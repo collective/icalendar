@@ -511,7 +511,9 @@ class Calendar(Component):
     'BEGIN:VEVENT\\r\\nDTSTART:20050404T080000\\r\\nSUMMARY:Python meeting about calendaring\\r\\nUID:42\\r\\nEND:VEVENT\\r\\n'
     
     Write to disc
-    >>> open('test.ics', 'wb').write(cal.as_string())
+    >>> import tempfile, os
+    >>> directory = tempfile.mkdtemp()
+    >>> open(os.path.join(directory, 'test.ics'), 'wb').write(cal.as_string())
     """
 
     name = 'VCALENDAR'
