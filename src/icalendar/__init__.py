@@ -1,6 +1,6 @@
 # Components
-from icalendar.calendar import Calendar, Event, Todo, Journal
-from icalendar.calendar import FreeBusy, Timezone, Alarm, ComponentFactory
+from icalendar.cal import Calendar, Event, Todo, Journal
+from icalendar.cal import FreeBusy, Timezone, Alarm, ComponentFactory
 
 # Property Data Value Types
 from icalendar.prop import vBinary, vBoolean, vCalAddress, vDatetime, vDate, \

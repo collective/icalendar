@@ -37,7 +37,7 @@ class ComponentFactory(CaselessDict):
     'BEGIN:VEVENT\\r\\nDTSTART:19700101\\r\\nEND:VEVENT\\r\\n'
     
     >>> factory.get('VCALENDAR', Component)
-    <class 'icalendar.calendar.Calendar'>
+    <class 'icalendar.cal.Calendar'>
     """
     
     def __init__(self, *args, **kwargs):
