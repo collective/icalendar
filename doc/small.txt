@@ -1,10 +1,12 @@
 # -*- coding: latin-1 -*-
-"""
 
 A small example
 
     >>> from iCalendar import Calendar
-    >>> cal = Calendar.from_string(open('test.ics','rb').read())
+    >>> import os
+    >>> directory = os.path.dirname(__file__)
+    >>> cal = Calendar.from_string(
+    ...   open(os.path.join(directory, 'small.ics'),'rb').read())
     >>> cal
     VCALENDAR({'VERSION': '2.0', 'METHOD': 'Request', 'PRODID': '-//My product//mxm.dk/'})
 
@@ -26,10 +28,3 @@ A small example
 
     >>> first_event['summary']
     'A second event'
-    
-"""
-
-if __name__ == "__main__":
-    import os.path, doctest, test
-    # import and test this file 
-    doctest.testmod(test)
