@@ -9,7 +9,10 @@ This module contains non-essential tools for iCalendar. Pretty thin so far eh?
 class UIDGenerator:
 
     """
-    If you are too lazy to create real uid's. Notice, this doctest is disabled!
+    If you are too lazy to create real uid's.
+
+    NOTE: this doctest is disabled
+    (only two > instead of three)
     
     Automatic semi-random uid
     >> g = UIDGenerator()
@@ -46,8 +49,3 @@ class UIDGenerator:
         unique = unique or self.rnd_string()
         return vText('%s-%s@%s' % (vDatetime.today().ical(), unique, host_name))
 
-
-if __name__ == "__main__":
-    import os.path, doctest, tools
-    # import and test this file 
-    doctest.testmod(tools)

@@ -49,8 +49,8 @@ import re
 import time as _time
 
 # from this package
-from CaselessDict import CaselessDict
-from ContentlinesParser import Parameters
+from icalendar.caselessdict import CaselessDict
+from icalendar.parser import Parameters
 
 
 
@@ -534,8 +534,8 @@ class vDDDTypes:
     >>> type(d)
     <type 'datetime.datetime'>
 
-    >>> repr(vDDDTypes.from_ical('20010101T123000Z'))[:75]
-    'datetime.datetime(2001, 1, 1, 12, 30, tzinfo=<iCalendar.PropertyValues.UTC '
+    >>> repr(vDDDTypes.from_ical('20010101T123000Z'))[:65]
+    'datetime.datetime(2001, 1, 1, 12, 30, tzinfo=<icalendar.prop.UTC '
 
     >>> d = vDDDTypes.from_ical('20010101')
     >>> type(d)
@@ -1393,11 +1393,4 @@ class TypesFactory(CaselessDict):
         type_class = self.for_property(name)
         decoded = type_class.from_ical(str(value))
         return decoded
-
-
-
-if __name__ == "__main__":
-    import os.path, doctest, PropertyValues
-    # import and test this file
-    doctest.testmod(PropertyValues)
 

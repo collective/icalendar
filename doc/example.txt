@@ -70,7 +70,7 @@ There are methods for converting to and from these encodings in the package.
 
 These are the most important imports.
 
-    >>> from iCalendar import Calendar, Event
+    >>> from icalendar import Calendar, Event
 
 Components
 ----------
@@ -128,9 +128,10 @@ ATTENDEE:MAILTO:test@example.com
 END:VCALENDAR
 
 
-Note: this version doesn't check for compliance, so you should look in the RFC 
-2445 spec for legal properties for each component, or look in the iCalendar.py 
-file, where it is at least defined for each component.
+Note: this version doesn't check for compliance, so you should look in
+the RFC 2445 spec for legal properties for each component, or look in
+the icalendar/calendar.py file, where it is at least defined for each
+component.
 
 Subcomponents
 -------------
@@ -189,7 +190,7 @@ a class that can parse and encode the type.
 
 So if you want to do it manually ...
 
-    >>> from iCalendar import vDatetime
+    >>> from icalendar import vDatetime
     >>> now = datetime(2005,4,4,8,0,0)
     >>> vDatetime(now).ical()
     '20050404T080000'
@@ -205,8 +206,8 @@ Python type.
     datetime.datetime(2005, 4, 4, 8, 0)
 
     >>> dt = vDatetime.from_ical('20050404T080000Z')
-    >>> repr(dt)[:85] + repr(dt)[85+8:]
-    'datetime.datetime(2005, 4, 4, 8, 0, tzinfo=<iCalendar.PropertyValues.UTC object at 0x>)'
+    >>> repr(dt)[:62]
+    'datetime.datetime(2005, 4, 4, 8, 0, tzinfo=<icalendar.prop.UTC'
 
 
 You can also choose to use the decoded() method, which will return a decoded 
@@ -229,7 +230,7 @@ that can be loaded into the Mozilla calendar
     Init the calendar
     >>> cal = Calendar()
     >>> from datetime import datetime
-    >>> from iCalendar import UTC # timezone
+    >>> from icalendar import UTC # timezone
     
     Som properties are required to be complient
     >>> cal.add('prodid', '-//My calendar product//mxm.dk//')
@@ -244,7 +245,7 @@ that can be loaded into the Mozilla calendar
     
     
     A property with parameters. Notice that they are an attribute on the value.
-    >>> from iCalendar import vCalAddress, vText
+    >>> from icalendar import vCalAddress, vText
     >>> organizer = vCalAddress('MAILTO:noone@example.com')
     
     Automatic encoding is not yet implemented for parameter values.

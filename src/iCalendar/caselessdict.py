@@ -94,9 +94,4 @@ class CaselessDict(dict):
         return 'CaselessDict(' + dict.__repr__(self) + ')'
 
 
-if __name__ == "__main__":
-    import os.path, doctest, CaselessDict
-    # import and test this file 
-    doctest.testmod(CaselessDict)
-
 

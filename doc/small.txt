@@ -2,7 +2,7 @@
 
 A small example
 
-    >>> from iCalendar import Calendar
+    >>> from icalendar import Calendar
     >>> import os
     >>> directory = os.path.dirname(__file__)
     >>> cal = Calendar.from_string(
