@@ -272,30 +272,13 @@ that can be loaded into the Mozilla calendar
     >>> cal.add_component(event)
     
     Write to disc
-    >>> import os
-    >>> directory = os.path.dirname(__file__)
+    >>> import tempfile, os
+    >>> directory = tempfile.mkdtemp()
     >>> f = open(os.path.join(directory, 'example.ics'), 'wb')
     >>> f.write(cal.as_string())
     >>> f.close()
-    
-And that generates this file.
-    
-    BEGIN:VCALENDAR
-    PRODID:-//My calendar product//mxm.dk//
-    VERSION:2.0
-    BEGIN:VEVENT
-    ATTENDEE:MAILTO:maxm@example.com
-    ATTENDEE:MAILTO:the-dude@example.com
-    DTEND:20050404T100000Z
-    DTSTAMP:20050404T001000Z
-    DTSTART:20050404T080000Z
-    LOCATION:Odense, Denmark
-    ORGANIZER;CN=Max Rasmussen;ROLE=CHAIR:MAILTO:noone@example.com
-    PRIORITY:5
-    SUMMARY:Python meeting about calendaring
-    UID:20050115T101010/27346262376@mxm.dk
-    END:VEVENT
-    END:VCALENDAR
+ 
+    XXX We should check whether the write succeeded here..
 
 --
 
