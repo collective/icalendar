@@ -1,0 +1,25 @@
+BEGIN:VCALENDAR
+METHOD:Request
+PRODID:-//My product//mxm.dk/
+VERSION:2.0
+BEGIN:VEVENT
+DESCRIPTION:This is a very long description that will be folded This is a 
+ very long description that will be folded This is a very long description 
+ that will be folded This is a very long description that will be folded Th
+ is is a very long description that will be folded This is a very long desc
+ ription that will be folded This is a very long description that will be f
+ olded This is a very long description that will be folded This is a very l
+ ong description that will be folded This is a very long description that w
+ ill be folded
+PARTICIPANT;CN=Max M:MAILTO:maxm@mxm.dk
+DTEND:20050107T160000
+DTSTART:20050107T120000
+SUMMARY:A second event
+END:VEVENT
+BEGIN:VEVENT
+DTEND:20050108T235900
+DTSTART:20050108T230000
+SUMMARY:A single event
+UID:42
+END:VEVENT
+END:VCALENDAR
