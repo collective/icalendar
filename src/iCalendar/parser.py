@@ -17,7 +17,7 @@ from types import TupleType, ListType
 SequenceTypes = [TupleType, ListType]
 import re
 # from this package
-from CaselessDict import CaselessDict
+from icalendar.caselessdict import CaselessDict
 
 
 #################################################################
@@ -250,13 +250,13 @@ class Contentline(str):
     'ATTENDEE:MAILTO:maxm@example.com'
     
     A value can also be any of the types defined in PropertyValues
-    >>> from PropertyValues import vText
+    >>> from icalendar.prop import vText
     >>> parts = ('ATTENDEE', Parameters(), vText('MAILTO:test@example.com'))
     >>> Contentline.from_parts(parts)
     'ATTENDEE:MAILTO:test@example.com'
     
     A value can also be unicode
-    >>> from PropertyValues import vText
+    >>> from icalendar.prop import vText
     >>> parts = ('SUMMARY', Parameters(), vText(u'INternational char æ ø å'))
     >>> Contentline.from_parts(parts)
     'SUMMARY:INternational char \\xc3\\xa6 \\xc3\\xb8 \\xc3\\xa5'
@@ -379,13 +379,6 @@ class Contentlines(list):
         except:
             raise ValueError, 'Expected StringType with content lines'
     from_string = staticmethod(from_string)
-
-
-
-if __name__ == "__main__":
-    import os.path, doctest, ContentlinesParser
-    # import and test this file 
-    doctest.testmod(ContentlinesParser)
 
 
 # ran this:    

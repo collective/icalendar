@@ -15,10 +15,10 @@ SequenceTypes = (ListType, TupleType)
 import re
 
 # from this package
-from CaselessDict import CaselessDict
-from ContentlinesParser import Contentlines, Contentline, Parameters,\
-                               q_split, q_join
-from PropertyValues import TypesFactory
+from icalendar.caselessdict import CaselessDict
+from icalendar.parser import Contentlines, Contentline, Parameters
+from icalendar.parser import q_split, q_join
+from icalendar.prop import TypesFactory
 
 
 ######################################
@@ -37,7 +37,7 @@ class ComponentFactory(CaselessDict):
     'BEGIN:VEVENT\\r\\nDTSTART:19700101\\r\\nEND:VEVENT\\r\\n'
     
     >>> factory.get('VCALENDAR', Component)
-    <class 'iCalendar.iCalendar.Calendar'>
+    <class 'icalendar.calendar.Calendar'>
     """
     
     def __init__(self, *args, **kwargs):
@@ -110,7 +110,7 @@ class Component(CaselessDict):
     >>> c.as_string()
     'BEGIN:VCALENDAR\\r\\nATTENDEE:Max M\\r\\nEND:VCALENDAR\\r\\n'
     
-    >>> from PropertyValues import vDatetime
+    >>> from icalendar.prop import vDatetime
 
     Components can be nested, so You can add a subcompont. Eg a calendar holds events.
     >>> e = Component(summary='A brief history of time')
@@ -523,10 +523,3 @@ class Calendar(Component):
 # These are read only singleton, so one instance is enough for the module
 types_factory = TypesFactory()
 component_factory = ComponentFactory()
-
-
-if __name__ == "__main__":
-    
-    import os.path, doctest, iCalendar
-    # import and test this file 
-    doctest.testmod(iCalendar)
