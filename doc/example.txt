@@ -236,7 +236,7 @@ single event that can be loaded into the Mozilla calendar
     >>> from datetime import datetime
     >>> from icalendar import UTC # timezone
     
-    Som properties are required to be complient
+    Some properties are required to be compliant
     >>> cal.add('prodid', '-//My calendar product//mxm.dk//')
     >>> cal.add('version', '2.0')
     
