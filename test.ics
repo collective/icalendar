@@ -1,9 +1,0 @@
-BEGIN:VCALENDAR
-PRODID:-//My calendar product//mxm.dk//
-VERSION:2.0
-BEGIN:VEVENT
-DTSTART:20050404T080000
-SUMMARY:Python meeting about calendaring
-UID:42
-END:VEVENT
-END:VCALENDAR
