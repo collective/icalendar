@@ -8,7 +8,7 @@ from icalendar.prop import vBinary, vBoolean, vCalAddress, vDatetime, vDate, \
      vWeekday, vFrequency, vRecur, vText, vTime, vUri, \
      vGeo, vUTCOffset, TypesFactory
 
-# usefull tzinfo subclasses
+# useful tzinfo subclasses
 from icalendar.prop import FixedOffset, UTC, LocalTimezone
 
 # Parameters and helper methods for splitting and joining string with escaped 
