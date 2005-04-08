@@ -41,7 +41,7 @@ them directly.
 
 """
 
-# from python > 2.3
+# from python >= 2.3
 from datetime import datetime, timedelta, time, date, tzinfo
 from types import IntType, StringType, UnicodeType, TupleType, ListType
 SequenceTypes = [TupleType, ListType]
