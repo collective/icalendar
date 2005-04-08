@@ -481,7 +481,7 @@ class Timezone(Component):
 class Alarm(Component):
 
     name = 'VALARM'
-    # not quite shure about these ...
+    # not quite sure about these ...
     required = ('ACTION', 'TRIGGER',)
     singletons = ('ATTACH', 'ACTION', 'TRIGGER', 'DURATION', 'REPEAT',)
     inclusive = (('DURATION', 'REPEAT',),)
