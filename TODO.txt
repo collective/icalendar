@@ -1,5 +1,6 @@
-- Automatic En- & de-coding of parameter values
+Todo
+====
 
-    Most of the work is done allread. Just need to get it finished. Look at line 
-    153 in 'ContentlinesParser.py'
-    
+* Automatic encoding and decoding of parameter values. Most of the
+  work is done already. Just need to get it finished. Look at line 153
+  in 'src/icalendar/parser.py'
