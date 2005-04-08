@@ -9,7 +9,7 @@ This module contains non-essential tools for iCalendar. Pretty thin so far eh?
 class UIDGenerator:
 
     """
-    If you are too lazy to create real uid's.
+    If you are too lazy to create real uids.
 
     NOTE: this doctest is disabled
     (only two > instead of three)
@@ -20,7 +20,7 @@ class UIDGenerator:
     >> uid.ical()
     '20050109T153222-7ekDDHKcw46QlwZK@example.com'
     
-    You Should at least insert your own hostname to be more complient
+    You should at least insert your own hostname to be more compliant
     >> g = UIDGenerator()
     >> uid = g.uid('Example.ORG')
     >> uid.ical()
@@ -48,4 +48,3 @@ class UIDGenerator:
         from PropertyValues import vText, vDatetime
         unique = unique or self.rnd_string()
         return vText('%s-%s@%s' % (vDatetime.today().ical(), unique, host_name))
-
