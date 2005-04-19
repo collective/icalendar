@@ -2,7 +2,7 @@ try:
     from zope.interface import Interface, Attribute
 except ImportError:
     class Interface:
-        """A dummy interface base class"
+        """A dummy interface base class"""
 
     class Attribute:
         """A dummy attribute implementation"""
