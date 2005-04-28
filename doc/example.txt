@@ -1,15 +1,11 @@
-# -*- coding: latin-1 -*-
-
 iCalendar package
 =================
-
 
 This package is used for parsing and generating iCalendar files following the 
 standard in RFC 2445.
 
 It should be fully compliant, but it is possible to generate and parse invalid 
 files if you really want to.
-
 
 File structure
 --------------
@@ -20,24 +16,22 @@ consists of content lines.
 Each content line defines a property that has 3 parts (name, parameters, 
 values). Parameters are optional.
 
-A simple content line with only name and value could look like this:
+A simple content line with only name and value could look like this::
 
-    BEGIN:VCALENDAR
+  BEGIN:VCALENDAR
     
-A content line with parameters can look like this:
+A content line with parameters can look like this::
 
-    ATTENDEE;CN=Max Rasmussen;ROLE=REQ-PARTICIPANT:MAILTO:example@example.com
+  ATTENDEE;CN=Max Rasmussen;ROLE=REQ-PARTICIPANT:MAILTO:example@example.com
 
-And the parts are:
+And the parts are::
 
-    Name:   ATTENDEE
-    Params: CN=Max Rasmussen;ROLE=REQ-PARTICIPANT
-    Value:  MAILTO:example@example.com
+  Name:   ATTENDEE
+  Params: CN=Max Rasmussen;ROLE=REQ-PARTICIPANT
+  Value:  MAILTO:example@example.com
     
 Long content lines are usually "folded" to less than 75 character, but the 
 package takes care of that.
-
-
 
 Overview
 --------
@@ -45,20 +39,20 @@ Overview
 On a higher level iCalendar files consists of components. Components can have 
 sub components.
 
-The root component is the VCALENDAR.
+The root component is the VCALENDAR::
 
-    BEGIN:VCALENDAR
-    ... vcalendar properties ...
-    END:VCALENDAR
+  BEGIN:VCALENDAR
+  ... vcalendar properties ...
+  END:VCALENDAR
 
 The most frequent subcomponent to a VCALENDAR is a VEVENT. They are
-nested like this:
+nested like this::
 
-    BEGIN:VCALENDAR
-    ... vcalendar properties ...
-    BEGIN:VEVENT
-    ... vevent properties ...
-    END:VEVENT
+  BEGIN:VCALENDAR
+  ... vcalendar properties ...
+  BEGIN:VEVENT
+  ... vevent properties ...
+  END:VEVENT
     END:VCALENDAR
 
 Inside the components there are properties with values. The values
@@ -67,67 +61,68 @@ encoded in a special text format in an iCalendar file.
 
 There are methods for converting to and from these encodings in the package. 
 
+These are the most important imports::
 
-These are the most important imports.
-
-    >>> from icalendar import Calendar, Event
+  >>> from icalendar import Calendar, Event
 
 Components
 ----------
 
 Components are like (Case Insensitive) dicts. So if you want to set a property 
-you do it like this. The calendar is a component.
+you do it like this. The calendar is a component::
 
-    >>> cal = Calendar()
-    >>> cal['dtstart'] = '20050404T080000'
-    >>> cal['summary'] = 'Python meeting about calendaring'
-    >>> for k,v in cal.items():
-    ...     k,v
-    ('DTSTART', '20050404T080000')
-    ('SUMMARY', 'Python meeting about calendaring')
+  >>> cal = Calendar()
+  >>> cal['dtstart'] = '20050404T080000'
+  >>> cal['summary'] = 'Python meeting about calendaring'
+  >>> for k,v in cal.items():
+  ...     k,v
+  ('DTSTART', '20050404T080000')
+  ('SUMMARY', 'Python meeting about calendaring')
     
 You can generate a string for a file with the as_string() method. (Calling 
-str(cal) does the same):
+str(cal) does the same)::
     
-    >>> cal.as_string()
-    'BEGIN:VCALENDAR\r\nDTSTART:20050404T080000\r\nSUMMARY:Python meeting about calendaring\r\nEND:VCALENDAR\r\n'
+  >>> cal.as_string()
+  'BEGIN:VCALENDAR\r\nDTSTART:20050404T080000\r\nSUMMARY:Python meeting about calendaring\r\nEND:VCALENDAR\r\n'
     
-    >>> str(cal)
-    'BEGIN:VCALENDAR\r\nDTSTART:20050404T080000\r\nSUMMARY:Python meeting about calendaring\r\nEND:VCALENDAR\r\n'
-    
-in the calendar examples below the as_string() is implied. The
-rendered view is easier to read:
-    
-BEGIN:VCALENDAR
-DTSTART:20050404T080000
-SUMMARY:Python meeting about calendaring
-END:VCALENDAR
-    
-You can set multiple properties like this:
+  >>> str(cal)
+  'BEGIN:VCALENDAR\r\nDTSTART:20050404T080000\r\nSUMMARY:Python meeting about calendaring\r\nEND:VCALENDAR\r\n'
+   
+The rendered view is easier to read::
 
-    >>> cal = Calendar()
-    >>> cal['attendee'] = ['MAILTO:maxm@mxm.dk','MAILTO:test@example.com']
+  BEGIN:VCALENDAR
+  DTSTART:20050404T080000
+  SUMMARY:Python meeting about calendaring
+  END:VCALENDAR
 
-BEGIN:VCALENDAR
-ATTENDEE:MAILTO:maxm@mxm.dk
-ATTENDEE:MAILTO:test@example.com
-END:VCALENDAR
+So, let's define a function so we can easily display to_string() output::
 
+  >>> def display(cal):
+  ...    return cal.as_string().replace('\r\n', '\n').strip()
     
-if you don't want to care about whether a property value is a list or
+You can set multiple properties like this::
+
+  >>> cal = Calendar()
+  >>> cal['attendee'] = ['MAILTO:maxm@mxm.dk','MAILTO:test@example.com']
+  >>> print display(cal)
+  BEGIN:VCALENDAR
+  ATTENDEE:MAILTO:maxm@mxm.dk
+  ATTENDEE:MAILTO:test@example.com
+  END:VCALENDAR
+
+If you don't want to care about whether a property value is a list or
 a single value, just use the add() method. It will automatically
 convert the property to a list of values if more than one value is
-added.
+added. Here is an example::
 
-    >>> cal = Calendar()
-    >>> cal.add('attendee', 'MAILTO:maxm@mxm.dk')
-    >>> cal.add('attendee', 'MAILTO:test@example.com')
-
-BEGIN:VCALENDAR
-ATTENDEE:MAILTO:maxm@mxm.dk
-ATTENDEE:MAILTO:test@example.com
-END:VCALENDAR
-
+  >>> cal = Calendar()
+  >>> cal.add('attendee', 'MAILTO:maxm@mxm.dk')
+  >>> cal.add('attendee', 'MAILTO:test@example.com')
+  >>> print display(cal)
+  BEGIN:VCALENDAR
+  ATTENDEE:MAILTO:maxm@mxm.dk
+  ATTENDEE:MAILTO:test@example.com
+  END:VCALENDAR
 
 Note: this version doesn't check for compliance, so you should look in
 the RFC 2445 spec for legal properties for each component, or look in
@@ -139,29 +134,29 @@ Subcomponents
 
 Any component can have subcomponents. Eg. inside a calendar there can
 be events.  They can be arbitrarily nested. First by making a new
-component:
+component::
 
-    >>> event = Event()
-    >>> event['uid'] = '42'
-    >>> event['dtstart'] = '20050404T080000'
+  >>> event = Event()
+  >>> event['uid'] = '42'
+  >>> event['dtstart'] = '20050404T080000'
 
-And then appending it to a "parent".
+And then appending it to a "parent"::
 
-    >>> cal.add_component(event)
+  >>> cal.add_component(event)
+  >>> print display(cal)
+  BEGIN:VCALENDAR
+  ATTENDEE:MAILTO:maxm@mxm.dk
+  ATTENDEE:MAILTO:test@example.com
+  BEGIN:VEVENT
+  DTSTART:20050404T080000
+  UID:42
+  END:VEVENT
+  END:VCALENDAR
 
-BEGIN:VCALENDAR
-ATTENDEE:MAILTO:maxm@mxm.dk
-ATTENDEE:MAILTO:test@example.com
-BEGIN:VEVENT
-DTSTART:20050404T080000
-UID:42
-END:VEVENT
-END:VCALENDAR
+Subcomponents are appended to the subcomponents property on the component::
 
-Subcomponents are appended to the subcomponents property on the component.
-
-    >>> cal.subcomponents
-    [VEVENT({'DTSTART': '20050404T080000', 'UID': '42'})]
+  >>> cal.subcomponents
+  [VEVENT({'DTSTART': '20050404T080000', 'UID': '42'})]
     
 Value types
 -----------
@@ -178,12 +173,12 @@ yourself.
 
 To add a datetime value, you can use Pythons built in datetime types,
 and the set the encode parameter to true, and it will convert to the
-type defined in the spec.
+type defined in the spec::
 
-    >>> from datetime import datetime
-    >>> cal.add('dtstart', datetime(2005,4,4,8,0,0))
-    >>> str(cal['dtstart'])
-    '20050404T080000'
+  >>> from datetime import datetime
+  >>> cal.add('dtstart', datetime(2005,4,4,8,0,0))
+  >>> str(cal['dtstart'])
+  '20050404T080000'
    
 If that doesn't work satisfactorily for some reason, you can also do it 
 manually.
@@ -191,12 +186,12 @@ manually.
 In 'icalendar.prop', all the iCalendar data types are defined. Each
 type has a class that can parse and encode the type.
 
-So if you want to do it manually ...
+So if you want to do it manually::
 
-    >>> from icalendar import vDatetime
-    >>> now = datetime(2005,4,4,8,0,0)
-    >>> vDatetime(now).ical()
-    '20050404T080000'
+  >>> from icalendar import vDatetime
+  >>> now = datetime(2005,4,4,8,0,0)
+  >>> vDatetime(now).ical()
+  '20050404T080000'
 
 So the drill is to initialise the object with a python built in type,
 and then call the "ical()" method on the object. That will return an
@@ -204,26 +199,24 @@ ical encoded string.
 
 You can do it the other way around too. To parse an encoded string, just call 
 the "from_ical()" method, and it will return an instance of the corresponding 
-Python type.
+Python type::
 
-    >>> vDatetime.from_ical('20050404T080000')
-    datetime.datetime(2005, 4, 4, 8, 0)
+  >>> vDatetime.from_ical('20050404T080000')
+  datetime.datetime(2005, 4, 4, 8, 0)
 
-    >>> dt = vDatetime.from_ical('20050404T080000Z')
-    >>> repr(dt)[:62]
-    'datetime.datetime(2005, 4, 4, 8, 0, tzinfo=<icalendar.prop.UTC'
-
+  >>> dt = vDatetime.from_ical('20050404T080000Z')
+  >>> repr(dt)[:62]
+  'datetime.datetime(2005, 4, 4, 8, 0, tzinfo=<icalendar.prop.UTC'
 
 You can also choose to use the decoded() method, which will return a decoded 
-value directly.
+value directly::
 
-    >>> cal = Calendar()
-    >>> cal.add('dtstart', datetime(2005,4,4,8,0,0))
-    >>> str(cal['dtstart'])
-    '20050404T080000'
-    >>> cal.decoded('dtstart')
-    datetime.datetime(2005, 4, 4, 8, 0)
-
+  >>> cal = Calendar()
+  >>> cal.add('dtstart', datetime(2005,4,4,8,0,0))
+  >>> str(cal['dtstart'])
+  '20050404T080000'
+  >>> cal.decoded('dtstart')
+  datetime.datetime(2005, 4, 4, 8, 0)
 
 Example
 -------
@@ -231,59 +224,63 @@ Example
 Here is an example generating a complete iCal calendar file with a
 single event that can be loaded into the Mozilla calendar
 
-    Init the calendar
-    >>> cal = Calendar()
-    >>> from datetime import datetime
-    >>> from icalendar import UTC # timezone
-    
-    Some properties are required to be compliant
-    >>> cal.add('prodid', '-//My calendar product//mxm.dk//')
-    >>> cal.add('version', '2.0')
-    
-    We need at least one subcomponent for a calendar to be complient
-    >>> event = Event()
-    >>> event.add('summary', 'Python meeting about calendaring')
-    >>> event.add('dtstart', datetime(2005,4,4,8,0,0,tzinfo=UTC()))
-    >>> event.add('dtend', datetime(2005,4,4,10,0,0,tzinfo=UTC()))
-    >>> event.add('dtstamp', datetime(2005,4,4,0,10,0,tzinfo=UTC()))
-    
-    
-    A property with parameters. Notice that they are an attribute on the value.
-    >>> from icalendar import vCalAddress, vText
-    >>> organizer = vCalAddress('MAILTO:noone@example.com')
-    
-    Automatic encoding is not yet implemented for parameter values.
-    So you must use the 'v*' types defined in PropertyValues.py
-    >>> organizer.params['cn'] = vText('Max Rasmussen')
-    >>> organizer.params['role'] = vText('CHAIR')
-    >>> event['organizer'] = organizer
-    >>> event['location'] = vText('Odense, Denmark')
+Init the calendar::
 
-    >>> event['uid'] = '20050115T101010/27346262376@mxm.dk'
-    >>> event.add('priority', 5)
-
-    >>> attendee = vCalAddress('MAILTO:maxm@example.com')
-    >>> attendee.params['cn'] = vText('Max Rasmussen')
-    >>> attendee.params['ROLE'] = vText('REQ-PARTICIPANT')
-    >>> event.add('attendee', attendee, encode=0)
-
-    >>> attendee = vCalAddress('MAILTO:the-dude@example.com')
-    >>> attendee.params['cn'] = vText('The Dude')
-    >>> attendee.params['ROLE'] = vText('REQ-PARTICIPANT')
-    >>> event.add('attendee', attendee, encode=0)
-
-    Add the event to the calendar
-    >>> cal.add_component(event)
+  >>> cal = Calendar()
+  >>> from datetime import datetime
+  >>> from icalendar import UTC # timezone
     
-    Write to disc
-    >>> import tempfile, os
-    >>> directory = tempfile.mkdtemp()
-    >>> f = open(os.path.join(directory, 'example.ics'), 'wb')
-    >>> f.write(cal.as_string())
-    >>> f.close()
+Some properties are required to be compliant::
+
+  >>> cal.add('prodid', '-//My calendar product//mxm.dk//')
+  >>> cal.add('version', '2.0')
+    
+We need at least one subcomponent for a calendar to be compliant::
+
+  >>> event = Event()
+  >>> event.add('summary', 'Python meeting about calendaring')
+  >>> event.add('dtstart', datetime(2005,4,4,8,0,0,tzinfo=UTC()))
+  >>> event.add('dtend', datetime(2005,4,4,10,0,0,tzinfo=UTC()))
+  >>> event.add('dtstamp', datetime(2005,4,4,0,10,0,tzinfo=UTC()))
+      
+A property with parameters. Notice that they are an attribute on the value::
+
+  >>> from icalendar import vCalAddress, vText
+  >>> organizer = vCalAddress('MAILTO:noone@example.com')
+    
+Automatic encoding is not yet implemented for parameter values, so you
+must use the 'v*' types you can import from the icalendar package
+(they're defined in ``icalendar.prop``)::
+    
+  >>> organizer.params['cn'] = vText('Max Rasmussen')
+  >>> organizer.params['role'] = vText('CHAIR')
+  >>> event['organizer'] = organizer
+  >>> event['location'] = vText('Odense, Denmark')
+
+  >>> event['uid'] = '20050115T101010/27346262376@mxm.dk'
+  >>> event.add('priority', 5)
+
+  >>> attendee = vCalAddress('MAILTO:maxm@example.com')
+  >>> attendee.params['cn'] = vText('Max Rasmussen')
+  >>> attendee.params['ROLE'] = vText('REQ-PARTICIPANT')
+  >>> event.add('attendee', attendee, encode=0)
+
+  >>> attendee = vCalAddress('MAILTO:the-dude@example.com')
+  >>> attendee.params['cn'] = vText('The Dude')
+  >>> attendee.params['ROLE'] = vText('REQ-PARTICIPANT')
+  >>> event.add('attendee', attendee, encode=0)
+
+Add the event to the calendar::
+
+  >>> cal.add_component(event)
+    
+Write to disk::
+
+  >>> import tempfile, os
+  >>> directory = tempfile.mkdtemp()
+  >>> f = open(os.path.join(directory, 'example.ics'), 'wb')
+  >>> f.write(cal.as_string())
+  >>> f.close()
  
     XXX We should check whether the write succeeded here..
 
---
-
-    Enjoy, Max M, maxm@mxm.dk
