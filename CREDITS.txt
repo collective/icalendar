@@ -1,0 +1,17 @@
+iCalendar contributors
+======================
+
+Main developer
+--------------
+
+- Max M (maxm@mxm.d)
+
+Janitor
+-------
+
+- Martijn Faassen (faassen@infrae.com)
+
+Contributors
+------------
+
+- Lennart Regebro (regebro@nuxeo.com)
