@@ -3,10 +3,9 @@ iCalendar package for Python
 ============================
 
 The iCalendar package is a parser/generator of iCalender files for use
-with Python. It follows the RFC 2445 (iCalendar) specification, which
-can be found here:
+with Python. It follows the `RFC 2445 (iCalendar) specification`_.
 
-http://www.ietf.org/rfc/rfc2445.txt
+.. _`RFC 2445 (iCalendar) specification`: http://www.ietf.org/rfc/rfc2445.txt
 
 Introduction
 ============
@@ -18,23 +17,22 @@ So this is my attempt at making an iCalendar package for Python. The
 inspiration has come from the email package in the standard lib, which
 I think is pretty simple, yet efficient and powerful.
 
+The package can both generate and parse iCalender files, and can
+easily be used as is.
+
 The aim is to make a package that is fully compliant to RFC 2445, well
 designed, simple to use and well documented.
 
-Look in doc/example.txt for introductory doctests and explanations.
-    
-All modules and classes have doctests that shows how they work, so it
-is all pretty well documented. There is also an interfaces.py file
-which describe the API in src/icalendar.
-    
-It can generate and parse iCalender files, and can easily be used as
-is.
-    
-But it does need a bit more polish before i will considder it
-finished. I would say that it's about 95% done.
-    
-Examples
-========
+News
+====
+
+* 2005-04-28: `iCalendar 0.10`_ released (`changes for 0.10`_)
+
+.. _`iCalendar 0.10`: iCalendar-0.10.tgz
+.. _`changes for 0.10`: changes-0.10.html
+
+Example
+=======
 
 To open and parse a file::
     
@@ -71,11 +69,20 @@ To create a calendar and write it to disk::
   >>> f.write(cal.as_string())
   >>> f.close()
 
-Dependencies
-============
+More documentation
+==================
+
+Consult this example_ for introductory doctests and explanations. Here
+are two smaller_ examples_.
+
+.. _example: example.html
+.. _smaller: small.html
+.. _examples: groupscheduled.html
     
-It is dependent on the datetime package, so it requires Python >=
-2.3. There are no other dependencies.
+All modules and classes also have doctests that shows how they
+work. There is also an `interfaces.py`_ file which describes the API.
+
+.. _`interfaces.py`: interfaces.py
 
 Mailing list
 ============
@@ -94,7 +101,22 @@ http://codespeak.net/mailman/listinfo/icalendar-checkins
 Download
 ========
 
-Get the latest version from the download page.
+* `iCalendar 0.10`_ (2005-04-28)
+
+.. _`iCalendar 0.10`: iCalendar-0.10.tgz
+
+You can also check out the `development version of iCalendar`_ from
+subversion, using a command like::
+
+  svn co http://codespeak.net/svn/iCalendar/trunk iCalendar
+
+.. _`development version of iCalendar`: http://codespeak.net/svn/iCalendar/trunk
+
+Dependencies
+============
+    
+It is dependent on the datetime package, so it requires Python >=
+2.3. There are no other dependencies.
 
 License
 =======
