@@ -2,8 +2,12 @@
 
 from distutils.core import setup
 
+f = open('version.txt', 'r')
+version = f.read().strip()
+f.close()
+
 setup(name='icalendar',
-      version='0.10',
+      version=version,
       description='iCalendar support module',
       package_dir = {'': 'src'},
       packages=['icalendar'],
