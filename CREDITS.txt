@@ -15,3 +15,5 @@ Contributors
 ------------
 
 - Lennart Regebro (regebro@nuxeo.com)
+
+Thanks to codespeak for hosting this project.
