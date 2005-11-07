@@ -11,6 +11,6 @@ from icalendar.prop import vBinary, vBoolean, vCalAddress, vDatetime, vDate, \
 # useful tzinfo subclasses
 from icalendar.prop import FixedOffset, UTC, LocalTimezone
 
-# Parameters and helper methods for splitting and joining string with escaped 
+# Parameters and helper methods for splitting and joining string with escaped
 # chars.
 from icalendar.parser import Parameters, q_split, q_join

@@ -1,3 +1,27 @@
+iCalendar 0.11 (2005-11-XX)
+===========================
+
+* Changed component .from_string to use types_factory instead of
+  hardcoding entries to 'inline'
+
+* Changed UTC tzinfo to a singleton so the same one is used everywhere
+
+* Made the parser more strict by using regular expressions for key
+  name, param name and quoted/unquoted safe char as per the RFC
+
+* Added some tests from the schooltool icalendar parser for better
+  coverage
+
+* Be more forgiving on the regex for folding lines
+
+* Allow for multiple top-level components on .from_string
+
+* Fix vWeekdays, wasn't accepting relative param (eg: -3SA vs -SA)
+
+* vDDDTypes didn't accept negative period (eg: -P30M)
+
+* '\N' is also acceptable as newline on content lines, per RFC
+
 iCalendar 0.10 (2005-04-28)
 ===========================
 

@@ -198,7 +198,6 @@ DSTDIFF = DSTOFFSET - STDOFFSET
 
 
 class FixedOffset(tzinfo):
-
     """Fixed offset in minutes east from UTC."""
 
     def __init__(self, offset, name):
@@ -229,7 +228,6 @@ class UTC(tzinfo):
 UTC = UTC()
 
 class LocalTimezone(tzinfo):
-
     """
     Timezone of the machine where the code is running
     """
@@ -532,9 +530,7 @@ class vInt(int):
 
 
 class vDDDTypes:
-
     """
-
     A combined Datetime, Date or Duration parser/generator. Their format cannot
     be confused, and often values can be of either types. So this is practical.
 
@@ -600,7 +596,6 @@ class vDDDTypes:
 
 
 class vPeriod:
-
     """
     A precise period of time.
     One day in exact datetimes
@@ -1271,7 +1266,6 @@ class vInline(str):
 
 
 class TypesFactory(CaselessDict):
-
     """
     All Value types defined in rfc 2445 are registered in this factory class. To
     get a type you can use it like this.
@@ -1434,4 +1428,3 @@ class TypesFactory(CaselessDict):
         type_class = self.for_property(name)
         decoded = type_class.from_ical(str(value))
         return decoded
-

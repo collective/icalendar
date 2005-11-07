@@ -1,0 +1,20 @@
+A exmaple with multiple VCALENDAR components::
+
+  >>> from icalendar import Calendar
+  >>> import os
+  >>> directory = os.path.dirname(__file__)
+  >>> cals = Calendar.from_string(
+  ...   open(os.path.join(directory, 'multiple.ics'),'rb').read(), multiple=True)
+
+  >>> for cal in cals:
+  ...   for component in cal.walk():
+  ...     component.name
+  'VCALENDAR'
+  'VEVENT'
+  'VCALENDAR'
+  'VEVENT'
+  'VEVENT'
+
+  >>> cals[0]['prodid']
+  vText(u'-//Mozilla.org/NONSGML Mozilla Calendar V1.0//EN')
+

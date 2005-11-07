@@ -2127,10 +2127,10 @@ def _unittest_count(docstring):
                 words = 0
         else:
             words = 1
-            
+
     return count or 1
-            
-    
+
+
 class DocTestCase(unittest.TestCase):
 
     def __init__(self, test, optionflags=0, setUp=None, tearDown=None,
