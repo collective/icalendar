@@ -1,10 +1,9 @@
 # -*- coding: latin-1 -*-
 
 class CaselessDict(dict):
-
     """
     A dictionary that isn't case sensitive, and only use string as keys.
-    
+
     >>> ncd = CaselessDict(key1='val1', key2='val2')
     >>> ncd
     CaselessDict({'KEY2': 'val2', 'KEY1': 'val1'})
@@ -64,19 +63,19 @@ class CaselessDict(dict):
 
     def get(self, key, default=None):
         return dict.get(self, key.upper(), default)
-        
+
     def setdefault(self, key, value=None):
         return dict.setdefault(self, key.upper(), value)
 
     def pop(self, key, default=None):
         return dict.pop(self, key.upper(), default)
-    
+
     def popitem(self):
         return dict.popitem(self, key.upper())
-    
+
     def has_key(self, key):
         return dict.has_key(self, key.upper())
-        
+
     def update(self, indict):
         """
         Multiple keys where key1.upper() == key2.upper() will be lost.
