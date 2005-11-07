@@ -15,12 +15,12 @@ class IComponent(Interface):
     """
     Component is the base object for calendar, Event and the other
     components defined in RFC 2445.
-    
+
     A component is like a dictionary with extra methods and attributes.
     """
 
     # MANIPULATORS
-    
+
     def __setitem__(name, value):
         """Set a property.
 
@@ -50,7 +50,7 @@ class IComponent(Interface):
         values - list of values to set
         encode - if True, encode Python values as iCalendar types first.
         """
-        
+
     def add(name, value):
         """Add a property. Can be called multiple times to set a list.
 
@@ -69,7 +69,7 @@ class IComponent(Interface):
         Reads the iCalendar string and constructs components and
         subcomponents out of it.
         """
-        
+
     # ACCESSORS
     def __getitem__(name):
         """Get a property
@@ -78,7 +78,7 @@ class IComponent(Interface):
 
         Returns an iCalendar property object such as vText.
         """
-        
+
     def decoded(name, default=_marker):
         """Get a property as a python object.
 
@@ -98,7 +98,7 @@ class IComponent(Interface):
 
         Returns list of python objects.
         """
-        
+
     def as_string():
         """Render the component in the RFC 2445 (iCalendar) format.
 
@@ -112,15 +112,15 @@ class IComponent(Interface):
     name = Attribute("""
         Name of this component (VEVENT, etc)
         """)
-    
+
     def walk(name=None):
         """Recursively traverses component and subcomponents.
 
         name - optional, if given, only return components with that name
-        
+
         Returns sequence of components.
         """
-        
+
     def property_items():
         """Return properties as (name, value) tuples.
 
@@ -143,7 +143,7 @@ class IJournal(IComponent):
 class IFreeBusy(IComponent):
     """A component which conforms to an iCalendar VFREEBUSY.
     """
-    
+
 class ITimezone(IComponent):
     """A component which conforms to an iCalendar VTIMEZONE.
     """
@@ -151,17 +151,17 @@ class ITimezone(IComponent):
 class IAlarm(IComponent):
     """A component which conforms to an iCalendar VALARM.
     """
-    
+
 class ICalendar(IComponent):
     """A component which conforms to an iCalendar VCALENDAR.
     """
 
 class IPropertyValue(Interface):
     """An iCalendar property value.
-    iCalendar properties have strongly typed values.    
+    iCalendar properties have strongly typed values.
 
     This invariance should always be true:
-    
+
     assert x == vDataType.from_ical(vDataType(x).ical())
     """
 
@@ -191,11 +191,11 @@ class ICalAddress(IPropertyValue):
 
     Also behaves like a python str.
     """
-    
+
 class IDateTime(IPropertyValue):
     """Render and generates iCalendar datetime format.
-    
-    Important: if tzinfo is defined it renders itself as 'date with utc time' 
+
+    Important: if tzinfo is defined it renders itself as 'date with utc time'
     Meaning that it has a 'Z' appended, and is in absolute time.
     """
 
@@ -209,7 +209,7 @@ class IDuration(IPropertyValue):
 
 class IFloat(IPropertyValue):
     """Render and generate floats in iCalendar format.
-    
+
     Also behaves like a python float.
     """
 
@@ -222,7 +222,7 @@ class IInt(IPropertyValue):
 class IPeriod(IPropertyValue):
     """A precise period of time (datetime, datetime).
     """
-    
+
 class IWeekDay(IPropertyValue):
     """Render and generate weekday abbreviation.
     """
@@ -260,6 +260,3 @@ class IUTCOffset(IPropertyValue):
 class IInline(IPropertyValue):
     """Inline list.
     """
-
-
-

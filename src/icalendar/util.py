@@ -1,4 +1,4 @@
-from string import ascii_letters, digits 
+from string import ascii_letters, digits
 import random
 
 """
@@ -13,28 +13,28 @@ class UIDGenerator:
 
     NOTE: this doctest is disabled
     (only two > instead of three)
-    
+
     Automatic semi-random uid
     >> g = UIDGenerator()
     >> uid = g.uid()
     >> uid.ical()
     '20050109T153222-7ekDDHKcw46QlwZK@example.com'
-    
+
     You should at least insert your own hostname to be more compliant
     >> g = UIDGenerator()
     >> uid = g.uid('Example.ORG')
     >> uid.ical()
     '20050109T153549-NbUItOPDjQj8Ux6q@Example.ORG'
-    
+
     You can also insert a path or similar
     >> g = UIDGenerator()
     >> uid = g.uid('Example.ORG', '/path/to/content')
     >> uid.ical()
     '20050109T153415-/path/to/content@Example.ORG'
     """
-    
+
     chars = list(ascii_letters + digits)
-    
+
     def rnd_string(self, length=16):
         "Generates a string with random characters of length"
         return ''.join([random.choice(self.chars) for i in range(length)])

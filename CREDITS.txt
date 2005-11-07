@@ -16,4 +16,6 @@ Contributors
 
 - Lennart Regebro (regebro@nuxeo.com)
 
+- Sidnei da Silva (sidnei@enfoldsystems.com)
+
 Thanks to codespeak for hosting this project.

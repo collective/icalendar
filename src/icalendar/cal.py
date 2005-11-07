@@ -25,7 +25,6 @@ from icalendar.prop import TypesFactory
 # The component factory
 
 class ComponentFactory(CaselessDict):
-
     """
     All components defined in rfc 2445 are registered in this factory class. To
     get a component you can use it like this.
@@ -61,9 +60,7 @@ INLINE = CaselessDict(
 _marker = []
 
 class Component(CaselessDict):
-
     """
-
     Component is the base object for calendar, Event and the other components
     defined in RFC 2445. normally you will not use this class directy, but
     rather one of the subclasses.
@@ -498,7 +495,6 @@ class Alarm(Component):
 
 
 class Calendar(Component):
-
     """
     This is the base object for an iCalendar file.
 

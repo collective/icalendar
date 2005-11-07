@@ -95,7 +95,6 @@ def q_join(lst, sep=','):
     return sep.join([dQuote(itm) for itm in lst])
 
 class Parameters(CaselessDict):
-
     """
     Parser and generator of Property parameter strings. It knows nothing of
     datatypes. It's main concern is textual structure.
@@ -244,7 +243,6 @@ class Parameters(CaselessDict):
 # parsing and generation of content lines
 
 class Contentline(str):
-
     """
     A content line is basically a string that can be folded and parsed into
     parts.
@@ -340,6 +338,22 @@ class Contentline(str):
     Traceback (most recent call last):
         ...
     ValueError: Content line could not be parsed into parts
+
+    >>> c = Contentline('key;param=pvalue:value', strict=False)
+    >>> c.parts()
+    ('key', Parameters({'PARAM': 'pvalue'}), 'value')
+
+    If strict is set to True, uppercase param values that are not
+    double-quoted, this is because the spec says non-quoted params are
+    case-insensitive.
+
+    >>> c = Contentline('key;param=pvalue:value', strict=True)
+    >>> c.parts()
+    ('key', Parameters({'PARAM': 'PVALUE'}), 'value')
+
+    >>> c = Contentline('key;param="pValue":value', strict=True)
+    >>> c.parts()
+    ('key', Parameters({'PARAM': 'pValue'}), 'value')
     """
 
     def __new__(cls, st, strict=False):
@@ -410,7 +424,6 @@ class Contentline(str):
 
 
 class Contentlines(list):
-
     """
     I assume that iCalendar files generally are a few kilobytes in size. Then
     this should be efficient. for Huge files, an iterator should probably be

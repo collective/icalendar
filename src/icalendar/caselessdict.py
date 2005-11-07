@@ -91,6 +91,3 @@ class CaselessDict(dict):
 
     def __repr__(self):
         return 'CaselessDict(' + dict.__repr__(self) + ')'
-
-
-
