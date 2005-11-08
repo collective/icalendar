@@ -2,7 +2,7 @@
 iCalendar package for Python
 ============================
 
-The iCalendar package is a parser/generator of iCalender files for use
+The iCalendar package is a parser/generator of iCalendar files for use
 with Python. It follows the `RFC 2445 (iCalendar) specification`_.
 
 .. _`RFC 2445 (iCalendar) specification`: http://www.ietf.org/rfc/rfc2445.txt
@@ -17,7 +17,7 @@ So this is my attempt at making an iCalendar package for Python. The
 inspiration has come from the email package in the standard lib, which
 I think is pretty simple, yet efficient and powerful.
 
-The package can both generate and parse iCalender files, and can
+The package can both generate and parse iCalendar files, and can
 easily be used as is.
 
 The aim is to make a package that is fully compliant to RFC 2445, well
