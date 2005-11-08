@@ -26,8 +26,11 @@ designed, simple to use and well documented.
 News
 ====
 
+* 2005-11-08: `iCalendar 0.11`_ released (`changes for 0.11`_)
 * 2005-04-28: `iCalendar 0.10`_ released (`changes for 0.10`_)
 
+.. _`iCalendar 0.11`: iCalendar-0.11.tgz
+.. _`changes for 0.11`: changes-0.11.html
 .. _`iCalendar 0.10`: iCalendar-0.10.tgz
 .. _`changes for 0.10`: changes-0.10.html
 
@@ -102,9 +105,8 @@ http://codespeak.net/mailman/listinfo/icalendar-checkins
 Download
 ========
 
+* `iCalendar 0.11`_ (2005-08-11)
 * `iCalendar 0.10`_ (2005-04-28)
-
-.. _`iCalendar 0.10`: iCalendar-0.10.tgz
 
 You can also check out the `development version of iCalendar`_ from
 subversion, using a command like::

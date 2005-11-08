@@ -63,7 +63,7 @@ class IComponent(Interface):
         """
 
     # static method, can be called on class directly
-    def from_string(st):
+    def from_string(st, multiple=False):
         """Populates the component recursively from a iCalendar string.
 
         Reads the iCalendar string and constructs components and
