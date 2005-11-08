@@ -1,0 +1,23 @@
+iCalendar 0.10 (2005-04-28)
+===========================
+
+* moved code to codespeak.net subversion.
+
+* reorganized package structure so that source code is under 'src'
+  directory. Non-package files remain in distribution root.
+
+* redid doc/*.py files as doc/*.txt, using more modern doctest. Before
+  they were .py files with big docstrings.
+
+* added test.py testrunner, and tests/test_icalendar.py that picks up
+  all doctests in source code and doc directory, and runs them, when
+  typing:
+
+  python2.3 test.py
+
+* renamed iCalendar to lower case package name, lowercased,
+  de-pluralized and shorted module names, which are mostly
+  implementation detail.
+
+* changed tests so they generate .ics files in a temp directory, not
+  in the structure itself.
