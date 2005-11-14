@@ -54,7 +54,7 @@ To create a calendar and write it to disk::
 
   >>> cal = Calendar()
   >>> from datetime import datetime
-  >>> from iCalendar import UTC # timezone
+  >>> from icalendar import UTC # timezone
   >>> cal.add('prodid', '-//My calendar product//mxm.dk//')
   >>> cal.add('version', '2.0')
 
