@@ -4,7 +4,7 @@ iCalendar contributors
 Main developer
 --------------
 
-- Max M (maxm@mxm.d)
+- Max M (maxm@mxm.dk)
 
 Janitor
 -------
