@@ -18,7 +18,7 @@ import re
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Contentlines, Contentline, Parameters
 from icalendar.parser import q_split, q_join
-from icalendar.prop import TypesFactory
+from icalendar.prop import TypesFactory, vText
 
 
 ######################################
@@ -260,7 +260,8 @@ class Component(CaselessDict):
         """
         Returns a list of values (split on comma).
         """
-        vals = [v.strip('" ') for v in q_split(self[name])]
+        vals = [v.strip('" ').encode(vText.encoding)
+                  for v in q_split(self[name])]
         if decode:
             return [self._decode(name, val) for val in vals]
         return vals
@@ -273,7 +274,8 @@ class Component(CaselessDict):
         """
         if encode:
             values = [self._encode(name, value, 1) for value in values]
-        self[name] = types_factory['inline'](q_join(values))
+        joined = q_join(values).encode(vText.encoding)
+        self[name] = types_factory['inline'](joined)
 
 
     #########################
