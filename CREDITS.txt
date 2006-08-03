@@ -14,8 +14,10 @@ Janitor
 Contributors
 ------------
 
-- Lennart Regebro (regebro@nuxeo.com)
+- Lennart Regebro (lregebro@nuxeo.com)
 
 - Sidnei da Silva (sidnei@enfoldsystems.com)
+
+- Olivier Grisel (ogrisel@nuxeo.com)
 
 Thanks to codespeak for hosting this project.
