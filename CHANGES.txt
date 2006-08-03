@@ -1,4 +1,7 @@
-iCalendar trunk (1.0?) (unreleased)
-===================================
+iCalendar 1.0
+=============
 
-* Added support for creating a python egg distribution.
+* make get_inline and set_inline support non ascii codes. (ogrisel@nuxeo.com)
+
+* Added support for creating a python egg distribution. (lregebro@nuxeo.com)
+
