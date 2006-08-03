@@ -26,9 +26,12 @@ designed, simple to use and well documented.
 News
 ====
 
+* 2006-08-03: `iCalendar 1.0`_ released (`changes for 1.0`_)
 * 2005-11-08: `iCalendar 0.11`_ released (`changes for 0.11`_)
 * 2005-04-28: `iCalendar 0.10`_ released (`changes for 0.10`_)
 
+.. _`iCalendar 1.0`: iCalendar-0.11.tgz
+.. _`changes for 1.0`: changes-1.0.html
 .. _`iCalendar 0.11`: iCalendar-0.11.tgz
 .. _`changes for 0.11`: changes-0.11.html
 .. _`iCalendar 0.10`: iCalendar-0.10.tgz
