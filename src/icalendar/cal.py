@@ -521,6 +521,20 @@ class Calendar(Component):
     >>> import tempfile, os
     >>> directory = tempfile.mkdtemp()
     >>> open(os.path.join(directory, 'test.ics'), 'wb').write(cal.as_string())
+    
+    Test that line breaks do not happen in UTF characters. RFC 2445 is a bit
+    unclear, it sais that lines may not be longer than 75 *octets* and that
+    you can split within any *characters*. Some implementation takes this
+    (quite reasonably) as not allowing splits within multiple-octet UTF-8
+    characters. So we need to handle that.
+    
+    >>> desc1 = u'PETROL Conference:\\n"Gestion de riesgos en el sector del petr\xf3leo"'
+    >>> event = Event()
+    >>> event.add('description', desc1)
+    
+    Make sure the unicode of the \xf3 (an o with an accent) exists in the result:
+    >>> '\xc3\xb3' in event.as_string()
+    True
     """
 
     name = 'VCALENDAR'
