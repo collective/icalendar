@@ -980,23 +980,23 @@ class vText(unicode):
         unicode.__init__(self, *args, **kwargs)
         self.params = Parameters()
 
-    def escape(self, value):
+    def escape(self):
         """
         Format value according to iCalendar TEXT escaping rules.
         """
-        return (value.replace('\N', '\n')
-                     .replace('\\', '\\\\')
-                     .replace(';', r'\;')
-                     .replace(',', r'\,')
-                     .replace('\r\n', r'\n')
-                     .replace('\n', r'\n')
-                     )
+        return (self.replace('\N', '\n')
+                    .replace('\\', '\\\\')
+                    .replace(';', r'\;')
+                    .replace(',', r'\,')
+                    .replace('\r\n', r'\n')
+                    .replace('\n', r'\n')
+                )
 
     def __repr__(self):
         return u"vText(%s)" % unicode.__repr__(self)
 
     def ical(self):
-        return self.escape(self).encode(self.encoding)
+        return self.escape().encode(self.encoding)
 
     def from_ical(ical):
         "Parses the data format from ical text format"
