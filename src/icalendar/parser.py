@@ -261,6 +261,11 @@ class Contentline(str):
     >>> c
     '123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 '
 
+    We do not fold withing a UTF-8 character:
+    >>> c = Contentline('This line has a UTF-8 character where it should be folded. Make sure it g\xc3\xabts folded before that character.')
+    >>> '\xc3\xab' in str(c)
+    True
+
     It can parse itself into parts. Which is a tuple of (name, params, vals)
 
     >>> c = Contentline('dtstart:20050101T120000')
@@ -354,6 +359,7 @@ class Contentline(str):
     >>> c = Contentline('key;param="pValue":value', strict=True)
     >>> c.parts()
     ('key', Parameters({'PARAM': 'pValue'}), 'value')
+    
     """
 
     def __new__(cls, st, strict=False):
@@ -417,8 +423,29 @@ class Contentline(str):
         "Long content lines are folded so they are less than 75 characters wide"
         l_line = len(self)
         new_lines = []
-        for i in range(0, l_line, 74):
-            new_lines.append(self[i:i+74])
+        start = 0
+        end = 74
+        while True:
+            if end > l_line:
+                end = l_line
+            else:
+                # Check that we don't fold in the middle of a UTF-8 character:
+                # http://lists.osafoundation.org/pipermail/ietf-calsify/2006-August/001126.html
+                while True:
+                    char_value = ord(self[end])
+                    if char_value < 128 or char_value >= 192:
+                        # This is not in the middle of a UTF-8 character, so we
+                        # can fold here:
+                        break
+                    else:
+                        end -= 1
+
+            new_lines.append(self[start:end])
+            if end == l_line:
+                # Done
+                break
+            start = end
+            end = start + 74
         return '\r\n '.join(new_lines)
 
 
