@@ -71,7 +71,7 @@ class CaselessDict(dict):
         return dict.pop(self, key.upper(), default)
 
     def popitem(self):
-        return dict.popitem(self, key.upper())
+        return dict.popitem(self)
 
     def has_key(self, key):
         return dict.has_key(self, key.upper())
