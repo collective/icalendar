@@ -1,7 +1,7 @@
-iCalendar 1.0
-=============
+iCalendar 1.1 (unreleased)
+==========================
 
-* make get_inline and set_inline support non ascii codes. 
-
-* Added support for creating a python egg distribution. 
-
+* Fixed a bug in caselessdicts popitem 
+  (thanks to Michael Smith <msmith@fluendo.com>)
+  
+  

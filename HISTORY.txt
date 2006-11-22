@@ -1,3 +1,10 @@
+iCalendar 1.0 (2006-08-03)
+==========================
+
+* make get_inline and set_inline support non ascii codes. 
+
+* Added support for creating a python egg distribution. 
+
 iCalendar 0.11 (2005-11-08)
 ===========================
 
