@@ -1,4 +1,4 @@
-iCalendar 1.1 (unreleased)
+iCalendar 1.1 (2006-11-23)
 ==========================
 
 * Fixed a bug in caselessdicts popitem.

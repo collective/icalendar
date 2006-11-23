@@ -20,4 +20,6 @@ Contributors
 
 - Olivier Grisel (ogrisel@nuxeo.com)
 
+- Michael Smith <msmith@fluendo.com>
+
 Thanks to codespeak for hosting this project.
