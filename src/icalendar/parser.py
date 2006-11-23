@@ -261,10 +261,13 @@ class Contentline(str):
     >>> c
     '123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 '
 
-    We do not fold withing a UTF-8 character:
+    We do not fold within a UTF-8 character:
     >>> c = Contentline('This line has a UTF-8 character where it should be folded. Make sure it g\xc3\xabts folded before that character.')
     >>> '\xc3\xab' in str(c)
     True
+
+    Don't fail if we fold a line that is exactly X times 74 characters long:
+    >>> c = str(Contentline(''.join(['x']*148)))
 
     It can parse itself into parts. Which is a tuple of (name, params, vals)
 
@@ -426,7 +429,7 @@ class Contentline(str):
         start = 0
         end = 74
         while True:
-            if end > l_line:
+            if end >= l_line:
                 end = l_line
             else:
                 # Check that we don't fold in the middle of a UTF-8 character:
