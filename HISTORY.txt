@@ -1,3 +1,18 @@
+iCalendar 1.1 (2006-11-23)
+==========================
+
+* Fixed a bug in caselessdicts popitem.
+  (thanks to Michael Smith <msmith@fluendo.com>)
+  
+* The RFC 2445 was a bit unclear on how to handle line folding when it
+  happened to be in the middle of a UTF-8 character. This has been clarified
+  in the following discussion:
+  http://lists.osafoundation.org/pipermail/ietf-calsify/2006-August/001126.html
+  And this is now implemented in iCalendar. It will not fold in the middle
+  of a UTF-8 character, but may fold in the middle of a UTF-8 composing
+  character sequence.
+  
+  
 iCalendar 1.0 (2006-08-03)
 ==========================
 
