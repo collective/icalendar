@@ -1,4 +1,4 @@
-iCalendar 1.2 (unreleased)
+iCalendar 1.2 (2006-11-25)
 ==========================
 
 * Fixed a string index out of range error in the new folding code.
