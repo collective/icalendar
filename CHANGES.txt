@@ -13,8 +13,5 @@ API Changes:
 * When createing a vDuration of -5 hours (which in itself is nonsensical),
   the ical output of that was -P1DT19H, which is correct, but ugly. Now
   it's '-PT5H', which is prettier.
-  
-iCalendar 1.2 (2006-11-25)
-==========================
 
-* Fixed a string index out of range error in the new folding code.
+* Made the tests run under Python 2.5+

@@ -1,3 +1,9 @@
+iCalendar 1.2 (2006-11-25)
+==========================
+
+* Fixed a string index out of range error in the new folding code.
+
+
 iCalendar 1.1 (2006-11-23)
 ==========================
 
@@ -19,6 +25,7 @@ iCalendar 1.0 (2006-08-03)
 * make get_inline and set_inline support non ascii codes. 
 
 * Added support for creating a python egg distribution. 
+
 
 iCalendar 0.11 (2005-11-08)
 ===========================

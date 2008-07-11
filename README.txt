@@ -26,12 +26,15 @@ designed, simple to use and well documented.
 News
 ====
 
+* 2008-07-11: `iCalendar 2.0`_ released (`changes for 2.0`_)
 * 2006-11-26: `iCalendar 1.2`_ released (`changes for 1.2`_)
 * 2006-11-23: `iCalendar 1.1`_ released (`changes for 1.1`_)
 * 2006-08-03: `iCalendar 1.0`_ released (`changes for 1.0`_)
 * 2005-11-08: `iCalendar 0.11`_ released (`changes for 0.11`_)
 * 2005-04-28: `iCalendar 0.10`_ released (`changes for 0.10`_)
 
+.. _`iCalendar 2.0`: iCalendar-2.0.tgz
+.. _`changes for 2.0`: changes-2.0.html
 .. _`iCalendar 1.2`: iCalendar-1.2.tgz
 .. _`changes for 1.2`: changes-1.2.html
 .. _`iCalendar 1.1`: iCalendar-1.1.tgz
@@ -114,6 +117,7 @@ http://codespeak.net/mailman/listinfo/icalendar-checkins
 Download
 ========
 
+* `iCalendar 2.0`_ (2008-07-11)
 * `iCalendar 1.2`_ (2006-11-26)
 * `iCalendar 1.1`_ (2006-11-23)
 * `iCalendar 1.0`_ (2006-08-03)
