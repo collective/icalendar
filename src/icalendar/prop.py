@@ -397,6 +397,13 @@ class vDuration:
     'PT22S'
     >>> vDuration(timedelta(0, 3622)).ical()
     'PT1H0M22S'
+    
+    >>> vDuration(timedelta(days=1, hours=5)).ical()
+    'P1DT5H'
+    >>> vDuration(timedelta(hours=-5)).ical()
+    '-P1DT19H'
+    >>> vDuration(timedelta(days=-1, hours=-5)).ical()
+    '-P1DT5H'
 
     How does the parsing work?
     >>> vDuration.from_ical('PT1H0M22S')
@@ -426,6 +433,7 @@ class vDuration:
         sign = ""
         if self.td.days < 0:
             sign = "-"
+            self.td = -self.td
         timepart = ""
         if self.td.seconds:
             timepart = "T"
