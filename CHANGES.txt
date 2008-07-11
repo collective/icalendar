@@ -1,8 +1,6 @@
 iCalendar 2.0.1 (2008-07-11)
 ============================
 
-API Changes:
-
 * EXDATE and RDATE now returns a vDDDLists object, which contains a list
   of vDDDTypes objects. This is do that EXDATE and RDATE can contain
   lists of dates, as per RFC.
