@@ -594,6 +594,80 @@ class vDDDTypes:
         return self.ical()
 
 
+class vDDDLists:
+    """
+    A list of vDDDTypes values.
+    
+    >>> dt_list = vDDDLists.from_ical('19960402T010000Z')
+    >>> type(dt_list)
+    <type 'list'>
+    
+    >>> len(dt_list)
+    1
+    
+    >>> type(dt_list[0])
+    <type 'datetime.datetime'>
+        
+    >>> str(dt_list[0])
+    '1996-04-02 01:00:00+00:00'
+    
+    >>> dt_list = vDDDLists.from_ical('19960402T010000Z,19960403T010000Z,19960404T010000Z')
+    >>> len(dt_list)
+    3
+        
+    >>> str(dt_list[0])
+    '1996-04-02 01:00:00+00:00'
+    >>> str(dt_list[2])    
+    '1996-04-04 01:00:00+00:00'
+    
+    >>> dt_list = vDDDLists('19960402T010000Z')
+    Traceback (most recent call last):
+        ...
+    ValueError: Value MUST be a list (of date instances)
+    
+    >>> dt_list = vDDDLists([])
+    >>> str(dt_list)
+    ''
+    
+    >>> dt_list = vDDDLists([datetime(2000,1,1)])
+    >>> str(dt_list)
+    '20000101T000000'
+        
+    >>> dt_list = vDDDLists([datetime(2000,1,1), datetime(2000,11,11)])
+    >>> str(dt_list)
+    '20000101T000000,20001111T000000'
+    """
+    
+    def __init__(self, dt_list):
+        if not isinstance(dt_list, list):
+            raise ValueError('Value MUST be a list (of date instances)')        
+        vDDD = []
+        for dt in dt_list:
+            vDDD.append(vDDDTypes(dt))
+        self.dts = vDDD
+    
+    def ical(self):
+        '''
+        Generates the text string in the iCalendar format.
+        '''
+        dts_ical = [dt.ical() for dt in self.dts]
+        return ",".join(dts_ical)
+    
+    def from_ical(ical):
+        '''
+        Parses the list of data formats from ical text format.
+        @param ical: ical text format
+        '''
+        out = []
+        ical_dates = ical.split(",")
+        for ical_dt in ical_dates:
+            out.append(vDDDTypes.from_ical(ical_dt))
+        return out
+    from_ical = staticmethod(from_ical)
+    
+    def __str__(self):
+        return self.ical()
+        
 
 class vPeriod:
     """
@@ -1318,6 +1392,7 @@ class TypesFactory(CaselessDict):
         self['utc-offset'] = vUTCOffset
         self['geo'] = vGeo
         self['inline'] = vInline
+        self['date-time-list'] = vDDDLists
 
 
     #################################################
@@ -1368,9 +1443,9 @@ class TypesFactory(CaselessDict):
         'url' : 'uri',
         'uid' : 'text',
         # Recurrence Component Properties
-        'exdate' : 'date-time',
+        'exdate' : 'date-time-list',
         'exrule' : 'recur',
-        'rdate' : 'date-time',
+        'rdate' : 'date-time-list',
         'rrule' : 'recur',
         # Alarm Component Properties
         'action' : 'text',
