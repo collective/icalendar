@@ -214,7 +214,7 @@ class FixedOffset(tzinfo):
         return ZERO
 
 
-class UTC(tzinfo):
+class Utc(tzinfo):
     """UTC tzinfo subclass"""
 
     def utcoffset(self, dt):
@@ -225,7 +225,7 @@ class UTC(tzinfo):
 
     def dst(self, dt):
         return ZERO
-UTC = UTC()
+UTC = Utc()
 
 class LocalTimezone(tzinfo):
     """
@@ -401,7 +401,7 @@ class vDuration:
     >>> vDuration(timedelta(days=1, hours=5)).ical()
     'P1DT5H'
     >>> vDuration(timedelta(hours=-5)).ical()
-    '-P1DT19H'
+    '-PT5H'
     >>> vDuration(timedelta(days=-1, hours=-5)).ical()
     '-P1DT5H'
 
@@ -547,7 +547,7 @@ class vDDDTypes:
     <type 'datetime.datetime'>
 
     >>> repr(vDDDTypes.from_ical('20010101T123000Z'))[:65]
-    'datetime.datetime(2001, 1, 1, 12, 30, tzinfo=<icalendar.prop.UTC '
+    'datetime.datetime(2001, 1, 1, 12, 30, tzinfo=<icalendar.prop.Utc '
 
     >>> d = vDDDTypes.from_ical('20010101')
     >>> type(d)

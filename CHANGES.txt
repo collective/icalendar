@@ -1,5 +1,5 @@
-iCalendar 2.0 (2008-07-11)
-==========================
+iCalendar 2.0.1 (2008-07-11)
+============================
 
 API Changes:
 
@@ -15,3 +15,6 @@ API Changes:
   it's '-PT5H', which is prettier.
 
 * Made the tests run under Python 2.5+
+
+* Renamed the UTC class to Utc, so it would not clash with the UTC object,
+  since that rendered the UTC object unpicklable.  
