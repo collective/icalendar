@@ -10,7 +10,10 @@ API Changes:
   ***Note!***: This change is incompatible with earlier behavior, so if you
   handle EXDATE and RDATE you will need to update your code.
 
-
+* When createing a vDuration of -5 hours (which in itself is nonsensical),
+  the ical output of that was -P1DT19H, which is correct, but ugly. Now
+  it's '-PT5H', which is prettier.
+  
 iCalendar 1.2 (2006-11-25)
 ==========================
 
