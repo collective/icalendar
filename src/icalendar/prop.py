@@ -82,6 +82,14 @@ class vBinary:
     >>> b = vBinary('txt')
     >>> b.params
     Parameters({'VALUE': 'BINARY', 'ENCODING': 'BASE64'})
+
+    Long data should not have line breaks, as that would interfere
+    >>> x = 'a'*99
+    >>> vBinary(x).ical() == 'YWFh' * 33
+    True
+    >>> vBinary.from_ical('YWFh' * 33) == 'a' * 99
+    True
+    
     """
 
     def __init__(self, obj):
