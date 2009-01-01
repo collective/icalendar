@@ -1,3 +1,9 @@
+iCalendar trunk (unreleased)
+============================
+
+* Long binary data would be base64 encoded with newlines, which made the
+  iCalendar files incorrect. (This still needs testing).
+
 iCalendar 2.0.1 (2008-07-11)
 ============================
 
