@@ -47,6 +47,7 @@ from types import IntType, StringType, UnicodeType, TupleType, ListType
 SequenceTypes = [TupleType, ListType]
 import re
 import time as _time
+import binascii
 
 # from this package
 from icalendar.caselessdict import CaselessDict
@@ -91,7 +92,7 @@ class vBinary:
         return "vBinary(%s)" % str.__repr__(self.obj)
 
     def ical(self):
-        return self.obj.encode('base-64')[:-1]
+        return binascii.b2a_base64(self.obj)[:-1]
 
     def from_ical(ical):
         "Parses the data format from ical text format"
