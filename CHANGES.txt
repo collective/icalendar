@@ -1,6 +1,8 @@
 iCalendar trunk (unreleased)
 ============================
 
+* Set the VALUE parameter correctly for date values.
+
 * Long binary data would be base64 encoded with newlines, which made the
   iCalendar files incorrect. (This still needs testing).
 
