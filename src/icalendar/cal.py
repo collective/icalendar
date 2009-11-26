@@ -35,6 +35,14 @@ class ComponentFactory(CaselessDict):
     >>> event.as_string()
     'BEGIN:VEVENT\\r\\nDTSTART:19700101\\r\\nEND:VEVENT\\r\\n'
 
+    or using python types directly:
+
+    >>> import datetime
+    >>> component = factory['VEVENT']
+    >>> event = component(dtstart=datetime.date(2009, 12, 25))
+    >>> event.as_string()
+    'BEGIN:VEVENT\\r\\nDTSTART;VALUE=DATE:19700101\\r\\nEND:VEVENT\\r\\n'
+
     >>> factory.get('VCALENDAR', Component)
     <class 'icalendar.cal.Calendar'>
     """
