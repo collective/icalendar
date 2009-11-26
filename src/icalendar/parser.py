@@ -19,7 +19,6 @@ import re
 # from this package
 from icalendar.caselessdict import CaselessDict
 
-
 #################################################################
 # Property parameter stuff
 
@@ -34,6 +33,8 @@ NAME = re.compile('[\w-]+')
 UNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7F",:;]')
 QUNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7F"]')
 FOLD = re.compile('([\r]?\n)+[ \t]{1}')
+NEWLINE = re.compile(r'\r?\n')
+
 
 def validate_token(name):
     match = NAME.findall(name)
@@ -254,12 +255,17 @@ class Contentline(str):
     A long line gets folded
     >>> c = Contentline(''.join(['123456789 ']*10))
     >>> str(c)
-    '123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234\\r\\n 56789 123456789 123456789 '
+    '123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234\\r\\n 56789 123456789 123456789'
 
     A folded line gets unfolded
     >>> c = Contentline.from_string(str(c))
     >>> c
-    '123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 '
+    '123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789'
+
+    Newlines in a string get need to be preserved
+    >>> c = Contentline('1234\\n\\n1234')
+    >>> str(c)
+    '1234\\r\\n \\r\\n 1234'
 
     We do not fold within a UTF-8 character:
     >>> c = Contentline('This line has a UTF-8 character where it should be folded. Make sure it g\xc3\xabts folded before that character.')
@@ -427,8 +433,15 @@ class Contentline(str):
         l_line = len(self)
         new_lines = []
         start = 0
-        end = 74
         while True:
+            end = start + 74
+            slice = self[start:end]
+            m = NEWLINE.search(slice)
+            if m is not None and m.end()!=l_line:
+                new_lines.append(self[start:start+m.start()])
+                start += m.end()
+                continue
+
             if end >= l_line:
                 end = l_line
             else:
@@ -443,13 +456,12 @@ class Contentline(str):
                     else:
                         end -= 1
 
-            new_lines.append(self[start:end])
+            new_lines.append(slice)
             if end == l_line:
                 # Done
                 break
             start = end
-            end = start + 74
-        return '\r\n '.join(new_lines)
+        return '\r\n '.join(new_lines).rstrip(" ")
 
 
 
