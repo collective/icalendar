@@ -359,7 +359,7 @@ class vDate:
         if not isinstance(dt, date):
             raise ValueError('Value MUST be a date instance')
         self.dt = dt
-        self.params = Parameters()
+        self.params = Parameters(dict(value='DATE'))
 
     def ical(self):
         return self.dt.strftime("%Y%m%d")
@@ -583,6 +583,9 @@ class vDDDTypes:
                 wrong_type_used = 0
         if wrong_type_used:
             raise ValueError ('You must use datetime, date or timedelta')
+        if isinstance(dt, date):
+            self.params = Parameters(dict(value='DATE'))
+
         self.dt = dt
 
     def ical(self):
