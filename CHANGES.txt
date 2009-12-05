@@ -1,4 +1,20 @@
-iCalendar 1.2 (2006-11-25)
-==========================
+iCalendar 2.0.1 (2008-07-11)
+============================
 
-* Fixed a string index out of range error in the new folding code.
+API Changes:
+
+* EXDATE and RDATE now returns a vDDDLists object, which contains a list
+  of vDDDTypes objects. This is do that EXDATE and RDATE can contain
+  lists of dates, as per RFC.
+  
+  ***Note!***: This change is incompatible with earlier behavior, so if you
+  handle EXDATE and RDATE you will need to update your code.
+
+* When createing a vDuration of -5 hours (which in itself is nonsensical),
+  the ical output of that was -P1DT19H, which is correct, but ugly. Now
+  it's '-PT5H', which is prettier.
+
+* Made the tests run under Python 2.5+
+
+* Renamed the UTC class to Utc, so it would not clash with the UTC object,
+  since that rendered the UTC object unpicklable.  

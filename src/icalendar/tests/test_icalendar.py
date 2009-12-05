@@ -10,6 +10,7 @@ def test_suite():
     suite.addTest(doctest.DocTestSuite(cal))
     doc_dir = '../../../doc'
     for docfile in ['example.txt', 'groupscheduled.txt',
-                    'small.txt', 'multiple.txt']:
-        suite.addTest(doctest.DocFileSuite(os.path.join(doc_dir, docfile)))
+                    'small.txt', 'multiple.txt', 'recurrence.txt']:
+        suite.addTest(doctest.DocFileSuite(os.path.join(doc_dir, docfile),
+                                           optionflags=doctest.ELLIPSIS),)
     return suite
