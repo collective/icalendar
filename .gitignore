@@ -3,6 +3,7 @@
 *.swp
 *.swo
 
+.DT_Store
 .coverage
 .tox/
 bin/
