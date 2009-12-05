@@ -125,7 +125,6 @@ class vBoolean(int):
     """
 
     def __init__(self, *args, **kwargs):
-        int.__init__(self, *args, **kwargs)
         self.params = Parameters()
 
     def ical(self):
@@ -164,7 +163,6 @@ class vCalAddress(str):
     """
 
     def __init__(self, *args, **kwargs):
-        str.__init__(self, *args, **kwargs)
         self.params = Parameters()
 
     def __repr__(self):
@@ -482,7 +480,6 @@ class vFloat(float):
     """
 
     def __init__(self, *args, **kwargs):
-        float.__init__(self, *args, **kwargs)
         self.params = Parameters()
 
     def ical(self):
@@ -513,7 +510,6 @@ class vInt(int):
     """
 
     def __init__(self, *args, **kwargs):
-        int.__init__(self, *args, **kwargs)
         self.params = Parameters()
 
     def ical(self):
@@ -744,7 +740,6 @@ class vWeekday(str):
                               "TH":4, "FR":5, "SA":6})
 
     def __init__(self, *args, **kwargs):
-        str.__init__(self, *args, **kwargs)
         match = WEEKDAY_RULE.match(self)
         if match is None:
             raise ValueError, 'Expected weekday abbrevation, got: %s' % self
@@ -797,7 +792,6 @@ class vFrequency(str):
     })
 
     def __init__(self, *args, **kwargs):
-        str.__init__(self, *args, **kwargs)
         if not self in vFrequency.frequencies:
             raise ValueError, 'Expected frequency, got: %s' % self
         self.params = Parameters()
@@ -977,7 +971,6 @@ class vText(unicode):
     encoding = 'utf-8'
 
     def __init__(self, *args, **kwargs):
-        unicode.__init__(self, *args, **kwargs)
         self.params = Parameters()
 
     def escape(self):
@@ -1036,7 +1029,6 @@ class vTime(time):
     """
 
     def __init__(self, *args, **kwargs):
-        time.__init__(self, *args, **kwargs)
         self.params = Parameters()
 
     def ical(self):
@@ -1067,7 +1059,6 @@ class vUri(str):
     """
 
     def __init__(self, *args, **kwargs):
-        str.__init__(self, *args, **kwargs)
         self.params = Parameters()
 
     def ical(self):
