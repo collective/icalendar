@@ -133,6 +133,12 @@ class Component(CaselessDict):
     >>> [i['dtstart'] for i in c.walk('VEVENT')]
     ['20000101T000000']
 
+    Text fields which span multiple mulitple lines require proper indenting
+    >>> c = Calendar()
+    >>> c['description']=u'Paragraph one\\n\\nParagraph two'
+    >>> c.as_string()
+    'BEGIN:VCALENDAR\\r\\nDESCRIPTION:Paragraph one\\r\\n \\r\\n Paragraph two\\r\\nEND:VCALENDAR\\r\\n'
+
     INLINE properties have their values on one property line. Note the double
     quoting of the value with a colon in it.
     >>> c = Calendar()
@@ -515,7 +521,7 @@ class Calendar(Component):
     >>> event.set('dtstart', datetime(2005,4,4,8,0,0))
     >>> cal.add_component(event)
     >>> cal.subcomponents[0].as_string()
-    'BEGIN:VEVENT\\r\\nDTSTART:20050404T080000\\r\\nSUMMARY:Python meeting about calendaring\\r\\nUID:42\\r\\nEND:VEVENT\\r\\n'
+    'BEGIN:VEVENT\\r\\nDTSTART;VALUE=DATE:20050404T080000\\r\\nSUMMARY:Python meeting about calendaring\\r\\nUID:42\\r\\nEND:VEVENT\\r\\n'
 
     Write to disc
     >>> import tempfile, os

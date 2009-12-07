@@ -47,6 +47,7 @@ from types import IntType, StringType, UnicodeType, TupleType, ListType
 SequenceTypes = [TupleType, ListType]
 import re
 import time as _time
+import binascii
 
 # from this package
 from icalendar.caselessdict import CaselessDict
@@ -81,6 +82,14 @@ class vBinary:
     >>> b = vBinary('txt')
     >>> b.params
     Parameters({'VALUE': 'BINARY', 'ENCODING': 'BASE64'})
+
+    Long data should not have line breaks, as that would interfere
+    >>> x = 'a'*99
+    >>> vBinary(x).ical() == 'YWFh' * 33
+    True
+    >>> vBinary.from_ical('YWFh' * 33) == 'a' * 99
+    True
+    
     """
 
     def __init__(self, obj):
@@ -91,7 +100,7 @@ class vBinary:
         return "vBinary(%s)" % str.__repr__(self.obj)
 
     def ical(self):
-        return self.obj.encode('base-64')[:-1]
+        return binascii.b2a_base64(self.obj)[:-1]
 
     def from_ical(ical):
         "Parses the data format from ical text format"
@@ -348,7 +357,7 @@ class vDate:
         if not isinstance(dt, date):
             raise ValueError('Value MUST be a date instance')
         self.dt = dt
-        self.params = Parameters()
+        self.params = Parameters(dict(value='DATE'))
 
     def ical(self):
         return self.dt.strftime("%Y%m%d")
@@ -570,6 +579,9 @@ class vDDDTypes:
                 wrong_type_used = 0
         if wrong_type_used:
             raise ValueError ('You must use datetime, date or timedelta')
+        if isinstance(dt, date):
+            self.params = Parameters(dict(value='DATE'))
+
         self.dt = dt
 
     def ical(self):

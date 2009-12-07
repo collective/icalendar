@@ -1,7 +1,15 @@
-iCalendar 2.0.1 (2008-07-11)
+iCalendar trunk (unreleased)
 ============================
 
-API Changes:
+* Set the VALUE parameter correctly for date values.
+
+* Long binary data would be base64 encoded with newlines, which made the
+  iCalendar files incorrect. (This still needs testing).
+
+* Correctly handle content lines which include newlines.
+
+iCalendar 2.0.1 (2008-07-11)
+============================
 
 * EXDATE and RDATE now returns a vDDDLists object, which contains a list
   of vDDDTypes objects. This is do that EXDATE and RDATE can contain
