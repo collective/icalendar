@@ -1,6 +1,8 @@
 iCalendar trunk (unreleased)
 ============================
 
+* Fix deprecation warnings about `object.__init__` taking no parameters.
+
 * Set the VALUE parameter correctly for date values.
 
 * Long binary data would be base64 encoded with newlines, which made the

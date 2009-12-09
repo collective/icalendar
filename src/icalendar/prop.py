@@ -133,9 +133,10 @@ class vBoolean(int):
     True
     """
 
-    def __init__(self, *args, **kwargs):
-        int.__init__(self, *args, **kwargs)
+    def __new__(cls, *args, **kwargs):
+        self = super(vBoolean, cls).__new__(cls, *args, **kwargs)
         self.params = Parameters()
+        return self
 
     def ical(self):
         if self:
@@ -172,9 +173,10 @@ class vCalAddress(str):
     'MAILTO:maxm@mxm.dk'
     """
 
-    def __init__(self, *args, **kwargs):
-        str.__init__(self, *args, **kwargs)
+    def __new__(cls, *args, **kwargs):
+        self = super(vCalAddress, cls).__new__(cls, *args, **kwargs)
         self.params = Parameters()
+        return self
 
     def __repr__(self):
         return u"vCalAddress(%s)" % str.__repr__(self)
@@ -498,9 +500,10 @@ class vFloat(float):
     '42.0'
     """
 
-    def __init__(self, *args, **kwargs):
-        float.__init__(self, *args, **kwargs)
+    def __new__(cls, *args, **kwargs):
+        self = super(vFloat, cls).__new__(cls, *args, **kwargs)
         self.params = Parameters()
+        return self
 
     def ical(self):
         return str(self)
@@ -529,9 +532,10 @@ class vInt(int):
     ValueError: Expected int, got: 1s3
     """
 
-    def __init__(self, *args, **kwargs):
-        int.__init__(self, *args, **kwargs)
+    def __new__(cls, *args, **kwargs):
+        self = super(vInt, cls).__new__(cls, *args, **kwargs)
         self.params = Parameters()
+        return self
 
     def ical(self):
         return str(self)
@@ -837,8 +841,8 @@ class vWeekday(str):
     week_days = CaselessDict({"SU":0, "MO":1, "TU":2, "WE":3,
                               "TH":4, "FR":5, "SA":6})
 
-    def __init__(self, *args, **kwargs):
-        str.__init__(self, *args, **kwargs)
+    def __new__(cls, *args, **kwargs):
+        self = super(vWeekday, cls).__new__(cls, *args, **kwargs)
         match = WEEKDAY_RULE.match(self)
         if match is None:
             raise ValueError, 'Expected weekday abbrevation, got: %s' % self
@@ -850,6 +854,7 @@ class vWeekday(str):
             raise ValueError, 'Expected weekday abbrevation, got: %s' % self
         self.relative = relative and int(relative) or None
         self.params = Parameters()
+        return self
 
     def ical(self):
         return self.upper()
@@ -890,11 +895,12 @@ class vFrequency(str):
         "YEARLY":"YEARLY",
     })
 
-    def __init__(self, *args, **kwargs):
-        str.__init__(self, *args, **kwargs)
+    def __new__(cls, *args, **kwargs):
+        self = super(vFrequency, cls).__new__(cls, *args, **kwargs)
         if not self in vFrequency.frequencies:
             raise ValueError, 'Expected frequency, got: %s' % self
         self.params = Parameters()
+        return self
 
     def ical(self):
         return self.upper()
@@ -1070,9 +1076,10 @@ class vText(unicode):
 
     encoding = 'utf-8'
 
-    def __init__(self, *args, **kwargs):
-        unicode.__init__(self, *args, **kwargs)
+    def __new__(cls, *args, **kwargs):
+        self = super(vText, cls).__new__(cls, *args, **kwargs)
         self.params = Parameters()
+        return self
 
     def escape(self):
         """
@@ -1129,9 +1136,10 @@ class vTime(time):
     ValueError: Expected time, got: 263000
     """
 
-    def __init__(self, *args, **kwargs):
-        time.__init__(self, *args, **kwargs)
+    def __new__(cls, *args, **kwargs):
+        self = super(vTime, cls).__new__(cls, *args, **kwargs)
         self.params = Parameters()
+        return self
 
     def ical(self):
         return self.strftime("%H%M%S")
@@ -1160,9 +1168,10 @@ class vUri(str):
     'http://www.example.com/'
     """
 
-    def __init__(self, *args, **kwargs):
-        str.__init__(self, *args, **kwargs)
+    def __new__(cls, *args, **kwargs):
+        self = super(vUri, cls).__new__(cls, *args, **kwargs)
         self.params = Parameters()
+        return self
 
     def ical(self):
         return str(self)
