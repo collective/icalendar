@@ -43,7 +43,7 @@ them directly.
 
 # from python >= 2.3
 from datetime import datetime, timedelta, time, date, tzinfo
-from types import IntType, StringType, UnicodeType, TupleType, ListType
+from types import TupleType, ListType
 SequenceTypes = [TupleType, ListType]
 import re
 import time as _time
@@ -309,7 +309,6 @@ class vDatetime:
 
     def ical(self):
         if self.dt.tzinfo:
-            offset = self.dt.tzinfo.utcoffset(datetime.now())
             utc_time = self.dt - self.dt.tzinfo.utcoffset(datetime.now())
             return utc_time.strftime("%Y%m%dT%H%M%SZ")
         return self.dt.strftime("%Y%m%dT%H%M%S")
@@ -601,7 +600,7 @@ class vDDDTypes:
         elif isinstance(dt, timedelta):
             return vDuration(dt).ical()
         else:
-            raise ValueEror ('Unknown date type')
+            raise ValueError('Unknown date type')
 
     def from_ical(ical):
         "Parses the data format from ical text format"

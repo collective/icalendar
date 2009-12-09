@@ -12,7 +12,6 @@ These are the defined components.
 # from python
 from types import ListType, TupleType
 SequenceTypes = (ListType, TupleType)
-import re
 
 # from this package
 from icalendar.caselessdict import CaselessDict

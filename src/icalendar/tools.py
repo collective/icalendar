@@ -48,6 +48,6 @@ class UIDGenerator:
 
 
 if __name__ == "__main__":
-    import os.path, doctest, tools
+    import doctest, tools
     # import and test this file
     doctest.testmod(tools)
