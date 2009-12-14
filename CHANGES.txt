@@ -1,5 +1,11 @@
-iCalendar trunk (unreleased)
-============================
+2.2 - unreleased
+================
+
+* ...
+
+
+2.1 (2009-12-14)
+================
 
 * Fix deprecation warnings about `object.__init__` taking no parameters.
 
