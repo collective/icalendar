@@ -272,6 +272,11 @@ class Contentline(str):
     >>> '\xc3\xab' in str(c)
     True
 
+    Another test of the above
+    >>> c = Contentline('x' * 73 + '\xc3\xab' + '\\n ' + 'y' * 10)
+    >>> str(c).count('\xc3')
+    1
+
     Don't fail if we fold a line that is exactly X times 74 characters long:
     >>> c = str(Contentline(''.join(['x']*148)))
 
