@@ -456,6 +456,8 @@ class Contentline(str):
                     else:
                         end -= 1
 
+            # Recompute slice, since start or end may have changed.
+            slice = self[start:end]
             new_lines.append(slice)
             if end == l_line:
                 # Done
