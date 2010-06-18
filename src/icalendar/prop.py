@@ -1071,6 +1071,15 @@ class vText(unicode):
     >>> print vText.from_ical('A string with\\; some\\\\ characters in\\Nit')
     A string with; some\\ characters in
     it
+
+    We are forgiving to UTF8 encoding errors:
+    >>> # We intentionally use a string with unexpected encoding
+    >>> t = vText.from_ical('Ol\\xe9')
+    >>> t
+    u'Ol\\ufffd'
+
+    Notice how accented E character, encoded with latin-1, got replaced
+    with the official U+FFFD REPLACEMENT CHARACTER.
     """
 
     encoding = 'utf-8'
@@ -1107,7 +1116,7 @@ class vText(unicode):
                         .replace(r'\,', ',')
                         .replace(r'\;', ';')
                         .replace('\\\\', '\\'))
-            return ical.decode(vText.encoding)
+            return ical.decode(vText.encoding, 'replace')
         except:
             raise ValueError, 'Expected ical text, got: %s' % ical
     from_ical = staticmethod(from_ical)
