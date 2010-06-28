@@ -182,12 +182,17 @@ class Component(CaselessDict):
     multiple = ()   # may occur more than once
     exclusive = ()  # These properties are mutually exclusive
     inclusive = ()  # if any occurs the other(s) MUST occur ('duration', 'repeat')
+    ignore_exceptions = False   # if True, and we cannot parse this
+                                # component, we will silently ignore
+                                # it, rather than let the exception
+                                # propagate upwards
 
     def __init__(self, *args, **kwargs):
         "Set keys to upper for initial dict"
         CaselessDict.__init__(self, *args, **kwargs)
         # set parameters here for properties that use non-default values
         self.subcomponents = [] # Components can be nested.
+        self.is_broken = False  # True iff we ignored an exception while parsing a property
 
 
 #    def non_complience(self, warnings=0):
@@ -366,13 +371,22 @@ class Component(CaselessDict):
                 if not stack: # we are at the end
                     comps.append(component)
                 else:
-                    stack[-1].add_component(component)
+                    if not component.is_broken:
+                        stack[-1].add_component(component)
             # we are adding properties to the current top of the stack
             else:
                 factory = types_factory.for_property(name)
-                vals = factory(factory.from_ical(vals))
-                vals.params = params
-                stack[-1].add(name, vals, encode=0)
+                component = stack[-1]
+                try:
+                    vals = factory(factory.from_ical(vals))
+                except ValueError:
+                    if not component.ignore_exceptions:
+                        raise
+                    component.is_broken = True
+                else:
+                    vals.params = params
+                    component.add(name, vals, encode=0)
+
         if multiple:
             return comps
         if not len(comps) == 1:
@@ -431,7 +445,7 @@ class Event(Component):
         'ATTACH', 'ATTENDEE', 'CATEGORIES', 'COMMENT','CONTACT', 'EXDATE',
         'EXRULE', 'RSTATUS', 'RELATED', 'RESOURCES', 'RDATE', 'RRULE'
     )
-
+    ignore_exceptions = True
 
 
 class Todo(Component):
@@ -526,6 +540,32 @@ class Calendar(Component):
     >>> import tempfile, os
     >>> directory = tempfile.mkdtemp()
     >>> open(os.path.join(directory, 'test.ics'), 'wb').write(cal.as_string())
+
+    Parsing a complete calendar from a string will silently ignore bogus events.
+    The bogosity in the following is the third EXDATE: it has an empty DATE.
+    >>> s = '\\r\\n'.join(('BEGIN:VCALENDAR',
+    ...                    'PRODID:-//Google Inc//Google Calendar 70.9054//EN',
+    ...                    'VERSION:2.0',
+    ...                    'CALSCALE:GREGORIAN',
+    ...                    'METHOD:PUBLISH',
+    ...                    'BEGIN:VEVENT',
+    ...                    'DESCRIPTION:Perfectly OK event',
+    ...                    'DTSTART;VALUE=DATE:20080303',
+    ...                    'DTEND;VALUE=DATE:20080304',
+    ...                    'RRULE:FREQ=DAILY;UNTIL=20080323T235959Z',
+    ...                    'EXDATE;VALUE=DATE:20080311',
+    ...                    'END:VEVENT',
+    ...                    'BEGIN:VEVENT',
+    ...                    'DESCRIPTION:Bogus event',
+    ...                    'DTSTART;VALUE=DATE:20080303',
+    ...                    'DTEND;VALUE=DATE:20080304',
+    ...                    'RRULE:FREQ=DAILY;UNTIL=20080323T235959Z',
+    ...                    'EXDATE;VALUE=DATE:20080311',
+    ...                    'EXDATE;VALUE=DATE:',
+    ...                    'END:VEVENT',
+    ...                    'END:VCALENDAR'))
+    >>> [e['DESCRIPTION'].ical() for e in Calendar.from_string(s).walk('VEVENT')]
+    ['Perfectly OK event']
     """
 
     name = 'VCALENDAR'
