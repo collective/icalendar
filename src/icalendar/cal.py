@@ -392,7 +392,7 @@ class Component(CaselessDict):
         if len(comps) > 1:
             raise ValueError('Found multiple components where '
                              'only one is allowed: {st!r}'.format(**locals()))
-        if not len(comps):
+        if len(comps) < 1:
             raise ValueError('Found no components where '
                              'exactly one is required: {st!r}'.format(**locals()))
         return comps[0]
