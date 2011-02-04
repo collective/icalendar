@@ -206,10 +206,11 @@ class Parameters(CaselessDict):
 
     def from_string(st, strict=False):
         "Parses the parameter format from ical text format"
-        try:
-            # parse into strings
-            result = Parameters()
-            for param in q_split(st, ';'):
+
+        # parse into strings
+        result = Parameters()
+        for param in q_split(st, ';'):
+            try:
                 key, val =  q_split(param, '=')
                 validate_token(key)
                 param_values = [v for v in q_split(val, ',')]
@@ -234,9 +235,9 @@ class Parameters(CaselessDict):
                         result[key] = vals[0]
                     else:
                         result[key] = vals
-            return result
-        except ValueError, e:
-            raise ValueError, '{st!r} is not a valid parameter string: '.format(**locals()) + str(e)
+            except ValueError, e:
+                raise ValueError, '{param!r} is not a valid parameter string: '.format(**locals()) + str(e)
+        return result
     from_string = staticmethod(from_string)
 
 
