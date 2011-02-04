@@ -235,8 +235,8 @@ class Parameters(CaselessDict):
                     else:
                         result[key] = vals
             return result
-        except:
-            raise ValueError, 'Not a valid parameter string'
+        except ValueError, e:
+            raise ValueError, '{st!r} is not a valid parameter string: '.format(**locals()) + str(e)
     from_string = staticmethod(from_string)
 
 
@@ -331,17 +331,17 @@ class Contentline(str):
 
     And the traditional failure
     >>> c = Contentline('ATTENDEE;maxm@example.com')
-    >>> c.parts()
+    >>> c.parts()                                               #doctest: +ELLIPSIS
     Traceback (most recent call last):
         ...
-    ValueError: Content line could not be parsed into parts
+    ValueError: Content line could not be parsed into parts...
 
     Another failure:
     >>> c = Contentline(':maxm@example.com')
-    >>> c.parts()
+    >>> c.parts()                                               #doctest: +ELLIPSIS
     Traceback (most recent call last):
         ...
-    ValueError: Content line could not be parsed into parts
+    ValueError: Content line could not be parsed into parts...
 
     >>> c = Contentline('key;param=:value')
     >>> c.parts()
@@ -353,10 +353,10 @@ class Contentline(str):
 
     Should bomb on missing param:
     >>> c = Contentline.from_string("k;:no param")
-    >>> c.parts()
+    >>> c.parts()                                               #doctest: +ELLIPSIS
     Traceback (most recent call last):
         ...
-    ValueError: Content line could not be parsed into parts
+    ValueError: Content line could not be parsed into parts...
 
     >>> c = Contentline('key;param=pvalue:value', strict=False)
     >>> c.parts()
@@ -421,8 +421,8 @@ class Contentline(str):
                                             strict=self.strict)
             values = self[value_split+1:]
             return (name, params, values)
-        except:
-            raise ValueError, 'Content line could not be parsed into parts'
+        except ValueError, e:
+            raise ValueError, "Content line could not be parsed into parts: {self!r}: {0}".format(str(e), **locals())
 
     def from_string(st, strict=False):
         "Unfolds the content lines in an iCalendar into long content lines"
