@@ -389,9 +389,12 @@ class Component(CaselessDict):
 
         if multiple:
             return comps
-        if not len(comps) == 1:
+        if len(comps) > 1:
             raise ValueError('Found multiple components where '
-                             'only one is allowed')
+                             'only one is allowed: {st!r}'.format(**locals()))
+        if not len(comps):
+            raise ValueError('Found no components where '
+                             'exactly one is required: {st!r}'.format(**locals()))
         return comps[0]
     from_string = staticmethod(from_string)
 
