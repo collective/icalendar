@@ -236,7 +236,7 @@ class Parameters(CaselessDict):
                     else:
                         result[key] = vals
             except ValueError, e:
-                raise ValueError, '{param!r} is not a valid parameter string: '.format(**locals()) + str(e)
+                raise ValueError, '%r is not a valid parameter string: %s' % (param, e)
         return result
     from_string = staticmethod(from_string)
 
@@ -423,7 +423,7 @@ class Contentline(str):
             values = self[value_split+1:]
             return (name, params, values)
         except ValueError, e:
-            raise ValueError, "Content line could not be parsed into parts: {self!r}: {0}".format(str(e), **locals())
+            raise ValueError, "Content line could not be parsed into parts: %r: %s" % (self, e)
 
     def from_string(st, strict=False):
         "Unfolds the content lines in an iCalendar into long content lines"
