@@ -1269,7 +1269,7 @@ class vUTCOffset:
 
     >>> u = vUTCOffset(timedelta())
     >>> u.ical()
-    '0000'
+    '+0000'
 
     >>> u = vUTCOffset(timedelta(minutes=-30))
     >>> u.ical()
@@ -1322,7 +1322,7 @@ class vUTCOffset:
         seconds_in_minutes = td.seconds // 60
         total_minutes = day_in_minutes + seconds_in_minutes
         if total_minutes == 0:
-            sign = '%s'
+            sign = '+%s' # Google Calendar rejects '0000' but accepts '+0000'
         elif total_minutes < 0:
             sign = '-%s'
         else:
