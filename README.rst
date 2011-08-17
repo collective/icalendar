@@ -22,8 +22,8 @@ Current plan:
     1. Merge bugfixes from forks listed bellow.
     2. Contact all interested and try to get release 2.2 out.
     3. Start working on 3.0 to bring package up-to-date with newer iCalendar
-       specification (`RFC 5545`_), while keeping 2.X series to be backwords
-       compatible with `RFC 2445`_.
+       specification (`RFC 5545`_), while keeping 2.X series compatible with
+       `RFC 2445`_.
 
 Known forks:
 
