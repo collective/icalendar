@@ -1,29 +1,34 @@
-#!/usr/bin/env python
+from setuptools import setup
+from setuptools import find_packages
 
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+version = '3.0dev'
 
-version = file('version.txt').read().strip()
-
-setup(name='icalendar',
-      package_dir={'': 'src'},
-      packages=['icalendar'],
-      version=version,
-
-      # metadata for upload to PyPI
-      author='MaxM',
-      author_email='maxm@mxm.dk',
-      description='iCalendar parser/generator',
-      license='GPL2.1',
-      keywords='calendar icalendar',
-      url='http://codespeak.net/icalendar/',
-      long_description="""iCalendar is a parser/generator of iCalendar files 
-          (RFC 2445) for use with Python.""",
-      classifiers=['Development Status :: 5 - Production/Stable',
-                   'Intended Audience :: Developers',
-                   'License :: OSI Approved :: GNU General Public License (GPL)',
-                   'Operating System :: OS Independent'],
-      platforms='All',
-      )
+setup(
+    name='icalendar',
+    version=version,
+    description="iCalendar parser/generator",
+    long_description=open("README.rst").read(),
+    classifiers=[
+        'Development Status :: 5 - Production/Stable',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: GNU General Public License (GPL)',
+        'Operating System :: OS Independent',
+        ],
+    keywords='calendar calendaring ical icalendar event todo journal recurring',
+    author='MaxM',
+    author_email='max@mxm.dk',
+    url='https://gihub.com/collective/iCalendar',
+    license='GPL',
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
+    include_package_data=True,
+    zip_safe=False,
+    install_requires=[
+        'setuptools',
+        ],
+    extras_require={
+        'test': [
+            'unittest2',
+            ],
+        },
+    )
