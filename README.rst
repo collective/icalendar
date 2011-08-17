@@ -9,7 +9,9 @@ with Python.
 About this fork
 ===============
 
-.. warn:: This part should be removed actual before release.
+.. warning::
+
+    This part should be removed actual before release.
 
 Aim of this fork is to bring this package up to date with latest RFC
 specification as part of `plone.app.event`_ project which aims is to bring
@@ -57,7 +59,9 @@ Known forks:
 
 
 
-.. warn:: Below is content of previous README.
+.. warning::
+
+    Below is content of previous README.
 
 
 
