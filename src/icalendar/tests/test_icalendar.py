@@ -42,9 +42,12 @@ def load_tests(loader=None, tests=None, pattern=None):
     suite.addTest(doctest.DocTestSuite(prop))
     suite.addTest(doctest.DocTestSuite(cal))
 
+    current_dir = os.path.dirname(__file__)
     for docfile in ['example.txt', 'groupscheduled.txt',
                     'small.txt', 'multiple.txt', 'recurrence.txt']:
-        suite.addTest(doctest.DocFileSuite(
-            docfile, optionflags=doctest.ELLIPSIS))
+        suite.addTest(doctest.DocFileSuite(docfile,
+            optionflags=doctest.ELLIPSIS,
+            globs={'__file__': os.path.abspath(os.path.join(current_dir, docfile))},
+                ))
 
     return suite
