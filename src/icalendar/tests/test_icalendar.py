@@ -33,8 +33,7 @@ class FuckYouTests(unittest.TestCase):
         self.assertEqual(output, 
                 'BEGIN:VEVENT\r\n\r\n123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234\r\n 56789 123456789 123456789 \r\n')
 
-def test_suite():
-#    return unittest.defaultTestLoader.loadTestsFromName(__name__)
+def load_tests(loader=None, tests=None, pattern=None):
 
     suite = unittest.TestSuite()
 
@@ -42,9 +41,10 @@ def test_suite():
     suite.addTest(doctest.DocTestSuite(parser))
     suite.addTest(doctest.DocTestSuite(prop))
     suite.addTest(doctest.DocTestSuite(cal))
-    doc_dir = '../../../doc'
+
     for docfile in ['example.txt', 'groupscheduled.txt',
                     'small.txt', 'multiple.txt', 'recurrence.txt']:
-        suite.addTest(doctest.DocFileSuite(os.path.join(doc_dir, docfile),
-                                           optionflags=doctest.ELLIPSIS),)
+        suite.addTest(doctest.DocFileSuite(
+            docfile, optionflags=doctest.ELLIPSIS))
+
     return suite
