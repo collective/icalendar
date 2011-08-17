@@ -17,7 +17,8 @@ Aim of this fork is to bring this package up to date with latest RFC
 specification as part of `plone.app.event`_ project which aims is to bring
 recurrence evens to `Plone`_.
 
-Current plan:
+Current plan
+------------
 
     1. Merge bugfixes from forks listed bellow.
     2. Contact all interested and try to get release 2.2 out.
@@ -25,7 +26,8 @@ Current plan:
        specification (`RFC 5545`_), while keeping 2.X series compatible with
        `RFC 2445`_.
 
-Known forks:
+Known forks
+-----------
 
  - https://codespeak.net/svn/iCalendar/trunk/
    The original codespeak repo, which this branch is based on (keeping it up to
@@ -56,6 +58,11 @@ Known forks:
 .. _`Plone`: http://plone.org
 .. _`RFC 5545`: http://www.ietf.org/rfc/rfc5545.txt
 .. _`RFC 2445`: http://www.ietf.org/rfc/rfc2445.txt
+
+
+
+
+
 
 
 
