@@ -3,6 +3,7 @@
 *.swp
 *.swo
 
+.coverage
 .tox/
 bin/
 include/
