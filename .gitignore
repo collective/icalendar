@@ -3,6 +3,8 @@
 *.swp
 *.swo
 
+.tox/
 bin/
 include/
 lib/
+src/icalendar.egg-info/
