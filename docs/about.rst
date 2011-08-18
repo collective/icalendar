@@ -1,10 +1,10 @@
 About
 =====
 
-`Max M`_ had often needed to parse and generate iCalendar files. Finally I got
+`Max M`_ had often needed to parse and generate iCalendar files. Finally he got
 tired of writing ad-hoc tools. This package is his attempt at making an
 iCalendar package for Python. The inspiration has come from the email package
-in the standard lib, which I think is pretty simple, yet efficient and
+in the standard lib, which he thinks is pretty simple, yet efficient and
 powerful.
 
 At the time of writing this, last version was released more then 2 years ago.
