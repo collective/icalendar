@@ -9,5 +9,6 @@ Contents
 
     about
     examples
+    RFC 5545 <rfc5545/index>
     changelog
     license
