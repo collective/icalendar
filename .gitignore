@@ -1,2 +1,10 @@
+*.pyc
+*.pyo
 
+.coverage
+.tox/
+bin/
 docs/_build/
+include/
+lib/
+src/icalendar.egg-info/
