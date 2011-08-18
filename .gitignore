@@ -6,6 +6,7 @@
 .coverage
 .tox/
 bin/
+coverage-*
 include/
 lib/
 src/icalendar.egg-info/
