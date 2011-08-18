@@ -6,7 +6,30 @@ Changelog
 2.2 - unreleased
 ================
 
-* ...
+* migration to https://github.com/collective/icalendar using svn2git preserving
+  tags, branches and authors.
+  [garbas]
+
+* using tox for testing on python 2.4, 2.5, 2.6, 2.6.
+  [garbas]
+
+* fixed tests so they pass also under python 2.7.
+  [garbas]
+
+* running tests on https://jenkins.plone.org/job/icalendar (only 2.6 for now)
+  with some other metrics (pylint, clonedigger, coverage).
+  [garbas]
+
+* review and merge changes from https://github.com/cozi/icalendar fork.
+  [garbas]
+
+* created sphinx documentation and started documenting development and goals.
+  [garbas]
+
+* hook out github repository to http://readthedocs.org service so sphinx
+  documentation is generated on each commit (for master). Documentation can be
+  visible on: http://readthedocs.org/docs/icalendar/en/latest/
+  [garbas]
 
 
 2.1 (2009-12-14)
