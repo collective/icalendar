@@ -15,9 +15,9 @@
 /* -- page layout ----------------------------------------------------------- */
 
 body {
-    font-family: 'Droid Sans', serif;
-    font-size: 14px;
-    letter-spacing: -0.01em;
+    font-family: Arial, sans-serif, serif;
+    font-size: 15px;
+    letter-spacing: -0.05em;
     line-height: 1.3em;
     background-color: #F5F4EF;
     padding: 0;    
@@ -143,7 +143,7 @@ div.sphinxsidebar {
 
 div.sphinxsidebar h3, div.sphinxsidebar h4 {
     margin: 1em 0;
-    font-size: 1.5em;
+    font-size: 1.8em;
     line-height: 1.3em;
     padding: 0.2em 0.5em;
     color: white;
@@ -160,6 +160,8 @@ div.sphinxsidebar ul {
     margin-top: 7px;
     padding: 0;
     line-height: 130%;
+    font-size: 1.3em;
+    margin-left: 1em;
 }
 
 div.sphinxsidebar ul ul {
@@ -211,7 +213,7 @@ h1 {
     margin: 0;
     padding: 0.7em 0 0.3em 0;
     font-size: 2.5em;
-    line-height: 0.8em;
+    line-height: 1em;
     color: #48443d;
 }
 
@@ -282,6 +284,9 @@ tt.descname, tt.descclassname, tt.xref {
 }
 
 hr {
+    dispay: none;
+}
+.body hr {
     border: 1px solid #abc;
     margin: 2em;
 }
