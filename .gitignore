@@ -7,6 +7,7 @@
 .tox/
 bin/
 coverage-*
+docs/_build/
 include/
 lib/
 src/icalendar.egg-info/
