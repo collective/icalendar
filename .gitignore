@@ -1,0 +1,12 @@
+*.pyc
+*.pyo
+*.swp
+*.swo
+
+.coverage
+.tox/
+bin/
+coverage-*
+include/
+lib/
+src/icalendar.egg-info/
