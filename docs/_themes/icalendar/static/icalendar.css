@@ -284,7 +284,7 @@ tt.descname, tt.descclassname, tt.xref {
 }
 
 hr {
-    dispay: none;
+    display: none;
 }
 .body hr {
     border: 1px solid #abc;
