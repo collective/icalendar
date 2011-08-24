@@ -1,13 +1,14 @@
-from setuptools import setup
-from setuptools import find_packages
+import os
+import setuptools
 
 version = '2.2'
 
-setup(
+setuptools.setup(
     name='icalendar',
     version=version,
     description="iCalendar parser/generator",
-    long_description=open("README.rst").read(),
+    long_description=open("README.rst").read() + \
+            open(os.path.join('docs', 'changelog.rst')).read(),
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
@@ -15,11 +16,13 @@ setup(
         'Operating System :: OS Independent',
         ],
     keywords='calendar calendaring ical icalendar event todo journal recurring',
+    maintainer="Rok Garbas",
+    maintainer_email="rok@garbas.si",
     author='MaxM',
     author_email='max@mxm.dk',
-    url='https://gihub.com/collective/iCalendar',
+    url='https://gihub.com/collective/icalendar',
     license='GPL',
-    packages=find_packages('src'),
+    packages=setuptools.find_packages('src'),
     package_dir={'': 'src'},
     include_package_data=True,
     zip_safe=False,

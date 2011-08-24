@@ -8,6 +8,7 @@
 .tox/
 bin/
 coverage-*
+dist/
 docs/_build/
 include/
 lib/

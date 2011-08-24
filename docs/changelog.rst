@@ -1,10 +1,9 @@
-=========
 Changelog
 =========
 
 
 2.2 - unreleased
-================
+----------------
 
 * migration to https://github.com/collective/icalendar using svn2git preserving
   tags, branches and authors.
@@ -33,7 +32,7 @@ Changelog
 
 
 2.1 (2009-12-14)
-================
+----------------
 
 * Fix deprecation warnings about ``object.__init__`` taking no parameters.
 
@@ -46,7 +45,7 @@ Changelog
 
 
 2.0.1 (2008-07-11)
-==================
+------------------
 
 * Made the tests run under Python 2.5+
 
@@ -55,7 +54,7 @@ Changelog
 
 
 2.0 (2008-07-11)
-================
+----------------
 
 * EXDATE and RDATE now returns a vDDDLists object, which contains a list
   of vDDDTypes objects. This is do that EXDATE and RDATE can contain
@@ -70,13 +69,13 @@ Changelog
 
 
 1.2 (2006-11-25)
-================
+----------------
 
 * Fixed a string index out of range error in the new folding code.
 
 
 1.1 (2006-11-23)
-================
+----------------
 
 * Fixed a bug in caselessdicts popitem. (thanks to Michael Smith
   <msmith@fluendo.com>)
@@ -90,7 +89,7 @@ Changelog
 
 
 1.0 (2006-08-03)
-================
+----------------
 
 * make get_inline and set_inline support non ascii codes.
 
@@ -98,7 +97,7 @@ Changelog
 
 
 0.11 (2005-11-08)
-=================
+-----------------
 
 * Changed component .from_string to use types_factory instead of hardcoding
   entries to 'inline'
@@ -122,7 +121,7 @@ Changelog
 
 
 0.10 (2005-04-28)
-=================
+-----------------
 
 * moved code to codespeak.net subversion.
 
