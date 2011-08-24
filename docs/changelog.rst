@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-2.2 - unreleased
+2.2 (2011-08-24)
 ----------------
 
 * migration to https://github.com/collective/icalendar using svn2git preserving

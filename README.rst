@@ -24,10 +24,12 @@ Aim of this fork was to bring this package up to date with latest icalendar
 bring recurrent evens to `Plone`_.
 
 After some thoughts we (Plone developers involved with `plone.app.event`_) send
-a suggestion to icalendar-dev@codespeak.net to take owner the maintanancea.
+a suggestion to icalendar-dev@codespeak.net to take over mainaining of
+`icalendar`_. Nobody object and since version 2.2 we are back to development.
 
 
 .. _`icalendar`: http://pypi.python.org/pypi/icalendar
 .. _`plone.app.event`: http://github.com/collective/plone.app.event
 .. _`Plone`: http://plone.org
 .. _`RFC`: http://www.ietf.org/rfc/rfc5545.txt
+
