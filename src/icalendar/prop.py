@@ -309,7 +309,7 @@ class vDatetime:
 
     def ical(self):
         if self.dt.tzinfo:
-            utc_time = self.dt - self.dt.tzinfo.utcoffset(datetime.now())
+            utc_time = self.dt - self.dt.tzinfo.utcoffset(self.dt)
             return utc_time.strftime("%Y%m%dT%H%M%SZ")
         return self.dt.strftime("%Y%m%dT%H%M%S")
 
