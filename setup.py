@@ -20,7 +20,7 @@ setuptools.setup(
     maintainer_email="rok@garbas.si",
     author='MaxM',
     author_email='max@mxm.dk',
-    url='https://gihub.com/collective/icalendar',
+    url='https://github.com/collective/icalendar',
     license='GPL',
     packages=setuptools.find_packages('src'),
     package_dir={'': 'src'},
