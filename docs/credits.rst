@@ -1,18 +1,9 @@
 iCalendar contributors
 ======================
 
-Main developer
---------------
-
-- Max M (maxm@mxm.dk)
-
-Janitor
--------
+- Max M (maxm@mxm.dk) (Original author)
 
 - Martijn Faassen (faassen@infrae.com)
-
-Contributors
-------------
 
 - Lennart Regebro (lregebro@nuxeo.com)
 
@@ -21,5 +12,3 @@ Contributors
 - Olivier Grisel (ogrisel@nuxeo.com)
 
 - Michael Smith <msmith@fluendo.com>
-
-Thanks to codespeak for hosting this project.
