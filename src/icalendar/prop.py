@@ -586,7 +586,9 @@ class vDDDTypes:
                 wrong_type_used = 0
         if wrong_type_used:
             raise ValueError ('You must use datetime, date or timedelta')
-        if isinstance(dt, date):
+        if isinstance(dt, datetime):
+            self.params = Parameters(dict(value='DATE-TIME'))
+        elif isinstance(dt, date): # isinstance(datetime_object, date) => True
             self.params = Parameters(dict(value='DATE'))
 
         self.dt = dt
