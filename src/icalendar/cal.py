@@ -537,7 +537,7 @@ class Calendar(Component):
     >>> event.set('dtstart', datetime(2005,4,4,8,0,0))
     >>> cal.add_component(event)
     >>> cal.subcomponents[0].as_string()
-    'BEGIN:VEVENT\\r\\nDTSTART;VALUE=DATE:20050404T080000\\r\\nSUMMARY:Python meeting about calendaring\\r\\nUID:42\\r\\nEND:VEVENT\\r\\n'
+    'BEGIN:VEVENT\\r\\nDTSTART;VALUE=DATE-TIME:20050404T080000\\r\\nSUMMARY:Python meeting about calendaring\\r\\nUID:42\\r\\nEND:VEVENT\\r\\n'
 
     Write to disc
     >>> import tempfile, os
