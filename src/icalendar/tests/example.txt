@@ -79,13 +79,9 @@ you do it like this. The calendar is a component::
   ('DTSTART', '20050404T080000')
   ('SUMMARY', 'Python meeting about calendaring')
 
-You can generate a string for a file with the as_string() method. (Calling
-str(cal) does the same)::
+You can generate a string for a file with the to_ical() method::
 
-  >>> cal.as_string()
-  'BEGIN:VCALENDAR\r\nDTSTART:20050404T080000\r\nSUMMARY:Python meeting about calendaring\r\nEND:VCALENDAR\r\n'
-
-  >>> str(cal)
+  >>> cal.to_ical()
   'BEGIN:VCALENDAR\r\nDTSTART:20050404T080000\r\nSUMMARY:Python meeting about calendaring\r\nEND:VCALENDAR\r\n'
 
 The rendered view is easier to read::
@@ -95,10 +91,10 @@ The rendered view is easier to read::
   SUMMARY:Python meeting about calendaring
   END:VCALENDAR
 
-So, let's define a function so we can easily display to_string() output::
+So, let's define a function so we can easily display to_ical() output::
 
   >>> def display(cal):
-  ...    return cal.as_string().replace('\r\n', '\n').strip()
+  ...    return cal.to_ical().replace('\r\n', '\n').strip()
 
 You can set multiple properties like this::
 
@@ -177,7 +173,7 @@ type defined in the spec::
 
   >>> from datetime import datetime
   >>> cal.add('dtstart', datetime(2005,4,4,8,0,0))
-  >>> str(cal['dtstart'])
+  >>> cal['dtstart'].to_ical()
   '20050404T080000'
 
 If that doesn't work satisfactorily for some reason, you can also do it
@@ -190,11 +186,11 @@ So if you want to do it manually::
 
   >>> from icalendar import vDatetime
   >>> now = datetime(2005,4,4,8,0,0)
-  >>> vDatetime(now).ical()
+  >>> vDatetime(now).to_ical()
   '20050404T080000'
 
 So the drill is to initialise the object with a python built in type,
-and then call the "ical()" method on the object. That will return an
+and then call the "to_ical()" method on the object. That will return an
 ical encoded string.
 
 You can do it the other way around too. To parse an encoded string, just call
@@ -213,7 +209,7 @@ value directly::
 
   >>> cal = Calendar()
   >>> cal.add('dtstart', datetime(2005,4,4,8,0,0))
-  >>> str(cal['dtstart'])
+  >>> cal['dtstart'].to_ical()
   '20050404T080000'
   >>> cal.decoded('dtstart')
   datetime.datetime(2005, 4, 4, 8, 0)
@@ -279,7 +275,7 @@ Write to disk::
   >>> import tempfile, os
   >>> directory = tempfile.mkdtemp()
   >>> f = open(os.path.join(directory, 'example.ics'), 'wb')
-  >>> f.write(cal.as_string())
+  >>> f.write(cal.to_ical())
   >>> f.close()
 
     XXX We should check whether the write succeeded here..

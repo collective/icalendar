@@ -63,7 +63,7 @@ class IComponent(Interface):
         """
 
     # static method, can be called on class directly
-    def from_string(st, multiple=False):
+    def from_ical(st, multiple=False):
         """Populates the component recursively from a iCalendar string.
 
         Reads the iCalendar string and constructs components and
@@ -99,7 +99,7 @@ class IComponent(Interface):
         Returns list of python objects.
         """
 
-    def as_string():
+    def to_ical():
         """Render the component in the RFC 2445 (iCalendar) format.
 
         Returns a string in RFC 2445 format.
@@ -162,10 +162,10 @@ class IPropertyValue(Interface):
 
     This invariance should always be true:
 
-    assert x == vDataType.from_ical(vDataType(x).ical())
+    assert x == vDataType.from_ical(vDataType(x).to_ical())
     """
 
-    def ical():
+    def to_ical():
         """Render property as string, as defined in iCalendar RFC 2445.
         """
 
@@ -173,7 +173,7 @@ class IPropertyValue(Interface):
     def from_ical(ical):
         """Parse property from iCalendar RFC 2445 text.
 
-        Inverse of ical().
+        Inverse of to_ical().
         """
 
 class IBinary(IPropertyValue):

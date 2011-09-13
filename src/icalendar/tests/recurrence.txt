@@ -3,7 +3,7 @@ Testing recurrence.
   >>> from icalendar import Calendar
   >>> import os
   >>> directory = os.path.dirname(__file__)
-  >>> cal = Calendar.from_string(
+  >>> cal = Calendar.from_ical(
   ...   open(os.path.join(directory, 'recurrence.ics'),'rb').read())
   >>> first_event = cal.walk('vevent')[0]
 

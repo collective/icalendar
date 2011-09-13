@@ -1,6 +1,15 @@
 Todo
 ====
 
+* unify api and make it python 3 compliant.
+    - deprecate usage of __str__, ical, str(
+    - deprecate usage of from_string, as_string, string
+    - use from_ical, to_ical
+
+- use @static instead of staticmethod
+
+%s/from_string/from_ical/gc
+
 * Automatic encoding and decoding of parameter values. Most of the
   work is done already. Just need to get it finished. Look at line 153
   in 'src/icalendar/parser.py'

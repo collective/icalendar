@@ -31,7 +31,7 @@ class ComponentFactory(CaselessDict):
     >>> factory = ComponentFactory()
     >>> component = factory['VEVENT']
     >>> event = component(dtstart='19700101')
-    >>> event.as_string()
+    >>> event.to_ical()
     'BEGIN:VEVENT\\r\\nDTSTART:19700101\\r\\nEND:VEVENT\\r\\n'
 
     >>> factory.get('VCALENDAR', Component)
@@ -103,7 +103,7 @@ class Component(CaselessDict):
     >>> c = Component()
     >>> c.name = 'VCALENDAR'
     >>> c.add('attendee', 'Max M')
-    >>> c.as_string()
+    >>> c.to_ical()
     'BEGIN:VCALENDAR\\r\\nATTENDEE:Max M\\r\\nEND:VCALENDAR\\r\\n'
 
     >>> from icalendar.prop import vDatetime
@@ -113,7 +113,7 @@ class Component(CaselessDict):
     >>> e.name = 'VEVENT'
     >>> e.add('dtend', '20000102T000000', encode=0)
     >>> e.add('dtstart', '20000101T000000', encode=0)
-    >>> e.as_string()
+    >>> e.to_ical()
     'BEGIN:VEVENT\\r\\nDTEND:20000102T000000\\r\\nDTSTART:20000101T000000\\r\\nSUMMARY:A brief history of time\\r\\nEND:VEVENT\\r\\n'
 
     >>> c.add_component(e)
@@ -135,7 +135,7 @@ class Component(CaselessDict):
     Text fields which span multiple mulitple lines require proper indenting
     >>> c = Calendar()
     >>> c['description']=u'Paragraph one\\n\\nParagraph two'
-    >>> c.as_string()
+    >>> c.to_ical()
     'BEGIN:VCALENDAR\\r\\nDESCRIPTION:Paragraph one\\r\\n \\r\\n Paragraph two\\r\\nEND:VCALENDAR\\r\\n'
 
     INLINE properties have their values on one property line. Note the double
@@ -145,7 +145,7 @@ class Component(CaselessDict):
     >>> c
     VCALENDAR({'RESOURCES': 'Chair, Table, "Room: 42"'})
 
-    >>> c.as_string()
+    >>> c.to_ical()
     'BEGIN:VCALENDAR\\r\\nRESOURCES:Chair, Table, "Room: 42"\\r\\nEND:VCALENDAR\\r\\n'
 
     The inline values must be handled by the get_inline() and set_inline()
@@ -324,7 +324,7 @@ class Component(CaselessDict):
         [(name, value), ...]
         """
         vText = types_factory['text']
-        properties = [('BEGIN', vText(self.name).ical())]
+        properties = [('BEGIN', vText(self.name).to_ical())]
         property_names = self.keys()
         property_names.sort()
         for name in property_names:
@@ -338,17 +338,17 @@ class Component(CaselessDict):
         # recursion is fun!
         for subcomponent in self.subcomponents:
             properties += subcomponent.property_items()
-        properties.append(('END', vText(self.name).ical()))
+        properties.append(('END', vText(self.name).to_ical()))
         return properties
 
 
-    def from_string(st, multiple=False):
+    def from_ical(st, multiple=False):
         """
         Populates the component recursively from a string
         """
         stack = [] # a stack of components
         comps = []
-        for line in Contentlines.from_string(st): # raw parsing
+        for line in Contentlines.from_ical(st): # raw parsing
             if not line:
                 continue
             name, params, vals = line.parts()
@@ -396,7 +396,7 @@ class Component(CaselessDict):
             raise ValueError('Found no components where '
                              'exactly one is required: {st!r}'.format(**locals()))
         return comps[0]
-    from_string = staticmethod(from_string)
+    from_ical = staticmethod(from_ical)
 
 
     def __repr__(self):
@@ -418,13 +418,8 @@ class Component(CaselessDict):
         return contentlines
 
 
-    def as_string(self):
+    def to_ical(self):
         return str(self.content_lines())
-
-
-    def __str__(self):
-        "Returns rendered iCalendar"
-        return self.as_string()
 
 
 
@@ -536,13 +531,13 @@ class Calendar(Component):
     >>> event['uid'] = '42'
     >>> event.set('dtstart', datetime(2005,4,4,8,0,0))
     >>> cal.add_component(event)
-    >>> cal.subcomponents[0].as_string()
+    >>> cal.subcomponents[0].to_ical()
     'BEGIN:VEVENT\\r\\nDTSTART;VALUE=DATE-TIME:20050404T080000\\r\\nSUMMARY:Python meeting about calendaring\\r\\nUID:42\\r\\nEND:VEVENT\\r\\n'
 
     Write to disc
     >>> import tempfile, os
     >>> directory = tempfile.mkdtemp()
-    >>> open(os.path.join(directory, 'test.ics'), 'wb').write(cal.as_string())
+    >>> open(os.path.join(directory, 'test.ics'), 'wb').write(cal.to_ical())
 
     Parsing a complete calendar from a string will silently ignore bogus events.
     The bogosity in the following is the third EXDATE: it has an empty DATE.
@@ -567,7 +562,7 @@ class Calendar(Component):
     ...                    'EXDATE;VALUE=DATE:',
     ...                    'END:VEVENT',
     ...                    'END:VCALENDAR'))
-    >>> [e['DESCRIPTION'].ical() for e in Calendar.from_string(s).walk('VEVENT')]
+   >>> [e['DESCRIPTION'].to_ical() for e in Calendar.from_ical(s).walk('VEVENT')]
     ['Perfectly OK event']
     """
 

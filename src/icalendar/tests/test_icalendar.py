@@ -6,14 +6,14 @@ class FuckYouTests(unittest.TestCase):
         from icalendar import Calendar
         c = Calendar()
         c['description']=u'Paragraph one\n\nParagraph two'
-        output = c.as_string()
+        output = c.to_ical()
         self.assertEqual(output, 
                 "BEGIN:VCALENDAR\r\nDESCRIPTION:Paragraph one\r\n \r\n Paragraph two\r\nEND:VCALENDAR\r\n")
 
     def XtestTrailingNewline(self):
         from icalendar.parser import Contentlines, Contentline
         c = Contentlines([Contentline('BEGIN:VEVENT\\r\\n')])
-        output = str(c)
+        output = c.to_ical()
         self.assertEqual(output, 'BEGIN:VEVENT\\r\\n')
 
     def XtestLongLine(self):
@@ -21,7 +21,7 @@ class FuckYouTests(unittest.TestCase):
         c = Contentlines([Contentline('BEGIN:VEVENT\\r\\n')])
         c.append(Contentline(''.join(['123456789 ']*10)+'\\r\\n'))
         import pdb ; pdb.set_trace()
-        output = str(c)
+        output = c.to_ical()
         self.assertEqual(output, 
                 "BEGIN:VEVENT\\r\\n\\r\\n123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234\\r\\n 56789 123456789 123456789 \\r\\n")
 
@@ -29,7 +29,7 @@ class FuckYouTests(unittest.TestCase):
         from icalendar.parser import Contentlines, Contentline
         c = Contentlines([Contentline('BEGIN:VEVENT\r\n')])
         c.append(Contentline(''.join(['123456789 ']*10)+'\r\n'))
-        output = str(c)
+        output = c.to_ical()
         self.assertEqual(output, 
                 'BEGIN:VEVENT\r\n\r\n123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234\r\n 56789 123456789 123456789 \r\n')
 
