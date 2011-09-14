@@ -562,7 +562,7 @@ class Calendar(Component):
     ...                    'EXDATE;VALUE=DATE:',
     ...                    'END:VEVENT',
     ...                    'END:VCALENDAR'))
-   >>> [e['DESCRIPTION'].to_ical() for e in Calendar.from_ical(s).walk('VEVENT')]
+    >>> [e['DESCRIPTION'].to_ical() for e in Calendar.from_ical(s).walk('VEVENT')]
     ['Perfectly OK event']
     """
 
