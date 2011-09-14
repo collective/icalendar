@@ -1,4 +1,4 @@
-# -*- coding: latin-1 -*-
+# -*- coding: utf-8 -*-
 
 """
 This module parses and generates contentlines as defined in RFC 2445
@@ -12,12 +12,39 @@ Copyright, 2005: Max M <maxm@mxm.dk>
 License: GPL (Just contact med if and why you would like it changed)
 """
 
-# from python
-from types import TupleType, ListType
-SequenceTypes = [TupleType, ListType]
 import re
-# from this package
+import textwrap
+from types import TupleType, ListType
 from icalendar.caselessdict import CaselessDict
+
+SequenceTypes = [TupleType, ListType]
+
+
+def foldline(text, lenght=75, newline='\r\n'):
+    """ Make a string folded per RFC5545 (each line must be less than 75 octets)
+
+    >>> from plone.event.utils import foldline
+    >>> foldline('foo')
+    u'foo\\r\\n'
+
+    >>> longtext = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+    ...             "Vestibulum convallis imperdiet dui posuere.")
+    >>> foldline(longtext)
+    u'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum co\\r\\n
+    nvallis imperdiet dui posuere.\\r\\n'
+
+#    >>> uuu = u'alfdkadäääüüaskd'
+#    >>> foldline(uuu, length=3)
+#    u'alf\ndka\nd\xe4\xe4\n\xe4\xfc\xfc\nask\nd'
+
+    """
+    return newline.join(
+            textwrap.wrap(text, lenght,
+                subsequent_indent=' ',
+                drop_whitespace=True,
+                break_long_words=True
+                )
+            )
 
 #################################################################
 # Property parameter stuff
@@ -384,10 +411,10 @@ class Contentline(str):
 
     def from_parts(parts):
         "Turns a tuple of parts into a content line"
-        (name, params, values) = [str(p) for p in parts] # TODO: str or to_ical?
+        (name, params, values) = parts
         try:
             if params:
-                return Contentline('%s;%s:%s' % (name, params, values))
+                return Contentline('%s;%s:%s' % (name, params.to_ical(), values))
             return Contentline('%s:%s' %  (name, values))
         except:
             raise ValueError(
@@ -436,40 +463,7 @@ class Contentline(str):
 
     def to_ical(self):
         "Long content lines are folded so they are less than 75 characters wide"
-        l_line = len(self)
-        new_lines = []
-        start = 0
-        while True:
-            end = start + 74
-            slice = self[start:end]
-            m = NEWLINE.search(slice)
-            if m is not None and m.end()!=l_line:
-                new_lines.append(self[start:start+m.start()])
-                start += m.end()
-                continue
-
-            if end >= l_line:
-                end = l_line
-            else:
-                # Check that we don't fold in the middle of a UTF-8 character:
-                # http://lists.osafoundation.org/pipermail/ietf-calsify/2006-August/001126.html
-                while True:
-                    char_value = ord(self[end])
-                    if char_value < 128 or char_value >= 192:
-                        # This is not in the middle of a UTF-8 character, so we
-                        # can fold here:
-                        break
-                    else:
-                        end -= 1
-
-            # Recompute slice, since start or end may have changed.
-            slice = self[start:end]
-            new_lines.append(slice)
-            if end == l_line:
-                # Done
-                break
-            start = end
-        return '\r\n '.join(new_lines).rstrip(" ")
+        return foldline(self, newline='\r\n')
 
 
 
