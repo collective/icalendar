@@ -91,3 +91,13 @@ class CaselessDict(dict):
 
     def __repr__(self):
         return 'CaselessDict(' + dict.__repr__(self) + ')'
+
+    canonical_order = None
+
+    def sorted_keys(self):
+        """
+        Sorts keys according to the canonical_order for the derived class.
+        Keys not specified in canonical_order will appear at the end.
+        """
+        canonical_map = dict((k, i) for i, k in enumerate(self.canonical_order or []))
+        return sorted(self.keys(), key=lambda k: canonical_map.get(k, 999))

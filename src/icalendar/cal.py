@@ -325,8 +325,7 @@ class Component(CaselessDict):
         """
         vText = types_factory['text']
         properties = [('BEGIN', vText(self.name).to_ical())]
-        property_names = self.keys()
-        property_names.sort()
+        property_names = self.sorted_keys()
         for name in property_names:
             values = self[name]
             if type(values) == ListType:
@@ -431,11 +430,17 @@ class Event(Component):
 
     name = 'VEVENT'
 
+    canonical_order = (
+        'SUMMARY', 'DTSTART', 'DTEND', 'DURATION', 'DTSTAMP',
+        'UID', 'RECURRENCE-ID', 'SEQUENCE',
+        'RRULE' 'EXRULE', 'RDATE', 'EXDATE',
+    )
+
     required = ('UID',)
     singletons = (
         'CLASS', 'CREATED', 'DESCRIPTION', 'DTSTART', 'GEO',
-        'LAST-MOD', 'LOCATION', 'ORGANIZER', 'PRIORITY', 'DTSTAMP', 'SEQUENCE',
-        'STATUS', 'SUMMARY', 'TRANSP', 'URL', 'RECURID', 'DTEND', 'DURATION',
+        'LAST-MODIFIED', 'LOCATION', 'ORGANIZER', 'PRIORITY', 'DTSTAMP', 'SEQUENCE',
+        'STATUS', 'SUMMARY', 'TRANSP', 'URL', 'RECURRENCE-ID', 'DTEND', 'DURATION',
         'DTSTART',
     )
     exclusive = ('DTEND', 'DURATION', )
@@ -453,8 +458,8 @@ class Todo(Component):
     required = ('UID',)
     singletons = (
         'CLASS', 'COMPLETED', 'CREATED', 'DESCRIPTION', 'DTSTAMP', 'DTSTART',
-        'GEO', 'LAST-MOD', 'LOCATION', 'ORGANIZER', 'PERCENT', 'PRIORITY',
-        'RECURID', 'SEQUENCE', 'STATUS', 'SUMMARY', 'UID', 'URL', 'DUE', 'DURATION',
+        'GEO', 'LAST-MODIFIED', 'LOCATION', 'ORGANIZER', 'PERCENT', 'PRIORITY',
+        'RECURRENCE-ID', 'SEQUENCE', 'STATUS', 'SUMMARY', 'UID', 'URL', 'DUE', 'DURATION',
     )
     exclusive = ('DUE', 'DURATION',)
     multiple = (
@@ -470,8 +475,8 @@ class Journal(Component):
 
     required = ('UID',)
     singletons = (
-        'CLASS', 'CREATED', 'DESCRIPTION', 'DTSTART', 'DTSTAMP', 'LAST-MOD',
-        'ORGANIZER', 'RECURID', 'SEQUENCE', 'STATUS', 'SUMMARY', 'UID', 'URL',
+        'CLASS', 'CREATED', 'DESCRIPTION', 'DTSTART', 'DTSTAMP', 'LAST-MODIFIED',
+        'ORGANIZER', 'RECURRENCE-ID', 'SEQUENCE', 'STATUS', 'SUMMARY', 'UID', 'URL',
     )
     multiple = (
         'ATTACH', 'ATTENDEE', 'CATEGORIES', 'COMMENT', 'CONTACT', 'EXDATE',
@@ -494,12 +499,13 @@ class FreeBusy(Component):
 class Timezone(Component):
 
     name = 'VTIMEZONE'
+    canonical_order = ('TZID', 'STANDARDC', 'DAYLIGHTC',)
 
     required = (
         'TZID', 'STANDARDC', 'DAYLIGHTC', 'DTSTART', 'TZOFFSETTO',
         'TZOFFSETFROM'
         )
-    singletons = ('LAST-MOD', 'TZURL', 'TZID',)
+    singletons = ('LAST-MODIFIED', 'TZURL', 'TZID',)
     multiple = ('COMMENT', 'RDATE', 'RRULE', 'TZNAME',)
 
 
@@ -532,7 +538,7 @@ class Calendar(Component):
     >>> event.set('dtstart', datetime(2005,4,4,8,0,0))
     >>> cal.add_component(event)
     >>> cal.subcomponents[0].to_ical()
-    'BEGIN:VEVENT\\r\\nDTSTART;VALUE=DATE-TIME:20050404T080000\\r\\nSUMMARY:Python meeting about calendaring\\r\\nUID:42\\r\\nEND:VEVENT\\r\\n'
+    'BEGIN:VEVENT\\r\\nSUMMARY:Python meeting about calendaring\\r\\nDTSTART;VALUE=DATE-TIME:20050404T080000\\r\\nUID:42\\r\\nEND:VEVENT\\r\\n'
 
     Write to disc
     >>> import tempfile, os
@@ -567,6 +573,7 @@ class Calendar(Component):
     """
 
     name = 'VCALENDAR'
+    canonical_order = ('PRODID', 'VERSION', 'CALSCALE', 'METHOD',)
     required = ('prodid', 'version', )
     singletons = ('prodid', 'version', )
     multiple = ('calscale', 'method', )
