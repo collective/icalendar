@@ -1,5 +1,26 @@
 # -*- coding: latin-1 -*-
 
+def canonsort(keys, canonical_order=None):
+    """
+    Sorts leading keys according to canonical_order.
+    Keys not specified in canonical_order will appear alphabetically at the end.
+    Keys are expected to be uppercase.
+
+    >>> keys = ['DTEND', 'DTSTAMP', 'DTSTART', 'UID', 'SUMMARY', 'LOCATION']
+    >>> canonsort(keys)
+    ['DTEND', 'DTSTAMP', 'DTSTART', 'LOCATION', 'SUMMARY', 'UID']
+    >>> canonsort(keys, ('SUMMARY', 'DTSTART', 'DTEND', ))
+    ['SUMMARY', 'DTSTART', 'DTEND', 'DTSTAMP', 'LOCATION', 'UID']
+    >>> canonsort(keys, ('UID', 'DTSTART', 'DTEND', ))
+    ['UID', 'DTSTART', 'DTEND', 'DTSTAMP', 'LOCATION', 'SUMMARY']
+    >>> canonsort(keys, ('UID', 'DTSTART', 'DTEND', 'RRULE', 'EXDATE'))
+    ['UID', 'DTSTART', 'DTEND', 'DTSTAMP', 'LOCATION', 'SUMMARY']
+    """
+    canonical_map = dict((k.upper(), i) for i, k in enumerate(canonical_order or []))
+    head = [k for k in keys if k in canonical_map]
+    tail = [k for k in keys if k not in canonical_map]
+    return sorted(head, key=lambda k: canonical_map[k])  +  sorted(tail)
+
 class CaselessDict(dict):
     """
     A dictionary that isn't case sensitive, and only use string as keys.
@@ -99,5 +120,4 @@ class CaselessDict(dict):
         Sorts keys according to the canonical_order for the derived class.
         Keys not specified in canonical_order will appear at the end.
         """
-        canonical_map = dict((k, i) for i, k in enumerate(self.canonical_order or []))
-        return sorted(self.keys(), key=lambda k: canonical_map.get(k, 999))
+        return canonsort(self.keys(), self.canonical_order)
