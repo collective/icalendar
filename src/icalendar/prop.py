@@ -984,9 +984,11 @@ class vRecur(CaselessDict):
     frequencies = ["SECONDLY",  "MINUTELY", "HOURLY", "DAILY", "WEEKLY",
                    "MONTHLY", "YEARLY"]
 
-    canonical_order = [ "FREQ", "UNTIL", "COUNT", "INTERVAL",
+    # Mac iCal ignores RRULEs where FREQ is not the first rule part.
+    # Sorts parts according to the order listed in RFC 5545, section 3.3.10.
+    canonical_order = ( "FREQ", "UNTIL", "COUNT", "INTERVAL",
                         "BYSECOND", "BYMINUTE", "BYHOUR", "BYDAY", "BYMONTHDAY", "BYYEARDAY",
-                        "BYWEEKNO", "BYMONTH", "BYSETPOS", "WKST" ]
+                        "BYWEEKNO", "BYMONTH", "BYSETPOS", "WKST" )
 
     types = CaselessDict({
         'COUNT':vInt,
@@ -1018,11 +1020,6 @@ class vRecur(CaselessDict):
             vals = ','.join([typ(val).ical() for val in vals])
             result.append('%s=%s' % (key, vals))
         return ';'.join(result)
-
-    def sorted_items(self):
-        """Mac iCal ignores RRULEs where FREQ is not the first rule part.
-        Sorts parts according to the order listed in RFC 5545, section 3.3.10."""
-        return [(k, self[k]) for k in self.canonical_order if self.get(k)]
 
     def parse_type(key, values):
         # integers
