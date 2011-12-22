@@ -1409,7 +1409,7 @@ class TypesFactory(CaselessDict):
     # These are the default types
     types_map = CaselessDict({
         ####################################
-        # Property valye types
+        # Property value types
         # Calendar Properties
         'calscale' : 'text',
         'method' : 'text',
