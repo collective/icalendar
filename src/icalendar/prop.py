@@ -3,7 +3,7 @@
 """
 
 This module contains the parser/generators (or coders/encoders if you prefer)
-for the classes/datatypes that are used in Icalendar:
+for the classes/datatypes that are used in iCalendar:
 
 ###########################################################################
 # This module defines these property value data types and property parameters
@@ -23,16 +23,16 @@ for the classes/datatypes that are used in Icalendar:
 
 
 iCalendar properties has values. The values are strongly typed. This module
-defines these types, calling val.to_ical() on them, Will render them as defined in
-rfc2445.
+defines these types, calling val.to_ical() on them, Will render them as defined
+in rfc2445.
 
 If you pass any of these classes a Python primitive, you will have an object
 that can render itself as iCalendar formatted date.
 
 Property Value Data Types starts with a 'v'. they all have an to_ical() and
-from_ical() method. The to_ical() method generates a text string in the iCalendar
-format. The from_ical() method can parse this format and return a primitive
-Python datatype. So it should allways be true that:
+from_ical() method. The to_ical() method generates a text string in the
+iCalendar format. The from_ical() method can parse this format and return a
+primitive Python datatype. So it should allways be true that:
 
     x == vDataType.from_ical(VDataType(x).to_ical())
 
@@ -1467,7 +1467,7 @@ class TypesFactory(CaselessDict):
         # Miscellaneous Component Properties
         'request-status' : 'text',
         ####################################
-        # parameter types (luckilly there is no name overlap)
+        # parameter types (luckily there is no name overlap)
         'altrep' : 'uri',
         'cn' : 'text',
         'cutype' : 'text',
