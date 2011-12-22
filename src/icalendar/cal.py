@@ -578,7 +578,7 @@ class Calendar(Component):
     """
 
     name = 'VCALENDAR'
-    canonical_order = ('PRODID', 'VERSION', 'CALSCALE', 'METHOD',)
+    canonical_order = ('VERSION', 'PRODID', 'CALSCALE', 'METHOD',)
     required = ('prodid', 'version', )
     singletons = ('prodid', 'version', )
     multiple = ('calscale', 'method', )
