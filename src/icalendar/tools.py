@@ -1,10 +1,11 @@
-from string import ascii_letters, digits
+""" This module contains non-essential tools for iCalendar. Pretty thin so far
+eh?
+"""
+
 import random
+from string import ascii_letters, digits
+from datetime import datetime
 
-"""
-This module contains non-essential tools for iCalendar. Pretty thin so far eh?
-
-"""
 
 class UIDGenerator:
 
@@ -42,9 +43,9 @@ class UIDGenerator:
         datetime-uniquevalue@host. Like:
         20050105T225746Z-HKtJMqUgdO0jDUwm@example.com
         """
-        from PropertyValues import vText, vDatetime
+        from icalendar.prop import vText, vDatetime
         unique = unique or self.rnd_string()
-        return vText('%s-%s@%s' % (vDatetime.today().ical(), unique, host_name))
+        return vText('%s-%s@%s' % (vDatetime(datetime.today()).ical(), unique, host_name))
 
 
 if __name__ == "__main__":
