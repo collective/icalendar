@@ -3,7 +3,7 @@
 """
 
 This module contains the parser/generators (or coders/encoders if you prefer)
-for the classes/datatypes that are used in Icalendar:
+for the classes/datatypes that are used in iCalendar:
 
 ###########################################################################
 # This module defines these property value data types and property parameters
@@ -23,13 +23,13 @@ for the classes/datatypes that are used in Icalendar:
 
 
 iCalendar properties has values. The values are strongly typed. This module
-defines these types, calling val.ical() on them, Will render them as defined in
+defines these types, calling val.ical() on them will render them as defined in
 rfc2445.
 
 If you pass any of these classes a Python primitive, you will have an object
 that can render itself as iCalendar formatted date.
 
-Property Value Data Types starts with a 'v'. they all have an ical() and
+Property Value Data Types starts with a 'v'. They all have an ical() and
 from_ical() method. The ical() method generates a text string in the iCalendar
 format. The from_ical() method can parse this format and return a primitive
 Python datatype. So it should allways be true that:
@@ -984,9 +984,11 @@ class vRecur(CaselessDict):
     frequencies = ["SECONDLY",  "MINUTELY", "HOURLY", "DAILY", "WEEKLY",
                    "MONTHLY", "YEARLY"]
 
-    canonical_order = [ "FREQ", "UNTIL", "COUNT", "INTERVAL",
+    # Mac iCal ignores RRULEs where FREQ is not the first rule part.
+    # Sorts parts according to the order listed in RFC 5545, section 3.3.10.
+    canonical_order = ( "FREQ", "UNTIL", "COUNT", "INTERVAL",
                         "BYSECOND", "BYMINUTE", "BYHOUR", "BYDAY", "BYMONTHDAY", "BYYEARDAY",
-                        "BYWEEKNO", "BYMONTH", "BYSETPOS", "WKST" ]
+                        "BYWEEKNO", "BYMONTH", "BYSETPOS", "WKST" )
 
     types = CaselessDict({
         'COUNT':vInt,
@@ -1018,11 +1020,6 @@ class vRecur(CaselessDict):
             vals = ','.join([typ(val).ical() for val in vals])
             result.append('%s=%s' % (key, vals))
         return ';'.join(result)
-
-    def sorted_items(self):
-        """Mac iCal ignores RRULEs where FREQ is not the first rule part.
-        Sorts parts according to the order listed in RFC 5545, section 3.3.10."""
-        return [(k, self[k]) for k in self.canonical_order if self.get(k)]
 
     def parse_type(key, values):
         # integers
@@ -1449,7 +1446,7 @@ class TypesFactory(CaselessDict):
     # These are the default types
     types_map = CaselessDict({
         ####################################
-        # Property valye types
+        # Property value types
         # Calendar Properties
         'calscale' : 'text',
         'method' : 'text',
@@ -1507,7 +1504,7 @@ class TypesFactory(CaselessDict):
         # Miscellaneous Component Properties
         'request-status' : 'text',
         ####################################
-        # parameter types (luckilly there is no name overlap)
+        # parameter types (luckily there is no name overlap)
         'altrep' : 'uri',
         'cn' : 'text',
         'cutype' : 'text',
