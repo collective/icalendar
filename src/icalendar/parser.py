@@ -23,7 +23,7 @@ SequenceTypes = [TupleType, ListType]
 def foldline(text, lenght=75, newline='\r\n'):
     """ Make a string folded per RFC5545 (each line must be less than 75 octets)
 
-    >>> from plone.event.utils import foldline
+    >>> from icalendar.parser import foldline
     >>> foldline('foo')
     u'foo\\r\\n'
 
