@@ -11,7 +11,7 @@ with Python.
     :Mailing list: http://github.com/collective/icalendar/issues
     :Dependencies: There are no other dependencies.
     :Tested with: Python 2.4 - 2.7
-    :License: ???
+    :License: LGPL 2.1
 
 ----
 
