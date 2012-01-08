@@ -106,7 +106,7 @@ class vBinary:
         "Parses the data format from ical text format"
         try:
             return ical.decode('base-64')
-        except:
+        except UnicodeError:
             raise ValueError, 'Not valid base 64 encoding.'
     from_ical = staticmethod(from_ical)
 
