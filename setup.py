@@ -15,7 +15,8 @@ setuptools.setup(
         'License :: OSI Approved :: GNU General Public License (GPL)',
         'Operating System :: OS Independent',
         ],
-    keywords='calendar calendaring ical icalendar event todo journal recurring',
+    keywords='calendar calendaring ical icalendar event todo journal '
+             'recurring',
     maintainer="Rok Garbas",
     maintainer_email="rok@garbas.si",
     author='MaxM',
@@ -26,12 +27,8 @@ setuptools.setup(
     package_dir={'': 'src'},
     include_package_data=True,
     zip_safe=False,
-    install_requires=[
-        'setuptools',
-        ],
+    install_requires=[],
     extras_require={
-        'test': [
-            'unittest2',
-            ],
+        'test': ['unittest2'],
         },
     )
