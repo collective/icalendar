@@ -1,4 +1,3 @@
 include README.rst docs/changelog.rst
 recursive-include src/icalendar *
 recursive-exclude src/icalendar *.pyc
-prune src/icalendar/tests
