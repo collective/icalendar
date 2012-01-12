@@ -20,7 +20,6 @@ class FuckYouTests(unittest.TestCase):
         from icalendar.parser import Contentlines, Contentline
         c = Contentlines([Contentline('BEGIN:VEVENT\\r\\n')])
         c.append(Contentline(''.join(['123456789 ']*10)+'\\r\\n'))
-        import pdb ; pdb.set_trace()
         output = c.to_ical()
         self.assertEqual(output, 
                 "BEGIN:VEVENT\\r\\n\\r\\n123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234\\r\\n 56789 123456789 123456789 \\r\\n")
