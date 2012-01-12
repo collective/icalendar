@@ -15,19 +15,19 @@ class UIDGenerator:
     Automatic semi-random uid
     >> g = UIDGenerator()
     >> uid = g.uid()
-    >> uid.ical()
+    >> uid.to_ical()
     '20050109T153222-7ekDDHKcw46QlwZK@example.com'
 
-    You Should at least insert your own hostname to be more complient
+    You should at least insert your own hostname to be more compliant
     >> g = UIDGenerator()
     >> uid = g.uid('Example.ORG')
-    >> uid.ical()
+    >> uid.to_ical()
     '20050109T153549-NbUItOPDjQj8Ux6q@Example.ORG'
 
     You can also insert a path or similar
     >> g = UIDGenerator()
     >> uid = g.uid('Example.ORG', '/path/to/content')
-    >> uid.ical()
+    >> uid.to_ical()
     '20050109T153415-/path/to/content@Example.ORG'
     """
 
@@ -45,7 +45,7 @@ class UIDGenerator:
         """
         from icalendar.prop import vText, vDatetime
         unique = unique or self.rnd_string()
-        return vText('%s-%s@%s' % (vDatetime(datetime.today()).ical(), unique, host_name))
+        return vText('%s-%s@%s' % (vDatetime(datetime.today()).to_ical(), unique, host_name))
 
 
 if __name__ == "__main__":
