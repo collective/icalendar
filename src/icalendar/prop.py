@@ -89,7 +89,7 @@ class vBinary:
     True
     >>> vBinary.from_ical('YWFh' * 33) == 'a' * 99
     True
-    
+
     """
 
     def __init__(self, obj):
@@ -394,7 +394,7 @@ class vDuration:
     'PT22S'
     >>> vDuration(timedelta(0, 3622)).to_ical()
     'PT1H0M22S'
-    
+
     >>> vDuration(timedelta(days=1, hours=5)).to_ical()
     'P1DT5H'
     >>> vDuration(timedelta(hours=-5)).to_ical()
@@ -605,62 +605,62 @@ class vDDDTypes:
 class vDDDLists:
     """
     A list of vDDDTypes values.
-    
+
     >>> dt_list = vDDDLists.from_ical('19960402T010000Z')
     >>> type(dt_list)
     <type 'list'>
-    
+
     >>> len(dt_list)
     1
-    
+
     >>> type(dt_list[0])
     <type 'datetime.datetime'>
-        
+
     >>> str(dt_list[0])
     '1996-04-02 01:00:00+00:00'
-    
+
     >>> dt_list = vDDDLists.from_ical('19960402T010000Z,19960403T010000Z,19960404T010000Z')
     >>> len(dt_list)
     3
-        
+
     >>> str(dt_list[0])
     '1996-04-02 01:00:00+00:00'
-    >>> str(dt_list[2])    
+    >>> str(dt_list[2])
     '1996-04-04 01:00:00+00:00'
-    
+
     >>> dt_list = vDDDLists('19960402T010000Z')
     Traceback (most recent call last):
         ...
     ValueError: Value MUST be a list (of date instances)
-    
+
     >>> dt_list = vDDDLists([])
     >>> dt_list.to_ical()
     ''
-    
+
     >>> dt_list = vDDDLists([datetime(2000,1,1)])
     >>> dt_list.to_ical()
     '20000101T000000'
-        
+
     >>> dt_list = vDDDLists([datetime(2000,1,1), datetime(2000,11,11)])
     >>> dt_list.to_ical()
     '20000101T000000,20001111T000000'
     """
-    
+
     def __init__(self, dt_list):
         if not isinstance(dt_list, list):
-            raise ValueError('Value MUST be a list (of date instances)')        
+            raise ValueError('Value MUST be a list (of date instances)')
         vDDD = []
         for dt in dt_list:
             vDDD.append(vDDDTypes(dt))
         self.dts = vDDD
-    
+
     def to_ical(self):
         '''
         Generates the text string in the iCalendar format.
         '''
         dts_ical = [dt.to_ical() for dt in self.dts]
         return ",".join(dts_ical)
-    
+
     def from_ical(ical):
         '''
         Parses the list of data formats from ical text format.
@@ -672,8 +672,8 @@ class vDDDLists:
             out.append(vDDDTypes.from_ical(ical_dt))
         return out
     from_ical = staticmethod(from_ical)
-    
-        
+
+
 
 class vPeriod:
     """
