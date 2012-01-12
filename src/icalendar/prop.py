@@ -634,15 +634,15 @@ class vDDDLists:
     ValueError: Value MUST be a list (of date instances)
     
     >>> dt_list = vDDDLists([])
-    >>> str(dt_list)
+    >>> dt_list.to_ical()
     ''
     
     >>> dt_list = vDDDLists([datetime(2000,1,1)])
-    >>> str(dt_list)
+    >>> dt_list.to_ical()
     '20000101T000000'
         
     >>> dt_list = vDDDLists([datetime(2000,1,1), datetime(2000,11,11)])
-    >>> str(dt_list)
+    >>> dt_list.to_ical()
     '20000101T000000,20001111T000000'
     """
     
