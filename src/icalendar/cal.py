@@ -418,7 +418,7 @@ class Component(CaselessDict):
 
 
     def to_ical(self):
-        return str(self.content_lines())
+        return self.content_lines().to_ical()
 
 
 
