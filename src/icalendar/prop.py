@@ -681,19 +681,19 @@ class vPeriod:
     One day in exact datetimes
     >>> per = (datetime(2000,1,1), datetime(2000,1,2))
     >>> p = vPeriod(per)
-    >>> p.ical()
+    >>> p.to_ical()
     '20000101T000000/20000102T000000'
 
     >>> per = (datetime(2000,1,1), timedelta(days=31))
     >>> p = vPeriod(per)
-    >>> p.ical()
+    >>> p.to_ical()
     '20000101T000000/P31D'
 
     Roundtrip
     >>> p = vPeriod.from_ical('20000101T000000/20000102T000000')
     >>> p
     (datetime.datetime(2000, 1, 1, 0, 0), datetime.datetime(2000, 1, 2, 0, 0))
-    >>> vPeriod(p).ical()
+    >>> vPeriod(p).to_ical()
     '20000101T000000/20000102T000000'
 
     >>> vPeriod.from_ical('20000101T000000/P31D')
@@ -701,7 +701,7 @@ class vPeriod:
 
     Roundtrip with absolute time
     >>> p = vPeriod.from_ical('20000101T000000Z/20000102T000000Z')
-    >>> vPeriod(p).ical()
+    >>> vPeriod(p).to_ical()
     '20000101T000000Z/20000102T000000Z'
 
     And an error
@@ -715,11 +715,11 @@ class vPeriod:
     >>> start = datetime(2000,1,1, tzinfo=da_tz)
     >>> end = datetime(2000,1,2, tzinfo=da_tz)
     >>> per = (start, end)
-    >>> vPeriod(per).ical()
+    >>> vPeriod(per).to_ical()
     '19991231T235900Z/20000101T235900Z'
 
     >>> p = vPeriod((datetime(2000,1,1, tzinfo=da_tz), timedelta(days=31)))
-    >>> p.ical()
+    >>> p.to_ical()
     '19991231T235900Z/P31D'
     """
 
@@ -760,8 +760,8 @@ class vPeriod:
 
     def to_ical(self):
         if self.by_duration:
-            return '%s/%s' % (vDatetime(self.start).ical(), vDuration(self.duration).ical())
-        return '%s/%s' % (vDatetime(self.start).ical(), vDatetime(self.end).ical())
+            return '%s/%s' % (vDatetime(self.start).to_ical(), vDuration(self.duration).to_ical())
+        return '%s/%s' % (vDatetime(self.start).to_ical(), vDatetime(self.end).to_ical())
 
     def from_ical(ical):
         "Parses the data format from ical text format"
