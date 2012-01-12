@@ -1,11 +1,6 @@
 Todo
 ====
 
-* unify api and make it python 3 compliant.
-    - deprecate usage of __str__, ical, str(
-    - deprecate usage of from_string, as_string, string
-    - use from_ical, to_ical
-
 - use @static instead of staticmethod
 
 %s/from_string/from_ical/gc
