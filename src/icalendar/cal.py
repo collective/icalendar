@@ -318,7 +318,7 @@ class Component(CaselessDict):
     #####################
     # Generation
 
-    def property_items(self):
+    def property_items(self, recursive=True):
         """
         Returns properties in this component and subcomponents as:
         [(name, value), ...]
@@ -334,9 +334,10 @@ class Component(CaselessDict):
                     properties.append((name, value))
             else:
                 properties.append((name, values))
-        # recursion is fun!
-        for subcomponent in self.subcomponents:
-            properties += subcomponent.property_items()
+        if recursive:
+            # recursion is fun!
+            for subcomponent in self.subcomponents:
+                properties += subcomponent.property_items()
         properties.append(('END', vText(self.name).to_ical()))
         return properties
 
