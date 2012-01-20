@@ -1266,6 +1266,9 @@ class vUTCOffset:
     >>> vUTCOffset.from_ical('+0200')
     datetime.timedelta(0, 7200)
 
+    >>> vUTCOffset.from_ical('+023040')
+    datetime.timedelta(0, 9040)
+
     >>> o = vUTCOffset.from_ical('+0230')
     >>> vUTCOffset(o).to_ical()
     '+0230'
@@ -1310,8 +1313,8 @@ class vUTCOffset:
         if isinstance(ical, vUTCOffset):
             return ical.td
         try:
-            sign, hours, minutes = (ical[-5:-4], int(ical[-4:-2]), int(ical[-2:]))
-            offset = timedelta(hours=hours, minutes=minutes)
+            sign, hours, minutes, seconds = (ical[0:1], int(ical[1:3]), int(ical[3:5]), int(ical[5:7] or 0))
+            offset = timedelta(hours=hours, minutes=minutes, seconds=seconds)
         except:
             raise ValueError, 'Expected utc offset, got: %s' % ical
         if offset >= timedelta(hours=24):
