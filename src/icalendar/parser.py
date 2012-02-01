@@ -496,7 +496,7 @@ class Contentlines(list):
 
     def to_ical(self):
         "Simply join self."
-        return '\r\n'.join(map(str, self))
+        return '\r\n'.join(l.to_ical() for l in self if l)
 
     def from_ical(st):
         "Parses a string into content lines"
