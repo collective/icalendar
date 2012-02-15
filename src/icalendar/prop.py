@@ -1,5 +1,4 @@
 # -*- coding: latin-1 -*-
-
 """
 
 This module contains the parser/generators (or coders/encoders if you prefer)
@@ -111,7 +110,6 @@ class vBinary:
     from_ical = staticmethod(from_ical)
 
 
-
 class vBoolean(int):
     """
     Returns specific string according to state
@@ -149,8 +147,6 @@ class vBoolean(int):
         except:
             raise ValueError, "Expected 'TRUE' or 'FALSE'. Got %s" % ical
     from_ical = staticmethod(from_ical)
-
-
 
 
 class vCalAddress(str):
@@ -257,8 +253,238 @@ class LocalTimezone(tzinfo):
         tt = _time.localtime(stamp)
         return tt.tm_isdst > 0
 
-####################################################
 
+class vFloat(float):
+    """
+    Just a float.
+    >>> f = vFloat(1.0)
+    >>> f.to_ical()
+    '1.0'
+    >>> vFloat.from_ical('42')
+    42.0
+    >>> vFloat(42).to_ical()
+    '42.0'
+    """
+
+    def __new__(cls, *args, **kwargs):
+        self = super(vFloat, cls).__new__(cls, *args, **kwargs)
+        self.params = Parameters()
+        return self
+
+    def to_ical(self):
+        return str(self)
+
+    def from_ical(ical):
+        "Parses the data format from ical text format"
+        try:
+            return float(ical)
+        except:
+            raise ValueError, 'Expected float value, got: %s' % ical
+    from_ical = staticmethod(from_ical)
+
+
+class vInt(int):
+    """
+    Just an int.
+    >>> f = vInt(42)
+    >>> f.to_ical()
+    '42'
+    >>> vInt.from_ical('13')
+    13
+    >>> vInt.from_ical('1s3')
+    Traceback (most recent call last):
+        ...
+    ValueError: Expected int, got: 1s3
+    """
+
+    def __new__(cls, *args, **kwargs):
+        self = super(vInt, cls).__new__(cls, *args, **kwargs)
+        self.params = Parameters()
+        return self
+
+    def to_ical(self):
+        return str(self)
+
+    def from_ical(ical):
+        "Parses the data format from ical text format"
+        try:
+            return int(ical)
+        except:
+            raise ValueError, 'Expected int, got: %s' % ical
+    from_ical = staticmethod(from_ical)
+
+
+class vDDDLists:
+    """
+    A list of vDDDTypes values.
+
+    >>> dt_list = vDDDLists.from_ical('19960402T010000Z')
+    >>> type(dt_list)
+    <type 'list'>
+
+    >>> len(dt_list)
+    1
+
+    >>> type(dt_list[0])
+    <type 'datetime.datetime'>
+
+    >>> str(dt_list[0])
+    '1996-04-02 01:00:00+00:00'
+
+    >>> dt_list = vDDDLists.from_ical('19960402T010000Z,19960403T010000Z,19960404T010000Z')
+    >>> len(dt_list)
+    3
+
+    >>> str(dt_list[0])
+    '1996-04-02 01:00:00+00:00'
+    >>> str(dt_list[2])
+    '1996-04-04 01:00:00+00:00'
+
+    >>> dt_list = vDDDLists('19960402T010000Z')
+    Traceback (most recent call last):
+        ...
+    ValueError: Value MUST be a list (of date instances)
+
+    >>> dt_list = vDDDLists([])
+    >>> dt_list.to_ical()
+    ''
+
+    >>> dt_list = vDDDLists([datetime(2000,1,1)])
+    >>> dt_list.to_ical()
+    '20000101T000000'
+
+    >>> dt_list = vDDDLists([datetime(2000,1,1), datetime(2000,11,11)])
+    >>> dt_list.to_ical()
+    '20000101T000000,20001111T000000'
+    """
+
+    def __init__(self, dt_list):
+        if not isinstance(dt_list, list):
+            raise ValueError('Value MUST be a list (of date instances)')
+        vDDD = []
+        for dt in dt_list:
+            vDDD.append(vDDDTypes(dt))
+        self.dts = vDDD
+
+    def to_ical(self):
+        '''
+        Generates the text string in the iCalendar format.
+        '''
+        dts_ical = [dt.to_ical() for dt in self.dts]
+        return ",".join(dts_ical)
+
+    def from_ical(ical):
+        '''
+        Parses the list of data formats from ical text format.
+        @param ical: ical text format
+        '''
+        out = []
+        ical_dates = ical.split(",")
+        for ical_dt in ical_dates:
+            out.append(vDDDTypes.from_ical(ical_dt))
+        return out
+    from_ical = staticmethod(from_ical)
+
+
+class vDDDTypes:
+    """
+    A combined Datetime, Date or Duration parser/generator. Their format cannot
+    be confused, and often values can be of either types. So this is practical.
+
+    >>> d = vDDDTypes.from_ical('20010101T123000')
+    >>> type(d)
+    <type 'datetime.datetime'>
+
+    >>> repr(vDDDTypes.from_ical('20010101T123000Z'))[:65]
+    'datetime.datetime(2001, 1, 1, 12, 30, tzinfo=<icalendar.prop.Utc '
+
+    >>> d = vDDDTypes.from_ical('20010101')
+    >>> type(d)
+    <type 'datetime.date'>
+
+    >>> vDDDTypes.from_ical('P31D')
+    datetime.timedelta(31)
+
+    >>> vDDDTypes.from_ical('-P31D')
+    datetime.timedelta(-31)
+
+    Bad input
+    >>> vDDDTypes(42)
+    Traceback (most recent call last):
+        ...
+    ValueError: You must use datetime, date or timedelta
+    """
+
+    def __init__(self, dt):
+        "Returns vDate from"
+        if type(dt) not in (datetime, date, timedelta):
+            raise ValueError ('You must use datetime, date or timedelta')
+        if isinstance(dt, datetime):
+            self.params = Parameters(dict(value='DATE-TIME'))
+        elif isinstance(dt, date): # isinstance(datetime_object, date) => True
+            self.params = Parameters(dict(value='DATE'))
+        self.dt = dt
+
+    def to_ical(self):
+        dt = self.dt
+        if isinstance(dt, datetime):
+            return vDatetime(dt).to_ical()
+        elif isinstance(dt, date):
+            return vDate(dt).to_ical()
+        elif isinstance(dt, timedelta):
+            return vDuration(dt).to_ical()
+        else:
+            raise ValueError('Unknown date type')
+
+    def from_ical(ical):
+        "Parses the data format from ical text format"
+        u = ical.upper()
+        if u.startswith('-P') or u.startswith('P'):
+            return vDuration.from_ical(ical)
+        try:
+            return vDatetime.from_ical(ical)
+        except:
+            return vDate.from_ical(ical)
+    from_ical = staticmethod(from_ical)
+
+
+class vDate:
+    """
+    Render and generates iCalendar date format.
+    >>> d = date(2001, 1,1)
+    >>> vDate(d).to_ical()
+    '20010101'
+
+    >>> vDate.from_ical('20010102')
+    datetime.date(2001, 1, 2)
+
+    >>> vDate('d').to_ical()
+    Traceback (most recent call last):
+        ...
+    ValueError: Value MUST be a date instance
+    """
+
+    def __init__(self, dt):
+        if not isinstance(dt, date):
+            raise ValueError('Value MUST be a date instance')
+        self.dt = dt
+        self.params = Parameters(dict(value='DATE'))
+
+    def to_ical(self):
+        return self.dt.strftime("%Y%m%d")
+
+    def from_ical(ical):
+        "Parses the data format from ical text format"
+        try:
+            timetuple = map(int, ((
+                ical[:4],     # year
+                ical[4:6],    # month
+                ical[6:8],    # day
+                )))
+            return date(*timetuple)
+        except:
+            raise ValueError, 'Wrong date format %s' % ical
+    from_ical = staticmethod(from_ical)
 
 
 class vDatetime:
@@ -325,49 +551,6 @@ class vDatetime:
         except:
             raise ValueError, 'Wrong datetime format: %s' % ical
     from_ical = staticmethod(from_ical)
-
-
-
-
-class vDate:
-    """
-    Render and generates iCalendar date format.
-    >>> d = date(2001, 1,1)
-    >>> vDate(d).to_ical()
-    '20010101'
-
-    >>> vDate.from_ical('20010102')
-    datetime.date(2001, 1, 2)
-
-    >>> vDate('d').to_ical()
-    Traceback (most recent call last):
-        ...
-    ValueError: Value MUST be a date instance
-    """
-
-    def __init__(self, dt):
-        if not isinstance(dt, date):
-            raise ValueError('Value MUST be a date instance')
-        self.dt = dt
-        self.params = Parameters(dict(value='DATE'))
-
-    def to_ical(self):
-        return self.dt.strftime("%Y%m%d")
-
-    def from_ical(ical):
-        "Parses the data format from ical text format"
-        try:
-            timetuple = map(int, ((
-                ical[:4],     # year
-                ical[4:6],    # month
-                ical[6:8],    # day
-                )))
-            return date(*timetuple)
-        except:
-            raise ValueError, 'Wrong date format %s' % ical
-    from_ical = staticmethod(from_ical)
-
-
 
 
 class vDuration:
@@ -468,206 +651,6 @@ class vDuration:
         except:
             raise ValueError('Invalid iCalendar duration: %s' % ical)
     from_ical = staticmethod(from_ical)
-
-
-
-
-class vFloat(float):
-    """
-    Just a float.
-    >>> f = vFloat(1.0)
-    >>> f.to_ical()
-    '1.0'
-    >>> vFloat.from_ical('42')
-    42.0
-    >>> vFloat(42).to_ical()
-    '42.0'
-    """
-
-    def __new__(cls, *args, **kwargs):
-        self = super(vFloat, cls).__new__(cls, *args, **kwargs)
-        self.params = Parameters()
-        return self
-
-    def to_ical(self):
-        return str(self)
-
-    def from_ical(ical):
-        "Parses the data format from ical text format"
-        try:
-            return float(ical)
-        except:
-            raise ValueError, 'Expected float value, got: %s' % ical
-    from_ical = staticmethod(from_ical)
-
-
-
-class vInt(int):
-    """
-    Just an int.
-    >>> f = vInt(42)
-    >>> f.to_ical()
-    '42'
-    >>> vInt.from_ical('13')
-    13
-    >>> vInt.from_ical('1s3')
-    Traceback (most recent call last):
-        ...
-    ValueError: Expected int, got: 1s3
-    """
-
-    def __new__(cls, *args, **kwargs):
-        self = super(vInt, cls).__new__(cls, *args, **kwargs)
-        self.params = Parameters()
-        return self
-
-    def to_ical(self):
-        return str(self)
-
-    def from_ical(ical):
-        "Parses the data format from ical text format"
-        try:
-            return int(ical)
-        except:
-            raise ValueError, 'Expected int, got: %s' % ical
-    from_ical = staticmethod(from_ical)
-
-
-
-class vDDDTypes:
-    """
-    A combined Datetime, Date or Duration parser/generator. Their format cannot
-    be confused, and often values can be of either types. So this is practical.
-
-    >>> d = vDDDTypes.from_ical('20010101T123000')
-    >>> type(d)
-    <type 'datetime.datetime'>
-
-    >>> repr(vDDDTypes.from_ical('20010101T123000Z'))[:65]
-    'datetime.datetime(2001, 1, 1, 12, 30, tzinfo=<icalendar.prop.Utc '
-
-    >>> d = vDDDTypes.from_ical('20010101')
-    >>> type(d)
-    <type 'datetime.date'>
-
-    >>> vDDDTypes.from_ical('P31D')
-    datetime.timedelta(31)
-
-    >>> vDDDTypes.from_ical('-P31D')
-    datetime.timedelta(-31)
-
-    Bad input
-    >>> vDDDTypes(42)
-    Traceback (most recent call last):
-        ...
-    ValueError: You must use datetime, date or timedelta
-    """
-
-    def __init__(self, dt):
-        "Returns vDate from"
-        if type(dt) not in (datetime, date, timedelta):
-            raise ValueError ('You must use datetime, date or timedelta')
-        if isinstance(dt, datetime):
-            self.params = Parameters(dict(value='DATE-TIME'))
-        elif isinstance(dt, date): # isinstance(datetime_object, date) => True
-            self.params = Parameters(dict(value='DATE'))
-        self.dt = dt
-
-    def to_ical(self):
-        dt = self.dt
-        if isinstance(dt, datetime):
-            return vDatetime(dt).to_ical()
-        elif isinstance(dt, date):
-            return vDate(dt).to_ical()
-        elif isinstance(dt, timedelta):
-            return vDuration(dt).to_ical()
-        else:
-            raise ValueError('Unknown date type')
-
-    def from_ical(ical):
-        "Parses the data format from ical text format"
-        u = ical.upper()
-        if u.startswith('-P') or u.startswith('P'):
-            return vDuration.from_ical(ical)
-        try:
-            return vDatetime.from_ical(ical)
-        except:
-            return vDate.from_ical(ical)
-    from_ical = staticmethod(from_ical)
-
-
-
-class vDDDLists:
-    """
-    A list of vDDDTypes values.
-
-    >>> dt_list = vDDDLists.from_ical('19960402T010000Z')
-    >>> type(dt_list)
-    <type 'list'>
-
-    >>> len(dt_list)
-    1
-
-    >>> type(dt_list[0])
-    <type 'datetime.datetime'>
-
-    >>> str(dt_list[0])
-    '1996-04-02 01:00:00+00:00'
-
-    >>> dt_list = vDDDLists.from_ical('19960402T010000Z,19960403T010000Z,19960404T010000Z')
-    >>> len(dt_list)
-    3
-
-    >>> str(dt_list[0])
-    '1996-04-02 01:00:00+00:00'
-    >>> str(dt_list[2])
-    '1996-04-04 01:00:00+00:00'
-
-    >>> dt_list = vDDDLists('19960402T010000Z')
-    Traceback (most recent call last):
-        ...
-    ValueError: Value MUST be a list (of date instances)
-
-    >>> dt_list = vDDDLists([])
-    >>> dt_list.to_ical()
-    ''
-
-    >>> dt_list = vDDDLists([datetime(2000,1,1)])
-    >>> dt_list.to_ical()
-    '20000101T000000'
-
-    >>> dt_list = vDDDLists([datetime(2000,1,1), datetime(2000,11,11)])
-    >>> dt_list.to_ical()
-    '20000101T000000,20001111T000000'
-    """
-
-    def __init__(self, dt_list):
-        if not isinstance(dt_list, list):
-            raise ValueError('Value MUST be a list (of date instances)')
-        vDDD = []
-        for dt in dt_list:
-            vDDD.append(vDDDTypes(dt))
-        self.dts = vDDD
-
-    def to_ical(self):
-        '''
-        Generates the text string in the iCalendar format.
-        '''
-        dts_ical = [dt.to_ical() for dt in self.dts]
-        return ",".join(dts_ical)
-
-    def from_ical(ical):
-        '''
-        Parses the list of data formats from ical text format.
-        @param ical: ical text format
-        '''
-        out = []
-        ical_dates = ical.split(",")
-        for ical_dt in ical_dates:
-            out.append(vDDDTypes.from_ical(ical_dt))
-        return out
-    from_ical = staticmethod(from_ical)
-
 
 
 class vPeriod:
@@ -777,6 +760,7 @@ class vPeriod:
             p = (self.start, self.end)
         return 'vPeriod(%s)' % repr(p)
 
+
 class vWeekday(str):
     """
     This returns an unquoted weekday abbrevation
@@ -843,8 +827,6 @@ class vWeekday(str):
     from_ical = staticmethod(from_ical)
 
 
-
-
 class vFrequency(str):
     """
     A simple class that catches illegal values.
@@ -885,8 +867,6 @@ class vFrequency(str):
         except:
             raise ValueError, 'Expected weekday abbrevation, got: %s' % ical
     from_ical = staticmethod(from_ical)
-
-
 
 
 class vRecur(CaselessDict):
@@ -1010,7 +990,6 @@ class vRecur(CaselessDict):
     from_ical = staticmethod(from_ical)
 
 
-
 class vText(unicode):
     """
     Simple text
@@ -1097,8 +1076,6 @@ class vText(unicode):
     from_ical = staticmethod(from_ical)
 
 
-
-
 class vTime(time):
     """
     A subclass of datetime, that renders itself in the iCalendar time
@@ -1135,8 +1112,6 @@ class vTime(time):
     from_ical = staticmethod(from_ical)
 
 
-
-
 class vUri(str):
     """
     Uniform resource identifier is basically just an unquoted string.
@@ -1162,8 +1137,6 @@ class vUri(str):
         except:
             raise ValueError, 'Expected , got: %s' % ical
     from_ical = staticmethod(from_ical)
-
-
 
 
 class vGeo:
@@ -1209,8 +1182,6 @@ class vGeo:
         except:
             raise ValueError, "Expected 'float;float' , got: %s" % ical
     from_ical = staticmethod(from_ical)
-
-
 
 
 class vUTCOffset:
@@ -1305,8 +1276,6 @@ class vUTCOffset:
     from_ical = staticmethod(from_ical)
 
 
-
-
 class vInline(str):
     """
     This is an especially dumb class that just holds raw unparsed text and has
@@ -1336,7 +1305,6 @@ class vInline(str):
     def from_ical(ical):
         return str(ical)
     from_ical = staticmethod(from_ical)
-
 
 
 class TypesFactory(CaselessDict):
