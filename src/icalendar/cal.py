@@ -377,7 +377,11 @@ class Component(CaselessDict):
                 factory = types_factory.for_property(name)
                 component = stack[-1]
                 try:
-                    vals = factory(factory.from_ical(vals))
+                    if name in ('DTSTART', 'DTEND') and 'TZID' in params: # TODO: add DUE, FREEBUSY 
+                        vals = factory(factory.from_ical(vals, params['TZID']))
+                        print vals.to_ical()
+                    else:
+                        vals = factory(factory.from_ical(vals))
                 except ValueError:
                     if not component.ignore_exceptions:
                         raise

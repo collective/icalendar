@@ -47,6 +47,7 @@ SequenceTypes = [TupleType, ListType]
 import re
 import time as _time
 import binascii
+import pytz
 
 # from this package
 from icalendar.caselessdict import CaselessDict
@@ -443,13 +444,13 @@ class vDDDTypes:
         else:
             raise ValueError('Unknown date type')
 
-    def from_ical(ical):
+    def from_ical(ical, timezone=None):
         "Parses the data format from ical text format"
         u = ical.upper()
         if u.startswith('-P') or u.startswith('P'):
             return vDuration.from_ical(ical)
         try:
-            return vDatetime.from_ical(ical)
+            return vDatetime.from_ical(ical, timezone=timezone)
         except:
             return vDate.from_ical(ical)
     from_ical = staticmethod(from_ical)
@@ -526,6 +527,9 @@ class vDatetime:
     >>> vDatetime(utc).to_ical()
     '20010101T000000Z'
 
+    >>> dat = vDatetime.from_ical('20101010T000000', 'Europe/Vienna')
+    >>> vDatetime.to_ical(dat)
+    'TZID=Europe/Vienna;20101010T000000'
     """
 
     def __init__(self, dt):
@@ -533,16 +537,25 @@ class vDatetime:
         self.params = Parameters()
 
     def to_ical(self):
-        if self.dt.tzinfo:
-            utc_time = self.dt - self.dt.tzinfo.utcoffset(self.dt)
-            return utc_time.strftime("%Y%m%dT%H%M%SZ")
+        if str(self.dt.tzinfo) == 'UTC':
+            return self.dt.strftime("%Y%m%dT%H%M%SZ")
+        elif self.dt.tzinfo:
+            return "TZID=%s;%s" % (self.dt.tzinfo, self.dt.strftime("%Y%m%dT%H%M%S"))
         return self.dt.strftime("%Y%m%dT%H%M%S")
 
-    def from_ical(ical):
+    def from_ical(ical, timezone=None):
         """ Parses the data format from ical text format.
 
         """
-        import pdb; pdb.set_trace()
+        # TODO: ical string should better contain also the TZID property.
+        if timezone:
+            try:
+                timezone = pytz.timezone(timezone)
+            except pytz.UnknownTimeZoneError:
+                # We only support timezones from the Olson Database.
+                timezone=None
+                timezone = pytz.timezone('Europe/Vienna')
+
         try:
             timetuple = map(int, ((
                 ical[:4],       # year
@@ -552,7 +565,9 @@ class vDatetime:
                 ical[11:13],    # minute
                 ical[13:15],    # second
                 )))
-            if not ical[15:]:
+            if timezone:
+                return datetime(*timetuple, tzinfo=timezone)
+            elif not ical[15:]:
                 return datetime(*timetuple)
             elif ical[15:16] == 'Z':
                 timetuple += [0, UTC]
