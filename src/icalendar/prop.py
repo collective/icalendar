@@ -565,17 +565,12 @@ class vDDDTypes:
 
     def __init__(self, dt):
         "Returns vDate from"
-        wrong_type_used = 1
-        for typ in (datetime, date, timedelta):
-            if isinstance(dt, typ):
-                wrong_type_used = 0
-        if wrong_type_used:
+        if type(dt) not in (datetime, date, timedelta):
             raise ValueError ('You must use datetime, date or timedelta')
         if isinstance(dt, datetime):
             self.params = Parameters(dict(value='DATE-TIME'))
         elif isinstance(dt, date): # isinstance(datetime_object, date) => True
             self.params = Parameters(dict(value='DATE'))
-
         self.dt = dt
 
     def to_ical(self):
