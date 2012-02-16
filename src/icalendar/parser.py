@@ -455,7 +455,9 @@ class Contentline(str):
             raise ValueError, "Content line could not be parsed into parts: %r: %s" % (self, e)
 
     def from_ical(st, strict=False):
-        "Unfolds the content lines in an iCalendar into long content lines"
+        """ Unfolds the content lines in an iCalendar into long content lines.
+
+        """
         try:
             # a fold is carriage return followed by either a space or a tab
             return Contentline(FOLD.sub('', st), strict=strict)
@@ -464,7 +466,10 @@ class Contentline(str):
     from_ical = staticmethod(from_ical)
 
     def to_ical(self):
-        "Long content lines are folded so they are less than 75 characters wide"
+        """ Long content lines are folded so they are less than 75 characters
+        wide.
+        
+        """
         return foldline(self, newline='\r\n')
 
 

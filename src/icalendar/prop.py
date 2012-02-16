@@ -536,25 +536,35 @@ class vDatetime:
         self.dt = dt
         self.params = Parameters()
 
+    def cleanup_timezone(timezone):
+        try:
+            timezone = pytz.timezone(timezone)
+        except pytz.UnknownTimeZoneError:
+            timezone = None
+
     def to_ical(self):
-        if str(self.dt.tzinfo) == 'UTC':
+        timezone = None
+        if self.dt.tzinfo:
+            timezone = str(self.cleanup_timezone(self.dt.tzinfo))
+
+        if timezone == 'UTC':
             return self.dt.strftime("%Y%m%dT%H%M%SZ")
-        elif self.dt.tzinfo:
-            return "TZID=%s;%s" % (self.dt.tzinfo, self.dt.strftime("%Y%m%dT%H%M%S"))
+        elif timezone:
+            self.params.update({'TZID': timezone})
+            #return "TZID=%s;%s" % (timezone, self.dt.strftime("%Y%m%dT%H%M%S"))
         return self.dt.strftime("%Y%m%dT%H%M%S")
 
     def from_ical(ical, timezone=None):
         """ Parses the data format from ical text format.
 
         """
-        # TODO: ical string should better contain also the TZID property.
+        # TODO: ical string should better contain also the TZID property.deleter(
+
         if timezone:
             try:
                 timezone = pytz.timezone(timezone)
             except pytz.UnknownTimeZoneError:
-                # We only support timezones from the Olson Database.
-                timezone=None
-                timezone = pytz.timezone('Europe/Vienna')
+                timezone = None
 
         try:
             timetuple = map(int, ((

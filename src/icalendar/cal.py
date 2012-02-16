@@ -377,7 +377,7 @@ class Component(CaselessDict):
                 factory = types_factory.for_property(name)
                 component = stack[-1]
                 try:
-                    if name in ('DTSTART', 'DTEND') and 'TZID' in params: # TODO: add DUE, FREEBUSY 
+                    if name in ('DTSTART', 'DTEND') and 'TZID' in params: # TODO: add DUE, FREEBUSY :call <SNR>31_LustyJugglerKeyPressed('ENTER')
                         vals = factory(factory.from_ical(vals, params['TZID']))
                         print vals.to_ical()
                     else:
