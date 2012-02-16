@@ -51,7 +51,7 @@ import pytz
 
 # from this package
 from icalendar.caselessdict import CaselessDict
-from icalendar.parser import Parameters
+from icalendar.parser import Parameters, timezone_from_string
 
 DATE_PART = r'(\d+)D'
 TIME_PART = r'T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?'
@@ -536,16 +536,10 @@ class vDatetime:
         self.dt = dt
         self.params = Parameters()
 
-    def cleanup_timezone(self, timezone):
-        try:
-            timezone = pytz.timezone(str(timezone))
-        except pytz.UnknownTimeZoneError:
-            timezone = None
-
     def to_ical(self):
         timezone = None
         if self.dt.tzinfo:
-            timezone = str(self.cleanup_timezone(self.dt.tzinfo))
+            timezone = str(timezone_from_string(self.dt.tzinfo))
 
         if timezone == 'UTC':
             return self.dt.strftime("%Y%m%dT%H%M%SZ")
@@ -561,10 +555,7 @@ class vDatetime:
         # TODO: ical string should better contain also the TZID property.deleter(
 
         if timezone:
-            try:
-                timezone = pytz.timezone(timezone)
-            except pytz.UnknownTimeZoneError:
-                timezone = None
+            timezone = timezone_from_string(timezone)
 
         try:
             timetuple = map(int, ((
