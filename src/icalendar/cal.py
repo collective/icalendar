@@ -16,7 +16,7 @@ SequenceTypes = (ListType, TupleType)
 # from this package
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Contentlines, Contentline, Parameters
-from icalendar.parser import q_split, q_join
+from icalendar.parser import q_split, q_join, timezone_from_string
 from icalendar.prop import TypesFactory, vText
 
 
@@ -240,6 +240,9 @@ class Component(CaselessDict):
                 self.set(name, [oldval, value], encode=0)
         else:
             self.set(name, value, encode)
+        if getattr(value, 'tzinfo', False):
+            timezone = timezone_from_string(value.tzinfo)
+            self[name].params.update({'TZID': str(timezone)})
 
 
     def _decode(self, name, value):
