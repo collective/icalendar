@@ -24,9 +24,8 @@ from icalendar.prop import TypesFactory, vText
 # The component factory
 
 class ComponentFactory(CaselessDict):
-    """
-    All components defined in rfc 2445 are registered in this factory class. To
-    get a component you can use it like this.
+    """ All components defined in rfc 2445 are registered in this factory 
+    class. To get a component you can use it like this.
 
     >>> factory = ComponentFactory()
     >>> component = factory['VEVENT']
