@@ -536,9 +536,9 @@ class vDatetime:
         self.dt = dt
         self.params = Parameters()
 
-    def cleanup_timezone(timezone):
+    def cleanup_timezone(self, timezone):
         try:
-            timezone = pytz.timezone(timezone)
+            timezone = pytz.timezone(str(timezone))
         except pytz.UnknownTimeZoneError:
             timezone = None
 
