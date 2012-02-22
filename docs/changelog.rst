@@ -1,6 +1,17 @@
 Changelog
 =========
 
+3.0 (unreleased)
+----------------
+
+* Add API for proper Timezone support. Allow creating ical DATE-TIME strings
+  with timezone information from Python datetimes with pytz based timezone
+  information and vice versa.
+  [thet]
+
+* Unify API to only use to_ical and from_ical and remove any __str__ API
+  definitions. This is one requirement for Python 3 compatibility.
+  [thet]
 
 2.2 (2011-08-24)
 ----------------
