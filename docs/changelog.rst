@@ -1,8 +1,15 @@
 Changelog
 =========
 
-3.0b1 (2012-02-24)
+
+3.0.1b1 (2012-02-24)
 ------------------
+
+* Update Release information.
+  [thet]
+
+3.0
+---
 
 * Add API for proper Timezone support. Allow creating ical DATE-TIME strings
   with timezone information from Python datetimes with pytz based timezone
