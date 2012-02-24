@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.0a1 (2012-02-24)
+3.0b1 (2012-02-24)
 ------------------
 
 * Add API for proper Timezone support. Allow creating ical DATE-TIME strings
