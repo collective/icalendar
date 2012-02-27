@@ -28,7 +28,7 @@ def timezone_from_string(timezone):
 
     Testing an existent zone:
     >>> timezone_from_string("Europe/Vienna")
-    <DstTzInfo 'Europe/Vienna' ...
+    <DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>
 
     Testing an inexistend zone. In the Styrian dialect, Tripstrül describes an
     imaginative place somewhere in nowhere, far away.
@@ -36,7 +36,7 @@ def timezone_from_string(timezone):
     >>> pytz.timezone('Tripstrul')
     Traceback (most recent call last):
     ...
-    raise UnknownTimeZoneError(zone)
+      raise UnknownTimeZoneError(zone)
     UnknownTimeZoneError: 'Tripstrul'
 
     """
@@ -52,13 +52,12 @@ def foldline(text, lenght=75, newline='\r\n'):
 
     >>> from icalendar.parser import foldline
     >>> foldline('foo')
-    u'foo\\r\\n'
+    'foo'
 
     >>> longtext = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
     ...             "Vestibulum convallis imperdiet dui posuere.")
     >>> foldline(longtext)
-    u'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum co\\r\\n
-    nvallis imperdiet dui posuere.\\r\\n'
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum \\r\\n convallis imperdiet dui posuere.'
 
 #    >>> uuu = u'alfdkadäääüüaskd'
 #    >>> foldline(uuu, length=3)
@@ -68,8 +67,9 @@ def foldline(text, lenght=75, newline='\r\n'):
     return newline.join(
             textwrap.wrap(text, lenght,
                 subsequent_indent=' ',
-                drop_whitespace=True,
-                break_long_words=True
+                drop_whitespace=False,
+                break_long_words=True,
+                replace_whitespace=False
                 )
             )
 
@@ -310,17 +310,17 @@ class Contentline(str):
     A long line gets folded
     >>> c = Contentline(''.join(['123456789 ']*10))
     >>> c.to_ical()
-    '123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234\\r\\n 56789 123456789 123456789'
+    '123456789 123456789 123456789 123456789 123456789 123456789 123456789 \\r\\n 123456789 123456789 123456789 '
 
     A folded line gets unfolded
     >>> c = Contentline.from_ical(c.to_ical())
     >>> c
-    '123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789'
+    '123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 '
 
     Newlines in a string get need to be preserved
     >>> c = Contentline('1234\\n\\n1234')
     >>> c.to_ical()
-    '1234\\r\\n \\r\\n 1234'
+    '1234\\n\\n1234'
 
     We do not fold within a UTF-8 character:
     >>> c = Contentline('This line has a UTF-8 character where it should be folded. Make sure it g\xc3\xabts folded before that character.')
@@ -509,12 +509,12 @@ class Contentlines(list):
 
     >>> c = Contentlines([Contentline('BEGIN:VEVENT\\r\\n')])
     >>> c.to_ical()
-    'BEGIN:VEVENT\\r\\n'
+    'BEGIN:VEVENT\\r\\n\\r\\n'
 
     Lets try appending it with a 100 charater wide string
     >>> c.append(Contentline(''.join(['123456789 ']*10)+'\\r\\n'))
     >>> c.to_ical()
-    'BEGIN:VEVENT\\r\\n\\r\\n123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234\\r\\n 56789 123456789 123456789 \\r\\n'
+    'BEGIN:VEVENT\\r\\n\\r\\n123456789 123456789 123456789 123456789 123456789 123456789 123456789 \\r\\n 123456789 123456789 123456789 \\r\\n\\r\\n'
 
     Notice that there is an extra empty string in the end of the content lines.
     That is so they can be easily joined with: '\r\n'.join(contentlines)).
@@ -528,7 +528,7 @@ class Contentlines(list):
 
     def to_ical(self):
         "Simply join self."
-        return '\r\n'.join(l.to_ical() for l in self if l)
+        return '\r\n'.join(l.to_ical() for l in self if l) + '\r\n'
 
     def from_ical(st):
         "Parses a string into content lines"
