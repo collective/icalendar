@@ -541,11 +541,11 @@ class vDatetime:
         if self.dt.tzinfo:
             timezone = str(timezone_from_string(self.dt.tzinfo))
 
-        if timezone == 'UTC':
+        if timezone == 'UTC' or self.dt.tzinfo == UTC:
             return self.dt.strftime("%Y%m%dT%H%M%SZ")
         elif timezone:
             self.params.update({'TZID': timezone})
-            #return "TZID=%s;%s" % (timezone, self.dt.strftime("%Y%m%dT%H%M%S"))
+            return "TZID=%s;%s" % (timezone, self.dt.strftime("%Y%m%dT%H%M%S"))
         return self.dt.strftime("%Y%m%dT%H%M%S")
 
     def from_ical(ical, timezone=None):
