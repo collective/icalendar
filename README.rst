@@ -12,7 +12,7 @@ with Python.
     :Dependencies: Since version 3.0 we depend on `pytz`_. There are no
         dependencies.
     :Tested with: Python 2.4 - 2.7
-    :License: ???
+    :License: `BSD`_
 
 ----
 
@@ -34,4 +34,5 @@ a suggestion to icalendar-dev@codespeak.net to take over mainaining of
 .. _`Plone`: http://plone.org
 .. _`pytz`: http://pypi.python.org/pypi/pytz
 .. _`RFC`: http://www.ietf.org/rfc/rfc5545.txt
+.. _`BSD`: https://github.com/collective/icalendar/issues/2
 

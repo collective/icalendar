@@ -12,7 +12,7 @@ setuptools.setup(
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: GNU General Public License (GPL)',
+        'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         ],
     keywords='calendar calendaring ical icalendar event todo journal '
@@ -22,7 +22,7 @@ setuptools.setup(
     author='MaxM',
     author_email='max@mxm.dk',
     url='https://github.com/collective/icalendar',
-    license='GPL',
+    license='BSD',
     packages=setuptools.find_packages('src'),
     package_dir={'': 'src'},
     include_package_data=True,
