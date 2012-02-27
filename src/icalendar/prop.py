@@ -567,7 +567,7 @@ class vDatetime:
                 ical[13:15],    # second
                 )))
             if timezone:
-                return datetime(*timetuple, tzinfo=timezone)
+                return datetime(tzinfo=timezone, *timetuple)
             elif not ical[15:]:
                 return datetime(*timetuple)
             elif ical[15:16] == 'Z':
