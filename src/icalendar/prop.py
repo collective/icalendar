@@ -797,7 +797,7 @@ class vWeekday(str):
     >>> a = vWeekday('erwer')
     Traceback (most recent call last):
         ...
-    ValueError: Expected weekday abbrevation, got: ERWER
+    ValueError: Expected weekday abbrevation, got: erwer
 
     >>> vWeekday.from_ical('mo')
     'MO'
@@ -860,7 +860,7 @@ class vFrequency(str):
     >>> f = vFrequency('bad test')
     Traceback (most recent call last):
         ...
-    ValueError: Expected frequency, got: BAD TEST
+    ValueError: Expected frequency, got: bad test
     >>> vFrequency('daily').to_ical()
     'DAILY'
     >>> vFrequency('daily').from_ical('MONTHLY')
