@@ -34,7 +34,7 @@ To create a calendar and write it to disk::
   >>> cal.add_component(event)
 
   >>> f = open('example.ics', 'wb')
-  >>> f.write(cal.as_string())
+  >>> f.write(cal.to_ical())
   >>> f.close()
 
 More documentation

@@ -9,12 +9,26 @@ with Python.
 
     :Code: http://github.com/collective/icalendar
     :Mailing list: http://github.com/collective/icalendar/issues
-    :Dependencies: Since version 3.0 we depend on `pytz`_. There are no
-        dependencies.
+    :Dependencies: Since version 3.0 we depend on `pytz`_.
     :Tested with: Python 2.4 - 2.7
     :License: `BSD`_
 
 ----
+
+API Change in version 3.0
+=========================
+
+Since version we unified to icalendar de/serialization API to use only to_ical
+(for writing an ical string from the internal representation) and from_ical
+(for parsing an ical string into the internal representation).
+
+to_ical is now used instead of the methods ical, string, as_string and instead
+of string casting via __str__ and str.
+
+from_ical is now used instead of from_string.
+
+This change is a requirement for future Python 3 compatibility. Please update
+your code to reflect to the new API.
 
 
 About this fork which is not a fork anymore

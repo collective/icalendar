@@ -3,8 +3,6 @@ Todo
 
 - use @static instead of staticmethod
 
-%s/from_string/from_ical/gc
-
 * Automatic encoding and decoding of parameter values. Most of the
   work is done already. Just need to get it finished. Look at line 153
   in 'src/icalendar/parser.py'

@@ -16,8 +16,12 @@ Changelog
   information and vice versa.
   [thet]
 
-* Unify API to only use to_ical and from_ical and remove any __str__ API
-  definitions. This is one requirement for Python 3 compatibility.
+* Unify API to only use to_ical and from_ical and remove string casting as a
+  requirement for Python 3 compatibility:
+  New: to_ical.
+  Old: ical, string, as_string and string casting via __str__ and str.
+  New: from_ical.
+  Old: from_string.
   [thet]
 
 2.2 (2011-08-24)
