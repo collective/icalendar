@@ -239,9 +239,9 @@ class Component(CaselessDict):
                 self.set(name, [oldval, value], encode=0)
         else:
             self.set(name, value, encode)
-        if getattr(value, 'tzinfo', False):
-            timezone = timezone_from_string(value.tzinfo)
-            self[name].params.update({'TZID': str(timezone)})
+        if getattr(value, 'tzname', False):
+            timezone = value.tzname()
+            self[name].params.update({'TZID': timezone})
 
 
     def _decode(self, name, value):
