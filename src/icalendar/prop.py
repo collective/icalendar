@@ -528,8 +528,8 @@ class vDatetime:
     '20010101T000000Z'
 
     >>> dat = vDatetime.from_ical('20101010T000000', 'Europe/Vienna')
-    >>> vDatetime.to_ical(dat)
-    'TZID=Europe/Vienna;20101010T000000'
+    >>> vDatetime(dat).to_ical()
+    'TZID=CET;20101010T000000'
     """
 
     def __init__(self, dt):
@@ -537,10 +537,7 @@ class vDatetime:
         self.params = Parameters()
 
     def to_ical(self):
-        timezone = None
-        if self.dt.tzinfo:
-            timezone = str(timezone_from_string(self.dt.tzinfo))
-
+        timezone = self.dt.tzname()
         if timezone == 'UTC' or self.dt.tzinfo == UTC:
             return self.dt.strftime("%Y%m%dT%H%M%SZ")
         elif timezone:
@@ -567,7 +564,7 @@ class vDatetime:
                 ical[13:15],    # second
                 )))
             if timezone:
-                return datetime(*timetuple, tzinfo=timezone)
+                return datetime(tzinfo=timezone, *timetuple)
             elif not ical[15:]:
                 return datetime(*timetuple)
             elif ical[15:16] == 'Z':
