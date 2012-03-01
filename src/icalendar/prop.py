@@ -712,17 +712,18 @@ class vPeriod:
         ...
     ValueError: Expected period format, got: 20000101T000000/Psd31D
 
-    Utc datetime
-    >>> da_tz = FixedOffset(+1.0, 'da_DK')
-    >>> start = datetime(2000,1,1, tzinfo=da_tz)
-    >>> end = datetime(2000,1,2, tzinfo=da_tz)
+    Timezoned
+    >>> import pytz
+    >>> dk = pytz.timezone('Europe/Copenhagen')
+    >>> start = datetime(2000,1,1, tzinfo=dk)
+    >>> end = datetime(2000,1,2, tzinfo=dk)
     >>> per = (start, end)
     >>> vPeriod(per).to_ical()
     '20000101T000000/20000102T000000'
     >>> vPeriod(per).params['TZID']
-    'da_DK'
+    'Europe/Copenhagen'
 
-    >>> p = vPeriod((datetime(2000,1,1, tzinfo=da_tz), timedelta(days=31)))
+    >>> p = vPeriod((datetime(2000,1,1, tzinfo=dk), timedelta(days=31)))
     >>> p.to_ical()
     '20000101T000000/P31D'
 
@@ -736,21 +737,28 @@ class vPeriod:
                 isinstance(end_or_duration, date) or
                 isinstance(end_or_duration, timedelta)):
             raise ValueError('end_or_duration MUST be a datetime, date or timedelta instance')
-        self.start = start
-        self.end_or_duration = end_or_duration
-        self.by_duration = 0
+        by_duration = 0
         if isinstance(end_or_duration, timedelta):
-            self.by_duration = 1
-            self.duration = end_or_duration
-            self.end = self.start + self.duration
+            by_duration = 1
+            duration = end_or_duration
+            end = start + duration
         else:
-            self.end = end_or_duration
-            self.duration = self.end - self.start
-        if self.start > self.end:
+            end = end_or_duration
+            duration = end - start
+        if start > end:
             raise ValueError("Start time is greater than end time")
+
         self.params = Parameters()
-        if self.start.tzname():
-            self.params['TZID'] = self.start.tzname()
+        # set the timezone identifier
+        tzid = start.tzinfo and start.tzinfo.zone or None
+        if tzid:
+            self.params['TZID'] = tzid
+
+        self.start = start
+        self.end = end
+        self.by_duration = by_duration
+        self.duration = duration
+
     def __cmp__(self, other):
         if not isinstance(other, vPeriod):
             raise NotImplementedError(
