@@ -5,6 +5,12 @@ Changelog
 3.0.1b2 (unreleased)
 --------------------
 
+* For all TZID parameters in DATE-TIME properties, use timezone identifiers
+  (e.g. Europe/Vienna) instead of timezone names (e.g. CET), as required by
+  RFC5545. Timezone names are used together with timezone identifiers in the
+  Timezone components.
+  [thet]
+
 * Since we use pytz for timezones, also use UTC tzinfo object from the pytz 
   library instead of own implementation.
   [thet]
