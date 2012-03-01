@@ -51,36 +51,6 @@ def normalized_timezone(timezone):
     return timezone
 
 
-def normalized_tzid(timezone):
-    """ Return the timezone name from a tzinfo object or timezone identifier.
-
-    We need real timezone names if available - From UTC offsets, no Daylight
-    Saving Time information can be guessed.
-
-    >>> from icalendar.parser import normalized_tzid
-    >>> normalized_tzid("Europe/Vienna")
-    'Europe/Vienna'
-
-    The tzname object doesn't return the timezone identifier we need.
-    >>> from datetime import dateime
-    >>> import pytz
-    >>> at = pytz.timezone('Europe/Vienna')
-    >>> dt = datetime(2012,03,01,10,10, tzinfo=at)
-    >>> dt.tzname()
-    'CET'
-
-    The string representation does...
-    >>> str(dt.tzinfo)
-    'Europe/Vienna'
-
-    And so does normalize_tzname, which is just here for convenience:
-    >>> normalized_tzid(dt.tzinfo)
-    'Europe/Vienna'
-
-    """
-    return str(normalized_timezone(timezone))
-
-
 def foldline(text, lenght=75, newline='\r\n'):
     """ Make a string folded per RFC5545 (each line must be less than 75 octets)
 
