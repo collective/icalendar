@@ -11,6 +11,9 @@ Changelog
   Timezone components.
   [thet]
 
+* Timezone parsing, issues and test fixes.
+  [mikaelfrykholm, garbas, tgecho]
+
 * Since we use pytz for timezones, also use UTC tzinfo object from the pytz 
   library instead of own implementation.
   [thet]
