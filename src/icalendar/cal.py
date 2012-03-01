@@ -16,7 +16,7 @@ SequenceTypes = (ListType, TupleType)
 # from this package
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Contentlines, Contentline, Parameters
-from icalendar.parser import q_split, q_join, timezone_from_string
+from icalendar.parser import q_split, q_join
 from icalendar.prop import TypesFactory, vText
 
 
