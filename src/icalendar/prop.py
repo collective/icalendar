@@ -529,7 +529,7 @@ class vDatetime:
 
     >>> dat = vDatetime.from_ical('20101010T000000', 'Europe/Vienna')
     >>> vDatetime(dat).to_ical()
-    'TZID=CET;20101010T000000'
+    '20101010T000000'
     """
 
     def __init__(self, dt):
@@ -542,7 +542,7 @@ class vDatetime:
             return self.dt.strftime("%Y%m%dT%H%M%SZ")
         elif timezone:
             self.params.update({'TZID': timezone})
-            return "TZID=%s;%s" % (timezone, self.dt.strftime("%Y%m%dT%H%M%S"))
+#            return "TZID=%s;%s" % (timezone, self.dt.strftime("%Y%m%dT%H%M%S")) The timezone should not be printed with the date, but rather in the containing component.
         return self.dt.strftime("%Y%m%dT%H%M%S")
 
     def from_ical(ical, timezone=None):
@@ -568,8 +568,7 @@ class vDatetime:
             elif not ical[15:]:
                 return datetime(*timetuple)
             elif ical[15:16] == 'Z':
-                timetuple += [0, UTC]
-                return datetime(*timetuple)
+                return datetime(*timetuple, tzinfo=UTC)
             else:
                 raise ValueError, ical
         except:
@@ -719,11 +718,13 @@ class vPeriod:
     >>> end = datetime(2000,1,2, tzinfo=da_tz)
     >>> per = (start, end)
     >>> vPeriod(per).to_ical()
-    '19991231T235900Z/20000101T235900Z'
+    '20000101T000000/20000102T000000'
+    >>> vPeriod(per).params['TZID']
+    'da_DK'
 
     >>> p = vPeriod((datetime(2000,1,1, tzinfo=da_tz), timedelta(days=31)))
     >>> p.to_ical()
-    '19991231T235900Z/P31D'
+    '20000101T000000/P31D'
 
     """
 
@@ -748,7 +749,8 @@ class vPeriod:
         if self.start > self.end:
             raise ValueError("Start time is greater than end time")
         self.params = Parameters()
-
+        if self.start.tzname():
+            self.params['TZID'] = self.start.tzname()
     def __cmp__(self, other):
         if not isinstance(other, vPeriod):
             raise NotImplementedError(
@@ -797,7 +799,7 @@ class vWeekday(str):
     >>> a = vWeekday('erwer')
     Traceback (most recent call last):
         ...
-    ValueError: Expected weekday abbrevation, got: ERWER
+    ValueError: Expected weekday abbrevation, got: erwer
 
     >>> vWeekday.from_ical('mo')
     'MO'
@@ -860,7 +862,7 @@ class vFrequency(str):
     >>> f = vFrequency('bad test')
     Traceback (most recent call last):
         ...
-    ValueError: Expected frequency, got: BAD TEST
+    ValueError: Expected frequency, got: bad test
     >>> vFrequency('daily').to_ical()
     'DAILY'
     >>> vFrequency('daily').from_ical('MONTHLY')
