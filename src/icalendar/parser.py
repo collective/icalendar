@@ -20,24 +20,28 @@ import pytz
 SequenceTypes = [TupleType, ListType]
 
 
-def timezone_from_string(timezone):
-    """ Return a DstTzInfo object from a timezone string using the pytz module.
-    Timezones other than those defined in the Olson database are not supported.
+def normalized_timezone(timezone):
+    """ Return a DstTzInfo object from a timezone string or a tzinfo object
+    using the pytz module. This function ensures, that a timezone identifier
+    known to the pytz library/Olson database is used. Timezones other than
+    those defined in the Olson database are not supported.
 
-    >>> from icalendar.parser import timezone_from_string
+    >>> from icalendar.parser import normalized_timezone
 
     Testing an existent zone:
-    >>> timezone_from_string("Europe/Vienna")
+    >>> normalized_timezone('Europe/Vienna')
     <DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>
 
     Testing an inexistend zone. In the Styrian dialect, Tripstrül describes an
     imaginative place somewhere in nowhere, far away.
     It's not defined in the Olson database.
-    >>> pytz.timezone('Tripstrul')
-    Traceback (most recent call last):
-    ...
-      raise UnknownTimeZoneError(zone)
-    UnknownTimeZoneError: 'Tripstrul'
+    In that case, None is returned.
+    >>> normalized_timezone('Tripstrul')
+
+    You can also pass a tzinfo object directly:
+    >>> import pytz
+    >>> normalized_timezone(pytz.timezone('Europe/Vienna'))
+    <DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>
 
     """
     try:
@@ -45,6 +49,36 @@ def timezone_from_string(timezone):
     except pytz.UnknownTimeZoneError:
         timezone = None
     return timezone
+
+
+def normalized_tzid(timezone):
+    """ Return the timezone name from a tzinfo object or timezone identifier.
+
+    We need real timezone names if available - From UTC offsets, no Daylight
+    Saving Time information can be guessed.
+
+    >>> from icalendar.parser import normalized_tzid
+    >>> normalized_tzid("Europe/Vienna")
+    'Europe/Vienna'
+
+    The tzname object doesn't return the timezone identifier we need.
+    >>> from datetime import dateime
+    >>> import pytz
+    >>> at = pytz.timezone('Europe/Vienna')
+    >>> dt = datetime(2012,03,01,10,10, tzinfo=at)
+    >>> dt.tzname()
+    'CET'
+
+    The string representation does...
+    >>> str(dt.tzinfo)
+    'Europe/Vienna'
+
+    And so does normalize_tzname, which is just here for convenience:
+    >>> normalized_tzid(dt.tzinfo)
+    'Europe/Vienna'
+
+    """
+    return str(normalized_timezone(timezone))
 
 
 def foldline(text, lenght=75, newline='\r\n'):

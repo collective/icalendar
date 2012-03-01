@@ -51,7 +51,8 @@ from icalendar.tools import utctz
 
 # from this package
 from icalendar.caselessdict import CaselessDict
-from icalendar.parser import Parameters, timezone_from_string
+from icalendar.parser import Parameters
+from icalendar.parser import normalized_timezone
 
 DATE_PART = r'(\d+)D'
 TIME_PART = r'T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?'
@@ -189,79 +190,64 @@ class vCalAddress(str):
 
 
 
-#
-#ZERO = timedelta(0)
-#HOUR = timedelta(hours=1)
-#STDOFFSET = timedelta(seconds = -_time.timezone)
-#if _time.daylight:
-#    DSTOFFSET = timedelta(seconds = -_time.altzone)
-#else:
-#    DSTOFFSET = STDOFFSET
-#DSTDIFF = DSTOFFSET - STDOFFSET
-#
-#
-#class FixedOffset(tzinfo):
-#    """ Fixed offset in minutes east from UTC.
-#
-#    """
-#
-#    def __init__(self, offset, name):
-#        self.__offset = timedelta(minutes = offset)
-#        self.__name = name
-#
-#    def utcoffset(self, dt):
-#        return self.__offset
-#
-#    def tzname(self, dt):
-#        return self.__name
-#
-#    def dst(self, dt):
-#        return ZERO
-#
-#
-#class Utc(tzinfo):
-#    """ UTC tzinfo subclass.
-#
-#    """
-#
-#    def utcoffset(self, dt):
-#        return ZERO
-#
-#    def tzname(self, dt):
-#        return "UTC"
-#
-#    def dst(self, dt):
-#        return ZERO
-#UTC = Utc()
-#
-#class LocalTimezone(tzinfo):
-#    """ Timezone of the machine where the code is running.
-#
-#    """
-#
-#    def utcoffset(self, dt):
-#        if self._isdst(dt):
-#            return DSTOFFSET
-#        else:
-#            return STDOFFSET
-#
-#    def dst(self, dt):
-#        if self._isdst(dt):
-#            return DSTDIFF
-#        else:
-#            return ZERO
-#
-#    def tzname(self, dt):
-#        return _time.tzname[self._isdst(dt)]
-#
-#    def _isdst(self, dt):
-#        tt = (dt.year, dt.month, dt.day,
-#              dt.hour, dt.minute, dt.second,
-#              dt.weekday(), 0, -1)
-#        stamp = _time.mktime(tt)
-#        tt = _time.localtime(stamp)
-#        return tt.tm_isdst > 0
-#
+
+ZERO = timedelta(0)
+HOUR = timedelta(hours=1)
+STDOFFSET = timedelta(seconds = -_time.timezone)
+if _time.daylight:
+    DSTOFFSET = timedelta(seconds = -_time.altzone)
+else:
+    DSTOFFSET = STDOFFSET
+DSTDIFF = DSTOFFSET - STDOFFSET
+
+
+class FixedOffset(tzinfo):
+    """ Fixed offset in minutes east from UTC.
+
+    """
+
+    def __init__(self, offset, name):
+        self.__offset = timedelta(minutes = offset)
+        self.__name = name
+
+    def utcoffset(self, dt):
+        return self.__offset
+
+    def tzname(self, dt):
+        return self.__name
+
+    def dst(self, dt):
+        return ZERO
+
+
+class LocalTimezone(tzinfo):
+    """ Timezone of the machine where the code is running.
+
+    """
+
+    def utcoffset(self, dt):
+        if self._isdst(dt):
+            return DSTOFFSET
+        else:
+            return STDOFFSET
+
+    def dst(self, dt):
+        if self._isdst(dt):
+            return DSTDIFF
+        else:
+            return ZERO
+
+    def tzname(self, dt):
+        return _time.tzname[self._isdst(dt)]
+
+    def _isdst(self, dt):
+        tt = (dt.year, dt.month, dt.day,
+              dt.hour, dt.minute, dt.second,
+              dt.weekday(), 0, -1)
+        stamp = _time.mktime(tt)
+        tt = _time.localtime(stamp)
+        return tt.tm_isdst > 0
+
 
 #####################
 
@@ -565,7 +551,7 @@ class vDatetime:
         # TODO: ical string should better contain also the TZID property.
 
         if timezone:
-            timezone = timezone_from_string(timezone)
+            timezone = normalized_timezone(timezone)
 
         try:
             timetuple = map(int, ((
