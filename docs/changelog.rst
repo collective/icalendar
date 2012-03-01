@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-3.0.1b2 (unreleased)
+3.0.1b2 (2012-03-01)
 --------------------
 
 * For all TZID parameters in DATE-TIME properties, use timezone identifiers

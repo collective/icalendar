@@ -1,7 +1,7 @@
 import os
 import setuptools
 
-version = '3.0.1b1'
+version = '3.0.1b2'
 
 setuptools.setup(
     name='icalendar',
