@@ -1,3 +1,4 @@
+from interlude import interact
 import unittest, doctest, os
 from icalendar import cal, caselessdict, parser, prop
 
@@ -46,7 +47,7 @@ def load_tests(loader=None, tests=None, pattern=None):
                     'small.txt', 'multiple.txt', 'recurrence.txt']:
         suite.addTest(doctest.DocFileSuite(docfile,
             optionflags=doctest.ELLIPSIS,
-            globs={'__file__': os.path.abspath(os.path.join(current_dir, docfile))},
+            globs={'__file__': os.path.abspath(os.path.join(current_dir, docfile)), 'interact': interact},
                 ))
 
     return suite

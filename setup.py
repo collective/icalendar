@@ -29,6 +29,6 @@ setuptools.setup(
     zip_safe=False,
     install_requires=['pytz'],
     extras_require={
-        'test': ['unittest2'],
+        'test': ['unittest2', 'interlude'],
         },
     )
