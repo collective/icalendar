@@ -47,7 +47,7 @@ SequenceTypes = [TupleType, ListType]
 import re
 import time as _time
 import binascii
-import pytz
+from icalendar.tools import utctz
 
 # from this package
 from icalendar.caselessdict import CaselessDict
@@ -185,79 +185,85 @@ class vCalAddress(str):
 
 ####################################################
 # handy tzinfo classes you can use.
-
-ZERO = timedelta(0)
-HOUR = timedelta(hours=1)
-STDOFFSET = timedelta(seconds = -_time.timezone)
-if _time.daylight:
-    DSTOFFSET = timedelta(seconds = -_time.altzone)
-else:
-    DSTOFFSET = STDOFFSET
-DSTDIFF = DSTOFFSET - STDOFFSET
+#
 
 
-class FixedOffset(tzinfo):
-    """ Fixed offset in minutes east from UTC.
 
-    """
+#
+#ZERO = timedelta(0)
+#HOUR = timedelta(hours=1)
+#STDOFFSET = timedelta(seconds = -_time.timezone)
+#if _time.daylight:
+#    DSTOFFSET = timedelta(seconds = -_time.altzone)
+#else:
+#    DSTOFFSET = STDOFFSET
+#DSTDIFF = DSTOFFSET - STDOFFSET
+#
+#
+#class FixedOffset(tzinfo):
+#    """ Fixed offset in minutes east from UTC.
+#
+#    """
+#
+#    def __init__(self, offset, name):
+#        self.__offset = timedelta(minutes = offset)
+#        self.__name = name
+#
+#    def utcoffset(self, dt):
+#        return self.__offset
+#
+#    def tzname(self, dt):
+#        return self.__name
+#
+#    def dst(self, dt):
+#        return ZERO
+#
+#
+#class Utc(tzinfo):
+#    """ UTC tzinfo subclass.
+#
+#    """
+#
+#    def utcoffset(self, dt):
+#        return ZERO
+#
+#    def tzname(self, dt):
+#        return "UTC"
+#
+#    def dst(self, dt):
+#        return ZERO
+#UTC = Utc()
+#
+#class LocalTimezone(tzinfo):
+#    """ Timezone of the machine where the code is running.
+#
+#    """
+#
+#    def utcoffset(self, dt):
+#        if self._isdst(dt):
+#            return DSTOFFSET
+#        else:
+#            return STDOFFSET
+#
+#    def dst(self, dt):
+#        if self._isdst(dt):
+#            return DSTDIFF
+#        else:
+#            return ZERO
+#
+#    def tzname(self, dt):
+#        return _time.tzname[self._isdst(dt)]
+#
+#    def _isdst(self, dt):
+#        tt = (dt.year, dt.month, dt.day,
+#              dt.hour, dt.minute, dt.second,
+#              dt.weekday(), 0, -1)
+#        stamp = _time.mktime(tt)
+#        tt = _time.localtime(stamp)
+#        return tt.tm_isdst > 0
+#
 
-    def __init__(self, offset, name):
-        self.__offset = timedelta(minutes = offset)
-        self.__name = name
-
-    def utcoffset(self, dt):
-        return self.__offset
-
-    def tzname(self, dt):
-        return self.__name
-
-    def dst(self, dt):
-        return ZERO
-
-
-class Utc(tzinfo):
-    """ UTC tzinfo subclass.
-
-    """
-
-    def utcoffset(self, dt):
-        return ZERO
-
-    def tzname(self, dt):
-        return "UTC"
-
-    def dst(self, dt):
-        return ZERO
-UTC = Utc()
-
-class LocalTimezone(tzinfo):
-    """ Timezone of the machine where the code is running.
-
-    """
-
-    def utcoffset(self, dt):
-        if self._isdst(dt):
-            return DSTOFFSET
-        else:
-            return STDOFFSET
-
-    def dst(self, dt):
-        if self._isdst(dt):
-            return DSTDIFF
-        else:
-            return ZERO
-
-    def tzname(self, dt):
-        return _time.tzname[self._isdst(dt)]
-
-    def _isdst(self, dt):
-        tt = (dt.year, dt.month, dt.day,
-              dt.hour, dt.minute, dt.second,
-              dt.weekday(), 0, -1)
-        stamp = _time.mktime(tt)
-        tt = _time.localtime(stamp)
-        return tt.tm_isdst > 0
-
+#####################
 
 class vFloat(float):
     """ Just a float.
@@ -403,7 +409,7 @@ class vDDDTypes:
     <type 'datetime.datetime'>
 
     >>> repr(vDDDTypes.from_ical('20010101T123000Z'))[:65]
-    'datetime.datetime(2001, 1, 1, 12, 30, tzinfo=<icalendar.prop.Utc '
+    'datetime.datetime(2001, 1, 1, 12, 30, tzinfo=<UTC>)'
 
     >>> d = vDDDTypes.from_ical('20010101')
     >>> type(d)
@@ -497,10 +503,17 @@ class vDate:
 
 
 class vDatetime:
-    """ Render and generates iCalendar datetime format.
+    """ Render and generates icalendar datetime format.
 
-    Important: if tzinfo is defined it renders itself as "date with utc time"
-    Meaning that it has a 'Z' appended, and is in absolute time.
+    vDatetime is timezone aware and uses the pytz library, an implementation of
+    the Olson database in Python. When a vDatetime object is created from an
+    ical string, the string must be a valid pytz timezone identifier. When and
+    vDatetime object is created from a python datetime object, it uses the
+    tzinfo component, if present. Otherwise an timezone-naive object is
+    created. Be aware that there are certain limitations with timezone naive
+    DATE-TIME components in the icalendar standard.
+
+    >>> from icalendar.tools import utctz
 
     >>> d = datetime(2001, 1,1, 12, 30, 0)
 
@@ -511,7 +524,7 @@ class vDatetime:
     >>> vDatetime.from_ical('20000101T120000')
     datetime.datetime(2000, 1, 1, 12, 0)
 
-    >>> dutc = datetime(2001, 1,1, 12, 30, 0, tzinfo=UTC)
+    >>> dutc = datetime(2001, 1,1, 12, 30, 0, tzinfo=utctz())
     >>> vDatetime(dutc).to_ical()
     '20010101T123000Z'
 
@@ -538,7 +551,7 @@ class vDatetime:
 
     def to_ical(self):
         timezone = self.dt.tzname()
-        if timezone == 'UTC' or self.dt.tzinfo == UTC:
+        if timezone == 'UTC':
             return self.dt.strftime("%Y%m%dT%H%M%SZ")
         elif timezone:
             self.params.update({'TZID': timezone})
@@ -549,7 +562,7 @@ class vDatetime:
         """ Parses the data format from ical text format.
 
         """
-        # TODO: ical string should better contain also the TZID property.deleter(
+        # TODO: ical string should better contain also the TZID property.
 
         if timezone:
             timezone = timezone_from_string(timezone)
@@ -568,7 +581,7 @@ class vDatetime:
             elif not ical[15:]:
                 return datetime(*timetuple)
             elif ical[15:16] == 'Z':
-                return datetime(*timetuple, tzinfo=UTC)
+                return datetime(tzinfo=utctz(), *timetuple)
             else:
                 raise ValueError, ical
         except:

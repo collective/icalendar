@@ -2,6 +2,13 @@ Changelog
 =========
 
 
+3.0.1b2 (unreleased)
+--------------------
+
+* Since we use pytz for timezones, also use UTC tzinfo object from the pytz 
+  library instead of own implementation.
+  [thet]
+
 3.0.1b1 (2012-02-24)
 ------------------
 

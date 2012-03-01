@@ -202,7 +202,7 @@ Python type::
 
   >>> dt = vDatetime.from_ical('20050404T080000Z')
   >>> repr(dt)[:62]
-  'datetime.datetime(2005, 4, 4, 8, 0, tzinfo=<icalendar.prop.Utc'
+  'datetime.datetime(2005, 4, 4, 8, 0, tzinfo=<UTC>)'
 
 You can also choose to use the decoded() method, which will return a decoded
 value directly::
@@ -224,7 +224,7 @@ Init the calendar::
 
   >>> cal = Calendar()
   >>> from datetime import datetime
-  >>> from icalendar import UTC # timezone
+  >>> from icalendar.tools import utctz # timezone
 
 Some properties are required to be compliant::
 
@@ -235,9 +235,9 @@ We need at least one subcomponent for a calendar to be compliant::
 
   >>> event = Event()
   >>> event.add('summary', 'Python meeting about calendaring')
-  >>> event.add('dtstart', datetime(2005,4,4,8,0,0,tzinfo=UTC))
-  >>> event.add('dtend', datetime(2005,4,4,10,0,0,tzinfo=UTC))
-  >>> event.add('dtstamp', datetime(2005,4,4,0,10,0,tzinfo=UTC))
+  >>> event.add('dtstart', datetime(2005,4,4,8,0,0,tzinfo=utctz()))
+  >>> event.add('dtend', datetime(2005,4,4,10,0,0,tzinfo=utctz()))
+  >>> event.add('dtstamp', datetime(2005,4,4,0,10,0,tzinfo=utctz()))
 
 A property with parameters. Notice that they are an attribute on the value::
 

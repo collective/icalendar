@@ -5,7 +5,13 @@ eh?
 import random
 from string import ascii_letters, digits
 from datetime import datetime
+import pytz
 
+def utctz():
+    """ Return an UTC tzinfo object from the pytz library.
+
+    """
+    return pytz.timezone('UTC')
 
 class UIDGenerator:
 

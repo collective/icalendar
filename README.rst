@@ -15,8 +15,11 @@ with Python.
 
 ----
 
-API Change in version 3.0
-=========================
+Changes in version 3.0
+======================
+
+API Change
+----------
 
 Since version we unified to icalendar de/serialization API to use only to_ical
 (for writing an ical string from the internal representation) and from_ical
@@ -29,6 +32,17 @@ from_ical is now used instead of from_string.
 
 This change is a requirement for future Python 3 compatibility. Please update
 your code to reflect to the new API.
+
+Timezone support
+----------------
+
+Timezones are now fully supported in icalendar for serialization and
+deserialization. We use the pytz library for timezone components of datetime
+instances. The timezone identifiers must be valid pytz respectively Olson
+database timezone identifiers. This can be a problem for 'GMT' identifiers,
+which are not defined in the Olson database.
+
+Instead of the own UTC tzinfo implementation we use pytz UTC tzinfo object now.
 
 
 About this fork which is not a fork anymore
