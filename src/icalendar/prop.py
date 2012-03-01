@@ -536,13 +536,14 @@ class vDatetime:
         self.params = Parameters()
 
     def to_ical(self):
-        timezone = self.dt.tzname()
-        if timezone == 'UTC':
-            return self.dt.strftime("%Y%m%dT%H%M%SZ")
-        elif timezone:
-            self.params.update({'TZID': timezone})
+        dt = self.dt
+        tzid = dt.tzinfo and dt.tzinfo.zone or None
+        if tzid == 'UTC':
+            return dt.strftime("%Y%m%dT%H%M%SZ")
+        elif tzid:
+            self.params.update({'TZID': tzid})
 #            return "TZID=%s;%s" % (timezone, self.dt.strftime("%Y%m%dT%H%M%S")) The timezone should not be printed with the date, but rather in the containing component.
-        return self.dt.strftime("%Y%m%dT%H%M%S")
+        return dt.strftime("%Y%m%dT%H%M%S")
 
     def from_ical(ical, timezone=None):
         """ Parses the data format from ical text format.

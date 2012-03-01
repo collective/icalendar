@@ -56,5 +56,5 @@ class TestTimezoned(unittest.TestCase):
 
         ical_lines = cal.to_ical().splitlines()
 
-        self.assertTrue("DTSTART;TZID=CET;VALUE=DATE-TIME:20120213T100000" in ical_lines)
+        self.assertTrue("DTSTART;TZID=Europe/Vienna;VALUE=DATE-TIME:20120213T100000" in ical_lines)
         self.assertTrue("ATTENDEE:sepp" in ical_lines)
