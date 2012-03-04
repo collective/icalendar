@@ -132,6 +132,14 @@ class Component(CaselessDict):
     >>> [i['dtstart'] for i in c.walk('VEVENT')]
     ['20000101T000000']
 
+    We can enumerate property items recursively with the property_items method.
+    >>> c.property_items()
+    []
+
+    We can also enumerate property items just under the component.
+    >>> c.property_items(recursive=False)
+    []
+
     Text fields which span multiple mulitple lines require proper indenting
     >>> c = Calendar()
     >>> c['description']=u'Paragraph one\\n\\nParagraph two'
