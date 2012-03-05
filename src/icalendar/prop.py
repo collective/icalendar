@@ -438,6 +438,8 @@ class vDDDTypes:
 
     def from_ical(ical, timezone=None):
         "Parses the data format from ical text format"
+        if isinstance(ical, vDDDTypes):
+            return ical.dt
         u = ical.upper()
         if u.startswith('-P') or u.startswith('P'):
             return vDuration.from_ical(ical)
@@ -1305,6 +1307,8 @@ class vUTCOffset:
 
     def from_ical(ical):
         "Parses the data format from ical text format"
+        if isinstance(ical, vUTCOffset):
+            return ical.td
         try:
             sign, hours, minutes = (ical[-5:-4], int(ical[-4:-2]), int(ical[-2:]))
             offset = timedelta(hours=hours, minutes=minutes)
@@ -1514,5 +1518,5 @@ class TypesFactory(CaselessDict):
 
         """
         type_class = self.for_property(name)
-        decoded = type_class.from_ical(str(value))
+        decoded = type_class.from_ical(value)
         return decoded
