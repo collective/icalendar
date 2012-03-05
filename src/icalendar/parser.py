@@ -445,7 +445,8 @@ class Contentline(str):
         (name, params, values) = parts
         try:
             if values and not isinstance(values, str):
-                values = values.to_ical()
+                if hasattr(values, 'to_ical'):
+                    values = values.to_ical()
             if params:
                 return Contentline('%s;%s:%s' % (name, params.to_ical(), values))
             return Contentline('%s:%s' %  (name, values))

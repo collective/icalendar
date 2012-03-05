@@ -135,7 +135,7 @@ class Component(CaselessDict):
     >>> c = Calendar()
     >>> c['description']=u'Paragraph one\\n\\nParagraph two'
     >>> c.to_ical()
-    'BEGIN:VCALENDAR\\r\\nDESCRIPTION:Paragraph one\\r\\n \\r\\n Paragraph two\\r\\nEND:VCALENDAR\\r\\n'
+    'BEGIN:VCALENDAR\\r\\nDESCRIPTION:Paragraph one\\n\\nParagraph two\\r\\nEND:VCALENDAR\\r\\n'
 
     INLINE properties have their values on one property line. Note the double
     quoting of the value with a colon in it.
