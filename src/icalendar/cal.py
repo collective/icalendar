@@ -381,7 +381,6 @@ class Component(CaselessDict):
                 try:
                     if name in ('DTSTART', 'DTEND') and 'TZID' in params: # TODO: add DUE, FREEBUSY
                         vals = factory(factory.from_ical(vals, params['TZID']))
-                        print vals.to_ical()
                     else:
                         vals = factory(factory.from_ical(vals))
                 except ValueError:
