@@ -121,7 +121,7 @@ class IComponent(Interface):
         Returns sequence of components.
         """
 
-    def property_items():
+    def property_items(recursive=True):
         """Return properties as (name, value) tuples.
 
         Returns all properties in this comopnent and subcomponents as
