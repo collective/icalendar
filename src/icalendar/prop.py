@@ -1247,7 +1247,7 @@ class vUTCOffset:
     >>> u.to_ical()
     '-0030'
 
-    ->>> u = vUTCOffset(timedelta(hours=2, minutes=-30))
+    >>> u = vUTCOffset(timedelta(hours=2, minutes=-30))
     >>> u.to_ical()
     '+0130'
 
