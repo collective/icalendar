@@ -32,7 +32,7 @@ def normalized_timezone(timezone):
     >>> normalized_timezone('Europe/Vienna')
     <DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>
 
-    Testing an inexistend zone. In the Styrian dialect, Tripstrül describes an
+    Testing an inexistend zone. In the Styrian dialect, TripstrÃ¼l describes an
     imaginative place somewhere in nowhere, far away.
     It's not defined in the Olson database.
     In that case, None is returned.
@@ -63,7 +63,7 @@ def foldline(text, lenght=75, newline='\r\n'):
     >>> foldline(longtext)
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum \\r\\n convallis imperdiet dui posuere.'
 
-#    >>> uuu = u'alfdkadäääüüaskd'
+#    >>> uuu = u'alfdkadÃ¤Ã¤Ã¤Ã¼Ã¼askd'
 #    >>> foldline(uuu, length=3)
 #    u'alf\ndka\nd\xe4\xe4\n\xe4\xfc\xfc\nask\nd'
 
@@ -373,7 +373,7 @@ class Contentline(str):
 
     A value can also be unicode
     >>> from icalendar.prop import vText
-    >>> parts = ('SUMMARY', Parameters(), vText(u'INternational char æ ø å'))
+    >>> parts = ('SUMMARY', Parameters(), vText(u'INternational char Ã¦ Ã¸ Ã¥'))
     >>> Contentline.from_parts(parts)
     'SUMMARY:INternational char \\xc3\\xa6 \\xc3\\xb8 \\xc3\\xa5'
 
