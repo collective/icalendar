@@ -107,7 +107,7 @@ class CaselessDict(dict):
         return dict.popitem(self)
 
     def has_key(self, key):
-        return dict.has_key(self, key.upper())
+        return key.upper() in self
 
     def update(self, indict):
         """
