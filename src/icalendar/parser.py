@@ -98,14 +98,14 @@ def validate_token(name):
     match = NAME.findall(name)
     if len(match) == 1 and name == match[0]:
         return
-    raise ValueError, name
+    raise ValueError(name)
 
 def validate_param_value(value, quoted=True):
     validator = UNSAFE_CHAR
     if quoted:
         validator = QUNSAFE_CHAR
     if validator.findall(value):
-        raise ValueError, value
+        raise ValueError(value)
 
 QUOTABLE = re.compile('[,;:].')
 def dQuote(val):
@@ -293,8 +293,8 @@ class Parameters(CaselessDict):
                         result[key] = vals[0]
                     else:
                         result[key] = vals
-            except ValueError, e:
-                raise ValueError, '%r is not a valid parameter string: %s' % (param, e)
+            except ValueError as e:
+                raise ValueError('%r is not a valid parameter string: %s' % (param, e))
         return result
     from_ical = staticmethod(from_ical)
 
@@ -475,16 +475,16 @@ class Contentline(str):
                     inquotes = not inquotes
             name = self[:name_split]
             if not name:
-                raise ValueError, 'Key name is required'
+                raise ValueError('Key name is required')
             validate_token(name)
             if name_split+1 == value_split:
-                raise ValueError, 'Invalid content line'
+                raise ValueError('Invalid content line')
             params = Parameters.from_ical(self[name_split+1:value_split],
                                             strict=self.strict)
             values = self[value_split+1:]
             return (name, params, values)
-        except ValueError, e:
-            raise ValueError, "Content line could not be parsed into parts: %r: %s" % (self, e)
+        except ValueError as e:
+            raise ValueError("Content line could not be parsed into parts: %r: %s" % (self, e))
 
     def from_ical(st, strict=False):
         """ Unfolds the content lines in an iCalendar into long content lines.
@@ -494,7 +494,7 @@ class Contentline(str):
             # a fold is carriage return followed by either a space or a tab
             return Contentline(FOLD.sub('', st), strict=strict)
         except:
-            raise ValueError, 'Expected StringType with content line'
+            raise ValueError('Expected StringType with content line')
     from_ical = staticmethod(from_ical)
 
     def to_ical(self):
@@ -544,7 +544,7 @@ class Contentlines(list):
             lines.append('') # we need a '\r\n' in the end of every content line
             return Contentlines(lines)
         except:
-            raise ValueError, 'Expected StringType with content lines'
+            raise ValueError('Expected StringType with content lines')
     from_ical = staticmethod(from_ical)
 
 

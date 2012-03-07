@@ -108,7 +108,7 @@ class vBinary:
         try:
             return ical.decode('base-64')
         except UnicodeError:
-            raise ValueError, 'Not valid base 64 encoding.'
+            raise ValueError('Not valid base 64 encoding.')
     from_ical = staticmethod(from_ical)
 
 
@@ -147,7 +147,7 @@ class vBoolean(int):
         try:
             return vBoolean.bool_map[ical]
         except:
-            raise ValueError, "Expected 'TRUE' or 'FALSE'. Got %s" % ical
+            raise ValueError("Expected 'TRUE' or 'FALSE'. Got %s" % ical)
     from_ical = staticmethod(from_ical)
 
 
@@ -180,7 +180,7 @@ class vCalAddress(str):
         try:
             return str(ical)
         except:
-            raise ValueError, 'Expected vCalAddress, got: %s' % ical
+            raise ValueError('Expected vCalAddress, got: %s' % ical)
     from_ical = staticmethod(from_ical)
 
 
@@ -277,7 +277,7 @@ class vFloat(float):
         try:
             return float(ical)
         except:
-            raise ValueError, 'Expected float value, got: %s' % ical
+            raise ValueError('Expected float value, got: %s' % ical)
     from_ical = staticmethod(from_ical)
 
 
@@ -309,7 +309,7 @@ class vInt(int):
         try:
             return int(ical)
         except:
-            raise ValueError, 'Expected int, got: %s' % ical
+            raise ValueError('Expected int, got: %s' % ical)
     from_ical = staticmethod(from_ical)
 
 
@@ -486,7 +486,7 @@ class vDate:
                 )))
             return date(*timetuple)
         except:
-            raise ValueError, 'Wrong date format %s' % ical
+            raise ValueError('Wrong date format %s' % ical)
     from_ical = staticmethod(from_ical)
 
 
@@ -572,9 +572,9 @@ class vDatetime:
             elif ical[15:16] == 'Z':
                 return datetime(tzinfo=utctz(), *timetuple)
             else:
-                raise ValueError, ical
+                raise ValueError(ical)
         except:
-            raise ValueError, 'Wrong datetime format: %s' % ical
+            raise ValueError('Wrong datetime format: %s' % ical)
     from_ical = staticmethod(from_ical)
 
 
@@ -787,7 +787,7 @@ class vPeriod:
             end_or_duration = vDDDTypes.from_ical(end_or_duration)
             return (start, end_or_duration)
         except:
-            raise ValueError, 'Expected period format, got: %s' % ical
+            raise ValueError('Expected period format, got: %s' % ical)
     from_ical = staticmethod(from_ical)
 
 
@@ -843,13 +843,13 @@ class vWeekday(str):
         self = super(vWeekday, cls).__new__(cls, *args, **kwargs)
         match = WEEKDAY_RULE.match(self)
         if match is None:
-            raise ValueError, 'Expected weekday abbrevation, got: %s' % self
+            raise ValueError('Expected weekday abbrevation, got: %s' % self)
         match = match.groupdict()
         sign = match['signal']
         weekday = match['weekday']
         relative = match['relative']
         if not weekday in vWeekday.week_days or sign not in '+-':
-            raise ValueError, 'Expected weekday abbrevation, got: %s' % self
+            raise ValueError('Expected weekday abbrevation, got: %s' % self)
         self.relative = relative and int(relative) or None
         self.params = Parameters()
         return self
@@ -862,7 +862,7 @@ class vWeekday(str):
         try:
             return vWeekday(ical.upper())
         except:
-            raise ValueError, 'Expected weekday abbrevation, got: %s' % ical
+            raise ValueError('Expected weekday abbrevation, got: %s' % ical)
     from_ical = staticmethod(from_ical)
 
 
@@ -893,7 +893,7 @@ class vFrequency(str):
     def __new__(cls, *args, **kwargs):
         self = super(vFrequency, cls).__new__(cls, *args, **kwargs)
         if not self in vFrequency.frequencies:
-            raise ValueError, 'Expected frequency, got: %s' % self
+            raise ValueError('Expected frequency, got: %s' % self)
         self.params = Parameters()
         return self
 
@@ -905,7 +905,7 @@ class vFrequency(str):
         try:
             return vFrequency(ical.upper())
         except:
-            raise ValueError, 'Expected weekday abbrevation, got: %s' % ical
+            raise ValueError('Expected weekday abbrevation, got: %s' % ical)
     from_ical = staticmethod(from_ical)
 
 
@@ -1027,7 +1027,7 @@ class vRecur(CaselessDict):
                 recur[key] = vRecur.parse_type(key, vals)
             return dict(recur)
         except:
-            raise ValueError, 'Error in recurrence rule: %s' % ical
+            raise ValueError('Error in recurrence rule: %s' % ical)
     from_ical = staticmethod(from_ical)
 
 
@@ -1114,7 +1114,7 @@ class vText(unicode):
                         .replace('\\\\', '\\'))
             return ical.decode(vText.encoding, 'replace')
         except:
-            raise ValueError, 'Expected ical text, got: %s' % ical
+            raise ValueError('Expected ical text, got: %s' % ical)
     from_ical = staticmethod(from_ical)
 
 
@@ -1151,7 +1151,7 @@ class vTime(time):
             timetuple = map(int, (ical[:2],ical[2:4],ical[4:6]))
             return time(*timetuple)
         except:
-            raise ValueError, 'Expected time, got: %s' % ical
+            raise ValueError('Expected time, got: %s' % ical)
     from_ical = staticmethod(from_ical)
 
 
@@ -1179,7 +1179,7 @@ class vUri(str):
         try:
             return str(ical)
         except:
-            raise ValueError, 'Expected , got: %s' % ical
+            raise ValueError('Expected , got: %s' % ical)
     from_ical = staticmethod(from_ical)
 
 
@@ -1224,7 +1224,7 @@ class vGeo:
             latitude, longitude = ical.split(';')
             return (float(latitude), float(longitude))
         except:
-            raise ValueError, "Expected 'float;float' , got: %s" % ical
+            raise ValueError("Expected 'float;float' , got: %s" % ical)
     from_ical = staticmethod(from_ical)
 
 
@@ -1313,9 +1313,9 @@ class vUTCOffset:
             sign, hours, minutes = (ical[-5:-4], int(ical[-4:-2]), int(ical[-2:]))
             offset = timedelta(hours=hours, minutes=minutes)
         except:
-            raise ValueError, 'Expected utc offset, got: %s' % ical
+            raise ValueError('Expected utc offset, got: %s' % ical)
         if offset >= timedelta(hours=24):
-            raise ValueError, 'Offset must be less than 24 hours, was %s' % ical
+            raise ValueError('Offset must be less than 24 hours, was %s' % ical)
         if sign == '-':
             return -offset
         return offset

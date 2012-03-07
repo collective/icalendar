@@ -259,7 +259,7 @@ class Component(CaselessDict):
             return self._decode(name, value)
         else:
             if default is _marker:
-                raise KeyError, name
+                raise KeyError(name)
             else:
                 return default
 
