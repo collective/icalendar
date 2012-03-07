@@ -1,4 +1,4 @@
-# -*- coding: latin-1 -*-
+# -*- coding: utf-8 -*-
 """
 
 This module contains the parser/generators (or coders/encoders if you prefer)
@@ -64,7 +64,7 @@ WEEKDAY_RULE = re.compile('(?P<signal>[+-]?)(?P<relative>[\d]?)'
                           '(?P<weekday>[\w]{2})$')
 
 class vBinary:
-    """ Binary property values are base 64 encoded.
+    ur""" Binary property values are base 64 encoded.
 
     >>> b = vBinary('This is gibberish')
     >>> b.to_ical()
@@ -74,11 +74,11 @@ class vBinary:
     'This is gibberish'
 
     The roundtrip test
-    >>> x = 'Binary data æ ø å \x13 \x56'
+    >>> x = 'Binary data Ã¦ Ã¸ Ã¥ \x13 \x56'
     >>> vBinary(x).to_ical()
-    'QmluYXJ5IGRhdGEg5iD4IOUgEyBW'
-    >>> vBinary.from_ical('QmluYXJ5IGRhdGEg5iD4IOUgEyBW')
-    'Binary data \\xe6 \\xf8 \\xe5 \\x13 V'
+    'QmluYXJ5IGRhdGEgw6Ygw7ggw6UgEyBW'
+    >>> vBinary.from_ical('QmluYXJ5IGRhdGEgw6Ygw7ggw6UgEyBW')
+    'Binary data \xc3\xa6 \xc3\xb8 \xc3\xa5 \x13 V'
 
     >>> b = vBinary('txt')
     >>> b.params
@@ -1032,46 +1032,46 @@ class vRecur(CaselessDict):
 
 
 class vText(unicode):
-    """ Simple text
+    ur""" Simple text
 
     >>> t = vText(u'Simple text')
     >>> t.to_ical()
     'Simple text'
 
     Escaped text
-    >>> t = vText('Text ; with escaped, chars')
+    >>> t = vText(ur'Text ; with escaped, chars')
     >>> t.to_ical()
-    'Text \\\\; with escaped\\\\, chars'
+    'Text \\; with escaped\\, chars'
 
     Escaped newlines
-    >>> vText('Text with escaped\N chars').to_ical()
+    >>> vText('Text with escaped\\n chars').to_ical()
     'Text with escaped\\\\n chars'
 
     If you pass a unicode object, it will be utf-8 encoded. As this is the
     (only) standard that RFC 2445 support.
 
-    >>> t = vText(u'international chars æøå ÆØÅ ü')
+    >>> t = vText(ur'international chars Ã¦Ã¸Ã¥ Ã†Ã˜Ã… Ã¼')
     >>> t.to_ical()
-    'international chars \\xc3\\xa6\\xc3\\xb8\\xc3\\xa5 \\xc3\\x86\\xc3\\x98\\xc3\\x85 \\xc3\\xbc'
+    'international chars \xc3\xa6\xc3\xb8\xc3\xa5 \xc3\x86\xc3\x98\xc3\x85 \xc3\xbc'
 
     Unicode is converted to utf-8
-    >>> t = vText(u'international æ ø å')
+    >>> t = vText(ur'international Ã¦ Ã¸ Ã¥')
     >>> t.to_ical()
-    'international \\xc3\\xa6 \\xc3\\xb8 \\xc3\\xa5'
+    'international \xc3\xa6 \xc3\xb8 \xc3\xa5'
 
     and parsing?
     >>> vText.from_ical('Text \\; with escaped\\, chars')
     u'Text ; with escaped, chars'
 
     >>> print vText.from_ical('A string with\\; some\\\\ characters in\\Nit')
-    A string with; some\\ characters in
+    A string with; some\ characters in
     it
 
     We are forgiving to UTF8 encoding errors:
     >>> # We intentionally use a string with unexpected encoding
-    >>> t = vText.from_ical('Ol\\xe9')
-    >>> t
-    u'Ol\\ufffd'
+    >>> t = vText.from_ical('Ol\xe9')
+    >>> print t
+    Ol\ufffd
 
     Notice how accented E character, encoded with latin-1, got replaced
     with the official U+FFFD REPLACEMENT CHARACTER.
@@ -1353,7 +1353,7 @@ class vInline(str):
 
 
 class TypesFactory(CaselessDict):
-    """ All Value types defined in rfc 2445 are registered in this factory
+    ur""" All Value types defined in rfc 2445 are registered in this factory
     class.
 
     To get a type you can use it like this.
@@ -1372,16 +1372,16 @@ class TypesFactory(CaselessDict):
     datetime.datetime(2005, 1, 1, 12, 30)
 
     It can also be used to directly encode property and parameter values
-    >>> comment = factory.to_ical('comment', u'by Rasmussen, Max Møller')
+    >>> comment = factory.to_ical('comment', ur'by Rasmussen, Max MÃ¸ller')
     >>> str(comment)
-    'by Rasmussen\\\\, Max M\\xc3\\xb8ller'
+    'by Rasmussen\\, Max M\xc3\xb8ller'
     >>> factory.to_ical('priority', 1)
     '1'
-    >>> factory.to_ical('cn', u'Rasmussen, Max Møller')
-    'Rasmussen\\\\, Max M\\xc3\\xb8ller'
+    >>> factory.to_ical('cn', ur'Rasmussen, Max MÃ¸ller')
+    'Rasmussen\\, Max M\xc3\xb8ller'
 
-    >>> factory.from_ical('cn', 'Rasmussen\\\\, Max M\\xc3\\xb8ller')
-    u'Rasmussen, Max M\\xf8ller'
+    >>> factory.from_ical('cn', 'Rasmussen\\, Max M\xc3\xb8ller')
+    u'Rasmussen, Max M\xf8ller'
 
     The value and parameter names don't overlap. So one factory is enough for
     both kinds.
