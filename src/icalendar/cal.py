@@ -131,6 +131,17 @@ class Component(CaselessDict):
     >>> [i['dtstart'] for i in c.walk('VEVENT')]
     ['20000101T000000']
 
+    We can enumerate property items recursively with the property_items method.
+    >>> c.property_items()
+    [('BEGIN', 'VCALENDAR'), ('ATTENDEE', vCalAddress('Max M')), ('BEGIN', 'VEVENT'), ('DTEND', '20000102T000000'), ('DTSTART', '20000101T000000'), ('SUMMARY', 'A brief history of time'), ('END', 'VEVENT'), ('END', 'VCALENDAR')]
+
+    We can also enumerate property items just under the component.
+    >>> c.property_items(recursive=False)
+    [('BEGIN', 'VCALENDAR'), ('ATTENDEE', vCalAddress('Max M')), ('END', 'VCALENDAR')]
+    >>> sc = c.subcomponents[0]
+    >>> sc.property_items(recursive=False)
+    [('BEGIN', 'VEVENT'), ('DTEND', '20000102T000000'), ('DTSTART', '20000101T000000'), ('SUMMARY', 'A brief history of time'), ('END', 'VEVENT')]
+
     Text fields which span multiple mulitple lines require proper indenting
     >>> c = Calendar()
     >>> c['description']=u'Paragraph one\\n\\nParagraph two'
@@ -320,7 +331,7 @@ class Component(CaselessDict):
     #####################
     # Generation
 
-    def property_items(self):
+    def property_items(self, recursive=True):
         """
         Returns properties in this component and subcomponents as:
         [(name, value), ...]
@@ -336,9 +347,10 @@ class Component(CaselessDict):
                     properties.append((name, value))
             else:
                 properties.append((name, values))
-        # recursion is fun!
-        for subcomponent in self.subcomponents:
-            properties += subcomponent.property_items()
+        if recursive:
+            # recursion is fun!
+            for subcomponent in self.subcomponents:
+                properties += subcomponent.property_items()
         properties.append(('END', vText(self.name).to_ical()))
         return properties
 
