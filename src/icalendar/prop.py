@@ -64,7 +64,7 @@ WEEKDAY_RULE = re.compile('(?P<signal>[+-]?)(?P<relative>[\d]?)'
                           '(?P<weekday>[\w]{2})$')
 
 class vBinary:
-    ur""" Binary property values are base 64 encoded.
+    r""" Binary property values are base 64 encoded.
 
     >>> b = vBinary('This is gibberish')
     >>> b.to_ical()
@@ -1032,7 +1032,7 @@ class vRecur(CaselessDict):
 
 
 class vText(unicode):
-    ur""" Simple text
+    r""" Simple text
 
     >>> t = vText(u'Simple text')
     >>> t.to_ical()
@@ -1050,12 +1050,12 @@ class vText(unicode):
     If you pass a unicode object, it will be utf-8 encoded. As this is the
     (only) standard that RFC 2445 support.
 
-    >>> t = vText(ur'international chars æøå ÆØÅ ü')
+    >>> t = vText(u'international chars \xe6\xf8\xe5 \xc6\xd8\xc5 \xfc')
     >>> t.to_ical()
     'international chars \xc3\xa6\xc3\xb8\xc3\xa5 \xc3\x86\xc3\x98\xc3\x85 \xc3\xbc'
 
     Unicode is converted to utf-8
-    >>> t = vText(ur'international æ ø å')
+    >>> t = vText(u'international \xe6 \xf8 \xe5')
     >>> t.to_ical()
     'international \xc3\xa6 \xc3\xb8 \xc3\xa5'
 
@@ -1070,8 +1070,8 @@ class vText(unicode):
     We are forgiving to UTF8 encoding errors:
     >>> # We intentionally use a string with unexpected encoding
     >>> t = vText.from_ical('Ol\xe9')
-    >>> print t
-    Ol\ufffd
+    >>> t
+    u'Ol\ufffd'
 
     Notice how accented E character, encoded with latin-1, got replaced
     with the official U+FFFD REPLACEMENT CHARACTER.
@@ -1353,7 +1353,7 @@ class vInline(str):
 
 
 class TypesFactory(CaselessDict):
-    ur""" All Value types defined in rfc 2445 are registered in this factory
+    r""" All Value types defined in rfc 2445 are registered in this factory
     class.
 
     To get a type you can use it like this.
@@ -1372,12 +1372,12 @@ class TypesFactory(CaselessDict):
     datetime.datetime(2005, 1, 1, 12, 30)
 
     It can also be used to directly encode property and parameter values
-    >>> comment = factory.to_ical('comment', ur'by Rasmussen, Max Møller')
-    >>> str(comment)
+    >>> comment = factory.to_ical('comment', u'by Rasmussen, Max M\xf8ller')
+    >>> comment
     'by Rasmussen\\, Max M\xc3\xb8ller'
     >>> factory.to_ical('priority', 1)
     '1'
-    >>> factory.to_ical('cn', ur'Rasmussen, Max Møller')
+    >>> factory.to_ical('cn', u'Rasmussen, Max M\xf8ller')
     'Rasmussen\\, Max M\xc3\xb8ller'
 
     >>> factory.from_ical('cn', 'Rasmussen\\, Max M\xc3\xb8ller')

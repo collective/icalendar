@@ -303,7 +303,7 @@ class Parameters(CaselessDict):
 # parsing and generation of content lines
 
 class Contentline(str):
-    ur"""
+    r"""
     A content line is basically a string that can be folded and parsed into
     parts.
 
@@ -373,8 +373,8 @@ class Contentline(str):
 
     A value can also be unicode
     >>> from icalendar.prop import vText
-    >>> parts = ('SUMMARY', Parameters(), vText(u'INternational char æ ø å'))
-    >>> Contentline.from_parts(parts)
+    >>> parts = ('SUMMARY', Parameters(), vText(u'INternational char \xe6 \xf8 \xe5'))
+    >>> Contentline.from_parts(parts) 
     'SUMMARY:INternational char \xc3\xa6 \xc3\xb8 \xc3\xa5'
 
     Traversing could look like this.
