@@ -9,10 +9,6 @@ These are the defined components.
 
 """
 
-# from python
-from types import ListType, TupleType
-SequenceTypes = (ListType, TupleType)
-
 # from this package
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Contentlines, Contentline, Parameters
@@ -222,7 +218,7 @@ class Component(CaselessDict):
 
 
     def set(self, name, value, encode=1):
-        if type(value) == ListType:
+        if isinstance(value, list):
             self[name] = [self._encode(name, v, encode) for v in value]
         else:
             self[name] = self._encode(name, value, encode)
@@ -233,7 +229,7 @@ class Component(CaselessDict):
         if name in self:
             oldval = self[name]
             value = self._encode(name, value, encode)
-            if type(oldval) == ListType:
+            if isinstance(oldval, list):
                 oldval.append(value)
             else:
                 self.set(name, [oldval, value], encode=0)
@@ -254,7 +250,7 @@ class Component(CaselessDict):
         "Returns decoded value of property"
         if name in self:
             value = self[name]
-            if type(value) == ListType:
+            if isinstance(value, list):
                 return [self._decode(name, v) for v in value]
             return self._decode(name, value)
         else:
@@ -330,7 +326,7 @@ class Component(CaselessDict):
         property_names = self.sorted_keys()
         for name in property_names:
             values = self[name]
-            if type(values) == ListType:
+            if isinstance(values, list):
                 # normally one property is one line
                 for value in values:
                     properties.append((name, value))

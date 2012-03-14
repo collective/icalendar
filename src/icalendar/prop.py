@@ -42,8 +42,10 @@ them directly.
 
 # from python >= 2.3
 from datetime import datetime, timedelta, time, date, tzinfo
-from types import TupleType, ListType
-SequenceTypes = [TupleType, ListType]
+import six
+from six.moves import map
+from six.moves import zip
+SequenceTypes = [tuple, list]
 import re
 import time as _time
 import binascii

@@ -14,10 +14,9 @@ License: GPL (Just contact med if and why you would like it changed)
 
 import re
 import textwrap
-from types import TupleType, ListType
 from icalendar.caselessdict import CaselessDict
 import pytz
-SequenceTypes = [TupleType, ListType]
+SequenceTypes = [tuple, list]
 
 
 def normalized_timezone(timezone):
