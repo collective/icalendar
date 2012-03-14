@@ -172,7 +172,7 @@ class vCalAddress(str):
         return self
 
     def __repr__(self):
-        return u"vCalAddress(%s)" % str.__repr__(self)
+        return six.u("vCalAddress(%s)") % str.__repr__(self)
 
     def to_ical(self):
         return str(self)
@@ -1033,7 +1033,7 @@ class vRecur(CaselessDict):
     from_ical = staticmethod(from_ical)
 
 
-class vText(unicode):
+class vText(six.text_type):
     r""" Simple text
 
     >>> t = vText(u'Simple text')
@@ -1091,7 +1091,7 @@ class vText(unicode):
         """
         Format value according to iCalendar TEXT escaping rules.
         """
-        return (self.replace('\N', '\n')
+        return (self.replace(r'\N', '\n')
                     .replace('\\', '\\\\')
                     .replace(';', r'\;')
                     .replace(',', r'\,')
@@ -1100,7 +1100,7 @@ class vText(unicode):
                 )
 
     def __repr__(self):
-        return u"vText(%s)" % unicode.__repr__(self)
+        return six.u("vText(%s)") % six.text_type.__repr__(self)
 
     def to_ical(self):
         return self.escape().encode(self.encoding)

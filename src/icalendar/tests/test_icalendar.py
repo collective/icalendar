@@ -1,12 +1,13 @@
 from interlude import interact
 import unittest, doctest, os
 from icalendar import cal, caselessdict, parser, prop
+import six
 
 class FuckYouTests(unittest.TestCase):
     def XtestBla(self):
         from icalendar import Calendar
         c = Calendar()
-        c['description']=u'Paragraph one\n\nParagraph two'
+        c['description']=six.u('Paragraph one\n\nParagraph two')
         output = c.to_ical()
         self.assertEqual(output, 
                 "BEGIN:VCALENDAR\r\nDESCRIPTION:Paragraph one\r\n \r\n Paragraph two\r\nEND:VCALENDAR\r\n")
