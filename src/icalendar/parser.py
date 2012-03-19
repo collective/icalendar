@@ -16,39 +16,7 @@ import re
 import textwrap
 from types import TupleType, ListType
 from icalendar.caselessdict import CaselessDict
-import pytz
 SequenceTypes = [TupleType, ListType]
-
-
-def normalized_timezone(timezone):
-    """ Return a DstTzInfo object from a timezone string or a tzinfo object
-    using the pytz module. This function ensures, that a timezone identifier
-    known to the pytz library/Olson database is used. Timezones other than
-    those defined in the Olson database are not supported.
-
-    >>> from icalendar.parser import normalized_timezone
-
-    Testing an existent zone:
-    >>> normalized_timezone('Europe/Vienna')
-    <DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>
-
-    Testing an inexistend zone. In the Styrian dialect, Tripstrül describes an
-    imaginative place somewhere in nowhere, far away.
-    It's not defined in the Olson database.
-    In that case, None is returned.
-    >>> normalized_timezone('Tripstrul')
-
-    You can also pass a tzinfo object directly:
-    >>> import pytz
-    >>> normalized_timezone(pytz.timezone('Europe/Vienna'))
-    <DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>
-
-    """
-    try:
-        timezone = pytz.timezone(str(timezone))
-    except pytz.UnknownTimeZoneError:
-        timezone = None
-    return timezone
 
 
 def foldline(text, lenght=75, newline='\r\n'):
