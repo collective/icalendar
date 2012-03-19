@@ -37,13 +37,13 @@ class TestTimezoned(unittest.TestCase):
 
         event = icalendar.Event()
         tz = pytz.timezone("Europe/Vienna")
+        event.add('dtstart', datetime.datetime(2012,02,13,10,00,00,tzinfo=tz))
+        event.add('dtend',  datetime.datetime(2012,02,17,18,00,00,tzinfo=tz))
         event.add('dtstamp', datetime.datetime(2010,10,10,10,10,10,tzinfo=tz))
         event.add('created', datetime.datetime(2010,10,10,10,10,10,tzinfo=tz))
         event.add('uid', u'123456')
         event.add('last-modified', datetime.datetime(2010,10,10,10,10,10,tzinfo=tz))
         event.add('summary', u'artsprint 2012')
-        event.add('dtstart', datetime.datetime(2012,02,13,10,00,00,tzinfo=tz))
-        event.add('dtend',  datetime.datetime(2012,02,17,18,00,00,tzinfo=tz))
         #event.add('rrule', u'FREQ=YEARLY;INTERVAL=1;COUNT=10')
         event.add('description', u'sprinting at the artsprint')
         event.add('location', u'aka bild, wien')
@@ -60,3 +60,7 @@ class TestTimezoned(unittest.TestCase):
 
         self.assertTrue("DTSTART;TZID=Europe/Vienna;VALUE=DATE-TIME:20120213T100000" in ical_lines)
         self.assertTrue("ATTENDEE:sepp" in ical_lines)
+
+        # ical standard expects DTSTAMP and CREATED in UTC
+        self.assertTrue("DTSTAMP;VALUE=DATE-TIME:20101010T091010Z" in ical_lines)
+        self.assertTrue("CREATED;VALUE=DATE-TIME:20101010T091010Z" in ical_lines)

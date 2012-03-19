@@ -9,6 +9,9 @@ These are the defined components.
 
 """
 
+import pytz
+from datetime import datetime
+
 # from python
 from types import ListType, TupleType
 SequenceTypes = (ListType, TupleType)
@@ -24,7 +27,7 @@ from icalendar.prop import TypesFactory, vText
 # The component factory
 
 class ComponentFactory(CaselessDict):
-    """ All components defined in rfc 2445 are registered in this factory 
+    """ All components defined in rfc 2445 are registered in this factory
     class. To get a component you can use it like this.
 
     >>> factory = ComponentFactory()
@@ -225,10 +228,14 @@ class Component(CaselessDict):
     # handling of property values
 
     def _encode(self, name, value, cond=1):
-        # internal, for conditional convertion of values.
+        """ Conditional convertion of values.
+
+        """
+
         if cond:
             klass = types_factory.for_property(name)
             return klass(value)
+
         return value
 
 
@@ -238,9 +245,41 @@ class Component(CaselessDict):
         else:
             self[name] = self._encode(name, value, encode)
 
-
     def add(self, name, value, encode=1):
-        "If property exists append, else create and set it"
+        """ Add a property.
+
+        Test the for timezone correctness: dtstart should preserve it's
+        timezone, crated, dtstamp and last-modified must be in UTC.
+        >>> from datetime import datetime
+        >>> import pytz
+        >>> from icalendar.cal import Component
+        >>> comp = Component()
+        >>> comp.add('dtstart', datetime(2010,10,10,10,0,0,tzinfo=pytz.timezone("Europe/Vienna")))
+        >>> comp.add('created', datetime(2010,10,10,12,0,0))
+        >>> comp.add('dtstamp', datetime(2010,10,10,14,0,0,tzinfo=pytz.timezone("Europe/Vienna")))
+        >>> comp.add('last-modified', datetime(2010,10,10,16,0,0,tzinfo=pytz.utc))
+
+        >>> lines = comp.to_ical().splitlines()
+        >>> "DTSTART;TZID=Europe/Vienna;VALUE=DATE-TIME:20101010T100000" in lines
+        True
+        >>> "CREATED;VALUE=DATE-TIME:20101010T120000Z" in lines
+        True
+        >>> "DTSTAMP;VALUE=DATE-TIME:20101010T130000Z" in lines
+        True
+        >>> "LAST-MODIFIED;VALUE=DATE-TIME:20101010T160000Z" in lines
+        True
+
+        """
+        if isinstance(value, datetime) and\
+                name.lower() in ('dtstamp', 'created', 'last-modified'):
+            # RFC expects UTC for those... force value conversion.
+            if getattr(value, 'tzinfo', False) and value.tzinfo is not None:
+                value = value.astimezone(pytz.utc)
+            else:
+                # assume UTC for naive datetime instances
+                value = pytz.utc.localize(value)
+
+        # If property exists append, else create and set it.
         if name in self:
             oldval = self[name]
             value = self._encode(name, value, encode)
@@ -250,7 +289,8 @@ class Component(CaselessDict):
                 self.set(name, [oldval, value], encode=0)
         else:
             self.set(name, value, encode)
-        if getattr(value, 'tzinfo', False) and value.tzinfo is not None:
+        if getattr(value, 'tzinfo', False) and value.tzinfo is not None and value.tzinfo is not pytz.utc:
+            # set the timezone as a parameter to the property
             tzid = value.tzinfo.zone
             self[name].params.update({'TZID': tzid})
 

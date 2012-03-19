@@ -5,6 +5,11 @@ Changelog
 3.1 (unreleased)
 ----------------
 
+* When using Component.add() to add icalendar properties, force a value
+  conversion to UTC for CREATED, DTSTART and LAST-MODIFIED. The RFC expects UTC
+  for those properties.
+  [thet]
+
 * Removed last occurrences of old API (from_string).
   [Rembane]
 
