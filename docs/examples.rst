@@ -5,7 +5,7 @@ Examples
 To open and parse a file::
 
   >>> from icalendar import Calendar, Event
-  >>> cal = Calendar.from_string(open('test.ics','rb').read())
+  >>> cal = Calendar.from_ical(open('test.ics','rb').read())
   >>> cal
   VCALENDAR({'VERSION': vText(u'2.0'), 'METHOD': vText(u'Request'), 'PRODID': vText(u'-//My product//mxm.dk/')})
 
