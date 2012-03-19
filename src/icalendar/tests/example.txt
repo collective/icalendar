@@ -224,7 +224,6 @@ Init the calendar::
 
   >>> cal = Calendar()
   >>> from datetime import datetime
-  >>> from icalendar.tools import utctz # timezone
 
 Some properties are required to be compliant::
 
@@ -232,12 +231,13 @@ Some properties are required to be compliant::
   >>> cal.add('version', '2.0')
 
 We need at least one subcomponent for a calendar to be compliant::
-
+  
+  >>> import pytz
   >>> event = Event()
   >>> event.add('summary', 'Python meeting about calendaring')
-  >>> event.add('dtstart', datetime(2005,4,4,8,0,0,tzinfo=utctz()))
-  >>> event.add('dtend', datetime(2005,4,4,10,0,0,tzinfo=utctz()))
-  >>> event.add('dtstamp', datetime(2005,4,4,0,10,0,tzinfo=utctz()))
+  >>> event.add('dtstart', datetime(2005,4,4,8,0,0,tzinfo=pytz.utc))
+  >>> event.add('dtend', datetime(2005,4,4,10,0,0,tzinfo=pytz.utc))
+  >>> event.add('dtstamp', datetime(2005,4,4,0,10,0,tzinfo=pytz.utc))
 
 A property with parameters. Notice that they are an attribute on the value::
 

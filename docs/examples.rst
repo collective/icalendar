@@ -19,15 +19,15 @@ To create a calendar and write it to disk::
 
   >>> cal = Calendar()
   >>> from datetime import datetime
-  >>> from icalendar.tools import utctz # timezone
   >>> cal.add('prodid', '-//My calendar product//mxm.dk//')
   >>> cal.add('version', '2.0')
 
+  >>> import pytz
   >>> event = Event()
   >>> event.add('summary', 'Python meeting about calendaring')
-  >>> event.add('dtstart', datetime(2005,4,4,8,0,0,tzinfo=utctz()))
-  >>> event.add('dtend', datetime(2005,4,4,10,0,0,tzinfo=utctz()))
-  >>> event.add('dtstamp', datetime(2005,4,4,0,10,0,tzinfo=utctz()))
+  >>> event.add('dtstart', datetime(2005,4,4,8,0,0,tzinfo=pytz.utc))
+  >>> event.add('dtend', datetime(2005,4,4,10,0,0,tzinfo=pytz.utc))
+  >>> event.add('dtstamp', datetime(2005,4,4,0,10,0,tzinfo=pytz.utc))
   >>> event['uid'] = '20050115T101010/27346262376@mxm.dk'
   >>> event.add('priority', 5)
 

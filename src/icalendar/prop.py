@@ -40,6 +40,8 @@ them directly.
 
 """
 
+import pytz
+
 # from python >= 2.3
 from datetime import datetime, timedelta, time, date, tzinfo
 from types import TupleType, ListType
@@ -47,12 +49,10 @@ SequenceTypes = [TupleType, ListType]
 import re
 import time as _time
 import binascii
-from icalendar.tools import utctz
 
 # from this package
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Parameters
-from icalendar.parser import normalized_timezone
 
 DATE_PART = r'(\d+)D'
 TIME_PART = r'T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?'
@@ -501,8 +501,6 @@ class vDatetime:
     created. Be aware that there are certain limitations with timezone naive
     DATE-TIME components in the icalendar standard.
 
-    >>> from icalendar.tools import utctz
-
     >>> d = datetime(2001, 1,1, 12, 30, 0)
 
     >>> dt = vDatetime(d)
@@ -512,7 +510,7 @@ class vDatetime:
     >>> vDatetime.from_ical('20000101T120000')
     datetime.datetime(2000, 1, 1, 12, 0)
 
-    >>> dutc = datetime(2001, 1,1, 12, 30, 0, tzinfo=utctz())
+    >>> dutc = datetime(2001, 1,1, 12, 30, 0, tzinfo=pytz.utc)
     >>> vDatetime(dutc).to_ical()
     '20010101T123000Z'
 
@@ -551,10 +549,12 @@ class vDatetime:
         """ Parses the data format from ical text format.
 
         """
-        # TODO: ical string should better contain also the TZID property.
-
+        tzinfo = None
         if timezone:
-            timezone = normalized_timezone(timezone)
+            try:
+                tzinfo = pytz.timezone(timezone)
+            except pytz.UnknownTimeZoneError:
+                pass
 
         try:
             timetuple = map(int, ((
@@ -565,12 +565,12 @@ class vDatetime:
                 ical[11:13],    # minute
                 ical[13:15],    # second
                 )))
-            if timezone:
-                return datetime(tzinfo=timezone, *timetuple)
+            if tzinfo:
+                return datetime(tzinfo=tzinfo, *timetuple)
             elif not ical[15:]:
                 return datetime(*timetuple)
             elif ical[15:16] == 'Z':
-                return datetime(tzinfo=utctz(), *timetuple)
+                return datetime(tzinfo=pytz.utc, *timetuple)
             else:
                 raise ValueError, ical
         except:
