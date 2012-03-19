@@ -10,20 +10,20 @@ class TestTimezoned(unittest.TestCase):
         directory = os.path.dirname(__file__)
         cal = icalendar.Calendar.from_ical(open(os.path.join(directory, 'timezoned.ics'),'rb').read())
 
-        self.assertTrue(cal, "VCALENDAR({'VERSION': vText(u'2.0'), 'PRODID': vText(u'-//RDU Software//NONSGML HandCal//EN')})")
+        self.assertEqual(cal['prodid'].to_ical(), "-//Plone.org//NONSGML plone.app.event//EN")
 
         timezones = cal.walk('VTIMEZONE')
-        self.assertTrue(len(timezones), 1)
+        self.assertEqual(len(timezones), 1)
 
         tz = timezones[0]
-        self.assertTrue(tz, "VTIMEZONE({'TZID': vText(u'Europe/Vienna')})")
+        self.assertEqual(tz['tzid'].to_ical(), "Europe/Vienna")
 
         std = tz.walk('STANDARD')[0]
-        self.assertTrue(std.decoded('TZOFFSETFROM'), datetime.timedelta(0, 7200))
+        self.assertEqual(std.decoded('TZOFFSETFROM'), datetime.timedelta(0, 7200))
 
         ev1 = cal.walk('VEVENT')[0]
-        self.assertTrue(ev1.decoded('DTSTART'), datetime.datetime(2012, 02, 13, 10, 0, 0, tzinfo=pytz.timezone('Europe/Vienna')))
-        self.assertTrue(ev1.decoded('DTSTAMP'), datetime.datetime(2010, 10, 10, 9, 10, 10, tzinfo=pytz.utc))
+        self.assertEqual(ev1.decoded('DTSTART'), datetime.datetime(2012, 02, 13, 10, 0, 0, tzinfo=pytz.timezone('Europe/Vienna')))
+        self.assertEqual(ev1.decoded('DTSTAMP'), datetime.datetime(2010, 10, 10, 9, 10, 10, tzinfo=pytz.utc))
 
     def test_create_to_ical(self):
         cal = icalendar.Calendar()
