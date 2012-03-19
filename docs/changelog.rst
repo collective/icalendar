@@ -5,6 +5,10 @@ Changelog
 3.1 (unreleased)
 ----------------
 
+* Allow UTC-OFFSET property value data types in seconds, which follows RFC5545
+  specification.
+  [nikolaeff]
+
 * Remove utctz and normalized_timezone methods to simplify the codebase. The
   methods were too tiny to be useful and just used at one place.
   [thet]
