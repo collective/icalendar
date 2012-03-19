@@ -12,7 +12,7 @@ class TestEncoding(unittest.TestCase):
 
         self.assertEqual(cal['prodid'].to_ical(), "-//Plönë.org//NONSGML plone.app.event//EN")
         self.assertEqual(cal['X-WR-CALDESC'].to_ical(), "test non ascii: äöü ÄÖÜ €")
-        
+
         event = cal.walk('VEVENT')[0]
         self.assertEqual(event['SUMMARY'].to_ical(), 'Non-ASCII Test: ÄÖÜ äöü €')
         self.assertEqual(event['DESCRIPTION'].to_ical(), 'icalendar should be able to handle non-ascii: €äüöÄÜÖ.')
