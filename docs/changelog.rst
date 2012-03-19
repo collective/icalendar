@@ -2,6 +2,19 @@ Changelog
 =========
 
 
+3.1 (unreleased)
+----------------
+
+* Add 'recursive' argument to property_items() to switch recursive listing.
+  For example when parsing a text/calendar text including multiple components
+  (e.g. a VCALENDAR with 5 VEVENTs), the previous situation required us to look
+  over all properties in VEVENTs even if we just want the properties under the
+  VCALENDAR component (VERSION, PRODID, CALSCALE, METHOD).
+  [dmikurube]
+
+* All unit tests fixed.
+  [mikaelfrykholm]
+
 3.0.1b2 (2012-03-01)
 --------------------
 
