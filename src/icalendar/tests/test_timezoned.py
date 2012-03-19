@@ -6,7 +6,6 @@ import os
 
 class TestTimezoned(unittest.TestCase):
 
-    """
     def test_create_from_ical(self):
         directory = os.path.dirname(__file__)
         cal = icalendar.Calendar.from_ical(open(os.path.join(directory, 'timezoned.ics'),'rb').read())
@@ -20,10 +19,13 @@ class TestTimezoned(unittest.TestCase):
         self.assertTrue(tz, "VTIMEZONE({'TZID': vText(u'Europe/Vienna')})")
 
         std = tz.walk('STANDARD')[0]
-        self.assertTrue(std.decoded('TZOFFSETFROM'), datetime.timedelta(-1, 72000))
-    """
+        self.assertTrue(std.decoded('TZOFFSETFROM'), datetime.timedelta(0, 7200))
 
-    def test_create_from_code(self):
+        ev1 = cal.walk('VEVENT')[0]
+        self.assertTrue(ev1.decoded('DTSTART'), datetime.datetime(2010, 10, 10, 10, 10, 10, tzinfo=pytz.timezone('Europe/Vienna')))
+        self.assertTrue(ev1.decoded('DTSTAMP'), datetime.datetime(2010, 10, 10, 9, 10, 10, tzinfo=pytz.utc))
+
+    def test_create_to_ical(self):
         cal = icalendar.Calendar()
 
         cal.add('prodid', u"-//Plone.org//NONSGML plone.app.event//EN")
