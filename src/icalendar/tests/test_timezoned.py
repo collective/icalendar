@@ -22,7 +22,7 @@ class TestTimezoned(unittest.TestCase):
         self.assertTrue(std.decoded('TZOFFSETFROM'), datetime.timedelta(0, 7200))
 
         ev1 = cal.walk('VEVENT')[0]
-        self.assertTrue(ev1.decoded('DTSTART'), datetime.datetime(2010, 10, 10, 10, 10, 10, tzinfo=pytz.timezone('Europe/Vienna')))
+        self.assertTrue(ev1.decoded('DTSTART'), datetime.datetime(2012, 02, 13, 10, 0, 0, tzinfo=pytz.timezone('Europe/Vienna')))
         self.assertTrue(ev1.decoded('DTSTAMP'), datetime.datetime(2010, 10, 10, 9, 10, 10, tzinfo=pytz.utc))
 
     def test_create_to_ical(self):
