@@ -5,6 +5,9 @@ Changelog
 3.1 (unreleased)
 ----------------
 
+* Removed last occurrences of old API (from_string).
+  [Rembane]
+
 * Add 'recursive' argument to property_items() to switch recursive listing.
   For example when parsing a text/calendar text including multiple components
   (e.g. a VCALENDAR with 5 VEVENTs), the previous situation required us to look
