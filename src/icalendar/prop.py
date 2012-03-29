@@ -526,6 +526,16 @@ class vDatetime:
     >>> vDatetime(utc).to_ical()
     '20010101T000000Z'
 
+    1 minute before transition to DST
+    >>> dat = vDatetime.from_ical('20120311T015959', 'America/Denver')
+    >>> dat.strftime('%Y%m%d%H%M%S %z')
+    '20120311015959 -0700'
+
+    After transition to DST
+    >>> dat = vDatetime.from_ical('20120311T030000', 'America/Denver')
+    >>> dat.strftime('%Y%m%d%H%M%S %z')
+    '20120311030000 -0600'
+
     >>> dat = vDatetime.from_ical('20101010T000000', 'Europe/Vienna')
     >>> vDatetime(dat).to_ical()
     '20101010T000000'
@@ -565,7 +575,7 @@ class vDatetime:
                 ical[13:15],    # second
                 )))
             if tzinfo:
-                return datetime(tzinfo=tzinfo, *timetuple)
+                return tzinfo.localize(datetime(*timetuple))
             elif not ical[15:]:
                 return datetime(*timetuple)
             elif ical[15:16] == 'Z':
