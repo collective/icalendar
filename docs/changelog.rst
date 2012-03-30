@@ -5,6 +5,9 @@ Changelog
 3.1 (unreleased)
 ----------------
 
+* Localize datetimes for timezones to avaiod DST transition errors.
+  [dbstovall]
+
 * Allow UTC-OFFSET property value data types in seconds, which follows RFC5545
   specification.
   [nikolaeff]
