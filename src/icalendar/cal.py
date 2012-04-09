@@ -398,6 +398,17 @@ class Component(CaselessDict):
     def from_ical(st, multiple=False):
         """
         Populates the component recursively from a string
+
+        RecurrenceIDs may contain a TZID parameter, if so, they should create a tz localized datetime, otherwise, create a naive datetime
+        >>> componentStr = 'BEGIN:VEVENT\\nRECURRENCE-ID;TZID=America/Denver:20120404T073000\\nEND:VEVENT'
+        >>> component = Component.from_ical(componentStr)
+        >>> component['RECURRENCE-ID'].dt.tzinfo
+        <DstTzInfo 'America/Denver' MDT-1 day, 18:00:00 DST>
+
+        >>> componentStr = 'BEGIN:VEVENT\\nRECURRENCE-ID:20120404T073000\\nEND:VEVENT'
+        >>> component = Component.from_ical(componentStr)
+        >>> component['RECURRENCE-ID'].dt.tzinfo == None
+        True
         """
         stack = [] # a stack of components
         comps = []
@@ -431,7 +442,7 @@ class Component(CaselessDict):
                 factory = types_factory.for_property(name)
                 component = stack[-1]
                 try:
-                    if name in ('DTSTART', 'DTEND') and 'TZID' in params: # TODO: add DUE, FREEBUSY
+                    if name in ('DTSTART', 'DTEND','RECURRENCE-ID') and 'TZID' in params: # TODO: add DUE, FREEBUSY
                         vals = factory(factory.from_ical(vals, params['TZID']))
                     else:
                         vals = factory(factory.from_ical(vals))
