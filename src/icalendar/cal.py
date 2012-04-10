@@ -1,4 +1,4 @@
-# -*- coding: latin-1 -*-
+# -*- coding: utf-8 -*-
 
 """
 
@@ -27,7 +27,7 @@ class ComponentFactory(CaselessDict):
     >>> component = factory['VEVENT']
     >>> event = component(dtstart='19700101')
     >>> event.to_ical()
-    'BEGIN:VEVENT\\r\\nDTSTART:19700101\\r\\nEND:VEVENT\\r\\n'
+    b'BEGIN:VEVENT\\r\\nDTSTART:19700101\\r\\nEND:VEVENT\\r\\n'
 
     >>> factory.get('VCALENDAR', Component)
     <class 'icalendar.cal.Calendar'>
@@ -84,11 +84,11 @@ class Component(CaselessDict):
     You can get the values back directly
     >>> c.add('prodid', '-//my product//')
     >>> c['prodid']
-    vText(u'-//my product//')
+    vText('-//my product//')
 
     or decoded to a python type
     >>> c.decoded('prodid')
-    u'-//my product//'
+    '-//my product//'
 
     With default values for non existing properties
     >>> c.decoded('version', 'No Version')
@@ -99,7 +99,7 @@ class Component(CaselessDict):
     >>> c.name = 'VCALENDAR'
     >>> c.add('attendee', 'Max M')
     >>> c.to_ical()
-    'BEGIN:VCALENDAR\\r\\nATTENDEE:Max M\\r\\nEND:VCALENDAR\\r\\n'
+    b'BEGIN:VCALENDAR\\r\\nATTENDEE:Max M\\r\\nEND:VCALENDAR\\r\\n'
 
     >>> from icalendar.prop import vDatetime
 
@@ -109,7 +109,7 @@ class Component(CaselessDict):
     >>> e.add('dtend', '20000102T000000', encode=0)
     >>> e.add('dtstart', '20000101T000000', encode=0)
     >>> e.to_ical()
-    'BEGIN:VEVENT\\r\\nDTEND:20000102T000000\\r\\nDTSTART:20000101T000000\\r\\nSUMMARY:A brief history of time\\r\\nEND:VEVENT\\r\\n'
+    b'BEGIN:VEVENT\\r\\nDTEND:20000102T000000\\r\\nDTSTART:20000101T000000\\r\\nSUMMARY:A brief history of time\\r\\nEND:VEVENT\\r\\n'
 
     >>> c.add_component(e)
     >>> c.subcomponents
@@ -129,9 +129,9 @@ class Component(CaselessDict):
 
     Text fields which span multiple mulitple lines require proper indenting
     >>> c = Calendar()
-    >>> c['description']=u'Paragraph one\\n\\nParagraph two'
+    >>> c['description']='Paragraph one\\n\\nParagraph two'
     >>> c.to_ical()
-    'BEGIN:VCALENDAR\\r\\nDESCRIPTION:Paragraph one\\n\\nParagraph two\\r\\nEND:VCALENDAR\\r\\n'
+    b'BEGIN:VCALENDAR\\r\\nDESCRIPTION:Paragraph one\\n\\nParagraph two\\r\\nEND:VCALENDAR\\r\\n'
 
     INLINE properties have their values on one property line. Note the double
     quoting of the value with a colon in it.
@@ -141,7 +141,7 @@ class Component(CaselessDict):
     VCALENDAR({'RESOURCES': 'Chair, Table, "Room: 42"'})
 
     >>> c.to_ical()
-    'BEGIN:VCALENDAR\\r\\nRESOURCES:Chair, Table, "Room: 42"\\r\\nEND:VCALENDAR\\r\\n'
+    b'BEGIN:VCALENDAR\\r\\nRESOURCES:Chair, Table, "Room: 42"\\r\\nEND:VCALENDAR\\r\\n'
 
     The inline values must be handled by the get_inline() and set_inline()
     methods.
@@ -151,7 +151,7 @@ class Component(CaselessDict):
 
     These can also be decoded
     >>> c.get_inline('resources', decode=1)
-    [u'Chair', u'Table', u'Room: 42']
+    ['Chair', 'Table', 'Room: 42']
 
     You can set them directly
     >>> c.set_inline('resources', ['A', 'List', 'of', 'some, recources'], encode=1)
@@ -168,7 +168,7 @@ class Component(CaselessDict):
 
     >>> freebusy = c.get_inline('freebusy', decode=1)
     >>> type(freebusy[0][0]), type(freebusy[0][1])
-    (<type 'datetime.datetime'>, <type 'datetime.timedelta'>)
+    (<class 'datetime.datetime'>, <class 'datetime.timedelta'>)
     """
 
     name = ''       # must be defined in each component
@@ -268,7 +268,7 @@ class Component(CaselessDict):
         """
         Returns a list of values (split on comma).
         """
-        vals = [v.strip('" ').encode(vText.encoding)
+        vals = [v.strip('" ')
                   for v in q_split(self[name])]
         if decode:
             return [self._decode(name, val) for val in vals]
@@ -282,7 +282,7 @@ class Component(CaselessDict):
         """
         if encode:
             values = [self._encode(name, value, 1) for value in values]
-        joined = q_join(values).encode(vText.encoding)
+        joined = q_join(values)
         self[name] = types_factory['inline'](joined)
 
 
@@ -539,36 +539,37 @@ class Calendar(Component):
     >>> event.set('dtstart', datetime(2005,4,4,8,0,0))
     >>> cal.add_component(event)
     >>> cal.subcomponents[0].to_ical()
-    'BEGIN:VEVENT\\r\\nSUMMARY:Python meeting about calendaring\\r\\nDTSTART;VALUE=DATE-TIME:20050404T080000\\r\\nUID:42\\r\\nEND:VEVENT\\r\\n'
+    b'BEGIN:VEVENT\\r\\nSUMMARY:Python meeting about calendaring\\r\\nDTSTART;VALUE=DATE-TIME:20050404T080000\\r\\nUID:42\\r\\nEND:VEVENT\\r\\n'
 
     Write to disc
     >>> import tempfile, os
     >>> directory = tempfile.mkdtemp()
     >>> open(os.path.join(directory, 'test.ics'), 'wb').write(cal.to_ical())
+    203
 
     Parsing a complete calendar from a string will silently ignore bogus events.
     The bogosity in the following is the third EXDATE: it has an empty DATE.
-    >>> s = '\\r\\n'.join(('BEGIN:VCALENDAR',
-    ...                    'PRODID:-//Google Inc//Google Calendar 70.9054//EN',
-    ...                    'VERSION:2.0',
-    ...                    'CALSCALE:GREGORIAN',
-    ...                    'METHOD:PUBLISH',
-    ...                    'BEGIN:VEVENT',
-    ...                    'DESCRIPTION:Perfectly OK event',
-    ...                    'DTSTART;VALUE=DATE:20080303',
-    ...                    'DTEND;VALUE=DATE:20080304',
-    ...                    'RRULE:FREQ=DAILY;UNTIL=20080323T235959Z',
-    ...                    'EXDATE;VALUE=DATE:20080311',
-    ...                    'END:VEVENT',
-    ...                    'BEGIN:VEVENT',
-    ...                    'DESCRIPTION:Bogus event',
-    ...                    'DTSTART;VALUE=DATE:20080303',
-    ...                    'DTEND;VALUE=DATE:20080304',
-    ...                    'RRULE:FREQ=DAILY;UNTIL=20080323T235959Z',
-    ...                    'EXDATE;VALUE=DATE:20080311',
-    ...                    'EXDATE;VALUE=DATE:',
-    ...                    'END:VEVENT',
-    ...                    'END:VCALENDAR'))
+    >>> s = b'\\r\\n'.join((b'BEGIN:VCALENDAR',
+    ...                    b'PRODID:-//Google Inc//Google Calendar 70.9054//EN',
+    ...                    b'VERSION:2.0',
+    ...                    b'CALSCALE:GREGORIAN',
+    ...                    b'METHOD:PUBLISH',
+    ...                    b'BEGIN:VEVENT',
+    ...                    b'DESCRIPTION:Perfectly OK event',
+    ...                    b'DTSTART;VALUE=DATE:20080303',
+    ...                    b'DTEND;VALUE=DATE:20080304',
+    ...                    b'RRULE:FREQ=DAILY;UNTIL=20080323T235959Z',
+    ...                    b'EXDATE;VALUE=DATE:20080311',
+    ...                    b'END:VEVENT',
+    ...                    b'BEGIN:VEVENT',
+    ...                    b'DESCRIPTION:Bogus event',
+    ...                    b'DTSTART;VALUE=DATE:20080303',
+    ...                    b'DTEND;VALUE=DATE:20080304',
+    ...                    b'RRULE:FREQ=DAILY;UNTIL=20080323T235959Z',
+    ...                    b'EXDATE;VALUE=DATE:20080311',
+    ...                    b'EXDATE;VALUE=DATE:',
+    ...                    b'END:VEVENT',
+    ...                    b'END:VCALENDAR'))
     >>> [e['DESCRIPTION'].to_ical() for e in Calendar.from_ical(s).walk('VEVENT')]
     ['Perfectly OK event']
     """

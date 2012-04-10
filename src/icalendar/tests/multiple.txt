@@ -16,5 +16,5 @@ A exmaple with multiple VCALENDAR components::
   'VEVENT'
 
   >>> cals[0]['prodid']
-  vText(u'-//Mozilla.org/NONSGML Mozilla Calendar V1.0//EN')
+  vText('-//Mozilla.org/NONSGML Mozilla Calendar V1.0//EN')
 

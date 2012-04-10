@@ -49,6 +49,7 @@ SequenceTypes = [tuple, list]
 import re
 import time as _time
 import binascii
+import base64
 from icalendar.tools import utctz
 
 # from this package
@@ -68,29 +69,29 @@ WEEKDAY_RULE = re.compile('(?P<signal>[+-]?)(?P<relative>[\d]?)'
 class vBinary:
     r""" Binary property values are base 64 encoded.
 
-    >>> b = vBinary('This is gibberish')
+    >>> b = vBinary(b'This is gibberish')
     >>> b.to_ical()
-    'VGhpcyBpcyBnaWJiZXJpc2g='
-    >>> b = vBinary.from_ical('VGhpcyBpcyBnaWJiZXJpc2g=')
+    b'VGhpcyBpcyBnaWJiZXJpc2g='
+    >>> b = vBinary.from_ical(b'VGhpcyBpcyBnaWJiZXJpc2g=')
     >>> b
-    'This is gibberish'
+    b'This is gibberish'
 
     The roundtrip test
-    >>> x = 'Binary data æ ø å \x13 \x56'
+    >>> x = b'Binary data \xc3\xa6 \xc3\xb8 \xc3\xa5 \x13 \x56'
     >>> vBinary(x).to_ical()
-    'QmluYXJ5IGRhdGEgw6Ygw7ggw6UgEyBW'
-    >>> vBinary.from_ical('QmluYXJ5IGRhdGEgw6Ygw7ggw6UgEyBW')
-    'Binary data \xc3\xa6 \xc3\xb8 \xc3\xa5 \x13 V'
+    b'QmluYXJ5IGRhdGEgw6Ygw7ggw6UgEyBW'
+    >>> vBinary.from_ical(b'QmluYXJ5IGRhdGEgw6Ygw7ggw6UgEyBW')
+    b'Binary data \xc3\xa6 \xc3\xb8 \xc3\xa5 \x13 V'
 
     >>> b = vBinary('txt')
     >>> b.params
     Parameters({'VALUE': 'BINARY', 'ENCODING': 'BASE64'})
 
     Long data should not have line breaks, as that would interfere
-    >>> x = 'a'*99
-    >>> vBinary(x).to_ical() == 'YWFh' * 33
+    >>> x = b'a'*99
+    >>> vBinary(x).to_ical() == b'YWFh' * 33
     True
-    >>> vBinary.from_ical('YWFh' * 33) == 'a' * 99
+    >>> vBinary.from_ical(b'YWFh' * 33) == b'a' * 99
     True
 
     """
@@ -100,15 +101,15 @@ class vBinary:
         self.params = Parameters(encoding='BASE64', value="BINARY")
 
     def __repr__(self):
-        return "vBinary(%s)" % str.__repr__(self.obj)
+        return "vBinary(%s)" % bytes.__repr__(self.obj)
 
     def to_ical(self):
         return binascii.b2a_base64(self.obj)[:-1]
 
     def from_ical(ical):
         "Parses the data format from ical text format"
-        try:
-            return ical.decode('base-64')
+        try:    
+            return base64.decodebytes(ical)            
         except UnicodeError:
             raise ValueError('Not valid base 64 encoding.')
     from_ical = staticmethod(from_ical)
@@ -320,13 +321,13 @@ class vDDDLists:
 
     >>> dt_list = vDDDLists.from_ical('19960402T010000Z')
     >>> type(dt_list)
-    <type 'list'>
+    <class 'list'>
 
     >>> len(dt_list)
     1
 
     >>> type(dt_list[0])
-    <type 'datetime.datetime'>
+    <class 'datetime.datetime'>
 
     >>> str(dt_list[0])
     '1996-04-02 01:00:00+00:00'
@@ -394,14 +395,14 @@ class vDDDTypes:
 
     >>> d = vDDDTypes.from_ical('20010101T123000')
     >>> type(d)
-    <type 'datetime.datetime'>
+    <class 'datetime.datetime'>
 
     >>> repr(vDDDTypes.from_ical('20010101T123000Z'))[:65]
     'datetime.datetime(2001, 1, 1, 12, 30, tzinfo=<UTC>)'
 
     >>> d = vDDDTypes.from_ical('20010101')
     >>> type(d)
-    <type 'datetime.date'>
+    <class 'datetime.date'>
 
     >>> vDDDTypes.from_ical('P31D')
     datetime.timedelta(31)
@@ -1036,12 +1037,12 @@ class vRecur(CaselessDict):
 class vText(six.text_type):
     r""" Simple text
 
-    >>> t = vText(u'Simple text')
+    >>> t = vText(six.u('Simple text'))
     >>> t.to_ical()
     'Simple text'
 
     Escaped text
-    >>> t = vText(ur'Text ; with escaped, chars')
+    >>> t = vText(six.u(r'Text ; with escaped, chars'))
     >>> t.to_ical()
     'Text \\; with escaped\\, chars'
 
@@ -1052,20 +1053,20 @@ class vText(six.text_type):
     If you pass a unicode object, it will be utf-8 encoded. As this is the
     (only) standard that RFC 2445 support.
 
-    >>> t = vText(u'international chars \xe6\xf8\xe5 \xc6\xd8\xc5 \xfc')
+    >>> t = vText(six.u('international chars \xe6\xf8\xe5 \xc6\xd8\xc5 \xfc'))
     >>> t.to_ical()
-    'international chars \xc3\xa6\xc3\xb8\xc3\xa5 \xc3\x86\xc3\x98\xc3\x85 \xc3\xbc'
+    'international chars æøå ÆØÅ ü'
 
     Unicode is converted to utf-8
-    >>> t = vText(u'international \xe6 \xf8 \xe5')
+    >>> t = vText(six.u('international \xe6 \xf8 \xe5'))
     >>> t.to_ical()
-    'international \xc3\xa6 \xc3\xb8 \xc3\xa5'
+    'international æ ø å'
 
     and parsing?
     >>> vText.from_ical('Text \\; with escaped\\, chars')
-    u'Text ; with escaped, chars'
+    'Text ; with escaped, chars'
 
-    >>> print vText.from_ical('A string with\\; some\\\\ characters in\\Nit')
+    >>> print(vText.from_ical('A string with\\; some\\\\ characters in\\Nit'))
     A string with; some\ characters in
     it
 
@@ -1073,7 +1074,7 @@ class vText(six.text_type):
     >>> # We intentionally use a string with unexpected encoding
     >>> t = vText.from_ical('Ol\xe9')
     >>> t
-    u'Ol\ufffd'
+    'Olé'
 
     Notice how accented E character, encoded with latin-1, got replaced
     with the official U+FFFD REPLACEMENT CHARACTER.
@@ -1103,7 +1104,7 @@ class vText(six.text_type):
         return six.u("vText(%s)") % six.text_type.__repr__(self)
 
     def to_ical(self):
-        return self.escape().encode(self.encoding)
+        return self.escape()
 
     def from_ical(ical):
         "Parses the data format from ical text format"
@@ -1114,7 +1115,7 @@ class vText(six.text_type):
                         .replace(r'\,', ',')
                         .replace(r'\;', ';')
                         .replace('\\\\', '\\'))
-            return ical.decode(vText.encoding, 'replace')
+            return ical
         except:
             raise ValueError('Expected ical text, got: %s' % ical)
     from_ical = staticmethod(from_ical)
@@ -1374,16 +1375,16 @@ class TypesFactory(CaselessDict):
     datetime.datetime(2005, 1, 1, 12, 30)
 
     It can also be used to directly encode property and parameter values
-    >>> comment = factory.to_ical('comment', u'by Rasmussen, Max M\xf8ller')
+    >>> comment = factory.to_ical('comment', six.u('by Rasmussen, Max M\xf8ller'))
     >>> comment
-    'by Rasmussen\\, Max M\xc3\xb8ller'
+    'by Rasmussen\\, Max Møller'
     >>> factory.to_ical('priority', 1)
     '1'
-    >>> factory.to_ical('cn', u'Rasmussen, Max M\xf8ller')
-    'Rasmussen\\, Max M\xc3\xb8ller'
+    >>> factory.to_ical('cn', six.u('Rasmussen, Max M\xf8ller'))
+    'Rasmussen\\, Max Møller'
 
-    >>> factory.from_ical('cn', 'Rasmussen\\, Max M\xc3\xb8ller')
-    u'Rasmussen, Max M\xf8ller'
+    >>> factory.from_ical('cn', 'Rasmussen\\, Max Møller')
+    'Rasmussen, Max Møller'
 
     The value and parameter names don't overlap. So one factory is enough for
     both kinds.
