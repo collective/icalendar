@@ -5,7 +5,10 @@ Changelog
 3.1 (unreleased)
 ----------------
 
-* Localize datetimes for timezones to avaiod DST transition errors.
+* Apply TZID parameter to datetimes parsed from RECURRENCE-ID
+  [dbstovall]
+
+* Localize datetimes for timezones to avoid DST transition errors.
   [dbstovall]
 
 * Allow UTC-OFFSET property value data types in seconds, which follows RFC5545
