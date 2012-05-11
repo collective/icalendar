@@ -7,6 +7,7 @@ with Python.
 
 ----
 
+    :Homepage: http://icalendar.readthedocs.org
     :Code: http://github.com/collective/icalendar
     :Mailing list: http://github.com/collective/icalendar/issues
     :Dependencies: Since version 3.0 we depend on `pytz`_.
