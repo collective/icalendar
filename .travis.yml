@@ -8,3 +8,5 @@ python:
 install:
   - pip install . --use-mirrors
   - pip install unittest2 --use-mirrors
+script:
+  - bin/unit2 discover icalendar []
