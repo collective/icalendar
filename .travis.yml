@@ -7,7 +7,7 @@ python:
   - "3.2"
 install:
   - env
-  - pip install . --use-mirrors --environment=$HOME/virtualenv
-  - pip install unittest2 --use-mirrors --environment=$HOME/virtualenv
+  - pip install . --use-mirrors --environment=$HOME/virtualen/python$TRAVIS_PYTHON_VERSIONv
+  - pip install unittest2 --use-mirrors --environment=$HOME/virtualen/python$TRAVIS_PYTHON_VERSIONv
 script:
-  - bin/unit2 discover icalendar []
+  - $HOME/virtualenv/python$TRAVIS_PYTHON_VERSION/bin/unit2 discover icalendar []
