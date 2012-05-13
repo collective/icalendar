@@ -7,4 +7,4 @@ python:
   - "3.2"
 install:
   - pip install . --use-mirrors
-  - pip install unittest2 interlude --use-mirrors
+  - pip install unittest2 --use-mirrors
