@@ -7,7 +7,8 @@ python:
   - "3.2"
 install:
   - pip help install
-  - pip install --upgrade pip
+  - pip install --upgrade pip --use-mirrors
+  - pip help install
   - pip install --use-mirrors -E=$HOME/virtualenv/python$TRAVIS_PYTHON_VERSION .
   - pip install --use-mirrors --environment=$HOME/virtualenv/python$TRAVIS_PYTHON_VERSION unittest2
 script:
