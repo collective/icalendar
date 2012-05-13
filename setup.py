@@ -27,7 +27,7 @@ setuptools.setup(
     package_dir={'': 'src'},
     include_package_data=True,
     zip_safe=False,
-    install_requires=['pytz'],
+    install_requires=['setuptools', 'pytz'],
     extras_require={
         'test': ['unittest2', ] #'interlude'],
         },
