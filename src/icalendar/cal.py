@@ -259,7 +259,10 @@ class Component(CaselessDict):
 
         if cond:
             klass = types_factory.for_property(name)
-            return klass(value)
+            _klass = klass(value)
+            if hasattr(value, 'params') and len(value.params.keys()) > 0:
+                _klass.params = value.params
+            return _klass
 
         return value
 
