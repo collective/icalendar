@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 # Copyright (c) 2012, Plone Foundation
 # All rights reserved.
 #
@@ -26,7 +25,6 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-
 This module contains the parser/generators (or coders/encoders if you prefer)
 for the classes/datatypes that are used in iCalendar:
 
@@ -46,7 +44,6 @@ for the classes/datatypes that are used in iCalendar:
 
 ###########################################################################
 
-
 iCalendar properties has values. The values are strongly typed. This module
 defines these types, calling val.to_ical() on them, Will render them as defined
 in rfc2445.
@@ -63,22 +60,25 @@ primitive Python datatype. So it should allways be true that:
 
 These types are mainly used for parsing and file generation. But you can set
 them directly.
-
 """
 
 import pytz
-
-# from python >= 2.3
-from datetime import datetime, timedelta, time, date, tzinfo
-from types import TupleType, ListType
-SequenceTypes = [TupleType, ListType]
 import re
 import time as _time
 import binascii
-
-# from this package
+from datetime import (
+    datetime,
+    timedelta,
+    time,
+    date,
+    tzinfo,
+)
+from types import TupleType, ListType
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Parameters
+
+
+SequenceTypes = [TupleType, ListType]
 
 DATE_PART = r'(\d+)D'
 TIME_PART = r'T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?'
@@ -89,8 +89,9 @@ DURATION_REGEX = re.compile(r'([-+]?)P(?:%s|%s)$'
 WEEKDAY_RULE = re.compile('(?P<signal>[+-]?)(?P<relative>[\d]?)'
                           '(?P<weekday>[\w]{2})$')
 
+
 class vBinary:
-    """ Binary property values are base 64 encoded.
+    """Binary property values are base 64 encoded.
 
     >>> b = vBinary('This is gibberish')
     >>> b.to_ical()
@@ -100,11 +101,11 @@ class vBinary:
     'This is gibberish'
 
     The roundtrip test
-    >>> x = 'Binary data æ ø å \x13 \x56'
+    >>> x = 'Binary data \x13 \x56'
     >>> vBinary(x).to_ical()
-    'QmluYXJ5IGRhdGEg5iD4IOUgEyBW'
-    >>> vBinary.from_ical('QmluYXJ5IGRhdGEg5iD4IOUgEyBW')
-    'Binary data \\xe6 \\xf8 \\xe5 \\x13 V'
+    'QmluYXJ5IGRhdGEgEyBW'
+    >>> vBinary.from_ical('QmluYXJ5IGRhdGEgEyBW')
+    'Binary data \\x13 V'
 
     >>> b = vBinary('txt')
     >>> b.params
@@ -116,7 +117,6 @@ class vBinary:
     True
     >>> vBinary.from_ical('YWFh' * 33) == 'a' * 99
     True
-
     """
 
     def __init__(self, obj):
@@ -135,11 +135,12 @@ class vBinary:
             return ical.decode('base-64')
         except UnicodeError:
             raise ValueError, 'Not valid base 64 encoding.'
+    
     from_ical = staticmethod(from_ical)
 
 
 class vBoolean(int):
-    """ Returns specific string according to state.
+    """Returns specific string according to state.
 
     >>> bin = vBoolean(True)
     >>> bin.to_ical()
@@ -174,11 +175,12 @@ class vBoolean(int):
             return vBoolean.bool_map[ical]
         except:
             raise ValueError, "Expected 'TRUE' or 'FALSE'. Got %s" % ical
+    
     from_ical = staticmethod(from_ical)
 
 
 class vCalAddress(str):
-    """ This just returns an unquoted string.
+    """This just returns an unquoted string.
 
     >>> a = vCalAddress('MAILTO:maxm@mxm.dk')
     >>> a.params['cn'] = 'Max M'
@@ -190,8 +192,10 @@ class vCalAddress(str):
     'MAILTO:maxm@mxm.dk'
     """
 
-    def __new__(cls, *args, **kwargs):
-        self = super(vCalAddress, cls).__new__(cls, *args, **kwargs)
+    def __new__(cls, value):
+        if isinstance(value, unicode):
+            value = value.encode('utf-8')
+        self = super(vCalAddress, cls).__new__(cls, value)
         self.params = Parameters()
         return self
 
@@ -207,15 +211,13 @@ class vCalAddress(str):
             return str(ical)
         except:
             raise ValueError, 'Expected vCalAddress, got: %s' % ical
+    
     from_ical = staticmethod(from_ical)
 
 
 ####################################################
 # handy tzinfo classes you can use.
 #
-
-
-
 
 ZERO = timedelta(0)
 HOUR = timedelta(hours=1)
@@ -228,8 +230,7 @@ DSTDIFF = DSTOFFSET - STDOFFSET
 
 
 class FixedOffset(tzinfo):
-    """ Fixed offset in minutes east from UTC.
-
+    """Fixed offset in minutes east from UTC.
     """
 
     def __init__(self, offset, name):
@@ -247,8 +248,7 @@ class FixedOffset(tzinfo):
 
 
 class LocalTimezone(tzinfo):
-    """ Timezone of the machine where the code is running.
-
+    """Timezone of the machine where the code is running.
     """
 
     def utcoffset(self, dt):
@@ -275,10 +275,8 @@ class LocalTimezone(tzinfo):
         return tt.tm_isdst > 0
 
 
-#####################
-
 class vFloat(float):
-    """ Just a float.
+    """Just a float.
 
     >>> f = vFloat(1.0)
     >>> f.to_ical()
@@ -287,7 +285,6 @@ class vFloat(float):
     42.0
     >>> vFloat(42).to_ical()
     '42.0'
-
     """
 
     def __new__(cls, *args, **kwargs):
@@ -304,11 +301,12 @@ class vFloat(float):
             return float(ical)
         except:
             raise ValueError, 'Expected float value, got: %s' % ical
+    
     from_ical = staticmethod(from_ical)
 
 
 class vInt(int):
-    """ Just an int.
+    """Just an int.
 
     >>> f = vInt(42)
     >>> f.to_ical()
@@ -319,7 +317,6 @@ class vInt(int):
     Traceback (most recent call last):
         ...
     ValueError: Expected int, got: 1s3
-
     """
 
     def __new__(cls, *args, **kwargs):
@@ -336,11 +333,12 @@ class vInt(int):
             return int(ical)
         except:
             raise ValueError, 'Expected int, got: %s' % ical
+    
     from_ical = staticmethod(from_ical)
 
 
 class vDDDLists:
-    """ A list of vDDDTypes values.
+    """A list of vDDDTypes values.
 
     >>> dt_list = vDDDLists.from_ical('19960402T010000Z')
     >>> type(dt_list)
@@ -355,7 +353,8 @@ class vDDDLists:
     >>> str(dt_list[0])
     '1996-04-02 01:00:00+00:00'
 
-    >>> dt_list = vDDDLists.from_ical('19960402T010000Z,19960403T010000Z,19960404T010000Z')
+    >>> p = '19960402T010000Z,19960403T010000Z,19960404T010000Z'
+    >>> dt_list = vDDDLists.from_ical(p)
     >>> len(dt_list)
     3
 
@@ -380,7 +379,6 @@ class vDDDLists:
     >>> dt_list = vDDDLists([datetime(2000,1,1), datetime(2000,11,11)])
     >>> dt_list.to_ical()
     '20000101T000000,20001111T000000'
-
     """
 
     def __init__(self, dt_list):
@@ -392,15 +390,13 @@ class vDDDLists:
         self.dts = vDDD
 
     def to_ical(self):
-        '''
-        Generates the text string in the iCalendar format.
+        '''Generates the text string in the iCalendar format.
         '''
         dts_ical = [dt.to_ical() for dt in self.dts]
         return ",".join(dts_ical)
 
     def from_ical(ical):
-        '''
-        Parses the list of data formats from ical text format.
+        '''Parses the list of data formats from ical text format.
         @param ical: ical text format
         '''
         out = []
@@ -408,11 +404,12 @@ class vDDDLists:
         for ical_dt in ical_dates:
             out.append(vDDDTypes.from_ical(ical_dt))
         return out
+    
     from_ical = staticmethod(from_ical)
 
 
 class vDDDTypes:
-    """ A combined Datetime, Date or Duration parser/generator. Their format
+    """A combined Datetime, Date or Duration parser/generator. Their format
     cannot be confused, and often values can be of either types.
     So this is practical.
 
@@ -438,7 +435,6 @@ class vDDDTypes:
     Traceback (most recent call last):
         ...
     ValueError: You must use datetime, date or timedelta
-
     """
 
     def __init__(self, dt):
@@ -473,11 +469,12 @@ class vDDDTypes:
             return vDatetime.from_ical(ical, timezone=timezone)
         except:
             return vDate.from_ical(ical)
+    
     from_ical = staticmethod(from_ical)
 
 
 class vDate:
-    """ Render and generates iCalendar date format.
+    """Render and generates iCalendar date format.
 
     >>> d = date(2001, 1,1)
     >>> vDate(d).to_ical()
@@ -490,7 +487,6 @@ class vDate:
     Traceback (most recent call last):
         ...
     ValueError: Value MUST be a date instance
-
     """
 
     def __init__(self, dt):
@@ -513,11 +509,12 @@ class vDate:
             return date(*timetuple)
         except:
             raise ValueError, 'Wrong date format %s' % ical
+    
     from_ical = staticmethod(from_ical)
 
 
 class vDatetime:
-    """ Render and generates icalendar datetime format.
+    """Render and generates icalendar datetime format.
 
     vDatetime is timezone aware and uses the pytz library, an implementation of
     the Olson database in Python. When a vDatetime object is created from an
@@ -610,11 +607,12 @@ class vDatetime:
                 raise ValueError, ical
         except:
             raise ValueError, 'Wrong datetime format: %s' % ical
+    
     from_ical = staticmethod(from_ical)
 
 
 class vDuration:
-    """ Subclass of timedelta that renders itself in the iCalendar DURATION
+    """Subclass of timedelta that renders itself in the iCalendar DURATION
     format.
 
     >>> vDuration(timedelta(11)).to_ical()
@@ -661,7 +659,6 @@ class vDuration:
     Traceback (most recent call last):
         ...
     ValueError: Value MUST be a timedelta instance
-
     """
 
     def __init__(self, td):
@@ -711,11 +708,12 @@ class vDuration:
             return value
         except:
             raise ValueError('Invalid iCalendar duration: %s' % ical)
+    
     from_ical = staticmethod(from_ical)
 
 
 class vPeriod:
-    """ A precise period of time.
+    """A precise period of time.
 
     One day in exact datetimes
     >>> per = (datetime(2000,1,1), datetime(2000,1,2))
@@ -763,7 +761,6 @@ class vPeriod:
     >>> p = vPeriod((datetime(2000,1,1, tzinfo=dk), timedelta(days=31)))
     >>> p.to_ical()
     '20000101T000000/P31D'
-
     """
 
     def __init__(self, per):
@@ -773,7 +770,8 @@ class vPeriod:
         if not (isinstance(end_or_duration, datetime) or
                 isinstance(end_or_duration, date) or
                 isinstance(end_or_duration, timedelta)):
-            raise ValueError('end_or_duration MUST be a datetime, date or timedelta instance')
+            raise ValueError('end_or_duration MUST be a datetime, '
+                             'date or timedelta instance')
         by_duration = 0
         if isinstance(end_or_duration, timedelta):
             by_duration = 1
@@ -811,8 +809,10 @@ class vPeriod:
 
     def to_ical(self):
         if self.by_duration:
-            return '%s/%s' % (vDatetime(self.start).to_ical(), vDuration(self.duration).to_ical())
-        return '%s/%s' % (vDatetime(self.start).to_ical(), vDatetime(self.end).to_ical())
+            return '%s/%s' % (vDatetime(self.start).to_ical(),
+                              vDuration(self.duration).to_ical())
+        return '%s/%s' % (vDatetime(self.start).to_ical(),
+                          vDatetime(self.end).to_ical())
 
     def from_ical(ical):
         "Parses the data format from ical text format"
@@ -823,8 +823,8 @@ class vPeriod:
             return (start, end_or_duration)
         except:
             raise ValueError, 'Expected period format, got: %s' % ical
+    
     from_ical = staticmethod(from_ical)
-
 
     def __repr__(self):
         if self.by_duration:
@@ -835,7 +835,7 @@ class vPeriod:
 
 
 class vWeekday(str):
-    """ This returns an unquoted weekday abbrevation.
+    """This returns an unquoted weekday abbrevation.
 
     >>> a = vWeekday('mo')
     >>> a.to_ical()
@@ -868,7 +868,6 @@ class vWeekday(str):
     >>> a = vWeekday('-tu')
     >>> a.to_ical()
     '-TU'
-
     """
 
     week_days = CaselessDict({"SU":0, "MO":1, "TU":2, "WE":3,
@@ -898,11 +897,12 @@ class vWeekday(str):
             return vWeekday(ical.upper())
         except:
             raise ValueError, 'Expected weekday abbrevation, got: %s' % ical
+    
     from_ical = staticmethod(from_ical)
 
 
 class vFrequency(str):
-    """ A simple class that catches illegal values.
+    """A simple class that catches illegal values.
 
     >>> f = vFrequency('bad test')
     Traceback (most recent call last):
@@ -912,7 +912,6 @@ class vFrequency(str):
     'DAILY'
     >>> vFrequency('daily').from_ical('MONTHLY')
     'MONTHLY'
-
     """
 
     frequencies = CaselessDict({
@@ -941,11 +940,12 @@ class vFrequency(str):
             return vFrequency(ical.upper())
         except:
             raise ValueError, 'Expected weekday abbrevation, got: %s' % ical
+    
     from_ical = staticmethod(from_ical)
 
 
 class vRecur(CaselessDict):
-    """ Recurrence definition.
+    """Recurrence definition.
 
     Let's see how close we can get to one from the rfc:
     FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=SU;BYHOUR=8,9;BYMINUTE=30
@@ -983,9 +983,12 @@ class vRecur(CaselessDict):
     >>> vRecur(r).to_ical()
     'FREQ=DAILY;COUNT=10;INTERVAL=2'
 
-    >>> r = vRecur.from_ical('FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=-SU;BYHOUR=8,9;BYMINUTE=30')
+    >>> p = 'FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=-SU;BYHOUR=8,9;BYMINUTE=30'
+    >>> r = vRecur.from_ical(p)
     >>> r
-    {'BYHOUR': [8, 9], 'BYDAY': ['-SU'], 'BYMINUTE': [30], 'BYMONTH': [1], 'FREQ': ['YEARLY'], 'INTERVAL': [2]}
+    {'BYHOUR': [8, 9], 'BYDAY': ['-SU'], 'BYMINUTE': [30], 'BYMONTH': [1], 
+    'FREQ': ['YEARLY'], 'INTERVAL': [2]}
+    
     >>> vRecur(r).to_ical()
     'FREQ=YEARLY;INTERVAL=2;BYMINUTE=30;BYHOUR=8,9;BYDAY=-SU;BYMONTH=1'
 
@@ -995,7 +998,8 @@ class vRecur(CaselessDict):
     >>> vRecur(r).to_ical()
     'FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1'
 
-    >>> r = vRecur.from_ical('FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=SU;BYHOUR=8,9;BYMINUTE=30')
+    >>> p = 'FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=SU;BYHOUR=8,9;BYMINUTE=30'
+    >>> r = vRecur.from_ical(p)
     >>> vRecur(r).to_ical()
     'FREQ=YEARLY;INTERVAL=2;BYMINUTE=30;BYHOUR=8,9;BYDAY=SU;BYMONTH=1'
 
@@ -1004,7 +1008,6 @@ class vRecur(CaselessDict):
     Traceback (most recent call last):
         ...
     ValueError: Error in recurrence rule: BYDAY=12
-
     """
 
     frequencies = ["SECONDLY",  "MINUTELY", "HOURLY", "DAILY", "WEEKLY",
@@ -1013,8 +1016,9 @@ class vRecur(CaselessDict):
     # Mac iCal ignores RRULEs where FREQ is not the first rule part.
     # Sorts parts according to the order listed in RFC 5545, section 3.3.10.
     canonical_order = ( "FREQ", "UNTIL", "COUNT", "INTERVAL",
-                        "BYSECOND", "BYMINUTE", "BYHOUR", "BYDAY", "BYMONTHDAY", "BYYEARDAY",
-                        "BYWEEKNO", "BYMONTH", "BYSETPOS", "WKST" )
+                        "BYSECOND", "BYMINUTE", "BYHOUR", "BYDAY",
+                        "BYMONTHDAY", "BYYEARDAY", "BYWEEKNO", "BYMONTH",
+                        "BYSETPOS", "WKST" )
 
     types = CaselessDict({
         'COUNT':vInt,
@@ -1063,11 +1067,14 @@ class vRecur(CaselessDict):
             return dict(recur)
         except:
             raise ValueError, 'Error in recurrence rule: %s' % ical
+    
     from_ical = staticmethod(from_ical)
 
 
+DEFAULT_ENCODING = 'utf-8'
+
 class vText(unicode):
-    """ Simple text
+    """Simple text.
 
     >>> t = vText(u'Simple text')
     >>> t.to_ical()
@@ -1085,14 +1092,9 @@ class vText(unicode):
     If you pass a unicode object, it will be utf-8 encoded. As this is the
     (only) standard that RFC 2445 support.
 
-    >>> t = vText(u'international chars æøå ÆØÅ ü')
+    >>> t = vText(u'international chars \xe4\xf6\xfc')
     >>> t.to_ical()
-    'international chars \\xc3\\xa6\\xc3\\xb8\\xc3\\xa5 \\xc3\\x86\\xc3\\x98\\xc3\\x85 \\xc3\\xbc'
-
-    Unicode is converted to utf-8
-    >>> t = vText(u'international æ ø å')
-    >>> t.to_ical()
-    'international \\xc3\\xa6 \\xc3\\xb8 \\xc3\\xa5'
+    'international chars \\xc3\\xa4\\xc3\\xb6\\xc3\\xbc'
 
     and parsing?
     >>> vText.from_ical('Text \\; with escaped\\, chars')
@@ -1110,13 +1112,15 @@ class vText(unicode):
 
     Notice how accented E character, encoded with latin-1, got replaced
     with the official U+FFFD REPLACEMENT CHARACTER.
-
     """
+    
+    encoding = DEFAULT_ENCODING
 
-    encoding = 'utf-8'
-
-    def __new__(cls, *args, **kwargs):
-        self = super(vText, cls).__new__(cls, *args, **kwargs)
+    def __new__(cls, value, encoding=DEFAULT_ENCODING):
+        if isinstance(value, unicode):
+            value = value.encode(DEFAULT_ENCODING)
+        self = super(vText, cls).__new__(cls, value, encoding=encoding)
+        self.encoding = encoding
         self.params = Parameters()
         return self
 
@@ -1150,11 +1154,12 @@ class vText(unicode):
             return ical.decode(vText.encoding, 'replace')
         except:
             raise ValueError, 'Expected ical text, got: %s' % ical
+    
     from_ical = staticmethod(from_ical)
 
 
 class vTime(time):
-    """ A subclass of datetime, that renders itself in the iCalendar time
+    """A subclass of datetime, that renders itself in the iCalendar time
     format.
 
     >>> dt = vTime(12, 30, 0)
@@ -1169,7 +1174,6 @@ class vTime(time):
     Traceback (most recent call last):
         ...
     ValueError: Expected time, got: 263000
-
     """
 
     def __new__(cls, *args, **kwargs):
@@ -1187,18 +1191,18 @@ class vTime(time):
             return time(*timetuple)
         except:
             raise ValueError, 'Expected time, got: %s' % ical
+    
     from_ical = staticmethod(from_ical)
 
 
 class vUri(str):
-    """ Uniform resource identifier is basically just an unquoted string.
+    """Uniform resource identifier is basically just an unquoted string.
 
     >>> u = vUri('http://www.example.com/')
     >>> u.to_ical()
     'http://www.example.com/'
     >>> vUri.from_ical('http://www.example.com/') # doh!
     'http://www.example.com/'
-
     """
 
     def __new__(cls, *args, **kwargs):
@@ -1215,11 +1219,12 @@ class vUri(str):
             return str(ical)
         except:
             raise ValueError, 'Expected , got: %s' % ical
+    
     from_ical = staticmethod(from_ical)
 
 
 class vGeo:
-    """ A special type that is only indirectly defined in the rfc.
+    """A special type that is only indirectly defined in the rfc.
 
     >>> g = vGeo((1.2, 3.0))
     >>> g.to_ical()
@@ -1236,7 +1241,6 @@ class vGeo:
     Traceback (most recent call last):
         ...
     ValueError: Input must be (float, float) for latitude and longitude
-
     """
 
     def __init__(self, geo):
@@ -1245,7 +1249,8 @@ class vGeo:
             latitude = float(latitude)
             longitude = float(longitude)
         except:
-            raise ValueError('Input must be (float, float) for latitude and longitude')
+            raise ValueError('Input must be (float, float) for '
+                             'latitude and longitude')
         self.latitude = latitude
         self.longitude = longitude
         self.params = Parameters()
@@ -1260,11 +1265,12 @@ class vGeo:
             return (float(latitude), float(longitude))
         except:
             raise ValueError, "Expected 'float;float' , got: %s" % ical
+    
     from_ical = staticmethod(from_ical)
 
 
 class vUTCOffset:
-    """ Renders itself as a utc offset.
+    """Renders itself as a utc offset.
 
     >>> u = vUTCOffset(timedelta(hours=2))
     >>> u.to_ical()
@@ -1318,7 +1324,6 @@ class vUTCOffset:
     Traceback (most recent call last):
         ...
     ValueError: Offset must be less than 24 hours, was +2400
-
     """
 
     def __init__(self, td):
@@ -1348,7 +1353,10 @@ class vUTCOffset:
         if isinstance(ical, vUTCOffset):
             return ical.td
         try:
-            sign, hours, minutes, seconds = (ical[0:1], int(ical[1:3]), int(ical[3:5]), int(ical[5:7] or 0))
+            sign, hours, minutes, seconds = (ical[0:1],
+                                             int(ical[1:3]),
+                                             int(ical[3:5]),
+                                             int(ical[5:7] or 0))
             offset = timedelta(hours=hours, minutes=minutes, seconds=seconds)
         except:
             raise ValueError, 'Expected utc offset, got: %s' % ical
@@ -1357,11 +1365,12 @@ class vUTCOffset:
         if sign == '-':
             return -offset
         return offset
+    
     from_ical = staticmethod(from_ical)
 
 
 class vInline(str):
-    """ This is an especially dumb class that just holds raw unparsed text and
+    """This is an especially dumb class that just holds raw unparsed text and
     has parameters. Conversion of inline values are handled by the Component
     class, so no further processing is needed.
 
@@ -1375,7 +1384,6 @@ class vInline(str):
     >>> t2.params['cn'] = 'Test Osterone'
     >>> t2.params
     Parameters({'CN': 'Test Osterone'})
-
     """
 
     def __init__(self,obj):
@@ -1387,11 +1395,12 @@ class vInline(str):
 
     def from_ical(ical):
         return str(ical)
+    
     from_ical = staticmethod(from_ical)
 
 
 class TypesFactory(CaselessDict):
-    """ All Value types defined in rfc 2445 are registered in this factory
+    """All Value types defined in rfc 2445 are registered in this factory
     class.
 
     To get a type you can use it like this.
@@ -1410,20 +1419,19 @@ class TypesFactory(CaselessDict):
     datetime.datetime(2005, 1, 1, 12, 30)
 
     It can also be used to directly encode property and parameter values
-    >>> comment = factory.to_ical('comment', u'by Rasmussen, Max Møller')
+    >>> comment = factory.to_ical('comment', u'by Rasmussen, Max M\xfcller')
     >>> str(comment)
-    'by Rasmussen\\\\, Max M\\xc3\\xb8ller'
+    'by Rasmussen\\\\, Max M\\xc3\\xbcller'
     >>> factory.to_ical('priority', 1)
     '1'
-    >>> factory.to_ical('cn', u'Rasmussen, Max Møller')
-    'Rasmussen\\\\, Max M\\xc3\\xb8ller'
+    >>> factory.to_ical('cn', u'Rasmussen, Max M\xfcller')
+    'Rasmussen\\\\, Max M\\xc3\\xbcller'
 
     >>> factory.from_ical('cn', 'Rasmussen\\\\, Max M\\xc3\\xb8ller')
     u'Rasmussen, Max M\\xf8ller'
 
     The value and parameter names don't overlap. So one factory is enough for
     both kinds.
-
     """
 
     def __init__(self, *args, **kwargs):
@@ -1446,7 +1454,6 @@ class TypesFactory(CaselessDict):
         self['geo'] = vGeo
         self['inline'] = vInline
         self['date-time-list'] = vDDDLists
-
 
     #################################################
     # Property types
@@ -1535,25 +1542,21 @@ class TypesFactory(CaselessDict):
         'value' : 'text',
     })
 
-
     def for_property(self, name):
-        """ Returns a the default type for a property or parameter
-
+        """Returns a the default type for a property or parameter
         """
         return self[self.types_map.get(name, 'text')]
 
     def to_ical(self, name, value):
-        """ Encodes a named value from a primitive python type to an icalendar
+        """Encodes a named value from a primitive python type to an icalendar
         encoded string.
-
         """
         type_class = self.for_property(name)
         return type_class(value).to_ical()
 
     def from_ical(self, name, value):
-        """ Decodes a named property or parameter value from an icalendar
+        """Decodes a named property or parameter value from an icalendar
         encoded string to a primitive python type.
-
         """
         type_class = self.for_property(name)
         decoded = type_class.from_ical(value)

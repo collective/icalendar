@@ -16,6 +16,7 @@ with Python.
 
 ----
 
+
 Changes in version 3.0
 ======================
 
@@ -46,7 +47,6 @@ which are not defined in the Olson database.
 Instead of the own UTC tzinfo implementation we use pytz UTC tzinfo object now.
 
 
-
 About this fork which is not a fork anymore
 ===========================================
 
@@ -66,4 +66,3 @@ a suggestion to icalendar-dev@codespeak.net to take over mainaining of
 .. _`setuptools`: http://pypi.python.org/pypi/setuptools
 .. _`RFC`: http://www.ietf.org/rfc/rfc5545.txt
 .. _`BSD`: https://github.com/collective/icalendar/issues/2
-

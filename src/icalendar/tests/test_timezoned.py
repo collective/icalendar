@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Copyright (c) 2012, Plone Foundation
 # All rights reserved.
 #
@@ -74,7 +75,7 @@ class TestTimezoned(unittest.TestCase):
         event.add('location', u'aka bild, wien')
         event.add('categories', u'first subject')
         event.add('categories', u'second subject')
-        event.add('attendee', u'hans')
+        event.add('attendee', u'häns')
         event.add('attendee', u'franz')
         event.add('attendee', u'sepp')
         event.add('contact', u'Max Mustermann, 1010 Wien')

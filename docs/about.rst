@@ -11,7 +11,4 @@ At the time of writing this, last version was released more then 2 years ago.
 Since then many things have changes. For one, `RFC 2445`_ was updated by `RFC
 5545`_ which makes this package. So in some sense this package became outdated.
 
-
-
-
 .. _`Max M`: http://www.mxm.dk 

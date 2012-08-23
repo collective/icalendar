@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 # Copyright (c) 2012, Plone Foundation
 # All rights reserved.
 #
@@ -25,26 +24,33 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+
 import unittest2 as unittest
 import icalendar
 import pytz
 import datetime
 import os
 
+
 class TestEncoding(unittest.TestCase):
 
     def test_create_from_ical(self):
         directory = os.path.dirname(__file__)
-        cal = icalendar.Calendar.from_ical(open(os.path.join(directory, 'encoding.ics'),'rb').read())
+        data = open(os.path.join(directory, 'encoding.ics'),'rb').read()
+        cal = icalendar.Calendar.from_ical(data)
 
-        self.assertEqual(cal['prodid'].to_ical(), "-//Plönë.org//NONSGML plone.app.event//EN")
-        self.assertEqual(cal['X-WR-CALDESC'].to_ical(), "test non ascii: äöü ÄÖÜ €")
+        self.assertEqual(cal['prodid'].to_ical(),
+                         "-//Plönë.org//NONSGML plone.app.event//EN")
+        self.assertEqual(cal['X-WR-CALDESC'].to_ical(),
+                         "test non ascii: äöü ÄÖÜ €")
 
         event = cal.walk('VEVENT')[0]
-        self.assertEqual(event['SUMMARY'].to_ical(), 'Non-ASCII Test: ÄÖÜ äöü €')
-        self.assertEqual(event['DESCRIPTION'].to_ical(), 'icalendar should be able to handle non-ascii: €äüöÄÜÖ.')
-        self.assertEqual(event['LOCATION'].to_ical(), 'Tribstrül')
-
+        self.assertEqual(event['SUMMARY'].to_ical(),
+                         'Non-ASCII Test: ÄÖÜ äöü €')
+        self.assertEqual(event['DESCRIPTION'].to_ical(),
+            'icalendar should be able to handle non-ascii: €äüöÄÜÖ.')
+        self.assertEqual(event['LOCATION'].to_ical(),
+                         'Tribstrül')
 
     def test_create_to_ical(self):
         cal = icalendar.Calendar()
@@ -66,6 +72,5 @@ class TestEncoding(unittest.TestCase):
         cal.add_component(event)
 
         ical_lines = cal.to_ical().splitlines()
-
-        ## TODO FIX TESTS AND CODE TO SUPPORT UNICODE/UTF-8
-        #self.assertTrue(u"-//Plönë.org//NONSGML plone.app.event//EN" in ical_lines)
+        cmp = 'PRODID:-//Pl\xc3\xb6n\xc3\xab.org//NONSGML plone.app.event//EN'
+        self.assertTrue(cmp in ical_lines)

@@ -23,7 +23,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from interlude import interact
+#from interlude import interact
 
 import doctest
 import os.path
@@ -52,14 +52,14 @@ def test_suite():
             os.path.join(os.path.dirname(__file__), docfile),
             module_relative=False,
             optionflags=OPTIONFLAGS,
-            globs={'interact': interact}
+            #globs={'interact': interact}
         ) for docfile in DOCFILES
     ])
     suite.addTests([
         doctest.DocTestSuite(
             docmod,
             optionflags=OPTIONFLAGS,
-            globs={'interact': interact}
+            #globs={'interact': interact}
         ) for docmod in DOCMODS
     ])
     return suite

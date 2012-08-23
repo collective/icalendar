@@ -1,9 +1,15 @@
 Changelog
 =========
 
+3.1dev
+------
 
-3.1 (unreleased)
-----------------
+* Re-include doctests.
+  [rnix]
+
+* endure correct datatype at instance creation time in ``prop.vCalAddress``
+  and ``prop.vText``.
+  [rnix]
 
 * Apply TZID parameter to datetimes parsed from RECURRENCE-ID
   [dbstovall]
@@ -37,6 +43,7 @@ Changelog
 * All unit tests fixed.
   [mikaelfrykholm]
 
+
 3.0.1b2 (2012-03-01)
 --------------------
 
@@ -53,11 +60,13 @@ Changelog
   library instead of own implementation.
   [thet]
 
+
 3.0.1b1 (2012-02-24)
-------------------
+--------------------
 
 * Update Release information.
   [thet]
+
 
 3.0
 ---
@@ -74,6 +83,7 @@ Changelog
   New: from_ical.
   Old: from_string.
   [thet]
+
 
 2.2 (2011-08-24)
 ----------------

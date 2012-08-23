@@ -23,7 +23,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-""" This module contains non-essential tools for iCalendar. Pretty thin so far
+"""This module contains non-essential tools for iCalendar. Pretty thin so far
 eh?
 """
 
@@ -31,10 +31,10 @@ import random
 from string import ascii_letters, digits
 from datetime import datetime
 
-class UIDGenerator:
 
-    """
-    If you are too lazy to create real uid's. Notice, this doctest is disabled!
+class UIDGenerator:
+    """If you are too lazy to create real uid's. Notice, this doctest is
+    disabled!
 
     Automatic semi-random uid
     >> g = UIDGenerator()

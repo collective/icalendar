@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 # Copyright (c) 2012, Plone Foundation
 # All rights reserved.
 #
@@ -26,26 +25,31 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
-
 Calendar is a dictionary like Python object that can render itself as VCAL
 files according to rfc2445.
 
 These are the defined components.
-
 """
 
 import pytz
 from datetime import datetime
-
-# from python
 from types import ListType, TupleType
-SequenceTypes = (ListType, TupleType)
-
-# from this package
 from icalendar.caselessdict import CaselessDict
-from icalendar.parser import Contentlines, Contentline, Parameters
-from icalendar.parser import q_split, q_join
-from icalendar.prop import TypesFactory, vText
+from icalendar.parser import (
+    Contentlines,
+    Contentline,
+    Parameters,
+)
+from icalendar.parser import (
+    q_split,
+    q_join,
+)
+from icalendar.prop import (
+    TypesFactory,
+    vText,
+)
+
+SequenceTypes = (ListType, TupleType)
 
 
 ######################################
@@ -232,7 +236,6 @@ class Component(CaselessDict):
         self.subcomponents = [] # Components can be nested.
         self.is_broken = False  # True iff we ignored an exception while parsing a property
 
-
 #    def non_complience(self, warnings=0):
 #        """
 #        not implemented yet!
@@ -248,21 +251,16 @@ class Component(CaselessDict):
 #            nc['name'] = {'type':'ERROR', 'description':'Name is not defined'}
 #        return nc
 
-
     #############################
     # handling of property values
 
     def _encode(self, name, value, cond=1):
-        """ Conditional convertion of values.
-
+        """Conditional convertion of values.
         """
-
         if cond:
             klass = types_factory.for_property(name)
             return klass(value)
-
         return value
-
 
     def set(self, name, value, encode=1):
         if type(value) == ListType:
@@ -318,14 +316,12 @@ class Component(CaselessDict):
             # set the timezone as a parameter to the property
             tzid = value.tzinfo.zone
             self[name].params.update({'TZID': tzid})
-
-
+    
     def _decode(self, name, value):
         # internal for decoding property values
         decoded = types_factory.from_ical(name, value)
         return decoded
-
-
+    
     def decoded(self, name, default=_marker):
         "Returns decoded value of property"
         if name in self:
@@ -338,7 +334,6 @@ class Component(CaselessDict):
                 raise KeyError, name
             else:
                 return default
-
 
     ########################################################################
     # Inline values. A few properties have multiple values inlined in in one
@@ -354,7 +349,6 @@ class Component(CaselessDict):
             return [self._decode(name, val) for val in vals]
         return vals
 
-
     def set_inline(self, name, values, encode=1):
         """
         Converts a list of values into comma seperated string and sets value to
@@ -365,14 +359,12 @@ class Component(CaselessDict):
         joined = q_join(values).encode(vText.encoding)
         self[name] = types_factory['inline'](joined)
 
-
     #########################
     # Handling of components
 
     def add_component(self, component):
         "add a subcomponent to this component"
         self.subcomponents.append(component)
-
 
     def _walk(self, name):
         # private!
@@ -382,7 +374,6 @@ class Component(CaselessDict):
         for subcomponent in self.subcomponents:
             result += subcomponent._walk(name)
         return result
-
 
     def walk(self, name=None):
         """
@@ -418,7 +409,6 @@ class Component(CaselessDict):
                 properties += subcomponent.property_items()
         properties.append(('END', vText(self.name).to_ical()))
         return properties
-
 
     def from_ical(st, multiple=False):
         """
@@ -490,7 +480,6 @@ class Component(CaselessDict):
         return comps[0]
     from_ical = staticmethod(from_ical)
 
-
     def __repr__(self):
         return '%s(' % self.name + dict.__repr__(self) + ')'
 
@@ -509,15 +498,12 @@ class Component(CaselessDict):
         contentlines.append('') # remember the empty string in the end
         return contentlines
 
-
     def to_ical(self):
         return self.content_lines().to_ical()
 
 
-
 #######################################
 # components defined in RFC 2445
-
 
 class Event(Component):
 
@@ -559,7 +545,6 @@ class Todo(Component):
         'ATTACH', 'ATTENDEE', 'CATEGORIES', 'COMMENT', 'CONTACT', 'EXDATE',
         'EXRULE', 'RSTATUS', 'RELATED', 'RESOURCES', 'RDATE', 'RRULE'
     )
-
 
 
 class Journal(Component):
@@ -670,7 +655,6 @@ class Calendar(Component):
     required = ('prodid', 'version', )
     singletons = ('prodid', 'version', )
     multiple = ('calscale', 'method', )
-
 
 # These are read only singleton, so one instance is enough for the module
 types_factory = TypesFactory()

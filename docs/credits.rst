@@ -11,4 +11,10 @@ iCalendar contributors
 
 - Olivier Grisel (ogrisel@nuxeo.com)
 
-- Michael Smith <msmith@fluendo.com>
+- Michael Smith (msmith@fluendo.com)
+
+- Hannes Raggam (johannes@raggam.co.at)
+
+- Rok Garbas (rok@garbas.si)
+
+- Robert Niederreiter (rnix@squarewave.at)
