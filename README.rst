@@ -58,7 +58,6 @@ After some thoughts we (Plone developers involved with `plone.app.event`_) send
 a suggestion to icalendar-dev@codespeak.net to take over mainaining of
 `icalendar`_. Nobody object and since version 2.2 we are back to development.
 
-
 .. _`icalendar`: http://pypi.python.org/pypi/icalendar
 .. _`plone.app.event`: http://github.com/collective/plone.app.event
 .. _`Plone`: http://plone.org
@@ -66,3 +65,21 @@ a suggestion to icalendar-dev@codespeak.net to take over mainaining of
 .. _`setuptools`: http://pypi.python.org/pypi/setuptools
 .. _`RFC`: http://www.ietf.org/rfc/rfc5545.txt
 .. _`BSD`: https://github.com/collective/icalendar/issues/2
+
+
+Test Coverage Report
+====================
+
+Output from coverage test::
+
+    lines   cov%   module
+       13   100%   icalendar.__init__
+      224    91%   icalendar.cal
+       48    91%   icalendar.caselessdict
+      163    92%   icalendar.parser
+      667    90%   icalendar.prop
+        1   100%   icalendar.tests.__init__
+       24    95%   icalendar.tests.test_doctests
+       40   100%   icalendar.tests.test_encoding
+       43    32%   icalendar.tests.test_icalendar
+       51   100%   icalendar.tests.test_timezoned
