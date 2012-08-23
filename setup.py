@@ -2,13 +2,18 @@ import os
 import setuptools
 
 version = '3.1dev'
+shortdesc = 'iCalendar parser/generator'
+longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
+longdesc += open(os.path.join(os.path.dirname(__file__),
+                              'docs', 'changelog.rst')).read()
+longdesc += open(os.path.join(os.path.dirname(__file__), 'LICENSE.rst')).read()
+tests_require = ['unittest2']
 
 setuptools.setup(
     name='icalendar',
     version=version,
-    description="iCalendar parser/generator",
-    long_description=open("README.rst").read() + \
-            open(os.path.join('docs', 'changelog.rst')).read(),
+    description=shortdesc,
+    long_description=longdesc,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
@@ -27,8 +32,10 @@ setuptools.setup(
     package_dir={'': 'src'},
     include_package_data=True,
     zip_safe=False,
-    install_requires=['setuptools', 'pytz'],
+    install_requires=[
+        'setuptools',
+        'pytz',
+    ],
     extras_require={
-        'test': ['unittest2', ] #'interlude'],
-        },
-    )
+        'test': tests_require
+    })
