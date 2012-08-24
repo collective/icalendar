@@ -986,6 +986,7 @@ class vRecur(CaselessDict):
     >>> p = 'FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=-SU;BYHOUR=8,9;BYMINUTE=30'
     >>> r = vRecur.from_ical(p)
     >>> r
+    ... # doctest: +NORMALIZE_WHITESPACE
     {'BYHOUR': [8, 9], 'BYDAY': ['-SU'], 'BYMINUTE': [30], 'BYMONTH': [1], 
     'FREQ': ['YEARLY'], 'INTERVAL': [2]}
     

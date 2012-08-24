@@ -32,6 +32,7 @@ from icalendar import (
     prop,
 )
 
+OPTIONFLAGS = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS
 
 class FuckYouTests(unittest.TestCase):
     def XtestBla(self):
@@ -85,6 +86,6 @@ def load_tests(loader=None, tests=None, pattern=None):
                     'small.txt', 'multiple.txt', 'recurrence.txt']:
         filename = os.path.abspath(os.path.join(current_dir, docfile))
         suite.addTest(doctest.DocFileSuite(docfile,
-            optionflags=doctest.ELLIPSIS,
+            optionflags=OPTIONFLAGS,
             globs={'__file__': filename}))
     return suite
