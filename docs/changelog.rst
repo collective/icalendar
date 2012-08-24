@@ -4,6 +4,9 @@ Changelog
 3.1dev
 ------
 
+* Make sure parameters to certain properties propagate to the ical output.
+  [kanarip]
+
 * Re-include doctests.
   [rnix]
 
@@ -56,7 +59,7 @@ Changelog
 * Timezone parsing, issues and test fixes.
   [mikaelfrykholm, garbas, tgecho]
 
-* Since we use pytz for timezones, also use UTC tzinfo object from the pytz 
+* Since we use pytz for timezones, also use UTC tzinfo object from the pytz
   library instead of own implementation.
   [thet]
 
@@ -133,7 +136,7 @@ Changelog
 * Made the tests run under Python 2.5+
 
 * Renamed the UTC class to Utc, so it would not clash with the UTC object,
-  since that rendered the UTC object unpicklable.  
+  since that rendered the UTC object unpicklable.
 
 
 2.0 (2008-07-11)
@@ -142,7 +145,7 @@ Changelog
 * EXDATE and RDATE now returns a vDDDLists object, which contains a list
   of vDDDTypes objects. This is do that EXDATE and RDATE can contain
   lists of dates, as per RFC.
-  
+
   ***Note!***: This change is incompatible with earlier behavior, so if you
   handle EXDATE and RDATE you will need to update your code.
 
