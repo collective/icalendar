@@ -316,12 +316,12 @@ class Component(CaselessDict):
             # set the timezone as a parameter to the property
             tzid = value.tzinfo.zone
             self[name].params.update({'TZID': tzid})
-    
+
     def _decode(self, name, value):
         # internal for decoding property values
         decoded = types_factory.from_ical(name, value)
         return decoded
-    
+
     def decoded(self, name, default=_marker):
         "Returns decoded value of property"
         if name in self:

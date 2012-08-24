@@ -231,7 +231,7 @@ Some properties are required to be compliant::
   >>> cal.add('version', '2.0')
 
 We need at least one subcomponent for a calendar to be compliant::
-  
+
   >>> import pytz
   >>> event = Event()
   >>> event.add('summary', 'Python meeting about calendaring')

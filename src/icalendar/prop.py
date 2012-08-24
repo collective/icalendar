@@ -137,7 +137,7 @@ class vBinary:
             return ical.decode('base-64')
         except UnicodeError:
             raise ValueError, 'Not valid base 64 encoding.'
-    
+
     from_ical = staticmethod(from_ical)
 
 
@@ -177,7 +177,7 @@ class vBoolean(int):
             return vBoolean.bool_map[ical]
         except:
             raise ValueError, "Expected 'TRUE' or 'FALSE'. Got %s" % ical
-    
+
     from_ical = staticmethod(from_ical)
 
 
@@ -213,7 +213,7 @@ class vCalAddress(str):
             return str(ical)
         except:
             raise ValueError, 'Expected vCalAddress, got: %s' % ical
-    
+
     from_ical = staticmethod(from_ical)
 
 
@@ -303,7 +303,7 @@ class vFloat(float):
             return float(ical)
         except:
             raise ValueError, 'Expected float value, got: %s' % ical
-    
+
     from_ical = staticmethod(from_ical)
 
 
@@ -335,7 +335,7 @@ class vInt(int):
             return int(ical)
         except:
             raise ValueError, 'Expected int, got: %s' % ical
-    
+
     from_ical = staticmethod(from_ical)
 
 
@@ -406,7 +406,7 @@ class vDDDLists:
         for ical_dt in ical_dates:
             out.append(vDDDTypes.from_ical(ical_dt))
         return out
-    
+
     from_ical = staticmethod(from_ical)
 
 
@@ -471,7 +471,7 @@ class vDDDTypes:
             return vDatetime.from_ical(ical, timezone=timezone)
         except:
             return vDate.from_ical(ical)
-    
+
     from_ical = staticmethod(from_ical)
 
 
@@ -511,7 +511,7 @@ class vDate:
             return date(*timetuple)
         except:
             raise ValueError, 'Wrong date format %s' % ical
-    
+
     from_ical = staticmethod(from_ical)
 
 
@@ -609,7 +609,7 @@ class vDatetime:
                 raise ValueError, ical
         except:
             raise ValueError, 'Wrong datetime format: %s' % ical
-    
+
     from_ical = staticmethod(from_ical)
 
 
@@ -710,7 +710,7 @@ class vDuration:
             return value
         except:
             raise ValueError('Invalid iCalendar duration: %s' % ical)
-    
+
     from_ical = staticmethod(from_ical)
 
 
@@ -825,7 +825,7 @@ class vPeriod:
             return (start, end_or_duration)
         except:
             raise ValueError, 'Expected period format, got: %s' % ical
-    
+
     from_ical = staticmethod(from_ical)
 
     def __repr__(self):
@@ -899,7 +899,7 @@ class vWeekday(str):
             return vWeekday(ical.upper())
         except:
             raise ValueError, 'Expected weekday abbrevation, got: %s' % ical
-    
+
     from_ical = staticmethod(from_ical)
 
 
@@ -942,7 +942,7 @@ class vFrequency(str):
             return vFrequency(ical.upper())
         except:
             raise ValueError, 'Expected weekday abbrevation, got: %s' % ical
-    
+
     from_ical = staticmethod(from_ical)
 
 
@@ -989,9 +989,9 @@ class vRecur(CaselessDict):
     >>> r = vRecur.from_ical(p)
     >>> r
     ... # doctest: +NORMALIZE_WHITESPACE
-    {'BYHOUR': [8, 9], 'BYDAY': ['-SU'], 'BYMINUTE': [30], 'BYMONTH': [1], 
+    {'BYHOUR': [8, 9], 'BYDAY': ['-SU'], 'BYMINUTE': [30], 'BYMONTH': [1],
     'FREQ': ['YEARLY'], 'INTERVAL': [2]}
-    
+
     >>> vRecur(r).to_ical()
     'FREQ=YEARLY;INTERVAL=2;BYMINUTE=30;BYHOUR=8,9;BYDAY=-SU;BYMONTH=1'
 
@@ -1070,7 +1070,7 @@ class vRecur(CaselessDict):
             return dict(recur)
         except:
             raise ValueError, 'Error in recurrence rule: %s' % ical
-    
+
     from_ical = staticmethod(from_ical)
 
 
@@ -1114,7 +1114,7 @@ class vText(unicode):
     Notice how accented E character, encoded with latin-1, got replaced
     with the official U+FFFD REPLACEMENT CHARACTER.
     """
-    
+
     encoding = DEFAULT_ENCODING
 
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
@@ -1155,7 +1155,7 @@ class vText(unicode):
             return ical.decode(vText.encoding, 'replace')
         except:
             raise ValueError, 'Expected ical text, got: %s' % ical
-    
+
     from_ical = staticmethod(from_ical)
 
 
@@ -1192,7 +1192,7 @@ class vTime(time):
             return time(*timetuple)
         except:
             raise ValueError, 'Expected time, got: %s' % ical
-    
+
     from_ical = staticmethod(from_ical)
 
 
@@ -1220,7 +1220,7 @@ class vUri(str):
             return str(ical)
         except:
             raise ValueError, 'Expected , got: %s' % ical
-    
+
     from_ical = staticmethod(from_ical)
 
 
@@ -1266,7 +1266,7 @@ class vGeo:
             return (float(latitude), float(longitude))
         except:
             raise ValueError, "Expected 'float;float' , got: %s" % ical
-    
+
     from_ical = staticmethod(from_ical)
 
 
@@ -1366,7 +1366,7 @@ class vUTCOffset:
         if sign == '-':
             return -offset
         return offset
-    
+
     from_ical = staticmethod(from_ical)
 
 
@@ -1396,7 +1396,7 @@ class vInline(str):
 
     def from_ical(ical):
         return str(ical)
-    
+
     from_ical = staticmethod(from_ical)
 
 
