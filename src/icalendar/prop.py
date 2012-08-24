@@ -80,6 +80,8 @@ from icalendar.parser import Parameters
 
 SequenceTypes = [TupleType, ListType]
 
+DEFAULT_ENCODING = 'utf-8'
+
 DATE_PART = r'(\d+)D'
 TIME_PART = r'T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?'
 DATETIME_PART = '(?:%s)?(?:%s)?' % (DATE_PART, TIME_PART)
@@ -194,7 +196,7 @@ class vCalAddress(str):
 
     def __new__(cls, value):
         if isinstance(value, unicode):
-            value = value.encode('utf-8')
+            value = value.encode(DEFAULT_ENCODING)
         self = super(vCalAddress, cls).__new__(cls, value)
         self.params = Parameters()
         return self
@@ -1072,8 +1074,6 @@ class vRecur(CaselessDict):
     from_ical = staticmethod(from_ical)
 
 
-DEFAULT_ENCODING = 'utf-8'
-
 class vText(unicode):
     """Simple text.
 
@@ -1105,7 +1105,7 @@ class vText(unicode):
     A string with; some\\ characters in
     it
 
-    We are forgiving to UTF8 encoding errors:
+    We are forgiving to utf-8 encoding errors:
     >>> # We intentionally use a string with unexpected encoding
     >>> t = vText.from_ical('Ol\\xe9')
     >>> t
