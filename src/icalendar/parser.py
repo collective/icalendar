@@ -1,32 +1,5 @@
 # -*- coding: utf-8 -*-
-
-# Copyright (c) 2012, Plone Foundation
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are
-# met:
-#
-#  * Redistributions of source code must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
-#  * Redistributions in binary form must reproduce the above copyright
-#    notice, this list of conditions and the following disclaimer in the
-#    documentation and/or other materials provided with the distribution.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
-# IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
-# TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-# PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
-# TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-"""
-This module parses and generates contentlines as defined in RFC 2445
+""" This module parses and generates contentlines as defined in RFC 2445
 (iCalendar), but will probably work for other MIME types with similar syntax.
 Eg. RFC 2426 (vCard)
 
@@ -44,7 +17,7 @@ SequenceTypes = [TupleType, ListType]
 
 
 def foldline(text, lenght=75, newline='\r\n'):
-    """ Make a string folded per RFC5545 (each line must be less than 75 octets)
+    """Make a string folded per RFC5545 (each line must be less than 75 octets)
 
     >>> from icalendar.parser import foldline
     >>> foldline('foo')
@@ -53,7 +26,9 @@ def foldline(text, lenght=75, newline='\r\n'):
     >>> longtext = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
     ...             "Vestibulum convallis imperdiet dui posuere.")
     >>> foldline(longtext)
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum \\r\\n convallis imperdiet dui posuere.'
+    ... # doctest: +NORMALIZE_WHITESPACE
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum \\r\\n
+    convallis imperdiet dui posuere.'
 
 #    >>> uuu = u'alfdkadäääüüaskd'
 #    >>> foldline(uuu, length=3)
