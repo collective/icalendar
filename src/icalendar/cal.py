@@ -231,10 +231,14 @@ class Component(CaselessDict):
 
     def _encode(self, name, value, cond=1):
         """Conditional convertion of values.
+
         """
         if cond:
             klass = types_factory.for_property(name)
-            return klass(value)
+            _klass = klass(value)
+            if hasattr(value, 'params') and len(value.params.keys()) > 0:
+                _klass.params = value.params
+            return _klass
         return value
 
     def set(self, name, value, encode=1):
