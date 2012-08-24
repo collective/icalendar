@@ -3,7 +3,7 @@ METHOD:Request
 PRODID:-//My product//mxm.dk/
 VERSION:2.0
 BEGIN:VEVENT
-DESCRIPTION:This is a very long description that will be folded This is a
+DESCRIPTION:This is a very long description that will be folded This is a 
  very long description that will be folded This is a very long description
  that will be folded This is a very long description that will be folded Th
  is is a very long description that will be folded This is a very long desc
