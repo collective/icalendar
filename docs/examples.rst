@@ -41,17 +41,5 @@ More documentation
 ==================
 
 Have a look at the doctests in the tests directory of the package to get more
-examples.
-
-This example_ for introductory doctests and explanations. Here
-are two smaller_ examples_.
-
-.. _example: ../src/icalendar/tests/example.txt
-.. _smaller: ../src/icalendar/tests/small.txt
-.. _examples: ../src/icalendar/tests/groupscheduled.txt
-.. _multiple: ../src/icalendar/tests/multiple.txt
-
-All modules and classes also have doctests that shows how they
-work. There is also an `interfaces.py`_ file which describes the API.
-
-.. _`interfaces.py`: ../src/icalendar/interfaces.py
+examples. All modules and classes also have doctests that show how they work.
+There is also an `interfaces.py` file which describes the API.
