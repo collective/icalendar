@@ -10,7 +10,7 @@ Copyright, 2005: Max M <maxm@mxm.dk>
 """
 
 import re
-import textwrap
+import icalendar.tools
 from types import TupleType, ListType
 from icalendar.caselessdict import CaselessDict
 SequenceTypes = [TupleType, ListType]
@@ -36,7 +36,7 @@ def foldline(text, lenght=75, newline='\r\n'):
 
     """
     return newline.join(
-            textwrap.wrap(text, lenght,
+            icalendar.tools.wrap(text, lenght,
                 subsequent_indent=' ',
                 drop_whitespace=False,
                 break_long_words=True,
