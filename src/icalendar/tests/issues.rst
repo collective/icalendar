@@ -1,11 +1,19 @@
+======
+ISSUES
+======
+
+Test for reported issues
 
 
+Basic Imports
+=============
 
+    >>> from icalendar import Event
+    >>> from datetime import datetime
+    >>> import pytz
 
-Issue 64
-========
-
-Event.to_ical() fails for unicode strings
+Issue #64 - Event.to_ical() fails for unicode strings
+=====================================================
 
 https://github.com/collective/icalendar/issues/64
 by Prillan
@@ -13,9 +21,6 @@ by Prillan
 This is pretty self explanatory
 
 Non-unicode characters
-
-    >>> from icalendar import Event
-    >>> from datetime import datetime
 
     >>> event = Event()
     >>> event.add("dtstart", datetime(2012,9,3,0,0,0))
@@ -39,4 +44,22 @@ Unicode characters
         repr(values)))
     ValueError: Property: 'SUMMARY' Wrong values "Parameters({})" or "vText(u'\xe5\xe4\xf6')"
 
+
+Issue #58 - TZID on UTC DATE-TIMEs
+==================================
+
+https://github.com/collective/icalendar/issues/58
+By gregbaker
+
+According to RFC 2445: "The TZID property parameter MUST NOT be applied to
+DATE-TIME or TIME properties whose time values are specified in UTC."
+
+But the module will produce them in cases like:
+
+    >>> e = Event()
+    >>> e.add('dtstart', pytz.utc.localize(datetime(2012,7,16,0,0,0)))
+    >>> print e.to_ical()
+    BEGIN:VEVENT
+    DTSTART;VALUE=DATE-TIME:20120716T000000Z
+    END:VEVENT
 
