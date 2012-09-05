@@ -85,3 +85,4 @@ Output from coverage test::
        13   100%   icalendar.tests.test_property_params
        51   100%   icalendar.tests.test_timezoned
        53    30%   icalendar.tools
+

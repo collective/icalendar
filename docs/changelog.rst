@@ -226,3 +226,4 @@ Changelog
   shorted module names, which are mostly implementation detail.
 
 * changed tests so they generate .ics files in a temp directory, not in the structure itself.
+
