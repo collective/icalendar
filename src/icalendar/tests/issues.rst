@@ -2,7 +2,12 @@
 ISSUES
 ======
 
-Test for reported issues
+Test for reported issues.
+
+NOTE: not sure what should happen with fixed issues in here -> move them to
+      appropriate test file or keep here, marked fixed as reference where case
+      came from... ???
+      -rnix
 
 
 Basic Imports
@@ -14,6 +19,8 @@ Basic Imports
 
 Issue #64 - Event.to_ical() fails for unicode strings
 =====================================================
+
+FIXED - SEE BELOW
 
 https://github.com/collective/icalendar/issues/64
 by Prillan
@@ -34,19 +41,13 @@ Unicode characters
     >>> event.add("dtstart", datetime.now())
     >>> event.add("summary", u"åäö")
     >>> event.to_ical()
-    Traceback (most recent call last):
-      File "<stdin>", line 1, in <module>
-      File "icalendar\cal.py", line 481, in to_ical
-        return self.content_lines().to_ical()
-      File "icalendar\cal.py", line 476, in content_lines
-        contentlines.append(Contentline.from_parts((name, params, values)))
-      File "icalendar\parser.py", line 424, in from_parts
-        repr(values)))
-    ValueError: Property: 'SUMMARY' Wrong values "Parameters({})" or "vText(u'\xe5\xe4\xf6')"
+    'BEGIN:VEVENT\r\nSUMMARY:\xc3\x83\xc2\xa5\xc3\x83\xc2\xa4\xc3\x83\xc2\xb6\r\nDTSTART;VALUE=DATE-TIME:...\r\nEND:VEVENT\r\n'
 
 
 Issue #58 - TZID on UTC DATE-TIMEs
 ==================================
+
+FIXED - SEE BELOW
 
 https://github.com/collective/icalendar/issues/58
 By gregbaker
@@ -62,4 +63,3 @@ But the module will produce them in cases like:
     BEGIN:VEVENT
     DTSTART;VALUE=DATE-TIME:20120716T000000Z
     END:VEVENT
-
