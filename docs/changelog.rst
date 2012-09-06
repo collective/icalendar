@@ -1,8 +1,8 @@
 Changelog
 =========
 
-3.1dev
-------
+3.1
+---
 
 * Make sure parameters to certain properties propagate to the ical output.
   [kanarip]
