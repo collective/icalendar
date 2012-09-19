@@ -1,6 +1,13 @@
 Changelog
 =========
 
+3.2dev
+------
+
+* Supports to_ical() on date/time properties for dates prior to 1900.
+  [cdevienne]
+
+
 3.1
 ---
 

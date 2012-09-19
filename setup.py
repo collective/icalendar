@@ -1,7 +1,7 @@
 import os
 import setuptools
 
-version = '3.1'
+version = '3.2dev'
 shortdesc = 'iCalendar parser/generator'
 longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
 longdesc += open(os.path.join(os.path.dirname(__file__),
