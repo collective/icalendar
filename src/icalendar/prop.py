@@ -457,6 +457,10 @@ class vDate:
     >>> vDate(d).to_ical()
     '20010101'
 
+    >>> d = date(1899, 1, 1)
+    >>> vDate(d).to_ical()
+    '18990101'
+
     >>> vDate.from_ical('20010102')
     datetime.date(2001, 1, 2)
 
@@ -473,7 +477,7 @@ class vDate:
         self.params = Parameters(dict(value='DATE'))
 
     def to_ical(self):
-        return self.dt.strftime("%Y%m%d")
+        return "%04d%02d%02d" % (self.dt.year, self.dt.month, self.dt.day)
 
     def from_ical(ical):
         "Parses the data format from ical text format"
@@ -514,6 +518,10 @@ class vDatetime:
     >>> vDatetime(dutc).to_ical()
     '20010101T123000Z'
 
+    >>> dutc = datetime(1899, 1,1, 12, 30, 0, tzinfo=pytz.utc)
+    >>> vDatetime(dutc).to_ical()
+    '18990101T123000Z'
+
     >>> vDatetime.from_ical('20010101T000000')
     datetime.datetime(2001, 1, 1, 0, 0)
 
@@ -548,11 +556,19 @@ class vDatetime:
     def to_ical(self):
         dt = self.dt
         tzid = dt.tzinfo and dt.tzinfo.zone or None
+        s = "%04d%02d%02dT%02d%02d%02d" % (
+            self.dt.year,
+            self.dt.month,
+            self.dt.day,
+            self.dt.hour,
+            self.dt.minute,
+            self.dt.second
+        )
         if tzid == 'UTC':
-            return dt.strftime("%Y%m%dT%H%M%SZ")
+            s += "Z"
         elif tzid:
             self.params.update({'TZID': tzid})
-        return dt.strftime("%Y%m%dT%H%M%S")
+        return s
 
     def from_ical(ical, timezone=None):
         """ Parses the data format from ical text format.
