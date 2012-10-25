@@ -1,8 +1,15 @@
 Changelog
 =========
 
-3.1dev
+3.2dev
 ------
+
+* Supports to_ical() on date/time properties for dates prior to 1900.
+  [cdevienne]
+
+
+3.1
+---
 
 * Make sure parameters to certain properties propagate to the ical output.
   [kanarip]
@@ -226,3 +233,4 @@ Changelog
   shorted module names, which are mostly implementation detail.
 
 * changed tests so they generate .ics files in a temp directory, not in the structure itself.
+

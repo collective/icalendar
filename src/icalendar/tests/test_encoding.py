@@ -49,3 +49,11 @@ class TestEncoding(unittest.TestCase):
         ical_lines = cal.to_ical().splitlines()
         cmp = 'PRODID:-//Pl\xc3\xb6n\xc3\xab.org//NONSGML plone.app.event//EN'
         self.assertTrue(cmp in ical_lines)
+
+    def test_create_event_simple(self):
+        event = icalendar.Event()
+        event.add("dtstart", datetime.datetime(2010,10,10,0,0,0,tzinfo=pytz.utc))
+        event.add("summary", u"åäö")
+        out = event.to_ical()
+        summary = "SUMMARY:åäö"
+        self.assertTrue(summary in out.splitlines())

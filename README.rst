@@ -72,14 +72,17 @@ Test Coverage Report
 
 Output from coverage test::
 
-    lines   cov%   module
+    lines   cov%   module   (path)
        13   100%   icalendar.__init__
-      224    91%   icalendar.cal
+      227    91%   icalendar.cal
        48    91%   icalendar.caselessdict
-      163    92%   icalendar.parser
+      166    92%   icalendar.parser
       667    90%   icalendar.prop
-        1   100%   icalendar.tests.__init__
-       24    95%   icalendar.tests.test_doctests
-       40   100%   icalendar.tests.test_encoding
-       43    32%   icalendar.tests.test_icalendar
+       16   100%   icalendar.tests.test_cases
+       25    96%   icalendar.tests.test_doctests
+       47   100%   icalendar.tests.test_encoding
+       44    34%   icalendar.tests.test_icalendar
+       13   100%   icalendar.tests.test_property_params
        51   100%   icalendar.tests.test_timezoned
+       53    30%   icalendar.tools
+

@@ -10,7 +10,8 @@ DOCFILES = [
     'groupscheduled.txt',
     'multiple.txt',
     'recurrence.txt',
-    'small.txt'
+    'small.txt',
+    'issues.rst'
 ]
 DOCMODS = [
     'icalendar.caselessdict',

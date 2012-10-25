@@ -60,6 +60,7 @@ QUNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7F"]')
 FOLD = re.compile('([\r]?\n)+[ \t]{1}')
 NEWLINE = re.compile(r'\r?\n')
 
+DEFAULT_ENCODING = 'utf-8'
 
 def validate_token(name):
     match = NAME.findall(name)
@@ -402,8 +403,10 @@ class Contentline(str):
 
     """
 
-    def __new__(cls, st, strict=False):
-        self = str.__new__(cls, st)
+    def __new__(cls, value, strict=False):
+        if isinstance(value, unicode):
+            value = value.encode(DEFAULT_ENCODING)
+        self = super(Contentline, cls).__new__(cls, value)
         setattr(self, 'strict', strict)
         return self
 
