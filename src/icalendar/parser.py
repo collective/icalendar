@@ -16,7 +16,7 @@ from icalendar.caselessdict import CaselessDict
 SequenceTypes = [TupleType, ListType]
 
 
-def foldline(text, lenght=75, newline='\r\n'):
+def foldline(text, length=75, newline='\r\n'):
     """Make a string folded per RFC5545 (each line must be less than 75 octets)
 
     >>> from icalendar.parser import foldline
@@ -29,20 +29,52 @@ def foldline(text, lenght=75, newline='\r\n'):
     ... # doctest: +NORMALIZE_WHITESPACE
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum \\r\\n
     convallis imperdiet dui posuere.'
-
-#    >>> uuu = u'alfdkadäääüüaskd'
-#    >>> foldline(uuu, length=3)
-#    u'alf\ndka\nd\xe4\xe4\n\xe4\xfc\xfc\nask\nd'
-
     """
-    return newline.join(
-            icalendar.tools.wrap(text, lenght,
-                subsequent_indent=' ',
-                drop_whitespace=False,
-                break_long_words=True,
-                replace_whitespace=False
-                )
-            )
+    assert isinstance(text, str)
+#    text.decode('utf-8')  # try to decode, to be sure it's utf-8 or ASCII
+    l_line = len(text)
+    new_lines = []
+    start = 0
+    while True:
+        end = start + length - 1
+        chunk = text[start:end]
+        m = NEWLINE.search(chunk)
+        if m is not None and m.end() != l_line:
+            new_lines.append(text[start:start + m.start()])
+            start += m.end()
+            continue
+
+        if end >= l_line:
+            end = l_line
+        else:
+            # Check that we don't fold in the middle of a UTF-8 character:
+            # http://lists.osafoundation.org/pipermail/ietf-calsify/2006-August/001126.html
+            while True:
+                char_value = ord(text[end])
+                if char_value < 128 or char_value >= 192:
+                    # This is not in the middle of a UTF-8 character, so we
+                    # can fold here:
+                    break
+                else:
+                    end -= 1
+
+        # Recompute the chunk, since start or end may have changed.
+        chunk = text[start:end]
+        new_lines.append(chunk)
+        if end == l_line:
+            break  # Done
+        start = end
+    return (newline + ' ').join(new_lines).rstrip(' ')
+
+#    return newline.join(
+#            icalendar.tools.wrap(text, length,
+#                subsequent_indent=' ',
+#                drop_whitespace=False,
+#                break_long_words=True,
+#                replace_whitespace=False
+#                )
+#            )
+
 
 #################################################################
 # Property parameter stuff
@@ -341,7 +373,7 @@ class Contentline(str):
 
     A value can also be unicode
     >>> from icalendar.prop import vText
-    >>> parts = ('SUMMARY', Parameters(), vText(u'INternational char æ ø å'))
+    >>> parts = ('SUMMARY', Parameters(), vText(u'INternational char Ã¦ Ã¸ Ã¥'))
     >>> Contentline.from_parts(parts)
     'SUMMARY:INternational char \\xc3\\xa6 \\xc3\\xb8 \\xc3\\xa5'
 
@@ -414,7 +446,7 @@ class Contentline(str):
         "Turns a tuple of parts into a content line"
         (name, params, values) = parts
         try:
-            if values and not isinstance(values, basestring):
+            if values and not isinstance(values, str):
                 if hasattr(values, 'to_ical'):
                     values = values.to_ical()
             if params:
