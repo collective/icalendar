@@ -1,5 +1,7 @@
-#from interlude import interact
-import unittest, doctest, os
+# coding: utf-8
+import unittest
+import doctest
+import os
 from icalendar import (
     cal,
     caselessdict,
@@ -9,45 +11,34 @@ from icalendar import (
 
 OPTIONFLAGS = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS
 
-class FuckYouTests(unittest.TestCase):
-    def XtestBla(self):
-        from icalendar import Calendar
-        c = Calendar()
-        c['description']=u'Paragraph one\n\nParagraph two'
-        output = c.to_ical()
-        cmp = ("BEGIN:VCALENDAR\r\nDESCRIPTION:Paragraph one\r\n \r\n "
-               "Paragraph two\r\nEND:VCALENDAR\r\n")
-        self.assertEqual(output, cmp)
 
-    def XtestTrailingNewline(self):
-        from icalendar.parser import Contentlines, Contentline
-        c = Contentlines([Contentline('BEGIN:VEVENT\\r\\n')])
-        output = c.to_ical()
-        self.assertEqual(output, 'BEGIN:VEVENT\\r\\n')
+class IcalendarTestCase (unittest.TestCase):
 
-    def XtestLongLine(self):
-        from icalendar.parser import Contentlines, Contentline
-        c = Contentlines([Contentline('BEGIN:VEVENT\\r\\n')])
-        c.append(Contentline(''.join(['123456789 ']*10)+'\\r\\n'))
-        output = c.to_ical()
-        cmp = ("BEGIN:VEVENT\\r\\n\\r\\n123456789 123456789 123456789 "
-               "123456789 123456789 123456789 123456789 1234\\r\\n 56789 "
-               "123456789 123456789 \\r\\n")
-        self.assertEqual(output, cmp)
-
-    def testHmm(self):
+    def test_long_lines(self):
         from icalendar.parser import Contentlines, Contentline
         c = Contentlines([Contentline('BEGIN:VEVENT\r\n')])
-        c.append(Contentline(''.join(['123456789 ']*10)+'\r\n'))
-        output = c.to_ical()
-        # XXX: sure? looks weird in conjunction with generated content above.
-        #cmp = ('BEGIN:VEVENT\r\n\r\n123456789 123456789 123456789 123456789 '
-        #       '123456789 123456789 123456789 1234\r\n 56789 123456789 '
-        #       '123456789 \r\n')
-        cmp = ('BEGIN:VEVENT\r\n\r\n123456789 123456789 123456789 123456789 '
-               '123456789 123456789 123456789 \r\n 123456789 123456789 '
-               '123456789 \r\n\r\n')
-        self.assertEqual(output, cmp)
+        c.append(Contentline(''.join('123456789 ' * 10) + '\r\n'))
+        self.assertEqual(
+            c.to_ical(),
+            'BEGIN:VEVENT\r\n\r\n123456789 123456789 123456789 123456789 '
+            '123456789 123456789 123456789 1234\r\n 56789 123456789 '
+            '123456789 \r\n\r\n'
+        )
+
+    def test_fold_line(self):
+        from icalendar.parser import foldline
+        self.assertRaises(AssertionError, foldline, u'привет', length=3)
+        self.assertEqual(foldline('foobar', length=4), 'foo\r\n bar')
+        self.assertEqual(
+            foldline('Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+                     ' Vestibulum convallis imperdiet dui posuere.'),
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+            ' Vestibulum conval\r\n lis imperdiet dui posuere.'
+        )
+        self.assertEqual(
+            foldline('DESCRIPTION:АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯ'),
+            'DESCRIPTION:АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭ\r\n ЮЯ'
+        )
 
 
 def load_tests(loader=None, tests=None, pattern=None):
@@ -60,7 +51,11 @@ def load_tests(loader=None, tests=None, pattern=None):
     for docfile in ['example.txt', 'groupscheduled.txt',
                     'small.txt', 'multiple.txt', 'recurrence.txt']:
         filename = os.path.abspath(os.path.join(current_dir, docfile))
-        suite.addTest(doctest.DocFileSuite(docfile,
-            optionflags=OPTIONFLAGS,
-            globs={'__file__': filename}))
+        suite.addTest(
+            doctest.DocFileSuite(
+                docfile,
+                optionflags=OPTIONFLAGS,
+                globs={'__file__': filename}
+            )
+        )
     return suite
