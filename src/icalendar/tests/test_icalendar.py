@@ -1,4 +1,3 @@
-#from interlude import interact
 import unittest, doctest, os
 from icalendar import (
     cal,

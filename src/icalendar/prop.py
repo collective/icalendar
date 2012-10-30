@@ -932,7 +932,7 @@ class vFrequency(str):
         try:
             return vFrequency(ical.upper())
         except:
-            raise ValueError, 'Expected weekday abbrevation, got: %s' % ical
+            raise ValueError, 'Expected frequency, got: %s' % ical
 
     from_ical = staticmethod(from_ical)
 
@@ -1120,6 +1120,7 @@ class vText(unicode):
         """
         Format value according to iCalendar TEXT escaping rules.
         """
+        import pdb; pdb.set_trace()
         return (self.replace('\N', '\n')
                     .replace('\\', '\\\\')
                     .replace(';', r'\;')

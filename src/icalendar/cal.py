@@ -627,6 +627,9 @@ class Calendar(Component):
     ...                    'END:VCALENDAR'))
     >>> [e['DESCRIPTION'].to_ical() for e in Calendar.from_ical(s).walk('VEVENT')]
     ['Perfectly OK event']
+
+    >>> interact( locals() )
+
     """
 
     name = 'VCALENDAR'

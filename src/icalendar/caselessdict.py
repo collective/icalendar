@@ -6,6 +6,7 @@ def canonsort_keys(keys, canonical_order=None):
     Sorts leading keys according to canonical_order.
     Keys not specified in canonical_order will appear alphabetically at the end.
 
+    >>> from icalendar.caselessdict import canonsort_keys
     >>> keys = ['DTEND', 'DTSTAMP', 'DTSTART', 'UID', 'SUMMARY', 'LOCATION']
     >>> canonsort_keys(keys)
     ['DTEND', 'DTSTAMP', 'DTSTART', 'LOCATION', 'SUMMARY', 'UID']
@@ -25,6 +26,7 @@ def canonsort_items(dict1, canonical_order=None):
     """
     Returns a list of items from dict1, sorted by canonical_order.
 
+    >>> from icalendar.caselessdict import canonsort_items
     >>> d = dict(i=7, c='at', a=3.5, l=(2,3), e=[4,5], n=13, d={'x': 'y'}, r=1.0)
     >>> canonsort_items(d)
     [('a', 3.5), ('c', 'at'), ('d', {'x': 'y'}), ('e', [4, 5]), ('i', 7), ('l', (2, 3)), ('n', 13), ('r', 1.0)]
@@ -38,6 +40,7 @@ class CaselessDict(dict):
     A dictionary that isn't case sensitive, and only uses strings as keys.
     Values retain their case.
 
+    >>> from icalendar.caselessdict import CaselessDict
     >>> ncd = CaselessDict(key1='val1', key2='val2')
     >>> ncd
     CaselessDict({'KEY2': 'val2', 'KEY1': 'val1'})
