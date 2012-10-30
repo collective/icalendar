@@ -1,5 +1,5 @@
-You want help and contribute? Perfect!
-======================================
+You want to help and contribute? Perfect!
+=========================================
 
 These are some contribution examples
 ------------------------------------
