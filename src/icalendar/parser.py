@@ -446,7 +446,7 @@ class Contentline(str):
         "Turns a tuple of parts into a content line"
         (name, params, values) = parts
         try:
-            if values and not isinstance(values, str):
+            if values and not isinstance(values, basestring):
                 if hasattr(values, 'to_ical'):
                     values = values.to_ical()
             if params:
