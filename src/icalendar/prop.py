@@ -1120,7 +1120,6 @@ class vText(unicode):
         """
         Format value according to iCalendar TEXT escaping rules.
         """
-        import pdb; pdb.set_trace()
         return (self.replace('\N', '\n')
                     .replace('\\', '\\\\')
                     .replace(';', r'\;')
