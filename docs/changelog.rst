@@ -7,6 +7,9 @@ Changelog
 * Supports to_ical() on date/time properties for dates prior to 1900.
   [cdevienne]
 
+* Returned old folding algorithm, as the current implementation fails in some
+  cases (https://github.com/collective/icalendar/issues/72)
+
 
 3.1
 ---

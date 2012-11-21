@@ -555,7 +555,11 @@ class vDatetime:
 
     def to_ical(self):
         dt = self.dt
-        tzid = dt.tzinfo and dt.tzinfo.zone or None
+        if hasattr(dt.tzinfo, 'zone'):
+            tzid = dt.tzinfo and dt.tzinfo.zone or None
+        else:
+            tzid = dt.tzinfo and dt.tzinfo.tzname(self.dt) or None
+
         s = "%04d%02d%02dT%02d%02d%02d" % (
             self.dt.year,
             self.dt.month,
