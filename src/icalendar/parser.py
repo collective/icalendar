@@ -446,9 +446,10 @@ class Contentline(str):
         "Turns a tuple of parts into a content line"
         (name, params, values) = parts
         try:
-            if values and not isinstance(values, basestring):
-                if hasattr(values, 'to_ical'):
-                    values = values.to_ical()
+            if hasattr(values, 'to_ical'):
+                values = values.to_ical()
+            else:
+                values = vText(values).to_ical()
             if params:
                 return Contentline('%s;%s:%s' % (name, params.to_ical(), values))
             return Contentline('%s:%s' %  (name, values))
@@ -575,3 +576,5 @@ class Contentlines(list):
 #('UID', Parameters({}), '42')
 #('END', Parameters({}), 'VEVENT')
 #('END', Parameters({}), 'VCALENDAR')
+
+from icalendar.prop import vText
