@@ -416,7 +416,7 @@ class vDDDTypes:
 
     def __init__(self, dt):
         "Returns vDate from"
-        if type(dt) not in (datetime, date, timedelta):
+        if type(dt) not in (datetime, date, timedelta, time):
             raise ValueError ('You must use datetime, date or timedelta')
         if isinstance(dt, datetime):
             self.params = Parameters(dict(value='DATE-TIME'))
@@ -432,6 +432,8 @@ class vDDDTypes:
             return vDate(dt).to_ical()
         elif isinstance(dt, timedelta):
             return vDuration(dt).to_ical()
+        elif isinstance(dt, time):
+            return vTime(dt).to_ical()
         else:
             raise ValueError('Unknown date type')
 
@@ -444,8 +446,11 @@ class vDDDTypes:
             return vDuration.from_ical(ical)
         try:
             return vDatetime.from_ical(ical, timezone=timezone)
-        except:
-            return vDate.from_ical(ical)
+        except ValueError:
+            try:
+                return vDate.from_ical(ical)
+            except ValueError:
+                return vTime.from_ical(ical)
 
     from_ical = staticmethod(from_ical)
 
@@ -1150,7 +1155,7 @@ class vText(unicode):
     from_ical = staticmethod(from_ical)
 
 
-class vTime(time):
+class vTime:
     """A subclass of datetime, that renders itself in the iCalendar time
     format.
 
@@ -1168,13 +1173,17 @@ class vTime(time):
     ValueError: Expected time, got: 263000
     """
 
-    def __new__(cls, *args, **kwargs):
-        self = super(vTime, cls).__new__(cls, *args, **kwargs)
-        self.params = Parameters()
-        return self
+    def __init__(self, *args):
+        if len(args) == 1:
+            if not isinstance(args[0], (time, datetime)):
+                raise ValueError('Expected a datetime.time, got: %s' % args[0])
+            self.dt = args[0]
+        else:
+            self.dt = time(*args)
+        self.params = Parameters(dict(value='TIME'))
 
     def to_ical(self):
-        return self.strftime("%H%M%S")
+        return self.dt.strftime("%H%M%S")
 
     def from_ical(ical):
         "Parses the data format from ical text format"
