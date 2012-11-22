@@ -5,15 +5,32 @@ Eg. RFC 2426 (vCard)
 
 It is stupid in the sense that it treats the content purely as strings. No type
 conversion is attempted.
-
-Copyright, 2005: Max M <maxm@mxm.dk>
 """
-
 import re
-import icalendar.tools
 from types import TupleType, ListType
 from icalendar.caselessdict import CaselessDict
 SequenceTypes = [TupleType, ListType]
+
+
+def escape_char(text):
+    """Format value according to iCalendar TEXT escaping rules.
+    """
+    # NOTE: ORDER MATTERS!
+    return text.replace('\N', '\n')\
+               .replace('\\', '\\\\')\
+               .replace(';', r'\;')\
+               .replace(',', r'\,')\
+               .replace('\r\n', r'\n')\
+               .replace('\n', r'\n')
+
+def unescape_char(text):
+    # NOTE: ORDER MATTERS!
+    return text.replace(r'\N', r'\n')\
+               .replace(r'\r\n', '\n')\
+               .replace(r'\n', '\n')\
+               .replace(r'\,', ',')\
+               .replace(r'\;', ';')\
+               .replace('\\\\', '\\')
 
 
 def foldline(text, length=75, newline='\r\n'):
@@ -27,8 +44,8 @@ def foldline(text, length=75, newline='\r\n'):
     ...             "Vestibulum convallis imperdiet dui posuere.")
     >>> foldline(longtext)
     ... # doctest: +NORMALIZE_WHITESPACE
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum \\r\\n
-    convallis imperdiet dui posuere.'
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum conval\\r\\n
+    lis imperdiet dui posuere.'
     """
     assert isinstance(text, str)
 #    text.decode('utf-8')  # try to decode, to be sure it's utf-8 or ASCII
@@ -231,6 +248,7 @@ class Parameters(CaselessDict):
         """
         return self.keys()
 
+### TODO?
 ### Later, when I get more time... need to finish this off now. The last majot thing missing.
 ###    def _encode(self, name, value, cond=1):
 ###        # internal, for conditional convertion of values.
@@ -314,17 +332,17 @@ class Contentline(str):
     A long line gets folded
     >>> c = Contentline(''.join(['123456789 ']*10))
     >>> c.to_ical()
-    '123456789 123456789 123456789 123456789 123456789 123456789 123456789 \\r\\n 123456789 123456789 123456789 '
+    '123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234\\r\\n 56789 123456789 123456789'
 
     A folded line gets unfolded
     >>> c = Contentline.from_ical(c.to_ical())
     >>> c
-    '123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 '
+    '123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789'
 
     Newlines in a string get need to be preserved
     >>> c = Contentline('1234\\n\\n1234')
     >>> c.to_ical()
-    '1234\\n\\n1234'
+    '1234\\r\\n \\r\\n 1234'
 
     We do not fold within a UTF-8 character:
     >>> c = Contentline('This line has a UTF-8 character where it should be folded. Make sure it g\xc3\xabts folded before that character.')
@@ -376,6 +394,10 @@ class Contentline(str):
     >>> parts = ('SUMMARY', Parameters(), vText(u'INternational char æ ø å'))
     >>> Contentline.from_parts(parts)
     'SUMMARY:INternational char \\xc3\\xa6 \\xc3\\xb8 \\xc3\\xa5'
+
+    'SUMMARY:INternational char \xc3\x83\xc2\xa6 \xc3\x83\xc2\xb8 \xc3\x83\xc2\xa5'
+
+    TODO: troubles with console and doctest encodings?
 
     Traversing could look like this.
     >>> name, params, vals = c.parts()
@@ -450,6 +472,9 @@ class Contentline(str):
                 values = values.to_ical()
             else:
                 values = vText(values).to_ical()
+            #elif isinstance(values, basestring):
+            #    values = escape_char(values)
+
             if params:
                 return Contentline('%s;%s:%s' % (name, params.to_ical(), values))
             return Contentline('%s:%s' %  (name, values))
@@ -522,7 +547,7 @@ class Contentlines(list):
     Lets try appending it with a 100 charater wide string
     >>> c.append(Contentline(''.join(['123456789 ']*10)+'\\r\\n'))
     >>> c.to_ical()
-    'BEGIN:VEVENT\\r\\n\\r\\n123456789 123456789 123456789 123456789 123456789 123456789 123456789 \\r\\n 123456789 123456789 123456789 \\r\\n\\r\\n'
+    'BEGIN:VEVENT\\r\\n\\r\\n123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234\\r\\n 56789 123456789 123456789 \\r\\n\\r\\n'
 
     Notice that there is an extra empty string in the end of the content lines.
     That is so they can be easily joined with: '\r\n'.join(contentlines)).

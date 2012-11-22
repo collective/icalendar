@@ -153,7 +153,7 @@ class Component(CaselessDict):
     >>> c = Calendar()
     >>> c['description']=u'Paragraph one\\n\\nParagraph two'
     >>> c.to_ical()
-    'BEGIN:VCALENDAR\\r\\nDESCRIPTION:Paragraph one\\n\\nParagraph two\\r\\nEND:VCALENDAR\\r\\n'
+    'BEGIN:VCALENDAR\\r\\nDESCRIPTION:Paragraph one\\\\n\\\\nParagraph two\\r\\nEND:VCALENDAR\\r\\n'
 
     INLINE properties have their values on one property line. Note the double
     quoting of the value with a colon in it.
@@ -163,7 +163,7 @@ class Component(CaselessDict):
     VCALENDAR({'RESOURCES': 'Chair, Table, "Room: 42"'})
 
     >>> c.to_ical()
-    'BEGIN:VCALENDAR\\r\\nRESOURCES:Chair, Table, "Room: 42"\\r\\nEND:VCALENDAR\\r\\n'
+    'BEGIN:VCALENDAR\\r\\nRESOURCES:Chair\\\\, Table\\\\, "Room: 42"\\r\\nEND:VCALENDAR\\r\\n'
 
     The inline values must be handled by the get_inline() and set_inline()
     methods.

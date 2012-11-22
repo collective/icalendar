@@ -51,6 +51,8 @@ from datetime import (
 from types import TupleType, ListType
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Parameters
+from icalendar.parser import escape_char
+from icalendar.parser import unescape_char
 
 
 SequenceTypes = [TupleType, ListType]
@@ -1120,33 +1122,17 @@ class vText(unicode):
         self.params = Parameters()
         return self
 
-    def escape(self):
-        """
-        Format value according to iCalendar TEXT escaping rules.
-        """
-        return (self.replace('\N', '\n')
-                    .replace('\\', '\\\\')
-                    .replace(';', r'\;')
-                    .replace(',', r'\,')
-                    .replace('\r\n', r'\n')
-                    .replace('\n', r'\n')
-                )
-
     def __repr__(self):
         return u"vText(%s)" % unicode.__repr__(self)
 
     def to_ical(self):
-        return self.escape().encode(self.encoding)
+        return escape_char(self).encode(self.encoding)
 
     def from_ical(ical):
-        "Parses the data format from ical text format"
+        """Parses the data format from ical text format.
+        """
         try:
-            ical = (ical.replace(r'\N', r'\n')
-                        .replace(r'\r\n', '\n')
-                        .replace(r'\n', '\n')
-                        .replace(r'\,', ',')
-                        .replace(r'\;', ';')
-                        .replace('\\\\', '\\'))
+            ical = unescape_char(ical)
             return ical.decode(vText.encoding, 'replace')
         except:
             raise ValueError, 'Expected ical text, got: %s' % ical
