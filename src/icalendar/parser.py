@@ -32,6 +32,14 @@ def unescape_char(text):
                .replace(r'\;', ';')\
                .replace('\\\\', '\\')
 
+def tzinfo_from_dt(dt):
+    tzid = None
+    if hasattr(dt.tzinfo, 'zone'):
+        tzid = dt.tzinfo.zone # pytz implementation
+    elif hasattr(dt.tzinfo, 'tzname'):
+        tzid = dt.tzinfo.tzname(dt) # dateutil implementation
+    return tzid
+
 
 def foldline(text, length=75, newline='\r\n'):
     """Make a string folded per RFC5545 (each line must be less than 75 octets)

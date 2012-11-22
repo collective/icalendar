@@ -4,6 +4,9 @@ Changelog
 3.2dev
 ------
 
+* Correctly handle tzinfo objects parsed with dateutil. Fixes #77.
+  [warvariuc, thet]
+
 * Text values are escaped correclty. Fixes #74.
   [warvariuc]
 

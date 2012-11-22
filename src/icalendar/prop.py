@@ -53,6 +53,7 @@ from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Parameters
 from icalendar.parser import escape_char
 from icalendar.parser import unescape_char
+from icalendar.parser import tzinfo_from_dt
 
 
 SequenceTypes = [TupleType, ListType]
@@ -557,18 +558,15 @@ class vDatetime:
 
     def to_ical(self):
         dt = self.dt
-        if hasattr(dt.tzinfo, 'zone'):
-            tzid = dt.tzinfo and dt.tzinfo.zone or None
-        else:
-            tzid = dt.tzinfo and dt.tzinfo.tzname(self.dt) or None
+        tzid = tzinfo_from_dt(dt)
 
         s = "%04d%02d%02dT%02d%02d%02d" % (
-            self.dt.year,
-            self.dt.month,
-            self.dt.day,
-            self.dt.hour,
-            self.dt.minute,
-            self.dt.second
+            dt.year,
+            dt.month,
+            dt.day,
+            dt.hour,
+            dt.minute,
+            dt.second
         )
         if tzid == 'UTC':
             s += "Z"
@@ -784,7 +782,8 @@ class vPeriod:
 
         self.params = Parameters()
         # set the timezone identifier
-        tzid = start.tzinfo and start.tzinfo.zone or None
+        # does not support different timezones for start and end
+        tzid = tzinfo_from_dt(start)
         if tzid:
             self.params['TZID'] = tzid
 
