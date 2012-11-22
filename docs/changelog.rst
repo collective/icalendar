@@ -4,6 +4,9 @@ Changelog
 3.2dev
 ------
 
+* Text values are escaped correclty. Fixes #74.
+  [warvariuc]
+
 * Returned old folding algorithm, as the current implementation fails in some
   cases (https://github.com/collective/icalendar/issues/72)
   [warvariuc]
