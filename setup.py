@@ -3,10 +3,9 @@ import setuptools
 
 version = '3.2dev'
 shortdesc = 'iCalendar parser/generator'
-longdesc = open(os.path.join(os.path.dirname(__file__), 'README.rst')).read()
-longdesc += open(os.path.join(os.path.dirname(__file__),
-                              'docs', 'changelog.rst')).read()
-longdesc += open(os.path.join(os.path.dirname(__file__), 'LICENSE.rst')).read()
+longdesc = open('README.rst').read()
+longdesc += open('CHANGES.rst').read()
+longdesc += open('LICENSE.rst').read()
 tests_require = ['unittest2']
 
 setuptools.setup(
@@ -22,10 +21,8 @@ setuptools.setup(
         ],
     keywords='calendar calendaring ical icalendar event todo journal '
              'recurring',
-    maintainer="Rok Garbas",
-    maintainer_email="rok@garbas.si",
-    author='MaxM',
-    author_email='max@mxm.dk',
+    author='Plone Foundation',
+    author_email='plone-developers@lists.sourceforge.net', 
     url='https://github.com/collective/icalendar',
     license='BSD',
     packages=setuptools.find_packages('src'),
