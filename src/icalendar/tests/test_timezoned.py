@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-
 import unittest2 as unittest
 import icalendar
 import pytz
 import datetime
+import dateutil.parser
 import os
 
 class TestTimezoned(unittest.TestCase):
@@ -66,3 +66,13 @@ class TestTimezoned(unittest.TestCase):
         # ical standard expects DTSTAMP and CREATED in UTC
         self.assertTrue("DTSTAMP;VALUE=DATE-TIME:20101010T091010Z" in ical_lines)
         self.assertTrue("CREATED;VALUE=DATE-TIME:20101010T091010Z" in ical_lines)
+
+
+    def test_tzinfo_dateutil(self):
+
+        date = dateutil.parser.parse('2012-08-30T22:41:00Z')
+        self.assertTrue(date.tzinfo.__module__ == 'dateutil.tz')
+
+        # make sure, it's parsed properly and doesn't throw an error
+        self.assertTrue(icalendar.vDDDTypes(date).to_ical()
+                        == '20120830T224100Z')
