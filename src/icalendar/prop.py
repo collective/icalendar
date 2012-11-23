@@ -1147,7 +1147,7 @@ class vText(unicode):
 
 
 class vTime:
-    """A subclass of time, that renders itself in the iCalendar time format.
+    """Render and generates iCalendar time format.
 
     >>> dt = vTime(12, 30, 0)
     >>> dt.to_ical()
