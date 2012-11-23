@@ -6,7 +6,7 @@ shortdesc = 'iCalendar parser/generator'
 longdesc = open('README.rst').read()
 longdesc += open('CHANGES.rst').read()
 longdesc += open('LICENSE.rst').read()
-tests_require = ['unittest2', 'python-dateutil']
+tests_require = ['unittest2', 'python-dateutil==1.5']
 
 setuptools.setup(
     name='icalendar',
