@@ -32,3 +32,4 @@ iCalendar contributors
 - Wichert Akkerman <wichert@wiggy.net>
 - spanktar <spanky@kapanka.com>
 - tgecho <tgecho@gmail.com>
+- Ronan Dunklau <ronan@dunklau.fr>

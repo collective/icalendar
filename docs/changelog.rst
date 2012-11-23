@@ -16,6 +16,8 @@ Changelog
 
 * Supports to_ical() on date/time properties for dates prior to 1900.
   [cdevienne]
+* Fix time supports. vTime events can be instantiated with a datetime.time
+  object, and do not inherit from datetime.time itself.
 
 3.1
 ---
