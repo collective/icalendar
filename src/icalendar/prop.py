@@ -414,17 +414,19 @@ class vDDDTypes:
     >>> vDDDTypes(42)
     Traceback (most recent call last):
         ...
-    ValueError: You must use datetime, date or timedelta
+    ValueError: You must use datetime, date, timedelta or time
     """
 
     def __init__(self, dt):
         "Returns vDate from"
         if type(dt) not in (datetime, date, timedelta, time):
-            raise ValueError ('You must use datetime, date or timedelta')
+            raise ValueError ('You must use datetime, date, timedelta or time')
         if isinstance(dt, datetime):
             self.params = Parameters(dict(value='DATE-TIME'))
-        elif isinstance(dt, date): # isinstance(datetime_object, date) => True
+        elif isinstance(dt, date):
             self.params = Parameters(dict(value='DATE'))
+        elif isinstance(dt, time):
+            self.params = Parameters(dict(value='TIME'))
         self.dt = dt
 
     def to_ical(self):
@@ -1145,8 +1147,7 @@ class vText(unicode):
 
 
 class vTime:
-    """A subclass of datetime, that renders itself in the iCalendar time
-    format.
+    """A subclass of time, that renders itself in the iCalendar time format.
 
     >>> dt = vTime(12, 30, 0)
     >>> dt.to_ical()

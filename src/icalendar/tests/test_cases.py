@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-
 import unittest2 as unittest
 import icalendar
-import pytz
-import datetime
 import os
 
 class TestCases(unittest.TestCase):
@@ -12,7 +9,9 @@ class TestCases(unittest.TestCase):
         # broken description
         # see: https://github.com/collective/icalendar/issues/53
         directory = os.path.dirname(__file__)
-        cal = icalendar.Calendar.from_ical(open(os.path.join(directory, 'case_meetup.ics'),'rb').read())
+        ics = open(os.path.join(directory, 'case_meetup.ics'),'rb')
+        cal = icalendar.Calendar.from_ical(ics.read())
+        ics.close()
 
         event = cal.walk('VEVENT')[0]
         desc = event.get('DESCRIPTION')

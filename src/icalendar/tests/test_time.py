@@ -1,6 +1,5 @@
 import unittest2 as unittest
 import icalendar
-import pytz
 import datetime
 import os
 
@@ -14,8 +13,10 @@ class TestTime(unittest.TestCase):
 
     def test_create_from_ical(self):
         directory = os.path.dirname(__file__)
-        with open(os.path.join(directory, 'time.ics')) as f:
-            cal = icalendar.Calendar.from_ical(f.read())
+        ics = open(os.path.join(directory, 'time.ics'),'rb')
+        cal = icalendar.Calendar.from_ical(ics.read())
+        ics.close()
+
         self.assertEqual(cal['X-SOMETIME'].dt, datetime.time(17, 20, 10))
         self.assertEqual(cal['X-SOMETIME'].to_ical(), '172010')
 

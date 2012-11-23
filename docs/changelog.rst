@@ -4,6 +4,10 @@ Changelog
 3.2dev
 ------
 
+* Fix time support. vTime events can be instantiated with a datetime.time
+  object, and do not inherit from datetime.time itself.
+  [rdunklau]
+
 * Correctly handle tzinfo objects parsed with dateutil. Fixes #77.
   [warvariuc, thet]
 
@@ -16,8 +20,7 @@ Changelog
 
 * Supports to_ical() on date/time properties for dates prior to 1900.
   [cdevienne]
-* Fix time supports. vTime events can be instantiated with a datetime.time
-  object, and do not inherit from datetime.time itself.
+
 
 3.1
 ---
