@@ -14,5 +14,5 @@ For pull requests, keep this in mind
 ------------------------------------
 
 * Add a test which proves your fix and make it pass.
-* Describe your change in docs/changelog.rst 
+* Describe your change in CHANGES.rst 
 * Add yourself to the docs/credits.rst
