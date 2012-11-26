@@ -9,7 +9,7 @@ conversion is attempted.
 import re
 from types import TupleType, ListType
 from icalendar.caselessdict import CaselessDict
-from icalendar import logger
+from . import logger
 SequenceTypes = [TupleType, ListType]
 
 
