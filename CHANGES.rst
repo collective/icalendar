@@ -1,8 +1,8 @@
 Changelog
 =========
 
-3.2dev
-------
+3.2 (2012-11-27)
+----------------
 
 * Documentation file layout restructuring.
   [thet]
