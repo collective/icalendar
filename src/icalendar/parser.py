@@ -9,6 +9,7 @@ conversion is attempted.
 import re
 from types import TupleType, ListType
 from icalendar.caselessdict import CaselessDict
+from icalendar import logger
 SequenceTypes = [TupleType, ListType]
 
 
@@ -284,7 +285,7 @@ class Parameters(CaselessDict):
         items.sort() # To make doctests work
         for key, value in items:
             value = paramVal(value)
-            result.append('%s=%s' % (key.upper(), value))
+            result.append('%s=%s' % (key.upper(), value.encode(DEFAULT_ENCODING)))
         return ';'.join(result)
 
 
@@ -486,7 +487,8 @@ class Contentline(str):
             if params:
                 return Contentline('%s;%s:%s' % (name, params.to_ical(), values))
             return Contentline('%s:%s' %  (name, values))
-        except:
+        except Exception, e:
+            logger.error(str(e))
             raise ValueError(
                 'Property: %s Wrong values "%s" or "%s"' % (repr(name),
                                                             repr(params),

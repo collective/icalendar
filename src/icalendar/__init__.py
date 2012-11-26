@@ -24,3 +24,6 @@ __all__ = [
     FixedOffset, LocalTimezone,
     Parameters, q_split, q_join,
 ]
+
+import logging
+logger = logging.getLogger('iCalendar')
