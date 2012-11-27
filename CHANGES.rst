@@ -25,8 +25,8 @@ Changelog
   [cdevienne]
 
 
-3.1
----
+3.1 (2012-09-05)
+----------------
 
 * Make sure parameters to certain properties propagate to the ical output.
   [kanarip]
@@ -250,5 +250,3 @@ Changelog
   shorted module names, which are mostly implementation detail.
 
 * changed tests so they generate .ics files in a temp directory, not in the structure itself.
-
-
