@@ -137,7 +137,9 @@ def validate_param_value(value, quoted=True):
         raise ValueError(value)
 
 
-QUOTABLE = re.compile('[,;:].')
+# chars presence of which in parameter value will be cause the value
+# to be enclosed in double-tuotes
+QUOTABLE = re.compile("[,;: ’']")
 
 
 def dQuote(val):
@@ -150,6 +152,9 @@ def dQuote(val):
     >>> dQuote('name:value')
     '"name:value"'
     """
+    # a double-quote character is forbidden to appear in a parameter value
+    # so replace it with a single-quote character
+    val = val.replace('"', "'")
     if QUOTABLE.search(val):
         return '"%s"' % val
     return val
