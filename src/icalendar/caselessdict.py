@@ -20,7 +20,8 @@ def canonsort_keys(keys, canonical_order=None):
     canonical_map = dict((k, i) for i, k in enumerate(canonical_order or []))
     head = [k for k in keys if k in canonical_map]
     tail = [k for k in keys if k not in canonical_map]
-    return sorted(head, key=lambda k: canonical_map[k])  +  sorted(tail)
+    return sorted(head, key=lambda k: canonical_map[k]) + sorted(tail)
+
 
 def canonsort_items(dict1, canonical_order=None):
     """
@@ -34,6 +35,7 @@ def canonsort_items(dict1, canonical_order=None):
     [('i', 7), ('c', 'at'), ('a', 3.5), ('d', {'x': 'y'}), ('e', [4, 5]), ('l', (2, 3)), ('n', 13), ('r', 1.0)]
     """
     return [(k, dict1[k]) for k in canonsort_keys(dict1.keys(), canonical_order)]
+
 
 class CaselessDict(dict):
     """
@@ -80,7 +82,7 @@ class CaselessDict(dict):
     def __init__(self, *args, **kwargs):
         "Set keys to upper for initial dict"
         dict.__init__(self, *args, **kwargs)
-        for k,v in self.items():
+        for k, v in self.items():
             k_upper = k.upper()
             if k != k_upper:
                 dict.__delitem__(self, k)
@@ -95,8 +97,8 @@ class CaselessDict(dict):
     def __delitem__(self, key):
         dict.__delitem__(self, key.upper())
 
-    def __contains__(self, item):
-        return dict.__contains__(self, item.upper())
+    def __contains__(self, key):
+        return dict.__contains__(self, key.upper())
 
     def get(self, key, default=None):
         return dict.get(self, key.upper(), default)

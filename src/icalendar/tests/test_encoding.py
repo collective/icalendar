@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 
-import unittest2 as unittest
 import icalendar
 import pytz
 import datetime
 import os
+
+
+import unittest
+if not hasattr(unittest.TestCase, 'assertIsNotNone'):
+    import unittest2 as unittest
 
 
 class TestEncoding(unittest.TestCase):

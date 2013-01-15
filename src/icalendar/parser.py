@@ -25,6 +25,7 @@ def escape_char(text):
                .replace('\r\n', r'\n')\
                .replace('\n', r'\n')
 
+
 def unescape_char(text):
     # NOTE: ORDER MATTERS!
     return text.replace(r'\N', r'\n')\
@@ -34,12 +35,13 @@ def unescape_char(text):
                .replace(r'\;', ';')\
                .replace('\\\\', '\\')
 
+
 def tzinfo_from_dt(dt):
     tzid = None
     if hasattr(dt.tzinfo, 'zone'):
-        tzid = dt.tzinfo.zone # pytz implementation
+        tzid = dt.tzinfo.zone  # pytz implementation
     elif hasattr(dt.tzinfo, 'tzname'):
-        tzid = dt.tzinfo.tzname(dt) # dateutil implementation
+        tzid = dt.tzinfo.tzname(dt)  # dateutil implementation
     return tzid
 
 
@@ -121,20 +123,23 @@ NEWLINE = re.compile(r'\r?\n')
 
 DEFAULT_ENCODING = 'utf-8'
 
+
 def validate_token(name):
     match = NAME.findall(name)
     if len(match) == 1 and name == match[0]:
         return
-    raise ValueError, name
+    raise ValueError(name)
+
 
 def validate_param_value(value, quoted=True):
-    validator = UNSAFE_CHAR
-    if quoted:
-        validator = QUNSAFE_CHAR
+    validator = QUNSAFE_CHAR if quoted else UNSAFE_CHAR
     if validator.findall(value):
-        raise ValueError, value
+        raise ValueError(value)
+
 
 QUOTABLE = re.compile('[,;:].')
+
+
 def dQuote(val):
     """
     Parameter values containing [,;:] must be double quoted
@@ -148,6 +153,7 @@ def dQuote(val):
     if QUOTABLE.search(val):
         return '"%s"' % val
     return val
+
 
 # parsing helper
 def q_split(st, sep=','):
@@ -171,6 +177,7 @@ def q_split(st, sep=','):
             result.append(st[cursor:])
     return result
 
+
 def q_join(lst, sep=','):
     """
     Joins a list on sep, quoting strings with QUOTABLE chars
@@ -178,12 +185,13 @@ def q_join(lst, sep=','):
     >>> q_join(s)
     'Max,Moller,"Rasmussen, Max"'
     """
-    return sep.join([dQuote(itm) for itm in lst])
+    return sep.join(dQuote(itm) for itm in lst)
+
 
 class Parameters(CaselessDict):
     """
     Parser and generator of Property parameter strings. It knows nothing of
-    datatypes. It's main concern is textual structure.
+    datatypes. Its main concern is textual structure.
 
 
     Simple parameter:value pair
@@ -250,7 +258,6 @@ class Parameters(CaselessDict):
     Parameters({'PARAMETER1': 'Value1', 'ALTREP': ['http://www.wiz.org', 'value4'], 'PARAMETER2': ['Value2', 'Value3']})
     """
 
-
     def params(self):
         """
         in rfc2445 keys are called parameters, so this is to be consitent with
@@ -279,17 +286,16 @@ class Parameters(CaselessDict):
     def __repr__(self):
         return 'Parameters(' + dict.__repr__(self) + ')'
 
-
     def to_ical(self):
         result = []
         items = self.items()
-        items.sort() # To make doctests work
+        items.sort()  # To make doctests work
         for key, value in items:
             value = paramVal(value)
             result.append('%s=%s' % (key.upper(), value.encode(DEFAULT_ENCODING)))
         return ';'.join(result)
 
-
+    @staticmethod
     def from_ical(st, strict=False):
         "Parses the parameter format from ical text format"
 
@@ -297,7 +303,7 @@ class Parameters(CaselessDict):
         result = Parameters()
         for param in q_split(st, ';'):
             try:
-                key, val =  q_split(param, '=')
+                key, val = q_split(param, '=')
                 validate_token(key)
                 param_values = [v for v in q_split(val, ',')]
                 # Property parameter values that are not in quoted
@@ -321,10 +327,10 @@ class Parameters(CaselessDict):
                         result[key] = vals[0]
                     else:
                         result[key] = vals
-            except ValueError, e:
-                raise ValueError, '%r is not a valid parameter string: %s' % (param, e)
+            except ValueError as exc:
+                raise ValueError('%r is not a valid parameter string: %s'
+                                 % (param, exc))
         return result
-    from_ical = staticmethod(from_ical)
 
 
 #########################################
@@ -471,9 +477,10 @@ class Contentline(str):
         if isinstance(value, unicode):
             value = value.encode(DEFAULT_ENCODING)
         self = super(Contentline, cls).__new__(cls, value)
-        setattr(self, 'strict', strict)
+        self.strict = strict
         return self
 
+    @staticmethod
     def from_parts(parts):
         "Turns a tuple of parts into a content line"
         (name, params, values) = parts
@@ -487,14 +494,11 @@ class Contentline(str):
 
             if params:
                 return Contentline('%s;%s:%s' % (name, params.to_ical(), values))
-            return Contentline('%s:%s' %  (name, values))
-        except Exception, e:
-            logger.error(str(e))
-            raise ValueError(
-                'Property: %s Wrong values "%s" or "%s"' % (repr(name),
-                                                            repr(params),
-                                                            repr(values)))
-    from_parts = staticmethod(from_parts)
+            return Contentline('%s:%s' % (name, values))
+        except Exception as exc:
+            logger.error(str(exc))
+            raise ValueError(u'Property: %r Wrong values "%r" or "%r"'
+                             % (name, params, values))
 
     def parts(self):
         """ Splits the content line up into (name, parameters, values) parts
@@ -514,17 +518,19 @@ class Contentline(str):
                     inquotes = not inquotes
             name = self[:name_split]
             if not name:
-                raise ValueError, 'Key name is required'
+                raise ValueError('Key name is required')
             validate_token(name)
-            if name_split+1 == value_split:
-                raise ValueError, 'Invalid content line'
-            params = Parameters.from_ical(self[name_split+1:value_split],
+            if name_split + 1 == value_split:
+                raise ValueError('Invalid content line')
+            params = Parameters.from_ical(self[name_split + 1:value_split],
                                             strict=self.strict)
-            values = self[value_split+1:]
+            values = self[value_split + 1:]
             return (name, params, values)
         except ValueError, e:
-            raise ValueError, "Content line could not be parsed into parts: %r: %s" % (self, e)
+            raise ValueError("Content line could not be parsed into parts: %r:"
+                             " %s" % (self, e))
 
+    @staticmethod
     def from_ical(st, strict=False):
         """ Unfolds the content lines in an iCalendar into long content lines.
 
@@ -533,8 +539,7 @@ class Contentline(str):
             # a fold is carriage return followed by either a space or a tab
             return Contentline(FOLD.sub('', st), strict=strict)
         except:
-            raise ValueError, 'Expected StringType with content line'
-    from_ical = staticmethod(from_ical)
+            raise ValueError('Expected StringType with content line')
 
     def to_ical(self):
         """ Long content lines are folded so they are less than 75 characters
@@ -542,7 +547,6 @@ class Contentline(str):
 
         """
         return foldline(self, newline='\r\n')
-
 
 
 class Contentlines(list):
@@ -574,17 +578,17 @@ class Contentlines(list):
         "Simply join self."
         return '\r\n'.join(l.to_ical() for l in self if l) + '\r\n'
 
+    @staticmethod
     def from_ical(st):
         "Parses a string into content lines"
         try:
             # a fold is carriage return followed by either a space or a tab
             unfolded = FOLD.sub('', st)
             lines = [Contentline(line) for line in unfolded.splitlines() if line]
-            lines.append('') # we need a '\r\n' in the end of every content line
+            lines.append('')  # we need a '\r\n' in the end of every content line
             return Contentlines(lines)
         except:
-            raise ValueError, 'Expected StringType with content lines'
-    from_ical = staticmethod(from_ical)
+            raise ValueError('Expected StringType with content lines')
 
 
 # ran this:

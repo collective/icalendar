@@ -6,6 +6,9 @@
 .DT_Store
 .coverage
 .tox/
+.project
+.pydevproject
+.settings/
 bin/
 build/
 coverage-*
