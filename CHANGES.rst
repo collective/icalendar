@@ -4,6 +4,10 @@ Changelog
 3.3dev (unreleased)
 -------------------
 
+* Extend escaping of parameter values to the characters ",;: ’'". This fixes an
+  outlook incompatibility with some characters. Fixes: #79, Fixes: #81.
+  [warvariuc]
+
 * Define VTIMETZONE subcomponents STANDARD and DAYLIGHT.
   [thet]
 
