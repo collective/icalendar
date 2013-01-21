@@ -37,6 +37,28 @@ class TestTimezoned(unittest.TestCase):
         cal.add('x-wr-relcalid', u"12345")
         cal.add('x-wr-timezone', u"Europe/Vienna")
 
+        tzc = icalendar.Timezone()
+        tzc.add('tzid', 'Europe/Vienna')
+        tzc.add('x-lic-location', 'Europe/Vienna')
+
+        tzs = icalendar.TimezoneStandard()
+        tzs.add('tzname', 'CET')
+        tzs.add('dtstart', datetime.datetime(1970, 10, 25, 3, 0, 0))
+        tzs.add('rrule', {'freq': 'yearly', 'bymonth': 10, 'byday': '-1su'})
+        tzs.add('TZOFFSETFROM', datetime.timedelta(hours=2))
+        tzs.add('TZOFFSETTO', datetime.timedelta(hours=1))
+
+        tzd = icalendar.TimezoneDaylight()
+        tzd.add('tzname', 'CEST')
+        tzd.add('dtstart', datetime.datetime(1970, 3, 29, 2, 0, 0))
+        tzs.add('rrule', {'freq': 'yearly', 'bymonth': 3, 'byday': '-1su'})
+        tzd.add('TZOFFSETFROM', datetime.timedelta(hours=1))
+        tzd.add('TZOFFSETTO', datetime.timedelta(hours=2))
+
+        tzc.add_component(tzs)
+        tzc.add_component(tzd)
+        cal.add_component(tzc)
+
         event = icalendar.Event()
         tz = pytz.timezone("Europe/Vienna")
         event.add('dtstart', datetime.datetime(2012,02,13,10,00,00,tzinfo=tz))
@@ -58,14 +80,24 @@ class TestTimezoned(unittest.TestCase):
         event.add('url', u'http://plone.org')
         cal.add_component(event)
 
-        ical_lines = cal.to_ical().splitlines()
+        test_out = '|'.join(cal.to_ical().splitlines())
 
-        self.assertTrue("DTSTART;TZID=Europe/Vienna;VALUE=DATE-TIME:20120213T100000" in ical_lines)
-        self.assertTrue("ATTENDEE:sepp" in ical_lines)
+        vtimezone_lines = "BEGIN:VTIMEZONE|TZID:Europe/Vienna|X-LIC-LOCATION:"\
+          + "Europe/Vienna|BEGIN:STANDARD|DTSTART;VALUE=DATE-TIME:19701025T03"\
+          + "0000|RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10|RRULE:FREQ=YEARLY;B"\
+          + "YDAY=-1SU;BYMONTH=3|TZNAME:CET|TZOFFSETFROM:+0200|TZOFFSETTO:+01"\
+          + "00|END:STANDARD|BEGIN:DAYLIGHT|DTSTART;VALUE=DATE-TIME:19700329T"\
+          + "020000|TZNAME:CEST|TZOFFSETFROM:+0100|TZOFFSETTO:+0200|END:DAYLI"\
+          + "GHT|END:VTIMEZONE"
+        self.assertTrue(vtimezone_lines in test_out)
+
+        test_str = "DTSTART;TZID=Europe/Vienna;VALUE=DATE-TIME:20120213T100000"
+        self.assertTrue(test_str in test_out)
+        self.assertTrue("ATTENDEE:sepp" in test_out)
 
         # ical standard expects DTSTAMP and CREATED in UTC
-        self.assertTrue("DTSTAMP;VALUE=DATE-TIME:20101010T091010Z" in ical_lines)
-        self.assertTrue("CREATED;VALUE=DATE-TIME:20101010T091010Z" in ical_lines)
+        self.assertTrue("DTSTAMP;VALUE=DATE-TIME:20101010T091010Z" in test_out)
+        self.assertTrue("CREATED;VALUE=DATE-TIME:20101010T091010Z" in test_out)
 
 
     def test_tzinfo_dateutil(self):
