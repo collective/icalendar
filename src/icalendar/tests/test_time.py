@@ -1,7 +1,11 @@
-import unittest2 as unittest
 import icalendar
 import datetime
 import os
+
+import unittest
+if not hasattr(unittest.TestCase, 'assertIsNotNone'):
+    import unittest2 as unittest
+
 
 class TestTime(unittest.TestCase):
 
