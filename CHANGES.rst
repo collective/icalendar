@@ -1,6 +1,13 @@
 Changelog
 =========
 
+3.3dev (unreleased)
+-------------------
+
+* Define VTIMETZONE subcomponents STANDARD and DAYLIGHT.
+  [thet]
+
+
 3.2 (2012-11-27)
 ----------------
 

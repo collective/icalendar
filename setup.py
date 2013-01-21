@@ -1,6 +1,6 @@
 import setuptools
 
-version = '3.2'
+version = '3.3dev'
 shortdesc = 'iCalendar parser/generator'
 longdesc = open('README.rst').read()
 longdesc += open('CHANGES.rst').read()
