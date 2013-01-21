@@ -52,6 +52,8 @@ class ComponentFactory(CaselessDict):
         self['VJOURNAL'] = Journal
         self['VFREEBUSY'] = FreeBusy
         self['VTIMEZONE'] = Timezone
+        self['STANDARD'] = TimezoneStandard
+        self['DAYLIGHT'] = TimezoneDaylight
         self['VALARM'] = Alarm
         self['VCALENDAR'] = Calendar
 
@@ -554,16 +556,24 @@ class FreeBusy(Component):
 
 
 class Timezone(Component):
-
     name = 'VTIMEZONE'
-    canonical_order = ('TZID', 'STANDARDC', 'DAYLIGHTC',)
+    canonical_order = ('TZID', 'STANDARD', 'DAYLIGHT',)
+    required = ('TZID', 'STANDARD', 'DAYLIGHT',)
+    singletons = ('TZID', 'LAST-MODIFIED', 'TZURL',)
 
-    required = (
-        'TZID', 'STANDARDC', 'DAYLIGHTC', 'DTSTART', 'TZOFFSETTO',
-        'TZOFFSETFROM'
-        )
-    singletons = ('LAST-MODIFIED', 'TZURL', 'TZID',)
-    multiple = ('COMMENT', 'RDATE', 'RRULE', 'TZNAME',)
+
+class TimezoneStandard(Component):
+    name = 'STANDARD'
+    required = ('DTSTART', 'TZOFFSETTO', 'TZOFFSETFROM')
+    singletons = ('DTSTART', 'TZOFFSETTO', 'TZOFFSETFROM', 'RRULE')
+    multiple = ('COMMENT', 'RDATE', 'TZNAME')
+
+
+class TimezoneDaylight(Component):
+    name = 'DAYLIGHT'
+    required = ('DTSTART', 'TZOFFSETTO', 'TZOFFSETFROM')
+    singletons = ('DTSTART', 'TZOFFSETTO', 'TZOFFSETFROM', 'RRULE')
+    multiple = ('COMMENT', 'RDATE', 'TZNAME')
 
 
 class Alarm(Component):
@@ -573,7 +583,6 @@ class Alarm(Component):
     required = ('ACTION', 'TRIGGER',)
     singletons = ('ATTACH', 'ACTION', 'TRIGGER', 'DURATION', 'REPEAT',)
     inclusive = (('DURATION', 'REPEAT',),)
-    multiple = ('STANDARDC', 'DAYLIGHTC')
 
 
 class Calendar(Component):
