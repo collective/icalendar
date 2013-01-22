@@ -391,6 +391,7 @@ class Component(CaselessDict):
         properties.append(('END', vText(self.name).to_ical()))
         return properties
 
+    @staticmethod
     def from_ical(st, multiple=False):
         """
         Populates the component recursively from a string
@@ -459,7 +460,6 @@ class Component(CaselessDict):
             raise ValueError('Found no components where '
                              'exactly one is required: {st!r}'.format(**locals()))
         return comps[0]
-    from_ical = staticmethod(from_ical)
 
     def __repr__(self):
         return '%s(' % self.name + dict.__repr__(self) + ')'

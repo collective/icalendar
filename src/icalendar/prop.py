@@ -109,14 +109,13 @@ class vBinary:
     def to_ical(self):
         return binascii.b2a_base64(self.obj)[:-1]
 
+    @staticmethod
     def from_ical(ical):
         "Parses the data format from ical text format"
         try:
             return ical.decode('base-64')
         except UnicodeError:
             raise ValueError, 'Not valid base 64 encoding.'
-
-    from_ical = staticmethod(from_ical)
 
 
 class vBoolean(int):
@@ -149,14 +148,13 @@ class vBoolean(int):
 
     bool_map = CaselessDict(true=True, false=False)
 
+    @staticmethod
     def from_ical(ical):
         "Parses the data format from ical text format"
         try:
             return vBoolean.bool_map[ical]
         except:
             raise ValueError, "Expected 'TRUE' or 'FALSE'. Got %s" % ical
-
-    from_ical = staticmethod(from_ical)
 
 
 class vCalAddress(str):
@@ -185,14 +183,13 @@ class vCalAddress(str):
     def to_ical(self):
         return str(self)
 
+    @staticmethod
     def from_ical(ical):
         "Parses the data format from ical text format"
         try:
             return str(ical)
         except:
             raise ValueError, 'Expected vCalAddress, got: %s' % ical
-
-    from_ical = staticmethod(from_ical)
 
 
 ####################################################
@@ -275,14 +272,13 @@ class vFloat(float):
     def to_ical(self):
         return str(self)
 
+    @staticmethod
     def from_ical(ical):
         "Parses the data format from ical text format"
         try:
             return float(ical)
         except:
             raise ValueError, 'Expected float value, got: %s' % ical
-
-    from_ical = staticmethod(from_ical)
 
 
 class vInt(int):
@@ -307,14 +303,13 @@ class vInt(int):
     def to_ical(self):
         return str(self)
 
+    @staticmethod
     def from_ical(ical):
         "Parses the data format from ical text format"
         try:
             return int(ical)
         except:
             raise ValueError, 'Expected int, got: %s' % ical
-
-    from_ical = staticmethod(from_ical)
 
 
 class vDDDLists:
@@ -375,6 +370,7 @@ class vDDDLists:
         dts_ical = [dt.to_ical() for dt in self.dts]
         return ",".join(dts_ical)
 
+    @staticmethod
     def from_ical(ical):
         '''Parses the list of data formats from ical text format.
         @param ical: ical text format
@@ -384,8 +380,6 @@ class vDDDLists:
         for ical_dt in ical_dates:
             out.append(vDDDTypes.from_ical(ical_dt))
         return out
-
-    from_ical = staticmethod(from_ical)
 
 
 class vDDDTypes:
@@ -442,6 +436,7 @@ class vDDDTypes:
         else:
             raise ValueError('Unknown date type')
 
+    @staticmethod
     def from_ical(ical, timezone=None):
         "Parses the data format from ical text format"
         if isinstance(ical, vDDDTypes):
@@ -456,8 +451,6 @@ class vDDDTypes:
                 return vDate.from_ical(ical)
             except ValueError:
                 return vTime.from_ical(ical)
-
-    from_ical = staticmethod(from_ical)
 
 
 class vDate:
@@ -489,6 +482,7 @@ class vDate:
     def to_ical(self):
         return "%04d%02d%02d" % (self.dt.year, self.dt.month, self.dt.day)
 
+    @staticmethod
     def from_ical(ical):
         "Parses the data format from ical text format"
         try:
@@ -500,8 +494,6 @@ class vDate:
             return date(*timetuple)
         except:
             raise ValueError, 'Wrong date format %s' % ical
-
-    from_ical = staticmethod(from_ical)
 
 
 class vDatetime:
@@ -581,6 +573,7 @@ class vDatetime:
             self.params.update({'TZID': tzid})
         return s
 
+    @staticmethod
     def from_ical(ical, timezone=None):
         """ Parses the data format from ical text format.
 
@@ -611,8 +604,6 @@ class vDatetime:
                 raise ValueError, ical
         except:
             raise ValueError, 'Wrong datetime format: %s' % ical
-
-    from_ical = staticmethod(from_ical)
 
 
 class vDuration:
@@ -693,6 +684,7 @@ class vDuration:
         else:
             return "%sP%dD%s" % (sign, abs(self.td.days), timepart)
 
+    @staticmethod
     def from_ical(ical):
         """ Parses the data format from ical text format.
 
@@ -712,8 +704,6 @@ class vDuration:
             return value
         except:
             raise ValueError('Invalid iCalendar duration: %s' % ical)
-
-    from_ical = staticmethod(from_ical)
 
 
 class vPeriod:
@@ -819,6 +809,7 @@ class vPeriod:
         return '%s/%s' % (vDatetime(self.start).to_ical(),
                           vDatetime(self.end).to_ical())
 
+    @staticmethod
     def from_ical(ical):
         "Parses the data format from ical text format"
         try:
@@ -828,8 +819,6 @@ class vPeriod:
             return (start, end_or_duration)
         except:
             raise ValueError, 'Expected period format, got: %s' % ical
-
-    from_ical = staticmethod(from_ical)
 
     def __repr__(self):
         if self.by_duration:
@@ -896,14 +885,13 @@ class vWeekday(str):
     def to_ical(self):
         return self.upper()
 
+    @staticmethod
     def from_ical(ical):
         "Parses the data format from ical text format"
         try:
             return vWeekday(ical.upper())
         except:
             raise ValueError, 'Expected weekday abbrevation, got: %s' % ical
-
-    from_ical = staticmethod(from_ical)
 
 
 class vFrequency(str):
@@ -939,14 +927,13 @@ class vFrequency(str):
     def to_ical(self):
         return self.upper()
 
+    @staticmethod
     def from_ical(ical):
         "Parses the data format from ical text format"
         try:
             return vFrequency(ical.upper())
         except:
             raise ValueError, 'Expected frequency, got: %s' % ical
-
-    from_ical = staticmethod(from_ical)
 
 
 class vRecur(CaselessDict):
@@ -1057,12 +1044,13 @@ class vRecur(CaselessDict):
             result.append('%s=%s' % (key, vals))
         return ';'.join(result)
 
+    @staticmethod
     def parse_type(key, values):
         # integers
         parser = vRecur.types.get(key, vText)
         return [parser.from_ical(v) for v in values.split(',')]
-    parse_type = staticmethod(parse_type)
 
+    @staticmethod
     def from_ical(ical):
         "Parses the data format from ical text format"
         try:
@@ -1073,8 +1061,6 @@ class vRecur(CaselessDict):
             return dict(recur)
         except:
             raise ValueError, 'Error in recurrence rule: %s' % ical
-
-    from_ical = staticmethod(from_ical)
 
 
 class vText(unicode):
@@ -1134,6 +1120,7 @@ class vText(unicode):
     def to_ical(self):
         return escape_char(self).encode(self.encoding)
 
+    @staticmethod
     def from_ical(ical):
         """Parses the data format from ical text format.
         """
@@ -1142,8 +1129,6 @@ class vText(unicode):
             return ical.decode(vText.encoding, 'replace')
         except:
             raise ValueError, 'Expected ical text, got: %s' % ical
-
-    from_ical = staticmethod(from_ical)
 
 
 class vTime:
@@ -1175,6 +1160,7 @@ class vTime:
     def to_ical(self):
         return self.dt.strftime("%H%M%S")
 
+    @staticmethod
     def from_ical(ical):
         "Parses the data format from ical text format"
         try:
@@ -1182,8 +1168,6 @@ class vTime:
             return time(*timetuple)
         except:
             raise ValueError, 'Expected time, got: %s' % ical
-
-    from_ical = staticmethod(from_ical)
 
 
 class vUri(str):
@@ -1204,14 +1188,13 @@ class vUri(str):
     def to_ical(self):
         return str(self)
 
+    @staticmethod
     def from_ical(ical):
         "Parses the data format from ical text format"
         try:
             return str(ical)
         except:
             raise ValueError, 'Expected , got: %s' % ical
-
-    from_ical = staticmethod(from_ical)
 
 
 class vGeo:
@@ -1249,6 +1232,7 @@ class vGeo:
     def to_ical(self):
         return '%s;%s' % (self.latitude, self.longitude)
 
+    @staticmethod
     def from_ical(ical):
         "Parses the data format from ical text format"
         try:
@@ -1256,8 +1240,6 @@ class vGeo:
             return (float(latitude), float(longitude))
         except:
             raise ValueError, "Expected 'float;float' , got: %s" % ical
-
-    from_ical = staticmethod(from_ical)
 
 
 class vUTCOffset:
@@ -1339,6 +1321,7 @@ class vUTCOffset:
         duration = '%02i%02i' % (hours, minutes)
         return sign % duration
 
+    @staticmethod
     def from_ical(ical):
         "Parses the data format from ical text format"
         if isinstance(ical, vUTCOffset):
@@ -1356,8 +1339,6 @@ class vUTCOffset:
         if sign == '-':
             return -offset
         return offset
-
-    from_ical = staticmethod(from_ical)
 
 
 class vInline(str):
@@ -1384,10 +1365,9 @@ class vInline(str):
     def to_ical(self):
         return str(self)
 
+    @staticmethod
     def from_ical(ical):
         return str(ical)
-
-    from_ical = staticmethod(from_ical)
 
 
 class TypesFactory(CaselessDict):
