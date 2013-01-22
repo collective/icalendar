@@ -4,8 +4,12 @@ Changelog
 3.3dev (unreleased)
 -------------------
 
-* Extend escaping of parameter values to the characters ",;: ’'". This fixes an
-  outlook incompatibility with some characters. Fixes: #79, Fixes: #81.
+* Use @staticmethod decorator instead of wrapper function.
+  [warvariuc, thet]
+
+* Extend quoting of parameter values to all of those characters: ",;: ’'".
+  This fixes an outlook incompatibility with some characters. Fixes: #79,
+  Fixes: #81.
   [warvariuc]
 
 * Define VTIMETZONE subcomponents STANDARD and DAYLIGHT for RFC5545 compliance.
