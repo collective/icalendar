@@ -395,9 +395,10 @@ class Contentline(str):
     'ATTENDEE;CN=Max Rasmussen;ROLE=REQ-PARTICIPANT:MAILTO:maxm@example.com'
 
     and back again
+    NOTE: we are quoting property values with spaces in it.
     >>> parts = ('ATTENDEE', Parameters({'ROLE': 'REQ-PARTICIPANT', 'CN': 'Max Rasmussen'}), 'MAILTO:maxm@example.com')
     >>> Contentline.from_parts(parts)
-    'ATTENDEE;CN=Max Rasmussen;ROLE=REQ-PARTICIPANT:MAILTO:maxm@example.com'
+    'ATTENDEE;CN="Max Rasmussen";ROLE=REQ-PARTICIPANT:MAILTO:maxm@example.com'
 
     and again
     >>> parts = ('ATTENDEE', Parameters(), 'MAILTO:maxm@example.com')
