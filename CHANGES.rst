@@ -8,7 +8,7 @@ Changelog
   outlook incompatibility with some characters. Fixes: #79, Fixes: #81.
   [warvariuc]
 
-* Define VTIMETZONE subcomponents STANDARD and DAYLIGHT.
+* Define VTIMETZONE subcomponents STANDARD and DAYLIGHT for RFC5545 compliance.
   [thet]
 
 
