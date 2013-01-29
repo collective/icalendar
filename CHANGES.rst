@@ -4,6 +4,13 @@ Changelog
 3.3dev (unreleased)
 -------------------
 
+* Allow setting of timezone for vDDDLists and support timezone properties for
+  RDATE and EXDATE component properties.
+  [thet]
+
+* Move setting of TZID properties to vDDDTypes, where it belongs to.
+  [thet]
+
 * Use @staticmethod decorator instead of wrapper function.
   [warvariuc, thet]
 

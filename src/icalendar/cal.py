@@ -294,13 +294,6 @@ class Component(CaselessDict):
         else:
             self.set(name, value, encode)
 
-        if getattr(value, 'tzinfo', False)\
-                and value.tzinfo is not None\
-                and value.tzinfo is not pytz.utc:
-            # set the timezone as a parameter to the property
-            tzid = value.tzinfo.zone
-            self[name].params.update({'TZID': tzid})
-
     def _decode(self, name, value):
         # internal for decoding property values
         decoded = types_factory.from_ical(name, value)
@@ -443,8 +436,8 @@ class Component(CaselessDict):
                 factory = types_factory.for_property(name)
                 component = stack[-1]
                 try:
-                    if name in ('DTSTART', 'DTEND','RECURRENCE-ID')\
-                            and 'TZID' in params: # TODO: add DUE, FREEBUSY
+                    if name in ('DTSTART', 'DTEND', 'RECURRENCE-ID')\
+                            and 'TZID' in params: # TODO: add DUE, FREEBUSY, RDATE, EXDATE ..
                         vals = factory(factory.from_ical(vals, params['TZID']))
                     else:
                         vals = factory(factory.from_ical(vals))

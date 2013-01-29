@@ -37,7 +37,6 @@ them directly.
 
 """
 
-import pytz
 import re
 import time as _time
 import binascii
@@ -49,6 +48,9 @@ from datetime import (
     tzinfo,
 )
 from types import TupleType, ListType
+
+import pytz
+from dateutil.tz import tzutc
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Parameters
 from icalendar.parser import escape_char
@@ -360,8 +362,16 @@ class vDDDLists:
         if not isinstance(dt_list, list):
             raise ValueError('Value MUST be a list (of date instances)')
         vDDD = []
+        tzid = None
         for dt in dt_list:
-            vDDD.append(vDDDTypes(dt))
+            dt = vDDDTypes(dt)
+            vDDD.append(dt)
+            if 'TZID' in dt.params:
+                tzid = dt.params['TZID']
+
+        if tzid:
+            self.params = Parameters({'TZID': tzid}) # NOTE: no support for
+                                                     # multiple timezones here!
         self.dts = vDDD
 
     def to_ical(self):
@@ -371,14 +381,14 @@ class vDDDLists:
         return ",".join(dts_ical)
 
     @staticmethod
-    def from_ical(ical):
+    def from_ical(ical, timezone=None):
         '''Parses the list of data formats from ical text format.
         @param ical: ical text format
         '''
         out = []
         ical_dates = ical.split(",")
         for ical_dt in ical_dates:
-            out.append(vDDDTypes.from_ical(ical_dt))
+            out.append(vDDDTypes.from_ical(ical_dt, timezone=timezone))
         return out
 
 
@@ -421,6 +431,14 @@ class vDDDTypes:
             self.params = Parameters(dict(value='DATE'))
         elif isinstance(dt, time):
             self.params = Parameters(dict(value='TIME'))
+
+        if (isinstance(dt, datetime) or isinstance(dt, time))\
+            and getattr(dt, 'tzinfo', False):
+            tzinfo = dt.tzinfo
+            if tzinfo is not pytz.utc and not isinstance(tzinfo, tzutc):
+                # set the timezone as a parameter to the property
+                tzid = dt.tzinfo.zone
+                self.params.update({'TZID': tzid})
         self.dt = dt
 
     def to_ical(self):
@@ -501,7 +519,7 @@ class vDatetime:
 
     vDatetime is timezone aware and uses the pytz library, an implementation of
     the Olson database in Python. When a vDatetime object is created from an
-    ical string, the string must be a valid pytz timezone identifier. When and
+    ical string, you can pass a valid pytz timezone identifier. When a
     vDatetime object is created from a python datetime object, it uses the
     tzinfo component, if present. Otherwise an timezone-naive object is
     created. Be aware that there are certain limitations with timezone naive
@@ -1163,6 +1181,7 @@ class vTime:
     @staticmethod
     def from_ical(ical):
         "Parses the data format from ical text format"
+        # TODO: timezone support
         try:
             timetuple = map(int, (ical[:2],ical[2:4],ical[4:6]))
             return time(*timetuple)
