@@ -247,7 +247,7 @@ class Component(CaselessDict):
         if encode and type(value) == ListType\
                 and name.lower() not in ['rdate', 'exdate']:
             # Individually convert each value to an ical type except rdate and
-            # exdate, which encoded to vDDDLists, which needs a list
+            # exdate, where lists of dates might be passed to vDDDLists.
             self[name] = [self._encode(name, v, encode) for v in value]
         else:
             self[name] = self._encode(name, value, encode)
