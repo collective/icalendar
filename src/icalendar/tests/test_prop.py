@@ -8,6 +8,8 @@ import pytz
 class TestPropertyValues(unittest.TestCase):
 
     def test_vDDDLists_timezone(self):
+        """Test vDDDLists with timezone information.
+        """
         e = icalendar.Event()
         at = pytz.timezone('Europe/Vienna')
         dt1 = at.localize(datetime.datetime(2013,1,1))
@@ -17,7 +19,6 @@ class TestPropertyValues(unittest.TestCase):
         e.add('exdate', dt3)
         out = e.to_ical()
 
-        import pdb; pdb.set_trace()
         self.assertTrue('RDATE;TZID=Europe/Vienna:20130101T000000,20130102T000000' in out)
         self.assertTrue('EXDATE;TZID=Europe/Vienna:20130103T000000' in out)
 
