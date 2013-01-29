@@ -340,11 +340,6 @@ class vDDDLists:
     >>> str(dt_list[2])
     '1996-04-04 01:00:00+00:00'
 
-    >>> dt_list = vDDDLists('19960402T010000Z')
-    Traceback (most recent call last):
-        ...
-    ValueError: Value MUST be a list (of date instances)
-
     >>> dt_list = vDDDLists([])
     >>> dt_list.to_ical()
     ''
@@ -357,20 +352,11 @@ class vDDDLists:
     >>> dt_list.to_ical()
     '20000101T000000,20001111T000000'
 
-    Timezone support
-    >>> from icalendar import Event
-    >>> at = pytz.timezone('Europe/Vienna')
-    >>> dt = at.localize(datetime(2013,1,29))
-    >>> event = Event()
-    >>> event.add('rdate', vDDDLists([dt]), encode=0)
-    >>> out = event.to_ical()
-    >>> assert("RDATE;TZID=Europe/Vienna:20130129T000000" in out)
-
     """
 
     def __init__(self, dt_list):
-        if not isinstance(dt_list, list):
-            raise ValueError('Value MUST be a list (of date instances)')
+        if not hasattr(dt_list, '__iter__'):
+            dt_list = [dt_list]
         vDDD = []
         tzid = None
         for dt in dt_list:

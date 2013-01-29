@@ -235,16 +235,19 @@ class Component(CaselessDict):
         """Conditional convertion of values.
 
         """
-        if cond:
-            klass = types_factory.for_property(name)
-            _klass = klass(value)
-            if hasattr(value, 'params') and len(value.params.keys()) > 0:
-                _klass.params = value.params
-            return _klass
-        return value
+        if not cond: return value
+        klass = types_factory.for_property(name)
+        obj = klass(value)
+        if hasattr(value, 'params') and len(value.params.keys()) > 0:
+            # TODO: How can a python native value have params?
+            obj.params = value.params
+        return obj
 
     def set(self, name, value, encode=1):
-        if type(value) == ListType:
+        if encode and type(value) == ListType\
+                and name.lower() not in ['rdate', 'exdate']:
+            # Individually convert each value to an ical type except rdate and
+            # exdate, which encoded to vDDDLists, which needs a list
             self[name] = [self._encode(name, v, encode) for v in value]
         else:
             self[name] = self._encode(name, value, encode)

@@ -4,6 +4,14 @@ Changelog
 3.3dev (unreleased)
 -------------------
 
+* Don't force to pass a list to vDDDLists and allow setting individual RDATE
+  and EXDATE values without having to wrap them in a list.
+  [thet]
+
+* Fix encoding function to allow setting RDATE and EXDATE values and not to
+  have bypass encoding with an icalendar property.
+  [thet]
+
 * Allow setting of timezone for vDDDLists and support timezone properties for
   RDATE and EXDATE component properties.
   [thet]
