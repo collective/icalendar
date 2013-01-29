@@ -356,6 +356,16 @@ class vDDDLists:
     >>> dt_list = vDDDLists([datetime(2000,1,1), datetime(2000,11,11)])
     >>> dt_list.to_ical()
     '20000101T000000,20001111T000000'
+
+    Timezone support
+    >>> from icalendar import Event
+    >>> at = pytz.timezone('Europe/Vienna')
+    >>> dt = at.localize(datetime(2013,1,29))
+    >>> event = Event()
+    >>> event.add('rdate', vDDDLists([dt]), encode=0)
+    >>> out = event.to_ical()
+    >>> assert("RDATE;TZID=Europe/Vienna:20130129T000000" in out)
+
     """
 
     def __init__(self, dt_list):
