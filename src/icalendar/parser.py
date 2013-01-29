@@ -297,7 +297,8 @@ class Parameters(CaselessDict):
         items.sort()  # To make doctests work
         for key, value in items:
             value = paramVal(value)
-            result.append('%s=%s' % (key.upper(), value.encode(DEFAULT_ENCODING)))
+            result.append('%s=%s' % (key.upper(),
+                                     value.encode(DEFAULT_ENCODING)))
         return ';'.join(result)
 
     @staticmethod
@@ -499,7 +500,9 @@ class Contentline(str):
             #    values = escape_char(values)
 
             if params:
-                return Contentline('%s;%s:%s' % (name, params.to_ical(), values))
+                return Contentline('%s;%s:%s' % (name,
+                                                 params.to_ical(),
+                                                 values))
             return Contentline('%s:%s' % (name, values))
         except Exception as exc:
             logger.error(str(exc))
@@ -590,8 +593,9 @@ class Contentlines(list):
         try:
             # a fold is carriage return followed by either a space or a tab
             unfolded = FOLD.sub('', st)
-            lines = [Contentline(line) for line in unfolded.splitlines() if line]
-            lines.append('')  # we need a '\r\n' in the end of every content line
+            lines = [Contentline(line) for
+                     line in unfolded.splitlines() if line]
+            lines.append('')  # '\r\n' at the end of every content line
             return Contentlines(lines)
         except:
             raise ValueError('Expected StringType with content lines')

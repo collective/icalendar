@@ -4,7 +4,8 @@
 def canonsort_keys(keys, canonical_order=None):
     """
     Sorts leading keys according to canonical_order.
-    Keys not specified in canonical_order will appear alphabetically at the end.
+    Keys not specified in canonical_order will appear alphabetically at the
+    end.
 
     >>> from icalendar.caselessdict import canonsort_keys
     >>> keys = ['DTEND', 'DTSTAMP', 'DTSTART', 'UID', 'SUMMARY', 'LOCATION']

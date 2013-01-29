@@ -283,7 +283,7 @@ class Component(CaselessDict):
                 # assume UTC for naive datetime instances
                 value = pytz.utc.localize(value)
 
-        # If property exists append, else create and set it.
+        # If property already exists, append it. Otherwise create and set it.
         if name in self:
             oldval = self[name]
             value = self._encode(name, value, encode)
@@ -293,7 +293,10 @@ class Component(CaselessDict):
                 self.set(name, [oldval, value], encode=0)
         else:
             self.set(name, value, encode)
-        if getattr(value, 'tzinfo', False) and value.tzinfo is not None and value.tzinfo is not pytz.utc:
+
+        if getattr(value, 'tzinfo', False)\
+                and value.tzinfo is not None\
+                and value.tzinfo is not pytz.utc:
             # set the timezone as a parameter to the property
             tzid = value.tzinfo.zone
             self[name].params.update({'TZID': tzid})
@@ -396,7 +399,8 @@ class Component(CaselessDict):
         """
         Populates the component recursively from a string
 
-        RecurrenceIDs may contain a TZID parameter, if so, they should create a tz localized datetime, otherwise, create a naive datetime
+        RecurrenceIDs may contain a TZID parameter, if so, they should create
+        a tz localized datetime, otherwise, create a naive datetime
         >>> componentStr = 'BEGIN:VEVENT\\nRECURRENCE-ID;TZID=America/Denver:20120404T073000\\nEND:VEVENT'
         >>> component = Component.from_ical(componentStr)
         >>> component['RECURRENCE-ID'].dt.tzinfo
@@ -418,11 +422,11 @@ class Component(CaselessDict):
             if uname == 'BEGIN':
                 # try and create one of the components defined in the spec,
                 # otherwise get a general Components for robustness.
-                component_name = vals.upper()
-                component_class = component_factory.get(component_name, Component)
-                component = component_class()
-                if not getattr(component, 'name', ''): # for undefined components
-                    component.name = component_name
+                c_name = vals.upper()
+                c_class = component_factory.get(c_name, Component)
+                component = c_class()
+                if not getattr(component, 'name', ''): # undefined components
+                    component.name = c_name
                 stack.append(component)
             # check for end of event
             elif uname == 'END':
@@ -439,7 +443,8 @@ class Component(CaselessDict):
                 factory = types_factory.for_property(name)
                 component = stack[-1]
                 try:
-                    if name in ('DTSTART', 'DTEND','RECURRENCE-ID') and 'TZID' in params: # TODO: add DUE, FREEBUSY
+                    if name in ('DTSTART', 'DTEND','RECURRENCE-ID')\
+                            and 'TZID' in params: # TODO: add DUE, FREEBUSY
                         vals = factory(factory.from_ical(vals, params['TZID']))
                     else:
                         vals = factory(factory.from_ical(vals))
@@ -458,7 +463,8 @@ class Component(CaselessDict):
                              'only one is allowed: {st!r}'.format(**locals()))
         if len(comps) < 1:
             raise ValueError('Found no components where '
-                             'exactly one is required: {st!r}'.format(**locals()))
+                             'exactly one is required: '
+                             '{st!r}'.format(**locals()))
         return comps[0]
 
     def __repr__(self):
@@ -498,9 +504,9 @@ class Event(Component):
 
     required = ('UID',)
     singletons = (
-        'CLASS', 'CREATED', 'DESCRIPTION', 'DTSTART', 'GEO',
-        'LAST-MODIFIED', 'LOCATION', 'ORGANIZER', 'PRIORITY', 'DTSTAMP', 'SEQUENCE',
-        'STATUS', 'SUMMARY', 'TRANSP', 'URL', 'RECURRENCE-ID', 'DTEND', 'DURATION',
+        'CLASS', 'CREATED', 'DESCRIPTION', 'DTSTART', 'GEO', 'LAST-MODIFIED',
+        'LOCATION', 'ORGANIZER', 'PRIORITY', 'DTSTAMP', 'SEQUENCE', 'STATUS',
+        'SUMMARY', 'TRANSP', 'URL', 'RECURRENCE-ID', 'DTEND', 'DURATION',
         'DTSTART',
     )
     exclusive = ('DTEND', 'DURATION', )
@@ -519,7 +525,8 @@ class Todo(Component):
     singletons = (
         'CLASS', 'COMPLETED', 'CREATED', 'DESCRIPTION', 'DTSTAMP', 'DTSTART',
         'GEO', 'LAST-MODIFIED', 'LOCATION', 'ORGANIZER', 'PERCENT', 'PRIORITY',
-        'RECURRENCE-ID', 'SEQUENCE', 'STATUS', 'SUMMARY', 'UID', 'URL', 'DUE', 'DURATION',
+        'RECURRENCE-ID', 'SEQUENCE', 'STATUS', 'SUMMARY', 'UID', 'URL', 'DUE',
+        'DURATION',
     )
     exclusive = ('DUE', 'DURATION',)
     multiple = (
@@ -534,8 +541,9 @@ class Journal(Component):
 
     required = ('UID',)
     singletons = (
-        'CLASS', 'CREATED', 'DESCRIPTION', 'DTSTART', 'DTSTAMP', 'LAST-MODIFIED',
-        'ORGANIZER', 'RECURRENCE-ID', 'SEQUENCE', 'STATUS', 'SUMMARY', 'UID', 'URL',
+        'CLASS', 'CREATED', 'DESCRIPTION', 'DTSTART', 'DTSTAMP',
+        'LAST-MODIFIED', 'ORGANIZER', 'RECURRENCE-ID', 'SEQUENCE', 'STATUS',
+        'SUMMARY', 'UID', 'URL',
     )
     multiple = (
         'ATTACH', 'ATTENDEE', 'CATEGORIES', 'COMMENT', 'CONTACT', 'EXDATE',

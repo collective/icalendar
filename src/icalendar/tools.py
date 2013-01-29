@@ -42,7 +42,9 @@ class UIDGenerator:
         """
         from icalendar.prop import vText, vDatetime
         unique = unique or self.rnd_string()
-        return vText('%s-%s@%s' % (vDatetime(datetime.today()).to_ical(), unique, host_name))
+        return vText('%s-%s@%s' % (vDatetime(datetime.today()).to_ical(),
+                                   unique,
+                                   host_name))
 
 
 if sys.version_info[0:2] <= (2, 5):
@@ -114,7 +116,8 @@ if sys.version_info[0:2] <= (2, 5):
                     self._handle_long_word(chunks, cur_line, cur_len, width)
 
                 # If the last chunk on this line is all whitespace, drop it.
-                if self.drop_whitespace and cur_line and cur_line[-1].strip() == '':
+                if self.drop_whitespace\
+                        and cur_line and cur_line[-1].strip() == '':
                     del cur_line[-1]
 
                 # Convert current line back to a string and store it in list
