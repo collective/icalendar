@@ -4,6 +4,10 @@ Changelog
 3.3dev (unreleased)
 -------------------
 
+* Allow vGeo to be instantiated with list and not only tuples of geo
+  coordinates. Fixes #83.
+  [thet]
+
 * Don't force to pass a list to vDDDLists and allow setting individual RDATE
   and EXDATE values without having to wrap them in a list.
   [thet]

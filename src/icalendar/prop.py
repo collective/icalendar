@@ -1215,6 +1215,12 @@ class vUri(str):
 class vGeo:
     """A special type that is only indirectly defined in the rfc.
 
+    Pass a list
+    >>> g = vGeo([1.2, 3.0])
+    >>> g.to_ical()
+    '1.2;3.0'
+
+    Pass a tuple
     >>> g = vGeo((1.2, 3.0))
     >>> g.to_ical()
     '1.2;3.0'
@@ -1234,7 +1240,7 @@ class vGeo:
 
     def __init__(self, geo):
         try:
-            latitude, longitude = geo
+            latitude, longitude = (geo[0], geo[1])
             latitude = float(latitude)
             longitude = float(longitude)
         except:
