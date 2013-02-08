@@ -4,6 +4,9 @@ Changelog
 3.3 (2013-02-08)
 ----------------
 
+* Drop support for Python < 2.6.
+  [thet]
+
 * Allow vGeo to be instantiated with list and not only tuples of geo
   coordinates. Fixes #83.
   [thet]
