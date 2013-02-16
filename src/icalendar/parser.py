@@ -422,7 +422,6 @@ class Contentline(str):
     >>> Contentline('This line has a UTF-8 character where it should be folded. Make sure it \\\xc3\xabts folded before that character.').to_ical().find('\\\r\n \xc3\xab')
     72
 
-    True
     Don't fail if we fold a line that is exactly X times 74 characters long:
     >>> c = Contentline(''.join(['x']*148)).to_ical()
 
