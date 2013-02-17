@@ -405,7 +405,7 @@ class Contentline(str):
     True
 
     Split on even number of \\
-    >>> c=Contentline('This line has five \\ characters that only 2 should be on the next line. \\\\\\\\\\This is the test')
+    >>> c=Contentline('This line has five \\ characters that only 3 should be on the next line. \\\\\\\\\\This is the test')
     >>> ". \\\\" in c.to_ical() and " \\\\\\This" in c.to_ical()
     True
 
