@@ -44,6 +44,14 @@ def tzinfo_from_dt(dt):
         tzid = dt.tzinfo.tzname(dt)  # dateutil implementation
     return tzid
 
+def _escapeCount(text):
+    """ Returns the number of \\ at the end of the string"""
+    cnt = 0
+    l = len(text)
+    while cnt < l and text[-cnt - 1] == '\\':
+        cnt += 1
+    return cnt
+
 
 def foldline(text, length=75, newline='\r\n'):
     """Make a string folded per RFC5545 (each line must be less than 75 octets)
@@ -79,6 +87,16 @@ def foldline(text, length=75, newline='\r\n'):
             # Check that we don't fold in the middle of a UTF-8 character:
             # http://lists.osafoundation.org/pipermail/ietf-calsify/2006-August/001126.html
             while True:
+                # middle of escape sequence?
+                if chunk[-1] == '\\':
+                    if _escapeCount(text[:end]) % 2 == 1:
+                        end -= 1
+                        break
+                elif chunk[-2] == '\\':
+                    if _escapeCount(text[:end-1]) % 2 == 1:
+                        end -= 1
+                        break
+
                 char_value = ord(text[end])
                 if char_value < 128 or char_value >= 192:
                     # This is not in the middle of a UTF-8 character, so we
@@ -375,6 +393,34 @@ class Contentline(str):
     >>> c = Contentline('x' * 73 + '\xc3\xab' + '\\n ' + 'y' * 10)
     >>> c.to_ical().count('\xc3')
     1
+
+    We do not fold within a escape character
+    >>> c=Contentline('This line has a \\ character before where should be folded. Make sure it g\\ets folded before that character.')
+    >>> ' \\e' in c.to_ical()
+    True
+
+    Two \\ should go to the next line
+    >>> c=Contentline('This line has two \\ characters that shouldn\'t be split over lines. Here\'s\\\\the Test')
+    >>> ' \\\\' in c.to_ical()
+    True
+
+    Split on even number of \\
+    >>> c=Contentline('This line has five \\ characters that only 3 should be on the next line. \\\\\\\\\\This is the test')
+    >>> ". \\\\" in c.to_ical() and " \\\\\\This" in c.to_ical()
+    True
+
+    Big longs multiple lines of \\ work out ok.
+    >>> Contentline('\\' * (74 * 2 + 2) ).to_ical().endswith('\r\n \\\\')
+    True
+
+    A \\ before a UTF-8 character gets split before the \\
+    >>> c = Contentline('This line has a UTF-8 character where it should be folded. Make sure it g\\\xc3\xabts folded before that character.')
+    >>> ' \\\xc3\xab' in c.to_ical()
+    True
+
+    Two \\ before a UTF-8 character gets split before the UTF-8 character
+    >>> Contentline('This line has a UTF-8 character where it should be folded. Make sure it \\\xc3\xabts folded before that character.').to_ical().find('\\\r\n \xc3\xab')
+    72
 
     Don't fail if we fold a line that is exactly X times 74 characters long:
     >>> c = Contentline(''.join(['x']*148)).to_ical()
