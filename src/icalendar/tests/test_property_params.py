@@ -23,6 +23,19 @@ class TestPropertyParams(unittest.TestCase):
         ical2 = icalendar.Calendar.from_ical(ical_str)
         self.assertEqual(ical2.get('ORGANIZER').params.get('CN'), 'Doe, John')
 
+        # test unicode parameter value
+        cal_address = icalendar.vCalAddress('mailto:john.doe@example.org')
+        cal_address.params["CN"] = "Джон Доу"
+        vevent = icalendar.Event()
+        vevent['ORGANIZER'] = cal_address
+        self.assertEqual(
+            vevent.to_ical(),
+            'BEGIN:VEVENT\r\n'
+            'ORGANIZER;CN="Джон Доу":mailto:john.doe@example.org\r\n'
+            'END:VEVENT\r\n'
+        )
+        self.assertEqual(vevent['ORGANIZER'].params['CN'], 'Джон Доу')
+
     def test_quoting(self):
         # not double-quoted
         self._test_quoting(u"Aramis", 'Aramis')
