@@ -433,8 +433,9 @@ class vDDDTypes:
             tzinfo = dt.tzinfo
             if tzinfo is not pytz.utc and not isinstance(tzinfo, tzutc):
                 # set the timezone as a parameter to the property
-                tzid = dt.tzinfo.zone
-                self.params.update({'TZID': tzid})
+                tzid = tzinfo_from_dt(dt)
+                if tzid:
+                    self.params.update({'TZID': tzid})
         self.dt = dt
 
     def to_ical(self):
