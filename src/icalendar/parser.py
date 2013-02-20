@@ -142,7 +142,7 @@ def validate_param_value(value, quoted=True):
 
 
 # chars presence of which in parameter value will be cause the value
-# to be enclosed in double-tuotes
+# to be enclosed in double-quotes
 QUOTABLE = re.compile("[,;: ’']")
 
 
@@ -301,8 +301,9 @@ class Parameters(CaselessDict):
         items.sort()  # To make doctests work
         for key, value in items:
             value = paramVal(value)
-            result.append('%s=%s' % (key.upper(),
-                                     value.encode(DEFAULT_ENCODING)))
+            if isinstance(value, unicode):
+                value = value.encode(DEFAULT_ENCODING)
+            result.append('%s=%s' % (key.upper(), value))
         return ';'.join(result)
 
     @staticmethod
