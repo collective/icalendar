@@ -5,6 +5,9 @@ Changelog
 3.4dev (unreleased)
 -------------------
 
+- Support for non-ascii parameter values. Fixes #88.
+  [warvariuc]
+
 - Rename tzinfo_from_dt to tzid_from_dt, which is what it does.
   [thet]
 
