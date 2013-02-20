@@ -12,8 +12,7 @@ except ImportError:
 _marker = object()
 
 class IComponent(Interface):
-    """
-    Component is the base object for calendar, Event and the other
+    """Component is the base object for calendar, Event and the other
     components defined in RFC 2445.
 
     A component is like a dictionary with extra methods and attributes.
