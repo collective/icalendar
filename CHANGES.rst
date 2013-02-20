@@ -5,6 +5,12 @@ Changelog
 3.4dev (unreleased)
 -------------------
 
+- Rename tzinfo_from_dt to tzid_from_dt, which is what it does.
+  [thet]
+
+- More support for dateutil parsed tzinfo objects. Fixes #89.
+  [leo-naeka]
+
 - Remove python-dateutil version fix.
   [thet]
 

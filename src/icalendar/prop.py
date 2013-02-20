@@ -55,7 +55,7 @@ from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Parameters
 from icalendar.parser import escape_char
 from icalendar.parser import unescape_char
-from icalendar.parser import tzinfo_from_dt
+from icalendar.parser import tzid_from_dt
 
 
 SequenceTypes = [TupleType, ListType]
@@ -433,7 +433,7 @@ class vDDDTypes:
             tzinfo = dt.tzinfo
             if tzinfo is not pytz.utc and not isinstance(tzinfo, tzutc):
                 # set the timezone as a parameter to the property
-                tzid = tzinfo_from_dt(dt)
+                tzid = tzid_from_dt(dt)
                 if tzid:
                     self.params.update({'TZID': tzid})
         self.dt = dt
@@ -572,7 +572,7 @@ class vDatetime:
 
     def to_ical(self):
         dt = self.dt
-        tzid = tzinfo_from_dt(dt)
+        tzid = tzid_from_dt(dt)
 
         s = "%04d%02d%02dT%02d%02d%02d" % (
             dt.year,
@@ -795,7 +795,7 @@ class vPeriod:
         self.params = Parameters()
         # set the timezone identifier
         # does not support different timezones for start and end
-        tzid = tzinfo_from_dt(start)
+        tzid = tzid_from_dt(start)
         if tzid:
             self.params['TZID'] = tzid
 

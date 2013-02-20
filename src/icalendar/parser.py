@@ -36,12 +36,16 @@ def unescape_char(text):
                .replace('\\\\', '\\')
 
 
-def tzinfo_from_dt(dt):
+def tzid_from_dt(dt):
     tzid = None
     if hasattr(dt.tzinfo, 'zone'):
         tzid = dt.tzinfo.zone  # pytz implementation
     elif hasattr(dt.tzinfo, 'tzname'):
-        tzid = dt.tzinfo.tzname(dt)  # dateutil implementation
+        try:
+            tzid = dt.tzinfo.tzname(dt)  # dateutil implementation
+        except AttributeError:
+            # No tzid available
+            pass
     return tzid
 
 
