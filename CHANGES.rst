@@ -2,6 +2,16 @@
 Changelog
 =========
 
+3.4dev (unreleased)
+-------------------
+
+- Remove python-dateutil version fix.
+  [thet]
+
+- Declare the required python-dateutil dependency in setup.py. Fixes #90.
+  [kleink]
+
+
 3.3 (2013-02-08)
 ----------------
 

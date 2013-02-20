@@ -1,6 +1,6 @@
 import setuptools
 
-version = '3.3'
+version = '3.4'
 shortdesc = 'iCalendar parser/generator'
 longdesc = open('README.rst').read()
 longdesc += open('CHANGES.rst').read()
@@ -30,7 +30,7 @@ setuptools.setup(
     zip_safe=False,
     install_requires=[
         'setuptools',
-        'python-dateutil==1.5',
+        'python-dateutil',
         'pytz',
     ],
     extras_require={
