@@ -6,7 +6,7 @@ from icalendar.cal import FreeBusy, Alarm, ComponentFactory
 from icalendar.prop import vBinary, vBoolean, vCalAddress, vDatetime, vDate,\
      vDDDTypes, vDuration, vFloat, vInt, vPeriod,\
      vWeekday, vFrequency, vRecur, vText, vTime, vUri,\
-     vGeo, vUTCOffset, TypesFactory
+     vGeo, vUTCOffset, TypesFactory, ICalendarEncoder
 
 # useful tzinfo subclasses
 from icalendar.prop import FixedOffset, LocalTimezone
@@ -25,4 +25,5 @@ __all__ = [
     vGeo, vUTCOffset, TypesFactory,
     FixedOffset, LocalTimezone,
     Parameters, q_split, q_join,
+    ICalendarEncoder
 ]

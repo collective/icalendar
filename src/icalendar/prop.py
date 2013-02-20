@@ -57,6 +57,9 @@ from icalendar.parser import escape_char
 from icalendar.parser import unescape_char
 from icalendar.parser import tzid_from_dt
 
+from json import JSONEncoder
+import json
+
 
 SequenceTypes = [TupleType, ListType]
 
@@ -1554,3 +1557,19 @@ class TypesFactory(CaselessDict):
         type_class = self.for_property(name)
         decoded = type_class.from_ical(value)
         return decoded
+
+
+class ICalendarEncoder(JSONEncoder):
+    def default(self, obj, markers=None):
+        
+        try:
+            if obj.__module__.startswith("icalendar.prop"):
+                return (obj.to_ical())
+        except AttributeError:
+            pass
+
+        if isinstance(obj, datetime):
+            return (obj.now().strftime('%Y-%m-%dT%H:%M:%S'))
+        
+        return JSONEncoder.default(self,obj)    
+

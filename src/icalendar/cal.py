@@ -391,7 +391,7 @@ class Component(CaselessDict):
         return properties
 
     @staticmethod
-    def from_ical(st, multiple=False):
+    def from_ical(st, multiple=False, ignoreBadLines=False):
         """
         Populates the component recursively from a string
 
@@ -412,7 +412,14 @@ class Component(CaselessDict):
         for line in Contentlines.from_ical(st): # raw parsing
             if not line:
                 continue
-            name, params, vals = line.parts()
+            try:
+                name, params, vals = line.parts()
+            except ValueError as e:
+                if ignoreBadLines:
+                    pass
+                else:
+                    raise e                
+
             uname = name.upper()
             # check for start of component
             if uname == 'BEGIN':
