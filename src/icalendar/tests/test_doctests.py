@@ -19,6 +19,7 @@ DOCMODS = [
     'icalendar.prop',
 ]
 
+
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTests([

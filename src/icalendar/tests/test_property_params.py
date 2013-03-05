@@ -7,6 +7,9 @@ import unittest
 class TestPropertyParams(unittest.TestCase):
 
     def test_property_params(self):
+        # Property parameters with values containing a COLON character, a
+        # SEMICOLON character or a COMMA character MUST be placed in quoted
+        # text.
         cal_address = icalendar.vCalAddress('mailto:john.doe@example.org')
         cal_address.params["CN"] = "Doe, John"
         ical = icalendar.Calendar()
@@ -23,7 +26,7 @@ class TestPropertyParams(unittest.TestCase):
         ical2 = icalendar.Calendar.from_ical(ical_str)
         self.assertEqual(ical2.get('ORGANIZER').params.get('CN'), 'Doe, John')
 
-        # test unicode parameter value
+    def test_unicode_param(self):
         cal_address = icalendar.vCalAddress('mailto:john.doe@example.org')
         cal_address.params["CN"] = "Джон Доу"
         vevent = icalendar.Event()
@@ -61,3 +64,16 @@ class TestPropertyParams(unittest.TestCase):
             'BEGIN:VEVENT\r\nATTENDEE;CN=%s:test@mail.com\r\nEND:VEVENT\r\n'
             % cn_quoted
         )
+
+    def test_escaping(self):
+        # verify that escaped non safe chars are decoded correctly
+        NON_SAFE_CHARS = r',\;:'
+        for char in NON_SAFE_CHARS:
+            cn_escaped = "Society\\%s 2014" % char
+            cn_decoded = "Society%s 2014" % char
+            vevent = icalendar.Event.from_ical(
+                'BEGIN:VEVENT\r\n'
+                'ORGANIZER;CN=%s:that\r\n'
+                'END:VEVENT\r\n' % cn_escaped
+            )
+            self.assertEqual(vevent['ORGANIZER'].params['CN'], cn_decoded)

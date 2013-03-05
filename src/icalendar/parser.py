@@ -122,7 +122,7 @@ def paramVal(val):
 NAME = re.compile('[\w-]+')
 UNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7F",:;]')
 QUNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7F"]')
-FOLD = re.compile('([\r]?\n)+[ \t]{1}')
+FOLD = re.compile('(\r?\n)+[ \t]')
 NEWLINE = re.compile(r'\r?\n')
 
 DEFAULT_ENCODING = 'utf-8'
