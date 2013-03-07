@@ -78,6 +78,21 @@ class TestPropertyParams(unittest.TestCase):
             )
             self.assertEqual(vevent['ORGANIZER'].params['CN'], cn_decoded)
 
+        vevent = icalendar.Event.from_ical(
+            'BEGIN:VEVENT\r\n'
+            'ORGANIZER;CN=that\\, that\\; that\\\\ that\\:'
+            ':that\\, that\\; that\\\\ that\\:\r\n'
+            'END:VEVENT\r\n'
+        )
+        self.assertEqual(
+            vevent['ORGANIZER'].params['CN'],
+            r'that, that; that\ that:'
+        )
+        self.assertEqual(
+            vevent['ORGANIZER'],
+            r'that, that; that\ that:'
+        )
+
     def test_parameters_class(self):
         from icalendar import Parameters
 
