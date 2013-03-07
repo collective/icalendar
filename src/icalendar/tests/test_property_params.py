@@ -69,11 +69,83 @@ class TestPropertyParams(unittest.TestCase):
         # verify that escaped non safe chars are decoded correctly
         NON_SAFE_CHARS = r',\;:'
         for char in NON_SAFE_CHARS:
-            cn_escaped = "Society\\%s 2014" % char
-            cn_decoded = "Society%s 2014" % char
+            cn_escaped = r"Society\%s 2014" % char
+            cn_decoded = r"Society%s 2014" % char
             vevent = icalendar.Event.from_ical(
                 'BEGIN:VEVENT\r\n'
                 'ORGANIZER;CN=%s:that\r\n'
                 'END:VEVENT\r\n' % cn_escaped
             )
             self.assertEqual(vevent['ORGANIZER'].params['CN'], cn_decoded)
+
+    def test_parameters_class(self):
+        from icalendar import Parameters
+
+        # Simple parameter:value pair
+        p = Parameters(parameter1='Value1')
+        self.assertEqual(p.to_ical(), 'PARAMETER1=Value1')
+
+        # keys are converted to upper
+        self.assertEqual(p.keys(), ['PARAMETER1'])
+
+        # Parameters are case insensitive
+        self.assertEqual(p['parameter1'], 'Value1')
+        self.assertEqual(p['PARAMETER1'], 'Value1')
+
+        # Parameter with list of values must be seperated by comma
+        p = Parameters({'parameter1': ['Value1', 'Value2']})
+        self.assertEqual(p.to_ical(), 'PARAMETER1=Value1,Value2')
+
+        # Multiple parameters must be seperated by a semicolon
+        p = Parameters({'RSVP': 'TRUE', 'ROLE': 'REQ-PARTICIPANT'})
+        self.assertEqual(p.to_ical(), 'ROLE=REQ-PARTICIPANT;RSVP=TRUE')
+
+        # Parameter values containing ',;:' must be double quoted
+        p = Parameters({'ALTREP': 'http://www.wiz.org'})
+        self.assertEqual(p.to_ical(), 'ALTREP="http://www.wiz.org"')
+
+        # list items must be quoted seperately
+        p = Parameters({'MEMBER': ['MAILTO:projectA@host.com',
+                                   'MAILTO:projectB@host.com']})
+        self.assertEqual(
+            p.to_ical(),
+            'MEMBER="MAILTO:projectA@host.com","MAILTO:projectB@host.com"'
+        )
+
+        # Now the whole sheebang
+        p = Parameters({'parameter1': 'Value1',
+                        'parameter2': ['Value2', 'Value3'],
+                        'ALTREP': ['http://www.wiz.org', 'value4']})
+        self.assertEqual(
+            p.to_ical(),
+            ('ALTREP="http://www.wiz.org",value4;PARAMETER1=Value1;'
+             'PARAMETER2=Value2,Value3')
+        )
+
+        # We can also parse parameter strings
+        self.assertEqual(
+            Parameters.from_ical('PARAMETER1=Value 1;param2=Value 2'),
+            Parameters({'PARAMETER1': 'Value 1', 'PARAM2': 'Value 2'})
+        )
+
+        # Including empty strings
+        self.assertEqual(Parameters.from_ical('param='),
+                         Parameters({'PARAM': ''}))
+
+        # We can also parse parameter strings
+        self.assertEqual(
+            Parameters.from_ical(
+                'MEMBER="MAILTO:projectA@host.com","MAILTO:projectB@host.com"'
+            ),
+            Parameters({'MEMBER': ['MAILTO:projectA@host.com',
+                                   'MAILTO:projectB@host.com']})
+        )
+
+        # We can also parse parameter strings
+        self.assertEqual(
+            Parameters.from_ical('ALTREP="http://www.wiz.org",value4;'
+                                 'PARAMETER1=Value1;PARAMETER2=Value2,Value3'),
+            Parameters({'PARAMETER1': 'Value1',
+                        'ALTREP': ['http://www.wiz.org', 'value4'],
+                        'PARAMETER2': ['Value2', 'Value3']})
+        )

@@ -201,70 +201,6 @@ class Parameters(CaselessDict):
     """
     Parser and generator of Property parameter strings. It knows nothing of
     datatypes. Its main concern is textual structure.
-
-
-    Simple parameter:value pair
-    >>> p = Parameters(parameter1='Value1')
-    >>> p.to_ical()
-    'PARAMETER1=Value1'
-
-
-    keys are converted to upper
-    >>> p.keys()
-    ['PARAMETER1']
-
-
-    Parameters are case insensitive
-    >>> p['parameter1']
-    'Value1'
-    >>> p['PARAMETER1']
-    'Value1'
-
-
-    Parameter with list of values must be seperated by comma
-    >>> p = Parameters({'parameter1':['Value1', 'Value2']})
-    >>> p.to_ical()
-    'PARAMETER1=Value1,Value2'
-
-
-    Multiple parameters must be seperated by a semicolon
-    >>> p = Parameters({'RSVP':'TRUE', 'ROLE':'REQ-PARTICIPANT'})
-    >>> p.to_ical()
-    'ROLE=REQ-PARTICIPANT;RSVP=TRUE'
-
-
-    Parameter values containing ',;:' must be double quoted
-    >>> p = Parameters({'ALTREP':'http://www.wiz.org'})
-    >>> p.to_ical()
-    'ALTREP="http://www.wiz.org"'
-
-
-    list items must be quoted seperately
-    >>> p = Parameters({'MEMBER':['MAILTO:projectA@host.com', 'MAILTO:projectB@host.com', ]})
-    >>> p.to_ical()
-    'MEMBER="MAILTO:projectA@host.com","MAILTO:projectB@host.com"'
-
-    Now the whole sheebang
-    >>> p = Parameters({'parameter1':'Value1', 'parameter2':['Value2', 'Value3'],\
-                          'ALTREP':['http://www.wiz.org', 'value4']})
-    >>> p.to_ical()
-    'ALTREP="http://www.wiz.org",value4;PARAMETER1=Value1;PARAMETER2=Value2,Value3'
-
-    We can also parse parameter strings
-    >>> Parameters.from_ical('PARAMETER1=Value 1;param2=Value 2')
-    Parameters({'PARAMETER1': 'Value 1', 'PARAM2': 'Value 2'})
-
-    Including empty strings
-    >>> Parameters.from_ical('param=')
-    Parameters({'PARAM': ''})
-
-    We can also parse parameter strings
-    >>> Parameters.from_ical('MEMBER="MAILTO:projectA@host.com","MAILTO:projectB@host.com"')
-    Parameters({'MEMBER': ['MAILTO:projectA@host.com', 'MAILTO:projectB@host.com']})
-
-    We can also parse parameter strings
-    >>> Parameters.from_ical('ALTREP="http://www.wiz.org",value4;PARAMETER1=Value1;PARAMETER2=Value2,Value3')
-    Parameters({'PARAMETER1': 'Value1', 'ALTREP': ['http://www.wiz.org', 'value4'], 'PARAMETER2': ['Value2', 'Value3']})
     """
 
     def params(self):
@@ -274,23 +210,23 @@ class Parameters(CaselessDict):
         """
         return self.keys()
 
-### TODO?
-### Later, when I get more time... need to finish this off now. The last majot thing missing.
-###    def _encode(self, name, value, cond=1):
-###        # internal, for conditional convertion of values.
-###        if cond:
-###            klass = types_factory.for_property(name)
-###            return klass(value)
-###        return value
-###
-###    def add(self, name, value, encode=0):
-###        "Add a parameter value and optionally encode it."
-###        if encode:
-###            value = self._encode(name, value, encode)
-###        self[name] = value
-###
-###    def decoded(self, name):
-###        "returns a decoded value, or list of same"
+#TODO?
+#Later, when I get more time... need to finish this off now. The last majot thing missing.
+#   def _encode(self, name, value, cond=1):
+#       # internal, for conditional convertion of values.
+#       if cond:
+#           klass = types_factory.for_property(name)
+#           return klass(value)
+#       return value
+#
+#   def add(self, name, value, encode=0):
+#       "Add a parameter value and optionally encode it."
+#       if encode:
+#           value = self._encode(name, value, encode)
+#       self[name] = value
+#
+#   def decoded(self, name):
+#       "returns a decoded value, or list of same"
 
     def __repr__(self):
         return 'Parameters(' + dict.__repr__(self) + ')'
@@ -316,11 +252,10 @@ class Parameters(CaselessDict):
             try:
                 key, val = q_split(param, '=')
                 validate_token(key)
-                param_values = [v for v in q_split(val, ',')]
                 # Property parameter values that are not in quoted
                 # strings are case insensitive.
                 vals = []
-                for v in param_values:
+                for v in q_split(val, ','):
                     if v.startswith('"') and v.endswith('"'):
                         v = v.strip('"')
                         validate_param_value(v, quoted=True)
@@ -344,6 +279,19 @@ class Parameters(CaselessDict):
         return result
 
 
+def escape_string(val):
+    assert isinstance(val, str)
+    # '%{:02X}'.format(i)
+    return val.replace(r'\,', '%2C').replace(r'\:', '%3A')\
+              .replace(r'\;', '%3B').replace(r'\\', '%5C')
+
+
+def unsescape_string(val):
+    assert isinstance(val, str)
+    return val.replace('%2C', ',').replace('%3A', ':')\
+              .replace('%3B', ';').replace('%5C', '\\')
+
+
 #########################################
 # parsing and generation of content lines
 
@@ -351,138 +299,6 @@ class Contentline(str):
     """
     A content line is basically a string that can be folded and parsed into
     parts.
-
-    >>> c = Contentline('Si meliora dies, ut vina, poemata reddit')
-    >>> c.to_ical()
-    'Si meliora dies, ut vina, poemata reddit'
-
-    A long line gets folded
-    >>> c = Contentline(''.join(['123456789 ']*10))
-    >>> c.to_ical()
-    '123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234\\r\\n 56789 123456789 123456789'
-
-    A folded line gets unfolded
-    >>> c = Contentline.from_ical(c.to_ical())
-    >>> c
-    '123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789'
-
-    Newlines in a string get need to be preserved
-    >>> c = Contentline('1234\\n\\n1234')
-    >>> c.to_ical()
-    '1234\\r\\n \\r\\n 1234'
-
-    We do not fold within a UTF-8 character:
-    >>> c = Contentline('This line has a UTF-8 character where it should be folded. Make sure it g\xc3\xabts folded before that character.')
-    >>> '\xc3\xab' in c.to_ical()
-    True
-
-    Another test of the above
-    >>> c = Contentline('x' * 73 + '\xc3\xab' + '\\n ' + 'y' * 10)
-    >>> c.to_ical().count('\xc3')
-    1
-
-    Don't fail if we fold a line that is exactly X times 74 characters long:
-    >>> c = Contentline(''.join(['x']*148)).to_ical()
-
-    It can parse itself into parts. Which is a tuple of (name, params, vals)
-
-    >>> c = Contentline('dtstart:20050101T120000')
-    >>> c.parts()
-    ('dtstart', Parameters({}), '20050101T120000')
-
-    >>> c = Contentline('dtstart;value=datetime:20050101T120000')
-    >>> c.parts()
-    ('dtstart', Parameters({'VALUE': 'datetime'}), '20050101T120000')
-
-    >>> c = Contentline('ATTENDEE;CN=Max Rasmussen;ROLE=REQ-PARTICIPANT:MAILTO:maxm@example.com')
-    >>> c.parts()
-    ('ATTENDEE', Parameters({'ROLE': 'REQ-PARTICIPANT', 'CN': 'Max Rasmussen'}), 'MAILTO:maxm@example.com')
-    >>> c.to_ical()
-    'ATTENDEE;CN=Max Rasmussen;ROLE=REQ-PARTICIPANT:MAILTO:maxm@example.com'
-
-    and back again
-    NOTE: we are quoting property values with spaces in it.
-    >>> parts = ('ATTENDEE', Parameters({'ROLE': 'REQ-PARTICIPANT', 'CN': 'Max Rasmussen'}), 'MAILTO:maxm@example.com')
-    >>> Contentline.from_parts(parts)
-    'ATTENDEE;CN="Max Rasmussen";ROLE=REQ-PARTICIPANT:MAILTO:maxm@example.com'
-
-    and again
-    >>> parts = ('ATTENDEE', Parameters(), 'MAILTO:maxm@example.com')
-    >>> Contentline.from_parts(parts)
-    'ATTENDEE:MAILTO:maxm@example.com'
-
-    A value can also be any of the types defined in PropertyValues
-    >>> from icalendar.prop import vText
-    >>> parts = ('ATTENDEE', Parameters(), vText('MAILTO:test@example.com'))
-    >>> Contentline.from_parts(parts)
-    'ATTENDEE:MAILTO:test@example.com'
-
-    A value can also be unicode
-    >>> from icalendar.prop import vText
-    >>> parts = ('SUMMARY', Parameters(), vText(u'INternational char æ ø å'))
-    >>> Contentline.from_parts(parts)
-    'SUMMARY:INternational char \\xc3\\xa6 \\xc3\\xb8 \\xc3\\xa5'
-
-    'SUMMARY:INternational char \xc3\x83\xc2\xa6 \xc3\x83\xc2\xb8 \xc3\x83\xc2\xa5'
-
-    TODO: troubles with console and doctest encodings?
-
-    Traversing could look like this.
-    >>> name, params, vals = c.parts()
-    >>> name
-    'ATTENDEE'
-    >>> vals
-    'MAILTO:maxm@example.com'
-    >>> for key, val in params.items():
-    ...     (key, val)
-    ('ROLE', 'REQ-PARTICIPANT')
-    ('CN', 'Max Rasmussen')
-
-    And the traditional failure
-    >>> c = Contentline('ATTENDEE;maxm@example.com')
-    >>> c.parts()                                               #doctest: +ELLIPSIS
-    Traceback (most recent call last):
-        ...
-    ValueError: Content line could not be parsed into parts...
-
-    Another failure:
-    >>> c = Contentline(':maxm@example.com')
-    >>> c.parts()                                               #doctest: +ELLIPSIS
-    Traceback (most recent call last):
-        ...
-    ValueError: Content line could not be parsed into parts...
-
-    >>> c = Contentline('key;param=:value')
-    >>> c.parts()
-    ('key', Parameters({'PARAM': ''}), 'value')
-
-    >>> c = Contentline('key;param="pvalue":value')
-    >>> c.parts()
-    ('key', Parameters({'PARAM': 'pvalue'}), 'value')
-
-    Should bomb on missing param:
-    >>> c = Contentline.from_ical("k;:no param")
-    >>> c.parts()                                               #doctest: +ELLIPSIS
-    Traceback (most recent call last):
-        ...
-    ValueError: Content line could not be parsed into parts...
-
-    >>> c = Contentline('key;param=pvalue:value', strict=False)
-    >>> c.parts()
-    ('key', Parameters({'PARAM': 'pvalue'}), 'value')
-
-    If strict is set to True, uppercase param values that are not
-    double-quoted, this is because the spec says non-quoted params are
-    case-insensitive.
-
-    >>> c = Contentline('key;param=pvalue:value', strict=True)
-    >>> c.parts()
-    ('key', Parameters({'PARAM': 'PVALUE'}), 'value')
-
-    >>> c = Contentline('key;param="pValue":value', strict=True)
-    >>> c.parts()
-    ('key', Parameters({'PARAM': 'pValue'}), 'value')
-
     """
 
     def __new__(cls, value, strict=False):
@@ -501,7 +317,7 @@ class Contentline(str):
                 values = values.to_ical()
             else:
                 values = vText(values).to_ical()
-            #elif isinstance(values, basestring):
+            # elif isinstance(values, basestring):
             #    values = escape_char(values)
 
             if params:
@@ -518,11 +334,11 @@ class Contentline(str):
         """ Splits the content line up into (name, parameters, values) parts
         """
         try:
+            st = escape_string(self)
             name_split = None
             value_split = None
             inquotes = 0
-            for i in range(len(self)):
-                ch = self[i]
+            for i, ch in enumerate(st):
                 if not inquotes:
                     if ch in ':;' and not name_split:
                         name_split = i
@@ -530,19 +346,21 @@ class Contentline(str):
                         value_split = i
                 if ch == '"':
                     inquotes = not inquotes
-            name = self[:name_split]
+            name = unsescape_string(st[:name_split])
             if not name:
                 raise ValueError('Key name is required')
             validate_token(name)
             if name_split + 1 == value_split:
                 raise ValueError('Invalid content line')
-            params = Parameters.from_ical(self[name_split + 1:value_split],
-                                            strict=self.strict)
-            values = self[value_split + 1:]
+            params = Parameters.from_ical(st[name_split + 1: value_split],
+                                          strict=self.strict)
+            params = dict((unsescape_string(key), unsescape_string(value))
+                          for key, value in params.iteritems())
+            values = unsescape_string(st[value_split + 1:])
             return (name, params, values)
-        except ValueError, e:
+        except ValueError as exc:
             raise ValueError("Content line could not be parsed into parts: %r:"
-                             " %s" % (self, e))
+                             " %s" % (self, exc))
 
     @staticmethod
     def from_ical(st, strict=False):
@@ -613,23 +431,23 @@ class Contentlines(list):
 #        print line.parts()
 
 # got this:
-#('BEGIN', Parameters({}), 'VCALENDAR')
-#('METHOD', Parameters({}), 'Request')
-#('PRODID', Parameters({}), '-//My product//mxm.dk/')
-#('VERSION', Parameters({}), '2.0')
-#('BEGIN', Parameters({}), 'VEVENT')
-#('DESCRIPTION', Parameters({}), 'This is a very long description that ...')
-#('PARTICIPANT', Parameters({'CN': 'Max M'}), 'MAILTO:maxm@mxm.dk')
-#('DTEND', Parameters({}), '20050107T160000')
-#('DTSTART', Parameters({}), '20050107T120000')
-#('SUMMARY', Parameters({}), 'A second event')
-#('END', Parameters({}), 'VEVENT')
-#('BEGIN', Parameters({}), 'VEVENT')
-#('DTEND', Parameters({}), '20050108T235900')
-#('DTSTART', Parameters({}), '20050108T230000')
-#('SUMMARY', Parameters({}), 'A single event')
-#('UID', Parameters({}), '42')
-#('END', Parameters({}), 'VEVENT')
-#('END', Parameters({}), 'VCALENDAR')
+# ('BEGIN', Parameters({}), 'VCALENDAR')
+# ('METHOD', Parameters({}), 'Request')
+# ('PRODID', Parameters({}), '-//My product//mxm.dk/')
+# ('VERSION', Parameters({}), '2.0')
+# ('BEGIN', Parameters({}), 'VEVENT')
+# ('DESCRIPTION', Parameters({}), 'This is a very long description that ...')
+# ('PARTICIPANT', Parameters({'CN': 'Max M'}), 'MAILTO:maxm@mxm.dk')
+# ('DTEND', Parameters({}), '20050107T160000')
+# ('DTSTART', Parameters({}), '20050107T120000')
+# ('SUMMARY', Parameters({}), 'A second event')
+# ('END', Parameters({}), 'VEVENT')
+# ('BEGIN', Parameters({}), 'VEVENT')
+# ('DTEND', Parameters({}), '20050108T235900')
+# ('DTSTART', Parameters({}), '20050108T230000')
+# ('SUMMARY', Parameters({}), 'A single event')
+# ('UID', Parameters({}), '42')
+# ('END', Parameters({}), 'VEVENT')
+# ('END', Parameters({}), 'VCALENDAR')
 
 from icalendar.prop import vText
