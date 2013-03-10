@@ -72,7 +72,7 @@ WEEKDAY_RULE = re.compile('(?P<signal>[+-]?)(?P<relative>[\d]?)'
                           '(?P<weekday>[\w]{2})$')
 
 
-class vBinary:
+class vBinary(object):
     """Binary property values are base 64 encoded.
 
     >>> b = vBinary('This is gibberish')
