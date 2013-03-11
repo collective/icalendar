@@ -81,7 +81,7 @@ class TestPropertyParams(unittest.TestCase):
         vevent = icalendar.Event.from_ical(
             'BEGIN:VEVENT\r\n'
             'ORGANIZER;CN=that\\, that\\; that\\\\ that\\:'
-            ':that\\, that\\; that\\\\ that\\:\r\n'
+            ':это\\, то\\; that\\\\ that\\:\r\n'
             'END:VEVENT\r\n'
         )
         self.assertEqual(
@@ -90,7 +90,7 @@ class TestPropertyParams(unittest.TestCase):
         )
         self.assertEqual(
             vevent['ORGANIZER'],
-            r'that, that; that\ that:'
+            r'это, то; that\ that:'
         )
 
     def test_parameters_class(self):
