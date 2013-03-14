@@ -13,7 +13,7 @@ class TestCases(unittest.TestCase):
         # broken description
         # see: https://github.com/collective/icalendar/issues/53
         directory = os.path.dirname(__file__)
-        ics = open(os.path.join(directory, 'case_meetup.ics'),'rb')
+        ics = open(os.path.join(directory, 'case_meetup.ics'), 'rb')
         cal = icalendar.Calendar.from_ical(ics.read())
         ics.close()
 
