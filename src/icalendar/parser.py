@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-""" This module parses and generates contentlines as defined in RFC 2445
+"""This module parses and generates contentlines as defined in RFC 2445
 (iCalendar), but will probably work for other MIME types with similar syntax.
 Eg. RFC 2426 (vCard)
 
@@ -7,11 +7,16 @@ It is stupid in the sense that it treats the content purely as strings. No type
 conversion is attempted.
 """
 import re
-from types import TupleType, ListType
-from icalendar.caselessdict import CaselessDict
 import logging
+from types import (
+    TupleType,
+    ListType,
+)
+from icalendar.caselessdict import CaselessDict
+
+
 logger = logging.getLogger('icalendar')
-SequenceTypes = [TupleType, ListType]
+SequenceTypes = (ListType, TupleType)
 
 
 def escape_char(text):
@@ -118,6 +123,7 @@ def paramVal(val):
         return q_join(val)
     return dQuote(val)
 
+
 # Could be improved
 NAME = re.compile('[\w-]+')
 UNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7F",:;]')
@@ -210,8 +216,9 @@ class Parameters(CaselessDict):
         """
         return self.keys()
 
-#TODO?
-#Later, when I get more time... need to finish this off now. The last majot thing missing.
+# TODO?
+# Later, when I get more time... need to finish this off now. The last major
+# thing missing.
 #   def _encode(self, name, value, cond=1):
 #       # internal, for conditional convertion of values.
 #       if cond:
@@ -450,4 +457,5 @@ class Contentlines(list):
 # ('END', Parameters({}), 'VEVENT')
 # ('END', Parameters({}), 'VCALENDAR')
 
+# XXX: what kind of hack is this? import depends to be at end
 from icalendar.prop import vText

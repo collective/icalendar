@@ -35,7 +35,8 @@ def canonsort_items(dict1, canonical_order=None):
     >>> canonsort_items(d, ('i', 'c', 'a'))
     [('i', 7), ('c', 'at'), ('a', 3.5), ('d', {'x': 'y'}), ('e', [4, 5]), ('l', (2, 3)), ('n', 13), ('r', 1.0)]
     """
-    return [(k, dict1[k]) for k in canonsort_keys(dict1.keys(), canonical_order)]
+    return [(k, dict1[k]) for \
+            k in canonsort_keys(dict1.keys(), canonical_order)]
 
 
 class CaselessDict(dict):
@@ -114,7 +115,7 @@ class CaselessDict(dict):
         return dict.popitem(self)
 
     def has_key(self, key):
-        return dict.has_key(self, key.upper())
+        return dict.__contains__(self, key.upper())
 
     def update(self, indict):
         """

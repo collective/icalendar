@@ -36,10 +36,10 @@ These types are mainly used for parsing and file generation. But you can set
 them directly.
 
 """
-
 import re
-import time as _time
+import pytz
 import binascii
+import time as _time
 from datetime import (
     datetime,
     timedelta,
@@ -47,18 +47,21 @@ from datetime import (
     date,
     tzinfo,
 )
-from types import TupleType, ListType
-
-import pytz
+from types import (
+    TupleType,
+    ListType,
+)
 from dateutil.tz import tzutc
 from icalendar.caselessdict import CaselessDict
-from icalendar.parser import Parameters
-from icalendar.parser import escape_char
-from icalendar.parser import unescape_char
-from icalendar.parser import tzid_from_dt
+from icalendar.parser import (
+    Parameters,
+    escape_char,
+    unescape_char,
+    tzid_from_dt,
+)
 
 
-SequenceTypes = [TupleType, ListType]
+SequenceTypes = (ListType, TupleType)
 
 DEFAULT_ENCODING = 'utf-8'
 
@@ -117,7 +120,7 @@ class vBinary(object):
         try:
             return ical.decode('base-64')
         except UnicodeError:
-            raise ValueError, 'Not valid base 64 encoding.'
+            raise ValueError('Not valid base 64 encoding.')
 
 
 class vBoolean(int):
@@ -156,7 +159,7 @@ class vBoolean(int):
         try:
             return vBoolean.bool_map[ical]
         except:
-            raise ValueError, "Expected 'TRUE' or 'FALSE'. Got %s" % ical
+            raise ValueError("Expected 'TRUE' or 'FALSE'. Got %s" % ical)
 
 
 class vCalAddress(str):
@@ -191,7 +194,7 @@ class vCalAddress(str):
         try:
             return str(ical)
         except:
-            raise ValueError, 'Expected vCalAddress, got: %s' % ical
+            raise ValueError('Expected vCalAddress, got: %s' % ical)
 
 
 ####################################################
@@ -200,9 +203,9 @@ class vCalAddress(str):
 
 ZERO = timedelta(0)
 HOUR = timedelta(hours=1)
-STDOFFSET = timedelta(seconds = -_time.timezone)
+STDOFFSET = timedelta(seconds=-_time.timezone)
 if _time.daylight:
-    DSTOFFSET = timedelta(seconds = -_time.altzone)
+    DSTOFFSET = timedelta(seconds=-_time.altzone)
 else:
     DSTOFFSET = STDOFFSET
 DSTDIFF = DSTOFFSET - STDOFFSET
@@ -213,7 +216,7 @@ class FixedOffset(tzinfo):
     """
 
     def __init__(self, offset, name):
-        self.__offset = timedelta(minutes = offset)
+        self.__offset = timedelta(minutes=offset)
         self.__name = name
 
     def utcoffset(self, dt):
@@ -280,7 +283,7 @@ class vFloat(float):
         try:
             return float(ical)
         except:
-            raise ValueError, 'Expected float value, got: %s' % ical
+            raise ValueError('Expected float value, got: %s' % ical)
 
 
 class vInt(int):
@@ -311,7 +314,7 @@ class vInt(int):
         try:
             return int(ical)
         except:
-            raise ValueError, 'Expected int, got: %s' % ical
+            raise ValueError('Expected int, got: %s' % ical)
 
 
 class vDDDLists(object):
@@ -366,8 +369,8 @@ class vDDDLists(object):
                 tzid = dt.params['TZID']
 
         if tzid:
-            self.params = Parameters({'TZID': tzid}) # NOTE: no support for
-                                                     # multiple timezones here!
+            # NOTE: no support for multiple timezones here!
+            self.params = Parameters({'TZID': tzid})
         self.dts = vDDD
 
     def to_ical(self):
@@ -420,7 +423,7 @@ class vDDDTypes(object):
     def __init__(self, dt):
         "Returns vDate from"
         if type(dt) not in (datetime, date, timedelta, time):
-            raise ValueError ('You must use datetime, date, timedelta or time')
+            raise ValueError('You must use datetime, date, timedelta or time')
         if isinstance(dt, datetime):
             self.params = Parameters(dict(value='DATE-TIME'))
         elif isinstance(dt, date):
@@ -508,7 +511,7 @@ class vDate(object):
                 )))
             return date(*timetuple)
         except:
-            raise ValueError, 'Wrong date format %s' % ical
+            raise ValueError('Wrong date format %s' % ical)
 
 
 class vDatetime(object):
@@ -616,9 +619,9 @@ class vDatetime(object):
             elif ical[15:16] == 'Z':
                 return datetime(tzinfo=pytz.utc, *timetuple)
             else:
-                raise ValueError, ical
+                raise ValueError(ical)
         except:
-            raise ValueError, 'Wrong datetime format: %s' % ical
+            raise ValueError('Wrong datetime format: %s' % ical)
 
 
 class vDuration(object):
@@ -833,7 +836,7 @@ class vPeriod(object):
             end_or_duration = vDDDTypes.from_ical(end_or_duration)
             return (start, end_or_duration)
         except:
-            raise ValueError, 'Expected period format, got: %s' % ical
+            raise ValueError('Expected period format, got: %s' % ical)
 
     def __repr__(self):
         if self.by_duration:
@@ -879,20 +882,21 @@ class vWeekday(str):
     '-TU'
     """
 
-    week_days = CaselessDict({"SU":0, "MO":1, "TU":2, "WE":3,
-                              "TH":4, "FR":5, "SA":6})
+    week_days = CaselessDict({
+        "SU": 0, "MO": 1, "TU": 2, "WE": 3, "TH": 4, "FR": 5, "SA": 6,
+    })
 
     def __new__(cls, *args, **kwargs):
         self = super(vWeekday, cls).__new__(cls, *args, **kwargs)
         match = WEEKDAY_RULE.match(self)
         if match is None:
-            raise ValueError, 'Expected weekday abbrevation, got: %s' % self
+            raise ValueError('Expected weekday abbrevation, got: %s' % self)
         match = match.groupdict()
         sign = match['signal']
         weekday = match['weekday']
         relative = match['relative']
         if not weekday in vWeekday.week_days or sign not in '+-':
-            raise ValueError, 'Expected weekday abbrevation, got: %s' % self
+            raise ValueError('Expected weekday abbrevation, got: %s' % self)
         self.relative = relative and int(relative) or None
         self.params = Parameters()
         return self
@@ -906,7 +910,7 @@ class vWeekday(str):
         try:
             return vWeekday(ical.upper())
         except:
-            raise ValueError, 'Expected weekday abbrevation, got: %s' % ical
+            raise ValueError('Expected weekday abbrevation, got: %s' % ical)
 
 
 class vFrequency(str):
@@ -923,19 +927,19 @@ class vFrequency(str):
     """
 
     frequencies = CaselessDict({
-        "SECONDLY":"SECONDLY",
-        "MINUTELY":"MINUTELY",
-        "HOURLY":"HOURLY",
-        "DAILY":"DAILY",
-        "WEEKLY":"WEEKLY",
-        "MONTHLY":"MONTHLY",
-        "YEARLY":"YEARLY",
+        "SECONDLY": "SECONDLY",
+        "MINUTELY": "MINUTELY",
+        "HOURLY": "HOURLY",
+        "DAILY": "DAILY",
+        "WEEKLY": "WEEKLY",
+        "MONTHLY": "MONTHLY",
+        "YEARLY": "YEARLY",
     })
 
     def __new__(cls, *args, **kwargs):
         self = super(vFrequency, cls).__new__(cls, *args, **kwargs)
         if not self in vFrequency.frequencies:
-            raise ValueError, 'Expected frequency, got: %s' % self
+            raise ValueError('Expected frequency, got: %s' % self)
         self.params = Parameters()
         return self
 
@@ -948,7 +952,7 @@ class vFrequency(str):
         try:
             return vFrequency(ical.upper())
         except:
-            raise ValueError, 'Expected frequency, got: %s' % ical
+            raise ValueError('Expected frequency, got: %s' % ical)
 
 
 class vRecur(CaselessDict):
@@ -1023,25 +1027,25 @@ class vRecur(CaselessDict):
 
     # Mac iCal ignores RRULEs where FREQ is not the first rule part.
     # Sorts parts according to the order listed in RFC 5545, section 3.3.10.
-    canonical_order = ( "FREQ", "UNTIL", "COUNT", "INTERVAL",
-                        "BYSECOND", "BYMINUTE", "BYHOUR", "BYDAY",
-                        "BYMONTHDAY", "BYYEARDAY", "BYWEEKNO", "BYMONTH",
-                        "BYSETPOS", "WKST" )
+    canonical_order = ("FREQ", "UNTIL", "COUNT", "INTERVAL",
+                       "BYSECOND", "BYMINUTE", "BYHOUR", "BYDAY",
+                       "BYMONTHDAY", "BYYEARDAY", "BYWEEKNO", "BYMONTH",
+                       "BYSETPOS", "WKST")
 
     types = CaselessDict({
-        'COUNT':vInt,
-        'INTERVAL':vInt,
-        'BYSECOND':vInt,
-        'BYMINUTE':vInt,
-        'BYHOUR':vInt,
-        'BYMONTHDAY':vInt,
-        'BYYEARDAY':vInt,
-        'BYMONTH':vInt,
-        'UNTIL':vDDDTypes,
-        'BYSETPOS':vInt,
-        'WKST':vWeekday,
-        'BYDAY':vWeekday,
-        'FREQ':vFrequency
+        'COUNT': vInt,
+        'INTERVAL': vInt,
+        'BYSECOND': vInt,
+        'BYMINUTE': vInt,
+        'BYHOUR': vInt,
+        'BYMONTHDAY': vInt,
+        'BYYEARDAY': vInt,
+        'BYMONTH': vInt,
+        'UNTIL': vDDDTypes,
+        'BYSETPOS': vInt,
+        'WKST': vWeekday,
+        'BYDAY': vWeekday,
+        'FREQ': vFrequency,
     })
 
     def __init__(self, *args, **kwargs):
@@ -1075,7 +1079,7 @@ class vRecur(CaselessDict):
                 recur[key] = vRecur.parse_type(key, vals)
             return dict(recur)
         except:
-            raise ValueError, 'Error in recurrence rule: %s' % ical
+            raise ValueError('Error in recurrence rule: %s' % ical)
 
 
 class vText(unicode):
@@ -1143,7 +1147,7 @@ class vText(unicode):
             ical = unescape_char(ical)
             return ical.decode(vText.encoding, 'replace')
         except:
-            raise ValueError, 'Expected ical text, got: %s' % ical
+            raise ValueError('Expected ical text, got: %s' % ical)
 
 
 class vTime(object):
@@ -1180,10 +1184,10 @@ class vTime(object):
         "Parses the data format from ical text format"
         # TODO: timezone support
         try:
-            timetuple = map(int, (ical[:2],ical[2:4],ical[4:6]))
+            timetuple = map(int, (ical[:2], ical[2:4], ical[4:6]))
             return time(*timetuple)
         except:
-            raise ValueError, 'Expected time, got: %s' % ical
+            raise ValueError('Expected time, got: %s' % ical)
 
 
 class vUri(str):
@@ -1210,7 +1214,7 @@ class vUri(str):
         try:
             return str(ical)
         except:
-            raise ValueError, 'Expected , got: %s' % ical
+            raise ValueError('Expected , got: %s' % ical)
 
 
 class vGeo(object):
@@ -1261,7 +1265,7 @@ class vGeo(object):
             latitude, longitude = ical.split(';')
             return (float(latitude), float(longitude))
         except:
-            raise ValueError, "Expected 'float;float' , got: %s" % ical
+            raise ValueError("Expected 'float;float' , got: %s" % ical)
 
 
 class vUTCOffset(object):
@@ -1333,7 +1337,8 @@ class vUTCOffset(object):
         seconds_in_minutes = td.seconds // 60
         total_minutes = day_in_minutes + seconds_in_minutes
         if total_minutes == 0:
-            sign = '+%s' # Google Calendar rejects '0000' but accepts '+0000'
+            # Google Calendar rejects '0000' but accepts '+0000'
+            sign = '+%s'
         elif total_minutes < 0:
             sign = '-%s'
         else:
@@ -1355,9 +1360,10 @@ class vUTCOffset(object):
                                              int(ical[5:7] or 0))
             offset = timedelta(hours=hours, minutes=minutes, seconds=seconds)
         except:
-            raise ValueError, 'Expected utc offset, got: %s' % ical
+            raise ValueError('Expected utc offset, got: %s' % ical)
         if offset >= timedelta(hours=24):
-            raise ValueError, 'Offset must be less than 24 hours, was %s' % ical
+            raise ValueError(
+                'Offset must be less than 24 hours, was %s' % ical)
         if sign == '-':
             return -offset
         return offset
@@ -1380,7 +1386,7 @@ class vInline(str):
     Parameters({'CN': 'Test Osterone'})
     """
 
-    def __init__(self,obj):
+    def __init__(self, obj):
         self.obj = obj
         self.params = Parameters()
 
@@ -1456,83 +1462,83 @@ class TypesFactory(CaselessDict):
         ####################################
         # Property value types
         # Calendar Properties
-        'calscale' : 'text',
-        'method' : 'text',
-        'prodid' : 'text',
-        'version' : 'text',
+        'calscale': 'text',
+        'method': 'text',
+        'prodid': 'text',
+        'version': 'text',
         # Descriptive Component Properties
-        'attach' : 'uri',
-        'categories' : 'text',
-        'class' : 'text',
-        'comment' : 'text',
-        'description' : 'text',
-        'geo' : 'geo',
-        'location' : 'text',
-        'percent-complete' : 'integer',
-        'priority' : 'integer',
-        'resources' : 'text',
-        'status' : 'text',
-        'summary' : 'text',
+        'attach': 'uri',
+        'categories': 'text',
+        'class': 'text',
+        'comment': 'text',
+        'description': 'text',
+        'geo': 'geo',
+        'location': 'text',
+        'percent-complete': 'integer',
+        'priority': 'integer',
+        'resources': 'text',
+        'status': 'text',
+        'summary': 'text',
         # Date and Time Component Properties
-        'completed' : 'date-time',
-        'dtend' : 'date-time',
-        'due' : 'date-time',
-        'dtstart' : 'date-time',
-        'duration' : 'duration',
-        'freebusy' : 'period',
-        'transp' : 'text',
+        'completed': 'date-time',
+        'dtend': 'date-time',
+        'due': 'date-time',
+        'dtstart': 'date-time',
+        'duration': 'duration',
+        'freebusy': 'period',
+        'transp': 'text',
         # Time Zone Component Properties
-        'tzid' : 'text',
-        'tzname' : 'text',
-        'tzoffsetfrom' : 'utc-offset',
-        'tzoffsetto' : 'utc-offset',
-        'tzurl' : 'uri',
+        'tzid': 'text',
+        'tzname': 'text',
+        'tzoffsetfrom': 'utc-offset',
+        'tzoffsetto': 'utc-offset',
+        'tzurl': 'uri',
         # Relationship Component Properties
-        'attendee' : 'cal-address',
-        'contact' : 'text',
-        'organizer' : 'cal-address',
-        'recurrence-id' : 'date-time',
-        'related-to' : 'text',
-        'url' : 'uri',
-        'uid' : 'text',
+        'attendee': 'cal-address',
+        'contact': 'text',
+        'organizer': 'cal-address',
+        'recurrence-id': 'date-time',
+        'related-to': 'text',
+        'url': 'uri',
+        'uid': 'text',
         # Recurrence Component Properties
-        'exdate' : 'date-time-list',
-        'exrule' : 'recur',
-        'rdate' : 'date-time-list',
-        'rrule' : 'recur',
+        'exdate': 'date-time-list',
+        'exrule': 'recur',
+        'rdate': 'date-time-list',
+        'rrule': 'recur',
         # Alarm Component Properties
-        'action' : 'text',
-        'repeat' : 'integer',
-        'trigger' : 'duration',
+        'action': 'text',
+        'repeat': 'integer',
+        'trigger': 'duration',
         # Change Management Component Properties
-        'created' : 'date-time',
-        'dtstamp' : 'date-time',
-        'last-modified' : 'date-time',
-        'sequence' : 'integer',
+        'created': 'date-time',
+        'dtstamp': 'date-time',
+        'last-modified': 'date-time',
+        'sequence': 'integer',
         # Miscellaneous Component Properties
-        'request-status' : 'text',
+        'request-status': 'text',
         ####################################
         # parameter types (luckily there is no name overlap)
-        'altrep' : 'uri',
-        'cn' : 'text',
-        'cutype' : 'text',
-        'delegated-from' : 'cal-address',
-        'delegated-to' : 'cal-address',
-        'dir' : 'uri',
-        'encoding' : 'text',
-        'fmttype' : 'text',
-        'fbtype' : 'text',
-        'language' : 'text',
-        'member' : 'cal-address',
-        'partstat' : 'text',
-        'range' : 'text',
-        'related' : 'text',
-        'reltype' : 'text',
-        'role' : 'text',
-        'rsvp' : 'boolean',
-        'sent-by' : 'cal-address',
-        'tzid' : 'text',
-        'value' : 'text',
+        'altrep': 'uri',
+        'cn': 'text',
+        'cutype': 'text',
+        'delegated-from': 'cal-address',
+        'delegated-to': 'cal-address',
+        'dir': 'uri',
+        'encoding': 'text',
+        'fmttype': 'text',
+        'fbtype': 'text',
+        'language': 'text',
+        'member': 'cal-address',
+        'partstat': 'text',
+        'range': 'text',
+        'related': 'text',
+        'reltype': 'text',
+        'role': 'text',
+        'rsvp': 'boolean',
+        'sent-by': 'cal-address',
+        'tzid': 'text',
+        'value': 'text',
     })
 
     def for_property(self, name):

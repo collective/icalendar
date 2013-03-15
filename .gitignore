@@ -14,3 +14,10 @@ docs/_build/
 include/
 lib/
 src/icalendar.egg-info/
+.installed.cfg
+.project
+.pydevproject
+.settings/
+develop-eggs/
+eggs/
+parts/

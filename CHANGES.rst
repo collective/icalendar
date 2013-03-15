@@ -101,7 +101,7 @@ Changelog
 * Re-include doctests.
   [rnix]
 
-* endure correct datatype at instance creation time in ``prop.vCalAddress``
+* Ensure correct datatype at instance creation time in ``prop.vCalAddress``
   and ``prop.vText``.
   [rnix]
 
@@ -259,7 +259,8 @@ Changelog
 
 * The RFC 2445 was a bit unclear on how to handle line folding when it
   happened to be in the middle of a UTF-8 character. This has been clarified
-  in the following discussion: http://lists.osafoundation.org/pipermail/ietf-calsify/2006-August/001126.html
+  in the following discussion:
+  http://lists.osafoundation.org/pipermail/ietf-calsify/2006-August/001126.html
   And this is now implemented in iCalendar. It will not fold in the middle of
   a UTF-8 character, but may fold in the middle of a UTF-8 composing character
   sequence.
@@ -316,4 +317,5 @@ Changelog
 * renamed iCalendar to lower case package name, lowercased, de-pluralized and
   shorted module names, which are mostly implementation detail.
 
-* changed tests so they generate .ics files in a temp directory, not in the structure itself.
+* changed tests so they generate .ics files in a temp directory, not in the
+  structure itself.

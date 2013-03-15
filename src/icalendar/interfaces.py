@@ -1,15 +1,16 @@
 try:
     from zope.interface import Interface, Attribute
 except ImportError:
-    class Interface:
+    class Interface(object):
         """A dummy interface base class"""
 
-    class Attribute:
+    class Attribute(object):
         """A dummy attribute implementation"""
         def __init__(self, doc):
             self.doc = doc
 
 _marker = object()
+
 
 class IComponent(Interface):
     """Component is the base object for calendar, Event and the other
@@ -127,33 +128,41 @@ class IComponent(Interface):
         name, value tuples.
         """
 
+
 class IEvent(IComponent):
     """A component which conforms to an iCalendar VEVENT.
     """
+
 
 class ITodo(IComponent):
     """A component which conforms to an iCalendar VTODO.
     """
 
+
 class IJournal(IComponent):
     """A component which conforms to an iCalendar VJOURNAL.
     """
+
 
 class IFreeBusy(IComponent):
     """A component which conforms to an iCalendar VFREEBUSY.
     """
 
+
 class ITimezone(IComponent):
     """A component which conforms to an iCalendar VTIMEZONE.
     """
+
 
 class IAlarm(IComponent):
     """A component which conforms to an iCalendar VALARM.
     """
 
+
 class ICalendar(IComponent):
     """A component which conforms to an iCalendar VCALENDAR.
     """
+
 
 class IPropertyValue(Interface):
     """An iCalendar property value.
@@ -175,9 +184,11 @@ class IPropertyValue(Interface):
         Inverse of to_ical().
         """
 
+
 class IBinary(IPropertyValue):
     """Binary property values are base 64 encoded
     """
+
 
 class IBoolean(IPropertyValue):
     """Boolean property.
@@ -185,11 +196,13 @@ class IBoolean(IPropertyValue):
     Also behaves like a python int.
     """
 
+
 class ICalAddress(IPropertyValue):
     """Email address.
 
     Also behaves like a python str.
     """
+
 
 class IDateTime(IPropertyValue):
     """Render and generates iCalendar datetime format.
@@ -198,13 +211,16 @@ class IDateTime(IPropertyValue):
     Meaning that it has a 'Z' appended, and is in absolute time.
     """
 
+
 class IDate(IPropertyValue):
     """Render and generates iCalendar date format.
     """
 
+
 class IDuration(IPropertyValue):
     """Render and generates timedelta in iCalendar DURATION format.
     """
+
 
 class IFloat(IPropertyValue):
     """Render and generate floats in iCalendar format.
@@ -212,23 +228,28 @@ class IFloat(IPropertyValue):
     Also behaves like a python float.
     """
 
+
 class IInt(IPropertyValue):
     """Render and generate ints in iCalendar format.
 
     Also behaves like a python int.
     """
 
+
 class IPeriod(IPropertyValue):
     """A precise period of time (datetime, datetime).
     """
+
 
 class IWeekDay(IPropertyValue):
     """Render and generate weekday abbreviation.
     """
 
+
 class IFrequency(IPropertyValue):
     """Frequency.
     """
+
 
 class IRecur(IPropertyValue):
     """Render and generate data based on recurrent event representation.
@@ -236,25 +257,31 @@ class IRecur(IPropertyValue):
     This acts like a caseless dictionary.
     """
 
+
 class IText(IPropertyValue):
     """Unicode text.
     """
+
 
 class ITime(IPropertyValue):
     """Time.
     """
 
+
 class IUri(IPropertyValue):
     """URI
     """
+
 
 class IGeo(IPropertyValue):
     """Geographical location.
     """
 
+
 class IUTCOffset(IPropertyValue):
     """Offset from UTC.
     """
+
 
 class IInline(IPropertyValue):
     """Inline list.

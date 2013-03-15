@@ -5,17 +5,17 @@ files according to rfc2445.
 These are the defined components.
 
 """
-
 import pytz
 from datetime import datetime
-from types import ListType, TupleType
+from types import (
+    ListType,
+    TupleType,
+)
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import (
     Contentlines,
     Contentline,
     Parameters,
-)
-from icalendar.parser import (
     q_split,
     q_join,
 )
@@ -23,6 +23,7 @@ from icalendar.prop import (
     TypesFactory,
     vText,
 )
+
 
 SequenceTypes = (ListType, TupleType)
 
@@ -65,6 +66,7 @@ INLINE = CaselessDict(
 )
 
 _marker = []
+
 
 class Component(CaselessDict):
     """
@@ -235,7 +237,8 @@ class Component(CaselessDict):
         """Conditional convertion of values.
 
         """
-        if not cond: return value
+        if not cond:
+            return value
         klass = types_factory.for_property(name)
         obj = klass(value)
         if hasattr(value, 'params') and len(value.params.keys()) > 0:
@@ -311,7 +314,7 @@ class Component(CaselessDict):
             return self._decode(name, value)
         else:
             if default is _marker:
-                raise KeyError, name
+                raise KeyError(name)
             else:
                 return default
 
@@ -507,7 +510,7 @@ class Event(Component):
     )
     exclusive = ('DTEND', 'DURATION', )
     multiple = (
-        'ATTACH', 'ATTENDEE', 'CATEGORIES', 'COMMENT','CONTACT', 'EXDATE',
+        'ATTACH', 'ATTENDEE', 'CATEGORIES', 'COMMENT', 'CONTACT', 'EXDATE',
         'EXRULE', 'RSTATUS', 'RELATED', 'RESOURCES', 'RDATE', 'RRULE'
     )
     ignore_exceptions = True

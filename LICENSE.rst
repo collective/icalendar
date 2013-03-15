@@ -2,7 +2,7 @@
 License
 =======
 
-Copyright (c) 2012, Plone Foundation
+Copyright (c) 2012-2013, Plone Foundation
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

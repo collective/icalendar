@@ -1,8 +1,15 @@
-import random
 import sys
+import random
 import textwrap
-from string import ascii_letters, digits
+from string import (
+    ascii_letters,
+    digits,
+)
 from datetime import datetime
+from icalendar.prop import (
+    vText,
+    vDatetime,
+)
 
 
 class UIDGenerator:
@@ -31,16 +38,16 @@ class UIDGenerator:
     chars = list(ascii_letters + digits)
 
     def rnd_string(self, length=16):
-        "Generates a string with random characters of length"
-        return ''.join([random.choice(self.chars) for i in range(length)])
+        """Generates a string with random characters of length.
+        """
+        return ''.join([random.choice(self.chars) for _ in range(length)])
 
     def uid(self, host_name='example.com', unique=''):
+        """Generates a unique id consisting of:
+            datetime-uniquevalue@host.
+        Like:
+            20050105T225746Z-HKtJMqUgdO0jDUwm@example.com
         """
-        Generates a unique id consisting of:
-        datetime-uniquevalue@host. Like:
-        20050105T225746Z-HKtJMqUgdO0jDUwm@example.com
-        """
-        from icalendar.prop import vText, vDatetime
         unique = unique or self.rnd_string()
         return vText('%s-%s@%s' % (vDatetime(datetime.today()).to_ical(),
                                    unique,
@@ -133,6 +140,7 @@ else:
 def wrap(text, width=70, **kwargs):
     w = TextWrapper(width=width, **kwargs)
     return w.wrap(text)
+
 
 if __name__ == "__main__":
     import doctest, tools

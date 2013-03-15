@@ -5,12 +5,12 @@ import unittest
 
 OPTIONFLAGS = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS
 DOCFILES = [
-    'example.txt',
-    'groupscheduled.txt',
-    'multiple.txt',
-    'recurrence.txt',
-    'small.txt',
-    'issues.rst'
+    'example.rst',
+    'groupscheduled.rst',
+    'multiple.rst',
+    'recurrence.rst',
+    'small.rst',
+    'issues.rst',
 ]
 DOCMODS = [
     'icalendar.caselessdict',

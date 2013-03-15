@@ -9,5 +9,6 @@ product_dir, filename = os.path.split(__file__)
 src_path = os.path.join(product_dir, 'src')
 sys.path.append(src_path)
 
+
 def initialize(context):
     pass

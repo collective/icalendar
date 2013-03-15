@@ -59,7 +59,7 @@ a suggestion to icalendar-dev@codespeak.net to take over mainaining of
 `icalendar`_. Nobody object and since version 2.2 we are back to development.
 
 .. _`icalendar`: http://pypi.python.org/pypi/icalendar
-.. _`plone.app.event`: http://github.com/collective/plone.app.event
+.. _`plone.app.event`: http://github.com/plone/plone.app.event
 .. _`Plone`: http://plone.org
 .. _`pytz`: http://pypi.python.org/pypi/pytz
 .. _`setuptools`: http://pypi.python.org/pypi/setuptools
@@ -74,15 +74,15 @@ Output from coverage test::
 
     lines   cov%   module   (path)
        13   100%   icalendar.__init__
-      227    91%   icalendar.cal
-       48    91%   icalendar.caselessdict
-      166    92%   icalendar.parser
-      667    90%   icalendar.prop
-       16   100%   icalendar.tests.test_cases
+      222    95%   icalendar.cal
+       49    93%   icalendar.caselessdict
+      223    89%   icalendar.parser
+      666    90%   icalendar.prop
+       18    94%   icalendar.tests.test_cases
        25    96%   icalendar.tests.test_doctests
-       47   100%   icalendar.tests.test_encoding
-       44    34%   icalendar.tests.test_icalendar
-       13   100%   icalendar.tests.test_property_params
-       51   100%   icalendar.tests.test_timezoned
-       53    30%   icalendar.tools
-
+       49    97%   icalendar.tests.test_encoding
+      131    19%   icalendar.tests.test_icalendar
+       16   100%   icalendar.tests.test_prop
+       93   100%   icalendar.tests.test_property_params
+       23    95%   icalendar.tests.test_time
+       84    98%   icalendar.tests.test_timezoned
