@@ -15,7 +15,7 @@ class TestEncoding(unittest.TestCase):
 
     def test_create_from_ical(self):
         directory = os.path.dirname(__file__)
-        data = open(os.path.join(directory, 'encoding.ics'),'rb').read()
+        data = open(os.path.join(directory, 'encoding.ics'), 'rb').read()
         cal = icalendar.Calendar.from_ical(data)
 
         self.assertEqual(cal['prodid'].to_ical(),
@@ -41,9 +41,9 @@ class TestEncoding(unittest.TestCase):
         cal.add('x-wr-relcalid', u"12345")
 
         event = icalendar.Event()
-        event.add('dtstart', datetime.datetime(2010,10,10,10,00,00,tzinfo=pytz.utc))
-        event.add('dtend',  datetime.datetime(2010,10,10,12,00,00,tzinfo=pytz.utc))
-        event.add('created', datetime.datetime(2010,10,10,0,0,0,tzinfo=pytz.utc))
+        event.add('dtstart', datetime.datetime(2010, 10, 10, 10, 00, 00, tzinfo=pytz.utc))
+        event.add('dtend', datetime.datetime(2010, 10, 10, 12, 00, 00, tzinfo=pytz.utc))
+        event.add('created', datetime.datetime(2010, 10, 10, 0, 0, 0, tzinfo=pytz.utc))
         event.add('uid', u'123456')
         event.add('summary', u'Non-ASCII Test: ÄÖÜ äöü €')
         event.add('description', u'icalendar should be able to de/serialize non-ascii.')
@@ -56,7 +56,7 @@ class TestEncoding(unittest.TestCase):
 
     def test_create_event_simple(self):
         event = icalendar.Event()
-        event.add("dtstart", datetime.datetime(2010,10,10,0,0,0,tzinfo=pytz.utc))
+        event.add("dtstart", datetime.datetime(2010, 10, 10, 0, 0, 0, tzinfo=pytz.utc))
         event.add("summary", u"åäö")
         out = event.to_ical()
         summary = "SUMMARY:åäö"

@@ -72,7 +72,7 @@ WEEKDAY_RULE = re.compile('(?P<signal>[+-]?)(?P<relative>[\d]?)'
                           '(?P<weekday>[\w]{2})$')
 
 
-class vBinary:
+class vBinary(object):
     """Binary property values are base 64 encoded.
 
     >>> b = vBinary('This is gibberish')
@@ -314,7 +314,7 @@ class vInt(int):
             raise ValueError, 'Expected int, got: %s' % ical
 
 
-class vDDDLists:
+class vDDDLists(object):
     """A list of vDDDTypes values.
 
     >>> dt_list = vDDDLists.from_ical('19960402T010000Z')
@@ -388,7 +388,7 @@ class vDDDLists:
         return out
 
 
-class vDDDTypes:
+class vDDDTypes(object):
     """A combined Datetime, Date or Duration parser/generator. Their format
     cannot be confused, and often values can be of either types.
     So this is practical.
@@ -468,7 +468,7 @@ class vDDDTypes:
                 return vTime.from_ical(ical)
 
 
-class vDate:
+class vDate(object):
     """Render and generates iCalendar date format.
 
     >>> d = date(2001, 1,1)
@@ -511,7 +511,7 @@ class vDate:
             raise ValueError, 'Wrong date format %s' % ical
 
 
-class vDatetime:
+class vDatetime(object):
     """Render and generates icalendar datetime format.
 
     vDatetime is timezone aware and uses the pytz library, an implementation of
@@ -621,7 +621,7 @@ class vDatetime:
             raise ValueError, 'Wrong datetime format: %s' % ical
 
 
-class vDuration:
+class vDuration(object):
     """Subclass of timedelta that renders itself in the iCalendar DURATION
     format.
 
@@ -721,7 +721,7 @@ class vDuration:
             raise ValueError('Invalid iCalendar duration: %s' % ical)
 
 
-class vPeriod:
+class vPeriod(object):
     """A precise period of time.
 
     One day in exact datetimes
@@ -1146,7 +1146,7 @@ class vText(unicode):
             raise ValueError, 'Expected ical text, got: %s' % ical
 
 
-class vTime:
+class vTime(object):
     """Render and generates iCalendar time format.
 
     >>> dt = vTime(12, 30, 0)
@@ -1213,7 +1213,7 @@ class vUri(str):
             raise ValueError, 'Expected , got: %s' % ical
 
 
-class vGeo:
+class vGeo(object):
     """A special type that is only indirectly defined in the rfc.
 
     Pass a list
@@ -1264,7 +1264,7 @@ class vGeo:
             raise ValueError, "Expected 'float;float' , got: %s" % ical
 
 
-class vUTCOffset:
+class vUTCOffset(object):
     """Renders itself as a utc offset.
 
     >>> u = vUTCOffset(timedelta(hours=2))
