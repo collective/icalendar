@@ -5,6 +5,16 @@ Changelog
 3.4dev (unreleased)
 -------------------
 
+- Test fixes.
+  [warvariuc]
+
+- Transformed some doctests into unittests.
+  [warvariuc]
+
+- Added functions to transform chars in string with '\\' + any of r'\,;:' chars
+  into '%{:02X}' form to avoid splitting on chars escaped with '\\'.
+  [warvariuc]
+
 - Support for non-ascii parameter values. Fixes #88.
   [warvariuc]
 
