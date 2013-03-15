@@ -56,17 +56,6 @@ def tzid_from_dt(dt):
 
 def foldline(text, length=75, newline='\r\n'):
     """Make a string folded per RFC5545 (each line must be less than 75 octets)
-
-    >>> from icalendar.parser import foldline
-    >>> foldline('foo')
-    'foo'
-
-    >>> longtext = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
-    ...             "Vestibulum convallis imperdiet dui posuere.")
-    >>> foldline(longtext)
-    ... # doctest: +NORMALIZE_WHITESPACE
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum conval\\r\\n
-    lis imperdiet dui posuere.'
     """
     assert isinstance(text, str)
 #    text.decode('utf-8')  # try to decode, to be sure it's utf-8 or ASCII
@@ -118,7 +107,8 @@ def foldline(text, length=75, newline='\r\n'):
 # Property parameter stuff
 
 def paramVal(val):
-    "Returns a parameter value"
+    """Returns a parameter value.
+    """
     if type(val) in SequenceTypes:
         return q_join(val)
     return dQuote(val)
@@ -153,14 +143,7 @@ QUOTABLE = re.compile("[,;: ’']")
 
 
 def dQuote(val):
-    """
-    Parameter values containing [,;:] must be double quoted
-    >>> dQuote('Max')
-    'Max'
-    >>> dQuote('Rasmussen, Max')
-    '"Rasmussen, Max"'
-    >>> dQuote('name:value')
-    '"name:value"'
+    """Parameter values containing [,;:] must be double quoted.
     """
     # a double-quote character is forbidden to appear in a parameter value
     # so replace it with a single-quote character
@@ -172,10 +155,7 @@ def dQuote(val):
 
 # parsing helper
 def q_split(st, sep=','):
-    """
-    Splits a string on char, taking double (q)uotes into considderation
-    >>> q_split('Max,Moller,"Rasmussen, Max"')
-    ['Max', 'Moller', '"Rasmussen, Max"']
+    """Splits a string on char, taking double (q)uotes into considderation.
     """
     result = []
     cursor = 0
@@ -194,11 +174,7 @@ def q_split(st, sep=','):
 
 
 def q_join(lst, sep=','):
-    """
-    Joins a list on sep, quoting strings with QUOTABLE chars
-    >>> s = ['Max', 'Moller', 'Rasmussen, Max']
-    >>> q_join(s)
-    'Max,Moller,"Rasmussen, Max"'
+    """Joins a list on sep, quoting strings with QUOTABLE chars.
     """
     return sep.join(dQuote(itm) for itm in lst)
 
@@ -303,11 +279,9 @@ def unsescape_string(val):
 # parsing and generation of content lines
 
 class Contentline(str):
-    """
-    A content line is basically a string that can be folded and parsed into
+    """A content line is basically a string that can be folded and parsed into
     parts.
     """
-
     def __new__(cls, value, strict=False):
         if isinstance(value, unicode):
             value = value.encode(DEFAULT_ENCODING)
@@ -317,7 +291,8 @@ class Contentline(str):
 
     @staticmethod
     def from_parts(parts):
-        "Turns a tuple of parts into a content line"
+        """Turn a tuple of parts into a content line.
+        """
         (name, params, values) = parts
         try:
             if hasattr(values, 'to_ical'):
@@ -328,9 +303,8 @@ class Contentline(str):
             #    values = escape_char(values)
 
             if params:
-                return Contentline('%s;%s:%s' % (name,
-                                                 params.to_ical(),
-                                                 values))
+                return Contentline('%s;%s:%s'
+                                   % (name, params.to_ical(), values))
             return Contentline('%s:%s' % (name, values))
         except Exception as exc:
             logger.error(str(exc))
@@ -338,7 +312,7 @@ class Contentline(str):
                              % (name, params, values))
 
     def parts(self):
-        """ Splits the content line up into (name, parameters, values) parts
+        """Split the content line up into (name, parameters, values) parts.
         """
         try:
             st = escape_string(self)
@@ -371,8 +345,7 @@ class Contentline(str):
 
     @staticmethod
     def from_ical(st, strict=False):
-        """ Unfolds the content lines in an iCalendar into long content lines.
-
+        """Unfold the content lines in an iCalendar into long content lines.
         """
         try:
             # a fold is carriage return followed by either a space or a tab
@@ -381,45 +354,26 @@ class Contentline(str):
             raise ValueError('Expected StringType with content line')
 
     def to_ical(self):
-        """ Long content lines are folded so they are less than 75 characters
+        """Long content lines are folded so they are less than 75 characters.
         wide.
-
         """
         return foldline(self, newline='\r\n')
 
 
 class Contentlines(list):
+    """I assume that iCalendar files generally are a few kilobytes in size.
+    Then this should be efficient. for Huge files, an iterator should probably
+    be used instead.
     """
-    I assume that iCalendar files generally are a few kilobytes in size. Then
-    this should be efficient. for Huge files, an iterator should probably be
-    used instead.
-
-    >>> c = Contentlines([Contentline('BEGIN:VEVENT\\r\\n')])
-    >>> c.to_ical()
-    'BEGIN:VEVENT\\r\\n\\r\\n'
-
-    Lets try appending it with a 100 charater wide string
-    >>> c.append(Contentline(''.join(['123456789 ']*10)+'\\r\\n'))
-    >>> c.to_ical()
-    'BEGIN:VEVENT\\r\\n\\r\\n123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234\\r\\n 56789 123456789 123456789 \\r\\n\\r\\n'
-
-    Notice that there is an extra empty string in the end of the content lines.
-    That is so they can be easily joined with: '\r\n'.join(contentlines)).
-    >>> Contentlines.from_ical('A short line\\r\\n')
-    ['A short line', '']
-    >>> Contentlines.from_ical('A faked\\r\\n  long line\\r\\n')
-    ['A faked long line', '']
-    >>> Contentlines.from_ical('A faked\\r\\n  long line\\r\\nAnd another lin\\r\\n\\te that is folded\\r\\n')
-    ['A faked long line', 'And another line that is folded', '']
-    """
-
     def to_ical(self):
-        "Simply join self."
+        """Simply join self.
+        """
         return '\r\n'.join(l.to_ical() for l in self if l) + '\r\n'
 
     @staticmethod
     def from_ical(st):
-        "Parses a string into content lines"
+        """Parses a string into content lines.
+        """
         try:
             # a fold is carriage return followed by either a space or a tab
             unfolded = FOLD.sub('', st)

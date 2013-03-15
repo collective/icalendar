@@ -76,12 +76,12 @@ Output from coverage test::
        13   100%   icalendar.__init__
       222    95%   icalendar.cal
        49    93%   icalendar.caselessdict
-      223    89%   icalendar.parser
-      666    90%   icalendar.prop
+      222    85%   icalendar.parser
+      663    90%   icalendar.prop
        18    94%   icalendar.tests.test_cases
        25    96%   icalendar.tests.test_doctests
        49    97%   icalendar.tests.test_encoding
-      131    19%   icalendar.tests.test_icalendar
+      156    17%   icalendar.tests.test_icalendar
        16   100%   icalendar.tests.test_prop
        93   100%   icalendar.tests.test_property_params
        23    95%   icalendar.tests.test_time

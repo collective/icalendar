@@ -25,6 +25,19 @@ class IcalendarTestCase (unittest.TestCase):
             '123456789 \r\n\r\n'
         )
 
+        # from doctests
+        # Notice that there is an extra empty string in the end of the content lines.
+        # That is so they can be easily joined with: '\r\n'.join(contentlines)).
+        self.assertEqual(Contentlines.from_ical('A short line\r\n'),
+                         ['A short line', ''])
+        self.assertEqual(Contentlines.from_ical('A faked\r\n  long line\r\n'),
+                         ['A faked long line', ''])
+        self.assertEqual(
+            Contentlines.from_ical('A faked\r\n  long line\r\nAnd another '
+                                   'lin\r\n\te that is folded\r\n'),
+            ['A faked long line', 'And another line that is folded', '']
+        )
+
     def test_contentline_class(self):
         from icalendar.parser import Contentline, Parameters
         from icalendar.prop import vText
@@ -190,7 +203,17 @@ class IcalendarTestCase (unittest.TestCase):
 
     def test_fold_line(self):
         from icalendar.parser import foldline
-        self.assertRaises(AssertionError, foldline, u'привет', length=3)
+
+        self.assertEqual(foldline('foo'), 'foo')
+        self.assertEqual(
+            foldline("Lorem ipsum dolor sit amet, consectetur adipiscing "
+                     "elit. Vestibulum convallis imperdiet dui posuere."),
+            ('Lorem ipsum dolor sit amet, consectetur adipiscing elit. '
+             'Vestibulum conval\r\n lis imperdiet dui posuere.')
+        )
+
+        with self.assertRaises(AssertionError):
+            foldline(u'привет', length=3)
         self.assertEqual(foldline('foobar', length=4), 'foo\r\n bar')
         self.assertEqual(
             foldline('Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
@@ -202,6 +225,22 @@ class IcalendarTestCase (unittest.TestCase):
             foldline('DESCRIPTION:АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯ'),
             'DESCRIPTION:АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭ\r\n ЮЯ'
         )
+
+    def test_value_double_quoting(self):
+        from icalendar.parser import dQuote
+        self.assertEqual(dQuote('Max'), 'Max')
+        self.assertEqual(dQuote('Rasmussen, Max'), '"Rasmussen, Max"')
+        self.assertEqual(dQuote('name:value'), '"name:value"')
+
+    def test_q_split(self):
+        from icalendar.parser import q_split
+        self.assertEqual(q_split('Max,Moller,"Rasmussen, Max"'),
+                         ['Max', 'Moller', '"Rasmussen, Max"'])
+
+    def test_q_join(self):
+        from icalendar.parser import q_join
+        self.assertEqual(q_join(['Max', 'Moller', 'Rasmussen, Max']),
+                         'Max,Moller,"Rasmussen, Max"')
 
 
 def load_tests(loader=None, tests=None, pattern=None):
