@@ -66,7 +66,13 @@ class TestPropVFloat(unittest.TestCase):
         self.assertTrue(vFloat(42).to_ical() == '42.0')
 
 
+class TestPropVInt(unittest.TestCase):
 
+    def test_prop_vInt(self):
+        vInt = icalendar.prop.vInt
+        self.assertTrue(vInt(42).to_ical() == '42')
+        self.assertTrue(vInt.from_ical('13') == 13)
+        self.assertRaises(ValueError, vInt.from_ical, '1s3')
 
 
 class TestPropertyValues(unittest.TestCase):

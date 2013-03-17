@@ -228,15 +228,6 @@ class vFloat(float):
 class vInt(int):
     """Just an int.
 
-    >>> f = vInt(42)
-    >>> f.to_ical()
-    '42'
-    >>> vInt.from_ical('13')
-    13
-    >>> vInt.from_ical('1s3')
-    Traceback (most recent call last):
-        ...
-    ValueError: Expected int, got: 1s3
     """
     def __new__(cls, *args, **kwargs):
         self = super(vInt, cls).__new__(cls, *args, **kwargs)
@@ -248,7 +239,6 @@ class vInt(int):
 
     @staticmethod
     def from_ical(ical):
-        "Parses the data format from ical text format"
         try:
             return int(ical)
         except:
