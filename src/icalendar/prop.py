@@ -104,19 +104,6 @@ class vBinary(object):
 class vBoolean(int):
     """Returns specific string according to state.
 
-    >>> bin = vBoolean(True)
-    >>> bin.to_ical()
-    'TRUE'
-    >>> bin = vBoolean(0)
-    >>> bin.to_ical()
-    'FALSE'
-
-    The roundtrip test
-    >>> x = True
-    >>> x == vBoolean.from_ical(vBoolean(x).to_ical())
-    True
-    >>> vBoolean.from_ical('true')
-    True
     """
     bool_map = CaselessDict(true=True, false=False)
 
@@ -132,7 +119,9 @@ class vBoolean(int):
 
     @staticmethod
     def from_ical(ical):
-        "Parses the data format from ical text format"
+        """Parses the data format from ical text format.
+
+        """
         try:
             return vBoolean.bool_map[ical]
         except:

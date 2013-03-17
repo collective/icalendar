@@ -31,6 +31,19 @@ class TestPropVBinary(unittest.TestCase):
         self.assertTrue(vBinary.from_ical(txt_ical) == txt)
 
 
+class TestPropVBoolean(unittest.TestCase):
+
+    def test_prop_vboolean(self):
+        vBoolean = icalendar.prop.vBoolean
+
+        self.assertTrue(vBoolean(True).to_ical() == 'TRUE')
+        self.assertTrue(vBoolean(0).to_ical() == 'FALSE')
+
+        # The roundtrip test
+        self.assertTrue(vBoolean.from_ical(vBoolean(True).to_ical()) == True)
+        self.assertTrue(vBoolean.from_ical('true') == True)
+
+
 class TestPropertyValues(unittest.TestCase):
 
     def test_vDDDLists_timezone(self):
