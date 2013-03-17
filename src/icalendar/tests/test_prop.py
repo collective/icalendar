@@ -5,7 +5,7 @@ import icalendar
 import pytz
 
 
-class TestPropVBinary(unittest.TestCase):
+class TestProp(unittest.TestCase):
 
     def test_prop_vBinary(self):
         vBinary = icalendar.prop.vBinary
@@ -31,8 +31,6 @@ class TestPropVBinary(unittest.TestCase):
         self.assertTrue(vBinary.from_ical(txt_ical) == txt)
 
 
-class TestPropVBoolean(unittest.TestCase):
-
     def test_prop_vBoolean(self):
         vBoolean = icalendar.prop.vBoolean
 
@@ -43,8 +41,6 @@ class TestPropVBoolean(unittest.TestCase):
         self.assertTrue(vBoolean.from_ical(vBoolean(True).to_ical()) == True)
         self.assertTrue(vBoolean.from_ical('true') == True)
 
-
-class TestPropVCalAddress(unittest.TestCase):
 
     def test_prop_vCalAddress(self):
         vCalAddress = icalendar.prop.vCalAddress
@@ -57,8 +53,6 @@ class TestPropVCalAddress(unittest.TestCase):
         self.assertTrue(vCalAddress.from_ical(txt) == 'MAILTO:maxm@mxm.dk')
 
 
-class TestPropVFloat(unittest.TestCase):
-
     def test_prop_vFloat(self):
         vFloat = icalendar.prop.vFloat
         self.assertTrue(vFloat(1.0).to_ical() == '1.0')
@@ -66,16 +60,12 @@ class TestPropVFloat(unittest.TestCase):
         self.assertTrue(vFloat(42).to_ical() == '42.0')
 
 
-class TestPropVInt(unittest.TestCase):
-
     def test_prop_vInt(self):
         vInt = icalendar.prop.vInt
         self.assertTrue(vInt(42).to_ical() == '42')
         self.assertTrue(vInt.from_ical('13') == 13)
         self.assertRaises(ValueError, vInt.from_ical, '1s3')
 
-
-class TestPropVDDDLists(unittest.TestCase):
 
     def test_prop_vDDDLists(self):
         vDDDLists = icalendar.prop.vDDDLists
@@ -101,6 +91,30 @@ class TestPropVDDDLists(unittest.TestCase):
         dt_list = vDDDLists([datetime.datetime(2000,1,1),
                              datetime.datetime(2000,11,11)])
         self.assertTrue(dt_list.to_ical() == '20000101T000000,20001111T000000')
+
+
+    def test_prop_vDDDTypes(self):
+        vDDDTypes = icalendar.prop.vDDDTypes
+
+        self.assertTrue(type(vDDDTypes.from_ical('20010101T123000')) ==
+                        datetime.datetime)
+
+        self.assertTrue(repr(vDDDTypes.from_ical('20010101T123000Z'))[:65] ==
+                        'datetime.datetime(2001, 1, 1, 12, 30, tzinfo=<UTC>)')
+
+        self.assertTrue(type(vDDDTypes.from_ical('20010101')) == datetime.date)
+
+        self.assertTrue(vDDDTypes.from_ical('P31D') == datetime.timedelta(31))
+
+        self.assertTrue(vDDDTypes.from_ical('-P31D') ==
+                        datetime.timedelta(-31))
+
+        # Bad input
+        self.assertRaises(ValueError, vDDDTypes, 42)
+
+
+
+
 
 
 class TestPropertyValues(unittest.TestCase):
