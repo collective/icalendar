@@ -7,7 +7,7 @@ import pytz
 
 class TestPropVBinary(unittest.TestCase):
 
-    def test_prop_vbinary(self):
+    def test_prop_vBinary(self):
         vBinary = icalendar.prop.vBinary
 
         txt = 'This is gibberish'
@@ -33,7 +33,7 @@ class TestPropVBinary(unittest.TestCase):
 
 class TestPropVBoolean(unittest.TestCase):
 
-    def test_prop_vboolean(self):
+    def test_prop_vBoolean(self):
         vBoolean = icalendar.prop.vBoolean
 
         self.assertTrue(vBoolean(True).to_ical() == 'TRUE')
@@ -42,6 +42,19 @@ class TestPropVBoolean(unittest.TestCase):
         # The roundtrip test
         self.assertTrue(vBoolean.from_ical(vBoolean(True).to_ical()) == True)
         self.assertTrue(vBoolean.from_ical('true') == True)
+
+class TestPropVCalAddress(unittest.TestCase):
+
+    def test_prop_vCalAddress(self):
+        vCalAddress = icalendar.prop.vCalAddress
+        txt = 'MAILTO:maxm@mxm.dk'
+        a = vCalAddress(txt)
+        a.params['cn'] = 'Max M'
+
+        self.assertTrue(a.to_ical() == txt)
+        self.assertTrue(str(a.params) == "Parameters({'CN': 'Max M'})")
+        self.assertTrue(vCalAddress.from_ical(txt) == 'MAILTO:maxm@mxm.dk')
+
 
 
 class TestPropertyValues(unittest.TestCase):
