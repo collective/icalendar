@@ -370,48 +370,6 @@ class vDatetime(object):
     created. Be aware that there are certain limitations with timezone naive
     DATE-TIME components in the icalendar standard.
 
-    >>> d = datetime(2001, 1,1, 12, 30, 0)
-
-    >>> dt = vDatetime(d)
-    >>> dt.to_ical()
-    '20010101T123000'
-
-    >>> vDatetime.from_ical('20000101T120000')
-    datetime.datetime(2000, 1, 1, 12, 0)
-
-    >>> dutc = datetime(2001, 1,1, 12, 30, 0, tzinfo=pytz.utc)
-    >>> vDatetime(dutc).to_ical()
-    '20010101T123000Z'
-
-    >>> dutc = datetime(1899, 1,1, 12, 30, 0, tzinfo=pytz.utc)
-    >>> vDatetime(dutc).to_ical()
-    '18990101T123000Z'
-
-    >>> vDatetime.from_ical('20010101T000000')
-    datetime.datetime(2001, 1, 1, 0, 0)
-
-    >>> vDatetime.from_ical('20010101T000000A')
-    Traceback (most recent call last):
-      ...
-    ValueError: Wrong datetime format: 20010101T000000A
-
-    >>> utc = vDatetime.from_ical('20010101T000000Z')
-    >>> vDatetime(utc).to_ical()
-    '20010101T000000Z'
-
-    1 minute before transition to DST
-    >>> dat = vDatetime.from_ical('20120311T015959', 'America/Denver')
-    >>> dat.strftime('%Y%m%d%H%M%S %z')
-    '20120311015959 -0700'
-
-    After transition to DST
-    >>> dat = vDatetime.from_ical('20120311T030000', 'America/Denver')
-    >>> dat.strftime('%Y%m%d%H%M%S %z')
-    '20120311030000 -0600'
-
-    >>> dat = vDatetime.from_ical('20101010T000000', 'Europe/Vienna')
-    >>> vDatetime(dat).to_ical()
-    '20101010T000000'
     """
     def __init__(self, dt):
         self.dt = dt
@@ -437,8 +395,6 @@ class vDatetime(object):
 
     @staticmethod
     def from_ical(ical, timezone=None):
-        """Parse the data format from ical text format.
-        """
         tzinfo = None
         if timezone:
             try:

@@ -127,6 +127,42 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vDate, 'd')
 
 
+    def test_prop_vDatetime(self):
+        vDatetime = icalendar.prop.vDatetime
+
+        dt = datetime.datetime(2001, 1, 1, 12, 30, 0)
+        self.assertTrue(vDatetime(dt).to_ical() == '20010101T123000')
+
+        self.assertTrue(vDatetime.from_ical('20000101T120000') ==
+                        datetime.datetime(2000, 1, 1, 12, 0))
+
+        dutc = datetime.datetime(2001, 1,1, 12, 30, 0, tzinfo=pytz.utc)
+        self.assertTrue(vDatetime(dutc).to_ical() == '20010101T123000Z')
+
+        dutc = datetime.datetime(1899, 1,1, 12, 30, 0, tzinfo=pytz.utc)
+        self.assertTrue(vDatetime(dutc).to_ical() == '18990101T123000Z')
+
+        self.assertTrue(vDatetime.from_ical('20010101T000000') ==
+                        datetime.datetime(2001, 1, 1, 0, 0))
+
+        self.assertRaises(ValueError, vDatetime.from_ical, '20010101T000000A')
+
+        utc = vDatetime.from_ical('20010101T000000Z')
+        self.assertTrue(vDatetime(utc).to_ical() == '20010101T000000Z')
+
+        # 1 minute before transition to DST
+        dat = vDatetime.from_ical('20120311T015959', 'America/Denver')
+        self.assertTrue(dat.strftime('%Y%m%d%H%M%S %z') == 
+                        '20120311015959 -0700')
+
+        # After transition to DST
+        dat = vDatetime.from_ical('20120311T030000', 'America/Denver')
+        self.assertTrue(dat.strftime('%Y%m%d%H%M%S %z') ==
+                        '20120311030000 -0600')
+
+        dat = vDatetime.from_ical('20101010T000000', 'Europe/Vienna')
+        self.assertTrue(vDatetime(dat).to_ical() == '20101010T000000')
+
 
 class TestPropertyValues(unittest.TestCase):
 
