@@ -113,7 +113,18 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vDDDTypes, 42)
 
 
+    def test_prop_vDate(self):
+        vDate = icalendar.prop.vDate
 
+        self.assertTrue(vDate(datetime.date(2001, 1, 1)).to_ical() ==
+                        '20010101')
+        self.assertTrue(vDate(datetime.date(1899, 1, 1)).to_ical() ==
+                        '18990101')
+
+        self.assertTrue(vDate.from_ical('20010102') ==
+                        datetime.date(2001, 1, 2))
+
+        self.assertRaises(ValueError, vDate, 'd')
 
 
 

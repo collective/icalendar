@@ -283,31 +283,8 @@ class vDDDTypes(object):
     cannot be confused, and often values can be of either types.
     So this is practical.
 
-    >>> d = vDDDTypes.from_ical('20010101T123000')
-    >>> type(d)
-    <type 'datetime.datetime'>
-
-    >>> repr(vDDDTypes.from_ical('20010101T123000Z'))[:65]
-    'datetime.datetime(2001, 1, 1, 12, 30, tzinfo=<UTC>)'
-
-    >>> d = vDDDTypes.from_ical('20010101')
-    >>> type(d)
-    <type 'datetime.date'>
-
-    >>> vDDDTypes.from_ical('P31D')
-    datetime.timedelta(31)
-
-    >>> vDDDTypes.from_ical('-P31D')
-    datetime.timedelta(-31)
-
-    Bad input
-    >>> vDDDTypes(42)
-    Traceback (most recent call last):
-        ...
-    ValueError: You must use datetime, date, timedelta or time
     """
     def __init__(self, dt):
-        "Returns vDate from"
         if type(dt) not in (datetime, date, timedelta, time):
             raise ValueError('You must use datetime, date, timedelta or time')
         if isinstance(dt, datetime):
@@ -342,7 +319,6 @@ class vDDDTypes(object):
 
     @staticmethod
     def from_ical(ical, timezone=None):
-        "Parses the data format from ical text format"
         if isinstance(ical, vDDDTypes):
             return ical.dt
         u = ical.upper()
@@ -360,21 +336,6 @@ class vDDDTypes(object):
 class vDate(object):
     """Render and generates iCalendar date format.
 
-    >>> d = date(2001, 1,1)
-    >>> vDate(d).to_ical()
-    '20010101'
-
-    >>> d = date(1899, 1, 1)
-    >>> vDate(d).to_ical()
-    '18990101'
-
-    >>> vDate.from_ical('20010102')
-    datetime.date(2001, 1, 2)
-
-    >>> vDate('d').to_ical()
-    Traceback (most recent call last):
-        ...
-    ValueError: Value MUST be a date instance
     """
     def __init__(self, dt):
         if not isinstance(dt, date):
@@ -387,7 +348,6 @@ class vDate(object):
 
     @staticmethod
     def from_ical(ical):
-        "Parses the data format from ical text format"
         try:
             timetuple = (
                 int(ical[:4]),  # year
