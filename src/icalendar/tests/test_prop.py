@@ -75,6 +75,34 @@ class TestPropVInt(unittest.TestCase):
         self.assertRaises(ValueError, vInt.from_ical, '1s3')
 
 
+class TestPropVDDDLists(unittest.TestCase):
+
+    def test_prop_vDDDLists(self):
+        vDDDLists = icalendar.prop.vDDDLists
+
+        dt_list = vDDDLists.from_ical('19960402T010000Z')
+        self.assertTrue(type(dt_list) == list)
+        self.assertTrue(len(dt_list) == 1)
+        self.assertTrue(type(dt_list[0]) == datetime.datetime)
+        self.assertTrue(str(dt_list[0]) == '1996-04-02 01:00:00+00:00')
+
+        p = '19960402T010000Z,19960403T010000Z,19960404T010000Z'
+        dt_list = vDDDLists.from_ical(p)
+        self.assertTrue(len(dt_list) == 3)
+        self.assertTrue(str(dt_list[0]) == '1996-04-02 01:00:00+00:00')
+        self.assertTrue(str(dt_list[2]) == '1996-04-04 01:00:00+00:00')
+
+        dt_list = vDDDLists([])
+        self.assertTrue(dt_list.to_ical() == '')
+
+        dt_list = vDDDLists([datetime.datetime(2000,1,1)])
+        self.assertTrue(dt_list.to_ical() == '20000101T000000')
+
+        dt_list = vDDDLists([datetime.datetime(2000,1,1),
+                             datetime.datetime(2000,11,11)])
+        self.assertTrue(dt_list.to_ical() == '20000101T000000,20001111T000000')
+
+
 class TestPropertyValues(unittest.TestCase):
 
     def test_vDDDLists_timezone(self):

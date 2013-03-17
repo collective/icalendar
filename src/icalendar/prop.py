@@ -248,41 +248,6 @@ class vInt(int):
 class vDDDLists(object):
     """A list of vDDDTypes values.
 
-    >>> dt_list = vDDDLists.from_ical('19960402T010000Z')
-    >>> type(dt_list)
-    <type 'list'>
-
-    >>> len(dt_list)
-    1
-
-    >>> type(dt_list[0])
-    <type 'datetime.datetime'>
-
-    >>> str(dt_list[0])
-    '1996-04-02 01:00:00+00:00'
-
-    >>> p = '19960402T010000Z,19960403T010000Z,19960404T010000Z'
-    >>> dt_list = vDDDLists.from_ical(p)
-    >>> len(dt_list)
-    3
-
-    >>> str(dt_list[0])
-    '1996-04-02 01:00:00+00:00'
-    >>> str(dt_list[2])
-    '1996-04-04 01:00:00+00:00'
-
-    >>> dt_list = vDDDLists([])
-    >>> dt_list.to_ical()
-    ''
-
-    >>> dt_list = vDDDLists([datetime(2000,1,1)])
-    >>> dt_list.to_ical()
-    '20000101T000000'
-
-    >>> dt_list = vDDDLists([datetime(2000,1,1), datetime(2000,11,11)])
-    >>> dt_list.to_ical()
-    '20000101T000000,20001111T000000'
-
     """
     def __init__(self, dt_list):
         if not hasattr(dt_list, '__iter__'):
