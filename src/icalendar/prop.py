@@ -78,31 +78,8 @@ WEEKDAY_RULE = re.compile('(?P<signal>[+-]?)(?P<relative>[\d]?)'
 class vBinary(object):
     """Binary property values are base 64 encoded.
 
-    >>> b = vBinary('This is gibberish')
-    >>> b.to_ical()
-    'VGhpcyBpcyBnaWJiZXJpc2g='
-    >>> b = vBinary.from_ical('VGhpcyBpcyBnaWJiZXJpc2g=')
-    >>> b
-    'This is gibberish'
-
-    The roundtrip test
-    >>> x = 'Binary data \x13 \x56'
-    >>> vBinary(x).to_ical()
-    'QmluYXJ5IGRhdGEgEyBW'
-    >>> vBinary.from_ical('QmluYXJ5IGRhdGEgEyBW')
-    'Binary data \\x13 V'
-
-    >>> b = vBinary('txt')
-    >>> b.params
-    Parameters({'VALUE': 'BINARY', 'ENCODING': 'BASE64'})
-
-    Long data should not have line breaks, as that would interfere
-    >>> x = 'a'*99
-    >>> vBinary(x).to_ical() == 'YWFh' * 33
-    True
-    >>> vBinary.from_ical('YWFh' * 33) == 'a' * 99
-    True
     """
+
     def __init__(self, obj):
         self.obj = obj
         self.params = Parameters(encoding='BASE64', value="BINARY")
@@ -115,7 +92,9 @@ class vBinary(object):
 
     @staticmethod
     def from_ical(ical):
-        "Parses the data format from ical text format"
+        """Parses the data format from ical text format.
+
+        """
         try:
             return ical.decode('base-64')
         except UnicodeError:
@@ -1129,9 +1108,10 @@ class vText(unicode):
         """Parses the data format from ical text format.
         """
         try:
-            ical = unescape_char(ical)
-            return ical.decode(vText.encoding, 'replace')
+            ical_unesc = unescape_char(ical)
+            return ical_unesc.decode(vText.encoding, 'replace')
         except:
+            import pdb; pdb.set_trace()
             raise ValueError('Expected ical text, got: %s' % ical)
 
 

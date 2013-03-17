@@ -5,6 +5,32 @@ import icalendar
 import pytz
 
 
+class TestPropVBinary(unittest.TestCase):
+
+    def test_prop_vbinary(self):
+        vBinary = icalendar.prop.vBinary
+
+        txt = 'This is gibberish'
+        txt_ical = 'VGhpcyBpcyBnaWJiZXJpc2g='
+        self.assertTrue(vBinary(txt).to_ical() == txt_ical)
+        self.assertTrue(vBinary.from_ical(txt_ical) == txt)
+
+        # The roundtrip test
+        txt = 'Binary data \x13 \x56'
+        txt_ical = 'QmluYXJ5IGRhdGEgEyBW'
+        self.assertTrue(vBinary(txt).to_ical() == txt_ical)
+        self.assertTrue(vBinary.from_ical(txt_ical) == txt)
+
+        self.assertTrue(str(vBinary('txt').params) ==\
+            "Parameters({'VALUE': 'BINARY', 'ENCODING': 'BASE64'})")
+
+        # Long data should not have line breaks, as that would interfere
+        txt = 'a'*99
+        txt_ical = 'YWFh'*33
+        self.assertTrue(vBinary(txt).to_ical() == txt_ical)
+        self.assertTrue(vBinary.from_ical(txt_ical) == txt)
+
+
 class TestPropertyValues(unittest.TestCase):
 
     def test_vDDDLists_timezone(self):
