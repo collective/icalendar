@@ -92,9 +92,6 @@ class vBinary(object):
 
     @staticmethod
     def from_ical(ical):
-        """Parses the data format from ical text format.
-
-        """
         try:
             return ical.decode('base-64')
         except UnicodeError:
@@ -119,9 +116,6 @@ class vBoolean(int):
 
     @staticmethod
     def from_ical(ical):
-        """Parses the data format from ical text format.
-
-        """
         try:
             return vBoolean.bool_map[ical]
         except:
@@ -131,14 +125,6 @@ class vBoolean(int):
 class vCalAddress(str):
     """This just returns an unquoted string.
 
-    >>> a = vCalAddress('MAILTO:maxm@mxm.dk')
-    >>> a.params['cn'] = 'Max M'
-    >>> a.to_ical()
-    'MAILTO:maxm@mxm.dk'
-    >>> a.params
-    Parameters({'CN': 'Max M'})
-    >>> vCalAddress.from_ical('MAILTO:maxm@mxm.dk')
-    'MAILTO:maxm@mxm.dk'
     """
     def __new__(cls, value):
         if isinstance(value, unicode):
@@ -155,7 +141,6 @@ class vCalAddress(str):
 
     @staticmethod
     def from_ical(ical):
-        "Parses the data format from ical text format"
         try:
             return str(ical)
         except:

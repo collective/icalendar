@@ -43,6 +43,7 @@ class TestPropVBoolean(unittest.TestCase):
         self.assertTrue(vBoolean.from_ical(vBoolean(True).to_ical()) == True)
         self.assertTrue(vBoolean.from_ical('true') == True)
 
+
 class TestPropVCalAddress(unittest.TestCase):
 
     def test_prop_vCalAddress(self):
