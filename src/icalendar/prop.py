@@ -266,16 +266,11 @@ class vDDDLists(object):
         self.dts = vDDD
 
     def to_ical(self):
-        """Generates the text string in the iCalendar format.
-        """
         dts_ical = (dt.to_ical() for dt in self.dts)
         return ",".join(dts_ical)
 
     @staticmethod
     def from_ical(ical, timezone=None):
-        """Parses the list of data formats from ical text format.
-        @param ical: ical text format
-        """
         out = []
         ical_dates = ical.split(",")
         for ical_dt in ical_dates:
