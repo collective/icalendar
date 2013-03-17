@@ -208,13 +208,6 @@ class LocalTimezone(tzinfo):
 class vFloat(float):
     """Just a float.
 
-    >>> f = vFloat(1.0)
-    >>> f.to_ical()
-    '1.0'
-    >>> vFloat.from_ical('42')
-    42.0
-    >>> vFloat(42).to_ical()
-    '42.0'
     """
     def __new__(cls, *args, **kwargs):
         self = super(vFloat, cls).__new__(cls, *args, **kwargs)
@@ -226,7 +219,6 @@ class vFloat(float):
 
     @staticmethod
     def from_ical(ical):
-        "Parses the data format from ical text format"
         try:
             return float(ical)
         except:

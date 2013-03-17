@@ -57,6 +57,17 @@ class TestPropVCalAddress(unittest.TestCase):
         self.assertTrue(vCalAddress.from_ical(txt) == 'MAILTO:maxm@mxm.dk')
 
 
+class TestPropVFloat(unittest.TestCase):
+
+    def test_prop_vFloat(self):
+        vFloat = icalendar.prop.vFloat
+        self.assertTrue(vFloat(1.0).to_ical() == '1.0')
+        self.assertTrue(vFloat.from_ical('42') == 42.0)
+        self.assertTrue(vFloat(42).to_ical() == '42.0')
+
+
+
+
 
 class TestPropertyValues(unittest.TestCase):
 
