@@ -249,8 +249,60 @@ class TestProp(unittest.TestCase):
         self.at(vFrequency('daily').from_ical('MONTHLY') == 'MONTHLY')
 
 
+    def test_prop_vRecur(self):
+        vRecur = icalendar.prop.vRecur
 
+        #Let's see how close we can get to one from the rfc:
+        #FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=SU;BYHOUR=8,9;BYMINUTE=30
 
+        r = dict(freq='yearly', interval=2)
+        r['bymonth'] = 1
+        r['byday'] = 'su'
+        r['byhour'] = [8,9]
+        r['byminute'] = 30
+        self.at(vRecur(r).to_ical() ==
+            'FREQ=YEARLY;INTERVAL=2;BYMINUTE=30;BYHOUR=8,9;BYDAY=SU;BYMONTH=1')
+
+        r = vRecur(FREQ='yearly', INTERVAL=2)
+        r['BYMONTH'] = 1
+        r['BYDAY'] = 'su'
+        r['BYHOUR'] = [8,9]
+        r['BYMINUTE'] = 30
+        self.at(r.to_ical() ==
+            'FREQ=YEARLY;INTERVAL=2;BYMINUTE=30;BYHOUR=8,9;BYDAY=SU;BYMONTH=1')
+
+        r = vRecur(freq='DAILY', count=10)
+        r['bysecond'] = [0, 15, 30, 45]
+        self.at(r.to_ical() == 'FREQ=DAILY;COUNT=10;BYSECOND=0,15,30,45')
+
+        r = vRecur(freq='DAILY', until=datetime(2005,1,1,12,0,0))
+        self.at(r.to_ical() == 'FREQ=DAILY;UNTIL=20050101T120000')
+
+        # How do we fare with regards to parsing?
+        r = vRecur.from_ical('FREQ=DAILY;INTERVAL=2;COUNT=10')
+        self.at(r == {'COUNT': [10], 'FREQ': ['DAILY'], 'INTERVAL': [2]})
+        self.at(vRecur(r).to_ical() == 'FREQ=DAILY;COUNT=10;INTERVAL=2')
+
+        p = 'FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=-SU;BYHOUR=8,9;BYMINUTE=30'
+        r = vRecur.from_ical(p)
+        self.at(r == {'BYHOUR': [8, 9], 'BYDAY': ['-SU'], 'BYMINUTE': [30],
+                     'BYMONTH': [1], 'FREQ': ['YEARLY'], 'INTERVAL': [2]})
+
+        self.at(vRecur(r).to_ical() ==
+          'FREQ=YEARLY;INTERVAL=2;BYMINUTE=30;BYHOUR=8,9;BYDAY=-SU;BYMONTH=1')
+
+        # Some examples from the spec
+        r = vRecur.from_ical('FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1')
+        self.at(vRecur(r).to_ical() ==
+                'FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1')
+
+        p = 'FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=SU;BYHOUR=8,9;BYMINUTE=30'
+        r = vRecur.from_ical(p)
+        self.at(vRecur(r).to_ical() ==
+            'FREQ=YEARLY;INTERVAL=2;BYMINUTE=30;BYHOUR=8,9;BYDAY=SU;BYMONTH=1')
+
+        # and some errors
+        self.assertRaises(ValueError, vRecur.from_ical, 'BYDAY=12')
 
 
 
