@@ -741,11 +741,6 @@ class vTime(object):
 class vUri(str):
     """Uniform resource identifier is basically just an unquoted string.
 
-    >>> u = vUri('http://www.example.com/')
-    >>> u.to_ical()
-    'http://www.example.com/'
-    >>> vUri.from_ical('http://www.example.com/') # doh!
-    'http://www.example.com/'
     """
 
     def __new__(cls, *args, **kwargs):
@@ -758,7 +753,6 @@ class vUri(str):
 
     @staticmethod
     def from_ical(ical):
-        "Parses the data format from ical text format"
         try:
             return str(ical)
         except:
@@ -768,27 +762,7 @@ class vUri(str):
 class vGeo(object):
     """A special type that is only indirectly defined in the rfc.
 
-    Pass a list
-    >>> g = vGeo([1.2, 3.0])
-    >>> g.to_ical()
-    '1.2;3.0'
 
-    Pass a tuple
-    >>> g = vGeo((1.2, 3.0))
-    >>> g.to_ical()
-    '1.2;3.0'
-
-    >>> g = vGeo.from_ical('37.386013;-122.082932')
-    >>> g == (float('37.386013'), float('-122.082932'))
-    True
-
-    >>> vGeo(g).to_ical()
-    '37.386013;-122.082932'
-
-    >>> vGeo('g').to_ical()
-    Traceback (most recent call last):
-        ...
-    ValueError: Input must be (float, float) for latitude and longitude
     """
 
     def __init__(self, geo):

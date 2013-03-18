@@ -358,7 +358,21 @@ class TestProp(unittest.TestCase):
                 'http://www.example.com/')
 
 
+    def test_prop_vGeo(self):
+        vGeo = icalendar.prop.vGeo
 
+        # Pass a list
+        self.at(vGeo([1.2, 3.0]).to_ical() == '1.2;3.0')
+
+        # Pass a tuple
+        self.at(vGeo((1.2, 3.0)).to_ical() == '1.2;3.0')
+
+        g = vGeo.from_ical('37.386013;-122.082932')
+        self.at(g == (float('37.386013'), float('-122.082932')))
+
+        self.at(vGeo(g).to_ical() == '37.386013;-122.082932')
+
+        self.assertRaises(ValueError, vGeo, 'g')
 
 
 class TestPropertyValues(unittest.TestCase):
