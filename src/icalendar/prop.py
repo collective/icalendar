@@ -859,35 +859,9 @@ class TypesFactory(CaselessDict):
     """All Value types defined in rfc 2445 are registered in this factory
     class.
 
-    To get a type you can use it like this.
-    >>> factory = TypesFactory()
-    >>> datetime_parser = factory['date-time']
-    >>> dt = datetime_parser(datetime(2001, 1, 1))
-    >>> dt.to_ical()
-    '20010101T000000'
-
-    A typical use is when the parser tries to find a content type and use text
-    as the default
-    >>> value = '20050101T123000'
-    >>> value_type = 'date-time'
-    >>> typ = factory.get(value_type, 'text')
-    >>> typ.from_ical(value)
-    datetime.datetime(2005, 1, 1, 12, 30)
-
-    It can also be used to directly encode property and parameter values
-    >>> comment = factory.to_ical('comment', u'by Rasmussen, Max M\xfcller')
-    >>> str(comment)
-    'by Rasmussen\\\\, Max M\\xc3\\xbcller'
-    >>> factory.to_ical('priority', 1)
-    '1'
-    >>> factory.to_ical('cn', u'Rasmussen, Max M\xfcller')
-    'Rasmussen\\\\, Max M\\xc3\\xbcller'
-
-    >>> factory.from_ical('cn', 'Rasmussen\\\\, Max M\\xc3\\xb8ller')
-    u'Rasmussen, Max M\\xf8ller'
-
     The value and parameter names don't overlap. So one factory is enough for
     both kinds.
+
     """
 
     def __init__(self, *args, **kwargs):

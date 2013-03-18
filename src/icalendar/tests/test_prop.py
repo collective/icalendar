@@ -423,6 +423,33 @@ class TestProp(unittest.TestCase):
         self.at(str(t2.params) == "Parameters({'CN': 'Test Osterone'})")
 
 
+    def test_prop_TypesFactory(self):
+        TypesFactory = icalendar.prop.TypesFactory
+
+        # To get a type you can use it like this.
+        factory = TypesFactory()
+        datetime_parser = factory['date-time']
+        dt = datetime_parser(datetime(2001, 1, 1))
+        self.at(dt.to_ical() == '20010101T000000')
+
+        # A typical use is when the parser tries to find a content type and use
+        # text as the default
+        value = '20050101T123000'
+        value_type = 'date-time'
+        typ = factory.get(value_type, 'text')
+        self.at(typ.from_ical(value) == datetime(2005, 1, 1, 12, 30))
+
+        # It can also be used to directly encode property and parameter values
+        self.at(factory.to_ical('comment', u'by Rasmussen, Max M\xfcller') ==
+                                'by Rasmussen\\, Max M\xc3\xbcller')
+        self.at(factory.to_ical('priority', 1) == '1')
+        self.at(factory.to_ical('cn', u'Rasmussen, Max M\xfcller') ==
+                'Rasmussen\\, Max M\xc3\xbcller')
+
+        self.at(
+            factory.from_ical('cn', 'Rasmussen\\, Max M\xc3\xb8ller') ==
+            u'Rasmussen, Max M\xf8ller')
+
 
 
 
