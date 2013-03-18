@@ -228,6 +228,17 @@ class TestProp(unittest.TestCase):
         self.at(p.to_ical() == '20000101T000000/P31D')
 
 
+    def test_prop_vWeekday(self):
+        vWeekday = icalendar.prop.vWeekday
+
+        self.at(vWeekday('mo').to_ical() == 'MO')
+        self.assertRaises(ValueError, vWeekday, 'erwer')
+        self.at(vWeekday.from_ical('mo') == 'MO')
+        self.at(vWeekday.from_ical('+3mo') == '+3MO')
+        self.assertRaises(ValueError, vWeekday.from_ical, 'Saturday')
+        self.at(vWeekday('+mo').to_ical() == '+MO')
+        self.at(vWeekday('+3mo').to_ical() == '+3MO')
+        self.at(vWeekday('-tu').to_ical() == '-TU')
 
 
 

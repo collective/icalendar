@@ -533,7 +533,6 @@ class vPeriod(object):
 
     @staticmethod
     def from_ical(ical):
-        "Parses the data format from ical text format"
         try:
             start, end_or_duration = ical.split('/')
             start = vDDDTypes.from_ical(start)
@@ -553,37 +552,6 @@ class vPeriod(object):
 class vWeekday(str):
     """This returns an unquoted weekday abbrevation.
 
-    >>> a = vWeekday('mo')
-    >>> a.to_ical()
-    'MO'
-
-    >>> a = vWeekday('erwer')
-    Traceback (most recent call last):
-        ...
-    ValueError: Expected weekday abbrevation, got: erwer
-
-    >>> vWeekday.from_ical('mo')
-    'MO'
-
-    >>> vWeekday.from_ical('+3mo')
-    '+3MO'
-
-    >>> vWeekday.from_ical('Saturday')
-    Traceback (most recent call last):
-        ...
-    ValueError: Expected weekday abbrevation, got: Saturday
-
-    >>> a = vWeekday('+mo')
-    >>> a.to_ical()
-    '+MO'
-
-    >>> a = vWeekday('+3mo')
-    >>> a.to_ical()
-    '+3MO'
-
-    >>> a = vWeekday('-tu')
-    >>> a.to_ical()
-    '-TU'
     """
     week_days = CaselessDict({
         "SU": 0, "MO": 1, "TU": 2, "WE": 3, "TH": 4, "FR": 5, "SA": 6,
