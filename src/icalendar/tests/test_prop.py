@@ -1,4 +1,4 @@
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, timedelta, time
 import unittest
 
 import icalendar
@@ -339,6 +339,14 @@ class TestProp(unittest.TestCase):
         # with the official U+FFFD REPLACEMENT CHARACTER.
 
 
+    def test_prop_vTime(self):
+        vTime = icalendar.prop.vTime
+
+        self.at(vTime(12, 30, 0).to_ical() == '123000')
+        self.at(vTime.from_ical('123000') == time(12, 30))
+
+        # We should also fail, right?
+        self.assertRaises(ValueError, vTime.from_ical, '263000')
 
 
 

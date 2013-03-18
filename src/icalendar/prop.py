@@ -703,8 +703,6 @@ class vText(unicode):
 
     @staticmethod
     def from_ical(ical):
-        """Parses the data format from ical text format.
-        """
         try:
             ical_unesc = unescape_char(ical)
             return ical_unesc.decode(vText.encoding, 'replace')
