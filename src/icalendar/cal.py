@@ -21,9 +21,6 @@ from icalendar.prop import (
 )
 
 
-SequenceTypes = (list, tuple)
-
-
 ######################################
 # The component factory
 

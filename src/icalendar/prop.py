@@ -48,6 +48,8 @@ from datetime import (
     tzinfo,
 )
 from dateutil.tz import tzutc
+from icalendar import SEQUENCE_TYPES
+from icalendar import DEFAULT_ENCODING
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import (
     Parameters,
@@ -55,11 +57,6 @@ from icalendar.parser import (
     unescape_char,
     tzid_from_dt,
 )
-
-
-SequenceTypes = (list, tuple)
-
-DEFAULT_ENCODING = 'utf-8'
 
 DATE_PART = r'(\d+)D'
 TIME_PART = r'T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?'
@@ -648,11 +645,10 @@ class vRecur(CaselessDict):
         self.params = Parameters()
 
     def to_ical(self):
-        # SequenceTypes
         result = []
         for key, vals in self.sorted_items():
             typ = self.types[key]
-            if not type(vals) in SequenceTypes:
+            if not type(vals) in SEQUENCE_TYPES:
                 vals = [vals]
             vals = ','.join([typ(val).to_ical() for val in vals])
             result.append('%s=%s' % (key, vals))
@@ -685,7 +681,7 @@ class vText(unicode):
 
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
         if isinstance(value, unicode):
-            value = value.encode(DEFAULT_ENCODING)
+            value = value.encode(encoding)
         self = super(vText, cls).__new__(cls, value, encoding=encoding)
         self.encoding = encoding
         self.params = Parameters()

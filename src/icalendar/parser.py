@@ -8,11 +8,12 @@ conversion is attempted.
 """
 import re
 import logging
+from icalendar import DEFAULT_ENCODING
+from icalendar import SEQUENCE_TYPES
 from icalendar.caselessdict import CaselessDict
 
 
 logger = logging.getLogger('icalendar')
-SequenceTypes = (list, tuple)
 
 
 def escape_char(text):
@@ -105,7 +106,7 @@ def foldline(text, length=75, newline='\r\n'):
 def paramVal(val):
     """Returns a parameter value.
     """
-    if type(val) in SequenceTypes:
+    if type(val) in SEQUENCE_TYPES:
         return q_join(val)
     return dQuote(val)
 
@@ -116,8 +117,6 @@ UNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7F",:;]')
 QUNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7F"]')
 FOLD = re.compile('(\r?\n)+[ \t]')
 NEWLINE = re.compile(r'\r?\n')
-
-DEFAULT_ENCODING = 'utf-8'
 
 
 def validate_token(name):
