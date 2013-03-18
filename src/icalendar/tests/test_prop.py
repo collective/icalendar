@@ -7,7 +7,10 @@ import pytz
 
 class TestProp(unittest.TestCase):
 
-    
+    def __init__(self, *args, **kwargs):
+        super(TestProp, self).__init__(*args, **kwargs)
+        self.at = self.assertTrue
+
     def test_prop_vBinary(self):
         vBinary = icalendar.prop.vBinary
 
@@ -106,8 +109,7 @@ class TestProp(unittest.TestCase):
 
         self.assertTrue(vDDDTypes.from_ical('P31D') == timedelta(31))
 
-        self.assertTrue(vDDDTypes.from_ical('-P31D') ==
-                        timedelta(-31))
+        self.assertTrue(vDDDTypes.from_ical('-P31D') == timedelta(-31))
 
         # Bad input
         self.assertRaises(ValueError, vDDDTypes, 42)
@@ -149,7 +151,7 @@ class TestProp(unittest.TestCase):
 
         # 1 minute before transition to DST
         dat = vDatetime.from_ical('20120311T015959', 'America/Denver')
-        self.assertTrue(dat.strftime('%Y%m%d%H%M%S %z') == 
+        self.assertTrue(dat.strftime('%Y%m%d%H%M%S %z') ==
                         '20120311015959 -0700')
 
         # After transition to DST
@@ -159,6 +161,43 @@ class TestProp(unittest.TestCase):
 
         dat = vDatetime.from_ical('20101010T000000', 'Europe/Vienna')
         self.assertTrue(vDatetime(dat).to_ical() == '20101010T000000')
+
+
+    def test_prop_vDuration(self):
+        vDuration = icalendar.prop.vDuration
+
+        self.at(vDuration(timedelta(11)).to_ical() == 'P11D')
+        self.at(vDuration(timedelta(-14)).to_ical() == '-P14D')
+        self.at(vDuration(timedelta(1, 7384)).to_ical() == 'P1DT2H3M4S')
+        self.at(vDuration(timedelta(1, 7380)).to_ical() == 'P1DT2H3M')
+        self.at(vDuration(timedelta(1, 7200)).to_ical() == 'P1DT2H')
+        self.at(vDuration(timedelta(0, 7200)).to_ical() == 'PT2H')
+        self.at(vDuration(timedelta(0, 7384)).to_ical() == 'PT2H3M4S')
+        self.at(vDuration(timedelta(0, 184)).to_ical() == 'PT3M4S')
+        self.at(vDuration(timedelta(0, 22)).to_ical() == 'PT22S')
+        self.at(vDuration(timedelta(0, 3622)).to_ical() == 'PT1H0M22S')
+        self.at(vDuration(timedelta(days=1, hours=5)).to_ical() == 'P1DT5H')
+        self.at(vDuration(timedelta(hours=-5)).to_ical() == '-PT5H')
+        self.at(vDuration(timedelta(days=-1, hours=-5)).to_ical() == '-P1DT5H')
+
+        # How does the parsing work?
+        self.at(vDuration.from_ical('PT1H0M22S') == timedelta(0, 3622))
+
+        self.assertRaises(ValueError, vDuration.from_ical, 'kox')
+
+        self.at(vDuration.from_ical('-P14D') == timedelta(-14))
+
+        self.assertRaises(ValueError, vDuration, 11)
+
+
+
+
+
+
+
+
+
+
 
 
 
