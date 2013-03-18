@@ -399,11 +399,8 @@ class TestProp(unittest.TestCase):
         # Parsing
 
         self.at(vUTCOffset.from_ical('0000') == timedelta(0))
-
         self.at(vUTCOffset.from_ical('-0030') == timedelta(-1, 84600))
-
         self.at(vUTCOffset.from_ical('+0200') == timedelta(0, 7200))
-
         self.at(vUTCOffset.from_ical('+023040') == timedelta(0, 9040))
 
         o = vUTCOffset.from_ical('+0230')
@@ -413,6 +410,30 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vUTCOffset.from_ical, '+323k')
 
         self.assertRaises(ValueError, vUTCOffset.from_ical, '+2400')
+
+
+    def test_prop_vInline(self):
+        vInline = icalendar.prop.vInline
+
+        self.at(vInline('Some text') == 'Some text')
+        self.at(vInline.from_ical('Some text') == 'Some text')
+
+        t2 = vInline('other text')
+        t2.params['cn'] = 'Test Osterone'
+        self.at(str(t2.params) == "Parameters({'CN': 'Test Osterone'})")
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

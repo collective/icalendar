@@ -841,16 +841,6 @@ class vInline(str):
     has parameters. Conversion of inline values are handled by the Component
     class, so no further processing is needed.
 
-    >>> vInline('Some text')
-    'Some text'
-
-    >>> vInline.from_ical('Some text')
-    'Some text'
-
-    >>> t2 = vInline('other text')
-    >>> t2.params['cn'] = 'Test Osterone'
-    >>> t2.params
-    Parameters({'CN': 'Test Osterone'})
     """
 
     def __init__(self, obj):
