@@ -47,10 +47,6 @@ from datetime import (
     date,
     tzinfo,
 )
-from types import (
-    TupleType,
-    ListType,
-)
 from dateutil.tz import tzutc
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import (
@@ -61,7 +57,7 @@ from icalendar.parser import (
 )
 
 
-SequenceTypes = (ListType, TupleType)
+SequenceTypes = (list, tuple)
 
 DEFAULT_ENCODING = 'utf-8'
 
@@ -707,7 +703,6 @@ class vText(unicode):
             ical_unesc = unescape_char(ical)
             return ical_unesc.decode(vText.encoding, 'replace')
         except:
-            import pdb; pdb.set_trace()
             raise ValueError('Expected ical text, got: %s' % ical)
 
 

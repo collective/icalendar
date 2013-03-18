@@ -8,15 +8,11 @@ conversion is attempted.
 """
 import re
 import logging
-from types import (
-    TupleType,
-    ListType,
-)
 from icalendar.caselessdict import CaselessDict
 
 
 logger = logging.getLogger('icalendar')
-SequenceTypes = (ListType, TupleType)
+SequenceTypes = (list, tuple)
 
 
 def escape_char(text):
