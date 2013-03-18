@@ -42,3 +42,35 @@ class TestCaselessdict(unittest.TestCase):
         self.assertTrue(out,
             [('i', 7), ('c', 'at'), ('a', 3.5), ('d', {'x': 'y'}),
              ('e', [4, 5]), ('l', (2, 3)), ('n', 13), ('r', 1.0)])
+
+
+    def test_CaselessDict(self):
+        CaselessDict = icalendar.caselessdict.CaselessDict
+
+        ncd = CaselessDict(key1='val1', key2='val2')
+        self.assertEqual(ncd,
+            CaselessDict({'KEY2': 'val2', 'KEY1': 'val1'}))
+
+        self.assertEqual(ncd['key1'], 'val1')
+        self.assertEqual(ncd['KEY1'], 'val1')
+
+        ncd['KEY3'] = 'val3'
+        self.assertEqual(ncd['key3'], 'val3')
+
+        self.assertEqual(ncd.setdefault('key3', 'FOUND'), 'val3')
+        self.assertEqual(ncd.setdefault('key4', 'NOT FOUND'), 'NOT FOUND')
+        self.assertEqual(ncd['key4'], 'NOT FOUND')
+        self.assertEqual(ncd.get('key1'), 'val1')
+        self.assertEqual(ncd.get('key3', 'NOT FOUND'), 'val3')
+        self.assertEqual(ncd.get('key4', 'NOT FOUND'), 'NOT FOUND')
+        self.assertTrue('key4' in ncd)
+
+        del ncd['key4']
+        self.assertFalse(ncd.has_key('key4'))
+
+        ncd.update({'key5':'val5', 'KEY6':'val6', 'KEY5':'val7'})
+        self.assertEqual(ncd['key6'], 'val6')
+
+        keys = ncd.keys()
+        keys.sort()
+        self.assertEqual(keys, ['KEY1', 'KEY2', 'KEY3', 'KEY5', 'KEY6'])

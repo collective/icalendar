@@ -21,45 +21,9 @@ def canonsort_items(dict1, canonical_order=None):
 
 
 class CaselessDict(dict):
-    """
-    A dictionary that isn't case sensitive, and only uses strings as keys.
+    """A dictionary that isn't case sensitive, and only uses strings as keys.
     Values retain their case.
 
-    >>> from icalendar.caselessdict import CaselessDict
-    >>> ncd = CaselessDict(key1='val1', key2='val2')
-    >>> ncd
-    CaselessDict({'KEY2': 'val2', 'KEY1': 'val1'})
-    >>> ncd['key1']
-    'val1'
-    >>> ncd['KEY1']
-    'val1'
-    >>> ncd['KEY3'] = 'val3'
-    >>> ncd['key3']
-    'val3'
-    >>> ncd.setdefault('key3', 'FOUND')
-    'val3'
-    >>> ncd.setdefault('key4', 'NOT FOUND')
-    'NOT FOUND'
-    >>> ncd['key4']
-    'NOT FOUND'
-    >>> ncd.get('key1')
-    'val1'
-    >>> ncd.get('key3', 'NOT FOUND')
-    'val3'
-    >>> ncd.get('key4', 'NOT FOUND')
-    'NOT FOUND'
-    >>> 'key4' in ncd
-    True
-    >>> del ncd['key4']
-    >>> ncd.has_key('key4')
-    False
-    >>> ncd.update({'key5':'val5', 'KEY6':'val6', 'KEY5':'val7'})
-    >>> ncd['key6']
-    'val6'
-    >>> keys = ncd.keys()
-    >>> keys.sort()
-    >>> keys
-    ['KEY1', 'KEY2', 'KEY3', 'KEY5', 'KEY6']
     """
 
     def __init__(self, *args, **kwargs):
