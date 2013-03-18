@@ -31,14 +31,6 @@ class ComponentFactory(CaselessDict):
     """ All components defined in rfc 2445 are registered in this factory
     class. To get a component you can use it like this.
 
-    >>> factory = ComponentFactory()
-    >>> component = factory['VEVENT']
-    >>> event = component(dtstart='19700101')
-    >>> event.to_ical()
-    'BEGIN:VEVENT\\r\\nDTSTART:19700101\\r\\nEND:VEVENT\\r\\n'
-
-    >>> factory.get('VCALENDAR', Component)
-    <class 'icalendar.cal.Calendar'>
     """
 
     def __init__(self, *args, **kwargs):
@@ -251,20 +243,8 @@ class Component(CaselessDict):
 
     @staticmethod
     def from_ical(st, multiple=False):
-        """
-        Populates the component recursively from a string
+        """Populates the component recursively from a string.
 
-        RecurrenceIDs may contain a TZID parameter, if so, they should create
-        a tz localized datetime, otherwise, create a naive datetime
-        >>> componentStr = 'BEGIN:VEVENT\\nRECURRENCE-ID;TZID=America/Denver:20120404T073000\\nEND:VEVENT'
-        >>> component = Component.from_ical(componentStr)
-        >>> component['RECURRENCE-ID'].dt.tzinfo
-        <DstTzInfo 'America/Denver' MDT-1 day, 18:00:00 DST>
-
-        >>> componentStr = 'BEGIN:VEVENT\\nRECURRENCE-ID:20120404T073000\\nEND:VEVENT'
-        >>> component = Component.from_ical(componentStr)
-        >>> component['RECURRENCE-ID'].dt.tzinfo == None
-        True
         """
         stack = [] # a stack of components
         comps = []

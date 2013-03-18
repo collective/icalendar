@@ -184,3 +184,18 @@ class TestCalComponent(unittest.TestCase):
                        + 'END:VEVENT'
         component = Component.from_ical(componentStr)
         self.assertEqual(component['RECURRENCE-ID'].dt.tzinfo, None)
+
+
+class TestCal(unittest.TestCase):
+
+    def test_cal_ComponentFactory(self):
+        ComponentFactory = icalendar.cal.ComponentFactory
+        factory = ComponentFactory()
+        component = factory['VEVENT']
+        event = component(dtstart='19700101')
+        self.assertEqual(event.to_ical(),
+            'BEGIN:VEVENT\r\nDTSTART:19700101\r\nEND:VEVENT\r\n')
+
+        self.assertEqual(
+            factory.get('VCALENDAR', icalendar.cal.Component),
+            icalendar.cal.Calendar)
