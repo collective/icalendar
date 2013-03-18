@@ -306,10 +306,13 @@ class Contentline(unicode):
             # elif isinstance(values, basestring):
             #    values = escape_char(values)
 
+            # TODO: after unicode only, remove
+            name = safe_unicode(name)
+            values = safe_unicode(values)
             if params:
-                return Contentline('%s;%s:%s'
-                                   % (name, params.to_ical(), values))
-            return Contentline('%s:%s' % (name, values))
+                params = safe_unicode(params.to_ical())
+                return Contentline(u'%s;%s:%s' % (name, params, values))
+            return Contentline(u'%s:%s' % (name, values))
         except Exception:
             raise ValueError(u'Property: %r Wrong values "%r" or "%r"'
                              % (name, params, values))

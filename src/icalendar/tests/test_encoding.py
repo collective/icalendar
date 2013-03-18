@@ -61,3 +61,12 @@ class TestEncoding(unittest.TestCase):
         out = event.to_ical()
         summary = "SUMMARY:åäö"
         self.assertTrue(summary in out.splitlines())
+
+
+    def test_unicode_parameter_name(self):
+        # Test for issue #80
+        cal = icalendar.Calendar()
+        event = icalendar.Event()
+        event.add(u'DESCRIPTION', u'äöüßÄÖÜ')
+        cal.add_component(event)
+        c = cal.to_ical()

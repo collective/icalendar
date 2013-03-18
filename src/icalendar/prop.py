@@ -679,8 +679,6 @@ class vText(unicode):
 
     """
 
-    encoding = DEFAULT_ENCODING
-
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
         value = safe_unicode(value, encoding=encoding)
         self = super(vText, cls).__new__(cls, value)
