@@ -7,10 +7,6 @@ These are the defined components.
 """
 import pytz
 from datetime import datetime
-from types import (
-    ListType,
-    TupleType,
-)
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import (
     Contentlines,
@@ -25,7 +21,7 @@ from icalendar.prop import (
 )
 
 
-SequenceTypes = (ListType, TupleType)
+SequenceTypes = (list, tuple)
 
 
 ######################################
@@ -247,7 +243,7 @@ class Component(CaselessDict):
         return obj
 
     def set(self, name, value, encode=1):
-        if encode and type(value) == ListType\
+        if encode and isinstance(value, list) \
                 and name.lower() not in ['rdate', 'exdate']:
             # Individually convert each value to an ical type except rdate and
             # exdate, where lists of dates might be passed to vDDDLists.
@@ -293,7 +289,7 @@ class Component(CaselessDict):
         if name in self:
             oldval = self[name]
             value = self._encode(name, value, encode)
-            if type(oldval) == ListType:
+            if isinstance(oldval, list):
                 oldval.append(value)
             else:
                 self.set(name, [oldval, value], encode=0)
@@ -309,7 +305,7 @@ class Component(CaselessDict):
         "Returns decoded value of property"
         if name in self:
             value = self[name]
-            if type(value) == ListType:
+            if isinstance(value, list):
                 return [self._decode(name, v) for v in value]
             return self._decode(name, value)
         else:
@@ -380,7 +376,7 @@ class Component(CaselessDict):
         property_names = self.sorted_keys()
         for name in property_names:
             values = self[name]
-            if type(values) == ListType:
+            if isinstance(values, list):
                 # normally one property is one line
                 for value in values:
                     properties.append((name, value))
