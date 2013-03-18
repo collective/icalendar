@@ -714,18 +714,6 @@ class vText(unicode):
 class vTime(object):
     """Render and generates iCalendar time format.
 
-    >>> dt = vTime(12, 30, 0)
-    >>> dt.to_ical()
-    '123000'
-
-    >>> vTime.from_ical('123000')
-    datetime.time(12, 30)
-
-    We should also fail, right?
-    >>> vTime.from_ical('263000')
-    Traceback (most recent call last):
-        ...
-    ValueError: Expected time, got: 263000
     """
 
     def __init__(self, *args):
@@ -742,7 +730,6 @@ class vTime(object):
 
     @staticmethod
     def from_ical(ical):
-        "Parses the data format from ical text format"
         # TODO: timezone support
         try:
             timetuple = (int(ical[:2]), int(ical[2:4]), int(ical[4:6]))

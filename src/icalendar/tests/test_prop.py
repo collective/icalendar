@@ -349,6 +349,13 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vTime.from_ical, '263000')
 
 
+    def test_prop_vUri(self):
+        vUri = icalendar.prop.vUri
+
+        self.at(vUri('http://www.example.com/').to_ical() ==
+                'http://www.example.com/')
+        self.at(vUri.from_ical('http://www.example.com/') ==
+                'http://www.example.com/')
 
 
 
