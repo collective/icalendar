@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, date, timedelta
 import unittest
 
 import icalendar
@@ -7,6 +7,7 @@ import pytz
 
 class TestProp(unittest.TestCase):
 
+    
     def test_prop_vBinary(self):
         vBinary = icalendar.prop.vBinary
 
@@ -73,7 +74,7 @@ class TestProp(unittest.TestCase):
         dt_list = vDDDLists.from_ical('19960402T010000Z')
         self.assertTrue(type(dt_list) == list)
         self.assertTrue(len(dt_list) == 1)
-        self.assertTrue(type(dt_list[0]) == datetime.datetime)
+        self.assertTrue(type(dt_list[0]) == datetime)
         self.assertTrue(str(dt_list[0]) == '1996-04-02 01:00:00+00:00')
 
         p = '19960402T010000Z,19960403T010000Z,19960404T010000Z'
@@ -85,11 +86,10 @@ class TestProp(unittest.TestCase):
         dt_list = vDDDLists([])
         self.assertTrue(dt_list.to_ical() == '')
 
-        dt_list = vDDDLists([datetime.datetime(2000,1,1)])
+        dt_list = vDDDLists([datetime(2000,1,1)])
         self.assertTrue(dt_list.to_ical() == '20000101T000000')
 
-        dt_list = vDDDLists([datetime.datetime(2000,1,1),
-                             datetime.datetime(2000,11,11)])
+        dt_list = vDDDLists([datetime(2000,1,1), datetime(2000,11,11)])
         self.assertTrue(dt_list.to_ical() == '20000101T000000,20001111T000000')
 
 
@@ -97,17 +97,17 @@ class TestProp(unittest.TestCase):
         vDDDTypes = icalendar.prop.vDDDTypes
 
         self.assertTrue(type(vDDDTypes.from_ical('20010101T123000')) ==
-                        datetime.datetime)
+                        datetime)
 
-        self.assertTrue(repr(vDDDTypes.from_ical('20010101T123000Z'))[:65] ==
-                        'datetime.datetime(2001, 1, 1, 12, 30, tzinfo=<UTC>)')
+        self.assertTrue(vDDDTypes.from_ical('20010101T123000Z') ==
+                        datetime(2001, 1, 1, 12, 30, tzinfo=pytz.utc))
 
-        self.assertTrue(type(vDDDTypes.from_ical('20010101')) == datetime.date)
+        self.assertTrue(type(vDDDTypes.from_ical('20010101')) == date)
 
-        self.assertTrue(vDDDTypes.from_ical('P31D') == datetime.timedelta(31))
+        self.assertTrue(vDDDTypes.from_ical('P31D') == timedelta(31))
 
         self.assertTrue(vDDDTypes.from_ical('-P31D') ==
-                        datetime.timedelta(-31))
+                        timedelta(-31))
 
         # Bad input
         self.assertRaises(ValueError, vDDDTypes, 42)
@@ -116,13 +116,10 @@ class TestProp(unittest.TestCase):
     def test_prop_vDate(self):
         vDate = icalendar.prop.vDate
 
-        self.assertTrue(vDate(datetime.date(2001, 1, 1)).to_ical() ==
-                        '20010101')
-        self.assertTrue(vDate(datetime.date(1899, 1, 1)).to_ical() ==
-                        '18990101')
+        self.assertTrue(vDate(date(2001, 1, 1)).to_ical() == '20010101')
+        self.assertTrue(vDate(date(1899, 1, 1)).to_ical() == '18990101')
 
-        self.assertTrue(vDate.from_ical('20010102') ==
-                        datetime.date(2001, 1, 2))
+        self.assertTrue(vDate.from_ical('20010102') == date(2001, 1, 2))
 
         self.assertRaises(ValueError, vDate, 'd')
 
@@ -130,20 +127,20 @@ class TestProp(unittest.TestCase):
     def test_prop_vDatetime(self):
         vDatetime = icalendar.prop.vDatetime
 
-        dt = datetime.datetime(2001, 1, 1, 12, 30, 0)
+        dt = datetime(2001, 1, 1, 12, 30, 0)
         self.assertTrue(vDatetime(dt).to_ical() == '20010101T123000')
 
         self.assertTrue(vDatetime.from_ical('20000101T120000') ==
-                        datetime.datetime(2000, 1, 1, 12, 0))
+                        datetime(2000, 1, 1, 12, 0))
 
-        dutc = datetime.datetime(2001, 1,1, 12, 30, 0, tzinfo=pytz.utc)
+        dutc = datetime(2001, 1,1, 12, 30, 0, tzinfo=pytz.utc)
         self.assertTrue(vDatetime(dutc).to_ical() == '20010101T123000Z')
 
-        dutc = datetime.datetime(1899, 1,1, 12, 30, 0, tzinfo=pytz.utc)
+        dutc = datetime(1899, 1,1, 12, 30, 0, tzinfo=pytz.utc)
         self.assertTrue(vDatetime(dutc).to_ical() == '18990101T123000Z')
 
         self.assertTrue(vDatetime.from_ical('20010101T000000') ==
-                        datetime.datetime(2001, 1, 1, 0, 0))
+                        datetime(2001, 1, 1, 0, 0))
 
         self.assertRaises(ValueError, vDatetime.from_ical, '20010101T000000A')
 
@@ -164,6 +161,7 @@ class TestProp(unittest.TestCase):
         self.assertTrue(vDatetime(dat).to_ical() == '20101010T000000')
 
 
+
 class TestPropertyValues(unittest.TestCase):
 
     def test_vDDDLists_timezone(self):
@@ -171,9 +169,9 @@ class TestPropertyValues(unittest.TestCase):
         """
         e = icalendar.Event()
         at = pytz.timezone('Europe/Vienna')
-        dt1 = at.localize(datetime.datetime(2013, 1, 1))
-        dt2 = at.localize(datetime.datetime(2013, 1, 2))
-        dt3 = at.localize(datetime.datetime(2013, 1, 3))
+        dt1 = at.localize(datetime(2013, 1, 1))
+        dt2 = at.localize(datetime(2013, 1, 2))
+        dt3 = at.localize(datetime(2013, 1, 3))
         e.add('rdate', [dt1, dt2])
         e.add('exdate', dt3)
         out = e.to_ical()
