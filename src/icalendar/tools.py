@@ -12,29 +12,10 @@ from icalendar.prop import (
 )
 
 
-class UIDGenerator:
-    """If you are too lazy to create real uid's. Notice, this doctest is
-    disabled!
+class UIDGenerator(object):
+    """If you are too lazy to create real uid's.
 
-    Automatic semi-random uid
-    >> g = UIDGenerator()
-    >> uid = g.uid()
-    >> uid.to_ical()
-    '20050109T153222-7ekDDHKcw46QlwZK@example.com'
-
-    You should at least insert your own hostname to be more compliant
-    >> g = UIDGenerator()
-    >> uid = g.uid('Example.ORG')
-    >> uid.to_ical()
-    '20050109T153549-NbUItOPDjQj8Ux6q@Example.ORG'
-
-    You can also insert a path or similar
-    >> g = UIDGenerator()
-    >> uid = g.uid('Example.ORG', '/path/to/content')
-    >> uid.to_ical()
-    '20050109T153415-/path/to/content@Example.ORG'
     """
-
     chars = list(ascii_letters + digits)
 
     def rnd_string(self, length=16):
@@ -57,7 +38,7 @@ class UIDGenerator:
 if sys.version_info[0:2] <= (2, 5):
     class TextWrapper(textwrap.TextWrapper):
         """A TextWrapper that borrow its _wrap_chunks implementation
-        from python 2.7
+        from Python 2.7.
         """
         def __init__(self, **kw):
             self.drop_whitespace = kw.pop('drop_whitespace', True)
@@ -140,9 +121,3 @@ else:
 def wrap(text, width=70, **kwargs):
     w = TextWrapper(width=width, **kwargs)
     return w.wrap(text)
-
-
-if __name__ == "__main__":
-    import doctest, tools
-    # import and test this file
-    doctest.testmod(tools)
