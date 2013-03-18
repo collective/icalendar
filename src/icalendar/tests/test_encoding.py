@@ -70,3 +70,7 @@ class TestEncoding(unittest.TestCase):
         event.add(u'DESCRIPTION', u'äöüßÄÖÜ')
         cal.add_component(event)
         c = cal.to_ical()
+        self.assertEqual(c,
+            'BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nDESCRIPTION:'\
+            + '\xc3\xa4\xc3\xb6\xc3\xbc\xc3\x9f\xc3\x84\xc3\x96\xc3\x9c\r\n'\
+            + 'END:VEVENT\r\nEND:VCALENDAR\r\n')
