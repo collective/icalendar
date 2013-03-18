@@ -67,30 +67,30 @@ class TestPropertyParams(unittest.TestCase):
 
     def test_escaping(self):
         # verify that escaped non safe chars are decoded correctly
-        NON_SAFE_CHARS = r',\;:'
+        NON_SAFE_CHARS = ur',\;:'
         for char in NON_SAFE_CHARS:
-            cn_escaped = r"Society\%s 2014" % char
-            cn_decoded = r"Society%s 2014" % char
+            cn_escaped = ur"Society\%s 2014" % char
+            cn_decoded = ur"Society%s 2014" % char
             vevent = icalendar.Event.from_ical(
-                'BEGIN:VEVENT\r\n'
-                'ORGANIZER;CN=%s:that\r\n'
-                'END:VEVENT\r\n' % cn_escaped
+                u'BEGIN:VEVENT\r\n'
+                u'ORGANIZER;CN=%s:that\r\n'
+                u'END:VEVENT\r\n' % cn_escaped
             )
             self.assertEqual(vevent['ORGANIZER'].params['CN'], cn_decoded)
 
         vevent = icalendar.Event.from_ical(
-            'BEGIN:VEVENT\r\n'
-            'ORGANIZER;CN=that\\, that\\; that\\\\ that\\:'
-            ':это\\, то\\; that\\\\ that\\:\r\n'
-            'END:VEVENT\r\n'
+            u'BEGIN:VEVENT\r\n'
+            u'ORGANIZER;CN=that\\, that\\; that\\\\ that\\:'
+            u':это\\, то\\; that\\\\ that\\:\r\n'
+            u'END:VEVENT\r\n'
         )
         self.assertEqual(
             vevent['ORGANIZER'].params['CN'],
-            r'that, that; that\ that:'
+            ur'that, that; that\ that:'
         )
         self.assertEqual(
             vevent['ORGANIZER'],
-            r'это, то; that\ that:'
+            ur'это, то; that\ that:'
         )
 
     def test_parameters_class(self):

@@ -313,7 +313,7 @@ class Component(CaselessDict):
 
     def content_lines(self):
         """Converts the Component and subcomponents into content lines.
-        
+
         """
         contentlines = Contentlines()
         for name, values in self.property_items():
@@ -323,7 +323,8 @@ class Component(CaselessDict):
         return contentlines
 
     def to_ical(self):
-        return self.content_lines().to_ical()
+        content_lines = self.content_lines()
+        return content_lines.to_ical()
 
 
 #######################################

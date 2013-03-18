@@ -56,6 +56,7 @@ from icalendar.parser import (
     escape_char,
     unescape_char,
     tzid_from_dt,
+    safe_unicode
 )
 
 DATE_PART = r'(\d+)D'
@@ -78,7 +79,7 @@ class vBinary(object):
         self.params = Parameters(encoding='BASE64', value="BINARY")
 
     def __repr__(self):
-        return "vBinary(%s)" % str.__repr__(self.obj)
+        return "vBinary('%s')" % self.to_ical()
 
     def to_ical(self):
         return binascii.b2a_base64(self.obj)[:-1]
@@ -115,29 +116,28 @@ class vBoolean(int):
             raise ValueError("Expected 'TRUE' or 'FALSE'. Got %s" % ical)
 
 
-class vCalAddress(str):
+class vCalAddress(unicode):
     """This just returns an unquoted string.
 
     """
-    def __new__(cls, value):
-        if isinstance(value, unicode):
-            value = value.encode(DEFAULT_ENCODING)
+    def __new__(cls, value, encoding=DEFAULT_ENCODING):
+        value = safe_unicode(value, encoding=encoding)
         self = super(vCalAddress, cls).__new__(cls, value)
         self.params = Parameters()
         return self
 
     def __repr__(self):
-        return u"vCalAddress(%s)" % str.__repr__(self)
+        return "vCalAddress('%s')" % self.to_ical()
 
     def to_ical(self):
-        return str(self)
+        return self.encode(DEFAULT_ENCODING)
 
     @staticmethod
     def from_ical(ical):
         try:
-            return str(ical)
+            return vCalAddress(ical)
         except:
-            raise ValueError('Expected vCalAddress, got: %s' % ical)
+            raise ValueError(u'Expected vCalAddress, got: %s' % ical)
 
 
 ####################################################
@@ -542,7 +542,7 @@ class vPeriod(object):
         return 'vPeriod(%r)' % p
 
 
-class vWeekday(str):
+class vWeekday(unicode):
     """This returns an unquoted weekday abbrevation.
 
     """
@@ -550,8 +550,9 @@ class vWeekday(str):
         "SU": 0, "MO": 1, "TU": 2, "WE": 3, "TH": 4, "FR": 5, "SA": 6,
     })
 
-    def __new__(cls, *args, **kwargs):
-        self = super(vWeekday, cls).__new__(cls, *args, **kwargs)
+    def __new__(cls, value, encoding=DEFAULT_ENCODING):
+        value = safe_unicode(value, encoding=encoding)
+        self = super(vWeekday, cls).__new__(cls, value)
         match = WEEKDAY_RULE.match(self)
         if match is None:
             raise ValueError('Expected weekday abbrevation, got: %s' % self)
@@ -566,7 +567,7 @@ class vWeekday(str):
         return self
 
     def to_ical(self):
-        return self.upper()
+        return self.encode(DEFAULT_ENCODING).upper()
 
     @staticmethod
     def from_ical(ical):
@@ -576,7 +577,7 @@ class vWeekday(str):
             raise ValueError('Expected weekday abbrevation, got: %s' % ical)
 
 
-class vFrequency(str):
+class vFrequency(unicode):
     """A simple class that catches illegal values.
 
     """
@@ -591,15 +592,16 @@ class vFrequency(str):
         "YEARLY": "YEARLY",
     })
 
-    def __new__(cls, *args, **kwargs):
-        self = super(vFrequency, cls).__new__(cls, *args, **kwargs)
+    def __new__(cls, value, encoding=DEFAULT_ENCODING):
+        value = safe_unicode(value, encoding=encoding)
+        self = super(vFrequency, cls).__new__(cls, value)
         if not self in vFrequency.frequencies:
             raise ValueError('Expected frequency, got: %s' % self)
         self.params = Parameters()
         return self
 
     def to_ical(self):
-        return self.upper()
+        return self.encode(DEFAULT_ENCODING).upper()
 
     @staticmethod
     def from_ical(ical):
@@ -680,15 +682,14 @@ class vText(unicode):
     encoding = DEFAULT_ENCODING
 
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
-        if isinstance(value, unicode):
-            value = value.encode(encoding)
-        self = super(vText, cls).__new__(cls, value, encoding=encoding)
+        value = safe_unicode(value, encoding=encoding)
+        self = super(vText, cls).__new__(cls, value)
         self.encoding = encoding
         self.params = Parameters()
         return self
 
     def __repr__(self):
-        return u"vText(%s)" % unicode.__repr__(self)
+        return "vText('%s')" % self.to_ical()
 
     def to_ical(self):
         return escape_char(self).encode(self.encoding)
@@ -697,7 +698,7 @@ class vText(unicode):
     def from_ical(ical):
         try:
             ical_unesc = unescape_char(ical)
-            return ical_unesc.decode(vText.encoding, 'replace')
+            return vText(ical_unesc)
         except:
             raise ValueError('Expected ical text, got: %s' % ical)
 
@@ -729,23 +730,24 @@ class vTime(object):
             raise ValueError('Expected time, got: %s' % ical)
 
 
-class vUri(str):
+class vUri(unicode):
     """Uniform resource identifier is basically just an unquoted string.
 
     """
 
-    def __new__(cls, *args, **kwargs):
-        self = super(vUri, cls).__new__(cls, *args, **kwargs)
+    def __new__(cls, value, encoding=DEFAULT_ENCODING):
+        value = safe_unicode(value, encoding=encoding)
+        self = super(vUri, cls).__new__(cls, value)
         self.params = Parameters()
         return self
 
     def to_ical(self):
-        return str(self)
+        return self.encode(DEFAULT_ENCODING)
 
     @staticmethod
     def from_ical(ical):
         try:
-            return str(ical)
+            return vUri(ical)
         except:
             raise ValueError('Expected , got: %s' % ical)
 
@@ -827,23 +829,24 @@ class vUTCOffset(object):
         return offset
 
 
-class vInline(str):
+class vInline(unicode):
     """This is an especially dumb class that just holds raw unparsed text and
     has parameters. Conversion of inline values are handled by the Component
     class, so no further processing is needed.
 
     """
-
-    def __init__(self, obj):
-        self.obj = obj
+    def __new__(cls, value, encoding=DEFAULT_ENCODING):
+        value = safe_unicode(value, encoding=encoding)
+        self = super(vInline, cls).__new__(cls, value)
         self.params = Parameters()
+        return self
 
     def to_ical(self):
-        return str(self)
+        return self.encode(DEFAULT_ENCODING)
 
     @staticmethod
     def from_ical(ical):
-        return str(ical)
+        return vInline(ical)
 
 
 class TypesFactory(CaselessDict):

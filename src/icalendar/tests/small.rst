@@ -15,7 +15,7 @@ A small example::
   'VEVENT'
 
   >>> cal['prodid']
-  vText(u'-//My product//mxm.dk/')
+  vText('-//My product//mxm.dk/')
 
   >>> cal.decoded('prodid')
   u'-//My product//mxm.dk/'
@@ -25,4 +25,4 @@ A small example::
   u'This is a very long description that will be folded This is a very long des'
 
   >>> first_event['summary']
-  vText(u'A second event')
+  vText('A second event')

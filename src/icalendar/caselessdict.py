@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+from icalendar import DEFAULT_ENCODING
 
 def canonsort_keys(keys, canonical_order=None):
     """Sorts leading keys according to canonical_order.  Keys not specified in
@@ -76,7 +76,12 @@ class CaselessDict(dict):
         dict.clear(self)
 
     def __repr__(self):
-        return 'CaselessDict(' + dict.__repr__(self) + ')'
+        # TODO: not necessary when to_ical also outs unicode
+        dict_repr = dict(map(
+            lambda item: (item[0].encode(DEFAULT_ENCODING), item[1]),
+            self.iteritems()
+            ))
+        return 'CaselessDict(%s)' % dict_repr
 
     # A list of keys that must appear first in sorted_keys and sorted_items;
     # must be uppercase.

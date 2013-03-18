@@ -5,6 +5,9 @@ Changelog
 3.4dev (unreleased)
 -------------------
 
+- Switch to unicode internally.
+  [thet]
+
 - Test fixes.
   [warvariuc]
 

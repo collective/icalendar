@@ -7,18 +7,15 @@ It is stupid in the sense that it treats the content purely as strings. No type
 conversion is attempted.
 """
 import re
-import logging
 from icalendar import DEFAULT_ENCODING
 from icalendar import SEQUENCE_TYPES
 from icalendar.caselessdict import CaselessDict
 
 
-logger = logging.getLogger('icalendar')
-
-
 def safe_unicode(value, encoding='utf-8'):
     """Converts a value to unicode, even if it is already a unicode string.
 
+    Taken from from Products.CMFPlone.utils.
     """
     if isinstance(value, unicode):
         return value
@@ -221,7 +218,7 @@ class Parameters(CaselessDict):
 #       "returns a decoded value, or list of same"
 
     def __repr__(self):
-        return 'Parameters(' + dict.__repr__(self) + ')'
+        return 'Parameters(%s)' % dict.__repr__(self)
 
     def to_ical(self):
         result = []
@@ -272,14 +269,12 @@ class Parameters(CaselessDict):
 
 
 def escape_string(val):
-    assert isinstance(val, str)
     # '%{:02X}'.format(i)
     return val.replace(r'\,', '%2C').replace(r'\:', '%3A')\
               .replace(r'\;', '%3B').replace(r'\\', '%5C')
 
 
 def unsescape_string(val):
-    assert isinstance(val, str)
     return val.replace('%2C', ',').replace('%3A', ':')\
               .replace('%3B', ';').replace('%5C', '\\')
 
@@ -287,13 +282,13 @@ def unsescape_string(val):
 #########################################
 # parsing and generation of content lines
 
-class Contentline(str):
+class Contentline(unicode):
     """A content line is basically a string that can be folded and parsed into
     parts.
+
     """
-    def __new__(cls, value, strict=False):
-        if isinstance(value, unicode):
-            value = value.encode(DEFAULT_ENCODING)
+    def __new__(cls, value, strict=False, encoding=DEFAULT_ENCODING):
+        value = safe_unicode(value, encoding=encoding)
         self = super(Contentline, cls).__new__(cls, value)
         self.strict = strict
         return self
@@ -315,8 +310,7 @@ class Contentline(str):
                 return Contentline('%s;%s:%s'
                                    % (name, params.to_ical(), values))
             return Contentline('%s:%s' % (name, values))
-        except Exception as exc:
-            logger.error(str(exc))
+        except Exception:
             raise ValueError(u'Property: %r Wrong values "%r" or "%r"'
                              % (name, params, values))
 
@@ -360,13 +354,14 @@ class Contentline(str):
             # a fold is carriage return followed by either a space or a tab
             return Contentline(FOLD.sub('', st), strict=strict)
         except:
-            raise ValueError('Expected StringType with content line')
+            raise ValueError(u'Expected StringType with content line')
 
     def to_ical(self):
         """Long content lines are folded so they are less than 75 characters.
         wide.
         """
-        return foldline(self, newline='\r\n')
+        value = self.encode(DEFAULT_ENCODING)
+        return foldline(value, newline='\r\n')
 
 
 class Contentlines(list):
