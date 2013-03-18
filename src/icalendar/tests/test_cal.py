@@ -1,6 +1,8 @@
 import unittest
 import icalendar
 from datetime import datetime, timedelta
+import pytz
+
 
 class TestCalComponent(unittest.TestCase):
 
@@ -146,3 +148,23 @@ class TestCalComponent(unittest.TestCase):
         freebusy = c.get_inline('freebusy', decode=1)
         self.assertTrue(isinstance(freebusy[0][0], datetime))
         self.assertTrue(isinstance(freebusy[0][1], timedelta))
+
+    def test_cal_Component_add(self):
+        # Test the for timezone correctness: dtstart should preserve it's
+        # timezone, crated, dtstamp and last-modified must be in UTC.
+        Component = icalendar.cal.Component
+        comp = Component()
+        comp.add('dtstart', datetime(2010,10,10,10,0,0,tzinfo=pytz.timezone("Europe/Vienna")))
+        comp.add('created', datetime(2010,10,10,12,0,0))
+        comp.add('dtstamp', datetime(2010,10,10,14,0,0,tzinfo=pytz.timezone("Europe/Vienna")))
+        comp.add('last-modified', datetime(2010,10,10,16,0,0,tzinfo=pytz.utc))
+
+        lines = comp.to_ical().splitlines()
+        self.assertTrue(
+            "DTSTART;TZID=Europe/Vienna;VALUE=DATE-TIME:20101010T100000"
+            in lines)
+        self.assertTrue("CREATED;VALUE=DATE-TIME:20101010T120000Z" in lines)
+        self.assertTrue("DTSTAMP;VALUE=DATE-TIME:20101010T130000Z" in lines)
+        self.assertTrue(
+                "LAST-MODIFIED;VALUE=DATE-TIME:20101010T160000Z" in lines)
+

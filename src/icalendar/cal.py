@@ -84,7 +84,9 @@ class Component(CaselessDict):
                                 # propagate upwards
 
     def __init__(self, *args, **kwargs):
-        "Set keys to upper for initial dict"
+        """Set keys to upper for initial dict
+        
+        """
         CaselessDict.__init__(self, *args, **kwargs)
         # set parameters here for properties that use non-default values
         self.subcomponents = [] # Components can be nested.
@@ -132,27 +134,6 @@ class Component(CaselessDict):
 
     def add(self, name, value, encode=1):
         """ Add a property.
-
-        Test the for timezone correctness: dtstart should preserve it's
-        timezone, crated, dtstamp and last-modified must be in UTC.
-        >>> from datetime import datetime
-        >>> import pytz
-        >>> from icalendar.cal import Component
-        >>> comp = Component()
-        >>> comp.add('dtstart', datetime(2010,10,10,10,0,0,tzinfo=pytz.timezone("Europe/Vienna")))
-        >>> comp.add('created', datetime(2010,10,10,12,0,0))
-        >>> comp.add('dtstamp', datetime(2010,10,10,14,0,0,tzinfo=pytz.timezone("Europe/Vienna")))
-        >>> comp.add('last-modified', datetime(2010,10,10,16,0,0,tzinfo=pytz.utc))
-
-        >>> lines = comp.to_ical().splitlines()
-        >>> "DTSTART;TZID=Europe/Vienna;VALUE=DATE-TIME:20101010T100000" in lines
-        True
-        >>> "CREATED;VALUE=DATE-TIME:20101010T120000Z" in lines
-        True
-        >>> "DTSTAMP;VALUE=DATE-TIME:20101010T130000Z" in lines
-        True
-        >>> "LAST-MODIFIED;VALUE=DATE-TIME:20101010T160000Z" in lines
-        True
 
         """
         if isinstance(value, datetime) and\
