@@ -168,3 +168,19 @@ class TestCalComponent(unittest.TestCase):
         self.assertTrue(
                 "LAST-MODIFIED;VALUE=DATE-TIME:20101010T160000Z" in lines)
 
+
+
+    def test_cal_Component_from_ical(self):
+        # RecurrenceIDs may contain a TZID parameter, if so, they should create
+        # a tz localized datetime, otherwise, create a naive datetime
+        Component = icalendar.cal.Component
+        componentStr = 'BEGIN:VEVENT\nRECURRENCE-ID;TZID=America/Denver:'\
+                       + '20120404T073000\nEND:VEVENT'
+        component = Component.from_ical(componentStr)
+        self.assertEqual(
+            str(component['RECURRENCE-ID'].dt.tzinfo.zone), "America/Denver")
+
+        componentStr = 'BEGIN:VEVENT\nRECURRENCE-ID:20120404T073000\n'\
+                       + 'END:VEVENT'
+        component = Component.from_ical(componentStr)
+        self.assertEqual(component['RECURRENCE-ID'].dt.tzinfo, None)
