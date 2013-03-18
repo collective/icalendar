@@ -305,6 +305,46 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vRecur.from_ical, 'BYDAY=12')
 
 
+    def test_prop_vText(self):
+        vText = icalendar.prop.vText
+
+        self.at(vText(u'Simple text').to_ical() == 'Simple text')
+
+        # Escaped text
+        t = vText('Text ; with escaped, chars')
+        self.at(t.to_ical() == 'Text \\; with escaped\\, chars')
+
+        # Escaped newlines
+        self.at(vText('Text with escaped\N chars').to_ical() ==
+                'Text with escaped\\n chars')
+
+        # If you pass a unicode object, it will be utf-8 encoded. As this is
+        # the (only) standard that RFC 2445 support.
+        t = vText(u'international chars \xe4\xf6\xfc')
+        self.at(t.to_ical() ==
+                'international chars \xc3\xa4\xc3\xb6\xc3\xbc')
+
+        # and parsing?
+        self.at(vText.from_ical('Text \\; with escaped\\, chars') ==
+                u'Text ; with escaped, chars')
+
+        t = vText.from_ical('A string with\\; some\\\\ characters in\\it')
+        self.at(t == "A string with; some\\ characters in\it")
+
+        # We are forgiving to utf-8 encoding errors:
+        # We intentionally use a string with unexpected encoding
+        self.at(vText.from_ical('Ol\xe9') == u'Ol\ufffd')
+
+        # Notice how accented E character, encoded with latin-1, got replaced
+        # with the official U+FFFD REPLACEMENT CHARACTER.
+
+
+
+
+
+
+
+
 
 class TestPropertyValues(unittest.TestCase):
 
