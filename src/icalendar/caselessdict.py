@@ -2,21 +2,9 @@
 
 
 def canonsort_keys(keys, canonical_order=None):
-    """
-    Sorts leading keys according to canonical_order.
-    Keys not specified in canonical_order will appear alphabetically at the
-    end.
+    """Sorts leading keys according to canonical_order.  Keys not specified in
+    canonical_order will appear alphabetically at the end.
 
-    >>> from icalendar.caselessdict import canonsort_keys
-    >>> keys = ['DTEND', 'DTSTAMP', 'DTSTART', 'UID', 'SUMMARY', 'LOCATION']
-    >>> canonsort_keys(keys)
-    ['DTEND', 'DTSTAMP', 'DTSTART', 'LOCATION', 'SUMMARY', 'UID']
-    >>> canonsort_keys(keys, ('SUMMARY', 'DTSTART', 'DTEND', ))
-    ['SUMMARY', 'DTSTART', 'DTEND', 'DTSTAMP', 'LOCATION', 'UID']
-    >>> canonsort_keys(keys, ('UID', 'DTSTART', 'DTEND', ))
-    ['UID', 'DTSTART', 'DTEND', 'DTSTAMP', 'LOCATION', 'SUMMARY']
-    >>> canonsort_keys(keys, ('UID', 'DTSTART', 'DTEND', 'RRULE', 'EXDATE'))
-    ['UID', 'DTSTART', 'DTEND', 'DTSTAMP', 'LOCATION', 'SUMMARY']
     """
     canonical_map = dict((k, i) for i, k in enumerate(canonical_order or []))
     head = [k for k in keys if k in canonical_map]
