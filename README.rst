@@ -11,7 +11,7 @@ with Python.
     :Code: http://github.com/collective/icalendar
     :Mailing list: http://github.com/collective/icalendar/issues
     :Dependencies: `setuptools`_ and since version 3.0 we depend on `pytz`_.
-    :Compatible with: Python 2.6, 2.7
+    :Compatible with: Python 2.6 and 2.7
     :License: `BSD`_
 
 ----
@@ -45,6 +45,21 @@ database timezone identifiers. This can be a problem for 'GMT' identifiers,
 which are not defined in the Olson database.
 
 Instead of the own UTC tzinfo implementation we use pytz UTC tzinfo object now.
+
+
+Roadmap
+=======
+
+1) Internally Unicode will be used exclusively.
+
+2) On API Functions, accept or return Unicode or en/decoded strings.
+
+3) This will make the 3.4 Release.
+
+4) API change: API calls also only accept/return Unicode.
+
+5) This will make the 4.0 release.
+
 
 
 About this fork which is not a fork anymore
