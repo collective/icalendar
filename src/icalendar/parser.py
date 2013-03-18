@@ -16,6 +16,20 @@ from icalendar.caselessdict import CaselessDict
 logger = logging.getLogger('icalendar')
 
 
+def safe_unicode(value, encoding='utf-8'):
+    """Converts a value to unicode, even if it is already a unicode string.
+
+    """
+    if isinstance(value, unicode):
+        return value
+    elif isinstance(value, basestring):
+        try:
+            value = unicode(value, encoding)
+        except (UnicodeDecodeError):
+            value = value.decode('utf-8', 'replace')
+    return value
+
+
 def escape_char(text):
     """Format value according to iCalendar TEXT escaping rules.
     """
