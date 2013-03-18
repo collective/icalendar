@@ -13,15 +13,8 @@ def canonsort_keys(keys, canonical_order=None):
 
 
 def canonsort_items(dict1, canonical_order=None):
-    """
-    Returns a list of items from dict1, sorted by canonical_order.
+    """Returns a list of items from dict1, sorted by canonical_order.
 
-    >>> from icalendar.caselessdict import canonsort_items
-    >>> d = dict(i=7, c='at', a=3.5, l=(2,3), e=[4,5], n=13, d={'x': 'y'}, r=1.0)
-    >>> canonsort_items(d)
-    [('a', 3.5), ('c', 'at'), ('d', {'x': 'y'}), ('e', [4, 5]), ('i', 7), ('l', (2, 3)), ('n', 13), ('r', 1.0)]
-    >>> canonsort_items(d, ('i', 'c', 'a'))
-    [('i', 7), ('c', 'at'), ('a', 3.5), ('d', {'x': 'y'}), ('e', [4, 5]), ('l', (2, 3)), ('n', 13), ('r', 1.0)]
     """
     return [(k, dict1[k]) for \
             k in canonsort_keys(dict1.keys(), canonical_order)]
