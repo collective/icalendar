@@ -8,8 +8,8 @@ Changelog
 - Test fixes.
   [warvariuc]
 
-- Transformed some doctests into unittests.
-  [warvariuc]
+- Transformed doctests into unittests.
+  [warvariuc, thet]
 
 - Added functions to transform chars in string with '\\' + any of r'\,;:' chars
   into '%{:02X}' form to avoid splitting on chars escaped with '\\'.
