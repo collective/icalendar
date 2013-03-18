@@ -306,7 +306,8 @@ class Contentline(unicode):
             # elif isinstance(values, basestring):
             #    values = escape_char(values)
 
-            # TODO: after unicode only, remove
+            # TODO: after unicode only, remove this
+            # Convert back to unicode, after to_ical encoded it.
             name = safe_unicode(name)
             values = safe_unicode(values)
             if params:
