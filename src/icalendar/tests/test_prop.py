@@ -375,6 +375,47 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vGeo, 'g')
 
 
+    def test_prop_vUTCOffset(self):
+        vUTCOffset = icalendar.prop.vUTCOffset
+
+        u = vUTCOffset(timedelta(hours=2))
+        self.at(u.to_ical() == '+0200')
+
+        u = vUTCOffset(timedelta(hours=-5))
+        self.at(u.to_ical() == '-0500')
+
+        u = vUTCOffset(timedelta())
+        self.at(u.to_ical() == '+0000')
+
+        u = vUTCOffset(timedelta(minutes=-30))
+        self.at(u.to_ical() == '-0030')
+
+        u = vUTCOffset(timedelta(hours=2, minutes=-30))
+        self.at(u.to_ical() == '+0130')
+
+        u = vUTCOffset(timedelta(hours=1, minutes=30))
+        self.at(u.to_ical() == '+0130')
+
+        # Parsing
+
+        self.at(vUTCOffset.from_ical('0000') == timedelta(0))
+
+        self.at(vUTCOffset.from_ical('-0030') == timedelta(-1, 84600))
+
+        self.at(vUTCOffset.from_ical('+0200') == timedelta(0, 7200))
+
+        self.at(vUTCOffset.from_ical('+023040') == timedelta(0, 9040))
+
+        o = vUTCOffset.from_ical('+0230')
+        self.at(vUTCOffset(o).to_ical() == '+0230')
+
+        # And a few failures
+        self.assertRaises(ValueError, vUTCOffset.from_ical, '+323k')
+
+        self.assertRaises(ValueError, vUTCOffset.from_ical, '+2400')
+
+
+
 class TestPropertyValues(unittest.TestCase):
 
     def test_vDDDLists_timezone(self):

@@ -762,7 +762,6 @@ class vUri(str):
 class vGeo(object):
     """A special type that is only indirectly defined in the rfc.
 
-
     """
 
     def __init__(self, geo):
@@ -782,7 +781,6 @@ class vGeo(object):
 
     @staticmethod
     def from_ical(ical):
-        "Parses the data format from ical text format"
         try:
             latitude, longitude = ical.split(';')
             return (float(latitude), float(longitude))
@@ -793,58 +791,6 @@ class vGeo(object):
 class vUTCOffset(object):
     """Renders itself as a utc offset.
 
-    >>> u = vUTCOffset(timedelta(hours=2))
-    >>> u.to_ical()
-    '+0200'
-
-    >>> u = vUTCOffset(timedelta(hours=-5))
-    >>> u.to_ical()
-    '-0500'
-
-    >>> u = vUTCOffset(timedelta())
-    >>> u.to_ical()
-    '+0000'
-
-    >>> u = vUTCOffset(timedelta(minutes=-30))
-    >>> u.to_ical()
-    '-0030'
-
-    >>> u = vUTCOffset(timedelta(hours=2, minutes=-30))
-    >>> u.to_ical()
-    '+0130'
-
-    >>> u = vUTCOffset(timedelta(hours=1, minutes=30))
-    >>> u.to_ical()
-    '+0130'
-
-    Parsing
-
-    >>> vUTCOffset.from_ical('0000')
-    datetime.timedelta(0)
-
-    >>> vUTCOffset.from_ical('-0030')
-    datetime.timedelta(-1, 84600)
-
-    >>> vUTCOffset.from_ical('+0200')
-    datetime.timedelta(0, 7200)
-
-    >>> vUTCOffset.from_ical('+023040')
-    datetime.timedelta(0, 9040)
-
-    >>> o = vUTCOffset.from_ical('+0230')
-    >>> vUTCOffset(o).to_ical()
-    '+0230'
-
-    And a few failures
-    >>> vUTCOffset.from_ical('+323k')
-    Traceback (most recent call last):
-        ...
-    ValueError: Expected utc offset, got: +323k
-
-    >>> vUTCOffset.from_ical('+2400')
-    Traceback (most recent call last):
-        ...
-    ValueError: Offset must be less than 24 hours, was +2400
     """
 
     def __init__(self, td):
@@ -872,7 +818,6 @@ class vUTCOffset(object):
 
     @staticmethod
     def from_ical(ical):
-        "Parses the data format from ical text format"
         if isinstance(ical, vUTCOffset):
             return ical.td
         try:
