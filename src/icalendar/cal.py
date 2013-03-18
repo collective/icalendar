@@ -28,8 +28,8 @@ SequenceTypes = (list, tuple)
 # The component factory
 
 class ComponentFactory(CaselessDict):
-    """ All components defined in rfc 2445 are registered in this factory
-    class. To get a component you can use it like this.
+    """All components defined in rfc 2445 are registered in this factory class.
+    To get a component you can use it like this.
 
     """
 
@@ -57,10 +57,9 @@ _marker = []
 
 
 class Component(CaselessDict):
-    """
-    Component is the base object for calendar, Event and the other components
-    defined in RFC 2445. normally you will not use this class directy, but
-    rather one of the subclasses.
+    """Component is the base object for calendar, Event and the other
+    components defined in RFC 2445. normally you will not use this class
+    directy, but rather one of the subclasses.
 
     """
 
@@ -77,7 +76,7 @@ class Component(CaselessDict):
 
     def __init__(self, *args, **kwargs):
         """Set keys to upper for initial dict
-        
+
         """
         CaselessDict.__init__(self, *args, **kwargs)
         # set parameters here for properties that use non-default values
@@ -125,7 +124,7 @@ class Component(CaselessDict):
             self[name] = self._encode(name, value, encode)
 
     def add(self, name, value, encode=1):
-        """ Add a property.
+        """Add a property.
 
         """
         if isinstance(value, datetime) and\
@@ -154,7 +153,9 @@ class Component(CaselessDict):
         return decoded
 
     def decoded(self, name, default=_marker):
-        "Returns decoded value of property"
+        """Returns decoded value of property.
+
+        """
         if name in self:
             value = self[name]
             if isinstance(value, list):
@@ -171,8 +172,8 @@ class Component(CaselessDict):
     # property line. These methods are used for splitting and joining these.
 
     def get_inline(self, name, decode=1):
-        """
-        Returns a list of values (split on comma).
+        """Returns a list of values (split on comma).
+
         """
         vals = [v.strip('" ').encode(vText.encoding)
                   for v in q_split(self[name])]
@@ -181,9 +182,9 @@ class Component(CaselessDict):
         return vals
 
     def set_inline(self, name, values, encode=1):
-        """
-        Converts a list of values into comma seperated string and sets value to
-        that.
+        """Converts a list of values into comma seperated string and sets value
+        to that.
+
         """
         if encode:
             values = [self._encode(name, value, 1) for value in values]
@@ -194,7 +195,9 @@ class Component(CaselessDict):
     # Handling of components
 
     def add_component(self, component):
-        "add a subcomponent to this component"
+        """Add a subcomponent to this component.
+
+        """
         self.subcomponents.append(component)
 
     def _walk(self, name):
@@ -207,9 +210,9 @@ class Component(CaselessDict):
         return result
 
     def walk(self, name=None):
-        """
-        Recursively traverses component and subcomponents. Returns sequence of
-        same. If name is passed, only components with name will be returned.
+        """Recursively traverses component and subcomponents. Returns sequence
+        of same. If name is passed, only components with name will be returned.
+
         """
         if not name is None:
             name = name.upper()
@@ -219,9 +222,9 @@ class Component(CaselessDict):
     # Generation
 
     def property_items(self, recursive=True):
-        """
-        Returns properties in this component and subcomponents as:
+        """Returns properties in this component and subcomponents as:
         [(name, value), ...]
+
         """
         vText = types_factory['text']
         properties = [('BEGIN', vText(self.name).to_ical())]
@@ -312,7 +315,9 @@ class Component(CaselessDict):
 #        return Contentline.from_parts((name, params, value))
 
     def content_lines(self):
-        "Converts the Component and subcomponents into content lines"
+        """Converts the Component and subcomponents into content lines.
+        
+        """
         contentlines = Contentlines()
         for name, values in self.property_items():
             params = getattr(values, 'params', Parameters())
@@ -429,59 +434,9 @@ class Alarm(Component):
 
 
 class Calendar(Component):
-    """
-    This is the base object for an iCalendar file.
-
-    Setting up a minimal calendar component looks like this
-    >>> cal = Calendar()
-
-    Som properties are required to be compliant
-    >>> cal['prodid'] = '-//My calendar product//mxm.dk//'
-    >>> cal['version'] = '2.0'
-
-    We also need at least one subcomponent for a calendar to be compliant
-    >>> from datetime import datetime
-    >>> event = Event()
-    >>> event['summary'] = 'Python meeting about calendaring'
-    >>> event['uid'] = '42'
-    >>> event.set('dtstart', datetime(2005,4,4,8,0,0))
-    >>> cal.add_component(event)
-    >>> cal.subcomponents[0].to_ical()
-    'BEGIN:VEVENT\\r\\nSUMMARY:Python meeting about calendaring\\r\\nDTSTART;VALUE=DATE-TIME:20050404T080000\\r\\nUID:42\\r\\nEND:VEVENT\\r\\n'
-
-    Write to disc
-    >>> import tempfile, os
-    >>> directory = tempfile.mkdtemp()
-    >>> open(os.path.join(directory, 'test.ics'), 'wb').write(cal.to_ical())
-
-    Parsing a complete calendar from a string will silently ignore bogus events.
-    The bogosity in the following is the third EXDATE: it has an empty DATE.
-    >>> s = '\\r\\n'.join(('BEGIN:VCALENDAR',
-    ...                    'PRODID:-//Google Inc//Google Calendar 70.9054//EN',
-    ...                    'VERSION:2.0',
-    ...                    'CALSCALE:GREGORIAN',
-    ...                    'METHOD:PUBLISH',
-    ...                    'BEGIN:VEVENT',
-    ...                    'DESCRIPTION:Perfectly OK event',
-    ...                    'DTSTART;VALUE=DATE:20080303',
-    ...                    'DTEND;VALUE=DATE:20080304',
-    ...                    'RRULE:FREQ=DAILY;UNTIL=20080323T235959Z',
-    ...                    'EXDATE;VALUE=DATE:20080311',
-    ...                    'END:VEVENT',
-    ...                    'BEGIN:VEVENT',
-    ...                    'DESCRIPTION:Bogus event',
-    ...                    'DTSTART;VALUE=DATE:20080303',
-    ...                    'DTEND;VALUE=DATE:20080304',
-    ...                    'RRULE:FREQ=DAILY;UNTIL=20080323T235959Z',
-    ...                    'EXDATE;VALUE=DATE:20080311',
-    ...                    'EXDATE;VALUE=DATE:',
-    ...                    'END:VEVENT',
-    ...                    'END:VCALENDAR'))
-    >>> [e['DESCRIPTION'].to_ical() for e in Calendar.from_ical(s).walk('VEVENT')]
-    ['Perfectly OK event']
+    """This is the base object for an iCalendar file.
 
     """
-
     name = 'VCALENDAR'
     canonical_order = ('VERSION', 'PRODID', 'CALSCALE', 'METHOD',)
     required = ('prodid', 'version', )

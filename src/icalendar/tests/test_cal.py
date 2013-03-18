@@ -199,3 +199,57 @@ class TestCal(unittest.TestCase):
         self.assertEqual(
             factory.get('VCALENDAR', icalendar.cal.Component),
             icalendar.cal.Calendar)
+
+    def test_cal_Calendar(self):
+        # Setting up a minimal calendar component looks like this
+        cal = icalendar.cal.Calendar()
+
+        # Some properties are required to be compliant
+        cal['prodid'] = '-//My calendar product//mxm.dk//'
+        cal['version'] = '2.0'
+
+        # We also need at least one subcomponent for a calendar to be compliant
+        event = icalendar.cal.Event()
+        event['summary'] = 'Python meeting about calendaring'
+        event['uid'] = '42'
+        event.set('dtstart', datetime(2005,4,4,8,0,0))
+        cal.add_component(event)
+        self.assertEqual(
+            cal.subcomponents[0].to_ical(),
+            'BEGIN:VEVENT\r\nSUMMARY:Python meeting about calendaring\r\n'\
+            + 'DTSTART;VALUE=DATE-TIME:20050404T080000\r\nUID:42\r\n'\
+            + 'END:VEVENT\r\n')
+
+        # Write to disc
+        import tempfile, os
+        directory = tempfile.mkdtemp()
+        open(os.path.join(directory, 'test.ics'), 'wb').write(cal.to_ical())
+
+        # Parsing a complete calendar from a string will silently ignore bogus
+        # events. The bogosity in the following is the third EXDATE: it has an
+        # empty DATE.
+        s = '\r\n'.join(('BEGIN:VCALENDAR',
+                         'PRODID:-//Google Inc//Google Calendar 70.9054//EN',
+                         'VERSION:2.0',
+                         'CALSCALE:GREGORIAN',
+                         'METHOD:PUBLISH',
+                         'BEGIN:VEVENT',
+                         'DESCRIPTION:Perfectly OK event',
+                         'DTSTART;VALUE=DATE:20080303',
+                         'DTEND;VALUE=DATE:20080304',
+                         'RRULE:FREQ=DAILY;UNTIL=20080323T235959Z',
+                         'EXDATE;VALUE=DATE:20080311',
+                         'END:VEVENT',
+                         'BEGIN:VEVENT',
+                         'DESCRIPTION:Bogus event',
+                         'DTSTART;VALUE=DATE:20080303',
+                         'DTEND;VALUE=DATE:20080304',
+                         'RRULE:FREQ=DAILY;UNTIL=20080323T235959Z',
+                         'EXDATE;VALUE=DATE:20080311',
+                         'EXDATE;VALUE=DATE:',
+                         'END:VEVENT',
+                         'END:VCALENDAR'))
+        self.assertEqual(
+            [e['DESCRIPTION'].to_ical()
+                for e in icalendar.cal.Calendar.from_ical(s).walk('VEVENT')],
+            ['Perfectly OK event'])
