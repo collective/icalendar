@@ -452,18 +452,6 @@ class TestProp(unittest.TestCase):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 class TestPropertyValues(unittest.TestCase):
 
     def test_vDDDLists_timezone(self):

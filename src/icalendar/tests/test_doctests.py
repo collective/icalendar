@@ -16,7 +16,6 @@ DOCMODS = [
     'icalendar.caselessdict',
     'icalendar.cal',
     'icalendar.parser',
-    'icalendar.prop',
 ]
 
 
