@@ -68,9 +68,9 @@ class TestProp(unittest.TestCase):
         vDDDLists = icalendar.prop.vDDDLists
 
         dt_list = vDDDLists.from_ical('19960402T010000Z')
-        self.assertIsInstance(dt_list, list)
+        self.assertTrue(isinstance(dt_list, list))
         self.assertEqual(len(dt_list), 1)
-        self.assertIsInstance(dt_list[0], datetime)
+        self.assertTrue(isinstance(dt_list[0], datetime))
         self.assertEqual(str(dt_list[0]), '1996-04-02 01:00:00+00:00')
 
         p = '19960402T010000Z,19960403T010000Z,19960404T010000Z'
@@ -91,13 +91,13 @@ class TestProp(unittest.TestCase):
     def test_prop_vDDDTypes(self):
         vDDDTypes = icalendar.prop.vDDDTypes
 
-        self.assertIsInstance(vDDDTypes.from_ical('20010101T123000'),
-                              datetime)
+        self.assertTrue(isinstance(vDDDTypes.from_ical('20010101T123000'),
+                                   datetime))
 
         self.assertEqual(vDDDTypes.from_ical('20010101T123000Z'),
                          datetime(2001, 1, 1, 12, 30, tzinfo=pytz.utc))
 
-        self.assertIsInstance(vDDDTypes.from_ical('20010101'), date)
+        self.assertTrue(isinstance(vDDDTypes.from_ical('20010101'), date))
 
         self.assertEqual(vDDDTypes.from_ical('P31D'), timedelta(31))
 
@@ -472,7 +472,7 @@ class TestPropertyValues(unittest.TestCase):
         vevent.add('exdate', dt3)
         ical = vevent.to_ical()
 
-        self.assertIn(
-            'RDATE;TZID=Europe/Vienna:20130101T000000,20130102T000000', ical
+        self.assertTrue(
+            'RDATE;TZID=Europe/Vienna:20130101T000000,20130102T000000' in ical
         )
-        self.assertIn('EXDATE;TZID=Europe/Vienna:20130103T000000', ical)
+        self.assertTrue('EXDATE;TZID=Europe/Vienna:20130103T000000' in ical)
