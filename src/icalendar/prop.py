@@ -577,7 +577,6 @@ class vWeekday(str):
 
     @staticmethod
     def from_ical(ical):
-        "Parses the data format from ical text format"
         try:
             return vWeekday(ical.upper())
         except:
@@ -587,14 +586,6 @@ class vWeekday(str):
 class vFrequency(str):
     """A simple class that catches illegal values.
 
-    >>> f = vFrequency('bad test')
-    Traceback (most recent call last):
-        ...
-    ValueError: Expected frequency, got: bad test
-    >>> vFrequency('daily').to_ical()
-    'DAILY'
-    >>> vFrequency('daily').from_ical('MONTHLY')
-    'MONTHLY'
     """
 
     frequencies = CaselessDict({
@@ -619,7 +610,6 @@ class vFrequency(str):
 
     @staticmethod
     def from_ical(ical):
-        "Parses the data format from ical text format"
         try:
             return vFrequency(ical.upper())
         except:

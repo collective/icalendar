@@ -241,6 +241,12 @@ class TestProp(unittest.TestCase):
         self.at(vWeekday('-tu').to_ical() == '-TU')
 
 
+    def test_prop_vFrequency(self):
+        vFrequency = icalendar.prop.vFrequency
+
+        self.assertRaises(ValueError, vFrequency, 'bad test')
+        self.at(vFrequency('daily').to_ical() == 'DAILY')
+        self.at(vFrequency('daily').from_ical('MONTHLY') == 'MONTHLY')
 
 
 
