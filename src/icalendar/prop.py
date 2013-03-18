@@ -427,50 +427,6 @@ class vDuration(object):
     """Subclass of timedelta that renders itself in the iCalendar DURATION
     format.
 
-    >>> vDuration(timedelta(11)).to_ical()
-    'P11D'
-    >>> vDuration(timedelta(-14)).to_ical()
-    '-P14D'
-    >>> vDuration(timedelta(1, 7384)).to_ical()
-    'P1DT2H3M4S'
-    >>> vDuration(timedelta(1, 7380)).to_ical()
-    'P1DT2H3M'
-    >>> vDuration(timedelta(1, 7200)).to_ical()
-    'P1DT2H'
-    >>> vDuration(timedelta(0, 7200)).to_ical()
-    'PT2H'
-    >>> vDuration(timedelta(0, 7384)).to_ical()
-    'PT2H3M4S'
-    >>> vDuration(timedelta(0, 184)).to_ical()
-    'PT3M4S'
-    >>> vDuration(timedelta(0, 22)).to_ical()
-    'PT22S'
-    >>> vDuration(timedelta(0, 3622)).to_ical()
-    'PT1H0M22S'
-
-    >>> vDuration(timedelta(days=1, hours=5)).to_ical()
-    'P1DT5H'
-    >>> vDuration(timedelta(hours=-5)).to_ical()
-    '-PT5H'
-    >>> vDuration(timedelta(days=-1, hours=-5)).to_ical()
-    '-P1DT5H'
-
-    How does the parsing work?
-    >>> vDuration.from_ical('PT1H0M22S')
-    datetime.timedelta(0, 3622)
-
-    >>> vDuration.from_ical('kox')
-    Traceback (most recent call last):
-        ...
-    ValueError: Invalid iCalendar duration: kox
-
-    >>> vDuration.from_ical('-P14D')
-    datetime.timedelta(-14)
-
-    >>> vDuration(11)
-    Traceback (most recent call last):
-        ...
-    ValueError: Value MUST be a timedelta instance
     """
 
     def __init__(self, td):
@@ -503,8 +459,6 @@ class vDuration(object):
 
     @staticmethod
     def from_ical(ical):
-        """Parse the data format from ical text format.
-        """
         try:
             match = DURATION_REGEX.match(ical)
             sign, weeks, days, hours, minutes, seconds = match.groups()
@@ -525,52 +479,6 @@ class vDuration(object):
 class vPeriod(object):
     """A precise period of time.
 
-    One day in exact datetimes
-    >>> per = (datetime(2000,1,1), datetime(2000,1,2))
-    >>> p = vPeriod(per)
-    >>> p.to_ical()
-    '20000101T000000/20000102T000000'
-
-    >>> per = (datetime(2000,1,1), timedelta(days=31))
-    >>> p = vPeriod(per)
-    >>> p.to_ical()
-    '20000101T000000/P31D'
-
-    Roundtrip
-    >>> p = vPeriod.from_ical('20000101T000000/20000102T000000')
-    >>> p
-    (datetime.datetime(2000, 1, 1, 0, 0), datetime.datetime(2000, 1, 2, 0, 0))
-    >>> vPeriod(p).to_ical()
-    '20000101T000000/20000102T000000'
-
-    >>> vPeriod.from_ical('20000101T000000/P31D')
-    (datetime.datetime(2000, 1, 1, 0, 0), datetime.timedelta(31))
-
-    Roundtrip with absolute time
-    >>> p = vPeriod.from_ical('20000101T000000Z/20000102T000000Z')
-    >>> vPeriod(p).to_ical()
-    '20000101T000000Z/20000102T000000Z'
-
-    And an error
-    >>> vPeriod.from_ical('20000101T000000/Psd31D')
-    Traceback (most recent call last):
-        ...
-    ValueError: Expected period format, got: 20000101T000000/Psd31D
-
-    Timezoned
-    >>> import pytz
-    >>> dk = pytz.timezone('Europe/Copenhagen')
-    >>> start = datetime(2000,1,1, tzinfo=dk)
-    >>> end = datetime(2000,1,2, tzinfo=dk)
-    >>> per = (start, end)
-    >>> vPeriod(per).to_ical()
-    '20000101T000000/20000102T000000'
-    >>> vPeriod(per).params['TZID']
-    'Europe/Copenhagen'
-
-    >>> p = vPeriod((datetime(2000,1,1, tzinfo=dk), timedelta(days=31)))
-    >>> p.to_ical()
-    '20000101T000000/P31D'
     """
     def __init__(self, per):
         start, end_or_duration = per

@@ -190,6 +190,42 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vDuration, 11)
 
 
+    def test_prop_vPeriod(self):
+        vPeriod = icalendar.prop.vPeriod
+
+        # One day in exact datetimes
+        per = (datetime(2000,1,1), datetime(2000,1,2))
+        self.at(vPeriod(per).to_ical() == '20000101T000000/20000102T000000')
+
+        per = (datetime(2000,1,1), timedelta(days=31))
+        self.at(vPeriod(per).to_ical() == '20000101T000000/P31D')
+
+        # Roundtrip
+        p = vPeriod.from_ical('20000101T000000/20000102T000000')
+        self.at(p == (datetime(2000, 1, 1, 0, 0), datetime(2000, 1, 2, 0, 0)))
+        self.at(vPeriod(p).to_ical() == '20000101T000000/20000102T000000')
+
+        self.at(vPeriod.from_ical('20000101T000000/P31D') ==
+                (datetime(2000, 1, 1, 0, 0), timedelta(31)))
+
+        # Roundtrip with absolute time
+        p = vPeriod.from_ical('20000101T000000Z/20000102T000000Z')
+        self.at(vPeriod(p).to_ical() == '20000101T000000Z/20000102T000000Z')
+
+        # And an error
+        self.assertRaises(ValueError,
+                          vPeriod.from_ical, '20000101T000000/Psd31D')
+
+        # Timezoned
+        dk = pytz.timezone('Europe/Copenhagen')
+        start = datetime(2000,1,1, tzinfo=dk)
+        end = datetime(2000,1,2, tzinfo=dk)
+        per = (start, end)
+        self.at(vPeriod(per).to_ical() == '20000101T000000/20000102T000000')
+        self.at(vPeriod(per).params['TZID'] == 'Europe/Copenhagen')
+
+        p = vPeriod((datetime(2000,1,1, tzinfo=dk), timedelta(days=31)))
+        self.at(p.to_ical() == '20000101T000000/P31D')
 
 
 
