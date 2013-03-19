@@ -1,3 +1,6 @@
+SEQUENCE_TYPES = (list, tuple)
+DEFAULT_ENCODING = 'utf-8'
+
 from icalendar.cal import (
     Calendar,
     Event,

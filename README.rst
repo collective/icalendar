@@ -11,7 +11,7 @@ with Python.
     :Code: http://github.com/collective/icalendar
     :Mailing list: http://github.com/collective/icalendar/issues
     :Dependencies: `setuptools`_ and since version 3.0 we depend on `pytz`_.
-    :Tested with: Python 2.6, 2.7
+    :Compatible with: Python 2.6 and 2.7
     :License: `BSD`_
 
 ----
@@ -47,6 +47,21 @@ which are not defined in the Olson database.
 Instead of the own UTC tzinfo implementation we use pytz UTC tzinfo object now.
 
 
+Roadmap
+=======
+
+1) Internally Unicode will be used exclusively.
+
+2) On API Functions, accept or return Unicode or en/decoded strings.
+
+3) This will make the 3.4 Release.
+
+4) API change: API calls also only accept/return Unicode.
+
+5) This will make the 4.0 release.
+
+
+
 About this fork which is not a fork anymore
 ===========================================
 
@@ -72,17 +87,13 @@ Test Coverage Report
 
 Output from coverage test::
 
-    lines   cov%   module   (path)
-       13   100%   icalendar.__init__
-      222    95%   icalendar.cal
-       49    93%   icalendar.caselessdict
-      222    85%   icalendar.parser
-      663    90%   icalendar.prop
-       18    94%   icalendar.tests.test_cases
-       25    96%   icalendar.tests.test_doctests
-       49    97%   icalendar.tests.test_encoding
-      156    17%   icalendar.tests.test_icalendar
-       16   100%   icalendar.tests.test_prop
-       93   100%   icalendar.tests.test_property_params
-       23    95%   icalendar.tests.test_time
-       84    98%   icalendar.tests.test_timezoned
+    ----------------------------------------------------------------------------------
+    .tox/py26/lib/python2.6/site-packages/icalendar/__init__           5      0   100%
+    .tox/py26/lib/python2.6/site-packages/icalendar/cal              211      7    97%
+    .tox/py26/lib/python2.6/site-packages/icalendar/caselessdict      47      3    94%
+    .tox/py26/lib/python2.6/site-packages/icalendar/interfaces        50     50     0%
+    .tox/py26/lib/python2.6/site-packages/icalendar/parser           199     29    85%
+    .tox/py26/lib/python2.6/site-packages/icalendar/prop             522     63    88%
+    .tox/py26/lib/python2.6/site-packages/icalendar/tools             49     33    33%
+    ----------------------------------------------------------------------------------
+    TOTAL                                                           1083    185    83%
