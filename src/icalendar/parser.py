@@ -57,6 +57,12 @@ def tzid_from_dt(dt):
 
 def foldline(text, length=75, newline='\r\n'):
     """Make a string folded per RFC5545 (each line must be less than 75 octets)
+    Lines of text SHOULD NOT be longer than 75 octets, excluding the line
+    break.  Long content lines SHOULD be split into a multiple line
+    representations using a line "folding" technique.  That is, a long
+    line can be split between any two characters by inserting a CRLF
+    immediately followed by a single linear white-space character (i.e.,
+    SPACE or HTAB).
     """
     assert isinstance(text, str)
 #    text.decode('utf-8')  # try to decode, to be sure it's utf-8 or ASCII
