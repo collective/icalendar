@@ -33,3 +33,4 @@ iCalendar contributors
 - spanktar <spanky@kapanka.com>
 - tgecho <tgecho@gmail.com>
 - Ronan Dunklau <ronan@dunklau.fr>
+- Victor Varvaryuk <victor.varvariuc@gmail.com>
