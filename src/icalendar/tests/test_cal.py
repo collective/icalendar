@@ -7,10 +7,8 @@ import pytz
 class TestCalComponent(unittest.TestCase):
 
     def test_cal_Component(self):
-        Component = icalendar.cal.Component
-        Calendar = icalendar.cal.Calendar
-        Event = icalendar.cal.Event
-        prop = icalendar.prop
+        from icalendar.cal import Component, Calendar, Event
+        from icalendar import prop
 
         # A component is like a dictionary with extra methods and attributes.
         c = Component()
@@ -105,7 +103,7 @@ class TestCalComponent(unittest.TestCase):
         # Text fields which span multiple mulitple lines require proper
         # indenting
         c = Calendar()
-        c['description']=u'Paragraph one\n\nParagraph two'
+        c['description'] = u'Paragraph one\n\nParagraph two'
         self.assertEqual(c.to_ical(),
            'BEGIN:VCALENDAR\r\nDESCRIPTION:Paragraph one\\n\\nParagraph two'
            + '\r\nEND:VCALENDAR\r\n')
@@ -154,10 +152,13 @@ class TestCalComponent(unittest.TestCase):
         # timezone, crated, dtstamp and last-modified must be in UTC.
         Component = icalendar.cal.Component
         comp = Component()
-        comp.add('dtstart', datetime(2010,10,10,10,0,0,tzinfo=pytz.timezone("Europe/Vienna")))
-        comp.add('created', datetime(2010,10,10,12,0,0))
-        comp.add('dtstamp', datetime(2010,10,10,14,0,0,tzinfo=pytz.timezone("Europe/Vienna")))
-        comp.add('last-modified', datetime(2010,10,10,16,0,0,tzinfo=pytz.utc))
+        comp.add('dtstart', datetime(2010, 10, 10, 10, 0, 0,
+                                     tzinfo=pytz.timezone("Europe/Vienna")))
+        comp.add('created', datetime(2010, 10, 10, 12, 0, 0))
+        comp.add('dtstamp', datetime(2010, 10, 10, 14, 0, 0,
+                                     tzinfo=pytz.timezone("Europe/Vienna")))
+        comp.add('last-modified', datetime(2010, 10, 10, 16, 0, 0,
+                                           tzinfo=pytz.utc))
 
         lines = comp.to_ical().splitlines()
         self.assertTrue(
@@ -167,8 +168,6 @@ class TestCalComponent(unittest.TestCase):
         self.assertTrue("DTSTAMP;VALUE=DATE-TIME:20101010T130000Z" in lines)
         self.assertTrue(
                 "LAST-MODIFIED;VALUE=DATE-TIME:20101010T160000Z" in lines)
-
-
 
     def test_cal_Component_from_ical(self):
         # RecurrenceIDs may contain a TZID parameter, if so, they should create
@@ -212,7 +211,7 @@ class TestCal(unittest.TestCase):
         event = icalendar.cal.Event()
         event['summary'] = 'Python meeting about calendaring'
         event['uid'] = '42'
-        event.set('dtstart', datetime(2005,4,4,8,0,0))
+        event.set('dtstart', datetime(2005, 4, 4, 8, 0, 0))
         cal.add_component(event)
         self.assertEqual(
             cal.subcomponents[0].to_ical(),

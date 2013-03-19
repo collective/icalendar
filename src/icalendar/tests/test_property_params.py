@@ -1,7 +1,8 @@
 # coding: utf-8
 
-import icalendar
 import unittest
+
+from .. import vCalAddress, Calendar, Event, Parameters
 
 
 class TestPropertyParams(unittest.TestCase):
@@ -10,12 +11,12 @@ class TestPropertyParams(unittest.TestCase):
         # Property parameters with values containing a COLON character, a
         # SEMICOLON character or a COMMA character MUST be placed in quoted
         # text.
-        cal_address = icalendar.vCalAddress('mailto:john.doe@example.org')
+        cal_address = vCalAddress('mailto:john.doe@example.org')
         cal_address.params["CN"] = "Doe, John"
-        ical = icalendar.Calendar()
+        ical = Calendar()
         ical.add('organizer', cal_address)
 
-        ical_str = icalendar.Calendar.to_ical(ical)
+        ical_str = Calendar.to_ical(ical)
         exp_str = """BEGIN:VCALENDAR\r\nORGANIZER;CN="Doe, John":"""\
                   """mailto:john.doe@example.org\r\nEND:VCALENDAR\r\n"""
 
@@ -23,13 +24,13 @@ class TestPropertyParams(unittest.TestCase):
 
         # other way around: ensure the property parameters can be restored from
         # an icalendar string.
-        ical2 = icalendar.Calendar.from_ical(ical_str)
+        ical2 = Calendar.from_ical(ical_str)
         self.assertEqual(ical2.get('ORGANIZER').params.get('CN'), 'Doe, John')
 
     def test_unicode_param(self):
-        cal_address = icalendar.vCalAddress('mailto:john.doe@example.org')
+        cal_address = vCalAddress('mailto:john.doe@example.org')
         cal_address.params["CN"] = "Джон Доу"
-        vevent = icalendar.Event()
+        vevent = Event()
         vevent['ORGANIZER'] = cal_address
         self.assertEqual(
             vevent.to_ical(),
@@ -55,8 +56,8 @@ class TestPropertyParams(unittest.TestCase):
         @param cn_param: CN parameter value to test for quoting
         @param cn_quoted: expected quoted parameter in icalendar format
         """
-        vevent = icalendar.Event()
-        attendee = icalendar.vCalAddress('test@mail.com')
+        vevent = Event()
+        attendee = vCalAddress('test@mail.com')
         attendee.params['CN'] = cn_param
         vevent.add('ATTENDEE', attendee)
         self.assertEqual(
@@ -71,14 +72,14 @@ class TestPropertyParams(unittest.TestCase):
         for char in NON_SAFE_CHARS:
             cn_escaped = ur"Society\%s 2014" % char
             cn_decoded = ur"Society%s 2014" % char
-            vevent = icalendar.Event.from_ical(
+            vevent = Event.from_ical(
                 u'BEGIN:VEVENT\r\n'
                 u'ORGANIZER;CN=%s:that\r\n'
                 u'END:VEVENT\r\n' % cn_escaped
             )
             self.assertEqual(vevent['ORGANIZER'].params['CN'], cn_decoded)
 
-        vevent = icalendar.Event.from_ical(
+        vevent = Event.from_ical(
             u'BEGIN:VEVENT\r\n'
             u'ORGANIZER;CN=that\\, that\\; that\\\\ that\\:'
             u':это\\, то\\; that\\\\ that\\:\r\n'
@@ -94,7 +95,6 @@ class TestPropertyParams(unittest.TestCase):
         )
 
     def test_parameters_class(self):
-        from icalendar import Parameters
 
         # Simple parameter:value pair
         p = Parameters(parameter1='Value1')
