@@ -133,14 +133,14 @@ class IcalendarTestCase (unittest.TestCase):
         parts = ('SUMMARY', Parameters(), vText('INternational char æ ø å'))
         self.assertEqual(
             Contentline.from_parts(parts),
-            'SUMMARY:INternational char \xc3\xa6 \xc3\xb8 \xc3\xa5'
+            u'SUMMARY:INternational char æ ø å'
         )
 
         # A value can also be unicode
         parts = ('SUMMARY', Parameters(), vText(u'INternational char æ ø å'))
         self.assertEqual(
             Contentline.from_parts(parts),
-            'SUMMARY:INternational char \xc3\xa6 \xc3\xb8 \xc3\xa5'
+            u'SUMMARY:INternational char æ ø å'
         )
 
         # Traversing could look like this.
@@ -227,10 +227,10 @@ class IcalendarTestCase (unittest.TestCase):
         )
 
     def test_value_double_quoting(self):
-        from icalendar.parser import dQuote
-        self.assertEqual(dQuote('Max'), 'Max')
-        self.assertEqual(dQuote('Rasmussen, Max'), '"Rasmussen, Max"')
-        self.assertEqual(dQuote('name:value'), '"name:value"')
+        from icalendar.parser import dquote
+        self.assertEqual(dquote('Max'), 'Max')
+        self.assertEqual(dquote('Rasmussen, Max'), '"Rasmussen, Max"')
+        self.assertEqual(dquote('name:value'), '"name:value"')
 
     def test_q_split(self):
         from icalendar.parser import q_split

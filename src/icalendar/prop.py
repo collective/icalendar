@@ -36,6 +36,7 @@ These types are mainly used for parsing and file generation. But you can set
 them directly.
 
 """
+from __future__ import absolute_import
 import re
 import pytz
 import binascii
@@ -48,15 +49,13 @@ from datetime import (
     tzinfo,
 )
 from dateutil.tz import tzutc
-from icalendar import SEQUENCE_TYPES
-from icalendar import DEFAULT_ENCODING
-from icalendar.caselessdict import CaselessDict
-from icalendar.parser import (
+from . import SEQUENCE_TYPES, DEFAULT_ENCODING, to_unicode
+from .caselessdict import CaselessDict
+from .parser import (
     Parameters,
     escape_char,
     unescape_char,
     tzid_from_dt,
-    safe_unicode
 )
 
 DATE_PART = r'(\d+)D'
@@ -96,7 +95,7 @@ class vBoolean(int):
     """Returns specific string according to state.
 
     """
-    bool_map = CaselessDict(true=True, false=False)
+    BOOL_MAP = CaselessDict(true=True, false=False)
 
     def __new__(cls, *args, **kwargs):
         self = super(vBoolean, cls).__new__(cls, *args, **kwargs)
@@ -108,10 +107,10 @@ class vBoolean(int):
             return 'TRUE'
         return 'FALSE'
 
-    @staticmethod
-    def from_ical(ical):
+    @classmethod
+    def from_ical(cls, ical):
         try:
-            return vBoolean.bool_map[ical]
+            return cls.BOOL_MAP[ical]
         except:
             raise ValueError("Expected 'TRUE' or 'FALSE'. Got %s" % ical)
 
@@ -121,7 +120,7 @@ class vCalAddress(unicode):
 
     """
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
-        value = safe_unicode(value, encoding=encoding)
+        value = to_unicode(value, encoding=encoding)
         self = super(vCalAddress, cls).__new__(cls, value)
         self.params = Parameters()
         return self
@@ -551,7 +550,7 @@ class vWeekday(unicode):
     })
 
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
-        value = safe_unicode(value, encoding=encoding)
+        value = to_unicode(value, encoding=encoding)
         self = super(vWeekday, cls).__new__(cls, value)
         match = WEEKDAY_RULE.match(self)
         if match is None:
@@ -593,7 +592,7 @@ class vFrequency(unicode):
     })
 
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
-        value = safe_unicode(value, encoding=encoding)
+        value = to_unicode(value, encoding=encoding)
         self = super(vFrequency, cls).__new__(cls, value)
         if not self in vFrequency.frequencies:
             raise ValueError('Expected frequency, got: %s' % self)
@@ -650,9 +649,9 @@ class vRecur(CaselessDict):
         result = []
         for key, vals in self.sorted_items():
             typ = self.types[key]
-            if not type(vals) in SEQUENCE_TYPES:
+            if not isinstance(vals, SEQUENCE_TYPES):
                 vals = [vals]
-            vals = ','.join([typ(val).to_ical() for val in vals])
+            vals = ','.join(typ(val).to_ical() for val in vals)
             result.append('%s=%s' % (key, vals))
         return ';'.join(result)
 
@@ -680,7 +679,7 @@ class vText(unicode):
     """
 
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
-        value = safe_unicode(value, encoding=encoding)
+        value = to_unicode(value, encoding=encoding)
         self = super(vText, cls).__new__(cls, value)
         self.encoding = encoding
         self.params = Parameters()
@@ -694,11 +693,8 @@ class vText(unicode):
 
     @staticmethod
     def from_ical(ical):
-        try:
-            ical_unesc = unescape_char(ical)
-            return vText(ical_unesc)
-        except:
-            raise ValueError('Expected ical text, got: %s' % ical)
+        ical_unesc = unescape_char(ical)
+        return vText(ical_unesc)
 
 
 class vTime(object):
@@ -734,7 +730,7 @@ class vUri(unicode):
     """
 
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
-        value = safe_unicode(value, encoding=encoding)
+        value = to_unicode(value, encoding=encoding)
         self = super(vUri, cls).__new__(cls, value)
         self.params = Parameters()
         return self
@@ -834,7 +830,7 @@ class vInline(unicode):
 
     """
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
-        value = safe_unicode(value, encoding=encoding)
+        value = to_unicode(value, encoding=encoding)
         self = super(vInline, cls).__new__(cls, value)
         self.params = Parameters()
         return self

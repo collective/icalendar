@@ -1,7 +1,23 @@
+from __future__ import absolute_import
+
 SEQUENCE_TYPES = (list, tuple)
 DEFAULT_ENCODING = 'utf-8'
 
-from icalendar.cal import (
+
+def to_unicode(value, encoding='utf-8'):
+    """Converts a value to unicode, even if it is already a unicode string.
+    """
+    if isinstance(value, unicode):
+        return value
+    elif isinstance(value, str):
+        try:
+            return value.decode(encoding)
+        except UnicodeDecodeError:
+            return value.decode('utf-8', 'replace')
+    raise AssertionError('A str/unicode expected.')
+
+
+from .cal import (
     Calendar,
     Event,
     Todo,
@@ -14,7 +30,7 @@ from icalendar.cal import (
     ComponentFactory,
 )
 # Property Data Value Types
-from icalendar.prop import (
+from .prop import (
     vBinary,
     vBoolean,
     vCalAddress,
@@ -36,13 +52,13 @@ from icalendar.prop import (
     TypesFactory,
 )
 # useful tzinfo subclasses
-from icalendar.prop import (
+from .prop import (
     FixedOffset,
     LocalTimezone,
 )
 # Parameters and helper methods for splitting and joining string with escaped
 # chars.
-from icalendar.parser import (
+from .parser import (
     Parameters,
     q_split,
     q_join,

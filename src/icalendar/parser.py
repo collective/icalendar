@@ -6,30 +6,17 @@ Eg. RFC 2426 (vCard)
 It is stupid in the sense that it treats the content purely as strings. No type
 conversion is attempted.
 """
+from __future__ import absolute_import
 import re
-from icalendar import DEFAULT_ENCODING
-from icalendar import SEQUENCE_TYPES
-from icalendar.caselessdict import CaselessDict
-
-
-def safe_unicode(value, encoding='utf-8'):
-    """Converts a value to unicode, even if it is already a unicode string.
-
-    Taken from from Products.CMFPlone.utils.
-    """
-    if isinstance(value, unicode):
-        return value
-    elif isinstance(value, basestring):
-        try:
-            value = unicode(value, encoding)
-        except (UnicodeDecodeError):
-            value = value.decode('utf-8', 'replace')
-    return value
+from . import DEFAULT_ENCODING, SEQUENCE_TYPES, to_unicode
+from .caselessdict import CaselessDict
 
 
 def escape_char(text):
     """Format value according to iCalendar TEXT escaping rules.
     """
+    assert isinstance(text, basestring)
+    # TODO: optimize this
     # NOTE: ORDER MATTERS!
     return text.replace('\N', '\n')\
                .replace('\\', '\\\\')\
@@ -40,6 +27,8 @@ def escape_char(text):
 
 
 def unescape_char(text):
+    assert isinstance(text, basestring)
+    # TODO: optimize this
     # NOTE: ORDER MATTERS!
     return text.replace(r'\N', r'\n')\
                .replace(r'\r\n', '\n')\
@@ -114,12 +103,12 @@ def foldline(text, length=75, newline='\r\n'):
 #################################################################
 # Property parameter stuff
 
-def paramVal(val):
+def param_value(value):
     """Returns a parameter value.
     """
-    if type(val) in SEQUENCE_TYPES:
-        return q_join(val)
-    return dQuote(val)
+    if isinstance(value, SEQUENCE_TYPES):
+        return q_join(value)
+    return dquote(value)
 
 
 # Could be improved
@@ -148,8 +137,8 @@ def validate_param_value(value, quoted=True):
 QUOTABLE = re.compile("[,;: ’']")
 
 
-def dQuote(val):
-    """Parameter values containing [,;:] must be double quoted.
+def dquote(val):
+    """Enclose parameter values containing [,;:] in double quotes.
     """
     # a double-quote character is forbidden to appear in a parameter value
     # so replace it with a single-quote character
@@ -182,7 +171,7 @@ def q_split(st, sep=','):
 def q_join(lst, sep=','):
     """Joins a list on sep, quoting strings with QUOTABLE chars.
     """
-    return sep.join(dQuote(itm) for itm in lst)
+    return sep.join(dquote(itm) for itm in lst)
 
 
 class Parameters(CaselessDict):
@@ -225,10 +214,11 @@ class Parameters(CaselessDict):
         items = self.items()
         items.sort()  # To make doctests work
         for key, value in items:
-            value = paramVal(value)
+            value = param_value(value)
             if isinstance(value, unicode):
                 value = value.encode(DEFAULT_ENCODING)
-            result.append('%s=%s' % (key.upper(), value))
+            # CaselessDict keys are always unicode
+            result.append('%s=%s' % (key.upper().encode('utf-8'), value))
         return ';'.join(result)
 
     @staticmethod
@@ -269,12 +259,14 @@ class Parameters(CaselessDict):
 
 
 def escape_string(val):
+    # TODO: optimize this
     # '%{:02X}'.format(i)
     return val.replace(r'\,', '%2C').replace(r'\:', '%3A')\
               .replace(r'\;', '%3B').replace(r'\\', '%5C')
 
 
 def unsescape_string(val):
+    # TODO: optimize this
     return val.replace('%2C', ',').replace('%3A', ':')\
               .replace('%3B', ';').replace('%5C', '\\')
 
@@ -288,7 +280,7 @@ class Contentline(unicode):
 
     """
     def __new__(cls, value, strict=False, encoding=DEFAULT_ENCODING):
-        value = safe_unicode(value, encoding=encoding)
+        value = to_unicode(value, encoding=encoding)
         self = super(Contentline, cls).__new__(cls, value)
         self.strict = strict
         return self
@@ -307,10 +299,10 @@ class Contentline(unicode):
             #    values = escape_char(values)
 
             # TODO: after unicode only, remove
-            name = safe_unicode(name)
-            values = safe_unicode(values)
+            name = to_unicode(name)
+            values = to_unicode(values)
             if params:
-                params = safe_unicode(params.to_ical())
+                params = to_unicode(params.to_ical())
                 return Contentline(u'%s;%s:%s' % (name, params, values))
             return Contentline(u'%s:%s' % (name, values))
         except Exception:
@@ -349,22 +341,20 @@ class Contentline(unicode):
             raise ValueError("Content line could not be parsed into parts: %r:"
                              " %s" % (self, exc))
 
-    @staticmethod
-    def from_ical(st, strict=False):
+    @classmethod
+    def from_ical(cls, ical, strict=False):
         """Unfold the content lines in an iCalendar into long content lines.
         """
-        try:
-            # a fold is carriage return followed by either a space or a tab
-            return Contentline(FOLD.sub('', st), strict=strict)
-        except:
-            raise ValueError(u'Expected StringType with content line')
+        ical = to_unicode(ical)
+        # a fold is carriage return followed by either a space or a tab
+        return cls(FOLD.sub('', ical), strict=strict)
 
     def to_ical(self):
         """Long content lines are folded so they are less than 75 characters.
         wide.
         """
         value = self.encode(DEFAULT_ENCODING)
-        return foldline(value, newline='\r\n')
+        return foldline(value)
 
 
 class Contentlines(list):
@@ -392,31 +382,5 @@ class Contentlines(list):
             raise ValueError('Expected StringType with content lines')
 
 
-# ran this:
-#    sample = open('./samples/test.ics', 'rb').read() # binary file in windows!
-#    lines = Contentlines.from_ical(sample)
-#    for line in lines[:-1]:
-#        print line.parts()
-
-# got this:
-# ('BEGIN', Parameters({}), 'VCALENDAR')
-# ('METHOD', Parameters({}), 'Request')
-# ('PRODID', Parameters({}), '-//My product//mxm.dk/')
-# ('VERSION', Parameters({}), '2.0')
-# ('BEGIN', Parameters({}), 'VEVENT')
-# ('DESCRIPTION', Parameters({}), 'This is a very long description that ...')
-# ('PARTICIPANT', Parameters({'CN': 'Max M'}), 'MAILTO:maxm@mxm.dk')
-# ('DTEND', Parameters({}), '20050107T160000')
-# ('DTSTART', Parameters({}), '20050107T120000')
-# ('SUMMARY', Parameters({}), 'A second event')
-# ('END', Parameters({}), 'VEVENT')
-# ('BEGIN', Parameters({}), 'VEVENT')
-# ('DTEND', Parameters({}), '20050108T235900')
-# ('DTSTART', Parameters({}), '20050108T230000')
-# ('SUMMARY', Parameters({}), 'A single event')
-# ('UID', Parameters({}), '42')
-# ('END', Parameters({}), 'VEVENT')
-# ('END', Parameters({}), 'VCALENDAR')
-
 # XXX: what kind of hack is this? import depends to be at end
-from icalendar.prop import vText
+from .prop import vText

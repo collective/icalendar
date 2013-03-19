@@ -5,17 +5,18 @@ files according to rfc2445.
 These are the defined components.
 
 """
+from __future__ import absolute_import
 import pytz
 from datetime import datetime
-from icalendar.caselessdict import CaselessDict
-from icalendar.parser import (
+from .caselessdict import CaselessDict
+from .parser import (
     Contentlines,
     Contentline,
     Parameters,
     q_split,
     q_join,
 )
-from icalendar.prop import (
+from .prop import (
     TypesFactory,
     vText,
 )
@@ -172,8 +173,7 @@ class Component(CaselessDict):
         """Returns a list of values (split on comma).
 
         """
-        vals = [v.strip('" ').encode(vText.encoding)
-                  for v in q_split(self[name])]
+        vals = [v.strip('" ') for v in q_split(self[name])]
         if decode:
             return [self._decode(name, val) for val in vals]
         return vals
@@ -185,8 +185,7 @@ class Component(CaselessDict):
         """
         if encode:
             values = [self._encode(name, value, 1) for value in values]
-        joined = q_join(values).encode(vText.encoding)
-        self[name] = types_factory['inline'](joined)
+        self[name] = types_factory['inline'](q_join(values))
 
     #########################
     # Handling of components

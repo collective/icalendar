@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import sys
 import random
 import textwrap
@@ -6,7 +7,7 @@ from string import (
     digits,
 )
 from datetime import datetime
-from icalendar.prop import (
+from .prop import (
     vText,
     vDatetime,
 )
