@@ -1,5 +1,5 @@
 from datetime import datetime, date, timedelta, time
-import unittest
+from . import unittest
 
 import pytz
 

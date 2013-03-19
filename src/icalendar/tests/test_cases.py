@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
+from . import unittest
 import icalendar
 import os
-
-import unittest
-if not hasattr(unittest.TestCase, 'assertIsNotNone'):
-    import unittest2 as unittest
-
 
 class TestCases(unittest.TestCase):
 

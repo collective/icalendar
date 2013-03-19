@@ -5,10 +5,7 @@ import datetime
 import dateutil.parser
 import os
 
-import unittest
-if not hasattr(unittest.TestCase, 'assertIsNotNone'):
-    import unittest2 as unittest
-
+from . import unittest
 
 class TestTimezoned(unittest.TestCase):
 

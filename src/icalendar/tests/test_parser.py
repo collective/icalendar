@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import unittest
+from . import unittest
 from .. import to_unicode
 
 

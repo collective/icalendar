@@ -1,4 +1,4 @@
-import unittest
+from . import unittest
 import icalendar
 
 
