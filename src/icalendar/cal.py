@@ -8,6 +8,7 @@ These are the defined components.
 from __future__ import absolute_import
 import pytz
 from datetime import datetime
+from .parser_tools import data_encode
 from .caselessdict import CaselessDict
 from .parser import (
     Contentlines,
@@ -16,10 +17,7 @@ from .parser import (
     q_split,
     q_join,
 )
-from .prop import (
-    TypesFactory,
-    vText,
-)
+from .prop import TypesFactory
 
 
 ######################################
@@ -302,7 +300,7 @@ class Component(CaselessDict):
         return comps[0]
 
     def __repr__(self):
-        return '%s(' % self.name + dict.__repr__(self) + ')'
+        return '%s(%s)' % (self.name, data_encode(self))
 
 #    def content_line(self, name):
 #        "Returns property as content line"

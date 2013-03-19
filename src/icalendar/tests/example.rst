@@ -76,8 +76,13 @@ you do it like this. The calendar is a component::
   >>> cal['summary'] = 'Python meeting about calendaring'
   >>> for k,v in cal.items():
   ...     k,v
-  ('DTSTART', '20050404T080000')
-  ('SUMMARY', 'Python meeting about calendaring')
+  (u'DTSTART', '20050404T080000')
+  (u'SUMMARY', 'Python meeting about calendaring')
+
+NOTE: the recommended way to add components to the calendar is to use
+create the subcomponent and add it via Calendar.add! The example above adds a
+string, but not a vText component.
+
 
 You can generate a string for a file with the to_ical() method::
 

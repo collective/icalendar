@@ -49,7 +49,7 @@ from datetime import (
     tzinfo,
 )
 from dateutil.tz import tzutc
-from . import SEQUENCE_TYPES, DEFAULT_ENCODING, to_unicode
+from .parser_tools import SEQUENCE_TYPES, DEFAULT_ENCODING, to_unicode
 from .caselessdict import CaselessDict
 from .parser import (
     Parameters,

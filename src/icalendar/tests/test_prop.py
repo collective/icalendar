@@ -22,7 +22,7 @@ class TestProp(unittest.TestCase):
 
         self.assertEqual(
             str(vBinary('txt').params),
-            "Parameters({u'VALUE': 'BINARY', u'ENCODING': 'BASE64'})"
+            "Parameters({'VALUE': 'BINARY', 'ENCODING': 'BASE64'})"
         )
 
         # Long data should not have line breaks, as that would interfere
@@ -48,7 +48,7 @@ class TestProp(unittest.TestCase):
         a.params['cn'] = 'Max M'
 
         self.assertEqual(a.to_ical(), txt)
-        self.assertEqual(str(a.params), "Parameters({u'CN': 'Max M'})")
+        self.assertEqual(str(a.params), "Parameters({'CN': 'Max M'})")
         self.assertEqual(vCalAddress.from_ical(txt), 'MAILTO:maxm@mxm.dk')
 
     def test_prop_vFloat(self):
@@ -425,7 +425,7 @@ class TestProp(unittest.TestCase):
         t2 = vInline('other text')
         t2.params['cn'] = 'Test Osterone'
         self.assertEqual(str(t2.params),
-                         "Parameters({u'CN': 'Test Osterone'})")
+                         "Parameters({'CN': 'Test Osterone'})")
 
     def test_prop_TypesFactory(self):
         from ..prop import TypesFactory

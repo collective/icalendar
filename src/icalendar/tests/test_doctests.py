@@ -1,6 +1,6 @@
 import doctest
 import os.path
-import unittest
+from . import unittest
 
 
 OPTIONFLAGS = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS

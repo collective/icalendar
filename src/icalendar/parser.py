@@ -8,9 +8,13 @@ conversion is attempted.
 """
 from __future__ import absolute_import
 import re
-from . import DEFAULT_ENCODING, SEQUENCE_TYPES, to_unicode
 from .caselessdict import CaselessDict
-
+from .parser_tools import (
+    DEFAULT_ENCODING,
+    SEQUENCE_TYPES,
+    to_unicode,
+    data_encode
+)
 
 def escape_char(text):
     """Format value according to iCalendar TEXT escaping rules.
@@ -207,7 +211,7 @@ class Parameters(CaselessDict):
 #       "returns a decoded value, or list of same"
 
     def __repr__(self):
-        return 'Parameters(%s)' % dict.__repr__(self)
+        return 'Parameters(%s)' % data_encode(self)
 
     def to_ical(self):
         result = []

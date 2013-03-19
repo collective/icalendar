@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from . import unittest
-from .. import to_unicode
+from ..parser_tools import to_unicode
 
 
 class TestCalComponent(unittest.TestCase):

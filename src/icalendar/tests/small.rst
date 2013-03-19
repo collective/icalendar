@@ -6,7 +6,7 @@ A small example::
   >>> cal = Calendar.from_ical(
   ...   open(os.path.join(directory, 'small.ics'),'rb').read())
   >>> cal
-  VCALENDAR({'VERSION': vText(u'2.0'), 'METHOD': vText(u'Request'), 'PRODID': vText(u'-//My product//mxm.dk/')})
+  VCALENDAR({'VERSION': '2.0', 'METHOD': 'Request', 'PRODID': '-//My product//mxm.dk/'})
 
   >>> for component in cal.walk():
   ...     component.name

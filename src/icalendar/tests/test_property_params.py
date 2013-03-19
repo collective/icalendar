@@ -1,6 +1,6 @@
 # coding: utf-8
 
-import unittest
+from . import unittest
 
 from .. import vCalAddress, Calendar, Event, Parameters
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from . import DEFAULT_ENCODING, to_unicode
+from .parser_tools import to_unicode, data_encode
 
 
 def canonsort_keys(keys, canonical_order=None):
@@ -84,7 +84,7 @@ class CaselessDict(dict):
         return CaselessDict(dict.copy(self))
 
     def __repr__(self):
-        return 'CaselessDict(%s)' % dict.__repr__(self)
+        return 'CaselessDict(%s)' % data_encode(self)
 
     # A list of keys that must appear first in sorted_keys and sorted_items;
     # must be uppercase.
