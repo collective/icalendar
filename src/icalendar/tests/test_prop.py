@@ -1,14 +1,13 @@
 from datetime import datetime, date, timedelta, time
 import unittest
 
-import icalendar
 import pytz
 
 
 class TestProp(unittest.TestCase):
 
     def test_prop_vBinary(self):
-        vBinary = icalendar.prop.vBinary
+        from ..prop import vBinary
 
         txt = 'This is gibberish'
         txt_ical = 'VGhpcyBpcyBnaWJiZXJpc2g='
@@ -23,7 +22,7 @@ class TestProp(unittest.TestCase):
 
         self.assertEqual(
             str(vBinary('txt').params),
-            "Parameters({'VALUE': 'BINARY', 'ENCODING': 'BASE64'})"
+            "Parameters({u'VALUE': 'BINARY', u'ENCODING': 'BASE64'})"
         )
 
         # Long data should not have line breaks, as that would interfere
@@ -33,7 +32,7 @@ class TestProp(unittest.TestCase):
         self.assertEqual(vBinary.from_ical(txt_ical), txt)
 
     def test_prop_vBoolean(self):
-        vBoolean = icalendar.prop.vBoolean
+        from ..prop import vBoolean
 
         self.assertEqual(vBoolean(True).to_ical(), 'TRUE')
         self.assertEqual(vBoolean(0).to_ical(), 'FALSE')
@@ -43,29 +42,29 @@ class TestProp(unittest.TestCase):
         self.assertEqual(vBoolean.from_ical('true'), True)
 
     def test_prop_vCalAddress(self):
-        vCalAddress = icalendar.prop.vCalAddress
+        from ..prop import vCalAddress
         txt = 'MAILTO:maxm@mxm.dk'
         a = vCalAddress(txt)
         a.params['cn'] = 'Max M'
 
         self.assertEqual(a.to_ical(), txt)
-        self.assertEqual(str(a.params), "Parameters({'CN': 'Max M'})")
+        self.assertEqual(str(a.params), "Parameters({u'CN': 'Max M'})")
         self.assertEqual(vCalAddress.from_ical(txt), 'MAILTO:maxm@mxm.dk')
 
     def test_prop_vFloat(self):
-        vFloat = icalendar.prop.vFloat
+        from ..prop import vFloat
         self.assertEqual(vFloat(1.0).to_ical(), '1.0')
         self.assertEqual(vFloat.from_ical('42'), 42.0)
         self.assertEqual(vFloat(42).to_ical(), '42.0')
 
     def test_prop_vInt(self):
-        vInt = icalendar.prop.vInt
+        from ..prop import vInt
         self.assertEqual(vInt(42).to_ical(), '42')
         self.assertEqual(vInt.from_ical('13'), 13)
         self.assertRaises(ValueError, vInt.from_ical, '1s3')
 
     def test_prop_vDDDLists(self):
-        vDDDLists = icalendar.prop.vDDDLists
+        from ..prop import vDDDLists
 
         dt_list = vDDDLists.from_ical('19960402T010000Z')
         self.assertTrue(isinstance(dt_list, list))
@@ -89,7 +88,7 @@ class TestProp(unittest.TestCase):
         self.assertEqual(dt_list.to_ical(), '20000101T000000,20001111T000000')
 
     def test_prop_vDDDTypes(self):
-        vDDDTypes = icalendar.prop.vDDDTypes
+        from ..prop import vDDDTypes
 
         self.assertTrue(isinstance(vDDDTypes.from_ical('20010101T123000'),
                                    datetime))
@@ -107,7 +106,7 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vDDDTypes, 42)
 
     def test_prop_vDate(self):
-        vDate = icalendar.prop.vDate
+        from ..prop import vDate
 
         self.assertEqual(vDate(date(2001, 1, 1)).to_ical(), '20010101')
         self.assertEqual(vDate(date(1899, 1, 1)).to_ical(), '18990101')
@@ -117,7 +116,7 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vDate, 'd')
 
     def test_prop_vDatetime(self):
-        vDatetime = icalendar.prop.vDatetime
+        from ..prop import vDatetime
 
         dt = datetime(2001, 1, 1, 12, 30, 0)
         self.assertEqual(vDatetime(dt).to_ical(), '20010101T123000')
@@ -153,7 +152,7 @@ class TestProp(unittest.TestCase):
         self.assertEqual(vDatetime(dat).to_ical(), '20101010T000000')
 
     def test_prop_vDuration(self):
-        vDuration = icalendar.prop.vDuration
+        from ..prop import vDuration
 
         self.assertEqual(vDuration(timedelta(11)).to_ical(), 'P11D')
         self.assertEqual(vDuration(timedelta(-14)).to_ical(), '-P14D')
@@ -181,7 +180,7 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vDuration, 11)
 
     def test_prop_vPeriod(self):
-        vPeriod = icalendar.prop.vPeriod
+        from ..prop import vPeriod
 
         # One day in exact datetimes
         per = (datetime(2000, 1, 1), datetime(2000, 1, 2))
@@ -226,7 +225,7 @@ class TestProp(unittest.TestCase):
         self.assertEqual(p.to_ical(), '20000101T000000/P31D')
 
     def test_prop_vWeekday(self):
-        vWeekday = icalendar.prop.vWeekday
+        from ..prop import vWeekday
 
         self.assertEqual(vWeekday('mo').to_ical(), 'MO')
         self.assertRaises(ValueError, vWeekday, 'erwer')
@@ -238,14 +237,14 @@ class TestProp(unittest.TestCase):
         self.assertEqual(vWeekday('-tu').to_ical(), '-TU')
 
     def test_prop_vFrequency(self):
-        vFrequency = icalendar.prop.vFrequency
+        from ..prop import vFrequency
 
         self.assertRaises(ValueError, vFrequency, 'bad test')
         self.assertEqual(vFrequency('daily').to_ical(), 'DAILY')
         self.assertEqual(vFrequency('daily').from_ical('MONTHLY'), 'MONTHLY')
 
     def test_prop_vRecur(self):
-        vRecur = icalendar.prop.vRecur
+        from ..prop import vRecur
 
         # Let's see how close we can get to one from the rfc:
         # FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=SU;BYHOUR=8,9;BYMINUTE=30
@@ -317,7 +316,7 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vRecur.from_ical, 'BYDAY=12')
 
     def test_prop_vText(self):
-        vText = icalendar.prop.vText
+        from ..prop import vText
 
         self.assertEqual(vText(u'Simple text').to_ical(), 'Simple text')
 
@@ -350,7 +349,7 @@ class TestProp(unittest.TestCase):
         # with the official U+FFFD REPLACEMENT CHARACTER.
 
     def test_prop_vTime(self):
-        vTime = icalendar.prop.vTime
+        from ..prop import vTime
 
         self.assertEqual(vTime(12, 30, 0).to_ical(), '123000')
         self.assertEqual(vTime.from_ical('123000'), time(12, 30))
@@ -359,7 +358,7 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vTime.from_ical, '263000')
 
     def test_prop_vUri(self):
-        vUri = icalendar.prop.vUri
+        from ..prop import vUri
 
         self.assertEqual(vUri('http://www.example.com/').to_ical(),
                          'http://www.example.com/')
@@ -367,7 +366,7 @@ class TestProp(unittest.TestCase):
                          'http://www.example.com/')
 
     def test_prop_vGeo(self):
-        vGeo = icalendar.prop.vGeo
+        from ..prop import vGeo
 
         # Pass a list
         self.assertEqual(vGeo([1.2, 3.0]).to_ical(), '1.2;3.0')
@@ -383,7 +382,7 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vGeo, 'g')
 
     def test_prop_vUTCOffset(self):
-        vUTCOffset = icalendar.prop.vUTCOffset
+        from ..prop import vUTCOffset
 
         self.assertEqual(vUTCOffset(timedelta(hours=2)).to_ical(), '+0200')
 
@@ -418,17 +417,18 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vUTCOffset.from_ical, '+2400')
 
     def test_prop_vInline(self):
-        vInline = icalendar.prop.vInline
+        from ..prop import vInline
 
         self.assertEqual(vInline('Some text'), 'Some text')
         self.assertEqual(vInline.from_ical('Some text'), 'Some text')
 
         t2 = vInline('other text')
         t2.params['cn'] = 'Test Osterone'
-        self.assertEqual(str(t2.params), "Parameters({'CN': 'Test Osterone'})")
+        self.assertEqual(str(t2.params),
+                         "Parameters({u'CN': 'Test Osterone'})")
 
     def test_prop_TypesFactory(self):
-        TypesFactory = icalendar.prop.TypesFactory
+        from ..prop import TypesFactory
 
         # To get a type you can use it like this.
         factory = TypesFactory()
@@ -463,7 +463,8 @@ class TestPropertyValues(unittest.TestCase):
     def test_vDDDLists_timezone(self):
         """Test vDDDLists with timezone information.
         """
-        vevent = icalendar.Event()
+        from .. import Event
+        vevent = Event()
         at = pytz.timezone('Europe/Vienna')
         dt1 = at.localize(datetime(2013, 1, 1))
         dt2 = at.localize(datetime(2013, 1, 2))

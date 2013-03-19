@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-from icalendar import DEFAULT_ENCODING
+from __future__ import absolute_import
+from . import DEFAULT_ENCODING, to_unicode
+
 
 def canonsort_keys(keys, canonical_order=None):
     """Sorts leading keys according to canonical_order.  Keys not specified in
@@ -27,61 +29,62 @@ class CaselessDict(dict):
     """
 
     def __init__(self, *args, **kwargs):
-        "Set keys to upper for initial dict"
+        """Set keys to upper for initial dict.
+        """
         dict.__init__(self, *args, **kwargs)
-        for k, v in self.items():
-            k_upper = k.upper()
-            if k != k_upper:
-                dict.__delitem__(self, k)
-                self[k_upper] = v
+        for key, value in self.items():
+            key_upper = to_unicode(key).upper()
+            if key != key_upper:
+                dict.__delitem__(self, key)
+                self[key_upper] = value
 
     def __getitem__(self, key):
+        key = to_unicode(key)
         return dict.__getitem__(self, key.upper())
 
     def __setitem__(self, key, value):
+        key = to_unicode(key)
         dict.__setitem__(self, key.upper(), value)
 
     def __delitem__(self, key):
+        key = to_unicode(key)
         dict.__delitem__(self, key.upper())
 
     def __contains__(self, key):
+        key = to_unicode(key)
         return dict.__contains__(self, key.upper())
 
     def get(self, key, default=None):
+        key = to_unicode(key)
         return dict.get(self, key.upper(), default)
 
     def setdefault(self, key, value=None):
+        key = to_unicode(key)
         return dict.setdefault(self, key.upper(), value)
 
     def pop(self, key, default=None):
+        key = to_unicode(key)
         return dict.pop(self, key.upper(), default)
 
     def popitem(self):
         return dict.popitem(self)
 
     def has_key(self, key):
+        key = to_unicode(key)
         return dict.__contains__(self, key.upper())
 
     def update(self, indict):
         """
         Multiple keys where key1.upper() == key2.upper() will be lost.
         """
-        for entry in indict:
-            self[entry] = indict[entry]
+        for key, value in indict.iteritems():
+            self[key] = value
 
     def copy(self):
         return CaselessDict(dict.copy(self))
 
-    def clear(self):
-        dict.clear(self)
-
     def __repr__(self):
-        # TODO: not necessary when to_ical also outs unicode
-        dict_repr = dict(map(
-            lambda item: (item[0].encode(DEFAULT_ENCODING), item[1]),
-            self.iteritems()
-            ))
-        return 'CaselessDict(%s)' % dict_repr
+        return 'CaselessDict(%s)' % self
 
     # A list of keys that must appear first in sorted_keys and sorted_items;
     # must be uppercase.
