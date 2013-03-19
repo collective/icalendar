@@ -84,7 +84,7 @@ class CaselessDict(dict):
         return CaselessDict(dict.copy(self))
 
     def __repr__(self):
-        return 'CaselessDict(%s)' % self
+        return 'CaselessDict(%s)' % dict.__repr__(self)
 
     # A list of keys that must appear first in sorted_keys and sorted_items;
     # must be uppercase.
