@@ -71,7 +71,7 @@ class Component(CaselessDict):
                                 # propagate upwards
 
     def __init__(self, *args, **kwargs):
-        """Set keys to upper for initial dict
+        """Set keys to upper for initial dict.
 
         """
         CaselessDict.__init__(self, *args, **kwargs)
@@ -147,7 +147,9 @@ class Component(CaselessDict):
             self.set(name, value, encode)
 
     def _decode(self, name, value):
-        # internal for decoding property values
+        """Internal for decoding property values.
+
+        """
         decoded = types_factory.from_ical(name, value)
         return decoded
 
@@ -198,7 +200,9 @@ class Component(CaselessDict):
         self.subcomponents.append(component)
 
     def _walk(self, name):
-        # private!
+        """Walk to given component.
+
+        """
         result = []
         if name is None or self.name == name:
             result.append(self)
