@@ -15,10 +15,13 @@ def to_unicode(value, encoding='utf-8'):
     raise AssertionError('A str/unicode expected.')
 
 
-def data_encode(data):
+def data_encode(data, encoding=DEFAULT_ENCODING):
+    """Encode all datastructures to the given encoding.
+    Currently unicode strings, dicts and lists are supported.
+    """
     # http://stackoverflow.com/questions/1254454/fastest-way-to-convert-a-dicts-keys-values-from-unicode-to-str
     if isinstance(data, unicode):
-        return data.encode(DEFAULT_ENCODING)
+        return data.encode(encoding)
     elif isinstance(data, dict):
         return dict(map(data_encode, data.iteritems()))
     elif isinstance(data, list) or isinstance(data, tuple):
