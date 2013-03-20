@@ -68,6 +68,64 @@ WEEKDAY_RULE = re.compile('(?P<signal>[+-]?)(?P<relative>[\d]?)'
                           '(?P<weekday>[\w]{2})$')
 
 
+####################################################
+# handy tzinfo classes you can use.
+#
+
+ZERO = timedelta(0)
+HOUR = timedelta(hours=1)
+STDOFFSET = timedelta(seconds=-_time.timezone)
+if _time.daylight:
+    DSTOFFSET = timedelta(seconds=-_time.altzone)
+else:
+    DSTOFFSET = STDOFFSET
+DSTDIFF = DSTOFFSET - STDOFFSET
+
+
+class FixedOffset(tzinfo):
+    """Fixed offset in minutes east from UTC.
+    """
+    def __init__(self, offset, name):
+        self.__offset = timedelta(minutes=offset)
+        self.__name = name
+
+    def utcoffset(self, dt):
+        return self.__offset
+
+    def tzname(self, dt):
+        return self.__name
+
+    def dst(self, dt):
+        return ZERO
+
+
+class LocalTimezone(tzinfo):
+    """Timezone of the machine where the code is running.
+    """
+    def utcoffset(self, dt):
+        if self._isdst(dt):
+            return DSTOFFSET
+        else:
+            return STDOFFSET
+
+    def dst(self, dt):
+        if self._isdst(dt):
+            return DSTDIFF
+        else:
+            return ZERO
+
+    def tzname(self, dt):
+        return _time.tzname[self._isdst(dt)]
+
+    def _isdst(self, dt):
+        tt = (dt.year, dt.month, dt.day,
+              dt.hour, dt.minute, dt.second,
+              dt.weekday(), 0, -1)
+        stamp = _time.mktime(tt)
+        tt = _time.localtime(stamp)
+        return tt.tm_isdst > 0
+
+
 class vBinary(object):
     """Binary property values are base 64 encoded.
 
@@ -138,63 +196,6 @@ class vCalAddress(unicode):
         except:
             raise ValueError(u'Expected vCalAddress, got: %s' % ical)
 
-
-####################################################
-# handy tzinfo classes you can use.
-#
-
-ZERO = timedelta(0)
-HOUR = timedelta(hours=1)
-STDOFFSET = timedelta(seconds=-_time.timezone)
-if _time.daylight:
-    DSTOFFSET = timedelta(seconds=-_time.altzone)
-else:
-    DSTOFFSET = STDOFFSET
-DSTDIFF = DSTOFFSET - STDOFFSET
-
-
-class FixedOffset(tzinfo):
-    """Fixed offset in minutes east from UTC.
-    """
-    def __init__(self, offset, name):
-        self.__offset = timedelta(minutes=offset)
-        self.__name = name
-
-    def utcoffset(self, dt):
-        return self.__offset
-
-    def tzname(self, dt):
-        return self.__name
-
-    def dst(self, dt):
-        return ZERO
-
-
-class LocalTimezone(tzinfo):
-    """Timezone of the machine where the code is running.
-    """
-    def utcoffset(self, dt):
-        if self._isdst(dt):
-            return DSTOFFSET
-        else:
-            return STDOFFSET
-
-    def dst(self, dt):
-        if self._isdst(dt):
-            return DSTDIFF
-        else:
-            return ZERO
-
-    def tzname(self, dt):
-        return _time.tzname[self._isdst(dt)]
-
-    def _isdst(self, dt):
-        tt = (dt.year, dt.month, dt.day,
-              dt.hour, dt.minute, dt.second,
-              dt.weekday(), 0, -1)
-        stamp = _time.mktime(tt)
-        tt = _time.localtime(stamp)
-        return tt.tm_isdst > 0
 
 
 class vFloat(float):
@@ -855,6 +856,28 @@ class TypesFactory(CaselessDict):
     def __init__(self, *args, **kwargs):
         "Set keys to upper for initial dict"
         CaselessDict.__init__(self, *args, **kwargs)
+        self.all_types = [
+            vBinary,
+            vBoolean,
+            vCalAddress,
+            vDDDLists,
+            vDDDTypes,
+            vDate,
+            vDatetime,
+            vDuration,
+            vFloat,
+            vFrequency,
+            vGeo,
+            vInline,
+            vInt,
+            vPeriod,
+            vRecur,
+            vText,
+            vTime,
+            vUTCOffset,
+            vUri,
+            vWeekday,
+        ]
         self['binary'] = vBinary
         self['boolean'] = vBoolean
         self['cal-address'] = vCalAddress

@@ -103,6 +103,9 @@ class Component(CaselessDict):
         """
         if not cond:
             return value
+        if type(value) in types_factory.all_types:
+            # Don't encode already encoded values.
+            return value
         klass = types_factory.for_property(name)
         obj = klass(value)
         if hasattr(value, 'params') and len(value.params.keys()) > 0:
