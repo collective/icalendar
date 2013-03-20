@@ -131,12 +131,9 @@ class vCalAddress(unicode):
     def to_ical(self):
         return self.encode(DEFAULT_ENCODING)
 
-    @staticmethod
-    def from_ical(ical):
-        try:
-            return vCalAddress(ical)
-        except:
-            raise ValueError(u'Expected vCalAddress, got: %s' % ical)
+    @classmethod
+    def from_ical(cls, ical):
+        return cls(ical)
 
 
 ####################################################
