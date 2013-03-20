@@ -69,6 +69,7 @@ class Component(CaselessDict):
                                 # component, we will silently ignore
                                 # it, rather than let the exception
                                 # propagate upwards
+    # not_compliant = [''] # List of non-compliant properties.
 
     def __init__(self, *args, **kwargs):
         """Set keys to upper for initial dict.
@@ -79,20 +80,16 @@ class Component(CaselessDict):
         self.subcomponents = [] # Components can be nested.
         self.is_broken = False  # True iff we ignored an exception while parsing a property
 
-#    def non_complience(self, warnings=0):
-#        """
-#        not implemented yet!
-#        Returns a dict describing non compliant properties, if any.
-#        If warnings is true it also returns warnings.
-#
-#        If the parser is too strict it might prevent parsing erroneous but
-#        otherwise compliant properties. So the parser is pretty lax, but it is
-#        possible to test for non-complience by calling this method.
-#        """
-#        nc = {}
-#        if not getattr(self, 'name', ''):
-#            nc['name'] = {'type':'ERROR', 'description':'Name is not defined'}
-#        return nc
+    #def is_compliant(self, name):
+    #    """Returns True is the given property name is compliant with the
+    #    icalendar implementation.
+    #
+    #    If the parser is too strict it might prevent parsing erroneous but
+    #    otherwise compliant properties. So the parser is pretty lax, but it is
+    #    possible to test for non-complience by calling this method.
+    #    """
+    #    return name in not_compliant
+
 
     #############################
     # handling of property values
@@ -317,20 +314,19 @@ class Component(CaselessDict):
     def __repr__(self):
         return '%s(%s)' % (self.name, data_encode(self))
 
-#    def content_line(self, name):
-#        "Returns property as content line"
-#        value = self[name]
-#        params = getattr(value, 'params', Parameters())
-#        return Contentline.from_parts((name, params, value))
+    def content_line(self, name, value):
+        """Returns property as content line.
+        """
+        params = getattr(value, 'params', Parameters())
+        return Contentline.from_parts((name, params, value))
 
     def content_lines(self):
         """Converts the Component and subcomponents into content lines.
-
         """
         contentlines = Contentlines()
-        for name, values in self.property_items():
-            params = getattr(values, 'params', Parameters())
-            contentlines.append(Contentline.from_parts((name, params, values)))
+        for name, value in self.property_items():
+            cl = self.content_line(name, value)
+            contentlines.append(cl)
         contentlines.append('') # remember the empty string in the end
         return contentlines
 
