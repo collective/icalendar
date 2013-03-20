@@ -5,6 +5,10 @@ Changelog
 3.4dev (unreleased)
 -------------------
 
+- Remove ``test_doctests.py``, test suite already created properly in
+  ``test_icalendar.py``.
+  [rnix]
+
 - Allow seconds in vUTCOffset properties. Fixes #55.
   [thet]
 
