@@ -150,6 +150,9 @@ class Component(CaselessDict):
         """Internal for decoding property values.
 
         """
+        # TODO: how much sense makes it to call from_ical of values, which are
+        # not an ical string?  We do not store ical strings internally, but
+        # prop.* classes or primitive types...
         decoded = types_factory.from_ical(name, value)
         return decoded
 

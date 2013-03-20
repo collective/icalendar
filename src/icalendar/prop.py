@@ -664,6 +664,8 @@ class vRecur(CaselessDict):
 
     @staticmethod
     def from_ical(ical):
+        if isinstance(ical, vRecur):
+            return ical
         try:
             recur = vRecur()
             for pairs in ical.split(';'):
