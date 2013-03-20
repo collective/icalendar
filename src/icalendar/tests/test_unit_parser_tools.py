@@ -3,9 +3,9 @@ from . import unittest
 from ..parser_tools import to_unicode
 
 
-class TestCalComponent(unittest.TestCase):
+class TestParserTools(unittest.TestCase):
 
-    def test_cal_Component(self):
+    def test_parser_tools_to_unicode(self):
 
         self.assertEqual(to_unicode('spam'), u'spam')
         self.assertEqual(to_unicode(u'spam'), u'spam')
@@ -18,3 +18,4 @@ class TestCalComponent(unittest.TestCase):
             to_unicode(1)
         with self.assertRaises(AssertionError):
             to_unicode(None)
+
