@@ -161,6 +161,9 @@ class Component(CaselessDict):
 
         """
         if name in self:
+            # XXX: see small.rst line 22. tests fail. what's this function
+            #      supposed to do in the end?
+            # -rnix
             value = self[name]
             if isinstance(value, list):
                 return [self._decode(name, v) for v in value]

@@ -69,7 +69,7 @@ def foldline(line, limit=75, fold_sep=u'\r\n '):
     ret_line = u''
     byte_count = 0
     for char in line:
-        char_byte_len = len(char.encode('utf-8'))
+        char_byte_len = len(char.encode(DEFAULT_ENCODING))
         byte_count += char_byte_len
         if byte_count >= limit:
             ret_line += fold_sep
