@@ -9,8 +9,8 @@ class TestIssues(unittest.TestCase):
 
 
     def test_issue_53(self):
-        """parsing failure on some descriptions?
-        see: https://github.com/collective/icalendar/issues/53
+        """Issue #53 - Parsing failure on some descriptions?
+        https://github.com/collective/icalendar/issues/53
         """
 
         directory = os.path.dirname(__file__)
@@ -47,7 +47,7 @@ class TestIssues(unittest.TestCase):
 
 
     def test_issue_64(self):
-        """Event.to_ical() fails for unicode strings
+        """Issue #64 - Event.to_ical() fails for unicode strings
         https://github.com/collective/icalendar/issues/64
         """
 
@@ -69,8 +69,11 @@ class TestIssues(unittest.TestCase):
 
 
     def test_issue_82(self):
-        # vBinary __repr__ called rather than to_ical from container types
-        # https://github.com/collective/icalendar/issues/82
+        """Issue #82 - vBinary __repr__ called rather than to_ical from
+                       container types
+        https://github.com/collective/icalendar/issues/82
+        """
+
         b = icalendar.vBinary('text')
         b.params['FMTTYPE'] = 'text/plain'
         self.assertEqual(b.to_ical(), 'dGV4dA==')
