@@ -16,11 +16,11 @@ from .parser_tools import (
     data_encode
 )
 
+
 def escape_char(text):
     """Format value according to iCalendar TEXT escaping rules.
     """
     assert isinstance(text, basestring)
-    # TODO: optimize this
     # NOTE: ORDER MATTERS!
     return text.replace('\N', '\n')\
                .replace('\\', '\\\\')\
@@ -32,7 +32,6 @@ def escape_char(text):
 
 def unescape_char(text):
     assert isinstance(text, basestring)
-    # TODO: optimize this
     # NOTE: ORDER MATTERS!
     return text.replace(r'\N', r'\n')\
                .replace(r'\r\n', '\n')\
@@ -55,8 +54,8 @@ def tzid_from_dt(dt):
     return tzid
 
 
-def foldline(text, length=75, newline='\r\n'):
-    """Make a string folded per RFC5545 (each line must be less than 75 octets)
+def foldline(line, limit=75, fold_sep=u'\r\n '):
+    """Make a string folded as defined in RFC5545
     Lines of text SHOULD NOT be longer than 75 octets, excluding the line
     break.  Long content lines SHOULD be split into a multiple line
     representations using a line "folding" technique.  That is, a long
@@ -64,50 +63,20 @@ def foldline(text, length=75, newline='\r\n'):
     immediately followed by a single linear white-space character (i.e.,
     SPACE or HTAB).
     """
-    assert isinstance(text, str)
-#    text.decode('utf-8')  # try to decode, to be sure it's utf-8 or ASCII
-    l_line = len(text)
-    new_lines = []
-    start = 0
-    while True:
-        end = start + length - 1
-        chunk = text[start:end]
-        m = NEWLINE.search(chunk)
-        if m is not None and m.end() != l_line:
-            new_lines.append(text[start:start + m.start()])
-            start += m.end()
-            continue
+    assert isinstance(line, unicode)
+    assert u'\n' not in line
 
-        if end >= l_line:
-            end = l_line
-        else:
-            # Check that we don't fold in the middle of a UTF-8 character:
-            # http://lists.osafoundation.org/pipermail/ietf-calsify/2006-August/001126.html
-            while True:
-                char_value = ord(text[end])
-                if char_value < 128 or char_value >= 192:
-                    # This is not in the middle of a UTF-8 character, so we
-                    # can fold here:
-                    break
-                else:
-                    end -= 1
+    ret_line = u''
+    byte_count = 0
+    for char in line:
+        char_byte_len = len(char.encode('utf-8'))
+        byte_count += char_byte_len
+        if byte_count >= limit:
+            ret_line += fold_sep
+            byte_count = char_byte_len
+        ret_line += char
 
-        # Recompute the chunk, since start or end may have changed.
-        chunk = text[start:end]
-        new_lines.append(chunk)
-        if end == l_line:
-            break  # Done
-        start = end
-    return (newline + ' ').join(new_lines).rstrip(' ')
-
-#    return newline.join(
-#            icalendar.tools.wrap(text, length,
-#                subsequent_indent=' ',
-#                drop_whitespace=False,
-#                break_long_words=True,
-#                replace_whitespace=False
-#                )
-#            )
+    return ret_line
 
 
 #################################################################
@@ -269,14 +238,12 @@ class Parameters(CaselessDict):
 
 
 def escape_string(val):
-    # TODO: optimize this
     # '%{:02X}'.format(i)
     return val.replace(r'\,', '%2C').replace(r'\:', '%3A')\
               .replace(r'\;', '%3B').replace(r'\\', '%5C')
 
 
 def unsescape_string(val):
-    # TODO: optimize this
     return val.replace('%2C', ',').replace('%3A', ':')\
               .replace('%3B', ';').replace('%5C', '\\')
 
@@ -291,6 +258,8 @@ class Contentline(unicode):
     """
     def __new__(cls, value, strict=False, encoding=DEFAULT_ENCODING):
         value = to_unicode(value, encoding=encoding)
+        assert u'\n' not in value, ('Content line can not contain unescaped '
+                                    'new line characters.')
         self = super(Contentline, cls).__new__(cls, value)
         self.strict = strict
         return self
@@ -364,8 +333,7 @@ class Contentline(unicode):
         """Long content lines are folded so they are less than 75 characters.
         wide.
         """
-        value = self.encode(DEFAULT_ENCODING)
-        return foldline(value)
+        return foldline(self).encode(DEFAULT_ENCODING)
 
 
 class Contentlines(list):
@@ -378,8 +346,8 @@ class Contentlines(list):
         """
         return '\r\n'.join(l.to_ical() for l in self if l) + '\r\n'
 
-    @staticmethod
-    def from_ical(st):
+    @classmethod
+    def from_ical(cls, st):
         """Parses a string into content lines.
         """
         try:
@@ -388,7 +356,7 @@ class Contentlines(list):
             lines = [Contentline(line) for
                      line in unfolded.splitlines() if line]
             lines.append('')  # '\r\n' at the end of every content line
-            return Contentlines(lines)
+            return cls(lines)
         except:
             raise ValueError('Expected StringType with content lines')
 
