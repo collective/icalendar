@@ -200,12 +200,12 @@ class Parameters(CaselessDict):
             result.append('%s=%s' % (key.upper().encode('utf-8'), value))
         return ';'.join(result)
 
-    @staticmethod
-    def from_ical(st, strict=False):
+    @classmethod
+    def from_ical(cls, st, strict=False):
         "Parses the parameter format from ical text format"
 
         # parse into strings
-        result = Parameters()
+        result = cls()
         for param in q_split(st, ';'):
             try:
                 key, val = q_split(param, '=')
@@ -264,8 +264,8 @@ class Contentline(unicode):
         self.strict = strict
         return self
 
-    @staticmethod
-    def from_parts(parts):
+    @classmethod
+    def from_parts(cls, parts):
         """Turn a tuple of parts into a content line.
         """
         (name, params, values) = parts
@@ -283,8 +283,8 @@ class Contentline(unicode):
             values = to_unicode(values)
             if params:
                 params = to_unicode(params.to_ical())
-                return Contentline(u'%s;%s:%s' % (name, params, values))
-            return Contentline(u'%s:%s' % (name, values))
+                return cls(u'%s;%s:%s' % (name, params, values))
+            return cls(u'%s:%s' % (name, values))
         except Exception:
             raise ValueError(u'Property: %r Wrong values "%r" or "%r"'
                              % (name, params, values))

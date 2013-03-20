@@ -189,10 +189,10 @@ class vCalAddress(unicode):
     def to_ical(self):
         return self.encode(DEFAULT_ENCODING)
 
-    @staticmethod
-    def from_ical(ical):
+    @classmethod
+    def from_ical(cls, ical):
         try:
-            return vCalAddress(ical)
+            return cls(ical)
         except:
             raise ValueError(u'Expected vCalAddress, got: %s' % ical)
 
@@ -210,10 +210,10 @@ class vFloat(float):
     def to_ical(self):
         return str(self)
 
-    @staticmethod
-    def from_ical(ical):
+    @classmethod
+    def from_ical(cls, ical):
         try:
-            return float(ical)
+            return cls(ical)
         except:
             raise ValueError('Expected float value, got: %s' % ical)
 
@@ -230,10 +230,10 @@ class vInt(int):
     def to_ical(self):
         return str(self)
 
-    @staticmethod
-    def from_ical(ical):
+    @classmethod
+    def from_ical(cls, ical):
         try:
-            return int(ical)
+            return cls(ical)
         except:
             raise ValueError('Expected int, got: %s' % ical)
 
@@ -310,9 +310,9 @@ class vDDDTypes(object):
         else:
             raise ValueError('Unknown date type')
 
-    @staticmethod
-    def from_ical(ical, timezone=None):
-        if isinstance(ical, vDDDTypes):
+    @classmethod
+    def from_ical(cls, ical, timezone=None):
+        if isinstance(ical, cls):
             return ical.dt
         u = ical.upper()
         if u.startswith('-P') or u.startswith('P'):
@@ -569,10 +569,10 @@ class vWeekday(unicode):
     def to_ical(self):
         return self.encode(DEFAULT_ENCODING).upper()
 
-    @staticmethod
-    def from_ical(ical):
+    @classmethod
+    def from_ical(cls, ical):
         try:
-            return vWeekday(ical.upper())
+            return cls(ical.upper())
         except:
             raise ValueError('Expected weekday abbrevation, got: %s' % ical)
 
@@ -603,10 +603,10 @@ class vFrequency(unicode):
     def to_ical(self):
         return self.encode(DEFAULT_ENCODING).upper()
 
-    @staticmethod
-    def from_ical(ical):
+    @classmethod
+    def from_ical(cls, ical):
         try:
-            return vFrequency(ical.upper())
+            return cls(ical.upper())
         except:
             raise ValueError('Expected frequency, got: %s' % ical)
 
@@ -656,21 +656,21 @@ class vRecur(CaselessDict):
             result.append('%s=%s' % (key, vals))
         return ';'.join(result)
 
-    @staticmethod
-    def parse_type(key, values):
+    @classmethod
+    def parse_type(cls, key, values):
         # integers
-        parser = vRecur.types.get(key, vText)
+        parser = cls.types.get(key, vText)
         return [parser.from_ical(v) for v in values.split(',')]
 
-    @staticmethod
-    def from_ical(ical):
-        if isinstance(ical, vRecur):
+    @classmethod
+    def from_ical(cls, ical):
+        if isinstance(ical, cls):
             return ical
         try:
-            recur = vRecur()
+            recur = cls()
             for pairs in ical.split(';'):
                 key, vals = pairs.split('=')
-                recur[key] = vRecur.parse_type(key, vals)
+                recur[key] = cls.parse_type(key, vals)
             return dict(recur)
         except:
             raise ValueError('Error in recurrence rule: %s' % ical)
@@ -694,10 +694,10 @@ class vText(unicode):
     def to_ical(self):
         return escape_char(self).encode(self.encoding)
 
-    @staticmethod
-    def from_ical(ical):
+    @classmethod
+    def from_ical(cls, ical):
         ical_unesc = unescape_char(ical)
-        return vText(ical_unesc)
+        return cls(ical_unesc)
 
 
 class vTime(object):
@@ -741,10 +741,10 @@ class vUri(unicode):
     def to_ical(self):
         return self.encode(DEFAULT_ENCODING)
 
-    @staticmethod
-    def from_ical(ical):
+    @classmethod
+    def from_ical(cls, ical):
         try:
-            return vUri(ical)
+            return cls(ical)
         except:
             raise ValueError('Expected , got: %s' % ical)
 
@@ -810,9 +810,9 @@ class vUTCOffset(object):
             duration = '%02i%02i' % (hours, minutes)
         return sign % duration
 
-    @staticmethod
-    def from_ical(ical):
-        if isinstance(ical, vUTCOffset):
+    @classmethod
+    def from_ical(cls, ical):
+        if isinstance(ical, cls):
             return ical.td
         try:
             sign, hours, minutes, seconds = (ical[0:1],
@@ -845,9 +845,9 @@ class vInline(unicode):
     def to_ical(self):
         return self.encode(DEFAULT_ENCODING)
 
-    @staticmethod
-    def from_ical(ical):
-        return vInline(ical)
+    @classmethod
+    def from_ical(cls, ical):
+        return cls(ical)
 
 
 class TypesFactory(CaselessDict):
