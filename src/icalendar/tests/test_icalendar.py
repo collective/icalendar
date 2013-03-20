@@ -2,7 +2,7 @@
 from . import unittest
 import doctest
 import os
-from icalendar import (
+from .. import (
     cal,
     caselessdict,
     parser,
@@ -15,19 +15,20 @@ OPTIONFLAGS = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS
 class IcalendarTestCase (unittest.TestCase):
 
     def test_long_lines(self):
-        from icalendar.parser import Contentlines, Contentline
-        c = Contentlines([Contentline('BEGIN:VEVENT\r\n')])
-        c.append(Contentline(''.join('123456789 ' * 10) + '\r\n'))
+        from ..parser import Contentlines, Contentline
+        c = Contentlines([Contentline('BEGIN:VEVENT')])
+        c.append(Contentline(''.join('123456789 ' * 10)))
         self.assertEqual(
             c.to_ical(),
-            'BEGIN:VEVENT\r\n\r\n123456789 123456789 123456789 123456789 '
+            'BEGIN:VEVENT\r\n123456789 123456789 123456789 123456789 '
             '123456789 123456789 123456789 1234\r\n 56789 123456789 '
-            '123456789 \r\n\r\n'
+            '123456789 \r\n'
         )
 
         # from doctests
-        # Notice that there is an extra empty string in the end of the content lines.
-        # That is so they can be easily joined with: '\r\n'.join(contentlines)).
+        # Notice that there is an extra empty string in the end of the content
+        # lines. That is so they can be easily joined with:
+        # '\r\n'.join(contentlines))
         self.assertEqual(Contentlines.from_ical('A short line\r\n'),
                          ['A short line', ''])
         self.assertEqual(Contentlines.from_ical('A faked\r\n  long line\r\n'),
@@ -39,8 +40,8 @@ class IcalendarTestCase (unittest.TestCase):
         )
 
     def test_contentline_class(self):
-        from icalendar.parser import Contentline, Parameters
-        from icalendar.prop import vText
+        from ..parser import Contentline, Parameters
+        from ..prop import vText
 
         self.assertEqual(
             Contentline('Si meliora dies, ut vina, poemata reddit').to_ical(),
@@ -52,20 +53,28 @@ class IcalendarTestCase (unittest.TestCase):
         self.assertEqual(
             c,
             ('123456789 123456789 123456789 123456789 123456789 123456789 '
-             '123456789 1234\r\n 56789 123456789 123456789')
+             '123456789 1234\r\n 56789 123456789 123456789 ')
         )
 
         # A folded line gets unfolded
         self.assertEqual(
             Contentline.from_ical(c),
             ('123456789 123456789 123456789 123456789 123456789 123456789 '
-             '123456789 123456789 123456789 123456789')
+             '123456789 123456789 123456789 123456789 ')
         )
 
-        # Newlines in a string get need to be preserved
+        # http://tools.ietf.org/html/rfc5545#section-3.3.11
+        # An intentional formatted text line break MUST only be included in
+        # a "TEXT" property value by representing the line break with the
+        # character sequence of BACKSLASH, followed by a LATIN SMALL LETTER
+        # N or a LATIN CAPITAL LETTER N, that is "\n" or "\N".
+
+        # Newlines are not allwoed in content lines
+        self.assertRaises(AssertionError, Contentline, '1234\r\n\r\n1234')
+
         self.assertEqual(
-            Contentline('1234\n\n1234').to_ical(),
-            '1234\r\n \r\n 1234'
+            Contentline('1234\\n\\n1234').to_ical(),
+            '1234\\n\\n1234'
         )
 
         # We do not fold within a UTF-8 character
@@ -78,10 +87,12 @@ class IcalendarTestCase (unittest.TestCase):
         c = Contentline('x' * 73 + '\xc3\xab' + '\\n ' + 'y' * 10)
         self.assertEqual(c.to_ical().count('\xc3'), 1)
 
-        # Don't fail if we fold a line that is exactly X times 74 characters long:
+        # Don't fail if we fold a line that is exactly X times 74 characters
+        # long
         c = Contentline(''.join(['x'] * 148)).to_ical()
 
-        # It can parse itself into parts. Which is a tuple of (name, params, vals)
+        # It can parse itself into parts,
+        # which is a tuple of (name, params, vals)
         self.assertEqual(
             Contentline('dtstart:20050101T120000').parts(),
             ('dtstart', Parameters({}), '20050101T120000')
@@ -92,7 +103,8 @@ class IcalendarTestCase (unittest.TestCase):
             ('dtstart', Parameters({'VALUE': 'datetime'}), '20050101T120000')
         )
 
-        c = Contentline('ATTENDEE;CN=Max Rasmussen;ROLE=REQ-PARTICIPANT:MAILTO:maxm@example.com')
+        c = Contentline('ATTENDEE;CN=Max Rasmussen;ROLE=REQ-PARTICIPANT:'
+                        'MAILTO:maxm@example.com')
         self.assertEqual(
             c.parts(),
             ('ATTENDEE',
@@ -101,7 +113,8 @@ class IcalendarTestCase (unittest.TestCase):
         )
         self.assertEqual(
             c.to_ical(),
-            'ATTENDEE;CN=Max Rasmussen;ROLE=REQ-PARTICIPANT:MAILTO:maxm@example.com'
+            'ATTENDEE;CN=Max Rasmussen;ROLE=REQ-PARTICIPANT:'
+            'MAILTO:maxm@example.com'
         )
 
         # and back again
@@ -112,7 +125,8 @@ class IcalendarTestCase (unittest.TestCase):
                  'MAILTO:maxm@example.com')
         self.assertEqual(
             Contentline.from_parts(parts),
-            'ATTENDEE;CN="Max Rasmussen";ROLE=REQ-PARTICIPANT:MAILTO:maxm@example.com'
+            'ATTENDEE;CN="Max Rasmussen";ROLE=REQ-PARTICIPANT:'
+            'MAILTO:maxm@example.com'
         )
 
         # and again
@@ -202,43 +216,43 @@ class IcalendarTestCase (unittest.TestCase):
         )
 
     def test_fold_line(self):
-        from icalendar.parser import foldline
+        from ..parser import foldline
 
-        self.assertEqual(foldline('foo'), 'foo')
+        self.assertEqual(foldline(u'foo'), u'foo')
         self.assertEqual(
-            foldline("Lorem ipsum dolor sit amet, consectetur adipiscing "
-                     "elit. Vestibulum convallis imperdiet dui posuere."),
-            ('Lorem ipsum dolor sit amet, consectetur adipiscing elit. '
-             'Vestibulum conval\r\n lis imperdiet dui posuere.')
+            foldline(u"Lorem ipsum dolor sit amet, consectetur adipiscing "
+                     u"elit. Vestibulum convallis imperdiet dui posuere."),
+            (u'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '
+             u'Vestibulum conval\r\n lis imperdiet dui posuere.')
         )
 
         with self.assertRaises(AssertionError):
-            foldline(u'привет', length=3)
-        self.assertEqual(foldline('foobar', length=4), 'foo\r\n bar')
+            foldline('привет', limit=3)
+        self.assertEqual(foldline(u'foobar', limit=4), u'foo\r\n bar')
         self.assertEqual(
-            foldline('Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
-                     ' Vestibulum convallis imperdiet dui posuere.'),
-            ('Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
-             ' Vestibulum conval\r\n lis imperdiet dui posuere.')
+            foldline(u'Lorem ipsum dolor sit amet, consectetur adipiscing elit'
+                     u'. Vestibulum convallis imperdiet dui posuere.'),
+            (u'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+             u' Vestibulum conval\r\n lis imperdiet dui posuere.')
         )
         self.assertEqual(
-            foldline('DESCRIPTION:АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯ'),
-            'DESCRIPTION:АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭ\r\n ЮЯ'
+            foldline(u'DESCRIPTION:АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯ'),
+            u'DESCRIPTION:АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭ\r\n ЮЯ'
         )
 
     def test_value_double_quoting(self):
-        from icalendar.parser import dquote
+        from ..parser import dquote
         self.assertEqual(dquote('Max'), 'Max')
         self.assertEqual(dquote('Rasmussen, Max'), '"Rasmussen, Max"')
         self.assertEqual(dquote('name:value'), '"name:value"')
 
     def test_q_split(self):
-        from icalendar.parser import q_split
+        from ..parser import q_split
         self.assertEqual(q_split('Max,Moller,"Rasmussen, Max"'),
                          ['Max', 'Moller', '"Rasmussen, Max"'])
 
     def test_q_join(self):
-        from icalendar.parser import q_join
+        from ..parser import q_join
         self.assertEqual(q_join(['Max', 'Moller', 'Rasmussen, Max']),
                          'Max,Moller,"Rasmussen, Max"')
 
