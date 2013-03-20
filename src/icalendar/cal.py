@@ -150,9 +150,11 @@ class Component(CaselessDict):
         """Internal for decoding property values.
 
         """
-        # TODO: how much sense makes it to call from_ical of values, which are
-        # not an ical string?  We do not store ical strings internally, but
-        # prop.* classes or primitive types...
+
+        # TODO: Currently the decoded method calls the icalendar.prop instances
+        # from_ical. We probably want to decode properties into Python native
+        # types here. But when parsing from an ical string with from_ical, we
+        # want to encode the string into a real icalendar.prop property.
         decoded = types_factory.from_ical(name, value)
         return decoded
 
@@ -160,10 +162,10 @@ class Component(CaselessDict):
         """Returns decoded value of property.
 
         """
+        # XXX: fail. what's this function supposed to do in the end?
+        # -rnix
+
         if name in self:
-            # XXX: see small.rst line 22. tests fail. what's this function
-            #      supposed to do in the end?
-            # -rnix
             value = self[name]
             if isinstance(value, list):
                 return [self._decode(name, v) for v in value]
