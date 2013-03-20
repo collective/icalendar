@@ -68,6 +68,64 @@ WEEKDAY_RULE = re.compile('(?P<signal>[+-]?)(?P<relative>[\d]?)'
                           '(?P<weekday>[\w]{2})$')
 
 
+####################################################
+# handy tzinfo classes you can use.
+#
+
+ZERO = timedelta(0)
+HOUR = timedelta(hours=1)
+STDOFFSET = timedelta(seconds=-_time.timezone)
+if _time.daylight:
+    DSTOFFSET = timedelta(seconds=-_time.altzone)
+else:
+    DSTOFFSET = STDOFFSET
+DSTDIFF = DSTOFFSET - STDOFFSET
+
+
+class FixedOffset(tzinfo):
+    """Fixed offset in minutes east from UTC.
+    """
+    def __init__(self, offset, name):
+        self.__offset = timedelta(minutes=offset)
+        self.__name = name
+
+    def utcoffset(self, dt):
+        return self.__offset
+
+    def tzname(self, dt):
+        return self.__name
+
+    def dst(self, dt):
+        return ZERO
+
+
+class LocalTimezone(tzinfo):
+    """Timezone of the machine where the code is running.
+    """
+    def utcoffset(self, dt):
+        if self._isdst(dt):
+            return DSTOFFSET
+        else:
+            return STDOFFSET
+
+    def dst(self, dt):
+        if self._isdst(dt):
+            return DSTDIFF
+        else:
+            return ZERO
+
+    def tzname(self, dt):
+        return _time.tzname[self._isdst(dt)]
+
+    def _isdst(self, dt):
+        tt = (dt.year, dt.month, dt.day,
+              dt.hour, dt.minute, dt.second,
+              dt.weekday(), 0, -1)
+        stamp = _time.mktime(tt)
+        tt = _time.localtime(stamp)
+        return tt.tm_isdst > 0
+
+
 class vBinary(object):
     """Binary property values are base 64 encoded.
 
@@ -136,64 +194,6 @@ class vCalAddress(unicode):
         return cls(ical)
 
 
-####################################################
-# handy tzinfo classes you can use.
-#
-
-ZERO = timedelta(0)
-HOUR = timedelta(hours=1)
-STDOFFSET = timedelta(seconds=-_time.timezone)
-if _time.daylight:
-    DSTOFFSET = timedelta(seconds=-_time.altzone)
-else:
-    DSTOFFSET = STDOFFSET
-DSTDIFF = DSTOFFSET - STDOFFSET
-
-
-class FixedOffset(tzinfo):
-    """Fixed offset in minutes east from UTC.
-    """
-    def __init__(self, offset, name):
-        self.__offset = timedelta(minutes=offset)
-        self.__name = name
-
-    def utcoffset(self, dt):
-        return self.__offset
-
-    def tzname(self, dt):
-        return self.__name
-
-    def dst(self, dt):
-        return ZERO
-
-
-class LocalTimezone(tzinfo):
-    """Timezone of the machine where the code is running.
-    """
-    def utcoffset(self, dt):
-        if self._isdst(dt):
-            return DSTOFFSET
-        else:
-            return STDOFFSET
-
-    def dst(self, dt):
-        if self._isdst(dt):
-            return DSTDIFF
-        else:
-            return ZERO
-
-    def tzname(self, dt):
-        return _time.tzname[self._isdst(dt)]
-
-    def _isdst(self, dt):
-        tt = (dt.year, dt.month, dt.day,
-              dt.hour, dt.minute, dt.second,
-              dt.weekday(), 0, -1)
-        stamp = _time.mktime(tt)
-        tt = _time.localtime(stamp)
-        return tt.tm_isdst > 0
-
-
 class vFloat(float):
     """Just a float.
 
@@ -206,10 +206,10 @@ class vFloat(float):
     def to_ical(self):
         return str(self)
 
-    @staticmethod
-    def from_ical(ical):
+    @classmethod
+    def from_ical(cls, ical):
         try:
-            return float(ical)
+            return cls(ical)
         except:
             raise ValueError('Expected float value, got: %s' % ical)
 
@@ -226,10 +226,10 @@ class vInt(int):
     def to_ical(self):
         return str(self)
 
-    @staticmethod
-    def from_ical(ical):
+    @classmethod
+    def from_ical(cls, ical):
         try:
-            return int(ical)
+            return cls(ical)
         except:
             raise ValueError('Expected int, got: %s' % ical)
 
@@ -306,9 +306,9 @@ class vDDDTypes(object):
         else:
             raise ValueError('Unknown date type')
 
-    @staticmethod
-    def from_ical(ical, timezone=None):
-        if isinstance(ical, vDDDTypes):
+    @classmethod
+    def from_ical(cls, ical, timezone=None):
+        if isinstance(ical, cls):
             return ical.dt
         u = ical.upper()
         if u.startswith('-P') or u.startswith('P'):
@@ -565,10 +565,10 @@ class vWeekday(unicode):
     def to_ical(self):
         return self.encode(DEFAULT_ENCODING).upper()
 
-    @staticmethod
-    def from_ical(ical):
+    @classmethod
+    def from_ical(cls, ical):
         try:
-            return vWeekday(ical.upper())
+            return cls(ical.upper())
         except:
             raise ValueError('Expected weekday abbrevation, got: %s' % ical)
 
@@ -599,10 +599,10 @@ class vFrequency(unicode):
     def to_ical(self):
         return self.encode(DEFAULT_ENCODING).upper()
 
-    @staticmethod
-    def from_ical(ical):
+    @classmethod
+    def from_ical(cls, ical):
         try:
-            return vFrequency(ical.upper())
+            return cls(ical.upper())
         except:
             raise ValueError('Expected frequency, got: %s' % ical)
 
@@ -652,19 +652,21 @@ class vRecur(CaselessDict):
             result.append('%s=%s' % (key, vals))
         return ';'.join(result)
 
-    @staticmethod
-    def parse_type(key, values):
+    @classmethod
+    def parse_type(cls, key, values):
         # integers
-        parser = vRecur.types.get(key, vText)
+        parser = cls.types.get(key, vText)
         return [parser.from_ical(v) for v in values.split(',')]
 
-    @staticmethod
-    def from_ical(ical):
+    @classmethod
+    def from_ical(cls, ical):
+        if isinstance(ical, cls):
+            return ical
         try:
-            recur = vRecur()
+            recur = cls()
             for pairs in ical.split(';'):
                 key, vals = pairs.split('=')
-                recur[key] = vRecur.parse_type(key, vals)
+                recur[key] = cls.parse_type(key, vals)
             return dict(recur)
         except:
             raise ValueError('Error in recurrence rule: %s' % ical)
@@ -688,10 +690,10 @@ class vText(unicode):
     def to_ical(self):
         return escape_char(self).encode(self.encoding)
 
-    @staticmethod
-    def from_ical(ical):
+    @classmethod
+    def from_ical(cls, ical):
         ical_unesc = unescape_char(ical)
-        return vText(ical_unesc)
+        return cls(ical_unesc)
 
 
 class vTime(object):
@@ -735,10 +737,10 @@ class vUri(unicode):
     def to_ical(self):
         return self.encode(DEFAULT_ENCODING)
 
-    @staticmethod
-    def from_ical(ical):
+    @classmethod
+    def from_ical(cls, ical):
         try:
-            return vUri(ical)
+            return cls(ical)
         except:
             raise ValueError('Expected , got: %s' % ical)
 
@@ -784,25 +786,29 @@ class vUTCOffset(object):
         self.params = Parameters()
 
     def to_ical(self):
-        td = self.td
-        day_in_minutes = (td.days * 24 * 60)
-        seconds_in_minutes = td.seconds // 60
-        total_minutes = day_in_minutes + seconds_in_minutes
-        if total_minutes == 0:
+
+        if self.td<timedelta(0):
+            sign = '-%s'
+            td = timedelta(0)-self.td # get timedelta relative to 0
+        else:
             # Google Calendar rejects '0000' but accepts '+0000'
             sign = '+%s'
-        elif total_minutes < 0:
-            sign = '-%s'
+            td = self.td
+
+        days, seconds = td.days, td.seconds
+
+        hours = abs(days * 24 + seconds // 3600)
+        minutes = abs((seconds % 3600) // 60)
+        seconds = abs(seconds % 60)
+        if seconds:
+            duration = '%02i%02i%02i' % (hours, minutes, seconds)
         else:
-            sign = '+%s'
-        hours = abs(total_minutes) // 60
-        minutes = total_minutes % 60
-        duration = '%02i%02i' % (hours, minutes)
+            duration = '%02i%02i' % (hours, minutes)
         return sign % duration
 
-    @staticmethod
-    def from_ical(ical):
-        if isinstance(ical, vUTCOffset):
+    @classmethod
+    def from_ical(cls, ical):
+        if isinstance(ical, cls):
             return ical.td
         try:
             sign, hours, minutes, seconds = (ical[0:1],
@@ -835,9 +841,9 @@ class vInline(unicode):
     def to_ical(self):
         return self.encode(DEFAULT_ENCODING)
 
-    @staticmethod
-    def from_ical(ical):
-        return vInline(ical)
+    @classmethod
+    def from_ical(cls, ical):
+        return cls(ical)
 
 
 class TypesFactory(CaselessDict):
@@ -852,6 +858,28 @@ class TypesFactory(CaselessDict):
     def __init__(self, *args, **kwargs):
         "Set keys to upper for initial dict"
         CaselessDict.__init__(self, *args, **kwargs)
+        self.all_types = [
+            vBinary,
+            vBoolean,
+            vCalAddress,
+            vDDDLists,
+            vDDDTypes,
+            vDate,
+            vDatetime,
+            vDuration,
+            vFloat,
+            vFrequency,
+            vGeo,
+            vInline,
+            vInt,
+            vPeriod,
+            vRecur,
+            vText,
+            vTime,
+            vUTCOffset,
+            vUri,
+            vWeekday,
+        ]
         self['binary'] = vBinary
         self['boolean'] = vBoolean
         self['cal-address'] = vCalAddress

@@ -401,6 +401,11 @@ class TestProp(unittest.TestCase):
         self.assertEqual(vUTCOffset(timedelta(hours=1, minutes=30)).to_ical(),
                          '+0130')
 
+        # Support seconds
+        self.assertEqual(vUTCOffset(timedelta(hours=1,
+                                              minutes=30,
+                                              seconds=7)).to_ical(), '+013007')
+
         # Parsing
 
         self.assertEqual(vUTCOffset.from_ical('0000'), timedelta(0))

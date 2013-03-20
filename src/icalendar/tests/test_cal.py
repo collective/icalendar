@@ -169,6 +169,19 @@ class TestCalComponent(unittest.TestCase):
         self.assertTrue(
                 "LAST-MODIFIED;VALUE=DATE-TIME:20101010T160000Z" in lines)
 
+    def test_cal_Component_add_no_reencode(self):
+        """Already encoded values should not be re-encoded.
+        """
+        from icalendar import cal, prop
+        comp = cal.Component()
+        comp.add('ATTACH', 'me')
+
+        comp.add('ATTACH', 'you', encode=False)
+        binary = prop.vBinary('us')
+        comp.add('ATTACH', binary)
+
+        self.assertEqual(comp['ATTACH'], [u'me', 'you', binary])
+
     def test_cal_Component_from_ical(self):
         # RecurrenceIDs may contain a TZID parameter, if so, they should create
         # a tz localized datetime, otherwise, create a naive datetime

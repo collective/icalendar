@@ -71,7 +71,7 @@ class Component(CaselessDict):
                                 # propagate upwards
 
     def __init__(self, *args, **kwargs):
-        """Set keys to upper for initial dict
+        """Set keys to upper for initial dict.
 
         """
         CaselessDict.__init__(self, *args, **kwargs)
@@ -102,6 +102,9 @@ class Component(CaselessDict):
 
         """
         if not cond:
+            return value
+        if type(value) in types_factory.all_types:
+            # Don't encode already encoded values.
             return value
         klass = types_factory.for_property(name)
         obj = klass(value)
@@ -144,7 +147,12 @@ class Component(CaselessDict):
             self.set(name, value, encode)
 
     def _decode(self, name, value):
-        # internal for decoding property values
+        """Internal for decoding property values.
+
+        """
+        # TODO: how much sense makes it to call from_ical of values, which are
+        # not an ical string?  We do not store ical strings internally, but
+        # prop.* classes or primitive types...
         decoded = types_factory.from_ical(name, value)
         return decoded
 
@@ -195,7 +203,9 @@ class Component(CaselessDict):
         self.subcomponents.append(component)
 
     def _walk(self, name):
-        # private!
+        """Walk to given component.
+
+        """
         result = []
         if name is None or self.name == name:
             result.append(self)
@@ -238,8 +248,8 @@ class Component(CaselessDict):
         properties.append(('END', vText(self.name).to_ical()))
         return properties
 
-    @staticmethod
-    def from_ical(st, multiple=False):
+    @classmethod
+    def from_ical(cls, st, multiple=False):
         """Populates the component recursively from a string.
 
         """
@@ -255,7 +265,7 @@ class Component(CaselessDict):
                 # try and create one of the components defined in the spec,
                 # otherwise get a general Components for robustness.
                 c_name = vals.upper()
-                c_class = component_factory.get(c_name, Component)
+                c_class = component_factory.get(c_name, cls)
                 component = c_class()
                 if not getattr(component, 'name', ''): # undefined components
                     component.name = c_name

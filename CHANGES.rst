@@ -5,6 +5,16 @@ Changelog
 3.4dev (unreleased)
 -------------------
 
+- Allow seconds in vUTCOffset properties. Fixes #55.
+  [thet]
+
+- Let ``Component.decode`` correctly decode vRecur properties. Fixes #70.
+  [thet]
+
+- Don't let ``Component.add`` re-encode already encoded values. This simplifies
+  the API, since there is no need explicitly pass ``encode=False``. Fixes #82.
+  [thet]
+
 - Switch to unicode internally.
   [thet]
 
