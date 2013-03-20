@@ -6,6 +6,12 @@ TODO
   correct subcomponent, as specified in prop.TypesFactory. See also the NOTE
   in: icalendar.tests.example.rst, Components, line 82.
 
+- Eventually implement a ``decoded`` method for all icalendar.prop properties,
+  so that cal.decoded doesn't call the from_ical methods but decode it into
+  realy python natives. We want from_ical encode a ical string into a
+  icalendar.prop instance, so decoding into a python native seems not to be
+  appropriate there. (but the vDDD-types are encoded into python natives, so
+  there is an inconsistence...)
 
 OLD TODO's
 ==========
