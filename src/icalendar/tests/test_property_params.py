@@ -90,7 +90,7 @@ class TestPropertyParams(unittest.TestCase):
             r'that, that; %th%%at%\ that:'
         )
         self.assertEqual(
-            vevent['ORGANIZER'],
+            vevent['ORGANIZER'].to_ical(),
             r'это, то; that\ %th%%at%:'
         )
 
