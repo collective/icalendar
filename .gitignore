@@ -21,3 +21,4 @@ src/icalendar.egg-info/
 develop-eggs/
 eggs/
 parts/
+htmlcov/
