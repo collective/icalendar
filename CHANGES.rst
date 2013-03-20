@@ -5,6 +5,9 @@ Changelog
 3.4dev (unreleased)
 -------------------
 
+- Remove interfaces module, as it is unused.
+  [thet]
+
 - Remove ``test_doctests.py``, test suite already created properly in
   ``test_icalendar.py``.
   [rnix]
