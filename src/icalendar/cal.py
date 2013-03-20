@@ -248,8 +248,8 @@ class Component(CaselessDict):
         properties.append(('END', vText(self.name).to_ical()))
         return properties
 
-    @staticmethod
-    def from_ical(st, multiple=False):
+    @classmethod
+    def from_ical(cls, st, multiple=False):
         """Populates the component recursively from a string.
 
         """
@@ -265,7 +265,7 @@ class Component(CaselessDict):
                 # try and create one of the components defined in the spec,
                 # otherwise get a general Components for robustness.
                 c_name = vals.upper()
-                c_class = component_factory.get(c_name, Component)
+                c_class = component_factory.get(c_name, cls)
                 component = c_class()
                 if not getattr(component, 'name', ''): # undefined components
                     component.name = c_name
