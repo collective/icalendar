@@ -191,11 +191,7 @@ class vCalAddress(unicode):
 
     @classmethod
     def from_ical(cls, ical):
-        try:
-            return cls(ical)
-        except:
-            raise ValueError(u'Expected vCalAddress, got: %s' % ical)
-
+        return cls(ical)
 
 
 class vFloat(float):
