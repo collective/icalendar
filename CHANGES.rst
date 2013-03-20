@@ -5,6 +5,9 @@ Changelog
 3.4dev (unreleased)
 -------------------
 
+- Allow seconds in vUTCOffset properties. Fixes #55.
+  [thet]
+
 - Let ``Component.decode`` correctly decode vRecur properties. Fixes #70.
   [thet]
 

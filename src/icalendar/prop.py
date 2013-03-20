@@ -790,20 +790,24 @@ class vUTCOffset(object):
         self.params = Parameters()
 
     def to_ical(self):
-        td = self.td
-        day_in_minutes = (td.days * 24 * 60)
-        seconds_in_minutes = td.seconds // 60
-        total_minutes = day_in_minutes + seconds_in_minutes
-        if total_minutes == 0:
+
+        if self.td<timedelta(0):
+            sign = '-%s'
+            td = timedelta(0)-self.td # get timedelta relative to 0
+        else:
             # Google Calendar rejects '0000' but accepts '+0000'
             sign = '+%s'
-        elif total_minutes < 0:
-            sign = '-%s'
+            td = self.td
+
+        days, seconds = td.days, td.seconds
+
+        hours = abs(days * 24 + seconds // 3600)
+        minutes = abs((seconds % 3600) // 60)
+        seconds = abs(seconds % 60)
+        if seconds:
+            duration = '%02i%02i%02i' % (hours, minutes, seconds)
         else:
-            sign = '+%s'
-        hours = abs(total_minutes) // 60
-        minutes = total_minutes % 60
-        duration = '%02i%02i' % (hours, minutes)
+            duration = '%02i%02i' % (hours, minutes)
         return sign % duration
 
     @staticmethod
