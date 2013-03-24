@@ -41,7 +41,7 @@ class TestCalComponent(unittest.TestCase):
         self.assertEqual(c['prodid'], prop.vText(u'-//my product//'))
 
         # ... or decoded to a python type
-        self.assertEqual(c.decoded('prodid'), u'-//my product//')
+        self.assertEqual(c.decoded('prodid'), '-//my product//')
 
         # With default values for non existing properties
         self.assertEqual(c.decoded('version', 'No Version'), 'No Version')

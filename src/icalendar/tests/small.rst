@@ -20,7 +20,7 @@ A small example::
     vText('-//My product//mxm.dk/')
 
     >>> cal.decoded('prodid')
-    vText('-//My product//mxm.dk/')
+    '-//My product//mxm.dk/'
 
     >>> first_event = cal.walk('vevent')[0]
     >>> first_event['description'][:75]

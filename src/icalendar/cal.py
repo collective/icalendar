@@ -18,7 +18,8 @@ from .parser import (
     q_join,
 )
 from .prop import TypesFactory
-
+from .prop import vText
+from .parser_tools import DEFAULT_ENCODING
 
 ######################################
 # The component factory
@@ -153,6 +154,10 @@ class Component(CaselessDict):
         # types here. But when parsing from an ical string with from_ical, we
         # want to encode the string into a real icalendar.prop property.
         decoded = types_factory.from_ical(name, value)
+        # TODO: remove when proper decoded is implemented in every prop.* class
+        # Workaround to decode vText properly
+        if isinstance(decoded, vText):
+            decoded = decoded.encode(DEFAULT_ENCODING)
         return decoded
 
     def decoded(self, name, default=_marker):
