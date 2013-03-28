@@ -15,7 +15,8 @@ Changelog
 - Allow seconds in vUTCOffset properties. Fixes #55.
   [thet]
 
-- Let ``Component.decode`` correctly decode vRecur properties. Fixes #70.
+- Let ``Component.decode`` better handle vRecur and vDDDLists properties.
+  Fixes #70.
   [thet]
 
 - Don't let ``Component.add`` re-encode already encoded values. This simplifies

@@ -18,7 +18,7 @@ from .parser import (
     q_join,
 )
 from .prop import TypesFactory
-from .prop import vText
+from .prop import vText, vDDDLists
 from .parser_tools import DEFAULT_ENCODING
 
 ######################################
@@ -153,6 +153,9 @@ class Component(CaselessDict):
         # from_ical. We probably want to decode properties into Python native
         # types here. But when parsing from an ical string with from_ical, we
         # want to encode the string into a real icalendar.prop property.
+        if type(value) in [vDDDLists,]:
+            # TODO: Workaround unfinished decoding
+            return value
         decoded = types_factory.from_ical(name, value)
         # TODO: remove when proper decoded is implemented in every prop.* class
         # Workaround to decode vText properly
