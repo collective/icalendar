@@ -1,6 +1,7 @@
 from . import unittest
 from icalendar.tools import UIDGenerator
 
+
 class TestTools(unittest.TestCase):
 
     def test_tools_UIDGenerator(self):
@@ -9,7 +10,7 @@ class TestTools(unittest.TestCase):
         g = UIDGenerator()
         uid = g.uid()
         txt = uid.to_ical()
-        length = 15+1+16+1+11
+        length = 15 + 1 + 16 + 1 + 11
         self.assertTrue(len(txt) == length)
         self.assertTrue('@example.com' in txt)
 
