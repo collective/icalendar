@@ -5,6 +5,7 @@ import datetime
 import os
 import pytz
 
+
 class TestIssues(unittest.TestCase):
 
 
@@ -61,7 +62,7 @@ END:VTIMEZONE"""
         # specified in UTC."
 
         event = icalendar.Event()
-        dt = pytz.utc.localize(datetime.datetime(2012,7,16,0,0,0))
+        dt = pytz.utc.localize(datetime.datetime(2012, 7, 16, 0, 0, 0))
         event.add('dtstart', dt)
         self.assertEqual(event.to_ical(),
             "BEGIN:VEVENT\r\n"
@@ -76,7 +77,7 @@ END:VTIMEZONE"""
 
         # Non-unicode characters
         event = icalendar.Event()
-        event.add("dtstart", datetime.datetime(2012,9,3,0,0,0))
+        event.add("dtstart", datetime.datetime(2012, 9, 3, 0, 0, 0))
         event.add("summary", u"abcdef")
         self.assertEqual(event.to_ical(),
             "BEGIN:VEVENT\r\nSUMMARY:abcdef\r\nDTSTART;VALUE=DATE-TIME:"
@@ -84,7 +85,7 @@ END:VTIMEZONE"""
 
         # Unicode characters
         event = icalendar.Event()
-        event.add("dtstart", datetime.datetime(2012,9,3,0,0,0))
+        event.add("dtstart", datetime.datetime(2012, 9, 3, 0, 0, 0))
         event.add("summary", u"åäö")
         self.assertEqual(event.to_ical(),
             "BEGIN:VEVENT\r\nSUMMARY:\xc3\xa5\xc3\xa4\xc3\xb6\r\n"
@@ -130,3 +131,9 @@ END:VEVENT"""
             "BEGIN:VEVENT\r\nATTACH;ENCODING=BASE64;FMTTYPE=text/plain;"
             "VALUE=BINARY:dGV4dA==\r\nEND:VEVENT\r\n"
         )
+
+
+    def test_2(self):
+        ical_content = "BEGIN:VEVENT\r\nSUMMARY;LANGUAGE=ru:te\r\nEND:VEVENT"
+        vevent = icalendar.Event.from_ical(ical_content)
+

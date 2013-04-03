@@ -7,6 +7,7 @@ import os
 
 from . import unittest
 
+
 class TestTimezoned(unittest.TestCase):
 
     def test_create_from_ical(self):
