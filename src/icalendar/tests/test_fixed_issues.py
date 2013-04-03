@@ -133,6 +133,6 @@ END:VEVENT"""
         )
 
 
-    def test_wrong_values(self):
+    def test_issue_100(self):
         ical_content = "BEGIN:VEVENT\r\nSUMMARY;LANGUAGE=ru:te\r\nEND:VEVENT"
         icalendar.Event.from_ical(ical_content).to_ical()

@@ -124,7 +124,7 @@ class IcalendarTestCase (unittest.TestCase):
                              'CN': 'Max Rasmussen'}),
                  'MAILTO:maxm@example.com')
         self.assertEqual(
-            Contentline.from_parts(parts),
+            Contentline.from_parts(*parts),
             'ATTENDEE;CN="Max Rasmussen";ROLE=REQ-PARTICIPANT:'
             'MAILTO:maxm@example.com'
         )
@@ -132,28 +132,28 @@ class IcalendarTestCase (unittest.TestCase):
         # and again
         parts = ('ATTENDEE', Parameters(), 'MAILTO:maxm@example.com')
         self.assertEqual(
-            Contentline.from_parts(parts),
+            Contentline.from_parts(*parts),
             'ATTENDEE:MAILTO:maxm@example.com'
         )
 
         # A value can also be any of the types defined in PropertyValues
         parts = ('ATTENDEE', Parameters(), vText('MAILTO:test@example.com'))
         self.assertEqual(
-            Contentline.from_parts(parts),
+            Contentline.from_parts(*parts),
             'ATTENDEE:MAILTO:test@example.com'
         )
 
         # A value in UTF-8
         parts = ('SUMMARY', Parameters(), vText('INternational char æ ø å'))
         self.assertEqual(
-            Contentline.from_parts(parts),
+            Contentline.from_parts(*parts),
             u'SUMMARY:INternational char æ ø å'
         )
 
         # A value can also be unicode
         parts = ('SUMMARY', Parameters(), vText(u'INternational char æ ø å'))
         self.assertEqual(
-            Contentline.from_parts(parts),
+            Contentline.from_parts(*parts),
             u'SUMMARY:INternational char æ ø å'
         )
 
