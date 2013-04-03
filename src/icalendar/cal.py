@@ -21,6 +21,7 @@ from .prop import TypesFactory
 from .prop import vText, vDDDLists
 from .parser_tools import DEFAULT_ENCODING
 
+
 ######################################
 # The component factory
 
@@ -31,7 +32,8 @@ class ComponentFactory(CaselessDict):
     """
 
     def __init__(self, *args, **kwargs):
-        "Set keys to upper for initial dict"
+        """Set keys to upper for initial dict.
+        """
         CaselessDict.__init__(self, *args, **kwargs)
         self['VEVENT'] = Event
         self['VTODO'] = Todo
@@ -326,7 +328,7 @@ class Component(CaselessDict):
         """Returns property as content line.
         """
         params = getattr(value, 'params', Parameters())
-        return Contentline.from_parts((name, params, value))
+        return Contentline.from_parts(name, params, value)
 
     def content_lines(self):
         """Converts the Component and subcomponents into content lines.

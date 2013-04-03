@@ -265,29 +265,25 @@ class Contentline(unicode):
         return self
 
     @classmethod
-    def from_parts(cls, parts):
-        """Turn a tuple of parts into a content line.
+    def from_parts(cls, name, params, values):
+        """Turn a parts into a content line.
         """
-        (name, params, values) = parts
-        try:
-            if hasattr(values, 'to_ical'):
-                values = values.to_ical()
-            else:
-                values = vText(values).to_ical()
-            # elif isinstance(values, basestring):
-            #    values = escape_char(values)
+        assert isinstance(params, Parameters)
+        if hasattr(values, 'to_ical'):
+            values = values.to_ical()
+        else:
+            values = vText(values).to_ical()
+        # elif isinstance(values, basestring):
+        #    values = escape_char(values)
 
-            # TODO: after unicode only, remove this
-            # Convert back to unicode, after to_ical encoded it.
-            name = to_unicode(name)
-            values = to_unicode(values)
-            if params:
-                params = to_unicode(params.to_ical())
-                return cls(u'%s;%s:%s' % (name, params, values))
-            return cls(u'%s:%s' % (name, values))
-        except Exception:
-            raise ValueError(u'Property: %r Wrong values "%r" or "%r"'
-                             % (name, params, values))
+        # TODO: after unicode only, remove this
+        # Convert back to unicode, after to_ical encoded it.
+        name = to_unicode(name)
+        values = to_unicode(values)
+        if params:
+            params = to_unicode(params.to_ical())
+            return cls(u'%s;%s:%s' % (name, params, values))
+        return cls(u'%s:%s' % (name, values))
 
     def parts(self):
         """Split the content line up into (name, parameters, values) parts.
@@ -296,15 +292,15 @@ class Contentline(unicode):
             st = escape_string(self)
             name_split = None
             value_split = None
-            inquotes = 0
+            in_quotes = False
             for i, ch in enumerate(st):
-                if not inquotes:
+                if not in_quotes:
                     if ch in ':;' and not name_split:
                         name_split = i
                     if ch == ':' and not value_split:
                         value_split = i
                 if ch == '"':
-                    inquotes = not inquotes
+                    in_quotes = not in_quotes
             name = unsescape_string(st[:name_split])
             if not name:
                 raise ValueError('Key name is required')
@@ -313,8 +309,10 @@ class Contentline(unicode):
                 raise ValueError('Invalid content line')
             params = Parameters.from_ical(st[name_split + 1: value_split],
                                           strict=self.strict)
-            params = dict((unsescape_string(key), unsescape_string(value))
-                          for key, value in params.iteritems())
+            params = Parameters(
+                (unsescape_string(key), unsescape_string(value))
+                for key, value in params.iteritems()
+            )
             values = unsescape_string(st[value_split + 1:])
             return (name, params, values)
         except ValueError as exc:
@@ -344,7 +342,7 @@ class Contentlines(list):
     def to_ical(self):
         """Simply join self.
         """
-        return '\r\n'.join(l.to_ical() for l in self if l) + '\r\n'
+        return '\r\n'.join(line.to_ical() for line in self if line) + '\r\n'
 
     @classmethod
     def from_ical(cls, st):
@@ -353,10 +351,10 @@ class Contentlines(list):
         try:
             # a fold is carriage return followed by either a space or a tab
             unfolded = FOLD.sub('', st)
-            lines = [Contentline(line) for
-                     line in unfolded.splitlines() if line]
+            lines = cls(Contentline(line) for
+                        line in unfolded.splitlines() if line)
             lines.append('')  # '\r\n' at the end of every content line
-            return cls(lines)
+            return lines
         except:
             raise ValueError('Expected StringType with content lines')
 
