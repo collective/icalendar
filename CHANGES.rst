@@ -26,11 +26,8 @@ Changelog
 - Switch to unicode internally.
   [thet]
 
-- Test fixes.
+- Transformed doctests into unittests, Test fixes and cleanup.
   [warvariuc]
-
-- Transformed doctests into unittests.
-  [warvariuc, thet]
 
 - Added functions to transform chars in string with '\\' + any of r'\,;:' chars
   into '%{:02X}' form to avoid splitting on chars escaped with '\\'.
