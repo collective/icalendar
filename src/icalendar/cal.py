@@ -155,7 +155,7 @@ class Component(CaselessDict):
         # from_ical. We probably want to decode properties into Python native
         # types here. But when parsing from an ical string with from_ical, we
         # want to encode the string into a real icalendar.prop property.
-        if type(value) in [vDDDLists,]:
+        if isinstance(value, vDDDLists):
             # TODO: Workaround unfinished decoding
             return value
         decoded = types_factory.from_ical(name, value)
