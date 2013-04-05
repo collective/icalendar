@@ -23,7 +23,7 @@ Changelog
   the API, since there is no need explicitly pass ``encode=False``. Fixes #82.
   [thet]
 
-- Switch to unicode internally.
+- Switch to unicode internally. This should fix all en/decoding errors.
   [thet]
 
 - Transformed doctests into unittests, Test fixes and cleanup.
