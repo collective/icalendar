@@ -2,15 +2,18 @@
 Changelog
 =========
 
-3.4dev (unreleased)
--------------------
+3.4 (2014-04-24)
+----------------
 
-- Remove interfaces module, as it is unused.
+- Switch to unicode internally. This should fix all en/decoding errors.
   [thet]
 
-- Remove ``test_doctests.py``, test suite already created properly in
-  ``test_icalendar.py``.
-  [rnix]
+- Support for non-ascii parameter values. Fixes #88.
+  [warvariuc]
+
+- Added functions to transform chars in string with '\\' + any of r'\,;:' chars
+  into '%{:02X}' form to avoid splitting on chars escaped with '\\'.
+  [warvariuc]
 
 - Allow seconds in vUTCOffset properties. Fixes #55.
   [thet]
@@ -23,30 +26,31 @@ Changelog
   the API, since there is no need explicitly pass ``encode=False``. Fixes #82.
   [thet]
 
-- Switch to unicode internally. This should fix all en/decoding errors.
-  [thet]
-
-- Transformed doctests into unittests, Test fixes and cleanup.
-  [warvariuc]
-
-- Added functions to transform chars in string with '\\' + any of r'\,;:' chars
-  into '%{:02X}' form to avoid splitting on chars escaped with '\\'.
-  [warvariuc]
-
-- Support for non-ascii parameter values. Fixes #88.
-  [warvariuc]
-
 - Rename tzinfo_from_dt to tzid_from_dt, which is what it does.
   [thet]
 
 - More support for dateutil parsed tzinfo objects. Fixes #89.
   [leo-naeka]
 
-- Remove python-dateutil version fix.
+- Remove python-dateutil version fix at all. Current python-dateutil has Py3
+  and Py2 compatibility.
   [thet]
 
 - Declare the required python-dateutil dependency in setup.py. Fixes #90.
   [kleink]
+
+- Raise test coverage.
+  [thet]
+
+- Remove interfaces module, as it is unused.
+  [thet]
+
+- Remove ``test_doctests.py``, test suite already created properly in
+  ``test_icalendar.py``.
+  [rnix]
+
+- Transformed doctests into unittests, Test fixes and cleanup.
+  [warvariuc]
 
 
 3.3 (2013-02-08)
