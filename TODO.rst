@@ -1,6 +1,8 @@
 TODO
 ====
 
+- Update docs.
+
 - Add a __add__ method to cal.Component, so that ``cal[key] = val`` works as
   expected. Currently, the value is added as is, but not converted to the
   correct subcomponent, as specified in prop.TypesFactory. See also the NOTE
