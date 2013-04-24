@@ -2,7 +2,7 @@
 Changelog
 =========
 
-3.4 (2014-04-24)
+3.4 (2013-04-24)
 ----------------
 
 - Switch to unicode internally. This should fix all en/decoding errors.
