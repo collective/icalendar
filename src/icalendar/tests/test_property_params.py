@@ -2,6 +2,7 @@
 
 from . import unittest
 
+import icalendar
 from .. import vCalAddress, Calendar, Event, Parameters
 
 
@@ -164,3 +165,40 @@ class TestPropertyParams(unittest.TestCase):
                         'ALTREP': ['http://www.wiz.org', 'value4'],
                         'PARAMETER2': ['Value2', 'Value3']})
         )
+
+
+    def test_parse_and_access_property_params(self):
+        """Parse an ics string and access some property parameters then.
+        This is a follow-up of a question recieved per email.
+
+        """
+        ics = """BEGIN:VCALENDAR
+VERSION:2.0
+PRODID://RESEARCH IN MOTION//BIS 3.0
+METHOD:REQUEST
+BEGIN:VEVENT
+SEQUENCE:2
+X-RIM-REVISION:0
+SUMMARY:Test meeting from BB
+X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
+CLASS:PUBLIC
+ATTENDEE;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN="RembrandXS":MAILTO:rembrand@xs4all.nl
+ATTENDEE;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN="RembrandDX":MAILTO:rembrand@daxlab.com
+ATTENDEE;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN="RembrandSB":MAILTO:rembspam@xs4all.nl
+UID:XRIMCAL-628059586-522954492-9750559
+DTSTART;VALUE=DATE:20120814
+DTEND;VALUE=DATE:20120815
+DESCRIPTION:Test meeting from BB
+DTSTAMP:20120813T151458Z
+ORGANIZER:mailto:rembrand@daxlab.com
+END:VEVENT
+END:VCALENDAR"""
+
+        cal = icalendar.Calendar.from_ical(ics)
+        event = cal.walk("VEVENT")[0]
+        event['attendee'][0]
+        self.assertEqual(event['attendee'][0].to_ical(),
+                         'MAILTO:rembrand@xs4all.nl')
+        self.assertEqual(event['attendee'][0].params.to_ical(),
+                         'CN=RembrandXS;PARTSTAT=NEEDS-ACTION;RSVP=TRUE')
+        self.assertEqual(event['attendee'][0].params['cn'], u'RembrandXS')
