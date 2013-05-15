@@ -1,11 +1,6 @@
-*.pyc
-*.pyo
-*.swp
-*.swo
-
-.DT_Store
-.coverage
-.tox/
+*.py?
+*.sw?
+.*
 bin/
 build/
 coverage-*
@@ -14,11 +9,8 @@ docs/_build/
 include/
 lib/
 src/icalendar.egg-info/
-.installed.cfg
-.project
-.pydevproject
-.settings/
 develop-eggs/
 eggs/
 parts/
 htmlcov/
+!.gitignore
