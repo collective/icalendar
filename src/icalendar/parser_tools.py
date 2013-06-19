@@ -7,12 +7,12 @@ def to_unicode(value, encoding='utf-8'):
     """
     if isinstance(value, unicode):
         return value
-    elif isinstance(value, str):
+    elif isinstance(value, basestring):
         try:
-            return value.decode(encoding)
-        except UnicodeDecodeError:
-            return value.decode('utf-8', 'replace')
-    raise AssertionError('A str/unicode expected.')
+            value = unicode(value, encoding)
+        except (UnicodeDecodeError):
+            value = value.decode('utf-8', 'replace')
+    return value
 
 
 def data_encode(data, encoding=DEFAULT_ENCODING):

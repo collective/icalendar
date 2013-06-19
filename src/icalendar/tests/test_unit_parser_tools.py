@@ -15,10 +15,8 @@ class TestParserTools(unittest.TestCase):
         self.assertEqual(to_unicode(u'\xc6\xb5'.encode('iso-8859-1')),
                          u'\u01b5')
         self.assertEqual(to_unicode('\xc6\xb5', encoding='ascii'), u'\u01b5')
-        with self.assertRaises(AssertionError):
-            to_unicode(1)
-        with self.assertRaises(AssertionError):
-            to_unicode(None)
+        self.assertEqual(to_unicode(1), 1)
+        self.assertEqual(to_unicode(None), None)
 
     def test_parser_tools_data_encode(self):
 
