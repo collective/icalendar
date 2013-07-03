@@ -2,8 +2,8 @@
 Changelog
 =========
 
-3.5dev (unreleased)
--------------------
+3.5 (2013-07-03)
+----------------
 
 - Let to_unicode be more graceful for non-unicode strings, as like CMFPlone's
   safe_unicode does it.
