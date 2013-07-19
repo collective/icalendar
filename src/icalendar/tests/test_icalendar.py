@@ -265,7 +265,7 @@ def load_tests(loader=None, tests=None, pattern=None):
     suite.addTest(doctest.DocTestSuite(cal))
     current_dir = os.path.dirname(__file__)
     for docfile in ['example.rst', 'groupscheduled.rst',
-                    'small.rst', 'multiple.rst', 'recurrence.rst']:
+                    'small.rst', 'multiple.rst']:
         filename = os.path.abspath(os.path.join(current_dir, docfile))
         suite.addTest(
             doctest.DocFileSuite(
