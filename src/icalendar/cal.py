@@ -296,9 +296,10 @@ class Component(CaselessDict):
             else:
                 factory = types_factory.for_property(name)
                 component = stack[-1]
+                datetime_names = ('DTSTART', 'DTEND', 'RECURRENCE-ID', 'DUE',
+                                  'FREEBUSY', 'RDATE', 'EXDATE')
                 try:
-                    if name in ('DTSTART', 'DTEND', 'RECURRENCE-ID')\
-                            and 'TZID' in params: # TODO: add DUE, FREEBUSY, RDATE, EXDATE ..
+                    if name in datetime_names and 'TZID' in params:
                         vals = factory(factory.from_ical(vals, params['TZID']))
                     else:
                         vals = factory(factory.from_ical(vals))
