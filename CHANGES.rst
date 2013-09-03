@@ -2,6 +2,14 @@
 Changelog
 =========
 
+3.6 (unreleased)
+----------------
+
+- Correctly parse datetime component property values with timezone information
+  when parsed from ical strings.
+  [untitaker]
+
+
 3.5 (2013-07-03)
 ----------------
 
