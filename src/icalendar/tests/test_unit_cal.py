@@ -186,19 +186,27 @@ class TestCalComponent(unittest.TestCase):
         self.assertEqual(comp['ATTACH'], [u'me', 'you', binary])
 
     def test_cal_Component_from_ical(self):
-        # RecurrenceIDs may contain a TZID parameter, if so, they should create
-        # a tz localized datetime, otherwise, create a naive datetime
+        # Check for proper handling of TZID parameter of datetime properties
         Component = icalendar.cal.Component
-        componentStr = 'BEGIN:VEVENT\nRECURRENCE-ID;TZID=America/Denver:'\
-                       + '20120404T073000\nEND:VEVENT'
-        component = Component.from_ical(componentStr)
-        self.assertEqual(
-            str(component['RECURRENCE-ID'].dt.tzinfo.zone), "America/Denver")
+        for component_name, property_name in (
+            ('VEVENT', 'DTSTART'),
+            ('VEVENT', 'DTEND'),
+            ('VEVENT', 'RECURRENCE-ID'),
+            ('VTODO', 'DUE')
+        ):
+            component_str = 'BEGIN:' + component_name + '\n'
+            component_str += property_name + ';TZID=America/Denver:'
+            component_str += '20120404T073000\nEND:' + component_name
+            component = Component.from_ical(component_str)
+            self.assertEqual(str(component[property_name].dt.tzinfo.zone),
+                             "America/Denver")
 
-        componentStr = 'BEGIN:VEVENT\nRECURRENCE-ID:20120404T073000\n'\
-                       + 'END:VEVENT'
-        component = Component.from_ical(componentStr)
-        self.assertEqual(component['RECURRENCE-ID'].dt.tzinfo, None)
+            component_str = 'BEGIN:' + component_name + '\n'
+            component_str += property_name + ':'
+            component_str += '20120404T073000\nEND:' + component_name
+            component = Component.from_ical(component_str)
+            self.assertEqual(component[property_name].dt.tzinfo,
+                             None)
 
 
 class TestCal(unittest.TestCase):
