@@ -316,8 +316,10 @@ class Contentline(unicode):
             values = unsescape_string(st[value_split + 1:])
             return (name, params, values)
         except ValueError as exc:
-            raise ValueError("Content line could not be parsed into parts: %r:"
-                             " %s" % (self, exc))
+            raise ValueError(
+                u"Content line could not be parsed into parts: %r: %s"
+                % (self, exc)
+            )
 
     @classmethod
     def from_ical(cls, ical, strict=False):
