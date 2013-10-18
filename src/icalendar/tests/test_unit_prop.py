@@ -325,7 +325,7 @@ class TestProp(unittest.TestCase):
         self.assertEqual(t.to_ical(), 'Text \\; with escaped\\, chars')
 
         # Escaped newlines
-        self.assertEqual(vText('Text with escaped\N chars').to_ical(),
+        self.assertEqual(vText('Text with escaped\\N chars').to_ical(),
                          'Text with escaped\\n chars')
 
         # If you pass a unicode object, it will be utf-8 encoded. As this is

@@ -15,6 +15,7 @@ from .parser_tools import (
     to_unicode,
     data_encode
 )
+from . import compat
 
 
 def escape_char(text):
@@ -22,7 +23,7 @@ def escape_char(text):
     """
     assert isinstance(text, basestring)
     # NOTE: ORDER MATTERS!
-    return text.replace('\N', '\n')\
+    return text.replace(r'\N', '\n')\
                .replace('\\', '\\\\')\
                .replace(';', r'\;')\
                .replace(',', r'\,')\
@@ -194,7 +195,7 @@ class Parameters(CaselessDict):
         items.sort()  # To make doctests work
         for key, value in items:
             value = param_value(value)
-            if isinstance(value, unicode):
+            if isinstance(value, compat.unicode_type):
                 value = value.encode(DEFAULT_ENCODING)
             # CaselessDict keys are always unicode
             result.append('%s=%s' % (key.upper().encode('utf-8'), value))
@@ -251,7 +252,7 @@ def unsescape_string(val):
 #########################################
 # parsing and generation of content lines
 
-class Contentline(unicode):
+class Contentline(compat.unicode_type):
     """A content line is basically a string that can be folded and parsed into
     parts.
 

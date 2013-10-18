@@ -57,6 +57,7 @@ from .parser import (
     unescape_char,
     tzid_from_dt,
 )
+from . import compat
 
 DATE_PART = r'(\d+)D'
 TIME_PART = r'T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?'
@@ -173,7 +174,7 @@ class vBoolean(int):
             raise ValueError("Expected 'TRUE' or 'FALSE'. Got %s" % ical)
 
 
-class vCalAddress(unicode):
+class vCalAddress(compat.unicode_type):
     """This just returns an unquoted string.
 
     """
@@ -538,7 +539,7 @@ class vPeriod(object):
         return 'vPeriod(%r)' % p
 
 
-class vWeekday(unicode):
+class vWeekday(compat.unicode_type):
     """This returns an unquoted weekday abbrevation.
 
     """
@@ -573,7 +574,7 @@ class vWeekday(unicode):
             raise ValueError('Expected weekday abbrevation, got: %s' % ical)
 
 
-class vFrequency(unicode):
+class vFrequency(compat.unicode_type):
     """A simple class that catches illegal values.
 
     """
@@ -672,7 +673,7 @@ class vRecur(CaselessDict):
             raise ValueError('Error in recurrence rule: %s' % ical)
 
 
-class vText(unicode):
+class vText(compat.unicode_type):
     """Simple text.
 
     """
@@ -723,7 +724,7 @@ class vTime(object):
             raise ValueError('Expected time, got: %s' % ical)
 
 
-class vUri(unicode):
+class vUri(compat.unicode_type):
     """Uniform resource identifier is basically just an unquoted string.
 
     """
@@ -826,7 +827,7 @@ class vUTCOffset(object):
         return offset
 
 
-class vInline(unicode):
+class vInline(compat.unicode_type):
     """This is an especially dumb class that just holds raw unparsed text and
     has parameters. Conversion of inline values are handled by the Component
     class, so no further processing is needed.

@@ -26,7 +26,7 @@ class TestTimezoned(unittest.TestCase):
         self.assertEqual(std.decoded('TZOFFSETFROM'), datetime.timedelta(0, 7200))
 
         ev1 = cal.walk('VEVENT')[0]
-        self.assertEqual(ev1.decoded('DTSTART'), datetime.datetime(2012, 02, 13, 10, 0, 0, tzinfo=pytz.timezone('Europe/Vienna')))
+        self.assertEqual(ev1.decoded('DTSTART'), datetime.datetime(2012,  2, 13, 10, 0, 0, tzinfo=pytz.timezone('Europe/Vienna')))
         self.assertEqual(ev1.decoded('DTSTAMP'), datetime.datetime(2010, 10, 10, 9, 10, 10, tzinfo=pytz.utc))
 
     def test_create_to_ical(self):
@@ -63,8 +63,8 @@ class TestTimezoned(unittest.TestCase):
 
         event = icalendar.Event()
         tz = pytz.timezone("Europe/Vienna")
-        event.add('dtstart', datetime.datetime(2012, 02, 13, 10, 00, 00, tzinfo=tz))
-        event.add('dtend', datetime.datetime(2012, 02, 17, 18, 00, 00, tzinfo=tz))
+        event.add('dtstart', datetime.datetime(2012, 2, 13, 10, 00, 00, tzinfo=tz))
+        event.add('dtend', datetime.datetime(2012, 2, 17, 18, 00, 00, tzinfo=tz))
         event.add('dtstamp', datetime.datetime(2010, 10, 10, 10, 10, 10, tzinfo=tz))
         event.add('created', datetime.datetime(2010, 10, 10, 10, 10, 10, tzinfo=tz))
         event.add('uid', u'123456')

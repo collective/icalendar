@@ -69,10 +69,10 @@ class TestPropertyParams(unittest.TestCase):
 
     def test_escaping(self):
         # verify that escaped non safe chars are decoded correctly
-        NON_SAFE_CHARS = ur',\;:'
+        NON_SAFE_CHARS = u',\\;:'
         for char in NON_SAFE_CHARS:
-            cn_escaped = ur"Society\%s 2014" % char
-            cn_decoded = ur"Society%s 2014" % char
+            cn_escaped = u"Society\\%s 2014" % char
+            cn_decoded = u"Society%s 2014" % char
             vevent = Event.from_ical(
                 u'BEGIN:VEVENT\r\n'
                 u'ORGANIZER;CN=%s:that\r\n'
