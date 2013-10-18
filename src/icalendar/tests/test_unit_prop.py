@@ -227,14 +227,14 @@ class TestProp(unittest.TestCase):
     def test_prop_vWeekday(self):
         from ..prop import vWeekday
 
-        self.assertEqual(vWeekday('mo').to_ical(), 'MO')
+        self.assertEqual(vWeekday('mo').to_ical(), b'MO')
         self.assertRaises(ValueError, vWeekday, 'erwer')
         self.assertEqual(vWeekday.from_ical('mo'), 'MO')
         self.assertEqual(vWeekday.from_ical('+3mo'), '+3MO')
         self.assertRaises(ValueError, vWeekday.from_ical, 'Saturday')
-        self.assertEqual(vWeekday('+mo').to_ical(), '+MO')
-        self.assertEqual(vWeekday('+3mo').to_ical(), '+3MO')
-        self.assertEqual(vWeekday('-tu').to_ical(), '-TU')
+        self.assertEqual(vWeekday('+mo').to_ical(), b'+MO')
+        self.assertEqual(vWeekday('+3mo').to_ical(), b'+3MO')
+        self.assertEqual(vWeekday('-tu').to_ical(), b'-TU')
 
     def test_prop_vFrequency(self):
         from ..prop import vFrequency
@@ -318,21 +318,21 @@ class TestProp(unittest.TestCase):
     def test_prop_vText(self):
         from ..prop import vText
 
-        self.assertEqual(vText(u'Simple text').to_ical(), 'Simple text')
+        self.assertEqual(vText(u'Simple text').to_ical(), b'Simple text')
 
         # Escaped text
         t = vText('Text ; with escaped, chars')
-        self.assertEqual(t.to_ical(), 'Text \\; with escaped\\, chars')
+        self.assertEqual(t.to_ical(), b'Text \\; with escaped\\, chars')
 
         # Escaped newlines
         self.assertEqual(vText('Text with escaped\\N chars').to_ical(),
-                         'Text with escaped\\n chars')
+                         b'Text with escaped\\n chars')
 
         # If you pass a unicode object, it will be utf-8 encoded. As this is
         # the (only) standard that RFC 2445 support.
         t = vText(u'international chars \xe4\xf6\xfc')
         self.assertEqual(t.to_ical(),
-                         'international chars \xc3\xa4\xc3\xb6\xc3\xbc')
+                         b'international chars \xc3\xa4\xc3\xb6\xc3\xbc')
 
         # and parsing?
         self.assertEqual(vText.from_ical('Text \\; with escaped\\, chars'),
@@ -343,7 +343,7 @@ class TestProp(unittest.TestCase):
 
         # We are forgiving to utf-8 encoding errors:
         # We intentionally use a string with unexpected encoding
-        self.assertEqual(vText.from_ical('Ol\xe9'), u'Ol\ufffd')
+        self.assertEqual(vText.from_ical(b'Ol\xe9'), u'Ol\ufffd')
 
         # Notice how accented E character, encoded with latin-1, got replaced
         # with the official U+FFFD REPLACEMENT CHARACTER.
@@ -361,7 +361,7 @@ class TestProp(unittest.TestCase):
         from ..prop import vUri
 
         self.assertEqual(vUri('http://www.example.com/').to_ical(),
-                         'http://www.example.com/')
+                         b'http://www.example.com/')
         self.assertEqual(vUri.from_ical('http://www.example.com/'),
                          'http://www.example.com/')
 

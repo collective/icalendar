@@ -344,7 +344,7 @@ class Contentlines(list):
     def to_ical(self):
         """Simply join self.
         """
-        return '\r\n'.join(line.to_ical() for line in self if line) + '\r\n'
+        return b'\r\n'.join(line.to_ical() for line in self if line) + b'\r\n'
 
     @classmethod
     def from_ical(cls, st):
