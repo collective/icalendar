@@ -21,7 +21,7 @@ from . import compat
 def escape_char(text):
     """Format value according to iCalendar TEXT escaping rules.
     """
-    assert isinstance(text, basestring)
+    assert isinstance(text, (compat.unicode_type, compat.bytes_type))
     # NOTE: ORDER MATTERS!
     return text.replace(r'\N', '\n')\
                .replace('\\', '\\\\')\
@@ -32,7 +32,7 @@ def escape_char(text):
 
 
 def unescape_char(text):
-    assert isinstance(text, basestring)
+    assert isinstance(text, (compat.unicode_type, compat.bytes_type))
     # NOTE: ORDER MATTERS!
     return text.replace(r'\N', r'\n')\
                .replace(r'\r\n', '\n')\
@@ -64,7 +64,7 @@ def foldline(line, limit=75, fold_sep=u'\r\n '):
     immediately followed by a single linear white-space character (i.e.,
     SPACE or HTAB).
     """
-    assert isinstance(line, unicode)
+    assert isinstance(line, compat.unicode_type)
     assert u'\n' not in line
 
     ret_line = u''

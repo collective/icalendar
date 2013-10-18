@@ -9,10 +9,10 @@ def to_unicode(value, encoding='utf-8'):
     """
     if isinstance(value, compat.unicode_type):
         return value
-    elif isinstance(value, basestring):
+    elif isinstance(value, compat.bytes_type):
         try:
-            value = unicode(value, encoding)
-        except (UnicodeDecodeError):
+            value = value.decode(encoding)
+        except UnicodeDecodeError:
             value = value.decode('utf-8', 'replace')
     return value
 
