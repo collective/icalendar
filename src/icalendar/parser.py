@@ -192,8 +192,7 @@ class Parameters(CaselessDict):
     def to_ical(self):
         result = []
         items = self.items()
-        items.sort()  # To make doctests work
-        for key, value in items:
+        for key, value in sorted(items):
             value = param_value(value)
             if isinstance(value, compat.unicode_type):
                 value = value.encode(DEFAULT_ENCODING)
@@ -312,7 +311,7 @@ class Contentline(compat.unicode_type):
                                           strict=self.strict)
             params = Parameters(
                 (unsescape_string(key), unsescape_string(value))
-                for key, value in params.iteritems()
+                for key, value in params.items()  # TODO optimize for python 2?
             )
             values = unsescape_string(st[value_split + 1:])
             return (name, params, values)

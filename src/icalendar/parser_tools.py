@@ -25,7 +25,7 @@ def data_encode(data, encoding=DEFAULT_ENCODING):
     if isinstance(data, compat.unicode_type):
         return data.encode(encoding)
     elif isinstance(data, dict):
-        return dict(map(data_encode, data.iteritems()))
+        return dict(map(data_encode, data.items()))  # TODO: optimize for python 2?
     elif isinstance(data, list) or isinstance(data, tuple):
         return list(map(data_encode, data))
     else:

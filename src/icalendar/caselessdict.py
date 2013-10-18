@@ -77,7 +77,7 @@ class CaselessDict(dict):
         """
         Multiple keys where key1.upper() == key2.upper() will be lost.
         """
-        for key, value in indict.iteritems():
+        for key, value in indict.items():  # TODO optimize in python 2
             self[key] = value
 
     def copy(self):
