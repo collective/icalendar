@@ -479,6 +479,6 @@ class TestPropertyValues(unittest.TestCase):
         ical = vevent.to_ical()
 
         self.assertTrue(
-            'RDATE;TZID=Europe/Vienna:20130101T000000,20130102T000000' in ical
+            b'RDATE;TZID=Europe/Vienna:20130101T000000,20130102T000000' in ical
         )
-        self.assertTrue('EXDATE;TZID=Europe/Vienna:20130103T000000' in ical)
+        self.assertTrue(b'EXDATE;TZID=Europe/Vienna:20130103T000000' in ical)

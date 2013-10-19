@@ -649,8 +649,10 @@ class vRecur(CaselessDict):
             typ = self.types[key]
             if not isinstance(vals, SEQUENCE_TYPES):
                 vals = [vals]
-            vals = ','.join(typ(val).to_ical() for val in vals)
-            result.append('%s=%s' % (key, vals))
+            vals = b','.join(typ(val).to_ical() for val in vals)
+            # CaselessDict keys are always unicode
+            key = key.encode(DEFAULT_ENCODING)
+            result.append(key + b'=' + vals)
         return ';'.join(result)
 
     @classmethod

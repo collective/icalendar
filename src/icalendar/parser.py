@@ -197,8 +197,9 @@ class Parameters(CaselessDict):
             if isinstance(value, compat.unicode_type):
                 value = value.encode(DEFAULT_ENCODING)
             # CaselessDict keys are always unicode
-            result.append('%s=%s' % (key.upper().encode('utf-8'), value))
-        return ';'.join(result)
+            key = key.upper().encode(DEFAULT_ENCODING)
+            result.append(key + b'=' + value)
+        return b';'.join(result)
 
     @classmethod
     def from_ical(cls, st, strict=False):
