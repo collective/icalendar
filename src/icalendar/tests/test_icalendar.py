@@ -20,9 +20,9 @@ class IcalendarTestCase (unittest.TestCase):
         c.append(Contentline(''.join('123456789 ' * 10)))
         self.assertEqual(
             c.to_ical(),
-            'BEGIN:VEVENT\r\n123456789 123456789 123456789 123456789 '
-            '123456789 123456789 123456789 1234\r\n 56789 123456789 '
-            '123456789 \r\n'
+            b'BEGIN:VEVENT\r\n123456789 123456789 123456789 123456789 '
+            b'123456789 123456789 123456789 1234\r\n 56789 123456789 '
+            b'123456789 \r\n'
         )
 
         # from doctests
@@ -45,15 +45,15 @@ class IcalendarTestCase (unittest.TestCase):
 
         self.assertEqual(
             Contentline('Si meliora dies, ut vina, poemata reddit').to_ical(),
-            'Si meliora dies, ut vina, poemata reddit'
+            b'Si meliora dies, ut vina, poemata reddit'
         )
 
         # A long line gets folded
         c = Contentline(''.join(['123456789 '] * 10)).to_ical()
         self.assertEqual(
             c,
-            ('123456789 123456789 123456789 123456789 123456789 123456789 '
-             '123456789 1234\r\n 56789 123456789 123456789 ')
+            (b'123456789 123456789 123456789 123456789 123456789 123456789 '
+             b'123456789 1234\r\n 56789 123456789 123456789 ')
         )
 
         # A folded line gets unfolded
@@ -70,22 +70,24 @@ class IcalendarTestCase (unittest.TestCase):
         # N or a LATIN CAPITAL LETTER N, that is "\n" or "\N".
 
         # Newlines are not allwoed in content lines
-        self.assertRaises(AssertionError, Contentline, '1234\r\n\r\n1234')
+        self.assertRaises(AssertionError, Contentline, b'1234\r\n\r\n1234')
 
         self.assertEqual(
             Contentline('1234\\n\\n1234').to_ical(),
-            '1234\\n\\n1234'
+            b'1234\\n\\n1234'
         )
 
         # We do not fold within a UTF-8 character
-        c = Contentline('This line has a UTF-8 character where it should be '
-                        'folded. Make sure it g\xc3\xabts folded before that '
-                        'character.')
-        self.assertIn('\xc3\xab', c.to_ical())
+        c = Contentline(b'This line has a UTF-8 character where it should be '
+                        b'folded. Make sure it g\xc3\xabts folded before that '
+                        b'character.')
+
+        self.assertIn(b'\xc3\xab', c.to_ical())
 
         # Another test of the above
-        c = Contentline('x' * 73 + '\xc3\xab' + '\\n ' + 'y' * 10)
-        self.assertEqual(c.to_ical().count('\xc3'), 1)
+        c = Contentline(b'x' * 73 + b'\xc3\xab' + b'\\n ' + b'y' * 10)
+
+        self.assertEqual(c.to_ical().count(b'\xc3'), 1)
 
         # Don't fail if we fold a line that is exactly X times 74 characters
         # long
@@ -112,7 +114,7 @@ class IcalendarTestCase (unittest.TestCase):
              'MAILTO:maxm@example.com')
         )
         self.assertEqual(
-            c.to_ical(),
+            c.to_ical().decode('utf-8'),
             'ATTENDEE;CN=Max Rasmussen;ROLE=REQ-PARTICIPANT:'
             'MAILTO:maxm@example.com'
         )
@@ -162,7 +164,7 @@ class IcalendarTestCase (unittest.TestCase):
         self.assertEqual(name, 'ATTENDEE')
         self.assertEqual(vals, 'MAILTO:maxm@example.com')
         self.assertEqual(
-            params.items(),
+            list(params.items()),
             [('ROLE', 'REQ-PARTICIPANT'), ('CN', 'Max Rasmussen')]
         )
 
@@ -226,7 +228,7 @@ class IcalendarTestCase (unittest.TestCase):
              u'Vestibulum conval\r\n lis imperdiet dui posuere.')
         )
 
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(AssertionError):  # TODO not sure why this should except
             foldline('привет', limit=3)
         self.assertEqual(foldline(u'foobar', limit=4), u'foo\r\n bar')
         self.assertEqual(
