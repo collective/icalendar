@@ -163,8 +163,8 @@ class vBoolean(int):
 
     def to_ical(self):
         if self:
-            return 'TRUE'
-        return 'FALSE'
+            return b'TRUE'
+        return b'FALSE'
 
     @classmethod
     def from_ical(cls, ical):

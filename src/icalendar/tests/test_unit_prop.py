@@ -9,8 +9,8 @@ class TestProp(unittest.TestCase):
     def test_prop_vBinary(self):
         from ..prop import vBinary
 
-        txt = 'This is gibberish'
-        txt_ical = 'VGhpcyBpcyBnaWJiZXJpc2g='
+        txt = b'This is gibberish'
+        txt_ical = b'VGhpcyBpcyBnaWJiZXJpc2g='
         self.assertEqual(vBinary(txt).to_ical(), txt_ical)
         self.assertEqual(vBinary.from_ical(txt_ical), txt)
 
@@ -34,8 +34,8 @@ class TestProp(unittest.TestCase):
     def test_prop_vBoolean(self):
         from ..prop import vBoolean
 
-        self.assertEqual(vBoolean(True).to_ical(), 'TRUE')
-        self.assertEqual(vBoolean(0).to_ical(), 'FALSE')
+        self.assertEqual(vBoolean(True).to_ical(), b'TRUE')
+        self.assertEqual(vBoolean(0).to_ical(), b'FALSE')
 
         # The roundtrip test
         self.assertEqual(vBoolean.from_ical(vBoolean(True).to_ical()), True)
@@ -43,7 +43,7 @@ class TestProp(unittest.TestCase):
 
     def test_prop_vCalAddress(self):
         from ..prop import vCalAddress
-        txt = 'MAILTO:maxm@mxm.dk'
+        txt = b'MAILTO:maxm@mxm.dk'
         a = vCalAddress(txt)
         a.params['cn'] = 'Max M'
 
@@ -240,7 +240,7 @@ class TestProp(unittest.TestCase):
         from ..prop import vFrequency
 
         self.assertRaises(ValueError, vFrequency, 'bad test')
-        self.assertEqual(vFrequency('daily').to_ical(), 'DAILY')
+        self.assertEqual(vFrequency('daily').to_ical(), b'DAILY')
         self.assertEqual(vFrequency('daily').from_ical('MONTHLY'), 'MONTHLY')
 
     def test_prop_vRecur(self):
