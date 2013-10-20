@@ -26,6 +26,7 @@ class CaselessDict(dict):
     """A dictionary that isn't case sensitive, and only uses strings as keys.
     Values retain their case.
 
+    XXX: why not use unicode for keys?
     """
 
     def __init__(self, *args, **kwargs):

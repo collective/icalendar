@@ -15,8 +15,7 @@ from .parser_tools import (
     to_unicode,
     data_encode
 )
-from . import compat
-
+import icalendar.compat as compat
 
 def escape_char(text):
     """Format value according to iCalendar TEXT escaping rules.
@@ -34,12 +33,20 @@ def escape_char(text):
 def unescape_char(text):
     assert isinstance(text, (compat.unicode_type, compat.bytes_type))
     # NOTE: ORDER MATTERS!
-    return text.replace(r'\N', r'\n')\
-               .replace(r'\r\n', '\n')\
-               .replace(r'\n', '\n')\
-               .replace(r'\,', ',')\
-               .replace(r'\;', ';')\
-               .replace('\\\\', '\\')
+    if isinstance(text, compat.unicode_type):
+        return text.replace(u'\\N', u'\\n')\
+                   .replace(u'\r\n', u'\n')\
+                   .replace(u'\\n', u'\n')\
+                   .replace(u'\\,', u',')\
+                   .replace(u'\\;', u';')\
+                   .replace(u'\\\\', u'\\')
+    elif isinstance(text, compat.bytes_type):
+        return text.replace(b'\N', b'\n')\
+                   .replace(b'\r\n', b'\n')\
+                   .replace(b'\n', b'\n')\
+                   .replace(b'\,', b',')\
+                   .replace(b'\;', b';')\
+                   .replace(b'\\\\', b'\\')
 
 
 def tzid_from_dt(dt):

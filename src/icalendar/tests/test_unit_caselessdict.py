@@ -71,6 +71,6 @@ class TestCaselessdict(unittest.TestCase):
         ncd.update({'key5':'val5', 'KEY6':'val6', 'KEY5':'val7'})
         self.assertEqual(ncd['key6'], 'val6')
 
-        keys = ncd.keys()
+        keys = list(ncd.keys())
         keys.sort()
         self.assertEqual(keys, ['KEY1', 'KEY2', 'KEY3', 'KEY5', 'KEY6'])

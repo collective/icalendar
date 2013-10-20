@@ -343,6 +343,7 @@ class TestProp(unittest.TestCase):
 
         # We are forgiving to utf-8 encoding errors:
         # We intentionally use a string with unexpected encoding
+        #
         self.assertEqual(vText.from_ical(b'Ol\xe9'), u'Ol\ufffd')
 
         # Notice how accented E character, encoded with latin-1, got replaced
@@ -451,11 +452,11 @@ class TestProp(unittest.TestCase):
         # It can also be used to directly encode property and parameter values
         self.assertEqual(
             factory.to_ical('comment', u'by Rasmussen, Max M\xfcller'),
-            'by Rasmussen\\, Max M\xc3\xbcller'
+            b'by Rasmussen\\, Max M\xc3\xbcller'
         )
         self.assertEqual(factory.to_ical('priority', 1), '1')
         self.assertEqual(factory.to_ical('cn', u'Rasmussen, Max M\xfcller'),
-                         'Rasmussen\\, Max M\xc3\xbcller')
+                         b'Rasmussen\\, Max M\xc3\xbcller')
 
         self.assertEqual(
             factory.from_ical('cn', 'Rasmussen\\, Max M\xc3\xb8ller'),

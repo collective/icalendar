@@ -14,13 +14,13 @@ class TestTimezoned(unittest.TestCase):
         directory = os.path.dirname(__file__)
         cal = icalendar.Calendar.from_ical(open(os.path.join(directory, 'timezoned.ics'), 'rb').read())
 
-        self.assertEqual(cal['prodid'].to_ical(), "-//Plone.org//NONSGML plone.app.event//EN")
+        self.assertEqual(cal['prodid'].to_ical(), b"-//Plone.org//NONSGML plone.app.event//EN")
 
         timezones = cal.walk('VTIMEZONE')
         self.assertEqual(len(timezones), 1)
 
         tz = timezones[0]
-        self.assertEqual(tz['tzid'].to_ical(), "Europe/Vienna")
+        self.assertEqual(tz['tzid'].to_ical(), b"Europe/Vienna")
 
         std = tz.walk('STANDARD')[0]
         self.assertEqual(std.decoded('TZOFFSETFROM'), datetime.timedelta(0, 7200))
