@@ -93,9 +93,10 @@ def param_value(value):
 
 # Could be improved
 NAME = re.compile('[\w-]+')
-UNSAFE_CHAR = re.compile(b'[\x00-\x08\x0a-\x1f\x7F",:;]')
-QUNSAFE_CHAR = re.compile(b'[\x00-\x08\x0a-\x1f\x7F"]')
+UNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7F",:;]')
+QUNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7F"]')
 FOLD = re.compile(b'(\r?\n)+[ \t]')
+uFOLD = re.compile(u'(\r?\n)+[ \t]')
 NEWLINE = re.compile(r'\r?\n')
 
 
@@ -328,7 +329,7 @@ class Contentline(compat.unicode_type):
         """
         ical = to_unicode(ical)
         # a fold is carriage return followed by either a space or a tab
-        return cls(FOLD.sub('', ical), strict=strict)
+        return cls(uFOLD.sub('', ical), strict=strict)
 
     def to_ical(self):
         """Long content lines are folded so they are less than 75 characters.
@@ -351,12 +352,13 @@ class Contentlines(list):
     def from_ical(cls, st):
         """Parses a string into content lines.
         """
+        st = to_unicode(st)
         try:
             # a fold is carriage return followed by either a space or a tab
-            unfolded = FOLD.sub(b'', st)
+            unfolded = uFOLD.sub('', st)
             lines = cls(Contentline(line) for
                         line in unfolded.splitlines() if line)
-            lines.append(b'')  # '\r\n' at the end of every content line
+            lines.append('')  # '\r\n' at the end of every content line
             return lines
         except:
             raise
