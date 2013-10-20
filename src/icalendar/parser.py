@@ -93,9 +93,9 @@ def param_value(value):
 
 # Could be improved
 NAME = re.compile('[\w-]+')
-UNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7F",:;]')
-QUNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7F"]')
-FOLD = re.compile('(\r?\n)+[ \t]')
+UNSAFE_CHAR = re.compile(b'[\x00-\x08\x0a-\x1f\x7F",:;]')
+QUNSAFE_CHAR = re.compile(b'[\x00-\x08\x0a-\x1f\x7F"]')
+FOLD = re.compile(b'(\r?\n)+[ \t]')
 NEWLINE = re.compile(r'\r?\n')
 
 
@@ -353,12 +353,13 @@ class Contentlines(list):
         """
         try:
             # a fold is carriage return followed by either a space or a tab
-            unfolded = FOLD.sub('', st)
+            unfolded = FOLD.sub(b'', st)
             lines = cls(Contentline(line) for
                         line in unfolded.splitlines() if line)
-            lines.append('')  # '\r\n' at the end of every content line
+            lines.append(b'')  # '\r\n' at the end of every content line
             return lines
         except:
+            raise
             raise ValueError('Expected StringType with content lines')
 
 
