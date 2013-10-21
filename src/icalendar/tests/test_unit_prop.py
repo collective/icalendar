@@ -53,13 +53,13 @@ class TestProp(unittest.TestCase):
 
     def test_prop_vFloat(self):
         from ..prop import vFloat
-        self.assertEqual(vFloat(1.0).to_ical(), '1.0')
+        self.assertEqual(vFloat(1.0).to_ical(), b'1.0')
         self.assertEqual(vFloat.from_ical('42'), 42.0)
-        self.assertEqual(vFloat(42).to_ical(), '42.0')
+        self.assertEqual(vFloat(42).to_ical(), b'42.0')
 
     def test_prop_vInt(self):
         from ..prop import vInt
-        self.assertEqual(vInt(42).to_ical(), '42')
+        self.assertEqual(vInt(42).to_ical(), b'42')
         self.assertEqual(vInt.from_ical('13'), 13)
         self.assertRaises(ValueError, vInt.from_ical, '1s3')
 
@@ -79,13 +79,13 @@ class TestProp(unittest.TestCase):
         self.assertEqual(str(dt_list[2]), '1996-04-04 01:00:00+00:00')
 
         dt_list = vDDDLists([])
-        self.assertEqual(dt_list.to_ical(), '')
+        self.assertEqual(dt_list.to_ical(), b'')
 
         dt_list = vDDDLists([datetime(2000, 1, 1)])
-        self.assertEqual(dt_list.to_ical(), '20000101T000000')
+        self.assertEqual(dt_list.to_ical(), b'20000101T000000')
 
         dt_list = vDDDLists([datetime(2000, 1, 1), datetime(2000, 11, 11)])
-        self.assertEqual(dt_list.to_ical(), '20000101T000000,20001111T000000')
+        self.assertEqual(dt_list.to_ical(), b'20000101T000000,20001111T000000')
 
     def test_prop_vDDDTypes(self):
         from ..prop import vDDDTypes
@@ -108,8 +108,8 @@ class TestProp(unittest.TestCase):
     def test_prop_vDate(self):
         from ..prop import vDate
 
-        self.assertEqual(vDate(date(2001, 1, 1)).to_ical(), '20010101')
-        self.assertEqual(vDate(date(1899, 1, 1)).to_ical(), '18990101')
+        self.assertEqual(vDate(date(2001, 1, 1)).to_ical(), b'20010101')
+        self.assertEqual(vDate(date(1899, 1, 1)).to_ical(), b'18990101')
 
         self.assertEqual(vDate.from_ical('20010102'), date(2001, 1, 2))
 
@@ -119,16 +119,16 @@ class TestProp(unittest.TestCase):
         from ..prop import vDatetime
 
         dt = datetime(2001, 1, 1, 12, 30, 0)
-        self.assertEqual(vDatetime(dt).to_ical(), '20010101T123000')
+        self.assertEqual(vDatetime(dt).to_ical(), b'20010101T123000')
 
         self.assertEqual(vDatetime.from_ical('20000101T120000'),
                          datetime(2000, 1, 1, 12, 0))
 
         dutc = datetime(2001, 1, 1, 12, 30, 0, tzinfo=pytz.utc)
-        self.assertEqual(vDatetime(dutc).to_ical(), '20010101T123000Z')
+        self.assertEqual(vDatetime(dutc).to_ical(), b'20010101T123000Z')
 
         dutc = datetime(1899, 1, 1, 12, 30, 0, tzinfo=pytz.utc)
-        self.assertEqual(vDatetime(dutc).to_ical(), '18990101T123000Z')
+        self.assertEqual(vDatetime(dutc).to_ical(), b'18990101T123000Z')
 
         self.assertEqual(vDatetime.from_ical('20010101T000000'),
                          datetime(2001, 1, 1, 0, 0))
@@ -136,7 +136,7 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vDatetime.from_ical, '20010101T000000A')
 
         utc = vDatetime.from_ical('20010101T000000Z')
-        self.assertEqual(vDatetime(utc).to_ical(), '20010101T000000Z')
+        self.assertEqual(vDatetime(utc).to_ical(), b'20010101T000000Z')
 
         # 1 minute before transition to DST
         dat = vDatetime.from_ical('20120311T015959', 'America/Denver')
@@ -149,26 +149,26 @@ class TestProp(unittest.TestCase):
                          '20120311030000 -0600')
 
         dat = vDatetime.from_ical('20101010T000000', 'Europe/Vienna')
-        self.assertEqual(vDatetime(dat).to_ical(), '20101010T000000')
+        self.assertEqual(vDatetime(dat).to_ical(), b'20101010T000000')
 
     def test_prop_vDuration(self):
         from ..prop import vDuration
 
-        self.assertEqual(vDuration(timedelta(11)).to_ical(), 'P11D')
-        self.assertEqual(vDuration(timedelta(-14)).to_ical(), '-P14D')
-        self.assertEqual(vDuration(timedelta(1, 7384)).to_ical(), 'P1DT2H3M4S')
-        self.assertEqual(vDuration(timedelta(1, 7380)).to_ical(), 'P1DT2H3M')
-        self.assertEqual(vDuration(timedelta(1, 7200)).to_ical(), 'P1DT2H')
-        self.assertEqual(vDuration(timedelta(0, 7200)).to_ical(), 'PT2H')
-        self.assertEqual(vDuration(timedelta(0, 7384)).to_ical(), 'PT2H3M4S')
-        self.assertEqual(vDuration(timedelta(0, 184)).to_ical(), 'PT3M4S')
-        self.assertEqual(vDuration(timedelta(0, 22)).to_ical(), 'PT22S')
-        self.assertEqual(vDuration(timedelta(0, 3622)).to_ical(), 'PT1H0M22S')
+        self.assertEqual(vDuration(timedelta(11)).to_ical(), b'P11D')
+        self.assertEqual(vDuration(timedelta(-14)).to_ical(), b'-P14D')
+        self.assertEqual(vDuration(timedelta(1, 7384)).to_ical(), b'P1DT2H3M4S')
+        self.assertEqual(vDuration(timedelta(1, 7380)).to_ical(), b'P1DT2H3M')
+        self.assertEqual(vDuration(timedelta(1, 7200)).to_ical(), b'P1DT2H')
+        self.assertEqual(vDuration(timedelta(0, 7200)).to_ical(), b'PT2H')
+        self.assertEqual(vDuration(timedelta(0, 7384)).to_ical(), b'PT2H3M4S')
+        self.assertEqual(vDuration(timedelta(0, 184)).to_ical(), b'PT3M4S')
+        self.assertEqual(vDuration(timedelta(0, 22)).to_ical(), b'PT22S')
+        self.assertEqual(vDuration(timedelta(0, 3622)).to_ical(), b'PT1H0M22S')
         self.assertEqual(vDuration(timedelta(days=1, hours=5)).to_ical(),
-                         'P1DT5H')
-        self.assertEqual(vDuration(timedelta(hours=-5)).to_ical(), '-PT5H')
+                         b'P1DT5H')
+        self.assertEqual(vDuration(timedelta(hours=-5)).to_ical(), b'-PT5H')
         self.assertEqual(vDuration(timedelta(days=-1, hours=-5)).to_ical(),
-                         '-P1DT5H')
+                         b'-P1DT5H')
 
         # How does the parsing work?
         self.assertEqual(vDuration.from_ical('PT1H0M22S'), timedelta(0, 3622))
@@ -185,10 +185,10 @@ class TestProp(unittest.TestCase):
         # One day in exact datetimes
         per = (datetime(2000, 1, 1), datetime(2000, 1, 2))
         self.assertEqual(vPeriod(per).to_ical(),
-                         '20000101T000000/20000102T000000')
+                         b'20000101T000000/20000102T000000')
 
         per = (datetime(2000, 1, 1), timedelta(days=31))
-        self.assertEqual(vPeriod(per).to_ical(), '20000101T000000/P31D')
+        self.assertEqual(vPeriod(per).to_ical(), b'20000101T000000/P31D')
 
         # Roundtrip
         p = vPeriod.from_ical('20000101T000000/20000102T000000')
@@ -197,7 +197,7 @@ class TestProp(unittest.TestCase):
             (datetime(2000, 1, 1, 0, 0), datetime(2000, 1, 2, 0, 0))
         )
         self.assertEqual(vPeriod(p).to_ical(),
-                         '20000101T000000/20000102T000000')
+                         b'20000101T000000/20000102T000000')
 
         self.assertEqual(vPeriod.from_ical('20000101T000000/P31D'),
                          (datetime(2000, 1, 1, 0, 0), timedelta(31)))
@@ -205,7 +205,7 @@ class TestProp(unittest.TestCase):
         # Roundtrip with absolute time
         p = vPeriod.from_ical('20000101T000000Z/20000102T000000Z')
         self.assertEqual(vPeriod(p).to_ical(),
-                         '20000101T000000Z/20000102T000000Z')
+                         b'20000101T000000Z/20000102T000000Z')
 
         # And an error
         self.assertRaises(ValueError,
@@ -217,12 +217,12 @@ class TestProp(unittest.TestCase):
         end = datetime(2000, 1, 2, tzinfo=dk)
         per = (start, end)
         self.assertEqual(vPeriod(per).to_ical(),
-                         '20000101T000000/20000102T000000')
+                         b'20000101T000000/20000102T000000')
         self.assertEqual(vPeriod(per).params['TZID'],
                          'Europe/Copenhagen')
 
         p = vPeriod((datetime(2000, 1, 1, tzinfo=dk), timedelta(days=31)))
-        self.assertEqual(p.to_ical(), '20000101T000000/P31D')
+        self.assertEqual(p.to_ical(), b'20000101T000000/P31D')
 
     def test_prop_vWeekday(self):
         from ..prop import vWeekday
@@ -258,7 +258,7 @@ class TestProp(unittest.TestCase):
         })
         self.assertEqual(
             vRecur(r).to_ical(),
-            'FREQ=YEARLY;INTERVAL=2;BYMINUTE=30;BYHOUR=8,9;BYDAY=SU;BYMONTH=1'
+            b'FREQ=YEARLY;INTERVAL=2;BYMINUTE=30;BYHOUR=8,9;BYDAY=SU;BYMONTH=1'
         )
 
         r = vRecur(FREQ='yearly', INTERVAL=2)
@@ -270,22 +270,22 @@ class TestProp(unittest.TestCase):
         })
         self.assertEqual(
             r.to_ical(),
-            'FREQ=YEARLY;INTERVAL=2;BYMINUTE=30;BYHOUR=8,9;BYDAY=SU;BYMONTH=1'
+            b'FREQ=YEARLY;INTERVAL=2;BYMINUTE=30;BYHOUR=8,9;BYDAY=SU;BYMONTH=1'
         )
 
         r = vRecur(freq='DAILY', count=10)
         r['bysecond'] = [0, 15, 30, 45]
         self.assertEqual(r.to_ical(),
-                         'FREQ=DAILY;COUNT=10;BYSECOND=0,15,30,45')
+                         b'FREQ=DAILY;COUNT=10;BYSECOND=0,15,30,45')
 
         r = vRecur(freq='DAILY', until=datetime(2005, 1, 1, 12, 0, 0))
-        self.assertEqual(r.to_ical(), 'FREQ=DAILY;UNTIL=20050101T120000')
+        self.assertEqual(r.to_ical(), b'FREQ=DAILY;UNTIL=20050101T120000')
 
         # How do we fare with regards to parsing?
         r = vRecur.from_ical('FREQ=DAILY;INTERVAL=2;COUNT=10')
         self.assertEqual(r,
                          {'COUNT': [10], 'FREQ': ['DAILY'], 'INTERVAL': [2]})
-        self.assertEqual(vRecur(r).to_ical(), 'FREQ=DAILY;COUNT=10;INTERVAL=2')
+        self.assertEqual(vRecur(r).to_ical(), b'FREQ=DAILY;COUNT=10;INTERVAL=2')
 
         r = vRecur.from_ical('FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=-SU;'
                              'BYHOUR=8,9;BYMINUTE=30')
@@ -297,19 +297,19 @@ class TestProp(unittest.TestCase):
 
         self.assertEqual(
             vRecur(r).to_ical(),
-            'FREQ=YEARLY;INTERVAL=2;BYMINUTE=30;BYHOUR=8,9;BYDAY=-SU;BYMONTH=1'
+            b'FREQ=YEARLY;INTERVAL=2;BYMINUTE=30;BYHOUR=8,9;BYDAY=-SU;BYMONTH=1'
         )
 
         # Some examples from the spec
         r = vRecur.from_ical('FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1')
         self.assertEqual(vRecur(r).to_ical(),
-                         'FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1')
+                         b'FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1')
 
         p = 'FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=SU;BYHOUR=8,9;BYMINUTE=30'
         r = vRecur.from_ical(p)
         self.assertEqual(
             vRecur(r).to_ical(),
-            'FREQ=YEARLY;INTERVAL=2;BYMINUTE=30;BYHOUR=8,9;BYDAY=SU;BYMONTH=1'
+            b'FREQ=YEARLY;INTERVAL=2;BYMINUTE=30;BYHOUR=8,9;BYDAY=SU;BYMONTH=1'
         )
 
         # and some errors
@@ -440,7 +440,7 @@ class TestProp(unittest.TestCase):
         factory = TypesFactory()
         datetime_parser = factory['date-time']
         self.assertEqual(datetime_parser(datetime(2001, 1, 1)).to_ical(),
-                         '20010101T000000')
+                         b'20010101T000000')
 
         # A typical use is when the parser tries to find a content type and use
         # text as the default
@@ -454,7 +454,7 @@ class TestProp(unittest.TestCase):
             factory.to_ical('comment', u'by Rasmussen, Max M\xfcller'),
             b'by Rasmussen\\, Max M\xc3\xbcller'
         )
-        self.assertEqual(factory.to_ical('priority', 1), '1')
+        self.assertEqual(factory.to_ical('priority', 1), b'1')
         self.assertEqual(factory.to_ical('cn', u'Rasmussen, Max M\xfcller'),
                          b'Rasmussen\\, Max M\xc3\xbcller')
 

@@ -205,7 +205,7 @@ class vFloat(float):
         return self
 
     def to_ical(self):
-        return str(self)
+        return compat.unicode_type(self).encode('utf-8')
 
     @classmethod
     def from_ical(cls, ical):
@@ -225,7 +225,7 @@ class vInt(int):
         return self
 
     def to_ical(self):
-        return str(self)
+        return compat.unicode_type(self).encode('utf-8')
 
     @classmethod
     def from_ical(cls, ical):
@@ -256,8 +256,12 @@ class vDDDLists(object):
         self.dts = vDDD
 
     def to_ical(self):
-        dts_ical = (dt.to_ical() for dt in self.dts)
-        return ",".join(dts_ical)
+        try:
+            dts_ical = (dt.to_ical() for dt in self.dts)
+            return b",".join(dts_ical)
+        except:
+            import pdb; pdb.set_trace()
+
 
     @staticmethod
     def from_ical(ical, timezone=None):
@@ -334,7 +338,8 @@ class vDate(object):
         self.params = Parameters(dict(value='DATE'))
 
     def to_ical(self):
-        return "%04d%02d%02d" % (self.dt.year, self.dt.month, self.dt.day)
+        s = "%04d%02d%02d" % (self.dt.year, self.dt.month, self.dt.day)
+        return s.encode('utf-8')
 
     @staticmethod
     def from_ical(ical):
@@ -381,7 +386,7 @@ class vDatetime(object):
             s += "Z"
         elif tzid:
             self.params.update({'TZID': tzid})
-        return s
+        return s.encode('utf-8')
 
     @staticmethod
     def from_ical(ical, timezone=None):
@@ -443,9 +448,12 @@ class vDuration(object):
             if seconds:
                 timepart += "%dS" % seconds
         if self.td.days == 0 and timepart:
-            return "%sP%s" % (sign, timepart)
+            return (compat.unicode_type(sign).encode('utf-8') + b'P' +
+                    compat.unicode_type(timepart).encode('utf-8'))
         else:
-            return "%sP%dD%s" % (sign, abs(self.td.days), timepart)
+            return (compat.unicode_type(sign).encode('utf-8') + b'P' +
+                    compat.unicode_type(abs(self.td.days)).encode('utf-8') +
+                    b'D' + compat.unicode_type(timepart).encode('utf-8'))
 
     @staticmethod
     def from_ical(ical):
@@ -516,10 +524,10 @@ class vPeriod(object):
 
     def to_ical(self):
         if self.by_duration:
-            return '%s/%s' % (vDatetime(self.start).to_ical(),
-                              vDuration(self.duration).to_ical())
-        return '%s/%s' % (vDatetime(self.start).to_ical(),
-                          vDatetime(self.end).to_ical())
+            return (vDatetime(self.start).to_ical() + b'/' +
+                    vDuration(self.duration).to_ical())
+        return (vDatetime(self.start).to_ical() + b'/' +
+                vDatetime(self.end).to_ical())
 
     @staticmethod
     def from_ical(ical):
@@ -650,10 +658,12 @@ class vRecur(CaselessDict):
             if not isinstance(vals, SEQUENCE_TYPES):
                 vals = [vals]
             vals = b','.join(typ(val).to_ical() for val in vals)
+
             # CaselessDict keys are always unicode
             key = key.encode(DEFAULT_ENCODING)
             result.append(key + b'=' + vals)
-        return ';'.join(result)
+
+        return b';'.join(result)
 
     @classmethod
     def parse_type(cls, key, values):

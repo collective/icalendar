@@ -57,6 +57,6 @@ class TestRecurrence(unittest.TestCase):
         # code has to handle this as list and not blindly expecting to be able
         # to call event['EXDATE'].to_ical() on it:
         self.assertEqual(isinstance(exdate, list), True)  # multiple EXDATE
-        self.assertEqual(exdate[0].to_ical(), '20120529T100000')
+        self.assertEqual(exdate[0].to_ical(), b'20120529T100000')
 
         # TODO: test for embedded timezone information!

@@ -82,7 +82,8 @@ class TestTimezoned(unittest.TestCase):
         event.add('url', u'http://plone.org')
         cal.add_component(event)
 
-        test_out = '|'.join(cal.to_ical().splitlines())
+        test_out = b'|'.join(cal.to_ical().splitlines())
+        test_out = test_out.decode('utf-8')
 
         vtimezone_lines = "BEGIN:VTIMEZONE|TZID:Europe/Vienna|X-LIC-LOCATION:"\
           + "Europe/Vienna|BEGIN:STANDARD|DTSTART;VALUE=DATE-TIME:19701025T03"\
@@ -112,6 +113,6 @@ class TestTimezoned(unittest.TestCase):
 
         # make sure, it's parsed properly and doesn't throw an error
         self.assertTrue(icalendar.vDDDTypes(date).to_ical()
-                        == '20120830T224100Z')
+                        == b'20120830T224100Z')
         self.assertTrue(icalendar.vDDDTypes(date2).to_ical()
-                        == '20120830T224100')
+                        == b'20120830T224100')
