@@ -39,6 +39,7 @@ them directly.
 from __future__ import absolute_import
 import re
 import pytz
+import base64
 import binascii
 import time as _time
 from datetime import (
@@ -133,19 +134,19 @@ class vBinary(object):
     """
 
     def __init__(self, obj):
-        self.obj = obj
+        self.obj = to_unicode(obj)
         self.params = Parameters(encoding='BASE64', value="BINARY")
 
     def __repr__(self):
         return "vBinary('%s')" % self.to_ical()
 
     def to_ical(self):
-        return binascii.b2a_base64(self.obj)[:-1]
+        return binascii.b2a_base64(self.obj.encode('utf-8'))[:-1]
 
     @staticmethod
     def from_ical(ical):
         try:
-            return ical.decode('base-64')
+            return base64.b64decode(ical)
         except UnicodeError:
             raise ValueError('Not valid base 64 encoding.')
 

@@ -15,19 +15,19 @@ class TestProp(unittest.TestCase):
         self.assertEqual(vBinary.from_ical(txt_ical), txt)
 
         # The roundtrip test
-        txt = 'Binary data \x13 \x56'
-        txt_ical = 'QmluYXJ5IGRhdGEgEyBW'
+        txt = b'Binary data \x13 \x56'
+        txt_ical = b'QmluYXJ5IGRhdGEgEyBW'
         self.assertEqual(vBinary(txt).to_ical(), txt_ical)
         self.assertEqual(vBinary.from_ical(txt_ical), txt)
 
+        self.assertIsInstance(vBinary('txt').params, Parameters)
         self.assertEqual(
-            str(vBinary('txt').params),
-            "Parameters({'VALUE': 'BINARY', 'ENCODING': 'BASE64'})"
+            vBinary('txt').params, {'VALUE': 'BINARY', 'ENCODING': 'BASE64'}
         )
 
         # Long data should not have line breaks, as that would interfere
-        txt = 'a' * 99
-        txt_ical = 'YWFh' * 33
+        txt = b'a' * 99
+        txt_ical = b'YWFh' * 33
         self.assertEqual(vBinary(txt).to_ical(), txt_ical)
         self.assertEqual(vBinary.from_ical(txt_ical), txt)
 
@@ -456,7 +456,7 @@ class TestProp(unittest.TestCase):
         )
         self.assertEqual(factory.to_ical('priority', 1), b'1')
         self.assertEqual(factory.to_ical('cn', u'Rasmussen, Max M\xfcller'),
-                         b'Rasmussen\\, Max M\xc3\xbcller')
+                         'Rasmussen\\, Max M\xc3\xbcller')
 
         self.assertEqual(
             factory.from_ical('cn', 'Rasmussen\\, Max M\xc3\xb8ller'),
