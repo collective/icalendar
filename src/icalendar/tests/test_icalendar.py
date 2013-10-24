@@ -164,8 +164,8 @@ class IcalendarTestCase (unittest.TestCase):
         self.assertEqual(name, 'ATTENDEE')
         self.assertEqual(vals, 'MAILTO:maxm@example.com')
         self.assertEqual(
-            list(params.items()),
-            [('ROLE', 'REQ-PARTICIPANT'), ('CN', 'Max Rasmussen')]
+            list(params.items()).sort(),
+            [('ROLE', 'REQ-PARTICIPANT'), ('CN', 'Max Rasmussen')].sort()
         )
 
         # And the traditional failure
