@@ -6,6 +6,7 @@ import dateutil.parser
 import os
 
 from . import unittest
+from icalendar.caselessdict import CaselessDict
 
 
 class TestRecurrence(unittest.TestCase):
@@ -19,14 +20,14 @@ class TestRecurrence(unittest.TestCase):
     def test_recurrence_exdates_one_line(self):
         first_event = self.cal.walk('vevent')[0]
 
+        self.assertIsInstance(first_event, CaselessDict)
         self.assertEqual(
-            str(first_event['rrule']),
-            "CaselessDict({'COUNT': [100], 'FREQ': ['DAILY']})"
+            first_event['rrule'], {'COUNT': [100], 'FREQ': ['DAILY']}
         )
 
         self.assertEqual(
             first_event['exdate'].to_ical(),
-            '19960402T010000Z,19960403T010000Z,19960404T010000Z'
+            b'19960402T010000Z,19960403T010000Z,19960404T010000Z'
         )
 
         self.assertEqual(

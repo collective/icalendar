@@ -124,12 +124,12 @@ END:VEVENT"""
 
         b = icalendar.vBinary('text')
         b.params['FMTTYPE'] = 'text/plain'
-        self.assertEqual(b.to_ical(), 'dGV4dA==')
+        self.assertEqual(b.to_ical(), b'dGV4dA==')
         e = icalendar.Event()
         e.add('ATTACH', b)
         self.assertEqual(e.to_ical(),
-            "BEGIN:VEVENT\r\nATTACH;ENCODING=BASE64;FMTTYPE=text/plain;"
-            "VALUE=BINARY:dGV4dA==\r\nEND:VEVENT\r\n"
+            b"BEGIN:VEVENT\r\nATTACH;ENCODING=BASE64;FMTTYPE=text/plain;"
+            b"VALUE=BINARY:dGV4dA==\r\nEND:VEVENT\r\n"
         )
 
 

@@ -1,5 +1,8 @@
+# -*- coding: utf-8 -*-
 from datetime import datetime, date, timedelta, time
 from . import unittest
+from icalendar.parser import Parameters
+
 
 import pytz
 
@@ -48,7 +51,8 @@ class TestProp(unittest.TestCase):
         a.params['cn'] = 'Max M'
 
         self.assertEqual(a.to_ical(), txt)
-        self.assertEqual(str(a.params), "Parameters({'CN': 'Max M'})")
+        self.assertIsInstance(a.params, Parameters)
+        self.assertEqual(a.params, {'CN': 'Max M'})
         self.assertEqual(vCalAddress.from_ical(txt), 'MAILTO:maxm@mxm.dk')
 
     def test_prop_vFloat(self):
@@ -430,8 +434,8 @@ class TestProp(unittest.TestCase):
 
         t2 = vInline('other text')
         t2.params['cn'] = 'Test Osterone'
-        self.assertEqual(str(t2.params),
-                         "Parameters({'CN': 'Test Osterone'})")
+        self.assertIsInstance(t2.params, Parameters)
+        self.assertEqual(t2.params, {'CN': 'Test Osterone'})
 
     def test_prop_TypesFactory(self):
         from ..prop import TypesFactory
@@ -456,10 +460,9 @@ class TestProp(unittest.TestCase):
         )
         self.assertEqual(factory.to_ical('priority', 1), b'1')
         self.assertEqual(factory.to_ical('cn', u'Rasmussen, Max M\xfcller'),
-                         'Rasmussen\\, Max M\xc3\xbcller')
-
+                         b'Rasmussen\\, Max M\xc3\xbcller')
         self.assertEqual(
-            factory.from_ical('cn', 'Rasmussen\\, Max M\xc3\xb8ller'),
+            factory.from_ical('cn', b'Rasmussen\\, Max M\xc3\xb8ller'),
             u'Rasmussen, Max M\xf8ller'
         )
 

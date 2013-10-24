@@ -1,7 +1,0 @@
-* several errors in Caseless dict's to_ical()
-    TypeError: sequence item 0: expected bytes, str found
-* data_encode should return strings vom dicts without enclosed 'b's
-  (this is the main source of failed tests at the moment)
-* base64 encoding needs to be redone
-===============================================================
-* should to_ical() not better return unicode? (not bytes?)
