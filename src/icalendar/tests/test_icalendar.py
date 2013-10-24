@@ -228,8 +228,12 @@ class IcalendarTestCase (unittest.TestCase):
              u'Vestibulum conval\r\n lis imperdiet dui posuere.')
         )
 
-        with self.assertRaises(AssertionError):  # TODO not sure why this should except
-            foldline('привет', limit=3)
+        # I don't really get this test
+        # at least just but bytes in there
+        # porting it to "run" under python 2 & 3 makes it not much better
+        with self.assertRaises(AssertionError):
+            foldline(u'привет'.encode('utf-8'), limit=3)
+
         self.assertEqual(foldline(u'foobar', limit=4), u'foo\r\n bar')
         self.assertEqual(
             foldline(u'Lorem ipsum dolor sit amet, consectetur adipiscing elit'
