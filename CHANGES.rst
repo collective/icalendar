@@ -9,6 +9,10 @@ Changelog
   when parsed from ical strings.
   [untitaker]
 
+- Python3 (3.3+) support [geier]
+
+- Made sure to_ical() always returns bytes [geier]
+
 
 3.5 (2013-07-03)
 ----------------
