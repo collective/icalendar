@@ -7,6 +7,7 @@ icalendar contributors
 - Andrey Nikolaev <nikolaeff@gmail.com>
 - Barak Michener <me@barakmich.com>
 - Christophe de Vienne <cdevienne@gmail.com>
+- Christian Geier <contact@lostpackets.de>
 - Dai MIKURUBE <dmikurube@acm.org>
 - Dan Stovall <dbstovall@gmail.com>
 - Eric Hanchrow <erich@cozi.com>
@@ -29,6 +30,7 @@ icalendar contributors
 - Ronan Dunklau <ronan@dunklau.fr>
 - Sidnei da Silva <sidnei@enfoldsystems.com>
 - Stanislav Ochotnicky <sochotnicky@redhat.com>
+- Stefan Schwarzer <sschwarzer@sschwarzer.net>
 - Victor Varvaryuk <victor.varvariuc@gmail.com>
 - Wichert Akkerman <wichert@wiggy.net>
 - spanktar <spanky@kapanka.com>
