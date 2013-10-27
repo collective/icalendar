@@ -257,11 +257,8 @@ class vDDDLists(object):
         self.dts = vDDD
 
     def to_ical(self):
-        try:
-            dts_ical = (dt.to_ical() for dt in self.dts)
-            return b",".join(dts_ical)
-        except:
-            import pdb; pdb.set_trace()
+        dts_ical = (dt.to_ical() for dt in self.dts)
+        return b",".join(dts_ical)
 
 
     @staticmethod

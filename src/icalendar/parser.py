@@ -368,7 +368,6 @@ class Contentlines(list):
             lines.append('')  # '\r\n' at the end of every content line
             return lines
         except:
-            raise
             raise ValueError('Expected StringType with content lines')
 
 
