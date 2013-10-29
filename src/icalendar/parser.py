@@ -320,7 +320,7 @@ class Contentline(compat.unicode_type):
                                           strict=self.strict)
             params = Parameters(
                 (unsescape_string(key), unsescape_string(value))
-                for key, value in params.items()  # TODO optimize for python 2?
+                for key, value in compat.iteritems(params)
             )
             values = unsescape_string(st[value_split + 1:])
             return (name, params, values)
