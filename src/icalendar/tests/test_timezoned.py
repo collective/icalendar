@@ -14,19 +14,19 @@ class TestTimezoned(unittest.TestCase):
         directory = os.path.dirname(__file__)
         cal = icalendar.Calendar.from_ical(open(os.path.join(directory, 'timezoned.ics'), 'rb').read())
 
-        self.assertEqual(cal['prodid'].to_ical(), "-//Plone.org//NONSGML plone.app.event//EN")
+        self.assertEqual(cal['prodid'].to_ical(), b"-//Plone.org//NONSGML plone.app.event//EN")
 
         timezones = cal.walk('VTIMEZONE')
         self.assertEqual(len(timezones), 1)
 
         tz = timezones[0]
-        self.assertEqual(tz['tzid'].to_ical(), "Europe/Vienna")
+        self.assertEqual(tz['tzid'].to_ical(), b"Europe/Vienna")
 
         std = tz.walk('STANDARD')[0]
         self.assertEqual(std.decoded('TZOFFSETFROM'), datetime.timedelta(0, 7200))
 
         ev1 = cal.walk('VEVENT')[0]
-        self.assertEqual(ev1.decoded('DTSTART'), datetime.datetime(2012, 02, 13, 10, 0, 0, tzinfo=pytz.timezone('Europe/Vienna')))
+        self.assertEqual(ev1.decoded('DTSTART'), datetime.datetime(2012,  2, 13, 10, 0, 0, tzinfo=pytz.timezone('Europe/Vienna')))
         self.assertEqual(ev1.decoded('DTSTAMP'), datetime.datetime(2010, 10, 10, 9, 10, 10, tzinfo=pytz.utc))
 
     def test_create_to_ical(self):
@@ -63,8 +63,8 @@ class TestTimezoned(unittest.TestCase):
 
         event = icalendar.Event()
         tz = pytz.timezone("Europe/Vienna")
-        event.add('dtstart', datetime.datetime(2012, 02, 13, 10, 00, 00, tzinfo=tz))
-        event.add('dtend', datetime.datetime(2012, 02, 17, 18, 00, 00, tzinfo=tz))
+        event.add('dtstart', datetime.datetime(2012, 2, 13, 10, 00, 00, tzinfo=tz))
+        event.add('dtend', datetime.datetime(2012, 2, 17, 18, 00, 00, tzinfo=tz))
         event.add('dtstamp', datetime.datetime(2010, 10, 10, 10, 10, 10, tzinfo=tz))
         event.add('created', datetime.datetime(2010, 10, 10, 10, 10, 10, tzinfo=tz))
         event.add('uid', u'123456')
@@ -82,7 +82,8 @@ class TestTimezoned(unittest.TestCase):
         event.add('url', u'http://plone.org')
         cal.add_component(event)
 
-        test_out = '|'.join(cal.to_ical().splitlines())
+        test_out = b'|'.join(cal.to_ical().splitlines())
+        test_out = test_out.decode('utf-8')
 
         vtimezone_lines = "BEGIN:VTIMEZONE|TZID:Europe/Vienna|X-LIC-LOCATION:"\
           + "Europe/Vienna|BEGIN:STANDARD|DTSTART;VALUE=DATE-TIME:19701025T03"\
@@ -112,6 +113,6 @@ class TestTimezoned(unittest.TestCase):
 
         # make sure, it's parsed properly and doesn't throw an error
         self.assertTrue(icalendar.vDDDTypes(date).to_ical()
-                        == '20120830T224100Z')
+                        == b'20120830T224100Z')
         self.assertTrue(icalendar.vDDDTypes(date2).to_ical()
-                        == '20120830T224100')
+                        == b'20120830T224100')

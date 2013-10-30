@@ -24,5 +24,5 @@ class TestTime(unittest.TestCase):
     def test_create_to_ical(self):
         cal = icalendar.Calendar()
         cal.add('X-SOMETIME', datetime.time(17, 20, 10))
-        self.assertTrue('X-SOMETIME;VALUE=TIME:172010' in
+        self.assertTrue(b'X-SOMETIME;VALUE=TIME:172010' in
                         cal.to_ical().splitlines())

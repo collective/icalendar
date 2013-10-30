@@ -39,6 +39,7 @@ them directly.
 from __future__ import absolute_import
 import re
 import pytz
+import base64
 import binascii
 import time as _time
 from datetime import (
@@ -57,6 +58,7 @@ from .parser import (
     unescape_char,
     tzid_from_dt,
 )
+from . import compat
 
 DATE_PART = r'(\d+)D'
 TIME_PART = r'T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?'
@@ -132,19 +134,19 @@ class vBinary(object):
     """
 
     def __init__(self, obj):
-        self.obj = obj
+        self.obj = to_unicode(obj)
         self.params = Parameters(encoding='BASE64', value="BINARY")
 
     def __repr__(self):
         return "vBinary('%s')" % self.to_ical()
 
     def to_ical(self):
-        return binascii.b2a_base64(self.obj)[:-1]
+        return binascii.b2a_base64(self.obj.encode('utf-8'))[:-1]
 
     @staticmethod
     def from_ical(ical):
         try:
-            return ical.decode('base-64')
+            return base64.b64decode(ical)
         except UnicodeError:
             raise ValueError('Not valid base 64 encoding.')
 
@@ -162,8 +164,8 @@ class vBoolean(int):
 
     def to_ical(self):
         if self:
-            return 'TRUE'
-        return 'FALSE'
+            return b'TRUE'
+        return b'FALSE'
 
     @classmethod
     def from_ical(cls, ical):
@@ -173,7 +175,7 @@ class vBoolean(int):
             raise ValueError("Expected 'TRUE' or 'FALSE'. Got %s" % ical)
 
 
-class vCalAddress(unicode):
+class vCalAddress(compat.unicode_type):
     """This just returns an unquoted string.
 
     """
@@ -204,7 +206,7 @@ class vFloat(float):
         return self
 
     def to_ical(self):
-        return str(self)
+        return compat.unicode_type(self).encode('utf-8')
 
     @classmethod
     def from_ical(cls, ical):
@@ -224,7 +226,7 @@ class vInt(int):
         return self
 
     def to_ical(self):
-        return str(self)
+        return compat.unicode_type(self).encode('utf-8')
 
     @classmethod
     def from_ical(cls, ical):
@@ -256,7 +258,8 @@ class vDDDLists(object):
 
     def to_ical(self):
         dts_ical = (dt.to_ical() for dt in self.dts)
-        return ",".join(dts_ical)
+        return b",".join(dts_ical)
+
 
     @staticmethod
     def from_ical(ical, timezone=None):
@@ -333,7 +336,8 @@ class vDate(object):
         self.params = Parameters(dict(value='DATE'))
 
     def to_ical(self):
-        return "%04d%02d%02d" % (self.dt.year, self.dt.month, self.dt.day)
+        s = "%04d%02d%02d" % (self.dt.year, self.dt.month, self.dt.day)
+        return s.encode('utf-8')
 
     @staticmethod
     def from_ical(ical):
@@ -380,7 +384,7 @@ class vDatetime(object):
             s += "Z"
         elif tzid:
             self.params.update({'TZID': tzid})
-        return s
+        return s.encode('utf-8')
 
     @staticmethod
     def from_ical(ical, timezone=None):
@@ -442,9 +446,12 @@ class vDuration(object):
             if seconds:
                 timepart += "%dS" % seconds
         if self.td.days == 0 and timepart:
-            return "%sP%s" % (sign, timepart)
+            return (compat.unicode_type(sign).encode('utf-8') + b'P' +
+                    compat.unicode_type(timepart).encode('utf-8'))
         else:
-            return "%sP%dD%s" % (sign, abs(self.td.days), timepart)
+            return (compat.unicode_type(sign).encode('utf-8') + b'P' +
+                    compat.unicode_type(abs(self.td.days)).encode('utf-8') +
+                    b'D' + compat.unicode_type(timepart).encode('utf-8'))
 
     @staticmethod
     def from_ical(ical):
@@ -515,10 +522,10 @@ class vPeriod(object):
 
     def to_ical(self):
         if self.by_duration:
-            return '%s/%s' % (vDatetime(self.start).to_ical(),
-                              vDuration(self.duration).to_ical())
-        return '%s/%s' % (vDatetime(self.start).to_ical(),
-                          vDatetime(self.end).to_ical())
+            return (vDatetime(self.start).to_ical() + b'/' +
+                    vDuration(self.duration).to_ical())
+        return (vDatetime(self.start).to_ical() + b'/' +
+                vDatetime(self.end).to_ical())
 
     @staticmethod
     def from_ical(ical):
@@ -538,7 +545,7 @@ class vPeriod(object):
         return 'vPeriod(%r)' % p
 
 
-class vWeekday(unicode):
+class vWeekday(compat.unicode_type):
     """This returns an unquoted weekday abbrevation.
 
     """
@@ -573,7 +580,7 @@ class vWeekday(unicode):
             raise ValueError('Expected weekday abbrevation, got: %s' % ical)
 
 
-class vFrequency(unicode):
+class vFrequency(compat.unicode_type):
     """A simple class that catches illegal values.
 
     """
@@ -648,9 +655,13 @@ class vRecur(CaselessDict):
             typ = self.types[key]
             if not isinstance(vals, SEQUENCE_TYPES):
                 vals = [vals]
-            vals = ','.join(typ(val).to_ical() for val in vals)
-            result.append('%s=%s' % (key, vals))
-        return ';'.join(result)
+            vals = b','.join(typ(val).to_ical() for val in vals)
+
+            # CaselessDict keys are always unicode
+            key = key.encode(DEFAULT_ENCODING)
+            result.append(key + b'=' + vals)
+
+        return b';'.join(result)
 
     @classmethod
     def parse_type(cls, key, values):
@@ -672,7 +683,7 @@ class vRecur(CaselessDict):
             raise ValueError('Error in recurrence rule: %s' % ical)
 
 
-class vText(unicode):
+class vText(compat.unicode_type):
     """Simple text.
 
     """
@@ -723,7 +734,7 @@ class vTime(object):
             raise ValueError('Expected time, got: %s' % ical)
 
 
-class vUri(unicode):
+class vUri(compat.unicode_type):
     """Uniform resource identifier is basically just an unquoted string.
 
     """
@@ -826,7 +837,7 @@ class vUTCOffset(object):
         return offset
 
 
-class vInline(unicode):
+class vInline(compat.unicode_type):
     """This is an especially dumb class that just holds raw unparsed text and
     has parameters. Conversion of inline values are handled by the Component
     class, so no further processing is needed.

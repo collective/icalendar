@@ -6,6 +6,7 @@ import dateutil.parser
 import os
 
 from . import unittest
+from icalendar.caselessdict import CaselessDict
 
 
 class TestRecurrence(unittest.TestCase):
@@ -19,14 +20,14 @@ class TestRecurrence(unittest.TestCase):
     def test_recurrence_exdates_one_line(self):
         first_event = self.cal.walk('vevent')[0]
 
+        self.assertIsInstance(first_event, CaselessDict)
         self.assertEqual(
-            str(first_event['rrule']),
-            "CaselessDict({'COUNT': [100], 'FREQ': ['DAILY']})"
+            first_event['rrule'], {'COUNT': [100], 'FREQ': ['DAILY']}
         )
 
         self.assertEqual(
             first_event['exdate'].to_ical(),
-            '19960402T010000Z,19960403T010000Z,19960404T010000Z'
+            b'19960402T010000Z,19960403T010000Z,19960404T010000Z'
         )
 
         self.assertEqual(
@@ -57,6 +58,6 @@ class TestRecurrence(unittest.TestCase):
         # code has to handle this as list and not blindly expecting to be able
         # to call event['EXDATE'].to_ical() on it:
         self.assertEqual(isinstance(exdate, list), True)  # multiple EXDATE
-        self.assertEqual(exdate[0].to_ical(), '20120529T100000')
+        self.assertEqual(exdate[0].to_ical(), b'20120529T100000')
 
         # TODO: test for embedded timezone information!

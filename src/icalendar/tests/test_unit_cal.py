@@ -41,7 +41,7 @@ class TestCalComponent(unittest.TestCase):
         self.assertEqual(c['prodid'], prop.vText(u'-//my product//'))
 
         # ... or decoded to a python type
-        self.assertEqual(c.decoded('prodid'), '-//my product//')
+        self.assertEqual(c.decoded('prodid'), b'-//my product//')
 
         # With default values for non existing properties
         self.assertEqual(c.decoded('version', 'No Version'), 'No Version')
@@ -54,7 +54,7 @@ class TestCalComponent(unittest.TestCase):
         c.name = 'VCALENDAR'
         c.add('attendee', 'Max M')
         self.assertEqual(c.to_ical(),
-            'BEGIN:VCALENDAR\r\nATTENDEE:Max M\r\nEND:VCALENDAR\r\n')
+            b'BEGIN:VCALENDAR\r\nATTENDEE:Max M\r\nEND:VCALENDAR\r\n')
 
         # Components can be nested, so You can add a subcompont. Eg a calendar
         # holds events.
@@ -63,9 +63,9 @@ class TestCalComponent(unittest.TestCase):
         e.add('dtend', '20000102T000000', encode=0)
         e.add('dtstart', '20000101T000000', encode=0)
         self.assertEqual(e.to_ical(),
-            'BEGIN:VEVENT\r\nDTEND:20000102T000000\r\n'
-            + 'DTSTART:20000101T000000\r\nSUMMARY:A brief history of time\r'
-            + '\nEND:VEVENT\r\n')
+            b'BEGIN:VEVENT\r\nDTEND:20000102T000000\r\n'
+            + b'DTSTART:20000101T000000\r\nSUMMARY:A brief history of time\r'
+            + b'\nEND:VEVENT\r\n')
 
         c.add_component(e)
         self.assertEqual(c.subcomponents,
@@ -85,31 +85,31 @@ class TestCalComponent(unittest.TestCase):
         # We can enumerate property items recursively with the property_items
         # method.
         self.assertEqual(c.property_items(),
-            [('BEGIN', 'VCALENDAR'), ('ATTENDEE', prop.vCalAddress('Max M')),
-             ('BEGIN', 'VEVENT'), ('DTEND', '20000102T000000'),
+            [('BEGIN', b'VCALENDAR'), ('ATTENDEE', prop.vCalAddress('Max M')),
+             ('BEGIN', b'VEVENT'), ('DTEND', '20000102T000000'),
              ('DTSTART', '20000101T000000'),
-             ('SUMMARY', 'A brief history of time'), ('END', 'VEVENT'),
-             ('END', 'VCALENDAR')])
+             ('SUMMARY', 'A brief history of time'), ('END', b'VEVENT'),
+             ('END', b'VCALENDAR')])
 
         # We can also enumerate property items just under the component.
         self.assertEqual(c.property_items(recursive=False),
-            [('BEGIN', 'VCALENDAR'),
+            [('BEGIN', b'VCALENDAR'),
              ('ATTENDEE', prop.vCalAddress('Max M')),
-             ('END', 'VCALENDAR')])
+             ('END', b'VCALENDAR')])
 
         sc = c.subcomponents[0]
         self.assertEqual(sc.property_items(recursive=False),
-            [('BEGIN', 'VEVENT'), ('DTEND', '20000102T000000'),
+            [('BEGIN', b'VEVENT'), ('DTEND', '20000102T000000'),
              ('DTSTART', '20000101T000000'),
-             ('SUMMARY', 'A brief history of time'), ('END', 'VEVENT')])
+             ('SUMMARY', 'A brief history of time'), ('END', b'VEVENT')])
 
         # Text fields which span multiple mulitple lines require proper
         # indenting
         c = Calendar()
         c['description'] = u'Paragraph one\n\nParagraph two'
         self.assertEqual(c.to_ical(),
-           'BEGIN:VCALENDAR\r\nDESCRIPTION:Paragraph one\\n\\nParagraph two'
-           + '\r\nEND:VCALENDAR\r\n')
+           b'BEGIN:VCALENDAR\r\nDESCRIPTION:Paragraph one\\n\\nParagraph two'
+           + b'\r\nEND:VCALENDAR\r\n')
 
         # INLINE properties have their values on one property line. Note the
         # double quoting of the value with a colon in it.
@@ -119,17 +119,17 @@ class TestCalComponent(unittest.TestCase):
             Calendar({'RESOURCES': 'Chair, Table, "Room: 42"'}))
 
         self.assertEqual(c.to_ical(),
-            'BEGIN:VCALENDAR\r\nRESOURCES:Chair\\, Table\\, "Room: 42"\r\n'
-            + 'END:VCALENDAR\r\n')
+            b'BEGIN:VCALENDAR\r\nRESOURCES:Chair\\, Table\\, "Room: 42"\r\n'
+            + b'END:VCALENDAR\r\n')
 
         # The inline values must be handled by the get_inline() and
         # set_inline() methods.
         self.assertEqual(c.get_inline('resources', decode=0),
-            ['Chair', 'Table', 'Room: 42'])
+            [u'Chair', u'Table', u'Room: 42'])
 
         # These can also be decoded
         self.assertEqual(c.get_inline('resources', decode=1),
-            [u'Chair', u'Table', u'Room: 42'])
+            [b'Chair', b'Table', b'Room: 42'])
 
         # You can set them directly ...
         c.set_inline('resources', ['A', 'List', 'of', 'some, recources'],
@@ -165,12 +165,12 @@ class TestCalComponent(unittest.TestCase):
 
         lines = comp.to_ical().splitlines()
         self.assertTrue(
-            "DTSTART;TZID=Europe/Vienna;VALUE=DATE-TIME:20101010T100000"
+            b"DTSTART;TZID=Europe/Vienna;VALUE=DATE-TIME:20101010T100000"
             in lines)
-        self.assertTrue("CREATED;VALUE=DATE-TIME:20101010T120000Z" in lines)
-        self.assertTrue("DTSTAMP;VALUE=DATE-TIME:20101010T130000Z" in lines)
+        self.assertTrue(b"CREATED;VALUE=DATE-TIME:20101010T120000Z" in lines)
+        self.assertTrue(b"DTSTAMP;VALUE=DATE-TIME:20101010T130000Z" in lines)
         self.assertTrue(
-                "LAST-MODIFIED;VALUE=DATE-TIME:20101010T160000Z" in lines)
+                b"LAST-MODIFIED;VALUE=DATE-TIME:20101010T160000Z" in lines)
 
     def test_cal_Component_add_no_reencode(self):
         """Already encoded values should not be re-encoded.
@@ -217,7 +217,7 @@ class TestCal(unittest.TestCase):
         component = factory['VEVENT']
         event = component(dtstart='19700101')
         self.assertEqual(event.to_ical(),
-            'BEGIN:VEVENT\r\nDTSTART:19700101\r\nEND:VEVENT\r\n')
+            b'BEGIN:VEVENT\r\nDTSTART:19700101\r\nEND:VEVENT\r\n')
 
         self.assertEqual(
             factory.get('VCALENDAR', icalendar.cal.Component),
@@ -239,9 +239,9 @@ class TestCal(unittest.TestCase):
         cal.add_component(event)
         self.assertEqual(
             cal.subcomponents[0].to_ical(),
-            'BEGIN:VEVENT\r\nSUMMARY:Python meeting about calendaring\r\n'\
-            + 'DTSTART;VALUE=DATE-TIME:20050404T080000\r\nUID:42\r\n'\
-            + 'END:VEVENT\r\n')
+            b'BEGIN:VEVENT\r\nSUMMARY:Python meeting about calendaring\r\n'\
+            + b'DTSTART;VALUE=DATE-TIME:20050404T080000\r\nUID:42\r\n'\
+            + b'END:VEVENT\r\n')
 
         # Write to disc
         import tempfile, os
@@ -275,4 +275,4 @@ class TestCal(unittest.TestCase):
         self.assertEqual(
             [e['DESCRIPTION'].to_ical()
                 for e in icalendar.cal.Calendar.from_ical(s).walk('VEVENT')],
-            ['Perfectly OK event'])
+            [b'Perfectly OK event'])

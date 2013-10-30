@@ -15,14 +15,14 @@ from .parser_tools import (
     to_unicode,
     data_encode
 )
-
+import icalendar.compat as compat
 
 def escape_char(text):
     """Format value according to iCalendar TEXT escaping rules.
     """
-    assert isinstance(text, basestring)
+    assert isinstance(text, (compat.unicode_type, compat.bytes_type))
     # NOTE: ORDER MATTERS!
-    return text.replace('\N', '\n')\
+    return text.replace(r'\N', '\n')\
                .replace('\\', '\\\\')\
                .replace(';', r'\;')\
                .replace(',', r'\,')\
@@ -31,14 +31,22 @@ def escape_char(text):
 
 
 def unescape_char(text):
-    assert isinstance(text, basestring)
+    assert isinstance(text, (compat.unicode_type, compat.bytes_type))
     # NOTE: ORDER MATTERS!
-    return text.replace(r'\N', r'\n')\
-               .replace(r'\r\n', '\n')\
-               .replace(r'\n', '\n')\
-               .replace(r'\,', ',')\
-               .replace(r'\;', ';')\
-               .replace('\\\\', '\\')
+    if isinstance(text, compat.unicode_type):
+        return text.replace(u'\\N', u'\\n')\
+                   .replace(u'\r\n', u'\n')\
+                   .replace(u'\\n', u'\n')\
+                   .replace(u'\\,', u',')\
+                   .replace(u'\\;', u';')\
+                   .replace(u'\\\\', u'\\')
+    elif isinstance(text, compat.bytes_type):
+        return text.replace(b'\N', b'\n')\
+                   .replace(b'\r\n', b'\n')\
+                   .replace(b'\n', b'\n')\
+                   .replace(b'\,', b',')\
+                   .replace(b'\;', b';')\
+                   .replace(b'\\\\', b'\\')
 
 
 def tzid_from_dt(dt):
@@ -63,7 +71,7 @@ def foldline(line, limit=75, fold_sep=u'\r\n '):
     immediately followed by a single linear white-space character (i.e.,
     SPACE or HTAB).
     """
-    assert isinstance(line, unicode)
+    assert isinstance(line, compat.unicode_type)
     assert u'\n' not in line
 
     ret_line = u''
@@ -94,7 +102,8 @@ def param_value(value):
 NAME = re.compile('[\w-]+')
 UNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7F",:;]')
 QUNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7F"]')
-FOLD = re.compile('(\r?\n)+[ \t]')
+FOLD = re.compile(b'(\r?\n)+[ \t]')
+uFOLD = re.compile(u'(\r?\n)+[ \t]')
 NEWLINE = re.compile(r'\r?\n')
 
 
@@ -191,14 +200,14 @@ class Parameters(CaselessDict):
     def to_ical(self):
         result = []
         items = self.items()
-        items.sort()  # To make doctests work
-        for key, value in items:
+        for key, value in sorted(items):
             value = param_value(value)
-            if isinstance(value, unicode):
+            if isinstance(value, compat.unicode_type):
                 value = value.encode(DEFAULT_ENCODING)
             # CaselessDict keys are always unicode
-            result.append('%s=%s' % (key.upper().encode('utf-8'), value))
-        return ';'.join(result)
+            key = key.upper().encode(DEFAULT_ENCODING)
+            result.append(key + b'=' + value)
+        return b';'.join(result)
 
     @classmethod
     def from_ical(cls, st, strict=False):
@@ -251,7 +260,7 @@ def unsescape_string(val):
 #########################################
 # parsing and generation of content lines
 
-class Contentline(unicode):
+class Contentline(compat.unicode_type):
     """A content line is basically a string that can be folded and parsed into
     parts.
 
@@ -311,7 +320,7 @@ class Contentline(unicode):
                                           strict=self.strict)
             params = Parameters(
                 (unsescape_string(key), unsescape_string(value))
-                for key, value in params.iteritems()
+                for key, value in compat.iteritems(params)
             )
             values = unsescape_string(st[value_split + 1:])
             return (name, params, values)
@@ -327,7 +336,7 @@ class Contentline(unicode):
         """
         ical = to_unicode(ical)
         # a fold is carriage return followed by either a space or a tab
-        return cls(FOLD.sub('', ical), strict=strict)
+        return cls(uFOLD.sub('', ical), strict=strict)
 
     def to_ical(self):
         """Long content lines are folded so they are less than 75 characters.
@@ -344,15 +353,16 @@ class Contentlines(list):
     def to_ical(self):
         """Simply join self.
         """
-        return '\r\n'.join(line.to_ical() for line in self if line) + '\r\n'
+        return b'\r\n'.join(line.to_ical() for line in self if line) + b'\r\n'
 
     @classmethod
     def from_ical(cls, st):
         """Parses a string into content lines.
         """
+        st = to_unicode(st)
         try:
             # a fold is carriage return followed by either a space or a tab
-            unfolded = FOLD.sub('', st)
+            unfolded = uFOLD.sub('', st)
             lines = cls(Contentline(line) for
                         line in unfolded.splitlines() if line)
             lines.append('')  # '\r\n' at the end of every content line

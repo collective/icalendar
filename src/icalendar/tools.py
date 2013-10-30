@@ -5,6 +5,7 @@ from string import (
     digits,
 )
 from datetime import datetime
+from .parser_tools import to_unicode
 from .prop import (
     vText,
     vDatetime,
@@ -28,7 +29,9 @@ class UIDGenerator(object):
         Like:
             20050105T225746Z-HKtJMqUgdO0jDUwm@example.com
         """
+        host_name = to_unicode(host_name)
         unique = unique or self.rnd_string()
-        return vText('%s-%s@%s' % (vDatetime(datetime.today()).to_ical(),
+        today = to_unicode(vDatetime(datetime.today()).to_ical())
+        return vText('%s-%s@%s' % (today,
                                    unique,
                                    host_name))

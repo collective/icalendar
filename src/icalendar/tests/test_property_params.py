@@ -18,8 +18,8 @@ class TestPropertyParams(unittest.TestCase):
         ical.add('organizer', cal_address)
 
         ical_str = Calendar.to_ical(ical)
-        exp_str = """BEGIN:VCALENDAR\r\nORGANIZER;CN="Doe, John":"""\
-                  """mailto:john.doe@example.org\r\nEND:VCALENDAR\r\n"""
+        exp_str = b"""BEGIN:VCALENDAR\r\nORGANIZER;CN="Doe, John":"""\
+                  b"""mailto:john.doe@example.org\r\nEND:VCALENDAR\r\n"""
 
         self.assertEqual(ical_str, exp_str)
 
@@ -34,23 +34,25 @@ class TestPropertyParams(unittest.TestCase):
         vevent = Event()
         vevent['ORGANIZER'] = cal_address
         self.assertEqual(
-            vevent.to_ical(),
-            'BEGIN:VEVENT\r\n'
-            'ORGANIZER;CN="Джон Доу":mailto:john.doe@example.org\r\n'
-            'END:VEVENT\r\n'
+            vevent.to_ical().decode('utf-8'),
+            u'BEGIN:VEVENT\r\n'
+            u'ORGANIZER;CN="Джон Доу":mailto:john.doe@example.org\r\n'
+            u'END:VEVENT\r\n'
         )
-        self.assertEqual(vevent['ORGANIZER'].params['CN'], 'Джон Доу')
+
+        self.assertEqual(vevent['ORGANIZER'].params['CN'],
+                         'Джон Доу')
 
     def test_quoting(self):
         # not double-quoted
-        self._test_quoting(u"Aramis", 'Aramis')
+        self._test_quoting(u"Aramis", u'Aramis')
         # if a space is present - enclose in double quotes
-        self._test_quoting(u"Aramis Alameda", '"Aramis Alameda"')
+        self._test_quoting(u"Aramis Alameda", u'"Aramis Alameda"')
         # a single quote in parameter value - double quote the value
-        self._test_quoting("Aramis d'Alameda", '"Aramis d\'Alameda"')
+        self._test_quoting(u"Aramis d'Alameda", u'"Aramis d\'Alameda"')
         # double quote is replaced with single quote
-        self._test_quoting("Aramis d\"Alameda", '"Aramis d\'Alameda"')
-        self._test_quoting(u"Арамис д'Аламеда", '"Арамис д\'Аламеда"')
+        self._test_quoting(u"Aramis d\"Alameda", u'"Aramis d\'Alameda"')
+        self._test_quoting(u"Арамис д'Аламеда", u'"Арамис д\'Аламеда"')
 
     def _test_quoting(self, cn_param, cn_quoted):
         """
@@ -63,16 +65,16 @@ class TestPropertyParams(unittest.TestCase):
         vevent.add('ATTENDEE', attendee)
         self.assertEqual(
             vevent.to_ical(),
-            'BEGIN:VEVENT\r\nATTENDEE;CN=%s:test@mail.com\r\nEND:VEVENT\r\n'
-            % cn_quoted
+            b'BEGIN:VEVENT\r\nATTENDEE;CN=' + cn_quoted.encode('utf-8') +
+            b':test@mail.com\r\nEND:VEVENT\r\n'
         )
 
     def test_escaping(self):
         # verify that escaped non safe chars are decoded correctly
-        NON_SAFE_CHARS = ur',\;:'
+        NON_SAFE_CHARS = u',\\;:'
         for char in NON_SAFE_CHARS:
-            cn_escaped = ur"Society\%s 2014" % char
-            cn_decoded = ur"Society%s 2014" % char
+            cn_escaped = u"Society\\%s 2014" % char
+            cn_decoded = u"Society%s 2014" % char
             vevent = Event.from_ical(
                 u'BEGIN:VEVENT\r\n'
                 u'ORGANIZER;CN=%s:that\r\n'
@@ -91,18 +93,18 @@ class TestPropertyParams(unittest.TestCase):
             r'that, that; %th%%at%\ that:'
         )
         self.assertEqual(
-            vevent['ORGANIZER'].to_ical(),
-            r'это, то; that\ %th%%at%:'
+            vevent['ORGANIZER'].to_ical().decode('utf-8'),
+            u'это, то; that\\ %th%%at%:'
         )
 
     def test_parameters_class(self):
 
         # Simple parameter:value pair
         p = Parameters(parameter1='Value1')
-        self.assertEqual(p.to_ical(), 'PARAMETER1=Value1')
+        self.assertEqual(p.to_ical(), b'PARAMETER1=Value1')
 
         # keys are converted to upper
-        self.assertEqual(p.keys(), ['PARAMETER1'])
+        self.assertEqual(list(p.keys()), ['PARAMETER1'])
 
         # Parameters are case insensitive
         self.assertEqual(p['parameter1'], 'Value1')
@@ -110,22 +112,22 @@ class TestPropertyParams(unittest.TestCase):
 
         # Parameter with list of values must be seperated by comma
         p = Parameters({'parameter1': ['Value1', 'Value2']})
-        self.assertEqual(p.to_ical(), 'PARAMETER1=Value1,Value2')
+        self.assertEqual(p.to_ical(), b'PARAMETER1=Value1,Value2')
 
         # Multiple parameters must be seperated by a semicolon
         p = Parameters({'RSVP': 'TRUE', 'ROLE': 'REQ-PARTICIPANT'})
-        self.assertEqual(p.to_ical(), 'ROLE=REQ-PARTICIPANT;RSVP=TRUE')
+        self.assertEqual(p.to_ical(), b'ROLE=REQ-PARTICIPANT;RSVP=TRUE')
 
         # Parameter values containing ',;:' must be double quoted
         p = Parameters({'ALTREP': 'http://www.wiz.org'})
-        self.assertEqual(p.to_ical(), 'ALTREP="http://www.wiz.org"')
+        self.assertEqual(p.to_ical(), b'ALTREP="http://www.wiz.org"')
 
         # list items must be quoted seperately
         p = Parameters({'MEMBER': ['MAILTO:projectA@host.com',
                                    'MAILTO:projectB@host.com']})
         self.assertEqual(
             p.to_ical(),
-            'MEMBER="MAILTO:projectA@host.com","MAILTO:projectB@host.com"'
+            b'MEMBER="MAILTO:projectA@host.com","MAILTO:projectB@host.com"'
         )
 
         # Now the whole sheebang
@@ -134,8 +136,8 @@ class TestPropertyParams(unittest.TestCase):
                         'ALTREP': ['http://www.wiz.org', 'value4']})
         self.assertEqual(
             p.to_ical(),
-            ('ALTREP="http://www.wiz.org",value4;PARAMETER1=Value1;'
-             'PARAMETER2=Value2,Value3')
+            (b'ALTREP="http://www.wiz.org",value4;PARAMETER1=Value1;'
+             b'PARAMETER2=Value2,Value3')
         )
 
         # We can also parse parameter strings
@@ -198,7 +200,7 @@ END:VCALENDAR"""
         event = cal.walk("VEVENT")[0]
         event['attendee'][0]
         self.assertEqual(event['attendee'][0].to_ical(),
-                         'MAILTO:rembrand@xs4all.nl')
+                         b'MAILTO:rembrand@xs4all.nl')
         self.assertEqual(event['attendee'][0].params.to_ical(),
-                         'CN=RembrandXS;PARTSTAT=NEEDS-ACTION;RSVP=TRUE')
+                         b'CN=RembrandXS;PARTSTAT=NEEDS-ACTION;RSVP=TRUE')
         self.assertEqual(event['attendee'][0].params['cn'], u'RembrandXS')
