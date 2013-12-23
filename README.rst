@@ -11,7 +11,7 @@ with Python.
     :Code: http://github.com/collective/icalendar
     :Mailing list: http://github.com/collective/icalendar/issues
     :Dependencies: `setuptools`_ and since version 3.0 we depend on `pytz`_.
-    :Compatible with: Python 2.6 and 2.7
+    :Compatible with: Python 2.6, 2.7 and 3.3+
     :License: `BSD`_
 
 ----
