@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from . import unittest
-from ..parser_tools import to_unicode
-from ..parser_tools import data_encode
+from icalendar.parser_tools import data_encode
+from icalendar.parser_tools import to_unicode
+from icalendar.tests import unittest
 
 
 class TestParserTools(unittest.TestCase):

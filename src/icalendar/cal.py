@@ -4,21 +4,19 @@ files according to rfc2445.
 
 These are the defined components.
 """
-from __future__ import absolute_import
-import pytz
 from datetime import datetime
-from .parser_tools import data_encode
-from .caselessdict import CaselessDict
-from .parser import (
-    Contentlines,
-    Contentline,
-    Parameters,
-    q_split,
-    q_join,
-)
-from .prop import TypesFactory
-from .prop import vText, vDDDLists
-from .parser_tools import DEFAULT_ENCODING
+from icalendar.caselessdict import CaselessDict
+from icalendar.parser import Contentline
+from icalendar.parser import Contentlines
+from icalendar.parser import Parameters
+from icalendar.parser import q_join
+from icalendar.parser import q_split
+from icalendar.parser_tools import DEFAULT_ENCODING
+from icalendar.parser_tools import data_encode
+from icalendar.prop import TypesFactory
+from icalendar.prop import vText, vDDDLists
+
+import pytz
 
 
 ######################################

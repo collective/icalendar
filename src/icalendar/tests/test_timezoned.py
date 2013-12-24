@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-import icalendar
-import pytz
+from icalendar.tests import unittest
+
 import datetime
 import dateutil.parser
+import icalendar
 import os
-
-from . import unittest
+import pytz
 
 
 class TestTimezoned(unittest.TestCase):

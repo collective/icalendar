@@ -1,9 +1,11 @@
 # coding: utf-8
-
-from . import unittest
+from icalendar import Calendar
+from icalendar import Event
+from icalendar import Parameters
+from icalendar import vCalAddress
+from icalendar.tests import unittest
 
 import icalendar
-from .. import vCalAddress, Calendar, Event, Parameters
 
 
 class TestPropertyParams(unittest.TestCase):

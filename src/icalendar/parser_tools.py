@@ -1,4 +1,5 @@
-from . import compat
+from icalendar import compat
+
 
 SEQUENCE_TYPES = (list, tuple)
 DEFAULT_ENCODING = 'utf-8'

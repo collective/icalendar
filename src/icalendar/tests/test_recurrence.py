@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-import icalendar
-import pytz
-import datetime
-import os
-
-from . import unittest
 from icalendar.caselessdict import CaselessDict
+from icalendar.tests import unittest
+
+import datetime
+import icalendar
+import os
+import pytz
 
 
 class TestRecurrence(unittest.TestCase):

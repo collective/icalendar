@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from .parser_tools import to_unicode, data_encode
+from icalendar.parser_tools import to_unicode
+from icalendar.parser_tools import data_encode
 
 
 def canonsort_keys(keys, canonical_order=None):

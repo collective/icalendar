@@ -1,7 +1,4 @@
-from __future__ import absolute_import
-
-
-from .cal import (
+from icalendar.cal import (
     Calendar,
     Event,
     Todo,
@@ -14,7 +11,7 @@ from .cal import (
     ComponentFactory,
 )
 # Property Data Value Types
-from .prop import (
+from icalendar.prop import (
     vBinary,
     vBoolean,
     vCalAddress,
@@ -36,13 +33,13 @@ from .prop import (
     TypesFactory,
 )
 # useful tzinfo subclasses
-from .prop import (
+from icalendar.prop import (
     FixedOffset,
     LocalTimezone,
 )
 # Parameters and helper methods for splitting and joining string with escaped
 # chars.
-from .parser import (
+from icalendar.parser import (
     Parameters,
     q_split,
     q_join,

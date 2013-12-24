@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime, date, timedelta, time
-from . import unittest
+from datetime import date
+from datetime import datetime
+from datetime import time
+from datetime import timedelta
 from icalendar.parser import Parameters
-
+from icalendar.tests import unittest
 
 import pytz
 

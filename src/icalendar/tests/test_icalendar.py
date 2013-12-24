@@ -1,16 +1,5 @@
 # coding: utf-8
-import sys
-from . import unittest
-import doctest
-import os
-from .. import (
-    cal,
-    caselessdict,
-    parser,
-    prop,
-)
-
-OPTIONFLAGS = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS
+from icalendar.tests import unittest
 
 
 class IcalendarTestCase (unittest.TestCase):

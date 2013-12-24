@@ -1,15 +1,11 @@
-from __future__ import absolute_import
-import random
-from string import (
-    ascii_letters,
-    digits,
-)
 from datetime import datetime
-from .parser_tools import to_unicode
-from .prop import (
-    vText,
-    vDatetime,
-)
+from icalendar.parser_tools import to_unicode
+from icalendar.prop import vDatetime
+from icalendar.prop import vText
+from string import ascii_letters
+from string import digits
+
+import random
 
 
 class UIDGenerator(object):

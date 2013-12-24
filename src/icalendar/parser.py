@@ -6,16 +6,14 @@ Eg. RFC 2426 (vCard)
 It is stupid in the sense that it treats the content purely as strings. No type
 conversion is attempted.
 """
-from __future__ import absolute_import
+from icalendar import compat
+from icalendar.caselessdict import CaselessDict
+from icalendar.parser_tools import DEFAULT_ENCODING
+from icalendar.parser_tools import SEQUENCE_TYPES
+from icalendar.parser_tools import data_encode
+from icalendar.parser_tools import to_unicode
+
 import re
-from .caselessdict import CaselessDict
-from .parser_tools import (
-    DEFAULT_ENCODING,
-    SEQUENCE_TYPES,
-    to_unicode,
-    data_encode
-)
-import icalendar.compat as compat
 
 
 def escape_char(text):
@@ -370,4 +368,4 @@ class Contentlines(list):
 
 
 # XXX: what kind of hack is this? import depends to be at end
-from .prop import vText
+from icalendar.prop import vText

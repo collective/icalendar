@@ -35,29 +35,28 @@ primitive Python datatype. So it should allways be true that:
 These types are mainly used for parsing and file generation. But you can set
 them directly.
 """
-from __future__ import absolute_import
-import re
-import pytz
+from datetime import date
+from datetime import datetime
+from datetime import time
+from datetime import timedelta
+from datetime import tzinfo
+from dateutil.tz import tzutc
+from icalendar import compat
+from icalendar.caselessdict import CaselessDict
+from icalendar.parser import Parameters
+from icalendar.parser import escape_char
+from icalendar.parser import tzid_from_dt
+from icalendar.parser import unescape_char
+from icalendar.parser_tools import DEFAULT_ENCODING
+from icalendar.parser_tools import SEQUENCE_TYPES
+from icalendar.parser_tools import to_unicode
+
 import base64
 import binascii
+import pytz
+import re
 import time as _time
-from datetime import (
-    datetime,
-    timedelta,
-    time,
-    date,
-    tzinfo,
-)
-from dateutil.tz import tzutc
-from .parser_tools import SEQUENCE_TYPES, DEFAULT_ENCODING, to_unicode
-from .caselessdict import CaselessDict
-from .parser import (
-    Parameters,
-    escape_char,
-    unescape_char,
-    tzid_from_dt,
-)
-from . import compat
+
 
 DATE_PART = r'(\d+)D'
 TIME_PART = r'T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?'

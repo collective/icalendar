@@ -1,8 +1,8 @@
-import icalendar
-import datetime
-import os
+from icalendar.tests import unittest
 
-from . import unittest
+import datetime
+import icalendar
+import os
 
 
 class TestTime(unittest.TestCase):

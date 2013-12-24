@@ -1,6 +1,8 @@
-from . import unittest
+from datetime import datetime
+from datetime import timedelta
+from icalendar.tests import unittest
+
 import icalendar
-from datetime import datetime, timedelta
 import pytz
 
 

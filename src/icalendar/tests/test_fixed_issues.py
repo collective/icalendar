@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-from . import unittest
-import icalendar
+from icalendar.tests import unittest
+
 import datetime
+import icalendar
 import os
 import pytz
 

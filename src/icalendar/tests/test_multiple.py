@@ -1,6 +1,7 @@
-from . import unittest
-from ..prop import vText
 from icalendar import Calendar
+from icalendar.prop import vText
+from icalendar.tests import unittest
+
 import os
 
 

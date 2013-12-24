@@ -1,4 +1,5 @@
-from . import unittest
+from icalendar.tests import unittest
+
 import icalendar
 
 

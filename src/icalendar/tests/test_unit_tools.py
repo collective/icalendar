@@ -1,4 +1,4 @@
-from . import unittest
+from icalendar.tests import unittest
 from icalendar.tools import UIDGenerator
 
 
