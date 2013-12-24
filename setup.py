@@ -5,6 +5,7 @@ shortdesc = 'iCalendar parser/generator'
 longdesc = open('README.rst').read()
 longdesc += open('CHANGES.rst').read()
 longdesc += open('LICENSE.rst').read()
+
 tests_require = ['unittest2']
 
 setuptools.setup(
@@ -21,7 +22,7 @@ setuptools.setup(
     keywords='calendar calendaring ical icalendar event todo journal '
              'recurring',
     author='Plone Foundation',
-    author_email='plone-developers@lists.sourceforge.net', 
+    author_email='plone-developers@lists.sourceforge.net',
     url='https://github.com/collective/icalendar',
     license='BSD',
     packages=setuptools.find_packages('src'),
