@@ -1,4 +1,5 @@
 # coding: utf-8
+import sys
 from . import unittest
 import doctest
 import os
@@ -261,22 +262,3 @@ class IcalendarTestCase (unittest.TestCase):
         from ..parser import q_join
         self.assertEqual(q_join(['Max', 'Moller', 'Rasmussen, Max']),
                          'Max,Moller,"Rasmussen, Max"')
-
-
-def load_tests(loader=None, tests=None, pattern=None):
-    suite = unittest.TestSuite()
-    suite.addTest(doctest.DocTestSuite(caselessdict))
-    suite.addTest(doctest.DocTestSuite(parser))
-    suite.addTest(doctest.DocTestSuite(prop))
-    suite.addTest(doctest.DocTestSuite(cal))
-    current_dir = os.path.dirname(__file__)
-    for docfile in ['example.rst']:
-        filename = os.path.abspath(os.path.join(current_dir, docfile))
-        suite.addTest(
-            doctest.DocFileSuite(
-                docfile,
-                optionflags=OPTIONFLAGS,
-                globs={'__file__': filename}
-            )
-        )
-    return suite

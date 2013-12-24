@@ -12,9 +12,14 @@ class TestTimezoned(unittest.TestCase):
 
     def test_create_from_ical(self):
         directory = os.path.dirname(__file__)
-        cal = icalendar.Calendar.from_ical(open(os.path.join(directory, 'timezoned.ics'), 'rb').read())
+        cal = icalendar.Calendar.from_ical(
+            open(os.path.join(directory, 'timezoned.ics'), 'rb').read()
+        )
 
-        self.assertEqual(cal['prodid'].to_ical(), b"-//Plone.org//NONSGML plone.app.event//EN")
+        self.assertEqual(
+            cal['prodid'].to_ical(),
+            b"-//Plone.org//NONSGML plone.app.event//EN"
+        )
 
         timezones = cal.walk('VTIMEZONE')
         self.assertEqual(len(timezones), 1)
@@ -23,11 +28,19 @@ class TestTimezoned(unittest.TestCase):
         self.assertEqual(tz['tzid'].to_ical(), b"Europe/Vienna")
 
         std = tz.walk('STANDARD')[0]
-        self.assertEqual(std.decoded('TZOFFSETFROM'), datetime.timedelta(0, 7200))
+        self.assertEqual(
+            std.decoded('TZOFFSETFROM'),
+            datetime.timedelta(0, 7200)
+        )
 
         ev1 = cal.walk('VEVENT')[0]
-        self.assertEqual(ev1.decoded('DTSTART'), datetime.datetime(2012,  2, 13, 10, 0, 0, tzinfo=pytz.timezone('Europe/Vienna')))
-        self.assertEqual(ev1.decoded('DTSTAMP'), datetime.datetime(2010, 10, 10, 9, 10, 10, tzinfo=pytz.utc))
+        self.assertEqual(
+            ev1.decoded('DTSTART'),
+            datetime.datetime(2012,  2, 13, 10, 0, 0,
+                              tzinfo=pytz.timezone('Europe/Vienna')))
+        self.assertEqual(
+            ev1.decoded('DTSTAMP'),
+            datetime.datetime(2010, 10, 10, 9, 10, 10, tzinfo=pytz.utc))
 
     def test_create_to_ical(self):
         cal = icalendar.Calendar()
@@ -63,12 +76,22 @@ class TestTimezoned(unittest.TestCase):
 
         event = icalendar.Event()
         tz = pytz.timezone("Europe/Vienna")
-        event.add('dtstart', datetime.datetime(2012, 2, 13, 10, 00, 00, tzinfo=tz))
-        event.add('dtend', datetime.datetime(2012, 2, 17, 18, 00, 00, tzinfo=tz))
-        event.add('dtstamp', datetime.datetime(2010, 10, 10, 10, 10, 10, tzinfo=tz))
-        event.add('created', datetime.datetime(2010, 10, 10, 10, 10, 10, tzinfo=tz))
+        event.add(
+            'dtstart',
+            datetime.datetime(2012, 2, 13, 10, 00, 00, tzinfo=tz))
+        event.add(
+            'dtend',
+            datetime.datetime(2012, 2, 17, 18, 00, 00, tzinfo=tz))
+        event.add(
+            'dtstamp',
+            datetime.datetime(2010, 10, 10, 10, 10, 10, tzinfo=tz))
+        event.add(
+            'created',
+            datetime.datetime(2010, 10, 10, 10, 10, 10, tzinfo=tz))
         event.add('uid', u'123456')
-        event.add('last-modified', datetime.datetime(2010, 10, 10, 10, 10, 10, tzinfo=tz))
+        event.add(
+            'last-modified',
+            datetime.datetime(2010, 10, 10, 10, 10, 10, tzinfo=tz))
         event.add('summary', u'artsprint 2012')
         # event.add('rrule', u'FREQ=YEARLY;INTERVAL=1;COUNT=10')
         event.add('description', u'sprinting at the artsprint')
@@ -85,13 +108,13 @@ class TestTimezoned(unittest.TestCase):
         test_out = b'|'.join(cal.to_ical().splitlines())
         test_out = test_out.decode('utf-8')
 
-        vtimezone_lines = "BEGIN:VTIMEZONE|TZID:Europe/Vienna|X-LIC-LOCATION:"\
-          + "Europe/Vienna|BEGIN:STANDARD|DTSTART;VALUE=DATE-TIME:19701025T03"\
-          + "0000|RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10|RRULE:FREQ=YEARLY;B"\
-          + "YDAY=-1SU;BYMONTH=3|TZNAME:CET|TZOFFSETFROM:+0200|TZOFFSETTO:+01"\
-          + "00|END:STANDARD|BEGIN:DAYLIGHT|DTSTART;VALUE=DATE-TIME:19700329T"\
-          + "020000|TZNAME:CEST|TZOFFSETFROM:+0100|TZOFFSETTO:+0200|END:DAYLI"\
-          + "GHT|END:VTIMEZONE"
+        vtimezone_lines = "BEGIN:VTIMEZONE|TZID:Europe/Vienna|X-LIC-LOCATION:"
+        "Europe/Vienna|BEGIN:STANDARD|DTSTART;VALUE=DATE-TIME:19701025T03"
+        "0000|RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10|RRULE:FREQ=YEARLY;B"
+        "YDAY=-1SU;BYMONTH=3|TZNAME:CET|TZOFFSETFROM:+0200|TZOFFSETTO:+01"
+        "00|END:STANDARD|BEGIN:DAYLIGHT|DTSTART;VALUE=DATE-TIME:19700329T"
+        "020000|TZNAME:CEST|TZOFFSETFROM:+0100|TZOFFSETTO:+0200|END:DAYLI"
+        "GHT|END:VTIMEZONE"
         self.assertTrue(vtimezone_lines in test_out)
 
         test_str = "DTSTART;TZID=Europe/Vienna;VALUE=DATE-TIME:20120213T100000"

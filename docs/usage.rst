@@ -283,5 +283,10 @@ Write to disk::
   >>> f.write(cal.to_ical())
   >>> f.close()
 
-    XXX We should check whether the write succeeded here..
 
+More documentation
+==================
+
+Have a look at the tests of this package to get more examples.
+All modules and classes docstrings, which document how they work.
+There is also an `interfaces.py` file which describes the API.

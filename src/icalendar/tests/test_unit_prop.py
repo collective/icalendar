@@ -160,7 +160,10 @@ class TestProp(unittest.TestCase):
 
         self.assertEqual(vDuration(timedelta(11)).to_ical(), b'P11D')
         self.assertEqual(vDuration(timedelta(-14)).to_ical(), b'-P14D')
-        self.assertEqual(vDuration(timedelta(1, 7384)).to_ical(), b'P1DT2H3M4S')
+        self.assertEqual(
+            vDuration(timedelta(1, 7384)).to_ical(),
+            b'P1DT2H3M4S'
+        )
         self.assertEqual(vDuration(timedelta(1, 7380)).to_ical(), b'P1DT2H3M')
         self.assertEqual(vDuration(timedelta(1, 7200)).to_ical(), b'P1DT2H')
         self.assertEqual(vDuration(timedelta(0, 7200)).to_ical(), b'PT2H')
@@ -289,7 +292,10 @@ class TestProp(unittest.TestCase):
         r = vRecur.from_ical('FREQ=DAILY;INTERVAL=2;COUNT=10')
         self.assertEqual(r,
                          {'COUNT': [10], 'FREQ': ['DAILY'], 'INTERVAL': [2]})
-        self.assertEqual(vRecur(r).to_ical(), b'FREQ=DAILY;COUNT=10;INTERVAL=2')
+        self.assertEqual(
+            vRecur(r).to_ical(),
+            b'FREQ=DAILY;COUNT=10;INTERVAL=2'
+        )
 
         r = vRecur.from_ical('FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=-SU;'
                              'BYHOUR=8,9;BYMINUTE=30')
@@ -301,7 +307,8 @@ class TestProp(unittest.TestCase):
 
         self.assertEqual(
             vRecur(r).to_ical(),
-            b'FREQ=YEARLY;INTERVAL=2;BYMINUTE=30;BYHOUR=8,9;BYDAY=-SU;BYMONTH=1'
+            b'FREQ=YEARLY;INTERVAL=2;BYMINUTE=30;BYHOUR=8,9;BYDAY=-SU;'
+            b'BYMONTH=1'
         )
 
         # Some examples from the spec

@@ -8,7 +8,6 @@ import pytz
 
 class TestIssues(unittest.TestCase):
 
-
     def test_issue_53(self):
         """Issue #53 - Parsing failure on some descriptions?
         https://github.com/collective/icalendar/issues/53
@@ -28,7 +27,6 @@ class TestIssues(unittest.TestCase):
         tz = timezones[0]
         self.assertEqual(tz['tzid'].to_ical(), b"America/New_York")
 
-
     def test_issue_55(self):
         """Issue #55 - Parse error on utc-offset with seconds value
         https://github.com/collective/icalendar/issues/55
@@ -45,12 +43,14 @@ END:STANDARD
 END:VTIMEZONE"""
 
         tz = icalendar.Timezone.from_ical(ical_str)
-        self.assertEqual(tz.to_ical(),
-            b'BEGIN:VTIMEZONE\r\nTZID:America/Los Angeles\r\nBEGIN:STANDARD\r\n'
+        self.assertEqual(
+            tz.to_ical(),
+            b'BEGIN:VTIMEZONE\r\nTZID:America/Los Angeles\r\n'
+            b'BEGIN:STANDARD\r\n'
             b'DTSTART:18831118T120702\r\nRDATE:18831118T120702\r\nTZNAME:PST'
-            b'\r\nTZOFFSETFROM:-075258\r\nTZOFFSETTO:-0800\r\nEND:STANDARD\r\n'
+            b'\r\nTZOFFSETFROM:-075258\r\nTZOFFSETTO:-0800\r\n'
+            b'END:STANDARD\r\n'
             b'END:VTIMEZONE\r\n')
-
 
     def test_issue_58(self):
         """Issue #58 - TZID on UTC DATE-TIMEs
@@ -64,11 +64,12 @@ END:VTIMEZONE"""
         event = icalendar.Event()
         dt = pytz.utc.localize(datetime.datetime(2012, 7, 16, 0, 0, 0))
         event.add('dtstart', dt)
-        self.assertEqual(event.to_ical(),
+        self.assertEqual(
+            event.to_ical(),
             b"BEGIN:VEVENT\r\n"
             b"DTSTART;VALUE=DATE-TIME:20120716T000000Z\r\n"
-            b"END:VEVENT\r\n")
-
+            b"END:VEVENT\r\n"
+        )
 
     def test_issue_64(self):
         """Issue #64 - Event.to_ical() fails for unicode strings
@@ -79,17 +80,21 @@ END:VTIMEZONE"""
         event = icalendar.Event()
         event.add("dtstart", datetime.datetime(2012, 9, 3, 0, 0, 0))
         event.add("summary", u"abcdef")
-        self.assertEqual(event.to_ical(),
+        self.assertEqual(
+            event.to_ical(),
             b"BEGIN:VEVENT\r\nSUMMARY:abcdef\r\nDTSTART;VALUE=DATE-TIME:"
-            b"20120903T000000\r\nEND:VEVENT\r\n")
+            b"20120903T000000\r\nEND:VEVENT\r\n"
+        )
 
         # Unicode characters
         event = icalendar.Event()
         event.add("dtstart", datetime.datetime(2012, 9, 3, 0, 0, 0))
         event.add("summary", u"åäö")
-        self.assertEqual(event.to_ical(),
+        self.assertEqual(
+            event.to_ical(),
             b"BEGIN:VEVENT\r\nSUMMARY:\xc3\xa5\xc3\xa4\xc3\xb6\r\n"
-            b"DTSTART;VALUE=DATE-TIME:20120903T000000\r\nEND:VEVENT\r\n")
+            b"DTSTART;VALUE=DATE-TIME:20120903T000000\r\nEND:VEVENT\r\n"
+        )
 
     def test_issue_70(self):
         """Issue #70 - e.decode("RRULE") causes Attribute Error
@@ -111,10 +116,10 @@ END:VEVENT"""
         cal = icalendar.Calendar.from_ical(ical_str)
         recur = cal.decoded("RRULE")
         self.assertIsInstance(recur, icalendar.vRecur)
-        self.assertEqual(recur.to_ical(),
-            b'FREQ=WEEKLY;UNTIL=20070619T225959;INTERVAL=1')
-
-
+        self.assertEqual(
+            recur.to_ical(),
+            b'FREQ=WEEKLY;UNTIL=20070619T225959;INTERVAL=1'
+        )
 
     def test_issue_82(self):
         """Issue #82 - vBinary __repr__ called rather than to_ical from
@@ -127,11 +132,11 @@ END:VEVENT"""
         self.assertEqual(b.to_ical(), b'dGV4dA==')
         e = icalendar.Event()
         e.add('ATTACH', b)
-        self.assertEqual(e.to_ical(),
+        self.assertEqual(
+            e.to_ical(),
             b"BEGIN:VEVENT\r\nATTACH;ENCODING=BASE64;FMTTYPE=text/plain;"
             b"VALUE=BINARY:dGV4dA==\r\nEND:VEVENT\r\n"
         )
-
 
     def test_issue_100(self):
         """Issue #100 - Transformed doctests into unittests, Test fixes and
@@ -141,7 +146,6 @@ END:VEVENT"""
 
         ical_content = "BEGIN:VEVENT\r\nSUMMARY;LANGUAGE=ru:te\r\nEND:VEVENT"
         icalendar.Event.from_ical(ical_content).to_ical()
-
 
     def test_issue_101(self):
         """Issue #101 - icalender is choking on umlauts in ORGANIZER

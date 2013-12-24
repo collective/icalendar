@@ -6,7 +6,6 @@ from .parser_tools import to_unicode, data_encode
 def canonsort_keys(keys, canonical_order=None):
     """Sorts leading keys according to canonical_order.  Keys not specified in
     canonical_order will appear alphabetically at the end.
-
     """
     canonical_map = dict((k, i) for i, k in enumerate(canonical_order or []))
     head = [k for k in keys if k in canonical_map]
@@ -16,7 +15,6 @@ def canonsort_keys(keys, canonical_order=None):
 
 def canonsort_items(dict1, canonical_order=None):
     """Returns a list of items from dict1, sorted by canonical_order.
-
     """
     return [(k, dict1[k]) for \
             k in canonsort_keys(dict1.keys(), canonical_order)]
@@ -25,7 +23,6 @@ def canonsort_items(dict1, canonical_order=None):
 class CaselessDict(dict):
     """A dictionary that isn't case sensitive, and only uses strings as keys.
     Values retain their case.
-
     """
 
     def __init__(self, *args, **kwargs):
@@ -74,9 +71,7 @@ class CaselessDict(dict):
         return dict.__contains__(self, key.upper())
 
     def update(self, indict):
-        """
-        Multiple keys where key1.upper() == key2.upper() will be lost.
-        """
+        # Multiple keys where key1.upper() == key2.upper() will be lost.
         for key, value in indict.items():  # TODO optimize in python 2
             self[key] = value
 
@@ -91,15 +86,13 @@ class CaselessDict(dict):
     canonical_order = None
 
     def sorted_keys(self):
-        """
-        Sorts keys according to the canonical_order for the derived class.
+        """Sorts keys according to the canonical_order for the derived class.
         Keys not specified in canonical_order will appear at the end.
         """
         return canonsort_keys(self.keys(), self.canonical_order)
 
     def sorted_items(self):
-        """
-        Sorts items according to the canonical_order for the derived class.
+        """Sorts items according to the canonical_order for the derived class.
         Items not specified in canonical_order will appear at the end.
         """
         return canonsort_items(self, self.canonical_order)

@@ -34,7 +34,6 @@ primitive Python datatype. So it should allways be true that:
 
 These types are mainly used for parsing and file generation. But you can set
 them directly.
-
 """
 from __future__ import absolute_import
 import re
@@ -130,7 +129,6 @@ class LocalTimezone(tzinfo):
 
 class vBinary(object):
     """Binary property values are base 64 encoded.
-
     """
 
     def __init__(self, obj):
@@ -153,7 +151,6 @@ class vBinary(object):
 
 class vBoolean(int):
     """Returns specific string according to state.
-
     """
     BOOL_MAP = CaselessDict(true=True, false=False)
 
@@ -177,7 +174,6 @@ class vBoolean(int):
 
 class vCalAddress(compat.unicode_type):
     """This just returns an unquoted string.
-
     """
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
         value = to_unicode(value, encoding=encoding)
@@ -198,7 +194,6 @@ class vCalAddress(compat.unicode_type):
 
 class vFloat(float):
     """Just a float.
-
     """
     def __new__(cls, *args, **kwargs):
         self = super(vFloat, cls).__new__(cls, *args, **kwargs)
@@ -218,7 +213,6 @@ class vFloat(float):
 
 class vInt(int):
     """Just an int.
-
     """
     def __new__(cls, *args, **kwargs):
         self = super(vInt, cls).__new__(cls, *args, **kwargs)
@@ -238,7 +232,6 @@ class vInt(int):
 
 class vDDDLists(object):
     """A list of vDDDTypes values.
-
     """
     def __init__(self, dt_list):
         if not hasattr(dt_list, '__iter__'):
@@ -260,7 +253,6 @@ class vDDDLists(object):
         dts_ical = (dt.to_ical() for dt in self.dts)
         return b",".join(dts_ical)
 
-
     @staticmethod
     def from_ical(ical, timezone=None):
         out = []
@@ -274,7 +266,6 @@ class vDDDTypes(object):
     """A combined Datetime, Date or Duration parser/generator. Their format
     cannot be confused, and often values can be of either types.
     So this is practical.
-
     """
     def __init__(self, dt):
         if type(dt) not in (datetime, date, timedelta, time):
@@ -287,7 +278,7 @@ class vDDDTypes(object):
             self.params = Parameters(dict(value='TIME'))
 
         if (isinstance(dt, datetime) or isinstance(dt, time))\
-            and getattr(dt, 'tzinfo', False):
+                and getattr(dt, 'tzinfo', False):
             tzinfo = dt.tzinfo
             if tzinfo is not pytz.utc and not isinstance(tzinfo, tzutc):
                 # set the timezone as a parameter to the property
@@ -327,7 +318,6 @@ class vDDDTypes(object):
 
 class vDate(object):
     """Render and generates iCalendar date format.
-
     """
     def __init__(self, dt):
         if not isinstance(dt, date):
@@ -362,7 +352,6 @@ class vDatetime(object):
     tzinfo component, if present. Otherwise an timezone-naive object is
     created. Be aware that there are certain limitations with timezone naive
     DATE-TIME components in the icalendar standard.
-
     """
     def __init__(self, dt):
         self.dt = dt
@@ -419,7 +408,6 @@ class vDatetime(object):
 class vDuration(object):
     """Subclass of timedelta that renders itself in the iCalendar DURATION
     format.
-
     """
 
     def __init__(self, td):
@@ -474,7 +462,6 @@ class vDuration(object):
 
 class vPeriod(object):
     """A precise period of time.
-
     """
     def __init__(self, per):
         start, end_or_duration = per
@@ -547,7 +534,6 @@ class vPeriod(object):
 
 class vWeekday(compat.unicode_type):
     """This returns an unquoted weekday abbrevation.
-
     """
     week_days = CaselessDict({
         "SU": 0, "MO": 1, "TU": 2, "WE": 3, "TH": 4, "FR": 5, "SA": 6,
@@ -582,7 +568,6 @@ class vWeekday(compat.unicode_type):
 
 class vFrequency(compat.unicode_type):
     """A simple class that catches illegal values.
-
     """
 
     frequencies = CaselessDict({
@@ -616,7 +601,6 @@ class vFrequency(compat.unicode_type):
 
 class vRecur(CaselessDict):
     """Recurrence definition.
-
     """
 
     frequencies = ["SECONDLY", "MINUTELY", "HOURLY", "DAILY", "WEEKLY",
@@ -685,7 +669,6 @@ class vRecur(CaselessDict):
 
 class vText(compat.unicode_type):
     """Simple text.
-
     """
 
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
@@ -709,7 +692,6 @@ class vText(compat.unicode_type):
 
 class vTime(object):
     """Render and generates iCalendar time format.
-
     """
 
     def __init__(self, *args):
@@ -736,7 +718,6 @@ class vTime(object):
 
 class vUri(compat.unicode_type):
     """Uniform resource identifier is basically just an unquoted string.
-
     """
 
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
@@ -758,7 +739,6 @@ class vUri(compat.unicode_type):
 
 class vGeo(object):
     """A special type that is only indirectly defined in the rfc.
-
     """
 
     def __init__(self, geo):
@@ -787,7 +767,6 @@ class vGeo(object):
 
 class vUTCOffset(object):
     """Renders itself as a utc offset.
-
     """
 
     def __init__(self, td):
@@ -798,9 +777,9 @@ class vUTCOffset(object):
 
     def to_ical(self):
 
-        if self.td<timedelta(0):
+        if self.td < timedelta(0):
             sign = '-%s'
-            td = timedelta(0)-self.td # get timedelta relative to 0
+            td = timedelta(0)-self.td  # get timedelta relative to 0
         else:
             # Google Calendar rejects '0000' but accepts '+0000'
             sign = '+%s'
@@ -841,7 +820,6 @@ class vInline(compat.unicode_type):
     """This is an especially dumb class that just holds raw unparsed text and
     has parameters. Conversion of inline values are handled by the Component
     class, so no further processing is needed.
-
     """
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
         value = to_unicode(value, encoding=encoding)
@@ -863,7 +841,6 @@ class TypesFactory(CaselessDict):
 
     The value and parameter names don't overlap. So one factory is enough for
     both kinds.
-
     """
 
     def __init__(self, *args, **kwargs):

@@ -3,7 +3,6 @@
 files according to rfc2445.
 
 These are the defined components.
-
 """
 from __future__ import absolute_import
 import pytz
@@ -28,7 +27,6 @@ from .parser_tools import DEFAULT_ENCODING
 class ComponentFactory(CaselessDict):
     """All components defined in rfc 2445 are registered in this factory class.
     To get a component you can use it like this.
-
     """
 
     def __init__(self, *args, **kwargs):
@@ -59,15 +57,15 @@ class Component(CaselessDict):
     """Component is the base object for calendar, Event and the other
     components defined in RFC 2445. normally you will not use this class
     directy, but rather one of the subclasses.
-
     """
 
-    name = ''       # must be defined in each component
-    required = ()   # These properties are required
-    singletons = () # These properties must only appear once
-    multiple = ()   # may occur more than once
-    exclusive = ()  # These properties are mutually exclusive
-    inclusive = ()  # if any occurs the other(s) MUST occur ('duration', 'repeat')
+    name = ''        # must be defined in each component
+    required = ()    # These properties are required
+    singletons = ()  # These properties must only appear once
+    multiple = ()    # may occur more than once
+    exclusive = ()   # These properties are mutually exclusive
+    inclusive = ()   # if any occurs the other(s) MUST occur
+                     # ('duration', 'repeat')
     ignore_exceptions = False   # if True, and we cannot parse this
                                 # component, we will silently ignore
                                 # it, rather than let the exception
@@ -76,12 +74,12 @@ class Component(CaselessDict):
 
     def __init__(self, *args, **kwargs):
         """Set keys to upper for initial dict.
-
         """
         CaselessDict.__init__(self, *args, **kwargs)
         # set parameters here for properties that use non-default values
-        self.subcomponents = [] # Components can be nested.
-        self.is_broken = False  # True iff we ignored an exception while parsing a property
+        self.subcomponents = []  # Components can be nested.
+        self.is_broken = False  # True if we ignored an exception while
+                                # parsing a property
 
     #def is_compliant(self, name):
     #    """Returns True is the given property name is compliant with the
@@ -93,13 +91,11 @@ class Component(CaselessDict):
     #    """
     #    return name in not_compliant
 
-
     #############################
     # handling of property values
 
     def _encode(self, name, value, cond=1):
         """Conditional convertion of values.
-
         """
         if not cond:
             return value
@@ -124,7 +120,6 @@ class Component(CaselessDict):
 
     def add(self, name, value, encode=1):
         """Add a property.
-
         """
         if isinstance(value, datetime) and\
                 name.lower() in ('dtstamp', 'created', 'last-modified'):
@@ -148,7 +143,6 @@ class Component(CaselessDict):
 
     def _decode(self, name, value):
         """Internal for decoding property values.
-
         """
 
         # TODO: Currently the decoded method calls the icalendar.prop instances
@@ -167,7 +161,6 @@ class Component(CaselessDict):
 
     def decoded(self, name, default=_marker):
         """Returns decoded value of property.
-
         """
         # XXX: fail. what's this function supposed to do in the end?
         # -rnix
@@ -189,7 +182,6 @@ class Component(CaselessDict):
 
     def get_inline(self, name, decode=1):
         """Returns a list of values (split on comma).
-
         """
         vals = [v.strip('" ') for v in q_split(self[name])]
         if decode:
@@ -199,7 +191,6 @@ class Component(CaselessDict):
     def set_inline(self, name, values, encode=1):
         """Converts a list of values into comma seperated string and sets value
         to that.
-
         """
         if encode:
             values = [self._encode(name, value, 1) for value in values]
@@ -210,13 +201,11 @@ class Component(CaselessDict):
 
     def add_component(self, component):
         """Add a subcomponent to this component.
-
         """
         self.subcomponents.append(component)
 
     def _walk(self, name):
         """Walk to given component.
-
         """
         result = []
         if name is None or self.name == name:
@@ -228,7 +217,6 @@ class Component(CaselessDict):
     def walk(self, name=None):
         """Recursively traverses component and subcomponents. Returns sequence
         of same. If name is passed, only components with name will be returned.
-
         """
         if not name is None:
             name = name.upper()
@@ -240,7 +228,6 @@ class Component(CaselessDict):
     def property_items(self, recursive=True):
         """Returns properties in this component and subcomponents as:
         [(name, value), ...]
-
         """
         vText = types_factory['text']
         properties = [('BEGIN', vText(self.name).to_ical())]
@@ -263,11 +250,10 @@ class Component(CaselessDict):
     @classmethod
     def from_ical(cls, st, multiple=False):
         """Populates the component recursively from a string.
-
         """
-        stack = [] # a stack of components
+        stack = []  # a stack of components
         comps = []
-        for line in Contentlines.from_ical(st): # raw parsing
+        for line in Contentlines.from_ical(st):  # raw parsing
             if not line:
                 continue
             name, params, vals = line.parts()
@@ -279,7 +265,7 @@ class Component(CaselessDict):
                 c_name = vals.upper()
                 c_class = component_factory.get(c_name, cls)
                 component = c_class()
-                if not getattr(component, 'name', ''): # undefined components
+                if not getattr(component, 'name', ''):  # undefined components
                     component.name = c_name
                 stack.append(component)
             # check for end of event
@@ -287,7 +273,7 @@ class Component(CaselessDict):
                 # we are done adding properties to this component
                 # so pop it from the stack and add it to the new top.
                 component = stack.pop()
-                if not stack: # we are at the end
+                if not stack:  # we are at the end
                     comps.append(component)
                 else:
                     if not component.is_broken:
@@ -338,7 +324,7 @@ class Component(CaselessDict):
         for name, value in self.property_items():
             cl = self.content_line(name, value)
             contentlines.append(cl)
-        contentlines.append('') # remember the empty string in the end
+        contentlines.append('')  # remember the empty string in the end
         return contentlines
 
     def to_ical(self):
@@ -452,7 +438,6 @@ class Alarm(Component):
 
 class Calendar(Component):
     """This is the base object for an iCalendar file.
-
     """
     name = 'VCALENDAR'
     canonical_order = ('VERSION', 'PRODID', 'CALSCALE', 'METHOD',)

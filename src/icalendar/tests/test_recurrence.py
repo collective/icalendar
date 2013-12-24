@@ -2,7 +2,6 @@
 import icalendar
 import pytz
 import datetime
-import dateutil.parser
 import os
 
 from . import unittest

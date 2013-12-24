@@ -168,7 +168,6 @@ class TestPropertyParams(unittest.TestCase):
                         'PARAMETER2': ['Value2', 'Value3']})
         )
 
-
     def test_parse_and_access_property_params(self):
         """Parse an ics string and access some property parameters then.
         This is a follow-up of a question recieved per email.

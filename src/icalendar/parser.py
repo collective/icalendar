@@ -17,6 +17,7 @@ from .parser_tools import (
 )
 import icalendar.compat as compat
 
+
 def escape_char(text):
     """Format value according to iCalendar TEXT escaping rules.
     """
@@ -163,15 +164,13 @@ def q_join(lst, sep=','):
 
 
 class Parameters(CaselessDict):
-    """
-    Parser and generator of Property parameter strings. It knows nothing of
+    """Parser and generator of Property parameter strings. It knows nothing of
     datatypes. Its main concern is textual structure.
     """
 
     def params(self):
-        """
-        in rfc2445 keys are called parameters, so this is to be consitent with
-        the naming conventions
+        """In rfc2445 keys are called parameters, so this is to be consitent
+        with the naming conventions.
         """
         return self.keys()
 
@@ -211,7 +210,7 @@ class Parameters(CaselessDict):
 
     @classmethod
     def from_ical(cls, st, strict=False):
-        "Parses the parameter format from ical text format"
+        """Parses the parameter format from ical text format."""
 
         # parse into strings
         result = cls()
@@ -263,7 +262,6 @@ def unsescape_string(val):
 class Contentline(compat.unicode_type):
     """A content line is basically a string that can be folded and parsed into
     parts.
-
     """
     def __new__(cls, value, strict=False, encoding=DEFAULT_ENCODING):
         value = to_unicode(value, encoding=encoding)
@@ -339,7 +337,7 @@ class Contentline(compat.unicode_type):
         return cls(uFOLD.sub('', ical), strict=strict)
 
     def to_ical(self):
-        """Long content lines are folded so they are less than 75 characters.
+        """Long content lines are folded so they are less than 75 characters
         wide.
         """
         return foldline(self).encode(DEFAULT_ENCODING)
