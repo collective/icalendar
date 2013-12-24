@@ -89,12 +89,14 @@ Output from coverage test::
 
     Name                                                           Stmts   Miss  Cover
     ----------------------------------------------------------------------------------
-    .tox/py27/lib/python2.7/site-packages/icalendar/__init__           6      0   100%
-    .tox/py27/lib/python2.7/site-packages/icalendar/cal              223      8    96%
-    .tox/py27/lib/python2.7/site-packages/icalendar/caselessdict      55      2    96%
-    .tox/py27/lib/python2.7/site-packages/icalendar/parser           181     18    90%
-    .tox/py27/lib/python2.7/site-packages/icalendar/parser_tools      19      0   100%
-    .tox/py27/lib/python2.7/site-packages/icalendar/prop             521     59    89%
-    .tox/py27/lib/python2.7/site-packages/icalendar/tools             12      0   100%
+    .tox/py33/lib/python3.3/site-packages/icalendar/__init__           5      0   100%
+    .tox/py33/lib/python3.3/site-packages/icalendar/cal              227      9    96%
+    .tox/py33/lib/python3.3/site-packages/icalendar/caselessdict      55      5    91%
+    .tox/py33/lib/python3.3/site-packages/icalendar/compat             1      0   100%
+    .tox/py33/lib/python3.3/site-packages/icalendar/parser           189      8    96%
+    .tox/py33/lib/python3.3/site-packages/icalendar/parser_tools      20      0   100%
+    .tox/py33/lib/python3.3/site-packages/icalendar/prop             533     62    88%
+    .tox/py33/lib/python3.3/site-packages/icalendar/tools             16      0   100%
     ----------------------------------------------------------------------------------
-    TOTAL                                                           1017     87    91%
+    TOTAL                                                           1046     84    92%
+
