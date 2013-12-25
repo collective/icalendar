@@ -55,7 +55,7 @@ class TestCalComponent(unittest.TestCase):
         self.assertEqual(c.decoded('version', 'No Version'), 'No Version')
 
         c.add('rdate', [datetime(2013, 3, 28), datetime(2013, 3, 27)])
-        self.assertEqual(type(c.decoded('rdate')), prop.vDDDLists)
+        self.assertTrue(isinstance(c.decoded('rdate'), prop.vDDDLists))
 
         # The component can render itself in the RFC 2445 format.
         c = Component()

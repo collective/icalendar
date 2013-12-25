@@ -267,7 +267,7 @@ class vDDDTypes(object):
     So this is practical.
     """
     def __init__(self, dt):
-        if type(dt) not in (datetime, date, timedelta, time):
+        if not isinstance(dt, (datetime, date, timedelta, time)):
             raise ValueError('You must use datetime, date, timedelta or time')
         if isinstance(dt, datetime):
             self.params = Parameters(dict(value='DATE-TIME'))
@@ -845,7 +845,7 @@ class TypesFactory(CaselessDict):
     def __init__(self, *args, **kwargs):
         "Set keys to upper for initial dict"
         CaselessDict.__init__(self, *args, **kwargs)
-        self.all_types = [
+        self.all_types = (
             vBinary,
             vBoolean,
             vCalAddress,
@@ -865,8 +865,8 @@ class TypesFactory(CaselessDict):
             vTime,
             vUTCOffset,
             vUri,
-            vWeekday,
-        ]
+            vWeekday
+        )
         self['binary'] = vBinary
         self['boolean'] = vBoolean
         self['cal-address'] = vCalAddress

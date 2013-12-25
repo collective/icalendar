@@ -5,6 +5,9 @@ Changelog
 4.0.dev (unreleased)
 --------------------
 
+- Backport some of Regebro's changes from his regebro-refactor branch.
+  [thet]
+
 - Raise explicit error on another malformed content line case.
   [hajdbo]
 
