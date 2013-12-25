@@ -5,6 +5,9 @@ Changelog
 4.0.dev (unreleased)
 --------------------
 
+- Raise explicit error on another malformed content line case.
+  [hajdbo]
+
 - Correctly parse datetime component property values with timezone information
   when parsed from ical strings.
   [untitaker]

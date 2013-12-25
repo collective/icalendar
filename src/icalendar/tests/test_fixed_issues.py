@@ -177,3 +177,15 @@ END:VCALENDAR"""
         cal = icalendar.Calendar.from_ical(ical_str)
         org_cn = cal.walk('VEVENT')[0]['ORGANIZER'].params['CN']
         self.assertEqual(org_cn, u'acme, ädmin')
+
+    def test_issue_114(self):
+        """Issue #114/#115 - invalid line in event breaks the parser
+        https://github.com/collective/icalendar/issues/114
+        """
+
+        directory = os.path.dirname(__file__)
+        ics = open(os.path.join(directory, 'case_invalid_line.ics'), 'rb')
+        with self.assertRaises(ValueError):
+            cal = icalendar.Calendar.from_ical(ics.read())
+            cal  # pep 8
+        ics.close()
