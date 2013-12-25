@@ -1,0 +1,41 @@
+BEGIN:VEVENT
+DTSTART:20130927T130000Z
+DTEND:20130927T140000Z
+DTSTAMP:20131107T004757Z
+ORGANIZER;CN=gxxxxxxxn@nxx.fr:mailto:gxxxxxn@nxx.fr
+UID:040000008200E00074C5B7101A82E00800000000A0F3321606B6CE01000000000000000
+ 010000000F09F33F0E8ED4C44B99F6027ACF588D0
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;CN=St
+ eve Bxxxxxx;X-NUM-GUESTS=0:mailto:sxxxxxt@nxx.fr
+ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=ACCEPTED;CN=Boris
+ Hxxxxx;X-NUM-GUESTS=0:mailto:bxxxxxxk@vxxxxxxxx.com
+CREATED:20130920T113409Z
+DESCRIPTION:Quand : vendredi 27 septembre 2013 15:00-16:00 (UTC+01:00) Brux
+ elles\, Copenhague\, Madrid\, Paris.\nEmplacement : Conf-Call - 01 xx xx xx
+  xx\n\nRemarque : le décalage GMT ci-dessus ne tient pas compte des réglage
+ s de l'heure d'été.\n\n*~*~*~*~*~*~*~*~*~*\n\nComme convenu à l’instant par
+  e-mail\n
+LAST-MODIFIED:20130920T115104Z
+LOCATION:Conf-Call - 01 xx xx xx xx
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Nxx - Réunion lancement PxxxxxxT
+TRANSP:OPAQUE
+X-ALT-DESC;FMTTYPE=text/html:<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//E
+ N">\n<HTML>\n<HEAD>\n<META NAME="Generator" CONTENT="MS Exchange Server ver
+ sion 08.00.0681.000">\n<TITLE></TITLE>\n</HEAD>\n<BODY>\n<!-- Converted fro
+ m text/rtf format -->\n\n<P DIR=LTR><SPAN LANG="fr"><FONT FACE="Calibri">Qu
+ and : vendredi 27 septembre 2013 15:00-16:00 (UTC+01:00) Bruxelles\, Copenh
+ ague\, Madrid\, Paris.</FONT></SPAN></P>\n\n<P DIR=LTR><SPAN LANG="fr"><FON
+ T FACE="Calibri">Emplacement : Conf-Call - 01 xx xx xx xx</FONT></SPAN></P>
+ \n\n<P DIR=LTR><SPAN LANG="fr"><FONT FACE="Calibri">Remarque : le décalage
+ GMT ci-dessus ne tient pas compte des réglages de l'heure d'été.</FONT></SP
+ AN></P>\n\n<P DIR=LTR><SPAN LANG="fr"><FONT FACE="Calibri">*~*~*~*~*~*~*~*~
+ *~*</FONT></SPAN></P>\n\n<P DIR=LTR><SPAN LANG="fr"><FONT FACE="Calibri">Co
+ mme convenu à l’instant par e-mail</FONT></SPAN><SPAN LANG="fr"></SPAN></P>
+ \n\n</BODY>\n</HTML>
+X-MICROSOFT-CDO-BUSYSTATUS:TENTATIVE
+X-MICROSOFT-CDO-IMPORTANCE:1
+X-MICROSOFT-CDO-INTENDEDSTATUS:BUSY
+X
+END:VEVENT
