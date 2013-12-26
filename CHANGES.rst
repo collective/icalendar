@@ -6,7 +6,7 @@ Changelog
 --------------------
 
 - Support adding lists to a component property, which value already was a list
-  and remove the Component.set method, which was only be used by add method.
+  and remove the Component.set method, which was only used by the add method.
   [thet]
 
 - Remove ability to add property parameters via a value's params attribute when
