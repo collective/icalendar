@@ -211,3 +211,9 @@ END:VCALENDAR"""
             b'X-APPLE-RADIUS=72;X-TITLE="367 George Street":'
             b'geo:-33.868900\r\n \\,151.207000\r\nEND:VEVENT\r\n'
         )
+
+        # roundtrip
+        self.assertEqual(
+            event.to_ical(),
+            icalendar.Event.from_ical(event.to_ical()).to_ical()
+        )
