@@ -92,32 +92,56 @@ class Component(CaselessDict):
     #############################
     # handling of property values
 
-    def _encode(self, name, value, cond=1):
+    def _encode(self, name, value, parameters=None, encode=1):
         """Conditional convertion of values.
         """
-        if not cond:
+        if not encode:
             return value
         if isinstance(value, types_factory.all_types):
             # Don't encode already encoded values.
             return value
         klass = types_factory.for_property(name)
         obj = klass(value)
-        if hasattr(value, 'params') and len(value.params.keys()) > 0:
-            # TODO: How can a python native value have params?
-            obj.params = value.params
+        if parameters:
+            if isinstance(parameters, dict):
+                params = Parameters()
+                for key, item in parameters.items():
+                    params[key] = item
+                parameters = params
+            assert isinstance(parameters, Parameters)
+            obj.params = parameters
         return obj
 
-    def set(self, name, value, encode=1):
+    def set(self, name, value, parameters=None, encode=1):
         if encode and isinstance(value, list) \
                 and name.lower() not in ['rdate', 'exdate']:
             # Individually convert each value to an ical type except rdate and
             # exdate, where lists of dates might be passed to vDDDLists.
-            self[name] = [self._encode(name, v, encode) for v in value]
+            self[name] = [self._encode(name, v, parameters, encode)
+                          for v in value]
         else:
-            self[name] = self._encode(name, value, encode)
+            self[name] = self._encode(name, value, parameters, encode)
 
-    def add(self, name, value, encode=1):
+    def add(self, name, value, parameters=None, encode=1):
         """Add a property.
+
+        :param name: Key name of the property.
+        :type name: string
+
+        :param value: Value of the property. Either of a basic Python type of
+                      any of the icalendar's own property types.
+        :type value: Python native type or icalendar property type.
+
+        :param parameters: Property parameter dictionary for the value. Only
+                           available, if encode is set to True.
+        :type parameters: Dictionary
+
+        :param encode: True, if the value should be encoded to one of
+                       icalendar's own property types (Fallback is "vText")
+                       or False, if not.
+        :type encode: Boolean
+
+        :returns: None
         """
         if isinstance(value, datetime) and\
                 name.lower() in ('dtstamp', 'created', 'last-modified'):
@@ -131,13 +155,13 @@ class Component(CaselessDict):
         # If property already exists, append it. Otherwise create and set it.
         if name in self:
             oldval = self[name]
-            value = self._encode(name, value, encode)
+            value = self._encode(name, value, parameters, encode)
             if isinstance(oldval, list):
                 oldval.append(value)
             else:
-                self.set(name, [oldval, value], encode=0)
+                self.set(name, [oldval, value], None, encode=0)
         else:
-            self.set(name, value, encode)
+            self.set(name, value, parameters, encode)
 
     def _decode(self, name, value):
         """Internal for decoding property values.
@@ -191,7 +215,7 @@ class Component(CaselessDict):
         to that.
         """
         if encode:
-            values = [self._encode(name, value, 1) for value in values]
+            values = [self._encode(name, value, encode=1) for value in values]
         self[name] = types_factory['inline'](q_join(values))
 
     #########################

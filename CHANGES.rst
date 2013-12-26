@@ -5,6 +5,13 @@ Changelog
 4.0.dev (unreleased)
 --------------------
 
+- Remove ability to add property parameters via a value's params attribute when
+  adding via cal.add (that was only possible for custom value objects and makes
+  up a strange API), but support a parameter attribute on cal.add's method
+  signature to pass a dictionary with property parameter key/value pairs.
+  Fixes #116.
+  [thet]
+
 - Backport some of Regebro's changes from his regebro-refactor branch.
   [thet]
 

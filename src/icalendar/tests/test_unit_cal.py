@@ -222,6 +222,16 @@ class TestCalComponent(unittest.TestCase):
 
         self.assertEqual(comp['ATTACH'], [u'me', 'you', binary])
 
+    def test_cal_Component_add_property_parameter(self):
+        # Test the for timezone correctness: dtstart should preserve it's
+        # timezone, crated, dtstamp and last-modified must be in UTC.
+        Component = icalendar.cal.Component
+        comp = Component()
+        comp.add('X-TEST-PROP', 'tryout.',
+                 parameters={'prop1': 'val1', 'prop2': 'val2'})
+        lines = comp.to_ical().splitlines()
+        self.assertTrue(b"X-TEST-PROP;PROP1=val1;PROP2=val2:tryout." in lines)
+
     def test_cal_Component_from_ical(self):
         # Check for proper handling of TZID parameter of datetime properties
         Component = icalendar.cal.Component
