@@ -32,17 +32,38 @@ class TestCalComponent(unittest.TestCase):
                       'PRODID': '-//max m//icalendar.mxm.dk/'})
         )
 
+        ### ADD MULTIPLE VALUES TO A PROPERTY
+
         # if you use the add method you don't have to considder if a value is
         # a list or not.
         c = Component()
         c.name = 'VEVENT'
+
+        # add multiple values at once
+        c.add('attendee',
+              ['test@test.com', 'test2@test.com'])
+
+        # or add one per line
         c.add('attendee', 'maxm@mxm.dk')
         c.add('attendee', 'test@example.dk')
+
+        # add again multiple values at once to very concatenaton of lists
+        c.add('attendee',
+              ['test3@test.com', 'test4@test.com'])
+
         self.assertEqual(
             c,
-            Event({'ATTENDEE': [prop.vCalAddress('maxm@mxm.dk'),
-                                prop.vCalAddress('test@example.dk')]})
+            Event({'ATTENDEE': [
+                prop.vCalAddress('test@test.com'),
+                prop.vCalAddress('test2@test.com'),
+                prop.vCalAddress('maxm@mxm.dk'),
+                prop.vCalAddress('test@example.dk'),
+                prop.vCalAddress('test3@test.com'),
+                prop.vCalAddress('test4@test.com')
+            ]})
         )
+
+        ###
 
         # You can get the values back directly ...
         c.add('prodid', '-//my product//')
@@ -284,7 +305,7 @@ class TestCal(unittest.TestCase):
         event = icalendar.cal.Event()
         event['summary'] = 'Python meeting about calendaring'
         event['uid'] = '42'
-        event.set('dtstart', datetime(2005, 4, 4, 8, 0, 0))
+        event.add('dtstart', datetime(2005, 4, 4, 8, 0, 0))
         cal.add_component(event)
         self.assertEqual(
             cal.subcomponents[0].to_ical(),

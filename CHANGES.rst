@@ -5,6 +5,10 @@ Changelog
 4.0.dev (unreleased)
 --------------------
 
+- Support adding lists to a component property, which value already was a list
+  and remove the Component.set method, which was only be used by add method.
+  [thet]
+
 - Remove ability to add property parameters via a value's params attribute when
   adding via cal.add (that was only possible for custom value objects and makes
   up a strange API), but support a parameter attribute on cal.add's method

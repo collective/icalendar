@@ -112,16 +112,6 @@ class Component(CaselessDict):
             obj.params = parameters
         return obj
 
-    def set(self, name, value, parameters=None, encode=1):
-        if encode and isinstance(value, list) \
-                and name.lower() not in ['rdate', 'exdate']:
-            # Individually convert each value to an ical type except rdate and
-            # exdate, where lists of dates might be passed to vDDDLists.
-            self[name] = [self._encode(name, v, parameters, encode)
-                          for v in value]
-        else:
-            self[name] = self._encode(name, value, parameters, encode)
-
     def add(self, name, value, parameters=None, encode=1):
         """Add a property.
 
@@ -152,16 +142,29 @@ class Component(CaselessDict):
                 # assume UTC for naive datetime instances
                 value = pytz.utc.localize(value)
 
-        # If property already exists, append it. Otherwise create and set it.
-        if name in self:
-            oldval = self[name]
-            value = self._encode(name, value, parameters, encode)
-            if isinstance(oldval, list):
-                oldval.append(value)
-            else:
-                self.set(name, [oldval, value], None, encode=0)
+        # encode value
+        if encode and isinstance(value, list) \
+                and name.lower() not in ['rdate', 'exdate']:
+            # Individually convert each value to an ical type except rdate and
+            # exdate, where lists of dates might be passed to vDDDLists.
+            value = [self._encode(name, v, parameters, encode) for v in value]
         else:
-            self.set(name, value, parameters, encode)
+            value = self._encode(name, value, parameters, encode)
+
+        # set value
+        if name in self:
+            # If property already exists, append it.
+            #if name == 'attendee': import pdb; pdb.set_trace()
+            oldval = self[name]
+            if isinstance(oldval, list):
+                if isinstance(value, list):
+                    value = oldval + value
+                else:
+                    oldval.append(value)
+                    value = oldval
+            else:
+                value = [oldval, value]
+        self[name] = value
 
     def _decode(self, name, value):
         """Internal for decoding property values.
