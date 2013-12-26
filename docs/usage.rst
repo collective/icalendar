@@ -7,6 +7,7 @@ standard in RFC 2445.
 It should be fully compliant, but it is possible to generate and parse invalid
 files if you really want to.
 
+
 File structure
 --------------
 
@@ -32,6 +33,7 @@ And the parts are::
 
 Long content lines are usually "folded" to less than 75 character, but the
 package takes care of that.
+
 
 Overview
 --------
@@ -65,7 +67,8 @@ These are the most important imports::
 
   >>> from icalendar import Calendar, Event
 
-Components
+
+  Components
 ----------
 
 Components are like (Case Insensitive) dicts. So if you want to set a property
@@ -130,6 +133,7 @@ the RFC 2445 spec for legal properties for each component, or look in
 the icalendar/calendar.py file, where it is at least defined for each
 component.
 
+
 Subcomponents
 -------------
 
@@ -158,6 +162,7 @@ Subcomponents are appended to the subcomponents property on the component::
 
   >>> cal.subcomponents
   [VEVENT({'DTSTART': '20050404T080000', 'UID': '42'})]
+
 
 Value types
 -----------
@@ -218,6 +223,34 @@ value directly::
   '20050404T080000'
   >>> cal.decoded('dtstart')
   datetime.datetime(2005, 4, 4, 8, 0)
+
+
+Property parameters
+-------------------
+
+Property parameters are automatically added, depending on the input value. For
+example, for date/time related properties, the value type and timezone
+identifier (if applicable) are automatically added here::
+
+    >>> event = Event()
+    >>> event.add('dtstart', datetime(2010, 10, 10, 10, 0, 0,
+    ...                               tzinfo=pytz.timezone("Europe/Vienna")))
+
+    >>> lines = event.to_ical().splitlines()
+    >>> self.assertTrue(
+    ...     b"DTSTART;TZID=Europe/Vienna;VALUE=DATE-TIME:20101010T100000"
+    ...     in lines)
+
+
+You can also add arbitrary property parameters by passing a parameters
+dictionary to the add method like so::
+
+    >>> event = Event()
+    >>> event.add('X-TEST-PROP', 'tryout.',
+    ....          parameters={'prop1': 'val1', 'prop2': 'val2'})
+    >>> lines = event.to_ical().splitlines()
+    >>> self.assertTrue(b"X-TEST-PROP;PROP1=val1;PROP2=val2:tryout." in lines)
+
 
 Example
 -------
