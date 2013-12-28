@@ -322,4 +322,3 @@ More documentation
 
 Have a look at the tests of this package to get more examples.
 All modules and classes docstrings, which document how they work.
-There is also an `interfaces.py` file which describes the API.
