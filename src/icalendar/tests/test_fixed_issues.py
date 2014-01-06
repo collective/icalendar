@@ -15,7 +15,8 @@ class TestIssues(unittest.TestCase):
         """
 
         directory = os.path.dirname(__file__)
-        ics = open(os.path.join(directory, 'case_meetup.ics'), 'rb')
+        ics = open(os.path.join(directory, 'issue_53_parsing_failure.ics'),
+                   'rb')
         cal = icalendar.Calendar.from_ical(ics.read())
         ics.close()
 
@@ -184,7 +185,7 @@ END:VCALENDAR"""
         """
 
         directory = os.path.dirname(__file__)
-        ics = open(os.path.join(directory, 'case_invalid_line.ics'), 'rb')
+        ics = open(os.path.join(directory, 'issue_114_invalid_line.ics'), 'rb')
         with self.assertRaises(ValueError):
             cal = icalendar.Calendar.from_ical(ics.read())
             cal  # pep 8
