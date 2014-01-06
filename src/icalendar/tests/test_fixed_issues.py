@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from icalendar.parser_tools import to_unicode
 from icalendar.tests import unittest
 
 import datetime
@@ -178,6 +179,32 @@ END:VCALENDAR"""
         cal = icalendar.Calendar.from_ical(ical_str)
         org_cn = cal.walk('VEVENT')[0]['ORGANIZER'].params['CN']
         self.assertEqual(org_cn, u'acme, ädmin')
+
+    def test_issue_112(self):
+        """Issue #112 - No timezone info on EXDATE
+        https://github.com/collective/icalendar/issues/112
+        """
+        directory = os.path.dirname(__file__)
+        path = os.path.join(directory,
+                            'issue_112_missing_tzinfo_on_exdate.ics')
+        with open(path, 'rb') as ics:
+            cal = icalendar.Calendar.from_ical(ics.read())
+            event = cal.walk('VEVENT')[0]
+
+            event_ical = to_unicode(event.to_ical())  # Py3 str type doesn't
+                                                      # support buffer API
+            # General timezone aware dates in ical string
+            self.assertTrue('DTSTART;TZID=America/New_York:20130907T120000'
+                            in event_ical)
+            self.assertTrue('DTEND;TZID=America/New_York:20130907T170000'
+                            in event_ical)
+            # Specific timezone aware exdates in ical string
+            self.assertTrue('EXDATE;TZID=America/New_York:20131012T120000'
+                            in event_ical)
+            self.assertTrue('EXDATE;TZID=America/New_York:20131011T120000'
+                            in event_ical)
+
+            self.assertEqual(event['exdate'][0].dts[0].dt.tzname(), 'EDT')
 
     def test_issue_114(self):
         """Issue #114/#115 - invalid line in event breaks the parser
