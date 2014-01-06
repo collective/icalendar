@@ -68,7 +68,7 @@ These are the most important imports::
   >>> from icalendar import Calendar, Event
 
 
-  Components
+Components
 ----------
 
 Components are like (Case Insensitive) dicts. So if you want to set a property
