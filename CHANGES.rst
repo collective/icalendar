@@ -2,8 +2,8 @@
 Changelog
 =========
 
-3.6.dev (unreleased)
---------------------
+3.6 (2014-01-06)
+----------------
 
 - Python3 (3.3+) + Python 2 (2.6+) support [geier]
 

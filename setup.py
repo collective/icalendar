@@ -1,16 +1,19 @@
 import setuptools
 import sys
 
-version = '3.6.dev'
+
+version = '3.6'
 shortdesc = 'iCalendar parser/generator'
 longdesc = open('README.rst').read()
 longdesc += open('CHANGES.rst').read()
 longdesc += open('LICENSE.rst').read()
 
+
 tests_require = []
 if sys.version_info[:2] == (2, 6):
     # Python unittest2 only needed for Python 2.6
     tests_require = ['unittest2']
+
 
 setuptools.setup(
     name='icalendar',
