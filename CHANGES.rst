@@ -2,8 +2,12 @@
 Changelog
 =========
 
-4.0.dev (unreleased)
+3.6.dev (unreleased)
 --------------------
+
+- Python3 (3.3+) + Python 2 (2.6+) support [geier]
+
+- Made sure to_ical() always returns bytes [geier]
 
 - Support adding lists to a component property, which value already was a list
   and remove the Component.set method, which was only used by the add method.
@@ -25,10 +29,6 @@ Changelog
 - Correctly parse datetime component property values with timezone information
   when parsed from ical strings.
   [untitaker]
-
-- Python3 (3.3+) support [geier]
-
-- Made sure to_ical() always returns bytes [geier]
 
 
 3.5 (2013-07-03)

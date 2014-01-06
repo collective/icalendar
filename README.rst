@@ -17,6 +17,15 @@ with Python.
 ----
 
 
+Roadmap
+=======
+
+- 3.6: Python 3 support (current version)
+
+- 4.0: API refactoring
+
+
+
 Changes in version 3.0
 ======================
 
@@ -47,21 +56,6 @@ which are not defined in the Olson database.
 Instead of the own UTC tzinfo implementation we use pytz UTC tzinfo object now.
 
 
-Roadmap
-=======
-
-1) Internally Unicode will be used exclusively.
-
-2) On API Functions, accept or return Unicode or en/decoded strings.
-
-3) This will make the 3.4 Release.
-
-4) API change: API calls also only accept/return Unicode.
-
-5) This will make the 4.0 release.
-
-
-
 About this fork which is not a fork anymore
 ===========================================
 
@@ -89,14 +83,14 @@ Output from coverage test::
 
     Name                                                           Stmts   Miss  Cover
     ----------------------------------------------------------------------------------
-    .tox/py33/lib/python3.3/site-packages/icalendar/__init__           5      0   100%
-    .tox/py33/lib/python3.3/site-packages/icalendar/cal              227      9    96%
-    .tox/py33/lib/python3.3/site-packages/icalendar/caselessdict      55      5    91%
-    .tox/py33/lib/python3.3/site-packages/icalendar/compat             1      0   100%
-    .tox/py33/lib/python3.3/site-packages/icalendar/parser           189      8    96%
-    .tox/py33/lib/python3.3/site-packages/icalendar/parser_tools      20      0   100%
-    .tox/py33/lib/python3.3/site-packages/icalendar/prop             533     62    88%
-    .tox/py33/lib/python3.3/site-packages/icalendar/tools             16      0   100%
+    .tox/py27/lib/python2.7/site-packages/icalendar/__init__           5      0   100%
+    .tox/py27/lib/python2.7/site-packages/icalendar/cal              234      7    97%
+    .tox/py27/lib/python2.7/site-packages/icalendar/caselessdict      55      5    91%
+    .tox/py27/lib/python2.7/site-packages/icalendar/compat             1      0   100%
+    .tox/py27/lib/python2.7/site-packages/icalendar/parser           189      6    97%
+    .tox/py27/lib/python2.7/site-packages/icalendar/parser_tools      20      0   100%
+    .tox/py27/lib/python2.7/site-packages/icalendar/prop             533     62    88%
+    .tox/py27/lib/python2.7/site-packages/icalendar/tools             16      0   100%
     ----------------------------------------------------------------------------------
-    TOTAL                                                           1046     84    92%
+    TOTAL                                                           1053     80    92%
 
