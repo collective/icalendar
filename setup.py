@@ -1,12 +1,13 @@
+import codecs
 import setuptools
 import sys
 
 
 version = '3.6'
 shortdesc = 'iCalendar parser/generator'
-longdesc = open('README.rst').read()
-longdesc += open('CHANGES.rst').read()
-longdesc += open('LICENSE.rst').read()
+longdesc = codecs.open('README.rst', encoding='utf-8').read()
+longdesc += codecs.open('CHANGES.rst', encoding='utf-8').read()
+longdesc += codecs.open('LICENSE.rst', encoding='utf-8').read()
 
 
 tests_require = []
