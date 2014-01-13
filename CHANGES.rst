@@ -2,6 +2,17 @@
 Changelog
 =========
 
+3.6.1 (2014-01-13)
+------------------
+
+- Open text files referenced by setup.py as utf-8, no matter what the locale
+  settings are set to. Fixes #122.
+  [sochotnicky]
+
+- Add tox.ini to source tarball, which simplifies testing for in distributions.
+  [sochotnicky]
+
+
 3.6 (2014-01-06)
 ----------------
 
