@@ -172,7 +172,6 @@ class Component(CaselessDict):
         # set value
         if name in self:
             # If property already exists, append it.
-            #if name == 'attendee': import pdb; pdb.set_trace()
             oldval = self[name]
             if isinstance(oldval, list):
                 if isinstance(value, list):
