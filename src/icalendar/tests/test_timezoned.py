@@ -36,7 +36,7 @@ class TestTimezoned(unittest.TestCase):
         ev1 = cal.walk('VEVENT')[0]
         self.assertEqual(
             ev1.decoded('DTSTART'),
-            datetime.datetime(2012,  2, 13, 10, 0, 0,
+            datetime.datetime(2012, 2, 13, 10, 0, 0,
                               tzinfo=pytz.timezone('Europe/Vienna')))
         self.assertEqual(
             ev1.decoded('DTSTAMP'),
