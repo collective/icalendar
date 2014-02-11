@@ -778,7 +778,7 @@ class vUTCOffset(object):
 
         if self.td < timedelta(0):
             sign = '-%s'
-            td = timedelta(0)-self.td  # get timedelta relative to 0
+            td = timedelta(0) - self.td  # get timedelta relative to 0
         else:
             # Google Calendar rejects '0000' but accepts '+0000'
             sign = '+%s'
