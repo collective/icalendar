@@ -44,16 +44,3 @@ from icalendar.parser import (
     q_split,
     q_join,
 )
-
-
-__all__ = [
-    Calendar, Event, Todo, Journal,
-    FreeBusy, Alarm, ComponentFactory,
-    Timezone, TimezoneStandard, TimezoneDaylight,
-    vBinary, vBoolean, vCalAddress, vDatetime, vDate,
-    vDDDTypes, vDuration, vFloat, vInt, vPeriod,
-    vWeekday, vFrequency, vRecur, vText, vTime, vUri,
-    vGeo, vUTCOffset, TypesFactory,
-    FixedOffset, LocalTimezone,
-    Parameters, q_split, q_join,
-]
