@@ -180,6 +180,50 @@ END:VCALENDAR"""
         org_cn = cal.walk('VEVENT')[0]['ORGANIZER'].params['CN']
         self.assertEqual(org_cn, u'acme, ädmin')
 
+    def test_issue_104__ignore_exceptions(self):
+        """
+        Issue #104 - line parsing error in a VEVENT
+        (which has ignore_exceptions). Should mark the event broken
+        but not raise an exception.
+        https://github.com/collective/icalendar/issues/104
+        """
+        ical_str = """
+BEGIN:VEVENT
+DTSTART:20140401T000000Z
+DTEND:20140401T010000Z
+DTSTAMP:20140401T000000Z
+SUMMARY:Broken Eevnt
+CLASS:PUBLIC
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+X
+END:VEVENT"""
+        event = icalendar.Calendar.from_ical(ical_str)
+        self.assertTrue(isinstance(event, icalendar.Event))
+        self.assertTrue(event.is_broken)
+
+    def test_issue_104__no_ignore_exceptions(self):
+        """
+        Issue #104 - line parsing error in a VCALENDAR
+        (which doesn't have ignore_exceptions). Should raise an exception.
+        """
+        ical_str = """BEGIN:VCALENDAR
+VERSION:2.0
+METHOD:PUBLISH
+BEGIN:VEVENT
+DTSTART:20140401T000000Z
+DTEND:20140401T010000Z
+DTSTAMP:20140401T000000Z
+SUMMARY:Broken Eevnt
+CLASS:PUBLIC
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+X
+END:VCALENDAR"""
+        with self.assertRaises(ValueError):
+            icalendar.Calendar.from_ical(ical_str)
+
     def test_issue_112(self):
         """Issue #112 - No timezone info on EXDATE
         https://github.com/collective/icalendar/issues/112
@@ -205,18 +249,6 @@ END:VCALENDAR"""
                             in event_ical)
 
             self.assertEqual(event['exdate'][0].dts[0].dt.tzname(), 'EDT')
-
-    def test_issue_114(self):
-        """Issue #114/#115 - invalid line in event breaks the parser
-        https://github.com/collective/icalendar/issues/114
-        """
-
-        directory = os.path.dirname(__file__)
-        ics = open(os.path.join(directory, 'issue_114_invalid_line.ics'), 'rb')
-        with self.assertRaises(ValueError):
-            cal = icalendar.Calendar.from_ical(ics.read())
-            cal  # pep 8
-        ics.close()
 
     def test_issue_116(self):
         """Issue #116/#117 - How to add 'X-APPLE-STRUCTURED-LOCATION'
