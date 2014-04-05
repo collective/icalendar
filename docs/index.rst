@@ -11,6 +11,5 @@ Contents
     install
     usage
     RFC 5545 <rfc5545/index>
-    changelog
     credits
     license
