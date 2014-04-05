@@ -2,7 +2,7 @@
 Changelog
 =========
 
-3.6.2 (unreleased)
+3.6.2 (2014-04-05)
 ------------------
 
 - Pep8 and cleanup.
