@@ -5,7 +5,9 @@ Changelog
 3.6.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Remove incorrect use of __all__. We don't encourage using `from package
+  import *` imports. Fixes #129.
+  [eric-wieser]
 
 
 3.6.2 (2014-04-05)
