@@ -285,7 +285,7 @@ class vDDDTypes(object):
                 and getattr(dt, 'tzinfo', False):
             tzinfo = dt.tzinfo
             if tzinfo is not pytz.utc and\
-               not (tzutc and isinstance(tzinfo, tzutc)):
+               (tzutc is None or not isinstance(tzinfo, tzutc)):
                 # set the timezone as a parameter to the property
                 tzid = tzid_from_dt(dt)
                 if tzid:
