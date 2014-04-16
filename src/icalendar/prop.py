@@ -40,7 +40,12 @@ from datetime import datetime
 from datetime import time
 from datetime import timedelta
 from datetime import tzinfo
-from dateutil.tz import tzutc
+
+try:
+    from dateutil.tz import tzutc
+except ImportError:
+    tzutc = None
+
 from icalendar import compat
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Parameters
@@ -279,7 +284,8 @@ class vDDDTypes(object):
         if (isinstance(dt, datetime) or isinstance(dt, time))\
                 and getattr(dt, 'tzinfo', False):
             tzinfo = dt.tzinfo
-            if tzinfo is not pytz.utc and not isinstance(tzinfo, tzutc):
+            if tzinfo is not pytz.utc and\
+               not (tzutc and isinstance(tzinfo, tzutc)):
                 # set the timezone as a parameter to the property
                 tzid = tzid_from_dt(dt)
                 if tzid:
