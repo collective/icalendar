@@ -25,7 +25,7 @@ def canonsort_items(dict1, canonical_order=None):
             k in canonsort_keys(dict1.keys(), canonical_order)]
 
 
-class CaselessDict(dict):
+class CaselessDict(OrderedDict):
     """A dictionary that isn't case sensitive, and only uses strings as keys.
     Values retain their case.
     """
@@ -85,6 +85,9 @@ class CaselessDict(dict):
 
     def __repr__(self):
         return 'CaselessDict(%s)' % data_encode(self)
+
+    def __eq__(self, other):
+        return self is other or dict(self.items()) == dict(other.items())
 
     # A list of keys that must appear first in sorted_keys and sorted_items;
     # must be uppercase.
