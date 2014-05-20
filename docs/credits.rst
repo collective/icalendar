@@ -35,3 +35,4 @@ icalendar contributors
 - Wichert Akkerman <wichert@wiggy.net>
 - spanktar <spanky@kapanka.com>
 - tgecho <tgecho@gmail.com>
+- Markus Unterwaditzer <markus@unterwaditzer.net>
