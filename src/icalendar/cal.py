@@ -267,13 +267,17 @@ class Component(CaselessDict):
     #####################
     # Generation
 
-    def property_items(self, recursive=True):
+    def property_items(self, recursive=True, sorted=True):
         """Returns properties in this component and subcomponents as:
         [(name, value), ...]
         """
         vText = types_factory['text']
         properties = [('BEGIN', vText(self.name).to_ical())]
-        property_names = self.sorted_keys()
+        if sorted:
+            property_names = self.sorted_keys()
+        else:
+            property_names = self.keys()
+
         for name in property_names:
             values = self[name]
             if isinstance(values, list):
@@ -285,7 +289,7 @@ class Component(CaselessDict):
         if recursive:
             # recursion is fun!
             for subcomponent in self.subcomponents:
-                properties += subcomponent.property_items()
+                properties += subcomponent.property_items(sorted=sorted)
         properties.append(('END', vText(self.name).to_ical()))
         return properties
 
@@ -359,18 +363,18 @@ class Component(CaselessDict):
         params = getattr(value, 'params', Parameters())
         return Contentline.from_parts(name, params, value)
 
-    def content_lines(self):
+    def content_lines(self, sorted=True):
         """Converts the Component and subcomponents into content lines.
         """
         contentlines = Contentlines()
-        for name, value in self.property_items():
+        for name, value in self.property_items(sorted=sorted):
             cl = self.content_line(name, value)
             contentlines.append(cl)
         contentlines.append('')  # remember the empty string in the end
         return contentlines
 
-    def to_ical(self):
-        content_lines = self.content_lines()
+    def to_ical(self, sorted=True):
+        content_lines = self.content_lines(sorted=sorted)
         return content_lines.to_ical()
 
 
