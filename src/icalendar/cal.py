@@ -357,23 +357,28 @@ class Component(CaselessDict):
     def __repr__(self):
         return '%s(%s)' % (self.name, data_encode(self))
 
-    def content_line(self, name, value):
+    def content_line(self, name, value, sorted=True):
         """Returns property as content line.
         """
         params = getattr(value, 'params', Parameters())
-        return Contentline.from_parts(name, params, value)
+        return Contentline.from_parts(name, params, value, sorted=sorted)
 
     def content_lines(self, sorted=True):
         """Converts the Component and subcomponents into content lines.
         """
         contentlines = Contentlines()
         for name, value in self.property_items(sorted=sorted):
-            cl = self.content_line(name, value)
+            cl = self.content_line(name, value, sorted=sorted)
             contentlines.append(cl)
         contentlines.append('')  # remember the empty string in the end
         return contentlines
 
     def to_ical(self, sorted=True):
+        '''
+        :param sorted: Whether parameters and properties should be
+        lexicographically sorted.
+        '''
+
         content_lines = self.content_lines(sorted=sorted)
         return content_lines.to_ical()
 

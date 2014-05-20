@@ -292,6 +292,21 @@ class TestCalComponent(unittest.TestCase):
         preserved_str = component.to_ical(sorted=False).splitlines()
         assert preserved_str == component_str
 
+    def test_cal_Component_to_ical_parameter_order(self):
+        Component = icalendar.cal.Component
+        component_str = [b'BEGIN:VEVENT',
+                         b'X-FOOBAR;C=one;A=two;B=three:helloworld.',
+                         b'END:VEVENT']
+        component = Component.from_ical(b'\r\n'.join(component_str))
+
+        sorted_str = component.to_ical().splitlines()
+        assert sorted_str[0] == component_str[0]
+        assert sorted_str[1] == b'X-FOOBAR;A=two;B=three;C=one:helloworld.'
+        assert sorted_str[2] == component_str[2]
+
+        preserved_str = component.to_ical(sorted=False).splitlines()
+        assert preserved_str == component_str
+
 
 class TestCal(unittest.TestCase):
 

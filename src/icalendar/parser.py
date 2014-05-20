@@ -194,10 +194,13 @@ class Parameters(CaselessDict):
     def __repr__(self):
         return 'Parameters(%s)' % data_encode(self)
 
-    def to_ical(self):
+    def to_ical(self, sorted=True):
         result = []
-        items = self.items()
-        for key, value in sorted(items):
+        items = list(self.items())
+        if sorted:
+            items.sort()
+
+        for key, value in items:
             value = param_value(value)
             if isinstance(value, compat.unicode_type):
                 value = value.encode(DEFAULT_ENCODING)
@@ -270,7 +273,7 @@ class Contentline(compat.unicode_type):
         return self
 
     @classmethod
-    def from_parts(cls, name, params, values):
+    def from_parts(cls, name, params, values, sorted=True):
         """Turn a parts into a content line.
         """
         assert isinstance(params, Parameters)
@@ -286,7 +289,7 @@ class Contentline(compat.unicode_type):
         name = to_unicode(name)
         values = to_unicode(values)
         if params:
-            params = to_unicode(params.to_ical())
+            params = to_unicode(params.to_ical(sorted=sorted))
             return cls(u'%s;%s:%s' % (name, params, values))
         return cls(u'%s:%s' % (name, values))
 
