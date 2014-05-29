@@ -209,14 +209,13 @@ class TestCalComponent(unittest.TestCase):
 
     def test_cal_Component_add(self):
         # Test the for timezone correctness: dtstart should preserve it's
-        # timezone, crated, dtstamp and last-modified must be in UTC.
+        # timezone, created, dtstamp and last-modified must be in UTC.
         Component = icalendar.cal.Component
         comp = Component()
-        comp.add('dtstart', datetime(2010, 10, 10, 10, 0, 0,
-                                     tzinfo=pytz.timezone("Europe/Vienna")))
+        vienna = pytz.timezone("Europe/Vienna")
+        comp.add('dtstart', vienna.localize(datetime(2010, 10, 10, 10, 0, 0)))
         comp.add('created', datetime(2010, 10, 10, 12, 0, 0))
-        comp.add('dtstamp', datetime(2010, 10, 10, 14, 0, 0,
-                                     tzinfo=pytz.timezone("Europe/Vienna")))
+        comp.add('dtstamp', vienna.localize(datetime(2010, 10, 10, 14, 0, 0)))
         comp.add('last-modified', datetime(2010, 10, 10, 16, 0, 0,
                                            tzinfo=pytz.utc))
 
@@ -225,7 +224,7 @@ class TestCalComponent(unittest.TestCase):
             b"DTSTART;TZID=Europe/Vienna;VALUE=DATE-TIME:20101010T100000"
             in lines)
         self.assertTrue(b"CREATED;VALUE=DATE-TIME:20101010T120000Z" in lines)
-        self.assertTrue(b"DTSTAMP;VALUE=DATE-TIME:20101010T130000Z" in lines)
+        self.assertTrue(b"DTSTAMP;VALUE=DATE-TIME:20101010T120000Z" in lines)
         self.assertTrue(
             b"LAST-MODIFIED;VALUE=DATE-TIME:20101010T160000Z" in lines
         )

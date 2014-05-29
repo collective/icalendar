@@ -222,15 +222,15 @@ class TestProp(unittest.TestCase):
 
         # Timezoned
         dk = pytz.timezone('Europe/Copenhagen')
-        start = datetime(2000, 1, 1, tzinfo=dk)
-        end = datetime(2000, 1, 2, tzinfo=dk)
+        start = dk.localize(datetime(2000, 1, 1))
+        end = dk.localize(datetime(2000, 1, 2))
         per = (start, end)
         self.assertEqual(vPeriod(per).to_ical(),
                          b'20000101T000000/20000102T000000')
         self.assertEqual(vPeriod(per).params['TZID'],
                          'Europe/Copenhagen')
 
-        p = vPeriod((datetime(2000, 1, 1, tzinfo=dk), timedelta(days=31)))
+        p = vPeriod((dk.localize(datetime(2000, 1, 1)), timedelta(days=31)))
         self.assertEqual(p.to_ical(), b'20000101T000000/P31D')
 
     def test_prop_vWeekday(self):

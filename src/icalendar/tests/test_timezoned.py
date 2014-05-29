@@ -36,8 +36,10 @@ class TestTimezoned(unittest.TestCase):
         ev1 = cal.walk('VEVENT')[0]
         self.assertEqual(
             ev1.decoded('DTSTART'),
-            datetime.datetime(2012, 2, 13, 10, 0, 0,
-                              tzinfo=pytz.timezone('Europe/Vienna')))
+            pytz.timezone('Europe/Vienna').localize(
+                datetime.datetime(2012, 2, 13, 10, 0, 0)
+            )
+        )
         self.assertEqual(
             ev1.decoded('DTSTAMP'),
             datetime.datetime(2010, 10, 10, 9, 10, 10, tzinfo=pytz.utc))
@@ -78,20 +80,20 @@ class TestTimezoned(unittest.TestCase):
         tz = pytz.timezone("Europe/Vienna")
         event.add(
             'dtstart',
-            datetime.datetime(2012, 2, 13, 10, 00, 00, tzinfo=tz))
+            tz.localize(datetime.datetime(2012, 2, 13, 10, 00, 00)))
         event.add(
             'dtend',
-            datetime.datetime(2012, 2, 17, 18, 00, 00, tzinfo=tz))
+            tz.localize(datetime.datetime(2012, 2, 17, 18, 00, 00)))
         event.add(
             'dtstamp',
-            datetime.datetime(2010, 10, 10, 10, 10, 10, tzinfo=tz))
+            tz.localize(datetime.datetime(2010, 10, 10, 10, 10, 10)))
         event.add(
             'created',
-            datetime.datetime(2010, 10, 10, 10, 10, 10, tzinfo=tz))
+            tz.localize(datetime.datetime(2010, 10, 10, 10, 10, 10)))
         event.add('uid', u'123456')
         event.add(
             'last-modified',
-            datetime.datetime(2010, 10, 10, 10, 10, 10, tzinfo=tz))
+            tz.localize(datetime.datetime(2010, 10, 10, 10, 10, 10)))
         event.add('summary', u'artsprint 2012')
         # event.add('rrule', u'FREQ=YEARLY;INTERVAL=1;COUNT=10')
         event.add('description', u'sprinting at the artsprint')
@@ -122,8 +124,8 @@ class TestTimezoned(unittest.TestCase):
         self.assertTrue("ATTENDEE:sepp" in test_out)
 
         # ical standard expects DTSTAMP and CREATED in UTC
-        self.assertTrue("DTSTAMP;VALUE=DATE-TIME:20101010T091010Z" in test_out)
-        self.assertTrue("CREATED;VALUE=DATE-TIME:20101010T091010Z" in test_out)
+        self.assertTrue("DTSTAMP;VALUE=DATE-TIME:20101010T081010Z" in test_out)
+        self.assertTrue("CREATED;VALUE=DATE-TIME:20101010T081010Z" in test_out)
 
     def test_tzinfo_dateutil(self):
         # Test for issues #77, #63
