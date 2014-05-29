@@ -45,7 +45,7 @@ setuptools.setup(
     install_requires=[
         'setuptools',
         'python-dateutil',
-        'pytz==2014.2',
+        'pytz',
     ],
     extras_require={
         'test': tests_require
