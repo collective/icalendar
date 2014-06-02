@@ -100,7 +100,7 @@ class TestProp(unittest.TestCase):
                                    datetime))
 
         self.assertEqual(vDDDTypes.from_ical('20010101T123000Z'),
-                         datetime(2001, 1, 1, 12, 30, tzinfo=pytz.utc))
+                         pytz.utc.localize(datetime(2001, 1, 1, 12, 30)))
 
         self.assertTrue(isinstance(vDDDTypes.from_ical('20010101'), date))
 
@@ -130,10 +130,10 @@ class TestProp(unittest.TestCase):
         self.assertEqual(vDatetime.from_ical('20000101T120000'),
                          datetime(2000, 1, 1, 12, 0))
 
-        dutc = datetime(2001, 1, 1, 12, 30, 0, tzinfo=pytz.utc)
+        dutc = pytz.utc.localize(datetime(2001, 1, 1, 12, 30, 0))
         self.assertEqual(vDatetime(dutc).to_ical(), b'20010101T123000Z')
 
-        dutc = datetime(1899, 1, 1, 12, 30, 0, tzinfo=pytz.utc)
+        dutc = pytz.utc.localize(datetime(1899, 1, 1, 12, 30, 0))
         self.assertEqual(vDatetime(dutc).to_ical(), b'18990101T123000Z')
 
         self.assertEqual(vDatetime.from_ical('20010101T000000'),

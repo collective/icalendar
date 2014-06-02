@@ -42,7 +42,10 @@ class TestTimezoned(unittest.TestCase):
         )
         self.assertEqual(
             ev1.decoded('DTSTAMP'),
-            datetime.datetime(2010, 10, 10, 9, 10, 10, tzinfo=pytz.utc))
+            pytz.utc.localize(
+                datetime.datetime(2010, 10, 10, 9, 10, 10)
+            )
+        )
 
     def test_create_to_ical(self):
         cal = icalendar.Calendar()

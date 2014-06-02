@@ -41,15 +41,15 @@ class TestEncoding(unittest.TestCase):
         event = icalendar.Event()
         event.add(
             'dtstart',
-            datetime.datetime(2010, 10, 10, 10, 00, 00, tzinfo=pytz.utc)
+            pytz.utc.localize(datetime.datetime(2010, 10, 10, 10, 0, 0))
         )
         event.add(
             'dtend',
-            datetime.datetime(2010, 10, 10, 12, 00, 00, tzinfo=pytz.utc)
+            pytz.utc.localize(datetime.datetime(2010, 10, 10, 12, 0, 0))
         )
         event.add(
             'created',
-            datetime.datetime(2010, 10, 10, 0, 0, 0, tzinfo=pytz.utc)
+            pytz.utc.localize(datetime.datetime(2010, 10, 10, 0, 0, 0))
         )
         event.add('uid', u'123456')
         event.add('summary', u'Non-ASCII Test: ÄÖÜ äöü €')
@@ -68,7 +68,7 @@ class TestEncoding(unittest.TestCase):
         event = icalendar.Event()
         event.add(
             "dtstart",
-            datetime.datetime(2010, 10, 10, 0, 0, 0, tzinfo=pytz.utc)
+            pytz.utc.localize(datetime.datetime(2010, 10, 10, 0, 0, 0))
         )
         event.add("summary", u"åäö")
         out = event.to_ical()

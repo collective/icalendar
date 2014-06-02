@@ -5,8 +5,12 @@ Changelog
 3.6.3 (unreleased)
 ------------------
 
-- Remove incorrect use of __all__. We don't encourage using `from package
-  import *` imports. Fixes #129.
+- Fix tests for latest ``pytz``. Don't set ``tzinfo`` directly on datetime
+  objects, but use pytz's ``localize`` function.
+  [untitaker, thet]
+
+- Remove incorrect use of __all__. We don't encourage using ``from package
+  import *`` imports. Fixes #129.
   [eric-wieser]
 
 

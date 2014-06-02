@@ -31,17 +31,17 @@ class TestRecurrence(unittest.TestCase):
 
         self.assertEqual(
             first_event['exdate'].dts[0].dt,
-            datetime.datetime(1996, 4, 2, 1, 0, tzinfo=pytz.utc)
+            pytz.utc.localize(datetime.datetime(1996, 4, 2, 1, 0))
         )
 
         self.assertEqual(
             first_event['exdate'].dts[1].dt,
-            datetime.datetime(1996, 4, 3, 1, 0, tzinfo=pytz.utc)
+            pytz.utc.localize(datetime.datetime(1996, 4, 3, 1, 0))
         )
 
         self.assertEqual(
             first_event['exdate'].dts[2].dt,
-            datetime.datetime(1996, 4, 4, 1, 0, tzinfo=pytz.utc)
+            pytz.utc.localize(datetime.datetime(1996, 4, 4, 1, 0))
         )
 
     def test_recurrence_exdates_multiple_lines(self):

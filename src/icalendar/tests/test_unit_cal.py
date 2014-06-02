@@ -216,8 +216,8 @@ class TestCalComponent(unittest.TestCase):
         comp.add('dtstart', vienna.localize(datetime(2010, 10, 10, 10, 0, 0)))
         comp.add('created', datetime(2010, 10, 10, 12, 0, 0))
         comp.add('dtstamp', vienna.localize(datetime(2010, 10, 10, 14, 0, 0)))
-        comp.add('last-modified', datetime(2010, 10, 10, 16, 0, 0,
-                                           tzinfo=pytz.utc))
+        comp.add('last-modified', pytz.utc.localize(
+            datetime(2010, 10, 10, 16, 0, 0)))
 
         lines = comp.to_ical().splitlines()
         self.assertTrue(

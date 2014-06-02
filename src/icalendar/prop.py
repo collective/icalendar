@@ -397,7 +397,7 @@ class vDatetime(object):
             elif not ical[15:]:
                 return datetime(*timetuple)
             elif ical[15:16] == 'Z':
-                return datetime(tzinfo=pytz.utc, *timetuple)
+                return pytz.utc.localize(datetime(*timetuple))
             else:
                 raise ValueError(ical)
         except:
