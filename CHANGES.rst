@@ -5,6 +5,10 @@ Changelog
 3.6.3 (unreleased)
 ------------------
 
+- Add optional ``sorted`` parameter to ``Component.to_ical``. Setting it to
+  false allows the user to preserve the original property and parameter order.
+  [untitaker]
+
 - Fix tests for latest ``pytz``. Don't set ``tzinfo`` directly on datetime
   objects, but use pytz's ``localize`` function.
   [untitaker, thet]
@@ -12,9 +16,6 @@ Changelog
 - Remove incorrect use of __all__. We don't encourage using ``from package
   import *`` imports. Fixes #129.
   [eric-wieser]
-- Add optional ``sorted`` parameter to ``Component.to_ical``. Setting it to
-  false allows the user to preserve the original property and parameter order.
-  [untitaker]
 
 
 3.6.2 (2014-04-05)
