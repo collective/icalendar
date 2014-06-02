@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from icalendar.compat import iteritems
 from icalendar.parser_tools import to_unicode
 from icalendar.parser_tools import data_encode
 
@@ -75,10 +76,14 @@ class CaselessDict(OrderedDict):
         key = to_unicode(key)
         return super(CaselessDict, self).__contains__(key.upper())
 
-    def update(self, indict):
+    def update(self, *args, **kwargs):
         # Multiple keys where key1.upper() == key2.upper() will be lost.
-        for key, value in indict.items():  # TODO optimize in python 2
-            self[key] = value
+        mappings = list(args) + [kwargs]
+        for mapping in mappings:
+            if hasattr(mapping, 'items'):
+                mapping = iteritems(mapping)
+            for key, value in mapping:
+                self[key] = value
 
     def copy(self):
         return type(self)(super(CaselessDict, self).copy())
