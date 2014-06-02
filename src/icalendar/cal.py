@@ -30,7 +30,7 @@ class ComponentFactory(CaselessDict):
     def __init__(self, *args, **kwargs):
         """Set keys to upper for initial dict.
         """
-        CaselessDict.__init__(self, *args, **kwargs)
+        super(ComponentFactory, self).__init__(*args, **kwargs)
         self['VEVENT'] = Event
         self['VTODO'] = Todo
         self['VJOURNAL'] = Journal
@@ -44,9 +44,11 @@ class ComponentFactory(CaselessDict):
 
 # These Properties have multiple property values inlined in one propertyline
 # seperated by comma. Use CaselessDict as simple caseless set.
-INLINE = CaselessDict(
-    [(cat, 1) for cat in ('CATEGORIES', 'RESOURCES', 'FREEBUSY')]
-)
+INLINE = CaselessDict({
+    'CATEGORIES': 1,
+    'RESOURCES': 1,
+    'FREEBUSY': 1,
+})
 
 _marker = []
 
@@ -73,7 +75,7 @@ class Component(CaselessDict):
     def __init__(self, *args, **kwargs):
         """Set keys to upper for initial dict.
         """
-        CaselessDict.__init__(self, *args, **kwargs)
+        super(Component, self).__init__(*args, **kwargs)
         # set parameters here for properties that use non-default values
         self.subcomponents = []  # Components can be nested.
         self.is_broken = False  # True if we ignored an exception while

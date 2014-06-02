@@ -156,7 +156,7 @@ class vBinary(object):
 class vBoolean(int):
     """Returns specific string according to state.
     """
-    BOOL_MAP = CaselessDict(true=True, false=False)
+    BOOL_MAP = CaselessDict({'true': True, 'false': False})
 
     def __new__(cls, *args, **kwargs):
         self = super(vBoolean, cls).__new__(cls, *args, **kwargs)
@@ -635,7 +635,7 @@ class vRecur(CaselessDict):
     })
 
     def __init__(self, *args, **kwargs):
-        CaselessDict.__init__(self, *args, **kwargs)
+        super(vRecur, self).__init__(*args, **kwargs)
         self.params = Parameters()
 
     def to_ical(self):
@@ -850,7 +850,7 @@ class TypesFactory(CaselessDict):
 
     def __init__(self, *args, **kwargs):
         "Set keys to upper for initial dict"
-        CaselessDict.__init__(self, *args, **kwargs)
+        super(TypesFactory, self).__init__(*args, **kwargs)
         self.all_types = (
             vBinary,
             vBoolean,
