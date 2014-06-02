@@ -2,8 +2,8 @@
 Changelog
 =========
 
-3.6.3 (unreleased)
-------------------
+3.7 (unreleased)
+----------------
 
 - For components with ``ignore_exceptions`` set to ``True``, mark unparseable
   lines as broken instead rising a ``ValueError``. ``VEVENT`` components have
