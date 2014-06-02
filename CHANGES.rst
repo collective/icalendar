@@ -5,6 +5,11 @@ Changelog
 3.6.3 (unreleased)
 ------------------
 
+- For components with ``ignore_exceptions`` set to ``True``, mark unparseable
+  lines as broken instead rising a ``ValueError``. ``VEVENT`` components have
+  ``ignore_exceptions`` set to ``True`` by default.
+  [jkiang13]
+
 - Make ``python-dateutil`` a soft-dependency.
   [boltnev]
 
