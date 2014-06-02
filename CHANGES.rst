@@ -2,7 +2,7 @@
 Changelog
 =========
 
-3.7 (unreleased)
+3.7 (2014-06-02)
 ----------------
 
 - For components with ``ignore_exceptions`` set to ``True``, mark unparseable

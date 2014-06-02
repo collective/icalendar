@@ -20,8 +20,6 @@ with Python.
 Roadmap
 =======
 
-- 3.6: Python 3 support (current version)
-
 - 4.0: API refactoring
 
 
@@ -81,16 +79,15 @@ Test Coverage Report
 
 Output from coverage test::
 
-    Name                                                           Stmts   Miss  Cover
-    ----------------------------------------------------------------------------------
-    .tox/py27/lib/python2.7/site-packages/icalendar/__init__           5      0   100%
-    .tox/py27/lib/python2.7/site-packages/icalendar/cal              234      7    97%
-    .tox/py27/lib/python2.7/site-packages/icalendar/caselessdict      55      5    91%
-    .tox/py27/lib/python2.7/site-packages/icalendar/compat             1      0   100%
-    .tox/py27/lib/python2.7/site-packages/icalendar/parser           189      6    97%
-    .tox/py27/lib/python2.7/site-packages/icalendar/parser_tools      20      0   100%
-    .tox/py27/lib/python2.7/site-packages/icalendar/prop             533     62    88%
-    .tox/py27/lib/python2.7/site-packages/icalendar/tools             16      0   100%
-    ----------------------------------------------------------------------------------
-    TOTAL                                                           1053     80    92%
-
+    Name                         Stmts   Miss  Cover
+    ------------------------------------------------
+    src/icalendar/__init__           4      0   100%
+    src/icalendar/cal              243      7    97%
+    src/icalendar/caselessdict      66      7    89%
+    src/icalendar/compat             1      0   100%
+    src/icalendar/parser           192      6    97%
+    src/icalendar/parser_tools      20      0   100%
+    src/icalendar/prop             536     64    88%
+    src/icalendar/tools             16      0   100%
+    ------------------------------------------------
+    TOTAL                         1078     84    92%
