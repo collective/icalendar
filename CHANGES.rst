@@ -5,6 +5,9 @@ Changelog
 3.6.3 (unreleased)
 ------------------
 
+- Make ``python-dateutil`` a soft-dependency.
+  [boltnev]
+
 - Add optional ``sorted`` parameter to ``Component.to_ical``. Setting it to
   false allows the user to preserve the original property and parameter order.
   [untitaker]

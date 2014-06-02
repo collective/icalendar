@@ -10,10 +10,11 @@ longdesc += codecs.open('CHANGES.rst', encoding='utf-8').read()
 longdesc += codecs.open('LICENSE.rst', encoding='utf-8').read()
 
 
-tests_require = []
+tests_require = [
+    'python-dateutil',
+]
 install_requires = [
     'setuptools',
-    'python-dateutil',
     'pytz'
 ]
 
