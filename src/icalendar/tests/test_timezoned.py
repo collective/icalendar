@@ -133,7 +133,6 @@ class TestTimezoned(unittest.TestCase):
     def test_tzinfo_dateutil(self):
         # Test for issues #77, #63
         # references: #73,7430b66862346fe3a6a100ab25e35a8711446717
-
         date = dateutil.parser.parse('2012-08-30T22:41:00Z')
         date2 = dateutil.parser.parse('2012-08-30T22:41:00 +02:00')
         self.assertTrue(date.tzinfo.__module__ == 'dateutil.tz')
