@@ -302,7 +302,19 @@ class Component(CaselessDict):
         for line in Contentlines.from_ical(st):  # raw parsing
             if not line:
                 continue
-            name, params, vals = line.parts()
+
+            try:
+                name, params, vals = line.parts()
+            except ValueError:
+                # if unable to parse a line within a component
+                # that ignores exceptions, mark the component
+                # as broken and skip the line. otherwise raise.
+                component = stack[-1] if stack else None
+                if not component or not component.ignore_exceptions:
+                    raise
+                component.is_broken = True
+                continue
+
             uname = name.upper()
             # check for start of component
             if uname == 'BEGIN':
