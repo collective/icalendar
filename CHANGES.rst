@@ -7,7 +7,7 @@ Changelog
 
 - For components with ``ignore_exceptions`` set to ``True``, mark unparseable
   lines as broken instead rising a ``ValueError``. ``VEVENT`` components have
-  ``ignore_exceptions`` set to ``True`` by default.
+  ``ignore_exceptions`` set to ``True`` by default. Ref #131. Fixes #104.
   [jkiang13]
 
 - Make ``python-dateutil`` a soft-dependency.
@@ -15,10 +15,11 @@ Changelog
 
 - Add optional ``sorted`` parameter to ``Component.to_ical``. Setting it to
   false allows the user to preserve the original property and parameter order.
+  Ref #136. Fixes #133.
   [untitaker]
 
 - Fix tests for latest ``pytz``. Don't set ``tzinfo`` directly on datetime
-  objects, but use pytz's ``localize`` function.
+  objects, but use pytz's ``localize`` function. Ref #138.
   [untitaker, thet]
 
 - Remove incorrect use of __all__. We don't encourage using ``from package
