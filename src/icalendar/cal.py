@@ -267,13 +267,17 @@ class Component(CaselessDict):
     #####################
     # Generation
 
-    def property_items(self, recursive=True):
+    def property_items(self, recursive=True, sorted=True):
         """Returns properties in this component and subcomponents as:
         [(name, value), ...]
         """
         vText = types_factory['text']
         properties = [('BEGIN', vText(self.name).to_ical())]
-        property_names = self.sorted_keys()
+        if sorted:
+            property_names = self.sorted_keys()
+        else:
+            property_names = self.keys()
+
         for name in property_names:
             values = self[name]
             if isinstance(values, list):
@@ -285,7 +289,7 @@ class Component(CaselessDict):
         if recursive:
             # recursion is fun!
             for subcomponent in self.subcomponents:
-                properties += subcomponent.property_items()
+                properties += subcomponent.property_items(sorted=sorted)
         properties.append(('END', vText(self.name).to_ical()))
         return properties
 
@@ -353,24 +357,29 @@ class Component(CaselessDict):
     def __repr__(self):
         return '%s(%s)' % (self.name, data_encode(self))
 
-    def content_line(self, name, value):
+    def content_line(self, name, value, sorted=True):
         """Returns property as content line.
         """
         params = getattr(value, 'params', Parameters())
-        return Contentline.from_parts(name, params, value)
+        return Contentline.from_parts(name, params, value, sorted=sorted)
 
-    def content_lines(self):
+    def content_lines(self, sorted=True):
         """Converts the Component and subcomponents into content lines.
         """
         contentlines = Contentlines()
-        for name, value in self.property_items():
-            cl = self.content_line(name, value)
+        for name, value in self.property_items(sorted=sorted):
+            cl = self.content_line(name, value, sorted=sorted)
             contentlines.append(cl)
         contentlines.append('')  # remember the empty string in the end
         return contentlines
 
-    def to_ical(self):
-        content_lines = self.content_lines()
+    def to_ical(self, sorted=True):
+        '''
+        :param sorted: Whether parameters and properties should be
+        lexicographically sorted.
+        '''
+
+        content_lines = self.content_lines(sorted=sorted)
         return content_lines.to_ical()
 
 

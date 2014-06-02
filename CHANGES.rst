@@ -12,6 +12,9 @@ Changelog
 - Remove incorrect use of __all__. We don't encourage using ``from package
   import *`` imports. Fixes #129.
   [eric-wieser]
+- Add optional ``sorted`` parameter to ``Component.to_ical``. Setting it to
+  false allows the user to preserve the original property and parameter order.
+  [untitaker]
 
 
 3.6.2 (2014-04-05)

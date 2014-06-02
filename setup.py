@@ -11,9 +11,17 @@ longdesc += codecs.open('LICENSE.rst', encoding='utf-8').read()
 
 
 tests_require = []
+install_requires = [
+    'setuptools',
+    'python-dateutil',
+    'pytz'
+]
+
 if sys.version_info[:2] == (2, 6):
     # Python unittest2 only needed for Python 2.6
-    tests_require = ['unittest2']
+    tests_require.append('unittest2')
+    # OrderedDict was added in 2.7
+    install_requires.append('ordereddict')
 
 
 setuptools.setup(
@@ -42,11 +50,7 @@ setuptools.setup(
     package_dir={'': 'src'},
     include_package_data=True,
     zip_safe=False,
-    install_requires=[
-        'setuptools',
-        'python-dateutil',
-        'pytz',
-    ],
+    install_requires=install_requires,
     extras_require={
         'test': tests_require
     }
