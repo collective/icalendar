@@ -91,3 +91,4 @@ Output from coverage test::
     src/icalendar/tools             16      0   100%
     ------------------------------------------------
     TOTAL                         1078     84    92%
+
