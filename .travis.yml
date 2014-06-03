@@ -3,7 +3,8 @@ python:
   - "2.6"
   - "2.7"
   - "3.3"
+  - "3.4"
 install:
-  - pip install tox unittest2
+  - pip install tox
 script:
   - tox -e $(echo py$TRAVIS_PYTHON_VERSION | tr -d . | sed -e 's/pypypy/pypy/')

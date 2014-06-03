@@ -17,6 +17,10 @@ with Python.
 ----
 
 
+.. image:: https://travis-ci.org/collective/icalendar.svg?branch=master
+    :target: https://travis-ci.org/collective/icalendar
+
+
 Roadmap
 =======
 
