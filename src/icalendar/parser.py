@@ -257,6 +257,13 @@ def unescape_string(val):
               .replace('%3B', ';').replace('%5C', '\\')
 
 
+def unescape_list_or_string(val):
+    if isinstance(val, list):
+        return [unescape_string(s) for s in val]
+    else:
+        return unescape_string(val)
+
+
 #########################################
 # parsing and generation of content lines
 
@@ -318,7 +325,7 @@ class Contentline(compat.unicode_type):
             params = Parameters.from_ical(st[name_split + 1: value_split],
                                           strict=self.strict)
             params = Parameters(
-                (unescape_string(key), unescape_string(value))
+                (unescape_string(key), unescape_list_or_string(value))
                 for key, value in compat.iteritems(params)
             )
             values = unescape_string(st[value_split + 1:])
