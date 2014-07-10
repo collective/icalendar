@@ -277,3 +277,16 @@ END:VCALENDAR"""
             event.to_ical(),
             icalendar.Event.from_ical(event.to_ical()).to_ical()
         )
+
+    def test_issue_XXX(self):
+        """Issue XXX - Multivalued parameters
+        This is needed for VCard 3.0
+        """
+        from icalendar.parser import Contentline, Parameters
+
+        ctl = Contentline.from_ical("TEL;TYPE=HOME,VOICE:000000000")
+
+        self.assertEqual(
+            ctl.parts(),
+            (u'TEL', Parameters({'TYPE': ['HOME', 'VOICE']}), u'000000000'),
+        )
