@@ -36,3 +36,4 @@ icalendar contributors
 - spanktar <spanky@kapanka.com>
 - tgecho <tgecho@gmail.com>
 - Markus Unterwaditzer <markus@unterwaditzer.net>
+- Thomas Weißschuh <thomas@t-8ch.de>
