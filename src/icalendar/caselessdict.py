@@ -89,7 +89,7 @@ class CaselessDict(OrderedDict):
         return type(self)(super(CaselessDict, self).copy())
 
     def __repr__(self):
-        return 'CaselessDict(%s)' % data_encode(self)
+        return 'CaselessDict(%s)' % dict(self)
 
     def __eq__(self, other):
         return self is other or dict(self.items()) == dict(other.items())
