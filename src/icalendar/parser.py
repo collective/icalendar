@@ -252,7 +252,7 @@ def escape_string(val):
               .replace(r'\;', '%3B').replace(r'\\', '%5C')
 
 
-def unsescape_string(val):
+def unescape_string(val):
     return val.replace('%2C', ',').replace('%3A', ':')\
               .replace('%3B', ';').replace('%5C', '\\')
 
@@ -309,7 +309,7 @@ class Contentline(compat.unicode_type):
                         value_split = i
                 if ch == '"':
                     in_quotes = not in_quotes
-            name = unsescape_string(st[:name_split])
+            name = unescape_string(st[:name_split])
             if not name:
                 raise ValueError('Key name is required')
             validate_token(name)
@@ -318,10 +318,10 @@ class Contentline(compat.unicode_type):
             params = Parameters.from_ical(st[name_split + 1: value_split],
                                           strict=self.strict)
             params = Parameters(
-                (unsescape_string(key), unsescape_string(value))
+                (unescape_string(key), unescape_string(value))
                 for key, value in compat.iteritems(params)
             )
-            values = unsescape_string(st[value_split + 1:])
+            values = unescape_string(st[value_split + 1:])
             return (name, params, values)
         except ValueError as exc:
             raise ValueError(
