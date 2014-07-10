@@ -278,8 +278,8 @@ END:VCALENDAR"""
             icalendar.Event.from_ical(event.to_ical()).to_ical()
         )
 
-    def test_issue_XXX(self):
-        """Issue XXX - Multivalued parameters
+    def test_issue_142(self):
+        """Issue #142 - Multivalued parameters
         This is needed for VCard 3.0
         """
         from icalendar.parser import Contentline, Parameters
