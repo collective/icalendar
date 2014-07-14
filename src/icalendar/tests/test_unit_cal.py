@@ -334,15 +334,14 @@ class TestCalComponent(unittest.TestCase):
         )
 
         # Representation of nested Components
-        calendar.add_component(event)
-        nested = Component(key1='VALUE1', key2='VALUE2')
+        nested = Component(key1='VALUE1')
         nested.add_component(component)
+        calendar.add_component(event)
         nested.add_component(calendar)
-        nested.add_component(event)
 
         self.assertTrue(
             re.match(
-                "Component\({u?'KEY2': 'VALUE2', u?'KEY1': 'VALUE1'}, Component\({u?'KEY1': 'value1'}\), VCALENDAR\({u?'KEY1': 'value1'}, VEVENT\({u?'KEY1': 'value1'}\)\), VEVENT\({u?'KEY1': 'value1'}\)\)",  # nopep8
+                "Component\({u?'KEY1': 'VALUE1'}, Component\({u?'KEY1': 'value1'}\), VCALENDAR\({u?'KEY1': 'value1'}, VEVENT\({u?'KEY1': 'value1'}\)\)\)",  # nopep8
                 str(nested)
             )
         )
