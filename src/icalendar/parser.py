@@ -10,7 +10,6 @@ from icalendar import compat
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.parser_tools import SEQUENCE_TYPES
-from icalendar.parser_tools import data_encode
 from icalendar.parser_tools import to_unicode
 
 import re
