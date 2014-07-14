@@ -97,7 +97,11 @@ def param_value(value):
 
 
 # Could be improved
-NAME = re.compile('[\w-]+')
+
+# [\w-] because of the iCalendar RFC
+# \. because of the vCard RFC
+NAME = re.compile('[\w\.-]+')
+
 UNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7F",:;]')
 QUNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7F"]')
 FOLD = re.compile(b'(\r?\n)+[ \t]')
