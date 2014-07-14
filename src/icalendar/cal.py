@@ -12,7 +12,6 @@ from icalendar.parser import Parameters
 from icalendar.parser import q_join
 from icalendar.parser import q_split
 from icalendar.parser_tools import DEFAULT_ENCODING
-from icalendar.parser_tools import data_encode
 from icalendar.prop import TypesFactory
 from icalendar.prop import vText, vDDDLists
 
@@ -59,13 +58,13 @@ class Component(CaselessDict):
     directy, but rather one of the subclasses.
     """
 
-    name = ''        # must be defined in each component
-    required = ()    # These properties are required
-    singletons = ()  # These properties must only appear once
-    multiple = ()    # may occur more than once
-    exclusive = ()   # These properties are mutually exclusive
-    inclusive = ()   # if any occurs the other(s) MUST occur
-                     # ('duration', 'repeat')
+    name = None         # should be defined in each component
+    required = ()       # These properties are required
+    singletons = ()     # These properties must only appear once
+    multiple = ()       # may occur more than once
+    exclusive = ()      # These properties are mutually exclusive
+    inclusive = ()      # if any occurs the other(s) MUST occur
+                        # ('duration', 'repeat')
     ignore_exceptions = False   # if True, and we cannot parse this
                                 # component, we will silently ignore
                                 # it, rather than let the exception
@@ -262,7 +261,7 @@ class Component(CaselessDict):
         """Recursively traverses component and subcomponents. Returns sequence
         of same. If name is passed, only components with name will be returned.
         """
-        if not name is None:
+        if name is not None:
             name = name.upper()
         return self._walk(name)
 
@@ -368,9 +367,6 @@ class Component(CaselessDict):
                              '{st!r}'.format(**locals()))
         return comps[0]
 
-    def __repr__(self):
-        return '%s(%s)' % (self.name, data_encode(self))
-
     def content_line(self, name, value, sorted=True):
         """Returns property as content line.
         """
@@ -395,6 +391,16 @@ class Component(CaselessDict):
 
         content_lines = self.content_lines(sorted=sorted)
         return content_lines.to_ical()
+
+    def __repr__(self):
+        """String representation of class with all of it's subcomponents.
+        """
+        subs = ', '.join([str(it) for it in self.subcomponents])
+        return '%s(%s%s)' % (
+            self.name,
+            dict(self),
+            ', %s' % subs if subs else ''
+        )
 
 
 #######################################

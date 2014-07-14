@@ -4,6 +4,7 @@ from icalendar.tests import unittest
 
 import icalendar
 import pytz
+import re
 
 
 class TestCalComponent(unittest.TestCase):
@@ -305,6 +306,46 @@ class TestCalComponent(unittest.TestCase):
 
         preserved_str = component.to_ical(sorted=False).splitlines()
         assert preserved_str == component_str
+
+    def test_repr(self):
+        """Test correct class representation.
+        """
+        from icalendar.cal import Component, Calendar, Event
+
+        component = Component()
+        component['key1'] = 'value1'
+
+        self.assertTrue(
+            re.match("Component\({u?'KEY1': 'value1'}\)", str(component))
+        )
+
+        calendar = Calendar()
+        calendar['key1'] = 'value1'
+
+        self.assertTrue(
+            re.match("VCALENDAR\({u?'KEY1': 'value1'}\)", str(calendar))
+        )
+
+        event = Event()
+        event['key1'] = 'value1'
+
+        self.assertTrue(
+            re.match("VEVENT\({u?'KEY1': 'value1'}\)", str(event))
+        )
+
+        # Representation of nested Components
+        calendar.add_component(event)
+        nested = Component(key1='VALUE1', key2='VALUE2')
+        nested.add_component(component)
+        nested.add_component(calendar)
+        nested.add_component(event)
+
+        self.assertTrue(
+            re.match(
+                "Component\({u?'KEY2': 'VALUE2', u?'KEY1': 'VALUE1'}, Component\({u?'KEY1': 'value1'}\), VCALENDAR\({u?'KEY1': 'value1'}, VEVENT\({u?'KEY1': 'value1'}\)\), VEVENT\({u?'KEY1': 'value1'}\)\)",  # nopep8
+                str(nested)
+            )
+        )
 
 
 class TestCal(unittest.TestCase):

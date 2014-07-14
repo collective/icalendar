@@ -191,9 +191,6 @@ class Parameters(CaselessDict):
 #   def decoded(self, name):
 #       "returns a decoded value, or list of same"
 
-    def __repr__(self):
-        return 'Parameters(%s)' % data_encode(self)
-
     def to_ical(self, sorted=True):
         result = []
         items = list(self.items())

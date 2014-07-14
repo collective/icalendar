@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from icalendar.compat import iteritems
 from icalendar.parser_tools import to_unicode
-from icalendar.parser_tools import data_encode
 
 try:
     from collections import OrderedDict
@@ -40,6 +39,9 @@ class CaselessDict(OrderedDict):
             if key != key_upper:
                 super(CaselessDict, self).__delitem__(key)
                 self[key_upper] = value
+
+        # If name not set, use class name instead
+        self.name = getattr(self, 'name', None) or type(self).__name__
 
     def __getitem__(self, key):
         key = to_unicode(key)
@@ -89,7 +91,7 @@ class CaselessDict(OrderedDict):
         return type(self)(super(CaselessDict, self).copy())
 
     def __repr__(self):
-        return 'CaselessDict(%s)' % dict(self)
+        return '%s(%s)' % (self.name, dict(self))
 
     def __eq__(self, other):
         return self is other or dict(self.items()) == dict(other.items())

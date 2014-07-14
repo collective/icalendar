@@ -4,7 +4,12 @@ Changelog
 
 3.8 (unreleased)
 ----------------
- 
+
+- Change class representation for CaselessDict objects to always include the
+  class name or the class' name attribute, if available. Also show
+  subcomponents for Component objects.
+  [thet]
+  
 - Don't use data_encode for CaselessDict class representation but use dict's
   __repr__ method.
   [t-8ch]

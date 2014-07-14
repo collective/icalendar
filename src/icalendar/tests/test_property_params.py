@@ -6,6 +6,7 @@ from icalendar import vCalAddress
 from icalendar.tests import unittest
 
 import icalendar
+import re
 
 
 class TestPropertyParams(unittest.TestCase):
@@ -205,3 +206,11 @@ END:VCALENDAR"""
         self.assertEqual(event['attendee'][0].params.to_ical(),
                          b'CN=RembrandXS;PARTSTAT=NEEDS-ACTION;RSVP=TRUE')
         self.assertEqual(event['attendee'][0].params['cn'], u'RembrandXS')
+
+    def test_repr(self):
+        """Test correct class representation.
+        """
+        it = Parameters(parameter1='Value1')
+        self.assertTrue(
+            re.match("Parameters\({u?'PARAMETER1': 'Value1'}\)", str(it))
+        )
