@@ -4,6 +4,10 @@ Changelog
 
 3.8 (unreleased)
 ----------------
+ 
+- Don't use data_encode for CaselessDict class representation but use dict's
+  __repr__ method.
+  [t-8ch]
 
 - Handle parameters with multiple values, which is needed for VCard 3.0.
   [t-8ch]
