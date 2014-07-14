@@ -5,16 +5,20 @@ Changelog
 3.8 (unreleased)
 ----------------
 
+- Allow dots in property names. Refs #143.
+  [untitaker]
+
 - Change class representation for CaselessDict objects to always include the
   class name or the class' name attribute, if available. Also show
   subcomponents for Component objects.
   [thet]
-  
+
 - Don't use data_encode for CaselessDict class representation but use dict's
   __repr__ method.
   [t-8ch]
 
 - Handle parameters with multiple values, which is needed for VCard 3.0.
+  Refs #142.
   [t-8ch]
 
 

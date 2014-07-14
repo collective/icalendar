@@ -293,3 +293,26 @@ END:VCALENDAR"""
             ctl.parts(),
             (u'TEL', Parameters({'TYPE': ['HOME', 'VOICE']}), u'000000000'),
         )
+
+    def test_issue_143(self):
+        """Issue #143 - Allow dots in property names.
+        Another vCard related issue.
+        https://github.com/collective/icalendar/pull/143
+        """
+        from icalendar.parser import Contentline, Parameters
+
+        ctl = Contentline.from_ical("ITEMADRNULLTHISISTHEADRESS08158SOMECITY12345.ADR:;;This is the Adress 08; Some City;;12345;Germany")  # nopep8
+        self.assertEqual(
+            ctl.parts(),
+            (u'ITEMADRNULLTHISISTHEADRESS08158SOMECITY12345.ADR',
+             Parameters(),
+             u';;This is the Adress 08; Some City;;12345;Germany'),
+        )
+
+        ctl2 = Contentline.from_ical("ITEMADRNULLTHISISTHEADRESS08158SOMECITY12345.X-ABLABEL:")  # nopep8
+        self.assertEqual(
+            ctl2.parts(),
+            (u'ITEMADRNULLTHISISTHEADRESS08158SOMECITY12345.X-ABLABEL',
+             Parameters(),
+             u''),
+        )
