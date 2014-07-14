@@ -252,6 +252,8 @@ END:VCALENDAR"""
 
     def test_issue_116(self):
         """Issue #116/#117 - How to add 'X-APPLE-STRUCTURED-LOCATION'
+        https://github.com/collective/icalendar/issues/116
+        https://github.com/collective/icalendar/issues/117
         """
         event = icalendar.Event()
         event.add(
@@ -280,7 +282,8 @@ END:VCALENDAR"""
 
     def test_issue_142(self):
         """Issue #142 - Multivalued parameters
-        This is needed for VCard 3.0
+        This is needed for VCard 3.0.
+        https://github.com/collective/icalendar/pull/142
         """
         from icalendar.parser import Contentline, Parameters
 

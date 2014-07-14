@@ -5,7 +5,9 @@ Changelog
 3.8 (unreleased)
 ----------------
 
-- Handle parameters with multiple values, which is needed for VCard 3.0
+- Handle parameters with multiple values, which is needed for VCard 3.0.
+  [t-8ch]
+
 
 3.7 (2014-06-02)
 ----------------

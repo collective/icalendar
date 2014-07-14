@@ -3,7 +3,7 @@ import setuptools
 import sys
 
 
-version = '3.7'
+version = '3.8.dev0'
 shortdesc = 'iCalendar parser/generator'
 longdesc = codecs.open('README.rst', encoding='utf-8').read()
 longdesc += codecs.open('CHANGES.rst', encoding='utf-8').read()
@@ -40,7 +40,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.3",
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
-        ],
+    ],
     keywords='calendar calendaring ical icalendar event todo journal '
              'recurring',
     author='Plone Foundation',
