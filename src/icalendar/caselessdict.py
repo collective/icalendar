@@ -40,9 +40,6 @@ class CaselessDict(OrderedDict):
                 super(CaselessDict, self).__delitem__(key)
                 self[key_upper] = value
 
-        # If name not set, use class name instead
-        self.name = getattr(self, 'name', None) or type(self).__name__
-
     def __getitem__(self, key):
         key = to_unicode(key)
         return super(CaselessDict, self).__getitem__(key.upper())
@@ -91,7 +88,7 @@ class CaselessDict(OrderedDict):
         return type(self)(super(CaselessDict, self).copy())
 
     def __repr__(self):
-        return '%s(%s)' % (self.name, dict(self))
+        return '%s(%s)' % (type(self).__name__, dict(self))
 
     def __eq__(self, other):
         return self is other or dict(self.items()) == dict(other.items())

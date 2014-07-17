@@ -397,7 +397,7 @@ class Component(CaselessDict):
         """
         subs = ', '.join([str(it) for it in self.subcomponents])
         return '%s(%s%s)' % (
-            self.name,
+            self.name or type(self).__name__,
             dict(self),
             ', %s' % subs if subs else ''
         )
