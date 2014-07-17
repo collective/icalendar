@@ -2,8 +2,8 @@
 Changelog
 =========
 
-3.9 (unreleased)
-----------------
+3.8.1 (2014-07-17)
+------------------
 
 - The representation of CaselessDicts in 3.8 changed the name attribute of
   Components and therefore broke the external API. This has been fixed.
