@@ -2,10 +2,10 @@
 Changelog
 =========
 
-3.8 (unreleased)
+3.8 (2014-07-17)
 ----------------
 
-- Allow dots in property names. Refs #143.
+- Allow dots in property names (Needed for vCard compatibility). Refs #143.
   [untitaker]
 
 - Change class representation for CaselessDict objects to always include the
@@ -17,7 +17,7 @@ Changelog
   __repr__ method.
   [t-8ch]
 
-- Handle parameters with multiple values, which is needed for VCard 3.0.
+- Handle parameters with multiple values, which is needed for vCard 3.0.
   Refs #142.
   [t-8ch]
 
