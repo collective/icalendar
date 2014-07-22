@@ -3,7 +3,7 @@ import setuptools
 import sys
 
 
-version = '3.9.dev0'
+version = '3.8.2'
 shortdesc = 'iCalendar parser/generator'
 longdesc = codecs.open('README.rst', encoding='utf-8').read()
 longdesc += codecs.open('CHANGES.rst', encoding='utf-8').read()

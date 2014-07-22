@@ -2,7 +2,7 @@
 Changelog
 =========
 
-3.8.2 (unreleased)
+3.8.2 (2014-07-22)
 ------------------
 
 - Exclude editor backup files from egg distributions. Fixes #144.
