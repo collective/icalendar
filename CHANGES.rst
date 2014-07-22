@@ -2,10 +2,11 @@
 Changelog
 =========
 
-3.9 (unreleased)
-----------------
+3.8.2 (unreleased)
+------------------
 
-- Nothing changed yet.
+- Exclude editor backup files from egg distributions. Fixes #144.
+  [thet]
 
 
 3.8.1 (2014-07-17)

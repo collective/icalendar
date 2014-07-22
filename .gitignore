@@ -1,6 +1,7 @@
 *.mo
 *.py?
 *.sw?
+*~
 .*
 bin/
 build/
