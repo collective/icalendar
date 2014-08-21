@@ -438,7 +438,7 @@ class Todo(Component):
     required = ('UID',)
     singletons = (
         'CLASS', 'COMPLETED', 'CREATED', 'DESCRIPTION', 'DTSTAMP', 'DTSTART',
-        'GEO', 'LAST-MODIFIED', 'LOCATION', 'ORGANIZER', 'PERCENT', 'PRIORITY',
+        'GEO', 'LAST-MODIFIED', 'LOCATION', 'ORGANIZER', 'PERCENT-COMPLETE', 'PRIORITY',
         'RECURRENCE-ID', 'SEQUENCE', 'STATUS', 'SUMMARY', 'UID', 'URL', 'DUE',
         'DURATION',
     )
