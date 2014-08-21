@@ -5,7 +5,8 @@ Changelog
 3.9 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- PERCENT property in VTODO renamed to PERCENT-COMPLETE, according to RFC5545.
+  [thomascube]
 
 
 3.8.2 (2014-07-22)
