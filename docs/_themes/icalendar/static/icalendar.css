@@ -20,7 +20,7 @@ body {
     letter-spacing: -0.05em;
     line-height: 1.3em;
     background-color: #F5F4EF;
-    padding: 0;    
+    padding: 0;
     margin: 0 auto;
     width: 950px;
     -moz-box-shadow: 0px 0px 15px #bbb;
@@ -125,7 +125,7 @@ div.related ul li a:hover {
     color: #89c912;
     text-decoration: none;
     border-bottom: #89c912 1px dotted;
-    
+
 }
 
 div.sphinxsidebarwrapper {
@@ -188,7 +188,7 @@ div.footer a:hover {
 
 /* -- body styles ----------------------------------------------------------- */
 
-p {    
+p {
     margin: 0.8em 0 0.5em 0;
 }
 
@@ -416,7 +416,7 @@ div.viewcode-block:target {
 .twtr-widget {
 	font-family: font-family: 'Droid Sans', serif !important;
 }
-    
+
 #disqus_thread {
 	padding: 0.5em 20px 20px 20px;
 	width: 670px;

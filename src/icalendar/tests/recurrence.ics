@@ -19,6 +19,6 @@ EXDATE;TZID=Europe/Vienna:20120410T100000
 EXDATE;TZID=Europe/Vienna:20120501T100000
 EXDATE;TZID=Europe/Vienna:20120417T100000
 DTSTAMP:20130716T120638Z
-SUMMARY:A Recurring event with multiple exdates, one per line. 
+SUMMARY:A Recurring event with multiple exdates, one per line.
 END:VEVENT
 END:VCALENDAR
