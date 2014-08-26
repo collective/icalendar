@@ -6,17 +6,23 @@ icalendar contributors
 - Andreas Zeidler <az@zitc.de>
 - Andrey Nikolaev <nikolaeff@gmail.com>
 - Barak Michener <me@barakmich.com>
-- Christophe de Vienne <cdevienne@gmail.com>
 - Christian Geier <contact@lostpackets.de>
+- Christophe de Vienne <cdevienne@gmail.com>
 - Dai MIKURUBE <dmikurube@acm.org>
 - Dan Stovall <dbstovall@gmail.com>
 - Eric Hanchrow <erich@cozi.com>
+- Eric Wieser <wieser.eric@gmail.com>
 - Erik Simmler <tgecho@gmail.com>
 - George V. Reilly <george@reilly.org>
 - Jannis Leidel <jannis@leidel.info>
 - Jeroen van Meeuwen (Kolab Systems) <vanmeeuwen@kolabsys.com>
+- Jordan Kiang <jordan@cozi.com>
+- Klaus Klein <kleink+github@kleink.org>
+- Laurent Lasudry <lasudry@gmail.com>
 - Lennart Regebro <lregebro@nuxeo.com>
+- Léo S <leo@naeka.fr>
 - Marc Egli <frog32@me.com>
+- Markus Unterwaditzer <markus@unterwaditzer.net>
 - Martijn Faassen <faassen@infrae.com>
 - Martin Melin <git@martinmelin.com>
 - Michael Smith <msmith@fluendo.com>
@@ -31,9 +37,18 @@ icalendar contributors
 - Sidnei da Silva <sidnei@enfoldsystems.com>
 - Stanislav Ochotnicky <sochotnicky@redhat.com>
 - Stefan Schwarzer <sschwarzer@sschwarzer.net>
+- Thomas Bruederli <thomas@roundcube.net>
+- Thomas Weißschuh <thomas@t-8ch.de>
 - Victor Varvaryuk <victor.varvariuc@gmail.com>
 - Wichert Akkerman <wichert@wiggy.net>
+- cillianderoiste <cillian.deroiste@gmail.com>
+- fitnr <fitnr@fakeisthenewreal>
+- hajdbo <boris@hajduk.org>
+- ilya <ilya@boltnev-pc.(none)>
 - spanktar <spanky@kapanka.com>
 - tgecho <tgecho@gmail.com>
-- Markus Unterwaditzer <markus@unterwaditzer.net>
-- Thomas Weißschuh <thomas@t-8ch.de>
+- tisto <tisto@plone.org>
+
+Find out who contributed::
+
+    $ git shortlog -s -e
