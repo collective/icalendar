@@ -12,3 +12,5 @@ Since then many things have changes. For one, `RFC 2445`_ was updated by `RFC
 5545`_ which makes this package. So in some sense this package became outdated.
 
 .. _`Max M`: http://www.mxm.dk
+.. _`RFC 2445`: https://tools.ietf.org/html/rfc2445
+.. _`RFC 5545`: https://tools.ietf.org/html/rfc5545
