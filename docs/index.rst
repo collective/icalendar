@@ -10,5 +10,6 @@ Contents
     about
     install
     usage
+    api
     credits
     license
