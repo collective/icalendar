@@ -624,6 +624,7 @@ class vRecur(CaselessDict):
         'BYSECOND': vInt,
         'BYMINUTE': vInt,
         'BYHOUR': vInt,
+        'BYWEEKNO': vInt,
         'BYMONTHDAY': vInt,
         'BYYEARDAY': vInt,
         'BYMONTH': vInt,
