@@ -34,6 +34,7 @@ icalendar contributors
 - Robert Niederreiter <rnix@squarewave.at>
 - Rok Garbas <rok@garbas.si>
 - Ronan Dunklau <ronan@dunklau.fr>
+- Russ <russ@rw.id.au>
 - Sidnei da Silva <sidnei@enfoldsystems.com>
 - Stanislav Ochotnicky <sochotnicky@redhat.com>
 - Stefan Schwarzer <sschwarzer@sschwarzer.net>

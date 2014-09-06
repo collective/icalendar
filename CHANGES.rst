@@ -5,7 +5,8 @@ Changelog
 3.9 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Add missing BYWEEKNO to recurrence rules.
+  [russkel]
 
 
 3.8.3 (2014-08-26)
