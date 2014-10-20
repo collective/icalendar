@@ -310,7 +310,7 @@ class vDDDTypes(object):
         if isinstance(ical, cls):
             return ical.dt
         u = ical.upper()
-        if u.startswith('-P') or u.startswith('P') or u.startswith('+P'):
+        if u.startswith(('P', '-P', '+P')):
             return vDuration.from_ical(ical)
         try:
             return vDatetime.from_ical(ical, timezone=timezone)
