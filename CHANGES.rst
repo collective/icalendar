@@ -2,8 +2,8 @@
 Changelog
 =========
 
-3.9 (unreleased)
-----------------
+3.8.4 (2014-11-01)
+------------------
 
 - Add missing BYWEEKNO to recurrence rules.
   [russkel]
