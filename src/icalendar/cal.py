@@ -4,7 +4,7 @@ files according to rfc2445.
 
 These are the defined components.
 """
-from datetime import datetime
+from datetime import datetime, timedelta
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Contentline
 from icalendar.parser import Contentlines
@@ -14,8 +14,11 @@ from icalendar.parser import q_split
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import TypesFactory
 from icalendar.prop import vText, vDDDLists
+from icalendar.timezone_cache import _timezone_cache
 
 import pytz
+import dateutil.rrule
+from pytz.tzinfo import DstTzInfo
 
 
 ######################################
@@ -337,6 +340,11 @@ class Component(CaselessDict):
                 else:
                     if not component.is_broken:
                         stack[-1].add_component(component)
+                if vals == 'VTIMEZONE' and \
+                        'TZID' in component and \
+                        component['TZID'] not in pytz.all_timezones and \
+                        component['TZID'] not in _timezone_cache:
+                    _timezone_cache[component['TZID']] = component.to_tz()
             # we are adding properties to the current top of the stack
             else:
                 factory = types_factory.for_property(name)
@@ -482,6 +490,91 @@ class Timezone(Component):
     canonical_order = ('TZID', 'STANDARD', 'DAYLIGHT',)
     required = ('TZID', 'STANDARD', 'DAYLIGHT',)
     singletons = ('TZID', 'LAST-MODIFIED', 'TZURL',)
+
+    def to_tz(self):
+        """convert this VTIMEZONE component to a pytz.timezone object
+        """
+        # TODO check for case where dst moves timezone over dateline
+        zone = str(self['TZID'])
+        transitions = list()
+        dst = dict()
+        for component in self.walk():
+            if type(component) == Timezone:
+                continue
+
+            tzname = str(component['TZNAME'])
+            offsetfrom = component['TZOFFSETFROM'].td
+            offsetto = component['TZOFFSETTO'].td
+            dtstart = component['DTSTART'].dt
+
+            # offsets need to be rounded to the next minute, we might loose up
+            # to 30 seconds accuracy, but it can't be helped (datetime
+            # supposedly cannot handle smaller offsets)
+            offsetto_s = int((offsetto.seconds + 30) / 60) * 60
+            offsetto = timedelta(days=offsetto.days, seconds=offsetto_s)
+            offsetfrom_s = int((offsetfrom.seconds + 30) / 60) * 60
+            offsetfrom = timedelta(days=offsetfrom.days, seconds=offsetfrom_s)
+
+            # expand recurrences
+            if 'RRULE' in component:
+                rrulestr = component['RRULE'].to_ical()
+                rrule = dateutil.rrule.rrulestr(rrulestr, dtstart=dtstart)
+                if not set(['UNTIL', 'COUNT']).intersection(component['RRULE'].keys()):
+                    # pytz.timezones don't know any transition dates after 2038
+                    # either
+                    rrule._until = datetime(2038, 12, 31)
+                elif rrule._until.tzinfo:
+                    rrule._until = rrule._until.replace(tzinfo=None)
+                transtimes = rrule
+            # or rdates
+            elif 'RDATE' in component:
+                transtimes = [dtstart] + [one.dt for one in component['RDATE'].dts]
+            else:
+                transtimes = [dtstart]
+
+            for transtime in transtimes:
+                transitions.append((transtime, offsetfrom, offsetto, tzname))
+
+            if component.name == 'STANDARD':
+                dst[tzname] = 0
+            elif component.name == 'DAYLIGHT':
+                dst[tzname] = 1
+            else:
+                raise ValueError('unknown component name')
+
+        transitions.sort()
+        transition_times = [transtime - osfrom for transtime, osfrom, _, _ in transitions]
+
+        # transition_info is a list with tuples in the format
+        # (utcoffset, dstoffset, name)
+        # dstoffset = 0, if current transition is to standard time
+        #           = this_utcoffset - prev_standard_utcoffset, otherwise
+        transition_info = list()
+        for num, (transtime, osfrom, osto, name) in enumerate(transitions):
+            dst_offset = False
+            if not dst[name]:
+                dst_offset = timedelta(seconds=0)
+            else:
+                # go back in time until we find a transition to dst
+                for index in range(num - 1, -1, -1):
+                    if not dst[transitions[index][3]]:  # [3] is the name
+                        dst_offset = osto - transitions[index][2]  # [2] is osto
+                        break
+                # when the first transition is to dst, we didn't find anything in
+                # the past, so we have to look into the future
+                if not dst_offset:
+                    for index in range(num, len(transitions)):
+                        if not dst[transitions[index][3]]:  # [3] is the name
+                            dst_offset = osto - transitions[index][2]  # [2] is osto
+                            break
+            transition_info.append((osto, dst_offset, name))
+
+        cls = type(zone, (DstTzInfo,), dict(
+            zone=zone,
+            _utc_transition_times=transition_times,
+            _transition_info=transition_info))
+
+        return cls()
 
 
 class TimezoneStandard(Component):
