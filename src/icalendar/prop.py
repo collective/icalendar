@@ -55,6 +55,7 @@ from icalendar.parser import unescape_char
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.parser_tools import SEQUENCE_TYPES
 from icalendar.parser_tools import to_unicode
+from icalendar.timezone_cache import _timezone_cache
 
 import base64
 import binascii
@@ -387,7 +388,7 @@ class vDatetime(object):
             try:
                 tzinfo = pytz.timezone(timezone)
             except pytz.UnknownTimeZoneError:
-                pass
+                tzinfo = _timezone_cache.get(timezone, None)
 
         try:
             timetuple = (
