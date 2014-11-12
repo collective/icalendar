@@ -34,7 +34,7 @@ Changes in version 3.0
 API Change
 ----------
 
-Since version we unified to icalendar de/serialization API to use only to_ical
+Since version 3.0 the icalendar de/serialization API is unified to use only to_ical
 (for writing an ical string from the internal representation) and from_ical
 (for parsing an ical string into the internal representation).
 
@@ -55,19 +55,19 @@ instances. The timezone identifiers must be valid pytz respectively Olson
 database timezone identifiers. This can be a problem for 'GMT' identifiers,
 which are not defined in the Olson database.
 
-Instead of the own UTC tzinfo implementation we use pytz UTC tzinfo object now.
+Instead of our own UTC tzinfo implementation we use pytz UTC tzinfo object now.
 
 
 About this fork which is not a fork anymore
 ===========================================
 
-Aim of this fork (not fork anymore, read further) was to bring this package up
-to date with latest icalendar `RFC`_ specification as part of
-`plone.app.event`_ project which goal is to bring recurrent evens to `Plone`_.
+The aim of this fork (not fork anymore, read further) was to bring this package
+up to date with latest icalendar `RFC`_ specification as part of
+`plone.app.event`_ project which goal is to bring recurrent events to `Plone`_.
 
 After some thoughts we (Plone developers involved with `plone.app.event`_) send
-a suggestion to icalendar-dev@codespeak.net to take over mainaining of
-`icalendar`_. Nobody object and since version 2.2 we are back to development.
+a suggestion to icalendar-dev@codespeak.net to take over maintaining of
+`icalendar`_. Nobody objected and since version 2.2 we are back to development.
 
 .. _`icalendar`: http://pypi.python.org/pypi/icalendar
 .. _`plone.app.event`: http://github.com/plone/plone.app.event
