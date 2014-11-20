@@ -5,7 +5,8 @@ Changelog
 3.8.5 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Documentation fixes.
+  [t-8ch, thet]
 
 
 3.8.4 (2014-11-01)
