@@ -10,6 +10,6 @@ Contents
     about
     install
     usage
-    RFC 5545 <rfc5545/index>
+    api
     credits
     license

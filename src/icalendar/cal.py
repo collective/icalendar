@@ -386,7 +386,7 @@ class Component(CaselessDict):
     def to_ical(self, sorted=True):
         '''
         :param sorted: Whether parameters and properties should be
-        lexicographically sorted.
+                       lexicographically sorted.
         '''
 
         content_lines = self.content_lines(sorted=sorted)
