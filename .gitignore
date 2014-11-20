@@ -13,6 +13,7 @@ eggs/
 htmlcov/
 include/
 lib/
+lib64
 parts/
 src/icalendar.egg-info/
 !.gitignore
