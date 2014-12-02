@@ -61,9 +61,9 @@ class TestCaselessdict(unittest.TestCase):
         CaselessDict = icalendar.caselessdict.CaselessDict
         
         original_dict = CaselessDict(key1='val1', key2='val2')
-        copied_dict = originalDict.copy()
+        copied_dict = original_dict.copy()
 
-        self.assertEqual(originalDict, copyDict)
+        self.assertEqual(original_dict, copied_dict)
 
     def test_CaselessDict(self):
         CaselessDict = icalendar.caselessdict.CaselessDict
