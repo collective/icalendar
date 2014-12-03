@@ -57,6 +57,14 @@ class TestCaselessdict(unittest.TestCase):
              ('e', [4, 5]), ('l', (2, 3)), ('n', 13), ('r', 1.0)]
         )
 
+    def test_caselessdict_copy(self):
+        CaselessDict = icalendar.caselessdict.CaselessDict
+        
+        original_dict = CaselessDict(key1='val1', key2='val2')
+        copied_dict = original_dict.copy()
+
+        self.assertEqual(original_dict, copied_dict)
+
     def test_CaselessDict(self):
         CaselessDict = icalendar.caselessdict.CaselessDict
 
