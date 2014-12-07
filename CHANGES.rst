@@ -2,11 +2,13 @@
 Changelog
 =========
 
-3.8.5 (unreleased)
+3.9.0 (unreleased)
 ------------------
 
 - Documentation fixes.
   [t-8ch, thet]
+- Creating timezone objects from VTIMETZONE components [geier]
+- Make ``python-dateutil`` a dependency [geier]
 
 - Made RRULE tolerant of trailing semicolons.
   [sleeper]
