@@ -143,3 +143,32 @@ class TestTimezoned(unittest.TestCase):
                         == b'20120830T224100Z')
         self.assertTrue(icalendar.vDDDTypes(date2).to_ical()
                         == b'20120830T224100')
+
+
+class TestTimezoneCreation(unittest.TestCase):
+    def test_create_america_new_york(self):
+        """testing the America/New_York, the most complex example from the
+        RFC"""
+
+        directory = os.path.dirname(__file__)
+        cal = icalendar.Calendar.from_ical(
+            open(os.path.join(directory, 'america_new_york.ics'), 'rb').read()
+        )
+
+        tz = cal.walk('VEVENT')[0]['DTSTART'][0].dt.tzinfo
+        self.assertEqual(str(tz), 'custom_America/New_York')
+        pytz_new_york = pytz.timezone('America/New_York')
+        # pytz's information starts earlier, the VTIMEZONE transition times
+        # go on longer into the future
+        self.assertEqual(tz._utc_transition_times[:142],
+                         pytz_new_york._utc_transition_times[95:])
+        self.assertEqual(tz._transition_info[0:142],
+                         pytz_new_york._transition_info[95:])
+        self.assertIn(
+            (datetime.timedelta(-1, 72000), datetime.timedelta(0, 3600), 'EDT'),
+            tz._tzinfos.keys()
+        )
+        self.assertIn(
+            (datetime.timedelta(-1, 68400), datetime.timedelta(0), 'EST'),
+            tz._tzinfos.keys()
+        )
