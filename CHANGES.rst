@@ -2,11 +2,13 @@
 Changelog
 =========
 
-3.8.5 (unreleased)
+3.9.0 (unreleased)
 ------------------
 
 - Documentation fixes.
   [t-8ch, thet]
+- Creating timezone objects from VTIMETZONE components [geier]
+- Make ``python-dateutil`` a dependency [geier]
 
 
 3.8.4 (2014-11-01)
