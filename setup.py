@@ -14,8 +14,9 @@ tests_require = [
     'python-dateutil',
 ]
 install_requires = [
+    'python-dateutil',
+    'pytz',
     'setuptools',
-    'pytz'
 ]
 
 if sys.version_info[:2] == (2, 6):
@@ -52,7 +53,4 @@ setuptools.setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=install_requires,
-    extras_require={
-        'test': tests_require
-    }
 )
