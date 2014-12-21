@@ -7,7 +7,7 @@ Changelog
 
 - Documentation fixes.
   [t-8ch, thet]
-- Creating timezone objects from VTIMETZONE components [geier]
+- Creating timezone objects from VTIMEZONE components [geier]
 - Make ``python-dateutil`` a dependency [geier]
 
 
