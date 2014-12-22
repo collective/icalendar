@@ -491,58 +491,67 @@ class Timezone(Component):
     required = ('TZID', 'STANDARD', 'DAYLIGHT',)
     singletons = ('TZID', 'LAST-MODIFIED', 'TZURL',)
 
+    @staticmethod
+    def _extract_offsets(component):
+        """extract offsets and transition times from a VTIMEZONE component
+        :param component: a STANDARD or DAYLIGHT component
+        """
+        tzname = str(component['TZNAME'])
+        offsetfrom = component['TZOFFSETFROM'].td
+        offsetto = component['TZOFFSETTO'].td
+        dtstart = component['DTSTART'].dt
+
+        # offsets need to be rounded to the next minute, we might loose up
+        # to 30 seconds accuracy, but it can't be helped (datetime
+        # supposedly cannot handle smaller offsets)
+        offsetto_s = int((offsetto.seconds + 30) / 60) * 60
+        offsetto = timedelta(days=offsetto.days, seconds=offsetto_s)
+        offsetfrom_s = int((offsetfrom.seconds + 30) / 60) * 60
+        offsetfrom = timedelta(days=offsetfrom.days, seconds=offsetfrom_s)
+
+        # expand recurrences
+        if 'RRULE' in component:
+            rrulestr = component['RRULE'].to_ical().decode('utf-8')
+            rrule = dateutil.rrule.rrulestr(rrulestr, dtstart=dtstart)
+            if not set(['UNTIL', 'COUNT']).intersection(component['RRULE'].keys()):
+                # pytz.timezones don't know any transition dates after 2038
+                # either
+                rrule._until = datetime(2038, 12, 31)
+            elif rrule._until.tzinfo:
+                rrule._until = rrule._until.replace(tzinfo=None)
+            transtimes = rrule
+        # or rdates
+        elif 'RDATE' in component:
+            if not isinstance(component['RDATE'], list):
+                rdates = [component['RDATE']]
+            else:
+                rdates = component['RDATE']
+            transtimes = [dtstart] + [leaf.dt for tree in rdates for
+                                      leaf in tree.dts]
+        else:
+            transtimes = [dtstart]
+
+        transitions = [(transtime, offsetfrom, offsetto, tzname) for
+                       transtime in set(transtimes)]
+
+        if component.name == 'STANDARD':
+            is_dst = 0
+        elif component.name == 'DAYLIGHT':
+            is_dst = 1
+        return is_dst, transitions
+
     def to_tz(self):
         """convert this VTIMEZONE component to a pytz.timezone object
         """
-        # TODO check for case where dst moves timezone over dateline
         zone = str(self['TZID'])
         transitions = list()
         dst = dict()
         for component in self.walk():
             if type(component) == Timezone:
                 continue
-
             tzname = str(component['TZNAME'])
-            offsetfrom = component['TZOFFSETFROM'].td
-            offsetto = component['TZOFFSETTO'].td
-            dtstart = component['DTSTART'].dt
-
-            # offsets need to be rounded to the next minute, we might loose up
-            # to 30 seconds accuracy, but it can't be helped (datetime
-            # supposedly cannot handle smaller offsets)
-            offsetto_s = int((offsetto.seconds + 30) / 60) * 60
-            offsetto = timedelta(days=offsetto.days, seconds=offsetto_s)
-            offsetfrom_s = int((offsetfrom.seconds + 30) / 60) * 60
-            offsetfrom = timedelta(days=offsetfrom.days, seconds=offsetfrom_s)
-
-            # expand recurrences
-            if 'RRULE' in component:
-                rrulestr = component['RRULE'].to_ical().decode('utf-8')
-                rrule = dateutil.rrule.rrulestr(rrulestr, dtstart=dtstart)
-                if not set(['UNTIL', 'COUNT']).intersection(component['RRULE'].keys()):
-                    # pytz.timezones don't know any transition dates after 2038
-                    # either
-                    rrule._until = datetime(2038, 12, 31)
-                elif rrule._until.tzinfo:
-                    rrule._until = rrule._until.replace(tzinfo=None)
-                transtimes = rrule
-            # or rdates
-            elif 'RDATE' in component:
-                if not isinstance(component['RDATE'], list):
-                    rdates = [component['RDATE']]
-                else:
-                    rdates = component['RDATE']
-                transtimes = [dtstart] + [leaf.dt for tree in rdates for leaf in tree.dts]
-            else:
-                transtimes = [dtstart]
-
-            for transtime in set(transtimes):
-                transitions.append((transtime, offsetfrom, offsetto, tzname))
-
-            if component.name == 'STANDARD':
-                dst[tzname] = 0
-            elif component.name == 'DAYLIGHT':
-                dst[tzname] = 1
+            dst[tzname], component_transitions = self._extract_offsets(component)
+            transitions.extend(component_transitions)
 
         transitions.sort()
         transition_times = [transtime - osfrom for transtime, osfrom, _, _ in transitions]
