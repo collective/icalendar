@@ -543,8 +543,6 @@ class Timezone(Component):
                 dst[tzname] = 0
             elif component.name == 'DAYLIGHT':
                 dst[tzname] = 1
-            else:
-                raise ValueError('unknown component name')
 
         transitions.sort()
         transition_times = [transtime - osfrom for transtime, osfrom, _, _ in transitions]
