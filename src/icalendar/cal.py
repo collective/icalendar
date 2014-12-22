@@ -536,7 +536,7 @@ class Timezone(Component):
             else:
                 transtimes = [dtstart]
 
-            for transtime in transtimes:
+            for transtime in set(transtimes):
                 transitions.append((transtime, offsetfrom, offsetto, tzname))
 
             if component.name == 'STANDARD':
