@@ -147,7 +147,7 @@ class TestTimezoned(unittest.TestCase):
 
 class TestTimezoneCreation(unittest.TestCase):
     def test_create_america_new_york(self):
-        """testing the America/New_York, the most complex example from the
+        """testing America/New_York, the most complex example from the
         RFC"""
 
         directory = os.path.dirname(__file__)
@@ -170,5 +170,32 @@ class TestTimezoneCreation(unittest.TestCase):
         )
         self.assertIn(
             (datetime.timedelta(-1, 68400), datetime.timedelta(0), 'EST'),
+            tz._tzinfos.keys()
+        )
+
+    def test_create_pacific_fiji(self):
+        """testing Pacific/Fiji, another pretty complex example with more than
+        one RDATE property per subcomponent"""
+        self.maxDiff = None
+
+        directory = os.path.dirname(__file__)
+        cal = icalendar.Calendar.from_ical(
+            open(os.path.join(directory, 'pacific_fiji.ics'), 'rb').read()
+        )
+
+        tz = cal.walk('VEVENT')[0]['DTSTART'][0].dt.tzinfo
+        self.assertEqual(str(tz), 'custom_Pacific/Fiji')
+        pytz_fiji = pytz.timezone('Pacific/Fiji')
+        # pytz first transition time is datetime.datetime(1, 1, 1, 0, 0)
+        self.assertEqual(tz._utc_transition_times[1:-2],
+                         pytz_fiji._utc_transition_times[2:])
+        self.assertEqual(tz._transition_info[1:-2],
+                         pytz_fiji._transition_info[2:])
+        self.assertIn(
+            (datetime.timedelta(0, 46800), datetime.timedelta(0, 3600), 'FJST'),
+            tz._tzinfos.keys()
+        )
+        self.assertIn(
+            (datetime.timedelta(0, 43200), datetime.timedelta(0), 'FJT'),
             tz._tzinfos.keys()
         )
