@@ -528,7 +528,11 @@ class Timezone(Component):
                 transtimes = rrule
             # or rdates
             elif 'RDATE' in component:
-                transtimes = [dtstart] + [one.dt for one in component['RDATE'].dts]
+                if not isinstance(component['RDATE'], list):
+                    rdates = [component['RDATE']]
+                else:
+                    rdates = component['RDATE']
+                transtimes = [dtstart] + [leaf.dt for tree in rdates for leaf in tree.dts]
             else:
                 transtimes = [dtstart]
 
