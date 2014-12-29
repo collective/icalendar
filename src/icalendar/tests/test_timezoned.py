@@ -185,12 +185,79 @@ class TestTimezoneCreation(unittest.TestCase):
 
         tz = cal.walk('VEVENT')[0]['DTSTART'][0].dt.tzinfo
         self.assertEqual(str(tz), 'custom_Pacific/Fiji')
-        pytz_fiji = pytz.timezone('Pacific/Fiji')
-        # pytz first transition time is datetime.datetime(1, 1, 1, 0, 0)
-        self.assertEqual(tz._utc_transition_times[1:-2],
-                         pytz_fiji._utc_transition_times[2:])
-        self.assertEqual(tz._transition_info[1:-2],
-                         pytz_fiji._transition_info[2:])
+        self.assertEqual(tz._utc_transition_times,
+                         [datetime.datetime(1915, 10, 25, 12, 4),
+                          datetime.datetime(1998, 10, 31, 14, 0),
+                          datetime.datetime(1999, 2, 27, 14, 0),
+                          datetime.datetime(1999, 11, 6, 14, 0),
+                          datetime.datetime(2000, 2, 26, 14, 0),
+                          datetime.datetime(2009, 11, 28, 14, 0),
+                          datetime.datetime(2010, 3, 27, 14, 0),
+                          datetime.datetime(2010, 10, 23, 14, 0),
+                          datetime.datetime(2011, 3, 5, 14, 0),
+                          datetime.datetime(2011, 10, 22, 14, 0),
+                          datetime.datetime(2012, 1, 21, 14, 0),
+                          datetime.datetime(2012, 10, 20, 14, 0),
+                          datetime.datetime(2013, 1, 19, 14, 0),
+                          datetime.datetime(2013, 10, 26, 14, 0),
+                          datetime.datetime(2014, 1, 18, 13, 0),
+                          datetime.datetime(2014, 10, 25, 14, 0),
+                          datetime.datetime(2015, 1, 17, 13, 0),
+                          datetime.datetime(2015, 10, 24, 14, 0),
+                          datetime.datetime(2016, 1, 23, 13, 0),
+                          datetime.datetime(2016, 10, 22, 14, 0),
+                          datetime.datetime(2017, 1, 21, 13, 0),
+                          datetime.datetime(2017, 10, 21, 14, 0),
+                          datetime.datetime(2018, 1, 20, 13, 0),
+                          datetime.datetime(2018, 10, 20, 14, 0),
+                          datetime.datetime(2019, 1, 19, 13, 0),
+                          datetime.datetime(2019, 10, 26, 14, 0),
+                          datetime.datetime(2020, 1, 18, 13, 0),
+                          datetime.datetime(2020, 10, 24, 14, 0),
+                          datetime.datetime(2021, 1, 23, 13, 0),
+                          datetime.datetime(2021, 10, 23, 14, 0),
+                          datetime.datetime(2022, 1, 22, 13, 0),
+                          datetime.datetime(2022, 10, 22, 14, 0),
+                          datetime.datetime(2023, 1, 21, 13, 0),
+                          datetime.datetime(2023, 10, 21, 14, 0),
+                          datetime.datetime(2024, 1, 20, 13, 0),
+                          datetime.datetime(2024, 10, 26, 14, 0),
+                          datetime.datetime(2025, 1, 18, 13, 0),
+                          datetime.datetime(2025, 10, 25, 14, 0),
+                          datetime.datetime(2026, 1, 17, 13, 0),
+                          datetime.datetime(2026, 10, 24, 14, 0),
+                          datetime.datetime(2027, 1, 23, 13, 0),
+                          datetime.datetime(2027, 10, 23, 14, 0),
+                          datetime.datetime(2028, 1, 22, 13, 0),
+                          datetime.datetime(2028, 10, 21, 14, 0),
+                          datetime.datetime(2029, 1, 20, 13, 0),
+                          datetime.datetime(2029, 10, 20, 14, 0),
+                          datetime.datetime(2030, 1, 19, 13, 0),
+                          datetime.datetime(2030, 10, 26, 14, 0),
+                          datetime.datetime(2031, 1, 18, 13, 0),
+                          datetime.datetime(2031, 10, 25, 14, 0),
+                          datetime.datetime(2032, 1, 17, 13, 0),
+                          datetime.datetime(2032, 10, 23, 14, 0),
+                          datetime.datetime(2033, 1, 22, 13, 0),
+                          datetime.datetime(2033, 10, 22, 14, 0),
+                          datetime.datetime(2034, 1, 21, 13, 0),
+                          datetime.datetime(2034, 10, 21, 14, 0),
+                          datetime.datetime(2035, 1, 20, 13, 0),
+                          datetime.datetime(2035, 10, 20, 14, 0),
+                          datetime.datetime(2036, 1, 19, 13, 0),
+                          datetime.datetime(2036, 10, 25, 14, 0),
+                          datetime.datetime(2037, 1, 17, 13, 0),
+                          datetime.datetime(2037, 10, 24, 14, 0),
+                          datetime.datetime(2038, 1, 23, 13, 0),
+                          datetime.datetime(2038, 10, 23, 14, 0)]
+
+                         )
+        self.assertEqual(
+            tz._transition_info,
+            32 * [(datetime.timedelta(0, 43200), datetime.timedelta(0), 'FJT'),
+                  (datetime.timedelta(0, 46800), datetime.timedelta(0, 3600), 'FJST')]
+        )
+
         self.assertIn(
             (datetime.timedelta(0, 46800), datetime.timedelta(0, 3600), 'FJST'),
             tz._tzinfos.keys()
