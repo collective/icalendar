@@ -2,10 +2,21 @@
 # icalendar documentation build configuration file
 import pkg_resources
 import datetime
-import sphinx_rtd_theme
+import os
 
-html_theme = "sphinx_rtd_theme"
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+
+try:
+    import sphinx_rtd_theme
+    html_theme = 'sphinx_rtd_theme'
+    html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+except ImportError:
+    html_theme = 'default'
+    if not on_rtd:
+        print('-' * 74)
+        print('Warning: sphinx-rtd-theme not installed, building with default '
+              'theme.')
+        print('-' * 74)
 
 extensions = [
     'sphinx.ext.autodoc',
