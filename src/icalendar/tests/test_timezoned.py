@@ -254,15 +254,21 @@ class TestTimezoneCreation(unittest.TestCase):
                          )
         self.assertEqual(
             tz._transition_info,
-            32 * [(datetime.timedelta(0, 43200), datetime.timedelta(0), 'FJT'),
-                  (datetime.timedelta(0, 46800), datetime.timedelta(0, 3600), 'FJST')]
+            [(datetime.timedelta(0, 43200), datetime.timedelta(0), 'custom_Pacific/Fiji_19151026T000000')] +
+            3 * [(datetime.timedelta(0, 46800), datetime.timedelta(0, 3600), 'custom_Pacific/Fiji_19981101T020000'),
+                 (datetime.timedelta(0, 43200), datetime.timedelta(0), 'custom_Pacific/Fiji_19990228T030000'), ] +
+            3 * [(datetime.timedelta(0, 46800), datetime.timedelta(0, 3600), 'custom_Pacific/Fiji_20101024T020000'),
+                 (datetime.timedelta(0, 43200), datetime.timedelta(0), 'custom_Pacific/Fiji_19990228T030000'), ] +
+            25 * [(datetime.timedelta(0, 46800), datetime.timedelta(0, 3600), 'custom_Pacific/Fiji_20101024T020000'),
+                  (datetime.timedelta(0, 43200), datetime.timedelta(0), 'custom_Pacific/Fiji_20140119T020000'), ] +
+            [(datetime.timedelta(0, 46800), datetime.timedelta(0, 3600), 'custom_Pacific/Fiji_20101024T020000')]
         )
 
         self.assertIn(
-            (datetime.timedelta(0, 46800), datetime.timedelta(0, 3600), 'FJST'),
+            (datetime.timedelta(0, 46800), datetime.timedelta(0, 3600), 'custom_Pacific/Fiji_19981101T020000'),
             tz._tzinfos.keys()
         )
         self.assertIn(
-            (datetime.timedelta(0, 43200), datetime.timedelta(0), 'FJT'),
+            (datetime.timedelta(0, 43200), datetime.timedelta(0), 'custom_Pacific/Fiji_19990228T030000'),
             tz._tzinfos.keys()
         )
