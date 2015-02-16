@@ -492,11 +492,16 @@ class Timezone(Component):
     singletons = ('TZID', 'LAST-MODIFIED', 'TZURL',)
 
     @staticmethod
-    def _extract_offsets(component):
+    def _extract_offsets(component, zone):
         """extract offsets and transition times from a VTIMEZONE component
         :param component: a STANDARD or DAYLIGHT component
+        :param zone: the name of the zone, used for constructing a TZNAME if
+                     this component has none
         """
-        tzname = str(component['TZNAME'])
+        try:
+            tzname = str(component['TZNAME'])
+        except KeyError:
+            tzname = zone + '_' + component['DTSTART'].to_ical().decode('utf-8')
         offsetfrom = component['TZOFFSETFROM'].td
         offsetto = component['TZOFFSETTO'].td
         dtstart = component['DTSTART'].dt
@@ -549,8 +554,11 @@ class Timezone(Component):
         for component in self.walk():
             if type(component) == Timezone:
                 continue
-            tzname = str(component['TZNAME'])
-            dst[tzname], component_transitions = self._extract_offsets(component)
+            try:
+                tzname = str(component['TZNAME'])
+            except KeyError:
+                tzname = zone + '_' + component['DTSTART'].to_ical().decode('utf-8')
+            dst[tzname], component_transitions = self._extract_offsets(component, zone)
             transitions.extend(component_transitions)
 
         transitions.sort()
