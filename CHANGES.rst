@@ -8,6 +8,9 @@ Changelog
 - Documentation fixes.
   [t-8ch, thet]
 
+- Made RRULE tolerant of trailing semicolons.
+  [sleeper]
+
 
 3.8.4 (2014-11-01)
 ------------------
