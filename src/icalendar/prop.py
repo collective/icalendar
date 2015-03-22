@@ -666,7 +666,10 @@ class vRecur(CaselessDict):
         try:
             recur = cls()
             for pairs in ical.split(';'):
-                key, vals = pairs.split('=')
+                try:
+                    key, vals = pairs.split('=')
+                except ValueError:
+                    continue
                 recur[key] = cls.parse_type(key, vals)
             return dict(recur)
         except:
