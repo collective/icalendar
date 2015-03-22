@@ -666,9 +666,11 @@ class vRecur(CaselessDict):
         try:
             recur = cls()
             for pairs in ical.split(';'):
-                if len(pairs) >= 3:
+                try:
                     key, vals = pairs.split('=')
-                    recur[key] = cls.parse_type(key, vals)
+                except ValueError:
+                    continue
+                recur[key] = cls.parse_type(key, vals)
             return dict(recur)
         except:
             raise ValueError('Error in recurrence rule: %s' % ical)
