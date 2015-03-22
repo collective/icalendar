@@ -143,3 +143,132 @@ class TestTimezoned(unittest.TestCase):
                         == b'20120830T224100Z')
         self.assertTrue(icalendar.vDDDTypes(date2).to_ical()
                         == b'20120830T224100')
+
+
+class TestTimezoneCreation(unittest.TestCase):
+    def test_create_america_new_york(self):
+        """testing America/New_York, the most complex example from the
+        RFC"""
+
+        directory = os.path.dirname(__file__)
+        cal = icalendar.Calendar.from_ical(
+            open(os.path.join(directory, 'america_new_york.ics'), 'rb').read()
+        )
+
+        tz = cal.walk('VEVENT')[0]['DTSTART'][0].dt.tzinfo
+        self.assertEqual(str(tz), 'custom_America/New_York')
+        pytz_new_york = pytz.timezone('America/New_York')
+        # pytz's information starts earlier, the VTIMEZONE transition times
+        # go on longer into the future
+        self.assertEqual(tz._utc_transition_times[:142],
+                         pytz_new_york._utc_transition_times[95:])
+        self.assertEqual(tz._transition_info[0:142],
+                         pytz_new_york._transition_info[95:])
+        self.assertIn(
+            (datetime.timedelta(-1, 72000), datetime.timedelta(0, 3600), 'EDT'),
+            tz._tzinfos.keys()
+        )
+        self.assertIn(
+            (datetime.timedelta(-1, 68400), datetime.timedelta(0), 'EST'),
+            tz._tzinfos.keys()
+        )
+
+    def test_create_pacific_fiji(self):
+        """testing Pacific/Fiji, another pretty complex example with more than
+        one RDATE property per subcomponent"""
+        self.maxDiff = None
+
+        directory = os.path.dirname(__file__)
+        cal = icalendar.Calendar.from_ical(
+            open(os.path.join(directory, 'pacific_fiji.ics'), 'rb').read()
+        )
+
+        tz = cal.walk('VEVENT')[0]['DTSTART'][0].dt.tzinfo
+        self.assertEqual(str(tz), 'custom_Pacific/Fiji')
+        self.assertEqual(tz._utc_transition_times,
+                         [datetime.datetime(1915, 10, 25, 12, 4),
+                          datetime.datetime(1998, 10, 31, 14, 0),
+                          datetime.datetime(1999, 2, 27, 14, 0),
+                          datetime.datetime(1999, 11, 6, 14, 0),
+                          datetime.datetime(2000, 2, 26, 14, 0),
+                          datetime.datetime(2009, 11, 28, 14, 0),
+                          datetime.datetime(2010, 3, 27, 14, 0),
+                          datetime.datetime(2010, 10, 23, 14, 0),
+                          datetime.datetime(2011, 3, 5, 14, 0),
+                          datetime.datetime(2011, 10, 22, 14, 0),
+                          datetime.datetime(2012, 1, 21, 14, 0),
+                          datetime.datetime(2012, 10, 20, 14, 0),
+                          datetime.datetime(2013, 1, 19, 14, 0),
+                          datetime.datetime(2013, 10, 26, 14, 0),
+                          datetime.datetime(2014, 1, 18, 13, 0),
+                          datetime.datetime(2014, 10, 25, 14, 0),
+                          datetime.datetime(2015, 1, 17, 13, 0),
+                          datetime.datetime(2015, 10, 24, 14, 0),
+                          datetime.datetime(2016, 1, 23, 13, 0),
+                          datetime.datetime(2016, 10, 22, 14, 0),
+                          datetime.datetime(2017, 1, 21, 13, 0),
+                          datetime.datetime(2017, 10, 21, 14, 0),
+                          datetime.datetime(2018, 1, 20, 13, 0),
+                          datetime.datetime(2018, 10, 20, 14, 0),
+                          datetime.datetime(2019, 1, 19, 13, 0),
+                          datetime.datetime(2019, 10, 26, 14, 0),
+                          datetime.datetime(2020, 1, 18, 13, 0),
+                          datetime.datetime(2020, 10, 24, 14, 0),
+                          datetime.datetime(2021, 1, 23, 13, 0),
+                          datetime.datetime(2021, 10, 23, 14, 0),
+                          datetime.datetime(2022, 1, 22, 13, 0),
+                          datetime.datetime(2022, 10, 22, 14, 0),
+                          datetime.datetime(2023, 1, 21, 13, 0),
+                          datetime.datetime(2023, 10, 21, 14, 0),
+                          datetime.datetime(2024, 1, 20, 13, 0),
+                          datetime.datetime(2024, 10, 26, 14, 0),
+                          datetime.datetime(2025, 1, 18, 13, 0),
+                          datetime.datetime(2025, 10, 25, 14, 0),
+                          datetime.datetime(2026, 1, 17, 13, 0),
+                          datetime.datetime(2026, 10, 24, 14, 0),
+                          datetime.datetime(2027, 1, 23, 13, 0),
+                          datetime.datetime(2027, 10, 23, 14, 0),
+                          datetime.datetime(2028, 1, 22, 13, 0),
+                          datetime.datetime(2028, 10, 21, 14, 0),
+                          datetime.datetime(2029, 1, 20, 13, 0),
+                          datetime.datetime(2029, 10, 20, 14, 0),
+                          datetime.datetime(2030, 1, 19, 13, 0),
+                          datetime.datetime(2030, 10, 26, 14, 0),
+                          datetime.datetime(2031, 1, 18, 13, 0),
+                          datetime.datetime(2031, 10, 25, 14, 0),
+                          datetime.datetime(2032, 1, 17, 13, 0),
+                          datetime.datetime(2032, 10, 23, 14, 0),
+                          datetime.datetime(2033, 1, 22, 13, 0),
+                          datetime.datetime(2033, 10, 22, 14, 0),
+                          datetime.datetime(2034, 1, 21, 13, 0),
+                          datetime.datetime(2034, 10, 21, 14, 0),
+                          datetime.datetime(2035, 1, 20, 13, 0),
+                          datetime.datetime(2035, 10, 20, 14, 0),
+                          datetime.datetime(2036, 1, 19, 13, 0),
+                          datetime.datetime(2036, 10, 25, 14, 0),
+                          datetime.datetime(2037, 1, 17, 13, 0),
+                          datetime.datetime(2037, 10, 24, 14, 0),
+                          datetime.datetime(2038, 1, 23, 13, 0),
+                          datetime.datetime(2038, 10, 23, 14, 0)]
+
+                         )
+        self.assertEqual(
+            tz._transition_info,
+            [(datetime.timedelta(0, 43200), datetime.timedelta(0), 'custom_Pacific/Fiji_19151026T000000')] +
+            3 * [(datetime.timedelta(0, 46800), datetime.timedelta(0, 3600), 'custom_Pacific/Fiji_19981101T020000'),
+                 (datetime.timedelta(0, 43200), datetime.timedelta(0), 'custom_Pacific/Fiji_19990228T030000'), ] +
+            3 * [(datetime.timedelta(0, 46800), datetime.timedelta(0, 3600), 'custom_Pacific/Fiji_20101024T020000'),
+                 (datetime.timedelta(0, 43200), datetime.timedelta(0), 'custom_Pacific/Fiji_19990228T030000'), ] +
+            25 * [(datetime.timedelta(0, 46800), datetime.timedelta(0, 3600), 'custom_Pacific/Fiji_20101024T020000'),
+                  (datetime.timedelta(0, 43200), datetime.timedelta(0), 'custom_Pacific/Fiji_20140119T020000'), ] +
+            [(datetime.timedelta(0, 46800), datetime.timedelta(0, 3600), 'custom_Pacific/Fiji_20101024T020000')]
+        )
+
+        self.assertIn(
+            (datetime.timedelta(0, 46800), datetime.timedelta(0, 3600), 'custom_Pacific/Fiji_19981101T020000'),
+            tz._tzinfos.keys()
+        )
+        self.assertIn(
+            (datetime.timedelta(0, 43200), datetime.timedelta(0), 'custom_Pacific/Fiji_19990228T030000'),
+            tz._tzinfos.keys()
+        )
