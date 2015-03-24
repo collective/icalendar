@@ -316,3 +316,21 @@ END:VCALENDAR"""
              Parameters(),
              u''),
         )
+
+    def test_issue_157(self):
+        """Issue #157 - Recurring rules and trailing semicolons
+        https://github.com/collective/icalendar/pull/157
+        """
+        # The trailing semicolon caused a problem
+        ical_str = """BEGIN:VEVENT
+DTSTART:20150325T101010
+RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU;
+END:VEVENT"""
+
+        cal = icalendar.Calendar.from_ical(ical_str)
+        recur = cal.decoded("RRULE")
+        self.assertIsInstance(recur, icalendar.vRecur)
+        self.assertEqual(
+            recur.to_ical(),
+            b'FREQ=YEARLY;BYDAY=1SU;BYMONTH=11'
+        )

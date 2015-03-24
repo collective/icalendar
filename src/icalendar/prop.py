@@ -669,6 +669,8 @@ class vRecur(CaselessDict):
                 try:
                     key, vals = pairs.split('=')
                 except ValueError:
+                    # E.g. incorrect trailing semicolon, like (issue #157):
+                    # FREQ=YEARLY;BYMONTH=11;BYDAY=1SU;
                     continue
                 recur[key] = cls.parse_type(key, vals)
             return dict(recur)
