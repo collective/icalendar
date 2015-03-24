@@ -83,7 +83,7 @@ class Component(CaselessDict):
         self.is_broken = False  # True if we ignored an exception while
                                 # parsing a property
 
-    #def is_compliant(self, name):
+    # def is_compliant(self, name):
     #    """Returns True is the given property name is compliant with the
     #    icalendar implementation.
     #
@@ -446,9 +446,9 @@ class Todo(Component):
     required = ('UID',)
     singletons = (
         'CLASS', 'COMPLETED', 'CREATED', 'DESCRIPTION', 'DTSTAMP', 'DTSTART',
-        'GEO', 'LAST-MODIFIED', 'LOCATION', 'ORGANIZER', 'PERCENT-COMPLETE', 'PRIORITY',
-        'RECURRENCE-ID', 'SEQUENCE', 'STATUS', 'SUMMARY', 'UID', 'URL', 'DUE',
-        'DURATION',
+        'GEO', 'LAST-MODIFIED', 'LOCATION', 'ORGANIZER', 'PERCENT-COMPLETE',
+        'PRIORITY', 'RECURRENCE-ID', 'SEQUENCE', 'STATUS', 'SUMMARY', 'UID',
+        'URL', 'DUE', 'DURATION',
     )
     exclusive = ('DUE', 'DURATION',)
     multiple = (
@@ -501,7 +501,10 @@ class Timezone(Component):
         try:
             tzname = str(component['TZNAME'])
         except KeyError:
-            tzname = zone + '_' + component['DTSTART'].to_ical().decode('utf-8')
+            tzname = '{0}_{1}'.format(
+                zone,
+                component['DTSTART'].to_ical().decode('utf-8')
+            )
         offsetfrom = component['TZOFFSETFROM'].td
         offsetto = component['TZOFFSETTO'].td
         dtstart = component['DTSTART'].dt
@@ -518,7 +521,8 @@ class Timezone(Component):
         if 'RRULE' in component:
             rrulestr = component['RRULE'].to_ical().decode('utf-8')
             rrule = dateutil.rrule.rrulestr(rrulestr, dtstart=dtstart)
-            if not set(['UNTIL', 'COUNT']).intersection(component['RRULE'].keys()):
+            if not set(['UNTIL', 'COUNT']).intersection(
+                    component['RRULE'].keys()):
                 # pytz.timezones don't know any transition dates after 2038
                 # either
                 rrule._until = datetime(2038, 12, 31)
@@ -557,12 +561,19 @@ class Timezone(Component):
             try:
                 tzname = str(component['TZNAME'])
             except KeyError:
-                tzname = zone + '_' + component['DTSTART'].to_ical().decode('utf-8')
-            dst[tzname], component_transitions = self._extract_offsets(component, zone)
+                tzname = '{0}_{1}'.format(
+                    zone,
+                    component['DTSTART'].to_ical().decode('utf-8')
+                )
+            dst[tzname], component_transitions = self._extract_offsets(
+                component, zone
+            )
             transitions.extend(component_transitions)
 
         transitions.sort()
-        transition_times = [transtime - osfrom for transtime, osfrom, _, _ in transitions]
+        transition_times = [
+            transtime - osfrom for transtime, osfrom, _, _ in transitions
+        ]
 
         # transition_info is a list with tuples in the format
         # (utcoffset, dstoffset, name)
@@ -577,14 +588,14 @@ class Timezone(Component):
                 # go back in time until we find a transition to dst
                 for index in range(num - 1, -1, -1):
                     if not dst[transitions[index][3]]:  # [3] is the name
-                        dst_offset = osto - transitions[index][2]  # [2] is osto
+                        dst_offset = osto - transitions[index][2]  # [2] is osto  # noqa
                         break
-                # when the first transition is to dst, we didn't find anything in
-                # the past, so we have to look into the future
+                # when the first transition is to dst, we didn't find anything
+                # in the past, so we have to look into the future
                 if not dst_offset:
                     for index in range(num, len(transitions)):
                         if not dst[transitions[index][3]]:  # [3] is the name
-                            dst_offset = osto - transitions[index][2]  # [2] is osto
+                            dst_offset = osto - transitions[index][2]  # [2] is osto  # noqa
                             break
             transition_info.append((osto, dst_offset, name))
 

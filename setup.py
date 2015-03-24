@@ -3,16 +3,14 @@ import setuptools
 import sys
 
 
-version = '3.8.5.dev0'
+version = '3.9.0.dev0'
 shortdesc = 'iCalendar parser/generator'
 longdesc = codecs.open('README.rst', encoding='utf-8').read()
 longdesc += codecs.open('CHANGES.rst', encoding='utf-8').read()
 longdesc += codecs.open('LICENSE.rst', encoding='utf-8').read()
 
 
-tests_require = [
-    'python-dateutil',
-]
+tests_require = []
 install_requires = [
     'python-dateutil',
     'pytz',
@@ -54,4 +52,7 @@ setuptools.setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=install_requires,
+    extras_require={
+        'test': tests_require
+    }
 )

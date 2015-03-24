@@ -5,14 +5,17 @@ Changelog
 3.9.0 (unreleased)
 ------------------
 
-- Documentation fixes.
-  [t-8ch, thet]
-- Creating timezone objects from VTIMEZONE components [geier]
-- Make ``python-dateutil`` a dependency [geier]
+- Creating timezone objects from VTIMEZONE components.
+  [geier]
+
+- Make ``python-dateutil`` a dependency.
+  [geier]
 
 - Made RRULE tolerant of trailing semicolons.
   [sleeper]
 
+- Documentation fixes.
+  [t-8ch, thet]
 
 3.8.4 (2014-11-01)
 ------------------
