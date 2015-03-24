@@ -2,7 +2,7 @@
 Changelog
 =========
 
-3.9.0 (unreleased)
+3.9.0 (2015-03-24)
 ------------------
 
 - Creating timezone objects from VTIMEZONE components.
