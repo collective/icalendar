@@ -83,15 +83,17 @@ Test Coverage Report
 
 Output from coverage test::
 
-    Name                         Stmts   Miss  Cover
-    ------------------------------------------------
-    src/icalendar/__init__           4      0   100%
-    src/icalendar/cal              243      7    97%
-    src/icalendar/caselessdict      66      7    89%
-    src/icalendar/compat             1      0   100%
-    src/icalendar/parser           192      6    97%
-    src/icalendar/parser_tools      20      0   100%
-    src/icalendar/prop             536     64    88%
-    src/icalendar/tools             16      0   100%
-    ------------------------------------------------
-    TOTAL                         1078     84    92%
+    Name                           Stmts   Miss  Cover
+    --------------------------------------------------
+    src/icalendar/__init__             4      0   100%
+    src/icalendar/cal                312      7    98%
+    src/icalendar/caselessdict        65      7    89%
+    src/icalendar/compat               1      0   100%
+    src/icalendar/parser             193      5    97%
+    src/icalendar/parser_tools        20      0   100%
+    src/icalendar/prop               540     62    89%
+    src/icalendar/timezone_cache       1      0   100%
+    src/icalendar/tools               16      0   100%
+    --------------------------------------------------
+    TOTAL                           1152     81    93%
+
