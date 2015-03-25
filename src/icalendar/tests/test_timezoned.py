@@ -158,12 +158,17 @@ class TestTimezoneCreation(unittest.TestCase):
         tz = cal.walk('VEVENT')[0]['DTSTART'][0].dt.tzinfo
         self.assertEqual(str(tz), 'custom_America/New_York')
         pytz_new_york = pytz.timezone('America/New_York')
-        # pytz's information starts earlier, the VTIMEZONE transition times
-        # go on longer into the future
-        self.assertEqual(tz._utc_transition_times[:142],
-                         pytz_new_york._utc_transition_times[95:])
-        self.assertEqual(tz._transition_info[0:142],
-                         pytz_new_york._transition_info[95:])
+        # for reasons (tm) the locally installed versions of the time zone
+        # database isn't always complete, therefore we only compare some
+        # transition times
+        ny_transition_times = list()
+        ny_transition_info = list()
+        for num, date in enumerate(pytz_new_york._utc_transition_times):
+            if datetime.datetime(1967, 4, 30, 7, 0) <= date <= datetime.datetime(2037, 11, 1, 6, 0):
+                ny_transition_times.append(date)
+                ny_transition_info.append(pytz_new_york._transition_info[num])
+        self.assertEqual(tz._utc_transition_times[:142], ny_transition_times)
+        self.assertEqual(tz._transition_info[0:142], ny_transition_info)
         self.assertIn(
             (datetime.timedelta(-1, 72000), datetime.timedelta(0, 3600), 'EDT'),
             tz._tzinfos.keys()
