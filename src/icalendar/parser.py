@@ -72,17 +72,26 @@ def foldline(line, limit=75, fold_sep=u'\r\n '):
     assert isinstance(line, compat.unicode_type)
     assert u'\n' not in line
 
-    ret_line = u''
+    # Use a fast and simple variant for the common case that line is all ASCII.
+    try:
+        line.encode('ascii')
+    except (UnicodeEncodeError, UnicodeDecodeError):
+        pass
+    else:
+        return fold_sep.join(line[i:i+limit-1] for i in
+                             range(0, len(line), limit-1))
+
+    ret_chars = []
     byte_count = 0
     for char in line:
         char_byte_len = len(char.encode(DEFAULT_ENCODING))
         byte_count += char_byte_len
         if byte_count >= limit:
-            ret_line += fold_sep
+            ret_chars.append(fold_sep)
             byte_count = char_byte_len
-        ret_line += char
+        ret_chars.append(char)
 
-    return ret_line
+    return u''.join(ret_chars)
 
 
 #################################################################
