@@ -5,7 +5,11 @@ Changelog
 3.9.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Improve foldline() performance. This improves the foldline performance,
+  especially for large strings like base64-encoded inline attachements. In some
+  cases (1MB string) from 7 Minutes to less than 20ms for ASCII data and 500ms
+  for non-ASCII data. Ref: #163.
+  [emfree]
 
 
 3.9.0 (2015-03-24)
