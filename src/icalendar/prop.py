@@ -535,7 +535,7 @@ class vPeriod(object):
             p = (self.start, self.duration)
         else:
             p = (self.start, self.end)
-        return 'vPeriod(%r)' % p
+        return 'vPeriod(%r)' % (p, )
 
 
 class vWeekday(compat.unicode_type):
