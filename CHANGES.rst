@@ -5,6 +5,9 @@ Changelog
 3.9.1 (unreleased)
 ------------------
 
+- Fix ``vPeriod.__repr__``.
+  [spacekpe]
+
 - Improve foldline() performance. This improves the foldline performance,
   especially for large strings like base64-encoded inline attachements. In some
   cases (1MB string) from 7 Minutes to less than 20ms for ASCII data and 500ms
