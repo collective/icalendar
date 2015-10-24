@@ -16,4 +16,5 @@ lib/
 lib64
 parts/
 src/icalendar.egg-info/
+!.gitattributes
 !.gitignore
