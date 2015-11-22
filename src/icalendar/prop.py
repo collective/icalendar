@@ -18,17 +18,17 @@ prefer) for the classes/datatypes that are used in iCalendar:
 
 ###########################################################################
 
-iCalendar properties has values. The values are strongly typed. This module
-defines these types, calling val.to_ical() on them, Will render them as defined
+iCalendar properties have values. The values are strongly typed. This module
+defines these types, calling val.to_ical() on them will render them as defined
 in rfc2445.
 
 If you pass any of these classes a Python primitive, you will have an object
 that can render itself as iCalendar formatted date.
 
-Property Value Data Types starts with a 'v'. they all have an to_ical() and
+Property Value Data Types start with a 'v'. they all have an to_ical() and
 from_ical() method. The to_ical() method generates a text string in the
 iCalendar format. The from_ical() method can parse this format and return a
-primitive Python datatype. So it should allways be true that:
+primitive Python datatype. So it should always be true that:
 
     x == vDataType.from_ical(VDataType(x).to_ical())
 
