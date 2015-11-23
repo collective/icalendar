@@ -10,7 +10,7 @@ New:
 
 Fixes:
 
-- *add item here*
+- Documentation fixes
 
 
 3.9.1 (2015-09-08)
