@@ -49,6 +49,7 @@ icalendar contributors
 - spanktar <spanky@kapanka.com>
 - tgecho <tgecho@gmail.com>
 - tisto <tisto@plone.org>
+- Tom Try <tom.try@gmail.com>
 
 Find out who contributed::
 

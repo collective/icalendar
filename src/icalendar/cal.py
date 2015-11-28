@@ -639,6 +639,10 @@ class Calendar(Component):
     singletons = ('prodid', 'version', )
     multiple = ('calscale', 'method', )
 
+    def display(self):
+        '''Pretty print the Calendar object'''
+        print(self.to_ical().decode("utf-8").replace('\r\n', '\n').strip())
+
 # These are read only singleton, so one instance is enough for the module
 types_factory = TypesFactory()
 component_factory = ComponentFactory()

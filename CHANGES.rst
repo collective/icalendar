@@ -6,7 +6,7 @@ Changelog
 
 New:
 
-- *add item here*
+- Added display method to pretty print Calendar objects.
 
 Fixes:
 
