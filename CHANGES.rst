@@ -11,6 +11,7 @@ New:
 Fixes:
 
 - Documentation fixes
+- Added __version__attribute to init.py
 
 
 3.9.1 (2015-09-08)
