@@ -1,3 +1,5 @@
+__version__ = '3.9.2.dev0'
+
 from icalendar.cal import (
     Calendar,
     Event,

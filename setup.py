@@ -1,9 +1,17 @@
 import codecs
 import setuptools
 import sys
+import re
+import ast
+
+from setuptools import setup
+_version_re = re.compile(r'__version__\s+=\s+(.*)')
+
+with open('src/icalendar/__init__.py', 'rb') as f:
+    version = str(ast.literal_eval(_version_re.search(
+        f.read().decode('utf-8')).group(1)))
 
 
-version = '3.9.2.dev0'
 shortdesc = 'iCalendar parser/generator'
 longdesc = codecs.open('README.rst', encoding='utf-8').read()
 longdesc += codecs.open('CHANGES.rst', encoding='utf-8').read()
