@@ -10,8 +10,11 @@ New:
 
 Fixes:
 
-- Documentation fixes
-- Added __version__attribute to init.py
+- Added __version__ attribute to init.py
+  [TomTry]
+
+- Documentation fixes.
+  [TomTry]
 
 
 3.9.1 (2015-09-08)

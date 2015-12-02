@@ -4,7 +4,6 @@ import sys
 import re
 import ast
 
-from setuptools import setup
 _version_re = re.compile(r'__version__\s+=\s+(.*)')
 
 with open('src/icalendar/__init__.py', 'rb') as f:
