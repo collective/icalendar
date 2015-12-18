@@ -389,8 +389,9 @@ class TestCal(unittest.TestCase):
         directory = tempfile.mkdtemp()
         open(os.path.join(directory, 'test.ics'), 'wb').write(cal.to_ical())
 
-        # Parsing a complete calendar from a string will silently ignore bogus
-        # events. The bogosity in the following is the third EXDATE: it has an
+        # Parsing a complete calendar from a string will silently ignore wrong
+        # events but adding the error information to the component's 'errors'
+        # attribute. The error in the following is the third EXDATE: it has an
         # empty DATE.
         s = '\r\n'.join(('BEGIN:VCALENDAR',
                          'PRODID:-//Google Inc//Google Calendar 70.9054//EN',
@@ -405,7 +406,7 @@ class TestCal(unittest.TestCase):
                          'EXDATE;VALUE=DATE:20080311',
                          'END:VEVENT',
                          'BEGIN:VEVENT',
-                         'DESCRIPTION:Bogus event',
+                         'DESCRIPTION:Wrong event',
                          'DTSTART;VALUE=DATE:20080303',
                          'DTEND;VALUE=DATE:20080304',
                          'RRULE:FREQ=DAILY;UNTIL=20080323T235959Z',
@@ -416,4 +417,9 @@ class TestCal(unittest.TestCase):
         self.assertEqual(
             [e['DESCRIPTION'].to_ical()
                 for e in icalendar.cal.Calendar.from_ical(s).walk('VEVENT')],
-            [b'Perfectly OK event'])
+            [b'Perfectly OK event', b'Wrong event'])
+        self.assertEqual(
+            [e.errors
+                for e in icalendar.cal.Calendar.from_ical(s).walk('VEVENT')],
+            [[], [('EXDATE', "Expected datetime, date, or time, got: ''")]]
+            )

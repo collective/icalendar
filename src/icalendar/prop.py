@@ -313,13 +313,15 @@ class vDDDTypes(object):
         u = ical.upper()
         if u.startswith(('P', '-P', '+P')):
             return vDuration.from_ical(ical)
-        try:
+
+        if len(ical) in (15, 16):
             return vDatetime.from_ical(ical, timezone=timezone)
-        except ValueError:
-            try:
-                return vDate.from_ical(ical)
-            except ValueError:
-                return vTime.from_ical(ical)
+        elif len(ical) == 8:
+            return vDate.from_ical(ical)
+        elif len(ical) in (6,7):
+            return vTime.from_ical(ical)
+        else:
+            raise ValueError("Expected datetime, date, or time, got: '%s'" % ical)
 
 
 class vDate(object):

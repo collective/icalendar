@@ -36,6 +36,7 @@ icalendar contributors
 - Ronan Dunklau <ronan@dunklau.fr>
 - Russ <russ@rw.id.au>
 - Sidnei da Silva <sidnei@enfoldsystems.com>
+- Stanislav Láznička <slaznick@redhat.com>
 - Stanislav Ochotnicky <sochotnicky@redhat.com>
 - Stefan Schwarzer <sschwarzer@sschwarzer.net>
 - Thomas Bruederli <thomas@roundcube.net>

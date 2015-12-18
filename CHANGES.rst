@@ -10,6 +10,10 @@ New:
 
 Fixes:
 
+- Fixed date-time being recognized as date or time during parsing. Added
+  better error handling to parsing from ical strings.
+  [stlaz]
+
 - Added __version__ attribute to init.py
   [TomTry]
 

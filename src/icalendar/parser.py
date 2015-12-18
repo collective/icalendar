@@ -341,7 +341,7 @@ class Contentline(compat.unicode_type):
             return (name, params, values)
         except ValueError as exc:
             raise ValueError(
-                u"Content line could not be parsed into parts: %r: %s"
+                u"Content line could not be parsed into parts: '%s': %s"
                 % (self, exc)
             )
 

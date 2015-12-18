@@ -80,8 +80,8 @@ class Component(CaselessDict):
         super(Component, self).__init__(*args, **kwargs)
         # set parameters here for properties that use non-default values
         self.subcomponents = []  # Components can be nested.
-        self.is_broken = False  # True if we ignored an exception while
-                                # parsing a property
+        self.errors = list()  # If we ignored exception(s) while
+                                 # parsing a property, contains error strings
 
     # def is_compliant(self, name):
     #    """Returns True is the given property name is compliant with the
@@ -309,14 +309,14 @@ class Component(CaselessDict):
 
             try:
                 name, params, vals = line.parts()
-            except ValueError:
+            except ValueError as e:
                 # if unable to parse a line within a component
                 # that ignores exceptions, mark the component
                 # as broken and skip the line. otherwise raise.
                 component = stack[-1] if stack else None
                 if not component or not component.ignore_exceptions:
                     raise
-                component.is_broken = True
+                component.errors.append((None, str(e)))
                 continue
 
             uname = name.upper()
@@ -338,8 +338,7 @@ class Component(CaselessDict):
                 if not stack:  # we are at the end
                     comps.append(component)
                 else:
-                    if not component.is_broken:
-                        stack[-1].add_component(component)
+                    stack[-1].add_component(component)
                 if vals == 'VTIMEZONE' and \
                         'TZID' in component and \
                         component['TZID'] not in pytz.all_timezones and \
@@ -356,10 +355,11 @@ class Component(CaselessDict):
                         vals = factory(factory.from_ical(vals, params['TZID']))
                     else:
                         vals = factory(factory.from_ical(vals))
-                except ValueError:
+                except ValueError as e:
                     if not component.ignore_exceptions:
                         raise
-                    component.is_broken = True
+                    component.errors.append((uname, str(e)))
+                    component.add(name, None, encode=0)
                 else:
                     vals.params = params
                     component.add(name, vals, encode=0)

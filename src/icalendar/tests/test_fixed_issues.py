@@ -200,7 +200,9 @@ X
 END:VEVENT"""
         event = icalendar.Calendar.from_ical(ical_str)
         self.assertTrue(isinstance(event, icalendar.Event))
-        self.assertTrue(event.is_broken)
+        self.assertEqual(event.errors,
+            [(None, "Content line could not be parsed into parts: 'X': Invalid content line")]
+        )
 
     def test_issue_104__no_ignore_exceptions(self):
         """
