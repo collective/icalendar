@@ -1,4 +1,4 @@
-# coding: utf-8
+# -*- coding: utf-8 -*-
 from icalendar import Calendar
 from icalendar import Event
 from icalendar import Parameters

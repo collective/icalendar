@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import codecs
 import setuptools
 import sys

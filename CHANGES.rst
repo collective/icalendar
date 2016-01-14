@@ -20,7 +20,7 @@ Fixes:
 - Documentation fixes.
   [TomTry]
 
-- Pep 8.
+- Pep 8, UTF 8 headers.
   [thet]
 
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from icalendar import Calendar
 from icalendar.prop import vText
 from icalendar.tests import unittest

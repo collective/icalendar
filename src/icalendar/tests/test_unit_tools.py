@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from icalendar.tests import unittest
 from icalendar.tools import UIDGenerator
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from icalendar.tests import unittest
 
 import datetime

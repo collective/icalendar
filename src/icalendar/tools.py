@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from datetime import datetime
 from icalendar.parser_tools import to_unicode
 from icalendar.prop import vDatetime
