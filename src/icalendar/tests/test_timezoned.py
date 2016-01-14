@@ -164,13 +164,17 @@ class TestTimezoneCreation(unittest.TestCase):
         ny_transition_times = list()
         ny_transition_info = list()
         for num, date in enumerate(pytz_new_york._utc_transition_times):
-            if datetime.datetime(1967, 4, 30, 7, 0) <= date <= datetime.datetime(2037, 11, 1, 6, 0):
+            if datetime.datetime(1967, 4, 30, 7, 0)\
+                    <= date <= datetime.datetime(2037, 11, 1, 6, 0):
                 ny_transition_times.append(date)
                 ny_transition_info.append(pytz_new_york._transition_info[num])
         self.assertEqual(tz._utc_transition_times[:142], ny_transition_times)
         self.assertEqual(tz._transition_info[0:142], ny_transition_info)
         self.assertIn(
-            (datetime.timedelta(-1, 72000), datetime.timedelta(0, 3600), 'EDT'),
+            (
+                datetime.timedelta(-1, 72000),
+                datetime.timedelta(0, 3600), 'EDT'
+            ),
             tz._tzinfos.keys()
         )
         self.assertIn(
@@ -259,21 +263,58 @@ class TestTimezoneCreation(unittest.TestCase):
                          )
         self.assertEqual(
             tz._transition_info,
-            [(datetime.timedelta(0, 43200), datetime.timedelta(0), 'custom_Pacific/Fiji_19151026T000000')] +
-            3 * [(datetime.timedelta(0, 46800), datetime.timedelta(0, 3600), 'custom_Pacific/Fiji_19981101T020000'),
-                 (datetime.timedelta(0, 43200), datetime.timedelta(0), 'custom_Pacific/Fiji_19990228T030000'), ] +
-            3 * [(datetime.timedelta(0, 46800), datetime.timedelta(0, 3600), 'custom_Pacific/Fiji_20101024T020000'),
-                 (datetime.timedelta(0, 43200), datetime.timedelta(0), 'custom_Pacific/Fiji_19990228T030000'), ] +
-            25 * [(datetime.timedelta(0, 46800), datetime.timedelta(0, 3600), 'custom_Pacific/Fiji_20101024T020000'),
-                  (datetime.timedelta(0, 43200), datetime.timedelta(0), 'custom_Pacific/Fiji_20140119T020000'), ] +
-            [(datetime.timedelta(0, 46800), datetime.timedelta(0, 3600), 'custom_Pacific/Fiji_20101024T020000')]
+            [(
+                datetime.timedelta(0, 43200),
+                datetime.timedelta(0),
+                'custom_Pacific/Fiji_19151026T000000'
+            )] +
+            3 * [(
+                datetime.timedelta(0, 46800),
+                datetime.timedelta(0, 3600),
+                'custom_Pacific/Fiji_19981101T020000'
+            ), (
+                datetime.timedelta(0, 43200),
+                datetime.timedelta(0),
+                'custom_Pacific/Fiji_19990228T030000')
+            ] +
+            3 * [(
+                datetime.timedelta(0, 46800),
+                datetime.timedelta(0, 3600),
+                'custom_Pacific/Fiji_20101024T020000'
+            ), (
+                datetime.timedelta(0, 43200),
+                datetime.timedelta(0),
+                'custom_Pacific/Fiji_19990228T030000'
+            )] +
+            25 * [(
+                datetime.timedelta(0, 46800),
+                datetime.timedelta(0, 3600),
+                'custom_Pacific/Fiji_20101024T020000'
+            ), (
+                datetime.timedelta(0, 43200),
+                datetime.timedelta(0),
+                'custom_Pacific/Fiji_20140119T020000'
+            )] +
+            [(
+                datetime.timedelta(0, 46800),
+                datetime.timedelta(0, 3600),
+                'custom_Pacific/Fiji_20101024T020000'
+            )]
         )
 
         self.assertIn(
-            (datetime.timedelta(0, 46800), datetime.timedelta(0, 3600), 'custom_Pacific/Fiji_19981101T020000'),
+            (
+                datetime.timedelta(0, 46800),
+                datetime.timedelta(0, 3600),
+                'custom_Pacific/Fiji_19981101T020000'
+            ),
             tz._tzinfos.keys()
         )
         self.assertIn(
-            (datetime.timedelta(0, 43200), datetime.timedelta(0), 'custom_Pacific/Fiji_19990228T030000'),
+            (
+                datetime.timedelta(0, 43200),
+                datetime.timedelta(0),
+                'custom_Pacific/Fiji_19990228T030000'
+            ),
             tz._tzinfos.keys()
         )

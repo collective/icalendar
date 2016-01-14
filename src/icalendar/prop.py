@@ -318,10 +318,12 @@ class vDDDTypes(object):
             return vDatetime.from_ical(ical, timezone=timezone)
         elif len(ical) == 8:
             return vDate.from_ical(ical)
-        elif len(ical) in (6,7):
+        elif len(ical) in (6, 7):
             return vTime.from_ical(ical)
         else:
-            raise ValueError("Expected datetime, date, or time, got: '%s'" % ical)
+            raise ValueError(
+                "Expected datetime, date, or time, got: '%s'" % ical
+            )
 
 
 class vDate(object):
@@ -557,7 +559,7 @@ class vWeekday(compat.unicode_type):
         sign = match['signal']
         weekday = match['weekday']
         relative = match['relative']
-        if not weekday in vWeekday.week_days or sign not in '+-':
+        if weekday not in vWeekday.week_days or sign not in '+-':
             raise ValueError('Expected weekday abbrevation, got: %s' % self)
         self.relative = relative and int(relative) or None
         self.params = Parameters()
@@ -591,7 +593,7 @@ class vFrequency(compat.unicode_type):
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
         value = to_unicode(value, encoding=encoding)
         self = super(vFrequency, cls).__new__(cls, value)
-        if not self in vFrequency.frequencies:
+        if self not in vFrequency.frequencies:
             raise ValueError('Expected frequency, got: %s' % self)
         self.params = Parameters()
         return self

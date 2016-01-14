@@ -78,8 +78,9 @@ def foldline(line, limit=75, fold_sep=u'\r\n '):
     except (UnicodeEncodeError, UnicodeDecodeError):
         pass
     else:
-        return fold_sep.join(line[i:i+limit-1] for i in
-                             range(0, len(line), limit-1))
+        return fold_sep.join(
+            line[i:i + limit - 1] for i in range(0, len(line), limit - 1)
+        )
 
     ret_chars = []
     byte_count = 0

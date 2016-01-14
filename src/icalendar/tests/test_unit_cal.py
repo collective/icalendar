@@ -33,7 +33,7 @@ class TestCalComponent(unittest.TestCase):
                       'PRODID': '-//max m//icalendar.mxm.dk/'})
         )
 
-        ### ADD MULTIPLE VALUES TO A PROPERTY
+        # ## ADD MULTIPLE VALUES TO A PROPERTY
 
         # if you use the add method you don't have to considder if a value is
         # a list or not.
@@ -422,4 +422,4 @@ class TestCal(unittest.TestCase):
             [e.errors
                 for e in icalendar.cal.Calendar.from_ical(s).walk('VEVENT')],
             [[], [('EXDATE', "Expected datetime, date, or time, got: ''")]]
-            )
+        )

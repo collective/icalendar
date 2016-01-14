@@ -20,6 +20,9 @@ Fixes:
 - Documentation fixes.
   [TomTry]
 
+- Pep 8.
+  [thet]
+
 
 3.9.1 (2015-09-08)
 ------------------

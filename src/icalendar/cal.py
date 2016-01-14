@@ -72,7 +72,7 @@ class Component(CaselessDict):
                                 # component, we will silently ignore
                                 # it, rather than let the exception
                                 # propagate upwards
-    # not_compliant = [''] # List of non-compliant properties.
+    # not_compliant = ['']  # List of non-compliant properties.
 
     def __init__(self, *args, **kwargs):
         """Set keys to upper for initial dict.
@@ -81,7 +81,7 @@ class Component(CaselessDict):
         # set parameters here for properties that use non-default values
         self.subcomponents = []  # Components can be nested.
         self.errors = list()  # If we ignored exception(s) while
-                                 # parsing a property, contains error strings
+                              # parsing a property, contains error strings
 
     # def is_compliant(self, name):
     #    """Returns True is the given property name is compliant with the

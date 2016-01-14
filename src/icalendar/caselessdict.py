@@ -21,8 +21,8 @@ def canonsort_keys(keys, canonical_order=None):
 def canonsort_items(dict1, canonical_order=None):
     """Returns a list of items from dict1, sorted by canonical_order.
     """
-    return [(k, dict1[k]) for \
-            k in canonsort_keys(dict1.keys(), canonical_order)]
+    return [(k, dict1[k]) for k
+            in canonsort_keys(dict1.keys(), canonical_order)]
 
 
 class CaselessDict(OrderedDict):
