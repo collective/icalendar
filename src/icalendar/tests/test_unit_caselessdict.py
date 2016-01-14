@@ -41,8 +41,9 @@ class TestCaselessdict(unittest.TestCase):
     def test_caselessdict_canonsort_items(self):
         canonsort_items = icalendar.caselessdict.canonsort_items
 
-        d = dict(i=7, c='at', a=3.5, l=(2, 3), e=[4, 5], n=13, d={'x': 'y'},
-                 r=1.0)
+        d = dict(
+            i=7, c='at', a=3.5, l=(2, 3), e=[4, 5], n=13, d={'x': 'y'}, r=1.0
+        )
 
         out = canonsort_items(d)
         self.assertEqual(

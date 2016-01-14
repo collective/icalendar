@@ -80,8 +80,8 @@ class Component(CaselessDict):
         super(Component, self).__init__(*args, **kwargs)
         # set parameters here for properties that use non-default values
         self.subcomponents = []  # Components can be nested.
-        self.errors = list()  # If we ignored exception(s) while
-                              # parsing a property, contains error strings
+        self.errors = []  # If we ignored exception(s) while
+                          # parsing a property, contains error strings
 
     # def is_compliant(self, name):
     #    """Returns True is the given property name is compliant with the
@@ -553,8 +553,8 @@ class Timezone(Component):
         """convert this VTIMEZONE component to a pytz.timezone object
         """
         zone = str(self['TZID'])
-        transitions = list()
-        dst = dict()
+        transitions = []
+        dst = {}
         for component in self.walk():
             if type(component) == Timezone:
                 continue
@@ -579,7 +579,7 @@ class Timezone(Component):
         # (utcoffset, dstoffset, name)
         # dstoffset = 0, if current transition is to standard time
         #           = this_utcoffset - prev_standard_utcoffset, otherwise
-        transition_info = list()
+        transition_info = []
         for num, (transtime, osfrom, osto, name) in enumerate(transitions):
             dst_offset = False
             if not dst[name]:
@@ -599,10 +599,11 @@ class Timezone(Component):
                             break
             transition_info.append((osto, dst_offset, name))
 
-        cls = type(zone, (DstTzInfo,), dict(
-            zone=zone,
-            _utc_transition_times=transition_times,
-            _transition_info=transition_info))
+        cls = type(zone, (DstTzInfo,), {
+            'zone': zone,
+            '_utc_transition_times': transition_times,
+            '_transition_info': transition_info
+        })
 
         return cls()
 

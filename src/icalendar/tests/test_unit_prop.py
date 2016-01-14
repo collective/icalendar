@@ -258,7 +258,7 @@ class TestProp(unittest.TestCase):
         # Let's see how close we can get to one from the rfc:
         # FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=SU;BYHOUR=8,9;BYMINUTE=30
 
-        r = dict(freq='yearly', interval=2)
+        r = dict({'freq': 'yearly', 'interval': 2})
         r.update({
             'bymonth': 1,
             'byday': 'su',

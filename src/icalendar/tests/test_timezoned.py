@@ -161,8 +161,8 @@ class TestTimezoneCreation(unittest.TestCase):
         # for reasons (tm) the locally installed version of the time zone
         # database isn't always complete, therefore we only compare some
         # transition times
-        ny_transition_times = list()
-        ny_transition_info = list()
+        ny_transition_times = []
+        ny_transition_info = []
         for num, date in enumerate(pytz_new_york._utc_transition_times):
             if datetime.datetime(1967, 4, 30, 7, 0)\
                     <= date <= datetime.datetime(2037, 11, 1, 6, 0):

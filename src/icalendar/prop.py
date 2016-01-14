@@ -276,11 +276,11 @@ class vDDDTypes(object):
         if not isinstance(dt, (datetime, date, timedelta, time)):
             raise ValueError('You must use datetime, date, timedelta or time')
         if isinstance(dt, datetime):
-            self.params = Parameters(dict(value='DATE-TIME'))
+            self.params = Parameters({'value': 'DATE-TIME'})
         elif isinstance(dt, date):
-            self.params = Parameters(dict(value='DATE'))
+            self.params = Parameters({'value': 'DATE'})
         elif isinstance(dt, time):
-            self.params = Parameters(dict(value='TIME'))
+            self.params = Parameters({'value': 'TIME'})
 
         if (isinstance(dt, datetime) or isinstance(dt, time))\
                 and getattr(dt, 'tzinfo', False):
@@ -333,7 +333,7 @@ class vDate(object):
         if not isinstance(dt, date):
             raise ValueError('Value MUST be a date instance')
         self.dt = dt
-        self.params = Parameters(dict(value='DATE'))
+        self.params = Parameters({'value': 'DATE'})
 
     def to_ical(self):
         s = "%04d%02d%02d" % (self.dt.year, self.dt.month, self.dt.day)
@@ -717,7 +717,7 @@ class vTime(object):
             self.dt = args[0]
         else:
             self.dt = time(*args)
-        self.params = Parameters(dict(value='TIME'))
+        self.params = Parameters({'value': 'TIME'})
 
     def to_ical(self):
         return self.dt.strftime("%H%M%S")
