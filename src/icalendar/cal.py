@@ -93,6 +93,21 @@ class Component(CaselessDict):
     #    """
     #    return name in not_compliant
 
+    def __bool__(self):
+        """
+        Returns True, CaselessDict would return False if it had no items
+        """
+        return True
+
+    # python 2 compatibility
+    __nonzero__ = __bool__
+
+    def is_empty(self):
+        """
+        Returns True if Component has no items or subcomponents, else False
+        """
+        return True if not (list(self.values()) + self.subcomponents) else False
+
     #############################
     # handling of property values
 
