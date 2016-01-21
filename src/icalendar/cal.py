@@ -362,7 +362,10 @@ class Component(CaselessDict):
             # we are adding properties to the current top of the stack
             else:
                 factory = types_factory.for_property(name)
-                component = stack[-1]
+                component = stack[-1] if stack else None
+                if not component:
+                    raise ValueError('Property "{prop}" does not have '
+                                     'a parent component.'.format(prop=name))
                 datetime_names = ('DTSTART', 'DTEND', 'RECURRENCE-ID', 'DUE',
                                   'FREEBUSY', 'RDATE', 'EXDATE')
                 try:

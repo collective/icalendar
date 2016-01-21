@@ -10,6 +10,9 @@ New:
 
 Fixes:
 
+- Fixed possible IndexError exception during parsing of an ical string.
+  [stlaz]
+
 - Fixed date-time being recognized as date or time during parsing. Added
   better error handling to parsing from ical strings.
   [stlaz]
