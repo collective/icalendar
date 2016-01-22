@@ -325,7 +325,7 @@ class Component(CaselessDict):
                 # try and create one of the components defined in the spec,
                 # otherwise get a general Components for robustness.
                 c_name = vals.upper()
-                c_class = component_factory.get(c_name, cls)
+                c_class = component_factory.get(c_name, Component)
                 component = c_class()
                 if not getattr(component, 'name', ''):  # undefined components
                     component.name = c_name
