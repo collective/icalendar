@@ -362,10 +362,53 @@ END:VCALENDAR"""
         )
 
     def test_index_error_issue(self):
-        """
-        Found an issue where from_ical() would raise IndexError for properties
-        without parent components
+        """Found an issue where from_ical() would raise IndexError for
+        properties without parent components.
+        https://github.com/collective/icalendar/pull/179
         """
 
         with self.assertRaises(ValueError):
             cal = icalendar.Calendar.from_ical('VERSION:2.0')
+
+    def test_issue_178(self):
+        """Issue #178 - A component with an unknown/invalid name is represented
+        as one of the known components, the information about the original
+        component name is lost.
+        https://github.com/collective/icalendar/issues/178
+        https://github.com/collective/icalendar/pull/180
+        """
+
+        # Parsing of a nonstandard component
+        ical_str = '\r\n'.join(['BEGIN:MYCOMP', 'END:MYCOMP'])
+        cal = icalendar.Calendar.from_ical(ical_str)
+        self.assertEqual(cal.to_ical(),
+                         b'BEGIN:MYCOMP\r\nEND:MYCOMP\r\n')
+
+        # Nonstandard component inside other components, also has properties
+        ical_str = '\r\n'.join(['BEGIN:VCALENDAR',
+                                'BEGIN:UNKNOWN',
+                                'UID:1234',
+                                'END:UNKNOWN',
+                                'END:VCALENDAR'])
+
+        cal = icalendar.Calendar.from_ical(ical_str)
+        self.assertEqual(cal.errors, [])
+        self.assertEqual(cal.to_ical(),
+                         b'BEGIN:VCALENDAR\r\nBEGIN:UNKNOWN\r\nUID:1234\r\n'
+                         b'END:UNKNOWN\r\nEND:VCALENDAR\r\n')
+
+        # Nonstandard component is able to contain other components
+        ical_str = '\r\n'.join(['BEGIN:MYCOMPTOO',
+                                'DTSTAMP:20150121T080000',
+                                'BEGIN:VEVENT',
+                                'UID:12345',
+                                'DTSTART:20150122',
+                                'END:VEVENT',
+                                'END:MYCOMPTOO'])
+        cal = icalendar.Calendar.from_ical(ical_str)
+        self.assertEqual(cal.errors, [])
+        self.assertEqual(cal.to_ical(),
+                         b'BEGIN:MYCOMPTOO\r\nDTSTAMP:20150121T080000\r\n'
+                         b'BEGIN:VEVENT\r\nDTSTART:20150122\r\nUID:12345\r\n'
+                         b'END:VEVENT\r\nEND:MYCOMPTOO\r\n')
+>>>>>>> Fixes unknown component represented as known one
