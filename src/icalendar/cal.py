@@ -339,6 +339,10 @@ class Component(CaselessDict):
                 # otherwise get a general Components for robustness.
                 c_name = vals.upper()
                 c_class = component_factory.get(c_name, Component)
+                # If component factory cannot resolve ``c_name``, the generic
+                # ``Component`` class is used which does not have the name set.
+                # That's opposed to the usage of ``cls``, which represents a
+                # more concrete subclass with a name set (e.g. VCALENDAR).
                 component = c_class()
                 if not getattr(component, 'name', ''):  # undefined components
                     component.name = c_name

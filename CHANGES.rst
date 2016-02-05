@@ -10,13 +10,10 @@ New:
 
 Fixes:
 
-- Fixed possible IndexError exception during parsing of an ical string.
-- Fixed cal.Component.from_ical() representing an unknown component
-  as one of the known.
+- Fixed cal.Component.from_ical() representing an unknown component as one of the known.
   [stlaz]
 
-- Fixed date-time being recognized as date or time during parsing. Added
-  better error handling to parsing from ical strings.
+- Fixed possible IndexError exception during parsing of an ical string.
   [stlaz]
 
 - When doing a boolean test on ``icalendar.cal.Component``, always return ``True``.
