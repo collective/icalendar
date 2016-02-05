@@ -94,8 +94,7 @@ class Component(CaselessDict):
     #    return name in not_compliant
 
     def __bool__(self):
-        """
-        Returns True, CaselessDict would return False if it had no items
+        """Returns True, CaselessDict would return False if it had no items.
         """
         return True
 
@@ -103,10 +102,9 @@ class Component(CaselessDict):
     __nonzero__ = __bool__
 
     def is_empty(self):
+        """Returns True if Component has no items or subcomponents, else False.
         """
-        Returns True if Component has no items or subcomponents, else False
-        """
-        return True if not (list(self.values()) + self.subcomponents) else False
+        return True if not (list(self.values()) + self.subcomponents) else False  # noqa
 
     #############################
     # handling of property values
