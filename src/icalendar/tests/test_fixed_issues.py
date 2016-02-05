@@ -360,3 +360,12 @@ END:VCALENDAR"""
             b'DTEND:20150905T100000Z\r\nUID:123\r\n'
             b'END:VEVENT\r\nEND:VCALENDAR\r\n'
         )
+
+    def test_index_error_issue(self):
+        """
+        Found an issue where from_ical() would raise IndexError for properties
+        without parent components
+        """
+
+        with self.assertRaises(ValueError):
+            cal = icalendar.Calendar.from_ical('VERSION:2.0')

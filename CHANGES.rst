@@ -10,11 +10,18 @@ New:
 
 Fixes:
 
-- Fixed date-time being recognized as date or time during parsing. Added
-  better error handling to parsing from ical strings.
+- Fixed possible IndexError exception during parsing of an ical string.
   [stlaz]
 
-- Added __version__ attribute to init.py
+- When doing a boolean test on ``icalendar.cal.Component``, always return ``True``.
+  Before it was returning ``False`` due to CaselessDict, if it didn't contain any items.
+  [stlaz]
+
+- Fixed date-time being recognized as date or time during parsing.
+  Added better error handling to parsing from ical strings.
+  [stlaz]
+
+- Added __version__ attribute to init.py.
   [TomTry]
 
 - Documentation fixes.

@@ -18,9 +18,14 @@ class TestCalComponent(unittest.TestCase):
         c = Component()
         c.name = 'VCALENDAR'
 
+        self.assertTrue(c)
+        self.assertTrue(c.is_empty())
+
         # Every key defines a property.A property can consist of either a
         # single item. This can be set with a single value...
         c['prodid'] = '-//max m//icalendar.mxm.dk/'
+        self.assertFalse(c.is_empty())
+
         self.assertEqual(
             c,
             Calendar({'PRODID': '-//max m//icalendar.mxm.dk/'})

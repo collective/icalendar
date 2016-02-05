@@ -93,6 +93,19 @@ class Component(CaselessDict):
     #    """
     #    return name in not_compliant
 
+    def __bool__(self):
+        """Returns True, CaselessDict would return False if it had no items.
+        """
+        return True
+
+    # python 2 compatibility
+    __nonzero__ = __bool__
+
+    def is_empty(self):
+        """Returns True if Component has no items or subcomponents, else False.
+        """
+        return True if not (list(self.values()) + self.subcomponents) else False  # noqa
+
     #############################
     # handling of property values
 
@@ -347,7 +360,10 @@ class Component(CaselessDict):
             # we are adding properties to the current top of the stack
             else:
                 factory = types_factory.for_property(name)
-                component = stack[-1]
+                component = stack[-1] if stack else None
+                if not component:
+                    raise ValueError('Property "{prop}" does not have '
+                                     'a parent component.'.format(prop=name))
                 datetime_names = ('DTSTART', 'DTEND', 'RECURRENCE-ID', 'DUE',
                                   'FREEBUSY', 'RDATE', 'EXDATE')
                 try:
