@@ -6,7 +6,9 @@ Changelog
 
 New:
 
-- *add item here*
+- Defined ``test_suite`` in setup.py.
+  Now tests can be run via ``python setup.py test``.
+  [geier]
 
 Fixes:
 
