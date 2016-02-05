@@ -411,4 +411,3 @@ END:VCALENDAR"""
                          b'BEGIN:MYCOMPTOO\r\nDTSTAMP:20150121T080000\r\n'
                          b'BEGIN:VEVENT\r\nDTSTART:20150122\r\nUID:12345\r\n'
                          b'END:VEVENT\r\nEND:MYCOMPTOO\r\n')
->>>>>>> Fixes unknown component represented as known one
