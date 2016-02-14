@@ -11,6 +11,7 @@ New:
 Fixes:
 
 - Fix testsuite for use with ``dateutil>=2.5``. Refs #195.
+- Reintroduce cal.Component.is_broken that was removed with 3.9.2 [geier]
 
 
 3.9.2 (2016-02-05)

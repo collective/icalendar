@@ -106,6 +106,10 @@ class Component(CaselessDict):
         """
         return True if not (list(self.values()) + self.subcomponents) else False  # noqa
 
+    @property
+    def is_broken(self):
+        return bool(self.errors)
+
     #############################
     # handling of property values
 
