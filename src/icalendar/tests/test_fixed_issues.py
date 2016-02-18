@@ -368,7 +368,7 @@ END:VCALENDAR"""
         """
 
         with self.assertRaises(ValueError):
-            cal = icalendar.Calendar.from_ical('VERSION:2.0')
+            icalendar.Calendar.from_ical('VERSION:2.0')
 
     def test_issue_178(self):
         """Issue #178 - A component with an unknown/invalid name is represented
@@ -411,3 +411,23 @@ END:VCALENDAR"""
                          b'BEGIN:MYCOMPTOO\r\nDTSTAMP:20150121T080000\r\n'
                          b'BEGIN:VEVENT\r\nDTSTART:20150122\r\nUID:12345\r\n'
                          b'END:VEVENT\r\nEND:MYCOMPTOO\r\n')
+
+    def test_issue_184(self):
+        """Issue #184 - Previous changes in code broke already broken
+        representation of PERIOD values - in a new way"""
+
+        ical_str = ['BEGIN:VEVENT',
+                    'DTSTAMP:20150219T133000',
+                    'DTSTART:20150219T133000',
+                    'UID:1234567',
+                    'RDATE;VALUE=PERIOD:20150219T133000/PT10H',
+                    'END:VEVENT']
+
+        event = icalendar.Event.from_ical('\r\n'.join(ical_str))
+        self.assertEqual(event.errors, [])
+        self.assertEqual(event.to_ical(),
+                         b'BEGIN:VEVENT\r\nDTSTART:20150219T133000\r\n'
+                         b'DTSTAMP:20150219T133000\r\nUID:1234567\r\n'
+                         b'RDATE;VALUE=PERIOD:20150219T133000/PT10H\r\n'
+                         b'END:VEVENT\r\n'
+                         )

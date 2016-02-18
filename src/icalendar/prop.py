@@ -273,14 +273,17 @@ class vDDDTypes(object):
     So this is practical.
     """
     def __init__(self, dt):
-        if not isinstance(dt, (datetime, date, timedelta, time)):
-            raise ValueError('You must use datetime, date, timedelta or time')
+        if not isinstance(dt, (datetime, date, timedelta, time, tuple)):
+            raise ValueError('You must use datetime, date, timedelta, '
+                             'time or tuple (for periods)')
         if isinstance(dt, datetime):
             self.params = Parameters({'value': 'DATE-TIME'})
         elif isinstance(dt, date):
             self.params = Parameters({'value': 'DATE'})
         elif isinstance(dt, time):
             self.params = Parameters({'value': 'TIME'})
+        elif isinstance(dt, tuple):
+            self.params = Parameters({'value': 'PERIOD'})
 
         if (isinstance(dt, datetime) or isinstance(dt, time))\
                 and getattr(dt, 'tzinfo', False):
@@ -303,8 +306,10 @@ class vDDDTypes(object):
             return vDuration(dt).to_ical()
         elif isinstance(dt, time):
             return vTime(dt).to_ical()
+        elif isinstance(dt, tuple) and len(dt) == 2:
+            return vPeriod(dt).to_ical()
         else:
-            raise ValueError('Unknown date type')
+            raise ValueError('Unknown date type: {}'.format(type(dt)))
 
     @classmethod
     def from_ical(cls, ical, timezone=None):
@@ -313,6 +318,8 @@ class vDDDTypes(object):
         u = ical.upper()
         if u.startswith(('P', '-P', '+P')):
             return vDuration.from_ical(ical)
+        if '/' in u:
+            return vPeriod.from_ical(ical)
 
         if len(ical) in (15, 16):
             return vDatetime.from_ical(ical, timezone=timezone)
