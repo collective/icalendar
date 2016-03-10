@@ -380,7 +380,7 @@ class Contentlines(list):
             # a fold is carriage return followed by either a space or a tab
             unfolded = uFOLD.sub('', st)
             lines = cls(Contentline(line) for
-                        line in unfolded.splitlines() if line)
+                        line in NEWLINE.split(unfolded) if line)
             lines.append('')  # '\r\n' at the end of every content line
             return lines
         except:
