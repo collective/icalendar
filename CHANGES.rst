@@ -1,6 +1,24 @@
 Changelog
 =========
 
+5.0 (unreleased)
+----------------
+
+Breaking changes:
+
+- Added strong typing of property values. Unknown properties with VALUE parameter
+  should now be represented as the appropriate type
+  Refs #187
+  [stlaz]
+
+New features:
+
+- *add item here*
+
+Bug fixes:
+
+- *add item here*
+
 
 4.0.9 (unreleased)
 ------------------
