@@ -4,8 +4,11 @@ Changelog
 3.11 (unreleased)
 -----------------
 
-- Nothing changed yet.
-
+- *add item here*
+- Added strong typing of property values. Unknown properties with VALUE parameter
+  should now be represented as the appropriate type
+  Refs #187
+  [stlaz]
 
 3.10 (2016-05-26)
 -----------------
