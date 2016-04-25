@@ -10,7 +10,7 @@ New:
 
 Fixes:
 
-- *add item here*
+- Fix testsuite for use with ``dateutil>=2.5``. Refs #195.
 
 
 3.9.2 (2016-02-05)
