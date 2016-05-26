@@ -6,14 +6,24 @@ Changelog
 
 New:
 
-- *add item here*
 - Updated components description to better comply with RFC 5545.
+  Refs #183.
+  [stlaz]
+
+- Added PERIOD value type to date types.
+  Also fixes incompatibilities described in #184.
+  Refs #189.
   [stlaz]
 
 Fixes:
 
-- Fix testsuite for use with ``dateutil>=2.5``. Refs #195.
-- Reintroduce cal.Component.is_broken that was removed with 3.9.2 [geier]
+- Fix testsuite for use with ``dateutil>=2.5``.
+  Refs #195.
+  [untitaker]
+
+- Reintroduce cal.Component.is_broken that was removed with 3.9.2.
+  Refs #185.
+  [geier]
 
 
 3.9.2 (2016-02-05)
