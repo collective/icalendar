@@ -432,7 +432,7 @@ class Component(CaselessDict):
 
 
 #######################################
-# components defined in RFC 2445
+# components defined in RFC 5545
 
 class Event(Component):
 
@@ -440,21 +440,21 @@ class Event(Component):
 
     canonical_order = (
         'SUMMARY', 'DTSTART', 'DTEND', 'DURATION', 'DTSTAMP',
-        'UID', 'RECURRENCE-ID', 'SEQUENCE',
-        'RRULE' 'EXRULE', 'RDATE', 'EXDATE',
+        'UID', 'RECURRENCE-ID', 'SEQUENCE', 'RRULE', 'RDATE',
+        'EXDATE',
     )
 
-    required = ('UID',)
+    required = ('UID', 'DTSTAMP',)
     singletons = (
         'CLASS', 'CREATED', 'DESCRIPTION', 'DTSTART', 'GEO', 'LAST-MODIFIED',
         'LOCATION', 'ORGANIZER', 'PRIORITY', 'DTSTAMP', 'SEQUENCE', 'STATUS',
         'SUMMARY', 'TRANSP', 'URL', 'RECURRENCE-ID', 'DTEND', 'DURATION',
-        'DTSTART',
+        'UID',
     )
-    exclusive = ('DTEND', 'DURATION', )
+    exclusive = ('DTEND', 'DURATION',)
     multiple = (
         'ATTACH', 'ATTENDEE', 'CATEGORIES', 'COMMENT', 'CONTACT', 'EXDATE',
-        'EXRULE', 'RSTATUS', 'RELATED', 'RESOURCES', 'RDATE', 'RRULE'
+        'RSTATUS', 'RELATED', 'RESOURCES', 'RDATE', 'RRULE'
     )
     ignore_exceptions = True
 
@@ -463,7 +463,7 @@ class Todo(Component):
 
     name = 'VTODO'
 
-    required = ('UID',)
+    required = ('UID', 'DTSTAMP',)
     singletons = (
         'CLASS', 'COMPLETED', 'CREATED', 'DESCRIPTION', 'DTSTAMP', 'DTSTART',
         'GEO', 'LAST-MODIFIED', 'LOCATION', 'ORGANIZER', 'PERCENT-COMPLETE',
@@ -473,7 +473,7 @@ class Todo(Component):
     exclusive = ('DUE', 'DURATION',)
     multiple = (
         'ATTACH', 'ATTENDEE', 'CATEGORIES', 'COMMENT', 'CONTACT', 'EXDATE',
-        'EXRULE', 'RSTATUS', 'RELATED', 'RESOURCES', 'RDATE', 'RRULE'
+        'RSTATUS', 'RELATED', 'RESOURCES', 'RDATE', 'RRULE'
     )
 
 
@@ -481,15 +481,14 @@ class Journal(Component):
 
     name = 'VJOURNAL'
 
-    required = ('UID',)
+    required = ('UID', 'DTSTAMP',)
     singletons = (
-        'CLASS', 'CREATED', 'DESCRIPTION', 'DTSTART', 'DTSTAMP',
-        'LAST-MODIFIED', 'ORGANIZER', 'RECURRENCE-ID', 'SEQUENCE', 'STATUS',
-        'SUMMARY', 'UID', 'URL',
+        'CLASS', 'CREATED', 'DTSTART', 'DTSTAMP', 'LAST-MODIFIED', 'ORGANIZER',
+        'RECURRENCE-ID', 'SEQUENCE', 'STATUS', 'SUMMARY', 'UID', 'URL',
     )
     multiple = (
         'ATTACH', 'ATTENDEE', 'CATEGORIES', 'COMMENT', 'CONTACT', 'EXDATE',
-        'EXRULE', 'RELATED', 'RDATE', 'RRULE', 'RSTATUS',
+        'RELATED', 'RDATE', 'RRULE', 'RSTATUS', 'DESCRIPTION',
     )
 
 
@@ -497,9 +496,9 @@ class FreeBusy(Component):
 
     name = 'VFREEBUSY'
 
-    required = ('UID',)
+    required = ('UID', 'DTSTAMP',)
     singletons = (
-        'CONTACT', 'DTSTART', 'DTEND', 'DURATION', 'DTSTAMP', 'ORGANIZER',
+        'CONTACT', 'DTSTART', 'DTEND', 'DTSTAMP', 'ORGANIZER',
         'UID', 'URL',
     )
     multiple = ('ATTENDEE', 'COMMENT', 'FREEBUSY', 'RSTATUS',)
@@ -507,8 +506,8 @@ class FreeBusy(Component):
 
 class Timezone(Component):
     name = 'VTIMEZONE'
-    canonical_order = ('TZID', 'STANDARD', 'DAYLIGHT',)
-    required = ('TZID', 'STANDARD', 'DAYLIGHT',)
+    canonical_order = ('TZID',)
+    required = ('TZID',) # it also requires one of components DAYLIGHT and STANDARD
     singletons = ('TZID', 'LAST-MODIFIED', 'TZURL',)
 
     @staticmethod
@@ -631,24 +630,28 @@ class Timezone(Component):
 class TimezoneStandard(Component):
     name = 'STANDARD'
     required = ('DTSTART', 'TZOFFSETTO', 'TZOFFSETFROM')
-    singletons = ('DTSTART', 'TZOFFSETTO', 'TZOFFSETFROM', 'RRULE')
-    multiple = ('COMMENT', 'RDATE', 'TZNAME')
+    singletons = ('DTSTART', 'TZOFFSETTO', 'TZOFFSETFROM',)
+    multiple = ('COMMENT', 'RDATE', 'TZNAME', 'RRULE', 'EXDATE')
 
 
 class TimezoneDaylight(Component):
     name = 'DAYLIGHT'
-    required = ('DTSTART', 'TZOFFSETTO', 'TZOFFSETFROM')
-    singletons = ('DTSTART', 'TZOFFSETTO', 'TZOFFSETFROM', 'RRULE')
-    multiple = ('COMMENT', 'RDATE', 'TZNAME')
+    required = TimezoneStandard.required
+    singletons = TimezoneStandard.singletons
+    multiple = TimezoneStandard.multiple
 
 
 class Alarm(Component):
 
     name = 'VALARM'
-    # not quite sure about these ...
+    # some properties MAY/MUST/MUST NOT appear depending on ACTION value
     required = ('ACTION', 'TRIGGER',)
-    singletons = ('ATTACH', 'ACTION', 'TRIGGER', 'DURATION', 'REPEAT',)
-    inclusive = (('DURATION', 'REPEAT',),)
+    singletons = (
+            'ATTACH', 'ACTION', 'DESCRIPTION', 'SUMMARY', 'TRIGGER',
+            'DURATION', 'REPEAT',
+            )
+    inclusive = (('DURATION', 'REPEAT',), ('SUMMARY', 'ATTENDEE',))
+    multiple = ('ATTENDEE', 'ATTACH')
 
 
 class Calendar(Component):
@@ -656,9 +659,8 @@ class Calendar(Component):
     """
     name = 'VCALENDAR'
     canonical_order = ('VERSION', 'PRODID', 'CALSCALE', 'METHOD',)
-    required = ('prodid', 'version', )
-    singletons = ('prodid', 'version', )
-    multiple = ('calscale', 'method', )
+    required = ('PRODID', 'VERSION', )
+    singletons = ('PRODID', 'VERSION', 'CALSCALE', 'METHOD')
 
 # These are read only singleton, so one instance is enough for the module
 types_factory = TypesFactory()

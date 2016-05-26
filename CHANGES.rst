@@ -7,6 +7,8 @@ Changelog
 New:
 
 - *add item here*
+- Updated components description to better comply with RFC 5545.
+  [stlaz]
 
 Fixes:
 
