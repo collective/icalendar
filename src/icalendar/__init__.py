@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-__version__ = '3.10.dev0'
+__version__ = '3.10'
 
 from icalendar.cal import (
     Calendar,
