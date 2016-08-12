@@ -384,7 +384,17 @@ class Component(CaselessDict):
                 try:
                     factory = types_factory.for_property(name,
                                                          params.get('VALUE'))
-                    if types_factory.is_list_property(name):
+                except ValueError as e:
+                    if not component.ignore_exceptions:
+                        raise
+                    else:
+                        # add error message and fall back to vText value type
+                        component.errors.append((uname, str(e)))
+                        factory = types_factory['text']
+                try:
+                    if (types_factory.is_list_property(name) and
+                            factory != vText):
+                        # TODO: list type currenty supports only datetime types
                         vals = vDDDLists(
                             vDDDLists.from_ical(vals, params.get('TZID'),
                                                 factory))
@@ -398,10 +408,11 @@ class Component(CaselessDict):
                     if not component.ignore_exceptions:
                         raise
                     component.errors.append((uname, unicode_type(e)))
-                    component.add(name, None, encode=0)
-                else:
-                    vals.params = params
-                    component.add(name, vals, encode=0)
+                    # fallback to vText and store the original value
+                    vals = types_factory['text'](vals)
+
+                vals.params = params
+                component.add(name, vals, encode=0)
 
         if multiple:
             return comps

@@ -7,6 +7,12 @@ Changelog
 Breaking changes:
 
 - *add item here*
+
+- Improved error handling. The value and parameters of a property should no longer
+  be lost upon error.
+  Refs #158 #174
+  [stlaz]
+
 - Added strong typing of property values. Unknown properties with VALUE parameter
   should now be represented as the appropriate type
   Refs #187
