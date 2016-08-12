@@ -512,6 +512,8 @@ END:VCALENDAR"""
         event = icalendar.Event.from_ical('\r\n'.join(ical_str))
         self.assertEqual(event.errors,
                          [('MYPROP', "Expected time, got: '20050520T200505'")])
+        self.assertEqual(event['MYPROP'],
+                         icalendar.prop.vText('20050520T200505'))
 
         # Wrong default property value (DATE instead of DATE-TIME)
         ical_str = orig_str[:]
@@ -519,6 +521,8 @@ END:VCALENDAR"""
         event = icalendar.Event.from_ical('\r\n'.join(ical_str))
         self.assertEqual(event.errors,
                          [('DTSTART', "Wrong datetime format '20150408'")])
+        self.assertEqual(event['DTSTART'],
+                         icalendar.prop.vText('20150408'))
 
         # -------- Wrong vDDDLists setups follow --------
         ical_str = orig_str[:]
@@ -527,6 +531,8 @@ END:VCALENDAR"""
         event = icalendar.Event.from_ical('\r\n'.join(ical_str))
         self.assertEqual(event.errors,
                          [('RDATE', "Wrong date format '20150217T095800'")])
+        self.assertEqual(event['RDATE'],
+                         icalendar.prop.vText('20150217T095800'))
 
         ical_str[3] = ('RDATE;FMTTYPE=text/plain;ENCODING=BASE64;VALUE=BINARY:'
                        'c3RsYXo=')
@@ -534,3 +540,8 @@ END:VCALENDAR"""
         self.assertEqual(event.errors,
                          [('RDATE', "The VALUE parameter of RDATE property "
                                     "is not supported: 'BINARY'")])
+        self.assertEqual(event['RDATE'],
+                         icalendar.prop.vText('c3RsYXo='))
+        self.assertEqual(event['RDATE'].params,
+                         {'VALUE': 'BINARY', 'ENCODING': 'BASE64',
+                          'FMTTYPE': 'text/plain'})

@@ -11,6 +11,11 @@ Breaking changes:
   Refs #187
   [stlaz]
 
+- Improved error handling. The value and parameters of a property should no longer
+  be lost upon error.
+  Refs #158 #174
+  [stlaz]
+
 New features:
 
 - *add item here*
