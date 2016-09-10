@@ -58,7 +58,7 @@ nested like this::
     END:VCALENDAR
 
 Inside the components there are properties with values. The values
-have special types. like integer, text, datetime etc. These values are
+have special types. Like integer, text, datetime etc. these values are
 encoded in a special text format in an iCalendar file.
 
 There are methods for converting to and from these encodings in the package.
