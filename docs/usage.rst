@@ -171,7 +171,7 @@ Property values are utf-8 encoded strings.
 
 This is impractical if you want to use the data for further
 computation. The datetime format for example looks like this:
-'20050404T080000'. But the package makes it simple to Parse and
+'20050404T080000'. But the package makes it simple to parse and
 generate iCalendar formatted strings.
 
 Basically you can make the add() method do the thinking, or you can do it
