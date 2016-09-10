@@ -256,7 +256,7 @@ Example
 -------
 
 Here is an example generating a complete iCal calendar file with a
-single event that can be loaded into the Mozilla calendar
+single event that can be loaded into the Mozilla calendar.
 
 Init the calendar::
 
