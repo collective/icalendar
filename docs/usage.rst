@@ -58,7 +58,7 @@ nested like this::
     END:VCALENDAR
 
 Inside the components there are properties with values. The values
-have special types. like integer, text, datetime etc. These values are
+have special types. Like integer, text, datetime etc. these values are
 encoded in a special text format in an iCalendar file.
 
 There are methods for converting to and from these encodings in the package.
@@ -170,8 +170,8 @@ Value types
 Property values are utf-8 encoded strings.
 
 This is impractical if you want to use the data for further
-computation. Eg. the datetime format looks like this:
-'20050404T080000'. But the package makes it simple to Parse and
+computation. The datetime format for example looks like this:
+'20050404T080000'. But the package makes it simple to parse and
 generate iCalendar formatted strings.
 
 Basically you can make the add() method do the thinking, or you can do it
@@ -256,7 +256,7 @@ Example
 -------
 
 Here is an example generating a complete iCal calendar file with a
-single event that can be loaded into the Mozilla calendar
+single event that can be loaded into the Mozilla calendar.
 
 Init the calendar::
 
