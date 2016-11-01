@@ -333,7 +333,7 @@ class Component(CaselessDict):
                 component = stack[-1] if stack else None
                 if not component or not component.ignore_exceptions:
                     raise
-                component.errors.append((None, str(e)))
+                component.errors.append((None, repr(e)))
                 continue
 
             uname = name.upper()
