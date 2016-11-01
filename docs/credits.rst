@@ -51,6 +51,7 @@ icalendar contributors
 - tgecho <tgecho@gmail.com>
 - tisto <tisto@plone.org>
 - TomTry <tom.try@gmail.com>
+- Andreas Ruppen <andreas.ruppen@gmail.com>
 
 Find out who contributed::
 

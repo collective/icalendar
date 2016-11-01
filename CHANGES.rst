@@ -5,6 +5,7 @@ Changelog
 -----------------
 
 - Nothing changed yet.
+- Use repr() function to render ics attributes in error messages
 
 
 3.10 (2016-05-26)
