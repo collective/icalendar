@@ -275,7 +275,7 @@ END:VCALENDAR"""
             b'BEGIN:VEVENT\r\nX-APPLE-STRUCTURED-LOCATION;VALUE=URI;'
             b'X-ADDRESS="367 George Street Sydney \r\n CBD NSW 2000";'
             b'X-APPLE-RADIUS=72;X-TITLE="367 George Street":'
-            b'geo:-33.868900\r\n \\,151.207000\r\nEND:VEVENT\r\n'
+            b'geo:-33.868900\r\n ,151.207000\r\nEND:VEVENT\r\n'
         )
 
         # roundtrip
@@ -403,14 +403,14 @@ END:VCALENDAR"""
                                 'DTSTAMP:20150121T080000',
                                 'BEGIN:VEVENT',
                                 'UID:12345',
-                                'DTSTART:20150122',
+                                'DTSTART;VALUE=DATE:20150122',
                                 'END:VEVENT',
                                 'END:MYCOMPTOO'])
         cal = icalendar.Calendar.from_ical(ical_str)
         self.assertEqual(cal.errors, [])
         self.assertEqual(cal.to_ical(),
                          b'BEGIN:MYCOMPTOO\r\nDTSTAMP:20150121T080000\r\n'
-                         b'BEGIN:VEVENT\r\nDTSTART:20150122\r\nUID:12345\r\n'
+                         b'BEGIN:VEVENT\r\nDTSTART;VALUE=DATE:20150122\r\nUID:12345\r\n'
                          b'END:VEVENT\r\nEND:MYCOMPTOO\r\n')
 
     def test_issue_184(self):
@@ -432,3 +432,59 @@ END:VCALENDAR"""
                          b'RDATE;VALUE=PERIOD:20150219T133000/PT10H\r\n'
                          b'END:VEVENT\r\n'
                          )
+
+    def test_issue_187(self):
+        """Issue 184: The property VALUE parameter is being ignored during
+        parsing. Also, the types are not strong as the RFC 5545 requires."""
+
+        orig_str = ['BEGIN:VEVENT',
+                    'DTSTAMP:20150217T095800',
+                    'DTSTART:20150408T120001',
+                    'RDATE:20150408T120001',
+                    'END:VEVENT'
+                    ]
+        ical_str = orig_str[:]
+        # correct setup
+        event = icalendar.Event.from_ical('\r\n'.join(ical_str))
+        self.assertEqual(event.to_ical(),
+                         b'BEGIN:VEVENT\r\n'
+                         b'DTSTART:20150408T120001\r\n'
+                         b'DTSTAMP:20150217T095800\r\n'
+                         b'RDATE:20150408T120001\r\n'
+                         b'END:VEVENT\r\n')
+        self.assertEqual(event.errors, [])
+        # correct setup with an unknown property
+        ical_str.insert(4, 'MYPROP:200512,143022,064530')
+        event = icalendar.Event.from_ical('\r\n'.join(ical_str))
+        self.assertTrue(isinstance(event['MYPROP'], icalendar.vText))
+        # correct setup with unknown property - VALUE is set
+        ical_str[4] = 'MYPROP;VALUE=DATE-TIME:20050520T200505'
+        event = icalendar.Event.from_ical('\r\n'.join(ical_str))
+        self.assertTrue(isinstance(event['MYPROP'], icalendar.vDatetime))
+        # wrong setup with unknown property when VALUE is set
+        ical_str[4] = 'MYPROP;VALUE=TIME:20050520T200505'
+        event = icalendar.Event.from_ical('\r\n'.join(ical_str))
+        self.assertEqual(event.errors,
+                         [('MYPROP', "Expected time, got: '20050520T200505'")])
+
+        # Wrong default property value (DATE instead of DATE-TIME)
+        ical_str = orig_str[:]
+        ical_str[2] = 'DTSTART:20150408'
+        event = icalendar.Event.from_ical('\r\n'.join(ical_str))
+        self.assertEqual(event.errors,
+                         [('DTSTART', "Wrong datetime format '20150408'")])
+
+        # -------- Wrong vDDDLists setups follow --------
+        ical_str = orig_str[:]
+        # DATE-TIME value at EXDATE with VALUE:DATE
+        ical_str[3] = 'RDATE;VALUE=DATE:20150217T095800'
+        event = icalendar.Event.from_ical('\r\n'.join(ical_str))
+        self.assertEqual(event.errors,
+                         [('RDATE', "Wrong date format '20150217T095800'")])
+
+        ical_str[3] = ('RDATE;FMTTYPE=text/plain;ENCODING=BASE64;VALUE=BINARY:'
+                       'c3RsYXo=')
+        event = icalendar.Event.from_ical('\r\n'.join(ical_str))
+        self.assertEqual(event.errors,
+                         [('RDATE', "The VALUE parameter of RDATE property "
+                                    "is not supported: 'BINARY'")])

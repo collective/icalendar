@@ -427,5 +427,5 @@ class TestCal(unittest.TestCase):
         self.assertEqual(
             [e.errors
                 for e in icalendar.cal.Calendar.from_ical(s).walk('VEVENT')],
-            [[], [('EXDATE', "Expected datetime, date, or time, got: ''")]]
+            [[], [('EXDATE', "Wrong date format ''")]]
         )
