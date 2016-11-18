@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.11 (unreleased)
+3.11 (2016-11-18)
 -----------------
 
 Fixes:
@@ -306,7 +306,7 @@ Fixes:
 - Use @staticmethod decorator instead of wrapper function.
   [warvariuc, thet]
 
-- Extend quoting of parameter values to all of those characters: ",;: ’'".
+- Extend quoting of parameter values to all of those characters: ",;: â'".
   This fixes an outlook incompatibility with some characters. Fixes: #79,
   Fixes: #81.
   [warvariuc]
