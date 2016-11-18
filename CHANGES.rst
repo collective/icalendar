@@ -4,7 +4,11 @@ Changelog
 3.11 (unreleased)
 -----------------
 
-- Nothing changed yet.
+Fixes:
+
+- Successfully test with pypy and pypy3.  [gforcada]
+
+- Minor documentation update.  [tpltnt]
 
 
 3.10 (2016-05-26)
