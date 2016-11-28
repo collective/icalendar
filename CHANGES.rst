@@ -14,7 +14,7 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Encode error message before adding it to the stack of collected error messages.
 
 
 3.11 (2016-11-18)
