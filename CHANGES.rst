@@ -4,14 +4,6 @@ Changelog
 3.11.1 (unreleased)
 -------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Encode error message before adding it to the stack of collected error messages.
