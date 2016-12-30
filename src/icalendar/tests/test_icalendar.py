@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import textwrap
+
 from icalendar.tests import unittest
 
 
@@ -207,6 +209,30 @@ class IcalendarTestCase (unittest.TestCase):
             ('key', Parameters({'PARAM': 'pValue'}), 'value')
         )
 
+        contains_base64 = (
+            'X-APPLE-STRUCTURED-LOCATION;'
+            'VALUE=URI;X-ADDRESS="Kaiserliche Hofburg, 1010 Wien";'
+            'X-APPLE-MAPKIT-HANDLE=CAESxQEZgr3QZXJyZWljaA==;'
+            'X-APPLE-RADIUS=328.7978217977285;X-APPLE-REFERENCEFRAME=1;'
+            'X-TITLE=Heldenplatz:geo:48.206686,16.363235'
+        ).encode('utf-8')
+
+        self.assertEqual(
+            Contentline(contains_base64, strict=True).parts(),
+            ('X-APPLE-STRUCTURED-LOCATION',
+             Parameters({
+                 'X-APPLE-RADIUS': '328.7978217977285',
+                 'X-ADDRESS': 'Kaiserliche Hofburg, 1010 Wien',
+                 'X-APPLE-REFERENCEFRAME': '1',
+                 'X-TITLE': u'HELDENPLATZ',
+                 'X-APPLE-MAPKIT-HANDLE':
+                 'CAESXQEZGR3QZXJYZWLJAA==',
+                 'VALUE': 'URI',
+             }),
+             'geo:48.206686,16.363235'
+             )
+        )
+
     def test_fold_line(self):
         from ..parser import foldline
 
@@ -246,6 +272,10 @@ class IcalendarTestCase (unittest.TestCase):
         from ..parser import q_split
         self.assertEqual(q_split('Max,Moller,"Rasmussen, Max"'),
                          ['Max', 'Moller', '"Rasmussen, Max"'])
+
+    def test_q_split_bin(self):
+        from ..parser import q_split
+        self.assertEqual(q_split('X-SOMETHING=ABCDE==', '=', maxsplit=1), ['X-SOMETHING', 'ABCDE=='])
 
     def test_q_join(self):
         from ..parser import q_join
