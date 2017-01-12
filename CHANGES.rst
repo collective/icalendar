@@ -4,19 +4,13 @@ Changelog
 3.11.2 (unreleased)
 -------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
-- also run tests with python 3.5 and 3.6 [geier]
+- Run tests with python 3.5 and 3.6.
+  [geier]
 
-- allow tests failing with pypy3 on travis.ci [geier]
+- Allow tests failing with pypy3 on travis.ci.
+  [geier]
 
 
 3.11.1 (2016-12-19)
