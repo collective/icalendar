@@ -152,6 +152,9 @@ def dquote(val):
 def q_split(st, sep=',', maxsplit=-1):
     """Splits a string on char, taking double (q)uotes into considderation.
     """
+    if maxsplit == 0:
+        return [st]
+
     result = []
     cursor = 0
     length = len(st)

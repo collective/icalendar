@@ -277,7 +277,10 @@ class IcalendarTestCase (unittest.TestCase):
 
     def test_q_split_bin(self):
         from ..parser import q_split
-        self.assertEqual(q_split('X-SOMETHING=ABCDE==', '=', maxsplit=1), ['X-SOMETHING', 'ABCDE=='])
+        for s in ('X-SOMETHING=ABCDE==', ',,,'):
+            for maxsplit in range(3):
+                self.assertEqual(q_split(s, '=', maxsplit=maxsplit),
+                                 s.split('=', maxsplit))
 
     def test_q_join(self):
         from ..parser import q_join
