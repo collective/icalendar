@@ -278,7 +278,7 @@ class IcalendarTestCase (unittest.TestCase):
     def test_q_split_bin(self):
         from ..parser import q_split
         for s in ('X-SOMETHING=ABCDE==', ',,,'):
-            for maxsplit in range(3):
+            for maxsplit in range(-1, 3):
                 self.assertEqual(q_split(s, '=', maxsplit=maxsplit),
                                  s.split('=', maxsplit))
 
