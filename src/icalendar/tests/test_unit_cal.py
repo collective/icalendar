@@ -393,7 +393,8 @@ class TestCal(unittest.TestCase):
         import tempfile
         import os
         directory = tempfile.mkdtemp()
-        open(os.path.join(directory, 'test.ics'), 'wb').write(cal.to_ical())
+        with open(os.path.join(directory, 'test.ics'), 'wb') as fp:
+            fp.write(cal.to_ical())
 
         # Parsing a complete calendar from a string will silently ignore wrong
         # events but adding the error information to the component's 'errors'

@@ -12,9 +12,9 @@ class TestRecurrence(unittest.TestCase):
 
     def setUp(self):
         directory = os.path.dirname(__file__)
-        self.cal = icalendar.Calendar.from_ical(
-            open(os.path.join(directory, 'recurrence.ics'), 'rb').read()
-        )
+        with open(os.path.join(directory, 'recurrence.ics'), 'rb') as fp:
+            data = fp.read()
+        self.cal = icalendar.Calendar.from_ical(data)
 
     def test_recurrence_exdates_one_line(self):
         first_event = self.cal.walk('vevent')[0]

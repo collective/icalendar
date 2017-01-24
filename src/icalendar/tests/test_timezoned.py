@@ -12,9 +12,9 @@ class TestTimezoned(unittest.TestCase):
 
     def test_create_from_ical(self):
         directory = os.path.dirname(__file__)
-        cal = icalendar.Calendar.from_ical(
-            open(os.path.join(directory, 'timezoned.ics'), 'rb').read()
-        )
+        with open(os.path.join(directory, 'timezoned.ics'), 'rb') as fp:
+            data = fp.read()
+        cal = icalendar.Calendar.from_ical(data)
 
         self.assertEqual(
             cal['prodid'].to_ical(),
@@ -151,9 +151,9 @@ class TestTimezoneCreation(unittest.TestCase):
         RFC"""
 
         directory = os.path.dirname(__file__)
-        cal = icalendar.Calendar.from_ical(
-            open(os.path.join(directory, 'america_new_york.ics'), 'rb').read()
-        )
+        with open(os.path.join(directory, 'america_new_york.ics'), 'rb') as fp:
+            data = fp.read()
+        cal = icalendar.Calendar.from_ical(data)
 
         tz = cal.walk('VEVENT')[0]['DTSTART'][0].dt.tzinfo
         self.assertEqual(str(tz), 'custom_America/New_York')
@@ -188,9 +188,9 @@ class TestTimezoneCreation(unittest.TestCase):
         self.maxDiff = None
 
         directory = os.path.dirname(__file__)
-        cal = icalendar.Calendar.from_ical(
-            open(os.path.join(directory, 'pacific_fiji.ics'), 'rb').read()
-        )
+        with open(os.path.join(directory, 'pacific_fiji.ics'), 'rb') as fp:
+            data = fp.read()
+        cal = icalendar.Calendar.from_ical(data)
 
         tz = cal.walk('VEVENT')[0]['DTSTART'][0].dt.tzinfo
         self.assertEqual(str(tz), 'custom_Pacific/Fiji')
