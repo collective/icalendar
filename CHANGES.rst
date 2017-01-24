@@ -6,7 +6,8 @@ Changelog
 
 Breaking changes:
 
-- *add item here*
+- Removed ``setuptools`` as a dependency as it was only required by setup.py
+  and not by the package.
 
 New features:
 
