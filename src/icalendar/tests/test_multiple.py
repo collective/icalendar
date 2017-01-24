@@ -12,10 +12,9 @@ class TestMultiple(unittest.TestCase):
     def test_multiple(self):
 
         directory = os.path.dirname(__file__)
-        cals = Calendar.from_ical(
-            open(os.path.join(directory, 'multiple.ics'), 'rb').read(),
-            multiple=True
-        )
+        with open(os.path.join(directory, 'multiple.ics'), 'rb') as fp:
+            data = fp.read()
+        cals = Calendar.from_ical(data, multiple=True)
 
         self.assertEqual(len(cals), 2)
         self.assertSequenceEqual([comp.name for comp in cals[0].walk()],

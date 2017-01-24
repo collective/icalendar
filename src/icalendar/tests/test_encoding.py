@@ -11,7 +11,8 @@ class TestEncoding(unittest.TestCase):
 
     def test_create_from_ical(self):
         directory = os.path.dirname(__file__)
-        data = open(os.path.join(directory, 'encoding.ics'), 'rb').read()
+        with open(os.path.join(directory, 'encoding.ics'), 'rb') as fp:
+            data = fp.read()
         cal = icalendar.Calendar.from_ical(data)
 
         self.assertEqual(cal['prodid'].to_ical().decode('utf-8'),
