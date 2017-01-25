@@ -10,7 +10,7 @@ with Python.
     :Homepage: http://icalendar.readthedocs.org
     :Code: http://github.com/collective/icalendar
     :Mailing list: http://github.com/collective/icalendar/issues
-    :Dependencies: `setuptools`_ and since version 3.0 we depend on `pytz`_.
+    :Dependencies: `python-dateutil`_ and `pytz`_.
     :Compatible with: Python 2.6, 2.7 and 3.3+
     :License: `BSD`_
 
@@ -72,8 +72,8 @@ a suggestion to icalendar-dev@codespeak.net to take over maintaining of
 .. _`icalendar`: http://pypi.python.org/pypi/icalendar
 .. _`plone.app.event`: http://github.com/plone/plone.app.event
 .. _`Plone`: http://plone.org
+.. _`python-dateutil`: https://github.com/dateutil/dateutil/
 .. _`pytz`: http://pypi.python.org/pypi/pytz
-.. _`setuptools`: http://pypi.python.org/pypi/setuptools
 .. _`RFC`: http://www.ietf.org/rfc/rfc5545.txt
 .. _`BSD`: https://github.com/collective/icalendar/issues/2
 
@@ -96,4 +96,3 @@ Output from coverage test::
     src/icalendar/tools               16      0   100%
     --------------------------------------------------
     TOTAL                           1152     81    93%
-

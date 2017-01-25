@@ -22,7 +22,6 @@ tests_require = []
 install_requires = [
     'python-dateutil',
     'pytz',
-    'setuptools',
 ]
 
 if sys.version_info[:2] == (2, 6):
