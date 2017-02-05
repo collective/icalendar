@@ -15,8 +15,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
-
+- Don't split content lines on the unicode ``LINE SEPARATOR`` character
+  ``\u2028`` but only on ``CRLF`` or ``LF``.
 
 3.11.2 (2017-01-12)
 -------------------
