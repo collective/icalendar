@@ -4,16 +4,10 @@ Changelog
 3.11.3 (unreleased)
 -------------------
 
-Breaking changes:
+Bug fixes:
 
 - Removed ``setuptools`` as a dependency as it was only required by setup.py
   and not by the package.
-
-New features:
-
-- *add item here*
-
-Bug fixes:
 
 - Don't split content lines on the unicode ``LINE SEPARATOR`` character
   ``\u2028`` but only on ``CRLF`` or ``LF``.
