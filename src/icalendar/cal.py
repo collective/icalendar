@@ -517,19 +517,11 @@ class Timezone(Component):
     singletons = ('TZID', 'LAST-MODIFIED', 'TZURL',)
 
     @staticmethod
-    def _extract_offsets(component, zone):
+    def _extract_offsets(component, tzname):
         """extract offsets and transition times from a VTIMEZONE component
         :param component: a STANDARD or DAYLIGHT component
-        :param zone: the name of the zone, used for constructing a TZNAME if
-                     this component has none
+        :param tzname: the name of the zone
         """
-        try:
-            tzname = str(component['TZNAME'])
-        except KeyError:
-            tzname = '{0}_{1}'.format(
-                zone,
-                component['DTSTART'].to_ical().decode('utf-8')
-            )
         offsetfrom = component['TZOFFSETFROM'].td
         offsetto = component['TZOFFSETTO'].td
         dtstart = component['DTSTART'].dt
@@ -586,12 +578,14 @@ class Timezone(Component):
             try:
                 tzname = str(component['TZNAME'])
             except KeyError:
-                tzname = '{0}_{1}'.format(
+                tzname = '{0}_{1}_{2}_{3}'.format(
                     zone,
-                    component['DTSTART'].to_ical().decode('utf-8')
+                    component['DTSTART'].to_ical().decode('utf-8'),
+                    component['TZOFFSETFROM'].to_ical(),  # for whatever reason this is str/unicode
+                    component['TZOFFSETTO'].to_ical(),  # for whatever reason this is str/unicode
                 )
             dst[tzname], component_transitions = self._extract_offsets(
-                component, zone
+                component, tzname
             )
             transitions.extend(component_transitions)
 
@@ -622,6 +616,7 @@ class Timezone(Component):
                         if not dst[transitions[index][3]]:  # [3] is the name
                             dst_offset = osto - transitions[index][2]  # [2] is osto  # noqa
                             break
+            assert dst_offset is not False
             transition_info.append((osto, dst_offset, name))
 
         cls = type(zone, (DstTzInfo,), {

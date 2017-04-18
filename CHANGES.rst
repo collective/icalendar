@@ -17,6 +17,11 @@ Bug fixes:
 - Don't break on parameter values which contain equal signs, e.g. base64 encoded
   binary data [geier]
 
+- Fix handling of VTIMEZONEs with subcomponents with the same DTSTARTs.
+  [geier]
+
+- *add item here*
+
 
 3.11.3 (2017-02-15)
 -------------------

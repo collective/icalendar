@@ -266,39 +266,39 @@ class TestTimezoneCreation(unittest.TestCase):
             [(
                 datetime.timedelta(0, 43200),
                 datetime.timedelta(0),
-                'custom_Pacific/Fiji_19151026T000000'
+                'custom_Pacific/Fiji_19151026T000000_+115544_+1200'
             )] +
             3 * [(
                 datetime.timedelta(0, 46800),
                 datetime.timedelta(0, 3600),
-                'custom_Pacific/Fiji_19981101T020000'
+                'custom_Pacific/Fiji_19981101T020000_+1200_+1300'
             ), (
                 datetime.timedelta(0, 43200),
                 datetime.timedelta(0),
-                'custom_Pacific/Fiji_19990228T030000')
+                'custom_Pacific/Fiji_19990228T030000_+1300_+1200')
             ] +
             3 * [(
                 datetime.timedelta(0, 46800),
                 datetime.timedelta(0, 3600),
-                'custom_Pacific/Fiji_20101024T020000'
+                'custom_Pacific/Fiji_20101024T020000_+1200_+1300'
             ), (
                 datetime.timedelta(0, 43200),
                 datetime.timedelta(0),
-                'custom_Pacific/Fiji_19990228T030000'
+                'custom_Pacific/Fiji_19990228T030000_+1300_+1200'
             )] +
             25 * [(
                 datetime.timedelta(0, 46800),
                 datetime.timedelta(0, 3600),
-                'custom_Pacific/Fiji_20101024T020000'
+                'custom_Pacific/Fiji_20101024T020000_+1200_+1300'
             ), (
                 datetime.timedelta(0, 43200),
                 datetime.timedelta(0),
-                'custom_Pacific/Fiji_20140119T020000'
+                'custom_Pacific/Fiji_20140119T020000_+1300_+1200'
             )] +
             [(
                 datetime.timedelta(0, 46800),
                 datetime.timedelta(0, 3600),
-                'custom_Pacific/Fiji_20101024T020000'
+                'custom_Pacific/Fiji_20101024T020000_+1200_+1300'
             )]
         )
 
@@ -306,7 +306,7 @@ class TestTimezoneCreation(unittest.TestCase):
             (
                 datetime.timedelta(0, 46800),
                 datetime.timedelta(0, 3600),
-                'custom_Pacific/Fiji_19981101T020000'
+                'custom_Pacific/Fiji_19981101T020000_+1200_+1300'
             ),
             tz._tzinfos.keys()
         )
@@ -314,7 +314,17 @@ class TestTimezoneCreation(unittest.TestCase):
             (
                 datetime.timedelta(0, 43200),
                 datetime.timedelta(0),
-                'custom_Pacific/Fiji_19990228T030000'
+                'custom_Pacific/Fiji_19990228T030000_+1300_+1200'
             ),
             tz._tzinfos.keys()
         )
+
+    def test_same_start_date(self):
+        """testing if we can handle VTIMEZONEs whose different components
+        have the same start DTIMEs."""
+        directory = os.path.dirname(__file__)
+        with open(os.path.join(directory, 'timezone_same_start.ics'), 'rb') as fp:
+            data = fp.read()
+        cal = icalendar.Calendar.from_ical(data)
+        d = cal.subcomponents[1]['DTSTART'].dt
+        self.assertEqual(d.strftime('%c'), 'Fri Feb 24 12:00:00 2017')
