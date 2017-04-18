@@ -149,13 +149,17 @@ def dquote(val):
 
 
 # parsing helper
-def q_split(st, sep=','):
+def q_split(st, sep=',', maxsplit=-1):
     """Splits a string on char, taking double (q)uotes into considderation.
     """
+    if maxsplit == 0:
+        return [st]
+
     result = []
     cursor = 0
     length = len(st)
     inquote = 0
+    splits = 0
     for i in range(length):
         ch = st[i]
         if ch == '"':
@@ -163,8 +167,10 @@ def q_split(st, sep=','):
         if not inquote and ch == sep:
             result.append(st[cursor:i])
             cursor = i + 1
-        if i + 1 == length:
+            splits += 1
+        if i + 1 == length or splits == maxsplit:
             result.append(st[cursor:])
+            break
     return result
 
 
@@ -227,7 +233,7 @@ class Parameters(CaselessDict):
         result = cls()
         for param in q_split(st, ';'):
             try:
-                key, val = q_split(param, '=')
+                key, val = q_split(param, '=', maxsplit=1)
                 validate_token(key)
                 # Property parameter values that are not in quoted
                 # strings are case insensitive.

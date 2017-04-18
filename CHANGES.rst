@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Don't break on parameter values which contain equal signs, e.g. base64 encoded
+  binary data [geier]
 
 
 3.11.3 (2017-02-15)

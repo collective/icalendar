@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+import icalendar
+import os
+import textwrap
+
 from icalendar.tests import unittest
 
 
@@ -207,6 +211,30 @@ class IcalendarTestCase (unittest.TestCase):
             ('key', Parameters({'PARAM': 'pValue'}), 'value')
         )
 
+        contains_base64 = (
+            'X-APPLE-STRUCTURED-LOCATION;'
+            'VALUE=URI;X-ADDRESS="Kaiserliche Hofburg, 1010 Wien";'
+            'X-APPLE-MAPKIT-HANDLE=CAESxQEZgr3QZXJyZWljaA==;'
+            'X-APPLE-RADIUS=328.7978217977285;X-APPLE-REFERENCEFRAME=1;'
+            'X-TITLE=Heldenplatz:geo:48.206686,16.363235'
+        ).encode('utf-8')
+
+        self.assertEqual(
+            Contentline(contains_base64, strict=True).parts(),
+            ('X-APPLE-STRUCTURED-LOCATION',
+             Parameters({
+                 'X-APPLE-RADIUS': '328.7978217977285',
+                 'X-ADDRESS': 'Kaiserliche Hofburg, 1010 Wien',
+                 'X-APPLE-REFERENCEFRAME': '1',
+                 'X-TITLE': u'HELDENPLATZ',
+                 'X-APPLE-MAPKIT-HANDLE':
+                 'CAESXQEZGR3QZXJYZWLJAA==',
+                 'VALUE': 'URI',
+             }),
+             'geo:48.206686,16.363235'
+             )
+        )
+
     def test_fold_line(self):
         from ..parser import foldline
 
@@ -247,7 +275,47 @@ class IcalendarTestCase (unittest.TestCase):
         self.assertEqual(q_split('Max,Moller,"Rasmussen, Max"'),
                          ['Max', 'Moller', '"Rasmussen, Max"'])
 
+    def test_q_split_bin(self):
+        from ..parser import q_split
+        for s in ('X-SOMETHING=ABCDE==', ',,,'):
+            for maxsplit in range(-1, 3):
+                self.assertEqual(q_split(s, '=', maxsplit=maxsplit),
+                                 s.split('=', maxsplit))
+
     def test_q_join(self):
         from ..parser import q_join
         self.assertEqual(q_join(['Max', 'Moller', 'Rasmussen, Max']),
                          'Max,Moller,"Rasmussen, Max"')
+
+
+class TestEncoding(unittest.TestCase):
+
+    def test_broken_property(self):
+        """
+        Test if error messages are encode properly.
+        """
+        broken_ical = textwrap.dedent("""
+            BEGIN:VCALENDAR
+            BEGIN:VEVENT
+            SUMMARY:An Event with too many semicolons
+            DTSTART;;VALUE=DATE-TIME:20140409T093000
+            UID:abc
+            END:VEVENT
+            END:VCALENDAR
+            """)
+        cal = icalendar.Calendar.from_ical(broken_ical)
+        for event in cal.walk('vevent'):
+            self.assertEqual(len(event.errors), 1, 'Not the right amount of errors.')
+            error = event.errors[0][1]
+            self.assertTrue(error.startswith(u'Content line could not be parsed into parts'))
+
+    def test_apple_xlocation(self):
+        """
+        Test if we support base64 encoded binary data in parameter values.
+        """
+        directory = os.path.dirname(__file__)
+        with open(os.path.join(directory, 'x_location.ics'), 'rb') as fp:
+            data = fp.read()
+        cal = icalendar.Calendar.from_ical(data)
+        for event in cal.walk('vevent'):
+            self.assertEqual(len(event.errors), 0, 'Got too many errors')
