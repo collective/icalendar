@@ -831,7 +831,7 @@ class vUTCOffset(object):
             offset = timedelta(hours=hours, minutes=minutes, seconds=seconds)
         except:
             raise ValueError('Expected utc offset, got: %s' % ical)
-        if offset >= timedelta(hours=24):
+        if strict and offset >= timedelta(hours=24):
             raise ValueError(
                 'Offset must be less than 24 hours, was %s' % ical)
         if sign == '-':

@@ -426,14 +426,15 @@ class TestProp(unittest.TestCase):
         self.assertEqual(vUTCOffset.from_ical('-0030'), timedelta(-1, 84600))
         self.assertEqual(vUTCOffset.from_ical('+0200'), timedelta(0, 7200))
         self.assertEqual(vUTCOffset.from_ical('+023040'), timedelta(0, 9040))
-
-        self.assertEqual(vUTCOffset(vUTCOffset.from_ical('+0230')).to_ical(),
-                         '+0230')
+        self.assertEqual(vUTCOffset.from_ical('+2400'), timedelta(0, 86400))
+        self.assertEqual(
+            vUTCOffset(
+                vUTCOffset.from_ical('+5330', strict=False)).to_ical(), '+5330')
 
         # And a few failures
         self.assertRaises(ValueError, vUTCOffset.from_ical, '+323k')
 
-        self.assertRaises(ValueError, vUTCOffset.from_ical, '+2400')
+        self.assertRaises(ValueError, vUTCOffset.from_ical, '+2400', strict=True)
 
     def test_prop_vInline(self):
         from ..prop import vInline

@@ -430,3 +430,23 @@ class TestCal(unittest.TestCase):
                 for e in icalendar.cal.Calendar.from_ical(s).walk('VEVENT')],
             [[], [('EXDATE', "Expected datetime, date, or time, got: ''")]]
         )
+
+    def test_cal_strict_parsing(self):
+        cal_str = b'\r\n'.join(
+            [
+                b'BEGIN:VCALENDAR',
+                b'BEGIN:VTIMEZONE',
+                b'TZID:Europe/Prague',
+                b'BEGIN:STANDARD',
+                b'DTSTART:18500101T000000',
+                b'TZNAME:PMT',
+                b'TZOFFSETFROM:+5744',
+                b'TZOFFSETTO:+5744',
+                b'END:STANDARD',
+                b'END:VTIMEZONE',
+                b'END:VCALENDAR',
+                b'',
+            ]
+        )
+        self.assertRaises(ValueError, icalendar.Calendar.from_ical, cal_str, strict=True)
+        self.assertEqual(icalendar.Calendar.from_ical(cal_str).to_ical(), cal_str)

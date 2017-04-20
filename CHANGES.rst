@@ -23,6 +23,9 @@ Bug fixes:
 - Make every from_ical() method accept an optional `strict=False` parameter
   [geier]
 
+- Don't break on UTCOffsets > 24 hours, even though they make no sense, at least
+  one major calendar service provider uses those [geier]
+
 - *add item here*
 
 
