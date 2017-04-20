@@ -20,6 +20,9 @@ Bug fixes:
 - Fix handling of VTIMEZONEs with subcomponents with the same DTSTARTs.
   [geier]
 
+- Make every from_ical() method accept an optional `strict=False` parameter
+  [geier]
+
 - *add item here*
 
 
