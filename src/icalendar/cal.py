@@ -317,12 +317,12 @@ class Component(CaselessDict):
         return properties
 
     @classmethod
-    def from_ical(cls, st, multiple=False):
+    def from_ical(cls, st, multiple=False, strict=False):
         """Populates the component recursively from a string.
         """
         stack = []  # a stack of components
         comps = []
-        for line in Contentlines.from_ical(st):  # raw parsing
+        for line in Contentlines.from_ical(st, strict=strict):  # raw parsing
             if not line:
                 continue
 
@@ -378,9 +378,9 @@ class Component(CaselessDict):
                                   'FREEBUSY', 'RDATE', 'EXDATE')
                 try:
                     if name in datetime_names and 'TZID' in params:
-                        vals = factory(factory.from_ical(vals, params['TZID']))
+                        vals = factory(factory.from_ical(vals, params['TZID'], strict=strict))
                     else:
-                        vals = factory(factory.from_ical(vals))
+                        vals = factory(factory.from_ical(vals, strict=strict))
                 except ValueError as e:
                     if not component.ignore_exceptions:
                         raise

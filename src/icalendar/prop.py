@@ -147,7 +147,7 @@ class vBinary(object):
         return binascii.b2a_base64(self.obj.encode('utf-8'))[:-1]
 
     @staticmethod
-    def from_ical(ical):
+    def from_ical(ical, strict=False):
         try:
             return base64.b64decode(ical)
         except UnicodeError:
@@ -170,7 +170,7 @@ class vBoolean(int):
         return b'FALSE'
 
     @classmethod
-    def from_ical(cls, ical):
+    def from_ical(cls, ical, strict=False):
         try:
             return cls.BOOL_MAP[ical]
         except:
@@ -193,7 +193,7 @@ class vCalAddress(compat.unicode_type):
         return self.encode(DEFAULT_ENCODING)
 
     @classmethod
-    def from_ical(cls, ical):
+    def from_ical(cls, ical, strict=False):
         return cls(ical)
 
 
@@ -209,7 +209,7 @@ class vFloat(float):
         return compat.unicode_type(self).encode('utf-8')
 
     @classmethod
-    def from_ical(cls, ical):
+    def from_ical(cls, ical, strict=False):
         try:
             return cls(ical)
         except:
@@ -228,7 +228,7 @@ class vInt(int):
         return compat.unicode_type(self).encode('utf-8')
 
     @classmethod
-    def from_ical(cls, ical):
+    def from_ical(cls, ical, strict=False):
         try:
             return cls(ical)
         except:
@@ -259,11 +259,11 @@ class vDDDLists(object):
         return b",".join(dts_ical)
 
     @staticmethod
-    def from_ical(ical, timezone=None):
+    def from_ical(ical, timezone=None, strict=False):
         out = []
         ical_dates = ical.split(",")
         for ical_dt in ical_dates:
-            out.append(vDDDTypes.from_ical(ical_dt, timezone=timezone))
+            out.append(vDDDTypes.from_ical(ical_dt, timezone=timezone, strict=strict))
         return out
 
 
@@ -312,21 +312,21 @@ class vDDDTypes(object):
             raise ValueError('Unknown date type: {}'.format(type(dt)))
 
     @classmethod
-    def from_ical(cls, ical, timezone=None):
+    def from_ical(cls, ical, timezone=None, strict=False):
         if isinstance(ical, cls):
             return ical.dt
         u = ical.upper()
         if u.startswith(('P', '-P', '+P')):
-            return vDuration.from_ical(ical)
+            return vDuration.from_ical(ical, strict=strict)
         if '/' in u:
-            return vPeriod.from_ical(ical)
+            return vPeriod.from_ical(ical, strict=strict)
 
         if len(ical) in (15, 16):
-            return vDatetime.from_ical(ical, timezone=timezone)
+            return vDatetime.from_ical(ical, timezone=timezone, strict=strict)
         elif len(ical) == 8:
-            return vDate.from_ical(ical)
+            return vDate.from_ical(ical, strict=strict)
         elif len(ical) in (6, 7):
-            return vTime.from_ical(ical)
+            return vTime.from_ical(ical, strict=strict)
         else:
             raise ValueError(
                 "Expected datetime, date, or time, got: '%s'" % ical
@@ -347,7 +347,7 @@ class vDate(object):
         return s.encode('utf-8')
 
     @staticmethod
-    def from_ical(ical):
+    def from_ical(ical, strict=False):
         try:
             timetuple = (
                 int(ical[:4]),  # year
@@ -393,7 +393,7 @@ class vDatetime(object):
         return s.encode('utf-8')
 
     @staticmethod
-    def from_ical(ical, timezone=None):
+    def from_ical(ical, timezone=None, strict=False):
         tzinfo = None
         if timezone:
             try:
@@ -459,7 +459,7 @@ class vDuration(object):
                     b'D' + compat.unicode_type(timepart).encode('utf-8'))
 
     @staticmethod
-    def from_ical(ical):
+    def from_ical(ical, strict=False):
         try:
             match = DURATION_REGEX.match(ical)
             sign, weeks, days, hours, minutes, seconds = match.groups()
@@ -532,11 +532,11 @@ class vPeriod(object):
                 vDatetime(self.end).to_ical())
 
     @staticmethod
-    def from_ical(ical):
+    def from_ical(ical, strict=False):
         try:
             start, end_or_duration = ical.split('/')
-            start = vDDDTypes.from_ical(start)
-            end_or_duration = vDDDTypes.from_ical(end_or_duration)
+            start = vDDDTypes.from_ical(start, strict=strict)
+            end_or_duration = vDDDTypes.from_ical(end_or_duration, strict=strict)
             return (start, end_or_duration)
         except:
             raise ValueError('Expected period format, got: %s' % ical)
@@ -576,7 +576,7 @@ class vWeekday(compat.unicode_type):
         return self.encode(DEFAULT_ENCODING).upper()
 
     @classmethod
-    def from_ical(cls, ical):
+    def from_ical(cls, ical, strict=False):
         try:
             return cls(ical.upper())
         except:
@@ -609,7 +609,7 @@ class vFrequency(compat.unicode_type):
         return self.encode(DEFAULT_ENCODING).upper()
 
     @classmethod
-    def from_ical(cls, ical):
+    def from_ical(cls, ical, strict=False):
         try:
             return cls(ical.upper())
         except:
@@ -672,7 +672,7 @@ class vRecur(CaselessDict):
         return [parser.from_ical(v) for v in values.split(',')]
 
     @classmethod
-    def from_ical(cls, ical):
+    def from_ical(cls, ical, strict=False):
         if isinstance(ical, cls):
             return ical
         try:
@@ -708,7 +708,7 @@ class vText(compat.unicode_type):
         return escape_char(self).encode(self.encoding)
 
     @classmethod
-    def from_ical(cls, ical):
+    def from_ical(cls, ical, strict=False):
         ical_unesc = unescape_char(ical)
         return cls(ical_unesc)
 
@@ -730,7 +730,7 @@ class vTime(object):
         return self.dt.strftime("%H%M%S")
 
     @staticmethod
-    def from_ical(ical):
+    def from_ical(ical, strict=False):
         # TODO: timezone support
         try:
             timetuple = (int(ical[:2]), int(ical[2:4]), int(ical[4:6]))
@@ -753,7 +753,7 @@ class vUri(compat.unicode_type):
         return self.encode(DEFAULT_ENCODING)
 
     @classmethod
-    def from_ical(cls, ical):
+    def from_ical(cls, ical, strict=False):
         try:
             return cls(ical)
         except:
@@ -780,7 +780,7 @@ class vGeo(object):
         return '%s;%s' % (self.latitude, self.longitude)
 
     @staticmethod
-    def from_ical(ical):
+    def from_ical(ical, strict=False):
         try:
             latitude, longitude = ical.split(';')
             return (float(latitude), float(longitude))
@@ -820,7 +820,7 @@ class vUTCOffset(object):
         return sign % duration
 
     @classmethod
-    def from_ical(cls, ical):
+    def from_ical(cls, ical, strict=False):
         if isinstance(ical, cls):
             return ical.td
         try:
@@ -831,7 +831,7 @@ class vUTCOffset(object):
             offset = timedelta(hours=hours, minutes=minutes, seconds=seconds)
         except:
             raise ValueError('Expected utc offset, got: %s' % ical)
-        if offset >= timedelta(hours=24):
+        if strict and offset >= timedelta(hours=24):
             raise ValueError(
                 'Offset must be less than 24 hours, was %s' % ical)
         if sign == '-':
@@ -854,7 +854,7 @@ class vInline(compat.unicode_type):
         return self.encode(DEFAULT_ENCODING)
 
     @classmethod
-    def from_ical(cls, ical):
+    def from_ical(cls, ical, strict=False):
         return cls(ical)
 
 
@@ -1008,10 +1008,10 @@ class TypesFactory(CaselessDict):
         type_class = self.for_property(name)
         return type_class(value).to_ical()
 
-    def from_ical(self, name, value):
+    def from_ical(self, name, value, strict=False):
         """Decodes a named property or parameter value from an icalendar
         encoded string to a primitive python type.
         """
         type_class = self.for_property(name)
-        decoded = type_class.from_ical(value)
+        decoded = type_class.from_ical(value, strict=strict)
         return decoded
