@@ -1,16 +1,8 @@
 Changelog
 =========
 
-3.11.4 (unreleased)
+3.11.4 (2017-05-10)
 -------------------
-
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
 
 Bug fixes:
 
@@ -19,8 +11,6 @@ Bug fixes:
 
 - Fix handling of VTIMEZONEs with subcomponents with the same DTSTARTs.
   [geier]
-
-- *add item here*
 
 
 3.11.3 (2017-02-15)
