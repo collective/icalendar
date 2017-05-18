@@ -616,7 +616,6 @@ class Timezone(Component):
                         if not dst[transitions[index][3]]:  # [3] is the name
                             dst_offset = osto - transitions[index][2]  # [2] is osto  # noqa
                             break
-            assert dst_offset is not False
             transition_info.append((osto, dst_offset, name))
 
         cls = type(zone, (DstTzInfo,), {
