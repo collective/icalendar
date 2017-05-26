@@ -17,6 +17,11 @@ Bug fixes:
 - added an assertion that VTIMEZONE sub-components' DTSTART must be of type
   DATETIME [geier]
 
+- Fix handling of VTIMEZONEs with subcomponents with the same DTSTARTs and
+  OFFSETs but which are of different types  [geier]
+
+- *add item here*
+
 
 3.11.4 (2017-05-10)
 -------------------
