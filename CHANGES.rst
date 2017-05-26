@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- added an assertion that VTIMEZONE sub-components' DTSTART must be of type
+  DATETIME [geier]
 
 
 3.11.4 (2017-05-10)
