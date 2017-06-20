@@ -328,3 +328,13 @@ class TestTimezoneCreation(unittest.TestCase):
         cal = icalendar.Calendar.from_ical(data)
         d = cal.subcomponents[1]['DTSTART'].dt
         self.assertEqual(d.strftime('%c'), 'Fri Feb 24 12:00:00 2017')
+
+    def test_same_start_date_and_offset(self):
+        """testing if we can handle VTIMEZONEs whose different components
+        have the same DTSTARTs, TZOFFSETFROM, and TZOFFSETTO."""
+        directory = os.path.dirname(__file__)
+        with open(os.path.join(directory, 'timezone_same_start_and_offset.ics'), 'rb') as fp:
+            data = fp.read()
+        cal = icalendar.Calendar.from_ical(data)
+        d = cal.subcomponents[1]['DTSTART'].dt
+        self.assertEqual(d.strftime('%c'), 'Fri Feb 24 12:00:00 2017')

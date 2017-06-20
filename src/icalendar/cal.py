@@ -572,6 +572,7 @@ class Timezone(Component):
         zone = str(self['TZID'])
         transitions = []
         dst = {}
+        tznames = set()
         for component in self.walk():
             if type(component) == Timezone:
                 continue
@@ -587,6 +588,11 @@ class Timezone(Component):
                     component['TZOFFSETFROM'].to_ical(),  # for whatever reason this is str/unicode
                     component['TZOFFSETTO'].to_ical(),  # for whatever reason this is str/unicode
                 )
+                # TODO better way of making sure tznames are unique
+                while tzname in tznames:
+                    tzname += '_1'
+                tznames.add(tzname)
+
             dst[tzname], component_transitions = self._extract_offsets(
                 component, tzname
             )
