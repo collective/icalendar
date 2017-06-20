@@ -575,6 +575,9 @@ class Timezone(Component):
         for component in self.walk():
             if type(component) == Timezone:
                 continue
+            assert isinstance(component['DTSTART'].dt, datetime), (
+                "VTIMEZONEs sub-components' DTSTART must be of type datetime, not date"
+            )
             try:
                 tzname = str(component['TZNAME'])
             except KeyError:
