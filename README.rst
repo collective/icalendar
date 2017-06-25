@@ -7,9 +7,9 @@ with Python.
 
 ----
 
-:Homepage: http://icalendar.readthedocs.org
-:Code: http://github.com/collective/icalendar
-:Mailing list: http://github.com/collective/icalendar/issues
+:Homepage: https://icalendar.readthedocs.io
+:Code: https://github.com/collective/icalendar
+:Mailing list: https://github.com/collective/icalendar/issues
 :Dependencies: `python-dateutil`_ and `pytz`_.
 :Compatible with: Python 2.6, 2.7 and 3.3+
 :License: `BSD`_
@@ -25,7 +25,6 @@ Roadmap
 =======
 
 - 4.0: API refactoring
-
 
 
 Changes in version 3.0
@@ -55,26 +54,26 @@ instances. The timezone identifiers must be valid pytz respectively Olson
 database timezone identifiers. This can be a problem for 'GMT' identifiers,
 which are not defined in the Olson database.
 
-Instead of our own UTC tzinfo implementation we use pytz UTC tzinfo object now.
+Instead of our own UTC tzinfo implementation, we use pytz UTC tzinfo object now.
 
 
 About this fork which is not a fork anymore
 ===========================================
 
 The aim of this fork (not fork anymore, read further) was to bring this package
-up to date with latest icalendar `RFC`_ specification as part of
-`plone.app.event`_ project which goal is to bring recurrent events to `Plone`_.
+up to date with latest icalendar `RFC`_ specification, as part of the
+`plone.app.event`_ project whose goal is to bring recurrent events to `Plone`_.
 
-After some thoughts we (Plone developers involved with `plone.app.event`_) send
-a suggestion to icalendar-dev@codespeak.net to take over maintaining of
+After some thoughts we (Plone developers involved with `plone.app.event`_) sent
+a suggestion to icalendar-dev@codespeak.net to take over maintenance of
 `icalendar`_. Nobody objected and since version 2.2 we are back to development.
 
-.. _`icalendar`: http://pypi.python.org/pypi/icalendar
-.. _`plone.app.event`: http://github.com/plone/plone.app.event
-.. _`Plone`: http://plone.org
+.. _`icalendar`: https://pypi.python.org/pypi/icalendar
+.. _`plone.app.event`: https://github.com/plone/plone.app.event
+.. _`Plone`: https://plone.org
 .. _`python-dateutil`: https://github.com/dateutil/dateutil/
-.. _`pytz`: http://pypi.python.org/pypi/pytz
-.. _`RFC`: http://www.ietf.org/rfc/rfc5545.txt
+.. _`pytz`: https://pypi.python.org/pypi/pytz
+.. _`RFC`: https://www.ietf.org/rfc/rfc5545.txt
 .. _`BSD`: https://github.com/collective/icalendar/issues/2
 
 
