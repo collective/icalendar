@@ -338,3 +338,35 @@ class TestTimezoneCreation(unittest.TestCase):
         cal = icalendar.Calendar.from_ical(data)
         d = cal.subcomponents[1]['DTSTART'].dt
         self.assertEqual(d.strftime('%c'), 'Fri Feb 24 12:00:00 2017')
+
+    def test_rdate(self):
+        """testing if we can handle VTIMEZONEs who only have an RDATE, not RRULE
+        """
+        directory = os.path.dirname(__file__)
+        with open(os.path.join(directory, 'timezone_rdate.ics'), 'rb') as fp:
+            data = fp.read()
+        cal = icalendar.Calendar.from_ical(data)
+        vevent = cal.walk('VEVENT')[0]
+        tz = vevent['DTSTART'].dt.tzinfo
+        self.assertEqual(str(tz), 'posix/Europe/Vaduz')
+        self.assertEqual(
+            tz._utc_transition_times[:6],
+            [
+                datetime.datetime(1901, 12, 13, 20, 45, 38),
+                datetime.datetime(1941, 5, 5, 0, 0, 0),
+                datetime.datetime(1941, 10, 6, 0, 0, 0),
+                datetime.datetime(1942, 5, 4, 0, 0, 0),
+                datetime.datetime(1942, 10, 5, 0, 0, 0),
+                datetime.datetime(1981, 3, 29, 1, 0),
+            ])
+        self.assertEqual(
+            tz._transition_info[:6],
+            [
+                (datetime.timedelta(0, 3600), datetime.timedelta(0), 'CET'),
+                (datetime.timedelta(0, 7200), datetime.timedelta(0, 3600), 'CEST'),
+                (datetime.timedelta(0, 3600), datetime.timedelta(0), 'CET'),
+                (datetime.timedelta(0, 7200), datetime.timedelta(0, 3600), 'CEST'),
+                (datetime.timedelta(0, 3600), datetime.timedelta(0), 'CET'),
+                (datetime.timedelta(0, 7200), datetime.timedelta(0, 3600), 'CEST'),
+            ]
+        )

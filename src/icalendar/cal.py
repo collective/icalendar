@@ -543,7 +543,7 @@ class Timezone(Component):
                 # pytz.timezones don't know any transition dates after 2038
                 # either
                 rrule._until = datetime(2038, 12, 31)
-            elif rrule._until.tzinfo:
+            elif 'UNTIL' in component['RRULE'] and rrule._until.tzinfo:
                 rrule._until = rrule._until.replace(tzinfo=None)
             transtimes = rrule
         # or rdates
