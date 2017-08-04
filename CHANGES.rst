@@ -4,17 +4,9 @@ Changelog
 3.11.6 (unreleased)
 -------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
-- *add item here*
+- Fix VTIMEZONEs including RDATEs #234.  [geier]
 
 
 3.11.5 (2017-07-03)
