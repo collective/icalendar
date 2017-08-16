@@ -792,6 +792,11 @@ class vUTCOffset(object):
     """Renders itself as a utc offset.
     """
 
+    ignore_exceptions = False   # if True, and we cannot parse this
+                                # component, we will silently ignore
+                                # it, rather than let the exception
+                                # propagate upwards
+
     def __init__(self, td):
         if not isinstance(td, timedelta):
             raise ValueError('Offset value MUST be a timedelta instance')
@@ -831,7 +836,7 @@ class vUTCOffset(object):
             offset = timedelta(hours=hours, minutes=minutes, seconds=seconds)
         except:
             raise ValueError('Expected utc offset, got: %s' % ical)
-        if offset >= timedelta(hours=24):
+        if not cls.ignore_exceptions and offset >= timedelta(hours=24):
             raise ValueError(
                 'Offset must be less than 24 hours, was %s' % ical)
         if sign == '-':

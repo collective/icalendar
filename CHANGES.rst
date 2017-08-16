@@ -10,7 +10,8 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- added vUTCOffset.ignore_exceptions to allow surpressing of failed TZOFFSET
+  parsing (for now this ignores the check for offsets > 24h) [geier]
 
 Bug fixes:
 
