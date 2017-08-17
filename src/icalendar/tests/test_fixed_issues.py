@@ -432,3 +432,47 @@ END:VCALENDAR"""
                          b'RDATE;VALUE=PERIOD:20150219T133000/PT10H\r\n'
                          b'END:VEVENT\r\n'
                          )
+
+    def test_issue_237(self):
+        """Issue #237 - Fail to parse timezone with non-ascii TZID"""
+
+        ical_str = [u'BEGIN:VCALENDAR',
+                    u'BEGIN:VTIMEZONE',
+                    u'TZID:(UTC-03:00) Brasília',
+                    u'BEGIN:STANDARD',
+                    u'TZNAME:Brasília standard',
+                    u'DTSTART:16010101T235959',
+                    u'TZOFFSETFROM:-0200',
+                    u'TZOFFSETTO:-0300',
+                    u'RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=3SA;BYMONTH=2',
+                    u'END:STANDARD',
+                    u'BEGIN:DAYLIGHT',
+                    u'TZNAME:Brasília daylight',
+                    u'DTSTART:16010101T235959',
+                    u'TZOFFSETFROM:-0300',
+                    u'TZOFFSETTO:-0200',
+                    u'RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=2SA;BYMONTH=10',
+                    u'END:DAYLIGHT',
+                    u'END:VTIMEZONE',
+                    u'BEGIN:VEVENT',
+                    u'DTSTART;TZID=\"(UTC-03:00) Brasília\":20170511T133000',
+                    u'DTEND;TZID=\"(UTC-03:00) Brasília\":20170511T140000',
+                    u'END:VEVENT',
+                    u'END:VCALENDAR',
+                    ]
+
+        cal = icalendar.Calendar.from_ical(u'\r\n'.join(ical_str))
+        self.assertEqual(cal.errors, [])
+
+        dtstart = cal.walk(name='VEVENT')[0].decoded("DTSTART")
+        expected = pytz.timezone('America/Sao_Paulo').localize(datetime.datetime(2017, 5, 11, 13, 30))
+        self.assertEqual(dtstart, expected)
+
+        try:
+            expected_zone = str(u'(UTC-03:00) Brasília')
+            expected_tzname = str(u'Brasília standard')
+        except UnicodeEncodeError:
+            expected_zone = u'(UTC-03:00) Brasília'.encode('ascii', 'replace')
+            expected_tzname = u'Brasília standard'.encode('ascii', 'replace')
+        self.assertEqual(dtstart.tzinfo.zone, expected_zone)
+        self.assertEqual(dtstart.tzname(), expected_tzname)
