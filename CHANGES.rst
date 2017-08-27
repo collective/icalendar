@@ -4,18 +4,10 @@ Changelog
 3.11.7 (unreleased)
 -------------------
 
-Breaking changes:
-
-- *add item here*
-
 New features:
 
 - added vUTCOffset.ignore_exceptions to allow surpressing of failed TZOFFSET
   parsing (for now this ignores the check for offsets > 24h) [geier]
-
-Bug fixes:
-
-- *add item here*
 
 
 3.11.6 (2017-08-04)
