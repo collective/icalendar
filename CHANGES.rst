@@ -14,6 +14,7 @@ New features:
 
 Bug fixes:
 
+- Wiki: update install instruction
 - *add item here*
 
 
