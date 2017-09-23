@@ -3,7 +3,7 @@ Installing iCalendar
 
 To install the icalendar package, use::
 
-  python setup.py install
+  pip install icalendar
 
 If installation is successful, you will be able to import the iCalendar
 package, like this::
