@@ -14,6 +14,7 @@ New features:
 
 Bug fixes:
 
+- Fix non-ASCII TZID and TZNAME parameter handling #237 [clivest]
 - Wiki: update install instruction
 - *add item here*
 

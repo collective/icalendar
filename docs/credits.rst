@@ -52,6 +52,7 @@ icalendar contributors
 - tisto <tisto@plone.org>
 - TomTry <tom.try@gmail.com>
 - Andreas Ruppen <andreas.ruppen@gmail.com>
+- Clive Stevens <clivest2@gmail.com>
 
 Find out who contributed::
 

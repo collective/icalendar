@@ -566,10 +566,25 @@ class Timezone(Component):
             is_dst = 1
         return is_dst, transitions
 
+    @staticmethod
+    def _make_unique_tzname(tzname, tznames):
+        """
+        :param tzname: Candidate tzname
+        :param tznames: Other tznames
+        """
+        # TODO better way of making sure tznames are unique
+        while tzname in tznames:
+            tzname += '_1'
+        tznames.add(tzname)
+        return tzname
+
     def to_tz(self):
         """convert this VTIMEZONE component to a pytz.timezone object
         """
-        zone = str(self['TZID'])
+        try:
+            zone = str(self['TZID'])
+        except UnicodeEncodeError:
+            zone = self['TZID'].encode('ascii', 'replace')
         transitions = []
         dst = {}
         tznames = set()
@@ -581,6 +596,9 @@ class Timezone(Component):
             )
             try:
                 tzname = str(component['TZNAME'])
+            except UnicodeEncodeError:
+                tzname = component['TZNAME'].encode('ascii', 'replace')
+                tzname = self._make_unique_tzname(tzname, tznames)
             except KeyError:
                 tzname = '{0}_{1}_{2}_{3}'.format(
                     zone,
@@ -588,10 +606,7 @@ class Timezone(Component):
                     component['TZOFFSETFROM'].to_ical(),  # for whatever reason this is str/unicode
                     component['TZOFFSETTO'].to_ical(),  # for whatever reason this is str/unicode
                 )
-                # TODO better way of making sure tznames are unique
-                while tzname in tznames:
-                    tzname += '_1'
-                tznames.add(tzname)
+                tzname = self._make_unique_tzname(tzname, tznames)
 
             dst[tzname], component_transitions = self._extract_offsets(
                 component, tzname
