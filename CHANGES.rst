@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.11.7 (unreleased)
+3.11.8 (unreleased)
 -------------------
 
 Breaking changes:
@@ -10,12 +10,22 @@ Breaking changes:
 
 New features:
 
-- added vUTCOffset.ignore_exceptions to allow surpressing of failed TZOFFSET
-  parsing (for now this ignores the check for offsets > 24h) [geier]
+- *add item here*
 
 Bug fixes:
 
 - Fix non-ASCII TZID and TZNAME parameter handling #237 [clivest]
+- Wiki: update install instruction
+- *add item here*
+
+
+3.11.7 (2017-08-27)
+-------------------
+
+New features:
+
+- added vUTCOffset.ignore_exceptions to allow surpressing of failed TZOFFSET
+  parsing (for now this ignores the check for offsets > 24h) [geier]
 
 
 3.11.6 (2017-08-04)
