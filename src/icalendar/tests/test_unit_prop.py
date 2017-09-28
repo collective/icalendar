@@ -5,6 +5,8 @@ from datetime import time
 from datetime import timedelta
 from icalendar.parser import Parameters
 from icalendar.tests import unittest
+from icalendar.prop import vDatetime
+from icalendar.windows_to_olson import WINDOWS_TO_OLSON
 
 import pytz
 
@@ -495,3 +497,19 @@ class TestPropertyValues(unittest.TestCase):
             b'RDATE;TZID=Europe/Vienna:20130101T000000,20130102T000000' in ical
         )
         self.assertTrue(b'EXDATE;TZID=Europe/Vienna:20130103T000000' in ical)
+
+
+class TestWindowsOlsonMapping(unittest.TestCase):
+    """Test the mappings from windows to olson tzids"""
+
+    def test_windows_timezone(self):
+        """test that an example"""
+        self.assertEqual(
+            vDatetime.from_ical('20170507T181920', 'Eastern Standard Time'),
+            pytz.timezone('America/New_York').localize(datetime(2017, 5, 7, 18, 19, 20))
+        )
+
+    def test_all(self):
+        """test if all mappings actually map to valid pytz tzids"""
+        for olson in WINDOWS_TO_OLSON.values():
+            pytz.timezone(olson)
