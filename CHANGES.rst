@@ -10,7 +10,7 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- Accept Windows timezone identifiers as valid [geier]
 
 Bug fixes:
 

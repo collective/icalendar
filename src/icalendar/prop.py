@@ -56,6 +56,7 @@ from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.parser_tools import SEQUENCE_TYPES
 from icalendar.parser_tools import to_unicode
 from icalendar.timezone_cache import _timezone_cache
+from icalendar.windows_to_olson import WINDOWS_TO_OLSON
 
 import base64
 import binascii
@@ -399,7 +400,10 @@ class vDatetime(object):
             try:
                 tzinfo = pytz.timezone(timezone)
             except pytz.UnknownTimeZoneError:
-                tzinfo = _timezone_cache.get(timezone, None)
+                if timezone in WINDOWS_TO_OLSON:
+                    tzinfo = pytz.timezone(WINDOWS_TO_OLSON.get(timezone))
+                else:
+                    tzinfo = _timezone_cache.get(timezone, None)
 
         try:
             timetuple = (
