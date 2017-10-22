@@ -29,4 +29,3 @@ To build the documentation follow these steps:
 You can now open the output from ``_build/html/index.html``. To build the
 presentation-version use ``make presentation`` instead of ``make html``. You
 can open the presentation at ``presentation/index.html``.
-
