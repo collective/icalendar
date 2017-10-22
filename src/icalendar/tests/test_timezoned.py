@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-from icalendar.tests import unittest
+from __future__ import unicode_literals
+
+import unittest
 
 import datetime
 import dateutil.parser
@@ -50,12 +52,12 @@ class TestTimezoned(unittest.TestCase):
     def test_create_to_ical(self):
         cal = icalendar.Calendar()
 
-        cal.add('prodid', u"-//Plone.org//NONSGML plone.app.event//EN")
-        cal.add('version', u"2.0")
-        cal.add('x-wr-calname', u"test create calendar")
-        cal.add('x-wr-caldesc', u"icalendar tests")
-        cal.add('x-wr-relcalid', u"12345")
-        cal.add('x-wr-timezone', u"Europe/Vienna")
+        cal.add('prodid', "-//Plone.org//NONSGML plone.app.event//EN")
+        cal.add('version', "2.0")
+        cal.add('x-wr-calname', "test create calendar")
+        cal.add('x-wr-caldesc', "icalendar tests")
+        cal.add('x-wr-relcalid', "12345")
+        cal.add('x-wr-timezone', "Europe/Vienna")
 
         tzc = icalendar.Timezone()
         tzc.add('tzid', 'Europe/Vienna')
@@ -93,21 +95,21 @@ class TestTimezoned(unittest.TestCase):
         event.add(
             'created',
             tz.localize(datetime.datetime(2010, 10, 10, 10, 10, 10)))
-        event.add('uid', u'123456')
+        event.add('uid', '123456')
         event.add(
             'last-modified',
             tz.localize(datetime.datetime(2010, 10, 10, 10, 10, 10)))
-        event.add('summary', u'artsprint 2012')
-        # event.add('rrule', u'FREQ=YEARLY;INTERVAL=1;COUNT=10')
-        event.add('description', u'sprinting at the artsprint')
-        event.add('location', u'aka bild, wien')
-        event.add('categories', u'first subject')
-        event.add('categories', u'second subject')
-        event.add('attendee', u'häns')
-        event.add('attendee', u'franz')
-        event.add('attendee', u'sepp')
-        event.add('contact', u'Max Mustermann, 1010 Wien')
-        event.add('url', u'http://plone.org')
+        event.add('summary', 'artsprint 2012')
+        # event.add('rrule', 'FREQ=YEARLY;INTERVAL=1;COUNT=10')
+        event.add('description', 'sprinting at the artsprint')
+        event.add('location', 'aka bild, wien')
+        event.add('categories', 'first subject')
+        event.add('categories', 'second subject')
+        event.add('attendee', 'häns')
+        event.add('attendee', 'franz')
+        event.add('attendee', 'sepp')
+        event.add('contact', 'Max Mustermann, 1010 Wien')
+        event.add('url', 'http://plone.org')
         cal.add_component(event)
 
         test_out = b'|'.join(cal.to_ical().splitlines())

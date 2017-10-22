@@ -4,7 +4,9 @@ Changelog
 3.12.1 (unreleased)
 -------------------
 
-- Nothing changed yet.
+Breaking changes:
+
+- Drop support for Python 2.6 and 3.3.
 
 
 3.12 (2017-11-07)

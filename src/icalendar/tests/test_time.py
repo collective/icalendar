@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from icalendar.tests import unittest
+import unittest
 
 import datetime
 import icalendar

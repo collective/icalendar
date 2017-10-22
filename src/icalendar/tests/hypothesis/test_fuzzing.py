@@ -4,7 +4,7 @@ from hypothesis import given, settings
 import hypothesis.strategies as st
 
 from icalendar.parser import Contentline, Contentlines, Parameters
-from icalendar.tests import unittest
+import unittest
 
 
 def printable_characters(**kw):
@@ -15,7 +15,7 @@ def printable_characters(**kw):
     )
 
 key = st.text(string.ascii_letters + string.digits, min_size=1)
-value = printable_characters(blacklist_characters=u'\\;:\"')
+value = printable_characters(blacklist_characters='\\;:\"')
 
 
 class TestFuzzing(unittest.TestCase):
