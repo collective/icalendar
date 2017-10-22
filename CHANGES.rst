@@ -16,6 +16,7 @@ Bug fixes:
 
 - Fix non-ASCII TZID and TZNAME parameter handling #237 [clivest]
 - Wiki: update install instruction
+- Fix invalid escape sequences in string and bytes literals
 - *add item here*
 
 

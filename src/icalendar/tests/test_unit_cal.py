@@ -322,21 +322,21 @@ class TestCalComponent(unittest.TestCase):
         component['key1'] = 'value1'
 
         self.assertTrue(
-            re.match("Component\({u?'KEY1': 'value1'}\)", str(component))
+            re.match(r"Component\({u?'KEY1': 'value1'}\)", str(component))
         )
 
         calendar = Calendar()
         calendar['key1'] = 'value1'
 
         self.assertTrue(
-            re.match("VCALENDAR\({u?'KEY1': 'value1'}\)", str(calendar))
+            re.match(r"VCALENDAR\({u?'KEY1': 'value1'}\)", str(calendar))
         )
 
         event = Event()
         event['key1'] = 'value1'
 
         self.assertTrue(
-            re.match("VEVENT\({u?'KEY1': 'value1'}\)", str(event))
+            re.match(r"VEVENT\({u?'KEY1': 'value1'}\)", str(event))
         )
 
         # Representation of nested Components
@@ -347,7 +347,7 @@ class TestCalComponent(unittest.TestCase):
 
         self.assertTrue(
             re.match(
-                "Component\({u?'KEY1': 'VALUE1'}, Component\({u?'KEY1': 'value1'}\), VCALENDAR\({u?'KEY1': 'value1'}, VEVENT\({u?'KEY1': 'value1'}\)\)\)",  # nopep8
+                r"Component\({u?'KEY1': 'VALUE1'}, Component\({u?'KEY1': 'value1'}\), VCALENDAR\({u?'KEY1': 'value1'}, VEVENT\({u?'KEY1': 'value1'}\)\)\)",  # nopep8
                 str(nested)
             )
         )

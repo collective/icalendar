@@ -354,7 +354,7 @@ class TestProp(unittest.TestCase):
                          u'Text ; with escaped, chars')
 
         t = vText.from_ical('A string with\\; some\\\\ characters in\\it')
-        self.assertEqual(t, "A string with; some\\ characters in\it")
+        self.assertEqual(t, "A string with; some\\ characters in\\it")
 
         # We are forgiving to utf-8 encoding errors:
         # We intentionally use a string with unexpected encoding
