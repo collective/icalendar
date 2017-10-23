@@ -35,7 +35,7 @@ Bootstraps a buildout-based project.
 Simply run this script in a directory containing a buildout.cfg, using the
 Python that you want bin/buildout to use.
 
-Note that by using --find-links to point to local resources, you can keep 
+Note that by using --find-links to point to local resources, you can keep
 this script from going over the network.
 '''
 
@@ -79,10 +79,10 @@ exec(urlopen('https://bootstrap.pypa.io/ez_setup.py').read(), ez)
 
 if not options.allow_site_packages:
     # ez_setup imports site, which adds site packages
-    # this will remove them from the path to ensure that incompatible versions 
+    # this will remove them from the path to ensure that incompatible versions
     # of setuptools are not in the path
     import site
-    # inside a virtualenv, there is no 'getsitepackages'. 
+    # inside a virtualenv, there is no 'getsitepackages'.
     # We can't remove these reliably
     if hasattr(site, 'getsitepackages'):
         for sitepackage_path in site.getsitepackages():
