@@ -155,7 +155,7 @@ END:VEVENT"""
 
         https://github.com/collective/icalendar/issues/101
         """
-        ical_str = """BEGIN:VCALENDAR
+        ical_str = r"""BEGIN:VCALENDAR
 VERSION:2.0
 X-WR-CALNAME:Kalender von acme\, admin
 PRODID:-//The Horde Project//Horde_iCalendar Library\, Horde 3.3.5//EN

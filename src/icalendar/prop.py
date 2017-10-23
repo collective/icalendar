@@ -71,8 +71,8 @@ DATETIME_PART = '(?:%s)?(?:%s)?' % (DATE_PART, TIME_PART)
 WEEKS_PART = r'(\d+)W'
 DURATION_REGEX = re.compile(r'([-+]?)P(?:%s|%s)$'
                             % (WEEKS_PART, DATETIME_PART))
-WEEKDAY_RULE = re.compile('(?P<signal>[+-]?)(?P<relative>[\d]?)'
-                          '(?P<weekday>[\w]{2})$')
+WEEKDAY_RULE = re.compile(r'(?P<signal>[+-]?)(?P<relative>[\d]?)'
+                          r'(?P<weekday>[\w]{2})$')
 
 
 ####################################################

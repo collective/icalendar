@@ -39,11 +39,11 @@ def unescape_char(text):
                    .replace(u'\\;', u';')\
                    .replace(u'\\\\', u'\\')
     elif isinstance(text, compat.bytes_type):
-        return text.replace(b'\N', b'\n')\
+        return text.replace(b'\\N', b'\\n')\
                    .replace(b'\r\n', b'\n')\
                    .replace(b'\n', b'\n')\
-                   .replace(b'\,', b',')\
-                   .replace(b'\;', b';')\
+                   .replace(b'\\,', b',')\
+                   .replace(b'\\;', b';')\
                    .replace(b'\\\\', b'\\')
 
 
@@ -109,8 +109,8 @@ def param_value(value):
 # Could be improved
 
 # [\w-] because of the iCalendar RFC
-# \. because of the vCard RFC
-NAME = re.compile('[\w\.-]+')
+# . because of the vCard RFC
+NAME = re.compile(r'[\w.-]+')
 
 UNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7F",:;]')
 QUNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7F"]')

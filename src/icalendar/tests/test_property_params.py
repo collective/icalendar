@@ -212,5 +212,5 @@ END:VCALENDAR"""
         """
         it = Parameters(parameter1='Value1')
         self.assertTrue(
-            re.match("Parameters\({u?'PARAMETER1': 'Value1'}\)", str(it))
+            re.match(r"Parameters\({u?'PARAMETER1': 'Value1'}\)", str(it))
         )
