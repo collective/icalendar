@@ -1,23 +1,24 @@
 Changelog
 =========
 
-3.11.8 (unreleased)
+3.12 (unreleased)
 -------------------
-
-Breaking changes:
-
-- *add item here*
 
 New features:
 
-- Accept Windows timezone identifiers as valid [geier]
+- Accept Windows timezone identifiers as valid. #242 [geier]
 
 Bug fixes:
 
-- Fix non-ASCII TZID and TZNAME parameter handling #237 [clivest]
-- Wiki: update install instruction
-- Fix invalid escape sequences in string and bytes literals
-- *add item here*
+- Fix ResourceWarnings in setup.py when Python warnings are enabled. #244 [jdufresne]
+
+- Fix invalid escape sequences in string and bytes literals. #245 [jdufresne]
+
+- Include license file in the generated wheel package. #243 [jdufresne]
+
+- Fix non-ASCII TZID and TZNAME parameter handling. #238 [clivest]
+
+- Docs: update install instructions. #240 [Ekran]
 
 
 3.11.7 (2017-08-27)
