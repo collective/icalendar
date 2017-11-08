@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 import icalendar
 import os
 import textwrap
 
-from icalendar.tests import unittest
+import unittest
 
 
 class IcalendarTestCase (unittest.TestCase):
@@ -143,14 +145,14 @@ class IcalendarTestCase (unittest.TestCase):
         parts = ('SUMMARY', Parameters(), vText('INternational char æ ø å'))
         self.assertEqual(
             Contentline.from_parts(*parts),
-            u'SUMMARY:INternational char æ ø å'
+            'SUMMARY:INternational char æ ø å'
         )
 
         # A value can also be unicode
-        parts = ('SUMMARY', Parameters(), vText(u'INternational char æ ø å'))
+        parts = ('SUMMARY', Parameters(), vText('INternational char æ ø å'))
         self.assertEqual(
             Contentline.from_parts(*parts),
-            u'SUMMARY:INternational char æ ø å'
+            'SUMMARY:INternational char æ ø å'
         )
 
         # Traversing could look like this.
@@ -226,7 +228,7 @@ class IcalendarTestCase (unittest.TestCase):
                  'X-APPLE-RADIUS': '328.7978217977285',
                  'X-ADDRESS': 'Kaiserliche Hofburg, 1010 Wien',
                  'X-APPLE-REFERENCEFRAME': '1',
-                 'X-TITLE': u'HELDENPLATZ',
+                 'X-TITLE': 'HELDENPLATZ',
                  'X-APPLE-MAPKIT-HANDLE':
                  'CAESXQEZGR3QZXJYZWLJAA==',
                  'VALUE': 'URI',
@@ -238,30 +240,30 @@ class IcalendarTestCase (unittest.TestCase):
     def test_fold_line(self):
         from ..parser import foldline
 
-        self.assertEqual(foldline(u'foo'), u'foo')
+        self.assertEqual(foldline('foo'), 'foo')
         self.assertEqual(
-            foldline(u"Lorem ipsum dolor sit amet, consectetur adipiscing "
-                     u"elit. Vestibulum convallis imperdiet dui posuere."),
-            (u'Lorem ipsum dolor sit amet, consectetur adipiscing elit. '
-             u'Vestibulum conval\r\n lis imperdiet dui posuere.')
+            foldline("Lorem ipsum dolor sit amet, consectetur adipiscing "
+                     "elit. Vestibulum convallis imperdiet dui posuere."),
+            ('Lorem ipsum dolor sit amet, consectetur adipiscing elit. '
+             'Vestibulum conval\r\n lis imperdiet dui posuere.')
         )
 
         # I don't really get this test
         # at least just but bytes in there
         # porting it to "run" under python 2 & 3 makes it not much better
         with self.assertRaises(AssertionError):
-            foldline(u'привет'.encode('utf-8'), limit=3)
+            foldline('привет'.encode('utf-8'), limit=3)
 
-        self.assertEqual(foldline(u'foobar', limit=4), u'foo\r\n bar')
+        self.assertEqual(foldline('foobar', limit=4), 'foo\r\n bar')
         self.assertEqual(
-            foldline(u'Lorem ipsum dolor sit amet, consectetur adipiscing elit'
-                     u'. Vestibulum convallis imperdiet dui posuere.'),
-            (u'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
-             u' Vestibulum conval\r\n lis imperdiet dui posuere.')
+            foldline('Lorem ipsum dolor sit amet, consectetur adipiscing elit'
+                     '. Vestibulum convallis imperdiet dui posuere.'),
+            ('Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
+             ' Vestibulum conval\r\n lis imperdiet dui posuere.')
         )
         self.assertEqual(
-            foldline(u'DESCRIPTION:АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯ'),
-            u'DESCRIPTION:АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭ\r\n ЮЯ'
+            foldline('DESCRIPTION:АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯ'),
+            'DESCRIPTION:АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭ\r\n ЮЯ'
         )
 
     def test_value_double_quoting(self):
@@ -307,7 +309,7 @@ class TestEncoding(unittest.TestCase):
         for event in cal.walk('vevent'):
             self.assertEqual(len(event.errors), 1, 'Not the right amount of errors.')
             error = event.errors[0][1]
-            self.assertTrue(error.startswith(u'Content line could not be parsed into parts'))
+            self.assertTrue(error.startswith('Content line could not be parsed into parts'))
 
     def test_apple_xlocation(self):
         """

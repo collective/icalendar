@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from icalendar import Calendar
 from icalendar import Event
 from icalendar import Parameters
 from icalendar import vCalAddress
-from icalendar.tests import unittest
+import unittest
 
 import icalendar
 import re
@@ -38,9 +40,9 @@ class TestPropertyParams(unittest.TestCase):
         vevent['ORGANIZER'] = cal_address
         self.assertEqual(
             vevent.to_ical().decode('utf-8'),
-            u'BEGIN:VEVENT\r\n'
-            u'ORGANIZER;CN="Джон Доу":mailto:john.doe@example.org\r\n'
-            u'END:VEVENT\r\n'
+            'BEGIN:VEVENT\r\n'
+            'ORGANIZER;CN="Джон Доу":mailto:john.doe@example.org\r\n'
+            'END:VEVENT\r\n'
         )
 
         self.assertEqual(vevent['ORGANIZER'].params['CN'],
@@ -48,14 +50,14 @@ class TestPropertyParams(unittest.TestCase):
 
     def test_quoting(self):
         # not double-quoted
-        self._test_quoting(u"Aramis", u'Aramis')
+        self._test_quoting("Aramis", 'Aramis')
         # if a space is present - enclose in double quotes
-        self._test_quoting(u"Aramis Alameda", u'"Aramis Alameda"')
+        self._test_quoting("Aramis Alameda", '"Aramis Alameda"')
         # a single quote in parameter value - double quote the value
-        self._test_quoting(u"Aramis d'Alameda", u'"Aramis d\'Alameda"')
+        self._test_quoting("Aramis d'Alameda", '"Aramis d\'Alameda"')
         # double quote is replaced with single quote
-        self._test_quoting(u"Aramis d\"Alameda", u'"Aramis d\'Alameda"')
-        self._test_quoting(u"Арамис д'Аламеда", u'"Арамис д\'Аламеда"')
+        self._test_quoting("Aramis d\"Alameda", '"Aramis d\'Alameda"')
+        self._test_quoting("Арамис д'Аламеда", '"Арамис д\'Аламеда"')
 
     def _test_quoting(self, cn_param, cn_quoted):
         """
@@ -74,14 +76,14 @@ class TestPropertyParams(unittest.TestCase):
 
     def test_escaping(self):
         # verify that escaped non safe chars are decoded correctly
-        NON_SAFE_CHARS = u',\\;:'
+        NON_SAFE_CHARS = ',\\;:'
         for char in NON_SAFE_CHARS:
-            cn_escaped = u"Society\\%s 2014" % char
-            cn_decoded = u"Society%s 2014" % char
+            cn_escaped = "Society\\%s 2014" % char
+            cn_decoded = "Society%s 2014" % char
             vevent = Event.from_ical(
-                u'BEGIN:VEVENT\r\n'
-                u'ORGANIZER;CN=%s:that\r\n'
-                u'END:VEVENT\r\n' % cn_escaped
+                'BEGIN:VEVENT\r\n'
+                'ORGANIZER;CN=%s:that\r\n'
+                'END:VEVENT\r\n' % cn_escaped
             )
             self.assertEqual(vevent['ORGANIZER'].params['CN'], cn_decoded)
 
@@ -97,7 +99,7 @@ class TestPropertyParams(unittest.TestCase):
         )
         self.assertEqual(
             vevent['ORGANIZER'].to_ical().decode('utf-8'),
-            u'это, то; that\\ %th%%at%:'
+            'это, то; that\\ %th%%at%:'
         )
 
     def test_parameters_class(self):
@@ -205,12 +207,12 @@ END:VCALENDAR"""
                          b'MAILTO:rembrand@xs4all.nl')
         self.assertEqual(event['attendee'][0].params.to_ical(),
                          b'CN=RembrandXS;PARTSTAT=NEEDS-ACTION;RSVP=TRUE')
-        self.assertEqual(event['attendee'][0].params['cn'], u'RembrandXS')
+        self.assertEqual(event['attendee'][0].params['cn'], 'RembrandXS')
 
     def test_repr(self):
         """Test correct class representation.
         """
         it = Parameters(parameter1='Value1')
         self.assertTrue(
-            re.match(r"Parameters\({u?'PARAMETER1': 'Value1'}\)", str(it))
+            re.match(r"Parameters\({u?'PARAMETER1': u?'Value1'}\)", str(it))
         )

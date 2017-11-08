@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from icalendar.parser_tools import to_unicode
-from icalendar.tests import unittest
+import unittest
 
 import datetime
 import icalendar
@@ -82,7 +84,7 @@ END:VTIMEZONE"""
         # Non-unicode characters
         event = icalendar.Event()
         event.add("dtstart", datetime.datetime(2012, 9, 3, 0, 0, 0))
-        event.add("summary", u"abcdef")
+        event.add("summary", "abcdef")
         self.assertEqual(
             event.to_ical(),
             b"BEGIN:VEVENT\r\nSUMMARY:abcdef\r\nDTSTART;VALUE=DATE-TIME:"
@@ -92,7 +94,7 @@ END:VTIMEZONE"""
         # Unicode characters
         event = icalendar.Event()
         event.add("dtstart", datetime.datetime(2012, 9, 3, 0, 0, 0))
-        event.add("summary", u"åäö")
+        event.add("summary", "åäö")
         self.assertEqual(
             event.to_ical(),
             b"BEGIN:VEVENT\r\nSUMMARY:\xc3\xa5\xc3\xa4\xc3\xb6\r\n"
@@ -178,7 +180,7 @@ END:VCALENDAR"""
 
         cal = icalendar.Calendar.from_ical(ical_str)
         org_cn = cal.walk('VEVENT')[0]['ORGANIZER'].params['CN']
-        self.assertEqual(org_cn, u'acme, ädmin')
+        self.assertEqual(org_cn, 'acme, ädmin')
 
     def test_issue_104__ignore_exceptions(self):
         """
@@ -295,7 +297,7 @@ END:VCALENDAR"""
 
         self.assertEqual(
             ctl.parts(),
-            (u'TEL', Parameters({'TYPE': ['HOME', 'VOICE']}), u'000000000'),
+            ('TEL', Parameters({'TYPE': ['HOME', 'VOICE']}), '000000000'),
         )
 
     def test_issue_143(self):
@@ -308,17 +310,17 @@ END:VCALENDAR"""
         ctl = Contentline.from_ical("ITEMADRNULLTHISISTHEADRESS08158SOMECITY12345.ADR:;;This is the Adress 08; Some City;;12345;Germany")  # nopep8
         self.assertEqual(
             ctl.parts(),
-            (u'ITEMADRNULLTHISISTHEADRESS08158SOMECITY12345.ADR',
+            ('ITEMADRNULLTHISISTHEADRESS08158SOMECITY12345.ADR',
              Parameters(),
-             u';;This is the Adress 08; Some City;;12345;Germany'),
+             ';;This is the Adress 08; Some City;;12345;Germany'),
         )
 
         ctl2 = Contentline.from_ical("ITEMADRNULLTHISISTHEADRESS08158SOMECITY12345.X-ABLABEL:")  # nopep8
         self.assertEqual(
             ctl2.parts(),
-            (u'ITEMADRNULLTHISISTHEADRESS08158SOMECITY12345.X-ABLABEL',
+            ('ITEMADRNULLTHISISTHEADRESS08158SOMECITY12345.X-ABLABEL',
              Parameters(),
-             u''),
+             ''),
         )
 
     def test_issue_157(self):
@@ -436,32 +438,32 @@ END:VCALENDAR"""
     def test_issue_237(self):
         """Issue #237 - Fail to parse timezone with non-ascii TZID"""
 
-        ical_str = [u'BEGIN:VCALENDAR',
-                    u'BEGIN:VTIMEZONE',
-                    u'TZID:(UTC-03:00) Brasília',
-                    u'BEGIN:STANDARD',
-                    u'TZNAME:Brasília standard',
-                    u'DTSTART:16010101T235959',
-                    u'TZOFFSETFROM:-0200',
-                    u'TZOFFSETTO:-0300',
-                    u'RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=3SA;BYMONTH=2',
-                    u'END:STANDARD',
-                    u'BEGIN:DAYLIGHT',
-                    u'TZNAME:Brasília daylight',
-                    u'DTSTART:16010101T235959',
-                    u'TZOFFSETFROM:-0300',
-                    u'TZOFFSETTO:-0200',
-                    u'RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=2SA;BYMONTH=10',
-                    u'END:DAYLIGHT',
-                    u'END:VTIMEZONE',
-                    u'BEGIN:VEVENT',
-                    u'DTSTART;TZID=\"(UTC-03:00) Brasília\":20170511T133000',
-                    u'DTEND;TZID=\"(UTC-03:00) Brasília\":20170511T140000',
-                    u'END:VEVENT',
-                    u'END:VCALENDAR',
+        ical_str = ['BEGIN:VCALENDAR',
+                    'BEGIN:VTIMEZONE',
+                    'TZID:(UTC-03:00) Brasília',
+                    'BEGIN:STANDARD',
+                    'TZNAME:Brasília standard',
+                    'DTSTART:16010101T235959',
+                    'TZOFFSETFROM:-0200',
+                    'TZOFFSETTO:-0300',
+                    'RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=3SA;BYMONTH=2',
+                    'END:STANDARD',
+                    'BEGIN:DAYLIGHT',
+                    'TZNAME:Brasília daylight',
+                    'DTSTART:16010101T235959',
+                    'TZOFFSETFROM:-0300',
+                    'TZOFFSETTO:-0200',
+                    'RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=2SA;BYMONTH=10',
+                    'END:DAYLIGHT',
+                    'END:VTIMEZONE',
+                    'BEGIN:VEVENT',
+                    'DTSTART;TZID=\"(UTC-03:00) Brasília\":20170511T133000',
+                    'DTEND;TZID=\"(UTC-03:00) Brasília\":20170511T140000',
+                    'END:VEVENT',
+                    'END:VCALENDAR',
                     ]
 
-        cal = icalendar.Calendar.from_ical(u'\r\n'.join(ical_str))
+        cal = icalendar.Calendar.from_ical('\r\n'.join(ical_str))
         self.assertEqual(cal.errors, [])
 
         dtstart = cal.walk(name='VEVENT')[0].decoded("DTSTART")
@@ -469,10 +471,10 @@ END:VCALENDAR"""
         self.assertEqual(dtstart, expected)
 
         try:
-            expected_zone = str(u'(UTC-03:00) Brasília')
-            expected_tzname = str(u'Brasília standard')
+            expected_zone = str('(UTC-03:00) Brasília')
+            expected_tzname = str('Brasília standard')
         except UnicodeEncodeError:
-            expected_zone = u'(UTC-03:00) Brasília'.encode('ascii', 'replace')
-            expected_tzname = u'Brasília standard'.encode('ascii', 'replace')
+            expected_zone = '(UTC-03:00) Brasília'.encode('ascii', 'replace')
+            expected_tzname = 'Brasília standard'.encode('ascii', 'replace')
         self.assertEqual(dtstart.tzinfo.zone, expected_zone)
         self.assertEqual(dtstart.tzname(), expected_tzname)

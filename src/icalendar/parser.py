@@ -6,6 +6,8 @@ Eg. RFC 2426 (vCard)
 It is stupid in the sense that it treats the content purely as strings. No type
 conversion is attempted.
 """
+from __future__ import unicode_literals
+
 from icalendar import compat
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser_tools import DEFAULT_ENCODING
@@ -32,12 +34,12 @@ def unescape_char(text):
     assert isinstance(text, (compat.unicode_type, compat.bytes_type))
     # NOTE: ORDER MATTERS!
     if isinstance(text, compat.unicode_type):
-        return text.replace(u'\\N', u'\\n')\
-                   .replace(u'\r\n', u'\n')\
-                   .replace(u'\\n', u'\n')\
-                   .replace(u'\\,', u',')\
-                   .replace(u'\\;', u';')\
-                   .replace(u'\\\\', u'\\')
+        return text.replace('\\N', '\\n')\
+                   .replace('\r\n', '\n')\
+                   .replace('\\n', '\n')\
+                   .replace('\\,', ',')\
+                   .replace('\\;', ';')\
+                   .replace('\\\\', '\\')
     elif isinstance(text, compat.bytes_type):
         return text.replace(b'\\N', b'\\n')\
                    .replace(b'\r\n', b'\n')\
@@ -60,7 +62,7 @@ def tzid_from_dt(dt):
     return tzid
 
 
-def foldline(line, limit=75, fold_sep=u'\r\n '):
+def foldline(line, limit=75, fold_sep='\r\n '):
     """Make a string folded as defined in RFC5545
     Lines of text SHOULD NOT be longer than 75 octets, excluding the line
     break.  Long content lines SHOULD be split into a multiple line
@@ -70,7 +72,7 @@ def foldline(line, limit=75, fold_sep=u'\r\n '):
     SPACE or HTAB).
     """
     assert isinstance(line, compat.unicode_type)
-    assert u'\n' not in line
+    assert '\n' not in line
 
     # Use a fast and simple variant for the common case that line is all ASCII.
     try:
@@ -92,7 +94,7 @@ def foldline(line, limit=75, fold_sep=u'\r\n '):
             byte_count = char_byte_len
         ret_chars.append(char)
 
-    return u''.join(ret_chars)
+    return ''.join(ret_chars)
 
 
 #################################################################
@@ -115,7 +117,7 @@ NAME = re.compile(r'[\w.-]+')
 UNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7F",:;]')
 QUNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7F"]')
 FOLD = re.compile(b'(\r?\n)+[ \t]')
-uFOLD = re.compile(u'(\r?\n)+[ \t]')
+uFOLD = re.compile('(\r?\n)+[ \t]')
 NEWLINE = re.compile(r'\r?\n')
 
 
@@ -289,7 +291,7 @@ class Contentline(compat.unicode_type):
     """
     def __new__(cls, value, strict=False, encoding=DEFAULT_ENCODING):
         value = to_unicode(value, encoding=encoding)
-        assert u'\n' not in value, ('Content line can not contain unescaped '
+        assert '\n' not in value, ('Content line can not contain unescaped '
                                     'new line characters.')
         self = super(Contentline, cls).__new__(cls, value)
         self.strict = strict
@@ -313,8 +315,8 @@ class Contentline(compat.unicode_type):
         values = to_unicode(values)
         if params:
             params = to_unicode(params.to_ical(sorted=sorted))
-            return cls(u'%s;%s:%s' % (name, params, values))
-        return cls(u'%s:%s' % (name, values))
+            return cls('%s;%s:%s' % (name, params, values))
+        return cls('%s:%s' % (name, values))
 
     def parts(self):
         """Split the content line up into (name, parameters, values) parts.
@@ -348,7 +350,7 @@ class Contentline(compat.unicode_type):
             return (name, params, values)
         except ValueError as exc:
             raise ValueError(
-                u"Content line could not be parsed into parts: '%s': %s"
+                "Content line could not be parsed into parts: '%s': %s"
                 % (self, exc)
             )
 

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-from icalendar.tests import unittest
+from __future__ import unicode_literals
+
+import unittest
 
 import datetime
 import icalendar
@@ -16,28 +18,28 @@ class TestEncoding(unittest.TestCase):
         cal = icalendar.Calendar.from_ical(data)
 
         self.assertEqual(cal['prodid'].to_ical().decode('utf-8'),
-                         u"-//Plönë.org//NONSGML plone.app.event//EN")
+                         "-//Plönë.org//NONSGML plone.app.event//EN")
         self.assertEqual(cal['X-WR-CALDESC'].to_ical().decode('utf-8'),
-                         u"test non ascii: äöü ÄÖÜ €")
+                         "test non ascii: äöü ÄÖÜ €")
 
         event = cal.walk('VEVENT')[0]
         self.assertEqual(event['SUMMARY'].to_ical().decode('utf-8'),
-                         u'Non-ASCII Test: ÄÖÜ äöü €')
+                         'Non-ASCII Test: ÄÖÜ äöü €')
         self.assertEqual(
             event['DESCRIPTION'].to_ical().decode('utf-8'),
-            u'icalendar should be able to handle non-ascii: €äüöÄÜÖ.'
+            'icalendar should be able to handle non-ascii: €äüöÄÜÖ.'
         )
         self.assertEqual(event['LOCATION'].to_ical().decode('utf-8'),
-                         u'Tribstrül')
+                         'Tribstrül')
 
     def test_create_to_ical(self):
         cal = icalendar.Calendar()
 
-        cal.add('prodid', u"-//Plönë.org//NONSGML plone.app.event//EN")
-        cal.add('version', u"2.0")
-        cal.add('x-wr-calname', u"äöü ÄÖÜ €")
-        cal.add('x-wr-caldesc', u"test non ascii: äöü ÄÖÜ €")
-        cal.add('x-wr-relcalid', u"12345")
+        cal.add('prodid', "-//Plönë.org//NONSGML plone.app.event//EN")
+        cal.add('version', "2.0")
+        cal.add('x-wr-calname', "äöü ÄÖÜ €")
+        cal.add('x-wr-caldesc', "test non ascii: äöü ÄÖÜ €")
+        cal.add('x-wr-relcalid', "12345")
 
         event = icalendar.Event()
         event.add(
@@ -52,13 +54,13 @@ class TestEncoding(unittest.TestCase):
             'created',
             pytz.utc.localize(datetime.datetime(2010, 10, 10, 0, 0, 0))
         )
-        event.add('uid', u'123456')
-        event.add('summary', u'Non-ASCII Test: ÄÖÜ äöü €')
+        event.add('uid', '123456')
+        event.add('summary', 'Non-ASCII Test: ÄÖÜ äöü €')
         event.add(
             'description',
-            u'icalendar should be able to de/serialize non-ascii.'
+            'icalendar should be able to de/serialize non-ascii.'
         )
-        event.add('location', u'Tribstrül')
+        event.add('location', 'Tribstrül')
         cal.add_component(event)
 
         ical_lines = cal.to_ical().splitlines()
@@ -71,7 +73,7 @@ class TestEncoding(unittest.TestCase):
             "dtstart",
             pytz.utc.localize(datetime.datetime(2010, 10, 10, 0, 0, 0))
         )
-        event.add("summary", u"åäö")
+        event.add("summary", "åäö")
         out = event.to_ical()
         summary = b'SUMMARY:\xc3\xa5\xc3\xa4\xc3\xb6'
         self.assertTrue(summary in out.splitlines())
@@ -80,7 +82,7 @@ class TestEncoding(unittest.TestCase):
         # Test for issue #80
         cal = icalendar.Calendar()
         event = icalendar.Event()
-        event.add(u'DESCRIPTION', u'äöüßÄÖÜ')
+        event.add('DESCRIPTION', 'äöüßÄÖÜ')
         cal.add_component(event)
         c = cal.to_ical()
         self.assertEqual(

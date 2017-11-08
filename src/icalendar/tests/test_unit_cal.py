@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from datetime import datetime
 from datetime import timedelta
-from icalendar.tests import unittest
+import unittest
 
 import icalendar
 import pytz
@@ -74,7 +76,7 @@ class TestCalComponent(unittest.TestCase):
 
         # You can get the values back directly ...
         c.add('prodid', '-//my product//')
-        self.assertEqual(c['prodid'], prop.vText(u'-//my product//'))
+        self.assertEqual(c['prodid'], prop.vText('-//my product//'))
 
         # ... or decoded to a python type
         self.assertEqual(c.decoded('prodid'), b'-//my product//')
@@ -156,7 +158,7 @@ class TestCalComponent(unittest.TestCase):
         # Text fields which span multiple mulitple lines require proper
         # indenting
         c = Calendar()
-        c['description'] = u'Paragraph one\n\nParagraph two'
+        c['description'] = 'Paragraph one\n\nParagraph two'
         self.assertEqual(
             c.to_ical(),
             b'BEGIN:VCALENDAR\r\nDESCRIPTION:Paragraph one\\n\\nParagraph two'
@@ -182,7 +184,7 @@ class TestCalComponent(unittest.TestCase):
         # set_inline() methods.
         self.assertEqual(
             c.get_inline('resources', decode=0),
-            [u'Chair', u'Table', u'Room: 42']
+            ['Chair', 'Table', 'Room: 42']
         )
 
         # These can also be decoded
@@ -247,7 +249,7 @@ class TestCalComponent(unittest.TestCase):
         binary = prop.vBinary('us')
         comp.add('ATTACH', binary)
 
-        self.assertEqual(comp['ATTACH'], [u'me', 'you', binary])
+        self.assertEqual(comp['ATTACH'], ['me', 'you', binary])
 
     def test_cal_Component_add_property_parameter(self):
         # Test the for timezone correctness: dtstart should preserve it's
@@ -322,21 +324,21 @@ class TestCalComponent(unittest.TestCase):
         component['key1'] = 'value1'
 
         self.assertTrue(
-            re.match(r"Component\({u?'KEY1': 'value1'}\)", str(component))
+            re.match(r"Component\({u?'KEY1': u?'value1'}\)", str(component))
         )
 
         calendar = Calendar()
         calendar['key1'] = 'value1'
 
         self.assertTrue(
-            re.match(r"VCALENDAR\({u?'KEY1': 'value1'}\)", str(calendar))
+            re.match(r"VCALENDAR\({u?'KEY1': u?'value1'}\)", str(calendar))
         )
 
         event = Event()
         event['key1'] = 'value1'
 
         self.assertTrue(
-            re.match(r"VEVENT\({u?'KEY1': 'value1'}\)", str(event))
+            re.match(r"VEVENT\({u?'KEY1': u?'value1'}\)", str(event))
         )
 
         # Representation of nested Components
@@ -347,7 +349,10 @@ class TestCalComponent(unittest.TestCase):
 
         self.assertTrue(
             re.match(
-                r"Component\({u?'KEY1': 'VALUE1'}, Component\({u?'KEY1': 'value1'}\), VCALENDAR\({u?'KEY1': 'value1'}, VEVENT\({u?'KEY1': 'value1'}\)\)\)",  # nopep8
+                r"Component\({u?'KEY1': u?'VALUE1'}, "
+                r"Component\({u?'KEY1': u?'value1'}\), "
+                r"VCALENDAR\({u?'KEY1': u?'value1'}, "
+                r"VEVENT\({u?'KEY1': u?'value1'}\)\)\)",
                 str(nested)
             )
         )

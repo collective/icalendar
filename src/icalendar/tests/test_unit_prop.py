@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from datetime import date
 from datetime import datetime
 from datetime import time
 from datetime import timedelta
 from icalendar.parser import Parameters
-from icalendar.tests import unittest
+import unittest
 from icalendar.prop import vDatetime
 from icalendar.windows_to_olson import WINDOWS_TO_OLSON
 
@@ -333,7 +335,7 @@ class TestProp(unittest.TestCase):
     def test_prop_vText(self):
         from ..prop import vText
 
-        self.assertEqual(vText(u'Simple text').to_ical(), b'Simple text')
+        self.assertEqual(vText('Simple text').to_ical(), b'Simple text')
 
         # Escaped text
         t = vText('Text ; with escaped, chars')
@@ -345,13 +347,13 @@ class TestProp(unittest.TestCase):
 
         # If you pass a unicode object, it will be utf-8 encoded. As this is
         # the (only) standard that RFC 2445 support.
-        t = vText(u'international chars \xe4\xf6\xfc')
+        t = vText('international chars \xe4\xf6\xfc')
         self.assertEqual(t.to_ical(),
                          b'international chars \xc3\xa4\xc3\xb6\xc3\xbc')
 
         # and parsing?
         self.assertEqual(vText.from_ical('Text \\; with escaped\\, chars'),
-                         u'Text ; with escaped, chars')
+                         'Text ; with escaped, chars')
 
         t = vText.from_ical('A string with\\; some\\\\ characters in\\it')
         self.assertEqual(t, "A string with; some\\ characters in\\it")
@@ -359,7 +361,7 @@ class TestProp(unittest.TestCase):
         # We are forgiving to utf-8 encoding errors:
         # We intentionally use a string with unexpected encoding
         #
-        self.assertEqual(vText.from_ical(b'Ol\xe9'), u'Ol\ufffd')
+        self.assertEqual(vText.from_ical(b'Ol\xe9'), 'Ol\ufffd')
 
         # Notice how accented E character, encoded with latin-1, got replaced
         # with the official U+FFFD REPLACEMENT CHARACTER.
@@ -466,15 +468,15 @@ class TestProp(unittest.TestCase):
 
         # It can also be used to directly encode property and parameter values
         self.assertEqual(
-            factory.to_ical('comment', u'by Rasmussen, Max M\xfcller'),
+            factory.to_ical('comment', 'by Rasmussen, Max M\xfcller'),
             b'by Rasmussen\\, Max M\xc3\xbcller'
         )
         self.assertEqual(factory.to_ical('priority', 1), b'1')
-        self.assertEqual(factory.to_ical('cn', u'Rasmussen, Max M\xfcller'),
+        self.assertEqual(factory.to_ical('cn', 'Rasmussen, Max M\xfcller'),
                          b'Rasmussen\\, Max M\xc3\xbcller')
         self.assertEqual(
             factory.from_ical('cn', b'Rasmussen\\, Max M\xc3\xb8ller'),
-            u'Rasmussen, Max M\xf8ller'
+            'Rasmussen, Max M\xf8ller'
         )
 
 

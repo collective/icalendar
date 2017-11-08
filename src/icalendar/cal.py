@@ -538,8 +538,7 @@ class Timezone(Component):
         if 'RRULE' in component:
             rrulestr = component['RRULE'].to_ical().decode('utf-8')
             rrule = dateutil.rrule.rrulestr(rrulestr, dtstart=dtstart)
-            if not set(['UNTIL', 'COUNT']).intersection(
-                    component['RRULE'].keys()):
+            if not {'UNTIL', 'COUNT'}.intersection(component['RRULE'].keys()):
                 # pytz.timezones don't know any transition dates after 2038
                 # either
                 rrule._until = datetime(2038, 12, 31)
