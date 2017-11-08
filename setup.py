@@ -13,7 +13,7 @@ with open('src/icalendar/__init__.py', 'rb') as f:
 
 shortdesc = 'iCalendar parser/generator'
 longdesc = ''
-for fname in ['README.rst', 'CHANGES.rst', 'LICENSE.rst']:
+for fname in ['README.rst', 'CONTRIBUTING.rst', 'CHANGES.rst', 'LICENSE.rst']:
     with codecs.open(fname, encoding='utf-8') as f:
         longdesc += f.read()
         longdesc += '\n'
