@@ -56,6 +56,7 @@ setuptools.setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=install_requires,
+    entry_points = {'console_scripts': ['icalendar = icalendar.cli:main']},
     extras_require={
         'test': tests_require
     },
