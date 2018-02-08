@@ -51,19 +51,6 @@ def _format_attendees(attendees):
     return _format_name(attendees)
 
 
-def _optional(event, key):
-    """Wrapper to prevent a KeyError.
-
-    :arg Event event: An event.
-    :arg str key: Attribute of the event.
-
-    :returns any: The attribute or an empty string.
-    """
-    if key in event:
-        return event[key]
-    return ''
-
-
 def view(input_handle, output_handle):
     """Make a human readable summary of an iCalendar file.
 
@@ -78,14 +65,15 @@ def view(input_handle, output_handle):
             break
 
     output_handle.write(_template.format(
-        organiser=_format_name(event['organizer']),
-        attendees=_format_attendees(_optional(event, 'attendee')),
-        summary=event['summary'],
-        time_from=datetime.strftime(event['dtstart'].dt, '%a %d %b %Y %H:%M'),
-        time_to=datetime.strftime(event['dtend'].dt, '%H:%M'),
-        location=_optional(event, 'location'),
-        comment=_optional(event, 'comment'),
-        description=_optional(event, 'description')).encode('utf-8'))
+        organiser=_format_name(event.get('organizer', '')),
+        attendees=_format_attendees(event.get('attendee', [])),
+        summary=event.get('summary', ''),
+        time_from=datetime.strftime(
+            event.get('dtstart').dt, '%a %d %b %Y %H:%M'),
+        time_to=datetime.strftime(event.get('dtend').dt, '%H:%M'),
+        location=event.get('location', ''),
+        comment=event.get('comment', ''),
+        description=event.get('description', '')).encode('utf-8'))
 
 
 def main():
