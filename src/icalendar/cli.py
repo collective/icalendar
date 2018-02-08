@@ -19,6 +19,7 @@ Comment: {comment}
 Description:
 
 {description}
+
 """
 
 
@@ -60,20 +61,17 @@ def view(input_handle, output_handle):
     """
     cal = Calendar.from_ical(input_handle.read())
 
-    for event in cal.walk():
-        if event.name == 'VEVENT':
-            break
-
-    output_handle.write(_template.format(
-        organiser=_format_name(event.get('organizer', '')),
-        attendees=_format_attendees(event.get('attendee')),
-        summary=event.get('summary', ''),
-        time_from=datetime.strftime(
-            event.get('dtstart').dt, '%a %d %b %Y %H:%M'),
-        time_to=datetime.strftime(event.get('dtend').dt, '%H:%M'),
-        location=event.get('location', ''),
-        comment=event.get('comment', ''),
-        description=event.get('description', '')).encode('utf-8'))
+    for event in cal.walk('vevent'):
+        output_handle.write(_template.format(
+            organiser=_format_name(event.get('organizer', '')),
+            attendees=_format_attendees(event.get('attendee')),
+            summary=event.get('summary', ''),
+            time_from=datetime.strftime(
+                event.get('dtstart').dt, '%a %d %b %Y %H:%M'),
+            time_to=datetime.strftime(event.get('dtend').dt, '%H:%M'),
+            location=event.get('location', ''),
+            comment=event.get('comment', ''),
+            description=event.get('description', '')).encode('utf-8'))
 
 
 def main():
