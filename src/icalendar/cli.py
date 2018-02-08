@@ -66,7 +66,7 @@ def view(input_handle, output_handle):
 
     output_handle.write(_template.format(
         organiser=_format_name(event.get('organizer', '')),
-        attendees=_format_attendees(event.get('attendee', [])),
+        attendees=_format_attendees(event.get('attendee')),
         summary=event.get('summary', ''),
         time_from=datetime.strftime(
             event.get('dtstart').dt, '%a %d %b %Y %H:%M'),
