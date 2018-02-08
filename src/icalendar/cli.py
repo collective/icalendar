@@ -82,7 +82,7 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=__doc__)
     parser.add_argument(
-        '-v', action='version',
+        '-v', '--version', action='version',
         version='{} version {}'.format(parser.prog, __version__))
 
     # This seems a bit of an overkill now, but we will probably add more
