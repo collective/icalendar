@@ -4,7 +4,8 @@ Changelog
 4.0.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Readme, setup and travis updates.
+  [jdufresne, PabloCastellano]
 
 
 4.0.0 (2017-11-08)
