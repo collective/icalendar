@@ -4,7 +4,7 @@ Changelog
 4.0.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Added rudimentary command line interface.
 
 
 4.0.0 (2017-11-08)
