@@ -26,3 +26,10 @@ files.
 .. _`python-dateutil`: https://github.com/dateutil/dateutil/
 .. _`pytz`: https://pypi.python.org/pypi/pytz
 .. _`BSD`: https://github.com/collective/icalendar/issues/2
+
+
+Related projects
+================
+
+* `icalevents <https://github.com/irgangla/icalevents>`_. It is built on top of icalendar and allows you to query iCal files and get the events happening on specific dates. It manages recurrent events as well.
+

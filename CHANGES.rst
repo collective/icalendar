@@ -5,6 +5,10 @@ Changelog
 ------------------
 
 - Added rudimentary command line interface.
+  [jfjlaros]
+
+- Readme, setup and travis updates.
+  [jdufresne, PabloCastellano]
 
 
 4.0.0 (2017-11-08)
