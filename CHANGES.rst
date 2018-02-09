@@ -4,6 +4,9 @@ Changelog
 4.0.1 (unreleased)
 ------------------
 
+- Added rudimentary command line interface.
+  [jfjlaros]
+
 - Readme, setup and travis updates.
   [jdufresne, PabloCastellano]
 

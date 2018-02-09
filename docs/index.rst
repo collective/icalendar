@@ -10,5 +10,6 @@ Contents
     install
     usage
     api
+    cli
     credits
     license

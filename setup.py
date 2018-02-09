@@ -57,6 +57,7 @@ setuptools.setup(
     zip_safe=False,
     python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*",
     install_requires=install_requires,
+    entry_points = {'console_scripts': ['icalendar = icalendar.cli:main']},
     extras_require={
         'test': tests_require
     },

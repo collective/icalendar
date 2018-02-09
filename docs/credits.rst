@@ -15,6 +15,7 @@ icalendar contributors
 - Erik Simmler <tgecho@gmail.com>
 - George V. Reilly <george@reilly.org>
 - Jannis Leidel <jannis@leidel.info>
+- Jeroen F.J. Laros <jlaros@fixedpoint.nl>
 - Jeroen van Meeuwen (Kolab Systems) <vanmeeuwen@kolabsys.com>
 - Jordan Kiang <jordan@cozi.com>
 - Klaus Klein <kleink+github@kleink.org>
