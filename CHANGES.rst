@@ -1,7 +1,7 @@
 Changelog
 =========
 
-4.0.1 (unreleased)
+4.0.1 (2018-02-11)
 ------------------
 
 - Added rudimentary command line interface.
