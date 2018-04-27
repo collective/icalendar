@@ -21,10 +21,10 @@ files.
     :target: https://travis-ci.org/collective/icalendar
 
 
-.. _`icalendar`: https://pypi.python.org/pypi/icalendar
+.. _`icalendar`: https://pypi.org/project/icalendar/
 .. _`RFC 5545`: https://www.ietf.org/rfc/rfc5545.txt
 .. _`python-dateutil`: https://github.com/dateutil/dateutil/
-.. _`pytz`: https://pypi.python.org/pypi/pytz
+.. _`pytz`: https://pypi.org/project/pytz/
 .. _`BSD`: https://github.com/collective/icalendar/issues/2
 
 
