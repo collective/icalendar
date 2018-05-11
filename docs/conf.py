@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 # icalendar documentation build configuration file
-import pkg_resources
 import datetime
 import os
+import sys
 
+base_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..')
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+
+sys.path.append(os.path.join(base_dir, 'src'))
 
 try:
     import sphinx_rtd_theme
@@ -29,7 +32,16 @@ master_doc = 'index'
 project = u'icalendar'
 this_year = datetime.date.today().year
 copyright = u'{}, Plone Foundation'.format(this_year)
-version = pkg_resources.get_distribution('icalendar').version
+
+# Read the version number
+with open(os.path.join(base_dir, 'src/icalendar/__init__.py')) as f:
+    for line in f.readlines():
+        if line.startswith('__version__'):
+            version_info = {}
+            exec(line, None, version_info)
+            version = version_info['__version__']
+            break
+
 release = version
 
 exclude_patterns = ['_build', 'lib', 'bin', 'include', 'local']
