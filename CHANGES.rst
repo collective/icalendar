@@ -4,17 +4,10 @@ Changelog
 4.0.2 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
-- *add item here*
+- Update all pypi.python.org URLs to pypi.org
+  [jon.dufresne]
 
 
 4.0.1 (2018-02-11)
