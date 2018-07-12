@@ -185,7 +185,7 @@ class Component(CaselessDict):
 
         # encode value
         if encode and isinstance(value, list) \
-                and name.lower() not in ['rdate', 'exdate']:
+                and name.lower() not in ['rdate', 'exdate', 'categories']:
             # Individually convert each value to an ical type except rdate and
             # exdate, where lists of dates might be passed to vDDDLists.
             value = [self._encode(name, v, parameters, encode) for v in value]
@@ -455,11 +455,11 @@ class Event(Component):
         'CLASS', 'CREATED', 'DESCRIPTION', 'DTSTART', 'GEO', 'LAST-MODIFIED',
         'LOCATION', 'ORGANIZER', 'PRIORITY', 'DTSTAMP', 'SEQUENCE', 'STATUS',
         'SUMMARY', 'TRANSP', 'URL', 'RECURRENCE-ID', 'DTEND', 'DURATION',
-        'UID',
+        'UID', 'CATEGORIES',
     )
     exclusive = ('DTEND', 'DURATION',)
     multiple = (
-        'ATTACH', 'ATTENDEE', 'CATEGORIES', 'COMMENT', 'CONTACT', 'EXDATE',
+        'ATTACH', 'ATTENDEE', 'COMMENT', 'CONTACT', 'EXDATE',
         'RSTATUS', 'RELATED', 'RESOURCES', 'RDATE', 'RRULE'
     )
     ignore_exceptions = True
