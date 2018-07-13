@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 # icalendar documentation build configuration file
+import ast
 import datetime
 import os
+import re
 import sys
 
 base_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..')
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+_version_re = re.compile(r'__version__\s+=\s+(.*)')
 
 sys.path.append(os.path.join(base_dir, 'src'))
 
@@ -35,12 +38,8 @@ copyright = u'{}, Plone Foundation'.format(this_year)
 
 # Read the version number
 with open(os.path.join(base_dir, 'src/icalendar/__init__.py')) as f:
-    for line in f.readlines():
-        if line.startswith('__version__'):
-            version_info = {}
-            exec(line, None, version_info)
-            version = version_info['__version__']
-            break
+    version = str(ast.literal_eval(_version_re.search(
+        f.read().decode('utf-8')).group(1)))
 
 release = version
 
