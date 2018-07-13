@@ -269,17 +269,17 @@ class vDDDLists(object):
 
 class vCategory(object):
 
-    def __init__(self, c_list, encoding=DEFAULT_ENCODING):
+    def __init__(self, c_list):
         if not hasattr(c_list, '__iter__'):
             d_list = [c_list]
-        self.cats = [to_unicode(c, encoding=encoding) for c in c_list]
+        self.cats = [vText(c) for c in c_list]
 
     def to_ical(self):
-        return ",".join(self.cats)
+        return b",".join([c.to_ical() for c in self.cats])
 
     @staticmethod
     def from_ical(ical, timezone=None):
-        out = ical.split(",")
+        out = unescape_char(ical).split(",")
         return out
 
 
