@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Categories are comma separated not 1 per line #265. [cleder]
+- mark test with mixed timezoneaware and naive datetimes as an expected failure. [cleder]
 
 
 4.0.2 (2018-06-20)

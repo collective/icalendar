@@ -267,6 +267,21 @@ class vDDDLists(object):
             out.append(vDDDTypes.from_ical(ical_dt, timezone=timezone))
         return out
 
+class vCategory(object):
+
+    def __init__(self, c_list):
+        if not hasattr(c_list, '__iter__'):
+            d_list = [c_list]
+        self.cats = [vText(c) for c in c_list]
+
+    def to_ical(self):
+        return b",".join([c.to_ical() for c in self.cats])
+
+    @staticmethod
+    def from_ical(ical, timezone=None):
+        out = unescape_char(ical).split(",")
+        return out
+
 
 class vDDDTypes(object):
     """A combined Datetime, Date or Duration parser/generator. Their format
@@ -898,7 +913,8 @@ class TypesFactory(CaselessDict):
             vTime,
             vUTCOffset,
             vUri,
-            vWeekday
+            vWeekday,
+            vCategory,
         )
         self['binary'] = vBinary
         self['boolean'] = vBoolean
@@ -917,6 +933,7 @@ class TypesFactory(CaselessDict):
         self['geo'] = vGeo
         self['inline'] = vInline
         self['date-time-list'] = vDDDLists
+        self['categories'] = vCategory
 
     #################################################
     # Property types
@@ -932,7 +949,7 @@ class TypesFactory(CaselessDict):
         'version': 'text',
         # Descriptive Component Properties
         'attach': 'uri',
-        'categories': 'text',
+        'categories': 'categories',
         'class': 'text',
         'comment': 'text',
         'description': 'text',
