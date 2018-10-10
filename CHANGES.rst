@@ -4,14 +4,6 @@ Changelog
 4.0.3 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Categories are comma separated not 1 per line #265. [cleder]
