@@ -18,7 +18,6 @@ for fname in ['README.rst', 'CONTRIBUTING.rst', 'CHANGES.rst', 'LICENSE.rst']:
         longdesc += f.read()
         longdesc += '\n'
 
-tests_require = []
 install_requires = [
     'python-dateutil',
     'pytz',
@@ -58,8 +57,5 @@ setuptools.setup(
     python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*",
     install_requires=install_requires,
     entry_points = {'console_scripts': ['icalendar = icalendar.cli:main']},
-    extras_require={
-        'test': tests_require
-    },
     test_suite='icalendar.tests'
 )
