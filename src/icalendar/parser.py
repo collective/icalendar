@@ -391,7 +391,7 @@ class Contentlines(list):
                         line in NEWLINE.split(unfolded) if line)
             lines.append('')  # '\r\n' at the end of every content line
             return lines
-        except:
+        except Exception:
             raise ValueError('Expected StringType with content lines')
 
 

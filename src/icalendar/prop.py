@@ -174,7 +174,7 @@ class vBoolean(int):
     def from_ical(cls, ical):
         try:
             return cls.BOOL_MAP[ical]
-        except:
+        except Exception:
             raise ValueError("Expected 'TRUE' or 'FALSE'. Got %s" % ical)
 
 
@@ -213,7 +213,7 @@ class vFloat(float):
     def from_ical(cls, ical):
         try:
             return cls(ical)
-        except:
+        except Exception:
             raise ValueError('Expected float value, got: %s' % ical)
 
 
@@ -232,7 +232,7 @@ class vInt(int):
     def from_ical(cls, ical):
         try:
             return cls(ical)
-        except:
+        except Exception:
             raise ValueError('Expected int, got: %s' % ical)
 
 
@@ -371,7 +371,7 @@ class vDate(object):
                 int(ical[6:8]),  # day
             )
             return date(*timetuple)
-        except:
+        except Exception:
             raise ValueError('Wrong date format %s' % ical)
 
 
@@ -437,7 +437,7 @@ class vDatetime(object):
                 return pytz.utc.localize(datetime(*timetuple))
             else:
                 raise ValueError(ical)
-        except:
+        except Exception:
             raise ValueError('Wrong datetime format: %s' % ical)
 
 
@@ -492,7 +492,7 @@ class vDuration(object):
             if sign == '-':
                 value = -value
             return value
-        except:
+        except Exception:
             raise ValueError('Invalid iCalendar duration: %s' % ical)
 
 
@@ -557,7 +557,7 @@ class vPeriod(object):
             start = vDDDTypes.from_ical(start)
             end_or_duration = vDDDTypes.from_ical(end_or_duration)
             return (start, end_or_duration)
-        except:
+        except Exception:
             raise ValueError('Expected period format, got: %s' % ical)
 
     def __repr__(self):
@@ -598,7 +598,7 @@ class vWeekday(compat.unicode_type):
     def from_ical(cls, ical):
         try:
             return cls(ical.upper())
-        except:
+        except Exception:
             raise ValueError('Expected weekday abbrevation, got: %s' % ical)
 
 
@@ -631,7 +631,7 @@ class vFrequency(compat.unicode_type):
     def from_ical(cls, ical):
         try:
             return cls(ical.upper())
-        except:
+        except Exception:
             raise ValueError('Expected frequency, got: %s' % ical)
 
 
@@ -705,7 +705,7 @@ class vRecur(CaselessDict):
                     continue
                 recur[key] = cls.parse_type(key, vals)
             return dict(recur)
-        except:
+        except Exception:
             raise ValueError('Error in recurrence rule: %s' % ical)
 
 
@@ -754,7 +754,7 @@ class vTime(object):
         try:
             timetuple = (int(ical[:2]), int(ical[2:4]), int(ical[4:6]))
             return time(*timetuple)
-        except:
+        except Exception:
             raise ValueError('Expected time, got: %s' % ical)
 
 
@@ -775,7 +775,7 @@ class vUri(compat.unicode_type):
     def from_ical(cls, ical):
         try:
             return cls(ical)
-        except:
+        except Exception:
             raise ValueError('Expected , got: %s' % ical)
 
 
@@ -788,7 +788,7 @@ class vGeo(object):
             latitude, longitude = (geo[0], geo[1])
             latitude = float(latitude)
             longitude = float(longitude)
-        except:
+        except Exception:
             raise ValueError('Input must be (float, float) for '
                              'latitude and longitude')
         self.latitude = latitude
@@ -803,7 +803,7 @@ class vGeo(object):
         try:
             latitude, longitude = ical.split(';')
             return (float(latitude), float(longitude))
-        except:
+        except Exception:
             raise ValueError("Expected 'float;float' , got: %s" % ical)
 
 
@@ -853,7 +853,7 @@ class vUTCOffset(object):
                                              int(ical[3:5]),
                                              int(ical[5:7] or 0))
             offset = timedelta(hours=hours, minutes=minutes, seconds=seconds)
-        except:
+        except Exception:
             raise ValueError('Expected utc offset, got: %s' % ical)
         if not cls.ignore_exceptions and offset >= timedelta(hours=24):
             raise ValueError(
