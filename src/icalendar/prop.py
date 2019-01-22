@@ -271,7 +271,7 @@ class vCategory(object):
 
     def __init__(self, c_list):
         if not hasattr(c_list, '__iter__'):
-            d_list = [c_list]
+            c_list = [c_list]
         self.cats = [vText(c) for c in c_list]
 
     def to_ical(self):
