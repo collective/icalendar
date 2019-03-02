@@ -28,7 +28,7 @@ def data_encode(data, encoding=DEFAULT_ENCODING):
         return data.encode(encoding)
     elif isinstance(data, dict):
         return dict(map(data_encode, compat.iteritems(data)))
-    elif isinstance(data, list) or isinstance(data, tuple):
+    elif isinstance(data, (tuple, list)):
         return list(map(data_encode, data))
     else:
         return data
