@@ -14,7 +14,7 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Fixed a docs issue related to building on Read the Docs [davidfischer]
 
 
 4.0.3 (2018-10-10)
