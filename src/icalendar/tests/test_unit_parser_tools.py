@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from icalendar.parser_tools import data_encode
 from icalendar.parser_tools import to_unicode
 import unittest

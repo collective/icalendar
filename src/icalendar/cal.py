@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Calendar is a dictionary like Python object that can render itself as VCAL
 files according to rfc2445.
 
@@ -19,8 +18,6 @@ from icalendar.timezone_cache import _timezone_cache
 import pytz
 import dateutil.rrule
 from pytz.tzinfo import DstTzInfo
-
-from icalendar.compat import unicode_type
 
 
 ######################################
@@ -335,7 +332,7 @@ class Component(CaselessDict):
                 component = stack[-1] if stack else None
                 if not component or not component.ignore_exceptions:
                     raise
-                component.errors.append((None, unicode_type(e)))
+                component.errors.append((None, str(e)))
                 continue
 
             uname = name.upper()
@@ -384,7 +381,7 @@ class Component(CaselessDict):
                 except ValueError as e:
                     if not component.ignore_exceptions:
                         raise
-                    component.errors.append((uname, unicode_type(e)))
+                    component.errors.append((uname, str(e)))
                     component.add(name, None, encode=0)
                 else:
                     vals.params = params

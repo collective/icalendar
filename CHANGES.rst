@@ -6,15 +6,15 @@ Changelog
 
 Breaking changes:
 
-- *add item here*
+- Remove PyPy 2.7, Python 2.7, Python 3.4, and Python 3.5 support. [aleksihakli]
 
 New features:
 
-- *add item here*
+- Add Python 3.7 support. [aleksihakli]
 
 Bug fixes:
 
-- *add item here*
+- Remove Hypothesis tests and fix Travis CI setup. [aleksihakli]
 
 
 4.0.3 (2018-10-10)

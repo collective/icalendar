@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """This module contains the parser/generators (or coders/encoders if you
 prefer) for the classes/datatypes that are used in iCalendar:
 
@@ -46,7 +45,6 @@ try:
 except ImportError:
     tzutc = None
 
-from icalendar import compat
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Parameters
 from icalendar.parser import escape_char
@@ -178,7 +176,7 @@ class vBoolean(int):
             raise ValueError("Expected 'TRUE' or 'FALSE'. Got %s" % ical)
 
 
-class vCalAddress(compat.unicode_type):
+class vCalAddress(str):
     """This just returns an unquoted string.
     """
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
@@ -207,7 +205,7 @@ class vFloat(float):
         return self
 
     def to_ical(self):
-        return compat.unicode_type(self).encode('utf-8')
+        return str(self).encode('utf-8')
 
     @classmethod
     def from_ical(cls, ical):
@@ -226,7 +224,7 @@ class vInt(int):
         return self
 
     def to_ical(self):
-        return compat.unicode_type(self).encode('utf-8')
+        return str(self).encode('utf-8')
 
     @classmethod
     def from_ical(cls, ical):
@@ -470,12 +468,12 @@ class vDuration(object):
             if seconds:
                 timepart += "%dS" % seconds
         if self.td.days == 0 and timepart:
-            return (compat.unicode_type(sign).encode('utf-8') + b'P' +
-                    compat.unicode_type(timepart).encode('utf-8'))
+            return (str(sign).encode('utf-8') + b'P' +
+                    str(timepart).encode('utf-8'))
         else:
-            return (compat.unicode_type(sign).encode('utf-8') + b'P' +
-                    compat.unicode_type(abs(self.td.days)).encode('utf-8') +
-                    b'D' + compat.unicode_type(timepart).encode('utf-8'))
+            return (str(sign).encode('utf-8') + b'P' +
+                    str(abs(self.td.days)).encode('utf-8') +
+                    b'D' + str(timepart).encode('utf-8'))
 
     @staticmethod
     def from_ical(ical):
@@ -568,7 +566,7 @@ class vPeriod(object):
         return 'vPeriod(%r)' % (p, )
 
 
-class vWeekday(compat.unicode_type):
+class vWeekday(str):
     """This returns an unquoted weekday abbrevation.
     """
     week_days = CaselessDict({
@@ -602,7 +600,7 @@ class vWeekday(compat.unicode_type):
             raise ValueError('Expected weekday abbrevation, got: %s' % ical)
 
 
-class vFrequency(compat.unicode_type):
+class vFrequency(str):
     """A simple class that catches illegal values.
     """
 
@@ -709,7 +707,7 @@ class vRecur(CaselessDict):
             raise ValueError('Error in recurrence rule: %s' % ical)
 
 
-class vText(compat.unicode_type):
+class vText(str):
     """Simple text.
     """
 
@@ -758,7 +756,7 @@ class vTime(object):
             raise ValueError('Expected time, got: %s' % ical)
 
 
-class vUri(compat.unicode_type):
+class vUri(str):
     """Uniform resource identifier is basically just an unquoted string.
     """
 
@@ -863,7 +861,7 @@ class vUTCOffset(object):
         return offset
 
 
-class vInline(compat.unicode_type):
+class vInline(str):
     """This is an especially dumb class that just holds raw unparsed text and
     has parameters. Conversion of inline values are handled by the Component
     class, so no further processing is needed.
