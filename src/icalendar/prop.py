@@ -60,7 +60,6 @@ from icalendar.windows_to_olson import WINDOWS_TO_OLSON
 
 import base64
 import binascii
-import pytz
 import re
 import time as _time
 
@@ -304,6 +303,7 @@ class vDDDTypes(object):
         if (isinstance(dt, datetime) or isinstance(dt, time))\
                 and getattr(dt, 'tzinfo', False):
             tzinfo = dt.tzinfo
+            import pytz
             if tzinfo is not pytz.utc and\
                (tzutc is None or not isinstance(tzinfo, tzutc)):
                 # set the timezone as a parameter to the property
@@ -412,6 +412,7 @@ class vDatetime(object):
     def from_ical(ical, timezone=None):
         tzinfo = None
         if timezone:
+            import pytz
             try:
                 tzinfo = pytz.timezone(timezone)
             except pytz.UnknownTimeZoneError:
@@ -434,6 +435,7 @@ class vDatetime(object):
             elif not ical[15:]:
                 return datetime(*timetuple)
             elif ical[15:16] == 'Z':
+                import pytz
                 return pytz.utc.localize(datetime(*timetuple))
             else:
                 raise ValueError(ical)

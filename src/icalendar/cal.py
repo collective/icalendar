@@ -16,9 +16,7 @@ from icalendar.prop import TypesFactory
 from icalendar.prop import vText, vDDDLists
 from icalendar.timezone_cache import _timezone_cache
 
-import pytz
 import dateutil.rrule
-from pytz.tzinfo import DstTzInfo
 
 from icalendar.compat import unicode_type
 
@@ -177,6 +175,7 @@ class Component(CaselessDict):
         if isinstance(value, datetime) and\
                 name.lower() in ('dtstamp', 'created', 'last-modified'):
             # RFC expects UTC for those... force value conversion.
+            import pytz
             if getattr(value, 'tzinfo', False) and value.tzinfo is not None:
                 value = value.astimezone(pytz.utc)
             else:
@@ -362,11 +361,12 @@ class Component(CaselessDict):
                     comps.append(component)
                 else:
                     stack[-1].add_component(component)
-                if vals == 'VTIMEZONE' and \
-                        'TZID' in component and \
+                if vals == 'VTIMEZONE':
+                    import pytz
+                    if 'TZID' in component and \
                         component['TZID'] not in pytz.all_timezones and \
                         component['TZID'] not in _timezone_cache:
-                    _timezone_cache[component['TZID']] = component.to_tz()
+                        _timezone_cache[component['TZID']] = component.to_tz()
             # we are adding properties to the current top of the stack
             else:
                 factory = types_factory.for_property(name)
@@ -642,6 +642,7 @@ class Timezone(Component):
             assert dst_offset is not False
             transition_info.append((osto, dst_offset, name))
 
+        from pytz.tzinfo import DstTzInfo
         cls = type(zone, (DstTzInfo,), {
             'zone': zone,
             '_utc_transition_times': transition_times,
