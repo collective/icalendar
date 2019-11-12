@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Reduce Hypothesis iterations to speed up testing, allowing PRs to pass
+  [UniversalSuperBox]
 
 
 4.0.3 (2018-10-10)

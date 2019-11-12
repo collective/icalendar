@@ -17,14 +17,13 @@ def printable_characters(**kw):
 key = st.text(string.ascii_letters + string.digits, min_size=1)
 value = printable_characters(blacklist_characters='\\;:\"')
 
-
 class TestFuzzing(unittest.TestCase):
 
     @given(lines=st.lists(
         st.tuples(key, st.dictionaries(key, value), value),
         min_size=1
     ))
-    @settings(max_examples=10**9)
+    @settings(max_examples=10**4)
     def test_main(self, lines):
         cl = Contentlines()
         for key, params, value in lines:
