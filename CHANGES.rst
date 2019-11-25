@@ -4,14 +4,6 @@ Changelog
 4.0.4 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Reduce Hypothesis iterations to speed up testing, allowing PRs to pass
