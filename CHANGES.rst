@@ -14,7 +14,7 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- fixed rrule handling, re-enabled test_create_america_new_york()
 
 
 4.0.4 (2019-11-25)
