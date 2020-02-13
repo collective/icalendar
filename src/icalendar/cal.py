@@ -17,7 +17,7 @@ from icalendar.prop import vText, vDDDLists
 from icalendar.timezone_cache import _timezone_cache
 
 import pytz
-import dateutil.rrule
+import dateutil.rrule, dateutil.tz
 from pytz.tzinfo import DstTzInfo
 
 from icalendar.compat import unicode_type
@@ -536,15 +536,23 @@ class Timezone(Component):
 
         # expand recurrences
         if 'RRULE' in component:
+            # to be paranoid about correct weekdays
+            # evaluate the rrule with the current offset
+            tzi = dateutil.tz.tzoffset ("(offsetfrom)", offsetfrom)
+            rrstart = dtstart.replace (tzinfo=tzi)
+
             rrulestr = component['RRULE'].to_ical().decode('utf-8')
-            rrule = dateutil.rrule.rrulestr(rrulestr, dtstart=dtstart)
+            rrule = dateutil.rrule.rrulestr(rrulestr, dtstart=rrstart)
             if not {'UNTIL', 'COUNT'}.intersection(component['RRULE'].keys()):
                 # pytz.timezones don't know any transition dates after 2038
                 # either
-                rrule._until = datetime(2038, 12, 31)
-            elif 'UNTIL' in component['RRULE'] and rrule._until.tzinfo:
-                rrule._until = rrule._until.replace(tzinfo=None)
-            transtimes = rrule
+                rrule._until = datetime(2038, 12, 31, tzinfo=pytz.UTC)
+
+            # constructing the pytz-timezone requires UTC transition times.
+            # here we construct local times without tzinfo, the offset to UTC
+            # gets subtracted in to_tz().
+            transtimes = [dt.replace (tzinfo=None) for dt in rrule]
+
         # or rdates
         elif 'RDATE' in component:
             if not isinstance(component['RDATE'], list):
