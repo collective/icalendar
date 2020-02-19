@@ -165,14 +165,14 @@ class IcalendarTestCase (unittest.TestCase):
         )
 
         # And the traditional failure
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
             ValueError,
             'Content line could not be parsed into parts'
         ):
             Contentline('ATTENDEE;maxm@example.com').parts()
 
         # Another failure:
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
             ValueError,
             'Content line could not be parsed into parts'
         ):
@@ -189,7 +189,7 @@ class IcalendarTestCase (unittest.TestCase):
         )
 
         # Should bomb on missing param:
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
             ValueError,
             'Content line could not be parsed into parts'
         ):
