@@ -27,7 +27,11 @@ class TestFuzzing(unittest.TestCase):
     def test_main(self, lines):
         cl = Contentlines()
         for key, params, value in lines:
-            params = Parameters(**params)
+            try:
+                params = Parameters(**params)
+            except TypeError:
+                # Happens when there is a random parameter 'self'...
+                continue
             cl.append(Contentline.from_parts(key, params, value))
         cl.append('')
 
