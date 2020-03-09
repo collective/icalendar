@@ -23,11 +23,15 @@ class TestFuzzing(unittest.TestCase):
         st.tuples(key, st.dictionaries(key, value), value),
         min_size=1
     ))
-    @settings(max_examples=10**4)
+    @settings(max_examples=10**3)
     def test_main(self, lines):
         cl = Contentlines()
         for key, params, value in lines:
-            params = Parameters(**params)
+            try:
+                params = Parameters(**params)
+            except TypeError:
+                # Happens when there is a random parameter 'self'...
+                continue
             cl.append(Contentline.from_parts(key, params, value))
         cl.append('')
 
