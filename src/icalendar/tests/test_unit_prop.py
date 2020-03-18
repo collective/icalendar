@@ -332,6 +332,11 @@ class TestProp(unittest.TestCase):
         # and some errors
         self.assertRaises(ValueError, vRecur.from_ical, 'BYDAY=12')
 
+        # when key is not RFC-compliant, parse it as vText
+        r = vRecur.from_ical('FREQ=MONTHLY;BYOTHER=TEXT;BYEASTER=-3')
+        self.assertEqual(vRecur(r).to_ical(),
+                         b'FREQ=MONTHLY;BYEASTER=-3;BYOTHER=TEXT')
+
     def test_prop_vText(self):
         from ..prop import vText
 

@@ -15,6 +15,7 @@ New features:
 Bug fixes:
 
 - Fixed a docs issue related to building on Read the Docs [davidfischer]
+- Use ``vText`` as default type, when convert recurrence definition to ical string. [kam193] 
 
 
 4.0.4 (2019-11-25)
