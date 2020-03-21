@@ -4,14 +4,6 @@ Changelog
 4.0.5 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Fixed a docs issue related to building on Read the Docs [davidfischer]
