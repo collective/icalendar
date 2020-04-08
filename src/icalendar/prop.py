@@ -673,7 +673,7 @@ class vRecur(CaselessDict):
     def to_ical(self):
         result = []
         for key, vals in self.sorted_items():
-            typ = self.types[key]
+            typ = self.types.get(key, vText)
             if not isinstance(vals, SEQUENCE_TYPES):
                 vals = [vals]
             vals = b','.join(typ(val).to_ical() for val in vals)

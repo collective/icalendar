@@ -55,6 +55,7 @@ icalendar contributors
 - Andreas Ruppen <andreas.ruppen@gmail.com>
 - Clive Stevens <clivest2@gmail.com>
 - Dalton Durst <github@daltondur.st>
+- Kamil Mańkowski <kam193@wp.pl>
 
 Find out who contributed::
 
