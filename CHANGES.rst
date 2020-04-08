@@ -14,7 +14,7 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Use ``vText`` as default type, when convert recurrence definition to ical string. [kam193] 
 
 
 4.0.5 (2020-03-21)
@@ -23,8 +23,6 @@ Bug fixes:
 Bug fixes:
 
 - Fixed a docs issue related to building on Read the Docs [davidfischer]
-- Use ``vText`` as default type, when convert recurrence definition to ical string. [kam193] 
-- Enable CI for Python 3.7 and more reduce Hypothesis iteration due to CI timeout. [kam193]
 
 
 4.0.4 (2019-11-25)
