@@ -4,14 +4,6 @@ Changelog
 4.0.6 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Use ``vText`` as default type, when convert recurrence definition to ical string. [kam193] 
