@@ -16,7 +16,7 @@ import pytz
 class TestProp(unittest.TestCase):
 
     def test_prop_vBinary(self):
-        from ..prop import vBinary
+        from icalendar.prop import vBinary
 
         txt = b'This is gibberish'
         txt_ical = b'VGhpcyBpcyBnaWJiZXJpc2g='
@@ -41,7 +41,7 @@ class TestProp(unittest.TestCase):
         self.assertEqual(vBinary.from_ical(txt_ical), txt)
 
     def test_prop_vBoolean(self):
-        from ..prop import vBoolean
+        from icalendar.prop import vBoolean
 
         self.assertEqual(vBoolean(True).to_ical(), b'TRUE')
         self.assertEqual(vBoolean(0).to_ical(), b'FALSE')
@@ -51,7 +51,7 @@ class TestProp(unittest.TestCase):
         self.assertEqual(vBoolean.from_ical('true'), True)
 
     def test_prop_vCalAddress(self):
-        from ..prop import vCalAddress
+        from icalendar.prop import vCalAddress
         txt = b'MAILTO:maxm@mxm.dk'
         a = vCalAddress(txt)
         a.params['cn'] = 'Max M'
@@ -62,19 +62,19 @@ class TestProp(unittest.TestCase):
         self.assertEqual(vCalAddress.from_ical(txt), 'MAILTO:maxm@mxm.dk')
 
     def test_prop_vFloat(self):
-        from ..prop import vFloat
+        from icalendar.prop import vFloat
         self.assertEqual(vFloat(1.0).to_ical(), b'1.0')
         self.assertEqual(vFloat.from_ical('42'), 42.0)
         self.assertEqual(vFloat(42).to_ical(), b'42.0')
 
     def test_prop_vInt(self):
-        from ..prop import vInt
+        from icalendar.prop import vInt
         self.assertEqual(vInt(42).to_ical(), b'42')
         self.assertEqual(vInt.from_ical('13'), 13)
         self.assertRaises(ValueError, vInt.from_ical, '1s3')
 
     def test_prop_vDDDLists(self):
-        from ..prop import vDDDLists
+        from icalendar.prop import vDDDLists
 
         dt_list = vDDDLists.from_ical('19960402T010000Z')
         self.assertTrue(isinstance(dt_list, list))
@@ -98,7 +98,7 @@ class TestProp(unittest.TestCase):
         self.assertEqual(dt_list.to_ical(), b'20000101T000000,20001111T000000')
 
     def test_prop_vDDDTypes(self):
-        from ..prop import vDDDTypes
+        from icalendar.prop import vDDDTypes
 
         self.assertTrue(isinstance(vDDDTypes.from_ical('20010101T123000'),
                                    datetime))
@@ -116,7 +116,7 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vDDDTypes, 42)
 
     def test_prop_vDate(self):
-        from ..prop import vDate
+        from icalendar.prop import vDate
 
         self.assertEqual(vDate(date(2001, 1, 1)).to_ical(), b'20010101')
         self.assertEqual(vDate(date(1899, 1, 1)).to_ical(), b'18990101')
@@ -126,7 +126,7 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vDate, 'd')
 
     def test_prop_vDatetime(self):
-        from ..prop import vDatetime
+        from icalendar.prop import vDatetime
 
         dt = datetime(2001, 1, 1, 12, 30, 0)
         self.assertEqual(vDatetime(dt).to_ical(), b'20010101T123000')
@@ -162,7 +162,7 @@ class TestProp(unittest.TestCase):
         self.assertEqual(vDatetime(dat).to_ical(), b'20101010T000000')
 
     def test_prop_vDuration(self):
-        from ..prop import vDuration
+        from icalendar.prop import vDuration
 
         self.assertEqual(vDuration(timedelta(11)).to_ical(), b'P11D')
         self.assertEqual(vDuration(timedelta(-14)).to_ical(), b'-P14D')
@@ -193,7 +193,7 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vDuration, 11)
 
     def test_prop_vPeriod(self):
-        from ..prop import vPeriod
+        from icalendar.prop import vPeriod
 
         # One day in exact datetimes
         per = (datetime(2000, 1, 1), datetime(2000, 1, 2))
@@ -238,7 +238,7 @@ class TestProp(unittest.TestCase):
         self.assertEqual(p.to_ical(), b'20000101T000000/P31D')
 
     def test_prop_vWeekday(self):
-        from ..prop import vWeekday
+        from icalendar.prop import vWeekday
 
         self.assertEqual(vWeekday('mo').to_ical(), b'MO')
         self.assertRaises(ValueError, vWeekday, 'erwer')
@@ -250,14 +250,14 @@ class TestProp(unittest.TestCase):
         self.assertEqual(vWeekday('-tu').to_ical(), b'-TU')
 
     def test_prop_vFrequency(self):
-        from ..prop import vFrequency
+        from icalendar.prop import vFrequency
 
         self.assertRaises(ValueError, vFrequency, 'bad test')
         self.assertEqual(vFrequency('daily').to_ical(), b'DAILY')
         self.assertEqual(vFrequency('daily').from_ical('MONTHLY'), 'MONTHLY')
 
     def test_prop_vRecur(self):
-        from ..prop import vRecur
+        from icalendar.prop import vRecur
 
         # Let's see how close we can get to one from the rfc:
         # FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=SU;BYHOUR=8,9;BYMINUTE=30
@@ -338,7 +338,7 @@ class TestProp(unittest.TestCase):
                          b'FREQ=MONTHLY;BYEASTER=-3;BYOTHER=TEXT')
 
     def test_prop_vText(self):
-        from ..prop import vText
+        from icalendar.prop import vText
 
         self.assertEqual(vText('Simple text').to_ical(), b'Simple text')
 
@@ -372,7 +372,7 @@ class TestProp(unittest.TestCase):
         # with the official U+FFFD REPLACEMENT CHARACTER.
 
     def test_prop_vTime(self):
-        from ..prop import vTime
+        from icalendar.prop import vTime
 
         self.assertEqual(vTime(12, 30, 0).to_ical(), '123000')
         self.assertEqual(vTime.from_ical('123000'), time(12, 30))
@@ -381,7 +381,7 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vTime.from_ical, '263000')
 
     def test_prop_vUri(self):
-        from ..prop import vUri
+        from icalendar.prop import vUri
 
         self.assertEqual(vUri('http://www.example.com/').to_ical(),
                          b'http://www.example.com/')
@@ -389,7 +389,7 @@ class TestProp(unittest.TestCase):
                          'http://www.example.com/')
 
     def test_prop_vGeo(self):
-        from ..prop import vGeo
+        from icalendar.prop import vGeo
 
         # Pass a list
         self.assertEqual(vGeo([1.2, 3.0]).to_ical(), '1.2;3.0')
@@ -405,7 +405,7 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vGeo, 'g')
 
     def test_prop_vUTCOffset(self):
-        from ..prop import vUTCOffset
+        from icalendar.prop import vUTCOffset
 
         self.assertEqual(vUTCOffset(timedelta(hours=2)).to_ical(), '+0200')
 
@@ -445,7 +445,7 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vUTCOffset.from_ical, '+2400')
 
     def test_prop_vInline(self):
-        from ..prop import vInline
+        from icalendar.prop import vInline
 
         self.assertEqual(vInline('Some text'), 'Some text')
         self.assertEqual(vInline.from_ical('Some text'), 'Some text')
@@ -456,7 +456,7 @@ class TestProp(unittest.TestCase):
         self.assertEqual(t2.params, {'CN': 'Test Osterone'})
 
     def test_prop_TypesFactory(self):
-        from ..prop import TypesFactory
+        from icalendar.prop import TypesFactory
 
         # To get a type you can use it like this.
         factory = TypesFactory()
@@ -490,7 +490,7 @@ class TestPropertyValues(unittest.TestCase):
     def test_vDDDLists_timezone(self):
         """Test vDDDLists with timezone information.
         """
-        from .. import Event
+        from icalendar import Event
         vevent = Event()
         at = pytz.timezone('Europe/Vienna')
         dt1 = at.localize(datetime(2013, 1, 1))

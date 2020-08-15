@@ -6,7 +6,9 @@ Changelog
 
 Breaking changes:
 
-- *add item here*
+- Tests are no longer installed as part of the package in ``site-packages``.
+  The tests will continue to be a part of the source distribution as a top
+  level directory. #250 [jdufresne]
 
 New features:
 

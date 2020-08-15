@@ -2,3 +2,4 @@ include *.rst tox.ini
 graft docs
 recursive-include src/icalendar *
 recursive-exclude src/icalendar *.pyc *~
+graft tests
