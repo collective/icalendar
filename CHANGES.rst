@@ -4,14 +4,6 @@ Changelog
 4.0.7 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - fixed rrule handling, re-enabled test_create_america_new_york()
