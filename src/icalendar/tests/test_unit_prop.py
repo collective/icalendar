@@ -192,6 +192,12 @@ class TestProp(unittest.TestCase):
 
         self.assertRaises(ValueError, vDuration, 11)
 
+        # calling to_ical twice should result in same output
+        duration = vDuration(timedelta(days=-1, hours=-5))
+        self.assertEqual(duration.to_ical(), b'-P1DT5H')
+        self.assertEqual(duration.to_ical(), b'-P1DT5H')
+
+
     def test_prop_vPeriod(self):
         from ..prop import vPeriod
 

@@ -454,27 +454,28 @@ class vDuration(object):
 
     def to_ical(self):
         sign = ""
-        if self.td.days < 0:
+        td = self.td
+        if td.days < 0:
             sign = "-"
-            self.td = -self.td
+            td = -td
         timepart = ""
-        if self.td.seconds:
+        if td.seconds:
             timepart = "T"
-            hours = self.td.seconds // 3600
-            minutes = self.td.seconds % 3600 // 60
-            seconds = self.td.seconds % 60
+            hours = td.seconds // 3600
+            minutes = td.seconds % 3600 // 60
+            seconds = td.seconds % 60
             if hours:
                 timepart += "%dH" % hours
             if minutes or (hours and seconds):
                 timepart += "%dM" % minutes
             if seconds:
                 timepart += "%dS" % seconds
-        if self.td.days == 0 and timepart:
+        if td.days == 0 and timepart:
             return (compat.unicode_type(sign).encode('utf-8') + b'P' +
                     compat.unicode_type(timepart).encode('utf-8'))
         else:
             return (compat.unicode_type(sign).encode('utf-8') + b'P' +
-                    compat.unicode_type(abs(self.td.days)).encode('utf-8') +
+                    compat.unicode_type(abs(td.days)).encode('utf-8') +
                     b'D' + compat.unicode_type(timepart).encode('utf-8'))
 
     @staticmethod
