@@ -1,15 +1,12 @@
-# -*- coding: utf-8 -*-
-"""iCalendar utility"""
-from __future__ import unicode_literals
-
-import argparse
+#!/usr/bin/env python3
+"""utility program that allows user to preview calendar's events"""
 import sys
+import argparse
 from datetime import datetime
 
 from . import Calendar, __version__
 
-
-_template = """Organiser: {organiser}
+_TEMPLATE = """Organiser: {organiser}
 Attendees:
   {attendees}
 Summary: {summary}
@@ -21,7 +18,6 @@ Description:
 {description}
 
 """
-
 
 def _format_name(address):
     """Retrieve the e-mail and optionally the name from an address.
@@ -39,7 +35,6 @@ def _format_name(address):
 
     return email
 
-
 def _format_attendees(attendees):
     """Format the list of attendees.
 
@@ -47,10 +42,9 @@ def _format_attendees(attendees):
 
     :returns str: Formatted list of attendees.
     """
-    if type(attendees) == list:
+    if isinstance(attendees, list):
         return '\n  '.join(map(_format_name, attendees))
     return _format_name(attendees)
-
 
 def view(input_handle, output_handle):
     """Make a human readable summary of an iCalendar file.
@@ -62,7 +56,7 @@ def view(input_handle, output_handle):
     cal = Calendar.from_ical(input_handle.read())
 
     for event in cal.walk('vevent'):
-        output_handle.write(_template.format(
+        output_handle.write(_TEMPLATE.format(
             organiser=_format_name(event.get('organizer', '')),
             attendees=_format_attendees(event.get('attendee')),
             summary=event.get('summary', ''),
@@ -72,7 +66,6 @@ def view(input_handle, output_handle):
             location=event.get('location', ''),
             comment=event.get('comment', ''),
             description=event.get('description', '')).encode('utf-8'))
-
 
 def main():
     """Main entry point."""
@@ -101,11 +94,10 @@ def main():
     args = parser.parse_args()
 
     try:
-        args.func(**{k: v for k, v in vars(args).items()
-            if k not in ('func', 'subcommand')})
+        args.func(**{k: v for k, v in vars(args).items() if k not in ('func', 'subcommand')})
     except ValueError as error:
         parser.error(error)
 
-
 if __name__ == '__main__':
     main()
+
