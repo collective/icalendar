@@ -16,8 +16,7 @@ def _format_name(address):
     name = email.split('@')[0]
     if not email:
         return ''
-    else:
-        return f"{name} <{email}>"
+    return f"{name} <{email}>"
 
 
 def _format_attendees(attendees):
@@ -45,16 +44,21 @@ def view(event):
     description = '\n'.join(map(lambda s: s.rjust(len(s) + 5), description))
 
     timezone = datetime.utcnow().astimezone().tzinfo
-    start = event.decoded('dtstart').astimezone(timezone).strftime('%c')
-    end = event.decoded('dtstart', default=start).astimezone(timezone).strftime('%c')
+    start = event.decoded('dtstart')
+    end = event.decoded('dtend', default=start)
+    duration = end - start
+    start = start.astimezone(timezone).strftime('%c')
+    end = end.astimezone(timezone).strftime('%c')
 
-    return f"""Organiser: {organiser}
+    return f"""    Organiser: {organiser}
     Attendees:
 {attendees}
-    Summary: {summary}
-    When: {start} - {end}
-    Location: {location}
-    Comment: {comment}
+    Summary    : {summary}
+    Starts     : {start}
+    End        : {end}
+    Duration   : {duration}
+    Location   : {location}
+    Comment    : {comment}
     Description:
 {description}
     """
