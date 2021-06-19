@@ -1,23 +1,9 @@
 #!/usr/bin/env python3
 """utility program that allows user to preview calendar's events"""
-import sys
 import pathlib
 import argparse
 from datetime import datetime
-from . import Calendar, __version__
-
-_TEMPLATE = """Organiser: {organiser}
-Attendees:
-  {attendees}
-Summary: {summary}
-When: {time_from}-{time_to}
-Location: {location}
-Comment: {comment}
-Description:
-
-{description}
-
-"""
+from icalendar import Calendar, __version__
 
 def _format_name(address):
     """Retrieve the e-mail and optionally the name from an address.
@@ -46,26 +32,34 @@ def _format_attendees(attendees):
         return '\n  '.join(map(_format_name, attendees))
     return _format_name(attendees)
 
-def view(input_handle, output_handle):
+def view(event):
     """Make a human readable summary of an iCalendar file.
-
-    :arg stream handle: Open readable handle to an iCalendar file.
 
     :returns str: Human readable summary.
     """
-    cal = Calendar.from_ical(input_handle.read())
+    summary = event.get('summary', default='')
+    organiser = _format_name(event.get('organizer', default=''))
+    attendees = _format_attendees(event.get('attendee', default=[]))
+    location = event.get('location', default='')
+    comment = event.get('comment', '')
+    description = event.get('description', '')
 
-    for event in cal.walk('vevent'):
-        output_handle.write(_TEMPLATE.format(
-            organiser=_format_name(event.get('organizer', '')),
-            attendees=_format_attendees(event.get('attendee')),
-            summary=event.get('summary', ''),
-            time_from=datetime.strftime(
-                event.get('dtstart').dt, '%a %d %b %Y %H:%M'),
-            time_to=datetime.strftime(event.get('dtend').dt, '%H:%M'),
-            location=event.get('location', ''),
-            comment=event.get('comment', ''),
-            description=event.get('description', '')).encode('utf-8'))
+    timezone = datetime.utcnow().astimezone().tzinfo
+    start = event.decoded('dtstart').astimezone(timezone).strftime('%c')
+    end = event.decoded('dtstart', default=start).astimezone(timezone).strftime('%c')
+
+    return f"""Organiser: {organiser}
+    Attendees:
+      {attendees}
+    Summary: {summary}
+    When: {start} - {end}
+    Location: {location}
+    Comment: {comment}
+    Description:
+
+    {description}
+
+    """
 
 def main():
     """Main entry point."""
@@ -74,10 +68,11 @@ def main():
     parser.add_argument('-v', '--version', action='version', version=f'{parser.prog} version {__version__}')
     argv = parser.parse_args()
 
-    try:
-        args.func(**{k: v for k, v in vars(args).items() if k not in ('func', 'subcommand')})
-    except ValueError as error:
-        parser.error(error)
+    for calendar_file in argv.calendar_files:
+        with open(calendar_file) as f:
+            calendar = Calendar.from_ical(f.read())
+            for event in calendar.walk('vevent'):
+                print(view(event))
 
 if __name__ == '__main__':
     main()
