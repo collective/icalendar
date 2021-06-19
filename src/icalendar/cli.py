@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """utility program that allows user to preview calendar's events"""
 import sys
+import pathlib
 import argparse
 from datetime import datetime
-
 from . import Calendar, __version__
 
 _TEMPLATE = """Organiser: {organiser}
@@ -69,29 +69,10 @@ def view(input_handle, output_handle):
 
 def main():
     """Main entry point."""
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=__doc__)
-    parser.add_argument(
-        '-v', '--version', action='version',
-        version='{} version {}'.format(parser.prog, __version__))
-
-    # This seems a bit of an overkill now, but we will probably add more
-    # functionality later, e.g., iCalendar to JSON / YAML and vice versa.
-    subparsers = parser.add_subparsers(dest='subcommand')
-
-    subparser = subparsers.add_parser(
-        'view', description=view.__doc__.split('\n\n')[0])
-    subparser.add_argument(
-        'input_handle', metavar='INPUT', type=argparse.FileType('r'),
-        help='iCalendar file')
-    subparser.add_argument(
-        '-o', dest='output_handle', metavar='OUTPUT',
-        type=argparse.FileType('w'), default=sys.stdout,
-        help='output file (default=<stdout>)')
-    subparser.set_defaults(func=view)
-
-    args = parser.parse_args()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('calendar_files', nargs='+', type=pathlib.Path)
+    parser.add_argument('-v', '--version', action='version', version=f'{parser.prog} version {__version__}')
+    argv = parser.parse_args()
 
     try:
         args.func(**{k: v for k, v in vars(args).items() if k not in ('func', 'subcommand')})
