@@ -6,20 +6,19 @@ from datetime import datetime
 from icalendar import Calendar, __version__
 
 def _format_name(address):
-    """Retrieve the e-mail and optionally the name from an address.
+    """Retrieve the e-mail and the name from an address.
 
-    :arg vCalAddress address: An address object.
+    :arg an address object, e.g. mailto:test@test.test
 
-    :returns str: The name and optionally the e-mail address.
+    :returns str: The name and the e-mail address.
     """
-    if not address:
+    email = address.split(':')[-1]
+    name = email.split('@')[0]
+    if not email:
         return ''
+    else:
+        return f"{name} <{email}>"
 
-    email = address.title().split(':')[1]
-    if 'cn' in address.params:
-        return '{} <{}>'.format(address.params['cn'], email)
-
-    return email
 
 def _format_attendees(attendees):
     """Format the list of attendees.
@@ -29,7 +28,7 @@ def _format_attendees(attendees):
     :returns str: Formatted list of attendees.
     """
     if isinstance(attendees, list):
-        return '\n  '.join(map(_format_name, attendees))
+        return '\n'.join(map(lambda s: s.rjust(len(s) + 5), map(_format_name, attendees)))
     return _format_name(attendees)
 
 def view(event):
@@ -43,7 +42,7 @@ def view(event):
     location = event.get('location', default='')
     comment = event.get('comment', '')
     description = event.get('description', '').split('\n')
-    description = '\n'.join(map(lambda s: s.rjust(len(s) + 4), description))
+    description = '\n'.join(map(lambda s: s.rjust(len(s) + 5), description))
 
     timezone = datetime.utcnow().astimezone().tzinfo
     start = event.decoded('dtstart').astimezone(timezone).strftime('%c')
@@ -51,7 +50,7 @@ def view(event):
 
     return f"""Organiser: {organiser}
     Attendees:
-      {attendees}
+{attendees}
     Summary: {summary}
     When: {start} - {end}
     Location: {location}
