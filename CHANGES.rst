@@ -6,11 +6,14 @@ Changelog
 
 Breaking changes:
 
-- *add item here*
+- icalendar now longer accepts -o as an option
+- icalenar now takes a ics file directly as an input
+- icalendar's output is different
 
 New features:
 
-- *add item here*
+- icalendar utility outputs a 'Duration' row
+- icalendar can take multiple ics files as an input
 
 Bug fixes:
 
