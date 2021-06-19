@@ -42,7 +42,8 @@ def view(event):
     attendees = _format_attendees(event.get('attendee', default=[]))
     location = event.get('location', default='')
     comment = event.get('comment', '')
-    description = event.get('description', '')
+    description = event.get('description', '').split('\n')
+    description = '\n'.join(map(lambda s: s.rjust(len(s) + 4), description))
 
     timezone = datetime.utcnow().astimezone().tzinfo
     start = event.decoded('dtstart').astimezone(timezone).strftime('%c')
@@ -56,9 +57,7 @@ def view(event):
     Location: {location}
     Comment: {comment}
     Description:
-
-    {description}
-
+{description}
     """
 
 def main():
