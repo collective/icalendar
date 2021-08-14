@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
 """iCalendar utility"""
-from __future__ import unicode_literals
 
 import argparse
 import sys
