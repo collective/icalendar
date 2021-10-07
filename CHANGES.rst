@@ -1,28 +1,15 @@
 Changelog
 =========
 
-4.0.9 (unreleased)
-------------------
-
-Breaking changes:
-
-- Added Python 3.9 and 3.10
-
 
 4.0.8 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
-- *add item here*
+- Support added for Python 3.9 and 3.10 (no code changes needed).
+
+- Replace bare 'except:' with 'except Exception:' (#281)
 
 
 4.0.7 (2020-09-07)
@@ -38,7 +25,7 @@ Bug fixes:
 
 Bug fixes:
 
-- Use ``vText`` as default type, when convert recurrence definition to ical string. [kam193] 
+- Use ``vText`` as default type, when convert recurrence definition to ical string. [kam193]
 
 
 4.0.5 (2020-03-21)
