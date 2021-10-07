@@ -1,6 +1,14 @@
 Changelog
 =========
 
+4.0.9 (unreleased)
+------------------
+
+Breaking changes:
+
+- Added Python 3.9 and 3.10
+
+
 4.0.8 (unreleased)
 ------------------
 
