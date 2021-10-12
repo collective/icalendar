@@ -251,7 +251,7 @@ class vDDDLists(object):
             ltype = type(dt_list[0])
         for dt in dt_list:
             # raise ValueError if type of the input values differs
-            if not isinstance(dt, ltype):
+            if not type(dt) == ltype:
                 raise ValueError("Trying to insert '%s' value into a list "
                                  "of '%s'".format(type(dt), ltype))
             dt = type_class(dt)

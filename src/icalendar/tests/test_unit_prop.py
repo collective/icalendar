@@ -97,6 +97,13 @@ class TestProp(unittest.TestCase):
         dt_list = vDDDLists([datetime(2000, 1, 1), datetime(2000, 11, 11)])
         self.assertEqual(dt_list.to_ical(), b'20000101T000000,20001111T000000')
 
+    def test_prop_vDDDLists_same_types(self):
+        """vDDDLists should raise an error when initialized with different date/time types.
+        """
+        from ..prop import vDDDLists
+        with self.assertRaises(ValueError):
+            vDDDLists([date.today(), datetime.now()])
+
     def test_prop_vDDDTypes(self):
         from ..prop import vDDDTypes
 
