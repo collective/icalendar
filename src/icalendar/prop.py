@@ -304,19 +304,19 @@ class vDDDTypes(object):
     So this is practical.
     """
     def __init__(self, dt):
-        if not isinstance(dt, (datetime, date, timedelta, time, tuple)):
+        if type(dt) not in (datetime, date, timedelta, time, tuple):
             raise ValueError('You must use datetime, date, timedelta, '
                              'time or tuple (for periods)')
-        if isinstance(dt, datetime):
+        if type(dt) is datetime:
             self.params = Parameters({'value': 'DATE-TIME'})
-        elif isinstance(dt, date):
+        elif type(dt) is date:
             self.params = Parameters({'value': 'DATE'})
-        elif isinstance(dt, time):
+        elif type(dt) is time:
             self.params = Parameters({'value': 'TIME'})
-        elif isinstance(dt, tuple):
+        elif type(dt) is tuple:
             self.params = Parameters({'value': 'PERIOD'})
 
-        if isinstance(dt, (datetime, time)) and hasattr(dt, 'tzinfo'):
+        if type(dt) in (datetime, time) and hasattr(dt, 'tzinfo'):
             tzinfo = dt.tzinfo
             if tzinfo is not pytz.utc and\
                (tzutc is None or not isinstance(tzinfo, tzutc)):
@@ -328,15 +328,15 @@ class vDDDTypes(object):
 
     def to_ical(self):
         dt = self.dt
-        if isinstance(dt, datetime):
+        if type(dt) is datetime:
             return vDatetime(dt).to_ical()
-        elif isinstance(dt, date):
+        elif type(dt) is date:
             return vDate(dt).to_ical()
-        elif isinstance(dt, timedelta):
+        elif type(dt) is timedelta:
             return vDuration(dt).to_ical()
-        elif isinstance(dt, time):
+        elif type(dt) is time:
             return vTime(dt).to_ical()
-        elif isinstance(dt, tuple) and len(dt) == 2:
+        elif type(dt) is tuple and len(dt) == 2:
             return vPeriod(dt).to_ical()
         else:
             raise ValueError('Unknown date type: {}'.format(type(dt)))
@@ -367,7 +367,7 @@ class vDate(object):
     """Render and generates iCalendar date format.
     """
     def __init__(self, dt):
-        if not isinstance(dt, date):
+        if type(dt) is not date:
             raise ValueError('Value MUST be a date instance')
         self.dt = dt
         self.params = Parameters({'value': 'DATE'})
@@ -480,7 +480,7 @@ class vDuration(object):
     """
 
     def __init__(self, td):
-        if not isinstance(td, timedelta):
+        if type(td) is not timedelta:
             raise ValueError('Value MUST be a timedelta instance')
         self.td = td
         self.params = Parameters()
@@ -543,15 +543,13 @@ class vPeriod(object):
     """
     def __init__(self, per):
         start, end_or_duration = per
-        if not (isinstance(start, datetime) or isinstance(start, date)):
+        if type(start) not in (datetime, date):
             raise ValueError('Start value MUST be a datetime or date instance')
-        if not (isinstance(end_or_duration, datetime) or
-                isinstance(end_or_duration, date) or
-                isinstance(end_or_duration, timedelta)):
+        if type(end_or_duration) not in (datetime, date, timedelta):
             raise ValueError('end_or_duration MUST be a datetime, '
                              'date or timedelta instance')
         by_duration = 0
-        if isinstance(end_or_duration, timedelta):
+        if type(end_or_duration) is timedelta:
             by_duration = 1
             duration = end_or_duration
             end = start + duration
@@ -782,7 +780,7 @@ class vTime(object):
 
     def __init__(self, *args):
         if len(args) == 1:
-            if not isinstance(args[0], (time, datetime)):
+            if type(args[0]) not in (time, datetime):
                 raise ValueError('Expected a datetime.time, got: %s' % args[0])
             self.dt = args[0]
         else:
@@ -871,7 +869,7 @@ class vUTCOffset(object):
                                 # propagate upwards
 
     def __init__(self, td):
-        if not isinstance(td, timedelta):
+        if not type(td) is timedelta:
             raise ValueError('Offset value MUST be a timedelta instance')
         self.td = td
         self.params = Parameters()

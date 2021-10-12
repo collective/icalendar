@@ -182,7 +182,7 @@ class Component(CaselessDict):
 
         :returns: None
         """
-        if isinstance(value, datetime) and\
+        if type(value) is datetime and\
                 name.lower() in ('dtstamp', 'created', 'last-modified'):
             # RFC expects UTC for those... force value conversion.
             if getattr(value, 'tzinfo', False) and value.tzinfo is not None:
@@ -624,9 +624,9 @@ class Timezone(Component):
         dst = {}
         tznames = set()
         for component in self.walk():
-            if type(component) == Timezone:
+            if type(component) is Timezone:
                 continue
-            assert isinstance(component['DTSTART'].dt, datetime), (
+            assert type(component['DTSTART'].dt) is datetime, (
                 "VTIMEZONEs sub-components' DTSTART must be of type datetime, not date"
             )
             try:
