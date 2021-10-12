@@ -506,6 +506,72 @@ class TestProp(unittest.TestCase):
             'Rasmussen, Max M\xf8ller'
         )
 
+    def test_prop_TypesFactory_for_property(self):
+        """Test all the different supported cases of for_property
+        """
+        from icalendar import prop
+        factory = prop.TypesFactory()
+
+        today = date.today()
+        now = datetime.now()
+
+        self.assertEqual(
+            factory.for_property("version"),
+            prop.vText
+        )
+
+        self.assertEqual(
+            factory.for_property("rrule"),
+            prop.vRecur
+        )
+
+        # dtstart can be date-time or date
+        # Default
+        self.assertEqual(
+            factory.for_property("dtstart"),
+            prop.vDatetime
+        )
+        # Specifying the valuetype
+        self.assertEqual(
+            factory.for_property("dtstart", valuetype="date"),
+            prop.vDate
+        )
+        # Passing a native type
+        self.assertEqual(
+            factory.for_property("dtstart", nativetype=type(today)),
+            prop.vDate
+        )
+        # valuetype takes precedence
+        self.assertEqual(
+            factory.for_property("dtstart", valuetype="date", nativetype=type(now)),
+            prop.vDate
+        )
+
+        # Asking for not existent types raises ValueError
+        with self.assertRaises(ValueError):
+            factory.for_property("dtstart", valuetype="does-not-exist")
+        with self.assertRaises(ValueError):
+            factory.for_property("version", valuetype="does-not-exist")
+
+        # Unsresolved name fallbacks
+        self.assertEqual(
+            factory.for_property("does-not-exist"),
+            prop.vText
+        )
+        self.assertEqual(
+            factory.for_property("does-not-exist", valuetype="date"),
+            prop.vDate
+        )
+        self.assertEqual(
+            factory.for_property("does-not-exist", nativetype=type(today)),
+            prop.vDate
+        )
+        # valuetype takes precedence
+        self.assertEqual(
+            factory.for_property("does-not-exist", valuetype="date", nativetype=type(now)),
+            prop.vDate
+        )
+
 
 class TestPropertyValues(unittest.TestCase):
 

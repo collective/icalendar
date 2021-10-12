@@ -1070,6 +1070,11 @@ class TypesFactory(CaselessDict):
         'value': 'text',
     })
 
+    native_type_map = {
+        datetime: 'date-time',
+        date: 'date',
+    }
+
     list_properties = ('exdate', 'rdate')
 
     def is_list_property(self, name):
@@ -1077,20 +1082,28 @@ class TypesFactory(CaselessDict):
             return True
         return False
 
-    def for_property(self, name, valuetype=None):
+    def for_property(self, name, valuetype=None, nativetype=None):
         """Returns inner representation type for a property
         @param valuetype: the value of the VALUE parameter if set
         """
         res_type = self.types_map.get(name)
+        _nativetype = self.native_type_map.get(nativetype)
+
         if res_type is None:
-            # unknown property
-            if valuetype is not None\
-               and valuetype.upper() in list(self.keys()):
+            # Unknown property
+
+            if valuetype and valuetype.upper() in list(self.keys()):
                 return self[valuetype]
-            else:
-                return self['text']
+
+            if _nativetype:
+                return self[_nativetype]
+
+            return self['text']  # Default fallback
+
         if isinstance(res_type, tuple):
-            if valuetype is not None:
+            # List of values should have the same type
+
+            if valuetype:
                 # VALUE was set
                 valuetype = valuetype.lower()
                 if valuetype not in res_type:
@@ -1098,21 +1111,20 @@ class TypesFactory(CaselessDict):
                                      "is not supported: '{type}'"
                                      .format(name=name, type=valuetype.upper())
                                      )
-                else:
-                    # the type in VALUE can be used
-                    res_type = self[valuetype]
-            else:
-                # VALUE was not set, use default type
-                res_type = self[res_type[0]]
-        elif valuetype is not None and valuetype.lower() != res_type:
+                # The type in VALUE can be used
+                return self[valuetype]
+
+            if _nativetype:
+                return self[_nativetype]
+
+            return self[res_type[0]]  # Fallback, use first type of tuple.
+
+        elif valuetype and valuetype.lower() != res_type:
             raise ValueError("The VALUE parameter of {name} property is "
                              "not supported: '{type}'"
-                             .format(name=name, type=valuetype.uppper()))
-        else:
-            # Only one type is allowed and if VALUE set, it corresponds to it
-            res_type = self[res_type]
+                             .format(name=name, type=valuetype.upper()))
 
-        return res_type
+        return self[res_type]
 
     def to_ical(self, name, value):
         """Encodes a named value from a primitive python type to an icalendar

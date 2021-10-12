@@ -545,3 +545,14 @@ END:VCALENDAR"""
         self.assertEqual(event['RDATE'].params,
                          {'VALUE': 'BINARY', 'ENCODING': 'BASE64',
                           'FMTTYPE': 'text/plain'})
+
+    def test_pr_196__1(self):
+        """Test case from comment
+        https://github.com/collective/icalendar/pull/196#issuecomment-317485774
+        """
+        event = icalendar.Event()
+        event.add('DTSTART', datetime.date(2021, 10, 12))
+        self.assertEqual(
+            event.to_ical(),
+            b'BEGIN:VEVENT\r\nDTSTART;VALUE=DATE:20211012\r\nEND:VEVENT\r\n'
+        )

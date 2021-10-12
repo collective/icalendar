@@ -148,7 +148,10 @@ class Component(CaselessDict):
                     params[key] = item
                 parameters = params
         klass = types_factory.for_property(
-            name, parameters.get('VALUE') if parameters else None)
+            name,
+            valuetype=parameters.get('VALUE') if parameters else None,
+            nativetype=type(value)
+        )
         if types_factory.is_list_property(name):
             obj = vDDDLists(value, klass)
         else:
