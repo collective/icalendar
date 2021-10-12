@@ -115,7 +115,7 @@ class Component(CaselessDict):
     #############################
     # handling of property values
 
-    def _encode(self, name, value, parameters=None, encode=1):
+    def _encode(self, name, value, parameters=None, encode=True):
         """Encode values to icalendar property values.
 
         :param name: Name of the property.
@@ -152,7 +152,7 @@ class Component(CaselessDict):
             valuetype=parameters.get('VALUE') if parameters else None,
             nativetype=type(value)
         )
-        if types_factory.is_list_property(name):
+        if types_factory.is_date_list_property(name):
             obj = vDDDLists(value, klass)
         else:
             obj = klass(value)
@@ -161,7 +161,7 @@ class Component(CaselessDict):
             obj.params = parameters
         return obj
 
-    def add(self, name, value, parameters=None, encode=1):
+    def add(self, name, value, parameters=None, encode=True):
         """Add a property.
 
         :param name: Name of the property.
@@ -193,7 +193,7 @@ class Component(CaselessDict):
 
         # encode value
         if encode and isinstance(value, list) \
-                and not types_factory.is_list_property(name)\
+                and not types_factory.is_date_list_property(name)\
                 and name.lower() not in ('categories',):
             # Individually convert each value to an ical type except rdate and
             # exdate, where lists of dates might be passed to vDDDLists.
@@ -255,7 +255,7 @@ class Component(CaselessDict):
     # Inline values. A few properties have multiple values inlined in in one
     # property line. These methods are used for splitting and joining these.
 
-    def get_inline(self, name, decode=1):
+    def get_inline(self, name, decode=True):
         """Returns a list of values (split on comma).
         """
         vals = [v.strip('" ') for v in q_split(self[name])]
@@ -263,12 +263,12 @@ class Component(CaselessDict):
             return [self._decode(name, val) for val in vals]
         return vals
 
-    def set_inline(self, name, values, encode=1):
+    def set_inline(self, name, values, encode=True):
         """Converts a list of values into comma seperated string and sets value
         to that.
         """
         if encode:
-            values = [self._encode(name, value, encode=1) for value in values]
+            values = [self._encode(name, value, encode=True) for value in values]
         self[name] = types_factory['inline'](q_join(values))
 
     #########################
@@ -383,11 +383,10 @@ class Component(CaselessDict):
                 if not component:
                     raise ValueError('Property "{prop}" does not have '
                                      'a parent component.'.format(prop=name))
-                datetime_names = ('DTSTART', 'DTEND', 'RECURRENCE-ID', 'DUE',
-                                  'FREEBUSY', 'RDATE', 'EXDATE')
+
                 try:
                     factory = types_factory.for_property(name,
-                                                         params.get('VALUE'))
+                                                         valuetype=params.get('VALUE'))
                 except ValueError as e:
                     if not component.ignore_exceptions:
                         raise
@@ -395,19 +394,19 @@ class Component(CaselessDict):
                         # add error message and fall back to vText value type
                         component.errors.append((uname, str(e)))
                         factory = types_factory['text']
+
                 try:
-                    if (types_factory.is_list_property(name) and
+                    if (types_factory.is_date_list_property(name) and
                             factory != vText):
                         # TODO: list type currenty supports only datetime types
                         vals = vDDDLists(
                             vDDDLists.from_ical(vals, params.get('TZID'),
                                                 factory))
+                    elif uname in types_factory.datetime_names and 'TZID' in params:
+                        vals = factory(factory.from_ical(vals, params['TZID']))
                     else:
-                        if name in datetime_names and 'TZID' in params:
-                            vals = factory(
-                                factory.from_ical(vals, params['TZID']))
-                        else:
-                            vals = factory(factory.from_ical(vals))
+                        vals = factory(factory.from_ical(vals))
+
                 except ValueError as e:
                     if not component.ignore_exceptions:
                         raise

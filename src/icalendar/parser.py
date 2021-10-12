@@ -196,7 +196,7 @@ class Parameters(CaselessDict):
 # TODO?
 # Later, when I get more time... need to finish this off now. The last major
 # thing missing.
-#   def _encode(self, name, value, cond=1):
+#   def _encode(self, name, value, cond=True):
 #       # internal, for conditional convertion of values.
 #       if cond:
 #           klass = types_factory.for_property(name)

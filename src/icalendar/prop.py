@@ -483,7 +483,7 @@ class vDuration(object):
         if type(td) is not timedelta:
             raise ValueError('Value MUST be a timedelta instance')
         self.td = td
-        self.params = Parameters()
+        self.params = Parameters({'value': 'DURATION'})
 
     @property
     def dt(self):
@@ -559,7 +559,7 @@ class vPeriod(object):
         if start > end:
             raise ValueError("Start time is greater than end time")
 
-        self.params = Parameters()
+        self.params = Parameters({'value': 'PERIOD'})
         # set the timezone identifier
         # does not support different timezones for start and end
         tzid = tzid_from_dt(start)
@@ -1079,10 +1079,25 @@ class TypesFactory(CaselessDict):
         date: 'date',
     }
 
-    list_properties = ('exdate', 'rdate')
+    datetime_names = (
+        'COMPLETED',
+        'CREATED',
+        'DTEND',
+        'DTSTAMP',
+        'DTSTART',
+        'DUE',
+        'DURATION',
+        'EXDATE'
+        'FREEBUSY',
+        'LAST-MODIFIED',
+        'RDATE',
+        'RECURRENCE-ID',
+        'TRIGGER',
+    )
+    date_list_properties = ('EXDATE', 'RDATE')
 
-    def is_list_property(self, name):
-        if name.lower() in self.list_properties:
+    def is_date_list_property(self, name):
+        if name.upper() in self.date_list_properties:
             return True
         return False
 
@@ -1142,8 +1157,7 @@ class TypesFactory(CaselessDict):
         encoded string to a primitive python type.
         """
         type_class = self.for_property(name, valuetype)
-
-        if name.lower() in self.list_properties:
+        if name.upper() in self.date_list_properties:
             # this property is of list type
             decoded = vDDDLists.from_ical(value, unit_type=type_class)
         else:
