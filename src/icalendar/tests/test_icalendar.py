@@ -10,6 +10,10 @@ import unittest
 
 class IcalendarTestCase (unittest.TestCase):
 
+    def setUp(self):
+        if not hasattr(self, 'assertRaisesRegex'):
+            self.assertRaisesRegex = self.assertRaisesRegexp
+
     def test_long_lines(self):
         from ..parser import Contentlines, Contentline
         c = Contentlines([Contentline('BEGIN:VEVENT')])
@@ -165,14 +169,14 @@ class IcalendarTestCase (unittest.TestCase):
         )
 
         # And the traditional failure
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
             ValueError,
             'Content line could not be parsed into parts'
         ):
             Contentline('ATTENDEE;maxm@example.com').parts()
 
         # Another failure:
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
             ValueError,
             'Content line could not be parsed into parts'
         ):
@@ -189,7 +193,7 @@ class IcalendarTestCase (unittest.TestCase):
         )
 
         # Should bomb on missing param:
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
             ValueError,
             'Content line could not be parsed into parts'
         ):
