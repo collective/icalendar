@@ -485,6 +485,12 @@ class vDuration(object):
         self.td = td
         self.params = Parameters()
 
+    @property
+    def dt(self):
+        # BBB: Backwards compatibility.
+        #      Might be removed in future version.
+        return self.td
+
     def to_ical(self):
         sign = ""
         td = self.td

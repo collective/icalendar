@@ -556,3 +556,12 @@ END:VCALENDAR"""
             event.to_ical(),
             b'BEGIN:VEVENT\r\nDTSTART;VALUE=DATE:20211012\r\nEND:VEVENT\r\n'
         )
+
+    def test_pr_196__2(self):
+        """Test case from comment
+        https://github.com/collective/icalendar/pull/196#issuecomment-318034052
+        """
+        event = icalendar.Event()
+        event.add('DURATION', datetime.timedelta(hours=2))
+        self.assertEqual(event["DURATION"].td, datetime.timedelta(seconds=7200)) # Official API
+        self.assertEqual(event["DURATION"].dt, datetime.timedelta(seconds=7200)) # Backwards compatibility
