@@ -18,6 +18,11 @@ Bug fixes:
 - Fix vCategories for correct en/de coding.
   [thet]
 
+- vDuration property value: Fix changing duration sign after multiple ``to_ical`` calls.
+  Ref: #320
+  Fixes: #319
+  [barlik]
+
 
 4.0.8 (2021-10-07)
 ------------------
