@@ -455,6 +455,15 @@ class TestProp(unittest.TestCase):
         self.assertIsInstance(t2.params, Parameters)
         self.assertEqual(t2.params, {'CN': 'Test Osterone'})
 
+    def test_prop_vCategory(self):
+        from ..prop import vCategory
+
+        catz = ['cat 1', 'cat 2', 'cat 3']
+        v_cat = vCategory(catz)
+
+        self.assertEqual(v_cat.to_ical(), b'cat 1,cat 2,cat 3')
+        self.assertEqual(vCategory.from_ical(v_cat.to_ical()), catz)
+
     def test_prop_TypesFactory(self):
         from ..prop import TypesFactory
 

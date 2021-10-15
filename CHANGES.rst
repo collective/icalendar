@@ -15,7 +15,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Fix vCategories for correct en/de coding.
+  [thet]
 
 
 4.0.8 (2021-10-07)

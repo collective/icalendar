@@ -278,8 +278,9 @@ class vCategory(object):
         return b",".join([c.to_ical() for c in self.cats])
 
     @staticmethod
-    def from_ical(ical, timezone=None):
-        out = unescape_char(ical).split(",")
+    def from_ical(ical):
+        ical = to_unicode(ical)
+        out = unescape_char(ical).split(',')
         return out
 
 
