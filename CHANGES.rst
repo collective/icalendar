@@ -5,14 +5,6 @@ Changelog
 4.0.9 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Fix vCategories for correct en/de coding.
