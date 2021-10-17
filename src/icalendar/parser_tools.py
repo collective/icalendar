@@ -11,7 +11,7 @@ def to_unicode(value, encoding='utf-8'):
     """
     if isinstance(value, compat.unicode_type):
         return value
-    elif isinstance(value, compat.bytes_type):
+    elif isinstance(value, bytes):
         try:
             value = value.decode(encoding)
         except UnicodeDecodeError:

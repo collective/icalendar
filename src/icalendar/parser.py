@@ -20,7 +20,7 @@ import re
 def escape_char(text):
     """Format value according to iCalendar TEXT escaping rules.
     """
-    assert isinstance(text, (compat.unicode_type, compat.bytes_type))
+    assert isinstance(text, (compat.unicode_type, bytes))
     # NOTE: ORDER MATTERS!
     return text.replace(r'\N', '\n')\
                .replace('\\', '\\\\')\
@@ -31,7 +31,7 @@ def escape_char(text):
 
 
 def unescape_char(text):
-    assert isinstance(text, (compat.unicode_type, compat.bytes_type))
+    assert isinstance(text, (compat.unicode_type, bytes))
     # NOTE: ORDER MATTERS!
     if isinstance(text, compat.unicode_type):
         return text.replace('\\N', '\\n')\
@@ -40,7 +40,7 @@ def unescape_char(text):
                    .replace('\\,', ',')\
                    .replace('\\;', ';')\
                    .replace('\\\\', '\\')
-    elif isinstance(text, compat.bytes_type):
+    elif isinstance(text, bytes):
         return text.replace(b'\\N', b'\\n')\
                    .replace(b'\r\n', b'\n')\
                    .replace(b'\n', b'\n')\
