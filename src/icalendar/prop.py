@@ -302,8 +302,7 @@ class vDDDTypes(object):
         elif isinstance(dt, tuple):
             self.params = Parameters({'value': 'PERIOD'})
 
-        if (isinstance(dt, datetime) or isinstance(dt, time))\
-                and getattr(dt, 'tzinfo', False):
+        if isinstance(dt, (datetime, time)) and getattr(dt, 'tzinfo', False):
             tzinfo = dt.tzinfo
             if tzinfo is not pytz.utc and\
                (tzutc is None or not isinstance(tzinfo, tzutc)):
@@ -503,7 +502,7 @@ class vPeriod(object):
     """
     def __init__(self, per):
         start, end_or_duration = per
-        if not (isinstance(start, datetime) or isinstance(start, date)):
+        if not isinstance(start, (datetime, date)):
             raise ValueError('Start value MUST be a datetime or date instance')
         if not (isinstance(end_or_duration, datetime) or
                 isinstance(end_or_duration, date) or
