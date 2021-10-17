@@ -65,5 +65,4 @@ setuptools.setup(
     extras_require={
         'test': tests_require
     },
-    test_suite='icalendar.tests'
 )

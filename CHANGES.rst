@@ -7,7 +7,8 @@ Changelog
 
 Breaking changes:
 
-- *add item here*
+- Removed deprecated ``test_suite`` from ``setup.py``. This removes support for
+  running tests via the ``python setup.py test`` command.
 
 New features:
 
