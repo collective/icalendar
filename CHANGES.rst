@@ -15,7 +15,10 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- proper handling of datetime objects with `tzinfo` generated through zoneinfo.ZoneInfo.
+  Ref: #334
+  Fixes: #333
+  [tobixen]
 
 
 4.0.9 (2021-10-16)

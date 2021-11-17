@@ -56,6 +56,7 @@ icalendar contributors
 - Clive Stevens <clivest2@gmail.com>
 - Dalton Durst <github@daltondur.st>
 - Kamil Mańkowski <kam193@wp.pl>
+- Tobias Brox <tobias@redpill-linpro.com>
 
 Find out who contributed::
 
