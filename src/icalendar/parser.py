@@ -53,14 +53,13 @@ def tzid_from_dt(dt):
     tzid = None
     if hasattr(dt.tzinfo, 'zone'):
         tzid = dt.tzinfo.zone  # pytz implementation
+    elif hasattr(dt.tzinfo, 'key'):
+        tzid = dt.tzinfo.key # ZoneInfo implementation
     elif hasattr(dt.tzinfo, 'tzname'):
-        try:
-            tzid = dt.tzinfo.tzname(dt)  # dateutil implementation
-        except AttributeError:
-            # No tzid available
-            pass
+        # dateutil implementation, but this is broken
+        # See https://github.com/collective/icalendar/issues/333 for details
+        tzid = dt.tzinfo.tzname(dt)
     return tzid
-
 
 def foldline(line, limit=75, fold_sep='\r\n '):
     """Make a string folded as defined in RFC5545

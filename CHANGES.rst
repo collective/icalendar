@@ -5,7 +5,11 @@ Changelog
 5.0.0a2 (unreleased)
 --------------------
 
-- Nothing changed yet.
+Bug fixes: 
+- proper handling of datetime objects with `tzinfo` generated through zoneinfo.ZoneInfo.
+  Ref: #334
+  Fixes: #333
+  [tobixen]
 
 
 5.0.0a1 (2022-07-11)
