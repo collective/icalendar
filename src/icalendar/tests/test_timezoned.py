@@ -19,6 +19,9 @@ except:
 class TestTimezoned(unittest.TestCase):
 
     def test_create_from_ical_zoneinfo(self):
+        if zoneinfo is None:
+            self.skipTest("zoneinfo library not found for this python version")
+            
         directory = os.path.dirname(__file__)
         with open(os.path.join(directory, 'timezoned.ics'), 'rb') as fp:
             data = fp.read()
@@ -172,6 +175,9 @@ class TestTimezoned(unittest.TestCase):
         self.assertTrue("CREATED;VALUE=DATE-TIME:20101010T081010Z" in test_out)
 
     def test_create_to_ical_zoneinfo(self):
+        if zoneinfo is None:
+            self.skipTest("zoneinfo library not found for this python version")
+
         cal = icalendar.Calendar()
 
         cal.add('prodid', "-//Plone.org//NONSGML plone.app.event//EN")
