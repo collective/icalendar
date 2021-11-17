@@ -19,6 +19,9 @@ Bug fixes:
   Ref: #334
   Fixes: #333
   [tobixen]
+- Timestamps in UTC does not need tzid
+  Ref: #338
+  Fixes: #335
 
 
 4.0.9 (2021-10-16)
