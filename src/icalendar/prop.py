@@ -305,12 +305,9 @@ class vDDDTypes(object):
         if (isinstance(dt, datetime) or isinstance(dt, time))\
                 and getattr(dt, 'tzinfo', False):
             tzinfo = dt.tzinfo
-            if tzinfo is not pytz.utc and\
-               (tzutc is None or not isinstance(tzinfo, tzutc)):
-                # set the timezone as a parameter to the property
-                tzid = tzid_from_dt(dt)
-                if tzid:
-                    self.params.update({'TZID': tzid})
+            tzid = tzid_from_dt(dt)
+            if tzid != 'UTC':
+                self.params.update({'TZID': tzid})
         self.dt = dt
 
     def to_ical(self):
