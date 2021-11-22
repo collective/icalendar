@@ -15,7 +15,7 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Test with GitHub Actions.  [maurits]
 
 
 4.0.9 (2021-10-16)
