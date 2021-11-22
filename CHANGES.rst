@@ -7,7 +7,7 @@ Changelog
 
 Breaking changes:
 
-- Drop support for Python 3.4 and 3.5.  [maurits]
+- Drop support for Python 3.4, 3.5 and PyPy2.  [maurits]
 
 New features:
 
