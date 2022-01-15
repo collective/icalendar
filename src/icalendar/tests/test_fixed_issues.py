@@ -490,3 +490,4 @@ END:VCALENDAR"""
         self.assertEqual(uid2.split('@')[1], 'test.test')
         self.assertEqual(uid3.split('-')[1], '123@example.com')
         self.assertEqual(uid4.split('-')[1], '123@test.test')
+        
