@@ -259,25 +259,6 @@ class Parameters(CaselessDict):
                                  % (param, exc))
         return result
 
-
-def escape_string(val):
-    # '%{:02X}'.format(i)
-    return val.replace(r'\,', '%2C').replace(r'\:', '%3A')\
-              .replace(r'\;', '%3B').replace(r'\\', '%5C')
-
-
-def unescape_string(val):
-    return val.replace('%2C', ',').replace('%3A', ':')\
-              .replace('%3B', ';').replace('%5C', '\\')
-
-
-def unescape_list_or_string(val):
-    if isinstance(val, list):
-        return [unescape_string(s) for s in val]
-    else:
-        return unescape_string(val)
-
-
 #########################################
 # parsing and generation of content lines
 
@@ -315,34 +296,68 @@ class Contentline(str):
         return cls(f'{name}:{values}')
 
     def parts(self):
-        """Split the content line up into (name, parameters, values) parts.
+        """
+        Split the content line up into (name, parameters, values) parts.
+
+        Example with parameter:
+        DESCRIPTION;ALTREP="cid:part1.0001@example.org":The Fall'98 Wild
+
+        Example without parameters:
+        DESCRIPTION:The Fall'98 Wild
+
+        https://icalendar.org/iCalendar-RFC-5545/3-2-property-parameters.html
         """
         try:
-            st = escape_string(self)
+            st = self
             name_split = None
             value_split = None
             in_quotes = False
+            # Any character can be escaped using a backslash, e.g.: "test\:test"
+            quote_character = False
             for i, ch in enumerate(st):
-                if not in_quotes:
-                    if ch in ':;' and not name_split:
-                        name_split = i
-                    if ch == ':' and not value_split:
-                        value_split = i
+                # We can also quote using quotation marks. This ignores any output, until another quote appears.
                 if ch == '"':
                     in_quotes = not in_quotes
-            name = unescape_string(st[:name_split])
+                    continue
+
+                # Ignore input, as we are currently in quotation mark quotes
+                if in_quotes:
+                    continue
+
+                # Skip quoted character
+                if quote_character:
+                    quote_character = False
+                    continue
+
+                # The next character should be ignored
+                if ch == '\\':
+                    quote_character = True
+                    continue
+
+                # The name ends either after the parameter or value delimiter
+                if ch in ':;' and not name_split:
+                    name_split = i
+
+                # The value starts after the value delimiter
+                if ch == ':' and not value_split:
+                    value_split = i
+
+            # Get name
+            name = st[:name_split]
             if not name:
                 raise ValueError('Key name is required')
             validate_token(name)
+
+            # Check if parameters are empty
             if not name_split or name_split + 1 == value_split:
                 raise ValueError('Invalid content line')
+
+            # Get parameters (text between ; and :)
             params = Parameters.from_ical(st[name_split + 1: value_split],
                                           strict=self.strict)
-            params = Parameters(
-                (unescape_string(key), unescape_list_or_string(value))
-                for key, value in iter(params.items())
-            )
-            values = unescape_string(st[value_split + 1:])
+
+            # Get the value after the :
+            values = st[value_split + 1:]
             return (name, params, values)
         except ValueError as exc:
             raise ValueError(
