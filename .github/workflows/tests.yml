@@ -2,10 +2,10 @@ name: tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [ 4.x ]
   pull_request:
   schedule:
-    - cron: '14 7 * * 0'  # run once a week on Sunday
+    - cron: '21 7 * * 0'  # run once a week on Sunday
   workflow_dispatch:
 
 jobs:

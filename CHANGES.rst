@@ -2,16 +2,16 @@ Changelog
 =========
 
 
-5.0.0 (unreleased)
+4.1.0 (unreleased)
 ------------------
-
-Breaking changes:
-
-- Drop support for Python 3.4, 3.5 and PyPy2.  [maurits]
 
 New features:
 
-- *add item here*
+- No longer test on Python 3.4, 3.5 and PyPy2, because we cannot get it to work.
+  Technically it should still work, it is just no longer tested.
+  Do not expect much development on branch 4.x anymore.
+  The master branch will be for the remaining Python versions that we support.
+  [maurits]
 
 Bug fixes:
 
