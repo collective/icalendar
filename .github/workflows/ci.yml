@@ -1,0 +1,39 @@
+---
+name: CI
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+  workflow_dispatch:
+
+jobs:
+  tests:
+    name: "Python ${{ matrix.python-version }} ${{ matrix.tox-test }}"
+    runs-on: "ubuntu-latest"
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["2.7", "3.7", "3.8", "3.9", "3.10"]
+        tox-test: ["default"]
+
+    steps:
+      - uses: "actions/checkout@v2"
+      - uses: "actions/setup-python@v2"
+        with:
+          python-version: "${{ matrix.python-version }}"
+      - name: "Install dependencies"
+        run: |
+          set -xe
+          python -VV
+          python -m site
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install --upgrade coverage[toml] virtualenv tox tox-gh-actions
+
+      - name: "Run tox targets for ${{ matrix.python-version }}"
+        if: ${{ matrix.tox-test == 'default' }}
+        # Fake a TTY
+        shell: 'script -q -e -c "bash --noprofile --norc -eo pipefail {0}"'
+        run: "python -m tox"
