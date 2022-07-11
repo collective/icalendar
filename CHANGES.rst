@@ -2,12 +2,12 @@ Changelog
 =========
 
 
-4.0.10 (unreleased)
--------------------
+5.0.0 (unreleased)
+------------------
 
 Breaking changes:
 
-- *add item here*
+- Drop support for Python 3.4, 3.5 and PyPy2.  [maurits]
 
 New features:
 
@@ -15,7 +15,7 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Test with GitHub Actions.  [maurits]
 
 
 4.0.9 (2021-10-16)
