@@ -20,6 +20,13 @@ files.
 .. image:: https://travis-ci.org/collective/icalendar.svg?branch=master
     :target: https://travis-ci.org/collective/icalendar
 
+.. image:: https://badge.fury.io/py/icalendar.svg
+   :target: https://pypi.org/project/icalendar/
+   :alt: Python Package Version on PyPI
+
+.. image:: https://img.shields.io/pypi/dm/icalendar.svg
+   :target: https://pypi.org/project/icalendar/#files
+   :alt: Downloads from PyPI
 
 .. _`icalendar`: https://pypi.org/project/icalendar/
 .. _`RFC 5545`: https://www.ietf.org/rfc/rfc5545.txt
