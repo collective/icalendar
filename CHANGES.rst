@@ -5,7 +5,9 @@ Changelog
 5.0.0a2 (unreleased)
 --------------------
 
-- Nothing changed yet.
+Minor changes:
+
+- removed deprecated test checks [tuergeist]
 
 
 5.0.0a1 (2022-07-11)
@@ -70,10 +72,6 @@ Bug fixes:
 Bug fixes:
 
 - Fixed a docs issue related to building on Read the Docs [davidfischer]
-
-Minor changes:
-
-- removed deprecated test checks [tuergeist]
 
 4.0.4 (2019-11-25)
 ------------------
