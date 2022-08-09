@@ -16,10 +16,12 @@ files.
 
 ----
 
-
-.. image:: https://travis-ci.org/collective/icalendar.svg?branch=master
-    :target: https://travis-ci.org/collective/icalendar
-
+.. image:: https://github.com/collective/icalendar/actions/workflows/tests.yml/badge.svg
+    :target: https://github.com/collective/icalendar/actions/workflows/tests.yml
+    :alt: GitHub Actions build status for master
+.. image:: https://github.com/collective/icalendar/actions/workflows/tests.yml/badge.svg?branch=4.x
+    :target: https://github.com/collective/icalendar/actions/workflows/tests.yml
+    :alt: GitHub Actions build status for 4.x
 
 .. _`icalendar`: https://pypi.org/project/icalendar/
 .. _`RFC 5545`: https://www.ietf.org/rfc/rfc5545.txt
