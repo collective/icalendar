@@ -16,9 +16,18 @@ files.
 
 ----
 
+.. image:: https://badge.fury.io/py/icalendar.svg
+   :target: https://pypi.org/project/icalendar/
+   :alt: Python Package Version on PyPI
+
+.. image:: https://img.shields.io/pypi/dm/icalendar.svg
+   :target: https://pypi.org/project/icalendar/#files
+   :alt: Downloads from PyPI
+
 .. image:: https://github.com/collective/icalendar/actions/workflows/tests.yml/badge.svg
     :target: https://github.com/collective/icalendar/actions/workflows/tests.yml
     :alt: GitHub Actions build status for master
+
 .. image:: https://github.com/collective/icalendar/actions/workflows/tests.yml/badge.svg?branch=4.x
     :target: https://github.com/collective/icalendar/actions/workflows/tests.yml
     :alt: GitHub Actions build status for 4.x
