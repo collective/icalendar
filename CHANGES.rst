@@ -5,7 +5,11 @@ Changelog
 5.0.0a2 (unreleased)
 --------------------
 
-- Nothing changed yet.
+Bug fixes:
+
+- Changed tools.UIDGenerator instance methods to static methods
+  Ref: #345
+  [spralja]
 
 
 5.0.0a1 (2022-07-11)
@@ -17,7 +21,9 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- Document development setup
+  Ref: #358
+  [niccokunzmann]
 
 Bug fixes:
 
