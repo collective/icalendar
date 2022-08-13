@@ -56,6 +56,7 @@ icalendar contributors
 - Clive Stevens <clivest2@gmail.com>
 - Dalton Durst <github@daltondur.st>
 - Kamil Mańkowski <kam193@wp.pl>
+- `Nicco Kunzmann <https://github.com/niccokunzmann>`_
 
 Find out who contributed::
 
