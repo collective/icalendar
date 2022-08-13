@@ -21,7 +21,9 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- Document development setup
+  Ref: #358
+  [niccokunzmann]
 
 Bug fixes:
 
