@@ -14,9 +14,6 @@ jobs:
       matrix:
         config:
         # [Python version, tox env]
-        - ["2.7",   "py27"]
-        - ["3.6",   "py36"]
-        - ["3.7",   "py37"]
         - ["3.8",   "py38"]
         - ["3.9",   "py39"]
         - ["3.10",  "py310"]
@@ -46,7 +43,6 @@ jobs:
     - name: Test
       run: tox -e ${{ matrix.config[1] }}
     - name: Coverage
-      if: matrix.config[0] != '2.7'
       run: |
         pip install coveralls coverage-python-version
         coveralls --service=github
