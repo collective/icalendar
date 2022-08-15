@@ -24,12 +24,12 @@ files.
    :target: https://pypi.org/project/icalendar/#files
    :alt: Downloads from PyPI
 
-.. image:: https://github.com/collective/icalendar/actions/workflows/tests.yml/badge.svg
-    :target: https://github.com/collective/icalendar/actions/workflows/tests.yml
+.. image:: https://img.shields.io/github/workflow/status/collective/icalendar/tests/master?label=master&logo=github
+    :target: https://github.com/collective/icalendar/actions/workflows/tests.yml?query=branch%3Amaster
     :alt: GitHub Actions build status for master
 
-.. image:: https://github.com/collective/icalendar/actions/workflows/tests.yml/badge.svg?branch=4.x
-    :target: https://github.com/collective/icalendar/actions/workflows/tests.yml
+.. image:: https://img.shields.io/github/workflow/status/collective/icalendar/tests/4.x?label=4.x&logo=github
+    :target: https://github.com/collective/icalendar/actions/workflows/tests.yml?query=branch%3A4.x++
     :alt: GitHub Actions build status for 4.x
 
 .. _`icalendar`: https://pypi.org/project/icalendar/
