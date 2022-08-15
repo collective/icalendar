@@ -5,6 +5,10 @@ Changelog
 5.0.0a2 (unreleased)
 --------------------
 
+Breaking changes:
+
+- Require Python 3.8 as minimum Python version.  [maurits]
+
 Bug fixes:
 
 - Changed tools.UIDGenerator instance methods to static methods
