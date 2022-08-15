@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
 """iCalendar utility"""
-from __future__ import unicode_literals
 
 import argparse
 import sys
@@ -81,7 +79,7 @@ def main():
         description=__doc__)
     parser.add_argument(
         '-v', '--version', action='version',
-        version='{} version {}'.format(parser.prog, __version__))
+        version=f'{parser.prog} version {__version__}')
 
     # This seems a bit of an overkill now, but we will probably add more
     # functionality later, e.g., iCalendar to JSON / YAML and vice versa.
