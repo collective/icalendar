@@ -49,7 +49,7 @@ Since we pour more `effort into maintaining and developing icalendar <https://gi
 we split the project into two:
 
 - `Branch ``4.x`` <https://github.com/collective/icalendar/tree/4.x>`__ with maximum compatibility to Python versions ``2.7`` and ``3.4+``, ``PyPy2`` and ``PyPy3``.
-- `Branch ``master`` <https://github.com/collective/icalendar/>`__ with the compatibility to Python versions ``3.8+`` and ``PyPy3``.
+- `Branch ``master`` <https://github.com/collective/icalendar/>`__ with the compatibility to Python versions ``3.7+`` and ``PyPy3``.
 
 We expect the ``master`` branch with versions ``5+`` receive the latest updates and features,
 and the ``4.x`` branch the subset of security and bug fixes only.
