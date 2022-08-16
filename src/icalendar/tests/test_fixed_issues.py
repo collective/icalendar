@@ -479,6 +479,17 @@ END:VCALENDAR"""
         self.assertEqual(dtstart.tzinfo.zone, expected_zone)
         self.assertEqual(dtstart.tzname(), expected_tzname)
 
+    def test_issue_321_assert_dst_offset_is_not_false(self):
+        """This tests the assertion hitting for a calendar.
+
+        See https://github.com/collective/icalendar/issues/321
+        """
+        directory = os.path.dirname(__file__)
+        path = os.path.join(directory,
+                            'issue_321_assert_dst_offset_is_not_false.ics')
+        with open(path, 'rb') as ics:
+            cal = icalendar.Calendar.from_ical(ics.read()) # assertion should fail
+
     def test_issue_345(self):
         """Issue #345 - Why is tools.UIDGenerator a class (that must be instantiated) instead of a module? """
         uid1 = icalendar.tools.UIDGenerator.uid()
