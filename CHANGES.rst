@@ -667,9 +667,9 @@ Fixes:
 - created sphinx documentation and started documenting development and goals.
   [garbas]
 
-- hook out github repository to http://readthedocs.org service so sphinx
+- hook out github repository to https://readthedocs.org service so sphinx
   documentation is generated on each commit (for master). Documentation can be
-  visible on: http://readthedocs.org/docs/icalendar/en/latest/
+  visible on: https://icalendar.readthedocs.io/en/latest/
   [garbas]
 
 
