@@ -109,7 +109,7 @@ class TestTimezoned(unittest.TestCase):
         event.add('attendee', 'franz')
         event.add('attendee', 'sepp')
         event.add('contact', 'Max Mustermann, 1010 Wien')
-        event.add('url', 'http://plone.org')
+        event.add('url', 'https://plone.org')
         cal.add_component(event)
 
         test_out = b'|'.join(cal.to_ical().splitlines())

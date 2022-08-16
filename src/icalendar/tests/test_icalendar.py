@@ -59,7 +59,7 @@ class IcalendarTestCase (unittest.TestCase):
              '123456789 123456789 123456789 123456789 ')
         )
 
-        # http://tools.ietf.org/html/rfc5545#section-3.3.11
+        # https://tools.ietf.org/html/rfc5545#section-3.3.11
         # An intentional formatted text line break MUST only be included in
         # a "TEXT" property value by representing the line break with the
         # character sequence of BACKSLASH, followed by a LATIN SMALL LETTER
