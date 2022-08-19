@@ -10,7 +10,7 @@ These are some contribution examples
 
 - Extending the documentation.
 
-- Sponsor a Sprint (http://plone.org/events/sprints/whatis).
+- Sponsor a Sprint (https://plone.org/events/sprints/whatis).
 
 
 For pull requests, keep this in mind

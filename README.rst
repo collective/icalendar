@@ -24,12 +24,12 @@ files.
    :target: https://pypi.org/project/icalendar/#files
    :alt: Downloads from PyPI
 
-.. image:: https://github.com/collective/icalendar/actions/workflows/tests.yml/badge.svg
-    :target: https://github.com/collective/icalendar/actions/workflows/tests.yml
+.. image:: https://img.shields.io/github/workflow/status/collective/icalendar/tests/master?label=master&logo=github
+    :target: https://github.com/collective/icalendar/actions/workflows/tests.yml?query=branch%3Amaster
     :alt: GitHub Actions build status for master
 
-.. image:: https://github.com/collective/icalendar/actions/workflows/tests.yml/badge.svg?branch=4.x
-    :target: https://github.com/collective/icalendar/actions/workflows/tests.yml
+.. image:: https://img.shields.io/github/workflow/status/collective/icalendar/tests/4.x?label=4.x&logo=github
+    :target: https://github.com/collective/icalendar/actions/workflows/tests.yml?query=branch%3A4.x++
     :alt: GitHub Actions build status for 4.x
 
 .. _`icalendar`: https://pypi.org/project/icalendar/
@@ -38,6 +38,22 @@ files.
 .. _`pytz`: https://pypi.org/project/pytz/
 .. _`BSD`: https://github.com/collective/icalendar/issues/2
 
+Versions and Compatibility
+--------------------------
+
+``icalendar`` is a critical project used by many. It has been there for a long time and maintaining
+long-term compatibility with projects conflicts partially with providing and using the features that
+the latest Python versions bring.
+
+Since we pour more `effort into maintaining and developing icalendar <https://github.com/collective/icalendar/discussions/360>`__,
+we split the project into two:
+
+- `Branch 4.x <https://github.com/collective/icalendar/tree/4.x>`__ with maximum compatibility to Python versions ``2.7`` and ``3.4+``, ``PyPy2`` and ``PyPy3``.
+- `Branch master <https://github.com/collective/icalendar/>`__ with the compatibility to Python versions ``3.7+`` and ``PyPy3``.
+
+We expect the ``master`` branch with versions ``5+`` receive the latest updates and features,
+and the ``4.x`` branch the subset of security and bug fixes only.
+We recomment migrating to later Python versions and also providing feedback if you depend on the ``4.x`` features.
 
 Related projects
 ================
