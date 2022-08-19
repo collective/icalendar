@@ -7,7 +7,7 @@ Changelog
 
 Breaking changes:
 
-- Require Python 3.8 as minimum Python version.  [maurits]
+- Require Python 3.7 as minimum Python version.  [maurits] [niccokunzmann]
 
 Bug fixes:
 
