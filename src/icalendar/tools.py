@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from datetime import datetime
 from icalendar.parser_tools import to_unicode
 from icalendar.prop import vDatetime
@@ -9,7 +8,7 @@ from string import digits
 import random
 
 
-class UIDGenerator(object):
+class UIDGenerator:
     """If you are too lazy to create real uid's.
 
     """
@@ -31,6 +30,6 @@ class UIDGenerator(object):
         host_name = to_unicode(host_name)
         unique = unique or UIDGenerator.rnd_string()
         today = to_unicode(vDatetime(datetime.today()).to_ical())
-        return vText('%s-%s@%s' % (today,
+        return vText('{}-{}@{}'.format(today,
                                    unique,
                                    host_name))
