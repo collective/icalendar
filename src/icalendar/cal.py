@@ -60,7 +60,7 @@ _marker = []
 class Component(CaselessDict):
     """Component is the base object for calendar, Event and the other
     components defined in RFC 2445. normally you will not use this class
-    directy, but rather one of the subclasses.
+    directly, but rather one of the subclasses.
     """
 
     name = None         # should be defined in each component
@@ -91,7 +91,7 @@ class Component(CaselessDict):
     #
     #    If the parser is too strict it might prevent parsing erroneous but
     #    otherwise compliant properties. So the parser is pretty lax, but it is
-    #    possible to test for non-complience by calling this method.
+    #    possible to test for non-compliance by calling this method.
     #    """
     #    return name in not_compliant
 
@@ -254,7 +254,7 @@ class Component(CaselessDict):
         return vals
 
     def set_inline(self, name, values, encode=1):
-        """Converts a list of values into comma seperated string and sets value
+        """Converts a list of values into comma separated string and sets value
         to that.
         """
         if encode:
