@@ -13,18 +13,20 @@ jobs:
     strategy:
       matrix:
         config:
-        # [Python version, tox env]
-        - ["2.7",   "py27"]
-        - ["3.4.10",   "py34"]
-        - ["3.5.10",   "py35"]
-        - ["3.6",   "py36"]
-        - ["3.7",   "py37"]
-        - ["3.8",   "py38"]
-        - ["3.9",   "py39"]
-        - ["3.10",  "py310"]
-        - ["pypy3", "pypy3"]
+        # [Python version, tox env, OS ]
+        # see for version: https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json
+        # see for runners: https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
+        - ["2.7",   "py27", "ubuntu-latest"]
+        - ["3.4.10",   "py34", "ubuntu-18.04"]
+        - ["3.5.10",   "py35", "ubuntu-latest"]
+        - ["3.6",   "py36", "ubuntu-latest"]
+        - ["3.7",   "py37", "ubuntu-latest"]
+        - ["3.8",   "py38", "ubuntu-latest"]
+        - ["3.9",   "py39", "ubuntu-latest"]
+        - ["3.10",  "py310", "ubuntu-latest"]
+        - ["pypy3", "pypy3", "ubuntu-latest"]
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.config[2] }}
     name: ${{ matrix.config[1] }}
     steps:
     - uses: actions/checkout@v2
