@@ -488,7 +488,10 @@ END:VCALENDAR"""
         path = os.path.join(directory,
                             'issue_321_assert_dst_offset_is_not_false.ics')
         with open(path, 'rb') as ics:
-            cal = icalendar.Calendar.from_ical(ics.read()) # assertion should fail
+            cal = icalendar.Calendar.from_ical(ics.read())
+        timezone = list(cal.walk())[1]
+        print(timezone)
+        pytz = timezone.to_tz() # assertion should fail
 
     def test_issue_345(self):
         """Issue #345 - Why is tools.UIDGenerator a class (that must be instantiated) instead of a module? """
