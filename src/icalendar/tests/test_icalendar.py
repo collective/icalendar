@@ -65,7 +65,7 @@ class IcalendarTestCase (unittest.TestCase):
         # character sequence of BACKSLASH, followed by a LATIN SMALL LETTER
         # N or a LATIN CAPITAL LETTER N, that is "\n" or "\N".
 
-        # Newlines are not allwoed in content lines
+        # Newlines are not allowed in content lines
         self.assertRaises(AssertionError, Contentline, b'1234\r\n\r\n1234')
 
         self.assertEqual(

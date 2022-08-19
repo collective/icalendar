@@ -153,7 +153,7 @@ END:VEVENT"""
         icalendar.Event.from_ical(ical_content).to_ical()
 
     def test_issue_101(self):
-        """Issue #101 - icalender is choking on umlauts in ORGANIZER
+        """Issue #101 - icalendar is choking on umlauts in ORGANIZER
 
         https://github.com/collective/icalendar/issues/101
         """

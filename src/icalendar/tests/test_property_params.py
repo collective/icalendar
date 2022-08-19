@@ -115,11 +115,11 @@ class TestPropertyParams(unittest.TestCase):
         self.assertEqual(p['parameter1'], 'Value1')
         self.assertEqual(p['PARAMETER1'], 'Value1')
 
-        # Parameter with list of values must be seperated by comma
+        # Parameter with list of values must be separated by comma
         p = Parameters({'parameter1': ['Value1', 'Value2']})
         self.assertEqual(p.to_ical(), b'PARAMETER1=Value1,Value2')
 
-        # Multiple parameters must be seperated by a semicolon
+        # Multiple parameters must be separated by a semicolon
         p = Parameters({'RSVP': 'TRUE', 'ROLE': 'REQ-PARTICIPANT'})
         self.assertEqual(p.to_ical(), b'ROLE=REQ-PARTICIPANT;RSVP=TRUE')
 
@@ -127,7 +127,7 @@ class TestPropertyParams(unittest.TestCase):
         p = Parameters({'ALTREP': 'http://www.wiz.org'})
         self.assertEqual(p.to_ical(), b'ALTREP="http://www.wiz.org"')
 
-        # list items must be quoted seperately
+        # list items must be quoted separately
         p = Parameters({'MEMBER': ['MAILTO:projectA@host.com',
                                    'MAILTO:projectB@host.com']})
         self.assertEqual(
@@ -175,7 +175,7 @@ class TestPropertyParams(unittest.TestCase):
 
     def test_parse_and_access_property_params(self):
         """Parse an ics string and access some property parameters then.
-        This is a follow-up of a question recieved per email.
+        This is a follow-up of a question received per email.
 
         """
         ics = """BEGIN:VCALENDAR
