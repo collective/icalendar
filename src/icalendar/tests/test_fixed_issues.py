@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from icalendar.parser_tools import to_unicode
 import unittest
 
@@ -471,8 +468,8 @@ END:VCALENDAR"""
         self.assertEqual(dtstart, expected)
 
         try:
-            expected_zone = str('(UTC-03:00) Brasília')
-            expected_tzname = str('Brasília standard')
+            expected_zone = '(UTC-03:00) Brasília'
+            expected_tzname = 'Brasília standard'
         except UnicodeEncodeError:
             expected_zone = '(UTC-03:00) Brasília'.encode('ascii', 'replace')
             expected_tzname = 'Brasília standard'.encode('ascii', 'replace')
