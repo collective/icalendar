@@ -8,6 +8,13 @@ Changelog
 Breaking changes:
 
 - Require Python 3.8 as minimum Python version.  [maurits]
+- icalenar now takes a ics file directly as an input
+- icalendar's output is different
+
+New features:
+
+- icalendar utility outputs a 'Duration' row
+- icalendar can take multiple ics files as an input
 
 Bug fixes:
 
