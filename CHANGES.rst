@@ -1,20 +1,61 @@
 Changelog
 =========
 
-4.0.8 (unreleased)
-------------------
+
+5.0.0a2 (unreleased)
+--------------------
 
 Breaking changes:
 
-- *add item here*
-
-New features:
-
-- *add item here*
+- Require Python 3.8 as minimum Python version.  [maurits]
 
 Bug fixes:
 
-- *add item here*
+- Changed tools.UIDGenerator instance methods to static methods
+  Ref: #345
+  [spralja]
+
+
+5.0.0a1 (2022-07-11)
+--------------------
+
+Breaking changes:
+
+- Drop support for Python 3.4, 3.5 and PyPy2.  [maurits]
+
+New features:
+
+- Document development setup
+  Ref: #358
+  [niccokunzmann]
+
+Bug fixes:
+
+- Test with GitHub Actions.  [maurits]
+
+
+4.0.9 (2021-10-16)
+------------------
+
+Bug fixes:
+
+- Fix vCategories for correct en/de coding.
+  [thet]
+
+- vDuration property value: Fix changing duration sign after multiple ``to_ical`` calls.
+  Ref: #320
+  Fixes: #319
+  [barlik]
+
+
+4.0.8 (2021-10-07)
+------------------
+
+Bug fixes:
+
+- Support added for Python 3.9 and 3.10 (no code changes needed).
+
+- Replace bare 'except:' with 'except Exception:' (#281)
 
 
 4.0.7 (2020-09-07)
@@ -30,7 +71,7 @@ Bug fixes:
 
 Bug fixes:
 
-- Use ``vText`` as default type, when convert recurrence definition to ical string. [kam193] 
+- Use ``vText`` as default type, when convert recurrence definition to ical string. [kam193]
 
 
 4.0.5 (2020-03-21)
@@ -626,9 +667,9 @@ Fixes:
 - created sphinx documentation and started documenting development and goals.
   [garbas]
 
-- hook out github repository to http://readthedocs.org service so sphinx
+- hook out github repository to https://readthedocs.org service so sphinx
   documentation is generated on each commit (for master). Documentation can be
-  visible on: http://readthedocs.org/docs/icalendar/en/latest/
+  visible on: https://icalendar.readthedocs.io/en/latest/
   [garbas]
 
 

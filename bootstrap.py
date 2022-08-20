@@ -111,7 +111,7 @@ cmd = [sys.executable, '-c',
 find_links = os.environ.get(
     'bootstrap-testing-find-links',
     options.find_links or
-    ('http://downloads.buildout.org/'
+    ('https://downloads.buildout.org/'
      if options.accept_buildout_test_releases else None)
     )
 if find_links:

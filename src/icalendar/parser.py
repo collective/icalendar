@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """This module parses and generates contentlines as defined in RFC 2445
 (iCalendar), but will probably work for other MIME types with similar syntax.
 Eg. RFC 2426 (vCard)
@@ -6,7 +5,6 @@ Eg. RFC 2426 (vCard)
 It is stupid in the sense that it treats the content purely as strings. No type
 conversion is attempted.
 """
-from __future__ import unicode_literals
 
 from icalendar import compat
 from icalendar.caselessdict import CaselessDict
@@ -293,7 +291,7 @@ class Contentline(compat.unicode_type):
         value = to_unicode(value, encoding=encoding)
         assert '\n' not in value, ('Content line can not contain unescaped '
                                     'new line characters.')
-        self = super(Contentline, cls).__new__(cls, value)
+        self = super().__new__(cls, value)
         self.strict = strict
         return self
 
@@ -315,8 +313,8 @@ class Contentline(compat.unicode_type):
         values = to_unicode(values)
         if params:
             params = to_unicode(params.to_ical(sorted=sorted))
-            return cls('%s;%s:%s' % (name, params, values))
-        return cls('%s:%s' % (name, values))
+            return cls(f'{name};{params}:{values}')
+        return cls(f'{name}:{values}')
 
     def parts(self):
         """Split the content line up into (name, parameters, values) parts.
@@ -391,7 +389,7 @@ class Contentlines(list):
                         line in NEWLINE.split(unfolded) if line)
             lines.append('')  # '\r\n' at the end of every content line
             return lines
-        except:
+        except Exception:
             raise ValueError('Expected StringType with content lines')
 
 

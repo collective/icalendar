@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """This module contains the parser/generators (or coders/encoders if you
 prefer) for the classes/datatypes that are used in iCalendar:
 
@@ -67,7 +66,7 @@ import time as _time
 
 DATE_PART = r'(\d+)D'
 TIME_PART = r'T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?'
-DATETIME_PART = '(?:%s)?(?:%s)?' % (DATE_PART, TIME_PART)
+DATETIME_PART = f'(?:{DATE_PART})?(?:{TIME_PART})?'
 WEEKS_PART = r'(\d+)W'
 DURATION_REGEX = re.compile(r'([-+]?)P(?:%s|%s)$'
                             % (WEEKS_PART, DATETIME_PART))
@@ -133,7 +132,7 @@ class LocalTimezone(tzinfo):
         return tt.tm_isdst > 0
 
 
-class vBinary(object):
+class vBinary:
     """Binary property values are base 64 encoded.
     """
 
@@ -161,7 +160,7 @@ class vBoolean(int):
     BOOL_MAP = CaselessDict({'true': True, 'false': False})
 
     def __new__(cls, *args, **kwargs):
-        self = super(vBoolean, cls).__new__(cls, *args, **kwargs)
+        self = super().__new__(cls, *args, **kwargs)
         self.params = Parameters()
         return self
 
@@ -174,7 +173,7 @@ class vBoolean(int):
     def from_ical(cls, ical):
         try:
             return cls.BOOL_MAP[ical]
-        except:
+        except Exception:
             raise ValueError("Expected 'TRUE' or 'FALSE'. Got %s" % ical)
 
 
@@ -183,7 +182,7 @@ class vCalAddress(compat.unicode_type):
     """
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
         value = to_unicode(value, encoding=encoding)
-        self = super(vCalAddress, cls).__new__(cls, value)
+        self = super().__new__(cls, value)
         self.params = Parameters()
         return self
 
@@ -202,7 +201,7 @@ class vFloat(float):
     """Just a float.
     """
     def __new__(cls, *args, **kwargs):
-        self = super(vFloat, cls).__new__(cls, *args, **kwargs)
+        self = super().__new__(cls, *args, **kwargs)
         self.params = Parameters()
         return self
 
@@ -213,7 +212,7 @@ class vFloat(float):
     def from_ical(cls, ical):
         try:
             return cls(ical)
-        except:
+        except Exception:
             raise ValueError('Expected float value, got: %s' % ical)
 
 
@@ -221,7 +220,7 @@ class vInt(int):
     """Just an int.
     """
     def __new__(cls, *args, **kwargs):
-        self = super(vInt, cls).__new__(cls, *args, **kwargs)
+        self = super().__new__(cls, *args, **kwargs)
         self.params = Parameters()
         return self
 
@@ -232,11 +231,11 @@ class vInt(int):
     def from_ical(cls, ical):
         try:
             return cls(ical)
-        except:
+        except Exception:
             raise ValueError('Expected int, got: %s' % ical)
 
 
-class vDDDLists(object):
+class vDDDLists:
     """A list of vDDDTypes values.
     """
     def __init__(self, dt_list):
@@ -267,23 +266,24 @@ class vDDDLists(object):
             out.append(vDDDTypes.from_ical(ical_dt, timezone=timezone))
         return out
 
-class vCategory(object):
+class vCategory:
 
     def __init__(self, c_list):
         if not hasattr(c_list, '__iter__'):
-            d_list = [c_list]
+            c_list = [c_list]
         self.cats = [vText(c) for c in c_list]
 
     def to_ical(self):
         return b",".join([c.to_ical() for c in self.cats])
 
     @staticmethod
-    def from_ical(ical, timezone=None):
-        out = unescape_char(ical).split(",")
+    def from_ical(ical):
+        ical = to_unicode(ical)
+        out = unescape_char(ical).split(',')
         return out
 
 
-class vDDDTypes(object):
+class vDDDTypes:
     """A combined Datetime, Date or Duration parser/generator. Their format
     cannot be confused, and often values can be of either types.
     So this is practical.
@@ -325,7 +325,7 @@ class vDDDTypes(object):
         elif isinstance(dt, tuple) and len(dt) == 2:
             return vPeriod(dt).to_ical()
         else:
-            raise ValueError('Unknown date type: {}'.format(type(dt)))
+            raise ValueError(f'Unknown date type: {type(dt)}')
 
     @classmethod
     def from_ical(cls, ical, timezone=None):
@@ -349,7 +349,7 @@ class vDDDTypes(object):
             )
 
 
-class vDate(object):
+class vDate:
     """Render and generates iCalendar date format.
     """
     def __init__(self, dt):
@@ -371,11 +371,11 @@ class vDate(object):
                 int(ical[6:8]),  # day
             )
             return date(*timetuple)
-        except:
+        except Exception:
             raise ValueError('Wrong date format %s' % ical)
 
 
-class vDatetime(object):
+class vDatetime:
     """Render and generates icalendar datetime format.
 
     vDatetime is timezone aware and uses the pytz library, an implementation of
@@ -437,11 +437,11 @@ class vDatetime(object):
                 return pytz.utc.localize(datetime(*timetuple))
             else:
                 raise ValueError(ical)
-        except:
+        except Exception:
             raise ValueError('Wrong datetime format: %s' % ical)
 
 
-class vDuration(object):
+class vDuration:
     """Subclass of timedelta that renders itself in the iCalendar DURATION
     format.
     """
@@ -454,27 +454,28 @@ class vDuration(object):
 
     def to_ical(self):
         sign = ""
-        if self.td.days < 0:
+        td = self.td
+        if td.days < 0:
             sign = "-"
-            self.td = -self.td
+            td = -td
         timepart = ""
-        if self.td.seconds:
+        if td.seconds:
             timepart = "T"
-            hours = self.td.seconds // 3600
-            minutes = self.td.seconds % 3600 // 60
-            seconds = self.td.seconds % 60
+            hours = td.seconds // 3600
+            minutes = td.seconds % 3600 // 60
+            seconds = td.seconds % 60
             if hours:
                 timepart += "%dH" % hours
             if minutes or (hours and seconds):
                 timepart += "%dM" % minutes
             if seconds:
                 timepart += "%dS" % seconds
-        if self.td.days == 0 and timepart:
+        if td.days == 0 and timepart:
             return (compat.unicode_type(sign).encode('utf-8') + b'P' +
                     compat.unicode_type(timepart).encode('utf-8'))
         else:
             return (compat.unicode_type(sign).encode('utf-8') + b'P' +
-                    compat.unicode_type(abs(self.td.days)).encode('utf-8') +
+                    compat.unicode_type(abs(td.days)).encode('utf-8') +
                     b'D' + compat.unicode_type(timepart).encode('utf-8'))
 
     @staticmethod
@@ -492,11 +493,11 @@ class vDuration(object):
             if sign == '-':
                 value = -value
             return value
-        except:
+        except Exception:
             raise ValueError('Invalid iCalendar duration: %s' % ical)
 
 
-class vPeriod(object):
+class vPeriod:
     """A precise period of time.
     """
     def __init__(self, per):
@@ -557,7 +558,7 @@ class vPeriod(object):
             start = vDDDTypes.from_ical(start)
             end_or_duration = vDDDTypes.from_ical(end_or_duration)
             return (start, end_or_duration)
-        except:
+        except Exception:
             raise ValueError('Expected period format, got: %s' % ical)
 
     def __repr__(self):
@@ -565,7 +566,7 @@ class vPeriod(object):
             p = (self.start, self.duration)
         else:
             p = (self.start, self.end)
-        return 'vPeriod(%r)' % (p, )
+        return f'vPeriod({p!r})'
 
 
 class vWeekday(compat.unicode_type):
@@ -577,7 +578,7 @@ class vWeekday(compat.unicode_type):
 
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
         value = to_unicode(value, encoding=encoding)
-        self = super(vWeekday, cls).__new__(cls, value)
+        self = super().__new__(cls, value)
         match = WEEKDAY_RULE.match(self)
         if match is None:
             raise ValueError('Expected weekday abbrevation, got: %s' % self)
@@ -598,7 +599,7 @@ class vWeekday(compat.unicode_type):
     def from_ical(cls, ical):
         try:
             return cls(ical.upper())
-        except:
+        except Exception:
             raise ValueError('Expected weekday abbrevation, got: %s' % ical)
 
 
@@ -618,7 +619,7 @@ class vFrequency(compat.unicode_type):
 
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
         value = to_unicode(value, encoding=encoding)
-        self = super(vFrequency, cls).__new__(cls, value)
+        self = super().__new__(cls, value)
         if self not in vFrequency.frequencies:
             raise ValueError('Expected frequency, got: %s' % self)
         self.params = Parameters()
@@ -631,7 +632,7 @@ class vFrequency(compat.unicode_type):
     def from_ical(cls, ical):
         try:
             return cls(ical.upper())
-        except:
+        except Exception:
             raise ValueError('Expected frequency, got: %s' % ical)
 
 
@@ -667,7 +668,7 @@ class vRecur(CaselessDict):
     })
 
     def __init__(self, *args, **kwargs):
-        super(vRecur, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.params = Parameters()
 
     def to_ical(self):
@@ -705,7 +706,7 @@ class vRecur(CaselessDict):
                     continue
                 recur[key] = cls.parse_type(key, vals)
             return dict(recur)
-        except:
+        except Exception:
             raise ValueError('Error in recurrence rule: %s' % ical)
 
 
@@ -715,7 +716,7 @@ class vText(compat.unicode_type):
 
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
         value = to_unicode(value, encoding=encoding)
-        self = super(vText, cls).__new__(cls, value)
+        self = super().__new__(cls, value)
         self.encoding = encoding
         self.params = Parameters()
         return self
@@ -732,7 +733,7 @@ class vText(compat.unicode_type):
         return cls(ical_unesc)
 
 
-class vTime(object):
+class vTime:
     """Render and generates iCalendar time format.
     """
 
@@ -754,7 +755,7 @@ class vTime(object):
         try:
             timetuple = (int(ical[:2]), int(ical[2:4]), int(ical[4:6]))
             return time(*timetuple)
-        except:
+        except Exception:
             raise ValueError('Expected time, got: %s' % ical)
 
 
@@ -764,7 +765,7 @@ class vUri(compat.unicode_type):
 
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
         value = to_unicode(value, encoding=encoding)
-        self = super(vUri, cls).__new__(cls, value)
+        self = super().__new__(cls, value)
         self.params = Parameters()
         return self
 
@@ -775,11 +776,11 @@ class vUri(compat.unicode_type):
     def from_ical(cls, ical):
         try:
             return cls(ical)
-        except:
+        except Exception:
             raise ValueError('Expected , got: %s' % ical)
 
 
-class vGeo(object):
+class vGeo:
     """A special type that is only indirectly defined in the rfc.
     """
 
@@ -788,7 +789,7 @@ class vGeo(object):
             latitude, longitude = (geo[0], geo[1])
             latitude = float(latitude)
             longitude = float(longitude)
-        except:
+        except Exception:
             raise ValueError('Input must be (float, float) for '
                              'latitude and longitude')
         self.latitude = latitude
@@ -796,18 +797,18 @@ class vGeo(object):
         self.params = Parameters()
 
     def to_ical(self):
-        return '%s;%s' % (self.latitude, self.longitude)
+        return f'{self.latitude};{self.longitude}'
 
     @staticmethod
     def from_ical(ical):
         try:
             latitude, longitude = ical.split(';')
             return (float(latitude), float(longitude))
-        except:
+        except Exception:
             raise ValueError("Expected 'float;float' , got: %s" % ical)
 
 
-class vUTCOffset(object):
+class vUTCOffset:
     """Renders itself as a utc offset.
     """
 
@@ -853,7 +854,7 @@ class vUTCOffset(object):
                                              int(ical[3:5]),
                                              int(ical[5:7] or 0))
             offset = timedelta(hours=hours, minutes=minutes, seconds=seconds)
-        except:
+        except Exception:
             raise ValueError('Expected utc offset, got: %s' % ical)
         if not cls.ignore_exceptions and offset >= timedelta(hours=24):
             raise ValueError(
@@ -870,7 +871,7 @@ class vInline(compat.unicode_type):
     """
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
         value = to_unicode(value, encoding=encoding)
-        self = super(vInline, cls).__new__(cls, value)
+        self = super().__new__(cls, value)
         self.params = Parameters()
         return self
 
@@ -892,7 +893,7 @@ class TypesFactory(CaselessDict):
 
     def __init__(self, *args, **kwargs):
         "Set keys to upper for initial dict"
-        super(TypesFactory, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.all_types = (
             vBinary,
             vBoolean,
