@@ -1,4 +1,3 @@
-from icalendar.compat import iteritems
 from icalendar.parser_tools import to_unicode
 
 from collections import OrderedDict
@@ -76,7 +75,7 @@ class CaselessDict(OrderedDict):
         mappings = list(args) + [kwargs]
         for mapping in mappings:
             if hasattr(mapping, 'items'):
-                mapping = iteritems(mapping)
+                mapping = iter(mapping.items())
             for key, value in mapping:
                 self[key] = value
 
