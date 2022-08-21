@@ -14,7 +14,14 @@ Bug fixes:
 - Changed tools.UIDGenerator instance methods to static methods
   Ref: #345
   [spralja]
-
+- proper handling of datetime objects with `tzinfo` generated through zoneinfo.ZoneInfo.
+  Ref: #334
+  Fixes: #333
+  [tobixen]
+- Timestamps in UTC does not need tzid
+  Ref: #338
+  Fixes: #335
+  [tobixen]
 
 5.0.0a1 (2022-07-11)
 --------------------
