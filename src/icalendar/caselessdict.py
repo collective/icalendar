@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-from icalendar.compat import iteritems
 from icalendar.parser_tools import to_unicode
 
 from collections import OrderedDict
@@ -30,62 +28,62 @@ class CaselessDict(OrderedDict):
     def __init__(self, *args, **kwargs):
         """Set keys to upper for initial dict.
         """
-        super(CaselessDict, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         for key, value in self.items():
             key_upper = to_unicode(key).upper()
             if key != key_upper:
-                super(CaselessDict, self).__delitem__(key)
+                super().__delitem__(key)
                 self[key_upper] = value
 
     def __getitem__(self, key):
         key = to_unicode(key)
-        return super(CaselessDict, self).__getitem__(key.upper())
+        return super().__getitem__(key.upper())
 
     def __setitem__(self, key, value):
         key = to_unicode(key)
-        super(CaselessDict, self).__setitem__(key.upper(), value)
+        super().__setitem__(key.upper(), value)
 
     def __delitem__(self, key):
         key = to_unicode(key)
-        super(CaselessDict, self).__delitem__(key.upper())
+        super().__delitem__(key.upper())
 
     def __contains__(self, key):
         key = to_unicode(key)
-        return super(CaselessDict, self).__contains__(key.upper())
+        return super().__contains__(key.upper())
 
     def get(self, key, default=None):
         key = to_unicode(key)
-        return super(CaselessDict, self).get(key.upper(), default)
+        return super().get(key.upper(), default)
 
     def setdefault(self, key, value=None):
         key = to_unicode(key)
-        return super(CaselessDict, self).setdefault(key.upper(), value)
+        return super().setdefault(key.upper(), value)
 
     def pop(self, key, default=None):
         key = to_unicode(key)
-        return super(CaselessDict, self).pop(key.upper(), default)
+        return super().pop(key.upper(), default)
 
     def popitem(self):
-        return super(CaselessDict, self).popitem()
+        return super().popitem()
 
     def has_key(self, key):
         key = to_unicode(key)
-        return super(CaselessDict, self).__contains__(key.upper())
+        return super().__contains__(key.upper())
 
     def update(self, *args, **kwargs):
         # Multiple keys where key1.upper() == key2.upper() will be lost.
         mappings = list(args) + [kwargs]
         for mapping in mappings:
             if hasattr(mapping, 'items'):
-                mapping = iteritems(mapping)
+                mapping = iter(mapping.items())
             for key, value in mapping:
                 self[key] = value
 
     def copy(self):
-        return type(self)(super(CaselessDict, self).copy())
+        return type(self)(super().copy())
 
     def __repr__(self):
-        return '%s(%s)' % (type(self).__name__, dict(self))
+        return f'{type(self).__name__}({dict(self)})'
 
     def __eq__(self, other):
         return self is other or dict(self.items()) == dict(other.items())

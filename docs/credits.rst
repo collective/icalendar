@@ -54,6 +54,12 @@ icalendar contributors
 - TomTry <tom.try@gmail.com>
 - Andreas Ruppen <andreas.ruppen@gmail.com>
 - Clive Stevens <clivest2@gmail.com>
+- Dalton Durst <github@daltondur.st>
+- Kamil Mańkowski <kam193@wp.pl>
+- Tobias Brox <tobias@redpill-linpro.com>
+- `Nicco Kunzmann <https://github.com/niccokunzmann>`_
+- Robert Spralja <robert.spralja@gmail.com>
+- Maurits van Rees <maurits@vanrees.org>
 
 Find out who contributed::
 

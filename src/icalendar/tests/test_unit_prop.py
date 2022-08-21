@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from datetime import date
 from datetime import datetime
 from datetime import time
@@ -192,6 +189,12 @@ class TestProp(unittest.TestCase):
 
         self.assertRaises(ValueError, vDuration, 11)
 
+        # calling to_ical twice should result in same output
+        duration = vDuration(timedelta(days=-1, hours=-5))
+        self.assertEqual(duration.to_ical(), b'-P1DT5H')
+        self.assertEqual(duration.to_ical(), b'-P1DT5H')
+
+
     def test_prop_vPeriod(self):
         from ..prop import vPeriod
 
@@ -332,6 +335,11 @@ class TestProp(unittest.TestCase):
         # and some errors
         self.assertRaises(ValueError, vRecur.from_ical, 'BYDAY=12')
 
+        # when key is not RFC-compliant, parse it as vText
+        r = vRecur.from_ical('FREQ=MONTHLY;BYOTHER=TEXT;BYEASTER=-3')
+        self.assertEqual(vRecur(r).to_ical(),
+                         b'FREQ=MONTHLY;BYEASTER=-3;BYOTHER=TEXT')
+
     def test_prop_vText(self):
         from ..prop import vText
 
@@ -449,6 +457,15 @@ class TestProp(unittest.TestCase):
         t2.params['cn'] = 'Test Osterone'
         self.assertIsInstance(t2.params, Parameters)
         self.assertEqual(t2.params, {'CN': 'Test Osterone'})
+
+    def test_prop_vCategory(self):
+        from ..prop import vCategory
+
+        catz = ['cat 1', 'cat 2', 'cat 3']
+        v_cat = vCategory(catz)
+
+        self.assertEqual(v_cat.to_ical(), b'cat 1,cat 2,cat 3')
+        self.assertEqual(vCategory.from_ical(v_cat.to_ical()), catz)
 
     def test_prop_TypesFactory(self):
         from ..prop import TypesFactory
