@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from icalendar.parser_tools import data_encode
 from icalendar.parser_tools import to_unicode
 import unittest
@@ -12,9 +9,9 @@ class TestParserTools(unittest.TestCase):
 
         self.assertEqual(to_unicode(b'spam'), 'spam')
         self.assertEqual(to_unicode('spam'), 'spam')
-        self.assertEqual(to_unicode('spam'.encode('utf-8')), 'spam')
+        self.assertEqual(to_unicode(b'spam'), 'spam')
         self.assertEqual(to_unicode(b'\xc6\xb5'), '\u01b5')
-        self.assertEqual(to_unicode('\xc6\xb5'.encode('iso-8859-1')),
+        self.assertEqual(to_unicode(b'\xc6\xb5'),
                          '\u01b5')
         self.assertEqual(to_unicode(b'\xc6\xb5', encoding='ascii'), '\u01b5')
         self.assertEqual(to_unicode(1), 1)

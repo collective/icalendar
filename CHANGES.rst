@@ -9,6 +9,23 @@ Minor changes:
 
 - removed deprecated test checks [tuergeist]
 
+Breaking changes:
+
+- Require Python 3.8 as minimum Python version.  [maurits]
+
+Bug fixes:
+
+- Changed tools.UIDGenerator instance methods to static methods
+  Ref: #345
+  [spralja]
+- proper handling of datetime objects with `tzinfo` generated through zoneinfo.ZoneInfo.
+  Ref: #334
+  Fixes: #333
+  [tobixen]
+- Timestamps in UTC does not need tzid
+  Ref: #338
+  Fixes: #335
+  [tobixen]
 
 5.0.0a1 (2022-07-11)
 --------------------
@@ -19,7 +36,9 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- Document development setup
+  Ref: #358
+  [niccokunzmann]
 
 Bug fixes:
 
@@ -658,9 +677,9 @@ Fixes:
 - created sphinx documentation and started documenting development and goals.
   [garbas]
 
-- hook out github repository to http://readthedocs.org service so sphinx
+- hook out github repository to https://readthedocs.org service so sphinx
   documentation is generated on each commit (for master). Documentation can be
-  visible on: http://readthedocs.org/docs/icalendar/en/latest/
+  visible on: https://icalendar.readthedocs.io/en/latest/
   [garbas]
 
 
