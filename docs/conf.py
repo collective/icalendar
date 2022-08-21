@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # icalendar documentation build configuration file
 import pkg_resources
 import datetime
@@ -26,9 +25,9 @@ extensions = [
 source_suffix = '.rst'
 master_doc = 'index'
 
-project = u'icalendar'
+project = 'icalendar'
 this_year = datetime.date.today().year
-copyright = u'{}, Plone Foundation'.format(this_year)
+copyright = f'{this_year}, Plone Foundation'
 version = pkg_resources.get_distribution('icalendar').version
 release = version
 
@@ -38,6 +37,6 @@ pygments_style = 'sphinx'
 htmlhelp_basename = 'icalendardoc'
 
 man_pages = [
-    ('index', 'icalendar', u'icalendar Documentation',
-     [u'Plone Foundation'], 1)
+    ('index', 'icalendar', 'icalendar Documentation',
+     ['Plone Foundation'], 1)
 ]

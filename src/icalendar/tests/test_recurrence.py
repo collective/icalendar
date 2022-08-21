@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from icalendar.caselessdict import CaselessDict
 import unittest
 

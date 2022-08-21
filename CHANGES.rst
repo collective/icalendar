@@ -2,19 +2,18 @@ Changelog
 =========
 
 
-4.0.10 (unreleased)
--------------------
+5.0.0a2 (unreleased)
+--------------------
 
 Breaking changes:
 
-- *add item here*
-
-New features:
-
-- *add item here*
+- Require Python 3.8 as minimum Python version.  [maurits]
 
 Bug fixes:
 
+- Changed tools.UIDGenerator instance methods to static methods
+  Ref: #345
+  [spralja]
 - proper handling of datetime objects with `tzinfo` generated through zoneinfo.ZoneInfo.
   Ref: #334
   Fixes: #333
@@ -22,6 +21,24 @@ Bug fixes:
 - Timestamps in UTC does not need tzid
   Ref: #338
   Fixes: #335
+  [tobixen]
+
+5.0.0a1 (2022-07-11)
+--------------------
+
+Breaking changes:
+
+- Drop support for Python 3.4, 3.5 and PyPy2.  [maurits]
+
+New features:
+
+- Document development setup
+  Ref: #358
+  [niccokunzmann]
+
+Bug fixes:
+
+- Test with GitHub Actions.  [maurits]
 
 
 4.0.9 (2021-10-16)
@@ -657,9 +674,9 @@ Fixes:
 - created sphinx documentation and started documenting development and goals.
   [garbas]
 
-- hook out github repository to http://readthedocs.org service so sphinx
+- hook out github repository to https://readthedocs.org service so sphinx
   documentation is generated on each commit (for master). Documentation can be
-  visible on: http://readthedocs.org/docs/icalendar/en/latest/
+  visible on: https://icalendar.readthedocs.io/en/latest/
   [garbas]
 
 

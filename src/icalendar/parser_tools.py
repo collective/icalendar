@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from icalendar import compat
 
 
@@ -23,7 +22,7 @@ def data_encode(data, encoding=DEFAULT_ENCODING):
     """Encode all datastructures to the given encoding.
     Currently unicode strings, dicts and lists are supported.
     """
-    # http://stackoverflow.com/questions/1254454/fastest-way-to-convert-a-dicts-keys-values-from-unicode-to-str
+    # https://stackoverflow.com/questions/1254454/fastest-way-to-convert-a-dicts-keys-values-from-unicode-to-str
     if isinstance(data, compat.unicode_type):
         return data.encode(encoding)
     elif isinstance(data, dict):
