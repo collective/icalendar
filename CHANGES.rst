@@ -5,6 +5,10 @@ Changelog
 5.0.0a2 (unreleased)
 --------------------
 
+Minor changes:
+
+- removed deprecated test checks [tuergeist]
+
 Breaking changes:
 
 - Require Python 3.8 as minimum Python version.  [maurits]
@@ -87,7 +91,6 @@ Bug fixes:
 Bug fixes:
 
 - Fixed a docs issue related to building on Read the Docs [davidfischer]
-
 
 4.0.4 (2019-11-25)
 ------------------
