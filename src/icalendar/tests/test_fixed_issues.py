@@ -10,8 +10,8 @@ from dateutil import tz
 
 try:
     import zoneinfo
-except:
-    import backports.zoneinfo as zoneinfo
+except ModuleNotFoundError:
+    from backports import zoneinfo
 
 class TestIssues(unittest.TestCase):
 
