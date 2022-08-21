@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import unittest
 
 import datetime
@@ -151,7 +148,7 @@ class TestTimezoned(unittest.TestCase):
         event.add('attendee', 'franz')
         event.add('attendee', 'sepp')
         event.add('contact', 'Max Mustermann, 1010 Wien')
-        event.add('url', 'http://plone.org')
+        event.add('url', 'https://plone.org')
         cal.add_component(event)
 
         test_out = b'|'.join(cal.to_ical().splitlines())
@@ -259,7 +256,6 @@ class TestTimezoned(unittest.TestCase):
         # ical standard expects DTSTAMP and CREATED in UTC
         self.assertTrue("DTSTAMP;VALUE=DATE-TIME:20101010T081010Z" in test_out)
         self.assertTrue("CREATED;VALUE=DATE-TIME:20101010T081010Z" in test_out)
-
 
     def test_tzinfo_dateutil(self):
         # Test for issues #77, #63
