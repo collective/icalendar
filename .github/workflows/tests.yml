@@ -17,6 +17,7 @@ jobs:
         # see for version: https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json
         # see for runners: https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
         - ["2.7",   "py27", "ubuntu-latest"]
+        - ["pypy",   "pypy", "ubuntu-latest"]
         - ["3.4.10",   "py34", "ubuntu-18.04"]
         - ["3.5.10",   "py35", "ubuntu-latest"]
         - ["3.6",   "py36", "ubuntu-latest"]
