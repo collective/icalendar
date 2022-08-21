@@ -50,7 +50,7 @@ jobs:
     - name: Test
       run: tox -e ${{ matrix.config[1] }}
     - name: Coverage
-      if: matrix.config[0] != '2.7' && matrix.config[0] != '3.4.10'
+      if: matrix.config[0] != '2.7' && matrix.config[0] != 'pypy-2.7' && matrix.config[0] != '3.4.10'
       run: |
         pip install coveralls coverage-python-version
         coveralls --service=github
