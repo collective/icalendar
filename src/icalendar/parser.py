@@ -6,7 +6,6 @@ It is stupid in the sense that it treats the content purely as strings. No type
 conversion is attempted.
 """
 
-from icalendar import compat
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.parser_tools import SEQUENCE_TYPES
@@ -18,7 +17,7 @@ import re
 def escape_char(text):
     """Format value according to iCalendar TEXT escaping rules.
     """
-    assert isinstance(text, (compat.unicode_type, compat.bytes_type))
+    assert isinstance(text, (str, bytes))
     # NOTE: ORDER MATTERS!
     return text.replace(r'\N', '\n')\
                .replace('\\', '\\\\')\
@@ -29,16 +28,16 @@ def escape_char(text):
 
 
 def unescape_char(text):
-    assert isinstance(text, (compat.unicode_type, compat.bytes_type))
+    assert isinstance(text, (str, bytes))
     # NOTE: ORDER MATTERS!
-    if isinstance(text, compat.unicode_type):
+    if isinstance(text, str):
         return text.replace('\\N', '\\n')\
                    .replace('\r\n', '\n')\
                    .replace('\\n', '\n')\
                    .replace('\\,', ',')\
                    .replace('\\;', ';')\
                    .replace('\\\\', '\\')
-    elif isinstance(text, compat.bytes_type):
+    elif isinstance(text, bytes):
         return text.replace(b'\\N', b'\\n')\
                    .replace(b'\r\n', b'\n')\
                    .replace(b'\n', b'\n')\
@@ -68,7 +67,7 @@ def foldline(line, limit=75, fold_sep='\r\n '):
     immediately followed by a single linear white-space character (i.e.,
     SPACE or HTAB).
     """
-    assert isinstance(line, compat.unicode_type)
+    assert isinstance(line, str)
     assert '\n' not in line
 
     # Use a fast and simple variant for the common case that line is all ASCII.
@@ -217,7 +216,7 @@ class Parameters(CaselessDict):
 
         for key, value in items:
             value = param_value(value)
-            if isinstance(value, compat.unicode_type):
+            if isinstance(value, str):
                 value = value.encode(DEFAULT_ENCODING)
             # CaselessDict keys are always unicode
             key = key.upper().encode(DEFAULT_ENCODING)
@@ -282,7 +281,7 @@ def unescape_list_or_string(val):
 #########################################
 # parsing and generation of content lines
 
-class Contentline(compat.unicode_type):
+class Contentline(str):
     """A content line is basically a string that can be folded and parsed into
     parts.
     """
@@ -341,7 +340,7 @@ class Contentline(compat.unicode_type):
                                           strict=self.strict)
             params = Parameters(
                 (unescape_string(key), unescape_list_or_string(value))
-                for key, value in compat.iteritems(params)
+                for key, value in iter(params.items())
             )
             values = unescape_string(st[value_split + 1:])
             return (name, params, values)
