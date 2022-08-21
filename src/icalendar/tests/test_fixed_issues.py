@@ -5,7 +5,13 @@ import datetime
 import icalendar
 import os
 import pytz
+import pytest
+from dateutil import tz
 
+try:
+    import zoneinfo
+except:
+    import backports.zoneinfo as zoneinfo
 
 class TestIssues(unittest.TestCase):
 
@@ -487,4 +493,15 @@ END:VCALENDAR"""
         self.assertEqual(uid2.split('@')[1], 'test.test')
         self.assertEqual(uid3.split('-')[1], '123@example.com')
         self.assertEqual(uid4.split('-')[1], '123@test.test')
-        
+
+@pytest.mark.parametrize("zone", [
+    pytz.utc,
+    zoneinfo.ZoneInfo('UTC'),
+    pytz.timezone('UTC'),
+    tz.UTC,
+    tz.gettz('UTC')])
+def test_issue_335_identify_UTC(zone):
+    myevent = icalendar.Event()
+    dt = datetime.datetime(2021, 11, 17, 15, 9, 15)
+    myevent.add('dtstart', dt.astimezone(zone))
+    assert 'DTSTART;VALUE=DATE-TIME:20211117T150915Z' in myevent.to_ical().decode('ASCII')
