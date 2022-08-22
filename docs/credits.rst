@@ -60,6 +60,7 @@ icalendar contributors
 - `Nicco Kunzmann <https://github.com/niccokunzmann>`_
 - Robert Spralja <robert.spralja@gmail.com>
 - Maurits van Rees <maurits@vanrees.org>
+- jacadzaca <vitouejj@gmail.com>
 
 Find out who contributed::
 
