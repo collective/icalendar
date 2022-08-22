@@ -59,8 +59,9 @@ PROPER_OUTPUT = '''    Organizer: organizer <organizer@test.test>
 
 '''
 
-class CLITool(unittest.TestCase):
+class CLIToolTest(unittest.TestCase):
     def test_output_is_proper(self):
+        self.maxDiff = None
         calendar = Calendar.from_ical(INPUT)
         output = ''
         for event in calendar.walk('vevent'):
