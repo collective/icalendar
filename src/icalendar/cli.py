@@ -45,12 +45,11 @@ def view(event):
     description = event.get('description', '').split('\n')
     description = '\n'.join(map(lambda s: s.rjust(len(s) + 5), description))
 
-    timezone = datetime.utcnow().astimezone().tzinfo
     start = event.decoded('dtstart')
     end = event.decoded('dtend', default=start)
     duration = end - start
-    start = start.astimezone(timezone).strftime('%c')
-    end = end.astimezone(timezone).strftime('%c')
+    start = start.astimezone(start.tzinfo).strftime('%c')
+    end = end.astimezone(end.tzinfo).strftime('%c')
 
     return f"""    Organizer: {organizer}
     Attendees:
