@@ -1,43 +1,24 @@
-# -*- coding: utf-8 -*-
-"""iCalendar utility"""
-from __future__ import unicode_literals
-
-import argparse
+#!/usr/bin/env python3
+"""utility program that allows user to preview calendar's events"""
 import sys
+import pathlib
+import argparse
 from datetime import datetime
 
-from . import Calendar, __version__
-
-
-_template = """Organiser: {organiser}
-Attendees:
-  {attendees}
-Summary: {summary}
-When: {time_from}-{time_to}
-Location: {location}
-Comment: {comment}
-Description:
-
-{description}
-
-"""
-
+from icalendar import Calendar, __version__
 
 def _format_name(address):
-    """Retrieve the e-mail and optionally the name from an address.
+    """Retrieve the e-mail and the name from an address.
 
-    :arg vCalAddress address: An address object.
+    :arg an address object, e.g. mailto:test@test.test
 
-    :returns str: The name and optionally the e-mail address.
+    :returns str: The name and the e-mail address.
     """
-    if not address:
+    email = address.split(':')[-1]
+    name = email.split('@')[0]
+    if not email:
         return ''
-
-    email = address.title().split(':')[1]
-    if 'cn' in address.params:
-        return '{} <{}>'.format(address.params['cn'], email)
-
-    return email
+    return f"{name} <{email}>"
 
 
 def _format_attendees(attendees):
@@ -47,65 +28,54 @@ def _format_attendees(attendees):
 
     :returns str: Formatted list of attendees.
     """
-    if type(attendees) == list:
-        return '\n  '.join(map(_format_name, attendees))
+    if isinstance(attendees, list):
+        return '\n'.join(map(lambda s: s.rjust(len(s) + 5), map(_format_name, attendees)))
     return _format_name(attendees)
 
-
-def view(input_handle, output_handle):
+def view(event):
     """Make a human readable summary of an iCalendar file.
-
-    :arg stream handle: Open readable handle to an iCalendar file.
 
     :returns str: Human readable summary.
     """
-    cal = Calendar.from_ical(input_handle.read())
+    summary = event.get('summary', default='')
+    organizer = _format_name(event.get('organizer', default=''))
+    attendees = _format_attendees(event.get('attendee', default=[]))
+    location = event.get('location', default='')
+    comment = event.get('comment', '')
+    description = event.get('description', '').split('\n')
+    description = '\n'.join(map(lambda s: s.rjust(len(s) + 5), description))
 
-    for event in cal.walk('vevent'):
-        output_handle.write(_template.format(
-            organiser=_format_name(event.get('organizer', '')),
-            attendees=_format_attendees(event.get('attendee')),
-            summary=event.get('summary', ''),
-            time_from=datetime.strftime(
-                event.get('dtstart').dt, '%a %d %b %Y %H:%M'),
-            time_to=datetime.strftime(event.get('dtend').dt, '%H:%M'),
-            location=event.get('location', ''),
-            comment=event.get('comment', ''),
-            description=event.get('description', '')).encode('utf-8'))
+    start = event.decoded('dtstart')
+    end = event.decoded('dtend', default=start)
+    duration = end - start
+    start = start.astimezone(start.tzinfo).strftime('%c')
+    end = end.astimezone(end.tzinfo).strftime('%c')
 
+    return f"""    Organizer: {organizer}
+    Attendees:
+{attendees}
+    Summary    : {summary}
+    Starts     : {start}
+    End        : {end}
+    Duration   : {duration}
+    Location   : {location}
+    Comment    : {comment}
+    Description:
+{description}"""
 
 def main():
-    """Main entry point."""
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=__doc__)
-    parser.add_argument(
-        '-v', '--version', action='version',
-        version='{} version {}'.format(parser.prog, __version__))
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('calendar_files', nargs='+', type=pathlib.Path)
+    parser.add_argument('--output', '-o', type=argparse.FileType('w'), default=sys.stdout, help='output file')
+    parser.add_argument('-v', '--version', action='version', version=f'{parser.prog} version {__version__}')
+    argv = parser.parse_args()
 
-    # This seems a bit of an overkill now, but we will probably add more
-    # functionality later, e.g., iCalendar to JSON / YAML and vice versa.
-    subparsers = parser.add_subparsers(dest='subcommand')
-
-    subparser = subparsers.add_parser(
-        'view', description=view.__doc__.split('\n\n')[0])
-    subparser.add_argument(
-        'input_handle', metavar='INPUT', type=argparse.FileType('r'),
-        help='iCalendar file')
-    subparser.add_argument(
-        '-o', dest='output_handle', metavar='OUTPUT',
-        type=argparse.FileType('w'), default=sys.stdout,
-        help='output file (default=<stdout>)')
-    subparser.set_defaults(func=view)
-
-    args = parser.parse_args()
-
-    try:
-        args.func(**{k: v for k, v in vars(args).items()
-            if k not in ('func', 'subcommand')})
-    except ValueError as error:
-        parser.error(error)
-
+    for calendar_file in argv.calendar_files:
+        with open(calendar_file) as f:
+            calendar = Calendar.from_ical(f.read())
+            for event in calendar.walk('vevent'):
+                argv.output.write(view(event) + '\n\n')
 
 if __name__ == '__main__':
     main()
+

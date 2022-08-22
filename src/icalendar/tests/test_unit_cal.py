@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from datetime import datetime
 from datetime import timedelta
 import unittest
@@ -96,7 +93,7 @@ class TestCalComponent(unittest.TestCase):
             b'BEGIN:VCALENDAR\r\nATTENDEE:Max M\r\nEND:VCALENDAR\r\n'
         )
 
-        # Components can be nested, so You can add a subcompont. Eg a calendar
+        # Components can be nested, so You can add a subcomponent. Eg a calendar
         # holds events.
         e = Component(summary='A brief history of time')
         e.name = 'VEVENT'

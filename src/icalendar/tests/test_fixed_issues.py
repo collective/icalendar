@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from icalendar.parser_tools import to_unicode
 import unittest
 
@@ -153,7 +150,7 @@ END:VEVENT"""
         icalendar.Event.from_ical(ical_content).to_ical()
 
     def test_issue_101(self):
-        """Issue #101 - icalender is choking on umlauts in ORGANIZER
+        """Issue #101 - icalendar is choking on umlauts in ORGANIZER
 
         https://github.com/collective/icalendar/issues/101
         """
@@ -471,8 +468,8 @@ END:VCALENDAR"""
         self.assertEqual(dtstart, expected)
 
         try:
-            expected_zone = str('(UTC-03:00) Brasília')
-            expected_tzname = str('Brasília standard')
+            expected_zone = '(UTC-03:00) Brasília'
+            expected_tzname = 'Brasília standard'
         except UnicodeEncodeError:
             expected_zone = '(UTC-03:00) Brasília'.encode('ascii', 'replace')
             expected_tzname = 'Brasília standard'.encode('ascii', 'replace')
@@ -565,3 +562,16 @@ END:VCALENDAR"""
         event.add('DURATION', datetime.timedelta(hours=2))
         self.assertEqual(event["DURATION"].td, datetime.timedelta(seconds=7200)) # Official API
         self.assertEqual(event["DURATION"].dt, datetime.timedelta(seconds=7200)) # Backwards compatibility
+
+    def test_issue_345(self):
+        """Issue #345 - Why is tools.UIDGenerator a class (that must be instantiated) instead of a module? """
+        uid1 = icalendar.tools.UIDGenerator.uid()
+        uid2 = icalendar.tools.UIDGenerator.uid('test.test')
+        uid3 = icalendar.tools.UIDGenerator.uid(unique='123')
+        uid4 = icalendar.tools.UIDGenerator.uid('test.test', '123')
+
+        self.assertEqual(uid1.split('@')[1], 'example.com')
+        self.assertEqual(uid2.split('@')[1], 'test.test')
+        self.assertEqual(uid3.split('-')[1], '123@example.com')
+        self.assertEqual(uid4.split('-')[1], '123@test.test')
+

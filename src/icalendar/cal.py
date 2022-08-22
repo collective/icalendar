@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Calendar is a dictionary like Python object that can render itself as VCAL
 files according to rfc2445.
 
@@ -20,7 +19,6 @@ import pytz
 import dateutil.rrule, dateutil.tz
 from pytz.tzinfo import DstTzInfo
 
-from icalendar.compat import unicode_type
 
 
 ######################################
@@ -34,7 +32,7 @@ class ComponentFactory(CaselessDict):
     def __init__(self, *args, **kwargs):
         """Set keys to upper for initial dict.
         """
-        super(ComponentFactory, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self['VEVENT'] = Event
         self['VTODO'] = Todo
         self['VJOURNAL'] = Journal
@@ -60,7 +58,7 @@ _marker = []
 class Component(CaselessDict):
     """Component is the base object for calendar, Event and the other
     components defined in RFC 2445. normally you will not use this class
-    directy, but rather one of the subclasses.
+    directly, but rather one of the subclasses.
     """
 
     name = None         # should be defined in each component
@@ -79,7 +77,7 @@ class Component(CaselessDict):
     def __init__(self, *args, **kwargs):
         """Set keys to upper for initial dict.
         """
-        super(Component, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         # set parameters here for properties that use non-default values
         self.subcomponents = []  # Components can be nested.
         self.errors = []  # If we ignored exception(s) while
@@ -91,7 +89,7 @@ class Component(CaselessDict):
     #
     #    If the parser is too strict it might prevent parsing erroneous but
     #    otherwise compliant properties. So the parser is pretty lax, but it is
-    #    possible to test for non-complience by calling this method.
+    #    possible to test for non-compliance by calling this method.
     #    """
     #    return name in not_compliant
 
@@ -345,7 +343,7 @@ class Component(CaselessDict):
                 component = stack[-1] if stack else None
                 if not component or not component.ignore_exceptions:
                     raise
-                component.errors.append((None, unicode_type(e)))
+                component.errors.append((None, str(e)))
                 continue
 
             uname = name.upper()
@@ -410,22 +408,27 @@ class Component(CaselessDict):
                 except ValueError as e:
                     if not component.ignore_exceptions:
                         raise
-                    component.errors.append((uname, unicode_type(e)))
-                    # fallback to vText and store the original value
-                    vals = types_factory['text'](vals)
-
-                vals.params = params
-                component.add(name, vals, encode=0)
+#                    component.errors.append((uname, unicode_type(e)))
+#                    # fallback to vText and store the original value
+#                    vals = types_factory['text'](vals)
+#
+#                vals.params = params
+#                component.add(name, vals, encode=0)
+                    component.errors.append((uname, str(e)))
+                    component.add(name, None, encode=0)
+                else:
+                    vals.params = params
+                    component.add(name, vals, encode=0)
 
         if multiple:
             return comps
         if len(comps) > 1:
-            raise ValueError('Found multiple components where '
-                             'only one is allowed: {st!r}'.format(**locals()))
+            raise ValueError(f'Found multiple components where '
+                             f'only one is allowed: {st!r}')
         if len(comps) < 1:
-            raise ValueError('Found no components where '
-                             'exactly one is required: '
-                             '{st!r}'.format(**locals()))
+            raise ValueError(f'Found no components where '
+                             f'exactly one is required: '
+                             f'{st!r}')
         return comps[0]
 
     def content_line(self, name, value, sorted=True):
@@ -457,7 +460,7 @@ class Component(CaselessDict):
         """String representation of class with all of it's subcomponents.
         """
         subs = ', '.join([str(it) for it in self.subcomponents])
-        return '%s(%s%s)' % (
+        return '{}({}{})'.format(
             self.name or type(self).__name__,
             dict(self),
             ', %s' % subs if subs else ''
@@ -634,7 +637,7 @@ class Timezone(Component):
                 tzname = component['TZNAME'].encode('ascii', 'replace')
                 tzname = self._make_unique_tzname(tzname, tznames)
             except KeyError:
-                tzname = '{0}_{1}_{2}_{3}'.format(
+                tzname = '{}_{}_{}_{}'.format(
                     zone,
                     component['DTSTART'].to_ical().decode('utf-8'),
                     component['TZOFFSETFROM'].to_ical(),  # for whatever reason this is str/unicode
