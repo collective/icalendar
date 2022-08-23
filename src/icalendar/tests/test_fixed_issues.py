@@ -6,6 +6,8 @@ import icalendar
 import os
 import pytz
 
+HERE = os.path.dirname(__file__)
+
 
 class TestIssues(unittest.TestCase):
 
@@ -14,8 +16,7 @@ class TestIssues(unittest.TestCase):
         https://github.com/collective/icalendar/issues/53
         """
 
-        directory = os.path.dirname(__file__)
-        ics = open(os.path.join(directory, 'issue_53_parsing_failure.ics'),
+        ics = open(os.path.join(HERE, 'issue_53_parsing_failure.ics'),
                    'rb')
         cal = icalendar.Calendar.from_ical(ics.read())
         ics.close()
@@ -231,8 +232,7 @@ END:VCALENDAR"""
         """Issue #112 - No timezone info on EXDATE
         https://github.com/collective/icalendar/issues/112
         """
-        directory = os.path.dirname(__file__)
-        path = os.path.join(directory,
+        path = os.path.join(HERE,
                             'issue_112_missing_tzinfo_on_exdate.ics')
         with open(path, 'rb') as ics:
             cal = icalendar.Calendar.from_ical(ics.read())
@@ -431,6 +431,18 @@ END:VCALENDAR"""
                          b'RDATE;VALUE=PERIOD:20150219T133000/PT10H\r\n'
                          b'END:VEVENT\r\n'
                          )
+
+    def test_issue_356_url_escaping(self):
+        """Test that the URLs stay intact.
+
+        see https://github.com/collective/icalendar/pull/356
+        see https://github.com/collective/icalendar/issues/355
+        """
+        ics = open(os.path.join(HERE, 'issue_53_parsing_failure.ics'), 'rb')
+        cal = icalendar.Calendar.from_ical(ics)
+        event = cal.walk(name='VEVENT')[0]
+        URL = "https://www.facebook.com/events/756119502186737/?acontext=%7B%22source%22%3A5%2C%22action_history%22%3A[%7B%22surface%22%3A%22page%22%2C%22mechanism%22%3A%22main_list%22%2C%22extra_data%22%3A%22%5C%22[]%5C%22%22%7D]%2C%22has_source%22%3Atrue%7D"
+        self.assertEqual(event["DESCRIPTION"], URL)
 
     def test_issue_237(self):
         """Issue #237 - Fail to parse timezone with non-ascii TZID"""
