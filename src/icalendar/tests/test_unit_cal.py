@@ -6,7 +6,6 @@ import icalendar
 import pytz
 import re
 
-
 class TestCalComponent(unittest.TestCase):
 
     def test_cal_Component(self):
@@ -356,7 +355,6 @@ class TestCalComponent(unittest.TestCase):
 
 
 class TestCal(unittest.TestCase):
-
     def test_cal_ComponentFactory(self):
         ComponentFactory = icalendar.cal.ComponentFactory
         factory = ComponentFactory()
@@ -370,6 +368,18 @@ class TestCal(unittest.TestCase):
         self.assertEqual(
             factory.get('VCALENDAR', icalendar.cal.Component),
             icalendar.cal.Calendar)
+
+    def test_cal_ComponentWithRequiredFieldsFactory_properly_creates_components(self):
+        from icalendar.cal import Event, Journal, Todo, FreeBusy, Timezone, TimezoneStandard, TimezoneDaylight, Alarm, Calendar
+        names = ['VEVENT', 'VTODO', 'VJOURNAL', 'VFREEBUSY', 'VTIMEZONE', 'VALARM', 'VCALENDAR']
+        component_types = [Event, Todo, Journal, FreeBusy, Timezone, Alarm, Calendar]
+
+        component_factory = icalendar.cal.ComponentWithRequiredFieldsFactory(alarm_trigger_supplier=lambda: datetime.now())
+        for name, component_type in zip(names, component_types):
+            component = component_factory[name]()
+            self.assertIsInstance(component, component_type)
+            for required_field in component.required:
+                self.assertIn(required_field, component)
 
     def test_cal_Calendar(self):
         # Setting up a minimal calendar component looks like this

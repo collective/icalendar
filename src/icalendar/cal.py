@@ -4,6 +4,8 @@ files according to rfc2445.
 These are the defined components.
 """
 from datetime import datetime, timedelta
+
+from icalendar import __version__
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Contentline
 from icalendar.parser import Contentlines
@@ -12,8 +14,9 @@ from icalendar.parser import q_join
 from icalendar.parser import q_split
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import TypesFactory
-from icalendar.prop import vText, vDDDLists
+from icalendar.prop import vText, vDDDLists, vDDDTypes
 from icalendar.timezone_cache import _timezone_cache
+from icalendar.tools import UIDGenerator
 
 import pytz
 import dateutil.rrule, dateutil.tz
@@ -24,11 +27,60 @@ from pytz.tzinfo import DstTzInfo
 ######################################
 # The component factory
 
+class ComponentWithRequiredFieldsFactory(CaselessDict):
+    """All components defined in rfc 5545 in the section 3.6 are registered in this factory class.
+    All components returned by this factory should have all the required fields
+    as per each component's definition.
+    """
+
+    def __init__(self, host_name='example.com', tzid='Europe/London', daylight_saving=False, alarm_action='AUDIO', alarm_trigger_supplier=None, *args, **kwargs):
+        """Set keys to upper for initial dict.
+        :param host_name is the suffix to be appended after components uid, e.g
+        host_name='example.com' would result in UID@example.com
+
+        :param tzid is the the timezone id you'd like your event to be in, e.g Europe/Warsaw
+
+        :param alarm_trigger_supplier is a callable that gives you the the date
+        when the alarm is to go off, e.g lambda: datetime.datime(year=2002, month=7, day=22).
+        Bother with it, if and only if, you plan on creating alarms with this factory
+        """
+        super().__init__(*args, **kwargs,)
+        self['VEVENT'] = lambda **kwargs: Event(**kwargs, UID=UIDGenerator.uid(host_name), DTSTAMP=vDDDTypes(datetime.now(pytz.timezone(tzid))))
+        self['VTODO'] = lambda **kwargs: Todo(**kwargs, UID=UIDGenerator.uid(host_name), DTSTAMP=vDDDTypes(datetime.now(pytz.timezone(tzid))))
+        self['VJOURNAL'] = lambda **kwargs: Journal(**kwargs, UID=UIDGenerator.uid(host_name), DTSTAMP=vDDDTypes(datetime.now(pytz.timezone(tzid))))
+        self['VFREEBUSY'] = lambda **kwargs: FreeBusy(**kwargs, UID=UIDGenerator.uid(host_name), DTSTAMP=vDDDTypes(datetime.now(pytz.timezone(tzid))))
+        self['VTIMEZONE'] = lambda **kwargs: self._create_timezone(tzid, daylight_saving, **kwargs)
+        self['VALARM'] = lambda **kwargs: self.create_alarm(alarm_action, alarm_trigger_supplier(), **kwargs)
+        self['VCALENDAR'] = lambda **kwargs: Calendar(**kwargs, PRODID='icalendar', VERSION='2')
+        self._host_name = host_name
+
+    def _create_timezone(self, tzid, daylight_saving, **kwargs):
+        now = datetime.now(dateutil.tz.gettz(tzid))
+        offset = now.strftime('%z')
+        timezone = Timezone(**kwargs, tzid=now.tzname())
+        timezone_type = TimezoneDaylight if daylight_saving else TimezoneStandard
+        # DTSTART is probably very wrong. I have no idea what it should be set to
+        timezone_type = timezone_type(DTSTART=vDDDTypes(now), TZOFFSETTO=offset, TZOFFSETFROM=offset)
+        timezone.add_component(timezone_type)
+        return timezone
+
+
+
+    def create_alarm(self, alarm_action, alarm_trigger, **kwargs):
+        """Create a VALARM
+        :param alarm_action: what is supposed to happen on alarm trigger, e.g use AUDIO to play a sound
+        on trigger
+        :type alarm_action: string
+
+        :param alarm_trigger: at what time is the alarm supposed to trigger
+        :type alarm_trigger: :class `datetime.datetime`
+        """
+        return Alarm(**kwargs, action=alarm_action, trigger=vDDDTypes(alarm_trigger))
+
 class ComponentFactory(CaselessDict):
     """All components defined in rfc 2445 are registered in this factory class.
     To get a component you can use it like this.
     """
-
     def __init__(self, *args, **kwargs):
         """Set keys to upper for initial dict.
         """
@@ -42,7 +94,6 @@ class ComponentFactory(CaselessDict):
         self['DAYLIGHT'] = TimezoneDaylight
         self['VALARM'] = Alarm
         self['VCALENDAR'] = Calendar
-
 
 # These Properties have multiple property values inlined in one propertyline
 # seperated by comma. Use CaselessDict as simple caseless set.

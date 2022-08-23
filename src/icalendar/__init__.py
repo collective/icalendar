@@ -11,6 +11,7 @@ from icalendar.cal import (
     FreeBusy,
     Alarm,
     ComponentFactory,
+    ComponentWithRequiredFieldsFactory,
 )
 # Property Data Value Types
 from icalendar.prop import (
