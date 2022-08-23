@@ -7,6 +7,10 @@ import unittest
 
 class IcalendarTestCase (unittest.TestCase):
 
+    def setUp(self):
+        if not hasattr(self, 'assertRaisesRegex'):
+            self.assertRaisesRegex = self.assertRaisesRegexp
+
     def test_long_lines(self):
         from ..parser import Contentlines, Contentline
         c = Contentlines([Contentline('BEGIN:VEVENT')])
