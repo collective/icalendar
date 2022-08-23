@@ -66,9 +66,8 @@ Related projects
 Examples
 ================
 Create a calendear and add an event to it (master branch)
-..example-code::
 
-    .. codeblock:: python
+.. code-block:: python
 
     #!/usr/bin/env python3
     from dateutil import tz
@@ -100,15 +99,15 @@ Create a calendear and add an event to it (master branch)
         main()
 
 
-    You can view it with the handy CLI tool by:
+You can view it with the handy CLI tool by:
 
-    .. codeblock:: bash
+.. code-block:: text
 
     python SCRIPT-NAME.py > sample.ics && pythom -m icalendar.cli sample.ics
 
-    Create a ics file with 5 alarms, each 10 minutes apart
+Create a ics file with 5 alarms, each 10 minutes apart
 
-    .. codeblock:: python
+.. code-block:: python
 
     #!/usr/bin/env python3
     from datetime import datetime, timedelta
