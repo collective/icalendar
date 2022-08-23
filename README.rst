@@ -53,7 +53,7 @@ we split the project into two:
 
 We expect the ``master`` branch with versions ``5+`` receive the latest updates and features,
 and the ``4.x`` branch the subset of security and bug fixes only.
-We recomment migrating to later Python versions and also providing feedback if you depend on the ``4.x`` features.
+We recommend migrating to later Python versions and also providing feedback if you depend on the ``4.x`` features.
 
 Related projects
 ================
