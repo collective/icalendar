@@ -18,4 +18,6 @@ parts/
 pip-selfcheck.json
 src/icalendar.egg-info/
 !.gitattributes
+!.github
 !.gitignore
+venv

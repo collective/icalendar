@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import icalendar
 import os
 import textwrap
@@ -9,6 +6,10 @@ import unittest
 
 
 class IcalendarTestCase (unittest.TestCase):
+
+    def setUp(self):
+        if not hasattr(self, 'assertRaisesRegex'):
+            self.assertRaisesRegex = self.assertRaisesRegexp
 
     def test_long_lines(self):
         from ..parser import Contentlines, Contentline
@@ -59,13 +60,13 @@ class IcalendarTestCase (unittest.TestCase):
              '123456789 123456789 123456789 123456789 ')
         )
 
-        # http://tools.ietf.org/html/rfc5545#section-3.3.11
+        # https://tools.ietf.org/html/rfc5545#section-3.3.11
         # An intentional formatted text line break MUST only be included in
         # a "TEXT" property value by representing the line break with the
         # character sequence of BACKSLASH, followed by a LATIN SMALL LETTER
         # N or a LATIN CAPITAL LETTER N, that is "\n" or "\N".
 
-        # Newlines are not allwoed in content lines
+        # Newlines are not allowed in content lines
         self.assertRaises(AssertionError, Contentline, b'1234\r\n\r\n1234')
 
         self.assertEqual(
@@ -165,14 +166,14 @@ class IcalendarTestCase (unittest.TestCase):
         )
 
         # And the traditional failure
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
             ValueError,
             'Content line could not be parsed into parts'
         ):
             Contentline('ATTENDEE;maxm@example.com').parts()
 
         # Another failure:
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
             ValueError,
             'Content line could not be parsed into parts'
         ):
@@ -189,7 +190,7 @@ class IcalendarTestCase (unittest.TestCase):
         )
 
         # Should bomb on missing param:
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
             ValueError,
             'Content line could not be parsed into parts'
         ):
@@ -214,12 +215,12 @@ class IcalendarTestCase (unittest.TestCase):
         )
 
         contains_base64 = (
-            'X-APPLE-STRUCTURED-LOCATION;'
-            'VALUE=URI;X-ADDRESS="Kaiserliche Hofburg, 1010 Wien";'
-            'X-APPLE-MAPKIT-HANDLE=CAESxQEZgr3QZXJyZWljaA==;'
-            'X-APPLE-RADIUS=328.7978217977285;X-APPLE-REFERENCEFRAME=1;'
-            'X-TITLE=Heldenplatz:geo:48.206686,16.363235'
-        ).encode('utf-8')
+            b'X-APPLE-STRUCTURED-LOCATION;'
+            b'VALUE=URI;X-ADDRESS="Kaiserliche Hofburg, 1010 Wien";'
+            b'X-APPLE-MAPKIT-HANDLE=CAESxQEZgr3QZXJyZWljaA==;'
+            b'X-APPLE-RADIUS=328.7978217977285;X-APPLE-REFERENCEFRAME=1;'
+            b'X-TITLE=Heldenplatz:geo:48.206686,16.363235'
+        )
 
         self.assertEqual(
             Contentline(contains_base64, strict=True).parts(),
@@ -252,7 +253,7 @@ class IcalendarTestCase (unittest.TestCase):
         # at least just but bytes in there
         # porting it to "run" under python 2 & 3 makes it not much better
         with self.assertRaises(AssertionError):
-            foldline('привет'.encode('utf-8'), limit=3)
+            foldline('привет'.encode(), limit=3)
 
         self.assertEqual(foldline('foobar', limit=4), 'foo\r\n bar')
         self.assertEqual(

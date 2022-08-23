@@ -5,8 +5,8 @@ The data is taken from the unicode consortium [0], the proposal and rationale
 for this mapping is also available at the unicode consortium [1].
 
 
-[0] http://www.unicode.org/cldr/charts/29/supplemental/zone_tzid.html
-[1] http://cldr.unicode.org/development/development-process/design-proposals/extended-windows-olson-zid-mapping  # noqa
+[0] https://www.unicode.org/cldr/cldr-aux/charts/29/supplemental/zone_tzid.html
+[1] https://cldr.unicode.org/development/development-process/design-proposals/extended-windows-olson-zid-mapping  # noqa
 """
 
 WINDOWS_TO_OLSON = {
