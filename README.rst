@@ -61,3 +61,73 @@ Related projects
 * `icalevents <https://github.com/irgangla/icalevents>`_. It is built on top of icalendar and allows you to query iCal files and get the events happening on specific dates. It manages recurrent events as well.
 * `recurring-ical-events <https://pypi.org/project/recurring-ical-events/>`_. Library to query an ``ICalendar`` object for events happening at a certain date or within a certain time.
 * `x-wr-timezone <https://pypi.org/project/x-wr-timezone/>`_. Library to make ``ICalendar`` objects and files using the non-standard ``X-WR-TIMEZONE`` compliant with the standard (RFC 5545).
+
+
+Examples
+================
+Create a calendear and add an event to it (master branch)
+..example-code::
+
+    .. codeblock:: python
+
+    #!/usr/bin/env python3
+    from dateutil import tz
+    from datetime import datetime
+
+    from icalendar import ComponentWithRequiredFieldsFactory, vDatetime
+
+    def main():
+        component_factory = ComponentWithRequiredFieldsFactory(tzid='Europe/Warsaw')
+
+        calendar = component_factory['VCALENDAR']()
+        event = component_factory['VEVENT'](
+                DTSTART=vDDDTypes(datetime.now()),
+                DTEND=vDDDTypes(datetime(year=2050, month=7, day=22, hour=12)),
+                SUMMARY='A sentence succinctly describing the event',
+                LOCATION='Where the event will take place',
+                ORGANIZER='organizer@example.com',
+                DESCRIPTION='Longer and more detailed version of the summary\nIt can also be multi-line',
+                COMMENT='A comment')
+        event.add('attendee', 'attendee@example.com')
+        event.add('attendee', 'attendee1@example.com')
+        timezone = component_factory['VTIMEZONE']()
+        calendar.add_component(timezone)
+        calendar.add_component(event)
+        print(calendar.to_ical().decode('utf-8'))
+
+
+    if __name__ == '__main__':
+        main()
+
+
+    You can view it with the handy CLI tool by:
+
+    .. codeblock:: bash
+
+    python SCRIPT-NAME.py > sample.ics && pythom -m icalendar.cli sample.ics
+
+    Create a ics file with 5 alarms, each 10 minutes apart
+
+    .. codeblock:: python
+
+    #!/usr/bin/env python3
+    from datetime import datetime, timedelta
+
+    from icalendar import ComponentWithRequiredFieldsFactory, vDatetime
+
+    def main():
+        now = datetime.now()
+        alarms_triggers = [now + timedelta(minutes=10 * i) for i in range(5)]
+        component_factory = ComponentWithRequiredFieldsFactory(tzid='Europe/Warsaw', alarm_trigger_supplier=lambda: alarms_triggers.pop())
+
+        calendar = component_factory['VCALENDAR']()
+        calendar.add_component(component_factory['VTIMEZONE']())
+
+        for _ in alarms_triggers:
+            calendar.add_component(component_factory['VALARM']())
+
+        print(calendar.to_ical().decode('utf-8'))
+
+    if __name__ == '__main__':
+        main()
+
