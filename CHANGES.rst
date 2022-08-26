@@ -11,7 +11,7 @@ Minor changes:
 
 Breaking changes:
 
-- Require Python 3.8 as minimum Python version.  [maurits]
+- Require Python 3.7 as minimum Python version.  [maurits] [niccokunzmann]
 - icalenar now takes a ics file directly as an input
 - icalendar's output is different
 
