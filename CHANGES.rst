@@ -5,16 +5,34 @@ Changelog
 5.0.0a2 (unreleased)
 --------------------
 
+Minor changes:
+
+- removed deprecated test checks [tuergeist]
+
 Breaking changes:
 
 - Require Python 3.7 as minimum Python version.  [maurits] [niccokunzmann]
+- icalenar now takes a ics file directly as an input
+- icalendar's output is different
+
+New features:
+
+- icalendar utility outputs a 'Duration' row
+- icalendar can take multiple ics files as an input
 
 Bug fixes:
 
 - Changed tools.UIDGenerator instance methods to static methods
   Ref: #345
   [spralja]
-
+- proper handling of datetime objects with `tzinfo` generated through zoneinfo.ZoneInfo.
+  Ref: #334
+  Fixes: #333
+  [tobixen]
+- Timestamps in UTC does not need tzid
+  Ref: #338
+  Fixes: #335
+  [tobixen]
 
 5.0.0a1 (2022-07-11)
 --------------------
@@ -80,7 +98,6 @@ Bug fixes:
 Bug fixes:
 
 - Fixed a docs issue related to building on Read the Docs [davidfischer]
-
 
 4.0.4 (2019-11-25)
 ------------------

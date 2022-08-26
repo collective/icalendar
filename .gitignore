@@ -20,3 +20,4 @@ src/icalendar.egg-info/
 !.gitattributes
 !.github
 !.gitignore
+venv

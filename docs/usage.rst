@@ -102,7 +102,7 @@ The rendered view is easier to read::
 So, let's define a function so we can easily display to_ical() output::
 
   >>> def display(cal):
-  ...    return cal.to_ical().replace(b'\r\n', b'\n').strip()
+  ...    return cal.to_ical().decode("utf-8").replace(b'\r\n', b'\n').strip()
 
 You can set multiple properties like this::
 
