@@ -323,6 +323,11 @@ class vDDDTypes:
         else:
             raise ValueError(f'Unknown date type: {type(dt)}')
 
+    def __eq__(self, other):
+        if isinstance(other, vDDDTypes):
+            return self.params == other.params
+        return False
+
     @classmethod
     def from_ical(cls, ical, timezone=None):
         if isinstance(ical, cls):
