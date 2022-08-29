@@ -112,6 +112,27 @@ class TestProp(unittest.TestCase):
         # Bad input
         self.assertRaises(ValueError, vDDDTypes, 42)
 
+    def test_vDDDTypes_equivalance(self):
+        from ..prop import vDDDTypes
+        from copy import deepcopy
+
+        vDDDTypes = [
+                vDDDTypes(pytz.timezone('US/Eastern').localize(datetime(year=2022, month=7, day=22, hour=12, minute=7))),
+                vDDDTypes(datetime(year=2022, month=7, day=22, hour=12, minute=7)),
+                vDDDTypes(date(year=2022, month=7, day=22)),
+                vDDDTypes(time(hour=22, minute=7, second=2))]
+
+        for v_type in vDDDTypes:
+            self.assertEqual(v_type, deepcopy(v_type))
+            for other in vDDDTypes:
+                if other is v_type:
+                    continue
+                self.assertNotEqual(v_type, other)
+
+            # see if equivalnce fails for other types
+            self.assertNotEqual(v_type, 42)
+            self.assertNotEqual(v_type, 'test')
+
     def test_prop_vDate(self):
         from ..prop import vDate
 
