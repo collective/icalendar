@@ -21,6 +21,9 @@ tests_require = []
 install_requires = [
     'python-dateutil',
     'pytz',
+    # install requirements depending on python version
+    # see https://www.python.org/dev/peps/pep-0508/#environment-markers
+    'backports.zoneinfo; python_version == "3.7" or python_version == "3.8"',
 ]
 
 
