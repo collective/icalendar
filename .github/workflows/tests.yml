@@ -17,6 +17,7 @@ jobs:
         # see for version: https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json
         # see for runners: https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
         - ["2.7",   "py27", "ubuntu-latest"]
+        - ["pypy-2.7",   "pypy", "ubuntu-latest"]
         - ["3.4.10",   "py34", "ubuntu-18.04"]
         - ["3.5.10",   "py35", "ubuntu-latest"]
         - ["3.6",   "py36", "ubuntu-latest"]
@@ -49,7 +50,7 @@ jobs:
     - name: Test
       run: tox -e ${{ matrix.config[1] }}
     - name: Coverage
-      if: matrix.config[0] != '2.7' && matrix.config[0] != '3.4.10'
+      if: matrix.config[0] != '2.7' && matrix.config[0] != 'pypy-2.7' && matrix.config[0] != '3.4.10'
       run: |
         pip install coveralls coverage-python-version
         coveralls --service=github
