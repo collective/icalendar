@@ -51,6 +51,20 @@ Bug fixes:
 
 - Test with GitHub Actions.  [maurits]
 
+4.1.0 (2022-07-11)
+------------------
+
+New features:
+
+- No longer test on Python 3.4, 3.5 and PyPy2, because we cannot get it to work.
+  Technically it should still work, it is just no longer tested.
+  Do not expect much development on branch 4.x anymore.
+  The master branch will be for the remaining Python versions that we support.
+  [maurits]
+
+Bug fixes:
+
+- Test with GitHub Actions.  [maurits]
 
 4.0.9 (2021-10-16)
 ------------------
