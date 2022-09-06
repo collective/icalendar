@@ -129,23 +129,6 @@ END:VEVENT"""
             b'FREQ=WEEKLY;UNTIL=20070619T225959;INTERVAL=1'
         )
 
-    def test_issue_82(self):
-        """Issue #82 - vBinary __repr__ called rather than to_ical from
-                       container types
-        https://github.com/collective/icalendar/issues/82
-        """
-
-        b = icalendar.vBinary('text')
-        b.params['FMTTYPE'] = 'text/plain'
-        self.assertEqual(b.to_ical(), b'dGV4dA==')
-        e = icalendar.Event()
-        e.add('ATTACH', b)
-        self.assertEqual(
-            e.to_ical(),
-            b"BEGIN:VEVENT\r\nATTACH;ENCODING=BASE64;FMTTYPE=text/plain;"
-            b"VALUE=BINARY:dGV4dA==\r\nEND:VEVENT\r\n"
-        )
-
     def test_issue_100(self):
         """Issue #100 - Transformed doctests into unittests, Test fixes and
                         cleanup.
