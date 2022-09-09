@@ -8,7 +8,7 @@ try:
 except ModuleNotFoundError:
     from backports import zoneinfo
 
-from icalendar import Event, vBinary
+from icalendar import Event, vBinary, Calendar
 
 def test_description_parsed_properly_issue_53(events):
     '''Issue #53 - Parsing failure on some descriptions?
@@ -84,4 +84,13 @@ def test_timezone_name_parsed_issue_112(events):
     https://github.com/collective/icalendar/issues/112
     '''
     assert events.issue_112_missing_tzinfo_on_exdate['exdate'][0].dts[0].dt.tzname() == 'EDT'
+
+def test_raises_value_error_for_properties_without_parent_pull_179():
+        '''Found an issue where from_ical() would raise IndexError for
+        properties without parent components.
+
+        https://github.com/collective/icalendar/pull/179
+        '''
+        with pytest.raises(ValueError):
+            Calendar.from_ical('VERSION:2.0')
 
