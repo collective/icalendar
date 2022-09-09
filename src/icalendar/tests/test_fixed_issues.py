@@ -72,29 +72,6 @@ END:VEVENT"""
         ical_content = "BEGIN:VEVENT\r\nSUMMARY;LANGUAGE=ru:te\r\nEND:VEVENT"
         icalendar.Event.from_ical(ical_content).to_ical()
 
-    def test_issue_168(self):
-        """Issue #168 - Parsing invalid icalendars fails without any warning
-        https://github.com/collective/icalendar/issues/168
-        """
-
-        event_str = """
-BEGIN:VCALENDAR
-BEGIN:VEVENT
-DTEND:20150905T100000Z
-DTSTART:20150905T090000Z
-X-APPLE-RADIUS=49.91307046514149
-UID:123
-END:VEVENT
-END:VCALENDAR"""
-
-        calendar = icalendar.Calendar.from_ical(event_str)
-        self.assertEqual(
-            calendar.to_ical(),
-            b'BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nDTSTART:20150905T090000Z\r\n'
-            b'DTEND:20150905T100000Z\r\nUID:123\r\n'
-            b'END:VEVENT\r\nEND:VCALENDAR\r\n'
-        )
-
     def test_issue_184(self):
         """Issue #184 - Previous changes in code broke already broken
         representation of PERIOD values - in a new way"""
