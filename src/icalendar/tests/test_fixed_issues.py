@@ -14,7 +14,6 @@ except ModuleNotFoundError:
     from backports import zoneinfo
 
 class TestIssues(unittest.TestCase):
-
     def test_issue_53(self):
         """Issue #53 - Parsing failure on some descriptions?
         https://github.com/collective/icalendar/issues/53
@@ -34,31 +33,6 @@ class TestIssues(unittest.TestCase):
         self.assertEqual(len(timezones), 1)
         tz = timezones[0]
         self.assertEqual(tz['tzid'].to_ical(), b"America/New_York")
-
-    def test_issue_55(self):
-        """Issue #55 - Parse error on utc-offset with seconds value
-        https://github.com/collective/icalendar/issues/55
-        """
-        ical_str = """BEGIN:VTIMEZONE
-TZID:America/Los Angeles
-BEGIN:STANDARD
-DTSTART:18831118T120702
-RDATE:18831118T120702
-TZNAME:PST
-TZOFFSETFROM:-075258
-TZOFFSETTO:-0800
-END:STANDARD
-END:VTIMEZONE"""
-
-        tz = icalendar.Timezone.from_ical(ical_str)
-        self.assertEqual(
-            tz.to_ical(),
-            b'BEGIN:VTIMEZONE\r\nTZID:America/Los Angeles\r\n'
-            b'BEGIN:STANDARD\r\n'
-            b'DTSTART:18831118T120702\r\nRDATE:18831118T120702\r\nTZNAME:PST'
-            b'\r\nTZOFFSETFROM:-075258\r\nTZOFFSETTO:-0800\r\n'
-            b'END:STANDARD\r\n'
-            b'END:VTIMEZONE\r\n')
 
     def test_issue_58(self):
         """Issue #58 - TZID on UTC DATE-TIMEs
