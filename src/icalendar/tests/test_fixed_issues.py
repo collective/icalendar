@@ -289,43 +289,6 @@ END:VCALENDAR"""
             icalendar.Event.from_ical(event.to_ical()).to_ical()
         )
 
-    def test_issue_142(self):
-        """Issue #142 - Multivalued parameters
-        This is needed for VCard 3.0.
-        https://github.com/collective/icalendar/pull/142
-        """
-        from icalendar.parser import Contentline, Parameters
-
-        ctl = Contentline.from_ical("TEL;TYPE=HOME,VOICE:000000000")
-
-        self.assertEqual(
-            ctl.parts(),
-            ('TEL', Parameters({'TYPE': ['HOME', 'VOICE']}), '000000000'),
-        )
-
-    def test_issue_143(self):
-        """Issue #143 - Allow dots in property names.
-        Another vCard related issue.
-        https://github.com/collective/icalendar/pull/143
-        """
-        from icalendar.parser import Contentline, Parameters
-
-        ctl = Contentline.from_ical("ITEMADRNULLTHISISTHEADRESS08158SOMECITY12345.ADR:;;This is the Adress 08; Some City;;12345;Germany")  # nopep8
-        self.assertEqual(
-            ctl.parts(),
-            ('ITEMADRNULLTHISISTHEADRESS08158SOMECITY12345.ADR',
-             Parameters(),
-             ';;This is the Adress 08; Some City;;12345;Germany'),
-        )
-
-        ctl2 = Contentline.from_ical("ITEMADRNULLTHISISTHEADRESS08158SOMECITY12345.X-ABLABEL:")  # nopep8
-        self.assertEqual(
-            ctl2.parts(),
-            ('ITEMADRNULLTHISISTHEADRESS08158SOMECITY12345.X-ABLABEL',
-             Parameters(),
-             ''),
-        )
-
     def test_issue_157(self):
         """Issue #157 - Recurring rules and trailing semicolons
         https://github.com/collective/icalendar/pull/157
