@@ -14,7 +14,6 @@ except ModuleNotFoundError:
     from backports import zoneinfo
 
 class TestIssues(unittest.TestCase):
-
     def test_issue_53(self):
         """Issue #53 - Parsing failure on some descriptions?
         https://github.com/collective/icalendar/issues/53
@@ -102,31 +101,6 @@ END:VTIMEZONE"""
             event.to_ical(),
             b"BEGIN:VEVENT\r\nSUMMARY:\xc3\xa5\xc3\xa4\xc3\xb6\r\n"
             b"DTSTART;VALUE=DATE-TIME:20120903T000000\r\nEND:VEVENT\r\n"
-        )
-
-    def test_issue_70(self):
-        """Issue #70 - e.decode("RRULE") causes Attribute Error
-        https://github.com/collective/icalendar/issues/70
-        """
-
-        ical_str = """BEGIN:VEVENT
-CREATED:20081114T072804Z
-UID:D449CA84-00A3-4E55-83E1-34B58268853B
-DTEND:20070220T180000
-RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20070619T225959
-TRANSP:OPAQUE
-SUMMARY:Esb mellon phone conf
-DTSTART:20070220T170000
-DTSTAMP:20070221T095412Z
-SEQUENCE:0
-END:VEVENT"""
-
-        cal = icalendar.Calendar.from_ical(ical_str)
-        recur = cal.decoded("RRULE")
-        self.assertIsInstance(recur, icalendar.vRecur)
-        self.assertEqual(
-            recur.to_ical(),
-            b'FREQ=WEEKLY;UNTIL=20070619T225959;INTERVAL=1'
         )
 
     def test_issue_82(self):
