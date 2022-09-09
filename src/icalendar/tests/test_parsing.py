@@ -9,7 +9,7 @@ try:
 except ModuleNotFoundError:
     from backports import zoneinfo
 
-from icalendar import Event, vBinary, Calendar
+from icalendar import Event, vBinary, Calendar, vRecur
 from icalendar.parser import Contentline, Parameters
 
 def test_description_parsed_properly_issue_53(events):
@@ -112,4 +112,13 @@ def test_raises_value_error_for_properties_without_parent_pull_179():
 ])
 def test_content_lines_parsed_properly(raw_content_line, expected_output):
     assert Contentline.from_ical(raw_content_line).parts() == expected_output
+
+def test_issue_157_removes_trailing_semicolon(events):
+    '''Issue #157 - Recurring rules and trailing semicolons
+
+    https://github.com/collective/icalendar/pull/157
+    '''
+    recur = events.issue_157_removes_trailing_semicolon.decoded("RRULE")
+    assert isinstance(recur, vRecur)
+    assert recur.to_ical() == b'FREQ=YEARLY;BYDAY=1SU;BYMONTH=11'
 
