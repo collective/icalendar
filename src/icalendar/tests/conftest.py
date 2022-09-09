@@ -15,7 +15,9 @@ class DataSource:
             attribute_name = name.replace('-', '_')
             with open(source_path, 'rb') as f:
                 try:
-                    source = parser(f.read())
+                    raw_ics = f.read()
+                    source = parser(raw_ics)
+                    source.raw_ics = raw_ics
                     setattr(self, attribute_name, source)
                 except ValueError as error:
                     LOGGER.error(f'Could not load {source_file} due to {error}')

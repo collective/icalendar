@@ -39,25 +39,6 @@ END:VTIMEZONE"""
             b'END:STANDARD\r\n'
             b'END:VTIMEZONE\r\n')
 
-    def test_issue_58(self):
-        """Issue #58 - TZID on UTC DATE-TIMEs
-        https://github.com/collective/icalendar/issues/58
-        """
-
-        # According to RFC 2445: "The TZID property parameter MUST NOT be
-        # applied to DATE-TIME or TIME properties whose time values are
-        # specified in UTC."
-
-        event = icalendar.Event()
-        dt = pytz.utc.localize(datetime.datetime(2012, 7, 16, 0, 0, 0))
-        event.add('dtstart', dt)
-        self.assertEqual(
-            event.to_ical(),
-            b"BEGIN:VEVENT\r\n"
-            b"DTSTART;VALUE=DATE-TIME:20120716T000000Z\r\n"
-            b"END:VEVENT\r\n"
-        )
-
     def test_issue_64(self):
         """Issue #64 - Event.to_ical() fails for unicode strings
         https://github.com/collective/icalendar/issues/64
