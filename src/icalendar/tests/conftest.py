@@ -4,6 +4,14 @@ import logging
 import pytest
 import icalendar
 
+import pytz
+from datetime import datetime
+from dateutil import tz
+try:
+    import zoneinfo
+except ModuleNotFoundError:
+    from backports import zoneinfo
+
 LOGGER = logging.getLogger(__name__)
 
 class DataSource:
@@ -40,4 +48,13 @@ def timezones():
 @pytest.fixture
 def events():
     return DataSource(EVENTS_FOLDER, icalendar.Event.from_ical)
+
+@pytest.fixture(params=[
+    pytz.utc,
+    zoneinfo.ZoneInfo('UTC'),
+    pytz.timezone('UTC'),
+    tz.UTC,
+    tz.gettz('UTC')])
+def utc(request):
+    return request.param
 
