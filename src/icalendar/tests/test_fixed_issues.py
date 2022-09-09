@@ -95,48 +95,6 @@ END:VCALENDAR"""
             b'END:VEVENT\r\nEND:VCALENDAR\r\n'
         )
 
-    def test_issue_178(self):
-        """Issue #178 - A component with an unknown/invalid name is represented
-        as one of the known components, the information about the original
-        component name is lost.
-        https://github.com/collective/icalendar/issues/178
-        https://github.com/collective/icalendar/pull/180
-        """
-
-        # Parsing of a nonstandard component
-        ical_str = '\r\n'.join(['BEGIN:MYCOMP', 'END:MYCOMP'])
-        cal = icalendar.Calendar.from_ical(ical_str)
-        self.assertEqual(cal.to_ical(),
-                         b'BEGIN:MYCOMP\r\nEND:MYCOMP\r\n')
-
-        # Nonstandard component inside other components, also has properties
-        ical_str = '\r\n'.join(['BEGIN:VCALENDAR',
-                                'BEGIN:UNKNOWN',
-                                'UID:1234',
-                                'END:UNKNOWN',
-                                'END:VCALENDAR'])
-
-        cal = icalendar.Calendar.from_ical(ical_str)
-        self.assertEqual(cal.errors, [])
-        self.assertEqual(cal.to_ical(),
-                         b'BEGIN:VCALENDAR\r\nBEGIN:UNKNOWN\r\nUID:1234\r\n'
-                         b'END:UNKNOWN\r\nEND:VCALENDAR\r\n')
-
-        # Nonstandard component is able to contain other components
-        ical_str = '\r\n'.join(['BEGIN:MYCOMPTOO',
-                                'DTSTAMP:20150121T080000',
-                                'BEGIN:VEVENT',
-                                'UID:12345',
-                                'DTSTART:20150122',
-                                'END:VEVENT',
-                                'END:MYCOMPTOO'])
-        cal = icalendar.Calendar.from_ical(ical_str)
-        self.assertEqual(cal.errors, [])
-        self.assertEqual(cal.to_ical(),
-                         b'BEGIN:MYCOMPTOO\r\nDTSTAMP:20150121T080000\r\n'
-                         b'BEGIN:VEVENT\r\nDTSTART:20150122\r\nUID:12345\r\n'
-                         b'END:VEVENT\r\nEND:MYCOMPTOO\r\n')
-
     def test_issue_184(self):
         """Issue #184 - Previous changes in code broke already broken
         representation of PERIOD values - in a new way"""

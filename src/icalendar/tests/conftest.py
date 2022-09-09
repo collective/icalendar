@@ -29,6 +29,7 @@ CALENDARS_FOLDER = os.path.join(HERE, 'calendars')
 
 TIMEZONES = DataSource(TIMEZONES_FOLDER, icalendar.Timezone.from_ical)
 EVENTS = DataSource(EVENTS_FOLDER, icalendar.Event.from_ical)
+CALENDARS = DataSource(CALENDARS_FOLDER, icalendar.Calendar.from_ical)
 
 @pytest.fixture
 def timezones():
@@ -37,6 +38,10 @@ def timezones():
 @pytest.fixture
 def events():
     return EVENTS
+
+@pytest.fixture
+def calendars():
+    return CALENDARS
 
 @pytest.fixture
 def calendars_folder():
