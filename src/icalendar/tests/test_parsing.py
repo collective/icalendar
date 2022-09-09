@@ -144,3 +144,13 @@ def test_calendar_to_ical_is_inverse_of_from_ical(calendars, calendar_name):
 def test_event_to_ical_is_inverse_of_from_ical(events, event_name):
     event = getattr(events, event_name)
     assert event.to_ical() == event.raw_ics
+
+@pytest.mark.parametrize('timezone_file', [
+    # Issue #55 - Parse error on utc-offset with seconds value
+    # see https://github.com/collective/icalendar/issues/55
+    'issue_55_parse_error_on_utc_offset_with_seconds',
+])
+def test_timezones_to_ical_is_inverse_of_from_ical(timezones, timezone_file):
+    timezone = getattr(timezones, timezone_file)
+    assert timezone.to_ical() == timezone.raw_ics
+
