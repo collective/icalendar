@@ -13,31 +13,6 @@ except ModuleNotFoundError:
     from backports import zoneinfo
 
 class TestIssues(unittest.TestCase):
-    def test_issue_70(self):
-        """Issue #70 - e.decode("RRULE") causes Attribute Error
-        https://github.com/collective/icalendar/issues/70
-        """
-
-        ical_str = """BEGIN:VEVENT
-CREATED:20081114T072804Z
-UID:D449CA84-00A3-4E55-83E1-34B58268853B
-DTEND:20070220T180000
-RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20070619T225959
-TRANSP:OPAQUE
-SUMMARY:Esb mellon phone conf
-DTSTART:20070220T170000
-DTSTAMP:20070221T095412Z
-SEQUENCE:0
-END:VEVENT"""
-
-        cal = icalendar.Calendar.from_ical(ical_str)
-        recur = cal.decoded("RRULE")
-        self.assertIsInstance(recur, icalendar.vRecur)
-        self.assertEqual(
-            recur.to_ical(),
-            b'FREQ=WEEKLY;UNTIL=20070619T225959;INTERVAL=1'
-        )
-
     def test_issue_237(self):
         """Issue #237 - Fail to parse timezone with non-ascii TZID"""
 
