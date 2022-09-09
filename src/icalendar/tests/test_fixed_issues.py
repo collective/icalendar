@@ -146,15 +146,6 @@ END:VEVENT"""
             b"VALUE=BINARY:dGV4dA==\r\nEND:VEVENT\r\n"
         )
 
-    def test_issue_100(self):
-        """Issue #100 - Transformed doctests into unittests, Test fixes and
-                        cleanup.
-        https://github.com/collective/icalendar/pull/100
-        """
-
-        ical_content = "BEGIN:VEVENT\r\nSUMMARY;LANGUAGE=ru:te\r\nEND:VEVENT"
-        icalendar.Event.from_ical(ical_content).to_ical()
-
     def test_issue_101(self):
         """Issue #101 - icalendar is choking on umlauts in ORGANIZER
 
@@ -417,26 +408,6 @@ END:VCALENDAR"""
                          b'BEGIN:MYCOMPTOO\r\nDTSTAMP:20150121T080000\r\n'
                          b'BEGIN:VEVENT\r\nDTSTART:20150122\r\nUID:12345\r\n'
                          b'END:VEVENT\r\nEND:MYCOMPTOO\r\n')
-
-    def test_issue_184(self):
-        """Issue #184 - Previous changes in code broke already broken
-        representation of PERIOD values - in a new way"""
-
-        ical_str = ['BEGIN:VEVENT',
-                    'DTSTAMP:20150219T133000',
-                    'DTSTART:20150219T133000',
-                    'UID:1234567',
-                    'RDATE;VALUE=PERIOD:20150219T133000/PT10H',
-                    'END:VEVENT']
-
-        event = icalendar.Event.from_ical('\r\n'.join(ical_str))
-        self.assertEqual(event.errors, [])
-        self.assertEqual(event.to_ical(),
-                         b'BEGIN:VEVENT\r\nDTSTART:20150219T133000\r\n'
-                         b'DTSTAMP:20150219T133000\r\nUID:1234567\r\n'
-                         b'RDATE;VALUE=PERIOD:20150219T133000/PT10H\r\n'
-                         b'END:VEVENT\r\n'
-                         )
 
     def test_issue_237(self):
         """Issue #237 - Fail to parse timezone with non-ascii TZID"""
