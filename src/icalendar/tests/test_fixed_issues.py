@@ -79,31 +79,6 @@ END:VTIMEZONE"""
             b"END:VEVENT\r\n"
         )
 
-    def test_issue_64(self):
-        """Issue #64 - Event.to_ical() fails for unicode strings
-        https://github.com/collective/icalendar/issues/64
-        """
-
-        # Non-unicode characters
-        event = icalendar.Event()
-        event.add("dtstart", datetime.datetime(2012, 9, 3, 0, 0, 0))
-        event.add("summary", "abcdef")
-        self.assertEqual(
-            event.to_ical(),
-            b"BEGIN:VEVENT\r\nSUMMARY:abcdef\r\nDTSTART;VALUE=DATE-TIME:"
-            b"20120903T000000\r\nEND:VEVENT\r\n"
-        )
-
-        # Unicode characters
-        event = icalendar.Event()
-        event.add("dtstart", datetime.datetime(2012, 9, 3, 0, 0, 0))
-        event.add("summary", "åäö")
-        self.assertEqual(
-            event.to_ical(),
-            b"BEGIN:VEVENT\r\nSUMMARY:\xc3\xa5\xc3\xa4\xc3\xb6\r\n"
-            b"DTSTART;VALUE=DATE-TIME:20120903T000000\r\nEND:VEVENT\r\n"
-        )
-
     def test_issue_70(self):
         """Issue #70 - e.decode("RRULE") causes Attribute Error
         https://github.com/collective/icalendar/issues/70

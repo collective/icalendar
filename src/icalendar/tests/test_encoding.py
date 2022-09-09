@@ -1,5 +1,7 @@
 import unittest
 
+import pytest
+
 import datetime
 import icalendar
 import os
@@ -88,3 +90,19 @@ class TestEncoding(unittest.TestCase):
             + b'\xc3\xa4\xc3\xb6\xc3\xbc\xc3\x9f\xc3\x84\xc3\x96\xc3\x9c\r\n'
             + b'END:VEVENT\r\nEND:VCALENDAR\r\n'
         )
+
+@pytest.mark.parametrize('summary, event_name', [
+    # Non-unicode characters in summary
+    ('abcdef', 'issue_64_event_with_non_unicode_summary'),
+    # Unicode characters in summary
+    ('åäö', 'issue_64_event_with_unicode_summary')
+])
+def test_events_summary_unicoded_issue_64(events, summary, event_name):
+    '''Issue #64 - Event.to_ical() fails for unicode strings
+
+    https://github.com/collective/icalendar/issues/64
+    '''
+    event = icalendar.Event()
+    event.add("summary", summary)
+    assert event.to_ical() == getattr(events, event_name).raw_ics
+
