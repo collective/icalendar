@@ -91,18 +91,21 @@ class TestEncoding(unittest.TestCase):
             + b'END:VEVENT\r\nEND:VCALENDAR\r\n'
         )
 
-@pytest.mark.parametrize('summary, event_name', [
+@pytest.mark.parametrize('event_name', [
     # Non-unicode characters in summary
-    ('abcdef', 'issue_64_event_with_non_unicode_summary'),
+    'issue_64_event_with_non_unicode_summary',
     # Unicode characters in summary
-    ('åäö', 'issue_64_event_with_unicode_summary')
+    'issue_64_event_with_unicode_summary',
+    # chokes on umlauts in ORGANIZER
+    'issue_101_icalendar_chokes_on_umlauts_in_organizer'
 ])
-def test_events_summary_unicoded_issue_64(events, summary, event_name):
+def test_events_unicoded(events, event_name):
     '''Issue #64 - Event.to_ical() fails for unicode strings
+       Issue #101 - icalendar is choking on umlauts in ORGANIZER
 
     https://github.com/collective/icalendar/issues/64
+    https://github.com/collective/icalendar/issues/101
     '''
-    event = icalendar.Event()
-    event.add("summary", summary)
-    assert event.to_ical() == getattr(events, event_name).raw_ics
+    event = getattr(events, event_name)
+    assert event.to_ical() == event.raw_ics
 

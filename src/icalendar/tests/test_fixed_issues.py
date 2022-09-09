@@ -73,36 +73,6 @@ END:VEVENT"""
         ical_content = "BEGIN:VEVENT\r\nSUMMARY;LANGUAGE=ru:te\r\nEND:VEVENT"
         icalendar.Event.from_ical(ical_content).to_ical()
 
-    def test_issue_101(self):
-        """Issue #101 - icalendar is choking on umlauts in ORGANIZER
-
-        https://github.com/collective/icalendar/issues/101
-        """
-        ical_str = r"""BEGIN:VCALENDAR
-VERSION:2.0
-X-WR-CALNAME:Kalender von acme\, admin
-PRODID:-//The Horde Project//Horde_iCalendar Library\, Horde 3.3.5//EN
-METHOD:PUBLISH
-BEGIN:VEVENT
-DTSTART:20130416T100000Z
-DTEND:20130416T110000Z
-DTSTAMP:20130416T092616Z
-UID:20130416112341.10064jz0k4j7uem8@acmenet.de
-CREATED:20130416T092341Z
-LAST-MODIFIED:20130416T092341Z
-SUMMARY:wichtiger termin 1
-ORGANIZER;CN="acme, ädmin":mailto:adm-acme@mydomain.de
-LOCATION:im büro
-CLASS:PUBLIC
-STATUS:CONFIRMED
-TRANSP:OPAQUE
-END:VEVENT
-END:VCALENDAR"""
-
-        cal = icalendar.Calendar.from_ical(ical_str)
-        org_cn = cal.walk('VEVENT')[0]['ORGANIZER'].params['CN']
-        self.assertEqual(org_cn, 'acme, ädmin')
-
     def test_issue_104__ignore_exceptions(self):
         """
         Issue #104 - line parsing error in a VEVENT
