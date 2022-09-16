@@ -18,7 +18,9 @@ class DataSource:
             source_path = os.path.join(self.__dict__['_data_source_folder'], source_file)
             with open(source_path, 'rb') as f:
                 try:
-                    source = self.__dict__['_parser'](f.read())
+                    raw_ics = f.read()
+                    source = self.__dict__['_parser'](raw_ics)
+                    source.raw_ics = raw_ics
                     self.__dict__[attribute] = source
                 except ValueError as error:
                     LOGGER.error(f'Could not load {source_file} due to {error}')
