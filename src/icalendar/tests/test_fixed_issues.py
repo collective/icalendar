@@ -14,26 +14,6 @@ except ModuleNotFoundError:
     from backports import zoneinfo
 
 class TestIssues(unittest.TestCase):
-    def test_issue_53(self):
-        """Issue #53 - Parsing failure on some descriptions?
-        https://github.com/collective/icalendar/issues/53
-        """
-
-        directory = os.path.dirname(__file__)
-        ics = open(os.path.join(directory, 'issue_53_parsing_failure.ics'),
-                   'rb')
-        cal = icalendar.Calendar.from_ical(ics.read())
-        ics.close()
-
-        event = cal.walk('VEVENT')[0]
-        desc = event.get('DESCRIPTION')
-        self.assertTrue(b'July 12 at 6:30 PM' in desc.to_ical())
-
-        timezones = cal.walk('VTIMEZONE')
-        self.assertEqual(len(timezones), 1)
-        tz = timezones[0]
-        self.assertEqual(tz['tzid'].to_ical(), b"America/New_York")
-
     def test_issue_55(self):
         """Issue #55 - Parse error on utc-offset with seconds value
         https://github.com/collective/icalendar/issues/55
