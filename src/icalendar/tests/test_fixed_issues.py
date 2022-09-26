@@ -14,52 +14,6 @@ except ModuleNotFoundError:
     from backports import zoneinfo
 
 class TestIssues(unittest.TestCase):
-
-    def test_issue_53(self):
-        """Issue #53 - Parsing failure on some descriptions?
-        https://github.com/collective/icalendar/issues/53
-        """
-
-        directory = os.path.dirname(__file__)
-        ics = open(os.path.join(directory, 'issue_53_parsing_failure.ics'),
-                   'rb')
-        cal = icalendar.Calendar.from_ical(ics.read())
-        ics.close()
-
-        event = cal.walk('VEVENT')[0]
-        desc = event.get('DESCRIPTION')
-        self.assertTrue(b'July 12 at 6:30 PM' in desc.to_ical())
-
-        timezones = cal.walk('VTIMEZONE')
-        self.assertEqual(len(timezones), 1)
-        tz = timezones[0]
-        self.assertEqual(tz['tzid'].to_ical(), b"America/New_York")
-
-    def test_issue_55(self):
-        """Issue #55 - Parse error on utc-offset with seconds value
-        https://github.com/collective/icalendar/issues/55
-        """
-        ical_str = """BEGIN:VTIMEZONE
-TZID:America/Los Angeles
-BEGIN:STANDARD
-DTSTART:18831118T120702
-RDATE:18831118T120702
-TZNAME:PST
-TZOFFSETFROM:-075258
-TZOFFSETTO:-0800
-END:STANDARD
-END:VTIMEZONE"""
-
-        tz = icalendar.Timezone.from_ical(ical_str)
-        self.assertEqual(
-            tz.to_ical(),
-            b'BEGIN:VTIMEZONE\r\nTZID:America/Los Angeles\r\n'
-            b'BEGIN:STANDARD\r\n'
-            b'DTSTART:18831118T120702\r\nRDATE:18831118T120702\r\nTZNAME:PST'
-            b'\r\nTZOFFSETFROM:-075258\r\nTZOFFSETTO:-0800\r\n'
-            b'END:STANDARD\r\n'
-            b'END:VTIMEZONE\r\n')
-
     def test_issue_58(self):
         """Issue #58 - TZID on UTC DATE-TIMEs
         https://github.com/collective/icalendar/issues/58
@@ -312,15 +266,6 @@ END:VCALENDAR"""
             b'END:VEVENT\r\nEND:VCALENDAR\r\n'
         )
 
-    def test_index_error_issue(self):
-        """Found an issue where from_ical() would raise IndexError for
-        properties without parent components.
-        https://github.com/collective/icalendar/pull/179
-        """
-
-        with self.assertRaises(ValueError):
-            icalendar.Calendar.from_ical('VERSION:2.0')
-
     def test_issue_178(self):
         """Issue #178 - A component with an unknown/invalid name is represented
         as one of the known components, the information about the original
@@ -362,26 +307,6 @@ END:VCALENDAR"""
                          b'BEGIN:MYCOMPTOO\r\nDTSTAMP:20150121T080000\r\n'
                          b'BEGIN:VEVENT\r\nDTSTART:20150122\r\nUID:12345\r\n'
                          b'END:VEVENT\r\nEND:MYCOMPTOO\r\n')
-
-    def test_issue_184(self):
-        """Issue #184 - Previous changes in code broke already broken
-        representation of PERIOD values - in a new way"""
-
-        ical_str = ['BEGIN:VEVENT',
-                    'DTSTAMP:20150219T133000',
-                    'DTSTART:20150219T133000',
-                    'UID:1234567',
-                    'RDATE;VALUE=PERIOD:20150219T133000/PT10H',
-                    'END:VEVENT']
-
-        event = icalendar.Event.from_ical('\r\n'.join(ical_str))
-        self.assertEqual(event.errors, [])
-        self.assertEqual(event.to_ical(),
-                         b'BEGIN:VEVENT\r\nDTSTART:20150219T133000\r\n'
-                         b'DTSTAMP:20150219T133000\r\nUID:1234567\r\n'
-                         b'RDATE;VALUE=PERIOD:20150219T133000/PT10H\r\n'
-                         b'END:VEVENT\r\n'
-                         )
 
     def test_issue_237(self):
         """Issue #237 - Fail to parse timezone with non-ascii TZID"""
