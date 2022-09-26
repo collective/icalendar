@@ -14,31 +14,6 @@ except ModuleNotFoundError:
     from backports import zoneinfo
 
 class TestIssues(unittest.TestCase):
-    def test_issue_55(self):
-        """Issue #55 - Parse error on utc-offset with seconds value
-        https://github.com/collective/icalendar/issues/55
-        """
-        ical_str = """BEGIN:VTIMEZONE
-TZID:America/Los Angeles
-BEGIN:STANDARD
-DTSTART:18831118T120702
-RDATE:18831118T120702
-TZNAME:PST
-TZOFFSETFROM:-075258
-TZOFFSETTO:-0800
-END:STANDARD
-END:VTIMEZONE"""
-
-        tz = icalendar.Timezone.from_ical(ical_str)
-        self.assertEqual(
-            tz.to_ical(),
-            b'BEGIN:VTIMEZONE\r\nTZID:America/Los Angeles\r\n'
-            b'BEGIN:STANDARD\r\n'
-            b'DTSTART:18831118T120702\r\nRDATE:18831118T120702\r\nTZNAME:PST'
-            b'\r\nTZOFFSETFROM:-075258\r\nTZOFFSETTO:-0800\r\n'
-            b'END:STANDARD\r\n'
-            b'END:VTIMEZONE\r\n')
-
     def test_issue_58(self):
         """Issue #58 - TZID on UTC DATE-TIMEs
         https://github.com/collective/icalendar/issues/58
@@ -81,31 +56,6 @@ END:VTIMEZONE"""
             event.to_ical(),
             b"BEGIN:VEVENT\r\nSUMMARY:\xc3\xa5\xc3\xa4\xc3\xb6\r\n"
             b"DTSTART;VALUE=DATE-TIME:20120903T000000\r\nEND:VEVENT\r\n"
-        )
-
-    def test_issue_70(self):
-        """Issue #70 - e.decode("RRULE") causes Attribute Error
-        https://github.com/collective/icalendar/issues/70
-        """
-
-        ical_str = """BEGIN:VEVENT
-CREATED:20081114T072804Z
-UID:D449CA84-00A3-4E55-83E1-34B58268853B
-DTEND:20070220T180000
-RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20070619T225959
-TRANSP:OPAQUE
-SUMMARY:Esb mellon phone conf
-DTSTART:20070220T170000
-DTSTAMP:20070221T095412Z
-SEQUENCE:0
-END:VEVENT"""
-
-        cal = icalendar.Calendar.from_ical(ical_str)
-        recur = cal.decoded("RRULE")
-        self.assertIsInstance(recur, icalendar.vRecur)
-        self.assertEqual(
-            recur.to_ical(),
-            b'FREQ=WEEKLY;UNTIL=20070619T225959;INTERVAL=1'
         )
 
     def test_issue_82(self):
@@ -336,15 +286,6 @@ END:VCALENDAR"""
             b'DTEND:20150905T100000Z\r\nUID:123\r\n'
             b'END:VEVENT\r\nEND:VCALENDAR\r\n'
         )
-
-    def test_index_error_issue(self):
-        """Found an issue where from_ical() would raise IndexError for
-        properties without parent components.
-        https://github.com/collective/icalendar/pull/179
-        """
-
-        with self.assertRaises(ValueError):
-            icalendar.Calendar.from_ical('VERSION:2.0')
 
     def test_issue_178(self):
         """Issue #178 - A component with an unknown/invalid name is represented
