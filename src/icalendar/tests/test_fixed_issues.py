@@ -296,15 +296,6 @@ END:VCALENDAR"""
             b'END:VEVENT\r\nEND:VCALENDAR\r\n'
         )
 
-    def test_index_error_issue(self):
-        """Found an issue where from_ical() would raise IndexError for
-        properties without parent components.
-        https://github.com/collective/icalendar/pull/179
-        """
-
-        with self.assertRaises(ValueError):
-            icalendar.Calendar.from_ical('VERSION:2.0')
-
     def test_issue_178(self):
         """Issue #178 - A component with an unknown/invalid name is represented
         as one of the known components, the information about the original
