@@ -10,7 +10,8 @@ from icalendar import vRecur
 ])
 def test_event_to_ical_is_inverse_of_from_ical(events, event_name):
     """Make sure that an event's ICS is equal to the ICS it was made from."""
-    assert events[event_name].to_ical() == event.raw_ics
+    event = events[event_name]
+    assert event.to_ical() == event.raw_ics
 
 def test_decode_rrule_attribute_error_issue_70(events):
     # Issue #70 - e.decode("RRULE") causes Attribute Error
