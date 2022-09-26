@@ -28,28 +28,27 @@ class TestTools(unittest.TestCase):
         self.assertTrue(len(txt) == length)
         self.assertTrue(b'-/path/to/content@Example.ORG' in txt)
 
-@pytest.mark.parametrize('host_name, unique', [
-    ('example.com', ''),
-    ('test.test', ''),
-    ('example.com', '123'),
-    ('test.test', '123')
+
+@pytest.mark.parametrize('split,expected,args,kw', [
+    # default argument host_name
+    ("@", "example.com", (), {},),
+    ("@", "example.com", ("example.com",), {}),
+    ("@", "example.com", (), {"host_name":"example.com"}),
+    # replaced host_name
+    ("@", "test.test", ("test.test",), {}),
+    ("@", "test.test", (), {"host_name":"test.test"}),
+    # replace unique
+    ("-", "123@example.com", (), {"unique": "123"},),
+    ("-", "abc@example.com", (), {"unique": "abc"},),
+    # replace host_name and unique
+    ("-", "1234@test.icalendar", (), {"unique": "1234", "host_name":"test.icalendar"},),
+    ("-", "abc@test.example.com", ("test.example.com", "abc"), {},),
+
 ])
-def test_uid_generator_uses_host_name(host_name, unique):
+def test_uid_generator_issue_345(args, kw, split, expected):
     '''Issue #345 - Why is tools.UIDGenerator a class (that must be instantiated) instead of a module?
 
     see https://github.com/collective/icalendar/issues/345
     '''
-    uid = UIDGenerator.uid(host_name=host_name, unique=unique)
-    assert uid.split('@')[1] == host_name
-
-@pytest.mark.parametrize('host_name, unique', [
-    ('example.com', '123'),
-    ('test.test', '123')
-])
-def test_uid_generator_uses_unique(host_name, unique):
-    '''Issue #345 - Why is tools.UIDGenerator a class (that must be instantiated) instead of a module?
-
-    see https://github.com/collective/icalendar/issues/345
-    '''
-    uid = UIDGenerator.uid(host_name=host_name, unique=unique)
-    assert uid.split('-')[1] == f'{unique}@{host_name}'
+    uid = UIDGenerator.uid(*args, **kw)
+    assert uid.split(split)[1] == expected
