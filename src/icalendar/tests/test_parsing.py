@@ -21,3 +21,9 @@ def test_tzid_parsed_properly_issue_53(timezones):
     https://github.com/collective/icalendar/issues/53
     '''
     assert timezones.issue_53_tzid_parsed_properly['tzid'].to_ical() == b'America/New_York'
+    
+def test_timezones_to_ical_is_inverse_of_from_ical(timezones):
+    '''Issue #55 - Parse error on utc-offset with seconds value
+     see https://github.com/collective/icalendar/issues/55'''
+    timezone = timezones['issue_55_parse_error_on_utc_offset_with_seconds']
+    assert timezone.to_ical() == timezone.raw_ics
