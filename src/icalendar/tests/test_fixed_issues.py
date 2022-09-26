@@ -33,31 +33,6 @@ class TestIssues(unittest.TestCase):
             b"END:VEVENT\r\n"
         )
 
-    def test_issue_70(self):
-        """Issue #70 - e.decode("RRULE") causes Attribute Error
-        https://github.com/collective/icalendar/issues/70
-        """
-
-        ical_str = """BEGIN:VEVENT
-CREATED:20081114T072804Z
-UID:D449CA84-00A3-4E55-83E1-34B58268853B
-DTEND:20070220T180000
-RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20070619T225959
-TRANSP:OPAQUE
-SUMMARY:Esb mellon phone conf
-DTSTART:20070220T170000
-DTSTAMP:20070221T095412Z
-SEQUENCE:0
-END:VEVENT"""
-
-        cal = icalendar.Calendar.from_ical(ical_str)
-        recur = cal.decoded("RRULE")
-        self.assertIsInstance(recur, icalendar.vRecur)
-        self.assertEqual(
-            recur.to_ical(),
-            b'FREQ=WEEKLY;UNTIL=20070619T225959;INTERVAL=1'
-        )
-
     def test_issue_82(self):
         """Issue #82 - vBinary __repr__ called rather than to_ical from
                        container types
@@ -74,15 +49,6 @@ END:VEVENT"""
             b"BEGIN:VEVENT\r\nATTACH;ENCODING=BASE64;FMTTYPE=text/plain;"
             b"VALUE=BINARY:dGV4dA==\r\nEND:VEVENT\r\n"
         )
-
-    def test_issue_100(self):
-        """Issue #100 - Transformed doctests into unittests, Test fixes and
-                        cleanup.
-        https://github.com/collective/icalendar/pull/100
-        """
-
-        ical_content = "BEGIN:VEVENT\r\nSUMMARY;LANGUAGE=ru:te\r\nEND:VEVENT"
-        icalendar.Event.from_ical(ical_content).to_ical()
 
     def test_issue_104__ignore_exceptions(self):
         """
