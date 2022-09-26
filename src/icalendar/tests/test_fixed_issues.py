@@ -33,31 +33,6 @@ class TestIssues(unittest.TestCase):
             b"END:VEVENT\r\n"
         )
 
-    def test_issue_64(self):
-        """Issue #64 - Event.to_ical() fails for unicode strings
-        https://github.com/collective/icalendar/issues/64
-        """
-
-        # Non-unicode characters
-        event = icalendar.Event()
-        event.add("dtstart", datetime.datetime(2012, 9, 3, 0, 0, 0))
-        event.add("summary", "abcdef")
-        self.assertEqual(
-            event.to_ical(),
-            b"BEGIN:VEVENT\r\nSUMMARY:abcdef\r\nDTSTART;VALUE=DATE-TIME:"
-            b"20120903T000000\r\nEND:VEVENT\r\n"
-        )
-
-        # Unicode characters
-        event = icalendar.Event()
-        event.add("dtstart", datetime.datetime(2012, 9, 3, 0, 0, 0))
-        event.add("summary", "åäö")
-        self.assertEqual(
-            event.to_ical(),
-            b"BEGIN:VEVENT\r\nSUMMARY:\xc3\xa5\xc3\xa4\xc3\xb6\r\n"
-            b"DTSTART;VALUE=DATE-TIME:20120903T000000\r\nEND:VEVENT\r\n"
-        )
-
     def test_issue_82(self):
         """Issue #82 - vBinary __repr__ called rather than to_ical from
                        container types
@@ -74,36 +49,6 @@ class TestIssues(unittest.TestCase):
             b"BEGIN:VEVENT\r\nATTACH;ENCODING=BASE64;FMTTYPE=text/plain;"
             b"VALUE=BINARY:dGV4dA==\r\nEND:VEVENT\r\n"
         )
-
-    def test_issue_101(self):
-        """Issue #101 - icalendar is choking on umlauts in ORGANIZER
-
-        https://github.com/collective/icalendar/issues/101
-        """
-        ical_str = r"""BEGIN:VCALENDAR
-VERSION:2.0
-X-WR-CALNAME:Kalender von acme\, admin
-PRODID:-//The Horde Project//Horde_iCalendar Library\, Horde 3.3.5//EN
-METHOD:PUBLISH
-BEGIN:VEVENT
-DTSTART:20130416T100000Z
-DTEND:20130416T110000Z
-DTSTAMP:20130416T092616Z
-UID:20130416112341.10064jz0k4j7uem8@acmenet.de
-CREATED:20130416T092341Z
-LAST-MODIFIED:20130416T092341Z
-SUMMARY:wichtiger termin 1
-ORGANIZER;CN="acme, ädmin":mailto:adm-acme@mydomain.de
-LOCATION:im büro
-CLASS:PUBLIC
-STATUS:CONFIRMED
-TRANSP:OPAQUE
-END:VEVENT
-END:VCALENDAR"""
-
-        cal = icalendar.Calendar.from_ical(ical_str)
-        org_cn = cal.walk('VEVENT')[0]['ORGANIZER'].params['CN']
-        self.assertEqual(org_cn, 'acme, ädmin')
 
     def test_issue_104__ignore_exceptions(self):
         """
