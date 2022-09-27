@@ -9,7 +9,8 @@ from icalendar import vRecur
     ('issue_184_broken_representation_of_period'),
 ])
 def test_event_to_ical_is_inverse_of_from_ical(events, event_name):
-    event = getattr(events, event_name)
+    """Make sure that an event's ICS is equal to the ICS it was made from."""
+    event = events[event_name]
     assert event.to_ical() == event.raw_ics
 
 def test_decode_rrule_attribute_error_issue_70(events):
