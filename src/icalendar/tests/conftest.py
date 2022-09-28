@@ -26,6 +26,9 @@ class DataSource:
                     LOGGER.error(f'Could not load {source_file} due to {error}')
         return self.__dict__[attribute]
 
+    def __getitem__(self, key):
+        return getattr(self, key)
+
     def __repr__(self):
         return repr(self.__dict__)
 
