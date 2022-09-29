@@ -46,7 +46,6 @@ def events():
     return DataSource(EVENTS_FOLDER, icalendar.Event.from_ical)
 
 @pytest.fixture
-def calendar_file(request):
-    print(request.param)
-    return os.path.join(CALENDARS_FOLDER, request.param)
+def calendars():
+    return DataSource(CALENDARS_FOLDER, icalendar.Calendar.from_ical)
 
