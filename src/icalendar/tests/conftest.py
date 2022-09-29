@@ -1,10 +1,8 @@
 import os
 import logging
-
 import pytest
 import icalendar
 
-LOGGER = logging.getLogger(__name__)
 
 class DataSource:
     '''A collection of parsed ICS elements (e.g calendars, timezones, events)'''
