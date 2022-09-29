@@ -49,54 +49,6 @@ class TestIssues(unittest.TestCase):
             b"VALUE=BINARY:dGV4dA==\r\nEND:VEVENT\r\n"
         )
 
-    def test_issue_104__ignore_exceptions(self):
-        """
-        Issue #104 - line parsing error in a VEVENT
-        (which has ignore_exceptions). Should mark the event broken
-        but not raise an exception.
-        https://github.com/collective/icalendar/issues/104
-        """
-        ical_str = """
-BEGIN:VEVENT
-DTSTART:20140401T000000Z
-DTEND:20140401T010000Z
-DTSTAMP:20140401T000000Z
-SUMMARY:Broken Eevnt
-CLASS:PUBLIC
-STATUS:CONFIRMED
-TRANSP:OPAQUE
-X
-END:VEVENT"""
-        event = icalendar.Calendar.from_ical(ical_str)
-        self.assertTrue(isinstance(event, icalendar.Event))
-        self.assertTrue(event.is_broken)  # REMOVE FOR NEXT MAJOR RELEASE
-        self.assertEqual(
-            event.errors,
-            [(None, "Content line could not be parsed into parts: 'X': Invalid content line")]  # noqa
-        )
-
-    def test_issue_104__no_ignore_exceptions(self):
-        """
-        Issue #104 - line parsing error in a VCALENDAR
-        (which doesn't have ignore_exceptions). Should raise an exception.
-        """
-        ical_str = """BEGIN:VCALENDAR
-VERSION:2.0
-METHOD:PUBLISH
-BEGIN:VEVENT
-DTSTART:20140401T000000Z
-DTEND:20140401T010000Z
-DTSTAMP:20140401T000000Z
-SUMMARY:Broken Eevnt
-CLASS:PUBLIC
-STATUS:CONFIRMED
-TRANSP:OPAQUE
-END:VEVENT
-X
-END:VCALENDAR"""
-        with self.assertRaises(ValueError):
-            icalendar.Calendar.from_ical(ical_str)
-
     def test_issue_116(self):
         """Issue #116/#117 - How to add 'X-APPLE-STRUCTURED-LOCATION'
         https://github.com/collective/icalendar/issues/116
