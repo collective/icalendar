@@ -1,9 +1,9 @@
 '''Tests checking that parsing works'''
 import pytest
-from icalendar import Calendar
-from icalendar import vRecur
-from icalendar import vBinary
+from icalendar import Calendar, vRecur, vBinary, Event
+from datetime import datetime
 from icalendar.parser import Contentline, Parameters
+
 
 @pytest.mark.parametrize('raw_content_line, expected_output', [
     # Issue #142 - Multivalued parameters. This is needed for VCard 3.0.
@@ -22,6 +22,7 @@ from icalendar.parser import Contentline, Parameters
 ])
 def test_content_lines_parsed_properly(raw_content_line, expected_output):
     assert Contentline.from_ical(raw_content_line).parts() == expected_output
+
 
 @pytest.mark.parametrize('timezone_info', [
     # General timezone aware dates in ical string
@@ -99,3 +100,22 @@ def test_timezones_to_ical_is_inverse_of_from_ical(timezones):
      see https://github.com/collective/icalendar/issues/55'''
     timezone = timezones['issue_55_parse_error_on_utc_offset_with_seconds']
     assert timezone.to_ical() == timezone.raw_ics
+
+@pytest.mark.parametrize('date, expected_output', [
+    (datetime(2012, 7, 16, 0, 0, 0), b'DTSTART;VALUE=DATE-TIME:20120716T000000Z'),
+    (datetime(2021, 11, 17, 15, 9, 15), b'DTSTART;VALUE=DATE-TIME:20211117T150915Z')
+])
+def test_no_tzid_when_utc(utc, date, expected_output):
+    '''Issue #58  - TZID on UTC DATE-TIMEs
+       Issue #335 - UTC timezone identification is broken
+
+    https://github.com/collective/icalendar/issues/58
+    https://github.com/collective/icalendar/issues/335
+    '''
+    # According to RFC 2445: "The TZID property parameter MUST NOT be
+    # applied to DATE-TIME or TIME properties whose time values are
+    # specified in UTC.
+    date = date.replace(tzinfo=utc)
+    event = Event()
+    event.add('dtstart', date)
+    assert expected_output in event.to_ical()

@@ -13,24 +13,6 @@ except ModuleNotFoundError:
     from backports import zoneinfo
 
 class TestIssues(unittest.TestCase):
-    def test_issue_58(self):
-        """Issue #58 - TZID on UTC DATE-TIMEs
-        https://github.com/collective/icalendar/issues/58
-        """
-
-        # According to RFC 2445: "The TZID property parameter MUST NOT be
-        # applied to DATE-TIME or TIME properties whose time values are
-        # specified in UTC."
-
-        event = icalendar.Event()
-        dt = pytz.utc.localize(datetime.datetime(2012, 7, 16, 0, 0, 0))
-        event.add('dtstart', dt)
-        self.assertEqual(
-            event.to_ical(),
-            b"BEGIN:VEVENT\r\n"
-            b"DTSTART;VALUE=DATE-TIME:20120716T000000Z\r\n"
-            b"END:VEVENT\r\n"
-        )
 
     def test_issue_82(self):
         """Issue #82 - vBinary __repr__ called rather than to_ical from
@@ -187,15 +169,3 @@ END:VCALENDAR"""
             expected_tzname = 'Brasília standard'.encode('ascii', 'replace')
         self.assertEqual(dtstart.tzinfo.zone, expected_zone)
         self.assertEqual(dtstart.tzname(), expected_tzname)
-
-@pytest.mark.parametrize("zone", [
-    pytz.utc,
-    zoneinfo.ZoneInfo('UTC'),
-    pytz.timezone('UTC'),
-    tz.UTC,
-    tz.gettz('UTC')])
-def test_issue_335_identify_UTC(zone):
-    myevent = icalendar.Event()
-    dt = datetime.datetime(2021, 11, 17, 15, 9, 15)
-    myevent.add('dtstart', dt.astimezone(zone))
-    assert 'DTSTART;VALUE=DATE-TIME:20211117T150915Z' in myevent.to_ical().decode('ASCII')
