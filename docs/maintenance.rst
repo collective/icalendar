@@ -71,6 +71,15 @@ You will need write access to the `PyPI project`_.
 6. TODO: how to release new version to PyPI.
 
 
+Links
+-----
+
+This section contains useful links for maintainers and contributors:
+
+- `Future of icalendar, looking for maintainer #360 <https://github.com/collective/icalendar/discussions/360>`__
+- `Team icalendar-admin <https://github.com/orgs/collective/teams/icalendar-admin>`__
+- `Team icalendar-contributor <https://github.com/orgs/collective/teams/icalendar-contributor>`__
+
 
 
 
