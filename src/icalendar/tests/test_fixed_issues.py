@@ -1,4 +1,3 @@
-from icalendar.parser_tools import to_unicode
 import unittest
 
 import datetime
@@ -14,99 +13,6 @@ except ModuleNotFoundError:
     from backports import zoneinfo
 
 class TestIssues(unittest.TestCase):
-    def test_issue_55(self):
-        """Issue #55 - Parse error on utc-offset with seconds value
-        https://github.com/collective/icalendar/issues/55
-        """
-        ical_str = """BEGIN:VTIMEZONE
-TZID:America/Los Angeles
-BEGIN:STANDARD
-DTSTART:18831118T120702
-RDATE:18831118T120702
-TZNAME:PST
-TZOFFSETFROM:-075258
-TZOFFSETTO:-0800
-END:STANDARD
-END:VTIMEZONE"""
-
-        tz = icalendar.Timezone.from_ical(ical_str)
-        self.assertEqual(
-            tz.to_ical(),
-            b'BEGIN:VTIMEZONE\r\nTZID:America/Los Angeles\r\n'
-            b'BEGIN:STANDARD\r\n'
-            b'DTSTART:18831118T120702\r\nRDATE:18831118T120702\r\nTZNAME:PST'
-            b'\r\nTZOFFSETFROM:-075258\r\nTZOFFSETTO:-0800\r\n'
-            b'END:STANDARD\r\n'
-            b'END:VTIMEZONE\r\n')
-
-    def test_issue_58(self):
-        """Issue #58 - TZID on UTC DATE-TIMEs
-        https://github.com/collective/icalendar/issues/58
-        """
-
-        # According to RFC 2445: "The TZID property parameter MUST NOT be
-        # applied to DATE-TIME or TIME properties whose time values are
-        # specified in UTC."
-
-        event = icalendar.Event()
-        dt = pytz.utc.localize(datetime.datetime(2012, 7, 16, 0, 0, 0))
-        event.add('dtstart', dt)
-        self.assertEqual(
-            event.to_ical(),
-            b"BEGIN:VEVENT\r\n"
-            b"DTSTART;VALUE=DATE-TIME:20120716T000000Z\r\n"
-            b"END:VEVENT\r\n"
-        )
-
-    def test_issue_64(self):
-        """Issue #64 - Event.to_ical() fails for unicode strings
-        https://github.com/collective/icalendar/issues/64
-        """
-
-        # Non-unicode characters
-        event = icalendar.Event()
-        event.add("dtstart", datetime.datetime(2012, 9, 3, 0, 0, 0))
-        event.add("summary", "abcdef")
-        self.assertEqual(
-            event.to_ical(),
-            b"BEGIN:VEVENT\r\nSUMMARY:abcdef\r\nDTSTART;VALUE=DATE-TIME:"
-            b"20120903T000000\r\nEND:VEVENT\r\n"
-        )
-
-        # Unicode characters
-        event = icalendar.Event()
-        event.add("dtstart", datetime.datetime(2012, 9, 3, 0, 0, 0))
-        event.add("summary", "åäö")
-        self.assertEqual(
-            event.to_ical(),
-            b"BEGIN:VEVENT\r\nSUMMARY:\xc3\xa5\xc3\xa4\xc3\xb6\r\n"
-            b"DTSTART;VALUE=DATE-TIME:20120903T000000\r\nEND:VEVENT\r\n"
-        )
-
-    def test_issue_70(self):
-        """Issue #70 - e.decode("RRULE") causes Attribute Error
-        https://github.com/collective/icalendar/issues/70
-        """
-
-        ical_str = """BEGIN:VEVENT
-CREATED:20081114T072804Z
-UID:D449CA84-00A3-4E55-83E1-34B58268853B
-DTEND:20070220T180000
-RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20070619T225959
-TRANSP:OPAQUE
-SUMMARY:Esb mellon phone conf
-DTSTART:20070220T170000
-DTSTAMP:20070221T095412Z
-SEQUENCE:0
-END:VEVENT"""
-
-        cal = icalendar.Calendar.from_ical(ical_str)
-        recur = cal.decoded("RRULE")
-        self.assertIsInstance(recur, icalendar.vRecur)
-        self.assertEqual(
-            recur.to_ical(),
-            b'FREQ=WEEKLY;UNTIL=20070619T225959;INTERVAL=1'
-        )
 
     def test_issue_82(self):
         """Issue #82 - vBinary __repr__ called rather than to_ical from
@@ -124,119 +30,6 @@ END:VEVENT"""
             b"BEGIN:VEVENT\r\nATTACH;ENCODING=BASE64;FMTTYPE=text/plain;"
             b"VALUE=BINARY:dGV4dA==\r\nEND:VEVENT\r\n"
         )
-
-    def test_issue_100(self):
-        """Issue #100 - Transformed doctests into unittests, Test fixes and
-                        cleanup.
-        https://github.com/collective/icalendar/pull/100
-        """
-
-        ical_content = "BEGIN:VEVENT\r\nSUMMARY;LANGUAGE=ru:te\r\nEND:VEVENT"
-        icalendar.Event.from_ical(ical_content).to_ical()
-
-    def test_issue_101(self):
-        """Issue #101 - icalendar is choking on umlauts in ORGANIZER
-
-        https://github.com/collective/icalendar/issues/101
-        """
-        ical_str = r"""BEGIN:VCALENDAR
-VERSION:2.0
-X-WR-CALNAME:Kalender von acme\, admin
-PRODID:-//The Horde Project//Horde_iCalendar Library\, Horde 3.3.5//EN
-METHOD:PUBLISH
-BEGIN:VEVENT
-DTSTART:20130416T100000Z
-DTEND:20130416T110000Z
-DTSTAMP:20130416T092616Z
-UID:20130416112341.10064jz0k4j7uem8@acmenet.de
-CREATED:20130416T092341Z
-LAST-MODIFIED:20130416T092341Z
-SUMMARY:wichtiger termin 1
-ORGANIZER;CN="acme, ädmin":mailto:adm-acme@mydomain.de
-LOCATION:im büro
-CLASS:PUBLIC
-STATUS:CONFIRMED
-TRANSP:OPAQUE
-END:VEVENT
-END:VCALENDAR"""
-
-        cal = icalendar.Calendar.from_ical(ical_str)
-        org_cn = cal.walk('VEVENT')[0]['ORGANIZER'].params['CN']
-        self.assertEqual(org_cn, 'acme, ädmin')
-
-    def test_issue_104__ignore_exceptions(self):
-        """
-        Issue #104 - line parsing error in a VEVENT
-        (which has ignore_exceptions). Should mark the event broken
-        but not raise an exception.
-        https://github.com/collective/icalendar/issues/104
-        """
-        ical_str = """
-BEGIN:VEVENT
-DTSTART:20140401T000000Z
-DTEND:20140401T010000Z
-DTSTAMP:20140401T000000Z
-SUMMARY:Broken Eevnt
-CLASS:PUBLIC
-STATUS:CONFIRMED
-TRANSP:OPAQUE
-X
-END:VEVENT"""
-        event = icalendar.Calendar.from_ical(ical_str)
-        self.assertTrue(isinstance(event, icalendar.Event))
-        self.assertTrue(event.is_broken)  # REMOVE FOR NEXT MAJOR RELEASE
-        self.assertEqual(
-            event.errors,
-            [(None, "Content line could not be parsed into parts: 'X': Invalid content line")]  # noqa
-        )
-
-    def test_issue_104__no_ignore_exceptions(self):
-        """
-        Issue #104 - line parsing error in a VCALENDAR
-        (which doesn't have ignore_exceptions). Should raise an exception.
-        """
-        ical_str = """BEGIN:VCALENDAR
-VERSION:2.0
-METHOD:PUBLISH
-BEGIN:VEVENT
-DTSTART:20140401T000000Z
-DTEND:20140401T010000Z
-DTSTAMP:20140401T000000Z
-SUMMARY:Broken Eevnt
-CLASS:PUBLIC
-STATUS:CONFIRMED
-TRANSP:OPAQUE
-END:VEVENT
-X
-END:VCALENDAR"""
-        with self.assertRaises(ValueError):
-            icalendar.Calendar.from_ical(ical_str)
-
-    def test_issue_112(self):
-        """Issue #112 - No timezone info on EXDATE
-        https://github.com/collective/icalendar/issues/112
-        """
-        directory = os.path.dirname(__file__)
-        path = os.path.join(directory,
-                            'issue_112_missing_tzinfo_on_exdate.ics')
-        with open(path, 'rb') as ics:
-            cal = icalendar.Calendar.from_ical(ics.read())
-            event = cal.walk('VEVENT')[0]
-
-            event_ical = to_unicode(event.to_ical())  # Py3 str type doesn't
-                                                      # support buffer API
-            # General timezone aware dates in ical string
-            self.assertTrue('DTSTART;TZID=America/New_York:20130907T120000'
-                            in event_ical)
-            self.assertTrue('DTEND;TZID=America/New_York:20130907T170000'
-                            in event_ical)
-            # Specific timezone aware exdates in ical string
-            self.assertTrue('EXDATE;TZID=America/New_York:20131012T120000'
-                            in event_ical)
-            self.assertTrue('EXDATE;TZID=America/New_York:20131011T120000'
-                            in event_ical)
-
-            self.assertEqual(event['exdate'][0].dts[0].dt.tzname(), 'EDT')
 
     def test_issue_116(self):
         """Issue #116/#117 - How to add 'X-APPLE-STRUCTURED-LOCATION'
@@ -268,61 +61,6 @@ END:VCALENDAR"""
             icalendar.Event.from_ical(event.to_ical()).to_ical()
         )
 
-    def test_issue_142(self):
-        """Issue #142 - Multivalued parameters
-        This is needed for VCard 3.0.
-        https://github.com/collective/icalendar/pull/142
-        """
-        from icalendar.parser import Contentline, Parameters
-
-        ctl = Contentline.from_ical("TEL;TYPE=HOME,VOICE:000000000")
-
-        self.assertEqual(
-            ctl.parts(),
-            ('TEL', Parameters({'TYPE': ['HOME', 'VOICE']}), '000000000'),
-        )
-
-    def test_issue_143(self):
-        """Issue #143 - Allow dots in property names.
-        Another vCard related issue.
-        https://github.com/collective/icalendar/pull/143
-        """
-        from icalendar.parser import Contentline, Parameters
-
-        ctl = Contentline.from_ical("ITEMADRNULLTHISISTHEADRESS08158SOMECITY12345.ADR:;;This is the Adress 08; Some City;;12345;Germany")  # nopep8
-        self.assertEqual(
-            ctl.parts(),
-            ('ITEMADRNULLTHISISTHEADRESS08158SOMECITY12345.ADR',
-             Parameters(),
-             ';;This is the Adress 08; Some City;;12345;Germany'),
-        )
-
-        ctl2 = Contentline.from_ical("ITEMADRNULLTHISISTHEADRESS08158SOMECITY12345.X-ABLABEL:")  # nopep8
-        self.assertEqual(
-            ctl2.parts(),
-            ('ITEMADRNULLTHISISTHEADRESS08158SOMECITY12345.X-ABLABEL',
-             Parameters(),
-             ''),
-        )
-
-    def test_issue_157(self):
-        """Issue #157 - Recurring rules and trailing semicolons
-        https://github.com/collective/icalendar/pull/157
-        """
-        # The trailing semicolon caused a problem
-        ical_str = """BEGIN:VEVENT
-DTSTART:20150325T101010
-RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU;
-END:VEVENT"""
-
-        cal = icalendar.Calendar.from_ical(ical_str)
-        recur = cal.decoded("RRULE")
-        self.assertIsInstance(recur, icalendar.vRecur)
-        self.assertEqual(
-            recur.to_ical(),
-            b'FREQ=YEARLY;BYDAY=1SU;BYMONTH=11'
-        )
-
     def test_issue_168(self):
         """Issue #168 - Parsing invalid icalendars fails without any warning
         https://github.com/collective/icalendar/issues/168
@@ -345,35 +83,6 @@ END:VCALENDAR"""
             b'DTEND:20150905T100000Z\r\nUID:123\r\n'
             b'END:VEVENT\r\nEND:VCALENDAR\r\n'
         )
-
-    def test_index_error_issue(self):
-        """Found an issue where from_ical() would raise IndexError for
-        properties without parent components.
-        https://github.com/collective/icalendar/pull/179
-        """
-
-        with self.assertRaises(ValueError):
-            icalendar.Calendar.from_ical('VERSION:2.0')
-
-    def test_issue_184(self):
-        """Issue #184 - Previous changes in code broke already broken
-        representation of PERIOD values - in a new way"""
-
-        ical_str = ['BEGIN:VEVENT',
-                    'DTSTAMP:20150219T133000',
-                    'DTSTART:20150219T133000',
-                    'UID:1234567',
-                    'RDATE;VALUE=PERIOD:20150219T133000/PT10H',
-                    'END:VEVENT']
-
-        event = icalendar.Event.from_ical('\r\n'.join(ical_str))
-        self.assertEqual(event.errors, [])
-        self.assertEqual(event.to_ical(),
-                         b'BEGIN:VEVENT\r\nDTSTART:20150219T133000\r\n'
-                         b'DTSTAMP:20150219T133000\r\nUID:1234567\r\n'
-                         b'RDATE;VALUE=PERIOD:20150219T133000/PT10H\r\n'
-                         b'END:VEVENT\r\n'
-                         )
 
     def test_issue_237(self):
         """Issue #237 - Fail to parse timezone with non-ascii TZID"""
@@ -418,27 +127,3 @@ END:VCALENDAR"""
             expected_tzname = 'Brasília standard'.encode('ascii', 'replace')
         self.assertEqual(dtstart.tzinfo.zone, expected_zone)
         self.assertEqual(dtstart.tzname(), expected_tzname)
-
-    def test_issue_345(self):
-        """Issue #345 - Why is tools.UIDGenerator a class (that must be instantiated) instead of a module? """
-        uid1 = icalendar.tools.UIDGenerator.uid()
-        uid2 = icalendar.tools.UIDGenerator.uid('test.test')
-        uid3 = icalendar.tools.UIDGenerator.uid(unique='123')
-        uid4 = icalendar.tools.UIDGenerator.uid('test.test', '123')
-
-        self.assertEqual(uid1.split('@')[1], 'example.com')
-        self.assertEqual(uid2.split('@')[1], 'test.test')
-        self.assertEqual(uid3.split('-')[1], '123@example.com')
-        self.assertEqual(uid4.split('-')[1], '123@test.test')
-
-@pytest.mark.parametrize("zone", [
-    pytz.utc,
-    zoneinfo.ZoneInfo('UTC'),
-    pytz.timezone('UTC'),
-    tz.UTC,
-    tz.gettz('UTC')])
-def test_issue_335_identify_UTC(zone):
-    myevent = icalendar.Event()
-    dt = datetime.datetime(2021, 11, 17, 15, 9, 15)
-    myevent.add('dtstart', dt.astimezone(zone))
-    assert 'DTSTART;VALUE=DATE-TIME:20211117T150915Z' in myevent.to_ical().decode('ASCII')
