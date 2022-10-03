@@ -16,4 +16,4 @@ def test_other_facebook_link_is_correctly_parsed(events):
     see https://github.com/collective/icalendar/pull/356#issuecomment-1265872696
     """
     expected_result = 'https://www.facebook.com/events/756119502186737/?acontext=%7B%22source%22%3A5%2C%22action_history%22%3A[%7B%22surface%22%3A%22page%22%2C%22mechanism%22%3A%22main_list%22%2C%22extra_data%22%3A%22%5C%22[]%5C%22%22%7D]%2C%22has_source%22%3Atrue%7D'
-    assert vents.issue_355_url_escaping_2["DESCRIPTION"] == expected_result
+    assert events.issue_355_url_escaping_2["DESCRIPTION"] == expected_result
