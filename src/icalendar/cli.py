@@ -46,10 +46,17 @@ def view(event):
     description = '\n'.join(map(lambda s: s.rjust(len(s) + 5), description))
 
     start = event.decoded('dtstart')
-    end = event.decoded('dtend', default=start)
-    duration = end - start
-    start = start.astimezone(start.tzinfo).strftime('%c')
-    end = end.astimezone(end.tzinfo).strftime('%c')
+    if 'duration' in event:
+        end = event.decoded('dtend', default=start + event.decoded('duration'))
+    else:
+        end = event.decoded('dtend', default=start)
+    duration = event.decoded('duration', default=end - start)
+    if isinstance(start, datetime):
+        start = start.astimezone(start.tzinfo)
+    start = start.strftime('%c')
+    if isinstance(end, datetime):
+        end = end.astimezone(end.tzinfo)
+    end = end.strftime('%c')
 
     return f"""    Organizer: {organizer}
     Attendees:
@@ -78,4 +85,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
