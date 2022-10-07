@@ -8,6 +8,7 @@ Changelog
 Minor changes:
 
 - removed deprecated test checks [tuergeist]
+- Fix: cli does not support DURATION #354 [mamico]
 
 Breaking changes:
 
