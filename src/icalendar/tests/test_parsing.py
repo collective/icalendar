@@ -135,7 +135,7 @@ def test_no_tzid_when_utc(utc, date, expected_output):
     event.add('dtstart', date)
     assert expected_output in event.to_ical()
     
- def test_vBinary_base64_encoded_issue_82():
+def test_vBinary_base64_encoded_issue_82():
     '''Issue #82 - vBinary __repr__ called rather than to_ical from
                    container types
     https://github.com/collective/icalendar/issues/82
