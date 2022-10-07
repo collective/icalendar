@@ -90,12 +90,12 @@ class TestEncoding(unittest.TestCase):
             + b'END:VEVENT\r\nEND:VCALENDAR\r\n'
         )
 
-def test_parses_event_with_non_ascii_tzid_issue_237(calendars, timezone):
+def test_parses_event_with_non_ascii_tzid_issue_237(calendars, in_timezone):
     """Issue #237 - Fail to parse timezone with non-ascii TZID
     see https://github.com/collective/icalendar/issues/237
     """
     start = calendars.issue_237_fail_to_parse_timezone_with_non_ascii_tzid.walk('VEVENT')[0].decoded('DTSTART')
-    expected = datetime.datetime(2017, 5, 11, 13, 30, tzinfo=timezone('America/Sao_Paulo'))
+    expected = in_timezone(datetime.datetime(2017, 5, 11, 13, 30), 'America/Sao_Paulo')
     assert start == expected
 
 def test_parses_timezone_with_non_ascii_tzid_issue_237(timezones):

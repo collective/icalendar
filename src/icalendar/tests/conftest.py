@@ -54,6 +54,19 @@ def timezones():
 def events():
     return DataSource(EVENTS_FOLDER, icalendar.Event.from_ical)
 
-@pytest.fixture(params=[pytz.timezone, tz.gettz, zoneinfo.ZoneInfo])
-def timezone(request):
+@pytest.fixture(params=[
+    pytz.utc,
+    zoneinfo.ZoneInfo('UTC'),
+    pytz.timezone('UTC'),
+    tz.UTC,
+    tz.gettz('UTC')])
+def utc(request):
+    return request.param
+
+@pytest.fixture(params=[
+    lambda dt, tzname: pytz.timezone(tzname).localize(dt),
+    lambda dt, tzname: dt.replace(tzinfo=tz.gettz(tzname)),
+    lambda dt, tzname: dt.replace(tzinfo=zoneinfo.ZoneInfo(tzname))
+])
+def in_timezone(request):
     return request.param
