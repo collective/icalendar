@@ -15,14 +15,26 @@ def test_calendar_from_ical_respects_unicode(field, expected_value, calendars):
     cal = calendars.calendar_with_unicode
     assert cal[field].to_ical().decode('utf-8') == expected_value
 
-@pytest.mark.parametrize('field, expected_value', [
-    ('SUMMARY', 'Non-ASCII Test: ÄÖÜ äöü €'),
-    ('DESCRIPTION', 'icalendar should be able to handle non-ascii: €äüöÄÜÖ.'),
-    ('LOCATION', 'Tribstrül'),
+@pytest.mark.parametrize('test_input, field, expected_value', [
+    ('event_with_unicode_fields', 'SUMMARY', 'Non-ASCII Test: ÄÖÜ äöü €'),
+    ('event_with_unicode_fields', 'DESCRIPTION', 'icalendar should be able to handle non-ascii: €äüöÄÜÖ.'),
+    ('event_with_unicode_fields', 'LOCATION', 'Tribstrül'),
+    # Non-unicode characters in summary
+    # https://github.com/collective/icalendar/issues/64
+    ('issue_64_event_with_non_unicode_summary', 'SUMMARY', 'åäö'),
+    # Unicode characters in summary
+    ('issue_64_event_with_unicode_summary', 'SUMMARY', 'abcdef'),
 ])
-def test_event_from_ical_respects_unicode(field, expected_value, events):
-    event = events.event_with_unicode_fields
-    event[field].to_ical().decode('utf-8') == expected_value
+def test_event_from_ical_respects_unicode(test_input, field, expected_value, events):
+    event = events[test_input]
+    assert event[field].to_ical().decode('utf-8') == expected_value
+
+def test_events_parameter_unicoded(events):
+    '''chokes on umlauts in ORGANIZER
+    https://github.com/collective/icalendar/issues/101
+    '''
+    assert events.issue_101_icalendar_chokes_on_umlauts_in_organizer['ORGANIZER'].params['CN'] == 'acme, ädmin'
+
 
 class TestEncoding(unittest.TestCase):
     def test_create_to_ical(self):
@@ -84,22 +96,4 @@ class TestEncoding(unittest.TestCase):
             + b'\xc3\xa4\xc3\xb6\xc3\xbc\xc3\x9f\xc3\x84\xc3\x96\xc3\x9c\r\n'
             + b'END:VEVENT\r\nEND:VCALENDAR\r\n'
         )
-
-@pytest.mark.parametrize('event_name', [
-    # Non-unicode characters in summary
-    'issue_64_event_with_non_unicode_summary',
-    # Unicode characters in summary
-    'issue_64_event_with_unicode_summary',
-    # chokes on umlauts in ORGANIZER
-    'issue_101_icalendar_chokes_on_umlauts_in_organizer'
-])
-def test_events_unicoded(events, event_name):
-    '''Issue #64 - Event.to_ical() fails for unicode strings
-       Issue #101 - icalendar is choking on umlauts in ORGANIZER
-
-    https://github.com/collective/icalendar/issues/64
-    https://github.com/collective/icalendar/issues/101
-    '''
-    event = getattr(events, event_name)
-    assert event.to_ical() == event.raw_ics
 
