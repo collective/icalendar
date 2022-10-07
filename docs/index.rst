@@ -12,4 +12,5 @@ Contents
     api
     cli
     credits
+    maintenance
     license
