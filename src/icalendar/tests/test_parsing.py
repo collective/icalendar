@@ -1,5 +1,6 @@
 '''Tests checking that parsing works'''
 import pytest
+import base64
 from icalendar import Calendar, vRecur, vBinary, Event
 from datetime import datetime
 from icalendar.parser import Contentline, Parameters
@@ -133,3 +134,23 @@ def test_no_tzid_when_utc(utc, date, expected_output):
     event = Event()
     event.add('dtstart', date)
     assert expected_output in event.to_ical()
+    
+def test_vBinary_base64_encoded_issue_82():
+    '''Issue #82 - vBinary __repr__ called rather than to_ical from
+                   container types
+    https://github.com/collective/icalendar/issues/82
+    '''
+    b = vBinary('text')
+    b.params['FMTTYPE'] = 'text/plain'
+    assert b.to_ical() == base64.b64encode(b'text')
+
+def test_creates_event_with_base64_encoded_attachment_issue_82(events):
+    '''Issue #82 - vBinary __repr__ called rather than to_ical from
+                   container types
+    https://github.com/collective/icalendar/issues/82
+    '''
+    b = vBinary('text')
+    b.params['FMTTYPE'] = 'text/plain'
+    event = Event()
+    event.add('ATTACH', b)
+    assert event.to_ical() == events.issue_82_expected_output.raw_ics
