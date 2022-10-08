@@ -62,6 +62,7 @@ icalendar contributors
 - Maurits van Rees <maurits@vanrees.org>
 - jacadzaca <vitouejj@gmail.com>
 - Mauro Amico <mauro.amico@gmail.com>
+- Alexander Pitkin <peleccom@gmail.com>
 
 Find out who contributed::
 
