@@ -14,3 +14,10 @@ Contents
     credits
     maintenance
     license
+    changelog
+
+
+.. toctree::
+    :titlesonly:
+
+    contributing

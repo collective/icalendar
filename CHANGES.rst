@@ -9,6 +9,7 @@ Minor changes:
 
 - removed deprecated test checks [tuergeist]
 - Fix: cli does not support DURATION #354 [mamico]
+- Add changelog and contributing to readthedocs documentation #428 [peleccom]
 
 Breaking changes:
 
