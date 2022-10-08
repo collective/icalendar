@@ -21,9 +21,9 @@ def test_calendar_from_ical_respects_unicode(field, expected_value, calendars):
     ('event_with_unicode_fields', 'LOCATION', 'Tribstrül'),
     # Non-unicode characters in summary
     # https://github.com/collective/icalendar/issues/64
-    ('issue_64_event_with_non_unicode_summary', 'SUMMARY', 'åäö'),
+    ('issue_64_event_with_non_ascii_summary', 'SUMMARY', 'åäö'),
     # Unicode characters in summary
-    ('issue_64_event_with_unicode_summary', 'SUMMARY', 'abcdef'),
+    ('issue_64_event_with_ascii_summary', 'SUMMARY', 'abcdef'),
 ])
 def test_event_from_ical_respects_unicode(test_input, field, expected_value, events):
     event = events[test_input]
