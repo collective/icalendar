@@ -37,14 +37,17 @@ def test_docstring_of_python_file(module_name):
     """This test runs doctest on the Python module."""
     module = importlib.import_module(module_name)
     test_result = doctest.testmod(module, name=module_name)
-    assert test_result.failed == 0
+    assert test_result.failed == 0, f"{test_result.failed} errors in {module_name}"
 
+
+# This collection needs to exclude .tox and other subdirectories
 DOCUMENTATION_PATH = os.path.join(HERE, "../../../")
 
 DOCUMENT_PATHS = [
-    os.path.join(dirpath, filename)
-    for dirpath, dirnames, filenames in os.walk(DOCUMENTATION_PATH)
-    for filename in filenames if filename.lower().endswith(".rst")
+    os.path.join(DOCUMENTATION_PATH, subdir, filename)
+    for subdir in ["docs", "."]
+    for filename in os.listdir(os.path.join(DOCUMENTATION_PATH, subdir))
+    if filename.lower().endswith(".rst")
 ]
 
 @pytest.mark.parametrize("filename", [
@@ -58,7 +61,7 @@ def test_files_is_included(filename):
 def test_documentation_file(document):
     """This test runs doctest on a documentation file."""
     test_result = doctest.testfile(document, module_relative=False)
-    assert test_result.failed == 0
+    assert test_result.failed == 0, f"{test_result.failed} errors in {os.path.basename(document)}"
 
 
 

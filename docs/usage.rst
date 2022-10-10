@@ -247,7 +247,7 @@ dictionary to the add method like so::
 
     >>> event = Event()
     >>> event.add('X-TEST-PROP', 'tryout.',
-    ....          parameters={'prop1': 'val1', 'prop2': 'val2'})
+    ...           parameters={'prop1':'val1', 'prop2':'val2'})
     >>> lines = event.to_ical().splitlines()
     >>> self.assertTrue(b"X-TEST-PROP;PROP1=val1;PROP2=val2:tryout." in lines)
 
