@@ -79,8 +79,8 @@ you do it like this. The calendar is a component::
   >>> cal['summary'] = 'Python meeting about calendaring'
   >>> for k,v in cal.items():
   ...     k,v
-  (u'DTSTART', '20050404T080000')
-  (u'SUMMARY', 'Python meeting about calendaring')
+  ('DTSTART', '20050404T080000')
+  ('SUMMARY', 'Python meeting about calendaring')
 
 NOTE: the recommended way to add components to the calendar is to use
 create the subcomponent and add it via Calendar.add! The example above adds a
@@ -90,7 +90,7 @@ string, but not a vText component.
 You can generate a string for a file with the to_ical() method::
 
   >>> cal.to_ical()
-  'BEGIN:VCALENDAR\r\nDTSTART:20050404T080000\r\nSUMMARY:Python meeting about calendaring\r\nEND:VCALENDAR\r\n'
+  b'BEGIN:VCALENDAR\r\nDTSTART:20050404T080000\r\nSUMMARY:Python meeting about calendaring\r\nEND:VCALENDAR\r\n'
 
 The rendered view is easier to read::
 
@@ -102,13 +102,13 @@ The rendered view is easier to read::
 So, let's define a function so we can easily display to_ical() output::
 
   >>> def display(cal):
-  ...    return cal.to_ical().decode("utf-8").replace(b'\r\n', b'\n').strip()
+  ...    return cal.to_ical().decode("utf-8").replace('\r\n', '\n').strip()
 
 You can set multiple properties like this::
 
   >>> cal = Calendar()
   >>> cal['attendee'] = ['MAILTO:maxm@mxm.dk','MAILTO:test@example.com']
-  >>> print display(cal)
+  >>> print(display(cal))
   BEGIN:VCALENDAR
   ATTENDEE:MAILTO:maxm@mxm.dk
   ATTENDEE:MAILTO:test@example.com
@@ -122,7 +122,7 @@ added. Here is an example::
   >>> cal = Calendar()
   >>> cal.add('attendee', 'MAILTO:maxm@mxm.dk')
   >>> cal.add('attendee', 'MAILTO:test@example.com')
-  >>> print display(cal)
+  >>> print(display(cal))
   BEGIN:VCALENDAR
   ATTENDEE:MAILTO:maxm@mxm.dk
   ATTENDEE:MAILTO:test@example.com
@@ -148,7 +148,7 @@ component::
 And then appending it to a "parent"::
 
   >>> cal.add_component(event)
-  >>> print display(cal)
+  >>> print(display(cal))
   BEGIN:VCALENDAR
   ATTENDEE:MAILTO:maxm@mxm.dk
   ATTENDEE:MAILTO:test@example.com
@@ -161,7 +161,7 @@ And then appending it to a "parent"::
 Subcomponents are appended to the subcomponents property on the component::
 
   >>> cal.subcomponents
-  [VEVENT({'DTSTART': '20050404T080000', 'UID': '42'})]
+  [VEVENT({'UID': '42', 'DTSTART': '20050404T080000'})]
 
 
 Value types
@@ -184,7 +184,7 @@ type defined in the spec::
   >>> from datetime import datetime
   >>> cal.add('dtstart', datetime(2005,4,4,8,0,0))
   >>> cal['dtstart'].to_ical()
-  '20050404T080000'
+  b'20050404T080000'
 
 If that doesn't work satisfactorily for some reason, you can also do it
 manually.
@@ -197,7 +197,7 @@ So if you want to do it manually::
   >>> from icalendar import vDatetime
   >>> now = datetime(2005,4,4,8,0,0)
   >>> vDatetime(now).to_ical()
-  '20050404T080000'
+  b'20050404T080000'
 
 So the drill is to initialise the object with a python built in type,
 and then call the "to_ical()" method on the object. That will return an
@@ -220,7 +220,7 @@ value directly::
   >>> cal = Calendar()
   >>> cal.add('dtstart', datetime(2005,4,4,8,0,0))
   >>> cal['dtstart'].to_ical()
-  '20050404T080000'
+  b'20050404T080000'
   >>> cal.decoded('dtstart')
   datetime.datetime(2005, 4, 4, 8, 0)
 
@@ -232,12 +232,13 @@ Property parameters are automatically added, depending on the input value. For
 example, for date/time related properties, the value type and timezone
 identifier (if applicable) are automatically added here::
 
+    >>> import pytz
     >>> event = Event()
     >>> event.add('dtstart', datetime(2010, 10, 10, 10, 0, 0,
     ...                               tzinfo=pytz.timezone("Europe/Vienna")))
 
     >>> lines = event.to_ical().splitlines()
-    >>> self.assertTrue(
+    >>> assert (
     ...     b"DTSTART;TZID=Europe/Vienna;VALUE=DATE-TIME:20101010T100000"
     ...     in lines)
 
@@ -249,7 +250,7 @@ dictionary to the add method like so::
     >>> event.add('X-TEST-PROP', 'tryout.',
     ...           parameters={'prop1':'val1', 'prop2':'val2'})
     >>> lines = event.to_ical().splitlines()
-    >>> self.assertTrue(b"X-TEST-PROP;PROP1=val1;PROP2=val2:tryout." in lines)
+    >>> assert b"X-TEST-PROP;PROP1=val1;PROP2=val2:tryout." in lines
 
 
 Example
@@ -270,7 +271,6 @@ Some properties are required to be compliant::
 
 We need at least one subcomponent for a calendar to be compliant::
 
-  >>> import pytz
   >>> event = Event()
   >>> event.add('summary', 'Python meeting about calendaring')
   >>> event.add('dtstart', datetime(2005,4,4,8,0,0,tzinfo=pytz.utc))
@@ -314,6 +314,7 @@ Write to disk::
   >>> directory = tempfile.mkdtemp()
   >>> f = open(os.path.join(directory, 'example.ics'), 'wb')
   >>> f.write(cal.to_ical())
+  570
   >>> f.close()
 
 
