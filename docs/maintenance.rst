@@ -50,7 +50,10 @@ This explains how to create a new release on PyPI.
 You will need write access to the `PyPI project`_.
 
 1. Check that the ``CHANGES.rst`` is up to date with the latest merges and the version you want to release is correctly named.
-2. Change the ``__version__`` variable in the ``src/icalendar/__init__.py`` file.
+2. Change the ``__version__`` variable in
+
+   - the ``src/icalendar/__init__.py`` file and 
+   - in the ``docs/usage.rst`` file (look for ``icalendar.__version__``)
 3. Create a commit on the ``master`` branch to release this version.
 
     .. code-block:: bash
