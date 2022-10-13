@@ -41,5 +41,8 @@ def test_duration_properly_parsed(events):
     rdate = events.issue_156_RDATE_with_PERIOD_list["RDATE"]
     print(rdate)
     period = rdate.dts[1].dt
+    print(dir(duration))
     assert period[0] == start
+    assert period[1].days == 0
+    assert period[1].seconds == (5 * 60 + 30) * 60
     assert period[1] == duration
