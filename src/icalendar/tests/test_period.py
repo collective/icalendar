@@ -36,10 +36,10 @@ def test_issue_156_period_list_in_rdate(calendars, calname, tzname, index, perio
 
 def test_duration_properly_parsed(events):
     """This checks the duration PT5H30M."""
+    start = vDDDTypes.from_ical("19970109T180000Z")
+    duration = vDDDTypes.from_ical("PT5H30M")
     rdate = events.issue_156_RDATE_with_PERIOD_list["RDATE"]
     print(rdate)
-    period = rdate[1]
-    assert period.duration.days == 0
-    assert period.duration.hours == 5
-    assert period.duration.minutes == 30
-    assert period.duration.seconds == 0
+    period = rdate.dts[1].dt
+    assert period[0] == start
+    assert period[1] == duration
