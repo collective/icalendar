@@ -1,5 +1,4 @@
 import os
-import logging
 import pytest
 import icalendar
 import pytz
@@ -9,7 +8,6 @@ try:
     import zoneinfo
 except ModuleNotFoundError:
     from backports import zoneinfo
-
 
 class DataSource:
     '''A collection of parsed ICS elements (e.g calendars, timezones, events)'''
@@ -41,9 +39,13 @@ class DataSource:
         return self.__class__(self._data_source_folder, lambda data: self._parser(data, multiple=True))
 
 HERE = os.path.dirname(__file__)
+CALENDARS_FOLDER = os.path.join(HERE, 'calendars')
 TIMEZONES_FOLDER = os.path.join(HERE, 'timezones')
 EVENTS_FOLDER = os.path.join(HERE, 'events')
-CALENDARS_FOLDER = os.path.join(HERE, 'calendars')
+
+@pytest.fixture
+def calendars():
+    return DataSource(CALENDARS_FOLDER, icalendar.Calendar.from_ical)
 
 @pytest.fixture
 def timezones():
@@ -62,6 +64,10 @@ def events():
 def utc(request):
     return request.param
 
-@pytest.fixture
-def calendars():
-    return DataSource(CALENDARS_FOLDER, icalendar.Calendar.from_ical)
+@pytest.fixture(params=[
+    lambda dt, tzname: pytz.timezone(tzname).localize(dt),
+    lambda dt, tzname: dt.replace(tzinfo=tz.gettz(tzname)),
+    lambda dt, tzname: dt.replace(tzinfo=zoneinfo.ZoneInfo(tzname))
+])
+def in_timezone(request):
+    return request.param
