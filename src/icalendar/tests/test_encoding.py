@@ -50,3 +50,19 @@ def test_parses_timezone_with_non_ascii_tzname_issue_273(timezones, timezone_nam
     see https://github.com/collective/icalendar/issues/237
     """
     assert timezones.issue_237_brazilia_standard.walk(timezone_name)[0]['TZNAME'] == f'Brasília {timezone_name}'
+
+def test_broken_property(calendars):
+    """
+    Test if error messages are encoded properly.
+    """
+    for event in calendars.broken_ical.walk('vevent'):
+        assert len(event.errors) == 1, 'Not the right amount of errors.'
+        error = event.errors[0][1]
+        assert error.startswith('Content line could not be parsed into parts')
+
+def test_apple_xlocation(calendars):
+    """
+    Test if we support base64 encoded binary data in parameter values.
+    """
+    for event in calendars.x_location.walk('vevent'):
+        assert len(event.errors) == 0, 'Got too many errors'

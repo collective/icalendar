@@ -22,7 +22,8 @@ class DataSource:
         with open(source_path, 'rb') as f:
             raw_ics = f.read()
         source = self._parser(raw_ics)
-        source.raw_ics = raw_ics
+        if not isinstance(source, list):
+            source.raw_ics = raw_ics
         self.__dict__[attribute] = source
         return source
 
@@ -31,6 +32,11 @@ class DataSource:
 
     def __repr__(self):
         return repr(self.__dict__)
+
+    @property
+    def multiple(self):
+        """Return a list of all components parsed."""
+        return self.__class__(self._data_source_folder, lambda data: self._parser(data, multiple=True))
 
 HERE = os.path.dirname(__file__)
 CALENDARS_FOLDER = os.path.join(HERE, 'calendars')
