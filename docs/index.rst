@@ -12,4 +12,12 @@ Contents
     api
     cli
     credits
+    maintenance
     license
+    changelog
+
+
+.. toctree::
+    :titlesonly:
+
+    contributing

@@ -1,18 +1,13 @@
 import os
-import logging
-
 import pytest
 import icalendar
-
-import datetime
 import pytz
+from datetime import datetime
 from dateutil import tz
 try:
     import zoneinfo
 except ModuleNotFoundError:
     from backports import zoneinfo
-
-LOGGER = logging.getLogger(__name__)
 
 class DataSource:
     '''A collection of parsed ICS elements (e.g calendars, timezones, events)'''
@@ -21,18 +16,18 @@ class DataSource:
         self._data_source_folder = data_source_folder
 
     def __getattr__(self, attribute):
-        if not attribute in self.__dict__:
-            source_file = attribute.replace('-', '_') + '.ics'
-            source_path = os.path.join(self.__dict__['_data_source_folder'], source_file)
-            with open(source_path, 'rb') as f:
-                try:
-                    raw_ics = f.read()
-                    source = self.__dict__['_parser'](raw_ics)
-                    source.raw_ics = raw_ics
-                    self.__dict__[attribute] = source
-                except ValueError as error:
-                    LOGGER.error(f'Could not load {source_file} due to {error}')
-        return self.__dict__[attribute]
+        """Parse a file and return the result stored in the attribute."""
+        source_file = attribute.replace('-', '_') + '.ics'
+        source_path = os.path.join(self._data_source_folder, source_file)
+        with open(source_path, 'rb') as f:
+            raw_ics = f.read()
+        source = self._parser(raw_ics)
+        source.raw_ics = raw_ics
+        self.__dict__[attribute] = source
+        return source
+
+    def __getitem__(self, key):
+        return getattr(self, key)
 
     def __repr__(self):
         return repr(self.__dict__)

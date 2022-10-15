@@ -27,6 +27,12 @@ DTEND;TZID=Europe/Warsaw:20220820T203000
 LOCATION:New Amsterdam, 1010 Test Street
 DESCRIPTION:Test Description\\nThis one is multiline
 END:VEVENT
+BEGIN:VEVENT
+UID:1
+SUMMARY:TEST
+DTSTART:20220511
+DURATION:P5D
+END:VEVENT
 END:VCALENDAR
 '''
 
@@ -56,6 +62,18 @@ PROPER_OUTPUT = '''    Organizer: organizer <organizer@test.test>
     Description:
      Test Description
      This one is multiline
+
+    Organizer: 
+    Attendees:
+
+    Summary    : TEST
+    Starts     : Wed May 11 00:00:00 2022
+    End        : Mon May 16 00:00:00 2022
+    Duration   : 5 days, 0:00:00
+    Location   : 
+    Comment    : 
+    Description:
+     
 
 '''
 

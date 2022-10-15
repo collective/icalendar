@@ -32,7 +32,7 @@ and execute the code.
 The latest version of Python 3 should work and will be enough
 to get you started.
 If you like to run the tests with different Python versions,
-the following setup proecess should work the same.
+the following setup process should work the same.
 
 Install Tox
 -----------
