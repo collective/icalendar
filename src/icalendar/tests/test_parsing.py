@@ -15,9 +15,11 @@ from icalendar.parser import Contentline, Parameters
     # Nonstandard component inside other components, also has properties
     'issue_178_custom_component_inside_other',
     # Nonstandard component is able to contain other components
-    'issue_178_custom_component_contains_other'])
+    'issue_178_custom_component_contains_other',
+])
 def test_calendar_to_ical_is_inverse_of_from_ical(calendars, calendar_name):
     calendar = getattr(calendars, calendar_name)
+    assert calendar.to_ical().splitlines() == calendar.raw_ics.splitlines()
     assert calendar.to_ical() == calendar.raw_ics
 
 @pytest.mark.parametrize('raw_content_line, expected_output', [
@@ -74,10 +76,14 @@ def test_issue_157_removes_trailing_semicolon(events):
     # https://github.com/collective/icalendar/pull/100
     ('issue_100_transformed_doctests_into_unittests'),
     ('issue_184_broken_representation_of_period'),
+    # PERIOD should be put back into shape
+    'issue_156_RDATE_with_PERIOD',
+    'issue_156_RDATE_with_PERIOD_list',
 ])
 def test_event_to_ical_is_inverse_of_from_ical(events, event_name):
     """Make sure that an event's ICS is equal to the ICS it was made from."""
     event = events[event_name]
+    assert event.to_ical().splitlines() == event.raw_ics.splitlines()
     assert event.to_ical() == event.raw_ics
 
 def test_decode_rrule_attribute_error_issue_70(events):
