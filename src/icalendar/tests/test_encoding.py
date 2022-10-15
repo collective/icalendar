@@ -96,6 +96,7 @@ def test_parses_event_with_non_ascii_tzid_issue_237(calendars, in_timezone):
     """
     start = calendars.issue_237_fail_to_parse_timezone_with_non_ascii_tzid.walk('VEVENT')[0].decoded('DTSTART')
     expected = in_timezone(datetime.datetime(2017, 5, 11, 13, 30), 'America/Sao_Paulo')
+    assert not calendars.issue_237_fail_to_parse_timezone_with_non_ascii_tzid.errors
     assert start == expected
 
 def test_parses_timezone_with_non_ascii_tzid_issue_237(timezones):
