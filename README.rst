@@ -11,7 +11,7 @@ files.
 :Code: https://github.com/collective/icalendar
 :Mailing list: https://github.com/collective/icalendar/issues
 :Dependencies: `python-dateutil`_ and `pytz`_.
-:Compatible with: Python 2.7 and 3.4+
+:Compatible with: Python 3.7+
 :License: `BSD`_
 
 ----
