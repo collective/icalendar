@@ -56,32 +56,8 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
 
 1. Check that the ``CHANGES.rst`` is up to date with the `latest merged pull requests <https://github.com/collective/icalendar/pulls?q=is%3Apr+is%3Amerged>`__
    and the version you want to release is correctly named.
-2. Copy this to the start of ``CHANGES.rst``:
-
-   .. code-block:: text
-
-       5.0.1 (unreleased)
-       ------------------
-       
-       Minor changes:
-        
-       - ...
-        
-       Breaking changes:
-        
-       - ...
-        
-       New features:
-        
-       - ...
-        
-       Bug fixes:
-        
-       - ...
-        
-
-3. Change the ``__version__`` variable in the ``src/icalendar/__init__.py`` file.
-4. Create a commit on the ``release-5.0.0`` branch (or equivalent) to release this version.
+2. Change the ``__version__`` variable in the ``src/icalendar/__init__.py`` file.
+3. Create a commit on the ``release-5.0.0`` branch (or equivalent) to release this version.
 
    .. code-block:: bash
 
@@ -91,17 +67,17 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
        git add CHANGES.rst src/icalendar/__init__.py
        git commit -m"version 5.0.0"
 
-5. Push the commit and `create a pull request <https://github.com/collective/icalendar/compare?expand=1>`__
+4. Push the commit and `create a pull request <https://github.com/collective/icalendar/compare?expand=1>`__
    Here is an `example pull request #457 <https://github.com/collective/icalendar/pull/457>`__.
 
    .. code-block:: bash
 
        git push -u origin release-5.0.0
 
-6. See if the `CI-tests <https://github.com/collective/icalendar/actions>`_ are running on the pull request.
+5. See if the `CI-tests <https://github.com/collective/icalendar/actions>`_ are running on the pull request.
    If they are not running, no new release can be issued.
    If the tests are running, merge the pull request.
-7. Create a tag for the release and see if the `CI-tests`_ are running.
+6. Create a tag for the release and see if the `CI-tests`_ are running.
 
    .. code-block:: bash
 
@@ -110,14 +86,35 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
        git tag v5.0.0
        git push upstream v5.0.0 # could be origin or whatever reference
 
-8. Once the tag is pushed and its `CI-tests`_ are passing, maintainers will get an e-mail::
+7. Once the tag is pushed and its `CI-tests`_ are passing, maintainers will get an e-mail::
 
        Subject: Deployment review in collective/icalendar
 
        tests: PyPI is waiting for your review
 
-9. If the release is approved by a maintainer. It will be pushed to `PyPI`_.
+8. If the release is approved by a maintainer. It will be pushed to `PyPI`_.
    If that happens, notify the issues that were fixed about this release.
+9. Copy this to the start of ``CHANGES.rst`` and create a new commit with this on the ``master`` branch::
+
+       5.0.1 (unreleased)
+       ------------------
+       
+       Minor changes:
+       
+       - ...
+       
+       Breaking changes:
+       
+       - ...
+       
+       New features:
+       
+       - ...
+       
+       Bug fixes:
+       
+       - ...
+       
 
 Links
 -----
