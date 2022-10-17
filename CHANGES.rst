@@ -1,9 +1,27 @@
 Changelog
 =========
 
+5.0.1 (unreleased)
+------------------
 
-5.0.0a2 (unreleased)
---------------------
+Minor changes:
+
+- ...
+
+Breaking changes:
+
+- ...
+
+New features:
+
+- ...
+
+Bug fixes:
+
+- ...
+
+5.0.0 (2022-10-17)
+------------------
 
 Minor changes:
 
