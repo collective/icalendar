@@ -28,12 +28,15 @@ Minor changes:
 - removed deprecated test checks [tuergeist]
 - Fix: cli does not support DURATION #354 [mamico]
 - Add changelog and contributing to readthedocs documentation #428 [peleccom]
+- fixed small typos #323 [rohnsha0]
+- unittest to parametrized pytest refactoring [jacadzaca]
 
 Breaking changes:
 
 - Require Python 3.7 as minimum Python version.  [maurits] [niccokunzmann]
 - icalenar now takes a ics file directly as an input
 - icalendar's output is different
+- Drop Support for Python 3.6. Versions 3.7 - 3.11 are supported and tested.
 
 New features:
 
@@ -53,6 +56,8 @@ Bug fixes:
   Ref: #338
   Fixes: #335
   [tobixen]
+-  add ``__eq__`` to ``icalendar.prop.vDDDTypes`` #391 [jacadzaca]
+- Refactor deprecated unittest aliases for Python 3.11 compatibility #330 [tirkarthi]
 
 5.0.0a1 (2022-07-11)
 --------------------

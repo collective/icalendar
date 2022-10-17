@@ -291,34 +291,3 @@ class IcalendarTestCase (unittest.TestCase):
                          'Max,Moller,"Rasmussen, Max"')
 
 
-class TestEncoding(unittest.TestCase):
-
-    def test_broken_property(self):
-        """
-        Test if error messages are encode properly.
-        """
-        broken_ical = textwrap.dedent("""
-            BEGIN:VCALENDAR
-            BEGIN:VEVENT
-            SUMMARY:An Event with too many semicolons
-            DTSTART;;VALUE=DATE-TIME:20140409T093000
-            UID:abc
-            END:VEVENT
-            END:VCALENDAR
-            """)
-        cal = icalendar.Calendar.from_ical(broken_ical)
-        for event in cal.walk('vevent'):
-            self.assertEqual(len(event.errors), 1, 'Not the right amount of errors.')
-            error = event.errors[0][1]
-            self.assertTrue(error.startswith('Content line could not be parsed into parts'))
-
-    def test_apple_xlocation(self):
-        """
-        Test if we support base64 encoded binary data in parameter values.
-        """
-        directory = os.path.dirname(__file__)
-        with open(os.path.join(directory, 'x_location.ics'), 'rb') as fp:
-            data = fp.read()
-        cal = icalendar.Calendar.from_ical(data)
-        for event in cal.walk('vevent'):
-            self.assertEqual(len(event.errors), 0, 'Got too many errors')
