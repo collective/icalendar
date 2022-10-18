@@ -6,7 +6,7 @@ Changelog
 
 Minor changes:
 
-- ...
+- fixed setuptools deprecation warnings [mgorny]
 
 Breaking changes:
 
