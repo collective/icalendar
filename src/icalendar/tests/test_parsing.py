@@ -160,3 +160,22 @@ def test_creates_event_with_base64_encoded_attachment_issue_82(events):
     event = Event()
     event.add('ATTACH', b)
     assert event.to_ical() == events.issue_82_expected_output.raw_ics
+
+def test_converts_unqiue_tzid_if_no_timezone(events, in_timezone):
+    ''' Issue #466 - [BUG] TZID timezone is ignored when forward-slash is used
+    https://github.com/collective/icalendar/issues/466
+    '''
+    start_dt = events.issue_466_convert_tzid_with_slash['dtstart'].dt
+    end_dt = events.issue_466_convert_tzid_with_slash['dtend'].dt
+    assert start_dt == in_timezone(datetime(2022, 10, 21, 20, 0, 0), 'Europe/Stockholm')
+    assert end_dt == in_timezone(datetime(2022, 10, 21, 21, 0, 0), 'Europe/Stockholm')
+
+def test_respects_unique_tzid(calendars, in_timezone):
+    ''' Issue #466 - [BUG] TZID timezone is ignored when forward-slash is used
+    https://github.com/collective/icalendar/issues/466
+    '''
+    start_dt = calendars.issue_466_respect_unique_timezone.walk('VEVENT')[0]['dtstart'].dt
+    end_dt = calendars.issue_466_respect_unique_timezone.walk('VEVENT')[0]['dtend'].dt
+    assert start_dt == in_timezone(datetime(2022, 10, 21, 20, 0, 0), 'Europe/Stockholm')
+    assert end_dt == in_timezone(datetime(2022, 10, 21, 21, 0, 0), 'Europe/Stockholm')
+
