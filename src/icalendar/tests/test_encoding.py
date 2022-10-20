@@ -23,11 +23,14 @@ def test_event_from_ical_respects_unicode(test_input, field, expected_value, eve
     event = events[test_input]
     assert event[field].to_ical().decode('utf-8') == expected_value
 
-def test_events_parameter_unicoded(events):
-    '''chokes on umlauts in ORGANIZER
-    https://github.com/collective/icalendar/issues/101
-    '''
-    assert events.issue_101_icalendar_chokes_on_umlauts_in_organizer['ORGANIZER'].params['CN'] == 'acme, ädmin'
+@pytest.mark.parametrize('test_input, expected_output', [
+    # chokes on umlauts in ORGANIZER
+    # https://github.com/collective/icalendar/issues/101
+    ('issue_101_icalendar_chokes_on_umlauts_in_organizer', 'acme, ädmin'),
+    ('event_with_unicode_organizer', 'Джон Доу'),
+])
+def test_events_parameter_unicoded(events, test_input, expected_output):
+    assert events[test_input]['ORGANIZER'].params['CN'] == expected_output
 
 def test_parses_event_with_non_ascii_tzid_issue_237(calendars, in_timezone):
     """Issue #237 - Fail to parse timezone with non-ascii TZID
