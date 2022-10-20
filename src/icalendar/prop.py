@@ -414,10 +414,10 @@ class vDatetime:
         tzinfo = None
         if timezone:
             try:
-                tzinfo = pytz.timezone(timezone)
+                tzinfo = pytz.timezone(timezone.strip('/'))
             except pytz.UnknownTimeZoneError:
                 if timezone in WINDOWS_TO_OLSON:
-                    tzinfo = pytz.timezone(WINDOWS_TO_OLSON.get(timezone))
+                    tzinfo = pytz.timezone(WINDOWS_TO_OLSON.get(timezone.strip('/')))
                 else:
                     tzinfo = _timezone_cache.get(timezone, None)
 
