@@ -18,7 +18,10 @@ New features:
 
 Bug fixes:
 
-- ...
+- a well-known timezone timezone prefixed with a `/` is treated as if the slash wasn't present
+  Ref: #467
+  Fixes: #466
+  [jacadzaca]
 
 5.0.0 (2022-10-17)
 ------------------
