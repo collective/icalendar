@@ -1,12 +1,28 @@
-from icalendar import Calendar
-from icalendar import Event
-from icalendar import Parameters
-from icalendar import vCalAddress
-import unittest
+import pytest
+from icalendar import Calendar, Event, Parameters, vCalAddress
 
+import unittest
 import icalendar
 import re
 
+
+@pytest.mark.parametrize('cn_param, cn_quoted', [
+    # not double-quoted
+    ('Aramis', 'Aramis'),
+    # if a space is present - enclose in double quotes
+    ('Aramis Alameda', '"Aramis Alameda"'),
+    # a single quote in parameter value - double quote the value
+    ('Aramis d\'Alameda', '"Aramis d\'Alameda"'),
+    ('Арамис д\'Аламеда', '"Арамис д\'Аламеда"'),
+    # double quote is replaced with single quote
+    ('Aramis d\"Alameda', '"Aramis d\'Alameda"'),
+])
+def test_quoting(cn_param, cn_quoted):
+    event = Event()
+    attendee = vCalAddress('test@example.com')
+    attendee.params['CN'] = cn_param
+    event.add('ATTENDEE', attendee)
+    assert f'ATTENDEE;CN={cn_quoted}:test@example.com' in event.to_ical().decode('utf-8')
 
 class TestPropertyParams(unittest.TestCase):
 
@@ -44,32 +60,6 @@ class TestPropertyParams(unittest.TestCase):
 
         self.assertEqual(vevent['ORGANIZER'].params['CN'],
                          'Джон Доу')
-
-    def test_quoting(self):
-        # not double-quoted
-        self._test_quoting("Aramis", 'Aramis')
-        # if a space is present - enclose in double quotes
-        self._test_quoting("Aramis Alameda", '"Aramis Alameda"')
-        # a single quote in parameter value - double quote the value
-        self._test_quoting("Aramis d'Alameda", '"Aramis d\'Alameda"')
-        # double quote is replaced with single quote
-        self._test_quoting("Aramis d\"Alameda", '"Aramis d\'Alameda"')
-        self._test_quoting("Арамис д'Аламеда", '"Арамис д\'Аламеда"')
-
-    def _test_quoting(self, cn_param, cn_quoted):
-        """
-        @param cn_param: CN parameter value to test for quoting
-        @param cn_quoted: expected quoted parameter in icalendar format
-        """
-        vevent = Event()
-        attendee = vCalAddress('test@mail.com')
-        attendee.params['CN'] = cn_param
-        vevent.add('ATTENDEE', attendee)
-        self.assertEqual(
-            vevent.to_ical(),
-            b'BEGIN:VEVENT\r\nATTENDEE;CN=' + cn_quoted.encode('utf-8') +
-            b':test@mail.com\r\nEND:VEVENT\r\n'
-        )
 
     def test_escaping(self):
         # verify that escaped non safe chars are decoded correctly
