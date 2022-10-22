@@ -1,12 +1,12 @@
 Changelog
 =========
 
-5.0.1 (unreleased)
+5.0.2 (unreleased)
 ------------------
 
 Minor changes:
 
-- fixed setuptools deprecation warnings [mgorny]
+- ...
 
 Breaking changes:
 
@@ -15,6 +15,17 @@ Breaking changes:
 New features:
 
 - ...
+
+Bug fixes:
+
+- ...
+
+5.0.1 (2022-10-22)
+------------------
+
+Minor changes:
+
+- fixed setuptools deprecation warnings [mgorny]
 
 Bug fixes:
 
