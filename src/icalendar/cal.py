@@ -383,7 +383,6 @@ class Component(CaselessDict):
                     if not component.ignore_exceptions:
                         raise
                     component.errors.append((uname, str(e)))
-                    component.add(name, None, encode=0)
                 else:
                     vals.params = params
                     component.add(name, vals, encode=0)

@@ -18,7 +18,10 @@ New features:
 
 Bug fixes:
 
-- ...
+- broken properties are not added to the parent component
+  Ref: #471
+  Fixes: #464
+  [jacadzaca]
 
 5.0.1 (2022-10-22)
 ------------------
