@@ -18,3 +18,11 @@ def test_dont_ignore_exceptions_on_broken_calendars_issue_104(calendars):
     '''
     with pytest.raises(ValueError):
         calendars.issue_104_broken_calendar
+
+def test_rdate_dosent_become_none_on_invalid_input_issue_464(events):
+    '''Issue #464 - [BUG] RDATE can become None if value is invalid
+    https://github.com/collective/icalendar/issues/464
+    '''
+    assert events.issue_464_invalid_rdate.is_broken
+    assert ('RDATE', 'Expected period format, got: 199709T180000Z/PT5H30M') in events.issue_464_invalid_rdate.errors
+    assert not b'RDATE:None' in events.issue_464_invalid_rdate.to_ical()
