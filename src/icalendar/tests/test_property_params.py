@@ -89,21 +89,6 @@ class TestPropertyParams(unittest.TestCase):
         ical2 = Calendar.from_ical(ical_str)
         self.assertEqual(ical2.get('ORGANIZER').params.get('CN'), 'Doe, John')
 
-    def test_unicode_param(self):
-        cal_address = vCalAddress('mailto:john.doe@example.org')
-        cal_address.params["CN"] = "Джон Доу"
-        vevent = Event()
-        vevent['ORGANIZER'] = cal_address
-        self.assertEqual(
-            vevent.to_ical().decode('utf-8'),
-            'BEGIN:VEVENT\r\n'
-            'ORGANIZER;CN="Джон Доу":mailto:john.doe@example.org\r\n'
-            'END:VEVENT\r\n'
-        )
-
-        self.assertEqual(vevent['ORGANIZER'].params['CN'],
-                         'Джон Доу')
-
     def test_parse_and_access_property_params(self):
         """Parse an ics string and access some property parameters then.
         This is a follow-up of a question received per email.

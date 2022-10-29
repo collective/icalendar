@@ -79,6 +79,7 @@ def test_issue_157_removes_trailing_semicolon(events):
     # PERIOD should be put back into shape
     'issue_156_RDATE_with_PERIOD',
     'issue_156_RDATE_with_PERIOD_list',
+    'event_with_unicode_organizer',
 ])
 def test_event_to_ical_is_inverse_of_from_ical(events, event_name):
     """Make sure that an event's ICS is equal to the ICS it was made from."""
