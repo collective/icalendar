@@ -6,7 +6,10 @@ Changelog
 
 Minor changes:
 
-- ...
+- Calendar.from_ical no longer throws long errors
+  Ref: #473
+  Fixes: #472
+  [jacadzaca]
 
 Breaking changes:
 

@@ -390,13 +390,21 @@ class Component(CaselessDict):
         if multiple:
             return comps
         if len(comps) > 1:
-            raise ValueError(f'Found multiple components where '
-                             f'only one is allowed: {st!r}')
+            raise ValueError(cls._format_error(
+                'Found multiple components where only one is allowed', st))
         if len(comps) < 1:
-            raise ValueError(f'Found no components where '
-                             f'exactly one is required: '
-                             f'{st!r}')
+            raise ValueError(cls._format_error(
+                'Found no components where exactly one is required', st))
         return comps[0]
+
+    def _format_error(error_description, bad_input, elipsis='[...]'):
+        # there's three character more in the error, ie. ' ' x2 and a ':'
+        max_error_length = 100 - 3
+        if len(error_description) + len(bad_input) + len(elipsis) > max_error_length:
+            truncate_to = max_error_length - len(error_description) - len(elipsis)
+            return f'{error_description}: {bad_input[:truncate_to]} {elipsis}'
+        else:
+            return f'{error_description}: {bad_input}'
 
     def content_line(self, name, value, sorted=True):
         """Returns property as content line.
