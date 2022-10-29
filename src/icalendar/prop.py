@@ -292,7 +292,7 @@ class vDDDTypes:
             raise ValueError('You must use datetime, date, timedelta, '
                              'time or tuple (for periods)')
         if isinstance(dt, datetime):
-            self.params = Parameters({'value': 'DATE-TIME'})
+            self.params = Parameters()
         elif isinstance(dt, date):
             self.params = Parameters({'value': 'DATE'})
         elif isinstance(dt, time):
@@ -300,12 +300,10 @@ class vDDDTypes:
         elif isinstance(dt, tuple):
             self.params = Parameters({'value': 'PERIOD'})
 
-        if (isinstance(dt, datetime) or isinstance(dt, time))\
-                and getattr(dt, 'tzinfo', False):
-            tzinfo = dt.tzinfo
-            tzid = tzid_from_dt(dt)
-            if tzid != 'UTC':
-                self.params.update({'TZID': tzid})
+        tzid = tzid_from_dt(dt) if isinstance(dt, (datetime, time)) else None
+        if not tzid is None and tzid != 'UTC':
+            self.params.update({'TZID': tzid})
+
         self.dt = dt
 
     def to_ical(self):

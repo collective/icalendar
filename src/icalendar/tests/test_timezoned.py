@@ -149,21 +149,21 @@ class TestTimezoned(unittest.TestCase):
         test_out = test_out.decode('utf-8')
 
         vtimezone_lines = "BEGIN:VTIMEZONE|TZID:Europe/Vienna|X-LIC-LOCATION:"
-        "Europe/Vienna|BEGIN:STANDARD|DTSTART;VALUE=DATE-TIME:19701025T03"
+        "Europe/Vienna|BEGIN:STANDARD|DTSTART:19701025T03"
         "0000|RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10|RRULE:FREQ=YEARLY;B"
         "YDAY=-1SU;BYMONTH=3|TZNAME:CET|TZOFFSETFROM:+0200|TZOFFSETTO:+01"
-        "00|END:STANDARD|BEGIN:DAYLIGHT|DTSTART;VALUE=DATE-TIME:19700329T"
+        "00|END:STANDARD|BEGIN:DAYLIGHT|DTSTART:19700329T"
         "020000|TZNAME:CEST|TZOFFSETFROM:+0100|TZOFFSETTO:+0200|END:DAYLI"
         "GHT|END:VTIMEZONE"
         self.assertTrue(vtimezone_lines in test_out)
 
-        test_str = "DTSTART;TZID=Europe/Vienna;VALUE=DATE-TIME:20120213T100000"
+        test_str = "DTSTART;TZID=Europe/Vienna:20120213T100000"
         self.assertTrue(test_str in test_out)
         self.assertTrue("ATTENDEE:sepp" in test_out)
 
         # ical standard expects DTSTAMP and CREATED in UTC
-        self.assertTrue("DTSTAMP;VALUE=DATE-TIME:20101010T081010Z" in test_out)
-        self.assertTrue("CREATED;VALUE=DATE-TIME:20101010T081010Z" in test_out)
+        self.assertTrue("DTSTAMP:20101010T081010Z" in test_out)
+        self.assertTrue("CREATED:20101010T081010Z" in test_out)
 
     def test_create_to_ical_zoneinfo(self):
         cal = icalendar.Calendar()
@@ -232,21 +232,21 @@ class TestTimezoned(unittest.TestCase):
         test_out = test_out.decode('utf-8')
 
         vtimezone_lines = "BEGIN:VTIMEZONE|TZID:Europe/Vienna|X-LIC-LOCATION:"
-        "Europe/Vienna|BEGIN:STANDARD|DTSTART;VALUE=DATE-TIME:19701025T03"
+        "Europe/Vienna|BEGIN:STANDARD|DTSTART:19701025T03"
         "0000|RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10|RRULE:FREQ=YEARLY;B"
         "YDAY=-1SU;BYMONTH=3|TZNAME:CET|TZOFFSETFROM:+0200|TZOFFSETTO:+01"
-        "00|END:STANDARD|BEGIN:DAYLIGHT|DTSTART;VALUE=DATE-TIME:19700329T"
+        "00|END:STANDARD|BEGIN:DAYLIGHT|DTSTART:19700329T"
         "020000|TZNAME:CEST|TZOFFSETFROM:+0100|TZOFFSETTO:+0200|END:DAYLI"
         "GHT|END:VTIMEZONE"
         self.assertTrue(vtimezone_lines in test_out)
 
-        test_str = "DTSTART;TZID=Europe/Vienna;VALUE=DATE-TIME:20120213T100000"
+        test_str = "DTSTART;TZID=Europe/Vienna:20120213T100000"
         self.assertTrue(test_str in test_out)
         self.assertTrue("ATTENDEE:sepp" in test_out)
 
         # ical standard expects DTSTAMP and CREATED in UTC
-        self.assertTrue("DTSTAMP;VALUE=DATE-TIME:20101010T081010Z" in test_out)
-        self.assertTrue("CREATED;VALUE=DATE-TIME:20101010T081010Z" in test_out)
+        self.assertTrue("DTSTAMP:20101010T081010Z" in test_out)
+        self.assertTrue("CREATED:20101010T081010Z" in test_out)
 
 
     def test_tzinfo_dateutil(self):
