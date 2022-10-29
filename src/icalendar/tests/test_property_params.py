@@ -1,12 +1,53 @@
-from icalendar import Calendar
-from icalendar import Event
-from icalendar import Parameters
-from icalendar import vCalAddress
-import unittest
+import pytest
+from icalendar import Calendar, Event, Parameters, vCalAddress
 
+import unittest
 import icalendar
 import re
 
+@pytest.mark.parametrize('parameter, expected', [
+    # Simple parameter:value pair
+    (Parameters(parameter1='Value1'), b'PARAMETER1=Value1'),
+    # Parameter with list of values must be separated by comma
+    (Parameters({'parameter1': ['Value1', 'Value2']}), b'PARAMETER1=Value1,Value2'),
+    # Multiple parameters must be separated by a semicolon
+    (Parameters({'RSVP': 'TRUE', 'ROLE': 'REQ-PARTICIPANT'}), b'ROLE=REQ-PARTICIPANT;RSVP=TRUE'),
+    # Parameter values containing ',;:' must be double quoted
+    (Parameters({'ALTREP': 'http://www.wiz.org'}), b'ALTREP="http://www.wiz.org"'),
+    # list items must be quoted separately
+    (Parameters({'MEMBER': ['MAILTO:projectA@host.com',
+                                   'MAILTO:projectB@host.com']}),
+     b'MEMBER="MAILTO:projectA@host.com","MAILTO:projectB@host.com"'),
+    (Parameters({'parameter1': 'Value1',
+                        'parameter2': ['Value2', 'Value3'],
+                        'ALTREP': ['http://www.wiz.org', 'value4']}),
+     b'ALTREP="http://www.wiz.org",value4;PARAMETER1=Value1;PARAMETER2=Value2,Value3'),
+    # Including empty strings
+    (Parameters({'PARAM': ''}), b'PARAM='),
+    # We can also parse parameter strings
+    (Parameters({'MEMBER': ['MAILTO:projectA@host.com',
+                                   'MAILTO:projectB@host.com']}),
+     b'MEMBER="MAILTO:projectA@host.com","MAILTO:projectB@host.com"'),
+    # We can also parse parameter strings
+    (Parameters({'PARAMETER1': 'Value1',
+                 'ALTREP': ['http://www.wiz.org', 'value4'],
+                 'PARAMETER2': ['Value2', 'Value3']}),
+     b'ALTREP="http://www.wiz.org",value4;PARAMETER1=Value1;PARAMETER2=Value2,Value3'),
+])
+def test_parameter_to_ical_is_inverse_of_from_ical(parameter, expected):
+    assert parameter.to_ical() == expected
+    assert Parameters.from_ical(expected.decode('utf-8')) == parameter
+
+def test_parse_parameter_string_without_quotes():
+    assert Parameters.from_ical('PARAM1=Value 1;PARA2=Value 2') == Parameters({'PARAM1': 'Value 1', 'PARA2': 'Value 2'})
+
+def test_parametr_is_case_insensitive():
+    parameter = Parameters(parameter1='Value1')
+    assert parameter['parameter1'] == parameter['PARAMETER1'] == parameter['PaRaMeTer1']
+
+def test_parameter_keys_are_uppercase():
+    parameter = Parameters(parameter1='Value1')
+    assert list(parameter.keys()) == ['PARAMETER1']
 
 class TestPropertyParams(unittest.TestCase):
 
@@ -97,77 +138,6 @@ class TestPropertyParams(unittest.TestCase):
         self.assertEqual(
             vevent['ORGANIZER'].to_ical().decode('utf-8'),
             'это, то; that\\ %th%%at%:'
-        )
-
-    def test_parameters_class(self):
-
-        # Simple parameter:value pair
-        p = Parameters(parameter1='Value1')
-        self.assertEqual(p.to_ical(), b'PARAMETER1=Value1')
-
-        # keys are converted to upper
-        self.assertEqual(list(p.keys()), ['PARAMETER1'])
-
-        # Parameters are case insensitive
-        self.assertEqual(p['parameter1'], 'Value1')
-        self.assertEqual(p['PARAMETER1'], 'Value1')
-
-        # Parameter with list of values must be separated by comma
-        p = Parameters({'parameter1': ['Value1', 'Value2']})
-        self.assertEqual(p.to_ical(), b'PARAMETER1=Value1,Value2')
-
-        # Multiple parameters must be separated by a semicolon
-        p = Parameters({'RSVP': 'TRUE', 'ROLE': 'REQ-PARTICIPANT'})
-        self.assertEqual(p.to_ical(), b'ROLE=REQ-PARTICIPANT;RSVP=TRUE')
-
-        # Parameter values containing ',;:' must be double quoted
-        p = Parameters({'ALTREP': 'http://www.wiz.org'})
-        self.assertEqual(p.to_ical(), b'ALTREP="http://www.wiz.org"')
-
-        # list items must be quoted separately
-        p = Parameters({'MEMBER': ['MAILTO:projectA@host.com',
-                                   'MAILTO:projectB@host.com']})
-        self.assertEqual(
-            p.to_ical(),
-            b'MEMBER="MAILTO:projectA@host.com","MAILTO:projectB@host.com"'
-        )
-
-        # Now the whole sheebang
-        p = Parameters({'parameter1': 'Value1',
-                        'parameter2': ['Value2', 'Value3'],
-                        'ALTREP': ['http://www.wiz.org', 'value4']})
-        self.assertEqual(
-            p.to_ical(),
-            (b'ALTREP="http://www.wiz.org",value4;PARAMETER1=Value1;'
-             b'PARAMETER2=Value2,Value3')
-        )
-
-        # We can also parse parameter strings
-        self.assertEqual(
-            Parameters.from_ical('PARAMETER1=Value 1;param2=Value 2'),
-            Parameters({'PARAMETER1': 'Value 1', 'PARAM2': 'Value 2'})
-        )
-
-        # Including empty strings
-        self.assertEqual(Parameters.from_ical('param='),
-                         Parameters({'PARAM': ''}))
-
-        # We can also parse parameter strings
-        self.assertEqual(
-            Parameters.from_ical(
-                'MEMBER="MAILTO:projectA@host.com","MAILTO:projectB@host.com"'
-            ),
-            Parameters({'MEMBER': ['MAILTO:projectA@host.com',
-                                   'MAILTO:projectB@host.com']})
-        )
-
-        # We can also parse parameter strings
-        self.assertEqual(
-            Parameters.from_ical('ALTREP="http://www.wiz.org",value4;'
-                                 'PARAMETER1=Value1;PARAMETER2=Value2,Value3'),
-            Parameters({'PARAMETER1': 'Value1',
-                        'ALTREP': ['http://www.wiz.org', 'value4'],
-                        'PARAMETER2': ['Value2', 'Value3']})
         )
 
     def test_parse_and_access_property_params(self):
