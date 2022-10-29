@@ -26,3 +26,14 @@ def test_rdate_dosent_become_none_on_invalid_input_issue_464(events):
     assert events.issue_464_invalid_rdate.is_broken
     assert ('RDATE', 'Expected period format, got: 199709T180000Z/PT5H30M') in events.issue_464_invalid_rdate.errors
     assert not b'RDATE:None' in events.issue_464_invalid_rdate.to_ical()
+
+@pytest.mark.parametrize('calendar_name', [
+    'big_bad_calendar',
+    'small_bad_calendar',
+    'multiple_calendar_components',
+])
+def test_error_message_doesnt_get_too_big(calendars, calendar_name):
+    with pytest.raises(ValueError) as exception:
+        calendars[calendar_name]
+    assert len(str(exception).split(': ')[1]) <= 100
+
