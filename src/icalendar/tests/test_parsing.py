@@ -174,3 +174,15 @@ def test_handles_unique_tzid(calendars, in_timezone, calendar_name):
     assert start_dt == in_timezone(datetime(2022, 10, 21, 20, 0, 0), 'Europe/Stockholm')
     assert end_dt == in_timezone(datetime(2022, 10, 21, 21, 0, 0), 'Europe/Stockholm')
 
+@pytest.mark.parametrize('event_name, expected_cn, expected_ics', [
+    ('event_with_escaped_characters', r'that, that; %th%%at%\ that:', 'это, то; that\\ %th%%at%:'),
+    ('event_with_escaped_character1', r'Society, 2014', 'that'),
+    ('event_with_escaped_character2', r'Society\ 2014', 'that'),
+    ('event_with_escaped_character3', r'Society; 2014', 'that'),
+    ('event_with_escaped_character4', r'Society: 2014', 'that'),
+])
+def test_escaped_characters_read(event_name, expected_cn, expected_ics, events):
+    event = events[event_name]
+    assert event['ORGANIZER'].params['CN'] == expected_cn
+    assert event['ORGANIZER'].to_ical() == expected_ics.encode('utf-8')
+
