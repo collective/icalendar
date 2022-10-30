@@ -1,29 +1,12 @@
 Changelog
 =========
-5.0.3 (unreleased)
-
-Minor changes:
-
-Update cal.py: 
-
-- All ``format`` strings converted to python3.6+ compliant ``f-strings``.
-
-Breaking changes:
-
-- ...
-
-New features:
-
-- ...
-
-Bug fixes:
-
-- ...
 
 5.0.2 (unreleased)
 ------------------
 
 Minor changes:
+
+- Updated cal.py to convert ll ``format`` strings converted to python3.6+ compliant ``f-strings``.
 
 - Calendar.from_ical no longer throws long errors
   Ref: #473
