@@ -4,7 +4,7 @@ Changelog
 5.0.3 (unreleased)
 ------------------
 
-Update parser.py
+Update prop.py
 
 - All ``format`` strings converted to python3.6+ compliant ``f-strings``.
 - Optimised rudimentary returns with equivalent boolean statements.
