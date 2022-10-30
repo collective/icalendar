@@ -6,7 +6,6 @@ It is stupid in the sense that it treats the content purely as strings. No type
 conversion is attempted.
 """
 
-from icalendar.prop import vText
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.parser_tools import SEQUENCE_TYPES
@@ -392,3 +391,4 @@ class Contentlines(list):
 
 
 # XXX: what kind of hack is this? import depends to be at end
+from icalendar.prop import vText
