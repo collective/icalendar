@@ -7,7 +7,6 @@ Changelog
 Update parser.py:
 
 - All ``format`` strings converted to python3.6+ compliant ``f-strings``.
-- Optimised rudimentary returns with equivalent boolean statements.
 - Converted ``for i in range()`` construct with an equivalent ``enumerate`` in ``q_split`` function.
 
 Breaking changes:
