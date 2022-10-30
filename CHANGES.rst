@@ -1,6 +1,26 @@
 Changelog
 =========
 
+5.0.3 (unreleased)
+------------------
+
+Update parser.py:
+
+- All ``format`` strings converted to python3.6+ compliant ``f-strings``.
+- Converted ``for i in range()`` construct with an equivalent ``enumerate`` in ``q_split`` function.
+
+Breaking changes:
+
+- ...
+
+New features:
+
+- ...
+
+Bug fixes:
+
+- ...
+
 5.0.2 (unreleased)
 ------------------
 
