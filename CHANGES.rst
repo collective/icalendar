@@ -4,16 +4,6 @@ Changelog
 
 Minor changes:
 
-Update parser.py
-
-- All ``format`` strings converted to python3.6+ compliant ``f-strings``.
-- Optimised rudimentary returns with equivalent boolean statements.
-
-Update prop.py:
-
-- All ``format`` strings converted to python3.6+ compliant ``f-strings``.
-- Optimised rudimentary returns with equivalent boolean statements.
-
 Update cal.py: 
 
 - All ``format`` strings converted to python3.6+ compliant ``f-strings``.
