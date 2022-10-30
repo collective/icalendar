@@ -6,6 +6,8 @@ Changelog
 
 Minor changes:
 
+- Refactored parser.py. Ref: #483 [pronoym99]
+
 - Calendar.from_ical no longer throws long errors
   Ref: #473
   Fixes: #472
