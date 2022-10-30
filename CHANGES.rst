@@ -9,6 +9,10 @@ Update prop.py:
 - All ``format`` strings converted to python3.6+ compliant ``f-strings``.
 - Optimised rudimentary returns with equiavlent boolean statements.
 
+Update cal.py: 
+
+- All ``format`` strings converted to python3.6+ compliant ``f-strings``.
+
 Breaking changes:
 
 - ...
