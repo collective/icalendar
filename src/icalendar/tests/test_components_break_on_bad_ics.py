@@ -35,5 +35,6 @@ def test_rdate_dosent_become_none_on_invalid_input_issue_464(events):
 def test_error_message_doesnt_get_too_big(calendars, calendar_name):
     with pytest.raises(ValueError) as exception:
         calendars[calendar_name]
-    assert len(str(exception).split(': ')[1]) <= 100
+    # Ignore part before first : for the test.
+    assert len(str(exception).split(': ', 1)[1]) <= 100
 
