@@ -1,30 +1,12 @@
 Changelog
 =========
 
-5.0.3 (unreleased)
-------------------
-
-Update parser.py:
-
-- All ``format`` strings converted to python3.6+ compliant ``f-strings``.
-- Converted ``for i in range()`` construct with an equivalent ``enumerate`` in ``q_split`` function.
-
-Breaking changes:
-
-- ...
-
-New features:
-
-- ...
-
-Bug fixes:
-
-- ...
-
 5.0.2 (unreleased)
 ------------------
 
 Minor changes:
+
+- Updated parser.py to convert all ``format`` strings converted to python3.6+ compliant ``f-strings`` and converted ``for i in range()`` construct with an equivalent ``enumerate`` in ``q_split`` function. Ref: #483 [pronoym99]
 
 - Calendar.from_ical no longer throws long errors
   Ref: #473
