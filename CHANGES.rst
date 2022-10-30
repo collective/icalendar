@@ -1,6 +1,14 @@
 Changelog
 =========
 
+5.0.3 (unreleased)
+------------------
+
+Update parser.py
+
+- All ``format`` strings converted to python3.6+ compliant ``f-strings``.
+- Optimised rudimentary returns with equivalent boolean statements.
+
 5.0.2 (unreleased)
 ------------------
 
