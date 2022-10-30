@@ -6,6 +6,8 @@ Changelog
 
 Minor changes:
 
+- Updated prop.py to convert all ``format`` strings to python3.6+ compliant ``f-strings`` and optimised rudimentary returns with equivalent boolean statements. Ref: #482 [pronoym99]
+
 - Calendar.from_ical no longer throws long errors
   Ref: #473
   Fixes: #472
