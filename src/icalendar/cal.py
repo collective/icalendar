@@ -434,7 +434,7 @@ class Component(CaselessDict):
         """String representation of class with all of it's subcomponents.
         """
         subs = ', '.join(str(it) for it in self.subcomponents)
-        return f"{self.name or type(self).__name__}({dict(self)}{', %s' % subs if subs else ''})"
+        return f"{self.name or type(self).__name__}({dict(self)}{', ' + subs if subs else ''})"
 
 
 #######################################
