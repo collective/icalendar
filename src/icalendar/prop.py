@@ -110,10 +110,10 @@ class LocalTimezone(tzinfo):
     """
 
     def utcoffset(self, dt):
-        return self._isdst(dt) and DSTOFFSET or STDOFFSET
+        return DSTOFFSET if self._isdst(dt) else STDOFFSET
 
     def dst(self, dt):
-        return self._isdst(dt) and DSTDIFF or ZERO
+        return DSTDIFF if self._isdst(dt) else ZERO
 
     def tzname(self, dt):
         return _time.tzname[self._isdst(dt)]
@@ -160,7 +160,7 @@ class vBoolean(int):
         return self
 
     def to_ical(self):
-        return self and b'TRUE' or b'FALSE'
+        return b'TRUE' if self else b'FALSE'
 
     @classmethod
     def from_ical(cls, ical):
