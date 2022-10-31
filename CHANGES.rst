@@ -1,64 +1,12 @@
 Changelog
 =========
 
-<<<<<<< HEAD
-5.0.3 (unreleased)
-------------------
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-Update prop.py
-=======
-Update parser.py
->>>>>>> 3463555 (Update CHANGES.rst)
-=======
-Update prop.py
->>>>>>> 4b91ae1 (Update CHANGES.rst pertaining to #482)
-
-- All ``format`` strings converted to python3.6+ compliant ``f-strings``.
-- Optimised rudimentary returns with equivalent boolean statements.
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 89e39d1 (Update CHANGES.rst)
-Breaking changes:
-
-- ...
-
-New features:
-
-- ...
-
-Bug fixes:
-
-- ...
-
-<<<<<<< HEAD
-=======
->>>>>>> 3463555 (Update CHANGES.rst)
-=======
->>>>>>> 89e39d1 (Update CHANGES.rst)
-=======
->>>>>>> 3df7370 (Update CHANGES.rst)
 5.0.2 (unreleased)
 ------------------
 
 Minor changes:
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-- Refactored prop.py Ref: #482 [pronoym99]
-=======
-- Updated prop.py to convert all ``format`` strings to python3.6+ compliant ``f-strings`` and optimised rudimentary returns with equivalent boolean statements. Ref: #482 [pronoym99]
->>>>>>> cdca594 (Update CHANGES.rst pertaining to #482)
-=======
-- Updated prop.py to convert all ``format`` strings to python3.6+ compliant ``f-strings`` and optimised rudimentary returns with equivalent boolean statements. Ref: #482 [pronoym99]
->>>>>>> 3df7370 (Update CHANGES.rst)
-=======
-- Refactored prop.py Ref: #482 [pronoym99]
->>>>>>> 0421d31 (Update CHANGES.rst)
+- Refactored prop.py. Ref: #482 [pronoym99]
 
 - Calendar.from_ical no longer throws long errors
   Ref: #473
