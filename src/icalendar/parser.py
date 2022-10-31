@@ -261,7 +261,7 @@ class Parameters(CaselessDict):
 
 
 def escape_string(val):
-    # '%{:02X}'.format(i)
+    # f'{i:02X}'
     return val.replace(r'\,', '%2C').replace(r'\:', '%3A')\
               .replace(r'\;', '%3B').replace(r'\\', '%5C')
 

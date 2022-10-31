@@ -370,8 +370,7 @@ class Component(CaselessDict):
                 factory = types_factory.for_property(name)
                 component = stack[-1] if stack else None
                 if not component:
-                    raise ValueError('Property "{prop}" does not have '
-                                     'a parent component.'.format(prop=name))
+                    raise ValueError(f'Property "{name}" does not have a parent component.')
                 datetime_names = ('DTSTART', 'DTEND', 'RECURRENCE-ID', 'DUE',
                                   'FREEBUSY', 'RDATE', 'EXDATE')
                 try:
@@ -434,12 +433,8 @@ class Component(CaselessDict):
     def __repr__(self):
         """String representation of class with all of it's subcomponents.
         """
-        subs = ', '.join([str(it) for it in self.subcomponents])
-        return '{}({}{})'.format(
-            self.name or type(self).__name__,
-            dict(self),
-            ', %s' % subs if subs else ''
-        )
+        subs = ', '.join(str(it) for it in self.subcomponents)
+        return f"{self.name or type(self).__name__}({dict(self)}{', ' + subs if subs else ''})"
 
 
 #######################################
@@ -612,12 +607,10 @@ class Timezone(Component):
                 tzname = component['TZNAME'].encode('ascii', 'replace')
                 tzname = self._make_unique_tzname(tzname, tznames)
             except KeyError:
-                tzname = '{}_{}_{}_{}'.format(
-                    zone,
-                    component['DTSTART'].to_ical().decode('utf-8'),
-                    component['TZOFFSETFROM'].to_ical(),  # for whatever reason this is str/unicode
-                    component['TZOFFSETTO'].to_ical(),  # for whatever reason this is str/unicode
-                )
+                # for whatever reason this is str/unicode
+                tzname = f"{zone}_{component['DTSTART'].to_ical().decode('utf-8')}_" + \
+                         f"{component['TZOFFSETFROM'].to_ical()}_" + \
+                         f"{component['TZOFFSETTO'].to_ical()}"
                 tzname = self._make_unique_tzname(tzname, tznames)
 
             dst[tzname], component_transitions = self._extract_offsets(
