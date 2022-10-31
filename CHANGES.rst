@@ -6,7 +6,7 @@ Changelog
 
 Minor changes:
 
-- Updated cal.py to convert all ``format`` strings converted to python3.6+ compliant ``f-strings``. Ref: #481 [pronoym99]
+- Converted all ``format`` strings to ``f-strings`` in cal.py. Ref: #481 [pronoym99]
 
 - Calendar.from_ical no longer throws long errors
   Ref: #473
