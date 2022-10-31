@@ -89,34 +89,6 @@ class TestPropertyParams(unittest.TestCase):
         ical2 = Calendar.from_ical(ical_str)
         self.assertEqual(ical2.get('ORGANIZER').params.get('CN'), 'Doe, John')
 
-    def test_escaping(self):
-        # verify that escaped non safe chars are decoded correctly
-        NON_SAFE_CHARS = ',\\;:'
-        for char in NON_SAFE_CHARS:
-            cn_escaped = "Society\\%s 2014" % char
-            cn_decoded = "Society%s 2014" % char
-            vevent = Event.from_ical(
-                'BEGIN:VEVENT\r\n'
-                'ORGANIZER;CN=%s:that\r\n'
-                'END:VEVENT\r\n' % cn_escaped
-            )
-            self.assertEqual(vevent['ORGANIZER'].params['CN'], cn_decoded)
-
-        vevent = Event.from_ical(
-            'BEGIN:VEVENT\r\n'
-            'ORGANIZER;CN=that\\, that\\; %th%%at%\\\\ that\\:'
-            ':это\\, то\\; that\\\\ %th%%at%\\:\r\n'
-            'END:VEVENT\r\n'
-        )
-        self.assertEqual(
-            vevent['ORGANIZER'].params['CN'],
-            r'that, that; %th%%at%\ that:'
-        )
-        self.assertEqual(
-            vevent['ORGANIZER'].to_ical().decode('utf-8'),
-            'это, то; that\\ %th%%at%:'
-        )
-
     def test_parse_and_access_property_params(self):
         """Parse an ics string and access some property parameters then.
         This is a follow-up of a question received per email.
