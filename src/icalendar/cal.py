@@ -608,9 +608,9 @@ class Timezone(Component):
                 tzname = self._make_unique_tzname(tzname, tznames)
             except KeyError:
                 # for whatever reason this is str/unicode
-                tzname = f"""{zone}_{component['DTSTART'].to_ical().decode('utf-8')}_
-                             {component['TZOFFSETFROM'].to_ical()}_
-                             {component['TZOFFSETTO'].to_ical()}"""
+                tzname = f"{zone}_{component['DTSTART'].to_ical().decode('utf-8')}_" + \
+                         f"{component['TZOFFSETFROM'].to_ical()}_" + \
+                         f"{component['TZOFFSETTO'].to_ical()}"
                 tzname = self._make_unique_tzname(tzname, tznames)
 
             dst[tzname], component_transitions = self._extract_offsets(
