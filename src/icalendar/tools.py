@@ -30,6 +30,4 @@ class UIDGenerator:
         host_name = to_unicode(host_name)
         unique = unique or UIDGenerator.rnd_string()
         today = to_unicode(vDatetime(datetime.today()).to_ical())
-        return vText('{}-{}@{}'.format(today,
-                                   unique,
-                                   host_name))
+        return vText(f'{today}-{unique}@{host_name}')

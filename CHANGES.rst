@@ -1,12 +1,16 @@
 Changelog
 =========
 
-5.0.1 (unreleased)
+5.0.2 (unreleased)
 ------------------
 
 Minor changes:
 
-- fixed setuptools deprecation warnings [mgorny]
+- Refactored cal.py, tools.py and completed remaining minimal refactoring in parser.py. Ref: #481 [pronoym99]
+- Calendar.from_ical no longer throws long errors
+  Ref: #473
+  Fixes: #472
+  [jacadzaca]
 
 Breaking changes:
 
@@ -18,7 +22,24 @@ New features:
 
 Bug fixes:
 
-- ...
+- broken properties are not added to the parent component
+  Ref: #471
+  Fixes: #464
+  [jacadzaca]
+
+5.0.1 (2022-10-22)
+------------------
+
+Minor changes:
+
+- fixed setuptools deprecation warnings [mgorny]
+
+Bug fixes:
+
+- a well-known timezone timezone prefixed with a `/` is treated as if the slash wasn't present
+  Ref: #467
+  Fixes: #466
+  [jacadzaca]
 
 5.0.0 (2022-10-17)
 ------------------

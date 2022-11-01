@@ -79,6 +79,7 @@ def test_issue_157_removes_trailing_semicolon(events):
     # PERIOD should be put back into shape
     'issue_156_RDATE_with_PERIOD',
     'issue_156_RDATE_with_PERIOD_list',
+    'event_with_unicode_organizer',
 ])
 def test_event_to_ical_is_inverse_of_from_ical(events, event_name):
     """Make sure that an event's ICS is equal to the ICS it was made from."""
@@ -160,3 +161,29 @@ def test_creates_event_with_base64_encoded_attachment_issue_82(events):
     event = Event()
     event.add('ATTACH', b)
     assert event.to_ical() == events.issue_82_expected_output.raw_ics
+
+@pytest.mark.parametrize('calendar_name', [
+    # Issue #466 - [BUG] TZID timezone is ignored when forward-slash is used
+    # https://github.com/collective/icalendar/issues/466
+    'issue_466_respect_unique_timezone',
+    'issue_466_convert_tzid_with_slash'
+])
+def test_handles_unique_tzid(calendars, in_timezone, calendar_name):
+    calendar = calendars[calendar_name]
+    start_dt = calendar.walk('VEVENT')[0]['dtstart'].dt
+    end_dt = calendar.walk('VEVENT')[0]['dtend'].dt
+    assert start_dt == in_timezone(datetime(2022, 10, 21, 20, 0, 0), 'Europe/Stockholm')
+    assert end_dt == in_timezone(datetime(2022, 10, 21, 21, 0, 0), 'Europe/Stockholm')
+
+@pytest.mark.parametrize('event_name, expected_cn, expected_ics', [
+    ('event_with_escaped_characters', r'that, that; %th%%at%\ that:', 'это, то; that\\ %th%%at%:'),
+    ('event_with_escaped_character1', r'Society, 2014', 'that'),
+    ('event_with_escaped_character2', r'Society\ 2014', 'that'),
+    ('event_with_escaped_character3', r'Society; 2014', 'that'),
+    ('event_with_escaped_character4', r'Society: 2014', 'that'),
+])
+def test_escaped_characters_read(event_name, expected_cn, expected_ics, events):
+    event = events[event_name]
+    assert event['ORGANIZER'].params['CN'] == expected_cn
+    assert event['ORGANIZER'].to_ical() == expected_ics.encode('utf-8')
+
