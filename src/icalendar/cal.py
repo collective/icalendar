@@ -370,8 +370,7 @@ class Component(CaselessDict):
                 factory = types_factory.for_property(name)
                 component = stack[-1] if stack else None
                 if not component:
-                    raise ValueError('Property "{prop}" does not have '
-                                     'a parent component.'.format(prop=name))
+                    raise ValueError(f'Property "{name}" does not have a parent component.')
                 datetime_names = ('DTSTART', 'DTEND', 'RECURRENCE-ID', 'DUE',
                                   'FREEBUSY', 'RDATE', 'EXDATE')
                 try:
@@ -383,7 +382,6 @@ class Component(CaselessDict):
                     if not component.ignore_exceptions:
                         raise
                     component.errors.append((uname, str(e)))
-                    component.add(name, None, encode=0)
                 else:
                     vals.params = params
                     component.add(name, vals, encode=0)
@@ -391,13 +389,21 @@ class Component(CaselessDict):
         if multiple:
             return comps
         if len(comps) > 1:
-            raise ValueError(f'Found multiple components where '
-                             f'only one is allowed: {st!r}')
+            raise ValueError(cls._format_error(
+                'Found multiple components where only one is allowed', st))
         if len(comps) < 1:
-            raise ValueError(f'Found no components where '
-                             f'exactly one is required: '
-                             f'{st!r}')
+            raise ValueError(cls._format_error(
+                'Found no components where exactly one is required', st))
         return comps[0]
+
+    def _format_error(error_description, bad_input, elipsis='[...]'):
+        # there's three character more in the error, ie. ' ' x2 and a ':'
+        max_error_length = 100 - 3
+        if len(error_description) + len(bad_input) + len(elipsis) > max_error_length:
+            truncate_to = max_error_length - len(error_description) - len(elipsis)
+            return f'{error_description}: {bad_input[:truncate_to]} {elipsis}'
+        else:
+            return f'{error_description}: {bad_input}'
 
     def content_line(self, name, value, sorted=True):
         """Returns property as content line.
@@ -427,12 +433,8 @@ class Component(CaselessDict):
     def __repr__(self):
         """String representation of class with all of it's subcomponents.
         """
-        subs = ', '.join([str(it) for it in self.subcomponents])
-        return '{}({}{})'.format(
-            self.name or type(self).__name__,
-            dict(self),
-            ', %s' % subs if subs else ''
-        )
+        subs = ', '.join(str(it) for it in self.subcomponents)
+        return f"{self.name or type(self).__name__}({dict(self)}{', ' + subs if subs else ''})"
 
 
 #######################################
@@ -605,12 +607,10 @@ class Timezone(Component):
                 tzname = component['TZNAME'].encode('ascii', 'replace')
                 tzname = self._make_unique_tzname(tzname, tznames)
             except KeyError:
-                tzname = '{}_{}_{}_{}'.format(
-                    zone,
-                    component['DTSTART'].to_ical().decode('utf-8'),
-                    component['TZOFFSETFROM'].to_ical(),  # for whatever reason this is str/unicode
-                    component['TZOFFSETTO'].to_ical(),  # for whatever reason this is str/unicode
-                )
+                # for whatever reason this is str/unicode
+                tzname = f"{zone}_{component['DTSTART'].to_ical().decode('utf-8')}_" + \
+                         f"{component['TZOFFSETFROM'].to_ical()}_" + \
+                         f"{component['TZOFFSETTO'].to_ical()}"
                 tzname = self._make_unique_tzname(tzname, tznames)
 
             dst[tzname], component_transitions = self._extract_offsets(

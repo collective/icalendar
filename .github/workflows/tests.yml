@@ -2,14 +2,17 @@ name: tests
 
 on:
   push:
-    branches: [ main ]
+    branches:
+    - main
+    tags:
+    - v*
   pull_request:
   schedule:
     - cron: '14 7 * * 0'  # run once a week on Sunday
   workflow_dispatch:
 
 jobs:
-  build:
+  run-tests:
     strategy:
       matrix:
         config:
@@ -51,3 +54,61 @@ jobs:
         coveralls --service=github
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy-tag-to-pypi:
+    # only deploy on tags, see https://stackoverflow.com/a/58478262/1320237
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs:
+    - run-tests
+    runs-on: ubuntu-latest
+    # This environment stores the TWINE_USERNAME and TWINE_PASSWORD
+    # see https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment
+    environment:
+      name: PyPI
+      url: https://pypi.org/project/icalendar/
+    # after using the environment, we need to make the secrets available
+    # see https://docs.github.com/en/actions/security-guides/encrypted-secrets#example-using-bash
+    env:
+      TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
+      TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: "3.9"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install wheel twine
+    - name: Check the tag
+      run: |
+        PACKAGE_VERSION=`python setup.py --version`
+        TAG_NAME=v$PACKAGE_VERSION
+        echo "Package version $PACKAGE_VERSION with possible tag name $TAG_NAME on $GITHUB_REF_NAME"
+        # test that the tag represents the version
+        # see https://docs.github.com/en/actions/learn-github-actions/environment-variables
+        if [ "$TAG_NAME" != "$GITHUB_REF_NAME" ]; then
+          echo "ERROR: This tag is for the wrong version. Got \"$GITHUB_REF_NAME\" expected \"$TAG_NAME\"."
+          exit 1
+        fi
+    - name: remove old files
+      run: rm -rf dist/*
+    - name: build distribution files
+      run: python setup.py bdist_wheel sdist
+    - name: deploy to pypi
+      run: |
+        # You will have to set the variables TWINE_USERNAME and TWINE_PASSWORD
+        # You can use a token specific to your project by setting the user name to
+        # __token__ and the password to the token given to you by the PyPI project.
+        # sources:
+        #   - https://shambu2k.hashnode.dev/gitlab-to-pypi
+        #   - http://blog.octomy.org/2020/11/deploying-python-pacakges-to-pypi-using.html?m=1
+        if [ -z "$TWINE_USERNAME" ]; then
+          echo "WARNING: TWINE_USERNAME not set!"
+        fi
+        if [ -z "$TWINE_PASSWORD" ]; then
+          echo "WARNING: TWINE_PASSWORD not set!"
+        fi
+        twine check dist/*
+        twine upload dist/*

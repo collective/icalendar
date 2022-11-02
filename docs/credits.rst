@@ -63,6 +63,8 @@ icalendar contributors
 - jacadzaca <vitouejj@gmail.com>
 - Mauro Amico <mauro.amico@gmail.com>
 - Alexander Pitkin <peleccom@gmail.com>
+- Michał Górny <mgorny@gentoo.org>
+- Pronoy <lukex9442@gmail.com>
 
 Find out who contributed::
 

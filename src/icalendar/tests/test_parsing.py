@@ -15,9 +15,11 @@ from icalendar.parser import Contentline, Parameters
     # Nonstandard component inside other components, also has properties
     'issue_178_custom_component_inside_other',
     # Nonstandard component is able to contain other components
-    'issue_178_custom_component_contains_other'])
+    'issue_178_custom_component_contains_other',
+])
 def test_calendar_to_ical_is_inverse_of_from_ical(calendars, calendar_name):
     calendar = getattr(calendars, calendar_name)
+    assert calendar.to_ical().splitlines() == calendar.raw_ics.splitlines()
     assert calendar.to_ical() == calendar.raw_ics
 
 @pytest.mark.parametrize('raw_content_line, expected_output', [
@@ -74,10 +76,15 @@ def test_issue_157_removes_trailing_semicolon(events):
     # https://github.com/collective/icalendar/pull/100
     ('issue_100_transformed_doctests_into_unittests'),
     ('issue_184_broken_representation_of_period'),
+    # PERIOD should be put back into shape
+    'issue_156_RDATE_with_PERIOD',
+    'issue_156_RDATE_with_PERIOD_list',
+    'event_with_unicode_organizer',
 ])
 def test_event_to_ical_is_inverse_of_from_ical(events, event_name):
     """Make sure that an event's ICS is equal to the ICS it was made from."""
     event = events[event_name]
+    assert event.to_ical().splitlines() == event.raw_ics.splitlines()
     assert event.to_ical() == event.raw_ics
 
 def test_decode_rrule_attribute_error_issue_70(events):
@@ -154,3 +161,29 @@ def test_creates_event_with_base64_encoded_attachment_issue_82(events):
     event = Event()
     event.add('ATTACH', b)
     assert event.to_ical() == events.issue_82_expected_output.raw_ics
+
+@pytest.mark.parametrize('calendar_name', [
+    # Issue #466 - [BUG] TZID timezone is ignored when forward-slash is used
+    # https://github.com/collective/icalendar/issues/466
+    'issue_466_respect_unique_timezone',
+    'issue_466_convert_tzid_with_slash'
+])
+def test_handles_unique_tzid(calendars, in_timezone, calendar_name):
+    calendar = calendars[calendar_name]
+    start_dt = calendar.walk('VEVENT')[0]['dtstart'].dt
+    end_dt = calendar.walk('VEVENT')[0]['dtend'].dt
+    assert start_dt == in_timezone(datetime(2022, 10, 21, 20, 0, 0), 'Europe/Stockholm')
+    assert end_dt == in_timezone(datetime(2022, 10, 21, 21, 0, 0), 'Europe/Stockholm')
+
+@pytest.mark.parametrize('event_name, expected_cn, expected_ics', [
+    ('event_with_escaped_characters', r'that, that; %th%%at%\ that:', 'это, то; that\\ %th%%at%:'),
+    ('event_with_escaped_character1', r'Society, 2014', 'that'),
+    ('event_with_escaped_character2', r'Society\ 2014', 'that'),
+    ('event_with_escaped_character3', r'Society; 2014', 'that'),
+    ('event_with_escaped_character4', r'Society: 2014', 'that'),
+])
+def test_escaped_characters_read(event_name, expected_cn, expected_ics, events):
+    event = events[event_name]
+    assert event['ORGANIZER'].params['CN'] == expected_cn
+    assert event['ORGANIZER'].to_ical() == expected_ics.encode('utf-8')
+

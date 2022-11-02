@@ -25,6 +25,9 @@ Maintainers need this:
 - ``Maintainer`` access to the `Read The Docs project <https://readthedocs.org/projects/icalendar/>`_.
     This can be given by existing maintainers listed on the project's page.
     TODO: link to the settings
+- ``PyPI environment access for GitHub Actions`` grant new releases from tags.
+    This access can be granted in `Settings → Environments → PyPI <https://github.com/collective/icalendar/settings/environments/674266024/edit>`__
+    by adding the GitHub username to the list of "Required Reviewers".
 
 
 Contributors
@@ -42,34 +45,79 @@ Nobody should merge their own pull requests.
 If you like to review or merge pull requests of other people and you have shown that you know how to contribute,
 you can ask for becoming a contributor or a maintainer asks you if you would like to become one.
 
-
 New Releases
 ------------
 
-This explains how to create a new release on PyPI.
-You will need write access to the `PyPI project`_.
+This explains how to create a new release on `PyPI  <https://pypi.org/project/icalendar/>`_.
 
-1. Check that the ``CHANGES.rst`` is up to date with the latest merges and the version you want to release is correctly named.
-2. Change the ``__version__`` variable in the ``src/icalendar/__init__.py`` file.
-3. Create a commit on the ``master`` branch to release this version.
+Since contributors and maintainers have write access the the repository, they can start the release process.
+However, only people with ``PyPI environment access for GitHub Actions`` can approve an automated release to PyPI.
 
-    .. code-block:: bash
 
-        git checkout master
-        git commit -am"version 5.0.0a2"
-4. Push the commit and see if the `CI-tests <https://github.com/collective/icalendar/actions?query=branch%3Amaster>`__ are running on it.
+1. Check that the ``CHANGES.rst`` is up to date with the `latest merged pull requests <https://github.com/collective/icalendar/pulls?q=is%3Apr+is%3Amerged>`__
+   and the version you want to release is correctly named.
+2. Change the ``__version__`` variable in
 
-    .. code-block:: bash
+   - the ``src/icalendar/__init__.py`` file and 
+   - in the ``docs/usage.rst`` file (look for ``icalendar.__version__``)
+3. Create a commit on the ``release-5.0.0`` branch (or equivalent) to release this version.
 
-        git push
-5. Create a tag for the release and see if the `CI-tests <https://github.com/collective/icalendar/actions>`__ are running.
+   .. code-block:: bash
 
-    .. code-block:: bash
+       git checkout master
+       git pull
+       git checkout -b release master
+       git add CHANGES.rst src/icalendar/__init__.py
+       git commit -m"version 5.0.0"
 
-        git tag v5.0.0a2
-        git push origin v5.0.0a2
-6. TODO: how to release new version to PyPI.
+4. Push the commit and `create a pull request <https://github.com/collective/icalendar/compare?expand=1>`__
+   Here is an `example pull request #457 <https://github.com/collective/icalendar/pull/457>`__.
 
+   .. code-block:: bash
+
+       git push -u origin release-5.0.0
+
+5. See if the `CI-tests <https://github.com/collective/icalendar/actions>`_ are running on the pull request.
+   If they are not running, no new release can be issued.
+   If the tests are running, merge the pull request.
+6. Create a tag for the release and see if the `CI-tests`_ are running.
+
+   .. code-block:: bash
+
+       git checkout master
+       git pull
+       git tag v5.0.0
+       git push upstream v5.0.0 # could be origin or whatever reference
+
+7. Once the tag is pushed and its `CI-tests`_ are passing, maintainers will get an e-mail::
+
+       Subject: Deployment review in collective/icalendar
+
+       tests: PyPI is waiting for your review
+
+8. If the release is approved by a maintainer. It will be pushed to `PyPI`_.
+   If that happens, notify the issues that were fixed about this release.
+9. Copy this to the start of ``CHANGES.rst`` and create a new commit with this on the ``master`` branch::
+
+       5.0.1 (unreleased)
+       ------------------
+       
+       Minor changes:
+       
+       - ...
+       
+       Breaking changes:
+       
+       - ...
+       
+       New features:
+       
+       - ...
+       
+       Bug fixes:
+       
+       - ...
+       
 
 Links
 -----
@@ -79,6 +127,7 @@ This section contains useful links for maintainers and contributors:
 - `Future of icalendar, looking for maintainer #360 <https://github.com/collective/icalendar/discussions/360>`__
 - `Team icalendar-admin <https://github.com/orgs/collective/teams/icalendar-admin>`__
 - `Team icalendar-contributor <https://github.com/orgs/collective/teams/icalendar-contributor>`__
+- `Comment on the Plone tests running with icalendar <https://github.com/collective/icalendar/pull/447#issuecomment-1277643634>`__
 
 
 

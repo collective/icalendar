@@ -1,21 +1,63 @@
 Changelog
 =========
 
+5.0.2 (unreleased)
+------------------
 
-5.0.0a2 (unreleased)
---------------------
+Minor changes:
+
+- Refactored cal.py, tools.py and completed remaining minimal refactoring in parser.py. Ref: #481 [pronoym99]
+- Calendar.from_ical no longer throws long errors
+  Ref: #473
+  Fixes: #472
+  [jacadzaca]
+
+Breaking changes:
+
+- ...
+
+New features:
+
+- source code in documentation is tested using doctest #445 [niccokunzmann]
+
+Bug fixes:
+
+- broken properties are not added to the parent component
+  Ref: #471
+  Fixes: #464
+  [jacadzaca]
+
+5.0.1 (2022-10-22)
+------------------
+
+Minor changes:
+
+- fixed setuptools deprecation warnings [mgorny]
+
+Bug fixes:
+
+- a well-known timezone timezone prefixed with a `/` is treated as if the slash wasn't present
+  Ref: #467
+  Fixes: #466
+  [jacadzaca]
+
+5.0.0 (2022-10-17)
+------------------
 
 Minor changes:
 
 - removed deprecated test checks [tuergeist]
 - Fix: cli does not support DURATION #354 [mamico]
 - Add changelog and contributing to readthedocs documentation #428 [peleccom]
+- fixed small typos #323 [rohnsha0]
+- unittest to parametrized pytest refactoring [jacadzaca]
 
 Breaking changes:
 
 - Require Python 3.7 as minimum Python version.  [maurits] [niccokunzmann]
 - icalenar now takes a ics file directly as an input
 - icalendar's output is different
+- Drop Support for Python 3.6. Versions 3.7 - 3.11 are supported and tested.
 
 New features:
 
@@ -35,6 +77,8 @@ Bug fixes:
   Ref: #338
   Fixes: #335
   [tobixen]
+-  add ``__eq__`` to ``icalendar.prop.vDDDTypes`` #391 [jacadzaca]
+- Refactor deprecated unittest aliases for Python 3.11 compatibility #330 [tirkarthi]
 
 5.0.0a1 (2022-07-11)
 --------------------
