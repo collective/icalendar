@@ -56,7 +56,10 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
 
 1. Check that the ``CHANGES.rst`` is up to date with the `latest merged pull requests <https://github.com/collective/icalendar/pulls?q=is%3Apr+is%3Amerged>`__
    and the version you want to release is correctly named.
-2. Change the ``__version__`` variable in the ``src/icalendar/__init__.py`` file.
+2. Change the ``__version__`` variable in
+
+   - the ``src/icalendar/__init__.py`` file and 
+   - in the ``docs/usage.rst`` file (look for ``icalendar.__version__``)
 3. Create a commit on the ``release-5.0.0`` branch (or equivalent) to release this version.
 
    .. code-block:: bash
