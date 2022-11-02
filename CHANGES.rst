@@ -18,7 +18,7 @@ Breaking changes:
 
 New features:
 
-- ...
+- source code in documentation is tested using doctest #445 [niccokunzmann]
 
 Bug fixes:
 
@@ -63,7 +63,6 @@ New features:
 
 - icalendar utility outputs a 'Duration' row
 - icalendar can take multiple ics files as an input
-- source code in documentation is tested using doctest #445 [niccokunzmann]
 
 Bug fixes:
 
