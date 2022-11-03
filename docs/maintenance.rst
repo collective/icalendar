@@ -99,7 +99,7 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
    If that happens, notify the issues that were fixed about this release.
 9. Copy this to the start of ``CHANGES.rst`` and create a new commit with this on the ``master`` branch::
 
-       5.0.1 (unreleased)
+       5.0.2 (unreleased)
        ------------------
        
        Minor changes:

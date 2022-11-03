@@ -1,7 +1,26 @@
 Changelog
 =========
 
-5.0.2 (unreleased)
+5.0.3 (unreleased)
+------------------
+
+Minor changes:
+
+- ...
+
+Breaking changes:
+
+- ...
+
+New features:
+
+- ...
+
+Bug fixes:
+
+- ...
+
+5.0.2 (2022-11-03)
 ------------------
 
 Minor changes:
@@ -14,10 +33,6 @@ Minor changes:
 - Make datetime value shorter by removing the value parameter where possible.
   Fixes: #318
   [jacadzaca], [niccokunzmann]
-
-Breaking changes:
-
-- ...
 
 New features:
 
