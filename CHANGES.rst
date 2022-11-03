@@ -11,6 +11,9 @@ Minor changes:
   Ref: #473
   Fixes: #472
   [jacadzaca]
+- Make datetime value shorter by removing the value parameter where possible.
+  Fixes: #318
+  [jacadzaca], [niccokunzmann]
 
 Breaking changes:
 

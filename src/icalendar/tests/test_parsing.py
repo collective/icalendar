@@ -124,8 +124,8 @@ def test_timezones_to_ical_is_inverse_of_from_ical(timezones):
     assert timezone.to_ical() == timezone.raw_ics
 
 @pytest.mark.parametrize('date, expected_output', [
-    (datetime(2012, 7, 16, 0, 0, 0), b'DTSTART;VALUE=DATE-TIME:20120716T000000Z'),
-    (datetime(2021, 11, 17, 15, 9, 15), b'DTSTART;VALUE=DATE-TIME:20211117T150915Z')
+    (datetime(2012, 7, 16, 0, 0, 0), b'DTSTART:20120716T000000Z'),
+    (datetime(2021, 11, 17, 15, 9, 15), b'DTSTART:20211117T150915Z')
 ])
 def test_no_tzid_when_utc(utc, date, expected_output):
     '''Issue #58  - TZID on UTC DATE-TIMEs

@@ -239,7 +239,7 @@ identifier (if applicable) are automatically added here::
 
     >>> lines = event.to_ical().splitlines()
     >>> assert (
-    ...     b"DTSTART;TZID=Europe/Vienna;VALUE=DATE-TIME:20101010T100000"
+    ...     b"DTSTART;TZID=Europe/Vienna:20101010T100000"
     ...     in lines)
 
 
@@ -314,7 +314,7 @@ Write to disk::
   >>> directory = tempfile.mkdtemp()
   >>> f = open(os.path.join(directory, 'example.ics'), 'wb')
   >>> f.write(cal.to_ical())
-  570
+  522
   >>> f.close()
 
 
