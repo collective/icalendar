@@ -1,11 +1,24 @@
-from icalendar.caselessdict import CaselessDict
+import pytest
 import unittest
 
-import datetime
-import icalendar
+from datetime import datetime
 import os
-import pytz
+import icalendar
 
+def test_recurrence_properly_parsed(events):
+    assert events.event_with_recurrence['rrule'] == {'COUNT': [100], 'FREQ': ['DAILY']}
+
+@pytest.mark.parametrize('i, exception_date', [
+    (0, datetime(1996, 4, 2, 1, 0)),
+    (1, datetime(1996, 4, 3, 1, 0)),
+    (2, datetime(1996, 4, 4, 1, 0))
+])
+def test_exdate_properly_parsed(events, i, exception_date, in_timezone):
+    assert events.event_with_recurrence['exdate'].dts[i].dt == in_timezone(exception_date, 'UTC')
+
+def test_exdate_properly_marshalled(events):
+    actual = events.event_with_recurrence['exdate'].to_ical()
+    assert actual == b'19960402T010000Z,19960403T010000Z,19960404T010000Z'
 
 class TestRecurrence(unittest.TestCase):
 
@@ -14,34 +27,6 @@ class TestRecurrence(unittest.TestCase):
         with open(os.path.join(directory, 'recurrence.ics'), 'rb') as fp:
             data = fp.read()
         self.cal = icalendar.Calendar.from_ical(data)
-
-    def test_recurrence_exdates_one_line(self):
-        first_event = self.cal.walk('vevent')[0]
-
-        self.assertIsInstance(first_event, CaselessDict)
-        self.assertEqual(
-            first_event['rrule'], {'COUNT': [100], 'FREQ': ['DAILY']}
-        )
-
-        self.assertEqual(
-            first_event['exdate'].to_ical(),
-            b'19960402T010000Z,19960403T010000Z,19960404T010000Z'
-        )
-
-        self.assertEqual(
-            first_event['exdate'].dts[0].dt,
-            pytz.utc.localize(datetime.datetime(1996, 4, 2, 1, 0))
-        )
-
-        self.assertEqual(
-            first_event['exdate'].dts[1].dt,
-            pytz.utc.localize(datetime.datetime(1996, 4, 3, 1, 0))
-        )
-
-        self.assertEqual(
-            first_event['exdate'].dts[2].dt,
-            pytz.utc.localize(datetime.datetime(1996, 4, 4, 1, 0))
-        )
 
     def test_recurrence_exdates_multiple_lines(self):
         event = self.cal.walk('vevent')[1]
