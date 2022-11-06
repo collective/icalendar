@@ -1,9 +1,7 @@
-import pytest
 import unittest
-
 from datetime import datetime
-import os
-import icalendar
+
+import pytest
 
 def test_recurrence_properly_parsed(events):
     assert events.event_with_recurrence['rrule'] == {'COUNT': [100], 'FREQ': ['DAILY']}
@@ -20,27 +18,30 @@ def test_exdate_properly_marshalled(events):
     actual = events.event_with_recurrence['exdate'].to_ical()
     assert actual == b'19960402T010000Z,19960403T010000Z,19960404T010000Z'
 
+# TODO: DOCUMENT BETTER!
+# In this case we have multiple EXDATE definitions, one per line.
+# Icalendar makes a list out of this instead of zipping it into one
+# vDDDLists object. Actually, this feels correct for me, as it also
+# allows to define different timezones per exdate line - but client
+# code has to handle this as list and not blindly expecting to be able
+# to call event['EXDATE'].to_ical() on it:
+def test_exdate_formed_from_exdates_on_multiple_lines_is_a_list(events):
+    exdate = events.event_with_recurrence_exdates_on_different_lines['exdate']
+    assert isinstance(exdate, list)
+
+@pytest.mark.parametrize('i, exception_date', [
+    (0, b'20120529T100000'),
+    (1, b'20120403T100000'),
+    (2, b'20120410T100000'),
+    (3, b'20120501T100000'),
+    (4, b'20120417T100000')
+])
+def test_list_exdate_properly_marshalled(events, i, exception_date):
+    exdate = events.event_with_recurrence_exdates_on_different_lines['exdate']
+    assert exdate[i].to_ical() == exception_date
+
+
 class TestRecurrence(unittest.TestCase):
-
-    def setUp(self):
-        directory = os.path.dirname(__file__)
-        with open(os.path.join(directory, 'recurrence.ics'), 'rb') as fp:
-            data = fp.read()
-        self.cal = icalendar.Calendar.from_ical(data)
-
     def test_recurrence_exdates_multiple_lines(self):
-        event = self.cal.walk('vevent')[1]
-
-        exdate = event['exdate']
-
-        # TODO: DOCUMENT BETTER!
-        # In this case we have multiple EXDATE definitions, one per line.
-        # Icalendar makes a list out of this instead of zipping it into one
-        # vDDDLists object. Actually, this feels correct for me, as it also
-        # allows to define different timezones per exdate line - but client
-        # code has to handle this as list and not blindly expecting to be able
-        # to call event['EXDATE'].to_ical() on it:
-        self.assertEqual(isinstance(exdate, list), True)  # multiple EXDATE
-        self.assertEqual(exdate[0].to_ical(), b'20120529T100000')
-
         # TODO: test for embedded timezone information!
+        pass
