@@ -1,4 +1,3 @@
-import unittest
 from datetime import datetime
 
 import pytest
@@ -29,19 +28,15 @@ def test_exdate_formed_from_exdates_on_multiple_lines_is_a_list(events):
     exdate = events.event_with_recurrence_exdates_on_different_lines['exdate']
     assert isinstance(exdate, list)
 
-@pytest.mark.parametrize('i, exception_date', [
-    (0, b'20120529T100000'),
-    (1, b'20120403T100000'),
-    (2, b'20120410T100000'),
-    (3, b'20120501T100000'),
-    (4, b'20120417T100000')
+@pytest.mark.parametrize('i, exception_date, exception_date_ics', [
+    (0, datetime(2012, 5, 29, 10, 0), b'20120529T100000'),
+    (1, datetime(2012, 4, 3, 10, 0),  b'20120403T100000'),
+    (2, datetime(2012, 4, 10, 10, 0), b'20120410T100000'),
+    (3, datetime(2012, 5, 1, 10, 0),  b'20120501T100000'),
+    (4, datetime(2012, 4, 17, 10, 0), b'20120417T100000')
 ])
-def test_list_exdate_properly_marshalled(events, i, exception_date):
+def test_list_exdate_to_ical_is_inverse_of_from_ical(events, i, exception_date, exception_date_ics, in_timezone):
     exdate = events.event_with_recurrence_exdates_on_different_lines['exdate']
-    assert exdate[i].to_ical() == exception_date
+    assert exdate[i].dts[0].dt == in_timezone(exception_date, 'Europe/Vienna')
+    assert exdate[i].to_ical() == exception_date_ics
 
-
-class TestRecurrence(unittest.TestCase):
-    def test_recurrence_exdates_multiple_lines(self):
-        # TODO: test for embedded timezone information!
-        pass
