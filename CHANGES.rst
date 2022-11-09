@@ -74,7 +74,7 @@ Breaking changes:
 
 - Require Python 3.7 as minimum Python version.  [maurits] [niccokunzmann]
 - icalenar now takes a ics file directly as an input
-- icalendar's output is different
+- icalendar's CLI utility program's output is different
 - Drop Support for Python 3.6. Versions 3.7 - 3.11 are supported and tested.
 
 New features:
