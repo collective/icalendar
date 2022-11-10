@@ -320,7 +320,7 @@ class vDDDTypes:
 
     def __eq__(self, other):
         if isinstance(other, vDDDTypes):
-            return self.params == other.params
+            return self.params == other.params and self.dt == other.dt
         return False
 
     def __hash__(self):
