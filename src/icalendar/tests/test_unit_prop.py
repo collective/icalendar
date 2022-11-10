@@ -6,8 +6,11 @@ from icalendar.parser import Parameters
 import unittest
 from icalendar.prop import vDatetime
 from icalendar.windows_to_olson import WINDOWS_TO_OLSON
-
+import pytest
 import pytz
+from ..prop import vDDDTypes
+from copy import deepcopy
+
 
 
 class TestProp(unittest.TestCase):
@@ -111,27 +114,6 @@ class TestProp(unittest.TestCase):
 
         # Bad input
         self.assertRaises(ValueError, vDDDTypes, 42)
-
-    def test_vDDDTypes_equivalance(self):
-        from ..prop import vDDDTypes
-        from copy import deepcopy
-
-        vDDDTypes = [
-                vDDDTypes(pytz.timezone('US/Eastern').localize(datetime(year=2022, month=7, day=22, hour=12, minute=7))),
-                vDDDTypes(datetime(year=2022, month=7, day=22, hour=12, minute=7)),
-                vDDDTypes(date(year=2022, month=7, day=22)),
-                vDDDTypes(time(hour=22, minute=7, second=2))]
-
-        for v_type in vDDDTypes:
-            self.assertEqual(v_type, deepcopy(v_type))
-            for other in vDDDTypes:
-                if other is v_type:
-                    continue
-                self.assertNotEqual(v_type, other)
-
-            # see if equivalnce fails for other types
-            self.assertNotEqual(v_type, 42)
-            self.assertNotEqual(v_type, 'test')
 
     def test_prop_vDate(self):
         from ..prop import vDate
@@ -517,6 +499,37 @@ class TestProp(unittest.TestCase):
             'Rasmussen, Max M\xf8ller'
         )
 
+
+
+vDDDTypes = [
+    vDDDTypes(pytz.timezone('US/Eastern').localize(datetime(year=2022, month=7, day=22, hour=12, minute=7))),
+    vDDDTypes(datetime(year=2022, month=7, day=22, hour=12, minute=7)),
+    vDDDTypes(date(year=2022, month=7, day=22)),
+    vDDDTypes(time(hour=22, minute=7, second=2))
+]
+
+def identity(x):
+    return x
+
+@pytest.mark.parametrize("map", [
+    deepcopy,
+    identity,
+    hash,
+])
+@pytest.mark.parametrize("v_type", vDDDTypes)
+@pytest.mark.parametrize("other", vDDDTypes)
+def test_vDDDTypes_equivalance(map, v_type, other):
+    if v_type is other:
+        assert map(v_type) == map(other), f"identity implies equality: {map.__name__}()"
+        assert not (map(v_type) != map(other)), f"identity implies equality: {map.__name__}()"
+    else:
+        assert map(v_type) != map(other), f"expected inequality: {map.__name__}()"
+        assert not (map(v_type) == map(other)), f"expected inequality: {map.__name__}()"
+
+@pytest.mark.parametrize("v_type", vDDDTypes)
+def test_inequality_with_different_types(v_type):
+    assert v_type != 42
+    assert v_type != 'test'
 
 class TestPropertyValues(unittest.TestCase):
 
