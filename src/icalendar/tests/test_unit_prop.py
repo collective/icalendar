@@ -505,6 +505,7 @@ vDDDTypes_list = [
     vDDDTypes(pytz.timezone('US/Eastern').localize(datetime(year=2022, month=7, day=22, hour=12, minute=7))),
     vDDDTypes(datetime(year=2022, month=7, day=22, hour=12, minute=7)),
     vDDDTypes(date(year=2022, month=7, day=22)),
+    vDDDTypes(date(year=2022, month=7, day=23)),
     vDDDTypes(time(hour=22, minute=7, second=2))
 ]
 
