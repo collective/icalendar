@@ -14,11 +14,11 @@ Breaking changes:
 
 New features:
 
-- ...
+- vDDDTypes is hashable #487 #492 [niccokunzmann]
 
 Bug fixes:
 
-- ...
+- vDDDTypes' equality also checks the dt attribute #497 #492 [niccokunzmann]
 
 5.0.2 (2022-11-03)
 ------------------
