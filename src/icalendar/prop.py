@@ -323,6 +323,9 @@ class vDDDTypes:
             return self.params == other.params
         return False
 
+    def __hash__(self):
+        return hash(self.dt)
+
     @classmethod
     def from_ical(cls, ical, timezone=None):
         if isinstance(ical, cls):

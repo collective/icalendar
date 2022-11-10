@@ -501,7 +501,7 @@ class TestProp(unittest.TestCase):
 
 
 
-vDDDTypes = [
+vDDDTypes_list = [
     vDDDTypes(pytz.timezone('US/Eastern').localize(datetime(year=2022, month=7, day=22, hour=12, minute=7))),
     vDDDTypes(datetime(year=2022, month=7, day=22, hour=12, minute=7)),
     vDDDTypes(date(year=2022, month=7, day=22)),
@@ -516,8 +516,8 @@ def identity(x):
     identity,
     hash,
 ])
-@pytest.mark.parametrize("v_type", vDDDTypes)
-@pytest.mark.parametrize("other", vDDDTypes)
+@pytest.mark.parametrize("v_type", vDDDTypes_list)
+@pytest.mark.parametrize("other", vDDDTypes_list)
 def test_vDDDTypes_equivalance(map, v_type, other):
     if v_type is other:
         assert map(v_type) == map(other), f"identity implies equality: {map.__name__}()"
@@ -526,7 +526,7 @@ def test_vDDDTypes_equivalance(map, v_type, other):
         assert map(v_type) != map(other), f"expected inequality: {map.__name__}()"
         assert not (map(v_type) == map(other)), f"expected inequality: {map.__name__}()"
 
-@pytest.mark.parametrize("v_type", vDDDTypes)
+@pytest.mark.parametrize("v_type", vDDDTypes_list)
 def test_inequality_with_different_types(v_type):
     assert v_type != 42
     assert v_type != 'test'
