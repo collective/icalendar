@@ -11,6 +11,7 @@ Maintainers
 Currently, the maintainers are
 
 - `@geier <https://github.com/geier>`_
+- `@jacadzaca <https://github.com/jacadzaca>`_
 - `@niccokunzmann <https://github.com/niccokunzmann>`_
 
 Maintainers need this:
