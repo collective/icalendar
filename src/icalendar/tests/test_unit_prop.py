@@ -4,13 +4,12 @@ from datetime import time
 from datetime import timedelta
 from icalendar.parser import Parameters
 import unittest
-from icalendar.prop import vDatetime
+from icalendar.prop import vDatetime, vDDDTypes
 from icalendar.windows_to_olson import WINDOWS_TO_OLSON
 import pytest
 import pytz
-from ..prop import vDDDTypes
 from copy import deepcopy
-
+from dateutil import tz
 
 
 class TestProp(unittest.TestCase):
@@ -504,6 +503,7 @@ class TestProp(unittest.TestCase):
 vDDDTypes_list = [
     vDDDTypes(pytz.timezone('US/Eastern').localize(datetime(year=2022, month=7, day=22, hour=12, minute=7))),
     vDDDTypes(datetime(year=2022, month=7, day=22, hour=12, minute=7)),
+    vDDDTypes(datetime(year=2022, month=7, day=22, hour=12, minute=7, tzinfo=tz.UTC)),
     vDDDTypes(date(year=2022, month=7, day=22)),
     vDDDTypes(date(year=2022, month=7, day=23)),
     vDDDTypes(time(hour=22, minute=7, second=2))
