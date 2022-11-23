@@ -76,7 +76,7 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
 
    .. code-block:: bash
 
-       git push -u origin release-5.0.0
+       git push -u origin release
 
 5. See if the `CI-tests <https://github.com/collective/icalendar/actions>`_ are running on the pull request.
    If they are not running, no new release can be issued.
