@@ -81,7 +81,16 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
 5. See if the `CI-tests <https://github.com/collective/icalendar/actions>`_ are running on the pull request.
    If they are not running, no new release can be issued.
    If the tests are running, merge the pull request.
-6. Create a tag for the release and see if the `CI-tests`_ are running.
+6. Clean up behind you!
+
+   .. code-block:: bash
+
+       git checkout master
+       git pull
+       git branch -d release
+       git push -d origin release
+
+7. Create a tag for the release and see if the `CI-tests`_ are running.
 
    .. code-block:: bash
 
@@ -90,15 +99,15 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
        git tag v5.0.0
        git push upstream v5.0.0 # could be origin or whatever reference
 
-7. Once the tag is pushed and its `CI-tests`_ are passing, maintainers will get an e-mail::
+8. Once the tag is pushed and its `CI-tests`_ are passing, maintainers will get an e-mail::
 
        Subject: Deployment review in collective/icalendar
 
        tests: PyPI is waiting for your review
 
-8. If the release is approved by a maintainer. It will be pushed to `PyPI`_.
+9. If the release is approved by a maintainer. It will be pushed to `PyPI`_.
    If that happens, notify the issues that were fixed about this release.
-9. Copy this to the start of ``CHANGES.rst`` and create a new commit with this on the ``master`` branch::
+10. Copy this to the start of ``CHANGES.rst`` and create a new commit with this on the ``master`` branch::
 
        5.0.2 (unreleased)
        ------------------
