@@ -60,15 +60,15 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
 2. Change the ``__version__`` variable in
 
    - the ``src/icalendar/__init__.py`` file and 
-   - in the ``docs/usage.rst`` file (look for ``icalendar.__version__``)
-3. Create a commit on the ``release-5.0.0`` branch (or equivalent) to release this version.
+   - in the ``docs/install.rst`` file (look for ``icalendar.__version__``)
+3. Create a commit on the ``release`` branch (or equivalent) to release this version.
 
    .. code-block:: bash
 
        git checkout master
        git pull
        git checkout -b release master
-       git add CHANGES.rst src/icalendar/__init__.py
+       git add CHANGES.rst src/icalendar/__init__.py docs/install.rst
        git commit -m"version 5.0.0"
 
 4. Push the commit and `create a pull request <https://github.com/collective/icalendar/compare?expand=1>`__

@@ -1,16 +1,8 @@
 Changelog
 =========
 
-5.0.3 (unreleased)
+5.0.3 (2022-11-03)
 ------------------
-
-Minor changes:
-
-- ...
-
-Breaking changes:
-
-- ...
 
 New features:
 
