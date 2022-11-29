@@ -57,7 +57,7 @@ _marker = []
 
 class Component(CaselessDict):
     """Component is the base object for calendar, Event and the other
-    components defined in RFC 2445. normally you will not use this class
+    components defined in RFC 2445. Normally you will not use this class
     directly, but rather one of the subclasses.
     """
 
