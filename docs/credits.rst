@@ -65,6 +65,7 @@ icalendar contributors
 - Alexander Pitkin <peleccom@gmail.com>
 - Michał Górny <mgorny@gentoo.org>
 - Pronoy <lukex9442@gmail.com>
+- Abe Hanoka <abe@habet.dev>
 
 Find out who contributed::
 
