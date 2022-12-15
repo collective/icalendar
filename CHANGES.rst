@@ -18,7 +18,10 @@ New features:
 
 Bug fixes:
 
-- ...
+- vBoolean can now be used as an parameter
+  Ref: #501
+  Fixes: #500
+  [jacadzaca]
 
 
 5.0.3 (2022-11-23)
