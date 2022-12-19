@@ -263,6 +263,7 @@ Init the calendar::
 
   >>> cal = Calendar()
   >>> from datetime import datetime
+  >>> import pytz
 
 Some properties are required to be compliant::
 
