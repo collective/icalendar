@@ -318,6 +318,26 @@ Write to disk::
   522
   >>> f.close()
 
+Print out the calendar::
+
+  >>> print(cal.to_ical().decode("utf-8")) # doctest: +NORMALIZE_WHITESPACE
+  BEGIN:VCALENDAR
+  VERSION:2.0
+  PRODID:-//My calendar product//mxm.dk//
+  BEGIN:VEVENT
+  SUMMARY:Python meeting about calendaring
+  DTSTART:20050404T080000Z
+  DTEND:20050404T100000Z
+  DTSTAMP:20050404T001000Z
+  UID:20050115T101010/27346262376@mxm.dk
+  ATTENDEE;CN="Max Rasmussen";ROLE=REQ-PARTICIPANT:MAILTO:maxm@example.com
+  ATTENDEE;CN="The Dude";ROLE=REQ-PARTICIPANT:MAILTO:the-dude@example.com
+  LOCATION:Odense\, Denmark
+  ORGANIZER;CN="Max Rasmussen";ROLE=CHAIR:MAILTO:noone@example.com
+  PRIORITY:5
+  END:VEVENT
+  END:VCALENDAR
+  <BLANKLINE>
 
 More documentation
 ==================
