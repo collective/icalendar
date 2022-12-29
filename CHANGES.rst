@@ -1,20 +1,13 @@
 Changelog
 =========
 
-5.0.4 (unreleased)
+5.0.4 (2022-12-29)
 ------------------
 
 Minor changes:
 
-- ...
-
-Breaking changes:
-
-- ...
-
-New features:
-
-- ...
+- Improved documentation
+  Ref: #503, #504 
 
 Bug fixes:
 
