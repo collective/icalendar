@@ -322,6 +322,18 @@ class TestProp(unittest.TestCase):
             b'BYMONTH=1'
         )
 
+        r = vRecur.from_ical('FREQ=WEEKLY;INTERVAL=1;BYWEEKDAY=TH')
+        
+        self.assertEqual(
+            r,
+            {'FREQ': ['WEEKLY'], 'INTERVAL': [1], 'BYWEEKDAY': ['TH']}
+        )
+
+        self.assertEqual(
+            vRecur(r).to_ical(),
+            b'FREQ=WEEKLY;INTERVAL=1;BYWEEKDAY=TH'
+        )
+
         # Some examples from the spec
         r = vRecur.from_ical('FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1')
         self.assertEqual(vRecur(r).to_ical(),
