@@ -643,7 +643,7 @@ class vRecur(CaselessDict):
     # Mac iCal ignores RRULEs where FREQ is not the first rule part.
     # Sorts parts according to the order listed in RFC 5545, section 3.3.10.
     canonical_order = ("FREQ", "UNTIL", "COUNT", "INTERVAL",
-                       "BYSECOND", "BYMINUTE", "BYHOUR", "BYDAY",
+                       "BYSECOND", "BYMINUTE", "BYHOUR", "BYDAY", "BYWEEKDAY",
                        "BYMONTHDAY", "BYYEARDAY", "BYWEEKNO", "BYMONTH",
                        "BYSETPOS", "WKST")
 
@@ -662,6 +662,7 @@ class vRecur(CaselessDict):
         'WKST': vWeekday,
         'BYDAY': vWeekday,
         'FREQ': vFrequency,
+        'BYWEEKDAY': vWeekday,
     })
 
     def __init__(self, *args, **kwargs):

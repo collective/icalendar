@@ -66,6 +66,7 @@ icalendar contributors
 - Michał Górny <mgorny@gentoo.org>
 - Pronoy <lukex9442@gmail.com>
 - Abe Hanoka <abe@habet.dev>
+- `Natasha Mattson <https://github.com/natashamm`_
 
 Find out who contributed::
 
