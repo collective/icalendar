@@ -6,7 +6,7 @@ Changelog
 
 Minor changes:
 
-- ...
+- Added support for BYWEEKDAY in vRecur ref: #268 
 
 Breaking changes:
 
