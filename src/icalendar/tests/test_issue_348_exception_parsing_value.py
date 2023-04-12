@@ -9,4 +9,4 @@ def test_calendar_can_be_parsed_correctly(calendars):
     see https://github.com/collective/icalendar/issues/348 
     """
     freebusy = calendars.issue_348_exception_parsing_value.walk("VFREEBUSY")[0]
-    assert freebusy["ORGANIZER"]["CN"] == "Sixt SE"
+    assert freebusy["ORGANIZER"].params["CN"] == "Sixt SE"
