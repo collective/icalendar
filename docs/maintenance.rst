@@ -107,7 +107,7 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
 
 9. If the release is approved by a maintainer. It will be pushed to `PyPI`_.
    If that happens, notify the issues that were fixed about this release.
-10. Copy this to the start of ``CHANGES.rst`` and create a new commit with this on the ``master`` branch::
+10. Copy this to the start of ``CHANGES.rst``::
 
        5.0.2 (unreleased)
        ------------------
@@ -127,7 +127,18 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
        Bug fixes:
        
        - ...
+
+11. Push the new CHANGELOG so it is used for future changes.
+
+   .. code-block:: bash
+
+       git checkout master
+       git pull
+       git add CHANGES.rst
+       git commit -m"Add new CHANGELOG section for future release
        
+       See https://icalendar.readthedocs.io/en/latest/maintenance.html#new-releases"
+       git push upstream master # could be origin or whatever reference
 
 Links
 -----
