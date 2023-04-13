@@ -1,20 +1,12 @@
 Changelog
 =========
 
-5.0.5 (unreleased)
+5.0.5 (2023-04-13)
 ------------------
 
 Minor changes:
 
 - Added support for BYWEEKDAY in vRecur ref: #268 
-
-Breaking changes:
-
-- ...
-
-New features:
-
-- ...
 
 Bug fixes:
 
