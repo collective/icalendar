@@ -18,7 +18,7 @@ New features:
 
 Bug fixes:
 
-- ...
+- Fix problem with ORGANIZER in FREE/BUSY #348
 
 5.0.4 (2022-12-29)
 ------------------
