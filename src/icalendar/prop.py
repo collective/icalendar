@@ -63,12 +63,9 @@ import re
 import time as _time
 
 
-DATE_PART = r'(\d+)D'
-TIME_PART = r'T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?'
-DATETIME_PART = f'(?:{DATE_PART})?(?:{TIME_PART})?'
-WEEKS_PART = r'(\d+)W'
-DURATION_REGEX = re.compile(r'([-+]?)P(?:%s|%s)$'
-                            % (WEEKS_PART, DATETIME_PART))
+DURATION_REGEX = re.compile(r'([-+]?)P(?:(\d+)W)?(?:(\d+)D)?'
+                            r'(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$')
+
 WEEKDAY_RULE = re.compile(r'(?P<signal>[+-]?)(?P<relative>[\d]?)'
                           r'(?P<weekday>[\w]{2})$')
 
@@ -475,21 +472,23 @@ class vDuration:
 
     @staticmethod
     def from_ical(ical):
-        try:
-            match = DURATION_REGEX.match(ical)
-            sign, weeks, days, hours, minutes, seconds = match.groups()
-            if weeks:
-                value = timedelta(weeks=int(weeks))
-            else:
-                value = timedelta(days=int(days or 0),
-                                  hours=int(hours or 0),
-                                  minutes=int(minutes or 0),
-                                  seconds=int(seconds or 0))
-            if sign == '-':
-                value = -value
-            return value
-        except Exception:
+        match = DURATION_REGEX.match(ical)
+        if not match:
             raise ValueError(f'Invalid iCalendar duration: {ical}')
+
+        sign, weeks, days, hours, minutes, seconds = match.groups()
+        value = timedelta(
+            weeks=int(weeks or 0),
+            days=int(days or 0),
+            hours=int(hours or 0),
+            minutes=int(minutes or 0),
+            seconds=int(seconds or 0)
+        )
+
+        if sign == '-':
+            value = -value
+
+        return value
 
 
 class vPeriod:
