@@ -1,12 +1,12 @@
 Changelog
 =========
 
-5.0.6 (unreleased)
+5.0.7 (unreleased)
 ------------------
 
 Minor changes:
 
-- Adjusted duration regex
+- ...
 
 Breaking changes:
 
@@ -19,6 +19,14 @@ New features:
 Bug fixes:
 
 - ...
+
+
+5.0.6 (2023-05-26)
+------------------
+
+Minor changes:
+
+- Adjusted duration regex
 
 5.0.5 (2023-04-13)
 ------------------
