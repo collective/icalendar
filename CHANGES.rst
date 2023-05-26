@@ -6,7 +6,7 @@ Changelog
 
 Minor changes:
 
-- ...
+- Adjusted duration regex
 
 Breaking changes:
 

@@ -67,6 +67,7 @@ icalendar contributors
 - Pronoy <lukex9442@gmail.com>
 - Abe Hanoka <abe@habet.dev>
 - `Natasha Mattson <https://github.com/natashamm`_
+- `NikEasY <https://github.com/NikEasY>`_
 
 Find out who contributed::
 
