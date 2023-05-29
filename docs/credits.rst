@@ -68,6 +68,7 @@ icalendar contributors
 - Abe Hanoka <abe@habet.dev>
 - `Natasha Mattson <https://github.com/natashamm`_
 - `NikEasY <https://github.com/NikEasY>`_
+- Matt Lewis <git@semiprime.com>
 
 Find out who contributed::
 

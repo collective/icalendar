@@ -66,7 +66,7 @@ import time as _time
 DURATION_REGEX = re.compile(r'([-+]?)P(?:(\d+)W)?(?:(\d+)D)?'
                             r'(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$')
 
-WEEKDAY_RULE = re.compile(r'(?P<signal>[+-]?)(?P<relative>[\d]?)'
+WEEKDAY_RULE = re.compile(r'(?P<signal>[+-]?)(?P<relative>[\d]{0,2})'
                           r'(?P<weekday>[\w]{2})$')
 
 

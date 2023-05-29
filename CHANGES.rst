@@ -18,6 +18,7 @@ New features:
 
 Bug fixes:
 
+- to_ical() now accepts RRULE BYDAY values>=10 #518
 - ...
 
 
