@@ -1,7 +1,7 @@
 Changelog
 =========
 
-5.0.7 (unreleased)
+5.0.8 (unreleased)
 ------------------
 
 Minor changes:
@@ -18,8 +18,14 @@ New features:
 
 Bug fixes:
 
-- to_ical() now accepts RRULE BYDAY values>=10 #518
 - ...
+
+5.0.7 (2023-05-29)
+------------------
+
+Bug fixes:
+
+- to_ical() now accepts RRULE BYDAY values>=10 #518
 
 
 5.0.6 (2023-05-26)
