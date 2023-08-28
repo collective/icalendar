@@ -6,7 +6,7 @@ Changelog
 
 Minor changes:
 
-- ...
+- No longer run the ``plone.app.event`` tests.
 
 Breaking changes:
 

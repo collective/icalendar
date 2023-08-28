@@ -23,8 +23,7 @@ jobs:
         - ["3.10",  "py310"]
         - ["pypy-3.9", "pypy3"]
         - ["3.10",  "docs"]
-        - ["3.10",  "plone"]
-        - ["3.11.0-rc.1",  "py311"]
+        - ["3.11",  "py311"]
 
     runs-on: ubuntu-latest
     name: ${{ matrix.config[1] }}
