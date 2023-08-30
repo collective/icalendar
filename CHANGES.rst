@@ -8,6 +8,7 @@ Minor changes:
 
 - Update build configuration to build readthedocs. #538
 - No longer run the ``plone.app.event`` tests.
+- Add documentation on how to parse ``.ics`` files. #152
 - Move pip caching into Python setup action.
 
 Breaking changes:
