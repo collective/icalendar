@@ -16,8 +16,8 @@ jobs:
         # [Python version, tox env, OS ]
         # see for version: https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json
         # see for runners: https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
-        - ["2.7",   "py27", "ubuntu-22.04"]
-        - ["pypy-2.7",   "pypy", "ubuntu-22.04"]
+#        - ["2.7",   "py27", "ubuntu-22.04"]
+        - ["pypy2.7",   "pypy", "ubuntu-22.04"]
         - ["3.4.10",   "py34", "ubuntu-18.04"]
         - ["3.5.10",   "py35", "ubuntu-20.04"]
         - ["3.6.15",   "py36", "ubuntu-20.04"]
@@ -25,14 +25,14 @@ jobs:
         - ["3.8.18",   "py38", "ubuntu-latest"]
         - ["3.9",   "py39", "ubuntu-latest"]
         - ["3.10",  "py310", "ubuntu-latest"]
-        - ["pypy3", "pypy3", "ubuntu-latest"]
+        - ["pypy3.9", "pypy3", "ubuntu-latest"]
 
     runs-on: ${{ matrix.config[2] }}
     name: ${{ matrix.config[1] }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.config[0] }}
     - name: Pip cache
