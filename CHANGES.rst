@@ -6,6 +6,7 @@ Changelog
 
 Minor changes:
 
+- Update build configuration to build readthedocs. #538
 - No longer run the ``plone.app.event`` tests.
 
 Breaking changes:
