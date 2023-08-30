@@ -9,6 +9,7 @@ Minor changes:
 - Update build configuration to build readthedocs. #538
 - No longer run the ``plone.app.event`` tests.
 - Move pip caching into Python setup action.
+- Check that issue #165 can be closed.
 
 Breaking changes:
 
