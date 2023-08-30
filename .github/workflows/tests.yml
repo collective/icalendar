@@ -19,7 +19,7 @@ jobs:
         # If you change this, maybe you need to change the coverage version.
 #        - ["2.7",   "py27", "ubuntu-22.04"]
         - ["pypy2.7",   "pypy", "ubuntu-22.04"]
-        - ["3.4.10",   "py34", "ubuntu-18.04"]
+#        - ["3.4.10",   "py34", "ubuntu-18.04"] # there seem to be no 18.04 runners any more
         - ["3.5.10",   "py35", "ubuntu-20.04"]
         - ["3.6.15",   "py36", "ubuntu-20.04"]
         - ["3.7.17",   "py37", "ubuntu-22.04"]
