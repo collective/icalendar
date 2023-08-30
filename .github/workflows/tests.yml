@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  run-tests:
     strategy:
       matrix:
         config:
