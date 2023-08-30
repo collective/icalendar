@@ -7,6 +7,7 @@ Changelog
 Minor changes:
 
 - No longer run the ``plone.app.event`` tests.
+- Move pip caching into Python setup action.
 
 Breaking changes:
 
