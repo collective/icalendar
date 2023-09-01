@@ -18,7 +18,10 @@ New features:
 
 Bug fixes:
 
-- ...
+- Calendar components are now properly compared
+  Ref: #550
+  Fixes: #526
+  [jacadzaca]
 
 5.0.7 (2023-05-29)
 ------------------

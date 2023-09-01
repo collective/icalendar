@@ -2,6 +2,8 @@ from datetime import datetime
 from datetime import timedelta
 import unittest
 
+import pytest
+
 import icalendar
 import pytz
 import re
@@ -455,3 +457,37 @@ class TestCal(unittest.TestCase):
         icalendar.vUTCOffset.ignore_exceptions = True
         self.assertEqual(icalendar.Calendar.from_ical(cal_str).to_ical(), cal_str)
         icalendar.vUTCOffset.ignore_exceptions = False
+
+
+@pytest.mark.parametrize('calendar', [
+    'issue_156_RDATE_with_PERIOD_TZID_khal',
+    'issue_156_RDATE_with_PERIOD_TZID_khal_2',
+    'issue_178_custom_component_contains_other',
+    'issue_178_custom_component_inside_other',
+    'issue_526_calendar_with_events',
+    'issue_526_calendar_with_different_events',
+])
+@pytest.mark.parametrize('other_calendar', [
+    'issue_156_RDATE_with_PERIOD_TZID_khal',
+    'issue_156_RDATE_with_PERIOD_TZID_khal_2',
+    'issue_178_custom_component_contains_other',
+    'issue_178_custom_component_inside_other',
+    'issue_526_calendar_with_events',
+    'issue_526_calendar_with_different_events',
+])
+def test_comparing_calendars(calendars, calendar, other_calendar):
+    are_calendars_equal = calendars[calendar] == calendars[other_calendar]
+    are_calendars_actually_equal = calendar == other_calendar
+    assert are_calendars_equal == are_calendars_actually_equal
+
+
+@pytest.mark.parametrize('calendar, shuffeled_calendar', [
+    (
+        'issue_526_calendar_with_events',
+        'issue_526_calendar_with_shuffeled_events',
+    ),
+])
+def test_calendars_with_same_subcomponents_in_different_order_are_equal(calendars, calendar, shuffeled_calendar):
+    assert not calendars[calendar].subcomponents == calendars[shuffeled_calendar].subcomponents
+    assert calendars[calendar] == calendars[shuffeled_calendar]
+
