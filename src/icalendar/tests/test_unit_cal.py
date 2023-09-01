@@ -469,6 +469,7 @@ class TestCal(unittest.TestCase):
         'issue_178_custom_component_inside_other',
         'issue_526_calendar_with_events',
         'issue_526_calendar_with_different_events',
+        'issue_526_calendar_with_event_subset',
     ], repeat=2)
 )
 def test_comparing_calendars(calendars, calendar, other_calendar):

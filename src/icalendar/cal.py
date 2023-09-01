@@ -437,6 +437,9 @@ class Component(CaselessDict):
         return f"{self.name or type(self).__name__}({dict(self)}{', ' + subs if subs else ''})"
 
     def __eq__(self, other):
+        if not len(self.subcomponents) == len(other.subcomponents):
+            return False
+
         properties_equal = super().__eq__(other)
         if not properties_equal:
             return False
