@@ -1,3 +1,4 @@
+import itertools
 from datetime import datetime
 from datetime import timedelta
 import unittest
@@ -459,22 +460,17 @@ class TestCal(unittest.TestCase):
         icalendar.vUTCOffset.ignore_exceptions = False
 
 
-@pytest.mark.parametrize('calendar', [
-    'issue_156_RDATE_with_PERIOD_TZID_khal',
-    'issue_156_RDATE_with_PERIOD_TZID_khal_2',
-    'issue_178_custom_component_contains_other',
-    'issue_178_custom_component_inside_other',
-    'issue_526_calendar_with_events',
-    'issue_526_calendar_with_different_events',
-])
-@pytest.mark.parametrize('other_calendar', [
-    'issue_156_RDATE_with_PERIOD_TZID_khal',
-    'issue_156_RDATE_with_PERIOD_TZID_khal_2',
-    'issue_178_custom_component_contains_other',
-    'issue_178_custom_component_inside_other',
-    'issue_526_calendar_with_events',
-    'issue_526_calendar_with_different_events',
-])
+@pytest.mark.parametrize(
+    'calendar, other_calendar',
+    itertools.product([
+        'issue_156_RDATE_with_PERIOD_TZID_khal',
+        'issue_156_RDATE_with_PERIOD_TZID_khal_2',
+        'issue_178_custom_component_contains_other',
+        'issue_178_custom_component_inside_other',
+        'issue_526_calendar_with_events',
+        'issue_526_calendar_with_different_events',
+    ], repeat=2)
+)
 def test_comparing_calendars(calendars, calendar, other_calendar):
     are_calendars_equal = calendars[calendar] == calendars[other_calendar]
     are_calendars_actually_equal = calendar == other_calendar
