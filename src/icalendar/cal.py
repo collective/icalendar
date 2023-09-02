@@ -436,6 +436,25 @@ class Component(CaselessDict):
         subs = ', '.join(str(it) for it in self.subcomponents)
         return f"{self.name or type(self).__name__}({dict(self)}{', ' + subs if subs else ''})"
 
+    def __eq__(self, other):
+        if not len(self.subcomponents) == len(other.subcomponents):
+            return False
+
+        properties_equal = super().__eq__(other)
+        if not properties_equal:
+            return False
+
+        # The subcomponents might not be in the same order,
+        # neither there's a natural key we can sort the subcomponents by nor
+        # are the subcomponent types hashable, so  we cant put them in a set to
+        # check for set equivalence. We have to iterate over the subcomponents
+        # and look for each of them in the list.
+        for subcomponent in self.subcomponents:
+            if subcomponent not in other.subcomponents:
+                return False
+
+        return True
+
 
 #######################################
 # components defined in RFC 5545
