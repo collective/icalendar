@@ -1,6 +1,24 @@
 Changelog
 =========
 
+4.1.2 (unreleased)
+------------------
+
+Minor changes:
+
+- ...
+
+Breaking changes:
+
+- ...
+
+New features:
+
+- ...
+
+Bug fixes:
+
+- ...
 
 4.1.1 (2023-09-06)
 ------------------
