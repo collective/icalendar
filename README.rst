@@ -42,6 +42,27 @@ files.
 .. _`pytz`: https://pypi.org/project/pytz/
 .. _`BSD`: https://github.com/collective/icalendar/issues/2
 
+Quick Guide
+-----------
+
+To **install** the package, run::
+
+    pip install icalendar
+
+You can open an ``.ics`` file and see all the events::
+
+  >>> import icalendar
+  >>> path_to_ics_file = "src/icalendar/tests/calendars/example.ics"
+  >>> with open(path_to_ics_file) as f:
+  ...     calendar = icalendar.Calendar.from_ical(f.read())
+  >>> for event in calendar.walk('VEVENT'):
+  ...     print(event.get("SUMMARY"))
+  New Year's Day
+  Orthodox Christmas
+  International Women's Day
+
+Using this package, you can also create calendars from scratch or edit existing ones.
+
 Versions and Compatibility
 --------------------------
 
