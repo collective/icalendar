@@ -5,7 +5,9 @@ Changelog
 4.1.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+Bug fixes:
+
+- to_ical() now accepts RRULE BYDAY values>=10 (Issue #518)
 
 
 4.1.0 (2022-07-11)

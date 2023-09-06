@@ -9,30 +9,31 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  run-tests:
     strategy:
       matrix:
         config:
         # [Python version, tox env, OS ]
         # see for version: https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json
         # see for runners: https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
-        - ["2.7",   "py27", "ubuntu-latest"]
-        - ["pypy-2.7",   "pypy", "ubuntu-latest"]
-        - ["3.4.10",   "py34", "ubuntu-18.04"]
-        - ["3.5.10",   "py35", "ubuntu-latest"]
-        - ["3.6",   "py36", "ubuntu-latest"]
-        - ["3.7",   "py37", "ubuntu-latest"]
-        - ["3.8",   "py38", "ubuntu-latest"]
+        # If you change this, maybe you need to change the coverage version.
+#        - ["2.7",   "py27", "ubuntu-22.04"]
+        - ["pypy2.7",   "pypy", "ubuntu-22.04"]
+#        - ["3.4.10",   "py34", "ubuntu-18.04"] # there seem to be no 18.04 runners any more
+        - ["3.5.10",   "py35", "ubuntu-20.04"]
+        - ["3.6.15",   "py36", "ubuntu-20.04"]
+        - ["3.7.17",   "py37", "ubuntu-22.04"]
+        - ["3.8.18",   "py38", "ubuntu-latest"]
         - ["3.9",   "py39", "ubuntu-latest"]
         - ["3.10",  "py310", "ubuntu-latest"]
-        - ["pypy3", "pypy3", "ubuntu-latest"]
+        - ["pypy3.9", "pypy3", "ubuntu-latest"]
 
     runs-on: ${{ matrix.config[2] }}
     name: ${{ matrix.config[1] }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.config[0] }}
     - name: Pip cache
@@ -50,9 +51,67 @@ jobs:
     - name: Test
       run: tox -e ${{ matrix.config[1] }}
     - name: Coverage
-      if: matrix.config[0] != '2.7' && matrix.config[0] != 'pypy-2.7' && matrix.config[0] != '3.4.10'
+      if: matrix.config[0] != '2.7' && matrix.config[0] != 'pypy2.7' && matrix.config[0] != '3.4.10'
       run: |
         pip install coveralls coverage-python-version
         coveralls --service=github
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy-tag-to-pypi:
+    # only deploy on tags, see https://stackoverflow.com/a/58478262/1320237
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs:
+    - run-tests
+    runs-on: ubuntu-latest
+    # This environment stores the TWINE_USERNAME and TWINE_PASSWORD
+    # see https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment
+    environment:
+      name: PyPI
+      url: https://pypi.org/project/icalendar/
+    # after using the environment, we need to make the secrets available
+    # see https://docs.github.com/en/actions/security-guides/encrypted-secrets#example-using-bash
+    env:
+      TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
+      TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: "3.9"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install wheel twine
+    - name: Check the tag
+      run: |
+        PACKAGE_VERSION=`python setup.py --version`
+        TAG_NAME=v$PACKAGE_VERSION
+        echo "Package version $PACKAGE_VERSION with possible tag name $TAG_NAME on $GITHUB_REF_NAME"
+        # test that the tag represents the version
+        # see https://docs.github.com/en/actions/learn-github-actions/environment-variables
+        if [ "$TAG_NAME" != "$GITHUB_REF_NAME" ]; then
+          echo "ERROR: This tag is for the wrong version. Got \"$GITHUB_REF_NAME\" expected \"$TAG_NAME\"."
+          exit 1
+        fi
+    - name: remove old files
+      run: rm -rf dist/*
+    - name: build distribution files
+      run: python setup.py bdist_wheel sdist
+    - name: deploy to pypi
+      run: |
+        # You will have to set the variables TWINE_USERNAME and TWINE_PASSWORD
+        # You can use a token specific to your project by setting the user name to
+        # __token__ and the password to the token given to you by the PyPI project.
+        # sources:
+        #   - https://shambu2k.hashnode.dev/gitlab-to-pypi
+        #   - http://blog.octomy.org/2020/11/deploying-python-pacakges-to-pypi-using.html?m=1
+        if [ -z "$TWINE_USERNAME" ]; then
+          echo "WARNING: TWINE_USERNAME not set!"
+        fi
+        if [ -z "$TWINE_PASSWORD" ]; then
+          echo "WARNING: TWINE_PASSWORD not set!"
+        fi
+        twine check dist/*
+        twine upload dist/*
