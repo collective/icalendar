@@ -2,7 +2,10 @@ name: tests
 
 on:
   push:
-    branches: [ 4.x ]
+    branches:
+    - 4.x
+    tags:
+    - v*
   pull_request:
   schedule:
     - cron: '21 7 * * 0'  # run once a week on Sunday
