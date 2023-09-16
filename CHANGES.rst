@@ -11,6 +11,7 @@ Minor changes:
 - Add documentation on how to parse ``.ics`` files. #152
 - Move pip caching into Python setup action.
 - Check that issue #165 can be closed.
+- Updated about.rst for issue #527
 
 Breaking changes:
 
