@@ -12,6 +12,7 @@ Minor changes:
 - Move pip caching into Python setup action.
 - Check that issue #165 can be closed.
 - Updated about.rst for issue #527
+- Avoid ``vText.__repr__`` BytesWarning.
 
 Breaking changes:
 
