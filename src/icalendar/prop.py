@@ -719,7 +719,7 @@ class vText(str):
         return self
 
     def __repr__(self):
-        return f"vText('{self.to_ical()}')"
+        return f"vText('{self.to_ical()!r}')"
 
     def to_ical(self):
         return escape_char(self).encode(self.encoding)

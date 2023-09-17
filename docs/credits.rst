@@ -43,6 +43,7 @@ icalendar contributors
 - Thomas Bruederli <thomas@roundcube.net>
 - Thomas Weißschuh <thomas@t-8ch.de>
 - Victor Varvaryuk <victor.varvariuc@gmail.com>
+- Ville Skyttä <ville.skytta@iki.fi>
 - Wichert Akkerman <wichert@wiggy.net>
 - cillianderoiste <cillian.deroiste@gmail.com>
 - fitnr <fitnr@fakeisthenewreal>
