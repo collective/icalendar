@@ -1,7 +1,7 @@
 Changelog
 =========
 
-5.0.8 (unreleased)
+5.0.8 (2023-09-18)
 ------------------
 
 Minor changes:
