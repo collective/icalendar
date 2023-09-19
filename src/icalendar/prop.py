@@ -331,7 +331,7 @@ class vDDDTypes:
         if u.startswith(('P', '-P', '+P')):
             return vDuration.from_ical(ical)
         if '/' in u:
-            return vPeriod.from_ical(ical)
+            return vPeriod.from_ical(ical, timezone=timezone)
 
         if len(ical) in (15, 16):
             return vDatetime.from_ical(ical, timezone=timezone)
@@ -548,11 +548,11 @@ class vPeriod:
                 + vDatetime(self.end).to_ical())
 
     @staticmethod
-    def from_ical(ical):
+    def from_ical(ical, timezone=None):
         try:
             start, end_or_duration = ical.split('/')
-            start = vDDDTypes.from_ical(start)
-            end_or_duration = vDDDTypes.from_ical(end_or_duration)
+            start = vDDDTypes.from_ical(start, timezone=timezone)
+            end_or_duration = vDDDTypes.from_ical(end_or_duration, timezone=timezone)
             return (start, end_or_duration)
         except Exception:
             raise ValueError(f'Expected period format, got: {ical}')

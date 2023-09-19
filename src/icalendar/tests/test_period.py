@@ -7,6 +7,7 @@ See
 import pytest
 import pytz
 from icalendar.prop import vDDDTypes
+import datetime
 
 
 @pytest.mark.parametrize("calname,tzname,index,period_string", [
@@ -31,7 +32,7 @@ def test_issue_156_period_list_in_rdate(calendars, calname, tzname, index, perio
     calendar = calendars[calname]
     rdate = calendar.walk("vevent")[0]["rdate"]
     period = rdate.dts[index]
-    assert period.dt == vDDDTypes.from_ical(period_string, timezone=pytz.timezone(tzname))
+    assert period.dt == vDDDTypes.from_ical(period_string, timezone=tzname)
 
 
 def test_duration_properly_parsed(events):
@@ -46,3 +47,17 @@ def test_duration_properly_parsed(events):
     assert period[1].days == 0
     assert period[1].seconds == (5 * 60 + 30) * 60
     assert period[1] == duration
+
+
+def test_tzid_is_part_of_the_parameters(calendars):
+    """The TZID should be mentioned in the parameters."""
+    event = list(calendars.period_with_timezone.walk("VEVENT"))[0]
+    assert event["RDATE"].params["TZID"] == "America/Vancouver"
+
+
+def test_tzid_is_part_of_the_period_values(calendars):
+    """The TZID should be set in the datetime."""
+    event = list(calendars.period_with_timezone.walk("VEVENT"))[0]
+    start, end = event["RDATE"].dts[0].dt
+    assert start == pytz.timezone("America/Vancouver").localize(datetime.datetime(2023, 12, 13, 12))
+    assert end == pytz.timezone("America/Vancouver").localize(datetime.datetime(2023, 12, 13, 15))
