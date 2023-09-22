@@ -18,7 +18,7 @@ New features:
 
 Bug fixes:
 
-- ...
+- PERIOD values now set the timezone of their start and end. #556
 
 5.0.8 (2023-09-18)
 ------------------
