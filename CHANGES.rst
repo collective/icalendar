@@ -18,6 +18,9 @@ New features:
 
 Bug fixes:
 
+- Component._encode stops ignoring parameters argument on native values, now merges them
+  Fixes: #557
+  [zocker1999net]
 - ...
 
 5.0.9 (2023-09-24)
