@@ -70,6 +70,7 @@ icalendar contributors
 - `Natasha Mattson <https://github.com/natashamm`_
 - `NikEasY <https://github.com/NikEasY>`_
 - Matt Lewis <git@semiprime.com>
+- Felix Stupp <felix.stupp@banananet.work>
 
 Find out who contributed::
 
