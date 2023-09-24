@@ -144,13 +144,14 @@ class Component(CaselessDict):
             klass = types_factory.for_property(name)
             obj = klass(value)
         if parameters:
-            if isinstance(parameters, dict):
-                params = Parameters()
-                for key, item in parameters.items():
-                    params[key] = item
-                parameters = params
-            assert isinstance(parameters, Parameters)
-            obj.params = parameters
+            if not hasattr(obj, "params"):
+                obj.params = Parameters()
+            for key, item in parameters.items():
+                if item is None:
+                    if key in obj.params:
+                        del obj.params[key]
+                else:
+                    obj.params[key] = item
         return obj
 
     def add(self, name, value, parameters=None, encode=1):
