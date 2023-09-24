@@ -1,20 +1,8 @@
 Changelog
 =========
 
-5.0.9 (unreleased)
+5.0.9 (2023-09-24)
 ------------------
-
-Minor changes:
-
-- ...
-
-Breaking changes:
-
-- ...
-
-New features:
-
-- ...
 
 Bug fixes:
 
@@ -32,14 +20,6 @@ Minor changes:
 - Check that issue #165 can be closed.
 - Updated about.rst for issue #527
 - Avoid ``vText.__repr__`` BytesWarning.
-
-Breaking changes:
-
-- ...
-
-New features:
-
-- ...
 
 Bug fixes:
 
