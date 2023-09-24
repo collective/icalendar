@@ -139,9 +139,10 @@ class Component(CaselessDict):
             return value
         if isinstance(value, types_factory.all_types):
             # Don't encode already encoded values.
-            return value
-        klass = types_factory.for_property(name)
-        obj = klass(value)
+            obj = value
+        else:
+            klass = types_factory.for_property(name)
+            obj = klass(value)
         if parameters:
             if isinstance(parameters, dict):
                 params = Parameters()
