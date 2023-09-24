@@ -113,7 +113,8 @@ class Component(CaselessDict):
     #############################
     # handling of property values
 
-    def _encode(self, name, value, parameters=None, encode=1):
+    @staticmethod
+    def _encode(name, value, parameters=None, encode=1):
         """Encode values to icalendar property values.
 
         :param name: Name of the property.
