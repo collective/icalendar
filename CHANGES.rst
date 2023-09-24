@@ -1,6 +1,25 @@
 Changelog
 =========
 
+5.0.10 (unreleased)
+-------------------
+
+Minor changes:
+
+- ...
+
+Breaking changes:
+
+- ...
+
+New features:
+
+- ...
+
+Bug fixes:
+
+- ...
+
 5.0.9 (2023-09-24)
 ------------------
 
