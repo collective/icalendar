@@ -6,7 +6,9 @@ Changelog
 
 Minor changes:
 
-- ...
+- The cli utility now displays start and end datetimes in the user's local timezone.
+  Ref: #561
+  [vimpostor]
 
 Breaking changes:
 
