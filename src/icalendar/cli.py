@@ -52,10 +52,10 @@ def view(event):
         end = event.decoded('dtend', default=start)
     duration = event.decoded('duration', default=end - start)
     if isinstance(start, datetime):
-        start = start.astimezone(start.tzinfo)
+        start = start.astimezone()
     start = start.strftime('%c')
     if isinstance(end, datetime):
-        end = end.astimezone(end.tzinfo)
+        end = end.astimezone()
     end = end.strftime('%c')
 
     return f"""    Organizer: {organizer}
