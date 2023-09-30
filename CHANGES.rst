@@ -20,7 +20,9 @@ New features:
 
 Bug fixes:
 
-- ...
+- CATEGORIES field now accepts strings properly
+  Ref: #322
+  [jacadzaca]
 
 5.0.10 (unreleased)
 -------------------
