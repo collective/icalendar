@@ -375,19 +375,26 @@ class Component(CaselessDict):
                 if not component:
                     raise ValueError(f'Property "{name}" does not have a parent component.')
                 datetime_names = ('DTSTART', 'DTEND', 'RECURRENCE-ID', 'DUE',
-                                  'FREEBUSY', 'RDATE', 'EXDATE')
+                                  'RDATE', 'EXDATE')
                 try:
-                    if name in datetime_names and 'TZID' in params:
-                        vals = factory(factory.from_ical(vals, params['TZID']))
+                    if name == 'FREEBUSY':
+                        vals = vals.split(',')
+                        if 'TZID' in params:
+                            parsed_components = [factory(factory.from_ical(val, params['TZID'])) for val in vals]
+                        else:
+                            parsed_components = [factory(factory.from_ical(val)) for val in vals]
+                    elif name in datetime_names and 'TZID' in params:
+                        parsed_components = [factory(factory.from_ical(vals, params['TZID']))]
                     else:
-                        vals = factory(factory.from_ical(vals))
+                        parsed_components = [factory(factory.from_ical(vals))]
                 except ValueError as e:
                     if not component.ignore_exceptions:
                         raise
                     component.errors.append((uname, str(e)))
                 else:
-                    vals.params = params
-                    component.add(name, vals, encode=0)
+                    for parsed_component in parsed_components:
+                        parsed_component.params = params
+                        component.add(name, parsed_component, encode=0)
 
         if multiple:
             return comps

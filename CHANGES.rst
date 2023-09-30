@@ -20,7 +20,9 @@ New features:
 
 Bug fixes:
 
-- ...
+- Multivalue FREEBUSY property is now parsed properly
+  Ref: #27
+  [jacadzaca]
 
 5.0.10 (unreleased)
 -------------------
