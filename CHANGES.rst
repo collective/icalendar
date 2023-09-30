@@ -16,7 +16,9 @@ Breaking changes:
 
 New features:
 
-- ...
+- icalendar releases are deployed to Github releases
+  Fixes: #563
+  [jacadzaca]
 
 Bug fixes:
 
