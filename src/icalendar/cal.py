@@ -113,7 +113,8 @@ class Component(CaselessDict):
     #############################
     # handling of property values
 
-    def _encode(self, name, value, parameters=None, encode=1):
+    @staticmethod
+    def _encode(name, value, parameters=None, encode=1):
         """Encode values to icalendar property values.
 
         :param name: Name of the property.
@@ -138,17 +139,19 @@ class Component(CaselessDict):
             return value
         if isinstance(value, types_factory.all_types):
             # Don't encode already encoded values.
-            return value
-        klass = types_factory.for_property(name)
-        obj = klass(value)
+            obj = value
+        else:
+            klass = types_factory.for_property(name)
+            obj = klass(value)
         if parameters:
-            if isinstance(parameters, dict):
-                params = Parameters()
-                for key, item in parameters.items():
-                    params[key] = item
-                parameters = params
-            assert isinstance(parameters, Parameters)
-            obj.params = parameters
+            if not hasattr(obj, "params"):
+                obj.params = Parameters()
+            for key, item in parameters.items():
+                if item is None:
+                    if key in obj.params:
+                        del obj.params[key]
+                else:
+                    obj.params[key] = item
         return obj
 
     def add(self, name, value, parameters=None, encode=1):
@@ -435,6 +438,25 @@ class Component(CaselessDict):
         """
         subs = ', '.join(str(it) for it in self.subcomponents)
         return f"{self.name or type(self).__name__}({dict(self)}{', ' + subs if subs else ''})"
+
+    def __eq__(self, other):
+        if not len(self.subcomponents) == len(other.subcomponents):
+            return False
+
+        properties_equal = super().__eq__(other)
+        if not properties_equal:
+            return False
+
+        # The subcomponents might not be in the same order,
+        # neither there's a natural key we can sort the subcomponents by nor
+        # are the subcomponent types hashable, so  we cant put them in a set to
+        # check for set equivalence. We have to iterate over the subcomponents
+        # and look for each of them in the list.
+        for subcomponent in self.subcomponents:
+            if subcomponent not in other.subcomponents:
+                return False
+
+        return True
 
 
 #######################################

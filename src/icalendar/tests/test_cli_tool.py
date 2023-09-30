@@ -1,6 +1,11 @@
 import unittest
 
+from datetime import tzinfo, datetime
 from icalendar import Calendar, cli
+try:
+    import zoneinfo
+except ModuleNotFoundError:
+    from backports import zoneinfo
 
 INPUT = '''
 BEGIN:VCALENDAR
@@ -21,7 +26,7 @@ BEGIN:VEVENT
 ORGANIZER:organizer@test.test
 ATTENDEE:attendee1@example.com
 ATTENDEE:attendee2@test.test
-SUMMARY:Test summury
+SUMMARY:Test summary
 DTSTART;TZID=Europe/Warsaw:20220820T200000
 DTEND;TZID=Europe/Warsaw:20220820T203000
 LOCATION:New Amsterdam, 1010 Test Street
@@ -36,13 +41,22 @@ END:VEVENT
 END:VCALENDAR
 '''
 
-PROPER_OUTPUT = '''    Organizer: organizer <organizer@test.test>
+def local_datetime(dt):
+    return datetime.strptime(dt, "%Y%m%dT%H%M%S").replace(tzinfo=zoneinfo.ZoneInfo("Europe/Warsaw")).astimezone().strftime('%c')
+
+# datetimes are displayed in the local timezone, so we cannot just hardcode them
+firststart = local_datetime('20220820T103400')
+firstend = local_datetime('20220820T113400')
+secondstart = local_datetime('20220820T200000')
+secondend = local_datetime('20220820T203000')
+
+PROPER_OUTPUT = f"""    Organizer: organizer <organizer@test.test>
     Attendees:
      attendee1 <attendee1@example.com>
      attendee2 <attendee2@test.test>
     Summary    : Test Summary
-    Starts     : Sat Aug 20 10:34:00 2022
-    End        : Sat Aug 20 11:34:00 2022
+    Starts     : {firststart}
+    End        : {firstend}
     Duration   : 1:00:00
     Location   : New Amsterdam, 1000 Sunrise Test Street
     Comment    : Comment
@@ -53,9 +67,9 @@ PROPER_OUTPUT = '''    Organizer: organizer <organizer@test.test>
     Attendees:
      attendee1 <attendee1@example.com>
      attendee2 <attendee2@test.test>
-    Summary    : Test summury
-    Starts     : Sat Aug 20 20:00:00 2022
-    End        : Sat Aug 20 20:30:00 2022
+    Summary    : Test summary
+    Starts     : {secondstart}
+    End        : {secondend}
     Duration   : 0:30:00
     Location   : New Amsterdam, 1010 Test Street
     Comment    : 
@@ -75,7 +89,7 @@ PROPER_OUTPUT = '''    Organizer: organizer <organizer@test.test>
     Description:
      
 
-'''
+"""
 
 class CLIToolTest(unittest.TestCase):
     def test_output_is_proper(self):
