@@ -23,6 +23,8 @@ Bug fixes:
 - Multivalue FREEBUSY property is now parsed properly
   Ref: #27
   [jacadzaca]
+- Use non legacy timezone name.
+  Ref: #567
 
 5.0.10 (unreleased)
 -------------------

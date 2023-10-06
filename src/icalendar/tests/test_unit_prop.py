@@ -513,7 +513,7 @@ class TestProp(unittest.TestCase):
 
 
 vDDDTypes_list = [
-    vDDDTypes(pytz.timezone('US/Eastern').localize(datetime(year=2022, month=7, day=22, hour=12, minute=7))),
+    vDDDTypes(pytz.timezone('EST').localize(datetime(year=2022, month=7, day=22, hour=12, minute=7))),
     vDDDTypes(datetime(year=2022, month=7, day=22, hour=12, minute=7)),
     vDDDTypes(datetime(year=2022, month=7, day=22, hour=12, minute=7, tzinfo=tz.UTC)),
     vDDDTypes(date(year=2022, month=7, day=22)),
