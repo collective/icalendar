@@ -533,6 +533,11 @@ class vPeriod:
                 f'Cannot compare vPeriod with {other!r}')
         return cmp((self.start, self.end), (other.start, other.end))
 
+    def __eq__(self, other):
+        if not isinstance(other, vPeriod):
+            return False
+        return (self.start, self.end) == (other.start, other.end)
+
     def overlaps(self, other):
         if self.start > other.start:
             return other.overlaps(self)

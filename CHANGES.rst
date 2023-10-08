@@ -20,9 +20,14 @@ New features:
 
 Bug fixes:
 
-- CATEGORIES field now accepts strings properly
+- CATEGORIES field now accepts a string as argument
   Ref: #322
   [jacadzaca]
+- Multivalue FREEBUSY property is now parsed properly
+  Ref: #27
+  [jacadzaca]
+- Use non legacy timezone name.
+  Ref: #567
 
 5.0.10 (unreleased)
 -------------------
