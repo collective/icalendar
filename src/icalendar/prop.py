@@ -261,7 +261,7 @@ class vDDDLists:
 class vCategory:
 
     def __init__(self, c_list):
-        if not hasattr(c_list, '__iter__'):
+        if not hasattr(c_list, '__iter__') or isinstance(c_list, str):
             c_list = [c_list]
         self.cats = [vText(c) for c in c_list]
 

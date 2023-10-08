@@ -20,6 +20,9 @@ New features:
 
 Bug fixes:
 
+- CATEGORIES field now accepts a string as argument
+  Ref: #322
+  [jacadzaca]
 - Multivalue FREEBUSY property is now parsed properly
   Ref: #27
   [jacadzaca]
