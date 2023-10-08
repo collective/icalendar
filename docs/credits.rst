@@ -17,6 +17,7 @@ icalendar contributors
 - Jannis Leidel <jannis@leidel.info>
 - Jeroen F.J. Laros <jlaros@fixedpoint.nl>
 - Jeroen van Meeuwen (Kolab Systems) <vanmeeuwen@kolabsys.com>
+- Jochen Sprickerhof <icalendar@jochen.sprickerhof.de>
 - Jordan Kiang <jordan@cozi.com>
 - Klaus Klein <kleink+github@kleink.org>
 - Laurent Lasudry <lasudry@gmail.com>
