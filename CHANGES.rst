@@ -28,6 +28,8 @@ Bug fixes:
   [jacadzaca]
 - Use non legacy timezone name.
   Ref: #567
+- Add some compare functions.
+  Ref: #568
 
 5.0.10 (unreleased)
 -------------------
