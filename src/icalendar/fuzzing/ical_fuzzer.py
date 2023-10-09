@@ -20,22 +20,23 @@ import sys
 with atheris.instrument_imports(include=['icalendar']):
     from icalendar import Calendar
 
-from enhanced_fdp import EnhancedFuzzedDataProvider
-
 
 def TestOneInput(data):
-    fdp = EnhancedFuzzedDataProvider(data)
+    fdp = atheris.FuzzedDataProvider(data)
     try:
-        Calendar.from_ical(fdp.ConsumeRemainingString())
-        for event in Calendar.walk('VEVENT'):
-            event.to_ical().decode('utf-8')
+        b = fdp.ConsumeBool()
+
+        cal = Calendar.from_ical(fdp.ConsumeString(fdp.remaining_bytes()))
+
+        if b:
+            for event in cal.walk('VEVENT'):
+                event.to_ical().decode('utf-8')
+        else:
+            cal.to_ical()
     except ValueError as e:
         if "component" in str(e) or "parse" in str(e) or "Expected" in str(e):
             return -1
         raise e
-    except IndexError:
-        return -1
-
 
 def main():
     atheris.Setup(sys.argv, TestOneInput)
