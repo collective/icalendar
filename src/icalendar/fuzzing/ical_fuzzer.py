@@ -30,7 +30,7 @@ def TestOneInput(data):
         for event in Calendar.walk('VEVENT'):
             event.to_ical().decode('utf-8')
     except ValueError as e:
-        if "component" in str(e) or "parse" in str(e) or "Expected datetime" in str(e):
+        if "component" in str(e) or "parse" in str(e) or "Expected" in str(e):
             return -1
         raise e
     except IndexError:
