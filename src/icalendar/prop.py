@@ -257,6 +257,11 @@ class vDDDLists:
             out.append(vDDDTypes.from_ical(ical_dt, timezone=timezone))
         return out
 
+    def __eq__(self, other):
+        if not isinstance(other, vDDDLists):
+            return False
+        return self.dts == other.dts
+
 
 class vCategory:
 
@@ -864,6 +869,11 @@ class vUTCOffset:
         if sign == '-':
             return -offset
         return offset
+
+    def __eq__(self, other):
+        if not isinstance(other, vUTCOffset):
+            return False
+        return self.td == other.td
 
 
 class vInline(str):
