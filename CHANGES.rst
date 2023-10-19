@@ -16,7 +16,7 @@ Breaking changes:
 
 New features:
 
-- ...
+- Added fuzzing harnesses, for integration to OSSFuzz.
 
 Bug fixes:
 
