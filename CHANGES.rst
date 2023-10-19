@@ -17,6 +17,9 @@ Breaking changes:
 New features:
 
 - Added fuzzing harnesses, for integration to OSSFuzz.
+- icalendar releases are deployed to Github releases
+  Fixes: #563
+  [jacadzaca]
 
 Bug fixes:
 
@@ -28,6 +31,8 @@ Bug fixes:
   [jacadzaca]
 - Use non legacy timezone name.
   Ref: #567
+- Add some compare functions.
+  Ref: #568
 
 5.0.10 (unreleased)
 -------------------
