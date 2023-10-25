@@ -16,6 +16,7 @@ Breaking changes:
 
 New features:
 
+- Added fuzzing harnesses, for integration to OSSFuzz.
 - icalendar releases are deployed to Github releases
   Fixes: #563
   [jacadzaca]

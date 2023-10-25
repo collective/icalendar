@@ -21,7 +21,7 @@ ICALENDAR_PATH = os.path.dirname(HERE)
 PYTHON_FILES = [
     os.path.join(dirpath, filename)
     for dirpath, dirnames, filenames in os.walk(ICALENDAR_PATH)
-    for filename in filenames if filename.lower().endswith(".py")
+    for filename in filenames if filename.lower().endswith(".py") and 'fuzzing' not in dirpath
 ]
 
 MODULE_NAMES = [

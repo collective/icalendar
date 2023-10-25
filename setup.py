@@ -52,7 +52,7 @@ setuptools.setup(
     author_email='plone-developers@lists.sourceforge.net',
     url='https://github.com/collective/icalendar',
     license='BSD',
-    packages=setuptools.find_namespace_packages('src'),
+    packages=setuptools.find_namespace_packages('src', exclude=["icalendar.fuzzing"]),
     package_dir={'': 'src'},
     include_package_data=True,
     zip_safe=False,
