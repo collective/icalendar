@@ -34,3 +34,9 @@ jobs:
       sarif_file: cifuzz-sarif/results.sarif
       checkout_path: cifuzz-sarif
 
+  check-distribution:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Do not include Apache files in the distribution.
+      run: |
+        src/icalendar/tests/test_create_release.sh
