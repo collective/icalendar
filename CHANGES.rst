@@ -33,6 +33,8 @@ Bug fixes:
   Ref: #567
 - Add some compare functions.
   Ref: #568
+- Change OSS Fuzz build script to point to harnesses in fuzzing directory
+  Ref: #574
 
 5.0.10 (unreleased)
 -------------------
