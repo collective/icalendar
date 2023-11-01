@@ -1,6 +1,9 @@
 """Test the equality and inequality of components."""
 import copy
 import pytz
+from icalendar.prop import *
+from datetime import datetime, date, timedelta
+import pytest
 
 
 def test_parsed_calendars_are_equal(ics_file):
@@ -41,3 +44,55 @@ def test_a_components_copy_also_copies_subcomponents(calendars):
     assert copy.subcomponents
     assert copy.subcomponents is not cal.subcomponents
     assert copy.subcomponents == cal.subcomponents
+
+
+def test_vGeo():
+    """Check the equality of vGeo."""
+    assert vGeo(("100", "12.33")) == vGeo(("100.00", "12.330"))
+    assert vGeo(("100", "12.331")) != vGeo(("100.00", "12.330"))
+    assert vGeo(("10", "12.33")) != vGeo(("100.00", "12.330"))
+
+
+def test_vBinary():
+    assert vBinary('asd') == vBinary('asd')
+    assert vBinary('asdf') != vBinary('asd')
+
+def test_vBoolean():
+    assert vBoolean.from_ical('TRUE') == vBoolean.from_ical('TRUE')
+    assert vBoolean.from_ical('FALSE') == vBoolean.from_ical('FALSE')
+    assert vBoolean.from_ical('TRUE') != vBoolean.from_ical('FALSE')
+
+def test_vCategory():
+    assert vCategory("HELLO") == vCategory("HELLO")
+    assert vCategory(["a","b"]) == vCategory(["a","b"])
+    assert vCategory(["a","b"]) != vCategory(["a","b", "c"])
+
+
+@pytest.mark.parametrize(
+    "vType,v1,v2",
+    [
+        (vDatetime, datetime(2023, 11, 1, 10, 11), datetime(2023, 11, 1, 10, 10)),
+        (vDate, date(2023, 11, 1), date(2023, 10, 31)),
+        (vDuration, timedelta(3, 11, 1), timedelta(23, 10, 31)),
+        (vPeriod, (datetime(2023, 11, 1, 10, 11), timedelta(3, 11, 1)), (datetime(2023, 11, 1, 10, 11), timedelta(23, 10, 31))),
+        (vPeriod, (datetime(2023, 11, 1, 10, 1), timedelta(3, 11, 1)), (datetime(2023, 11, 1, 10, 11), timedelta(3, 11, 1))),
+        (vPeriod, (datetime(2023, 11, 1, 10, 1), datetime(2023, 11, 1, 10, 3)), (datetime(2023, 11, 1, 10, 1), datetime(2023, 11, 1, 10, 2))),
+    ]
+)
+@pytest.mark.parametrize("eq", ["==", "!="])
+@pytest.mark.parametrize("cls1", [0, 1])
+@pytest.mark.parametrize("cls2", [0, 1])
+@pytest.mark.parametrize("hash", [lambda x:x, hash])
+def test_vDDDTypes_and_others(vType, v1, v2, cls1, cls2, eq, hash):
+    """Check equality and inequality."""
+    t1 = (vType, vDDDTypes)[cls1]
+    t2 = (vType, vDDDTypes)[cls2]
+    if eq == "==":
+        assert hash(v1) == hash(v1)
+        assert hash(t1(v1)) == hash(t2(v1))
+    else:
+        assert hash(v1) != hash(v2)
+        assert hash(t1(v1)) != hash(t2(v2))
+
+def test_repr_vDDDTypes():
+    assert "vDDDTypes" in repr(vDDDTypes(timedelta(3, 11, 1)))
