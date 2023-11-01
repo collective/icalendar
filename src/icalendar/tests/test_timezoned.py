@@ -10,11 +10,13 @@ try:
 except:
     from backports import zoneinfo
 
+HERE = os.path.dirname(__file__)
+CALENDARS_DIRECTORY = os.path.join(HERE, 'calendars')
+
 class TestTimezoned(unittest.TestCase):
 
     def test_create_from_ical_zoneinfo(self):
-        directory = os.path.dirname(__file__)
-        with open(os.path.join(directory, 'calendars', 'timezoned.ics'), 'rb') as fp:
+        with open(os.path.join(CALENDARS_DIRECTORY, 'timezoned.ics'), 'rb') as fp:
             data = fp.read()
         cal = icalendar.Calendar.from_ical(data)
 
@@ -47,7 +49,7 @@ class TestTimezoned(unittest.TestCase):
 
     def test_create_from_ical_pytz(self):
         directory = os.path.dirname(__file__)
-        with open(os.path.join(directory, 'calendars', 'timezoned.ics'), 'rb') as fp:
+        with open(os.path.join(CALENDARS_DIRECTORY, 'timezoned.ics'), 'rb') as fp:
             data = fp.read()
         cal = icalendar.Calendar.from_ical(data)
 
@@ -269,9 +271,7 @@ class TestTimezoneCreation(unittest.TestCase):
     def test_create_america_new_york(self):
         """testing America/New_York, the most complex example from the
         RFC"""
-
-        directory = os.path.dirname(__file__)
-        with open(os.path.join(directory, 'america_new_york.ics'), 'rb') as fp:
+        with open(os.path.join(CALENDARS_DIRECTORY, 'america_new_york.ics'), 'rb') as fp:
             data = fp.read()
         cal = icalendar.Calendar.from_ical(data)
 
@@ -307,8 +307,7 @@ class TestTimezoneCreation(unittest.TestCase):
         one RDATE property per subcomponent"""
         self.maxDiff = None
 
-        directory = os.path.dirname(__file__)
-        with open(os.path.join(directory, 'pacific_fiji.ics'), 'rb') as fp:
+        with open(os.path.join(CALENDARS_DIRECTORY, 'pacific_fiji.ics'), 'rb') as fp:
             data = fp.read()
         cal = icalendar.Calendar.from_ical(data)
 
@@ -442,8 +441,7 @@ class TestTimezoneCreation(unittest.TestCase):
     def test_same_start_date(self):
         """testing if we can handle VTIMEZONEs whose different components
         have the same start DTIMEs."""
-        directory = os.path.dirname(__file__)
-        with open(os.path.join(directory, 'timezone_same_start.ics'), 'rb') as fp:
+        with open(os.path.join(CALENDARS_DIRECTORY, 'timezone_same_start.ics'), 'rb') as fp:
             data = fp.read()
         cal = icalendar.Calendar.from_ical(data)
         d = cal.subcomponents[1]['DTSTART'].dt
@@ -452,8 +450,7 @@ class TestTimezoneCreation(unittest.TestCase):
     def test_same_start_date_and_offset(self):
         """testing if we can handle VTIMEZONEs whose different components
         have the same DTSTARTs, TZOFFSETFROM, and TZOFFSETTO."""
-        directory = os.path.dirname(__file__)
-        with open(os.path.join(directory, 'timezone_same_start_and_offset.ics'), 'rb') as fp:
+        with open(os.path.join(CALENDARS_DIRECTORY, 'timezone_same_start_and_offset.ics'), 'rb') as fp:
             data = fp.read()
         cal = icalendar.Calendar.from_ical(data)
         d = cal.subcomponents[1]['DTSTART'].dt
@@ -462,8 +459,7 @@ class TestTimezoneCreation(unittest.TestCase):
     def test_rdate(self):
         """testing if we can handle VTIMEZONEs who only have an RDATE, not RRULE
         """
-        directory = os.path.dirname(__file__)
-        with open(os.path.join(directory, 'timezone_rdate.ics'), 'rb') as fp:
+        with open(os.path.join(CALENDARS_DIRECTORY, 'timezone_rdate.ics'), 'rb') as fp:
             data = fp.read()
         cal = icalendar.Calendar.from_ical(data)
         vevent = cal.walk('VEVENT')[0]
