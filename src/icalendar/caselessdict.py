@@ -88,6 +88,9 @@ class CaselessDict(OrderedDict):
     def __eq__(self, other):
         return self is other or dict(self.items()) == dict(other.items())
 
+    def __ne__(self, other):
+        return not self == other
+
     # A list of keys that must appear first in sorted_keys and sorted_items;
     # must be uppercase.
     canonical_order = None
