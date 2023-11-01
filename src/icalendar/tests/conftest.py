@@ -15,6 +15,10 @@ class DataSource:
         self._parser = parser
         self._data_source_folder = data_source_folder
 
+    def keys(self):
+        """Return all the files that could be used."""
+        return [file[:-4] for file in os.listdir(self._data_source_folder) if file.lower().endswith(".ics")]
+
     def __getattr__(self, attribute):
         """Parse a file and return the result stored in the attribute."""
         source_file = attribute.replace('-', '_') + '.ics'
@@ -40,20 +44,23 @@ class DataSource:
 
 HERE = os.path.dirname(__file__)
 CALENDARS_FOLDER = os.path.join(HERE, 'calendars')
+CALENDARS = DataSource(CALENDARS_FOLDER, icalendar.Calendar.from_ical)
 TIMEZONES_FOLDER = os.path.join(HERE, 'timezones')
+TIMEZONES = DataSource(TIMEZONES_FOLDER, icalendar.Timezone.from_ical)
 EVENTS_FOLDER = os.path.join(HERE, 'events')
+EVENTS = DataSource(EVENTS_FOLDER, icalendar.Event.from_ical)
 
-@pytest.fixture
+@pytest.fixture()
 def calendars():
-    return DataSource(CALENDARS_FOLDER, icalendar.Calendar.from_ical)
+    return CALENDARS
 
-@pytest.fixture
+@pytest.fixture()
 def timezones():
-    return DataSource(TIMEZONES_FOLDER, icalendar.Timezone.from_ical)
+    return TIMEZONES
 
-@pytest.fixture
+@pytest.fixture()
 def events():
-    return DataSource(EVENTS_FOLDER, icalendar.Event.from_ical)
+    return EVENTS
 
 @pytest.fixture(params=[
     pytz.utc,
@@ -71,3 +78,18 @@ def utc(request):
 ])
 def in_timezone(request):
     return request.param
+
+
+@pytest.fixture(params=[
+    (data, key)
+    for data in [CALENDARS, TIMEZONES, EVENTS]
+    for key in data.keys() if key not in
+    (
+        "big_bad_calendar", "issue_104_broken_calendar", "small_bad_calendar",
+        "multiple_calendar_components")
+])
+def ics_file(request):
+    """An example ICS file."""
+    data, key = request.param
+    print(key)
+    return data[key]

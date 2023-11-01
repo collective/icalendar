@@ -5,3 +5,4 @@ END:VEVENT
 BEGIN:VEVENT
 SUMMARY:Another event with a ': ' in the summary
 END:VEVENT
+END:VCALENDAR
