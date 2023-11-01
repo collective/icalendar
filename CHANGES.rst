@@ -29,6 +29,8 @@ Bug fixes:
 - Multivalue FREEBUSY property is now parsed properly
   Ref: #27
   [jacadzaca]
+- Compare equality and inequality of calendars more completely
+  Ref: #570
 - Use non legacy timezone name.
   Ref: #567
 - Add some compare functions.
@@ -36,7 +38,7 @@ Bug fixes:
 - Change OSS Fuzz build script to point to harnesses in fuzzing directory
   Ref: #574
 
-5.0.10 (unreleased)
+5.0.10 (2023-09-26)
 -------------------
 
 Bug fixes:
@@ -92,7 +94,7 @@ Minor changes:
 
 Minor changes:
 
-- Added support for BYWEEKDAY in vRecur ref: #268 
+- Added support for BYWEEKDAY in vRecur ref: #268
 
 Bug fixes:
 
@@ -104,7 +106,7 @@ Bug fixes:
 Minor changes:
 
 - Improved documentation
-  Ref: #503, #504 
+  Ref: #503, #504
 
 Bug fixes:
 
