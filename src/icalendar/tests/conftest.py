@@ -23,6 +23,8 @@ class DataSource:
         """Parse a file and return the result stored in the attribute."""
         source_file = attribute.replace('-', '_') + '.ics'
         source_path = os.path.join(self._data_source_folder, source_file)
+        if not os.path.isfile(source_path):
+            raise AttributeError(f"{source_path} does not exist.")
         with open(source_path, 'rb') as f:
             raw_ics = f.read()
         source = self._parser(raw_ics)
@@ -84,9 +86,10 @@ def in_timezone(request):
     (data, key)
     for data in [CALENDARS, TIMEZONES, EVENTS]
     for key in data.keys() if key not in
-    (
+    ( # exclude broken calendars here
         "big_bad_calendar", "issue_104_broken_calendar", "small_bad_calendar",
-        "multiple_calendar_components")
+        "multiple_calendar_components", "pr_480_summary_with_colon"
+    )
 ])
 def ics_file(request):
     """An example ICS file."""
