@@ -758,7 +758,7 @@ class vText(str):
         return cls(ical_unesc)
 
 
-class vTime:
+class vTime(DtEqualityMixin):
     """Render and generates iCalendar time format.
     """
 

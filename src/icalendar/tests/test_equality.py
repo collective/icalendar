@@ -6,11 +6,18 @@ from datetime import datetime, date, timedelta
 import pytest
 
 
-def test_parsed_calendars_are_equal(ics_file):
+def test_parsed_calendars_are_equal_if_parsed_again(ics_file):
     """Ensure that a calendar equals the same calendar."""
     copy_of_calendar = ics_file.__class__.from_ical(ics_file.to_ical())
     assert copy_of_calendar == ics_file
     assert not copy_of_calendar != ics_file
+
+
+def test_parsed_calendars_are_equal_if_from_same_source(ics_file):
+    """Ensure that a calendar equals the same calendar."""
+    same_calendar = ics_file.__class__.from_ical(ics_file.raw_ics)
+    assert same_calendar == ics_file
+    assert not same_calendar != ics_file
 
 
 def test_copies_are_equal(ics_file):
@@ -19,6 +26,7 @@ def test_copies_are_equal(ics_file):
     assert ics_file.copy() == ics_file
     assert not ics_file.copy() != ics_file.copy()
     assert not ics_file.copy() != ics_file
+
 
 def test_deep_copies_are_equal(ics_file):
     """Ensure that deep copies are equal."""
@@ -68,6 +76,13 @@ def test_vCategory():
     assert vCategory(["a","b"]) != vCategory(["a","b", "c"])
 
 
+def test_vText():
+    assert vText("HELLO") == vText("HELLO")
+    assert not vText("HELLO") != vText("HELLO")
+    assert vText("HELLO1") != vText("HELLO")
+    assert not vText("HELLO1") == vText("HELLO")
+
+
 @pytest.mark.parametrize(
     "vType,v1,v2",
     [
@@ -77,6 +92,7 @@ def test_vCategory():
         (vPeriod, (datetime(2023, 11, 1, 10, 11), timedelta(3, 11, 1)), (datetime(2023, 11, 1, 10, 11), timedelta(23, 10, 31))),
         (vPeriod, (datetime(2023, 11, 1, 10, 1), timedelta(3, 11, 1)), (datetime(2023, 11, 1, 10, 11), timedelta(3, 11, 1))),
         (vPeriod, (datetime(2023, 11, 1, 10, 1), datetime(2023, 11, 1, 10, 3)), (datetime(2023, 11, 1, 10, 1), datetime(2023, 11, 1, 10, 2))),
+        (vTime, time(10, 10, 10), time(10, 10, 11)),
     ]
 )
 @pytest.mark.parametrize("eq", ["==", "!="])
