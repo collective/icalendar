@@ -15,17 +15,28 @@ def test_parsed_calendars_are_equal_if_parsed_again(ics_file):
 
 def test_parsed_calendars_are_equal_if_from_same_source(ics_file):
     """Ensure that a calendar equals the same calendar."""
-    same_calendar = ics_file.__class__.from_ical(ics_file.raw_ics)
-    assert same_calendar == ics_file
-    assert not same_calendar != ics_file
+    cal1 = ics_file.__class__.from_ical(ics_file.raw_ics)
+    cal2 = ics_file.__class__.from_ical(ics_file.raw_ics)
+    assert cal1 == cal2
+    assert not cal1 != cal2
 
 
 def test_copies_are_equal(ics_file):
     """Ensure that copies are equal."""
-    assert ics_file.copy() == ics_file.copy()
-    assert ics_file.copy() == ics_file
-    assert not ics_file.copy() != ics_file.copy()
-    assert not ics_file.copy() != ics_file
+    copy1 = ics_file.copy(); copy1.subcomponents = ics_file.subcomponents
+    copy2 = ics_file.copy();  copy2.subcomponents = ics_file.subcomponents[:]
+    assert copy1 == copy2
+    assert copy1 == ics_file
+    assert copy2 == ics_file
+    assert not copy1 != copy2
+    assert not copy1 != ics_file
+    assert not copy2 != ics_file
+
+
+def test_copy_does_not_copy_subcomponents(calendars):
+    """If we copy the subcomponents, assumptions around copies will be broken."""
+    assert calendars.timezoned.subcomponents
+    assert not calendars.timezoned.copy().subcomponents
 
 
 def test_deep_copies_are_equal(ics_file):
@@ -39,19 +50,6 @@ def test_deep_copies_are_equal(ics_file):
         # Ignore errors when a custom time zone is used.
         # This is still covered by the parsing test.
         pass
-
-
-def test_a_components_copy_also_copies_subcomponents(calendars):
-    """A calendar's copy does not have the identical subcompoenets!
-
-    We expect to be able to modify a copy but not its values.
-    """
-    cal = calendars.timezoned
-    copy = cal.copy()
-    assert copy is not cal
-    assert copy.subcomponents
-    assert copy.subcomponents is not cal.subcomponents
-    assert copy.subcomponents == cal.subcomponents
 
 
 def test_vGeo():
