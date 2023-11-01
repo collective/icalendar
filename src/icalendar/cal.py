@@ -465,6 +465,11 @@ class Component(CaselessDict):
 
         return True
 
+    def copy(self):
+        """Create a copy of the component."""
+        copy = super().copy()
+        copy.subcomponents = self.subcomponents[:]
+        return copy
 
 #######################################
 # components defined in RFC 5545

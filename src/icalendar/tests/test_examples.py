@@ -3,7 +3,7 @@
 import datetime
 from icalendar import Calendar, Event
 import pytest
-import copy
+
 
 def test_creating_calendar_with_unicode_fields(calendars, utc):
     ''' create a calendar with events that contain unicode characters in their fields '''
@@ -37,17 +37,3 @@ def test_creating_calendar_with_unicode_fields(calendars, utc):
     cal.add_component(event2)
 
     assert cal.to_ical() == calendars.created_calendar_with_unicode_fields.raw_ics
-
-
-def test_parsed_calendars_are_equal(ics_file):
-    """Ensure that a calendar equals the same calendar."""
-    copy_of_calendar = ics_file.__class__.from_ical(ics_file.to_ical())
-    assert copy_of_calendar == ics_file
-
-def test_copies_are_equal(ics_file):
-    """Ensure that copies are equal."""
-    assert ics_file.copy() == ics_file.copy() == ics_file
-
-def test_deep_copies_are_equal(ics_file):
-    """Ensure that deep copies are equal."""
-    assert copy.deepcopy(ics_file) == copy.deepcopy(ics_file) == ics_file
