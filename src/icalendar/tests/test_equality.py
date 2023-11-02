@@ -106,9 +106,26 @@ def test_vDDDTypes_and_others(vType, v1, v2, cls1, cls2, eq, hash):
     if eq == "==":
         assert hash(v1) == hash(v1)
         assert hash(t1(v1)) == hash(t2(v1))
+        assert not hash(t1(v1)) != hash(t2(v1))
     else:
         assert hash(v1) != hash(v2)
         assert hash(t1(v1)) != hash(t2(v2))
 
+
 def test_repr_vDDDTypes():
     assert "vDDDTypes" in repr(vDDDTypes(timedelta(3, 11, 1)))
+
+
+vDDDLists_examples = [
+    vDDDLists([]),
+    vDDDLists([datetime(2023, 11, 1, 10, 1)]),
+    vDDDLists([datetime(2023, 11, 1, 10, 1), date(2023, 11, 1)]),
+]
+@pytest.mark.parametrize("l1", vDDDLists_examples)
+@pytest.mark.parametrize("l2", vDDDLists_examples)
+def test_vDDDLists(l1, l2):
+    """Check the equality functions of vDDDLists."""
+    equal = l1 is l2
+    l2 = copy.deepcopy(l2)
+    assert equal == (l1 == l2)
+    assert equal != (l1 != l2)
