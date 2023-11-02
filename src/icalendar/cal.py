@@ -447,7 +447,7 @@ class Component(CaselessDict):
         return f"{self.name or type(self).__name__}({dict(self)}{', ' + subs if subs else ''})"
 
     def __eq__(self, other):
-        if not len(self.subcomponents) == len(other.subcomponents):
+        if len(self.subcomponents) != len(other.subcomponents):
             return False
 
         properties_equal = super().__eq__(other)
@@ -464,7 +464,6 @@ class Component(CaselessDict):
                 return False
 
         return True
-
 
 #######################################
 # components defined in RFC 5545

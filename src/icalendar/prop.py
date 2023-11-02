@@ -145,6 +145,10 @@ class vBinary:
         except UnicodeError:
             raise ValueError('Not valid base 64 encoding.')
 
+    def __eq__(self, other):
+        """self == other"""
+        return isinstance(other, vBinary) and self.obj == other.obj
+
 
 class vBoolean(int):
     """Returns specific string according to state.
@@ -269,6 +273,7 @@ class vCategory:
         if not hasattr(c_list, '__iter__') or isinstance(c_list, str):
             c_list = [c_list]
         self.cats = [vText(c) for c in c_list]
+        self.params = Parameters()
 
     def to_ical(self):
         return b",".join([c.to_ical() for c in self.cats])
@@ -279,8 +284,24 @@ class vCategory:
         out = unescape_char(ical).split(',')
         return out
 
+    def __eq__(self, other):
+        """self == other"""
+        return isinstance(other, vCategory) and self.cats == other.cats
 
-class vDDDTypes:
+class TimeBase:
+    """Make classes with a datetime/date comparable."""
+
+    def __eq__(self, other):
+        """self == other"""
+        if isinstance(other, TimeBase):
+            return self.params == other.params and self.dt == other.dt
+        return False
+
+    def __hash__(self):
+        return hash(self.dt)
+
+
+class vDDDTypes(TimeBase):
     """A combined Datetime, Date or Duration parser/generator. Their format
     cannot be confused, and often values can be of either types.
     So this is practical.
@@ -290,7 +311,7 @@ class vDDDTypes:
         if not isinstance(dt, (datetime, date, timedelta, time, tuple)):
             raise ValueError('You must use datetime, date, timedelta, '
                              'time or tuple (for periods)')
-        if isinstance(dt, datetime):
+        if isinstance(dt, (datetime, timedelta)):
             self.params = Parameters()
         elif isinstance(dt, date):
             self.params = Parameters({'value': 'DATE'})
@@ -320,14 +341,6 @@ class vDDDTypes:
         else:
             raise ValueError(f'Unknown date type: {type(dt)}')
 
-    def __eq__(self, other):
-        if isinstance(other, vDDDTypes):
-            return self.params == other.params and self.dt == other.dt
-        return False
-
-    def __hash__(self):
-        return hash(self.dt)
-
     @classmethod
     def from_ical(cls, ical, timezone=None):
         if isinstance(ical, cls):
@@ -349,8 +362,11 @@ class vDDDTypes:
                 f"Expected datetime, date, or time, got: '{ical}'"
             )
 
+    def __repr__(self):
+        """repr(self)"""
+        return f"{self.__class__.__name__}({self.dt}, {self.params})"
 
-class vDate:
+class vDate(TimeBase):
     """Render and generates iCalendar date format.
     """
 
@@ -377,7 +393,7 @@ class vDate:
             raise ValueError(f'Wrong date format {ical}')
 
 
-class vDatetime:
+class vDatetime(TimeBase):
     """Render and generates icalendar datetime format.
 
     vDatetime is timezone aware and uses the pytz library, an implementation of
@@ -438,7 +454,7 @@ class vDatetime:
             raise ValueError(f'Wrong datetime format: {ical}')
 
 
-class vDuration:
+class vDuration(TimeBase):
     """Subclass of timedelta that renders itself in the iCalendar DURATION
     format.
     """
@@ -495,8 +511,12 @@ class vDuration:
 
         return value
 
+    @property
+    def dt(self):
+        """The time delta for compatibility."""
+        return self.td
 
-class vPeriod:
+class vPeriod(TimeBase):
     """A precise period of time.
     """
 
@@ -520,7 +540,7 @@ class vPeriod:
         if start > end:
             raise ValueError("Start time is greater than end time")
 
-        self.params = Parameters()
+        self.params = Parameters({'value': 'PERIOD'})
         # set the timezone identifier
         # does not support different timezones for start and end
         tzid = tzid_from_dt(start)
@@ -531,17 +551,6 @@ class vPeriod:
         self.end = end
         self.by_duration = by_duration
         self.duration = duration
-
-    def __cmp__(self, other):
-        if not isinstance(other, vPeriod):
-            raise NotImplementedError(
-                f'Cannot compare vPeriod with {other!r}')
-        return cmp((self.start, self.end), (other.start, other.end))
-
-    def __eq__(self, other):
-        if not isinstance(other, vPeriod):
-            return False
-        return (self.start, self.end) == (other.start, other.end)
 
     def overlaps(self, other):
         if self.start > other.start:
@@ -574,6 +583,10 @@ class vPeriod:
             p = (self.start, self.end)
         return f'vPeriod({p!r})'
 
+    @property
+    def dt(self):
+        """Make this cooperate with the other vDDDTypes."""
+        return (self.start, (self.duration if self.by_duration else self.end))
 
 class vWeekday(str):
     """This returns an unquoted weekday abbrevation.
@@ -740,7 +753,7 @@ class vText(str):
         return cls(ical_unesc)
 
 
-class vTime:
+class vTime(TimeBase):
     """Render and generates iCalendar time format.
     """
 
@@ -814,6 +827,8 @@ class vGeo:
         except Exception:
             raise ValueError(f"Expected 'float;float' , got: {ical}")
 
+    def __eq__(self, other):
+        return self.to_ical() == other.to_ical()
 
 class vUTCOffset:
     """Renders itself as a utc offset.

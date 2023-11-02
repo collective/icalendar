@@ -15,7 +15,7 @@ class TestTime(unittest.TestCase):
 
     def test_create_from_ical(self):
         directory = os.path.dirname(__file__)
-        ics = open(os.path.join(directory, 'time.ics'), 'rb')
+        ics = open(os.path.join(directory, 'calendars', 'time.ics'), 'rb')
         cal = icalendar.Calendar.from_ical(ics.read())
         ics.close()
 

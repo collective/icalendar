@@ -1,10 +1,9 @@
 '''tests ensuring that *the* way of doing things works'''
 
 import datetime
-
 from icalendar import Calendar, Event
-
 import pytest
+
 
 def test_creating_calendar_with_unicode_fields(calendars, utc):
     ''' create a calendar with events that contain unicode characters in their fields '''
@@ -38,4 +37,3 @@ def test_creating_calendar_with_unicode_fields(calendars, utc):
     cal.add_component(event2)
 
     assert cal.to_ical() == calendars.created_calendar_with_unicode_fields.raw_ics
-
