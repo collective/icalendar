@@ -48,7 +48,6 @@ class TestTimezoned(unittest.TestCase):
         )
 
     def test_create_from_ical_pytz(self):
-        directory = os.path.dirname(__file__)
         with open(os.path.join(CALENDARS_DIRECTORY, 'timezoned.ics'), 'rb') as fp:
             data = fp.read()
         cal = icalendar.Calendar.from_ical(data)
