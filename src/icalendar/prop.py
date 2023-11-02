@@ -124,20 +124,7 @@ class LocalTimezone(tzinfo):
         return tt.tm_isdst > 0
 
 
-class EqualityMixin:
-    """A class to share equality functions of properties."""
-
-    def __eq__(self, other):
-        """Check the equality between this property and the other.
-
-        You can override this to make comparing faster.
-        """
-        return isinstance(other, EqualityMixin) and \
-            self.params == other.params and \
-            self.to_ical() == other.to_ical()
-
-
-class vBinary(EqualityMixin):
+class vBinary:
     """Binary property values are base 64 encoded.
     """
 
@@ -157,6 +144,10 @@ class vBinary(EqualityMixin):
             return base64.b64decode(ical)
         except UnicodeError:
             raise ValueError('Not valid base 64 encoding.')
+
+    def __eq__(self, other):
+        """self == other"""
+        return isinstance(other, vBinary) and self.obj == other.obj
 
 
 class vBoolean(int):
@@ -276,7 +267,7 @@ class vDDDLists:
         return self.dts == other.dts
 
 
-class vCategory(EqualityMixin):
+class vCategory:
 
     def __init__(self, c_list):
         if not hasattr(c_list, '__iter__') or isinstance(c_list, str):
@@ -293,12 +284,16 @@ class vCategory(EqualityMixin):
         out = unescape_char(ical).split(',')
         return out
 
+    def __eq__(self, other):
+        """self == other"""
+        return isinstance(other, vCategory) and self.cats == other.cats
 
-class DtEqualityMixin:
+class TimeBase:
     """Make classes with a datetime/date comparable."""
 
     def __eq__(self, other):
-        if isinstance(other, DtEqualityMixin):
+        """self == other"""
+        if isinstance(other, TimeBase):
             return self.params == other.params and self.dt == other.dt
         return False
 
@@ -306,7 +301,7 @@ class DtEqualityMixin:
         return hash(self.dt)
 
 
-class vDDDTypes(DtEqualityMixin):
+class vDDDTypes(TimeBase):
     """A combined Datetime, Date or Duration parser/generator. Their format
     cannot be confused, and often values can be of either types.
     So this is practical.
@@ -371,7 +366,7 @@ class vDDDTypes(DtEqualityMixin):
         """repr(self)"""
         return f"{self.__class__.__name__}({self.dt}, {self.params})"
 
-class vDate(DtEqualityMixin):
+class vDate(TimeBase):
     """Render and generates iCalendar date format.
     """
 
@@ -398,7 +393,7 @@ class vDate(DtEqualityMixin):
             raise ValueError(f'Wrong date format {ical}')
 
 
-class vDatetime(DtEqualityMixin):
+class vDatetime(TimeBase):
     """Render and generates icalendar datetime format.
 
     vDatetime is timezone aware and uses the pytz library, an implementation of
@@ -459,7 +454,7 @@ class vDatetime(DtEqualityMixin):
             raise ValueError(f'Wrong datetime format: {ical}')
 
 
-class vDuration(DtEqualityMixin):
+class vDuration(TimeBase):
     """Subclass of timedelta that renders itself in the iCalendar DURATION
     format.
     """
@@ -521,7 +516,7 @@ class vDuration(DtEqualityMixin):
         """The time delta for compatibility."""
         return self.td
 
-class vPeriod(DtEqualityMixin):
+class vPeriod(TimeBase):
     """A precise period of time.
     """
 
@@ -758,7 +753,7 @@ class vText(str):
         return cls(ical_unesc)
 
 
-class vTime(DtEqualityMixin):
+class vTime(TimeBase):
     """Render and generates iCalendar time format.
     """
 

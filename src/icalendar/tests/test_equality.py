@@ -63,10 +63,12 @@ def test_vBinary():
     assert vBinary('asd') == vBinary('asd')
     assert vBinary('asdf') != vBinary('asd')
 
+
 def test_vBoolean():
     assert vBoolean.from_ical('TRUE') == vBoolean.from_ical('TRUE')
     assert vBoolean.from_ical('FALSE') == vBoolean.from_ical('FALSE')
     assert vBoolean.from_ical('TRUE') != vBoolean.from_ical('FALSE')
+
 
 def test_vCategory():
     assert vCategory("HELLO") == vCategory("HELLO")
