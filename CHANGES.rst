@@ -1,7 +1,7 @@
 Changelog
 =========
 
-5.0.11 (unreleased)
+5.0.11 (2023-11-03)
 -------------------
 
 Minor changes:
@@ -9,10 +9,6 @@ Minor changes:
 - The cli utility now displays start and end datetimes in the user's local timezone.
   Ref: #561
   [vimpostor]
-
-Breaking changes:
-
-- ...
 
 New features:
 
