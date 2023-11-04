@@ -17,16 +17,24 @@
 import atheris
 import sys
 
-with atheris.instrument_imports(include=['icalendar']):
-    from icalendar import Calendar
+with atheris.instrument_imports(
+        include=['icalendar'],
+        exclude=['pytz', 'six', 'site_packages', 'pkg_resources', 'dateutil']):
+    import icalendar
+
+_value_error_matches = [
+    "component", "parse", "Expected", "Wrong date format", "END encountered",
+    "vDDD", 'recurrence', 'Wrong datetime', 'Offset must', 'Invalid iCalendar'
+]
 
 
+@atheris.instrument_func
 def TestOneInput(data):
     fdp = atheris.FuzzedDataProvider(data)
     try:
         b = fdp.ConsumeBool()
 
-        cal = Calendar.from_ical(fdp.ConsumeString(fdp.remaining_bytes()))
+        cal = icalendar.Calendar.from_ical(fdp.ConsumeString(fdp.remaining_bytes()))
 
         if b:
             for event in cal.walk('VEVENT'):
@@ -34,9 +42,10 @@ def TestOneInput(data):
         else:
             cal.to_ical()
     except ValueError as e:
-        if "component" in str(e) or "parse" in str(e) or "Expected" in str(e):
+        if any(m in str(e) for m in _value_error_matches):
             return -1
         raise e
+
 
 def main():
     atheris.Setup(sys.argv, TestOneInput)

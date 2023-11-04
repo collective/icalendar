@@ -250,8 +250,19 @@ class vDDDLists:
         self.dts = vDDD
 
     def to_ical(self):
-        dts_ical = (dt.to_ical() for dt in self.dts)
-        return b",".join(dts_ical)
+        dts_ical = [dt.to_ical() for dt in self.dts]
+
+        # Make sure all elements are of the same type
+        if dts_ical and all(type(dt) is type(dts_ical[0]) for dt in dts_ical):
+            first_dt = dts_ical[0]
+            if isinstance(first_dt, bytes):
+                return b",".join(dts_ical)
+            elif isinstance(first_dt, str):
+                return ",".join(dts_ical)
+            else:
+                raise ValueError(f"Unexpected type {type(first_dt)} in vDDD list!")
+        else:
+            raise ValueError("Type mismatch in vDDD list!")
 
     @staticmethod
     def from_ical(ical, timezone=None):
