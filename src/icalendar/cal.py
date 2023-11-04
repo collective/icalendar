@@ -358,6 +358,10 @@ class Component(CaselessDict):
             elif uname == 'END':
                 # we are done adding properties to this component
                 # so pop it from the stack and add it to the new top.
+                if not stack:
+                    # The stack is currently empty, the input must be invalid
+                    raise ValueError('END encountered without an accompanying BEGIN!')
+
                 component = stack.pop()
                 if not stack:  # we are at the end
                     comps.append(component)
