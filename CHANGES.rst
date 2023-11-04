@@ -6,7 +6,7 @@ Changelog
 
 Minor changes:
 
-- ...
+- Augmented fuzzer to optionally convert multiple calendars from a source string
 
 Breaking changes:
 

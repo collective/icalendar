@@ -28,19 +28,28 @@ _value_error_matches = [
 ]
 
 
+def _fuzz_calendar(cal: icalendar.Calendar, should_walk: bool):
+    if should_walk:
+        for event in cal.walk('VEVENT'):
+            event.to_ical()
+    else:
+        cal.to_ical()
+
+
 @atheris.instrument_func
 def TestOneInput(data):
     fdp = atheris.FuzzedDataProvider(data)
     try:
-        b = fdp.ConsumeBool()
+        multiple = fdp.ConsumeBool()
+        should_walk = fdp.ConsumeBool()
 
-        cal = icalendar.Calendar.from_ical(fdp.ConsumeString(fdp.remaining_bytes()))
+        cal = icalendar.Calendar.from_ical(fdp.ConsumeString(fdp.remaining_bytes()), multiple=multiple)
 
-        if b:
-            for event in cal.walk('VEVENT'):
-                event.to_ical().decode('utf-8')
+        if multiple:
+            for c in cal:
+                _fuzz_calendar(c, should_walk)
         else:
-            cal.to_ical()
+            _fuzz_calendar(cal, should_walk)
     except ValueError as e:
         if any(m in str(e) for m in _value_error_matches):
             return -1
