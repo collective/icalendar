@@ -62,13 +62,11 @@ import pytz
 import re
 import time as _time
 
-
 DURATION_REGEX = re.compile(r'([-+]?)P(?:(\d+)W)?(?:(\d+)D)?'
                             r'(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$')
 
 WEEKDAY_RULE = re.compile(r'(?P<signal>[+-]?)(?P<relative>[\d]{0,2})'
                           r'(?P<weekday>[\w]{2})$')
-
 
 ####################################################
 # handy tzinfo classes you can use.
@@ -174,6 +172,7 @@ class vBoolean(int):
 class vCalAddress(str):
     """This just returns an unquoted string.
     """
+
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
@@ -194,6 +193,7 @@ class vCalAddress(str):
 class vFloat(float):
     """Just a float.
     """
+
     def __new__(cls, *args, **kwargs):
         self = super().__new__(cls, *args, **kwargs)
         self.params = Parameters()
@@ -213,6 +213,7 @@ class vFloat(float):
 class vInt(int):
     """Just an int.
     """
+
     def __new__(cls, *args, **kwargs):
         self = super().__new__(cls, *args, **kwargs)
         self.params = Parameters()
@@ -253,7 +254,7 @@ class vDDDLists:
         dts_ical = [dt.to_ical() for dt in self.dts]
 
         # Make sure all elements are of the same type
-        if dts_ical and all(type(dt) is type(dts_ical[0]) for dt in dts_ical):
+        if dts_ical and all(isinstance(dt, type(dts_ical[0])) for dt in dts_ical):
             first_dt = dts_ical[0]
             if isinstance(first_dt, bytes):
                 return b",".join(dts_ical)
@@ -261,6 +262,8 @@ class vDDDLists:
                 return ",".join(dts_ical)
             else:
                 raise ValueError(f"Unexpected type {type(first_dt)} in vDDD list!")
+        elif not dts_ical:
+            return b""
         else:
             raise ValueError("Type mismatch in vDDD list!")
 
@@ -298,6 +301,7 @@ class vCategory:
     def __eq__(self, other):
         """self == other"""
         return isinstance(other, vCategory) and self.cats == other.cats
+
 
 class TimeBase:
     """Make classes with a datetime/date comparable."""
@@ -376,6 +380,7 @@ class vDDDTypes(TimeBase):
     def __repr__(self):
         """repr(self)"""
         return f"{self.__class__.__name__}({self.dt}, {self.params})"
+
 
 class vDate(TimeBase):
     """Render and generates iCalendar date format.
@@ -527,6 +532,7 @@ class vDuration(TimeBase):
         """The time delta for compatibility."""
         return self.td
 
+
 class vPeriod(TimeBase):
     """A precise period of time.
     """
@@ -598,6 +604,7 @@ class vPeriod(TimeBase):
     def dt(self):
         """Make this cooperate with the other vDDDTypes."""
         return (self.start, (self.duration if self.by_duration else self.end))
+
 
 class vWeekday(str):
     """This returns an unquoted weekday abbrevation.
@@ -841,11 +848,13 @@ class vGeo:
     def __eq__(self, other):
         return self.to_ical() == other.to_ical()
 
+
 class vUTCOffset:
     """Renders itself as a utc offset.
     """
 
-    ignore_exceptions = False   # if True, and we cannot parse this
+    ignore_exceptions = False  # if True, and we cannot parse this
+
     # component, we will silently ignore
     # it, rather than let the exception
     # propagate upwards
@@ -907,6 +916,7 @@ class vInline(str):
     has parameters. Conversion of inline values are handled by the Component
     class, so no further processing is needed.
     """
+
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
