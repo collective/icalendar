@@ -2,6 +2,23 @@ SEQUENCE_TYPES = (list, tuple)
 DEFAULT_ENCODING = 'utf-8'
 
 
+def from_unicode(value, encoding='utf-8') -> bytes:
+    """
+    Converts a value to bytes, even if it already is bytes
+    :param value: The value to convert
+    :param encoding: The encoding to use in the conversion
+    :return: The bytes representation of the value
+    """
+    if isinstance(value, bytes):
+        return value
+    elif isinstance(value, str):
+        try:
+            return value.encode(encoding)
+        except UnicodeEncodeError:
+            value = value.encode('utf-8', 'replace')
+    return value
+
+
 def to_unicode(value, encoding='utf-8'):
     """Converts a value to unicode, even if it is already a unicode string.
     """

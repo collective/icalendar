@@ -53,6 +53,7 @@ from icalendar.parser import unescape_char
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.parser_tools import SEQUENCE_TYPES
 from icalendar.parser_tools import to_unicode
+from icalendar.parser_tools import from_unicode
 from icalendar.timezone_cache import _timezone_cache
 from icalendar.windows_to_olson import WINDOWS_TO_OLSON
 
@@ -251,21 +252,8 @@ class vDDDLists:
         self.dts = vDDD
 
     def to_ical(self):
-        dts_ical = [dt.to_ical() for dt in self.dts]
-
-        # Make sure all elements are of the same type
-        if dts_ical and all(isinstance(dt, type(dts_ical[0])) for dt in dts_ical):
-            first_dt = dts_ical[0]
-            if isinstance(first_dt, bytes):
-                return b",".join(dts_ical)
-            elif isinstance(first_dt, str):
-                return ",".join(dts_ical)
-            else:
-                raise ValueError(f"Unexpected type {type(first_dt)} in vDDD list!")
-        elif not dts_ical:
-            return b""
-        else:
-            raise ValueError("Type mismatch in vDDD list!")
+        dts_ical = (from_unicode(dt.to_ical()) for dt in self.dts)
+        return b",".join(dts_ical)
 
     @staticmethod
     def from_ical(ical, timezone=None):
