@@ -19,6 +19,9 @@ New features:
 Bug fixes:
 
 - ...
+- Fixed index error in cal.py when attempting to pop from an empty stack
+- Fixed type error in prop.py when attempting to join strings into a byte-string
+- Caught Wrong Date Format in ical_fuzzer to resolve fuzzing coverage blocker
 
 5.0.11 (2023-11-03)
 -------------------
