@@ -6,7 +6,7 @@ Changelog
 
 Minor changes:
 
-- ...
+- Added corpus to fuzzing directory
 
 Breaking changes:
 
