@@ -17,26 +17,44 @@
 import atheris
 import sys
 
-with atheris.instrument_imports(include=['icalendar']):
-    from icalendar import Calendar
+with atheris.instrument_imports(
+        include=['icalendar'],
+        exclude=['pytz', 'six', 'site_packages', 'pkg_resources', 'dateutil']):
+    import icalendar
+
+_value_error_matches = [
+    "component", "parse", "Expected", "Wrong date format", "END encountered",
+    "vDDD", 'recurrence', 'Wrong datetime', 'Offset must', 'Invalid iCalendar'
+]
 
 
+def _fuzz_calendar(cal: icalendar.Calendar, should_walk: bool):
+    if should_walk:
+        for event in cal.walk('VEVENT'):
+            event.to_ical()
+    else:
+        cal.to_ical()
+
+
+@atheris.instrument_func
 def TestOneInput(data):
     fdp = atheris.FuzzedDataProvider(data)
     try:
-        b = fdp.ConsumeBool()
+        multiple = fdp.ConsumeBool()
+        should_walk = fdp.ConsumeBool()
 
-        cal = Calendar.from_ical(fdp.ConsumeString(fdp.remaining_bytes()))
+        cal = icalendar.Calendar.from_ical(fdp.ConsumeString(fdp.remaining_bytes()), multiple=multiple)
 
-        if b:
-            for event in cal.walk('VEVENT'):
-                event.to_ical().decode('utf-8')
+        if multiple:
+            for c in cal:
+                _fuzz_calendar(c, should_walk)
         else:
-            cal.to_ical()
+            _fuzz_calendar(cal, should_walk)
     except ValueError as e:
-        if "component" in str(e) or "parse" in str(e) or "Expected" in str(e):
+        if any(m in str(e) for m in _value_error_matches):
             return -1
         raise e
+
 
 def main():
     atheris.Setup(sys.argv, TestOneInput)
@@ -45,3 +63,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
