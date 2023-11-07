@@ -7,6 +7,7 @@ Changelog
 Minor changes:
 
 - Added corpus to fuzzing directory
+- Added exclusion of fuzzing corpus in MANIFEST.in
 
 Breaking changes:
 
