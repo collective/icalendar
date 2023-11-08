@@ -6,6 +6,8 @@ Changelog
 
 Minor changes:
 
+- Added corpus to fuzzing directory
+- Added exclusion of fuzzing corpus in MANIFEST.in
 - Augmented fuzzer to optionally convert multiple calendars from a source string
 
 Breaking changes:
