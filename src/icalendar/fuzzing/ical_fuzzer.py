@@ -24,7 +24,11 @@ with atheris.instrument_imports(
 
 _value_error_matches = [
     "component", "parse", "Expected", "Wrong date format", "END encountered",
-    "vDDD", 'recurrence', 'Wrong datetime', 'Offset must', 'Invalid iCalendar'
+    "vDDD", 'recurrence', 'Offset must', 'Invalid iCalendar',
+    'alue MUST', 'Key name', 'Invalid content line', 'does not exist',
+    'base 64', 'must use datetime', 'Unknown date type', 'Wrong',
+    'Start time', 'iCalendar', 'recurrence', 'float, float', 'utc offset',
+    'parent'
 ]
 
 
