@@ -17,9 +17,7 @@
 import atheris
 import sys
 
-with atheris.instrument_imports(
-        include=['icalendar'],
-        exclude=['pytz', 'six', 'site_packages', 'pkg_resources', 'dateutil']):
+with atheris.instrument_imports():
     import icalendar
 
 _value_error_matches = [
@@ -28,7 +26,7 @@ _value_error_matches = [
     'alue MUST', 'Key name', 'Invalid content line', 'does not exist',
     'base 64', 'must use datetime', 'Unknown date type', 'Wrong',
     'Start time', 'iCalendar', 'recurrence', 'float, float', 'utc offset',
-    'parent'
+    'parent', 'MUST be a datetime'
 ]
 
 
