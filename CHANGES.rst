@@ -10,6 +10,7 @@ Minor changes:
 - Added exclusion of fuzzing corpus in MANIFEST.in
 - Augmented fuzzer to optionally convert multiple calendars from a source string
 - Added additional exception handling of defined errors to fuzzer, to allow fuzzer to explore deeper
+- Added more instrumentation to fuzz-harness
 Breaking changes:
 
 - ...
