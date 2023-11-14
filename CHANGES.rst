@@ -11,6 +11,8 @@ Minor changes:
 - Augmented fuzzer to optionally convert multiple calendars from a source string
 - Added additional exception handling of defined errors to fuzzer, to allow fuzzer to explore deeper
 - Added more instrumentation to fuzz-harness
+- Rename "contributor" to "collaborator" in documentation
+
 Breaking changes:
 
 - ...
