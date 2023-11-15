@@ -31,10 +31,15 @@ Maintainers need this:
     by adding the GitHub username to the list of "Required Reviewers".
 
 
-Contributors
-------------
+Collaborators
+-------------
 
-Contributors here are people with write access to the repository.
+Collaborators are people with write access to the repository.
+As a collaborator, you can
+
+- merge Pull Requests,
+- initiate a new release, see below.
+
 We want to have as many knowledgeable people with write access taking responsibility as possible for these reasons:
 
 - a constant flow of fixes and new features
@@ -44,14 +49,14 @@ We want to have as many knowledgeable people with write access taking responsibi
 
 Nobody should merge their own pull requests.
 If you like to review or merge pull requests of other people and you have shown that you know how to contribute,
-you can ask for becoming a contributor or a maintainer asks you if you would like to become one.
+you can ask for becoming a collaborator or a maintainer asks you if you would like to become one.
 
 New Releases
 ------------
 
 This explains how to create a new release on `PyPI  <https://pypi.org/project/icalendar/>`_.
 
-Since contributors and maintainers have write access the the repository, they can start the release process.
+Since collaborators and maintainers have write access the the repository, they can start the release process.
 However, only people with ``PyPI environment access for GitHub Actions`` can approve an automated release to PyPI.
 
 
@@ -59,7 +64,7 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
    and the version you want to release is correctly named.
 2. Change the ``__version__`` variable in
 
-   - the ``src/icalendar/__init__.py`` file and 
+   - the ``src/icalendar/__init__.py`` file and
    - in the ``docs/install.rst`` file (look for ``icalendar.__version__``)
 3. Create a commit on the ``release`` branch (or equivalent) to release this version.
 
@@ -111,21 +116,21 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
 
        5.0.2 (unreleased)
        ------------------
-       
+
        Minor changes:
-       
+
        - ...
-       
+
        Breaking changes:
-       
+
        - ...
-       
+
        New features:
-       
+
        - ...
-       
+
        Bug fixes:
-       
+
        - ...
 
 11. Push the new CHANGELOG so it is used for future changes.
@@ -136,18 +141,14 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
        git pull
        git add CHANGES.rst
        git commit -m"Add new CHANGELOG section for future release
-       
+
        See https://icalendar.readthedocs.io/en/latest/maintenance.html#new-releases"
        git push upstream master # could be origin or whatever reference
 
 Links
 -----
 
-This section contains useful links for maintainers and contributors:
+This section contains useful links for maintainers and collaborators:
 
 - `Future of icalendar, looking for maintainer #360 <https://github.com/collective/icalendar/discussions/360>`__
 - `Comment on the Plone tests running with icalendar <https://github.com/collective/icalendar/pull/447#issuecomment-1277643634>`__
-
-
-
-
