@@ -148,7 +148,7 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
 Links
 -----
 
-This section contains useful links for maintainers and contributors:
+This section contains useful links for maintainers and collaborators:
 
 - `Future of icalendar, looking for maintainer #360 <https://github.com/collective/icalendar/discussions/360>`__
 - `Comment on the Plone tests running with icalendar <https://github.com/collective/icalendar/pull/447#issuecomment-1277643634>`__
