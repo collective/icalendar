@@ -40,9 +40,11 @@ def TestOneInput(data):
         should_walk = fdp.ConsumeBool()
         calendar_string = fdp.ConsumeString(fdp.remaining_bytes())
         print("--- start calendar ---")
-        # print the ICS file for the test case extraction
-        # see https://stackoverflow.com/a/27367173/1320237
-        print(base64.b64encode(calendar_string.encode("UTF-8", "surrogateescape")).decode("ASCII"))
+        try:
+            # print the ICS file for the test case extraction
+            # see https://stackoverflow.com/a/27367173/1320237
+            print(base64.b64encode(calendar_string.encode("UTF-8", "surrogateescape")).decode("ASCII"))
+        except UnicodeEncodeError: pass
         print("--- end calendar ---")
 
         fuzz_calendar_v1(icalendar.Calendar.from_ical, calendar_string, multiple, should_walk)
