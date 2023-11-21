@@ -12,14 +12,11 @@ def fuzz_calendar_v1(from_ical, calendar_string: str, multiple: bool, should_wal
     """
     cal = from_ical(calendar_string, multiple=multiple)
 
-    if multiple:
-        for c in cal:
-            _fuzz_calendar(c, should_walk)
-    else:
-        _fuzz_calendar(cal, should_walk)
-
-    if should_walk:
-        for event in cal.walk('VEVENT'):
-            event.to_ical()
-    else:
-        cal.to_ical()
+    if not multiple:
+        cal = [cal]
+    for c in cal:
+        if should_walk:
+            for event in cal.walk('VEVENT'):
+                event.to_ical()
+        else:
+            cal.to_ical()
