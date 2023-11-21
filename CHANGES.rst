@@ -9,6 +9,7 @@ Minor changes:
 - Added corpus to fuzzing directory
 - Added exclusion of fuzzing corpus in MANIFEST.in
 - Augmented fuzzer to optionally convert multiple calendars from a source string
+- Add script to convert OSS FUZZ test cases to Python/pytest test cases
 - Added additional exception handling of defined errors to fuzzer, to allow fuzzer to explore deeper
 - Added more instrumentation to fuzz-harness
 - Rename "contributor" to "collaborator" in documentation
