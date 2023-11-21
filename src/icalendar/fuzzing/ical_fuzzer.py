@@ -34,14 +34,15 @@ _value_error_matches = [
 
 @atheris.instrument_func
 def TestOneInput(data):
-    print("sys.argv: ", sys.argv)
     fdp = atheris.FuzzedDataProvider(data)
     try:
         multiple = fdp.ConsumeBool()
         should_walk = fdp.ConsumeBool()
         calendar_string = fdp.ConsumeString(fdp.remaining_bytes())
         print("--- start calendar ---")
-        print(base64.b64encode(calendar_string.encode("UTF-8")).decode("ASCII"))
+        # print the ICS file for the test case extraction
+        # see https://stackoverflow.com/a/27367173/1320237
+        print(base64.b64encode(calendar_string.encode("UTF-8", "surrogateescape")).decode("ASCII"))
         print("--- end calendar ---")
 
         fuzz_calendar_v1(icalendar.Calendar.from_ical, calendar_string, multiple, should_walk)
