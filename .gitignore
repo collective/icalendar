@@ -21,3 +21,4 @@ src/icalendar.egg-info/
 !.github
 !.gitignore
 venv
+/ical_fuzzer.pkg.spec

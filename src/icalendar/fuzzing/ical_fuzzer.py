@@ -16,9 +16,11 @@
 ################################################################################
 import atheris
 import sys
+import base64
 
 with atheris.instrument_imports():
     import icalendar
+    from icalendar.tests.fuzzed import fuzz_calendar_v1
 
 _value_error_matches = [
     "component", "parse", "Expected", "Wrong date format", "END encountered",
@@ -30,28 +32,19 @@ _value_error_matches = [
 ]
 
 
-def _fuzz_calendar(cal: icalendar.Calendar, should_walk: bool):
-    if should_walk:
-        for event in cal.walk('VEVENT'):
-            event.to_ical()
-    else:
-        cal.to_ical()
-
-
 @atheris.instrument_func
 def TestOneInput(data):
+    print("sys.argv: ", sys.argv)
     fdp = atheris.FuzzedDataProvider(data)
     try:
         multiple = fdp.ConsumeBool()
         should_walk = fdp.ConsumeBool()
+        calendar_string = fdp.ConsumeString(fdp.remaining_bytes())
+        print("--- start calendar ---")
+        print(base64.b64encode(calendar_string.encode("UTF-8")).decode("ASCII"))
+        print("--- end calendar ---")
 
-        cal = icalendar.Calendar.from_ical(fdp.ConsumeString(fdp.remaining_bytes()), multiple=multiple)
-
-        if multiple:
-            for c in cal:
-                _fuzz_calendar(c, should_walk)
-        else:
-            _fuzz_calendar(cal, should_walk)
+        fuzz_calendar_v1(icalendar.Calendar.from_ical, calendar_string, multiple, should_walk)
     except ValueError as e:
         if any(m in str(e) for m in _value_error_matches):
             return -1
@@ -65,4 +58,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
