@@ -9,9 +9,9 @@ option::
 view
 ----
 
-Use the ``view`` subcommand for a human readable summary of an event::
+To output a human readable summary of an event::
 
-    $ icalendar view myfile.ics
+    $ icalendar myfile.ics
 
 The output will look something like this::
 
@@ -31,6 +31,6 @@ To use this in terminal based e-mail clients like mutt, add a new mime type (as
 root)::
 
     # cat << EOF > /usr/lib/mime/packages/icalendar
-    text/calendar; icalendar view '%s'; copiousoutput; description=iCalendar text; priority=2
+    text/calendar; icalendar '%s'; copiousoutput; description=iCalendar text; priority=2
     EOF
     # update-mime
