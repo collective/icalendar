@@ -12,6 +12,7 @@ Minor changes:
 - Added additional exception handling of defined errors to fuzzer, to allow fuzzer to explore deeper
 - Added more instrumentation to fuzz-harness
 - Rename "contributor" to "collaborator" in documentation
+- Correct the outdated "icalendar view myfile.ics" command in documentation. #588
 - Update GitHub Actions steps versions
 
 Breaking changes:
