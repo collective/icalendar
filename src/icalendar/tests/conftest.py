@@ -19,9 +19,9 @@ class DataSource:
         """Return all the files that could be used."""
         return [file[:-4] for file in os.listdir(self._data_source_folder) if file.lower().endswith(".ics")]
 
-    def __getattr__(self, attribute):
+    def __getitem__(self, attribute):
         """Parse a file and return the result stored in the attribute."""
-        source_file = attribute.replace('-', '_') + '.ics'
+        source_file = attribute + '.ics'
         source_path = os.path.join(self._data_source_folder, source_file)
         if not os.path.isfile(source_path):
             raise AttributeError(f"{source_path} does not exist.")
@@ -33,8 +33,8 @@ class DataSource:
         self.__dict__[attribute] = source
         return source
 
-    def __getitem__(self, key):
-        return getattr(self, key)
+    def __getattr__(self, key):
+        return self[key]
 
     def __repr__(self):
         return repr(self.__dict__)
@@ -82,7 +82,7 @@ def in_timezone(request):
     return request.param
 
 
-@pytest.fixture(params=[
+ICS_FILES = [
     (data, key)
     for data in [CALENDARS, TIMEZONES, EVENTS]
     for key in data.keys() if key not in
@@ -90,9 +90,17 @@ def in_timezone(request):
         "big_bad_calendar", "issue_104_broken_calendar", "small_bad_calendar",
         "multiple_calendar_components", "pr_480_summary_with_colon"
     )
-])
+]
+@pytest.fixture(params=ICS_FILES)
 def ics_file(request):
     """An example ICS file."""
     data, key = request.param
     print(key)
     return data[key]
+
+
+FUZZ_V1 = [os.path.join(CALENDARS_FOLDER, key) for key in os.listdir(CALENDARS_FOLDER) if "fuzz-testcase" in key]
+@pytest.fixture(params=FUZZ_V1)
+def fuzz_v1_calendar(request):
+    """Clusterfuzz calendars."""
+    return request.param
