@@ -51,7 +51,7 @@ setuptools.setup(
     author='Plone Foundation',
     author_email='plone-developers@lists.sourceforge.net',
     url='https://github.com/collective/icalendar',
-    license='BSD',
+    license='BSD-2-Clause',
     packages=setuptools.find_namespace_packages('src', exclude=["icalendar.fuzzing"]),
     package_dir={'': 'src'},
     include_package_data=True,
