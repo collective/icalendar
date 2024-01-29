@@ -30,7 +30,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.config[0] }}
         # for caching, see
@@ -72,7 +72,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: "3.9"
     - name: Install dependencies
@@ -122,7 +122,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: create release
-        uses: elgohr/Github-Release-Action@v4
+        uses: elgohr/Github-Release-Action@v5
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         with:
