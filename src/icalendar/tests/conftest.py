@@ -104,3 +104,11 @@ FUZZ_V1 = [os.path.join(CALENDARS_FOLDER, key) for key in os.listdir(CALENDARS_F
 def fuzz_v1_calendar(request):
     """Clusterfuzz calendars."""
     return request.param
+
+
+@pytest.fixture()
+def x_sometime():
+    """Map x_sometime to time"""
+    icalendar.cal.types_factory.types_map['X-SOMETIME'] = 'time'
+    yield
+    icalendar.cal.types_factory.types_map.pop('X-SOMETIME')
