@@ -8,13 +8,14 @@ import pytest
 import icalendar
 import pytz
 import re
+from icalendar.cal import Component, Calendar, Event, ComponentFactory
+from icalendar import prop, cal
+
 
 
 class TestCalComponent(unittest.TestCase):
 
     def test_cal_Component(self):
-        from icalendar.cal import Component, Calendar, Event
-        from icalendar import prop
 
         # A component is like a dictionary with extra methods and attributes.
         c = Component()
@@ -241,7 +242,6 @@ class TestCalComponent(unittest.TestCase):
     def test_cal_Component_add_no_reencode(self):
         """Already encoded values should not be re-encoded.
         """
-        from icalendar import cal, prop
         comp = cal.Component()
         comp.add('ATTACH', 'me')
 
@@ -254,7 +254,6 @@ class TestCalComponent(unittest.TestCase):
     def test_cal_Component_add_property_parameter(self):
         # Test the for timezone correctness: dtstart should preserve it's
         # timezone, crated, dtstamp and last-modified must be in UTC.
-        Component = icalendar.cal.Component
         comp = Component()
         comp.add('X-TEST-PROP', 'tryout.',
                  parameters={'prop1': 'val1', 'prop2': 'val2'})
@@ -263,7 +262,6 @@ class TestCalComponent(unittest.TestCase):
 
     def test_cal_Component_from_ical(self):
         # Check for proper handling of TZID parameter of datetime properties
-        Component = icalendar.cal.Component
         for component_name, property_name in (
             ('VEVENT', 'DTSTART'),
             ('VEVENT', 'DTEND'),
@@ -285,7 +283,6 @@ class TestCalComponent(unittest.TestCase):
                              None)
 
     def test_cal_Component_to_ical_property_order(self):
-        Component = icalendar.cal.Component
         component_str = [b'BEGIN:VEVENT',
                          b'DTSTART:19970714T170000Z',
                          b'DTEND:19970715T035959Z',
@@ -301,7 +298,6 @@ class TestCalComponent(unittest.TestCase):
         assert preserved_str == component_str
 
     def test_cal_Component_to_ical_parameter_order(self):
-        Component = icalendar.cal.Component
         component_str = [b'BEGIN:VEVENT',
                          b'X-FOOBAR;C=one;A=two;B=three:helloworld.',
                          b'END:VEVENT']
@@ -318,8 +314,6 @@ class TestCalComponent(unittest.TestCase):
     def test_repr(self):
         """Test correct class representation.
         """
-        from icalendar.cal import Component, Calendar, Event
-
         component = Component()
         component['key1'] = 'value1'
 
@@ -361,7 +355,6 @@ class TestCalComponent(unittest.TestCase):
 class TestCal(unittest.TestCase):
 
     def test_cal_ComponentFactory(self):
-        ComponentFactory = icalendar.cal.ComponentFactory
         factory = ComponentFactory()
         component = factory['VEVENT']
         event = component(dtstart='19700101')
@@ -376,14 +369,14 @@ class TestCal(unittest.TestCase):
 
     def test_cal_Calendar(self):
         # Setting up a minimal calendar component looks like this
-        cal = icalendar.cal.Calendar()
+        cal = Calendar()
 
         # Some properties are required to be compliant
         cal['prodid'] = '-//My calendar product//mxm.dk//'
         cal['version'] = '2.0'
 
         # We also need at least one subcomponent for a calendar to be compliant
-        event = icalendar.cal.Event()
+        event = Event()
         event['summary'] = 'Python meeting about calendaring'
         event['uid'] = '42'
         event.add('dtstart', datetime(2005, 4, 4, 8, 0, 0))
@@ -393,13 +386,6 @@ class TestCal(unittest.TestCase):
             b'BEGIN:VEVENT\r\nSUMMARY:Python meeting about calendaring\r\n'
             + b'DTSTART:20050404T080000\r\nUID:42\r\n'
             + b'END:VEVENT\r\n')
-
-        # Write to disc
-        import tempfile
-        import os
-        directory = tempfile.mkdtemp()
-        with open(os.path.join(directory, 'test.ics'), 'wb') as fp:
-            fp.write(cal.to_ical())
 
         # Parsing a complete calendar from a string will silently ignore wrong
         # events but adding the error information to the component's 'errors'
@@ -487,4 +473,3 @@ def test_comparing_calendars(calendars, calendar, other_calendar):
 def test_calendars_with_same_subcomponents_in_different_order_are_equal(calendars, calendar, shuffeled_calendar):
     assert not calendars[calendar].subcomponents == calendars[shuffeled_calendar].subcomponents
     assert calendars[calendar] == calendars[shuffeled_calendar]
-
