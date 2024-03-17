@@ -352,98 +352,68 @@ class TestCalComponent(unittest.TestCase):
         )
 
 
-class TestCal(unittest.TestCase):
+def test_component_factory_VEVENT(factory):
+    """Check the events in the component factory"""
+    component = factory['VEVENT']
+    event = component(dtstart='19700101')
+    assert event.to_ical() == b'BEGIN:VEVENT\r\nDTSTART:19700101\r\nEND:VEVENT\r\n'
 
-    def test_cal_ComponentFactory(self):
-        factory = ComponentFactory()
-        component = factory['VEVENT']
-        event = component(dtstart='19700101')
-        self.assertEqual(
-            event.to_ical(),
-            b'BEGIN:VEVENT\r\nDTSTART:19700101\r\nEND:VEVENT\r\n'
-        )
 
-        self.assertEqual(
-            factory.get('VCALENDAR', icalendar.cal.Component),
-            icalendar.cal.Calendar)
+def test_component_factory_VCALENDAR(factory):
+    """Check the VCALENDAR in the factory."""
+    assert factory.get('VCALENDAR') == icalendar.cal.Calendar
 
-    def test_cal_Calendar(self):
-        # Setting up a minimal calendar component looks like this
-        cal = Calendar()
 
-        # Some properties are required to be compliant
-        cal['prodid'] = '-//My calendar product//mxm.dk//'
-        cal['version'] = '2.0'
+def test_minimal_calendar_component_with_one_event():
+    """Setting up a minimal calendar component looks like this"""
+    cal = Calendar()
 
-        # We also need at least one subcomponent for a calendar to be compliant
-        event = Event()
-        event['summary'] = 'Python meeting about calendaring'
-        event['uid'] = '42'
-        event.add('dtstart', datetime(2005, 4, 4, 8, 0, 0))
-        cal.add_component(event)
-        self.assertEqual(
-            cal.subcomponents[0].to_ical(),
-            b'BEGIN:VEVENT\r\nSUMMARY:Python meeting about calendaring\r\n'
-            + b'DTSTART:20050404T080000\r\nUID:42\r\n'
-            + b'END:VEVENT\r\n')
+    # Some properties are required to be compliant
+    cal['prodid'] = '-//My calendar product//mxm.dk//'
+    cal['version'] = '2.0'
 
-        # Parsing a complete calendar from a string will silently ignore wrong
-        # events but adding the error information to the component's 'errors'
-        # attribute. The error in the following is the third EXDATE: it has an
-        # empty DATE.
-        s = '\r\n'.join(('BEGIN:VCALENDAR',
-                         'PRODID:-//Google Inc//Google Calendar 70.9054//EN',
-                         'VERSION:2.0',
-                         'CALSCALE:GREGORIAN',
-                         'METHOD:PUBLISH',
-                         'BEGIN:VEVENT',
-                         'DESCRIPTION:Perfectly OK event',
-                         'DTSTART;VALUE=DATE:20080303',
-                         'DTEND;VALUE=DATE:20080304',
-                         'RRULE:FREQ=DAILY;UNTIL=20080323T235959Z',
-                         'EXDATE;VALUE=DATE:20080311',
-                         'END:VEVENT',
-                         'BEGIN:VEVENT',
-                         'DESCRIPTION:Wrong event',
-                         'DTSTART;VALUE=DATE:20080303',
-                         'DTEND;VALUE=DATE:20080304',
-                         'RRULE:FREQ=DAILY;UNTIL=20080323T235959Z',
-                         'EXDATE;VALUE=DATE:20080311',
-                         'EXDATE;VALUE=DATE:',
-                         'END:VEVENT',
-                         'END:VCALENDAR'))
-        self.assertEqual(
-            [e['DESCRIPTION'].to_ical()
-                for e in icalendar.cal.Calendar.from_ical(s).walk('VEVENT')],
-            [b'Perfectly OK event', b'Wrong event'])
-        self.assertEqual(
-            [e.errors
-                for e in icalendar.cal.Calendar.from_ical(s).walk('VEVENT')],
-            [[], [('EXDATE', "Expected datetime, date, or time, got: ''")]]
-        )
+    # We also need at least one subcomponent for a calendar to be compliant
+    event = Event()
+    event['summary'] = 'Python meeting about calendaring'
+    event['uid'] = '42'
+    event.add('dtstart', datetime(2005, 4, 4, 8, 0, 0))
+    cal.add_component(event)
+    assert cal.subcomponents[0].to_ical() == \
+        b'BEGIN:VEVENT\r\nSUMMARY:Python meeting about calendaring\r\n' \
+        + b'DTSTART:20050404T080000\r\nUID:42\r\n' \
+        + b'END:VEVENT\r\n'
 
-    def test_cal_strict_parsing(self):
-        cal_str = b'\r\n'.join(
-            [
-                b'BEGIN:VCALENDAR',
-                b'BEGIN:VTIMEZONE',
-                b'TZID:Europe/Prague',
-                b'BEGIN:STANDARD',
-                b'DTSTART:18500101T000000',
-                b'TZNAME:PMT',
-                b'TZOFFSETFROM:+5744',
-                b'TZOFFSETTO:+5744',
-                b'END:STANDARD',
-                b'END:VTIMEZONE',
-                b'END:VCALENDAR',
-                b'',
-            ]
-        )
 
-        self.assertRaises(ValueError, icalendar.Calendar.from_ical, cal_str)
-        icalendar.vUTCOffset.ignore_exceptions = True
-        self.assertEqual(icalendar.Calendar.from_ical(cal_str).to_ical(), cal_str)
-        icalendar.vUTCOffset.ignore_exceptions = False
+def test_calendar_with_parsing_errors_includes_all_events(calendars):
+    """Parsing a complete calendar from a string will silently ignore wrong
+    events but adding the error information to the component's 'errors'
+    attribute. The error in the following is the third EXDATE: it has an
+    empty DATE.
+    """
+    event_descriptions = [e['DESCRIPTION'].to_ical() for e in calendars.parsing_error.walk('VEVENT')]
+    assert event_descriptions == [b'Perfectly OK event', b'Wrong event']
+
+
+def test_calendar_with_parsing_errors_has_an_error_in_one_event(calendars):
+    """Parsing a complete calendar from a string will silently ignore wrong
+    events but adding the error information to the component's 'errors'
+    attribute. The error in the following is the third EXDATE: it has an
+    empty DATE.
+    """
+    errors = [e.errors for e in calendars.parsing_error.walk('VEVENT')]
+    assert errors == [[], [('EXDATE', "Expected datetime, date, or time, got: ''")]]
+
+
+def test_cal_strict_parsing(calendars):
+    """If components are damaged, we raise an exception."""
+    with pytest.raises(ValueError):
+        calendars.parsing_error_in_UTC_offset
+
+
+def test_cal_ignore_errors_parsing(calendars, vUTCOffset_ignore_exceptions):
+    """If we diable the errors, we should be able to put the calendar back together."""
+    assert calendars.parsing_error_in_UTC_offset.to_ical() == calendars.parsing_error_in_UTC_offset.raw_ics
+
 
 
 @pytest.mark.parametrize(

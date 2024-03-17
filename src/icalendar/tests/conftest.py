@@ -88,7 +88,8 @@ ICS_FILES = [
     for key in data.keys() if key not in
     ( # exclude broken calendars here
         "big_bad_calendar", "issue_104_broken_calendar", "small_bad_calendar",
-        "multiple_calendar_components", "pr_480_summary_with_colon"
+        "multiple_calendar_components", "pr_480_summary_with_colon",
+        "parsing_error_in_UTC_offset", "parsing_error",
     )
 ]
 @pytest.fixture(params=ICS_FILES)
@@ -104,3 +105,16 @@ FUZZ_V1 = [os.path.join(CALENDARS_FOLDER, key) for key in os.listdir(CALENDARS_F
 def fuzz_v1_calendar(request):
     """Clusterfuzz calendars."""
     return request.param
+
+
+@pytest.fixture()
+def factory():
+    """Return a new component factory."""
+    return icalendar.ComponentFactory()
+
+
+@pytest.fixture()
+def vUTCOffset_ignore_exceptions():
+    icalendar.vUTCOffset.ignore_exceptions = True
+    yield
+    icalendar.vUTCOffset.ignore_exceptions = False
