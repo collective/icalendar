@@ -8,6 +8,8 @@ try:
     import zoneinfo
 except ModuleNotFoundError:
     from backports import zoneinfo
+from icalendar.cal import Component, Calendar, Event, ComponentFactory
+
 
 class DataSource:
     '''A collection of parsed ICS elements (e.g calendars, timezones, events)'''
@@ -118,3 +120,44 @@ def vUTCOffset_ignore_exceptions():
     icalendar.vUTCOffset.ignore_exceptions = True
     yield
     icalendar.vUTCOffset.ignore_exceptions = False
+
+
+@pytest.fixture()
+def event_component():
+    """Return an event component."""
+    c = Component()
+    c.name = 'VEVENT'
+    return c
+
+
+@pytest.fixture()
+def c():
+    """Return an empty component."""
+    c = Component()
+    return c
+comp = c
+
+@pytest.fixture()
+def calendar_component():
+    """Return an empty component."""
+    c = Component()
+    c.name = 'VCALENDAR'
+    return c
+
+
+@pytest.fixture()
+def filled_event_component(c, calendar_component):
+    """Return an event with some values and add it to calendar_component."""
+    e = Component(summary='A brief history of time')
+    e.name = 'VEVENT'
+    e.add('dtend', '20000102T000000', encode=0)
+    e.add('dtstart', '20000101T000000', encode=0)
+    calendar_component.add_component(e)
+    return e
+
+
+@pytest.fixture()
+def calendar_with_resources():
+    c = Calendar()
+    c['resources'] = 'Chair, Table, "Room: 42"'
+    return c
