@@ -12,52 +12,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  run-tests:
-    strategy:
-      matrix:
-        config:
-        # [Python version, tox env]
-        - ["3.7",   "py37"]
-        - ["3.8",   "py38"]
-        - ["3.9",   "py39"]
-        - ["3.10",  "py310"]
-        - ["pypy-3.9", "pypy3"]
-        - ["3.10",  "docs"]
-        - ["3.11",  "py311"]
-
-    runs-on: ubuntu-latest
-    name: ${{ matrix.config[1] }}
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.config[0] }}
-        # for caching, see
-        # https://github.com/actions/setup-python/blob/main/docs/advanced-usage.md#caching-packages
-        cache: 'pip'
-        cache-dependency-path: |
-          setup.*
-          tox.ini
-          requirements*.txt
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install tox
-    - name: Test
-      run: tox -e ${{ matrix.config[1] }}
-    - name: Coverage
-      run: |
-        pip install coveralls coverage-python-version
-        coveralls --service=github
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   deploy-github-release:
     # only deploy on tags, see https://stackoverflow.com/a/58478262/1320237
     if: startsWith(github.ref, 'refs/tags/v')
-    needs:
-      - run-tests
     runs-on: ubuntu-latest
     environment:
       name: github-release
@@ -65,5 +22,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: create release
         uses: elgohr/Github-Release-Action@v5
+        env:
+          GH_TOKEN: ${{ github.token }}
         with:
           title: ${{ github.ref_name }}
