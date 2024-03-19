@@ -14,7 +14,7 @@ Breaking changes:
 
 New features:
 
-- ...
+- Create GitHub releases for each tag.
 
 Bug fixes:
 
