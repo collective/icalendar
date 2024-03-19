@@ -1,7 +1,7 @@
 Changelog
 =========
 
-5.0.12 (unreleased)
+5.0.12 (2024-03-19)
 -------------------
 
 Minor changes:
@@ -15,6 +15,8 @@ Minor changes:
 - Rename "contributor" to "collaborator" in documentation
 - Correct the outdated "icalendar view myfile.ics" command in documentation. #588
 - Update GitHub Actions steps versions
+- Keep GitHub Actions up to date with GitHub's Dependabot
+
 
 Breaking changes:
 
