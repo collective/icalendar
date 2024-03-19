@@ -1,6 +1,9 @@
 import icalendar
 import os
 import textwrap
+from ..parser import Contentlines, Contentline, Parameters, foldline
+from ..parser import q_join, q_split, dquote
+from ..prop import vText
 
 import unittest
 
@@ -12,7 +15,6 @@ class IcalendarTestCase (unittest.TestCase):
             self.assertRaisesRegex = self.assertRaisesRegexp
 
     def test_long_lines(self):
-        from ..parser import Contentlines, Contentline
         c = Contentlines([Contentline('BEGIN:VEVENT')])
         c.append(Contentline(''.join('123456789 ' * 10)))
         self.assertEqual(
@@ -37,9 +39,6 @@ class IcalendarTestCase (unittest.TestCase):
         )
 
     def test_contentline_class(self):
-        from ..parser import Contentline, Parameters
-        from ..prop import vText
-
         self.assertEqual(
             Contentline('Si meliora dies, ut vina, poemata reddit').to_ical(),
             b'Si meliora dies, ut vina, poemata reddit'
@@ -239,8 +238,6 @@ class IcalendarTestCase (unittest.TestCase):
         )
 
     def test_fold_line(self):
-        from ..parser import foldline
-
         self.assertEqual(foldline('foo'), 'foo')
         self.assertEqual(
             foldline("Lorem ipsum dolor sit amet, consectetur adipiscing "
@@ -268,26 +265,20 @@ class IcalendarTestCase (unittest.TestCase):
         )
 
     def test_value_double_quoting(self):
-        from ..parser import dquote
         self.assertEqual(dquote('Max'), 'Max')
         self.assertEqual(dquote('Rasmussen, Max'), '"Rasmussen, Max"')
         self.assertEqual(dquote('name:value'), '"name:value"')
 
     def test_q_split(self):
-        from ..parser import q_split
         self.assertEqual(q_split('Max,Moller,"Rasmussen, Max"'),
                          ['Max', 'Moller', '"Rasmussen, Max"'])
 
     def test_q_split_bin(self):
-        from ..parser import q_split
         for s in ('X-SOMETHING=ABCDE==', ',,,'):
             for maxsplit in range(-1, 3):
                 self.assertEqual(q_split(s, '=', maxsplit=maxsplit),
                                  s.split('=', maxsplit))
 
     def test_q_join(self):
-        from ..parser import q_join
         self.assertEqual(q_join(['Max', 'Moller', 'Rasmussen, Max']),
                          'Max,Moller,"Rasmussen, Max"')
-
-

@@ -5,32 +5,38 @@ from icalendar.prop import *
 from datetime import datetime, date, timedelta
 import pytest
 
+def assert_equal(actual_value, expected_value):
+    """Make sure both values are equal"""
+    assert actual_value == expected_value
+    assert not actual_value != expected_value
+
+
+def assert_not_equal(actual_value, expected_value):
+    """Make sure both values are not equal"""
+    assert not actual_value == expected_value
+    assert actual_value != expected_value
+
 
 def test_parsed_calendars_are_equal_if_parsed_again(ics_file):
     """Ensure that a calendar equals the same calendar."""
     copy_of_calendar = ics_file.__class__.from_ical(ics_file.to_ical())
-    assert copy_of_calendar == ics_file
-    assert not copy_of_calendar != ics_file
+    assert_equal(copy_of_calendar, ics_file)
 
 
 def test_parsed_calendars_are_equal_if_from_same_source(ics_file):
     """Ensure that a calendar equals the same calendar."""
     cal1 = ics_file.__class__.from_ical(ics_file.raw_ics)
     cal2 = ics_file.__class__.from_ical(ics_file.raw_ics)
-    assert cal1 == cal2
-    assert not cal1 != cal2
+    assert_equal(cal1, cal2)
 
 
 def test_copies_are_equal(ics_file):
     """Ensure that copies are equal."""
     copy1 = ics_file.copy(); copy1.subcomponents = ics_file.subcomponents
     copy2 = ics_file.copy();  copy2.subcomponents = ics_file.subcomponents[:]
-    assert copy1 == copy2
-    assert copy1 == ics_file
-    assert copy2 == ics_file
-    assert not copy1 != copy2
-    assert not copy1 != ics_file
-    assert not copy2 != ics_file
+    assert_equal(copy1, copy2)
+    assert_equal(copy1, ics_file)
+    assert_equal(copy2, ics_file)
 
 
 def test_copy_does_not_copy_subcomponents(calendars):
@@ -42,45 +48,47 @@ def test_copy_does_not_copy_subcomponents(calendars):
 def test_deep_copies_are_equal(ics_file):
     """Ensure that deep copies are equal."""
     try:
-        assert copy.deepcopy(ics_file) == copy.deepcopy(ics_file)
-        assert copy.deepcopy(ics_file) == ics_file
-        assert not copy.deepcopy(ics_file) != copy.deepcopy(ics_file)
-        assert not copy.deepcopy(ics_file) != ics_file
+        assert_equal(copy.deepcopy(ics_file), copy.deepcopy(ics_file))
+    except pytz.UnknownTimeZoneError:
+        # Ignore errors when a custom time zone is used.
+        # This is still covered by the parsing test.
+        pass
+    try:
+        assert_equal(copy.deepcopy(ics_file), ics_file)
     except pytz.UnknownTimeZoneError:
         # Ignore errors when a custom time zone is used.
         # This is still covered by the parsing test.
         pass
 
 
+
 def test_vGeo():
     """Check the equality of vGeo."""
-    assert vGeo(("100", "12.33")) == vGeo(("100.00", "12.330"))
-    assert vGeo(("100", "12.331")) != vGeo(("100.00", "12.330"))
-    assert vGeo(("10", "12.33")) != vGeo(("100.00", "12.330"))
+    assert_equal(vGeo(("100", "12.33")), vGeo(("100.00", "12.330")))
+    assert_not_equal(vGeo(("100", "12.331")), vGeo(("100.00", "12.330")))
+    assert_not_equal(vGeo(("10", "12.33")), vGeo(("100.00", "12.330")))
 
 
 def test_vBinary():
-    assert vBinary('asd') == vBinary('asd')
-    assert vBinary('asdf') != vBinary('asd')
+    assert_equal(vBinary('asd'), vBinary('asd'))
+    assert_not_equal(vBinary('asdf'), vBinary('asd'))
 
 
 def test_vBoolean():
-    assert vBoolean.from_ical('TRUE') == vBoolean.from_ical('TRUE')
-    assert vBoolean.from_ical('FALSE') == vBoolean.from_ical('FALSE')
-    assert vBoolean.from_ical('TRUE') != vBoolean.from_ical('FALSE')
+    assert_equal(vBoolean.from_ical('TRUE'), vBoolean.from_ical('TRUE'))
+    assert_equal(vBoolean.from_ical('FALSE'), vBoolean.from_ical('FALSE'))
+    assert_not_equal(vBoolean.from_ical('TRUE'), vBoolean.from_ical('FALSE'))
 
 
 def test_vCategory():
-    assert vCategory("HELLO") == vCategory("HELLO")
-    assert vCategory(["a","b"]) == vCategory(["a","b"])
-    assert vCategory(["a","b"]) != vCategory(["a","b", "c"])
+    assert_equal(vCategory("HELLO"), vCategory("HELLO"))
+    assert_equal(vCategory(["a","b"]), vCategory(["a","b"]))
+    assert_not_equal(vCategory(["a","b"]), vCategory(["a","b", "c"]))
 
 
 def test_vText():
-    assert vText("HELLO") == vText("HELLO")
-    assert not vText("HELLO") != vText("HELLO")
-    assert vText("HELLO1") != vText("HELLO")
-    assert not vText("HELLO1") == vText("HELLO")
+    assert_equal(vText("HELLO"), vText("HELLO"))
+    assert_not_equal(vText("HELLO1"), vText("HELLO"))
 
 
 @pytest.mark.parametrize(
