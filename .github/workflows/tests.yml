@@ -23,7 +23,6 @@ jobs:
       - name: create release
         uses: ncipollo/release-action@v1
         with:
-          generateReleaseNotes: true
           body: To view the changes, please see the
             [Changelog](https://icalendar.readthedocs.io/en/latest/changelog.html).
             This release can be installed from
