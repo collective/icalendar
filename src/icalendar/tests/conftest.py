@@ -110,6 +110,14 @@ def fuzz_v1_calendar(request):
 
 
 @pytest.fixture()
+def x_sometime():
+    """Map x_sometime to time"""
+    icalendar.cal.types_factory.types_map['X-SOMETIME'] = 'time'
+    yield
+    icalendar.cal.types_factory.types_map.pop('X-SOMETIME')
+
+    
+@pytest.fixture()
 def factory():
     """Return a new component factory."""
     return icalendar.ComponentFactory()
