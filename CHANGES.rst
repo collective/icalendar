@@ -6,7 +6,7 @@ Changelog
 
 Minor changes:
 
-- ...
+- Add funding information
 
 Breaking changes:
 
