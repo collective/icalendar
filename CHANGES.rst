@@ -1,12 +1,32 @@
 Changelog
 =========
 
-5.0.12 (unreleased)
+5.0.13 (unreleased)
 -------------------
 
 Minor changes:
 
 - Add funding information
+
+Breaking changes:
+
+- ...
+
+New features:
+
+- Create GitHub releases for each tag.
+
+Bug fixes:
+
+- ...
+
+
+5.0.12 (2024-03-19)
+-------------------
+
+Minor changes:
+
+- Analyse code coverage of test files
 - Added corpus to fuzzing directory
 - Added exclusion of fuzzing corpus in MANIFEST.in
 - Augmented fuzzer to optionally convert multiple calendars from a source string
@@ -16,6 +36,8 @@ Minor changes:
 - Rename "contributor" to "collaborator" in documentation
 - Correct the outdated "icalendar view myfile.ics" command in documentation. #588
 - Update GitHub Actions steps versions
+- Keep GitHub Actions up to date with GitHub's Dependabot
+
 
 Breaking changes:
 
