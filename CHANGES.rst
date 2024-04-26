@@ -7,6 +7,7 @@ Changelog
 Minor changes:
 
 - Add funding information
+- Update windows to olson conversion for Greenland Standard Time
 
 Breaking changes:
 
