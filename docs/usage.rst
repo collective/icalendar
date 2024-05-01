@@ -335,7 +335,7 @@ Write to disk::
   >>> directory = tempfile.mkdtemp()
   >>> f = open(os.path.join(directory, 'example.ics'), 'wb')
   >>> f.write(cal.to_ical())
-  522
+  733
   >>> f.close()
 
 Print out the calendar::
