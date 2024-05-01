@@ -311,6 +311,7 @@ Add the event to the calendar::
 
 Extending the event with subcomponents you can create multiple alarms::
 
+  >>> from icalendar import Alarm
   >>> from datetime import timedelta
   >>> alarm_1h_before = Alarm()
   >>> alarm_1h_before.add("action", "DISPLAY")
