@@ -309,6 +309,25 @@ Add the event to the calendar::
 
   >>> cal.add_component(event)
 
+Extending the event with subcomponents you can create multiple alarms::
+
+  >>> from datetime import timedelta
+  >>> alarm_1h_before = Alarm()
+  >>> alarm_1h_before.add("action", "DISPLAY")
+  >>> alarm_1h_before.add("trigger", timedelta(hours=-1))
+  >>> alarm_1h_before.add("description", 'Reminder: Event in 1 hour')
+  >>> event.add_component(alarm_1h_before)
+
+  >>> alarm_24h_before = Alarm()
+  >>> alarm_24h_before.add("action", "DISPLAY")
+  >>> alarm_24h_before.add("trigger", timedelta(hours=-24))
+  >>> alarm_24h_before.add("description", 'Reminder: Event in 24 hours')
+  >>> event.add_component(alarm_24h_before)
+
+Or even recurrence::
+
+  >>> event.add('rrule', {'freq': 'daily'})
+
 Write to disk::
 
   >>> import tempfile, os
@@ -330,11 +349,22 @@ Print out the calendar::
   DTEND:20050404T100000Z
   DTSTAMP:20050404T001000Z
   UID:20050115T101010/27346262376@mxm.dk
+  RRULE:FREQ=DAILY
   ATTENDEE;CN="Max Rasmussen";ROLE=REQ-PARTICIPANT:MAILTO:maxm@example.com
   ATTENDEE;CN="The Dude";ROLE=REQ-PARTICIPANT:MAILTO:the-dude@example.com
   LOCATION:Odense\, Denmark
   ORGANIZER;CN="Max Rasmussen";ROLE=CHAIR:MAILTO:noone@example.com
   PRIORITY:5
+  BEGIN:VALARM
+  ACTION:DISPLAY
+  DESCRIPTION:Reminder: Event in 1 hour
+  TRIGGER:-PT1H
+  END:VALARM
+  BEGIN:VALARM
+  ACTION:DISPLAY
+  DESCRIPTION:Reminder: Event in 24 hours
+  TRIGGER:-P1D
+  END:VALARM
   END:VEVENT
   END:VCALENDAR
   <BLANKLINE>
