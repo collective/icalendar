@@ -314,20 +314,20 @@ By extending the event with subcomponents, you can create multiple alarms::
   >>> from icalendar import Alarm
   >>> from datetime import timedelta
   >>> alarm_1h_before = Alarm()
-  >>> alarm_1h_before.add("action", "DISPLAY")
-  >>> alarm_1h_before.add("trigger", timedelta(hours=-1))
-  >>> alarm_1h_before.add("description", "Reminder: Event in 1 hour")
+  >>> alarm_1h_before.add('action', 'DISPLAY')
+  >>> alarm_1h_before.add('trigger', timedelta(hours=-1))
+  >>> alarm_1h_before.add('description', 'Reminder: Event in 1 hour')
   >>> event.add_component(alarm_1h_before)
 
   >>> alarm_24h_before = Alarm()
-  >>> alarm_24h_before.add("action", "DISPLAY")
-  >>> alarm_24h_before.add("trigger", timedelta(hours=-24))
-  >>> alarm_24h_before.add("description", "Reminder: Event in 24 hours")
+  >>> alarm_24h_before.add('action', 'DISPLAY')
+  >>> alarm_24h_before.add('trigger', timedelta(hours=-24))
+  >>> alarm_24h_before.add('description', 'Reminder: Event in 24 hours')
   >>> event.add_component(alarm_24h_before)
 
 Or even recurrence::
 
-  >>> event.add("rrule", {"freq": "daily"})
+  >>> event.add('rrule', {'freq': 'daily'})
 
 Write to disk::
 
@@ -340,7 +340,7 @@ Write to disk::
 
 Print out the calendar::
 
-  >>> print(cal.to_ical().decode("utf-8")) # doctest: +NORMALIZE_WHITESPACE
+  >>> print(cal.to_ical().decode('utf-8')) # doctest: +NORMALIZE_WHITESPACE
   BEGIN:VCALENDAR
   VERSION:2.0
   PRODID:-//My calendar product//mxm.dk//
