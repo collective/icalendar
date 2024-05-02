@@ -309,25 +309,25 @@ Add the event to the calendar::
 
   >>> cal.add_component(event)
 
-Extending the event with subcomponents you can create multiple alarms::
+By extending the event with subcomponents, you can create multiple alarms::
 
   >>> from icalendar import Alarm
   >>> from datetime import timedelta
   >>> alarm_1h_before = Alarm()
   >>> alarm_1h_before.add("action", "DISPLAY")
   >>> alarm_1h_before.add("trigger", timedelta(hours=-1))
-  >>> alarm_1h_before.add("description", 'Reminder: Event in 1 hour')
+  >>> alarm_1h_before.add("description", "Reminder: Event in 1 hour")
   >>> event.add_component(alarm_1h_before)
 
   >>> alarm_24h_before = Alarm()
   >>> alarm_24h_before.add("action", "DISPLAY")
   >>> alarm_24h_before.add("trigger", timedelta(hours=-24))
-  >>> alarm_24h_before.add("description", 'Reminder: Event in 24 hours')
+  >>> alarm_24h_before.add("description", "Reminder: Event in 24 hours")
   >>> event.add_component(alarm_24h_before)
 
 Or even recurrence::
 
-  >>> event.add('rrule', {'freq': 'daily'})
+  >>> event.add("rrule", {"freq": "daily"})
 
 Write to disk::
 
