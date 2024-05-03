@@ -72,6 +72,7 @@ icalendar contributors
 - `NikEasY <https://github.com/NikEasY>`_
 - Matt Lewis <git@semiprime.com>
 - Felix Stupp <felix.stupp@banananet.work>
+- Bastian Wegge <wegge@crossbow.de>
 
 Find out who contributed::
 
