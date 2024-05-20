@@ -377,7 +377,12 @@ class Component(CaselessDict):
                 factory = types_factory.for_property(name)
                 component = stack[-1] if stack else None
                 if not component:
-                    raise ValueError(f'Property "{name}" does not have a parent component.')
+                    # only accept X-COMMENT at the end of the .ics file
+                    # ignore these components in parsing
+                    if uname == 'X-COMMENT':
+                        break
+                    else:
+                        raise ValueError(f'Property "{name}" does not have a parent component.')
                 datetime_names = ('DTSTART', 'DTEND', 'RECURRENCE-ID', 'DUE',
                                   'RDATE', 'EXDATE')
                 try:
