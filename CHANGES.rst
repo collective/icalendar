@@ -20,7 +20,7 @@ New features:
 
 Bug fixes:
 
-- ...
+- Parse calendars with X-COMMENT properties at the end the file by ignoring these properites
 
 
 5.0.12 (2024-03-19)
