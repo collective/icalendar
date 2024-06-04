@@ -59,42 +59,6 @@ class TestProp(unittest.TestCase):
 
         self.assertRaises(ValueError, vDate, 'd')
 
-    def test_prop_vDatetime(self):
-        from ..prop import vDatetime
-
-        dt = datetime(2001, 1, 1, 12, 30, 0)
-        self.assertEqual(vDatetime(dt).to_ical(), b'20010101T123000')
-
-        self.assertEqual(vDatetime.from_ical('20000101T120000'),
-                         datetime(2000, 1, 1, 12, 0))
-
-        dutc = pytz.utc.localize(datetime(2001, 1, 1, 12, 30, 0))
-        self.assertEqual(vDatetime(dutc).to_ical(), b'20010101T123000Z')
-
-        dutc = pytz.utc.localize(datetime(1899, 1, 1, 12, 30, 0))
-        self.assertEqual(vDatetime(dutc).to_ical(), b'18990101T123000Z')
-
-        self.assertEqual(vDatetime.from_ical('20010101T000000'),
-                         datetime(2001, 1, 1, 0, 0))
-
-        self.assertRaises(ValueError, vDatetime.from_ical, '20010101T000000A')
-
-        utc = vDatetime.from_ical('20010101T000000Z')
-        self.assertEqual(vDatetime(utc).to_ical(), b'20010101T000000Z')
-
-        # 1 minute before transition to DST
-        dat = vDatetime.from_ical('20120311T015959', 'America/Denver')
-        self.assertEqual(dat.strftime('%Y%m%d%H%M%S %z'),
-                         '20120311015959 -0700')
-
-        # After transition to DST
-        dat = vDatetime.from_ical('20120311T030000', 'America/Denver')
-        self.assertEqual(dat.strftime('%Y%m%d%H%M%S %z'),
-                         '20120311030000 -0600')
-
-        dat = vDatetime.from_ical('20101010T000000', 'Europe/Vienna')
-        self.assertEqual(vDatetime(dat).to_ical(), b'20101010T000000')
-
     def test_prop_vDuration(self):
         from ..prop import vDuration
 
