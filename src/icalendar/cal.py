@@ -574,10 +574,7 @@ class Timezone(Component):
 
             rrulestr = component['RRULE'].to_ical().decode('utf-8')
             rrule = dateutil.rrule.rrulestr(rrulestr, dtstart=rrstart)
-            if not {'UNTIL', 'COUNT'}.intersection(component['RRULE'].keys()):
-                # pytz.timezones don't know any transition dates after 2038
-                # either
-                rrule._until = datetime(2038, 12, 31, tzinfo=pytz.UTC)
+            tzp.fix_pytz_rrule_until(rrule, component)
 
             # constructing the pytz-timezone requires UTC transition times.
             # here we construct local times without tzinfo, the offset to UTC

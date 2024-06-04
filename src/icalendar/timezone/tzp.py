@@ -38,5 +38,9 @@ class TZP:
             component['TZID'] not in _timezone_cache:
             _timezone_cache[component['TZID']] = component.to_tz()
 
+    def fix_pytz_rrule_until(self, rrule, component):
+        """Make sure the until value works."""
+        self.__provider.fix_pytz_rrule_until(rrule, component)
+
 
 __all__ = ["TZP"]
