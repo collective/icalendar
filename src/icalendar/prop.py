@@ -48,7 +48,7 @@ except ImportError:
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Parameters
 from icalendar.parser import escape_char
-from icalendar.parser import tzid_from_dt
+from icalendar.timezone import tzid_from_dt
 from icalendar.parser import unescape_char
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.parser_tools import SEQUENCE_TYPES

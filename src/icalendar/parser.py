@@ -46,19 +46,6 @@ def unescape_char(text):
                    .replace(b'\\\\', b'\\')
 
 
-def tzid_from_dt(dt):
-    tzid = None
-    if hasattr(dt.tzinfo, 'zone'):
-        tzid = dt.tzinfo.zone  # pytz implementation
-    elif hasattr(dt.tzinfo, 'key'):
-        tzid = dt.tzinfo.key  # ZoneInfo implementation
-    elif hasattr(dt.tzinfo, 'tzname'):
-        # dateutil implementation, but this is broken
-        # See https://github.com/collective/icalendar/issues/333 for details
-        tzid = dt.tzinfo.tzname(dt)
-    return tzid
-
-
 def foldline(line, limit=75, fold_sep='\r\n '):
     """Make a string folded as defined in RFC5545
     Lines of text SHOULD NOT be longer than 75 octets, excluding the line
