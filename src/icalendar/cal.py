@@ -574,7 +574,7 @@ class Timezone(Component):
             rrule = dateutil.rrule.rrulestr(rrulestr, dtstart=rrstart)
             tzp.fix_pytz_rrule_until(rrule, component)
 
-            # constructing the pytz-timezone requires UTC transition times.
+            # constructing the timezone requires UTC transition times.
             # here we construct local times without tzinfo, the offset to UTC
             # gets subtracted in to_tz().
             transtimes = [dt.replace (tzinfo=None) for dt in rrule]
@@ -612,7 +612,7 @@ class Timezone(Component):
         return tzname
 
     def to_tz(self):
-        """convert this VTIMEZONE component to a pytz.timezone object
+        """convert this VTIMEZONE component to a timezone object
         """
         try:
             zone = str(self['TZID'])
