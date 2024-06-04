@@ -42,5 +42,12 @@ class TZP:
         """Make sure the until value works."""
         self.__provider.fix_pytz_rrule_until(rrule, component)
 
+    def create_timezone(self, name: str, transition_times, transition_info):
+        """Create a timezone from given information."""
+        return self.__provider.create_timezone(name, transition_times, transition_info)
+
+
+
+
 
 __all__ = ["TZP"]

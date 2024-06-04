@@ -16,9 +16,7 @@ from icalendar.prop import vText, vDDDLists
 from icalendar.timezone.cache import _timezone_cache
 from icalendar.timezone import tzp
 
-import pytz
 import dateutil.rrule, dateutil.tz
-from pytz.tzinfo import DstTzInfo
 
 
 
@@ -676,13 +674,7 @@ class Timezone(Component):
             assert dst_offset is not False
             transition_info.append((osto, dst_offset, name))
 
-        cls = type(zone, (DstTzInfo,), {
-            'zone': zone,
-            '_utc_transition_times': transition_times,
-            '_transition_info': transition_info
-        })
-
-        return cls()
+        return tzp.create_timezone(zone, transition_times, transition_info)
 
 
 class TimezoneStandard(Component):

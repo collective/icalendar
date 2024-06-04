@@ -1,6 +1,7 @@
 """Use pytz timezones."""
 import pytz
 from datetime import datetime
+from pytz.tzinfo import DstTzInfo
 
 
 class PYTZ:
@@ -24,3 +25,13 @@ class PYTZ:
             # pytz.timezones don't know any transition dates after 2038
             # either
             rrule._until = datetime(2038, 12, 31, tzinfo=pytz.UTC)
+
+    def create_timezone(self, name: str, transition_times, transition_info):
+        """Create a pytz timezone file given information."""
+        cls = type(name, (DstTzInfo,), {
+            'zone': name,
+            '_utc_transition_times': transition_times,
+            '_transition_info': transition_info
+        })
+
+        return cls()
