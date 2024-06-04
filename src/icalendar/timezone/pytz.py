@@ -1,19 +1,24 @@
 """Use pytz timezones."""
 import pytz
-from datetime import datetime
+from datetime import datetime, tzinfo
 from pytz.tzinfo import DstTzInfo
+from typing import Optional
 
 
 class PYTZ:
     """Provide icalendar with timezones from pytz."""
 
-    def make_utc(self, value):
-        """See icalendar.timezone.tzp.make_utc."""
-        if getattr(value, 'tzinfo', False) and value.tzinfo is not None:
-            return value.astimezone(pytz.utc)
+    def localize_utc(self, dt: datetime) -> datetime:
+        """Return the datetime in UTC."""
+        if getattr(dt, 'tzinfo', False) and dt.tzinfo is not None:
+            return dt.astimezone(pytz.utc)
         else:
             # assume UTC for naive datetime instances
-            return pytz.utc.localize(value)
+            return pytz.utc.localize(dt)
+
+    def localize(self, dt: datetime, tz: tzinfo) -> datetime:
+        """Localize a datetime to a timezone."""
+        return tz.localize(dt)
 
     def knows_timezone_id(self, id: str) -> bool:
         """Whether the timezone is already cached by the implementation."""
@@ -35,3 +40,13 @@ class PYTZ:
         })
 
         return cls()
+
+    def timezone(self, name: str) -> Optional[tzinfo]:
+        """Return a timezone with a name or None if we cannot find it."""
+        try:
+            return pytz.timezone(name)
+        except pytz.UnknownTimeZoneError:
+            pass
+
+
+__all__ = ["PYTZ"]

@@ -5,7 +5,7 @@ from datetime import timedelta
 from icalendar.parser import Parameters
 import unittest
 from icalendar.prop import vDatetime, vDDDTypes
-from icalendar.windows_to_olson import WINDOWS_TO_OLSON
+from icalendar.timezone.windows_to_olson import WINDOWS_TO_OLSON
 import pytest
 import pytz
 from copy import deepcopy
@@ -323,7 +323,7 @@ class TestProp(unittest.TestCase):
         )
 
         r = vRecur.from_ical('FREQ=WEEKLY;INTERVAL=1;BYWEEKDAY=TH')
-        
+
         self.assertEqual(
             r,
             {'FREQ': ['WEEKLY'], 'INTERVAL': [1], 'BYWEEKDAY': ['TH']}

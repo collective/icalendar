@@ -55,11 +55,10 @@ from icalendar.parser_tools import SEQUENCE_TYPES
 from icalendar.parser_tools import to_unicode
 from icalendar.parser_tools import from_unicode
 from icalendar.timezone.cache import _timezone_cache
-from icalendar.windows_to_olson import WINDOWS_TO_OLSON
 
 import base64
 import binascii
-import pytz
+from .timezone import tzp
 import re
 import time as _time
 
@@ -400,9 +399,9 @@ class vDate(TimeBase):
 class vDatetime(TimeBase):
     """Render and generates icalendar datetime format.
 
-    vDatetime is timezone aware and uses the pytz library, an implementation of
-    the Olson database in Python. When a vDatetime object is created from an
-    ical string, you can pass a valid pytz timezone identifier. When a
+    vDatetime is timezone aware and uses a timezone library.
+    When a vDatetime object is created from an
+    ical string, you can pass a valid timezone identifier. When a
     vDatetime object is created from a python datetime object, it uses the
     tzinfo component, if present. Otherwise an timezone-naive object is
     created. Be aware that there are certain limitations with timezone naive
@@ -428,14 +427,7 @@ class vDatetime(TimeBase):
     def from_ical(ical, timezone=None):
         tzinfo = None
         if timezone:
-            try:
-                tzinfo = pytz.timezone(timezone.strip('/'))
-            except pytz.UnknownTimeZoneError:
-                if timezone in WINDOWS_TO_OLSON:
-                    tzinfo = pytz.timezone(
-                        WINDOWS_TO_OLSON.get(timezone.strip('/')))
-                else:
-                    tzinfo = _timezone_cache.get(timezone, None)
+            tzinfo = tzp.timezone(timezone)
 
         try:
             timetuple = (
@@ -447,11 +439,11 @@ class vDatetime(TimeBase):
                 int(ical[13:15]),  # second
             )
             if tzinfo:
-                return tzinfo.localize(datetime(*timetuple))
+                return tzp.localize(datetime(*timetuple), tzinfo)
             elif not ical[15:]:
                 return datetime(*timetuple)
             elif ical[15:16] == 'Z':
-                return pytz.utc.localize(datetime(*timetuple))
+                return tzp.localize_utc(datetime(*timetuple))
             else:
                 raise ValueError(ical)
         except Exception:

@@ -177,7 +177,7 @@ class Component(CaselessDict):
         if isinstance(value, datetime) and\
                 name.lower() in ('dtstamp', 'created', 'last-modified'):
             # RFC expects UTC for those... force value conversion.
-            value = tzp.make_utc(value)
+            value = tzp.localize_utc(value)
 
         # encode value
         if encode and isinstance(value, list) \
