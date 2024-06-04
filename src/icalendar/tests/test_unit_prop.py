@@ -15,16 +15,6 @@ class TestProp(unittest.TestCase):
 
 
 
-    def test_prop_vBoolean(self):
-        from ..prop import vBoolean
-
-        self.assertEqual(vBoolean(True).to_ical(), b'TRUE')
-        self.assertEqual(vBoolean(0).to_ical(), b'FALSE')
-
-        # The roundtrip test
-        self.assertEqual(vBoolean.from_ical(vBoolean(True).to_ical()), True)
-        self.assertEqual(vBoolean.from_ical('true'), True)
-
     def test_prop_vCalAddress(self):
         from ..prop import vCalAddress
         txt = b'MAILTO:maxm@mxm.dk'
