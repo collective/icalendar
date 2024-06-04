@@ -26,7 +26,7 @@ def test_create_from_ical(calendars, other_tzp):
     assert ev1.decoded('DTSTAMP') == other_tzp.localize(datetime.datetime(2010, 10, 10, 9, 10, 10), 'UTC')
 
 
-def test_create_to_ical_tz(self, tzp):
+def test_create_to_ical(tzp):
     cal = icalendar.Calendar()
 
     cal.add('prodid', "-//Plone.org//NONSGML plone.app.event//EN")
@@ -99,124 +99,39 @@ def test_create_to_ical_tz(self, tzp):
     "00|END:STANDARD|BEGIN:DAYLIGHT|DTSTART:19700329T"
     "020000|TZNAME:CEST|TZOFFSETFROM:+0100|TZOFFSETTO:+0200|END:DAYLI"
     "GHT|END:VTIMEZONE"
-    self.assertTrue(vtimezone_lines in test_out)
+    assert vtimezone_lines in test_out
 
     test_str = "DTSTART;TZID=Europe/Vienna:20120213T100000"
-    self.assertTrue(test_str in test_out)
-    self.assertTrue("ATTENDEE:sepp" in test_out)
+    assert (test_str in test_out)
+    assert ("ATTENDEE:sepp" in test_out)
 
     # ical standard expects DTSTAMP and CREATED in UTC
-    self.assertTrue("DTSTAMP:20101010T081010Z" in test_out)
-    self.assertTrue("CREATED:20101010T081010Z" in test_out)
-
-def test_create_to_ical_zoneinfo(self):
-    cal = icalendar.Calendar()
-
-    cal.add('prodid', "-//Plone.org//NONSGML plone.app.event//EN")
-    cal.add('version', "2.0")
-    cal.add('x-wr-calname', "test create calendar")
-    cal.add('x-wr-caldesc', "icalendar tests")
-    cal.add('x-wr-relcalid', "12345")
-    cal.add('x-wr-timezone', "Europe/Vienna")
-
-    tzc = icalendar.Timezone()
-    tzc.add('tzid', 'Europe/Vienna')
-    tzc.add('x-lic-location', 'Europe/Vienna')
-
-    tzs = icalendar.TimezoneStandard()
-    tzs.add('tzname', 'CET')
-    tzs.add('dtstart', datetime.datetime(1970, 10, 25, 3, 0, 0))
-    tzs.add('rrule', {'freq': 'yearly', 'bymonth': 10, 'byday': '-1su'})
-    tzs.add('TZOFFSETFROM', datetime.timedelta(hours=2))
-    tzs.add('TZOFFSETTO', datetime.timedelta(hours=1))
-
-    tzd = icalendar.TimezoneDaylight()
-    tzd.add('tzname', 'CEST')
-    tzd.add('dtstart', datetime.datetime(1970, 3, 29, 2, 0, 0))
-    tzs.add('rrule', {'freq': 'yearly', 'bymonth': 3, 'byday': '-1su'})
-    tzd.add('TZOFFSETFROM', datetime.timedelta(hours=1))
-    tzd.add('TZOFFSETTO', datetime.timedelta(hours=2))
-
-    tzc.add_component(tzs)
-    tzc.add_component(tzd)
-    cal.add_component(tzc)
-
-    event = icalendar.Event()
-    tz = zoneinfo.ZoneInfo("Europe/Vienna")
-    event.add(
-        'dtstart',
-        datetime.datetime(2012, 2, 13, 10, 00, 00, tzinfo=tz))
-    event.add(
-        'dtend',
-        datetime.datetime(2012, 2, 17, 18, 00, 00, tzinfo=tz))
-    event.add(
-        'dtstamp',
-        datetime.datetime(2010, 10, 10, 10, 10, 10, tzinfo=tz))
-    event.add(
-        'created',
-        datetime.datetime(2010, 10, 10, 10, 10, 10, tzinfo=tz))
-    event.add('uid', '123456')
-    event.add(
-        'last-modified',
-        datetime.datetime(2010, 10, 10, 10, 10, 10, tzinfo=tz))
-    event.add('summary', 'artsprint 2012')
-    # event.add('rrule', 'FREQ=YEARLY;INTERVAL=1;COUNT=10')
-    event.add('description', 'sprinting at the artsprint')
-    event.add('location', 'aka bild, wien')
-    event.add('categories', 'first subject')
-    event.add('categories', 'second subject')
-    event.add('attendee', 'häns')
-    event.add('attendee', 'franz')
-    event.add('attendee', 'sepp')
-    event.add('contact', 'Max Mustermann, 1010 Wien')
-    event.add('url', 'http://plone.org')
-    cal.add_component(event)
-
-    test_out = b'|'.join(cal.to_ical().splitlines())
-    test_out = test_out.decode('utf-8')
-
-    vtimezone_lines = "BEGIN:VTIMEZONE|TZID:Europe/Vienna|X-LIC-LOCATION:"
-    "Europe/Vienna|BEGIN:STANDARD|DTSTART:19701025T03"
-    "0000|RRULE:FREQ=YEARLY;BYDAY=-1SU;BYMONTH=10|RRULE:FREQ=YEARLY;B"
-    "YDAY=-1SU;BYMONTH=3|TZNAME:CET|TZOFFSETFROM:+0200|TZOFFSETTO:+01"
-    "00|END:STANDARD|BEGIN:DAYLIGHT|DTSTART:19700329T"
-    "020000|TZNAME:CEST|TZOFFSETFROM:+0100|TZOFFSETTO:+0200|END:DAYLI"
-    "GHT|END:VTIMEZONE"
-    self.assertTrue(vtimezone_lines in test_out)
-
-    test_str = "DTSTART;TZID=Europe/Vienna:20120213T100000"
-    self.assertTrue(test_str in test_out)
-    self.assertTrue("ATTENDEE:sepp" in test_out)
-
-    # ical standard expects DTSTAMP and CREATED in UTC
-    self.assertTrue("DTSTAMP:20101010T081010Z" in test_out)
-    self.assertTrue("CREATED:20101010T081010Z" in test_out)
+    assert ("DTSTAMP:20101010T081010Z" in test_out)
+    assert ("CREATED:20101010T081010Z" in test_out)
 
 
-def test_tzinfo_dateutil(self):
-    # Test for issues #77, #63
-    # references: #73,7430b66862346fe3a6a100ab25e35a8711446717
+def test_tzinfo_dateutil():
+    """Test for issues #77, #63
+    references: #73,7430b66862346fe3a6a100ab25e35a8711446717
+    """
     date = dateutil.parser.parse('2012-08-30T22:41:00Z')
     date2 = dateutil.parser.parse('2012-08-30T22:41:00 +02:00')
-    self.assertTrue(date.tzinfo.__module__.startswith('dateutil.tz'))
-    self.assertTrue(date2.tzinfo.__module__.startswith('dateutil.tz'))
+    assert (date.tzinfo.__module__.startswith('dateutil.tz'))
+    assert (date2.tzinfo.__module__.startswith('dateutil.tz'))
 
     # make sure, it's parsed properly and doesn't throw an error
-    self.assertTrue(icalendar.vDDDTypes(date).to_ical()
+    assert (icalendar.vDDDTypes(date).to_ical()
                     == b'20120830T224100Z')
-    self.assertTrue(icalendar.vDDDTypes(date2).to_ical()
+    assert (icalendar.vDDDTypes(date2).to_ical()
                     == b'20120830T224100')
 
 
-def test_create_america_new_york(self, tzp):
-    """testing America/New_York, the most complex example from the
-    RFC"""
-    with open(os.path.join(CALENDARS_DIRECTORY, 'america_new_york.ics'), 'rb') as fp:
-        data = fp.read()
-    cal = icalendar.Calendar.from_ical(data)
+def test_create_america_new_york(calendars, tzp):
+    """testing America/New_York, the most complex example from the RFC"""
+    cal = calendars.america_new_york
 
     tz = cal.walk('VEVENT')[0]['DTSTART'][0].dt.tzinfo
-    self.assertEqual(str(tz), 'custom_America/New_York')
+    assert str(tz) == 'custom_America/New_York'
     tz_new_york = tzp.timezone('America/New_York')
     # for reasons (tm) the locally installed version of the time zone
     # database isn't always complete, therefore we only compare some
@@ -228,19 +143,13 @@ def test_create_america_new_york(self, tzp):
                 <= date <= datetime.datetime(2037, 11, 1, 6, 0):
             ny_transition_times.append(date)
             ny_transition_info.append(tz_new_york._transition_info[num])
-    self.assertEqual(tz._utc_transition_times[:142], ny_transition_times)
-    self.assertEqual(tz._transition_info[0:142], ny_transition_info)
-    self.assertIn(
-        (
+    assert tz._utc_transition_times[:142] == ny_transition_times
+    assert tz._transition_info[0:142] == ny_transition_info
+    assert (
             datetime.timedelta(-1, 72000),
             datetime.timedelta(0, 3600), 'EDT'
-        ),
-        tz._tzinfos.keys()
-    )
-    self.assertIn(
-        (datetime.timedelta(-1, 68400), datetime.timedelta(0), 'EST'),
-        tz._tzinfos.keys()
-    )
+        ) in tz._tzinfos.keys()
+    assert (datetime.timedelta(-1, 68400), datetime.timedelta(0), 'EST') in tz._tzinfos.keys()
 
 
 def test_create_pacific_fiji(self):

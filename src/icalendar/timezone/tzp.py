@@ -69,7 +69,7 @@ class TZP:
             return tz
         if clean_id in WINDOWS_TO_OLSON:
             tz = self.__provider.timezone(WINDOWS_TO_OLSON[clean_id])
-            return tz or self.__provider.timezone(id) or self.__tz_cache.get(id)
+        return tz or self.__provider.timezone(id) or self.__tz_cache.get(id)
 
 
 __all__ = ["TZP"]
