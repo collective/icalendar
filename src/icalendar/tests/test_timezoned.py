@@ -152,86 +152,80 @@ def test_create_america_new_york(calendars, tzp):
     assert (datetime.timedelta(-1, 68400), datetime.timedelta(0), 'EST') in tz._tzinfos.keys()
 
 
-def test_create_pacific_fiji(self):
+def test_create_pacific_fiji(calendars):
     """testing Pacific/Fiji, another pretty complex example with more than
     one RDATE property per subcomponent"""
-    self.maxDiff = None
-
-    with open(os.path.join(CALENDARS_DIRECTORY, 'pacific_fiji.ics'), 'rb') as fp:
-        data = fp.read()
-    cal = icalendar.Calendar.from_ical(data)
+    cal = calendars.pacific_fiji
 
     tz = cal.walk('VEVENT')[0]['DTSTART'][0].dt.tzinfo
-    self.assertEqual(str(tz), 'custom_Pacific/Fiji')
-    self.assertEqual(tz._utc_transition_times,
-                     [datetime.datetime(1915, 10, 25, 12, 4),
-                      datetime.datetime(1998, 10, 31, 14, 0),
-                      datetime.datetime(1999, 2, 27, 14, 0),
-                      datetime.datetime(1999, 11, 6, 14, 0),
-                      datetime.datetime(2000, 2, 26, 14, 0),
-                      datetime.datetime(2009, 11, 28, 14, 0),
-                      datetime.datetime(2010, 3, 27, 14, 0),
-                      datetime.datetime(2010, 10, 23, 14, 0),
-                      datetime.datetime(2011, 3, 5, 14, 0),
-                      datetime.datetime(2011, 10, 22, 14, 0),
-                      datetime.datetime(2012, 1, 21, 14, 0),
-                      datetime.datetime(2012, 10, 20, 14, 0),
-                      datetime.datetime(2013, 1, 19, 14, 0),
-                      datetime.datetime(2013, 10, 26, 14, 0),
-                      datetime.datetime(2014, 1, 18, 13, 0),
-                      datetime.datetime(2014, 10, 25, 14, 0),
-                      datetime.datetime(2015, 1, 17, 13, 0),
-                      datetime.datetime(2015, 10, 24, 14, 0),
-                      datetime.datetime(2016, 1, 23, 13, 0),
-                      datetime.datetime(2016, 10, 22, 14, 0),
-                      datetime.datetime(2017, 1, 21, 13, 0),
-                      datetime.datetime(2017, 10, 21, 14, 0),
-                      datetime.datetime(2018, 1, 20, 13, 0),
-                      datetime.datetime(2018, 10, 20, 14, 0),
-                      datetime.datetime(2019, 1, 19, 13, 0),
-                      datetime.datetime(2019, 10, 26, 14, 0),
-                      datetime.datetime(2020, 1, 18, 13, 0),
-                      datetime.datetime(2020, 10, 24, 14, 0),
-                      datetime.datetime(2021, 1, 23, 13, 0),
-                      datetime.datetime(2021, 10, 23, 14, 0),
-                      datetime.datetime(2022, 1, 22, 13, 0),
-                      datetime.datetime(2022, 10, 22, 14, 0),
-                      datetime.datetime(2023, 1, 21, 13, 0),
-                      datetime.datetime(2023, 10, 21, 14, 0),
-                      datetime.datetime(2024, 1, 20, 13, 0),
-                      datetime.datetime(2024, 10, 26, 14, 0),
-                      datetime.datetime(2025, 1, 18, 13, 0),
-                      datetime.datetime(2025, 10, 25, 14, 0),
-                      datetime.datetime(2026, 1, 17, 13, 0),
-                      datetime.datetime(2026, 10, 24, 14, 0),
-                      datetime.datetime(2027, 1, 23, 13, 0),
-                      datetime.datetime(2027, 10, 23, 14, 0),
-                      datetime.datetime(2028, 1, 22, 13, 0),
-                      datetime.datetime(2028, 10, 21, 14, 0),
-                      datetime.datetime(2029, 1, 20, 13, 0),
-                      datetime.datetime(2029, 10, 20, 14, 0),
-                      datetime.datetime(2030, 1, 19, 13, 0),
-                      datetime.datetime(2030, 10, 26, 14, 0),
-                      datetime.datetime(2031, 1, 18, 13, 0),
-                      datetime.datetime(2031, 10, 25, 14, 0),
-                      datetime.datetime(2032, 1, 17, 13, 0),
-                      datetime.datetime(2032, 10, 23, 14, 0),
-                      datetime.datetime(2033, 1, 22, 13, 0),
-                      datetime.datetime(2033, 10, 22, 14, 0),
-                      datetime.datetime(2034, 1, 21, 13, 0),
-                      datetime.datetime(2034, 10, 21, 14, 0),
-                      datetime.datetime(2035, 1, 20, 13, 0),
-                      datetime.datetime(2035, 10, 20, 14, 0),
-                      datetime.datetime(2036, 1, 19, 13, 0),
-                      datetime.datetime(2036, 10, 25, 14, 0),
-                      datetime.datetime(2037, 1, 17, 13, 0),
-                      datetime.datetime(2037, 10, 24, 14, 0),
-                      datetime.datetime(2038, 1, 23, 13, 0),
-                      datetime.datetime(2038, 10, 23, 14, 0)]
-
-                     )
-    self.assertEqual(
-        tz._transition_info,
+    assert str(tz) == 'custom_Pacific/Fiji'
+    assert tz._utc_transition_times == [
+        datetime.datetime(1915, 10, 25, 12, 4),
+        datetime.datetime(1998, 10, 31, 14, 0),
+        datetime.datetime(1999, 2, 27, 14, 0),
+        datetime.datetime(1999, 11, 6, 14, 0),
+        datetime.datetime(2000, 2, 26, 14, 0),
+        datetime.datetime(2009, 11, 28, 14, 0),
+        datetime.datetime(2010, 3, 27, 14, 0),
+        datetime.datetime(2010, 10, 23, 14, 0),
+        datetime.datetime(2011, 3, 5, 14, 0),
+        datetime.datetime(2011, 10, 22, 14, 0),
+        datetime.datetime(2012, 1, 21, 14, 0),
+        datetime.datetime(2012, 10, 20, 14, 0),
+        datetime.datetime(2013, 1, 19, 14, 0),
+        datetime.datetime(2013, 10, 26, 14, 0),
+        datetime.datetime(2014, 1, 18, 13, 0),
+        datetime.datetime(2014, 10, 25, 14, 0),
+        datetime.datetime(2015, 1, 17, 13, 0),
+        datetime.datetime(2015, 10, 24, 14, 0),
+        datetime.datetime(2016, 1, 23, 13, 0),
+        datetime.datetime(2016, 10, 22, 14, 0),
+        datetime.datetime(2017, 1, 21, 13, 0),
+        datetime.datetime(2017, 10, 21, 14, 0),
+        datetime.datetime(2018, 1, 20, 13, 0),
+        datetime.datetime(2018, 10, 20, 14, 0),
+        datetime.datetime(2019, 1, 19, 13, 0),
+        datetime.datetime(2019, 10, 26, 14, 0),
+        datetime.datetime(2020, 1, 18, 13, 0),
+        datetime.datetime(2020, 10, 24, 14, 0),
+        datetime.datetime(2021, 1, 23, 13, 0),
+        datetime.datetime(2021, 10, 23, 14, 0),
+        datetime.datetime(2022, 1, 22, 13, 0),
+        datetime.datetime(2022, 10, 22, 14, 0),
+        datetime.datetime(2023, 1, 21, 13, 0),
+        datetime.datetime(2023, 10, 21, 14, 0),
+        datetime.datetime(2024, 1, 20, 13, 0),
+        datetime.datetime(2024, 10, 26, 14, 0),
+        datetime.datetime(2025, 1, 18, 13, 0),
+        datetime.datetime(2025, 10, 25, 14, 0),
+        datetime.datetime(2026, 1, 17, 13, 0),
+        datetime.datetime(2026, 10, 24, 14, 0),
+        datetime.datetime(2027, 1, 23, 13, 0),
+        datetime.datetime(2027, 10, 23, 14, 0),
+        datetime.datetime(2028, 1, 22, 13, 0),
+        datetime.datetime(2028, 10, 21, 14, 0),
+        datetime.datetime(2029, 1, 20, 13, 0),
+        datetime.datetime(2029, 10, 20, 14, 0),
+        datetime.datetime(2030, 1, 19, 13, 0),
+        datetime.datetime(2030, 10, 26, 14, 0),
+        datetime.datetime(2031, 1, 18, 13, 0),
+        datetime.datetime(2031, 10, 25, 14, 0),
+        datetime.datetime(2032, 1, 17, 13, 0),
+        datetime.datetime(2032, 10, 23, 14, 0),
+        datetime.datetime(2033, 1, 22, 13, 0),
+        datetime.datetime(2033, 10, 22, 14, 0),
+        datetime.datetime(2034, 1, 21, 13, 0),
+        datetime.datetime(2034, 10, 21, 14, 0),
+        datetime.datetime(2035, 1, 20, 13, 0),
+        datetime.datetime(2035, 10, 20, 14, 0),
+        datetime.datetime(2036, 1, 19, 13, 0),
+        datetime.datetime(2036, 10, 25, 14, 0),
+        datetime.datetime(2037, 1, 17, 13, 0),
+        datetime.datetime(2037, 10, 24, 14, 0),
+        datetime.datetime(2038, 1, 23, 13, 0),
+        datetime.datetime(2038, 10, 23, 14, 0)
+    ]
+    assert tz._transition_info == (
         [(
             datetime.timedelta(0, 43200),
             datetime.timedelta(0),
@@ -271,63 +265,47 @@ def test_create_pacific_fiji(self):
         )]
     )
 
-    self.assertIn(
-        (
+    assert (
             datetime.timedelta(0, 46800),
             datetime.timedelta(0, 3600),
             'custom_Pacific/Fiji_19981101T020000_+1200_+1300'
-        ),
-        tz._tzinfos.keys()
-    )
-    self.assertIn(
-        (
+        ) in  tz._tzinfos.keys()
+    assert (
             datetime.timedelta(0, 43200),
             datetime.timedelta(0),
             'custom_Pacific/Fiji_19990228T030000_+1300_+1200'
-        ),
-        tz._tzinfos.keys()
-    )
+        ) in tz._tzinfos.keys()
 
-def test_same_start_date(self):
+def test_same_start_date(calendars):
     """testing if we can handle VTIMEZONEs whose different components
     have the same start DTIMEs."""
-    with open(os.path.join(CALENDARS_DIRECTORY, 'timezone_same_start.ics'), 'rb') as fp:
-        data = fp.read()
-    cal = icalendar.Calendar.from_ical(data)
+    cal = calendars.timezone_same_start
     d = cal.subcomponents[1]['DTSTART'].dt
-    self.assertEqual(d.strftime('%c'), 'Fri Feb 24 12:00:00 2017')
+    assert d.strftime('%c') == 'Fri Feb 24 12:00:00 2017'
 
-def test_same_start_date_and_offset(self):
+def test_same_start_date_and_offset(calendars):
     """testing if we can handle VTIMEZONEs whose different components
     have the same DTSTARTs, TZOFFSETFROM, and TZOFFSETTO."""
-    with open(os.path.join(CALENDARS_DIRECTORY, 'timezone_same_start_and_offset.ics'), 'rb') as fp:
-        data = fp.read()
-    cal = icalendar.Calendar.from_ical(data)
+    cal = calendars.timezone_same_start_and_offset
     d = cal.subcomponents[1]['DTSTART'].dt
-    self.assertEqual(d.strftime('%c'), 'Fri Feb 24 12:00:00 2017')
+    assert d.strftime('%c') == 'Fri Feb 24 12:00:00 2017'
 
-def test_rdate(self):
+def test_rdate(calendars):
     """testing if we can handle VTIMEZONEs who only have an RDATE, not RRULE
     """
-    with open(os.path.join(CALENDARS_DIRECTORY, 'timezone_rdate.ics'), 'rb') as fp:
-        data = fp.read()
-    cal = icalendar.Calendar.from_ical(data)
+    cal = calendars.timezone_rdate
     vevent = cal.walk('VEVENT')[0]
     tz = vevent['DTSTART'].dt.tzinfo
-    self.assertEqual(str(tz), 'posix/Europe/Vaduz')
-    self.assertEqual(
-        tz._utc_transition_times[:6],
-        [
+    assert str(tz) == 'posix/Europe/Vaduz'
+    assert tz._utc_transition_times[:6] == [
             datetime.datetime(1901, 12, 13, 20, 45, 38),
             datetime.datetime(1941, 5, 5, 0, 0, 0),
             datetime.datetime(1941, 10, 6, 0, 0, 0),
             datetime.datetime(1942, 5, 4, 0, 0, 0),
             datetime.datetime(1942, 10, 5, 0, 0, 0),
             datetime.datetime(1981, 3, 29, 1, 0),
-        ])
-    self.assertEqual(
-        tz._transition_info[:6],
-        [
+        ]
+    assert tz._transition_info[:6] == [
             (datetime.timedelta(0, 3600), datetime.timedelta(0), 'CET'),
             (datetime.timedelta(0, 7200), datetime.timedelta(0, 3600), 'CEST'),
             (datetime.timedelta(0, 3600), datetime.timedelta(0), 'CET'),
@@ -335,4 +313,3 @@ def test_rdate(self):
             (datetime.timedelta(0, 3600), datetime.timedelta(0), 'CET'),
             (datetime.timedelta(0, 7200), datetime.timedelta(0, 3600), 'CEST'),
         ]
-    )
