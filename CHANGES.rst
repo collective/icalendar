@@ -6,6 +6,7 @@ Changelog
 
 Minor changes:
 
+- Guide to delete the build folder before running tests
 - Add funding information
 - Update windows to olson conversion for Greenland Standard Time
 - Extend examples in Usage with alarm and recurrence
