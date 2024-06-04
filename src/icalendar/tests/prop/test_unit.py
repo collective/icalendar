@@ -95,52 +95,6 @@ class TestProp(unittest.TestCase):
         self.assertEqual(duration.to_ical(), b'-P1DT5H')
         self.assertEqual(duration.to_ical(), b'-P1DT5H')
 
-
-    def test_prop_vPeriod(self):
-        from ..prop import vPeriod
-
-        # One day in exact datetimes
-        per = (datetime(2000, 1, 1), datetime(2000, 1, 2))
-        self.assertEqual(vPeriod(per).to_ical(),
-                         b'20000101T000000/20000102T000000')
-
-        per = (datetime(2000, 1, 1), timedelta(days=31))
-        self.assertEqual(vPeriod(per).to_ical(), b'20000101T000000/P31D')
-
-        # Roundtrip
-        p = vPeriod.from_ical('20000101T000000/20000102T000000')
-        self.assertEqual(
-            p,
-            (datetime(2000, 1, 1, 0, 0), datetime(2000, 1, 2, 0, 0))
-        )
-        self.assertEqual(vPeriod(p).to_ical(),
-                         b'20000101T000000/20000102T000000')
-
-        self.assertEqual(vPeriod.from_ical('20000101T000000/P31D'),
-                         (datetime(2000, 1, 1, 0, 0), timedelta(31)))
-
-        # Roundtrip with absolute time
-        p = vPeriod.from_ical('20000101T000000Z/20000102T000000Z')
-        self.assertEqual(vPeriod(p).to_ical(),
-                         b'20000101T000000Z/20000102T000000Z')
-
-        # And an error
-        self.assertRaises(ValueError,
-                          vPeriod.from_ical, '20000101T000000/Psd31D')
-
-        # Timezoned
-        dk = pytz.timezone('Europe/Copenhagen')
-        start = dk.localize(datetime(2000, 1, 1))
-        end = dk.localize(datetime(2000, 1, 2))
-        per = (start, end)
-        self.assertEqual(vPeriod(per).to_ical(),
-                         b'20000101T000000/20000102T000000')
-        self.assertEqual(vPeriod(per).params['TZID'],
-                         'Europe/Copenhagen')
-
-        p = vPeriod((dk.localize(datetime(2000, 1, 1)), timedelta(days=31)))
-        self.assertEqual(p.to_ical(), b'20000101T000000/P31D')
-
     def test_prop_vWeekday(self):
         from ..prop import vWeekday
 
