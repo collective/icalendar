@@ -364,11 +364,8 @@ class Component(CaselessDict):
                     comps.append(component)
                 else:
                     stack[-1].add_component(component)
-                if vals == 'VTIMEZONE' and \
-                        'TZID' in component and \
-                        component['TZID'] not in pytz.all_timezones and \
-                        component['TZID'] not in _timezone_cache:
-                    _timezone_cache[component['TZID']] = component.to_tz()
+                if vals == 'VTIMEZONE' and 'TZID' in component:
+                    tzp.cache_timezone_component(component)
             # we are adding properties to the current top of the stack
             else:
                 factory = types_factory.for_property(name)

@@ -1,7 +1,10 @@
-from .provider import Provider
+from __future__ import annotations
 from datetime import datetime
+from .cache import _timezone_cache
+from .. import cal
 
-class TZP(Provider):
+
+class TZP:
     """This is the timezone provider proxy.
 
     If you would like to have another timezone implementation,
@@ -18,7 +21,7 @@ class TZP(Provider):
         from .pytz import PYTZ
         self.use(PYTZ())
 
-    def use(self, provider: Provider):
+    def use(self, provider):
         """Use another timezone implementation."""
         self.__provider = provider
 
@@ -28,6 +31,12 @@ class TZP(Provider):
         If there is no timezone, UTC is assumed.
         """
         return self.__provider.make_utc(value)
+
+    def cache_timezone_component(self, component: cal.VTIMEZONE):
+        """Cache a timezone component."""
+        if not self.__provider.knows_timezone_id(component['TZID']) and \
+            component['TZID'] not in _timezone_cache:
+            _timezone_cache[component['TZID']] = component.to_tz()
 
 
 __all__ = ["TZP"]
