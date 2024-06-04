@@ -2,7 +2,7 @@ from __future__ import annotations
 import datetime
 from .cache import _timezone_cache
 from .. import cal
-from typing import Optional
+from typing import Optional, Union
 from .windows_to_olson import WINDOWS_TO_OLSON
 
 
@@ -34,8 +34,10 @@ class TZP:
         """
         return self.__provider.localize_utc(dt)
 
-    def localize(self, dt: datetime.datetime, tz: datetime.tzinfo) -> datetime.datetime:
+    def localize(self, dt: datetime.datetime, tz: Union[datetime.tzinfo, str]) -> datetime.datetime:
         """Localize a datetime to a timezone."""
+        if isinstance(tz, str):
+            tz = self.timezone(tz)
         return self.__provider.localize(dt, tz)
 
     def cache_timezone_component(self, component: cal.VTIMEZONE) -> None:

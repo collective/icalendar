@@ -5,7 +5,6 @@ See
 - https://github.com/pimutils/khal/issues/152#issuecomment-933635248
 """
 import pytest
-import pytz
 from icalendar.prop import vDDDTypes
 import datetime
 
@@ -55,9 +54,9 @@ def test_tzid_is_part_of_the_parameters(calendars):
     assert event["RDATE"].params["TZID"] == "America/Vancouver"
 
 
-def test_tzid_is_part_of_the_period_values(calendars):
+def test_tzid_is_part_of_the_period_values(calendars, tzp):
     """The TZID should be set in the datetime."""
     event = list(calendars.period_with_timezone.walk("VEVENT"))[0]
     start, end = event["RDATE"].dts[0].dt
-    assert start == pytz.timezone("America/Vancouver").localize(datetime.datetime(2023, 12, 13, 12))
-    assert end == pytz.timezone("America/Vancouver").localize(datetime.datetime(2023, 12, 13, 15))
+    assert start == tzp.localize(datetime.datetime(2023, 12, 13, 12), "America/Vancouver")
+    assert end == tzp.localize(datetime.datetime(2023, 12, 13, 15), "America/Vancouver")
