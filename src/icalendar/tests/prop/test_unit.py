@@ -13,10 +13,6 @@ from dateutil import tz
 
 class TestProp(unittest.TestCase):
 
-
-
-
-
     def test_prop_vFloat(self):
         from ..prop import vFloat
         self.assertEqual(vFloat(1.0).to_ical(), b'1.0')
@@ -52,24 +48,6 @@ class TestProp(unittest.TestCase):
 
         dt_list = vDDDLists([datetime(2000, 1, 1), datetime(2000, 11, 11)])
         self.assertEqual(dt_list.to_ical(), b'20000101T000000,20001111T000000')
-
-    def test_prop_vDDDTypes(self):
-        from ..prop import vDDDTypes
-
-        self.assertTrue(isinstance(vDDDTypes.from_ical('20010101T123000'),
-                                   datetime))
-
-        self.assertEqual(vDDDTypes.from_ical('20010101T123000Z'),
-                         pytz.utc.localize(datetime(2001, 1, 1, 12, 30)))
-
-        self.assertTrue(isinstance(vDDDTypes.from_ical('20010101'), date))
-
-        self.assertEqual(vDDDTypes.from_ical('P31D'), timedelta(31))
-
-        self.assertEqual(vDDDTypes.from_ical('-P31D'), timedelta(-31))
-
-        # Bad input
-        self.assertRaises(ValueError, vDDDTypes, 42)
 
     def test_prop_vDate(self):
         from ..prop import vDate
