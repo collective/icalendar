@@ -1,6 +1,5 @@
 from __future__ import annotations
 import datetime
-from .cache import _timezone_cache
 from .. import cal
 from typing import Optional, Union
 from .windows_to_olson import WINDOWS_TO_OLSON
@@ -14,17 +13,26 @@ class TZP:
     All of icalendar will then use this timezone implementation.
     """
 
-    def __init__(self):
+    def __init__(self, provider_name:str):
         """Create a new timezone implementation proxy."""
-        self.use_pytz()
+        provider = getattr(self, f"use_{provider_name}", None)
+        if provider is None:
+            raise ValueError(f"Unknown provider {provider_name}. Use 'pytz' or 'zoneinfo'.")
+        provider()
 
     def use_pytz(self) -> None:
         """Use pytz as the timezone provider."""
         from .pytz import PYTZ
         self.use(PYTZ())
 
+    def use_zoneinfo(self) -> None:
+        """Use zoneinfo as timezone provider."""
+        from .zoneinfo import ZONEINFO
+        self.use(ZONEINFO())
+
     def use(self, provider) -> None:
         """Use another timezone implementation."""
+        self.__tz_cache = {}
         self.__provider = provider
 
     def localize_utc(self, dt: datetime.datetime)-> datetime.datetime:
@@ -42,9 +50,8 @@ class TZP:
 
     def cache_timezone_component(self, component: cal.VTIMEZONE) -> None:
         """Cache a timezone component."""
-        if not self.__provider.knows_timezone_id(component['TZID']) and \
-            component['TZID'] not in _timezone_cache:
-            _timezone_cache[component['TZID']] = component.to_tz()
+        if not self.__provider.knows_timezone_id(component['TZID']):
+            self.__tz_cache.setdefault(component['TZID'], component.to_tz())
 
     def fix_pytz_rrule_until(self, rrule, component) -> None:
         """Make sure the until value works."""
@@ -62,7 +69,7 @@ class TZP:
             return tz
         if clean_id in WINDOWS_TO_OLSON:
             tz = self.__provider.timezone(WINDOWS_TO_OLSON[clean_id])
-        return tz or self.__provider.timezone(id) or _timezone_cache.get(id)
+            return tz or self.__provider.timezone(id) or self.__tz_cache.get(id)
 
 
 __all__ = ["TZP"]

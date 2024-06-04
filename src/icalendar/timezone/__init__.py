@@ -3,8 +3,7 @@ from .tzp import TZP
 from datetime import datetime
 from typing import Optional
 
-tzp = TZP()
-tzp.use_pytz()
+tzp = TZP("pytz")
 
 def tzid_from_dt(dt: datetime) -> Optional[str]:
     """Retrieve the timezone id from the datetime object."""

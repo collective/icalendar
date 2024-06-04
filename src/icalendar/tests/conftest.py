@@ -9,7 +9,8 @@ try:
 except ModuleNotFoundError:
     from backports import zoneinfo
 from icalendar.cal import Component, Calendar, Event, ComponentFactory
-from icalendar.timezone.tzp import TZP
+from icalendar.timezone import tzp as _tzp
+from icalendar.timezone import TZP
 
 
 class DataSource:
@@ -175,6 +176,16 @@ def calendar_with_resources():
 @pytest.fixture()
 def tzp():
     """The time zone provider."""
-    tzp = TZP()
-    tzp.use_pytz()
+    _tzp.use_pytz() # todo: parametrize
+    return _tzp
+
+
+@pytest.fixture(params=["pytz", "zoneinfo"])
+def other_tzp(request, tzp):
+    """This is annother timezone provider.
+
+    The purpose here is to cross test: pytz <-> zoneinfo.
+    tzp as parameter makes sure we test the cross product.
+    """
+    tzp = TZP(request.param)
     return tzp
