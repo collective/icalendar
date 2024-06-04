@@ -14,6 +14,7 @@ from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import TypesFactory
 from icalendar.prop import vText, vDDDLists
 from icalendar.timezone.cache import _timezone_cache
+from icalendar.timezone import tzp
 
 import pytz
 import dateutil.rrule, dateutil.tz
@@ -178,11 +179,7 @@ class Component(CaselessDict):
         if isinstance(value, datetime) and\
                 name.lower() in ('dtstamp', 'created', 'last-modified'):
             # RFC expects UTC for those... force value conversion.
-            if getattr(value, 'tzinfo', False) and value.tzinfo is not None:
-                value = value.astimezone(pytz.utc)
-            else:
-                # assume UTC for naive datetime instances
-                value = pytz.utc.localize(value)
+            value = tzp.make_utc(value)
 
         # encode value
         if encode and isinstance(value, list) \
