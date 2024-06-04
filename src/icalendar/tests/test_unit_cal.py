@@ -6,7 +6,6 @@ import unittest
 import pytest
 
 import icalendar
-import pytz
 import re
 from icalendar.cal import Component, Calendar, Event, ComponentFactory
 from icalendar import prop, cal
@@ -199,15 +198,15 @@ def test_inline_free_busy_inline(c):
     assert isinstance(freebusy[0][1], timedelta)
 
 
-def test_cal_Component_add(comp):
+def test_cal_Component_add(comp, tzp):
     """Test the for timezone correctness: dtstart should preserve it's
     timezone, created, dtstamp and last-modified must be in UTC.
     """
-    vienna = pytz.timezone("Europe/Vienna")
+    vienna = tzp.timezone("Europe/Vienna")
     comp.add('dtstart', vienna.localize(datetime(2010, 10, 10, 10, 0, 0)))
     comp.add('created', datetime(2010, 10, 10, 12, 0, 0))
     comp.add('dtstamp', vienna.localize(datetime(2010, 10, 10, 14, 0, 0)))
-    comp.add('last-modified', pytz.utc.localize(
+    comp.add('last-modified', tzp.localize_utc(
         datetime(2010, 10, 10, 16, 0, 0)))
 
     lines = comp.to_ical().splitlines()

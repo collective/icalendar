@@ -52,7 +52,7 @@ class TZP:
         """Create a timezone from given information."""
         return self.__provider.create_timezone(name, transition_times, transition_info)
 
-    def timezone(self, id: str) -> datetime.tzinfo:
+    def timezone(self, id: str) -> Optional[datetime.tzinfo]:
         """Return a timezone with an id or None if we cannot find it."""
         clean_id = id.strip("/")
         tz = self.__provider.timezone(clean_id)

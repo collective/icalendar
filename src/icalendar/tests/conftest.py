@@ -9,6 +9,7 @@ try:
 except ModuleNotFoundError:
     from backports import zoneinfo
 from icalendar.cal import Component, Calendar, Event, ComponentFactory
+from icalendar.timezone.tzp import TZP
 
 
 class DataSource:
@@ -116,7 +117,7 @@ def x_sometime():
     yield
     icalendar.cal.types_factory.types_map.pop('X-SOMETIME')
 
-    
+
 @pytest.fixture()
 def factory():
     """Return a new component factory."""
@@ -169,3 +170,11 @@ def calendar_with_resources():
     c = Calendar()
     c['resources'] = 'Chair, Table, "Room: 42"'
     return c
+
+
+@pytest.fixture()
+def tzp():
+    """The time zone provider."""
+    tzp = TZP()
+    tzp.use_pytz()
+    return tzp
