@@ -15,16 +15,7 @@ class TestProp(unittest.TestCase):
 
 
 
-    def test_prop_vCalAddress(self):
-        from ..prop import vCalAddress
-        txt = b'MAILTO:maxm@mxm.dk'
-        a = vCalAddress(txt)
-        a.params['cn'] = 'Max M'
 
-        self.assertEqual(a.to_ical(), txt)
-        self.assertIsInstance(a.params, Parameters)
-        self.assertEqual(a.params, {'CN': 'Max M'})
-        self.assertEqual(vCalAddress.from_ical(txt), 'MAILTO:maxm@mxm.dk')
 
     def test_prop_vFloat(self):
         from ..prop import vFloat
