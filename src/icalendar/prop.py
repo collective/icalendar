@@ -54,7 +54,7 @@ from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.parser_tools import SEQUENCE_TYPES
 from icalendar.parser_tools import to_unicode
 from icalendar.parser_tools import from_unicode
-from icalendar.timezone_cache import _timezone_cache
+from icalendar.timezone.cache import _timezone_cache
 from icalendar.windows_to_olson import WINDOWS_TO_OLSON
 
 import base64

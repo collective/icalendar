@@ -13,7 +13,7 @@ from icalendar.parser import q_split
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import TypesFactory
 from icalendar.prop import vText, vDDDLists
-from icalendar.timezone_cache import _timezone_cache
+from icalendar.timezone.cache import _timezone_cache
 
 import pytz
 import dateutil.rrule, dateutil.tz
