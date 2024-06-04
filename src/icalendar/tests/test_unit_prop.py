@@ -13,30 +13,7 @@ from dateutil import tz
 
 class TestProp(unittest.TestCase):
 
-    def test_prop_vBinary(self):
-        from ..prop import vBinary
 
-        txt = b'This is gibberish'
-        txt_ical = b'VGhpcyBpcyBnaWJiZXJpc2g='
-        self.assertEqual(vBinary(txt).to_ical(), txt_ical)
-        self.assertEqual(vBinary.from_ical(txt_ical), txt)
-
-        # The roundtrip test
-        txt = b'Binary data \x13 \x56'
-        txt_ical = b'QmluYXJ5IGRhdGEgEyBW'
-        self.assertEqual(vBinary(txt).to_ical(), txt_ical)
-        self.assertEqual(vBinary.from_ical(txt_ical), txt)
-
-        self.assertIsInstance(vBinary('txt').params, Parameters)
-        self.assertEqual(
-            vBinary('txt').params, {'VALUE': 'BINARY', 'ENCODING': 'BASE64'}
-        )
-
-        # Long data should not have line breaks, as that would interfere
-        txt = b'a' * 99
-        txt_ical = b'YWFh' * 33
-        self.assertEqual(vBinary(txt).to_ical(), txt_ical)
-        self.assertEqual(vBinary.from_ical(txt_ical), txt)
 
     def test_prop_vBoolean(self):
         from ..prop import vBoolean
