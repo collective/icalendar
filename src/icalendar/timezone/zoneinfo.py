@@ -23,6 +23,8 @@ class ZONEINFO(TZProvider):
 
     def localize_utc(self, dt: datetime) -> datetime:
         """Return the datetime in UTC."""
+        if getattr(dt, 'tzinfo', False) and dt.tzinfo is not None:
+            return dt.astimezone(self.utc)
         return self.localize(dt, self.utc)
 
     def timezone(self, name: str) -> Optional[tzinfo]:

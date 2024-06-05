@@ -17,9 +17,8 @@ class PYTZ(TZProvider):
         """Return the datetime in UTC."""
         if getattr(dt, 'tzinfo', False) and dt.tzinfo is not None:
             return dt.astimezone(pytz.utc)
-        else:
-            # assume UTC for naive datetime instances
-            return pytz.utc.localize(dt)
+        # assume UTC for naive datetime instances
+        return pytz.utc.localize(dt)
 
     def localize(self, dt: datetime, tz: tzinfo) -> datetime:
         """Localize a datetime to a timezone."""
