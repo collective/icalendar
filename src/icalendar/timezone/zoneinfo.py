@@ -25,7 +25,7 @@ class ZONEINFO:
         """Return a timezone with a name or None if we cannot find it."""
         try:
             return zoneinfo.ZoneInfo(name)
-        except ValueError:
+        except zoneinfo.ZoneInfoNotFoundError:
             pass
 
     def knows_timezone_id(self, id: str) -> bool:
@@ -38,6 +38,14 @@ class ZONEINFO:
             # zoninfo does not know any transition dates after 2038
             rrule._until = datetime(2038, 12, 31, tzinfo=pytz.UTC)
 
+    def create_timezone(self, name: str, transition_times, transition_info):
+        """Create a pytz timezone file given information."""
+        cls = type(name, (DstTzInfo,), {
+            'zone': name,
+            '_utc_transition_times': transition_times,
+            '_transition_info': transition_info
+        })
+        return cls()
 
 
 __all__ = ["ZONEINFO"]

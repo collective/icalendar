@@ -12,5 +12,6 @@ import pytest
 @pytest.mark.parametrize("tzp_", [PYTZ(), ZONEINFO()])
 def test_timezone_names_are_known(tz_name, tzp_):
     """Make sure that all timezones are understood."""
-    pytest.skip()
+    if tz_name in ("Factory", "localtime"):
+        pytest.skip()
     assert tzp_.knows_timezone_id(tz_name), f"{tzp_.__class__.__name__} should know {tz_name}"
