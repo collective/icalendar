@@ -40,7 +40,7 @@ class ZONEINFO(TZProvider):
         """Make sure the until value works for the rrule generated from the ical_rrule."""
         if not {'UNTIL', 'COUNT'}.intersection(ical_rrule.keys()):
             # zoninfo does not know any transition dates after 2038
-            rrule._until = datetime(2038, 12, 31, tzinfo=pytz.UTC)
+            rrule._until = datetime(2038, 12, 31, tzinfo=self.utc)
 
     def create_timezone(self, name: str, transition_times, transition_info) -> tzinfo:
         """Create a timezone from the given information."""

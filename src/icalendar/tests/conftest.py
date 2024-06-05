@@ -173,11 +173,12 @@ def calendar_with_resources():
     return c
 
 
-@pytest.fixture()
-def tzp():
+@pytest.fixture(params=["pytz", "zoneinfo"])
+def tzp(request):
     """The time zone provider."""
-    _tzp.use_pytz() # todo: parametrize
-    return _tzp
+    _tzp.use(request.param) # todo: parametrize
+    yield _tzp
+    _tzp.use_default()
 
 
 @pytest.fixture(params=["pytz", "zoneinfo"])

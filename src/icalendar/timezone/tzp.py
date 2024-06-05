@@ -6,6 +6,8 @@ from .windows_to_olson import WINDOWS_TO_OLSON
 from .provider import TZProvider
 
 
+DEFAULT_TIMEZONE_PROVIDER = "pytz"
+
 class TZP:
     """This is the timezone provider proxy.
 
@@ -14,7 +16,7 @@ class TZP:
     All of icalendar will then use this timezone implementation.
     """
 
-    def __init__(self, provider:Union[str, TZProvider]):
+    def __init__(self, provider:Union[str, TZProvider]=DEFAULT_TIMEZONE_PROVIDER):
         """Create a new timezone implementation proxy."""
         self.use(provider)
 
@@ -42,6 +44,10 @@ class TZP:
             provider()
         else:
             self._use(provider)
+
+    def use_default(self):
+        """Use the default timezone provider."""
+        self.use(DEFAULT_TIMEZONE_PROVIDER)
 
     def localize_utc(self, dt: datetime.datetime)-> datetime.datetime:
         """Return the datetime in UTC.
