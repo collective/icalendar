@@ -59,23 +59,22 @@ def test_create_to_ical(tzp):
     cal.add_component(tzc)
 
     event = icalendar.Event()
-    tz = tzp.timezone("Europe/Vienna")
     event.add(
         'dtstart',
-        tz.localize(datetime.datetime(2012, 2, 13, 10, 00, 00)))
+        tzp.localize(datetime.datetime(2012, 2, 13, 10, 00, 00), "Europe/Vienna"))
     event.add(
         'dtend',
-        tz.localize(datetime.datetime(2012, 2, 17, 18, 00, 00)))
+        tzp.localize(datetime.datetime(2012, 2, 17, 18, 00, 00), "Europe/Vienna"))
     event.add(
         'dtstamp',
-        tz.localize(datetime.datetime(2010, 10, 10, 10, 10, 10)))
+        tzp.localize(datetime.datetime(2010, 10, 10, 10, 10, 10), "Europe/Vienna"))
     event.add(
         'created',
-        tz.localize(datetime.datetime(2010, 10, 10, 10, 10, 10)))
+        tzp.localize(datetime.datetime(2010, 10, 10, 10, 10, 10), "Europe/Vienna"))
     event.add('uid', '123456')
     event.add(
         'last-modified',
-        tz.localize(datetime.datetime(2010, 10, 10, 10, 10, 10)))
+        tzp.localize(datetime.datetime(2010, 10, 10, 10, 10, 10), "Europe/Vienna"))
     event.add('summary', 'artsprint 2012')
     # event.add('rrule', 'FREQ=YEARLY;INTERVAL=1;COUNT=10')
     event.add('description', 'sprinting at the artsprint')

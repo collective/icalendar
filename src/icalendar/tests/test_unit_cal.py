@@ -202,10 +202,9 @@ def test_cal_Component_add(comp, tzp):
     """Test the for timezone correctness: dtstart should preserve it's
     timezone, created, dtstamp and last-modified must be in UTC.
     """
-    vienna = tzp.timezone("Europe/Vienna")
-    comp.add('dtstart', vienna.localize(datetime(2010, 10, 10, 10, 0, 0)))
+    comp.add('dtstart', tzp.localize(datetime(2010, 10, 10, 10, 0, 0), "Europe/Vienna"))
     comp.add('created', datetime(2010, 10, 10, 12, 0, 0))
-    comp.add('dtstamp', vienna.localize(datetime(2010, 10, 10, 14, 0, 0)))
+    comp.add('dtstamp', tzp.localize(datetime(2010, 10, 10, 14, 0, 0), "Europe/Vienna"))
     comp.add('last-modified', tzp.localize_utc(
         datetime(2010, 10, 10, 16, 0, 0)))
 
