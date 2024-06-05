@@ -17,6 +17,7 @@ Breaking changes:
 New features:
 
 - Create GitHub releases for each tag.
+- Allow using ``zoneinfo`` as a timezone implementations 
 
 Bug fixes:
 
