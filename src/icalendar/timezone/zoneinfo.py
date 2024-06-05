@@ -32,5 +32,12 @@ class ZONEINFO:
         """Whether the timezone is already cached by the implementation."""
         return id in self._available_timezones
 
+    def fix_rrule_until(self, rrule, component):
+        """Make sure the until value works."""
+        if not {'UNTIL', 'COUNT'}.intersection(component['RRULE'].keys()):
+            # zoninfo does not know any transition dates after 2038
+            rrule._until = datetime(2038, 12, 31, tzinfo=pytz.UTC)
+
+
 
 __all__ = ["ZONEINFO"]

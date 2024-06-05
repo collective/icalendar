@@ -571,7 +571,7 @@ class Timezone(Component):
 
             rrulestr = component['RRULE'].to_ical().decode('utf-8')
             rrule = dateutil.rrule.rrulestr(rrulestr, dtstart=rrstart)
-            tzp.fix_pytz_rrule_until(rrule, component)
+            tzp.fix_rrule_until(rrule, component)
 
             # constructing the timezone requires UTC transition times.
             # here we construct local times without tzinfo, the offset to UTC

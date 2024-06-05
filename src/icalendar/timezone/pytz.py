@@ -24,7 +24,7 @@ class PYTZ:
         """Whether the timezone is already cached by the implementation."""
         return id in pytz.all_timezones
 
-    def fix_pytz_rrule_until(self, rrule, component):
+    def fix_rrule_until(self, rrule, component):
         """Make sure the until value works."""
         if not {'UNTIL', 'COUNT'}.intersection(component['RRULE'].keys()):
             # pytz.timezones don't know any transition dates after 2038

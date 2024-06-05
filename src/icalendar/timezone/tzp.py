@@ -53,9 +53,9 @@ class TZP:
         if not self.__provider.knows_timezone_id(component['TZID']):
             self.__tz_cache.setdefault(component['TZID'], component.to_tz())
 
-    def fix_pytz_rrule_until(self, rrule, component) -> None:
+    def fix_rrule_until(self, rrule, component) -> None:
         """Make sure the until value works."""
-        self.__provider.fix_pytz_rrule_until(rrule, component)
+        self.__provider.fix_rrule_until(rrule, component)
 
     def create_timezone(self, name: str, transition_times, transition_info) -> datetime.tzinfo:
         """Create a timezone from given information."""
