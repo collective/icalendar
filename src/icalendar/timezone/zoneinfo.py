@@ -11,6 +11,7 @@ class ZONEINFO:
     """Provide icalendar with timezones from zoneinfo."""
 
     utc = zoneinfo.ZoneInfo("UTC")
+    _available_timezones = zoneinfo.available_timezones()
 
     def localize(self, dt: datetime, tz: zoneinfo.ZoneInfo) -> datetime:
         """Localize a datetime to a timezone."""
@@ -27,6 +28,9 @@ class ZONEINFO:
         except ValueError:
             pass
 
+    def knows_timezone_id(self, id: str) -> bool:
+        """Whether the timezone is already cached by the implementation."""
+        return id in self._available_timezones
 
 
 __all__ = ["ZONEINFO"]
