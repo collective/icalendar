@@ -1,13 +1,17 @@
 """Use zoneinfo timezones"""
+from __future__ import annotations
 try:
     import zoneinfo
 except:
     from backports import zoneinfo
+from icalendar import prop
+from dateutil.rrule import rrule
 from datetime import datetime, tzinfo
 from typing import Optional
+from .provider import TZProvider
 
 
-class ZONEINFO:
+class ZONEINFO(TZProvider):
     """Provide icalendar with timezones from zoneinfo."""
 
     utc = zoneinfo.ZoneInfo("UTC")
@@ -32,14 +36,14 @@ class ZONEINFO:
         """Whether the timezone is already cached by the implementation."""
         return id in self._available_timezones
 
-    def fix_rrule_until(self, rrule, component):
-        """Make sure the until value works."""
-        if not {'UNTIL', 'COUNT'}.intersection(component['RRULE'].keys()):
+    def fix_rrule_until(self, rrule:rrule, ical_rrule:prop.vRecur) -> None:
+        """Make sure the until value works for the rrule generated from the ical_rrule."""
+        if not {'UNTIL', 'COUNT'}.intersection(ical_rrule.keys()):
             # zoninfo does not know any transition dates after 2038
             rrule._until = datetime(2038, 12, 31, tzinfo=pytz.UTC)
 
-    def create_timezone(self, name: str, transition_times, transition_info):
-        """Create a pytz timezone file given information."""
+    def create_timezone(self, name: str, transition_times, transition_info) -> tzinfo:
+        """Create a timezone from the given information."""
         cls = type(name, (DstTzInfo,), {
             'zone': name,
             '_utc_transition_times': transition_times,

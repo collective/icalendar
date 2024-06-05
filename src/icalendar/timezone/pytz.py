@@ -1,11 +1,16 @@
 """Use pytz timezones."""
+from __future__ import annotations
 import pytz
 from datetime import datetime, tzinfo
 from pytz.tzinfo import DstTzInfo
 from typing import Optional
+from .provider import TZProvider
+from icalendar import prop
+from dateutil.rrule import rrule
 
 
-class PYTZ:
+
+class PYTZ(TZProvider):
     """Provide icalendar with timezones from pytz."""
 
     def localize_utc(self, dt: datetime) -> datetime:
@@ -24,15 +29,15 @@ class PYTZ:
         """Whether the timezone is already cached by the implementation."""
         return id in pytz.all_timezones
 
-    def fix_rrule_until(self, rrule, component):
-        """Make sure the until value works."""
-        if not {'UNTIL', 'COUNT'}.intersection(component['RRULE'].keys()):
+    def fix_rrule_until(self, rrule:rrule, ical_rrule:prop.vRecur) -> None:
+        """Make sure the until value works for the rrule generated from the ical_rrule."""
+        if not {'UNTIL', 'COUNT'}.intersection(ical_rrule.keys()):
             # pytz.timezones don't know any transition dates after 2038
             # either
             rrule._until = datetime(2038, 12, 31, tzinfo=pytz.UTC)
 
-    def create_timezone(self, name: str, transition_times, transition_info):
-        """Create a pytz timezone file given information."""
+    def create_timezone(self, name: str, transition_times, transition_info) -> tzinfo:
+        """Create a pytz timezone from the given information."""
         cls = type(name, (DstTzInfo,), {
             'zone': name,
             '_utc_transition_times': transition_times,

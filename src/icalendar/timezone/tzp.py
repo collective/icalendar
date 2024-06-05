@@ -3,6 +3,7 @@ import datetime
 from .. import cal
 from typing import Optional, Union
 from .windows_to_olson import WINDOWS_TO_OLSON
+from .provider import TZProvider
 
 
 class TZP:
@@ -13,27 +14,34 @@ class TZP:
     All of icalendar will then use this timezone implementation.
     """
 
-    def __init__(self, provider_name:str):
+    def __init__(self, provider:Union[str, TZProvider]):
         """Create a new timezone implementation proxy."""
-        provider = getattr(self, f"use_{provider_name}", None)
-        if provider is None:
-            raise ValueError(f"Unknown provider {provider_name}. Use 'pytz' or 'zoneinfo'.")
-        provider()
+        self.use(provider)
 
     def use_pytz(self) -> None:
         """Use pytz as the timezone provider."""
         from .pytz import PYTZ
-        self.use(PYTZ())
+        self._use(PYTZ())
 
     def use_zoneinfo(self) -> None:
         """Use zoneinfo as timezone provider."""
         from .zoneinfo import ZONEINFO
-        self.use(ZONEINFO())
+        self._use(ZONEINFO())
 
-    def use(self, provider) -> None:
-        """Use another timezone implementation."""
+    def _use(self, provider:TZProvider) -> None:
+        """Use a timezone implementation."""
         self.__tz_cache = {}
         self.__provider = provider
+
+    def use(self, provider:Union[str, TZProvider]):
+        """Switch to a different timezone provider."""
+        if isinstance(provider, str):
+            provider = getattr(self, f"use_{provider}", None)
+            if provider is None:
+                raise ValueError(f"Unknown provider {provider_name}. Use 'pytz' or 'zoneinfo'.")
+            provider()
+        else:
+            self._use(provider)
 
     def localize_utc(self, dt: datetime.datetime)-> datetime.datetime:
         """Return the datetime in UTC.

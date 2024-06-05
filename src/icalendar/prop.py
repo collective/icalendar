@@ -48,7 +48,6 @@ except ImportError:
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Parameters
 from icalendar.parser import escape_char
-from icalendar.timezone import tzid_from_dt
 from icalendar.parser import unescape_char
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.parser_tools import SEQUENCE_TYPES
@@ -60,6 +59,9 @@ import binascii
 from .timezone import tzp
 import re
 import time as _time
+
+from typing import Optional
+
 
 DURATION_REGEX = re.compile(r'([-+]?)P(?:(\d+)W)?(?:(\d+)D)?'
                             r'(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$')
@@ -79,6 +81,20 @@ if _time.daylight:
 else:
     DSTOFFSET = STDOFFSET
 DSTDIFF = DSTOFFSET - STDOFFSET
+
+
+def tzid_from_dt(dt: datetime) -> Optional[str]:
+    """Retrieve the timezone id from the datetime object."""
+    tzid = None
+    if hasattr(dt.tzinfo, 'zone'):
+        tzid = dt.tzinfo.zone  # pytz implementation
+    elif hasattr(dt.tzinfo, 'key'):
+        tzid = dt.tzinfo.key  # ZoneInfo implementation
+    elif hasattr(dt.tzinfo, 'tzname'):
+        # dateutil implementation, but this is broken
+        # See https://github.com/collective/icalendar/issues/333 for details
+        tzid = dt.tzinfo.tzname(dt)
+    return tzid
 
 
 class FixedOffset(tzinfo):
