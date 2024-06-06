@@ -17,20 +17,20 @@ def assert_not_equal(actual_value, expected_value):
     assert actual_value != expected_value
 
 
-def test_parsed_calendars_are_equal_if_parsed_again(ics_file):
+def test_parsed_calendars_are_equal_if_parsed_again(ics_file, tzp):
     """Ensure that a calendar equals the same calendar."""
     copy_of_calendar = ics_file.__class__.from_ical(ics_file.to_ical())
     assert_equal(copy_of_calendar, ics_file)
 
 
-def test_parsed_calendars_are_equal_if_from_same_source(ics_file):
+def test_parsed_calendars_are_equal_if_from_same_source(ics_file, tzp):
     """Ensure that a calendar equals the same calendar."""
     cal1 = ics_file.__class__.from_ical(ics_file.raw_ics)
     cal2 = ics_file.__class__.from_ical(ics_file.raw_ics)
     assert_equal(cal1, cal2)
 
 
-def test_copies_are_equal(ics_file):
+def test_copies_are_equal(ics_file, tzp):
     """Ensure that copies are equal."""
     copy1 = ics_file.copy(); copy1.subcomponents = ics_file.subcomponents
     copy2 = ics_file.copy();  copy2.subcomponents = ics_file.subcomponents[:]
@@ -39,13 +39,13 @@ def test_copies_are_equal(ics_file):
     assert_equal(copy2, ics_file)
 
 
-def test_copy_does_not_copy_subcomponents(calendars):
+def test_copy_does_not_copy_subcomponents(calendars, tzp):
     """If we copy the subcomponents, assumptions around copies will be broken."""
     assert calendars.timezoned.subcomponents
     assert not calendars.timezoned.copy().subcomponents
 
 
-def test_deep_copies_are_equal(ics_file):
+def test_deep_copies_are_equal(ics_file, tzp):
     """Ensure that deep copies are equal."""
     try:
         assert_equal(copy.deepcopy(ics_file), copy.deepcopy(ics_file))

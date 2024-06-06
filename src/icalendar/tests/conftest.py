@@ -12,7 +12,6 @@ from icalendar.cal import Component, Calendar, Event, ComponentFactory
 from icalendar.timezone import tzp as _tzp
 from icalendar.timezone import TZP
 
-
 class DataSource:
     '''A collection of parsed ICS elements (e.g calendars, timezones, events)'''
     def __init__(self, data_source_folder, parser):
@@ -57,15 +56,15 @@ EVENTS_FOLDER = os.path.join(HERE, 'events')
 EVENTS = DataSource(EVENTS_FOLDER, icalendar.Event.from_ical)
 
 @pytest.fixture()
-def calendars():
+def calendars(tzp):
     return CALENDARS
 
 @pytest.fixture()
-def timezones():
+def timezones(tzp):
     return TIMEZONES
 
 @pytest.fixture()
-def events():
+def events(tzp):
     return EVENTS
 
 @pytest.fixture(params=[
@@ -74,7 +73,7 @@ def events():
     pytz.timezone('UTC'),
     tz.UTC,
     tz.gettz('UTC')])
-def utc(request):
+def utc(request, tzp):
     return request.param
 
 @pytest.fixture(params=[
@@ -82,7 +81,7 @@ def utc(request):
     lambda dt, tzname: dt.replace(tzinfo=tz.gettz(tzname)),
     lambda dt, tzname: dt.replace(tzinfo=zoneinfo.ZoneInfo(tzname))
 ])
-def in_timezone(request):
+def in_timezone(request, tzp):
     return request.param
 
 
@@ -97,7 +96,7 @@ ICS_FILES = [
     )
 ]
 @pytest.fixture(params=ICS_FILES)
-def ics_file(request):
+def ics_file(request, tzp):
     """An example ICS file."""
     data, key = request.param
     print(key)
@@ -133,7 +132,7 @@ def vUTCOffset_ignore_exceptions():
 
 
 @pytest.fixture()
-def event_component():
+def event_component(tzp):
     """Return an event component."""
     c = Component()
     c.name = 'VEVENT'
@@ -141,14 +140,14 @@ def event_component():
 
 
 @pytest.fixture()
-def c():
+def c(tzp):
     """Return an empty component."""
     c = Component()
     return c
 comp = c
 
 @pytest.fixture()
-def calendar_component():
+def calendar_component(tzp):
     """Return an empty component."""
     c = Component()
     c.name = 'VCALENDAR'
@@ -167,7 +166,7 @@ def filled_event_component(c, calendar_component):
 
 
 @pytest.fixture()
-def calendar_with_resources():
+def calendar_with_resources(tzp):
     c = Calendar()
     c['resources'] = 'Chair, Table, "Room: 42"'
     return c

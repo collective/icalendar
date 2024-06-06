@@ -248,7 +248,7 @@ comp_prop = pytest.mark.parametrize(
 
 
 @comp_prop
-def test_cal_Component_from_ical(component_name, property_name):
+def test_cal_Component_from_ical(component_name, property_name, tzp):
     """Check for proper handling of TZID parameter of datetime properties"""
     component_str = 'BEGIN:' + component_name + '\n'
     component_str += property_name + ';TZID=America/Denver:'
@@ -258,7 +258,7 @@ def test_cal_Component_from_ical(component_name, property_name):
 
 
 @comp_prop
-def test_cal_Component_from_ical_2(component_name, property_name):
+def test_cal_Component_from_ical_2(component_name, property_name, tzp):
     """Check for proper handling of TZID parameter of datetime properties"""
     component_str = 'BEGIN:' + component_name + '\n'
     component_str += property_name + ':'
@@ -414,7 +414,7 @@ def test_cal_ignore_errors_parsing(calendars, vUTCOffset_ignore_exceptions):
         'issue_526_calendar_with_event_subset',
     ], repeat=2)
 )
-def test_comparing_calendars(calendars, calendar, other_calendar):
+def test_comparing_calendars(calendars, calendar, other_calendar, tzp):
     are_calendars_equal = calendars[calendar] == calendars[other_calendar]
     are_calendars_actually_equal = calendar == other_calendar
     assert are_calendars_equal == are_calendars_actually_equal
