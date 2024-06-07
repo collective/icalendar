@@ -1,12 +1,12 @@
 try:
     from backports import zoneinfo
-    # we make the tests nicer
-    class ZoneInfo(zoneinfo.ZoneInfo):
-        def __repr__(self):
-            return f"zoneinfo.ZoneInfo(key={repr(self.key)})"
-    zoneinfo.ZoneInfo = ZoneInfo
 except ImportError:
     import zoneinfo
+# we make it nicer for doctests
+class ZoneInfo(zoneinfo.ZoneInfo):
+    def __repr__(self):
+        return f"ZoneInfo(key={repr(self.key)})"
+zoneinfo.ZoneInfo = ZoneInfo
 import os
 import pytest
 import icalendar

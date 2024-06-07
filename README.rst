@@ -71,14 +71,7 @@ long-term compatibility with projects conflicts partially with providing and usi
 the latest Python versions bring.
 
 Since we pour more `effort into maintaining and developing icalendar <https://github.com/collective/icalendar/discussions/360>`__,
-we split the project into two:
-
-- `Branch 4.x <https://github.com/collective/icalendar/tree/4.x>`__ with maximum compatibility to Python versions ``2.7`` and ``3.4+``, ``PyPy2`` and ``PyPy3``.
-- `Branch master <https://github.com/collective/icalendar/>`__ with the compatibility to Python versions ``3.7+`` and ``PyPy3``.
-
-We expect the ``master`` branch with versions ``5+`` receive the latest updates and features,
-and the ``4.x`` branch the subset of security and bug fixes only.
-We recommend migrating to later Python versions and also providing feedback if you depend on the ``4.x`` features.
+this is an overview of the versions:
 
 Version 6
 ~~~~~~~~~
@@ -87,7 +80,7 @@ Version 6 of ``icalendar`` switches the timezone implementation to ``zoneinfo``.
 
     >>> dt = icalendar.Calendar.example("timezoned").walk("VEVENT")[0]["DTSTART"].dt
     >>> dt.tzinfo
-    zoneinfo.ZoneInfo(key='Europe/Vienna')
+    ZoneInfo(key='Europe/Vienna')
 
 If you would like to continue to use ``pytz`` and receive the latest updates, you
 can switch back:
@@ -96,6 +89,21 @@ can switch back:
     >>> dt = icalendar.Calendar.example("timezoned").walk("VEVENT")[0]["DTSTART"].dt
     >>> dt.tzinfo
     <DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>
+
+`Branch master <https://github.com/collective/icalendar/>`__ with the compatibility to Python versions ``3.7+`` and ``PyPy3``.
+We expect the ``master`` branch with versions ``6+`` to receive the latest updates and features.
+
+Version 5
+~~~~~~~~~
+
+Version 5 contains the ``pytz`` only
+
+Version 4
+~~~~~~~~~
+
+Version 4 is on `Branch 4.x <https://github.com/collective/icalendar/tree/4.x>`__ with maximum compatibility to Python versions ``2.7`` and ``3.4+``, ``PyPy2`` and ``PyPy3``.
+The ``4.x`` branch only receives security and bug fixes if someone makes the effort.
+We recommend migrating to later Python versions and also providing feedback if you depend on the ``4.x`` features.
 
 Related projects
 ================

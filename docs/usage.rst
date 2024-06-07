@@ -211,7 +211,7 @@ Python type::
   datetime.datetime(2005, 4, 4, 8, 0)
 
   >>> vDatetime.from_ical('20050404T080000Z')
-  datetime.datetime(2005, 4, 4, 8, 0, tzinfo=zoneinfo.ZoneInfo(key='UTC'))
+  datetime.datetime(2005, 4, 4, 8, 0, tzinfo=ZoneInfo(key='UTC'))
 
 You can also choose to use the decoded() method, which will return a decoded
 value directly::
