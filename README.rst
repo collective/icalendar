@@ -80,10 +80,10 @@ We expect the ``master`` branch with versions ``5+`` receive the latest updates 
 and the ``4.x`` branch the subset of security and bug fixes only.
 We recommend migrating to later Python versions and also providing feedback if you depend on the ``4.x`` features.
 
-``icalendar`` Version 6
-~~~~~~~~~~~~~~~~~~~~~~~
+Version 6
+~~~~~~~~~
 
-Version 6 of ``icalendar`` switches the timezone implementation from ``pytz`` to ``zoneinfo``.
+Version 6 of ``icalendar`` switches the timezone implementation to ``zoneinfo``.
 
     >>> dt = icalendar.Calendar.example("timezoned").walk("VEVENT")[0]["DTSTART"].dt
     >>> dt.tzinfo
