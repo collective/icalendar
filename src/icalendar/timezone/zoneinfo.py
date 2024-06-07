@@ -41,6 +41,9 @@ class ZONEINFO(TZProvider):
             return zoneinfo.ZoneInfo(name)
         except zoneinfo.ZoneInfoNotFoundError:
             pass
+        except ValueError:
+            # ValueError: ZoneInfo keys may not be absolute paths, got: /Europe/CUSTOM
+            pass
 
     def knows_timezone_id(self, id: str) -> bool:
         """Whether the timezone is already cached by the implementation."""

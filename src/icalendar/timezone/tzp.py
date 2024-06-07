@@ -72,10 +72,12 @@ class TZP:
         This can influence the result from timezone(): Once cached, the
         custom timezone is returned from timezone().
         """
-        tzid = timezone_component['TZID']
-        if not self.__provider.knows_timezone_id(tzid) \
-            and tzid not in self.__tz_cache:
-            self.__tz_cache[tzid] = timezone_component.to_tz(self)
+        _unclean_id = timezone_component['TZID']
+        id = self.clean_timezone_id(_unclean_id)
+        if not self.__provider.knows_timezone_id(id) \
+            and not self.__provider.knows_timezone_id(_unclean_id) \
+            and id not in self.__tz_cache:
+            self.__tz_cache[id] = timezone_component.to_tz(self)
 
     def fix_rrule_until(self, rrule:rrule, ical_rrule:prop.vRecur) -> None:
         """Make sure the until value works."""
@@ -88,15 +90,24 @@ class TZP:
         """
         return self.__provider.create_timezone(timezone_component)
 
+    def clean_timezone_id(self, tzid: str) -> str:
+        """Return a clean version of the timezone id.
+
+        Timezone ids can be a bit unclean, starting with a / for example.
+        Internally, we should use this to identify timezones.
+        """
+        return tzid.strip("/")
+
     def timezone(self, id: str) -> Optional[datetime.tzinfo]:
         """Return a timezone with an id or None if we cannot find it."""
-        clean_id = id.strip("/")
-        tz = self.__provider.timezone(clean_id)
+        _unclean_id = id
+        id = self.clean_timezone_id(id)
+        tz = self.__provider.timezone(id)
         if tz is not None:
             return tz
-        if clean_id in WINDOWS_TO_OLSON:
-            tz = self.__provider.timezone(WINDOWS_TO_OLSON[clean_id])
-        return tz or self.__provider.timezone(id) or self.__tz_cache.get(id)
+        if id in WINDOWS_TO_OLSON:
+            tz = self.__provider.timezone(WINDOWS_TO_OLSON[id])
+        return tz or self.__provider.timezone(_unclean_id) or self.__tz_cache.get(id)
 
     def uses_pytz(self) -> bool:
         """Whether we use pytz at all."""

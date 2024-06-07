@@ -170,8 +170,10 @@ def test_creates_event_with_base64_encoded_attachment_issue_82(events):
 ])
 def test_handles_unique_tzid(calendars, in_timezone, calendar_name):
     calendar = calendars[calendar_name]
-    start_dt = calendar.walk('VEVENT')[0]['dtstart'].dt
-    end_dt = calendar.walk('VEVENT')[0]['dtend'].dt
+    event = calendar.walk('VEVENT')[0]
+    print(vars(event))
+    start_dt = event['dtstart'].dt
+    end_dt = event['dtend'].dt
     assert start_dt == in_timezone(datetime(2022, 10, 21, 20, 0, 0), 'Europe/Stockholm')
     assert end_dt == in_timezone(datetime(2022, 10, 21, 21, 0, 0), 'Europe/Stockholm')
 
