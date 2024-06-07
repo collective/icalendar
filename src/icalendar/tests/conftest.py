@@ -6,7 +6,7 @@ try:
             return f"zoneinfo.ZoneInfo(key={repr(self.key)})"
     zoneinfo.ZoneInfo = ZoneInfo
 except ImportError:
-    pass
+    import zoneinfo
 import os
 import pytest
 import icalendar
