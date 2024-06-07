@@ -14,15 +14,6 @@ import doctest
 import os
 import pytest
 import importlib
-try:
-    from backports import zoneinfo
-    # we make the tests nicer
-    class ZoneInfo(zoneinfo.ZoneInfo):
-        def __repr__(self):
-            return f"zoneinfo.ZoneInfo(key={repr(self.key)})"
-    zoneinfo.ZoneInfo = ZoneInfo
-except ImportError:
-    pass
 
 HERE = os.path.dirname(__file__) or "."
 ICALENDAR_PATH = os.path.dirname(HERE)

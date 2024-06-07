@@ -1,13 +1,18 @@
+try:
+    from backports import zoneinfo
+    # we make the tests nicer
+    class ZoneInfo(zoneinfo.ZoneInfo):
+        def __repr__(self):
+            return f"zoneinfo.ZoneInfo(key={repr(self.key)})"
+    zoneinfo.ZoneInfo = ZoneInfo
+except ImportError:
+    pass
 import os
 import pytest
 import icalendar
 import pytz
 from datetime import datetime
 from dateutil import tz
-try:
-    import zoneinfo
-except ModuleNotFoundError:
-    from backports import zoneinfo
 from icalendar.cal import Component, Calendar, Event, ComponentFactory
 from icalendar.timezone import tzp as _tzp
 from icalendar.timezone import TZP
