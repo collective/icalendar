@@ -3,4 +3,12 @@ from .tzp import TZP
 
 tzp = TZP()
 
-__all__ = ["tzp"]
+def use_pytz():
+    """Use pytz as the implementation that looks up and creates timezones."""
+    tzp.use_pytz()
+
+def use_zoneinfo():
+    """Use zoneinfo as the implementation that looks up and creates timezones."""
+    tzp.use_zoneinfo()
+
+__all__ = ["tzp", "use_pytz", "use_zoneinfo"]

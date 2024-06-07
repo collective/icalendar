@@ -113,6 +113,10 @@ class TZP:
         """Whether we use pytz at all."""
         return self.__provider.uses_pytz()
 
+    def uses_zoneinfo(self) -> bool:
+        """Whether we use zoneinfo."""
+        return self.__provider.uses_zoneinfo()
+
     @property
     def name(self) -> str:
         """The name of the timezone component used."""

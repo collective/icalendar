@@ -207,8 +207,16 @@ def other_tzp(request, tzp):
     tzp = TZP(request.param)
     return tzp
 
+
 @pytest.fixture()
 def pytz_only(tzp):
     """Skip tests that are not running under pytz."""
     if not tzp.uses_pytz():
         pytest.skip("Not using pytz. Skipping this test.")
+
+
+@pytest.fixture()
+def zoneinfo_only(tzp):
+    """Skip tests that are not running under pytz."""
+    if not tzp.uses_zoneinfo():
+        pytest.skip("Not using zoneinfo. Skipping this test.")

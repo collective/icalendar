@@ -80,6 +80,23 @@ We expect the ``master`` branch with versions ``5+`` receive the latest updates 
 and the ``4.x`` branch the subset of security and bug fixes only.
 We recommend migrating to later Python versions and also providing feedback if you depend on the ``4.x`` features.
 
+``icalendar`` Version 6
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Version 6 of ``icalendar`` switches the timezone implementation from ``pytz`` to ``zoneinfo``.
+
+    >>> dt = icalendar.Calendar.example("timezoned").walk("VEVENT")[0]["DTSTART"].dt
+    >>> dt.tzinfo
+    zoneinfo.ZoneInfo(key='Europe/Vienna')
+
+If you would like to continue to use ``pytz`` and receive the latest updates, you
+can switch back:
+
+    >>> icalendar.use_pytz()
+    >>> dt = icalendar.Calendar.example("timezoned").walk("VEVENT")[0]["DTSTART"].dt
+    >>> dt.tzinfo
+    <DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>
+
 Related projects
 ================
 

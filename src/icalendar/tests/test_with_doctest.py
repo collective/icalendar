@@ -14,6 +14,15 @@ import doctest
 import os
 import pytest
 import importlib
+try:
+    from backports import zoneinfo
+    # we make the tests nicer
+    class ZoneInfo(zoneinfo.ZoneInfo):
+        def __repr__(self):
+            return f"zoneinfo.ZoneInfo(key={repr(self.key)})"
+    zoneinfo.ZoneInfo = ZoneInfo
+except ImportError:
+    pass
 
 HERE = os.path.dirname(__file__) or "."
 ICALENDAR_PATH = os.path.dirname(HERE)
@@ -58,7 +67,8 @@ def test_files_is_included(filename):
     assert any(path.endswith(filename) for path in DOCUMENT_PATHS)
 
 @pytest.mark.parametrize("document", DOCUMENT_PATHS)
-def test_documentation_file(document, pytz_only):
+def test_documentation_file(document, zoneinfo_only):
     """This test runs doctest on a documentation file."""
+
     test_result = doctest.testfile(document, module_relative=False)
     assert test_result.failed == 0, f"{test_result.failed} errors in {os.path.basename(document)}"

@@ -35,3 +35,11 @@ class TZProvider(ABC):
     @abstractmethod
     def timezone(self, name: str) -> Optional[tzinfo]:
         """Return a timezone with a name or None if we cannot find it."""
+
+    @abstractmethod
+    def uses_pytz(self) -> bool:
+        """Whether we use pytz."""
+
+    @abstractmethod
+    def uses_zoneinfo(self) -> bool:
+        """Whether we use zoneinfo."""

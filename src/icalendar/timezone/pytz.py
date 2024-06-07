@@ -57,8 +57,12 @@ class PYTZ(TZProvider):
             pass
 
     def uses_pytz(self) -> bool:
-        """Whether we use pytz at all."""
+        """Whether we use pytz."""
         return True
+
+    def uses_zoneinfo(self) -> bool:
+        """Whether we use zoneinfo."""
+        return False
 
 
 __all__ = ["PYTZ"]

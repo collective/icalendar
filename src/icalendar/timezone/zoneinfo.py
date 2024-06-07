@@ -75,8 +75,12 @@ class ZONEINFO(TZProvider):
         return tzical(file).get()
 
     def uses_pytz(self) -> bool:
-        """Whether we use pytz at all."""
+        """Whether we use pytz."""
         return False
+
+    def uses_zoneinfo(self) -> bool:
+        """Whether we use zoneinfo."""
+        return True
 
 
 def pickle_tzicalvtz(tzicalvtz:tz._tzicalvtz):
