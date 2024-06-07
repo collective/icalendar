@@ -3,6 +3,7 @@ files according to rfc2445.
 
 These are the defined components.
 """
+from __future__ import annotations
 from datetime import datetime, timedelta
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Contentline
@@ -16,7 +17,20 @@ from icalendar.prop import vText, vDDDLists
 from icalendar.timezone import tzp
 from typing import Tuple, List
 import dateutil.rrule, dateutil.tz
+import os
 
+
+def get_example(component_directory: str, example_name: str) -> bytes:
+    """Return an example and raise an error if it is absent."""
+    here = os.path.dirname(__file__)
+    examples = os.path.join(here, "tests", component_directory)
+    if not example_name.endswith(".ics"):
+        example_name = example_name + ".ics"
+    example_file = os.path.join(examples, example_name)
+    if not os.path.isfile(example_file):
+        raise ValueError(f"Example {example_name} for {component_directory} not found. You can use one of {', '.join(os.listdir(examples))}")
+    with open(example_file, "rb") as f:
+        return f.read()
 
 
 ######################################
@@ -492,6 +506,12 @@ class Event(Component):
     )
     ignore_exceptions = True
 
+    @classmethod
+    def example(cls, name) -> Event:
+        """Return the calendar example with the given name."""
+        return cls.from_ical(get_example("events", name))
+
+
 
 class Todo(Component):
 
@@ -543,6 +563,11 @@ class Timezone(Component):
     canonical_order = ('TZID',)
     required = ('TZID',) # it also requires one of components DAYLIGHT and STANDARD
     singletons = ('TZID', 'LAST-MODIFIED', 'TZURL',)
+
+    @classmethod
+    def example(cls, name) -> Calendar:
+        """Return the calendar example with the given name."""
+        return cls.from_ical(get_example("timezones", name))
 
     @staticmethod
     def _extract_offsets(component, tzname):
@@ -727,6 +752,11 @@ class Calendar(Component):
     canonical_order = ('VERSION', 'PRODID', 'CALSCALE', 'METHOD',)
     required = ('PRODID', 'VERSION', )
     singletons = ('PRODID', 'VERSION', 'CALSCALE', 'METHOD')
+
+    @classmethod
+    def example(cls, name) -> Calendar:
+        """Return the calendar example with the given name."""
+        return cls.from_ical(get_example("calendars", name))
 
 # These are read only singleton, so one instance is enough for the module
 types_factory = TypesFactory()

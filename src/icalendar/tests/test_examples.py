@@ -1,7 +1,7 @@
 '''tests ensuring that *the* way of doing things works'''
 
 import datetime
-from icalendar import Calendar, Event
+from icalendar import Calendar, Event, Timezone
 import pytest
 
 
@@ -37,3 +37,26 @@ def test_creating_calendar_with_unicode_fields(calendars, utc):
     cal.add_component(event2)
 
     assert cal.to_ical() == calendars.created_calendar_with_unicode_fields.raw_ics
+
+
+@pytest.mark.parametrize("component,example",
+    [
+        (Calendar, "example"),
+        (Calendar, "example.ics"),
+        (Event, "event_with_rsvp"),
+        (Timezone, "pacific_fiji"),
+    ]
+)
+def test_component_has_examples(tzp, calendars, timezones, events, component, example):
+    """Check that the examples function works."""
+    mapping = {Calendar: calendars, Event: events, Timezone: timezones}
+    example_component = component.example(example)
+    expected_component = mapping[component][example]
+    assert example_component == expected_component
+
+
+def test_invalid_examples_lists_the_others():
+    """We need a bit of guidance here."""
+    with pytest.raises(ValueError) as e:
+        Calendar.example("does not exist")
+    assert "example.ics" in str(e.value)
