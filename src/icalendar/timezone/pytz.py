@@ -1,6 +1,7 @@
 """Use pytz timezones."""
 from __future__ import annotations
 import pytz
+from .. import cal
 from datetime import datetime, tzinfo
 from pytz.tzinfo import DstTzInfo
 from typing import Optional
@@ -12,6 +13,8 @@ from dateutil.rrule import rrule
 
 class PYTZ(TZProvider):
     """Provide icalendar with timezones from pytz."""
+
+    name = "pytz"
 
     def localize_utc(self, dt: datetime) -> datetime:
         """Return the datetime in UTC."""
@@ -35,8 +38,10 @@ class PYTZ(TZProvider):
             # either
             rrule._until = datetime(2038, 12, 31, tzinfo=pytz.UTC)
 
-    def create_timezone(self, name: str, transition_times, transition_info) -> tzinfo:
+    def create_timezone(self, tz: cal.Timezone) -> tzinfo:
         """Create a pytz timezone from the given information."""
+        transition_times, transition_info = tz.get_transitions()
+        name = tz.tz_name
         cls = type(name, (DstTzInfo,), {
             'zone': name,
             '_utc_transition_times': transition_times,
@@ -50,6 +55,10 @@ class PYTZ(TZProvider):
             return pytz.timezone(name)
         except pytz.UnknownTimeZoneError:
             pass
+
+    def uses_pytz(self) -> bool:
+        """Whether we use pytz at all."""
+        return True
 
 
 __all__ = ["PYTZ"]

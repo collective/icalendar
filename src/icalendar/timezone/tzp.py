@@ -4,9 +4,12 @@ from .. import cal
 from typing import Optional, Union
 from .windows_to_olson import WINDOWS_TO_OLSON
 from .provider import TZProvider
+from icalendar import prop
+from dateutil.rrule import rrule
 
 
 DEFAULT_TIMEZONE_PROVIDER = "pytz"
+
 
 class TZP:
     """This is the timezone provider proxy.
@@ -62,18 +65,28 @@ class TZP:
             tz = self.timezone(tz)
         return self.__provider.localize(dt, tz)
 
-    def cache_timezone_component(self, component: cal.VTIMEZONE) -> None:
-        """Cache a timezone component."""
-        if not self.__provider.knows_timezone_id(component['TZID']):
-            self.__tz_cache.setdefault(component['TZID'], component.to_tz())
+    def cache_timezone_component(self, timezone_component: cal.VTIMEZONE) -> None:
+        """Cache the timezone that is created from a timezone component
+        if it is not already known.
 
-    def fix_rrule_until(self, rrule, component) -> None:
+        This can influence the result from timezone(): Once cached, the
+        custom timezone is returned from timezone().
+        """
+        tzid = timezone_component['TZID']
+        if not self.__provider.knows_timezone_id(tzid) \
+            and tzid not in self.__tz_cache:
+            self.__tz_cache[tzid] = timezone_component.to_tz(self)
+
+    def fix_rrule_until(self, rrule:rrule, ical_rrule:prop.vRecur) -> None:
         """Make sure the until value works."""
-        self.__provider.fix_rrule_until(rrule, component)
+        self.__provider.fix_rrule_until(rrule, ical_rrule)
 
-    def create_timezone(self, name: str, transition_times, transition_info) -> datetime.tzinfo:
-        """Create a timezone from given information."""
-        return self.__provider.create_timezone(name, transition_times, transition_info)
+    def create_timezone(self, timezone_component: cal.Timezone) -> datetime.tzinfo:
+        """Create a timezone from a timezone component.
+
+        This component will not be cached.
+        """
+        return self.__provider.create_timezone(timezone_component)
 
     def timezone(self, id: str) -> Optional[datetime.tzinfo]:
         """Return a timezone with an id or None if we cannot find it."""
@@ -85,5 +98,16 @@ class TZP:
             tz = self.__provider.timezone(WINDOWS_TO_OLSON[clean_id])
         return tz or self.__provider.timezone(id) or self.__tz_cache.get(id)
 
+    def uses_pytz(self) -> bool:
+        """Whether we use pytz at all."""
+        return self.__provider.uses_pytz()
+
+    @property
+    def name(self) -> str:
+        """The name of the timezone component used."""
+        return self.__provider.name
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({repr(self.name)})"
 
 __all__ = ["TZP"]

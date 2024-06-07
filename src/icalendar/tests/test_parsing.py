@@ -116,7 +116,7 @@ def test_tzid_parsed_properly_issue_53(timezones):
     https://github.com/collective/icalendar/issues/53
     '''
     assert timezones.issue_53_tzid_parsed_properly['tzid'].to_ical() == b'America/New_York'
-    
+
 def test_timezones_to_ical_is_inverse_of_from_ical(timezones):
     '''Issue #55 - Parse error on utc-offset with seconds value
      see https://github.com/collective/icalendar/issues/55'''
@@ -141,7 +141,7 @@ def test_no_tzid_when_utc(utc, date, expected_output):
     event = Event()
     event.add('dtstart', date)
     assert expected_output in event.to_ical()
-    
+
 def test_vBinary_base64_encoded_issue_82():
     '''Issue #82 - vBinary __repr__ called rather than to_ical from
                    container types
@@ -186,4 +186,3 @@ def test_escaped_characters_read(event_name, expected_cn, expected_ics, events):
     event = events[event_name]
     assert event['ORGANIZER'].params['CN'] == expected_cn
     assert event['ORGANIZER'].to_ical() == expected_ics.encode('utf-8')
-

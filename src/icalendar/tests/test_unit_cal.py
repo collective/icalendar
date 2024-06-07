@@ -9,6 +9,7 @@ import icalendar
 import re
 from icalendar.cal import Component, Calendar, Event, ComponentFactory
 from icalendar import prop, cal
+from icalendar.prop import tzid_from_dt
 
 
 def test_cal_Component(calendar_component):
@@ -254,7 +255,7 @@ def test_cal_Component_from_ical(component_name, property_name, tzp):
     component_str += property_name + ';TZID=America/Denver:'
     component_str += '20120404T073000\nEND:' + component_name
     component = Component.from_ical(component_str)
-    assert str(component[property_name].dt.tzinfo.zone) == "America/Denver"
+    assert tzid_from_dt(component[property_name].dt) == "America/Denver"
 
 
 @comp_prop

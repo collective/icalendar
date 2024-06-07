@@ -1,6 +1,6 @@
 """This file tests the source code provided by the documentation.
 
-See 
+See
 - doctest documentation: https://docs.python.org/3/library/doctest.html
 - Issue 443: https://github.com/collective/icalendar/issues/443
 
@@ -58,10 +58,7 @@ def test_files_is_included(filename):
     assert any(path.endswith(filename) for path in DOCUMENT_PATHS)
 
 @pytest.mark.parametrize("document", DOCUMENT_PATHS)
-def test_documentation_file(document):
+def test_documentation_file(document, pytz_only):
     """This test runs doctest on a documentation file."""
     test_result = doctest.testfile(document, module_relative=False)
     assert test_result.failed == 0, f"{test_result.failed} errors in {os.path.basename(document)}"
-
-
-

@@ -14,7 +14,7 @@ from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import TypesFactory
 from icalendar.prop import vText, vDDDLists
 from icalendar.timezone import tzp
-
+from typing import Tuple, List
 import dateutil.rrule, dateutil.tz
 
 
@@ -610,13 +610,31 @@ class Timezone(Component):
         tznames.add(tzname)
         return tzname
 
-    def to_tz(self):
+    def to_tz(self, tzp=tzp):
         """convert this VTIMEZONE component to a timezone object
         """
+        return tzp.create_timezone(self)
+
+    @property
+    def tz_name(self) -> str:
+        """Return the name of the timezone component.
+
+        Please note that the  names of the timezone is different from this name
+        and may change with winter/summer time.
+        """
         try:
-            zone = str(self['TZID'])
+            return str(self['TZID'])
         except UnicodeEncodeError:
-            zone = self['TZID'].encode('ascii', 'replace')
+            return self['TZID'].encode('ascii', 'replace')
+
+    def get_transitions(self) -> Tuple[List[datetime], List[Tuple[timedelta, timedelta, str]]]:
+        """Return a tuple of (transition_times, transition_info)
+
+        - transition_times = [datetime, ...]
+        - transition_info = [(TZOFFSETTO, dts_offset, tzname)]
+
+        """
+        zone = self.tz_name
         transitions = []
         dst = {}
         tznames = set()
@@ -672,8 +690,7 @@ class Timezone(Component):
                             break
             assert dst_offset is not False
             transition_info.append((osto, dst_offset, name))
-
-        return tzp.create_timezone(zone, transition_times, transition_info)
+        return transition_times, transition_info
 
 
 class TimezoneStandard(Component):

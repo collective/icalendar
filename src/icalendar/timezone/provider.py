@@ -1,12 +1,16 @@
 """The interface for timezone implementations."""
 from __future__ import annotations
-from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod, abstractproperty
 from icalendar import prop
 from dateutil.rrule import rrule
 from datetime import datetime, tzinfo
 
 class TZProvider(ABC):
     """Interface for timezone implementations."""
+
+    @abstractproperty
+    def name(self) -> str:
+        """The name of the implementation."""
 
     @abstractmethod
     def localize_utc(self, dt: datetime) -> datetime:

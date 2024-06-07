@@ -24,7 +24,11 @@ class DataSource:
 
     def __getitem__(self, attribute):
         """Parse a file and return the result stored in the attribute."""
-        source_file = attribute + '.ics'
+        if attribute.endswith(".ics"):
+            source_file = attribute
+            attribute = attribute[:-4]
+        else:
+            source_file = attribute + '.ics'
         source_path = os.path.join(self._data_source_folder, source_file)
         if not os.path.isfile(source_path):
             raise AttributeError(f"{source_path} does not exist.")
@@ -35,6 +39,12 @@ class DataSource:
             source.raw_ics = raw_ics
         self.__dict__[attribute] = source
         return source
+
+    def __contains__(self, key):
+        """key in self.keys()"""
+        if key.endswith(".ics"):
+            key = key[:-4]
+        return key in self.keys()
 
     def __getattr__(self, key):
         return self[key]
@@ -49,23 +59,20 @@ class DataSource:
 
 HERE = os.path.dirname(__file__)
 CALENDARS_FOLDER = os.path.join(HERE, 'calendars')
-CALENDARS = DataSource(CALENDARS_FOLDER, icalendar.Calendar.from_ical)
 TIMEZONES_FOLDER = os.path.join(HERE, 'timezones')
-TIMEZONES = DataSource(TIMEZONES_FOLDER, icalendar.Timezone.from_ical)
 EVENTS_FOLDER = os.path.join(HERE, 'events')
-EVENTS = DataSource(EVENTS_FOLDER, icalendar.Event.from_ical)
 
-@pytest.fixture()
+@pytest.fixture(scope="package")
 def calendars(tzp):
-    return CALENDARS
+    return DataSource(CALENDARS_FOLDER, icalendar.Calendar.from_ical)
 
-@pytest.fixture()
+@pytest.fixture(scope="package")
 def timezones(tzp):
-    return TIMEZONES
+    return DataSource(TIMEZONES_FOLDER, icalendar.Timezone.from_ical)
 
-@pytest.fixture()
+@pytest.fixture(scope="package")
 def events(tzp):
-    return EVENTS
+    return DataSource(EVENTS_FOLDER, icalendar.Event.from_ical)
 
 @pytest.fixture(params=[
     pytz.utc,
@@ -85,22 +92,26 @@ def in_timezone(request, tzp):
     return request.param
 
 
+# exclude broken calendars here
+ICS_FILES_EXCLUDE = (
+    "big_bad_calendar.ics", "issue_104_broken_calendar.ics", "small_bad_calendar.ics",
+    "multiple_calendar_components.ics", "pr_480_summary_with_colon.ics",
+    "parsing_error_in_UTC_offset.ics", "parsing_error.ics",
+)
 ICS_FILES = [
-    (data, key)
-    for data in [CALENDARS, TIMEZONES, EVENTS]
-    for key in data.keys() if key not in
-    ( # exclude broken calendars here
-        "big_bad_calendar", "issue_104_broken_calendar", "small_bad_calendar",
-        "multiple_calendar_components", "pr_480_summary_with_colon",
-        "parsing_error_in_UTC_offset", "parsing_error",
-    )
+    file_name for file_name in
+    os.listdir(CALENDARS_FOLDER) + os.listdir(TIMEZONES_FOLDER) + os.listdir(EVENTS_FOLDER)
+    if file_name not in ICS_FILES_EXCLUDE
 ]
 @pytest.fixture(params=ICS_FILES)
-def ics_file(request, tzp):
+def ics_file(tzp, calendars, timezones, events, request):
     """An example ICS file."""
-    data, key = request.param
-    print(key)
-    return data[key]
+    ics_file = request.param
+    print("example file:", ics_file)
+    for data in calendars, timezones, events:
+        if ics_file in data:
+            return data[ics_file]
+    raise ValueError(f"Could not find file {ics_file}.")
 
 
 FUZZ_V1 = [os.path.join(CALENDARS_FOLDER, key) for key in os.listdir(CALENDARS_FOLDER) if "fuzz-testcase" in key]
@@ -172,10 +183,16 @@ def calendar_with_resources(tzp):
     return c
 
 
-@pytest.fixture(params=["pytz", "zoneinfo"])
-def tzp(request):
+@pytest.fixture(params=["pytz", "zoneinfo"], scope="package")
+def tzp_name(request):
+    """The name of the timezone provider."""
+    return request.param
+
+
+@pytest.fixture(scope="package")
+def tzp(tzp_name):
     """The time zone provider."""
-    _tzp.use(request.param) # todo: parametrize
+    _tzp.use(tzp_name)
     yield _tzp
     _tzp.use_default()
 
@@ -189,3 +206,9 @@ def other_tzp(request, tzp):
     """
     tzp = TZP(request.param)
     return tzp
+
+@pytest.fixture()
+def pytz_only(tzp):
+    """Skip tests that are not running under pytz."""
+    if not tzp.uses_pytz():
+        pytest.skip("Not using pytz. Skipping this test.")

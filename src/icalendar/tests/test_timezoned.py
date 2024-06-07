@@ -4,6 +4,7 @@ import datetime
 import dateutil.parser
 import icalendar
 import os
+from icalendar.prop import tzid_from_dt
 
 
 def test_create_from_ical(calendars, other_tzp):
@@ -128,9 +129,16 @@ def test_tzinfo_dateutil():
 def test_create_america_new_york(calendars, tzp):
     """testing America/New_York, the most complex example from the RFC"""
     cal = calendars.america_new_york
+    dt = cal.walk('VEVENT')[0]['DTSTART'][0].dt
+    assert tzid_from_dt(dt) in ('custom_America/New_York', "EDT")
 
-    tz = cal.walk('VEVENT')[0]['DTSTART'][0].dt.tzinfo
-    assert str(tz) == 'custom_America/New_York'
+
+def test_america_new_york_with_pytz(calendars, tzp, pytz_only):
+    """Create a custom timezone with pytz and test the transition times."""
+    print(tzp)
+    cal = calendars.america_new_york
+    dt = cal.walk('VEVENT')[0]['DTSTART'][0].dt
+    tz = dt.tzinfo
     tz_new_york = tzp.timezone('America/New_York')
     # for reasons (tm) the locally installed version of the time zone
     # database isn't always complete, therefore we only compare some
@@ -151,7 +159,7 @@ def test_create_america_new_york(calendars, tzp):
     assert (datetime.timedelta(-1, 68400), datetime.timedelta(0), 'EST') in tz._tzinfos.keys()
 
 
-def test_create_pacific_fiji(calendars):
+def test_create_pacific_fiji(calendars, pytz_only):
     """testing Pacific/Fiji, another pretty complex example with more than
     one RDATE property per subcomponent"""
     cal = calendars.pacific_fiji
@@ -294,8 +302,14 @@ def test_rdate(calendars):
     """
     cal = calendars.timezone_rdate
     vevent = cal.walk('VEVENT')[0]
+    assert tzid_from_dt(vevent['DTSTART'].dt) in ('posix/Europe/Vaduz', "CET")
+
+def test_rdate_pytz(calendars, pytz_only):
+    """testing if we can handle VTIMEZONEs who only have an RDATE, not RRULE
+    """
+    cal = calendars.timezone_rdate
+    vevent = cal.walk('VEVENT')[0]
     tz = vevent['DTSTART'].dt.tzinfo
-    assert str(tz) == 'posix/Europe/Vaduz'
     assert tz._utc_transition_times[:6] == [
             datetime.datetime(1901, 12, 13, 20, 45, 38),
             datetime.datetime(1941, 5, 5, 0, 0, 0),
