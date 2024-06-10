@@ -25,7 +25,7 @@ def test_timezone_names_are_known(tz_name, tzp_):
 @pytest.mark.parametrize("func", [pickle.dumps, copy.copy, copy.deepcopy])
 @pytest.mark.parametrize("obj", [_tzicalvtz("id"), rrule(freq=MONTHLY, count=4, dtstart=datetime(2028, 10, 1), cache=True)])
 def test_can_pickle_timezone(func, tzp, obj):
-    """Check that re can serialize and copy timezones."""
+    """Check that we can serialize and copy timezones."""
     func(obj)
 
 
@@ -47,7 +47,7 @@ def test_tzp_is_pytz_only(tzp, tzp_name, pytz_only):
 
 
 def test_cache_reuse_timezone_cache(tzp, timezones):
-    """Make sure we do not reuse the timezones created when we switch the provider."""
+    """Make sure we do not cache the timezones twice and change them."""
     tzp.cache_timezone_component(timezones.pacific_fiji)
     tzp1 = tzp.timezone("custom_Pacific/Fiji")
     assert tzp1 is tzp.timezone("custom_Pacific/Fiji")
