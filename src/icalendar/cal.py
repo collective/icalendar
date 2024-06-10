@@ -644,7 +644,7 @@ class Timezone(Component):
     def tz_name(self) -> str:
         """Return the name of the timezone component.
 
-        Please note that the  names of the timezone is different from this name
+        Please note that the names of the timezone are different from this name
         and may change with winter/summer time.
         """
         try:
