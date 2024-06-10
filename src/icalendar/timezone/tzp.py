@@ -29,7 +29,7 @@ class TZP:
         self._use(PYTZ())
 
     def use_zoneinfo(self) -> None:
-        """Use zoneinfo as timezone provider."""
+        """Use zoneinfo as the timezone provider."""
         from .zoneinfo import ZONEINFO
         self._use(ZONEINFO())
 
