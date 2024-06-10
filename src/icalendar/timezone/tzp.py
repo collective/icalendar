@@ -52,7 +52,7 @@ class TZP:
         """Use the default timezone provider."""
         self.use(DEFAULT_TIMEZONE_PROVIDER)
 
-    def localize_utc(self, dt: datetime.datetime)-> datetime.datetime:
+    def localize_utc(self, dt: datetime.datetime) -> datetime.datetime:
         """Return the datetime in UTC.
 
         If the datetime has no timezone, UTC is set.
