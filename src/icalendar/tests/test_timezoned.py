@@ -140,7 +140,7 @@ def test_america_new_york_with_pytz(calendars, tzp, pytz_only):
     dt = cal.walk('VEVENT')[0]['DTSTART'][0].dt
     tz = dt.tzinfo
     tz_new_york = tzp.timezone('America/New_York')
-    # for reasons (tm) the locally installed version of the time zone
+    # for reasons (tm) the locally installed version of the timezone
     # database isn't always complete, therefore we only compare some
     # transition times
     ny_transition_times = []
