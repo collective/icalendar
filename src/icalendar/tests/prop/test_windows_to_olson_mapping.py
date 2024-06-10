@@ -6,9 +6,11 @@ from datetime import datetime
 
 
 def test_windows_timezone(tzp):
-    """test that an example"""
-    dt = vDatetime.from_ical('20170507T181920', 'Eastern Standard Time'),
+    """Test that the timezone is mapped correctly to olson."""
+    dt = vDatetime.from_ical('20170507T181920', 'Eastern Standard Time')
     expected = tzp.localize(datetime(2017, 5, 7, 18, 19, 20), 'America/New_York')
+    assert dt.tzinfo == dt.tzinfo
+    assert dt == expected
 
 
 @pytest.mark.parametrize("olson_id", WINDOWS_TO_OLSON.values())
