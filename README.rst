@@ -90,7 +90,7 @@ can switch back:
     >>> dt.tzinfo
     <DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>
 
-`Branch master <https://github.com/collective/icalendar/>`__ with the compatibility to Python versions ``3.7+`` and ``PyPy3``.
+`Branch master <https://github.com/collective/icalendar/>`_ with the compatibility to Python versions ``3.7+`` and ``PyPy3``.
 We expect the ``master`` branch with versions ``6+`` to receive the latest updates and features.
 
 Version 5
