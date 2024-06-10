@@ -18,13 +18,20 @@ def assert_not_equal(actual_value, expected_value):
 
 
 def test_parsed_calendars_are_equal_if_parsed_again(ics_file, tzp):
-    """Ensure that a calendar equals the same calendar."""
+    """Ensure that a calendar equals the same calendar.
+
+    ics -> calendar -> ics -> same calendar
+    """
     copy_of_calendar = ics_file.__class__.from_ical(ics_file.to_ical())
     assert_equal(copy_of_calendar, ics_file)
 
 
 def test_parsed_calendars_are_equal_if_from_same_source(ics_file, tzp):
-    """Ensure that a calendar equals the same calendar."""
+    """Ensure that a calendar equals the same calendar.
+
+    ics -> calendar
+    ics -> same calendar
+    """
     cal1 = ics_file.__class__.from_ical(ics_file.raw_ics)
     cal2 = ics_file.__class__.from_ical(ics_file.raw_ics)
     assert_equal(cal1, cal2)
