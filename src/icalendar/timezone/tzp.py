@@ -55,7 +55,7 @@ class TZP:
     def localize_utc(self, dt: datetime.datetime) -> datetime.datetime:
         """Return the datetime in UTC.
 
-        If the datetime has no timezone, UTC is set.
+        If the datetime has no timezone, set UTC as its timezone.
         """
         return self.__provider.localize_utc(dt)
 
