@@ -196,7 +196,7 @@ def tzp_name(request):
 
 @pytest.fixture(scope="package")
 def tzp(tzp_name):
-    """The time zone provider."""
+    """The timezone provider."""
     _tzp.use(tzp_name)
     yield _tzp
     _tzp.use_default()
