@@ -103,7 +103,7 @@ Please use version 6 and switch to use ``zoneinfo`` as documented above.
 Version 4
 ~~~~~~~~~
 
-Version 4 is on `Branch 4.x <https://github.com/collective/icalendar/tree/4.x>`_ with maximum compatibility with Python versions ``2.7`` and ``3.4+``, ``PyPy2`` and ``PyPy3``.
+Version 4 is on `branch 4.x <https://github.com/collective/icalendar/tree/4.x>`_ with maximum compatibility with Python versions ``2.7`` and ``3.4+``, ``PyPy2`` and ``PyPy3``.
 The ``4.x`` branch only receives security and bug fixes if someone makes the effort.
 We recommend migrating to later Python versions and also providing feedback if you depend on the ``4.x`` features.
 
