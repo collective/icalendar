@@ -98,7 +98,7 @@ Version 5
 
 Version 5 uses only the ``pytz`` timezone implementation, and not ``zoneinfo``.
 No updates will be released for this.
-Please use version 6 and switch to use ``pytz`` as documented above.
+Please use version 6 and switch to use ``zoneinfo`` as documented above.
 
 Version 4
 ~~~~~~~~~
