@@ -9,6 +9,7 @@ Minor changes:
 - Add funding information
 - Update windows to olson conversion for Greenland Standard Time
 - Extend examples in Usage with alarm and recurrence
+- Document how to serve the built documentation to view with the browser
 
 Breaking changes:
 
