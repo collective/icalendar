@@ -67,15 +67,15 @@ CALENDARS_FOLDER = os.path.join(HERE, 'calendars')
 TIMEZONES_FOLDER = os.path.join(HERE, 'timezones')
 EVENTS_FOLDER = os.path.join(HERE, 'events')
 
-@pytest.fixture(scope="package")
+@pytest.fixture(scope="module")
 def calendars(tzp):
     return DataSource(CALENDARS_FOLDER, icalendar.Calendar.from_ical)
 
-@pytest.fixture(scope="package")
+@pytest.fixture(scope="module")
 def timezones(tzp):
     return DataSource(TIMEZONES_FOLDER, icalendar.Timezone.from_ical)
 
-@pytest.fixture(scope="package")
+@pytest.fixture(scope="module")
 def events(tzp):
     return DataSource(EVENTS_FOLDER, icalendar.Event.from_ical)
 
@@ -188,13 +188,7 @@ def calendar_with_resources(tzp):
     return c
 
 
-@pytest.fixture(params=["pytz", "zoneinfo"], scope="package")
-def tzp_name(request):
-    """The name of the timezone provider."""
-    return request.param
-
-
-@pytest.fixture(scope="package")
+@pytest.fixture(scope="module")
 def tzp(tzp_name):
     """The timezone provider."""
     _tzp.use(tzp_name)
@@ -225,3 +219,22 @@ def zoneinfo_only(tzp):
     """Skip tests that are not running under pytz."""
     if not tzp.uses_zoneinfo():
         pytest.skip("Not using zoneinfo. Skipping this test.")
+
+
+def pytest_generate_tests(metafunc):
+    """Parametrize without skipping:
+
+    tzp_name will be parametrized according to the use of
+    - pytz_only
+    - zoneinfo_only
+
+    See https://docs.pytest.org/en/6.2.x/example/parametrize.html#deferring-the-setup-of-parametrized-resources
+    """
+    if "tzp_name" in metafunc.fixturenames:
+        tzp_names = ["pytz", "zoneinfo"]
+        if "zoneinfo_only" in metafunc.fixturenames:
+            tzp_names.remove("pytz")
+        if "pytz_only" in  metafunc.fixturenames:
+            tzp_names.remove("zoneinfo")
+        assert tzp_names, "Use pytz_only or zoneinfo_only but not both!"
+        metafunc.parametrize("tzp_name", tzp_names, scope="module")
