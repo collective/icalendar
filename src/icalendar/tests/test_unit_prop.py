@@ -49,6 +49,9 @@ class TestProp(unittest.TestCase):
         self.assertEqual(vBoolean.from_ical(vBoolean(True).to_ical()), True)
         self.assertEqual(vBoolean.from_ical('true'), True)
 
+        # Error: key not exists
+        self.assertRaises(ValueError, vBoolean.from_ical, 'ture')
+
     def test_prop_vCalAddress(self):
         from ..prop import vCalAddress
         txt = b'MAILTO:maxm@mxm.dk'
@@ -65,6 +68,7 @@ class TestProp(unittest.TestCase):
         self.assertEqual(vFloat(1.0).to_ical(), b'1.0')
         self.assertEqual(vFloat.from_ical('42'), 42.0)
         self.assertEqual(vFloat(42).to_ical(), b'42.0')
+        self.assertRaises(ValueError, vFloat.from_ical, '1s3')
 
     def test_prop_vInt(self):
         from ..prop import vInt
@@ -107,9 +111,15 @@ class TestProp(unittest.TestCase):
 
         self.assertTrue(isinstance(vDDDTypes.from_ical('20010101'), date))
 
+        self.assertEqual(vDDDTypes.from_ical('123000'), time(12, 30))
+        self.assertIsInstance(vDDDTypes.from_ical('123000'), time)
+
         self.assertEqual(vDDDTypes.from_ical('P31D'), timedelta(31))
 
         self.assertEqual(vDDDTypes.from_ical('-P31D'), timedelta(-31))
+
+        invalid_period = (datetime(2000, 1, 1), datetime(2000, 1, 2), datetime(2000, 1, 2))
+        self.assertRaises(ValueError, vDDDTypes(invalid_period).to_ical)
 
         # Bad input
         self.assertRaises(ValueError, vDDDTypes, 42)
@@ -123,6 +133,7 @@ class TestProp(unittest.TestCase):
         self.assertEqual(vDate.from_ical('20010102'), date(2001, 1, 2))
 
         self.assertRaises(ValueError, vDate, 'd')
+        self.assertRaises(ValueError, vDate.from_ical, '200102')
 
     def test_prop_vDatetime(self):
         from ..prop import vDatetime
@@ -204,6 +215,17 @@ class TestProp(unittest.TestCase):
         per = (datetime(2000, 1, 1), datetime(2000, 1, 2))
         self.assertEqual(vPeriod(per).to_ical(),
                          b'20000101T000000/20000102T000000')
+
+        # Error: one of the params is not instance of date/datetime
+        per = ('20000101T000000', datetime(2000, 1, 2))
+        self.assertRaises(ValueError, vPeriod, per)
+
+        per = (datetime(2000, 1, 1), '20000102T000000')
+        self.assertRaises(ValueError, vPeriod, per)
+
+        # Error: first params > second params
+        per = (datetime(2000, 1, 2), datetime(2000, 1, 1))
+        self.assertRaises(ValueError, vPeriod, per)
 
         per = (datetime(2000, 1, 1), timedelta(days=31))
         self.assertEqual(vPeriod(per).to_ical(), b'20000101T000000/P31D')
@@ -397,6 +419,8 @@ class TestProp(unittest.TestCase):
         # We should also fail, right?
         self.assertRaises(ValueError, vTime.from_ical, '263000')
 
+        self.assertRaises(ValueError, vTime, '263000')
+
     def test_prop_vUri(self):
         from ..prop import vUri
 
@@ -420,6 +444,7 @@ class TestProp(unittest.TestCase):
         self.assertEqual(vGeo(g).to_ical(), '37.386013;-122.082932')
 
         self.assertRaises(ValueError, vGeo, 'g')
+        self.assertRaises(ValueError, vGeo.from_ical, '1s3;1s3')
 
     def test_prop_vUTCOffset(self):
         from ..prop import vUTCOffset
@@ -461,10 +486,13 @@ class TestProp(unittest.TestCase):
 
         self.assertRaises(ValueError, vUTCOffset.from_ical, '+2400')
 
+        self.assertRaises(ValueError, vUTCOffset, '0:00:00')
+
     def test_prop_vInline(self):
         from ..prop import vInline
 
         self.assertEqual(vInline('Some text'), 'Some text')
+        self.assertEqual(vInline('Some text').to_ical(), b'Some text')
         self.assertEqual(vInline.from_ical('Some text'), 'Some text')
 
         t2 = vInline('other text')
