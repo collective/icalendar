@@ -6,6 +6,7 @@ Changelog
 
 Minor changes:
 
+- Guide to delete the build folder before running tests
 - Add funding information
 - Make documentation build with Python 3.12
 - Update windows to olson conversion for Greenland Standard Time

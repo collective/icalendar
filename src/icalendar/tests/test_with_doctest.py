@@ -1,6 +1,6 @@
 """This file tests the source code provided by the documentation.
 
-See 
+See
 - doctest documentation: https://docs.python.org/3/library/doctest.html
 - Issue 443: https://github.com/collective/icalendar/issues/443
 
@@ -43,12 +43,15 @@ def test_docstring_of_python_file(module_name):
 # This collection needs to exclude .tox and other subdirectories
 DOCUMENTATION_PATH = os.path.join(HERE, "../../../")
 
-DOCUMENT_PATHS = [
-    os.path.join(DOCUMENTATION_PATH, subdir, filename)
-    for subdir in ["docs", "."]
-    for filename in os.listdir(os.path.join(DOCUMENTATION_PATH, subdir))
-    if filename.lower().endswith(".rst")
-]
+try:
+    DOCUMENT_PATHS = [
+        os.path.join(DOCUMENTATION_PATH, subdir, filename)
+        for subdir in ["docs", "."]
+        for filename in os.listdir(os.path.join(DOCUMENTATION_PATH, subdir))
+        if filename.lower().endswith(".rst")
+    ]
+except FileNotFoundError:
+    raise EnvironmentError("Could not find the documentation - remove the build folder and try again.")
 
 @pytest.mark.parametrize("filename", [
     "README.rst",
@@ -62,6 +65,3 @@ def test_documentation_file(document):
     """This test runs doctest on a documentation file."""
     test_result = doctest.testfile(document, module_relative=False)
     assert test_result.failed == 0, f"{test_result.failed} errors in {os.path.basename(document)}"
-
-
-
