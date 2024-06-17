@@ -7,6 +7,7 @@ Changelog
 Minor changes:
 
 - Add funding information
+- Make documentation build with Python 3.12
 - Update windows to olson conversion for Greenland Standard Time
 - Extend examples in Usage with alarm and recurrence
 - Document how to serve the built documentation to view with the browser
