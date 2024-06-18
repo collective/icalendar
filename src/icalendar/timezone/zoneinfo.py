@@ -13,7 +13,7 @@ from .. import cal
 from io import StringIO
 from dateutil.tz import tzical
 from dateutil.tz.tz import _tzicalvtz
-from copyreg import pickle
+import copyreg
 import functools
 import copy
 
@@ -87,7 +87,7 @@ def pickle_tzicalvtz(tzicalvtz:tz._tzicalvtz):
     """Because we use dateutil.tzical, we need to make it pickle-able."""
     return _tzicalvtz, (tzicalvtz._tzid, tzicalvtz._comps)
 
-pickle(_tzicalvtz, pickle_tzicalvtz)
+copyreg.pickle(_tzicalvtz, pickle_tzicalvtz)
 
 
 def pickle_rrule_with_cache(self: rrule):
@@ -106,7 +106,7 @@ def pickle_rrule_with_cache(self: rrule):
     # from https://stackoverflow.com/a/64915638/1320237
     return functools.partial(rrule, new_kwargs.pop("freq"), **new_kwargs), ()
 
-pickle(rrule, pickle_rrule_with_cache)
+copyreg.pickle(rrule, pickle_rrule_with_cache)
 
 def pickle_rruleset_with_cache(rs: rruleset):
     """Pickle an rruleset."""
@@ -128,6 +128,6 @@ def unpickle_rruleset_with_cache(rrule, rdate, exrule, exdate, cache):
     for o in exdate: rs.exdate(o)
     return rs
 
-pickle(rruleset, pickle_rruleset_with_cache)
+copyreg.pickle(rruleset, pickle_rruleset_with_cache)
 
 __all__ = ["ZONEINFO"]
