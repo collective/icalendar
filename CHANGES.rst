@@ -1,6 +1,45 @@
 Changelog
 =========
 
+
+6.0.0 (unreleased)
+------------------
+
+Minor changes:
+
+- Test that all code works with both ``pytz`` and ``zoneinfo``.
+
+Breaking changes:
+
+- Use ``zoneinfo`` for ``icalendar`` objects created from strings,
+  see `Issue #609 <https://github.com/collective/icalendar/issues/609>`_.
+
+  This is an tested extension of the functionality, not a restriction:
+  If you create ``icalendar`` objects with ``pytz`` timezones in your code,
+  ``icalendar`` will continue to work in the same way.
+  Your code is not affected.
+
+  ``zoneinfo`` will be used for those **objects that** ``icalendar``
+  **creates itself**.
+  This happens for example when parsing an ``.ics`` file, strings or bytes with
+  ``from_ical()``.
+
+  If you rely on ``icalendar`` providing timezones from ``pytz``, you can add
+  one line to your code to get the behavior of versions below 6:
+
+  .. code:: Python
+
+      import icalendar
+      icalendar.use_pytz()
+
+New features:
+
+- ...
+
+Bug fixes:
+
+- ...
+
 5.0.13 (unreleased)
 -------------------
 
@@ -17,7 +56,6 @@ Breaking changes:
 New features:
 
 - Create GitHub releases for each tag.
-- Allow using ``zoneinfo`` as a timezone implementation.
 
 Bug fixes:
 
