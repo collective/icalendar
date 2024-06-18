@@ -7,7 +7,6 @@ class ZoneInfo(zoneinfo.ZoneInfo):
     def __repr__(self):
         return f"ZoneInfo(key={repr(self.key)})"
 zoneinfo.ZoneInfo = ZoneInfo
-import os
 import pytest
 import icalendar
 import pytz
@@ -16,16 +15,19 @@ from dateutil import tz
 from icalendar.cal import Component, Calendar, Event, ComponentFactory
 from icalendar.timezone import tzp as _tzp
 from icalendar.timezone import TZP
+from pathlib import Path
+import itertools
+
 
 class DataSource:
     '''A collection of parsed ICS elements (e.g calendars, timezones, events)'''
-    def __init__(self, data_source_folder, parser):
+    def __init__(self, data_source_folder:Path, parser):
         self._parser = parser
         self._data_source_folder = data_source_folder
 
     def keys(self):
         """Return all the files that could be used."""
-        return [file[:-4] for file in os.listdir(self._data_source_folder) if file.lower().endswith(".ics")]
+        return [p.stem for p in self._data_source_folder.iterdir() if p.suffix.lower() == ".ics"]
 
     def __getitem__(self, attribute):
         """Parse a file and return the result stored in the attribute."""
@@ -34,10 +36,10 @@ class DataSource:
             attribute = attribute[:-4]
         else:
             source_file = attribute + '.ics'
-        source_path = os.path.join(self._data_source_folder, source_file)
-        if not os.path.isfile(source_path):
+        source_path = self._data_source_folder / source_file
+        if not source_path.is_file():
             raise AttributeError(f"{source_path} does not exist.")
-        with open(source_path, 'rb') as f:
+        with source_path.open('rb') as f:
             raw_ics = f.read()
         source = self._parser(raw_ics)
         if not isinstance(source, list):
@@ -62,10 +64,10 @@ class DataSource:
         """Return a list of all components parsed."""
         return self.__class__(self._data_source_folder, lambda data: self._parser(data, multiple=True))
 
-HERE = os.path.dirname(__file__)
-CALENDARS_FOLDER = os.path.join(HERE, 'calendars')
-TIMEZONES_FOLDER = os.path.join(HERE, 'timezones')
-EVENTS_FOLDER = os.path.join(HERE, 'events')
+HERE = Path(__file__).parent
+CALENDARS_FOLDER = HERE / 'calendars'
+TIMEZONES_FOLDER = HERE / 'timezones'
+EVENTS_FOLDER = HERE / 'events'
 
 @pytest.fixture(scope="module")
 def calendars(tzp):
@@ -104,9 +106,9 @@ ICS_FILES_EXCLUDE = (
     "parsing_error_in_UTC_offset.ics", "parsing_error.ics",
 )
 ICS_FILES = [
-    file_name for file_name in
-    os.listdir(CALENDARS_FOLDER) + os.listdir(TIMEZONES_FOLDER) + os.listdir(EVENTS_FOLDER)
-    if file_name not in ICS_FILES_EXCLUDE
+    file.name for file in
+    itertools.chain(CALENDARS_FOLDER.iterdir(), TIMEZONES_FOLDER.iterdir(), EVENTS_FOLDER.iterdir())
+    if file.name not in ICS_FILES_EXCLUDE
 ]
 @pytest.fixture(params=ICS_FILES)
 def ics_file(tzp, calendars, timezones, events, request):
@@ -119,7 +121,7 @@ def ics_file(tzp, calendars, timezones, events, request):
     raise ValueError(f"Could not find file {ics_file}.")
 
 
-FUZZ_V1 = [os.path.join(CALENDARS_FOLDER, key) for key in os.listdir(CALENDARS_FOLDER) if "fuzz-testcase" in key]
+FUZZ_V1 = [key for key in CALENDARS_FOLDER.iterdir() if "fuzz-testcase" in str(key)]
 @pytest.fixture(params=FUZZ_V1)
 def fuzz_v1_calendar(request):
     """Clusterfuzz calendars."""
