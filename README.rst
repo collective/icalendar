@@ -90,7 +90,7 @@ Create Events, TODOs, Journals, Alarms, ...
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ``icalendar`` supports the creation and parsing of all kinds of objects
-in the standard.
+in the iCalendar (RFC 5545) standard.
 
 .. code:: python
 
