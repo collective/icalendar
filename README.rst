@@ -42,7 +42,7 @@ files.
 .. _`pytz`: https://pypi.org/project/pytz/
 .. _`BSD`: https://github.com/collective/icalendar/issues/2
 
-Quick Guide
+Quick start guide
 -----------
 
 ``icalendar`` enables you to **create**, **inspect** and **modify**
