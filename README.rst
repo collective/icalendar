@@ -146,7 +146,7 @@ long-term compatibility with projects conflicts partially with providing and usi
 the latest Python versions bring.
 
 Volunteers pour `effort into maintaining and developing icalendar
-<https://github.com/collective/icalendar/discussions/360>`__.
+<https://github.com/collective/icalendar/discussions/360>`_.
 Below, you can find an overview of the versions and how we maintain them.
 
 Version 6
