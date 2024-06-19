@@ -2,11 +2,6 @@ try:
     from backports import zoneinfo
 except ImportError:
     import zoneinfo
-# we make it nicer for doctests
-class ZoneInfo(zoneinfo.ZoneInfo):
-    def __repr__(self):
-        return f"ZoneInfo(key={repr(self.key)})"
-zoneinfo.ZoneInfo = ZoneInfo
 import pytest
 import icalendar
 import pytz
@@ -17,6 +12,7 @@ from icalendar.timezone import tzp as _tzp
 from icalendar.timezone import TZP
 from pathlib import Path
 import itertools
+import sys
 
 
 class DataSource:
@@ -240,3 +236,26 @@ def pytest_generate_tests(metafunc):
             tzp_names.remove("zoneinfo")
         assert tzp_names, "Use pytz_only or zoneinfo_only but not both!"
         metafunc.parametrize("tzp_name", tzp_names, scope="module")
+
+
+class DoctestZoneInfo(zoneinfo.ZoneInfo):
+    """Constent ZoneInfo representation for tests."""
+    def __repr__(self):
+        return f"ZoneInfo(key={repr(self.key)})"
+
+
+def test_print(obj):
+    """doctest print"""
+    if isinstance(obj, bytes):
+        obj = obj.decode("UTF-8")
+    print(str(obj).strip().replace("\r\n", "\n").replace("\r", "\n"))
+
+
+@pytest.fixture()
+def env_for_doctest(monkeypatch):
+    """Modify the environment to make doctests run."""
+    monkeypatch.setitem(sys.modules, "zoneinfo", zoneinfo)
+    monkeypatch.setattr(zoneinfo, "ZoneInfo", DoctestZoneInfo)
+    from icalendar.timezone.zoneinfo import ZONEINFO
+    monkeypatch.setattr(ZONEINFO, "utc", zoneinfo.ZoneInfo("UTC"))
+    return {"print": test_print}
