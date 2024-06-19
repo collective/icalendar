@@ -109,7 +109,7 @@ in the iCalendar (RFC 5545) standard.
 Have a look at `more examples
 <https://icalendar.readthedocs.io/en/latest/usage.html>`_.
 
-Use Timezones of your choice
+Use timezones of your choice
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 With ``icalendar``, you can localize your events to take place in different
