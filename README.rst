@@ -155,7 +155,7 @@ Version 6
 Version 6 of ``icalendar`` switches the timezone implementation to ``zoneinfo``.
 This only affects you if you parse ``icalendar`` objects with ``from_ical()``.
 The functionality is extended and is tested since 6.0.0 with both timezone
-implementations: ``pytz`` and ``zoneinfo``.
+implementations ``pytz`` and ``zoneinfo``.
 
 By default and since 6.0.0, ``zoneinfo`` timezones are created.
 
