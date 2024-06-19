@@ -1,5 +1,5 @@
 from icalendar.prop import vDDDTypes
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, time
 import pytest
 
 
@@ -21,3 +21,12 @@ def test_timedelta():
 def test_bad_input():
     with pytest.raises(ValueError):
         vDDDTypes(42)
+
+def test_time_from_string():
+    assert vDDDTypes.from_ical('123000') == time(12, 30)
+    assert isinstance(vDDDTypes.from_ical('123000'), time)
+
+def test_invalid_period_to_ical():
+    invalid_period = (datetime(2000, 1, 1), datetime(2000, 1, 2), datetime(2000, 1, 2))
+    with pytest.raises(ValueError):
+        vDDDTypes(invalid_period).to_ical()

@@ -1,6 +1,7 @@
 import unittest
 from icalendar.prop import vPeriod
 from datetime import datetime, timedelta
+import pytest
 
 
 class TestProp(unittest.TestCase):
@@ -47,3 +48,18 @@ def test_timezoned(tzp):
 def test_timezoned_with_timedelta(tzp):
     p = vPeriod((tzp.localize(datetime(2000, 1, 1), 'Europe/Copenhagen'), timedelta(days=31)))
     assert p.to_ical() == b'20000101T000000/P31D'
+
+
+@pytest.mark.parametrize(
+    "params",
+    [
+        ('20000101T000000', datetime(2000, 1, 2)),
+        (datetime(2000, 1, 1), '20000102T000000'),
+        (datetime(2000, 1, 2), datetime(2000, 1, 1)),
+        (datetime(2000, 1, 2), timedelta(-1)),
+    ]
+)
+def test_invalid_parameters(params):
+    """The parameters are of wrong type or of wrong order."""
+    with pytest.raises(ValueError):
+        vPeriod(params)

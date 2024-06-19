@@ -45,9 +45,13 @@ Bug fixes:
 
 Minor changes:
 
+- Guide to delete the build folder before running tests
 - Add funding information
+- Make documentation build with Python 3.12
 - Update windows to olson conversion for Greenland Standard Time
 - Extend examples in Usage with alarm and recurrence
+- Document how to serve the built documentation to view with the browser
+- Improve test coverage
 
 Breaking changes:
 

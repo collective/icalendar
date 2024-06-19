@@ -43,12 +43,15 @@ def test_docstring_of_python_file(module_name):
 # This collection needs to exclude .tox and other subdirectories
 DOCUMENTATION_PATH = os.path.join(HERE, "../../../")
 
-DOCUMENT_PATHS = [
-    os.path.join(DOCUMENTATION_PATH, subdir, filename)
-    for subdir in ["docs", "."]
-    for filename in os.listdir(os.path.join(DOCUMENTATION_PATH, subdir))
-    if filename.lower().endswith(".rst")
-]
+try:
+    DOCUMENT_PATHS = [
+        os.path.join(DOCUMENTATION_PATH, subdir, filename)
+        for subdir in ["docs", "."]
+        for filename in os.listdir(os.path.join(DOCUMENTATION_PATH, subdir))
+        if filename.lower().endswith(".rst")
+    ]
+except FileNotFoundError:
+    raise EnvironmentError("Could not find the documentation - remove the build folder and try again.")
 
 @pytest.mark.parametrize("filename", [
     "README.rst",

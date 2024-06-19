@@ -114,8 +114,8 @@ Try it out:
     >>> icalendar.__version__
     '5.0.12'
 
-Building the documentation locally
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Building the documentation
+--------------------------
 
 To build the documentation follow these steps:
 
@@ -136,3 +136,10 @@ You can also use ``tox`` to build the documentation:
 
     cd icalendar
     tox -e docs
+
+If you would like to serve the documentation and access it from your browser,
+you can run the HTTP server:
+
+.. code-block:: bash
+
+    python3 -m http.server -d docs/_build/html/

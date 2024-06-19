@@ -18,6 +18,7 @@ class TestProp(unittest.TestCase):
         self.assertEqual(vFloat(1.0).to_ical(), b'1.0')
         self.assertEqual(vFloat.from_ical('42'), 42.0)
         self.assertEqual(vFloat(42).to_ical(), b'42.0')
+        self.assertRaises(ValueError, vFloat.from_ical, '1s3')
 
     def test_prop_vInt(self):
         from icalendar.prop import vInt
@@ -58,6 +59,7 @@ class TestProp(unittest.TestCase):
         self.assertEqual(vDate.from_ical('20010102'), date(2001, 1, 2))
 
         self.assertRaises(ValueError, vDate, 'd')
+        self.assertRaises(ValueError, vDate.from_ical, '200102')
 
     def test_prop_vDuration(self):
         from icalendar.prop import vDuration
@@ -250,6 +252,8 @@ class TestProp(unittest.TestCase):
         # We should also fail, right?
         self.assertRaises(ValueError, vTime.from_ical, '263000')
 
+        self.assertRaises(ValueError, vTime, '263000')
+
     def test_prop_vUri(self):
         from icalendar.prop import vUri
 
@@ -273,6 +277,7 @@ class TestProp(unittest.TestCase):
         self.assertEqual(vGeo(g).to_ical(), '37.386013;-122.082932')
 
         self.assertRaises(ValueError, vGeo, 'g')
+        self.assertRaises(ValueError, vGeo.from_ical, '1s3;1s3')
 
     def test_prop_vUTCOffset(self):
         from icalendar.prop import vUTCOffset
@@ -314,10 +319,13 @@ class TestProp(unittest.TestCase):
 
         self.assertRaises(ValueError, vUTCOffset.from_ical, '+2400')
 
+        self.assertRaises(ValueError, vUTCOffset, '0:00:00')
+
     def test_prop_vInline(self):
         from icalendar.prop import vInline
 
         self.assertEqual(vInline('Some text'), 'Some text')
+        self.assertEqual(vInline('Some text').to_ical(), b'Some text')
         self.assertEqual(vInline.from_ical('Some text'), 'Some text')
 
         t2 = vInline('other text')
