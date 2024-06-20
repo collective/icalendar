@@ -112,7 +112,7 @@ Try it out:
     Type "help", "copyright", "credits" or "license" for more information.
     >>> import icalendar
     >>> icalendar.__version__
-    '5.0.12'
+    '5.0.13'
 
 Building the documentation
 --------------------------
