@@ -7,6 +7,8 @@ Changelog
 Minor changes:
 
 - Test that all code works with both ``pytz`` and ``zoneinfo``.
+- Rename ``master`` branch to ``main``, see `Issue
+  <https://github.com/collective/icalendar/issues/627>`_
 
 Breaking changes:
 

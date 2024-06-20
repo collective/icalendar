@@ -70,9 +70,9 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
 
    .. code-block:: bash
 
-       git checkout master
+       git checkout main
        git pull
-       git checkout -b release master
+       git checkout -b release main
        git add CHANGES.rst src/icalendar/__init__.py docs/install.rst
        git commit -m"version 5.0.0"
 
@@ -90,7 +90,7 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
 
    .. code-block:: bash
 
-       git checkout master
+       git checkout main
        git pull
        git branch -d release
        git push -d origin release
@@ -99,7 +99,7 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
 
    .. code-block:: bash
 
-       git checkout master
+       git checkout main
        git pull
        git tag v5.0.0
        git push upstream v5.0.0 # could be origin or whatever reference
@@ -137,13 +137,13 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
 
    .. code-block:: bash
 
-       git checkout master
+       git checkout main
        git pull
        git add CHANGES.rst
        git commit -m"Add new CHANGELOG section for future release
 
        See https://icalendar.readthedocs.io/en/latest/maintenance.html#new-releases"
-       git push upstream master # could be origin or whatever reference
+       git push upstream main # could be origin or whatever reference
 
 Links
 -----
