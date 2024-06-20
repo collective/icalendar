@@ -1,7 +1,7 @@
 Changelog
 =========
 
-5.0.13 (unreleased)
+5.0.13 (2024-06-20)
 -------------------
 
 Minor changes:
