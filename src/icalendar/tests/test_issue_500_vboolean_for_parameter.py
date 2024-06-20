@@ -2,7 +2,7 @@ from icalendar import Event, vBoolean, vCalAddress
 
 def test_vBoolean_can_be_used_as_parameter_issue_500(events):
     '''https://github.com/collective/icalendar/issues/500'''
-    attendee = vCalAddress(f'mailto:someone@example.com')
+    attendee = vCalAddress('mailto:someone@example.com')
     attendee.params['rsvp'] = vBoolean(True)
     event = Event()
     event.add('attendee', attendee)

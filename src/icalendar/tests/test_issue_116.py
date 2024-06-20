@@ -1,10 +1,5 @@
-import unittest
 
-import datetime
 import icalendar
-import os
-import pytest
-from dateutil import tz
 
 
 def test_issue_116():

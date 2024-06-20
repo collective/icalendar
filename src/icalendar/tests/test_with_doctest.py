@@ -73,6 +73,3 @@ def test_documentation_file(document, zoneinfo_only, env_for_doctest):
 
 def test_can_import_zoneinfo(env_for_doctest):
     """Allow importing zoneinfo for tests."""
-    import pytz
-    import zoneinfo
-    from dateutil import tz

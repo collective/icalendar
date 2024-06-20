@@ -2,7 +2,6 @@
 
    https://github.com/collective/icalendar/issues/350
 '''
-from icalendar import Calendar
 
 def test_issue_350(calendars):
     calendar = list(calendars.issue_350.walk('X-COMMENT'))

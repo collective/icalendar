@@ -1,14 +1,13 @@
 import itertools
 from datetime import datetime
 from datetime import timedelta
-import unittest
 
 import pytest
 
 import icalendar
 import re
-from icalendar.cal import Component, Calendar, Event, ComponentFactory
-from icalendar import prop, cal
+from icalendar.cal import Component, Calendar, Event
+from icalendar import prop
 from icalendar.prop import tzid_from_dt
 
 

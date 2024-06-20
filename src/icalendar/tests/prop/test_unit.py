@@ -4,11 +4,6 @@ from datetime import time
 from datetime import timedelta
 from icalendar.parser import Parameters
 import unittest
-from icalendar.prop import vDatetime, vDDDTypes
-from icalendar.timezone.windows_to_olson import WINDOWS_TO_OLSON
-import pytest
-from copy import deepcopy
-from dateutil import tz
 
 
 class TestProp(unittest.TestCase):

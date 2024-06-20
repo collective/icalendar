@@ -1,6 +1,5 @@
 import pytest
 
-from icalendar import Event, Calendar
 
 def test_ignore_exceptions_on_broken_events_issue_104(events):
     ''' Issue #104 - line parsing error in a VEVENT
@@ -25,7 +24,7 @@ def test_rdate_dosent_become_none_on_invalid_input_issue_464(events):
     '''
     assert events.issue_464_invalid_rdate.is_broken
     assert ('RDATE', 'Expected period format, got: 199709T180000Z/PT5H30M') in events.issue_464_invalid_rdate.errors
-    assert not b'RDATE:None' in events.issue_464_invalid_rdate.to_ical()
+    assert b'RDATE:None' not in events.issue_464_invalid_rdate.to_ical()
 
 @pytest.mark.parametrize('calendar_name', [
     'big_bad_calendar',

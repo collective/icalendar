@@ -1,8 +1,6 @@
 import pytest
 from icalendar import Calendar, Event, Parameters, vCalAddress
 
-import unittest
-import icalendar
 import re
 
 @pytest.mark.parametrize('parameter, expected', [
