@@ -60,8 +60,19 @@ except FileNotFoundError:
 def test_files_is_included(filename):
     assert any(path.endswith(filename) for path in DOCUMENT_PATHS)
 
+
 @pytest.mark.parametrize("document", DOCUMENT_PATHS)
-def test_documentation_file(document):
-    """This test runs doctest on a documentation file."""
-    test_result = doctest.testfile(document, module_relative=False)
+def test_documentation_file(document, zoneinfo_only, env_for_doctest):
+    """This test runs doctest on a documentation file.
+
+    functions are also replaced to work.
+    """
+    test_result = doctest.testfile(document, module_relative=False, globs=env_for_doctest)
     assert test_result.failed == 0, f"{test_result.failed} errors in {os.path.basename(document)}"
+
+
+def test_can_import_zoneinfo(env_for_doctest):
+    """Allow importing zoneinfo for tests."""
+    import pytz
+    import zoneinfo
+    from dateutil import tz

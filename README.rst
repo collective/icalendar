@@ -42,18 +42,26 @@ files.
 .. _`pytz`: https://pypi.org/project/pytz/
 .. _`BSD`: https://github.com/collective/icalendar/issues/2
 
-Quick Guide
+Quick start guide
 -----------
+
+``icalendar`` enables you to **create**, **inspect** and **modify**
+calendaring information with Python.
 
 To **install** the package, run::
 
     pip install icalendar
 
+
+Inspect Files
+~~~~~~~~~~~~~
+
 You can open an ``.ics`` file and see all the events::
 
   >>> import icalendar
-  >>> path_to_ics_file = "src/icalendar/tests/calendars/example.ics"
-  >>> with open(path_to_ics_file) as f:
+  >>> from pathlib import Path
+  >>> ics_path = Path("src/icalendar/tests/calendars/example.ics")
+  >>> with ics_path.open() as f:
   ...     calendar = icalendar.Calendar.from_ical(f.read())
   >>> for event in calendar.walk('VEVENT'):
   ...     print(event.get("SUMMARY"))
@@ -61,7 +69,74 @@ You can open an ``.ics`` file and see all the events::
   Orthodox Christmas
   International Women's Day
 
-Using this package, you can also create calendars from scratch or edit existing ones.
+Modify Content
+~~~~~~~~~~~~~~
+
+Such a calendar can then be edited and saved again.
+
+.. code:: python
+
+    >>> calendar["X-WR-CALNAME"] = "My Modified Calendar"  # modify
+    >>> print(calendar.to_ical()[:129])  # save modification
+    BEGIN:VCALENDAR
+    VERSION:2.0
+    PRODID:collective/icalendar
+    CALSCALE:GREGORIAN
+    METHOD:PUBLISH
+    X-WR-CALNAME:My Modified Calendar
+
+
+Create Events, TODOs, Journals, Alarms, ...
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``icalendar`` supports the creation and parsing of all kinds of objects
+in the iCalendar (RFC 5545) standard.
+
+.. code:: python
+
+    >>> icalendar.Event()  # events
+    VEVENT({})
+    >>> icalendar.FreeBusy()  # free/busy times
+    VFREEBUSY({})
+    >>> icalendar.Todo()  # Todo list entries
+    VTODO({})
+    >>> icalendar.Alarm()  # Alarms e.g. for events
+    VALARM({})
+    >>> icalendar.Journal()   # Journal entries
+    VJOURNAL({})
+
+
+Have a look at `more examples
+<https://icalendar.readthedocs.io/en/latest/usage.html>`_.
+
+Use timezones of your choice
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+With ``icalendar``, you can localize your events to take place in different
+timezones.
+``zoneinfo``, ``dateutil.tz`` and ``pytz`` are compatible with ``icalendar``.
+This example creates an event that uses all of the timezone implementations
+with the same result:
+
+.. code:: python
+
+    >>> import pytz, zoneinfo, dateutil.tz  # timezone libraries
+    >>> import datetime, icalendar
+    >>> e = icalendar.Event()
+    >>> tz = dateutil.tz.tzstr("Europe/London")
+    >>> e["X-DT-DATEUTIL"] = icalendar.vDatetime(datetime.datetime(2024, 6, 19, 10, 1, tzinfo=tz))
+    >>> tz = pytz.timezone("Europe/London")
+    >>> e["X-DT-USE-PYTZ"] = icalendar.vDatetime(datetime.datetime(2024, 6, 19, 10, 1, tzinfo=tz))
+    >>> tz = zoneinfo.ZoneInfo("Europe/London")
+    >>> e["X-DT-ZONEINFO"] = icalendar.vDatetime(datetime.datetime(2024, 6, 19, 10, 1, tzinfo=tz))
+    >>> print(e.to_ical())  # the libraries yield the same result
+    BEGIN:VEVENT
+    X-DT-DATEUTIL;TZID=Europe/London:20240619T100100
+    X-DT-USE-PYTZ;TZID=Europe/London:20240619T100100
+    X-DT-ZONEINFO;TZID=Europe/London:20240619T100100
+    END:VEVENT
+
+
 
 Versions and Compatibility
 --------------------------
@@ -70,14 +145,51 @@ Versions and Compatibility
 long-term compatibility with projects conflicts partially with providing and using the features that
 the latest Python versions bring.
 
-Since we pour more `effort into maintaining and developing icalendar <https://github.com/collective/icalendar/discussions/360>`__,
-we split the project into two:
+Volunteers pour `effort into maintaining and developing icalendar
+<https://github.com/collective/icalendar/discussions/360>`_.
+Below, you can find an overview of the versions and how we maintain them.
 
-- `Branch 4.x <https://github.com/collective/icalendar/tree/4.x>`__ with maximum compatibility to Python versions ``2.7`` and ``3.4+``, ``PyPy2`` and ``PyPy3``.
-- `Branch master <https://github.com/collective/icalendar/>`__ with the compatibility to Python versions ``3.7+`` and ``PyPy3``.
+Version 6
+~~~~~~~~~
 
-We expect the ``master`` branch with versions ``5+`` receive the latest updates and features,
-and the ``4.x`` branch the subset of security and bug fixes only.
+Version 6 of ``icalendar`` switches the timezone implementation to ``zoneinfo``.
+This only affects you if you parse ``icalendar`` objects with ``from_ical()``.
+The functionality is extended and is tested since 6.0.0 with both timezone
+implementations ``pytz`` and ``zoneinfo``.
+
+By default and since 6.0.0, ``zoneinfo`` timezones are created.
+
+.. code:: python
+
+    >>> dt = icalendar.Calendar.example("timezoned").walk("VEVENT")[0]["DTSTART"].dt
+    >>> dt.tzinfo
+    ZoneInfo(key='Europe/Vienna')
+
+If you would like to continue to receive ``pytz`` timezones in as parse results,
+you can receive all the latest updates, and switch back to version 5.x behavior:
+
+.. code:: python
+
+    >>> icalendar.use_pytz()
+    >>> dt = icalendar.Calendar.example("timezoned").walk("VEVENT")[0]["DTSTART"].dt
+    >>> dt.tzinfo
+    <DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>
+
+Version 6 is on `branch master <https://github.com/collective/icalendar/>`_ with compatibility to Python versions ``3.7+`` and ``PyPy3``.
+We expect the ``master`` branch with versions ``6+`` to receive the latest updates and features.
+
+Version 5
+~~~~~~~~~
+
+Version 5 uses only the ``pytz`` timezone implementation, and not ``zoneinfo``.
+No updates will be released for this.
+Please use version 6 and switch to use ``zoneinfo`` as documented above.
+
+Version 4
+~~~~~~~~~
+
+Version 4 is on `branch 4.x <https://github.com/collective/icalendar/tree/4.x>`_ with maximum compatibility with Python versions ``2.7`` and ``3.4+``, ``PyPy2`` and ``PyPy3``.
+The ``4.x`` branch only receives security and bug fixes if someone makes the effort.
 We recommend migrating to later Python versions and also providing feedback if you depend on the ``4.x`` features.
 
 Related projects

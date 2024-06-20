@@ -3,6 +3,7 @@ files according to rfc2445.
 
 These are the defined components.
 """
+from __future__ import annotations
 from datetime import datetime, timedelta
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Contentline
@@ -13,12 +14,23 @@ from icalendar.parser import q_split
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import TypesFactory
 from icalendar.prop import vText, vDDDLists
-from icalendar.timezone_cache import _timezone_cache
-
-import pytz
+from icalendar.timezone import tzp
+from typing import Tuple, List
 import dateutil.rrule, dateutil.tz
-from pytz.tzinfo import DstTzInfo
+import os
 
+
+def get_example(component_directory: str, example_name: str) -> bytes:
+    """Return an example and raise an error if it is absent."""
+    here = os.path.dirname(__file__)
+    examples = os.path.join(here, "tests", component_directory)
+    if not example_name.endswith(".ics"):
+        example_name = example_name + ".ics"
+    example_file = os.path.join(examples, example_name)
+    if not os.path.isfile(example_file):
+        raise ValueError(f"Example {example_name} for {component_directory} not found. You can use one of {', '.join(os.listdir(examples))}")
+    with open(example_file, "rb") as f:
+        return f.read()
 
 
 ######################################
@@ -178,11 +190,7 @@ class Component(CaselessDict):
         if isinstance(value, datetime) and\
                 name.lower() in ('dtstamp', 'created', 'last-modified'):
             # RFC expects UTC for those... force value conversion.
-            if getattr(value, 'tzinfo', False) and value.tzinfo is not None:
-                value = value.astimezone(pytz.utc)
-            else:
-                # assume UTC for naive datetime instances
-                value = pytz.utc.localize(value)
+            value = tzp.localize_utc(value)
 
         # encode value
         if encode and isinstance(value, list) \
@@ -367,11 +375,8 @@ class Component(CaselessDict):
                     comps.append(component)
                 else:
                     stack[-1].add_component(component)
-                if vals == 'VTIMEZONE' and \
-                        'TZID' in component and \
-                        component['TZID'] not in pytz.all_timezones and \
-                        component['TZID'] not in _timezone_cache:
-                    _timezone_cache[component['TZID']] = component.to_tz()
+                if vals == 'VTIMEZONE' and 'TZID' in component:
+                    tzp.cache_timezone_component(component)
             # we are adding properties to the current top of the stack
             else:
                 factory = types_factory.for_property(name)
@@ -501,6 +506,12 @@ class Event(Component):
     )
     ignore_exceptions = True
 
+    @classmethod
+    def example(cls, name) -> Event:
+        """Return the calendar example with the given name."""
+        return cls.from_ical(get_example("events", name))
+
+
 
 class Todo(Component):
 
@@ -553,6 +564,11 @@ class Timezone(Component):
     required = ('TZID',) # it also requires one of components DAYLIGHT and STANDARD
     singletons = ('TZID', 'LAST-MODIFIED', 'TZURL',)
 
+    @classmethod
+    def example(cls, name) -> Calendar:
+        """Return the calendar example with the given name."""
+        return cls.from_ical(get_example("timezones", name))
+
     @staticmethod
     def _extract_offsets(component, tzname):
         """extract offsets and transition times from a VTIMEZONE component
@@ -580,12 +596,9 @@ class Timezone(Component):
 
             rrulestr = component['RRULE'].to_ical().decode('utf-8')
             rrule = dateutil.rrule.rrulestr(rrulestr, dtstart=rrstart)
-            if not {'UNTIL', 'COUNT'}.intersection(component['RRULE'].keys()):
-                # pytz.timezones don't know any transition dates after 2038
-                # either
-                rrule._until = datetime(2038, 12, 31, tzinfo=pytz.UTC)
+            tzp.fix_rrule_until(rrule, component['RRULE'])
 
-            # constructing the pytz-timezone requires UTC transition times.
+            # constructing the timezone requires UTC transition times.
             # here we construct local times without tzinfo, the offset to UTC
             # gets subtracted in to_tz().
             transtimes = [dt.replace (tzinfo=None) for dt in rrule]
@@ -622,13 +635,31 @@ class Timezone(Component):
         tznames.add(tzname)
         return tzname
 
-    def to_tz(self):
-        """convert this VTIMEZONE component to a pytz.timezone object
+    def to_tz(self, tzp=tzp):
+        """convert this VTIMEZONE component to a timezone object
+        """
+        return tzp.create_timezone(self)
+
+    @property
+    def tz_name(self) -> str:
+        """Return the name of the timezone component.
+
+        Please note that the names of the timezone are different from this name
+        and may change with winter/summer time.
         """
         try:
-            zone = str(self['TZID'])
+            return str(self['TZID'])
         except UnicodeEncodeError:
-            zone = self['TZID'].encode('ascii', 'replace')
+            return self['TZID'].encode('ascii', 'replace')
+
+    def get_transitions(self) -> Tuple[List[datetime], List[Tuple[timedelta, timedelta, str]]]:
+        """Return a tuple of (transition_times, transition_info)
+
+        - transition_times = [datetime, ...]
+        - transition_info = [(TZOFFSETTO, dts_offset, tzname)]
+
+        """
+        zone = self.tz_name
         transitions = []
         dst = {}
         tznames = set()
@@ -684,14 +715,7 @@ class Timezone(Component):
                             break
             assert dst_offset is not False
             transition_info.append((osto, dst_offset, name))
-
-        cls = type(zone, (DstTzInfo,), {
-            'zone': zone,
-            '_utc_transition_times': transition_times,
-            '_transition_info': transition_info
-        })
-
-        return cls()
+        return transition_times, transition_info
 
 
 class TimezoneStandard(Component):
@@ -728,6 +752,11 @@ class Calendar(Component):
     canonical_order = ('VERSION', 'PRODID', 'CALSCALE', 'METHOD',)
     required = ('PRODID', 'VERSION', )
     singletons = ('PRODID', 'VERSION', 'CALSCALE', 'METHOD')
+
+    @classmethod
+    def example(cls, name) -> Calendar:
+        """Return the calendar example with the given name."""
+        return cls.from_ical(get_example("calendars", name))
 
 # These are read only singleton, so one instance is enough for the module
 types_factory = TypesFactory()

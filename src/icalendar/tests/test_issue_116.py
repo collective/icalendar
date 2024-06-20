@@ -3,7 +3,6 @@ import unittest
 import datetime
 import icalendar
 import os
-import pytz
 import pytest
 from dateutil import tz
 

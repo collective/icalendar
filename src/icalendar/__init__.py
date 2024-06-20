@@ -46,3 +46,6 @@ from icalendar.parser import (
     q_split,
     q_join,
 )
+
+# Switching the timezone provider
+from icalendar.timezone import use_pytz, use_zoneinfo

@@ -5,79 +5,29 @@ from datetime import timedelta
 from icalendar.parser import Parameters
 import unittest
 from icalendar.prop import vDatetime, vDDDTypes
-from icalendar.windows_to_olson import WINDOWS_TO_OLSON
+from icalendar.timezone.windows_to_olson import WINDOWS_TO_OLSON
 import pytest
-import pytz
 from copy import deepcopy
 from dateutil import tz
 
 
 class TestProp(unittest.TestCase):
 
-    def test_prop_vBinary(self):
-        from ..prop import vBinary
-
-        txt = b'This is gibberish'
-        txt_ical = b'VGhpcyBpcyBnaWJiZXJpc2g='
-        self.assertEqual(vBinary(txt).to_ical(), txt_ical)
-        self.assertEqual(vBinary.from_ical(txt_ical), txt)
-
-        # The roundtrip test
-        txt = b'Binary data \x13 \x56'
-        txt_ical = b'QmluYXJ5IGRhdGEgEyBW'
-        self.assertEqual(vBinary(txt).to_ical(), txt_ical)
-        self.assertEqual(vBinary.from_ical(txt_ical), txt)
-
-        self.assertIsInstance(vBinary('txt').params, Parameters)
-        self.assertEqual(
-            vBinary('txt').params, {'VALUE': 'BINARY', 'ENCODING': 'BASE64'}
-        )
-
-        # Long data should not have line breaks, as that would interfere
-        txt = b'a' * 99
-        txt_ical = b'YWFh' * 33
-        self.assertEqual(vBinary(txt).to_ical(), txt_ical)
-        self.assertEqual(vBinary.from_ical(txt_ical), txt)
-
-    def test_prop_vBoolean(self):
-        from ..prop import vBoolean
-
-        self.assertEqual(vBoolean(True).to_ical(), b'TRUE')
-        self.assertEqual(vBoolean(0).to_ical(), b'FALSE')
-
-        # The roundtrip test
-        self.assertEqual(vBoolean.from_ical(vBoolean(True).to_ical()), True)
-        self.assertEqual(vBoolean.from_ical('true'), True)
-
-        # Error: key not exists
-        self.assertRaises(ValueError, vBoolean.from_ical, 'ture')
-
-    def test_prop_vCalAddress(self):
-        from ..prop import vCalAddress
-        txt = b'MAILTO:maxm@mxm.dk'
-        a = vCalAddress(txt)
-        a.params['cn'] = 'Max M'
-
-        self.assertEqual(a.to_ical(), txt)
-        self.assertIsInstance(a.params, Parameters)
-        self.assertEqual(a.params, {'CN': 'Max M'})
-        self.assertEqual(vCalAddress.from_ical(txt), 'MAILTO:maxm@mxm.dk')
-
     def test_prop_vFloat(self):
-        from ..prop import vFloat
+        from icalendar.prop import vFloat
         self.assertEqual(vFloat(1.0).to_ical(), b'1.0')
         self.assertEqual(vFloat.from_ical('42'), 42.0)
         self.assertEqual(vFloat(42).to_ical(), b'42.0')
         self.assertRaises(ValueError, vFloat.from_ical, '1s3')
 
     def test_prop_vInt(self):
-        from ..prop import vInt
+        from icalendar.prop import vInt
         self.assertEqual(vInt(42).to_ical(), b'42')
         self.assertEqual(vInt.from_ical('13'), 13)
         self.assertRaises(ValueError, vInt.from_ical, '1s3')
 
     def test_prop_vDDDLists(self):
-        from ..prop import vDDDLists
+        from icalendar.prop import vDDDLists
 
         dt_list = vDDDLists.from_ical('19960402T010000Z')
         self.assertTrue(isinstance(dt_list, list))
@@ -100,32 +50,8 @@ class TestProp(unittest.TestCase):
         dt_list = vDDDLists([datetime(2000, 1, 1), datetime(2000, 11, 11)])
         self.assertEqual(dt_list.to_ical(), b'20000101T000000,20001111T000000')
 
-    def test_prop_vDDDTypes(self):
-        from ..prop import vDDDTypes
-
-        self.assertTrue(isinstance(vDDDTypes.from_ical('20010101T123000'),
-                                   datetime))
-
-        self.assertEqual(vDDDTypes.from_ical('20010101T123000Z'),
-                         pytz.utc.localize(datetime(2001, 1, 1, 12, 30)))
-
-        self.assertTrue(isinstance(vDDDTypes.from_ical('20010101'), date))
-
-        self.assertEqual(vDDDTypes.from_ical('123000'), time(12, 30))
-        self.assertIsInstance(vDDDTypes.from_ical('123000'), time)
-
-        self.assertEqual(vDDDTypes.from_ical('P31D'), timedelta(31))
-
-        self.assertEqual(vDDDTypes.from_ical('-P31D'), timedelta(-31))
-
-        invalid_period = (datetime(2000, 1, 1), datetime(2000, 1, 2), datetime(2000, 1, 2))
-        self.assertRaises(ValueError, vDDDTypes(invalid_period).to_ical)
-
-        # Bad input
-        self.assertRaises(ValueError, vDDDTypes, 42)
-
     def test_prop_vDate(self):
-        from ..prop import vDate
+        from icalendar.prop import vDate
 
         self.assertEqual(vDate(date(2001, 1, 1)).to_ical(), b'20010101')
         self.assertEqual(vDate(date(1899, 1, 1)).to_ical(), b'18990101')
@@ -135,44 +61,8 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vDate, 'd')
         self.assertRaises(ValueError, vDate.from_ical, '200102')
 
-    def test_prop_vDatetime(self):
-        from ..prop import vDatetime
-
-        dt = datetime(2001, 1, 1, 12, 30, 0)
-        self.assertEqual(vDatetime(dt).to_ical(), b'20010101T123000')
-
-        self.assertEqual(vDatetime.from_ical('20000101T120000'),
-                         datetime(2000, 1, 1, 12, 0))
-
-        dutc = pytz.utc.localize(datetime(2001, 1, 1, 12, 30, 0))
-        self.assertEqual(vDatetime(dutc).to_ical(), b'20010101T123000Z')
-
-        dutc = pytz.utc.localize(datetime(1899, 1, 1, 12, 30, 0))
-        self.assertEqual(vDatetime(dutc).to_ical(), b'18990101T123000Z')
-
-        self.assertEqual(vDatetime.from_ical('20010101T000000'),
-                         datetime(2001, 1, 1, 0, 0))
-
-        self.assertRaises(ValueError, vDatetime.from_ical, '20010101T000000A')
-
-        utc = vDatetime.from_ical('20010101T000000Z')
-        self.assertEqual(vDatetime(utc).to_ical(), b'20010101T000000Z')
-
-        # 1 minute before transition to DST
-        dat = vDatetime.from_ical('20120311T015959', 'America/Denver')
-        self.assertEqual(dat.strftime('%Y%m%d%H%M%S %z'),
-                         '20120311015959 -0700')
-
-        # After transition to DST
-        dat = vDatetime.from_ical('20120311T030000', 'America/Denver')
-        self.assertEqual(dat.strftime('%Y%m%d%H%M%S %z'),
-                         '20120311030000 -0600')
-
-        dat = vDatetime.from_ical('20101010T000000', 'Europe/Vienna')
-        self.assertEqual(vDatetime(dat).to_ical(), b'20101010T000000')
-
     def test_prop_vDuration(self):
-        from ..prop import vDuration
+        from icalendar.prop import vDuration
 
         self.assertEqual(vDuration(timedelta(11)).to_ical(), b'P11D')
         self.assertEqual(vDuration(timedelta(-14)).to_ical(), b'-P14D')
@@ -207,65 +97,8 @@ class TestProp(unittest.TestCase):
         self.assertEqual(duration.to_ical(), b'-P1DT5H')
         self.assertEqual(duration.to_ical(), b'-P1DT5H')
 
-
-    def test_prop_vPeriod(self):
-        from ..prop import vPeriod
-
-        # One day in exact datetimes
-        per = (datetime(2000, 1, 1), datetime(2000, 1, 2))
-        self.assertEqual(vPeriod(per).to_ical(),
-                         b'20000101T000000/20000102T000000')
-
-        # Error: one of the params is not instance of date/datetime
-        per = ('20000101T000000', datetime(2000, 1, 2))
-        self.assertRaises(ValueError, vPeriod, per)
-
-        per = (datetime(2000, 1, 1), '20000102T000000')
-        self.assertRaises(ValueError, vPeriod, per)
-
-        # Error: first params > second params
-        per = (datetime(2000, 1, 2), datetime(2000, 1, 1))
-        self.assertRaises(ValueError, vPeriod, per)
-
-        per = (datetime(2000, 1, 1), timedelta(days=31))
-        self.assertEqual(vPeriod(per).to_ical(), b'20000101T000000/P31D')
-
-        # Roundtrip
-        p = vPeriod.from_ical('20000101T000000/20000102T000000')
-        self.assertEqual(
-            p,
-            (datetime(2000, 1, 1, 0, 0), datetime(2000, 1, 2, 0, 0))
-        )
-        self.assertEqual(vPeriod(p).to_ical(),
-                         b'20000101T000000/20000102T000000')
-
-        self.assertEqual(vPeriod.from_ical('20000101T000000/P31D'),
-                         (datetime(2000, 1, 1, 0, 0), timedelta(31)))
-
-        # Roundtrip with absolute time
-        p = vPeriod.from_ical('20000101T000000Z/20000102T000000Z')
-        self.assertEqual(vPeriod(p).to_ical(),
-                         b'20000101T000000Z/20000102T000000Z')
-
-        # And an error
-        self.assertRaises(ValueError,
-                          vPeriod.from_ical, '20000101T000000/Psd31D')
-
-        # Timezoned
-        dk = pytz.timezone('Europe/Copenhagen')
-        start = dk.localize(datetime(2000, 1, 1))
-        end = dk.localize(datetime(2000, 1, 2))
-        per = (start, end)
-        self.assertEqual(vPeriod(per).to_ical(),
-                         b'20000101T000000/20000102T000000')
-        self.assertEqual(vPeriod(per).params['TZID'],
-                         'Europe/Copenhagen')
-
-        p = vPeriod((dk.localize(datetime(2000, 1, 1)), timedelta(days=31)))
-        self.assertEqual(p.to_ical(), b'20000101T000000/P31D')
-
     def test_prop_vWeekday(self):
-        from ..prop import vWeekday
+        from icalendar.prop import vWeekday
 
         self.assertEqual(vWeekday('mo').to_ical(), b'MO')
         self.assertRaises(ValueError, vWeekday, 'erwer')
@@ -277,14 +110,14 @@ class TestProp(unittest.TestCase):
         self.assertEqual(vWeekday('-tu').to_ical(), b'-TU')
 
     def test_prop_vFrequency(self):
-        from ..prop import vFrequency
+        from icalendar.prop import vFrequency
 
         self.assertRaises(ValueError, vFrequency, 'bad test')
         self.assertEqual(vFrequency('daily').to_ical(), b'DAILY')
         self.assertEqual(vFrequency('daily').from_ical('MONTHLY'), 'MONTHLY')
 
     def test_prop_vRecur(self):
-        from ..prop import vRecur
+        from icalendar.prop import vRecur
 
         # Let's see how close we can get to one from the rfc:
         # FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=SU;BYHOUR=8,9;BYMINUTE=30
@@ -345,7 +178,7 @@ class TestProp(unittest.TestCase):
         )
 
         r = vRecur.from_ical('FREQ=WEEKLY;INTERVAL=1;BYWEEKDAY=TH')
-        
+
         self.assertEqual(
             r,
             {'FREQ': ['WEEKLY'], 'INTERVAL': [1], 'BYWEEKDAY': ['TH']}
@@ -377,7 +210,7 @@ class TestProp(unittest.TestCase):
                          b'FREQ=MONTHLY;BYEASTER=-3;BYOTHER=TEXT')
 
     def test_prop_vText(self):
-        from ..prop import vText
+        from icalendar.prop import vText
 
         self.assertEqual(vText('Simple text').to_ical(), b'Simple text')
 
@@ -411,7 +244,7 @@ class TestProp(unittest.TestCase):
         # with the official U+FFFD REPLACEMENT CHARACTER.
 
     def test_prop_vTime(self):
-        from ..prop import vTime
+        from icalendar.prop import vTime
 
         self.assertEqual(vTime(12, 30, 0).to_ical(), '123000')
         self.assertEqual(vTime.from_ical('123000'), time(12, 30))
@@ -422,7 +255,7 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vTime, '263000')
 
     def test_prop_vUri(self):
-        from ..prop import vUri
+        from icalendar.prop import vUri
 
         self.assertEqual(vUri('http://www.example.com/').to_ical(),
                          b'http://www.example.com/')
@@ -430,7 +263,7 @@ class TestProp(unittest.TestCase):
                          'http://www.example.com/')
 
     def test_prop_vGeo(self):
-        from ..prop import vGeo
+        from icalendar.prop import vGeo
 
         # Pass a list
         self.assertEqual(vGeo([1.2, 3.0]).to_ical(), '1.2;3.0')
@@ -447,7 +280,7 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vGeo.from_ical, '1s3;1s3')
 
     def test_prop_vUTCOffset(self):
-        from ..prop import vUTCOffset
+        from icalendar.prop import vUTCOffset
 
         self.assertEqual(vUTCOffset(timedelta(hours=2)).to_ical(), '+0200')
 
@@ -489,7 +322,7 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vUTCOffset, '0:00:00')
 
     def test_prop_vInline(self):
-        from ..prop import vInline
+        from icalendar.prop import vInline
 
         self.assertEqual(vInline('Some text'), 'Some text')
         self.assertEqual(vInline('Some text').to_ical(), b'Some text')
@@ -501,7 +334,7 @@ class TestProp(unittest.TestCase):
         self.assertEqual(t2.params, {'CN': 'Test Osterone'})
 
     def test_prop_vCategory(self):
-        from ..prop import vCategory
+        from icalendar.prop import vCategory
 
         catz = ['cat 1', 'cat 2', 'cat 3']
         v_cat = vCategory(catz)
@@ -510,7 +343,7 @@ class TestProp(unittest.TestCase):
         self.assertEqual(vCategory.from_ical(v_cat.to_ical()), catz)
 
     def test_prop_TypesFactory(self):
-        from ..prop import TypesFactory
+        from icalendar.prop import TypesFactory
 
         # To get a type you can use it like this.
         factory = TypesFactory()
@@ -537,73 +370,3 @@ class TestProp(unittest.TestCase):
             factory.from_ical('cn', b'Rasmussen\\, Max M\xc3\xb8ller'),
             'Rasmussen, Max M\xf8ller'
         )
-
-
-
-vDDDTypes_list = [
-    vDDDTypes(pytz.timezone('EST').localize(datetime(year=2022, month=7, day=22, hour=12, minute=7))),
-    vDDDTypes(datetime(year=2022, month=7, day=22, hour=12, minute=7)),
-    vDDDTypes(datetime(year=2022, month=7, day=22, hour=12, minute=7, tzinfo=tz.UTC)),
-    vDDDTypes(date(year=2022, month=7, day=22)),
-    vDDDTypes(date(year=2022, month=7, day=23)),
-    vDDDTypes(time(hour=22, minute=7, second=2))
-]
-
-def identity(x):
-    return x
-
-@pytest.mark.parametrize("map", [
-    deepcopy,
-    identity,
-    hash,
-])
-@pytest.mark.parametrize("v_type", vDDDTypes_list)
-@pytest.mark.parametrize("other", vDDDTypes_list)
-def test_vDDDTypes_equivalance(map, v_type, other):
-    if v_type is other:
-        assert map(v_type) == map(other), f"identity implies equality: {map.__name__}()"
-        assert not (map(v_type) != map(other)), f"identity implies equality: {map.__name__}()"
-    else:
-        assert map(v_type) != map(other), f"expected inequality: {map.__name__}()"
-        assert not (map(v_type) == map(other)), f"expected inequality: {map.__name__}()"
-
-@pytest.mark.parametrize("v_type", vDDDTypes_list)
-def test_inequality_with_different_types(v_type):
-    assert v_type != 42
-    assert v_type != 'test'
-
-class TestPropertyValues(unittest.TestCase):
-
-    def test_vDDDLists_timezone(self):
-        """Test vDDDLists with timezone information.
-        """
-        from .. import Event
-        vevent = Event()
-        at = pytz.timezone('Europe/Vienna')
-        dt1 = at.localize(datetime(2013, 1, 1))
-        dt2 = at.localize(datetime(2013, 1, 2))
-        dt3 = at.localize(datetime(2013, 1, 3))
-        vevent.add('rdate', [dt1, dt2])
-        vevent.add('exdate', dt3)
-        ical = vevent.to_ical()
-
-        self.assertTrue(
-            b'RDATE;TZID=Europe/Vienna:20130101T000000,20130102T000000' in ical
-        )
-        self.assertTrue(b'EXDATE;TZID=Europe/Vienna:20130103T000000' in ical)
-
-
-class TestWindowsOlsonMapping(unittest.TestCase):
-    """Test the mappings from windows to olson tzids"""
-
-    def test_windows_timezone(self):
-        """test that an example"""
-        self.assertEqual(
-            vDatetime.from_ical('20170507T181920', 'Eastern Standard Time'),
-            pytz.timezone('America/New_York').localize(datetime(2017, 5, 7, 18, 19, 20))
-        )
-
-    def test_all(self):
-        """test if all mappings actually map to valid pytz tzids"""
-        for olson in WINDOWS_TO_OLSON.values():
-            pytz.timezone(olson)

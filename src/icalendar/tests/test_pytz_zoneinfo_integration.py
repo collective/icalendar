@@ -1,0 +1,66 @@
+"""This tests the switch to different timezone implementations.
+
+These are mostly located in icalendar.timezone.
+"""
+import pytz
+from icalendar.timezone.zoneinfo import zoneinfo, ZONEINFO
+from dateutil.tz.tz import _tzicalvtz
+from icalendar.timezone.pytz import PYTZ
+import pytest
+import copy
+import pickle
+from dateutil.rrule import rrule, MONTHLY
+from datetime import datetime
+
+
+@pytest.mark.parametrize("tz_name", pytz.all_timezones + list(zoneinfo.available_timezones()))
+@pytest.mark.parametrize("tzp_", [PYTZ(), ZONEINFO()])
+def test_timezone_names_are_known(tz_name, tzp_):
+    """Make sure that all timezones are understood."""
+    if tz_name in ("Factory", "localtime"):
+        pytest.skip()
+    assert tzp_.knows_timezone_id(tz_name), f"{tzp_.__class__.__name__} should know {tz_name}"
+
+
+@pytest.mark.parametrize("func", [pickle.dumps, copy.copy, copy.deepcopy])
+@pytest.mark.parametrize("obj", [_tzicalvtz("id"), rrule(freq=MONTHLY, count=4, dtstart=datetime(2028, 10, 1), cache=True)])
+def test_can_pickle_timezone(func, tzp, obj):
+    """Check that we can serialize and copy timezones."""
+    func(obj)
+
+
+def test_copied_rrule_is_the_same():
+    """When we copy an rrule, we want it to be the same after this."""
+    r = rrule(freq=MONTHLY, count=4, dtstart=datetime(2028, 10, 1), cache=True)
+    assert str(copy.deepcopy(r)) == str(r)
+
+
+def test_tzp_properly_switches(tzp, tzp_name):
+    """We want the default implementation to switch."""
+    assert (tzp_name == "pytz") == tzp.uses_pytz()
+
+
+def test_tzp_is_pytz_only(tzp, tzp_name, pytz_only):
+    """We want the default implementation to switch."""
+    assert tzp_name == "pytz"
+    assert tzp.uses_pytz()
+
+
+def test_cache_reuse_timezone_cache(tzp, timezones):
+    """Make sure we do not cache the timezones twice and change them."""
+    tzp.cache_timezone_component(timezones.pacific_fiji)
+    tzp1 = tzp.timezone("custom_Pacific/Fiji")
+    assert tzp1 is tzp.timezone("custom_Pacific/Fiji")
+    tzp.cache_timezone_component(timezones.pacific_fiji)
+    assert tzp1 is tzp.timezone("custom_Pacific/Fiji"), "Cache is not replaced."
+
+
+@pytest.mark.parametrize("new_tzp_name", ["pytz", "zoneinfo"])
+def test_cache_is_emptied_when_tzp_is_switched(tzp, timezones, new_tzp_name):
+    """Make sure we do not reuse the timezones created when we switch the provider."""
+    tzp.cache_timezone_component(timezones.pacific_fiji)
+    tz1 = tzp.timezone("custom_Pacific/Fiji")
+    tzp.use(new_tzp_name)
+    tzp.cache_timezone_component(timezones.pacific_fiji)
+    tz2 = tzp.timezone("custom_Pacific/Fiji")
+    assert tz1 is not tz2

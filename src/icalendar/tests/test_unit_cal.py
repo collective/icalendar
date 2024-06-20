@@ -6,10 +6,10 @@ import unittest
 import pytest
 
 import icalendar
-import pytz
 import re
 from icalendar.cal import Component, Calendar, Event, ComponentFactory
 from icalendar import prop, cal
+from icalendar.prop import tzid_from_dt
 
 
 def test_cal_Component(calendar_component):
@@ -199,15 +199,14 @@ def test_inline_free_busy_inline(c):
     assert isinstance(freebusy[0][1], timedelta)
 
 
-def test_cal_Component_add(comp):
+def test_cal_Component_add(comp, tzp):
     """Test the for timezone correctness: dtstart should preserve it's
     timezone, created, dtstamp and last-modified must be in UTC.
     """
-    vienna = pytz.timezone("Europe/Vienna")
-    comp.add('dtstart', vienna.localize(datetime(2010, 10, 10, 10, 0, 0)))
+    comp.add('dtstart', tzp.localize(datetime(2010, 10, 10, 10, 0, 0), "Europe/Vienna"))
     comp.add('created', datetime(2010, 10, 10, 12, 0, 0))
-    comp.add('dtstamp', vienna.localize(datetime(2010, 10, 10, 14, 0, 0)))
-    comp.add('last-modified', pytz.utc.localize(
+    comp.add('dtstamp', tzp.localize(datetime(2010, 10, 10, 14, 0, 0), "Europe/Vienna"))
+    comp.add('last-modified', tzp.localize_utc(
         datetime(2010, 10, 10, 16, 0, 0)))
 
     lines = comp.to_ical().splitlines()
@@ -250,17 +249,17 @@ comp_prop = pytest.mark.parametrize(
 
 
 @comp_prop
-def test_cal_Component_from_ical(component_name, property_name):
+def test_cal_Component_from_ical(component_name, property_name, tzp):
     """Check for proper handling of TZID parameter of datetime properties"""
     component_str = 'BEGIN:' + component_name + '\n'
     component_str += property_name + ';TZID=America/Denver:'
     component_str += '20120404T073000\nEND:' + component_name
     component = Component.from_ical(component_str)
-    assert str(component[property_name].dt.tzinfo.zone) == "America/Denver"
+    assert tzid_from_dt(component[property_name].dt) == "America/Denver"
 
 
 @comp_prop
-def test_cal_Component_from_ical_2(component_name, property_name):
+def test_cal_Component_from_ical_2(component_name, property_name, tzp):
     """Check for proper handling of TZID parameter of datetime properties"""
     component_str = 'BEGIN:' + component_name + '\n'
     component_str += property_name + ':'
@@ -416,7 +415,7 @@ def test_cal_ignore_errors_parsing(calendars, vUTCOffset_ignore_exceptions):
         'issue_526_calendar_with_event_subset',
     ], repeat=2)
 )
-def test_comparing_calendars(calendars, calendar, other_calendar):
+def test_comparing_calendars(calendars, calendar, other_calendar, tzp):
     are_calendars_equal = calendars[calendar] == calendars[other_calendar]
     are_calendars_actually_equal = calendar == other_calendar
     assert are_calendars_equal == are_calendars_actually_equal
