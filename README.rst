@@ -43,7 +43,7 @@ files.
 .. _`BSD`: https://github.com/collective/icalendar/issues/2
 
 Quick start guide
------------
+-----------------
 
 ``icalendar`` enables you to **create**, **inspect** and **modify**
 calendaring information with Python.
