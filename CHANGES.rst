@@ -40,7 +40,8 @@ New features:
 
 Bug fixes:
 
-- ...
+- Rename RFC 2445 to RFC 5545, see `Issue 278
+  <https://github.com/collective/icalendar/issues/278>`_
 
 5.0.13 (2024-06-20)
 -------------------
