@@ -36,7 +36,7 @@ Breaking changes:
 
 New features:
 
-- ...
+- Added missing public classes and functions to API documentation.
 
 Bug fixes:
 
