@@ -80,7 +80,7 @@ def test_default_list_example(c):
 
 
 def test_render_component(calendar_component):
-    """The component can render itself in the RFC 2445 format."""
+    """The component can render itself in the RFC 5545 format."""
     calendar_component.add('attendee', 'Max M')
     assert calendar_component.to_ical() == b'BEGIN:VCALENDAR\r\nATTENDEE:Max M\r\nEND:VCALENDAR\r\n'
 

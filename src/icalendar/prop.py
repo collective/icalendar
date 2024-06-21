@@ -20,7 +20,7 @@ prefer) for the classes/datatypes that are used in iCalendar:
 
 iCalendar properties have values. The values are strongly typed. This module
 defines these types, calling val.to_ical() on them will render them as defined
-in rfc2445.
+in rfc5545.
 
 If you pass any of these classes a Python primitive, you will have an object
 that can render itself as iCalendar formatted date.
@@ -928,7 +928,7 @@ class vInline(str):
 
 
 class TypesFactory(CaselessDict):
-    """All Value types defined in rfc 2445 are registered in this factory
+    """All Value types defined in RFC 5545 are registered in this factory
     class.
 
     The value and parameter names don't overlap. So one factory is enough for
