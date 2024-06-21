@@ -372,5 +372,5 @@ Print out the calendar::
 More documentation
 ==================
 
-Have a look at the `tests <https://github.com/collective/icalendar/tree/master/src/icalendar/tests>`__ of this package to get more examples.
+Have a look at the `tests <https://github.com/collective/icalendar/tree/main/src/icalendar/tests>`__ of this package to get more examples.
 All modules and classes docstrings, which document how they work.
