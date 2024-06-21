@@ -33,6 +33,8 @@ Breaking changes:
 
 - Replaced ``pkg_resources.get_distribution`` with ``importlib.metadata`` in
   ``docs/conf.py`` to allow building docs on Python 3.12.
+- Remove untested and broken ``LocalTimezone`` and ``FixedOffset`` tzinfo
+  sub-classes, see `Issue 67 <https://github.com/collective/icalendar/issues/67>`_
 
 New features:
 
