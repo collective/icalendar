@@ -73,6 +73,7 @@ icalendar contributors
 - Matt Lewis <git@semiprime.com>
 - Felix Stupp <felix.stupp@banananet.work>
 - Bastian Wegge <wegge@crossbow.de>
+- `Steve Piercy <https://github.com/stevepiercy>`_
 
 Find out who contributed::
 

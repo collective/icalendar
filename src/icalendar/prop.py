@@ -2,6 +2,7 @@
 prefer) for the classes/datatypes that are used in iCalendar:
 
 ###########################################################################
+
 # This module defines these property value data types and property parameters
 
 4.2 Defined property parameters are:

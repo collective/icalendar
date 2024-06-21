@@ -31,9 +31,12 @@ Breaking changes:
       import icalendar
       icalendar.use_pytz()
 
+- Replaced ``pkg_resources.get_distribution`` with ``importlib.metadata`` in
+  ``docs/conf.py`` to allow building docs on Python 3.12.
+
 New features:
 
-- ...
+- Added missing public classes and functions to API documentation.
 
 Bug fixes:
 

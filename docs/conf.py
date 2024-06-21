@@ -1,5 +1,5 @@
 # icalendar documentation build configuration file
-import pkg_resources
+import importlib.metadata
 import datetime
 import os
 
@@ -28,7 +28,7 @@ master_doc = 'index'
 project = 'icalendar'
 this_year = datetime.date.today().year
 copyright = f'{this_year}, Plone Foundation'
-version = pkg_resources.get_distribution('icalendar').version
+version = importlib.metadata.version('icalendar')
 release = version
 
 exclude_patterns = ['_build', 'lib', 'bin', 'include', 'local']
