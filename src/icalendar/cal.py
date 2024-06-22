@@ -1,5 +1,5 @@
 """Calendar is a dictionary like Python object that can render itself as VCAL
-files according to rfc2445.
+files according to RFC 5545.
 
 These are the defined components.
 """
@@ -37,7 +37,7 @@ def get_example(component_directory: str, example_name: str) -> bytes:
 # The component factory
 
 class ComponentFactory(CaselessDict):
-    """All components defined in rfc 2445 are registered in this factory class.
+    """All components defined in RFC 5545 are registered in this factory class.
     To get a component you can use it like this.
     """
 
@@ -69,7 +69,7 @@ _marker = []
 
 class Component(CaselessDict):
     """Component is the base object for calendar, Event and the other
-    components defined in RFC 2445. Normally you will not use this class
+    components defined in RFC 5545. Normally you will not use this class
     directly, but rather one of the subclasses.
     """
 
