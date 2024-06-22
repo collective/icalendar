@@ -42,7 +42,7 @@ New features:
 
 Bug fixes:
 
-- ...
+- Change documentation to represent compatibility to Python 3.8+ and PyPy3
 
 5.0.13 (2024-06-20)
 -------------------
