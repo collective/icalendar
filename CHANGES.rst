@@ -7,7 +7,7 @@ Changelog
 Minor changes:
 
 - Test that all code works with both ``pytz`` and ``zoneinfo``.
-
+- Make coverage report submission optional for pull requests
 - Added missing public classes and functions to API documentation.
 
 Breaking changes:
