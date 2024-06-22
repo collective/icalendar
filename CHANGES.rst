@@ -57,10 +57,6 @@ Minor changes:
 - Document how to serve the built documentation to view with the browser
 - Improve test coverage
 
-Breaking changes:
-
-- ...
-
 New features:
 
 - Create GitHub releases for each tag.
@@ -87,18 +83,8 @@ Minor changes:
 - Update GitHub Actions steps versions
 - Keep GitHub Actions up to date with GitHub's Dependabot
 
-
-Breaking changes:
-
-- ...
-
-New features:
-
-- ...
-
 Bug fixes:
 
-- ...
 - Fixed index error in cal.py when attempting to pop from an empty stack
 - Fixed type error in prop.py when attempting to join strings into a byte-string
 - Caught Wrong Date Format in ical_fuzzer to resolve fuzzing coverage blocker
