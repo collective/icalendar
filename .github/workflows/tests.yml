@@ -49,7 +49,7 @@ jobs:
     - name: Coverage
       run: |
         pip install coveralls coverage-python-version
-        coveralls --service=github
+        coveralls --service=github || true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
