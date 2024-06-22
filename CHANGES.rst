@@ -8,6 +8,8 @@ Minor changes:
 
 - Test that all code works with both ``pytz`` and ``zoneinfo``.
 
+- Added missing public classes and functions to API documentation.
+
 Breaking changes:
 
 - Use ``zoneinfo`` for ``icalendar`` objects created from strings,
@@ -36,7 +38,7 @@ Breaking changes:
 
 New features:
 
-- Added missing public classes and functions to API documentation.
+- ...
 
 Bug fixes:
 
