@@ -1,4 +1,4 @@
-"""This module parses and generates contentlines as defined in RFC 2445
+"""This module parses and generates contentlines as defined in RFC 5545
 (iCalendar), but will probably work for other MIME types with similar syntax.
 Eg. RFC 2426 (vCard)
 
@@ -174,7 +174,7 @@ class Parameters(CaselessDict):
     """
 
     def params(self):
-        """In rfc2445 keys are called parameters, so this is to be consitent
+        """In RFC 5545 keys are called parameters, so this is to be consitent
         with the naming conventions.
         """
         return self.keys()
