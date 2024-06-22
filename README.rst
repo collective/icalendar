@@ -11,7 +11,6 @@ files.
 :Code: https://github.com/collective/icalendar
 :Mailing list: https://github.com/collective/icalendar/issues
 :Dependencies: `python-dateutil`_ and `pytz`_.
-:Compatible with: Python 2.7 and 3.4+
 :License: `BSD`_
 
 ----
@@ -19,6 +18,10 @@ files.
 .. image:: https://badge.fury.io/py/icalendar.svg
    :target: https://pypi.org/project/icalendar/
    :alt: Python Package Version on PyPI
+
+.. image:: https://img.shields.io/pypi/pyversions/icalendar
+   :target: https://pypi.org/project/icalendar/
+   :alt: PyPI - Python Version
 
 .. image:: https://img.shields.io/pypi/dm/icalendar.svg
    :target: https://pypi.org/project/icalendar/#files

@@ -9,6 +9,7 @@ Minor changes:
 - Test that all code works with both ``pytz`` and ``zoneinfo``.
 
 - Added missing public classes and functions to API documentation.
+- Add version badge
 
 Breaking changes:
 
