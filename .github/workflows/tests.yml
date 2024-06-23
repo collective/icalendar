@@ -47,7 +47,7 @@ jobs:
     - name: Test
       run: tox -e ${{ matrix.config[1] }}
     - name: Upload coverage data to coveralls.io
-      run: coveralls --service=github-actions || true
+      run: coveralls --service=github-actions
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         COVERALLS_REPO_TOKEN: ${{ secrets.CODECOV_TOKEN }}
@@ -62,8 +62,10 @@ jobs:
     runs-on: ubuntu-latest
     container: python:3-slim
     steps:
-    - name: Coverage
-      run: coveralls --service=github-actions --finish || true
+    - name: Install dependencies
+      run: pip3 install --upgrade coveralls
+    - name: Upload coverage
+      run: coveralls --service=github-actions --finish
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         COVERALLS_REPO_TOKEN: ${{ secrets.CODECOV_TOKEN }}
