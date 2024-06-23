@@ -134,7 +134,7 @@ def test_no_tzid_when_utc(utc, date, expected_output):
     https://github.com/collective/icalendar/issues/58
     https://github.com/collective/icalendar/issues/335
     '''
-    # According to RFC 2445: "The TZID property parameter MUST NOT be
+    # According to RFC 5545: "The TZID property parameter MUST NOT be
     # applied to DATE-TIME or TIME properties whose time values are
     # specified in UTC.
     date = date.replace(tzinfo=utc)

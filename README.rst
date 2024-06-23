@@ -11,7 +11,6 @@ files.
 :Code: https://github.com/collective/icalendar
 :Mailing list: https://github.com/collective/icalendar/issues
 :Dependencies: `python-dateutil`_ and `pytz`_.
-:Compatible with: Python 2.7 and 3.4+
 :License: `BSD`_
 
 ----
@@ -20,13 +19,17 @@ files.
    :target: https://pypi.org/project/icalendar/
    :alt: Python Package Version on PyPI
 
+.. image:: https://img.shields.io/pypi/pyversions/icalendar
+   :target: https://pypi.org/project/icalendar/
+   :alt: PyPI - Python Version
+
 .. image:: https://img.shields.io/pypi/dm/icalendar.svg
    :target: https://pypi.org/project/icalendar/#files
    :alt: Downloads from PyPI
 
-.. image:: https://img.shields.io/github/actions/workflow/status/collective/icalendar/tests.yml?branch=master&label=master&logo=github
-    :target: https://github.com/collective/icalendar/actions/workflows/tests.yml?query=branch%3Amaster
-    :alt: GitHub Actions build status for master
+.. image:: https://img.shields.io/github/actions/workflow/status/collective/icalendar/tests.yml?branch=main&label=main&logo=github
+    :target: https://github.com/collective/icalendar/actions/workflows/tests.yml?query=branch%3Amain
+    :alt: GitHub Actions build status for main
 
 .. image:: https://img.shields.io/github/actions/workflow/status/collective/icalendar/tests.yml?branch=4.x&label=4.x&logo=github
     :target: https://github.com/collective/icalendar/actions/workflows/tests.yml?query=branch%3A4.x++

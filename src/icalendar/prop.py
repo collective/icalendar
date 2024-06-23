@@ -20,7 +20,7 @@ prefer) for the classes/datatypes that are used in iCalendar:
 
 iCalendar properties have values. The values are strongly typed. This module
 defines these types, calling val.to_ical() on them will render them as defined
-in rfc2445.
+in rfc5545.
 
 If you pass any of these classes a Python primitive, you will have an object
 that can render itself as iCalendar formatted date.
@@ -40,12 +40,6 @@ from datetime import datetime
 from datetime import time
 from datetime import timedelta
 from datetime import tzinfo
-
-try:
-    from dateutil.tz import tzutc
-except ImportError:
-    tzutc = None
-
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Parameters
 from icalendar.parser import escape_char
@@ -70,19 +64,6 @@ DURATION_REGEX = re.compile(r'([-+]?)P(?:(\d+)W)?(?:(\d+)D)?'
 WEEKDAY_RULE = re.compile(r'(?P<signal>[+-]?)(?P<relative>[\d]{0,2})'
                           r'(?P<weekday>[\w]{2})$')
 
-####################################################
-# handy tzinfo classes you can use.
-#
-
-ZERO = timedelta(0)
-HOUR = timedelta(hours=1)
-STDOFFSET = timedelta(seconds=-_time.timezone)
-if _time.daylight:
-    DSTOFFSET = timedelta(seconds=-_time.altzone)
-else:
-    DSTOFFSET = STDOFFSET
-DSTDIFF = DSTOFFSET - STDOFFSET
-
 
 def tzid_from_dt(dt: datetime) -> Optional[str]:
     """Retrieve the timezone id from the datetime object."""
@@ -96,46 +77,6 @@ def tzid_from_dt(dt: datetime) -> Optional[str]:
         # See https://github.com/collective/icalendar/issues/333 for details
         tzid = dt.tzinfo.tzname(dt)
     return tzid
-
-
-class FixedOffset(tzinfo):
-    """Fixed offset in minutes east from UTC.
-    """
-
-    def __init__(self, offset, name):
-        self.__offset = timedelta(minutes=offset)
-        self.__name = name
-
-    def utcoffset(self, dt):
-        return self.__offset
-
-    def tzname(self, dt):
-        return self.__name
-
-    def dst(self, dt):
-        return ZERO
-
-
-class LocalTimezone(tzinfo):
-    """Timezone of the machine where the code is running.
-    """
-
-    def utcoffset(self, dt):
-        return DSTOFFSET if self._isdst(dt) else STDOFFSET
-
-    def dst(self, dt):
-        return DSTDIFF if self._isdst(dt) else ZERO
-
-    def tzname(self, dt):
-        return _time.tzname[self._isdst(dt)]
-
-    def _isdst(self, dt):
-        tt = (dt.year, dt.month, dt.day,
-              dt.hour, dt.minute, dt.second,
-              dt.weekday(), 0, -1)
-        stamp = _time.mktime(tt)
-        tt = _time.localtime(stamp)
-        return tt.tm_isdst > 0
 
 
 class vBinary:
@@ -928,7 +869,7 @@ class vInline(str):
 
 
 class TypesFactory(CaselessDict):
-    """All Value types defined in rfc 2445 are registered in this factory
+    """All Value types defined in RFC 5545 are registered in this factory
     class.
 
     The value and parameter names don't overlap. So one factory is enough for

@@ -223,7 +223,7 @@ class TestProp(unittest.TestCase):
                          b'Text with escaped\\n chars')
 
         # If you pass a unicode object, it will be utf-8 encoded. As this is
-        # the (only) standard that RFC 2445 support.
+        # the (only) standard that RFC 5545 support.
         t = vText('international chars \xe4\xf6\xfc')
         self.assertEqual(t.to_ical(),
                          b'international chars \xc3\xa4\xc3\xb6\xc3\xbc')
