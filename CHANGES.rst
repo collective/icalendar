@@ -8,7 +8,10 @@ Minor changes:
 
 - Test that all code works with both ``pytz`` and ``zoneinfo``.
 - Make coverage report submission optional for pull requests
+- Rename ``master`` branch to ``main``, see `Issue
+  <https://github.com/collective/icalendar/issues/627>`_
 - Added missing public classes and functions to API documentation.
+- Add version badge
 
 Breaking changes:
 
@@ -36,13 +39,21 @@ Breaking changes:
 - Replaced ``pkg_resources.get_distribution`` with ``importlib.metadata`` in
   ``docs/conf.py`` to allow building docs on Python 3.12.
 
+- Remove ``is_broken`` property. Use ``errors`` instead to check if a
+  component had suppressed parsing errors.
+  See `Issue 424 <https://github.com/collective/icalendar/issues/424>`_.
+
+- Remove untested and broken ``LocalTimezone`` and ``FixedOffset`` tzinfo
+  sub-classes, see `Issue 67 <https://github.com/collective/icalendar/issues/67>`_
+
 New features:
 
 - ...
 
 Bug fixes:
 
-- ...
+- Rename RFC 2445 to RFC 5545, see `Issue 278
+  <https://github.com/collective/icalendar/issues/278>`_
 
 5.0.13 (2024-06-20)
 -------------------
@@ -56,10 +67,6 @@ Minor changes:
 - Extend examples in Usage with alarm and recurrence
 - Document how to serve the built documentation to view with the browser
 - Improve test coverage
-
-Breaking changes:
-
-- ...
 
 New features:
 
@@ -87,18 +94,8 @@ Minor changes:
 - Update GitHub Actions steps versions
 - Keep GitHub Actions up to date with GitHub's Dependabot
 
-
-Breaking changes:
-
-- ...
-
-New features:
-
-- ...
-
 Bug fixes:
 
-- ...
 - Fixed index error in cal.py when attempting to pop from an empty stack
 - Fixed type error in prop.py when attempting to join strings into a byte-string
 - Caught Wrong Date Format in ical_fuzzer to resolve fuzzing coverage blocker
@@ -328,7 +325,7 @@ New features:
 - No longer test on Python 3.4, 3.5 and PyPy2, because we cannot get it to work.
   Technically it should still work, it is just no longer tested.
   Do not expect much development on branch 4.x anymore.
-  The master branch will be for the remaining Python versions that we support.
+  The main branch will be for the remaining Python versions that we support.
   [maurits]
 
 Bug fixes:
@@ -968,7 +965,7 @@ Fixes:
   [garbas]
 
 - hook out github repository to https://readthedocs.org service so sphinx
-  documentation is generated on each commit (for master). Documentation can be
+  documentation is generated on each commit (for main). Documentation can be
   visible on: https://icalendar.readthedocs.io/en/latest/
   [garbas]
 

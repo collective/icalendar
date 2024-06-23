@@ -11,7 +11,6 @@ files.
 :Code: https://github.com/collective/icalendar
 :Mailing list: https://github.com/collective/icalendar/issues
 :Dependencies: `python-dateutil`_ and `pytz`_.
-:Compatible with: Python 2.7 and 3.4+
 :License: `BSD`_
 
 ----
@@ -20,13 +19,17 @@ files.
    :target: https://pypi.org/project/icalendar/
    :alt: Python Package Version on PyPI
 
+.. image:: https://img.shields.io/pypi/pyversions/icalendar
+   :target: https://pypi.org/project/icalendar/
+   :alt: PyPI - Python Version
+
 .. image:: https://img.shields.io/pypi/dm/icalendar.svg
    :target: https://pypi.org/project/icalendar/#files
    :alt: Downloads from PyPI
 
-.. image:: https://img.shields.io/github/actions/workflow/status/collective/icalendar/tests.yml?branch=master&label=master&logo=github
-    :target: https://github.com/collective/icalendar/actions/workflows/tests.yml?query=branch%3Amaster
-    :alt: GitHub Actions build status for master
+.. image:: https://img.shields.io/github/actions/workflow/status/collective/icalendar/tests.yml?branch=main&label=main&logo=github
+    :target: https://github.com/collective/icalendar/actions/workflows/tests.yml?query=branch%3Amain
+    :alt: GitHub Actions build status for main
 
 .. image:: https://img.shields.io/github/actions/workflow/status/collective/icalendar/tests.yml?branch=4.x&label=4.x&logo=github
     :target: https://github.com/collective/icalendar/actions/workflows/tests.yml?query=branch%3A4.x++
@@ -175,8 +178,8 @@ you can receive all the latest updates, and switch back to version 5.x behavior:
     >>> dt.tzinfo
     <DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>
 
-Version 6 is on `branch master <https://github.com/collective/icalendar/>`_ with compatibility to Python versions ``3.7+`` and ``PyPy3``.
-We expect the ``master`` branch with versions ``6+`` to receive the latest updates and features.
+Version 6 is on `branch main <https://github.com/collective/icalendar/>`_ with compatibility to Python versions ``3.7+`` and ``PyPy3``.
+We expect the ``main`` branch with versions ``6+`` to receive the latest updates and features.
 
 Version 5
 ~~~~~~~~~

@@ -2,7 +2,7 @@ iCalendar package
 =================
 
 This package is used for parsing and generating iCalendar files following the
-standard in RFC 2445.
+standard in RFC 5545.
 
 It should be fully compliant, but it is possible to generate and parse invalid
 files if you really want to.
@@ -129,7 +129,7 @@ added. Here is an example::
   END:VCALENDAR
 
 Note: this version doesn't check for compliance, so you should look in
-the RFC 2445 spec for legal properties for each component, or look in
+the RFC 5545 spec for legal properties for each component, or look in
 the icalendar/calendar.py file, where it is at least defined for each
 component.
 
@@ -372,5 +372,5 @@ Print out the calendar::
 More documentation
 ==================
 
-Have a look at the `tests <https://github.com/collective/icalendar/tree/master/src/icalendar/tests>`__ of this package to get more examples.
+Have a look at the `tests <https://github.com/collective/icalendar/tree/main/src/icalendar/tests>`__ of this package to get more examples.
 All modules and classes docstrings, which document how they work.

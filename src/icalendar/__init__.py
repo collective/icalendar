@@ -34,11 +34,6 @@ from icalendar.prop import (
     vUTCOffset,
     TypesFactory,
 )
-# useful tzinfo subclasses
-from icalendar.prop import (
-    FixedOffset,
-    LocalTimezone,
-)
 # Parameters and helper methods for splitting and joining string with escaped
 # chars.
 from icalendar.parser import (
