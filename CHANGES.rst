@@ -46,9 +46,14 @@ Breaking changes:
 - Remove untested and broken ``LocalTimezone`` and ``FixedOffset`` tzinfo
   sub-classes, see `Issue 67 <https://github.com/collective/icalendar/issues/67>`_
 
+- Remove ``pytz`` as a dependency of ``icalendar``. If you require ``pytz``,
+  add it to your dependency list or install it additionally with::
+
+      pip install icalendar>=6.0.0 pytz
+
 New features:
 
-- ...
+- Add function ``icalendar.use_pytz()``.
 
 Bug fixes:
 
