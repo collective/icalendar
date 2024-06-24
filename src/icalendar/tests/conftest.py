@@ -223,15 +223,13 @@ def other_tzp(request, tzp):
 @pytest.fixture()
 def pytz_only(tzp):
     """Skip tests that are not running under pytz."""
-    if not tzp.uses_pytz():
-        pytest.skip("Not using pytz. Skipping this test.")
+    assert tzp.uses_pytz()
 
 
 @pytest.fixture()
-def zoneinfo_only(tzp):
-    """Skip tests that are not running under pytz."""
-    if not tzp.uses_zoneinfo():
-        pytest.skip("Not using zoneinfo. Skipping this test.")
+def zoneinfo_only(tzp, request, tzp_name):
+    """Skip tests that are not running under zoneinfo."""
+    assert tzp.uses_zoneinfo()
 
 
 def pytest_generate_tests(metafunc):
@@ -248,7 +246,7 @@ def pytest_generate_tests(metafunc):
         if "zoneinfo_only" in metafunc.fixturenames:
             tzp_names = ["zoneinfo"]
         if "pytz_only" in metafunc.fixturenames:
-            tzp_names.remove("zoneinfo")
+            tzp_names = PYTZ_TZP
         assert not ("zoneinfo_only" in metafunc.fixturenames and "pytz_only" in metafunc.fixturenames), "Use pytz_only or zoneinfo_only but not both!"
         metafunc.parametrize("tzp_name", tzp_names, scope="module")
 
@@ -280,6 +278,5 @@ def env_for_doctest(monkeypatch):
     from icalendar.timezone.zoneinfo import ZONEINFO
     monkeypatch.setattr(ZONEINFO, "utc", zoneinfo.ZoneInfo("UTC"))
     return {
-        "print": doctest_print,
-        "__import__": doctest_import,
+        "print": doctest_print
     }

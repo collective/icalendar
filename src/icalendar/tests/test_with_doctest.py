@@ -15,6 +15,7 @@ import os
 import pytest
 import importlib
 import sys
+import re
 
 HERE = os.path.dirname(__file__) or "."
 ICALENDAR_PATH = os.path.dirname(HERE)
@@ -68,14 +69,19 @@ def test_files_is_included(filename):
 
 
 @pytest.mark.parametrize("document", DOCUMENT_PATHS)
-def test_documentation_file(document, zoneinfo_only, env_for_doctest):
+def test_documentation_file(document, zoneinfo_only, env_for_doctest, tzp):
     """This test runs doctest on a documentation file.
 
     functions are also replaced to work.
     """
-    test_result = doctest.testfile(document, module_relative=False, globs=env_for_doctest)
-    if env_for_doctest.get("pytz") is None:
-        pytest.skip("pytz was imported but could not be used.")
+    try:
+        test_result = doctest.testfile(document, module_relative=False, globs=env_for_doctest, raise_on_error=True)
+    except doctest.UnexpectedException as e:
+        ty, err, tb = e.exc_info
+        if issubclass(ty, ModuleNotFoundError) and err.name == "pytz":
+            pytest.skip("pytz not installed, skipping this file.")
+    finally:
+        tzp.use_zoneinfo()
     assert test_result.failed == 0, f"{test_result.failed} errors in {os.path.basename(document)}"
 
 
