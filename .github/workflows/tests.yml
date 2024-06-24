@@ -19,6 +19,7 @@ jobs:
         # [Python version, tox env]
         - ["3.7",   "py37"]
         - ["3.8",   "py38"]
+        - ["3.8",   "nopytz"]
         - ["3.9",   "py39"]
         - ["3.10",  "py310"]
         - ["pypy-3.9", "pypy3"]
