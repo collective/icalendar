@@ -8,6 +8,7 @@ Minor changes:
 
 - Test that all code works with both ``pytz`` and ``zoneinfo``.
 - Make coverage report submission optional for pull requests
+- Parallelize coverage
 - Rename ``master`` branch to ``main``, see `Issue
   <https://github.com/collective/icalendar/issues/627>`_
 - Added missing public classes and functions to API documentation.
