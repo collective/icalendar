@@ -10,7 +10,7 @@ except ImportError:
     pytz = None
 from datetime import datetime
 from dateutil import tz
-from icalendar.cal import Component, Calendar, Event, ComponentFactory
+from icalendar.cal import Component, Calendar
 from icalendar.timezone import tzp as _tzp
 from icalendar.timezone import TZP
 from pathlib import Path

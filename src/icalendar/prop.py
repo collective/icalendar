@@ -280,7 +280,7 @@ class vDDDTypes(TimeBase):
             self.params = Parameters({'value': 'PERIOD'})
 
         tzid = tzid_from_dt(dt) if isinstance(dt, (datetime, time)) else None
-        if not tzid is None and tzid != 'UTC':
+        if tzid is not None and tzid != 'UTC':
             self.params.update({'TZID': tzid})
 
         self.dt = dt

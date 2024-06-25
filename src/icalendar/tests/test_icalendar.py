@@ -1,6 +1,3 @@
-import icalendar
-import os
-import textwrap
 from ..parser import Contentlines, Contentline, Parameters, foldline
 from ..parser import q_join, q_split, dquote
 from ..prop import vText

@@ -139,21 +139,8 @@ with the same result:
     X-DT-ZONEINFO;TZID=Europe/London:20240619T100100
     END:VEVENT
 
-
-
-Versions and Compatibility
---------------------------
-
-``icalendar`` is a critical project used by many. It has been there for a long time and maintaining
-long-term compatibility with projects conflicts partially with providing and using the features that
-the latest Python versions bring.
-
-Volunteers pour `effort into maintaining and developing icalendar
-<https://github.com/collective/icalendar/discussions/360>`_.
-Below, you can find an overview of the versions and how we maintain them.
-
-Version 6
-~~~~~~~~~
+Version 6 with zoneinfo
+~~~~~~~~~~~~~~~~~~~~~~~
 
 Version 6 of ``icalendar`` switches the timezone implementation to ``zoneinfo``.
 This only affects you if you parse ``icalendar`` objects with ``from_ical()``.
@@ -169,7 +156,7 @@ By default and since 6.0.0, ``zoneinfo`` timezones are created.
     ZoneInfo(key='Europe/Vienna')
 
 If you would like to continue to receive ``pytz`` timezones in as parse results,
-you can receive all the latest updates, and switch back to version 5.x behavior:
+you can receive all the latest updates, and switch back to earlier behavior:
 
 .. code:: python
 
@@ -178,22 +165,9 @@ you can receive all the latest updates, and switch back to version 5.x behavior:
     >>> dt.tzinfo
     <DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>
 
-Version 6 is on `branch main <https://github.com/collective/icalendar/>`_ with compatibility to Python versions ``3.7+`` and ``PyPy3``.
+Version 6 is on `branch main <https://github.com/collective/icalendar/>`_.
+It is compatible with Python versions 3.8 - 3.12, and PyPy3.
 We expect the ``main`` branch with versions ``6+`` to receive the latest updates and features.
-
-Version 5
-~~~~~~~~~
-
-Version 5 uses only the ``pytz`` timezone implementation, and not ``zoneinfo``.
-No updates will be released for this.
-Please use version 6 and switch to use ``zoneinfo`` as documented above.
-
-Version 4
-~~~~~~~~~
-
-Version 4 is on `branch 4.x <https://github.com/collective/icalendar/tree/4.x>`_ with maximum compatibility with Python versions ``2.7`` and ``3.4+``, ``PyPy2`` and ``PyPy3``.
-The ``4.x`` branch only receives security and bug fixes if someone makes the effort.
-We recommend migrating to later Python versions and also providing feedback if you depend on the ``4.x`` features.
 
 Related projects
 ================

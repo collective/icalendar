@@ -58,7 +58,7 @@ try:
         if filename.lower().endswith(".rst")
     ]
 except FileNotFoundError:
-    raise EnvironmentError("Could not find the documentation - remove the build folder and try again.")
+    raise OSError("Could not find the documentation - remove the build folder and try again.")
 
 @pytest.mark.parametrize("filename", [
     "README.rst",

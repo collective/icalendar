@@ -2,7 +2,6 @@
 
    https://github.com/collective/icalendar/issues/168
 '''
-from icalendar import Calendar
 
 def test_issue_168_parsing_inavlid_calendars_no_warning(calendars):
     expected_error = (None, "Content line could not be parsed into parts: 'X-APPLE-RADIUS=49.91307046514149': X-APPLE-RADIUS=49.91307046514149")

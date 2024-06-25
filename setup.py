@@ -22,7 +22,7 @@ install_requires = [
     'python-dateutil',
     # install requirements depending on python version
     # see https://www.python.org/dev/peps/pep-0508/#environment-markers
-    'backports.zoneinfo; python_version == "3.7" or python_version == "3.8"',
+    'backports.zoneinfo; python_version < "3.9"',
     'tzdata'
 ]
 
@@ -38,11 +38,11 @@ setuptools.setup(
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
     ],
@@ -56,7 +56,7 @@ setuptools.setup(
     package_dir={'': 'src'},
     include_package_data=True,
     zip_safe=False,
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     install_requires=install_requires,
     entry_points = {'console_scripts': ['icalendar = icalendar.cli:main']},
     extras_require={

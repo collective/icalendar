@@ -1,9 +1,7 @@
-import unittest
 
 import datetime
 import dateutil.parser
 import icalendar
-import os
 from icalendar.prop import tzid_from_dt
 
 

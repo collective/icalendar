@@ -1,6 +1,6 @@
 import unittest
 
-from datetime import tzinfo, datetime
+from datetime import datetime
 from icalendar import Calendar, cli
 try:
     import zoneinfo
