@@ -12,6 +12,7 @@ Minor changes:
 
 - Added missing public classes and functions to API documentation.
 - Add version badge
+- Update list of ``tox`` environments
 
 Breaking changes:
 
