@@ -4,7 +4,11 @@ except ImportError:
     import zoneinfo
 import pytest
 import icalendar
-import pytz
+try:
+    import pytz
+except ImportError:
+    pytz = None
+from datetime import datetime
 from dateutil import tz
 from icalendar.cal import Component, Calendar
 from icalendar.timezone import tzp as _tzp
@@ -12,6 +16,21 @@ from icalendar.timezone import TZP
 from pathlib import Path
 import itertools
 import sys
+
+HAS_PYTZ = pytz is not None
+if HAS_PYTZ:
+    PYTZ_UTC = [
+        pytz.utc,
+        pytz.timezone('UTC'),
+    ]
+    PYTZ_IN_TIMEZONE = [
+        lambda dt, tzname: pytz.timezone(tzname).localize(dt),
+    ]
+    PYTZ_TZP = ["pytz"]
+else:
+    PYTZ_UTC = []
+    PYTZ_IN_TIMEZONE = []
+    PYTZ_TZP = []
 
 
 class DataSource:
@@ -76,17 +95,14 @@ def timezones(tzp):
 def events(tzp):
     return DataSource(EVENTS_FOLDER, icalendar.Event.from_ical)
 
-@pytest.fixture(params=[
-    pytz.utc,
+@pytest.fixture(params=PYTZ_UTC + [
     zoneinfo.ZoneInfo('UTC'),
-    pytz.timezone('UTC'),
     tz.UTC,
     tz.gettz('UTC')])
 def utc(request, tzp):
     return request.param
 
-@pytest.fixture(params=[
-    lambda dt, tzname: pytz.timezone(tzname).localize(dt),
+@pytest.fixture(params=PYTZ_IN_TIMEZONE + [
     lambda dt, tzname: dt.replace(tzinfo=tz.gettz(tzname)),
     lambda dt, tzname: dt.replace(tzinfo=zoneinfo.ZoneInfo(tzname))
 ])
@@ -193,7 +209,7 @@ def tzp(tzp_name):
     _tzp.use_default()
 
 
-@pytest.fixture(params=["pytz", "zoneinfo"])
+@pytest.fixture(params=PYTZ_TZP + ["zoneinfo"])
 def other_tzp(request, tzp):
     """This is annother timezone provider.
 
@@ -207,15 +223,13 @@ def other_tzp(request, tzp):
 @pytest.fixture()
 def pytz_only(tzp):
     """Skip tests that are not running under pytz."""
-    if not tzp.uses_pytz():
-        pytest.skip("Not using pytz. Skipping this test.")
+    assert tzp.uses_pytz()
 
 
 @pytest.fixture()
-def zoneinfo_only(tzp):
-    """Skip tests that are not running under pytz."""
-    if not tzp.uses_zoneinfo():
-        pytest.skip("Not using zoneinfo. Skipping this test.")
+def zoneinfo_only(tzp, request, tzp_name):
+    """Skip tests that are not running under zoneinfo."""
+    assert tzp.uses_zoneinfo()
 
 
 def pytest_generate_tests(metafunc):
@@ -228,12 +242,12 @@ def pytest_generate_tests(metafunc):
     See https://docs.pytest.org/en/6.2.x/example/parametrize.html#deferring-the-setup-of-parametrized-resources
     """
     if "tzp_name" in metafunc.fixturenames:
-        tzp_names = ["pytz", "zoneinfo"]
+        tzp_names = PYTZ_TZP + ["zoneinfo"]
         if "zoneinfo_only" in metafunc.fixturenames:
-            tzp_names.remove("pytz")
-        if "pytz_only" in  metafunc.fixturenames:
-            tzp_names.remove("zoneinfo")
-        assert tzp_names, "Use pytz_only or zoneinfo_only but not both!"
+            tzp_names = ["zoneinfo"]
+        if "pytz_only" in metafunc.fixturenames:
+            tzp_names = PYTZ_TZP
+        assert not ("zoneinfo_only" in metafunc.fixturenames and "pytz_only" in metafunc.fixturenames), "Use pytz_only or zoneinfo_only but not both!"
         metafunc.parametrize("tzp_name", tzp_names, scope="module")
 
 
@@ -243,12 +257,18 @@ class DoctestZoneInfo(zoneinfo.ZoneInfo):
         return f"ZoneInfo(key={repr(self.key)})"
 
 
-def test_print(obj):
+def doctest_print(obj):
     """doctest print"""
     if isinstance(obj, bytes):
         obj = obj.decode("UTF-8")
     print(str(obj).strip().replace("\r\n", "\n").replace("\r", "\n"))
 
+
+def doctest_import(name, *args, **kw):
+    """Replace the import mechanism to skip the whole doctest if we import pytz."""
+    if name == "pytz":
+        return pytz
+    return __import__(name, *args, **kw)
 
 @pytest.fixture()
 def env_for_doctest(monkeypatch):
@@ -257,4 +277,6 @@ def env_for_doctest(monkeypatch):
     monkeypatch.setattr(zoneinfo, "ZoneInfo", DoctestZoneInfo)
     from icalendar.timezone.zoneinfo import ZONEINFO
     monkeypatch.setattr(ZONEINFO, "utc", zoneinfo.ZoneInfo("UTC"))
-    return {"print": test_print}
+    return {
+        "print": doctest_print
+    }

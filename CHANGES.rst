@@ -7,11 +7,12 @@ Changelog
 Minor changes:
 
 - Test that all code works with both ``pytz`` and ``zoneinfo``.
+- Make coverage report submission optional for pull requests
 - Rename ``master`` branch to ``main``, see `Issue
   <https://github.com/collective/icalendar/issues/627>`_
-
 - Added missing public classes and functions to API documentation.
 - Add version badge
+- Update list of ``tox`` environments
 
 Breaking changes:
 
@@ -49,9 +50,15 @@ Breaking changes:
 - Remove Python 3.7 as compatible. icalendar is compatible with Python
   versions 3.8 - 3.12, and PyPy3.
 
+- Remove ``pytz`` as a dependency of ``icalendar``. If you require ``pytz``,
+  add it to your dependency list or install it additionally with::
+
+      pip install icalendar==6.* pytz
+
 New features:
 
 - Test compatibility with Python 3.12
+- Add function ``icalendar.use_pytz()``.
 
 Bug fixes:
 

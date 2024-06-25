@@ -1,6 +1,9 @@
 """Test the equality and inequality of components."""
 import copy
-import pytz
+try:
+    import pytz
+except ImportError:
+    pytz = None
 from icalendar.prop import *
 from datetime import datetime, date, timedelta
 import pytest

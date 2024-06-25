@@ -2,19 +2,31 @@
 
 These are mostly located in icalendar.timezone.
 """
-import pytz
+try:
+    import pytz
+    from icalendar.timezone.pytz import PYTZ
+except ImportError:
+    pytz = None
 from icalendar.timezone.zoneinfo import zoneinfo, ZONEINFO
 from dateutil.tz.tz import _tzicalvtz
-from icalendar.timezone.pytz import PYTZ
 import pytest
 import copy
 import pickle
 from dateutil.rrule import rrule, MONTHLY
 from datetime import datetime
 
+if pytz:
+    PYTZ_TIMEZONES = pytz.all_timezones
+    TZP_ = [PYTZ(), ZONEINFO()]
+    NEW_TZP_NAME = ["pytz", "zoneinfo"]
+else:
+    PYTZ_TIMEZONES = []
+    TZP_ = [ZONEINFO()]
+    NEW_TZP_NAME = ["zoneinfo"]
 
-@pytest.mark.parametrize("tz_name", pytz.all_timezones + list(zoneinfo.available_timezones()))
-@pytest.mark.parametrize("tzp_", [PYTZ(), ZONEINFO()])
+
+@pytest.mark.parametrize("tz_name", PYTZ_TIMEZONES + list(zoneinfo.available_timezones()))
+@pytest.mark.parametrize("tzp_", TZP_)
 def test_timezone_names_are_known(tz_name, tzp_):
     """Make sure that all timezones are understood."""
     if tz_name in ("Factory", "localtime"):
@@ -55,7 +67,7 @@ def test_cache_reuse_timezone_cache(tzp, timezones):
     assert tzp1 is tzp.timezone("custom_Pacific/Fiji"), "Cache is not replaced."
 
 
-@pytest.mark.parametrize("new_tzp_name", ["pytz", "zoneinfo"])
+@pytest.mark.parametrize("new_tzp_name", NEW_TZP_NAME)
 def test_cache_is_emptied_when_tzp_is_switched(tzp, timezones, new_tzp_name):
     """Make sure we do not reuse the timezones created when we switch the provider."""
     tzp.cache_timezone_component(timezones.pacific_fiji)

@@ -2,7 +2,10 @@
 from icalendar import vDDDTypes
 from datetime import datetime, date, time
 from icalendar.timezone.zoneinfo import zoneinfo
-import pytz
+try:
+    import pytz
+except ImportError:
+    pytz = None
 from dateutil import tz
 import pytest
 from copy import deepcopy
@@ -10,7 +13,6 @@ from copy import deepcopy
 
 
 vDDDTypes_list = [
-    vDDDTypes(pytz.timezone('EST').localize(datetime(year=2022, month=7, day=22, hour=12, minute=7))),
     vDDDTypes(datetime(year=2022, month=7, day=22, hour=12, minute=7, tzinfo=zoneinfo.ZoneInfo("Europe/London"))),
     vDDDTypes(datetime(year=2022, month=7, day=22, hour=12, minute=7)),
     vDDDTypes(datetime(year=2022, month=7, day=22, hour=12, minute=7, tzinfo=tz.UTC)),
@@ -18,6 +20,8 @@ vDDDTypes_list = [
     vDDDTypes(date(year=2022, month=7, day=23)),
     vDDDTypes(time(hour=22, minute=7, second=2))
 ]
+if pytz:
+    vDDDTypes_list.append(vDDDTypes(pytz.timezone('EST').localize(datetime(year=2022, month=7, day=22, hour=12, minute=7))),)
 
 def identity(x):
     return x
