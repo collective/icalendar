@@ -46,9 +46,12 @@ Breaking changes:
 - Remove untested and broken ``LocalTimezone`` and ``FixedOffset`` tzinfo
   sub-classes, see `Issue 67 <https://github.com/collective/icalendar/issues/67>`_
 
+- Remove Python 3.7 as compatible. icalendar is compatible with Python
+  versions 3.8 - 3.12, and PyPy3.
+
 New features:
 
-- ...
+- Test compatibility with Python 3.12
 
 Bug fixes:
 
