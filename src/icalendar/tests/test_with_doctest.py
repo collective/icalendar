@@ -14,6 +14,8 @@ import doctest
 import os
 import pytest
 import importlib
+import sys
+import re
 
 HERE = os.path.dirname(__file__) or "."
 ICALENDAR_PATH = os.path.dirname(HERE)
@@ -35,7 +37,12 @@ def test_this_module_is_among_them():
 @pytest.mark.parametrize("module_name", MODULE_NAMES)
 def test_docstring_of_python_file(module_name):
     """This test runs doctest on the Python module."""
-    module = importlib.import_module(module_name)
+    try:
+        module = importlib.import_module(module_name)
+    except ModuleNotFoundError as e:
+        if e.name == "pytz":
+            pytest.skip("pytz is not installed, skipping this module.")
+        raise
     test_result = doctest.testmod(module, name=module_name)
     assert test_result.failed == 0, f"{test_result.failed} errors in {module_name}"
 
@@ -62,14 +69,22 @@ def test_files_is_included(filename):
 
 
 @pytest.mark.parametrize("document", DOCUMENT_PATHS)
-def test_documentation_file(document, zoneinfo_only, env_for_doctest):
+def test_documentation_file(document, zoneinfo_only, env_for_doctest, tzp):
     """This test runs doctest on a documentation file.
 
     functions are also replaced to work.
     """
-    test_result = doctest.testfile(document, module_relative=False, globs=env_for_doctest)
+    try:
+        test_result = doctest.testfile(document, module_relative=False, globs=env_for_doctest, raise_on_error=True)
+    except doctest.UnexpectedException as e:
+        ty, err, tb = e.exc_info
+        if issubclass(ty, ModuleNotFoundError) and err.name == "pytz":
+            pytest.skip("pytz not installed, skipping this file.")
+    finally:
+        tzp.use_zoneinfo()
     assert test_result.failed == 0, f"{test_result.failed} errors in {os.path.basename(document)}"
 
 
 def test_can_import_zoneinfo(env_for_doctest):
     """Allow importing zoneinfo for tests."""
+    assert "zoneinfo" in sys.modules

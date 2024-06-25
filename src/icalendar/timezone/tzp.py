@@ -8,7 +8,7 @@ from icalendar import prop
 from dateutil.rrule import rrule
 
 
-DEFAULT_TIMEZONE_PROVIDER = "pytz"
+DEFAULT_TIMEZONE_PROVIDER = "zoneinfo"
 
 
 class TZP:

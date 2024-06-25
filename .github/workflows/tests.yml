@@ -18,6 +18,7 @@ jobs:
         config:
         # [Python version, tox env]
         - ["3.8",   "py38"]
+        - ["3.8",   "nopytz"]
         - ["3.9",   "py39"]
         - ["3.10",  "py310"]
         - ["pypy-3.9", "pypy3"]
