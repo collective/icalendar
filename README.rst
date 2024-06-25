@@ -53,7 +53,7 @@ calendaring information with Python.
 
 To **install** the package, run::
 
-    pip install icalendar
+    pip install 'icalendar==6.*'
 
 
 Inspect Files
