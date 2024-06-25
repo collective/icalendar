@@ -52,6 +52,7 @@ New features:
 
 Bug fixes:
 
+- Change documentation to represent compatibility with Python 3.8 - 3.12, and PyPy3.
 - Rename RFC 2445 to RFC 5545, see `Issue 278
   <https://github.com/collective/icalendar/issues/278>`_
 
