@@ -2,7 +2,6 @@
 
    https://github.com/collective/icalendar/issues/27
 '''
-from icalendar import Calendar
 
 def test_issue_27_multiple_periods(calendars):
     free_busy = list(calendars.issue_27_multiple_periods_in_freebusy_multiple_freebusies.walk('VFREEBUSY'))[0]

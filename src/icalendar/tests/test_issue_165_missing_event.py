@@ -2,7 +2,6 @@
 
    https://github.com/collective/icalendar/issues/165
 '''
-from icalendar import Calendar
 
 def test_issue_165_missing_event(calendars):
     events = list(calendars.issue_165_missing_event.walk('VEVENT'))

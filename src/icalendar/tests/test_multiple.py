@@ -1,5 +1,4 @@
 """An example with multiple VCALENDAR components"""
-from icalendar import Calendar
 from icalendar.prop import vText
 
 

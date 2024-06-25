@@ -16,7 +16,8 @@ from icalendar.prop import TypesFactory
 from icalendar.prop import vText, vDDDLists
 from icalendar.timezone import tzp
 from typing import Tuple, List
-import dateutil.rrule, dateutil.tz
+import dateutil.rrule
+import dateutil.tz
 import os
 
 
