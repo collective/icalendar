@@ -31,10 +31,6 @@ files.
     :target: https://github.com/collective/icalendar/actions/workflows/tests.yml?query=branch%3Amain
     :alt: GitHub Actions build status for main
 
-.. image:: https://img.shields.io/github/actions/workflow/status/collective/icalendar/tests.yml?branch=4.x&label=4.x&logo=github
-    :target: https://github.com/collective/icalendar/actions/workflows/tests.yml?query=branch%3A4.x++
-    :alt: GitHub Actions build status for 4.x
-
 .. image:: https://readthedocs.org/projects/icalendar/badge/?version=latest
     :target: https://icalendar.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
