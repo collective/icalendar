@@ -139,5 +139,9 @@ jobs:
       name: github-release
     steps:
       - uses: actions/checkout@v4
-      - name: create release
+      - name: Create GitHub release from tag
         uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          body: "To view the changes, please see the [Changelog](https://icalendar.readthedocs.io/en/latest/changelog.html). This release can be installed from [PyPI](https://pypi.org/project/icalendar/#history)."
+          generateReleaseNotes: false
