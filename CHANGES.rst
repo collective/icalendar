@@ -60,6 +60,8 @@ New features:
 
 - Test compatibility with Python 3.12
 - Add function ``icalendar.use_pytz()``.
+- Allows selecting components with ``walk(select=func)`` where ``func`` takes a
+  component and returns ``True``/``False``.
 
 Bug fixes:
 
