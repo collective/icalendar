@@ -13,6 +13,7 @@ Minor changes:
   <https://github.com/collective/icalendar/issues/627>`_
 - Added missing public classes and functions to API documentation.
 - Add version badge
+- Remove 4.x badge
 - Update list of ``tox`` environments
 
 Breaking changes:
