@@ -60,6 +60,9 @@ jobs:
     # see https://coveralls-python.readthedocs.io/en/latest/usage/configuration.html#github-actions-support
     name: Submit test coverage
     needs: run-tests
+    # always finalize coverage aftest tests ran
+    # see https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-not-requiring-successful-dependent-jobs
+    if: ${{ always() }}
     runs-on: ubuntu-latest
     container: python:3-slim
     steps:
