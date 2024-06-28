@@ -5,7 +5,7 @@ See
 - https://www.rfc-editor.org/rfc/rfc7529.html
 """
 import pytest
-from icalendar.prop import vRecur, vMonth
+from icalendar.prop import vRecur, vMonth, vSkip
 
 
 @pytest.mark.parametrize(
@@ -55,6 +55,13 @@ def test_leap_month(calendars):
         (vRecur, vRecur(bymonth=vMonth("5L")), b"BYMONTH=5L"),
         (vMonth, vMonth(10), b"10"),
         (vMonth, vMonth("5L"), b"5L"),
+        (vSkip, vSkip.OMIT, b"OMIT"),
+        (vSkip, vSkip.BACKWARD, b"BACKWARD"),
+        (vSkip, vSkip.FORWARD, b"FORWARD"),
+        (vSkip, vSkip("OMIT"), b"OMIT"),
+        (vSkip, vSkip("BACKWARD"), b"BACKWARD"),
+        (vSkip, vSkip("FORWARD"), b"FORWARD"),
+        (vRecur, vRecur(rscale="GREGORIAN", freq="YEARLY", skip='FORWARD'), b"RSCALE=GREGORIAN;FREQ=YEARLY;SKIP=FORWARD"),
     ]
 )
 def test_conversion(ty, recur, ics):

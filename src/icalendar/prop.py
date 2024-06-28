@@ -55,6 +55,7 @@ import re
 import time as _time
 
 from typing import Optional, Union
+from enum import Enum, auto
 
 
 DURATION_REGEX = re.compile(r'([-+]?)P(?:(\d+)W)?(?:(\d+)D)?'
@@ -123,6 +124,29 @@ class vBoolean(int):
             return cls.BOOL_MAP[ical]
         except Exception:
             raise ValueError(f"Expected 'TRUE' or 'FALSE'. Got {ical}")
+
+
+class vText(str):
+    """Simple text.
+    """
+
+    def __new__(cls, value, encoding=DEFAULT_ENCODING):
+        value = to_unicode(value, encoding=encoding)
+        self = super().__new__(cls, value)
+        self.encoding = encoding
+        self.params = Parameters()
+        return self
+
+    def __repr__(self) -> str:
+        return f"vText({self.to_ical()!r})"
+
+    def to_ical(self) -> bytes:
+        return escape_char(self).encode(self.encoding)
+
+    @classmethod
+    def from_ical(cls, ical:ICAL_TYPE):
+        ical_unesc = unescape_char(ical)
+        return cls(ical_unesc)
 
 
 class vCalAddress(str):
@@ -678,6 +702,18 @@ class vMonth(int):
         return f"{int(self)}{'L' if self.leap else ''}"
 
 
+class vSkip(vText, Enum):
+    """Skip values for RRULE.
+
+    These are defined in :rfc:`7529`.
+
+    OMIT  is the default value.
+    """
+
+    OMIT = "OMIT"
+    FORWARD = "FORWARD"
+    BACKWARD = "BACKWARD"
+
 
 class vRecur(CaselessDict):
     """Recurrence definition.
@@ -691,7 +727,7 @@ class vRecur(CaselessDict):
     canonical_order = ("RSCALE", "FREQ", "UNTIL", "COUNT", "INTERVAL",
                        "BYSECOND", "BYMINUTE", "BYHOUR", "BYDAY", "BYWEEKDAY",
                        "BYMONTHDAY", "BYYEARDAY", "BYWEEKNO", "BYMONTH",
-                       "BYSETPOS", "WKST")
+                       "BYSETPOS", "WKST", "SKIP")
 
     types = CaselessDict({
         'COUNT': vInt,
@@ -709,6 +745,7 @@ class vRecur(CaselessDict):
         'BYDAY': vWeekday,
         'FREQ': vFrequency,
         'BYWEEKDAY': vWeekday,
+        'SKIP': vSkip,
     })
 
     def __init__(self, *args, **kwargs):
@@ -757,29 +794,6 @@ class vRecur(CaselessDict):
             raise
         except:
             raise ValueError(f'Error in recurrence rule: {ical}')
-
-
-class vText(str):
-    """Simple text.
-    """
-
-    def __new__(cls, value, encoding=DEFAULT_ENCODING):
-        value = to_unicode(value, encoding=encoding)
-        self = super().__new__(cls, value)
-        self.encoding = encoding
-        self.params = Parameters()
-        return self
-
-    def __repr__(self) -> str:
-        return f"vText({self.to_ical()!r})"
-
-    def to_ical(self) -> bytes:
-        return escape_char(self).encode(self.encoding)
-
-    @classmethod
-    def from_ical(cls, ical:ICAL_TYPE):
-        ical_unesc = unescape_char(ical)
-        return cls(ical_unesc)
 
 
 class vTime(TimeBase):
