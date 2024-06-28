@@ -62,6 +62,7 @@ def test_leap_month(calendars):
         (vSkip, vSkip("BACKWARD"), b"BACKWARD"),
         (vSkip, vSkip("FORWARD"), b"FORWARD"),
         (vRecur, vRecur(rscale="GREGORIAN", freq="YEARLY", skip='FORWARD'), b"RSCALE=GREGORIAN;FREQ=YEARLY;SKIP=FORWARD"),
+        (vRecur, vRecur(rscale="GREGORIAN", freq="YEARLY", skip=vSkip.FORWARD), b"RSCALE=GREGORIAN;FREQ=YEARLY;SKIP=FORWARD"),
     ]
 )
 def test_conversion(ty, recur, ics):
