@@ -714,6 +714,10 @@ class vSkip(vText, Enum):
     FORWARD = "FORWARD"
     BACKWARD = "BACKWARD"
 
+    def __reduce_ex__(self, _p):
+        """For pickling."""
+        return self.__class__, (self._name_,)
+
 
 class vRecur(CaselessDict):
     """Recurrence definition.
