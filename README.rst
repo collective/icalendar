@@ -35,6 +35,11 @@ files.
     :target: https://icalendar.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
+.. image:: https://coveralls.io/repos/github/collective/icalendar/badge.svg
+    :target: https://coveralls.io/github/collective/icalendar
+    :alt: Test Coverage
+
+
 .. _`icalendar`: https://pypi.org/project/icalendar/
 .. _`RFC 5545`: https://www.ietf.org/rfc/rfc5545.txt
 .. _`python-dateutil`: https://github.com/dateutil/dateutil/
