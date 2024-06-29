@@ -62,6 +62,7 @@ New features:
 - Add function ``icalendar.use_pytz()``.
 - Allows selecting components with ``walk(select=func)`` where ``func`` takes a
   component and returns ``True``/``False``.
+- Add compatibility to :rfc:`7529`, adding ``vMonth`` and ``vSkip``
 
 Bug fixes:
 
