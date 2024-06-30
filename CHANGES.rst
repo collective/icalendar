@@ -61,7 +61,7 @@ New features:
 - Test compatibility with Python 3.12
 - Add function ``icalendar.use_pytz()``.
 - Allows selecting components with ``walk(select=func)`` where ``func`` takes a
-  component and returns ``True``/``False``.
+  component and returns ``True`` or ``False``.
 - Add compatibility to :rfc:`7529`, adding ``vMonth`` and ``vSkip``
 
 Bug fixes:
