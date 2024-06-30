@@ -48,5 +48,5 @@ from icalendar.timezone import use_pytz, use_zoneinfo
 
 __all__ = ['Calendar', 'Event', 'Todo', 'Journal', 'Timezone', 'TimezoneStandard', 'TimezoneDaylight', 'FreeBusy', 'Alarm',
           'ComponentFactory', 'vBinary', 'vBoolean', 'vCalAddress', 'vDatetime', 'vDate', 'vDDDTypes', 'vDuration',
-          'vFloat, 'vInt', 'vPeriod','vWeekday', 'vFrequency', 'vRecur', 'vText', 'vTime', 'vUri', 'vGeo', 'vUTCOffset',
+          'vFloat', 'vInt', 'vPeriod','vWeekday', 'vFrequency', 'vRecur', 'vText', 'vTime', 'vUri', 'vGeo', 'vUTCOffset',
           'vTypesFactory', 'Parameters', 'q_split', 'q_join', 'use_pytz', 'use_zoneinfo']
