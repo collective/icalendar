@@ -35,7 +35,7 @@ def to_unicode(value:ICAL_TYPE, encoding='utf-8') -> str:
     return value
 
 
-def data_encode(data:Union[ICAL_TYPE, dict, list], encoding=DEFAULT_ENCODING) -> bytes:
+def data_encode(data: Union[ICAL_TYPE, dict, list], encoding=DEFAULT_ENCODING) -> bytes:
     """Encode all datastructures to the given encoding.
     Currently unicode strings, dicts and lists are supported.
     """
