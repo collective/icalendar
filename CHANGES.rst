@@ -11,7 +11,7 @@ Minor changes:
 - Rename ``master`` branch to ``main``, see `Issue
   <https://github.com/collective/icalendar/issues/627>`_
 - Added missing public classes and functions to API documentation.
-- Add version badge
+- Add Python version badge and badge for test coverage
 - Remove 4.x badge
 - Update list of ``tox`` environments
 
