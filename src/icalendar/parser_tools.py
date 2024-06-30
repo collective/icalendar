@@ -22,7 +22,7 @@ def from_unicode(value: ICAL_TYPE, encoding='utf-8') -> bytes:
     return value
 
 
-def to_unicode(value:ICAL_TYPE, encoding='utf-8') -> str:
+def to_unicode(value: ICAL_TYPE, encoding='utf-8') -> str:
     """Converts a value to unicode, even if it is already a unicode string.
     """
     if isinstance(value, str):
