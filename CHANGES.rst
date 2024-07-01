@@ -63,6 +63,7 @@ New features:
 
 - Test compatibility with Python 3.12
 - Add function ``icalendar.use_pytz()``.
+- Add `sphinx-autobuild` for `livehtml` Makefile target.
 
 Bug fixes:
 
