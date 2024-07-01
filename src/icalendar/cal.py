@@ -275,23 +275,29 @@ class Component(CaselessDict):
         """
         self.subcomponents.append(component)
 
-    def _walk(self, name):
+    def _walk(self, name, select):
         """Walk to given component.
         """
         result = []
-        if name is None or self.name == name:
+        if (name is None or self.name == name) and select(self):
             result.append(self)
         for subcomponent in self.subcomponents:
-            result += subcomponent._walk(name)
+            result += subcomponent._walk(name, select)
         return result
 
-    def walk(self, name=None):
+    def walk(self, name=None, select=lambda c: True):
         """Recursively traverses component and subcomponents. Returns sequence
         of same. If name is passed, only components with name will be returned.
+
+        :param name: The name of the component or None such as ``VEVENT``.
+        :param select: A function that takes the component as first argument
+          and returns True/False.
+        :returns: A list of components that match.
+        :rtype: list[Component]
         """
         if name is not None:
             name = name.upper()
-        return self._walk(name)
+        return self._walk(name, select)
 
     #####################
     # Generation
