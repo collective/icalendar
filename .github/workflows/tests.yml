@@ -48,7 +48,7 @@ jobs:
     - name: Test
       run: tox -e ${{ matrix.config[1] }}
     - name: Upload coverage data to coveralls.io
-      run: coveralls --service=github-actions
+      run: coveralls --service=github || which coveralls
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         COVERALLS_REPO_TOKEN: ${{ secrets.CODECOV_TOKEN }}
@@ -60,13 +60,16 @@ jobs:
     # see https://coveralls-python.readthedocs.io/en/latest/usage/configuration.html#github-actions-support
     name: Submit test coverage
     needs: run-tests
+    # always finalize coverage aftest tests ran
+    # see https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-not-requiring-successful-dependent-jobs
+    if: ${{ always() }}
     runs-on: ubuntu-latest
     container: python:3-slim
     steps:
     - name: Install dependencies
       run: pip3 install --upgrade coveralls
     - name: Upload coverage
-      run: coveralls --service=github-actions --finish
+      run: coveralls --service=github --finish || which coveralls
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         COVERALLS_REPO_TOKEN: ${{ secrets.CODECOV_TOKEN }}
