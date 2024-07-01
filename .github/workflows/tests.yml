@@ -22,7 +22,7 @@ jobs:
         - ["3.9",   "py39"]
         - ["3.10",  "py310"]
         - ["pypy-3.9", "pypy3"]
-        - ["3.10",  "docs"]
+#        - ["3.10",  "docs"] Disable docs build because we have readthedocs
         - ["3.11",  "py311"]
         - ["3.12",  "py312"]
 
