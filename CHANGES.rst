@@ -7,6 +7,7 @@ Changelog
 Minor changes:
 
 - Test that all code works with both ``pytz`` and ``zoneinfo``.
+- Add message to GitHub release, pointing to the changelog
 - Make coverage report submission optional for pull requests
 - Parallelize coverage
 - Rename ``master`` branch to ``main``, see `Issue
