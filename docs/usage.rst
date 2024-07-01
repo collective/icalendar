@@ -231,10 +231,10 @@ Property parameters are automatically added, depending on the input value. For
 example, for date/time related properties, the value type and timezone
 identifier (if applicable) are automatically added here::
 
-    >>> import pytz
+    >>> import zoneinfo
     >>> event = Event()
     >>> event.add('dtstart', datetime(2010, 10, 10, 10, 0, 0,
-    ...                               tzinfo=pytz.timezone("Europe/Vienna")))
+    ...                               tzinfo=zoneinfo.ZoneInfo("Europe/Vienna")))
 
     >>> lines = event.to_ical().splitlines()
     >>> assert (
@@ -262,7 +262,7 @@ Init the calendar::
 
   >>> cal = Calendar()
   >>> from datetime import datetime
-  >>> import pytz
+  >>> import zoneinfo
 
 Some properties are required to be compliant::
 
@@ -273,9 +273,9 @@ We need at least one subcomponent for a calendar to be compliant::
 
   >>> event = Event()
   >>> event.add('summary', 'Python meeting about calendaring')
-  >>> event.add('dtstart', datetime(2005,4,4,8,0,0,tzinfo=pytz.utc))
-  >>> event.add('dtend', datetime(2005,4,4,10,0,0,tzinfo=pytz.utc))
-  >>> event.add('dtstamp', datetime(2005,4,4,0,10,0,tzinfo=pytz.utc))
+  >>> event.add('dtstart', datetime(2005,4,4,8,0,0,tzinfo=zoneinfo.ZoneInfo("UTC")))
+  >>> event.add('dtend', datetime(2005,4,4,10,0,0,tzinfo=zoneinfo.ZoneInfo("UTC")))
+  >>> event.add('dtstamp', datetime(2005,4,4,0,10,0,tzinfo=zoneinfo.ZoneInfo("UTC")))
 
 A property with parameters. Notice that they are an attribute on the value::
 
