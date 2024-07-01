@@ -15,7 +15,7 @@ formats: all
 build:
   os: ubuntu-22.04
   tools:
-    python: "3.11"
+    python: "3.11"  # This Python version should be excluded from `.github/workflows/tests.yml`.
 
 python:
   install:
