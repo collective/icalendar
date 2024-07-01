@@ -61,6 +61,7 @@ New features:
 
 - Test compatibility with Python 3.12
 - Add function ``icalendar.use_pytz()``.
+- Add pull request preview on Read the Docs.
 
 Bug fixes:
 
