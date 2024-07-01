@@ -52,6 +52,8 @@ jobs:
       with:
         flag-name: run-${{ join(matrix.*, '-') }}
         parallel: true
+        file: coverage.xml
+        allow-empty: true
 
   coverage:
     # parallel test coverage upload
@@ -68,9 +70,6 @@ jobs:
       with:
         parallel-finished: true
         format: cobertura
-        file: coverage.xml
-        allow-empty: true
-
 
   deploy-tag-to-pypi:
     # only deploy on tags, see https://stackoverflow.com/a/58478262/1320237
