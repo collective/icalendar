@@ -47,13 +47,11 @@ jobs:
         pip install tox coveralls coverage-python-version
     - name: Test
       run: tox -e ${{ matrix.config[1] }}
-    - name: Upload coverage data to coveralls.io
-      run: coveralls --service=github || which coveralls
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        COVERALLS_REPO_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        COVERALLS_FLAG_NAME: ${{ matrix.config[1] }}
-        COVERALLS_PARALLEL: true
+    - name: Coveralls Parallel
+      uses: coverallsapp/github-action@v2
+      with:
+        flag-name: run-${{ join(matrix.*, '-') }}
+        parallel: true
 
   coverage:
     # parallel test coverage upload
@@ -64,15 +62,11 @@ jobs:
     # see https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-not-requiring-successful-dependent-jobs
     if: ${{ always() }}
     runs-on: ubuntu-latest
-    container: python:3-slim
     steps:
-    - name: Install dependencies
-      run: pip3 install --upgrade coveralls
-    - name: Upload coverage
-      run: coveralls --service=github --finish || which coveralls
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        COVERALLS_REPO_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+    - name: Coveralls Finished
+      uses: coverallsapp/github-action@v2
+      with:
+        parallel-finished: true
 
   deploy-tag-to-pypi:
     # only deploy on tags, see https://stackoverflow.com/a/58478262/1320237
