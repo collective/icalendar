@@ -74,6 +74,7 @@ icalendar contributors
 - Felix Stupp <felix.stupp@banananet.work>
 - Bastian Wegge <wegge@crossbow.de>
 - `Steve Piercy <https://github.com/stevepiercy>`_
+- Jeffrey Whewhetu <jeffwhewhetu@gmail.com>
 
 Find out who contributed::
 

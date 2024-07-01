@@ -8,10 +8,13 @@ Minor changes:
 
 - Test that all code works with both ``pytz`` and ``zoneinfo``.
 - Make coverage report submission optional for pull requests
+- Parallelize coverage
 - Rename ``master`` branch to ``main``, see `Issue
   <https://github.com/collective/icalendar/issues/627>`_
+- Update ``docs/usage.rst`` to use zoneinfo instead of pytz.  
 - Added missing public classes and functions to API documentation.
-- Add version badge
+- Improved namespace management in the ``icalendar`` directory.
+- Add Python version badge and badge for test coverage
 - Remove 4.x badge
 - Update list of ``tox`` environments
 
@@ -63,6 +66,7 @@ New features:
 - Allows selecting components with ``walk(select=func)`` where ``func`` takes a
   component and returns ``True`` or ``False``.
 - Add compatibility to :rfc:`7529`, adding ``vMonth`` and ``vSkip``
+- Add `sphinx-autobuild` for `livehtml` Makefile target.
 
 Bug fixes:
 
