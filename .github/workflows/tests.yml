@@ -67,6 +67,7 @@ jobs:
       uses: coverallsapp/github-action@v2
       with:
         parallel-finished: true
+        format: cobertura
 
   deploy-tag-to-pypi:
     # only deploy on tags, see https://stackoverflow.com/a/58478262/1320237
