@@ -28,7 +28,7 @@ build:
       then
         exit 183;
       fi
-    - sphinx-build -b html -d ${READTHEDOCS_OUTPUT}/doctrees ${READTHEDOCS_OUTPUT}/html/
+    - cd docs && "$(realpath bin/sphinx-build)" -b html -d ${READTHEDOCS_OUTPUT}/doctrees ${READTHEDOCS_OUTPUT}/html/
 
 python:
   install:
