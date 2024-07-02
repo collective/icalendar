@@ -29,4 +29,4 @@ build:
         exit 183;
       fi
     - pip install -r requirements_docs.txt
-    - cd docs && cat Makefile && which sphinx-build && ls -al $READTHEDOCS_VIRTUALENV_PATH  # make rtd-pr-preview
+    - cd docs && make rtd-pr-preview  # make rtd-pr-preview
