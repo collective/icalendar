@@ -28,6 +28,8 @@ build:
       then
         exit 183;
       fi
+    - echo ${READTHEDOCS_VIRTUALENV_PATH}
+    - ls -al ${READTHEDOCS_VIRTUALENV_PATH}
     - cd docs && pwd && ls -al && make rtd-pr-preview
 
 python:
