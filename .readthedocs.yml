@@ -29,6 +29,7 @@ build:
         exit 183;
       fi
     - cd docs
+    - cat Makefile
     - make rtd-pr-preview
 
 python:
