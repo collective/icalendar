@@ -28,10 +28,7 @@ build:
       then
         exit 183;
       fi
-    - cd docs
-    - pwd
-    - ls -al
-    - make rtd-pr-preview
+    - cd docs && pwd && ls -al && make rtd-pr-preview
 
 python:
   install:
