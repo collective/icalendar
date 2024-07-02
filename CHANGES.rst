@@ -12,12 +12,13 @@ Minor changes:
 - Parallelize coverage
 - Rename ``master`` branch to ``main``, see `Issue
   <https://github.com/collective/icalendar/issues/627>`_
-- Update ``docs/usage.rst`` to use zoneinfo instead of pytz.  
+- Update ``docs/usage.rst`` to use zoneinfo instead of pytz.
 - Added missing public classes and functions to API documentation.
 - Improved namespace management in the ``icalendar`` directory.
 - Add Python version badge and badge for test coverage
 - Remove 4.x badge
 - Update list of ``tox`` environments
+- Use Coveralls' GitHub Action
 
 Breaking changes:
 
