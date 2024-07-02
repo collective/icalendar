@@ -28,7 +28,8 @@ build:
       then
         exit 183;
       fi
-    - cd docs && ${READTHEDOCS_VIRTUALENV_PATH}/sphinx-build -b html -d ${READTHEDOCS_OUTPUT}/doctrees ${READTHEDOCS_OUTPUT}/html/
+    - cd docs && cat Makefile
+    - make rtd-pr-preview
 
 python:
   install:
