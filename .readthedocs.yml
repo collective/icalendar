@@ -28,7 +28,7 @@ build:
       then
         exit 183;
       fi
-    - cd docs && cat Makefile && which sphinx-build && ls -al ${READTHEDOCS_VIRTUALENV_PATH} # make rtd-pr-preview
+    - cd docs && cat Makefile && which sphinx-build && ls -al $READTHEDOCS_VIRTUALENV_PATH  # make rtd-pr-preview
 
 python:
   install:
