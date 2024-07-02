@@ -168,4 +168,4 @@ livehtml:
 	-b html . "$(BUILDDIR)/html" $(SPHINXOPTS) $(O)
 
 rtd-pr-preview:  ## Build pull request preview on Read the Docs
-	${READTHEDOCS_VIRTUALENV_PATH}$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) ${READTHEDOCS_OUTPUT}/html/
+	${READTHEDOCS_VIRTUALENV_PATH}/$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) ${READTHEDOCS_OUTPUT}/html/
