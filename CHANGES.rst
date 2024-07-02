@@ -7,6 +7,7 @@ Changelog
 Minor changes:
 
 - Test that all code works with both ``pytz`` and ``zoneinfo``.
+- Add message to GitHub release, pointing to the changelog
 - Make coverage report submission optional for pull requests
 - Parallelize coverage
 - Rename ``master`` branch to ``main``, see `Issue
@@ -63,6 +64,7 @@ New features:
 
 - Test compatibility with Python 3.12
 - Add function ``icalendar.use_pytz()``.
+- Add `sphinx-autobuild` for `livehtml` Makefile target.
 - Add pull request preview on Read the Docs.
 
 Bug fixes:
