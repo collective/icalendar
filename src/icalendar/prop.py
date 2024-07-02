@@ -233,6 +233,9 @@ class vCategory:
         self.cats = [vText(c) for c in c_list]
         self.params = Parameters()
 
+    def __iter__(self):
+        return iter(vCategory.from_ical(self.to_ical()))
+
     def to_ical(self):
         return b",".join([c.to_ical() for c in self.cats])
 

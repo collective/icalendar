@@ -336,6 +336,9 @@ class TestProp(unittest.TestCase):
 
         self.assertEqual(v_cat.to_ical(), b'cat 1,cat 2,cat 3')
         self.assertEqual(vCategory.from_ical(v_cat.to_ical()), catz)
+        c = vCategory(vCategory.from_ical("APPOINTMENT,EDUCATION"))
+        cats = list(c)
+        assert cats == ["APPOINTMENT", "EDUCATION"]
 
     def test_prop_TypesFactory(self):
         from icalendar.prop import TypesFactory
@@ -365,3 +368,4 @@ class TestProp(unittest.TestCase):
             factory.from_ical('cn', b'Rasmussen\\, Max M\xc3\xb8ller'),
             'Rasmussen, Max M\xf8ller'
         )
+
