@@ -22,7 +22,7 @@ jobs:
         - ["3.9",   "py39"]
         - ["3.10",  "py310"]
         - ["pypy-3.9", "pypy3"]
-        - ["3.10",  "docs"]
+#        - ["3.10",  "docs"]  # disable as readthedocs builds it
         - ["3.11",  "py311"]
         - ["3.12",  "py312"]
 
@@ -47,29 +47,29 @@ jobs:
         pip install tox coveralls coverage-python-version
     - name: Test
       run: tox -e ${{ matrix.config[1] }}
-    - name: Upload coverage data to coveralls.io
-      run: coveralls --service=github-actions
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        COVERALLS_REPO_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        COVERALLS_FLAG_NAME: ${{ matrix.config[1] }}
-        COVERALLS_PARALLEL: true
+    - name: Coveralls Parallel
+      uses: coverallsapp/github-action@v2
+      with:
+        flag-name: run-${{ matrix.config[1] }}
+        parallel: true
+        file: coverage.xml
+        allow-empty: true
 
   coverage:
     # parallel test coverage upload
     # see https://coveralls-python.readthedocs.io/en/latest/usage/configuration.html#github-actions-support
     name: Submit test coverage
     needs: run-tests
+    # always finalize coverage aftest tests ran
+    # see https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-not-requiring-successful-dependent-jobs
+    if: ${{ always() }}
     runs-on: ubuntu-latest
-    container: python:3-slim
     steps:
-    - name: Install dependencies
-      run: pip3 install --upgrade coveralls
-    - name: Upload coverage
-      run: coveralls --service=github-actions --finish
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        COVERALLS_REPO_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+    - name: Coveralls Finished
+      uses: coverallsapp/github-action@v2
+      with:
+        parallel-finished: true
+        format: cobertura
 
   deploy-tag-to-pypi:
     # only deploy on tags, see https://stackoverflow.com/a/58478262/1320237
@@ -139,5 +139,9 @@ jobs:
       name: github-release
     steps:
       - uses: actions/checkout@v4
-      - name: create release
+      - name: Create GitHub release from tag
         uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          body: "To view the changes, please see the [Changelog](https://icalendar.readthedocs.io/en/latest/changelog.html). This release can be installed from [PyPI](https://pypi.org/project/icalendar/#history)."
+          generateReleaseNotes: false
