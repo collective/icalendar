@@ -19,6 +19,7 @@ Minor changes:
 - Remove 4.x badge
 - Update list of ``tox`` environments
 - Use Coveralls' GitHub Action
+- Check distribution in CI
 
 Breaking changes:
 

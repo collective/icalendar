@@ -47,7 +47,7 @@ files.
 .. _`BSD`: https://github.com/collective/icalendar/issues/2
 
 Quick start guide
------------------
+=================
 
 ``icalendar`` enables you to **create**, **inspect** and **modify**
 calendaring information with Python.
@@ -58,7 +58,7 @@ To **install** the package, run::
 
 
 Inspect Files
-~~~~~~~~~~~~~
+-------------
 
 You can open an ``.ics`` file and see all the events::
 
@@ -74,7 +74,7 @@ You can open an ``.ics`` file and see all the events::
   International Women's Day
 
 Modify Content
-~~~~~~~~~~~~~~
+--------------
 
 Such a calendar can then be edited and saved again.
 
@@ -91,7 +91,7 @@ Such a calendar can then be edited and saved again.
 
 
 Create Events, TODOs, Journals, Alarms, ...
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------------------------
 
 ``icalendar`` supports the creation and parsing of all kinds of objects
 in the iCalendar (RFC 5545) standard.
@@ -114,7 +114,7 @@ Have a look at `more examples
 <https://icalendar.readthedocs.io/en/latest/usage.html>`_.
 
 Use timezones of your choice
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+----------------------------
 
 With ``icalendar``, you can localize your events to take place in different
 timezones.
@@ -141,7 +141,7 @@ with the same result:
     END:VEVENT
 
 Version 6 with zoneinfo
-~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------
 
 Version 6 of ``icalendar`` switches the timezone implementation to ``zoneinfo``.
 This only affects you if you parse ``icalendar`` objects with ``from_ical()``.

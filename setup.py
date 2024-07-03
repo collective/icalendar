@@ -32,6 +32,7 @@ setuptools.setup(
     version=version,
     description=shortdesc,
     long_description=longdesc,
+    long_description_content_type="text/x-rst",
     classifiers=[  # https://pypi.python.org/pypi?%3Aaction=list_classifiers
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
