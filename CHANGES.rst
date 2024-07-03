@@ -67,6 +67,7 @@ New features:
 - Add function ``icalendar.use_pytz()``.
 - Add `sphinx-autobuild` for `livehtml` Makefile target.
 - Add pull request preview on Read the Docs.
+- Add sphinx-copybutton to allow copying code blocks with a single click of a button.
 
 Bug fixes:
 
