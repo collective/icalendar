@@ -116,7 +116,7 @@ Try it out:
     Type "help", "copyright", "credits" or "license" for more information.
     >>> import icalendar
     >>> icalendar.__version__
-    '5.0.13'
+    '6.0.0a0'
 
 Build the documentation
 -----------------------
