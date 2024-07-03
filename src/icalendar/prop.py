@@ -44,10 +44,9 @@ from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Parameters
 from icalendar.parser import escape_char
 from icalendar.parser import unescape_char
-from icalendar.parser_tools import DEFAULT_ENCODING
-from icalendar.parser_tools import SEQUENCE_TYPES
-from icalendar.parser_tools import to_unicode
-from icalendar.parser_tools import from_unicode
+from icalendar.parser_tools import (
+    DEFAULT_ENCODING, SEQUENCE_TYPES, to_unicode, from_unicode, ICAL_TYPE
+)
 
 import base64
 import binascii
@@ -55,7 +54,8 @@ from .timezone import tzp
 import re
 import time as _time
 
-from typing import Optional
+from typing import Optional, Union
+from enum import Enum, auto
 
 
 DURATION_REGEX = re.compile(r'([-+]?)P(?:(\d+)W)?(?:(\d+)D)?'
@@ -126,6 +126,29 @@ class vBoolean(int):
             raise ValueError(f"Expected 'TRUE' or 'FALSE'. Got {ical}")
 
 
+class vText(str):
+    """Simple text.
+    """
+
+    def __new__(cls, value, encoding=DEFAULT_ENCODING):
+        value = to_unicode(value, encoding=encoding)
+        self = super().__new__(cls, value)
+        self.encoding = encoding
+        self.params = Parameters()
+        return self
+
+    def __repr__(self) -> str:
+        return f"vText({self.to_ical()!r})"
+
+    def to_ical(self) -> bytes:
+        return escape_char(self).encode(self.encoding)
+
+    @classmethod
+    def from_ical(cls, ical:ICAL_TYPE):
+        ical_unesc = unescape_char(ical)
+        return cls(ical_unesc)
+
+
 class vCalAddress(str):
     """This just returns an unquoted string.
     """
@@ -176,11 +199,11 @@ class vInt(int):
         self.params = Parameters()
         return self
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         return str(self).encode('utf-8')
 
     @classmethod
-    def from_ical(cls, ical):
+    def from_ical(cls, ical:ICAL_TYPE):
         try:
             return cls(ical)
         except Exception:
@@ -610,6 +633,92 @@ class vFrequency(str):
             raise ValueError(f'Expected frequency, got: {ical}')
 
 
+class vMonth(int):
+    """The number of the month for recurrence.
+
+    In :rfc:`5545`, this is just an int.
+    In :rfc:`7529`, this can be followed by `L` to indicate a leap month.
+
+        >>> vMonth(1) # first month January
+        vMonth('1')
+        >>> vMonth("5L") # leap month in Hebrew calendar
+        vMonth('5L')
+        >>> vMonth(1).leap
+        False
+        >>> vMonth("5L").leap
+        True
+
+    Definition from RFC::
+
+        type-bymonth = element bymonth {
+           xsd:positiveInteger |
+           xsd:string
+        }
+    """
+    def __new__(cls, month:Union[str, int]):
+        if isinstance(month, vMonth):
+            return cls(month.to_ical().decode())
+        if isinstance(month, str):
+            if month.isdigit():
+                month_index = int(month)
+                leap = False
+            else:
+                if not month[-1] == "L" and month[:-1].isdigit():
+                    raise ValueError(f"Invalid month: {month!r}")
+                month_index = int(month[:-1])
+                leap = True
+        else:
+            leap = False
+            month_index = int(month)
+        self = super().__new__(cls, month_index)
+        self.leap = leap
+        self.params = Parameters()
+        return self
+
+    def to_ical(self) -> bytes:
+        """The ical representation."""
+        return str(self).encode('utf-8')
+
+    @classmethod
+    def from_ical(cls, ical: str):
+        return cls(ical)
+
+    def leap():
+        doc = "Whether this is a leap month."
+        def fget(self) -> bool:
+            return self._leap
+        def fset(self, value:bool) -> None:
+            self._leap = value
+        return locals()
+    leap = property(**leap())
+
+
+    def __repr__(self) -> str:
+        """repr(self)"""
+        return f"{self.__class__.__name__}({str(self)!r})"
+
+    def __str__(self) -> str:
+        """str(self)"""
+        return f"{int(self)}{'L' if self.leap else ''}"
+
+
+class vSkip(vText, Enum):
+    """Skip values for RRULE.
+
+    These are defined in :rfc:`7529`.
+
+    OMIT  is the default value.
+    """
+
+    OMIT = "OMIT"
+    FORWARD = "FORWARD"
+    BACKWARD = "BACKWARD"
+
+    def __reduce_ex__(self, _p):
+        """For pickling."""
+        return self.__class__, (self._name_,)
+
+
 class vRecur(CaselessDict):
     """Recurrence definition.
     """
@@ -619,10 +728,10 @@ class vRecur(CaselessDict):
 
     # Mac iCal ignores RRULEs where FREQ is not the first rule part.
     # Sorts parts according to the order listed in RFC 5545, section 3.3.10.
-    canonical_order = ("FREQ", "UNTIL", "COUNT", "INTERVAL",
+    canonical_order = ("RSCALE", "FREQ", "UNTIL", "COUNT", "INTERVAL",
                        "BYSECOND", "BYMINUTE", "BYHOUR", "BYDAY", "BYWEEKDAY",
                        "BYMONTHDAY", "BYYEARDAY", "BYWEEKNO", "BYMONTH",
-                       "BYSETPOS", "WKST")
+                       "BYSETPOS", "WKST", "SKIP")
 
     types = CaselessDict({
         'COUNT': vInt,
@@ -633,16 +742,20 @@ class vRecur(CaselessDict):
         'BYWEEKNO': vInt,
         'BYMONTHDAY': vInt,
         'BYYEARDAY': vInt,
-        'BYMONTH': vInt,
+        'BYMONTH': vMonth,
         'UNTIL': vDDDTypes,
         'BYSETPOS': vInt,
         'WKST': vWeekday,
         'BYDAY': vWeekday,
         'FREQ': vFrequency,
         'BYWEEKDAY': vWeekday,
+        'SKIP': vSkip,
     })
 
     def __init__(self, *args, **kwargs):
+        for k, v in kwargs.items():
+            if not isinstance(v, SEQUENCE_TYPES):
+                kwargs[k] = [v]
         super().__init__(*args, **kwargs)
         self.params = Parameters()
 
@@ -667,7 +780,7 @@ class vRecur(CaselessDict):
         return [parser.from_ical(v) for v in values.split(',')]
 
     @classmethod
-    def from_ical(cls, ical):
+    def from_ical(cls, ical: str):
         if isinstance(ical, cls):
             return ical
         try:
@@ -680,32 +793,11 @@ class vRecur(CaselessDict):
                     # FREQ=YEARLY;BYMONTH=11;BYDAY=1SU;
                     continue
                 recur[key] = cls.parse_type(key, vals)
-            return dict(recur)
-        except Exception:
+            return cls(recur)
+        except ValueError:
+            raise
+        except:
             raise ValueError(f'Error in recurrence rule: {ical}')
-
-
-class vText(str):
-    """Simple text.
-    """
-
-    def __new__(cls, value, encoding=DEFAULT_ENCODING):
-        value = to_unicode(value, encoding=encoding)
-        self = super().__new__(cls, value)
-        self.encoding = encoding
-        self.params = Parameters()
-        return self
-
-    def __repr__(self):
-        return f"vText('{self.to_ical()!r}')"
-
-    def to_ical(self):
-        return escape_char(self).encode(self.encoding)
-
-    @classmethod
-    def from_ical(cls, ical):
-        ical_unesc = unescape_char(ical)
-        return cls(ical_unesc)
 
 
 class vTime(TimeBase):

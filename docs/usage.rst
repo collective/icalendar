@@ -7,6 +7,23 @@ standard in RFC 5545.
 It should be fully compliant, but it is possible to generate and parse invalid
 files if you really want to.
 
+Compatibility
+-------------
+
+This package is compatible with the following standards:
+
+- :rfc:`5545`
+- :rfc:`7529`
+
+We do not claim compatibility to:
+
+- :rfc:`2445` - which is obsoleted by :rfc:`5545`
+- :rfc:`6886`
+- :rfc:`7953`
+- :rfc:`7986`
+- :rfc:`9073`
+- :rfc:`9074`
+- :rfc:`9253`
 
 File structure
 --------------
