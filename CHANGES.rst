@@ -63,6 +63,7 @@ Breaking changes:
 
 New features:
 
+- Check code quality with `Ruff <https://docs.astral.sh/ruff/>`_, optional report
 - Test compatibility with Python 3.12
 - Add function ``icalendar.use_pytz()``.
 - Add `sphinx-autobuild` for `livehtml` Makefile target.
