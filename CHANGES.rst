@@ -7,16 +7,18 @@ Changelog
 Minor changes:
 
 - Test that all code works with both ``pytz`` and ``zoneinfo``.
+- Add message to GitHub release, pointing to the changelog
 - Make coverage report submission optional for pull requests
 - Parallelize coverage
 - Rename ``master`` branch to ``main``, see `Issue
   <https://github.com/collective/icalendar/issues/627>`_
-- Update ``docs/usage.rst`` to use zoneinfo instead of pytz.  
+- Update ``docs/usage.rst`` to use zoneinfo instead of pytz.
 - Added missing public classes and functions to API documentation.
 - Improved namespace management in the ``icalendar`` directory.
 - Add Python version badge and badge for test coverage
 - Remove 4.x badge
 - Update list of ``tox`` environments
+- Use Coveralls' GitHub Action
 
 Breaking changes:
 
@@ -66,7 +68,11 @@ New features:
 - Allows selecting components with ``walk(select=func)`` where ``func`` takes a
   component and returns ``True`` or ``False``.
 - Add compatibility to :rfc:`7529`, adding ``vMonth`` and ``vSkip``
-- Add `sphinx-autobuild` for `livehtml` Makefile target.
+- Add ``sphinx-autobuild`` for ``livehtml`` Makefile target.
+- Add pull request preview on Read the Docs, building only on changes to documentation-related files.
+- Add link to pull request preview builds in the pull request description only when there are changes to documentation-related files.
+- Add documentation of live HTML preview of documentation and clean up of ``install.rst``.
+- Add ``sphinx-copybutton`` to allow copying code blocks with a single click of a button.
 
 Bug fixes:
 

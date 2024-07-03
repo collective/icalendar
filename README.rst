@@ -156,7 +156,7 @@ By default and since 6.0.0, ``zoneinfo`` timezones are created.
     >>> dt.tzinfo
     ZoneInfo(key='Europe/Vienna')
 
-If you would like to continue to receive ``pytz`` timezones in as parse results,
+If you would like to continue to receive ``pytz`` timezones in parse results,
 you can receive all the latest updates, and switch back to earlier behavior:
 
 .. code:: python

@@ -20,7 +20,8 @@ except ImportError:
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.coverage',
-    'sphinx.ext.viewcode'
+    'sphinx.ext.viewcode',
+    'sphinx_copybutton'
 ]
 source_suffix = '.rst'
 master_doc = 'index'
