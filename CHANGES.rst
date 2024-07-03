@@ -68,6 +68,7 @@ New features:
 - Add `sphinx-autobuild` for `livehtml` Makefile target.
 - Add pull request preview on Read the Docs, building only on changes to documentation-related files.
 - Add link to pull request preview builds in the pull request description only when there are changes to documentation-related files.
+- Add documentation of live HTML preview of documentation and clean up of ``install.rst``.
 
 Bug fixes:
 

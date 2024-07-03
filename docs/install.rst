@@ -1,14 +1,18 @@
 Installing iCalendar
 ====================
 
-To install the icalendar package, use::
+To install the icalendar package, use:
 
-  pip install icalendar
+.. code-block:: shell
+
+    pip install icalendar
 
 If installation is successful, you will be able to import the iCalendar
-package, like this::
+package, like this:
 
-  >>> import icalendar
+.. code-block:: pycon
+
+    >>> import icalendar
 
 Development Setup
 -----------------
@@ -19,7 +23,7 @@ using Git.
 You can `fork <https://github.com/collective/icalendar/fork>`_
 the project first and clone your fork, too.
 
-.. code-block:: bash
+.. code-block:: shell
 
     git clone https://github.com/collective/icalendar.git
     cd icalendar
@@ -39,7 +43,7 @@ Install Tox
 
 First, install `tox <https://pypi.org/project/tox/>`_..
 
-.. code-block:: bash
+.. code-block:: shell
 
     pip install tox
 
@@ -53,7 +57,7 @@ Running Tests
 
 To run all tests in all environments, simply run ``tox``
 
-.. code-block:: bash
+.. code-block:: shell
 
     tox
 
@@ -63,7 +67,7 @@ Have a look at the `documentation
 <https://tox.wiki/en/latest/example/general.html#selecting-one-or-more-environments-to-run-tests-against>`__.
 This is how you can run ``tox`` with Python 3.9:
 
-.. code-block:: bash
+.. code-block:: shell
 
     tox -e py39
 
@@ -73,7 +77,7 @@ Accessing a ``tox`` environment
 If you like to enter a specific tox environment,
 you can do this:
 
-.. code-block:: bash
+.. code-block:: shell
 
     source .tox/py39/bin/activate
 
@@ -93,7 +97,7 @@ this section explains how to do it.
 You can install the local copy of ``icalendar`` with ``pip``
 like this:
 
-.. code-block:: bash
+.. code-block:: shell
 
     cd icalendar
     python -m pip install -e .
@@ -106,7 +110,7 @@ manually setup ``icalendar`` like this.
 
 Try it out:
 
-.. code-block:: python
+.. code-block:: pycon
 
     Python 3.9.5 (default, Nov 23 2021, 15:27:38)
     Type "help", "copyright", "credits" or "license" for more information.
@@ -114,32 +118,39 @@ Try it out:
     >>> icalendar.__version__
     '5.0.13'
 
-Building the documentation
---------------------------
+Build the documentation
+-----------------------
 
-To build the documentation follow these steps:
+To build the documentation, follow these steps:
 
-.. code-block:: bash
+.. code-block:: shell
 
-    $ source .tox/py39/bin/activate
-    $ pip install -r requirements_docs.txt
-    $ cd docs
-    $ make html
+    source .tox/py311/bin/activate
+    pip install -r requirements_docs.txt
+    cd docs
+    make html
 
-You can now open the output from ``_build/html/index.html``. To build the
-presentation-version use ``make presentation`` instead of ``make html``. You
-can open the presentation at ``presentation/index.html``.
+You can now open the output from ``_build/html/index.html``.
+
+To build the documentation, view it in a web browser, and automatically reload changes while you edit documentation, use the following command.
+
+.. code-block:: shell
+
+    make livehtml
+
+Then open a web browser at `http://127.0.0.1:8050 <http://127.0.0.1:8050>`_.
+
+To build the presentation-version use  the following command.
+
+.. code-block:: shell
+
+    make presentation
+
+You can open the presentation at ``presentation/index.html``.
 
 You can also use ``tox`` to build the documentation:
 
-.. code-block:: bash
+.. code-block:: shell
 
     cd icalendar
     tox -e docs
-
-If you would like to serve the documentation and access it from your browser,
-you can run the HTTP server:
-
-.. code-block:: bash
-
-    python3 -m http.server -d docs/_build/html/
