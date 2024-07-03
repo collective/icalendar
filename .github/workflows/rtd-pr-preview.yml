@@ -1,0 +1,26 @@
+# .github/workflows/rtd-pr-preview.yml
+name: readthedocs/actions
+on:
+  pull_request_target:
+    types:
+      - opened
+    # Execute this action only on PRs that touch
+    # documentation files.
+    paths:
+      - "docs/**"
+      - "*.rst"
+      - "src/icalendar/*.py"
+      - .readthedocs.yaml
+      - requirements_docs.txt
+
+permissions:
+  pull-requests: write
+
+jobs:
+  documentation-links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: readthedocs/actions/preview@v1
+        with:
+          project-slug: "icalendar"
+          single-version: "true"
