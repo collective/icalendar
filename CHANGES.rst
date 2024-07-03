@@ -1,6 +1,25 @@
 Changelog
 =========
 
+6.0.0 (unreleased)
+------------------
+
+Minor changes:
+
+- ...
+
+Breaking changes:
+
+- ...
+
+New features:
+
+- ...
+
+Bug fixes:
+
+- ...
+
 6.0.0a0 (2024-06-03)
 --------------------
 
