@@ -18,7 +18,7 @@ New features:
 
 Bug fixes:
 
-- Documentation link fix, see [issue](https://github.com/collective/icalendar/issues/614)
+- Documentation link fix, see issue https://github.com/collective/icalendar/issues/614
 
 6.0.0a0 (2024-06-03)
 --------------------
