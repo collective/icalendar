@@ -66,7 +66,8 @@ New features:
 - Test compatibility with Python 3.12
 - Add function ``icalendar.use_pytz()``.
 - Add ``sphinx-autobuild`` for ``livehtml`` Makefile target.
-- Add pull request preview on Read the Docs.
+- Add pull request preview on Read the Docs, building only on changes to documentation-related files.
+- Add link to pull request preview builds in the pull request description only when there are changes to documentation-related files.
 - Add documentation of live HTML preview of documentation and clean up of ``install.rst``.
 - Add ``sphinx-copybutton`` to allow copying code blocks with a single click of a button.
 
