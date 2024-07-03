@@ -63,6 +63,7 @@ Breaking changes:
 
 New features:
 
+- Check code quality with `Ruff <https://docs.astral.sh/ruff/>`_, optional report
 - Test compatibility with Python 3.12
 - Add function ``icalendar.use_pytz()``.
 - Allows selecting components with ``walk(select=func)`` where ``func`` takes a
