@@ -18,7 +18,7 @@ New features:
 
 Bug fixes:
 
-- ...
+- Fix link to stable release of tox in documentation.
 
 6.0.0a0 (2024-07-03)
 --------------------

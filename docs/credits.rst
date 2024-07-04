@@ -75,6 +75,7 @@ icalendar contributors
 - Bastian Wegge <wegge@crossbow.de>
 - `Steve Piercy <https://github.com/stevepiercy>`_
 - Jeffrey Whewhetu <jeffwhewhetu@gmail.com>
+- `Soham Dutta <https://github.com/NP-compete>`_
 
 Find out who contributed::
 
