@@ -106,3 +106,6 @@ class CaselessDict(OrderedDict):
         Items not specified in canonical_order will appear at the end.
         """
         return canonsort_items(self, self.canonical_order)
+
+
+__all__ = ["canonsort_keys", "canonsort_items", "CaselessDict"]

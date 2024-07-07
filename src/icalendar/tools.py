@@ -31,3 +31,5 @@ class UIDGenerator:
         unique = unique or UIDGenerator.rnd_string()
         today = to_unicode(vDatetime(datetime.today()).to_ical())
         return vText(f'{today}-{unique}@{host_name}')
+
+__all__ = ["UIDGenerator"]

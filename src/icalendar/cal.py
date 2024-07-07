@@ -764,3 +764,8 @@ class Calendar(Component):
 # These are read only singleton, so one instance is enough for the module
 types_factory = TypesFactory()
 component_factory = ComponentFactory()
+
+__all__ = ["Alarm", "Calendar", "Component", "ComponentFactory", "Event",
+           "FreeBusy", "INLINE", "Journal", "Timezone", "TimezoneDaylight",
+           "TimezoneStandard", "Todo", "component_factory", "dateutil",
+           "types_factory"]
