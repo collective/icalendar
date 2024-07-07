@@ -64,7 +64,7 @@ To run all tests in all environments, simply run ``tox``
 You may not have all Python versions installed or
 you may want to run a specific one.
 Have a look at the `documentation
-<https://tox.wiki/en/latest/example/general.html#selecting-one-or-more-environments-to-run-tests-against>`__.
+<https://tox.wiki/en/stable/user_guide.html#cli>`_.
 This is how you can run ``tox`` with Python 3.9:
 
 .. code-block:: shell
