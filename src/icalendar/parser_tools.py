@@ -50,5 +50,5 @@ def data_encode(data: Union[ICAL_TYPE, dict, list], encoding=DEFAULT_ENCODING) -
         return data
 
 
-__all__ = ["DEFAULT_ENCODING", "SEQUENCE_TYPES", "data_encode", "from_unicode",
+__all__ = ["DEFAULT_ENCODING", "SEQUENCE_TYPES", "ICAL_TYPE" "data_encode", "from_unicode",
            "to_unicode"]
