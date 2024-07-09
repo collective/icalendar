@@ -6,6 +6,7 @@ except ImportError:
     pytz = None
 from icalendar.prop import *
 from datetime import datetime, date, timedelta
+from time import time
 import pytest
 
 def assert_equal(actual_value, expected_value):
