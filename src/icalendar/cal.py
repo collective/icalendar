@@ -767,5 +767,4 @@ component_factory = ComponentFactory()
 
 __all__ = ["Alarm", "Calendar", "Component", "ComponentFactory", "Event",
            "FreeBusy", "INLINE", "Journal", "Timezone", "TimezoneDaylight",
-           "TimezoneStandard", "Todo", "component_factory", "dateutil",
-           "types_factory"]
+           "TimezoneStandard", "Todo", "component_factory", "types_factory"]

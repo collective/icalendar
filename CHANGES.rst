@@ -6,7 +6,7 @@ Changelog
 
 Minor changes:
 
-- ...
+- add ``__all__`` variable to each modules in ``icalendar`` package
 
 Breaking changes:
 
