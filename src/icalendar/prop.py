@@ -1123,3 +1123,10 @@ class TypesFactory(CaselessDict):
         decoded = type_class.from_ical(value)
         return decoded
 
+
+__all__ = ["DURATION_REGEX", "TimeBase", "TypesFactory", "WEEKDAY_RULE",
+           "tzid_from_dt", "vBinary", "vBoolean", "vCalAddress",
+           "vCategory", "vDDDLists", "vDDDTypes", "vDate", "vDatetime",
+           "vDuration", "vFloat", "vFrequency", "vGeo", "vInline", "vInt",
+           "vMonth", "vPeriod", "vRecur", "vSkip", "vText", "vTime",
+           "vUTCOffset", "vUri", "vWeekday"]
