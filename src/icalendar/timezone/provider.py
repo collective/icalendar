@@ -43,3 +43,5 @@ class TZProvider(ABC):
     @abstractmethod
     def uses_zoneinfo(self) -> bool:
         """Whether we use zoneinfo."""
+
+__all__ = ["TZProvider"]

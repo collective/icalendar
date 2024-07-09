@@ -83,5 +83,8 @@ def main():
             for event in calendar.walk('vevent'):
                 argv.output.write(view(event) + '\n\n')
 
+
+__all__ = ["main", "view"]
+
 if __name__ == '__main__':
     main()
