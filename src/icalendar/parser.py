@@ -40,7 +40,7 @@ def unescape_char(text):
     elif isinstance(text, bytes):
         return text.replace(b'\\N', b'\\n')\
                    .replace(b'\r\n', b'\n')\
-                   .replace(b'\n', b'\n')\
+                   .replace(b'\\n', b'\n')\
                    .replace(b'\\,', b',')\
                    .replace(b'\\;', b';')\
                    .replace(b'\\\\', b'\\')
