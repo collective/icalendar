@@ -19,6 +19,7 @@ New features:
 Bug fixes:
 
 - Fix link to stable release of tox in documentation.
+- Fix a bad bytes replace in unescape_char.
 
 6.0.0a0 (2024-07-03)
 --------------------
