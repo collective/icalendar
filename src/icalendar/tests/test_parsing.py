@@ -188,6 +188,7 @@ def test_escaped_characters_read(event_name, expected_cn, expected_ics, events):
     event = events[event_name]
     assert event['ORGANIZER'].params['CN'] == expected_cn
     assert event['ORGANIZER'].to_ical() == expected_ics.encode('utf-8')
+    
 def test_unescape_char():
     assert unescape_char(b'123') == b'123'
     assert unescape_char(b"\\n") == b"\n"
