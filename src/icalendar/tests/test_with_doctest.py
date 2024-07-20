@@ -21,13 +21,13 @@ HERE = os.path.dirname(__file__) or "."
 ICALENDAR_PATH = os.path.dirname(HERE)
 
 PYTHON_FILES = [
-    os.path.join(dirpath, filename)
+    "/".join((dirpath, filename))
     for dirpath, dirnames, filenames in os.walk(ICALENDAR_PATH)
     for filename in filenames if filename.lower().endswith(".py") and 'fuzzing' not in dirpath
 ]
 
 MODULE_NAMES = [
-    "icalendar" + python_file[len(ICALENDAR_PATH):-3].replace("/", ".")
+    "icalendar" + python_file[len(ICALENDAR_PATH):-3].replace("\\", "/").replace("/", ".")
     for python_file in PYTHON_FILES
 ]
 
