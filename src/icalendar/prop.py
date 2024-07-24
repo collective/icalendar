@@ -97,7 +97,7 @@ class vBinary:
     def from_ical(ical):
         try:
             return base64.b64decode(ical)
-        except UnicodeError:
+        except (ValueError, UnicodeError):
             raise ValueError('Not valid base 64 encoding.')
 
     def __eq__(self, other):
