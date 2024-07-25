@@ -88,7 +88,7 @@ class vBinary:
         self.params = Parameters(encoding='BASE64', value="BINARY")
 
     def __repr__(self):
-        return f"vBinary('{self.to_ical()}')"
+        return f"vBinary({self.to_ical()})"
 
     def to_ical(self):
         return binascii.b2a_base64(self.obj.encode('utf-8'))[:-1]
@@ -160,7 +160,7 @@ class vCalAddress(str):
         return self
 
     def __repr__(self):
-        return f"vCalAddress('{self.to_ical()}')"
+        return f"vCalAddress('{self}')"
 
     def to_ical(self):
         return self.encode(DEFAULT_ENCODING)
