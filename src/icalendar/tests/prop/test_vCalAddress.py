@@ -21,4 +21,4 @@ def test_from_ical():
 
 def test_repr():
     instance = vCalAddress("value")
-    assert repr(instance) == "vCalAddress('b'value'')"
+    assert repr(instance) == "vCalAddress('value')"
