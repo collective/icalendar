@@ -113,6 +113,7 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vFrequency, 'bad test')
         self.assertEqual(vFrequency('daily').to_ical(), b'DAILY')
         self.assertEqual(vFrequency('daily').from_ical('MONTHLY'), 'MONTHLY')
+        self.assertRaises(ValueError, vFrequency.from_ical, 234)
 
     def test_prop_vRecur(self):
         from icalendar.prop import vRecur
