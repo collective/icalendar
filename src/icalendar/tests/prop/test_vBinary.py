@@ -1,4 +1,6 @@
 """Test vBinary"""
+import pytest
+
 from icalendar import vBinary
 from icalendar.parser import Parameters
 
@@ -27,3 +29,13 @@ def test_long_data():
     txt_ical = b'YWFh' * 33
     assert (vBinary(txt).to_ical() == txt_ical)
     assert (vBinary.from_ical(txt_ical) == txt)
+    
+def test_repr():
+    instance = vBinary("value")
+    assert repr(instance) == "vBinary(b'dmFsdWU=')"
+    
+def test_from_ical():
+    with pytest.raises(ValueError, match='Not valid base 64 encoding.'):
+        vBinary.from_ical("value")
+    with pytest.raises(ValueError, match='Not valid base 64 encoding.'):
+        vBinary.from_ical("áèਮ")

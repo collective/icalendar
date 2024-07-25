@@ -7,6 +7,7 @@ Changelog
 Minor changes:
 
 - add ``__all__`` variable to each modules in ``icalendar`` package
+- Improve test coverage.
 - Adapt ``test_with_doctest.py`` to correctly run on Windows.
 
 Breaking changes:
@@ -21,6 +22,7 @@ Bug fixes:
 
 - Fix link to stable release of tox in documentation.
 - Fix a bad bytes replace in unescape_char.
+- Handle ``ValueError`` in ``vBinary.from_ical``.
 
 6.0.0a0 (2024-07-03)
 --------------------

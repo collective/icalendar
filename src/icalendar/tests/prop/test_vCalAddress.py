@@ -17,3 +17,8 @@ def test_params():
 
 def test_from_ical():
     assert vCalAddress.from_ical(txt) == 'MAILTO:maxm@mxm.dk'
+    
+
+def test_repr():
+    instance = vCalAddress("value")
+    assert repr(instance) == "vCalAddress('value')"
