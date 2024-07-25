@@ -32,7 +32,7 @@ def test_long_data():
     
 def test_repr():
     instance = vBinary("value")
-    assert repr(instance) == "vBinary('b'value'')"
+    assert repr(instance) == "vBinary(b'value')"
     
 def test_from_ical():
     with pytest.raises(ValueError, match='Not valid base 64 encoding.'):
