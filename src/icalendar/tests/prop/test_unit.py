@@ -44,6 +44,9 @@ class TestProp(unittest.TestCase):
 
         dt_list = vDDDLists([datetime(2000, 1, 1), datetime(2000, 11, 11)])
         self.assertEqual(dt_list.to_ical(), b'20000101T000000,20001111T000000')
+        
+        instance = vDDDLists([])
+        self.assertFalse(instance == "value")
 
     def test_prop_vDate(self):
         from icalendar.prop import vDate
