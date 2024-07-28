@@ -9,6 +9,7 @@ Minor changes:
 - add ``__all__`` variable to each modules in ``icalendar`` package
 - Improve test coverage.
 - Adapt ``test_with_doctest.py`` to correctly run on Windows.
+- Measure branch coverage when running tests.
 
 Breaking changes:
 
