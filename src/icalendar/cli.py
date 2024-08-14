@@ -78,7 +78,7 @@ def main():
     argv = parser.parse_args()
 
     for calendar_file in argv.calendar_files:
-        with open(calendar_file) as f:
+        with open(calendar_file, encoding='utf-8-sig') as f:
             calendar = Calendar.from_ical(f.read())
             for event in calendar.walk('vevent'):
                 argv.output.write(view(event) + '\n\n')
