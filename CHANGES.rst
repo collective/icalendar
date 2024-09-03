@@ -10,6 +10,7 @@ Minor changes:
 - Improve test coverage.
 - Adapt ``test_with_doctest.py`` to correctly run on Windows.
 - Measure branch coverage when running tests.
+- Export ``Component`` base class for typing
 
 Breaking changes:
 
