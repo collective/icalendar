@@ -5,27 +5,6 @@
 # See https://packaging.python.org/en/latest/specifications/pyproject-toml/#license
 #
 
-# TODO:
-# - plone developers email still in use for this?
-# - setup.cfg
-# - tox test dependencies
-# - In the readme, link to these:
-#     "CONTRIBUTING.rst",
-#     "CHANGES.rst",
-#     "LICENSE.rst"
-# - from setup.py:
-#   - license='BSD-2-Clause',
-#   - packages=setuptools.find_namespace_packages('src', exclude=["icalendar.fuzzing"]),
-#   - package_dir={'': 'src'},
-#   - include_package_data=True,
-#   - zip_safe=False
-#   - test_suite='icalendar.tests'
-# DONE:
-# - ruff in tox
-# - version.py
-#   - long_description_content_type="text/x-rst",
-
-
 [build-system]
 requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
