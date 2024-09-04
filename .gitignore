@@ -22,3 +22,5 @@ src/icalendar.egg-info/
 !.gitignore
 venv
 /ical_fuzzer.pkg.spec
+/src/icalendar/_version.py
+
