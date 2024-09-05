@@ -24,3 +24,4 @@ venv
 /ical_fuzzer.pkg.spec
 /src/icalendar/_version.py
 
+coverage.xml
