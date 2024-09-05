@@ -22,6 +22,7 @@ keywords = [
     "todo",
     "journal",
     "recurring",
+    "rfc5545",
 ]
 authors = [
   { name="Plone Foundation", email="plone-developers@lists.sourceforge.net" },
