@@ -83,9 +83,9 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install wheel twine setuptools
+        pip install build
     - name: Build distribution files
-      run: python setup.py bdist_wheel sdist
+      run: python -m build  # same as in deploy-tag-to-pypi
     - name: Check distribution files
       run: twine check dist/*
 
@@ -115,22 +115,11 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install wheel twine setuptools
-    - name: Check the tag
-      run: |
-        PACKAGE_VERSION=`python setup.py --version`
-        TAG_NAME=v$PACKAGE_VERSION
-        echo "Package version $PACKAGE_VERSION with possible tag name $TAG_NAME on $GITHUB_REF_NAME"
-        # test that the tag represents the version
-        # see https://docs.github.com/en/actions/learn-github-actions/environment-variables
-        if [ "$TAG_NAME" != "$GITHUB_REF_NAME" ]; then
-          echo "ERROR: This tag is for the wrong version. Got \"$GITHUB_REF_NAME\" expected \"$TAG_NAME\"."
-          exit 1
-        fi
+        pip install build
     - name: remove old files
       run: rm -rf dist/*
     - name: build distribution files
-      run: python setup.py bdist_wheel sdist
+      run: python -m build  # same as in test-distribution
     - name: deploy to pypi
       run: |
         # You will have to set the variables TWINE_USERNAME and TWINE_PASSWORD
