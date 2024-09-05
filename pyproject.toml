@@ -2,7 +2,7 @@
 # We use the pyproject.toml package specification.
 # See https://packaging.python.org/en/latest/guides/section-build-and-publish/
 # See https://github.com/collective/icalendar/issues/686
-# See https://packaging.python.org/en/latest/specifications/pyproject-toml/#license
+# See https://packaging.python.org/en/latest/specifications/pyproject-toml/
 #
 
 [build-system]
@@ -85,6 +85,17 @@ test = [
 
 [project.scripts]
 icalendar = "icalendar.cli:main"
+
+[tool.hatch.build]
+exclude = [
+  "/.*",
+  "/*.*",
+  "/src/icalendar/fuzzing",
+  "/docs",
+  "/dist",
+  "/build",
+  "/htmlcov",
+]
 
 [tool.hatch.metadata.hooks.vcs.urls]
 # This is a dynamic generation of [project.urls]
