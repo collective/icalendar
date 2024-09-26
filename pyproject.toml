@@ -24,6 +24,8 @@ keywords = [
     "recurring",
     "rfc5545",
 ]
+# This email is not in use any more. If you find a better one, go ahead!
+# See https://github.com/collective/icalendar/pull/707#discussion_r1775275335
 authors = [
   { name="Plone Foundation", email="plone-developers@lists.sourceforge.net" },
 ]
