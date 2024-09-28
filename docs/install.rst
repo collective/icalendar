@@ -71,6 +71,16 @@ This is how you can run ``tox`` with Python 3.9:
 
     tox -e py39
 
+Code Style
+----------
+
+We strive towards a common code style.
+You can run the following command to auto-format the code.
+
+.. code-block:: shell
+
+    tox -e ruff
+
 Accessing a ``tox`` environment
 -------------------------------
 

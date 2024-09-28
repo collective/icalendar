@@ -7,7 +7,9 @@ set -e
 cd "`dirname \"$0\"`"
 cd "../../.."
 
-python3 setup.py sdist
+rm -rf dist
+pip3 install build
+python3 -m build
 archive=`echo dist/icalendar-*.tar.gz`
 
 if ! [ -f "$archive" ]; then
