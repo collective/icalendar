@@ -69,8 +69,8 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
        git checkout main
        git pull
        git checkout -b release main
-       git add CHANGES.rst src/icalendar/__init__.py docs/install.rst
-       git commit -m"version 5.0.0"
+       git add CHANGES.rst
+       git commit -m"version 6.0.0"
 
 3. Push the commit and `create a pull request <https://github.com/collective/icalendar/compare?expand=1>`__
    Here is an `example pull request #457 <https://github.com/collective/icalendar/pull/457>`__.
