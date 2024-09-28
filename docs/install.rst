@@ -122,11 +122,11 @@ Try it out:
 
 .. code-block:: pycon
 
-    Python 3.9.5 (default, Nov 23 2021, 15:27:38)
+    Python 3.12.0 (main, Mar  1 2024, 09:09:21) [GCC 13.2.0] on linux
     Type "help", "copyright", "credits" or "license" for more information.
     >>> import icalendar
-    >>> icalendar.__version__
-    '6.0.0a0'
+    >>> icalendar.version_tuple[0]
+    6
 
 Build the documentation
 -----------------------
