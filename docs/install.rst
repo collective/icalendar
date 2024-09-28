@@ -125,8 +125,8 @@ Try it out:
     Python 3.12.0 (main, Mar  1 2024, 09:09:21) [GCC 13.2.0] on linux
     Type "help", "copyright", "credits" or "license" for more information.
     >>> import icalendar
-    >>> icalendar.version_tuple[0]
-    6
+    >>> icalendar.Calendar()
+    VCALENDAR({})
 
 Build the documentation
 -----------------------
