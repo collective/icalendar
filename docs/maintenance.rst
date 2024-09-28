@@ -97,8 +97,8 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
 
        git checkout main
        git pull
-       git tag v5.0.0
-       git push upstream v5.0.0 # could be origin or whatever reference
+       git tag v6.0.0
+       git push upstream v6.0.0 # could be origin or whatever reference
 
 7. Once the tag is pushed and its `CI-tests`_ are passing, maintainers will get an e-mail::
 
