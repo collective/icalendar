@@ -1,4 +1,5 @@
 """Version file as a stable interface for the generated _version.py file."""
+
 try:
     from ._version import __version__, __version_tuple__, version, version_tuple
 except ModuleNotFoundError:

@@ -65,7 +65,6 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
 2. Change the ``__version__`` variable in
 
    - the ``src/icalendar/__init__.py`` file and
-   - in the ``docs/install.rst`` file (look for ``icalendar.__version__``)
 3. Create a commit on the ``release`` branch (or equivalent) to release this version.
 
    .. code-block:: bash
