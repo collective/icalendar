@@ -12,10 +12,6 @@ Minor changes:
 - Measure branch coverage when running tests.
 - Export ``Component`` base class for typing
 
-Breaking changes:
-
-- ...
-
 New features:
 
 - Use ``pyproject.toml`` file instead of ``setup.py``
@@ -23,7 +19,7 @@ New features:
 Bug fixes:
 
 - Fix link to stable release of tox in documentation.
-- Fix a bad bytes replace in unescape_char.
+- Fix a bad ``bytes`` replace in ``unescape_char``.
 - Handle ``ValueError`` in ``vBinary.from_ical``.
 - Ignore the BOM character in incorrectly encoded ics files.
 

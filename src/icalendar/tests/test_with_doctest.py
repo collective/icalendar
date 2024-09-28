@@ -75,6 +75,7 @@ def test_documentation_file(document, zoneinfo_only, env_for_doctest, tzp):
     functions are also replaced to work.
     """
     try:
+        # set raise_on_error to False if you wand to see the error for debug
         test_result = doctest.testfile(document, module_relative=False, globs=env_for_doctest, raise_on_error=True)
     except doctest.UnexpectedException as e:
         ty, err, tb = e.exc_info

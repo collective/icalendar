@@ -1,53 +1,92 @@
-__version__ = '6.0.0a0'
-
 from icalendar.cal import (
+    Alarm,
     Calendar,
+    Component,
+    ComponentFactory,
     Event,
-    Todo,
+    FreeBusy,
     Journal,
     Timezone,
-    TimezoneStandard,
     TimezoneDaylight,
-    FreeBusy,
-    Alarm,
-    ComponentFactory,
-    Component
+    TimezoneStandard,
+    Todo,
 )
-# Property Data Value Types
-from icalendar.prop import (
-    vBinary,
-    vBoolean,
-    vCalAddress,
-    vDatetime,
-    vDate,
-    vDDDTypes,
-    vDuration,
-    vFloat,
-    vInt,
-    vPeriod,
-    vWeekday,
-    vFrequency,
-    vRecur,
-    vText,
-    vTime,
-    vUri,
-    vGeo,
-    vUTCOffset,
-    TypesFactory,
-)
+
 # Parameters and helper methods for splitting and joining string with escaped
 # chars.
 from icalendar.parser import (
     Parameters,
-    q_split,
     q_join,
+    q_split,
+)
+
+# Property Data Value Types
+from icalendar.prop import (
+    TypesFactory,
+    vBinary,
+    vBoolean,
+    vCalAddress,
+    vDate,
+    vDatetime,
+    vDDDTypes,
+    vDuration,
+    vFloat,
+    vFrequency,
+    vGeo,
+    vInt,
+    vPeriod,
+    vRecur,
+    vText,
+    vTime,
+    vUri,
+    vUTCOffset,
+    vWeekday,
 )
 
 # Switching the timezone provider
 from icalendar.timezone import use_pytz, use_zoneinfo
 
+from .version import __version__, __version_tuple__, version, version_tuple
 
-__all__ = ['Calendar', 'Event', 'Todo', 'Journal', 'Timezone', 'TimezoneStandard', 'TimezoneDaylight', 'FreeBusy', 'Alarm',
-          'ComponentFactory', 'vBinary', 'vBoolean', 'vCalAddress', 'vDatetime', 'vDate', 'vDDDTypes', 'vDuration',
-          'vFloat', 'vInt', 'vPeriod','vWeekday', 'vFrequency', 'vRecur', 'vText', 'vTime', 'vUri', 'vGeo', 'vUTCOffset',
-          'vTypesFactory', 'Parameters', 'q_split', 'q_join', 'use_pytz', 'use_zoneinfo']
+__all__ = [
+    "Calendar",
+    "Event",
+    "Todo",
+    "Journal",
+    "Timezone",
+    "TimezoneStandard",
+    "TimezoneDaylight",
+    "FreeBusy",
+    "Alarm",
+    "ComponentFactory",
+    "vBinary",
+    "vBoolean",
+    "vCalAddress",
+    "vDatetime",
+    "vDate",
+    "vDDDTypes",
+    "vDuration",
+    "vFloat",
+    "vInt",
+    "vPeriod",
+    "vWeekday",
+    "vFrequency",
+    "vRecur",
+    "vText",
+    "vTime",
+    "vUri",
+    "vGeo",
+    "vUTCOffset",
+    "vTypesFactory",
+    "Parameters",
+    "q_split",
+    "q_join",
+    "use_pytz",
+    "use_zoneinfo",
+    "__version__",
+    "version",
+    "__version_tuple__",
+    "version_tuple",
+    "TypesFactory",
+    "Component",
+]
