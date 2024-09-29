@@ -60,7 +60,9 @@ To **install** the package, run::
 Inspect Files
 -------------
 
-You can open an ``.ics`` file and see all the events::
+You can open an ``.ics`` file and see all the events:
+
+.. code:: python
 
   >>> import icalendar
   >>> from pathlib import Path
