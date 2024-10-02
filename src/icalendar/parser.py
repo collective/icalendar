@@ -389,6 +389,6 @@ from icalendar.prop import vText
 __all__ = ["Contentline", "Contentlines", "FOLD", "NAME", "NEWLINE",
            "Parameters", "QUNSAFE_CHAR", "QUOTABLE", "UNSAFE_CHAR", "dquote",
            "escape_char", "escape_string", "foldline", "param_value", "q_join",
-           "q_split", "tzid_from_dt", "uFOLD", "unescape_char",
+           "q_split", "uFOLD", "unescape_char",
            "unescape_list_or_string", "unescape_string", "validate_param_value",
            "validate_token"]
