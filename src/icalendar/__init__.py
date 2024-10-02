@@ -77,7 +77,6 @@ __all__ = [
     "vUri",
     "vGeo",
     "vUTCOffset",
-    "vTypesFactory",
     "Parameters",
     "q_split",
     "q_join",
