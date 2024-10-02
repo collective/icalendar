@@ -6,7 +6,7 @@ Changelog
 
 Minor changes:
 
-- Fix a few ``__all__`` variables.
+- ...
 
 Breaking changes:
 
@@ -18,7 +18,7 @@ New features:
 
 Bug fixes:
 
-- ...
+- Fix a few ``__all__`` variables.
 
 6.0.0 (2024-09-28)
 ------------------
