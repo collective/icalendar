@@ -6,7 +6,7 @@ Changelog
 
 Minor changes:
 
-- ...
+- Fix a few ``__all__`` variables.
 
 Breaking changes:
 
