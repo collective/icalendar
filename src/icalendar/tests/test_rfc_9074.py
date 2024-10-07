@@ -32,6 +32,7 @@ def test_snooze(events):
     assert alarm_2["RELATED-TO"] == "8297C37D-BA2D-4476-91AE-C1EAA364F8E1"
     assert alarm_2["RELATED-TO"].params["RELTYPE"] == "SNOOZE"
 
+
 def test_proximity(events):
     """Check the proximity values."""
     alarm = events.rfc_9074_example_proximity.subcomponents[0]
