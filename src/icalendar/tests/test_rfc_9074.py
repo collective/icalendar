@@ -4,7 +4,8 @@ See https://www.rfc-editor.org/rfc/rfc9074.html
 and also https://github.com/collective/icalendar/issues/657
 """
 import pytest
-from icalendar.prop import vText, vDDDTypes
+
+from icalendar.prop import vDDDTypes, vText
 
 
 @pytest.mark.parametrize(
