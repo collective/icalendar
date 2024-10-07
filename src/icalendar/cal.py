@@ -742,7 +742,7 @@ class Alarm(Component):
     required = ('ACTION', 'TRIGGER',)
     singletons = (
             'ATTACH', 'ACTION', 'DESCRIPTION', 'SUMMARY', 'TRIGGER',
-            'DURATION', 'REPEAT', 'UID'
+            'DURATION', 'REPEAT', 'UID', 'PROXIMITY',
             )
     inclusive = (('DURATION', 'REPEAT',), ('SUMMARY', 'ATTENDEE',))
     multiple = ('ATTENDEE', 'ATTACH')
