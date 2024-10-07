@@ -1072,6 +1072,7 @@ class TypesFactory(CaselessDict):
         'action': 'text',
         'repeat': 'integer',
         'trigger': 'duration',
+        'acknowledged': 'date-time',
         # Change Management Component Properties
         'created': 'date-time',
         'dtstamp': 'date-time',

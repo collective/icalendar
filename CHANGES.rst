@@ -14,7 +14,7 @@ Breaking changes:
 
 New features:
 
-- ...
+- Add ``VALARM`` properties for :rfc:`9074`, see `Issue 657 <https://github.com/collective/icalendar/issues/657>`_
 
 Bug fixes:
 
