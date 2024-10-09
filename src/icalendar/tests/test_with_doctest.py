@@ -10,12 +10,13 @@ This file should be tests, too:
     Hello World!
 
 """
+
 import doctest
-import os
-import pytest
 import importlib
+import os
 import sys
-import re
+
+import pytest
 
 HERE = os.path.dirname(__file__) or "."
 ICALENDAR_PATH = os.path.dirname(HERE)
@@ -23,16 +24,20 @@ ICALENDAR_PATH = os.path.dirname(HERE)
 PYTHON_FILES = [
     "/".join((dirpath, filename))
     for dirpath, dirnames, filenames in os.walk(ICALENDAR_PATH)
-    for filename in filenames if filename.lower().endswith(".py") and 'fuzzing' not in dirpath
+    for filename in filenames
+    if filename.lower().endswith(".py") and "fuzzing" not in dirpath
 ]
 
 MODULE_NAMES = [
-    "icalendar" + python_file[len(ICALENDAR_PATH):-3].replace("\\", "/").replace("/", ".")
+    "icalendar"
+    + python_file[len(ICALENDAR_PATH) : -3].replace("\\", "/").replace("/", ".")
     for python_file in PYTHON_FILES
 ]
 
+
 def test_this_module_is_among_them():
     assert __name__ in MODULE_NAMES
+
 
 @pytest.mark.parametrize("module_name", MODULE_NAMES)
 def test_docstring_of_python_file(module_name):
@@ -58,12 +63,18 @@ try:
         if filename.lower().endswith(".rst")
     ]
 except FileNotFoundError:
-    raise OSError("Could not find the documentation - remove the build folder and try again.")
+    raise OSError(
+        "Could not find the documentation - remove the build folder and try again."
+    )
 
-@pytest.mark.parametrize("filename", [
-    "README.rst",
-    "index.rst",
-])
+
+@pytest.mark.parametrize(
+    "filename",
+    [
+        "README.rst",
+        "index.rst",
+    ],
+)
 def test_files_is_included(filename):
     assert any(path.endswith(filename) for path in DOCUMENT_PATHS)
 
@@ -76,14 +87,18 @@ def test_documentation_file(document, zoneinfo_only, env_for_doctest, tzp):
     """
     try:
         # set raise_on_error to False if you wand to see the error for debug
-        test_result = doctest.testfile(document, module_relative=False, globs=env_for_doctest, raise_on_error=True)
+        test_result = doctest.testfile(
+            document, module_relative=False, globs=env_for_doctest, raise_on_error=True
+        )
     except doctest.UnexpectedException as e:
         ty, err, tb = e.exc_info
         if issubclass(ty, ModuleNotFoundError) and err.name == "pytz":
             pytest.skip("pytz not installed, skipping this file.")
     finally:
         tzp.use_zoneinfo()
-    assert test_result.failed == 0, f"{test_result.failed} errors in {os.path.basename(document)}"
+    assert (
+        test_result.failed == 0
+    ), f"{test_result.failed} errors in {os.path.basename(document)}"
 
 
 def test_can_import_zoneinfo(env_for_doctest):

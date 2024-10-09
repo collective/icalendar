@@ -6,7 +6,6 @@ making its behavior unexpected.
 
 see https://github.com/collective/icalendar/issues/557"""
 
-
 import unittest
 
 from icalendar.cal import Component
