@@ -6,7 +6,7 @@ Changelog
 
 Minor changes:
 
-- ...
+- Ruff format test code, see `Issue 672 <https://github.com/collective/icalendar/issues/672>`_
 
 Breaking changes:
 
