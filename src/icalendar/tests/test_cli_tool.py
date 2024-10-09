@@ -1,13 +1,14 @@
 import unittest
-
 from datetime import datetime
+
 from icalendar import Calendar, cli
+
 try:
     import zoneinfo
 except ModuleNotFoundError:
     from backports import zoneinfo
 
-INPUT = '''
+INPUT = """
 BEGIN:VCALENDAR
 VERSION:2.0
 CALSCALE:GREGORIAN
@@ -39,16 +40,23 @@ DTSTART:20220511
 DURATION:P5D
 END:VEVENT
 END:VCALENDAR
-'''
+"""
+
 
 def local_datetime(dt):
-    return datetime.strptime(dt, "%Y%m%dT%H%M%S").replace(tzinfo=zoneinfo.ZoneInfo("Europe/Warsaw")).astimezone().strftime('%c')
+    return (
+        datetime.strptime(dt, "%Y%m%dT%H%M%S")
+        .replace(tzinfo=zoneinfo.ZoneInfo("Europe/Warsaw"))
+        .astimezone()
+        .strftime("%c")
+    )
+
 
 # datetimes are displayed in the local timezone, so we cannot just hardcode them
-firststart = local_datetime('20220820T103400')
-firstend = local_datetime('20220820T113400')
-secondstart = local_datetime('20220820T200000')
-secondend = local_datetime('20220820T203000')
+firststart = local_datetime("20220820T103400")
+firstend = local_datetime("20220820T113400")
+secondstart = local_datetime("20220820T200000")
+secondend = local_datetime("20220820T203000")
 
 PROPER_OUTPUT = f"""    Organizer: organizer <organizer@test.test>
     Attendees:
@@ -91,15 +99,16 @@ PROPER_OUTPUT = f"""    Organizer: organizer <organizer@test.test>
 
 """
 
+
 class CLIToolTest(unittest.TestCase):
     def test_output_is_proper(self):
         self.maxDiff = None
         calendar = Calendar.from_ical(INPUT)
-        output = ''
-        for event in calendar.walk('vevent'):
-            output += cli.view(event) + '\n\n'
+        output = ""
+        for event in calendar.walk("vevent"):
+            output += cli.view(event) + "\n\n"
         self.assertEqual(PROPER_OUTPUT, output)
 
-if __name__ == '__main__':
-    unittest.main()
 
+if __name__ == "__main__":
+    unittest.main()

@@ -4,29 +4,62 @@ See
 - https://github.com/collective/icalendar/issues/156
 - https://github.com/pimutils/khal/issues/152#issuecomment-933635248
 """
-import pytest
-from icalendar.prop import vDDDTypes
+
 import datetime
 
+import pytest
 
-@pytest.mark.parametrize("calname,tzname,index,period_string", [
-    ("issue_156_RDATE_with_PERIOD_TZID_khal_2", "Europe/Berlin", 0, "20211101T160000/20211101T163000"),
-    ("issue_156_RDATE_with_PERIOD_TZID_khal_2", "Europe/Berlin", 1, "20211206T160000/20211206T163000"),
-    ("issue_156_RDATE_with_PERIOD_TZID_khal_2", "Europe/Berlin", 2, "20220103T160000/20220103T163000"),
-    ("issue_156_RDATE_with_PERIOD_TZID_khal_2", "Europe/Berlin", 3, "20220207T160000/20220207T163000"),
-] + [
-    ("issue_156_RDATE_with_PERIOD_TZID_khal", "America/Chicago", i, period)
-    for i, period in enumerate(("20180327T080000/20180327T0"
-        "90000,20180403T080000/20180403T090000,20180410T080000/20180410T090000,2018"
-        "0417T080000/20180417T090000,20180424T080000/20180424T090000,20180501T08000"
-        "0/20180501T090000,20180508T080000/20180508T090000,20180515T080000/20180515"
-        "T090000,20180522T080000/20180522T090000,20180529T080000/20180529T090000,20"
-        "180605T080000/20180605T090000,20180612T080000/20180612T090000,20180619T080"
-        "000/20180619T090000,20180626T080000/20180626T090000,20180703T080000/201807"
-        "03T090000,20180710T080000/20180710T090000,20180717T080000/20180717T090000,"
-        "20180724T080000/20180724T090000,20180731T080000/20180731T090000").split(","))
-])
-def test_issue_156_period_list_in_rdate(calendars, calname, tzname, index, period_string):
+from icalendar.prop import vDDDTypes
+
+
+@pytest.mark.parametrize(
+    ("calname", "tzname", "index", "period_string"),
+    [
+        (
+            "issue_156_RDATE_with_PERIOD_TZID_khal_2",
+            "Europe/Berlin",
+            0,
+            "20211101T160000/20211101T163000",
+        ),
+        (
+            "issue_156_RDATE_with_PERIOD_TZID_khal_2",
+            "Europe/Berlin",
+            1,
+            "20211206T160000/20211206T163000",
+        ),
+        (
+            "issue_156_RDATE_with_PERIOD_TZID_khal_2",
+            "Europe/Berlin",
+            2,
+            "20220103T160000/20220103T163000",
+        ),
+        (
+            "issue_156_RDATE_with_PERIOD_TZID_khal_2",
+            "Europe/Berlin",
+            3,
+            "20220207T160000/20220207T163000",
+        ),
+    ]
+    + [
+        ("issue_156_RDATE_with_PERIOD_TZID_khal", "America/Chicago", i, period)
+        for i, period in enumerate(
+            (
+                "20180327T080000/20180327T0"
+                "90000,20180403T080000/20180403T090000,20180410T080000/20180410T090000,2018"
+                "0417T080000/20180417T090000,20180424T080000/20180424T090000,20180501T08000"
+                "0/20180501T090000,20180508T080000/20180508T090000,20180515T080000/20180515"
+                "T090000,20180522T080000/20180522T090000,20180529T080000/20180529T090000,20"
+                "180605T080000/20180605T090000,20180612T080000/20180612T090000,20180619T080"
+                "000/20180619T090000,20180626T080000/20180626T090000,20180703T080000/201807"
+                "03T090000,20180710T080000/20180710T090000,20180717T080000/20180717T090000,"
+                "20180724T080000/20180724T090000,20180731T080000/20180731T090000"
+            ).split(",")
+        )
+    ],
+)
+def test_issue_156_period_list_in_rdate(
+    calendars, calname, tzname, index, period_string
+):
     """Check items in a list of period values."""
     calendar = calendars[calname]
     rdate = calendar.walk("vevent")[0]["rdate"]
@@ -58,5 +91,7 @@ def test_tzid_is_part_of_the_period_values(calendars, tzp):
     """The TZID should be set in the datetime."""
     event = list(calendars.period_with_timezone.walk("VEVENT"))[0]
     start, end = event["RDATE"].dts[0].dt
-    assert start == tzp.localize(datetime.datetime(2023, 12, 13, 12), "America/Vancouver")
+    assert start == tzp.localize(
+        datetime.datetime(2023, 12, 13, 12), "America/Vancouver"
+    )
     assert end == tzp.localize(datetime.datetime(2023, 12, 13, 15), "America/Vancouver")

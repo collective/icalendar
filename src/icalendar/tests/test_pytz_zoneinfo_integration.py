@@ -2,18 +2,22 @@
 
 These are mostly located in icalendar.timezone.
 """
+
 try:
     import pytz
+
     from icalendar.timezone.pytz import PYTZ
 except ImportError:
     pytz = None
-from icalendar.timezone.zoneinfo import zoneinfo, ZONEINFO
-from dateutil.tz.tz import _tzicalvtz
-import pytest
 import copy
 import pickle
-from dateutil.rrule import rrule, MONTHLY
 from datetime import datetime
+
+import pytest
+from dateutil.rrule import MONTHLY, rrule
+from dateutil.tz.tz import _tzicalvtz
+
+from icalendar.timezone.zoneinfo import ZONEINFO, zoneinfo
 
 if pytz:
     PYTZ_TIMEZONES = pytz.all_timezones
@@ -25,17 +29,27 @@ else:
     NEW_TZP_NAME = ["zoneinfo"]
 
 
-@pytest.mark.parametrize("tz_name", PYTZ_TIMEZONES + list(zoneinfo.available_timezones()))
+@pytest.mark.parametrize(
+    "tz_name", PYTZ_TIMEZONES + list(zoneinfo.available_timezones())
+)
 @pytest.mark.parametrize("tzp_", TZP_)
 def test_timezone_names_are_known(tz_name, tzp_):
     """Make sure that all timezones are understood."""
     if tz_name in ("Factory", "localtime"):
         pytest.skip()
-    assert tzp_.knows_timezone_id(tz_name), f"{tzp_.__class__.__name__} should know {tz_name}"
+    assert tzp_.knows_timezone_id(
+        tz_name
+    ), f"{tzp_.__class__.__name__} should know {tz_name}"
 
 
 @pytest.mark.parametrize("func", [pickle.dumps, copy.copy, copy.deepcopy])
-@pytest.mark.parametrize("obj", [_tzicalvtz("id"), rrule(freq=MONTHLY, count=4, dtstart=datetime(2028, 10, 1), cache=True)])
+@pytest.mark.parametrize(
+    "obj",
+    [
+        _tzicalvtz("id"),
+        rrule(freq=MONTHLY, count=4, dtstart=datetime(2028, 10, 1), cache=True),
+    ],
+)
 def test_can_pickle_timezone(func, tzp, obj):
     """Check that we can serialize and copy timezones."""
     func(obj)
