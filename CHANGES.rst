@@ -6,7 +6,7 @@ Changelog
 
 Minor changes:
 
-- ...
+- Document the Debian package, see `Issue 701 <https://github.com/collective/icalendar/issues/701>`_
 
 Breaking changes:
 

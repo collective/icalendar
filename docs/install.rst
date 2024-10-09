@@ -1,6 +1,11 @@
 Installing iCalendar
 ====================
 
+You can install ``icalendar`` in several ways.
+
+Python Package with ``pip``
+---------------------------
+
 To install the icalendar package, use:
 
 .. code-block:: shell
@@ -13,6 +18,16 @@ package, like this:
 .. code-block:: pycon
 
     >>> import icalendar
+
+Debian/Ubuntu
+-------------
+
+You can install the `python-icalendar package <https://tracker.debian.org/pkg/python-icalendar>`_
+for Debian and derivatives.
+
+.. code-block:: shell
+
+    sudo apt-get install python3-icalendar
 
 Development Setup
 -----------------
