@@ -93,7 +93,6 @@ exclude = [
   "/.*",
   "/*.*",
   "/src/icalendar/fuzzing",
-  "/docs",
   "/dist",
   "/build",
   "/htmlcov",
