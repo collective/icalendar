@@ -14,7 +14,7 @@ Breaking changes:
 
 New features:
 
-- ...
+- Add ``Event.end``, ``Event.start``, ``Event.dtstart`` and ``Event.dtend`` attributes, see `Issue 662 <https://github.com/collective/icalendar/issues/662>`_
 
 Bug fixes:
 

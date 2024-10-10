@@ -4,21 +4,18 @@ files according to RFC 5545.
 These are the defined components.
 """
 from __future__ import annotations
-from datetime import datetime, timedelta
-from icalendar.caselessdict import CaselessDict
-from icalendar.parser import Contentline
-from icalendar.parser import Contentlines
-from icalendar.parser import Parameters
-from icalendar.parser import q_join
-from icalendar.parser import q_split
-from icalendar.parser_tools import DEFAULT_ENCODING
-from icalendar.prop import TypesFactory
-from icalendar.prop import vText, vDDDLists
-from icalendar.timezone import tzp
-from typing import Tuple, List
+
+import os
+from datetime import date, datetime, timedelta
+from typing import List, Tuple
+
 import dateutil.rrule
 import dateutil.tz
-import os
+from icalendar.caselessdict import CaselessDict
+from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_split
+from icalendar.parser_tools import DEFAULT_ENCODING
+from icalendar.prop import TypesFactory, vDDDLists, vDDDTypes, vText, vDuration
+from icalendar.timezone import tzp
 
 
 def get_example(component_directory: str, example_name: str) -> bytes:
@@ -66,6 +63,21 @@ INLINE = CaselessDict({
 })
 
 _marker = []
+
+class InvalidCalendar(ValueError):
+    """The calendar given is not valid.
+
+    This calendar does not conform with RFC 5545 or breaks other RFCs.
+    """
+
+class IncompleteComponent(ValueError):
+    """The component is missing attributes.
+
+    The attributes are not required, otherwise this would be
+    an InvalidCalendar. But in order to perform calculations,
+    this attribute is required.
+    """
+
 
 
 class Component(CaselessDict):
@@ -485,6 +497,55 @@ class Component(CaselessDict):
 #######################################
 # components defined in RFC 5545
 
+def create_single_property(prop:str, value_attr:str, value_type:tuple[type], type_def:type, doc:str):
+    """Create a single property getter and setter."""
+
+    def p_get(self : Component) -> type_def | None:
+        default = object()
+        result = self.get(prop, default)
+        if result is default:
+            return None
+        if isinstance(result, list):
+            raise InvalidCalendar(f"Multiple {prop} defined.")
+        value = getattr(result, value_attr, result)
+        if not isinstance(value, value_type):
+            raise InvalidCalendar(f"{prop} must be either a date or a datetime, not {value}.")
+        return value
+
+    def p_set(self:Component, value: type_def | None) -> None:
+        if value is None:
+            p_del(self)
+            return
+        if not isinstance(value, value_type):
+            raise TypeError(f"Use {' or '.join(t.__name__ for t in value_type)}, not {type(value).__name__}.")
+        self[prop] = vDDDTypes(value)
+        if prop in self.exclusive:
+            for other_prop in self.exclusive:
+                if other_prop != prop:
+                    self.pop(other_prop, None)
+
+    def p_del(self:Component):
+        self.pop(prop)
+    
+    p_doc = f"""The {prop} property.
+    
+    {doc}
+
+    If the attribute has invalid values, we raise InvalidCalendar.
+    If the value is absent, we return None.
+    You can also delete the value with del.
+    """
+    return property(p_get, p_set, p_del, p_doc)
+
+
+def is_date(dt: date) -> bool:
+    """Whether this is a date and not a datetime."""
+    return isinstance(dt, date) and not isinstance(dt, datetime)
+
+def is_datetime(dt: date) -> bool:
+    """Whether this is a date and not a datetime."""
+    return isinstance(dt, datetime)
+
 class Event(Component):
 
     name = 'VEVENT'
@@ -514,6 +575,118 @@ class Event(Component):
         """Return the calendar example with the given name."""
         return cls.from_ical(get_example("events", name))
 
+    DTSTART = create_single_property("DTSTART", "dt", (datetime, date), date, 'The "DTSTART" property for a "VEVENT" specifies the inclusive start of the event.')
+    DTEND = create_single_property("DTEND", "dt", (datetime, date), date, 'The "DTEND" property for a "VEVENT" calendar component specifies the non-inclusive end of the event.')
+
+    def _get_start_end_duration(self):
+        """Verify the calendar validity and return the right attributes."""
+        start = self.DTSTART
+        end = self.DTEND
+        duration = self.DURATION
+        if duration is not None and end is not None:
+            raise InvalidCalendar("DTEND and DURATION cannot be there at the same time.")
+        if isinstance(start, date) and not isinstance(start, datetime) and duration is not None and duration.seconds != 0:
+            raise InvalidCalendar("When DTSTART is a date, DURATION must be of days or weeks.")
+        if start is not None and end is not None and is_date(start) != is_date(end):
+            raise InvalidCalendar("DTSTART and DTEND must have the same type.")
+        return start, end, duration
+
+    @property
+    def DURATION(self) -> timedelta | None:  # noqa: N802
+        """The DURATION of the component.
+
+        The "DTSTART" property for a "VEVENT" specifies the inclusive start of the event.
+        The "DURATION" property in conjunction with the DTSTART property
+        for a "VEVENT" calendar component specifies the non-inclusive end
+        of the event.
+
+        If you would like to calculate the duration of an event do not use this.
+        """
+        default = object()
+        duration = self.get("duration", default)
+        if isinstance(duration, vDDDTypes):
+            return duration.dt
+        if isinstance(duration, vDuration):
+            return duration.td
+        if duration is not default and not isinstance(duration, timedelta):
+            raise InvalidCalendar(f"DURATION must be a timedelta, not {type(duration).__name__}.")
+        return None
+    
+    @DURATION.setter
+    def DURATION(self, value: timedelta | None):  # noqa: N802
+        if value is None:
+            self.pop("duration", None)
+            return
+        if not isinstance(value, timedelta):
+            raise TypeError(f"Use timedelta, not {type(value).__name__}.")
+        self["duration"] = vDuration(value)
+        del self.DTEND
+
+    @property
+    def duration(self) -> timedelta:
+        """The duration of the component.
+
+        This duration is calculated from the start and end of the event.
+        You cannot set the duration as it is unclear what happens to start and end.
+        """
+        return self.end - self.start
+
+    @property
+    def start(self) -> date | datetime:
+        """The start of the component.
+
+        Invalid values raise an InvalidCalendar.
+        If there is no start, we also raise an IncompleteComponent error.
+
+        You can get the start, end and duration of an event as follows:
+
+        >>> from datetime import datetime
+        >>> from icalendar import Event
+        >>> event = Event()
+        >>> event.start = datetime(2021, 1, 1, 12)
+        >>> event.end = datetime(2021, 1, 1, 12, 30) # 30 minutes
+        >>> event.end - event.start  # 1800 seconds == 30 minutes
+        datetime.timedelta(seconds=1800)
+        >>> print(event.to_ical())
+        BEGIN:VEVENT
+        DTSTART:20210101T120000
+        DTEND:20210101T123000
+        END:VEVENT
+        """
+        start = self._get_start_end_duration()[0]
+        if start is None:
+            raise IncompleteComponent("No DTSTART given.")
+        return start
+
+    @start.setter
+    def start(self, start: date | datetime| None):
+        """Set the start."""
+        self.DTSTART = start
+
+    @property
+    def end(self) -> date | datetime:
+        """The end of the component.
+
+        Invalid values raise an InvalidCalendar error.
+        If there is no end, we also raise an IncompleteComponent error.
+        """
+        start, end, duration = self._get_start_end_duration()
+        if end is None and duration is None:
+            if start is None:
+                raise IncompleteComponent("No DTEND or DURATION+DTSTART given.")
+            if is_date(start):
+                return start + timedelta(days=1)
+            return start
+        if duration is not None:
+            if start is not None:
+                return start + duration
+            raise IncompleteComponent("No DTEND or DURATION+DTSTART given.")
+        return end
+
+    @end.setter
+    def end(self, end: date | datetime | None):
+        """Set the start."""
+        self.DTEND = end
 
 
 class Todo(Component):
@@ -767,4 +940,5 @@ component_factory = ComponentFactory()
 
 __all__ = ["Alarm", "Calendar", "Component", "ComponentFactory", "Event",
            "FreeBusy", "INLINE", "Journal", "Timezone", "TimezoneDaylight",
-           "TimezoneStandard", "Todo", "component_factory", "get_example"]
+           "TimezoneStandard", "Todo", "component_factory", "get_example",
+           "IncompleteComponent", "InvalidCalendar"]
