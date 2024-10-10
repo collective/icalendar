@@ -137,7 +137,7 @@ def set_event_end(request):
 
 def test_event_dtend(dtend, event):
     """Test the end of events."""
-    assert event.DTEND == dtend
+    assert event.DTEND == dtend  # noqa: SIM300
 
 
 def test_event_end(dtend, event):
@@ -217,25 +217,41 @@ def test_invalid_event(invalid_event, message, attr):
         getattr(invalid_event, attr)
     assert e.value.args[0] == message
 
+def test_duration_zero():
+    """
+    For cases where a "VEVENT" calendar component
+    specifies a "DTSTART" property with a DATE-TIME value type but no
+    "DTEND" property, the event ends on the same calendar date and
+    time of day specified by the "DTSTART" property.
+    """
+    event = Event()
+    event.start = datetime(2024, 10, 11, 10, 20)
+    assert event.end == event.start
+    assert event.duration == timedelta(days=0)
+
 def test_duration_one_day():
     """
-
     For cases where a "VEVENT" calendar component
     specifies a "DTSTART" property with a DATE value type but no
     "DTEND" nor "DURATION" property, the event's duration is taken to
     be one day
     """
-    # TODO: Test duration and end
+    event = Event()
+    event.start = date(2024, 10, 11)
+    assert event.end == event.start + timedelta(days=1)
+    assert event.duration == timedelta(days=1)
+
 
 incomplete_event_1 = Event()
 incomplete_event_2 = Event()
 incomplete_event_2.add("DURATION", timedelta(hours=1))
 
 @pytest.mark.parametrize("incomplete_event_end", [incomplete_event_1, incomplete_event_2])
-def test_incomplete_event(incomplete_event_end):
-    """Test that the end throuws the right error."""
+@pytest.mark.parametrize("attr", ["start", "end", "duration"])
+def test_incomplete_event(incomplete_event_end, attr):
+    """Test that the end throws the right error."""
     with pytest.raises(IncompleteComponent):
-        incomplete_event_end.end  # noqa: B018
+        getattr(incomplete_event_end, attr)
 
 
 def test_set_invalid_start():
@@ -245,10 +261,15 @@ def test_set_invalid_start():
     - object
     - None
     - timezone + no timezone
-    - duration or end do not math
+    - duration or end do not match
     """
 
 
 def test_check_invalid_duration():
     """Check that we get the right error."""
     # TODO
+
+
+def test_setting_the_end_deletes_the_duration():
+    """Setting the end should not break the event."""
+    

@@ -497,7 +497,7 @@ class Component(CaselessDict):
 #######################################
 # components defined in RFC 5545
 
-def create_single_property(prop:str, value_attr:str, value_type:tuple[type]|type, type_def:type):
+def create_single_property(prop:str, value_attr:str, value_type:tuple[type]|type, type_def:type, doc:str):
     """Create a single property getter and setter."""
 
     def p_get(self : Component) -> type_def | None:
@@ -518,6 +518,8 @@ def create_single_property(prop:str, value_attr:str, value_type:tuple[type]|type
         self.pop(prop)
     
     p_doc = f"""The {prop} property.
+    
+    {doc}
 
     If the attribute has invalid values, we raise InvalidCalendar.
     If the value is absent, we return None.
@@ -563,8 +565,8 @@ class Event(Component):
         """Return the calendar example with the given name."""
         return cls.from_ical(get_example("events", name))
 
-    DTSTART = create_single_property("DTSTART", "dt", date, date)
-    DTEND = create_single_property("DTEND", "dt", date, date)
+    DTSTART = create_single_property("DTSTART", "dt", date, date, 'The "DTSTART" property for a "VEVENT" specifies the inclusive start of the event.')
+    DTEND = create_single_property("DTEND", "dt", date, date, 'The "DTEND" property for a "VEVENT" calendar component specifies the non-inclusive end of the event.')
 
     def _get_start_end_duration(self):
         """Verify the calendar validity and return the right attributes."""
@@ -582,6 +584,11 @@ class Event(Component):
     @property
     def DURATION(self) -> timedelta | None:  # noqa: N802
         """The DURATION of the component.
+
+        The "DTSTART" property for a "VEVENT" specifies the inclusive start of the event.
+        The "DURATION" property in conjunction with the DTSTART property
+        for a "VEVENT" calendar component specifies the non-inclusive end
+        of the event.
 
         If you would like to calculate the duration of an event do not use this.
         """
@@ -641,10 +648,16 @@ class Event(Component):
         If there is no end, we also raise an IncompleteComponent error.
         """
         start, end, duration = self._get_start_end_duration()
-        if end is None and (duration is None or start is None):
+        if end is None and duration is None:
+            if start is None:
+                raise IncompleteComponent("No DTEND or DURATION+DTSTART given.")
+            if is_date(start):
+                return start + timedelta(days=1)
+            return start
+        if duration is not None:
+            if start is not None:
+                return start + duration
             raise IncompleteComponent("No DTEND or DURATION+DTSTART given.")
-        if start is not None and duration is not None:
-            return start + duration
         return end
 
     @end.setter
