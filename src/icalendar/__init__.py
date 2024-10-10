@@ -5,13 +5,13 @@ from icalendar.cal import (
     ComponentFactory,
     Event,
     FreeBusy,
+    IncompleteComponent,
+    InvalidCalendar,
     Journal,
     Timezone,
     TimezoneDaylight,
     TimezoneStandard,
     Todo,
-    InvalidCalendar,
-    IncompleteComponent
 )
 
 # Parameters and helper methods for splitting and joining string with escaped
@@ -36,6 +36,7 @@ from icalendar.prop import (
     vFrequency,
     vGeo,
     vInt,
+    vMonth,
     vPeriod,
     vRecur,
     vText,
@@ -90,4 +91,7 @@ __all__ = [
     "version_tuple",
     "TypesFactory",
     "Component",
+    "vMonth",
+    "IncompleteComponent",
+    "InvalidCalendar",
 ]

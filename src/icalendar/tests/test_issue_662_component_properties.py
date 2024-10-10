@@ -13,7 +13,7 @@ from icalendar import (
 from icalendar.prop import vDuration
 
 
-@pytest.fixture
+@pytest.fixture()
 def event():
     """The event to test."""
     return Event()
@@ -38,7 +38,7 @@ def _set_event_start_init(event, start):
 
 def _set_event_dtstart(event, start):
     """Create the event with the dtstart property."""
-    event.dtstart = start
+    event.DTSTART = start
 
 def _set_event_start_attr(event, start):
     """Create the event with the dtstart property."""
@@ -59,7 +59,7 @@ def set_event_start(request):
 
 def test_event_dtstart(dtstart, event):
     """Test the start of events."""
-    assert event.dtstart == dtstart
+    assert event.DTSTART == dtstart
 
 
 def test_event_start(dtstart, event):
@@ -80,7 +80,7 @@ def test_multiple_dtstart(invalid_event):
     with pytest.raises(InvalidCalendar):
         invalid_event.start  # noqa: B018
     with pytest.raises(InvalidCalendar):
-        invalid_event.dtstart  # noqa: B018
+        invalid_event.DTSTART  # noqa: B018
 
 def test_no_dtstart():
     """DTSTART is optional.
@@ -91,7 +91,7 @@ def test_no_dtstart():
     is OPTIONAL; in any case, it MUST NOT occur
     more than once.
     """
-    assert Event().dtstart is None
+    assert Event().DTSTART is None
     with pytest.raises(IncompleteComponent):
         Event().start  # noqa: B018
 
@@ -116,7 +116,7 @@ def _set_event_end_init(event, end):
 
 def _set_event_dtend(event, end):
     """Create the event with the dtend property."""
-    event.dtend = end
+    event.DTEND = end
 
 def _set_event_end_attr(event, end):
     """Create the event with the dtend property."""
@@ -137,7 +137,7 @@ def set_event_end(request):
 
 def test_event_dtend(dtend, event):
     """Test the end of events."""
-    assert event.dtend == dtend
+    assert event.DTEND == dtend
 
 
 def test_event_end(dtend, event):
@@ -145,7 +145,7 @@ def test_event_end(dtend, event):
     assert event.end == dtend
 
 
-@pytest.mark.parametrize("attr", ["dtstart", "dtend"])
+@pytest.mark.parametrize("attr", ["DTSTART", "DTEND"])
 def test_delete_attr(event, dtstart, dtend, attr):
     delattr(event, attr)
     assert getattr(event, attr) is None
@@ -178,6 +178,7 @@ def test_start_and_duration(event, dtstart, duration):
     """Check calculation of end with duration."""
     dur = event.end - event.start
     assert dur == duration
+    assert event.duration == duration
 
 def test_default_duration(event, dtstart):
     """Check that the end can be computed if a start is given."""
@@ -201,19 +202,19 @@ invalid_event_end_4 = Event()
 invalid_event_end_4.add("DTSTART", date(2024, 1, 1))
 invalid_event_end_4.add("DURATION", timedelta(hours=1))
 @pytest.mark.parametrize(
-    ("incomplete_event_end", "message"),
+    ("invalid_event", "message"),
     [
         (invalid_event_end_1, "DTSTART and DTEND must have the same type."),
         (invalid_event_end_2, "DTSTART and DTEND must have the same type."),
-        (invalid_event_end_3, "DURATION and DTEND cannot be there at the same time."),
+        (invalid_event_end_3, "DTEND and DURATION cannot be there at the same time."),
         (invalid_event_end_4, "When DTSTART is a date, DURATION must be of days or weeks."),
     ]
 )
 @pytest.mark.parametrize("attr", ["start", "end"])
-def test_invalid_event(incomplete_event_end, message, attr):
+def test_invalid_event(invalid_event, message, attr):
     """Test that the end and start throuw the right error."""
     with pytest.raises(InvalidCalendar) as e:
-        getattr(incomplete_event_end, attr)
+        getattr(invalid_event, attr)
     assert e.value.args[0] == message
 
 def test_duration_one_day():
@@ -224,7 +225,7 @@ def test_duration_one_day():
     "DTEND" nor "DURATION" property, the event's duration is taken to
     be one day
     """
-    
+    # TODO: Test duration and end
 
 incomplete_event_1 = Event()
 incomplete_event_2 = Event()
@@ -235,3 +236,19 @@ def test_incomplete_event(incomplete_event_end):
     """Test that the end throuws the right error."""
     with pytest.raises(IncompleteComponent):
         incomplete_event_end.end  # noqa: B018
+
+
+def test_set_invalid_start():
+    """Check that we get the right error.
+    
+    - other types that vDDDTypes accepts
+    - object
+    - None
+    - timezone + no timezone
+    - duration or end do not math
+    """
+
+
+def test_check_invalid_duration():
+    """Check that we get the right error."""
+    # TODO
