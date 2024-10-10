@@ -688,7 +688,7 @@ class Event(Component):
 
     @end.setter
     def end(self, end: date | datetime | None):
-        """Set the start."""
+        """Set the end."""
         self.DTEND = end
 
 
