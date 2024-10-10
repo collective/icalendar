@@ -254,22 +254,102 @@ def test_incomplete_event(incomplete_event_end, attr):
         getattr(incomplete_event_end, attr)
 
 
-def test_set_invalid_start():
+@pytest.mark.parametrize(
+    "invalid_value",
+    [
+        object(),
+        timedelta(days=1),
+        (datetime(2024, 10, 11, 10, 20), timedelta(days=1)),
+    ]
+)
+@pytest.mark.parametrize("attr", ["start", "end", "DTSTART", "DTEND"])
+def test_set_invalid_start(invalid_value, attr):
     """Check that we get the right error.
-    
+
     - other types that vDDDTypes accepts
     - object
-    - None
-    - timezone + no timezone
-    - duration or end do not match
     """
+    event = Event()
+    with pytest.raises(TypeError) as e:
+        setattr(event, attr, invalid_value)
+    assert e.value.args[0] == f"Use datetime or date, not {type(invalid_value).__name__}."
 
 
-def test_check_invalid_duration():
+def setitem(d:dict, key, value):
+    d[key] = value
+
+@pytest.mark.parametrize(
+    "invalid_value",
+    [
+        object(),
+        None,
+        (datetime(2024, 10, 11, 10, 20), timedelta(days=1)),
+        date(2012, 2, 2),
+        datetime(2022, 2, 2),
+    ]
+)
+def test_check_invalid_duration(invalid_value):
     """Check that we get the right error."""
-    # TODO
+    event = Event()
+    event["DURATION"] = invalid_value
+    with pytest.raises(InvalidCalendar) as e:
+        event.DURATION  # noqa: B018
+    assert e.value.args[0] == f"DURATION must be a timedelta, not {type(invalid_value).__name__}."
 
 
 def test_setting_the_end_deletes_the_duration():
     """Setting the end should not break the event."""
+    event = Event()
+    event.DTSTART = datetime(2024, 10, 11, 10, 20)
+    event.DURATION = timedelta(days=1)
+    event.DTEND = datetime(2024, 10, 11, 10, 21)
+    assert "DURATION" not in event
+    assert event.DURATION is None
+    assert event.DTEND == datetime(2024, 10, 11, 10, 21)
+
+
+def test_setting_duration_deletes_the_end():
+    """Setting the duration should not break the event."""
+    event = Event()
+    event.DTSTART = datetime(2024, 10, 11, 10, 20)
+    event.DTEND = datetime(2024, 10, 11, 10, 21)
+    event.DURATION = timedelta(days=1)
+    assert "DTEND" not in event
+    assert event.DTEND is None
+    assert event.DURATION == timedelta(days=1)
     
+valid_values = pytest.mark.parametrize(
+    ("attr", "value"),
+    [
+        ("DTSTART", datetime(2024, 10, 11, 10, 20)),
+        ("DTEND", datetime(2024, 10, 11, 10, 20)),
+        ("DURATION", timedelta(days=1)),
+    ]
+)
+@valid_values
+def test_setting_to_none_deletes_value(attr, value):
+    """Setting attributes to None deletes them."""
+    event = Event()
+    setattr(event, attr, value)
+    assert attr in event
+    assert getattr(event, attr) == value
+    setattr(event, attr, None)
+    assert attr not in event
+
+
+@valid_values
+def test_setting_a_value_twice(attr, value):
+    """Setting attributes twice replaces them."""
+    event = Event()
+    setattr(event, attr, value + timedelta(days=1))
+    setattr(event, attr, value)
+    assert getattr(event, attr) == value
+
+
+@pytest.mark.parametrize("attr", ["DTSTART", "DTEND", "DURATION"])
+def test_invalid_none(attr):
+    """Special case for None."""
+    event = Event()
+    event[attr] = None
+    with pytest.raises(InvalidCalendar):
+        getattr(event, attr)

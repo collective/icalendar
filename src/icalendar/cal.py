@@ -497,22 +497,32 @@ class Component(CaselessDict):
 #######################################
 # components defined in RFC 5545
 
-def create_single_property(prop:str, value_attr:str, value_type:tuple[type]|type, type_def:type, doc:str):
+def create_single_property(prop:str, value_attr:str, value_type:tuple[type], type_def:type, doc:str):
     """Create a single property getter and setter."""
 
     def p_get(self : Component) -> type_def | None:
-        result = self.get(prop)
-        if result is None:
+        default = object()
+        result = self.get(prop, default)
+        if result is default:
             return None
         if isinstance(result, list):
             raise InvalidCalendar(f"Multiple {prop} defined.")
-        value = getattr(result, value_attr)
+        value = getattr(result, value_attr, result)
         if not isinstance(value, value_type):
             raise InvalidCalendar(f"{prop} must be either a date or a datetime, not {value}.")
         return value
 
-    def p_set(self:Component, value: type_def) -> None:
+    def p_set(self:Component, value: type_def | None) -> None:
+        if value is None:
+            p_del(self)
+            return
+        if not isinstance(value, value_type):
+            raise TypeError(f"Use {' or '.join(t.__name__ for t in value_type)}, not {type(value).__name__}.")
         self[prop] = vDDDTypes(value)
+        if prop in self.exclusive:
+            for other_prop in self.exclusive:
+                if other_prop != prop:
+                    self.pop(other_prop, None)
 
     def p_del(self:Component):
         self.pop(prop)
@@ -565,8 +575,8 @@ class Event(Component):
         """Return the calendar example with the given name."""
         return cls.from_ical(get_example("events", name))
 
-    DTSTART = create_single_property("DTSTART", "dt", date, date, 'The "DTSTART" property for a "VEVENT" specifies the inclusive start of the event.')
-    DTEND = create_single_property("DTEND", "dt", date, date, 'The "DTEND" property for a "VEVENT" calendar component specifies the non-inclusive end of the event.')
+    DTSTART = create_single_property("DTSTART", "dt", (datetime, date), date, 'The "DTSTART" property for a "VEVENT" specifies the inclusive start of the event.')
+    DTEND = create_single_property("DTEND", "dt", (datetime, date), date, 'The "DTEND" property for a "VEVENT" calendar component specifies the non-inclusive end of the event.')
 
     def _get_start_end_duration(self):
         """Verify the calendar validity and return the right attributes."""
@@ -592,12 +602,25 @@ class Event(Component):
 
         If you would like to calculate the duration of an event do not use this.
         """
-        duration = self.get("duration")
+        default = object()
+        duration = self.get("duration", default)
         if isinstance(duration, vDDDTypes):
             return duration.dt
         if isinstance(duration, vDuration):
             return duration.td
+        if duration is not default and not isinstance(duration, timedelta):
+            raise InvalidCalendar(f"DURATION must be a timedelta, not {type(duration).__name__}.")
         return None
+    
+    @DURATION.setter
+    def DURATION(self, value: timedelta | None):  # noqa: N802
+        if value is None:
+            self.pop("duration", None)
+            return
+        if not isinstance(value, timedelta):
+            raise TypeError(f"Use timedelta, not {type(value).__name__}.")
+        self["duration"] = vDuration(value)
+        del self.DTEND
 
     @property
     def duration(self) -> timedelta:
@@ -636,7 +659,7 @@ class Event(Component):
         return start
 
     @start.setter
-    def start(self, start: date | datetime):
+    def start(self, start: date | datetime| None):
         """Set the start."""
         self.DTSTART = start
 
@@ -661,11 +684,11 @@ class Event(Component):
         return end
 
     @end.setter
-    def end(self, end: date | datetime):
+    def end(self, end: date | datetime | None):
         """Set the start."""
         self.DTEND = end
 
-    
+
 class Todo(Component):
 
     name = 'VTODO'
