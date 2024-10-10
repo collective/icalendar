@@ -180,9 +180,6 @@ def test_start_and_duration(event, dtstart, duration):
     assert dur == duration
     assert event.duration == duration
 
-def test_default_duration(event, dtstart):
-    """Check that the end can be computed if a start is given."""
-
 # The "VEVENT" is also the calendar component used to specify an
 # anniversary or daily reminder within a calendar.  These events
 # have a DATE value type for the "DTSTART" property instead of the

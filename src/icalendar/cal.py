@@ -500,7 +500,7 @@ class Component(CaselessDict):
 def create_single_property(prop:str, value_attr:str, value_type:tuple[type], type_def:type, doc:str):
     """Create a single property getter and setter."""
 
-    def p_get(self : Component) -> type_def | None:
+    def p_get(self : Component):
         default = object()
         result = self.get(prop, default)
         if result is default:
@@ -511,8 +511,9 @@ def create_single_property(prop:str, value_attr:str, value_type:tuple[type], typ
         if not isinstance(value, value_type):
             raise InvalidCalendar(f"{prop} must be either a date or a datetime, not {value}.")
         return value
+    
 
-    def p_set(self:Component, value: type_def | None) -> None:
+    def p_set(self:Component, value) -> None:
         if value is None:
             p_del(self)
             return
@@ -523,6 +524,7 @@ def create_single_property(prop:str, value_attr:str, value_type:tuple[type], typ
             for other_prop in self.exclusive:
                 if other_prop != prop:
                     self.pop(other_prop, None)
+    p_set.__annotations__["value"] = p_get.__annotations__["return"] = type_def | None
 
     def p_del(self:Component):
         self.pop(prop)
@@ -531,9 +533,10 @@ def create_single_property(prop:str, value_attr:str, value_type:tuple[type], typ
     
     {doc}
 
+    Accepted values: {', '.join(t.__name__ for t in value_type)}.
     If the attribute has invalid values, we raise InvalidCalendar.
     If the value is absent, we return None.
-    You can also delete the value with del.
+    You can also delete the value with del or by setting it to None.
     """
     return property(p_get, p_set, p_del, p_doc)
 
@@ -571,7 +574,7 @@ class Event(Component):
     ignore_exceptions = True
 
     @classmethod
-    def example(cls, name) -> Event:
+    def example(cls, name:str) -> Event:
         """Return the calendar example with the given name."""
         return cls.from_ical(get_example("events", name))
 
@@ -741,7 +744,7 @@ class Timezone(Component):
     singletons = ('TZID', 'LAST-MODIFIED', 'TZURL',)
 
     @classmethod
-    def example(cls, name) -> Calendar:
+    def example(cls, name: str) -> Calendar:
         """Return the calendar example with the given name."""
         return cls.from_ical(get_example("timezones", name))
 
@@ -930,7 +933,7 @@ class Calendar(Component):
     singletons = ('PRODID', 'VERSION', 'CALSCALE', 'METHOD')
 
     @classmethod
-    def example(cls, name) -> Calendar:
+    def example(cls, name: str) -> Calendar:
         """Return the calendar example with the given name."""
         return cls.from_ical(get_example("calendars", name))
 
