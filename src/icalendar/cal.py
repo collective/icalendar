@@ -4,21 +4,18 @@ files according to RFC 5545.
 These are the defined components.
 """
 from __future__ import annotations
-from datetime import datetime, timedelta
-from icalendar.caselessdict import CaselessDict
-from icalendar.parser import Contentline
-from icalendar.parser import Contentlines
-from icalendar.parser import Parameters
-from icalendar.parser import q_join
-from icalendar.parser import q_split
-from icalendar.parser_tools import DEFAULT_ENCODING
-from icalendar.prop import TypesFactory
-from icalendar.prop import vText, vDDDLists
-from icalendar.timezone import tzp
-from typing import Tuple, List
+
+import os
+from datetime import date, datetime, timedelta
+from typing import List, Tuple
+
 import dateutil.rrule
 import dateutil.tz
-import os
+from icalendar.caselessdict import CaselessDict
+from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_split
+from icalendar.parser_tools import DEFAULT_ENCODING
+from icalendar.prop import TypesFactory, vDDDLists, vDDDTypes, vText, vDuration
+from icalendar.timezone import tzp
 
 
 def get_example(component_directory: str, example_name: str) -> bytes:
@@ -66,6 +63,21 @@ INLINE = CaselessDict({
 })
 
 _marker = []
+
+class InvalidCalendar(ValueError):
+    """The calendar given is not valid.
+
+    This calendar does not conform with RFC 5545 or breaks other RFCs.
+    """
+
+class IncompleteComponent(ValueError):
+    """The component is missing attributes.
+
+    The attributes are not required, otherwise this would be
+    an InvalidCalendar. But in order to perform calculations,
+    this attribute is required.
+    """
+
 
 
 class Component(CaselessDict):
@@ -485,6 +497,37 @@ class Component(CaselessDict):
 #######################################
 # components defined in RFC 5545
 
+def create_single_property(prop:str, value_attr:str, value_type:tuple[type]|type, type_def:type):
+    """Create a single property getter and setter."""
+
+    def p_get(self : Component) -> type_def | None:
+        result = self.get(prop)
+        if result is None:
+            return None
+        if isinstance(result, list):
+            raise InvalidCalendar(f"Multiple {prop} defined.")
+        value = getattr(result, value_attr)
+        if not isinstance(value, value_type):
+            raise InvalidCalendar(f"{prop} must be either a date or a datetime, not {value}.")
+        return value
+
+    def p_set(self:Component, value: type_def) -> None:
+        self[prop] = vDDDTypes(value)
+
+    def p_del(self:Component):
+        self.pop(prop)
+    
+    p_doc = f"""The {prop} property.
+
+    If the attribute has invalid values, we raise InvalidCalendar.
+    If the value is absent, we return None.
+    You can also delete the value with del.
+    """
+    return property(p_get, p_set, p_del, p_doc)
+
+
+
+
 class Event(Component):
 
     name = 'VEVENT'
@@ -514,8 +557,49 @@ class Event(Component):
         """Return the calendar example with the given name."""
         return cls.from_ical(get_example("events", name))
 
+    dtstart = create_single_property("DTSTART", "dt", date, date)
+    dtend = create_single_property("DTEND", "dt", date, date)
 
+    @property
+    def start(self) -> date | datetime:
+        """The start of the component.
 
+        Invalid values raise an InvalidCalendar.
+        If there is no start, we also raise an IncompleteComponent error.
+        """
+        start = self.dtstart
+        if start is None:
+            raise IncompleteComponent("No DTSTART given.")
+        return self.dtstart
+
+    @start.setter
+    def start(self, start: date | datetime):
+        """Set the start."""
+        self.dtstart = start
+
+    @property
+    def end(self) -> date | datetime:
+        """The end of the component.
+
+        Invalid values raise an InvalidCalendar error.
+        If there is no end, we also raise an IncompleteComponent error.
+        """
+        end = self.dtend
+        duration : vDuration = self.get("duration")
+        if end is None and duration is None:
+            raise IncompleteComponent("No DTEND or DURATION+DTSTART given.")
+        if isinstance(duration, vDDDTypes):
+            return self.start + duration.dt
+        if isinstance(duration, vDuration):
+            return self.start + duration.td
+        return end
+
+    @end.setter
+    def end(self, end: date | datetime):
+        """Set the start."""
+        self.dtend = end
+
+    
 class Todo(Component):
 
     name = 'VTODO'
@@ -767,4 +851,5 @@ component_factory = ComponentFactory()
 
 __all__ = ["Alarm", "Calendar", "Component", "ComponentFactory", "Event",
            "FreeBusy", "INLINE", "Journal", "Timezone", "TimezoneDaylight",
-           "TimezoneStandard", "Todo", "component_factory", "get_example"]
+           "TimezoneStandard", "Todo", "component_factory", "get_example",
+           "IncompleteComponent", "InvalidCalendar"]

@@ -10,6 +10,8 @@ from icalendar.cal import (
     TimezoneDaylight,
     TimezoneStandard,
     Todo,
+    InvalidCalendar,
+    IncompleteComponent
 )
 
 # Parameters and helper methods for splitting and joining string with escaped
