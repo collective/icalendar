@@ -2,7 +2,11 @@
 from datetime import date, datetime, timedelta
 
 import pytest
-from zoneinfo import ZoneInfo
+
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:
+    from backports.zoneinfo import ZoneInfo  # type: ignore
 
 from icalendar import (
     Event,
@@ -201,9 +205,9 @@ invalid_event_end_4.add("DURATION", timedelta(hours=1))
 @pytest.mark.parametrize(
     ("invalid_event", "message"),
     [
-        (invalid_event_end_1, "DTSTART and DTEND must have the same type."),
-        (invalid_event_end_2, "DTSTART and DTEND must have the same type."),
-        (invalid_event_end_3, "DTEND and DURATION cannot be there at the same time."),
+        (invalid_event_end_1, "DTSTART and DTEND must be of the same type, either date or datetime."),
+        (invalid_event_end_2, "DTSTART and DTEND must be of the same type, either date or datetime."),
+        (invalid_event_end_3, "Only one of DTEND and DURATION may be in a VEVENT, not both."),
         (invalid_event_end_4, "When DTSTART is a date, DURATION must be of days or weeks."),
     ]
 )

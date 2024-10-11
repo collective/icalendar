@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import os
 from datetime import date, datetime, timedelta
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import dateutil.rrule
 import dateutil.tz
@@ -511,7 +511,6 @@ def create_single_property(prop:str, value_attr:str, value_type:tuple[type], typ
         if not isinstance(value, value_type):
             raise InvalidCalendar(f"{prop} must be either a date or a datetime, not {value}.")
         return value
-    
 
     def p_set(self:Component, value) -> None:
         if value is None:
@@ -524,13 +523,13 @@ def create_single_property(prop:str, value_attr:str, value_type:tuple[type], typ
             for other_prop in self.exclusive:
                 if other_prop != prop:
                     self.pop(other_prop, None)
-    p_set.__annotations__["value"] = p_get.__annotations__["return"] = type_def | None
+    p_set.__annotations__["value"] = p_get.__annotations__["return"] = Optional[type_def]
 
     def p_del(self:Component):
         self.pop(prop)
-    
+
     p_doc = f"""The {prop} property.
-    
+
     {doc}
 
     Accepted values: {', '.join(t.__name__ for t in value_type)}.
@@ -595,7 +594,7 @@ class Event(Component):
         return start, end, duration
 
     @property
-    def DURATION(self) -> timedelta | None:  # noqa: N802
+    def DURATION(self) -> Optional[timedelta]:  # noqa: N802
         """The DURATION of the component.
 
         The "DTSTART" property for a "VEVENT" specifies the inclusive start of the event.
@@ -617,7 +616,7 @@ class Event(Component):
         return None
     
     @DURATION.setter
-    def DURATION(self, value: timedelta | None):  # noqa: N802
+    def DURATION(self, value: Optional[timedelta]):  # noqa: N802
         if value is None:
             self.pop("duration", None)
             return
@@ -663,7 +662,7 @@ class Event(Component):
         return start
 
     @start.setter
-    def start(self, start: date | datetime| None):
+    def start(self, start: Optional[date | datetime]):
         """Set the start."""
         self.DTSTART = start
 
