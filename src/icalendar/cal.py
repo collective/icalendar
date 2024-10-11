@@ -711,6 +711,19 @@ class Todo(Component):
 
 
 class Journal(Component):
+    """A describtive text at a certain time or associated with a component.
+
+    A "VJOURNAL" calendar component is a grouping of
+    component properties that represent one or more descriptive text
+    notes associated with a particular calendar date.  The "DTSTART"
+    property is used to specify the calendar date with which the
+    journal entry is associated.  Generally, it will have a DATE value
+    data type, but it can also be used to specify a DATE-TIME value
+    data type.  Examples of a journal entry include a daily record of
+    a legislative body or a journal entry of individual telephone
+    contacts for the day or an ordered list of accomplishments for the
+    day.
+    """
 
     name = 'VJOURNAL'
 
@@ -724,6 +737,34 @@ class Journal(Component):
         'RELATED', 'RDATE', 'RRULE', 'RSTATUS', 'DESCRIPTION',
     )
 
+    DTSTART = create_single_property(
+        "DTSTART", "dt", (datetime, date), date,
+        'The "DTSTART" property for a "VJOURNAL" that specifies the exact date at which the journal entry was made.')
+
+    @property
+    def start(self) -> date:
+        """The start of the Journal.
+        
+        The "DTSTART"
+        property is used to specify the calendar date with which the
+        journal entry is associated.
+        """
+        start = self.DTSTART
+        if start is None:
+            raise IncompleteComponent("No DTSTART given.")
+        return start
+    
+    @start.setter
+    def start(self, value: datetime|date) -> None:
+        """Set the start of the journal."""
+        self.DTSTART = value
+
+    end = start
+    
+    @property
+    def duration(self) -> timedelta:
+        """The journal does not last any time."""
+        return timedelta(0)
 
 class FreeBusy(Component):
 

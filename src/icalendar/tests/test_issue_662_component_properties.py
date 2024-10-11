@@ -6,12 +6,13 @@ import pytest
 try:
     from zoneinfo import ZoneInfo
 except ImportError:
-    from backports.zoneinfo import ZoneInfo  # type: ignore
+    from backports.zoneinfo import ZoneInfo  # type: ignore PGH003
 
 from icalendar import (
     Event,
     IncompleteComponent,
     InvalidCalendar,
+    Journal,
     vDDDTypes,
 )
 from icalendar.prop import vDuration
@@ -263,14 +264,25 @@ def test_incomplete_event(incomplete_event_end, attr):
         (datetime(2024, 10, 11, 10, 20), timedelta(days=1)),
     ]
 )
-@pytest.mark.parametrize("attr", ["start", "end", "DTSTART", "DTEND"])
-def test_set_invalid_start(invalid_value, attr):
+@pytest.mark.parametrize(
+    ("Component", "attr"),
+    [
+        (Event,"start"),
+        (Event,"end"),
+        (Event,"DTSTART"),
+        (Event,"DTEND"),
+        (Journal,"start"),
+        (Journal,"end"),
+        (Journal,"DTSTART"),
+    ]
+)
+def test_set_invalid_start(invalid_value, attr, Component):
     """Check that we get the right error.
 
     - other types that vDDDTypes accepts
     - object
     """
-    event = Event()
+    event = Component()
     with pytest.raises(TypeError) as e:
         setattr(event, attr, invalid_value)
     assert e.value.args[0] == f"Use datetime or date, not {type(invalid_value).__name__}."
@@ -318,7 +330,7 @@ def test_setting_duration_deletes_the_end():
     assert "DTEND" not in event
     assert event.DTEND is None
     assert event.DURATION == timedelta(days=1)
-    
+
 valid_values = pytest.mark.parametrize(
     ("attr", "value"),
     [
@@ -354,3 +366,38 @@ def test_invalid_none(attr):
     event[attr] = None
     with pytest.raises(InvalidCalendar):
         getattr(event, attr)
+
+@pytest.mark.parametrize("attr", ["DTSTART", "end", "start"])
+@pytest.mark.parametrize("start", [
+    datetime(2024, 10, 11, 10, 20),
+    date(2024, 10, 11),
+    datetime(2024, 10, 11, 10, 20, tzinfo=ZoneInfo("Europe/Paris")),
+])
+def test_journal_start(start, attr):
+    """Test that we can set the start of a journal."""
+    j = Journal()
+    setattr(j, attr, start)
+    assert start == j.DTSTART
+    assert j.start == start
+    assert j.end == start
+    assert j.duration == timedelta(0)
+
+@pytest.mark.parametrize("attr", ["start", "end"])
+def test_delete_journal_start(attr):
+    """Delete the start of the journal."""
+    j = Journal()
+    j.start = datetime(2010, 11, 12, 13, 14)
+    j.DTSTART = None
+    assert j.DTSTART is None
+    assert "DTSTART" not in j
+    with pytest.raises(IncompleteComponent):
+        getattr(j, attr)
+
+def setting_twice_does_not_duplicate_the_entry():
+    j = Journal()
+    j.DTSTART = date(2024, 1,1 )
+    j.DTSTART = date(2024, 1, 3)
+    assert date(2024, 1, 3) == j.DTSTART
+    assert j.start == date(2024, 1, 3)
+    assert j.end == date(2024, 1, 3)
+
