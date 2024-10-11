@@ -591,7 +591,7 @@ class Event(Component):
         if isinstance(start, date) and not isinstance(start, datetime) and duration is not None and duration.seconds != 0:
             raise InvalidCalendar("When DTSTART is a date, DURATION must be of days or weeks.")
         if start is not None and end is not None and is_date(start) != is_date(end):
-            raise InvalidCalendar("DTSTART and DTEND must have the same type.")
+            raise InvalidCalendar("DTSTART and DTEND must be of the same type, either date or datetime.")
         return start, end, duration
 
     @property
