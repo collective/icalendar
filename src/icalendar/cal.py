@@ -604,6 +604,7 @@ class Event(Component):
         of the event.
 
         If you would like to calculate the duration of an event do not use this.
+        Instead use the difference between DTSTART and DTEND.
         """
         default = object()
         duration = self.get("duration", default)
