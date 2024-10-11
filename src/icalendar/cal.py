@@ -587,7 +587,7 @@ class Event(Component):
         end = self.DTEND
         duration = self.DURATION
         if duration is not None and end is not None:
-            raise InvalidCalendar("DTEND and DURATION cannot be there at the same time.")
+            raise InvalidCalendar("Only one of DTEND and DURATION may be in a VEVENT, not both.")
         if isinstance(start, date) and not isinstance(start, datetime) and duration is not None and duration.seconds != 0:
             raise InvalidCalendar("When DTSTART is a date, DURATION must be of days or weeks.")
         if start is not None and end is not None and is_date(start) != is_date(end):
