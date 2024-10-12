@@ -711,7 +711,7 @@ class Todo(Component):
 
 
 class Journal(Component):
-    """A describtive text at a certain time or associated with a component.
+    """A descriptive text at a certain time or associated with a component.
 
     A "VJOURNAL" calendar component is a grouping of
     component properties that represent one or more descriptive text
