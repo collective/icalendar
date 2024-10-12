@@ -24,7 +24,7 @@ if tar -tf "$archive" | grep -q 'fuzzing/'; then
 fi
 
 if ! tar -tf "$archive" | grep -q '/docs/'; then
-  echo "ERROR: The documentation is not included in the release."
+  echo "ERROR: The documentation is not included in the release, but should be."
   echo "       See https://github.com/collective/icalendar/issues/712"
   exit 1
 fi
