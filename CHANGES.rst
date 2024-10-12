@@ -19,7 +19,7 @@ New features:
 Bug fixes:
 
 - Fix a few ``__all__`` variables.
-- Add missing ``docs`` folder to distribution packages, see `Issue 712 <https://github.com/collective/icalendar/issues/712>`_
+- Added missing ``docs`` folder to distribution packages. See `Issue 712 <https://github.com/collective/icalendar/issues/712>`_.
 
 6.0.0 (2024-09-28)
 ------------------
