@@ -763,7 +763,7 @@ class Journal(Component):
     
     @property
     def duration(self) -> timedelta:
-        """The journal does not last any time."""
+        """The journal has no duration."""
         return timedelta(0)
 
 class FreeBusy(Component):
