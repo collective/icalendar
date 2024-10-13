@@ -1,27 +1,16 @@
 Changelog
 =========
 
-6.0.2 (unreleased)
+6.0.1 (unreleased)
 ------------------
 
 Minor changes:
 
-- ...
+- Test compatibility with Python 3.13
 
 Breaking changes:
 
 - ...
-
-New features:
-
-- ...
-
-Bug fixes:
-
-- ...
-
-6.0.1 (2024-10-13)
-------------------
 
 New features:
 
@@ -450,7 +439,6 @@ Bug fixes:
 Bug fixes:
 
 - Use ``vText`` as default type, when convert recurrence definition to ical string. [kam193]
-
 
 4.0.5 (2020-03-21)
 ------------------
