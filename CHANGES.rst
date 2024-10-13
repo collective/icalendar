@@ -26,7 +26,6 @@ Bug fixes:
 Bug fixes:
 
 - Added ``Event.end``, ``Event.start``, ``Event.dtstart``, and ``Event.dtend`` attributes. See `Issue 662 <https://github.com/collective/icalendar/issues/662>`_.
-- Test compatibility with Python 3.13
 
 Bug fixes:
 
