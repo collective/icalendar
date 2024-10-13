@@ -1,7 +1,11 @@
 Changelog
 =========
 
+6.0.2 (unreleased)
+
+
 6.0.1 (unreleased)
+
 ------------------
 
 Minor changes:
@@ -13,6 +17,10 @@ Breaking changes:
 - ...
 
 New features:
+
+- ...
+
+Bug fixes:
 
 - Added ``Event.end``, ``Event.start``, ``Event.dtstart``, and ``Event.dtend`` attributes. See `Issue 662 <https://github.com/collective/icalendar/issues/662>`_.
 - Test compatibility with Python 3.13
