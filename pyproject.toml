@@ -93,7 +93,6 @@ exclude = [
   "/.*",
   "/*.*",
   "/src/icalendar/fuzzing",
-  "/docs",
   "/dist",
   "/build",
   "/htmlcov",
@@ -157,6 +156,7 @@ ignore = [
     "PERF401", # Use a list comprehension to create a transformed list
     "ARG002",  # Unused method argument: ...
     "ARG001",  # Unused function argument: ...
+    "UP007",   # Optional -> X | None remove when migrated to py39+
 ]
 extend-safe-fixes = [
     "PT006", # Wrong type passed to first argument of @pytest.mark.parametrize; expected {expected_string}

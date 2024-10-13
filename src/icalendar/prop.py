@@ -642,6 +642,7 @@ class vMonth(int):
     In :rfc:`5545`, this is just an int.
     In :rfc:`7529`, this can be followed by `L` to indicate a leap month.
 
+        >>> from icalendar import vMonth
         >>> vMonth(1) # first month January
         vMonth('1')
         >>> vMonth("5L") # leap month in Hebrew calendar

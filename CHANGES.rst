@@ -15,10 +15,12 @@ Breaking changes:
 New features:
 
 - Add ``VALARM`` properties for :rfc:`9074`, see `Issue 657 <https://github.com/collective/icalendar/issues/657>`_
+- Added ``Event.end``, ``Event.start``, ``Event.dtstart``, and ``Event.dtend`` attributes. See `Issue 662 <https://github.com/collective/icalendar/issues/662>`_.
 
 Bug fixes:
 
 - Fix a few ``__all__`` variables.
+- Added missing ``docs`` folder to distribution packages. See `Issue 712 <https://github.com/collective/icalendar/issues/712>`_.
 
 6.0.0 (2024-09-28)
 ------------------
