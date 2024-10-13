@@ -169,7 +169,7 @@ you can receive all the latest updates, and switch back to earlier behavior:
     <DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>
 
 Version 6 is on `branch main <https://github.com/collective/icalendar/>`_.
-It is compatible with Python versions 3.8 - 3.12, and PyPy3.
+It is compatible with Python versions 3.8 - 3.13, and PyPy3.
 We expect the ``main`` branch with versions ``6+`` to receive the latest updates and features.
 
 Related projects

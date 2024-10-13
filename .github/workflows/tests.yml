@@ -25,6 +25,7 @@ jobs:
 #        - ["3.10",  "docs"]  # disable as readthedocs builds it
         - ["3.11",  "py311"]
         - ["3.12",  "py312"]
+        - ["3.13",  "py313"]
 
     runs-on: ubuntu-latest
     name: ${{ matrix.config[1] }}
@@ -79,7 +80,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: "3.12"
+        python-version: "3.13"
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -111,7 +112,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: "3.12"
+        python-version: "3.13"
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
