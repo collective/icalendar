@@ -549,6 +549,12 @@ def is_datetime(dt: date) -> bool:
     return isinstance(dt, datetime)
 
 class Event(Component):
+    """
+    An "VEVENT" calendar component is a grouping of component
+    properties that represents a scheduled amount of time on a
+    calendar. For example, it can be an activity; such as a one-hour
+    long, department meeting from 8:00 AM to 9:00 AM, tomorrow.
+    """
 
     name = 'VEVENT'
 
@@ -693,6 +699,13 @@ class Event(Component):
 
 
 class Todo(Component):
+    """
+    A "VTODO" calendar component is a grouping of component
+    properties that represents an action-item or assignment. For
+    example, it can be used to represent an item of work assigned to
+    an individual; such as "Prepare for the upcoming conference
+    seminar on Internet Calendaring".
+    """
 
     name = 'VTODO'
 
@@ -767,6 +780,12 @@ class Journal(Component):
         return timedelta(0)
 
 class FreeBusy(Component):
+    """
+    A "VFREEBUSY" calendar component is a grouping of component
+    properties that represents either a request for free or busy time
+    information, a reply to a request for free or busy time
+    information, or a published set of busy time information.
+    """
 
     name = 'VFREEBUSY'
 
@@ -779,6 +798,11 @@ class FreeBusy(Component):
 
 
 class Timezone(Component):
+    """
+    A "VTIMEZONE" calendar component is a grouping of component
+    properties that defines a time zone. It is used to describe the
+    way in which a time zone changes its offset from UTC over time.
+    """
     name = 'VTIMEZONE'
     canonical_order = ('TZID',)
     required = ('TZID',) # it also requires one of components DAYLIGHT and STANDARD
@@ -939,13 +963,31 @@ class Timezone(Component):
 
 
 class TimezoneStandard(Component):
+    """
+    The "STANDARD" sub-component of "VTIMEZONE" defines the standard
+    time offset from UTC for a time zone. It represents a time zone's
+    standard time, typically used during winter months in locations
+    that observe Daylight Saving Time.
+    """
     name = 'STANDARD'
+    """
+    The "STANDARD" sub-component of "VTIMEZONE" defines the standard
+    time offset from UTC for a time zone. It represents a time zone's
+    standard time, typically used during winter months in locations
+    that observe Daylight Saving Time.
+    """
     required = ('DTSTART', 'TZOFFSETTO', 'TZOFFSETFROM')
     singletons = ('DTSTART', 'TZOFFSETTO', 'TZOFFSETFROM',)
     multiple = ('COMMENT', 'RDATE', 'TZNAME', 'RRULE', 'EXDATE')
 
 
 class TimezoneDaylight(Component):
+    """
+    The "DAYLIGHT" sub-component of "VTIMEZONE" defines the daylight
+    saving time offset from UTC for a time zone. It represents a time
+    zone's daylight saving time, typically used during summer months
+    in locations that observe Daylight Saving Time.
+    """
     name = 'DAYLIGHT'
     required = TimezoneStandard.required
     singletons = TimezoneStandard.singletons
@@ -953,6 +995,12 @@ class TimezoneDaylight(Component):
 
 
 class Alarm(Component):
+    """
+    A "VALARM" calendar component is a grouping of component
+    properties that defines an alarm or reminder for an event or a
+    to-do. For example, it may be used to define a reminder for a
+    pending event or an overdue to-do.
+    """
 
     name = 'VALARM'
     # some properties MAY/MUST/MUST NOT appear depending on ACTION value
@@ -966,7 +1014,11 @@ class Alarm(Component):
 
 
 class Calendar(Component):
-    """This is the base object for an iCalendar file.
+    """
+    The "VCALENDAR" object is a collection of calendar information.
+    This information can include a variety of components, such as
+    "VEVENT", "VTODO", "VJOURNAL", "VFREEBUSY", "VTIMEZONE", or any
+    other type of calendar component.
     """
     name = 'VCALENDAR'
     canonical_order = ('VERSION', 'PRODID', 'CALSCALE', 'METHOD',)
