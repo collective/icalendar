@@ -1,7 +1,7 @@
 Changelog
 =========
 
-6.0.1 (unreleased)
+6.0.2 (unreleased)
 ------------------
 
 Minor changes:
@@ -15,7 +15,18 @@ Breaking changes:
 New features:
 
 - Add ``VALARM`` properties for :rfc:`9074`, see `Issue 657 <https://github.com/collective/icalendar/issues/657>`_
+
+Bug fixes:
+
+- ...
+
+6.0.1 (2024-10-13)
+------------------
+
+New features:
+
 - Added ``Event.end``, ``Event.start``, ``Event.dtstart``, and ``Event.dtend`` attributes. See `Issue 662 <https://github.com/collective/icalendar/issues/662>`_.
+- Test compatibility with Python 3.13
 
 Bug fixes:
 
