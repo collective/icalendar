@@ -6,7 +6,7 @@ Changelog
 
 Minor changes:
 
-- ...
+- Test compatibility with Python 3.13
 
 Breaking changes:
 
@@ -26,7 +26,6 @@ Bug fixes:
 New features:
 
 - Added ``Event.end``, ``Event.start``, ``Event.dtstart``, and ``Event.dtend`` attributes. See `Issue 662 <https://github.com/collective/icalendar/issues/662>`_.
-- Test compatibility with Python 3.13
 
 Bug fixes:
 
@@ -451,7 +450,6 @@ Bug fixes:
 Bug fixes:
 
 - Use ``vText`` as default type, when convert recurrence definition to ical string. [kam193]
-
 
 4.0.5 (2020-03-21)
 ------------------
