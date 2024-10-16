@@ -509,7 +509,7 @@ def create_single_property(prop:str, value_attr:str, value_type:tuple[type], typ
             raise InvalidCalendar(f"Multiple {prop} defined.")
         value = getattr(result, value_attr, result)
         if not isinstance(value, value_type):
-            raise InvalidCalendar(f"{prop} must be either a date or a datetime, not {value}.")
+            raise InvalidCalendar(f"{prop} must be either a {' or '.join(t.__name__ for t in value_type)}, not {value}.")
         return value
 
     def p_set(self:Component, value) -> None:
@@ -708,6 +708,9 @@ class Todo(Component):
         'ATTACH', 'ATTENDEE', 'CATEGORIES', 'COMMENT', 'CONTACT', 'EXDATE',
         'RSTATUS', 'RELATED', 'RESOURCES', 'RDATE', 'RRULE'
     )
+    DTSTART = create_single_property("DTSTART", "dt", (datetime, date), date, 'The "DTSTART" property for a "VTODO" specifies the inclusive start of the Todo.')
+    DUE = create_single_property("DUE", "dt", (datetime, date), date, 'The "DUE" property for a "VTODO" calendar component specifies the non-inclusive end of the Todo.')
+
 
 
 class Journal(Component):

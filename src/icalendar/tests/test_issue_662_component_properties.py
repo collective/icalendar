@@ -73,7 +73,7 @@ def set_event_start(request):
     """Create a new event."""
     return request.param
 
-def test_event_dtstart(dtstart, start_end_component):
+def test_component_dtstart(dtstart, start_end_component):
     """Test the start of events."""
     assert start_end_component.DTSTART == dtstart
 
