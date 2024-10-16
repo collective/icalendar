@@ -1,12 +1,13 @@
 Changelog
 =========
 
-6.0.1 (unreleased)
+6.0.2 (unreleased)
 ------------------
 
 Minor changes:
 
 - Format test code with Ruff. See `Issue 672 <https://github.com/collective/icalendar/issues/672>`_.
+- Document the Debian package. See `Issue 701 <https://github.com/collective/icalendar/issues/701>`_.
 
 Breaking changes:
 
@@ -14,11 +15,24 @@ Breaking changes:
 
 New features:
 
+- Add ``VALARM`` properties for :rfc:`9074`. See `Issue 657 <https://github.com/collective/icalendar/issues/657>`_
+- Test compatibility with Python 3.13
+
+Bug fixes:
+
 - ...
+
+6.0.1 (2024-10-13)
+------------------
+
+New features:
+
+- Added ``Event.end``, ``Event.start``, ``Event.dtstart``, and ``Event.dtend`` attributes. See `Issue 662 <https://github.com/collective/icalendar/issues/662>`_.
 
 Bug fixes:
 
 - Fix a few ``__all__`` variables.
+- Added missing ``docs`` folder to distribution packages. See `Issue 712 <https://github.com/collective/icalendar/issues/712>`_.
 
 6.0.0 (2024-09-28)
 ------------------
@@ -438,7 +452,6 @@ Bug fixes:
 Bug fixes:
 
 - Use ``vText`` as default type, when convert recurrence definition to ical string. [kam193]
-
 
 4.0.5 (2020-03-21)
 ------------------

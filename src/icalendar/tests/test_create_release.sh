@@ -17,9 +17,15 @@ if ! [ -f "$archive" ]; then
   exit 1
 fi
 
-if tar -tf "$archive" | grep 'fuzzing/'; then
+if tar -tf "$archive" | grep -q 'fuzzing/'; then
   echo "ERROR: Fuzzing files are included in the release."
   echo "       See https://github.com/collective/icalendar/pull/569"
+  exit 1
+fi
+
+if ! tar -tf "$archive" | grep -q '/docs/'; then
+  echo "ERROR: The documentation is not included in the release, but should be."
+  echo "       See https://github.com/collective/icalendar/issues/712"
   exit 1
 fi
 

@@ -40,7 +40,7 @@ def test_this_module_is_among_them():
 
 
 @pytest.mark.parametrize("module_name", MODULE_NAMES)
-def test_docstring_of_python_file(module_name):
+def test_docstring_of_python_file(module_name, env_for_doctest):
     """This test runs doctest on the Python module."""
     try:
         module = importlib.import_module(module_name)
@@ -48,7 +48,7 @@ def test_docstring_of_python_file(module_name):
         if e.name == "pytz":
             pytest.skip("pytz is not installed, skipping this module.")
         raise
-    test_result = doctest.testmod(module, name=module_name)
+    test_result = doctest.testmod(module, name=module_name, globs=env_for_doctest)
     assert test_result.failed == 0, f"{test_result.failed} errors in {module_name}"
 
 
