@@ -6,6 +6,7 @@ Changelog
 
 Minor changes:
 
+- Format test code with Ruff. See `Issue 672 <https://github.com/collective/icalendar/issues/672>`_.
 - Document the Debian package. See `Issue 701 <https://github.com/collective/icalendar/issues/701>`_.
 
 Breaking changes:

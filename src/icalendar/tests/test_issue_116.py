@@ -1,4 +1,3 @@
-
 import icalendar
 
 
@@ -15,14 +14,14 @@ def test_issue_116():
             "VALUE": "URI",
             "X-ADDRESS": "367 George Street Sydney CBD NSW 2000",
             "X-APPLE-RADIUS": "72",
-            "X-TITLE": "367 George Street"
-        }
+            "X-TITLE": "367 George Street",
+        },
     )
     assert event.to_ical() == (
-        b'BEGIN:VEVENT\r\nX-APPLE-STRUCTURED-LOCATION;VALUE=URI;'
+        b"BEGIN:VEVENT\r\nX-APPLE-STRUCTURED-LOCATION;VALUE=URI;"
         b'X-ADDRESS="367 George Street Sydney \r\n CBD NSW 2000";'
         b'X-APPLE-RADIUS=72;X-TITLE="367 George Street":'
-        b'geo:-33.868900\r\n \\,151.207000\r\nEND:VEVENT\r\n'
+        b"geo:-33.868900\r\n \\,151.207000\r\nEND:VEVENT\r\n"
     )
 
     # roundtrip
