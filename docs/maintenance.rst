@@ -157,7 +157,7 @@ When adding support for a new Python version or removing support for an old one,
 1. ``.github/workflows/tests.yml``: Add or remove the Python version from the test matrix.
 2. ``tox.ini``: Update the ``envlist`` to include or remove the Python version.
 3. ``pyproject.toml``: Update the ``requires-python`` line and the ``classifiers`` list.
-4. `README.rst`: Update the compatibility information.
+4. ``README.rst``: Update the compatibility information.
 5. `docs/maintenance.rst`: Update this list if any new files need to be modified.
 
 Remember to test the changes thoroughly and update any documentation that mentions supported Python versions.
