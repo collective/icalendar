@@ -148,3 +148,16 @@ This section contains useful links for maintainers and collaborators:
 
 - `Future of icalendar, looking for maintainer #360 <https://github.com/collective/icalendar/discussions/360>`__
 - `Comment on the Plone tests running with icalendar <https://github.com/collective/icalendar/pull/447#issuecomment-1277643634>`__
+
+Updating Python Versions
+------------------------
+
+When adding support for a new Python version or removing support for an old one, the following files need to be updated:
+
+1. ``.github/workflows/tests.yml``: Add or remove the Python version from the test matrix.
+2. ``tox.ini``: Update the ``envlist`` to include or remove the Python version.
+3. ``pyproject.toml``: Update the ``requires-python`` line and the ``classifiers`` list.
+4. ``README.rst``: Update the compatibility information.
+5. ``docs/maintenance.rst``: Update this list if any new files need to be modified.
+
+Remember to test the changes thoroughly and update any documentation that mentions supported Python versions.

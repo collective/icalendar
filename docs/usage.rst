@@ -12,18 +12,18 @@ Compatibility
 
 This package is compatible with the following standards:
 
-- :rfc:`5545`
-- :rfc:`7529`
+- :rfc:`5545` - Internet Calendaring and Scheduling Core Object Specification (iCalendar)
+- :rfc:`7529` - Non-Gregorian Recurrence Rules in the Internet Calendaring and Scheduling Core Object Specification (iCalendar)
+- :rfc:`9074` - "VALARM" Extensions for iCalendar
 
-We do not claim compatibility to:
+We do not claim compatibility to the following RFCs. They might work though.
 
-- :rfc:`2445` - which is obsoleted by :rfc:`5545`
-- :rfc:`6886`
-- :rfc:`7953`
-- :rfc:`7986`
-- :rfc:`9073`
-- :rfc:`9074`
-- :rfc:`9253`
+- :rfc:`2445` - obsoleted by :rfc:`5545`
+- :rfc:`6868` - Parameter Value Encoding in iCalendar and vCard
+- :rfc:`7953` - Calendar Availability
+- :rfc:`7986` - New Properties for iCalendar
+- :rfc:`9073` - Event Publishing Extensions to iCalendar
+- :rfc:`9253` - Support for iCalendar Relationships
 
 File structure
 --------------
