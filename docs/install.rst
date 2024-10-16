@@ -20,7 +20,7 @@ package, like this:
     >>> import icalendar
 
 Debian or Ubuntu
--------------
+----------------
 
 You can install the `python-icalendar package <https://tracker.debian.org/pkg/python-icalendar>`_
 for Debian and derivatives.
