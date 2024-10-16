@@ -6,7 +6,7 @@ Changelog
 
 Minor changes:
 
-- Test compatibility with Python 3.13
+- Document the Debian package. See `Issue 701 <https://github.com/collective/icalendar/issues/701>`_.
 
 Breaking changes:
 
@@ -14,7 +14,8 @@ Breaking changes:
 
 New features:
 
-- Add ``VALARM`` properties for :rfc:`9074`, see `Issue 657 <https://github.com/collective/icalendar/issues/657>`_
+- Add ``VALARM`` properties for :rfc:`9074`. See `Issue 657 <https://github.com/collective/icalendar/issues/657>`_
+- Test compatibility with Python 3.13
 
 Bug fixes:
 
