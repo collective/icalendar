@@ -586,7 +586,7 @@ for a "{component}" calendar component specifies the non-inclusive end
 of the event.
 
 If you would like to calculate the duration a {component}s do not use this.
-Instead use duration property (lower case).
+Instead use the duration property (lower case).
 """
 
 
