@@ -29,7 +29,7 @@ Bug fixes:
 New features:
 
 - Added ``end``, ``start``, ``duration``, ``DTSTART``, ``DUE``, and ``DURATION`` attributes to ``Event`` components. See `Issue 662`_.
-- Added ``end``, ``start``, ``duration`` and, ``DTSTART`` attributes to ``Journal`` components. See `Issue 662`_.
+- Added ``end``, ``start``, ``duration``, and ``DTSTART`` attributes to ``Journal`` components. See `Issue 662`_.
 
 Bug fixes:
 
