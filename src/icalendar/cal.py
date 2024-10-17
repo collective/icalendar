@@ -578,7 +578,7 @@ def _del_duration(self: Component):
     """Delete property DURATION."""
     self.pop("DURATION")
 
-_doc_duration = """The DURATION of {component}.
+_doc_duration = """The DURATION property.
 
 The "DTSTART" property for a "{component}" specifies the inclusive start of the event.
 The "DURATION" property in conjunction with the DTSTART property
@@ -661,7 +661,7 @@ class Event(Component):
         >>> event = Event()
         >>> event.start = datetime(2021, 1, 1, 12)
         >>> event.end = datetime(2021, 1, 1, 12, 30) # 30 minutes
-        >>> event.end - event.start  # 1800 seconds == 30 minutes
+        >>> event.duration  # 1800 seconds == 30 minutes
         datetime.timedelta(seconds=1800)
         >>> print(event.to_ical())
         BEGIN:VEVENT
@@ -746,16 +746,16 @@ class Todo(Component):
         Invalid values raise an InvalidCalendar.
         If there is no start, we also raise an IncompleteComponent error.
 
-        You can get the start, end and duration of a todo as follows:
+        You can get the start, end and duration of a Todo as follows:
 
         >>> from datetime import datetime
         >>> from icalendar import Todo
-        >>> event = Todo()
-        >>> event.start = datetime(2021, 1, 1, 12)
-        >>> event.end = datetime(2021, 1, 1, 12, 30) # 30 minutes
-        >>> event.end - event.start  # 1800 seconds == 30 minutes
+        >>> todo = Todo()
+        >>> todo.start = datetime(2021, 1, 1, 12)
+        >>> todo.end = datetime(2021, 1, 1, 12, 30) # 30 minutes
+        >>> todo.duration  # 1800 seconds == 30 minutes
         datetime.timedelta(seconds=1800)
-        >>> print(event.to_ical())
+        >>> print(todo.to_ical())
         BEGIN:VTODO
         DTSTART:20210101T120000
         DUE:20210101T123000
@@ -800,7 +800,7 @@ class Todo(Component):
     def duration(self) -> timedelta:
         """The duration of the VTODO.
 
-        This duration is calculated from the start and end of the event.
+        This duration is calculated from the start and end of the Todo.
         You cannot set the duration as it is unclear what happens to start and end.
         """
         return self.end - self.start
@@ -859,7 +859,7 @@ class Journal(Component):
     
     @property
     def duration(self) -> timedelta:
-        """The journal has no duration."""
+        """The journal has no duration: timedelta(0)."""
         return timedelta(0)
 
 class FreeBusy(Component):
