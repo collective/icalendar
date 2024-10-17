@@ -6,6 +6,7 @@ Changelog
 
 Minor changes:
 
+- Added ``end``, ``start``, ``duration``, ``DTSTART``, ``DUE``, and ``DURATION`` attributes to ``Todo`` components. See `Issue 662`_.
 - Format test code with Ruff. See `Issue 672 <https://github.com/collective/icalendar/issues/672>`_.
 - Document the Debian package. See `Issue 701 <https://github.com/collective/icalendar/issues/701>`_.
 
@@ -27,12 +28,15 @@ Bug fixes:
 
 New features:
 
-- Added ``Event.end``, ``Event.start``, ``Event.dtstart``, and ``Event.dtend`` attributes. See `Issue 662 <https://github.com/collective/icalendar/issues/662>`_.
+- Added ``end``, ``start``, ``duration``, ``DTSTART``, ``DUE``, and ``DURATION`` attributes to ``Event`` components. See `Issue 662`_.
+- Added ``end``, ``start``, ``duration``, and ``DTSTART`` attributes to ``Journal`` components. See `Issue 662`_.
 
 Bug fixes:
 
 - Fix a few ``__all__`` variables.
 - Added missing ``docs`` folder to distribution packages. See `Issue 712 <https://github.com/collective/icalendar/issues/712>`_.
+
+.. _`Issue 662`: https://github.com/collective/icalendar/issues/662
 
 6.0.0 (2024-09-28)
 ------------------
