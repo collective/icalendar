@@ -3,25 +3,28 @@ try:
 except ImportError:
     import zoneinfo
 import pytest
+
 import icalendar
+
 try:
     import pytz
 except ImportError:
     pytz = None
-from datetime import datetime
-from dateutil import tz
-from icalendar.cal import Component, Calendar
-from icalendar.timezone import tzp as _tzp
-from icalendar.timezone import TZP
-from pathlib import Path
 import itertools
 import sys
+from pathlib import Path
+
+from dateutil import tz
+
+from icalendar.cal import Calendar, Component
+from icalendar.timezone import TZP
+from icalendar.timezone import tzp as _tzp
 
 HAS_PYTZ = pytz is not None
 if HAS_PYTZ:
     PYTZ_UTC = [
         pytz.utc,
-        pytz.timezone('UTC'),
+        pytz.timezone("UTC"),
     ]
     PYTZ_IN_TIMEZONE = [
         lambda dt, tzname: pytz.timezone(tzname).localize(dt),
@@ -34,14 +37,19 @@ else:
 
 
 class DataSource:
-    '''A collection of parsed ICS elements (e.g calendars, timezones, events)'''
-    def __init__(self, data_source_folder:Path, parser):
+    """A collection of parsed ICS elements (e.g calendars, timezones, events)"""
+
+    def __init__(self, data_source_folder: Path, parser):
         self._parser = parser
         self._data_source_folder = data_source_folder
 
     def keys(self):
         """Return all the files that could be used."""
-        return [p.stem for p in self._data_source_folder.iterdir() if p.suffix.lower() == ".ics"]
+        return [
+            p.stem
+            for p in self._data_source_folder.iterdir()
+            if p.suffix.lower() == ".ics"
+        ]
 
     def __getitem__(self, attribute):
         """Parse a file and return the result stored in the attribute."""
@@ -49,11 +57,11 @@ class DataSource:
             source_file = attribute
             attribute = attribute[:-4]
         else:
-            source_file = attribute + '.ics'
+            source_file = attribute + ".ics"
         source_path = self._data_source_folder / source_file
         if not source_path.is_file():
             raise AttributeError(f"{source_path} does not exist.")
-        with source_path.open('rb') as f:
+        with source_path.open("rb") as f:
             raw_ics = f.read()
         source = self._parser(raw_ics)
         if not isinstance(source, list):
@@ -76,51 +84,67 @@ class DataSource:
     @property
     def multiple(self):
         """Return a list of all components parsed."""
-        return self.__class__(self._data_source_folder, lambda data: self._parser(data, multiple=True))
+        return self.__class__(
+            self._data_source_folder, lambda data: self._parser(data, multiple=True)
+        )
+
 
 HERE = Path(__file__).parent
-CALENDARS_FOLDER = HERE / 'calendars'
-TIMEZONES_FOLDER = HERE / 'timezones'
-EVENTS_FOLDER = HERE / 'events'
+CALENDARS_FOLDER = HERE / "calendars"
+TIMEZONES_FOLDER = HERE / "timezones"
+EVENTS_FOLDER = HERE / "events"
+
 
 @pytest.fixture(scope="module")
 def calendars(tzp):
     return DataSource(CALENDARS_FOLDER, icalendar.Calendar.from_ical)
 
+
 @pytest.fixture(scope="module")
 def timezones(tzp):
     return DataSource(TIMEZONES_FOLDER, icalendar.Timezone.from_ical)
+
 
 @pytest.fixture(scope="module")
 def events(tzp):
     return DataSource(EVENTS_FOLDER, icalendar.Event.from_ical)
 
-@pytest.fixture(params=PYTZ_UTC + [
-    zoneinfo.ZoneInfo('UTC'),
-    tz.UTC,
-    tz.gettz('UTC')])
+
+@pytest.fixture(params=PYTZ_UTC + [zoneinfo.ZoneInfo("UTC"), tz.UTC, tz.gettz("UTC")])
 def utc(request, tzp):
     return request.param
 
-@pytest.fixture(params=PYTZ_IN_TIMEZONE + [
-    lambda dt, tzname: dt.replace(tzinfo=tz.gettz(tzname)),
-    lambda dt, tzname: dt.replace(tzinfo=zoneinfo.ZoneInfo(tzname))
-])
+
+@pytest.fixture(
+    params=PYTZ_IN_TIMEZONE
+    + [
+        lambda dt, tzname: dt.replace(tzinfo=tz.gettz(tzname)),
+        lambda dt, tzname: dt.replace(tzinfo=zoneinfo.ZoneInfo(tzname)),
+    ]
+)
 def in_timezone(request, tzp):
     return request.param
 
 
 # exclude broken calendars here
 ICS_FILES_EXCLUDE = (
-    "big_bad_calendar.ics", "issue_104_broken_calendar.ics", "small_bad_calendar.ics",
-    "multiple_calendar_components.ics", "pr_480_summary_with_colon.ics",
-    "parsing_error_in_UTC_offset.ics", "parsing_error.ics",
+    "big_bad_calendar.ics",
+    "issue_104_broken_calendar.ics",
+    "small_bad_calendar.ics",
+    "multiple_calendar_components.ics",
+    "pr_480_summary_with_colon.ics",
+    "parsing_error_in_UTC_offset.ics",
+    "parsing_error.ics",
 )
 ICS_FILES = [
-    file.name for file in
-    itertools.chain(CALENDARS_FOLDER.iterdir(), TIMEZONES_FOLDER.iterdir(), EVENTS_FOLDER.iterdir())
+    file.name
+    for file in itertools.chain(
+        CALENDARS_FOLDER.iterdir(), TIMEZONES_FOLDER.iterdir(), EVENTS_FOLDER.iterdir()
+    )
     if file.name not in ICS_FILES_EXCLUDE
 ]
+
+
 @pytest.fixture(params=ICS_FILES)
 def ics_file(tzp, calendars, timezones, events, request):
     """An example ICS file."""
@@ -133,71 +157,76 @@ def ics_file(tzp, calendars, timezones, events, request):
 
 
 FUZZ_V1 = [key for key in CALENDARS_FOLDER.iterdir() if "fuzz-testcase" in str(key)]
+
+
 @pytest.fixture(params=FUZZ_V1)
 def fuzz_v1_calendar(request):
     """Clusterfuzz calendars."""
     return request.param
 
 
-@pytest.fixture()
+@pytest.fixture
 def x_sometime():
     """Map x_sometime to time"""
-    icalendar.cal.types_factory.types_map['X-SOMETIME'] = 'time'
+    icalendar.cal.types_factory.types_map["X-SOMETIME"] = "time"
     yield
-    icalendar.cal.types_factory.types_map.pop('X-SOMETIME')
+    icalendar.cal.types_factory.types_map.pop("X-SOMETIME")
 
 
-@pytest.fixture()
+@pytest.fixture
 def factory():
     """Return a new component factory."""
     return icalendar.ComponentFactory()
 
 
-@pytest.fixture()
+@pytest.fixture
 def vUTCOffset_ignore_exceptions():
     icalendar.vUTCOffset.ignore_exceptions = True
     yield
     icalendar.vUTCOffset.ignore_exceptions = False
 
 
-@pytest.fixture()
+@pytest.fixture
 def event_component(tzp):
     """Return an event component."""
     c = Component()
-    c.name = 'VEVENT'
+    c.name = "VEVENT"
     return c
 
 
-@pytest.fixture()
+@pytest.fixture
 def c(tzp):
     """Return an empty component."""
     c = Component()
     return c
+
+
 comp = c
 
-@pytest.fixture()
+
+@pytest.fixture
 def calendar_component(tzp):
     """Return an empty component."""
     c = Component()
-    c.name = 'VCALENDAR'
+    c.name = "VCALENDAR"
     return c
 
 
-@pytest.fixture()
+@pytest.fixture
 def filled_event_component(c, calendar_component):
     """Return an event with some values and add it to calendar_component."""
-    e = Component(summary='A brief history of time')
-    e.name = 'VEVENT'
-    e.add('dtend', '20000102T000000', encode=0)
-    e.add('dtstart', '20000101T000000', encode=0)
+    e = Component(summary="A brief history of time")
+    e.name = "VEVENT"
+    e.add("dtend", "20000102T000000", encode=0)
+    e.add("dtstart", "20000101T000000", encode=0)
     calendar_component.add_component(e)
     return e
 
 
-@pytest.fixture()
+@pytest.fixture
 def calendar_with_resources(tzp):
     c = Calendar()
-    c['resources'] = 'Chair, Table, "Room: 42"'
+    c["resources"] = 'Chair, Table, "Room: 42"'
     return c
 
 
@@ -220,13 +249,13 @@ def other_tzp(request, tzp):
     return tzp
 
 
-@pytest.fixture()
+@pytest.fixture
 def pytz_only(tzp):
     """Skip tests that are not running under pytz."""
     assert tzp.uses_pytz()
 
 
-@pytest.fixture()
+@pytest.fixture
 def zoneinfo_only(tzp, request, tzp_name):
     """Skip tests that are not running under zoneinfo."""
     assert tzp.uses_zoneinfo()
@@ -247,14 +276,18 @@ def pytest_generate_tests(metafunc):
             tzp_names = ["zoneinfo"]
         if "pytz_only" in metafunc.fixturenames:
             tzp_names = PYTZ_TZP
-        assert not ("zoneinfo_only" in metafunc.fixturenames and "pytz_only" in metafunc.fixturenames), "Use pytz_only or zoneinfo_only but not both!"
+        assert not (
+            "zoneinfo_only" in metafunc.fixturenames
+            and "pytz_only" in metafunc.fixturenames
+        ), "Use pytz_only or zoneinfo_only but not both!"
         metafunc.parametrize("tzp_name", tzp_names, scope="module")
 
 
 class DoctestZoneInfo(zoneinfo.ZoneInfo):
     """Constent ZoneInfo representation for tests."""
+
     def __repr__(self):
-        return f"ZoneInfo(key={repr(self.key)})"
+        return f"ZoneInfo(key={self.key!r})"
 
 
 def doctest_print(obj):
@@ -270,13 +303,13 @@ def doctest_import(name, *args, **kw):
         return pytz
     return __import__(name, *args, **kw)
 
-@pytest.fixture()
+
+@pytest.fixture
 def env_for_doctest(monkeypatch):
     """Modify the environment to make doctests run."""
     monkeypatch.setitem(sys.modules, "zoneinfo", zoneinfo)
     monkeypatch.setattr(zoneinfo, "ZoneInfo", DoctestZoneInfo)
     from icalendar.timezone.zoneinfo import ZONEINFO
+
     monkeypatch.setattr(ZONEINFO, "utc", zoneinfo.ZoneInfo("UTC"))
-    return {
-        "print": doctest_print
-    }
+    return {"print": doctest_print}

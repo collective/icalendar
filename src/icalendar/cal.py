@@ -1055,10 +1055,10 @@ class Alarm(Component):
     required = ('ACTION', 'TRIGGER',)
     singletons = (
             'ATTACH', 'ACTION', 'DESCRIPTION', 'SUMMARY', 'TRIGGER',
-            'DURATION', 'REPEAT',
+            'DURATION', 'REPEAT', 'UID', 'PROXIMITY', 'ACKNOWLEDGED'
             )
     inclusive = (('DURATION', 'REPEAT',), ('SUMMARY', 'ATTENDEE',))
-    multiple = ('ATTENDEE', 'ATTACH')
+    multiple = ('ATTENDEE', 'ATTACH', 'RELATED-TO')
 
 
 class Calendar(Component):

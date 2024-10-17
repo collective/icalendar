@@ -7,6 +7,8 @@ Changelog
 Minor changes:
 
 - Added ``end``, ``start``, ``duration``, ``DTSTART``, ``DUE``, and ``DURATION`` attributes to ``Todo`` components. See `Issue 662`_.
+- Format test code with Ruff. See `Issue 672 <https://github.com/collective/icalendar/issues/672>`_.
+- Document the Debian package. See `Issue 701 <https://github.com/collective/icalendar/issues/701>`_.
 
 Breaking changes:
 
@@ -14,7 +16,8 @@ Breaking changes:
 
 New features:
 
-- ...
+- Add ``VALARM`` properties for :rfc:`9074`. See `Issue 657 <https://github.com/collective/icalendar/issues/657>`_
+- Test compatibility with Python 3.13
 
 Bug fixes:
 
@@ -27,7 +30,6 @@ New features:
 
 - Added ``end``, ``start``, ``duration``, ``DTSTART``, ``DUE``, and ``DURATION`` attributes to ``Event`` components. See `Issue 662`_.
 - Added ``end``, ``start``, ``duration`` and, ``DTSTART`` attributes to ``Journal`` components. See `Issue 662`_.
-- Test compatibility with Python 3.13
 
 Bug fixes:
 
@@ -454,7 +456,6 @@ Bug fixes:
 Bug fixes:
 
 - Use ``vText`` as default type, when convert recurrence definition to ical string. [kam193]
-
 
 4.0.5 (2020-03-21)
 ------------------

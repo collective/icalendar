@@ -2,7 +2,7 @@
 Internet Calendaring and Scheduling (iCalendar) for Python
 ==========================================================
 
-The `icalendar`_ package is a `RFC 5545`_ compatible parser/generator for iCalendar
+The `icalendar`_ package is a :rfc:`5545` compatible parser/generator for iCalendar
 files.
 
 ----
@@ -10,7 +10,7 @@ files.
 :Homepage: https://icalendar.readthedocs.io
 :Code: https://github.com/collective/icalendar
 :Mailing list: https://github.com/collective/icalendar/issues
-:Dependencies: `python-dateutil`_ and `pytz`_.
+:Dependencies: `python-dateutil`_ and `tzdata`_.
 :License: `BSD`_
 
 ----
@@ -41,9 +41,8 @@ files.
 
 
 .. _`icalendar`: https://pypi.org/project/icalendar/
-.. _`RFC 5545`: https://www.ietf.org/rfc/rfc5545.txt
 .. _`python-dateutil`: https://github.com/dateutil/dateutil/
-.. _`pytz`: https://pypi.org/project/pytz/
+.. _`tzdata`: https://pypi.org/project/tzdata/
 .. _`BSD`: https://github.com/collective/icalendar/issues/2
 
 Quick start guide
@@ -96,7 +95,7 @@ Create Events, TODOs, Journals, Alarms, ...
 -------------------------------------------
 
 ``icalendar`` supports the creation and parsing of all kinds of objects
-in the iCalendar (RFC 5545) standard.
+in the iCalendar (:rfc:`5545`) standard.
 
 .. code:: python
 
@@ -176,8 +175,9 @@ Related projects
 ================
 
 * `icalevents <https://github.com/irgangla/icalevents>`_. It is built on top of icalendar and allows you to query iCal files and get the events happening on specific dates. It manages recurrent events as well.
-* `recurring-ical-events <https://pypi.org/project/recurring-ical-events/>`_. Library to query an ``ICalendar`` object for events happening at a certain date or within a certain time.
-* `x-wr-timezone <https://pypi.org/project/x-wr-timezone/>`_. Library to make ``ICalendar`` objects and files using the non-standard ``X-WR-TIMEZONE`` compliant with the standard (RFC 5545).
+* `recurring-ical-events <https://pypi.org/project/recurring-ical-events/>`_. Library to query an ``icalendar.Calendar`` object for events and other components happening at a certain date or within a certain time.
+* `x-wr-timezone <https://pypi.org/project/x-wr-timezone/>`_. Library and command line tool to make ``icalendar.Calendar`` objects and files from Google Calendar (using the non-standard ``X-WR-TIMEZONE`` property) compliant with the standard (:rfc:`5545`).
+* `ics-query <http://pypi.org/project/ics-query>`_. Command line tool to query iCalendar files for occurrences of events and other components.
 
 Further Reading
 ===============
