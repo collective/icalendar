@@ -39,37 +39,37 @@ def start_end_component(request):
         date(2022, 7, 22),
         datetime(2022, 7, 22, 13, 7, tzinfo=ZoneInfo("Europe/Paris")),
     ])
-def dtstart(request, set_event_start, start_end_component):
+def dtstart(request, set_component_start, start_end_component):
     """Start of the event."""
-    set_event_start(start_end_component, request.param)
+    set_component_start(start_end_component, request.param)
     return request.param
 
 
-def _set_event_start_init(event, start):
+def _set_component_start_init(component, start):
     """Create the event with the __init__ method."""
-    d = dict(event)
+    d = dict(component)
     d["dtstart"] = vDDDTypes(start)
-    event.clear()
-    event.update(Event(d))
+    component.clear()
+    component.update(type(component)(d))
 
-def _set_event_dtstart(event, start):
+def _set_component_dtstart(component, start):
     """Create the event with the dtstart property."""
-    event.DTSTART = start
+    component.DTSTART = start
 
-def _set_event_start_attr(event, start):
+def _set_component_start_attr(component, start):
     """Create the event with the dtstart property."""
-    event.start = start
+    component.start = start
 
-def _set_event_start_ics(event, start):
+def _set_component_start_ics(component, start):
     """Create the event with the start property."""
-    event.add("dtstart", start)
-    ics = event.to_ical().decode()
+    component.add("dtstart", start)
+    ics = component.to_ical().decode()
     print(ics)
-    event.clear()
-    event.update(Event.from_ical(ics))
+    component.clear()
+    component.update(type(component).from_ical(ics))
 
-@pytest.fixture(params=[_set_event_start_init, _set_event_start_ics, _set_event_dtstart, _set_event_start_attr])
-def set_event_start(request):
+@pytest.fixture(params=[_set_component_start_init, _set_component_start_ics, _set_component_dtstart, _set_component_start_attr])
+def set_component_start(request):
     """Create a new event."""
     return request.param
 
@@ -145,7 +145,7 @@ def _set_component_end_init(component, end):
 
 def _set_component_end_property(component, end):
     """Create the event with the dtend property."""
-    setattr(component, prop("DTEND"), end)
+    setattr(component, prop(component, "DTEND"), end)
 
 def _set_component_end_attr(component, end):
     """Create the event with the dtend property."""
@@ -153,7 +153,7 @@ def _set_component_end_attr(component, end):
 
 def _set_component_end_ics(component, end):
     """Create the event with the end property."""
-    component.add("dtend", end)
+    component.add(prop(component, "DTEND"), end)
     ics = component.to_ical().decode()
     print(ics)
     component.clear()
@@ -166,7 +166,8 @@ def set_component_end(request):
 
 def test_component_end_property(dtend, start_end_component):
     """Test the end of events."""
-    assert start_end_component.DTEND == dtend  # noqa: SIM300
+    attr = prop(start_end_component, "DTEND")
+    assert getattr(start_end_component, attr) == dtend  # noqa: SIM300
 
 
 def test_component_end(dtend, start_end_component):
@@ -229,17 +230,17 @@ invalid_event_end_4 = Event()
 invalid_event_end_4.add("DTSTART", date(2024, 1, 1))
 invalid_event_end_4.add("DURATION", timedelta(hours=1))
 
-invalid_todo_end_1 = Event()
+invalid_todo_end_1 = Todo()
 invalid_todo_end_1.add("DTSTART", datetime(2024, 1, 1, 10, 20))
 invalid_todo_end_1.add("DUE", date(2024, 1, 1))
-invalid_todo_end_2 = Event()
+invalid_todo_end_2 = Todo()
 invalid_todo_end_2.add("DUE", datetime(2024, 1, 1, 10, 20))
 invalid_todo_end_2.add("DTSTART", date(2024, 1, 1))
-invalid_todo_end_3 = Event()
+invalid_todo_end_3 = Todo()
 invalid_todo_end_3.add("DUE", datetime(2024, 1, 1, 10, 20))
 invalid_todo_end_3.add("DTSTART", datetime(2024, 1, 1, 10, 20))
 invalid_todo_end_3.add("DURATION", timedelta(days=1))
-invalid_todo_end_4 = Event()
+invalid_todo_end_4 = Todo()
 invalid_todo_end_4.add("DTSTART", date(2024, 1, 1))
 invalid_todo_end_4.add("DURATION", timedelta(hours=1))
 
@@ -450,6 +451,13 @@ def test_invalid_none(start_end_component, attr):
     start_end_component[attr] = None
     with pytest.raises(InvalidCalendar):
         getattr(start_end_component, attr)
+
+
+def test_delete_duration(start_end_component):
+    """Test the del command."""
+    start_end_component.DURATION = timedelta(days=1)
+    del start_end_component.DURATION
+    assert start_end_component.DURATION is None
 
 @pytest.mark.parametrize("attr", ["DTSTART", "end", "start"])
 @pytest.mark.parametrize("start", [
