@@ -585,7 +585,7 @@ The "DURATION" property in conjunction with the DTSTART property
 for a "{component}" calendar component specifies the non-inclusive end
 of the event.
 
-If you would like to calculate the duration a {component}s do not use this.
+If you would like to calculate the duration of a {component}, do not use this.
 Instead use the duration property (lower case).
 """
 
