@@ -18,7 +18,7 @@ New features:
 
 Bug fixes:
 
-- ...
+- Add ``icalendar.timezone`` to the documentation.
 
 6.0.1 (2024-10-13)
 ------------------
