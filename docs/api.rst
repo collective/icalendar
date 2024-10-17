@@ -42,3 +42,18 @@ icalendar.tools
 
 .. automodule:: icalendar.tools
    :members:
+
+icalendar.timezone
+++++++++++++++++++
+
+.. automodule:: icalendar.timezone
+   :members:
+
+.. automodule:: icalendar.timezone.tzp
+   :members:
+
+icalendar.version
++++++++++++++++++
+
+.. automodule:: icalendar.version
+   :members:
