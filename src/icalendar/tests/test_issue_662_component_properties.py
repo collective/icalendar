@@ -1,4 +1,5 @@
 """This tests the properties of components and their types."""
+from __future__ import annotations
 from datetime import date, datetime, timedelta
 
 import pytest
@@ -13,63 +14,73 @@ from icalendar import (
     IncompleteComponent,
     InvalidCalendar,
     Journal,
+    Todo,
     vDDDTypes,
 )
 from icalendar.prop import vDuration
 
 
-@pytest.fixture()
-def event():
+def prop(component: Event|Todo, prop:str) -> str:
+    """Translate the end property.
+
+    This allows us to run the same tests on Event and Todo.
+    """
+    if isinstance(component, Todo) and prop.upper() == "DTEND":
+        return "DUE"
+    return prop
+
+@pytest.fixture(params=[Event, Todo])
+def start_end_component(request):
     """The event to test."""
-    return Event()
+    return request.param()
 
 @pytest.fixture(params=[
         datetime(2022, 7, 22, 12, 7),
         date(2022, 7, 22),
         datetime(2022, 7, 22, 13, 7, tzinfo=ZoneInfo("Europe/Paris")),
     ])
-def dtstart(request, set_event_start, event):
+def dtstart(request, set_component_start, start_end_component):
     """Start of the event."""
-    set_event_start(event, request.param)
+    set_component_start(start_end_component, request.param)
     return request.param
 
 
-def _set_event_start_init(event, start):
+def _set_component_start_init(component, start):
     """Create the event with the __init__ method."""
-    d = dict(event)
+    d = dict(component)
     d["dtstart"] = vDDDTypes(start)
-    event.clear()
-    event.update(Event(d))
+    component.clear()
+    component.update(type(component)(d))
 
-def _set_event_dtstart(event, start):
+def _set_component_dtstart(component, start):
     """Create the event with the dtstart property."""
-    event.DTSTART = start
+    component.DTSTART = start
 
-def _set_event_start_attr(event, start):
+def _set_component_start_attr(component, start):
     """Create the event with the dtstart property."""
-    event.start = start
+    component.start = start
 
-def _set_event_start_ics(event, start):
+def _set_component_start_ics(component, start):
     """Create the event with the start property."""
-    event.add("dtstart", start)
-    ics = event.to_ical().decode()
+    component.add("dtstart", start)
+    ics = component.to_ical().decode()
     print(ics)
-    event.clear()
-    event.update(Event.from_ical(ics))
+    component.clear()
+    component.update(type(component).from_ical(ics))
 
-@pytest.fixture(params=[_set_event_start_init, _set_event_start_ics, _set_event_dtstart, _set_event_start_attr])
-def set_event_start(request):
+@pytest.fixture(params=[_set_component_start_init, _set_component_start_ics, _set_component_dtstart, _set_component_start_attr])
+def set_component_start(request):
     """Create a new event."""
     return request.param
 
-def test_event_dtstart(dtstart, event):
+def test_component_dtstart(dtstart, start_end_component):
     """Test the start of events."""
-    assert event.DTSTART == dtstart
+    assert start_end_component.DTSTART == dtstart
 
 
-def test_event_start(dtstart, event):
+def test_event_start(dtstart, start_end_component):
     """Test the start of events."""
-    assert event.start == dtstart
+    assert start_end_component.start == dtstart
 
 
 invalid_start_event_1 = Event()
@@ -78,8 +89,20 @@ invalid_start_event_1.add("dtstart", datetime(2022, 7, 22, 12, 8))
 invalid_start_event_2 = Event.from_ical(invalid_start_event_1.to_ical())
 invalid_start_event_3 = Event()
 invalid_start_event_3.add("DTSTART", (date(2018, 1, 1), date(2018, 2, 1)))
+invalid_start_todo_1 = Todo(invalid_start_event_1)
+invalid_start_todo_2 = Todo(invalid_start_event_2)
+invalid_start_todo_3 = Todo(invalid_start_event_3)
 
-@pytest.mark.parametrize("invalid_event", [invalid_start_event_1, invalid_start_event_2, invalid_start_event_3])
+@pytest.mark.parametrize(
+    "invalid_event", [
+        invalid_start_event_1,
+        invalid_start_event_2,
+        invalid_start_event_3,
+        invalid_start_todo_1,
+        invalid_start_todo_2,
+        invalid_start_todo_3,
+    ]
+)
 def test_multiple_dtstart(invalid_event):
     """Check that we get the right error."""
     with pytest.raises(InvalidCalendar):
@@ -87,7 +110,8 @@ def test_multiple_dtstart(invalid_event):
     with pytest.raises(InvalidCalendar):
         invalid_event.DTSTART  # noqa: B018
 
-def test_no_dtstart():
+
+def test_no_dtstart(start_end_component):
     """DTSTART is optional.
 
     The following is REQUIRED if the component
@@ -96,9 +120,9 @@ def test_no_dtstart():
     is OPTIONAL; in any case, it MUST NOT occur
     more than once.
     """
-    assert Event().DTSTART is None
+    assert start_end_component.DTSTART is None
     with pytest.raises(IncompleteComponent):
-        Event().start  # noqa: B018
+        start_end_component.start  # noqa: B018
 
 
 @pytest.fixture(params=[
@@ -106,55 +130,57 @@ def test_no_dtstart():
         date(2022, 7, 23),
         datetime(2022, 7, 22, 14, 7, tzinfo=ZoneInfo("Europe/Paris")),
     ])
-def dtend(request, set_event_end, event):
+def dtend(request, set_component_end, start_end_component):
     """end of the event."""
-    set_event_end(event, request.param)
+    set_component_end(start_end_component, request.param)
     return request.param
 
 
-def _set_event_end_init(event, end):
+def _set_component_end_init(component, end):
     """Create the event with the __init__ method."""
-    d = dict(event)
-    d["dtend"] = vDDDTypes(end)
-    event.clear()
-    event.update(Event(d))
+    d = dict(component)
+    d[prop(component, "dtend")] = vDDDTypes(end)
+    component.clear()
+    component.update(type(component)(d))
 
-def _set_event_dtend(event, end):
+def _set_component_end_property(component, end):
     """Create the event with the dtend property."""
-    event.DTEND = end
+    setattr(component, prop(component, "DTEND"), end)
 
-def _set_event_end_attr(event, end):
+def _set_component_end_attr(component, end):
     """Create the event with the dtend property."""
-    event.end = end
+    component.end = end
 
-def _set_event_end_ics(event, end):
+def _set_component_end_ics(component, end):
     """Create the event with the end property."""
-    event.add("dtend", end)
-    ics = event.to_ical().decode()
+    component.add(prop(component, "DTEND"), end)
+    ics = component.to_ical().decode()
     print(ics)
-    event.clear()
-    event.update(Event.from_ical(ics))
+    component.clear()
+    component.update(type(component).from_ical(ics))
 
-@pytest.fixture(params=[_set_event_end_init, _set_event_end_ics, _set_event_dtend, _set_event_end_attr])
-def set_event_end(request):
+@pytest.fixture(params=[_set_component_end_init, _set_component_end_ics, _set_component_end_property, _set_component_end_attr])
+def set_component_end(request):
     """Create a new event."""
     return request.param
 
-def test_event_dtend(dtend, event):
+def test_component_end_property(dtend, start_end_component):
     """Test the end of events."""
-    assert event.DTEND == dtend  # noqa: SIM300
+    attr = prop(start_end_component, "DTEND")
+    assert getattr(start_end_component, attr) == dtend  # noqa: SIM300
 
 
-def test_event_end(dtend, event):
+def test_component_end(dtend, start_end_component):
     """Test the end of events."""
-    assert event.end == dtend
+    assert start_end_component.end == dtend
 
 
 @pytest.mark.parametrize("attr", ["DTSTART", "DTEND"])
-def test_delete_attr(event, dtstart, dtend, attr):
-    delattr(event, attr)
-    assert getattr(event, attr) is None
-    delattr(event, attr)
+def test_delete_attr(start_end_component, dtstart, dtend, attr):
+    attr = prop(start_end_component, attr)
+    delattr(start_end_component, attr)
+    assert getattr(start_end_component, attr) is None
+    delattr(start_end_component, attr)
 
 
 def _set_duration_vdddtypes(event:Event, duration:timedelta):
@@ -170,20 +196,20 @@ def _set_duration_vduration(event:Event, duration:timedelta):
     event["DURATION"] = vDuration(duration)
 
 @pytest.fixture(params=[_set_duration_vdddtypes, _set_duration_add, _set_duration_vduration])
-def duration(event, dtstart, request):
+def duration(start_end_component, dtstart, request):
     """... events have a DATE value type for the "DTSTART" property ...
     If such a "VEVENT" has a "DURATION"
     property, it MUST be specified as a "dur-day" or "dur-week" value.
     """
     duration = timedelta(hours=1) if isinstance(dtstart, datetime) else timedelta(days=2)
-    request.param(event, duration)
+    request.param(start_end_component, duration)
     return duration
 
-def test_start_and_duration(event, dtstart, duration):
+def test_start_and_duration(start_end_component, dtstart, duration):
     """Check calculation of end with duration."""
-    dur = event.end - event.start
+    dur = start_end_component.end - start_end_component.start
     assert dur == duration
-    assert event.duration == duration
+    assert start_end_component.duration == duration
 
 # The "VEVENT" is also the calendar component used to specify an
 # anniversary or daily reminder within a calendar.  These events
@@ -203,23 +229,42 @@ invalid_event_end_3.add("DURATION", timedelta(days=1))
 invalid_event_end_4 = Event()
 invalid_event_end_4.add("DTSTART", date(2024, 1, 1))
 invalid_event_end_4.add("DURATION", timedelta(hours=1))
+
+invalid_todo_end_1 = Todo()
+invalid_todo_end_1.add("DTSTART", datetime(2024, 1, 1, 10, 20))
+invalid_todo_end_1.add("DUE", date(2024, 1, 1))
+invalid_todo_end_2 = Todo()
+invalid_todo_end_2.add("DUE", datetime(2024, 1, 1, 10, 20))
+invalid_todo_end_2.add("DTSTART", date(2024, 1, 1))
+invalid_todo_end_3 = Todo()
+invalid_todo_end_3.add("DUE", datetime(2024, 1, 1, 10, 20))
+invalid_todo_end_3.add("DTSTART", datetime(2024, 1, 1, 10, 20))
+invalid_todo_end_3.add("DURATION", timedelta(days=1))
+invalid_todo_end_4 = Todo()
+invalid_todo_end_4.add("DTSTART", date(2024, 1, 1))
+invalid_todo_end_4.add("DURATION", timedelta(hours=1))
+
 @pytest.mark.parametrize(
-    ("invalid_event", "message"),
+    ("invalid_component", "message"),
     [
         (invalid_event_end_1, "DTSTART and DTEND must be of the same type, either date or datetime."),
         (invalid_event_end_2, "DTSTART and DTEND must be of the same type, either date or datetime."),
         (invalid_event_end_3, "Only one of DTEND and DURATION may be in a VEVENT, not both."),
         (invalid_event_end_4, "When DTSTART is a date, DURATION must be of days or weeks."),
+        (invalid_todo_end_1, "DTSTART and DUE must be of the same type, either date or datetime."),
+        (invalid_todo_end_2, "DTSTART and DUE must be of the same type, either date or datetime."),
+        (invalid_todo_end_3, "Only one of DUE and DURATION may be in a VTODO, not both."),
+        (invalid_todo_end_4, "When DTSTART is a date, DURATION must be of days or weeks."),
     ]
 )
 @pytest.mark.parametrize("attr", ["start", "end"])
-def test_invalid_event(invalid_event, message, attr):
+def test_invalid_event(invalid_component, message, attr):
     """Test that the end and start throuw the right error."""
     with pytest.raises(InvalidCalendar) as e:
-        getattr(invalid_event, attr)
+        getattr(invalid_component, attr)
     assert e.value.args[0] == message
 
-def test_duration_zero():
+def test_event_duration_zero():
     """
     For cases where a "VEVENT" calendar component
     specifies a "DTSTART" property with a DATE-TIME value type but no
@@ -231,7 +276,8 @@ def test_duration_zero():
     assert event.end == event.start
     assert event.duration == timedelta(days=0)
 
-def test_duration_one_day():
+
+def test_event_duration_one_day():
     """
     For cases where a "VEVENT" calendar component
     specifies a "DTSTART" property with a DATE value type but no
@@ -244,11 +290,46 @@ def test_duration_one_day():
     assert event.duration == timedelta(days=1)
 
 
+def test_todo_duration_zero():
+    """We do not know about the duration of a todo really."""
+    todo = Todo()
+    todo.start = datetime(2024, 10, 11, 10, 20)
+    assert todo.end == todo.start
+    assert todo.duration == timedelta(days=0)
+
+def test_todo_duration_one_day():
+    """ The end is at the end of the day, excluding midnight.
+
+    RFC 5545:
+    The following is an example of a "VTODO" calendar
+    component that needs to be completed before May 1st, 2007.  On
+    midnight May 1st, 2007 this to-do would be considered overdue.
+    """
+    event = Event()
+    event.start = date(2024, 10, 11)
+    assert event.end == event.start + timedelta(days=1)
+    assert event.duration == timedelta(days=1)
+
+
+
 incomplete_event_1 = Event()
 incomplete_event_2 = Event()
 incomplete_event_2.add("DURATION", timedelta(hours=1))
+incomplete_todo_1 = Todo()
+incomplete_todo_2 = Todo()
+incomplete_todo_2.add("DURATION", timedelta(hours=1))
 
-@pytest.mark.parametrize("incomplete_event_end", [incomplete_event_1, incomplete_event_2])
+
+
+@pytest.mark.parametrize(
+    "incomplete_event_end",
+    [
+        incomplete_event_1,
+        incomplete_event_2,
+        incomplete_todo_1,
+        incomplete_todo_2,
+    ]
+)
 @pytest.mark.parametrize("attr", ["start", "end", "duration"])
 def test_incomplete_event(incomplete_event_end, attr):
     """Test that the end throws the right error."""
@@ -274,6 +355,10 @@ def test_incomplete_event(incomplete_event_end, attr):
         (Journal,"start"),
         (Journal,"end"),
         (Journal,"DTSTART"),
+        (Todo,"start"),
+        (Todo,"end"),
+        (Todo,"DTSTART"),
+        (Todo,"DUE"),
     ]
 )
 def test_set_invalid_start(invalid_value, attr, Component):
@@ -282,9 +367,9 @@ def test_set_invalid_start(invalid_value, attr, Component):
     - other types that vDDDTypes accepts
     - object
     """
-    event = Component()
+    component = Component()
     with pytest.raises(TypeError) as e:
-        setattr(event, attr, invalid_value)
+        setattr(component, attr, invalid_value)
     assert e.value.args[0] == f"Use datetime or date, not {type(invalid_value).__name__}."
 
 
@@ -301,35 +386,35 @@ def setitem(d:dict, key, value):
         datetime(2022, 2, 2),
     ]
 )
-def test_check_invalid_duration(invalid_value):
+def test_check_invalid_duration(start_end_component, invalid_value):
     """Check that we get the right error."""
-    event = Event()
-    event["DURATION"] = invalid_value
+    start_end_component["DURATION"] = invalid_value
     with pytest.raises(InvalidCalendar) as e:
-        event.DURATION  # noqa: B018
+        start_end_component.DURATION  # noqa: B018
     assert e.value.args[0] == f"DURATION must be a timedelta, not {type(invalid_value).__name__}."
 
 
-def test_setting_the_end_deletes_the_duration():
+def test_setting_the_end_deletes_the_duration(start_end_component):
     """Setting the end should not break the event."""
-    event = Event()
-    event.DTSTART = datetime(2024, 10, 11, 10, 20)
-    event.DURATION = timedelta(days=1)
-    event.DTEND = datetime(2024, 10, 11, 10, 21)
-    assert "DURATION" not in event
-    assert event.DURATION is None
-    assert event.DTEND == datetime(2024, 10, 11, 10, 21)
+    DTEND = prop(start_end_component, "DTEND")
+    start_end_component.DTSTART = datetime(2024, 10, 11, 10, 20)
+    start_end_component.DURATION = timedelta(days=1)
+    setattr(start_end_component, DTEND, datetime(2024, 10, 11, 10, 21))
+    assert "DURATION" not in start_end_component
+    assert start_end_component.DURATION is None
+    end = getattr(start_end_component, DTEND)
+    assert end == datetime(2024, 10, 11, 10, 21)
 
 
-def test_setting_duration_deletes_the_end():
+def test_setting_duration_deletes_the_end(start_end_component):
     """Setting the duration should not break the event."""
-    event = Event()
-    event.DTSTART = datetime(2024, 10, 11, 10, 20)
-    event.DTEND = datetime(2024, 10, 11, 10, 21)
-    event.DURATION = timedelta(days=1)
-    assert "DTEND" not in event
-    assert event.DTEND is None
-    assert event.DURATION == timedelta(days=1)
+    DTEND = prop(start_end_component, "DTEND")
+    start_end_component.DTSTART = datetime(2024, 10, 11, 10, 20)
+    setattr(start_end_component, DTEND, datetime(2024, 10, 11, 10, 21))
+    start_end_component.DURATION = timedelta(days=1)
+    assert DTEND not in start_end_component
+    assert getattr(start_end_component, DTEND) is None
+    assert start_end_component.DURATION == timedelta(days=1)
 
 valid_values = pytest.mark.parametrize(
     ("attr", "value"),
@@ -340,32 +425,39 @@ valid_values = pytest.mark.parametrize(
     ]
 )
 @valid_values
-def test_setting_to_none_deletes_value(attr, value):
+def test_setting_to_none_deletes_value(start_end_component, attr, value):
     """Setting attributes to None deletes them."""
-    event = Event()
-    setattr(event, attr, value)
-    assert attr in event
-    assert getattr(event, attr) == value
-    setattr(event, attr, None)
-    assert attr not in event
+    attr = prop(start_end_component, attr)
+    setattr(start_end_component, attr, value)
+    assert attr in start_end_component
+    assert getattr(start_end_component, attr) == value
+    setattr(start_end_component, attr, None)
+    assert attr not in start_end_component
 
 
 @valid_values
-def test_setting_a_value_twice(attr, value):
+def test_setting_a_value_twice(start_end_component, attr, value):
     """Setting attributes twice replaces them."""
-    event = Event()
-    setattr(event, attr, value + timedelta(days=1))
-    setattr(event, attr, value)
-    assert getattr(event, attr) == value
+    attr = prop(start_end_component, attr)
+    setattr(start_end_component, attr, value + timedelta(days=1))
+    setattr(start_end_component, attr, value)
+    assert getattr(start_end_component, attr) == value
 
 
 @pytest.mark.parametrize("attr", ["DTSTART", "DTEND", "DURATION"])
-def test_invalid_none(attr):
+def test_invalid_none(start_end_component, attr):
     """Special case for None."""
-    event = Event()
-    event[attr] = None
+    attr = prop(start_end_component, attr)
+    start_end_component[attr] = None
     with pytest.raises(InvalidCalendar):
-        getattr(event, attr)
+        getattr(start_end_component, attr)
+
+
+def test_delete_duration(start_end_component):
+    """Test the del command."""
+    start_end_component.DURATION = timedelta(days=1)
+    del start_end_component.DURATION
+    assert start_end_component.DURATION is None
 
 @pytest.mark.parametrize("attr", ["DTSTART", "end", "start"])
 @pytest.mark.parametrize("start", [
