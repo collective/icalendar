@@ -93,3 +93,8 @@ def test_alarm_to_string():
     a = Alarm()
     a.REPEAT = 11
     assert a.to_ical() == b"BEGIN:VALARM\r\nREPEAT:11\r\nEND:VALARM\r\n"
+
+
+def test_alarm_has_only_one_of_repeat_or_duration():
+    """This is an edge case and we should ignore the repetition."""
+    pytest.skip("TODO")

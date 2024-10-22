@@ -137,7 +137,6 @@ class Alarms:
             repeat = absolute_alarm.REPEAT
             if repeat:
                 duration = absolute_alarm.DURATION
-                # TODO: test duration should not be None
                 for i in range(1, repeat + 1):
                     result.append(AlarmTime(absolute_alarm, trigger + duration * i, None, None))
         return result
