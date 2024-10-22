@@ -10,6 +10,7 @@ from datetime import date, datetime
 from typing import Optional
 
 from icalendar.cal import Alarm, Component, Event, Todo
+from icalendar.prop import vDatetime
 
 
 class IncompleteAlarmInformation(ValueError):
@@ -19,10 +20,12 @@ class IncompleteAlarmInformation(ValueError):
 class AlarmTime(ABC):
     """An alarm time with all the information."""
 
-    def __init__(self, alarm: Alarm, parent: Optional[Component]):
+    def __init__(self, alarm: Alarm, trigger : datetime, acknowledged:Optional[datetime], parent: Optional[Component]):
         """Create a new AlarmTime."""
         self._alarm = alarm
         self._parent = parent
+        self._trigger = trigger
+        self._acknowledged = acknowledged
 
     @property
     def alarm(self) -> Alarm:
@@ -38,7 +41,6 @@ class AlarmTime(ABC):
         return self._parent
 
     @property
-    @abstractmethod
     def is_active(self) -> bool:
         """Whether this alarm is active (True) or acknowledged (False).
 
@@ -47,9 +49,9 @@ class AlarmTime(ABC):
         """
 
     @property
-    @abstractmethod
     def trigger(self) -> datetime:
         """This is the time to trigger the alarm."""
+        return self._trigger
 
 
 class Alarms:
@@ -61,8 +63,12 @@ class Alarms:
     This is not implemented yet.
     """
 
-    def __init__(self):
+    def __init__(self, component:Optional[Alarm]=None):
         """Start computing alarm times."""
+        self._absolute_alarms : list[Alarm] = []
+
+        if isinstance(component, Alarm):
+            self.add_alarm(component)
 
     def from_component(self, component: Event | Todo) -> None:
         """Create an Alarm computation from the component."""
@@ -77,6 +83,8 @@ class Alarms:
 
     def add_alarm(self, alarm: Alarm) -> None:
         """Optional: Add an alarm component."""
+        trigger = alarm.get("TRIGGER")
+        self._absolute_alarms.append(alarm)
 
     def set_component_start(self, dt: date):
         """Set the start of the component.
@@ -117,6 +125,22 @@ class Alarms:
         Please make sure to set all the required parameters before calculating.
         If you forget to set the acknowledged times, that is not problem.
         """
+        return self._get_absolute_alarm_times()
+            
+    
+    def _get_absolute_alarm_times(self) -> list[AlarmTime]:
+        """Return a list of absolute alarm times."""
+        result : list[AlarmTime] = []
+        for absolute_alarm in self._absolute_alarms:
+            trigger : datetime = absolute_alarm["TRIGGER"].dt
+            result.append(AlarmTime(absolute_alarm, trigger, None, None))
+            repeat = absolute_alarm.REPEAT
+            if repeat:
+                duration = absolute_alarm.DURATION
+                # TODO: test duration should not be None
+                for i in range(1, repeat + 1):
+                    result.append(AlarmTime(absolute_alarm, trigger + duration * i, None, None))
+        return result
 
 
 __all__ = ["Alarms", "AlarmTime", "IncompleteAlarmInformation"]

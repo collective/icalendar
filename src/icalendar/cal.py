@@ -965,6 +965,22 @@ class Alarm(Component):
     multiple = ('ATTENDEE', 'ATTACH', 'RELATED-TO')
 
 
+    @property
+    def REPEAT(self) -> int:
+        """The REPEAT property of an alarm component."""
+        try:
+            return int(self.get("REPEAT", 0))
+        except ValueError as e:
+            raise InvalidCalendar("REPEAT must be an int") from e
+
+    @REPEAT.setter
+    def REPEAT(self, value: int) -> None:
+        """The REPEAT property of an alarm component."""
+        self["REPEAT"] = int(value)
+
+    DURATION = Event.DURATION # TODO: adjust once https://github.com/collective/icalendar/pull/733 is merged
+
+
 class Calendar(Component):
     """This is the base object for an iCalendar file.
     """
