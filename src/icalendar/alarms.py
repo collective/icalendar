@@ -107,7 +107,8 @@ class Alarms:
         the same time.
         """
 
-    def compute_alarm_times(self) -> list[AlarmTime]:
+    @property
+    def times(self) -> list[AlarmTime]:
         """Compute and return the times of the alarms given.
 
         If the information for calculation is incomplete, this will raise a
