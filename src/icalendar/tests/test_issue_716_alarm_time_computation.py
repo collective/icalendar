@@ -4,7 +4,7 @@ from icalendar.alarms import Alarms
 from datetime import datetime, timedelta, timezone
 
 
-EXAMPLE_TRIGGER = datetime(1997, 3, 17, 13, 30, timezone.utc)
+EXAMPLE_TRIGGER = datetime(1997, 3, 17, 13, 30, tzinfo=timezone.utc)
 
 
 def test_absolute_alarm_time(alarms):
