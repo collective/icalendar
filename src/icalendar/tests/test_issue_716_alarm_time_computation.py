@@ -7,12 +7,7 @@ import pytest
 from icalendar.alarms import Alarms, IncompleteAlarmInformation
 from icalendar.cal import Alarm, InvalidCalendar
 from icalendar.prop import vDatetime
-from pytz import timezone as pytz_timezone
-try:
-    from zoneinfo import ZoneInfo
-except ImportError:
-    from backports.zoneinfo import ZoneInfo
-
+from icalendar.tools import normalize_pytz
 
 UTC = timezone.utc
 EXAMPLE_TRIGGER = datetime(1997, 3, 17, 13, 30, tzinfo=UTC)
@@ -131,7 +126,7 @@ def test_cannot_compute_relative_alarm_without_start(alarm_before_start):
     ("dtstart", "timezone", "trigger"),
     [
         (datetime(2024, 10, 29, 13, 10), "UTC", datetime(2024, 10, 29, 13, 10, tzinfo=UTC)),
-        (date(2024, 11, 16), None, datetime(2024, 10, 29, 0, 0)),
+        (date(2024, 11, 16), None, datetime(2024, 11, 16, 0, 0)),
         (datetime(2024, 10, 29, 13, 10), "Asia/Singapore", datetime(2024, 10, 29, 5, 10, tzinfo=UTC)),
         (datetime(2024, 10, 29, 13, 20), None, datetime(2024, 10, 29, 13, 20)),
     ]
@@ -143,7 +138,8 @@ def test_can_complete_relative_calculation_if_a_start_is_given(alarm_before_star
     alarms.set_start(start)
     assert len(alarms.times) == 1
     time = alarms.times[0]
-    assert time.trigger == trigger + alarm_before_start.test_td
+    expected_trigger = normalize_pytz(trigger + alarm_before_start.test_td)
+    assert time.trigger == expected_trigger
 
 
 def test_add_multiple_alarms():

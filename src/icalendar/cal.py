@@ -16,6 +16,7 @@ from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_sp
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import TypesFactory, vDDDLists, vDDDTypes, vText, vDuration
 from icalendar.timezone import tzp
+from icalendar.tools import is_date, is_datetime
 
 
 def get_example(component_directory: str, example_name: str) -> bytes:
@@ -539,14 +540,6 @@ def create_single_property(prop:str, value_attr:str, value_type:tuple[type], typ
     """
     return property(p_get, p_set, p_del, p_doc)
 
-
-def is_date(dt: date) -> bool:
-    """Whether this is a date and not a datetime."""
-    return isinstance(dt, date) and not isinstance(dt, datetime)
-
-def is_datetime(dt: date) -> bool:
-    """Whether this is a date and not a datetime."""
-    return isinstance(dt, datetime)
 
 class Event(Component):
 

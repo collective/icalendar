@@ -6,9 +6,10 @@ This takes different calendar software into account and RFC 9074 (Alarm Extensio
 from __future__ import annotations
 
 from datetime import date
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Generator, Optional
 
 from icalendar.cal import Alarm, Component, Event, Todo
+from icalendar.tools import normalize_pytz, to_datetime
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -100,7 +101,7 @@ class Alarms:
         If you have only absolute alarms, this is not required.
         If you have alarms relative to the start of a compoment, set the start here.
         """
-        self._start = dt
+        self._start = to_datetime(dt)
 
     def set_end(self, dt: date):
         """Set the end of the component.
@@ -134,24 +135,31 @@ class Alarms:
         """
         return self._get_start_alarm_times() + self._get_absolute_alarm_times()
 
+    def _repeat(self, first: datetime, alarm: Alarm) -> Generator[datetime]:
+        """The times when the alarm is triggered relative to start."""
+        yield first # we trigger at the start
+        repeat = alarm.REPEAT
+        if repeat:
+            duration = alarm.DURATION
+            for i in range(1, repeat + 1):
+                yield normalize_pytz(first + duration * i)
+
     def _get_absolute_alarm_times(self) -> list[AlarmTime]:
         """Return a list of absolute alarm times."""
-        result : list[AlarmTime] = []
-        for absolute_alarm in self._absolute_alarms:
-            trigger : datetime = absolute_alarm["TRIGGER"].dt
-            result.append(AlarmTime(absolute_alarm, trigger, None, None))
-            repeat = absolute_alarm.REPEAT
-            if repeat:
-                duration = absolute_alarm.DURATION
-                for i in range(1, repeat + 1):
-                    result.append(AlarmTime(absolute_alarm, trigger + duration * i, None, None))
-        return result
+        return [
+            AlarmTime(alarm, trigger, None, None)
+            for alarm in self._absolute_alarms
+            for trigger in self._repeat(alarm["TRIGGER"].dt, alarm)
+        ]
 
     def _get_start_alarm_times(self) -> list[AlarmTime]:
         """Return a list of alarm times relative to the start of the component."""
         if self._start is None and self._start_alarms:
             raise IncompleteAlarmInformation("Use Alarms.set_start because at least one alarm is relative to the start of a component.")
-        result : list[AlarmTime] = []
-        return result
+        return [
+            AlarmTime(alarm, trigger, None, None)
+            for alarm in self._start_alarms
+            for trigger in self._repeat(normalize_pytz(alarm["TRIGGER"].dt + self._start), alarm)
+        ]
 
 __all__ = ["Alarms", "AlarmTime", "IncompleteAlarmInformation"]
