@@ -86,7 +86,7 @@ class AlarmTime:
             raise IncompleteAlarmInformation("A timezone is required to check if the alarm is still active.")
         if self._snooze_until is not None and self._snooze_until > self._last_ack:
             return True
-        print(f"trigger == {trigger} > {self._last_ack} == last ack")
+        # print(f"trigger == {trigger} > {self._last_ack} == last ack")
         return trigger > self._last_ack
 
     @property
@@ -134,7 +134,6 @@ class Alarms:
             self.set_start(component.start)
             self.set_end(component.end)
             if component.is_thunderbird():
-                print("component.DTSTAMP", component.DTSTAMP)
                 self.acknowledge_until(component.X_MOZ_LASTACK)
                 self.snooze_until(component.X_MOZ_SNOOZE_TIME)
             else:
@@ -191,7 +190,7 @@ class Alarms:
     def acknowledge_until(self, dt: Optional[date]) -> None:
         """This is the time when all the alarms of this component were acknowledged.
 
-        You can set several times like this. Only the latest one counts.
+        You can set several times like this. Only the last one counts.
 
         Since RFC 9074 (Alarm Extension) was created later,
         calendar implementations differ in how they acknowledge alarms.
@@ -199,18 +198,16 @@ class Alarms:
         an event has been acknowledged because of an alarm.
         All alarms that happen before this time will be ackknowledged at this dt.
         """
-        print("acknowledge_until", dt)
         if dt is not None:
             self._last_ack = tzp.localize_utc(dt)
 
     def snooze_until(self, dt: Optional[date]) -> None:
         """This is the time when all the alarms of this component were snoozed.
 
-        You can set several times like this. Only the latest one counts.
+        You can set several times like this. Only the last one counts.
         The alarms are supposed to turn up again at dt when they are not acknowledged
         but snoozed.
         """
-        print("snooze_until     ", dt)
         if dt is not None:
             self._snooze_until = tzp.localize_utc(dt)
 
