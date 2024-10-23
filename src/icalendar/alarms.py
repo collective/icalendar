@@ -5,19 +5,20 @@ This takes different calendar software into account and RFC 9074 (Alarm Extensio
 
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
-from datetime import date, datetime
-from typing import Optional
+from datetime import date
+from typing import TYPE_CHECKING, Optional
 
 from icalendar.cal import Alarm, Component, Event, Todo
-from icalendar.prop import vDatetime
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 class IncompleteAlarmInformation(ValueError):
     """The alarms cannot be calculated yet because information is missing."""
 
 
-class AlarmTime(ABC):
+class AlarmTime:
     """An alarm time with all the information."""
 
     def __init__(self, alarm: Alarm, trigger : datetime, acknowledged:Optional[datetime], parent: Optional[Component]):
@@ -66,6 +67,8 @@ class Alarms:
     def __init__(self, component:Optional[Alarm]=None):
         """Start computing alarm times."""
         self._absolute_alarms : list[Alarm] = []
+        self._start_alarms : list[Alarm] = []
+        self._start : Optional[date] = None
 
         if isinstance(component, Alarm):
             self.add_alarm(component)
@@ -84,22 +87,26 @@ class Alarms:
     def add_alarm(self, alarm: Alarm) -> None:
         """Optional: Add an alarm component."""
         trigger = alarm.get("TRIGGER")
-        self._absolute_alarms.append(alarm)
+        if trigger is None:
+            return
+        if isinstance(trigger.dt, date):
+            self._absolute_alarms.append(alarm)
+        else:
+            self._start_alarms.append(alarm)
 
-    def set_component_start(self, dt: date):
+    def set_start(self, dt: date):
         """Set the start of the component.
 
         If you have only absolute alarms, this is not required.
-        If you have alarms relative to start or end, you need to
-        set the start or the end respectively.
+        If you have alarms relative to the start of a compoment, set the start here.
         """
+        self._start = dt
 
-    def set_component_end(self, dt: date):
+    def set_end(self, dt: date):
         """Set the end of the component.
 
         If you have only absolute alarms, this is not required.
-        If you have alarms relative to start or end, you need to
-        set the start or the end respectively.
+        If you have alarms relative to the end of a compoment, set the end here.
         """
 
     def add_acknowledged_time(self, dt: date) -> None:
@@ -125,9 +132,8 @@ class Alarms:
         Please make sure to set all the required parameters before calculating.
         If you forget to set the acknowledged times, that is not problem.
         """
-        return self._get_absolute_alarm_times()
-            
-    
+        return self._get_start_alarm_times() + self._get_absolute_alarm_times()
+
     def _get_absolute_alarm_times(self) -> list[AlarmTime]:
         """Return a list of absolute alarm times."""
         result : list[AlarmTime] = []
@@ -141,5 +147,11 @@ class Alarms:
                     result.append(AlarmTime(absolute_alarm, trigger + duration * i, None, None))
         return result
 
+    def _get_start_alarm_times(self) -> list[AlarmTime]:
+        """Return a list of alarm times relative to the start of the component."""
+        if self._start is None and self._start_alarms:
+            raise IncompleteAlarmInformation("Use Alarms.set_start because at least one alarm is relative to the start of a component.")
+        result : list[AlarmTime] = []
+        return result
 
 __all__ = ["Alarms", "AlarmTime", "IncompleteAlarmInformation"]
