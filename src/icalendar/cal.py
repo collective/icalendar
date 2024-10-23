@@ -82,7 +82,7 @@ class IncompleteComponent(ValueError):
     only in the lowercase computations like .start.
     """
 
-def create_utc_property(name:str, docs:str):
+def create_utc_property(name:str, docs:str) -> property:
     """Create a property to access a value of datetime in UTC timezone.
 
     name - name of the property
@@ -98,7 +98,11 @@ def create_utc_property(name:str, docs:str):
         if name not in self:
             return None
         dt = self.get(name)
-        value = getattr(dt, "dt", None)
+        if isinstance(dt, vText):
+            # we might be in an attribute that is not typed
+            value = vDDDTypes.from_ical(dt)
+        else:
+            value = getattr(dt, "dt", None)
         if value is None or not isinstance(value, date):
             raise InvalidCalendar(f"{name} must be a datetime in UTC, not {value}")
         return tzp.localize_utc(value)
@@ -559,6 +563,11 @@ class Component(CaselessDict):
         "VTODO", "VJOURNAL", or "VTIMEZONE" calendar components.
     """)
 
+    def is_thunderbird(self) -> bool:
+        """Whether this component has attributes that indicate that Mozilla Thunderbird createsd it."""
+        return any(attr.startswith("X-MOZ-") for attr in self.keys())
+
+
 
 #######################################
 # components defined in RFC 5545
@@ -605,6 +614,15 @@ def create_single_property(prop:str, value_attr:str, value_type:tuple[type], typ
     """
     return property(p_get, p_set, p_del, p_doc)
 
+
+_X_MOZ_SNOOZE_TIME = create_utc_property(
+    "X-MOZ-SNOOZE-TIME",
+    "Thunderbird: Alarms before this time are snoozed."
+)
+_X_MOZ_LASTACK = create_utc_property(
+    "X-MOZ-LASTACK",
+    "Thunderbird: Alarms before this time are acknowledged."
+)
 
 class Event(Component):
 
@@ -749,6 +767,9 @@ class Event(Component):
         """Set the end."""
         self.DTEND = end
 
+    X_MOZ_SNOOZE_TIME = _X_MOZ_SNOOZE_TIME
+    X_MOZ_LASTACK = _X_MOZ_LASTACK
+
 
 class Todo(Component):
 
@@ -767,6 +788,8 @@ class Todo(Component):
         'RSTATUS', 'RELATED', 'RESOURCES', 'RDATE', 'RRULE'
     )
 
+    X_MOZ_SNOOZE_TIME = _X_MOZ_SNOOZE_TIME
+    X_MOZ_LASTACK = _X_MOZ_LASTACK
 
 class Journal(Component):
     """A descriptive text at a certain time or associated with a component.
@@ -1037,7 +1060,6 @@ class Alarm(Component):
         self["REPEAT"] = int(value)
 
     DURATION = Event.DURATION # TODO: adjust once https://github.com/collective/icalendar/pull/733 is merged
-
 
 class Calendar(Component):
     """This is the base object for an iCalendar file.

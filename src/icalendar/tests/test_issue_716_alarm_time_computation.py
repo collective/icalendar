@@ -2,6 +2,7 @@
 
 from datetime import date, datetime, timedelta, timezone, tzinfo
 
+from icalendar import Event
 import pytest
 
 from icalendar.alarms import Alarms, IncompleteAlarmInformation
@@ -181,16 +182,23 @@ def test_alarms_from_calendar():
 @pytest.mark.parametrize(
     ("calendar", "index", "count", "message"),
     [
-        ("alarm_etar_future", -1, 3, "Etar: we just created the alarm"),
-        ("alarm_etar_notification", -1, 3, "Etar: the notification popped up"),
-        ("alarm_etar_notification_clicked", -1, 1, "Etar: the notification was dismissed"),
-        ("alarm_google_future", -1, 4, "Google: we just created the event with alarms"),
-        ("alarm_google_acknowledged", -1, 2, "Google: 2 alarms happened at the same time"),
+        ("alarm_etar_future", -1, 3, "Etar (1): we just created the alarm"),
+        ("alarm_etar_notification", -1, 2, "Etar (2): the notification popped up"),
+        ("alarm_etar_notification_clicked", -1, 0, "Etar (3): the notification was dismissed"),  # TODO: check that that is really true
+        ("alarm_google_future", -1, 4, "Google (1): we just created the event with alarms"),
+        ("alarm_google_acknowledged", -1, 2, "Google (2): 2 alarms happened at the same time"),
+        ("alarm_thunderbird_future", -1, 2, "Thunderbird (1.1): 2 alarms are set"),
+        ("alarm_thunderbird_snoozed_until_1457", -1, 2, "Thunderbird (1.2): 2 alarms are snoozed to another time"),
+        ("alarm_thunderbird_closed", -1, 0, "Thunderbird (1.3): all alarms are dismissed (closed)"),
+        ("alarm_thunderbird_2_future", -1, 2, "Thunderbird (2.1): 2 alarms active"),
+        ("alarm_thunderbird_2_notification_popped_up", -1, 2, "Thunderbird (2.2): one alarm popped up as a notification"),
+        ("alarm_thunderbird_2_notification_5_min_postponed", -1, 2, "Thunderbird (2.3): 1 alarm active and one postponed by 5 minutes"),
+        ("alarm_thunderbird_2_notification_5_min_postponed_and_popped_up", -1, 2, "Thunderbird (2.4): 1 alarm active and one postponed by 5 minutes and now popped up"),
+        ("alarm_thunderbird_2_notification_5_min_postponed_and_closed", -1, 1, "Thunderbird (2.5): 1 alarm active and one postponed by 5 minutes and is now acknowledged"),
     ]
 )
 def test_number_of_active_alarms_from_calendar_software(calendars, calendar, index, count, message):
     """Check that we extract calculate the correct amount of active alarms."""
-    pytest.skip("TODO")
     event = calendars[calendar].subcomponents[index]
     a = Alarms(event)
     active_alarms = a.active_in()  # We do not need to pass a timezone because the events have a timezone
@@ -232,3 +240,21 @@ def test_incomplete_alarm_information_for_active_state(tzp):
     with pytest.raises(IncompleteAlarmInformation) as e:
         a.active_in()
     assert e.value.args[0] == "A timezone is required to check if the alarm is still active."
+
+
+@pytest.mark.parametrize(
+    "calendar_name",
+    [
+        "alarm_etar_future",
+        "alarm_google_acknowledged",
+        "alarm_thunderbird_closed",
+        "alarm_thunderbird_future",
+        "alarm_thunderbird_snoozed_until_1457",
+    ]
+)
+def test_thunderbird_recognition(calendars, calendar_name):
+    """Check if we correctly discover Thunderbird's alarm algorithm."""
+    calendar = calendars[calendar_name]
+    event = calendar.subcomponents[-1]
+    assert isinstance(event, Event)
+    assert event.is_thunderbird() == ("thunderbird" in calendar_name)

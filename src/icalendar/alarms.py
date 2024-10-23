@@ -3,7 +3,7 @@
 This takes different calendar software into account and RFC 9074 (Alarm Extension).
 
 - Outlook does not export VALARM information
-- Google uses the DTSTAMP to snooze the alarms
+- Google Calendar uses the DTSTAMP to acknowledge the alarms
 - Thunderbird snoozes the alarms with a X-MOZ-SNOOZE-TIME attribute in the event
 - Thunderbird acknowledges the alarms with a X-MOZ-LASTACK attribute in the event
 - Etar deletes alarms that are not active any more
@@ -15,8 +15,8 @@ from datetime import date, timedelta, tzinfo
 from typing import TYPE_CHECKING, Generator, Optional, Union
 
 from icalendar.cal import Alarm, Event, Todo
-from icalendar.tools import is_date, normalize_pytz, to_datetime
 from icalendar.timezone import tzp
+from icalendar.tools import is_date, normalize_pytz, to_datetime
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -31,19 +31,29 @@ class IncompleteAlarmInformation(ValueError):
 class AlarmTime:
     """An alarm time with all the information."""
 
-    def __init__(self, alarm: Alarm, trigger : datetime, acknowledged_until:Optional[datetime], parent: Optional[Parent]):
+    def __init__(
+            self,
+            alarm: Alarm,
+            trigger : datetime,
+            acknowledged_until:Optional[datetime]=None,
+            snoozed_until:Optional[datetime]=None,
+            parent: Optional[Parent]=None
+        ):
         """Create a new AlarmTime.
         
         alarm - the Alarm component
         trigger - a date or datetime at which to trigger the alarm
         acknowledged_until - an optional datetime in UTC until when all alarms
             have been acknowledged
+        snoozed_until - an optional datetime in UTC until which all alarms of
+            the same parent are snoozed
         parent - the optional parent component the alarm refers to
         """
         self._alarm = alarm
         self._parent = parent
         self._trigger = trigger
         self._last_ack = acknowledged_until
+        self._snooze_until = snoozed_until
 
     @property
     def alarm(self) -> Alarm:
@@ -74,6 +84,9 @@ class AlarmTime:
         trigger = self.trigger if timezone is None else tzp.localize(self.trigger, timezone)
         if trigger.tzinfo is None:
             raise IncompleteAlarmInformation("A timezone is required to check if the alarm is still active.")
+        if self._snooze_until is not None and self._snooze_until > self._last_ack:
+            return True
+        print(f"trigger == {trigger} > {self._last_ack} == last ack")
         return trigger > self._last_ack
 
     @property
@@ -104,6 +117,7 @@ class Alarms:
         self._end : Optional[date] = None
         self._parent : Optional[Parent] = None
         self._last_ack : Optional[datetime] = None
+        self._snooze_until : Optional[datetime] = None
 
         if component is not None:
             self.add_component(component)
@@ -119,6 +133,13 @@ class Alarms:
             self.set_parent(component)
             self.set_start(component.start)
             self.set_end(component.end)
+            if component.is_thunderbird():
+                print("component.DTSTAMP", component.DTSTAMP)
+                self.acknowledge_until(component.X_MOZ_LASTACK)
+                self.snooze_until(component.X_MOZ_SNOOZE_TIME)
+            else:
+                self.acknowledge_until(component.DTSTAMP)
+
         for alarm in component.walk("VALARM"):
             self.add_alarm(alarm)
 
@@ -167,7 +188,7 @@ class Alarms:
             dt = to_datetime(dt)
         return normalize_pytz(dt + td)
 
-    def acknowledge_until(self, dt: date) -> None:
+    def acknowledge_until(self, dt: Optional[date]) -> None:
         """This is the time when all the alarms of this component were acknowledged.
 
         You can set several times like this. Only the latest one counts.
@@ -178,15 +199,20 @@ class Alarms:
         an event has been acknowledged because of an alarm.
         All alarms that happen before this time will be ackknowledged at this dt.
         """
-        self._last_ack = tzp.localize_utc(dt)
+        print("acknowledge_until", dt)
+        if dt is not None:
+            self._last_ack = tzp.localize_utc(dt)
 
-    def snooze_until(self, dt: date) -> None:
+    def snooze_until(self, dt: Optional[date]) -> None:
         """This is the time when all the alarms of this component were snoozed.
 
         You can set several times like this. Only the latest one counts.
         The alarms are supposed to turn up again at dt when they are not acknowledged
         but snoozed.
         """
+        print("snooze_until     ", dt)
+        if dt is not None:
+            self._snooze_until = tzp.localize_utc(dt)
 
     @property
     def times(self) -> list[AlarmTime]:
@@ -215,7 +241,7 @@ class Alarms:
 
     def _alarm_time(self, alarm: Alarm, trigger:date):
         """Create an alarm time with the additional attributes."""
-        return AlarmTime(alarm, trigger, self._last_ack, self._parent)
+        return AlarmTime(alarm, trigger, self._last_ack, self._snooze_until, self._parent)
 
     def _get_absolute_alarm_times(self) -> list[AlarmTime]:
         """Return a list of absolute alarm times."""
