@@ -142,5 +142,59 @@ def test_can_complete_relative_calculation_if_a_start_is_given(alarm_before_star
     assert time.trigger == expected_trigger
 
 
+@pytest.mark.parametrize("dtstart", [date(1998, 10, 1), date(2023, 12, 31)])
+def test_start_as_date_with_delta_as_date_stays_date(alarms, dtstart):
+    """If we have an alarm with a day delta and the event is a day event, we should stay as a date."""
+    a = Alarms(alarms.start_date)
+    a.set_start(dtstart)
+    assert len(a.times) == 1
+    assert a.times[0].trigger == dtstart - timedelta(days=2)
+
+
+def test_cannot_compute_relative_alarm_without_end(alarms):
+    """We have an alarm without an end of a component."""
+    with pytest.raises(IncompleteAlarmInformation) as e:
+        Alarms(alarms.rfc_5545_end).times  # noqa: B018
+    assert e.value.args[0] == f"Use {Alarms.__name__}.{Alarms.set_end.__name__} because at least one alarm is relative to the end of a component."
+
+
+@pytest.mark.parametrize(
+    ("dtend", "timezone", "trigger"),
+    [
+        (datetime(2024, 10, 29, 13, 10), "UTC", datetime(2024, 10, 29, 13, 10, tzinfo=UTC)),
+        (date(2024, 11, 16), None, date(2024, 11, 16)),
+        (datetime(2024, 10, 29, 13, 10), "Asia/Singapore", datetime(2024, 10, 29, 5, 10, tzinfo=UTC)),
+        (datetime(2024, 10, 29, 13, 20), None, datetime(2024, 10, 29, 13, 20)),
+    ]
+)
+def test_can_complete_relative_calculation_if_a_start_is_given(alarms, dtend, timezone, trigger, tzp):
+    """The start is given and required."""
+    start = (dtend if timezone is None else tzp.localize(dtend, timezone))
+    alarms = Alarms(alarms.rfc_5545_end)
+    alarms.set_end(start)
+    assert len(alarms.times) == 1
+    time = alarms.times[0]
+    expected_trigger = normalize_pytz(trigger - timedelta(days=2))
+    assert time.trigger == expected_trigger
+
+
+@pytest.mark.parametrize("dtend", [date(1998, 10, 1), date(2023, 12, 31)])
+def test_end_as_date_with_delta_as_date_stays_date(alarms, dtend):
+    """If we have an alarm with a day delta and the event is a day event, we should stay as a date."""
+    a = Alarms(alarms.rfc_5545_end)
+    a.set_end(dtend)
+    assert len(a.times) == 1
+    assert a.times[0].trigger == dtend - timedelta(days=2)
+
+
+
 def test_add_multiple_alarms():
+    pytest.skip("TODO")
+
+
+def test_alarms_from_event():
+    pytest.skip("TODO")
+
+
+def test_alarms_from_calendar():
     pytest.skip("TODO")
