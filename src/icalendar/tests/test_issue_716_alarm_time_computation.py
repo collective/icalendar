@@ -1,6 +1,6 @@
 """Test the alarm time computation."""
 
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone, tzinfo
 
 import pytest
 
@@ -210,6 +210,7 @@ three_alarms.add("TRIGGER", -timedelta(hours=3)) # 3 hours before
         (datetime(2024, 10, 10, 12), datetime(2024, 10, 10, 9, 1), "UTC", 2),
         (datetime(2024, 10, 10, 12), datetime(2024, 10, 10, 10, 1), "UTC", 1),
         (datetime(2024, 10, 10, 12), datetime(2024, 10, 10, 11, 1), "UTC", 0),
+        (datetime(2024, 10, 10, 12, tzinfo=timezone.utc), datetime(2024, 10, 10, 11, 1), None, 0),
     ]
 )
 def test_number_of_active_alarms_with_moving_time(start, acknowledged, count, tzp, timezone):
@@ -220,3 +221,14 @@ def test_number_of_active_alarms_with_moving_time(start, acknowledged, count, tz
     a.acknowledge_until(tzp.localize_utc(acknowledged))
     active = a.active_in(timezone)
     assert len(active) == count
+
+
+def test_incomplete_alarm_information_for_active_state(tzp):
+    """Make sure we throw the right error."""
+    a = Alarms()
+    a.add_alarm(three_alarms)
+    a.set_start(date(2017, 12, 1))
+    a.acknowledge_until(tzp.localize_utc(datetime(2012, 10, 10, 12)))
+    with pytest.raises(IncompleteAlarmInformation) as e:
+        a.active_in()
+    assert e.value.args[0] == "A timezone is required to check if the alarm is still active."

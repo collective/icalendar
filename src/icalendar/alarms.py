@@ -72,6 +72,8 @@ class AlarmTime:
             # if nothing is acknowledged, this alarm counts
             return True
         trigger = self.trigger if timezone is None else tzp.localize(self.trigger, timezone)
+        if trigger.tzinfo is None:
+            raise IncompleteAlarmInformation("A timezone is required to check if the alarm is still active.")
         return trigger > self._last_ack
 
     @property
