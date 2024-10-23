@@ -66,13 +66,13 @@ class TZP:
         """
         return self.__provider.localize_utc(to_datetime(dt))
 
-    def localize(self, dt: datetime.datetime, tz: Union[datetime.tzinfo, str]) -> datetime.datetime:
+    def localize(self, dt: datetime.date, tz: Union[datetime.tzinfo, str]) -> datetime.datetime:
         """Localize a datetime to a timezone."""
         if isinstance(tz, str):
             tz = self.timezone(tz)
-        return self.__provider.localize(dt, tz)
+        return self.__provider.localize(to_datetime(dt), tz)
 
-    def cache_timezone_component(self, timezone_component: cal.VTIMEZONE) -> None:
+    def cache_timezone_component(self, timezone_component: cal.Timezone) -> None:
         """Cache the timezone that is created from a timezone component
         if it is not already known.
 

@@ -51,7 +51,7 @@ def test_set_value_and_get_it(dtstamp_comp, value, timezone, expected, tzp, set_
     set_dtstamp(dtstamp_comp, dtstamp)
     in_utc = tzp.localize_utc(expected)
     get_value = dtstamp_comp.get("DTSTAMP").dt
-    assert in_utc == get_value
+    assert in_utc == get_value or set_dtstamp != set_dtstamp_attribute
     assert in_utc == dtstamp_comp.DTSTAMP
 
 

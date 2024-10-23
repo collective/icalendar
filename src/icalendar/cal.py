@@ -101,7 +101,7 @@ def create_utc_property(name:str, docs:str):
         value = getattr(dt, "dt", None)
         if value is None or not isinstance(value, date):
             raise InvalidCalendar(f"{name} must be a datetime in UTC, not {value}")
-        return value
+        return tzp.localize_utc(value)
 
     def p_set(self: Component, value: datetime):
         """Set the value"""
