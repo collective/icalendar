@@ -5,7 +5,7 @@ from datetime import date, datetime, timedelta
 import pytest
 
 from icalendar import Event, FreeBusy, Journal, Todo, vDDDTypes
-from icalendar.cal import InvalidCalendar
+from icalendar.cal import Component, InvalidCalendar
 
 
 @pytest.fixture(params=[Event, Todo, Journal, FreeBusy])
@@ -19,6 +19,20 @@ def test_no_dtstamp(dtstamp_comp):
     assert dtstamp_comp.DTSTAMP is None
 
 
+def set_dtstamp_attribute(component:Component, value:date):
+    """Use the setter."""
+    component.DTSTAMP = value
+
+def set_dtstamp_item(component: Component, value:date):
+    """Use setitem."""
+    component["DTSTAMP"] = vDDDTypes(value)
+
+def set_dtstamp_add(component: Component, value:date):
+    """Use add."""
+    component.add("DTSTAMP", value)
+
+
+
 @pytest.mark.parametrize(
     ("value", "timezone", "expected"),
     [
@@ -28,10 +42,13 @@ def test_no_dtstamp(dtstamp_comp):
         (date(2024, 10, 10), None, datetime(2024, 10, 10)),
     ]
 )
-def test_set_value_and_get_it(dtstamp_comp, value, timezone, expected, tzp):
+@pytest.mark.parametrize(
+    "set_dtstamp", [set_dtstamp_add, set_dtstamp_attribute, set_dtstamp_item]
+)
+def test_set_value_and_get_it(dtstamp_comp, value, timezone, expected, tzp, set_dtstamp):
     """Set and get the DTSTAMP value."""
     dtstamp = value if timezone is None else tzp.localize(value, timezone)
-    dtstamp_comp.DTSTAMP = dtstamp
+    set_dtstamp(dtstamp_comp, dtstamp)
     in_utc = tzp.localize_utc(expected)
     get_value = dtstamp_comp.get("DTSTAMP").dt
     assert in_utc == get_value

@@ -1,12 +1,19 @@
 from __future__ import annotations
-import datetime
-from .. import cal
-from typing import Optional, Union
-from .windows_to_olson import WINDOWS_TO_OLSON
-from .provider import TZProvider
-from icalendar import prop
-from dateutil.rrule import rrule
 
+from typing import TYPE_CHECKING, Optional, Union
+
+from icalendar.tools import to_datetime
+
+from .windows_to_olson import WINDOWS_TO_OLSON
+
+if TYPE_CHECKING:
+    import datetime
+
+    from dateutil.rrule import rrule
+
+    from icalendar import cal, prop
+
+    from .provider import TZProvider
 
 DEFAULT_TIMEZONE_PROVIDER = "zoneinfo"
 
@@ -41,10 +48,10 @@ class TZP:
     def use(self, provider:Union[str, TZProvider]):
         """Switch to a different timezone provider."""
         if isinstance(provider, str):
-            provider = getattr(self, f"use_{provider}", None)
-            if provider is None:
-                raise ValueError(f"Unknown provider {provider_name}. Use 'pytz' or 'zoneinfo'.")
-            provider()
+            use_provider = getattr(self, f"use_{provider}", None)
+            if use_provider is None:
+                raise ValueError(f"Unknown provider {provider}. Use 'pytz' or 'zoneinfo'.")
+            use_provider()
         else:
             self._use(provider)
 
@@ -52,12 +59,12 @@ class TZP:
         """Use the default timezone provider."""
         self.use(DEFAULT_TIMEZONE_PROVIDER)
 
-    def localize_utc(self, dt: datetime.datetime) -> datetime.datetime:
+    def localize_utc(self, dt: datetime.date) -> datetime.datetime:
         """Return the datetime in UTC.
 
         If the datetime has no timezone, set UTC as its timezone.
         """
-        return self.__provider.localize_utc(dt)
+        return self.__provider.localize_utc(to_datetime(dt))
 
     def localize(self, dt: datetime.datetime, tz: Union[datetime.tzinfo, str]) -> datetime.datetime:
         """Localize a datetime to a timezone."""

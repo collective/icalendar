@@ -35,28 +35,25 @@ primitive Python datatype. So it should always be true that:
 These types are mainly used for parsing and file generation. But you can set
 them directly.
 """
-from datetime import date
-from datetime import datetime
-from datetime import time
-from datetime import timedelta
-from datetime import tzinfo
-from icalendar.caselessdict import CaselessDict
-from icalendar.parser import Parameters
-from icalendar.parser import escape_char
-from icalendar.parser import unescape_char
-from icalendar.parser_tools import (
-    DEFAULT_ENCODING, SEQUENCE_TYPES, to_unicode, from_unicode, ICAL_TYPE
-)
-
 import base64
 import binascii
-from .timezone import tzp
 import re
 import time as _time
-
-from typing import Optional, Union
+from datetime import date, datetime, time, timedelta, tzinfo
 from enum import Enum, auto
+from typing import Optional, Union
 
+from icalendar.caselessdict import CaselessDict
+from icalendar.parser import Parameters, escape_char, unescape_char
+from icalendar.parser_tools import (
+    DEFAULT_ENCODING,
+    ICAL_TYPE,
+    SEQUENCE_TYPES,
+    from_unicode,
+    to_unicode,
+)
+
+from . import timezone as _timezone
 
 DURATION_REGEX = re.compile(r'([-+]?)P(?:(\d+)W)?(?:(\d+)D)?'
                             r'(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$')
@@ -410,7 +407,7 @@ class vDatetime(TimeBase):
     def from_ical(ical, timezone=None):
         tzinfo = None
         if timezone:
-            tzinfo = tzp.timezone(timezone)
+            tzinfo = _timezone.tzp.timezone(timezone)
 
         try:
             timetuple = (
@@ -422,11 +419,11 @@ class vDatetime(TimeBase):
                 int(ical[13:15]),  # second
             )
             if tzinfo:
-                return tzp.localize(datetime(*timetuple), tzinfo)
+                return _timezone.tzp.localize(datetime(*timetuple), tzinfo)
             elif not ical[15:]:
                 return datetime(*timetuple)
             elif ical[15:16] == 'Z':
-                return tzp.localize_utc(datetime(*timetuple))
+                return _timezone.tzp.localize_utc(datetime(*timetuple))
             else:
                 raise ValueError(ical)
         except Exception:

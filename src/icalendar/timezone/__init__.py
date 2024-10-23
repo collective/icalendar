@@ -13,4 +13,4 @@ def use_zoneinfo():
     tzp.use_zoneinfo()
 
 
-__all__ = ["tzp", "use_pytz", "use_zoneinfo", "normalize_pytz"]
+__all__ = ["tzp", "use_pytz", "use_zoneinfo"]

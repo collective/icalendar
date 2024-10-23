@@ -99,7 +99,6 @@ def create_utc_property(name:str, docs:str):
             return None
         dt = self.get(name)
         value = getattr(dt, "dt", None)
-        print(value)
         if value is None or not isinstance(value, date):
             raise InvalidCalendar(f"{name} must be a datetime in UTC, not {value}")
         return value
@@ -109,7 +108,7 @@ def create_utc_property(name:str, docs:str):
         if not isinstance(value, date):
             raise TypeError(f"{name} takes a datetime in UTC, not {value}")
         self.pop(name)
-        self.add(name, tzp.localize_utc(to_datetime(value)))
+        self.add(name, tzp.localize_utc(value))
 
 
     return property(p_get, p_set, doc=docs)

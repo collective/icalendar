@@ -90,3 +90,15 @@ def test_cache_is_emptied_when_tzp_is_switched(tzp, timezones, new_tzp_name):
     tzp.cache_timezone_component(timezones.pacific_fiji)
     tz2 = tzp.timezone("custom_Pacific/Fiji")
     assert tz1 is not tz2
+
+
+def test_invalid_name(tzp):
+    """Check that the provider name is ok."""
+    provider = "invalid_provider"
+    with pytest.raises(ValueError) as e:
+        tzp.use(provider)
+    # f"Unknown provider {provider}. Use 'pytz' or 'zoneinfo'."
+    message = e.value.args[0]
+    assert f"Unknown provider {provider}." in message
+    assert "zoneinfo" in message
+    assert "pytz" in message

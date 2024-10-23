@@ -4,7 +4,6 @@ from datetime import date, datetime, tzinfo
 from string import ascii_letters, digits
 
 from icalendar.parser_tools import to_unicode
-from icalendar.prop import vDatetime, vText
 
 
 class UIDGenerator:
@@ -26,6 +25,7 @@ class UIDGenerator:
         Like:
             20050105T225746Z-HKtJMqUgdO0jDUwm@example.com
         """
+        from icalendar.prop import vDatetime, vText
         host_name = to_unicode(host_name)
         unique = unique or UIDGenerator.rnd_string()
         today = to_unicode(vDatetime(datetime.today()).to_ical())
