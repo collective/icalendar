@@ -89,3 +89,9 @@ def test_set_twice(dtstamp_comp, tzp):
     dtstamp_comp.DTSTAMP = date(2014, 1, 1)
     dtstamp_comp.DTSTAMP = date(2014, 1, 2)
     assert tzp.localize_utc(datetime(2014, 1, 2)) == dtstamp_comp.DTSTAMP
+
+
+def test_last_modified(dtstamp_comp, tzp):
+    """Check we can set LAST_MODIFIED in the same way as DTSTAMP"""
+    dtstamp_comp.LAST_MODIFIED = date(2014, 1, 2)
+    assert tzp.localize_utc(datetime(2014, 1, 2)) == dtstamp_comp.LAST_MODIFIED

@@ -529,19 +529,34 @@ class Component(CaselessDict):
 
     DTSTAMP = create_utc_property("DTSTAMP", """RFC 5545:
 
-            In the case of an iCalendar object that specifies a
-            "METHOD" property, this property specifies the date and time that
-            the instance of the iCalendar object was created.  In the case of
-            an iCalendar object that doesn't specify a "METHOD" property, this
-            property specifies the date and time that the information
-            associated with the calendar component was last revised in the
-            calendar store.
+        Conformance:  This property MUST be included in the "VEVENT",
+        "VTODO", "VJOURNAL", or "VFREEBUSY" calendar components.
 
-            The value MUST be specified in the UTC time format.
+        Description: In the case of an iCalendar object that specifies a
+        "METHOD" property, this property specifies the date and time that
+        the instance of the iCalendar object was created.  In the case of
+        an iCalendar object that doesn't specify a "METHOD" property, this
+        property specifies the date and time that the information
+        associated with the calendar component was last revised in the
+        calendar store.
 
-            In the case of an iCalendar object that doesn't specify a "METHOD"
-            property, this property is equivalent to the "LAST-MODIFIED"
-            property.
+        The value MUST be specified in the UTC time format.
+
+        In the case of an iCalendar object that doesn't specify a "METHOD"
+        property, this property is equivalent to the "LAST-MODIFIED"
+        property.
+    """)
+    LAST_MODIFIED = create_utc_property("LAST-MODIFIED", """RFC 5545:
+
+        Purpose:  This property specifies the date and time that the
+        information associated with the calendar component was last
+        revised in the calendar store.
+
+        Note: This is analogous to the modification date and time for a
+        file in the file system.
+
+        Conformance:  This property can be specified in the "VEVENT",
+        "VTODO", "VJOURNAL", or "VTIMEZONE" calendar components.
     """)
 
 
