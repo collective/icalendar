@@ -223,3 +223,23 @@ def test_cannot_set_the_event_twice(calendars):
 
 def test_alarms_from_calendar():
     pytest.skip("TODO")
+
+
+
+@pytest.mark.parametrize(
+    ("calendar", "index", "count", "message"),
+    [
+        ("alarm_etar_future", -1, 3, "Etar: we just created the alarm"),
+        ("alarm_etar_notification", -1, 3, "Etar: the notification popped up"),
+        ("alarm_etar_notification_clicked", -1, 1, "Etar: the notification was dismissed"),
+        ("alarm_google_future", -1, 4, "Google: we just created the event with alarms"),
+        ("alarm_google_acknowledged", -1, 2, "Google: 2 alarms happened at the same time"),
+        ("", -1, 1, ""),
+        ("", -1, 1, ""),
+    ]
+)
+def test_active_alarms(calendars, calendar, index, count, message):
+    """Check that we extract calculate the correct amount of active alarms."""
+    event = calendars[calendar].subcomponents[index]
+    a = Alarms(event)
+    assert len(a.active) == count, f"{message} - I expect {count} alarms active but got {len(a.active)}."

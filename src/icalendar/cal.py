@@ -16,7 +16,7 @@ from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_sp
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import TypesFactory, vDDDLists, vDDDTypes, vText, vDuration
 from icalendar.timezone import tzp
-from icalendar.tools import is_date, is_datetime
+from icalendar.tools import is_date, is_datetime, to_datetime
 
 
 def get_example(component_directory: str, example_name: str) -> bytes:
@@ -77,9 +77,42 @@ class IncompleteComponent(ValueError):
     The attributes are not required, otherwise this would be
     an InvalidCalendar. But in order to perform calculations,
     this attribute is required.
+
+    This error is not raised in the UPPERCASE properties like .DTSTART,
+    only in the lowercase computations like .start.
     """
 
+def create_utc_property(name:str, docs:str):
+    """Create a property to access a value of datetime in UTC timezone.
 
+    name - name of the property
+    docs - documentation string
+    """
+    docs = f"""The {name} property. datetime in UTC
+
+    All values will be converted to a datetime in UTC.
+    """ + docs
+
+    def p_get(self: Component) -> Optional[datetime]:
+        """Get the value."""
+        if name not in self:
+            return None
+        dt = self.get(name)
+        value = getattr(dt, "dt", None)
+        print(value)
+        if value is None or not isinstance(value, date):
+            raise InvalidCalendar(f"{name} must be a datetime in UTC, not {value}")
+        return value
+
+    def p_set(self: Component, value: datetime):
+        """Set the value"""
+        if not isinstance(value, date):
+            raise TypeError(f"{name} takes a datetime in UTC, not {value}")
+        self.pop(name)
+        self.add(name, tzp.localize_utc(to_datetime(value)))
+
+
+    return property(p_get, p_set, doc=docs)
 
 class Component(CaselessDict):
     """Component is the base object for calendar, Event and the other
@@ -494,6 +527,24 @@ class Component(CaselessDict):
                 return False
 
         return True
+
+    DTSTAMP = create_utc_property("DTSTAMP", """RFC 5545:
+
+            In the case of an iCalendar object that specifies a
+            "METHOD" property, this property specifies the date and time that
+            the instance of the iCalendar object was created.  In the case of
+            an iCalendar object that doesn't specify a "METHOD" property, this
+            property specifies the date and time that the information
+            associated with the calendar component was last revised in the
+            calendar store.
+
+            The value MUST be specified in the UTC time format.
+
+            In the case of an iCalendar object that doesn't specify a "METHOD"
+            property, this property is equivalent to the "LAST-MODIFIED"
+            property.
+    """)
+
 
 #######################################
 # components defined in RFC 5545

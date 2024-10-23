@@ -1,6 +1,12 @@
 """Compute the times and states of alarms.
 
 This takes different calendar software into account and RFC 9074 (Alarm Extension).
+
+- Outlook does not export VALARM information
+- Google uses the DTSTAMP to snooze the alarms
+- Thunderbird snoozes the alarms with a X-MOZ-SNOOZE-TIME attribute in the event
+- Thunderbird acknowledges the alarms with a X-MOZ-LASTACK attribute in the event
+- Etar deletes alarms that are not active any more
 """
 
 from __future__ import annotations
@@ -8,7 +14,7 @@ from __future__ import annotations
 from datetime import date, timedelta
 from typing import TYPE_CHECKING, Generator, Optional, Union
 
-from icalendar.cal import Alarm, Component, Event, Todo
+from icalendar.cal import Alarm, Event, Todo
 from icalendar.tools import is_date, normalize_pytz, to_datetime
 
 if TYPE_CHECKING:
@@ -95,7 +101,7 @@ class Alarms:
 
     def set_parent(self, parent: Parent):
         """Set the parent of all the alarms.
-        
+
         If you would like to collect alarms from a component, use add_component
         """
         if self._parent is not None and self._parent is not parent:
@@ -138,17 +144,24 @@ class Alarms:
             dt = to_datetime(dt)
         return normalize_pytz(dt + td)
 
-    def add_acknowledged_time(self, dt: date) -> None:
+    def acknowledge_until(self, dt: date) -> None:
         """This is the time when all the alarms of this component were acknowledged.
 
         You can set several times like this. Only the latest one counts.
 
         Since RFC 9074 (Alarm Extension) was created later,
-        calendar implementations differ in how they ackknowledge alarms.
+        calendar implementations differ in how they acknowledge alarms.
         E.g. Thunderbird and Google Calendar store the last time
         an event has been acknowledged because of an alarm.
-        All alarms that happen before this time will be ackknowledged at
-        the same time.
+        All alarms that happen before this time will be ackknowledged at this dt.
+        """
+
+    def snooze_until(self, dt: date) -> None:
+        """This is the time when all the alarms of this component were snoozed.
+
+        You can set several times like this. Only the latest one counts.
+        The alarms are supposed to turn up again at dt when they are not acknowledged
+        but snoozed.
         """
 
     @property
@@ -207,5 +220,10 @@ class Alarms:
             for alarm in self._end_alarms
             for trigger in self._repeat(self._add(self._end, alarm["TRIGGER"].dt), alarm)
         ]
+
+    @property
+    def active(self):
+        """The alarm times that are still active and not acknowledged."""
+        return [alarm_time for alarm_time in self.times if alarm_time.is_active]
 
 __all__ = ["Alarms", "AlarmTime", "IncompleteAlarmInformation"]
