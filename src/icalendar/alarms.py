@@ -11,11 +11,12 @@ This takes different calendar software into account and RFC 9074 (Alarm Extensio
 
 from __future__ import annotations
 
-from datetime import date, timedelta
+from datetime import date, timedelta, tzinfo
 from typing import TYPE_CHECKING, Generator, Optional, Union
 
 from icalendar.cal import Alarm, Event, Todo
 from icalendar.tools import is_date, normalize_pytz, to_datetime
+from icalendar.timezone import tzp
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -30,12 +31,19 @@ class IncompleteAlarmInformation(ValueError):
 class AlarmTime:
     """An alarm time with all the information."""
 
-    def __init__(self, alarm: Alarm, trigger : datetime, acknowledged:Optional[datetime], parent: Optional[Parent]):
-        """Create a new AlarmTime."""
+    def __init__(self, alarm: Alarm, trigger : datetime, acknowledged_until:Optional[datetime], parent: Optional[Parent]):
+        """Create a new AlarmTime.
+        
+        alarm - the Alarm component
+        trigger - a date or datetime at which to trigger the alarm
+        acknowledged_until - an optional datetime in UTC until when all alarms
+            have been acknowledged
+        parent - the optional parent component the alarm refers to
+        """
         self._alarm = alarm
         self._parent = parent
         self._trigger = trigger
-        self._acknowledged = acknowledged
+        self._last_ack = acknowledged_until
 
     @property
     def alarm(self) -> Alarm:
@@ -50,17 +58,29 @@ class AlarmTime:
         """
         return self._parent
 
-    @property
-    def is_active(self) -> bool:
+    def is_active_in(self, timezone:Optional[tzinfo]=None) -> bool:
         """Whether this alarm is active (True) or acknowledged (False).
 
         E.g. in some calendar software, this is True until the user had a look
         at the alarm message and clicked the dismiss button.
+
+        Alarms can be in local time (without a timezone).
+        To calculate if the alarm really happened, we need it to be in a timezone.
+        If a timezone is required but not given, we throw an IncompleteAlarmInformation.
         """
+        if not self._last_ack:
+            # if nothing is acknowledged, this alarm counts
+            return True
+        trigger = self.trigger if timezone is None else tzp.localize(self.trigger, timezone)
+        return trigger > self._last_ack
 
     @property
-    def trigger(self) -> datetime:
-        """This is the time to trigger the alarm."""
+    def trigger(self) -> date:
+        """This is the time to trigger the alarm.
+
+        If the alarm has been snoozed, this can differ from the TRIGGER property.
+        Use is_active_in() to avoid timezone issues.
+        """
         return self._trigger
 
 
@@ -81,6 +101,7 @@ class Alarms:
         self._start : Optional[date] = None
         self._end : Optional[date] = None
         self._parent : Optional[Parent] = None
+        self._last_ack : Optional[datetime] = None
 
         if component is not None:
             self.add_component(component)
@@ -155,6 +176,7 @@ class Alarms:
         an event has been acknowledged because of an alarm.
         All alarms that happen before this time will be ackknowledged at this dt.
         """
+        self._last_ack = tzp.localize_utc(dt)
 
     def snooze_until(self, dt: date) -> None:
         """This is the time when all the alarms of this component were snoozed.
@@ -191,7 +213,7 @@ class Alarms:
 
     def _alarm_time(self, alarm: Alarm, trigger:date):
         """Create an alarm time with the additional attributes."""
-        return AlarmTime(alarm, trigger, None, self._parent)
+        return AlarmTime(alarm, trigger, self._last_ack, self._parent)
 
     def _get_absolute_alarm_times(self) -> list[AlarmTime]:
         """Return a list of absolute alarm times."""
@@ -221,9 +243,16 @@ class Alarms:
             for trigger in self._repeat(self._add(self._end, alarm["TRIGGER"].dt), alarm)
         ]
 
-    @property
-    def active(self):
-        """The alarm times that are still active and not acknowledged."""
-        return [alarm_time for alarm_time in self.times if alarm_time.is_active]
+    def active_in(self, timezone:Optional[tzinfo|str]=None) -> list[AlarmTime]:
+        """The alarm times that are still active and not acknowledged.
+
+        This considers snoozed alarms.
+
+        Alarms can be in local time (without a timezone).
+        To calculate if the alarm really happened, we need it to be in a timezone.
+        If a timezone is required but not given, we throw an IncompleteAlarmInformation.
+        """
+        timezone = tzp.timezone(timezone) if isinstance(timezone, str) else timezone
+        return [alarm_time for alarm_time in self.times if alarm_time.is_active_in(timezone)]
 
 __all__ = ["Alarms", "AlarmTime", "IncompleteAlarmInformation"]

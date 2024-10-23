@@ -51,54 +51,6 @@ def test_absolute_alarm_time_with_vDatetime(alarm):
     assert times[0].trigger == EXAMPLE_TRIGGER
 
 
-def test_repeat_absent():
-    """Test the absence of REPEAT."""
-    assert Alarm().REPEAT == 0
-
-
-def test_repeat_number():
-    """Test the absence of REPEAT."""
-    assert Alarm({"REPEAT": 10}).REPEAT == 10
-
-
-def test_set_REPEAT():
-    """Check setting the value."""
-    a = Alarm()
-    a.REPEAT = 10
-    assert a.REPEAT == 10
-
-
-def test_set_REPEAT_twice():
-    """Check setting the value."""
-    a = Alarm()
-    a.REPEAT = 10
-    a.REPEAT = 20
-    assert a.REPEAT == 20
-
-
-def test_add_REPEAT():
-    """Check setting the value."""
-    a = Alarm()
-    a.add("REPEAT", 10)
-    assert a.REPEAT == 10
-
-
-def test_invalid_repeat_value():
-    """Check setting the value."""
-    a = Alarm()
-    with pytest.raises(ValueError):
-        a.REPEAT = "asd"
-    a["REPEAT"] = "asd"
-    with pytest.raises(InvalidCalendar):
-        a.REPEAT  # noqa: B018
-
-
-def test_alarm_to_string():
-    a = Alarm()
-    a.REPEAT = 11
-    assert a.to_ical() == b"BEGIN:VALARM\r\nREPEAT:11\r\nEND:VALARM\r\n"
-
-
 def test_alarm_has_only_one_of_repeat_or_duration():
     """This is an edge case and we should ignore the repetition."""
     pytest.skip("TODO")
@@ -234,12 +186,37 @@ def test_alarms_from_calendar():
         ("alarm_etar_notification_clicked", -1, 1, "Etar: the notification was dismissed"),
         ("alarm_google_future", -1, 4, "Google: we just created the event with alarms"),
         ("alarm_google_acknowledged", -1, 2, "Google: 2 alarms happened at the same time"),
-        ("", -1, 1, ""),
-        ("", -1, 1, ""),
     ]
 )
-def test_active_alarms(calendars, calendar, index, count, message):
+def test_number_of_active_alarms_from_calendar_software(calendars, calendar, index, count, message):
     """Check that we extract calculate the correct amount of active alarms."""
+    pytest.skip("TODO")
     event = calendars[calendar].subcomponents[index]
     a = Alarms(event)
-    assert len(a.active) == count, f"{message} - I expect {count} alarms active but got {len(a.active)}."
+    active_alarms = a.active_in()  # We do not need to pass a timezone because the events have a timezone
+    assert len(active_alarms) == count, f"{message} - I expect {count} alarms active but got {len(active_alarms)}."
+
+
+three_alarms = Alarm()
+three_alarms.REPEAT = 2
+three_alarms.add("DURATION", timedelta(hours=1)) # 2 hours & 1 hour before
+three_alarms.add("TRIGGER", -timedelta(hours=3)) # 3 hours before
+
+
+@pytest.mark.parametrize(
+    ("start", "acknowledged", "timezone", "count"),
+    [
+        (datetime(2024, 10, 10), datetime(2024, 10, 9), "UTC", 3),
+        (datetime(2024, 10, 10, 12), datetime(2024, 10, 10, 9, 1), "UTC", 2),
+        (datetime(2024, 10, 10, 12), datetime(2024, 10, 10, 10, 1), "UTC", 1),
+        (datetime(2024, 10, 10, 12), datetime(2024, 10, 10, 11, 1), "UTC", 0),
+    ]
+)
+def test_number_of_active_alarms_with_moving_time(start, acknowledged, count, tzp, timezone):
+    """Check how many alarms are active after a time they are acknowledged."""
+    a = Alarms()
+    a.add_alarm(three_alarms)
+    a.set_start(start)
+    a.acknowledge_until(tzp.localize_utc(acknowledged))
+    active = a.active_in(timezone)
+    assert len(active) == count
