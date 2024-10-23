@@ -188,12 +188,37 @@ def test_end_as_date_with_delta_as_date_stays_date(alarms, dtend):
 
 
 
-def test_add_multiple_alarms():
-    pytest.skip("TODO")
+def test_add_multiple_alarms(alarms):
+    """We can add multiple alarms."""
+    a = Alarms()
+    a.add_alarm(alarms.start_date)
+    a.add_alarm(alarms.rfc_5545_end)
+    a.add_alarm(alarms.rfc_5545_absolute_alarm_example)
+    with pytest.raises(IncompleteAlarmInformation):
+        a.times  # noqa: B018
+    a.set_start(datetime(2012, 3, 5))
+    with pytest.raises(IncompleteAlarmInformation):
+        a.times  # noqa: B018
+    a.set_end(datetime(2012, 3, 5))
+    assert len(a.times) == 7
 
 
-def test_alarms_from_event():
-    pytest.skip("TODO")
+def test_alarms_from_event_have_right_times(calendars):
+    """We can collect from an event."""
+    event = calendars.alarm_etar_future.subcomponents[-1]
+    a = Alarms(event)
+    assert len(a.times) == 3
+    assert a.times[0].parent == event
+
+
+def test_cannot_set_the_event_twice(calendars):
+    """We cannot set an event twice. This make the state ambiguous."""
+    event = calendars.alarm_etar_future.subcomponents[-1]
+    a = Alarms()
+    a.add_component(event)
+    a.add_component(event)  # same component is ok
+    with pytest.raises(ValueError):
+        a.add_component(calendars.alarm_google_future.subcomponents[-1])
 
 
 def test_alarms_from_calendar():

@@ -6,13 +6,15 @@ This takes different calendar software into account and RFC 9074 (Alarm Extensio
 from __future__ import annotations
 
 from datetime import date, timedelta
-from typing import TYPE_CHECKING, Generator, Optional
+from typing import TYPE_CHECKING, Generator, Optional, Union
 
 from icalendar.cal import Alarm, Component, Event, Todo
 from icalendar.tools import is_date, normalize_pytz, to_datetime
 
 if TYPE_CHECKING:
     from datetime import datetime
+
+Parent = Union[Event,Todo]
 
 
 class IncompleteAlarmInformation(ValueError):
@@ -22,7 +24,7 @@ class IncompleteAlarmInformation(ValueError):
 class AlarmTime:
     """An alarm time with all the information."""
 
-    def __init__(self, alarm: Alarm, trigger : datetime, acknowledged:Optional[datetime], parent: Optional[Component]):
+    def __init__(self, alarm: Alarm, trigger : datetime, acknowledged:Optional[datetime], parent: Optional[Parent]):
         """Create a new AlarmTime."""
         self._alarm = alarm
         self._parent = parent
@@ -35,7 +37,7 @@ class AlarmTime:
         return self._alarm
 
     @property
-    def parent(self) -> Optional[Component]:
+    def parent(self) -> Optional[Parent]:
         """This is the component that contains the alarm.
 
         This is None if you did not use Alarms.set_component().
@@ -65,27 +67,40 @@ class Alarms:
     This is not implemented yet.
     """
 
-    def __init__(self, component:Optional[Alarm]=None):
+    def __init__(self, component:Optional[Alarm|Event|Todo]=None):
         """Start computing alarm times."""
         self._absolute_alarms : list[Alarm] = []
         self._start_alarms : list[Alarm] = []
         self._end_alarms : list[Alarm] = []
         self._start : Optional[date] = None
         self._end : Optional[date] = None
+        self._parent : Optional[Parent] = None
 
-        if isinstance(component, Alarm):
-            self.add_alarm(component)
+        if component is not None:
+            self.add_component(component)
 
-    def from_component(self, component: Event | Todo) -> None:
-        """Create an Alarm computation from the component."""
+    def add_component(self, component:Alarm|Parent):
+        """Add a component.
 
-    def set_component(self, component: Component):
-        """Optional: Set the component of the computed alarms.
-
-        This does not change the computation in any way.
-        It makes it easier to identify the components of the alarms in case
-        you combine several computations.
+        If this is an alarm, it is added.
+        Events and Todos are added as a parent and all
+        their alarms are added, too.
         """
+        if isinstance(component, (Event, Todo)):
+            self.set_parent(component)
+            self.set_start(component.start)
+            self.set_end(component.end)
+        for alarm in component.walk("VALARM"):
+            self.add_alarm(alarm)
+
+    def set_parent(self, parent: Parent):
+        """Set the parent of all the alarms.
+        
+        If you would like to collect alarms from a component, use add_component
+        """
+        if self._parent is not None and self._parent is not parent:
+            raise ValueError("You can only set one parent for this alarm calculation.")
+        self._parent = parent
 
     def add_alarm(self, alarm: Alarm) -> None:
         """Optional: Add an alarm component."""
@@ -160,10 +175,10 @@ class Alarms:
             duration = alarm.DURATION
             for i in range(1, repeat + 1):
                 yield self._add(first, duration * i)
-    
+
     def _alarm_time(self, alarm: Alarm, trigger:date):
         """Create an alarm time with the additional attributes."""
-        return AlarmTime(alarm, trigger, None, None)
+        return AlarmTime(alarm, trigger, None, self._parent)
 
     def _get_absolute_alarm_times(self) -> list[AlarmTime]:
         """Return a list of absolute alarm times."""
