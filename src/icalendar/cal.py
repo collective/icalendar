@@ -1060,6 +1060,35 @@ class Alarm(Component):
         self["REPEAT"] = int(value)
 
     DURATION = Event.DURATION # TODO: adjust once https://github.com/collective/icalendar/pull/733 is merged
+    ACKNOWLEDGED = create_utc_property("ACKNOWLEDGED",
+    """This is defined in RFC 9074:
+
+    Purpose: This property specifies the UTC date and time at which the
+    corresponding alarm was last sent or acknowledged.
+
+    This property is used to specify when an alarm was last sent or acknowledged.
+    This allows clients to determine when a pending alarm has been acknowledged
+    by a calendar user so that any alerts can be dismissed across multiple devices.
+    It also allows clients to track repeating alarms or alarms on recurring events or
+    to-dos to ensure that the right number of missed alarms can be tracked.
+
+    Clients SHOULD set this property to the current date-time value in UTC
+    when a calendar user acknowledges a pending alarm. Certain kinds of alarms,
+    such as email-based alerts, might not provide feedback as to when the calendar user
+    sees them. For those kinds of alarms, the client SHOULD set this property
+    when the alarm is triggered and the action is successfully carried out.
+
+    When an alarm is triggered on a client, clients can check to see if an"ACKNOWLEDGED"
+    property is present. If it is, and the value of that property is greater than or
+    equal to the computed trigger time for the alarm, then the client SHOULD NOT trigger
+    the alarm. Similarly, if an alarm has been triggered and
+    an "alert" has been presented to a calendar user, clients can monitor
+    the iCalendar data to determine whether an "ACKNOWLEDGED" property is added or
+    changed in the alarm component. If the value of any "ACKNOWLEDGED" property
+    in the alarm changes and is greater than or equal to the trigger time of the alarm,
+    then clients SHOULD dismiss or cancel any "alert" presented to the calendar user.
+    """)
+
 
 class Calendar(Component):
     """This is the base object for an iCalendar file.

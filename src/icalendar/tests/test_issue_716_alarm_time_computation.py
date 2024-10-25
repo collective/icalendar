@@ -288,7 +288,22 @@ def test_snoozed_alarm_has_trigger_at_snooze_time(tzp, snooze):
 @pytest.mark.parametrize(
     ("event_index", "alarm_times"),
     [
+        # Assume that we have the following event with an alarm set to trigger 15 minutes before the meeting:
         (1, ("20210302T101500",)),
+        # When the alarm is triggered, the user decides to "snooze" it for 5 minutes.
+        # The client acknowledges the original alarm and creates a new "snooze"
+        # alarm as a sibling of, and relates it to, the original alarm (note that
+        # both occurrences of "VALARM" reside within the same "parent" VEVENT):
+        (2, ("20210302T102000",)),
+        # When the "snooze" alarm is triggered, the user decides to "snooze" it
+        # again for an additional 5 minutes. The client once again acknowledges
+        # the original alarm, removes the triggered "snooze" alarm, and creates another
+        # new "snooze" alarm as a sibling of, and relates it to, the original alarm
+        # (note the different UID for the new "snooze" alarm):
+        (3, ("20210302T102500",)),
+        # When the second "snooze" alarm is triggered, the user decides to dismiss it.
+        # The client acknowledges both the original alarm and the second "snooze" alarm:
+        (4, ()),
     ]
 )
 def test_rfc_9074_alarm_times(events, event_index, alarm_times):
@@ -297,9 +312,9 @@ def test_rfc_9074_alarm_times(events, event_index, alarm_times):
     Add times use America/New_York as timezone.
     """
     a = Alarms(events[f"rfc_9074_example_{event_index}"])
-    assert len(a.times) == len(alarm_times)
+    assert len(a.active) == len(alarm_times)
     expected_alarm_times = {vDatetime.from_ical(t, "America/New_York") for t in alarm_times}
-    computed_alarm_times = {alarm.trigger for alarm in a.times}
+    computed_alarm_times = {alarm.trigger for alarm in a.active}
     assert expected_alarm_times == computed_alarm_times
 
 

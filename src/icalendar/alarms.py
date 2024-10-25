@@ -1,12 +1,14 @@
 """Compute the times and states of alarms.
 
-This takes different calendar software into account and RFC 9074 (Alarm Extension).
+This takes different calendar software into account and the RFC 9074 (Alarm Extension).
 
-- Outlook does not export VALARM information
-- Google Calendar uses the DTSTAMP to acknowledge the alarms
-- Thunderbird snoozes the alarms with a X-MOZ-SNOOZE-TIME attribute in the event
-- Thunderbird acknowledges the alarms with a X-MOZ-LASTACK attribute in the event
-- Etar deletes alarms that are not active any more
+- RFC 9074 defines an ACKNOWLEDGED property in the VALARM.
+- Outlook does not export VALARM information.
+- Google Calendar uses the DTSTAMP to acknowledge the alarms.
+- Thunderbird snoozes the alarms with a X-MOZ-SNOOZE-TIME attribute in the event.
+- Thunderbird acknowledges the alarms with a X-MOZ-LASTACK attribute in the event.
+- Etar deletes alarms that are acknowledged.
+- Nextcloud's Webinterface does not do anything with the alarms when the time passes.
 """
 
 from __future__ import annotations
@@ -86,6 +88,19 @@ class AlarmTime:
         self._snooze_until = snoozed_until
 
     @property
+    def acknowledged(self) -> Optional[datetime]:
+        """The time in UTC at which this alarm was last acknowledged.
+
+        If the alarm was not acknowledged (dismissed), then this is None.
+        """
+        ack = self.alarm.ACKNOWLEDGED
+        if ack is None:
+            return self._last_ack
+        if self._last_ack is None:
+            return ack
+        return max(ack, self._last_ack)
+
+    @property
     def alarm(self) -> Alarm:
         """The alarm component."""
         return self._alarm
@@ -108,16 +123,19 @@ class AlarmTime:
         To calculate if the alarm really happened, we need it to be in a timezone.
         If a timezone is required but not given, we throw an IncompleteAlarmInformation.
         """
-        if not self._last_ack:
+        acknowledged = self.acknowledged
+        if not acknowledged:
             # if nothing is acknowledged, this alarm counts
             return True
-        if self._snooze_until is not None and self._snooze_until > self._last_ack:
+        if self._snooze_until is not None and self._snooze_until > acknowledged:
             return True
         trigger = self.trigger
         if trigger.tzinfo is None:
-            raise LocalTimezoneMissing("A local timezone is required to check if the alarm is still active. Use Alarms.set_local_timezone().")
-        # print(f"trigger == {trigger} > {self._last_ack} == last ack")
-        return trigger > self._last_ack
+            raise LocalTimezoneMissing(
+                "A local timezone is required to check if the alarm is still active. "
+                "Use Alarms.set_local_timezone()."
+            )
+        return trigger > acknowledged
 
     @property
     def trigger(self) -> date:
