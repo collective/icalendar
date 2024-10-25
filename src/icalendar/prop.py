@@ -405,9 +405,28 @@ class vDatetime(TimeBase):
 
     @staticmethod
     def from_ical(ical, timezone=None):
+        """Create a datetime from the RFC string.
+
+        Format: YYYYMMDDTHHMMSS
+
+        >>> from icalendar import vDatetime
+        >>> vDatetime.from_ical("20210302T101500")
+        datetime.datetime(2021, 3, 2, 10, 15)
+
+        >>> vDatetime.from_ical("20210302T101500", "America/New_York")
+        datetime.datetime(2021, 3, 2, 10, 15, tzinfo=ZoneInfo(key='America/New_York'))
+
+        >>> from zoneinfo import ZoneInfo
+        >>> timezone = ZoneInfo("Europe/Berlin")
+        >>> vDatetime.from_ical("20210302T101500", timezone)
+        datetime.datetime(2021, 3, 2, 10, 15, tzinfo=ZoneInfo(key='Europe/Berlin'))
+
+        """
         tzinfo = None
-        if timezone:
+        if isinstance(timezone, str):
             tzinfo = _timezone.tzp.timezone(timezone)
+        elif timezone is not None:
+            tzinfo = timezone
 
         try:
             timetuple = (
@@ -426,8 +445,8 @@ class vDatetime(TimeBase):
                 return _timezone.tzp.localize_utc(datetime(*timetuple))
             else:
                 raise ValueError(ical)
-        except Exception:
-            raise ValueError(f'Wrong datetime format: {ical}')
+        except Exception as e:
+            raise ValueError(f'Wrong datetime format: {ical}') from e
 
 
 class vDuration(TimeBase):
