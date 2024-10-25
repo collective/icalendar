@@ -120,7 +120,7 @@ def test_cannot_compute_relative_alarm_without_end(alarms):
         (datetime(2024, 10, 29, 13, 20), None, datetime(2024, 10, 29, 13, 20)),
     ]
 )
-def test_can_complete_relative_calculation_if_a_start_is_given(alarms, dtend, timezone, trigger, tzp):
+def test_can_complete_relative_calculation(alarms, dtend, timezone, trigger, tzp):
     """The start is given and required."""
     start = (dtend if timezone is None else tzp.localize(dtend, timezone))
     alarms = Alarms(alarms.rfc_5545_end)
@@ -201,7 +201,7 @@ def test_number_of_active_alarms_from_calendar_software(calendars, calendar, ind
     """Check that we extract calculate the correct amount of active alarms."""
     event = calendars[calendar].subcomponents[index]
     a = Alarms(event)
-    active_alarms = a.active_in()  # We do not need to pass a timezone because the events have a timezone
+    active_alarms = a.active  # We do not need to pass a timezone because the events have a timezone
     assert len(active_alarms) == count, f"{message} - I expect {count} alarms active but got {len(active_alarms)}."
 
 
@@ -226,8 +226,9 @@ def test_number_of_active_alarms_with_moving_time(start, acknowledged, count, tz
     a = Alarms()
     a.add_alarm(three_alarms)
     a.set_start(start)
+    a.set_local_timezone(timezone)
     a.acknowledge_until(tzp.localize_utc(acknowledged))
-    active = a.active_in(timezone)
+    active = a.active
     assert len(active) == count
 
 
@@ -238,8 +239,8 @@ def test_incomplete_alarm_information_for_active_state(tzp):
     a.set_start(date(2017, 12, 1))
     a.acknowledge_until(tzp.localize_utc(datetime(2012, 10, 10, 12)))
     with pytest.raises(IncompleteAlarmInformation) as e:
-        a.active_in()
-    assert e.value.args[0] == "A timezone is required to check if the alarm is still active."
+        a.active  # noqa: B018
+    assert e.value.args[0] == f"A local timezone is required to check if the alarm is still active. Use Alarms.{Alarms.set_local_timezone.__name__}()."
 
 
 @pytest.mark.parametrize(
@@ -258,3 +259,50 @@ def test_thunderbird_recognition(calendars, calendar_name):
     event = calendar.subcomponents[-1]
     assert isinstance(event, Event)
     assert event.is_thunderbird() == ("thunderbird" in calendar_name)
+
+
+@pytest.mark.parametrize(
+    "snooze",
+    [
+        datetime(2012, 10, 10, 11, 1), # before everything
+        datetime(2017, 12, 1, 10, 1),
+        datetime(2017, 12, 1, 11, 1),
+        datetime(2017, 12, 1, 12, 1),
+        datetime(2017, 12, 1, 13, 1), # snooze until after the start of the event
+    ]
+)
+def test_snoozed_alarm_has_trigger_at_snooze_time(tzp, snooze):
+    """When an alarm is snoozed, it pops up after the snooze time."""
+    a = Alarms()
+    a.add_alarm(three_alarms)
+    a.set_start(datetime(2017, 12, 1, 13))
+    a.set_local_timezone("UTC")
+    snooze_utc = tzp.localize_utc(snooze)
+    a.snooze_until(snooze_utc)
+    active = a.active
+    assert len(active) == 3
+    for alarm in active:
+        assert alarm.trigger >= snooze_utc
+
+
+@pytest.mark.parametrize(
+    ("event_index", "alarm_times"),
+    [
+        (1, ("20210302T101500",)),
+    ]
+)
+def test_rfc_9074_alarm_times(events, event_index, alarm_times):
+    """Test the examples from the RFC and their timing.
+
+    Add times use America/New_York as timezone.
+    """
+    a = Alarms(events[f"rfc_9074_example_{event_index}"])
+    assert len(a.times) == len(alarm_times)
+    expected_alarm_times = {vDatetime.from_ical(t, "America/New_York") for t in alarm_times}
+    computed_alarm_times = {alarm.trigger for alarm in a.times}
+    assert expected_alarm_times == computed_alarm_times
+
+
+def test_set_to_None():
+    """acknowledge_until, snooze_until, set_local_timezone."""
+    pytest.skip("TODO")
