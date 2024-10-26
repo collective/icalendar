@@ -151,7 +151,41 @@ class AlarmTime:
 class Alarms:
     """Compute the times and states of alarms.
 
-    TODO: example!
+    This is an example using RFC 9074.
+    One alarm is 30 minutes before the event and acknowledged.
+    Another alarm is 15 minutes before the event and still active.
+
+    >>> from icalendar import Event, Alarms
+    >>> event = Event.from_ical(
+    ... '''BEGIN:VEVENT
+    ... CREATED:20210301T151004Z
+    ... UID:AC67C078-CED3-4BF5-9726-832C3749F627
+    ... DTSTAMP:20210301T151004Z
+    ... DTSTART;TZID=America/New_York:20210302T103000
+    ... DTEND;TZID=America/New_York:20210302T113000
+    ... SUMMARY:Meeting
+    ... BEGIN:VALARM
+    ... UID:8297C37D-BA2D-4476-91AE-C1EAA364F8E1
+    ... TRIGGER:-PT30M
+    ... ACKNOWLEDGED:20210302T150004Z
+    ... DESCRIPTION:Event reminder
+    ... ACTION:DISPLAY
+    ... END:VALARM
+    ... BEGIN:VALARM
+    ... UID:8297C37D-BA2D-4476-91AE-C1EAA364F8E1
+    ... TRIGGER:-PT15M
+    ... DESCRIPTION:Event reminder
+    ... ACTION:DISPLAY
+    ... END:VALARM
+    ... END:VEVENT
+    ... ''')
+    >>> alarms = Alarms(event)
+    >>> len(alarms.times)   # all alarms including those acknowledged
+    2
+    >>> len(alarms.active)  # the alarms that are not acknowledged, yet
+    1
+    >>> alarms.active[0].trigger  # this alarm triggers 15 minutes before 10:30
+    datetime.datetime(2021, 3, 2, 10, 15, tzinfo=ZoneInfo(key='America/New_York'))
 
     RFC 9074 specifies that alarms can also be triggered by proximity.
     This is not implemented yet.
