@@ -18,6 +18,8 @@ New features:
 
 - Add ``VALARM`` properties for :rfc:`9074`. See `Issue 657 <https://github.com/collective/icalendar/issues/657>`_
 - Test compatibility with Python 3.13
+- Add ``icalendar.alarms`` module to calculate alarm times. See `Issue 716 <https://github.com/collective/icalendar/issues/716>`_.
+- Add ``Event.alarms`` and ``Todo.alarms`` to access alarm calculation.
 
 Bug fixes:
 
