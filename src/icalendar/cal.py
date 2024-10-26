@@ -509,7 +509,7 @@ def create_single_property(prop:str, value_attr:str, value_type:tuple[type], typ
             raise InvalidCalendar(f"Multiple {prop} defined.")
         value = getattr(result, value_attr, result)
         if not isinstance(value, value_type):
-            raise InvalidCalendar(f"{prop} must be either a date or a datetime, not {value}.")
+            raise InvalidCalendar(f"{prop} must be either a {' or '.join(t.__name__ for t in value_type)}, not {value}.")
         return value
 
     def p_set(self:Component, value) -> None:
@@ -547,6 +547,48 @@ def is_date(dt: date) -> bool:
 def is_datetime(dt: date) -> bool:
     """Whether this is a date and not a datetime."""
     return isinstance(dt, datetime)
+
+def _get_duration(self: Component) -> Optional[timedelta]:
+    """Getter for property DURATION."""
+    default = object()
+    duration = self.get("duration", default)
+    if isinstance(duration, vDDDTypes):
+        return duration.dt
+    if isinstance(duration, vDuration):
+        return duration.td
+    if duration is not default and not isinstance(duration, timedelta):
+        raise InvalidCalendar(
+            f"DURATION must be a timedelta, not {type(duration).__name__}."
+        )
+    return None
+
+def _set_duration(self: Component, value: Optional[timedelta]):
+    """Setter for property DURATION."""
+    if value is None:
+        self.pop("duration", None)
+        return
+    if not isinstance(value, timedelta):
+        raise TypeError(f"Use timedelta, not {type(value).__name__}.")
+    self["duration"] = vDuration(value)
+    self.pop("DTEND")
+    self.pop("DUE")
+
+
+def _del_duration(self: Component):
+    """Delete property DURATION."""
+    self.pop("DURATION")
+
+_doc_duration = """The DURATION property.
+
+The "DTSTART" property for a "{component}" specifies the inclusive start of the event.
+The "DURATION" property in conjunction with the DTSTART property
+for a "{component}" calendar component specifies the non-inclusive end
+of the event.
+
+If you would like to calculate the duration of a {component}, do not use this.
+Instead use the duration property (lower case).
+"""
+
 
 class Event(Component):
 
@@ -593,41 +635,12 @@ class Event(Component):
             raise InvalidCalendar("DTSTART and DTEND must be of the same type, either date or datetime.")
         return start, end, duration
 
-    @property
-    def DURATION(self) -> Optional[timedelta]:  # noqa: N802
-        """The DURATION of the component.
 
-        The "DTSTART" property for a "VEVENT" specifies the inclusive start of the event.
-        The "DURATION" property in conjunction with the DTSTART property
-        for a "VEVENT" calendar component specifies the non-inclusive end
-        of the event.
-
-        If you would like to calculate the duration of an event do not use this.
-        Instead use the difference between DTSTART and DTEND.
-        """
-        default = object()
-        duration = self.get("duration", default)
-        if isinstance(duration, vDDDTypes):
-            return duration.dt
-        if isinstance(duration, vDuration):
-            return duration.td
-        if duration is not default and not isinstance(duration, timedelta):
-            raise InvalidCalendar(f"DURATION must be a timedelta, not {type(duration).__name__}.")
-        return None
-    
-    @DURATION.setter
-    def DURATION(self, value: Optional[timedelta]):  # noqa: N802
-        if value is None:
-            self.pop("duration", None)
-            return
-        if not isinstance(value, timedelta):
-            raise TypeError(f"Use timedelta, not {type(value).__name__}.")
-        self["duration"] = vDuration(value)
-        del self.DTEND
+    DURATION = property(_get_duration, _set_duration, _del_duration, _doc_duration.format(component='VEVENT'))
 
     @property
     def duration(self) -> timedelta:
-        """The duration of the component.
+        """The duration of the VEVENT.
 
         This duration is calculated from the start and end of the event.
         You cannot set the duration as it is unclear what happens to start and end.
@@ -648,7 +661,7 @@ class Event(Component):
         >>> event = Event()
         >>> event.start = datetime(2021, 1, 1, 12)
         >>> event.end = datetime(2021, 1, 1, 12, 30) # 30 minutes
-        >>> event.end - event.start  # 1800 seconds == 30 minutes
+        >>> event.duration  # 1800 seconds == 30 minutes
         datetime.timedelta(seconds=1800)
         >>> print(event.to_ical())
         BEGIN:VEVENT
@@ -708,6 +721,89 @@ class Todo(Component):
         'ATTACH', 'ATTENDEE', 'CATEGORIES', 'COMMENT', 'CONTACT', 'EXDATE',
         'RSTATUS', 'RELATED', 'RESOURCES', 'RDATE', 'RRULE'
     )
+    DTSTART = create_single_property("DTSTART", "dt", (datetime, date), date, 'The "DTSTART" property for a "VTODO" specifies the inclusive start of the Todo.')
+    DUE = create_single_property("DUE", "dt", (datetime, date), date, 'The "DUE" property for a "VTODO" calendar component specifies the non-inclusive end of the Todo.')
+    DURATION = property(_get_duration, _set_duration, _del_duration, _doc_duration.format(component='VTODO'))
+
+    def _get_start_end_duration(self):
+        """Verify the calendar validity and return the right attributes."""
+        start = self.DTSTART
+        end = self.DUE
+        duration = self.DURATION
+        if duration is not None and end is not None:
+            raise InvalidCalendar("Only one of DUE and DURATION may be in a VTODO, not both.")
+        if isinstance(start, date) and not isinstance(start, datetime) and duration is not None and duration.seconds != 0:
+            raise InvalidCalendar("When DTSTART is a date, DURATION must be of days or weeks.")
+        if start is not None and end is not None and is_date(start) != is_date(end):
+            raise InvalidCalendar("DTSTART and DUE must be of the same type, either date or datetime.")
+        return start, end, duration
+
+
+    @property
+    def start(self) -> date | datetime:
+        """The start of the VTODO.
+
+        Invalid values raise an InvalidCalendar.
+        If there is no start, we also raise an IncompleteComponent error.
+
+        You can get the start, end and duration of a Todo as follows:
+
+        >>> from datetime import datetime
+        >>> from icalendar import Todo
+        >>> todo = Todo()
+        >>> todo.start = datetime(2021, 1, 1, 12)
+        >>> todo.end = datetime(2021, 1, 1, 12, 30) # 30 minutes
+        >>> todo.duration  # 1800 seconds == 30 minutes
+        datetime.timedelta(seconds=1800)
+        >>> print(todo.to_ical())
+        BEGIN:VTODO
+        DTSTART:20210101T120000
+        DUE:20210101T123000
+        END:VTODO
+        """
+        start = self._get_start_end_duration()[0]
+        if start is None:
+            raise IncompleteComponent("No DTSTART given.")
+        return start
+
+    @start.setter
+    def start(self, start: Optional[date | datetime]):
+        """Set the start."""
+        self.DTSTART = start
+
+    @property
+    def end(self) -> date | datetime:
+        """The end of the component.
+
+        Invalid values raise an InvalidCalendar error.
+        If there is no end, we also raise an IncompleteComponent error.
+        """
+        start, end, duration = self._get_start_end_duration()
+        if end is None and duration is None:
+            if start is None:
+                raise IncompleteComponent("No DUE or DURATION+DTSTART given.")
+            if is_date(start):
+                return start + timedelta(days=1)
+            return start
+        if duration is not None:
+            if start is not None:
+                return start + duration
+            raise IncompleteComponent("No DUE or DURATION+DTSTART given.")
+        return end
+
+    @end.setter
+    def end(self, end: date | datetime | None):
+        """Set the end."""
+        self.DUE = end
+
+    @property
+    def duration(self) -> timedelta:
+        """The duration of the VTODO.
+
+        This duration is calculated from the start and end of the Todo.
+        You cannot set the duration as it is unclear what happens to start and end.
+        """
+        return self.end - self.start
 
 
 class Journal(Component):
@@ -763,7 +859,7 @@ class Journal(Component):
     
     @property
     def duration(self) -> timedelta:
-        """The journal has no duration."""
+        """The journal has no duration: timedelta(0)."""
         return timedelta(0)
 
 class FreeBusy(Component):
