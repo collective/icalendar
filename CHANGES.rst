@@ -11,6 +11,7 @@ Minor changes:
 - Document the Debian package. See `Issue 701 <https://github.com/collective/icalendar/issues/701>`_.
 - Document ``vDatetime.from_ical``
 - Allow passing a ``datetime.date`` to ``TZP.localize_utc`` and ``TZP.localize`` methods.
+- Document component classes with description from :rfc:`5545`.
 
 Breaking changes:
 
