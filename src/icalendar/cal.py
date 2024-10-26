@@ -550,10 +550,10 @@ def is_datetime(dt: date) -> bool:
 
 class Event(Component):
     """
-    An "VEVENT" calendar component is a grouping of component
+    A "VEVENT" calendar component is a grouping of component
     properties that represents a scheduled amount of time on a
-    calendar. For example, it can be an activity; such as a one-hour
-    long, department meeting from 8:00 AM to 9:00 AM, tomorrow.
+    calendar. For example, it can be an activity, such as a one-hour
+    long department meeting from 8:00 AM to 9:00 AM, tomorrow.
     """
 
     name = 'VEVENT'
@@ -701,9 +701,9 @@ class Event(Component):
 class Todo(Component):
     """
     A "VTODO" calendar component is a grouping of component
-    properties that represents an action-item or assignment. For
+    properties that represents an action item or assignment. For
     example, it can be used to represent an item of work assigned to
-    an individual; such as "Prepare for the upcoming conference
+    an individual, such as "Prepare for the upcoming conference
     seminar on Internet Calendaring".
     """
 
