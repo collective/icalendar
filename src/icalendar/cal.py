@@ -970,12 +970,6 @@ class TimezoneStandard(Component):
     that observe Daylight Saving Time.
     """
     name = 'STANDARD'
-    """
-    The "STANDARD" sub-component of "VTIMEZONE" defines the standard
-    time offset from UTC for a time zone. It represents a time zone's
-    standard time, typically used during winter months in locations
-    that observe Daylight Saving Time.
-    """
     required = ('DTSTART', 'TZOFFSETTO', 'TZOFFSETFROM')
     singletons = ('DTSTART', 'TZOFFSETTO', 'TZOFFSETFROM',)
     multiple = ('COMMENT', 'RDATE', 'TZNAME', 'RRULE', 'EXDATE')
