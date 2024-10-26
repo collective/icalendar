@@ -1186,7 +1186,16 @@ class Alarm(Component):
 
     @property
     def REPEAT(self) -> int:
-        """The REPEAT property of an alarm component."""
+        """The REPEAT property of an alarm component.
+
+        The alarm can be defined such that it triggers repeatedly.  A
+        definition of an alarm with a repeating trigger MUST include both
+        the "DURATION" and "REPEAT" properties.  The "DURATION" property
+        specifies the delay period, after which the alarm will repeat.
+        The "REPEAT" property specifies the number of additional
+        repetitions that the alarm will be triggered.  This repetition
+        count is in addition to the initial triggering of the alarm.
+        """
         try:
             return int(self.get("REPEAT", 0))
         except ValueError as e:
@@ -1197,7 +1206,15 @@ class Alarm(Component):
         """The REPEAT property of an alarm component."""
         self["REPEAT"] = int(value)
 
-    DURATION = Event.DURATION # TODO: adjust once https://github.com/collective/icalendar/pull/733 is merged
+    DURATION = property(_get_duration, _set_duration, _del_duration,
+    """The DURATION property of an alarm component.
+
+    The alarm can be defined such that it triggers repeatedly.  A
+    definition of an alarm with a repeating trigger MUST include both
+    the "DURATION" and "REPEAT" properties.  The "DURATION" property
+    specifies the delay period, after which the alarm will repeat.
+    """)
+
     ACKNOWLEDGED = create_utc_property("ACKNOWLEDGED",
     """This is defined in RFC 9074:
 
