@@ -7,16 +7,20 @@ from __future__ import annotations
 
 import os
 from datetime import date, datetime, timedelta
-from typing import List, Optional, Tuple
+from typing import TYPE_CHECKING, List, Optional, Tuple
 
 import dateutil.rrule
 import dateutil.tz
+
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_split
 from icalendar.parser_tools import DEFAULT_ENCODING
-from icalendar.prop import TypesFactory, vDDDLists, vDDDTypes, vText, vDuration
+from icalendar.prop import TypesFactory, vDDDLists, vDDDTypes, vDuration, vText
 from icalendar.timezone import tzp
-from icalendar.tools import is_date, is_datetime, to_datetime
+from icalendar.tools import is_date
+
+if TYPE_CHECKING:
+    from icalendar.alarms import Alarms
 
 
 def get_example(component_directory: str, example_name: str) -> bytes:
@@ -647,6 +651,26 @@ class Event(Component):
         'RSTATUS', 'RELATED', 'RESOURCES', 'RDATE', 'RRULE'
     )
     ignore_exceptions = True
+    
+    @property
+    def alarms(self) -> Alarms:
+        """Compute the alarm times for this component.
+
+        >>> from icalendar import Event
+        >>> event = Event.example("rfc_9074_example_1")
+        >>> len(event.alarms.times)
+        1
+        >>> alarm_time = event.alarms.times[0]
+        >>> alarm_time.trigger  # The time when the alarm pops up
+        datetime.datetime(2021, 3, 2, 10, 15, tzinfo=ZoneInfo(key='America/New_York'))
+        >>> alarm_time.is_active()  # This alarm has not been acknowledged
+        True
+
+        Note that this only uses DTSTART and DTEND but ignores
+        RDATE, EXDATE and RRULE properties.
+        """
+        from icalendar.alarms import Alarms
+        return Alarms(self)
 
     @classmethod
     def example(cls, name:str) -> Event:
@@ -790,6 +814,22 @@ class Todo(Component):
 
     X_MOZ_SNOOZE_TIME = _X_MOZ_SNOOZE_TIME
     X_MOZ_LASTACK = _X_MOZ_LASTACK
+
+    @property
+    def alarms(self) -> Alarms:
+        """Compute the alarm times for this component.
+
+        >>> from icalendar import Todo
+        >>> todo = Todo()  # empty without alarms
+        >>> len(todo.alarms.times)
+        0
+
+        Note that this only uses DTSTART and DUE but ignores
+        RDATE, EXDATE and RRULE properties.
+        """
+        from icalendar.alarms import Alarms
+        return Alarms(self)
+
 
 class Journal(Component):
     """A descriptive text at a certain time or associated with a component.

@@ -1,12 +1,12 @@
 """Test the alarm time computation."""
 
-from datetime import date, datetime, timedelta, timezone, tzinfo
+from datetime import date, datetime, timedelta, timezone
 
-from icalendar import Event
 import pytest
 
+from icalendar import Event
 from icalendar.alarms import Alarms, IncompleteAlarmInformation
-from icalendar.cal import Alarm, InvalidCalendar
+from icalendar.cal import Alarm
 from icalendar.prop import vDatetime
 from icalendar.tools import normalize_pytz
 
@@ -311,7 +311,7 @@ def test_rfc_9074_alarm_times(events, event_index, alarm_times):
 
     Add times use America/New_York as timezone.
     """
-    a = Alarms(events[f"rfc_9074_example_{event_index}"])
+    a = events[f"rfc_9074_example_{event_index}"].alarms
     assert len(a.active) == len(alarm_times)
     expected_alarm_times = {vDatetime.from_ical(t, "America/New_York") for t in alarm_times}
     computed_alarm_times = {alarm.trigger for alarm in a.active}
