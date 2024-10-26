@@ -915,8 +915,10 @@ class Todo(Component):
     def alarms(self) -> Alarms:
         """Compute the alarm times for this component.
 
+        >>> from datetime import datetime
         >>> from icalendar import Todo
         >>> todo = Todo()  # empty without alarms
+        >>> todo.start = datetime(2024, 10, 26, 10, 21)
         >>> len(todo.alarms.times)
         0
 
