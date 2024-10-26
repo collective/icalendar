@@ -9,6 +9,7 @@ Minor changes:
 - Added ``end``, ``start``, ``duration``, ``DTSTART``, ``DUE``, and ``DURATION`` attributes to ``Todo`` components. See `Issue 662`_.
 - Format test code with Ruff. See `Issue 672 <https://github.com/collective/icalendar/issues/672>`_.
 - Document the Debian package. See `Issue 701 <https://github.com/collective/icalendar/issues/701>`_.
+- Document component classes with description from :rfc:`5545`.
 
 Breaking changes:
 
