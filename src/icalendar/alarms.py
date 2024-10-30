@@ -345,7 +345,7 @@ class Alarms:
         return [
             self._alarm_time(alarm , trigger)
             for alarm in self._absolute_alarms
-            for trigger in self._repeat(alarm["TRIGGER"].dt, alarm)
+            for trigger in self._repeat(alarm.TRIGGER, alarm)
         ]
 
     def _get_start_alarm_times(self) -> list[AlarmTime]:
@@ -355,7 +355,7 @@ class Alarms:
         return [
             self._alarm_time(alarm , trigger)
             for alarm in self._start_alarms
-            for trigger in self._repeat(self._add(self._start, alarm["TRIGGER"].dt), alarm)
+            for trigger in self._repeat(self._add(self._start, alarm.TRIGGER), alarm)
         ]
 
     def _get_end_alarm_times(self) -> list[AlarmTime]:
@@ -365,7 +365,7 @@ class Alarms:
         return [
             self._alarm_time(alarm , trigger)
             for alarm in self._end_alarms
-            for trigger in self._repeat(self._add(self._end, alarm["TRIGGER"].dt), alarm)
+            for trigger in self._repeat(self._add(self._end, alarm.TRIGGER), alarm)
         ]
 
     @property
