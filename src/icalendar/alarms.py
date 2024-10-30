@@ -237,12 +237,12 @@ class Alarms:
 
     def add_alarm(self, alarm: Alarm) -> None:
         """Optional: Add an alarm component."""
-        trigger = alarm.get("TRIGGER")
+        trigger = alarm.TRIGGER
         if trigger is None:
             return
-        if isinstance(trigger.dt, date):
+        if isinstance(trigger, date):
             self._absolute_alarms.append(alarm)
-        elif trigger.params.get("RELATED", "START").upper() == "START":
+        elif alarm.TRIGGER_RELATED == "START":
             self._start_alarms.append(alarm)
         else:
             self._end_alarms.append(alarm)

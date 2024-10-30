@@ -4,6 +4,8 @@ from datetime import date, datetime, timedelta
 
 import pytest
 
+from icalendar.cal import Alarm
+
 try:
     from zoneinfo import ZoneInfo
 except ImportError:
@@ -16,6 +18,7 @@ from icalendar import (
     Journal,
     Todo,
     vDDDTypes,
+    vDatetime,
 )
 from icalendar.prop import vDuration
 
@@ -493,3 +496,108 @@ def setting_twice_does_not_duplicate_the_entry():
     assert j.start == date(2024, 1, 3)
     assert j.end == date(2024, 1, 3)
 
+
+@pytest.mark.parametrize(
+    ("file", "trigger", "related"),
+    [
+        ("rfc_5545_absolute_alarm_example", vDatetime.from_ical("19970317T133000Z"), "START"),
+        ("rfc_5545_end", timedelta(days=-2), "END"),
+        ("start_date", timedelta(days=-2), "START"),
+    ]
+)
+def test_get_alarm_trigger_property(alarms, file, trigger, related):
+    """Get the trigger property."""
+    alarm = alarms[file]
+    assert alarm.TRIGGER == trigger
+    assert alarm.TRIGGER_RELATED == related
+
+
+def test_set_alarm_trigger():
+    """Set the alarm trigger."""
+    a = Alarm()
+    a.TRIGGER = timedelta(hours=1)
+    assert a.TRIGGER == timedelta(hours=1)
+    assert a.TRIGGER_RELATED == "START"
+
+
+def test_set_alarm_trigger_related():
+    """Set the alarm trigger."""
+    a = Alarm()
+    a.TRIGGER = timedelta(hours=1)
+    a.TRIGGER_RELATED = "END"
+    assert a.TRIGGER == timedelta(hours=1)
+    assert a.TRIGGER_RELATED == "END"
+
+
+def test_get_related_without_trigger():
+    """The default is start"""
+    assert Alarm().TRIGGER_RELATED == "START"
+
+def test_cannot_set_related_without_trigger():
+    """TRIGGER must be set to set the parameter."""
+    with pytest.raises(ValueError) as e:
+        a = Alarm()
+        a.TRIGGER_RELATED = "END"
+    assert e.value.args[0] == "You must set a TRIGGER before setting the RELATED parameter."
+
+
+@pytest.mark.parametrize(
+    ("file", "triggers"),
+    [
+        ("rfc_5545_absolute_alarm_example", ((), (), (vDatetime.from_ical("19970317T133000Z"), vDatetime.from_ical("19970317T134500Z"),vDatetime.from_ical("19970317T140000Z"),vDatetime.from_ical("19970317T141500Z"),vDatetime.from_ical("19970317T143000Z"),))),
+        ("rfc_5545_end", ((), (timedelta(days=-2),), ())),
+        ("start_date", ((timedelta(days=-2),), (), ())),
+    ]
+)
+def test_get_alarm_triggers(alarms, file, triggers):
+    """Get the trigger property."""
+    alarm = alarms[file]
+    print(tuple(alarm.triggers))
+    print(triggers)
+    assert alarm.triggers == triggers
+
+
+def triggers_emtpy_alarm():
+    """An alarm with no trigger has no triggers."""
+    assert Alarm().triggers == ((), (), ())
+
+h1 = timedelta(hours=1)
+
+def triggers_emtpy_with_no_repeat():
+    """Check incomplete values."""
+    a = Alarm()
+    a.TRIGGER = h1
+    a.DURATION = h1
+    assert a.triggers == ((h1,), (), ())
+
+def triggers_emtpy_with_no_duration():
+    """Check incomplete values."""
+    a = Alarm()
+    a.TRIGGER = h1
+    a.REPEAT = 10
+    assert a.triggers == ((h1,), (), ())
+
+
+@pytest.mark.parametrize(
+    ("file", "triggers"),
+    [
+        ("rfc_5545_absolute_alarm_example", ((), (), (vDatetime.from_ical("19970317T133000Z"),))),
+        ("rfc_5545_end", ((), (timedelta(days=-2),), ())),
+        ("start_date", ((timedelta(days=-2),), (), ())),
+    ]
+)
+@pytest.mark.parametrize("duration", [timedelta(days=-1), h1])
+@pytest.mark.parametrize("repeat", [1, 3])
+def test_get_alarm_triggers_repeated(alarms, file, triggers, duration, repeat):
+    """Get the trigger property."""
+    alarm = alarms[file].copy()
+    alarm.REPEAT = repeat
+    alarm.DURATION = duration
+    for expected, triggers in zip(triggers, alarm.triggers):
+        if not expected:
+            assert triggers == ()
+            continue
+        assert len(triggers) == 1 + repeat
+        assert triggers[0] == expected[0]
+        for x, y in zip(triggers[:-1], triggers[1:]):
+            assert y - x == duration

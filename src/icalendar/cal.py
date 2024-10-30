@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import os
 from datetime import date, datetime, timedelta
-from typing import TYPE_CHECKING, List, Optional, Tuple
+from typing import TYPE_CHECKING, List, NamedTuple, Optional, Tuple, Union
 
 import dateutil.rrule
 import dateutil.tz
@@ -577,7 +577,9 @@ class Component(CaselessDict):
 # components defined in RFC 5545
 
 def create_single_property(prop:str, value_attr:str, value_type:tuple[type], type_def:type, doc:str):
-    """Create a single property getter and setter."""
+    """Create a single property getter and setter.
+    
+    This is a getter and setter for a property that only occurs once or not (None)."""
 
     def p_get(self : Component):
         default = object()
@@ -1286,6 +1288,97 @@ class Alarm(Component):
     then clients SHOULD dismiss or cancel any "alert" presented to the calendar user.
     """)
 
+    TRIGGER = create_single_property(
+        "TRIGGER", "dt", (datetime, timedelta), Optional[Union[timedelta, datetime]],
+    """Purpose:  This property specifies when an alarm will trigger.
+
+    Value Type:  The default value type is DURATION.  The value type can
+    be set to a DATE-TIME value type, in which case the value MUST
+    specify a UTC-formatted DATE-TIME value.
+
+    Either a positive or negative duration may be specified for the
+    "TRIGGER" property.  An alarm with a positive duration is
+    triggered after the associated start or end of the event or to-do.
+    An alarm with a negative duration is triggered before the
+    associated start or end of the event or to-do."""
+    )
+
+    @property
+    def TRIGGER_RELATED(self) -> str:
+        """The RELATED parameter of the TRIGGER property.
+
+        Values are either "START" (default) or "END".
+
+        A value of START will set the alarm to trigger off the
+        start of the associated event or to-do.  A value of END will set
+        the alarm to trigger off the end of the associated event or to-do.
+        """
+        trigger = self.get("TRIGGER")
+        if trigger is None:
+            return "START"
+        return trigger.params.get("RELATED", "START")
+
+    @TRIGGER_RELATED.setter
+    def TRIGGER_RELATED(self, value: str):
+        """Set "START" or "END"."""
+        trigger = self.get("TRIGGER")
+        if trigger is None:
+            raise ValueError("You must set a TRIGGER before setting the RELATED parameter.")
+        trigger.params["RELATED"] = value
+    
+    class Triggers(NamedTuple):
+        """The computed times of alarm triggers.
+
+        start - relative to the start of the Event or Todo (timedelta)
+        
+        end - relateive to the end of the Event or Todo (timedelta)
+        
+        absolute - datetime in UTC
+        """
+        start: tuple[timedelta]
+        end: tuple[timedelta]
+        absolute: tuple[datetime]
+    
+    @property
+    def triggers(self):
+        """The computed triggers of an Alarm.
+
+        This takes the TRIGGER, DURATION and REPEAT properties into account.
+
+        Here, we create an alarm that triggers 3 times before the start of the
+        parent component:
+
+        >>> from icalendar import Alarm
+        >>> from datetime import timedelta
+        >>> alarm = Alarm()
+        >>> alarm.TRIGGER = timedelta(hours=-4)  # trigger 4 hours after
+        >>> alarm.DURATION = timedelta(hours=1)  # after 1 hour trigger again
+        >>> alarm.REPEAT = 2  # trigger 2 more times
+        >>> alarm.triggers.start == (timedelta(hours=-4),  timedelta(hours=-3),  timedelta(hours=-2))
+        True
+        >>> alarm.triggers.end
+        ()
+        >>> alarm.triggers.absolute
+        ()
+        """
+        start = []
+        end = []
+        absolute = []
+        trigger = self.TRIGGER
+        if trigger is not None:
+            if isinstance(trigger, date):
+                absolute.append(trigger)
+                add = absolute
+            elif self.TRIGGER_RELATED == "START":
+                start.append(trigger)
+                add = start
+            else:
+                end.append(trigger)
+                add = end
+            duration = self.DURATION
+            for _ in range(self.REPEAT):
+                add.append(add[-1] + duration)
+        return self.Triggers(start=tuple(start), end=tuple(end), absolute=tuple(absolute))
 
 class Calendar(Component):
     """
