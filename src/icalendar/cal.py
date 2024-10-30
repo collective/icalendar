@@ -1312,6 +1312,15 @@ class Alarm(Component):
         A value of START will set the alarm to trigger off the
         start of the associated event or to-do.  A value of END will set
         the alarm to trigger off the end of the associated event or to-do.
+
+        In this example, we create an alarm that triggers two hours after the
+        end of its parent component:
+
+        >>> from icalendar import Alarm
+        >>> from datetime import timedelta
+        >>> alarm = Alarm()
+        >>> alarm.TRIGGER = timedelta(hours=2)
+        >>> alarm.TRIGGER_RELATED = "END"
         """
         trigger = self.get("TRIGGER")
         if trigger is None:
@@ -1329,11 +1338,11 @@ class Alarm(Component):
     class Triggers(NamedTuple):
         """The computed times of alarm triggers.
 
-        start - relative to the start of the Event or Todo (timedelta)
+        start - triggers relative to the start of the Event or Todo (timedelta)
         
-        end - relateive to the end of the Event or Todo (timedelta)
+        end - triggers relative to the end of the Event or Todo (timedelta)
         
-        absolute - datetime in UTC
+        absolute - triggers at a datetime in UTC
         """
         start: tuple[timedelta]
         end: tuple[timedelta]
@@ -1351,7 +1360,7 @@ class Alarm(Component):
         >>> from icalendar import Alarm
         >>> from datetime import timedelta
         >>> alarm = Alarm()
-        >>> alarm.TRIGGER = timedelta(hours=-4)  # trigger 4 hours after
+        >>> alarm.TRIGGER = timedelta(hours=-4)  # trigger 4 hours before START
         >>> alarm.DURATION = timedelta(hours=1)  # after 1 hour trigger again
         >>> alarm.REPEAT = 2  # trigger 2 more times
         >>> alarm.triggers.start == (timedelta(hours=-4),  timedelta(hours=-3),  timedelta(hours=-2))
@@ -1376,8 +1385,9 @@ class Alarm(Component):
                 end.append(trigger)
                 add = end
             duration = self.DURATION
-            for _ in range(self.REPEAT):
-                add.append(add[-1] + duration)
+            if duration is not None:
+                for _ in range(self.REPEAT):
+                    add.append(add[-1] + duration)
         return self.Triggers(start=tuple(start), end=tuple(end), absolute=tuple(absolute))
 
 class Calendar(Component):

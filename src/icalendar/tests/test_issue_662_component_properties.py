@@ -557,20 +557,20 @@ def test_get_alarm_triggers(alarms, file, triggers):
     assert alarm.triggers == triggers
 
 
-def triggers_emtpy_alarm():
+def test_triggers_emtpy_alarm():
     """An alarm with no trigger has no triggers."""
     assert Alarm().triggers == ((), (), ())
 
 h1 = timedelta(hours=1)
 
-def triggers_emtpy_with_no_repeat():
+def test_triggers_emtpy_with_no_repeat():
     """Check incomplete values."""
     a = Alarm()
     a.TRIGGER = h1
     a.DURATION = h1
     assert a.triggers == ((h1,), (), ())
 
-def triggers_emtpy_with_no_duration():
+def test_triggers_emtpy_with_no_duration():
     """Check incomplete values."""
     a = Alarm()
     a.TRIGGER = h1
