@@ -25,68 +25,59 @@ We do not claim compatibility to the following RFCs. They might work though.
 - :rfc:`9073` - Event Publishing Extensions to iCalendar
 - :rfc:`9253` - Support for iCalendar Relationships
 
-File structure
+iCalendar File structure
 --------------
 
-An iCalendar file is a text file (utf-8) with a special format. Basically it
-consists of content lines.
+An iCalendar file is a text file (utf-8) with a special format.
 
-Each content line defines a property that has 3 parts (name, parameters,
-values). Parameters are optional.
+It consists of **content lines**,
+with each content line defining a property that has 3 parts: name, parameters and value. Parameters are optional.
 
-A simple content line with only name and value could look like this::
+Example 1: a simple content line (with only name and value)::
 
   BEGIN:VCALENDAR
 
-A content line with parameters can look like this::
+Example 2: a content line with parameters::
 
   ATTENDEE;CN=Max Rasmussen;ROLE=REQ-PARTICIPANT:MAILTO:example@example.com
 
-And the parts are::
+The parts in this example are::
 
   Name:   ATTENDEE
   Params: CN=Max Rasmussen;ROLE=REQ-PARTICIPANT
   Value:  MAILTO:example@example.com
 
-Long content lines are usually "folded" to less than 75 character, but the
-package takes care of that.
+Note: Long content lines are usually "folded" to less than 75 characters (the
+package takes care of this).
 
+On a higher level, you can think of iCalendar files structured as having components and sub components.
 
-Overview
---------
+A component will have properties with values. The values
+have special types, like integer, text, and datetime. These values are
+encoded in a special text format in an iCalendar file. This package contains methods for converting to and from these encodings.
 
-On a higher level iCalendar files consists of components. Components can have
-sub components.
-
-The root component is the VCALENDAR::
+Example 1: this is a VCALENDAR component representing a calendar::
 
   BEGIN:VCALENDAR
   ... vcalendar properties ...
   END:VCALENDAR
 
-The most frequent subcomponent to a VCALENDAR is a VEVENT. They are
-nested like this::
+Example 2: The most frequent subcomponent to a VCALENDAR component is a VEVENT. This is a VCALENDAR component with a nested VEVENT subcomponent::
 
   BEGIN:VCALENDAR
   ... vcalendar properties ...
   BEGIN:VEVENT
   ... vevent properties ...
   END:VEVENT
-    END:VCALENDAR
-
-Inside the components there are properties with values. The values
-have special types. Like integer, text, datetime etc. these values are
-encoded in a special text format in an iCalendar file.
-
-There are methods for converting to and from these encodings in the package.
-
-These are the most important imports::
-
-  >>> from icalendar import Calendar, Event
+  END:VCALENDAR
 
 
 Components
 ----------
+
+Note: The code snippets remainder of the docs will use these important imports::
+
+  >>> from icalendar import Calendar, Event
 
 Components are like (Case Insensitive) dicts. So if you want to set a property
 you do it like this. The calendar is a component::
