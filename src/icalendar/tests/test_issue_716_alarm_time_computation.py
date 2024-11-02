@@ -197,11 +197,6 @@ def test_cannot_set_the_event_twice(calendars):
         a.add_component(calendars.alarm_google_future.subcomponents[-1])
 
 
-def test_alarms_from_calendar():
-    pytest.skip("TODO")
-
-
-
 @pytest.mark.parametrize(
     ("calendar", "index", "count", "message"),
     [
