@@ -6,7 +6,7 @@ These are the defined components.
 from __future__ import annotations
 
 import os
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, tzinfo
 from typing import List, Optional, Tuple
 
 import dateutil.rrule
@@ -14,7 +14,7 @@ import dateutil.tz
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_split
 from icalendar.parser_tools import DEFAULT_ENCODING
-from icalendar.prop import TypesFactory, vDDDLists, vDDDTypes, vText, vDuration
+from icalendar.prop import TypesFactory, vDDDLists, vDDDTypes, vText, vDuration, tzid_from_tzinfo
 from icalendar.timezone import tzp
 
 
@@ -1056,6 +1056,53 @@ class Timezone(Component):
             assert dst_offset is not False
             transition_info.append((osto, dst_offset, name))
         return transition_times, transition_info
+
+    @classmethod
+    def from_tzinfo(cls, timezone: tzinfo, tzid:Optional[str]=None, first_date: datetime=datetime(1970, 1, 1), last_date:datetime=datetime(2040, 1, 1)) -> Timezone:  # noqa: DTZ001
+        """Return a VTIMEZONE component from a timezone object.
+
+        This works with pytz and zoneinfo and any other timezone.
+        The offsets are calculated from the actial tzinfo object.
+        """
+        first_date = first_date.replace(tzinfo=timezone)
+        last_date = last_date.replace(tzinfo=timezone)
+        skip_offsets = (timedelta(days=60), timedelta(days=1), timedelta(hours=1), timedelta(minutes=1), timedelta(seconds=1))
+        offsets : list[tuple[timedelta, timedelta, str, datetime, datetime]] = [] # from, to, tzname, start, end
+        start = first_date
+        while start < last_date:
+            end = start
+            offset_to = end.utcoffset()
+            for add_offset in skip_offsets:
+                end += add_offset
+                while end.utcoffset() == offset_to:
+                    end += add_offset
+                # retract if we overshoot
+                end -= add_offset
+            end += skip_offsets[-1]
+            # Now, start (inclusive) -> end (exclusive) are one timezone
+            offsets.append((
+                (start - skip_offsets[-1]).utcoffset(),
+                start.utcoffset(),
+                start.tzname(),
+                start,
+                end
+            ))
+            start = end
+        # 
+        tz = cls()
+        if tzid is None:
+            tzid = tzid_from_tzinfo(timezone)
+            if tzid is None:
+                raise ValueError(f"Cannot get TZID from {timezone}. Please set the tzid parameter.")
+        tz.add("TZID", timezone)
+        for offset_from, offset_to, tzname, start, _ in offsets:
+             subcomponent = TimezoneDaylight() if start.dst() == offset_to else TimezoneStandard()
+             subcomponent.add("TZOFFSETFROM", offset_from)
+             subcomponent.add("TZOFFSETTO", offset_to)
+             subcomponent.add("TZNAME", tzname)
+             subcomponent.add("DTSTART", start.replace(tzinfo=None))
+             tz.add_component(subcomponent)
+        return tz
 
 
 class TimezoneStandard(Component):

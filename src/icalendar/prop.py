@@ -65,17 +65,21 @@ WEEKDAY_RULE = re.compile(r'(?P<signal>[+-]?)(?P<relative>[\d]{0,2})'
                           r'(?P<weekday>[\w]{2})$')
 
 
+def tzid_from_tzinfo(tzinfo: tzinfo) -> Optional[str]:
+    """Retrieve the timezone id from the tzinfo object."""
+    tzid = None
+    if hasattr(tzinfo, 'zone'):
+        tzid = tzinfo.zone  # pytz implementation
+    elif hasattr(tzinfo, 'key'):
+        tzid = tzinfo.key  # ZoneInfo implementation
+    return tzid
+
+
 def tzid_from_dt(dt: datetime) -> Optional[str]:
     """Retrieve the timezone id from the datetime object."""
-    tzid = None
-    if hasattr(dt.tzinfo, 'zone'):
-        tzid = dt.tzinfo.zone  # pytz implementation
-    elif hasattr(dt.tzinfo, 'key'):
-        tzid = dt.tzinfo.key  # ZoneInfo implementation
-    elif hasattr(dt.tzinfo, 'tzname'):
-        # dateutil implementation, but this is broken
-        # See https://github.com/collective/icalendar/issues/333 for details
-        tzid = dt.tzinfo.tzname(dt)
+    tzid = tzid_from_tzinfo(dt.tzinfo)
+    if tzid is None:
+        return dt.tzname()
     return tzid
 
 
