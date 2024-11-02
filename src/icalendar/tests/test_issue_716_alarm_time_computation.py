@@ -65,9 +65,19 @@ def test_absolute_alarm_time_with_vDatetime(alarm):
     assert times[0].trigger == EXAMPLE_TRIGGER
 
 
-def test_alarm_has_only_one_of_repeat_or_duration():
+alarm_incomplete_1 = Alarm()
+alarm_incomplete_1.TRIGGER = timedelta(hours=2)
+alarm_incomplete_1.DURATION = timedelta(hours=1)
+alarm_incomplete_2 = Alarm()
+alarm_incomplete_2.TRIGGER = timedelta(hours=2)
+alarm_incomplete_2.REPEAT = 100
+
+@pytest.mark.parametrize("alarm", [alarm_incomplete_1, alarm_incomplete_2])
+def test_alarm_has_only_one_of_repeat_or_duration(alarm):
     """This is an edge case and we should ignore the repetition."""
-    pytest.skip("TODO")
+    a = Alarms(alarm)
+    a.set_start(datetime(2027, 12, 2))
+    assert len(a.times) == 1
 
 
 @pytest.fixture(params=[(0, timedelta(minutes=-30)), (1, timedelta(minutes=-25))])

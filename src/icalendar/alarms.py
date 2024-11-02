@@ -329,8 +329,8 @@ class Alarms:
         """The times when the alarm is triggered relative to start."""
         yield first # we trigger at the start
         repeat = alarm.REPEAT
-        if repeat:
-            duration = alarm.DURATION
+        duration = alarm.DURATION
+        if repeat and duration:
             for i in range(1, repeat + 1):
                 yield self._add(first, duration * i)
 
