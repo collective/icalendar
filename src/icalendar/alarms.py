@@ -282,8 +282,7 @@ class Alarms:
         an event has been acknowledged because of an alarm.
         All alarms that happen before this time count as ackknowledged.
         """
-        if dt is not None:
-            self._last_ack = tzp.localize_utc(dt)
+        self._last_ack = tzp.localize_utc(dt) if dt is not None else None
 
     def snooze_until(self, dt: Optional[date]) -> None:
         """This is the time in UTC when all the alarms of this component were snoozed.
@@ -293,8 +292,7 @@ class Alarms:
         The alarms are supposed to turn up again at dt when they are not acknowledged
         but snoozed.
         """
-        if dt is not None:
-            self._snooze_until = tzp.localize_utc(dt)
+        self._snooze_until = tzp.localize_utc(dt) if dt is not None else None
 
     def set_local_timezone(self, tzinfo:Optional[tzinfo|str]):
         """Set the local timezone.

@@ -338,4 +338,10 @@ def test_rfc_9074_alarm_times(events, event_index, alarm_times):
 
 def test_set_to_None():
     """acknowledge_until, snooze_until, set_local_timezone."""
-    pytest.skip("TODO")
+    a = Alarms()
+    a.set_start(None)
+    a.set_end(None)
+    a.set_local_timezone(None)
+    a.acknowledge_until(None)
+    a.snooze_until(None)
+    assert vars(a) == vars(Alarms())
