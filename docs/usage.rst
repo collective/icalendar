@@ -75,7 +75,9 @@ Example 2: The most frequent subcomponent to a VCALENDAR component is a VEVENT. 
 Components
 ----------
 
-Note: The code snippets remainder of the docs will use these important imports::
+The remaining code snippets in the documentation will use the following important imports.
+
+.. code-block:: pycon
 
   >>> from icalendar import Calendar, Event
 
