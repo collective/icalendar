@@ -25,8 +25,8 @@ We do not claim compatibility to the following RFCs. They might work though.
 - :rfc:`9073` - Event Publishing Extensions to iCalendar
 - :rfc:`9253` - Support for iCalendar Relationships
 
-iCalendar File structure
---------------
+iCalendar file structure
+------------------------
 
 An iCalendar file is a text file (utf-8) with a special format.
 
