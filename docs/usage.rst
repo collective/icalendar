@@ -28,12 +28,12 @@ We do not claim compatibility to the following RFCs. They might work though.
 iCalendar file structure
 ------------------------
 
-An iCalendar file is a text file (utf-8) with a special format.
+An iCalendar file is a text file with UTF-8 character encoding in a special format.
 
 It consists of **content lines**,
 with each content line defining a property that has 3 parts: name, parameters and value. Parameters are optional.
 
-Example 1: a simple content line (with only name and value)::
+Example 1: a simple content line, with only name and value.
 
   BEGIN:VCALENDAR
 
@@ -47,8 +47,7 @@ The parts in this example are::
   Params: CN=Max Rasmussen;ROLE=REQ-PARTICIPANT
   Value:  MAILTO:example@example.com
 
-Note: Long content lines are usually "folded" to less than 75 characters (the
-package takes care of this).
+For long content lines, iCalendar usually "folds" them to less than 75 characters.
 
 On a higher level, you can think of iCalendar files structured as having components and sub components.
 
