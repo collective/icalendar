@@ -55,7 +55,24 @@ def test_berlin_time(tzp):
         print(x.to_ical().decode())
     assert len(tz.daylight) == 1
     assert len(tz.standard) == 1
-    
+
 
 def test_end_of_zoninfo_range():pytest.skip("TODO")
 def test_range_is_not_crossed():pytest.skip("TODO")
+
+
+def test_use_the_original_timezone(tzid, tzp):
+    """When we get the timezone again, usually, we should use the
+    one of the library/tzp."""
+    pytest.skip("todo")
+
+@tzids
+def test_offset_and_other_parameters_match(tzp, tzid):
+    """When we create our timezone and parse it again
+    we want to make sure that the generated times and their
+    attributes match.
+    - equality
+    - utc offset
+    - dst
+    """
+    
