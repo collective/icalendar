@@ -1104,12 +1104,12 @@ class Timezone(Component):
             offset_to = end.utcoffset()
             for add_offset in cls._from_tzinfo_skip_search:
                 end = normalize(end + add_offset)
-                while end.utcoffset() == offset_to:
-                    try:
+                try:
+                    while end.utcoffset() == offset_to:
                         end = normalize(end + add_offset)
-                    except OverflowError:
-                        # zoninfo does not go all the way
-                        break
+                except OverflowError:
+                    # zoninfo does not go all the way
+                    break
                 # retract if we overshoot
                 end = normalize(end - add_offset)
             # Now, start (inclusive) -> end (exclusive) are one timezone
@@ -1146,7 +1146,7 @@ class Timezone(Component):
     @property
     def daylight(self) -> list[TimezoneDaylight]:
         """The DAYLIGHT subcomponents as a list.
-        
+
         These are for the daylight saving time.
         """
         return self.walk("DAYLIGHT")
