@@ -1049,7 +1049,10 @@ class Timezone(Component):
                 "VTIMEZONEs sub-components' DTSTART must be of type datetime, not date"
             )
             try:
-                tzname = self._make_unique_tzname(self.tz_name, tznames)
+                tzname = str(component['TZNAME'])
+            except UnicodeEncodeError:
+                tzname = component['TZNAME'].encode('ascii', 'replace')
+                tzname = self._make_unique_tzname(tzname, tznames)
             except KeyError:
                 # for whatever reason this is str/unicode
                 tzname = f"{zone}_{component['DTSTART'].to_ical().decode('utf-8')}_" + \
