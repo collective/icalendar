@@ -10,19 +10,27 @@ we should be able to create tests that work for the past.
 """
 
 from datetime import date, timedelta
+from pprint import pprint
 import pytest
 
 from icalendar import Component, Timezone
 
-tzids = pytest.mark.parametrize("tzid", ["Europe/Berlin", "Asia/Singapore", "America/New_York"])
+tzids = pytest.mark.parametrize("tzid", [
+    # "Europe/Berlin",
+    "Asia/Singapore",
+    # "America/New_York",
+])
 
 def assert_components_equal(c1:Component, c2:Component):
     """Print the diff of two components."""
+    ML = 32
     ll1 = c1.to_ical().decode().splitlines()
-    pad = max(len(l) for l in ll1)
+    ll2 = c2.to_ical().decode().splitlines()
+    pad = max(len(l) for l in ll1 if len(l) <=ML)
     diff = 0
-    for l1, l2 in zip(ll1, c2.to_ical().decode().splitlines()):
-        print(l1, " " * (pad - len(l1)), l2, " "*(pad - len(l2)), "\tdiff!" if l1 != l2 else "")
+    for l1, l2 in zip(ll1, ll2):
+        a = len(l1) > 32 or len(l2) > 32
+        print(a * "  " + l1, " " * (pad - len(l1)), a* "\n->" + l2, " "*(pad - len(l2)), "\tdiff!" if l1 != l2 else "")
         diff += l1 != l2
     assert not diff, f"{diff} lines differ"
 
@@ -38,6 +46,8 @@ def test_conversion_converges(tzp, tzid):
     generated1["TZID"] = "test-generated"  # change the TZID so we do not use an existing one
     tzinfo2 = generated1.to_tz()
     generated2 = Timezone.from_tzinfo(tzinfo2, "test-generated")
+    pprint(generated1.get_transitions())
+    pprint(generated2.get_transitions())
     assert_components_equal(generated1, generated2)
     assert 2 <= len(generated1.standard + generated1.daylight) <= 3
     assert 2 <= len(generated2.standard + generated2.daylight) <= 3
@@ -46,6 +56,7 @@ def test_conversion_converges(tzp, tzid):
     # assert generated1.daylight == generated2.daylight
     # assert generated1.standard == generated2.standard
     # assert generated1 == generated2
+    assert False
 
 
 @tzids

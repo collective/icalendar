@@ -389,7 +389,7 @@ fiji_expected_offsets = [
 
 def test_transition_times_fiji(tzp, timezones):
     """The transition times are computed."""
-    tz = timezones.pacific_fiji.to_tz(tzp)
+    tz = timezones.pacific_fiji.to_tz(tzp, lookup_tzid=False)
     offsets = []  # [(before, after), ...]
     for i, transition_time in enumerate(fiji_transition_times):
         before_after_offset = []

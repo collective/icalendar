@@ -65,7 +65,7 @@ class TZP:
             tz = self.timezone(tz)
         return self.__provider.localize(dt, tz)
 
-    def cache_timezone_component(self, timezone_component: cal.VTIMEZONE) -> None:
+    def cache_timezone_component(self, timezone_component: cal.Timezone) -> None:
         """Cache the timezone that is created from a timezone component
         if it is not already known.
 
@@ -73,11 +73,11 @@ class TZP:
         custom timezone is returned from timezone().
         """
         _unclean_id = timezone_component['TZID']
-        id = self.clean_timezone_id(_unclean_id)
-        if not self.__provider.knows_timezone_id(id) \
+        _id = self.clean_timezone_id(_unclean_id)
+        if not self.__provider.knows_timezone_id(_id) \
             and not self.__provider.knows_timezone_id(_unclean_id) \
-            and id not in self.__tz_cache:
-            self.__tz_cache[id] = timezone_component.to_tz(self)
+            and _id not in self.__tz_cache:
+            self.__tz_cache[_id] = timezone_component.to_tz(self, lookup_tzid=False)
 
     def fix_rrule_until(self, rrule:rrule, ical_rrule:prop.vRecur) -> None:
         """Make sure the until value works."""

@@ -969,6 +969,7 @@ class Timezone(Component):
             # here we construct local times without tzinfo, the offset to UTC
             # gets subtracted in to_tz().
             transtimes = [dt.replace (tzinfo=None) for dt in rrule]
+            print("transtimes", transtimes)
 
         # or rdates
         elif 'RDATE' in component:
@@ -1007,7 +1008,10 @@ class Timezone(Component):
 
         :param tzp: timezone provider to use
         :param lookup_tzid: whether to use the TZID property to look up existing
-                            timezone definitions with tzp
+                            timezone definitions with tzp.
+                            If it is False, a new timezone will be created.
+                            If it is True, the existing timezone will be used
+                            if it exists, otherwise a new timezone will be created.
         """
         if lookup_tzid:
             tz = tzp.timezone(self.tz_name)
@@ -1137,7 +1141,6 @@ class Timezone(Component):
         else:
             first_date = first_date.replace(tzinfo=timezone)
             last_date = last_date.replace(tzinfo=timezone)
-        print("first_date", first_date)
          # from, to, tzname, is_standard -> start
         offsets :dict[tuple[Optional[timedelta], timedelta, str, bool], list[datetime]] = defaultdict(list)
         start = first_date
@@ -1163,7 +1166,6 @@ class Timezone(Component):
             name = start.tzname()
             if name is None:
                 name = str(offset_to)
-            print("START", start, name)
             key = (offset_from, offset_to, name, is_standard)
             # first_key = (None,) + key[1:]
             # if first_key in offsets:
@@ -1173,6 +1175,7 @@ class Timezone(Component):
             start = normalize(end + cls._from_tzinfo_skip_search[-1])
         tz = cls()
         tz.add("TZID", tzid)
+        tz.add("COMMENT", f"This timezone only works from {first_date} to {last_date}.")
         for (offset_from, offset_to, tzname, is_standard), starts in offsets.items():
             first_start = min(starts)
             starts.remove(first_start)
@@ -1181,8 +1184,6 @@ class Timezone(Component):
             subcomponent = TimezoneStandard() if is_standard else TimezoneDaylight()
             if offset_from is None:
                 offset_from = offset_to  # noqa: PLW2901
-                subcomponent.add("COMMENT", f"Times before {first_start.date()} may not work.")
-            print("TZOFFSETFROM", offset_from, "TZOFFSETTO", offset_to, "TZNAME", tzname)
             subcomponent.TZOFFSETFROM = offset_from
             subcomponent.TZOFFSETTO = offset_to
             subcomponent.add("TZNAME", tzname)
