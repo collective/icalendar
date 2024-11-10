@@ -5,17 +5,26 @@ These are the defined components.
 """
 from __future__ import annotations
 
-from collections import defaultdict
 import os
+from collections import defaultdict
 from datetime import date, datetime, timedelta, tzinfo
 from typing import List, Optional, Tuple
 
 import dateutil.rrule
 import dateutil.tz
+
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_split
 from icalendar.parser_tools import DEFAULT_ENCODING
-from icalendar.prop import TypesFactory, vDDDLists, vDDDTypes, vText, vDuration, tzid_from_tzinfo
+from icalendar.prop import (
+    TypesFactory,
+    tzid_from_tzinfo,
+    vDDDLists,
+    vDDDTypes,
+    vDuration,
+    vText,
+    vUTCOffset,
+)
 from icalendar.timezone import tzp
 
 
@@ -498,8 +507,23 @@ class Component(CaselessDict):
 #######################################
 # components defined in RFC 5545
 
-def create_single_property(prop:str, value_attr:str, value_type:tuple[type], type_def:type, doc:str):
-    """Create a single property getter and setter."""
+def create_single_property(
+        prop:str,
+        value_attr:Optional[str],
+        value_type:tuple[type],
+        type_def:type,
+        doc:str,
+        vProp:type=vDDDTypes  # noqa: N803
+    ):
+    """Create a single property getter and setter.
+
+    :param prop: The name of the property.
+    :param value_attr: The name of the attribute to get the value from.
+    :param value_type: The type of the value.
+    :param type_def: The type of the property.
+    :param doc: The docstring of the property.
+    :param vProp: The type of the property from :mod:`icalendar.prop`.
+    """
 
     def p_get(self : Component):
         default = object()
@@ -508,7 +532,7 @@ def create_single_property(prop:str, value_attr:str, value_type:tuple[type], typ
             return None
         if isinstance(result, list):
             raise InvalidCalendar(f"Multiple {prop} defined.")
-        value = getattr(result, value_attr, result)
+        value = result if value_attr is None else getattr(result, value_attr, result)
         if not isinstance(value, value_type):
             raise InvalidCalendar(f"{prop} must be either a {' or '.join(t.__name__ for t in value_type)}, not {value}.")
         return value
@@ -519,7 +543,7 @@ def create_single_property(prop:str, value_attr:str, value_type:tuple[type], typ
             return
         if not isinstance(value, value_type):
             raise TypeError(f"Use {' or '.join(t.__name__ for t in value_type)}, not {type(value).__name__}.")
-        self[prop] = vDDDTypes(value)
+        self[prop] = vProp(value)
         if prop in self.exclusive:
             for other_prop in self.exclusive:
                 if other_prop != prop:
@@ -911,14 +935,14 @@ class Timezone(Component):
         return cls.from_ical(get_example("timezones", name))
 
     @staticmethod
-    def _extract_offsets(component, tzname):
+    def _extract_offsets(component: TimezoneDaylight|TimezoneStandard, tzname:str):
         """extract offsets and transition times from a VTIMEZONE component
         :param component: a STANDARD or DAYLIGHT component
         :param tzname: the name of the zone
         """
-        offsetfrom = component['TZOFFSETFROM'].td
-        offsetto = component['TZOFFSETTO'].td
-        dtstart = component['DTSTART'].dt
+        offsetfrom = component.TZOFFSETFROM
+        offsetto = component.TZOFFSETTO
+        dtstart = component.DTSTART
 
         # offsets need to be rounded to the next minute, we might loose up
         # to 30 seconds accuracy, but it can't be helped (datetime
@@ -976,9 +1000,16 @@ class Timezone(Component):
         tznames.add(tzname)
         return tzname
 
-    def to_tz(self, tzp=tzp):
+    def to_tz(self, tzp=tzp, lookup_tzid=True):
         """convert this VTIMEZONE component to a timezone object
+
+        :param tzp: timezone provider to use
+        :param lookup_tzid: whether to use the TZID property to look up existing
+                            timezone definitions with tzp
         """
+        tz = tzp.timezone(self.tz_name)
+        if tz is not None:
+            return tz
         return tzp.create_timezone(self)
 
     @property
@@ -1124,10 +1155,10 @@ class Timezone(Component):
             first_start = min(starts)
             starts.remove(first_start)
             subcomponent = TimezoneStandard() if is_standard else TimezoneDaylight()
-            subcomponent.add("TZOFFSETFROM", offset_from)
-            subcomponent.add("TZOFFSETTO", offset_to)
+            subcomponent.TZOFFSETFROM = offset_from
+            subcomponent.TZOFFSETTO = offset_to
             subcomponent.add("TZNAME", tzname)
-            subcomponent.add("DTSTART", first_start)
+            subcomponent.DTSTART = first_start
             if starts:
                 subcomponent.add("RDATE", starts)
             tz.add_component(subcomponent)
@@ -1164,6 +1195,45 @@ class TimezoneStandard(Component):
     singletons = ('DTSTART', 'TZOFFSETTO', 'TZOFFSETFROM',)
     multiple = ('COMMENT', 'RDATE', 'TZNAME', 'RRULE', 'EXDATE')
 
+    DTSTART = create_single_property(
+        "DTSTART",
+        "dt",
+        (datetime, date),
+        date,
+        """The mandatory "DTSTART" property gives the effective onset date
+        and local time for the time zone sub-component definition.
+        "DTSTART" in this usage MUST be specified as a date with a local
+        time value."""
+    )
+    TZOFFSETTO = create_single_property(
+        "TZOFFSETTO",
+        "td",
+        (timedelta,),
+        timedelta,
+        """The mandatory "TZOFFSETTO" property gives the UTC offset for the
+        time zone sub-component (Standard Time or Daylight Saving Time)
+        when this observance is in use.
+        """,
+        vUTCOffset
+    )
+    TZOFFSETFROM = create_single_property(
+        "TZOFFSETFROM",
+        "td",
+        (timedelta,),
+        timedelta,
+        """The mandatory "TZOFFSETFROM" property gives the UTC offset that is
+        in use when the onset of this time zone observance begins.
+        "TZOFFSETFROM" is combined with "DTSTART" to define the effective
+        onset for the time zone sub-component definition.  For example,
+        the following represents the time at which the observance of
+        Standard Time took effect in Fall 1967 for New York City:
+
+            DTSTART:19671029T020000
+            TZOFFSETFROM:-0400
+        """,
+        vUTCOffset
+    )
+
 
 class TimezoneDaylight(Component):
     """
@@ -1177,6 +1247,9 @@ class TimezoneDaylight(Component):
     singletons = TimezoneStandard.singletons
     multiple = TimezoneStandard.multiple
 
+    DTSTART = TimezoneStandard.DTSTART
+    TZOFFSETTO = TimezoneStandard.TZOFFSETTO
+    TZOFFSETFROM = TimezoneStandard.TZOFFSETFROM
 
 class Alarm(Component):
     """

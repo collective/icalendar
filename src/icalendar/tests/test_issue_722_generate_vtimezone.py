@@ -8,12 +8,11 @@ When we generate VTIMEZONE from actual tzinfo instances of
 Then, we cannot assume that the future information stays the same but
 we should be able to create tests that work for the past.
 """
-import dateutil.tz
+
+from datetime import timedelta
+import pytest
+
 from icalendar import Timezone
-import pytest, dateutil
-from datetime import tzinfo
-
-
 
 tzids = pytest.mark.parametrize("tzid", ["Europe/Berlin", "Asia/Singapore"])
 
@@ -55,16 +54,31 @@ def test_berlin_time(tzp):
         print(x.to_ical().decode())
     assert len(tz.daylight) == 1
     assert len(tz.standard) == 1
+    dst = tz.daylight[0]
+    sta = tz.standard[0]
+    assert dst["TZNAME"] == "CEST"  # summer
+    assert sta["TZNAME"] == "CET"
+    assert dst["TZOFFSETFROM"].td == timedelta(hours=1)  # summer
+    assert sta["TZOFFSETFROM"].td == timedelta(hours=2)
+    assert dst["TZOFFSETTO"].td == timedelta(hours=2)  # summer
+    assert sta["TZOFFSETTO"].td == timedelta(hours=1)
 
 
 def test_end_of_zoninfo_range():pytest.skip("TODO")
 def test_range_is_not_crossed():pytest.skip("TODO")
 
 
+@tzids
 def test_use_the_original_timezone(tzid, tzp):
     """When we get the timezone again, usually, we should use the
     one of the library/tzp."""
-    pytest.skip("todo")
+    tzinfo1 = tzp.timezone(tzid)
+    assert tzinfo1 is not None
+    generated1 = Timezone.from_tzinfo(tzinfo1)
+    tzinfo2 = generated1.to_tz()
+    assert type(tzinfo1) == type(tzinfo2)
+    assert tzinfo1 == tzinfo2
+
 
 @tzids
 def test_offset_and_other_parameters_match(tzp, tzid):
@@ -75,4 +89,4 @@ def test_offset_and_other_parameters_match(tzp, tzid):
     - utc offset
     - dst
     """
-    
+    pytest.skip("todo")
