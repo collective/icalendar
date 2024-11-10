@@ -1136,19 +1136,19 @@ class Timezone(Component):
             if tzid is None:
                 raise ValueError(f"Cannot get TZID from {timezone}. Please set the tzid parameter.")
         normalize = getattr(timezone, "normalize", lambda dt: dt) # pytz compatibility
-        first_date = datetime(first_date.year, first_date.month, first_date.day)  # noqa: DTZ001
-        last_date = datetime(last_date.year, last_date.month, last_date.day)  # noqa: DTZ001
+        first_datetime = datetime(first_date.year, first_date.month, first_date.day)  # noqa: DTZ001
+        last_datetime = datetime(last_date.year, last_date.month, last_date.day)  # noqa: DTZ001
         if hasattr(timezone, "localize"):  #pytz compatibility
-            first_date = timezone.localize(first_date)
-            last_date = timezone.localize(last_date)
+            first_datetime = timezone.localize(first_datetime)
+            last_datetime = timezone.localize(last_datetime)
         else:
-            first_date = first_date.replace(tzinfo=timezone)
-            last_date = last_date.replace(tzinfo=timezone)
+            first_datetime = first_datetime.replace(tzinfo=timezone)
+            last_datetime = last_datetime.replace(tzinfo=timezone)
          # from, to, tzname, is_standard -> start
         offsets :dict[tuple[Optional[timedelta], timedelta, str, bool], list[datetime]] = defaultdict(list)
-        start = first_date
+        start = first_datetime
         offset_to = None
-        while start < last_date:
+        while start < last_datetime:
             offset_from = offset_to
             end = start
             offset_to = end.utcoffset()
@@ -1182,8 +1182,8 @@ class Timezone(Component):
         for (offset_from, offset_to, tzname, is_standard), starts in offsets.items():
             first_start = min(starts)
             starts.remove(first_start)
-            if first_start.day == first_date.day and first_start.month == first_date.month and first_start.year == first_date.year:
-                first_start = datetime(first_date.year, first_date.month, first_date.day)  # noqa: DTZ001
+            if first_start.date() == last_date:
+                first_start = datetime(last_date.year, last_date.month, last_date.day)  # noqa: DTZ001
             subcomponent = TimezoneStandard() if is_standard else TimezoneDaylight()
             if offset_from is None:
                 offset_from = offset_to  # noqa: PLW2901

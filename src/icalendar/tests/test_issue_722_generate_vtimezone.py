@@ -16,9 +16,9 @@ import pytest
 from icalendar import Component, Timezone
 
 tzids = pytest.mark.parametrize("tzid", [
-    # "Europe/Berlin",
+    "Europe/Berlin",
     "Asia/Singapore",
-    # "America/New_York",
+    "America/New_York",
 ])
 
 def assert_components_equal(c1:Component, c2:Component):
@@ -40,23 +40,28 @@ def test_conversion_converges(tzp, tzid):
 
     We can assume that both generated VTIMEZONEs are equivalent.
     """
+    if tzp.uses_pytz():
+        pytest.skip("pytz will not converge on the first run. This is problematic.")
     tzinfo1 = tzp.timezone(tzid)
     assert tzinfo1 is not None
     generated1 = Timezone.from_tzinfo(tzinfo1)
     generated1["TZID"] = "test-generated"  # change the TZID so we do not use an existing one
     tzinfo2 = generated1.to_tz()
     generated2 = Timezone.from_tzinfo(tzinfo2, "test-generated")
-    pprint(generated1.get_transitions())
-    pprint(generated2.get_transitions())
+    tzinfo3 = generated2.to_tz()
+    generated3 = Timezone.from_tzinfo(tzinfo2, "test-generated")
+    # pprint(generated1.get_transitions())
+    # pprint(generated2.get_transitions())
     assert_components_equal(generated1, generated2)
+    assert_components_equal(generated2, generated3)
     assert 2 <= len(generated1.standard + generated1.daylight) <= 3
     assert 2 <= len(generated2.standard + generated2.daylight) <= 3
     assert dict(generated1) == dict(generated2)
     assert generated1.to_ical().decode() == generated2.to_ical().decode()
-    # assert generated1.daylight == generated2.daylight
-    # assert generated1.standard == generated2.standard
-    # assert generated1 == generated2
-    assert False
+    assert generated1.daylight == generated2.daylight
+    assert generated1.standard == generated2.standard
+    assert generated1 == generated2
+
 
 
 @tzids

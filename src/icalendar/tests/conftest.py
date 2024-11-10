@@ -260,6 +260,15 @@ def zoneinfo_only(tzp, request, tzp_name):
     """Skip tests that are not running under zoneinfo."""
     assert tzp.uses_zoneinfo()
 
+@pytest.fixture
+def no_pytz(tzp_name):
+    """Do not run tests with pytz."""
+    assert tzp_name != "pytz"
+
+@pytest.fixture
+def no_zoneinfo(tzp_name):
+    """Do not run tests with zoneinfo."""
+    assert tzp_name != "zoneinfo"
 
 def pytest_generate_tests(metafunc):
     """Parametrize without skipping:
@@ -267,6 +276,8 @@ def pytest_generate_tests(metafunc):
     tzp_name will be parametrized according to the use of
     - pytz_only
     - zoneinfo_only
+    - no_pytz
+    - no_zoneinfo
 
     See https://docs.pytest.org/en/6.2.x/example/parametrize.html#deferring-the-setup-of-parametrized-resources
     """
@@ -280,6 +291,9 @@ def pytest_generate_tests(metafunc):
             "zoneinfo_only" in metafunc.fixturenames
             and "pytz_only" in metafunc.fixturenames
         ), "Use pytz_only or zoneinfo_only but not both!"
+        for name in ["pytz", "zoneinfo"]:
+            if f"no_{name}" in metafunc.fixturenames and name in tzp_names:
+                tzp_names.remove(name)
         metafunc.parametrize("tzp_name", tzp_names, scope="module")
 
 
