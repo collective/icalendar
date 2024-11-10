@@ -9,12 +9,22 @@ Then, we cannot assume that the future information stays the same but
 we should be able to create tests that work for the past.
 """
 
-from datetime import timedelta
+from datetime import date, timedelta
 import pytest
 
-from icalendar import Timezone
+from icalendar import Component, Timezone
 
-tzids = pytest.mark.parametrize("tzid", ["Europe/Berlin", "Asia/Singapore"])
+tzids = pytest.mark.parametrize("tzid", ["Europe/Berlin", "Asia/Singapore", "America/New_York"])
+
+def assert_components_equal(c1:Component, c2:Component):
+    """Print the diff of two components."""
+    ll1 = c1.to_ical().decode().splitlines()
+    pad = max(len(l) for l in ll1)
+    diff = 0
+    for l1, l2 in zip(ll1, c2.to_ical().decode().splitlines()):
+        print(l1, " " * (pad - len(l1)), l2, " "*(pad - len(l2)), "\tdiff!" if l1 != l2 else "")
+        diff += l1 != l2
+    assert not diff, f"{diff} lines differ"
 
 @tzids
 def test_conversion_converges(tzp, tzid):
@@ -28,10 +38,31 @@ def test_conversion_converges(tzp, tzid):
     generated1["TZID"] = "test-generated"  # change the TZID so we do not use an existing one
     tzinfo2 = generated1.to_tz()
     generated2 = Timezone.from_tzinfo(tzinfo2, "test-generated")
+    assert_components_equal(generated1, generated2)
+    assert 2 <= len(generated1.standard + generated1.daylight) <= 3
+    assert 2 <= len(generated2.standard + generated2.daylight) <= 3
     assert dict(generated1) == dict(generated2)
-    assert generated1.daylight == generated2.daylight
-    assert generated1.standard == generated2.standard
-    assert generated1 == generated2
+    assert generated1.to_ical().decode() == generated2.to_ical().decode()
+    # assert generated1.daylight == generated2.daylight
+    # assert generated1.standard == generated2.standard
+    # assert generated1 == generated2
+
+
+@tzids
+def both_tzps_generate_the_same_info(tzid, tzp):
+    """We want to make sure that we get the same info for all timezone implementations.
+
+    We assume that
+    - the timezone implementations have the same info within the days we test
+    - the timezone transitions times do not change because they are before last_date
+    """
+    # default generation
+    tz1 = Timezone.from_tzid(tzid, tzp, last_date=date(2024, 1, 1))
+    tzp.use_zoneinfo() # we compare to zoneinfo
+    tz2 = Timezone.from_tzid(tzid, tzp, last_date=date(2024, 1, 1))
+    assert_components_equal(tz1, tz2)
+    assert tz1 == tz2
+
 
 @tzids
 def test_tzid_matches(tzid, tzp):
@@ -53,9 +84,9 @@ def test_berlin_time(tzp):
         print(x.name, x["TZNAME"], x["TZOFFSETFROM"].td, x["TZOFFSETTO"].td)
         print(x.to_ical().decode())
     assert len(tz.daylight) == 1
-    assert len(tz.standard) == 1
-    dst = tz.daylight[0]
-    sta = tz.standard[0]
+    assert len(tz.standard) in (1, 2), "We start in winter"
+    dst = tz.daylight[-1]
+    sta = tz.standard[-1]
     assert dst["TZNAME"] == "CEST"  # summer
     assert sta["TZNAME"] == "CET"
     assert dst["TZOFFSETFROM"].td == timedelta(hours=1)  # summer

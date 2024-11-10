@@ -25,7 +25,7 @@ from icalendar.prop import (
     vText,
     vUTCOffset,
 )
-from icalendar.timezone import tzp
+from icalendar.timezone import TZP, tzp
 
 
 def get_example(component_directory: str, example_name: str) -> bytes:
@@ -917,7 +917,6 @@ class FreeBusy(Component):
     )
     multiple = ('ATTENDEE', 'COMMENT', 'FREEBUSY', 'RSTATUS',)
 
-
 class Timezone(Component):
     """
     A "VTIMEZONE" calendar component is a grouping of component
@@ -928,6 +927,9 @@ class Timezone(Component):
     canonical_order = ('TZID',)
     required = ('TZID',) # it also requires one of components DAYLIGHT and STANDARD
     singletons = ('TZID', 'LAST-MODIFIED', 'TZURL',)
+
+    _DEFAULT_FIRST_DATE = date(1970, 1, 1)
+    _DEFAULT_LAST_DATE = date(2038, 1, 1)
 
     @classmethod
     def example(cls, name: str) -> Calendar:
@@ -1000,16 +1002,17 @@ class Timezone(Component):
         tznames.add(tzname)
         return tzname
 
-    def to_tz(self, tzp=tzp, lookup_tzid=True):
+    def to_tz(self, tzp:TZP=tzp, lookup_tzid:bool=True):
         """convert this VTIMEZONE component to a timezone object
 
         :param tzp: timezone provider to use
         :param lookup_tzid: whether to use the TZID property to look up existing
                             timezone definitions with tzp
         """
-        tz = tzp.timezone(self.tz_name)
-        if tz is not None:
-            return tz
+        if lookup_tzid:
+            tz = tzp.timezone(self.tz_name)
+            if tz is not None:
+                return tz
         return tzp.create_timezone(self)
 
     @property
@@ -1042,10 +1045,7 @@ class Timezone(Component):
                 "VTIMEZONEs sub-components' DTSTART must be of type datetime, not date"
             )
             try:
-                tzname = str(component['TZNAME'])
-            except UnicodeEncodeError:
-                tzname = component['TZNAME'].encode('ascii', 'replace')
-                tzname = self._make_unique_tzname(tzname, tznames)
+                tzname = self._make_unique_tzname(self.tz_name, tznames)
             except KeyError:
                 # for whatever reason this is str/unicode
                 tzname = f"{zone}_{component['DTSTART'].to_ical().decode('utf-8')}_" + \
@@ -1105,26 +1105,39 @@ class Timezone(Component):
         timedelta(seconds=1),
     ]
     @classmethod
-    def from_tzinfo(cls, timezone: tzinfo, tzid:Optional[str]=None, first_date: datetime=datetime(1970, 1, 1), last_date:datetime=datetime(2040, 1, 1)) -> Timezone:  # noqa: DTZ001
+    def from_tzinfo(
+            cls,
+            timezone: tzinfo,
+            tzid:Optional[str]=None,
+            first_date:date=_DEFAULT_FIRST_DATE,
+            last_date:date=_DEFAULT_LAST_DATE
+        ) -> Timezone:
         """Return a VTIMEZONE component from a timezone object.
 
         This works with pytz and zoneinfo and any other timezone.
         The offsets are calculated from the tzinfo object.
 
         Parameters:
-        - tzinfo - the timezone object
-        - tzid - the tzid for this timezone in case we cannot determine it
+        :param tzinfo: the timezone object
+        :param tzid: the tzid for this timezone in case we cannot determine it
                  None for pytz and zoneinfo is fine.
-        - first_date - a datetime that is earlier than anything that happens in the calendar
-        - last_date - a datetime that is later than anything that happens in the calendar
+        :param first_date: a datetime that is earlier than anything that happens in the calendar
+        :param last_date: a datetime that is later than anything that happens in the calendar
         """
         if tzid is None:
             tzid = tzid_from_tzinfo(timezone)
             if tzid is None:
                 raise ValueError(f"Cannot get TZID from {timezone}. Please set the tzid parameter.")
         normalize = getattr(timezone, "normalize", lambda dt: dt) # pytz compatibility
-        first_date = normalize(first_date.replace(tzinfo=timezone))
-        last_date = normalize(last_date.replace(tzinfo=timezone))
+        first_date = datetime(first_date.year, first_date.month, first_date.day)  # noqa: DTZ001
+        last_date = datetime(last_date.year, last_date.month, last_date.day)  # noqa: DTZ001
+        if hasattr(timezone, "localize"):  #pytz compatibility
+            first_date = timezone.localize(first_date)
+            last_date = timezone.localize(last_date)
+        else:
+            first_date = first_date.replace(tzinfo=timezone)
+            last_date = last_date.replace(tzinfo=timezone)
+        print("first_date", first_date)
          # from, to, tzname, is_standard -> start
         offsets :dict[tuple[Optional[timedelta], timedelta, str, bool], list[datetime]] = defaultdict(list)
         start = first_date
@@ -1134,27 +1147,42 @@ class Timezone(Component):
             end = start
             offset_to = end.utcoffset()
             for add_offset in cls._from_tzinfo_skip_search:
+                last_end = end  # we need to save this as we might be left and right of the time change
                 end = normalize(end + add_offset)
                 try:
                     while end.utcoffset() == offset_to:
+                        last_end = end
                         end = normalize(end + add_offset)
                 except OverflowError:
                     # zoninfo does not go all the way
                     break
                 # retract if we overshoot
-                end = normalize(end - add_offset)
+                end = last_end
             # Now, start (inclusive) -> end (exclusive) are one timezone
             is_standard = start.dst() == timedelta()
-            offsets[(offset_from, offset_to, start.tzname(), is_standard)].append(start.replace(tzinfo=None))
+            name = start.tzname()
+            if name is None:
+                name = str(offset_to)
+            print("START", start, name)
+            key = (offset_from, offset_to, name, is_standard)
+            # first_key = (None,) + key[1:]
+            # if first_key in offsets:
+            #     # remove the first one and claim it changes at that day
+            #     offsets[first_key] = offsets.pop(first_key)
+            offsets[key].append(start.replace(tzinfo=None))
             start = normalize(end + cls._from_tzinfo_skip_search[-1])
         tz = cls()
         tz.add("TZID", tzid)
         for (offset_from, offset_to, tzname, is_standard), starts in offsets.items():
-            if offset_from is None:
-                continue
             first_start = min(starts)
             starts.remove(first_start)
+            if first_start.day == first_date.day and first_start.month == first_date.month and first_start.year == first_date.year:
+                first_start = datetime(first_date.year, first_date.month, first_date.day)  # noqa: DTZ001
             subcomponent = TimezoneStandard() if is_standard else TimezoneDaylight()
+            if offset_from is None:
+                offset_from = offset_to  # noqa: PLW2901
+                subcomponent.add("COMMENT", f"Times before {first_start.date()} may not work.")
+            print("TZOFFSETFROM", offset_from, "TZOFFSETTO", offset_to, "TZNAME", tzname)
             subcomponent.TZOFFSETFROM = offset_from
             subcomponent.TZOFFSETTO = offset_to
             subcomponent.add("TZNAME", tzname)
@@ -1165,9 +1193,15 @@ class Timezone(Component):
         return tz
 
     @classmethod
-    def from_tzid(cls, tzid:str) -> Timezone:
+    def from_tzid(
+            cls,
+            tzid:str,
+            tzp:TZP=tzp,
+            first_date:date=_DEFAULT_FIRST_DATE,
+            last_date:date=_DEFAULT_LAST_DATE
+        ) -> Timezone:
         """Create a VTIMEZONE from a tzid like 'Europe/Berlin'."""
-        return cls.from_tzinfo(tzp.timezone(tzid), tzid)
+        return cls.from_tzinfo(tzp.timezone(tzid), tzid, first_date, last_date)
 
     @property
     def standard(self) -> list[TimezoneStandard]:
@@ -1198,8 +1232,8 @@ class TimezoneStandard(Component):
     DTSTART = create_single_property(
         "DTSTART",
         "dt",
-        (datetime, date),
-        date,
+        (datetime,),
+        datetime,
         """The mandatory "DTSTART" property gives the effective onset date
         and local time for the time zone sub-component definition.
         "DTSTART" in this usage MUST be specified as a date with a local
