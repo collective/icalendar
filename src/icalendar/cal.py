@@ -1125,11 +1125,15 @@ class Timezone(Component):
         The offsets are calculated from the tzinfo object.
 
         Parameters:
+
         :param tzinfo: the timezone object
         :param tzid: the tzid for this timezone in case we cannot determine it
                  None for pytz and zoneinfo is fine.
         :param first_date: a datetime that is earlier than anything that happens in the calendar
         :param last_date: a datetime that is later than anything that happens in the calendar
+
+        .. note::
+            This can take some time. Please cache the results.
         """
         if tzid is None:
             tzid = tzid_from_tzinfo(timezone)
@@ -1204,7 +1208,22 @@ class Timezone(Component):
             first_date:date=_DEFAULT_FIRST_DATE,
             last_date:date=_DEFAULT_LAST_DATE
         ) -> Timezone:
-        """Create a VTIMEZONE from a tzid like 'Europe/Berlin'."""
+        """Create a VTIMEZONE from a tzid like ``"Europe/Berlin"``.
+
+        :param tzid: the id of the timezone
+        :param tzp: the timezone provider
+        :param first_date: a datetime that is earlier than anything that happens in the calendar
+        :param last_date: a datetime that is later than anything that happens in the calendar
+
+        >>> from icalendar import Timezone
+        >>> tz = Timezone.from_tzid("Europe/Berlin")
+        >>> print(tz.to_ical()[:36])
+        BEGIN:VTIMEZONE
+        TZID:Europe/Berlin
+
+        .. note::
+            This can take some time. Please cache the results.
+        """
         return cls.from_tzinfo(tzp.timezone(tzid), tzid, first_date, last_date)
 
     @property
