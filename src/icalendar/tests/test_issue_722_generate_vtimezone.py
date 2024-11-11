@@ -224,6 +224,6 @@ def test_dateutil_timezone_when_time_is_going_backwards(calendars, tzp, uid):
     """
     cal : Calendar = calendars.issue_722_timezone_transition_ambiguity
     event : Event = cal.events[uid]
-    expected_tzname = event["X-TZNAME"]
+    expected_tzname = str(event["X-TZNAME"])
     actual_tzname = event.start.tzname()
-    assert actual_tzname == expected_tzname
+    assert actual_tzname == expected_tzname, event["SUMMARY"]
