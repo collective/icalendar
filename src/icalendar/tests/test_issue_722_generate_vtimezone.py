@@ -370,3 +370,11 @@ def test_cannot_add_unknown_timezone(calendars):
 def test_cannot_create_a_timezone_from_an_invalid_tzid():
     with pytest.raises(ValueError):
         Timezone.from_tzid("invalid/tzid")
+
+def test_dates_before_and_after_are_considered():
+    """When we add the timezones, we should check the calendar to see
+    if all dates really occur in the span we use.
+
+    We should also consider a huge default range.
+    """
+    pytest.skip("todo")

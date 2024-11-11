@@ -1422,10 +1422,21 @@ class Calendar(Component):
         """
         return self.walk("VTIMEZONE")
 
-    def add_missing_timezones(self):
+    def add_missing_timezones(
+            self,
+            first_date:date=Timezone._DEFAULT_FIRST_DATE,
+            last_date:date=Timezone._DEFAULT_LAST_DATE,
+            ):
         """Add all missing VTIMEZONE components.
 
         This adds all the timezone components that are required.
+
+        .. note::
+
+            Timezones that are not known will not be added.
+
+        :param first_date: earlier than anything that happens in the calendar
+        :param last_date: later than anything happening in the calendar
 
         >>> from icalendar import Calendar, Event
         >>> from datetime import datetime
@@ -1439,10 +1450,16 @@ class Calendar(Component):
         >>> calendar.add_missing_timezones()
         >>> calendar.timezones[0].tz_name
         'Europe/Berlin'
+        >>> calendar.get_missing_tzids()  # check that all are added
+        set()
         """
         for tzid in self.get_missing_tzids():
             try:
-                timezone = Timezone.from_tzid(tzid)
+                timezone = Timezone.from_tzid(
+                    tzid,
+                    first_date=first_date,
+                    last_date=last_date
+                )
             except ValueError:
                 continue
             self.add_component(timezone)
