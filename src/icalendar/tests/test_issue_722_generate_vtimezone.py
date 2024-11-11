@@ -9,7 +9,7 @@ Then, we cannot assume that the future information stays the same but
 we should be able to create tests that work for the past.
 """
 
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from pprint import pprint
 import pytest
 
@@ -137,3 +137,67 @@ def test_offset_and_other_parameters_match(tzp, tzid):
     - dst
     """
     pytest.skip("todo")
+
+
+
+@pytest.mark.parametrize(
+    ("tzid", "dt"),
+    [
+        ("Asia/Singapore", datetime(1970, 1, 1)),
+        ("Asia/Singapore", datetime(1981, 12, 31)),
+        ("Asia/Singapore", datetime(1981, 12, 31, 23, 10)),
+        ("Asia/Singapore", datetime(1981, 12, 31, 23, 34)),
+        ("Asia/Singapore", datetime(1981, 12, 31, 23, 59, 59)),
+        ("Asia/Singapore", datetime(1982, 1, 1)), # transition
+        ("Asia/Singapore", datetime(1982, 1, 1, 0, 1)),
+        ("Asia/Singapore", datetime(1982, 1, 1, 0, 34)),
+        ("Asia/Singapore", datetime(1982, 1, 1, 1, 0)),
+        ("Asia/Singapore", datetime(1982, 1, 1, 1, 1)),
+
+        ("Europe/Berlin", datetime(1970, 1, 1)),
+        ("Europe/Berlin", datetime(2024, 3, 31, 0, 0)),
+        ("Europe/Berlin", datetime(2024, 3, 31, 1, 0)),
+        ("Europe/Berlin", datetime(2024, 3, 31, 2, 0)),
+        ("Europe/Berlin", datetime(2024, 3, 31, 2, 59, 59)),
+        ("Europe/Berlin", datetime(2024, 3, 31, 3, 0)), # transition
+        ("Europe/Berlin", datetime(2024, 3, 31, 3, 0, 1)),
+        ("Europe/Berlin", datetime(2024, 3, 31, 4, 0)),
+        ("Europe/Berlin", datetime(2024, 10, 27, 0, 0)),
+        ("Europe/Berlin", datetime(2024, 10, 27, 1, 0)),
+        ("Europe/Berlin", datetime(2024, 10, 27, 2, 0)),
+        ("Europe/Berlin", datetime(2024, 10, 27, 2, 30)),
+        ("Europe/Berlin", datetime(2024, 10, 27, 2, 59, 59)),
+        ("Europe/Berlin", datetime(2024, 10, 27, 3, 0)), # transition
+        ("Europe/Berlin", datetime(2024, 10, 27, 3, 0, 1)),
+        ("Europe/Berlin", datetime(2024, 10, 27, 4, 0)),
+
+        ("America/New_York", datetime(1970, 1, 1)),
+        ("America/New_York", datetime(2024, 11, 3, 1, 0)),
+        ("America/New_York", datetime(2024, 11, 3, 2, 0)),
+        ("America/New_York", datetime(2024, 11, 3, 2, 59, 59)),
+        ("America/New_York", datetime(2024, 11, 3, 3, 0)), # transition 3 -> 2
+        ("America/New_York", datetime(2024, 11, 3, 3, 1, 1)),
+        ("America/New_York", datetime(2024, 11, 3, 4, 0)),
+        ("America/New_York", datetime(2025, 3, 9, 1, 0)),
+        ("America/New_York", datetime(2025, 3, 9, 1, 59, 59)),
+        ("America/New_York", datetime(2025, 3, 9, 2, 0)), # transition 2 -> 3
+        ("America/New_York", datetime(2025, 3, 9, 3, 0)),
+        ("America/New_York", datetime(2025, 3, 9, 3, 1, 1)),
+        ("America/New_York", datetime(2025, 3, 9, 4, 0)),
+    ]
+)
+def test_check_datetimes_around_transition_times(tzp, tzid, dt):
+    """We should make sure than the datetimes with the generated timezones
+    work as expected: They have the right UTC offset, dst and tzname.
+    """
+    expected_dt = tzp.localize(dt, tzid)
+    component = Timezone.from_tzinfo(tzp.timezone(tzid))
+    generated_tzinfo = component.to_tz(tzp, lookup_tzid=False)
+    generated_dt = dt.replace(tzinfo=generated_tzinfo)
+    if tzp.uses_pytz():
+        generated_dt = generated_tzinfo.normalize(generated_dt)
+        if dt == datetime(2024, 10, 27, 1, 0):
+            pytest.skip("todo: pytz bahaves weird.")
+    assert generated_dt.tzname() == expected_dt.tzname()
+    assert generated_dt.dst() == expected_dt.dst()
+    assert generated_dt.utcoffset() == expected_dt.utcoffset()
