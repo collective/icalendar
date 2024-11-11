@@ -1127,10 +1127,10 @@ class Timezone(Component):
         Parameters:
 
         :param tzinfo: the timezone object
-        :param tzid: the tzid for this timezone in case we cannot determine it
-                 None for pytz and zoneinfo is fine.
+        :param tzid: the tzid for this timezone. If None, it will be extracted from the tzinfo.
         :param first_date: a datetime that is earlier than anything that happens in the calendar
         :param last_date: a datetime that is later than anything that happens in the calendar
+        :raises ValueError: If we have no tzid and cannot extract one.
 
         .. note::
             This can take some time. Please cache the results.
