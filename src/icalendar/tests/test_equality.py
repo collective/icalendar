@@ -31,13 +31,13 @@ from icalendar.prop import (
 def assert_equal(actual_value, expected_value):
     """Make sure both values are equal"""
     assert actual_value == expected_value
-    assert actual_value == expected_value
+    assert expected_value == actual_value
 
 
 def assert_not_equal(actual_value, expected_value):
     """Make sure both values are not equal"""
     assert actual_value != expected_value
-    assert actual_value != expected_value
+    assert expected_value != actual_value
 
 
 def test_parsed_calendars_are_equal_if_parsed_again(ics_file, tzp):

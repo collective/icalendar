@@ -947,6 +947,11 @@ class vUTCOffset:
             return False
         return self.td == other.td
 
+    def __hash__(self):
+        return hash(self.td)
+
+    def __repr__(self):
+        return f"vUTCOffset({self.td!r})"
 
 class vInline(str):
     """This is an especially dumb class that just holds raw unparsed text and
