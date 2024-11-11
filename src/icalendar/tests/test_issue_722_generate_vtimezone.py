@@ -111,8 +111,16 @@ def test_berlin_time(tzp):
     assert sta["TZOFFSETTO"].td == timedelta(hours=1)
 
 
-def test_end_of_zoninfo_range():pytest.skip("TODO")
-def test_range_is_not_crossed():pytest.skip("TODO")
+def test_range_is_not_crossed():
+    first_date = datetime(2023, 1, 1)
+    last_date = datetime(2024, 1, 1)
+    def check(dt):
+        assert first_date <= dt <= last_date
+    tz = Timezone.from_tzid("Europe/Berlin", last_date=last_date, first_date=first_date)
+    for sub in tz.standard + tz.daylight:
+        check(sub.DTSTART)
+        for rdate in sub.get("RDATE", []):
+            check(rdate)
 
 
 @tzids
@@ -125,20 +133,6 @@ def test_use_the_original_timezone(tzid, tzp):
     tzinfo2 = generated1.to_tz()
     assert type(tzinfo1) == type(tzinfo2)
     assert tzinfo1 == tzinfo2
-
-
-@tzids
-def test_offset_and_other_parameters_match(tzp, tzid):
-    """When we create our timezone and parse it again
-    we want to make sure that the generated times and their
-    attributes match.
-    - equality
-    - utc offset
-    - dst
-    """
-    pytest.skip("todo")
-
-
 
 @pytest.mark.parametrize(
     ("tzid", "dt"),
