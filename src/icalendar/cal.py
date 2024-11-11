@@ -18,12 +18,14 @@ from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_sp
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import (
     TypesFactory,
+    tzid_from_dt,
     tzid_from_tzinfo,
     vDDDLists,
     vDDDTypes,
     vDuration,
     vText,
     vUTCOffset,
+    vDatetime,
 )
 from icalendar.timezone import TZP, tzp
 
@@ -324,7 +326,7 @@ class Component(CaselessDict):
     #####################
     # Generation
 
-    def property_items(self, recursive=True, sorted=True):
+    def property_items(self, recursive=True, sorted=True) -> list[tuple[str, object]]:
         """Returns properties in this component and subcomponents as:
         [(name, value), ...]
         """
@@ -969,7 +971,6 @@ class Timezone(Component):
             # here we construct local times without tzinfo, the offset to UTC
             # gets subtracted in to_tz().
             transtimes = [dt.replace (tzinfo=None) for dt in rrule]
-            print("transtimes", transtimes)
 
         # or rdates
         elif 'RDATE' in component:
@@ -1361,6 +1362,61 @@ class Calendar(Component):
         New Year's Day
         """
         return self.walk("VEVENT")
+
+    @property
+    def todos(self) -> list[Todo]:
+        """All todo components in the calendar.
+
+        This is a shortcut to get all todos.
+        Modifications do not change the calendar.
+        Use :py:meth:`Component.add_component`.
+        """
+        return self.walk("VTODO")
+
+    def get_used_tzids(self) -> set[str]:
+        """The set of TZIDs in use.
+
+        This goes through the whole calendar to find all occurrences of
+        timezone information like the TZID parameter in all attributes.
+
+        >>> from icalendar import Calendar
+        >>> calendar = Calendar.example("timezone_rdate")
+        >>> calendar.get_used_tzids()
+        {'posix/Europe/Vaduz'}
+
+        Even if you use UTC, this will not show up.
+        """
+        result = set()
+        for _, value in self.property_items(sorted=False):
+            if hasattr(value, "params"):
+                result.add(value.params.get("TZID"))
+        return result - {None}
+
+    def get_missing_tzids(self) -> set[str]:
+        """The set of missing timezone component tzids.
+
+        In order to createa :rfc:`5545` compatible calendar,
+        all of these timezones should be added.
+        """
+        tzids = self.get_used_tzids()
+        for timezone in self.timezones:
+            tzids.remove(timezone.tz_name)
+        return tzids
+
+    @property
+    def timezones(self) -> list[Timezone]:
+        """Return the timezones components in this calendar.
+
+        >>> from icalendar import Calendar
+        >>> calendar = Calendar.example("pacific_fiji")
+        >>> [timezone.tz_name for timezone in calendar.timezones]
+        ['custom_Pacific/Fiji']
+
+        .. note::
+
+            This is a read-only property.
+        """
+        return self.walk("VTIMEZONE")
 
 # These are read only singleton, so one instance is enough for the module
 types_factory = TypesFactory()

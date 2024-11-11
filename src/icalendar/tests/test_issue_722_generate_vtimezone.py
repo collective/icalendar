@@ -10,10 +10,12 @@ we should be able to create tests that work for the past.
 """
 
 from datetime import date, datetime, timedelta
+from re import findall
 
 import pytest
 
 from icalendar import Calendar, Component, Event, Timezone
+from icalendar.prop import tzid_from_tzinfo
 
 tzids = pytest.mark.parametrize("tzid", [
     "Europe/Berlin",
@@ -239,3 +241,105 @@ def test_dateutil_timezone_when_time_is_going_backwards(calendars, tzp, uid):
     expected_tzname = str(event["X-TZNAME"])
     actual_tzname = event.start.tzname()
     assert actual_tzname == expected_tzname, event["SUMMARY"]
+
+
+def query_tzid(query:str, cal:Calendar) -> str:
+    """The tzid from the query."""
+    try:
+        tzinfo = eval(query, {"cal": cal})  # noqa: S307
+    except Exception as e:
+        raise ValueError(query) from e
+    return  tzid_from_tzinfo(tzinfo)
+
+# these are queries for all the places that have a TZID
+# according to RFC 5545
+queries = [
+    "cal.events[0].start.tzinfo",  # DTSTART
+    "cal.events[0].end.tzinfo",  # DTEND
+    # EXDATE
+    "cal.todos[0].end.tzinfo",  # DUE
+    "cal.events[0].get('RDATE').dts[0].dt[0].tzinfo",  # RDATE
+    "cal.events[1].get('RECURRENCE-ID').dt.tzinfo",  # RECURRENCE-ID
+    "cal.events[2].get('RDATE')[0].dts[0].dt.tzinfo",  # RDATE multiple
+    "cal.events[2].get('RDATE')[1].dts[0].dt.tzinfo",  # RDATE multiple
+]
+
+@pytest.mark.parametrize("query", queries)
+def test_add_missing_timezones_to_example(calendars, query):
+    """Add the missing timezones to the calendar."""
+    cal = calendars.issue_722_missing_timezones
+    tzid = query_tzid(query, cal)
+    tzs = cal.get_missing_tzids()
+    assert tzid in tzs
+
+def test_queries_yield_unique_tzids(calendars):
+    """We make sure each query tests a unique place to find for the algorithm."""
+    cal = calendars.issue_722_missing_timezones
+    tzids = set()
+    for query in queries:
+        tzid = query_tzid(query, cal)
+        print(query, "->", tzid)
+        tzids.add(tzid)
+    assert len(tzids) == len(queries)
+
+def test_we_do_not_miss_to_add_a_query(calendars):
+    """Make sure all tzids are actually queried."""
+    cal = calendars.issue_722_missing_timezones
+    raw = cal.raw_ics.decode()
+    ids = set(findall("TZID=([a-zA-Z_/+-]+)", raw))
+    assert cal.get_used_tzids() == ids, "We find all tzids and they are unique."
+    assert len(ids) == len(queries), "We query all the tzids."
+
+def test_unknown_tzid(calendars):
+    """If we have an unknown tzid with no timezone component."""
+    cal = calendars.issue_722_missing_VTIMEZONE_custom
+    assert "CUSTOM_tzid" in cal.get_used_tzids()
+    assert "CUSTOM_tzid" in cal.get_missing_tzids()
+
+def test_custom_timezone_is_found_and_used(calendars):
+    """Check the custom timezone component is not missing."""
+    pytest.skip("todo")
+    cal = calendars.america_new_york
+    assert "custom_America/New_York" in cal.get_used_tzids()
+    assert "custom_America/New_York" not in cal.get_missing_tzids()
+
+def test_not_missing_anything():
+    """Check that no timezone is missing."""
+    cal = Calendar()
+    assert cal.get_missing_tzids() == set()
+
+def test_utc_is_not_missing(calendars):
+    """UTC should not be found missing."""
+    cal = calendars.issue_722_missing_timezones
+    assert "UTC" not in cal.get_missing_tzids()
+    assert "UTC" not in cal.get_used_tzids()
+
+def test_dateutil_timezone_is_matched_with_tzname():
+    """dateutil is an example of a timezone that has no tzid.
+    
+    In this test we make sure that the timezone is said to be missing.
+    """
+    pytest.skip("todo")
+
+@pytest.mark.parametrize("component", ["STANDARD", "DAYLIGHT"])
+def test_dateutil_timezone_is_matched_with_tzname(component):
+    """dateutil is an example of a timezone that has no tzid.
+    
+    In this test we make sure that the timezone is matched by its
+    tzname() in the timezone in the STANDARD and DAYLIGHT components.
+    """
+    pytest.skip("todo")
+
+
+@pytest.mark.parametrize(
+    "calendar",
+    [
+        "example",
+        "america_new_york", # custom
+        "timezone_same_start", # known tzid
+        "period_with_timezone", # known tzid
+    ]
+)
+def test_timezone_is_not_missing(calendars, calendar):
+    """Check that these calendars have no timezone missing."""
+    assert set() == calendars[calendar].get_missing_tzids()
