@@ -646,7 +646,7 @@ class Event(Component):
     ignore_exceptions = True
 
     @classmethod
-    def example(cls, name:str) -> Event:
+    def example(cls, name:str="rfc_9074_example_3") -> Event:
         """Return the calendar example with the given name."""
         return cls.from_ical(get_example("events", name))
 
@@ -932,8 +932,8 @@ class Timezone(Component):
     _DEFAULT_LAST_DATE = date(2038, 1, 1)
 
     @classmethod
-    def example(cls, name: str) -> Calendar:
-        """Return the calendar example with the given name."""
+    def example(cls, name: str="pacific_fiji") -> Calendar:
+        """Return the timezone example with the given name."""
         return cls.from_ical(get_example("timezones", name))
 
     @staticmethod
@@ -1340,9 +1340,27 @@ class Calendar(Component):
     singletons = ('PRODID', 'VERSION', 'CALSCALE', 'METHOD')
 
     @classmethod
-    def example(cls, name: str) -> Calendar:
+    def example(cls, name: str="example") -> Calendar:
         """Return the calendar example with the given name."""
         return cls.from_ical(get_example("calendars", name))
+
+    @property
+    def events(self) -> list[Event]:
+        """All event components in the calendar.
+
+        This is a shortcut to get all events.
+        Modifications do not change the calendar.
+        Use :py:meth:`Component.add_component`.
+
+        >>> from icalendar import Calendar
+        >>> calendar = Calendar.example()
+        >>> event = calendar.events[0]
+        >>> event.start
+        datetime.date(2022, 1, 1)
+        >>> print(event["SUMMARY"])
+        New Year's Day
+        """
+        return self.walk("VEVENT")
 
 # These are read only singleton, so one instance is enough for the module
 types_factory = TypesFactory()
