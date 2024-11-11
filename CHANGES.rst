@@ -6,7 +6,8 @@ Changelog
 
 Minor changes:
 
-- Added ``end``, ``start``, ``duration``, ``DTSTART``, ``DUE``, and ``DURATION`` attributes to ``Todo`` components. See `Issue 662`_.
+- Add ``end``, ``start``, ``duration``, ``DTSTART``, ``DUE``, and ``DURATION`` attributes to ``Todo`` components. See `Issue 662`_.
+- Add ``DTSTART``, ``TZOFFSETTO`` and ``TZOFFSETFROM`` properties to ``TimezoneStandard`` and ``TimezoneDaylight``. See `Issue 662`_.
 - Format test code with Ruff. See `Issue 672 <https://github.com/collective/icalendar/issues/672>`_.
 - Document the Debian package. See `Issue 701 <https://github.com/collective/icalendar/issues/701>`_.
 - Document component classes with description from :rfc:`5545`.
@@ -19,10 +20,14 @@ New features:
 
 - Add ``VALARM`` properties for :rfc:`9074`. See `Issue 657 <https://github.com/collective/icalendar/issues/657>`_
 - Test compatibility with Python 3.13
+- Add ``Timezone.from_tzinfo()`` and ``Timezone.from_tzid()`` to create a ``Timezone`` component from a ``datetime.tzinfo`` timezone. See `Issue 722`_.
+- Add ``icalendar.prop.tzid_from_tzinfo``.
 
 Bug fixes:
 
 - Add ``icalendar.timezone`` to the documentation.
+
+.. _`Issue 722`: https://github.com/collective/icalendar/issues/722
 
 6.0.1 (2024-10-13)
 ------------------

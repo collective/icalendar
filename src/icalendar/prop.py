@@ -1135,4 +1135,4 @@ __all__ = ["DURATION_REGEX", "TimeBase", "TypesFactory", "WEEKDAY_RULE",
            "vCategory", "vDDDLists", "vDDDTypes", "vDate", "vDatetime",
            "vDuration", "vFloat", "vFrequency", "vGeo", "vInline", "vInt",
            "vMonth", "vPeriod", "vRecur", "vSkip", "vText", "vTime",
-           "vUTCOffset", "vUri", "vWeekday"]
+           "vUTCOffset", "vUri", "vWeekday", "tzid_from_tzinfo"]
