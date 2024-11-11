@@ -10,7 +10,7 @@ we should be able to create tests that work for the past.
 """
 
 from datetime import date, datetime, timedelta
-from pprint import pprint
+
 import pytest
 
 from icalendar import Component, Timezone
@@ -87,9 +87,15 @@ def test_tzid_matches(tzid, tzp):
     assert tz["TZID"] == tzid
 
 
-def test_do_not_convert_utc():
-    """We do not need to convert UTC."""
-    pytest.skip("TODO")
+def test_do_not_convert_utc(tzp):
+    """We do not need to convert UTC but it should work."""
+    utc = Timezone.from_tzid("UTC")
+    assert utc.daylight == []
+    assert len(utc.standard) == 1
+    standard = utc.standard[0]
+    assert standard["TZOFFSETFROM"].td == timedelta(0)
+    assert standard["TZOFFSETTO"].td == timedelta(0)
+    assert standard["TZNAME"] == "UTC"
 
 
 def test_berlin_time(tzp):
