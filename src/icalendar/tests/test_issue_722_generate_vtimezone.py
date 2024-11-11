@@ -342,4 +342,31 @@ def test_dateutil_timezone_is_matched_with_tzname(component):
 )
 def test_timezone_is_not_missing(calendars, calendar):
     """Check that these calendars have no timezone missing."""
-    assert set() == calendars[calendar].get_missing_tzids()
+    cal :Calendar= calendars[calendar]
+    timezones = cal.timezones[:]
+    assert set() == cal.get_missing_tzids()
+    cal.add_missing_timezones()
+    assert set() == cal.get_missing_tzids()
+    assert cal.timezones == timezones
+
+def test_add_missing_known_timezones(calendars):
+    """Add all timezones specified."""
+    cal :Calendar= calendars.issue_722_missing_timezones
+    assert len(cal.timezones) == 0
+    cal.add_missing_timezones()
+    assert len(cal.timezones) == len(queries), "all timezones are known"
+    assert len(cal.get_missing_tzids()) == 0
+
+def test_cannot_add_unknown_timezone(calendars):
+    """I cannot add a timezone that is unknown."""
+    cal :Calendar= calendars.issue_722_missing_VTIMEZONE_custom
+    assert len(cal.timezones) == 0
+    assert cal.get_missing_tzids() == {"CUSTOM_tzid"}
+    cal.add_missing_timezones()
+    assert cal.timezones == [], "we cannot add this timezone"
+    assert cal.get_missing_tzids() == {"CUSTOM_tzid"}
+
+
+def test_cannot_create_a_timezone_from_an_invalid_tzid():
+    with pytest.raises(ValueError):
+        Timezone.from_tzid("invalid/tzid")

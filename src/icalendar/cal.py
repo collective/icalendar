@@ -1215,6 +1215,7 @@ class Timezone(Component):
         :param tzp: the timezone provider
         :param first_date: a datetime that is earlier than anything that happens in the calendar
         :param last_date: a datetime that is later than anything that happens in the calendar
+        :raises ValueError: If the tzid is unknown.
 
         >>> from icalendar import Timezone
         >>> tz = Timezone.from_tzid("Europe/Berlin")
@@ -1225,7 +1226,10 @@ class Timezone(Component):
         .. note::
             This can take some time. Please cache the results.
         """
-        return cls.from_tzinfo(tzp.timezone(tzid), tzid, first_date, last_date)
+        tz = tzp.timezone(tzid)
+        if tz is None:
+            raise ValueError(f"Unkown timezone {tzid}.")
+        return cls.from_tzinfo(tz, tzid, first_date, last_date)
 
     @property
     def standard(self) -> list[TimezoneStandard]:
@@ -1417,6 +1421,31 @@ class Calendar(Component):
             This is a read-only property.
         """
         return self.walk("VTIMEZONE")
+
+    def add_missing_timezones(self):
+        """Add all missing VTIMEZONE components.
+
+        This adds all the timezone components that are required.
+
+        >>> from icalendar import Calendar, Event
+        >>> from datetime import datetime
+        >>> from zoneinfo import ZoneInfo
+        >>> calendar = Calendar()
+        >>> event = Event()
+        >>> calendar.add_component(event)
+        >>> event.start = datetime(1990, 10, 11, 12, tzinfo=ZoneInfo("Europe/Berlin"))
+        >>> calendar.timezones
+        []
+        >>> calendar.add_missing_timezones()
+        >>> calendar.timezones[0].tz_name
+        'Europe/Berlin'
+        """
+        for tzid in self.get_missing_tzids():
+            try:
+                timezone = Timezone.from_tzid(tzid)
+            except ValueError:
+                continue
+            self.add_component(timezone)
 
 # These are read only singleton, so one instance is enough for the module
 types_factory = TypesFactory()
