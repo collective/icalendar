@@ -2,6 +2,7 @@ try:
     from backports import zoneinfo
 except ImportError:
     import zoneinfo
+from typing import Generator
 import pytest
 
 import icalendar
@@ -66,6 +67,7 @@ class DataSource:
         source = self._parser(raw_ics)
         if not isinstance(source, list):
             source.raw_ics = raw_ics
+            source.source_file = source_file
         self.__dict__[attribute] = source
         return source
 
@@ -223,7 +225,7 @@ def filled_event_component(c, calendar_component):
     return e
 
 
-@pytest.fixture
+@pytest.fixture()
 def calendar_with_resources(tzp):
     c = Calendar()
     c["resources"] = 'Chair, Table, "Room: 42"'
@@ -231,7 +233,7 @@ def calendar_with_resources(tzp):
 
 
 @pytest.fixture(scope="module")
-def tzp(tzp_name):
+def tzp(tzp_name) -> Generator[TZP, None, None]:
     """The timezone provider."""
     _tzp.use(tzp_name)
     yield _tzp
