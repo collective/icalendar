@@ -35,28 +35,29 @@ primitive Python datatype. So it should always be true that:
 These types are mainly used for parsing and file generation. But you can set
 them directly.
 """
-from datetime import date
-from datetime import datetime
-from datetime import time
-from datetime import timedelta
-from datetime import tzinfo
-from icalendar.caselessdict import CaselessDict
-from icalendar.parser import Parameters
-from icalendar.parser import escape_char
-from icalendar.parser import unescape_char
-from icalendar.parser_tools import (
-    DEFAULT_ENCODING, SEQUENCE_TYPES, to_unicode, from_unicode, ICAL_TYPE
-)
+from __future__ import annotations
 
 import base64
 import binascii
-from .timezone import tzp
+from collections import defaultdict
 import re
-import time as _time
-
+from datetime import date, datetime, time, timedelta, tzinfo
+from enum import Enum
 from typing import Optional, Union
-from enum import Enum, auto
 
+from zoneinfo import ZoneInfo, available_timezones
+
+from icalendar.caselessdict import CaselessDict
+from icalendar.parser import Parameters, escape_char, unescape_char
+from icalendar.parser_tools import (
+    DEFAULT_ENCODING,
+    ICAL_TYPE,
+    SEQUENCE_TYPES,
+    from_unicode,
+    to_unicode,
+)
+
+from .timezone import tzp
 
 DURATION_REGEX = re.compile(r'([-+]?)P(?:(\d+)W)?(?:(\d+)D)?'
                             r'(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$')
@@ -66,13 +67,12 @@ WEEKDAY_RULE = re.compile(r'(?P<signal>[+-]?)(?P<relative>[\d]{0,2})'
 
 
 def tzid_from_tzinfo(tzinfo: tzinfo) -> Optional[str]:
-    """Retrieve the timezone id from the tzinfo object."""
-    tzid = None
-    if hasattr(tzinfo, 'zone'):
-        tzid = tzinfo.zone  # pytz implementation
-    elif hasattr(tzinfo, 'key'):
-        tzid = tzinfo.key  # ZoneInfo implementation
-    return tzid
+    """Retrieve the timezone id from the tzinfo object.
+
+    Some timezones are equivalent.
+    Thus, we might return one ID that is equivelant to others.
+    """
+    return (tzids_from_tzinfo(tzinfo) + (None,))[0]
 
 
 def tzid_from_dt(dt: datetime) -> Optional[str]:
@@ -1140,4 +1140,4 @@ __all__ = ["DURATION_REGEX", "TimeBase", "TypesFactory", "WEEKDAY_RULE",
            "vCategory", "vDDDLists", "vDDDTypes", "vDate", "vDatetime",
            "vDuration", "vFloat", "vFrequency", "vGeo", "vInline", "vInt",
            "vMonth", "vPeriod", "vRecur", "vSkip", "vText", "vTime",
-           "vUTCOffset", "vUri", "vWeekday", "tzid_from_tzinfo"]
+           "vUTCOffset", "vUri", "vWeekday", "tzid_from_tzinfo", "tzids_from_tzinfo"]

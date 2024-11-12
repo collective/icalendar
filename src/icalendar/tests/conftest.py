@@ -247,30 +247,32 @@ def other_tzp(request, tzp):
     The purpose here is to cross test: pytz <-> zoneinfo.
     tzp as parameter makes sure we test the cross product.
     """
-    tzp = TZP(request.param)
-    return tzp
+    return TZP(request.param)
 
 
 @pytest.fixture
-def pytz_only(tzp):
+def pytz_only(tzp, tzp_name) -> str:
     """Skip tests that are not running under pytz."""
     assert tzp.uses_pytz()
-
+    return tzp_name
 
 @pytest.fixture
-def zoneinfo_only(tzp, request, tzp_name):
+def zoneinfo_only(tzp, request, tzp_name) -> str:
     """Skip tests that are not running under zoneinfo."""
     assert tzp.uses_zoneinfo()
+    return tzp_name
 
 @pytest.fixture
-def no_pytz(tzp_name):
+def no_pytz(tzp_name) -> str:
     """Do not run tests with pytz."""
     assert tzp_name != "pytz"
+    return tzp_name
 
 @pytest.fixture
-def no_zoneinfo(tzp_name):
+def no_zoneinfo(tzp_name) -> str:
     """Do not run tests with zoneinfo."""
     assert tzp_name != "zoneinfo"
+    return tzp_name
 
 def pytest_generate_tests(metafunc):
     """Parametrize without skipping:
