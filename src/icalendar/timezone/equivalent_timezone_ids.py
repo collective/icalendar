@@ -30,9 +30,12 @@ def check(dt, tz:tzinfo):
 def checks(tz:tzinfo) -> tuple:
     result = []
     for dt in DTS:
-        with contextlib.suppress(Exception):
+        try:
             result.append(check(dt, tz))
+        except Exception as e:
+            print(e)
     return result
+
 
 START = datetime(1970, 1, 1)  # noqa: DTZ001
 END = datetime(2030, 1, 1)  # noqa: DTZ001
@@ -46,13 +49,15 @@ del dt
 
 def main(
         create_timezones:list[Callable[[str], tzinfo]],
+        name:str,
+        pool_size = cpu_count()
     ):
     """Generate a lookup table for timezone information if unknown timezones.
 
-    
+    We cannot create one lookup for all because they seem to be all equivalent
+    if we mix timezone implementations.
     """
-    id2tzid = {}
-
+    print(create_timezones, name)
     dtids2tzids = defaultdict(tuple) # checks -> tzids
     # tzids without timezones that change
     tzids = [
@@ -64,27 +69,28 @@ def main(
     
     try:
         start = time()
-        pool_size = cpu_count()
-        pool = Pool(pool_size)
+        if pool_size > 1:
+            pool = Pool(pool_size)
+            pmap = pool.map
+        else:
+            pmap = map
         iter = enumerate(sorted(tzids))
         for i, tzid in iter:
             this_go_tzids = [tzid]
-            for j, tzid in iter:
-                this_go_tzids.append(tzid)
-                if len(this_go_tzids) >= pool_size:
-                    break
-            i=j
+            if pool_size > 1:
+                for i, tzid in iter:
+                    this_go_tzids.append(tzid)
+                    if len(this_go_tzids) >= pool_size:
+                        break
             for create_timezone in create_timezones:
-                try:
-                    tz = create_timezone(tzid)
-                except Exception as e:
-                    print(e)
-                    continue
-                tzid_checks = pool.map(checks, this_go_tzids)
+                tzid_checks = pmap(checks, list(map(create_timezone, this_go_tzids)))
                 for tzid_check in tzid_checks:
-                    dtids2tzids[tuple(tzid_check)] += (tzid,)
+                    tzid_check = tuple(tzid_check)
+                    _tzids = dtids2tzids[tzid_check]
+                    if tzid not in _tzids:
+                        dtids2tzids[tzid_check] = _tzids + (tzid,)
             duration = time() - start
-            print(f"{i+1}/{len(tzids)}, {timedelta(seconds=int(duration * len(tzids) / (i+1) - duration))} remaining.")
+            print(f"{i+1}/{len(tzids)} timezones, {timedelta(seconds=int(duration * len(tzids) / (i+1) - duration))} remaining.")
     except KeyboardInterrupt:
         write_to_result_file = False
         pass
@@ -153,7 +159,7 @@ def main(
             p = p_
             print(f"{p}%")
 
-    file = Path(__file__).parent / "equivalent_timezone_ids_result.py"
+    file = Path(__file__).parent / "equivalent_timezone_ids_{name}}.py"
     print(f"The result is written to {file}.")
     lookup = dict(lookup)
     print("lookup = ", end="")
@@ -168,41 +174,14 @@ def main(
 
     return lookup
 
-def tzinfo2tzids(tzinfo: tzinfo) -> tuple[str]:
-    """We return the tzids for a certain tzinfo object.
-
-    With different datetimes, we match
-    (tzinfo.utcoffset(dt), tzinfo.tzname(dt))
-
-    If we could identify the timezone, you will receive a tuple
-    with at least one tzid. All tzids are equivalent which means
-    that they describe the same timezone.
-
-    You should get results with any timezone implementation if it is known.
-    This one is especially useful for dateutil.
-
-    In the following example, we can see that the timezone Africa/Accra
-    is equivalent to many others.
-
-    >>> import zoneinfo
-    >>> from icalendar.timezone.equivalent_timezone_ids import tzinfo2tzids
-    >>> tzinfo2tzids(zoneinfo.ZoneInfo("Africa/Accra"))
-    ('Africa/Abidjan', 'Africa/Accra', 'Africa/Bamako', 'Africa/Banjul', 'Africa/Conakry', 'Africa/Dakar')
-    """
-    from icalendar.timezone.equivalent_timezone_ids_result import lookup
-
-    for dt in sorted(lookup):
-        _, utcoffset, tzname = check(dt, tzinfo)
-        tzids = lookup[dt].get((utcoffset, tzname), ())
-        if tzids:
-            return tzids
-    return ()
-
-
-__all__ = ["main", "tzinfo2tzids"]
+__all__ = ["main"]
 
 if __name__ == "__main__":
     from dateutil.tz import gettz
     from pytz import timezone
     from zoneinfo import ZoneInfo
-    main([ZoneInfo, gettz, timezone])
+    main([ZoneInfo, timezone, gettz], "test",
+         pool_size=1
+    )
+    # main([timezone], "pytz")
+    # main([gettz], "dateutil")

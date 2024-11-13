@@ -8,8 +8,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional
 
-from .equivalent_timezone_ids import tzinfo2tzids
-
 if TYPE_CHECKING:
     from datetime import datetime, tzinfo
 
@@ -48,5 +46,37 @@ def tzid_from_dt(dt: datetime) -> Optional[str]:
     if tzid is None:
         return dt.tzname()
     return tzid
+
+
+def tzinfo2tzids(tzinfo: tzinfo) -> tuple[str]:
+    """We return the tzids for a certain tzinfo object.
+
+    With different datetimes, we match
+    (tzinfo.utcoffset(dt), tzinfo.tzname(dt))
+
+    If we could identify the timezone, you will receive a tuple
+    with at least one tzid. All tzids are equivalent which means
+    that they describe the same timezone.
+
+    You should get results with any timezone implementation if it is known.
+    This one is especially useful for dateutil.
+
+    In the following example, we can see that the timezone Africa/Accra
+    is equivalent to many others.
+
+    >>> import zoneinfo
+    >>> from icalendar.timezone.equivalent_timezone_ids import tzinfo2tzids
+    >>> tzinfo2tzids(zoneinfo.ZoneInfo("Africa/Accra"))
+    ('Africa/Abidjan', 'Africa/Accra', 'Africa/Bamako', 'Africa/Banjul', 'Africa/Conakry', 'Africa/Dakar')
+    """
+    from icalendar.timezone.equivalent_timezone_ids_result import lookup
+
+    for dt in sorted(lookup):
+        utcoffset, tzname = tzinfo.utcoffset(dt), tzinfo.tzname(dt)
+        tzids = lookup[dt].get((utcoffset, tzname), ())
+        if tzids:
+            return tzids
+    return ()
+
 
 __all__ = ["tzid_from_tzinfo", "tzid_from_dt", "tzids_from_tzinfo"]
