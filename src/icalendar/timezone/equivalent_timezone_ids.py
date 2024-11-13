@@ -12,8 +12,10 @@ See also:
 """
 from __future__ import annotations
 
+import contextlib
 from collections import defaultdict
 from datetime import datetime, timedelta, tzinfo
+from multiprocessing import Pool, cpu_count
 from pathlib import Path
 from pprint import pprint
 from time import time
@@ -25,28 +27,30 @@ from zoneinfo import ZoneInfo, available_timezones
 def check(dt, tz:tzinfo):
     return (dt, tz.utcoffset(dt), tz.tzname(dt))
 
+def checks(tz:tzinfo) -> tuple:
+    result = []
+    for dt in DTS:
+        with contextlib.suppress(Exception):
+            result.append(check(dt, tz))
+    return result
+
+START = datetime(1970, 1, 1)  # noqa: DTZ001
+END = datetime(2030, 1, 1)  # noqa: DTZ001
+
+DTS = []
+dt = START
+while dt <= END:
+    DTS.append(dt)
+    dt += timedelta(hours=1)
+del dt
+
 def main(
         create_timezones:list[Callable[[str], tzinfo]],
-        start=datetime(1970, 1, 1),
-        end=datetime(2030, 1, 1)
     ):
     """Generate a lookup table for timezone information if unknown timezones.
 
     
     """
-    dts = []
-    dt = start
-    while dt <= end:
-        dts.append(dt)
-        dt += timedelta(hours=1)
-
-    def checks(tz:tzinfo) -> tuple:
-        for dt in dts:
-            try:
-                yield check(dt, tz)
-            except Exception as e:
-                print(e)
-
     id2tzid = {}
 
     dtids2tzids = defaultdict(tuple) # checks -> tzids
@@ -57,16 +61,28 @@ def main(
     ]
     print("Press Control+C for partial computation.")
     write_to_result_file = True
+    
     try:
         start = time()
-        for i, tzid in enumerate(sorted(tzids)):
+        pool_size = cpu_count()
+        pool = Pool(pool_size)
+        iter = enumerate(sorted(tzids))
+        for i, tzid in iter:
+            this_go_tzids = [tzid]
+            for j, tzid in iter:
+                this_go_tzids.append(tzid)
+                if len(this_go_tzids) >= pool_size:
+                    break
+            i=j
             for create_timezone in create_timezones:
                 try:
                     tz = create_timezone(tzid)
                 except Exception as e:
                     print(e)
                     continue
-                dtids2tzids[tuple(checks(tz))] += (tzid,)
+                tzid_checks = pool.map(checks, this_go_tzids)
+                for tzid_check in tzid_checks:
+                    dtids2tzids[tuple(tzid_check)] += (tzid,)
             duration = time() - start
             print(f"{i+1}/{len(tzids)}, {timedelta(seconds=int(duration * len(tzids) / (i+1) - duration))} remaining.")
     except KeyboardInterrupt:
