@@ -39,13 +39,10 @@ from __future__ import annotations
 
 import base64
 import binascii
-from collections import defaultdict
 import re
-from datetime import date, datetime, time, timedelta, tzinfo
+from datetime import date, datetime, time, timedelta
 from enum import Enum
-from typing import Optional, Union
-
-from zoneinfo import ZoneInfo, available_timezones
+from typing import Union
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Parameters, escape_char, unescape_char
@@ -57,30 +54,13 @@ from icalendar.parser_tools import (
     to_unicode,
 )
 
-from .timezone import tzp
+from .timezone import tzid_from_dt, tzid_from_tzinfo, tzp
 
 DURATION_REGEX = re.compile(r'([-+]?)P(?:(\d+)W)?(?:(\d+)D)?'
                             r'(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$')
 
 WEEKDAY_RULE = re.compile(r'(?P<signal>[+-]?)(?P<relative>[\d]{0,2})'
                           r'(?P<weekday>[\w]{2})$')
-
-
-def tzid_from_tzinfo(tzinfo: tzinfo) -> Optional[str]:
-    """Retrieve the timezone id from the tzinfo object.
-
-    Some timezones are equivalent.
-    Thus, we might return one ID that is equivelant to others.
-    """
-    return (tzids_from_tzinfo(tzinfo) + (None,))[0]
-
-
-def tzid_from_dt(dt: datetime) -> Optional[str]:
-    """Retrieve the timezone id from the datetime object."""
-    tzid = tzid_from_tzinfo(dt.tzinfo)
-    if tzid is None:
-        return dt.tzname()
-    return tzid
 
 
 class vBinary:
@@ -1140,4 +1120,4 @@ __all__ = ["DURATION_REGEX", "TimeBase", "TypesFactory", "WEEKDAY_RULE",
            "vCategory", "vDDDLists", "vDDDTypes", "vDate", "vDatetime",
            "vDuration", "vFloat", "vFrequency", "vGeo", "vInline", "vInt",
            "vMonth", "vPeriod", "vRecur", "vSkip", "vText", "vTime",
-           "vUTCOffset", "vUri", "vWeekday", "tzid_from_tzinfo", "tzids_from_tzinfo"]
+           "vUTCOffset", "vUri", "vWeekday", "tzid_from_tzinfo"]
