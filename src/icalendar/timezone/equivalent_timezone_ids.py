@@ -13,6 +13,7 @@ from collections import defaultdict
 from datetime import datetime, timedelta, tzinfo
 from pathlib import Path
 from pprint import pprint
+from time import time
 from typing import Callable
 
 from zoneinfo import ZoneInfo, available_timezones
@@ -22,7 +23,7 @@ def check(dt, tz:tzinfo):
     return (dt, tz.utcoffset(dt), tz.tzname(dt))
 
 def main(
-        create_timezone:list[Callable[[str], tzinfo]],
+        create_timezones:list[Callable[[str], tzinfo]],
         start=datetime(1970, 1, 1),
         end=datetime(2030, 1, 1)
     ):
@@ -37,7 +38,11 @@ def main(
         dt += timedelta(hours=1)
 
     def checks(tz:tzinfo) -> tuple:
-        return tuple(check(dt, tz) for dt in dts)
+        for dt in dts:
+            try:
+                yield check(dt, tz)
+            except Exception as e:
+                print(e)
 
     id2tzid = {}
 
@@ -49,11 +54,18 @@ def main(
     ]
     print("Press Control+C for partial computation.")
     write_to_result_file = True
-    tzs = list(map(create_timezone, tzids))
     try:
+        start = time()
         for i, tzid in enumerate(sorted(tzids)):
-            dtids2tzids[checks(tzs[i])] += (tzid,)
-            print(f"{i}/{len(tzids)}")
+            for create_timezone in create_timezones:
+                try:
+                    tz = create_timezone(tzid)
+                except Exception as e:
+                    print(e)
+                    continue
+                dtids2tzids[tuple(checks(tz))] += (tzid,)
+            duration = time() - start
+            print(f"{i+1}/{len(tzids)}, {timedelta(seconds=int(duration * len(tzids) / (i+1) - duration))} remaining.")
     except KeyboardInterrupt:
         write_to_result_file = False
         pass
