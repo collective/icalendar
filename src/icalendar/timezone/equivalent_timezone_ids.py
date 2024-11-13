@@ -6,6 +6,9 @@ We make a big map.
 If they are equivalent, they are equivalent within the time that is mostly used.
 
 You can regenerate the information from this module.
+
+See also:
+- https://stackoverflow.com/questions/79185519/which-timezones-are-equivalent
 """
 from __future__ import annotations
 
