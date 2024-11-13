@@ -27,6 +27,6 @@ def test_can_identify_pytz(tzid, pytz_only):
 
 @with_tzid
 def test_can_identify_dateutil(tzid):
-    """Check that all those pytz timezones can be identified."""
+    """Check that all those dateutil timezones can be identified."""
     from dateutil.tz import gettz
     assert tzid in tzids_from_tzinfo(gettz(tzid))
