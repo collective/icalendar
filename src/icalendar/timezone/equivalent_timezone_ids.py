@@ -13,6 +13,7 @@ from collections import defaultdict
 from datetime import datetime, timedelta, tzinfo
 from pathlib import Path
 from pprint import pprint
+from typing import Callable
 
 from zoneinfo import ZoneInfo, available_timezones
 
@@ -20,8 +21,16 @@ from zoneinfo import ZoneInfo, available_timezones
 def check(dt, tz:tzinfo):
     return (dt, tz.utcoffset(dt), tz.tzname(dt))
 
-def main(start=datetime(1970, 1, 1), end=datetime(2030, 1, 1)):
-    """Generate the module content."""
+def main(
+        create_timezone:Callable[[str], tzinfo],
+        name:str,
+        start=datetime(1970, 1, 1),
+        end=datetime(2030, 1, 1)
+    ):
+    """Generate a lookup table for timezone information if unknown timezones.
+
+    
+    """
     dts = []
     dt = start
     while dt <= end:
@@ -41,7 +50,7 @@ def main(start=datetime(1970, 1, 1), end=datetime(2030, 1, 1)):
     ]
     print("Press Control+C for partial computation.")
     write_to_result_file = True
-    tzs = list(map(ZoneInfo, tzids))
+    tzs = list(map(create_timezone, tzids))
     try:
         for i, tzid in enumerate(sorted(tzids)):
             dtids2tzids[checks(tzs[i])] += (tzid,)
@@ -114,7 +123,7 @@ def main(start=datetime(1970, 1, 1), end=datetime(2030, 1, 1)):
             p = p_
             print(f"{p}%")
 
-    file = Path(__file__).parent / "equivalent_timezone_ids_result.py"
+    file = Path(__file__).parent / "equivalent_timezone_ids_{name}.py"
     print(f"The result is written to {file}.")
     lookup = dict(lookup)
     print("lookup = ", end="")
@@ -150,19 +159,49 @@ def tzinfo2tzids(tzinfo: tzinfo) -> tuple[str]:
     >>> tzinfo2tzids(zoneinfo.ZoneInfo("Africa/Accra"))
     ('Africa/Abidjan', 'Africa/Accra', 'Africa/Bamako', 'Africa/Banjul', 'Africa/Conakry', 'Africa/Dakar')
     """
+    lookups = []
+
+    # zoneinfo
     try:
-        from equivalent_timezone_ids_result import lookup # type: ignore
+        from equivalent_timezone_ids_zoneinfo import lookup
     except ImportError:
-        from icalendar.timezone.equivalent_timezone_ids_result import lookup
-    for dt in sorted(lookup):
-        _, utcoffset, tzname = check(dt, tzinfo)
-        tzids = lookup[dt].get((utcoffset, tzname), ())
-        if tzids:
-            return tzids
-    return ()
+        from icalendar.timezone.equivalent_timezone_ids_zoneinfo import lookup
+    lookups.append(lookup)
+
+    # dateutil
+    try:
+        from equivalent_timezone_ids_dateutil import lookup
+    except ImportError:
+        from icalendar.timezone.equivalent_timezone_ids_dateutil import lookup
+    lookups.append(lookup)
+
+    # pytz
+    try:
+        from equivalent_timezone_ids_pytz import lookup
+    except ImportError:
+        from icalendar.timezone.equivalent_timezone_ids_pytz import lookup
+    lookups.append(lookup)
+
+    result = ()
+    for lookup in lookups:
+        for dt in sorted(lookup):
+            _, utcoffset, tzname = check(dt, tzinfo)
+            tzids = lookup[dt].get((utcoffset, tzname), ())
+            if tzids:
+                result += tzids
+                break
+    return result
 
 
 __all__ = ["main", "tzinfo2tzids"]
 
 if __name__ == "__main__":
-    main()
+    if input("Generate zoneinfo? Press ENTER to skip, anything else to generate: "):
+        from zoneinfo import ZoneInfo
+        main(ZoneInfo, "zoneinfo")
+    if input("Generate dateutil? Press ENTER to skip, anything else to generate: "):
+        from dateutil.tz import gettz
+        main(gettz, "dateutil")
+    if input("Generate pytz? Press ENTER to skip, anything else to generate: "):
+        from pytz import timezone
+        main(timezone, "pytz")

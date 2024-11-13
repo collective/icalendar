@@ -46,7 +46,7 @@ lookup = {datetime.datetime(1970, 1, 1, 0, 0): {(datetime.timedelta(days=-1, sec
                                                                                    'Europe/London',
                                                                                    'GB',
                                                                                    'GB-Eire',
-                                                                                   'localtime'),
+                                                                                   ),
                                        (datetime.timedelta(seconds=3600), 'IST'): ('Eire',
                                                                                    'Europe/Dublin'),
                                        (datetime.timedelta(seconds=3600), 'MET'): ('MET',),
