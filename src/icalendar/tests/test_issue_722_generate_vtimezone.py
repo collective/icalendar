@@ -230,7 +230,8 @@ def test_check_datetimes_around_transition_times(tzp, tzid, dt, tzname):
     "uid", [0, 1, 2, 3]
 )
 def test_dateutil_timezone_when_time_is_going_backwards(calendars, tzp, uid):
-    """Sometimes, times can be ambiguous: We go back from 3am to 2 am.
+    """When going from Daylight Saving Time to Standard Time, times can be ambiguous.
+    For example, at 3:00 AM, the time falls back to 2:00 AM, repeating a full hour of times from 2:00 AM to 3:00 AM on the same date.
 
     By the RFC 5545, we cannot accommodate this case. All datetimes should
     be BEFORE the transition if ambiguous. However, dateutil can
