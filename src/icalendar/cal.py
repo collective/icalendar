@@ -938,7 +938,7 @@ class Todo(Component):
         0
 
         Note that this only uses DTSTART and DUE but ignores
-        RDATE, EXDATE and RRULE properties.
+        RDATE, EXDATE, and RRULE properties.
         """
         from icalendar.alarms import Alarms
         return Alarms(self)
