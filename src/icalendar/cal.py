@@ -1400,7 +1400,7 @@ class Calendar(Component):
     def get_missing_tzids(self) -> set[str]:
         """The set of missing timezone component tzids.
 
-        In order to createa :rfc:`5545` compatible calendar,
+        To create a :rfc:`5545` compatible calendar,
         all of these timezones should be added.
         """
         tzids = self.get_used_tzids()
