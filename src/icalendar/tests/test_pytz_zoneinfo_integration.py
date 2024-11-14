@@ -93,7 +93,7 @@ def test_cache_is_emptied_when_tzp_is_switched(tzp, timezones, new_tzp_name):
 
 
 def test_invalid_name(tzp):
-    """Check that the provider name is ok."""
+    """Check that the provider name is OK."""
     provider = "invalid_provider"
     with pytest.raises(ValueError) as e:
         tzp.use(provider)
