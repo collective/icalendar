@@ -278,7 +278,7 @@ class Alarms:
 
         Since RFC 9074 (Alarm Extension) was created later,
         calendar implementations differ in how they acknowledge alarms.
-        E.g. Thunderbird and Google Calendar store the last time
+        For example, Thunderbird and Google Calendar store the last time
         an event has been acknowledged because of an alarm.
         All alarms that happen before this time count as ackknowledged.
         """
