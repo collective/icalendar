@@ -116,7 +116,7 @@ class AlarmTime:
     def is_active(self) -> bool:
         """Whether this alarm is active (True) or acknowledged (False).
 
-        E.g. in some calendar software, this is True until the user had a look
+        For example, in some calendar software, this is True until the user looks
         at the alarm message and clicked the dismiss button.
 
         Alarms can be in local time (without a timezone).
