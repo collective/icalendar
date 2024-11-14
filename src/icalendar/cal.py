@@ -716,7 +716,7 @@ class Event(Component):
         >>> alarm_time.is_active()  # This alarm has not been acknowledged
         True
 
-        Note that this only uses DTSTART and DTEND but ignores
+        Note that this only uses DTSTART and DTEND, but ignores
         RDATE, EXDATE and RRULE properties.
         """
         from icalendar.alarms import Alarms
