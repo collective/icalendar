@@ -280,7 +280,7 @@ class Alarms:
         calendar implementations differ in how they acknowledge alarms.
         For example, Thunderbird and Google Calendar store the last time
         an event has been acknowledged because of an alarm.
-        All alarms that happen before this time count as ackknowledged.
+        All alarms that happen before this time count as acknowledged.
         """
         self._last_ack = tzp.localize_utc(dt) if dt is not None else None
 
