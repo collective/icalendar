@@ -235,7 +235,7 @@ def test_dateutil_timezone_when_time_is_going_backwards(calendars, tzp, uid):
 
     By the RFC 5545, we cannot accommodate this case. All datetimes should
     be BEFORE the transition if ambiguous. However, dateutil can
-    create a timezone that allows being after of cause.
+    create a timezone that allows the event to be after this ambiguous time span, of course.
 
     Each event has its timezone saved in it.
     """
