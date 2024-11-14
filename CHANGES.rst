@@ -9,6 +9,8 @@ Minor changes:
 - Added ``end``, ``start``, ``duration``, ``DTSTART``, ``DUE``, and ``DURATION`` attributes to ``Todo`` components. See `Issue 662`_.
 - Format test code with Ruff. See `Issue 672 <https://github.com/collective/icalendar/issues/672>`_.
 - Document the Debian package. See `Issue 701 <https://github.com/collective/icalendar/issues/701>`_.
+- Document ``vDatetime.from_ical``
+- Allow passing a ``datetime.date`` to ``TZP.localize_utc`` and ``TZP.localize`` methods.
 - Document component classes with description from :rfc:`5545`.
 
 Breaking changes:
@@ -19,6 +21,13 @@ New features:
 
 - Add ``VALARM`` properties for :rfc:`9074`. See `Issue 657 <https://github.com/collective/icalendar/issues/657>`_
 - Test compatibility with Python 3.13
+- Add ``icalendar.alarms`` module to calculate alarm times. See `Issue 716 <https://github.com/collective/icalendar/issues/716>`_.
+- Add ``Event.alarms`` and ``Todo.alarms`` to access alarm calculation.
+- Add ``Component.DTSTAMP`` and ``Component.LAST_MODIFIED`` properties for datetime in UTC.
+- Add ``Component.is_thunderbird()`` to check if the component uses custom properties by Thunderbird.
+- Add ``X_MOZ_SNOOZE_TIME`` and ``X_MOZ_LASTACK`` properties to ``Event`` and ``Todo``.
+- Add ``Alarm.ACKNOWLEDGED``, ``Alarm.TRIGGER``, ``Alarm.REPEAT``, and ``Alarm.DURATION`` properties
+  as well as ``Alarm.triggers`` to calculate alarm triggers.
 
 Bug fixes:
 

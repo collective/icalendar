@@ -1,6 +1,13 @@
 API Reference
 -------------
 
+icalendar.alarms
+++++++++++++++++
+
+.. automodule:: icalendar.alarms
+   :members:
+
+
 icalendar.cal
 +++++++++++++
 

@@ -93,6 +93,7 @@ HERE = Path(__file__).parent
 CALENDARS_FOLDER = HERE / "calendars"
 TIMEZONES_FOLDER = HERE / "timezones"
 EVENTS_FOLDER = HERE / "events"
+ALARMS_FOLDER = HERE / "alarms"
 
 
 @pytest.fixture(scope="module")
@@ -108,6 +109,11 @@ def timezones(tzp):
 @pytest.fixture(scope="module")
 def events(tzp):
     return DataSource(EVENTS_FOLDER, icalendar.Event.from_ical)
+
+
+@pytest.fixture(scope="module")
+def alarms(tzp):
+    return DataSource(ALARMS_FOLDER, icalendar.Alarm.from_ical)
 
 
 @pytest.fixture(params=PYTZ_UTC + [zoneinfo.ZoneInfo("UTC"), tz.UTC, tz.gettz("UTC")])
