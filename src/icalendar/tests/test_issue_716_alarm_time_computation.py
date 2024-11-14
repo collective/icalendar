@@ -8,7 +8,7 @@ Alarms can be in this state:
 - snoozed - the user moved that alarm to another time
 
 The alarms can only work on the properties of the event like
-DTSTART, DTEND and DURATION.
+DTSTART, DTEND, and DURATION.
 
 """
 
