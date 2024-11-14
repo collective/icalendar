@@ -717,7 +717,7 @@ class Event(Component):
         True
 
         Note that this only uses DTSTART and DTEND, but ignores
-        RDATE, EXDATE and RRULE properties.
+        RDATE, EXDATE, and RRULE properties.
         """
         from icalendar.alarms import Alarms
         return Alarms(self)
