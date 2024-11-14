@@ -1277,7 +1277,7 @@ class Alarm(Component):
     sees them. For those kinds of alarms, the client SHOULD set this property
     when the alarm is triggered and the action is successfully carried out.
 
-    When an alarm is triggered on a client, clients can check to see if an"ACKNOWLEDGED"
+    When an alarm is triggered on a client, clients can check to see if an "ACKNOWLEDGED"
     property is present. If it is, and the value of that property is greater than or
     equal to the computed trigger time for the alarm, then the client SHOULD NOT trigger
     the alarm. Similarly, if an alarm has been triggered and
