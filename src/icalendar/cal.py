@@ -568,7 +568,7 @@ class Component(CaselessDict):
     """)
 
     def is_thunderbird(self) -> bool:
-        """Whether this component has attributes that indicate that Mozilla Thunderbird createsd it."""
+        """Whether this component has attributes that indicate that Mozilla Thunderbird created it."""
         return any(attr.startswith("X-MOZ-") for attr in self.keys())
 
 
