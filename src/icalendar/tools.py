@@ -62,7 +62,7 @@ def is_pytz_dt(dt: date):
 def normalize_pytz(dt: date):
     """We have to normalize the time after a calculation if we use pytz.
 
-    pytz requires this funtion to be used in order to correctly calculate the
+    pytz requires this function to be used in order to correctly calculate the
     timezone's offset after calculations.
     """
     if is_pytz_dt(dt):
