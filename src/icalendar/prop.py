@@ -379,6 +379,7 @@ class vDate(TimeBase):
 
        19970714
        
+       >>> from icalendar.prop impoer vDate
        >>> date = vDate.from_ical('19970714')
        >>> date.year
        1997
