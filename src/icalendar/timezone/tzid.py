@@ -48,7 +48,7 @@ def tzid_from_dt(dt: datetime) -> Optional[str]:
     return tzid
 
 
-def tzinfo2tzids(tzinfo: tzinfo) -> tuple[str]:
+def tzinfo2tzids(tzinfo: tzinfo) -> set[str]:
     """We return the tzids for a certain tzinfo object.
 
     With different datetimes, we match
@@ -71,12 +71,14 @@ def tzinfo2tzids(tzinfo: tzinfo) -> tuple[str]:
     """
     from icalendar.timezone.equivalent_timezone_ids_result import lookup
 
-    for dt in sorted(lookup):
-        utcoffset, tzname = tzinfo.utcoffset(dt), tzinfo.tzname(dt)
-        tzids = lookup[dt].get((utcoffset, tzname), ())
-        if tzids:
-            return tzids
-    return ()
-
+    while 1:
+        if isinstance(lookup, set):
+            return lookup
+        dt, offset2lookup = lookup
+        offset = tzinfo.utcoffset(dt)
+        lookup = offset2lookup.get(offset)
+        if lookup is None:
+            return set()
+    return set()
 
 __all__ = ["tzid_from_tzinfo", "tzid_from_dt", "tzids_from_tzinfo"]
