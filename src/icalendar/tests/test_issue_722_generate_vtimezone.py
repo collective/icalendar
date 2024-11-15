@@ -17,7 +17,7 @@ import pytest
 from dateutil.tz import gettz
 
 from icalendar import Calendar, Component, Event, Timezone
-from icalendar.prop import _identify_tzinfo, tzid_from_tzinfo, tzids_from_tzinfo
+from icalendar.timezone import tzid_from_tzinfo, tzids_from_tzinfo
 
 tzids = pytest.mark.parametrize("tzid", [
     "Europe/Berlin",
@@ -406,4 +406,4 @@ def test_we_can_identify_dateutil_timezones(tzid):
     But if we know their shortcodes, we should be able to identify them.
     """
     tz = gettz(tzid)
-    assert tzid in tzids_from_tzinfo(tz), f"{tzid} -> {_identify_tzinfo(tz)}"
+    assert tzid in tzids_from_tzinfo(tz)

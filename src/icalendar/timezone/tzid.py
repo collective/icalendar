@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from datetime import datetime, tzinfo
 
 
-def tzids_from_tzinfo(tzinfo: tzinfo) -> tuple[str]:
+def tzids_from_tzinfo(tzinfo: Optional[tzinfo]) -> tuple[str]:
     """Get several timezone ids if we can identify the timezone.
 
     >>> import zoneinfo
@@ -24,14 +24,16 @@ def tzids_from_tzinfo(tzinfo: tzinfo) -> tuple[str]:
     ('Africa/Abidjan', 'Africa/Accra', 'Africa/Bamako', 'Africa/Banjul', 'Africa/Conakry', 'Africa/Dakar')
 
     """
+    if tzinfo is None:
+        return ()
     if hasattr(tzinfo, 'zone'):
         return (tzinfo.zone,)  # pytz implementation
     if hasattr(tzinfo, 'key'):
         return (tzinfo.key,)  # dateutil implementation, tzinfo.key  # ZoneInfo implementation
-    return tzinfo2tzids(tzinfo)
+    return tuple(sorted(tzinfo2tzids(tzinfo)))
 
 
-def tzid_from_tzinfo(tzinfo: tzinfo) -> Optional[str]:
+def tzid_from_tzinfo(tzinfo: Optional[tzinfo]) -> Optional[str]:
     """Retrieve the timezone id from the tzinfo object.
 
     Some timezones are equivalent.
@@ -48,7 +50,7 @@ def tzid_from_dt(dt: datetime) -> Optional[str]:
     return tzid
 
 
-def tzinfo2tzids(tzinfo: tzinfo) -> set[str]:
+def tzinfo2tzids(tzinfo: Optional[tzinfo]) -> set[str]:
     """We return the tzids for a certain tzinfo object.
 
     With different datetimes, we match
@@ -69,6 +71,8 @@ def tzinfo2tzids(tzinfo: tzinfo) -> set[str]:
     >>> tzinfo2tzids(zoneinfo.ZoneInfo("Africa/Accra"))
     ('Africa/Abidjan', 'Africa/Accra', 'Africa/Bamako', 'Africa/Banjul', 'Africa/Conakry', 'Africa/Dakar')
     """
+    if tzinfo is None:
+        return set()
     from icalendar.timezone.equivalent_timezone_ids_result import lookup
 
     while 1:
