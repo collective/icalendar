@@ -159,7 +159,7 @@ def main(
             p = p_
             print(f"{p}%")
 
-    file = Path(__file__).parent / "equivalent_timezone_ids_{name}}.py"
+    file = Path(__file__).parent / f"equivalent_timezone_ids_{name}.py"
     print(f"The result is written to {file}.")
     lookup = dict(lookup)
     print("lookup = ", end="")
