@@ -166,8 +166,8 @@ class vText(str):
       text       = *(TSAFE-CHAR / ":" / DQUOTE / ESCAPED-CHAR)
           ; Folded according to description above
 
-       ESCAPED-CHAR = ("\\" / "\;" / "\," / "\N" / "\n")
-          ; \\ encodes \, \N or \n encodes newline
+       ESCAPED-CHAR = ("\\" / "\;" / "\," / "\N" / "\\n")
+          ; \\ encodes \, \N or \\n encodes newline
           ; \; encodes ;, \, encodes ,
 
        TSAFE-CHAR = WSP / %x21 / %x23-2B / %x2D-39 / %x3C-5B /
@@ -184,7 +184,7 @@ class vText(str):
       An intentional formatted text line break MUST only be included in
       a "TEXT" property value by representing the line break with the
       character sequence of BACKSLASH, followed by a LATIN SMALL LETTER
-      N or a LATIN CAPITAL LETTER N, that is "\n" or "\N".
+      N or a LATIN CAPITAL LETTER N, that is "\\n" or "\N".
 
       The "TEXT" property values may also contain special characters
       that are used to signify delimiters, such as a COMMA character for
@@ -207,7 +207,7 @@ class vText(str):
 
       would be represented as:
 
-       Project XYZ Final Review\nConference Room - 3B\nCome Prepared.
+       Project XYZ Final Review\\nConference Room - 3B\\nCome Prepared.
        
         >>> from icalendar.prop import vText
         >>> message = '''Project XYZ Final Review
