@@ -211,9 +211,9 @@ class vText(str):
        Project XYZ Final Review\nConference Room - 3B\nCome Prepared.
        
         >>> from icalendar.prop import vText
-        >>> message = """Project XYZ Final Review
+        >>> message = '''Project XYZ Final Review
         ... Conference Room - 3B
-        ... Come Prepared."""
+        ... Come Prepared.'''
         >>> text = vText.from_ical(message)
         >>> text
         vText(b'Project XYZ Final Review\\nConference Room - 3B\\nCome Prepared.')
