@@ -115,8 +115,7 @@ class vBoolean(int):
        boolean    = "TRUE" / "FALSE"
 
     Description:  These values are case-insensitive text.  No additional
-      content value encoding (i.e., BACKSLASH character encoding, see
-      Section 3.3.11) is defined for this value type.
+      content value encoding is defined for this value type.
 
     Example:  The following is an example of a hypothetical property that
       has a BOOLEAN value type:
@@ -302,9 +301,6 @@ class vFloat(float):
     Description:  If the property permits, multiple "float" values are
       specified by a COMMA-separated list of values.
 
-      No additional content value encoding (i.e., BACKSLASH character
-      encoding, see Section 3.3.11) is defined for this value type.
-
     Example:
 
         1000000.0000001
@@ -359,9 +355,6 @@ class vInt(int):
       specified by a COMMA-separated list of values.  The valid range
       for "integer" is -2147483648 to 2147483647.  If the sign is not
       specified, then the value is assumed to be positive.
-
-      No additional content value encoding (i.e., BACKSLASH character
-      encoding, see Section 3.3.11) is defined for this value type.
 
     Example:
 
