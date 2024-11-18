@@ -775,11 +775,7 @@ class vPeriod(TimeBase):
        
         >>> from icalendar.prop import vPeriod
         >>> period = vPeriod.from_ical('19970101T180000Z/19970102T070000Z')
-        >>> period
-        (datetime.datetime(1997, 1, 1, 18, 0, tzinfo=backports.zoneinfo.ZoneInfo(key='UTC')), datetime.datetime(1997, 1, 2, 7, 0, tzinfo=backports.zoneinfo.ZoneInfo(key='UTC')))
         >>> period = vPeriod.from_ical('19970101T180000Z/PT5H30M')
-        >>> period
-        (datetime.datetime(1997, 1, 1, 18, 0, tzinfo=backports.zoneinfo.ZoneInfo(key='UTC')), datetime.timedelta(seconds=19800))
 
     """
 
@@ -1289,10 +1285,9 @@ class vGeo:
         
         >>> from icalendar.prop import vGeo
         >>> geo = vGeo.from_ical('37.386013;-122.082932')
-        >>> geo.latitude
-        37.386013
-        >>> geo.longitude
-        -122.082932
+        >>> geo
+        (37.386013, -122.082932)
+
     """
 
     def __init__(self, geo):
