@@ -55,20 +55,24 @@ A component will have properties with values. The values
 have special types, like integer, text, and datetime. These values are
 encoded in a special text format in an iCalendar file. This package contains methods for converting to and from these encodings.
 
-Example 1: this is a VCALENDAR component representing a calendar::
+Example 1: this is a VCALENDAR component representing a calendar.
 
-  BEGIN:VCALENDAR
-  ... vcalendar properties ...
-  END:VCALENDAR
+.. code-block:: text
 
-Example 2: The most frequent subcomponent to a VCALENDAR component is a VEVENT. This is a VCALENDAR component with a nested VEVENT subcomponent::
+    BEGIN:VCALENDAR
+    ... vcalendar properties ...
+    END:VCALENDAR
 
-  BEGIN:VCALENDAR
-  ... vcalendar properties ...
-  BEGIN:VEVENT
-  ... vevent properties ...
-  END:VEVENT
-  END:VCALENDAR
+Example 2: The most frequent subcomponent to a VCALENDAR component is a VEVENT. This is a VCALENDAR component with a nested VEVENT subcomponent.
+
+.. code-block:: text
+
+    BEGIN:VCALENDAR
+    ... vcalendar properties ...
+    BEGIN:VEVENT
+    ... vevent properties ...
+    END:VEVENT
+    END:VCALENDAR
 
 
 Components
