@@ -49,7 +49,7 @@ The parts in this example are::
 
 For long content lines, iCalendar usually "folds" them to less than 75 characters.
 
-On a higher level, you can think of iCalendar files structured as having components and sub components.
+On a higher level, you can think of iCalendar files' structure as having components and subcomponents.
 
 A component will have properties with values. The values
 have special types, like integer, text, and datetime. These values are
