@@ -31,7 +31,7 @@ iCalendar file structure
 An iCalendar file is a text file with UTF-8 character encoding in a special format.
 
 It consists of **content lines**,
-with each content line defining a property that has 3 parts: name, parameters and value. Parameters are optional.
+with each content line defining a property that has 3 parts: name, parameters, and values. Parameters are optional.
 
 Example 1: a simple content line, with only name and value.
 
