@@ -766,17 +766,20 @@ class vPeriod(TimeBase):
     Example:  The period starting at 18:00:00 UTC, on January 1, 1997 and
     ending at 07:00:00 UTC on January 2, 1997 would be:
 
-        19970101T180000Z/19970102T070000Z
+        .. code-block:: text
 
-        The period start at 18:00:00 on January 1, 1997 and lasting 5
-        hours and 30 minutes would be:
+            19970101T180000Z/19970102T070000Z
 
-        19970101T180000Z/PT5H30M
+    The period start at 18:00:00 on January 1, 1997 and lasting 5 hours
+    and 30 minutes would be:
+
+        .. code-block:: text
+
+            19970101T180000Z/PT5H30M
        
         >>> from icalendar.prop import vPeriod
         >>> period = vPeriod.from_ical('19970101T180000Z/19970102T070000Z')
         >>> period = vPeriod.from_ical('19970101T180000Z/PT5H30M')
-
     """
 
     def __init__(self, per):
