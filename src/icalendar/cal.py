@@ -9,6 +9,8 @@ import os
 from collections import defaultdict
 from datetime import date, datetime, timedelta, tzinfo
 from typing import List, Optional, Tuple
+from datetime import date, datetime, timedelta
+from typing import TYPE_CHECKING, List, NamedTuple, Optional, Tuple, Union
 
 import dateutil.rrule
 import dateutil.tz
@@ -28,6 +30,12 @@ from icalendar.prop import (
     vDatetime,
 )
 from icalendar.timezone import TZP, tzp
+from icalendar.prop import TypesFactory, vDDDLists, vDDDTypes, vDuration, vText
+from icalendar.timezone import tzp
+from icalendar.tools import is_date
+
+if TYPE_CHECKING:
+    from icalendar.alarms import Alarms
 
 
 def get_example(component_directory: str, example_name: str) -> bytes:
@@ -88,9 +96,45 @@ class IncompleteComponent(ValueError):
     The attributes are not required, otherwise this would be
     an InvalidCalendar. But in order to perform calculations,
     this attribute is required.
+
+    This error is not raised in the UPPERCASE properties like .DTSTART,
+    only in the lowercase computations like .start.
     """
 
+def create_utc_property(name:str, docs:str) -> property:
+    """Create a property to access a value of datetime in UTC timezone.
 
+    name - name of the property
+    docs - documentation string
+    """
+    docs = f"""The {name} property. datetime in UTC
+
+    All values will be converted to a datetime in UTC.
+    """ + docs
+
+    def p_get(self: Component) -> Optional[datetime]:
+        """Get the value."""
+        if name not in self:
+            return None
+        dt = self.get(name)
+        if isinstance(dt, vText):
+            # we might be in an attribute that is not typed
+            value = vDDDTypes.from_ical(dt)
+        else:
+            value = getattr(dt, "dt", None)
+        if value is None or not isinstance(value, date):
+            raise InvalidCalendar(f"{name} must be a datetime in UTC, not {value}")
+        return tzp.localize_utc(value)
+
+    def p_set(self: Component, value: datetime):
+        """Set the value"""
+        if not isinstance(value, date):
+            raise TypeError(f"{name} takes a datetime in UTC, not {value}")
+        self.pop(name)
+        self.add(name, tzp.localize_utc(value))
+
+
+    return property(p_get, p_set, doc=docs)
 
 class Component(CaselessDict):
     """Component is the base object for calendar, Event and the other
@@ -506,6 +550,44 @@ class Component(CaselessDict):
 
         return True
 
+    DTSTAMP = create_utc_property("DTSTAMP", """RFC 5545:
+
+        Conformance:  This property MUST be included in the "VEVENT",
+        "VTODO", "VJOURNAL", or "VFREEBUSY" calendar components.
+
+        Description: In the case of an iCalendar object that specifies a
+        "METHOD" property, this property specifies the date and time that
+        the instance of the iCalendar object was created.  In the case of
+        an iCalendar object that doesn't specify a "METHOD" property, this
+        property specifies the date and time that the information
+        associated with the calendar component was last revised in the
+        calendar store.
+
+        The value MUST be specified in the UTC time format.
+
+        In the case of an iCalendar object that doesn't specify a "METHOD"
+        property, this property is equivalent to the "LAST-MODIFIED"
+        property.
+    """)
+    LAST_MODIFIED = create_utc_property("LAST-MODIFIED", """RFC 5545:
+
+        Purpose:  This property specifies the date and time that the
+        information associated with the calendar component was last
+        revised in the calendar store.
+
+        Note: This is analogous to the modification date and time for a
+        file in the file system.
+
+        Conformance:  This property can be specified in the "VEVENT",
+        "VTODO", "VJOURNAL", or "VTIMEZONE" calendar components.
+    """)
+
+    def is_thunderbird(self) -> bool:
+        """Whether this component has attributes that indicate that Mozilla Thunderbird created it."""
+        return any(attr.startswith("X-MOZ-") for attr in self.keys())
+
+
+
 #######################################
 # components defined in RFC 5545
 
@@ -567,13 +649,14 @@ def create_single_property(
     return property(p_get, p_set, p_del, p_doc)
 
 
-def is_date(dt: date) -> bool:
-    """Whether this is a date and not a datetime."""
-    return isinstance(dt, date) and not isinstance(dt, datetime)
-
-def is_datetime(dt: date) -> bool:
-    """Whether this is a date and not a datetime."""
-    return isinstance(dt, datetime)
+_X_MOZ_SNOOZE_TIME = create_utc_property(
+    "X-MOZ-SNOOZE-TIME",
+    "Thunderbird: Alarms before this time are snoozed."
+)
+_X_MOZ_LASTACK = create_utc_property(
+    "X-MOZ-LASTACK",
+    "Thunderbird: Alarms before this time are acknowledged."
+)
 
 def _get_duration(self: Component) -> Optional[timedelta]:
     """Getter for property DURATION."""
@@ -646,6 +729,26 @@ class Event(Component):
         'RSTATUS', 'RELATED', 'RESOURCES', 'RDATE', 'RRULE'
     )
     ignore_exceptions = True
+    
+    @property
+    def alarms(self) -> Alarms:
+        """Compute the alarm times for this component.
+
+        >>> from icalendar import Event
+        >>> event = Event.example("rfc_9074_example_1")
+        >>> len(event.alarms.times)
+        1
+        >>> alarm_time = event.alarms.times[0]
+        >>> alarm_time.trigger  # The time when the alarm pops up
+        datetime.datetime(2021, 3, 2, 10, 15, tzinfo=ZoneInfo(key='America/New_York'))
+        >>> alarm_time.is_active()  # This alarm has not been acknowledged
+        True
+
+        Note that this only uses DTSTART and DTEND, but ignores
+        RDATE, EXDATE, and RRULE properties.
+        """
+        from icalendar.alarms import Alarms
+        return Alarms(self)
 
     @classmethod
     def example(cls, name:str="rfc_9074_example_3") -> Event:
@@ -736,6 +839,9 @@ class Event(Component):
     def end(self, end: date | datetime | None):
         """Set the end."""
         self.DTEND = end
+
+    X_MOZ_SNOOZE_TIME = _X_MOZ_SNOOZE_TIME
+    X_MOZ_LASTACK = _X_MOZ_LASTACK
 
 
 class Todo(Component):
@@ -844,6 +950,26 @@ class Todo(Component):
         You cannot set the duration as it is unclear what happens to start and end.
         """
         return self.end - self.start
+
+    X_MOZ_SNOOZE_TIME = _X_MOZ_SNOOZE_TIME
+    X_MOZ_LASTACK = _X_MOZ_LASTACK
+
+    @property
+    def alarms(self) -> Alarms:
+        """Compute the alarm times for this component.
+
+        >>> from datetime import datetime
+        >>> from icalendar import Todo
+        >>> todo = Todo()  # empty without alarms
+        >>> todo.start = datetime(2024, 10, 26, 10, 21)
+        >>> len(todo.alarms.times)
+        0
+
+        Note that this only uses DTSTART and DUE, but ignores
+        RDATE, EXDATE, and RRULE properties.
+        """
+        from icalendar.alarms import Alarms
+        return Alarms(self)
 
 
 class Journal(Component):
@@ -1331,6 +1457,168 @@ class Alarm(Component):
     inclusive = (('DURATION', 'REPEAT',), ('SUMMARY', 'ATTENDEE',))
     multiple = ('ATTENDEE', 'ATTACH', 'RELATED-TO')
 
+
+    @property
+    def REPEAT(self) -> int:
+        """The REPEAT property of an alarm component.
+
+        The alarm can be defined such that it triggers repeatedly.  A
+        definition of an alarm with a repeating trigger MUST include both
+        the "DURATION" and "REPEAT" properties.  The "DURATION" property
+        specifies the delay period, after which the alarm will repeat.
+        The "REPEAT" property specifies the number of additional
+        repetitions that the alarm will be triggered.  This repetition
+        count is in addition to the initial triggering of the alarm.
+        """
+        try:
+            return int(self.get("REPEAT", 0))
+        except ValueError as e:
+            raise InvalidCalendar("REPEAT must be an int") from e
+
+    @REPEAT.setter
+    def REPEAT(self, value: int) -> None:
+        """The REPEAT property of an alarm component."""
+        self["REPEAT"] = int(value)
+
+    DURATION = property(_get_duration, _set_duration, _del_duration,
+    """The DURATION property of an alarm component.
+
+    The alarm can be defined such that it triggers repeatedly.  A
+    definition of an alarm with a repeating trigger MUST include both
+    the "DURATION" and "REPEAT" properties.  The "DURATION" property
+    specifies the delay period, after which the alarm will repeat.
+    """)
+
+    ACKNOWLEDGED = create_utc_property("ACKNOWLEDGED",
+    """This is defined in RFC 9074:
+
+    Purpose: This property specifies the UTC date and time at which the
+    corresponding alarm was last sent or acknowledged.
+
+    This property is used to specify when an alarm was last sent or acknowledged.
+    This allows clients to determine when a pending alarm has been acknowledged
+    by a calendar user so that any alerts can be dismissed across multiple devices.
+    It also allows clients to track repeating alarms or alarms on recurring events or
+    to-dos to ensure that the right number of missed alarms can be tracked.
+
+    Clients SHOULD set this property to the current date-time value in UTC
+    when a calendar user acknowledges a pending alarm. Certain kinds of alarms,
+    such as email-based alerts, might not provide feedback as to when the calendar user
+    sees them. For those kinds of alarms, the client SHOULD set this property
+    when the alarm is triggered and the action is successfully carried out.
+
+    When an alarm is triggered on a client, clients can check to see if an "ACKNOWLEDGED"
+    property is present. If it is, and the value of that property is greater than or
+    equal to the computed trigger time for the alarm, then the client SHOULD NOT trigger
+    the alarm. Similarly, if an alarm has been triggered and
+    an "alert" has been presented to a calendar user, clients can monitor
+    the iCalendar data to determine whether an "ACKNOWLEDGED" property is added or
+    changed in the alarm component. If the value of any "ACKNOWLEDGED" property
+    in the alarm changes and is greater than or equal to the trigger time of the alarm,
+    then clients SHOULD dismiss or cancel any "alert" presented to the calendar user.
+    """)
+
+    TRIGGER = create_single_property(
+        "TRIGGER", "dt", (datetime, timedelta), Optional[Union[timedelta, datetime]],
+    """Purpose:  This property specifies when an alarm will trigger.
+
+    Value Type:  The default value type is DURATION.  The value type can
+    be set to a DATE-TIME value type, in which case the value MUST
+    specify a UTC-formatted DATE-TIME value.
+
+    Either a positive or negative duration may be specified for the
+    "TRIGGER" property.  An alarm with a positive duration is
+    triggered after the associated start or end of the event or to-do.
+    An alarm with a negative duration is triggered before the
+    associated start or end of the event or to-do."""
+    )
+
+    @property
+    def TRIGGER_RELATED(self) -> str:
+        """The RELATED parameter of the TRIGGER property.
+
+        Values are either "START" (default) or "END".
+
+        A value of START will set the alarm to trigger off the
+        start of the associated event or to-do.  A value of END will set
+        the alarm to trigger off the end of the associated event or to-do.
+
+        In this example, we create an alarm that triggers two hours after the
+        end of its parent component:
+
+        >>> from icalendar import Alarm
+        >>> from datetime import timedelta
+        >>> alarm = Alarm()
+        >>> alarm.TRIGGER = timedelta(hours=2)
+        >>> alarm.TRIGGER_RELATED = "END"
+        """
+        trigger = self.get("TRIGGER")
+        if trigger is None:
+            return "START"
+        return trigger.params.get("RELATED", "START")
+
+    @TRIGGER_RELATED.setter
+    def TRIGGER_RELATED(self, value: str):
+        """Set "START" or "END"."""
+        trigger = self.get("TRIGGER")
+        if trigger is None:
+            raise ValueError("You must set a TRIGGER before setting the RELATED parameter.")
+        trigger.params["RELATED"] = value
+    
+    class Triggers(NamedTuple):
+        """The computed times of alarm triggers.
+
+        start - triggers relative to the start of the Event or Todo (timedelta)
+        
+        end - triggers relative to the end of the Event or Todo (timedelta)
+        
+        absolute - triggers at a datetime in UTC
+        """
+        start: tuple[timedelta]
+        end: tuple[timedelta]
+        absolute: tuple[datetime]
+    
+    @property
+    def triggers(self):
+        """The computed triggers of an Alarm.
+
+        This takes the TRIGGER, DURATION and REPEAT properties into account.
+
+        Here, we create an alarm that triggers 3 times before the start of the
+        parent component:
+
+        >>> from icalendar import Alarm
+        >>> from datetime import timedelta
+        >>> alarm = Alarm()
+        >>> alarm.TRIGGER = timedelta(hours=-4)  # trigger 4 hours before START
+        >>> alarm.DURATION = timedelta(hours=1)  # after 1 hour trigger again
+        >>> alarm.REPEAT = 2  # trigger 2 more times
+        >>> alarm.triggers.start == (timedelta(hours=-4),  timedelta(hours=-3),  timedelta(hours=-2))
+        True
+        >>> alarm.triggers.end
+        ()
+        >>> alarm.triggers.absolute
+        ()
+        """
+        start = []
+        end = []
+        absolute = []
+        trigger = self.TRIGGER
+        if trigger is not None:
+            if isinstance(trigger, date):
+                absolute.append(trigger)
+                add = absolute
+            elif self.TRIGGER_RELATED == "START":
+                start.append(trigger)
+                add = start
+            else:
+                end.append(trigger)
+                add = end
+            duration = self.DURATION
+            if duration is not None:
+                for _ in range(self.REPEAT):
+                    add.append(add[-1] + duration)
+        return self.Triggers(start=tuple(start), end=tuple(end), absolute=tuple(absolute))
 
 class Calendar(Component):
     """

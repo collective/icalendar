@@ -25,125 +25,139 @@ We do not claim compatibility to the following RFCs. They might work though.
 - :rfc:`9073` - Event Publishing Extensions to iCalendar
 - :rfc:`9253` - Support for iCalendar Relationships
 
-File structure
---------------
+iCalendar file structure
+------------------------
 
-An iCalendar file is a text file (utf-8) with a special format. Basically it
-consists of content lines.
+An iCalendar file is a text file with UTF-8 character encoding in a special format.
 
-Each content line defines a property that has 3 parts (name, parameters,
-values). Parameters are optional.
+It consists of **content lines**,
+with each content line defining a property that has 3 parts: name, parameters, and values. Parameters are optional.
 
-A simple content line with only name and value could look like this::
+Example 1: a simple content line, with only name and value.
 
-  BEGIN:VCALENDAR
+.. code-block:: text
 
-A content line with parameters can look like this::
+    BEGIN:VCALENDAR
 
-  ATTENDEE;CN=Max Rasmussen;ROLE=REQ-PARTICIPANT:MAILTO:example@example.com
+Example 2: a content line with parameters.
 
-And the parts are::
+.. code-block:: text
 
-  Name:   ATTENDEE
-  Params: CN=Max Rasmussen;ROLE=REQ-PARTICIPANT
-  Value:  MAILTO:example@example.com
+    ATTENDEE;CN=Max Rasmussen;ROLE=REQ-PARTICIPANT:MAILTO:example@example.com
 
-Long content lines are usually "folded" to less than 75 character, but the
-package takes care of that.
+The parts in this example are the following.
 
+.. code-block:: text
 
-Overview
---------
+    Name:   ATTENDEE
+    Params: CN=Max Rasmussen;ROLE=REQ-PARTICIPANT
+    Value:  MAILTO:example@example.com
 
-On a higher level iCalendar files consists of components. Components can have
-sub components.
+For long content lines, iCalendar usually "folds" them to less than 75 characters.
 
-The root component is the VCALENDAR::
+On a higher level, you can think of iCalendar files' structure as having components and subcomponents.
 
-  BEGIN:VCALENDAR
-  ... vcalendar properties ...
-  END:VCALENDAR
+A component will have properties with values. The values
+have special types, like integer, text, and datetime. These values are
+encoded in a special text format in an iCalendar file. This package contains methods for converting to and from these encodings.
 
-The most frequent subcomponent to a VCALENDAR is a VEVENT. They are
-nested like this::
+Example 1: this is a VCALENDAR component representing a calendar.
 
-  BEGIN:VCALENDAR
-  ... vcalendar properties ...
-  BEGIN:VEVENT
-  ... vevent properties ...
-  END:VEVENT
+.. code-block:: text
+
+    BEGIN:VCALENDAR
+    ... vcalendar properties ...
     END:VCALENDAR
 
-Inside the components there are properties with values. The values
-have special types. Like integer, text, datetime etc. these values are
-encoded in a special text format in an iCalendar file.
+Example 2: The most frequent subcomponent to a VCALENDAR component is a VEVENT. This is a VCALENDAR component with a nested VEVENT subcomponent.
 
-There are methods for converting to and from these encodings in the package.
+.. code-block:: text
 
-These are the most important imports::
-
-  >>> from icalendar import Calendar, Event
+    BEGIN:VCALENDAR
+    ... vcalendar properties ...
+    BEGIN:VEVENT
+    ... vevent properties ...
+    END:VEVENT
+    END:VCALENDAR
 
 
 Components
 ----------
 
+The remaining code snippets in the documentation will use the following important imports.
+
+.. code-block:: pycon
+
+    >>> from icalendar import Calendar, Event
+
 Components are like (Case Insensitive) dicts. So if you want to set a property
-you do it like this. The calendar is a component::
+you do it like this. The calendar is a component.
 
-  >>> cal = Calendar()
-  >>> cal['dtstart'] = '20050404T080000'
-  >>> cal['summary'] = 'Python meeting about calendaring'
-  >>> for k,v in cal.items():
-  ...     k,v
-  ('DTSTART', '20050404T080000')
-  ('SUMMARY', 'Python meeting about calendaring')
+.. code-block:: pycon
 
-NOTE: the recommended way to add components to the calendar is to use
-create the subcomponent and add it via Calendar.add! The example above adds a
-string, but not a vText component.
+    >>> cal = Calendar()
+    >>> cal['dtstart'] = '20050404T080000'
+    >>> cal['summary'] = 'Python meeting about calendaring'
+    >>> for k,v in cal.items():
+    ...     k,v
+    ('DTSTART', '20050404T080000')
+    ('SUMMARY', 'Python meeting about calendaring')
+
+NOTE: the recommended way to add components to the calendar is to
+create the subcomponent and add it via ``Calendar.add``! The example above adds a
+string, but not a ``vText`` component.
 
 
-You can generate a string for a file with the to_ical() method::
+You can generate a string for a file with the ``to_ical()`` method.
 
-  >>> cal.to_ical()
-  b'BEGIN:VCALENDAR\r\nDTSTART:20050404T080000\r\nSUMMARY:Python meeting about calendaring\r\nEND:VCALENDAR\r\n'
+.. code-block:: pycon
 
-The rendered view is easier to read::
+    >>> cal.to_ical()
+    b'BEGIN:VCALENDAR\r\nDTSTART:20050404T080000\r\nSUMMARY:Python meeting about calendaring\r\nEND:VCALENDAR\r\n'
 
-  BEGIN:VCALENDAR
-  DTSTART:20050404T080000
-  SUMMARY:Python meeting about calendaring
-  END:VCALENDAR
+The rendered view is easier to read.
 
-So, let's define a function so we can easily display to_ical() output::
+.. code-block:: pycon
 
-  >>> def display(cal):
-  ...    return cal.to_ical().decode("utf-8").replace('\r\n', '\n').strip()
+    BEGIN:VCALENDAR
+    DTSTART:20050404T080000
+    SUMMARY:Python meeting about calendaring
+    END:VCALENDAR
 
-You can set multiple properties like this::
+So, let's define a function so we can easily display to_ical() output.
 
-  >>> cal = Calendar()
-  >>> cal['attendee'] = ['MAILTO:maxm@mxm.dk','MAILTO:test@example.com']
-  >>> print(display(cal))
-  BEGIN:VCALENDAR
-  ATTENDEE:MAILTO:maxm@mxm.dk
-  ATTENDEE:MAILTO:test@example.com
-  END:VCALENDAR
+.. code-block:: pycon
+
+    >>> def display(cal):
+    ...    return cal.to_ical().decode("utf-8").replace('\r\n', '\n').strip()
+
+You can set multiple properties like this.
+
+.. code-block:: pycon
+
+    >>> cal = Calendar()
+    >>> cal['attendee'] = ['MAILTO:maxm@mxm.dk','MAILTO:test@example.com']
+    >>> print(display(cal))
+    BEGIN:VCALENDAR
+    ATTENDEE:MAILTO:maxm@mxm.dk
+    ATTENDEE:MAILTO:test@example.com
+    END:VCALENDAR
 
 If you don't want to care about whether a property value is a list or
 a single value, just use the add() method. It will automatically
 convert the property to a list of values if more than one value is
-added. Here is an example::
+added. Here is an example.
 
-  >>> cal = Calendar()
-  >>> cal.add('attendee', 'MAILTO:maxm@mxm.dk')
-  >>> cal.add('attendee', 'MAILTO:test@example.com')
-  >>> print(display(cal))
-  BEGIN:VCALENDAR
-  ATTENDEE:MAILTO:maxm@mxm.dk
-  ATTENDEE:MAILTO:test@example.com
-  END:VCALENDAR
+.. code-block:: pycon
+
+    >>> cal = Calendar()
+    >>> cal.add('attendee', 'MAILTO:maxm@mxm.dk')
+    >>> cal.add('attendee', 'MAILTO:test@example.com')
+    >>> print(display(cal))
+    BEGIN:VCALENDAR
+    ATTENDEE:MAILTO:maxm@mxm.dk
+    ATTENDEE:MAILTO:test@example.com
+    END:VCALENDAR
 
 Note: this version doesn't check for compliance, so you should look in
 the RFC 5545 spec for legal properties for each component, or look in
@@ -156,29 +170,35 @@ Subcomponents
 
 Any component can have subcomponents. Eg. inside a calendar there can
 be events.  They can be arbitrarily nested. First by making a new
-component::
+component.
 
-  >>> event = Event()
-  >>> event['uid'] = '42'
-  >>> event['dtstart'] = '20050404T080000'
+.. code-block:: pycon
 
-And then appending it to a "parent"::
+    >>> event = Event()
+    >>> event['uid'] = '42'
+    >>> event['dtstart'] = '20050404T080000'
 
-  >>> cal.add_component(event)
-  >>> print(display(cal))
-  BEGIN:VCALENDAR
-  ATTENDEE:MAILTO:maxm@mxm.dk
-  ATTENDEE:MAILTO:test@example.com
-  BEGIN:VEVENT
-  DTSTART:20050404T080000
-  UID:42
-  END:VEVENT
-  END:VCALENDAR
+And then appending it to a "parent".
 
-Subcomponents are appended to the subcomponents property on the component::
+.. code-block:: pycon
 
-  >>> cal.subcomponents
-  [VEVENT({'UID': '42', 'DTSTART': '20050404T080000'})]
+    >>> cal.add_component(event)
+    >>> print(display(cal))
+    BEGIN:VCALENDAR
+    ATTENDEE:MAILTO:maxm@mxm.dk
+    ATTENDEE:MAILTO:test@example.com
+    BEGIN:VEVENT
+    DTSTART:20050404T080000
+    UID:42
+    END:VEVENT
+    END:VCALENDAR
+
+Subcomponents are appended to the subcomponents property on the component.
+
+.. code-block:: pycon
+
+    >>> cal.subcomponents
+    [VEVENT({'UID': '42', 'DTSTART': '20050404T080000'})]
 
 
 Value types
@@ -196,12 +216,14 @@ yourself.
 
 To add a datetime value, you can use Pythons built in datetime types,
 and the set the encode parameter to true, and it will convert to the
-type defined in the spec::
+type defined in the spec.
 
-  >>> from datetime import datetime
-  >>> cal.add('dtstart', datetime(2005,4,4,8,0,0))
-  >>> cal['dtstart'].to_ical()
-  b'20050404T080000'
+.. code-block:: pycon
+
+    >>> from datetime import datetime
+    >>> cal.add('dtstart', datetime(2005,4,4,8,0,0))
+    >>> cal['dtstart'].to_ical()
+    b'20050404T080000'
 
 If that doesn't work satisfactorily for some reason, you can also do it
 manually.
@@ -209,12 +231,14 @@ manually.
 In 'icalendar.prop', all the iCalendar data types are defined. Each
 type has a class that can parse and encode the type.
 
-So if you want to do it manually::
+So if you want to do it manually.
 
-  >>> from icalendar import vDatetime
-  >>> now = datetime(2005,4,4,8,0,0)
-  >>> vDatetime(now).to_ical()
-  b'20050404T080000'
+.. code-block:: pycon
+
+    >>> from icalendar import vDatetime
+    >>> now = datetime(2005,4,4,8,0,0)
+    >>> vDatetime(now).to_ical()
+    b'20050404T080000'
 
 So the drill is to initialise the object with a python built in type,
 and then call the "to_ical()" method on the object. That will return an
@@ -222,23 +246,27 @@ ical encoded string.
 
 You can do it the other way around too. To parse an encoded string, just call
 the "from_ical()" method, and it will return an instance of the corresponding
-Python type::
+Python type.
 
-  >>> vDatetime.from_ical('20050404T080000')
-  datetime.datetime(2005, 4, 4, 8, 0)
+.. code-block:: pycon
 
-  >>> vDatetime.from_ical('20050404T080000Z')
-  datetime.datetime(2005, 4, 4, 8, 0, tzinfo=ZoneInfo(key='UTC'))
+    >>> vDatetime.from_ical('20050404T080000')
+    datetime.datetime(2005, 4, 4, 8, 0)
+
+    >>> vDatetime.from_ical('20050404T080000Z')
+    datetime.datetime(2005, 4, 4, 8, 0, tzinfo=ZoneInfo(key='UTC'))
 
 You can also choose to use the decoded() method, which will return a decoded
-value directly::
+value directly.
 
-  >>> cal = Calendar()
-  >>> cal.add('dtstart', datetime(2005,4,4,8,0,0))
-  >>> cal['dtstart'].to_ical()
-  b'20050404T080000'
-  >>> cal.decoded('dtstart')
-  datetime.datetime(2005, 4, 4, 8, 0)
+.. code-block:: pycon
+
+    >>> cal = Calendar()
+    >>> cal.add('dtstart', datetime(2005,4,4,8,0,0))
+    >>> cal['dtstart'].to_ical()
+    b'20050404T080000'
+    >>> cal.decoded('dtstart')
+    datetime.datetime(2005, 4, 4, 8, 0)
 
 
 Property parameters
@@ -246,7 +274,9 @@ Property parameters
 
 Property parameters are automatically added, depending on the input value. For
 example, for date/time related properties, the value type and timezone
-identifier (if applicable) are automatically added here::
+identifier (if applicable) are automatically added here.
+
+.. code-block:: pycon
 
     >>> import zoneinfo
     >>> event = Event()
@@ -260,7 +290,9 @@ identifier (if applicable) are automatically added here::
 
 
 You can also add arbitrary property parameters by passing a parameters
-dictionary to the add method like so::
+dictionary to the add method like so.
+
+.. code-block:: pycon
 
     >>> event = Event()
     >>> event.add('X-TEST-PROP', 'tryout.',
@@ -275,116 +307,136 @@ Example
 Here is an example generating a complete iCal calendar file with a
 single event that can be loaded into the Mozilla calendar.
 
-Init the calendar::
+Initialize the calendar.
 
-  >>> cal = Calendar()
-  >>> from datetime import datetime
-  >>> import zoneinfo
+.. code-block:: pycon
 
-Some properties are required to be compliant::
+    >>> cal = Calendar()
+    >>> from datetime import datetime
+    >>> import zoneinfo
 
-  >>> cal.add('prodid', '-//My calendar product//mxm.dk//')
-  >>> cal.add('version', '2.0')
+Some properties are required to be compliant.
 
-We need at least one subcomponent for a calendar to be compliant::
+.. code-block:: pycon
 
-  >>> event = Event()
-  >>> event.add('summary', 'Python meeting about calendaring')
-  >>> event.add('dtstart', datetime(2005,4,4,8,0,0,tzinfo=zoneinfo.ZoneInfo("UTC")))
-  >>> event.add('dtend', datetime(2005,4,4,10,0,0,tzinfo=zoneinfo.ZoneInfo("UTC")))
-  >>> event.add('dtstamp', datetime(2005,4,4,0,10,0,tzinfo=zoneinfo.ZoneInfo("UTC")))
+    >>> cal.add('prodid', '-//My calendar product//mxm.dk//')
+    >>> cal.add('version', '2.0')
 
-A property with parameters. Notice that they are an attribute on the value::
+We need at least one subcomponent for a calendar to be compliant.
 
-  >>> from icalendar import vCalAddress, vText
-  >>> organizer = vCalAddress('MAILTO:noone@example.com')
+.. code-block:: pycon
+
+    >>> event = Event()
+    >>> event.add('summary', 'Python meeting about calendaring')
+    >>> event.add('dtstart', datetime(2005,4,4,8,0,0,tzinfo=zoneinfo.ZoneInfo("UTC")))
+    >>> event.add('dtend', datetime(2005,4,4,10,0,0,tzinfo=zoneinfo.ZoneInfo("UTC")))
+    >>> event.add('dtstamp', datetime(2005,4,4,0,10,0,tzinfo=zoneinfo.ZoneInfo("UTC")))
+
+A property with parameters. Notice that they are an attribute on the value.
+
+.. code-block:: pycon
+
+    >>> from icalendar import vCalAddress, vText
+    >>> organizer = vCalAddress('MAILTO:noone@example.com')
 
 Automatic encoding is not yet implemented for parameter values, so you
 must use the 'v*' types you can import from the icalendar package
-(they're defined in ``icalendar.prop``)::
+(they're defined in ``icalendar.prop``).
 
-  >>> organizer.params['cn'] = vText('Max Rasmussen')
-  >>> organizer.params['role'] = vText('CHAIR')
-  >>> event['organizer'] = organizer
-  >>> event['location'] = vText('Odense, Denmark')
+.. code-block:: pycon
 
-  >>> event['uid'] = '20050115T101010/27346262376@mxm.dk'
-  >>> event.add('priority', 5)
+    >>> organizer.params['cn'] = vText('Max Rasmussen')
+    >>> organizer.params['role'] = vText('CHAIR')
+    >>> event['organizer'] = organizer
+    >>> event['location'] = vText('Odense, Denmark')
 
-  >>> attendee = vCalAddress('MAILTO:maxm@example.com')
-  >>> attendee.params['cn'] = vText('Max Rasmussen')
-  >>> attendee.params['ROLE'] = vText('REQ-PARTICIPANT')
-  >>> event.add('attendee', attendee, encode=0)
+    >>> event['uid'] = '20050115T101010/27346262376@mxm.dk'
+    >>> event.add('priority', 5)
 
-  >>> attendee = vCalAddress('MAILTO:the-dude@example.com')
-  >>> attendee.params['cn'] = vText('The Dude')
-  >>> attendee.params['ROLE'] = vText('REQ-PARTICIPANT')
-  >>> event.add('attendee', attendee, encode=0)
+    >>> attendee = vCalAddress('MAILTO:maxm@example.com')
+    >>> attendee.params['cn'] = vText('Max Rasmussen')
+    >>> attendee.params['ROLE'] = vText('REQ-PARTICIPANT')
+    >>> event.add('attendee', attendee, encode=0)
 
-Add the event to the calendar::
+    >>> attendee = vCalAddress('MAILTO:the-dude@example.com')
+    >>> attendee.params['cn'] = vText('The Dude')
+    >>> attendee.params['ROLE'] = vText('REQ-PARTICIPANT')
+    >>> event.add('attendee', attendee, encode=0)
 
-  >>> cal.add_component(event)
+Add the event to the calendar.
 
-By extending the event with subcomponents, you can create multiple alarms::
+.. code-block:: pycon
 
-  >>> from icalendar import Alarm
-  >>> from datetime import timedelta
-  >>> alarm_1h_before = Alarm()
-  >>> alarm_1h_before.add('action', 'DISPLAY')
-  >>> alarm_1h_before.add('trigger', timedelta(hours=-1))
-  >>> alarm_1h_before.add('description', 'Reminder: Event in 1 hour')
-  >>> event.add_component(alarm_1h_before)
+    >>> cal.add_component(event)
 
-  >>> alarm_24h_before = Alarm()
-  >>> alarm_24h_before.add('action', 'DISPLAY')
-  >>> alarm_24h_before.add('trigger', timedelta(hours=-24))
-  >>> alarm_24h_before.add('description', 'Reminder: Event in 24 hours')
-  >>> event.add_component(alarm_24h_before)
+By extending the event with subcomponents, you can create multiple alarms.
 
-Or even recurrence::
+.. code-block:: pycon
 
-  >>> event.add('rrule', {'freq': 'daily'})
+    >>> from icalendar import Alarm
+    >>> from datetime import timedelta
+    >>> alarm_1h_before = Alarm()
+    >>> alarm_1h_before.add('action', 'DISPLAY')
+    >>> alarm_1h_before.add('trigger', timedelta(hours=-1))
+    >>> alarm_1h_before.add('description', 'Reminder: Event in 1 hour')
+    >>> event.add_component(alarm_1h_before)
 
-Write to disk::
+    >>> alarm_24h_before = Alarm()
+    >>> alarm_24h_before.add('action', 'DISPLAY')
+    >>> alarm_24h_before.add('trigger', timedelta(hours=-24))
+    >>> alarm_24h_before.add('description', 'Reminder: Event in 24 hours')
+    >>> event.add_component(alarm_24h_before)
 
-  >>> import tempfile, os
-  >>> directory = tempfile.mkdtemp()
-  >>> f = open(os.path.join(directory, 'example.ics'), 'wb')
-  >>> f.write(cal.to_ical())
-  733
-  >>> f.close()
+Or even recurrence.
 
-Print out the calendar::
+.. code-block:: pycon
 
-  >>> print(cal.to_ical().decode('utf-8')) # doctest: +NORMALIZE_WHITESPACE
-  BEGIN:VCALENDAR
-  VERSION:2.0
-  PRODID:-//My calendar product//mxm.dk//
-  BEGIN:VEVENT
-  SUMMARY:Python meeting about calendaring
-  DTSTART:20050404T080000Z
-  DTEND:20050404T100000Z
-  DTSTAMP:20050404T001000Z
-  UID:20050115T101010/27346262376@mxm.dk
-  RRULE:FREQ=DAILY
-  ATTENDEE;CN="Max Rasmussen";ROLE=REQ-PARTICIPANT:MAILTO:maxm@example.com
-  ATTENDEE;CN="The Dude";ROLE=REQ-PARTICIPANT:MAILTO:the-dude@example.com
-  LOCATION:Odense\, Denmark
-  ORGANIZER;CN="Max Rasmussen";ROLE=CHAIR:MAILTO:noone@example.com
-  PRIORITY:5
-  BEGIN:VALARM
-  ACTION:DISPLAY
-  DESCRIPTION:Reminder: Event in 1 hour
-  TRIGGER:-PT1H
-  END:VALARM
-  BEGIN:VALARM
-  ACTION:DISPLAY
-  DESCRIPTION:Reminder: Event in 24 hours
-  TRIGGER:-P1D
-  END:VALARM
-  END:VEVENT
-  END:VCALENDAR
-  <BLANKLINE>
+    >>> event.add('rrule', {'freq': 'daily'})
+
+Write to disk.
+
+.. code-block:: pycon
+
+    >>> import tempfile, os
+    >>> directory = tempfile.mkdtemp()
+    >>> f = open(os.path.join(directory, 'example.ics'), 'wb')
+    >>> f.write(cal.to_ical())
+    733
+    >>> f.close()
+
+Print out the calendar.
+
+.. code-block:: pycon
+
+    >>> print(cal.to_ical().decode('utf-8')) # doctest: +NORMALIZE_WHITESPACE
+    BEGIN:VCALENDAR
+    VERSION:2.0
+    PRODID:-//My calendar product//mxm.dk//
+    BEGIN:VEVENT
+    SUMMARY:Python meeting about calendaring
+    DTSTART:20050404T080000Z
+    DTEND:20050404T100000Z
+    DTSTAMP:20050404T001000Z
+    UID:20050115T101010/27346262376@mxm.dk
+    RRULE:FREQ=DAILY
+    ATTENDEE;CN="Max Rasmussen";ROLE=REQ-PARTICIPANT:MAILTO:maxm@example.com
+    ATTENDEE;CN="The Dude";ROLE=REQ-PARTICIPANT:MAILTO:the-dude@example.com
+    LOCATION:Odense\, Denmark
+    ORGANIZER;CN="Max Rasmussen";ROLE=CHAIR:MAILTO:noone@example.com
+    PRIORITY:5
+    BEGIN:VALARM
+    ACTION:DISPLAY
+    DESCRIPTION:Reminder: Event in 1 hour
+    TRIGGER:-PT1H
+    END:VALARM
+    BEGIN:VALARM
+    ACTION:DISPLAY
+    DESCRIPTION:Reminder: Event in 24 hours
+    TRIGGER:-P1D
+    END:VALARM
+    END:VEVENT
+    END:VCALENDAR
+    <BLANKLINE>
 
 More documentation
 ==================
