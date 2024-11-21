@@ -3,15 +3,9 @@
 import pytest
 from zoneinfo import ZoneInfo, available_timezones
 
-from icalendar.timezone import tzids_from_tzinfo
+from icalendar.timezone import tzids_from_tzinfo, tzid_from_tzinfo
 
-tzids = available_timezones()
-try:
-    tzids.remove("Factory")
-    tzids.remove("localtime")
-except ValueError:
-    pass
-
+tzids = available_timezones() - {"Factory", "localtime"}
 with_tzid = pytest.mark.parametrize("tzid", tzids)
 
 @with_tzid
@@ -30,3 +24,8 @@ def test_can_identify_dateutil(tzid):
     """Check that all those dateutil timezones can be identified."""
     from dateutil.tz import gettz
     assert tzid in tzids_from_tzinfo(gettz(tzid))
+
+def test_utc_is_identified(utc):
+    """Test UTC because it is handled in a special way."""
+    assert "UTC" in tzids_from_tzinfo(utc)
+    assert tzid_from_tzinfo(utc) == "UTC"

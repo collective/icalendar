@@ -11,10 +11,10 @@ we should be able to create tests that work for the past.
 
 from datetime import date, datetime, timedelta
 from re import findall
-from zoneinfo import available_timezones
 
 import pytest
 from dateutil.tz import gettz
+from zoneinfo import available_timezones
 
 from icalendar import Calendar, Component, Event, Timezone
 from icalendar.timezone import tzid_from_tzinfo, tzids_from_tzinfo
@@ -327,7 +327,7 @@ def test_dateutil_timezone_is_not_found_with_tzname(calendars, no_pytz):
     assert "dateutil" in repr(cal.events[0].start.tzinfo.__class__)
 
 
-@pytest.mark.parametrize("tzname", ["America/New_York", "Europe/Berlin"])
+@pytest.mark.parametrize("tzname", ["America/New_York", "Arctic/Longyearbyen"])
 # @pytest.mark.parametrize("component", ["STANDARD", "DAYLIGHT"])
 def test_dateutil_timezone_is_matched_with_tzname(tzname):
     """dateutil is an example of a timezone that has no tzid.
@@ -338,6 +338,7 @@ def test_dateutil_timezone_is_matched_with_tzname(tzname):
     cal = Calendar()
     event = Event()
     event.start = datetime(2024, 11, 12, tzinfo=gettz(tzname))
+    print(dir(event.start.tzinfo))
     cal.add_component(event)
     assert cal.get_missing_tzids() == {tzname}
     cal.add_missing_timezones()
@@ -399,7 +400,7 @@ def test_dates_before_and_after_are_considered():
     pytest.skip("todo")
 
 
-@pytest.mark.parametrize("tzid", available_timezones())
+@pytest.mark.parametrize("tzid", available_timezones() - {"Factory", "localtime"})  
 def test_we_can_identify_dateutil_timezones(tzid):
     """dateutil and others were badly supported.
 

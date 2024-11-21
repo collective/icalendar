@@ -1392,7 +1392,6 @@ class Calendar(Component):
         """
         result = set()
         for name, value in self.property_items(sorted=False):
-            print(name, value)
             if hasattr(value, "params"):
                 result.add(value.params.get("TZID"))
         return result - {None}

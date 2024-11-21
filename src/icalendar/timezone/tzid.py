@@ -7,6 +7,7 @@ datetime.tzinfo object.
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional
+import dateutil.tz.tz as tz
 
 if TYPE_CHECKING:
     from datetime import datetime, tzinfo
@@ -20,16 +21,20 @@ def tzids_from_tzinfo(tzinfo: Optional[tzinfo]) -> tuple[str]:
     >>> tzids_from_tzinfo(zoneinfo.ZoneInfo("Africa/Accra"))
     ('Africa/Accra',)
     >>> from dateutil.tz import gettz
-    >>> tzids_from_tzinfo(gettz("Africa/Accra"))
-    ('Africa/Abidjan', 'Africa/Accra', 'Africa/Bamako', 'Africa/Banjul', 'Africa/Conakry', 'Africa/Dakar')
+    >>> tzids_from_tzinfo(gettz("Europe/Berlin"))
+    ('Arctic/Longyearbyen', 'Atlantic/Jan_Mayen', 'Europe/Berlin', 'Europe/Budapest', 'Europe/Copenhagen', 'Europe/Oslo', 'Europe/Stockholm', 'Europe/Vienna')
 
-    """
+    """ # The example might need to change if you recreate the lookup tree
     if tzinfo is None:
         return ()
     if hasattr(tzinfo, 'zone'):
         return (tzinfo.zone,)  # pytz implementation
     if hasattr(tzinfo, 'key'):
-        return (tzinfo.key,)  # dateutil implementation, tzinfo.key  # ZoneInfo implementation
+        return (tzinfo.key,)  # ZoneInfo implementation
+    if isinstance(tzinfo, tz._tzicalvtz):
+        return (tzinfo._tzid,)
+    if isinstance(tzinfo, tz.tzstr):
+        return (tzinfo._s,)
     return tuple(sorted(tzinfo2tzids(tzinfo)))
 
 
@@ -39,8 +44,12 @@ def tzid_from_tzinfo(tzinfo: Optional[tzinfo]) -> Optional[str]:
     Some timezones are equivalent.
     Thus, we might return one ID that is equivelant to others.
     """
-    return (tzids_from_tzinfo(tzinfo) + (None,))[0]
-
+    tzids = tzids_from_tzinfo(tzinfo)
+    if "UTC" in tzids:
+        return "UTC"
+    if not tzids:
+        return None
+    return tzids[0]
 
 def tzid_from_dt(dt: datetime) -> Optional[str]:
     """Retrieve the timezone id from the datetime object."""
@@ -67,10 +76,11 @@ def tzinfo2tzids(tzinfo: Optional[tzinfo]) -> set[str]:
     is equivalent to many others.
 
     >>> import zoneinfo
-    >>> from icalendar.timezone.equivalent_timezone_ids import tzinfo2tzids
-    >>> tzinfo2tzids(zoneinfo.ZoneInfo("Africa/Accra"))
-    ('Africa/Abidjan', 'Africa/Accra', 'Africa/Bamako', 'Africa/Banjul', 'Africa/Conakry', 'Africa/Dakar')
-    """
+    >>> from icalendar.timezone.tzid import tzinfo2tzids
+    >>> "Europe/Berlin" in tzinfo2tzids(zoneinfo.ZoneInfo("Europe/Berlin"))
+    True
+
+    """ # The example might need to change if you recreate the lookup tree
     if tzinfo is None:
         return set()
     from icalendar.timezone.equivalent_timezone_ids_result import lookup

@@ -1,21 +1,25 @@
 """Use zoneinfo timezones"""
 from __future__ import annotations
+
 try:
     import zoneinfo
-except:
-    from backports import zoneinfo
-from icalendar import prop
-from dateutil.rrule import rrule, rruleset
-from datetime import datetime, tzinfo
-from typing import Optional
-from .provider import TZProvider
-from .. import cal
-from io import StringIO
-from dateutil.tz import tzical
-from dateutil.tz.tz import _tzicalvtz
+except ImportError:
+    from backports import zoneinfo  # type: ignore  # noqa: PGH003
+import copy
 import copyreg
 import functools
-import copy
+from datetime import datetime, tzinfo
+from io import StringIO
+from typing import TYPE_CHECKING, Optional
+
+from dateutil.rrule import rrule, rruleset
+from dateutil.tz import tzical
+from dateutil.tz.tz import _tzicalvtz
+
+from .provider import TZProvider
+
+if TYPE_CHECKING:
+    from icalendar import cal, prop
 
 
 class ZONEINFO(TZProvider):
