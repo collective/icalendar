@@ -125,7 +125,7 @@ def main(
         f.write("import datetime\n\n")
         f.write(f"\nlookup = ")
         pprint(lookup, stream=f)
-        f.write("\n\n__all__ = ['lookup', 'dates']\n")
+        f.write("\n\n__all__ = ['lookup']\n")
 
     return lookup
 

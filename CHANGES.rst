@@ -15,6 +15,7 @@ Minor changes:
 - Document component classes with description from :rfc:`5545`.
 - Merge "File Structure" and "Overview" sections in the docs. See `Issue 626 <https://github.com/collective/icalendar/issues/626>`_.
 - Update code blocks in usage.rst with the correct lexer.
+- Improve typing and fix typing issues 
 
 Breaking changes:
 
@@ -34,6 +35,13 @@ New features:
 - Add ``Alarm.ACKNOWLEDGED``, ``Alarm.TRIGGER``, ``Alarm.REPEAT``, and ``Alarm.DURATION`` properties
   as well as ``Alarm.triggers`` to calculate alarm triggers.
 - Add ``__doc__`` string documentation for ``vDate``, ``vBoolean``, ``vCalAddress``, ``vDuration``, ``vFloat``, ``vGeo``, ``vInt``, ``vPeriod``, ``vTime``, ``vUTCOffset`` and ``vUri``. See `Issue 742 <https://github.com/collective/icalendar/issues/742>`_.
+- Add ``DTSTART``, ``TZOFFSETTO``, and ``TZOFFSETFROM`` to ``TimezoneStandard`` and ``TimezoneDaylight``
+- Use ``example`` methods of components without arguments.
+- Add ``events``, ``timezones``, and ``todos`` property to ``Calendar`` for nicer access.
+- To calculate which timezones are in use and add them to the ``Calendar`` when needed these methods are added: ``get_used_tzids``, ``get_missing_tzids``, and ``add_missing_timezones``.
+- Identify the TZID of more timezones from dateutil.
+- Identify totally unknown timezones using a UTC offset lookup tree generated in ``icalendar.timezone.equivalent_timezone_ids`` and stored in ``icalendar.timezone.equivalent_timezone_ids``.
+- Add ``icalendar.timezone.tzid`` to identify a timezone's TZID.
 
 Bug fixes:
 

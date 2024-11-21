@@ -808,4 +808,4 @@ lookup = (datetime.datetime(1970, 1, 2, 9, 0),
   datetime.timedelta(seconds=50400): {'Etc/GMT-14'}})
 
 
-__all__ = ['lookup', 'dates']
+__all__ = ['lookup']
