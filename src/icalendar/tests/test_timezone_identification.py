@@ -1,7 +1,10 @@
 """Test that we can identify all timezones."""
 
 import pytest
-from zoneinfo import ZoneInfo, available_timezones
+try:
+    from zoneinfo import ZoneInfo, available_timezones
+except ImportError:
+    from backports.zoneinfo import ZoneInfo, available_timezones
 
 from icalendar.timezone import tzids_from_tzinfo, tzid_from_tzinfo
 

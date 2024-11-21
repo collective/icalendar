@@ -14,7 +14,10 @@ from re import findall
 
 import pytest
 from dateutil.tz import gettz
-from zoneinfo import available_timezones
+try:
+    from zoneinfo import available_timezones
+except ImportError:
+    from backports.zoneinfo import available_timezones
 
 from icalendar import Calendar, Component, Event, Timezone
 from icalendar.timezone import tzid_from_tzinfo, tzids_from_tzinfo
