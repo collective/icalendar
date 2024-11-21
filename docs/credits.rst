@@ -76,6 +76,7 @@ icalendar contributors
 - `Steve Piercy <https://github.com/stevepiercy>`_
 - Jeffrey Whewhetu <jeffwhewhetu@gmail.com>
 - `Soham Dutta <https://github.com/NP-compete>`_
+- `Serif OZ  <https://github.com/SerifOZ>`_
 
 Find out who contributed::
 

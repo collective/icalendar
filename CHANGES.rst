@@ -30,7 +30,7 @@ New features:
 - Add ``X_MOZ_SNOOZE_TIME`` and ``X_MOZ_LASTACK`` properties to ``Event`` and ``Todo``.
 - Add ``Alarm.ACKNOWLEDGED``, ``Alarm.TRIGGER``, ``Alarm.REPEAT``, and ``Alarm.DURATION`` properties
   as well as ``Alarm.triggers`` to calculate alarm triggers.
-- Add ``__doc__`` string documentation for ``vDate``. See `Issue 742 <https://github.com/collective/icalendar/issues/742>`_.
+- Add ``__doc__`` string documentation for ``vDate``, ``vBoolean``, ``vCalAddress``, ``vDuration``, ``vFloat``, ``vGeo``, ``vInt``, ``vPeriod``, ``vTime``, ``vUTCOffset`` and ``vUri``. See `Issue 742 <https://github.com/collective/icalendar/issues/742>`_.
 
 Bug fixes:
 
