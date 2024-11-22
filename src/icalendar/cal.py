@@ -6,6 +6,9 @@ These are the defined components.
 from __future__ import annotations
 
 import os
+from collections import defaultdict
+from datetime import date, datetime, timedelta, tzinfo
+from typing import List, Optional, Tuple
 from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, List, NamedTuple, Optional, Tuple, Union
 
@@ -15,6 +18,18 @@ import dateutil.tz
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_split
 from icalendar.parser_tools import DEFAULT_ENCODING
+from icalendar.prop import (
+    TypesFactory,
+    tzid_from_dt,
+    tzid_from_tzinfo,
+    vDDDLists,
+    vDDDTypes,
+    vDuration,
+    vText,
+    vUTCOffset,
+    vDatetime,
+)
+from icalendar.timezone import TZP, tzp
 from icalendar.prop import TypesFactory, vDDDLists, vDDDTypes, vDuration, vText
 from icalendar.timezone import tzp
 from icalendar.tools import is_date
@@ -323,7 +338,7 @@ class Component(CaselessDict):
     #########################
     # Handling of components
 
-    def add_component(self, component):
+    def add_component(self, component: Component):
         """Add a subcomponent to this component.
         """
         self.subcomponents.append(component)
@@ -338,7 +353,7 @@ class Component(CaselessDict):
             result += subcomponent._walk(name, select)
         return result
 
-    def walk(self, name=None, select=lambda c: True):
+    def walk(self, name=None, select=lambda c: True) -> list[Component]:
         """Recursively traverses component and subcomponents. Returns sequence
         of same. If name is passed, only components with name will be returned.
 
@@ -355,7 +370,7 @@ class Component(CaselessDict):
     #####################
     # Generation
 
-    def property_items(self, recursive=True, sorted=True):
+    def property_items(self, recursive=True, sorted=True) -> list[tuple[str, object]]:
         """Returns properties in this component and subcomponents as:
         [(name, value), ...]
         """
@@ -576,10 +591,23 @@ class Component(CaselessDict):
 #######################################
 # components defined in RFC 5545
 
-def create_single_property(prop:str, value_attr:str, value_type:tuple[type], type_def:type, doc:str):
+def create_single_property(
+        prop:str,
+        value_attr:Optional[str],
+        value_type:tuple[type],
+        type_def:type,
+        doc:str,
+        vProp:type=vDDDTypes  # noqa: N803
+    ):
     """Create a single property getter and setter.
-    
-    This is a getter and setter for a property that only occurs once or not (None)."""
+
+    :param prop: The name of the property.
+    :param value_attr: The name of the attribute to get the value from.
+    :param value_type: The type of the value.
+    :param type_def: The type of the property.
+    :param doc: The docstring of the property.
+    :param vProp: The type of the property from :mod:`icalendar.prop`.
+    """
 
     def p_get(self : Component):
         default = object()
@@ -588,7 +616,7 @@ def create_single_property(prop:str, value_attr:str, value_type:tuple[type], typ
             return None
         if isinstance(result, list):
             raise InvalidCalendar(f"Multiple {prop} defined.")
-        value = getattr(result, value_attr, result)
+        value = result if value_attr is None else getattr(result, value_attr, result)
         if not isinstance(value, value_type):
             raise InvalidCalendar(f"{prop} must be either a {' or '.join(t.__name__ for t in value_type)}, not {value}.")
         return value
@@ -599,7 +627,7 @@ def create_single_property(prop:str, value_attr:str, value_type:tuple[type], typ
             return
         if not isinstance(value, value_type):
             raise TypeError(f"Use {' or '.join(t.__name__ for t in value_type)}, not {type(value).__name__}.")
-        self[prop] = vDDDTypes(value)
+        self[prop] = vProp(value)
         if prop in self.exclusive:
             for other_prop in self.exclusive:
                 if other_prop != prop:
@@ -723,7 +751,7 @@ class Event(Component):
         return Alarms(self)
 
     @classmethod
-    def example(cls, name:str) -> Event:
+    def example(cls, name:str="rfc_9074_example_3") -> Event:
         """Return the calendar example with the given name."""
         return cls.from_ical(get_example("events", name))
 
@@ -1017,7 +1045,6 @@ class FreeBusy(Component):
     )
     multiple = ('ATTENDEE', 'COMMENT', 'FREEBUSY', 'RSTATUS',)
 
-
 class Timezone(Component):
     """
     A "VTIMEZONE" calendar component is a grouping of component
@@ -1029,20 +1056,23 @@ class Timezone(Component):
     required = ('TZID',) # it also requires one of components DAYLIGHT and STANDARD
     singletons = ('TZID', 'LAST-MODIFIED', 'TZURL',)
 
+    _DEFAULT_FIRST_DATE = date(1970, 1, 1)
+    _DEFAULT_LAST_DATE = date(2038, 1, 1)
+
     @classmethod
-    def example(cls, name: str) -> Calendar:
-        """Return the calendar example with the given name."""
+    def example(cls, name: str="pacific_fiji") -> Calendar:
+        """Return the timezone example with the given name."""
         return cls.from_ical(get_example("timezones", name))
 
     @staticmethod
-    def _extract_offsets(component, tzname):
+    def _extract_offsets(component: TimezoneDaylight|TimezoneStandard, tzname:str):
         """extract offsets and transition times from a VTIMEZONE component
         :param component: a STANDARD or DAYLIGHT component
         :param tzname: the name of the zone
         """
-        offsetfrom = component['TZOFFSETFROM'].td
-        offsetto = component['TZOFFSETTO'].td
-        dtstart = component['DTSTART'].dt
+        offsetfrom = component.TZOFFSETFROM
+        offsetto = component.TZOFFSETTO
+        dtstart = component.DTSTART
 
         # offsets need to be rounded to the next minute, we might loose up
         # to 30 seconds accuracy, but it can't be helped (datetime
@@ -1100,9 +1130,20 @@ class Timezone(Component):
         tznames.add(tzname)
         return tzname
 
-    def to_tz(self, tzp=tzp):
+    def to_tz(self, tzp:TZP=tzp, lookup_tzid:bool=True):
         """convert this VTIMEZONE component to a timezone object
+
+        :param tzp: timezone provider to use
+        :param lookup_tzid: whether to use the TZID property to look up existing
+                            timezone definitions with tzp.
+                            If it is False, a new timezone will be created.
+                            If it is True, the existing timezone will be used
+                            if it exists, otherwise a new timezone will be created.
         """
+        if lookup_tzid:
+            tz = tzp.timezone(self.tz_name)
+            if tz is not None:
+                return tz
         return tzp.create_timezone(self)
 
     @property
@@ -1182,6 +1223,153 @@ class Timezone(Component):
             transition_info.append((osto, dst_offset, name))
         return transition_times, transition_info
 
+    # binary search
+    _from_tzinfo_skip_search = [
+        timedelta(days=days) for days in (64, 32, 16, 8, 4, 2, 1)
+    ] + [
+        # we know it happens in the night usually around 1am
+        timedelta(hours=4),
+        timedelta(hours=1),
+        # adding some minutes and seconds for faster search
+        timedelta(minutes=20),
+        timedelta(minutes=5),
+        timedelta(minutes=1),
+        timedelta(seconds=20),
+        timedelta(seconds=5),
+        timedelta(seconds=1),
+    ]
+    @classmethod
+    def from_tzinfo(
+            cls,
+            timezone: tzinfo,
+            tzid:Optional[str]=None,
+            first_date:date=_DEFAULT_FIRST_DATE,
+            last_date:date=_DEFAULT_LAST_DATE
+        ) -> Timezone:
+        """Return a VTIMEZONE component from a timezone object.
+
+        This works with pytz and zoneinfo and any other timezone.
+        The offsets are calculated from the tzinfo object.
+
+        Parameters:
+
+        :param tzinfo: the timezone object
+        :param tzid: the tzid for this timezone. If None, it will be extracted from the tzinfo.
+        :param first_date: a datetime that is earlier than anything that happens in the calendar
+        :param last_date: a datetime that is later than anything that happens in the calendar
+        :raises ValueError: If we have no tzid and cannot extract one.
+
+        .. note::
+            This can take some time. Please cache the results.
+        """
+        if tzid is None:
+            tzid = tzid_from_tzinfo(timezone)
+            if tzid is None:
+                raise ValueError(f"Cannot get TZID from {timezone}. Please set the tzid parameter.")
+        normalize = getattr(timezone, "normalize", lambda dt: dt) # pytz compatibility
+        first_datetime = datetime(first_date.year, first_date.month, first_date.day)  # noqa: DTZ001
+        last_datetime = datetime(last_date.year, last_date.month, last_date.day)  # noqa: DTZ001
+        if hasattr(timezone, "localize"):  #pytz compatibility
+            first_datetime = timezone.localize(first_datetime)
+            last_datetime = timezone.localize(last_datetime)
+        else:
+            first_datetime = first_datetime.replace(tzinfo=timezone)
+            last_datetime = last_datetime.replace(tzinfo=timezone)
+         # from, to, tzname, is_standard -> start
+        offsets :dict[tuple[Optional[timedelta], timedelta, str, bool], list[datetime]] = defaultdict(list)
+        start = first_datetime
+        offset_to = None
+        while start < last_datetime:
+            offset_from = offset_to
+            end = start
+            offset_to = end.utcoffset()
+            for add_offset in cls._from_tzinfo_skip_search:
+                last_end = end  # we need to save this as we might be left and right of the time change
+                end = normalize(end + add_offset)
+                try:
+                    while end.utcoffset() == offset_to:
+                        last_end = end
+                        end = normalize(end + add_offset)
+                except OverflowError:
+                    # zoninfo does not go all the way
+                    break
+                # retract if we overshoot
+                end = last_end
+            # Now, start (inclusive) -> end (exclusive) are one timezone
+            is_standard = start.dst() == timedelta()
+            name = start.tzname()
+            if name is None:
+                name = str(offset_to)
+            key = (offset_from, offset_to, name, is_standard)
+            # first_key = (None,) + key[1:]
+            # if first_key in offsets:
+            #     # remove the first one and claim it changes at that day
+            #     offsets[first_key] = offsets.pop(first_key)
+            offsets[key].append(start.replace(tzinfo=None))
+            start = normalize(end + cls._from_tzinfo_skip_search[-1])
+        tz = cls()
+        tz.add("TZID", tzid)
+        tz.add("COMMENT", f"This timezone only works from {first_date} to {last_date}.")
+        for (offset_from, offset_to, tzname, is_standard), starts in offsets.items():
+            first_start = min(starts)
+            starts.remove(first_start)
+            if first_start.date() == last_date:
+                first_start = datetime(last_date.year, last_date.month, last_date.day)  # noqa: DTZ001
+            subcomponent = TimezoneStandard() if is_standard else TimezoneDaylight()
+            if offset_from is None:
+                offset_from = offset_to  # noqa: PLW2901
+            subcomponent.TZOFFSETFROM = offset_from
+            subcomponent.TZOFFSETTO = offset_to
+            subcomponent.add("TZNAME", tzname)
+            subcomponent.DTSTART = first_start
+            if starts:
+                subcomponent.add("RDATE", starts)
+            tz.add_component(subcomponent)
+        return tz
+
+    @classmethod
+    def from_tzid(
+            cls,
+            tzid:str,
+            tzp:TZP=tzp,
+            first_date:date=_DEFAULT_FIRST_DATE,
+            last_date:date=_DEFAULT_LAST_DATE
+        ) -> Timezone:
+        """Create a VTIMEZONE from a tzid like ``"Europe/Berlin"``.
+
+        :param tzid: the id of the timezone
+        :param tzp: the timezone provider
+        :param first_date: a datetime that is earlier than anything that happens in the calendar
+        :param last_date: a datetime that is later than anything that happens in the calendar
+        :raises ValueError: If the tzid is unknown.
+
+        >>> from icalendar import Timezone
+        >>> tz = Timezone.from_tzid("Europe/Berlin")
+        >>> print(tz.to_ical()[:36])
+        BEGIN:VTIMEZONE
+        TZID:Europe/Berlin
+
+        .. note::
+            This can take some time. Please cache the results.
+        """
+        tz = tzp.timezone(tzid)
+        if tz is None:
+            raise ValueError(f"Unkown timezone {tzid}.")
+        return cls.from_tzinfo(tz, tzid, first_date, last_date)
+
+    @property
+    def standard(self) -> list[TimezoneStandard]:
+        """The STANDARD subcomponents as a list."""
+        return self.walk("STANDARD")
+
+    @property
+    def daylight(self) -> list[TimezoneDaylight]:
+        """The DAYLIGHT subcomponents as a list.
+
+        These are for the daylight saving time.
+        """
+        return self.walk("DAYLIGHT")
+
 
 class TimezoneStandard(Component):
     """
@@ -1194,6 +1382,45 @@ class TimezoneStandard(Component):
     required = ('DTSTART', 'TZOFFSETTO', 'TZOFFSETFROM')
     singletons = ('DTSTART', 'TZOFFSETTO', 'TZOFFSETFROM',)
     multiple = ('COMMENT', 'RDATE', 'TZNAME', 'RRULE', 'EXDATE')
+
+    DTSTART = create_single_property(
+        "DTSTART",
+        "dt",
+        (datetime,),
+        datetime,
+        """The mandatory "DTSTART" property gives the effective onset date
+        and local time for the time zone sub-component definition.
+        "DTSTART" in this usage MUST be specified as a date with a local
+        time value."""
+    )
+    TZOFFSETTO = create_single_property(
+        "TZOFFSETTO",
+        "td",
+        (timedelta,),
+        timedelta,
+        """The mandatory "TZOFFSETTO" property gives the UTC offset for the
+        time zone sub-component (Standard Time or Daylight Saving Time)
+        when this observance is in use.
+        """,
+        vUTCOffset
+    )
+    TZOFFSETFROM = create_single_property(
+        "TZOFFSETFROM",
+        "td",
+        (timedelta,),
+        timedelta,
+        """The mandatory "TZOFFSETFROM" property gives the UTC offset that is
+        in use when the onset of this time zone observance begins.
+        "TZOFFSETFROM" is combined with "DTSTART" to define the effective
+        onset for the time zone sub-component definition.  For example,
+        the following represents the time at which the observance of
+        Standard Time took effect in Fall 1967 for New York City:
+
+            DTSTART:19671029T020000
+            TZOFFSETFROM:-0400
+        """,
+        vUTCOffset
+    )
 
 
 class TimezoneDaylight(Component):
@@ -1208,6 +1435,9 @@ class TimezoneDaylight(Component):
     singletons = TimezoneStandard.singletons
     multiple = TimezoneStandard.multiple
 
+    DTSTART = TimezoneStandard.DTSTART
+    TZOFFSETTO = TimezoneStandard.TZOFFSETTO
+    TZOFFSETFROM = TimezoneStandard.TZOFFSETFROM
 
 class Alarm(Component):
     """
@@ -1403,9 +1633,124 @@ class Calendar(Component):
     singletons = ('PRODID', 'VERSION', 'CALSCALE', 'METHOD')
 
     @classmethod
-    def example(cls, name: str) -> Calendar:
+    def example(cls, name: str="example") -> Calendar:
         """Return the calendar example with the given name."""
         return cls.from_ical(get_example("calendars", name))
+
+    @property
+    def events(self) -> list[Event]:
+        """All event components in the calendar.
+
+        This is a shortcut to get all events.
+        Modifications do not change the calendar.
+        Use :py:meth:`Component.add_component`.
+
+        >>> from icalendar import Calendar
+        >>> calendar = Calendar.example()
+        >>> event = calendar.events[0]
+        >>> event.start
+        datetime.date(2022, 1, 1)
+        >>> print(event["SUMMARY"])
+        New Year's Day
+        """
+        return self.walk("VEVENT")
+
+    @property
+    def todos(self) -> list[Todo]:
+        """All todo components in the calendar.
+
+        This is a shortcut to get all todos.
+        Modifications do not change the calendar.
+        Use :py:meth:`Component.add_component`.
+        """
+        return self.walk("VTODO")
+
+    def get_used_tzids(self) -> set[str]:
+        """The set of TZIDs in use.
+
+        This goes through the whole calendar to find all occurrences of
+        timezone information like the TZID parameter in all attributes.
+
+        >>> from icalendar import Calendar
+        >>> calendar = Calendar.example("timezone_rdate")
+        >>> calendar.get_used_tzids()
+        {'posix/Europe/Vaduz'}
+
+        Even if you use UTC, this will not show up.
+        """
+        result = set()
+        for name, value in self.property_items(sorted=False):
+            if hasattr(value, "params"):
+                result.add(value.params.get("TZID"))
+        return result - {None}
+
+    def get_missing_tzids(self) -> set[str]:
+        """The set of missing timezone component tzids.
+
+        To create a :rfc:`5545` compatible calendar,
+        all of these timezones should be added.
+        """
+        tzids = self.get_used_tzids()
+        for timezone in self.timezones:
+            tzids.remove(timezone.tz_name)
+        return tzids
+
+    @property
+    def timezones(self) -> list[Timezone]:
+        """Return the timezones components in this calendar.
+
+        >>> from icalendar import Calendar
+        >>> calendar = Calendar.example("pacific_fiji")
+        >>> [timezone.tz_name for timezone in calendar.timezones]
+        ['custom_Pacific/Fiji']
+
+        .. note::
+
+            This is a read-only property.
+        """
+        return self.walk("VTIMEZONE")
+
+    def add_missing_timezones(
+            self,
+            first_date:date=Timezone._DEFAULT_FIRST_DATE,
+            last_date:date=Timezone._DEFAULT_LAST_DATE,
+            ):
+        """Add all missing VTIMEZONE components.
+
+        This adds all the timezone components that are required.
+
+        .. note::
+
+            Timezones that are not known will not be added.
+
+        :param first_date: earlier than anything that happens in the calendar
+        :param last_date: later than anything happening in the calendar
+
+        >>> from icalendar import Calendar, Event
+        >>> from datetime import datetime
+        >>> from zoneinfo import ZoneInfo
+        >>> calendar = Calendar()
+        >>> event = Event()
+        >>> calendar.add_component(event)
+        >>> event.start = datetime(1990, 10, 11, 12, tzinfo=ZoneInfo("Europe/Berlin"))
+        >>> calendar.timezones
+        []
+        >>> calendar.add_missing_timezones()
+        >>> calendar.timezones[0].tz_name
+        'Europe/Berlin'
+        >>> calendar.get_missing_tzids()  # check that all are added
+        set()
+        """
+        for tzid in self.get_missing_tzids():
+            try:
+                timezone = Timezone.from_tzid(
+                    tzid,
+                    first_date=first_date,
+                    last_date=last_date
+                )
+            except ValueError:
+                continue
+            self.add_component(timezone)
 
 # These are read only singleton, so one instance is enough for the module
 types_factory = TypesFactory()

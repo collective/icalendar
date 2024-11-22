@@ -2,6 +2,7 @@ try:
     from backports import zoneinfo
 except ImportError:
     import zoneinfo
+from typing import Generator
 import pytest
 
 import icalendar
@@ -66,6 +67,7 @@ class DataSource:
         source = self._parser(raw_ics)
         if not isinstance(source, list):
             source.raw_ics = raw_ics
+            source.source_file = source_file
         self.__dict__[attribute] = source
         return source
 
@@ -229,7 +231,7 @@ def filled_event_component(c, calendar_component):
     return e
 
 
-@pytest.fixture
+@pytest.fixture()
 def calendar_with_resources(tzp):
     c = Calendar()
     c["resources"] = 'Chair, Table, "Room: 42"'
@@ -237,7 +239,7 @@ def calendar_with_resources(tzp):
 
 
 @pytest.fixture(scope="module")
-def tzp(tzp_name):
+def tzp(tzp_name) -> Generator[TZP, None, None]:
     """The timezone provider."""
     _tzp.use(tzp_name)
     yield _tzp
@@ -251,21 +253,32 @@ def other_tzp(request, tzp):
     The purpose here is to cross test: pytz <-> zoneinfo.
     tzp as parameter makes sure we test the cross product.
     """
-    tzp = TZP(request.param)
-    return tzp
+    return TZP(request.param)
 
 
 @pytest.fixture
-def pytz_only(tzp):
+def pytz_only(tzp, tzp_name) -> str:
     """Skip tests that are not running under pytz."""
     assert tzp.uses_pytz()
-
+    return tzp_name
 
 @pytest.fixture
-def zoneinfo_only(tzp, request, tzp_name):
+def zoneinfo_only(tzp, request, tzp_name) -> str:
     """Skip tests that are not running under zoneinfo."""
     assert tzp.uses_zoneinfo()
+    return tzp_name
 
+@pytest.fixture
+def no_pytz(tzp_name) -> str:
+    """Do not run tests with pytz."""
+    assert tzp_name != "pytz"
+    return tzp_name
+
+@pytest.fixture
+def no_zoneinfo(tzp_name) -> str:
+    """Do not run tests with zoneinfo."""
+    assert tzp_name != "zoneinfo"
+    return tzp_name
 
 def pytest_generate_tests(metafunc):
     """Parametrize without skipping:
@@ -273,6 +286,8 @@ def pytest_generate_tests(metafunc):
     tzp_name will be parametrized according to the use of
     - pytz_only
     - zoneinfo_only
+    - no_pytz
+    - no_zoneinfo
 
     See https://docs.pytest.org/en/6.2.x/example/parametrize.html#deferring-the-setup-of-parametrized-resources
     """
@@ -286,6 +301,9 @@ def pytest_generate_tests(metafunc):
             "zoneinfo_only" in metafunc.fixturenames
             and "pytz_only" in metafunc.fixturenames
         ), "Use pytz_only or zoneinfo_only but not both!"
+        for name in ["pytz", "zoneinfo"]:
+            if f"no_{name}" in metafunc.fixturenames and name in tzp_names:
+                tzp_names.remove(name)
         metafunc.parametrize("tzp_name", tzp_names, scope="module")
 
 

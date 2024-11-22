@@ -6,7 +6,8 @@ Changelog
 
 Minor changes:
 
-- Added ``end``, ``start``, ``duration``, ``DTSTART``, ``DUE``, and ``DURATION`` attributes to ``Todo`` components. See `Issue 662`_.
+- Add ``end``, ``start``, ``duration``, ``DTSTART``, ``DUE``, and ``DURATION`` attributes to ``Todo`` components. See `Issue 662`_.
+- Add ``DTSTART``, ``TZOFFSETTO`` and ``TZOFFSETFROM`` properties to ``TimezoneStandard`` and ``TimezoneDaylight``. See `Issue 662`_.
 - Format test code with Ruff. See `Issue 672 <https://github.com/collective/icalendar/issues/672>`_.
 - Document the Debian package. See `Issue 701 <https://github.com/collective/icalendar/issues/701>`_.
 - Document ``vDatetime.from_ical``
@@ -14,6 +15,7 @@ Minor changes:
 - Document component classes with description from :rfc:`5545`.
 - Merge "File Structure" and "Overview" sections in the docs. See `Issue 626 <https://github.com/collective/icalendar/issues/626>`_.
 - Update code blocks in usage.rst with the correct lexer.
+- Improve typing and fix typing issues 
 
 Breaking changes:
 
@@ -23,6 +25,8 @@ New features:
 
 - Add ``VALARM`` properties for :rfc:`9074`. See `Issue 657 <https://github.com/collective/icalendar/issues/657>`_
 - Test compatibility with Python 3.13
+- Add ``Timezone.from_tzinfo()`` and ``Timezone.from_tzid()`` to create a ``Timezone`` component from a ``datetime.tzinfo`` timezone. See `Issue 722`_.
+- Add ``icalendar.prop.tzid_from_tzinfo``.
 - Add ``icalendar.alarms`` module to calculate alarm times. See `Issue 716 <https://github.com/collective/icalendar/issues/716>`_.
 - Add ``Event.alarms`` and ``Todo.alarms`` to access alarm calculation.
 - Add ``Component.DTSTAMP`` and ``Component.LAST_MODIFIED`` properties for datetime in UTC.
@@ -31,10 +35,19 @@ New features:
 - Add ``Alarm.ACKNOWLEDGED``, ``Alarm.TRIGGER``, ``Alarm.REPEAT``, and ``Alarm.DURATION`` properties
   as well as ``Alarm.triggers`` to calculate alarm triggers.
 - Add ``__doc__`` string documentation for ``vDate``, ``vBoolean``, ``vCalAddress``, ``vDuration``, ``vFloat``, ``vGeo``, ``vInt``, ``vPeriod``, ``vTime``, ``vUTCOffset`` and ``vUri``. See `Issue 742 <https://github.com/collective/icalendar/issues/742>`_.
+- Add ``DTSTART``, ``TZOFFSETTO``, and ``TZOFFSETFROM`` to ``TimezoneStandard`` and ``TimezoneDaylight``
+- Use ``example`` methods of components without arguments.
+- Add ``events``, ``timezones``, and ``todos`` property to ``Calendar`` for nicer access.
+- To calculate which timezones are in use and add them to the ``Calendar`` when needed these methods are added: ``get_used_tzids``, ``get_missing_tzids``, and ``add_missing_timezones``.
+- Identify the TZID of more timezones from dateutil.
+- Identify totally unknown timezones using a UTC offset lookup tree generated in ``icalendar.timezone.equivalent_timezone_ids`` and stored in ``icalendar.timezone.equivalent_timezone_ids``.
+- Add ``icalendar.timezone.tzid`` to identify a timezone's TZID.
 
 Bug fixes:
 
 - Add ``icalendar.timezone`` to the documentation.
+
+.. _`Issue 722`: https://github.com/collective/icalendar/issues/722
 
 6.0.1 (2024-10-13)
 ------------------
