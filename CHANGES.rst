@@ -1,7 +1,7 @@
 Changelog
 =========
 
-6.0.2 (unreleased)
+6.1.0 (2024-11-22)
 ------------------
 
 Minor changes:
@@ -18,9 +18,6 @@ Minor changes:
 - Tidy up the docstring for ``icalendar.prop.vPeriod``.
 - Improve typing and fix typing issues 
 
-Breaking changes:
-
-- ...
 
 New features:
 
