@@ -41,13 +41,14 @@ primitive Python datatype. So it should always be true that:
 These types are mainly used for parsing and file generation. But you can set
 them directly.
 """
+from __future__ import annotations
+
 import base64
 import binascii
 import re
-import time as _time
-from datetime import date, datetime, time, timedelta, tzinfo
-from enum import Enum, auto
-from typing import Optional, Union
+from datetime import date, datetime, time, timedelta
+from enum import Enum
+from typing import Union
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Parameters, escape_char, unescape_char
@@ -59,27 +60,13 @@ from icalendar.parser_tools import (
     to_unicode,
 )
 
-from . import timezone as _timezone
+from .timezone import tzid_from_dt, tzid_from_tzinfo, tzp
 
 DURATION_REGEX = re.compile(r'([-+]?)P(?:(\d+)W)?(?:(\d+)D)?'
                             r'(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$')
 
 WEEKDAY_RULE = re.compile(r'(?P<signal>[+-]?)(?P<relative>[\d]{0,2})'
                           r'(?P<weekday>[\w]{2})$')
-
-
-def tzid_from_dt(dt: datetime) -> Optional[str]:
-    """Retrieve the timezone id from the datetime object."""
-    tzid = None
-    if hasattr(dt.tzinfo, 'zone'):
-        tzid = dt.tzinfo.zone  # pytz implementation
-    elif hasattr(dt.tzinfo, 'key'):
-        tzid = dt.tzinfo.key  # ZoneInfo implementation
-    elif hasattr(dt.tzinfo, 'tzname'):
-        # dateutil implementation, but this is broken
-        # See https://github.com/collective/icalendar/issues/333 for details
-        tzid = dt.tzinfo.tzname(dt)
-    return tzid
 
 
 class vBinary:
@@ -640,7 +627,7 @@ class vDatetime(TimeBase):
         """
         tzinfo = None
         if isinstance(timezone, str):
-            tzinfo = _timezone.tzp.timezone(timezone)
+            tzinfo = tzp.timezone(timezone)
         elif timezone is not None:
             tzinfo = timezone
 
@@ -654,11 +641,11 @@ class vDatetime(TimeBase):
                 int(ical[13:15]),  # second
             )
             if tzinfo:
-                return _timezone.tzp.localize(datetime(*timetuple), tzinfo)
+                return tzp.localize(datetime(*timetuple), tzinfo)
             elif not ical[15:]:
                 return datetime(*timetuple)
             elif ical[15:16] == 'Z':
-                return _timezone.tzp.localize_utc(datetime(*timetuple))
+                return tzp.localize_utc(datetime(*timetuple))
             else:
                 raise ValueError(ical)
         except Exception as e:
@@ -1536,6 +1523,11 @@ class vUTCOffset:
             return False
         return self.td == other.td
 
+    def __hash__(self):
+        return hash(self.td)
+
+    def __repr__(self):
+        return f"vUTCOffset({self.td!r})"
 
 class vInline(str):
     """This is an especially dumb class that just holds raw unparsed text and
@@ -1724,4 +1716,4 @@ __all__ = ["DURATION_REGEX", "TimeBase", "TypesFactory", "WEEKDAY_RULE",
            "vCategory", "vDDDLists", "vDDDTypes", "vDate", "vDatetime",
            "vDuration", "vFloat", "vFrequency", "vGeo", "vInline", "vInt",
            "vMonth", "vPeriod", "vRecur", "vSkip", "vText", "vTime",
-           "vUTCOffset", "vUri", "vWeekday"]
+           "vUTCOffset", "vUri", "vWeekday", "tzid_from_tzinfo"]

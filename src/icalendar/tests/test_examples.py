@@ -63,3 +63,10 @@ def test_invalid_examples_lists_the_others():
     with pytest.raises(ValueError) as e:
         Calendar.example("does not exist")
     assert "example.ics" in str(e.value)
+
+
+@pytest.mark.parametrize("component", [Calendar, Event, Timezone])
+def test_default_example(component):
+    """Check that we have a default example."""
+    example = component.example()
+    assert isinstance(example, component)

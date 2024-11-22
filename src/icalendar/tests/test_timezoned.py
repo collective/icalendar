@@ -135,7 +135,7 @@ def test_tzinfo_dateutil():
 def test_create_america_new_york(calendars, tzp):
     """testing America/New_York, the most complex example from the RFC"""
     cal = calendars.america_new_york
-    dt = cal.walk("VEVENT")[0]["DTSTART"][0].dt
+    dt = cal.events[0].start
     assert tzid_from_dt(dt) in ("custom_America/New_York", "EDT")
 
 
@@ -143,7 +143,7 @@ def test_america_new_york_with_pytz(calendars, tzp, pytz_only):
     """Create a custom timezone with pytz and test the transition times."""
     print(tzp)
     cal = calendars.america_new_york
-    dt = cal.walk("VEVENT")[0]["DTSTART"][0].dt
+    dt = cal.events[0].start
     tz = dt.tzinfo
     tz_new_york = tzp.timezone("America/New_York")
     # for reasons (tm) the locally installed version of the timezone
@@ -389,7 +389,7 @@ fiji_expected_offsets = [
 
 def test_transition_times_fiji(tzp, timezones):
     """The transition times are computed."""
-    tz = timezones.pacific_fiji.to_tz(tzp)
+    tz = timezones.pacific_fiji.to_tz(tzp, lookup_tzid=False)
     offsets = []  # [(before, after), ...]
     for i, transition_time in enumerate(fiji_transition_times):
         before_after_offset = []

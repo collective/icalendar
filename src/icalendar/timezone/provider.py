@@ -1,14 +1,22 @@
 """The interface for timezone implementations."""
 from __future__ import annotations
-from abc import ABC, abstractmethod, abstractproperty
-from icalendar import prop
-from dateutil.rrule import rrule
-from datetime import datetime, tzinfo
+
+from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING, Optional
+
+if TYPE_CHECKING:
+    from datetime import datetime, tzinfo
+
+    from dateutil.rrule import rrule
+
+    from icalendar import prop
+
 
 class TZProvider(ABC):
     """Interface for timezone implementations."""
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def name(self) -> str:
         """The name of the implementation."""
 
