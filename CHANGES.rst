@@ -14,7 +14,8 @@ Minor changes:
 - Allow passing a ``datetime.date`` to ``TZP.localize_utc`` and ``TZP.localize`` methods.
 - Document component classes with description from :rfc:`5545`.
 - Merge "File Structure" and "Overview" sections in the docs. See `Issue 626 <https://github.com/collective/icalendar/issues/626>`_.
-- Update code blocks in usage.rst with the correct lexer.
+- Update code blocks in ``usage.rst`` with the correct lexer.
+- Tidy up the docstring for ``icalendar.prop.vPeriod``.
 - Improve typing and fix typing issues 
 
 Breaking changes:
