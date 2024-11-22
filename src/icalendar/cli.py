@@ -28,9 +28,9 @@ def _format_attendees(attendees):
 
     :returns str: Formatted list of attendees.
     """
-    if isinstance(attendees, list):
-        return '\n'.join(map(lambda s: s.rjust(len(s) + 5), map(_format_name, attendees)))
-    return _format_name(attendees)
+    if isinstance(attendees, str):
+        attendees = [attendees]
+    return '\n'.join(map(lambda s: s.rjust(len(s) + 5), map(_format_name, attendees)))
 
 def view(event):
     """Make a human readable summary of an iCalendar file.
