@@ -21,6 +21,7 @@ I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
 	@echo "  html       to make standalone HTML files"
+	@echo "  livehtml   to view a live preview of standalone HTML files"
 	@echo "  dirhtml    to make HTML files named index.html in directories"
 	@echo "  singlehtml to make a single large HTML file"
 	@echo "  pickle     to make pickle files"
@@ -163,6 +164,7 @@ doctest:
 
 livehtml:
 	$(SPHINXAUTOBUILD) \
+	--watch ../src \
 	--ignore "*.swp" \
 	--port 8050 \
 	-b html . "$(BUILDDIR)/html" $(SPHINXOPTS) $(O)
