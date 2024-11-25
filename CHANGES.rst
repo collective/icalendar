@@ -6,7 +6,7 @@ Changelog
 
 Minor changes:
 
-- ...
+- Add ``sign`` and ``weekday`` attributes to ``vWeekday`` components. See `Issue 749 <https://github.com/collective/icalendar/issues/749>`_.
 
 Breaking changes:
 

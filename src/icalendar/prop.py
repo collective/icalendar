@@ -931,6 +931,8 @@ class vWeekday(str):
         relative = match['relative']
         if weekday not in vWeekday.week_days or sign not in '+-':
             raise ValueError(f'Expected weekday abbrevation, got: {self}')
+        self.sign = sign or None
+        self.weekday = weekday or None
         self.relative = relative and int(relative) or None
         self.params = Parameters()
         return self

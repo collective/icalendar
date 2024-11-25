@@ -77,6 +77,7 @@ icalendar contributors
 - Jeffrey Whewhetu <jeffwhewhetu@gmail.com>
 - `Soham Dutta <https://github.com/NP-compete>`_
 - `Serif OZ  <https://github.com/SerifOZ>`_
+- David Venhoff <https://github.com/david-venhoff>
 
 Find out who contributed::
 
