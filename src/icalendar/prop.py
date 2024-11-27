@@ -927,7 +927,7 @@ class vWeekday(str):
         >>> vWeekday("-1SU").relative # Last Sunday
         -1
 
-    Definition from RFC:
+    Definition from `RFC 5545, Section 3.3.10 <https://www.rfc-editor.org/rfc/rfc5545#section-3.3.10>`_:
 
     .. code-block:: text
 
