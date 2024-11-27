@@ -450,7 +450,7 @@ class vDDDTypes(TimeBase):
             self.params = Parameters({'value': 'DATE'})
         elif isinstance(dt, time):
             self.params = Parameters({'value': 'TIME'})
-        elif isinstance(dt, tuple):
+        else: # isinstance(dt, tuple)
             self.params = Parameters({'value': 'PERIOD'})
 
         tzid = tzid_from_dt(dt) if isinstance(dt, (datetime, time)) else None

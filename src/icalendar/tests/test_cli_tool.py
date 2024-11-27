@@ -26,7 +26,6 @@ END:VEVENT
 BEGIN:VEVENT
 ORGANIZER:organizer@test.test
 ATTENDEE:attendee1@example.com
-ATTENDEE:attendee2@test.test
 SUMMARY:Test summary
 DTSTART;TZID=Europe/Warsaw:20220820T200000
 DTEND;TZID=Europe/Warsaw:20220820T203000
@@ -74,7 +73,6 @@ PROPER_OUTPUT = f"""    Organizer: organizer <organizer@test.test>
     Organizer: organizer <organizer@test.test>
     Attendees:
      attendee1 <attendee1@example.com>
-     attendee2 <attendee2@test.test>
     Summary    : Test summary
     Starts     : {secondstart}
     End        : {secondend}

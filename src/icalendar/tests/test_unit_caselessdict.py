@@ -104,6 +104,8 @@ class TestCaselessdict(unittest.TestCase):
         self.assertEqual(ncd["key1"], "val1")
         self.assertEqual(ncd["KEY1"], "val1")
 
+        assert ncd.has_key("key1")
+
         ncd["KEY3"] = "val3"
         self.assertEqual(ncd["key3"], "val3")
 

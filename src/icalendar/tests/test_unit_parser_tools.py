@@ -1,6 +1,6 @@
 import unittest
 
-from icalendar.parser_tools import data_encode, to_unicode
+from icalendar.parser_tools import data_encode, to_unicode, from_unicode
 
 
 class TestParserTools(unittest.TestCase):
@@ -13,6 +13,9 @@ class TestParserTools(unittest.TestCase):
         self.assertEqual(to_unicode(b"\xc6\xb5", encoding="ascii"), "\u01b5")
         self.assertEqual(to_unicode(1), 1)
         self.assertEqual(to_unicode(None), None)
+
+    def test_parser_tools_from_unicode(self):
+        self.assertEqual(from_unicode("\u01b5", encoding="ascii"), b"\xc6\xb5")
 
     def test_parser_tools_data_encode(self):
         data1 = {
