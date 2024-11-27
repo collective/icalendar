@@ -6,7 +6,6 @@ from icalendar.prop import vWeekday
 def test_simple():
     weekday = vWeekday("SU")
     assert weekday.to_ical() == b"SU"
-    assert weekday.sign is None
     assert weekday.weekday == "SU"
     assert weekday.relative is None
 
@@ -14,9 +13,8 @@ def test_simple():
 def test_relative():
     weekday = vWeekday("-1MO")
     assert weekday.to_ical() == b"-1MO"
-    assert weekday.sign == "-"
     assert weekday.weekday == "MO"
-    assert weekday.relative == 1
+    assert weekday.relative == -1
 
 
 def test_roundtrip():

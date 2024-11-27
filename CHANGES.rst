@@ -6,11 +6,11 @@ Changelog
 
 Minor changes:
 
-- Add ``sign`` and ``weekday`` attributes to ``vWeekday`` components. See `Issue 749 <https://github.com/collective/icalendar/issues/749>`_.
+- Add a ``weekday`` attribute to ``vWeekday`` components. See `Issue 749 <https://github.com/collective/icalendar/issues/749>`_.
 
 Breaking changes:
 
-- ...
+- The ``relative`` attribute of ``vWeekday`` components has the correct sign now. See `Issue 749 <https://github.com/collective/icalendar/issues/749>`_.
 
 New features:
 
