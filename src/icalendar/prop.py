@@ -913,7 +913,32 @@ class vPeriod(TimeBase):
 
 
 class vWeekday(str):
-    """This returns an unquoted weekday abbrevation.
+    """Either a ``weekday`` or a ``weekdaynum``
+
+    .. code-block:: pycon
+
+        >>> from icalendar import vWeekday
+        >>> vWeekday("MO") # Simple weekday
+        'MO'
+        >>> vWeekday("2FR").relative # Second friday
+        2
+        >>> vWeekday("2FR").weekday
+        'FR'
+        >>> vWeekday("-1SU").relative # Last Sunday
+        -1
+
+    Definition from RFC:
+
+    .. code-block:: text
+
+        weekdaynum = [[plus / minus] ordwk] weekday
+        plus        = "+"
+        minus       = "-"
+        ordwk       = 1*2DIGIT       ;1 to 53
+        weekday     = "SU" / "MO" / "TU" / "WE" / "TH" / "FR" / "SA"
+        ;Corresponding to SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY,
+        ;FRIDAY, and SATURDAY days of the week.
+
     """
     week_days = CaselessDict({
         "SU": 0, "MO": 1, "TU": 2, "WE": 3, "TH": 4, "FR": 5, "SA": 6,
@@ -931,7 +956,10 @@ class vWeekday(str):
         relative = match['relative']
         if weekday not in vWeekday.week_days or sign not in '+-':
             raise ValueError(f'Expected weekday abbrevation, got: {self}')
+        self.weekday = weekday or None
         self.relative = relative and int(relative) or None
+        if sign == '-' and self.relative:
+            self.relative *= -1
         self.params = Parameters()
         return self
 
