@@ -14,7 +14,7 @@ Breaking changes:
 
 New features:
 
-- ...
+- Add :ref:`Security Policy`
 
 Bug fixes:
 
