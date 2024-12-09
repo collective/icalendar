@@ -10,6 +10,7 @@ from collections import defaultdict
 from datetime import date, datetime, timedelta, tzinfo
 from typing import List, Optional, Tuple
 from datetime import date, datetime, timedelta
+from pathlib import Path
 from typing import TYPE_CHECKING, List, NamedTuple, Optional, Tuple, Union
 
 import dateutil.rrule
@@ -585,6 +586,74 @@ class Component(CaselessDict):
     def is_thunderbird(self) -> bool:
         """Whether this component has attributes that indicate that Mozilla Thunderbird created it."""
         return any(attr.startswith("X-MOZ-") for attr in self.keys())
+
+
+    @classmethod
+    def from_file(cls, file: Union[str, Path], multiple: bool = False):
+        """Create a Component from a file.
+
+        This class method can be used by any Component subclass (Calendar, Event, etc.)
+        to read their data from a file.
+
+        Args:
+            file: The file to read from. Can be:
+                - A string path to a file
+                - A Path object
+            multiple: If True, allows parsing multiple components from the file.
+
+        Returns:
+            If multiple=False (default):
+                A single Component instance of the appropriate type
+            If multiple=True:
+                A list of Component instances
+
+        Raises:
+            FileNotFoundError: If the file path doesn't exist
+            ValueError: If the file contents are not valid iCalendar format
+
+        Example:
+            >>> from icalendar import Calendar
+            >>> # Read a calendar file
+            >>> cal = Calendar.from_file("src/icalendar/tests/calendars/example.ics")
+            >>> # Read multiple calendars
+            >>> cals = Calendar.from_file("src/icalendar/tests/calendars/multiple_calendar_components.ics", multiple=True)
+        """
+        # Handle string path by converting to Path
+        if isinstance(file, str):
+            file = Path(file)
+
+        return cls.from_ical(file.read_bytes(), multiple=multiple)
+
+    def to_file(self, file: Union[str, Path], sorted: bool = True) -> None:
+        """Write the component to a file.
+
+        This method can be used by any Component subclass (Calendar, Event, etc.)
+        to write their data to a file.
+
+        Args:
+            file: Where to write the component. Can be:
+                - A string path to a file
+                - A Path object
+            sorted: Whether parameters and properties should be lexicographically sorted.
+
+        Example:
+            >>> from icalendar import Calendar
+            >>> from pathlib import Path
+            >>> # Read a calendar file
+            >>> cal = Calendar.from_file("src/icalendar/tests/calendars/example.ics")
+            >>> # or pass a Path object
+            >>> path = Path("src/icalendar/tests/calendars/example.ics")
+            >>> cal = Calendar.from_file(path)
+            >>> # Read multiple calendars
+            >>> cals = Calendar.from_file("src/icalendar/tests/calendars/multiple_calendar_components.ics", multiple=True)
+
+        """
+
+        # Handle string path
+        if isinstance(file, str):
+            file = Path(file)
+
+        file.write_bytes(self.to_ical(sorted=sorted))
 
 
 
