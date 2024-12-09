@@ -13,8 +13,7 @@ Breaking changes:
 - The ``relative`` attribute of ``vWeekday`` components has the correct sign now. See `Issue 749 <https://github.com/collective/icalendar/issues/749>`_.
 
 New features:
-
-- ...
+- Add ``from_file()`` and ``to_file()`` methods to ``Component`` class for easier file handling of iCalendar data. See `Issue 756 <https://github.com/collective/icalendar/issues/756>`_.
 
 Bug fixes:
 
