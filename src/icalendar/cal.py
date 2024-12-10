@@ -613,10 +613,14 @@ class Component(CaselessDict):
 
         Example:
             >>> from icalendar import Calendar
+            >>> from pathlib import Path
             >>> # Read a calendar file
             >>> cal = Calendar.from_file("src/icalendar/tests/calendars/example.ics")
             >>> # Read multiple calendars
             >>> cals = Calendar.from_file("src/icalendar/tests/calendars/multiple_calendar_components.ics", multiple=True)
+            >>> # or pass a Path object
+            >>> path = Path("src/icalendar/tests/calendars/example.ics")
+            >>> cal = Calendar.from_file(path)
         """
         # Handle string path by converting to Path
         if isinstance(file, str):
@@ -637,15 +641,13 @@ class Component(CaselessDict):
             sorted: Whether parameters and properties should be lexicographically sorted.
 
         Example:
-            >>> from icalendar import Calendar
-            >>> from pathlib import Path
-            >>> # Read a calendar file
-            >>> cal = Calendar.from_file("src/icalendar/tests/calendars/example.ics")
-            >>> # or pass a Path object
-            >>> path = Path("src/icalendar/tests/calendars/example.ics")
-            >>> cal = Calendar.from_file(path)
-            >>> # Read multiple calendars
-            >>> cals = Calendar.from_file("src/icalendar/tests/calendars/multiple_calendar_components.ics", multiple=True)
+            >>> from icalendar import Calendar, Event
+            >>> # Write a calendar
+            >>> cal = Calendar()
+            >>> cal.to_file("calendar.ics")
+            >>> # Write an event
+            >>> event = Event()
+            >>> event.to_file("event.ics")
 
         """
 
