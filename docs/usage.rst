@@ -396,8 +396,6 @@ Note that if you want to add the reccurence rule from a string, you must use the
 
     >>> event.add('rrule', {'freq': 'daily', 'interval': 10})
 
-    >>> event.add('rrule', vRecur.from_ical('FREQ=DAILY;INTERVAL=10'))
-
 Write to disk.
 
 .. code-block:: pycon
