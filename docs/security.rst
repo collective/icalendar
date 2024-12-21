@@ -27,8 +27,8 @@ Security vulnerabilities are fixed only for the latest version of `icalendar`.
 Reporting a Vulnerability
 -------------------------
 
-Please report any vulnerabilities you find on this project's
-`Security Page <https://github.com/collective/icalendar/security>`_.
+Please `report vulnerabilities of icalendar to Plone
+<https://github.com/plone/.github/blob/main/SECURITY.md#readme>`_.
 If you cannot do this, please contact one of the
 :ref:`maintainers`
 directly or open an issue.
