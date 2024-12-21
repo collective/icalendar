@@ -203,7 +203,7 @@ class vCalAddress(str):
     .. code-block:: text
 
         mailto:jane_doe@example.com
-        
+
     .. code-block:: pycon
 
         >>> from icalendar.prop import vCalAddress
@@ -211,7 +211,7 @@ class vCalAddress(str):
         >>> cal_address
         vCalAddress('mailto:jane_doe@example.com')
 
-      
+
     """
 
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
@@ -259,7 +259,7 @@ class vFloat(float):
             1000000.0000001
             1.333
             -3.14
-        
+
         .. code-block:: pycon
 
             >>> from icalendar.prop import vFloat
@@ -505,11 +505,11 @@ class vDate(TimeBase):
 
     Value Name:
         DATE
-    
+
     Purpose:
         This value type is used to identify values that contain a
         calendar date.
-      
+
     Format Definition:
         This value type is defined by the following notation:
 
@@ -531,7 +531,7 @@ class vDate(TimeBase):
         format specifies a four-digit year, two-digit month, and two-digit
         day of the month.  There are no separator characters between the
         year, month, and day component text.
-    
+
     Example:
         The following represents July 14, 1997:
 
@@ -696,7 +696,7 @@ class vDuration(TimeBase):
         components MUST be added first, that is, the number of days MUST
         be added first, followed by the number of hours, number of
         minutes, and number of seconds.
-      
+
     Example:
         A duration of 15 days, 5 hours, and 20 seconds would be:
 
@@ -709,7 +709,7 @@ class vDuration(TimeBase):
         .. code-block:: text
 
             P7W
-        
+
         .. code-block:: pycon
 
             >>> from icalendar.prop import vDuration
@@ -805,7 +805,7 @@ class vPeriod(TimeBase):
            ; [ISO.8601.2004] complete representation basic format for a
            ; period of time consisting of a start and positive duration
            ; of time.
-       
+
     Description:
         If the property permits, multiple "period" values are
         specified by a COMMA-separated list of values.  There are two
@@ -835,7 +835,7 @@ class vPeriod(TimeBase):
         .. code-block:: text
 
             19970101T180000Z/PT5H30M
-       
+
         .. code-block:: pycon
 
             >>> from icalendar.prop import vPeriod
@@ -1161,7 +1161,7 @@ class vRecur(CaselessDict):
         >>> from icalendar.prop import vRecur
         >>> rrule = vRecur.from_ical('FREQ=DAILY;COUNT=10')
         >>> rrule
-        {'FREQ': ['DAILY'], 'COUNT': [10]}
+        vRecur({'FREQ': ['DAILY'], 'COUNT': [10]})
     """
 
     frequencies = ["SECONDLY", "MINUTELY", "HOURLY", "DAILY", "WEEKLY",
