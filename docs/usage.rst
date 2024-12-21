@@ -388,7 +388,8 @@ By extending the event with subcomponents, you can create multiple alarms.
     >>> event.add_component(alarm_24h_before)
 
 Or even recurrence, either from a dictionary or a string.
-Note that if you want to add the reccurence rule from a string, you must use the vRecur property. Otherwise the rule will be escaped, making it invalid.
+Note that if you want to add the reccurence rule from a string, you must use the ``vRecur`` property.
+Otherwise the rule will be escaped, making it invalid.
 
 .. code-block:: pycon
 
