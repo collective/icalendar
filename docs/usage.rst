@@ -393,9 +393,7 @@ Otherwise the rule will be escaped, making it invalid.
 
 .. code-block:: pycon
 
-    >>> from icalendar import vRecur
-
-    >>> event.add('rrule', {'freq': 'daily', 'interval': 10})
+    >>> event.add('rrule', {'freq': 'daily'})
 
 Write to disk.
 
