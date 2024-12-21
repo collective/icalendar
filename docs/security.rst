@@ -6,7 +6,7 @@ This documents the security policy and actions to take to secure the package and
 Supported Versions
 ------------------
 
-Security vulnerabilities are fixed only for the latest version of `icalendar`.
+Security vulnerabilities are fixed only for the latest version of ``icalendar``.
 
 .. list-table:: Versions to receive security updates
    :widths: 25 25
