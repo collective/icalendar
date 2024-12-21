@@ -1,7 +1,7 @@
 Security Policy
 ===============
 
-This documents the security policy and actions to take to secure the security of the package, its deployment and use.
+This documents the security policy and actions to take to secure the package and its deployment and use.
 
 Supported Versions
 ------------------
