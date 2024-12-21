@@ -387,11 +387,16 @@ By extending the event with subcomponents, you can create multiple alarms.
     >>> alarm_24h_before.add('description', 'Reminder: Event in 24 hours')
     >>> event.add_component(alarm_24h_before)
 
-Or even recurrence.
+Or even recurrence, either from a dictionary or a string.
+Note that if you want to add the reccurence rule from a string, you must use the vRecur property. Otherwise the rule will be escaped, making it invalid.
 
 .. code-block:: pycon
 
-    >>> event.add('rrule', {'freq': 'daily'})
+    >>> from icalendar import vRecur
+
+    >>> event.add('rrule', {'freq': 'daily', 'interval': 10})
+
+    >>> event.add('rrule', vRecur.from_ical('FREQ=DAILY;INTERVAL=10'))
 
 Write to disk.
 
