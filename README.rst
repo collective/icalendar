@@ -8,8 +8,9 @@ files.
 ----
 
 :Homepage: https://icalendar.readthedocs.io
+:Community Discussions: https://github.com/collective/icalendar/discussions
+:Issue Tracker: https://github.com/collective/icalendar/issues
 :Code: https://github.com/collective/icalendar
-:Mailing list: https://github.com/collective/icalendar/issues
 :Dependencies: `python-dateutil`_ and `tzdata`_.
 :License: `BSD`_
 
