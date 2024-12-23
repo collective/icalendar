@@ -86,14 +86,14 @@ def test_documentation_file(document, zoneinfo_only, env_for_doctest, tzp):
     functions are also replaced to work.
     """
     try:
+        import pytz
+    except ImportError:
+        pytest.skip("pytz not installed, skipping this file.")
+    try:
         # set raise_on_error to False if you wand to see the error for debug
         test_result = doctest.testfile(
-            document, module_relative=False, globs=env_for_doctest, raise_on_error=True
+            document, module_relative=False, globs=env_for_doctest, raise_on_error=False
         )
-    except doctest.UnexpectedException as e:
-        ty, err, tb = e.exc_info
-        if issubclass(ty, ModuleNotFoundError) and err.name == "pytz":
-            pytest.skip("pytz not installed, skipping this file.")
     finally:
         tzp.use_zoneinfo()
     assert (
