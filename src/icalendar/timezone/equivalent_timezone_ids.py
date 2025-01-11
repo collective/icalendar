@@ -20,7 +20,7 @@ from multiprocessing import Pool, cpu_count
 from pathlib import Path
 from pprint import pprint
 from time import time
-from typing import Callable, NamedTuple, Optional
+from typing import Callable, NamedTuple, Optional, Any, Tuple, List
 
 from zoneinfo import ZoneInfo, available_timezones
 
@@ -30,7 +30,7 @@ from pytz import AmbiguousTimeError, NonExistentTimeError
 def check(dt, tz:tzinfo):
     return (dt, tz.utcoffset(dt))
 
-def checks(tz:tzinfo) -> tuple:
+def checks(tz:tzinfo) -> List[Tuple[Any, Optional[timedelta]]]:
     result = []
     for dt in DTS:
         try:
