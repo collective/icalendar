@@ -13,13 +13,14 @@ def from_unicode(value: ICAL_TYPE, encoding='utf-8') -> bytes:
     :return: The bytes representation of the value
     """
     if isinstance(value, bytes):
-        value = value
+        return value
     elif isinstance(value, str):
         try:
-            value = value.encode(encoding)
+            return value.encode(encoding)
         except UnicodeEncodeError:
-            value = value.encode('utf-8', 'replace')
-    return value
+            return value.encode('utf-8', 'replace')
+    else:
+        return value
 
 
 def to_unicode(value: ICAL_TYPE, encoding='utf-8-sig') -> str:
@@ -29,10 +30,11 @@ def to_unicode(value: ICAL_TYPE, encoding='utf-8-sig') -> str:
         return value
     elif isinstance(value, bytes):
         try:
-            value = value.decode(encoding)
+            return value.decode(encoding)
         except UnicodeDecodeError:
-            value = value.decode('utf-8-sig', 'replace')
-    return value
+            return value.decode('utf-8-sig', 'replace')
+    else:
+        return value
 
 
 def data_encode(data: Union[ICAL_TYPE, dict, list], encoding=DEFAULT_ENCODING) -> bytes:
