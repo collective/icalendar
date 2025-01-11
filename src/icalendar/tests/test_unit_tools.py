@@ -13,20 +13,20 @@ class TestTools(unittest.TestCase):
 
         txt = uid.to_ical()
         length = 15 + 1 + 16 + 1 + 11
-        self.assertTrue(len(txt) == length)
-        self.assertTrue(b"@example.com" in txt)
+        self.assertEqual(len(txt), length)
+        self.assertIn(b"@example.com", txt)
 
         # You should at least insert your own hostname to be more compliant
         uid = g.uid("Example.ORG")
         txt = uid.to_ical()
-        self.assertTrue(len(txt) == length)
-        self.assertTrue(b"@Example.ORG" in txt)
+        self.assertEqual(len(txt), length)
+        self.assertIn(b"@Example.ORG", txt)
 
         # You can also insert a path or similar
         uid = g.uid("Example.ORG", "/path/to/content")
         txt = uid.to_ical()
-        self.assertTrue(len(txt) == length)
-        self.assertTrue(b"-/path/to/content@Example.ORG" in txt)
+        self.assertEqual(len(txt), length)
+        self.assertIn(b"-/path/to/content@Example.ORG", txt)
 
 
 @pytest.mark.parametrize(
