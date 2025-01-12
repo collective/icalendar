@@ -24,9 +24,9 @@ class TestProp(unittest.TestCase):
         from icalendar.prop import vDDDLists
 
         dt_list = vDDDLists.from_ical("19960402T010000Z")
-        self.assertTrue(isinstance(dt_list, list))
+        self.assertIsInstance(dt_list, list)
         self.assertEqual(len(dt_list), 1)
-        self.assertTrue(isinstance(dt_list[0], datetime))
+        self.assertIsInstance(dt_list[0], datetime)
         self.assertEqual(str(dt_list[0]), "1996-04-02 01:00:00+00:00")
 
         p = "19960402T010000Z,19960403T010000Z,19960404T010000Z"
@@ -45,7 +45,7 @@ class TestProp(unittest.TestCase):
         self.assertEqual(dt_list.to_ical(), b"20000101T000000,20001111T000000")
 
         instance = vDDDLists([])
-        self.assertFalse(instance == "value")
+        self.assertNotEqual(instance, "value")
 
     def test_prop_vDate(self):
         from icalendar.prop import vDate
@@ -149,7 +149,7 @@ class TestProp(unittest.TestCase):
         self.assertEqual(vRecur(r).to_ical(), b"FREQ=DAILY;COUNT=10;INTERVAL=2")
 
         r = vRecur.from_ical(
-            "FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=-SU;" "BYHOUR=8,9;BYMINUTE=30"
+            "FREQ=YEARLY;INTERVAL=2;BYMONTH=1;BYDAY=-SU;BYHOUR=8,9;BYMINUTE=30"
         )
         self.assertEqual(
             r,
@@ -165,7 +165,7 @@ class TestProp(unittest.TestCase):
 
         self.assertEqual(
             vRecur(r).to_ical(),
-            b"FREQ=YEARLY;INTERVAL=2;BYMINUTE=30;BYHOUR=8,9;BYDAY=-SU;" b"BYMONTH=1",
+            b"FREQ=YEARLY;INTERVAL=2;BYMINUTE=30;BYHOUR=8,9;BYDAY=-SU;BYMONTH=1",
         )
 
         r = vRecur.from_ical("FREQ=WEEKLY;INTERVAL=1;BYWEEKDAY=TH")

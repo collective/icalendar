@@ -105,16 +105,16 @@ class TZP:
         """
         return tzid.strip("/")
 
-    def timezone(self, id: str) -> Optional[datetime.tzinfo]:
+    def timezone(self, tz_id: str) -> Optional[datetime.tzinfo]:
         """Return a timezone with an id or None if we cannot find it."""
-        _unclean_id = id
-        id = self.clean_timezone_id(id)
-        tz = self.__provider.timezone(id)
+        _unclean_id = tz_id
+        tz_id = self.clean_timezone_id(tz_id)
+        tz = self.__provider.timezone(tz_id)
         if tz is not None:
             return tz
-        if id in WINDOWS_TO_OLSON:
-            tz = self.__provider.timezone(WINDOWS_TO_OLSON[id])
-        return tz or self.__provider.timezone(_unclean_id) or self.__tz_cache.get(id)
+        if tz_id in WINDOWS_TO_OLSON:
+            tz = self.__provider.timezone(WINDOWS_TO_OLSON[tz_id])
+        return tz or self.__provider.timezone(_unclean_id) or self.__tz_cache.get(tz_id)
 
     def uses_pytz(self) -> bool:
         """Whether we use pytz at all."""

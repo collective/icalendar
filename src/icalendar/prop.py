@@ -1042,7 +1042,7 @@ class vMonth(int):
                 month_index = int(month)
                 leap = False
             else:
-                if not month[-1] == "L" and month[:-1].isdigit():
+                if month[-1] != "L" and month[:-1].isdigit():
                     raise ValueError(f"Invalid month: {month!r}")
                 month_index = int(month[:-1])
                 leap = True

@@ -12,7 +12,7 @@ class TestParserTools(unittest.TestCase):
         self.assertEqual(to_unicode(b"\xc6\xb5"), "\u01b5")
         self.assertEqual(to_unicode(b"\xc6\xb5", encoding="ascii"), "\u01b5")
         self.assertEqual(to_unicode(1), 1)
-        self.assertEqual(to_unicode(None), None)
+        self.assertIsNone(to_unicode(None))
 
     def test_parser_tools_from_unicode(self):
         self.assertEqual(from_unicode("\u01b5", encoding="ascii"), b"\xc6\xb5")

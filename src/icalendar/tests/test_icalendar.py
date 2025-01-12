@@ -40,7 +40,7 @@ class IcalendarTestCase(unittest.TestCase):
         )
         self.assertEqual(
             Contentlines.from_ical(
-                "A faked\r\n  long line\r\nAnd another " "lin\r\n\te that is folded\r\n"
+                "A faked\r\n  long line\r\nAnd another lin\r\n\te that is folded\r\n"
             ),
             ["A faked long line", "And another line that is folded", ""],
         )
@@ -112,7 +112,7 @@ class IcalendarTestCase(unittest.TestCase):
         )
 
         c = Contentline(
-            "ATTENDEE;CN=Max Rasmussen;ROLE=REQ-PARTICIPANT:" "MAILTO:maxm@example.com"
+            "ATTENDEE;CN=Max Rasmussen;ROLE=REQ-PARTICIPANT:MAILTO:maxm@example.com"
         )
         self.assertEqual(
             c.parts(),
@@ -124,7 +124,7 @@ class IcalendarTestCase(unittest.TestCase):
         )
         self.assertEqual(
             c.to_ical().decode("utf-8"),
-            "ATTENDEE;CN=Max Rasmussen;ROLE=REQ-PARTICIPANT:" "MAILTO:maxm@example.com",
+            "ATTENDEE;CN=Max Rasmussen;ROLE=REQ-PARTICIPANT:MAILTO:maxm@example.com",
         )
 
         # and back again
