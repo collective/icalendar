@@ -9,6 +9,7 @@ Minor changes:
 - Add a ``weekday`` attribute to ``vWeekday`` components. See `Issue 749 <https://github.com/collective/icalendar/issues/749>`_.
 - Document ``vRecur`` property. See `Issue 758 <https://github.com/collective/icalendar/issues/758>`_.
 - Print failure of doctest to aid debugging.
+- Fix tests, improve code readability, fix typing. See `Issue 766 <https://github.com/collective/icalendar/issues/766>`_ and `Issue 765 <https://github.com/collective/icalendar/issues/765>`_.
 
 Breaking changes:
 
