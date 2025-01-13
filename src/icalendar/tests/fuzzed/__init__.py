@@ -19,7 +19,7 @@ def fuzz_calendar_v1(
         cal = [cal]
     for c in cal:
         if should_walk:
-            for event in cal.walk("VEVENT"):
+            for event in c.walk("VEVENT"):
                 event.to_ical()
         else:
-            cal.to_ical()
+            c.to_ical()

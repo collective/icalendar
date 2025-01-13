@@ -1,4 +1,4 @@
-from typing import Any, Union
+from typing import List, Union
 
 SEQUENCE_TYPES = (list, tuple)
 DEFAULT_ENCODING = 'utf-8'
@@ -37,7 +37,9 @@ def to_unicode(value: ICAL_TYPE, encoding='utf-8-sig') -> str:
         return value
 
 
-def data_encode(data: Union[ICAL_TYPE, dict, list], encoding=DEFAULT_ENCODING) -> bytes:
+def data_encode(
+        data: Union[ICAL_TYPE, dict, list], encoding=DEFAULT_ENCODING
+) -> Union[bytes, List[bytes], dict]:
     """Encode all datastructures to the given encoding.
     Currently unicode strings, dicts and lists are supported.
     """
