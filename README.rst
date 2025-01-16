@@ -66,9 +66,8 @@ You can open an ``.ics`` file and see all the events:
   >>> import icalendar
   >>> from pathlib import Path
   >>> ics_path = Path("src/icalendar/tests/calendars/example.ics")
-  >>> with ics_path.open() as f:
-  ...     calendar = icalendar.Calendar.from_ical(f.read())
-  >>> for event in calendar.walk('VEVENT'):
+  >>> calendar = icalendar.Calendar.from_ical(ics_path.read_bytes())
+  >>> for event in calendar.events:
   ...     print(event.get("SUMMARY"))
   New Year's Day
   Orthodox Christmas
