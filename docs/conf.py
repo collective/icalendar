@@ -45,7 +45,4 @@ man_pages = [
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
-    "dateutil": ("https://dateutil.readthedocs.io/en/stable/", None),
-    "tzdata": ("https://tzdata.readthedocs.io/en/latest/", None),
-    "pytz": ("https://pythonhosted.org/pytz/", None),
 }
