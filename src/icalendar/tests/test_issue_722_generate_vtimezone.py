@@ -56,7 +56,7 @@ def test_conversion_converges(tzp, tzid):
     tzinfo2 = generated1.to_tz()
     generated2 = Timezone.from_tzinfo(tzinfo2, "test-generated")
     tzinfo3 = generated2.to_tz()
-    generated3 = Timezone.from_tzinfo(tzinfo2, "test-generated")
+    generated3 = Timezone.from_tzinfo(tzinfo3, "test-generated")
     # pprint(generated1.get_transitions())
     # pprint(generated2.get_transitions())
     assert_components_equal(generated1, generated2)

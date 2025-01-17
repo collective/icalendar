@@ -10,6 +10,7 @@ Minor changes:
 - Document :class:`icalendar.prop.vRecur` property. See `Issue 758 <https://github.com/collective/icalendar/issues/758>`_.
 - Print failure of doctest to aid debugging.
 - Improve documentation of :class:`icalendar.prop.vGeo`
+- Fix tests, improve code readability, fix typing. See `Issue 766 <https://github.com/collective/icalendar/issues/766>`_ and `Issue 765 <https://github.com/collective/icalendar/issues/765>`_.
 
 Breaking changes:
 

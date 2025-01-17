@@ -115,10 +115,10 @@ class TestCaselessdict(unittest.TestCase):
         self.assertEqual(ncd.get("key1"), "val1")
         self.assertEqual(ncd.get("key3", "NOT FOUND"), "val3")
         self.assertEqual(ncd.get("key4", "NOT FOUND"), "NOT FOUND")
-        self.assertTrue("key4" in ncd)
+        self.assertIn("key4", ncd)
 
         del ncd["key4"]
-        self.assertFalse("key4" in ncd)
+        self.assertNotIn("key4", ncd)
 
         ncd.update({"key5": "val5", "KEY6": "val6", "KEY5": "val7"})
         self.assertEqual(ncd["key6"], "val6")

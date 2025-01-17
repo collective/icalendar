@@ -491,6 +491,7 @@ class Component(CaselessDict):
                 'Found no components where exactly one is required', st))
         return comps[0]
 
+    @staticmethod
     def _format_error(error_description, bad_input, elipsis='[...]'):
         # there's three character more in the error, ie. ' ' x2 and a ':'
         max_error_length = 100 - 3
