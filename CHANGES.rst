@@ -18,7 +18,7 @@ Breaking changes:
 
 New features:
 
-- ...
+- Python types in documentation now link to their documentation pages using ``intersphinx``.
 
 Bug fixes:
 
