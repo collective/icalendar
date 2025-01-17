@@ -1487,7 +1487,7 @@ class vGeo:
             >>> geo
             (37.386013, -122.082932)
 
-        Add location to an event:
+        Add a geo location to an event:
 
         .. code-block:: pycon
 
