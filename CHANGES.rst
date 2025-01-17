@@ -17,7 +17,7 @@ Breaking changes:
 
 New features:
 
-- ...
+- Types in documentation now link to their documentation pages using ``intersphinx``
 
 Bug fixes:
 
