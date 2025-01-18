@@ -43,7 +43,7 @@ Once verified and fixed, the following steps will be taken:
     If it is compliant, they will submit it to the MITRE Corporation to generate a `CVE <https://www.cve.org/>`_.
     This in turn submits the CVE to the `National Vulnerability Database (NVD) <https://nvd.nist.gov/vuln/search>`_.
     GitHub notifies us of their decision.
--   Assuming it is compliant, we then publish our Security Advisory on GitHub, which triggers the next steps.
+-   Assuming it is compliant, we then publish `our Security Advisory <https://github.com/collective/icalendar/security/advisories>`_ on GitHub, which triggers the next steps.
 -   GitHub will publish the CVE to the CVE List.
 -   GitHub will broadcast our Security Advisory via the `GitHub Advisory Database <https://github.com/advisories>`_.
 -   GitHub will send `security alerts <https://docs.github.com/en/code-security/supply-chain-security/managing-vulnerabilities-in-your-projects-dependencies/about-alerts-for-vulnerable-dependencies>`_ to all repositories that use our package (and have opted into security alerts).
