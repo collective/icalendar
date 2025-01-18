@@ -43,3 +43,7 @@ man_pages = [
     ('index', 'icalendar', 'icalendar Documentation',
      ['Plone Foundation'], 1)
 ]
+
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
+}

@@ -129,7 +129,7 @@ if version is None and not options.accept_buildout_test_releases:
 
     def _final_version(parsed_version):
         for part in parsed_version:
-            if (part[:1] == '*') and (part not in _final_parts):
+            if (part.startswith('*')) and (part not in _final_parts):
                 return False
         return True
     index = setuptools.package_index.PackageIndex(

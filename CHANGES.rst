@@ -6,9 +6,11 @@ Changelog
 
 Minor changes:
 
-- Add a ``weekday`` attribute to ``vWeekday`` components. See `Issue 749 <https://github.com/collective/icalendar/issues/749>`_.
-- Document ``vRecur`` property. See `Issue 758 <https://github.com/collective/icalendar/issues/758>`_.
+- Add a ``weekday`` attribute to :class:`icalendar.prop.vWeekday` components. See `Issue 749 <https://github.com/collective/icalendar/issues/749>`_.
+- Document :class:`icalendar.prop.vRecur` property. See `Issue 758 <https://github.com/collective/icalendar/issues/758>`_.
 - Print failure of doctest to aid debugging.
+- Improve documentation of :class:`icalendar.prop.vGeo`
+- Fix tests, improve code readability, fix typing. See `Issue 766 <https://github.com/collective/icalendar/issues/766>`_ and `Issue 765 <https://github.com/collective/icalendar/issues/765>`_.
 
 Breaking changes:
 
@@ -17,6 +19,7 @@ Breaking changes:
 New features:
 
 - Add :ref:`Security Policy`
+- Python types in documentation now link to their documentation pages using ``intersphinx``.
 
 Bug fixes:
 
