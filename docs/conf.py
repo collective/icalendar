@@ -23,6 +23,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx_copybutton',
     'sphinx.ext.intersphinx',
+    'sphinx.ext.autosectionlabel',
 ]
 source_suffix = '.rst'
 master_doc = 'index'
