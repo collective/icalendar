@@ -1,7 +1,7 @@
 Changelog
 =========
 
-6.1.1 (unreleased)
+6.1.1 (2025-01-18)
 ------------------
 
 Minor changes:
@@ -20,11 +20,6 @@ New features:
 
 - Add :ref:`Security Policy`
 - Python types in documentation now link to their documentation pages using ``intersphinx``.
-
-Bug fixes:
-
-- ...
-
 
 6.1.0 (2024-11-22)
 ------------------
