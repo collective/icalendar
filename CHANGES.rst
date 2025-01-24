@@ -6,7 +6,7 @@ Changelog
 
 Minor changes:
 
-- ...
+- Link to related package.
 
 Breaking changes:
 
