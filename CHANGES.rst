@@ -6,7 +6,7 @@ Changelog
 
 Minor changes:
 
-- ...
+- Add funding link to Tidelift.
 
 Breaking changes:
 
