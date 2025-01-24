@@ -1,19 +1,16 @@
 Changelog
 =========
 
-6.1.1 (unreleased)
+6.1.2 (unreleased)
 ------------------
 
 Minor changes:
 
-- Add a ``weekday`` attribute to ``vWeekday`` components. See `Issue 749 <https://github.com/collective/icalendar/issues/749>`_.
-- Document ``vRecur`` property. See `Issue 758 <https://github.com/collective/icalendar/issues/758>`_.
-- Print failure of doctest to aid debugging.
-- Fix tests, improve code readability, fix typing. See `Issue 766 <https://github.com/collective/icalendar/issues/766>`_ and `Issue 765 <https://github.com/collective/icalendar/issues/765>`_.
+- ...
 
 Breaking changes:
 
-- The ``relative`` attribute of ``vWeekday`` components has the correct sign now. See `Issue 749 <https://github.com/collective/icalendar/issues/749>`_.
+- ...
 
 New features:
 
@@ -23,6 +20,25 @@ Bug fixes:
 
 - ...
 
+6.1.1 (2025-01-18)
+------------------
+
+Minor changes:
+
+- Add a ``weekday`` attribute to :class:`icalendar.prop.vWeekday` components. See `Issue 749 <https://github.com/collective/icalendar/issues/749>`_.
+- Document :class:`icalendar.prop.vRecur` property. See `Issue 758 <https://github.com/collective/icalendar/issues/758>`_.
+- Print failure of doctest to aid debugging.
+- Improve documentation of :class:`icalendar.prop.vGeo`
+- Fix tests, improve code readability, fix typing. See `Issue 766 <https://github.com/collective/icalendar/issues/766>`_ and `Issue 765 <https://github.com/collective/icalendar/issues/765>`_.
+
+Breaking changes:
+
+- The ``relative`` attribute of ``vWeekday`` components has the correct sign now. See `Issue 749 <https://github.com/collective/icalendar/issues/749>`_.
+
+New features:
+
+- Add :ref:`Security Policy`
+- Python types in documentation now link to their documentation pages using ``intersphinx``.
 
 6.1.0 (2024-11-22)
 ------------------

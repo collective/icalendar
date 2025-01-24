@@ -21,3 +21,4 @@ Contents
     :titlesonly:
 
     contributing
+    security

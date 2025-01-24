@@ -1478,40 +1478,62 @@ class vGeo:
 
             GEO:37.386013;-122.082932
 
+        Parse vGeo:
+
         .. code-block:: pycon
 
             >>> from icalendar.prop import vGeo
             >>> geo = vGeo.from_ical('37.386013;-122.082932')
             >>> geo
             (37.386013, -122.082932)
+
+        Add a geo location to an event:
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Event
+            >>> event = Event()
+            >>> latitude = 37.386013
+            >>> longitude = -122.082932
+            >>> event.add('GEO', (latitude, longitude))
+            >>> event['GEO']
+            vGeo((37.386013, -122.082932))
     """
 
-    def __init__(self, geo):
+    def __init__(self, geo: tuple[float|str|int, float|str|int]):
+        """Create a new vGeo from a tuple of (latitude, longitude).
+
+        Raises:
+            ValueError: if geo is not a tuple of (latitude, longitude)
+        """
         try:
             latitude, longitude = (geo[0], geo[1])
             latitude = float(latitude)
             longitude = float(longitude)
-        except Exception:
-            raise ValueError('Input must be (float, float) for '
-                             'latitude and longitude')
+        except Exception as e:
+            raise ValueError("Input must be (float, float) for "
+                             "latitude and longitude") from e
         self.latitude = latitude
         self.longitude = longitude
         self.params = Parameters()
 
     def to_ical(self):
-        return f'{self.latitude};{self.longitude}'
+        return f"{self.latitude};{self.longitude}"
 
     @staticmethod
     def from_ical(ical):
         try:
-            latitude, longitude = ical.split(';')
+            latitude, longitude = ical.split(";")
             return (float(latitude), float(longitude))
-        except Exception:
-            raise ValueError(f"Expected 'float;float' , got: {ical}")
+        except Exception as e:
+            raise ValueError(f"Expected 'float;float' , got: {ical}") from e
 
     def __eq__(self, other):
         return self.to_ical() == other.to_ical()
 
+    def __repr__(self):
+        """repr(self)"""
+        return f"{self.__class__.__name__}(({self.latitude}, {self.longitude}))"
 
 class vUTCOffset:
     """UTC Offset

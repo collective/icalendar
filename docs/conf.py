@@ -21,7 +21,9 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.coverage',
     'sphinx.ext.viewcode',
-    'sphinx_copybutton'
+    'sphinx_copybutton',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.autosectionlabel',
 ]
 source_suffix = '.rst'
 master_doc = 'index'
@@ -41,3 +43,7 @@ man_pages = [
     ('index', 'icalendar', 'icalendar Documentation',
      ['Plone Foundation'], 1)
 ]
+
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
+}
