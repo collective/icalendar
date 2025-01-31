@@ -7,6 +7,7 @@ Changelog
 Minor changes:
 
 - Link to related package.
+- Shorten first example in documentation.
 
 Breaking changes:
 
