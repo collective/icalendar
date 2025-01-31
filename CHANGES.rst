@@ -6,7 +6,7 @@ Changelog
 
 Minor changes:
 
-- ...
+- Shorten first example in documentation.
 
 Breaking changes:
 
