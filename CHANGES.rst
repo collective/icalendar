@@ -6,6 +6,7 @@ Changelog
 
 Minor changes:
 
+- Add funding link to Tidelift.
 - Link to related package.
 - Shorten first example in documentation.
 
