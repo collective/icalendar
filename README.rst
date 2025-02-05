@@ -67,9 +67,8 @@ You can open an ``.ics`` file and see all the events:
   >>> import icalendar
   >>> from pathlib import Path
   >>> ics_path = Path("src/icalendar/tests/calendars/example.ics")
-  >>> with ics_path.open() as f:
-  ...     calendar = icalendar.Calendar.from_ical(f.read())
-  >>> for event in calendar.walk('VEVENT'):
+  >>> calendar = icalendar.Calendar.from_ical(ics_path.read_bytes())
+  >>> for event in calendar.events:
   ...     print(event.get("SUMMARY"))
   New Year's Day
   Orthodox Christmas
@@ -179,6 +178,7 @@ Related projects
 * `recurring-ical-events <https://pypi.org/project/recurring-ical-events/>`_. Library to query an ``icalendar.Calendar`` object for events and other components happening at a certain date or within a certain time.
 * `x-wr-timezone <https://pypi.org/project/x-wr-timezone/>`_. Library and command line tool to make ``icalendar.Calendar`` objects and files from Google Calendar (using the non-standard ``X-WR-TIMEZONE`` property) compliant with the standard (:rfc:`5545`).
 * `ics-query <http://pypi.org/project/ics-query>`_. Command line tool to query iCalendar files for occurrences of events and other components.
+* `icalendar-compatibility <https://icalendar-compatibility.readthedocs.io/en/latest/>`_ - access to event data compatible with RFC5545 and different implementations
 
 Further Reading
 ===============
