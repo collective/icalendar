@@ -10,38 +10,25 @@ You can regenerate the information from this module.
 See also:
 - https://stackoverflow.com/questions/79185519/which-timezones-are-equivalent
 
+Run this module:
+
+    python -m icalendar.timezone.equivalent_timezone_ids
+
 """
 from __future__ import annotations
 
-import contextlib
 from collections import defaultdict
 from datetime import datetime, timedelta, tzinfo
-from multiprocessing import Pool, cpu_count
 from pathlib import Path
 from pprint import pprint
-from time import time
-from typing import Callable, NamedTuple, Optional, Any, Tuple, List
-
-from zoneinfo import ZoneInfo, available_timezones
+from typing import Callable, NamedTuple, Optional
 
 from pytz import AmbiguousTimeError, NonExistentTimeError
-
-
-def check(dt, tz:tzinfo):
-    return (dt, tz.utcoffset(dt))
-
-def checks(tz:tzinfo) -> List[Tuple[Any, Optional[timedelta]]]:
-    result = []
-    for dt in DTS:
-        try:
-            result.append(check(dt, tz))
-        except Exception as e:
-            print(e)
-    return result
-
+from zoneinfo import ZoneInfo, available_timezones
 
 START = datetime(1970, 1, 1)  # noqa: DTZ001
-END = datetime(2000, 1, 1)  # noqa: DTZ001
+END = datetime(2020, 1, 1)  # noqa: DTZ001
+DISTANCE_FROM_TIMEZONE_CHANGE = timedelta(hours=12)
 
 DTS = []
 dt = START
@@ -53,7 +40,6 @@ del dt
 def main(
         create_timezones:list[Callable[[str], tzinfo]],
         name:str,
-        pool_size = cpu_count()
     ):
     """Generate a lookup table for timezone information if unknown timezones.
 
@@ -95,11 +81,21 @@ def main(
         while start < end:
             offsets : dict[timedelta, list[TZ]] = defaultdict(list)
             try:
-                for tz in tzs:
-                    offsets[tz.tz.utcoffset(start)].append(tz)
+                # if we are around a timezone change, we must move on
+                # see https://github.com/collective/icalendar/issues/776
+                around_tz_change = not all(
+                    tz.tz.utcoffset(start) ==
+                    tz.tz.utcoffset(start - DISTANCE_FROM_TIMEZONE_CHANGE) ==
+                    tz.tz.utcoffset(start + DISTANCE_FROM_TIMEZONE_CHANGE)
+                    for tz in tzs
+                )
             except (NonExistentTimeError, AmbiguousTimeError):
-                start += step
+                around_tz_change = True
+            if around_tz_change:
+                start += DISTANCE_FROM_TIMEZONE_CHANGE
                 continue
+            for tz in tzs:
+                offsets[tz.tz.utcoffset(start)].append(tz)
             if len(offsets) == 1:
                 start += step
                 continue
@@ -107,6 +103,7 @@ def main(
             for offset, tzs in offsets.items():
                 lookup[offset] = generate_tree(tzs=tzs, step=step, start=start + step, end=end, todo=todo)
             return start, lookup
+        print(f"reached end with {len(tzs)} timezones - assuming they are equivalent.")
         result = set()
         for tz in tzs:
             result.add(tz.id)
@@ -137,5 +134,4 @@ if __name__ == "__main__":
     from zoneinfo import ZoneInfo
     # add more timezone implementations if you like
     main([ZoneInfo, timezone, gettz], "result",
-         pool_size=1
     )

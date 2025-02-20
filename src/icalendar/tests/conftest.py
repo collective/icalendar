@@ -1,11 +1,14 @@
 try:
-    from backports import zoneinfo
+    from backports import zoneinfo  # type: ignore  # noqa: PGH003
 except ImportError:
     import zoneinfo
 from typing import Generator
+
 import pytest
 
 import icalendar
+
+from . import timezone_ids
 
 try:
     import pytz
@@ -337,3 +340,12 @@ def env_for_doctest(monkeypatch):
 
     monkeypatch.setattr(ZONEINFO, "utc", zoneinfo.ZoneInfo("UTC"))
     return {"print": doctest_print}
+
+
+@pytest.fixture(params=timezone_ids.TZIDS)
+def tzid(request:pytest.FixtureRequest) -> str:
+    """Return a timezone id to be used with pytz or zoneinfo.
+
+    This goes through all the different timezones possible.
+    """
+    return request.param

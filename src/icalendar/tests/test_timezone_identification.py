@@ -1,32 +1,30 @@
-"""Test that we can identify all timezones."""
+"""Test that we can identify all timezones.
 
-import pytest
-try:
-    from zoneinfo import ZoneInfo, available_timezones
-except ImportError:
-    from backports.zoneinfo import ZoneInfo, available_timezones
+Timezones can be removed from ./timezone_ids.py if they make the tests fail:
+Timezone information changes over time and can be dependent on the operating system's
+timezone database (zoneinfo, dateutil) or the package (pytz).
+We want to make sure we can roughly identify most of them.
+"""
 
-from icalendar.timezone import tzids_from_tzinfo, tzid_from_tzinfo
+from icalendar.timezone import tzid_from_tzinfo, tzids_from_tzinfo
+from icalendar.timezone.tzp import TZP
 
-tzids = available_timezones() - {"Factory", "localtime"}
-with_tzid = pytest.mark.parametrize("tzid", tzids)
 
-@with_tzid
-def test_can_identify_zoneinfo(tzid, zoneinfo_only):
+def test_can_identify_zoneinfo(tzid, zoneinfo_only, tzp:TZP):
     """Check that all those zoneinfo timezones can be identified."""
-    assert tzid in tzids_from_tzinfo(ZoneInfo(tzid))
+    assert tzid in tzids_from_tzinfo(tzp.timezone(tzid))
 
-@with_tzid
-def test_can_identify_pytz(tzid, pytz_only):
+
+def test_can_identify_pytz(tzid, pytz_only, tzp:TZP):
     """Check that all those pytz timezones can be identified."""
-    import pytz
-    assert tzid in tzids_from_tzinfo(pytz.timezone(tzid))
+    assert tzid in tzids_from_tzinfo(tzp.timezone(tzid))
 
-@with_tzid
+
 def test_can_identify_dateutil(tzid):
     """Check that all those dateutil timezones can be identified."""
     from dateutil.tz import gettz
     assert tzid in tzids_from_tzinfo(gettz(tzid))
+
 
 def test_utc_is_identified(utc):
     """Test UTC because it is handled in a special way."""
