@@ -20,7 +20,7 @@ New features:
 
 Bug fixes:
 
-- ...
+- Restrict timezones tested, see `Issue 763 <https://github.com/collective/icalendar/issues/763>`_
 
 6.1.1 (2025-01-18)
 ------------------
