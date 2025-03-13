@@ -8,6 +8,8 @@ Minor changes:
 
 - Link to related package.
 - Shorten first example in documentation.
+- Add ``name`` and ``email`` properties to ``vCalAddress``.
+- Add type hint for property ``params`` in ``icalendar.prop``.
 
 Breaking changes:
 
