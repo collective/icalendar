@@ -73,6 +73,8 @@ class vBinary:
     """Binary property values are base 64 encoded.
     """
 
+    params: Parameters
+
     def __init__(self, obj):
         self.obj = to_unicode(obj)
         self.params = Parameters(encoding='BASE64', value="BINARY")
@@ -134,6 +136,8 @@ class vBoolean(int):
         True
     """
 
+    params: Parameters
+
     BOOL_MAP = CaselessDict({'true': True, 'false': False})
 
     def __new__(cls, *args, **kwargs):
@@ -155,6 +159,8 @@ class vBoolean(int):
 class vText(str):
     """Simple text.
     """
+
+    params: Parameters
 
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
         value = to_unicode(value, encoding=encoding)
@@ -214,6 +220,8 @@ class vCalAddress(str):
 
     """
 
+    params: Parameters
+
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
@@ -230,6 +238,21 @@ class vCalAddress(str):
     def from_ical(cls, ical):
         return cls(ical)
 
+    @property
+    def email(self) -> str:
+        """The email address without mailto: at the start."""
+        if self.lower().startswith("mailto:"):
+            return self[7:]
+        return str(self)
+
+    @property
+    def name(self) -> str:
+        """The CN parameter or an empty string."""
+        return self.params.get("CN", "")
+
+    @name.setter
+    def name(self, value:str):
+        self.params["CN"] = value
 
 class vFloat(float):
     """Float
@@ -276,6 +299,8 @@ class vFloat(float):
             >>> float
             -3.14
     """
+
+    params: Parameters
 
     def __new__(cls, *args, **kwargs):
         self = super().__new__(cls, *args, **kwargs)
@@ -342,6 +367,8 @@ class vInt(int):
             432109876
     """
 
+    params: Parameters
+
     def __new__(cls, *args, **kwargs):
         self = super().__new__(cls, *args, **kwargs)
         self.params = Parameters()
@@ -361,6 +388,9 @@ class vInt(int):
 class vDDDLists:
     """A list of vDDDTypes values.
     """
+    
+    params: Parameters
+    dts: list
 
     def __init__(self, dt_list):
         if not hasattr(dt_list, '__iter__'):
@@ -397,6 +427,8 @@ class vDDDLists:
 
 
 class vCategory:
+    
+    params: Parameters
 
     def __init__(self, c_list):
         if not hasattr(c_list, '__iter__') or isinstance(c_list, str):
@@ -439,6 +471,8 @@ class vDDDTypes(TimeBase):
     cannot be confused, and often values can be of either types.
     So this is practical.
     """
+    
+    params: Parameters
 
     def __init__(self, dt):
         if not isinstance(dt, (datetime, date, timedelta, time, tuple)):
@@ -550,6 +584,8 @@ class vDate(TimeBase):
             >>> date.day
             14
     """
+    
+    params: Parameters
 
     def __init__(self, dt):
         if not isinstance(dt, date):
@@ -585,6 +621,8 @@ class vDatetime(TimeBase):
     created. Be aware that there are certain limitations with timezone naive
     DATE-TIME components in the icalendar standard.
     """
+    
+    params: Parameters
 
     def __init__(self, dt):
         self.dt = dt
@@ -720,6 +758,8 @@ class vDuration(TimeBase):
             >>> duration
             datetime.timedelta(days=49)
     """
+    
+    params: Parameters
 
     def __init__(self, td):
         if not isinstance(td, timedelta):
@@ -842,6 +882,8 @@ class vPeriod(TimeBase):
             >>> period = vPeriod.from_ical('19970101T180000Z/19970102T070000Z')
             >>> period = vPeriod.from_ical('19970101T180000Z/PT5H30M')
     """
+    
+    params: Parameters
 
     def __init__(self, per):
         start, end_or_duration = per
@@ -940,6 +982,8 @@ class vWeekday(str):
         ;FRIDAY, and SATURDAY days of the week.
 
     """
+    params: Parameters
+
     week_days = CaselessDict({
         "SU": 0, "MO": 1, "TU": 2, "WE": 3, "TH": 4, "FR": 5, "SA": 6,
     })
@@ -977,6 +1021,8 @@ class vWeekday(str):
 class vFrequency(str):
     """A simple class that catches illegal values.
     """
+    
+    params: Parameters
 
     frequencies = CaselessDict({
         "SECONDLY": "SECONDLY",
@@ -1034,6 +1080,9 @@ class vMonth(int):
            xsd:string
         }
     """
+        
+    params: Parameters
+
     def __new__(cls, month:Union[str, int]):
         if isinstance(month, vMonth):
             return cls(month.to_ical().decode())
@@ -1168,6 +1217,8 @@ class vRecur(CaselessDict):
         >>> rrule
         vRecur({'FREQ': ['DAILY'], 'COUNT': [10]})
     """
+    
+    params: Parameters
 
     frequencies = ["SECONDLY", "MINUTELY", "HOURLY", "DAILY", "WEEKLY",
                    "MONTHLY", "YEARLY"]
@@ -1423,6 +1474,8 @@ class vUri(str):
                 >>> uri
                 'http://example.com/my-report.txt'
     """
+    
+    params: Parameters
 
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
         value = to_unicode(value, encoding=encoding)
@@ -1499,6 +1552,8 @@ class vGeo:
             >>> event['GEO']
             vGeo((37.386013, -122.082932))
     """
+    
+    params: Parameters
 
     def __init__(self, geo: tuple[float|str|int, float|str|int]):
         """Create a new vGeo from a tuple of (latitude, longitude).
@@ -1582,6 +1637,8 @@ class vUTCOffset:
             >>> utc_offset
             datetime.timedelta(seconds=3600)
     """
+    
+    params: Parameters
 
     ignore_exceptions = False  # if True, and we cannot parse this
 
@@ -1651,6 +1708,8 @@ class vInline(str):
     has parameters. Conversion of inline values are handled by the Component
     class, so no further processing is needed.
     """
+    
+    params: Parameters
 
     def __new__(cls, value, encoding=DEFAULT_ENCODING):
         value = to_unicode(value, encoding=encoding)
