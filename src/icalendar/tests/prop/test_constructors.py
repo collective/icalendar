@@ -1,116 +1,87 @@
 
-from icalendar.prop  import  vBoolean,vInline , vUTCOffset, vCategory, vCalAddress, vWeekday, vDuration, vFloat, vGeo, vInt,  vText, vMonth, vUTCOffset, vFrequency,  vRecur,  vDatetime, vDDDTypes, vUri
+from icalendar.prop  import  vBoolean,vInline , vUTCOffset, vCategory, vCalAddress, vWeekday, vDuration, vFloat, vGeo, vInt,  vText, vMonth, vUTCOffset, vFrequency,  vRecur,  vDatetime, vUri
 import datetime
 
 def test_param_vCategory():
-    try:
-        obj = vCategory(["Work", "Personal"], params={"SOME_PARAAM":"VALUE"}) 
-        assert isinstance(obj, vCategory)  
-    except Exception as e:
-        assert False, f"Error creating vCategory object: {e}"  
+    obj = vCategory(["Work", "Personal"], params={"SOME_PARAM":"VALUE"}) 
+    assert isinstance(obj, vCategory)  
+    assert obj.params["VALUE"]=="SOME_PARAM"
 
 def test_param_vCalAddress():
-    try:
-        obj = vCalAddress('mailto:jane_doe@example.com',params={"SOME_PARAAM":"VALUE"}) 
-        assert isinstance(obj, vCalAddress) 
-    except Exception as e:
-        assert False, f"Error creating vCalAddress object: {e}"  
+    obj = vCalAddress('mailto:jane_doe@example.com',params={"SOME_PARAM":"VALUE"}) 
+    assert isinstance(obj, vCalAddress) 
+    assert obj.params["SOME_PARAM"]=="VALUE"
 
 def test_param_vWeekday():
-    try:
-        obj = vWeekday("2FR",params={"SOME_PARAAM":"VALUE"}) 
-        assert isinstance(obj, vWeekday)  
-    except Exception as e:
-        assert False, f"Error creating vWeekday object: {e}"  
+    obj = vWeekday("2FR",params={"SOME_PARAM":"VALUE"}) 
+    assert isinstance(obj, vWeekday)  
+    assert obj.params["SOME_PARAM"]=="VALUE"
 
 def test_param_vBoolean():
-    try:
-        obj = vBoolean(True, params={"SOME_PARAM":"VALUE"})  
-        assert isinstance(obj, vBoolean)  
-    except Exception as e:
-        assert False, f"Error creating vBoolean object: {e}" 
+    
+    obj = vBoolean(True, params={"SOME_PARAM":"VALUE"})  
+    assert isinstance(obj, vBoolean)  
+    assert obj.params["SOME_PARAM"]=="VALUE"
 
 def test_param_vDuration():
-    try:
-        td=datetime.timedelta(days=15, seconds=18020)
-        obj = vDuration(td, params={"SOME_PARAAM":"VALUE"}) 
-        assert isinstance(obj, vDuration)  
-    except Exception as e:
-        assert False, f"Error creating vDuration object: {e}"  
+    td = datetime.timedelta(days=15, seconds=18020)
+    obj = vDuration(td, params={"SOME_PARAM":"VALUE"}) 
+    assert isinstance(obj, vDuration)  
+    assert obj.params["SOME_PARAM"]=="VALUE"
 
 def test_param_vFloat():
-    try:
-        obj = vFloat('1.333',params={"SOME_PARAAM":"VALUE"})
-        
-        assert isinstance(obj, vFloat)  
-    except Exception as e:
-        assert False, f"Error creating vFloat object: {e}"  
+    obj = vFloat('1.333',params={"SOME_PARAM":"VALUE"})    
+    assert isinstance(obj, vFloat)  
+    assert obj.params["SOME_PARAM"]=="VALUE"
 
 def test_param_vGeo():
-    try:
-        obj = vGeo((37.386013, -122.082932),params={"SOME_PARAAM":"VALUE"}) 
-        assert isinstance(obj, vGeo) 
-    except Exception as e:
-        assert False, f"Error creating vGeo object: {e}"  
+    obj = vGeo((37.386013, -122.082932),params={"SOME_PARAM":"VALUE"}) 
+    assert isinstance(obj, vGeo) 
+    assert obj.params["SOME_PARAM"]=="VALUE"
 
 def test_param_vInt():
-    try:
-        obj = vInt('87',params={"SOME_PARAAM":"VALUE"})  
-        assert isinstance(obj, vInt)  
-    except Exception as e:
-        assert False, f"Error creating vInt object: {e}"  
+    obj = vInt('87',params={"SOME_PARAM":"VALUE"})  
+    assert isinstance(obj, vInt)  
+    assert obj.params["SOME_PARAM"]=="VALUE"
 
 def test_param_vInline():
-    try:
-        obj = vInline("sometxt", params={"SOME_PARAAM":"VALUE"}) 
-        assert isinstance(obj, vInline)  
-    except Exception as e:
-        assert False, f"Error creating vInline object: {e}"  
+    obj = vInline("sometxt", params={"SOME_PARAM":"VALUE"}) 
+    assert isinstance(obj, vInline)  
+    assert obj.params["SOME_PARAM"]=="VALUE"
+
 def test_param_vText():
-    try:
-        obj = vText("sometxt", params={"SOME_PARAAM":"VALUE"}) 
-        assert isinstance(obj, vText)  
-    except Exception as e:
-        assert False, f"Error creating vText object: {e}"  
+    obj = vText("sometxt", params={"SOME_PARAM":"VALUE"}) 
+    assert isinstance(obj, vText)  
+    assert obj.params["SOME_PARAM"]=="VALUE" 
 
 def test_param_vMonth():
-    try:
-        obj = vMonth(1,params={"SOME_PARAAM":"VALUE"})  
-        assert isinstance(obj, vMonth)  
-    except Exception as e:
-        assert False, f"Error creating vMonth object: {e}"  
+    obj = vMonth(1,params={"SOME_PARAM":"VALUE"})  
+    assert isinstance(obj, vMonth)  
+    assert obj.params["SOME_PARAM"]=="VALUE"
 
 def test_param_vUTCOffset():
-    try:
-        obj =  vUTCOffset(datetime.timedelta(days=-1, seconds=68400),params={"SOME_PARAM":"VALUE"})  
-        assert isinstance(obj, vUTCOffset)  
-    except Exception as e:
-        assert False, f"Error creating vUTCOffset object: {e}"  
+    obj =  vUTCOffset(datetime.timedelta(days=-1, seconds=68400),params={"SOME_PARAM":"VALUE"})  
+    assert isinstance(obj, vUTCOffset)  
+    assert obj.params["SOME_PARAM"]=="VALUE"
 
 def test_param_vFrequency():
-    try:
-        obj = vFrequency("DAILY",params={"SOME_PARAAM":"VALUE"}) 
-        assert isinstance(obj, vFrequency) 
-    except Exception as e:
-        assert False, f"Error creating vFrequency object: {e}"  
+    obj = vFrequency("DAILY",params={"SOME_PARAM":"VALUE"}) 
+    assert isinstance(obj, vFrequency) 
+    assert obj.params["SOME_PARAM"]=="VALUE"
 
  
 def test_param_vRecur():
-    try:
-        obj =vRecur({'FREQ': ['DAILY'], 'COUNT': [10]}, params={"SOME_PARAAM":"VALUE"})
-    except Exception as e:
-        assert False, f"Error creating vRecur object: {e}"  
+    obj = vRecur({'FREQ': ['DAILY'], 'COUNT': [10]}, params={"SOME_PARAM":"VALUE"})
+    assert isinstance(obj,vRecur)
+    assert obj.params["SOME_PARAM"]=="VALUE"
 
 def test_param_vDatetime():
-    try:
-        dt = datetime.datetime(2025, 3, 16, 14, 30, 0, tzinfo=datetime.timezone.utc)
-        obj = vDatetime(dt,params={"SOME_PARAAM":"VALUE"})  
-        assert isinstance(obj, vDatetime)  
-    except Exception as e:
-        assert False, f"Error creating vDatetime object: {e}"  
+    dt = datetime.datetime(2025, 3, 16, 14, 30, 0, tzinfo=datetime.timezone.utc)
+    obj = vDatetime(dt,params={"SOME_PARAM":"VALUE"})  
+    assert isinstance(obj, vDatetime)  
+    assert obj.params["SOME_PARAM"]=="VALUE"
+
 def test_param_vUri():
-    try:
-        obj = uri_instance = vUri("WWW.WESBITE.COM",params={"SOME_PARAAM":"VALUE"}) 
-        assert isinstance(obj, vUri)  
-    except Exception as e:
-        assert False, f"Error creating vUri object: {e}"  
+    obj = vUri("WWW.WESBITE.COM",params={"SOME_PARAM":"VALUE"}) 
+    assert isinstance(obj, vUri)  
+    assert obj.params["SOME_PARAM"]=="VALUE"
