@@ -5,7 +5,7 @@ import datetime
 def test_param_vCategory():
     obj = vCategory(["Work", "Personal"], params={"SOME_PARAM":"VALUE"}) 
     assert isinstance(obj, vCategory)  
-    assert obj.params["VALUE"]=="SOME_PARAM"
+    assert obj.params["SOME_PARAM"]=="VALUE"
 
 def test_param_vCalAddress():
     obj = vCalAddress('mailto:jane_doe@example.com',params={"SOME_PARAM":"VALUE"}) 
