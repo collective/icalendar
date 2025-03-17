@@ -78,6 +78,7 @@ icalendar contributors
 - `Soham Dutta <https://github.com/NP-compete>`_
 - `Serif OZ  <https://github.com/SerifOZ>`_
 - David Venhoff <https://github.com/david-venhoff>
+- `Tariq <https://github.com/Horisyre>`_
 
 Find out who contributed::
 

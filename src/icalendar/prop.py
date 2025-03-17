@@ -140,9 +140,9 @@ class vBoolean(int):
 
     BOOL_MAP = CaselessDict({'true': True, 'false': False})
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, *args,params={}, **kwargs):
         self = super().__new__(cls, *args, **kwargs)
-        self.params = Parameters()
+        self.params =Parameters(params)
         return self
 
     def to_ical(self):
@@ -162,11 +162,11 @@ class vText(str):
 
     params: Parameters
 
-    def __new__(cls, value, encoding=DEFAULT_ENCODING):
+    def __new__(cls, value, encoding=DEFAULT_ENCODING,params={}):
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         self.encoding = encoding
-        self.params = Parameters()
+        self.params=Parameters(params)
         return self
 
     def __repr__(self) -> str:
@@ -222,10 +222,10 @@ class vCalAddress(str):
 
     params: Parameters
 
-    def __new__(cls, value, encoding=DEFAULT_ENCODING):
+    def __new__(cls, value, encoding=DEFAULT_ENCODING,params={}):
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
-        self.params = Parameters()
+        self.params =Parameters(params)
         return self
 
     def __repr__(self):
@@ -302,9 +302,9 @@ class vFloat(float):
 
     params: Parameters
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls,*args, params={}, **kwargs):
         self = super().__new__(cls, *args, **kwargs)
-        self.params = Parameters()
+        self.params = Parameters(params)
         return self
 
     def to_ical(self):
@@ -369,9 +369,9 @@ class vInt(int):
 
     params: Parameters
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, *args,params={}, **kwargs):
         self = super().__new__(cls, *args, **kwargs)
-        self.params = Parameters()
+        self.params = Parameters(params)
         return self
 
     def to_ical(self) -> bytes:
@@ -430,11 +430,11 @@ class vCategory:
     
     params: Parameters
 
-    def __init__(self, c_list):
+    def __init__(self, c_list, params={}):
         if not hasattr(c_list, '__iter__') or isinstance(c_list, str):
             c_list = [c_list]
         self.cats = [vText(c) for c in c_list]
-        self.params = Parameters()
+        self.params = Parameters(params)
 
     def __iter__(self):
         return iter(vCategory.from_ical(self.to_ical()))
@@ -624,9 +624,9 @@ class vDatetime(TimeBase):
     
     params: Parameters
 
-    def __init__(self, dt):
+    def __init__(self, dt, params={}):
         self.dt = dt
-        self.params = Parameters()
+        self.params = Parameters(params)
 
     def to_ical(self):
         dt = self.dt
@@ -761,11 +761,11 @@ class vDuration(TimeBase):
     
     params: Parameters
 
-    def __init__(self, td):
+    def __init__(self, td,params={}):
         if not isinstance(td, timedelta):
             raise ValueError('Value MUST be a timedelta instance')
         self.td = td
-        self.params = Parameters()
+        self.params = Parameters(params)
 
     def to_ical(self):
         sign = ""
@@ -988,7 +988,7 @@ class vWeekday(str):
         "SU": 0, "MO": 1, "TU": 2, "WE": 3, "TH": 4, "FR": 5, "SA": 6,
     })
 
-    def __new__(cls, value, encoding=DEFAULT_ENCODING):
+    def __new__(cls, value, encoding=DEFAULT_ENCODING,params={}):
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         match = WEEKDAY_RULE.match(self)
@@ -1004,7 +1004,7 @@ class vWeekday(str):
         self.relative = relative and int(relative) or None
         if sign == '-' and self.relative:
             self.relative *= -1
-        self.params = Parameters()
+        self.params = Parameters(params)
         return self
 
     def to_ical(self):
@@ -1034,12 +1034,12 @@ class vFrequency(str):
         "YEARLY": "YEARLY",
     })
 
-    def __new__(cls, value, encoding=DEFAULT_ENCODING):
+    def __new__(cls, value, encoding=DEFAULT_ENCODING, params={}):
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         if self not in vFrequency.frequencies:
             raise ValueError(f'Expected frequency, got: {self}')
-        self.params = Parameters()
+        self.params = Parameters(params)
         return self
 
     def to_ical(self):
@@ -1083,7 +1083,7 @@ class vMonth(int):
         
     params: Parameters
 
-    def __new__(cls, month:Union[str, int]):
+    def __new__(cls, month:Union[str, int], params={}):
         if isinstance(month, vMonth):
             return cls(month.to_ical().decode())
         if isinstance(month, str):
@@ -1100,7 +1100,7 @@ class vMonth(int):
             month_index = int(month)
         self = super().__new__(cls, month_index)
         self.leap = leap
-        self.params = Parameters()
+        self.params = Parameters(params)
         return self
 
     def to_ical(self) -> bytes:
@@ -1249,12 +1249,12 @@ class vRecur(CaselessDict):
         'SKIP': vSkip,
     })
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args,params={}, **kwargs):
         for k, v in kwargs.items():
             if not isinstance(v, SEQUENCE_TYPES):
                 kwargs[k] = [v]
         super().__init__(*args, **kwargs)
-        self.params = Parameters()
+        self.params = Parameters(params)
 
     def to_ical(self):
         result = []
@@ -1477,10 +1477,10 @@ class vUri(str):
     
     params: Parameters
 
-    def __new__(cls, value, encoding=DEFAULT_ENCODING):
+    def __new__(cls, value, encoding=DEFAULT_ENCODING, params={}):
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
-        self.params = Parameters()
+        self.params = Parameters(params)
         return self
 
     def to_ical(self):
@@ -1555,7 +1555,7 @@ class vGeo:
     
     params: Parameters
 
-    def __init__(self, geo: tuple[float|str|int, float|str|int]):
+    def __init__(self, geo: tuple[float|str|int, float|str|int], params={}):
         """Create a new vGeo from a tuple of (latitude, longitude).
 
         Raises:
@@ -1570,7 +1570,7 @@ class vGeo:
                              "latitude and longitude") from e
         self.latitude = latitude
         self.longitude = longitude
-        self.params = Parameters()
+        self.params = Parameters(params)
 
     def to_ical(self):
         return f"{self.latitude};{self.longitude}"
@@ -1646,11 +1646,11 @@ class vUTCOffset:
     # it, rather than let the exception
     # propagate upwards
 
-    def __init__(self, td):
+    def __init__(self, td, params={}):
         if not isinstance(td, timedelta):
             raise ValueError('Offset value MUST be a timedelta instance')
         self.td = td
-        self.params = Parameters()
+        self.params = Parameters(params)
 
     def to_ical(self):
 
@@ -1711,10 +1711,10 @@ class vInline(str):
     
     params: Parameters
 
-    def __new__(cls, value, encoding=DEFAULT_ENCODING):
+    def __new__(cls, value, encoding=DEFAULT_ENCODING, params={}):
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
-        self.params = Parameters()
+        self.params = Parameters(params)
         return self
 
     def to_ical(self):
