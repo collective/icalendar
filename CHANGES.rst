@@ -1,27 +1,8 @@
 Changelog
 =========
-6.1.2 (unreleased 2025-03-19)
-------------------
 
-Minor changes:
 
-- Set default value for ``params`` as ``params={}`` in mulitple constructors in ``icalendar.prop`` to improve usability.
-- Improve object initialization performance in ``icalendar.prop``.
-- Add type hint for ``params`` in multiple constructors in ``icalendar.prop``.
-
-Breaking changes:
-
-- ...
-
-New features:
-
-- ...
-
-Bug fixes:
-
-- ...
-
-6.1.2 (unreleased)
+6.1.2 (2025-03-19)
 ------------------
 
 Minor changes:
@@ -31,14 +12,9 @@ Minor changes:
 - Shorten first example in documentation.
 - Add ``name`` and ``email`` properties to ``vCalAddress``.
 - Add type hint for property ``params`` in ``icalendar.prop``.
-
-Breaking changes:
-
-- ...
-
-New features:
-
-- ...
+- Set default value for ``params`` as ``params={}`` in mulitple constructors in ``icalendar.prop`` to improve usability.
+- Improve object initialization performance in ``icalendar.prop``.
+- Add type hint for ``params`` in multiple constructors in ``icalendar.prop``.
 
 Bug fixes:
 
