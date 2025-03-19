@@ -7,15 +7,13 @@ from icalendar.parser_tools import to_unicode
 
 
 class UIDGenerator:
-    """If you are too lazy to create real uid's.
+    """If you are too lazy to create real uid's."""
 
-    """
     chars = list(ascii_letters + digits)
 
     @staticmethod
     def rnd_string(length=16):
-        """Generates a string with random characters of length.
-        """
+        """Generates a string with random characters of length."""
         return "".join([random.choice(UIDGenerator.chars) for _ in range(length)])
 
     @staticmethod
@@ -26,6 +24,7 @@ class UIDGenerator:
             20050105T225746Z-HKtJMqUgdO0jDUwm@example.com
         """
         from icalendar.prop import vDatetime, vText
+
         host_name = to_unicode(host_name)
         unique = unique or UIDGenerator.rnd_string()
         today = to_unicode(vDatetime(datetime.today()).to_ical())
@@ -70,4 +69,12 @@ def normalize_pytz(dt: date):
     return dt
 
 
-__all__ = ["UIDGenerator", "is_date", "is_datetime", "to_datetime", "is_pytz", "is_pytz_dt", "normalize_pytz"]
+__all__ = [
+    "UIDGenerator",
+    "is_date",
+    "is_datetime",
+    "to_datetime",
+    "is_pytz",
+    "is_pytz_dt",
+    "normalize_pytz",
+]

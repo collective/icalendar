@@ -23,12 +23,30 @@ with atheris.instrument_imports():
     from icalendar.tests.fuzzed import fuzz_calendar_v1
 
 _value_error_matches = [
-    "component", "parse", "Expected", "Wrong date format", "END encountered",
-    "vDDD", 'recurrence', 'Offset must', 'Invalid iCalendar',
-    'alue MUST', 'Key name', 'Invalid content line', 'does not exist',
-    'base 64', 'must use datetime', 'Unknown date type', 'Wrong',
-    'Start time', 'iCalendar', 'recurrence', 'float, float', 'utc offset',
-    'parent', 'MUST be a datetime'
+    "component",
+    "parse",
+    "Expected",
+    "Wrong date format",
+    "END encountered",
+    "vDDD",
+    "recurrence",
+    "Offset must",
+    "Invalid iCalendar",
+    "alue MUST",
+    "Key name",
+    "Invalid content line",
+    "does not exist",
+    "base 64",
+    "must use datetime",
+    "Unknown date type",
+    "Wrong",
+    "Start time",
+    "iCalendar",
+    "recurrence",
+    "float, float",
+    "utc offset",
+    "parent",
+    "MUST be a datetime",
 ]
 
 
@@ -43,11 +61,18 @@ def TestOneInput(data):
         try:
             # print the ICS file for the test case extraction
             # see https://stackoverflow.com/a/27367173/1320237
-            print(base64.b64encode(calendar_string.encode("UTF-8", "surrogateescape")).decode("ASCII"))
-        except UnicodeEncodeError: pass
+            print(
+                base64.b64encode(
+                    calendar_string.encode("UTF-8", "surrogateescape")
+                ).decode("ASCII")
+            )
+        except UnicodeEncodeError:
+            pass
         print("--- end calendar ---")
 
-        fuzz_calendar_v1(icalendar.Calendar.from_ical, calendar_string, multiple, should_walk)
+        fuzz_calendar_v1(
+            icalendar.Calendar.from_ical, calendar_string, multiple, should_walk
+        )
     except ValueError as e:
         if any(m in str(e) for m in _value_error_matches):
             return -1

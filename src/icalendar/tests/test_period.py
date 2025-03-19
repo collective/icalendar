@@ -100,12 +100,12 @@ def test_tzid_is_part_of_the_period_values(calendars, tzp):
 def test_period_overlaps():
     # 30 minute increments
     datetime_1 = datetime.datetime(2024, 11, 20, 12, 0)  # 12:00
-    datetime_2 = datetime.datetime(2024, 11, 20, 12, 30) # 12:30
+    datetime_2 = datetime.datetime(2024, 11, 20, 12, 30)  # 12:30
     datetime_3 = datetime.datetime(2024, 11, 20, 13, 0)  # 13:00
-    
-    period_1 = vPeriod((datetime_1,datetime_2))
-    period_2 = vPeriod((datetime_1,datetime_3))
-    period_3 = vPeriod((datetime_2,datetime_3))
+
+    period_1 = vPeriod((datetime_1, datetime_2))
+    period_2 = vPeriod((datetime_1, datetime_3))
+    period_3 = vPeriod((datetime_2, datetime_3))
 
     assert period_1.overlaps(period_2)
     assert period_3.overlaps(period_2)

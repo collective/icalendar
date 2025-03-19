@@ -19,18 +19,19 @@ def test_no_dtstamp(dtstamp_comp):
     assert dtstamp_comp.DTSTAMP is None
 
 
-def set_dtstamp_attribute(component:Component, value:date):
+def set_dtstamp_attribute(component: Component, value: date):
     """Use the setter."""
     component.DTSTAMP = value
 
-def set_dtstamp_item(component: Component, value:date):
+
+def set_dtstamp_item(component: Component, value: date):
     """Use setitem."""
     component["DTSTAMP"] = vDDDTypes(value)
 
-def set_dtstamp_add(component: Component, value:date):
+
+def set_dtstamp_add(component: Component, value: date):
     """Use add."""
     component.add("DTSTAMP", value)
-
 
 
 @pytest.mark.parametrize(
@@ -40,12 +41,14 @@ def set_dtstamp_add(component: Component, value:date):
         (datetime(2024, 10, 11, 23, 1), "Europe/Berlin", datetime(2024, 10, 11, 21, 1)),
         (datetime(2024, 10, 11, 22, 1), "UTC", datetime(2024, 10, 11, 22, 1)),
         (date(2024, 10, 10), None, datetime(2024, 10, 10)),
-    ]
+    ],
 )
 @pytest.mark.parametrize(
     "set_dtstamp", [set_dtstamp_add, set_dtstamp_attribute, set_dtstamp_item]
 )
-def test_set_value_and_get_it(dtstamp_comp, value, timezone, expected, tzp, set_dtstamp):
+def test_set_value_and_get_it(
+    dtstamp_comp, value, timezone, expected, tzp, set_dtstamp
+):
     """Set and get the DTSTAMP value."""
     dtstamp = value if timezone is None else tzp.localize(value, timezone)
     set_dtstamp(dtstamp_comp, dtstamp)
@@ -55,13 +58,7 @@ def test_set_value_and_get_it(dtstamp_comp, value, timezone, expected, tzp, set_
     assert in_utc == dtstamp_comp.DTSTAMP
 
 
-@pytest.mark.parametrize(
-    "invalid_value",
-    [
-        None,
-        timedelta()
-    ]
-)
+@pytest.mark.parametrize("invalid_value", [None, timedelta()])
 def test_set_invalid_value(invalid_value, dtstamp_comp):
     """Check handling of invalid values."""
     with pytest.raises(TypeError) as e:
@@ -69,19 +66,16 @@ def test_set_invalid_value(invalid_value, dtstamp_comp):
     assert e.value.args[0] == f"DTSTAMP takes a datetime in UTC, not {invalid_value}"
 
 
-@pytest.mark.parametrize(
-    "invalid_value",
-    [
-        None,
-        vDDDTypes(timedelta())
-    ]
-)
+@pytest.mark.parametrize("invalid_value", [None, vDDDTypes(timedelta())])
 def test_get_invalid_value(invalid_value, dtstamp_comp):
     """Check handling of invalid values."""
     dtstamp_comp["DTSTAMP"] = invalid_value
     with pytest.raises(InvalidCalendar) as e:
         dtstamp_comp.DTSTAMP  # noqa: B018
-    assert e.value.args[0] == f"DTSTAMP must be a datetime in UTC, not {getattr(invalid_value, 'dt', invalid_value)}"
+    assert (
+        e.value.args[0]
+        == f"DTSTAMP must be a datetime in UTC, not {getattr(invalid_value, 'dt', invalid_value)}"
+    )
 
 
 def test_set_twice(dtstamp_comp, tzp):

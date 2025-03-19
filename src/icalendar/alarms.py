@@ -23,11 +23,12 @@ from icalendar.tools import is_date, normalize_pytz, to_datetime
 if TYPE_CHECKING:
     from datetime import datetime
 
-Parent = Union[Event,Todo]
+Parent = Union[Event, Todo]
 
 
 class IncompleteAlarmInformation(ValueError):
     """The alarms cannot be calculated yet because information is missing."""
+
 
 class ComponentStartMissing(IncompleteAlarmInformation):
     """We are missing the start of a component that the alarm is for.
@@ -35,11 +36,13 @@ class ComponentStartMissing(IncompleteAlarmInformation):
     Use Alarms.set_start().
     """
 
+
 class ComponentEndMissing(IncompleteAlarmInformation):
     """We are missing the end of a component that the alarm is for.
 
     Use Alarms.set_end().
     """
+
 
 class LocalTimezoneMissing(IncompleteAlarmInformation):
     """We are missing the local timezone to compute the value.
@@ -52,13 +55,13 @@ class AlarmTime:
     """An alarm time with all the information."""
 
     def __init__(
-            self,
-            alarm: Alarm,
-            trigger : datetime,
-            acknowledged_until:Optional[datetime]=None,
-            snoozed_until:Optional[datetime]=None,
-            parent: Optional[Parent]=None,
-        ):
+        self,
+        alarm: Alarm,
+        trigger: datetime,
+        acknowledged_until: Optional[datetime] = None,
+        snoozed_until: Optional[datetime] = None,
+        parent: Optional[Parent] = None,
+    ):
         """Create a new AlarmTime.
 
         alarm
@@ -191,22 +194,22 @@ class Alarms:
     This is not implemented yet.
     """
 
-    def __init__(self, component:Optional[Alarm|Event|Todo]=None):
+    def __init__(self, component: Optional[Alarm | Event | Todo] = None):
         """Start computing alarm times."""
-        self._absolute_alarms : list[Alarm] = []
-        self._start_alarms : list[Alarm] = []
-        self._end_alarms : list[Alarm] = []
-        self._start : Optional[date] = None
-        self._end : Optional[date] = None
-        self._parent : Optional[Parent] = None
-        self._last_ack : Optional[datetime] = None
-        self._snooze_until : Optional[datetime] = None
-        self._local_tzinfo : Optional[tzinfo] = None
+        self._absolute_alarms: list[Alarm] = []
+        self._start_alarms: list[Alarm] = []
+        self._end_alarms: list[Alarm] = []
+        self._start: Optional[date] = None
+        self._end: Optional[date] = None
+        self._parent: Optional[Parent] = None
+        self._last_ack: Optional[datetime] = None
+        self._snooze_until: Optional[datetime] = None
+        self._local_tzinfo: Optional[tzinfo] = None
 
         if component is not None:
             self.add_component(component)
 
-    def add_component(self, component:Alarm|Parent):
+    def add_component(self, component: Alarm | Parent):
         """Add a component.
 
         If this is an alarm, it is added.
@@ -263,7 +266,7 @@ class Alarms:
         """
         self._end = dt
 
-    def _add(self, dt: date, td:timedelta):
+    def _add(self, dt: date, td: timedelta):
         """Add a timedelta to a datetime."""
         if is_date(dt):
             if td.seconds == 0:
@@ -294,7 +297,7 @@ class Alarms:
         """
         self._snooze_until = tzp.localize_utc(dt) if dt is not None else None
 
-    def set_local_timezone(self, tzinfo:Optional[tzinfo|str]):
+    def set_local_timezone(self, tzinfo: Optional[tzinfo | str]):
         """Set the local timezone.
 
         Events are sometimes in local time.
@@ -318,30 +321,32 @@ class Alarms:
         If you forget to set the acknowledged times, that is not problem.
         """
         return (
-            self._get_end_alarm_times() +
-            self._get_start_alarm_times() +
-            self._get_absolute_alarm_times()
+            self._get_end_alarm_times()
+            + self._get_start_alarm_times()
+            + self._get_absolute_alarm_times()
         )
 
     def _repeat(self, first: datetime, alarm: Alarm) -> Generator[datetime]:
         """The times when the alarm is triggered relative to start."""
-        yield first # we trigger at the start
+        yield first  # we trigger at the start
         repeat = alarm.REPEAT
         duration = alarm.DURATION
         if repeat and duration:
             for i in range(1, repeat + 1):
                 yield self._add(first, duration * i)
 
-    def _alarm_time(self, alarm: Alarm, trigger:date):
+    def _alarm_time(self, alarm: Alarm, trigger: date):
         """Create an alarm time with the additional attributes."""
         if getattr(trigger, "tzinfo", None) is None and self._local_tzinfo is not None:
             trigger = normalize_pytz(trigger.replace(tzinfo=self._local_tzinfo))
-        return AlarmTime(alarm, trigger, self._last_ack, self._snooze_until, self._parent)
+        return AlarmTime(
+            alarm, trigger, self._last_ack, self._snooze_until, self._parent
+        )
 
     def _get_absolute_alarm_times(self) -> list[AlarmTime]:
         """Return a list of absolute alarm times."""
         return [
-            self._alarm_time(alarm , trigger)
+            self._alarm_time(alarm, trigger)
             for alarm in self._absolute_alarms
             for trigger in self._repeat(alarm.TRIGGER, alarm)
         ]
@@ -349,9 +354,11 @@ class Alarms:
     def _get_start_alarm_times(self) -> list[AlarmTime]:
         """Return a list of alarm times relative to the start of the component."""
         if self._start is None and self._start_alarms:
-            raise ComponentStartMissing("Use Alarms.set_start because at least one alarm is relative to the start of a component.")
+            raise ComponentStartMissing(
+                "Use Alarms.set_start because at least one alarm is relative to the start of a component."
+            )
         return [
-            self._alarm_time(alarm , trigger)
+            self._alarm_time(alarm, trigger)
             for alarm in self._start_alarms
             for trigger in self._repeat(self._add(self._start, alarm.TRIGGER), alarm)
         ]
@@ -359,9 +366,11 @@ class Alarms:
     def _get_end_alarm_times(self) -> list[AlarmTime]:
         """Return a list of alarm times relative to the start of the component."""
         if self._end is None and self._end_alarms:
-            raise ComponentEndMissing("Use Alarms.set_end because at least one alarm is relative to the end of a component.")
+            raise ComponentEndMissing(
+                "Use Alarms.set_end because at least one alarm is relative to the end of a component."
+            )
         return [
-            self._alarm_time(alarm , trigger)
+            self._alarm_time(alarm, trigger)
             for alarm in self._end_alarms
             for trigger in self._repeat(self._add(self._end, alarm.TRIGGER), alarm)
         ]
@@ -378,11 +387,12 @@ class Alarms:
         """
         return [alarm_time for alarm_time in self.times if alarm_time.is_active()]
 
+
 __all__ = [
     "Alarms",
     "AlarmTime",
     "IncompleteAlarmInformation",
     "ComponentEndMissing",
     "ComponentStartMissing",
-    "LocalTimezoneMissing"
+    "LocalTimezoneMissing",
 ]

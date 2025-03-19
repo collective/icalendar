@@ -3,6 +3,7 @@ files according to RFC 5545.
 
 These are the defined components.
 """
+
 from __future__ import annotations
 
 import os
@@ -46,7 +47,9 @@ def get_example(component_directory: str, example_name: str) -> bytes:
         example_name = example_name + ".ics"
     example_file = os.path.join(examples, example_name)
     if not os.path.isfile(example_file):
-        raise ValueError(f"Example {example_name} for {component_directory} not found. You can use one of {', '.join(os.listdir(examples))}")
+        raise ValueError(
+            f"Example {example_name} for {component_directory} not found. You can use one of {', '.join(os.listdir(examples))}"
+        )
     with open(example_file, "rb") as f:
         return f.read()
 
@@ -54,41 +57,45 @@ def get_example(component_directory: str, example_name: str) -> bytes:
 ######################################
 # The component factory
 
+
 class ComponentFactory(CaselessDict):
     """All components defined in RFC 5545 are registered in this factory class.
     To get a component you can use it like this.
     """
 
     def __init__(self, *args, **kwargs):
-        """Set keys to upper for initial dict.
-        """
+        """Set keys to upper for initial dict."""
         super().__init__(*args, **kwargs)
-        self['VEVENT'] = Event
-        self['VTODO'] = Todo
-        self['VJOURNAL'] = Journal
-        self['VFREEBUSY'] = FreeBusy
-        self['VTIMEZONE'] = Timezone
-        self['STANDARD'] = TimezoneStandard
-        self['DAYLIGHT'] = TimezoneDaylight
-        self['VALARM'] = Alarm
-        self['VCALENDAR'] = Calendar
+        self["VEVENT"] = Event
+        self["VTODO"] = Todo
+        self["VJOURNAL"] = Journal
+        self["VFREEBUSY"] = FreeBusy
+        self["VTIMEZONE"] = Timezone
+        self["STANDARD"] = TimezoneStandard
+        self["DAYLIGHT"] = TimezoneDaylight
+        self["VALARM"] = Alarm
+        self["VCALENDAR"] = Calendar
 
 
 # These Properties have multiple property values inlined in one propertyline
 # seperated by comma. Use CaselessDict as simple caseless set.
-INLINE = CaselessDict({
-    'CATEGORIES': 1,
-    'RESOURCES': 1,
-    'FREEBUSY': 1,
-})
+INLINE = CaselessDict(
+    {
+        "CATEGORIES": 1,
+        "RESOURCES": 1,
+        "FREEBUSY": 1,
+    }
+)
 
 _marker = []
+
 
 class InvalidCalendar(ValueError):
     """The calendar given is not valid.
 
     This calendar does not conform with RFC 5545 or breaks other RFCs.
     """
+
 
 class IncompleteComponent(ValueError):
     """The component is missing attributes.
@@ -101,16 +108,20 @@ class IncompleteComponent(ValueError):
     only in the lowercase computations like .start.
     """
 
-def create_utc_property(name:str, docs:str) -> property:
+
+def create_utc_property(name: str, docs: str) -> property:
     """Create a property to access a value of datetime in UTC timezone.
 
     name - name of the property
     docs - documentation string
     """
-    docs = f"""The {name} property. datetime in UTC
+    docs = (
+        f"""The {name} property. datetime in UTC
 
     All values will be converted to a datetime in UTC.
-    """ + docs
+    """
+        + docs
+    )
 
     def p_get(self: Component) -> Optional[datetime]:
         """Get the value."""
@@ -133,8 +144,8 @@ def create_utc_property(name:str, docs:str) -> property:
         self.pop(name)
         self.add(name, tzp.localize_utc(value))
 
-
     return property(p_get, p_set, doc=docs)
+
 
 class Component(CaselessDict):
     """Component is the base object for calendar, Event and the other
@@ -142,27 +153,26 @@ class Component(CaselessDict):
     directly, but rather one of the subclasses.
     """
 
-    name = None         # should be defined in each component
-    required = ()       # These properties are required
-    singletons = ()     # These properties must only appear once
-    multiple = ()       # may occur more than once
-    exclusive = ()      # These properties are mutually exclusive
-    inclusive = ()      # if any occurs the other(s) MUST occur
-                        # ('duration', 'repeat')
-    ignore_exceptions = False   # if True, and we cannot parse this
-                                # component, we will silently ignore
-                                # it, rather than let the exception
-                                # propagate upwards
+    name = None  # should be defined in each component
+    required = ()  # These properties are required
+    singletons = ()  # These properties must only appear once
+    multiple = ()  # may occur more than once
+    exclusive = ()  # These properties are mutually exclusive
+    inclusive = ()  # if any occurs the other(s) MUST occur
+    # ('duration', 'repeat')
+    ignore_exceptions = False  # if True, and we cannot parse this
+    # component, we will silently ignore
+    # it, rather than let the exception
+    # propagate upwards
     # not_compliant = ['']  # List of non-compliant properties.
 
     def __init__(self, *args, **kwargs):
-        """Set keys to upper for initial dict.
-        """
+        """Set keys to upper for initial dict."""
         super().__init__(*args, **kwargs)
         # set parameters here for properties that use non-default values
         self.subcomponents = []  # Components can be nested.
         self.errors = []  # If we ignored exception(s) while
-                          # parsing a property, contains error strings
+        # parsing a property, contains error strings
 
     # def is_compliant(self, name):
     #    """Returns True is the given property name is compliant with the
@@ -175,16 +185,14 @@ class Component(CaselessDict):
     #    return name in not_compliant
 
     def __bool__(self):
-        """Returns True, CaselessDict would return False if it had no items.
-        """
+        """Returns True, CaselessDict would return False if it had no items."""
         return True
 
     # python 2 compatibility
     __nonzero__ = __bool__
 
     def is_empty(self):
-        """Returns True if Component has no items or subcomponents, else False.
-        """
+        """Returns True if Component has no items or subcomponents, else False."""
         return True if not (list(self.values()) + self.subcomponents) else False  # noqa
 
     #############################
@@ -252,14 +260,20 @@ class Component(CaselessDict):
 
         :returns: None
         """
-        if isinstance(value, datetime) and\
-                name.lower() in ('dtstamp', 'created', 'last-modified'):
+        if isinstance(value, datetime) and name.lower() in (
+            "dtstamp",
+            "created",
+            "last-modified",
+        ):
             # RFC expects UTC for those... force value conversion.
             value = tzp.localize_utc(value)
 
         # encode value
-        if encode and isinstance(value, list) \
-                and name.lower() not in ['rdate', 'exdate', 'categories']:
+        if (
+            encode
+            and isinstance(value, list)
+            and name.lower() not in ["rdate", "exdate", "categories"]
+        ):
             # Individually convert each value to an ical type except rdate and
             # exdate, where lists of dates might be passed to vDDDLists.
             value = [self._encode(name, v, parameters, encode) for v in value]
@@ -281,8 +295,7 @@ class Component(CaselessDict):
         self[name] = value
 
     def _decode(self, name, value):
-        """Internal for decoding property values.
-        """
+        """Internal for decoding property values."""
 
         # TODO: Currently the decoded method calls the icalendar.prop instances
         # from_ical. We probably want to decode properties into Python native
@@ -299,8 +312,7 @@ class Component(CaselessDict):
         return decoded
 
     def decoded(self, name, default=_marker):
-        """Returns decoded value of property.
-        """
+        """Returns decoded value of property."""
         # XXX: fail. what's this function supposed to do in the end?
         # -rnix
 
@@ -320,8 +332,7 @@ class Component(CaselessDict):
     # property line. These methods are used for splitting and joining these.
 
     def get_inline(self, name, decode=1):
-        """Returns a list of values (split on comma).
-        """
+        """Returns a list of values (split on comma)."""
         vals = [v.strip('" ') for v in q_split(self[name])]
         if decode:
             return [self._decode(name, val) for val in vals]
@@ -333,19 +344,17 @@ class Component(CaselessDict):
         """
         if encode:
             values = [self._encode(name, value, encode=1) for value in values]
-        self[name] = types_factory['inline'](q_join(values))
+        self[name] = types_factory["inline"](q_join(values))
 
     #########################
     # Handling of components
 
     def add_component(self, component: Component):
-        """Add a subcomponent to this component.
-        """
+        """Add a subcomponent to this component."""
         self.subcomponents.append(component)
 
     def _walk(self, name, select):
-        """Walk to given component.
-        """
+        """Walk to given component."""
         result = []
         if (name is None or self.name == name) and select(self):
             result.append(self)
@@ -374,8 +383,8 @@ class Component(CaselessDict):
         """Returns properties in this component and subcomponents as:
         [(name, value), ...]
         """
-        vText = types_factory['text']
-        properties = [('BEGIN', vText(self.name).to_ical())]
+        vText = types_factory["text"]
+        properties = [("BEGIN", vText(self.name).to_ical())]
         if sorted:
             property_names = self.sorted_keys()
         else:
@@ -393,13 +402,12 @@ class Component(CaselessDict):
             # recursion is fun!
             for subcomponent in self.subcomponents:
                 properties += subcomponent.property_items(sorted=sorted)
-        properties.append(('END', vText(self.name).to_ical()))
+        properties.append(("END", vText(self.name).to_ical()))
         return properties
 
     @classmethod
     def from_ical(cls, st, multiple=False):
-        """Populates the component recursively from a string.
-        """
+        """Populates the component recursively from a string."""
         stack = []  # a stack of components
         comps = []
         for line in Contentlines.from_ical(st):  # raw parsing
@@ -420,7 +428,7 @@ class Component(CaselessDict):
 
             uname = name.upper()
             # check for start of component
-            if uname == 'BEGIN':
+            if uname == "BEGIN":
                 # try and create one of the components defined in the spec,
                 # otherwise get a general Components for robustness.
                 c_name = vals.upper()
@@ -430,23 +438,23 @@ class Component(CaselessDict):
                 # That's opposed to the usage of ``cls``, which represents a
                 # more concrete subclass with a name set (e.g. VCALENDAR).
                 component = c_class()
-                if not getattr(component, 'name', ''):  # undefined components
+                if not getattr(component, "name", ""):  # undefined components
                     component.name = c_name
                 stack.append(component)
             # check for end of event
-            elif uname == 'END':
+            elif uname == "END":
                 # we are done adding properties to this component
                 # so pop it from the stack and add it to the new top.
                 if not stack:
                     # The stack is currently empty, the input must be invalid
-                    raise ValueError('END encountered without an accompanying BEGIN!')
+                    raise ValueError("END encountered without an accompanying BEGIN!")
 
                 component = stack.pop()
                 if not stack:  # we are at the end
                     comps.append(component)
                 else:
                     stack[-1].add_component(component)
-                if vals == 'VTIMEZONE' and 'TZID' in component:
+                if vals == "VTIMEZONE" and "TZID" in component:
                     tzp.cache_timezone_component(component)
             # we are adding properties to the current top of the stack
             else:
@@ -455,21 +463,36 @@ class Component(CaselessDict):
                 if not component:
                     # only accept X-COMMENT at the end of the .ics file
                     # ignore these components in parsing
-                    if uname == 'X-COMMENT':
+                    if uname == "X-COMMENT":
                         break
                     else:
-                        raise ValueError(f'Property "{name}" does not have a parent component.')
-                datetime_names = ('DTSTART', 'DTEND', 'RECURRENCE-ID', 'DUE',
-                                  'RDATE', 'EXDATE')
+                        raise ValueError(
+                            f'Property "{name}" does not have a parent component.'
+                        )
+                datetime_names = (
+                    "DTSTART",
+                    "DTEND",
+                    "RECURRENCE-ID",
+                    "DUE",
+                    "RDATE",
+                    "EXDATE",
+                )
                 try:
-                    if name == 'FREEBUSY':
-                        vals = vals.split(',')
-                        if 'TZID' in params:
-                            parsed_components = [factory(factory.from_ical(val, params['TZID'])) for val in vals]
+                    if name == "FREEBUSY":
+                        vals = vals.split(",")
+                        if "TZID" in params:
+                            parsed_components = [
+                                factory(factory.from_ical(val, params["TZID"]))
+                                for val in vals
+                            ]
                         else:
-                            parsed_components = [factory(factory.from_ical(val)) for val in vals]
-                    elif name in datetime_names and 'TZID' in params:
-                        parsed_components = [factory(factory.from_ical(vals, params['TZID']))]
+                            parsed_components = [
+                                factory(factory.from_ical(val)) for val in vals
+                            ]
+                    elif name in datetime_names and "TZID" in params:
+                        parsed_components = [
+                            factory(factory.from_ical(vals, params["TZID"]))
+                        ]
                     else:
                         parsed_components = [factory(factory.from_ical(vals))]
                 except ValueError as e:
@@ -484,52 +507,55 @@ class Component(CaselessDict):
         if multiple:
             return comps
         if len(comps) > 1:
-            raise ValueError(cls._format_error(
-                'Found multiple components where only one is allowed', st))
+            raise ValueError(
+                cls._format_error(
+                    "Found multiple components where only one is allowed", st
+                )
+            )
         if len(comps) < 1:
-            raise ValueError(cls._format_error(
-                'Found no components where exactly one is required', st))
+            raise ValueError(
+                cls._format_error(
+                    "Found no components where exactly one is required", st
+                )
+            )
         return comps[0]
 
     @staticmethod
-    def _format_error(error_description, bad_input, elipsis='[...]'):
+    def _format_error(error_description, bad_input, elipsis="[...]"):
         # there's three character more in the error, ie. ' ' x2 and a ':'
         max_error_length = 100 - 3
         if len(error_description) + len(bad_input) + len(elipsis) > max_error_length:
             truncate_to = max_error_length - len(error_description) - len(elipsis)
-            return f'{error_description}: {bad_input[:truncate_to]} {elipsis}'
+            return f"{error_description}: {bad_input[:truncate_to]} {elipsis}"
         else:
-            return f'{error_description}: {bad_input}'
+            return f"{error_description}: {bad_input}"
 
     def content_line(self, name, value, sorted=True):
-        """Returns property as content line.
-        """
-        params = getattr(value, 'params', Parameters())
+        """Returns property as content line."""
+        params = getattr(value, "params", Parameters())
         return Contentline.from_parts(name, params, value, sorted=sorted)
 
     def content_lines(self, sorted=True):
-        """Converts the Component and subcomponents into content lines.
-        """
+        """Converts the Component and subcomponents into content lines."""
         contentlines = Contentlines()
         for name, value in self.property_items(sorted=sorted):
             cl = self.content_line(name, value, sorted=sorted)
             contentlines.append(cl)
-        contentlines.append('')  # remember the empty string in the end
+        contentlines.append("")  # remember the empty string in the end
         return contentlines
 
     def to_ical(self, sorted=True):
-        '''
+        """
         :param sorted: Whether parameters and properties should be
                        lexicographically sorted.
-        '''
+        """
 
         content_lines = self.content_lines(sorted=sorted)
         return content_lines.to_ical()
 
     def __repr__(self):
-        """String representation of class with all of it's subcomponents.
-        """
-        subs = ', '.join(str(it) for it in self.subcomponents)
+        """String representation of class with all of it's subcomponents."""
+        subs = ", ".join(str(it) for it in self.subcomponents)
         return f"{self.name or type(self).__name__}({dict(self)}{', ' + subs if subs else ''})"
 
     def __eq__(self, other):
@@ -551,7 +577,9 @@ class Component(CaselessDict):
 
         return True
 
-    DTSTAMP = create_utc_property("DTSTAMP", """RFC 5545:
+    DTSTAMP = create_utc_property(
+        "DTSTAMP",
+        """RFC 5545:
 
         Conformance:  This property MUST be included in the "VEVENT",
         "VTODO", "VJOURNAL", or "VFREEBUSY" calendar components.
@@ -569,8 +597,11 @@ class Component(CaselessDict):
         In the case of an iCalendar object that doesn't specify a "METHOD"
         property, this property is equivalent to the "LAST-MODIFIED"
         property.
-    """)
-    LAST_MODIFIED = create_utc_property("LAST-MODIFIED", """RFC 5545:
+    """,
+    )
+    LAST_MODIFIED = create_utc_property(
+        "LAST-MODIFIED",
+        """RFC 5545:
 
         Purpose:  This property specifies the date and time that the
         information associated with the calendar component was last
@@ -581,25 +612,26 @@ class Component(CaselessDict):
 
         Conformance:  This property can be specified in the "VEVENT",
         "VTODO", "VJOURNAL", or "VTIMEZONE" calendar components.
-    """)
+    """,
+    )
 
     def is_thunderbird(self) -> bool:
         """Whether this component has attributes that indicate that Mozilla Thunderbird created it."""
         return any(attr.startswith("X-MOZ-") for attr in self.keys())
 
 
-
 #######################################
 # components defined in RFC 5545
 
+
 def create_single_property(
-        prop:str,
-        value_attr:Optional[str],
-        value_type:tuple[type],
-        type_def:type,
-        doc:str,
-        vProp:type=vDDDTypes  # noqa: N803
-    ):
+    prop: str,
+    value_attr: Optional[str],
+    value_type: tuple[type],
+    type_def: type,
+    doc: str,
+    vProp: type = vDDDTypes,  # noqa: N803
+):
     """Create a single property getter and setter.
 
     :param prop: The name of the property.
@@ -610,7 +642,7 @@ def create_single_property(
     :param vProp: The type of the property from :mod:`icalendar.prop`.
     """
 
-    def p_get(self : Component):
+    def p_get(self: Component):
         default = object()
         result = self.get(prop, default)
         if result is default:
@@ -619,23 +651,30 @@ def create_single_property(
             raise InvalidCalendar(f"Multiple {prop} defined.")
         value = result if value_attr is None else getattr(result, value_attr, result)
         if not isinstance(value, value_type):
-            raise InvalidCalendar(f"{prop} must be either a {' or '.join(t.__name__ for t in value_type)}, not {value}.")
+            raise InvalidCalendar(
+                f"{prop} must be either a {' or '.join(t.__name__ for t in value_type)}, not {value}."
+            )
         return value
 
-    def p_set(self:Component, value) -> None:
+    def p_set(self: Component, value) -> None:
         if value is None:
             p_del(self)
             return
         if not isinstance(value, value_type):
-            raise TypeError(f"Use {' or '.join(t.__name__ for t in value_type)}, not {type(value).__name__}.")
+            raise TypeError(
+                f"Use {' or '.join(t.__name__ for t in value_type)}, not {type(value).__name__}."
+            )
         self[prop] = vProp(value)
         if prop in self.exclusive:
             for other_prop in self.exclusive:
                 if other_prop != prop:
                     self.pop(other_prop, None)
-    p_set.__annotations__["value"] = p_get.__annotations__["return"] = Optional[type_def]
 
-    def p_del(self:Component):
+    p_set.__annotations__["value"] = p_get.__annotations__["return"] = Optional[
+        type_def
+    ]
+
+    def p_del(self: Component):
         self.pop(prop)
 
     p_doc = f"""The {prop} property.
@@ -651,13 +690,12 @@ def create_single_property(
 
 
 _X_MOZ_SNOOZE_TIME = create_utc_property(
-    "X-MOZ-SNOOZE-TIME",
-    "Thunderbird: Alarms before this time are snoozed."
+    "X-MOZ-SNOOZE-TIME", "Thunderbird: Alarms before this time are snoozed."
 )
 _X_MOZ_LASTACK = create_utc_property(
-    "X-MOZ-LASTACK",
-    "Thunderbird: Alarms before this time are acknowledged."
+    "X-MOZ-LASTACK", "Thunderbird: Alarms before this time are acknowledged."
 )
+
 
 def _get_duration(self: Component) -> Optional[timedelta]:
     """Getter for property DURATION."""
@@ -672,6 +710,7 @@ def _get_duration(self: Component) -> Optional[timedelta]:
             f"DURATION must be a timedelta, not {type(duration).__name__}."
         )
     return None
+
 
 def _set_duration(self: Component, value: Optional[timedelta]):
     """Setter for property DURATION."""
@@ -688,6 +727,7 @@ def _set_duration(self: Component, value: Optional[timedelta]):
 def _del_duration(self: Component):
     """Delete property DURATION."""
     self.pop("DURATION")
+
 
 _doc_duration = """The DURATION property.
 
@@ -709,28 +749,66 @@ class Event(Component):
     long department meeting from 8:00 AM to 9:00 AM, tomorrow.
     """
 
-    name = 'VEVENT'
+    name = "VEVENT"
 
     canonical_order = (
-        'SUMMARY', 'DTSTART', 'DTEND', 'DURATION', 'DTSTAMP',
-        'UID', 'RECURRENCE-ID', 'SEQUENCE', 'RRULE', 'RDATE',
-        'EXDATE',
+        "SUMMARY",
+        "DTSTART",
+        "DTEND",
+        "DURATION",
+        "DTSTAMP",
+        "UID",
+        "RECURRENCE-ID",
+        "SEQUENCE",
+        "RRULE",
+        "RDATE",
+        "EXDATE",
     )
 
-    required = ('UID', 'DTSTAMP',)
-    singletons = (
-        'CLASS', 'CREATED', 'DESCRIPTION', 'DTSTART', 'GEO', 'LAST-MODIFIED',
-        'LOCATION', 'ORGANIZER', 'PRIORITY', 'DTSTAMP', 'SEQUENCE', 'STATUS',
-        'SUMMARY', 'TRANSP', 'URL', 'RECURRENCE-ID', 'DTEND', 'DURATION',
-        'UID', 'CATEGORIES',
+    required = (
+        "UID",
+        "DTSTAMP",
     )
-    exclusive = ('DTEND', 'DURATION',)
+    singletons = (
+        "CLASS",
+        "CREATED",
+        "DESCRIPTION",
+        "DTSTART",
+        "GEO",
+        "LAST-MODIFIED",
+        "LOCATION",
+        "ORGANIZER",
+        "PRIORITY",
+        "DTSTAMP",
+        "SEQUENCE",
+        "STATUS",
+        "SUMMARY",
+        "TRANSP",
+        "URL",
+        "RECURRENCE-ID",
+        "DTEND",
+        "DURATION",
+        "UID",
+        "CATEGORIES",
+    )
+    exclusive = (
+        "DTEND",
+        "DURATION",
+    )
     multiple = (
-        'ATTACH', 'ATTENDEE', 'COMMENT', 'CONTACT', 'EXDATE',
-        'RSTATUS', 'RELATED', 'RESOURCES', 'RDATE', 'RRULE'
+        "ATTACH",
+        "ATTENDEE",
+        "COMMENT",
+        "CONTACT",
+        "EXDATE",
+        "RSTATUS",
+        "RELATED",
+        "RESOURCES",
+        "RDATE",
+        "RRULE",
     )
     ignore_exceptions = True
-    
+
     @property
     def alarms(self) -> Alarms:
         """Compute the alarm times for this component.
@@ -749,15 +827,28 @@ class Event(Component):
         RDATE, EXDATE, and RRULE properties.
         """
         from icalendar.alarms import Alarms
+
         return Alarms(self)
 
     @classmethod
-    def example(cls, name:str="rfc_9074_example_3") -> Event:
+    def example(cls, name: str = "rfc_9074_example_3") -> Event:
         """Return the calendar example with the given name."""
         return cls.from_ical(get_example("events", name))
 
-    DTSTART = create_single_property("DTSTART", "dt", (datetime, date), date, 'The "DTSTART" property for a "VEVENT" specifies the inclusive start of the event.')
-    DTEND = create_single_property("DTEND", "dt", (datetime, date), date, 'The "DTEND" property for a "VEVENT" calendar component specifies the non-inclusive end of the event.')
+    DTSTART = create_single_property(
+        "DTSTART",
+        "dt",
+        (datetime, date),
+        date,
+        'The "DTSTART" property for a "VEVENT" specifies the inclusive start of the event.',
+    )
+    DTEND = create_single_property(
+        "DTEND",
+        "dt",
+        (datetime, date),
+        date,
+        'The "DTEND" property for a "VEVENT" calendar component specifies the non-inclusive end of the event.',
+    )
 
     def _get_start_end_duration(self):
         """Verify the calendar validity and return the right attributes."""
@@ -765,15 +856,30 @@ class Event(Component):
         end = self.DTEND
         duration = self.DURATION
         if duration is not None and end is not None:
-            raise InvalidCalendar("Only one of DTEND and DURATION may be in a VEVENT, not both.")
-        if isinstance(start, date) and not isinstance(start, datetime) and duration is not None and duration.seconds != 0:
-            raise InvalidCalendar("When DTSTART is a date, DURATION must be of days or weeks.")
+            raise InvalidCalendar(
+                "Only one of DTEND and DURATION may be in a VEVENT, not both."
+            )
+        if (
+            isinstance(start, date)
+            and not isinstance(start, datetime)
+            and duration is not None
+            and duration.seconds != 0
+        ):
+            raise InvalidCalendar(
+                "When DTSTART is a date, DURATION must be of days or weeks."
+            )
         if start is not None and end is not None and is_date(start) != is_date(end):
-            raise InvalidCalendar("DTSTART and DTEND must be of the same type, either date or datetime.")
+            raise InvalidCalendar(
+                "DTSTART and DTEND must be of the same type, either date or datetime."
+            )
         return start, end, duration
 
-
-    DURATION = property(_get_duration, _set_duration, _del_duration, _doc_duration.format(component='VEVENT'))
+    DURATION = property(
+        _get_duration,
+        _set_duration,
+        _del_duration,
+        _doc_duration.format(component="VEVENT"),
+    )
 
     @property
     def duration(self) -> timedelta:
@@ -854,23 +960,71 @@ class Todo(Component):
     seminar on Internet Calendaring".
     """
 
-    name = 'VTODO'
+    name = "VTODO"
 
-    required = ('UID', 'DTSTAMP',)
+    required = (
+        "UID",
+        "DTSTAMP",
+    )
     singletons = (
-        'CLASS', 'COMPLETED', 'CREATED', 'DESCRIPTION', 'DTSTAMP', 'DTSTART',
-        'GEO', 'LAST-MODIFIED', 'LOCATION', 'ORGANIZER', 'PERCENT-COMPLETE',
-        'PRIORITY', 'RECURRENCE-ID', 'SEQUENCE', 'STATUS', 'SUMMARY', 'UID',
-        'URL', 'DUE', 'DURATION',
+        "CLASS",
+        "COMPLETED",
+        "CREATED",
+        "DESCRIPTION",
+        "DTSTAMP",
+        "DTSTART",
+        "GEO",
+        "LAST-MODIFIED",
+        "LOCATION",
+        "ORGANIZER",
+        "PERCENT-COMPLETE",
+        "PRIORITY",
+        "RECURRENCE-ID",
+        "SEQUENCE",
+        "STATUS",
+        "SUMMARY",
+        "UID",
+        "URL",
+        "DUE",
+        "DURATION",
     )
-    exclusive = ('DUE', 'DURATION',)
+    exclusive = (
+        "DUE",
+        "DURATION",
+    )
     multiple = (
-        'ATTACH', 'ATTENDEE', 'CATEGORIES', 'COMMENT', 'CONTACT', 'EXDATE',
-        'RSTATUS', 'RELATED', 'RESOURCES', 'RDATE', 'RRULE'
+        "ATTACH",
+        "ATTENDEE",
+        "CATEGORIES",
+        "COMMENT",
+        "CONTACT",
+        "EXDATE",
+        "RSTATUS",
+        "RELATED",
+        "RESOURCES",
+        "RDATE",
+        "RRULE",
     )
-    DTSTART = create_single_property("DTSTART", "dt", (datetime, date), date, 'The "DTSTART" property for a "VTODO" specifies the inclusive start of the Todo.')
-    DUE = create_single_property("DUE", "dt", (datetime, date), date, 'The "DUE" property for a "VTODO" calendar component specifies the non-inclusive end of the Todo.')
-    DURATION = property(_get_duration, _set_duration, _del_duration, _doc_duration.format(component='VTODO'))
+    DTSTART = create_single_property(
+        "DTSTART",
+        "dt",
+        (datetime, date),
+        date,
+        'The "DTSTART" property for a "VTODO" specifies the inclusive start of the Todo.',
+    )
+    DUE = create_single_property(
+        "DUE",
+        "dt",
+        (datetime, date),
+        date,
+        'The "DUE" property for a "VTODO" calendar component specifies the non-inclusive end of the Todo.',
+    )
+    DURATION = property(
+        _get_duration,
+        _set_duration,
+        _del_duration,
+        _doc_duration.format(component="VTODO"),
+    )
 
     def _get_start_end_duration(self):
         """Verify the calendar validity and return the right attributes."""
@@ -878,13 +1032,23 @@ class Todo(Component):
         end = self.DUE
         duration = self.DURATION
         if duration is not None and end is not None:
-            raise InvalidCalendar("Only one of DUE and DURATION may be in a VTODO, not both.")
-        if isinstance(start, date) and not isinstance(start, datetime) and duration is not None and duration.seconds != 0:
-            raise InvalidCalendar("When DTSTART is a date, DURATION must be of days or weeks.")
+            raise InvalidCalendar(
+                "Only one of DUE and DURATION may be in a VTODO, not both."
+            )
+        if (
+            isinstance(start, date)
+            and not isinstance(start, datetime)
+            and duration is not None
+            and duration.seconds != 0
+        ):
+            raise InvalidCalendar(
+                "When DTSTART is a date, DURATION must be of days or weeks."
+            )
         if start is not None and end is not None and is_date(start) != is_date(end):
-            raise InvalidCalendar("DTSTART and DUE must be of the same type, either date or datetime.")
+            raise InvalidCalendar(
+                "DTSTART and DUE must be of the same type, either date or datetime."
+            )
         return start, end, duration
-
 
     @property
     def start(self) -> date | datetime:
@@ -970,6 +1134,7 @@ class Todo(Component):
         RDATE, EXDATE, and RRULE properties.
         """
         from icalendar.alarms import Alarms
+
         return Alarms(self)
 
 
@@ -988,26 +1153,52 @@ class Journal(Component):
     day.
     """
 
-    name = 'VJOURNAL'
+    name = "VJOURNAL"
 
-    required = ('UID', 'DTSTAMP',)
+    required = (
+        "UID",
+        "DTSTAMP",
+    )
     singletons = (
-        'CLASS', 'CREATED', 'DTSTART', 'DTSTAMP', 'LAST-MODIFIED', 'ORGANIZER',
-        'RECURRENCE-ID', 'SEQUENCE', 'STATUS', 'SUMMARY', 'UID', 'URL',
+        "CLASS",
+        "CREATED",
+        "DTSTART",
+        "DTSTAMP",
+        "LAST-MODIFIED",
+        "ORGANIZER",
+        "RECURRENCE-ID",
+        "SEQUENCE",
+        "STATUS",
+        "SUMMARY",
+        "UID",
+        "URL",
     )
     multiple = (
-        'ATTACH', 'ATTENDEE', 'CATEGORIES', 'COMMENT', 'CONTACT', 'EXDATE',
-        'RELATED', 'RDATE', 'RRULE', 'RSTATUS', 'DESCRIPTION',
+        "ATTACH",
+        "ATTENDEE",
+        "CATEGORIES",
+        "COMMENT",
+        "CONTACT",
+        "EXDATE",
+        "RELATED",
+        "RDATE",
+        "RRULE",
+        "RSTATUS",
+        "DESCRIPTION",
     )
 
     DTSTART = create_single_property(
-        "DTSTART", "dt", (datetime, date), date,
-        'The "DTSTART" property for a "VJOURNAL" that specifies the exact date at which the journal entry was made.')
+        "DTSTART",
+        "dt",
+        (datetime, date),
+        date,
+        'The "DTSTART" property for a "VJOURNAL" that specifies the exact date at which the journal entry was made.',
+    )
 
     @property
     def start(self) -> date:
         """The start of the Journal.
-        
+
         The "DTSTART"
         property is used to specify the calendar date with which the
         journal entry is associated.
@@ -1016,18 +1207,19 @@ class Journal(Component):
         if start is None:
             raise IncompleteComponent("No DTSTART given.")
         return start
-    
+
     @start.setter
-    def start(self, value: datetime|date) -> None:
+    def start(self, value: datetime | date) -> None:
         """Set the start of the journal."""
         self.DTSTART = value
 
     end = start
-    
+
     @property
     def duration(self) -> timedelta:
         """The journal has no duration: timedelta(0)."""
         return timedelta(0)
+
 
 class FreeBusy(Component):
     """
@@ -1037,14 +1229,28 @@ class FreeBusy(Component):
     information, or a published set of busy time information.
     """
 
-    name = 'VFREEBUSY'
+    name = "VFREEBUSY"
 
-    required = ('UID', 'DTSTAMP',)
-    singletons = (
-        'CONTACT', 'DTSTART', 'DTEND', 'DTSTAMP', 'ORGANIZER',
-        'UID', 'URL',
+    required = (
+        "UID",
+        "DTSTAMP",
     )
-    multiple = ('ATTENDEE', 'COMMENT', 'FREEBUSY', 'RSTATUS',)
+    singletons = (
+        "CONTACT",
+        "DTSTART",
+        "DTEND",
+        "DTSTAMP",
+        "ORGANIZER",
+        "UID",
+        "URL",
+    )
+    multiple = (
+        "ATTENDEE",
+        "COMMENT",
+        "FREEBUSY",
+        "RSTATUS",
+    )
+
 
 class Timezone(Component):
     """
@@ -1052,21 +1258,26 @@ class Timezone(Component):
     properties that defines a time zone. It is used to describe the
     way in which a time zone changes its offset from UTC over time.
     """
-    name = 'VTIMEZONE'
-    canonical_order = ('TZID',)
-    required = ('TZID',) # it also requires one of components DAYLIGHT and STANDARD
-    singletons = ('TZID', 'LAST-MODIFIED', 'TZURL',)
+
+    name = "VTIMEZONE"
+    canonical_order = ("TZID",)
+    required = ("TZID",)  # it also requires one of components DAYLIGHT and STANDARD
+    singletons = (
+        "TZID",
+        "LAST-MODIFIED",
+        "TZURL",
+    )
 
     _DEFAULT_FIRST_DATE = date(1970, 1, 1)
     _DEFAULT_LAST_DATE = date(2038, 1, 1)
 
     @classmethod
-    def example(cls, name: str="pacific_fiji") -> Calendar:
+    def example(cls, name: str = "pacific_fiji") -> Calendar:
         """Return the timezone example with the given name."""
         return cls.from_ical(get_example("timezones", name))
 
     @staticmethod
-    def _extract_offsets(component: TimezoneDaylight|TimezoneStandard, tzname:str):
+    def _extract_offsets(component: TimezoneDaylight | TimezoneStandard, tzname: str):
         """extract offsets and transition times from a VTIMEZONE component
         :param component: a STANDARD or DAYLIGHT component
         :param tzname: the name of the zone
@@ -1084,38 +1295,38 @@ class Timezone(Component):
         offsetfrom = timedelta(days=offsetfrom.days, seconds=offsetfrom_s)
 
         # expand recurrences
-        if 'RRULE' in component:
+        if "RRULE" in component:
             # to be paranoid about correct weekdays
             # evaluate the rrule with the current offset
-            tzi = dateutil.tz.tzoffset ("(offsetfrom)", offsetfrom)
-            rrstart = dtstart.replace (tzinfo=tzi)
+            tzi = dateutil.tz.tzoffset("(offsetfrom)", offsetfrom)
+            rrstart = dtstart.replace(tzinfo=tzi)
 
-            rrulestr = component['RRULE'].to_ical().decode('utf-8')
+            rrulestr = component["RRULE"].to_ical().decode("utf-8")
             rrule = dateutil.rrule.rrulestr(rrulestr, dtstart=rrstart)
-            tzp.fix_rrule_until(rrule, component['RRULE'])
+            tzp.fix_rrule_until(rrule, component["RRULE"])
 
             # constructing the timezone requires UTC transition times.
             # here we construct local times without tzinfo, the offset to UTC
             # gets subtracted in to_tz().
-            transtimes = [dt.replace (tzinfo=None) for dt in rrule]
+            transtimes = [dt.replace(tzinfo=None) for dt in rrule]
 
         # or rdates
-        elif 'RDATE' in component:
-            if not isinstance(component['RDATE'], list):
-                rdates = [component['RDATE']]
+        elif "RDATE" in component:
+            if not isinstance(component["RDATE"], list):
+                rdates = [component["RDATE"]]
             else:
-                rdates = component['RDATE']
-            transtimes = [dtstart] + [leaf.dt for tree in rdates for
-                                      leaf in tree.dts]
+                rdates = component["RDATE"]
+            transtimes = [dtstart] + [leaf.dt for tree in rdates for leaf in tree.dts]
         else:
             transtimes = [dtstart]
 
-        transitions = [(transtime, offsetfrom, offsetto, tzname) for
-                       transtime in set(transtimes)]
+        transitions = [
+            (transtime, offsetfrom, offsetto, tzname) for transtime in set(transtimes)
+        ]
 
-        if component.name == 'STANDARD':
+        if component.name == "STANDARD":
             is_dst = 0
-        elif component.name == 'DAYLIGHT':
+        elif component.name == "DAYLIGHT":
             is_dst = 1
         return is_dst, transitions
 
@@ -1127,11 +1338,11 @@ class Timezone(Component):
         """
         # TODO better way of making sure tznames are unique
         while tzname in tznames:
-            tzname += '_1'
+            tzname += "_1"
         tznames.add(tzname)
         return tzname
 
-    def to_tz(self, tzp:TZP=tzp, lookup_tzid:bool=True):
+    def to_tz(self, tzp: TZP = tzp, lookup_tzid: bool = True):
         """convert this VTIMEZONE component to a timezone object
 
         :param tzp: timezone provider to use
@@ -1155,11 +1366,13 @@ class Timezone(Component):
         and may change with winter/summer time.
         """
         try:
-            return str(self['TZID'])
+            return str(self["TZID"])
         except UnicodeEncodeError:
-            return self['TZID'].encode('ascii', 'replace')
+            return self["TZID"].encode("ascii", "replace")
 
-    def get_transitions(self) -> Tuple[List[datetime], List[Tuple[timedelta, timedelta, str]]]:
+    def get_transitions(
+        self,
+    ) -> Tuple[List[datetime], List[Tuple[timedelta, timedelta, str]]]:
         """Return a tuple of (transition_times, transition_info)
 
         - transition_times = [datetime, ...]
@@ -1173,19 +1386,21 @@ class Timezone(Component):
         for component in self.walk():
             if type(component) == Timezone:
                 continue
-            assert isinstance(component['DTSTART'].dt, datetime), (
-                "VTIMEZONEs sub-components' DTSTART must be of type datetime, not date"
-            )
+            assert isinstance(
+                component["DTSTART"].dt, datetime
+            ), "VTIMEZONEs sub-components' DTSTART must be of type datetime, not date"
             try:
-                tzname = str(component['TZNAME'])
+                tzname = str(component["TZNAME"])
             except UnicodeEncodeError:
-                tzname = component['TZNAME'].encode('ascii', 'replace')
+                tzname = component["TZNAME"].encode("ascii", "replace")
                 tzname = self._make_unique_tzname(tzname, tznames)
             except KeyError:
                 # for whatever reason this is str/unicode
-                tzname = f"{zone}_{component['DTSTART'].to_ical().decode('utf-8')}_" + \
-                         f"{component['TZOFFSETFROM'].to_ical()}_" + \
-                         f"{component['TZOFFSETTO'].to_ical()}"
+                tzname = (
+                    f"{zone}_{component['DTSTART'].to_ical().decode('utf-8')}_"
+                    + f"{component['TZOFFSETFROM'].to_ical()}_"
+                    + f"{component['TZOFFSETTO'].to_ical()}"
+                )
                 tzname = self._make_unique_tzname(tzname, tznames)
 
             dst[tzname], component_transitions = self._extract_offsets(
@@ -1218,7 +1433,9 @@ class Timezone(Component):
                 if not dst_offset:
                     for index in range(num, len(transitions)):
                         if not dst[transitions[index][3]]:  # [3] is the name
-                            dst_offset = osto - transitions[index][2]  # [2] is osto  # noqa
+                            dst_offset = (
+                                osto - transitions[index][2]
+                            )  # [2] is osto  # noqa
                             break
             assert dst_offset is not False
             transition_info.append((osto, dst_offset, name))
@@ -1239,14 +1456,15 @@ class Timezone(Component):
         timedelta(seconds=5),
         timedelta(seconds=1),
     ]
+
     @classmethod
     def from_tzinfo(
-            cls,
-            timezone: tzinfo,
-            tzid:Optional[str]=None,
-            first_date:date=_DEFAULT_FIRST_DATE,
-            last_date:date=_DEFAULT_LAST_DATE
-        ) -> Timezone:
+        cls,
+        timezone: tzinfo,
+        tzid: Optional[str] = None,
+        first_date: date = _DEFAULT_FIRST_DATE,
+        last_date: date = _DEFAULT_LAST_DATE,
+    ) -> Timezone:
         """Return a VTIMEZONE component from a timezone object.
 
         This works with pytz and zoneinfo and any other timezone.
@@ -1266,18 +1484,22 @@ class Timezone(Component):
         if tzid is None:
             tzid = tzid_from_tzinfo(timezone)
             if tzid is None:
-                raise ValueError(f"Cannot get TZID from {timezone}. Please set the tzid parameter.")
-        normalize = getattr(timezone, "normalize", lambda dt: dt) # pytz compatibility
+                raise ValueError(
+                    f"Cannot get TZID from {timezone}. Please set the tzid parameter."
+                )
+        normalize = getattr(timezone, "normalize", lambda dt: dt)  # pytz compatibility
         first_datetime = datetime(first_date.year, first_date.month, first_date.day)  # noqa: DTZ001
         last_datetime = datetime(last_date.year, last_date.month, last_date.day)  # noqa: DTZ001
-        if hasattr(timezone, "localize"):  #pytz compatibility
+        if hasattr(timezone, "localize"):  # pytz compatibility
             first_datetime = timezone.localize(first_datetime)
             last_datetime = timezone.localize(last_datetime)
         else:
             first_datetime = first_datetime.replace(tzinfo=timezone)
             last_datetime = last_datetime.replace(tzinfo=timezone)
-         # from, to, tzname, is_standard -> start
-        offsets :dict[tuple[Optional[timedelta], timedelta, str, bool], list[datetime]] = defaultdict(list)
+        # from, to, tzname, is_standard -> start
+        offsets: dict[
+            tuple[Optional[timedelta], timedelta, str, bool], list[datetime]
+        ] = defaultdict(list)
         start = first_datetime
         offset_to = None
         while start < last_datetime:
@@ -1330,12 +1552,12 @@ class Timezone(Component):
 
     @classmethod
     def from_tzid(
-            cls,
-            tzid:str,
-            tzp:TZP=tzp,
-            first_date:date=_DEFAULT_FIRST_DATE,
-            last_date:date=_DEFAULT_LAST_DATE
-        ) -> Timezone:
+        cls,
+        tzid: str,
+        tzp: TZP = tzp,
+        first_date: date = _DEFAULT_FIRST_DATE,
+        last_date: date = _DEFAULT_LAST_DATE,
+    ) -> Timezone:
         """Create a VTIMEZONE from a tzid like ``"Europe/Berlin"``.
 
         :param tzid: the id of the timezone
@@ -1379,10 +1601,15 @@ class TimezoneStandard(Component):
     standard time, typically used during winter months in locations
     that observe Daylight Saving Time.
     """
-    name = 'STANDARD'
-    required = ('DTSTART', 'TZOFFSETTO', 'TZOFFSETFROM')
-    singletons = ('DTSTART', 'TZOFFSETTO', 'TZOFFSETFROM',)
-    multiple = ('COMMENT', 'RDATE', 'TZNAME', 'RRULE', 'EXDATE')
+
+    name = "STANDARD"
+    required = ("DTSTART", "TZOFFSETTO", "TZOFFSETFROM")
+    singletons = (
+        "DTSTART",
+        "TZOFFSETTO",
+        "TZOFFSETFROM",
+    )
+    multiple = ("COMMENT", "RDATE", "TZNAME", "RRULE", "EXDATE")
 
     DTSTART = create_single_property(
         "DTSTART",
@@ -1392,7 +1619,7 @@ class TimezoneStandard(Component):
         """The mandatory "DTSTART" property gives the effective onset date
         and local time for the time zone sub-component definition.
         "DTSTART" in this usage MUST be specified as a date with a local
-        time value."""
+        time value.""",
     )
     TZOFFSETTO = create_single_property(
         "TZOFFSETTO",
@@ -1403,7 +1630,7 @@ class TimezoneStandard(Component):
         time zone sub-component (Standard Time or Daylight Saving Time)
         when this observance is in use.
         """,
-        vUTCOffset
+        vUTCOffset,
     )
     TZOFFSETFROM = create_single_property(
         "TZOFFSETFROM",
@@ -1420,7 +1647,7 @@ class TimezoneStandard(Component):
             DTSTART:19671029T020000
             TZOFFSETFROM:-0400
         """,
-        vUTCOffset
+        vUTCOffset,
     )
 
 
@@ -1431,7 +1658,8 @@ class TimezoneDaylight(Component):
     zone's daylight saving time, typically used during summer months
     in locations that observe Daylight Saving Time.
     """
-    name = 'DAYLIGHT'
+
+    name = "DAYLIGHT"
     required = TimezoneStandard.required
     singletons = TimezoneStandard.singletons
     multiple = TimezoneStandard.multiple
@@ -1439,6 +1667,7 @@ class TimezoneDaylight(Component):
     DTSTART = TimezoneStandard.DTSTART
     TZOFFSETTO = TimezoneStandard.TZOFFSETTO
     TZOFFSETFROM = TimezoneStandard.TZOFFSETFROM
+
 
 class Alarm(Component):
     """
@@ -1448,16 +1677,35 @@ class Alarm(Component):
     pending event or an overdue to-do.
     """
 
-    name = 'VALARM'
+    name = "VALARM"
     # some properties MAY/MUST/MUST NOT appear depending on ACTION value
-    required = ('ACTION', 'TRIGGER',)
+    required = (
+        "ACTION",
+        "TRIGGER",
+    )
     singletons = (
-            'ATTACH', 'ACTION', 'DESCRIPTION', 'SUMMARY', 'TRIGGER',
-            'DURATION', 'REPEAT', 'UID', 'PROXIMITY', 'ACKNOWLEDGED'
-            )
-    inclusive = (('DURATION', 'REPEAT',), ('SUMMARY', 'ATTENDEE',))
-    multiple = ('ATTENDEE', 'ATTACH', 'RELATED-TO')
-
+        "ATTACH",
+        "ACTION",
+        "DESCRIPTION",
+        "SUMMARY",
+        "TRIGGER",
+        "DURATION",
+        "REPEAT",
+        "UID",
+        "PROXIMITY",
+        "ACKNOWLEDGED",
+    )
+    inclusive = (
+        (
+            "DURATION",
+            "REPEAT",
+        ),
+        (
+            "SUMMARY",
+            "ATTENDEE",
+        ),
+    )
+    multiple = ("ATTENDEE", "ATTACH", "RELATED-TO")
 
     @property
     def REPEAT(self) -> int:
@@ -1481,17 +1729,22 @@ class Alarm(Component):
         """The REPEAT property of an alarm component."""
         self["REPEAT"] = int(value)
 
-    DURATION = property(_get_duration, _set_duration, _del_duration,
-    """The DURATION property of an alarm component.
+    DURATION = property(
+        _get_duration,
+        _set_duration,
+        _del_duration,
+        """The DURATION property of an alarm component.
 
     The alarm can be defined such that it triggers repeatedly.  A
     definition of an alarm with a repeating trigger MUST include both
     the "DURATION" and "REPEAT" properties.  The "DURATION" property
     specifies the delay period, after which the alarm will repeat.
-    """)
+    """,
+    )
 
-    ACKNOWLEDGED = create_utc_property("ACKNOWLEDGED",
-    """This is defined in RFC 9074:
+    ACKNOWLEDGED = create_utc_property(
+        "ACKNOWLEDGED",
+        """This is defined in RFC 9074:
 
     Purpose: This property specifies the UTC date and time at which the
     corresponding alarm was last sent or acknowledged.
@@ -1517,11 +1770,15 @@ class Alarm(Component):
     changed in the alarm component. If the value of any "ACKNOWLEDGED" property
     in the alarm changes and is greater than or equal to the trigger time of the alarm,
     then clients SHOULD dismiss or cancel any "alert" presented to the calendar user.
-    """)
+    """,
+    )
 
     TRIGGER = create_single_property(
-        "TRIGGER", "dt", (datetime, timedelta), Optional[Union[timedelta, datetime]],
-    """Purpose:  This property specifies when an alarm will trigger.
+        "TRIGGER",
+        "dt",
+        (datetime, timedelta),
+        Optional[Union[timedelta, datetime]],
+        """Purpose:  This property specifies when an alarm will trigger.
 
     Value Type:  The default value type is DURATION.  The value type can
     be set to a DATE-TIME value type, in which case the value MUST
@@ -1531,7 +1788,7 @@ class Alarm(Component):
     "TRIGGER" property.  An alarm with a positive duration is
     triggered after the associated start or end of the event or to-do.
     An alarm with a negative duration is triggered before the
-    associated start or end of the event or to-do."""
+    associated start or end of the event or to-do.""",
     )
 
     @property
@@ -1563,22 +1820,25 @@ class Alarm(Component):
         """Set "START" or "END"."""
         trigger = self.get("TRIGGER")
         if trigger is None:
-            raise ValueError("You must set a TRIGGER before setting the RELATED parameter.")
+            raise ValueError(
+                "You must set a TRIGGER before setting the RELATED parameter."
+            )
         trigger.params["RELATED"] = value
-    
+
     class Triggers(NamedTuple):
         """The computed times of alarm triggers.
 
         start - triggers relative to the start of the Event or Todo (timedelta)
-        
+
         end - triggers relative to the end of the Event or Todo (timedelta)
-        
+
         absolute - triggers at a datetime in UTC
         """
+
         start: tuple[timedelta]
         end: tuple[timedelta]
         absolute: tuple[datetime]
-    
+
     @property
     def triggers(self):
         """The computed triggers of an Alarm.
@@ -1619,7 +1879,10 @@ class Alarm(Component):
             if duration is not None:
                 for _ in range(self.REPEAT):
                     add.append(add[-1] + duration)
-        return self.Triggers(start=tuple(start), end=tuple(end), absolute=tuple(absolute))
+        return self.Triggers(
+            start=tuple(start), end=tuple(end), absolute=tuple(absolute)
+        )
+
 
 class Calendar(Component):
     """
@@ -1628,13 +1891,22 @@ class Calendar(Component):
     "VEVENT", "VTODO", "VJOURNAL", "VFREEBUSY", "VTIMEZONE", or any
     other type of calendar component.
     """
-    name = 'VCALENDAR'
-    canonical_order = ('VERSION', 'PRODID', 'CALSCALE', 'METHOD',)
-    required = ('PRODID', 'VERSION', )
-    singletons = ('PRODID', 'VERSION', 'CALSCALE', 'METHOD')
+
+    name = "VCALENDAR"
+    canonical_order = (
+        "VERSION",
+        "PRODID",
+        "CALSCALE",
+        "METHOD",
+    )
+    required = (
+        "PRODID",
+        "VERSION",
+    )
+    singletons = ("PRODID", "VERSION", "CALSCALE", "METHOD")
 
     @classmethod
-    def example(cls, name: str="example") -> Calendar:
+    def example(cls, name: str = "example") -> Calendar:
         """Return the calendar example with the given name."""
         return cls.from_ical(get_example("calendars", name))
 
@@ -1712,10 +1984,10 @@ class Calendar(Component):
         return self.walk("VTIMEZONE")
 
     def add_missing_timezones(
-            self,
-            first_date:date=Timezone._DEFAULT_FIRST_DATE,
-            last_date:date=Timezone._DEFAULT_LAST_DATE,
-            ):
+        self,
+        first_date: date = Timezone._DEFAULT_FIRST_DATE,
+        last_date: date = Timezone._DEFAULT_LAST_DATE,
+    ):
         """Add all missing VTIMEZONE components.
 
         This adds all the timezone components that are required.
@@ -1745,19 +2017,32 @@ class Calendar(Component):
         for tzid in self.get_missing_tzids():
             try:
                 timezone = Timezone.from_tzid(
-                    tzid,
-                    first_date=first_date,
-                    last_date=last_date
+                    tzid, first_date=first_date, last_date=last_date
                 )
             except ValueError:
                 continue
             self.add_component(timezone)
 
+
 # These are read only singleton, so one instance is enough for the module
 types_factory = TypesFactory()
 component_factory = ComponentFactory()
 
-__all__ = ["Alarm", "Calendar", "Component", "ComponentFactory", "Event",
-           "FreeBusy", "INLINE", "Journal", "Timezone", "TimezoneDaylight",
-           "TimezoneStandard", "Todo", "component_factory", "get_example",
-           "IncompleteComponent", "InvalidCalendar"]
+__all__ = [
+    "Alarm",
+    "Calendar",
+    "Component",
+    "ComponentFactory",
+    "Event",
+    "FreeBusy",
+    "INLINE",
+    "Journal",
+    "Timezone",
+    "TimezoneDaylight",
+    "TimezoneStandard",
+    "Todo",
+    "component_factory",
+    "get_example",
+    "IncompleteComponent",
+    "InvalidCalendar",
+]

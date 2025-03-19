@@ -14,10 +14,8 @@ def canonsort_keys(keys, canonical_order=None):
 
 
 def canonsort_items(dict1, canonical_order=None):
-    """Returns a list of items from dict1, sorted by canonical_order.
-    """
-    return [(k, dict1[k]) for k
-            in canonsort_keys(dict1.keys(), canonical_order)]
+    """Returns a list of items from dict1, sorted by canonical_order."""
+    return [(k, dict1[k]) for k in canonsort_keys(dict1.keys(), canonical_order)]
 
 
 class CaselessDict(OrderedDict):
@@ -26,8 +24,7 @@ class CaselessDict(OrderedDict):
     """
 
     def __init__(self, *args, **kwargs):
-        """Set keys to upper for initial dict.
-        """
+        """Set keys to upper for initial dict."""
         super().__init__(*args, **kwargs)
         for key, value in self.items():
             key_upper = to_unicode(key).upper()
@@ -74,7 +71,7 @@ class CaselessDict(OrderedDict):
         # Multiple keys where key1.upper() == key2.upper() will be lost.
         mappings = list(args) + [kwargs]
         for mapping in mappings:
-            if hasattr(mapping, 'items'):
+            if hasattr(mapping, "items"):
                 mapping = iter(mapping.items())
             for key, value in mapping:
                 self[key] = value
@@ -83,7 +80,7 @@ class CaselessDict(OrderedDict):
         return type(self)(super().copy())
 
     def __repr__(self):
-        return f'{type(self).__name__}({dict(self)})'
+        return f"{type(self).__name__}({dict(self)})"
 
     def __eq__(self, other):
         return self is other or dict(self.items()) == dict(other.items())
