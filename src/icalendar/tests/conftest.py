@@ -265,11 +265,13 @@ def pytz_only(tzp, tzp_name) -> str:
     assert tzp.uses_pytz()
     return tzp_name
 
+
 @pytest.fixture
 def zoneinfo_only(tzp, request, tzp_name) -> str:
     """Skip tests that are not running under zoneinfo."""
     assert tzp.uses_zoneinfo()
     return tzp_name
+
 
 @pytest.fixture
 def no_pytz(tzp_name) -> str:
@@ -277,11 +279,13 @@ def no_pytz(tzp_name) -> str:
     assert tzp_name != "pytz"
     return tzp_name
 
+
 @pytest.fixture
 def no_zoneinfo(tzp_name) -> str:
     """Do not run tests with zoneinfo."""
     assert tzp_name != "zoneinfo"
     return tzp_name
+
 
 def pytest_generate_tests(metafunc):
     """Parametrize without skipping:
@@ -343,7 +347,7 @@ def env_for_doctest(monkeypatch):
 
 
 @pytest.fixture(params=timezone_ids.TZIDS)
-def tzid(request:pytest.FixtureRequest) -> str:
+def tzid(request: pytest.FixtureRequest) -> str:
     """Return a timezone id to be used with pytz or zoneinfo.
 
     This goes through all the different timezones possible.
