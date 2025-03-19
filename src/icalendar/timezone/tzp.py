@@ -26,31 +26,35 @@ class TZP:
     All of icalendar will then use this timezone implementation.
     """
 
-    def __init__(self, provider:Union[str, TZProvider]=DEFAULT_TIMEZONE_PROVIDER):
+    def __init__(self, provider: Union[str, TZProvider] = DEFAULT_TIMEZONE_PROVIDER):
         """Create a new timezone implementation proxy."""
         self.use(provider)
 
     def use_pytz(self) -> None:
         """Use pytz as the timezone provider."""
         from .pytz import PYTZ
+
         self._use(PYTZ())
 
     def use_zoneinfo(self) -> None:
         """Use zoneinfo as the timezone provider."""
         from .zoneinfo import ZONEINFO
+
         self._use(ZONEINFO())
 
-    def _use(self, provider:TZProvider) -> None:
+    def _use(self, provider: TZProvider) -> None:
         """Use a timezone implementation."""
         self.__tz_cache = {}
         self.__provider = provider
 
-    def use(self, provider:Union[str, TZProvider]):
+    def use(self, provider: Union[str, TZProvider]):
         """Switch to a different timezone provider."""
         if isinstance(provider, str):
             use_provider = getattr(self, f"use_{provider}", None)
             if use_provider is None:
-                raise ValueError(f"Unknown provider {provider}. Use 'pytz' or 'zoneinfo'.")
+                raise ValueError(
+                    f"Unknown provider {provider}. Use 'pytz' or 'zoneinfo'."
+                )
             use_provider()
         else:
             self._use(provider)
@@ -66,7 +70,9 @@ class TZP:
         """
         return self.__provider.localize_utc(to_datetime(dt))
 
-    def localize(self, dt: datetime.date, tz: Union[datetime.tzinfo, str]) -> datetime.datetime:
+    def localize(
+        self, dt: datetime.date, tz: Union[datetime.tzinfo, str]
+    ) -> datetime.datetime:
         """Localize a datetime to a timezone."""
         if isinstance(tz, str):
             tz = self.timezone(tz)
@@ -79,14 +85,16 @@ class TZP:
         This can influence the result from timezone(): Once cached, the
         custom timezone is returned from timezone().
         """
-        _unclean_id = timezone_component['TZID']
+        _unclean_id = timezone_component["TZID"]
         _id = self.clean_timezone_id(_unclean_id)
-        if not self.__provider.knows_timezone_id(_id) \
-            and not self.__provider.knows_timezone_id(_unclean_id) \
-            and _id not in self.__tz_cache:
+        if (
+            not self.__provider.knows_timezone_id(_id)
+            and not self.__provider.knows_timezone_id(_unclean_id)
+            and _id not in self.__tz_cache
+        ):
             self.__tz_cache[_id] = timezone_component.to_tz(self, lookup_tzid=False)
 
-    def fix_rrule_until(self, rrule:rrule, ical_rrule:prop.vRecur) -> None:
+    def fix_rrule_until(self, rrule: rrule, ical_rrule: prop.vRecur) -> None:
         """Make sure the until value works."""
         self.__provider.fix_rrule_until(rrule, ical_rrule)
 
@@ -131,5 +139,6 @@ class TZP:
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({repr(self.name)})"
+
 
 __all__ = ["TZP"]

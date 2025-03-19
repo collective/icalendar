@@ -4,6 +4,7 @@ Normally, timezones have ids.
 This is a way to access the ids if you have a
 datetime.tzinfo object.
 """
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional
@@ -24,12 +25,12 @@ def tzids_from_tzinfo(tzinfo: Optional[tzinfo]) -> tuple[str]:
     >>> tzids_from_tzinfo(gettz("Europe/Berlin"))
     ('Arctic/Longyearbyen', 'Atlantic/Jan_Mayen', 'Europe/Berlin', 'Europe/Budapest', 'Europe/Copenhagen', 'Europe/Oslo', 'Europe/Stockholm', 'Europe/Vienna')
 
-    """ # The example might need to change if you recreate the lookup tree
+    """  # The example might need to change if you recreate the lookup tree
     if tzinfo is None:
         return ()
-    if hasattr(tzinfo, 'zone'):
+    if hasattr(tzinfo, "zone"):
         return (tzinfo.zone,)  # pytz implementation
-    if hasattr(tzinfo, 'key'):
+    if hasattr(tzinfo, "key"):
         return (tzinfo.key,)  # ZoneInfo implementation
     if isinstance(tzinfo, tz._tzicalvtz):
         return (tzinfo._tzid,)
@@ -50,6 +51,7 @@ def tzid_from_tzinfo(tzinfo: Optional[tzinfo]) -> Optional[str]:
     if not tzids:
         return None
     return tzids[0]
+
 
 def tzid_from_dt(dt: datetime) -> Optional[str]:
     """Retrieve the timezone id from the datetime object."""
@@ -80,7 +82,7 @@ def tzinfo2tzids(tzinfo: Optional[tzinfo]) -> set[str]:
     >>> "Europe/Berlin" in tzinfo2tzids(zoneinfo.ZoneInfo("Europe/Berlin"))
     True
 
-    """ # The example might need to change if you recreate the lookup tree
+    """  # The example might need to change if you recreate the lookup tree
     if tzinfo is None:
         return set()
     from icalendar.timezone.equivalent_timezone_ids_result import lookup
@@ -94,5 +96,6 @@ def tzinfo2tzids(tzinfo: Optional[tzinfo]) -> set[str]:
         if lookup is None:
             return set()
     return set()
+
 
 __all__ = ["tzid_from_tzinfo", "tzid_from_dt", "tzids_from_tzinfo"]

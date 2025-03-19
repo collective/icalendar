@@ -1,4 +1,5 @@
 """The interface for timezone implementations."""
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -33,7 +34,7 @@ class TZProvider(ABC):
         """Whether the timezone is already cached by the implementation."""
 
     @abstractmethod
-    def fix_rrule_until(self, rrule:rrule, ical_rrule:prop.vRecur) -> None:
+    def fix_rrule_until(self, rrule: rrule, ical_rrule: prop.vRecur) -> None:
         """Make sure the until value works for the rrule generated from the ical_rrule."""
 
     @abstractmethod
@@ -51,5 +52,6 @@ class TZProvider(ABC):
     @abstractmethod
     def uses_zoneinfo(self) -> bool:
         """Whether we use zoneinfo."""
+
 
 __all__ = ["TZProvider"]
