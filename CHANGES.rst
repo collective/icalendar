@@ -6,7 +6,7 @@ Changelog
 
 Minor changes:
 
-- ...
+- Add the Developer Certificate of Origin v1.1 to all future Pull Requests, see `Issue 778 <https://github.com/collective/icalendar/issues/778>`_.
 
 Breaking changes:
 
