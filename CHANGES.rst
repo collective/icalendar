@@ -18,7 +18,7 @@ New features:
 
 Bug fixes:
 
-- ...
+- Move import at the end of ``icalendar.parser`` into a function to mitigate import errors, see `Issue 781 <https://github.com/collective/icalendar/issues/781>`_.
 
 6.1.2 (2025-03-19)
 ------------------
