@@ -13,8 +13,7 @@ Breaking changes:
 - ...
 
 New features:
-
-- ...
+- Add ``from_file()`` and ``to_file()`` methods to ``Component`` class for easier file handling of iCalendar data. See `Issue 756 <https://github.com/collective/icalendar/issues/756>`_.
 
 Bug fixes:
 
