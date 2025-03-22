@@ -18,6 +18,7 @@ New features:
 
 Bug fixes:
 
+- Fix to permit TZID forward references to VTIMEZONEs
 - ...
 
 6.1.2 (2025-03-19)
@@ -137,9 +138,7 @@ New features:
 Bug fixes:
 
 - Fix link to stable release of tox in documentation.
-- Fix a bad ``bytes`` replace in ``unescape_char``.
-- Handle ``ValueError`` in ``vBinary.from_ical``.
-- Ignore the BOM character in incorrectly encoded ics files.
+- Fix a bad bytes replace in unescape_char.
 
 6.0.0a0 (2024-07-03)
 --------------------
