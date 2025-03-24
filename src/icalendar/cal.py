@@ -1643,8 +1643,8 @@ class Calendar(Component):
         comps = Component.from_ical(st, multiple=True)
         all_timezones_so_far = True
         for comp in comps:
-            for component in comp.walk():
-                if type(component) == Timezone:
+            for component in comp.subcomponents:
+                if component.name == 'VTIMEZONE':
                     if all_timezones_so_far:
                         pass
                     else:

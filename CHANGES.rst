@@ -138,7 +138,9 @@ New features:
 Bug fixes:
 
 - Fix link to stable release of tox in documentation.
-- Fix a bad bytes replace in unescape_char.
+- Fix a bad ``bytes`` replace in ``unescape_char``.
+- Handle ``ValueError`` in ``vBinary.from_ical``.
+- Ignore the BOM character in incorrectly encoded ics files.
 
 6.0.0a0 (2024-07-03)
 --------------------
