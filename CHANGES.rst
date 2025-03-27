@@ -19,7 +19,7 @@ New features:
 Bug fixes:
 
 - Fix to permit TZID forward references to VTIMEZONEs
-- ...
+- Stabelize timezone id lookup, see `Issue 780 <https://github.com/collective/icalendar/issues/780>`_.
 
 6.1.2 (2025-03-19)
 ------------------
