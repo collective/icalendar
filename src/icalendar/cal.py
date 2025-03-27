@@ -730,7 +730,7 @@ class Event(Component):
         'RSTATUS', 'RELATED', 'RESOURCES', 'RDATE', 'RRULE'
     )
     ignore_exceptions = True
-    
+
     @property
     def alarms(self) -> Alarms:
         """Compute the alarm times for this component.
@@ -1007,7 +1007,7 @@ class Journal(Component):
     @property
     def start(self) -> date:
         """The start of the Journal.
-        
+
         The "DTSTART"
         property is used to specify the calendar date with which the
         journal entry is associated.
@@ -1016,14 +1016,14 @@ class Journal(Component):
         if start is None:
             raise IncompleteComponent("No DTSTART given.")
         return start
-    
+
     @start.setter
     def start(self, value: datetime|date) -> None:
         """Set the start of the journal."""
         self.DTSTART = value
 
     end = start
-    
+
     @property
     def duration(self) -> timedelta:
         """The journal has no duration: timedelta(0)."""
@@ -1565,20 +1565,20 @@ class Alarm(Component):
         if trigger is None:
             raise ValueError("You must set a TRIGGER before setting the RELATED parameter.")
         trigger.params["RELATED"] = value
-    
+
     class Triggers(NamedTuple):
         """The computed times of alarm triggers.
 
         start - triggers relative to the start of the Event or Todo (timedelta)
-        
+
         end - triggers relative to the end of the Event or Todo (timedelta)
-        
+
         absolute - triggers at a datetime in UTC
         """
         start: tuple[timedelta]
         end: tuple[timedelta]
         absolute: tuple[datetime]
-    
+
     @property
     def triggers(self):
         """The computed triggers of an Alarm.
@@ -1637,6 +1637,38 @@ class Calendar(Component):
     def example(cls, name: str="example") -> Calendar:
         """Return the calendar example with the given name."""
         return cls.from_ical(get_example("calendars", name))
+
+    @classmethod
+    def from_ical(cls, st, multiple=False):
+        comps = Component.from_ical(st, multiple=True)
+        all_timezones_so_far = True
+        for comp in comps:
+            for component in comp.subcomponents:
+                if component.name == 'VTIMEZONE':
+                    if all_timezones_so_far:
+                        pass
+                    else:
+                        # If a preceding component refers to a VTIMEZONE defined later in the source st
+                        # (forward references are allowed by RFC 5545), then the earlier component may have
+                        # the wrong timezone attached.
+                        # However, during computation of comps, all VTIMEZONEs observed do end up in
+                        # the timezone cache. So simply re-running from_ical will rely on the cache
+                        # for those forward references to produce the correct result.
+                        # See test_create_america_new_york_forward_reference.
+                        return Component.from_ical(st, multiple)
+                else:
+                    all_timezones_so_far = False
+
+        # No potentially forward VTIMEZONEs to worry about
+        if multiple:
+            return comps
+        if len(comps) > 1:
+            raise ValueError(cls._format_error(
+                'Found multiple components where only one is allowed', st))
+        if len(comps) < 1:
+            raise ValueError(cls._format_error(
+                'Found no components where exactly one is required', st))
+        return comps[0]
 
     @property
     def events(self) -> list[Event]:
