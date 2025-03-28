@@ -302,6 +302,7 @@ class Contentline(str):
         if hasattr(values, "to_ical"):
             values = values.to_ical()
         else:
+            from icalendar.prop import vText
             values = vText(values).to_ical()
         # elif isinstance(values, basestring):
         #    values = escape_char(values)
@@ -388,10 +389,6 @@ class Contentlines(list):
             return lines
         except Exception:
             raise ValueError("Expected StringType with content lines")
-
-
-# XXX: what kind of hack is this? import depends to be at end
-from icalendar.prop import vText
 
 
 __all__ = [
