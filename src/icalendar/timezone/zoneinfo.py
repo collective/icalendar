@@ -1,4 +1,5 @@
 """Use zoneinfo timezones"""
+
 from __future__ import annotations
 
 try:
@@ -35,7 +36,7 @@ class ZONEINFO(TZProvider):
 
     def localize_utc(self, dt: datetime) -> datetime:
         """Return the datetime in UTC."""
-        if getattr(dt, 'tzinfo', False) and dt.tzinfo is not None:
+        if getattr(dt, "tzinfo", False) and dt.tzinfo is not None:
             return dt.astimezone(self.utc)
         return self.localize(dt, self.utc)
 
@@ -53,9 +54,9 @@ class ZONEINFO(TZProvider):
         """Whether the timezone is already cached by the implementation."""
         return id in self._available_timezones
 
-    def fix_rrule_until(self, rrule:rrule, ical_rrule:prop.vRecur) -> None:
+    def fix_rrule_until(self, rrule: rrule, ical_rrule: prop.vRecur) -> None:
         """Make sure the until value works for the rrule generated from the ical_rrule."""
-        if not {'UNTIL', 'COUNT'}.intersection(ical_rrule.keys()):
+        if not {"UNTIL", "COUNT"}.intersection(ical_rrule.keys()):
             # zoninfo does not know any transition dates after 2038
             rrule._until = datetime(2038, 12, 31, tzinfo=self.utc)
 
@@ -87,9 +88,10 @@ class ZONEINFO(TZProvider):
         return True
 
 
-def pickle_tzicalvtz(tzicalvtz:tz._tzicalvtz):
+def pickle_tzicalvtz(tzicalvtz: tz._tzicalvtz):
     """Because we use dateutil.tzical, we need to make it pickle-able."""
     return _tzicalvtz, (tzicalvtz._tzid, tzicalvtz._comps)
+
 
 copyreg.pickle(_tzicalvtz, pickle_tzicalvtz)
 
@@ -99,18 +101,22 @@ def pickle_rrule_with_cache(self: rrule):
 
     This is mainly copied from rrule.replace.
     """
-    new_kwargs = {"interval": self._interval,
-                  "count": self._count,
-                  "dtstart": self._dtstart,
-                  "freq": self._freq,
-                  "until": self._until,
-                  "wkst": self._wkst,
-                  "cache": False if self._cache is None else True }
+    new_kwargs = {
+        "interval": self._interval,
+        "count": self._count,
+        "dtstart": self._dtstart,
+        "freq": self._freq,
+        "until": self._until,
+        "wkst": self._wkst,
+        "cache": False if self._cache is None else True,
+    }
     new_kwargs.update(self._original_rule)
     # from https://stackoverflow.com/a/64915638/1320237
     return functools.partial(rrule, new_kwargs.pop("freq"), **new_kwargs), ()
 
+
 copyreg.pickle(rrule, pickle_rrule_with_cache)
+
 
 def pickle_rruleset_with_cache(rs: rruleset):
     """Pickle an rruleset."""
@@ -119,18 +125,27 @@ def pickle_rruleset_with_cache(rs: rruleset):
     # self._exrule = []
     # self._exdate = []
     return unpickle_rruleset_with_cache, (
-        rs._rrule, rs._rdate, rs._exrule,
-        rs._exdate, False if rs._cache is None else True
+        rs._rrule,
+        rs._rdate,
+        rs._exrule,
+        rs._exdate,
+        False if rs._cache is None else True,
     )
+
 
 def unpickle_rruleset_with_cache(rrule, rdate, exrule, exdate, cache):
     """unpickling the rruleset."""
     rs = rruleset(cache)
-    for o in rrule: rs.rrule(o)
-    for o in rdate: rs.rdate(o)
-    for o in exrule: rs.exrule(o)
-    for o in exdate: rs.exdate(o)
+    for o in rrule:
+        rs.rrule(o)
+    for o in rdate:
+        rs.rdate(o)
+    for o in exrule:
+        rs.exrule(o)
+    for o in exdate:
+        rs.exdate(o)
     return rs
+
 
 copyreg.pickle(rruleset, pickle_rruleset_with_cache)
 

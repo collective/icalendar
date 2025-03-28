@@ -6,7 +6,7 @@ Changelog
 
 Minor changes:
 
-- ...
+- Use ``ruff`` to format the source code.
 
 Breaking changes:
 

@@ -6,8 +6,11 @@ import copy
 try:
     from pytz import UnknownTimeZoneError
 except ImportError:
+
     class UnknownTimeZoneError(Exception):
         pass
+
+
 from datetime import date, datetime, time, timedelta
 
 import pytest
@@ -83,7 +86,10 @@ def test_deep_copies_are_equal(ics_file, tzp):
     Ignore errors when a custom time zone is used.
     This is still covered by the parsing test.
     """
-    if ics_file.source_file == "issue_722_timezone_transition_ambiguity.ics" and tzp.uses_zoneinfo():
+    if (
+        ics_file.source_file == "issue_722_timezone_transition_ambiguity.ics"
+        and tzp.uses_zoneinfo()
+    ):
         pytest.skip("This test fails for now.")
     with contextlib.suppress(UnknownTimeZoneError):
         assert_equal(copy.deepcopy(ics_file), copy.deepcopy(ics_file))

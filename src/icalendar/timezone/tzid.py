@@ -4,6 +4,7 @@ Normally, timezones have ids.
 This is a way to access the ids if you have a
 datetime.tzinfo object.
 """
+
 from __future__ import annotations
 
 from collections import defaultdict
@@ -34,7 +35,7 @@ def tzids_from_tzinfo(tzinfo: Optional[tzinfo]) -> tuple[str]:
     >>> tzids_from_tzinfo(gettz("Europe/Berlin"))
     ('Europe/Berlin', 'Arctic/Longyearbyen', 'Atlantic/Jan_Mayen', 'Europe/Budapest', 'Europe/Copenhagen', 'Europe/Oslo', 'Europe/Stockholm', 'Europe/Vienna')
 
-    """ # The example might need to change if you recreate the lookup tree
+    """  # The example might need to change if you recreate the lookup tree
     if tzinfo is None:
         return ()
     if hasattr(tzinfo, "zone"):
@@ -71,6 +72,7 @@ def tzid_from_tzinfo(tzinfo: Optional[tzinfo]) -> Optional[str]:
         return None
     return tzids[0]
 
+
 def tzid_from_dt(dt: datetime) -> Optional[str]:
     """Retrieve the timezone id from the datetime object."""
     tzid = tzid_from_tzinfo(dt.tzinfo)
@@ -105,5 +107,6 @@ def get_equivalent_tzids(tzid: str) -> tuple[str]:
     """This returns the tzids which are equivalent to this one."""
     ids = _EQUIVALENT_IDS.get(tzid, set())
     return (tzid,) + tuple(sorted(ids - {tzid}))
+
 
 __all__ = ["tzid_from_tzinfo", "tzid_from_dt", "tzids_from_tzinfo"]
