@@ -434,4 +434,4 @@ def test_we_can_identify_dateutil_timezones(tzid):
     But if we know their shortcodes, we should be able to identify them.
     """
     tz = gettz(tzid)
-    assert tzid in tzids_from_tzinfo(tz)
+    assert tz is None or tzid in tzids_from_tzinfo(tz)

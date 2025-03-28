@@ -1910,6 +1910,38 @@ class Calendar(Component):
         """Return the calendar example with the given name."""
         return cls.from_ical(get_example("calendars", name))
 
+    @classmethod
+    def from_ical(cls, st, multiple=False):
+        comps = Component.from_ical(st, multiple=True)
+        all_timezones_so_far = True
+        for comp in comps:
+            for component in comp.subcomponents:
+                if component.name == 'VTIMEZONE':
+                    if all_timezones_so_far:
+                        pass
+                    else:
+                        # If a preceding component refers to a VTIMEZONE defined later in the source st
+                        # (forward references are allowed by RFC 5545), then the earlier component may have
+                        # the wrong timezone attached.
+                        # However, during computation of comps, all VTIMEZONEs observed do end up in
+                        # the timezone cache. So simply re-running from_ical will rely on the cache
+                        # for those forward references to produce the correct result.
+                        # See test_create_america_new_york_forward_reference.
+                        return Component.from_ical(st, multiple)
+                else:
+                    all_timezones_so_far = False
+
+        # No potentially forward VTIMEZONEs to worry about
+        if multiple:
+            return comps
+        if len(comps) > 1:
+            raise ValueError(cls._format_error(
+                'Found multiple components where only one is allowed', st))
+        if len(comps) < 1:
+            raise ValueError(cls._format_error(
+                'Found no components where exactly one is required', st))
+        return comps[0]
+
     @property
     def events(self) -> list[Event]:
         """All event components in the calendar.
