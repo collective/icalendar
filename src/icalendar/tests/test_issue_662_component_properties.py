@@ -1,4 +1,5 @@
 """This tests the properties of components and their types."""
+
 from __future__ import annotations
 from datetime import date, datetime, timedelta
 
@@ -23,7 +24,7 @@ from icalendar import (
 from icalendar.prop import vDuration
 
 
-def prop(component: Event|Todo, prop:str) -> str:
+def prop(component: Event | Todo, prop: str) -> str:
     """Translate the end property.
 
     This allows us to run the same tests on Event and Todo.
@@ -32,16 +33,20 @@ def prop(component: Event|Todo, prop:str) -> str:
         return "DUE"
     return prop
 
+
 @pytest.fixture(params=[Event, Todo])
 def start_end_component(request):
     """The event to test."""
     return request.param()
 
-@pytest.fixture(params=[
+
+@pytest.fixture(
+    params=[
         datetime(2022, 7, 22, 12, 7),
         date(2022, 7, 22),
         datetime(2022, 7, 22, 13, 7, tzinfo=ZoneInfo("Europe/Paris")),
-    ])
+    ]
+)
 def dtstart(request, set_component_start, start_end_component):
     """Start of the event."""
     set_component_start(start_end_component, request.param)
@@ -55,13 +60,16 @@ def _set_component_start_init(component, start):
     component.clear()
     component.update(type(component)(d))
 
+
 def _set_component_dtstart(component, start):
     """Create the event with the dtstart property."""
     component.DTSTART = start
 
+
 def _set_component_start_attr(component, start):
     """Create the event with the dtstart property."""
     component.start = start
+
 
 def _set_component_start_ics(component, start):
     """Create the event with the start property."""
@@ -71,10 +79,19 @@ def _set_component_start_ics(component, start):
     component.clear()
     component.update(type(component).from_ical(ics))
 
-@pytest.fixture(params=[_set_component_start_init, _set_component_start_ics, _set_component_dtstart, _set_component_start_attr])
+
+@pytest.fixture(
+    params=[
+        _set_component_start_init,
+        _set_component_start_ics,
+        _set_component_dtstart,
+        _set_component_start_attr,
+    ]
+)
 def set_component_start(request):
     """Create a new event."""
     return request.param
+
 
 def test_component_dtstart(dtstart, start_end_component):
     """Test the start of events."""
@@ -96,15 +113,17 @@ invalid_start_todo_1 = Todo(invalid_start_event_1)
 invalid_start_todo_2 = Todo(invalid_start_event_2)
 invalid_start_todo_3 = Todo(invalid_start_event_3)
 
+
 @pytest.mark.parametrize(
-    "invalid_event", [
+    "invalid_event",
+    [
         invalid_start_event_1,
         invalid_start_event_2,
         invalid_start_event_3,
         invalid_start_todo_1,
         invalid_start_todo_2,
         invalid_start_todo_3,
-    ]
+    ],
 )
 def test_multiple_dtstart(invalid_event):
     """Check that we get the right error."""
@@ -128,11 +147,13 @@ def test_no_dtstart(start_end_component):
         start_end_component.start  # noqa: B018
 
 
-@pytest.fixture(params=[
+@pytest.fixture(
+    params=[
         datetime(2022, 7, 22, 12, 8),
         date(2022, 7, 23),
         datetime(2022, 7, 22, 14, 7, tzinfo=ZoneInfo("Europe/Paris")),
-    ])
+    ]
+)
 def dtend(request, set_component_end, start_end_component):
     """end of the event."""
     set_component_end(start_end_component, request.param)
@@ -146,13 +167,16 @@ def _set_component_end_init(component, end):
     component.clear()
     component.update(type(component)(d))
 
+
 def _set_component_end_property(component, end):
     """Create the event with the dtend property."""
     setattr(component, prop(component, "DTEND"), end)
 
+
 def _set_component_end_attr(component, end):
     """Create the event with the dtend property."""
     component.end = end
+
 
 def _set_component_end_ics(component, end):
     """Create the event with the end property."""
@@ -162,10 +186,19 @@ def _set_component_end_ics(component, end):
     component.clear()
     component.update(type(component).from_ical(ics))
 
-@pytest.fixture(params=[_set_component_end_init, _set_component_end_ics, _set_component_end_property, _set_component_end_attr])
+
+@pytest.fixture(
+    params=[
+        _set_component_end_init,
+        _set_component_end_ics,
+        _set_component_end_property,
+        _set_component_end_attr,
+    ]
+)
 def set_component_end(request):
     """Create a new event."""
     return request.param
+
 
 def test_component_end_property(dtend, start_end_component):
     """Test the end of events."""
@@ -186,33 +219,42 @@ def test_delete_attr(start_end_component, dtstart, dtend, attr):
     delattr(start_end_component, attr)
 
 
-def _set_duration_vdddtypes(event:Event, duration:timedelta):
+def _set_duration_vdddtypes(event: Event, duration: timedelta):
     """Set the vDDDTypes value"""
     event["DURATION"] = vDDDTypes(duration)
 
-def _set_duration_add(event:Event, duration:timedelta):
+
+def _set_duration_add(event: Event, duration: timedelta):
     """Set the vDDDTypes value"""
     event.add("DURATION", duration)
 
-def _set_duration_vduration(event:Event, duration:timedelta):
+
+def _set_duration_vduration(event: Event, duration: timedelta):
     """Set the vDDDTypes value"""
     event["DURATION"] = vDuration(duration)
 
-@pytest.fixture(params=[_set_duration_vdddtypes, _set_duration_add, _set_duration_vduration])
+
+@pytest.fixture(
+    params=[_set_duration_vdddtypes, _set_duration_add, _set_duration_vduration]
+)
 def duration(start_end_component, dtstart, request):
     """... events have a DATE value type for the "DTSTART" property ...
     If such a "VEVENT" has a "DURATION"
     property, it MUST be specified as a "dur-day" or "dur-week" value.
     """
-    duration = timedelta(hours=1) if isinstance(dtstart, datetime) else timedelta(days=2)
+    duration = (
+        timedelta(hours=1) if isinstance(dtstart, datetime) else timedelta(days=2)
+    )
     request.param(start_end_component, duration)
     return duration
+
 
 def test_start_and_duration(start_end_component, dtstart, duration):
     """Check calculation of end with duration."""
     dur = start_end_component.end - start_end_component.start
     assert dur == duration
     assert start_end_component.duration == duration
+
 
 # The "VEVENT" is also the calendar component used to specify an
 # anniversary or daily reminder within a calendar.  These events
@@ -247,18 +289,43 @@ invalid_todo_end_4 = Todo()
 invalid_todo_end_4.add("DTSTART", date(2024, 1, 1))
 invalid_todo_end_4.add("DURATION", timedelta(hours=1))
 
+
 @pytest.mark.parametrize(
     ("invalid_component", "message"),
     [
-        (invalid_event_end_1, "DTSTART and DTEND must be of the same type, either date or datetime."),
-        (invalid_event_end_2, "DTSTART and DTEND must be of the same type, either date or datetime."),
-        (invalid_event_end_3, "Only one of DTEND and DURATION may be in a VEVENT, not both."),
-        (invalid_event_end_4, "When DTSTART is a date, DURATION must be of days or weeks."),
-        (invalid_todo_end_1, "DTSTART and DUE must be of the same type, either date or datetime."),
-        (invalid_todo_end_2, "DTSTART and DUE must be of the same type, either date or datetime."),
-        (invalid_todo_end_3, "Only one of DUE and DURATION may be in a VTODO, not both."),
-        (invalid_todo_end_4, "When DTSTART is a date, DURATION must be of days or weeks."),
-    ]
+        (
+            invalid_event_end_1,
+            "DTSTART and DTEND must be of the same type, either date or datetime.",
+        ),
+        (
+            invalid_event_end_2,
+            "DTSTART and DTEND must be of the same type, either date or datetime.",
+        ),
+        (
+            invalid_event_end_3,
+            "Only one of DTEND and DURATION may be in a VEVENT, not both.",
+        ),
+        (
+            invalid_event_end_4,
+            "When DTSTART is a date, DURATION must be of days or weeks.",
+        ),
+        (
+            invalid_todo_end_1,
+            "DTSTART and DUE must be of the same type, either date or datetime.",
+        ),
+        (
+            invalid_todo_end_2,
+            "DTSTART and DUE must be of the same type, either date or datetime.",
+        ),
+        (
+            invalid_todo_end_3,
+            "Only one of DUE and DURATION may be in a VTODO, not both.",
+        ),
+        (
+            invalid_todo_end_4,
+            "When DTSTART is a date, DURATION must be of days or weeks.",
+        ),
+    ],
 )
 @pytest.mark.parametrize("attr", ["start", "end"])
 def test_invalid_event(invalid_component, message, attr):
@@ -266,6 +333,7 @@ def test_invalid_event(invalid_component, message, attr):
     with pytest.raises(InvalidCalendar) as e:
         getattr(invalid_component, attr)
     assert e.value.args[0] == message
+
 
 def test_event_duration_zero():
     """
@@ -300,8 +368,9 @@ def test_todo_duration_zero():
     assert todo.end == todo.start
     assert todo.duration == timedelta(days=0)
 
+
 def test_todo_duration_one_day():
-    """ The end is at the end of the day, excluding midnight.
+    """The end is at the end of the day, excluding midnight.
 
     RFC 5545:
     The following is an example of a "VTODO" calendar
@@ -314,14 +383,12 @@ def test_todo_duration_one_day():
     assert event.duration == timedelta(days=1)
 
 
-
 incomplete_event_1 = Event()
 incomplete_event_2 = Event()
 incomplete_event_2.add("DURATION", timedelta(hours=1))
 incomplete_todo_1 = Todo()
 incomplete_todo_2 = Todo()
 incomplete_todo_2.add("DURATION", timedelta(hours=1))
-
 
 
 @pytest.mark.parametrize(
@@ -331,7 +398,7 @@ incomplete_todo_2.add("DURATION", timedelta(hours=1))
         incomplete_event_2,
         incomplete_todo_1,
         incomplete_todo_2,
-    ]
+    ],
 )
 @pytest.mark.parametrize("attr", ["start", "end", "duration"])
 def test_incomplete_event(incomplete_event_end, attr):
@@ -346,23 +413,23 @@ def test_incomplete_event(incomplete_event_end, attr):
         object(),
         timedelta(days=1),
         (datetime(2024, 10, 11, 10, 20), timedelta(days=1)),
-    ]
+    ],
 )
 @pytest.mark.parametrize(
     ("Component", "attr"),
     [
-        (Event,"start"),
-        (Event,"end"),
-        (Event,"DTSTART"),
-        (Event,"DTEND"),
-        (Journal,"start"),
-        (Journal,"end"),
-        (Journal,"DTSTART"),
-        (Todo,"start"),
-        (Todo,"end"),
-        (Todo,"DTSTART"),
-        (Todo,"DUE"),
-    ]
+        (Event, "start"),
+        (Event, "end"),
+        (Event, "DTSTART"),
+        (Event, "DTEND"),
+        (Journal, "start"),
+        (Journal, "end"),
+        (Journal, "DTSTART"),
+        (Todo, "start"),
+        (Todo, "end"),
+        (Todo, "DTSTART"),
+        (Todo, "DUE"),
+    ],
 )
 def test_set_invalid_start(invalid_value, attr, Component):
     """Check that we get the right error.
@@ -373,11 +440,14 @@ def test_set_invalid_start(invalid_value, attr, Component):
     component = Component()
     with pytest.raises(TypeError) as e:
         setattr(component, attr, invalid_value)
-    assert e.value.args[0] == f"Use datetime or date, not {type(invalid_value).__name__}."
+    assert (
+        e.value.args[0] == f"Use datetime or date, not {type(invalid_value).__name__}."
+    )
 
 
-def setitem(d:dict, key, value):
+def setitem(d: dict, key, value):
     d[key] = value
+
 
 @pytest.mark.parametrize(
     "invalid_value",
@@ -387,14 +457,17 @@ def setitem(d:dict, key, value):
         (datetime(2024, 10, 11, 10, 20), timedelta(days=1)),
         date(2012, 2, 2),
         datetime(2022, 2, 2),
-    ]
+    ],
 )
 def test_check_invalid_duration(start_end_component, invalid_value):
     """Check that we get the right error."""
     start_end_component["DURATION"] = invalid_value
     with pytest.raises(InvalidCalendar) as e:
         start_end_component.DURATION  # noqa: B018
-    assert e.value.args[0] == f"DURATION must be a timedelta, not {type(invalid_value).__name__}."
+    assert (
+        e.value.args[0]
+        == f"DURATION must be a timedelta, not {type(invalid_value).__name__}."
+    )
 
 
 def test_setting_the_end_deletes_the_duration(start_end_component):
@@ -419,14 +492,17 @@ def test_setting_duration_deletes_the_end(start_end_component):
     assert getattr(start_end_component, DTEND) is None
     assert start_end_component.DURATION == timedelta(days=1)
 
+
 valid_values = pytest.mark.parametrize(
     ("attr", "value"),
     [
         ("DTSTART", datetime(2024, 10, 11, 10, 20)),
         ("DTEND", datetime(2024, 10, 11, 10, 20)),
         ("DURATION", timedelta(days=1)),
-    ]
+    ],
 )
+
+
 @valid_values
 def test_setting_to_none_deletes_value(start_end_component, attr, value):
     """Setting attributes to None deletes them."""
@@ -462,12 +538,16 @@ def test_delete_duration(start_end_component):
     del start_end_component.DURATION
     assert start_end_component.DURATION is None
 
+
 @pytest.mark.parametrize("attr", ["DTSTART", "end", "start"])
-@pytest.mark.parametrize("start", [
-    datetime(2024, 10, 11, 10, 20),
-    date(2024, 10, 11),
-    datetime(2024, 10, 11, 10, 20, tzinfo=ZoneInfo("Europe/Paris")),
-])
+@pytest.mark.parametrize(
+    "start",
+    [
+        datetime(2024, 10, 11, 10, 20),
+        date(2024, 10, 11),
+        datetime(2024, 10, 11, 10, 20, tzinfo=ZoneInfo("Europe/Paris")),
+    ],
+)
 def test_journal_start(start, attr):
     """Test that we can set the start of a journal."""
     j = Journal()
@@ -476,6 +556,7 @@ def test_journal_start(start, attr):
     assert j.start == start
     assert j.end == start
     assert j.duration == timedelta(0)
+
 
 @pytest.mark.parametrize("attr", ["start", "end"])
 def test_delete_journal_start(attr):
@@ -488,9 +569,10 @@ def test_delete_journal_start(attr):
     with pytest.raises(IncompleteComponent):
         getattr(j, attr)
 
+
 def setting_twice_does_not_duplicate_the_entry():
     j = Journal()
-    j.DTSTART = date(2024, 1,1 )
+    j.DTSTART = date(2024, 1, 1)
     j.DTSTART = date(2024, 1, 3)
     assert date(2024, 1, 3) == j.DTSTART
     assert j.start == date(2024, 1, 3)
@@ -500,10 +582,14 @@ def setting_twice_does_not_duplicate_the_entry():
 @pytest.mark.parametrize(
     ("file", "trigger", "related"),
     [
-        ("rfc_5545_absolute_alarm_example", vDatetime.from_ical("19970317T133000Z"), "START"),
+        (
+            "rfc_5545_absolute_alarm_example",
+            vDatetime.from_ical("19970317T133000Z"),
+            "START",
+        ),
         ("rfc_5545_end", timedelta(days=-2), "END"),
         ("start_date", timedelta(days=-2), "START"),
-    ]
+    ],
 )
 def test_get_alarm_trigger_property(alarms, file, trigger, related):
     """Get the trigger property."""
@@ -533,21 +619,38 @@ def test_get_related_without_trigger():
     """The default is start"""
     assert Alarm().TRIGGER_RELATED == "START"
 
+
 def test_cannot_set_related_without_trigger():
     """TRIGGER must be set to set the parameter."""
     with pytest.raises(ValueError) as e:
         a = Alarm()
         a.TRIGGER_RELATED = "END"
-    assert e.value.args[0] == "You must set a TRIGGER before setting the RELATED parameter."
+    assert (
+        e.value.args[0]
+        == "You must set a TRIGGER before setting the RELATED parameter."
+    )
 
 
 @pytest.mark.parametrize(
     ("file", "triggers"),
     [
-        ("rfc_5545_absolute_alarm_example", ((), (), (vDatetime.from_ical("19970317T133000Z"), vDatetime.from_ical("19970317T134500Z"),vDatetime.from_ical("19970317T140000Z"),vDatetime.from_ical("19970317T141500Z"),vDatetime.from_ical("19970317T143000Z"),))),
+        (
+            "rfc_5545_absolute_alarm_example",
+            (
+                (),
+                (),
+                (
+                    vDatetime.from_ical("19970317T133000Z"),
+                    vDatetime.from_ical("19970317T134500Z"),
+                    vDatetime.from_ical("19970317T140000Z"),
+                    vDatetime.from_ical("19970317T141500Z"),
+                    vDatetime.from_ical("19970317T143000Z"),
+                ),
+            ),
+        ),
         ("rfc_5545_end", ((), (timedelta(days=-2),), ())),
         ("start_date", ((timedelta(days=-2),), (), ())),
-    ]
+    ],
 )
 def test_get_alarm_triggers(alarms, file, triggers):
     """Get the trigger property."""
@@ -561,7 +664,9 @@ def test_triggers_emtpy_alarm():
     """An alarm with no trigger has no triggers."""
     assert Alarm().triggers == ((), (), ())
 
+
 h1 = timedelta(hours=1)
+
 
 def test_triggers_emtpy_with_no_repeat():
     """Check incomplete values."""
@@ -569,6 +674,7 @@ def test_triggers_emtpy_with_no_repeat():
     a.TRIGGER = h1
     a.DURATION = h1
     assert a.triggers == ((h1,), (), ())
+
 
 def test_triggers_emtpy_with_no_duration():
     """Check incomplete values."""
@@ -581,10 +687,13 @@ def test_triggers_emtpy_with_no_duration():
 @pytest.mark.parametrize(
     ("file", "triggers"),
     [
-        ("rfc_5545_absolute_alarm_example", ((), (), (vDatetime.from_ical("19970317T133000Z"),))),
+        (
+            "rfc_5545_absolute_alarm_example",
+            ((), (), (vDatetime.from_ical("19970317T133000Z"),)),
+        ),
         ("rfc_5545_end", ((), (timedelta(days=-2),), ())),
         ("start_date", ((timedelta(days=-2),), (), ())),
-    ]
+    ],
 )
 @pytest.mark.parametrize("duration", [timedelta(days=-1), h1])
 @pytest.mark.parametrize("repeat", [1, 3])

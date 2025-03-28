@@ -138,6 +138,11 @@ def test_create_america_new_york(calendars, tzp):
     dt = cal.events[0].start
     assert tzid_from_dt(dt) in ("custom_America/New_York", "EDT")
 
+def test_create_america_new_york_forward_reference(calendars, tzp):
+    """testing America/New_York variant with VTIMEZONE as a forward reference"""
+    cal = calendars.america_new_york_forward_reference
+    dt = cal.walk('VEVENT')[0]['DTSTART'][0].dt
+    assert tzid_from_dt(dt) in ('custom_America/New_York_Forward_reference', "EDT")
 
 def test_america_new_york_with_pytz(calendars, tzp, pytz_only):
     """Create a custom timezone with pytz and test the transition times."""

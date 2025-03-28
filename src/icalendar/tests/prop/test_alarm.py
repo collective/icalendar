@@ -1,6 +1,5 @@
 """Test the properties of the alarm."""
 
-
 import pytest
 
 from icalendar.cal import Alarm, InvalidCalendar
@@ -52,6 +51,3 @@ def test_alarm_to_string():
     a = Alarm()
     a.REPEAT = 11
     assert a.to_ical() == b"BEGIN:VALARM\r\nREPEAT:11\r\nEND:VALARM\r\n"
-
-
-
