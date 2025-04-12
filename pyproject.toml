@@ -6,13 +6,13 @@
 #
 
 [build-system]
-requires = ["hatchling", "hatch-vcs"]
+requires = ["hatchling>=1.27.0", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
 name = "icalendar"
-license = { file = "LICENSE.rst", name = "BSD-2-Clause" }
-#    name = "BSD-2-Clause", # TODO: is this the right short key
+license = "BSD-2-Clause"
+license-files = ["LICENSE.rst"]
 keywords = [
     "calendar",
     "calendaring",
