@@ -7,6 +7,7 @@ Changelog
 Minor changes:
 
 - Use ``ruff`` to format the source code.
+- Update project metadata to use License-Expression.
 
 Breaking changes:
 
