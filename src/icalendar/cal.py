@@ -16,6 +16,7 @@ from typing import TYPE_CHECKING, List, NamedTuple, Optional, Tuple, Union
 import dateutil.rrule
 import dateutil.tz
 
+from icalendar.attr import multi_language_text_property
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_split
 from icalendar.parser_tools import DEFAULT_ENCODING
@@ -1898,6 +1899,10 @@ class Calendar(Component):
         "PRODID",
         "CALSCALE",
         "METHOD",
+        "NAME",
+        "X-WR-CALNAME",
+        "DESCRIPTION",
+        "X-WR-CALDESC",
     )
     required = (
         "PRODID",
@@ -2055,6 +2060,107 @@ class Calendar(Component):
                 continue
             self.add_component(timezone)
 
+    calendar_name = multi_language_text_property(
+        "NAME", "X-WR-CALNAME",
+        """This property specifies the name of the calendar
+
+    This takes care of :rfc:`7986` ``NAME`` and ``X-WR-CALNAME``.
+
+    Property Parameters:
+
+        IANA, non-standard, alternate text
+        representation, and language property parameters can be specified
+        on this property.
+
+    Conformance:
+
+        This property can be specified multiple times in an
+        iCalendar object.  However, each property MUST represent the name
+        of the calendar in a different language.
+
+    Description:
+
+        This property is used to specify a name of the
+        iCalendar object that can be used by calendar user agents when
+        presenting the calendar data to a user.  Whilst a calendar only
+        has a single name, multiple language variants can be specified by
+        including this property multiple times with different "LANGUAGE"
+        parameter values on each.
+
+    >>> from icalendar import Calendar
+    >>> calendar = Calendar()
+    >>> calendar.calendar_name = "My Calendar"
+    >>> print(calendar.to_ical())
+    BEGIN:VCALENDAR
+    NAME:My Calendar
+    END:VCALENDAR
+    """)
+
+    description = calendar_description = multi_language_text_property(
+        "DESCRIPTION", "X-WR-CALDESC",
+        """This property specifies the description of the calendar.
+
+    This takes care of :rfc:`7986` ``DESCRIPTION`` and ``X-WR-CALDESC``.
+
+    Conformance:
+
+        This property can be specified multiple times in an
+        iCalendar object.  However, each property MUST represent the
+        description of the calendar in a different language.
+
+    Description:
+
+        This property is used to specify a lengthy textual
+        description of the iCalendar object that can be used by calendar
+        user agents when describing the nature of the calendar data to a
+        user.  Whilst a calendar only has a single description, multiple
+        language variants can be specified by including this property
+        multiple times with different "LANGUAGE" parameter values on each.
+
+    >>> from icalendar import Calendar
+    >>> calendar = Calendar()
+    >>> calendar.description = "This is a calendar"
+    >>> print(calendar.to_ical())
+    BEGIN:VCALENDAR
+    DESCRIPTION:This is a calendar
+    END:VCALENDAR
+    """)
+
+    color = calendar_color = multi_language_text_property(
+        "COLOR", "X-APPLE-CALENDAR-COLOR",
+        """This property specifies a color used for displaying the calendar.
+
+    This takes care of :rfc:`7986` ``COLOR`` and ``X-APPLE-CALENDAR-COLOR``.
+
+    Property Parameters:
+
+        IANA and non-standard property parameters can
+        be specified on this property.
+
+    Conformance:
+
+        This property can be specified once in an iCalendar
+        object or in "VEVENT", "VTODO", or "VJOURNAL" calendar components.
+
+    Description:
+
+        This property specifies a color that clients MAY use
+        when presenting the relevant data to a user.  Typically, this
+        would appear as the "background" color of events or tasks.  The
+        value is a case-insensitive color name taken from the CSS3 set of
+        names, defined in Section 4.3 of [W3C.REC-css3-color-20110607].
+
+    Example: ``"turquoise"``, ``"#ffffff"``
+
+    >>> from icalendar import Calendar
+    >>> calendar = Calendar()
+    >>> calendar.color = "black"
+    >>> print(calendar.to_ical())
+    BEGIN:VCALENDAR
+    COLOR:black
+    END:VCALENDAR
+    """
+    )
 
 # These are read only singleton, so one instance is enough for the module
 types_factory = TypesFactory()
