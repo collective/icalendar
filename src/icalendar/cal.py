@@ -1899,10 +1899,10 @@ class Calendar(Component):
         "PRODID",
         "CALSCALE",
         "METHOD",
-        "NAME",
-        "X-WR-CALNAME",
         "DESCRIPTION",
         "X-WR-CALDESC",
+        "NAME",
+        "X-WR-CALNAME",
     )
     required = (
         "PRODID",
