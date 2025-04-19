@@ -2148,7 +2148,7 @@ class Calendar(Component):
         when presenting the relevant data to a user.  Typically, this
         would appear as the "background" color of events or tasks.  The
         value is a case-insensitive color name taken from the CSS3 set of
-        names, defined in Section 4.3 of [W3C.REC-css3-color-20110607].
+        names, defined in Section 4.3 of `W3C.REC-css3-color-20110607 <https://www.w3.org/TR/css-color-3/>`_.
 
     Example: ``"turquoise"``, ``"#ffffff"``
 
