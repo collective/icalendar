@@ -2130,7 +2130,7 @@ class Calendar(Component):
         "COLOR", "X-APPLE-CALENDAR-COLOR",
         """This property specifies a color used for displaying the calendar.
 
-    This takes care of :rfc:`7986` ``COLOR`` and ``X-APPLE-CALENDAR-COLOR``.
+    This implements :rfc:`7986` ``COLOR`` and ``X-APPLE-CALENDAR-COLOR``.
 
     Property Parameters:
 
