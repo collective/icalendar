@@ -2062,7 +2062,7 @@ class Calendar(Component):
 
     calendar_name = multi_language_text_property(
         "NAME", "X-WR-CALNAME",
-        """This property specifies the name of the calendar
+        """This property specifies the name of the calendar.
 
     This takes care of :rfc:`7986` ``NAME`` and ``X-WR-CALNAME``.
 
