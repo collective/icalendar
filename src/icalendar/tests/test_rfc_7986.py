@@ -89,8 +89,8 @@ def test_name_is_preferred(calendar, name):
 
 
 
-# For description, we would use the same tests as name but we also use the
-# same code, so it is alright.
+# For description, we would use the same tests as name, but we also use the
+# same code, so it is all right.
 
 param_color = pytest.mark.parametrize("desc", ["DESCRIPTION", "X-WR-CALDESC"])
 
