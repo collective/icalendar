@@ -101,8 +101,8 @@ def test_description(calendar, desc, name):
     calendar.add(desc, name)
     assert calendar.calendar_description == name
 
-# For color, we would use the same tests as name but we also use the
-# same code, so it is alright.
+# For color, we would use the same tests as name, but we also use the
+# same code, so it is all right.
 
 param_color = pytest.mark.parametrize("color", ["COLOR", "X-APPLE-CALENDAR-COLOR"])
 
