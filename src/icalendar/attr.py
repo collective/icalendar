@@ -7,7 +7,7 @@ from typing import Optional
 def multi_language_text_property(main_prop:str, compatibility_prop:str, doc:str) -> property:
     """This creates a text property.
 
-    This property can be defined several times with different LANGAUGE parameters.
+    This property can be defined several times with different ``LANGUAGE`` parameters.
 
     Args:
 
