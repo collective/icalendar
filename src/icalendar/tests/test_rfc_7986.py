@@ -1,4 +1,4 @@
-"""This tests additional attributes from RFC 7986.
+"""This tests additional attributes from :rfc:`7986`.
 
 Some attributes are also available as X-... attributes.
 They are also considered.
