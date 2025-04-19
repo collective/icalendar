@@ -2064,7 +2064,7 @@ class Calendar(Component):
         "NAME", "X-WR-CALNAME",
         """This property specifies the name of the calendar.
 
-    This takes care of :rfc:`7986` ``NAME`` and ``X-WR-CALNAME``.
+    This implements :rfc:`7986` ``NAME`` and ``X-WR-CALNAME``.
 
     Property Parameters:
 
