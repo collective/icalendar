@@ -2140,7 +2140,7 @@ class Calendar(Component):
     Conformance:
 
         This property can be specified once in an iCalendar
-        object or in "VEVENT", "VTODO", or "VJOURNAL" calendar components.
+        object or in ``VEVENT``, ``VTODO``, or ``VJOURNAL`` calendar components.
 
     Description:
 
