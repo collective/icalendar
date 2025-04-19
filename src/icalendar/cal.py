@@ -2100,7 +2100,7 @@ class Calendar(Component):
         "DESCRIPTION", "X-WR-CALDESC",
         """This property specifies the description of the calendar.
 
-    This takes care of :rfc:`7986` ``DESCRIPTION`` and ``X-WR-CALDESC``.
+    This implements :rfc:`7986` ``DESCRIPTION`` and ``X-WR-CALDESC``.
 
     Conformance:
 
