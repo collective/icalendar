@@ -11,8 +11,8 @@ def multi_language_text_property(main_prop:str, compatibility_prop:str, doc:str)
 
     Args:
 
-        main_prop: The property to set and get, e.g. NAME
-        compatibility_prop: An old property used before, e.g. X-WR-CALNAME
+        main_prop: The property to set and get, such as ``NAME``
+        compatibility_prop: An old property used before, such as ``X-WR-CALNAME``
         doc: The documentation string
     """
     def fget(self) -> Optional[str]:
