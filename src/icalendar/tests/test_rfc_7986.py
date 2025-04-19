@@ -1,6 +1,6 @@
 """This tests additional attributes from :rfc:`7986`.
 
-Some attributes are also available as X-... attributes.
+Some attributes are also available as ``X-*`` attributes.
 They are also considered.
 """
 
