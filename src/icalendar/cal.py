@@ -2096,7 +2096,7 @@ class Calendar(Component):
     END:VCALENDAR
     """)
 
-    description = calendar_description = multi_language_text_property(
+    description = multi_language_text_property(
         "DESCRIPTION", "X-WR-CALDESC",
         """This property specifies the description of the calendar.
 
@@ -2126,7 +2126,7 @@ class Calendar(Component):
     END:VCALENDAR
     """)
 
-    color = calendar_color = multi_language_text_property(
+    color = multi_language_text_property(
         "COLOR", "X-APPLE-CALENDAR-COLOR",
         """This property specifies a color used for displaying the calendar.
 
