@@ -17,6 +17,12 @@ from datetime import date, timedelta, tzinfo
 from typing import TYPE_CHECKING, Generator, Optional, Union
 
 from icalendar.cal import Alarm, Event, Todo
+from icalendar.error import (
+    ComponentEndMissing,
+    ComponentStartMissing,
+    IncompleteAlarmInformation,
+    LocalTimezoneMissing,
+)
 from icalendar.timezone import tzp
 from icalendar.tools import is_date, normalize_pytz, to_datetime
 
@@ -24,31 +30,6 @@ if TYPE_CHECKING:
     from datetime import datetime
 
 Parent = Union[Event, Todo]
-
-
-class IncompleteAlarmInformation(ValueError):
-    """The alarms cannot be calculated yet because information is missing."""
-
-
-class ComponentStartMissing(IncompleteAlarmInformation):
-    """We are missing the start of a component that the alarm is for.
-
-    Use Alarms.set_start().
-    """
-
-
-class ComponentEndMissing(IncompleteAlarmInformation):
-    """We are missing the end of a component that the alarm is for.
-
-    Use Alarms.set_end().
-    """
-
-
-class LocalTimezoneMissing(IncompleteAlarmInformation):
-    """We are missing the local timezone to compute the value.
-
-    Use Alarms.set_local_timezone().
-    """
 
 
 class AlarmTime:
@@ -394,5 +375,4 @@ __all__ = [
     "IncompleteAlarmInformation",
     "ComponentEndMissing",
     "ComponentStartMissing",
-    "LocalTimezoneMissing",
 ]

@@ -5,7 +5,8 @@ from datetime import date, datetime, timedelta
 import pytest
 
 from icalendar import Event, FreeBusy, Journal, Todo, vDDDTypes
-from icalendar.cal import Component, InvalidCalendar
+from icalendar.error import InvalidCalendar
+from icalendar.cal import Component
 
 
 @pytest.fixture(params=[Event, Todo, Journal, FreeBusy])

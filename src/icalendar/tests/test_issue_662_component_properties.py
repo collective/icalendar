@@ -5,6 +5,7 @@ from datetime import date, datetime, timedelta
 
 import pytest
 
+from icalendar.error import IncompleteComponent, InvalidCalendar
 from icalendar.cal import Alarm
 
 try:
@@ -14,8 +15,6 @@ except ImportError:
 
 from icalendar import (
     Event,
-    IncompleteComponent,
-    InvalidCalendar,
     Journal,
     Todo,
     vDDDTypes,

@@ -9,31 +9,31 @@ from __future__ import annotations
 import os
 from collections import defaultdict
 from datetime import date, datetime, timedelta, tzinfo
-from typing import List, Optional, Tuple
-from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, List, NamedTuple, Optional, Tuple, Union
 
 import dateutil.rrule
 import dateutil.tz
 
-from icalendar.attr import multi_language_text_property
+from icalendar.attr import (
+    multi_language_text_property,
+    sequence_property,
+    single_int_property,
+    single_utc_property,
+)
 from icalendar.caselessdict import CaselessDict
+from icalendar.error import IncompleteComponent, InvalidCalendar
 from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_split
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import (
     TypesFactory,
-    tzid_from_dt,
     tzid_from_tzinfo,
     vDDDLists,
     vDDDTypes,
     vDuration,
     vText,
     vUTCOffset,
-    vDatetime,
 )
 from icalendar.timezone import TZP, tzp
-from icalendar.prop import TypesFactory, vDDDLists, vDDDTypes, vDuration, vText
-from icalendar.timezone import tzp
 from icalendar.tools import is_date
 
 if TYPE_CHECKING:
@@ -89,63 +89,6 @@ INLINE = CaselessDict(
 )
 
 _marker = []
-
-
-class InvalidCalendar(ValueError):
-    """The calendar given is not valid.
-
-    This calendar does not conform with RFC 5545 or breaks other RFCs.
-    """
-
-
-class IncompleteComponent(ValueError):
-    """The component is missing attributes.
-
-    The attributes are not required, otherwise this would be
-    an InvalidCalendar. But in order to perform calculations,
-    this attribute is required.
-
-    This error is not raised in the UPPERCASE properties like .DTSTART,
-    only in the lowercase computations like .start.
-    """
-
-
-def create_utc_property(name: str, docs: str) -> property:
-    """Create a property to access a value of datetime in UTC timezone.
-
-    name - name of the property
-    docs - documentation string
-    """
-    docs = (
-        f"""The {name} property. datetime in UTC
-
-    All values will be converted to a datetime in UTC.
-    """
-        + docs
-    )
-
-    def p_get(self: Component) -> Optional[datetime]:
-        """Get the value."""
-        if name not in self:
-            return None
-        dt = self.get(name)
-        if isinstance(dt, vText):
-            # we might be in an attribute that is not typed
-            value = vDDDTypes.from_ical(dt)
-        else:
-            value = getattr(dt, "dt", None)
-        if value is None or not isinstance(value, date):
-            raise InvalidCalendar(f"{name} must be a datetime in UTC, not {value}")
-        return tzp.localize_utc(value)
-
-    def p_set(self: Component, value: datetime):
-        """Set the value"""
-        if not isinstance(value, date):
-            raise TypeError(f"{name} takes a datetime in UTC, not {value}")
-        self.pop(name)
-        self.add(name, tzp.localize_utc(value))
-
-    return property(p_get, p_set, doc=docs)
 
 
 class Component(CaselessDict):
@@ -578,7 +521,7 @@ class Component(CaselessDict):
 
         return True
 
-    DTSTAMP = create_utc_property(
+    DTSTAMP = single_utc_property(
         "DTSTAMP",
         """RFC 5545:
 
@@ -600,7 +543,7 @@ class Component(CaselessDict):
         property.
     """,
     )
-    LAST_MODIFIED = create_utc_property(
+    LAST_MODIFIED = single_utc_property(
         "LAST-MODIFIED",
         """RFC 5545:
 
@@ -690,10 +633,10 @@ def create_single_property(
     return property(p_get, p_set, p_del, p_doc)
 
 
-_X_MOZ_SNOOZE_TIME = create_utc_property(
+_X_MOZ_SNOOZE_TIME = single_utc_property(
     "X-MOZ-SNOOZE-TIME", "Thunderbird: Alarms before this time are snoozed."
 )
-_X_MOZ_LASTACK = create_utc_property(
+_X_MOZ_LASTACK = single_utc_property(
     "X-MOZ-LASTACK", "Thunderbird: Alarms before this time are acknowledged."
 )
 
@@ -950,6 +893,7 @@ class Event(Component):
 
     X_MOZ_SNOOZE_TIME = _X_MOZ_SNOOZE_TIME
     X_MOZ_LASTACK = _X_MOZ_LASTACK
+    sequence = sequence_property
 
 
 class Todo(Component):
@@ -1138,6 +1082,8 @@ class Todo(Component):
 
         return Alarms(self)
 
+    sequence = sequence_property
+
 
 class Journal(Component):
     """A descriptive text at a certain time or associated with a component.
@@ -1220,6 +1166,8 @@ class Journal(Component):
     def duration(self) -> timedelta:
         """The journal has no duration: timedelta(0)."""
         return timedelta(0)
+
+    sequence = sequence_property
 
 
 class FreeBusy(Component):
@@ -1708,8 +1656,8 @@ class Alarm(Component):
     )
     multiple = ("ATTENDEE", "ATTACH", "RELATED-TO")
 
-    @property
-    def REPEAT(self) -> int:
+    REPEAT = single_int_property(
+        "REPEAT", 0,
         """The REPEAT property of an alarm component.
 
         The alarm can be defined such that it triggers repeatedly.  A
@@ -1720,15 +1668,7 @@ class Alarm(Component):
         repetitions that the alarm will be triggered.  This repetition
         count is in addition to the initial triggering of the alarm.
         """
-        try:
-            return int(self.get("REPEAT", 0))
-        except ValueError as e:
-            raise InvalidCalendar("REPEAT must be an int") from e
-
-    @REPEAT.setter
-    def REPEAT(self, value: int) -> None:
-        """The REPEAT property of an alarm component."""
-        self["REPEAT"] = int(value)
+    )
 
     DURATION = property(
         _get_duration,
@@ -1743,7 +1683,7 @@ class Alarm(Component):
     """,
     )
 
-    ACKNOWLEDGED = create_utc_property(
+    ACKNOWLEDGED = single_utc_property(
         "ACKNOWLEDGED",
         """This is defined in RFC 9074:
 
@@ -2182,5 +2122,4 @@ __all__ = [
     "component_factory",
     "get_example",
     "IncompleteComponent",
-    "InvalidCalendar",
 ]

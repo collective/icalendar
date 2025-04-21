@@ -17,8 +17,9 @@ from datetime import date, datetime, timedelta, timezone
 import pytest
 
 from icalendar import Event
-from icalendar.alarms import Alarms, IncompleteAlarmInformation
+from icalendar.alarms import Alarms
 from icalendar.cal import Alarm
+from icalendar.error import IncompleteAlarmInformation
 from icalendar.prop import vDatetime
 from icalendar.tools import normalize_pytz
 

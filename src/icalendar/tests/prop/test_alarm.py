@@ -2,7 +2,8 @@
 
 import pytest
 
-from icalendar.cal import Alarm, InvalidCalendar
+from icalendar.error import InvalidCalendar
+from icalendar.cal import Alarm
 
 
 def test_repeat_absent():
