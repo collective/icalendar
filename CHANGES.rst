@@ -15,7 +15,7 @@ Breaking changes:
 
 New features:
 
-- ...
+- Add attributes to the calendar for properties ``NAME``, ``DESCRIPTION``, and ``COLOR``. See `Issue 655 <https://github.com/collective/icalendar/issues/655>`_.
 
 Bug fixes:
 
