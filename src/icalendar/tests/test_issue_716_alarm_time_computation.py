@@ -428,3 +428,11 @@ def test_set_to_None():
     a.acknowledge_until(None)
     a.snooze_until(None)
     assert vars(a) == vars(Alarms())
+
+
+def test_delete_TRIGGER():
+    """Delete the TRIGGER property."""
+    a = Alarm()
+    a.TRIGGER = datetime(2017, 12, 1, 10, 1)
+    del a.TRIGGER
+    assert a.TRIGGER is None
