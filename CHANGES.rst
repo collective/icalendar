@@ -8,6 +8,7 @@ Minor changes:
 
 - Use ``ruff`` to format the source code.
 - Update project metadata to use License-Expression.
+- Switch to PyData Sphinx Theme for documentation. See `Issue 803 <https://github.com/collective/icalendar/issues/804>`_.
 
 Breaking changes:
 
