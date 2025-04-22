@@ -17,8 +17,9 @@ from datetime import date, datetime, timedelta, timezone
 import pytest
 
 from icalendar import Event
-from icalendar.alarms import Alarms, IncompleteAlarmInformation
+from icalendar.alarms import Alarms
 from icalendar.cal import Alarm
+from icalendar.error import IncompleteAlarmInformation
 from icalendar.prop import vDatetime
 from icalendar.tools import normalize_pytz
 
@@ -427,3 +428,11 @@ def test_set_to_None():
     a.acknowledge_until(None)
     a.snooze_until(None)
     assert vars(a) == vars(Alarms())
+
+
+def test_delete_TRIGGER():
+    """Delete the TRIGGER property."""
+    a = Alarm()
+    a.TRIGGER = datetime(2017, 12, 1, 10, 1)
+    del a.TRIGGER
+    assert a.TRIGGER is None

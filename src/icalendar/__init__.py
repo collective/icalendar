@@ -1,10 +1,6 @@
 from icalendar.alarms import (
     Alarms,
     AlarmTime,
-    ComponentEndMissing,
-    ComponentStartMissing,
-    IncompleteAlarmInformation,
-    LocalTimezoneMissing,
 )
 from icalendar.cal import (
     Alarm,
@@ -13,13 +9,19 @@ from icalendar.cal import (
     ComponentFactory,
     Event,
     FreeBusy,
-    IncompleteComponent,
-    InvalidCalendar,
     Journal,
     Timezone,
     TimezoneDaylight,
     TimezoneStandard,
     Todo,
+)
+from icalendar.error import (
+    ComponentEndMissing,
+    ComponentStartMissing,
+    IncompleteAlarmInformation,
+    IncompleteComponent,
+    InvalidCalendar,
+    LocalTimezoneMissing,
 )
 
 # Parameters and helper methods for splitting and joining string with escaped
