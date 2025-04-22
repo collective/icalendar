@@ -26,6 +26,12 @@ icalendar.cli
 .. automodule:: icalendar.cli
    :members:
 
+icalendar.error
++++++++++++++++
+
+.. automodule:: icalendar.error
+   :members:
+
 icalendar.parser
 ++++++++++++++++
 
@@ -54,6 +60,9 @@ icalendar.timezone
 ++++++++++++++++++
 
 .. automodule:: icalendar.timezone
+   :members:
+
+.. automodule:: icalendar.timezone.tzid
    :members:
 
 .. automodule:: icalendar.timezone.tzp
