@@ -6,6 +6,7 @@ It is stupid in the sense that it treats the content purely as strings. No type
 conversion is attempted.
 """
 
+import os
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.parser_tools import SEQUENCE_TYPES
@@ -232,13 +233,13 @@ class Parameters(CaselessDict):
                     if v.startswith('"') and v.endswith('"'):
                         v = v.strip('"')
                         validate_param_value(v, quoted=True)
-                        vals.append(v)
+                        vals.append(rfc_6868_unescape(v))
                     else:
                         validate_param_value(v, quoted=False)
                         if strict:
-                            vals.append(v.upper())
+                            vals.append(rfc_6868_unescape(v.upper()))
                         else:
-                            vals.append(v)
+                            vals.append(rfc_6868_unescape(v))
                 if not vals:
                     result[key] = val
                 else:
@@ -268,6 +269,25 @@ def unescape_string(val):
         .replace("%3B", ";")
         .replace("%5C", "\\")
     )
+
+
+RFC_6868_UNESCAPE_REGEX = re.compile(r"\^\^|\^n|\^'")
+
+
+def rfc_6868_unescape(param_value: str) -> str:
+    """Take care of :rfc:`6868` escaping.
+
+    - ^^ -> ^
+    - ^n -> system specific newline
+    - ^' -> "
+    - ^ with others stay intact
+    """
+    rfc_6868_unescape = {
+        "^^": "^",
+        "^n": os.linesep,
+        "^'": '"',
+    }
+    return RFC_6868_UNESCAPE_REGEX.sub(lambda m: rfc_6868_unescape.get(m.group(0), m.group(0)), param_value)
 
 
 def unescape_list_or_string(val):
@@ -351,7 +371,7 @@ class Contentline(str):
         except ValueError as exc:
             raise ValueError(
                 f"Content line could not be parsed into parts: '{self}': {exc}"
-            )
+            ) from exc
 
     @classmethod
     def from_ical(cls, ical, strict=False):
