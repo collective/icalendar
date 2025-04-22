@@ -8,7 +8,7 @@ conversion is attempted.
 
 import os
 from icalendar.caselessdict import CaselessDict
-from icalendar.parser_tools import DEFAULT_ENCODING
+from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE
 from icalendar.parser_tools import SEQUENCE_TYPES
 from icalendar.parser_tools import to_unicode
 
@@ -95,10 +95,9 @@ def param_value(value):
     """Returns a parameter value."""
     if isinstance(value, SEQUENCE_TYPES):
         return q_join(value)
-    elif isinstance(value, str):
-        return dquote(value)
-    else:
-        return dquote(value.to_ical().decode(DEFAULT_ENCODING))
+    if isinstance(value, str):
+        return dquote(rfc_6868_escape(value))
+    return dquote(rfc_6868_escape(value.to_ical().decode(DEFAULT_ENCODING)))
 
 
 # Could be improved
@@ -275,20 +274,38 @@ RFC_6868_UNESCAPE_REGEX = re.compile(r"\^\^|\^n|\^'")
 
 
 def rfc_6868_unescape(param_value: str) -> str:
-    """Take care of :rfc:`6868` escaping.
+    """Take care of :rfc:`6868` unescaping.
 
     - ^^ -> ^
     - ^n -> system specific newline
     - ^' -> "
     - ^ with others stay intact
     """
-    rfc_6868_unescape = {
+    replacements = {
         "^^": "^",
         "^n": os.linesep,
         "^'": '"',
     }
-    return RFC_6868_UNESCAPE_REGEX.sub(lambda m: rfc_6868_unescape.get(m.group(0), m.group(0)), param_value)
+    return RFC_6868_UNESCAPE_REGEX.sub(lambda m: replacements.get(m.group(0), m.group(0)), param_value)
 
+
+RFC_6868_ESCAPE_REGEX = re.compile(r'\^|\r\n|\r|\n|"')
+
+def rfc_6868_escape(param_value: str) -> str:
+    """Take care of :rfc:`6868` escaping.
+
+    - ^ -> ^^
+    - " -> ^'
+    - newline -> ^n
+    """
+    replacements = {
+        "^": "^^",
+        "\n": "^n",
+        "\r": "^n",
+        "\r\n": "^n",
+        '"': "^'",
+    }
+    return RFC_6868_ESCAPE_REGEX.sub(lambda m: replacements.get(m.group(0), m.group(0)), param_value)
 
 def unescape_list_or_string(val):
     if isinstance(val, list):
@@ -316,7 +333,7 @@ class Contentline(str):
         return self
 
     @classmethod
-    def from_parts(cls, name, params, values, sorted=True):
+    def from_parts(cls, name:ICAL_TYPE, params: Parameters, values, sorted=True):
         """Turn a parts into a content line."""
         assert isinstance(params, Parameters)
         if hasattr(values, "to_ical"):
@@ -428,6 +445,8 @@ __all__ = [
     "param_value",
     "q_join",
     "q_split",
+    "rfc_6868_escape",
+    "rfc_6868_unescape",
     "uFOLD",
     "unescape_char",
     "unescape_list_or_string",
