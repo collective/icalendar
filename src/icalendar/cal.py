@@ -734,7 +734,6 @@ class Event(Component):
         "DTEND",
         "DURATION",
         "UID",
-        "CATEGORIES",
     )
     exclusive = (
         "DTEND",
@@ -743,6 +742,7 @@ class Event(Component):
     multiple = (
         "ATTACH",
         "ATTENDEE",
+        "CATEGORIES",
         "COMMENT",
         "CONTACT",
         "EXDATE",
@@ -1852,7 +1852,18 @@ class Calendar(Component):
         "PRODID",
         "VERSION",
     )
-    singletons = ("PRODID", "VERSION", "CALSCALE", "METHOD")
+    singletons = (
+        "PRODID",
+        "VERSION",
+        "CALSCALE",
+        "METHOD",
+        "COLOR",  # RFC 7986
+    )
+    multiple = (
+        "CATEGORIES",  # RFC 7986
+        "DESCRIPTION",  # RFC 7986
+        "NAME",  # RFC 7986
+    )
 
     @classmethod
     def example(cls, name: str = "example") -> Calendar:
