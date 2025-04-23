@@ -15,9 +15,11 @@ import dateutil.rrule
 import dateutil.tz
 
 from icalendar.attr import (
+    color_property,
     multi_language_text_property,
     sequence_property,
     single_int_property,
+    single_string_property,
     single_utc_property,
 )
 from icalendar.caselessdict import CaselessDict
@@ -716,6 +718,7 @@ class Event(Component):
     singletons = (
         "CLASS",
         "CREATED",
+        "COLOR",
         "DESCRIPTION",
         "DTSTART",
         "GEO",
@@ -893,6 +896,7 @@ class Event(Component):
 
     X_MOZ_SNOOZE_TIME = _X_MOZ_SNOOZE_TIME
     X_MOZ_LASTACK = _X_MOZ_LASTACK
+    color = color_property
     sequence = sequence_property
 
 
@@ -913,6 +917,7 @@ class Todo(Component):
     )
     singletons = (
         "CLASS",
+        "COLOR",
         "COMPLETED",
         "CREATED",
         "DESCRIPTION",
@@ -1082,6 +1087,7 @@ class Todo(Component):
 
         return Alarms(self)
 
+    color = color_property
     sequence = sequence_property
 
 
@@ -1108,6 +1114,7 @@ class Journal(Component):
     )
     singletons = (
         "CLASS",
+        "COLOR",
         "CREATED",
         "DTSTART",
         "DTSTAMP",
@@ -1167,6 +1174,7 @@ class Journal(Component):
         """The journal has no duration: timedelta(0)."""
         return timedelta(0)
 
+    color = color_property
     sequence = sequence_property
 
 
@@ -2066,8 +2074,8 @@ class Calendar(Component):
     END:VCALENDAR
     """)
 
-    color = multi_language_text_property(
-        "COLOR", "X-APPLE-CALENDAR-COLOR",
+    color = single_string_property(
+        "COLOR",
         """This property specifies a color used for displaying the calendar.
 
     This implements :rfc:`7986` ``COLOR`` and ``X-APPLE-CALENDAR-COLOR``.
@@ -2099,7 +2107,8 @@ class Calendar(Component):
     BEGIN:VCALENDAR
     COLOR:black
     END:VCALENDAR
-    """
+    """,
+    "X-APPLE-CALENDAR-COLOR",
     )
 
 # These are read only singleton, so one instance is enough for the module
