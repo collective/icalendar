@@ -6,8 +6,9 @@ It is stupid in the sense that it treats the content purely as strings. No type
 conversion is attempted.
 """
 
+import os
 from icalendar.caselessdict import CaselessDict
-from icalendar.parser_tools import DEFAULT_ENCODING
+from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE
 from icalendar.parser_tools import SEQUENCE_TYPES
 from icalendar.parser_tools import to_unicode
 
@@ -94,10 +95,9 @@ def param_value(value):
     """Returns a parameter value."""
     if isinstance(value, SEQUENCE_TYPES):
         return q_join(value)
-    elif isinstance(value, str):
-        return dquote(value)
-    else:
-        return dquote(value.to_ical().decode(DEFAULT_ENCODING))
+    if isinstance(value, str):
+        return dquote(rfc_6868_escape(value))
+    return dquote(rfc_6868_escape(value.to_ical().decode(DEFAULT_ENCODING)))
 
 
 # Could be improved
@@ -232,13 +232,13 @@ class Parameters(CaselessDict):
                     if v.startswith('"') and v.endswith('"'):
                         v = v.strip('"')
                         validate_param_value(v, quoted=True)
-                        vals.append(v)
+                        vals.append(rfc_6868_unescape(v))
                     else:
                         validate_param_value(v, quoted=False)
                         if strict:
-                            vals.append(v.upper())
+                            vals.append(rfc_6868_unescape(v.upper()))
                         else:
-                            vals.append(v)
+                            vals.append(rfc_6868_unescape(v))
                 if not vals:
                     result[key] = val
                 else:
@@ -270,6 +270,43 @@ def unescape_string(val):
     )
 
 
+RFC_6868_UNESCAPE_REGEX = re.compile(r"\^\^|\^n|\^'")
+
+
+def rfc_6868_unescape(param_value: str) -> str:
+    """Take care of :rfc:`6868` unescaping.
+
+    - ^^ -> ^
+    - ^n -> system specific newline
+    - ^' -> "
+    - ^ with others stay intact
+    """
+    replacements = {
+        "^^": "^",
+        "^n": os.linesep,
+        "^'": '"',
+    }
+    return RFC_6868_UNESCAPE_REGEX.sub(lambda m: replacements.get(m.group(0), m.group(0)), param_value)
+
+
+RFC_6868_ESCAPE_REGEX = re.compile(r'\^|\r\n|\r|\n|"')
+
+def rfc_6868_escape(param_value: str) -> str:
+    """Take care of :rfc:`6868` escaping.
+
+    - ^ -> ^^
+    - " -> ^'
+    - newline -> ^n
+    """
+    replacements = {
+        "^": "^^",
+        "\n": "^n",
+        "\r": "^n",
+        "\r\n": "^n",
+        '"': "^'",
+    }
+    return RFC_6868_ESCAPE_REGEX.sub(lambda m: replacements.get(m.group(0), m.group(0)), param_value)
+
 def unescape_list_or_string(val):
     if isinstance(val, list):
         return [unescape_string(s) for s in val]
@@ -296,7 +333,7 @@ class Contentline(str):
         return self
 
     @classmethod
-    def from_parts(cls, name, params, values, sorted=True):
+    def from_parts(cls, name:ICAL_TYPE, params: Parameters, values, sorted=True):
         """Turn a parts into a content line."""
         assert isinstance(params, Parameters)
         if hasattr(values, "to_ical"):
@@ -351,7 +388,7 @@ class Contentline(str):
         except ValueError as exc:
             raise ValueError(
                 f"Content line could not be parsed into parts: '{self}': {exc}"
-            )
+            ) from exc
 
     @classmethod
     def from_ical(cls, ical, strict=False):
@@ -408,6 +445,8 @@ __all__ = [
     "param_value",
     "q_join",
     "q_split",
+    "rfc_6868_escape",
+    "rfc_6868_unescape",
     "uFOLD",
     "unescape_char",
     "unescape_list_or_string",
