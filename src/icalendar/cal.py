@@ -15,6 +15,7 @@ import dateutil.rrule
 import dateutil.tz
 
 from icalendar.attr import (
+    categories_property,
     multi_language_text_property,
     sequence_property,
     single_int_property,
@@ -894,6 +895,7 @@ class Event(Component):
     X_MOZ_SNOOZE_TIME = _X_MOZ_SNOOZE_TIME
     X_MOZ_LASTACK = _X_MOZ_LASTACK
     sequence = sequence_property
+    categories = categories_property
 
 
 class Todo(Component):
@@ -1083,6 +1085,7 @@ class Todo(Component):
         return Alarms(self)
 
     sequence = sequence_property
+    categories = categories_property
 
 
 class Journal(Component):
@@ -1168,6 +1171,7 @@ class Journal(Component):
         return timedelta(0)
 
     sequence = sequence_property
+    categories = categories_property
 
 
 class FreeBusy(Component):
@@ -2101,6 +2105,7 @@ class Calendar(Component):
     END:VCALENDAR
     """
     )
+    categories = categories_property
 
 # These are read only singleton, so one instance is enough for the module
 types_factory = TypesFactory()

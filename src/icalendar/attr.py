@@ -2,10 +2,11 @@
 from __future__ import annotations
 
 from datetime import date, datetime
+import itertools
 from typing import TYPE_CHECKING, Optional
 
 from icalendar.error import InvalidCalendar
-from icalendar.prop import vDDDTypes, vText
+from icalendar.prop import vCategory, vDDDTypes, vText
 from icalendar.timezone import tzp
 
 if TYPE_CHECKING:
@@ -179,9 +180,79 @@ Examples:
     """
 )
 
+def _get_categories(component: Component) -> list[str]:
+    """Get all the categories."""
+    categories : Optional[vCategory|list[vCategory]] = component.get("CATEGORIES")
+    if isinstance(categories, list):
+        _set_categories(component, list(itertools.chain.from_iterable(cat.cats for cat in categories)))
+        return _get_categories(component)
+    if categories is None:
+        categories = vCategory([])
+        component.add("CATEGORIES", categories)
+    return categories.cats
+
+def _set_categories(component: Component, cats: list[str]) -> None:
+    """Set the categories."""
+    component["CATEGORIES"] = categories = vCategory(cats)
+    cats.clear()
+    cats.extend(categories.cats)
+    categories.cats = cats
+
+
+def _del_categories(component: Component) -> None:
+    """Delete the categories."""
+    component.pop("CATEGORIES", None)
+
+
+categories_property = property(
+    _get_categories,
+    _set_categories,
+    _del_categories,
+    """This property defines the categories for a component.
+
+Property Parameters:
+
+    IANA, non-standard, and language property parameters can be specified on this
+    property.
+
+Conformance:
+
+    The property can be specified within "VEVENT", "VTODO", or "VJOURNAL" calendar
+    components.
+    Since :rfc:`7986` it can also be defined on a "VCALENDAR" component.
+
+Description:
+
+    This property is used to specify categories or subtypes
+    of the calendar component.  The categories are useful in searching
+    for a calendar component of a particular type and category.
+    Within the "VEVENT", "VTODO", or "VJOURNAL" calendar components,
+    more than one category can be specified as a COMMA-separated list
+    of categories.
+
+Example:
+
+    >>> from icalendar import Event
+    >>> event = Event()
+    >>> event.categories = ["Work", "Meeting"]
+    >>> print(event.to_ical())
+    BEGIN:VEVENT
+    CATEGORIES:Work,Meeting
+    END:VEVENT
+    >>> event.categories.append("Lecture")
+    >>> event.categories == ["Work", "Meeting", "Lecture"]
+    True
+
+.. note::
+
+   At present, we do not take the LANGUAGE parameter into account.
+"""
+)
+
 __all__ = [
     "single_utc_property",
     "multi_language_text_property",
     "single_int_property",
-    "sequence_property"
+    "sequence_property",
+    "categories_property",
 ]
