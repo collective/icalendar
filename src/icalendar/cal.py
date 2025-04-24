@@ -34,7 +34,7 @@ from icalendar.prop import (
     vUTCOffset,
 )
 from icalendar.timezone import TZP, tzp
-from icalendar.tools import is_date
+from icalendar.tools import is_date, to_datetime
 
 if TYPE_CHECKING:
     from icalendar.alarms import Alarms
@@ -1208,6 +1208,8 @@ class Timezone(Component):
     way in which a time zone changes its offset from UTC over time.
     """
 
+    subcomponents: list[TimezoneStandard|TimezoneDaylight]
+
     name = "VTIMEZONE"
     canonical_order = ("TZID",)
     required = ("TZID",)  # it also requires one of components DAYLIGHT and STANDARD
@@ -1335,6 +1337,8 @@ class Timezone(Component):
         for component in self.walk():
             if type(component) == Timezone:
                 continue
+            if is_date(component["DTSTART"].dt):
+                component.DTSTART = to_datetime(component["DTSTART"].dt)
             assert isinstance(
                 component["DTSTART"].dt, datetime
             ), "VTIMEZONEs sub-components' DTSTART must be of type datetime, not date"
