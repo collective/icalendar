@@ -71,11 +71,13 @@ class TZP:
         return self.__provider.localize_utc(to_datetime(dt))
 
     def localize(
-        self, dt: datetime.date, tz: Union[datetime.tzinfo, str]
+        self, dt: datetime.date, tz: Union[datetime.tzinfo, str, None]
     ) -> datetime.datetime:
         """Localize a datetime to a timezone."""
         if isinstance(tz, str):
             tz = self.timezone(tz)
+        if tz is None:
+            return dt.replace(tzinfo=None)
         return self.__provider.localize(to_datetime(dt), tz)
 
     def cache_timezone_component(self, timezone_component: cal.Timezone) -> None:

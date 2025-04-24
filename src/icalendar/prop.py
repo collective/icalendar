@@ -258,6 +258,7 @@ class vCalAddress(str):
         PARTSTAT,
         ROLE,
         RSVP,
+        SENT_BY,
     )
     name = CN
 
@@ -470,6 +471,8 @@ class TimeBase:
     def __hash__(self):
         return hash(self.dt)
 
+    from icalendar.param import RANGE, RELATED, TZID
+
 
 class vDDDTypes(TimeBase):
     """A combined Datetime, Date or Duration parser/generator. Their format
@@ -536,8 +539,6 @@ class vDDDTypes(TimeBase):
     def __repr__(self):
         """repr(self)"""
         return f"{self.__class__.__name__}({self.dt}, {self.params})"
-
-    from icalendar.param import RANGE, RELATED
 
 class vDate(TimeBase):
     """Date
@@ -614,7 +615,6 @@ class vDate(TimeBase):
         except Exception:
             raise ValueError(f"Wrong date format {ical}")
 
-    from icalendar.param import RANGE
 
 class vDatetime(TimeBase):
     """Render and generates icalendar datetime format.
@@ -695,7 +695,6 @@ class vDatetime(TimeBase):
         except Exception as e:
             raise ValueError(f"Wrong datetime format: {ical}") from e
 
-    from icalendar.param import RANGE, RELATED
 
 class vDuration(TimeBase):
     """Duration
@@ -828,7 +827,6 @@ class vDuration(TimeBase):
         """The time delta for compatibility."""
         return self.td
 
-    from icalendar.param import RELATED
 
 class vPeriod(TimeBase):
     """Period of Time
@@ -1950,7 +1948,6 @@ __all__ = [
     "vMonth",
     "vPeriod",
     "vRecur",
-    "SKIP",
     "vText",
     "vTime",
     "vUTCOffset",

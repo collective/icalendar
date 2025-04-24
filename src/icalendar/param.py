@@ -369,6 +369,60 @@ Description:
 """
 )
 
+SENT_BY = string_parameter(
+    "SENT-BY",
+    """Specify the calendar user that is acting on behalf of the calendar user specified by the property.
+
+This parameter can be specified on properties with a
+CAL-ADDRESS value type.  The parameter specifies the calendar user
+that is acting on behalf of the calendar user specified by the
+property.  The parameter value MUST be a mailto URI as defined in
+:rfc:`2368`.  The individual calendar address parameter values MUST
+each be specified in a quoted-string.
+"""
+)
+
+TZID = string_parameter(
+    "TZID",
+    """Specify the identifier for the time zone definition for a time component in the property value.
+
+Description:
+
+    This parameter MUST be specified on the "DTSTART",
+    "DTEND", "DUE", "EXDATE", and "RDATE" properties when either a
+    DATE-TIME or TIME value type is specified and when the value is
+    neither a UTC or a "floating" time.  Refer to the DATE-TIME or
+    TIME value type definition for a description of UTC and "floating
+    time" formats.  This property parameter specifies a text value
+    that uniquely identifies the "VTIMEZONE" calendar component to be
+    used when evaluating the time portion of the property.  The value
+    of the "TZID" property parameter will be equal to the value of the
+    "TZID" property for the matching time zone definition.  An
+    individual "VTIMEZONE" calendar component MUST be specified for
+    each unique "TZID" parameter value specified in the iCalendar
+    object.
+
+    The parameter MUST be specified on properties with a DATE-TIME
+    value if the DATE-TIME is not either a UTC or a "floating" time.
+    Failure to include and follow VTIMEZONE definitions in iCalendar
+    objects may lead to inconsistent understanding of the local time
+    at any given location.
+
+    The presence of the SOLIDUS character as a prefix, indicates that
+    this "TZID" represents a unique ID in a globally defined time zone
+    registry (when such registry is defined).
+
+.. note::
+
+    This document does not define a naming convention for
+    time zone identifiers.  Implementers may want to use the naming
+    conventions defined in existing time zone specifications such
+    as the public-domain TZ database (TZDB). The specification of
+    globally unique time zone identifiers is not addressed by this
+    document and is left for future study.
+"""
+)
+
 __all__ = [
     "string_parameter",
     "quoted_list_parameter",
@@ -386,4 +440,6 @@ __all__ = [
     "RELATED",
     "ROLE",
     "RSVP",
+    "SENT_BY",
+    "TZID",
 ]

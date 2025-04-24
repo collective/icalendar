@@ -7,6 +7,7 @@ import pytest
 from icalendar.param import PARTSTAT
 from icalendar.parser import Parameters
 from icalendar.enums import CUTYPE, FBTYPE, PARTSTAT, RANGE
+from icalendar.timezone.tzp import TZP
 
 
 class Prop:
@@ -139,3 +140,21 @@ def test_set_rsvp(addr: vCalAddress, rsvp):
     addr.RSVP = rsvp
     assert addr.RSVP == rsvp
     assert addr.params["RSVP"] == ("TRUE" if rsvp else "FALSE")
+
+
+def test_sent_by(addr: vCalAddress):
+    assert addr.SENT_BY is None
+
+
+
+def test_set_sent_by(addr: vCalAddress):
+    addr.SENT_BY = "mailto:asd"
+    assert addr.SENT_BY == "mailto:asd"
+    assert addr.params["SENT-BY"] == "mailto:asd"
+    assert addr.params.to_ical() == b'SENT-BY="mailto:asd"'
+
+
+@pytest.mark.parametrize("tzid", [None, "Europe/Berlin"])
+def test_tzid(tzid, tzp:TZP):
+    dt = vDatetime(tzp.localize(datetime(2019, 12, 10), tzid))
+    assert dt.TZID is None
