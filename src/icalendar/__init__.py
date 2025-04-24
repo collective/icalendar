@@ -15,7 +15,7 @@ from icalendar.cal import (
     TimezoneStandard,
     Todo,
 )
-from icalendar.enums import CUTYPE, FBTYPE, PARTSTAT
+from icalendar.enums import CUTYPE, FBTYPE, PARTSTAT, RANGE, RELATED, SKIP
 from icalendar.error import (
     ComponentEndMissing,
     ComponentStartMissing,
@@ -114,4 +114,7 @@ __all__ = [
     "CUTYPE",
     "FBTYPE",
     "PARTSTAT",
+    "RANGE",
+    "SKIP",
+    "RELATED",
 ]

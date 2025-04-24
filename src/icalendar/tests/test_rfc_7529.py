@@ -7,7 +7,7 @@ See
 
 import pytest
 
-from icalendar.enums import vSkip
+from icalendar.enums import SKIP
 from icalendar.prop import vMonth, vRecur
 
 
@@ -62,12 +62,12 @@ def test_leap_month(calendars):
         (vRecur, vRecur(bymonth=vMonth("5L")), b"BYMONTH=5L"),
         (vMonth, vMonth(10), b"10"),
         (vMonth, vMonth("5L"), b"5L"),
-        (vSkip, vSkip.OMIT, b"OMIT"),
-        (vSkip, vSkip.BACKWARD, b"BACKWARD"),
-        (vSkip, vSkip.FORWARD, b"FORWARD"),
-        (vSkip, vSkip("OMIT"), b"OMIT"),
-        (vSkip, vSkip("BACKWARD"), b"BACKWARD"),
-        (vSkip, vSkip("FORWARD"), b"FORWARD"),
+        (SKIP, SKIP.OMIT, b"OMIT"),
+        (SKIP, SKIP.BACKWARD, b"BACKWARD"),
+        (SKIP, SKIP.FORWARD, b"FORWARD"),
+        (SKIP, SKIP("OMIT"), b"OMIT"),
+        (SKIP, SKIP("BACKWARD"), b"BACKWARD"),
+        (SKIP, SKIP("FORWARD"), b"FORWARD"),
         (
             vRecur,
             vRecur(rscale="GREGORIAN", freq="YEARLY", skip="FORWARD"),
@@ -75,7 +75,7 @@ def test_leap_month(calendars):
         ),
         (
             vRecur,
-            vRecur(rscale="GREGORIAN", freq="YEARLY", skip=vSkip.FORWARD),
+            vRecur(rscale="GREGORIAN", freq="YEARLY", skip=SKIP.FORWARD),
             b"RSCALE=GREGORIAN;FREQ=YEARLY;SKIP=FORWARD",
         ),
     ],

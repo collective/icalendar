@@ -31,6 +31,12 @@ icalendar.cli
 .. automodule:: icalendar.cli
    :members:
 
+icalendar.enums
++++++++++++++++
+
+.. automodule:: icalendar.enums
+   :members:
+
 icalendar.error
 +++++++++++++++
 

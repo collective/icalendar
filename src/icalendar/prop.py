@@ -51,7 +51,7 @@ from datetime import date, datetime, time, timedelta
 from typing import Union
 
 from icalendar.caselessdict import CaselessDict
-from icalendar.enums import vSkip
+from icalendar.enums import SKIP
 from icalendar.parser import Parameters, escape_char, unescape_char
 from icalendar.parser_tools import (
     DEFAULT_ENCODING,
@@ -256,6 +256,8 @@ class vCalAddress(str):
         DIR,
         LANGUAGE,
         PARTSTAT,
+        ROLE,
+        RSVP,
     )
     name = CN
 
@@ -535,6 +537,7 @@ class vDDDTypes(TimeBase):
         """repr(self)"""
         return f"{self.__class__.__name__}({self.dt}, {self.params})"
 
+    from icalendar.param import RANGE, RELATED
 
 class vDate(TimeBase):
     """Date
@@ -611,6 +614,7 @@ class vDate(TimeBase):
         except Exception:
             raise ValueError(f"Wrong date format {ical}")
 
+    from icalendar.param import RANGE
 
 class vDatetime(TimeBase):
     """Render and generates icalendar datetime format.
@@ -691,6 +695,7 @@ class vDatetime(TimeBase):
         except Exception as e:
             raise ValueError(f"Wrong datetime format: {ical}") from e
 
+    from icalendar.param import RANGE, RELATED
 
 class vDuration(TimeBase):
     """Duration
@@ -823,6 +828,7 @@ class vDuration(TimeBase):
         """The time delta for compatibility."""
         return self.td
 
+    from icalendar.param import RELATED
 
 class vPeriod(TimeBase):
     """Period of Time
@@ -1276,7 +1282,7 @@ class vRecur(CaselessDict):
             "BYDAY": vWeekday,
             "FREQ": vFrequency,
             "BYWEEKDAY": vWeekday,
-            "SKIP": vSkip,
+            "SKIP": SKIP,
         }
     )
 
@@ -1944,7 +1950,7 @@ __all__ = [
     "vMonth",
     "vPeriod",
     "vRecur",
-    ,
+    "SKIP",
     "vText",
     "vTime",
     "vUTCOffset",

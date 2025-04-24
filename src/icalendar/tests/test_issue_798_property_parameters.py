@@ -1,11 +1,12 @@
 """Test the property parameters."""
 
-from icalendar import vCalAddress, vPeriod
+from datetime import datetime
+from icalendar import vCalAddress, vDatetime, vPeriod
 import pytest
 
 from icalendar.param import PARTSTAT
 from icalendar.parser import Parameters
-from icalendar.enums import CUTYPE, FBTYPE, PARTSTAT
+from icalendar.enums import CUTYPE, FBTYPE, PARTSTAT, RANGE
 
 
 class Prop:
@@ -119,3 +120,22 @@ def test_partstat_get(addr: vCalAddress):
 def test_set_the_partstat(addr: vCalAddress):
     addr.PARTSTAT = PARTSTAT.ACCEPTED
     assert addr.PARTSTAT == "ACCEPTED"
+
+
+def test_this_and_future():
+    assert vDatetime(datetime(2019, 12, 10)).RANGE is None
+
+def test_this_and_future_set():
+    d = vDatetime(datetime(2019, 12, 10))
+    d.RANGE = RANGE.THISANDFUTURE
+    assert d.params["RANGE"] == "THISANDFUTURE"
+
+
+def test_rsvp_default(addr):
+    assert not addr.RSVP
+
+@pytest.mark.parametrize("rsvp", [True, False])
+def test_set_rsvp(addr: vCalAddress, rsvp):
+    addr.RSVP = rsvp
+    assert addr.RSVP == rsvp
+    assert addr.params["RSVP"] == ("TRUE" if rsvp else "FALSE")

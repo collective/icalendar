@@ -1,8 +1,6 @@
 """Enumerations for different types in the RFCs."""
 from enum import Enum
 
-from icalendar.prop import vText
-
 
 def _reduce_ex(self:Enum, _p):
     """For pickling."""
@@ -45,7 +43,7 @@ class CUTYPE(str, Enum):
     __reduce_ex__ = _reduce_ex
 
 
-class vSkip(vText, Enum):
+class SKIP(str, Enum):
     """Skip values for RRULE.
 
     These are defined in :rfc:`7529`.
@@ -60,9 +58,31 @@ class vSkip(vText, Enum):
     __reduce_ex__ = _reduce_ex
 
 
+class RANGE(str, Enum):
+    """Enum for RANGE from :rfc:`5545`."""
+
+    THISANDFUTURE = "THISANDFUTURE"
+    THISANDPRIOR = "THISANDPRIOR"  # deprecated
+
+class RELATED(str, Enum):
+    """Enum for RELATED from :rfc:`5545`."""
+    START = "START"
+    END = "END"
+
+class ROLE(str, Enum):
+    """Enum for ROLE from :rfc:`5545`."""
+    CHAIR = "CHAIR"
+    REQ_PARTICIPANT = "REQ-PARTICIPANT"
+    OPT_PARTICIPANT = "OPT-PARTICIPANT"
+    NON_PARTICIPANT = "NON-PARTICIPANT"
+
+
 __all__ = [
     "PARTSTAT",
     "FBTYPE",
     "CUTYPE",
-    "vSkip",
+    "SKIP",
+    "RANGE",
+    "RELATED",
+    "ROLE",
 ]
