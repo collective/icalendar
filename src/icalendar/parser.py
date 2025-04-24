@@ -182,6 +182,7 @@ class Parameters(CaselessDict):
         "DELEGATED-FROM",
         "DELEGATED-TO",
         "DIR",
+        "MEMBER",
     )
 
     def params(self):

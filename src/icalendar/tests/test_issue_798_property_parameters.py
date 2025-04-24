@@ -1,10 +1,11 @@
 """Test the property parameters."""
 
-from icalendar import vPeriod
+from icalendar import vCalAddress, vPeriod
 import pytest
 
-from icalendar.param import CUTYPES, FBTYPES
+from icalendar.param import PARTSTAT
 from icalendar.parser import Parameters
+from icalendar.enums import CUTYPE, FBTYPE, PARTSTAT
 
 
 class Prop:
@@ -60,7 +61,7 @@ def test_set_lowercase():
     p = Prop(CUTYPE="individual")
     assert p.CUTYPE == "INDIVIDUAL"
     p.CUTYPE = "unknown"
-    assert p.CUTYPE == CUTYPES.UNKNOWN
+    assert p.CUTYPE == CUTYPE.UNKNOWN
 
 
 def test_set_delegation_to_string(p):
@@ -93,9 +94,9 @@ def test_serialize_delegation_to(p, value, expected):
 @pytest.mark.parametrize(
     ("index", "expected"),
     [
-        (0, FBTYPES.BUSY_UNAVAILABLE),
-        (1, FBTYPES.BUSY),
-        (2, FBTYPES.FREE),
+        (0, FBTYPE.BUSY_UNAVAILABLE),
+        (1, FBTYPE.BUSY),
+        (2, FBTYPE.FREE),
     ]
 )
 def test_get_fbtype(calendars, index, expected):
@@ -104,3 +105,17 @@ def test_get_fbtype(calendars, index, expected):
     if isinstance(p, list):
         p = p[0]
     assert expected == p.FBTYPE
+
+
+@pytest.fixture()
+def addr():
+    return vCalAddress("mailto:foo")
+
+def test_partstat_get(addr: vCalAddress):
+    """test the default partstat"""
+    assert addr.PARTSTAT == "NEEDS-ACTION"
+
+
+def test_set_the_partstat(addr: vCalAddress):
+    addr.PARTSTAT = PARTSTAT.ACCEPTED
+    assert addr.PARTSTAT == "ACCEPTED"

@@ -12,6 +12,8 @@ from enum import Enum
 import functools
 from typing import TYPE_CHECKING, Callable, Optional, TypeVar, Union
 
+from icalendar import enums
+
 if TYPE_CHECKING:
     from icalendar.parser import Parameters
 
@@ -47,9 +49,7 @@ def string_parameter(name:str, doc:str, default:Callable = _default_return_none,
     def fdel(self: IcalendarProperty):
         self.params.pop(name, None)
 
-    return property(fget,
-                    fset, fdel, 
-                    doc=doc)
+    return property(fget, fset, fdel, doc=doc)
 
 
 ALTREP = string_parameter(
@@ -88,17 +88,9 @@ Description:
     default=_default_return_string
 )
 
-class CUTYPES(str, Enum):
-    """Enum for CTYPE."""
-    INDIVIDUAL = "INDIVIDUAL"
-    GROUP = "GROUP"
-    RESOURCE = "RESOURCE"
-    ROOM = "ROOM"
-    UNKNOWN = "UNKNOWN"
-
-def _default_return_individual() -> CUTYPES|str:
+def _default_return_individual() -> enums.CUTYPE|str:
     """Default value."""
-    return CUTYPES.INDIVIDUAL
+    return enums.CUTYPE.INDIVIDUAL
 
 def _convert_enum(enum: type[Enum]) -> Callable[[str], Enum]:
 
@@ -122,7 +114,7 @@ Description:
     property that allows this parameter, the default is INDIVIDUAL.
     Applications MUST treat x-name and iana-token values they don't
     recognize the same way as they would the UNKNOWN value.
-""", default=_default_return_individual, convert=_convert_enum(CUTYPES))
+""", default=_default_return_individual, convert=_convert_enum(enums.CUTYPE))
 
 
 def quoted_list_parameter(name: str, doc: str) -> property:
@@ -197,16 +189,9 @@ Description:
     used by current implementations.
 """)
 
-class FBTYPES(str, Enum):
-    """Enum for FBTYPE."""
-    FREE = "FREE"
-    BUSY = "BUSY"
-    BUSY_UNAVAILABLE = "BUSY-UNAVAILABLE"
-    BUSY_TENTATIVE = "BUSY-TENTATIVE"
-
-def _default_return_busy() -> FBTYPES|str:
+def _default_return_busy() -> enums.FBTYPE|str:
     """Default value."""
-    return FBTYPES.BUSY
+    return enums.FBTYPE.BUSY
 
 FBTYPE = string_parameter(
     "FBTYPE",
@@ -226,7 +211,7 @@ Description:
     parameter, the default is BUSY.  Applications MUST treat x-name
     and iana-token values they don't recognize the same way as they
     would the BUSY value.
-""", default=_default_return_busy, convert=_convert_enum(FBTYPES))
+""", default=_default_return_busy, convert=_convert_enum(enums.FBTYPE))
 
 LANGUAGE = string_parameter(
     "LANGUAGE",
@@ -244,6 +229,45 @@ Description:
     Otherwise, no default language is assumed.
 """)
 
+MEMBER = quoted_list_parameter(
+    "MEMBER",
+    """Specify the group or list membership of the calendar user specified by the property.
+
+Description:
+
+    This parameter can be specified on properties with a
+    CAL-ADDRESS value type.  The parameter identifies the groups or
+    list membership for the calendar user specified by the property.
+    The parameter value is either a single calendar address in a
+    quoted-string or a COMMA-separated list of calendar addresses,
+    each in a quoted-string.  The individual calendar address
+    parameter values MUST each be specified in a quoted-string.
+"""
+)
+
+def _default_return_needs_action() -> enums.PARTSTAT|str:
+    """Default value."""
+    return enums.PARTSTAT.NEEDS_ACTION
+
+PARTSTAT = string_parameter(
+    "PARTSTAT",
+    """Specify the participation status for the calendar user specified by the property.
+
+Description:
+
+    This parameter can be specified on properties with a
+    CAL-ADDRESS value type.  The parameter identifies the
+    participation status for the calendar user specified by the
+    property value.  The parameter values differ depending on whether
+    they are associated with a group-scheduled "VEVENT", "VTODO", or
+    "VJOURNAL".  The values MUST match one of the values allowed for
+    the given calendar component.  If not specified on a property that
+    allows this parameter, the default value is NEEDS-ACTION.
+    Applications MUST treat x-name and iana-token values they don't
+    recognize the same way as they would the NEEDS-ACTION value.
+""", default=_default_return_needs_action, convert=_convert_enum(enums.PARTSTAT))
+
+
 __all__ = [
     "string_parameter",
     "quoted_list_parameter",
@@ -255,6 +279,6 @@ __all__ = [
     "DELEGATED_TO",
     "DIR",
     "FBTYPE",
-    "FBTYPES",
+    ,
     "LANGUAGE",
 ]

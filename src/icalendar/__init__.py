@@ -15,6 +15,7 @@ from icalendar.cal import (
     TimezoneStandard,
     Todo,
 )
+from icalendar.enums import CUTYPE, FBTYPE, PARTSTAT
 from icalendar.error import (
     ComponentEndMissing,
     ComponentStartMissing,
@@ -110,4 +111,7 @@ __all__ = [
     "ComponentStartMissing",
     "IncompleteAlarmInformation",
     "LocalTimezoneMissing",
+    "CUTYPE",
+    "FBTYPE",
+    "PARTSTAT",
 ]

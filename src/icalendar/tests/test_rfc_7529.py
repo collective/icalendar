@@ -7,7 +7,8 @@ See
 
 import pytest
 
-from icalendar.prop import vMonth, vRecur, vSkip
+from icalendar.enums import vSkip
+from icalendar.prop import vMonth, vRecur
 
 
 @pytest.mark.parametrize(

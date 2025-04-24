@@ -48,10 +48,10 @@ import base64
 import binascii
 import re
 from datetime import date, datetime, time, timedelta
-from enum import Enum
 from typing import Union
 
 from icalendar.caselessdict import CaselessDict
+from icalendar.enums import vSkip
 from icalendar.parser import Parameters, escape_char, unescape_char
 from icalendar.parser_tools import (
     DEFAULT_ENCODING,
@@ -248,7 +248,15 @@ class vCalAddress(str):
             return self[7:]
         return str(self)
 
-    from icalendar.param import CN, CUTYPE, DELEGATED_FROM, DELEGATED_TO, DIR, LANGUAGE
+    from icalendar.param import (
+        CN,
+        CUTYPE,
+        DELEGATED_FROM,
+        DELEGATED_TO,
+        DIR,
+        LANGUAGE,
+        PARTSTAT,
+    )
     name = CN
 
 class vFloat(float):
@@ -1146,23 +1154,6 @@ class vMonth(int):
         return f"{int(self)}{'L' if self.leap else ''}"
 
 
-class vSkip(vText, Enum):
-    """Skip values for RRULE.
-
-    These are defined in :rfc:`7529`.
-
-    OMIT  is the default value.
-    """
-
-    OMIT = "OMIT"
-    FORWARD = "FORWARD"
-    BACKWARD = "BACKWARD"
-
-    def __reduce_ex__(self, _p):
-        """For pickling."""
-        return self.__class__, (self._name_,)
-
-
 class vRecur(CaselessDict):
     """Recurrence definition.
 
@@ -1953,7 +1944,7 @@ __all__ = [
     "vMonth",
     "vPeriod",
     "vRecur",
-    "vSkip",
+    ,
     "vText",
     "vTime",
     "vUTCOffset",
