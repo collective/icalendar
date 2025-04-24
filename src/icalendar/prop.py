@@ -181,7 +181,7 @@ class vText(str):
         ical_unesc = unescape_char(ical)
         return cls(ical_unesc)
 
-    from icalendar.param import ALTREP
+    from icalendar.param import ALTREP, LANGUAGE
 
 
 class vCalAddress(str):
@@ -248,7 +248,7 @@ class vCalAddress(str):
             return self[7:]
         return str(self)
 
-    from icalendar.param import CN, CUTYPE, DELEGATED_FROM, DELEGATED_TO, DIR
+    from icalendar.param import CN, CUTYPE, DELEGATED_FROM, DELEGATED_TO, DIR, LANGUAGE
     name = CN
 
 class vFloat(float):

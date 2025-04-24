@@ -228,6 +228,22 @@ Description:
     would the BUSY value.
 """, default=_default_return_busy, convert=_convert_enum(FBTYPES))
 
+LANGUAGE = string_parameter(
+    "LANGUAGE",
+    """Specify the language for text values in a property or property parameter.
+
+Description:
+
+    This parameter identifies the language of the text in
+    the property value and of all property parameter values of the
+    property.  The value of the "LANGUAGE" property parameter is that
+    defined in :rfc:`5646`.
+
+    For transport in a MIME entity, the Content-Language header field
+    can be used to set the default language for the entire body part.
+    Otherwise, no default language is assumed.
+""")
+
 __all__ = [
     "string_parameter",
     "quoted_list_parameter",
@@ -238,6 +254,7 @@ __all__ = [
     "DELEGATED_FROM",
     "DELEGATED_TO",
     "DIR",
-    "FBTYPE", 
+    "FBTYPE",
     "FBTYPES",
+    "LANGUAGE",
 ]
