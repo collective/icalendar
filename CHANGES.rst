@@ -21,7 +21,7 @@ New features:
 - Add ``sequence`` attribute to ``Event``, ``Todo``, and ``Journal`` components. See `Issue 802 <https://github.com/collective/icalendar/issues/802>`_.
 - Add compatibility to :rfc:`6868`. See `Issue 652 <https://github.com/collective/icalendar/issues/652>`_.
 - Add ``freebusy`` property to the ``Calendar`` to get this type of subcomponents easier.
-- Add parameters from :rfc:`5545` to properties: ``ALTREP``, ``CN``, ``CUTYPE``, ``DELEGATED_FROM``, ``DELEGATED_TO``, ``DIR``, ``FBTYPE``, ``LANGUAGE``, ``MEMBER``, ``PARTSTAT``, ``RANGE``, ``RELATED``, ``ROLE``, ``RSVP``, ``SENT_BY``, ``TZID``. See `Issue 798 <https://github.com/collective/icalendar/issues/798>`_.
+- Add parameters from :rfc:`5545` to properties: ``ALTREP``, ``CN``, ``CUTYPE``, ``DELEGATED_FROM``, ``DELEGATED_TO``, ``DIR``, ``FBTYPE``, ``LANGUAGE``, ``MEMBER``, ``PARTSTAT``, ``RANGE``, ``RELATED``, ``ROLE``, ``RSVP``, ``SENT_BY``, ``TZID``, ``RELTYPE``. See `Issue 798 <https://github.com/collective/icalendar/issues/798>`_.
 
 Bug fixes:
 

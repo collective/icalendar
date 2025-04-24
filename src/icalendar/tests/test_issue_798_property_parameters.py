@@ -1,12 +1,21 @@
 """Test the property parameters."""
 
 from datetime import datetime
-from icalendar import vCalAddress, vDatetime, vPeriod
+
 import pytest
 
-from icalendar.param import PARTSTAT
+from icalendar import (
+    CUTYPE,
+    FBTYPE,
+    PARTSTAT,
+    RANGE,
+    RELTYPE,
+    vCalAddress,
+    vDatetime,
+    vPeriod,
+    vText,
+)
 from icalendar.parser import Parameters
-from icalendar.enums import CUTYPE, FBTYPE, PARTSTAT, RANGE
 from icalendar.timezone.tzp import TZP
 
 
@@ -22,7 +31,14 @@ class Prop:
         """Parameters to bytes to string."""
         return self.params.to_ical().decode("utf-8")
 
-    from icalendar.param import ALTREP, CN, CUTYPE, DELEGATED_FROM, DELEGATED_TO
+    from icalendar.param import (
+        ALTREP,
+        CN,
+        CUTYPE,
+        DELEGATED_FROM,
+        DELEGATED_TO,
+        RELTYPE,
+    )
 
 
 @pytest.fixture()
@@ -158,3 +174,26 @@ def test_set_sent_by(addr: vCalAddress):
 def test_tzid(tzid, tzp:TZP):
     dt = vDatetime(tzp.localize(datetime(2019, 12, 10), tzid))
     assert dt.TZID is None
+
+
+@pytest.mark.parametrize(
+    ("index", "reltype"),
+    [
+        (0, RELTYPE.PARENT),
+        (1, RELTYPE.SIBLING),
+    ]
+)
+def test_reltype_example(calendars, index, reltype):
+    """The reltype parameter in the examples."""
+    event = calendars.issue_798_related_to.events[index]
+    print(event.to_ical().decode())
+    r : vText = event["RELATED-TO"]
+    print(r)
+    print(r.params)
+    assert reltype == r.RELTYPE
+
+
+def test_set_reltype(p):
+    p.RELTYPE = RELTYPE.CHILD
+    assert p.RELTYPE == RELTYPE.CHILD
+    assert p.params["RELTYPE"] == "CHILD"

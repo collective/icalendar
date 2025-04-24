@@ -423,6 +423,29 @@ Description:
 """
 )
 
+def _default_return_parent() -> enums.RELTYPE:
+    return enums.RELTYPE.PARENT
+
+RELTYPE = string_parameter(
+    "RELTYPE",
+    """Specify the type of hierarchical relationship associated with the calendar component specified by the property.
+
+Description:
+
+    This parameter can be specified on a property that
+    references another related calendar.  The parameter specifies the
+    hierarchical relationship type of the calendar component
+    referenced by the property.  The parameter value can be PARENT, to
+    indicate that the referenced calendar component is a superior of
+    calendar component; CHILD to indicate that the referenced calendar
+    component is a subordinate of the calendar component; or SIBLING
+    to indicate that the referenced calendar component is a peer of
+    the calendar component.  If this parameter is not specified on an
+    allowable property, the default relationship type is PARENT.
+    Applications MUST treat x-name and iana-token values they don't
+    recognize the same way as they would the PARENT value.
+""", default=_default_return_parent, convert=_convert_enum(enums.RELTYPE))
+
 __all__ = [
     "string_parameter",
     "quoted_list_parameter",

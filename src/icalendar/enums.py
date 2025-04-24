@@ -43,6 +43,11 @@ class CUTYPE(StrEnum):
     UNKNOWN = "UNKNOWN"
 
 
+class RELTYPE(StrEnum):
+    """Enum for RELTYPE from :rfc:`5545`."""
+    PARENT = "PARENT"
+    CHILD = "CHILD"
+    SIBLING = "SIBLING"
 
 
 class RANGE(StrEnum):
@@ -51,10 +56,12 @@ class RANGE(StrEnum):
     THISANDFUTURE = "THISANDFUTURE"
     THISANDPRIOR = "THISANDPRIOR"  # deprecated
 
+
 class RELATED(StrEnum):
     """Enum for RELATED from :rfc:`5545`."""
     START = "START"
     END = "END"
+
 
 class ROLE(StrEnum):
     """Enum for ROLE from :rfc:`5545`."""
@@ -71,4 +78,5 @@ __all__ = [
     "RANGE",
     "RELATED",
     "ROLE",
+    "RELTYPE",
 ]

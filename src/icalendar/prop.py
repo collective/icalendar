@@ -181,7 +181,7 @@ class vText(str):
         ical_unesc = unescape_char(ical)
         return cls(ical_unesc)
 
-    from icalendar.param import ALTREP, LANGUAGE
+    from icalendar.param import ALTREP, LANGUAGE, RELTYPE
 
 
 class vCalAddress(str):
