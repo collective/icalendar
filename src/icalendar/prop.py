@@ -955,6 +955,7 @@ class vPeriod(TimeBase):
         """Make this cooperate with the other vDDDTypes."""
         return (self.start, (self.duration if self.by_duration else self.end))
 
+    from icalendar.param import FBTYPE
 
 class vWeekday(str):
     """Either a ``weekday`` or a ``weekdaynum``

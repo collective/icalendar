@@ -1,8 +1,9 @@
 """Test the property parameters."""
 
+from icalendar import vPeriod
 import pytest
 
-from icalendar.param import CUTYPES
+from icalendar.param import CUTYPES, FBTYPES
 from icalendar.parser import Parameters
 
 
@@ -87,3 +88,19 @@ def test_delete_delegation_to(p):
 def test_serialize_delegation_to(p, value, expected):
     p.DELEGATED_TO = value
     assert p.to_ical() == expected
+
+
+@pytest.mark.parametrize(
+    ("index", "expected"),
+    [
+        (0, FBTYPES.BUSY_UNAVAILABLE),
+        (1, FBTYPES.BUSY),
+        (2, FBTYPES.FREE),
+    ]
+)
+def test_get_fbtype(calendars, index, expected):
+    fb = calendars.issue_798_freebusy.freebusy[index]
+    p : vPeriod = fb["FREEBUSY"]
+    if isinstance(p, list):
+        p = p[0]
+    assert expected == p.FBTYPE

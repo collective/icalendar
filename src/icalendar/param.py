@@ -100,12 +100,15 @@ def _default_return_individual() -> CUTYPES|str:
     """Default value."""
     return CUTYPES.INDIVIDUAL
 
-def _convert_cutype(value: str) -> CUTYPES|str:
-    """Convert if possible."""
-    try:
-        return CUTYPES(value.upper())
-    except ValueError:
-        return value
+def _convert_enum(enum: type[Enum]) -> Callable[[str], Enum]:
+
+    def convert(value: str) -> str:
+        """Convert if possible."""
+        try:
+            return enum(value.upper())
+        except ValueError:
+            return value
+    return convert
 
 CUTYPE = string_parameter(
     "CUTYPE",
@@ -119,7 +122,7 @@ Description:
     property that allows this parameter, the default is INDIVIDUAL.
     Applications MUST treat x-name and iana-token values they don't
     recognize the same way as they would the UNKNOWN value.
-""", default=_default_return_individual, convert=_convert_cutype)
+""", default=_default_return_individual, convert=_convert_enum(CUTYPES))
 
 
 def quoted_list_parameter(name: str, doc: str) -> property:
@@ -194,6 +197,37 @@ Description:
     used by current implementations.
 """)
 
+class FBTYPES(str, Enum):
+    """Enum for FBTYPE."""
+    FREE = "FREE"
+    BUSY = "BUSY"
+    BUSY_UNAVAILABLE = "BUSY-UNAVAILABLE"
+    BUSY_TENTATIVE = "BUSY-TENTATIVE"
+
+def _default_return_busy() -> FBTYPES|str:
+    """Default value."""
+    return FBTYPES.BUSY
+
+FBTYPE = string_parameter(
+    "FBTYPE",
+    """Specify the free or busy time type.
+
+Description:
+
+    This parameter specifies the free or busy time type.
+    The value FREE indicates that the time interval is free for
+    scheduling.  The value BUSY indicates that the time interval is
+    busy because one or more events have been scheduled for that
+    interval.  The value BUSY-UNAVAILABLE indicates that the time
+    interval is busy and that the interval can not be scheduled.  The
+    value BUSY-TENTATIVE indicates that the time interval is busy
+    because one or more events have been tentatively scheduled for
+    that interval.  If not specified on a property that allows this
+    parameter, the default is BUSY.  Applications MUST treat x-name
+    and iana-token values they don't recognize the same way as they
+    would the BUSY value.
+""", default=_default_return_busy, convert=_convert_enum(FBTYPES))
+
 __all__ = [
     "string_parameter",
     "quoted_list_parameter",
@@ -204,4 +238,6 @@ __all__ = [
     "DELEGATED_FROM",
     "DELEGATED_TO",
     "DIR",
+    "FBTYPE", 
+    "FBTYPES",
 ]
