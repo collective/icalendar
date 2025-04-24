@@ -8,6 +8,8 @@ Minor changes:
 
 - Use ``ruff`` to format the source code.
 - Update project metadata to use License-Expression.
+- Use ``tzp.localize(dt, None)`` to remove the timezone from a datetime.
+- Remove the HTML documentation when building with ``tox`` to force rebuild.
 
 Breaking changes:
 
@@ -18,10 +20,13 @@ New features:
 - Add attributes to the calendar for properties ``NAME``, ``DESCRIPTION``, and ``COLOR``. See `Issue 655 <https://github.com/collective/icalendar/issues/655>`_.
 - Add ``sequence`` attribute to ``Event``, ``Todo``, and ``Journal`` components. See `Issue 802 <https://github.com/collective/icalendar/issues/802>`_.
 - Add compatibility to :rfc:`6868`. See `Issue 652 <https://github.com/collective/icalendar/issues/652>`_.
+- Add ``freebusy`` property to the ``Calendar`` to get this type of subcomponents easier.
+- Add parameters from :rfc:`5545` to properties: ``ALTREP``, ``CN``, ``CUTYPE``, ``DELEGATED_FROM``, ``DELEGATED_TO``, ``DIR``, ``FBTYPE``, ``LANGUAGE``, ``MEMBER``, ``PARTSTAT``, ``RANGE``, ``RELATED``, ``ROLE``, ``RSVP``, ``SENT_BY``, ``TZID``. See `Issue 798 <https://github.com/collective/icalendar/issues/798>`_.
 
 Bug fixes:
 
 - Move import at the end of ``icalendar.parser`` into a function to mitigate import errors, see `Issue 781 <https://github.com/collective/icalendar/issues/781>`_.
+- ``ALTREP``, ``DELEGATED-FROM``, ``DELEGATED-TO``, ``DIR``, ``MEMBER`` and ``SENT-BY`` require double quotes. These are now always added.
 
 6.1.3 (2025-03-19)
 ------------------
