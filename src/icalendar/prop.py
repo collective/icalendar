@@ -51,7 +51,7 @@ from datetime import date, datetime, time, timedelta
 from typing import Union
 
 from icalendar.caselessdict import CaselessDict
-from icalendar.enums import SKIP
+from icalendar.enums import Enum
 from icalendar.parser import Parameters, escape_char, unescape_char
 from icalendar.parser_tools import (
     DEFAULT_ENCODING,
@@ -1158,6 +1158,21 @@ class vMonth(int):
         return f"{int(self)}{'L' if self.leap else ''}"
 
 
+class vSkip(vText, Enum):
+    """Skip values for RRULE.
+
+    These are defined in :rfc:`7529`.
+
+    OMIT  is the default value.
+    """
+
+    OMIT = "OMIT"
+    FORWARD = "FORWARD"
+    BACKWARD = "BACKWARD"
+
+    __reduce_ex__ = Enum.__reduce_ex__
+
+
 class vRecur(CaselessDict):
     """Recurrence definition.
 
@@ -1280,7 +1295,7 @@ class vRecur(CaselessDict):
             "BYDAY": vWeekday,
             "FREQ": vFrequency,
             "BYWEEKDAY": vWeekday,
-            "SKIP": SKIP,
+            "SKIP": vSkip,
         }
     )
 
@@ -1954,4 +1969,5 @@ __all__ = [
     "vUri",
     "vWeekday",
     "tzid_from_tzinfo",
+    "vSkip",
 ]
