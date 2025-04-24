@@ -181,6 +181,8 @@ class vText(str):
         ical_unesc = unescape_char(ical)
         return cls(ical_unesc)
 
+    from icalendar.param import ALTREP
+
 
 class vCalAddress(str):
     """Calendar User Address
@@ -246,15 +248,8 @@ class vCalAddress(str):
             return self[7:]
         return str(self)
 
-    @property
-    def name(self) -> str:
-        """The CN parameter or an empty string."""
-        return self.params.get("CN", "")
-
-    @name.setter
-    def name(self, value: str):
-        self.params["CN"] = value
-
+    from icalendar.param import CN, CUTYPE, DELEGATED_FROM, DELEGATED_TO, DIR
+    name = CN
 
 class vFloat(float):
     """Float
@@ -1910,7 +1905,6 @@ class TypesFactory(CaselessDict):
             "role": "text",
             "rsvp": "boolean",
             "sent-by": "cal-address",
-            "tzid": "text",
             "value": "text",
         }
     )

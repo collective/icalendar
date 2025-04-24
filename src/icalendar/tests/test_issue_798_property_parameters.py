@@ -1,0 +1,89 @@
+"""Test the property parameters."""
+
+import pytest
+
+from icalendar.param import CUTYPES
+from icalendar.parser import Parameters
+
+
+class Prop:
+
+    params: Parameters
+
+    def __init__(self, **parameters):
+        """Create a new property."""
+        self.params = Parameters(parameters)
+
+    def to_ical(self) -> str:
+        """Parameters to bytes to string."""
+        return self.params.to_ical().decode("utf-8")
+
+    from icalendar.param import ALTREP, CN, CUTYPE, DELEGATED_FROM, DELEGATED_TO
+
+
+@pytest.fixture()
+def p():
+    """Empty test property."""
+    return Prop()
+
+
+def test_set_altrep(p):
+    p.ALTREP = "http://example.com"
+    assert p.params == {"ALTREP": "http://example.com"}
+    assert p.ALTREP == "http://example.com"
+
+def test_altrep_must_be_quoted():
+    """altrepparam = "ALTREP" "=" DQUOTE uri DQUOTE"""
+    assert Prop(ALTREP="1234aA").to_ical() == 'ALTREP="1234aA"'
+
+def test_del_altrep(p):
+    """Del when empty"""
+    del p.ALTREP
+    assert p.params == {}
+    assert p.ALTREP is None
+
+def test_del_altrep_full(p):
+    """Del when empty"""
+    p.ALTREP = "http://example.com"
+    del p.ALTREP
+    assert p.params == {}
+    assert p.ALTREP is None
+
+
+def test_get_cutype(p):
+    """The default is individual."""
+    assert p.CUTYPE == "INDIVIDUAL"
+
+
+def test_set_lowercase():
+    p = Prop(CUTYPE="individual")
+    assert p.CUTYPE == "INDIVIDUAL"
+    p.CUTYPE = "unknown"
+    assert p.CUTYPE == CUTYPES.UNKNOWN
+
+
+def test_set_delegation_to_string(p):
+    p.DELEGATED_FROM = "mailto:foo"
+    assert p.DELEGATED_FROM == ("mailto:foo",)
+
+def test_set_delegation_to_tuple(p):
+    p.DELEGATED_TO = ("mailto:foo","mailto:bar")
+    assert p.DELEGATED_TO == ("mailto:foo","mailto:bar")
+
+def test_delete_delegation_to(p):
+    p.DELEGATED_TO = ("mailto:foo","mailto:bar")
+    del p.DELEGATED_TO
+    assert p.DELEGATED_TO == ()
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        ((), ""),
+        (("mailto:foo",), 'DELEGATED-TO="mailto:foo"'),
+        (("mailto:foo","mailto:bar"), 'DELEGATED-TO="mailto:foo","mailto:bar"'),
+        (('mailto:"asd"',), "DELEGATED-TO=\"mailto:^'asd^'\""),
+    ]
+)
+def test_serialize_delegation_to(p, value, expected):
+    p.DELEGATED_TO = value
+    assert p.to_ical() == expected

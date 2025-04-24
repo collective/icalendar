@@ -5,6 +5,7 @@ Eg. RFC 2426 (vCard)
 It is stupid in the sense that it treats the content purely as strings. No type
 conversion is attempted.
 """
+from __future__ import annotations
 
 import os
 from icalendar.caselessdict import CaselessDict
@@ -91,12 +92,12 @@ def foldline(line, limit=75, fold_sep="\r\n "):
 # Property parameter stuff
 
 
-def param_value(value):
+def param_value(value, always_quote=False):
     """Returns a parameter value."""
     if isinstance(value, SEQUENCE_TYPES):
-        return q_join(value)
+        return q_join(map(rfc_6868_escape, value), always_quote=always_quote)
     if isinstance(value, str):
-        return dquote(rfc_6868_escape(value))
+        return dquote(rfc_6868_escape(value), always_quote=always_quote)
     return dquote(rfc_6868_escape(value.to_ical().decode(DEFAULT_ENCODING)))
 
 
@@ -131,12 +132,12 @@ def validate_param_value(value, quoted=True):
 QUOTABLE = re.compile("[,;: ’']")
 
 
-def dquote(val):
+def dquote(val, always_quote=False):
     """Enclose parameter values containing [,;:] in double quotes."""
     # a double-quote character is forbidden to appear in a parameter value
     # so replace it with a single-quote character
     val = val.replace('"', "'")
-    if QUOTABLE.search(val):
+    if QUOTABLE.search(val) or always_quote:
         return f'"{val}"'
     return val
 
@@ -165,15 +166,23 @@ def q_split(st, sep=",", maxsplit=-1):
     return result
 
 
-def q_join(lst, sep=","):
+def q_join(lst, sep=",", always_quote=False):
     """Joins a list on sep, quoting strings with QUOTABLE chars."""
-    return sep.join(dquote(itm) for itm in lst)
+    return sep.join(dquote(itm, always_quote=always_quote) for itm in lst)
 
 
 class Parameters(CaselessDict):
     """Parser and generator of Property parameter strings. It knows nothing of
     datatypes. Its main concern is textual structure.
     """
+    
+    # The following paremeters must always be enclosed in double quotes
+    always_quoted = (
+        "ALTREP",
+        "DELEGATED-FROM",
+        "DELEGATED-TO",
+        "DIR",
+    )
 
     def params(self):
         """In RFC 5545 keys are called parameters, so this is to be consitent
@@ -207,12 +216,12 @@ class Parameters(CaselessDict):
             items.sort()
 
         for key, value in items:
-            value = param_value(value)
-            if isinstance(value, str):
-                value = value.encode(DEFAULT_ENCODING)
+            upper_key = key.upper()
+            quoted_value = param_value(value, always_quote=upper_key in self.always_quoted)
+            if isinstance(quoted_value, str):
+                quoted_value = quoted_value.encode(DEFAULT_ENCODING)
             # CaselessDict keys are always unicode
-            key = key.upper().encode(DEFAULT_ENCODING)
-            result.append(key + b"=" + value)
+            result.append(upper_key.encode(DEFAULT_ENCODING) + b"=" + quoted_value)
         return b";".join(result)
 
     @classmethod

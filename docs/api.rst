@@ -1,12 +1,17 @@
 API Reference
 -------------
 
+icalendar.attr
+++++++++++++++
+
+.. automodule:: icalendar.attr
+   :members:
+
 icalendar.alarms
 ++++++++++++++++
 
 .. automodule:: icalendar.alarms
    :members:
-
 
 icalendar.cal
 +++++++++++++
@@ -30,6 +35,12 @@ icalendar.error
 +++++++++++++++
 
 .. automodule:: icalendar.error
+   :members:
+
+icalendar.param
++++++++++++++++
+
+.. automodule:: icalendar.param
    :members:
 
 icalendar.parser
