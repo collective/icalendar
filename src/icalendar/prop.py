@@ -887,7 +887,7 @@ class vPeriod(TimeBase):
 
     params: Parameters
 
-    def __init__(self, per):
+    def __init__(self, per : tuple[datetime, Union[datetime, timedelta]]):
         start, end_or_duration = per
         if not (isinstance(start, datetime) or isinstance(start, date)):
             raise ValueError("Start value MUST be a datetime or date instance")
