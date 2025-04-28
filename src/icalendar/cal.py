@@ -18,6 +18,7 @@ from icalendar.attr import (
     exdates_property,
     multi_language_text_property,
     rdates_property,
+    rrules_property,
     sequence_property,
     single_int_property,
     single_utc_property,
@@ -898,6 +899,7 @@ class Event(Component):
     sequence = sequence_property
     rdates = rdates_property
     exdates = exdates_property
+    rrules = rrules_property
 
 
 class Todo(Component):
@@ -1089,6 +1091,7 @@ class Todo(Component):
     sequence = sequence_property
     rdates = rdates_property
     exdates = exdates_property
+    rrules = rrules_property
 
 
 class Journal(Component):
@@ -1176,6 +1179,7 @@ class Journal(Component):
     sequence = sequence_property
     rdates = rdates_property
     exdates = exdates_property
+    rrules = rrules_property
 
 
 class FreeBusy(Component):
@@ -1608,6 +1612,7 @@ class TimezoneStandard(Component):
     )
     rdates = rdates_property
     exdates = exdates_property
+    rrules = rrules_property
 
 
 class TimezoneDaylight(Component):
@@ -1629,6 +1634,7 @@ class TimezoneDaylight(Component):
 
     rdates = rdates_property
     exdates = exdates_property
+    rrules = rrules_property
 
 class Alarm(Component):
     """

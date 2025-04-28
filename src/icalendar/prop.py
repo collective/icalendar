@@ -1156,6 +1156,18 @@ class vSkip(vText, Enum):
     These are defined in :rfc:`7529`.
 
     OMIT  is the default value.
+
+    Examples:
+
+    .. code-block:: pycon
+
+        >>> from icalendar import vSkip
+        >>> vSkip.OMIT
+        vSkip('OMIT')
+        >>> vSkip.FORWARD
+        vSkip('FORWARD')
+        >>> vSkip.BACKWARD
+        vSkip('BACKWARD')
     """
 
     OMIT = "OMIT"
@@ -1294,6 +1306,9 @@ class vRecur(CaselessDict):
     )
 
     def __init__(self, *args, params={}, **kwargs):
+        if args and isinstance(args[0], str):
+            # we have a string as an argument.
+            args = (self.from_ical(args[0]),) + args[1:]
         for k, v in kwargs.items():
             if not isinstance(v, SEQUENCE_TYPES):
                 kwargs[k] = [v]

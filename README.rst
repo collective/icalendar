@@ -171,7 +171,7 @@ Version 6 is on `branch main <https://github.com/collective/icalendar/>`_.
 It is compatible with Python versions 3.8 - 3.13, and PyPy3.
 We expect the ``main`` branch with versions ``6+`` to receive the latest updates and features.
 
-Related projects
+Related Projects
 ================
 
 * `icalevents <https://github.com/irgangla/icalevents>`_. It is built on top of icalendar and allows you to query iCal files and get the events happening on specific dates. It manages recurrent events as well.
