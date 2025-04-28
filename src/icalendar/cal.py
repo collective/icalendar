@@ -16,6 +16,7 @@ import dateutil.tz
 
 from icalendar.attr import (
     multi_language_text_property,
+    rdates_property,
     sequence_property,
     single_int_property,
     single_utc_property,
@@ -894,6 +895,7 @@ class Event(Component):
     X_MOZ_SNOOZE_TIME = _X_MOZ_SNOOZE_TIME
     X_MOZ_LASTACK = _X_MOZ_LASTACK
     sequence = sequence_property
+    rdates = rdates_property
 
 
 class Todo(Component):
@@ -1083,6 +1085,7 @@ class Todo(Component):
         return Alarms(self)
 
     sequence = sequence_property
+    rdates = rdates_property
 
 
 class Journal(Component):
@@ -1168,6 +1171,7 @@ class Journal(Component):
         return timedelta(0)
 
     sequence = sequence_property
+    rdates = rdates_property
 
 
 class FreeBusy(Component):
@@ -1598,6 +1602,7 @@ class TimezoneStandard(Component):
         """,
         vUTCOffset,
     )
+    rdates = rdates_property
 
 
 class TimezoneDaylight(Component):
@@ -1617,6 +1622,7 @@ class TimezoneDaylight(Component):
     TZOFFSETTO = TimezoneStandard.TZOFFSETTO
     TZOFFSETFROM = TimezoneStandard.TZOFFSETFROM
 
+    rdates = rdates_property
 
 class Alarm(Component):
     """
