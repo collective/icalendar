@@ -1178,6 +1178,8 @@ class vSkip(vText, Enum):
         """For pickling."""
         return self.__class__, (self._name_,)
 
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self._name_!r})"
 
 class vRecur(CaselessDict):
     """Recurrence definition.
