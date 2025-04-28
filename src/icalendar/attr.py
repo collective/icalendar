@@ -175,7 +175,7 @@ def _get_exdates(self: Component) -> list[date|datetime]:
         # Add a list of excluded dates
         >>> event.add("EXDATE", [datetime(2025, 4, 28, 16, 5)])
         >>> event.exdates
-
+        [datetime.datetime(2025, 4, 28, 16, 5)]
 
     """
     result = []
