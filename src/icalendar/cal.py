@@ -15,6 +15,7 @@ import dateutil.rrule
 import dateutil.tz
 
 from icalendar.attr import (
+    exdates_property,
     multi_language_text_property,
     rdates_property,
     sequence_property,
@@ -896,6 +897,7 @@ class Event(Component):
     X_MOZ_LASTACK = _X_MOZ_LASTACK
     sequence = sequence_property
     rdates = rdates_property
+    exdates = exdates_property
 
 
 class Todo(Component):
@@ -1086,6 +1088,7 @@ class Todo(Component):
 
     sequence = sequence_property
     rdates = rdates_property
+    exdates = exdates_property
 
 
 class Journal(Component):
@@ -1172,6 +1175,7 @@ class Journal(Component):
 
     sequence = sequence_property
     rdates = rdates_property
+    exdates = exdates_property
 
 
 class FreeBusy(Component):
@@ -1603,6 +1607,7 @@ class TimezoneStandard(Component):
         vUTCOffset,
     )
     rdates = rdates_property
+    exdates = exdates_property
 
 
 class TimezoneDaylight(Component):
@@ -1623,6 +1628,7 @@ class TimezoneDaylight(Component):
     TZOFFSETFROM = TimezoneStandard.TZOFFSETFROM
 
     rdates = rdates_property
+    exdates = exdates_property
 
 class Alarm(Component):
     """

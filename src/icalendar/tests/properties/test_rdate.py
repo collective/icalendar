@@ -2,13 +2,20 @@
 """
 from __future__ import annotations
 
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 from pprint import pprint
 from typing import Union
 
 import pytest
 
-from icalendar import Calendar, Event, Journal, TimezoneDaylight, TimezoneStandard, Todo, vPeriod
+from icalendar import (
+    Calendar,
+    Event,
+    Journal,
+    TimezoneDaylight,
+    TimezoneStandard,
+    Todo,
+)
 
 C_RDATE = Union[Event, Todo, Journal, TimezoneDaylight, TimezoneStandard]
 
