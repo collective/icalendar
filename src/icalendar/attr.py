@@ -252,37 +252,41 @@ def _get_rrules(self: Component) -> list[vRecur]:
 
     Examples:
 
-    * Daily for 10 occurrences::
+        Daily for 10 occurrences:
 
-        >>> from icalendar import Event
-        >>> from datetime import datetime
-        >>> from zoneinfo import ZoneInfo
-        >>> event = Event()
-        >>> event.start = datetime(1997, 9, 2, 9, 0, tzinfo=ZoneInfo("America/New_York"))
-        >>> event.add("RRULE", "FREQ=DAILY;COUNT=10")
-        >>> print(event.to_ical())
-        BEGIN:VEVENT
-        DTSTART;TZID=America/New_York:19970902T090000
-        RRULE:FREQ=DAILY;COUNT=10
-        END:VEVENT
-        >>> event.rrules
-        [vRecur({'FREQ': ['DAILY'], 'COUNT': [10]})]
+        .. code-block:: pycon
 
-    * Daily until December 24, 1997::
+            >>> from icalendar import Event
+            >>> from datetime import datetime
+            >>> from zoneinfo import ZoneInfo
+            >>> event = Event()
+            >>> event.start = datetime(1997, 9, 2, 9, 0, tzinfo=ZoneInfo("America/New_York"))
+            >>> event.add("RRULE", "FREQ=DAILY;COUNT=10")
+            >>> print(event.to_ical())
+            BEGIN:VEVENT
+            DTSTART;TZID=America/New_York:19970902T090000
+            RRULE:FREQ=DAILY;COUNT=10
+            END:VEVENT
+            >>> event.rrules
+            [vRecur({'FREQ': ['DAILY'], 'COUNT': [10]})]
 
-        >>> from icalendar import Event, vRecur
-        >>> from datetime import datetime
-        >>> from zoneinfo import ZoneInfo
-        >>> event = Event()
-        >>> event.start = datetime(1997, 9, 2, 9, 0, tzinfo=ZoneInfo("America/New_York"))
-        >>> event.add("RRULE", vRecur({"FREQ": ["DAILY"]}, until=datetime(1997, 12, 24, tzinfo=ZoneInfo("UTC"))))
-        >>> print(event.to_ical())
-        BEGIN:VEVENT
-        DTSTART;TZID=America/New_York:19970902T090000
-        RRULE:FREQ=DAILY;UNTIL=19971224T000000Z
-        END:VEVENT
-        >>> event.rrules
-        [vRecur({'FREQ': ['DAILY'], 'UNTIL': [datetime.datetime(1997, 12, 24, 0, 0, tzinfo=ZoneInfo(key='UTC'))]})]
+        Daily until December 24, 1997::
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Event, vRecur
+            >>> from datetime import datetime
+            >>> from zoneinfo import ZoneInfo
+            >>> event = Event()
+            >>> event.start = datetime(1997, 9, 2, 9, 0, tzinfo=ZoneInfo("America/New_York"))
+            >>> event.add("RRULE", vRecur({"FREQ": ["DAILY"]}, until=datetime(1997, 12, 24, tzinfo=ZoneInfo("UTC"))))
+            >>> print(event.to_ical())
+            BEGIN:VEVENT
+            DTSTART;TZID=America/New_York:19970902T090000
+            RRULE:FREQ=DAILY;UNTIL=19971224T000000Z
+            END:VEVENT
+            >>> event.rrules
+            [vRecur({'FREQ': ['DAILY'], 'UNTIL': [datetime.datetime(1997, 12, 24, 0, 0, tzinfo=ZoneInfo(key='UTC'))]})]
 
     .. note::
 
