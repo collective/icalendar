@@ -1611,6 +1611,7 @@ class TimezoneStandard(Component):
         vUTCOffset,
     )
     rdates = rdates_property
+    exdates = exdates_property
     rrules = rrules_property
 
 
@@ -1632,6 +1633,7 @@ class TimezoneDaylight(Component):
     TZOFFSETFROM = TimezoneStandard.TZOFFSETFROM
 
     rdates = rdates_property
+    exdates = exdates_property
     rrules = rrules_property
 
 class Alarm(Component):
