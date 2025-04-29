@@ -159,6 +159,7 @@ def _get_exdates(self: Component) -> list[date|datetime]:
         dependencies by other properties such as the "RECURRENCE-ID".
 
     Example:
+        Below, we add an exdate in a list and get the resulting list of exdates.
 
         .. code-block:: pycon
 
