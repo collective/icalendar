@@ -162,16 +162,18 @@ def _get_exdates(self: Component) -> list[date|datetime]:
         You cannot modify the EXDATE value by modifying the result.
         Use :func:`icalendar.Component.add` to add values.
 
-    Example::
+    Example:
 
-        >>> from icalendar import Event
-        >>> from datetime import datetime
-        >>> event = Event()
+        .. code-block:: pycon
+    
+            >>> from icalendar import Event
+            >>> from datetime import datetime
+            >>> event = Event()
 
-        # Add a list of excluded dates
-        >>> event.add("EXDATE", [datetime(2025, 4, 28, 16, 5)])
-        >>> event.exdates
-        [datetime.datetime(2025, 4, 28, 16, 5)]
+            # Add a list of excluded dates
+            >>> event.add("EXDATE", [datetime(2025, 4, 28, 16, 5)])
+            >>> event.exdates
+            [datetime.datetime(2025, 4, 28, 16, 5)]
 
     .. note::
 
