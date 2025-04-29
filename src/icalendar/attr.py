@@ -447,7 +447,10 @@ Examples:
 
     The following is an example of this property for a calendar
     component that has been revised 10 different times by the
-    "Organizer"::
+    "Organizer":
+
+    .. code-block:: pycon
+
         >>> from icalendar import Calendar
         >>> calendar = Calendar.example("issue_156_RDATE_with_PERIOD_TZID_khal")
         >>> event = calendar.events[0]
