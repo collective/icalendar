@@ -167,7 +167,7 @@ def _get_exdates(self: Component) -> list[date|datetime]:
     Example:
 
         .. code-block:: pycon
-    
+
             >>> from icalendar import Event
             >>> from datetime import datetime
             >>> event = Event()
@@ -446,7 +446,9 @@ Description:
 
 Examples:
     The following is an example of this property for a calendar
-    component that was just created by the "Organizer"::
+    component that was just created by the "Organizer":
+
+    .. code-block:: pycon
 
         >>> from icalendar import Event
         >>> event = Event()
