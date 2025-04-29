@@ -69,12 +69,8 @@ def _get_rdates(self: Component) -> list[
         and "RDATE" properties, only one recurrence is considered.
         Duplicate instances are ignored.
 
-    .. note::
-
-        You cannot modify the RDATE value by modifying the result.
-        Use :func:`icalendar.Component.add` to add values.
-
     Example:
+        Below, we set one RDATE in a list and get the resulting tuple of start and end.
 
         .. code-block:: pycon
 
@@ -88,6 +84,9 @@ def _get_rdates(self: Component) -> list[
             [(datetime.datetime(2025, 4, 28, 16, 5), None)]
 
     .. note::
+
+        You cannot modify the RDATE value by modifying the result.
+        Use :func:`icalendar.cal.Component.add` to add values.
 
         If you want to compute recurrences, have a look at :ref:`Related Projects`.
 
@@ -159,11 +158,6 @@ def _get_exdates(self: Component) -> list[date|datetime]:
         because the original "DTSTART" value has inherent usage
         dependencies by other properties such as the "RECURRENCE-ID".
 
-    .. note::
-
-        You cannot modify the EXDATE value by modifying the result.
-        Use :func:`icalendar.Component.add` to add values.
-
     Example:
 
         .. code-block:: pycon
@@ -179,7 +173,11 @@ def _get_exdates(self: Component) -> list[date|datetime]:
 
     .. note::
 
+        You cannot modify the EXDATE value by modifying the result.
+        Use :func:`icalendar.cal.Component.add` to add values.
+
         If you want to compute recurrences, have a look at :ref:`Related Projects`.
+
     """
     result = []
     exdates = self.get("EXDATE", [])
@@ -292,6 +290,9 @@ def _get_rrules(self: Component) -> list[vRecur]:
             [vRecur({'FREQ': ['DAILY'], 'UNTIL': [datetime.datetime(1997, 12, 24, 0, 0, tzinfo=ZoneInfo(key='UTC'))]})]
 
     .. note::
+
+        You cannot modify the RRULE value by modifying the result.
+        Use :func:`icalendar.cal.Component.add` to add values.
 
         If you want to compute recurrences, have a look at :ref:`Related Projects`.
 
