@@ -49,6 +49,7 @@ from icalendar.prop import (
     vMonth,
     vPeriod,
     vRecur,
+    vSkip,
     vText,
     vTime,
     vUri,
@@ -110,4 +111,5 @@ __all__ = [
     "ComponentStartMissing",
     "IncompleteAlarmInformation",
     "LocalTimezoneMissing",
+    "vSkip",
 ]

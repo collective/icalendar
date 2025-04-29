@@ -1,5 +1,5 @@
-Sphinx>=1.2.3
-sphinx_rtd_theme
+Sphinx>=7
+pydata-sphinx-theme
 sphinx-autobuild
 sphinx-copybutton
 .

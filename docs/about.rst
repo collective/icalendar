@@ -7,7 +7,6 @@ iCalendar package for Python. The inspiration has come from the email package
 in the standard lib, which he thinks is pretty simple, yet efficient and
 powerful.
 
-The ``icalendar`` package is an `RFC 5545 <https://tools.ietf.org/html/rfc5545>`
-compatible parser/generator for iCalendar files.
+The ``icalendar`` package is an :rfc:`5545` compatible parser/generator for iCalendar files.
 
 .. _`Max M`: http://www.mxm.dk
