@@ -274,7 +274,7 @@ def _get_rrules(self: Component) -> list[vRecur]:
             >>> event.rrules
             [vRecur({'FREQ': ['DAILY'], 'COUNT': [10]})]
 
-        Daily until December 24, 1997::
+        Daily until December 24, 1997:
 
         .. code-block:: pycon
 
