@@ -153,7 +153,7 @@ By default and since 6.0.0, ``zoneinfo`` timezones are created.
 
 .. code:: python
 
-    >>> dt = icalendar.Calendar.example("timezoned").walk("VEVENT")[0]["DTSTART"].dt
+    >>> dt = icalendar.Calendar.example("timezoned").events[0].start
     >>> dt.tzinfo
     ZoneInfo(key='Europe/Vienna')
 
@@ -163,7 +163,7 @@ you can receive all the latest updates, and switch back to earlier behavior:
 .. code:: python
 
     >>> icalendar.use_pytz()
-    >>> dt = icalendar.Calendar.example("timezoned").walk("VEVENT")[0]["DTSTART"].dt
+    >>> dt = icalendar.Calendar.example("timezoned").events[0].start
     >>> dt.tzinfo
     <DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>
 
