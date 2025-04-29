@@ -255,7 +255,6 @@ def _get_rrules(self: Component) -> list[vRecur]:
         type.
 
     Examples:
-
         Daily for 10 occurrences:
 
         .. code-block:: pycon
