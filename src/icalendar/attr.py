@@ -74,16 +74,18 @@ def _get_rdates(self: Component) -> list[
         You cannot modify the RDATE value by modifying the result.
         Use :func:`icalendar.Component.add` to add values.
 
-    Example::
+    Example:
 
-        >>> from icalendar import Event
-        >>> from datetime import datetime
-        >>> event = Event()
+        .. code-block:: pycon
 
-        # Add a list of recurrence dates
-        >>> event.add("RDATE", [datetime(2025, 4, 28, 16, 5)])
-        >>> event.rdates
-        [(datetime.datetime(2025, 4, 28, 16, 5), None)]
+            >>> from icalendar import Event
+            >>> from datetime import datetime
+            >>> event = Event()
+
+            # Add a list of recurrence dates
+            >>> event.add("RDATE", [datetime(2025, 4, 28, 16, 5)])
+            >>> event.rdates
+            [(datetime.datetime(2025, 4, 28, 16, 5), None)]
 
     .. note::
 
