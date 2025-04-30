@@ -453,15 +453,18 @@ color_property = single_string_property(
         value is a case-insensitive color name taken from the CSS3 set of
         names, defined in Section 4.3 of `W3C.REC-css3-color-20110607 <https://www.w3.org/TR/css-color-3/>`_.
 
-    Example: ``"turquoise"``, ``"#ffffff"``
+    Example:
+        ``"turquoise"``, ``"#ffffff"``
 
-    >>> from icalendar import Todo
-    >>> todo = Todo()
-    >>> todo.color = "green"
-    >>> print(todo.to_ical())
-    BEGIN:VTODO
-    COLOR:green
-    END:VTODO
+        .. code-block:: pycon
+
+            >>> from icalendar import Todo
+            >>> todo = Todo()
+            >>> todo.color = "green"
+            >>> print(todo.to_ical())
+            BEGIN:VTODO
+            COLOR:green
+            END:VTODO
     """
 )
 
