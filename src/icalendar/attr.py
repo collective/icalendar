@@ -407,6 +407,67 @@ def single_utc_property(name: str, docs: str) -> property:
     return property(fget, fset, fdel, doc=docs)
 
 
+def single_string_property(name: str, docs: str, other_name:Optional[str]=None) -> property:
+    """Create a property to access a single string value."""
+
+    def fget(self: Component) -> str:
+        """Get the value."""
+        result = self.get(name, None if other_name is None else self.get(other_name, None))
+        if result is None or result == []:
+            return ""
+        if isinstance(result, list):
+            return result[0]
+        return result
+
+    def fset(self: Component, value: str):
+        """Set the value"""
+        fdel(self)
+        self.add(name, value)
+
+    def fdel(self: Component):
+        """Delete the property."""
+        self.pop(name, None)
+        if other_name is not None:
+            self.pop(other_name, None)
+
+    return property(fget, fset, fdel, doc=docs)
+
+color_property = single_string_property(
+    "COLOR",
+    """This property specifies a color used for displaying the component.
+
+    This implements :rfc:`7986` ``COLOR`` property.
+
+    Property Parameters:
+        IANA and non-standard property parameters can
+        be specified on this property.
+
+    Conformance:
+        This property can be specified once in an iCalendar
+        object or in ``VEVENT``, ``VTODO``, or ``VJOURNAL`` calendar components.
+
+    Description:
+        This property specifies a color that clients MAY use
+        when presenting the relevant data to a user.  Typically, this
+        would appear as the "background" color of events or tasks.  The
+        value is a case-insensitive color name taken from the CSS3 set of
+        names, defined in Section 4.3 of `W3C.REC-css3-color-20110607 <https://www.w3.org/TR/css-color-3/>`_.
+
+    Example:
+        ``"turquoise"``, ``"#ffffff"``
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Todo
+            >>> todo = Todo()
+            >>> todo.color = "green"
+            >>> print(todo.to_ical())
+            BEGIN:VTODO
+            COLOR:green
+            END:VTODO
+    """
+)
+
 sequence_property = single_int_property(
     "SEQUENCE",
     0,
@@ -473,6 +534,7 @@ Examples:
 
 __all__ = [
     "single_utc_property",
+    "color_property",
     "multi_language_text_property",
     "single_int_property",
     "sequence_property",
