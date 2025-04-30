@@ -443,7 +443,6 @@ color_property = single_string_property(
         be specified on this property.
 
     Conformance:
-
         This property can be specified once in an iCalendar
         object or in ``VEVENT``, ``VTODO``, or ``VJOURNAL`` calendar components.
 
