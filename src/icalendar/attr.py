@@ -447,7 +447,6 @@ color_property = single_string_property(
         object or in ``VEVENT``, ``VTODO``, or ``VJOURNAL`` calendar components.
 
     Description:
-
         This property specifies a color that clients MAY use
         when presenting the relevant data to a user.  Typically, this
         would appear as the "background" color of events or tasks.  The
