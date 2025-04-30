@@ -439,7 +439,6 @@ color_property = single_string_property(
     This implements :rfc:`7986` ``COLOR`` property.
 
     Property Parameters:
-
         IANA and non-standard property parameters can
         be specified on this property.
 
