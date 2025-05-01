@@ -8,13 +8,14 @@ Related:
 """
 from __future__ import annotations
 
-from enum import Enum
 import functools
 from typing import TYPE_CHECKING, Callable, Optional, TypeVar, Union
 
 from icalendar import enums
 
 if TYPE_CHECKING:
+    from enum import Enum
+
     from icalendar.parser import Parameters
 
 
@@ -67,7 +68,6 @@ ALTREP = string_parameter(
     """ALTREP - Specify an alternate text representation for the property value.
 
 Description:
-
     This parameter specifies a URI that points to an
     alternate representation for a textual property value.  A property
     specifying this parameter MUST also include a value that reflects
@@ -87,7 +87,6 @@ CN = string_parameter(
     """Specify the common name to be associated with the calendar user specified.
 
 Description:
-
     This parameter can be specified on properties with a
     CAL-ADDRESS value type.  The parameter specifies the common name
     to be associated with the calendar user specified by the property.
@@ -117,7 +116,6 @@ CUTYPE = string_parameter(
     """Identify the type of calendar user specified by the property.
 
 Description:
-
     This parameter can be specified on properties with a
     CAL-ADDRESS value type.  The parameter identifies the type of
     calendar user specified by the property.  If not specified on a
@@ -155,7 +153,6 @@ DELEGATED_FROM = quoted_list_parameter(
     """Specify the calendar users that have delegated their participation to the calendar user specified by the property.
 
 Description:
-
     This parameter can be specified on properties with a
     CAL-ADDRESS value type.  This parameter specifies those calendar
     users that have delegated their participation in a group-scheduled
@@ -169,7 +166,6 @@ DELEGATED_TO = quoted_list_parameter(
     """Specify the calendar users to whom the calendar user specified by the property has delegated participation.
 
 Description:
-
     This parameter can be specified on properties with a
     CAL-ADDRESS value type.  This parameter specifies those calendar
     users whom have been delegated participation in a group-scheduled
@@ -183,7 +179,6 @@ DIR = string_parameter(
     """Specify reference to a directory entry associated with the calendar user specified by the property.
 
 Description:
-
     This parameter can be specified on properties with a
     CAL-ADDRESS value type.  The parameter specifies a reference to
     the directory entry associated with the calendar user specified by
@@ -208,7 +203,6 @@ FBTYPE = string_parameter(
     """Specify the free or busy time type.
 
 Description:
-
     This parameter specifies the free or busy time type.
     The value FREE indicates that the time interval is free for
     scheduling.  The value BUSY indicates that the time interval is
@@ -228,7 +222,6 @@ LANGUAGE = string_parameter(
     """Specify the language for text values in a property or property parameter.
 
 Description:
-
     This parameter identifies the language of the text in
     the property value and of all property parameter values of the
     property.  The value of the "LANGUAGE" property parameter is that
@@ -244,7 +237,6 @@ MEMBER = quoted_list_parameter(
     """Specify the group or list membership of the calendar user specified by the property.
 
 Description:
-
     This parameter can be specified on properties with a
     CAL-ADDRESS value type.  The parameter identifies the groups or
     list membership for the calendar user specified by the property.
@@ -264,7 +256,6 @@ PARTSTAT = string_parameter(
     """Specify the participation status for the calendar user specified by the property.
 
 Description:
-
     This parameter can be specified on properties with a
     CAL-ADDRESS value type.  The parameter identifies the
     participation status for the calendar user specified by the
@@ -285,7 +276,6 @@ RANGE = string_parameter(
     """Specify the effective range of recurrence instances from the instance specified by the recurrence identifier specified by the property.
 
 Description:
-
     This parameter can be specified on a property that
     specifies a recurrence identifier.  The parameter specifies the
     effective range of recurrence instances that is specified by the
@@ -307,7 +297,6 @@ RELATED = string_parameter(
     """Specify the relationship of the alarm trigger with respect to the start or end of the calendar component.
 
 Description:
-
     This parameter can be specified on properties that
     specify an alarm trigger with a "DURATION" value type.  The
     parameter specifies whether the alarm will trigger relative to the
@@ -328,7 +317,6 @@ ROLE = string_parameter(
     """Specify the participation role for the calendar user specified by the property.
 
 Description:
-
     This parameter can be specified on properties with a
     CAL-ADDRESS value type.  The parameter specifies the participation
     role for the calendar user specified by the property in the group
@@ -358,7 +346,6 @@ RSVP = boolean_parameter(
     """Specify whether there is an expectation of a favor of anreply from the calendar user specified by the property value.
 
 Description:
-
     This parameter can be specified on properties with a
     CAL-ADDRESS value type.  The parameter identifies the expectation
     of a reply from the calendar user specified by the property value.
@@ -373,12 +360,13 @@ SENT_BY = string_parameter(
     "SENT-BY",
     """Specify the calendar user that is acting on behalf of the calendar user specified by the property.
 
-This parameter can be specified on properties with a
-CAL-ADDRESS value type.  The parameter specifies the calendar user
-that is acting on behalf of the calendar user specified by the
-property.  The parameter value MUST be a mailto URI as defined in
-:rfc:`2368`.  The individual calendar address parameter values MUST
-each be specified in a quoted-string.
+Description:
+    This parameter can be specified on properties with a
+    CAL-ADDRESS value type.  The parameter specifies the calendar user
+    that is acting on behalf of the calendar user specified by the
+    property.  The parameter value MUST be a mailto URI as defined in
+    :rfc:`2368`.  The individual calendar address parameter values MUST
+    each be specified in a quoted-string.
 """
 )
 
@@ -387,7 +375,6 @@ TZID = string_parameter(
     """Specify the identifier for the time zone definition for a time component in the property value.
 
 Description:
-
     This parameter MUST be specified on the "DTSTART",
     "DTEND", "DUE", "EXDATE", and "RDATE" properties when either a
     DATE-TIME or TIME value type is specified and when the value is
@@ -431,7 +418,6 @@ RELTYPE = string_parameter(
     """Specify the type of hierarchical relationship associated with the calendar component specified by the property.
 
 Description:
-
     This parameter can be specified on a property that
     references another related calendar.  The parameter specifies the
     hierarchical relationship type of the calendar component

@@ -208,19 +208,34 @@ class vCalAddress(str):
         mailto URI, as defined by [RFC2368].
 
     Example:
+        ``mailto:`` is in front of the address.
 
-    .. code-block:: text
+        .. code-block:: text
 
-        mailto:jane_doe@example.com
+            mailto:jane_doe@example.com
 
-    .. code-block:: pycon
+        Parsing:
 
-        >>> from icalendar.prop import vCalAddress
-        >>> cal_address = vCalAddress.from_ical('mailto:jane_doe@example.com')
-        >>> cal_address
-        vCalAddress('mailto:jane_doe@example.com')
+        .. code-block:: pycon
 
+            >>> from icalendar import vCalAddress
+            >>> cal_address = vCalAddress.from_ical('mailto:jane_doe@example.com')
+            >>> cal_address
+            vCalAddress('mailto:jane_doe@example.com')
 
+        Encoding:
+
+        .. code-block:: pycon
+
+            >>> from icalendar import vCalAddress, Event
+            >>> event = Event()
+            >>> jane = vCalAddress("mailto:jane_doe@example.com")
+            >>> jane.name = "Jane"
+            >>> event["organizer"] = jane
+            >>> print(event.to_ical())
+            BEGIN:VEVENT
+            ORGANIZER;CN=Jane:mailto:jane_doe@example.com
+            END:VEVENT
     """
 
     params: Parameters
