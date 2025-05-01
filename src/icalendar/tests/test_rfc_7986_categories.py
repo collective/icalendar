@@ -59,7 +59,8 @@ def test_delete_categories(component: CTJE):
 
 
 def test_deal_with_several_categories(component: CTJE):
-    """If we have categories several times, we should all use them."""
+    """Manage multiple categories by merging them, then append
+    and remove a category from the resulting set."""
     component.add("categories", ["c1", "c2"])
     component.add("categories", ["c3", "c4"])
     assert component.categories == ["c1", "c2", "c3", "c4"]
