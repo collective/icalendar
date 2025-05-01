@@ -430,17 +430,20 @@ class vDDDLists:
 class vCategory:
     params: Parameters
 
-    def __init__(self, c_list, params={}):
+    def __init__(self, c_list:list[str] | str, params={}):
         if not hasattr(c_list, "__iter__") or isinstance(c_list, str):
             c_list = [c_list]
-        self.cats = [vText(c) for c in c_list]
+        self.cats : list[vText|str] = [vText(c) for c in c_list]
         self.params = Parameters(params)
 
     def __iter__(self):
         return iter(vCategory.from_ical(self.to_ical()))
 
     def to_ical(self):
-        return b",".join([c.to_ical() for c in self.cats])
+        return b",".join([
+            c.to_ical() if hasattr(c, "to_ical") else vText(c).to_ical()
+            for c in self.cats
+        ])
 
     @staticmethod
     def from_ical(ical):

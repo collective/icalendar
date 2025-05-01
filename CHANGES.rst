@@ -20,11 +20,14 @@ New features:
 - Add attributes to the calendar for properties ``NAME``, ``DESCRIPTION``, and ``COLOR``. See `Issue 655 <https://github.com/collective/icalendar/issues/655>`_.
 - Add a ``color`` attribute to ``Event``, ``Todo``, and ``Journal`` components. See `Issue 655`_.
 - Add ``sequence`` attribute to ``Event``, ``Todo``, and ``Journal`` components. See `Issue 802 <https://github.com/collective/icalendar/issues/802>`_.
+- Add ``categories`` attribute to ``Calendar``, ``Event``, ``Todo``, and ``Journal`` components. See `Issue 655 <https://github.com/collective/icalendar/issues/655>`_.
 - Add compatibility to :rfc:`6868`. See `Issue 652 <https://github.com/collective/icalendar/issues/652>`_.
+- New properties from :rfc:`7986` can occur multiple times in ``VCALENDAR``. See `PR 808`_.
 
 Bug fixes:
 
 - Move import at the end of ``icalendar.parser`` into a function to mitigate import errors, see `Issue 781 <https://github.com/collective/icalendar/issues/781>`_.
+- Classify ``CATEGORIES`` as multiple in ``VEVENT``. See `PR 808 <https://github.com/collective/icalendar/pull/808>`_.
 
 6.1.3 (2025-03-19)
 ------------------

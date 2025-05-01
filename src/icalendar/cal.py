@@ -15,6 +15,7 @@ import dateutil.rrule
 import dateutil.tz
 
 from icalendar.attr import (
+    categories_property,
     color_property,
     exdates_property,
     multi_language_text_property,
@@ -739,7 +740,6 @@ class Event(Component):
         "DTEND",
         "DURATION",
         "UID",
-        "CATEGORIES",
     )
     exclusive = (
         "DTEND",
@@ -748,6 +748,7 @@ class Event(Component):
     multiple = (
         "ATTACH",
         "ATTENDEE",
+        "CATEGORIES",
         "COMMENT",
         "CONTACT",
         "EXDATE",
@@ -901,6 +902,7 @@ class Event(Component):
     X_MOZ_LASTACK = _X_MOZ_LASTACK
     color = color_property
     sequence = sequence_property
+    categories = categories_property
     rdates = rdates_property
     exdates = exdates_property
     rrules = rrules_property
@@ -1095,6 +1097,7 @@ class Todo(Component):
 
     color = color_property
     sequence = sequence_property
+    categories = categories_property
     rdates = rdates_property
     exdates = exdates_property
     rrules = rrules_property
@@ -1185,6 +1188,7 @@ class Journal(Component):
 
     color = color_property
     sequence = sequence_property
+    categories = categories_property
     rdates = rdates_property
     exdates = exdates_property
     rrules = rrules_property
@@ -1874,7 +1878,18 @@ class Calendar(Component):
         "PRODID",
         "VERSION",
     )
-    singletons = ("PRODID", "VERSION", "CALSCALE", "METHOD")
+    singletons = (
+        "PRODID",
+        "VERSION",
+        "CALSCALE",
+        "METHOD",
+        "COLOR",  # RFC 7986
+    )
+    multiple = (
+        "CATEGORIES",  # RFC 7986
+        "DESCRIPTION",  # RFC 7986
+        "NAME",  # RFC 7986
+    )
 
     @classmethod
     def example(cls, name: str = "example") -> Calendar:
@@ -2135,6 +2150,7 @@ class Calendar(Component):
     """,
     "X-APPLE-CALENDAR-COLOR",
     )
+    categories = categories_property
 
 # These are read only singleton, so one instance is enough for the module
 types_factory = TypesFactory()
