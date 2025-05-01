@@ -58,7 +58,7 @@ def test_delete_categories(component: CTJE):
     assert component.categories == []
 
 
-def test_deal_with_several_categories(component: CTJE):
+def test_manage_add_append_remove_categories(component: CTJE):
     """Manage multiple categories by merging them, then append
     and remove a category from the resulting set."""
     component.add("categories", ["c1", "c2"])
