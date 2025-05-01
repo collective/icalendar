@@ -16,6 +16,15 @@ class StrEnum(str, Enum):
 
 class PARTSTAT(StrEnum):
     """Enum for PARTSTAT from :rfc:`5545`.
+
+    Attributes:
+        ``NEEDS_ACTION``,
+        ``ACCEPTED``,
+        ``DECLINED``,
+        ``TENTATIVE``,
+        ``DELEGATED``,
+        ``COMPLETED``,
+        ``IN_PROCESS``
     """
     NEEDS_ACTION = "NEEDS-ACTION"
     ACCEPTED = "ACCEPTED"
@@ -27,7 +36,14 @@ class PARTSTAT(StrEnum):
 
 
 class FBTYPE(StrEnum):
-    """Enum for FBTYPE from :rfc:`5545`."""
+    """Enum for FBTYPE from :rfc:`5545`.
+
+    Attributes:
+        ``FREE``,
+        ``BUSY``,
+        ``BUSY-UNAVAILABLE``,
+        ``BUSY-TENTATIVE``
+    """
     FREE = "FREE"
     BUSY = "BUSY"
     BUSY_UNAVAILABLE = "BUSY-UNAVAILABLE"
@@ -35,7 +51,15 @@ class FBTYPE(StrEnum):
 
 
 class CUTYPE(StrEnum):
-    """Enum for CTYPE from :rfc:`5545`."""
+    """Enum for CTYPE from :rfc:`5545`.
+
+    Attributes:
+        ``INDIVIDUAL``,
+        ``GROUP``,
+        ``RESOURCE``,
+        ``ROOM``,
+        ``UNKNOWN``
+    """
     INDIVIDUAL = "INDIVIDUAL"
     GROUP = "GROUP"
     RESOURCE = "RESOURCE"
@@ -44,27 +68,50 @@ class CUTYPE(StrEnum):
 
 
 class RELTYPE(StrEnum):
-    """Enum for RELTYPE from :rfc:`5545`."""
+    """Enum for RELTYPE from :rfc:`5545`.
+
+    Attributes:
+        ``PARENT``,
+        ``CHILD``,
+        ``SIBLING``
+    """
     PARENT = "PARENT"
     CHILD = "CHILD"
     SIBLING = "SIBLING"
 
 
 class RANGE(StrEnum):
-    """Enum for RANGE from :rfc:`5545`."""
+    """Enum for RANGE from :rfc:`5545`.
+
+    Attributes:
+        ``THISANDFUTURE``,
+        ``THISANDPRIOR``
+    """
 
     THISANDFUTURE = "THISANDFUTURE"
     THISANDPRIOR = "THISANDPRIOR"  # deprecated
 
 
 class RELATED(StrEnum):
-    """Enum for RELATED from :rfc:`5545`."""
+    """Enum for RELATED from :rfc:`5545`.
+
+    Attributes:
+        ``START``,
+        ``END``
+    """
     START = "START"
     END = "END"
 
 
 class ROLE(StrEnum):
-    """Enum for ROLE from :rfc:`5545`."""
+    """Enum for ROLE from :rfc:`5545`.
+
+    Attributes:
+        ``CHAIR``,
+        ``REQ-PARTICIPANT``,
+        ``OPT-PARTICIPANT``,
+        ``NON-PARTICIPANT``
+    """
     CHAIR = "CHAIR"
     REQ_PARTICIPANT = "REQ-PARTICIPANT"
     OPT_PARTICIPANT = "OPT-PARTICIPANT"
