@@ -563,18 +563,15 @@ categories_property = property(
     """This property defines the categories for a component.
 
 Property Parameters:
-
     IANA, non-standard, and language property parameters can be specified on this
     property.
 
 Conformance:
-
     The property can be specified within "VEVENT", "VTODO", or "VJOURNAL" calendar
     components.
     Since :rfc:`7986` it can also be defined on a "VCALENDAR" component.
 
 Description:
-
     This property is used to specify categories or subtypes
     of the calendar component.  The categories are useful in searching
     for a calendar component of a particular type and category.
@@ -583,22 +580,24 @@ Description:
     of categories.
 
 Example:
+    Below, we add the categories to an event:
 
-    >>> from icalendar import Event
-    >>> event = Event()
-    >>> event.categories = ["Work", "Meeting"]
-    >>> print(event.to_ical())
-    BEGIN:VEVENT
-    CATEGORIES:Work,Meeting
-    END:VEVENT
-    >>> event.categories.append("Lecture")
-    >>> event.categories == ["Work", "Meeting", "Lecture"]
-    True
+    .. code-block:: pycon
+
+        >>> from icalendar import Event
+        >>> event = Event()
+        >>> event.categories = ["Work", "Meeting"]
+        >>> print(event.to_ical())
+        BEGIN:VEVENT
+        CATEGORIES:Work,Meeting
+        END:VEVENT
+        >>> event.categories.append("Lecture")
+        >>> event.categories == ["Work", "Meeting", "Lecture"]
+        True
 
 .. note::
 
    At present, we do not take the LANGUAGE parameter into account.
-
 """
 )
 
