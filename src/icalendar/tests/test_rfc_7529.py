@@ -1,7 +1,7 @@
 """This tests the compatibility with RFC 7529.
 
 See
-- https://github.com/collective/icalendar/issues/653
+- https://github.com/collective/icalendar/issues/655
 - https://www.rfc-editor.org/rfc/rfc7529.html
 """
 

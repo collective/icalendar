@@ -15,9 +15,15 @@ import dateutil.rrule
 import dateutil.tz
 
 from icalendar.attr import (
+    categories_property,
+    color_property,
+    exdates_property,
     multi_language_text_property,
+    rdates_property,
+    rrules_property,
     sequence_property,
     single_int_property,
+    single_string_property,
     single_utc_property,
 )
 from icalendar.caselessdict import CaselessDict
@@ -716,6 +722,7 @@ class Event(Component):
     singletons = (
         "CLASS",
         "CREATED",
+        "COLOR",
         "DESCRIPTION",
         "DTSTART",
         "GEO",
@@ -733,7 +740,6 @@ class Event(Component):
         "DTEND",
         "DURATION",
         "UID",
-        "CATEGORIES",
     )
     exclusive = (
         "DTEND",
@@ -742,6 +748,7 @@ class Event(Component):
     multiple = (
         "ATTACH",
         "ATTENDEE",
+        "CATEGORIES",
         "COMMENT",
         "CONTACT",
         "EXDATE",
@@ -893,7 +900,12 @@ class Event(Component):
 
     X_MOZ_SNOOZE_TIME = _X_MOZ_SNOOZE_TIME
     X_MOZ_LASTACK = _X_MOZ_LASTACK
+    color = color_property
     sequence = sequence_property
+    categories = categories_property
+    rdates = rdates_property
+    exdates = exdates_property
+    rrules = rrules_property
 
 
 class Todo(Component):
@@ -913,6 +925,7 @@ class Todo(Component):
     )
     singletons = (
         "CLASS",
+        "COLOR",
         "COMPLETED",
         "CREATED",
         "DESCRIPTION",
@@ -1082,7 +1095,12 @@ class Todo(Component):
 
         return Alarms(self)
 
+    color = color_property
     sequence = sequence_property
+    categories = categories_property
+    rdates = rdates_property
+    exdates = exdates_property
+    rrules = rrules_property
 
 
 class Journal(Component):
@@ -1108,6 +1126,7 @@ class Journal(Component):
     )
     singletons = (
         "CLASS",
+        "COLOR",
         "CREATED",
         "DTSTART",
         "DTSTAMP",
@@ -1167,7 +1186,12 @@ class Journal(Component):
         """The journal has no duration: timedelta(0)."""
         return timedelta(0)
 
+    color = color_property
     sequence = sequence_property
+    categories = categories_property
+    rdates = rdates_property
+    exdates = exdates_property
+    rrules = rrules_property
 
 
 class FreeBusy(Component):
@@ -1598,6 +1622,9 @@ class TimezoneStandard(Component):
         """,
         vUTCOffset,
     )
+    rdates = rdates_property
+    exdates = exdates_property
+    rrules = rrules_property
 
 
 class TimezoneDaylight(Component):
@@ -1617,6 +1644,9 @@ class TimezoneDaylight(Component):
     TZOFFSETTO = TimezoneStandard.TZOFFSETTO
     TZOFFSETFROM = TimezoneStandard.TZOFFSETFROM
 
+    rdates = rdates_property
+    exdates = exdates_property
+    rrules = rrules_property
 
 class Alarm(Component):
     """
@@ -1848,7 +1878,18 @@ class Calendar(Component):
         "PRODID",
         "VERSION",
     )
-    singletons = ("PRODID", "VERSION", "CALSCALE", "METHOD")
+    singletons = (
+        "PRODID",
+        "VERSION",
+        "CALSCALE",
+        "METHOD",
+        "COLOR",  # RFC 7986
+    )
+    multiple = (
+        "CATEGORIES",  # RFC 7986
+        "DESCRIPTION",  # RFC 7986
+        "NAME",  # RFC 7986
+    )
 
     @classmethod
     def example(cls, name: str = "example") -> Calendar:
@@ -2017,19 +2058,16 @@ class Calendar(Component):
     This implements :rfc:`7986` ``NAME`` and ``X-WR-CALNAME``.
 
     Property Parameters:
-
         IANA, non-standard, alternate text
         representation, and language property parameters can be specified
         on this property.
 
     Conformance:
-
         This property can be specified multiple times in an
         iCalendar object.  However, each property MUST represent the name
         of the calendar in a different language.
 
     Description:
-
         This property is used to specify a name of the
         iCalendar object that can be used by calendar user agents when
         presenting the calendar data to a user.  Whilst a calendar only
@@ -2037,13 +2075,18 @@ class Calendar(Component):
         including this property multiple times with different "LANGUAGE"
         parameter values on each.
 
-    >>> from icalendar import Calendar
-    >>> calendar = Calendar()
-    >>> calendar.calendar_name = "My Calendar"
-    >>> print(calendar.to_ical())
-    BEGIN:VCALENDAR
-    NAME:My Calendar
-    END:VCALENDAR
+    Example:
+        Below, we set the name of the calendar.
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Calendar
+            >>> calendar = Calendar()
+            >>> calendar.calendar_name = "My Calendar"
+            >>> print(calendar.to_ical())
+            BEGIN:VCALENDAR
+            NAME:My Calendar
+            END:VCALENDAR
     """)
 
     description = multi_language_text_property(
@@ -2053,13 +2096,11 @@ class Calendar(Component):
     This implements :rfc:`7986` ``DESCRIPTION`` and ``X-WR-CALDESC``.
 
     Conformance:
-
         This property can be specified multiple times in an
         iCalendar object.  However, each property MUST represent the
         description of the calendar in a different language.
 
     Description:
-
         This property is used to specify a lengthy textual
         description of the iCalendar object that can be used by calendar
         user agents when describing the nature of the calendar data to a
@@ -2067,50 +2108,59 @@ class Calendar(Component):
         language variants can be specified by including this property
         multiple times with different "LANGUAGE" parameter values on each.
 
-    >>> from icalendar import Calendar
-    >>> calendar = Calendar()
-    >>> calendar.description = "This is a calendar"
-    >>> print(calendar.to_ical())
-    BEGIN:VCALENDAR
-    DESCRIPTION:This is a calendar
-    END:VCALENDAR
+    Example:
+        Below, we add a description to a calendar.
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Calendar
+            >>> calendar = Calendar()
+            >>> calendar.description = "This is a calendar"
+            >>> print(calendar.to_ical())
+            BEGIN:VCALENDAR
+            DESCRIPTION:This is a calendar
+            END:VCALENDAR
     """)
 
-    color = multi_language_text_property(
-        "COLOR", "X-APPLE-CALENDAR-COLOR",
+    color = single_string_property(
+        "COLOR",
         """This property specifies a color used for displaying the calendar.
 
     This implements :rfc:`7986` ``COLOR`` and ``X-APPLE-CALENDAR-COLOR``.
+    Please note that since :rfc:`7986`, subcomponents can have their own color.
 
     Property Parameters:
-
         IANA and non-standard property parameters can
         be specified on this property.
 
     Conformance:
-
         This property can be specified once in an iCalendar
         object or in ``VEVENT``, ``VTODO``, or ``VJOURNAL`` calendar components.
 
     Description:
-
         This property specifies a color that clients MAY use
         when presenting the relevant data to a user.  Typically, this
         would appear as the "background" color of events or tasks.  The
         value is a case-insensitive color name taken from the CSS3 set of
         names, defined in Section 4.3 of `W3C.REC-css3-color-20110607 <https://www.w3.org/TR/css-color-3/>`_.
 
-    Example: ``"turquoise"``, ``"#ffffff"``
+    Example:
+        ``"turquoise"``, ``"#ffffff"``
 
-    >>> from icalendar import Calendar
-    >>> calendar = Calendar()
-    >>> calendar.color = "black"
-    >>> print(calendar.to_ical())
-    BEGIN:VCALENDAR
-    COLOR:black
-    END:VCALENDAR
-    """
+        .. code-block:: pycon
+
+            >>> from icalendar import Calendar
+            >>> calendar = Calendar()
+            >>> calendar.color = "black"
+            >>> print(calendar.to_ical())
+            BEGIN:VCALENDAR
+            COLOR:black
+            END:VCALENDAR
+
+    """,
+    "X-APPLE-CALENDAR-COLOR",
     )
+    categories = categories_property
 
 # These are read only singleton, so one instance is enough for the module
 types_factory = TypesFactory()
