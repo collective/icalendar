@@ -890,7 +890,7 @@ class vPeriod(TimeBase):
 
     params: Parameters
 
-    def __init__(self, per):
+    def __init__(self, per : tuple[datetime, Union[datetime, timedelta]]):
         start, end_or_duration = per
         if not (isinstance(start, datetime) or isinstance(start, date)):
             raise ValueError("Start value MUST be a datetime or date instance")
@@ -1159,6 +1159,18 @@ class vSkip(vText, Enum):
     These are defined in :rfc:`7529`.
 
     OMIT  is the default value.
+
+    Examples:
+
+    .. code-block:: pycon
+
+        >>> from icalendar import vSkip
+        >>> vSkip.OMIT
+        vSkip('OMIT')
+        >>> vSkip.FORWARD
+        vSkip('FORWARD')
+        >>> vSkip.BACKWARD
+        vSkip('BACKWARD')
     """
 
     OMIT = "OMIT"
@@ -1169,6 +1181,8 @@ class vSkip(vText, Enum):
         """For pickling."""
         return self.__class__, (self._name_,)
 
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self._name_!r})"
 
 class vRecur(CaselessDict):
     """Recurrence definition.
@@ -1297,6 +1311,9 @@ class vRecur(CaselessDict):
     )
 
     def __init__(self, *args, params={}, **kwargs):
+        if args and isinstance(args[0], str):
+            # we have a string as an argument.
+            args = (self.from_ical(args[0]),) + args[1:]
         for k, v in kwargs.items():
             if not isinstance(v, SEQUENCE_TYPES):
                 kwargs[k] = [v]
