@@ -607,7 +607,7 @@ __all__ = [
     "multi_language_text_property",
     "single_int_property",
     "sequence_property",
-    "categories_property",,
+    "categories_property",
     "rdates_property",
     "exdates_property",
     "rrules_property",
