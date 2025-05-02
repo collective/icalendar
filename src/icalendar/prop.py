@@ -194,13 +194,6 @@ class vCalAddress(str):
         This value type is used to identify properties that contain a
         calendar user address.
 
-    Format Definition:
-        This value type is defined by the following notation:
-
-    .. code-block:: text
-
-        cal-address        = uri
-
     Description:
         The value is a URI as defined by [RFC3986] or any other
         IANA-registered form for a URI.  When used to address an Internet
