@@ -34,7 +34,7 @@ from icalendar import Calendar, Event, Parameters, vCalAddress
                     "ALTREP": ["http://www.wiz.org", "value4"],
                 }
             ),
-            b'ALTREP="http://www.wiz.org",value4;PARAMETER1=Value1;PARAMETER2=Value2,Value3',
+            b'ALTREP="http://www.wiz.org","value4";PARAMETER1=Value1;PARAMETER2=Value2,Value3',
         ),
         # Including empty strings
         (Parameters({"PARAM": ""}), b"PARAM="),
@@ -54,7 +54,7 @@ from icalendar import Calendar, Event, Parameters, vCalAddress
                     "PARAMETER2": ["Value2", "Value3"],
                 }
             ),
-            b'ALTREP="http://www.wiz.org",value4;PARAMETER1=Value1;PARAMETER2=Value2,Value3',
+            b'ALTREP="http://www.wiz.org","value4";PARAMETER1=Value1;PARAMETER2=Value2,Value3',
         ),
     ],
 )

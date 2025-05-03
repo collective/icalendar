@@ -1956,6 +1956,16 @@ class Calendar(Component):
         """
         return self.walk("VTODO")
 
+    @property
+    def freebusy(self) -> list[FreeBusy]:
+        """All FreeBusy components in the calendar.
+
+        This is a shortcut to get all FreeBusy.
+        Modifications do not change the calendar.
+        Use :py:meth:`Component.add_component`.
+        """
+        return self.walk("VFREEBUSY")
+
     def get_used_tzids(self) -> set[str]:
         """The set of TZIDs in use.
 

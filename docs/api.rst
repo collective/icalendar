@@ -1,12 +1,17 @@
 API Reference
 -------------
 
+icalendar.attr
+++++++++++++++
+
+.. automodule:: icalendar.attr
+   :members:
+
 icalendar.alarms
 ++++++++++++++++
 
 .. automodule:: icalendar.alarms
    :members:
-
 
 icalendar.cal
 +++++++++++++
@@ -26,10 +31,22 @@ icalendar.cli
 .. automodule:: icalendar.cli
    :members:
 
+icalendar.enums
++++++++++++++++
+
+.. automodule:: icalendar.enums
+   :members:
+
 icalendar.error
 +++++++++++++++
 
 .. automodule:: icalendar.error
+   :members:
+
+icalendar.param
++++++++++++++++
+
+.. automodule:: icalendar.param
    :members:
 
 icalendar.parser

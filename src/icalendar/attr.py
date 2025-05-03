@@ -1,8 +1,8 @@
 """Attributes of Components and properties."""
 from __future__ import annotations
 
-from datetime import date, datetime, timedelta
 import itertools
+from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Optional, Union
 
 from icalendar.error import InvalidCalendar
@@ -313,9 +313,9 @@ def multi_language_text_property(main_prop:str, compatibility_prop:str, doc:str)
     This property can be defined several times with different ``LANGUAGE`` parameters.
 
     Args:
-        main_prop: The property to set and get, such as ``NAME``
-        compatibility_prop: An old property used before, such as ``X-WR-CALNAME``
-        doc: The documentation string
+        main_prop (str): The property to set and get, such as ``NAME``
+        compatibility_prop (str): An old property used before, such as ``X-WR-CALNAME``
+        doc (str): The documentation string
     """
     def fget(self: Component) -> Optional[str]:
         """Get the property"""
@@ -369,8 +369,9 @@ def single_int_property(prop:str, default:int, doc:str) -> property:
 def single_utc_property(name: str, docs: str) -> property:
     """Create a property to access a value of datetime in UTC timezone.
 
-    name - name of the property
-    docs - documentation string
+    Args:
+        name: name of the property
+        docs: documentation string
     """
     docs = (
         f"""The {name} property. datetime in UTC

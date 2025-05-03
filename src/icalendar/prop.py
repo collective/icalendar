@@ -48,10 +48,10 @@ import base64
 import binascii
 import re
 from datetime import date, datetime, time, timedelta
-from enum import Enum
 from typing import Union
 
 from icalendar.caselessdict import CaselessDict
+from icalendar.enums import Enum
 from icalendar.parser import Parameters, escape_char, unescape_char
 from icalendar.parser_tools import (
     DEFAULT_ENCODING,
@@ -181,6 +181,8 @@ class vText(str):
         ical_unesc = unescape_char(ical)
         return cls(ical_unesc)
 
+    from icalendar.param import ALTREP, LANGUAGE, RELTYPE
+
 
 class vCalAddress(str):
     """Calendar User Address
@@ -192,13 +194,6 @@ class vCalAddress(str):
         This value type is used to identify properties that contain a
         calendar user address.
 
-    Format Definition:
-        This value type is defined by the following notation:
-
-    .. code-block:: text
-
-        cal-address        = uri
-
     Description:
         The value is a URI as defined by [RFC3986] or any other
         IANA-registered form for a URI.  When used to address an Internet
@@ -206,19 +201,34 @@ class vCalAddress(str):
         mailto URI, as defined by [RFC2368].
 
     Example:
+        ``mailto:`` is in front of the address.
 
-    .. code-block:: text
+        .. code-block:: text
 
-        mailto:jane_doe@example.com
+            mailto:jane_doe@example.com
 
-    .. code-block:: pycon
+        Parsing:
 
-        >>> from icalendar.prop import vCalAddress
-        >>> cal_address = vCalAddress.from_ical('mailto:jane_doe@example.com')
-        >>> cal_address
-        vCalAddress('mailto:jane_doe@example.com')
+        .. code-block:: pycon
 
+            >>> from icalendar import vCalAddress
+            >>> cal_address = vCalAddress.from_ical('mailto:jane_doe@example.com')
+            >>> cal_address
+            vCalAddress('mailto:jane_doe@example.com')
 
+        Encoding:
+
+        .. code-block:: pycon
+
+            >>> from icalendar import vCalAddress, Event
+            >>> event = Event()
+            >>> jane = vCalAddress("mailto:jane_doe@example.com")
+            >>> jane.name = "Jane"
+            >>> event["organizer"] = jane
+            >>> print(event.to_ical())
+            BEGIN:VEVENT
+            ORGANIZER;CN=Jane:mailto:jane_doe@example.com
+            END:VEVENT
     """
 
     params: Parameters
@@ -246,15 +256,19 @@ class vCalAddress(str):
             return self[7:]
         return str(self)
 
-    @property
-    def name(self) -> str:
-        """The CN parameter or an empty string."""
-        return self.params.get("CN", "")
-
-    @name.setter
-    def name(self, value: str):
-        self.params["CN"] = value
-
+    from icalendar.param import (
+        CN,
+        CUTYPE,
+        DELEGATED_FROM,
+        DELEGATED_TO,
+        DIR,
+        LANGUAGE,
+        PARTSTAT,
+        ROLE,
+        RSVP,
+        SENT_BY,
+    )
+    name = CN
 
 class vFloat(float):
     """Float
@@ -468,6 +482,8 @@ class TimeBase:
     def __hash__(self):
         return hash(self.dt)
 
+    from icalendar.param import RANGE, RELATED, TZID
+
 
 class vDDDTypes(TimeBase):
     """A combined Datetime, Date or Duration parser/generator. Their format
@@ -534,7 +550,6 @@ class vDDDTypes(TimeBase):
     def __repr__(self):
         """repr(self)"""
         return f"{self.__class__.__name__}({self.dt}, {self.params})"
-
 
 class vDate(TimeBase):
     """Date
@@ -963,6 +978,7 @@ class vPeriod(TimeBase):
         """Make this cooperate with the other vDDDTypes."""
         return (self.start, (self.duration if self.by_duration else self.end))
 
+    from icalendar.param import FBTYPE
 
 class vWeekday(str):
     """Either a ``weekday`` or a ``weekdaynum``
@@ -1177,9 +1193,7 @@ class vSkip(vText, Enum):
     FORWARD = "FORWARD"
     BACKWARD = "BACKWARD"
 
-    def __reduce_ex__(self, _p):
-        """For pickling."""
-        return self.__class__, (self._name_,)
+    __reduce_ex__ = Enum.__reduce_ex__
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self._name_!r})"
@@ -1930,7 +1944,6 @@ class TypesFactory(CaselessDict):
             "role": "text",
             "rsvp": "boolean",
             "sent-by": "cal-address",
-            "tzid": "text",
             "value": "text",
         }
     )
@@ -1978,11 +1991,11 @@ __all__ = [
     "vMonth",
     "vPeriod",
     "vRecur",
-    "vSkip",
     "vText",
     "vTime",
     "vUTCOffset",
     "vUri",
     "vWeekday",
     "tzid_from_tzinfo",
+    "vSkip",
 ]
