@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from icalendar.tools import is_date, to_datetime
+
 try:
     import zoneinfo
 except ImportError:
@@ -21,6 +23,7 @@ from .provider import TZProvider
 
 if TYPE_CHECKING:
     from icalendar import cal, prop
+    from icalendar.prop import vDDDTypes
 
 
 class ZONEINFO(TZProvider):
@@ -72,6 +75,11 @@ class ZONEINFO(TZProvider):
                 for attr in list(sub.keys()):
                     if attr.lower().startswith("x-"):
                         sub.pop(attr)
+            for sub in tz.subcomponents:
+                start : vDDDTypes = sub.get("DTSTART")
+                if start and is_date(start.dt):
+                    # ValueError: Unsupported DTSTART param in VTIMEZONE: VALUE=DATE
+                    sub.DTSTART = to_datetime(start.dt)
             return self._create_timezone(tz)
 
     def _create_timezone(self, tz: cal.Timezone) -> tzinfo:

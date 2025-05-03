@@ -30,6 +30,7 @@ New features:
 
 Bug fixes:
 
+- Fix ``STANDARD`` and ``DAYLIGHT`` components that have a date as ``DTSTART``. See `Issue 218 <https://github.com/collective/icalendar/issues/218>`_
 - Move import at the end of ``icalendar.parser`` into a function to mitigate import errors, see `Issue 781 <https://github.com/collective/icalendar/issues/781>`_.
 - ``ALTREP``, ``DELEGATED-FROM``, ``DELEGATED-TO``, ``DIR``, ``MEMBER``, and ``SENT-BY`` require double quotes. These are now always added.
 - Classify ``CATEGORIES`` as multiple in ``VEVENT``. See `PR 808 <https://github.com/collective/icalendar/pull/808>`_.
