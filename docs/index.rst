@@ -33,8 +33,11 @@ Contents
 
 
 .. toctree::
-    :titlesonly:
+    :caption: Contribute
 
     contribute/index
-    contribute/credits
+
+
+.. toctree::
+    :titlesonly:
     security
