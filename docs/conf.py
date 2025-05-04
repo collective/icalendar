@@ -8,6 +8,7 @@ extensions = [
     "sphinx.ext.coverage",
     "sphinx.ext.viewcode",
     "sphinx_copybutton",
+    "sphinx_reredirects",
     "sphinx.ext.intersphinx",
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.napoleon",
@@ -81,6 +82,13 @@ htmlhelp_basename = "icalendardoc"
 # https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
+}
+
+
+# -- sphinx-reredirects configuration ----------------------------------
+# https://documatt.com/sphinx-reredirects/usage.html
+redirects = {
+    "contributing": "/contribute/index.html",
 }
 
 
