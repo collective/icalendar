@@ -61,7 +61,6 @@ html_theme_options = {
     "show_toc_level": 2,
     "use_edit_page_button": True,
 }
-pygments_style = "sphinx"
 html_context = {
 #     "github_url": "https://github.com", # or your GitHub Enterprise site
     "github_user": "collective",
@@ -69,7 +68,8 @@ html_context = {
     "github_version": "main",
     "doc_path": "docs",
 }
-htmlhelp_basename = "icalendardoc"
+pygments_style = "sphinx"
+
 
 
 # -- Intersphinx configuration ----------------------------------
@@ -98,3 +98,4 @@ redirects = {
 
 man_pages = [("index", "icalendar", "icalendar Documentation", ["Plone Foundation"], 1)]
 
+htmlhelp_basename = "icalendardoc"
