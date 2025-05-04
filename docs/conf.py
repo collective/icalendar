@@ -2,6 +2,9 @@
 import importlib.metadata
 import datetime
 import os
+import sys
+
+sys.path.insert(0, os.path.abspath("../src/"))
 
 extensions = [
     "sphinx.ext.autodoc",
@@ -13,7 +16,7 @@ extensions = [
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.napoleon",
 ]
-source_suffix = ".rst"
+source_suffix = {".rst": "restructuredtext"}
 master_doc = "index"
 
 project = "icalendar"
