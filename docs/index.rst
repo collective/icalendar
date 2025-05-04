@@ -27,7 +27,6 @@ Contents
     usage
     api
     cli
-    credits
     maintenance
     license
     changelog
@@ -36,6 +35,6 @@ Contents
 .. toctree::
     :titlesonly:
 
-    contributing
     contribute/index
+    contribute/credits
     security
