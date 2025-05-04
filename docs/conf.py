@@ -92,6 +92,7 @@ intersphinx_mapping = {
 # https://documatt.com/sphinx-reredirects/usage.html
 redirects = {
     "contributing": "/contribute/index.html",
+    "about": "/index.html#about-icalendar",
 }
 
 
