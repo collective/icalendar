@@ -37,4 +37,5 @@ Contents
     :titlesonly:
 
     contributing
+    contribute/index
     security
