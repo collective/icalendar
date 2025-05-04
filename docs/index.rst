@@ -21,11 +21,16 @@ Contents
 ========
 
 .. toctree::
+    :caption: Contribute
+
+    api/index
+
+
+.. toctree::
     :maxdepth: 2
 
     install
     usage
-    api
     cli
     maintenance
     license
