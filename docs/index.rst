@@ -21,9 +21,9 @@ Contents
 ========
 
 .. toctree::
-    :caption: Contribute
+    :caption: API Reference
 
-    api/index
+    reference/icalendar
 
 
 .. toctree::
