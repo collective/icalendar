@@ -1,7 +1,7 @@
 Changelog
 =========
 
-6.1.4 (unreleased)
+6.2.0 (2025-05-07)
 ------------------
 
 Minor changes:
@@ -11,10 +11,6 @@ Minor changes:
 - Use ``tzp.localize(dt, None)`` to remove the timezone from a datetime.
 - Remove the HTML documentation when building with ``tox`` to force rebuild.
 - Switch to PyData Sphinx Theme for documentation. See `Issue 803 <https://github.com/collective/icalendar/issues/804>`_.
-
-Breaking changes:
-
-- ...
 
 New features:
 
