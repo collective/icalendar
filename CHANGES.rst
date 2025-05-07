@@ -1,6 +1,12 @@
 Changelog
 =========
 
+We use `Semantic Versioning <https://semver.org>`_.
+
+- Breaking changes increase the **major** version number.
+- New features increase the **minor** version number.
+- Minor changes and bug fixes increase the **patch** version number.
+
 6.2.1 (unreleased)
 ------------------
 
