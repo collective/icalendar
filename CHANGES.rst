@@ -1,6 +1,26 @@
 Changelog
 =========
 
+6.2.1 (unreleased)
+------------------
+
+Minor changes:
+
+- ...
+
+Breaking changes:
+
+- ...
+
+New features:
+
+- ...
+
+Bug fixes:
+
+- ...
+
+
 6.2.0 (2025-05-07)
 ------------------
 
