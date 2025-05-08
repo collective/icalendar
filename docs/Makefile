@@ -1,10 +1,13 @@
 # Makefile for Sphinx documentation
-#
+.DEFAULT_GOAL   = help
+SHELL           = bash
 
 # You can set these variables from the command line.
-SPHINXOPTS      =
-SPHINXBUILD     = sphinx-build
-SPHINXAUTOBUILD = sphinx-autobuild
+SPHINXOPTS      ?=
+
+# Internal variables.
+SPHINXBUILD     = "$(realpath ../.venv/bin/sphinx-build)"
+SPHINXAUTOBUILD = "$(realpath ../.venv/bin/sphinx-autobuild)"
 PAPER           =
 BUILDDIR        = _build
 LOCALESDIR      = _locales
@@ -162,6 +165,7 @@ doctest:
 	@echo "Testing of doctests in the sources finished, look at the " \
 	      "results in $(BUILDDIR)/doctest/output.txt."
 
+.PHONY: livehtml
 livehtml:
 	$(SPHINXAUTOBUILD) \
 	--watch ../src \
