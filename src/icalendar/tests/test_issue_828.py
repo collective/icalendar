@@ -1,11 +1,16 @@
 """Events differ although their times are equal."""
-from datetime import date, datetime, timedelta
-from icalendar import Event, Journal, vDDDTypes, vDate, vDatetime
-import pytest
-import pytz
-from zoneinfo import ZoneInfo
+from datetime import date, datetime, timedelta, timezone
 
-from icalendar.prop import vDDDLists
+import pytest
+
+from icalendar import Event, Journal, vDate, vDatetime, vDDDLists, vDDDTypes
+
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:
+    from backports.zoneinfo import ZoneInfo  # type: ignore PGH003
+
+
 
 def to_dt(a:date) -> date:
     return a
@@ -43,7 +48,7 @@ equal_dts = pytest.mark.parametrize(
     [
         (date(1998, 10, 1), date(1998, 10, 1)),
         (datetime(2023, 12, 31), datetime(2023, 12, 31)),
-        (datetime(2023, 12, 31, tzinfo=pytz.UTC), datetime(2023, 12, 31, tzinfo=ZoneInfo("UTC"))),
+        (datetime(2023, 12, 31, tzinfo=timezone.utc), datetime(2023, 12, 31, tzinfo=ZoneInfo("UTC"))),
         (datetime(2023, 12, 31, tzinfo=ZoneInfo("UTC")), datetime(2023, 12, 31, tzinfo=ZoneInfo("UTC"))),
         (datetime(2025, 12, 31, tzinfo=ZoneInfo("UTC")), datetime(2025, 12, 31, tzinfo=ZoneInfo("GMT+0"))),
         (datetime(2025, 12, 31, 12, tzinfo=ZoneInfo("Europe/Zurich")), datetime(2025, 12, 31, 11, tzinfo=ZoneInfo("UTC"))),

@@ -24,7 +24,7 @@ New features:
 
 Bug fixes:
 
-- ...
+- Fix component equality where timezones differ for the datetimes but the times are actually equal. See `Issue 828 <https://github.com/collective/icalendar/issues/828>`_.
 
 
 6.2.0 (2025-05-07)
