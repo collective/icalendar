@@ -436,10 +436,15 @@ class vDDDLists:
         return out
 
     def __eq__(self, other):
-        if not isinstance(other, vDDDLists):
-            return False
-        return self.dts == other.dts
+        if isinstance(other, vDDDLists):
+            return self.dts == other.dts
+        if isinstance(other, (TimeBase, date)):
+            return self.dts == [other]
+        return False
 
+    def __repr__(self):
+        """String representation."""
+        return f"{self.__class__.__name__}({self.dts})"
 
 class vCategory:
     params: Parameters
@@ -473,16 +478,31 @@ class vCategory:
 class TimeBase:
     """Make classes with a datetime/date comparable."""
 
+    params: Parameters
+    ignore_for_equality = {"TZID", "VALUE"}
+
     def __eq__(self, other):
         """self == other"""
+        if isinstance(other, date):
+            return self.dt == other
         if isinstance(other, TimeBase):
-            return self.params == other.params and self.dt == other.dt
+            default = object()
+            for key in (set(self.params) | set(other.params)) - self.ignore_for_equality:
+                if self.params.get(key, default) != other.params.get(key, default):
+                    return False
+            return self.dt == other.dt
+        if isinstance(other, vDDDLists):
+            return other == self
         return False
 
     def __hash__(self):
         return hash(self.dt)
 
     from icalendar.param import RANGE, RELATED, TZID
+
+    def __repr__(self):
+        """String representation."""
+        return f"{self.__class__.__name__}({self.dt}, {self.params})"
 
 
 class vDDDTypes(TimeBase):
@@ -546,10 +566,6 @@ class vDDDTypes(TimeBase):
             return vTime.from_ical(ical)
         else:
             raise ValueError(f"Expected datetime, date, or time, got: '{ical}'")
-
-    def __repr__(self):
-        """repr(self)"""
-        return f"{self.__class__.__name__}({self.dt}, {self.params})"
 
 class vDate(TimeBase):
     """Date
@@ -834,7 +850,7 @@ class vDuration(TimeBase):
         return value
 
     @property
-    def dt(self):
+    def dt(self) -> timedelta:
         """The time delta for compatibility."""
         return self.td
 
