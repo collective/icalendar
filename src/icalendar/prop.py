@@ -418,9 +418,11 @@ class vDDDLists:
             if "TZID" in dt.params:
                 tzid = dt.params["TZID"]
 
+        params = {}
         if tzid:
             # NOTE: no support for multiple timezones here!
-            self.params = Parameters({"TZID": tzid})
+            params["TZID"] = tzid
+        self.params = Parameters(params)
         self.dts = vDDD
 
     def to_ical(self):
@@ -488,7 +490,7 @@ class TimeBase:
         if isinstance(other, TimeBase):
             default = object()
             for key in (set(self.params) | set(other.params)) - self.ignore_for_equality:
-                if self.params.get(key, default) != other.params.get(key, default):
+                if key[:2].lower() != "x-" and self.params.get(key, default) != other.params.get(key, default):
                     return False
             return self.dt == other.dt
         if isinstance(other, vDDDLists):
