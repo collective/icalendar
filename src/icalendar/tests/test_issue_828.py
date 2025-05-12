@@ -1,4 +1,5 @@
 """Events differ although their times are equal."""
+
 import contextlib
 from datetime import date, datetime, timedelta, timezone
 
@@ -12,9 +13,9 @@ except ImportError:
     from backports.zoneinfo import ZoneInfo  # type: ignore PGH003
 
 
-
-def to_dt(a:date) -> date:
+def to_dt(a: date) -> date:
     return a
+
 
 def to_event(a):
     e = Event()
@@ -23,6 +24,7 @@ def to_event(a):
     e.add("RECURRENCE-ID", a - timedelta(days=1))
     return e
 
+
 def to_journal(a):
     """return a journal for testing"""
     j = Journal()
@@ -30,6 +32,7 @@ def to_journal(a):
     j.end = a + timedelta(days=1)
     j.add("RECURRENCE-ID", a - timedelta(days=1))
     return j
+
 
 def to_vDD(a):
     """Return a value type."""
@@ -41,27 +44,38 @@ def to_vDD(a):
 def to_vDDDTypes(a):
     return vDDDTypes(a)
 
+
 def to_vDDDLists(a):
     return vDDDLists([a])
 
 
-equal_dt_pairs =     [
+equal_dt_pairs = [
     (date(1998, 10, 1), date(1998, 10, 1)),
     (datetime(2023, 12, 31), datetime(2023, 12, 31)),
-    (datetime(2023, 12, 31, tzinfo=timezone.utc), datetime(2023, 12, 31, tzinfo=ZoneInfo("UTC"))),
-    (datetime(2023, 12, 31, tzinfo=ZoneInfo("UTC")), datetime(2023, 12, 31, tzinfo=ZoneInfo("UTC"))),
-    (datetime(2025, 12, 31, tzinfo=ZoneInfo("UTC")), datetime(2025, 12, 31, tzinfo=ZoneInfo("GMT+0"))),
-    (datetime(2025, 12, 31, 12, tzinfo=ZoneInfo("Europe/Zurich")), datetime(2025, 12, 31, 11, tzinfo=ZoneInfo("UTC"))),
+    (
+        datetime(2023, 12, 31, tzinfo=timezone.utc),
+        datetime(2023, 12, 31, tzinfo=ZoneInfo("UTC")),
+    ),
+    (
+        datetime(2023, 12, 31, tzinfo=ZoneInfo("UTC")),
+        datetime(2023, 12, 31, tzinfo=ZoneInfo("UTC")),
+    ),
+    (
+        datetime(2025, 12, 31, tzinfo=ZoneInfo("UTC")),
+        datetime(2025, 12, 31, tzinfo=ZoneInfo("GMT+0")),
+    ),
+    (
+        datetime(2025, 12, 31, 12, tzinfo=ZoneInfo("Europe/Zurich")),
+        datetime(2025, 12, 31, 11, tzinfo=ZoneInfo("UTC")),
+    ),
 ]
 
 
-param_equal_dts = pytest.mark.parametrize(
-    ("d1", "d2"),
-    equal_dt_pairs
-)
+param_equal_dts = pytest.mark.parametrize(("d1", "d2"), equal_dt_pairs)
 
-param_transform = pytest.mark.parametrize("transform", [
-    to_dt, to_event, to_journal, to_vDD, to_vDDDTypes, to_vDDDLists])
+param_transform = pytest.mark.parametrize(
+    "transform", [to_dt, to_event, to_journal, to_vDD, to_vDDDTypes, to_vDDDLists]
+)
 
 
 @param_equal_dts
@@ -72,25 +86,28 @@ def test_equality_of_equal_datetimes(d1, d2, transform):
     b = transform(d2)
     assert_equal(a, b)
 
+
 def assert_equal(a, b):
     """Check all equality tests."""
-    assert  a == b, f"1 equal: {a} == {b}"
-    assert  b == a, f"2 equal reversed: {b} == {a}"
+    assert a == b, f"1 equal: {a} == {b}"
+    assert b == a, f"2 equal reversed: {b} == {a}"
     assert not a != b, f"3 not equal: {a} != {b}"  # noqa: SIM202
     assert not b != a, f"4 not equal reversed: {b} != {a}"  # noqa: SIM202
     assert bool(a) == bool(b), f"5 equal bool: {bool(a)} == {bool(b)}"
     with contextlib.suppress(TypeError):
         assert hash(a) == hash(b)
 
+
 def assert_not_eq(a, b):
     """Check all equality tests."""
-    assert  a != b, f"1 unequal: {a} == {b}"
-    assert  b != a, f"2 unequal reversed: {b} == {a}"
-    assert not a == b, f"3 not unequal: {a} != {b}"   # noqa: SIM201
-    assert not b == a, f"4 not unequal reversed: {b} != {a}"   # noqa: SIM201
+    assert a != b, f"1 unequal: {a} == {b}"
+    assert b != a, f"2 unequal reversed: {b} == {a}"
+    assert not a == b, f"3 not unequal: {a} != {b}"  # noqa: SIM201
+    assert not b == a, f"4 not unequal reversed: {b} != {a}"  # noqa: SIM201
 
 
 dts = [to_dt, to_vDD, to_vDDDTypes, to_vDDDLists]
+
 
 @pytest.mark.parametrize("transform1", dts)
 @pytest.mark.parametrize("transform2", dts)
@@ -109,16 +126,15 @@ def test_datetime_is_in_list_representation():
 
 unequal_pairs = [(a, b) for a, b in equal_dt_pairs if a != b]
 
-@pytest.mark.parametrize(
-    ("d1", "d2"),
-    unequal_pairs
-)
+
+@pytest.mark.parametrize(("d1", "d2"), unequal_pairs)
 @param_transform
 def test_inequality(d1, d2, transform):
     """The values are not equal."""
     a = transform(d1)
     b = transform(d2)
     assert_not_eq(a, b)
+
 
 @pytest.mark.parametrize("ddd_type", [to_vDD, to_vDDDTypes])
 @param_equal_dts

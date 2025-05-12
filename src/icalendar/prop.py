@@ -268,7 +268,9 @@ class vCalAddress(str):
         RSVP,
         SENT_BY,
     )
+
     name = CN
+
 
 class vFloat(float):
     """Float
@@ -448,23 +450,26 @@ class vDDDLists:
         """String representation."""
         return f"{self.__class__.__name__}({self.dts})"
 
+
 class vCategory:
     params: Parameters
 
-    def __init__(self, c_list:list[str] | str, params={}):
+    def __init__(self, c_list: list[str] | str, params={}):
         if not hasattr(c_list, "__iter__") or isinstance(c_list, str):
             c_list = [c_list]
-        self.cats : list[vText|str] = [vText(c) for c in c_list]
+        self.cats: list[vText | str] = [vText(c) for c in c_list]
         self.params = Parameters(params)
 
     def __iter__(self):
         return iter(vCategory.from_ical(self.to_ical()))
 
     def to_ical(self):
-        return b",".join([
-            c.to_ical() if hasattr(c, "to_ical") else vText(c).to_ical()
-            for c in self.cats
-        ])
+        return b",".join(
+            [
+                c.to_ical() if hasattr(c, "to_ical") else vText(c).to_ical()
+                for c in self.cats
+            ]
+        )
 
     @staticmethod
     def from_ical(ical):
@@ -489,8 +494,12 @@ class TimeBase:
             return self.dt == other
         if isinstance(other, TimeBase):
             default = object()
-            for key in (set(self.params) | set(other.params)) - self.ignore_for_equality:
-                if key[:2].lower() != "x-" and self.params.get(key, default) != other.params.get(key, default):
+            for key in (
+                set(self.params) | set(other.params)
+            ) - self.ignore_for_equality:
+                if key[:2].lower() != "x-" and self.params.get(
+                    key, default
+                ) != other.params.get(key, default):
                     return False
             return self.dt == other.dt
         if isinstance(other, vDDDLists):
@@ -568,6 +577,7 @@ class vDDDTypes(TimeBase):
             return vTime.from_ical(ical)
         else:
             raise ValueError(f"Expected datetime, date, or time, got: '{ical}'")
+
 
 class vDate(TimeBase):
     """Date
@@ -923,7 +933,7 @@ class vPeriod(TimeBase):
 
     params: Parameters
 
-    def __init__(self, per : tuple[datetime, Union[datetime, timedelta]]):
+    def __init__(self, per: tuple[datetime, Union[datetime, timedelta]]):
         start, end_or_duration = per
         if not (isinstance(start, datetime) or isinstance(start, date)):
             raise ValueError("Start value MUST be a datetime or date instance")
@@ -997,6 +1007,7 @@ class vPeriod(TimeBase):
         return (self.start, (self.duration if self.by_duration else self.end))
 
     from icalendar.param import FBTYPE
+
 
 class vWeekday(str):
     """Either a ``weekday`` or a ``weekdaynum``
@@ -1215,6 +1226,7 @@ class vSkip(vText, Enum):
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self._name_!r})"
+
 
 class vRecur(CaselessDict):
     """Recurrence definition.
