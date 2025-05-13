@@ -1863,6 +1863,8 @@ class Alarm(Component):
             start=tuple(start), end=tuple(end), absolute=tuple(absolute)
         )
 
+    uid = uid_property
+
 
 class Calendar(Component):
     """

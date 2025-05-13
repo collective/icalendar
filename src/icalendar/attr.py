@@ -633,8 +633,13 @@ Description:
     values in the middle of a UTF-8 multi-octet sequence.
 
 Conformance:
-    The "UID" property can be specified on "VEVENT", "VTODO", and
-    "VJOURNAL" calendar components.
+    :rfc:`5545` states that the "UID" property can be specified on "VEVENT", "VTODO",
+    and "VJOURNAL" calendar components.
+    :rfc:`7986` modifies the definition of the "UID" property to
+    allow it to be defined in an iCalendar object.
+    :rfc:`9074`  adds a "UID" property to "VALARM" components to allow a unique
+    identifier to be specified. The value of this property can then be used
+    to refer uniquely to the "VALARM" component.
 
 Purpose:
     :rfc:`5545` states that this property specifies the persistent, globally unique
