@@ -22,9 +22,12 @@ class UIDGenerator:
 
     @staticmethod
     def rnd_string(length=16) -> str:
-        """Generates a string with random characters of length."""
+        """Generates a string with random characters of length.
+
+        Use https://docs.python.org/3/library/uuid.html#uuid.uuid4 instead.
+        """
         warn(
-            "Use https://docs.python.org/3/library/uuid.html#uuid.uuid4",
+            "Use https://docs.python.org/3/library/uuid.html#uuid.uuid4 instead.",
             WillBeRemovedInVersion7,
             stacklevel=1
         )
@@ -36,10 +39,12 @@ class UIDGenerator:
             datetime-uniquevalue@host.
         Like:
             20050105T225746Z-HKtJMqUgdO0jDUwm@example.com
+
+        Use https://docs.python.org/3/library/uuid.html#uuid.uuid5 instead.
         """
         from icalendar.prop import vDatetime, vText
         warn(
-            "Use https://docs.python.org/3/library/uuid.html#uuid.uuid5",
+            "Use https://docs.python.org/3/library/uuid.html#uuid.uuid5 instead.",
             WillBeRemovedInVersion7,
             stacklevel=1
         )
