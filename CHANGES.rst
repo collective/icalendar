@@ -24,7 +24,7 @@ New features:
 
 Bug fixes:
 
-- ...
+- Test that we can add an RRULE as a string. See `Issue 301 <https://github.com/collective/icalendar/issues/301>`_.
 
 
 6.2.0 (2025-05-07)
