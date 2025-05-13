@@ -24,7 +24,7 @@ New features:
 
 Bug fixes:
 
-- ...
+- Test that we support dateutil timezones as outlined in `Issue 336 <https://github.com/collective/icalendar/issues/336>`_.
 
 
 6.2.0 (2025-05-07)
