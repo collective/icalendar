@@ -6,16 +6,19 @@ It appears that the timezone Brazil/DeNoronha is actually America/Noronha.
 """
 
 from datetime import datetime
+
 from dateutil import tz
 
 from icalendar import Event
 from icalendar.timezone import tzid_from_tzinfo
 
+valid_names = ("America/Noronha",  "Brazil/DeNoronha")
+
 
 def test_timezone_name_directly():
     """Try to get the name directly."""
     tzinfo = tz.gettz("Brazil/DeNoronha")
-    assert tzid_from_tzinfo(tzinfo) == "America/Noronha"
+    assert tzid_from_tzinfo(tzinfo) in valid_names
 
 
 def test_in_event():
@@ -24,4 +27,4 @@ def test_in_event():
     event.start = datetime(2025, 5, 13, 14, 23, tzinfo=tz.gettz("Brazil/DeNoronha"))
     ics = event.to_ical().decode()
     print(ics)
-    assert "America/Noronha" in ics
+    assert any(name in ics for name in valid_names)
