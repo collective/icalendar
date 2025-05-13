@@ -665,6 +665,18 @@ Examples:
     The following is an example of such a property value:
     ``5FC53010-1267-4F8E-BC28-1D7AE55A7C99``.
 
+    Set the UID of a calendar:
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Calendar
+        >>> from uuid import uuid4
+        >>> calendar = Calendar()
+        >>> calendar.uid = uuid4()
+        >>> print(calendar.to_ical())
+        BEGIN:VCALENDAR
+        UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
+        END:VCALENDAR
 
 """
 )
