@@ -602,14 +602,84 @@ Example:
 """
 )
 
+uid_property = single_string_property(
+    "UID", """UID specifies the persistent, globally unique identifier for a component.
+
+We recommend using :py:`uuid.uuid4` to generate new values.
+
+Description:
+    The "UID" itself MUST be a globally unique identifier.
+    The generator of the identifier MUST guarantee that the identifier
+    is unique.
+
+    This is the method for correlating scheduling messages with the
+    referenced "VEVENT", "VTODO", or "VJOURNAL" calendar component.
+    The full range of calendar components specified by a recurrence
+    set is referenced by referring to just the "UID" property value
+    corresponding to the calendar component.  The "RECURRENCE-ID"
+    property allows the reference to an individual instance within the
+    recurrence set.
+
+    This property is an important method for group-scheduling
+    applications to match requests with later replies, modifications,
+    or deletion requests.  Calendaring and scheduling applications
+    MUST generate this property in "VEVENT", "VTODO", and "VJOURNAL"
+    calendar components to assure interoperability with other group-
+    scheduling applications.  This identifier is created by the
+    calendar system that generates an iCalendar object.
+
+    Implementations MUST be able to receive and persist values of at
+    least 255 octets for this property, but they MUST NOT truncate
+    values in the middle of a UTF-8 multi-octet sequence.
+
+Conformance:
+    The "UID" property can be specified on "VEVENT", "VTODO", and
+    "VJOURNAL" calendar components.
+
+Purpose:
+    :rfc:`5545` states that this property specifies the persistent, globally unique
+    identifier for the iCalendar object.  This can be used, for
+    example, to identify duplicate calendar streams that a client may
+    have been given access to.  It can be used in conjunction with the
+    "LAST-MODIFIED" property also specified on the "VCALENDAR" object
+    to identify the most recent version of a calendar.
+
+    :rfc:`7986` states that UID can be used, for
+    example, to identify duplicate calendar streams that a client may
+    have been given access to.  It can be used in conjunction with the
+    "LAST-MODIFIED" property also specified on the "VCALENDAR" object
+    to identify the most recent version of a calendar.
+
+Security:
+    :rfc:`7986` states that UID values MUST NOT include any data that
+    might identify a user, host, domain, or any other security- or
+    privacy-sensitive information.  It is RECOMMENDED that calendar user
+    agents now generate "UID" values that are hex-encoded random
+    Universally Unique Identifier (UUID) values as defined in
+    Sections 4.4 and 4.5 of :rfc:`4122`.
+
+Conformance:
+    This property can be specified once in an iCalendar object.
+
+Examples:
+    The following is an example of such a property value:
+    ``5FC53010-1267-4F8E-BC28-1D7AE55A7C99``.
+
+
+"""
+)
+
+
+
 __all__ = [
-    "single_utc_property",
-    "color_property",
-    "multi_language_text_property",
-    "single_int_property",
-    "sequence_property",
     "categories_property",
-    "rdates_property",
+    "color_property",
     "exdates_property",
+    "multi_language_text_property",
+    "rdates_property",
     "rrules_property",
+    "sequence_property",
+    "single_int_property",
+    "single_utc_property",
+    "uid_property",
 ]
