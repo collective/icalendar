@@ -661,6 +661,9 @@ Security:
     Sections 4.4 and 4.5 of :rfc:`4122`.
     You can use the :mod:`uuid` module to generate new UUIDs.
 
+Compatibility:
+    For Alarms, ``X-ALARMUID`` is also considered.
+
 Examples:
     The following is an example of such a property value:
     ``5FC53010-1267-4F8E-BC28-1D7AE55A7C99``.

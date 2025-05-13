@@ -1863,7 +1863,11 @@ class Alarm(Component):
             start=tuple(start), end=tuple(end), absolute=tuple(absolute)
         )
 
-    uid = uid_property
+    uid = single_string_property(
+        "UID",
+        uid_property.__doc__,
+        "X-ALARMUID",
+    )
 
 
 class Calendar(Component):
