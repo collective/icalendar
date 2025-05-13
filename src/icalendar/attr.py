@@ -605,7 +605,10 @@ Example:
 uid_property = single_string_property(
     "UID", """UID specifies the persistent, globally unique identifier for a component.
 
-We recommend using :py:`uuid.uuid4` to generate new values.
+We recommend using :func:`uuid.uuid4` to generate new values.
+
+Returns:
+    The value of the UID property as a string or ``""`` if no value is set.
 
 Description:
     The "UID" itself MUST be a globally unique identifier.
@@ -632,6 +635,12 @@ Description:
     least 255 octets for this property, but they MUST NOT truncate
     values in the middle of a UTF-8 multi-octet sequence.
 
+    :rfc:`7986` states that UID can be used, for
+    example, to identify duplicate calendar streams that a client may
+    have been given access to.  It can be used in conjunction with the
+    "LAST-MODIFIED" property also specified on the "VCALENDAR" object
+    to identify the most recent version of a calendar.
+
 Conformance:
     :rfc:`5545` states that the "UID" property can be specified on "VEVENT", "VTODO",
     and "VJOURNAL" calendar components.
@@ -641,19 +650,7 @@ Conformance:
     identifier to be specified. The value of this property can then be used
     to refer uniquely to the "VALARM" component.
 
-Purpose:
-    :rfc:`5545` states that this property specifies the persistent, globally unique
-    identifier for the iCalendar object.  This can be used, for
-    example, to identify duplicate calendar streams that a client may
-    have been given access to.  It can be used in conjunction with the
-    "LAST-MODIFIED" property also specified on the "VCALENDAR" object
-    to identify the most recent version of a calendar.
-
-    :rfc:`7986` states that UID can be used, for
-    example, to identify duplicate calendar streams that a client may
-    have been given access to.  It can be used in conjunction with the
-    "LAST-MODIFIED" property also specified on the "VCALENDAR" object
-    to identify the most recent version of a calendar.
+    This property can be specified once only.
 
 Security:
     :rfc:`7986` states that UID values MUST NOT include any data that
@@ -662,9 +659,7 @@ Security:
     agents now generate "UID" values that are hex-encoded random
     Universally Unique Identifier (UUID) values as defined in
     Sections 4.4 and 4.5 of :rfc:`4122`.
-
-Conformance:
-    This property can be specified once in an iCalendar object.
+    You can use the :mod:`uuid` module to generate new UUIDs.
 
 Examples:
     The following is an example of such a property value:
