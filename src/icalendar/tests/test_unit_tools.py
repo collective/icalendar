@@ -79,3 +79,10 @@ def test_uid_generator_issue_345(args, kw, split, expected):
     """
     uid = UIDGenerator.uid(*args, **kw)
     assert uid.split(split)[1] == expected
+
+
+def test_warning():
+    with pytest.warns(DeprecationWarning):
+        UIDGenerator.uid()
+    with pytest.warns(DeprecationWarning):
+        UIDGenerator.rnd_string()

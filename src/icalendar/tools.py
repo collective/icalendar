@@ -1,19 +1,33 @@
+"""Utility functions for icalendar."""
+
 from __future__ import annotations
+
 import random
 from datetime import date, datetime, tzinfo
 from string import ascii_letters, digits
+from warnings import warn
 
 from icalendar.parser_tools import to_unicode
 
+from .error import WillBeRemovedInVersion7
+
 
 class UIDGenerator:
-    """If you are too lazy to create real uid's."""
+    """If you are too lazy to create real uid's.
+
+    Use https://docs.python.org/3/library/uuid.html#uuid.uuid4
+    """
 
     chars = list(ascii_letters + digits)
 
     @staticmethod
-    def rnd_string(length=16):
+    def rnd_string(length=16) -> str:
         """Generates a string with random characters of length."""
+        warn(
+            "Use https://docs.python.org/3/library/uuid.html#uuid.uuid4",
+            WillBeRemovedInVersion7,
+            stacklevel=1
+        )
         return "".join([random.choice(UIDGenerator.chars) for _ in range(length)])
 
     @staticmethod
@@ -24,6 +38,11 @@ class UIDGenerator:
             20050105T225746Z-HKtJMqUgdO0jDUwm@example.com
         """
         from icalendar.prop import vDatetime, vText
+        warn(
+            "Use https://docs.python.org/3/library/uuid.html#uuid.uuid5",
+            WillBeRemovedInVersion7,
+            stacklevel=1
+        )
 
         host_name = to_unicode(host_name)
         unique = unique or UIDGenerator.rnd_string()
