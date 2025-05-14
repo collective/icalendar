@@ -12,7 +12,7 @@ We use `Semantic Versioning <https://semver.org>`_.
 
 Minor changes:
 
-- ...
+- Deprecate the UIDGenerator class. See `Issue 816 <https://github.com/collective/icalendar/issues/816>`.
 
 Breaking changes:
 
@@ -20,11 +20,12 @@ Breaking changes:
 
 New features:
 
-- ...
+- Add the ``uid`` property to ``Alarm``, ``Event``, ``Calendar``, ``Todo``, and ``Journal`` components. See `Issue 740 <https://github.com/collective/icalendar/issues/740>`_.
 
 Bug fixes:
 
 - Test that we can add an RRULE as a string. See `Issue 301 <https://github.com/collective/icalendar/issues/301>`_.
+- Test that we support dateutil timezones as outlined in `Issue 336 <https://github.com/collective/icalendar/issues/336>`_.
 
 
 6.2.0 (2025-05-07)
