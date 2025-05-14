@@ -139,7 +139,7 @@ def test_inequality(d1, d2, transform):
 @pytest.mark.parametrize("ddd_type", [to_vDD, to_vDDDTypes])
 @param_equal_dts
 def test_not_equal_if_parameters_differ(d1, d2, ddd_type):
-    """If the items are equal but the parameters differ, we they should not equal."""
+    """If the items are equal but the parameters differ, they should not be equal."""
     d1 = ddd_type(d1)
     d2 = ddd_type(d2)
     d1.params["foo"] = "bar"
