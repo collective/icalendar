@@ -5,9 +5,9 @@ repos:
       - id: debug-statements
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.3.5
+    rev: v0.11.9
     hooks:
-      - id: ruff
+      - id: ruff-check
         args: [--config, "pyproject.toml", --fix]
       - id: ruff-format
         args: [--config, "pyproject.toml"]
