@@ -17,6 +17,9 @@ build:
   tools:
     python: "3.11"
   commands:
+    - get fetch tags
+    - pip install build
+    - python -m build
     # Cancel building pull requests when there aren't changes in the docs directory or YAML file.
     # You can add any other files or directories that you'd like here as well,
     # like your docs requirements file, or other files that will change your docs build.
