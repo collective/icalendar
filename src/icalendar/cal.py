@@ -25,6 +25,7 @@ from icalendar.attr import (
     single_int_property,
     single_string_property,
     single_utc_property,
+    uid_property,
 )
 from icalendar.caselessdict import CaselessDict
 from icalendar.error import IncompleteComponent, InvalidCalendar
@@ -906,6 +907,7 @@ class Event(Component):
     rdates = rdates_property
     exdates = exdates_property
     rrules = rrules_property
+    uid = uid_property
 
 
 class Todo(Component):
@@ -1101,6 +1103,7 @@ class Todo(Component):
     rdates = rdates_property
     exdates = exdates_property
     rrules = rrules_property
+    uid = uid_property
 
 
 class Journal(Component):
@@ -1192,6 +1195,7 @@ class Journal(Component):
     rdates = rdates_property
     exdates = exdates_property
     rrules = rrules_property
+    uid = uid_property
 
 
 class FreeBusy(Component):
@@ -1223,6 +1227,7 @@ class FreeBusy(Component):
         "FREEBUSY",
         "RSTATUS",
     )
+    uid = uid_property
 
 
 class Timezone(Component):
@@ -1858,6 +1863,12 @@ class Alarm(Component):
             start=tuple(start), end=tuple(end), absolute=tuple(absolute)
         )
 
+    uid = single_string_property(
+        "UID",
+        uid_property.__doc__,
+        "X-ALARMUID",
+    )
+
 
 class Calendar(Component):
     """
@@ -2165,19 +2176,21 @@ class Calendar(Component):
     "X-APPLE-CALENDAR-COLOR",
     )
     categories = categories_property
+    uid = uid_property
 
 # These are read only singleton, so one instance is enough for the module
 types_factory = TypesFactory()
 component_factory = ComponentFactory()
 
 __all__ = [
+    "INLINE",
     "Alarm",
     "Calendar",
     "Component",
     "ComponentFactory",
     "Event",
     "FreeBusy",
-    "INLINE",
+    "IncompleteComponent",
     "Journal",
     "Timezone",
     "TimezoneDaylight",
@@ -2185,5 +2198,4 @@ __all__ = [
     "Todo",
     "component_factory",
     "get_example",
-    "IncompleteComponent",
 ]
