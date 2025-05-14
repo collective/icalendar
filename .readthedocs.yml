@@ -18,7 +18,6 @@ build:
     python: "3.11"
   commands:
     - git fetch --tags
-    - git tag v7.0.0
     - pip install build
     - python -m build
     # Cancel building pull requests when there aren't changes in the docs directory or YAML file.
