@@ -24,7 +24,9 @@ class UIDGenerator:
     def rnd_string(length=16) -> str:
         """Generates a string with random characters of length.
 
-        Use https://docs.python.org/3/library/uuid.html#uuid.uuid4 instead.
+         .. deprecated:: 6.3.0
+
+             Use the Python standard library's :function:`uuid4` instead.
         """
         warn(
             "Use https://docs.python.org/3/library/uuid.html#uuid.uuid4 instead.",
