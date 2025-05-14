@@ -15,7 +15,7 @@ from .error import WillBeRemovedInVersion7
 class UIDGenerator:
     """Use this only if you're too lazy to create real UUIDs.
     
-    .. deprecated:: 6.3.0
+    .. deprecated:: 6.2.1
 
         Use the Python standard library's :func:`uuid.uuid4` instead.
     """
@@ -26,7 +26,7 @@ class UIDGenerator:
     def rnd_string(length=16) -> str:
         """Generates a string with random characters of length.
 
-         .. deprecated:: 6.3.0
+         .. deprecated:: 6.2.1
 
              Use the Python standard library's :func:`uuid.uuid4` instead.
         """
@@ -45,7 +45,7 @@ class UIDGenerator:
             
             20050105T225746Z-HKtJMqUgdO0jDUwm@example.com
         
-        .. deprecated:: 6.3.0
+        .. deprecated:: 6.2.1
 
             Use the Python standard library's :func:`uuid.uuid5` instead.
         """
