@@ -13,9 +13,11 @@ from .error import WillBeRemovedInVersion7
 
 
 class UIDGenerator:
-    """If you are too lazy to create real uid's.
+    """Use this only if you're too lazy to create real UUIDs.
+    
+    .. deprecated:: 6.3.0
 
-    Use https://docs.python.org/3/library/uuid.html#uuid.uuid4
+        Use the Python standard library's :function:`uuid4` instead.
     """
 
     chars = list(ascii_letters + digits)
