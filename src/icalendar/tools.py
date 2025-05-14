@@ -40,7 +40,15 @@ class UIDGenerator:
         Like:
             20050105T225746Z-HKtJMqUgdO0jDUwm@example.com
 
-        Use https://docs.python.org/3/library/uuid.html#uuid.uuid5 instead.
+"""Generates a unique ID consisting of ``datetime-uniquevalue@host``.
+   
+   For example:
+       
+       20050105T225746Z-HKtJMqUgdO0jDUwm@example.com
+   
+   .. deprecated:: 6.3.0
+
+        Use the Python standard library's :function:`uuid4` instead.
         """
         from icalendar.prop import vDatetime, vText
         warn(
