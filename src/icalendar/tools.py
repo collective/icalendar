@@ -17,7 +17,7 @@ class UIDGenerator:
     
     .. deprecated:: 6.3.0
 
-        Use the Python standard library's :function:`uuid4` instead.
+        Use the Python standard library's :func:`uuid.uuid4` instead.
     """
 
     chars = list(ascii_letters + digits)
@@ -28,7 +28,7 @@ class UIDGenerator:
 
          .. deprecated:: 6.3.0
 
-             Use the Python standard library's :function:`uuid4` instead.
+             Use the Python standard library's :func:`uuid.uuid4` instead.
         """
         warn(
             "Use https://docs.python.org/3/library/uuid.html#uuid.uuid4 instead.",
@@ -39,20 +39,15 @@ class UIDGenerator:
 
     @staticmethod
     def uid(host_name="example.com", unique=""):
-        """Generates a unique id consisting of:
-            datetime-uniquevalue@host.
-        Like:
+        """Generates a unique ID consisting of ``datetime-uniquevalue@host``.
+
+        For example:
+            
             20050105T225746Z-HKtJMqUgdO0jDUwm@example.com
+        
+        .. deprecated:: 6.3.0
 
-"""Generates a unique ID consisting of ``datetime-uniquevalue@host``.
-   
-   For example:
-       
-       20050105T225746Z-HKtJMqUgdO0jDUwm@example.com
-   
-   .. deprecated:: 6.3.0
-
-        Use the Python standard library's :function:`uuid4` instead.
+            Use the Python standard library's :func:`uuid.uuid5` instead.
         """
         from icalendar.prop import vDatetime, vText
         warn(
