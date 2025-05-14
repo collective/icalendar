@@ -43,7 +43,9 @@ class UIDGenerator:
 
         For example:
             
-            20050105T225746Z-HKtJMqUgdO0jDUwm@example.com
+            .. code-block:: text
+
+                20050105T225746Z-HKtJMqUgdO0jDUwm@example.com
         
         .. deprecated:: 6.2.1
 
