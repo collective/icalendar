@@ -761,7 +761,7 @@ class vDatetime(TimeBase):
                 return tzp.localize_utc(datetime(*timetuple))  # noqa: DTZ001
         except Exception as e:
             raise ValueError(f"Wrong datetime format: {ical}") from e
-        raise ValueError(ical)
+        raise ValueError(f"Wrong datetime format: {ical}")
 
 
 class vDuration(TimeBase):
