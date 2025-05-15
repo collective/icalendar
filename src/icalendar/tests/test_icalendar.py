@@ -26,7 +26,8 @@ class IcalendarTestCase(unittest.TestCase):
             c.to_ical()
             == b"BEGIN:VEVENT\r\n123456789 123456789 123456789 123456789 "  # noqa: ISC003
             + b"123456789 123456789 123456789 1234\r\n 56789 123456789 "
-        ), "123456789 \r\n"
+            + b"123456789 \r\n"
+        )
 
         # from doctests
         # Notice that there is an extra empty string in the end of the content
@@ -69,7 +70,7 @@ class IcalendarTestCase(unittest.TestCase):
         # N or a LATIN CAPITAL LETTER N, that is "\n" or "\N".
 
         # Newlines are not allowed in content lines
-        self.assertRaises(AssertionError, Contentline, b"1234\r\n\r\n1234")  # noqa: PT027
+        self.assertRaises(AssertionError, Contentline, b"1234\r\n\r\n1234")
 
         assert Contentline("1234\\n\\n1234").to_ical() == b"1234\\n\\n1234"
 
@@ -232,7 +233,7 @@ class IcalendarTestCase(unittest.TestCase):
         assert foldline("foo") == "foo"
         assert (
             foldline(
-                "Lorem ipsum dolor sit amet, consectetur adipiscing ",
+                "Lorem ipsum dolor sit amet, consectetur adipiscing "
                 "elit. Vestibulum convallis imperdiet dui posuere.",
             )
             == "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
@@ -248,7 +249,7 @@ class IcalendarTestCase(unittest.TestCase):
         assert foldline("foobar", limit=4) == "foo\r\n bar"
         assert (
             foldline(
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
                 ". Vestibulum convallis imperdiet dui posuere.",
             )
             == "Lorem ipsum dolor sit amet, consectetur adipiscing elit."  # noqa: ISC003

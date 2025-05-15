@@ -177,6 +177,8 @@ extend-safe-fixes = [
     "T203",   # `pprint` found
     "RUF001", # String contains ambiguous character
     "SLF001", # Private member accessed
+    "N999",   # module name
+    "PT027",  # assertRaises
 ]
 "src/icalendar/prop.py" = [
     "N801",   # Class name should use CamelCase

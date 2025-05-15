@@ -59,7 +59,7 @@ def get_example(component_directory: str, example_name: str) -> bytes:
     if not example_file.is_file():
         raise ValueError(
             f"Example {example_name} for {component_directory} not found. "
-            f"You can use one of {', '.join(p.stem for p in examples.iterdir())}"
+            f"You can use one of {', '.join(p.name for p in examples.iterdir())}"
         )
     return Path(example_file).read_bytes()
 
