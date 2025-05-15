@@ -12,7 +12,7 @@ We use `Semantic Versioning <https://semver.org>`_.
 
 Minor changes:
 
-- Deprecate the UIDGenerator class. See `Issue 816 <https://github.com/collective/icalendar/issues/816>`.
+- Deprecate ``icalendar.UIDGenerator``. See `Issue 816 <https://github.com/collective/icalendar/issues/816>`_.
 
 Breaking changes:
 

@@ -19,6 +19,7 @@ from icalendar.enums import CUTYPE, FBTYPE, PARTSTAT, RANGE, RELATED, RELTYPE, R
 from icalendar.error import (
     ComponentEndMissing,
     ComponentStartMissing,
+    FeatureWillBeRemovedInFutureVersion,
     IncompleteAlarmInformation,
     IncompleteComponent,
     InvalidCalendar,
@@ -121,4 +122,5 @@ __all__ = [
     "vSkip",
     "RELTYPE",
     "ROLE",
+    "FeatureWillBeRemovedInFutureVersion"
 ]
