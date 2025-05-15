@@ -136,7 +136,7 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
 
 10. Push the new CHANGELOG so it is used for future changes.
 
-   .. code-block:: bash
+    .. code-block:: bash
 
        git checkout main
        git pull
