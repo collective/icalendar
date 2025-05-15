@@ -34,7 +34,7 @@ Minor changes:
 
 Breaking changes:
 
-- ...
+- Correctly throw a ``TypeError`` for wrong types during property creation where a ``ValueError`` was thrown before.
 
 New features:
 
@@ -42,7 +42,7 @@ New features:
 
 Bug fixes:
 
-- Correctly throw a ``TypeError`` for wrong types during property creation where a ``ValueError`` was thrown before.
+- ...
 
 6.2.0 (2025-05-07)
 ------------------
