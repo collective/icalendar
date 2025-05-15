@@ -125,6 +125,7 @@ allow-direct-references = true
 
 [tool.ruff]
 target-version = "py38"
+unsafe-fixes = true
 
 [tool.ruff.lint]
 select = ["ALL"]
@@ -175,6 +176,10 @@ extend-safe-fixes = [
     "T201",   # print found
     "T203",   # `pprint` found
     "RUF001", # String contains ambiguous character
+    "SLF001", # Private member accessed
+]
+"src/icalendar/prop.py" = [
+    "N801",   # Class name should use CamelCase
 ]
 
 [tool.pytest.ini_options]

@@ -15,6 +15,7 @@ from icalendar import Calendar, Event, Journal, Todo
 
 CTJE = Union[Calendar, Event, Journal, Todo]
 
+
 @pytest.fixture(params=[Event, Calendar, Todo, Journal])
 def component(request):
     """An empty component with possible categories."""
@@ -32,10 +33,12 @@ def test_add_one_category(component: CTJE):
     component.add("categories", "Lecture")
     assert component.categories == ["Lecture"]
 
+
 def test_add_multiple_categories(component: CTJE):
     """Add categories."""
     component.add("categories", ["Lecture", "Workshop"])
     assert component.categories == ["Lecture", "Workshop"]
+
 
 def test_set_categories(component: CTJE):
     """Set categories."""

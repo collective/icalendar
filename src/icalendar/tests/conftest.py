@@ -209,8 +209,7 @@ def event_component(tzp):
 @pytest.fixture
 def c(tzp):
     """Return an empty component."""
-    c = Component()
-    return c
+    return Component()
 
 
 comp = c
@@ -235,7 +234,7 @@ def filled_event_component(c, calendar_component):
     return e
 
 
-@pytest.fixture()
+@pytest.fixture
 def calendar_with_resources(tzp):
     c = Calendar()
     c["resources"] = 'Chair, Table, "Room: 42"'
@@ -342,6 +341,7 @@ def env_for_doctest(monkeypatch):
     monkeypatch.setitem(sys.modules, "zoneinfo", zoneinfo)
     monkeypatch.setattr(zoneinfo, "ZoneInfo", DoctestZoneInfo)
     from icalendar.timezone.zoneinfo import ZONEINFO
+
     uid = uuid.UUID("d755cef5-2311-46ed-a0e1-6733c9e15c63", version=4)
     monkeypatch.setattr(uuid, "uuid4", lambda: uid)
 

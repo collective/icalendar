@@ -6,10 +6,10 @@ These are the defined components.
 
 from __future__ import annotations
 
-import os
 from collections import defaultdict
 from datetime import date, datetime, timedelta, tzinfo
-from typing import TYPE_CHECKING, List, NamedTuple, Optional, Tuple, Union
+from pathlib import Path
+from typing import TYPE_CHECKING, NamedTuple, Optional, Sequence, Union
 
 import dateutil.rrule
 import dateutil.tz
@@ -43,23 +43,25 @@ from icalendar.prop import (
 from icalendar.timezone import TZP, tzp
 from icalendar.tools import is_date, to_datetime
 
+from .version import __version__
+
 if TYPE_CHECKING:
     from icalendar.alarms import Alarms
 
 
 def get_example(component_directory: str, example_name: str) -> bytes:
     """Return an example and raise an error if it is absent."""
-    here = os.path.dirname(__file__)
-    examples = os.path.join(here, "tests", component_directory)
+    here = Path(__file__).parent
+    examples = here / "tests" / component_directory
     if not example_name.endswith(".ics"):
         example_name = example_name + ".ics"
-    example_file = os.path.join(examples, example_name)
-    if not os.path.isfile(example_file):
+    example_file = examples / example_name
+    if not example_file.is_file():
         raise ValueError(
-            f"Example {example_name} for {component_directory} not found. You can use one of {', '.join(os.listdir(examples))}"
+            f"Example {example_name} for {component_directory} not found. "
+            f"You can use one of {', '.join(p.stem for p in examples.iterdir())}"
         )
-    with open(example_file, "rb") as f:
-        return f.read()
+    return Path(example_file).read_bytes()
 
 
 ######################################
@@ -121,7 +123,7 @@ class Component(CaselessDict):
         """Set keys to upper for initial dict."""
         super().__init__(*args, **kwargs)
         # set parameters here for properties that use non-default values
-        self.subcomponents = []  # Components can be nested.
+        self.subcomponents: list[Component] = []  # Components can be nested.
         self.errors = []  # If we ignored exception(s) while
         # parsing a property, contains error strings
 
@@ -144,7 +146,7 @@ class Component(CaselessDict):
 
     def is_empty(self):
         """Returns True if Component has no items or subcomponents, else False."""
-        return True if not (list(self.values()) + self.subcomponents) else False  # noqa
+        return bool(not list(self.values()) + self.subcomponents)
 
     #############################
     # handling of property values
@@ -272,11 +274,9 @@ class Component(CaselessDict):
             if isinstance(value, list):
                 return [self._decode(name, v) for v in value]
             return self._decode(name, value)
-        else:
-            if default is _marker:
-                raise KeyError(name)
-            else:
-                return default
+        if default is _marker:
+            raise KeyError(name)
+        return default
 
     ########################################################################
     # Inline values. A few properties have multiple values inlined in in one
@@ -310,10 +310,10 @@ class Component(CaselessDict):
         if (name is None or self.name == name) and select(self):
             result.append(self)
         for subcomponent in self.subcomponents:
-            result += subcomponent._walk(name, select)
+            result += subcomponent._walk(name, select)  # noqa: SLF001
         return result
 
-    def walk(self, name=None, select=lambda c: True) -> list[Component]:
+    def walk(self, name=None, select=lambda _: True) -> list[Component]:
         """Recursively traverses component and subcomponents. Returns sequence
         of same. If name is passed, only components with name will be returned.
 
@@ -330,16 +330,17 @@ class Component(CaselessDict):
     #####################
     # Generation
 
-    def property_items(self, recursive=True, sorted=True) -> list[tuple[str, object]]:
+    def property_items(
+        self,
+        recursive=True,
+        sorted: bool = True,  # noqa: A002, FBT001
+    ) -> list[tuple[str, object]]:
         """Returns properties in this component and subcomponents as:
         [(name, value), ...]
         """
-        vText = types_factory["text"]
-        properties = [("BEGIN", vText(self.name).to_ical())]
-        if sorted:
-            property_names = self.sorted_keys()
-        else:
-            property_names = self.keys()
+        v_text = types_factory["text"]
+        properties = [("BEGIN", v_text(self.name).to_ical())]
+        property_names = self.sorted_keys() if sorted else self.keys()
 
         for name in property_names:
             values = self[name]
@@ -353,7 +354,7 @@ class Component(CaselessDict):
             # recursion is fun!
             for subcomponent in self.subcomponents:
                 properties += subcomponent.property_items(sorted=sorted)
-        properties.append(("END", vText(self.name).to_ical()))
+        properties.append(("END", v_text(self.name).to_ical()))
         return properties
 
     @classmethod
@@ -416,10 +417,9 @@ class Component(CaselessDict):
                     # ignore these components in parsing
                     if uname == "X-COMMENT":
                         break
-                    else:
-                        raise ValueError(
-                            f'Property "{name}" does not have a parent component.'
-                        )
+                    raise ValueError(
+                        f'Property "{name}" does not have a parent component.'
+                    )
                 datetime_names = (
                     "DTSTART",
                     "DTEND",
@@ -478,15 +478,14 @@ class Component(CaselessDict):
         if len(error_description) + len(bad_input) + len(elipsis) > max_error_length:
             truncate_to = max_error_length - len(error_description) - len(elipsis)
             return f"{error_description}: {bad_input[:truncate_to]} {elipsis}"
-        else:
-            return f"{error_description}: {bad_input}"
+        return f"{error_description}: {bad_input}"
 
-    def content_line(self, name, value, sorted=True):
+    def content_line(self, name, value, sorted: bool = True):  # noqa: A002, FBT001
         """Returns property as content line."""
         params = getattr(value, "params", Parameters())
         return Contentline.from_parts(name, params, value, sorted=sorted)
 
-    def content_lines(self, sorted=True):
+    def content_lines(self, sorted: bool = True):  # noqa: A002, FBT001
         """Converts the Component and subcomponents into content lines."""
         contentlines = Contentlines()
         for name, value in self.property_items(sorted=sorted):
@@ -495,7 +494,7 @@ class Component(CaselessDict):
         contentlines.append("")  # remember the empty string in the end
         return contentlines
 
-    def to_ical(self, sorted=True):
+    def to_ical(self, sorted: bool = True):  # noqa: A002, FBT001
         """
         :param sorted: Whether parameters and properties should be
                        lexicographically sorted.
@@ -507,7 +506,10 @@ class Component(CaselessDict):
     def __repr__(self):
         """String representation of class with all of it's subcomponents."""
         subs = ", ".join(str(it) for it in self.subcomponents)
-        return f"{self.name or type(self).__name__}({dict(self)}{', ' + subs if subs else ''})"
+        return (
+            f"{self.name or type(self).__name__}"
+            f"({dict(self)}{', ' + subs if subs else ''})"
+        )
 
     def __eq__(self, other):
         if len(self.subcomponents) != len(other.subcomponents):
@@ -567,7 +569,7 @@ class Component(CaselessDict):
     )
 
     def is_thunderbird(self) -> bool:
-        """Whether this component has attributes that indicate that Mozilla Thunderbird created it."""
+        """Whether this component has attributes that indicate that Mozilla Thunderbird created it."""  # noqa: E501
         return any(attr.startswith("X-MOZ-") for attr in self.keys())
 
 
@@ -603,7 +605,8 @@ def create_single_property(
         value = result if value_attr is None else getattr(result, value_attr, result)
         if not isinstance(value, value_type):
             raise InvalidCalendar(
-                f"{prop} must be either a {' or '.join(t.__name__ for t in value_type)}, not {value}."
+                f"{prop} must be either a {' or '.join(t.__name__ for t in value_type)}"
+                f", not {value}."
             )
         return value
 
@@ -613,7 +616,8 @@ def create_single_property(
             return
         if not isinstance(value, value_type):
             raise TypeError(
-                f"Use {' or '.join(t.__name__ for t in value_type)}, not {type(value).__name__}."
+                f"Use {' or '.join(t.__name__ for t in value_type)}, "
+                f"not {type(value).__name__}."
             )
         self[prop] = vProp(value)
         if prop in self.exclusive:
@@ -632,7 +636,7 @@ def create_single_property(
 
     {doc}
 
-    Accepted values: {', '.join(t.__name__ for t in value_type)}.
+    Accepted values: {", ".join(t.__name__ for t in value_type)}.
     If the attribute has invalid values, we raise InvalidCalendar.
     If the value is absent, we return None.
     You can also delete the value with del or by setting it to None.
@@ -792,14 +796,14 @@ class Event(Component):
         "dt",
         (datetime, date),
         date,
-        'The "DTSTART" property for a "VEVENT" specifies the inclusive start of the event.',
+        'The "DTSTART" property for a "VEVENT" specifies the inclusive start of the event.',  # noqa: E501
     )
     DTEND = create_single_property(
         "DTEND",
         "dt",
         (datetime, date),
         date,
-        'The "DTEND" property for a "VEVENT" calendar component specifies the non-inclusive end of the event.',
+        'The "DTEND" property for a "VEVENT" calendar component specifies the non-inclusive end of the event.',  # noqa: E501
     )
 
     def _get_start_end_duration(self):
@@ -970,14 +974,14 @@ class Todo(Component):
         "dt",
         (datetime, date),
         date,
-        'The "DTSTART" property for a "VTODO" specifies the inclusive start of the Todo.',
+        'The "DTSTART" property for a "VTODO" specifies the inclusive start of the Todo.',  # noqa: E501
     )
     DUE = create_single_property(
         "DUE",
         "dt",
         (datetime, date),
         date,
-        'The "DUE" property for a "VTODO" calendar component specifies the non-inclusive end of the Todo.',
+        'The "DUE" property for a "VTODO" calendar component specifies the non-inclusive end of the Todo.',  # noqa: E501
     )
     DURATION = property(
         _get_duration,
@@ -1161,7 +1165,7 @@ class Journal(Component):
         "dt",
         (datetime, date),
         date,
-        'The "DTSTART" property for a "VJOURNAL" that specifies the exact date at which the journal entry was made.',
+        'The "DTSTART" property for a "VJOURNAL" that specifies the exact date at which the journal entry was made.',  # noqa: E501
     )
 
     @property
@@ -1237,7 +1241,7 @@ class Timezone(Component):
     way in which a time zone changes its offset from UTC over time.
     """
 
-    subcomponents: list[TimezoneStandard|TimezoneDaylight]
+    subcomponents: list[TimezoneStandard | TimezoneDaylight]
 
     name = "VTIMEZONE"
     canonical_order = ("TZID",)
@@ -1322,7 +1326,7 @@ class Timezone(Component):
         tznames.add(tzname)
         return tzname
 
-    def to_tz(self, tzp: TZP = tzp, lookup_tzid: bool = True):
+    def to_tz(self, tzp: TZP = tzp, lookup_tzid: bool = True):  # noqa: FBT001
         """convert this VTIMEZONE component to a timezone object
 
         :param tzp: timezone provider to use
@@ -1352,7 +1356,7 @@ class Timezone(Component):
 
     def get_transitions(
         self,
-    ) -> Tuple[List[datetime], List[Tuple[timedelta, timedelta, str]]]:
+    ) -> tuple[list[datetime], list[tuple[timedelta, timedelta, str]]]:
         """Return a tuple of (transition_times, transition_info)
 
         - transition_times = [datetime, ...]
@@ -1364,13 +1368,13 @@ class Timezone(Component):
         dst = {}
         tznames = set()
         for component in self.walk():
-            if type(component) == Timezone:
+            if isinstance(component, Timezone):
                 continue
             if is_date(component["DTSTART"].dt):
                 component.DTSTART = to_datetime(component["DTSTART"].dt)
-            assert isinstance(
-                component["DTSTART"].dt, datetime
-            ), "VTIMEZONEs sub-components' DTSTART must be of type datetime, not date"
+            assert isinstance(component["DTSTART"].dt, datetime), (
+                "VTIMEZONEs sub-components' DTSTART must be of type datetime, not date"
+            )
             try:
                 tzname = str(component["TZNAME"])
             except UnicodeEncodeError:
@@ -1380,8 +1384,8 @@ class Timezone(Component):
                 # for whatever reason this is str/unicode
                 tzname = (
                     f"{zone}_{component['DTSTART'].to_ical().decode('utf-8')}_"
-                    + f"{component['TZOFFSETFROM'].to_ical()}_"
-                    + f"{component['TZOFFSETTO'].to_ical()}"
+                    f"{component['TZOFFSETFROM'].to_ical()}_"
+                    f"{component['TZOFFSETTO'].to_ical()}"
                 )
                 tzname = self._make_unique_tzname(tzname, tznames)
 
@@ -1400,7 +1404,7 @@ class Timezone(Component):
         # dstoffset = 0, if current transition is to standard time
         #           = this_utcoffset - prev_standard_utcoffset, otherwise
         transition_info = []
-        for num, (transtime, osfrom, osto, name) in enumerate(transitions):
+        for num, (_transtime, _osfrom, osto, name) in enumerate(transitions):
             dst_offset = False
             if not dst[name]:
                 dst_offset = timedelta(seconds=0)
@@ -1408,16 +1412,14 @@ class Timezone(Component):
                 # go back in time until we find a transition to dst
                 for index in range(num - 1, -1, -1):
                     if not dst[transitions[index][3]]:  # [3] is the name
-                        dst_offset = osto - transitions[index][2]  # [2] is osto  # noqa
+                        dst_offset = osto - transitions[index][2]  # [2] is osto
                         break
                 # when the first transition is to dst, we didn't find anything
                 # in the past, so we have to look into the future
                 if not dst_offset:
                     for index in range(num, len(transitions)):
                         if not dst[transitions[index][3]]:  # [3] is the name
-                            dst_offset = (
-                                osto - transitions[index][2]
-                            )  # [2] is osto  # noqa
+                            dst_offset = osto - transitions[index][2]  # [2] is osto
                             break
             assert dst_offset is not False
             transition_info.append((osto, dst_offset, name))
@@ -1462,7 +1464,7 @@ class Timezone(Component):
 
         .. note::
             This can take some time. Please cache the results.
-        """
+        """  # noqa: E501
         if tzid is None:
             tzid = tzid_from_tzinfo(timezone)
             if tzid is None:
@@ -1489,7 +1491,7 @@ class Timezone(Component):
             end = start
             offset_to = end.utcoffset()
             for add_offset in cls._from_tzinfo_skip_search:
-                last_end = end  # we need to save this as we might be left and right of the time change
+                last_end = end  # we need to save this as we might be left and right of the time change  # noqa: E501
                 end = normalize(end + add_offset)
                 try:
                     while end.utcoffset() == offset_to:
@@ -1544,8 +1546,10 @@ class Timezone(Component):
 
         :param tzid: the id of the timezone
         :param tzp: the timezone provider
-        :param first_date: a datetime that is earlier than anything that happens in the calendar
-        :param last_date: a datetime that is later than anything that happens in the calendar
+        :param first_date: a datetime that is earlier than anything
+            that happens in the calendar
+        :param last_date: a datetime that is later than anything
+            that happens in the calendar
         :raises ValueError: If the tzid is unknown.
 
         >>> from icalendar import Timezone
@@ -1657,6 +1661,7 @@ class TimezoneDaylight(Component):
     exdates = exdates_property
     rrules = rrules_property
 
+
 class Alarm(Component):
     """
     A "VALARM" calendar component is a grouping of component
@@ -1696,7 +1701,8 @@ class Alarm(Component):
     multiple = ("ATTENDEE", "ATTACH", "RELATED-TO")
 
     REPEAT = single_int_property(
-        "REPEAT", 0,
+        "REPEAT",
+        0,
         """The REPEAT property of an alarm component.
 
         The alarm can be defined such that it triggers repeatedly.  A
@@ -1706,7 +1712,7 @@ class Alarm(Component):
         The "REPEAT" property specifies the number of additional
         repetitions that the alarm will be triggered.  This repetition
         count is in addition to the initial triggering of the alarm.
-        """
+        """,
     )
 
     DURATION = property(
@@ -1750,7 +1756,7 @@ class Alarm(Component):
     changed in the alarm component. If the value of any "ACKNOWLEDGED" property
     in the alarm changes and is greater than or equal to the trigger time of the alarm,
     then clients SHOULD dismiss or cancel any "alert" presented to the calendar user.
-    """,
+    """,  # noqa: E501
     )
 
     TRIGGER = create_single_property(
@@ -1772,7 +1778,7 @@ class Alarm(Component):
     )
 
     @property
-    def TRIGGER_RELATED(self) -> str:
+    def TRIGGER_RELATED(self) -> str:  # noqa: N802
         """The RELATED parameter of the TRIGGER property.
 
         Values are either "START" (default) or "END".
@@ -1796,7 +1802,7 @@ class Alarm(Component):
         return trigger.params.get("RELATED", "START")
 
     @TRIGGER_RELATED.setter
-    def TRIGGER_RELATED(self, value: str):
+    def TRIGGER_RELATED(self, value: str):  # noqa: N802
         """Set "START" or "END"."""
         trigger = self.get("TRIGGER")
         if trigger is None:
@@ -1840,7 +1846,7 @@ class Alarm(Component):
         ()
         >>> alarm.triggers.absolute
         ()
-        """
+        """  # noqa: E501
         start = []
         end = []
         absolute = []
@@ -1917,15 +1923,17 @@ class Calendar(Component):
         all_timezones_so_far = True
         for comp in comps:
             for component in comp.subcomponents:
-                if component.name == 'VTIMEZONE':
-                    if all_timezones_so_far:
-                        pass
-                    else:
-                        # If a preceding component refers to a VTIMEZONE defined later in the source st
-                        # (forward references are allowed by RFC 5545), then the earlier component may have
+                if component.name == "VTIMEZONE":
+                    if not all_timezones_so_far:
+                        # If a preceding component refers to a VTIMEZONE defined later
+                        # in the source st
+                        # (forward references are allowed by RFC 5545), then the earlier
+                        # component may have
                         # the wrong timezone attached.
-                        # However, during computation of comps, all VTIMEZONEs observed do end up in
-                        # the timezone cache. So simply re-running from_ical will rely on the cache
+                        # However, during computation of comps, all VTIMEZONEs observed
+                        # do end up in
+                        # the timezone cache. So simply re-running from_ical will rely
+                        # on the cache
                         # for those forward references to produce the correct result.
                         # See test_create_america_new_york_forward_reference.
                         return Component.from_ical(st, multiple)
@@ -1936,11 +1944,17 @@ class Calendar(Component):
         if multiple:
             return comps
         if len(comps) > 1:
-            raise ValueError(cls._format_error(
-                'Found multiple components where only one is allowed', st))
+            raise ValueError(
+                cls._format_error(
+                    "Found multiple components where only one is allowed", st
+                )
+            )
         if len(comps) < 1:
-            raise ValueError(cls._format_error(
-                'Found no components where exactly one is required', st))
+            raise ValueError(
+                cls._format_error(
+                    "Found no components where exactly one is required", st
+                )
+            )
         return comps[0]
 
     @property
@@ -1995,7 +2009,7 @@ class Calendar(Component):
         Even if you use UTC, this will not show up.
         """
         result = set()
-        for name, value in self.property_items(sorted=False):
+        for _name, value in self.property_items(sorted=False):
             if hasattr(value, "params"):
                 result.add(value.params.get("TZID"))
         return result - {None}
@@ -2028,8 +2042,8 @@ class Calendar(Component):
 
     def add_missing_timezones(
         self,
-        first_date: date = Timezone._DEFAULT_FIRST_DATE,
-        last_date: date = Timezone._DEFAULT_LAST_DATE,
+        first_date: date = Timezone._DEFAULT_FIRST_DATE,  # noqa: SLF001
+        last_date: date = Timezone._DEFAULT_LAST_DATE,  # noqa: SLF001
     ):
         """Add all missing VTIMEZONE components.
 
@@ -2067,7 +2081,8 @@ class Calendar(Component):
             self.add_component(timezone)
 
     calendar_name = multi_language_text_property(
-        "NAME", "X-WR-CALNAME",
+        "NAME",
+        "X-WR-CALNAME",
         """This property specifies the name of the calendar.
 
     This implements :rfc:`7986` ``NAME`` and ``X-WR-CALNAME``.
@@ -2102,10 +2117,12 @@ class Calendar(Component):
             BEGIN:VCALENDAR
             NAME:My Calendar
             END:VCALENDAR
-    """)
+    """,
+    )
 
     description = multi_language_text_property(
-        "DESCRIPTION", "X-WR-CALDESC",
+        "DESCRIPTION",
+        "X-WR-CALDESC",
         """This property specifies the description of the calendar.
 
     This implements :rfc:`7986` ``DESCRIPTION`` and ``X-WR-CALDESC``.
@@ -2135,7 +2152,8 @@ class Calendar(Component):
             BEGIN:VCALENDAR
             DESCRIPTION:This is a calendar
             END:VCALENDAR
-    """)
+    """,
+    )
 
     color = single_string_property(
         "COLOR",
@@ -2173,10 +2191,120 @@ class Calendar(Component):
             END:VCALENDAR
 
     """,
-    "X-APPLE-CALENDAR-COLOR",
+        "X-APPLE-CALENDAR-COLOR",
     )
     categories = categories_property
     uid = uid_property
+    prodid = single_string_property(
+        "PRODID",
+        """PRODID specifies the identifier for the product that created the iCalendar object.
+
+Conformance:
+    The property MUST be specified once in an iCalendar object.
+
+Description:
+    The vendor of the implementation SHOULD assure that
+    this is a globally unique identifier; using some technique such as
+    an FPI value, as defined in [ISO.9070.1991].
+
+    This property SHOULD NOT be used to alter the interpretation of an
+    iCalendar object beyond the semantics specified in this memo.  For
+    example, it is not to be used to further the understanding of non-
+    standard properties.
+
+Example:
+    The following is an example of this property. It does not
+    imply that English is the default language.
+
+    .. code-block:: text
+
+        -//ABC Corporation//NONSGML My Product//EN
+""",  # noqa: E501
+    )
+    version = single_string_property(
+        "VERSION",
+        """VERSION of the calendar specification.
+
+The default is ``"2.0"`` for :rfc:`5545`.
+
+Purpose:
+    This property specifies the identifier corresponding to the
+    highest version number or the minimum and maximum range of the
+    iCalendar specification that is required in order to interpret the
+    iCalendar object.
+
+
+      """,
+    )
+
+    calscale = single_string_property(
+        "CALSCALE",
+        """CALSCALE defines the calendar scale used for the calendar information specified in the iCalendar object.
+
+Compatibility:
+    :rfc:`7529` makes the case that GREGORIAN stays the default and other calendar scales
+    are implemented on the RRULE.
+
+Conformance:
+    This property can be specified once in an iCalendar
+    object.  The default value is "GREGORIAN".
+
+Description:
+    This memo is based on the Gregorian calendar scale.
+    The Gregorian calendar scale is assumed if this property is not
+    specified in the iCalendar object.  It is expected that other
+    calendar scales will be defined in other specifications or by
+    future versions of this memo.
+        """,  # noqa: E501
+        default="GREGORIAN",
+    )
+    method = single_string_property(
+        "METHOD",
+        """METHOD defines the iCalendar object method associated with the calendar object.
+
+Description:
+    When used in a MIME message entity, the value of this
+    property MUST be the same as the Content-Type "method" parameter
+    value.  If either the "METHOD" property or the Content-Type
+    "method" parameter is specified, then the other MUST also be
+    specified.
+
+    No methods are defined by this specification.  This is the subject
+    of other specifications, such as the iCalendar Transport-
+    independent Interoperability Protocol (iTIP) defined by :rfc:`5546`.
+
+    If this property is not present in the iCalendar object, then a
+    scheduling transaction MUST NOT be assumed.  In such cases, the
+    iCalendar object is merely being used to transport a snapshot of
+    some calendar information; without the intention of conveying a
+    scheduling semantic.
+""",  # noqa: E501
+    )
+
+    @classmethod
+    def new(
+        cls,
+        /,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        color: Optional[str] = None,
+        categories: Optional[Sequence[str]] = None,
+        prodid: Optional[str] = f"-//collective//icalendar//{__version__}//EN",
+        method: Optional[str] = None,
+        version: str = "2.0",
+        calscale: Optional[str] = None,
+    ):
+        calendar = cls()
+        calendar.prodid = prodid
+        calendar.version = version
+        calendar.calendar_name = name
+        calendar.color = color
+        calendar.description = description
+        calendar.method = method
+        calendar.calscale = calscale
+        calendar.categories = categories or []
+        return calendar
+
 
 # These are read only singleton, so one instance is enough for the module
 types_factory = TypesFactory()

@@ -1,4 +1,5 @@
 """Enumerations for different types in the RFCs."""
+
 from enum import Enum as _Enum
 
 
@@ -26,6 +27,7 @@ class PARTSTAT(StrEnum):
         ``COMPLETED``,
         ``IN_PROCESS``
     """
+
     NEEDS_ACTION = "NEEDS-ACTION"
     ACCEPTED = "ACCEPTED"
     DECLINED = "DECLINED"
@@ -44,6 +46,7 @@ class FBTYPE(StrEnum):
         ``BUSY-UNAVAILABLE``,
         ``BUSY-TENTATIVE``
     """
+
     FREE = "FREE"
     BUSY = "BUSY"
     BUSY_UNAVAILABLE = "BUSY-UNAVAILABLE"
@@ -60,6 +63,7 @@ class CUTYPE(StrEnum):
         ``ROOM``,
         ``UNKNOWN``
     """
+
     INDIVIDUAL = "INDIVIDUAL"
     GROUP = "GROUP"
     RESOURCE = "RESOURCE"
@@ -75,6 +79,7 @@ class RELTYPE(StrEnum):
         ``CHILD``,
         ``SIBLING``
     """
+
     PARENT = "PARENT"
     CHILD = "CHILD"
     SIBLING = "SIBLING"
@@ -99,6 +104,7 @@ class RELATED(StrEnum):
         ``START``,
         ``END``
     """
+
     START = "START"
     END = "END"
 
@@ -112,6 +118,7 @@ class ROLE(StrEnum):
         ``OPT-PARTICIPANT``,
         ``NON-PARTICIPANT``
     """
+
     CHAIR = "CHAIR"
     REQ_PARTICIPANT = "REQ-PARTICIPANT"
     OPT_PARTICIPANT = "OPT-PARTICIPANT"
@@ -119,11 +126,11 @@ class ROLE(StrEnum):
 
 
 __all__ = [
-    "PARTSTAT",
-    "FBTYPE",
     "CUTYPE",
+    "FBTYPE",
+    "PARTSTAT",
     "RANGE",
     "RELATED",
-    "ROLE",
     "RELTYPE",
+    "ROLE",
 ]

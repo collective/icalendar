@@ -12,7 +12,7 @@ from dateutil import tz
 from icalendar import Event
 from icalendar.timezone import tzid_from_tzinfo
 
-valid_names = ("America/Noronha",  "Brazil/DeNoronha")
+valid_names = ("America/Noronha", "Brazil/DeNoronha")
 
 
 def test_timezone_name_directly():

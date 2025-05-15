@@ -1,4 +1,5 @@
 """Attributes of Components and properties."""
+
 from __future__ import annotations
 
 import itertools
@@ -13,10 +14,9 @@ if TYPE_CHECKING:
     from icalendar.cal import Component
 
 
-def _get_rdates(self: Component) -> list[
-        Union[tuple[date, None],
-              tuple[datetime, None],
-              tuple[datetime, datetime]]]:
+def _get_rdates(
+    self: Component,
+) -> list[Union[tuple[date, None], tuple[datetime, None], tuple[datetime, datetime]]]:
     """The RDATE property defines the list of DATE-TIME values for recurring components.
 
     RDATE is defined in :rfc:`5545`.
@@ -112,7 +112,7 @@ def _get_rdates(self: Component) -> list[
 rdates_property = property(_get_rdates)
 
 
-def _get_exdates(self: Component) -> list[date|datetime]:
+def _get_exdates(self: Component) -> list[date | datetime]:
     """EXDATE defines the list of DATE-TIME exceptions for recurring components.
 
     EXDATE is defined in :rfc:`5545`.
@@ -298,7 +298,7 @@ def _get_rrules(self: Component) -> list[vRecur]:
 
         If you want to compute recurrences, have a look at :ref:`Related projects`.
 
-    """
+    """  # noqa: E501
     rrules = self.get("RRULE", [])
     if not isinstance(rrules, list):
         return [rrules]
@@ -307,7 +307,10 @@ def _get_rrules(self: Component) -> list[vRecur]:
 
 rrules_property = property(_get_rrules)
 
-def multi_language_text_property(main_prop:str, compatibility_prop:str, doc:str) -> property:
+
+def multi_language_text_property(
+    main_prop: str, compatibility_prop: str, doc: str
+) -> property:
     """This creates a text property.
 
     This property can be defined several times with different ``LANGUAGE`` parameters.
@@ -317,6 +320,7 @@ def multi_language_text_property(main_prop:str, compatibility_prop:str, doc:str)
         compatibility_prop (str): An old property used before, such as ``X-WR-CALNAME``
         doc (str): The documentation string
     """
+
     def fget(self: Component) -> Optional[str]:
         """Get the property"""
         result = self.get(main_prop, self.get(compatibility_prop))
@@ -326,10 +330,14 @@ def multi_language_text_property(main_prop:str, compatibility_prop:str, doc:str)
                     return item
         return result
 
-    def fset(self: Component, value:str):
-        """Set the property."""
+    def fset(self: Component, value: Optional[str]):
+        """Set the property.
+
+        Setting to None will delete the value.
+        """
         fdel(self)
-        self.add(main_prop, value)
+        if value is not None:
+            self.add(main_prop, value)
 
     def fdel(self: Component):
         """Delete the property."""
@@ -339,7 +347,7 @@ def multi_language_text_property(main_prop:str, compatibility_prop:str, doc:str)
     return property(fget, fset, fdel, doc)
 
 
-def single_int_property(prop:str, default:int, doc:str) -> property:
+def single_int_property(prop: str, default: int, doc: str) -> property:
     """Create a property for an int value that exists only once.
 
     Args:
@@ -347,6 +355,7 @@ def single_int_property(prop:str, default:int, doc:str) -> property:
         default: The default value
         doc: The documentation string
     """
+
     def fget(self: Component) -> int:
         """Get the property"""
         try:
@@ -354,7 +363,7 @@ def single_int_property(prop:str, default:int, doc:str) -> property:
         except ValueError as e:
             raise InvalidCalendar(f"{prop} must be an int") from e
 
-    def fset(self: Component, value:int):
+    def fset(self: Component, value: int):
         """Set the property."""
         fdel(self)
         self.add(prop, value)
@@ -409,22 +418,30 @@ def single_utc_property(name: str, docs: str) -> property:
     return property(fget, fset, fdel, doc=docs)
 
 
-def single_string_property(name: str, docs: str, other_name:Optional[str]=None) -> property:
+def single_string_property(
+    name: str, docs: str, other_name: Optional[str] = None, default: str = ""
+) -> property:
     """Create a property to access a single string value."""
 
     def fget(self: Component) -> str:
         """Get the value."""
-        result = self.get(name, None if other_name is None else self.get(other_name, None))
+        result = self.get(
+            name, None if other_name is None else self.get(other_name, None)
+        )
         if result is None or result == []:
-            return ""
+            return default
         if isinstance(result, list):
             return result[0]
         return result
 
-    def fset(self: Component, value: str):
-        """Set the value"""
+    def fset(self: Component, value: Optional[str]):
+        """Set the value.
+
+        Setting the value to None will delete it.
+        """
         fdel(self)
-        self.add(name, value)
+        if value is not None:
+            self.add(name, value)
 
     def fdel(self: Component):
         """Delete the property."""
@@ -433,6 +450,7 @@ def single_string_property(name: str, docs: str, other_name:Optional[str]=None) 
             self.pop(other_name, None)
 
     return property(fget, fset, fdel, doc=docs)
+
 
 color_property = single_string_property(
     "COLOR",
@@ -467,7 +485,7 @@ color_property = single_string_property(
             BEGIN:VTODO
             COLOR:green
             END:VTODO
-    """
+    """,
 )
 
 sequence_property = single_int_property(
@@ -530,19 +548,24 @@ Examples:
         >>> event = calendar.events[0]
         >>> event.sequence
         10
-    """
+    """,  # noqa: E501
 )
+
 
 def _get_categories(component: Component) -> list[str]:
     """Get all the categories."""
-    categories : Optional[vCategory|list[vCategory]] = component.get("CATEGORIES")
+    categories: Optional[vCategory | list[vCategory]] = component.get("CATEGORIES")
     if isinstance(categories, list):
-        _set_categories(component, list(itertools.chain.from_iterable(cat.cats for cat in categories)))
+        _set_categories(
+            component,
+            list(itertools.chain.from_iterable(cat.cats for cat in categories)),
+        )
         return _get_categories(component)
     if categories is None:
         categories = vCategory([])
         component.add("CATEGORIES", categories)
     return categories.cats
+
 
 def _set_categories(component: Component, cats: list[str]) -> None:
     """Set the categories."""
@@ -599,11 +622,12 @@ Example:
 .. note::
 
    At present, we do not take the LANGUAGE parameter into account.
-"""
+""",
 )
 
 uid_property = single_string_property(
-    "UID", """UID specifies the persistent, globally unique identifier for a component.
+    "UID",
+    """UID specifies the persistent, globally unique identifier for a component.
 
 We recommend using :func:`uuid.uuid4` to generate new values.
 
@@ -681,9 +705,8 @@ Examples:
         UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
         END:VCALENDAR
 
-"""
+""",
 )
-
 
 
 __all__ = [

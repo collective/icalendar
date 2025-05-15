@@ -6,10 +6,11 @@ Related:
 - :rfc:`7986`, Section 6. Property Parameters
 - https://github.com/collective/icalendar/issues/798
 """
+
 from __future__ import annotations
 
 import functools
-from typing import TYPE_CHECKING, Callable, Optional, TypeVar, Union
+from typing import TYPE_CHECKING, Callable, Optional, TypeVar
 
 from icalendar import enums
 
@@ -21,6 +22,7 @@ if TYPE_CHECKING:
 
 class IcalendarProperty:
     """Interface provided by properties in icalendar.prop."""
+
     params: Parameters
 
 
@@ -33,15 +35,17 @@ def _default_return_string() -> str:
     """Return None by default."""
     return ""
 
+
 T = TypeVar("T")
 
+
 def string_parameter(
-        name:str,
-        doc:str,
-        default:Callable = _default_return_none,
-        convert:Optional[Callable[[str], T]] = None,
-        convert_to:Optional[Callable[[T], str]] = None
-    ) -> property:
+    name: str,
+    doc: str,
+    default: Callable = _default_return_none,
+    convert: Optional[Callable[[str], T]] = None,
+    convert_to: Optional[Callable[[T], str]] = None,
+) -> property:
     """Return a parameter with a quoted value (case sensitive)."""
 
     if convert_to is None:
@@ -80,7 +84,8 @@ Description:
     allowed for this parameter, Content Identifier (CID) :rfc:`2392`,
     HTTP :rfc:`2616`, and HTTPS :rfc:`2818` are the URI schemes most
     commonly used by current implementations.
-""")
+""",
+)
 
 CN = string_parameter(
     "CN",
@@ -94,22 +99,25 @@ Description:
     display text to be associated with the calendar address specified
     by the property.
 """,
-    default=_default_return_string
+    default=_default_return_string,
 )
 
-def _default_return_individual() -> enums.CUTYPE|str:
+
+def _default_return_individual() -> enums.CUTYPE | str:
     """Default value."""
     return enums.CUTYPE.INDIVIDUAL
 
-def _convert_enum(enum: type[Enum]) -> Callable[[str], Enum]:
 
+def _convert_enum(enum: type[Enum]) -> Callable[[str], Enum]:
     def convert(value: str) -> str:
         """Convert if possible."""
         try:
             return enum(value.upper())
         except ValueError:
             return value
+
     return convert
+
 
 CUTYPE = string_parameter(
     "CUTYPE",
@@ -122,7 +130,10 @@ Description:
     property that allows this parameter, the default is INDIVIDUAL.
     Applications MUST treat x-name and iana-token values they don't
     recognize the same way as they would the UNKNOWN value.
-""", default=_default_return_individual, convert=_convert_enum(enums.CUTYPE))
+""",
+    default=_default_return_individual,
+    convert=_convert_enum(enums.CUTYPE),
+)
 
 
 def quoted_list_parameter(name: str, doc: str) -> property:
@@ -136,7 +147,7 @@ def quoted_list_parameter(name: str, doc: str) -> property:
             return tuple(value.split(","))
         return value
 
-    def fset(self: IcalendarProperty, value: str|tuple[str]):
+    def fset(self: IcalendarProperty, value: str | tuple[str]):
         if value == ():
             fdel(self)
         else:
@@ -159,7 +170,8 @@ Description:
     event or to-do to the calendar user specified by the property.
     The individual calendar address parameter values MUST each be
     specified in a quoted-string.
-""")
+""",  # noqa: E501
+)
 
 DELEGATED_TO = quoted_list_parameter(
     "DELEGATED-TO",
@@ -172,7 +184,8 @@ Description:
     event or to-do by the calendar user specified by the property.
     The individual calendar address parameter values MUST each be
     specified in a quoted-string.
-    """)
+    """,  # noqa: E501
+)
 
 DIR = string_parameter(
     "DIR",
@@ -192,11 +205,14 @@ Description:
     :rfc:`1738`, FTP :rfc:`1738`, HTTP :rfc:`2616`, HTTPS :rfc:`2818`, LDAP
     :rfc:`4516`, and MID :rfc:`2392` are the URI schemes most commonly
     used by current implementations.
-""")
+""",  # noqa: E501
+)
 
-def _default_return_busy() -> enums.FBTYPE|str:
+
+def _default_return_busy() -> enums.FBTYPE | str:
     """Default value."""
     return enums.FBTYPE.BUSY
+
 
 FBTYPE = string_parameter(
     "FBTYPE",
@@ -215,7 +231,10 @@ Description:
     parameter, the default is BUSY.  Applications MUST treat x-name
     and iana-token values they don't recognize the same way as they
     would the BUSY value.
-""", default=_default_return_busy, convert=_convert_enum(enums.FBTYPE))
+""",
+    default=_default_return_busy,
+    convert=_convert_enum(enums.FBTYPE),
+)
 
 LANGUAGE = string_parameter(
     "LANGUAGE",
@@ -230,7 +249,8 @@ Description:
     For transport in a MIME entity, the Content-Language header field
     can be used to set the default language for the entire body part.
     Otherwise, no default language is assumed.
-""")
+""",
+)
 
 MEMBER = quoted_list_parameter(
     "MEMBER",
@@ -244,12 +264,14 @@ Description:
     quoted-string or a COMMA-separated list of calendar addresses,
     each in a quoted-string.  The individual calendar address
     parameter values MUST each be specified in a quoted-string.
-"""
+""",  # noqa: E501
 )
 
-def _default_return_needs_action() -> enums.PARTSTAT|str:
+
+def _default_return_needs_action() -> enums.PARTSTAT | str:
     """Default value."""
     return enums.PARTSTAT.NEEDS_ACTION
+
 
 PARTSTAT = string_parameter(
     "PARTSTAT",
@@ -266,10 +288,15 @@ Description:
     allows this parameter, the default value is NEEDS-ACTION.
     Applications MUST treat x-name and iana-token values they don't
     recognize the same way as they would the NEEDS-ACTION value.
-""", default=_default_return_needs_action, convert=_convert_enum(enums.PARTSTAT))
+""",
+    default=_default_return_needs_action,
+    convert=_convert_enum(enums.PARTSTAT),
+)
 
-def _default_range_none() -> Optional[enums.RANGE|str]:
+
+def _default_range_none() -> Optional[enums.RANGE | str]:
     return None
+
 
 RANGE = string_parameter(
     "RANGE",
@@ -287,10 +314,15 @@ Description:
     defined by the recurrence identifier and all subsequent instances.
     The value "THISANDPRIOR" is deprecated by this revision of
     iCalendar and MUST NOT be generated by applications.
-""", default=_default_range_none, convert=_convert_enum(enums.RANGE))
+""",  # noqa: E501
+    default=_default_range_none,
+    convert=_convert_enum(enums.RANGE),
+)
 
-def _default_related() -> enums.RELATED|str:
+
+def _default_related() -> enums.RELATED | str:
     return enums.RELATED.START
+
 
 RELATED = string_parameter(
     "RELATED",
@@ -306,11 +338,15 @@ Description:
     off the end of the calendar component.  If the parameter is not
     specified on an allowable property, then the default is START.
 
-""", default=_default_related, convert=_convert_enum(enums.RANGE))
+""",  # noqa: E501
+    default=_default_related,
+    convert=_convert_enum(enums.RANGE),
+)
 
 
-def _default_req_participant() -> enums.ROLE|str:
+def _default_req_participant() -> enums.ROLE | str:
     return enums.ROLE.REQ_PARTICIPANT
+
 
 ROLE = string_parameter(
     "ROLE",
@@ -324,11 +360,13 @@ Description:
     allows this parameter, the default value is REQ-PARTICIPANT.
     Applications MUST treat x-name and iana-token values they don't
     recognize the same way as they would the REQ-PARTICIPANT value.
-""", default=_default_req_participant, convert=_convert_enum(enums.ROLE)
+""",
+    default=_default_req_participant,
+    convert=_convert_enum(enums.ROLE),
 )
 
-def boolean_parameter(name: str, default:bool, doc: str) -> property:
 
+def boolean_parameter(name: str, default: bool, doc: str) -> property:  # noqa: FBT001
     def _default() -> bool:
         return default
 
@@ -340,9 +378,10 @@ def boolean_parameter(name: str, default:bool, doc: str) -> property:
         convert_to=lambda x: "TRUE" if x else "FALSE",
     )
 
+
 RSVP = boolean_parameter(
     "RSVP",
-    False,
+    False,  # noqa: FBT003
     """Specify whether there is an expectation of a favor of anreply from the calendar user specified by the property value.
 
 Description:
@@ -353,7 +392,7 @@ Description:
     participation status reply from an "Attendee" of a group-scheduled
     event or to-do.  If not specified on a property that allows this
     parameter, the default value is ``False``.
-"""
+""",  # noqa: E501
 )
 
 SENT_BY = string_parameter(
@@ -367,7 +406,7 @@ Description:
     property.  The parameter value MUST be a mailto URI as defined in
     :rfc:`2368`.  The individual calendar address parameter values MUST
     each be specified in a quoted-string.
-"""
+""",  # noqa: E501
 )
 
 TZID = string_parameter(
@@ -407,15 +446,17 @@ Description:
     as the public-domain TZ database (TZDB). The specification of
     globally unique time zone identifiers is not addressed by this
     document and is left for future study.
-"""
+""",  # noqa: E501
 )
+
 
 def _default_return_parent() -> enums.RELTYPE:
     return enums.RELTYPE.PARENT
 
+
 RELTYPE = string_parameter(
     "RELTYPE",
-    """Specify the type of hierarchical relationship associated with the calendar component specified by the property.
+    """Specify the type of hierarchical relationship associated with a component.
 
 Description:
     This parameter can be specified on a property that
@@ -430,11 +471,12 @@ Description:
     allowable property, the default relationship type is PARENT.
     Applications MUST treat x-name and iana-token values they don't
     recognize the same way as they would the PARENT value.
-""", default=_default_return_parent, convert=_convert_enum(enums.RELTYPE))
+""",
+    default=_default_return_parent,
+    convert=_convert_enum(enums.RELTYPE),
+)
 
 __all__ = [
-    "string_parameter",
-    "quoted_list_parameter",
     "ALTREP",
     "CN",
     "CUTYPE",
@@ -451,4 +493,6 @@ __all__ = [
     "RSVP",
     "SENT_BY",
     "TZID",
+    "quoted_list_parameter",
+    "string_parameter",
 ]

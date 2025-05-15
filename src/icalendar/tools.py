@@ -14,7 +14,7 @@ from .error import WillBeRemovedInVersion7
 
 class UIDGenerator:
     """Use this only if you're too lazy to create real UUIDs.
-    
+
     .. deprecated:: 6.2.1
 
         Use the Python standard library's :func:`uuid.uuid4` instead.
@@ -26,41 +26,42 @@ class UIDGenerator:
     def rnd_string(length=16) -> str:
         """Generates a string with random characters of length.
 
-         .. deprecated:: 6.2.1
+        .. deprecated:: 6.2.1
 
-             Use the Python standard library's :func:`uuid.uuid4` instead.
+            Use the Python standard library's :func:`uuid.uuid4` instead.
         """
         warn(
             "Use https://docs.python.org/3/library/uuid.html#uuid.uuid4 instead.",
             WillBeRemovedInVersion7,
-            stacklevel=1
+            stacklevel=1,
         )
-        return "".join([random.choice(UIDGenerator.chars) for _ in range(length)])
+        return "".join([random.choice(UIDGenerator.chars) for _ in range(length)])  # noqa: S311
 
     @staticmethod
     def uid(host_name="example.com", unique=""):
         """Generates a unique ID consisting of ``datetime-uniquevalue@host``.
 
         For example:
-            
+
             .. code-block:: text
 
                 20050105T225746Z-HKtJMqUgdO0jDUwm@example.com
-        
+
         .. deprecated:: 6.2.1
 
             Use the Python standard library's :func:`uuid.uuid5` instead.
         """
         from icalendar.prop import vDatetime, vText
+
         warn(
             "Use https://docs.python.org/3/library/uuid.html#uuid.uuid5 instead.",
             WillBeRemovedInVersion7,
-            stacklevel=1
+            stacklevel=1,
         )
 
         host_name = to_unicode(host_name)
         unique = unique or UIDGenerator.rnd_string()
-        today = to_unicode(vDatetime(datetime.today()).to_ical())
+        today = to_unicode(vDatetime(datetime.today()).to_ical())  # noqa: DTZ002
         return vText(f"{today}-{unique}@{host_name}")
 
 
@@ -106,8 +107,8 @@ __all__ = [
     "UIDGenerator",
     "is_date",
     "is_datetime",
-    "to_datetime",
     "is_pytz",
     "is_pytz_dt",
     "normalize_pytz",
+    "to_datetime",
 ]

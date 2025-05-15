@@ -1,8 +1,10 @@
 """Testing multiple VCALENDAR components and multiple VEVENT components"""
 
-from icalendar.prop import vText
-from icalendar.cal import Event
 import pytest
+
+from icalendar.cal import Event
+from icalendar.prop import vText
+
 
 def test_multiple(calendars):
     """Check opening multiple calendars."""
@@ -16,18 +18,20 @@ def test_multiple(calendars):
         "-//Mozilla.org/NONSGML Mozilla Calendar V1.0//EN"
     )
 
+
 def test_multiple_events():
     """Raises ValueError unless multiple=True"""
-    event_components="""
+    event_components = """
 BEGIN:VEVENT
 END:VEVENT
 BEGIN:VEVENT
 END:VEVENT
 """
-    with pytest.raises(ValueError) as exception:
+    with pytest.raises(ValueError):
         Event.from_ical(event_components, multiple=False)
+
 
 def test_missing_event():
     """Raises ValueError if no component found"""
-    with pytest.raises(ValueError) as exception:
-        Event.from_ical('')
+    with pytest.raises(ValueError):
+        Event.from_ical("")

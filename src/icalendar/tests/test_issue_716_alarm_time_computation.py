@@ -289,9 +289,9 @@ def test_number_of_active_alarms_from_calendar_software(
     active_alarms = (
         a.active
     )  # We do not need to pass a timezone because the events have a timezone
-    assert (
-        len(active_alarms) == count
-    ), f"{message} - I expect {count} alarms active but got {len(active_alarms)}."
+    assert len(active_alarms) == count, (
+        f"{message} - I expect {count} alarms active but got {len(active_alarms)}."
+    )
 
 
 three_alarms = Alarm()

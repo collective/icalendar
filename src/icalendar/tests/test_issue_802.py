@@ -14,10 +14,11 @@ from icalendar import Component, Event, Journal, Todo
 def default_sequence(request):
     return request.param
 
+
 @pytest.fixture(params=[Event, Journal, Todo])
 def component(request, default_sequence) -> Component:
     """Return a component."""
-    component : Component = request.param()
+    component: Component = request.param()
     if default_sequence is not None:
         component["SEQUENCE"] = default_sequence
     return component
@@ -46,6 +47,7 @@ def test_delete_sequence_default(component: Component):
     """Delete the value."""
     del component.sequence
     assert component.sequence == 0
+
 
 def test_delete_sequence_with_value(component: Component):
     """Delete the value."""

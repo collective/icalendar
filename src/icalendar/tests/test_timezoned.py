@@ -138,11 +138,13 @@ def test_create_america_new_york(calendars, tzp):
     dt = cal.events[0].start
     assert tzid_from_dt(dt) in ("custom_America/New_York", "EDT")
 
+
 def test_create_america_new_york_forward_reference(calendars, tzp):
     """testing America/New_York variant with VTIMEZONE as a forward reference"""
     cal = calendars.america_new_york_forward_reference
-    dt = cal.walk('VEVENT')[0]['DTSTART'][0].dt
-    assert tzid_from_dt(dt) in ('custom_America/New_York_Forward_reference', "EDT")
+    dt = cal.walk("VEVENT")[0]["DTSTART"][0].dt
+    assert tzid_from_dt(dt) in ("custom_America/New_York_Forward_reference", "EDT")
+
 
 def test_america_new_york_with_pytz(calendars, tzp, pytz_only):
     """Create a custom timezone with pytz and test the transition times."""
@@ -170,12 +172,12 @@ def test_america_new_york_with_pytz(calendars, tzp, pytz_only):
         datetime.timedelta(-1, 72000),
         datetime.timedelta(0, 3600),
         "EDT",
-    ) in tz._tzinfos.keys()
+    ) in tz._tzinfos
     assert (
         datetime.timedelta(-1, 68400),
         datetime.timedelta(0),
         "EST",
-    ) in tz._tzinfos.keys()
+    ) in tz._tzinfos
 
 
 fiji_transition_times = [
@@ -315,12 +317,12 @@ def test_create_pacific_fiji(calendars, pytz_only):
         datetime.timedelta(0, 46800),
         datetime.timedelta(0, 3600),
         "custom_Pacific/Fiji_19981101T020000_+1200_+1300",
-    ) in tz._tzinfos.keys()
+    ) in tz._tzinfos
     assert (
         datetime.timedelta(0, 43200),
         datetime.timedelta(0),
         "custom_Pacific/Fiji_19990228T030000_+1300_+1200",
-    ) in tz._tzinfos.keys()
+    ) in tz._tzinfos
 
 
 # these are the expected offsets before and after the fiji_transition_times
@@ -396,7 +398,7 @@ def test_transition_times_fiji(tzp, timezones):
     """The transition times are computed."""
     tz = timezones.pacific_fiji.to_tz(tzp, lookup_tzid=False)
     offsets = []  # [(before, after), ...]
-    for i, transition_time in enumerate(fiji_transition_times):
+    for _i, transition_time in enumerate(fiji_transition_times):
         before_after_offset = []
         for offset in (datetime.timedelta(hours=-1), datetime.timedelta(hours=+1)):
             time_in_timezone = tzp.localize(transition_time + offset, tz)
