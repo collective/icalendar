@@ -49,15 +49,15 @@ def test_timezoned_with_timedelta(tzp):
 
 
 @pytest.mark.parametrize(
-    "params",
+    ("period", "error"),
     [
-        ("20000101T000000", datetime(2000, 1, 2)),
-        (datetime(2000, 1, 1), "20000102T000000"),
-        (datetime(2000, 1, 2), datetime(2000, 1, 1)),
-        (datetime(2000, 1, 2), timedelta(-1)),
+        (("20000101T000000", datetime(2000, 1, 2)), TypeError),
+        ((datetime(2000, 1, 1), "20000102T000000"), TypeError),
+        ((datetime(2000, 1, 2), datetime(2000, 1, 1)), ValueError),
+        ((datetime(2000, 1, 2), timedelta(-1)), ValueError),
     ],
 )
-def test_invalid_parameters(params):
+def test_invalid_parameters(period, error):
     """The parameters are of wrong type or of wrong order."""
-    with pytest.raises(TypeError):
-        vPeriod(params)
+    with pytest.raises(error):
+        vPeriod(period)
