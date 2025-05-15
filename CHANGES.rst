@@ -12,7 +12,7 @@ We use `Semantic Versioning <https://semver.org>`_.
 
 Minor changes:
 
-- Deprecate the UIDGenerator class. See `Issue 816 <https://github.com/collective/icalendar/issues/816>`.
+- Deprecate ``icalendar.UIDGenerator``. See `Issue 816 <https://github.com/collective/icalendar/issues/816>`_.
 
 Breaking changes:
 
@@ -24,6 +24,7 @@ New features:
 
 Bug fixes:
 
+- Fix component equality where timezones differ for the datetimes but the times are actually equal. See `Issue 828 <https://github.com/collective/icalendar/issues/828>`_.
 - Test that we can add an RRULE as a string. See `Issue 301 <https://github.com/collective/icalendar/issues/301>`_.
 - Test that we support dateutil timezones as outlined in `Issue 336 <https://github.com/collective/icalendar/issues/336>`_.
 - Build documentation on Read the Docs with the version identifier. See `Issue 826 <https://github.com/collective/icalendar/issues/826>`_.

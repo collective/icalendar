@@ -19,6 +19,7 @@ from icalendar.enums import CUTYPE, FBTYPE, PARTSTAT, RANGE, RELATED, RELTYPE, R
 from icalendar.error import (
     ComponentEndMissing,
     ComponentStartMissing,
+    FeatureWillBeRemovedInFutureVersion,
     IncompleteAlarmInformation,
     IncompleteComponent,
     InvalidCalendar,
@@ -41,6 +42,7 @@ from icalendar.prop import (
     vCalAddress,
     vDate,
     vDatetime,
+    vDDDLists,
     vDDDTypes,
     vDuration,
     vFloat,
@@ -79,6 +81,7 @@ __all__ = [
     "vCalAddress",
     "vDatetime",
     "vDate",
+    "vDDDLists",
     "vDDDTypes",
     "vDuration",
     "vFloat",
@@ -121,4 +124,5 @@ __all__ = [
     "vSkip",
     "RELTYPE",
     "ROLE",
+    "FeatureWillBeRemovedInFutureVersion"
 ]

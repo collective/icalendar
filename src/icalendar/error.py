@@ -44,6 +44,15 @@ class ComponentStartMissing(IncompleteAlarmInformation):
     Use Alarms.set_start().
     """
 
+class FeatureWillBeRemovedInFutureVersion(DeprecationWarning):
+    """This feature will be removed in a future version."""
+
+
+class WillBeRemovedInVersion7(FeatureWillBeRemovedInFutureVersion):
+    """This feature will be removed in icalendar version 7.
+
+    Suppress FeatureWillBeRemovedInFutureVersion instead.
+    """
 
 __all__ = [
     "InvalidCalendar",
@@ -51,5 +60,8 @@ __all__ = [
     "IncompleteAlarmInformation",
     "LocalTimezoneMissing",
     "ComponentEndMissing",
+    
     "ComponentStartMissing",
+    "FeatureWillBeRemovedInFutureVersion",
+    "WillBeRemovedInVersion7",
 ]
