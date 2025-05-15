@@ -14,10 +14,6 @@ Minor changes:
 
 - Deprecate ``icalendar.UIDGenerator``. See `Issue 816 <https://github.com/collective/icalendar/issues/816>`_.
 
-Breaking changes:
-
-- ...
-
 New features:
 
 - Add the ``uid`` property to ``Alarm``, ``Event``, ``Calendar``, ``Todo``, and ``Journal`` components. See `Issue 740 <https://github.com/collective/icalendar/issues/740>`_.
