@@ -25,12 +25,12 @@ Bug fixes:
 - Test that we support dateutil timezones as outlined in `Issue 336 <https://github.com/collective/icalendar/issues/336>`_.
 - Build documentation on Read the Docs with the version identifier. See `Issue 826 <https://github.com/collective/icalendar/issues/826>`_.
 
-6.3.1 (unreleased)
+7.0.0 (unreleased)
 ------------------
 
 Minor changes:
 
-- ...
+- Add ``new()`` to ``icalendar.Calendar`` to set required attributes. See `Issue 569 <https://github.com/collective/icalendar/issues/569>`_.
 
 Breaking changes:
 
@@ -42,7 +42,7 @@ New features:
 
 Bug fixes:
 
-- ...
+- Correctly throw a ``TypeError`` for wrong types during property creation where a ``ValueError`` was thrown before.
 
 6.2.0 (2025-05-07)
 ------------------

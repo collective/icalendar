@@ -183,6 +183,10 @@ extend-safe-fixes = [
 "src/icalendar/prop.py" = [
     "N801",   # Class name should use CamelCase
 ]
+"src/icalendar/fuzzing/*" = [
+    "T201",   # print found
+    "N802",   # Function name {name} should be lowercase
+]
 
 [tool.pytest.ini_options]
 # see https://docs.pytest.org/en/6.2.x/customize.html
