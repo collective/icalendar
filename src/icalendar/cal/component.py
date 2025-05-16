@@ -1,4 +1,4 @@
-""""""
+"""The base for :rfc:`5545` components."""
 
 from __future__ import annotations
 

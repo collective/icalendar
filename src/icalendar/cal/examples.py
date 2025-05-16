@@ -1,4 +1,4 @@
-""""""
+"""Access to examples of components."""
 
 from __future__ import annotations
 

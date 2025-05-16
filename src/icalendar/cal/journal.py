@@ -1,4 +1,4 @@
-""""""
+""":rfc:`5545` VJOURNAL component."""
 
 from __future__ import annotations
 

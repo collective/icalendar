@@ -1,4 +1,4 @@
-""""""
+""":rfc:`5545` iCalendar component."""
 
 from __future__ import annotations
 

@@ -1,4 +1,4 @@
-""""""
+""":rfc:`5545` components for timezone information."""
 
 from __future__ import annotations
 

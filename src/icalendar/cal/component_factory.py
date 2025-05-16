@@ -1,4 +1,4 @@
-""""""
+"""A factory to create components."""
 
 from __future__ import annotations
 
