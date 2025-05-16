@@ -7,6 +7,12 @@ from typing import Generator
 import pytest
 
 import icalendar
+import icalendar.cal.alarm
+import icalendar.cal.calendar
+import icalendar.cal.component_factory
+import icalendar.cal.event
+import icalendar.cal.timezone
+from icalendar.cal.component import Component
 
 from . import timezone_ids
 
@@ -21,7 +27,7 @@ from pathlib import Path
 
 from dateutil import tz
 
-from icalendar.cal import Calendar, Component
+from icalendar.cal.calendar import Calendar
 from icalendar.timezone import TZP
 from icalendar.timezone import tzp as _tzp
 
@@ -104,22 +110,22 @@ ALARMS_FOLDER = HERE / "alarms"
 
 @pytest.fixture(scope="module")
 def calendars(tzp):
-    return DataSource(CALENDARS_FOLDER, icalendar.Calendar.from_ical)
+    return DataSource(CALENDARS_FOLDER, icalendar.cal.calendar.Calendar.from_ical)
 
 
 @pytest.fixture(scope="module")
 def timezones(tzp):
-    return DataSource(TIMEZONES_FOLDER, icalendar.Timezone.from_ical)
+    return DataSource(TIMEZONES_FOLDER, icalendar.cal.timezone.Timezone.from_ical)
 
 
 @pytest.fixture(scope="module")
 def events(tzp):
-    return DataSource(EVENTS_FOLDER, icalendar.Event.from_ical)
+    return DataSource(EVENTS_FOLDER, icalendar.cal.event.Event.from_ical)
 
 
 @pytest.fixture(scope="module")
 def alarms(tzp):
-    return DataSource(ALARMS_FOLDER, icalendar.Alarm.from_ical)
+    return DataSource(ALARMS_FOLDER, icalendar.cal.alarm.Alarm.from_ical)
 
 
 @pytest.fixture(params=PYTZ_UTC + [zoneinfo.ZoneInfo("UTC"), tz.UTC, tz.gettz("UTC")])
@@ -188,7 +194,7 @@ def x_sometime():
 @pytest.fixture
 def factory():
     """Return a new component factory."""
-    return icalendar.ComponentFactory()
+    return icalendar.cal.component_factory.ComponentFactory()
 
 
 @pytest.fixture
@@ -209,8 +215,7 @@ def event_component(tzp):
 @pytest.fixture
 def c(tzp):
     """Return an empty component."""
-    c = Component()
-    return c
+    return Component()
 
 
 comp = c
@@ -235,7 +240,7 @@ def filled_event_component(c, calendar_component):
     return e
 
 
-@pytest.fixture()
+@pytest.fixture
 def calendar_with_resources(tzp):
     c = Calendar()
     c["resources"] = 'Chair, Table, "Room: 42"'
@@ -342,6 +347,7 @@ def env_for_doctest(monkeypatch):
     monkeypatch.setitem(sys.modules, "zoneinfo", zoneinfo)
     monkeypatch.setattr(zoneinfo, "ZoneInfo", DoctestZoneInfo)
     from icalendar.timezone.zoneinfo import ZONEINFO
+
     uid = uuid.UUID("d755cef5-2311-46ed-a0e1-6733c9e15c63", version=4)
     monkeypatch.setattr(uuid, "uuid4", lambda: uid)
 

@@ -3,7 +3,7 @@
 See https://github.com/collective/icalendar/issues/740
 """
 
-from icalendar import Alarm
+from icalendar.cal.alarm import Alarm
 
 
 def test_alarm_uses_x_property_too():

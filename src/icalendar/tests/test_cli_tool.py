@@ -1,7 +1,8 @@
 import unittest
 from datetime import datetime
 
-from icalendar import Calendar, cli
+from icalendar import cli
+from icalendar.cal.calendar import Calendar
 
 try:
     import zoneinfo
@@ -78,22 +79,22 @@ PROPER_OUTPUT = f"""    Organizer: organizer <organizer@test.test>
     End        : {secondend}
     Duration   : 0:30:00
     Location   : New Amsterdam, 1010 Test Street
-    Comment    : 
+    Comment    :
     Description:
      Test Description
      This one is multiline
 
-    Organizer: 
+    Organizer:
     Attendees:
 
     Summary    : TEST
     Starts     : Wed May 11 00:00:00 2022
     End        : Mon May 16 00:00:00 2022
     Duration   : 5 days, 0:00:00
-    Location   : 
-    Comment    : 
+    Location   :
+    Comment    :
     Description:
-     
+
 
 """
 
@@ -105,7 +106,7 @@ class CLIToolTest(unittest.TestCase):
         output = ""
         for event in calendar.walk("vevent"):
             output += cli.view(event) + "\n\n"
-        self.assertEqual(PROPER_OUTPUT, output)
+        assert output == PROPER_OUTPUT
 
 
 if __name__ == "__main__":

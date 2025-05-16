@@ -125,6 +125,7 @@ allow-direct-references = true
 
 [tool.ruff]
 target-version = "py38"
+unsafe-fixes = true
 
 [tool.ruff.lint]
 select = ["ALL"]
