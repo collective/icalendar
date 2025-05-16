@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from datetime import datetime
 
+from icalendar import ComponentFactory
 from icalendar.attr import single_utc_property
-from icalendar.cal.component_factory import ComponentFactory
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_split
 from icalendar.parser_tools import DEFAULT_ENCODING
@@ -15,7 +15,6 @@ from icalendar.timezone import tzp
 _marker = []
 # These are read only singleton, so one instance is enough for the module
 types_factory = TypesFactory()
-component_factory = ComponentFactory()
 
 
 class Component(CaselessDict):
@@ -44,16 +43,6 @@ class Component(CaselessDict):
         self.subcomponents: list[Component] = []  # Components can be nested.
         self.errors = []  # If we ignored exception(s) while
         # parsing a property, contains error strings
-
-    # def is_compliant(self, name):
-    #    """Returns True is the given property name is compliant with the
-    #    icalendar implementation.
-    #
-    #    If the parser is too strict it might prevent parsing erroneous but
-    #    otherwise compliant properties. So the parser is pretty lax, but it is
-    #    possible to test for non-compliance by calling this method.
-    #    """
-    #    return name in not_compliant
 
     def __bool__(self):
         """Returns True, CaselessDict would return False if it had no items."""
@@ -302,7 +291,7 @@ class Component(CaselessDict):
                 # try and create one of the components defined in the spec,
                 # otherwise get a general Components for robustness.
                 c_name = vals.upper()
-                c_class = component_factory.get(c_name, Component)
+                c_class = ComponentFactory.singleton().get(c_name, Component)
                 # If component factory cannot resolve ``c_name``, the generic
                 # ``Component`` class is used which does not have the name set.
                 # That's opposed to the usage of ``cls``, which represents a

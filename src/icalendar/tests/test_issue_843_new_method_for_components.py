@@ -36,6 +36,12 @@ def test_summary_default(component):
     """Test the summary property default."""
     c = component()
     assert c.summary is None
+
+
+@param_description_components
+def test_description_default(component):
+    """Test the summary property default."""
+    c = component()
     assert c.description is None
 
 

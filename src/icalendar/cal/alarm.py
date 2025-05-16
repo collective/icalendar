@@ -236,13 +236,14 @@ class Alarm(Component):
     description = description_property
 
     @classmethod
-    def new(cls, /, summary: Optional[str] = None):
+    def new(cls, /, summary: Optional[str] = None, description: Optional[str] = None):
         """Create a new alarm with all required properties.
 
         This creates a new Alarm in accordance with :rfc:`5545`.
         """
         alarm = cls()
         alarm.summary = summary
+        alarm.description = description
         return alarm
 
 

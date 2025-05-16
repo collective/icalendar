@@ -6,13 +6,12 @@ import itertools
 from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Optional, Union
 
-from icalendar.cal.component import Component
 from icalendar.error import InvalidCalendar
 from icalendar.prop import vCategory, vDDDTypes, vDuration, vRecur, vText
 from icalendar.timezone import tzp
 
 if TYPE_CHECKING:
-    from icalendar.cal.component import Component
+    from icalendar.cal import Component
 
 
 def _get_rdates(
@@ -299,7 +298,7 @@ def _get_rrules(self: Component) -> list[vRecur]:
 
         If you want to compute recurrences, have a look at :ref:`Related projects`.
 
-    """
+    """  # noqa: E501
     rrules = self.get("RRULE", [])
     if not isinstance(rrules, list):
         return [rrules]
@@ -545,7 +544,7 @@ Examples:
         >>> event = calendar.events[0]
         >>> event.sequence
         10
-    """,
+    """,  # noqa: E501
 )
 
 
@@ -824,7 +823,9 @@ def create_single_property(
         value = result if value_attr is None else getattr(result, value_attr, result)
         if not isinstance(value, value_type):
             raise InvalidCalendar(
-                f"{prop} must be either a {' or '.join(t.__name__ for t in value_type)}, not {value}."
+                f"{prop} must be either a "
+                f"{' or '.join(t.__name__ for t in value_type)},"
+                f" not {value}."
             )
         return value
 
@@ -834,7 +835,8 @@ def create_single_property(
             return
         if not isinstance(value, value_type):
             raise TypeError(
-                f"Use {' or '.join(t.__name__ for t in value_type)}, not {type(value).__name__}."
+                f"Use {' or '.join(t.__name__ for t in value_type)}, "
+                f"not {type(value).__name__}."
             )
         self[prop] = vProp(value)
         if prop in self.exclusive:
