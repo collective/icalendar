@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from icalendar import ComponentFactory
 from icalendar.attr import single_utc_property
+from icalendar.cal.component_factory import ComponentFactory
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_split
 from icalendar.parser_tools import DEFAULT_ENCODING

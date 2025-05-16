@@ -6,8 +6,6 @@ import icalendar
 import icalendar.cal.calendar
 import icalendar.cal.event
 import icalendar.cal.timezone
-import icalendar.cal.TimezoneDaylight
-import icalendar.cal.TimezoneStandard
 from icalendar.prop import tzid_from_dt
 
 
@@ -49,14 +47,14 @@ def test_create_to_ical(tzp):
     tzc.add("tzid", "Europe/Vienna")
     tzc.add("x-lic-location", "Europe/Vienna")
 
-    tzs = icalendar.cal.TimezoneStandard.TimezoneStandard()
+    tzs = icalendar.cal.timezone.TimezoneStandard()
     tzs.add("tzname", "CET")
     tzs.add("dtstart", datetime.datetime(1970, 10, 25, 3, 0, 0))
     tzs.add("rrule", {"freq": "yearly", "bymonth": 10, "byday": "-1su"})
     tzs.add("TZOFFSETFROM", datetime.timedelta(hours=2))
     tzs.add("TZOFFSETTO", datetime.timedelta(hours=1))
 
-    tzd = icalendar.cal.TimezoneDaylight.TimezoneDaylight()
+    tzd = icalendar.cal.timezone.TimezoneDaylight()
     tzd.add("tzname", "CEST")
     tzd.add("dtstart", datetime.datetime(1970, 3, 29, 2, 0, 0))
     tzs.add("rrule", {"freq": "yearly", "bymonth": 3, "byday": "-1su"})

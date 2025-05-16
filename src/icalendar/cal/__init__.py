@@ -8,7 +8,7 @@ from icalendar.error import IncompleteComponent
 
 from .alarm import Alarm
 from .calendar import Calendar
-from .component import Component
+from .component import Component, types_factory
 from .event import Event
 from .examples import get_example
 from .free_busy import FreeBusy
@@ -29,4 +29,5 @@ __all__ = [
     "TimezoneStandard",
     "Todo",
     "get_example",
+    "types_factory",
 ]

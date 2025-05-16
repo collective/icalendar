@@ -7,7 +7,7 @@ from pathlib import Path
 
 def get_example(component_directory: str, example_name: str) -> bytes:
     """Return an example and raise an error if it is absent."""
-    here = Path(__file__).parent
+    here = Path(__file__).parent.parent
     examples = here / "tests" / component_directory
     if not example_name.endswith(".ics"):
         example_name = example_name + ".ics"

@@ -2,7 +2,7 @@ import datetime
 import os
 
 import icalendar
-import icalendar.cal.calendar
+import icalendar.cal
 
 
 def test_value_type_is_not_mapped():
@@ -16,8 +16,8 @@ def test_value_type_is_mapped(x_sometime):
 
 
 def test_create_from_ical(x_sometime):
-    directory = os.path.dirname(__file__)
-    ics = open(os.path.join(directory, "calendars", "time.ics"), "rb")
+    directory = os.path.dirname(__file__)  # noqa: PTH120
+    ics = open(os.path.join(directory, "calendars", "time.ics"), "rb")  # noqa: PTH118, PTH123, SIM115
     cal = icalendar.cal.calendar.Calendar.from_ical(ics.read())
     ics.close()
 
