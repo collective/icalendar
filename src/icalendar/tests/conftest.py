@@ -341,15 +341,19 @@ def doctest_import(name, *args, **kw):
     return __import__(name, *args, **kw)
 
 
+@pytest.fixture(autouse=True)
+def fixed_env(monkeypatch):
+    """Create a fixed test environment for the functions that are time and randomness dependent."""
+    uid = uuid.UUID("d755cef5-2311-46ed-a0e1-6733c9e15c63", version=4)
+    monkeypatch.setattr(uuid, "uuid4", lambda: uid)
+
+
 @pytest.fixture
 def env_for_doctest(monkeypatch):
     """Modify the environment to make doctests run."""
     monkeypatch.setitem(sys.modules, "zoneinfo", zoneinfo)
     monkeypatch.setattr(zoneinfo, "ZoneInfo", DoctestZoneInfo)
     from icalendar.timezone.zoneinfo import ZONEINFO
-
-    uid = uuid.UUID("d755cef5-2311-46ed-a0e1-6733c9e15c63", version=4)
-    monkeypatch.setattr(uuid, "uuid4", lambda: uid)
 
     monkeypatch.setattr(ZONEINFO, "utc", zoneinfo.ZoneInfo("UTC"))
     return {"print": doctest_print}

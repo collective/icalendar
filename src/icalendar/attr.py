@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import itertools
 from datetime import date, datetime, timedelta
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING, Optional, Sequence, Union
 
 from icalendar.error import InvalidCalendar
+from icalendar.parser_tools import SEQUENCE_TYPES
 from icalendar.prop import vCategory, vDDDTypes, vDuration, vRecur, vText
 from icalendar.timezone import tzp
 
@@ -755,9 +756,6 @@ Description:
     This property is used in the "VEVENT" and "VTODO" to
     capture lengthy textual descriptions associated with the activity.
 
-    This property is used in the "VJOURNAL" calendar component to
-    capture one or more textual journal entries.
-
     This property is used in the "VALARM" calendar component to
     capture the display text for a DISPLAY category of alarm, and to
     capture the body text for an EMAIL category of alarm.
@@ -774,25 +772,6 @@ Examples:
 
     """,  # noqa: E501
 )
-
-__all__ = [
-    "categories_property",
-    "color_property",
-    "description_property",
-    "exdates_property",
-    "multi_language_text_property",
-    "rdates_property",
-    "rrules_property",
-    "sequence_property",
-    "single_int_property",
-    "single_utc_property",
-    "summary_property",
-    "uid_property",
-]
-
-
-#######################################
-# components defined in RFC 5545
 
 
 def create_single_property(
@@ -913,3 +892,84 @@ of the event.
 If you would like to calculate the duration of a {component}, do not use this.
 Instead use the duration property (lower case).
 """
+
+
+def _get_descriptions(self: Component) -> list[str]:
+    """Get the descriptions."""
+    descriptions = self.get("DESCRIPTION")
+    if descriptions is None:
+        return []
+    if not isinstance(descriptions, SEQUENCE_TYPES):
+        return [descriptions]
+    return descriptions
+
+
+def _set_descriptions(self: Component, descriptions: Optional[str | Sequence[str]]):
+    """Set the descriptions"""
+    _del_descriptions(self)
+    if descriptions is None:
+        return
+    if isinstance(descriptions, str):
+        self.add("DESCRIPTION", descriptions)
+    else:
+        for description in descriptions:
+            self.add("DESCRIPTION", description)
+
+
+def _del_descriptions(self: Component):
+    """Delete the descriptions."""
+    self.pop("DESCRIPTION")
+
+
+descriptions_property = property(
+    _get_descriptions,
+    _set_descriptions,
+    _del_descriptions,
+    """DESCRIPTION provides a more complete description of the calendar component than that provided by the "SUMMARY" property.
+
+Property Parameters:
+    IANA, non-standard, alternate text
+    representation, and language property parameters can be specified
+    on this property.
+
+Conformance:
+    The property can be
+    specified multiple times only within a "VJOURNAL" calendar component.
+
+Description:
+    This property is used in the "VJOURNAL" calendar component to
+    capture one or more textual journal entries.
+
+Examples:
+    The following is an example of this property with formatted
+    line breaks in the property value:
+
+    .. code-block:: pycon
+
+        DESCRIPTION:Meeting to provide technical review for "Phoenix"
+         design.\\nHappy Face Conference Room. Phoenix design team
+         MUST attend this meeting.\\nRSVP to team leader.
+
+""",  # noqa: E501
+)
+
+__all__ = [
+    "categories_property",
+    "color_property",
+    "create_single_property",
+    "description_property",
+    "descriptions_property",
+    "exdates_property",
+    "multi_language_text_property",
+    "property_del_duration",
+    "property_doc_duration_template",
+    "property_get_duration",
+    "property_set_duration",
+    "rdates_property",
+    "rrules_property",
+    "sequence_property",
+    "single_int_property",
+    "single_utc_property",
+    "summary_property",
+    "uid_property",
+]

@@ -179,6 +179,7 @@ extend-safe-fixes = [
     "T201",   # print found
     "T203",   # `pprint` found
     "RUF001", # String contains ambiguous character
+    "SIM300", # Yoda condition
 ]
 
 [tool.pytest.ini_options]

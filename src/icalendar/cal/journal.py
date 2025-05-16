@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 from datetime import date, datetime, timedelta
-from typing import Optional
+from typing import Optional, Sequence
 
 from icalendar.attr import (
     categories_property,
     color_property,
     create_single_property,
+    descriptions_property,
     exdates_property,
     rdates_property,
     rrules_property,
@@ -112,16 +113,44 @@ class Journal(Component):
     uid = uid_property
 
     summary = summary_property
-    # description = description_property # This does not work. It should be a list.
+    descriptions = descriptions_property
+
+    @property
+    def description(self) -> str:
+        """The concatenated descriptions of the journal.
+
+        A Journal can have several descriptions.
+        This is a compatibility method.
+        """
+        descriptions = self.descriptions
+        if not descriptions:
+            return None
+        return "\r\n\r\n".join(descriptions)
+
+    @description.setter
+    def description(self, description: Optional[str]):
+        """Set the description"""
+        self.descriptions = description
+
+    @description.deleter
+    def description(self):
+        """Delete all descriptions."""
+        del self.descriptions
 
     @classmethod
-    def new(cls, /, summary: Optional[str] = None):
+    def new(
+        cls,
+        /,
+        summary: Optional[str] = None,
+        description: Optional[str | Sequence[str]] = None,
+    ):
         """Create a new journal entry with all required properties.
 
         This creates a new Journal in accordance with :rfc:`5545`.
         """
         journal = cls()
         journal.summary = summary
+        journal.descriptions = description
         return journal
 
 
