@@ -180,6 +180,16 @@ extend-safe-fixes = [
     "T203",   # `pprint` found
     "RUF001", # String contains ambiguous character
     "SIM300", # Yoda condition
+    "SLF001", # Private member accessed
+    "N999",   # module name
+    "PT027",  # assertRaises
+]
+"src/icalendar/prop.py" = [
+    "N801",   # Class name should use CamelCase
+]
+"src/icalendar/fuzzing/*" = [
+    "T201",   # print found
+    "N802",   # Function name {name} should be lowercase
 ]
 
 [tool.pytest.ini_options]

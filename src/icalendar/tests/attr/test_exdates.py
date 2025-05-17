@@ -7,10 +7,13 @@ from typing import Union
 
 import pytest
 
-from icalendar.cal.event import Event
-from icalendar.cal.journal import Journal
-from icalendar.cal.timezone import TimezoneDaylight, TimezoneStandard
-from icalendar.cal.todo import Todo
+from icalendar import (
+    Event,
+    Journal,
+    TimezoneDaylight,
+    TimezoneStandard,
+    Todo,
+)
 
 C_EXDATE = Union[Event, Todo, Journal, TimezoneDaylight, TimezoneStandard]
 

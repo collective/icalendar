@@ -2,8 +2,7 @@
 
 import pytest
 
-from icalendar.cal.event import Event
-from icalendar.prop import vText
+from icalendar import Event, vText
 
 
 def test_multiple(calendars):

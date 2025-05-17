@@ -420,7 +420,7 @@ def single_utc_property(name: str, docs: str) -> property:
 
 
 def single_string_property(
-    name: str, docs: str, other_name: Optional[str] = None
+    name: str, docs: str, other_name: Optional[str] = None, default: str = ""
 ) -> property:
     """Create a property to access a single string value."""
 
@@ -430,15 +430,19 @@ def single_string_property(
             name, None if other_name is None else self.get(other_name, None)
         )
         if result is None or result == []:
-            return ""
+            return default
         if isinstance(result, list):
             return result[0]
         return result
 
-    def fset(self: Component, value: str):
-        """Set the value"""
+    def fset(self: Component, value: Optional[str]):
+        """Set the value.
+
+        Setting the value to None will delete it.
+        """
         fdel(self)
-        self.add(name, value)
+        if value is not None:
+            self.add(name, value)
 
     def fdel(self: Component):
         """Delete the property."""

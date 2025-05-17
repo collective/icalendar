@@ -54,15 +54,15 @@ class ZONEINFO(TZProvider):
             # ValueError: ZoneInfo keys may not be absolute paths, got: /Europe/CUSTOM
             pass
 
-    def knows_timezone_id(self, id: str) -> bool:
+    def knows_timezone_id(self, tzid: str) -> bool:
         """Whether the timezone is already cached by the implementation."""
-        return id in self._available_timezones
+        return tzid in self._available_timezones
 
     def fix_rrule_until(self, rrule: rrule, ical_rrule: prop.vRecur) -> None:
-        """Make sure the until value works for the rrule generated from the ical_rrule."""
+        """Make sure the until value works for the rrule generated from the ical_rrule."""  # noqa: E501
         if not {"UNTIL", "COUNT"}.intersection(ical_rrule.keys()):
             # zoninfo does not know any transition dates after 2038
-            rrule._until = datetime(2038, 12, 31, tzinfo=self.utc)
+            rrule._until = datetime(2038, 12, 31, tzinfo=self.utc)  # noqa: SLF001
 
     def create_timezone(self, tz: Timezone.Timezone) -> tzinfo:
         """Create a timezone from the given information."""
@@ -97,9 +97,9 @@ class ZONEINFO(TZProvider):
         return True
 
 
-def pickle_tzicalvtz(tzicalvtz: tz._tzicalvtz):
+def pickle_tzicalvtz(tzicalvtz: _tzicalvtz):
     """Because we use dateutil.tzical, we need to make it pickle-able."""
-    return _tzicalvtz, (tzicalvtz._tzid, tzicalvtz._comps)
+    return _tzicalvtz, (tzicalvtz._tzid, tzicalvtz._comps)  # noqa: SLF001
 
 
 copyreg.pickle(_tzicalvtz, pickle_tzicalvtz)
@@ -129,16 +129,12 @@ copyreg.pickle(rrule, pickle_rrule_with_cache)
 
 def pickle_rruleset_with_cache(rs: rruleset):
     """Pickle an rruleset."""
-    # self._rrule = []
-    # self._rdate = []
-    # self._exrule = []
-    # self._exdate = []
     return unpickle_rruleset_with_cache, (
-        rs._rrule,
-        rs._rdate,
-        rs._exrule,
-        rs._exdate,
-        rs._cache is not None,
+        rs._rrule,  # noqa: SLF001
+        rs._rdate,  # noqa: SLF001
+        rs._exrule,  # noqa: SLF001
+        rs._exdate,  # noqa: SLF001
+        rs._cache is not None,  # noqa: SLF001
     )
 
 

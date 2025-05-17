@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, Sequence
 
 from icalendar.attr import (
     categories_property,
@@ -13,6 +13,7 @@ from icalendar.attr import (
 from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
 from icalendar.cal.timezone import Timezone
+from icalendar.version import __version__
 
 if TYPE_CHECKING:
     from datetime import date
@@ -341,6 +342,115 @@ class Calendar(Component):
     )
     categories = categories_property
     uid = uid_property
+    prodid = single_string_property(
+        "PRODID",
+        """PRODID specifies the identifier for the product that created the iCalendar object.
+
+Conformance:
+    The property MUST be specified once in an iCalendar object.
+
+Description:
+    The vendor of the implementation SHOULD assure that
+    this is a globally unique identifier; using some technique such as
+    an FPI value, as defined in [ISO.9070.1991].
+
+    This property SHOULD NOT be used to alter the interpretation of an
+    iCalendar object beyond the semantics specified in this memo.  For
+    example, it is not to be used to further the understanding of non-
+    standard properties.
+
+Example:
+    The following is an example of this property. It does not
+    imply that English is the default language.
+
+    .. code-block:: text
+
+        -//ABC Corporation//NONSGML My Product//EN
+""",  # noqa: E501
+    )
+    version = single_string_property(
+        "VERSION",
+        """VERSION of the calendar specification.
+
+The default is ``"2.0"`` for :rfc:`5545`.
+
+Purpose:
+    This property specifies the identifier corresponding to the
+    highest version number or the minimum and maximum range of the
+    iCalendar specification that is required in order to interpret the
+    iCalendar object.
+
+
+      """,
+    )
+
+    calscale = single_string_property(
+        "CALSCALE",
+        """CALSCALE defines the calendar scale used for the calendar information specified in the iCalendar object.
+
+Compatibility:
+    :rfc:`7529` makes the case that GREGORIAN stays the default and other calendar scales
+    are implemented on the RRULE.
+
+Conformance:
+    This property can be specified once in an iCalendar
+    object.  The default value is "GREGORIAN".
+
+Description:
+    This memo is based on the Gregorian calendar scale.
+    The Gregorian calendar scale is assumed if this property is not
+    specified in the iCalendar object.  It is expected that other
+    calendar scales will be defined in other specifications or by
+    future versions of this memo.
+        """,  # noqa: E501
+        default="GREGORIAN",
+    )
+    method = single_string_property(
+        "METHOD",
+        """METHOD defines the iCalendar object method associated with the calendar object.
+
+Description:
+    When used in a MIME message entity, the value of this
+    property MUST be the same as the Content-Type "method" parameter
+    value.  If either the "METHOD" property or the Content-Type
+    "method" parameter is specified, then the other MUST also be
+    specified.
+
+    No methods are defined by this specification.  This is the subject
+    of other specifications, such as the iCalendar Transport-
+    independent Interoperability Protocol (iTIP) defined by :rfc:`5546`.
+
+    If this property is not present in the iCalendar object, then a
+    scheduling transaction MUST NOT be assumed.  In such cases, the
+    iCalendar object is merely being used to transport a snapshot of
+    some calendar information; without the intention of conveying a
+    scheduling semantic.
+""",  # noqa: E501
+    )
+
+    @classmethod
+    def new(
+        cls,
+        /,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        color: Optional[str] = None,
+        categories: Optional[Sequence[str]] = None,
+        prodid: Optional[str] = f"-//collective//icalendar//{__version__}//EN",
+        method: Optional[str] = None,
+        version: str = "2.0",
+        calscale: Optional[str] = None,
+    ):
+        calendar = cls()
+        calendar.prodid = prodid
+        calendar.version = version
+        calendar.calendar_name = name
+        calendar.color = color
+        calendar.description = description
+        calendar.method = method
+        calendar.calscale = calscale
+        calendar.categories = categories or []
+        return calendar
 
 
 __all__ = ["Calendar"]

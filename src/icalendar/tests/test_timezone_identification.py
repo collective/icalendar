@@ -10,12 +10,12 @@ from icalendar.timezone import tzid_from_tzinfo, tzids_from_tzinfo
 from icalendar.timezone.tzp import TZP
 
 
-def test_can_identify_zoneinfo(tzid, zoneinfo_only, tzp:TZP):
+def test_can_identify_zoneinfo(tzid, zoneinfo_only, tzp: TZP):
     """Check that all those zoneinfo timezones can be identified."""
     assert tzid in tzids_from_tzinfo(tzp.timezone(tzid))
 
 
-def test_can_identify_pytz(tzid, pytz_only, tzp:TZP):
+def test_can_identify_pytz(tzid, pytz_only, tzp: TZP):
     """Check that all those pytz timezones can be identified."""
     assert tzid in tzids_from_tzinfo(tzp.timezone(tzid))
 
@@ -23,6 +23,7 @@ def test_can_identify_pytz(tzid, pytz_only, tzp:TZP):
 def test_can_identify_dateutil(tzid):
     """Check that all those dateutil timezones can be identified."""
     from dateutil.tz import gettz
+
     assert tzid in tzids_from_tzinfo(gettz(tzid))
 
 

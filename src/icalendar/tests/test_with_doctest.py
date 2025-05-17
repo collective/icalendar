@@ -15,14 +15,15 @@ import doctest
 import importlib
 import os
 import sys
+from pathlib import Path
 
 import pytest
 
-HERE = os.path.dirname(__file__) or "."
-ICALENDAR_PATH = os.path.dirname(HERE)
+HERE = os.path.dirname(__file__) or "."  # noqa: PTH120
+ICALENDAR_PATH = os.path.dirname(HERE)  # noqa: PTH120
 
 PYTHON_FILES = [
-    "/".join((dirpath, filename))
+    f"{dirpath}/{filename}"
     for dirpath, dirnames, filenames in os.walk(ICALENDAR_PATH)
     for filename in filenames
     if filename.lower().endswith(".py") and "fuzzing" not in dirpath
@@ -53,19 +54,19 @@ def test_docstring_of_python_file(module_name, env_for_doctest):
 
 
 # This collection needs to exclude .tox and other subdirectories
-DOCUMENTATION_PATH = os.path.join(HERE, "../../../")
+DOCUMENTATION_PATH = os.path.join(HERE, "../../../")  # noqa: PTH118
 
 try:
     DOCUMENT_PATHS = [
-        os.path.join(DOCUMENTATION_PATH, subdir, filename)
+        os.path.join(DOCUMENTATION_PATH, subdir, filename)  # noqa: PTH118
         for subdir in ["docs", "."]
-        for filename in os.listdir(os.path.join(DOCUMENTATION_PATH, subdir))
+        for filename in os.listdir(os.path.join(DOCUMENTATION_PATH, subdir))  # noqa: PTH118, PTH208
         if filename.lower().endswith(".rst")
     ]
-except FileNotFoundError:
+except FileNotFoundError as e:
     raise OSError(
         "Could not find the documentation - remove the build folder and try again."
-    )
+    ) from e
 
 
 @pytest.mark.parametrize(
@@ -86,7 +87,7 @@ def test_documentation_file(document, zoneinfo_only, env_for_doctest, tzp):
     functions are also replaced to work.
     """
     try:
-        import pytz
+        import pytz  # noqa: F401
     except ImportError:
         pytest.skip("pytz not installed, skipping this file.")
     try:
@@ -96,9 +97,9 @@ def test_documentation_file(document, zoneinfo_only, env_for_doctest, tzp):
         )
     finally:
         tzp.use_zoneinfo()
-    assert (
-        test_result.failed == 0
-    ), f"{test_result.failed} errors in {os.path.basename(document)}"
+    assert test_result.failed == 0, (
+        f"{test_result.failed} errors in {Path(document).name}"
+    )
 
 
 def test_can_import_zoneinfo(env_for_doctest):
