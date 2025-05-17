@@ -29,6 +29,7 @@ class FreeBusy(Component):
             DTSTAMP:20250517T080612Z
             UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
             END:VFREEBUSY
+
     """
 
     name = "VFREEBUSY"

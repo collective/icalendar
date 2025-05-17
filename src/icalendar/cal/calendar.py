@@ -38,6 +38,7 @@ class Calendar(Component):
             >>> calendar = Calendar.new(name="My Calendar")
             >>> print(calendar.calendar_name)
             My Calendar
+
     """
 
     name = "VCALENDAR"
