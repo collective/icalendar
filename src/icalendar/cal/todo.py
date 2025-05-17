@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import date, datetime, timedelta
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, Sequence
 
 from icalendar.attr import (
     X_MOZ_LASTACK_property,
@@ -239,6 +239,9 @@ class Todo(Component):
         uid: Optional[str | uuid.UUID] = None,
         start: Optional[date | datetime] = None,
         end: Optional[date | datetime] = None,
+        color: Optional[str] = None,
+        categories: Optional[Sequence[str]] = (),
+        sequence: Optional[int] = None,
     ):
         """Create a new TODO with all required properties.
 
@@ -250,6 +253,9 @@ class Todo(Component):
         todo.uid = uid if uid is not None else uuid.uuid4()
         todo.start = start
         todo.end = end
+        todo.color = color
+        todo.categories = categories
+        todo.sequence = sequence
         return todo
 
 

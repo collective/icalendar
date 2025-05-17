@@ -364,10 +364,11 @@ def single_int_property(prop: str, default: int, doc: str) -> property:
         except ValueError as e:
             raise InvalidCalendar(f"{prop} must be an int") from e
 
-    def fset(self: Component, value: int):
+    def fset(self: Component, value: Optional[int]):
         """Set the property."""
         fdel(self)
-        self.add(prop, value)
+        if value is not None:
+            self.add(prop, value)
 
     def fdel(self: Component):
         """Delete the property."""
@@ -571,9 +572,10 @@ def _get_categories(component: Component) -> list[str]:
 def _set_categories(component: Component, cats: list[str]) -> None:
     """Set the categories."""
     component["CATEGORIES"] = categories = vCategory(cats)
-    cats.clear()
-    cats.extend(categories.cats)
-    categories.cats = cats
+    if isinstance(cats, list):
+        cats.clear()
+        cats.extend(categories.cats)
+        categories.cats = cats
 
 
 def _del_categories(component: Component) -> None:

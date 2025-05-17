@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import date, datetime, timedelta
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, Sequence
 
 from icalendar.attr import (
     X_MOZ_LASTACK_property,
@@ -262,6 +262,9 @@ class Event(Component):
         uid: Optional[str | uuid.UUID] = None,
         start: Optional[date | datetime] = None,
         end: Optional[date | datetime] = None,
+        color: Optional[str] = None,
+        categories: Optional[Sequence[str]] = (),
+        sequence: Optional[int] = None,
     ):
         """Create a new event with all required properties.
 
@@ -273,6 +276,9 @@ class Event(Component):
         event.uid = uid if uid is not None else uuid.uuid4()
         event.start = start
         event.end = end
+        event.color = color
+        event.categories = categories
+        event.sequence = sequence
         return event
 
 

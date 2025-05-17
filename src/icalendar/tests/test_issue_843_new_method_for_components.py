@@ -341,12 +341,48 @@ COMPONENTS_UID = {Event, Todo, Journal, Alarm, Calendar}
             True,
             "set the end",
         ),
+        (
+            {Todo, Event, Calendar, Journal},
+            "color",
+            "color",
+            "red",
+            "red",
+            True,
+            "set the color",
+        ),
+        (
+            {Event, Todo, Journal},
+            "sequence",
+            "SEQUENCE",
+            1,
+            1,
+            True,
+            "set the sequence",
+        ),
+        (
+            {Event, Todo, Journal},
+            "sequence",
+            "SEQUENCE",
+            None,
+            0,
+            False,
+            "get the default the sequence",
+        ),
+        (
+            {Event, Journal, Todo, Calendar},
+            "categories",
+            "CATEGORIES",
+            ["cat1", "cat2"],
+            ["cat1", "cat2"],
+            True,
+            "set the categories",
+        ),
     ],
 )
 @pytest.mark.parametrize(
     "create_component_with_property", [component_setter, component_with_new]
 )
-def test_dtstamp_becomes_utc(
+def test_properties_and_new(
     create_component_with_property,
     component_classes,
     property_name,

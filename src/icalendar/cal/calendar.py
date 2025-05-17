@@ -436,7 +436,7 @@ Description:
         name: Optional[str] = None,
         description: Optional[str] = None,
         color: Optional[str] = None,
-        categories: Optional[Sequence[str]] = None,
+        categories: Optional[Sequence[str]] = (),
         prodid: Optional[str] = f"-//collective//icalendar//{__version__}//EN",
         method: Optional[str] = None,
         version: str = "2.0",
@@ -451,7 +451,7 @@ Description:
         calendar.description = description
         calendar.method = method
         calendar.calscale = calscale
-        calendar.categories = categories if categories is not None else []
+        calendar.categories = categories
         calendar.uid = uid
         return calendar
 
