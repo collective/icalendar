@@ -146,6 +146,7 @@ class Journal(Component):
         description: Optional[str | Sequence[str]] = None,
         dtstamp: Optional[date] = None,
         uid: Optional[str | uuid.UUID] = None,
+        start: Optional[date | datetime] = None,
     ):
         """Create a new journal entry with all required properties.
 
@@ -157,6 +158,7 @@ class Journal(Component):
         journal.summary = summary
         journal.descriptions = description
         journal.uid = uid if uid is not None else uuid.uuid4()
+        journal.start = start
         return journal
 
 

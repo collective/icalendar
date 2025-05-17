@@ -260,6 +260,8 @@ class Event(Component):
         description: Optional[str] = None,
         dtstamp: Optional[date] = None,
         uid: Optional[str | uuid.UUID] = None,
+        start: Optional[date | datetime] = None,
+        end: Optional[date | datetime] = None,
     ):
         """Create a new event with all required properties.
 
@@ -269,6 +271,8 @@ class Event(Component):
         event.summary = summary
         event.description = description
         event.uid = uid if uid is not None else uuid.uuid4()
+        event.start = start
+        event.end = end
         return event
 
 

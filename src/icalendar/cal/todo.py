@@ -237,6 +237,8 @@ class Todo(Component):
         description: Optional[str] = None,
         dtstamp: Optional[date] = None,
         uid: Optional[str | uuid.UUID] = None,
+        start: Optional[date | datetime] = None,
+        end: Optional[date | datetime] = None,
     ):
         """Create a new TODO with all required properties.
 
@@ -246,6 +248,8 @@ class Todo(Component):
         todo.summary = summary
         todo.description = description
         todo.uid = uid if uid is not None else uuid.uuid4()
+        todo.start = start
+        todo.end = end
         return todo
 
 

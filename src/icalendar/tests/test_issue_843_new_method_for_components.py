@@ -226,6 +226,7 @@ COMPONENTS_UID = {Event, Todo, Journal, Alarm, Calendar}
     (
         "component_classes",
         "property_name",
+        "key",
         "initial_value",
         "expected_value",
         "key_present",
@@ -235,6 +236,7 @@ COMPONENTS_UID = {Event, Todo, Journal, Alarm, Calendar}
         (
             COMPONENTS_DTSTAMP,
             "DTSTAMP",
+            "DTSTAMP",
             date(2023, 10, 21),
             datetime(2023, 10, 21, tzinfo=timezone.utc),
             True,
@@ -242,6 +244,7 @@ COMPONENTS_UID = {Event, Todo, Journal, Alarm, Calendar}
         ),
         (
             COMPONENTS_DTSTAMP,
+            "DTSTAMP",
             "DTSTAMP",
             datetime(2023, 10, 22),
             datetime(2023, 10, 22, tzinfo=timezone.utc),
@@ -251,6 +254,7 @@ COMPONENTS_UID = {Event, Todo, Journal, Alarm, Calendar}
         (
             COMPONENTS_DTSTAMP,
             "DTSTAMP",
+            "DTSTAMP",
             datetime(2023, 10, 23, 12, 30, tzinfo=timezone.utc),
             datetime(2023, 10, 23, 12, 30, tzinfo=ZoneInfo("UTC")),
             True,
@@ -258,6 +262,7 @@ COMPONENTS_UID = {Event, Todo, Journal, Alarm, Calendar}
         ),
         (
             COMPONENTS_DTSTAMP,
+            "DTSTAMP",
             "DTSTAMP",
             datetime(2023, 10, 24, 21, 0, 1, tzinfo=timezone(timedelta(hours=1))),
             datetime(2023, 10, 24, 20, 0, 1, tzinfo=ZoneInfo("UTC")),
@@ -267,6 +272,7 @@ COMPONENTS_UID = {Event, Todo, Journal, Alarm, Calendar}
         (
             COMPONENTS_DTSTAMP_AUTOMATIC,
             "DTSTAMP",
+            "DTSTAMP",
             None,
             NOW_UTC,
             True,
@@ -275,14 +281,24 @@ COMPONENTS_UID = {Event, Todo, Journal, Alarm, Calendar}
         (
             COMPONENTS_DTSTAMP - COMPONENTS_DTSTAMP_AUTOMATIC,
             "DTSTAMP",
+            "DTSTAMP",
             None,
             None,
             False,
             "DTSTAMP is not automatically set",
         ),
-        (COMPONENTS_UID, "uid", "test UID", "test UID", True, "Set the UID property"),
+        (
+            COMPONENTS_UID,
+            "uid",
+            "uid",
+            "test UID",
+            "test UID",
+            True,
+            "Set the UID property",
+        ),
         (
             COMPONENTS_UID_AUTOMATIC,
+            "uid",
             "uid",
             None,
             UID_DEFAULT,
@@ -292,10 +308,38 @@ COMPONENTS_UID = {Event, Todo, Journal, Alarm, Calendar}
         (
             COMPONENTS_UID - COMPONENTS_UID_AUTOMATIC,
             "uid",
+            "uid",
             None,
             "",
             False,
             "UID is not automatically set",
+        ),
+        (
+            {Event, Todo, Journal},  # TODO: FreeBusy
+            "start",
+            "dtstart",
+            datetime(2023, 10, 24, 21, 0, 1, tzinfo=ZoneInfo("Europe/Berlin")),
+            datetime(2023, 10, 24, 21, 0, 1, tzinfo=ZoneInfo("Europe/Berlin")),
+            True,
+            "set the start",
+        ),
+        (
+            {Event},  # TODO: FreeBusy
+            "end",
+            "dtend",
+            datetime(2023, 10, 24, 22, 0, 1, tzinfo=ZoneInfo("Europe/Berlin")),
+            datetime(2023, 10, 24, 22, 0, 1, tzinfo=ZoneInfo("Europe/Berlin")),
+            True,
+            "set the end",
+        ),
+        (
+            {Todo},
+            "end",
+            "due",
+            datetime(2023, 10, 24, 22, 0, 1, tzinfo=ZoneInfo("Europe/Berlin")),
+            datetime(2023, 10, 24, 22, 0, 1, tzinfo=ZoneInfo("Europe/Berlin")),
+            True,
+            "set the end",
         ),
     ],
 )
@@ -309,6 +353,7 @@ def test_dtstamp_becomes_utc(
     initial_value,
     expected_value,
     key_present,
+    key,
     message,
 ):
     """We set and get the dtstamp."""
@@ -325,4 +370,4 @@ def test_dtstamp_becomes_utc(
             assert_component_attribute_has_value(
                 component, property_name, expected_value, message
             )
-            assert (property_name in component) == key_present, message
+            assert (key in component) == key_present, message
