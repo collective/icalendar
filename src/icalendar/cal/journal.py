@@ -151,10 +151,12 @@ class Journal(Component):
 
         This creates a new Journal in accordance with :rfc:`5545`.
         """
-        journal = super().new(dtstamp=dtstamp or cls._utc_now())
+        journal = super().new(
+            dtstamp=dtstamp if dtstamp is not None else cls._utc_now()
+        )
         journal.summary = summary
         journal.descriptions = description
-        journal.uid = uid or uuid.uuid4()
+        journal.uid = uid if uid is not None else uuid.uuid4()
         return journal
 
 

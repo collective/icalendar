@@ -280,10 +280,10 @@ COMPONENTS_UID = {Event, Todo, Journal, Alarm, Calendar}
             False,
             "DTSTAMP is not automatically set",
         ),
-        (COMPONENTS_UID, "UID", "test UID", "test UID", True, "Set the UID property"),
+        (COMPONENTS_UID, "uid", "test UID", "test UID", True, "Set the UID property"),
         (
             COMPONENTS_UID_AUTOMATIC,
-            "UID",
+            "uid",
             None,
             UID_DEFAULT,
             True,
@@ -291,9 +291,9 @@ COMPONENTS_UID = {Event, Todo, Journal, Alarm, Calendar}
         ),
         (
             COMPONENTS_UID - COMPONENTS_UID_AUTOMATIC,
-            "UID",
+            "uid",
             None,
-            None,
+            "",
             False,
             "UID is not automatically set",
         ),
@@ -316,7 +316,13 @@ def test_dtstamp_becomes_utc(
         component = create_component_with_property(
             component_class, property_name, initial_value
         )
-        assert_component_attribute_has_value(
-            component, property_name, expected_value, message
-        )
-        assert (property_name in component) == key_present, message
+        if (
+            create_component_with_property is component_with_new
+            or initial_value is not None
+        ):
+            # the setter does not create default values
+            # so we only check it if present
+            assert_component_attribute_has_value(
+                component, property_name, expected_value, message
+            )
+            assert (property_name in component) == key_present, message

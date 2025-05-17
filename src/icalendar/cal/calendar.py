@@ -16,6 +16,7 @@ from icalendar.cal.timezone import Timezone
 from icalendar.version import __version__
 
 if TYPE_CHECKING:
+    import uuid
     from datetime import date
 
     from icalendar.cal.event import Event
@@ -440,6 +441,7 @@ Description:
         method: Optional[str] = None,
         version: str = "2.0",
         calscale: Optional[str] = None,
+        uid: Optional[str | uuid.UUID] = None,
     ):
         calendar = cls()
         calendar.prodid = prodid
@@ -449,7 +451,8 @@ Description:
         calendar.description = description
         calendar.method = method
         calendar.calscale = calscale
-        calendar.categories = categories or []
+        calendar.categories = categories if categories is not None else []
+        calendar.uid = uid
         return calendar
 
 

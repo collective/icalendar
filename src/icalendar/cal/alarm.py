@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime, timedelta
-from typing import NamedTuple, Optional, Union
+from typing import TYPE_CHECKING, NamedTuple, Optional, Union
 
 from icalendar.attr import (
     create_single_property,
@@ -18,6 +18,9 @@ from icalendar.attr import (
     uid_property,
 )
 from icalendar.cal.component import Component
+
+if TYPE_CHECKING:
+    import uuid
 
 
 class Alarm(Component):
@@ -236,7 +239,13 @@ class Alarm(Component):
     description = description_property
 
     @classmethod
-    def new(cls, /, summary: Optional[str] = None, description: Optional[str] = None):
+    def new(
+        cls,
+        /,
+        summary: Optional[str] = None,
+        description: Optional[str] = None,
+        uid: Optional[str | uuid.UUID] = None,
+    ):
         """Create a new alarm with all required properties.
 
         This creates a new Alarm in accordance with :rfc:`5545`.
@@ -244,6 +253,7 @@ class Alarm(Component):
         alarm = super().new()
         alarm.summary = summary
         alarm.description = description
+        alarm.uid = uid
         return alarm
 
 
