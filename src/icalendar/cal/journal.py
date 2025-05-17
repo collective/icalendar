@@ -155,18 +155,35 @@ class Journal(Component):
     def new(
         cls,
         /,
-        summary: Optional[str] = None,
+        categories: Sequence[str] = (),
+        color: Optional[str] = None,
         description: Optional[str | Sequence[str]] = None,
         dtstamp: Optional[date] = None,
-        uid: Optional[str | uuid.UUID] = None,
-        start: Optional[date | datetime] = None,
-        color: Optional[str] = None,
-        categories: Sequence[str] = (),
         sequence: Optional[int] = None,
+        start: Optional[date | datetime] = None,
+        summary: Optional[str] = None,
+        uid: Optional[str | uuid.UUID] = None,
     ):
         """Create a new journal entry with all required properties.
 
         This creates a new Journal in accordance with :rfc:`5545`.
+
+        Arguments:
+            categories: The :attr:`categories` of the component.
+            color: The :attr:`color` of the component.
+            description: The :attr:`description` of the component.
+            dtstamp: The :attr:`DTSTAMP` of the component.
+            sequence: The :attr:`sequence` of the component.
+            start: The :attr:`start` of the component.
+            summary: The :attr:`summary` of the component.
+            uid: The :attr:`uid` of the component.
+
+        Returns:
+            :class:`Journal`
+
+        Raises:
+            IncompleteComponent: If the content is not valid according to :rfc:`5545`.
+
         """
         journal = super().new(
             dtstamp=dtstamp if dtstamp is not None else cls._utc_now()

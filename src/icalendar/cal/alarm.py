@@ -242,13 +242,24 @@ class Alarm(Component):
     def new(
         cls,
         /,
-        summary: Optional[str] = None,
         description: Optional[str] = None,
+        summary: Optional[str] = None,
         uid: Optional[str | uuid.UUID] = None,
     ):
         """Create a new alarm with all required properties.
 
         This creates a new Alarm in accordance with :rfc:`5545`.
+
+        Arguments:
+            description: The :attr:`description` of the component.
+            summary: The :attr:`summary` of the component.
+            uid: The :attr:`uid` of the component.
+
+        Returns:
+            :class:`Alarm`
+
+        Raises:
+            IncompleteComponent: If the content is not valid according to :rfc:`5545`.
         """
         alarm = super().new()
         alarm.summary = summary

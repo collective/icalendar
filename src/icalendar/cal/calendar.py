@@ -442,16 +442,37 @@ Description:
     def new(
         cls,
         /,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        color: Optional[str] = None,
-        categories: Sequence[str] = (),
-        prodid: Optional[str] = f"-//collective//icalendar//{__version__}//EN",
-        method: Optional[str] = None,
-        version: str = "2.0",
         calscale: Optional[str] = None,
+        categories: Sequence[str] = (),
+        color: Optional[str] = None,
+        description: Optional[str] = None,
+        method: Optional[str] = None,
+        name: Optional[str] = None,
+        prodid: Optional[str] = f"-//collective//icalendar//{__version__}//EN",
         uid: Optional[str | uuid.UUID] = None,
+        version: str = "2.0",
     ):
+        """Create a new Calendar with all required properties.
+
+        This creates a new Todo in accordance with RFC 5545.
+
+        Arguments:
+            calscale: The :attr:`calscale` of the component.
+            categories: The :attr:`categories` of the component.
+            color: The :attr:`color` of the component.
+            description: The :attr:`description` of the component.
+            method: The :attr:`method` of the component.
+            name: The :attr:`name` of the component.
+            prodid: The :attr:`prodid` of the component.
+            uid: The :attr:`uid` of the component.
+            version: The :attr:`version` of the component.
+
+        Returns:
+            :class:`Calendar`
+
+        Raises:
+            IncompleteComponent: If the content is not valid according to :rfc:`5545`.
+        """
         calendar = cls()
         calendar.prodid = prodid
         calendar.version = version

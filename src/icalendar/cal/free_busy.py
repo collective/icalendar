@@ -65,6 +65,17 @@ class FreeBusy(Component):
         """Create a new alarm with all required properties.
 
         This creates a new Alarm in accordance with :rfc:`5545`.
+
+        Arguments:
+            dtstamp: The :attr:`DTSTAMP` of the component.
+            uid: The :attr:`uid` of the component.
+
+        Returns:
+            :class:`FreeBusy`
+
+        Raises:
+            IncompleteComponent: If the content is not valid according to :rfc:`5545`.
+
         """
         free_busy = super().new(
             dtstamp=dtstamp if dtstamp is not None else cls._utc_now()
