@@ -454,7 +454,7 @@ Description:
     ):
         """Create a new Calendar with all required properties.
 
-        This creates a new Todo in accordance with RFC 5545.
+        This creates a new Todo in accordance with :rfc:`5545`.
 
         Arguments:
             calscale: The :attr:`calscale` of the component.
@@ -462,7 +462,7 @@ Description:
             color: The :attr:`color` of the component.
             description: The :attr:`description` of the component.
             method: The :attr:`method` of the component.
-            name: The :attr:`name` of the component.
+            name: The :attr:`calendar_name` of the component.
             prodid: The :attr:`prodid` of the component.
             uid: The :attr:`uid` of the component.
             version: The :attr:`version` of the component.

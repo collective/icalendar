@@ -169,14 +169,14 @@ class Journal(Component):
         This creates a new Journal in accordance with :rfc:`5545`.
 
         Arguments:
-            categories: The :attr:`categories` of the component.
-            color: The :attr:`color` of the component.
-            description: The :attr:`description` of the component.
-            dtstamp: The :attr:`DTSTAMP` of the component.
-            sequence: The :attr:`sequence` of the component.
-            start: The :attr:`start` of the component.
-            summary: The :attr:`summary` of the component.
-            uid: The :attr:`uid` of the component.
+            categories: The :attr:`categories` of the journal.
+            color: The :attr:`color` of the journal.
+            description: The :attr:`description` of the journal.
+            dtstamp: The :attr:`DTSTAMP` of the journal.
+            sequence: The :attr:`sequence` of the journal.
+            start: The :attr:`start` of the journal.
+            summary: The :attr:`summary` of the journal.
+            uid: The :attr:`uid` of the journal.
 
         Returns:
             :class:`Journal`

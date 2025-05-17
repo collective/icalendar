@@ -251,9 +251,9 @@ class Alarm(Component):
         This creates a new Alarm in accordance with :rfc:`5545`.
 
         Arguments:
-            description: The :attr:`description` of the component.
-            summary: The :attr:`summary` of the component.
-            uid: The :attr:`uid` of the component.
+            description: The :attr:`description` of the alarm.
+            summary: The :attr:`summary` of the alarm.
+            uid: The :attr:`uid` of the alarm.
 
         Returns:
             :class:`Alarm`

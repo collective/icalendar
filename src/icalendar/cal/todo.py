@@ -178,7 +178,7 @@ class Todo(Component):
 
     @property
     def end(self) -> date | datetime:
-        """The end of the component.
+        """The end of the todo.
 
         Invalid values raise an InvalidCalendar error.
         If there is no end, we also raise an IncompleteComponent error.
@@ -260,15 +260,15 @@ class Todo(Component):
         This creates a new Todo in accordance with :rfc:`5545`.
 
         Arguments:
-            categories: The :attr:`categories` of the component.
-            color: The :attr:`color` of the component.
-            description: The :attr:`description` of the component.
-            dtstamp: The :attr:`DTSTAMP` of the component.
-            end: The :attr:`end` of the component.
-            sequence: The :attr:`sequence` of the component.
-            start: The :attr:`start` of the component.
-            summary: The :attr:`summary` of the component.
-            uid: The :attr:`uid` of the component.
+            categories: The :attr:`categories` of the todo.
+            color: The :attr:`color` of the todo.
+            description: The :attr:`description` of the todo.
+            dtstamp: The :attr:`DTSTAMP` of the todo.
+            end: The :attr:`end` of the todo.
+            sequence: The :attr:`sequence` of the todo.
+            start: The :attr:`start` of the todo.
+            summary: The :attr:`summary` of the todo.
+            uid: The :attr:`uid` of the todo.
 
         Returns:
             :class:`Todo`

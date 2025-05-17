@@ -302,7 +302,7 @@ class Event(Component):
 
     @property
     def start(self) -> date | datetime:
-        """The start of the component.
+        """The start of the event.
 
         Invalid values raise an InvalidCalendar.
         If there is no start, we also raise an IncompleteComponent error.
@@ -334,7 +334,7 @@ class Event(Component):
 
     @property
     def end(self) -> date | datetime:
-        """The end of the component.
+        """The end of the event.
 
         Invalid values raise an InvalidCalendar error.
         If there is no end, we also raise an IncompleteComponent error.
@@ -388,15 +388,15 @@ class Event(Component):
         This creates a new Event in accordance with :rfc:`5545`.
 
         Arguments:
-            categories: The :attr:`categories` of the component.
-            color: The :attr:`color` of the component.
-            description: The :attr:`description` of the component.
-            dtstamp: The :attr:`DTSTAMP` of the component.
-            end: The :attr:`end` of the component.
-            sequence: The :attr:`sequence` of the component.
-            start: The :attr:`start` of the component.
-            summary: The :attr:`summary` of the component.
-            uid: The :attr:`uid` of the component.
+            categories: The :attr:`categories` of the event.
+            color: The :attr:`color` of the event.
+            description: The :attr:`description` of the event.
+            dtstamp: The :attr:`DTSTAMP` of the event.
+            end: The :attr:`end` of the event.
+            sequence: The :attr:`sequence` of the event.
+            start: The :attr:`start` of the event.
+            summary: The :attr:`summary` of the event.
+            uid: The :attr:`uid` of the event.
 
         Returns:
             :class:`Event`
