@@ -2,8 +2,13 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Optional
+
 from icalendar.attr import uid_property
 from icalendar.cal.component import Component
+
+if TYPE_CHECKING:
+    from datetime import date
 
 
 class FreeBusy(Component):
@@ -36,6 +41,14 @@ class FreeBusy(Component):
         "RSTATUS",
     )
     uid = uid_property
+
+    @classmethod
+    def new(cls, /, dtstamp: Optional[date] = None):
+        """Create a new alarm with all required properties.
+
+        This creates a new Alarm in accordance with :rfc:`5545`.
+        """
+        return super().new(dtstamp=dtstamp or cls._utc_now())
 
 
 __all__ = ["FreeBusy"]

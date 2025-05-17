@@ -143,12 +143,13 @@ class Journal(Component):
         /,
         summary: Optional[str] = None,
         description: Optional[str | Sequence[str]] = None,
+        dtstamp: Optional[date] = None,
     ):
         """Create a new journal entry with all required properties.
 
         This creates a new Journal in accordance with :rfc:`5545`.
         """
-        journal = cls()
+        journal = super().new(dtstamp=dtstamp or cls._utc_now())
         journal.summary = summary
         journal.descriptions = description
         return journal

@@ -229,12 +229,18 @@ class Todo(Component):
     description = description_property
 
     @classmethod
-    def new(cls, /, summary: Optional[str] = None, description: Optional[str] = None):
+    def new(
+        cls,
+        /,
+        summary: Optional[str] = None,
+        description: Optional[str] = None,
+        dtstamp: Optional[date] = None,
+    ):
         """Create a new TODO with all required properties.
 
         This creates a new Todo in accordance with :rfc:`5545`.
         """
-        todo = cls()
+        todo = super().new(dtstamp=dtstamp or cls._utc_now())
         todo.summary = summary
         todo.description = description
         return todo

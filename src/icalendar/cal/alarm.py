@@ -241,7 +241,7 @@ class Alarm(Component):
 
         This creates a new Alarm in accordance with :rfc:`5545`.
         """
-        alarm = cls()
+        alarm = super().new()
         alarm.summary = summary
         alarm.description = description
         return alarm

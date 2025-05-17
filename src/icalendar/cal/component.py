@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date, datetime, timezone
+from typing import Optional
 
 from icalendar.attr import single_utc_property
 from icalendar.cal.component_factory import ComponentFactory
@@ -478,6 +479,19 @@ class Component(CaselessDict):
     def is_thunderbird(self) -> bool:
         """Whether this component has attributes that indicate that Mozilla Thunderbird created it."""  # noqa: E501
         return any(attr.startswith("X-MOZ-") for attr in self.keys())
+
+    @staticmethod
+    def _utc_now():
+        """Return now as UTC value."""
+        return datetime.now(timezone.utc)
+
+    @classmethod
+    def new(cls, dtstamp: Optional[date] = None) -> Component:
+        """Create a new component."""
+        component = cls()
+        if dtstamp is not None:
+            component.DTSTAMP = dtstamp
+        return component
 
 
 __all__ = ["Component"]

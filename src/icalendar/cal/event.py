@@ -252,12 +252,18 @@ class Event(Component):
     description = description_property
 
     @classmethod
-    def new(cls, /, summary: Optional[str] = None, description: Optional[str] = None):
+    def new(
+        cls,
+        /,
+        summary: Optional[str] = None,
+        description: Optional[str] = None,
+        dtstamp: Optional[date] = None,
+    ):
         """Create a new event with all required properties.
 
         This creates a new Event in accordance with :rfc:`5545`.
         """
-        event = cls()
+        event = super().new(dtstamp=dtstamp or cls._utc_now())
         event.summary = summary
         event.description = description
         return event

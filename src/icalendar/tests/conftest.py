@@ -2,6 +2,7 @@ try:
     from backports import zoneinfo  # type: ignore  # noqa: PGH003
 except ImportError:
     import zoneinfo
+from datetime import datetime, timezone
 from typing import Generator
 
 import pytest
@@ -341,11 +342,18 @@ def doctest_import(name, *args, **kw):
     return __import__(name, *args, **kw)
 
 
+NOW = datetime(2025, 5, 17, 9, 6, 12)
+NOW_UTC = NOW.astimezone(timezone.utc)
+
+
 @pytest.fixture(autouse=True)
 def fixed_env(monkeypatch):
     """Create a fixed test environment for the functions that are time and randomness dependent."""
+    # uuid is fixed for all tests
     uid = uuid.UUID("d755cef5-2311-46ed-a0e1-6733c9e15c63", version=4)
     monkeypatch.setattr(uuid, "uuid4", lambda: uid)
+    # now is fixed
+    monkeypatch.setattr(Component, "_utc_now", staticmethod(lambda: NOW_UTC))
 
 
 @pytest.fixture

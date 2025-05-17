@@ -11,18 +11,21 @@ See https://github.com/collective/icalendar/issues/843
 
 from __future__ import annotations
 
+import traceback
 from datetime import date, datetime, timedelta, timezone
-from typing import Optional
+from typing import Any, Callable, Optional
 
 import pytest
 
-from icalendar.cal import Alarm, Event, Journal, Todo
-from icalendar.cal.component import Component
+from icalendar import FreeBusy
+from icalendar.cal import Alarm, Component, Event, Journal, Todo
+
+from .conftest import NOW_UTC
 
 try:
     from zoneinfo import ZoneInfo
 except ImportError:
-    from backports.zoneinfo import ZoneInfo
+    from backports.zoneinfo import ZoneInfo  # type: ignore  # noqa: PGH003
 
 param_summary_components = pytest.mark.parametrize(
     "component", [Event, Todo, Alarm, Journal]
@@ -151,7 +154,9 @@ def set_journal_description(description) -> Journal:
 @pytest.mark.parametrize(
     "get_journal", [new_journal_description, set_journal_description]
 )
-def test_journal_description_is_a_list(get_journal, description, expected_description):
+def test_journal_description_is_a_list(
+    get_journal: Callable[..., Journal], description, expected_description
+):
     """A jounal entry can have several descriptions."""
     journal = get_journal(description)
     assert journal.descriptions == expected_description
@@ -167,23 +172,124 @@ def test_multiple_descriptions_are_concatenated():
     assert journal.description == "one description\r\n\r\ntwo descriptions"
 
 
+def component_setter(
+    component_class: type[Component], property_name: str, value: Any
+) -> Component:
+    """We set the value of the component's attribute."""
+    component = component_class()
+    try:
+        setattr(component, property_name, value)
+    except TypeError:
+        # we show the exception in case the test fails for easier debug
+        traceback.print_exc()
+        pytest.skip("Cannot set value")
+    return component
+
+
+def component_with_new(
+    component_class: type[Component], property_name: str, value: Any
+) -> Component:
+    """Use new() to create the component."""
+    kw = {property_name.lower(): value}
+    return component_class.new(**kw)
+
+
+def assert_component_attribute_has_value(
+    component: Component, property_name: str, expected_value: Any, message
+):
+    """Make  sure that a component's attribute has a value."""
+    actual_value = getattr(component, property_name)
+    assert actual_value == expected_value, (
+        f"The attribute {property_name} of {component} "
+        f"should be {expected_value!r} but got {actual_value!r}.\n{message}"
+    )
+
+
+COMPONENTS_DTSTAMP = [
+    Component,
+    Event,
+    Journal,
+    Todo,
+    FreeBusy,
+]
+COMPONENTS_DTSTAMP_AUTOMATIC = [
+    Event,
+    Journal,
+    Todo,
+    FreeBusy,
+]
+
+
 @pytest.mark.parametrize(
-    ("value", "expected"),
+    (
+        "component_classes",
+        "property_name",
+        "initial_value",
+        "expected_value",
+        "key_present",
+        "message",
+    ),
     [
-        (date(2023, 10, 21), datetime(2023, 10, 21, tzinfo=timezone.utc)),
-        (datetime(2023, 10, 22), datetime(2023, 10, 22, tzinfo=timezone.utc)),
         (
-            datetime(2023, 10, 23, 12, 30, tzinfo=timezone.utc),
-            datetime(2023, 10, 23, 12, 30, tzinfo=ZoneInfo("UTC")),
+            COMPONENTS_DTSTAMP,
+            "DTSTAMP",
+            date(2023, 10, 21),
+            datetime(2023, 10, 21, tzinfo=timezone.utc),
+            True,
+            "dtstamp becomes a UTC value",
         ),
         (
+            COMPONENTS_DTSTAMP,
+            "DTSTAMP",
+            datetime(2023, 10, 22),
+            datetime(2023, 10, 22, tzinfo=timezone.utc),
+            True,
+            "dtstamp becomes a UTC value",
+        ),
+        (
+            COMPONENTS_DTSTAMP,
+            "DTSTAMP",
+            datetime(2023, 10, 23, 12, 30, tzinfo=timezone.utc),
+            datetime(2023, 10, 23, 12, 30, tzinfo=ZoneInfo("UTC")),
+            True,
+            "dtstamp becomes a UTC value",
+        ),
+        (
+            COMPONENTS_DTSTAMP,
+            "DTSTAMP",
             datetime(2023, 10, 24, 21, 0, 1, tzinfo=timezone(timedelta(hours=1))),
             datetime(2023, 10, 24, 20, 0, 1, tzinfo=ZoneInfo("UTC")),
+            True,
+            "dtstamp becomes a UTC value",
+        ),
+        (
+            COMPONENTS_DTSTAMP_AUTOMATIC,
+            "DTSTAMP",
+            None,
+            NOW_UTC,
+            True,
+            "we use the current time to create a datetime for DTSTAMP",
         ),
     ],
 )
-def test_dtstamp_becomes_utc(value, expected):
+@pytest.mark.parametrize(
+    "create_component_with_property", [component_setter, component_with_new]
+)
+def test_dtstamp_becomes_utc(
+    create_component_with_property,
+    component_classes,
+    property_name,
+    initial_value,
+    expected_value,
+    key_present,
+    message,
+):
     """We set and get the dtstamp."""
-    component = Component()
-    component.DTSTAMP = value
-    assert component.DTSTAMP == expected
+    for component_class in component_classes:
+        component = create_component_with_property(
+            component_class, property_name, initial_value
+        )
+        assert_component_attribute_has_value(
+            component, property_name, expected_value, message
+        )
+        assert (property_name in component) == key_present, message
