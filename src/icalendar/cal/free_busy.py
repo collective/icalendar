@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import uuid
 from typing import TYPE_CHECKING, Optional
 
 from icalendar.attr import uid_property
@@ -43,12 +44,19 @@ class FreeBusy(Component):
     uid = uid_property
 
     @classmethod
-    def new(cls, /, dtstamp: Optional[date] = None):
+    def new(
+        cls,
+        /,
+        dtstamp: Optional[date] = None,
+        uid: Optional[str | uuid.UUID] = None,
+    ):
         """Create a new alarm with all required properties.
 
         This creates a new Alarm in accordance with :rfc:`5545`.
         """
-        return super().new(dtstamp=dtstamp or cls._utc_now())
+        free_busy = super().new(dtstamp=dtstamp or cls._utc_now())
+        free_busy.uid = uid or uuid.uuid4()
+        return free_busy
 
 
 __all__ = ["FreeBusy"]

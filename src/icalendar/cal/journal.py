@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import uuid
 from datetime import date, datetime, timedelta
 from typing import Optional, Sequence
 
@@ -144,6 +145,7 @@ class Journal(Component):
         summary: Optional[str] = None,
         description: Optional[str | Sequence[str]] = None,
         dtstamp: Optional[date] = None,
+        uid: Optional[str | uuid.UUID] = None,
     ):
         """Create a new journal entry with all required properties.
 
@@ -152,6 +154,7 @@ class Journal(Component):
         journal = super().new(dtstamp=dtstamp or cls._utc_now())
         journal.summary = summary
         journal.descriptions = description
+        journal.uid = uid or uuid.uuid4()
         return journal
 
 

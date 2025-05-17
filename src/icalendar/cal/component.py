@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import date, datetime, timezone
 from typing import Optional
 
-from icalendar.attr import single_utc_property
+from icalendar.attr import single_utc_property, uid_property
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_split
@@ -484,6 +484,8 @@ class Component(CaselessDict):
     def _utc_now():
         """Return now as UTC value."""
         return datetime.now(timezone.utc)
+
+    uid = uid_property
 
     @classmethod
     def new(cls, dtstamp: Optional[date] = None) -> Component:

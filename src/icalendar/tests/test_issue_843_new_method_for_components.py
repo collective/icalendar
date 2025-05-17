@@ -17,10 +17,10 @@ from typing import Any, Callable, Optional
 
 import pytest
 
-from icalendar import FreeBusy
+from icalendar import Calendar, FreeBusy
 from icalendar.cal import Alarm, Component, Event, Journal, Todo
 
-from .conftest import NOW_UTC
+from .conftest import NOW_UTC, UID_DEFAULT
 
 try:
     from zoneinfo import ZoneInfo
@@ -205,19 +205,21 @@ def assert_component_attribute_has_value(
     )
 
 
-COMPONENTS_DTSTAMP = [
+COMPONENTS_DTSTAMP = {
     Component,
     Event,
     Journal,
     Todo,
     FreeBusy,
-]
-COMPONENTS_DTSTAMP_AUTOMATIC = [
+}
+COMPONENTS_DTSTAMP_AUTOMATIC = {
     Event,
     Journal,
     Todo,
     FreeBusy,
-]
+}
+COMPONENTS_UID_AUTOMATIC = {Event, Todo, Journal}
+COMPONENTS_UID = {Event, Todo, Journal, Alarm, Calendar}
 
 
 @pytest.mark.parametrize(
@@ -269,6 +271,31 @@ COMPONENTS_DTSTAMP_AUTOMATIC = [
             NOW_UTC,
             True,
             "we use the current time to create a datetime for DTSTAMP",
+        ),
+        (
+            COMPONENTS_DTSTAMP - COMPONENTS_DTSTAMP_AUTOMATIC,
+            "DTSTAMP",
+            None,
+            None,
+            False,
+            "DTSTAMP is not automatically set",
+        ),
+        (COMPONENTS_UID, "UID", "test UID", "test UID", True, "Set the UID property"),
+        (
+            COMPONENTS_UID_AUTOMATIC,
+            "UID",
+            None,
+            UID_DEFAULT,
+            True,
+            "Set the UID property by default for these components",
+        ),
+        (
+            COMPONENTS_UID - COMPONENTS_UID_AUTOMATIC,
+            "UID",
+            None,
+            None,
+            False,
+            "UID is not automatically set",
         ),
     ],
 )

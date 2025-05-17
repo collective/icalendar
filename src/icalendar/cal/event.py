@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import uuid
 from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Optional
 
@@ -258,6 +259,7 @@ class Event(Component):
         summary: Optional[str] = None,
         description: Optional[str] = None,
         dtstamp: Optional[date] = None,
+        uid: Optional[str | uuid.UUID] = None,
     ):
         """Create a new event with all required properties.
 
@@ -266,6 +268,7 @@ class Event(Component):
         event = super().new(dtstamp=dtstamp or cls._utc_now())
         event.summary = summary
         event.description = description
+        event.uid = uid or uuid.uuid4()
         return event
 
 

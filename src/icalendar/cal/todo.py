@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import uuid
 from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Optional
 
@@ -235,6 +236,7 @@ class Todo(Component):
         summary: Optional[str] = None,
         description: Optional[str] = None,
         dtstamp: Optional[date] = None,
+        uid: Optional[str | uuid.UUID] = None,
     ):
         """Create a new TODO with all required properties.
 
@@ -243,6 +245,7 @@ class Todo(Component):
         todo = super().new(dtstamp=dtstamp or cls._utc_now())
         todo.summary = summary
         todo.description = description
+        todo.uid = uid or uuid.uuid4()
         return todo
 
 
