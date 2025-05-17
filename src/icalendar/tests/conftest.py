@@ -342,8 +342,8 @@ def doctest_import(name, *args, **kw):
     return __import__(name, *args, **kw)
 
 
-NOW = datetime(2025, 5, 17, 9, 6, 12)
-NOW_UTC = NOW.astimezone(timezone.utc)
+NOW = datetime(2025, 5, 17, 8, 6, 12)
+NOW_UTC = NOW.replace(tzinfo=timezone.utc)
 UID_DEFAULT = "d755cef5-2311-46ed-a0e1-6733c9e15c63"
 
 
