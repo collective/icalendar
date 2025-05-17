@@ -14,10 +14,21 @@ if TYPE_CHECKING:
 
 class FreeBusy(Component):
     """
-    A "VFREEBUSY" calendar component is a grouping of component
-    properties that represents either a request for free or busy time
-    information, a reply to a request for free or busy time
-    information, or a published set of busy time information.
+        A "VFREEBUSY" calendar component is a grouping of component
+        properties that represents either a request for free or busy time
+        information, a reply to a request for free or busy time
+        information, or a published set of busy time information.
+
+    Examples:
+        Create a new FreeBusy:
+
+            >>> from icalendar import FreeBusy
+            >>> free_busy = FreeBusy.new()
+            >>> print(free_busy.to_ical())
+            BEGIN:VFREEBUSY
+            DTSTAMP:20250517T080612Z
+            UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
+            END:VFREEBUSY
     """
 
     name = "VFREEBUSY"

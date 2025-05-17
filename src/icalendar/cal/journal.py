@@ -25,16 +25,28 @@ from icalendar.error import IncompleteComponent
 class Journal(Component):
     """A descriptive text at a certain time or associated with a component.
 
-    A "VJOURNAL" calendar component is a grouping of
-    component properties that represent one or more descriptive text
-    notes associated with a particular calendar date.  The "DTSTART"
-    property is used to specify the calendar date with which the
-    journal entry is associated.  Generally, it will have a DATE value
-    data type, but it can also be used to specify a DATE-TIME value
-    data type.  Examples of a journal entry include a daily record of
-    a legislative body or a journal entry of individual telephone
-    contacts for the day or an ordered list of accomplishments for the
-    day.
+        Description:
+            A "VJOURNAL" calendar component is a grouping of
+            component properties that represent one or more descriptive text
+            notes associated with a particular calendar date.  The "DTSTART"
+            property is used to specify the calendar date with which the
+            journal entry is associated.  Generally, it will have a DATE value
+            data type, but it can also be used to specify a DATE-TIME value
+            data type.  Examples of a journal entry include a daily record of
+            a legislative body or a journal entry of individual telephone
+            contacts for the day or an ordered list of accomplishments for the
+            day.
+
+    Examples:
+        Create a new Journal:
+
+            >>> from icalendar import Journal
+            >>> journal = Journal.new()
+            >>> print(journal.to_ical())
+            BEGIN:VJOURNAL
+            DTSTAMP:20250517T080612Z
+            UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
+            END:VJOURNAL
     """
 
     name = "VJOURNAL"

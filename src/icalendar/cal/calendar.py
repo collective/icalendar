@@ -26,10 +26,18 @@ if TYPE_CHECKING:
 
 class Calendar(Component):
     """
-    The "VCALENDAR" object is a collection of calendar information.
-    This information can include a variety of components, such as
-    "VEVENT", "VTODO", "VJOURNAL", "VFREEBUSY", "VTIMEZONE", or any
-    other type of calendar component.
+        The "VCALENDAR" object is a collection of calendar information.
+        This information can include a variety of components, such as
+        "VEVENT", "VTODO", "VJOURNAL", "VFREEBUSY", "VTIMEZONE", or any
+        other type of calendar component.
+
+    Examples:
+        Create a new Calendar:
+
+            >>> from icalendar import Calendar
+            >>> calendar = Calendar.new(name="My Calendar")
+            >>> print(calendar.calendar_name)
+            My Calendar
     """
 
     name = "VCALENDAR"

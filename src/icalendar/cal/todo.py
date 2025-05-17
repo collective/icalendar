@@ -39,6 +39,17 @@ class Todo(Component):
     example, it can be used to represent an item of work assigned to
     an individual, such as "Prepare for the upcoming conference
     seminar on Internet Calendaring".
+
+    Examples:
+        Create a new Todo:
+
+            >>> from icalendar import Todo
+            >>> todo = Todo.new()
+            >>> print(todo.to_ical())
+            BEGIN:VTODO
+            DTSTAMP:20250517T080612Z
+            UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
+            END:VTODO
     """
 
     name = "VTODO"
