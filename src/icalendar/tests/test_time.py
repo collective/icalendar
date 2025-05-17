@@ -2,6 +2,7 @@ import datetime
 import os
 
 import icalendar
+import icalendar.cal
 
 
 def test_value_type_is_not_mapped():
@@ -15,9 +16,9 @@ def test_value_type_is_mapped(x_sometime):
 
 
 def test_create_from_ical(x_sometime):
-    directory = os.path.dirname(__file__)
-    ics = open(os.path.join(directory, "calendars", "time.ics"), "rb")
-    cal = icalendar.Calendar.from_ical(ics.read())
+    directory = os.path.dirname(__file__)  # noqa: PTH120
+    ics = open(os.path.join(directory, "calendars", "time.ics"), "rb")  # noqa: PTH118, PTH123, SIM115
+    cal = icalendar.cal.calendar.Calendar.from_ical(ics.read())
     ics.close()
 
     assert cal["X-SOMETIME"].dt == datetime.time(17, 20, 10)
@@ -25,6 +26,6 @@ def test_create_from_ical(x_sometime):
 
 
 def test_create_to_ical(x_sometime):
-    cal = icalendar.Calendar()
+    cal = icalendar.cal.calendar.Calendar()
     cal.add("X-SOMETIME", datetime.time(17, 20, 10))
     assert b"X-SOMETIME;VALUE=TIME:172010" in cal.to_ical().splitlines()

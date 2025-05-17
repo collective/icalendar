@@ -2,7 +2,9 @@ import re
 
 import pytest
 
-from icalendar import Calendar, Event, Parameters, vCalAddress
+from icalendar import Parameters, vCalAddress
+from icalendar.cal.calendar import Calendar
+from icalendar.cal.event import Event
 
 
 @pytest.mark.parametrize(

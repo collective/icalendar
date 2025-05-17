@@ -4,11 +4,12 @@ TL;DR: Component._encode lost given parameters
 if the object to encode was already of native type,
 making its behavior unexpected.
 
-see https://github.com/collective/icalendar/issues/557"""
+see https://github.com/collective/icalendar/issues/557
+"""
 
 import unittest
 
-from icalendar.cal import Component
+from icalendar.cal.component import Component
 
 
 class TestComponentEncode(unittest.TestCase):
@@ -123,7 +124,7 @@ class TestComponentEncode(unittest.TestCase):
         self.assertParameter(obj, "LANGUAGE", "en")
 
     def __assert_native_content(self, obj):
-        self.assertEqual(obj, "English Summary")
+        assert obj == "English Summary"
 
     def __add_params(self, obj, parameters):
         return Component._encode(
@@ -144,8 +145,8 @@ class TestComponentEncode(unittest.TestCase):
         )
 
     def assertParameterMissing(self, obj, name):
-        self.assertNotIn(name, obj.params)
+        assert name not in obj.params
 
     def assertParameter(self, obj, name, val):
-        self.assertIn(name, obj.params)
-        self.assertEqual(obj.params[name], val)
+        assert name in obj.params
+        assert obj.params[name] == val

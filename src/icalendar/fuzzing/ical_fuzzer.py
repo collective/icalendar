@@ -14,12 +14,14 @@
 # limitations under the License.
 #
 ################################################################################
-import atheris
-import sys
 import base64
+import contextlib
+import sys
+
+import atheris
 
 with atheris.instrument_imports():
-    import icalendar
+    import icalendar.cal.calendar
     from icalendar.tests.fuzzed import fuzz_calendar_v1
 
 _value_error_matches = [
@@ -58,7 +60,7 @@ def TestOneInput(data):
         should_walk = fdp.ConsumeBool()
         calendar_string = fdp.ConsumeString(fdp.remaining_bytes())
         print("--- start calendar ---")
-        try:
+        with contextlib.suppress(UnicodeEncodeError):
             # print the ICS file for the test case extraction
             # see https://stackoverflow.com/a/27367173/1320237
             print(
@@ -66,17 +68,18 @@ def TestOneInput(data):
                     calendar_string.encode("UTF-8", "surrogateescape")
                 ).decode("ASCII")
             )
-        except UnicodeEncodeError:
-            pass
         print("--- end calendar ---")
 
         fuzz_calendar_v1(
-            icalendar.Calendar.from_ical, calendar_string, multiple, should_walk
+            icalendar.cal.calendar.Calendar.from_ical,
+            calendar_string,
+            multiple,
+            should_walk,
         )
-    except ValueError as e:
+    except (ValueError, TypeError) as e:
         if any(m in str(e) for m in _value_error_matches):
             return -1
-        raise e
+        raise
 
 
 def main():

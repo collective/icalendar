@@ -2,7 +2,7 @@ from datetime import date, datetime
 
 import pytest
 
-from icalendar import Event
+from icalendar.cal.event import Event
 
 
 def test_recurrence_properly_parsed(events):
@@ -124,7 +124,7 @@ def test_list_exdate_to_ical_is_inverse_of_from_ical(
 def test_byday_to_ical(freq, byday, dtstart, expected):
     """Test the BYDAY rule is correctly processed by to_ical()."""
     event = Event()
-    event.add("SUMMARY", " ".join(["Event", freq, byday]))
+    event.add("SUMMARY", f"Event {freq} {byday}")
     event.add("DTSTART", dtstart)
     event.add("RRULE", {"FREQ": [freq], "BYDAY": byday})
     assert event.to_ical() == expected

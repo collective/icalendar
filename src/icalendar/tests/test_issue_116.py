@@ -1,4 +1,4 @@
-import icalendar
+import icalendar.cal.event
 
 
 def test_issue_116():
@@ -6,7 +6,7 @@ def test_issue_116():
     https://github.com/collective/icalendar/issues/116
     https://github.com/collective/icalendar/issues/117
     """
-    event = icalendar.Event()
+    event = icalendar.cal.event.Event()
     event.add(
         "X-APPLE-STRUCTURED-LOCATION",
         "geo:-33.868900,151.207000",
@@ -25,4 +25,7 @@ def test_issue_116():
     )
 
     # roundtrip
-    assert event.to_ical() == icalendar.Event.from_ical(event.to_ical()).to_ical()
+    assert (
+        event.to_ical()
+        == icalendar.cal.event.Event.from_ical(event.to_ical()).to_ical()
+    )

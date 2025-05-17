@@ -1,4 +1,10 @@
-from icalendar import Calendar, Event
+"""
+
+See https://github.com/collective/icalendar/issues/322
+"""
+
+from icalendar.cal.calendar import Calendar
+from icalendar.cal.event import Event
 
 
 def test_issue_322_single_string_split_into_multiple_categories(calendars):

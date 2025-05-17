@@ -4,8 +4,12 @@ from datetime import date, datetime, timedelta
 
 import pytest
 
-from icalendar import Event, FreeBusy, Journal, Todo, vDDDTypes
-from icalendar.cal import Component
+from icalendar import vDDDTypes
+from icalendar.cal.component import Component
+from icalendar.cal.event import Event
+from icalendar.cal.free_busy import FreeBusy
+from icalendar.cal.journal import Journal
+from icalendar.cal.todo import Todo
 from icalendar.error import InvalidCalendar
 
 

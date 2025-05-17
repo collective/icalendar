@@ -1,15 +1,13 @@
-"""This tests the exdate property.
-"""
+"""This tests the exdate property."""
+
 from __future__ import annotations
 
 from datetime import date, datetime
-from pprint import pprint
 from typing import Union
 
 import pytest
 
 from icalendar import (
-    Calendar,
     Event,
     Journal,
     TimezoneDaylight,
@@ -19,11 +17,11 @@ from icalendar import (
 
 C_EXDATE = Union[Event, Todo, Journal, TimezoneDaylight, TimezoneStandard]
 
-@pytest.fixture(params = [Event, Todo, Journal, TimezoneDaylight, TimezoneStandard])
+
+@pytest.fixture(params=[Event, Todo, Journal, TimezoneDaylight, TimezoneStandard])
 def c_exdate(request) -> C_EXDATE:
     """Return a component that uses exdate."""
     return request.param()
-
 
 
 @pytest.fixture(
@@ -38,9 +36,11 @@ def exdate(request, tzp):
     """Possible values for an exdate."""
     return request.param(tzp)
 
+
 def test_no_exdates_by_default(c_exdate):
     """We expect no exdate by default."""
     assert c_exdate.exdates == []
+
 
 def test_set_and_retrieve_exdate(exdate, c_exdate):
     """Set the attribute and get the value."""
@@ -48,11 +48,13 @@ def test_set_and_retrieve_exdate(exdate, c_exdate):
     result = [exdate]
     assert c_exdate.exdates == result
 
+
 def test_set_and_retrieve_exdates_in_list(exdate, c_exdate):
     """Set the attribute and get the value."""
     c_exdate.add("exdate", [exdate, exdate])
     result = [exdate, exdate]
     assert c_exdate.exdates == result
+
 
 def test_set_and_retrieve_exdates_twice(exdate, c_exdate):
     """Set the attribute and get the value."""
