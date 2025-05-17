@@ -508,6 +508,10 @@ class vCategory:
         """self == other"""
         return isinstance(other, vCategory) and self.cats == other.cats
 
+    def __repr__(self):
+        """String representation."""
+        return f"{self.__class__.__name__}({self.cats}, params={self.params})"
+
 
 class TimeBase:
     """Make classes with a datetime/date comparable."""

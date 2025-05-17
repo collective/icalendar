@@ -569,8 +569,11 @@ def _get_categories(component: Component) -> list[str]:
     return categories.cats
 
 
-def _set_categories(component: Component, cats: list[str]) -> None:
+def _set_categories(component: Component, cats: Optional[Sequence[str]]) -> None:
     """Set the categories."""
+    if not cats and cats != []:
+        _del_categories(component)
+        return
     component["CATEGORIES"] = categories = vCategory(cats)
     if isinstance(cats, list):
         cats.clear()

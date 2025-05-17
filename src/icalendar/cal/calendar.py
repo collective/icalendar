@@ -436,7 +436,7 @@ Description:
         name: Optional[str] = None,
         description: Optional[str] = None,
         color: Optional[str] = None,
-        categories: Optional[Sequence[str]] = (),
+        categories: Sequence[str] = (),
         prodid: Optional[str] = f"-//collective//icalendar//{__version__}//EN",
         method: Optional[str] = None,
         version: str = "2.0",

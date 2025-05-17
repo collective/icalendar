@@ -240,7 +240,7 @@ class Todo(Component):
         start: Optional[date | datetime] = None,
         end: Optional[date | datetime] = None,
         color: Optional[str] = None,
-        categories: Optional[Sequence[str]] = (),
+        categories: Sequence[str] = (),
         sequence: Optional[int] = None,
     ):
         """Create a new TODO with all required properties.

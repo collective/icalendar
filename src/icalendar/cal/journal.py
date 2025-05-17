@@ -148,7 +148,7 @@ class Journal(Component):
         uid: Optional[str | uuid.UUID] = None,
         start: Optional[date | datetime] = None,
         color: Optional[str] = None,
-        categories: Optional[Sequence[str]] = (),
+        categories: Sequence[str] = (),
         sequence: Optional[int] = None,
     ):
         """Create a new journal entry with all required properties.

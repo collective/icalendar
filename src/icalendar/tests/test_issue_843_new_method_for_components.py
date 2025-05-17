@@ -377,6 +377,15 @@ COMPONENTS_UID = {Event, Todo, Journal, Alarm, Calendar}
             True,
             "set the categories",
         ),
+        (
+            {Event, Journal, Todo, Calendar},
+            "categories",
+            "CATEGORIES",
+            (),
+            [],
+            False,
+            "categories are absent",
+        ),
     ],
 )
 @pytest.mark.parametrize(
@@ -401,9 +410,9 @@ def test_properties_and_new(
             create_component_with_property is component_with_new
             or initial_value is not None
         ):
+            assert (key in component) == key_present, message
             # the setter does not create default values
             # so we only check it if present
             assert_component_attribute_has_value(
                 component, property_name, expected_value, message
             )
-            assert (key in component) == key_present, message
