@@ -129,7 +129,7 @@ def validate_param_value(value, quoted=True):
 
 # chars presence of which in parameter value will be cause the value
 # to be enclosed in double-quotes
-QUOTABLE = re.compile("[,;: ’']")
+QUOTABLE = re.compile("[,;:’]")
 
 
 def dquote(val, always_quote=False):
