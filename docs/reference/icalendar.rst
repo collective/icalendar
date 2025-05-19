@@ -1,5 +1,5 @@
-icalendar package
-=================
+API
+===
 
 .. automodule:: icalendar
    :members:
