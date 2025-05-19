@@ -268,7 +268,9 @@ class vCalAddress(str):
         RSVP,
         SENT_BY,
     )
+
     name = CN
+
 
 class vFloat(float):
     """Float
@@ -418,9 +420,11 @@ class vDDDLists:
             if "TZID" in dt.params:
                 tzid = dt.params["TZID"]
 
+        params = {}
         if tzid:
             # NOTE: no support for multiple timezones here!
-            self.params = Parameters({"TZID": tzid})
+            params["TZID"] = tzid
+        self.params = Parameters(params)
         self.dts = vDDD
 
     def to_ical(self):
@@ -436,28 +440,36 @@ class vDDDLists:
         return out
 
     def __eq__(self, other):
-        if not isinstance(other, vDDDLists):
-            return False
-        return self.dts == other.dts
+        if isinstance(other, vDDDLists):
+            return self.dts == other.dts
+        if isinstance(other, (TimeBase, date)):
+            return self.dts == [other]
+        return False
+
+    def __repr__(self):
+        """String representation."""
+        return f"{self.__class__.__name__}({self.dts})"
 
 
 class vCategory:
     params: Parameters
 
-    def __init__(self, c_list:list[str] | str, params={}):
+    def __init__(self, c_list: list[str] | str, params={}):
         if not hasattr(c_list, "__iter__") or isinstance(c_list, str):
             c_list = [c_list]
-        self.cats : list[vText|str] = [vText(c) for c in c_list]
+        self.cats: list[vText | str] = [vText(c) for c in c_list]
         self.params = Parameters(params)
 
     def __iter__(self):
         return iter(vCategory.from_ical(self.to_ical()))
 
     def to_ical(self):
-        return b",".join([
-            c.to_ical() if hasattr(c, "to_ical") else vText(c).to_ical()
-            for c in self.cats
-        ])
+        return b",".join(
+            [
+                c.to_ical() if hasattr(c, "to_ical") else vText(c).to_ical()
+                for c in self.cats
+            ]
+        )
 
     @staticmethod
     def from_ical(ical):
@@ -473,16 +485,35 @@ class vCategory:
 class TimeBase:
     """Make classes with a datetime/date comparable."""
 
+    params: Parameters
+    ignore_for_equality = {"TZID", "VALUE"}
+
     def __eq__(self, other):
         """self == other"""
+        if isinstance(other, date):
+            return self.dt == other
         if isinstance(other, TimeBase):
-            return self.params == other.params and self.dt == other.dt
+            default = object()
+            for key in (
+                set(self.params) | set(other.params)
+            ) - self.ignore_for_equality:
+                if key[:2].lower() != "x-" and self.params.get(
+                    key, default
+                ) != other.params.get(key, default):
+                    return False
+            return self.dt == other.dt
+        if isinstance(other, vDDDLists):
+            return other == self
         return False
 
     def __hash__(self):
         return hash(self.dt)
 
     from icalendar.param import RANGE, RELATED, TZID
+
+    def __repr__(self):
+        """String representation."""
+        return f"{self.__class__.__name__}({self.dt}, {self.params})"
 
 
 class vDDDTypes(TimeBase):
@@ -547,9 +578,6 @@ class vDDDTypes(TimeBase):
         else:
             raise ValueError(f"Expected datetime, date, or time, got: '{ical}'")
 
-    def __repr__(self):
-        """repr(self)"""
-        return f"{self.__class__.__name__}({self.dt}, {self.params})"
 
 class vDate(TimeBase):
     """Date
@@ -834,7 +862,7 @@ class vDuration(TimeBase):
         return value
 
     @property
-    def dt(self):
+    def dt(self) -> timedelta:
         """The time delta for compatibility."""
         return self.td
 
@@ -905,7 +933,7 @@ class vPeriod(TimeBase):
 
     params: Parameters
 
-    def __init__(self, per : tuple[datetime, Union[datetime, timedelta]]):
+    def __init__(self, per: tuple[datetime, Union[datetime, timedelta]]):
         start, end_or_duration = per
         if not (isinstance(start, datetime) or isinstance(start, date)):
             raise ValueError("Start value MUST be a datetime or date instance")
@@ -979,6 +1007,7 @@ class vPeriod(TimeBase):
         return (self.start, (self.duration if self.by_duration else self.end))
 
     from icalendar.param import FBTYPE
+
 
 class vWeekday(str):
     """Either a ``weekday`` or a ``weekdaynum``
@@ -1198,6 +1227,7 @@ class vSkip(vText, Enum):
     def __repr__(self):
         return f"{self.__class__.__name__}({self._name_!r})"
 
+
 class vRecur(CaselessDict):
     """Recurrence definition.
 
@@ -1254,19 +1284,32 @@ class vRecur(CaselessDict):
         recurrence may be modified in an exception component or simply by using an
         "RDATE" property of PERIOD value type.
 
-    Example:
+    Examples:
         The following RRULE specifies daily events for 10 occurrences.
 
-    .. code-block:: text
+        .. code-block:: text
 
-        RRULE:FREQ=DAILY;COUNT=10
+            RRULE:FREQ=DAILY;COUNT=10
 
-    .. code-block:: pycon
+        Below, we parse the RRULE ical string.
 
-        >>> from icalendar.prop import vRecur
-        >>> rrule = vRecur.from_ical('FREQ=DAILY;COUNT=10')
-        >>> rrule
-        vRecur({'FREQ': ['DAILY'], 'COUNT': [10]})
+        .. code-block:: pycon
+
+            >>> from icalendar.prop import vRecur
+            >>> rrule = vRecur.from_ical('FREQ=DAILY;COUNT=10')
+            >>> rrule
+            vRecur({'FREQ': ['DAILY'], 'COUNT': [10]})
+
+        You can choose to add an rrule to an :class:`icalendar.cal.Event` or
+        :class:`icalendar.cal.Todo`.
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Event
+            >>> event = Event()
+            >>> event.add('RRULE', 'FREQ=DAILY;COUNT=10')
+            >>> event.rrules
+            [vRecur({'FREQ': ['DAILY'], 'COUNT': [10]})]
     """
 
     params: Parameters

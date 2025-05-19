@@ -189,6 +189,9 @@ norecursedirs = [
     "src/icalendar/tests/hypothesis",
     "build",
 ]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]
 
 [dependency-groups]
 dev = [

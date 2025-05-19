@@ -62,6 +62,11 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
 
 1. Check that the ``CHANGES.rst`` is up to date with the `latest merged pull requests <https://github.com/collective/icalendar/pulls?q=is%3Apr+is%3Amerged>`__
    and the version you want to release is correctly named.
+
+   .. code-block:: bash
+
+       export VERSION=6.3.0
+
 2. Create a commit on the ``release`` branch (or equivalent) to release this version.
 
    .. code-block:: bash
@@ -70,7 +75,7 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
        git pull
        git checkout -b release main
        git add CHANGES.rst
-       git commit -m"version 6.0.0"
+       git commit -m"version $VERSION"
 
 3. Push the commit and `create a pull request <https://github.com/collective/icalendar/compare?expand=1>`__
    Here is an `example pull request #457 <https://github.com/collective/icalendar/pull/457>`__.
@@ -97,8 +102,8 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
 
        git checkout main
        git pull
-       git tag v6.0.0
-       git push upstream v6.0.0 # could be origin or whatever reference
+       git tag "v$VERSION"
+       git push upstream "v$VERSION" # could be origin or whatever reference
 
 7. Once the tag is pushed and its `CI-tests`_ are passing, maintainers will get an e-mail::
 
@@ -110,7 +115,7 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
    If that happens, notify the issues that were fixed about this release.
 9. Copy this to the start of ``CHANGES.rst``::
 
-       5.0.2 (unreleased)
+       6.3.1 (unreleased)
        ------------------
 
        Minor changes:
@@ -131,7 +136,7 @@ However, only people with ``PyPI environment access for GitHub Actions`` can app
 
 10. Push the new CHANGELOG so it is used for future changes.
 
-   .. code-block:: bash
+    .. code-block:: bash
 
        git checkout main
        git pull
