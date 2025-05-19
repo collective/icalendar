@@ -46,7 +46,7 @@ html_theme_options = {
         {
             "name": "PyPI",
             "url": "https://pypi.org/project/icalendar",
-            "icon": "fa-custom fa-pypi",
+            "icon": "fa-solid fa-download",
             "type": "fontawesome",
             "attributes": {
                 "target": "_blank",
