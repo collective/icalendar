@@ -7,24 +7,6 @@ We use `Semantic Versioning <https://semver.org>`_.
 - New features increase the **minor** version number.
 - Minor changes and bug fixes increase the **patch** version number.
 
-6.3.0 (2025-05-15)
-------------------
-
-Minor changes:
-
-- Deprecate ``icalendar.UIDGenerator``. See `Issue 816 <https://github.com/collective/icalendar/issues/816>`_.
-
-New features:
-
-- Add the ``uid`` property to ``Alarm``, ``Event``, ``Calendar``, ``Todo``, and ``Journal`` components. See `Issue 740 <https://github.com/collective/icalendar/issues/740>`_.
-
-Bug fixes:
-
-- Fix component equality where timezones differ for the datetimes but the times are actually equal. See `Issue 828 <https://github.com/collective/icalendar/issues/828>`_.
-- Test that we can add an RRULE as a string. See `Issue 301 <https://github.com/collective/icalendar/issues/301>`_.
-- Test that we support dateutil timezones as outlined in `Issue 336 <https://github.com/collective/icalendar/issues/336>`_.
-- Build documentation on Read the Docs with the version identifier. See `Issue 826 <https://github.com/collective/icalendar/issues/826>`_.
-
 6.3.1 (unreleased)
 ------------------
 
@@ -42,7 +24,25 @@ New features:
 
 Bug fixes:
 
-- ...
+- Remove forced quoting from parameters with space and single quote. See `Issue 836 <https://github.com/collective/icalendar/issues/836>`_.
+
+6.3.0 (2025-05-15)
+------------------
+
+Minor changes:
+
+- Deprecate ``icalendar.UIDGenerator``. See `Issue 816 <https://github.com/collective/icalendar/issues/816>`_.
+
+New features:
+
+- Add the ``uid`` property to ``Alarm``, ``Event``, ``Calendar``, ``Todo``, and ``Journal`` components. See `Issue 740 <https://github.com/collective/icalendar/issues/740>`_.
+
+Bug fixes:
+
+- Fix component equality where timezones differ for the datetimes but the times are actually equal. See `Issue 828 <https://github.com/collective/icalendar/issues/828>`_.
+- Test that we can add an RRULE as a string. See `Issue 301 <https://github.com/collective/icalendar/issues/301>`_.
+- Test that we support dateutil timezones as outlined in `Issue 336 <https://github.com/collective/icalendar/issues/336>`_.
+- Build documentation on Read the Docs with the version identifier. See `Issue 826 <https://github.com/collective/icalendar/issues/826>`_.
 
 6.2.0 (2025-05-07)
 ------------------
