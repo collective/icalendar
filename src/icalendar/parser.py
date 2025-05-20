@@ -129,7 +129,7 @@ def validate_param_value(value, quoted=True):
 
 # chars presence of which in parameter value will be cause the value
 # to be enclosed in double-quotes
-QUOTABLE = re.compile("[,;: ’']")
+QUOTABLE = re.compile("[,;:’]")
 
 
 def dquote(val, always_quote=False):
@@ -184,7 +184,15 @@ class Parameters(CaselessDict):
         "DIR",
         "MEMBER",
         "SENT-BY",
+        # Part of X-APPLE-STRUCTURED-LOCATION
+        "X-ADDRESS",
+        "X-TITLE",
     )
+    # this is quoted should one of the values be present
+    quote_also = {
+        # This is escaped in the RFC
+        "CN" : " '",
+    }
 
     def params(self):
         """In RFC 5545 keys are called parameters, so this is to be consitent
@@ -219,7 +227,14 @@ class Parameters(CaselessDict):
 
         for key, value in items:
             upper_key = key.upper()
-            quoted_value = param_value(value, always_quote=upper_key in self.always_quoted)
+            check_quoteable_characters = self.quote_also.get(key.upper())
+            always_quote = (
+                upper_key in self.always_quoted or (
+                    check_quoteable_characters and
+                    any(c in value for c in check_quoteable_characters)
+                )
+            )
+            quoted_value = param_value(value, always_quote=always_quote)
             if isinstance(quoted_value, str):
                 quoted_value = quoted_value.encode(DEFAULT_ENCODING)
             # CaselessDict keys are always unicode
