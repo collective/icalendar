@@ -7,6 +7,25 @@ We use `Semantic Versioning <https://semver.org>`_.
 - New features increase the **minor** version number.
 - Minor changes and bug fixes increase the **patch** version number.
 
+6.3.2 (unreleased)
+------------------
+
+Minor changes:
+
+- ...
+
+Breaking changes:
+
+- ...
+
+New features:
+
+- ...
+
+Bug fixes:
+
+- ...
+
 6.3.1 (2025-05-20)
 ------------------
 
