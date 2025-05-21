@@ -51,7 +51,7 @@ from datetime import date, datetime, time, timedelta
 from typing import Any, Optional, Union
 
 from icalendar.caselessdict import CaselessDict
-from icalendar.enums import Enum
+from icalendar.enums import VALUE, Enum
 from icalendar.parser import Parameters, escape_char, unescape_char
 from icalendar.parser_tools import (
     DEFAULT_ENCODING,
@@ -60,6 +60,7 @@ from icalendar.parser_tools import (
     from_unicode,
     to_unicode,
 )
+from icalendar.tools import to_datetime
 
 from .timezone import tzid_from_dt, tzid_from_tzinfo, tzp
 
@@ -602,6 +603,10 @@ class vDDDTypes(TimeBase):
         if len(ical) in (15, 16):
             return vDatetime.from_ical(ical, timezone=timezone)
         if len(ical) == 8:
+            if timezone:
+                tzinfo = tzp.timezone(timezone)
+                if tzinfo is not None:
+                    return to_datetime(vDate.from_ical(ical)).replace(tzinfo=tzinfo)
             return vDate.from_ical(ical)
         if len(ical) in (6, 7):
             return vTime.from_ical(ical)
