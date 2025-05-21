@@ -2,17 +2,21 @@
 import importlib.metadata
 import datetime
 import os
+import sys
+
+sys.path.insert(0, os.path.abspath("../src/"))
 
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.coverage",
     "sphinx.ext.viewcode",
     "sphinx_copybutton",
+    "sphinx_reredirects",
     "sphinx.ext.intersphinx",
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.napoleon",
 ]
-source_suffix = ".rst"
+source_suffix = {".rst": "restructuredtext"}
 master_doc = "index"
 
 project = "icalendar"
@@ -57,7 +61,6 @@ html_theme_options = {
     "show_toc_level": 2,
     "use_edit_page_button": True,
 }
-pygments_style = "sphinx"
 html_context = {
 #     "github_url": "https://github.com", # or your GitHub Enterprise site
     "github_user": "collective",
@@ -65,7 +68,8 @@ html_context = {
     "github_version": "main",
     "doc_path": "docs",
 }
-htmlhelp_basename = "icalendardoc"
+pygments_style = "sphinx"
+
 
 
 # -- Intersphinx configuration ----------------------------------
@@ -84,5 +88,14 @@ intersphinx_mapping = {
 }
 
 
+# -- sphinx-reredirects configuration ----------------------------------
+# https://documatt.com/sphinx-reredirects/usage.html
+redirects = {
+    "contributing": "/contribute/index.html",
+    "about": "/index.html#about-icalendar",
+}
+
+
 man_pages = [("index", "icalendar", "icalendar Documentation", ["Plone Foundation"], 1)]
 
+htmlhelp_basename = "icalendardoc"
