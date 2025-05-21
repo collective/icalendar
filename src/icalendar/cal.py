@@ -11,6 +11,14 @@ from collections import defaultdict
 from datetime import date, datetime, timedelta, tzinfo
 from typing import TYPE_CHECKING, List, NamedTuple, Optional, Tuple, Union
 
+try:
+    from typing import Self
+except ImportError:
+    try:
+        from typing_extensions import Self
+    except ImportError:
+        Self = "Self"
+
 import dateutil.rrule
 import dateutil.tz
 
@@ -357,7 +365,7 @@ class Component(CaselessDict):
         return properties
 
     @classmethod
-    def from_ical(cls, st, multiple=False):
+    def from_ical(cls, st, multiple=False) -> Self:
         """Populates the component recursively from a string."""
         stack = []  # a stack of components
         comps = []
