@@ -610,7 +610,7 @@ class vDDDTypes(TimeBase):
             return vDate.from_ical(ical)
         if len(ical) in (6, 7):
             return vTime.from_ical(ical)
-        raise ValueError(f"Expected datetime, date, or time, got: '{ical}'")
+        raise ValueError(f"Expected datetime, date, or time. Got: '{ical}'")
 
 
 class vDate(TimeBase):
