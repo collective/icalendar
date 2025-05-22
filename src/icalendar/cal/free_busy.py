@@ -68,7 +68,9 @@ class FreeBusy(Component):
 
         Arguments:
             dtstamp: The :attr:`DTSTAMP` of the component.
+                If None, this is set to the current time.
             uid: The :attr:`uid` of the component.
+                If None, this is set to a new :func:`uuid.uuid4`.
 
         Returns:
             :class:`FreeBusy`

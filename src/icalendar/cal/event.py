@@ -392,11 +392,13 @@ class Event(Component):
             color: The :attr:`color` of the event.
             description: The :attr:`description` of the event.
             dtstamp: The :attr:`DTSTAMP` of the event.
+                If None, this is set to the current time.
             end: The :attr:`end` of the event.
             sequence: The :attr:`sequence` of the event.
             start: The :attr:`start` of the event.
             summary: The :attr:`summary` of the event.
             uid: The :attr:`uid` of the event.
+                If None, this is set to a new :func:`uuid.uuid4`.
 
         Returns:
             :class:`Event`

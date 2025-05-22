@@ -5,6 +5,7 @@ except ImportError:
 from datetime import datetime, timezone
 from typing import Generator
 
+from icalendar import TypesFactory
 import pytest
 
 import icalendar
@@ -185,11 +186,16 @@ def fuzz_v1_calendar(request):
 
 
 @pytest.fixture
-def x_sometime():
+def types_factory():
+    """Return a new types factory."""
+    return TypesFactory()
+
+@pytest.fixture
+def x_sometime(types_factory):
     """Map x_sometime to time"""
-    icalendar.cal.types_factory.types_map["X-SOMETIME"] = "time"
+    types_factory.types_map["X-SOMETIME"] = "time"
     yield
-    icalendar.cal.types_factory.types_map.pop("X-SOMETIME")
+    types_factory.types_map.pop("X-SOMETIME")
 
 
 @pytest.fixture

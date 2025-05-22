@@ -465,6 +465,7 @@ Description:
             name: The :attr:`calendar_name` of the component.
             prodid: The :attr:`prodid` of the component.
             uid: The :attr:`uid` of the component.
+                If None, this is set to a new :func:`uuid.uuid4`.
             version: The :attr:`version` of the component.
 
         Returns:

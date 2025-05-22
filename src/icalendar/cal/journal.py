@@ -173,10 +173,12 @@ class Journal(Component):
             color: The :attr:`color` of the journal.
             description: The :attr:`description` of the journal.
             dtstamp: The :attr:`DTSTAMP` of the journal.
+                If None, this is set to the current time.
             sequence: The :attr:`sequence` of the journal.
             start: The :attr:`start` of the journal.
             summary: The :attr:`summary` of the journal.
             uid: The :attr:`uid` of the journal.
+                If None, this is set to a new :func:`uuid.uuid4`.
 
         Returns:
             :class:`Journal`

@@ -264,11 +264,13 @@ class Todo(Component):
             color: The :attr:`color` of the todo.
             description: The :attr:`description` of the todo.
             dtstamp: The :attr:`DTSTAMP` of the todo.
+                If None, this is set to the current time.
             end: The :attr:`end` of the todo.
             sequence: The :attr:`sequence` of the todo.
             start: The :attr:`start` of the todo.
             summary: The :attr:`summary` of the todo.
             uid: The :attr:`uid` of the todo.
+                If None, this is set to a new :func:`uuid.uuid4`.
 
         Returns:
             :class:`Todo`
