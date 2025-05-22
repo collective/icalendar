@@ -2,17 +2,19 @@ from icalendar.alarms import (
     Alarms,
     AlarmTime,
 )
-from icalendar.cal.alarm import Alarm
-from icalendar.cal.calendar import (
+from icalendar.cal import (
+    Alarm,
     Calendar,
+    Component,
+    ComponentFactory,
+    Event,
+    FreeBusy,
+    Journal,
+    Timezone,
+    TimezoneDaylight,
+    TimezoneStandard,
+    Todo,
 )
-from icalendar.cal.component import Component
-from icalendar.cal.component_factory import ComponentFactory
-from icalendar.cal.event import Event
-from icalendar.cal.free_busy import FreeBusy
-from icalendar.cal.journal import Journal
-from icalendar.cal.timezone import Timezone, TimezoneDaylight, TimezoneStandard
-from icalendar.cal.todo import Todo
 from icalendar.enums import CUTYPE, FBTYPE, PARTSTAT, RANGE, RELATED, RELTYPE, ROLE
 from icalendar.error import (
     ComponentEndMissing,

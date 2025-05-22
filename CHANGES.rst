@@ -12,15 +12,20 @@ We use `Semantic Versioning <https://semver.org>`_.
 
 Minor changes:
 
-- Add ``new()`` to ``icalendar.Calendar`` to set required attributes. See `Issue 569 <https://github.com/collective/icalendar/issues/569>`_.
+- Split up ``cal.py`` into different files as sub-package.
+- Format more source code with ruff.
 
 Breaking changes:
 
 - Correctly throw a ``TypeError`` for wrong types during property creation where a ``ValueError`` was thrown before.
+- Move ``types_factory`` into ``Component.types_factory``
+- Move ``components_factory`` into ``Component.get_component_class``
+- Move ``icalendar.cal.IncompleteComponent`` error into ``icalendar.error``.
 
 New features:
 
-- ...
+- Add ``new()`` to ``icalendar.Calendar`` to set required attributes. See `Issue 569 <https://github.com/collective/icalendar/issues/569>`_.
+- Add ``new()`` to ``Alarm``, ``Event``, ``Todo``, ``FreeBusy``, ``Component``, and ``Journal`` components. See `Issue 843 <https://github.com/collective/icalendar/issues/843>`_.
 
 Bug fixes:
 

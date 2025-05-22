@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime, timezone
-from typing import Optional
+from typing import ClassVar, Optional
 
 from icalendar.attr import single_utc_property, uid_property
 from icalendar.cal.component_factory import ComponentFactory
@@ -14,14 +14,25 @@ from icalendar.prop import TypesFactory, vDDDLists, vText
 from icalendar.timezone import tzp
 
 _marker = []
-# These are read only singleton, so one instance is enough for the module
-types_factory = TypesFactory()
-
 
 class Component(CaselessDict):
-    """Component is the base object for calendar, Event and the other
-    components defined in RFC 5545. Normally you will not use this class
+    """Base class for calendar components.
+
+    Component is the base object for calendar, Event and the other
+    components defined in :rfc:`5545`. Normally you will not use this class
     directly, but rather one of the subclasses.
+
+    Attributes:
+        name: The name of the component. Example: ``VCALENDAR``.
+        required: These properties are required.
+        singletons: These properties must only appear once.
+        multiple: These properties may occur more than once.
+        exclusive: These properties are mutually exclusive.
+        inclusive: If the first in a tuple occurs, the second one must also occur.
+        ignore_exceptions: If True, and we cannot parse this
+            component, we will silently ignore it, rather than let the
+            exception propagate upwards.
+        types_factory: Factory for property types
     """
 
     name = None  # should be defined in each component
@@ -29,13 +40,27 @@ class Component(CaselessDict):
     singletons = ()  # These properties must only appear once
     multiple = ()  # may occur more than once
     exclusive = ()  # These properties are mutually exclusive
-    inclusive = ()  # if any occurs the other(s) MUST occur
+    inclusive : tuple[str] | tuple[tuple[str, str]]= ()  # if any occurs the other(s) MUST occur
     # ('duration', 'repeat')
     ignore_exceptions = False  # if True, and we cannot parse this
     # component, we will silently ignore
     # it, rather than let the exception
     # propagate upwards
     # not_compliant = ['']  # List of non-compliant properties.
+
+    types_factory = TypesFactory()
+    _components_factory: ClassVar[Optional[ComponentFactory]] = None
+
+    @classmethod
+    def get_component_class(cls, name:str) -> type[Component]:
+        """Return a component with this name.
+
+        Arguments:
+            name: Name of the component, i.e. ``VCALENDAR``
+        """
+        if cls._components_factory is None:
+            cls._components_factory = ComponentFactory()
+        return cls._components_factory.get(name, Component)
 
     def __init__(self, *args, **kwargs):
         """Set keys to upper for initial dict."""
@@ -49,9 +74,6 @@ class Component(CaselessDict):
         """Returns True, CaselessDict would return False if it had no items."""
         return True
 
-    # python 2 compatibility
-    __nonzero__ = __bool__
-
     def is_empty(self):
         """Returns True if Component has no items or subcomponents, else False."""
         return bool(not list(self.values()) + self.subcomponents)
@@ -59,8 +81,8 @@ class Component(CaselessDict):
     #############################
     # handling of property values
 
-    @staticmethod
-    def _encode(name, value, parameters=None, encode=1):
+    @classmethod
+    def _encode(cls, name, value, parameters=None, encode=1):
         """Encode values to icalendar property values.
 
         :param name: Name of the property.
@@ -83,11 +105,11 @@ class Component(CaselessDict):
         """
         if not encode:
             return value
-        if isinstance(value, types_factory.all_types):
+        if isinstance(value, cls.types_factory.all_types):
             # Don't encode already encoded values.
             obj = value
         else:
-            klass = types_factory.for_property(name)
+            klass = cls.types_factory.for_property(name)
             obj = klass(value)
         if parameters:
             if not hasattr(obj, "params"):
@@ -165,7 +187,7 @@ class Component(CaselessDict):
         if isinstance(value, vDDDLists):
             # TODO: Workaround unfinished decoding
             return value
-        decoded = types_factory.from_ical(name, value)
+        decoded = self.types_factory.from_ical(name, value)
         # TODO: remove when proper decoded is implemented in every prop.* class
         # Workaround to decode vText properly
         if isinstance(decoded, vText):
@@ -203,7 +225,7 @@ class Component(CaselessDict):
         """
         if encode:
             values = [self._encode(name, value, encode=1) for value in values]
-        self[name] = types_factory["inline"](q_join(values))
+        self[name] = self.types_factory["inline"](q_join(values))
 
     #########################
     # Handling of components
@@ -246,7 +268,7 @@ class Component(CaselessDict):
         """Returns properties in this component and subcomponents as:
         [(name, value), ...]
         """
-        v_text = types_factory["text"]
+        v_text = self.types_factory["text"]
         properties = [("BEGIN", v_text(self.name).to_ical())]
         property_names = self.sorted_keys() if sorted else self.keys()
 
@@ -292,7 +314,7 @@ class Component(CaselessDict):
                 # try and create one of the components defined in the spec,
                 # otherwise get a general Components for robustness.
                 c_name = vals.upper()
-                c_class = ComponentFactory.singleton().get(c_name, Component)
+                c_class = cls.get_component_class(c_name)
                 # If component factory cannot resolve ``c_name``, the generic
                 # ``Component`` class is used which does not have the name set.
                 # That's opposed to the usage of ``cls``, which represents a
@@ -318,7 +340,7 @@ class Component(CaselessDict):
                     tzp.cache_timezone_component(component)
             # we are adding properties to the current top of the stack
             else:
-                factory = types_factory.for_property(name)
+                factory = cls.types_factory.for_property(name)
                 component = stack[-1] if stack else None
                 if not component:
                     # only accept X-COMMENT at the end of the .ics file
@@ -489,7 +511,16 @@ class Component(CaselessDict):
 
     @classmethod
     def new(cls, dtstamp: Optional[date] = None) -> Component:
-        """Create a new component."""
+        """Create a new component.
+
+        Arguments:
+            dtstamp: The :attr:`DTSTAMP` of the component.
+
+        Raises:
+            IncompleteComponent: If the content is not valid according to :rfc:`5545`.
+
+        .. warning:: As time progresses, we will be stricter with the validation.
+        """
         component = cls()
         if dtstamp is not None:
             component.DTSTAMP = dtstamp

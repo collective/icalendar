@@ -4,13 +4,11 @@ files according to RFC 5545.
 These are the defined components.
 """
 
-from icalendar.error import IncompleteComponent
-
 from .alarm import Alarm
 from .calendar import Calendar
-from .component import Component, types_factory
+from .component import Component
+from .component_factory import ComponentFactory
 from .event import Event
-from .examples import get_example
 from .free_busy import FreeBusy
 from .journal import Journal
 from .timezone import Timezone, TimezoneDaylight, TimezoneStandard
@@ -20,14 +18,12 @@ __all__ = [
     "Alarm",
     "Calendar",
     "Component",
+    "ComponentFactory",
     "Event",
     "FreeBusy",
-    "IncompleteComponent",
     "Journal",
     "Timezone",
     "TimezoneDaylight",
     "TimezoneStandard",
     "Todo",
-    "get_example",
-    "types_factory",
 ]

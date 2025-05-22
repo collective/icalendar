@@ -2,23 +2,13 @@
 
 from __future__ import annotations
 
-from typing import ClassVar, Optional
-
 from icalendar.caselessdict import CaselessDict
 
 
 class ComponentFactory(CaselessDict):
-    """All components defined in RFC 5545 are registered in this factory class.
+    """All components defined in :rfc:`5545` are registered in this factory class.
     To get a component you can use it like this.
     """
-
-    _instance: ClassVar[Optional[ComponentFactory]] = None
-
-    @classmethod
-    def singleton(cls) -> ComponentFactory:
-        if cls._instance is None:
-            cls._instance = cls()
-        return cls._instance
 
     def __init__(self, *args, **kwargs):
         """Set keys to upper for initial dict."""

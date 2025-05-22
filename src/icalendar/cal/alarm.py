@@ -260,6 +260,8 @@ class Alarm(Component):
 
         Raises:
             IncompleteComponent: If the content is not valid according to :rfc:`5545`.
+
+        .. warning:: As time progresses, we will be stricter with the validation.
         """
         alarm = super().new()
         alarm.summary = summary

@@ -184,6 +184,7 @@ class Journal(Component):
         Raises:
             IncompleteComponent: If the content is not valid according to :rfc:`5545`.
 
+        .. warning:: As time progresses, we will be stricter with the validation.
         """
         journal = super().new(
             dtstamp=dtstamp if dtstamp is not None else cls._utc_now()
