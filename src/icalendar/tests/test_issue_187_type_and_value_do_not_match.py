@@ -33,7 +33,7 @@ def test_wrong_dates_are_converted(string, expected_params, expected_property_va
     So, the tests can be changed if a different resolution is needed.
 
     The problem: The VALUE parameter might not correspond to the actual value.
-    However, we correctly parse the value and do not loose information.
+    However, we correctly parse the value and do not lose information.
     """
     event = Event.from_ical(f"""
 BEGIN:VEVENT
