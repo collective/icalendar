@@ -8,7 +8,6 @@ We use `Semantic Versioning <https://semver.org>`_.
 - Minor changes and bug fixes increase the **patch** version number.
 
 7.0.0 (unreleased)
-------------------
 
 Minor changes:
 
@@ -31,6 +30,12 @@ Bug fixes:
 
 - ...
 
+6.3.1 (2025-05-20)
+------------------
+
+Bug fixes:
+
+- Remove forced quoting from parameters with space and single quote. See `Issue 836 <https://github.com/collective/icalendar/issues/836>`_.
 
 6.3.0 (2025-05-15)
 ------------------
