@@ -1,12 +1,19 @@
-"""This tests the properties of components and their types."""
+"""This tests the properties of components and their types.
+
+See https://github.com/collective/icalendar/issues/662
+"""
 
 from __future__ import annotations
+
 from datetime import date, datetime, timedelta
 
 import pytest
 
+from icalendar.cal.alarm import Alarm
+from icalendar.cal.event import Event
+from icalendar.cal.journal import Journal
+from icalendar.cal.todo import Todo
 from icalendar.error import IncompleteComponent, InvalidCalendar
-from icalendar.cal import Alarm
 
 try:
     from zoneinfo import ZoneInfo
@@ -14,11 +21,8 @@ except ImportError:
     from backports.zoneinfo import ZoneInfo  # type: ignore PGH003
 
 from icalendar import (
-    Event,
-    Journal,
-    Todo,
-    vDDDTypes,
     vDatetime,
+    vDDDTypes,
 )
 from icalendar.prop import vDuration
 
@@ -94,7 +98,7 @@ def set_component_start(request):
 
 def test_component_dtstart(dtstart, start_end_component):
     """Test the start of events."""
-    assert start_end_component.DTSTART == dtstart
+    assert dtstart == start_end_component.DTSTART
 
 
 def test_event_start(dtstart, start_end_component):
@@ -202,7 +206,7 @@ def set_component_end(request):
 def test_component_end_property(dtend, start_end_component):
     """Test the end of events."""
     attr = prop(start_end_component, "DTEND")
-    assert getattr(start_end_component, attr) == dtend  # noqa: SIM300
+    assert getattr(start_end_component, attr) == dtend
 
 
 def test_component_end(dtend, start_end_component):
@@ -489,7 +493,7 @@ def test_setting_duration_deletes_the_end(start_end_component):
     start_end_component.DURATION = timedelta(days=1)
     assert DTEND not in start_end_component
     assert getattr(start_end_component, DTEND) is None
-    assert start_end_component.DURATION == timedelta(days=1)
+    assert timedelta(days=1) == start_end_component.DURATION
 
 
 valid_values = pytest.mark.parametrize(
@@ -593,15 +597,15 @@ def setting_twice_does_not_duplicate_the_entry():
 def test_get_alarm_trigger_property(alarms, file, trigger, related):
     """Get the trigger property."""
     alarm = alarms[file]
-    assert alarm.TRIGGER == trigger
-    assert alarm.TRIGGER_RELATED == related
+    assert trigger == alarm.TRIGGER
+    assert related == alarm.TRIGGER_RELATED
 
 
 def test_set_alarm_trigger():
     """Set the alarm trigger."""
     a = Alarm()
     a.TRIGGER = timedelta(hours=1)
-    assert a.TRIGGER == timedelta(hours=1)
+    assert timedelta(hours=1) == a.TRIGGER
     assert a.TRIGGER_RELATED == "START"
 
 
@@ -610,7 +614,7 @@ def test_set_alarm_trigger_related():
     a = Alarm()
     a.TRIGGER = timedelta(hours=1)
     a.TRIGGER_RELATED = "END"
-    assert a.TRIGGER == timedelta(hours=1)
+    assert timedelta(hours=1) == a.TRIGGER
     assert a.TRIGGER_RELATED == "END"
 
 

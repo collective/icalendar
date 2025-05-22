@@ -1,4 +1,5 @@
-from icalendar import Event, vBoolean, vCalAddress
+from icalendar import vBoolean, vCalAddress
+from icalendar.cal.event import Event
 
 
 def test_vBoolean_can_be_used_as_parameter_issue_500(events):

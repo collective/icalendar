@@ -1,22 +1,23 @@
 """Attributes of Components and properties."""
+
 from __future__ import annotations
 
 import itertools
 from datetime import date, datetime, timedelta
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING, Optional, Sequence, Union
 
 from icalendar.error import InvalidCalendar
-from icalendar.prop import vCategory, vDDDTypes, vRecur, vText
+from icalendar.parser_tools import SEQUENCE_TYPES
+from icalendar.prop import vCategory, vDDDTypes, vDuration, vRecur, vText
 from icalendar.timezone import tzp
 
 if TYPE_CHECKING:
     from icalendar.cal import Component
 
 
-def _get_rdates(self: Component) -> list[
-        Union[tuple[date, None],
-              tuple[datetime, None],
-              tuple[datetime, datetime]]]:
+def _get_rdates(
+    self: Component,
+) -> list[Union[tuple[date, None], tuple[datetime, None], tuple[datetime, datetime]]]:
     """The RDATE property defines the list of DATE-TIME values for recurring components.
 
     RDATE is defined in :rfc:`5545`.
@@ -112,7 +113,7 @@ def _get_rdates(self: Component) -> list[
 rdates_property = property(_get_rdates)
 
 
-def _get_exdates(self: Component) -> list[date|datetime]:
+def _get_exdates(self: Component) -> list[date | datetime]:
     """EXDATE defines the list of DATE-TIME exceptions for recurring components.
 
     EXDATE is defined in :rfc:`5545`.
@@ -298,7 +299,7 @@ def _get_rrules(self: Component) -> list[vRecur]:
 
         If you want to compute recurrences, have a look at :ref:`Related projects`.
 
-    """
+    """  # noqa: E501
     rrules = self.get("RRULE", [])
     if not isinstance(rrules, list):
         return [rrules]
@@ -307,7 +308,10 @@ def _get_rrules(self: Component) -> list[vRecur]:
 
 rrules_property = property(_get_rrules)
 
-def multi_language_text_property(main_prop:str, compatibility_prop:str, doc:str) -> property:
+
+def multi_language_text_property(
+    main_prop: str, compatibility_prop: Optional[str], doc: str
+) -> property:
     """This creates a text property.
 
     This property can be defined several times with different ``LANGUAGE`` parameters.
@@ -317,29 +321,34 @@ def multi_language_text_property(main_prop:str, compatibility_prop:str, doc:str)
         compatibility_prop (str): An old property used before, such as ``X-WR-CALNAME``
         doc (str): The documentation string
     """
+
     def fget(self: Component) -> Optional[str]:
         """Get the property"""
-        result = self.get(main_prop, self.get(compatibility_prop))
+        result = self.get(main_prop)
+        if result is None and compatibility_prop is not None:
+            result = self.get(compatibility_prop)
         if isinstance(result, list):
             for item in result:
                 if "LANGUAGE" not in item.params:
                     return item
         return result
 
-    def fset(self: Component, value:str):
+    def fset(self: Component, value: Optional[str]):
         """Set the property."""
         fdel(self)
-        self.add(main_prop, value)
+        if value is not None:
+            self.add(main_prop, value)
 
     def fdel(self: Component):
         """Delete the property."""
         self.pop(main_prop, None)
-        self.pop(compatibility_prop, None)
+        if compatibility_prop is not None:
+            self.pop(compatibility_prop, None)
 
     return property(fget, fset, fdel, doc)
 
 
-def single_int_property(prop:str, default:int, doc:str) -> property:
+def single_int_property(prop: str, default: int, doc: str) -> property:
     """Create a property for an int value that exists only once.
 
     Args:
@@ -347,6 +356,7 @@ def single_int_property(prop:str, default:int, doc:str) -> property:
         default: The default value
         doc: The documentation string
     """
+
     def fget(self: Component) -> int:
         """Get the property"""
         try:
@@ -354,10 +364,11 @@ def single_int_property(prop:str, default:int, doc:str) -> property:
         except ValueError as e:
             raise InvalidCalendar(f"{prop} must be an int") from e
 
-    def fset(self: Component, value:int):
+    def fset(self: Component, value: Optional[int]):
         """Set the property."""
         fdel(self)
-        self.add(prop, value)
+        if value is not None:
+            self.add(prop, value)
 
     def fdel(self: Component):
         """Delete the property."""
@@ -409,22 +420,30 @@ def single_utc_property(name: str, docs: str) -> property:
     return property(fget, fset, fdel, doc=docs)
 
 
-def single_string_property(name: str, docs: str, other_name:Optional[str]=None) -> property:
+def single_string_property(
+    name: str, docs: str, other_name: Optional[str] = None, default: str = ""
+) -> property:
     """Create a property to access a single string value."""
 
     def fget(self: Component) -> str:
         """Get the value."""
-        result = self.get(name, None if other_name is None else self.get(other_name, None))
+        result = self.get(
+            name, None if other_name is None else self.get(other_name, None)
+        )
         if result is None or result == []:
-            return ""
+            return default
         if isinstance(result, list):
             return result[0]
         return result
 
-    def fset(self: Component, value: str):
-        """Set the value"""
+    def fset(self: Component, value: Optional[str]):
+        """Set the value.
+
+        Setting the value to None will delete it.
+        """
         fdel(self)
-        self.add(name, value)
+        if value is not None:
+            self.add(name, value)
 
     def fdel(self: Component):
         """Delete the property."""
@@ -433,6 +452,7 @@ def single_string_property(name: str, docs: str, other_name:Optional[str]=None) 
             self.pop(other_name, None)
 
     return property(fget, fset, fdel, doc=docs)
+
 
 color_property = single_string_property(
     "COLOR",
@@ -467,7 +487,7 @@ color_property = single_string_property(
             BEGIN:VTODO
             COLOR:green
             END:VTODO
-    """
+    """,
 )
 
 sequence_property = single_int_property(
@@ -530,26 +550,35 @@ Examples:
         >>> event = calendar.events[0]
         >>> event.sequence
         10
-    """
+    """,  # noqa: E501
 )
+
 
 def _get_categories(component: Component) -> list[str]:
     """Get all the categories."""
-    categories : Optional[vCategory|list[vCategory]] = component.get("CATEGORIES")
+    categories: Optional[vCategory | list[vCategory]] = component.get("CATEGORIES")
     if isinstance(categories, list):
-        _set_categories(component, list(itertools.chain.from_iterable(cat.cats for cat in categories)))
+        _set_categories(
+            component,
+            list(itertools.chain.from_iterable(cat.cats for cat in categories)),
+        )
         return _get_categories(component)
     if categories is None:
         categories = vCategory([])
         component.add("CATEGORIES", categories)
     return categories.cats
 
-def _set_categories(component: Component, cats: list[str]) -> None:
+
+def _set_categories(component: Component, cats: Optional[Sequence[str]]) -> None:
     """Set the categories."""
+    if not cats and cats != []:
+        _del_categories(component)
+        return
     component["CATEGORIES"] = categories = vCategory(cats)
-    cats.clear()
-    cats.extend(categories.cats)
-    categories.cats = cats
+    if isinstance(cats, list):
+        cats.clear()
+        cats.extend(categories.cats)
+        categories.cats = cats
 
 
 def _del_categories(component: Component) -> None:
@@ -599,11 +628,12 @@ Example:
 .. note::
 
    At present, we do not take the LANGUAGE parameter into account.
-"""
+""",
 )
 
 uid_property = single_string_property(
-    "UID", """UID specifies the persistent, globally unique identifier for a component.
+    "UID",
+    """UID specifies the persistent, globally unique identifier for a component.
 
 We recommend using :func:`uuid.uuid4` to generate new values.
 
@@ -681,20 +711,274 @@ Examples:
         UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
         END:VCALENDAR
 
-"""
+""",
+)
+
+summary_property = multi_language_text_property(
+    "SUMMARY",
+    None,
+    """SUMMARY defines a short summary or subject for the calendar component.
+
+Property Parameters:
+    IANA, non-standard, alternate text
+    representation, and language property parameters can be specified
+    on this property.
+
+Conformance:
+    The property can be specified in "VEVENT", "VTODO",
+    "VJOURNAL", or "VALARM" calendar components.
+
+Description:
+    This property is used in the "VEVENT", "VTODO", and
+    "VJOURNAL" calendar components to capture a short, one-line
+    summary about the activity or journal entry.
+
+    This property is used in the "VALARM" calendar component to
+    capture the subject of an EMAIL category of alarm.
+
+Examples:
+    The following is an example of this property:
+
+    .. code-block:: pycon
+
+        SUMMARY:Department Party
+""",
+)
+
+description_property = multi_language_text_property(
+    "DESCRIPTION",
+    None,
+    """DESCRIPTION provides a more complete description of the calendar component than that provided by the "SUMMARY" property.
+
+Property Parameters:
+    IANA, non-standard, alternate text
+    representation, and language property parameters can be specified
+    on this property.
+
+Conformance:
+    The property can be specified in the "VEVENT", "VTODO",
+    "VJOURNAL", or "VALARM" calendar components.  The property can be
+    specified multiple times only within a "VJOURNAL" calendar
+    component.
+
+Description:
+    This property is used in the "VEVENT" and "VTODO" to
+    capture lengthy textual descriptions associated with the activity.
+
+    This property is used in the "VALARM" calendar component to
+    capture the display text for a DISPLAY category of alarm, and to
+    capture the body text for an EMAIL category of alarm.
+
+Examples:
+    The following is an example of this property with formatted
+    line breaks in the property value:
+
+    .. code-block:: pycon
+
+        DESCRIPTION:Meeting to provide technical review for "Phoenix"
+         design.\\nHappy Face Conference Room. Phoenix design team
+         MUST attend this meeting.\\nRSVP to team leader.
+
+    """,  # noqa: E501
 )
 
 
+def create_single_property(
+    prop: str,
+    value_attr: Optional[str],
+    value_type: tuple[type],
+    type_def: type,
+    doc: str,
+    vProp: type = vDDDTypes,  # noqa: N803
+):
+    """Create a single property getter and setter.
+
+    :param prop: The name of the property.
+    :param value_attr: The name of the attribute to get the value from.
+    :param value_type: The type of the value.
+    :param type_def: The type of the property.
+    :param doc: The docstring of the property.
+    :param vProp: The type of the property from :mod:`icalendar.prop`.
+    """
+
+    def p_get(self: Component):
+        default = object()
+        result = self.get(prop, default)
+        if result is default:
+            return None
+        if isinstance(result, list):
+            raise InvalidCalendar(f"Multiple {prop} defined.")
+        value = result if value_attr is None else getattr(result, value_attr, result)
+        if not isinstance(value, value_type):
+            raise InvalidCalendar(
+                f"{prop} must be either a "
+                f"{' or '.join(t.__name__ for t in value_type)},"
+                f" not {value}."
+            )
+        return value
+
+    def p_set(self: Component, value) -> None:
+        if value is None:
+            p_del(self)
+            return
+        if not isinstance(value, value_type):
+            raise TypeError(
+                f"Use {' or '.join(t.__name__ for t in value_type)}, "
+                f"not {type(value).__name__}."
+            )
+        self[prop] = vProp(value)
+        if prop in self.exclusive:
+            for other_prop in self.exclusive:
+                if other_prop != prop:
+                    self.pop(other_prop, None)
+
+    p_set.__annotations__["value"] = p_get.__annotations__["return"] = Optional[
+        type_def
+    ]
+
+    def p_del(self: Component):
+        self.pop(prop)
+
+    p_doc = f"""The {prop} property.
+
+    {doc}
+
+    Accepted values: {", ".join(t.__name__ for t in value_type)}.
+    If the attribute has invalid values, we raise InvalidCalendar.
+    If the value is absent, we return None.
+    You can also delete the value with del or by setting it to None.
+    """
+    return property(p_get, p_set, p_del, p_doc)
+
+
+X_MOZ_SNOOZE_TIME_property = single_utc_property(
+    "X-MOZ-SNOOZE-TIME", "Thunderbird: Alarms before this time are snoozed."
+)
+X_MOZ_LASTACK_property = single_utc_property(
+    "X-MOZ-LASTACK", "Thunderbird: Alarms before this time are acknowledged."
+)
+
+
+def property_get_duration(self: Component) -> Optional[timedelta]:
+    """Getter for property DURATION."""
+    default = object()
+    duration = self.get("duration", default)
+    if isinstance(duration, vDDDTypes):
+        return duration.dt
+    if isinstance(duration, vDuration):
+        return duration.td
+    if duration is not default and not isinstance(duration, timedelta):
+        raise InvalidCalendar(
+            f"DURATION must be a timedelta, not {type(duration).__name__}."
+        )
+    return None
+
+
+def property_set_duration(self: Component, value: Optional[timedelta]):
+    """Setter for property DURATION."""
+    if value is None:
+        self.pop("duration", None)
+        return
+    if not isinstance(value, timedelta):
+        raise TypeError(f"Use timedelta, not {type(value).__name__}.")
+    self["duration"] = vDuration(value)
+    self.pop("DTEND")
+    self.pop("DUE")
+
+
+def property_del_duration(self: Component):
+    """Delete property DURATION."""
+    self.pop("DURATION")
+
+
+property_doc_duration_template = """The DURATION property.
+
+The "DTSTART" property for a "{component}" specifies the inclusive start of the event.
+The "DURATION" property in conjunction with the DTSTART property
+for a "{component}" calendar component specifies the non-inclusive end
+of the event.
+
+If you would like to calculate the duration of a {component}, do not use this.
+Instead use the duration property (lower case).
+"""
+
+
+def _get_descriptions(self: Component) -> list[str]:
+    """Get the descriptions."""
+    descriptions = self.get("DESCRIPTION")
+    if descriptions is None:
+        return []
+    if not isinstance(descriptions, SEQUENCE_TYPES):
+        return [descriptions]
+    return descriptions
+
+
+def _set_descriptions(self: Component, descriptions: Optional[str | Sequence[str]]):
+    """Set the descriptions"""
+    _del_descriptions(self)
+    if descriptions is None:
+        return
+    if isinstance(descriptions, str):
+        self.add("DESCRIPTION", descriptions)
+    else:
+        for description in descriptions:
+            self.add("DESCRIPTION", description)
+
+
+def _del_descriptions(self: Component):
+    """Delete the descriptions."""
+    self.pop("DESCRIPTION")
+
+
+descriptions_property = property(
+    _get_descriptions,
+    _set_descriptions,
+    _del_descriptions,
+    """DESCRIPTION provides a more complete description of the calendar component than that provided by the "SUMMARY" property.
+
+Property Parameters:
+    IANA, non-standard, alternate text
+    representation, and language property parameters can be specified
+    on this property.
+
+Conformance:
+    The property can be
+    specified multiple times only within a "VJOURNAL" calendar component.
+
+Description:
+    This property is used in the "VJOURNAL" calendar component to
+    capture one or more textual journal entries.
+
+Examples:
+    The following is an example of this property with formatted
+    line breaks in the property value:
+
+    .. code-block:: pycon
+
+        DESCRIPTION:Meeting to provide technical review for "Phoenix"
+         design.\\nHappy Face Conference Room. Phoenix design team
+         MUST attend this meeting.\\nRSVP to team leader.
+
+""",  # noqa: E501
+)
 
 __all__ = [
     "categories_property",
     "color_property",
+    "create_single_property",
+    "description_property",
+    "descriptions_property",
     "exdates_property",
     "multi_language_text_property",
+    "property_del_duration",
+    "property_doc_duration_template",
+    "property_get_duration",
+    "property_set_duration",
     "rdates_property",
     "rrules_property",
     "sequence_property",
     "single_int_property",
     "single_utc_property",
+    "summary_property",
     "uid_property",
 ]

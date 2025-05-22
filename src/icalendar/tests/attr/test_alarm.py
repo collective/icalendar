@@ -2,7 +2,7 @@
 
 import pytest
 
-from icalendar.cal import Alarm
+from icalendar.cal.alarm import Alarm
 from icalendar.error import InvalidCalendar
 
 

@@ -4,7 +4,7 @@ from datetime import time
 
 import pytest
 
-from icalendar import Calendar
+from icalendar.cal.calendar import Calendar
 from icalendar.prop import vDDDLists
 
 

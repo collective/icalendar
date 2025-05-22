@@ -3,7 +3,7 @@
 See https://github.com/collective/icalendar/issues/301
 """
 
-from icalendar.cal import Event
+from icalendar.cal.event import Event
 
 
 def test_rrule_add_example():

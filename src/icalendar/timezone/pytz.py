@@ -1,14 +1,20 @@
 """Use pytz timezones."""
 
 from __future__ import annotations
-import pytz
-from .. import cal
+
 from datetime import datetime, tzinfo
+from typing import TYPE_CHECKING, Optional
+
+import pytz
 from pytz.tzinfo import DstTzInfo
-from typing import Optional
+
 from .provider import TZProvider
-from icalendar import prop
-from dateutil.rrule import rrule
+
+if TYPE_CHECKING:
+    from dateutil.rrule import rrule
+
+    from icalendar import prop
+    from icalendar.cal import Timezone
 
 
 class PYTZ(TZProvider):
@@ -38,7 +44,7 @@ class PYTZ(TZProvider):
             # either
             rrule._until = datetime(2038, 12, 31, tzinfo=pytz.UTC)
 
-    def create_timezone(self, tz: cal.Timezone) -> tzinfo:
+    def create_timezone(self, tz: Timezone.Timezone) -> tzinfo:
         """Create a pytz timezone from the given information."""
         transition_times, transition_info = tz.get_transitions()
         name = tz.tz_name

@@ -3,17 +3,21 @@
 Some attributes are also available as ``X-*`` attributes.
 They are also considered.
 """
+
 from __future__ import annotations
 
 from typing import Union
 
 import pytest
 
-from icalendar import Calendar, Event, Journal, Todo
+from icalendar.cal.calendar import Calendar
+from icalendar.cal.event import Event
+from icalendar.cal.journal import Journal
+from icalendar.cal.todo import Todo
 from icalendar.prop import vText
 
 
-@pytest.fixture()
+@pytest.fixture
 def calendar() -> Calendar:
     """Empty calendar"""
     return Calendar()
@@ -77,7 +81,7 @@ def test_multiple_names_use_the_one_without_a_language(calendar, name, order):
     """Add several names and use the one without a language param."""
     if order == 1:
         calendar.add("NAME", name)
-    calendar.add("NAME", vText("Kalendername", params={"LANGUAGE":"de"}))
+    calendar.add("NAME", vText("Kalendername", params={"LANGUAGE": "de"}))
     if order == 2:
         calendar.add("NAME", name)
     assert calendar.calendar_name == name
@@ -91,11 +95,11 @@ def test_name_is_preferred(calendar, name):
     assert calendar.calendar_name == name
 
 
-
 # For description, we would use the same tests as name, but we also use the
 # same code, so it is all right.
 
 param_color = pytest.mark.parametrize("desc", ["DESCRIPTION", "X-WR-CALDESC"])
+
 
 @param_color
 @param_name
@@ -104,16 +108,21 @@ def test_description(calendar, desc, name):
     calendar.add(desc, name)
     assert calendar.description == name
 
+
 # For color, we would use the same tests as name, but we also use the
 # same code, so it is all right.
 
-param_color = pytest.mark.parametrize("color_param", ["COLOR", "X-APPLE-CALENDAR-COLOR"])
+param_color = pytest.mark.parametrize(
+    "color_param", ["COLOR", "X-APPLE-CALENDAR-COLOR"]
+)
+
 
 @param_color
 def test_get_calendar_color(calendar, color_param, color):
     """Get the value"""
     calendar.add(color_param, color)
     assert calendar.color == color
+
 
 @param_color
 def test_delete_calendar_color(calendar, color_param, color):
@@ -123,6 +132,7 @@ def test_delete_calendar_color(calendar, color_param, color):
     assert calendar.color == ""
     assert color_param not in calendar
 
+
 @param_color
 def test_set_calendar_color(calendar, color_param, color):
     """Set the color and it replaces what is there."""
@@ -131,36 +141,47 @@ def test_set_calendar_color(calendar, color_param, color):
     assert calendar.color == color
     assert calendar["COLOR"] == color
 
+
 def test_get_COLOR_first(calendar, color):
     """We prefer COLOR over X-APPLE-CALENDAR-COLOR"""
     calendar.add("COLOR", color)
     calendar.add("X-APPLE-CALENDAR-COLOR", "green")
     assert calendar.color == color
 
+
 # The color of the event is a bit different
 # It only appears once and does not have a backup.
+
 
 @pytest.fixture(params=[Calendar, Event, Todo, Journal])
 def color_component(request) -> Union[Calendar, Event, Todo, Journal]:
     """An empty component that should have a color attribute."""
     return request.param()
 
+
 @pytest.fixture(params=["blue", "#123456"])
 def color(request) -> str:
     """Return a color."""
     return request.param
 
+
 def test_default_color(color_component: Union[Calendar, Event, Todo, Journal]):
     """There is no color by default."""
     assert color_component.color == ""
 
-def test_set_the_color(color:str, color_component: Union[Calendar, Event, Todo, Journal]):
+
+def test_set_the_color(
+    color: str, color_component: Union[Calendar, Event, Todo, Journal]
+):
     """We set the value and get it."""
     color_component.color = color
     assert color_component.color == color
     assert color_component["COLOR"] == color
 
-def test_replace_color(color:str, color_component: Union[Calendar, Event, Todo, Journal]):
+
+def test_replace_color(
+    color: str, color_component: Union[Calendar, Event, Todo, Journal]
+):
     """Replace the color."""
     color_component.color = "blue"
     color_component.color = color
@@ -183,7 +204,9 @@ def test_delete_the_color(color_component: Union[Calendar, Event, Todo, Journal]
     assert color_component.color == ""
 
 
-def test_set_if_multiple_colors(color: str, color_component: Union[Calendar, Event, Todo, Journal]):
+def test_set_if_multiple_colors(
+    color: str, color_component: Union[Calendar, Event, Todo, Journal]
+):
     """Add several colors and use the first one."""
     color_component.add("COLOR", "blue")
     color_component.add("COLOR", "green")

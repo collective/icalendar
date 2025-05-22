@@ -22,7 +22,8 @@ from dateutil.tz.tz import _tzicalvtz
 from .provider import TZProvider
 
 if TYPE_CHECKING:
-    from icalendar import cal, prop
+    from icalendar import prop
+    from icalendar.cal import Timezone
     from icalendar.prop import vDDDTypes
 
 
@@ -53,17 +54,17 @@ class ZONEINFO(TZProvider):
             # ValueError: ZoneInfo keys may not be absolute paths, got: /Europe/CUSTOM
             pass
 
-    def knows_timezone_id(self, id: str) -> bool:
+    def knows_timezone_id(self, tzid: str) -> bool:
         """Whether the timezone is already cached by the implementation."""
-        return id in self._available_timezones
+        return tzid in self._available_timezones
 
     def fix_rrule_until(self, rrule: rrule, ical_rrule: prop.vRecur) -> None:
-        """Make sure the until value works for the rrule generated from the ical_rrule."""
+        """Make sure the until value works for the rrule generated from the ical_rrule."""  # noqa: E501
         if not {"UNTIL", "COUNT"}.intersection(ical_rrule.keys()):
             # zoninfo does not know any transition dates after 2038
-            rrule._until = datetime(2038, 12, 31, tzinfo=self.utc)
+            rrule._until = datetime(2038, 12, 31, tzinfo=self.utc)  # noqa: SLF001
 
-    def create_timezone(self, tz: cal.Timezone) -> tzinfo:
+    def create_timezone(self, tz: Timezone.Timezone) -> tzinfo:
         """Create a timezone from the given information."""
         try:
             return self._create_timezone(tz)
@@ -76,13 +77,13 @@ class ZONEINFO(TZProvider):
                     if attr.lower().startswith("x-"):
                         sub.pop(attr)
             for sub in tz.subcomponents:
-                start : vDDDTypes = sub.get("DTSTART")
+                start: vDDDTypes = sub.get("DTSTART")
                 if start and is_date(start.dt):
                     # ValueError: Unsupported DTSTART param in VTIMEZONE: VALUE=DATE
                     sub.DTSTART = to_datetime(start.dt)
             return self._create_timezone(tz)
 
-    def _create_timezone(self, tz: cal.Timezone) -> tzinfo:
+    def _create_timezone(self, tz: Timezone.Timezone) -> tzinfo:
         """Create a timezone and maybe fail"""
         file = StringIO(tz.to_ical().decode("UTF-8", "replace"))
         return tzical(file).get()
@@ -96,9 +97,9 @@ class ZONEINFO(TZProvider):
         return True
 
 
-def pickle_tzicalvtz(tzicalvtz: tz._tzicalvtz):
+def pickle_tzicalvtz(tzicalvtz: _tzicalvtz):
     """Because we use dateutil.tzical, we need to make it pickle-able."""
-    return _tzicalvtz, (tzicalvtz._tzid, tzicalvtz._comps)
+    return _tzicalvtz, (tzicalvtz._tzid, tzicalvtz._comps)  # noqa: SLF001
 
 
 copyreg.pickle(_tzicalvtz, pickle_tzicalvtz)
@@ -116,7 +117,7 @@ def pickle_rrule_with_cache(self: rrule):
         "freq": self._freq,
         "until": self._until,
         "wkst": self._wkst,
-        "cache": False if self._cache is None else True,
+        "cache": self._cache is not None,
     }
     new_kwargs.update(self._original_rule)
     # from https://stackoverflow.com/a/64915638/1320237
@@ -128,16 +129,12 @@ copyreg.pickle(rrule, pickle_rrule_with_cache)
 
 def pickle_rruleset_with_cache(rs: rruleset):
     """Pickle an rruleset."""
-    # self._rrule = []
-    # self._rdate = []
-    # self._exrule = []
-    # self._exdate = []
     return unpickle_rruleset_with_cache, (
-        rs._rrule,
-        rs._rdate,
-        rs._exrule,
-        rs._exdate,
-        False if rs._cache is None else True,
+        rs._rrule,  # noqa: SLF001
+        rs._rdate,  # noqa: SLF001
+        rs._exrule,  # noqa: SLF001
+        rs._exdate,  # noqa: SLF001
+        rs._cache is not None,  # noqa: SLF001
     )
 
 
