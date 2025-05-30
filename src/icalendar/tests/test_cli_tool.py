@@ -1,13 +1,8 @@
 import unittest
 from datetime import datetime
 
-from icalendar import cli
-from icalendar.cal.calendar import Calendar
-
-try:
-    import zoneinfo
-except ModuleNotFoundError:
-    from backports import zoneinfo
+from icalendar import Calendar, cli
+from icalendar.compatibility import ZoneInfo
 
 INPUT = """
 BEGIN:VCALENDAR
@@ -46,7 +41,7 @@ END:VCALENDAR
 def local_datetime(dt):
     return (
         datetime.strptime(dt, "%Y%m%dT%H%M%S")
-        .replace(tzinfo=zoneinfo.ZoneInfo("Europe/Warsaw"))
+        .replace(tzinfo=ZoneInfo("Europe/Warsaw"))
         .astimezone()
         .strftime("%c")
     )

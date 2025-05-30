@@ -2,12 +2,6 @@
 
 from __future__ import annotations
 
-from icalendar.tools import is_date, to_datetime
-
-try:
-    import zoneinfo
-except ImportError:
-    from backports import zoneinfo  # type: ignore  # noqa: PGH003
 import copy
 import copyreg
 import functools
@@ -18,6 +12,9 @@ from typing import TYPE_CHECKING, Optional
 from dateutil.rrule import rrule, rruleset
 from dateutil.tz import tzical
 from dateutil.tz.tz import _tzicalvtz
+
+from icalendar.compatibility import zoneinfo
+from icalendar.tools import is_date, to_datetime
 
 from .provider import TZProvider
 

@@ -7,11 +7,7 @@ from datetime import date, datetime
 import pytest
 
 from icalendar import Event
-
-try:
-    from zoneinfo import ZoneInfo
-except ImportError:
-    from backports.zoneinfo import ZoneInfo
+from icalendar.compatibility import ZoneInfo
 
 
 @pytest.mark.parametrize(

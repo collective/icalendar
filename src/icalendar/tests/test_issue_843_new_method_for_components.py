@@ -17,15 +17,10 @@ from typing import Any, Callable, Optional
 
 import pytest
 
-from icalendar import Calendar, FreeBusy
-from icalendar.cal import Alarm, Component, Event, Journal, Todo
+from icalendar import Alarm, Calendar, Component, Event, FreeBusy, Journal, Todo
+from icalendar.compatibility import ZoneInfo
 
 from .conftest import NOW_UTC, UID_DEFAULT
-
-try:
-    from zoneinfo import ZoneInfo
-except ImportError:
-    from backports.zoneinfo import ZoneInfo  # type: ignore  # noqa: PGH003
 
 param_summary_components = pytest.mark.parametrize(
     "component", [Event, Todo, Alarm, Journal]
