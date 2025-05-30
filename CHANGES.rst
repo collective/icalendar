@@ -12,7 +12,7 @@ We use `Semantic Versioning <https://semver.org>`_.
 
 Minor changes:
 
-- Exclude type checking block from test coverage. 
+- Exclude type checking block from test coverage.
 
 Breaking changes:
 
