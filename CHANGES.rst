@@ -15,6 +15,8 @@ Minor changes:
 - Split up ``cal.py`` into different files as sub-package.
 - Format more source code with ruff.
 - Exclude type checking block from test coverage.
+- Add private ``icalendar.compatibility`` module to merge functionality for older Python versions into one place.
+- Add type annotation to ``from_ical()``.
 
 Breaking changes:
 
@@ -27,10 +29,11 @@ New features:
 
 - Add ``new()`` to ``icalendar.Calendar`` to set required attributes. See `Issue 569 <https://github.com/collective/icalendar/issues/569>`_.
 - Add ``new()`` to ``Alarm``, ``Event``, ``Todo``, ``FreeBusy``, ``Component``, and ``Journal`` components. See `Issue 843 <https://github.com/collective/icalendar/issues/843>`_.
+- Add ``value`` to ``Parameters`` to access the ``VALUE`` parameter.
 
 Bug fixes:
 
-- ...
+- Fix invalid calendar: Parsing a date with TZID results in a datetime to not loose the timezone. See `Issue 187 <https://github.com/collective/icalendar/issues/187>`_.
 
 6.3.1 (2025-05-20)
 ------------------
