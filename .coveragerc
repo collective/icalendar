@@ -1,0 +1,6 @@
+# Exclude type checking block
+# See https://github.com/nedbat/coveragepy/issues/831#issuecomment-517778185
+[report]
+exclude_lines = 
+    pragma: no cover
+    if TYPE_CHECKING:
