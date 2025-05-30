@@ -8,14 +8,8 @@ from datetime import date, datetime, timedelta, timezone
 
 import pytest
 
-from icalendar import vDate, vDatetime, vDDDLists, vDDDTypes
-from icalendar.cal.event import Event
-from icalendar.cal.journal import Journal
-
-try:
-    from zoneinfo import ZoneInfo
-except ImportError:
-    from backports.zoneinfo import ZoneInfo  # type: ignore PGH003
+from icalendar import Event, Journal, vDate, vDatetime, vDDDLists, vDDDTypes
+from icalendar.compatibility import ZoneInfo
 
 
 def to_dt(a: date) -> date:

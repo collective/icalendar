@@ -9,22 +9,18 @@ from datetime import date, datetime, timedelta
 
 import pytest
 
-from icalendar.cal.alarm import Alarm
-from icalendar.cal.event import Event
-from icalendar.cal.journal import Journal
-from icalendar.cal.todo import Todo
-from icalendar.error import IncompleteComponent, InvalidCalendar
-
-try:
-    from zoneinfo import ZoneInfo
-except ImportError:
-    from backports.zoneinfo import ZoneInfo  # type: ignore PGH003
-
 from icalendar import (
+    Alarm,
+    Event,
+    IncompleteComponent,
+    InvalidCalendar,
+    Journal,
+    Todo,
     vDatetime,
     vDDDTypes,
+    vDuration,
 )
-from icalendar.prop import vDuration
+from icalendar.compatibility import ZoneInfo
 
 
 def prop(component: Event | Todo, prop: str) -> str:

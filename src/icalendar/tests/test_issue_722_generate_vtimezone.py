@@ -17,16 +17,8 @@ from re import findall
 import pytest
 from dateutil.tz import gettz
 
-from icalendar.cal.component import Component
-from icalendar.cal.event import Event
-from icalendar.cal.timezone import Timezone
-
-try:
-    from zoneinfo import available_timezones
-except ImportError:
-    from backports.zoneinfo import available_timezones
-
-from icalendar.cal.calendar import Calendar
+from icalendar import Calendar, Component, Event, Timezone
+from icalendar.compatibility import zoneinfo
 from icalendar.timezone import tzid_from_tzinfo, tzids_from_tzinfo
 
 tzids = pytest.mark.parametrize(
@@ -433,7 +425,7 @@ def test_dates_before_and_after_are_considered():
     pytest.skip("todo")
 
 
-@pytest.mark.parametrize("tzid", available_timezones() - {"Factory", "localtime"})
+@pytest.mark.parametrize("tzid", zoneinfo.available_timezones() - {"Factory", "localtime"})
 def test_we_can_identify_dateutil_timezones(tzid):
     """dateutil and others were badly supported.
 

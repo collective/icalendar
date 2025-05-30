@@ -432,7 +432,7 @@ def test_calendar_with_parsing_errors_has_an_error_in_one_event(calendars):
     empty DATE.
     """
     errors = [e.errors for e in calendars.parsing_error.walk("VEVENT")]
-    assert errors == [[], [("EXDATE", "Expected datetime, date, or time, got: ''")]]
+    assert errors == [[], [("EXDATE", "Expected datetime, date, or time. Got: ''")]]
 
 
 def test_cal_strict_parsing(calendars):

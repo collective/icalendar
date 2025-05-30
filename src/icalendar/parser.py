@@ -8,8 +8,10 @@ conversion is attempted.
 
 from __future__ import annotations
 
+import functools
 import os
 import re
+from typing import TYPE_CHECKING
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser_tools import (
@@ -18,6 +20,9 @@ from icalendar.parser_tools import (
     SEQUENCE_TYPES,
     to_unicode,
 )
+
+if TYPE_CHECKING:
+    from icalendar.enums import VALUE
 
 
 def escape_char(text):
@@ -176,6 +181,29 @@ def q_join(lst, sep=",", always_quote=False):
     return sep.join(dquote(itm, always_quote=always_quote) for itm in lst)
 
 
+def single_string_parameter(func):
+    """Create a parameter getter/setter for a single string parameter."""
+
+    name = func.__name__
+
+    @functools.wraps(func)
+    def fget(self: Parameters):
+        """Get the value."""
+        return self.get(name)
+
+    def fset(self: Parameters, value: str|None):
+        """Set the value"""
+        if value is None:
+            fdel(self)
+        else:
+            self[name] = value
+
+    def fdel(self: Parameters):
+        """Delete the value."""
+        self.pop(name, None)
+
+    return property(fget, fset, fdel, doc=func.__doc__)
+
 class Parameters(CaselessDict):
     """Parser and generator of Property parameter strings. It knows nothing of
     datatypes. Its main concern is textual structure.
@@ -262,6 +290,26 @@ class Parameters(CaselessDict):
                     f"{param!r} is not a valid parameter string: {exc}"
                 ) from exc
         return result
+
+    @single_string_parameter
+    def value(self) -> VALUE | str | None:
+        """The VALUE parameter from :rfc:`5545`.
+
+        Description:
+            This parameter specifies the value type and format of
+            the property value.  The property values MUST be of a single value
+            type.  For example, a "RDATE" property cannot have a combination
+            of DATE-TIME and TIME value types.
+
+            If the property's value is the default value type, then this
+            parameter need not be specified.  However, if the property's
+            default value type is overridden by some other allowable value
+            type, then this parameter MUST be specified.
+
+            Applications MUST preserve the value data for x-name and iana-
+            token values that they don't recognize without attempting to
+            interpret or parse the value data.
+        """
 
 
 def escape_string(val):
