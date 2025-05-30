@@ -16,7 +16,8 @@ from __future__ import annotations
 from datetime import date, timedelta, tzinfo
 from typing import TYPE_CHECKING, Generator, Optional, Union
 
-from icalendar.cal import Alarm, Event, Todo
+from icalendar.cal.event import Event
+from icalendar.cal.todo import Todo
 from icalendar.error import (
     ComponentEndMissing,
     ComponentStartMissing,
@@ -28,6 +29,8 @@ from icalendar.tools import is_date, normalize_pytz, to_datetime
 
 if TYPE_CHECKING:
     from datetime import datetime
+
+    from icalendar.cal.alarm import Alarm
 
 Parent = Union[Event, Todo]
 
@@ -370,9 +373,9 @@ class Alarms:
 
 
 __all__ = [
-    "Alarms",
     "AlarmTime",
-    "IncompleteAlarmInformation",
+    "Alarms",
     "ComponentEndMissing",
     "ComponentStartMissing",
+    "IncompleteAlarmInformation",
 ]

@@ -2,7 +2,7 @@
 
 from datetime import datetime
 
-from icalendar import Event
+from icalendar.cal.event import Event
 
 
 def test_vDDDLists_timezone(tzp):

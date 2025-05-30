@@ -1,7 +1,8 @@
 import unittest
 from datetime import datetime
 
-from icalendar import Calendar, cli
+from icalendar import cli
+from icalendar.cal.calendar import Calendar
 
 try:
     import zoneinfo
@@ -95,7 +96,7 @@ PROPER_OUTPUT = f"""    Organizer: organizer <organizer@test.test>
     Description:
      
 
-"""
+"""  # noqa: W291, W293
 
 
 class CLIToolTest(unittest.TestCase):
@@ -105,7 +106,7 @@ class CLIToolTest(unittest.TestCase):
         output = ""
         for event in calendar.walk("vevent"):
             output += cli.view(event) + "\n\n"
-        self.assertEqual(PROPER_OUTPUT, output)
+        assert output == PROPER_OUTPUT
 
 
 if __name__ == "__main__":

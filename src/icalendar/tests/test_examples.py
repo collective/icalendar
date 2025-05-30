@@ -4,7 +4,9 @@ import datetime
 
 import pytest
 
-from icalendar import Calendar, Event, Timezone
+from icalendar.cal.calendar import Calendar
+from icalendar.cal.event import Event
+from icalendar.cal.timezone import Timezone
 
 
 def test_creating_calendar_with_unicode_fields(calendars, utc):

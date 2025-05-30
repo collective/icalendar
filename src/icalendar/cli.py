@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """utility program that allows user to preview calendar's events"""
 
-import sys
-import pathlib
 import argparse
+import pathlib
+import sys
 from datetime import datetime
 
-from icalendar import Calendar, __version__
+from icalendar import __version__
+from icalendar.cal.calendar import Calendar
 
 
 def _format_name(address):
@@ -32,7 +33,7 @@ def _format_attendees(attendees):
     """
     if isinstance(attendees, str):
         attendees = [attendees]
-    return "\n".join(map(lambda s: s.rjust(len(s) + 5), map(_format_name, attendees)))
+    return "\n".join(s.rjust(len(s) + 5) for s in map(_format_name, attendees))
 
 
 def view(event):
@@ -46,7 +47,7 @@ def view(event):
     location = event.get("location", default="")
     comment = event.get("comment", "")
     description = event.get("description", "").split("\n")
-    description = "\n".join(map(lambda s: s.rjust(len(s) + 5), description))
+    description = "\n".join(s.rjust(len(s) + 5) for s in description)
 
     start = event.decoded("dtstart")
     if "duration" in event:

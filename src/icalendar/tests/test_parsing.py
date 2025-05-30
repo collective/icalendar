@@ -5,7 +5,9 @@ from datetime import datetime
 
 import pytest
 
-from icalendar import Calendar, Event, vBinary, vRecur
+from icalendar import vBinary, vRecur
+from icalendar.cal.calendar import Calendar
+from icalendar.cal.event import Event
 from icalendar.parser import Contentline, Parameters, unescape_char
 
 

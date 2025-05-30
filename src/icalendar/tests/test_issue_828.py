@@ -1,11 +1,16 @@
-"""Events differ although their times are equal."""
+"""Events differ although their times are equal.
+
+See https://github.com/collective/icalendar/issues/828
+"""
 
 import contextlib
 from datetime import date, datetime, timedelta, timezone
 
 import pytest
 
-from icalendar import Event, Journal, vDate, vDatetime, vDDDLists, vDDDTypes
+from icalendar import vDate, vDatetime, vDDDLists, vDDDTypes
+from icalendar.cal.event import Event
+from icalendar.cal.journal import Journal
 
 try:
     from zoneinfo import ZoneInfo

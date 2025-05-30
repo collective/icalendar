@@ -125,6 +125,7 @@ allow-direct-references = true
 
 [tool.ruff]
 target-version = "py38"
+unsafe-fixes = true
 
 [tool.ruff.lint]
 select = ["ALL"]
@@ -164,6 +165,9 @@ extend-safe-fixes = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
+"src/icalendar/tests/test_timezoned.py" = [
+    "SLF001", # private member
+]
 "src/icalendar/tests/*" = [
     "B011",   # Do not assert False (python -O removes these calls), raise AssertionError()
     "DTZ001", # datetime.datetime() called without a tzinfo argument
@@ -175,6 +179,17 @@ extend-safe-fixes = [
     "T201",   # print found
     "T203",   # `pprint` found
     "RUF001", # String contains ambiguous character
+    "SIM300", # Yoda condition
+    "SLF001", # Private member accessed
+    "N999",   # module name
+    "PT027",  # assertRaises
+]
+"src/icalendar/prop.py" = [
+    "N801",   # Class name should use CamelCase
+]
+"src/icalendar/fuzzing/*" = [
+    "T201",   # print found
+    "N802",   # Function name {name} should be lowercase
 ]
 
 [tool.pytest.ini_options]

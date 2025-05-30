@@ -10,15 +10,16 @@ Alarms can be in this state:
 The alarms can only work on the properties of the event like
 DTSTART, DTEND, and DURATION.
 
+See https://github.com/collective/icalendar/issues/716
 """
 
 from datetime import date, datetime, timedelta, timezone
 
 import pytest
 
-from icalendar import Event
 from icalendar.alarms import Alarms
-from icalendar.cal import Alarm
+from icalendar.cal.alarm import Alarm
+from icalendar.cal.event import Event
 from icalendar.error import IncompleteAlarmInformation
 from icalendar.prop import vDatetime
 from icalendar.tools import normalize_pytz
@@ -289,9 +290,9 @@ def test_number_of_active_alarms_from_calendar_software(
     active_alarms = (
         a.active
     )  # We do not need to pass a timezone because the events have a timezone
-    assert (
-        len(active_alarms) == count
-    ), f"{message} - I expect {count} alarms active but got {len(active_alarms)}."
+    assert len(active_alarms) == count, (
+        f"{message} - I expect {count} alarms active but got {len(active_alarms)}."
+    )
 
 
 three_alarms = Alarm()

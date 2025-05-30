@@ -22,7 +22,7 @@ def test_timedelta():
 
 
 def test_bad_input():
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         vDDDTypes(42)
 
 

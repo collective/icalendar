@@ -44,6 +44,7 @@ class ComponentStartMissing(IncompleteAlarmInformation):
     Use Alarms.set_start().
     """
 
+
 class FeatureWillBeRemovedInFutureVersion(DeprecationWarning):
     """This feature will be removed in a future version."""
 
@@ -54,14 +55,14 @@ class WillBeRemovedInVersion7(FeatureWillBeRemovedInFutureVersion):
     Suppress FeatureWillBeRemovedInFutureVersion instead.
     """
 
+
 __all__ = [
-    "InvalidCalendar",
-    "IncompleteComponent",
-    "IncompleteAlarmInformation",
-    "LocalTimezoneMissing",
     "ComponentEndMissing",
-    
     "ComponentStartMissing",
     "FeatureWillBeRemovedInFutureVersion",
+    "IncompleteAlarmInformation",
+    "IncompleteComponent",
+    "InvalidCalendar",
+    "LocalTimezoneMissing",
     "WillBeRemovedInVersion7",
 ]

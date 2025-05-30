@@ -2,11 +2,19 @@ try:
     from backports import zoneinfo  # type: ignore  # noqa: PGH003
 except ImportError:
     import zoneinfo
+from datetime import datetime, timezone
 from typing import Generator
 
+from icalendar import TypesFactory
 import pytest
 
 import icalendar
+import icalendar.cal.alarm
+import icalendar.cal.calendar
+import icalendar.cal.component_factory
+import icalendar.cal.event
+import icalendar.cal.timezone
+from icalendar.cal.component import Component
 
 from . import timezone_ids
 
@@ -21,7 +29,7 @@ from pathlib import Path
 
 from dateutil import tz
 
-from icalendar.cal import Calendar, Component
+from icalendar.cal.calendar import Calendar
 from icalendar.timezone import TZP
 from icalendar.timezone import tzp as _tzp
 
@@ -104,22 +112,22 @@ ALARMS_FOLDER = HERE / "alarms"
 
 @pytest.fixture(scope="module")
 def calendars(tzp):
-    return DataSource(CALENDARS_FOLDER, icalendar.Calendar.from_ical)
+    return DataSource(CALENDARS_FOLDER, icalendar.cal.calendar.Calendar.from_ical)
 
 
 @pytest.fixture(scope="module")
 def timezones(tzp):
-    return DataSource(TIMEZONES_FOLDER, icalendar.Timezone.from_ical)
+    return DataSource(TIMEZONES_FOLDER, icalendar.cal.timezone.Timezone.from_ical)
 
 
 @pytest.fixture(scope="module")
 def events(tzp):
-    return DataSource(EVENTS_FOLDER, icalendar.Event.from_ical)
+    return DataSource(EVENTS_FOLDER, icalendar.cal.event.Event.from_ical)
 
 
 @pytest.fixture(scope="module")
 def alarms(tzp):
-    return DataSource(ALARMS_FOLDER, icalendar.Alarm.from_ical)
+    return DataSource(ALARMS_FOLDER, icalendar.cal.alarm.Alarm.from_ical)
 
 
 @pytest.fixture(params=PYTZ_UTC + [zoneinfo.ZoneInfo("UTC"), tz.UTC, tz.gettz("UTC")])
@@ -178,17 +186,22 @@ def fuzz_v1_calendar(request):
 
 
 @pytest.fixture
-def x_sometime():
+def types_factory():
+    """Return a new types factory."""
+    return TypesFactory()
+
+@pytest.fixture
+def x_sometime(types_factory):
     """Map x_sometime to time"""
-    icalendar.cal.types_factory.types_map["X-SOMETIME"] = "time"
+    types_factory.types_map["X-SOMETIME"] = "time"
     yield
-    icalendar.cal.types_factory.types_map.pop("X-SOMETIME")
+    types_factory.types_map.pop("X-SOMETIME")
 
 
 @pytest.fixture
 def factory():
     """Return a new component factory."""
-    return icalendar.ComponentFactory()
+    return icalendar.cal.component_factory.ComponentFactory()
 
 
 @pytest.fixture
@@ -209,8 +222,7 @@ def event_component(tzp):
 @pytest.fixture
 def c(tzp):
     """Return an empty component."""
-    c = Component()
-    return c
+    return Component()
 
 
 comp = c
@@ -235,7 +247,7 @@ def filled_event_component(c, calendar_component):
     return e
 
 
-@pytest.fixture()
+@pytest.fixture
 def calendar_with_resources(tzp):
     c = Calendar()
     c["resources"] = 'Chair, Table, "Room: 42"'
@@ -336,14 +348,27 @@ def doctest_import(name, *args, **kw):
     return __import__(name, *args, **kw)
 
 
+NOW = datetime(2025, 5, 17, 8, 6, 12)
+NOW_UTC = NOW.replace(tzinfo=timezone.utc)
+UID_DEFAULT = "d755cef5-2311-46ed-a0e1-6733c9e15c63"
+
+
+@pytest.fixture(autouse=True)
+def fixed_env(monkeypatch):
+    """Create a fixed test environment for the functions that are time and randomness dependent."""
+    # uuid is fixed for all tests
+    uid = uuid.UUID(UID_DEFAULT, version=4)
+    monkeypatch.setattr(uuid, "uuid4", lambda: uid)
+    # now is fixed
+    monkeypatch.setattr(Component, "_utc_now", staticmethod(lambda: NOW_UTC))
+
+
 @pytest.fixture
 def env_for_doctest(monkeypatch):
     """Modify the environment to make doctests run."""
     monkeypatch.setitem(sys.modules, "zoneinfo", zoneinfo)
     monkeypatch.setattr(zoneinfo, "ZoneInfo", DoctestZoneInfo)
     from icalendar.timezone.zoneinfo import ZONEINFO
-    uid = uuid.UUID("d755cef5-2311-46ed-a0e1-6733c9e15c63", version=4)
-    monkeypatch.setattr(uuid, "uuid4", lambda: uid)
 
     monkeypatch.setattr(ZONEINFO, "utc", zoneinfo.ZoneInfo("UTC"))
     return {"print": doctest_print}

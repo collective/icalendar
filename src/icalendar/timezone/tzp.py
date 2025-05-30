@@ -11,7 +11,8 @@ if TYPE_CHECKING:
 
     from dateutil.rrule import rrule
 
-    from icalendar import cal, prop
+    from icalendar import prop
+    from icalendar.cal import Timezone
 
     from .provider import TZProvider
 
@@ -80,7 +81,7 @@ class TZP:
             return dt.replace(tzinfo=None)
         return self.__provider.localize(to_datetime(dt), tz)
 
-    def cache_timezone_component(self, timezone_component: cal.Timezone) -> None:
+    def cache_timezone_component(self, timezone_component: Timezone.Timezone) -> None:
         """Cache the timezone that is created from a timezone component
         if it is not already known.
 
@@ -100,7 +101,7 @@ class TZP:
         """Make sure the until value works."""
         self.__provider.fix_rrule_until(rrule, ical_rrule)
 
-    def create_timezone(self, timezone_component: cal.Timezone) -> datetime.tzinfo:
+    def create_timezone(self, timezone_component: Timezone.Timezone) -> datetime.tzinfo:
         """Create a timezone from a timezone component.
 
         This component will not be cached.
@@ -140,7 +141,7 @@ class TZP:
         return self.__provider.name
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({repr(self.name)})"
+        return f"{self.__class__.__name__}({self.name!r})"
 
 
 __all__ = ["TZP"]
