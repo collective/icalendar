@@ -8,11 +8,13 @@ We use `Semantic Versioning <https://semver.org>`_.
 - Minor changes and bug fixes increase the **patch** version number.
 
 7.0.0 (unreleased)
+------------------
 
 Minor changes:
 
 - Split up ``cal.py`` into different files as sub-package.
 - Format more source code with ruff.
+- Exclude type checking block from test coverage.
 
 Breaking changes:
 
