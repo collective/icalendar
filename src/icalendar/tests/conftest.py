@@ -10,7 +10,6 @@ import pytest
 from dateutil import tz
 
 from icalendar import (
-    TZP,
     Alarm,
     Calendar,
     Component,
@@ -20,8 +19,9 @@ from icalendar import (
     TypesFactory,
     vUTCOffset,
 )
-from icalendar import tzp as _tzp
 from icalendar.compatibility import ZoneInfo, zoneinfo
+from icalendar.timezone import TZP
+from icalendar.timezone import tzp as _tzp
 
 from . import timezone_ids
 

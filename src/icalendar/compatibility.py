@@ -12,7 +12,7 @@ except ImportError:
 try:
     import zoneinfo
 except ImportError:
-    from backports.zoneinfo as zoneinfo
+    import backports.zoneinfo as zoneinfo
 
 ZoneInfo = zoneinfo.ZoneInfo
 
