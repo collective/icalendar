@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Optional, Sequence
 
 from icalendar.attr import (
     busy_type_property,
+    class_property,
     description_property,
     organizer_property,
     sequence_property,
@@ -22,6 +23,7 @@ if TYPE_CHECKING:
     from datetime import date, datetime
 
     from icalendar.cal.avaiable import Available
+    from icalendar.enums import CLASS
 
 
 class Availability(Component):
@@ -182,6 +184,7 @@ class Availability(Component):
     summary = summary_property
     description = description_property
     sequence = sequence_property
+    classification = class_property
 
     @property
     def available(self) -> list[Available]:
@@ -198,6 +201,7 @@ class Availability(Component):
         cls,
         /,
         categories: Sequence[str] = (),
+        classification: Optional[CLASS] = None,
         description: Optional[str] = None,
         dtstamp: Optional[date] = None,
         end: Optional[date | datetime] = None,
@@ -212,6 +216,7 @@ class Availability(Component):
 
         Arguments:
             categories: The :attr:`categories` of the availability.
+            classification: The :attr:`classification` of the availability.
             description: The :attr:`description` of the availability.
             dtstamp: The :attr:`DTSTAMP` of the availability.
                 If None, this is set to the current time.
@@ -240,6 +245,7 @@ class Availability(Component):
         availability.end = end
         availability.sequence = sequence
         availability.categories = categories
+        availability.classification = classification
         return availability
 
 

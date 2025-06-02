@@ -4,10 +4,11 @@ from __future__ import annotations
 
 import uuid
 from datetime import date, datetime, timedelta
-from typing import Optional, Sequence
+from typing import TYPE_CHECKING, Optional, Sequence
 
 from icalendar.attr import (
     categories_property,
+    class_property,
     color_property,
     create_single_property,
     descriptions_property,
@@ -20,6 +21,9 @@ from icalendar.attr import (
 )
 from icalendar.cal.component import Component
 from icalendar.error import IncompleteComponent
+
+if TYPE_CHECKING:
+    from icalendar.enums import CLASS
 
 
 class Journal(Component):
@@ -128,6 +132,7 @@ class Journal(Component):
 
     summary = summary_property
     descriptions = descriptions_property
+    classification = class_property
 
     @property
     def description(self) -> str:
@@ -156,6 +161,7 @@ class Journal(Component):
         cls,
         /,
         categories: Sequence[str] = (),
+        classification: Optional[CLASS] = None,
         color: Optional[str] = None,
         description: Optional[str | Sequence[str]] = None,
         dtstamp: Optional[date] = None,
@@ -170,6 +176,7 @@ class Journal(Component):
 
         Arguments:
             categories: The :attr:`categories` of the journal.
+            classification: The :attr:`classification` of the journal.
             color: The :attr:`color` of the journal.
             description: The :attr:`description` of the journal.
             dtstamp: The :attr:`DTSTAMP` of the journal.
@@ -198,6 +205,7 @@ class Journal(Component):
         journal.color = color
         journal.categories = categories
         journal.sequence = sequence
+        journal.classification = classification
         return journal
 
 

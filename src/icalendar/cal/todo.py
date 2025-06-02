@@ -10,6 +10,7 @@ from icalendar.attr import (
     X_MOZ_LASTACK_property,
     X_MOZ_SNOOZE_TIME_property,
     categories_property,
+    class_property,
     color_property,
     create_single_property,
     description_property,
@@ -30,6 +31,7 @@ from icalendar.tools import is_date
 
 if TYPE_CHECKING:
     from icalendar.alarms import Alarms
+    from icalendar.enums import CLASS
 
 
 class Todo(Component):
@@ -240,12 +242,14 @@ class Todo(Component):
     uid = uid_property
     summary = summary_property
     description = description_property
+    classification = class_property
 
     @classmethod
     def new(
         cls,
         /,
         categories: Sequence[str] = (),
+        classification: Optional[CLASS] = None,
         color: Optional[str] = None,
         description: Optional[str] = None,
         dtstamp: Optional[date] = None,
@@ -261,6 +265,7 @@ class Todo(Component):
 
         Arguments:
             categories: The :attr:`categories` of the todo.
+            classification: The :attr:`classification` of the todo.
             color: The :attr:`color` of the todo.
             description: The :attr:`description` of the todo.
             dtstamp: The :attr:`DTSTAMP` of the todo.
@@ -289,6 +294,7 @@ class Todo(Component):
         todo.color = color
         todo.categories = categories
         todo.sequence = sequence
+        todo.classification = classification
         return todo
 
 

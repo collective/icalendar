@@ -10,6 +10,7 @@ from icalendar.attr import (
     X_MOZ_LASTACK_property,
     X_MOZ_SNOOZE_TIME_property,
     categories_property,
+    class_property,
     color_property,
     create_single_property,
     description_property,
@@ -31,6 +32,7 @@ from icalendar.tools import is_date
 
 if TYPE_CHECKING:
     from icalendar.alarms import Alarms
+    from icalendar.enums import CLASS
 
 
 class Event(Component):
@@ -368,12 +370,14 @@ class Event(Component):
     uid = uid_property
     summary = summary_property
     description = description_property
+    classification = class_property
 
     @classmethod
     def new(
         cls,
         /,
         categories: Sequence[str] = (),
+        classification: Optional[CLASS] = None,
         color: Optional[str] = None,
         description: Optional[str] = None,
         dtstamp: Optional[date] = None,
@@ -389,6 +393,7 @@ class Event(Component):
 
         Arguments:
             categories: The :attr:`categories` of the event.
+            classification: The :attr:`classification` of the event.
             color: The :attr:`color` of the event.
             description: The :attr:`description` of the event.
             dtstamp: The :attr:`DTSTAMP` of the event.
@@ -417,6 +422,7 @@ class Event(Component):
         event.color = color
         event.categories = categories
         event.sequence = sequence
+        event.classification = classification
         return event
 
 
