@@ -46,3 +46,8 @@ def test_new_sets_default(test_uid):
     availability = Availability.new()
     assert availability.busy_type == BUSYTYPE.BUSY_UNAVAILABLE
     assert availability.uid == test_uid
+
+
+# TODO: Test other examples
+# TODO: add start and end, attributed for scheduling
+# TODO: make start a must
