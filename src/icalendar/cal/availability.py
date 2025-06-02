@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Optional, Sequence
 
 from icalendar.attr import (
     busy_type_property,
+    categories_property,
     class_property,
     description_property,
     location_property,
@@ -190,6 +191,7 @@ class Availability(Component):
     classification = class_property
     url = url_property
     location = location_property
+    categories = categories_property
 
     @property
     def available(self) -> list[Available]:
@@ -207,12 +209,14 @@ class Availability(Component):
         /,
         busy_type: Optional[BUSYTYPE] = None,
         categories: Sequence[str] = (),
+        created: Optional[date] = None,
         classification: Optional[CLASS] = None,
         description: Optional[str] = None,
-        dtstamp: Optional[date] = None,
+        last_modified: Optional[date] = None,
         location: Optional[str] = None,
         organizer: Optional[vCalAddress | str] = None,
         sequence: Optional[int] = None,
+        stamp: Optional[date] = None,
         summary: Optional[str] = None,
         uid: Optional[str | uuid.UUID] = None,
         url: Optional[str] = None,
@@ -225,12 +229,14 @@ class Availability(Component):
             busy_type: The :attr:`busy_type` of the availability.
             categories: The :attr:`categories` of the availability.
             classification: The :attr:`classification` of the availability.
+            created: The :attr:`Component.created` of the availability.
             description: The :attr:`description` of the availability.
-            dtstamp: The :attr:`DTSTAMP` of the availability.
-                If None, this is set to the current time.
+            last_modified: The :attr:`Component.last_modified` of the availability.
             location: The :attr:`location` of the availability.
             organizer: The :attr:`organizer` of the availability.
             sequence: The :attr:`sequence` of the availability.
+            stamp: The :attr:`Component.stamp` of the availability.
+                If None, this is set to the current time.
             summary: The :attr:`summary` of the availability.
             uid: The :attr:`uid` of the availability.
                 If None, this is set to a new :func:`uuid.uuid4`.
@@ -245,7 +251,9 @@ class Availability(Component):
         .. warning:: As time progresses, we will be stricter with the validation.
         """
         availability = super().new(
-            dtstamp=dtstamp if dtstamp is not None else cls._utc_now()
+            stamp=stamp if stamp is not None else cls._utc_now(),
+            created=created,
+            last_modified=last_modified,
         )
         availability.summary = summary
         availability.description = description

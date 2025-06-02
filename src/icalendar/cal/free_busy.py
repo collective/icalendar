@@ -63,7 +63,7 @@ class FreeBusy(Component):
     def new(
         cls,
         /,
-        dtstamp: Optional[date] = None,
+        stamp: Optional[date] = None,
         organizer: Optional[vCalAddress | str] = None,
         uid: Optional[str | uuid.UUID] = None,
         url: Optional[str] = None,
@@ -73,9 +73,9 @@ class FreeBusy(Component):
         This creates a new Alarm in accordance with :rfc:`5545`.
 
         Arguments:
-            dtstamp: The :attr:`DTSTAMP` of the component.
-                If None, this is set to the current time.
             organizer: The :attr:`organizer` of the component.
+            stamp: The :attr:`DTSTAMP` of the component.
+                If None, this is set to the current time.
             uid: The :attr:`uid` of the component.
                 If None, this is set to a new :func:`uuid.uuid4`.
             url: The :attr:`url` of the component.
@@ -88,9 +88,7 @@ class FreeBusy(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        free_busy = super().new(
-            dtstamp=dtstamp if dtstamp is not None else cls._utc_now()
-        )
+        free_busy = super().new(stamp=stamp if stamp is not None else cls._utc_now())
         free_busy.uid = uid if uid is not None else uuid.uuid4()
         free_busy.url = url
         free_busy.organizer = organizer

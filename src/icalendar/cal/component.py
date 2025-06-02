@@ -463,7 +463,7 @@ class Component(CaselessDict):
 
         return True
 
-    DTSTAMP = single_utc_property(
+    DTSTAMP = stamp = single_utc_property(
         "DTSTAMP",
         """RFC 5545:
 
@@ -501,6 +501,40 @@ class Component(CaselessDict):
     """,
     )
 
+    @property
+    def last_modified(self) -> datetime:
+        """Datetime when the information associated with the component was last revised.
+
+        Since :attr:`LAST_MODIFIED` is an optional property,
+        this returns :attr:`DTSTAMP` if :attr:`LAST_MODIFIED` is not set.
+        """
+        return self.LAST_MODIFIED or self.DTSTAMP
+
+    @last_modified.setter
+    def last_modified(self, value):
+        self.LAST_MODIFIED = value
+
+    @last_modified.deleter
+    def last_modified(self):
+        del self.LAST_MODIFIED
+
+    @property
+    def created(self) -> datetime:
+        """Datetime when the information associated with the component was created.
+
+        Since :attr:`CREATED` is an optional property,
+        this returns :attr:`DTSTAMP` if :attr:`CREATED` is not set.
+        """
+        return self.CREATED or self.DTSTAMP
+
+    @created.setter
+    def created(self, value):
+        self.CREATED = value
+
+    @created.deleter
+    def created(self):
+        del self.CREATED
+
     def is_thunderbird(self) -> bool:
         """Whether this component has attributes that indicate that Mozilla Thunderbird created it."""  # noqa: E501
         return any(attr.startswith("X-MOZ-") for attr in self.keys())
@@ -512,7 +546,7 @@ class Component(CaselessDict):
 
     uid = uid_property
 
-    created = single_utc_property(
+    CREATED = single_utc_property(
         "CREATED",
         """CREATED specifies the date and time that the calendar
 information was created by the calendar user agent in the calendar
@@ -528,13 +562,17 @@ Conformance:
 
     @classmethod
     def new(
-        cls, created: Optional[date] = None, dtstamp: Optional[date] = None
+        cls,
+        created: Optional[date] = None,
+        last_modified: Optional[date] = None,
+        stamp: Optional[date] = None,
     ) -> Component:
         """Create a new component.
 
         Arguments:
             created: The :attr:`created` of the component.
-            dtstamp: The :attr:`DTSTAMP` of the component.
+            last_modified: The :attr:`last_modified` of the component.
+            stamp: The :attr:`DTSTAMP` of the component.
 
         Raises:
             IncompleteComponent: If the content is not valid according to :rfc:`5545`.
@@ -542,10 +580,9 @@ Conformance:
         .. warning:: As time progresses, we will be stricter with the validation.
         """
         component = cls()
-        if dtstamp is not None:
-            component.DTSTAMP = dtstamp
-        if created is not None:
-            component.created = created
+        component.DTSTAMP = stamp
+        component.created = created
+        component.last_modified = last_modified
         return component
 
 

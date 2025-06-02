@@ -258,12 +258,14 @@ class Todo(Component):
         categories: Sequence[str] = (),
         classification: Optional[CLASS] = None,
         color: Optional[str] = None,
+        created: Optional[date] = None,
         description: Optional[str] = None,
-        dtstamp: Optional[date] = None,
         end: Optional[date | datetime] = None,
+        last_modified: Optional[date] = None,
         location: Optional[str] = None,
         organizer: Optional[vCalAddress | str] = None,
         sequence: Optional[int] = None,
+        stamp: Optional[date] = None,
         start: Optional[date | datetime] = None,
         summary: Optional[str] = None,
         uid: Optional[str | uuid.UUID] = None,
@@ -277,13 +279,15 @@ class Todo(Component):
             categories: The :attr:`categories` of the todo.
             classification: The :attr:`classification` of the todo.
             color: The :attr:`color` of the todo.
+            created: The :attr:`Component.created` of the todo.
             description: The :attr:`description` of the todo.
-            dtstamp: The :attr:`DTSTAMP` of the todo.
-                If None, this is set to the current time.
             end: The :attr:`end` of the todo.
+            last_modified: The :attr:`Component.last_modified` of the todo.
             location: The :attr:`location` of the todo.
             organizer: The :attr:`organizer` of the todo.
             sequence: The :attr:`sequence` of the todo.
+            stamp: The :attr:`Component.DTSTAMP` of the todo.
+                If None, this is set to the current time.
             start: The :attr:`start` of the todo.
             summary: The :attr:`summary` of the todo.
             uid: The :attr:`uid` of the todo.
@@ -298,7 +302,11 @@ class Todo(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        todo = super().new(dtstamp=dtstamp if dtstamp is not None else cls._utc_now())
+        todo = super().new(
+            stamp=stamp if stamp is not None else cls._utc_now(),
+            created=created,
+            last_modified=last_modified,
+        )
         todo.summary = summary
         todo.description = description
         todo.uid = uid if uid is not None else uuid.uuid4()

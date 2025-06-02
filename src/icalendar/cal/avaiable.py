@@ -63,10 +63,12 @@ class Available(Component):
         cls,
         /,
         categories: Sequence[str] = (),
+        created: Optional[date] = None,
         description: Optional[str] = None,
-        dtstamp: Optional[date] = None,
+        last_modified: Optional[date] = None,
         location: Optional[str] = None,
         sequence: Optional[int] = None,
+        stamp: Optional[date] = None,
         summary: Optional[str] = None,
         uid: Optional[str | uuid.UUID] = None,
     ):
@@ -76,11 +78,14 @@ class Available(Component):
 
         Arguments:
             categories: The :attr:`categories` of the Available component.
+            created: The :attr:`Component.created` of the Available component.
             description: The :attr:`description` of the Available component.
-            dtstamp: The :attr:`DTSTAMP` of the Available component.
-                If None, this is set to the current time.
+            last_modified: The :attr:`Component.last_modified` of the
+                Available component.
             location: The :attr:`location` of the Available component.
             sequence: The :attr:`sequence` of the Available component.
+            stamp: The :attr:`Component.stamp` of the Available component.
+                If None, this is set to the current time.
             summary: The :attr:`summary` of the Available component.
             uid: The :attr:`uid` of the Available component.
                 If None, this is set to a new :func:`uuid.uuid4`.
@@ -94,7 +99,9 @@ class Available(Component):
         .. warning:: As time progresses, we will be stricter with the validation.
         """
         available = super().new(
-            dtstamp=dtstamp if dtstamp is not None else cls._utc_now()
+            stamp=stamp if stamp is not None else cls._utc_now(),
+            created=created,
+            last_modified=last_modified,
         )
         available.summary = summary
         available.description = description

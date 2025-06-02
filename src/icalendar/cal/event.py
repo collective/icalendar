@@ -386,12 +386,14 @@ class Event(Component):
         categories: Sequence[str] = (),
         classification: Optional[CLASS] = None,
         color: Optional[str] = None,
+        created: Optional[date] = None,
         description: Optional[str] = None,
-        dtstamp: Optional[date] = None,
         end: Optional[date | datetime] = None,
+        last_modified: Optional[date] = None,
         location: Optional[str] = None,
         organizer: Optional[vCalAddress | str] = None,
         sequence: Optional[int] = None,
+        stamp: Optional[date] = None,
         start: Optional[date | datetime] = None,
         summary: Optional[str] = None,
         uid: Optional[str | uuid.UUID] = None,
@@ -405,13 +407,15 @@ class Event(Component):
             categories: The :attr:`categories` of the event.
             classification: The :attr:`classification` of the event.
             color: The :attr:`color` of the event.
+            created: The :attr:`Component.created` of the event.
             description: The :attr:`description` of the event.
-            dtstamp: The :attr:`DTSTAMP` of the event.
-                If None, this is set to the current time.
             end: The :attr:`end` of the event.
+            last_modified: The :attr:`Component.last_modified` of the event.
             location: The :attr:`location` of the event.
             organizer: The :attr:`organizer` of the event.
             sequence: The :attr:`sequence` of the event.
+            stamp: The :attr:`Component.stamp` of the event.
+                If None, this is set to the current time.
             start: The :attr:`start` of the event.
             summary: The :attr:`summary` of the event.
             uid: The :attr:`uid` of the event.
@@ -426,7 +430,11 @@ class Event(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        event = super().new(dtstamp=dtstamp if dtstamp is not None else cls._utc_now())
+        event = super().new(
+            stamp=stamp if stamp is not None else cls._utc_now(),
+            created=created,
+            last_modified=last_modified,
+        )
         event.summary = summary
         event.description = description
         event.uid = uid if uid is not None else uuid.uuid4()

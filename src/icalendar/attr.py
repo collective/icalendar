@@ -402,13 +402,16 @@ def single_utc_property(name: str, docs: str) -> property:
             # we might be in an attribute that is not typed
             value = vDDDTypes.from_ical(dt)
         else:
-            value = getattr(dt, "dt", None)
+            value = getattr(dt, "dt", dt)
         if value is None or not isinstance(value, date):
             raise InvalidCalendar(f"{name} must be a datetime in UTC, not {value}")
         return tzp.localize_utc(value)
 
-    def fset(self: Component, value: datetime):
+    def fset(self: Component, value: Optional[datetime]):
         """Set the value"""
+        if value is None:
+            fdel(self)
+            return
         if not isinstance(value, date):
             raise TypeError(f"{name} takes a datetime in UTC, not {value}")
         fdel(self)
@@ -1161,7 +1164,7 @@ Description:
     directory information with more structured specification of the
     location.  For example, the alternate representation may specify
     either an LDAP URL :rfc:`4516` pointing to an LDAP server entry or a
-    CID URL :rfc:`2392 pointing to a MIME body part containing a
+    CID URL :rfc:`2392` pointing to a MIME body part containing a
     Virtual-Information Card (vCard) :rfc:`2426` for the location.
 
 """,

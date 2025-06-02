@@ -168,10 +168,12 @@ class Journal(Component):
         categories: Sequence[str] = (),
         classification: Optional[CLASS] = None,
         color: Optional[str] = None,
+        created: Optional[date] = None,
         description: Optional[str | Sequence[str]] = None,
-        dtstamp: Optional[date] = None,
+        last_modified: Optional[date] = None,
         organizer: Optional[vCalAddress | str] = None,
         sequence: Optional[int] = None,
+        stamp: Optional[date] = None,
         start: Optional[date | datetime] = None,
         summary: Optional[str] = None,
         uid: Optional[str | uuid.UUID] = None,
@@ -185,11 +187,13 @@ class Journal(Component):
             categories: The :attr:`categories` of the journal.
             classification: The :attr:`classification` of the journal.
             color: The :attr:`color` of the journal.
+            created: The :attr:`Component.created` of the journal.
             description: The :attr:`description` of the journal.
-            dtstamp: The :attr:`DTSTAMP` of the journal.
-                If None, this is set to the current time.
+            last_modified: The :attr:`Component.last_modified` of the journal.
             organizer: The :attr:`organizer` of the journal.
             sequence: The :attr:`sequence` of the journal.
+            stamp: The :attr:`Component.stamp` of the journal.
+                If None, this is set to the current time.
             start: The :attr:`start` of the journal.
             summary: The :attr:`summary` of the journal.
             uid: The :attr:`uid` of the journal.
@@ -205,7 +209,9 @@ class Journal(Component):
         .. warning:: As time progresses, we will be stricter with the validation.
         """
         journal = super().new(
-            dtstamp=dtstamp if dtstamp is not None else cls._utc_now()
+            stamp=stamp if stamp is not None else cls._utc_now(),
+            created=created,
+            last_modified=last_modified,
         )
         journal.summary = summary
         journal.descriptions = description
