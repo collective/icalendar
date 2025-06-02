@@ -4,6 +4,8 @@ from icalendar.alarms import (
 )
 from icalendar.cal import (
     Alarm,
+    Availability,
+    Available,
     Calendar,
     Component,
     ComponentFactory,
@@ -76,6 +78,8 @@ __all__ = [
     "Alarm",
     "AlarmTime",
     "Alarms",
+    "Availability",
+    "Available",
     "Calendar",
     "Component",
     "ComponentEndMissing",

@@ -5,6 +5,8 @@ These are the defined components.
 """
 
 from .alarm import Alarm
+from .avaiable import Available
+from .availability import Availability
 from .calendar import Calendar
 from .component import Component
 from .component_factory import ComponentFactory
@@ -16,6 +18,8 @@ from .todo import Todo
 
 __all__ = [
     "Alarm",
+    "Availability",
+    "Available",
     "Calendar",
     "Component",
     "ComponentFactory",

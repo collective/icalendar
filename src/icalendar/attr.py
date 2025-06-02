@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Optional, Sequence, Union
 
 from icalendar.error import InvalidCalendar
 from icalendar.parser_tools import SEQUENCE_TYPES
-from icalendar.prop import vCategory, vDDDTypes, vDuration, vRecur, vText
+from icalendar.prop import vCalAddress, vCategory, vDDDTypes, vDuration, vRecur, vText
 from icalendar.timezone import tzp
 
 if TYPE_CHECKING:
@@ -962,6 +962,48 @@ Examples:
 """,  # noqa: E501
 )
 
+
+def _get_organizer(self: Component) -> Optional[vCalAddress]:
+    """ORGANIZER defines the organizer for a calendar component.
+
+    Property Parameters:
+        IANA, non-standard, language, common name,
+        directory entry reference, and sent-by property parameters can be
+        specified on this property.
+
+    Conformance:
+        This property MUST be specified in an iCalendar object
+        that specifies a group-scheduled calendar entity.  This property
+        MUST be specified in an iCalendar object that specifies the
+        publication of a calendar user's busy time.  This property MUST
+        NOT be specified in an iCalendar object that specifies only a time
+        zone definition or that defines calendar components that are not
+        group-scheduled components, but are components only on a single
+        user's calendar.
+
+    Description:
+        This property is specified within the "VEVENT",
+        "VTODO", and "VJOURNAL" calendar components to specify the
+        organizer of a group-scheduled calendar entity.  The property is
+        specified within the "VFREEBUSY" calendar component to specify the
+        calendar user requesting the free or busy time.  When publishing a
+        "VFREEBUSY" calendar component, the property is used to specify
+        the calendar that the published busy time came from.
+
+        The property has the property parameters "CN", for specifying the
+        common or display name associated with the "Organizer", "DIR", for
+        specifying a pointer to the directory information associated with
+        the "Organizer", "SENT-BY", for specifying another calendar user
+        that is acting on behalf of the "Organizer".  The non-standard
+        parameters may also be specified on this property.  If the
+        "LANGUAGE" property parameter is specified, the identified
+        language applies to the "CN" parameter value.
+    """
+    return self.get("ORGANIZER")
+
+
+organizer_property = property(_get_organizer)
+
 __all__ = [
     "categories_property",
     "color_property",
@@ -970,6 +1012,7 @@ __all__ = [
     "descriptions_property",
     "exdates_property",
     "multi_language_text_property",
+    "organizer_property",
     "property_del_duration",
     "property_doc_duration_template",
     "property_get_duration",
