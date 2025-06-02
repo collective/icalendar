@@ -1,10 +1,8 @@
 """This tests the parsing of the VAVAILABILITY component as defined in :rfc:`7953`."""
 
 from datetime import datetime
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from icalendar import Availability
+from icalendar import BUSYTYPE, Availability
 
 
 def test_uid(availabilities):
@@ -31,3 +29,20 @@ def test_subcomponents(availabilities):
     availability: Availability = availabilities.rfc_7953_1
     assert len(availability.subcomponents) == 1
     assert availability.available == availability.subcomponents
+
+
+def test_busy_type_default():
+    assert Availability().busy_type == BUSYTYPE.BUSY_UNAVAILABLE
+
+
+def test_set_busy_type():
+    availability = Availability()
+    availability.busy_type = BUSYTYPE.BUSY
+    assert availability.busy_type == BUSYTYPE.BUSY
+    assert availability["BUSYTYPE"] == "BUSY"
+
+
+def test_new_sets_default(test_uid):
+    availability = Availability.new()
+    assert availability.busy_type == BUSYTYPE.BUSY_UNAVAILABLE
+    assert availability.uid == test_uid

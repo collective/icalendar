@@ -17,8 +17,17 @@ from typing import Any, Callable, Optional
 
 import pytest
 
-from icalendar import Calendar, FreeBusy
-from icalendar.cal import Alarm, Component, Event, Journal, Todo
+from icalendar import (
+    Alarm,
+    Availability,
+    Available,
+    Calendar,
+    Component,
+    Event,
+    FreeBusy,
+    Journal,
+    Todo,
+)
 
 from .conftest import NOW_UTC, UID_DEFAULT
 
@@ -27,12 +36,27 @@ try:
 except ImportError:
     from backports.zoneinfo import ZoneInfo  # type: ignore  # noqa: PGH003
 
+
+# Test parametrization
+
 param_summary_components = pytest.mark.parametrize(
-    "component", [Event, Todo, Alarm, Journal]
+    "component", [Event, Todo, Alarm, Journal, Available, Availability]
 )
 param_description_components = pytest.mark.parametrize(
-    "component", [Event, Todo, Alarm, Journal]
+    "component", [Event, Todo, Alarm, Journal, Available, Availability]
 )
+COMPONENTS_DTSTAMP = {
+    Component,
+    Event,
+    Journal,
+    Todo,
+    FreeBusy,
+    Available,
+    Availability,
+}
+COMPONENTS_DTSTAMP_AUTOMATIC = {Event, Journal, Todo, FreeBusy, Available, Availability}
+COMPONENTS_UID_AUTOMATIC = {Event, Todo, Journal, Available, Availability}
+COMPONENTS_UID = {Event, Todo, Journal, Alarm, Calendar, Available, Availability}
 
 
 @param_summary_components
@@ -203,23 +227,6 @@ def assert_component_attribute_has_value(
         f"The attribute {property_name} of {component} "
         f"should be {expected_value!r} but got {actual_value!r}.\n{message}"
     )
-
-
-COMPONENTS_DTSTAMP = {
-    Component,
-    Event,
-    Journal,
-    Todo,
-    FreeBusy,
-}
-COMPONENTS_DTSTAMP_AUTOMATIC = {
-    Event,
-    Journal,
-    Todo,
-    FreeBusy,
-}
-COMPONENTS_UID_AUTOMATIC = {Event, Todo, Journal}
-COMPONENTS_UID = {Event, Todo, Journal, Alarm, Calendar}
 
 
 @pytest.mark.parametrize(

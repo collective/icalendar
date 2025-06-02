@@ -5,13 +5,22 @@ This is specified in :rfc:`7953`.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+import uuid
+from typing import TYPE_CHECKING, Optional, Sequence
 
-from icalendar.attr import organizer_property
+from icalendar.attr import (
+    busy_type_property,
+    description_property,
+    organizer_property,
+    sequence_property,
+    summary_property,
+)
 
 from .component import Component
 
 if TYPE_CHECKING:
+    from datetime import date, datetime
+
     from icalendar.cal.avaiable import Available
 
 
@@ -169,16 +178,69 @@ class Availability(Component):
     )
 
     organizer = organizer_property
+    busy_type = busy_type_property
+    summary = summary_property
+    description = description_property
+    sequence = sequence_property
 
     @property
     def available(self) -> list[Available]:
-        """All event components in the calendar.
+        """All VAVAILABLE sub-components.
 
         This is a shortcut to get all VAVAILABLE sub-components.
         Modifications do not change the calendar.
         Use :py:meth:`Component.add_component`.
         """
         return self.walk("VAVAILABLE")
+
+    @classmethod
+    def new(
+        cls,
+        /,
+        categories: Sequence[str] = (),
+        description: Optional[str] = None,
+        dtstamp: Optional[date] = None,
+        end: Optional[date | datetime] = None,
+        sequence: Optional[int] = None,
+        start: Optional[date | datetime] = None,
+        summary: Optional[str] = None,
+        uid: Optional[str | uuid.UUID] = None,
+    ):
+        """Create a new event with all required properties.
+
+        This creates a new Availability in accordance with :rfc:`7953`.
+
+        Arguments:
+            categories: The :attr:`categories` of the availability.
+            description: The :attr:`description` of the availability.
+            dtstamp: The :attr:`DTSTAMP` of the availability.
+                If None, this is set to the current time.
+            end: The :attr:`end` of the availability.
+            sequence: The :attr:`sequence` of the availability.
+            start: The :attr:`start` of the availability.
+            summary: The :attr:`summary` of the availability.
+            uid: The :attr:`uid` of the availability.
+                If None, this is set to a new :func:`uuid.uuid4`.
+
+        Returns:
+            :class:`Availability`
+
+        Raises:
+            IncompleteComponent: If the content is not valid according to :rfc:`7953`.
+
+        .. warning:: As time progresses, we will be stricter with the validation.
+        """
+        availability = super().new(
+            dtstamp=dtstamp if dtstamp is not None else cls._utc_now()
+        )
+        availability.summary = summary
+        availability.description = description
+        availability.uid = uid if uid is not None else uuid.uuid4()
+        availability.start = start
+        availability.end = end
+        availability.sequence = sequence
+        availability.categories = categories
+        return availability
 
 
 __all__ = ["Availability"]

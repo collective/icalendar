@@ -17,7 +17,16 @@ from icalendar.cal import (
     TimezoneStandard,
     Todo,
 )
-from icalendar.enums import CUTYPE, FBTYPE, PARTSTAT, RANGE, RELATED, RELTYPE, ROLE
+from icalendar.enums import (
+    BUSYTYPE,
+    CUTYPE,
+    FBTYPE,
+    PARTSTAT,
+    RANGE,
+    RELATED,
+    RELTYPE,
+    ROLE,
+)
 from icalendar.error import (
     ComponentEndMissing,
     ComponentStartMissing,
@@ -68,6 +77,7 @@ from icalendar.timezone import use_pytz, use_zoneinfo
 from .version import __version__, __version_tuple__, version, version_tuple
 
 __all__ = [
+    "BUSYTYPE",
     "CUTYPE",
     "FBTYPE",
     "PARTSTAT",

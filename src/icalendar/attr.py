@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import itertools
 from datetime import date, datetime, timedelta
-from typing import TYPE_CHECKING, Optional, Sequence, Union
+from typing import TYPE_CHECKING, Optional, Sequence, TypeVar, Union
 
+from icalendar.enums import BUSYTYPE, StrEnum
 from icalendar.error import InvalidCalendar
 from icalendar.parser_tools import SEQUENCE_TYPES
 from icalendar.prop import vCalAddress, vCategory, vDDDTypes, vDuration, vRecur, vText
@@ -1002,9 +1003,86 @@ def _get_organizer(self: Component) -> Optional[vCalAddress]:
     return self.get("ORGANIZER")
 
 
+ENUM_TYPE = TypeVar("ENUM_TYPE", bound=StrEnum)
+
+
+def single_string_enum_property(
+    name: str, enum: ENUM_TYPE, default: StrEnum, docs: str
+) -> property:
+    """Create a property to access a single string value and convert it to an enum."""
+    prop = single_string_property(name, docs, default=default)
+
+    def fget(self: Component) -> ENUM_TYPE:
+        value = prop.fget(self)
+        return enum(str(value))
+
+    return property(fget, prop.fset, prop.fdel, doc=docs)
+
+
 organizer_property = property(_get_organizer)
+busy_type_property = single_string_enum_property(
+    "BUSYTYPE",
+    BUSYTYPE,
+    BUSYTYPE.BUSY_UNAVAILABLE,
+    """BUSYTYPE specifies the default busy time type.
+
+Returns:
+    :class:`icalendar.enums.BUSYTYPE`
+
+Description:
+    This property is used to specify the default busy time
+    type. The values correspond to those used by the FBTYPE"
+    parameter used on a "FREEBUSY" property, with the exception that
+    the "FREE" value is not used in this property.  If not specified
+    on a component that allows this property, the default is "BUSY-
+    UNAVAILABLE".
+""",
+)
+
+priority_property = single_int_property(
+    "PRIORITY",
+    0,
+    """
+
+Conformance:
+    This property can be specified in "VEVENT" and "VTODO" calendar components
+    according to :rfc:`5545`.
+    :rfc:`7953` adds this property to "VAVAILABILITY".
+
+Description:
+    This priority is specified as an integer in the range 0
+    to 9.  A value of 0 specifies an undefined priority.  A value of 1
+    is the highest priority.  A value of 2 is the second highest
+    priority.  Subsequent numbers specify a decreasing ordinal
+    priority.  A value of 9 is the lowest priority.
+
+    A CUA with a three-level priority scheme of "HIGH", "MEDIUM", and
+    "LOW" is mapped into this property such that a property value in
+    the range of 1 to 4 specifies "HIGH" priority.  A value of 5 is
+    the normal or "MEDIUM" priority.  A value in the range of 6 to 9
+    is "LOW" priority.
+
+    A CUA with a priority schema of "A1", "A2", "A3", "B1", "B2", ...,
+    "C3" is mapped into this property such that a property value of 1
+    specifies "A1", a property value of 2 specifies "A2", a property
+    value of 3 specifies "A3", and so forth up to a property value of
+    9 specifies "C3".
+
+    Other integer values are reserved for future use.
+
+    Within a "VEVENT" calendar component, this property specifies a
+    priority for the event.  This property may be useful when more
+    than one event is scheduled for a given time period.
+
+    Within a "VTODO" calendar component, this property specified a
+    priority for the to-do.  This property is useful in prioritizing
+    multiple action items for a given time period.
+""",
+)
+
 
 __all__ = [
+    "busy_type_property",
     "categories_property",
     "color_property",
     "create_single_property",

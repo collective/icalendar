@@ -14,6 +14,13 @@ class Enum(_Enum):
 class StrEnum(str, Enum):
     """Enum for strings."""
 
+    def __str__(self) -> str:
+        """Convert to a string.
+
+        This is needed when we set the value directly in components.
+        """
+        return self.value
+
 
 class PARTSTAT(StrEnum):
     """Enum for PARTSTAT from :rfc:`5545`.
@@ -45,6 +52,8 @@ class FBTYPE(StrEnum):
         ``BUSY``,
         ``BUSY-UNAVAILABLE``,
         ``BUSY-TENTATIVE``
+
+    See also :class:`BUSYTYPE`.
     """
 
     FREE = "FREE"
@@ -114,9 +123,9 @@ class ROLE(StrEnum):
 
     Attributes:
         ``CHAIR``,
-        ``REQ-PARTICIPANT``,
-        ``OPT-PARTICIPANT``,
-        ``NON-PARTICIPANT``
+        ``REQ_PARTICIPANT``,
+        ``OPT_PARTICIPANT``,
+        ``NON_PARTICIPANT``
     """
 
     CHAIR = "CHAIR"
@@ -125,7 +134,37 @@ class ROLE(StrEnum):
     NON_PARTICIPANT = "NON-PARTICIPANT"
 
 
+class BUSYTYPE(StrEnum):
+    """Enum for BUSYTYPE from :rfc:`7953`.
+
+        Attributes:
+            ``BUSY``,
+            ``BUSY_UNAVAILABLE``,
+            ``BUSY_TENTATIVE``
+
+    Description:
+        This property is used to specify the default busy time
+        type.  The values correspond to those used by the :class:`FBTYPE`
+        parameter used on a "FREEBUSY" property, with the exception that
+        the "FREE" value is not used in this property.  If not specified
+        on a component that allows this property, the default is "BUSY-
+        UNAVAILABLE".
+
+    Example:
+        The following is an example of this property:
+
+        .. code-block:: text
+
+            BUSYTYPE:BUSY
+    """
+
+    BUSY = "BUSY"
+    BUSY_UNAVAILABLE = "BUSY-UNAVAILABLE"
+    BUSY_TENTATIVE = "BUSY-TENTATIVE"
+
+
 __all__ = [
+    "BUSYTYPE",
     "CUTYPE",
     "FBTYPE",
     "PARTSTAT",

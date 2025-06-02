@@ -3,7 +3,23 @@
 This is specified in :rfc:`7953`.
 """
 
+from __future__ import annotations
+
+import uuid
+from typing import TYPE_CHECKING, Optional, Sequence
+
+from icalendar.attr import (
+    categories_property,
+    description_property,
+    sequence_property,
+    summary_property,
+    uid_property,
+)
+
 from .component import Component
+
+if TYPE_CHECKING:
+    from datetime import date, datetime
 
 
 class Available(Component):
@@ -33,6 +49,61 @@ class Available(Component):
     """
 
     name = "VAVAILABLE"
+
+    summary = summary_property
+    description = description_property
+    sequence = sequence_property
+    categories = categories_property
+    uid = uid_property
+
+    @classmethod
+    def new(
+        cls,
+        /,
+        categories: Sequence[str] = (),
+        description: Optional[str] = None,
+        dtstamp: Optional[date] = None,
+        end: Optional[date | datetime] = None,
+        sequence: Optional[int] = None,
+        start: Optional[date | datetime] = None,
+        summary: Optional[str] = None,
+        uid: Optional[str | uuid.UUID] = None,
+    ):
+        """Create a new Available component with all required properties.
+
+        This creates a new Available component in accordance with :rfc:`5545`.
+
+        Arguments:
+            categories: The :attr:`categories` of the Available component.
+            description: The :attr:`description` of the Available component.
+            dtstamp: The :attr:`DTSTAMP` of the Available component.
+                If None, this is set to the current time.
+            end: The :attr:`end` of the Available component.
+            sequence: The :attr:`sequence` of the Available component.
+            start: The :attr:`start` of the Available component.
+            summary: The :attr:`summary` of the Available component.
+            uid: The :attr:`uid` of the Available component.
+                If None, this is set to a new :func:`uuid.uuid4`.
+
+        Returns:
+            :class:`Available`
+
+        Raises:
+            IncompleteComponent: If the content is not valid according to :rfc:`7953`.
+
+        .. warning:: As time progresses, we will be stricter with the validation.
+        """
+        available = super().new(
+            dtstamp=dtstamp if dtstamp is not None else cls._utc_now()
+        )
+        available.summary = summary
+        available.description = description
+        available.uid = uid if uid is not None else uuid.uuid4()
+        available.start = start
+        available.end = end
+        available.sequence = sequence
+        available.categories = categories
+        return available
 
 
 __all__ = ["Available"]

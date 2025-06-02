@@ -360,6 +360,12 @@ NOW_UTC = NOW.replace(tzinfo=timezone.utc)
 UID_DEFAULT = "d755cef5-2311-46ed-a0e1-6733c9e15c63"
 
 
+@pytest.fixture
+def test_uid() -> str:
+    """The UID that tests always create."""
+    return UID_DEFAULT
+
+
 @pytest.fixture(autouse=True)
 def fixed_env(monkeypatch):
     """Create a fixed test environment for the functions that are time and randomness dependent."""
