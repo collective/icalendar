@@ -15,6 +15,7 @@ from icalendar.timezone import tzp
 
 _marker = []
 
+
 class Component(CaselessDict):
     """Base class for calendar components.
 
@@ -40,7 +41,9 @@ class Component(CaselessDict):
     singletons = ()  # These properties must only appear once
     multiple = ()  # may occur more than once
     exclusive = ()  # These properties are mutually exclusive
-    inclusive : tuple[str] | tuple[tuple[str, str]]= ()  # if any occurs the other(s) MUST occur
+    inclusive: (
+        tuple[str] | tuple[tuple[str, str]]
+    ) = ()  # if any occurs the other(s) MUST occur
     # ('duration', 'repeat')
     ignore_exceptions = False  # if True, and we cannot parse this
     # component, we will silently ignore
@@ -52,7 +55,7 @@ class Component(CaselessDict):
     _components_factory: ClassVar[Optional[ComponentFactory]] = None
 
     @classmethod
-    def get_component_class(cls, name:str) -> type[Component]:
+    def get_component_class(cls, name: str) -> type[Component]:
         """Return a component with this name.
 
         Arguments:
@@ -509,11 +512,28 @@ class Component(CaselessDict):
 
     uid = uid_property
 
+    created = single_utc_property(
+        "CREATED",
+        """CREATED specifies the date and time that the calendar
+information was created by the calendar user agent in the calendar
+store.
+
+Conformance:
+    The property can be specified once in "VEVENT",
+    "VTODO", or "VJOURNAL" calendar components.  The value MUST be
+    specified as a date with UTC time.
+
+""",
+    )
+
     @classmethod
-    def new(cls, dtstamp: Optional[date] = None) -> Component:
+    def new(
+        cls, created: Optional[date] = None, dtstamp: Optional[date] = None
+    ) -> Component:
         """Create a new component.
 
         Arguments:
+            created: The :attr:`created` of the component.
             dtstamp: The :attr:`DTSTAMP` of the component.
 
         Raises:
@@ -524,6 +544,8 @@ class Component(CaselessDict):
         component = cls()
         if dtstamp is not None:
             component.DTSTAMP = dtstamp
+        if created is not None:
+            component.created = created
         return component
 
 

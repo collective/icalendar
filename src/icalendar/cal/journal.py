@@ -13,17 +13,20 @@ from icalendar.attr import (
     create_single_property,
     descriptions_property,
     exdates_property,
+    organizer_property,
     rdates_property,
     rrules_property,
     sequence_property,
     summary_property,
     uid_property,
+    url_property,
 )
 from icalendar.cal.component import Component
 from icalendar.error import IncompleteComponent
 
 if TYPE_CHECKING:
     from icalendar.enums import CLASS
+    from icalendar.prop import vCalAddress
 
 
 class Journal(Component):
@@ -133,6 +136,8 @@ class Journal(Component):
     summary = summary_property
     descriptions = descriptions_property
     classification = class_property
+    url = url_property
+    organizer = organizer_property
 
     @property
     def description(self) -> str:
@@ -165,10 +170,12 @@ class Journal(Component):
         color: Optional[str] = None,
         description: Optional[str | Sequence[str]] = None,
         dtstamp: Optional[date] = None,
+        organizer: Optional[vCalAddress | str] = None,
         sequence: Optional[int] = None,
         start: Optional[date | datetime] = None,
         summary: Optional[str] = None,
         uid: Optional[str | uuid.UUID] = None,
+        url: Optional[str] = None,
     ):
         """Create a new journal entry with all required properties.
 
@@ -181,11 +188,13 @@ class Journal(Component):
             description: The :attr:`description` of the journal.
             dtstamp: The :attr:`DTSTAMP` of the journal.
                 If None, this is set to the current time.
+            organizer: The :attr:`organizer` of the journal.
             sequence: The :attr:`sequence` of the journal.
             start: The :attr:`start` of the journal.
             summary: The :attr:`summary` of the journal.
             uid: The :attr:`uid` of the journal.
                 If None, this is set to a new :func:`uuid.uuid4`.
+            url: The :attr:`url` of the journal.
 
         Returns:
             :class:`Journal`
@@ -206,6 +215,8 @@ class Journal(Component):
         journal.categories = categories
         journal.sequence = sequence
         journal.classification = classification
+        journal.url = url
+        journal.organizer = organizer
         return journal
 
 

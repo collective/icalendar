@@ -1003,6 +1003,20 @@ def _get_organizer(self: Component) -> Optional[vCalAddress]:
     return self.get("ORGANIZER")
 
 
+def _set_organizer(self: Component, value: Optional[vCalAddress | str]):
+    """Set the value."""
+    _del_organizer(self)
+    if value is not None:
+        self.add("ORGANIZER", value)
+
+
+def _del_organizer(self: Component):
+    """Delete the value."""
+    self.pop("ORGANIZER")
+
+
+organizer_property = property(_get_organizer, _set_organizer, _del_organizer)
+
 ENUM_TYPE = TypeVar("ENUM_TYPE", bound=StrEnum)
 
 
@@ -1019,7 +1033,6 @@ def single_string_enum_property(
     return property(fget, prop.fset, prop.fdel, doc=docs)
 
 
-organizer_property = property(_get_organizer)
 busy_type_property = single_string_enum_property(
     "BUSYTYPE",
     BUSYTYPE,
@@ -1111,6 +1124,49 @@ Description:
 """,
 )
 
+url_property = single_string_property(
+    "URL",
+    """A Uniform Resource Locator (URL) associated with the iCalendar object.
+
+Description:
+    This property may be used in a calendar component to
+    convey a location where a more dynamic rendition of the calendar
+    information associated with the calendar component can be found.
+    This memo does not attempt to standardize the form of the URI, nor
+    the format of the resource pointed to by the property value.  If
+    the URL property and Content-Location MIME header are both
+    specified, they MUST point to the same resource.
+""",
+)
+
+location_property = multi_language_text_property(
+    "LOCATION",
+    None,
+    """The intended venue for the activity defined by a calendar component.
+
+Property Parameters:
+    IANA, non-standard, alternate text
+    representation, and language property parameters can be specified
+    on this property.
+
+Conformance:
+    Since :rfc:`5545`, this property can be specified in "VEVENT" or "VTODO"
+    calendar component.
+    :rfc:`7953` adds this property to "VAVAILABILITY" and "VAVAILABLE".
+
+Description:
+    Specific venues such as conference or meeting rooms may
+    be explicitly specified using this property.  An alternate
+    representation may be specified that is a URI that points to
+    directory information with more structured specification of the
+    location.  For example, the alternate representation may specify
+    either an LDAP URL :rfc:`4516` pointing to an LDAP server entry or a
+    CID URL :rfc:`2392 pointing to a MIME body part containing a
+    Virtual-Information Card (vCard) :rfc:`2426` for the location.
+
+""",
+)
+
 __all__ = [
     "busy_type_property",
     "categories_property",
@@ -1120,6 +1176,7 @@ __all__ = [
     "description_property",
     "descriptions_property",
     "exdates_property",
+    "location_property",
     "multi_language_text_property",
     "organizer_property",
     "property_del_duration",
@@ -1133,4 +1190,5 @@ __all__ = [
     "single_utc_property",
     "summary_property",
     "uid_property",
+    "url_property",
 ]

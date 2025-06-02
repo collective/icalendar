@@ -12,18 +12,21 @@ from icalendar.attr import (
     busy_type_property,
     class_property,
     description_property,
+    location_property,
     organizer_property,
     sequence_property,
     summary_property,
+    url_property,
 )
 
 from .component import Component
 
 if TYPE_CHECKING:
-    from datetime import date, datetime
+    from datetime import date
 
     from icalendar.cal.avaiable import Available
-    from icalendar.enums import CLASS
+    from icalendar.enums import BUSYTYPE, CLASS
+    from icalendar.prop import vCalAddress
 
 
 class Availability(Component):
@@ -185,6 +188,8 @@ class Availability(Component):
     description = description_property
     sequence = sequence_property
     classification = class_property
+    url = url_property
+    location = location_property
 
     @property
     def available(self) -> list[Available]:
@@ -200,32 +205,36 @@ class Availability(Component):
     def new(
         cls,
         /,
+        busy_type: Optional[BUSYTYPE] = None,
         categories: Sequence[str] = (),
         classification: Optional[CLASS] = None,
         description: Optional[str] = None,
         dtstamp: Optional[date] = None,
-        end: Optional[date | datetime] = None,
+        location: Optional[str] = None,
+        organizer: Optional[vCalAddress | str] = None,
         sequence: Optional[int] = None,
-        start: Optional[date | datetime] = None,
         summary: Optional[str] = None,
         uid: Optional[str | uuid.UUID] = None,
+        url: Optional[str] = None,
     ):
         """Create a new event with all required properties.
 
         This creates a new Availability in accordance with :rfc:`7953`.
 
         Arguments:
+            busy_type: The :attr:`busy_type` of the availability.
             categories: The :attr:`categories` of the availability.
             classification: The :attr:`classification` of the availability.
             description: The :attr:`description` of the availability.
             dtstamp: The :attr:`DTSTAMP` of the availability.
                 If None, this is set to the current time.
-            end: The :attr:`end` of the availability.
+            location: The :attr:`location` of the availability.
+            organizer: The :attr:`organizer` of the availability.
             sequence: The :attr:`sequence` of the availability.
-            start: The :attr:`start` of the availability.
             summary: The :attr:`summary` of the availability.
             uid: The :attr:`uid` of the availability.
                 If None, this is set to a new :func:`uuid.uuid4`.
+            url: The :attr:`url` of the availability.
 
         Returns:
             :class:`Availability`
@@ -241,11 +250,13 @@ class Availability(Component):
         availability.summary = summary
         availability.description = description
         availability.uid = uid if uid is not None else uuid.uuid4()
-        availability.start = start
-        availability.end = end
         availability.sequence = sequence
         availability.categories = categories
         availability.classification = classification
+        availability.url = url
+        availability.busy_type = busy_type
+        availability.organizer = organizer
+        availability.location = location
         return availability
 
 

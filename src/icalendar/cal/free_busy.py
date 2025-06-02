@@ -5,11 +5,13 @@ from __future__ import annotations
 import uuid
 from typing import TYPE_CHECKING, Optional
 
-from icalendar.attr import uid_property
+from icalendar.attr import organizer_property, uid_property, url_property
 from icalendar.cal.component import Component
 
 if TYPE_CHECKING:
     from datetime import date
+
+    from icalendar.prop import vCalAddress
 
 
 class FreeBusy(Component):
@@ -54,13 +56,17 @@ class FreeBusy(Component):
         "RSTATUS",
     )
     uid = uid_property
+    url = url_property
+    organizer = organizer_property
 
     @classmethod
     def new(
         cls,
         /,
         dtstamp: Optional[date] = None,
+        organizer: Optional[vCalAddress | str] = None,
         uid: Optional[str | uuid.UUID] = None,
+        url: Optional[str] = None,
     ):
         """Create a new alarm with all required properties.
 
@@ -69,8 +75,10 @@ class FreeBusy(Component):
         Arguments:
             dtstamp: The :attr:`DTSTAMP` of the component.
                 If None, this is set to the current time.
+            organizer: The :attr:`organizer` of the component.
             uid: The :attr:`uid` of the component.
                 If None, this is set to a new :func:`uuid.uuid4`.
+            url: The :attr:`url` of the component.
 
         Returns:
             :class:`FreeBusy`
@@ -84,6 +92,8 @@ class FreeBusy(Component):
             dtstamp=dtstamp if dtstamp is not None else cls._utc_now()
         )
         free_busy.uid = uid if uid is not None else uuid.uuid4()
+        free_busy.url = url
+        free_busy.organizer = organizer
         return free_busy
 
 

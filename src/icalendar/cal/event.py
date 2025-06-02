@@ -15,6 +15,8 @@ from icalendar.attr import (
     create_single_property,
     description_property,
     exdates_property,
+    location_property,
+    organizer_property,
     property_del_duration,
     property_doc_duration_template,
     property_get_duration,
@@ -24,6 +26,7 @@ from icalendar.attr import (
     sequence_property,
     summary_property,
     uid_property,
+    url_property,
 )
 from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
@@ -33,6 +36,7 @@ from icalendar.tools import is_date
 if TYPE_CHECKING:
     from icalendar.alarms import Alarms
     from icalendar.enums import CLASS
+    from icalendar.prop import vCalAddress
 
 
 class Event(Component):
@@ -371,6 +375,9 @@ class Event(Component):
     summary = summary_property
     description = description_property
     classification = class_property
+    url = url_property
+    organizer = organizer_property
+    location = location_property
 
     @classmethod
     def new(
@@ -382,10 +389,13 @@ class Event(Component):
         description: Optional[str] = None,
         dtstamp: Optional[date] = None,
         end: Optional[date | datetime] = None,
+        location: Optional[str] = None,
+        organizer: Optional[vCalAddress | str] = None,
         sequence: Optional[int] = None,
         start: Optional[date | datetime] = None,
         summary: Optional[str] = None,
         uid: Optional[str | uuid.UUID] = None,
+        url: Optional[str] = None,
     ):
         """Create a new event with all required properties.
 
@@ -399,11 +409,14 @@ class Event(Component):
             dtstamp: The :attr:`DTSTAMP` of the event.
                 If None, this is set to the current time.
             end: The :attr:`end` of the event.
+            location: The :attr:`location` of the event.
+            organizer: The :attr:`organizer` of the event.
             sequence: The :attr:`sequence` of the event.
             start: The :attr:`start` of the event.
             summary: The :attr:`summary` of the event.
             uid: The :attr:`uid` of the event.
                 If None, this is set to a new :func:`uuid.uuid4`.
+            url: The :attr:`url` of the event.
 
         Returns:
             :class:`Event`
@@ -423,6 +436,9 @@ class Event(Component):
         event.categories = categories
         event.sequence = sequence
         event.classification = classification
+        event.url = url
+        event.organizer = organizer
+        event.location = location
         return event
 
 

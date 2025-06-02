@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING, Optional, Sequence
 from icalendar.attr import (
     categories_property,
     description_property,
+    location_property,
     sequence_property,
     summary_property,
     uid_property,
@@ -19,7 +20,7 @@ from icalendar.attr import (
 from .component import Component
 
 if TYPE_CHECKING:
-    from datetime import date, datetime
+    from datetime import date
 
 
 class Available(Component):
@@ -55,6 +56,7 @@ class Available(Component):
     sequence = sequence_property
     categories = categories_property
     uid = uid_property
+    location = location_property
 
     @classmethod
     def new(
@@ -63,9 +65,8 @@ class Available(Component):
         categories: Sequence[str] = (),
         description: Optional[str] = None,
         dtstamp: Optional[date] = None,
-        end: Optional[date | datetime] = None,
+        location: Optional[str] = None,
         sequence: Optional[int] = None,
-        start: Optional[date | datetime] = None,
         summary: Optional[str] = None,
         uid: Optional[str | uuid.UUID] = None,
     ):
@@ -78,9 +79,8 @@ class Available(Component):
             description: The :attr:`description` of the Available component.
             dtstamp: The :attr:`DTSTAMP` of the Available component.
                 If None, this is set to the current time.
-            end: The :attr:`end` of the Available component.
+            location: The :attr:`location` of the Available component.
             sequence: The :attr:`sequence` of the Available component.
-            start: The :attr:`start` of the Available component.
             summary: The :attr:`summary` of the Available component.
             uid: The :attr:`uid` of the Available component.
                 If None, this is set to a new :func:`uuid.uuid4`.
@@ -99,10 +99,9 @@ class Available(Component):
         available.summary = summary
         available.description = description
         available.uid = uid if uid is not None else uuid.uuid4()
-        available.start = start
-        available.end = end
         available.sequence = sequence
         available.categories = categories
+        available.location = location
         return available
 
 
