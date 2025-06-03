@@ -34,7 +34,7 @@ from .component import Component
 if TYPE_CHECKING:
     from datetime import date
 
-    from icalendar.cal.avaiable import Available
+    from icalendar.cal.available import Available
     from icalendar.enums import BUSYTYPE, CLASS
     from icalendar.prop import vCalAddress
 

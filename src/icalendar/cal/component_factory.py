@@ -14,8 +14,8 @@ class ComponentFactory(CaselessDict):
         """Set keys to upper for initial dict."""
         super().__init__(*args, **kwargs)
         from icalendar.cal.alarm import Alarm
-        from icalendar.cal.avaiable import Available
         from icalendar.cal.availability import Availability
+        from icalendar.cal.available import Available
         from icalendar.cal.calendar import Calendar
         from icalendar.cal.event import Event
         from icalendar.cal.free_busy import FreeBusy
