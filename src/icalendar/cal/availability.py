@@ -12,6 +12,7 @@ from icalendar.attr import (
     busy_type_property,
     categories_property,
     class_property,
+    contacts_property,
     description_property,
     location_property,
     organizer_property,
@@ -194,6 +195,7 @@ class Availability(Component):
     location = location_property
     categories = categories_property
     priority = priority_property
+    contacts = contacts_property
 
     @property
     def available(self) -> list[Available]:
@@ -210,8 +212,9 @@ class Availability(Component):
         cls,
         /,
         busy_type: Optional[BUSYTYPE] = None,
-        comments: list[str] | str | None = None,
         categories: Sequence[str] = (),
+        comments: list[str] | str | None = None,
+        contacts: list[str] | str | None = None,
         created: Optional[date] = None,
         classification: Optional[CLASS] = None,
         description: Optional[str] = None,
@@ -234,6 +237,7 @@ class Availability(Component):
             categories: The :attr:`categories` of the availability.
             classification: The :attr:`classification` of the availability.
             comments: The :attr:`Component.comments` of the availability.
+            contacts: The :attr:`contacts` of the availability.
             created: The :attr:`Component.created` of the availability.
             description: The :attr:`description` of the availability.
             last_modified: The :attr:`Component.last_modified` of the availability.
@@ -272,6 +276,7 @@ class Availability(Component):
         availability.location = location
         availability.comments = comments
         availability.priority = priority
+        availability.contacts = contacts
         return availability
 
 

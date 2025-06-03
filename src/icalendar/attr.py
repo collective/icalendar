@@ -907,7 +907,7 @@ Instead use the duration property (lower case).
 """
 
 
-def get_multi_text_property(name: str, docs: str) -> property:
+def multi_text_property(name: str, docs: str) -> property:
     """Get a property that can occur several times and is text.
 
     Examples: Journal.descriptions, Event.comments
@@ -940,7 +940,7 @@ def get_multi_text_property(name: str, docs: str) -> property:
     return property(fget, fset, fdel, docs)
 
 
-descriptions_property = get_multi_text_property(
+descriptions_property = multi_text_property(
     "DESCRIPTION",
     """DESCRIPTION provides a more complete description of the calendar component than that provided by the "SUMMARY" property.
 
@@ -970,7 +970,7 @@ Examples:
 """,  # noqa: E501
 )
 
-comments_property = get_multi_text_property(
+comments_property = multi_text_property(
     "COMMENT",
     """COMMENT is used to specify a comment to the calendar user.
 
@@ -1197,12 +1197,79 @@ Description:
 """,
 )
 
+contacts_property = multi_text_property(
+    "CONTACT",
+    """Contact information associated with the calendar component.
+
+Purpose:
+    This property is used to represent contact information or
+    alternately a reference to contact information associated with the
+    calendar component.
+
+Property Parameters:
+    IANA, non-standard, alternate text
+    representation, and language property parameters can be specified
+    on this property.
+
+Conformance:
+    In :rfc:`5545`, this property can be specified in a "VEVENT", "VTODO",
+    "VJOURNAL", or "VFREEBUSY" calendar component.
+    In :rfc:`7953`, this property can be specified in a "VAVAILABILITY"
+    amd "VAVAILABLE" calendar component.
+
+Description:
+    The property value consists of textual contact
+    information.  An alternative representation for the property value
+    can also be specified that refers to a URI pointing to an
+    alternate form, such as a vCard :rfc:`2426`, for the contact
+    information.
+
+Example:
+    The following is an example of this property referencing
+    textual contact information:
+
+    .. code-block:: text
+
+        CONTACT:Jim Dolittle\\, ABC Industries\\, +1-919-555-1234
+
+    The following is an example of this property with an alternate
+    representation of an LDAP URI to a directory entry containing the
+    contact information:
+
+    .. code-block:: text
+
+        CONTACT;ALTREP="ldap://example.com:6666/o=ABC%20Industries\\,
+        c=US???(cn=Jim%20Dolittle)":Jim Dolittle\\, ABC Industries\\,
+        +1-919-555-1234
+
+    The following is an example of this property with an alternate
+    representation of a MIME body part containing the contact
+    information, such as a vCard :rfc:`2426` embedded in a text/
+    directory media type :rfc:`2425`:
+
+    .. code-block:: text
+
+        CONTACT;ALTREP="CID:part3.msg970930T083000SILVER@example.com":
+         Jim Dolittle\\, ABC Industries\\, +1-919-555-1234
+
+    The following is an example of this property referencing a network
+    resource, such as a vCard :rfc:`2426` object containing the contact
+    information:
+
+    .. code-block:: text
+
+        CONTACT;ALTREP="http://example.com/pdi/jdoe.vcf":Jim
+         Dolittle\\, ABC Industries\\, +1-919-555-1234
+""",
+)
+
 __all__ = [
     "busy_type_property",
     "categories_property",
     "class_property",
     "color_property",
     "comments_property",
+    "contacts_property",
     "create_single_property",
     "description_property",
     "descriptions_property",

@@ -12,6 +12,7 @@ from icalendar.attr import (
     categories_property,
     class_property,
     color_property,
+    contacts_property,
     create_single_property,
     description_property,
     exdates_property,
@@ -380,6 +381,7 @@ class Event(Component):
     organizer = organizer_property
     location = location_property
     priority = priority_property
+    contacts = contacts_property
 
     @classmethod
     def new(
@@ -389,6 +391,7 @@ class Event(Component):
         classification: Optional[CLASS] = None,
         color: Optional[str] = None,
         comments: list[str] | str | None = None,
+        contacts: list[str] | str | None = None,
         created: Optional[date] = None,
         description: Optional[str] = None,
         end: Optional[date | datetime] = None,
@@ -455,6 +458,7 @@ class Event(Component):
         event.organizer = organizer
         event.location = location
         event.priority = priority
+        event.contacts = contacts
         return event
 
 

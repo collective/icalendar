@@ -10,6 +10,7 @@ from icalendar.attr import (
     categories_property,
     class_property,
     color_property,
+    contacts_property,
     create_single_property,
     descriptions_property,
     exdates_property,
@@ -138,6 +139,7 @@ class Journal(Component):
     classification = class_property
     url = url_property
     organizer = organizer_property
+    contacts = contacts_property
 
     @property
     def description(self) -> str:
@@ -169,6 +171,7 @@ class Journal(Component):
         classification: Optional[CLASS] = None,
         color: Optional[str] = None,
         comments: list[str] | str | None = None,
+        contacts: list[str] | str | None = None,
         created: Optional[date] = None,
         description: Optional[str | Sequence[str]] = None,
         last_modified: Optional[date] = None,
@@ -226,6 +229,7 @@ class Journal(Component):
         journal.classification = classification
         journal.url = url
         journal.organizer = organizer
+        journal.contacts = contacts
         return journal
 
 

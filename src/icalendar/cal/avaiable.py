@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Optional, Sequence
 
 from icalendar.attr import (
     categories_property,
+    contacts_property,
     description_property,
     location_property,
     sequence_property,
@@ -57,6 +58,7 @@ class Available(Component):
     categories = categories_property
     uid = uid_property
     location = location_property
+    contacts = contacts_property
 
     @classmethod
     def new(
@@ -64,6 +66,7 @@ class Available(Component):
         /,
         categories: Sequence[str] = (),
         comments: list[str] | str | None = None,
+        contacts: list[str] | str | None = None,
         created: Optional[date] = None,
         description: Optional[str] = None,
         last_modified: Optional[date] = None,
@@ -80,6 +83,7 @@ class Available(Component):
         Arguments:
             categories: The :attr:`categories` of the Available component.
             comments: The :attr:`Component.comments` of the Available component.
+            contacts: The :attr:`contacts` of the Available component.
             created: The :attr:`Component.created` of the Available component.
             description: The :attr:`description` of the Available component.
             last_modified: The :attr:`Component.last_modified` of the
@@ -112,6 +116,7 @@ class Available(Component):
         available.categories = categories
         available.location = location
         available.comments = comments
+        available.contacts = contacts
         return available
 
 

@@ -5,7 +5,12 @@ from __future__ import annotations
 import uuid
 from typing import TYPE_CHECKING, Optional
 
-from icalendar.attr import organizer_property, uid_property, url_property
+from icalendar.attr import (
+    contacts_property,
+    organizer_property,
+    uid_property,
+    url_property,
+)
 from icalendar.cal.component import Component
 
 if TYPE_CHECKING:
@@ -58,12 +63,14 @@ class FreeBusy(Component):
     uid = uid_property
     url = url_property
     organizer = organizer_property
+    contacts = contacts_property
 
     @classmethod
     def new(
         cls,
         /,
         comments: list[str] | str | None = None,
+        contacts: list[str] | str | None = None,
         organizer: Optional[vCalAddress | str] = None,
         stamp: Optional[date] = None,
         uid: Optional[str | uuid.UUID] = None,
@@ -96,6 +103,7 @@ class FreeBusy(Component):
         free_busy.uid = uid if uid is not None else uuid.uuid4()
         free_busy.url = url
         free_busy.organizer = organizer
+        free_busy.contacts = contacts
         return free_busy
 
 

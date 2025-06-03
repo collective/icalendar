@@ -12,6 +12,7 @@ from icalendar.attr import (
     categories_property,
     class_property,
     color_property,
+    contacts_property,
     create_single_property,
     description_property,
     exdates_property,
@@ -252,6 +253,7 @@ class Todo(Component):
     organizer = organizer_property
     location = location_property
     priority = priority_property
+    contacts = contacts_property
 
     @classmethod
     def new(
@@ -261,6 +263,7 @@ class Todo(Component):
         classification: Optional[CLASS] = None,
         color: Optional[str] = None,
         comments: list[str] | str | None = None,
+        contacts: list[str] | str | None = None,
         created: Optional[date] = None,
         description: Optional[str] = None,
         end: Optional[date | datetime] = None,
@@ -326,6 +329,7 @@ class Todo(Component):
         todo.organizer = organizer
         todo.location = location
         todo.priority = priority
+        todo.contacts = contacts
         return todo
 
 

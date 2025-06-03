@@ -76,6 +76,7 @@ COMPONENTS_COMMENT = {
     Availability,
 }  # Standard and Daylight
 COMPONENTS_PRIORITY = {Event, Todo, Availability}
+COMPONENTS_CONTACT = {Event, Todo, Journal, FreeBusy, Available, Availability}
 
 
 @param_summary_components
@@ -578,6 +579,33 @@ new_test_cases = [
         ["one", "two", "three"],
         True,
         "several comments",
+    ),
+    (
+        COMPONENTS_CONTACT,
+        "contacts",
+        "CONTACT",
+        None,
+        [],
+        False,
+        "no contacts",
+    ),
+    (
+        COMPONENTS_CONTACT,
+        "contacts",
+        "CONTACT",
+        "This is a comment",
+        ["This is a comment"],
+        True,
+        "one contact is set",
+    ),
+    (
+        COMPONENTS_CONTACT,
+        "contacts",
+        "CONTACT",
+        ["one", "two", "three"],
+        ["one", "two", "three"],
+        True,
+        "several contacts",
     ),
 ]
 
