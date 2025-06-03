@@ -17,6 +17,7 @@ from icalendar.attr import (
     exdates_property,
     location_property,
     organizer_property,
+    priority_property,
     property_del_duration,
     property_doc_duration_template,
     property_get_duration,
@@ -250,6 +251,7 @@ class Todo(Component):
     url = url_property
     organizer = organizer_property
     location = location_property
+    priority = priority_property
 
     @classmethod
     def new(
@@ -258,12 +260,14 @@ class Todo(Component):
         categories: Sequence[str] = (),
         classification: Optional[CLASS] = None,
         color: Optional[str] = None,
+        comments: list[str] | str | None = None,
         created: Optional[date] = None,
         description: Optional[str] = None,
         end: Optional[date | datetime] = None,
         last_modified: Optional[date] = None,
         location: Optional[str] = None,
         organizer: Optional[vCalAddress | str] = None,
+        priority: Optional[int] = None,
         sequence: Optional[int] = None,
         stamp: Optional[date] = None,
         start: Optional[date | datetime] = None,
@@ -279,6 +283,7 @@ class Todo(Component):
             categories: The :attr:`categories` of the todo.
             classification: The :attr:`classification` of the todo.
             color: The :attr:`color` of the todo.
+            comments: The :attr:`Component.comments` of the todo.
             created: The :attr:`Component.created` of the todo.
             description: The :attr:`description` of the todo.
             end: The :attr:`end` of the todo.
@@ -306,6 +311,7 @@ class Todo(Component):
             stamp=stamp if stamp is not None else cls._utc_now(),
             created=created,
             last_modified=last_modified,
+            comments=comments,
         )
         todo.summary = summary
         todo.description = description
@@ -319,6 +325,7 @@ class Todo(Component):
         todo.url = url
         todo.organizer = organizer
         todo.location = location
+        todo.priority = priority
         return todo
 
 

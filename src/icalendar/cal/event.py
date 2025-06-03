@@ -17,6 +17,7 @@ from icalendar.attr import (
     exdates_property,
     location_property,
     organizer_property,
+    priority_property,
     property_del_duration,
     property_doc_duration_template,
     property_get_duration,
@@ -378,6 +379,7 @@ class Event(Component):
     url = url_property
     organizer = organizer_property
     location = location_property
+    priority = priority_property
 
     @classmethod
     def new(
@@ -386,12 +388,14 @@ class Event(Component):
         categories: Sequence[str] = (),
         classification: Optional[CLASS] = None,
         color: Optional[str] = None,
+        comments: list[str] | str | None = None,
         created: Optional[date] = None,
         description: Optional[str] = None,
         end: Optional[date | datetime] = None,
         last_modified: Optional[date] = None,
         location: Optional[str] = None,
         organizer: Optional[vCalAddress | str] = None,
+        priority: Optional[int] = None,
         sequence: Optional[int] = None,
         stamp: Optional[date] = None,
         start: Optional[date | datetime] = None,
@@ -407,12 +411,14 @@ class Event(Component):
             categories: The :attr:`categories` of the event.
             classification: The :attr:`classification` of the event.
             color: The :attr:`color` of the event.
+            comments: The :attr:`Component.comments` of the event.
             created: The :attr:`Component.created` of the event.
             description: The :attr:`description` of the event.
             end: The :attr:`end` of the event.
             last_modified: The :attr:`Component.last_modified` of the event.
             location: The :attr:`location` of the event.
             organizer: The :attr:`organizer` of the event.
+            priority: The :attr:`priority` of the event.
             sequence: The :attr:`sequence` of the event.
             stamp: The :attr:`Component.stamp` of the event.
                 If None, this is set to the current time.
@@ -434,6 +440,7 @@ class Event(Component):
             stamp=stamp if stamp is not None else cls._utc_now(),
             created=created,
             last_modified=last_modified,
+            comments=comments,
         )
         event.summary = summary
         event.description = description
@@ -447,6 +454,7 @@ class Event(Component):
         event.url = url
         event.organizer = organizer
         event.location = location
+        event.priority = priority
         return event
 
 

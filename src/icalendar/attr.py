@@ -907,37 +907,41 @@ Instead use the duration property (lower case).
 """
 
 
-def _get_descriptions(self: Component) -> list[str]:
-    """Get the descriptions."""
-    descriptions = self.get("DESCRIPTION")
-    if descriptions is None:
-        return []
-    if not isinstance(descriptions, SEQUENCE_TYPES):
-        return [descriptions]
-    return descriptions
+def get_multi_text_property(name: str, docs: str) -> property:
+    """Get a property that can occur several times and is text.
+
+    Examples: Journal.descriptions, Event.comments
+    """
+
+    def fget(self: Component) -> list[str]:
+        """Get the values."""
+        descriptions = self.get(name)
+        if descriptions is None:
+            return []
+        if not isinstance(descriptions, SEQUENCE_TYPES):
+            return [descriptions]
+        return descriptions
+
+    def fset(self: Component, values: Optional[str | Sequence[str]]):
+        """Set the values."""
+        fdel(self)
+        if values is None:
+            return
+        if isinstance(values, str):
+            self.add(name, values)
+        else:
+            for description in values:
+                self.add(name, description)
+
+    def fdel(self: Component):
+        """Delete the values."""
+        self.pop(name)
+
+    return property(fget, fset, fdel, docs)
 
 
-def _set_descriptions(self: Component, descriptions: Optional[str | Sequence[str]]):
-    """Set the descriptions"""
-    _del_descriptions(self)
-    if descriptions is None:
-        return
-    if isinstance(descriptions, str):
-        self.add("DESCRIPTION", descriptions)
-    else:
-        for description in descriptions:
-            self.add("DESCRIPTION", description)
-
-
-def _del_descriptions(self: Component):
-    """Delete the descriptions."""
-    self.pop("DESCRIPTION")
-
-
-descriptions_property = property(
-    _get_descriptions,
-    _set_descriptions,
-    _del_descriptions,
+descriptions_property = get_multi_text_property(
+    "DESCRIPTION",
     """DESCRIPTION provides a more complete description of the calendar component than that provided by the "SUMMARY" property.
 
 Property Parameters:
@@ -964,6 +968,29 @@ Examples:
          MUST attend this meeting.\\nRSVP to team leader.
 
 """,  # noqa: E501
+)
+
+comments_property = get_multi_text_property(
+    "COMMENT",
+    """COMMENT is used to specify a comment to the calendar user.
+
+Purpose:
+    This property specifies non-processing information intended
+    to provide a comment to the calendar user.
+
+Conformance:
+    In :rfc:`5545`, this property can be specified multiple times in
+    "VEVENT", "VTODO", "VJOURNAL", and "VFREEBUSY" calendar components
+    as well as in the "STANDARD" and "DAYLIGHT" sub-components.
+    In :rfc:`7953`, this property can be specified multiple times in
+    "VAVAILABILITY" and "VAVAILABLE".
+
+Property Parameters:
+    IANA, non-standard, alternate text
+    representation, and language property parameters can be specified
+    on this property.
+
+""",
 )
 
 
@@ -1175,6 +1202,7 @@ __all__ = [
     "categories_property",
     "class_property",
     "color_property",
+    "comments_property",
     "create_single_property",
     "description_property",
     "descriptions_property",
@@ -1182,6 +1210,7 @@ __all__ = [
     "location_property",
     "multi_language_text_property",
     "organizer_property",
+    "priority_property",
     "property_del_duration",
     "property_doc_duration_template",
     "property_get_duration",

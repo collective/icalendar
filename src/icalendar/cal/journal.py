@@ -168,6 +168,7 @@ class Journal(Component):
         categories: Sequence[str] = (),
         classification: Optional[CLASS] = None,
         color: Optional[str] = None,
+        comments: list[str] | str | None = None,
         created: Optional[date] = None,
         description: Optional[str | Sequence[str]] = None,
         last_modified: Optional[date] = None,
@@ -187,6 +188,7 @@ class Journal(Component):
             categories: The :attr:`categories` of the journal.
             classification: The :attr:`classification` of the journal.
             color: The :attr:`color` of the journal.
+            comments: The :attr:`Component.comments` of the journal.
             created: The :attr:`Component.created` of the journal.
             description: The :attr:`description` of the journal.
             last_modified: The :attr:`Component.last_modified` of the journal.
@@ -212,6 +214,7 @@ class Journal(Component):
             stamp=stamp if stamp is not None else cls._utc_now(),
             created=created,
             last_modified=last_modified,
+            comments=comments,
         )
         journal.summary = summary
         journal.descriptions = description

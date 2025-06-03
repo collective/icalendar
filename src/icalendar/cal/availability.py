@@ -15,6 +15,7 @@ from icalendar.attr import (
     description_property,
     location_property,
     organizer_property,
+    priority_property,
     sequence_property,
     summary_property,
     url_property,
@@ -192,6 +193,7 @@ class Availability(Component):
     url = url_property
     location = location_property
     categories = categories_property
+    priority = priority_property
 
     @property
     def available(self) -> list[Available]:
@@ -208,6 +210,7 @@ class Availability(Component):
         cls,
         /,
         busy_type: Optional[BUSYTYPE] = None,
+        comments: list[str] | str | None = None,
         categories: Sequence[str] = (),
         created: Optional[date] = None,
         classification: Optional[CLASS] = None,
@@ -215,6 +218,7 @@ class Availability(Component):
         last_modified: Optional[date] = None,
         location: Optional[str] = None,
         organizer: Optional[vCalAddress | str] = None,
+        priority: Optional[int] = None,
         sequence: Optional[int] = None,
         stamp: Optional[date] = None,
         summary: Optional[str] = None,
@@ -229,6 +233,7 @@ class Availability(Component):
             busy_type: The :attr:`busy_type` of the availability.
             categories: The :attr:`categories` of the availability.
             classification: The :attr:`classification` of the availability.
+            comments: The :attr:`Component.comments` of the availability.
             created: The :attr:`Component.created` of the availability.
             description: The :attr:`description` of the availability.
             last_modified: The :attr:`Component.last_modified` of the availability.
@@ -265,6 +270,8 @@ class Availability(Component):
         availability.busy_type = busy_type
         availability.organizer = organizer
         availability.location = location
+        availability.comments = comments
+        availability.priority = priority
         return availability
 
 

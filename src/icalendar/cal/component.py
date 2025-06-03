@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import date, datetime, timezone
 from typing import ClassVar, Optional
 
-from icalendar.attr import single_utc_property, uid_property
+from icalendar.attr import comments_property, single_utc_property, uid_property
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_split
@@ -545,6 +545,7 @@ class Component(CaselessDict):
         return datetime.now(timezone.utc)
 
     uid = uid_property
+    comments = comments_property
 
     CREATED = single_utc_property(
         "CREATED",
@@ -564,12 +565,14 @@ Conformance:
     def new(
         cls,
         created: Optional[date] = None,
+        comments: list[str] | str | None = None,
         last_modified: Optional[date] = None,
         stamp: Optional[date] = None,
     ) -> Component:
         """Create a new component.
 
         Arguments:
+            comments: The :attr:`comments` of the component.
             created: The :attr:`created` of the component.
             last_modified: The :attr:`last_modified` of the component.
             stamp: The :attr:`DTSTAMP` of the component.
@@ -583,6 +586,7 @@ Conformance:
         component.DTSTAMP = stamp
         component.created = created
         component.last_modified = last_modified
+        component.comments = comments
         return component
 
 

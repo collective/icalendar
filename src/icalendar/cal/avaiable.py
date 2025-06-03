@@ -63,6 +63,7 @@ class Available(Component):
         cls,
         /,
         categories: Sequence[str] = (),
+        comments: list[str] | str | None = None,
         created: Optional[date] = None,
         description: Optional[str] = None,
         last_modified: Optional[date] = None,
@@ -78,6 +79,7 @@ class Available(Component):
 
         Arguments:
             categories: The :attr:`categories` of the Available component.
+            comments: The :attr:`Component.comments` of the Available component.
             created: The :attr:`Component.created` of the Available component.
             description: The :attr:`description` of the Available component.
             last_modified: The :attr:`Component.last_modified` of the
@@ -109,6 +111,7 @@ class Available(Component):
         available.sequence = sequence
         available.categories = categories
         available.location = location
+        available.comments = comments
         return available
 
 

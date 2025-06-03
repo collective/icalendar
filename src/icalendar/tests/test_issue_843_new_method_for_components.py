@@ -67,6 +67,15 @@ COMPONENTS_URL = {Availability, Event, Todo, Journal, FreeBusy}
 COMPONENTS_BUSYTYPE = {Availability}
 COMPONENTS_DESCRIPTION = {Event, Todo, Journal, Alarm, Available, Availability}
 COMPONENTS_SUMMARY = {Event, Todo, Journal, Alarm, Available, Availability}
+COMPONENTS_COMMENT = {
+    Event,
+    Todo,
+    Journal,
+    FreeBusy,
+    Available,
+    Availability,
+}  # Standard and Daylight
+COMPONENTS_PRIORITY = {Event, Todo, Availability}
 
 
 @param_summary_components
@@ -525,6 +534,51 @@ new_test_cases = [
         False,
         "no summary by default",
     ),
+    (
+        COMPONENTS_PRIORITY,
+        "priority",
+        "PRIORITY",
+        8,
+        8,
+        True,
+        "priority is set",
+    ),
+    (
+        COMPONENTS_PRIORITY,
+        "priority",
+        "PRIORITY",
+        None,
+        0,
+        False,
+        "no priority by default",
+    ),
+    (
+        COMPONENTS_COMMENT,
+        "comments",
+        "COMMENT",
+        None,
+        [],
+        False,
+        "no comments",
+    ),
+    (
+        COMPONENTS_COMMENT,
+        "comments",
+        "COMMENT",
+        "This is a comment",
+        ["This is a comment"],
+        True,
+        "one comment is set",
+    ),
+    (
+        COMPONENTS_COMMENT,
+        "comments",
+        "COMMENT",
+        ["one", "two", "three"],
+        ["one", "two", "three"],
+        True,
+        "several comments",
+    ),
 ]
 
 
@@ -555,6 +609,7 @@ def test_properties_and_new(
 ):
     """We set and get the dtstamp."""
     for component_class in component_classes:
+        print("processing:", component_class.name)
         component = create_component_with_property(
             component_class, property_name, initial_value
         )
