@@ -244,6 +244,15 @@ def calendar_component(tzp):
 
 
 @pytest.fixture
+def dont_validate_new():
+    """Remove validation for new() of components."""
+    value = Component._validate_new
+    Component._validate_new = False
+    yield
+    Component._validate_new = value
+
+
+@pytest.fixture
 def filled_event_component(c, calendar_component):
     """Return an event with some values and add it to calendar_component."""
     e = Component(summary="A brief history of time")

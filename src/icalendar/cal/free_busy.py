@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import uuid
+from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Optional
 
 from icalendar.attr import (
     contacts_property,
+    create_single_property,
     organizer_property,
     uid_property,
     url_property,
@@ -14,8 +16,6 @@ from icalendar.attr import (
 from icalendar.cal.component import Component
 
 if TYPE_CHECKING:
-    from datetime import date
-
     from icalendar.prop import vCalAddress
 
 
@@ -64,6 +64,27 @@ class FreeBusy(Component):
     url = url_property
     organizer = organizer_property
     contacts = contacts_property
+    start = DTSTART = create_single_property(
+        "DTSTART",
+        "dt",
+        (datetime, date),
+        date,
+        'The "DTSTART" property for a "VFREEBUSY" specifies the inclusive start of the component.',  # noqa: E501
+    )
+    end = DTEND = create_single_property(
+        "DTEND",
+        "dt",
+        (datetime, date),
+        date,
+        'The "DTEND" property for a "VFREEBUSY" calendar component specifies the non-inclusive end of the component.',  # noqa: E501
+    )
+
+    @property
+    def duration(self) -> Optional[timedelta]:
+        """The duration computed from start and end."""
+        if self.DTSTART is None or self.DTEND is None:
+            return None
+        return self.DTEND - self.DTSTART
 
     @classmethod
     def new(
@@ -71,8 +92,10 @@ class FreeBusy(Component):
         /,
         comments: list[str] | str | None = None,
         contacts: list[str] | str | None = None,
+        end: Optional[date | datetime] = None,
         organizer: Optional[vCalAddress | str] = None,
         stamp: Optional[date] = None,
+        start: Optional[date | datetime] = None,
         uid: Optional[str | uuid.UUID] = None,
         url: Optional[str] = None,
     ):
@@ -93,7 +116,7 @@ class FreeBusy(Component):
             :class:`FreeBusy`
 
         Raises:
-            IncompleteComponent: If the content is not valid according to :rfc:`5545`.
+            InvalidCalendar: If the content is not valid according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
@@ -104,6 +127,10 @@ class FreeBusy(Component):
         free_busy.url = url
         free_busy.organizer = organizer
         free_busy.contacts = contacts
+        free_busy.end = end
+        free_busy.start = start
+        if cls._validate_new:
+            cls._validate_start_and_end(start, end)
         return free_busy
 
 

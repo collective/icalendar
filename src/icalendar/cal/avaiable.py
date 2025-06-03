@@ -6,17 +6,26 @@ This is specified in :rfc:`7953`.
 from __future__ import annotations
 
 import uuid
+from datetime import datetime
 from typing import TYPE_CHECKING, Optional, Sequence
 
 from icalendar.attr import (
     categories_property,
     contacts_property,
     description_property,
+    duration_property,
+    exdates_property,
     location_property,
+    rdates_property,
+    rfc_7953_dtend_property,
+    rfc_7953_dtstart_property,
+    rfc_7953_duration_property,
+    rfc_7953_end_property,
     sequence_property,
     summary_property,
     uid_property,
 )
+from icalendar.error import InvalidCalendar
 
 from .component import Component
 
@@ -59,6 +68,14 @@ class Available(Component):
     uid = uid_property
     location = location_property
     contacts = contacts_property
+    exdates = exdates_property
+    rdates = rdates_property
+
+    start = DTSTART = rfc_7953_dtstart_property
+    DTEND = rfc_7953_dtend_property
+    DURATION = duration_property("Available")
+    duration = rfc_7953_duration_property
+    end = rfc_7953_end_property
 
     @classmethod
     def new(
@@ -69,16 +86,18 @@ class Available(Component):
         contacts: list[str] | str | None = None,
         created: Optional[date] = None,
         description: Optional[str] = None,
+        end: Optional[datetime] = None,
         last_modified: Optional[date] = None,
         location: Optional[str] = None,
         sequence: Optional[int] = None,
         stamp: Optional[date] = None,
+        start: Optional[datetime] = None,
         summary: Optional[str] = None,
         uid: Optional[str | uuid.UUID] = None,
     ):
         """Create a new Available component with all required properties.
 
-        This creates a new Available component in accordance with :rfc:`5545`.
+        This creates a new Available component in accordance with :rfc:`7953`.
 
         Arguments:
             categories: The :attr:`categories` of the Available component.
@@ -100,7 +119,7 @@ class Available(Component):
             :class:`Available`
 
         Raises:
-            IncompleteComponent: If the content is not valid according to :rfc:`7953`.
+            InvalidCalendar: If the content is not valid according to :rfc:`7953`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
@@ -117,6 +136,20 @@ class Available(Component):
         available.location = location
         available.comments = comments
         available.contacts = contacts
+        if cls._validate_new:
+            if end is not None and (
+                not isinstance(end, datetime) or end.tzinfo is None
+            ):
+                raise InvalidCalendar(
+                    "Available end must be a datetime with a timezone"
+                )
+            if not isinstance(start, datetime) or start.tzinfo is None:
+                raise InvalidCalendar(
+                    "Available start must be a datetime with a timezone"
+                )
+            available._validate_start_and_end(start, end)  # noqa: SLF001
+        available.start = start
+        available.end = end
         return available
 
 

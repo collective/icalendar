@@ -435,7 +435,7 @@ class Event(Component):
             :class:`Event`
 
         Raises:
-            IncompleteComponent: If the content is not valid according to :rfc:`5545`.
+            InvalidCalendar: If the content is not valid according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
@@ -459,6 +459,8 @@ class Event(Component):
         event.location = location
         event.priority = priority
         event.contacts = contacts
+        if cls._validate_new:
+            cls._validate_start_and_end(start, end)
         return event
 
 

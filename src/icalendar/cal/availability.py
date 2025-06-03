@@ -6,6 +6,7 @@ This is specified in :rfc:`7953`.
 from __future__ import annotations
 
 import uuid
+from datetime import datetime
 from typing import TYPE_CHECKING, Optional, Sequence
 
 from icalendar.attr import (
@@ -14,13 +15,19 @@ from icalendar.attr import (
     class_property,
     contacts_property,
     description_property,
+    duration_property,
     location_property,
     organizer_property,
     priority_property,
+    rfc_7953_dtend_property,
+    rfc_7953_dtstart_property,
+    rfc_7953_duration_property,
+    rfc_7953_end_property,
     sequence_property,
     summary_property,
     url_property,
 )
+from icalendar.error import InvalidCalendar
 
 from .component import Component
 
@@ -197,6 +204,12 @@ class Availability(Component):
     priority = priority_property
     contacts = contacts_property
 
+    start = DTSTART = rfc_7953_dtstart_property
+    DTEND = rfc_7953_dtend_property
+    DURATION = duration_property("Availability")
+    duration = rfc_7953_duration_property
+    end = rfc_7953_end_property
+
     @property
     def available(self) -> list[Available]:
         """All VAVAILABLE sub-components.
@@ -214,16 +227,19 @@ class Availability(Component):
         busy_type: Optional[BUSYTYPE] = None,
         categories: Sequence[str] = (),
         comments: list[str] | str | None = None,
+        components: Sequence[Available] | None = (),
         contacts: list[str] | str | None = None,
         created: Optional[date] = None,
         classification: Optional[CLASS] = None,
         description: Optional[str] = None,
+        end: Optional[datetime] = None,
         last_modified: Optional[date] = None,
         location: Optional[str] = None,
         organizer: Optional[vCalAddress | str] = None,
         priority: Optional[int] = None,
         sequence: Optional[int] = None,
         stamp: Optional[date] = None,
+        start: Optional[datetime] = None,
         summary: Optional[str] = None,
         uid: Optional[str | uuid.UUID] = None,
         url: Optional[str] = None,
@@ -255,7 +271,7 @@ class Availability(Component):
             :class:`Availability`
 
         Raises:
-            IncompleteComponent: If the content is not valid according to :rfc:`7953`.
+            InvalidCalendar: If the content is not valid according to :rfc:`7953`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
@@ -277,6 +293,24 @@ class Availability(Component):
         availability.comments = comments
         availability.priority = priority
         availability.contacts = contacts
+        for subcomponent in components:
+            availability.add_component(subcomponent)
+        if cls._validate_new:
+            if start is not None and (
+                not isinstance(start, datetime) or start.tzinfo is None
+            ):
+                raise InvalidCalendar(
+                    "Availability start must be a datetime with a timezone"
+                )
+            if end is not None and (
+                not isinstance(end, datetime) or end.tzinfo is None
+            ):
+                raise InvalidCalendar(
+                    "Availability end must be a datetime with a timezone"
+                )
+            availability._validate_start_and_end(start, end)  # noqa: SLF001
+        availability.start = start
+        availability.end = end
         return availability
 
 

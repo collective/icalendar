@@ -77,6 +77,7 @@ COMPONENTS_COMMENT = {
 }  # Standard and Daylight
 COMPONENTS_PRIORITY = {Event, Todo, Availability}
 COMPONENTS_CONTACT = {Event, Todo, Journal, FreeBusy, Available, Availability}
+COMPONENTS_START_END = {Event, Todo, FreeBusy, Available, Availability}
 
 
 @param_summary_components
@@ -153,7 +154,7 @@ def test_set_summary(component, summary):
 
 @param_summary_components
 @param_summary
-def test_new_with_summary(component, summary):
+def test_new_with_summary(component, summary, dont_validate_new):
     """Test the summary property default."""
     assert_summary_equals(component.new(summary=summary), summary)
 
@@ -169,7 +170,7 @@ def test_set_description(component, description):
 
 @param_description_components
 @param_description
-def test_new_with_description(component, description):
+def test_new_with_description(component, description, dont_validate_new):
     """Test the description property default."""
     assert_description_equals(component.new(description=description), description)
 
@@ -634,6 +635,7 @@ def test_properties_and_new(
     key_present,
     key,
     message,
+    dont_validate_new,
 ):
     """We set and get the dtstamp."""
     for component_class in component_classes:
@@ -651,3 +653,30 @@ def test_properties_and_new(
             assert_component_attribute_has_value(
                 component, property_name, expected_value, message
             )
+
+
+@pytest.mark.parametrize("component_class", COMPONENTS_START_END)
+def test_end_must_be_after_start(tzp, component_class):
+    """The end must be after the start."""
+    with pytest.raises(ValueError) as e:
+        component_class.new(
+            start=tzp.localize_utc(datetime(2011, 10, 5, 13, 32, 25)),
+            end=tzp.localize_utc(datetime(2011, 10, 5, 12, 32, 25)),
+        )
+    assert "end must be after start" in str(e.value)
+
+
+@pytest.mark.parametrize("component_class", COMPONENTS_START_END)
+def test_start_and_end_can_be_the_same(tzp, component_class):
+    """The end must be after the start."""
+    start = tzp.localize_utc(datetime(2011, 10, 5, 13, 32, 25))
+    c = component_class.new(start=start, end=start)
+    assert c.start == start
+    assert c.end == start
+    assert c.duration == timedelta(0)
+
+
+def test_journal_start():
+    """Journal does not have an end."""
+    j = Journal.new(start=datetime(2011, 10, 5, 13, 32, 25))
+    assert j.start == datetime(2011, 10, 5, 13, 32, 25)

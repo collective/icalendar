@@ -194,6 +194,7 @@ class Journal(Component):
             comments: The :attr:`Component.comments` of the journal.
             created: The :attr:`Component.created` of the journal.
             description: The :attr:`description` of the journal.
+            end: The :attr:`end` of the journal.
             last_modified: The :attr:`Component.last_modified` of the journal.
             organizer: The :attr:`organizer` of the journal.
             sequence: The :attr:`sequence` of the journal.
@@ -209,7 +210,7 @@ class Journal(Component):
             :class:`Journal`
 
         Raises:
-            IncompleteComponent: If the content is not valid according to :rfc:`5545`.
+            InvalidCalendar: If the content is not valid according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
@@ -230,6 +231,7 @@ class Journal(Component):
         journal.url = url
         journal.organizer = organizer
         journal.contacts = contacts
+        journal.start = start
         return journal
 
 

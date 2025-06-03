@@ -306,7 +306,7 @@ class Todo(Component):
             :class:`Todo`
 
         Raises:
-            IncompleteComponent: If the content is not valid according to :rfc:`5545`.
+            InvalidCalendar: If the content is not valid according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
@@ -330,6 +330,8 @@ class Todo(Component):
         todo.location = location
         todo.priority = priority
         todo.contacts = contacts
+        if cls._validate_new:
+            cls._validate_start_and_end(start, end)
         return todo
 
 

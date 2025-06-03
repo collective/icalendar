@@ -7,7 +7,7 @@ from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Optional, Sequence, TypeVar, Union
 
 from icalendar.enums import BUSYTYPE, CLASS, StrEnum
-from icalendar.error import InvalidCalendar
+from icalendar.error import IncompleteComponent, InvalidCalendar
 from icalendar.parser_tools import SEQUENCE_TYPES
 from icalendar.prop import vCalAddress, vCategory, vDDDTypes, vDuration, vRecur, vText
 from icalendar.timezone import tzp
@@ -897,7 +897,8 @@ def property_del_duration(self: Component):
 
 property_doc_duration_template = """The DURATION property.
 
-The "DTSTART" property for a "{component}" specifies the inclusive start of the event.
+The "DTSTART" property for a "{component}" specifies the inclusive
+start of the {component}.
 The "DURATION" property in conjunction with the DTSTART property
 for a "{component}" calendar component specifies the non-inclusive end
 of the event.
@@ -905,6 +906,16 @@ of the event.
 If you would like to calculate the duration of a {component}, do not use this.
 Instead use the duration property (lower case).
 """
+
+
+def duration_property(component: str) -> property:
+    """Return the duration property."""
+    return property(
+        property_get_duration,
+        property_set_duration,
+        property_del_duration,
+        property_doc_duration_template.format(component=component),
+    )
 
 
 def multi_text_property(name: str, docs: str) -> property:
@@ -1263,6 +1274,101 @@ Example:
 """,
 )
 
+
+def timezone_datetime_property(name: str, docs: str):
+    """Create a property to access the values with a proper timezone."""
+
+    return single_utc_property(name, docs)
+
+
+rfc_7953_dtstart_property = timezone_datetime_property(
+    "DTSTART",
+    """Start of the component.
+
+    This is almost the same as :attr:`Event.DTSTART` with one exception:
+    The values MUST have a timezone and DATE is not allowed.
+
+    Description:
+        :rfc:`7953`: If specified, the "DTSTART" and "DTEND" properties in
+        "VAVAILABILITY" components and "AVAILABLE" subcomponents MUST be
+        "DATE-TIME" values specified as either the date with UTC time or
+        the date with local time and a time zone reference.
+
+    """,
+)
+
+rfc_7953_dtend_property = timezone_datetime_property(
+    "DTEND",
+    """Start of the component.
+
+    This is almost the same as :attr:`Event.DTEND` with one exception:
+    The values MUST have a timezone and DATE is not allowed.
+
+    Description:
+        :rfc:`7953`: If specified, the "DTSTART" and "DTEND" properties in
+        "VAVAILABILITY" components and "AVAILABLE" subcomponents MUST be
+        "DATE-TIME" values specified as either the date with UTC time or
+        the date with local time and a time zone reference.
+    """,
+)
+
+
+@property
+def rfc_7953_duration_property(self) -> Optional[timedelta]:
+    """Compute the duration of this component.
+
+    If there is no :attr:`DTEND` or :attr:`DURATION` set, this is None.
+    Otherwise, the duration is calculated from :attr:`DTSTART` and
+    :attr:`DTEND`/:attr:`DURATION`.
+
+    This is in accordance with :rfc:`7953`:
+    If "DTEND" or "DURATION" are not present, then the end time is unbounded.
+    """
+    duration = self.DURATION
+    if duration:
+        return duration
+    end = self.DTEND
+    if end is None:
+        return None
+    start = self.DTSTART
+    if start is None:
+        raise IncompleteComponent("Cannot compute duration without start.")
+    return end - start
+
+
+@property
+def rfc_7953_end_property(self) -> Optional[timedelta]:
+    """Compute the duration of this component.
+
+    If there is no :attr:`DTEND` or :attr:`DURATION` set, this is None.
+    Otherwise, the duration is calculated from :attr:`DTSTART` and
+    :attr:`DTEND`/:attr:`DURATION`.
+
+    This is in accordance with :rfc:`7953`:
+    If "DTEND" or "DURATION" are not present, then the end time is unbounded.
+    """
+    duration = self.DURATION
+    if duration:
+        start = self.DTSTART
+        if start is None:
+            raise IncompleteComponent("Cannot compute end without start.")
+        return start + duration
+    end = self.DTEND
+    if end is None:
+        return None
+    return end
+
+
+@rfc_7953_end_property.setter
+def rfc_7953_end_property(self, value: datetime):
+    self.DTEND = value
+
+
+@rfc_7953_end_property.deleter
+def rfc_7953_end_property(self):
+    del self.DTEND
+
+
 __all__ = [
     "busy_type_property",
     "categories_property",
@@ -1273,6 +1379,7 @@ __all__ = [
     "create_single_property",
     "description_property",
     "descriptions_property",
+    "duration_property",
     "exdates_property",
     "location_property",
     "multi_language_text_property",
@@ -1283,6 +1390,10 @@ __all__ = [
     "property_get_duration",
     "property_set_duration",
     "rdates_property",
+    "rfc_7953_dtend_property",
+    "rfc_7953_dtstart_property",
+    "rfc_7953_duration_property",
+    "rfc_7953_end_property",
     "rrules_property",
     "sequence_property",
     "single_int_property",

@@ -8,6 +8,7 @@ from typing import ClassVar, Optional
 from icalendar.attr import comments_property, single_utc_property, uid_property
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.caselessdict import CaselessDict
+from icalendar.error import InvalidCalendar
 from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_split
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import TypesFactory, vDDDLists, vText
@@ -561,6 +562,20 @@ Conformance:
 """,
     )
 
+    _validate_new = True
+
+    @staticmethod
+    def _validate_start_and_end(start, end):
+        """This validates start and end.
+
+        Raises:
+            InvalidCalendar: If the information is not valid
+        """
+        if start is None or end is None:
+            return
+        if start > end:
+            raise InvalidCalendar("end must be after start")
+
     @classmethod
     def new(
         cls,
@@ -578,7 +593,7 @@ Conformance:
             stamp: The :attr:`DTSTAMP` of the component.
 
         Raises:
-            IncompleteComponent: If the content is not valid according to :rfc:`5545`.
+            InvalidCalendar: If the content is not valid according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
