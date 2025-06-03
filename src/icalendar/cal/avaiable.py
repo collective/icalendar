@@ -21,6 +21,7 @@ from icalendar.attr import (
     rfc_7953_dtstart_property,
     rfc_7953_duration_property,
     rfc_7953_end_property,
+    rrules_property,
     sequence_property,
     summary_property,
     uid_property,
@@ -70,6 +71,7 @@ class Available(Component):
     contacts = contacts_property
     exdates = exdates_property
     rdates = rdates_property
+    rrules = rrules_property
 
     start = DTSTART = rfc_7953_dtstart_property
     DTEND = rfc_7953_dtend_property

@@ -1,10 +1,10 @@
 """This tests the parsing of the VAVAILABILITY component as defined in :rfc:`7953`."""
 
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 
 import pytest
 
-from icalendar import BUSYTYPE, Availability, Available
+from icalendar import BUSYTYPE, Availability, Available, Calendar
 from icalendar.error import IncompleteComponent
 
 
@@ -141,3 +141,54 @@ def test_missing_info_for_duration(rfc_7953_component, tzp):
     with pytest.raises(IncompleteComponent) as e:
         rfc_7953_component.duration  # noqa: B018
     assert "Cannot compute duration without start" in str(e.value)
+
+
+def test_example_2(availabilities, tzp):
+    """Test that we get all the right values after parsing."""
+    a: Availability = availabilities.rfc_7953_2
+    assert a.organizer == "mailto:bernard@example.com"
+    assert a.uid == "84D0F948-7FC6-4C1D-BBF3-BA9827B424B5"
+    assert a.stamp == datetime(2011, 10, 5, 13, 32, 25, tzinfo=timezone.utc)
+    assert a.start == tzp.localize(datetime(2011, 10, 2), "America/Montreal")
+    assert a.end == tzp.localize(datetime(2011, 12, 2), "America/Montreal")
+    a1 = a.available[0]
+    assert a1.uid == "7B33093A-7F98-4EED-B381-A5652530F04D"
+    assert a1.summary == "Monday to Thursday from 9:00 to 17:00"
+    assert a1.start == tzp.localize(datetime(2011, 10, 2, 9), "America/Montreal")
+    assert a1.end == tzp.localize(datetime(2011, 10, 2, 17), "America/Montreal")
+    assert len(a1.rrules) == 1
+    assert a1.rrules[0]["freq"] == ["WEEKLY"]
+    assert a1.rrules[0]["byday"] == ["MO", "TU", "WE", "TH"]
+    assert a1.location == "Main Office"
+    assert a1.exdates == []
+    a2 = a.available[1]
+    assert a2.uid == "DF39DC9E-D8C3-492F-9101-0434E8FC1896"
+    assert a2.summary == "Friday from 9:00 to 12:00"
+    assert a2.start == tzp.localize(datetime(2011, 10, 6, 9), "America/Montreal")
+    assert a2.end == tzp.localize(datetime(2011, 10, 6, 12), "America/Montreal")
+    assert len(a2.rrules) == 1
+    assert a2.rrules[0]["freq"] == ["WEEKLY"]
+    assert a2.location == "Branch Office"
+    assert a2.exdates == []
+
+
+def test_example_3(calendars, tzp):
+    """Test that we get all the right values after parsing."""
+    calendar: Calendar = calendars.rfc_7953_3
+    a: Availability = calendar.availabilities[0]
+    assert a.organizer == "mailto:bernard@example.com"
+    assert a.uid == "BE082249-7BDD-4FE0-BDBA-DE6598C32FC9"
+    assert a.stamp == datetime(2011, 10, 5, 13, 32, 25, tzinfo=timezone.utc)
+    assert a.start == tzp.localize(datetime(2011, 10, 2), "America/Montreal")
+    assert a.end == tzp.localize(datetime(2011, 10, 23, 3), "America/Montreal")
+    a1 = a.available[0]
+    assert a1.uid == "54602321-CEDB-4620-9099-757583263981"
+    assert a1.summary == "Monday to Friday from 9:00 to 17:00"
+    assert a1.start == tzp.localize(datetime(2011, 10, 2, 9), "America/Montreal")
+    assert a1.end == tzp.localize(datetime(2011, 10, 2, 17), "America/Montreal")
+    assert len(a1.rrules) == 1
+    assert a1.rrules[0]["freq"] == ["WEEKLY"]
+    assert a1.rrules[0]["byday"] == ["MO", "TU", "WE", "TH", "FR"]
+    assert a1.location == "Montreal"
+    assert a1.exdates == []
+    assert len(calendar.availabilities) == 3
