@@ -10,10 +10,15 @@ from icalendar.attr import (
     X_MOZ_LASTACK_property,
     X_MOZ_SNOOZE_TIME_property,
     categories_property,
+    class_property,
     color_property,
+    contacts_property,
     create_single_property,
     description_property,
     exdates_property,
+    location_property,
+    organizer_property,
+    priority_property,
     property_del_duration,
     property_doc_duration_template,
     property_get_duration,
@@ -23,6 +28,7 @@ from icalendar.attr import (
     sequence_property,
     summary_property,
     uid_property,
+    url_property,
 )
 from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
@@ -31,6 +37,8 @@ from icalendar.tools import is_date
 
 if TYPE_CHECKING:
     from icalendar.alarms import Alarms
+    from icalendar.enums import CLASS
+    from icalendar.prop import vCalAddress
 
 
 class Event(Component):
@@ -368,20 +376,35 @@ class Event(Component):
     uid = uid_property
     summary = summary_property
     description = description_property
+    classification = class_property
+    url = url_property
+    organizer = organizer_property
+    location = location_property
+    priority = priority_property
+    contacts = contacts_property
 
     @classmethod
     def new(
         cls,
         /,
         categories: Sequence[str] = (),
+        classification: Optional[CLASS] = None,
         color: Optional[str] = None,
+        comments: list[str] | str | None = None,
+        contacts: list[str] | str | None = None,
+        created: Optional[date] = None,
         description: Optional[str] = None,
-        dtstamp: Optional[date] = None,
         end: Optional[date | datetime] = None,
+        last_modified: Optional[date] = None,
+        location: Optional[str] = None,
+        organizer: Optional[vCalAddress | str] = None,
+        priority: Optional[int] = None,
         sequence: Optional[int] = None,
+        stamp: Optional[date] = None,
         start: Optional[date | datetime] = None,
         summary: Optional[str] = None,
         uid: Optional[str | uuid.UUID] = None,
+        url: Optional[str] = None,
     ):
         """Create a new event with all required properties.
 
@@ -389,26 +412,39 @@ class Event(Component):
 
         Arguments:
             categories: The :attr:`categories` of the event.
+            classification: The :attr:`classification` of the event.
             color: The :attr:`color` of the event.
+            comments: The :attr:`Component.comments` of the event.
+            created: The :attr:`Component.created` of the event.
             description: The :attr:`description` of the event.
-            dtstamp: The :attr:`DTSTAMP` of the event.
-                If None, this is set to the current time.
             end: The :attr:`end` of the event.
+            last_modified: The :attr:`Component.last_modified` of the event.
+            location: The :attr:`location` of the event.
+            organizer: The :attr:`organizer` of the event.
+            priority: The :attr:`priority` of the event.
             sequence: The :attr:`sequence` of the event.
+            stamp: The :attr:`Component.stamp` of the event.
+                If None, this is set to the current time.
             start: The :attr:`start` of the event.
             summary: The :attr:`summary` of the event.
             uid: The :attr:`uid` of the event.
                 If None, this is set to a new :func:`uuid.uuid4`.
+            url: The :attr:`url` of the event.
 
         Returns:
             :class:`Event`
 
         Raises:
-            IncompleteComponent: If the content is not valid according to :rfc:`5545`.
+            InvalidCalendar: If the content is not valid according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        event = super().new(dtstamp=dtstamp if dtstamp is not None else cls._utc_now())
+        event = super().new(
+            stamp=stamp if stamp is not None else cls._utc_now(),
+            created=created,
+            last_modified=last_modified,
+            comments=comments,
+        )
         event.summary = summary
         event.description = description
         event.uid = uid if uid is not None else uuid.uuid4()
@@ -417,6 +453,14 @@ class Event(Component):
         event.color = color
         event.categories = categories
         event.sequence = sequence
+        event.classification = classification
+        event.url = url
+        event.organizer = organizer
+        event.location = location
+        event.priority = priority
+        event.contacts = contacts
+        if cls._validate_new:
+            cls._validate_start_and_end(start, end)
         return event
 
 

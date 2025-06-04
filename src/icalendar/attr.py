@@ -4,11 +4,12 @@ from __future__ import annotations
 
 import itertools
 from datetime import date, datetime, timedelta
-from typing import TYPE_CHECKING, Optional, Sequence, Union
+from typing import TYPE_CHECKING, Optional, Sequence, TypeVar, Union
 
-from icalendar.error import InvalidCalendar
+from icalendar.enums import BUSYTYPE, CLASS, StrEnum
+from icalendar.error import IncompleteComponent, InvalidCalendar
 from icalendar.parser_tools import SEQUENCE_TYPES
-from icalendar.prop import vCategory, vDDDTypes, vDuration, vRecur, vText
+from icalendar.prop import vCalAddress, vCategory, vDDDTypes, vDuration, vRecur, vText
 from icalendar.timezone import tzp
 
 if TYPE_CHECKING:
@@ -401,13 +402,16 @@ def single_utc_property(name: str, docs: str) -> property:
             # we might be in an attribute that is not typed
             value = vDDDTypes.from_ical(dt)
         else:
-            value = getattr(dt, "dt", None)
+            value = getattr(dt, "dt", dt)
         if value is None or not isinstance(value, date):
             raise InvalidCalendar(f"{name} must be a datetime in UTC, not {value}")
         return tzp.localize_utc(value)
 
-    def fset(self: Component, value: datetime):
+    def fset(self: Component, value: Optional[datetime]):
         """Set the value"""
+        if value is None:
+            fdel(self)
+            return
         if not isinstance(value, date):
             raise TypeError(f"{name} takes a datetime in UTC, not {value}")
         fdel(self)
@@ -893,7 +897,8 @@ def property_del_duration(self: Component):
 
 property_doc_duration_template = """The DURATION property.
 
-The "DTSTART" property for a "{component}" specifies the inclusive start of the event.
+The "DTSTART" property for a "{component}" specifies the inclusive
+start of the {component}.
 The "DURATION" property in conjunction with the DTSTART property
 for a "{component}" calendar component specifies the non-inclusive end
 of the event.
@@ -903,37 +908,51 @@ Instead use the duration property (lower case).
 """
 
 
-def _get_descriptions(self: Component) -> list[str]:
-    """Get the descriptions."""
-    descriptions = self.get("DESCRIPTION")
-    if descriptions is None:
-        return []
-    if not isinstance(descriptions, SEQUENCE_TYPES):
-        return [descriptions]
-    return descriptions
+def duration_property(component: str) -> property:
+    """Return the duration property."""
+    return property(
+        property_get_duration,
+        property_set_duration,
+        property_del_duration,
+        property_doc_duration_template.format(component=component),
+    )
 
 
-def _set_descriptions(self: Component, descriptions: Optional[str | Sequence[str]]):
-    """Set the descriptions"""
-    _del_descriptions(self)
-    if descriptions is None:
-        return
-    if isinstance(descriptions, str):
-        self.add("DESCRIPTION", descriptions)
-    else:
-        for description in descriptions:
-            self.add("DESCRIPTION", description)
+def multi_text_property(name: str, docs: str) -> property:
+    """Get a property that can occur several times and is text.
+
+    Examples: Journal.descriptions, Event.comments
+    """
+
+    def fget(self: Component) -> list[str]:
+        """Get the values."""
+        descriptions = self.get(name)
+        if descriptions is None:
+            return []
+        if not isinstance(descriptions, SEQUENCE_TYPES):
+            return [descriptions]
+        return descriptions
+
+    def fset(self: Component, values: Optional[str | Sequence[str]]):
+        """Set the values."""
+        fdel(self)
+        if values is None:
+            return
+        if isinstance(values, str):
+            self.add(name, values)
+        else:
+            for description in values:
+                self.add(name, description)
+
+    def fdel(self: Component):
+        """Delete the values."""
+        self.pop(name)
+
+    return property(fget, fset, fdel, docs)
 
 
-def _del_descriptions(self: Component):
-    """Delete the descriptions."""
-    self.pop("DESCRIPTION")
-
-
-descriptions_property = property(
-    _get_descriptions,
-    _set_descriptions,
-    _del_descriptions,
+descriptions_property = multi_text_property(
+    "DESCRIPTION",
     """DESCRIPTION provides a more complete description of the calendar component than that provided by the "SUMMARY" property.
 
 Property Parameters:
@@ -962,23 +981,424 @@ Examples:
 """,  # noqa: E501
 )
 
+comments_property = multi_text_property(
+    "COMMENT",
+    """COMMENT is used to specify a comment to the calendar user.
+
+Purpose:
+    This property specifies non-processing information intended
+    to provide a comment to the calendar user.
+
+Conformance:
+    In :rfc:`5545`, this property can be specified multiple times in
+    "VEVENT", "VTODO", "VJOURNAL", and "VFREEBUSY" calendar components
+    as well as in the "STANDARD" and "DAYLIGHT" sub-components.
+    In :rfc:`7953`, this property can be specified multiple times in
+    "VAVAILABILITY" and "VAVAILABLE".
+
+Property Parameters:
+    IANA, non-standard, alternate text
+    representation, and language property parameters can be specified
+    on this property.
+
+""",
+)
+
+
+def _get_organizer(self: Component) -> Optional[vCalAddress]:
+    """ORGANIZER defines the organizer for a calendar component.
+
+    Property Parameters:
+        IANA, non-standard, language, common name,
+        directory entry reference, and sent-by property parameters can be
+        specified on this property.
+
+    Conformance:
+        This property MUST be specified in an iCalendar object
+        that specifies a group-scheduled calendar entity.  This property
+        MUST be specified in an iCalendar object that specifies the
+        publication of a calendar user's busy time.  This property MUST
+        NOT be specified in an iCalendar object that specifies only a time
+        zone definition or that defines calendar components that are not
+        group-scheduled components, but are components only on a single
+        user's calendar.
+
+    Description:
+        This property is specified within the "VEVENT",
+        "VTODO", and "VJOURNAL" calendar components to specify the
+        organizer of a group-scheduled calendar entity.  The property is
+        specified within the "VFREEBUSY" calendar component to specify the
+        calendar user requesting the free or busy time.  When publishing a
+        "VFREEBUSY" calendar component, the property is used to specify
+        the calendar that the published busy time came from.
+
+        The property has the property parameters "CN", for specifying the
+        common or display name associated with the "Organizer", "DIR", for
+        specifying a pointer to the directory information associated with
+        the "Organizer", "SENT-BY", for specifying another calendar user
+        that is acting on behalf of the "Organizer".  The non-standard
+        parameters may also be specified on this property.  If the
+        "LANGUAGE" property parameter is specified, the identified
+        language applies to the "CN" parameter value.
+    """
+    return self.get("ORGANIZER")
+
+
+def _set_organizer(self: Component, value: Optional[vCalAddress | str]):
+    """Set the value."""
+    _del_organizer(self)
+    if value is not None:
+        self.add("ORGANIZER", value)
+
+
+def _del_organizer(self: Component):
+    """Delete the value."""
+    self.pop("ORGANIZER")
+
+
+organizer_property = property(_get_organizer, _set_organizer, _del_organizer)
+
+ENUM_TYPE = TypeVar("ENUM_TYPE", bound=StrEnum)
+
+
+def single_string_enum_property(
+    name: str, enum: ENUM_TYPE, default: StrEnum, docs: str
+) -> property:
+    """Create a property to access a single string value and convert it to an enum."""
+    prop = single_string_property(name, docs, default=default)
+
+    def fget(self: Component) -> ENUM_TYPE:
+        value = prop.fget(self)
+        return enum(str(value))
+
+    return property(fget, prop.fset, prop.fdel, doc=docs)
+
+
+busy_type_property = single_string_enum_property(
+    "BUSYTYPE",
+    BUSYTYPE,
+    BUSYTYPE.BUSY_UNAVAILABLE,
+    """BUSYTYPE specifies the default busy time type.
+
+Returns:
+    :class:`icalendar.enums.BUSYTYPE`
+
+Description:
+    This property is used to specify the default busy time
+    type. The values correspond to those used by the FBTYPE"
+    parameter used on a "FREEBUSY" property, with the exception that
+    the "FREE" value is not used in this property.  If not specified
+    on a component that allows this property, the default is "BUSY-
+    UNAVAILABLE".
+""",
+)
+
+priority_property = single_int_property(
+    "PRIORITY",
+    0,
+    """
+
+Conformance:
+    This property can be specified in "VEVENT" and "VTODO" calendar components
+    according to :rfc:`5545`.
+    :rfc:`7953` adds this property to "VAVAILABILITY".
+
+Description:
+    This priority is specified as an integer in the range 0
+    to 9.  A value of 0 specifies an undefined priority.  A value of 1
+    is the highest priority.  A value of 2 is the second highest
+    priority.  Subsequent numbers specify a decreasing ordinal
+    priority.  A value of 9 is the lowest priority.
+
+    A CUA with a three-level priority scheme of "HIGH", "MEDIUM", and
+    "LOW" is mapped into this property such that a property value in
+    the range of 1 to 4 specifies "HIGH" priority.  A value of 5 is
+    the normal or "MEDIUM" priority.  A value in the range of 6 to 9
+    is "LOW" priority.
+
+    A CUA with a priority schema of "A1", "A2", "A3", "B1", "B2", ...,
+    "C3" is mapped into this property such that a property value of 1
+    specifies "A1", a property value of 2 specifies "A2", a property
+    value of 3 specifies "A3", and so forth up to a property value of
+    9 specifies "C3".
+
+    Other integer values are reserved for future use.
+
+    Within a "VEVENT" calendar component, this property specifies a
+    priority for the event.  This property may be useful when more
+    than one event is scheduled for a given time period.
+
+    Within a "VTODO" calendar component, this property specified a
+    priority for the to-do.  This property is useful in prioritizing
+    multiple action items for a given time period.
+""",
+)
+
+class_property = single_string_enum_property(
+    "CLASS",
+    CLASS,
+    CLASS.PUBLIC,
+    """CLASS specifies the class of the calendar component.
+
+Returns:
+    :class:`icalendar.enums.CLASS`
+
+Description:
+    An access classification is only one component of the
+    general security system within a calendar application.  It
+    provides a method of capturing the scope of the access the
+    calendar owner intends for information within an individual
+    calendar entry.  The access classification of an individual
+    iCalendar component is useful when measured along with the other
+    security components of a calendar system (e.g., calendar user
+    authentication, authorization, access rights, access role, etc.).
+    Hence, the semantics of the individual access classifications
+    cannot be completely defined by this memo alone.  Additionally,
+    due to the "blind" nature of most exchange processes using this
+    memo, these access classifications cannot serve as an enforcement
+    statement for a system receiving an iCalendar object.  Rather,
+    they provide a method for capturing the intention of the calendar
+    owner for the access to the calendar component.  If not specified
+    in a component that allows this property, the default value is
+    PUBLIC.  Applications MUST treat x-name and iana-token values they
+    don't recognize the same way as they would the PRIVATE value.
+""",
+)
+
+url_property = single_string_property(
+    "URL",
+    """A Uniform Resource Locator (URL) associated with the iCalendar object.
+
+Description:
+    This property may be used in a calendar component to
+    convey a location where a more dynamic rendition of the calendar
+    information associated with the calendar component can be found.
+    This memo does not attempt to standardize the form of the URI, nor
+    the format of the resource pointed to by the property value.  If
+    the URL property and Content-Location MIME header are both
+    specified, they MUST point to the same resource.
+""",
+)
+
+location_property = multi_language_text_property(
+    "LOCATION",
+    None,
+    """The intended venue for the activity defined by a calendar component.
+
+Property Parameters:
+    IANA, non-standard, alternate text
+    representation, and language property parameters can be specified
+    on this property.
+
+Conformance:
+    Since :rfc:`5545`, this property can be specified in "VEVENT" or "VTODO"
+    calendar component.
+    :rfc:`7953` adds this property to "VAVAILABILITY" and "VAVAILABLE".
+
+Description:
+    Specific venues such as conference or meeting rooms may
+    be explicitly specified using this property.  An alternate
+    representation may be specified that is a URI that points to
+    directory information with more structured specification of the
+    location.  For example, the alternate representation may specify
+    either an LDAP URL :rfc:`4516` pointing to an LDAP server entry or a
+    CID URL :rfc:`2392` pointing to a MIME body part containing a
+    Virtual-Information Card (vCard) :rfc:`2426` for the location.
+
+""",
+)
+
+contacts_property = multi_text_property(
+    "CONTACT",
+    """Contact information associated with the calendar component.
+
+Purpose:
+    This property is used to represent contact information or
+    alternately a reference to contact information associated with the
+    calendar component.
+
+Property Parameters:
+    IANA, non-standard, alternate text
+    representation, and language property parameters can be specified
+    on this property.
+
+Conformance:
+    In :rfc:`5545`, this property can be specified in a "VEVENT", "VTODO",
+    "VJOURNAL", or "VFREEBUSY" calendar component.
+    In :rfc:`7953`, this property can be specified in a "VAVAILABILITY"
+    amd "VAVAILABLE" calendar component.
+
+Description:
+    The property value consists of textual contact
+    information.  An alternative representation for the property value
+    can also be specified that refers to a URI pointing to an
+    alternate form, such as a vCard :rfc:`2426`, for the contact
+    information.
+
+Example:
+    The following is an example of this property referencing
+    textual contact information:
+
+    .. code-block:: text
+
+        CONTACT:Jim Dolittle\\, ABC Industries\\, +1-919-555-1234
+
+    The following is an example of this property with an alternate
+    representation of an LDAP URI to a directory entry containing the
+    contact information:
+
+    .. code-block:: text
+
+        CONTACT;ALTREP="ldap://example.com:6666/o=ABC%20Industries\\,
+        c=US???(cn=Jim%20Dolittle)":Jim Dolittle\\, ABC Industries\\,
+        +1-919-555-1234
+
+    The following is an example of this property with an alternate
+    representation of a MIME body part containing the contact
+    information, such as a vCard :rfc:`2426` embedded in a text/
+    directory media type :rfc:`2425`:
+
+    .. code-block:: text
+
+        CONTACT;ALTREP="CID:part3.msg970930T083000SILVER@example.com":
+         Jim Dolittle\\, ABC Industries\\, +1-919-555-1234
+
+    The following is an example of this property referencing a network
+    resource, such as a vCard :rfc:`2426` object containing the contact
+    information:
+
+    .. code-block:: text
+
+        CONTACT;ALTREP="http://example.com/pdi/jdoe.vcf":Jim
+         Dolittle\\, ABC Industries\\, +1-919-555-1234
+""",
+)
+
+
+def timezone_datetime_property(name: str, docs: str):
+    """Create a property to access the values with a proper timezone."""
+
+    return single_utc_property(name, docs)
+
+
+rfc_7953_dtstart_property = timezone_datetime_property(
+    "DTSTART",
+    """Start of the component.
+
+    This is almost the same as :attr:`Event.DTSTART` with one exception:
+    The values MUST have a timezone and DATE is not allowed.
+
+    Description:
+        :rfc:`7953`: If specified, the "DTSTART" and "DTEND" properties in
+        "VAVAILABILITY" components and "AVAILABLE" subcomponents MUST be
+        "DATE-TIME" values specified as either the date with UTC time or
+        the date with local time and a time zone reference.
+
+    """,
+)
+
+rfc_7953_dtend_property = timezone_datetime_property(
+    "DTEND",
+    """Start of the component.
+
+    This is almost the same as :attr:`Event.DTEND` with one exception:
+    The values MUST have a timezone and DATE is not allowed.
+
+    Description:
+        :rfc:`7953`: If specified, the "DTSTART" and "DTEND" properties in
+        "VAVAILABILITY" components and "AVAILABLE" subcomponents MUST be
+        "DATE-TIME" values specified as either the date with UTC time or
+        the date with local time and a time zone reference.
+    """,
+)
+
+
+@property
+def rfc_7953_duration_property(self) -> Optional[timedelta]:
+    """Compute the duration of this component.
+
+    If there is no :attr:`DTEND` or :attr:`DURATION` set, this is None.
+    Otherwise, the duration is calculated from :attr:`DTSTART` and
+    :attr:`DTEND`/:attr:`DURATION`.
+
+    This is in accordance with :rfc:`7953`:
+    If "DTEND" or "DURATION" are not present, then the end time is unbounded.
+    """
+    duration = self.DURATION
+    if duration:
+        return duration
+    end = self.DTEND
+    if end is None:
+        return None
+    start = self.DTSTART
+    if start is None:
+        raise IncompleteComponent("Cannot compute duration without start.")
+    return end - start
+
+
+@property
+def rfc_7953_end_property(self) -> Optional[timedelta]:
+    """Compute the duration of this component.
+
+    If there is no :attr:`DTEND` or :attr:`DURATION` set, this is None.
+    Otherwise, the duration is calculated from :attr:`DTSTART` and
+    :attr:`DTEND`/:attr:`DURATION`.
+
+    This is in accordance with :rfc:`7953`:
+    If "DTEND" or "DURATION" are not present, then the end time is unbounded.
+    """
+    duration = self.DURATION
+    if duration:
+        start = self.DTSTART
+        if start is None:
+            raise IncompleteComponent("Cannot compute end without start.")
+        return start + duration
+    end = self.DTEND
+    if end is None:
+        return None
+    return end
+
+
+@rfc_7953_end_property.setter
+def rfc_7953_end_property(self, value: datetime):
+    self.DTEND = value
+
+
+@rfc_7953_end_property.deleter
+def rfc_7953_end_property(self):
+    del self.DTEND
+
+
 __all__ = [
+    "busy_type_property",
     "categories_property",
+    "class_property",
     "color_property",
+    "comments_property",
+    "contacts_property",
     "create_single_property",
     "description_property",
     "descriptions_property",
+    "duration_property",
     "exdates_property",
+    "location_property",
     "multi_language_text_property",
+    "organizer_property",
+    "priority_property",
     "property_del_duration",
     "property_doc_duration_template",
     "property_get_duration",
     "property_set_duration",
     "rdates_property",
+    "rfc_7953_dtend_property",
+    "rfc_7953_dtstart_property",
+    "rfc_7953_duration_property",
+    "rfc_7953_end_property",
     "rrules_property",
     "sequence_property",
     "single_int_property",
     "single_utc_property",
     "summary_property",
     "uid_property",
+    "url_property",
 ]

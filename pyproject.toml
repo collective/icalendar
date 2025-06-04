@@ -191,6 +191,9 @@ extend-safe-fixes = [
     "T201",   # print found
     "N802",   # Function name {name} should be lowercase
 ]
+"docs/conf.py" = [
+    "INP001", # needs __init__.py
+]
 
 [tool.pytest.ini_options]
 # see https://docs.pytest.org/en/6.2.x/customize.html

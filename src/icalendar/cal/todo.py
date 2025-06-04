@@ -10,10 +10,15 @@ from icalendar.attr import (
     X_MOZ_LASTACK_property,
     X_MOZ_SNOOZE_TIME_property,
     categories_property,
+    class_property,
     color_property,
+    contacts_property,
     create_single_property,
     description_property,
     exdates_property,
+    location_property,
+    organizer_property,
+    priority_property,
     property_del_duration,
     property_doc_duration_template,
     property_get_duration,
@@ -23,6 +28,7 @@ from icalendar.attr import (
     sequence_property,
     summary_property,
     uid_property,
+    url_property,
 )
 from icalendar.cal.component import Component
 from icalendar.error import IncompleteComponent, InvalidCalendar
@@ -30,6 +36,8 @@ from icalendar.tools import is_date
 
 if TYPE_CHECKING:
     from icalendar.alarms import Alarms
+    from icalendar.enums import CLASS
+    from icalendar.prop import vCalAddress
 
 
 class Todo(Component):
@@ -240,20 +248,35 @@ class Todo(Component):
     uid = uid_property
     summary = summary_property
     description = description_property
+    classification = class_property
+    url = url_property
+    organizer = organizer_property
+    location = location_property
+    priority = priority_property
+    contacts = contacts_property
 
     @classmethod
     def new(
         cls,
         /,
         categories: Sequence[str] = (),
+        classification: Optional[CLASS] = None,
         color: Optional[str] = None,
+        comments: list[str] | str | None = None,
+        contacts: list[str] | str | None = None,
+        created: Optional[date] = None,
         description: Optional[str] = None,
-        dtstamp: Optional[date] = None,
         end: Optional[date | datetime] = None,
+        last_modified: Optional[date] = None,
+        location: Optional[str] = None,
+        organizer: Optional[vCalAddress | str] = None,
+        priority: Optional[int] = None,
         sequence: Optional[int] = None,
+        stamp: Optional[date] = None,
         start: Optional[date | datetime] = None,
         summary: Optional[str] = None,
         uid: Optional[str | uuid.UUID] = None,
+        url: Optional[str] = None,
     ):
         """Create a new TODO with all required properties.
 
@@ -261,26 +284,38 @@ class Todo(Component):
 
         Arguments:
             categories: The :attr:`categories` of the todo.
+            classification: The :attr:`classification` of the todo.
             color: The :attr:`color` of the todo.
+            comments: The :attr:`Component.comments` of the todo.
+            created: The :attr:`Component.created` of the todo.
             description: The :attr:`description` of the todo.
-            dtstamp: The :attr:`DTSTAMP` of the todo.
-                If None, this is set to the current time.
             end: The :attr:`end` of the todo.
+            last_modified: The :attr:`Component.last_modified` of the todo.
+            location: The :attr:`location` of the todo.
+            organizer: The :attr:`organizer` of the todo.
             sequence: The :attr:`sequence` of the todo.
+            stamp: The :attr:`Component.DTSTAMP` of the todo.
+                If None, this is set to the current time.
             start: The :attr:`start` of the todo.
             summary: The :attr:`summary` of the todo.
             uid: The :attr:`uid` of the todo.
                 If None, this is set to a new :func:`uuid.uuid4`.
+            url: The :attr:`url` of the todo.
 
         Returns:
             :class:`Todo`
 
         Raises:
-            IncompleteComponent: If the content is not valid according to :rfc:`5545`.
+            InvalidCalendar: If the content is not valid according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        todo = super().new(dtstamp=dtstamp if dtstamp is not None else cls._utc_now())
+        todo = super().new(
+            stamp=stamp if stamp is not None else cls._utc_now(),
+            created=created,
+            last_modified=last_modified,
+            comments=comments,
+        )
         todo.summary = summary
         todo.description = description
         todo.uid = uid if uid is not None else uuid.uuid4()
@@ -289,6 +324,14 @@ class Todo(Component):
         todo.color = color
         todo.categories = categories
         todo.sequence = sequence
+        todo.classification = classification
+        todo.url = url
+        todo.organizer = organizer
+        todo.location = location
+        todo.priority = priority
+        todo.contacts = contacts
+        if cls._validate_new:
+            cls._validate_start_and_end(start, end)
         return todo
 
 

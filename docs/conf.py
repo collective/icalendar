@@ -1,7 +1,12 @@
 # icalendar documentation build configuration file
-import importlib.metadata
 import datetime
-import os
+import importlib.metadata
+import sys
+from pathlib import Path
+
+HERE = Path(__file__).parent
+SRC = HERE.parent / "src"
+sys.path.insert(0, str(SRC))  # update docs from icalendar source for livehtml
 
 extensions = [
     "sphinx.ext.autodoc",
@@ -16,8 +21,8 @@ source_suffix = ".rst"
 master_doc = "index"
 
 project = "icalendar"
-this_year = datetime.date.today().year
-copyright = f"{this_year}, Plone Foundation"
+this_year = datetime.date.today().year  # noqa: DTZ011
+copyright = f"{this_year}, Plone Foundation"  # noqa: A001
 release = version = importlib.metadata.version("icalendar")
 
 
@@ -36,8 +41,8 @@ html_theme_options = {
             "attributes": {
                 "target": "_blank",
                 "rel": "noopener me",
-                "class": "nav-link custom-fancy-css"
-            }
+                "class": "nav-link custom-fancy-css",
+            },
         },
         {
             "name": "PyPI",
@@ -47,8 +52,8 @@ html_theme_options = {
             "attributes": {
                 "target": "_blank",
                 "rel": "noopener me",
-                "class": "nav-link custom-fancy-css"
-            }
+                "class": "nav-link custom-fancy-css",
+            },
         },
     ],
     "navigation_with_keys": True,
@@ -59,7 +64,7 @@ html_theme_options = {
 }
 pygments_style = "sphinx"
 html_context = {
-#     "github_url": "https://github.com", # or your GitHub Enterprise site
+    #     "github_url": "https://github.com", # or your GitHub Enterprise site
     "github_user": "collective",
     "github_repo": "icalendar",
     "github_version": "main",
@@ -85,4 +90,3 @@ intersphinx_mapping = {
 
 
 man_pages = [("index", "icalendar", "icalendar Documentation", ["Plone Foundation"], 1)]
-
