@@ -15,6 +15,7 @@ from icalendar.timezone import tzp
 
 _marker = []
 
+
 class Component(CaselessDict):
     """Base class for calendar components.
 
@@ -40,7 +41,9 @@ class Component(CaselessDict):
     singletons = ()  # These properties must only appear once
     multiple = ()  # may occur more than once
     exclusive = ()  # These properties are mutually exclusive
-    inclusive : tuple[str] | tuple[tuple[str, str]]= ()  # if any occurs the other(s) MUST occur
+    inclusive: (
+        tuple[str] | tuple[tuple[str, str]]
+    ) = ()  # if any occurs the other(s) MUST occur
     # ('duration', 'repeat')
     ignore_exceptions = False  # if True, and we cannot parse this
     # component, we will silently ignore
@@ -52,7 +55,7 @@ class Component(CaselessDict):
     _components_factory: ClassVar[Optional[ComponentFactory]] = None
 
     @classmethod
-    def get_component_class(cls, name:str) -> type[Component]:
+    def get_component_class(cls, name: str) -> type[Component]:
         """Return a component with this name.
 
         Arguments:
@@ -201,6 +204,8 @@ class Component(CaselessDict):
 
         if name in self:
             value = self[name]
+            if hasattr(value, "to_ical") and hasattr(value, "from_ical"):
+                return value.from_ical(value.to_ical())
             if isinstance(value, list):
                 return [self._decode(name, v) for v in value]
             return self._decode(name, value)
