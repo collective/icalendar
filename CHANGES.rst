@@ -30,7 +30,7 @@ New features:
 
 Bug fixes:
 
-- ...
+- Fix ``Component.decoded`` to work with arbitrary property values. See `issue 279 <https://github.com/collective/icalendar/issues/279>`_
 
 6.3.1 (2025-05-20)
 ------------------
