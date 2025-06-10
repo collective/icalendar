@@ -8,6 +8,7 @@ from typing import ClassVar, Optional
 from icalendar.attr import comments_property, single_utc_property, uid_property
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.caselessdict import CaselessDict
+from icalendar.compatibility import Self
 from icalendar.error import InvalidCalendar
 from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_split
 from icalendar.parser_tools import DEFAULT_ENCODING
@@ -292,7 +293,7 @@ class Component(CaselessDict):
         return properties
 
     @classmethod
-    def from_ical(cls, st, multiple=False):
+    def from_ical(cls, st, multiple:bool=False) -> Self|list[Self]:
         """Populates the component recursively from a string."""
         stack = []  # a stack of components
         comps = []

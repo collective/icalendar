@@ -242,6 +242,43 @@ class ROLE(StrEnum):
     OPT_PARTICIPANT = "OPT-PARTICIPANT"
     NON_PARTICIPANT = "NON-PARTICIPANT"
 
+class VALUE(StrEnum):
+    """VALUE datatypes as defined in :rfc:`5545`.
+
+    Attributes: ``BOOLEAN``, ``CAL_ADDRESS``, ``DATE``, ``DATE_TIME``, ``DURATION``,
+    ``FLOAT``, ``INTEGER``, ``PERIOD``, ``RECUR``, ``TEXT``, ``TIME``, ``URI``,
+    ``UTC_OFFSET``
+
+    Description:
+        This parameter specifies the value type and format of
+        the property value.  The property values MUST be of a single value
+        type.  For example, a "RDATE" property cannot have a combination
+        of DATE-TIME and TIME value types.
+
+        If the property's value is the default value type, then this
+        parameter need not be specified.  However, if the property's
+        default value type is overridden by some other allowable value
+        type, then this parameter MUST be specified.
+
+        Applications MUST preserve the value data for x-name and iana-
+        token values that they don't recognize without attempting to
+        interpret or parse the value data.
+
+"""
+
+    BOOLEAN = "BOOLEAN"
+    CAL_ADDRESS = "CAL-ADDRESS"
+    DATE = "DATE"
+    DATE_TIME = "DATE-TIME"
+    DURATION = "DURATION"
+    FLOAT = "FLOAT"
+    INTEGER = "INTEGER"
+    PERIOD = "PERIOD"
+    RECUR = "RECUR"
+    TEXT = "TEXT"
+    TIME = "TIME"
+    URI = "URI"
+    UTC_OFFSET = "UTC-OFFSET"
 
 class BUSYTYPE(StrEnum):
     """Enum for BUSYTYPE from :rfc:`7953`.
@@ -316,4 +353,5 @@ __all__ = [
     "RELATED",
     "RELTYPE",
     "ROLE",
+    "VALUE",
 ]

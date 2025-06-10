@@ -18,6 +18,10 @@ from typing import Any, Callable, Optional
 
 import pytest
 
+from icalendar.compatibility import ZoneInfo
+
+from .conftest import NOW_UTC, UID_DEFAULT
+
 from icalendar import (
     Alarm,
     Availability,
@@ -30,14 +34,6 @@ from icalendar import (
     Todo,
 )
 from icalendar.enums import BUSYTYPE
-
-from .conftest import NOW_UTC, UID_DEFAULT
-
-try:
-    from zoneinfo import ZoneInfo
-except ImportError:
-    from backports.zoneinfo import ZoneInfo  # type: ignore  # noqa: PGH003
-
 
 # Test parametrization
 
