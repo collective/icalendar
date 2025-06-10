@@ -11,14 +11,25 @@ See https://github.com/collective/icalendar/issues/843
 
 from __future__ import annotations
 
+import itertools
 import traceback
 from datetime import date, datetime, timedelta, timezone
 from typing import Any, Callable, Optional
 
 import pytest
 
-from icalendar import Calendar, FreeBusy
-from icalendar.cal import Alarm, Component, Event, Journal, Todo
+from icalendar import (
+    Alarm,
+    Availability,
+    Available,
+    Calendar,
+    Component,
+    Event,
+    FreeBusy,
+    Journal,
+    Todo,
+)
+from icalendar.enums import BUSYTYPE
 
 from .conftest import NOW_UTC, UID_DEFAULT
 
@@ -27,12 +38,46 @@ try:
 except ImportError:
     from backports.zoneinfo import ZoneInfo  # type: ignore  # noqa: PGH003
 
+
+# Test parametrization
+
 param_summary_components = pytest.mark.parametrize(
-    "component", [Event, Todo, Alarm, Journal]
+    "component", [Event, Todo, Alarm, Journal, Available, Availability]
 )
 param_description_components = pytest.mark.parametrize(
-    "component", [Event, Todo, Alarm, Journal]
+    "component", [Event, Todo, Alarm, Journal, Available, Availability]
 )
+COMPONENTS_DTSTAMP = {
+    Component,
+    Event,
+    Journal,
+    Todo,
+    FreeBusy,
+    Available,
+    Availability,
+}
+COMPONENTS_DTSTAMP_AUTOMATIC = {Event, Journal, Todo, FreeBusy, Available, Availability}
+COMPONENTS_UID_AUTOMATIC = {Event, Todo, Journal, Available, Availability}
+COMPONENTS_UID = {Event, Todo, Journal, Alarm, Calendar, Available, Availability}
+COMPONENTS_SEQUENCE = {Event, Todo, Journal, Availability}
+COMPONENTS_CATEGORIES = {Event, Journal, Todo, Calendar, Availability, Available}
+COMPONENTS_ORGANIZER = {Availability, Event, FreeBusy, Journal, Todo}
+COMPONENTS_LOCATION = {Availability, Available, Event, Todo}
+COMPONENTS_URL = {Availability, Event, Todo, Journal, FreeBusy}
+COMPONENTS_BUSYTYPE = {Availability}
+COMPONENTS_DESCRIPTION = {Event, Todo, Journal, Alarm, Available, Availability}
+COMPONENTS_SUMMARY = {Event, Todo, Journal, Alarm, Available, Availability}
+COMPONENTS_COMMENT = {
+    Event,
+    Todo,
+    Journal,
+    FreeBusy,
+    Available,
+    Availability,
+}  # Standard and Daylight
+COMPONENTS_PRIORITY = {Event, Todo, Availability}
+COMPONENTS_CONTACT = {Event, Todo, Journal, FreeBusy, Available, Availability}
+COMPONENTS_START_END = {Event, Todo, FreeBusy, Available, Availability}
 
 
 @param_summary_components
@@ -109,7 +154,7 @@ def test_set_summary(component, summary):
 
 @param_summary_components
 @param_summary
-def test_new_with_summary(component, summary):
+def test_new_with_summary(component, summary, dont_validate_new):
     """Test the summary property default."""
     assert_summary_equals(component.new(summary=summary), summary)
 
@@ -125,7 +170,7 @@ def test_set_description(component, description):
 
 @param_description_components
 @param_description
-def test_new_with_description(component, description):
+def test_new_with_description(component, description, dont_validate_new):
     """Test the description property default."""
     assert_description_equals(component.new(description=description), description)
 
@@ -205,21 +250,365 @@ def assert_component_attribute_has_value(
     )
 
 
-COMPONENTS_DTSTAMP = {
-    Component,
-    Event,
-    Journal,
-    Todo,
-    FreeBusy,
-}
-COMPONENTS_DTSTAMP_AUTOMATIC = {
-    Event,
-    Journal,
-    Todo,
-    FreeBusy,
-}
-COMPONENTS_UID_AUTOMATIC = {Event, Todo, Journal}
-COMPONENTS_UID = {Event, Todo, Journal, Alarm, Calendar}
+automatic_time_test_cases = list(
+    itertools.chain.from_iterable(
+        [
+            (
+                COMPONENTS_DTSTAMP.copy(),
+                property_name,
+                key,
+                date(2023, 10, 21),
+                datetime(2023, 10, 21, tzinfo=timezone.utc),
+                True,
+                f"{key} becomes a UTC value 1",
+            ),
+            (
+                COMPONENTS_DTSTAMP.copy(),
+                property_name,
+                key,
+                datetime(2023, 10, 22),
+                datetime(2023, 10, 22, tzinfo=timezone.utc),
+                True,
+                f"{key} becomes a UTC value 2",
+            ),
+            (
+                COMPONENTS_DTSTAMP.copy(),
+                property_name,
+                key,
+                datetime(2023, 10, 23, 12, 30, tzinfo=timezone.utc),
+                datetime(2023, 10, 23, 12, 30, tzinfo=ZoneInfo("UTC")),
+                True,
+                f"{key} becomes a UTC value 3",
+            ),
+            (
+                COMPONENTS_DTSTAMP.copy(),
+                property_name,
+                key,
+                datetime(2023, 10, 24, 21, 0, 1, tzinfo=timezone(timedelta(hours=1))),
+                datetime(2023, 10, 24, 20, 0, 1, tzinfo=ZoneInfo("UTC")),
+                True,
+                f"{key} becomes a UTC value 4",
+            ),
+            (
+                COMPONENTS_DTSTAMP_AUTOMATIC.copy(),
+                property_name,
+                key,
+                None,
+                NOW_UTC,
+                key == "DTSTAMP",
+                f"we use the current time to create a datetime for {key}",
+            ),
+            (
+                COMPONENTS_DTSTAMP - COMPONENTS_DTSTAMP_AUTOMATIC,
+                property_name,
+                key,
+                None,
+                None,
+                False,
+                f"{key} is not automatically set",
+            ),
+        ]
+        for property_name, key in (
+            ("stamp", "DTSTAMP"),
+            ("created", "CREATED"),
+            ("last_modified", "LAST-MODIFIED"),
+        )
+    )
+)
+for (
+    component_classes,
+    property_name,
+    _key,
+    _value,
+    _expected_value,
+    _expected,
+    _message,
+) in automatic_time_test_cases:
+    if property_name != "stamp" and FreeBusy in component_classes:
+        # FreeBusy only has stamp.
+        component_classes.remove(FreeBusy)
+
+new_test_cases = [
+    (
+        COMPONENTS_UID,
+        "uid",
+        "uid",
+        "test UID",
+        "test UID",
+        True,
+        "Set the UID property",
+    ),
+    (
+        COMPONENTS_UID_AUTOMATIC,
+        "uid",
+        "uid",
+        None,
+        UID_DEFAULT,
+        True,
+        "Set the UID property by default for these components",
+    ),
+    (
+        COMPONENTS_UID - COMPONENTS_UID_AUTOMATIC,
+        "uid",
+        "uid",
+        None,
+        "",
+        False,
+        "UID is not automatically set",
+    ),
+    (
+        {Event, Todo, Journal},  # TODO: FreeBusy, Availability, Available
+        "start",
+        "dtstart",
+        datetime(2023, 10, 24, 21, 0, 1, tzinfo=ZoneInfo("Europe/Berlin")),
+        datetime(2023, 10, 24, 21, 0, 1, tzinfo=ZoneInfo("Europe/Berlin")),
+        True,
+        "set the start",
+    ),
+    (
+        {Event},  # TODO: FreeBusy, Available
+        "end",
+        "dtend",
+        datetime(2023, 10, 24, 22, 0, 1, tzinfo=ZoneInfo("Europe/Berlin")),
+        datetime(2023, 10, 24, 22, 0, 1, tzinfo=ZoneInfo("Europe/Berlin")),
+        True,
+        "set the end",
+    ),
+    (
+        {Todo},
+        "end",
+        "due",
+        datetime(2023, 10, 24, 22, 0, 1, tzinfo=ZoneInfo("Europe/Berlin")),
+        datetime(2023, 10, 24, 22, 0, 1, tzinfo=ZoneInfo("Europe/Berlin")),
+        True,
+        "set the end",
+    ),
+    (
+        {Todo, Event, Calendar, Journal},
+        "color",
+        "color",
+        "red",
+        "red",
+        True,
+        "set the color",
+    ),
+    (
+        COMPONENTS_SEQUENCE,
+        "sequence",
+        "SEQUENCE",
+        1,
+        1,
+        True,
+        "set the sequence",
+    ),
+    (
+        COMPONENTS_SEQUENCE,
+        "sequence",
+        "SEQUENCE",
+        None,
+        0,
+        False,
+        "get the default the sequence",
+    ),
+    (
+        COMPONENTS_CATEGORIES,
+        "categories",
+        "CATEGORIES",
+        ["cat1", "cat2"],
+        ["cat1", "cat2"],
+        True,
+        "set the categories",
+    ),
+    (
+        COMPONENTS_CATEGORIES,
+        "categories",
+        "CATEGORIES",
+        (),
+        [],
+        False,
+        "categories are absent",
+    ),
+    (
+        COMPONENTS_ORGANIZER,
+        "organizer",
+        "ORGANIZER",
+        "mailto:bernard@example.com",
+        "mailto:bernard@example.com",
+        True,
+        "set the organizer",
+    ),
+    (
+        COMPONENTS_ORGANIZER,
+        "organizer",
+        "ORGANIZER",
+        None,
+        None,
+        False,
+        "no organizer by default",
+    ),
+    (
+        COMPONENTS_LOCATION,
+        "location",
+        "LOCATION",
+        "Berlin",
+        "Berlin",
+        True,
+        "set the location",
+    ),
+    (
+        COMPONENTS_LOCATION,
+        "location",
+        "LOCATION",
+        None,
+        None,
+        False,
+        "no location by default",
+    ),
+    (
+        COMPONENTS_URL,
+        "url",
+        "URL",
+        "https://icalendar.readthedocs.io/",
+        "https://icalendar.readthedocs.io/",
+        True,
+        "set the url",
+    ),
+    (
+        COMPONENTS_URL,
+        "url",
+        "URL",
+        None,
+        "",
+        False,
+        "no url by default",
+    ),
+    (
+        COMPONENTS_BUSYTYPE,
+        "busy_type",
+        "BUSYTYPE",
+        BUSYTYPE.BUSY,
+        BUSYTYPE.BUSY,
+        True,
+        "set the url",
+    ),
+    (
+        COMPONENTS_BUSYTYPE,
+        "busy_type",
+        "BUSYTYPE",
+        None,
+        BUSYTYPE.BUSY_UNAVAILABLE,
+        False,
+        "default busy type",
+    ),
+    (
+        COMPONENTS_DESCRIPTION,
+        "description",
+        "DESCRIPTION",
+        "This describes the component a bit more in detail.",
+        "This describes the component a bit more in detail.",
+        True,
+        "set the description",
+    ),
+    (
+        COMPONENTS_DESCRIPTION,
+        "description",
+        "DESCRIPTION",
+        None,
+        None,
+        False,
+        "no description by default",
+    ),
+    (
+        COMPONENTS_SUMMARY,
+        "summary",
+        "SUMMARY",
+        "component summary",
+        "component summary",
+        True,
+        "set the summary",
+    ),
+    (
+        COMPONENTS_SUMMARY,
+        "summary",
+        "SUMMARY",
+        None,
+        None,
+        False,
+        "no summary by default",
+    ),
+    (
+        COMPONENTS_PRIORITY,
+        "priority",
+        "PRIORITY",
+        8,
+        8,
+        True,
+        "priority is set",
+    ),
+    (
+        COMPONENTS_PRIORITY,
+        "priority",
+        "PRIORITY",
+        None,
+        0,
+        False,
+        "no priority by default",
+    ),
+    (
+        COMPONENTS_COMMENT,
+        "comments",
+        "COMMENT",
+        None,
+        [],
+        False,
+        "no comments",
+    ),
+    (
+        COMPONENTS_COMMENT,
+        "comments",
+        "COMMENT",
+        "This is a comment",
+        ["This is a comment"],
+        True,
+        "one comment is set",
+    ),
+    (
+        COMPONENTS_COMMENT,
+        "comments",
+        "COMMENT",
+        ["one", "two", "three"],
+        ["one", "two", "three"],
+        True,
+        "several comments",
+    ),
+    (
+        COMPONENTS_CONTACT,
+        "contacts",
+        "CONTACT",
+        None,
+        [],
+        False,
+        "no contacts",
+    ),
+    (
+        COMPONENTS_CONTACT,
+        "contacts",
+        "CONTACT",
+        "This is a comment",
+        ["This is a comment"],
+        True,
+        "one contact is set",
+    ),
+    (
+        COMPONENTS_CONTACT,
+        "contacts",
+        "CONTACT",
+        ["one", "two", "three"],
+        ["one", "two", "three"],
+        True,
+        "several contacts",
+    ),
+]
 
 
 @pytest.mark.parametrize(
@@ -232,161 +621,7 @@ COMPONENTS_UID = {Event, Todo, Journal, Alarm, Calendar}
         "key_present",
         "message",
     ),
-    [
-        (
-            COMPONENTS_DTSTAMP,
-            "DTSTAMP",
-            "DTSTAMP",
-            date(2023, 10, 21),
-            datetime(2023, 10, 21, tzinfo=timezone.utc),
-            True,
-            "dtstamp becomes a UTC value",
-        ),
-        (
-            COMPONENTS_DTSTAMP,
-            "DTSTAMP",
-            "DTSTAMP",
-            datetime(2023, 10, 22),
-            datetime(2023, 10, 22, tzinfo=timezone.utc),
-            True,
-            "dtstamp becomes a UTC value",
-        ),
-        (
-            COMPONENTS_DTSTAMP,
-            "DTSTAMP",
-            "DTSTAMP",
-            datetime(2023, 10, 23, 12, 30, tzinfo=timezone.utc),
-            datetime(2023, 10, 23, 12, 30, tzinfo=ZoneInfo("UTC")),
-            True,
-            "dtstamp becomes a UTC value",
-        ),
-        (
-            COMPONENTS_DTSTAMP,
-            "DTSTAMP",
-            "DTSTAMP",
-            datetime(2023, 10, 24, 21, 0, 1, tzinfo=timezone(timedelta(hours=1))),
-            datetime(2023, 10, 24, 20, 0, 1, tzinfo=ZoneInfo("UTC")),
-            True,
-            "dtstamp becomes a UTC value",
-        ),
-        (
-            COMPONENTS_DTSTAMP_AUTOMATIC,
-            "DTSTAMP",
-            "DTSTAMP",
-            None,
-            NOW_UTC,
-            True,
-            "we use the current time to create a datetime for DTSTAMP",
-        ),
-        (
-            COMPONENTS_DTSTAMP - COMPONENTS_DTSTAMP_AUTOMATIC,
-            "DTSTAMP",
-            "DTSTAMP",
-            None,
-            None,
-            False,
-            "DTSTAMP is not automatically set",
-        ),
-        (
-            COMPONENTS_UID,
-            "uid",
-            "uid",
-            "test UID",
-            "test UID",
-            True,
-            "Set the UID property",
-        ),
-        (
-            COMPONENTS_UID_AUTOMATIC,
-            "uid",
-            "uid",
-            None,
-            UID_DEFAULT,
-            True,
-            "Set the UID property by default for these components",
-        ),
-        (
-            COMPONENTS_UID - COMPONENTS_UID_AUTOMATIC,
-            "uid",
-            "uid",
-            None,
-            "",
-            False,
-            "UID is not automatically set",
-        ),
-        (
-            {Event, Todo, Journal},  # TODO: FreeBusy
-            "start",
-            "dtstart",
-            datetime(2023, 10, 24, 21, 0, 1, tzinfo=ZoneInfo("Europe/Berlin")),
-            datetime(2023, 10, 24, 21, 0, 1, tzinfo=ZoneInfo("Europe/Berlin")),
-            True,
-            "set the start",
-        ),
-        (
-            {Event},  # TODO: FreeBusy
-            "end",
-            "dtend",
-            datetime(2023, 10, 24, 22, 0, 1, tzinfo=ZoneInfo("Europe/Berlin")),
-            datetime(2023, 10, 24, 22, 0, 1, tzinfo=ZoneInfo("Europe/Berlin")),
-            True,
-            "set the end",
-        ),
-        (
-            {Todo},
-            "end",
-            "due",
-            datetime(2023, 10, 24, 22, 0, 1, tzinfo=ZoneInfo("Europe/Berlin")),
-            datetime(2023, 10, 24, 22, 0, 1, tzinfo=ZoneInfo("Europe/Berlin")),
-            True,
-            "set the end",
-        ),
-        (
-            {Todo, Event, Calendar, Journal},
-            "color",
-            "color",
-            "red",
-            "red",
-            True,
-            "set the color",
-        ),
-        (
-            {Event, Todo, Journal},
-            "sequence",
-            "SEQUENCE",
-            1,
-            1,
-            True,
-            "set the sequence",
-        ),
-        (
-            {Event, Todo, Journal},
-            "sequence",
-            "SEQUENCE",
-            None,
-            0,
-            False,
-            "get the default the sequence",
-        ),
-        (
-            {Event, Journal, Todo, Calendar},
-            "categories",
-            "CATEGORIES",
-            ["cat1", "cat2"],
-            ["cat1", "cat2"],
-            True,
-            "set the categories",
-        ),
-        (
-            {Event, Journal, Todo, Calendar},
-            "categories",
-            "CATEGORIES",
-            (),
-            [],
-            False,
-            "categories are absent",
-        ),
-    ],
+    automatic_time_test_cases + new_test_cases,
 )
 @pytest.mark.parametrize(
     "create_component_with_property", [component_setter, component_with_new]
@@ -400,9 +635,11 @@ def test_properties_and_new(
     key_present,
     key,
     message,
+    dont_validate_new,
 ):
     """We set and get the dtstamp."""
     for component_class in component_classes:
+        print("processing:", component_class.name)
         component = create_component_with_property(
             component_class, property_name, initial_value
         )
@@ -416,3 +653,30 @@ def test_properties_and_new(
             assert_component_attribute_has_value(
                 component, property_name, expected_value, message
             )
+
+
+@pytest.mark.parametrize("component_class", COMPONENTS_START_END)
+def test_end_must_be_after_start(tzp, component_class):
+    """The end must be after the start."""
+    with pytest.raises(ValueError) as e:
+        component_class.new(
+            start=tzp.localize_utc(datetime(2011, 10, 5, 13, 32, 25)),
+            end=tzp.localize_utc(datetime(2011, 10, 5, 12, 32, 25)),
+        )
+    assert "end must be after start" in str(e.value)
+
+
+@pytest.mark.parametrize("component_class", COMPONENTS_START_END)
+def test_start_and_end_can_be_the_same(tzp, component_class):
+    """The end must be after the start."""
+    start = tzp.localize_utc(datetime(2011, 10, 5, 13, 32, 25))
+    c = component_class.new(start=start, end=start)
+    assert c.start == start
+    assert c.end == start
+    assert c.duration == timedelta(0)
+
+
+def test_journal_start():
+    """Journal does not have an end."""
+    j = Journal.new(start=datetime(2011, 10, 5, 13, 32, 25))
+    assert j.start == datetime(2011, 10, 5, 13, 32, 25)

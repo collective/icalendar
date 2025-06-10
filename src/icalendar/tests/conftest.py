@@ -5,7 +5,6 @@ except ImportError:
 from datetime import datetime, timezone
 from typing import Generator
 
-from icalendar import TypesFactory
 import pytest
 
 import icalendar
@@ -14,6 +13,7 @@ import icalendar.cal.calendar
 import icalendar.cal.component_factory
 import icalendar.cal.event
 import icalendar.cal.timezone
+from icalendar import TypesFactory
 from icalendar.cal.component import Component
 
 from . import timezone_ids
@@ -108,6 +108,7 @@ CALENDARS_FOLDER = HERE / "calendars"
 TIMEZONES_FOLDER = HERE / "timezones"
 EVENTS_FOLDER = HERE / "events"
 ALARMS_FOLDER = HERE / "alarms"
+AVAILABILITIES_FOLDER = HERE / "availabilities"
 
 
 @pytest.fixture(scope="module")
@@ -128,6 +129,11 @@ def events(tzp):
 @pytest.fixture(scope="module")
 def alarms(tzp):
     return DataSource(ALARMS_FOLDER, icalendar.cal.alarm.Alarm.from_ical)
+
+
+@pytest.fixture(scope="module")
+def availabilities(tzp):
+    return DataSource(AVAILABILITIES_FOLDER, icalendar.cal.alarm.Alarm.from_ical)
 
 
 @pytest.fixture(params=PYTZ_UTC + [zoneinfo.ZoneInfo("UTC"), tz.UTC, tz.gettz("UTC")])
@@ -190,6 +196,7 @@ def types_factory():
     """Return a new types factory."""
     return TypesFactory()
 
+
 @pytest.fixture
 def x_sometime(types_factory):
     """Map x_sometime to time"""
@@ -234,6 +241,15 @@ def calendar_component(tzp):
     c = Component()
     c.name = "VCALENDAR"
     return c
+
+
+@pytest.fixture
+def dont_validate_new():
+    """Remove validation for new() of components."""
+    value = Component._validate_new
+    Component._validate_new = False
+    yield
+    Component._validate_new = value
 
 
 @pytest.fixture
@@ -351,6 +367,12 @@ def doctest_import(name, *args, **kw):
 NOW = datetime(2025, 5, 17, 8, 6, 12)
 NOW_UTC = NOW.replace(tzinfo=timezone.utc)
 UID_DEFAULT = "d755cef5-2311-46ed-a0e1-6733c9e15c63"
+
+
+@pytest.fixture
+def test_uid() -> str:
+    """The UID that tests always create."""
+    return UID_DEFAULT
 
 
 @pytest.fixture(autouse=True)

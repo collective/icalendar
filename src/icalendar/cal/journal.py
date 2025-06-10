@@ -4,22 +4,30 @@ from __future__ import annotations
 
 import uuid
 from datetime import date, datetime, timedelta
-from typing import Optional, Sequence
+from typing import TYPE_CHECKING, Optional, Sequence
 
 from icalendar.attr import (
     categories_property,
+    class_property,
     color_property,
+    contacts_property,
     create_single_property,
     descriptions_property,
     exdates_property,
+    organizer_property,
     rdates_property,
     rrules_property,
     sequence_property,
     summary_property,
     uid_property,
+    url_property,
 )
 from icalendar.cal.component import Component
 from icalendar.error import IncompleteComponent
+
+if TYPE_CHECKING:
+    from icalendar.enums import CLASS
+    from icalendar.prop import vCalAddress
 
 
 class Journal(Component):
@@ -128,6 +136,10 @@ class Journal(Component):
 
     summary = summary_property
     descriptions = descriptions_property
+    classification = class_property
+    url = url_property
+    organizer = organizer_property
+    contacts = contacts_property
 
     @property
     def description(self) -> str:
@@ -156,13 +168,20 @@ class Journal(Component):
         cls,
         /,
         categories: Sequence[str] = (),
+        classification: Optional[CLASS] = None,
         color: Optional[str] = None,
+        comments: list[str] | str | None = None,
+        contacts: list[str] | str | None = None,
+        created: Optional[date] = None,
         description: Optional[str | Sequence[str]] = None,
-        dtstamp: Optional[date] = None,
+        last_modified: Optional[date] = None,
+        organizer: Optional[vCalAddress | str] = None,
         sequence: Optional[int] = None,
+        stamp: Optional[date] = None,
         start: Optional[date | datetime] = None,
         summary: Optional[str] = None,
         uid: Optional[str | uuid.UUID] = None,
+        url: Optional[str] = None,
     ):
         """Create a new journal entry with all required properties.
 
@@ -170,26 +189,36 @@ class Journal(Component):
 
         Arguments:
             categories: The :attr:`categories` of the journal.
+            classification: The :attr:`classification` of the journal.
             color: The :attr:`color` of the journal.
+            comments: The :attr:`Component.comments` of the journal.
+            created: The :attr:`Component.created` of the journal.
             description: The :attr:`description` of the journal.
-            dtstamp: The :attr:`DTSTAMP` of the journal.
-                If None, this is set to the current time.
+            end: The :attr:`end` of the journal.
+            last_modified: The :attr:`Component.last_modified` of the journal.
+            organizer: The :attr:`organizer` of the journal.
             sequence: The :attr:`sequence` of the journal.
+            stamp: The :attr:`Component.stamp` of the journal.
+                If None, this is set to the current time.
             start: The :attr:`start` of the journal.
             summary: The :attr:`summary` of the journal.
             uid: The :attr:`uid` of the journal.
                 If None, this is set to a new :func:`uuid.uuid4`.
+            url: The :attr:`url` of the journal.
 
         Returns:
             :class:`Journal`
 
         Raises:
-            IncompleteComponent: If the content is not valid according to :rfc:`5545`.
+            InvalidCalendar: If the content is not valid according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
         journal = super().new(
-            dtstamp=dtstamp if dtstamp is not None else cls._utc_now()
+            stamp=stamp if stamp is not None else cls._utc_now(),
+            created=created,
+            last_modified=last_modified,
+            comments=comments,
         )
         journal.summary = summary
         journal.descriptions = description
@@ -198,6 +227,11 @@ class Journal(Component):
         journal.color = color
         journal.categories = categories
         journal.sequence = sequence
+        journal.classification = classification
+        journal.url = url
+        journal.organizer = organizer
+        journal.contacts = contacts
+        journal.start = start
         return journal
 
 
