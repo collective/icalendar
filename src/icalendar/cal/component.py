@@ -5,16 +5,18 @@ from __future__ import annotations
 from datetime import date, datetime, timezone
 from typing import ClassVar, Optional
 
-from icalendar.attr import single_utc_property, uid_property
+from icalendar.attr import comments_property, single_utc_property, uid_property
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.caselessdict import CaselessDict
 from icalendar.compatibility import Self
+from icalendar.error import InvalidCalendar
 from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_split
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import TypesFactory, vDDDLists, vText
 from icalendar.timezone import tzp
 
 _marker = []
+
 
 class Component(CaselessDict):
     """Base class for calendar components.
@@ -41,7 +43,9 @@ class Component(CaselessDict):
     singletons = ()  # These properties must only appear once
     multiple = ()  # may occur more than once
     exclusive = ()  # These properties are mutually exclusive
-    inclusive : tuple[str] | tuple[tuple[str, str]]= ()  # if any occurs the other(s) MUST occur
+    inclusive: (
+        tuple[str] | tuple[tuple[str, str]]
+    ) = ()  # if any occurs the other(s) MUST occur
     # ('duration', 'repeat')
     ignore_exceptions = False  # if True, and we cannot parse this
     # component, we will silently ignore
@@ -53,7 +57,7 @@ class Component(CaselessDict):
     _components_factory: ClassVar[Optional[ComponentFactory]] = None
 
     @classmethod
-    def get_component_class(cls, name:str) -> type[Component]:
+    def get_component_class(cls, name: str) -> type[Component]:
         """Return a component with this name.
 
         Arguments:
@@ -461,7 +465,7 @@ class Component(CaselessDict):
 
         return True
 
-    DTSTAMP = single_utc_property(
+    DTSTAMP = stamp = single_utc_property(
         "DTSTAMP",
         """RFC 5545:
 
@@ -499,6 +503,40 @@ class Component(CaselessDict):
     """,
     )
 
+    @property
+    def last_modified(self) -> datetime:
+        """Datetime when the information associated with the component was last revised.
+
+        Since :attr:`LAST_MODIFIED` is an optional property,
+        this returns :attr:`DTSTAMP` if :attr:`LAST_MODIFIED` is not set.
+        """
+        return self.LAST_MODIFIED or self.DTSTAMP
+
+    @last_modified.setter
+    def last_modified(self, value):
+        self.LAST_MODIFIED = value
+
+    @last_modified.deleter
+    def last_modified(self):
+        del self.LAST_MODIFIED
+
+    @property
+    def created(self) -> datetime:
+        """Datetime when the information associated with the component was created.
+
+        Since :attr:`CREATED` is an optional property,
+        this returns :attr:`DTSTAMP` if :attr:`CREATED` is not set.
+        """
+        return self.CREATED or self.DTSTAMP
+
+    @created.setter
+    def created(self, value):
+        self.CREATED = value
+
+    @created.deleter
+    def created(self):
+        del self.CREATED
+
     def is_thunderbird(self) -> bool:
         """Whether this component has attributes that indicate that Mozilla Thunderbird created it."""  # noqa: E501
         return any(attr.startswith("X-MOZ-") for attr in self.keys())
@@ -509,22 +547,62 @@ class Component(CaselessDict):
         return datetime.now(timezone.utc)
 
     uid = uid_property
+    comments = comments_property
+
+    CREATED = single_utc_property(
+        "CREATED",
+        """CREATED specifies the date and time that the calendar
+information was created by the calendar user agent in the calendar
+store.
+
+Conformance:
+    The property can be specified once in "VEVENT",
+    "VTODO", or "VJOURNAL" calendar components.  The value MUST be
+    specified as a date with UTC time.
+
+""",
+    )
+
+    _validate_new = True
+
+    @staticmethod
+    def _validate_start_and_end(start, end):
+        """This validates start and end.
+
+        Raises:
+            InvalidCalendar: If the information is not valid
+        """
+        if start is None or end is None:
+            return
+        if start > end:
+            raise InvalidCalendar("end must be after start")
 
     @classmethod
-    def new(cls, dtstamp: Optional[date] = None) -> Component:
+    def new(
+        cls,
+        created: Optional[date] = None,
+        comments: list[str] | str | None = None,
+        last_modified: Optional[date] = None,
+        stamp: Optional[date] = None,
+    ) -> Component:
         """Create a new component.
 
         Arguments:
-            dtstamp: The :attr:`DTSTAMP` of the component.
+            comments: The :attr:`comments` of the component.
+            created: The :attr:`created` of the component.
+            last_modified: The :attr:`last_modified` of the component.
+            stamp: The :attr:`DTSTAMP` of the component.
 
         Raises:
-            IncompleteComponent: If the content is not valid according to :rfc:`5545`.
+            InvalidCalendar: If the content is not valid according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
         component = cls()
-        if dtstamp is not None:
-            component.DTSTAMP = dtstamp
+        component.DTSTAMP = stamp
+        component.created = created
+        component.last_modified = last_modified
+        component.comments = comments
         return component
 
 

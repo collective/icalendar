@@ -17,6 +17,8 @@ Minor changes:
 - Exclude type checking block from test coverage.
 - Add private ``icalendar.compatibility`` module to merge functionality for older Python versions into one place.
 - Add type annotation to ``from_ical()``.
+- Fix enum documentation.
+- ``DTSTAMP``, ``LAST_MODIFIED``, and ``CREATED`` can now be set to ``None`` to delete the value.
 
 Breaking changes:
 
@@ -30,6 +32,9 @@ New features:
 - Add ``new()`` to ``icalendar.Calendar`` to set required attributes. See `Issue 569 <https://github.com/collective/icalendar/issues/569>`_.
 - Add ``new()`` to ``Alarm``, ``Event``, ``Todo``, ``FreeBusy``, ``Component``, and ``Journal`` components. See `Issue 843 <https://github.com/collective/icalendar/issues/843>`_.
 - Add ``value`` to ``Parameters`` to access the ``VALUE`` parameter.
+- Add ``Availability`` and ``Available`` components from :rfc:`7953`. See `Issue 654 <https://github.com/collective/icalendar/issues/654>`_.
+- Add ``stamp``, ``last_modified``, ``created``, ``CREATED``, ``busy_type``, ``class``, ``comments``, ``contacts``, ``location``, ``organizer``, ``priority``, and ``url`` properties to components that use them.
+- Add ``availabilities`` attribtue to ``Calendar``.
 
 Bug fixes:
 

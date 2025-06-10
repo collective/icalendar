@@ -19,6 +19,7 @@ if TYPE_CHECKING:
     import uuid
     from datetime import date
 
+    from icalendar.cal.availability import Availability
     from icalendar.cal.event import Event
     from icalendar.cal.free_busy import FreeBusy
     from icalendar.cal.todo import Todo
@@ -141,6 +142,16 @@ class Calendar(Component):
         Use :py:meth:`Component.add_component`.
         """
         return self.walk("VTODO")
+
+    @property
+    def availabilities(self) -> list[Availability]:
+        """All :class:`Availability` components in the calendar.
+
+        This is a shortcut to get all availabilities.
+        Modifications do not change the calendar.
+        Use :py:meth:`Component.add_component`.
+        """
+        return self.walk("VAVAILABILITY")
 
     @property
     def freebusy(self) -> list[FreeBusy]:
@@ -472,7 +483,7 @@ Description:
             :class:`Calendar`
 
         Raises:
-            IncompleteComponent: If the content is not valid according to :rfc:`5545`.
+            InvalidCalendar: If the content is not valid according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
