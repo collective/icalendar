@@ -1,4 +1,5 @@
 """Test configuration"""
+
 import itertools
 import sys
 import uuid
@@ -11,6 +12,7 @@ from dateutil import tz
 
 from icalendar import (
     Alarm,
+    Availability,
     Calendar,
     Component,
     ComponentFactory,
@@ -22,7 +24,6 @@ from icalendar import (
 from icalendar.compatibility import ZoneInfo, zoneinfo
 from icalendar.timezone import TZP
 from icalendar.timezone import tzp as _tzp
-from icalendar import TypesFactory
 
 from . import timezone_ids
 
@@ -131,7 +132,7 @@ def alarms(tzp):
 
 @pytest.fixture(scope="module")
 def availabilities(tzp):
-    return DataSource(AVAILABILITIES_FOLDER, icalendar.cal.alarm.Alarm.from_ical)
+    return DataSource(AVAILABILITIES_FOLDER, Availability.from_ical)
 
 
 @pytest.fixture(params=PYTZ_UTC + [ZoneInfo("UTC"), tz.UTC, tz.gettz("UTC")])
