@@ -63,9 +63,6 @@ class CaselessDict(OrderedDict):
     def popitem(self):
         return super().popitem()
 
-    def has_key(self, key):
-        key = to_unicode(key)
-        return super().__contains__(key.upper())
 
     def update(self, *args, **kwargs):
         # Multiple keys where key1.upper() == key2.upper() will be lost.
