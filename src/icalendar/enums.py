@@ -60,6 +60,55 @@ class PARTSTAT(StrEnum):
     IN_PROCESS = "IN-PROCESS"
 
 
+class STATUS(StrEnum):
+    """Enum for STATUS from :rfc:`5545`.
+
+    Values for :class:`icalendar.cal.event.Event`:
+        ``CONFIRMED``,
+        ``TENTATIVE``,
+        ``CANCELLED``
+
+    Values for :class:`icalendar.cal.todo.Todo`:
+        ``NEEDS_ACTION``,
+        ``COMPLETED``,
+        ``IN_PROCESS``,
+        ``CANCELLED``
+
+    Values for :class:`icalendar.cal.journal.Journal`:
+        ``DRAFT``,
+        ``FINAL``,
+        ``CANCELLED``
+
+    Description:
+        In a group-scheduled calendar component, the property
+        is used by the "Organizer" to provide a confirmation of the event
+        to the "Attendees".  For example in a "VEVENT" calendar component,
+        the "Organizer" can indicate that a meeting is tentative,
+        confirmed, or cancelled.  In a "VTODO" calendar component, the
+        "Organizer" can indicate that an action item needs action, is
+        completed, is in process or being worked on, or has been
+        cancelled.  In a "VJOURNAL" calendar component, the "Organizer"
+        can indicate that a journal entry is draft, final, or has been
+        cancelled or removed.
+    """
+
+    # Event
+    TENTATIVE = "TENTATIVE"
+    CONFIRMED = "CONFIRMED"
+    CANCELLED = "CANCELLED"
+
+    # VTodo
+    NEEDS_ACTION = "NEEDS-ACTION"
+    COMPLETED = "COMPLETED"
+    IN_PROCESS = "IN-PROCESS"
+    # CANCELLED
+
+    # Journal
+    DRAFT = "DRAFT"
+    FINAL = "FINAL"
+    # CANCELLED
+
+
 class FBTYPE(StrEnum):
     """Enum for FBTYPE from :rfc:`5545`.
 
@@ -377,6 +426,7 @@ __all__ = [
     "RELATED",
     "RELTYPE",
     "ROLE",
+    "STATUS",
     "TRANSP",
     "VALUE",
 ]

@@ -89,6 +89,7 @@ __all__ = [
     "RELATED",
     "RELTYPE",
     "ROLE",
+    "STATUS",
     "TRANSP",
     "VALUE",
     "Alarm",

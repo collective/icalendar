@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Optional, Sequence
 from icalendar.attr import (
     X_MOZ_LASTACK_property,
     X_MOZ_SNOOZE_TIME_property,
+    attendees_property,
     categories_property,
     class_property,
     color_property,
@@ -26,6 +27,7 @@ from icalendar.attr import (
     rdates_property,
     rrules_property,
     sequence_property,
+    status_property,
     summary_property,
     uid_property,
     url_property,
@@ -36,7 +38,7 @@ from icalendar.tools import is_date
 
 if TYPE_CHECKING:
     from icalendar.alarms import Alarms
-    from icalendar.enums import CLASS
+    from icalendar.enums import CLASS, STATUS
     from icalendar.prop import vCalAddress
 
 
@@ -254,11 +256,14 @@ class Todo(Component):
     location = location_property
     priority = priority_property
     contacts = contacts_property
+    status = status_property
+    attendees = attendees_property
 
     @classmethod
     def new(
         cls,
         /,
+        attendees: Optional[list[vCalAddress]] = None,
         categories: Sequence[str] = (),
         classification: Optional[CLASS] = None,
         color: Optional[str] = None,
@@ -274,6 +279,7 @@ class Todo(Component):
         sequence: Optional[int] = None,
         stamp: Optional[date] = None,
         start: Optional[date | datetime] = None,
+        status: Optional[STATUS] = None,
         summary: Optional[str] = None,
         uid: Optional[str | uuid.UUID] = None,
         url: Optional[str] = None,
@@ -283,6 +289,7 @@ class Todo(Component):
         This creates a new Todo in accordance with :rfc:`5545`.
 
         Arguments:
+            attendees: The :attr:`attendees` of the todo.
             categories: The :attr:`categories` of the todo.
             classification: The :attr:`classification` of the todo.
             color: The :attr:`color` of the todo.
@@ -297,6 +304,7 @@ class Todo(Component):
             stamp: The :attr:`Component.DTSTAMP` of the todo.
                 If None, this is set to the current time.
             start: The :attr:`start` of the todo.
+            status: The :attr:`status` of the todo.
             summary: The :attr:`summary` of the todo.
             uid: The :attr:`uid` of the todo.
                 If None, this is set to a new :func:`uuid.uuid4`.
@@ -330,6 +338,8 @@ class Todo(Component):
         todo.location = location
         todo.priority = priority
         todo.contacts = contacts
+        todo.status = status
+        todo.attendees = attendees
         if cls._validate_new:
             cls._validate_start_and_end(start, end)
         return todo

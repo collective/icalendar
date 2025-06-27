@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import itertools
 from datetime import date, datetime, timedelta
-from typing import TYPE_CHECKING, Optional, Sequence, TypeVar, Union
+from typing import TYPE_CHECKING, Optional, Sequence, Union
 
-from icalendar.enums import BUSYTYPE, CLASS, TRANSP, StrEnum
+from icalendar.enums import BUSYTYPE, CLASS, STATUS, TRANSP, StrEnum
 from icalendar.error import IncompleteComponent, InvalidCalendar
 from icalendar.parser_tools import SEQUENCE_TYPES
 from icalendar.prop import vCalAddress, vCategory, vDDDTypes, vDuration, vRecur, vText
@@ -635,6 +635,88 @@ Example:
 """,
 )
 
+
+def _get_attendees(self: Component) -> list[vCalAddress]:
+    """Get attendees."""
+    value = self.get("ATTENDEE")
+    if value is None:
+        value = []
+        self["ATTENDEE"] = value
+        return value
+    if isinstance(value, vCalAddress):
+        return [value]
+    return value
+
+
+def _set_attendees(self: Component, value: list[vCalAddress] | vCalAddress | None):
+    """Set attendees."""
+    _del_attendees(self)
+    if value is None:
+        return
+    if not isinstance(value, list):
+        value = [value]
+    self["ATTENDEE"] = value
+
+
+def _del_attendees(self: Component):
+    """Delete all attendees."""
+    self.pop("ATTENDEE", None)
+
+
+attendees_property = property(
+    _get_attendees,
+    _set_attendees,
+    _del_attendees,
+    """ATTENDEE defines one or more "Attendees" within a calendar component.
+
+Conformance:
+    This property MUST be specified in an iCalendar object
+    that specifies a group-scheduled calendar entity.  This property
+    MUST NOT be specified in an iCalendar object when publishing the
+    calendar information (e.g., NOT in an iCalendar object that
+    specifies the publication of a calendar user's busy time, event,
+    to-do, or journal).  This property is not specified in an
+    iCalendar object that specifies only a time zone definition or
+    that defines calendar components that are not group-scheduled
+    components, but are components only on a single user's calendar.
+
+Description:
+    This property MUST only be specified within calendar
+    components to specify participants, non-participants, and the
+    chair of a group-scheduled calendar entity.  The property is
+    specified within an "EMAIL" category of the "VALARM" calendar
+    component to specify an email address that is to receive the email
+    type of iCalendar alarm.
+
+Examples:
+    Add a new attendee to an existing event.
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Event, vCalAddress
+        >>> event = Event()
+        >>> event.attendees.append(vCalAddress("mailto:me@my-domain.com"))
+        >>> print(event.to_ical())
+        BEGIN:VEVENT
+        ATTENDEE:mailto:me@my-domain.com
+        END:VEVENT
+
+    Create an email alarm with several attendees:
+
+        >>> from icalendar import Alarm, vCalAddress
+        >>> alarm = Alarm.new(attendees = [
+        ...     vCalAddress("mailto:me@my-domain.com"),
+        ...     vCalAddress("mailto:you@my-domain.com"),
+        ... ], summary = "Email alarm")
+        >>> print(alarm.to_ical())
+        BEGIN:VALARM
+        ATTENDEE:mailto:me@my-domain.com
+        ATTENDEE:mailto:you@my-domain.com
+        SUMMARY:Email alarm
+        END:VALARM
+""",
+)
+
 uid_property = single_string_property(
     "UID",
     """UID specifies the persistent, globally unique identifier for a component.
@@ -1058,20 +1140,27 @@ def _del_organizer(self: Component):
 
 organizer_property = property(_get_organizer, _set_organizer, _del_organizer)
 
-ENUM_TYPE = TypeVar("ENUM_TYPE", bound=StrEnum)
-
 
 def single_string_enum_property(
-    name: str, enum: ENUM_TYPE, default: StrEnum, docs: str
+    name: str, enum: StrEnum, default: StrEnum, docs: str
 ) -> property:
     """Create a property to access a single string value and convert it to an enum."""
     prop = single_string_property(name, docs, default=default)
 
-    def fget(self: Component) -> ENUM_TYPE:
+    def fget(self: Component) -> StrEnum:
+        """Get the value."""
         value = prop.fget(self)
+        if value == default:
+            return default
         return enum(str(value))
 
-    return property(fget, prop.fset, prop.fdel, doc=docs)
+    def fset(self: Component, value: str | StrEnum | None) -> None:
+        """Set the value."""
+        if value == "":
+            value = None
+        prop.fset(self, value)
+
+    return property(fget, fset, prop.fdel, doc=docs)
 
 
 busy_type_property = single_string_enum_property(
@@ -1169,7 +1258,7 @@ transparency_property = single_string_enum_property(
     "TRANSP",
     TRANSP,
     TRANSP.OPAQUE,
-    """TRANSP    specifdefines whether or not an event is transparent to busy time searches.
+    """TRANSP defines whether or not an event is transparent to busy time searches.
 
 Returns:
     :class:`icalendar.enums.TRANSP`
@@ -1183,7 +1272,31 @@ Description:
     events, which do not take up the individual's (or resource's) time
     SHOULD be recorded as TRANSPARENT, making them invisible to free/
     busy time searches.
-""",  # noqa: E501
+""",
+)
+status_property = single_string_enum_property(
+    "STATUS",
+    STATUS,
+    "",
+    """STATUS defines the overall status or confirmation for the calendar component.
+
+Returns:
+    :class:`icalendar.enums.STATUS`
+
+The default value is ``""``.
+
+Description:
+    In a group-scheduled calendar component, the property
+    is used by the "Organizer" to provide a confirmation of the event
+    to the "Attendees".  For example in a "VEVENT" calendar component,
+    the "Organizer" can indicate that a meeting is tentative,
+    confirmed, or cancelled.  In a "VTODO" calendar component, the
+    "Organizer" can indicate that an action item needs action, is
+    completed, is in process or being worked on, or has been
+    cancelled.  In a "VJOURNAL" calendar component, the "Organizer"
+    can indicate that a journal entry is draft, final, or has been
+    cancelled or removed.
+""",
 )
 
 url_property = single_string_property(
@@ -1391,6 +1504,7 @@ def rfc_7953_end_property(self):
 
 
 __all__ = [
+    "attendees_property",
     "busy_type_property",
     "categories_property",
     "class_property",
@@ -1419,6 +1533,7 @@ __all__ = [
     "sequence_property",
     "single_int_property",
     "single_utc_property",
+    "status_property",
     "summary_property",
     "transparency_property",
     "uid_property",

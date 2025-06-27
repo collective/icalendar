@@ -28,6 +28,7 @@ from icalendar import (
     FreeBusy,
     Journal,
     Todo,
+    vCalAddress,
 )
 from icalendar.compatibility import ZoneInfo
 from icalendar.enums import BUSYTYPE
@@ -73,6 +74,8 @@ COMPONENTS_COMMENT = {
 COMPONENTS_PRIORITY = {Event, Todo, Availability}
 COMPONENTS_CONTACT = {Event, Todo, Journal, FreeBusy, Available, Availability}
 COMPONENTS_START_END = {Event, Todo, FreeBusy, Available, Availability}
+COMPONENTS_STATUS = {Event, Todo, Journal}
+COMPONENTS_ATTENDEES = {Event, Todo, Journal, Alarm}
 
 
 @param_summary_components
@@ -322,6 +325,11 @@ for (
     if property_name != "stamp" and FreeBusy in component_classes:
         # FreeBusy only has stamp.
         component_classes.remove(FreeBusy)
+
+
+attendee1 = vCalAddress("mailto:attendee1@example.com")
+attendee2 = vCalAddress("mailto:attendee2@test.test")
+
 
 new_test_cases = [
     (
@@ -630,6 +638,87 @@ new_test_cases = [
         False,
         "value is not set, defaults to OPAQUE",
     ),
+    (
+        COMPONENTS_STATUS,
+        "status",
+        "STATUS",
+        "CANCELLED",
+        "CANCELLED",
+        True,
+        "value set to CANCELLED",
+    ),
+    (
+        COMPONENTS_STATUS,
+        "status",
+        "STATUS",
+        "NEEDS-ACTION",
+        "NEEDS-ACTION",
+        True,
+        "value set to NEEDS-ACTION",
+    ),
+    (
+        COMPONENTS_STATUS,
+        "status",
+        "STATUS",
+        None,
+        "",
+        False,
+        "value is not set",
+    ),
+    (
+        COMPONENTS_STATUS,
+        "status",
+        "STATUS",
+        "",
+        "",
+        False,
+        "value is not set",
+    ),
+    (
+        COMPONENTS_ATTENDEES,
+        "attendees",
+        "ATTENDEE",
+        [],
+        [],
+        True,
+        "value is not set",
+    ),
+    (
+        COMPONENTS_ATTENDEES,
+        "attendees",
+        "ATTENDEE",
+        None,
+        [],
+        False,
+        "value is empty",
+    ),
+    (
+        COMPONENTS_ATTENDEES,
+        "attendees",
+        "ATTENDEE",
+        [attendee1],
+        [attendee1],
+        True,
+        "one attendee",
+    ),
+    (
+        COMPONENTS_ATTENDEES,
+        "attendees",
+        "ATTENDEE",
+        attendee2,
+        [attendee2],
+        True,
+        "one attendee",
+    ),
+    (
+        COMPONENTS_ATTENDEES,
+        "attendees",
+        "ATTENDEE",
+        [attendee1, attendee2],
+        [attendee1, attendee2],
+        True,
+        "two attendees",
+    ),
 ]
 
 
@@ -661,7 +750,16 @@ def test_properties_and_new(
 ):
     """We set and get the dtstamp."""
     for component_class in component_classes:
-        print("processing:", component_class.name)
+        print(
+            "processing:",
+            component_class.name,
+            "->",
+            property_name,
+            "=",
+            initial_value,
+            ":",
+            message,
+        )
         component = create_component_with_property(
             component_class, property_name, initial_value
         )
@@ -702,3 +800,48 @@ def test_journal_start():
     """Journal does not have an end."""
     j = Journal.new(start=datetime(2011, 10, 5, 13, 32, 25))
     assert j.start == datetime(2011, 10, 5, 13, 32, 25)
+
+
+def test_modify_attendees():
+    """We modify the list and see of that works."""
+    attendees = [attendee1]
+    j = Journal.new(attendees=attendees)
+    j.attendees.append(attendee2)
+    assert j.attendees == [attendee1, attendee2]
+    ics = j.to_ical().decode()
+    assert str(attendee1) in ics
+    assert str(attendee2) in ics
+
+
+def test_modify_default_attendees():
+    """Empty attendees need to be modifiable."""
+    todo = Todo.new()
+    todo.attendees.append(attendee1)
+    assert todo.attendees == [attendee1]
+    ics = todo.to_ical().decode()
+    assert str(attendee1) in ics
+
+
+def test_empty_attendees_to_ical():
+    """We should be able to have no attendees set."""
+    e = Event.new()
+    e.attendees = []
+    assert "ATTENDEE" not in e.to_ical().decode()
+
+
+def test_modify_empty_attendees_1():
+    """Empty value set and modified."""
+    e = Event()
+    attendees = []
+    e.attendees = attendees
+    e.attendees.append(attendee1)
+    assert e.attendees == [attendee1] == attendees
+
+
+def test_modify_empty_attendees_2():
+    """Empty value set and modified."""
+    e = Event()
+    attendees = []
+    e.attendees = attendees
+    attendees.append(attendee1)
+    assert e.attendees == [attendee1] == attendees
