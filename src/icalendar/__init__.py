@@ -19,6 +19,7 @@ from icalendar.cal import (
 )
 from icalendar.enums import (
     BUSYTYPE,
+    CLASS,
     CUTYPE,
     FBTYPE,
     PARTSTAT,
@@ -26,6 +27,8 @@ from icalendar.enums import (
     RELATED,
     RELTYPE,
     ROLE,
+    TRANSP,
+    VALUE,
 )
 from icalendar.error import (
     ComponentEndMissing,
@@ -78,6 +81,7 @@ from .version import __version__, __version_tuple__, version, version_tuple
 
 __all__ = [
     "BUSYTYPE",
+    "CLASS",
     "CUTYPE",
     "FBTYPE",
     "PARTSTAT",
@@ -85,6 +89,8 @@ __all__ = [
     "RELATED",
     "RELTYPE",
     "ROLE",
+    "TRANSP",
+    "VALUE",
     "Alarm",
     "AlarmTime",
     "Alarms",

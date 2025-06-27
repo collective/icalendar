@@ -6,7 +6,7 @@ import itertools
 from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Optional, Sequence, TypeVar, Union
 
-from icalendar.enums import BUSYTYPE, CLASS, StrEnum
+from icalendar.enums import BUSYTYPE, CLASS, TRANSP, StrEnum
 from icalendar.error import IncompleteComponent, InvalidCalendar
 from icalendar.parser_tools import SEQUENCE_TYPES
 from icalendar.prop import vCalAddress, vCategory, vDDDTypes, vDuration, vRecur, vText
@@ -1165,6 +1165,27 @@ Description:
 """,
 )
 
+transparency_property = single_string_enum_property(
+    "TRANSP",
+    TRANSP,
+    TRANSP.OPAQUE,
+    """TRANSP    specifdefines whether or not an event is transparent to busy time searches.
+
+Returns:
+    :class:`icalendar.enums.TRANSP`
+
+Description:
+    Time Transparency is the characteristic of an event
+    that determines whether it appears to consume time on a calendar.
+    Events that consume actual time for the individual or resource
+    associated with the calendar SHOULD be recorded as OPAQUE,
+    allowing them to be detected by free/busy time searches.  Other
+    events, which do not take up the individual's (or resource's) time
+    SHOULD be recorded as TRANSPARENT, making them invisible to free/
+    busy time searches.
+""",  # noqa: E501
+)
+
 url_property = single_string_property(
     "URL",
     """A Uniform Resource Locator (URL) associated with the iCalendar object.
@@ -1399,6 +1420,7 @@ __all__ = [
     "single_int_property",
     "single_utc_property",
     "summary_property",
+    "transparency_property",
     "uid_property",
     "url_property",
 ]

@@ -27,6 +27,7 @@ from icalendar.attr import (
     rrules_property,
     sequence_property,
     summary_property,
+    transparency_property,
     uid_property,
     url_property,
 )
@@ -37,7 +38,7 @@ from icalendar.tools import is_date
 
 if TYPE_CHECKING:
     from icalendar.alarms import Alarms
-    from icalendar.enums import CLASS
+    from icalendar.enums import CLASS, TRANSP
     from icalendar.prop import vCalAddress
 
 
@@ -382,6 +383,7 @@ class Event(Component):
     location = location_property
     priority = priority_property
     contacts = contacts_property
+    transparency = transparency_property
 
     @classmethod
     def new(
@@ -402,6 +404,7 @@ class Event(Component):
         sequence: Optional[int] = None,
         stamp: Optional[date] = None,
         start: Optional[date | datetime] = None,
+        transparency: Optional[TRANSP] = None,
         summary: Optional[str] = None,
         uid: Optional[str | uuid.UUID] = None,
         url: Optional[str] = None,
@@ -427,6 +430,7 @@ class Event(Component):
                 If None, this is set to the current time.
             start: The :attr:`start` of the event.
             summary: The :attr:`summary` of the event.
+            transparency: The :attr:`transparency` of the event.
             uid: The :attr:`uid` of the event.
                 If None, this is set to a new :func:`uuid.uuid4`.
             url: The :attr:`url` of the event.
@@ -458,6 +462,7 @@ class Event(Component):
         event.organizer = organizer
         event.location = location
         event.priority = priority
+        event.transparency = transparency
         event.contacts = contacts
         if cls._validate_new:
             cls._validate_start_and_end(start, end)

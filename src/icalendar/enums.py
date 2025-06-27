@@ -242,6 +242,7 @@ class ROLE(StrEnum):
     OPT_PARTICIPANT = "OPT-PARTICIPANT"
     NON_PARTICIPANT = "NON-PARTICIPANT"
 
+
 class VALUE(StrEnum):
     """VALUE datatypes as defined in :rfc:`5545`.
 
@@ -264,7 +265,7 @@ class VALUE(StrEnum):
         token values that they don't recognize without attempting to
         interpret or parse the value data.
 
-"""
+    """
 
     BOOLEAN = "BOOLEAN"
     CAL_ADDRESS = "CAL-ADDRESS"
@@ -279,6 +280,7 @@ class VALUE(StrEnum):
     TIME = "TIME"
     URI = "URI"
     UTC_OFFSET = "UTC-OFFSET"
+
 
 class BUSYTYPE(StrEnum):
     """Enum for BUSYTYPE from :rfc:`7953`.
@@ -343,6 +345,28 @@ class CLASS(StrEnum):
     CONFIDENTIAL = "CONFIDENTIAL"
 
 
+class TRANSP(StrEnum):
+    """Enum for TRANSP from :rfc:`5545`.
+
+    Values:
+        ``OPAQUE``,
+        ``TRANSPARENT``
+
+    Description:
+        Time Transparency is the characteristic of an event
+        that determines whether it appears to consume time on a calendar.
+        Events that consume actual time for the individual or resource
+        associated with the calendar SHOULD be recorded as OPAQUE,
+        allowing them to be detected by free/busy time searches.  Other
+        events, which do not take up the individual's (or resource's) time
+        SHOULD be recorded as TRANSPARENT, making them invisible to free/
+        busy time searches.
+    """
+
+    OPAQUE = "OPAQUE"
+    TRANSPARENT = "TRANSPARENT"
+
+
 __all__ = [
     "BUSYTYPE",
     "CLASS",
@@ -353,5 +377,6 @@ __all__ = [
     "RELATED",
     "RELTYPE",
     "ROLE",
+    "TRANSP",
     "VALUE",
 ]

@@ -603,6 +603,33 @@ new_test_cases = [
         True,
         "several contacts",
     ),
+    (
+        {Event},
+        "transparency",
+        "TRANSP",
+        "TRANSPARENT",
+        "TRANSPARENT",
+        True,
+        "value set to TRANSPARENT",
+    ),
+    (
+        {Event},
+        "transparency",
+        "TRANSP",
+        "OPAQUE",
+        "OPAQUE",
+        True,
+        "value set to OPAQUE",
+    ),
+    (
+        {Event},
+        "transparency",
+        "TRANSP",
+        None,
+        "OPAQUE",
+        False,
+        "value is not set, defaults to OPAQUE",
+    ),
 ]
 
 
