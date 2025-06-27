@@ -1142,7 +1142,7 @@ organizer_property = property(_get_organizer, _set_organizer, _del_organizer)
 
 
 def single_string_enum_property(
-    name: str, enum: StrEnum, default: StrEnum, docs: str
+    name: str, enum: type[StrEnum], default: StrEnum, docs: str
 ) -> property:
     """Create a property to access a single string value and convert it to an enum."""
     prop = single_string_property(name, docs, default=default)
