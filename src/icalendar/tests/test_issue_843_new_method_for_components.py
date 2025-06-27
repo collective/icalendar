@@ -18,10 +18,6 @@ from typing import Any, Callable, Optional
 
 import pytest
 
-from icalendar.compatibility import ZoneInfo
-
-from .conftest import NOW_UTC, UID_DEFAULT
-
 from icalendar import (
     Alarm,
     Availability,
@@ -33,7 +29,10 @@ from icalendar import (
     Journal,
     Todo,
 )
+from icalendar.compatibility import ZoneInfo
 from icalendar.enums import BUSYTYPE
+
+from .conftest import NOW_UTC, UID_DEFAULT
 
 # Test parametrization
 
@@ -353,7 +352,7 @@ new_test_cases = [
         "UID is not automatically set",
     ),
     (
-        {Event, Todo, Journal},  # TODO: FreeBusy, Availability, Available
+        {Event, Todo, Journal, Availability, Available, FreeBusy},
         "start",
         "dtstart",
         datetime(2023, 10, 24, 21, 0, 1, tzinfo=ZoneInfo("Europe/Berlin")),
@@ -362,7 +361,7 @@ new_test_cases = [
         "set the start",
     ),
     (
-        {Event},  # TODO: FreeBusy, Available
+        {Event, Available, FreeBusy},
         "end",
         "dtend",
         datetime(2023, 10, 24, 22, 0, 1, tzinfo=ZoneInfo("Europe/Berlin")),
