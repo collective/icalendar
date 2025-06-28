@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Optional, Sequence
 from icalendar.attr import (
     X_MOZ_LASTACK_property,
     X_MOZ_SNOOZE_TIME_property,
+    attendees_property,
     categories_property,
     class_property,
     color_property,
@@ -26,7 +27,9 @@ from icalendar.attr import (
     rdates_property,
     rrules_property,
     sequence_property,
+    status_property,
     summary_property,
+    transparency_property,
     uid_property,
     url_property,
 )
@@ -37,7 +40,7 @@ from icalendar.tools import is_date
 
 if TYPE_CHECKING:
     from icalendar.alarms import Alarms
-    from icalendar.enums import CLASS
+    from icalendar.enums import CLASS, STATUS, TRANSP
     from icalendar.prop import vCalAddress
 
 
@@ -382,11 +385,15 @@ class Event(Component):
     location = location_property
     priority = priority_property
     contacts = contacts_property
+    transparency = transparency_property
+    status = status_property
+    attendees = attendees_property
 
     @classmethod
     def new(
         cls,
         /,
+        attendees: Optional[list[vCalAddress]] = None,
         categories: Sequence[str] = (),
         classification: Optional[CLASS] = None,
         color: Optional[str] = None,
@@ -402,6 +409,8 @@ class Event(Component):
         sequence: Optional[int] = None,
         stamp: Optional[date] = None,
         start: Optional[date | datetime] = None,
+        status: Optional[STATUS] = None,
+        transparency: Optional[TRANSP] = None,
         summary: Optional[str] = None,
         uid: Optional[str | uuid.UUID] = None,
         url: Optional[str] = None,
@@ -411,6 +420,7 @@ class Event(Component):
         This creates a new Event in accordance with :rfc:`5545`.
 
         Arguments:
+            attendees: The :attr:`attendees` of the event.
             categories: The :attr:`categories` of the event.
             classification: The :attr:`classification` of the event.
             color: The :attr:`color` of the event.
@@ -426,7 +436,9 @@ class Event(Component):
             stamp: The :attr:`Component.stamp` of the event.
                 If None, this is set to the current time.
             start: The :attr:`start` of the event.
+            status: The :attr:`status` of the event.
             summary: The :attr:`summary` of the event.
+            transparency: The :attr:`transparency` of the event.
             uid: The :attr:`uid` of the event.
                 If None, this is set to a new :func:`uuid.uuid4`.
             url: The :attr:`url` of the event.
@@ -458,7 +470,10 @@ class Event(Component):
         event.organizer = organizer
         event.location = location
         event.priority = priority
+        event.transparency = transparency
         event.contacts = contacts
+        event.status = status
+        event.attendees = attendees
         if cls._validate_new:
             cls._validate_start_and_end(start, end)
         return event

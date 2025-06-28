@@ -7,6 +7,7 @@ from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Optional, Sequence
 
 from icalendar.attr import (
+    attendees_property,
     categories_property,
     class_property,
     color_property,
@@ -18,6 +19,7 @@ from icalendar.attr import (
     rdates_property,
     rrules_property,
     sequence_property,
+    status_property,
     summary_property,
     uid_property,
     url_property,
@@ -26,7 +28,7 @@ from icalendar.cal.component import Component
 from icalendar.error import IncompleteComponent
 
 if TYPE_CHECKING:
-    from icalendar.enums import CLASS
+    from icalendar.enums import CLASS, STATUS
     from icalendar.prop import vCalAddress
 
 
@@ -140,6 +142,8 @@ class Journal(Component):
     url = url_property
     organizer = organizer_property
     contacts = contacts_property
+    status = status_property
+    attendees = attendees_property
 
     @property
     def description(self) -> str:
@@ -167,6 +171,7 @@ class Journal(Component):
     def new(
         cls,
         /,
+        attendees: Optional[list[vCalAddress]] = None,
         categories: Sequence[str] = (),
         classification: Optional[CLASS] = None,
         color: Optional[str] = None,
@@ -179,6 +184,7 @@ class Journal(Component):
         sequence: Optional[int] = None,
         stamp: Optional[date] = None,
         start: Optional[date | datetime] = None,
+        status: Optional[STATUS] = None,
         summary: Optional[str] = None,
         uid: Optional[str | uuid.UUID] = None,
         url: Optional[str] = None,
@@ -188,6 +194,7 @@ class Journal(Component):
         This creates a new Journal in accordance with :rfc:`5545`.
 
         Arguments:
+            attendees: The :attr:`attendees` of the journal.
             categories: The :attr:`categories` of the journal.
             classification: The :attr:`classification` of the journal.
             color: The :attr:`color` of the journal.
@@ -201,6 +208,7 @@ class Journal(Component):
             stamp: The :attr:`Component.stamp` of the journal.
                 If None, this is set to the current time.
             start: The :attr:`start` of the journal.
+            status: The :attr:`status` of the journal.
             summary: The :attr:`summary` of the journal.
             uid: The :attr:`uid` of the journal.
                 If None, this is set to a new :func:`uuid.uuid4`.
@@ -232,6 +240,8 @@ class Journal(Component):
         journal.organizer = organizer
         journal.contacts = contacts
         journal.start = start
+        journal.status = status
+        journal.attendees = attendees
         return journal
 
 

@@ -60,6 +60,55 @@ class PARTSTAT(StrEnum):
     IN_PROCESS = "IN-PROCESS"
 
 
+class STATUS(StrEnum):
+    """Enum for STATUS from :rfc:`5545`.
+
+    Values for :class:`icalendar.cal.event.Event`:
+        ``CONFIRMED``,
+        ``TENTATIVE``,
+        ``CANCELLED``
+
+    Values for :class:`icalendar.cal.todo.Todo`:
+        ``NEEDS_ACTION``,
+        ``COMPLETED``,
+        ``IN_PROCESS``,
+        ``CANCELLED``
+
+    Values for :class:`icalendar.cal.journal.Journal`:
+        ``DRAFT``,
+        ``FINAL``,
+        ``CANCELLED``
+
+    Description:
+        In a group-scheduled calendar component, the property
+        is used by the "Organizer" to provide a confirmation of the event
+        to the "Attendees".  For example in a "VEVENT" calendar component,
+        the "Organizer" can indicate that a meeting is tentative,
+        confirmed, or cancelled.  In a "VTODO" calendar component, the
+        "Organizer" can indicate that an action item needs action, is
+        completed, is in process or being worked on, or has been
+        cancelled.  In a "VJOURNAL" calendar component, the "Organizer"
+        can indicate that a journal entry is draft, final, or has been
+        cancelled or removed.
+    """
+
+    # Event
+    TENTATIVE = "TENTATIVE"
+    CONFIRMED = "CONFIRMED"
+    CANCELLED = "CANCELLED"
+
+    # VTodo
+    NEEDS_ACTION = "NEEDS-ACTION"
+    COMPLETED = "COMPLETED"
+    IN_PROCESS = "IN-PROCESS"
+    # CANCELLED
+
+    # Journal
+    DRAFT = "DRAFT"
+    FINAL = "FINAL"
+    # CANCELLED
+
+
 class FBTYPE(StrEnum):
     """Enum for FBTYPE from :rfc:`5545`.
 
@@ -242,6 +291,7 @@ class ROLE(StrEnum):
     OPT_PARTICIPANT = "OPT-PARTICIPANT"
     NON_PARTICIPANT = "NON-PARTICIPANT"
 
+
 class VALUE(StrEnum):
     """VALUE datatypes as defined in :rfc:`5545`.
 
@@ -264,7 +314,7 @@ class VALUE(StrEnum):
         token values that they don't recognize without attempting to
         interpret or parse the value data.
 
-"""
+    """
 
     BOOLEAN = "BOOLEAN"
     CAL_ADDRESS = "CAL-ADDRESS"
@@ -279,6 +329,7 @@ class VALUE(StrEnum):
     TIME = "TIME"
     URI = "URI"
     UTC_OFFSET = "UTC-OFFSET"
+
 
 class BUSYTYPE(StrEnum):
     """Enum for BUSYTYPE from :rfc:`7953`.
@@ -343,6 +394,28 @@ class CLASS(StrEnum):
     CONFIDENTIAL = "CONFIDENTIAL"
 
 
+class TRANSP(StrEnum):
+    """Enum for TRANSP from :rfc:`5545`.
+
+    Values:
+        ``OPAQUE``,
+        ``TRANSPARENT``
+
+    Description:
+        Time Transparency is the characteristic of an event
+        that determines whether it appears to consume time on a calendar.
+        Events that consume actual time for the individual or resource
+        associated with the calendar SHOULD be recorded as OPAQUE,
+        allowing them to be detected by free/busy time searches.  Other
+        events, which do not take up the individual's (or resource's) time
+        SHOULD be recorded as TRANSPARENT, making them invisible to free/
+        busy time searches.
+    """
+
+    OPAQUE = "OPAQUE"
+    TRANSPARENT = "TRANSPARENT"
+
+
 __all__ = [
     "BUSYTYPE",
     "CLASS",
@@ -353,5 +426,7 @@ __all__ = [
     "RELATED",
     "RELTYPE",
     "ROLE",
+    "STATUS",
+    "TRANSP",
     "VALUE",
 ]
