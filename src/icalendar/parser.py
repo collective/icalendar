@@ -139,7 +139,7 @@ def validate_param_value(value, quoted=True):
 
 # chars presence of which in parameter value will be cause the value
 # to be enclosed in double-quotes
-QUOTABLE = re.compile("[,;:’]")# noqa: RUF001
+QUOTABLE = re.compile("[,;:’]")  # noqa: RUF001
 
 
 def dquote(val, always_quote=False):
@@ -224,7 +224,7 @@ class Parameters(CaselessDict):
     # this is quoted should one of the values be present
     quote_also = {
         # This is escaped in the RFC
-        "CN" : " '",
+        "CN": " '",
     }
 
     def params(self):
@@ -242,11 +242,9 @@ class Parameters(CaselessDict):
         for key, value in items:
             upper_key = key.upper()
             check_quoteable_characters = self.quote_also.get(key.upper())
-            always_quote = (
-                upper_key in self.always_quoted or (
-                    check_quoteable_characters and
-                    any(c in value for c in check_quoteable_characters)
-                )
+            always_quote = upper_key in self.always_quoted or (
+                check_quoteable_characters
+                and any(c in value for c in check_quoteable_characters)
             )
             quoted_value = param_value(value, always_quote=always_quote)
             if isinstance(quoted_value, str):
@@ -273,12 +271,11 @@ class Parameters(CaselessDict):
                         v2 = v.strip('"')
                         validate_param_value(v2, quoted=True)
                         vals.append(rfc_6868_unescape(v2))
+                    # validate_param_value(v, quoted=False)
+                    elif strict:
+                        vals.append(rfc_6868_unescape(v.upper()))
                     else:
-                        validate_param_value(v, quoted=False)
-                        if strict:
-                            vals.append(rfc_6868_unescape(v.upper()))
-                        else:
-                            vals.append(rfc_6868_unescape(v))
+                        vals.append(rfc_6868_unescape(v))
                 if not vals:
                     result[key] = val
                 elif len(vals) == 1:
