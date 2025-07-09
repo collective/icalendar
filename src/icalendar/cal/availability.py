@@ -27,6 +27,7 @@ from icalendar.attr import (
     summary_property,
     url_property,
 )
+from icalendar.cal.examples import get_example
 from icalendar.error import InvalidCalendar
 
 from .component import Component
@@ -110,6 +111,15 @@ class Availability(Component):
             RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR
             END:AVAILABLE
             END:VAVAILABILITY
+
+        You can get the same example from :meth:`example`:
+
+        .. code-block: pycon
+
+            >>> from icalendar import Availability
+            >>> a = Availability.example()
+            >>> a.organizer
+            vCalAddress('mailto:bernard@example.com')
 
         The following is an example of a "VAVAILABILITY" calendar
         component used to represent the availability of a user available
@@ -312,6 +322,11 @@ class Availability(Component):
         availability.start = start
         availability.end = end
         return availability
+
+    @classmethod
+    def example(cls, name: str = "rfc_7953_1") -> Availability:
+        """Return the calendar example with the given name."""
+        return cls.from_ical(get_example("availabilities", name))
 
 
 __all__ = ["Availability"]

@@ -32,7 +32,7 @@ New features:
 - Add ``new()`` to ``icalendar.Calendar`` to set required attributes. See `Issue 569 <https://github.com/collective/icalendar/issues/569>`_.
 - Add ``new()`` to ``Alarm``, ``Event``, ``Todo``, ``FreeBusy``, ``Component``, and ``Journal`` components. See `Issue 843 <https://github.com/collective/icalendar/issues/843>`_.
 - Add ``value`` to ``Parameters`` to access the ``VALUE`` parameter.
-- Add ``Availability`` and ``Available`` components from :rfc:`7953`. See `Issue 654 <https://github.com/collective/icalendar/issues/654>`_.
+- Add ``Availability`` and ``Available`` components from :rfc:`7953`. See `Issue 654 <https://github.com/collective/icalendar/issues/654>`_ and `Issue 864 <https://github.com/collective/icalendar/issues/864>`_.
 - Add ``stamp``, ``last_modified``, ``created``, ``CREATED``, ``busy_type``, ``class``, ``comments``, ``contacts``, ``location``, ``organizer``, ``priority``, and ``url`` properties to components that use them.
 - Add ``availabilities`` attribtue to ``Calendar``.
 - Add ``status``, ``transparency``, and ``attendees`` properties. See `Issue 841 <https://github.com/collective/icalendar/issues/841>`_.

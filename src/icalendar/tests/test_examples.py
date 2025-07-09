@@ -4,9 +4,7 @@ import datetime
 
 import pytest
 
-from icalendar.cal.calendar import Calendar
-from icalendar.cal.event import Event
-from icalendar.cal.timezone import Timezone
+from icalendar import Availability, Available, Calendar, Event, Timezone
 
 
 def test_creating_calendar_with_unicode_fields(calendars, utc):
@@ -67,7 +65,9 @@ def test_invalid_examples_lists_the_others():
     assert "example.ics" in str(e.value)
 
 
-@pytest.mark.parametrize("component", [Calendar, Event, Timezone])
+@pytest.mark.parametrize(
+    "component", [Calendar, Event, Timezone, Available, Availability]
+)
 def test_default_example(component):
     """Check that we have a default example."""
     example = component.example()
