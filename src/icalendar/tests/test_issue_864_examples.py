@@ -2,7 +2,7 @@
 
 from icalendar import Event
 
-SUMMARY = "This is a unicode summary. Das müssen wir dekodieren. Русский. ↧"
+SUMMARY = "This is a Unicode summary. Das müssen wir dekodieren. Русский. ↧"
 
 
 def test_summary_is_text():
