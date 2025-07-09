@@ -27,6 +27,7 @@ from icalendar.enums import (
     RELATED,
     RELTYPE,
     ROLE,
+    STATUS,
     TRANSP,
     VALUE,
 )
