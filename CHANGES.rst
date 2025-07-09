@@ -36,6 +36,7 @@ New features:
 - Add ``stamp``, ``last_modified``, ``created``, ``CREATED``, ``busy_type``, ``class``, ``comments``, ``contacts``, ``location``, ``organizer``, ``priority``, and ``url`` properties to components that use them.
 - Add ``availabilities`` attribtue to ``Calendar``.
 - Add ``status``, ``transparency``, and ``attendees`` properties. See `Issue 841 <https://github.com/collective/icalendar/issues/841>`_.
+- Add ``uid`` property that is ``''`` by default and set automatically with ``new()``. See `Issue 315 <https://github.com/collective/icalendar/issues/315>`_.
 
 Bug fixes:
 
