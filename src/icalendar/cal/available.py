@@ -26,6 +26,7 @@ from icalendar.attr import (
     summary_property,
     uid_property,
 )
+from icalendar.cal.examples import get_example
 from icalendar.error import InvalidCalendar
 
 from .component import Component
@@ -58,6 +59,16 @@ class Available(Component):
             RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR
             LOCATION:Denver
             END:AVAILABLE
+
+        You can get the same example from :meth:`example`:
+
+        .. code-block: pycon
+
+            >>> from icalendar import Available
+            >>> a = Available.example()
+            >>> str(a.summary)
+            'Monday to Friday from 9:00 to 17:00'
+
     """
 
     name = "VAVAILABLE"
@@ -153,6 +164,11 @@ class Available(Component):
         available.start = start
         available.end = end
         return available
+
+    @classmethod
+    def example(cls, name: str = "rfc_7953_1") -> Available:
+        """Return the calendar example with the given name."""
+        return cls.from_ical(get_example("availabilities", name)).available[0]
 
 
 __all__ = ["Available"]
