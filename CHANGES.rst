@@ -26,6 +26,7 @@ Breaking changes:
 - Move ``types_factory`` into ``Component.types_factory``
 - Move ``components_factory`` into ``Component.get_component_class``
 - Move ``icalendar.cal.IncompleteComponent`` error into ``icalendar.error``.
+- Remove ``icalendar.UIDGenerator``. Use Python's built-in `uuid library <https://docs.python.org/3/library/uuid.html>`_ instead.
 
 New features:
 

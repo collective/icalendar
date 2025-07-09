@@ -49,13 +49,6 @@ class FeatureWillBeRemovedInFutureVersion(DeprecationWarning):
     """This feature will be removed in a future version."""
 
 
-class WillBeRemovedInVersion7(FeatureWillBeRemovedInFutureVersion):
-    """This feature will be removed in icalendar version 7.
-
-    Suppress FeatureWillBeRemovedInFutureVersion instead.
-    """
-
-
 __all__ = [
     "ComponentEndMissing",
     "ComponentStartMissing",
@@ -64,5 +57,4 @@ __all__ = [
     "IncompleteComponent",
     "InvalidCalendar",
     "LocalTimezoneMissing",
-    "WillBeRemovedInVersion7",
 ]
