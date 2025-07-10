@@ -213,11 +213,10 @@ class Parameters(CaselessDict):
 
         for key, value in items:
             upper_key = key.upper()
-            check_quoteable_characters = self.quote_also.get(key.upper())
-            always_quote = upper_key in self.always_quoted or (
+            check_quoteable_characters = self.quote_also.get(key.upper(), [])
+            always_quote = upper_key in self.always_quoted or set(
                 check_quoteable_characters
-                and any(c in value for c in check_quoteable_characters)
-            )
+            ) & set(value)
             quoted_value = param_value(value, always_quote=always_quote)
             if isinstance(quoted_value, str):
                 quoted_value = quoted_value.encode(DEFAULT_ENCODING)
@@ -231,8 +230,8 @@ class Parameters(CaselessDict):
 
         # parse into strings
         result = cls()
-        for param in q_split(st, ";"):
-            try:
+        try:
+            for param in q_split(st, ";"):
                 key, val = q_split(param, "=", maxsplit=1)
                 validate_token(key)
                 # Property parameter values that are not in quoted
@@ -243,22 +242,34 @@ class Parameters(CaselessDict):
                         v2 = v.strip('"')
                         validate_param_value(v2, quoted=True)
                         vals.append(rfc_6868_unescape(v2))
-                    # validate_param_value(v, quoted=False)
                     elif strict:
+                        validate_param_value(v, quoted=False)
                         vals.append(rfc_6868_unescape(v.upper()))
                     else:
-                        vals.append(rfc_6868_unescape(v))
+                        v2 = (
+                            unescape_backslashes(v)
+                            if key.lower().startswith("x-")
+                            else v
+                        )
+                        if v2 == v:
+                            validate_param_value(v, quoted=False)
+                        vals.append(rfc_6868_unescape(v2))
                 if not vals:
                     result[key] = val
                 elif len(vals) == 1:
                     result[key] = vals[0]
                 else:
                     result[key] = vals
-            except ValueError as exc:  # noqa: PERF203
-                raise ValueError(
-                    f"{param!r} is not a valid parameter string: {exc}"
-                ) from exc
+        except ValueError as exc:
+            raise ValueError(
+                f"{param!r} is not a valid parameter string: {exc}"
+            ) from exc
         return result
+
+
+def unescape_backslashes(value: str) -> str:
+    """Remove the backslash escapes that may be in the string."""
+    return value.encode().decode("unicode_escape")
 
 
 def escape_string(val):

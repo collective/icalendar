@@ -5,7 +5,6 @@ except ImportError:
 from datetime import datetime, timezone
 from typing import Generator
 
-from icalendar import TypesFactory
 import pytest
 
 import icalendar
@@ -14,6 +13,7 @@ import icalendar.cal.calendar
 import icalendar.cal.component_factory
 import icalendar.cal.event
 import icalendar.cal.timezone
+from icalendar import TypesFactory
 from icalendar.cal.component import Component
 
 from . import timezone_ids
@@ -89,7 +89,7 @@ class DataSource:
             key = key[:-4]
         return key in self.keys()
 
-    def __getattr__(self, key):
+    def __getattr__(self, key) -> Component:
         return self[key]
 
     def __repr__(self):
@@ -189,6 +189,7 @@ def fuzz_v1_calendar(request):
 def types_factory():
     """Return a new types factory."""
     return TypesFactory()
+
 
 @pytest.fixture
 def x_sometime(types_factory):
