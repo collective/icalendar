@@ -41,6 +41,7 @@ New features:
 Bug fixes:
 
 - Fix invalid calendar: Parsing a date with TZID results in a datetime to not loose the timezone. See `Issue 187 <https://github.com/collective/icalendar/issues/187>`_.
+- Fixed ``Todo.duration`` and ``Event.duration`` to return ``DURATION`` property when set, even without ``DTSTART``. See `Issue 867 <https://github.com/collective/icalendar/issues/867>`_.
 
 6.3.1 (2025-05-20)
 ------------------
