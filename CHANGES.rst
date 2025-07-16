@@ -41,6 +41,7 @@ New features:
 Bug fixes:
 
 - Fix invalid calendar: Parsing a date with TZID results in a datetime to not loose the timezone. See `Issue 187 <https://github.com/collective/icalendar/issues/187>`_.
+- Fix timezone placement in add_missing_timezones(): VTIMEZONE components now appear before VEVENT and other components that reference them. See `Issue 844 <https://github.com/collective/icalendar/issues/844>`_.
 
 6.3.1 (2025-05-20)
 ------------------
