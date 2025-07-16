@@ -216,6 +216,8 @@ class Calendar(Component):
         """Add all missing VTIMEZONE components.
 
         This adds all the timezone components that are required.
+        VTIMEZONE components are inserted at the beginning of the calendar
+        to ensure they appear before other components that reference them.
 
         .. note::
 
@@ -239,14 +241,21 @@ class Calendar(Component):
         >>> calendar.get_missing_tzids()  # check that all are added
         set()
         """
-        for tzid in self.get_missing_tzids():
+        missing_tzids = self.get_missing_tzids()
+        if not missing_tzids:
+            return
+        
+        existing_timezone_count = len(self.timezones)
+        
+        for tzid in missing_tzids:
             try:
                 timezone = Timezone.from_tzid(
                     tzid, first_date=first_date, last_date=last_date
                 )
             except ValueError:
                 continue
-            self.add_component(timezone)
+            self.subcomponents.insert(existing_timezone_count, timezone)
+            existing_timezone_count += 1
 
     calendar_name = multi_language_text_property(
         "NAME",
