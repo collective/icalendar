@@ -408,14 +408,14 @@ def test_incomplete_event(incomplete_event_end, attr):
     "component_with_duration",
     [
         incomplete_event_2,  # Event with DURATION property
-        incomplete_todo_2,   # Todo with DURATION property
+        incomplete_todo_2,  # Todo with DURATION property
     ],
 )
 def test_duration_property_accessible_without_dtstart(component_with_duration):
     """Test that DURATION property is accessible even without DTSTART (fixes issue #867)."""
     # DURATION property should be accessible directly
     assert component_with_duration.duration == timedelta(hours=1)
-    
+
     # But start and end should still raise errors for incomplete components
     with pytest.raises(IncompleteComponent):
         _ = component_with_duration.start
