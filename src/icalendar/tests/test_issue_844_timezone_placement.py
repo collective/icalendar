@@ -181,3 +181,43 @@ END:VCALENDAR"""
     assert len(calendar.events) == 1
     assert len(calendar.timezones) == 1
     assert calendar.timezones[0].tz_name == "Europe/London"
+
+
+def test_timezone_placement_without_pytz():
+    """Test timezone placement works even if pytz is not available."""
+    import sys
+    import types
+    
+    # Temporarily mock pytz to simulate nopytz environment
+    original_pytz = sys.modules.get('pytz')
+    
+    class MockPytz:
+        def __getattr__(self, name):
+            raise ImportError("No module named 'pytz'")
+    
+    sys.modules['pytz'] = MockPytz()
+    
+    try:
+        calendar = Calendar()
+        calendar.add("VERSION", "2.0")
+        calendar.add("PRODID", "test calendar")
+
+        event = Event()
+        event.add("UID", str(uuid.uuid4()))
+        event.start = datetime(2026, 3, 19, 12, 30, tzinfo=ZoneInfo("Europe/London"))
+        event.add("SUMMARY", "Test Event")
+        calendar.add_component(event)
+        
+        calendar.add_missing_timezones()
+        
+        components = [comp.name for comp in calendar.subcomponents]
+        assert components == ["VTIMEZONE", "VEVENT"]
+        assert len(calendar.timezones) == 1
+        assert calendar.timezones[0].tz_name == "Europe/London"
+        
+    finally:
+        # Restore original pytz state
+        if original_pytz:
+            sys.modules['pytz'] = original_pytz
+        else:
+            sys.modules.pop('pytz', None)
