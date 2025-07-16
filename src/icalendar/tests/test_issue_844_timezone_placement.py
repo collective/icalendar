@@ -3,13 +3,9 @@
 import uuid
 from datetime import datetime
 
-try:
-    from zoneinfo import ZoneInfo
-except ImportError:
-    from backports.zoneinfo import ZoneInfo
-
 from icalendar import Calendar, Event
 from icalendar.cal.timezone import Timezone
+from icalendar.compatibility import ZoneInfo
 
 
 def test_single_timezone_placed_before_event():
