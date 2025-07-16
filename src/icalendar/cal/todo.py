@@ -215,9 +215,14 @@ class Todo(Component):
     def duration(self) -> timedelta:
         """The duration of the VTODO.
 
-        This duration is calculated from the start and end of the Todo.
-        You cannot set the duration as it is unclear what happens to start and end.
+        Returns the DURATION property if set, otherwise calculated from start and end.
+        For todos, DURATION can exist without DTSTART per RFC 5545.
         """
+        # First check if DURATION property is explicitly set
+        if 'DURATION' in self:
+            return self['DURATION'].dt
+        
+        # Fall back to calculated duration from start and end
         return self.end - self.start
 
     X_MOZ_SNOOZE_TIME = X_MOZ_SNOOZE_TIME_property
