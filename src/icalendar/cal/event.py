@@ -306,9 +306,13 @@ class Event(Component):
     def duration(self) -> timedelta:
         """The duration of the VEVENT.
 
-        This duration is calculated from the start and end of the event.
-        You cannot set the duration as it is unclear what happens to start and end.
+        Returns the DURATION property if set, otherwise calculated from start and end.
         """
+        # First check if DURATION property is explicitly set
+        if 'DURATION' in self:
+            return self['DURATION'].dt
+        
+        # Fall back to calculated duration from start and end
         return self.end - self.start
 
     @property
