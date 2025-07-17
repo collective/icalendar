@@ -19,6 +19,7 @@ Minor changes:
 - Add type annotation to ``from_ical()``.
 - Fix enum documentation.
 - ``DTSTAMP``, ``LAST_MODIFIED``, and ``CREATED`` can now be set to ``None`` to delete the value.
+- Add improved setters for ``start``, ``duration``, and ``end`` properties with explicit locking mechanisms to provide more flexible property manipulation while maintaining RFC 5545 compliance.
 
 Breaking changes:
 

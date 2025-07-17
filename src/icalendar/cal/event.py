@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import date, datetime, timedelta
-from typing import TYPE_CHECKING, Optional, Sequence
+from typing import TYPE_CHECKING, Sequence
 
 from icalendar.attr import (
     X_MOZ_LASTACK_property,
@@ -306,10 +306,34 @@ class Event(Component):
     def duration(self) -> timedelta:
         """The duration of the VEVENT.
 
-        This duration is calculated from the start and end of the event.
-        You cannot set the duration as it is unclear what happens to start and end.
+        Returns the DURATION property if set, otherwise calculated from start and end.
+        You can set the duration to automatically adjust the end time while keeping start locked.
         """
+        # First check if DURATION property is explicitly set
+        if "DURATION" in self:
+            # For Events, DURATION requires DTSTART to be valid
+            if self.DTSTART is None:
+                raise IncompleteComponent("No DTSTART given.")
+            return self["DURATION"].dt
+
+        # Fall back to calculated duration from start and end
         return self.end - self.start
+
+    @duration.setter
+    def duration(self, value: timedelta):
+        """Set the duration of the event.
+
+        Setting the duration will:
+        1. Keep the start time locked (unchanged)
+        2. Adjust the end time to start + duration
+        3. Remove any existing DTEND property
+        4. Set the DURATION property
+        """
+        if not isinstance(value, timedelta):
+            raise TypeError(f"Use timedelta, not {type(value).__name__}.")
+
+        # Use the set_duration method with default start-locked behavior
+        self.set_duration(value, locked="start")
 
     @property
     def start(self) -> date | datetime:
@@ -339,7 +363,7 @@ class Event(Component):
         return start
 
     @start.setter
-    def start(self, start: Optional[date | datetime]):
+    def start(self, start: date | datetime | None):
         """Set the start."""
         self.DTSTART = start
 
@@ -368,6 +392,112 @@ class Event(Component):
         """Set the end."""
         self.DTEND = end
 
+    def set_duration(self, duration: timedelta | None, locked: str = "start"):
+        """Set the duration with explicit locking behavior.
+
+        Args:
+            duration: The duration to set, or None to convert to DURATION property
+            locked: Which property to keep unchanged ('start' or 'end')
+        """
+        # Convert to DURATION property if duration is None
+        if duration is None:
+            if "DURATION" in self:
+                return  # Already has DURATION property
+            current_duration = self.duration
+            self.pop("DTEND", None)
+            self.add("DURATION", current_duration)
+            return
+
+        if not isinstance(duration, timedelta):
+            raise TypeError(f"Use timedelta, not {type(duration).__name__}.")
+
+        # Validate date/duration compatibility
+        start = self.DTSTART
+        if (
+            isinstance(start, date)
+            and not isinstance(start, datetime)
+            and duration.seconds != 0
+        ):
+            raise InvalidCalendar(
+                "When DTSTART is a date, DURATION must be of days or weeks."
+            )
+
+        if locked == "start":
+            # Keep start locked, adjust end
+            if start is None:
+                raise IncompleteComponent("No DTSTART given.")
+            self.pop("DTEND", None)
+            self.pop("DURATION", None)
+            self.add("DURATION", duration)
+        elif locked == "end":
+            # Keep end locked, adjust start
+            current_end = self.end
+            self.pop("DTEND", None)
+            self.pop("DURATION", None)
+            self.DTSTART = current_end - duration
+            self.add("DURATION", duration)
+        else:
+            raise ValueError(f"locked must be 'start' or 'end', not {locked!r}")
+
+    def set_start(self, start: date | datetime, locked: str | None = None):
+        """Set the start with explicit locking behavior.
+
+        Args:
+            start: The start time to set
+            locked: Which property to keep unchanged ('duration', 'end', or None for auto-detect)
+        """
+        if locked is None:
+            # Auto-detect based on existing properties
+            if "DURATION" in self:
+                locked = "duration"
+            elif "DTEND" in self:
+                locked = "end"
+            else:
+                # Default to duration if no existing properties
+                locked = "duration"
+
+        if locked == "duration":
+            # Keep duration locked, adjust end
+            current_duration = (
+                self.duration if "DURATION" in self or "DTEND" in self else None
+            )
+            self.DTSTART = start
+            if current_duration is not None:
+                self.pop("DTEND", None)
+                self.pop("DURATION", None)
+                self.add("DURATION", current_duration)
+        elif locked == "end":
+            # Keep end locked, adjust duration
+            current_end = self.end
+            self.DTSTART = start
+            self.pop("DURATION", None)
+            self.DTEND = current_end
+        else:
+            raise ValueError(
+                f"locked must be 'duration', 'end', or None, not {locked!r}"
+            )
+
+    def set_end(self, end: date | datetime, locked: str = "start"):
+        """Set the end with explicit locking behavior.
+
+        Args:
+            end: The end time to set
+            locked: Which property to keep unchanged ('start' or 'duration')
+        """
+        if locked == "start":
+            # Keep start locked, adjust duration
+            self.pop("DURATION", None)
+            self.DTEND = end
+        elif locked == "duration":
+            # Keep duration locked, adjust start
+            current_duration = self.duration
+            self.pop("DTEND", None)
+            self.pop("DURATION", None)
+            self.DTSTART = end - current_duration
+            self.add("DURATION", current_duration)
+        else:
+            raise ValueError(f"locked must be 'start' or 'duration', not {locked!r}")
+
     X_MOZ_SNOOZE_TIME = X_MOZ_SNOOZE_TIME_property
     X_MOZ_LASTACK = X_MOZ_LASTACK_property
     color = color_property
@@ -393,27 +523,27 @@ class Event(Component):
     def new(
         cls,
         /,
-        attendees: Optional[list[vCalAddress]] = None,
+        attendees: list[vCalAddress] | None = None,
         categories: Sequence[str] = (),
-        classification: Optional[CLASS] = None,
-        color: Optional[str] = None,
+        classification: CLASS | None = None,
+        color: str | None = None,
         comments: list[str] | str | None = None,
         contacts: list[str] | str | None = None,
-        created: Optional[date] = None,
-        description: Optional[str] = None,
-        end: Optional[date | datetime] = None,
-        last_modified: Optional[date] = None,
-        location: Optional[str] = None,
-        organizer: Optional[vCalAddress | str] = None,
-        priority: Optional[int] = None,
-        sequence: Optional[int] = None,
-        stamp: Optional[date] = None,
-        start: Optional[date | datetime] = None,
-        status: Optional[STATUS] = None,
-        transparency: Optional[TRANSP] = None,
-        summary: Optional[str] = None,
-        uid: Optional[str | uuid.UUID] = None,
-        url: Optional[str] = None,
+        created: date | None = None,
+        description: str | None = None,
+        end: date | datetime | None = None,
+        last_modified: date | None = None,
+        location: str | None = None,
+        organizer: vCalAddress | str | None = None,
+        priority: int | None = None,
+        sequence: int | None = None,
+        stamp: date | None = None,
+        start: date | datetime | None = None,
+        status: STATUS | None = None,
+        transparency: TRANSP | None = None,
+        summary: str | None = None,
+        uid: str | uuid.UUID | None = None,
+        url: str | None = None,
     ):
         """Create a new event with all required properties.
 
