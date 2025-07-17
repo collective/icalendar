@@ -314,13 +314,18 @@ class Event(Component):
     @duration.setter
     def duration(self, duration: timedelta):
         """Set the duration of the event.
-        
+
         This automatically calculates and sets the end time as start + duration.
         If no start time is set, raises IncompleteComponent.
         """
-        if not hasattr(self, '_get_start_end_duration') or self._get_start_end_duration()[0] is None:
-            raise IncompleteComponent("Cannot set duration without DTSTART. Set start time first.")
-        
+        if (
+            not hasattr(self, "_get_start_end_duration")
+            or self._get_start_end_duration()[0] is None
+        ):
+            raise IncompleteComponent(
+                "Cannot set duration without DTSTART. Set start time first."
+            )
+
         start_time = self.start
         self.end = start_time + duration
 
