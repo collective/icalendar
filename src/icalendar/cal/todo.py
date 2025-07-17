@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import date, datetime, timedelta
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING, Literal, Sequence
 
 from icalendar.attr import (
     X_MOZ_LASTACK_property,
@@ -216,7 +216,8 @@ class Todo(Component):
         """The duration of the VTODO.
 
         Returns the DURATION property if set, otherwise calculated from start and end.
-        You can set the duration to automatically adjust the end time while keeping start locked.
+        You can set the duration to automatically adjust the end time while keeping
+        start locked.
         """
         # First check if DURATION property is explicitly set
         if "DURATION" in self:
@@ -246,8 +247,10 @@ class Todo(Component):
         # Use the set_duration method with default start-locked behavior
         self.set_duration(value, locked="start")
 
-    def set_duration(self, duration: timedelta | None, locked: str = "start"):
-        """Set the duration with explicit locking behavior.
+    def set_duration(
+        self, duration: timedelta | None, locked: Literal["start", "end"] = "start"
+    ):
+        """Set the duration and keep either start or end.
 
         Args:
             duration: The duration to set, or None to convert to DURATION property
@@ -259,7 +262,7 @@ class Todo(Component):
                 return  # Already has DURATION property
             current_duration = self.duration
             self.pop("DUE", None)
-            self.add("DURATION", current_duration)
+            self.DURATION = current_duration
             return
 
         if not isinstance(duration, timedelta):
@@ -267,11 +270,7 @@ class Todo(Component):
 
         # Validate date/duration compatibility
         start = self.DTSTART
-        if (
-            isinstance(start, date)
-            and not isinstance(start, datetime)
-            and duration.seconds != 0
-        ):
+        if start is not None and is_date(start) and duration.seconds != 0:
             raise InvalidCalendar(
                 "When DTSTART is a date, DURATION must be of days or weeks."
             )
@@ -281,24 +280,25 @@ class Todo(Component):
             if start is None:
                 raise IncompleteComponent("No DTSTART given.")
             self.pop("DUE", None)
-            self.pop("DURATION", None)
-            self.add("DURATION", duration)
+            self.DURATION = duration
         elif locked == "end":
             # Keep end locked, adjust start
             current_end = self.end
             self.pop("DUE", None)
-            self.pop("DURATION", None)
             self.DTSTART = current_end - duration
-            self.add("DURATION", duration)
+            self.DURATION = duration
         else:
             raise ValueError(f"locked must be 'start' or 'end', not {locked!r}")
 
-    def set_start(self, start: date | datetime, locked: str | None = None):
+    def set_start(
+        self, start: date | datetime, locked: Literal["duration", "end"] | None = None
+    ):
         """Set the start with explicit locking behavior.
 
         Args:
             start: The start time to set
-            locked: Which property to keep unchanged ('duration', 'end', or None for auto-detect)
+            locked: Which property to keep unchanged ('duration', 'end', or None
+                for auto-detect)
         """
         if locked is None:
             # Auto-detect based on existing properties
@@ -318,8 +318,7 @@ class Todo(Component):
             self.DTSTART = start
             if current_duration is not None:
                 self.pop("DUE", None)
-                self.pop("DURATION", None)
-                self.add("DURATION", current_duration)
+                self.DURATION = current_duration
         elif locked == "end":
             # Keep end locked, adjust duration
             current_end = self.end
@@ -331,7 +330,9 @@ class Todo(Component):
                 f"locked must be 'duration', 'end', or None, not {locked!r}"
             )
 
-    def set_end(self, end: date | datetime, locked: str = "start"):
+    def set_end(
+        self, end: date | datetime, locked: Literal["start", "duration"] = "start"
+    ):
         """Set the end with explicit locking behavior.
 
         Args:
@@ -346,9 +347,8 @@ class Todo(Component):
             # Keep duration locked, adjust start
             current_duration = self.duration
             self.pop("DUE", None)
-            self.pop("DURATION", None)
             self.DTSTART = end - current_duration
-            self.add("DURATION", current_duration)
+            self.DURATION = current_duration
         else:
             raise ValueError(f"locked must be 'start' or 'duration', not {locked!r}")
 
