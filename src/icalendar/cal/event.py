@@ -307,6 +307,7 @@ class Event(Component):
         """The duration of the VEVENT.
 
         Returns the DURATION property if set, otherwise calculated from start and end.
+        When setting duration, the end time is automatically calculated from start + duration.
         You can set the duration to automatically adjust the end time while keeping
         start locked.
         """
@@ -324,6 +325,7 @@ class Event(Component):
     def duration(self, value: timedelta):
         """Set the duration of the event.
 
+        This automatically calculates and sets the end time as start + duration.
         Setting the duration will:
         1. Keep the start time locked (unchanged)
         2. Adjust the end time to start + duration
