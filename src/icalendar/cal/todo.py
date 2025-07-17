@@ -261,7 +261,6 @@ class Todo(Component):
             if "DURATION" in self:
                 return  # Already has DURATION property
             current_duration = self.duration
-            self.pop("DUE", None)
             self.DURATION = current_duration
             return
 
@@ -279,12 +278,10 @@ class Todo(Component):
             # Keep start locked, adjust end
             if start is None:
                 raise IncompleteComponent("No DTSTART given.")
-            self.pop("DUE", None)
             self.DURATION = duration
         elif locked == "end":
             # Keep end locked, adjust start
             current_end = self.end
-            self.pop("DUE", None)
             self.DTSTART = current_end - duration
             self.DURATION = duration
         else:
@@ -317,7 +314,6 @@ class Todo(Component):
             )
             self.DTSTART = start
             if current_duration is not None:
-                self.pop("DUE", None)
                 self.DURATION = current_duration
         elif locked == "end":
             # Keep end locked, adjust duration
@@ -346,7 +342,6 @@ class Todo(Component):
         elif locked == "duration":
             # Keep duration locked, adjust start
             current_duration = self.duration
-            self.pop("DUE", None)
             self.DTSTART = end - current_duration
             self.DURATION = current_duration
         else:

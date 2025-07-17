@@ -409,7 +409,6 @@ class Event(Component):
             if "DURATION" in self:
                 return  # Already has DURATION property
             current_duration = self.duration
-            self.pop("DTEND", None)
             self.DURATION = current_duration
             return
 
@@ -427,12 +426,10 @@ class Event(Component):
             # Keep start locked, adjust end
             if start is None:
                 raise IncompleteComponent("No DTSTART given.")
-            self.pop("DTEND", None)
             self.DURATION = duration
         elif locked == "end":
             # Keep end locked, adjust start
             current_end = self.end
-            self.pop("DTEND", None)
             self.DTSTART = current_end - duration
             self.DURATION = duration
         else:
@@ -465,7 +462,6 @@ class Event(Component):
             )
             self.DTSTART = start
             if current_duration is not None:
-                self.pop("DTEND", None)
                 self.DURATION = current_duration
         elif locked == "end":
             # Keep end locked, adjust duration
@@ -494,7 +490,6 @@ class Event(Component):
         elif locked == "duration":
             # Keep duration locked, adjust start
             current_duration = self.duration
-            self.pop("DTEND", None)
             self.DTSTART = end - current_duration
             self.DURATION = current_duration
         else:
