@@ -14,7 +14,7 @@ from __future__ import annotations
 import itertools
 import traceback
 from datetime import date, datetime, timedelta, timezone
-from typing import Any, Callable, Optional
+from typing import Any, Callable
 
 import pytest
 
@@ -122,17 +122,17 @@ param_description = pytest.mark.parametrize(
 )
 
 
-def assert_summary_equals(component: Component, summary: Optional[str]):
+def assert_summary_equals(component: Component, summary: str | None):
     """Check this is the summary."""
     assert_property_equals(component, "summary", summary)
 
 
-def assert_description_equals(component: Component, summary: Optional[str]):
+def assert_description_equals(component: Component, summary: str | None):
     """Check this is the summary."""
     assert_property_equals(component, "description", summary)
 
 
-def assert_property_equals(component: Component, name: str, text: Optional[str]):
+def assert_property_equals(component: Component, name: str, text: str | None):
     """Check the property."""
     assert getattr(component, name.lower()) == text
     if text is None:

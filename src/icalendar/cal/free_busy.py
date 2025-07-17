@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import date, datetime, timedelta
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from icalendar.attr import (
     contacts_property,
@@ -80,7 +80,7 @@ class FreeBusy(Component):
     )
 
     @property
-    def duration(self) -> Optional[timedelta]:
+    def duration(self) -> timedelta | None:
         """The duration computed from start and end."""
         if self.DTSTART is None or self.DTEND is None:
             return None
@@ -92,12 +92,12 @@ class FreeBusy(Component):
         /,
         comments: list[str] | str | None = None,
         contacts: list[str] | str | None = None,
-        end: Optional[date | datetime] = None,
-        organizer: Optional[vCalAddress | str] = None,
-        stamp: Optional[date] = None,
-        start: Optional[date | datetime] = None,
-        uid: Optional[str | uuid.UUID] = None,
-        url: Optional[str] = None,
+        end: date | datetime | None = None,
+        organizer: vCalAddress | str | None = None,
+        stamp: date | None = None,
+        start: date | datetime | None = None,
+        uid: str | uuid.UUID | None = None,
+        url: str | None = None,
     ):
         """Create a new alarm with all required properties.
 

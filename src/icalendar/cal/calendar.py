@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional, Sequence
+from typing import TYPE_CHECKING, Sequence
 
 from icalendar.attr import (
     categories_property,
@@ -453,14 +453,14 @@ Description:
     def new(
         cls,
         /,
-        calscale: Optional[str] = None,
+        calscale: str | None = None,
         categories: Sequence[str] = (),
-        color: Optional[str] = None,
-        description: Optional[str] = None,
-        method: Optional[str] = None,
-        name: Optional[str] = None,
-        prodid: Optional[str] = f"-//collective//icalendar//{__version__}//EN",
-        uid: Optional[str | uuid.UUID] = None,
+        color: str | None = None,
+        description: str | None = None,
+        method: str | None = None,
+        name: str | None = None,
+        prodid: str | None = f"-//collective//icalendar//{__version__}//EN",
+        uid: str | uuid.UUID | None = None,
         version: str = "2.0",
     ):
         """Create a new Calendar with all required properties.

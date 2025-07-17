@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime, tzinfo
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 import pytz
 from pytz.tzinfo import DstTzInfo
@@ -59,7 +59,7 @@ class PYTZ(TZProvider):
         )
         return cls()
 
-    def timezone(self, name: str) -> Optional[tzinfo]:
+    def timezone(self, name: str) -> tzinfo | None:
         """Return a timezone with a name or None if we cannot find it."""
         try:
             return pytz.timezone(name)

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from datetime import datetime, tzinfo
@@ -42,7 +42,7 @@ class TZProvider(ABC):
         """Create a pytz timezone file given information."""
 
     @abstractmethod
-    def timezone(self, name: str) -> Optional[tzinfo]:
+    def timezone(self, name: str) -> tzinfo | None:
         """Return a timezone with a name or None if we cannot find it."""
 
     @abstractmethod

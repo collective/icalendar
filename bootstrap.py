@@ -22,7 +22,6 @@ import os
 import shutil
 import sys
 import tempfile
-
 from optparse import OptionParser
 
 tmpeggs = tempfile.mkdtemp()
@@ -60,7 +59,7 @@ parser.add_option(
 parser.add_option(
     "-c",
     "--config-file",
-    help=("Specify the path to the buildout configuration " "file to be used."),
+    help=("Specify the path to the buildout configuration file to be used."),
 )
 parser.add_option(
     "-f", "--find-links", help=("Specify a URL to search for buildout releases")
@@ -80,8 +79,8 @@ options, args = parser.parse_args()
 
 try:
     if options.allow_site_packages:
-        import setuptools
         import pkg_resources
+        import setuptools
     from urllib.request import urlopen
 except ImportError:
     from urllib2 import urlopen
@@ -103,8 +102,8 @@ if not options.allow_site_packages:
 
 setup_args = {"to_dir": tmpeggs, "download_delay": 0}
 ez["use_setuptools"](**setup_args)
-import setuptools
 import pkg_resources
+import setuptools
 
 # This does not (always?) update the default working set.  We will
 # do it.
@@ -172,13 +171,13 @@ if version is None and not options.accept_buildout_test_releases:
             best.sort()
             version = best[-1].version
 if version:
-    requirement = "==".join((requirement, version))
+    requirement = f"{requirement}=={version}"
 cmd.append(requirement)
 
 import subprocess
 
 if subprocess.call(cmd, env=dict(os.environ, PYTHONPATH=setuptools_path)) != 0:
-    raise Exception("Failed to execute command:\n%s" % repr(cmd)[1:-1])
+    raise Exception(f"Failed to execute command:\n{repr(cmd)[1:-1]}")
 
 ######################################################################
 # Import and run buildout

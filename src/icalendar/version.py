@@ -8,7 +8,7 @@ except ModuleNotFoundError:
 
 __all__ = [
     "__version__",
-    "version",
     "__version_tuple__",
+    "version",
     "version_tuple",
 ]

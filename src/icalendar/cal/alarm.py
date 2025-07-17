@@ -246,10 +246,10 @@ class Alarm(Component):
     def new(
         cls,
         /,
-        attendees: Optional[list[vCalAddress]] = None,
-        description: Optional[str] = None,
-        summary: Optional[str] = None,
-        uid: Optional[str | uuid.UUID] = None,
+        attendees: list[vCalAddress] | None = None,
+        description: str | None = None,
+        summary: str | None = None,
+        uid: str | uuid.UUID | None = None,
     ):
         """Create a new alarm with all required properties.
 
