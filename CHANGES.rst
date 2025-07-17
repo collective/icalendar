@@ -19,7 +19,7 @@ Minor changes:
 - Add type annotation to ``from_ical()``.
 - Fix enum documentation.
 - ``DTSTAMP``, ``LAST_MODIFIED``, and ``CREATED`` can now be set to ``None`` to delete the value.
-- Enhanced ``Calendar.new()`` to support organization and language parameters for automatic PRODID generation.
+- Enhanced ``Calendar.new()`` to support organization and language parameters for automatic ``PRODID`` generation.
 - Added ``duration`` setter to ``Event`` class for more intuitive event creation.
 - Added ``validate()`` method to ``Calendar`` class for explicit validation of required properties and components.
 
