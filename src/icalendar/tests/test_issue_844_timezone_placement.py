@@ -186,7 +186,6 @@ END:VCALENDAR"""
 def test_timezone_placement_without_pytz():
     """Test timezone placement. Works even if pytz is not available."""
     import sys
-    import types
 
     # Temporarily mock pytz to simulate nopytz environment
     original_pytz = sys.modules.get("pytz")
