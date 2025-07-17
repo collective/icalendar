@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import date, datetime, timedelta
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING, Optional, Sequence
 
 from icalendar.attr import (
     X_MOZ_LASTACK_property,
@@ -182,7 +182,7 @@ class Todo(Component):
         return start
 
     @start.setter
-    def start(self, start: date | datetime | None):
+    def start(self, start: Optional[date | datetime]):
         """Set the start."""
         self.DTSTART = start
 
@@ -219,9 +219,9 @@ class Todo(Component):
         For todos, DURATION can exist without DTSTART per RFC 5545.
         """
         # First check if DURATION property is explicitly set
-        if "DURATION" in self:
-            return self["DURATION"].dt
-
+        if 'DURATION' in self:
+            return self['DURATION'].dt
+        
         # Fall back to calculated duration from start and end
         return self.end - self.start
 
@@ -268,26 +268,26 @@ class Todo(Component):
     def new(
         cls,
         /,
-        attendees: list[vCalAddress] | None = None,
+        attendees: Optional[list[vCalAddress]] = None,
         categories: Sequence[str] = (),
-        classification: CLASS | None = None,
-        color: str | None = None,
+        classification: Optional[CLASS] = None,
+        color: Optional[str] = None,
         comments: list[str] | str | None = None,
         contacts: list[str] | str | None = None,
-        created: date | None = None,
-        description: str | None = None,
-        end: date | datetime | None = None,
-        last_modified: date | None = None,
-        location: str | None = None,
-        organizer: vCalAddress | str | None = None,
-        priority: int | None = None,
-        sequence: int | None = None,
-        stamp: date | None = None,
-        start: date | datetime | None = None,
-        status: STATUS | None = None,
-        summary: str | None = None,
-        uid: str | uuid.UUID | None = None,
-        url: str | None = None,
+        created: Optional[date] = None,
+        description: Optional[str] = None,
+        end: Optional[date | datetime] = None,
+        last_modified: Optional[date] = None,
+        location: Optional[str] = None,
+        organizer: Optional[vCalAddress | str] = None,
+        priority: Optional[int] = None,
+        sequence: Optional[int] = None,
+        stamp: Optional[date] = None,
+        start: Optional[date | datetime] = None,
+        status: Optional[STATUS] = None,
+        summary: Optional[str] = None,
+        uid: Optional[str | uuid.UUID] = None,
+        url: Optional[str] = None,
     ):
         """Create a new TODO with all required properties.
 

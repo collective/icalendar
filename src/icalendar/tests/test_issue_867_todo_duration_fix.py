@@ -1,10 +1,9 @@
 """Tests for issue #867: Todo.duration should work without DTSTART."""
 
+import pytest
 from datetime import datetime, timedelta
 
-import pytest
-
-from icalendar import Event, Todo
+from icalendar import Todo, Event
 from icalendar.error import IncompleteComponent
 
 
@@ -26,10 +25,10 @@ END:VTODO""")
 def test_todo_duration_calculated_from_start_and_due():
     """Test that Todo.duration still works for calculated duration from `DTSTART` and `DUE`."""
     todo = Todo()
-    todo.add("UID", "test-calculated")
+    todo.add('UID', 'test-calculated')
     todo.start = datetime(2026, 3, 19, 12, 0)
     todo.end = datetime(2026, 3, 19, 15, 30)
-
+    
     # Should calculate duration from start and end
     assert todo.duration == timedelta(hours=3, minutes=30)
 
@@ -37,11 +36,11 @@ def test_todo_duration_calculated_from_start_and_due():
 def test_todo_duration_prefers_duration_property():
     """Test that explicit `DURATION` property takes precedence over calculated duration."""
     todo = Todo()
-    todo.add("UID", "test-precedence")
+    todo.add('UID', 'test-precedence')
     todo.start = datetime(2026, 3, 19, 12, 0)
     todo.end = datetime(2026, 3, 19, 15, 0)  # This would be 3 hours
-    todo.add("DURATION", timedelta(days=2))  # But DURATION says 2 days
-
+    todo.add('DURATION', timedelta(days=2))  # But DURATION says 2 days
+    
     # Should return DURATION property, not calculated value
     assert todo.duration == timedelta(days=2)
 
@@ -49,10 +48,10 @@ def test_todo_duration_prefers_duration_property():
 def test_todo_duration_with_dtstart_and_duration():
     """Test Todo with `DTSTART` and `DURATION` (valid per RFC 5545)."""
     todo = Todo()
-    todo.add("UID", "test-start-duration")
+    todo.add('UID', 'test-start-duration')
     todo.start = datetime(2026, 3, 19, 12, 0)
-    todo.add("DURATION", timedelta(hours=4))
-
+    todo.add('DURATION', timedelta(hours=4))
+    
     # Should return DURATION property
     assert todo.duration == timedelta(hours=4)
 
@@ -60,9 +59,9 @@ def test_todo_duration_with_dtstart_and_duration():
 def test_todo_duration_without_any_time_info_raises_error():
     """Test that Todo.duration raises error when no time information is available."""
     todo = Todo()
-    todo.add("UID", "test-no-time")
-    todo.add("SUMMARY", "Task without any time info")
-
+    todo.add('UID', 'test-no-time')
+    todo.add('SUMMARY', 'Task without any time info')
+    
     # Should raise error since no DURATION, DTSTART, or DUE is set
     with pytest.raises(IncompleteComponent):
         _ = todo.duration
@@ -76,17 +75,14 @@ def test_todo_duration_complex_duration_values():
         ("PT1H30M", timedelta(hours=1, minutes=30)),
         ("P1DT2H", timedelta(days=1, hours=2)),
         ("P1W", timedelta(weeks=1)),
-        (
-            "P1Y2M3DT4H5M6S",
-            timedelta(days=428, hours=4, minutes=5, seconds=6),
-        ),  # Approx 1 year 2 months
+        ("P1Y2M3DT4H5M6S", timedelta(days=428, hours=4, minutes=5, seconds=6)),  # Approx 1 year 2 months
     ]
-
+    
     for duration_str, expected_delta in test_cases:
         todo = Todo()
-        todo.add("UID", f"test-{duration_str}")
-        todo.add("DURATION", expected_delta)
-
+        todo.add('UID', f'test-{duration_str}')
+        todo.add('DURATION', expected_delta)
+        
         assert todo.duration == expected_delta
 
 
@@ -94,14 +90,14 @@ def test_todo_duration_maintains_backward_compatibility():
     """Test that the fix doesn't break existing functionality."""
     # Create todo the old way (DTSTART + DUE)
     todo = Todo()
-    todo.add("UID", "test-backward-compat")
-    todo.add("SUMMARY", "Backward compatibility test")
+    todo.add('UID', 'test-backward-compat')
+    todo.add('SUMMARY', 'Backward compatibility test')
     todo.start = datetime(2026, 3, 19, 9, 0)
     todo.end = datetime(2026, 3, 19, 17, 0)
-
+    
     # Should still work as before
     assert todo.duration == timedelta(hours=8)
-
+    
     # Properties should still work
     assert todo.start == datetime(2026, 3, 19, 9, 0)
     assert todo.end == datetime(2026, 3, 19, 17, 0)
@@ -110,9 +106,9 @@ def test_todo_duration_maintains_backward_compatibility():
 def test_todo_duration_edge_case_only_dtstart():
     """Test Todo with only `DTSTART` (no `DUE` or `DURATION`)."""
     todo = Todo()
-    todo.add("UID", "test-only-start")
+    todo.add('UID', 'test-only-start')
     todo.start = datetime(2026, 3, 19, 12, 0)
-
+    
     # This should use the fallback logic from the end property
     # which returns start + 1 day for date, or just start for datetime
     assert todo.duration == timedelta(0)  # end defaults to start for datetime
@@ -131,26 +127,23 @@ END:VTODO""")
 
     # This assertion was failing before the fix
     assert my_task.duration == timedelta(days=5)
-
+    
     # Verify the todo has the expected properties
-    assert my_task.get("UID") == "taskwithoutdtstart"
-    assert (
-        my_task.get("SUMMARY")
-        == "This is a task that is expected to take five days to complete"
-    )
-    assert "DURATION" in my_task
-    assert "DTSTART" not in my_task  # Confirming no DTSTART
+    assert my_task.get('UID') == 'taskwithoutdtstart'
+    assert my_task.get('SUMMARY') == 'This is a task that is expected to take five days to complete'
+    assert 'DURATION' in my_task
+    assert 'DTSTART' not in my_task  # Confirming no DTSTART
 
 
 def test_todo_duration_preserves_property_access():
     """Test that direct property access still works as expected."""
     todo = Todo()
-    todo.add("UID", "test-property-access")
-    todo.add("DURATION", timedelta(hours=2))
-
+    todo.add('UID', 'test-property-access')
+    todo.add('DURATION', timedelta(hours=2))
+    
     # Direct property access should still work
-    assert todo["DURATION"].dt == timedelta(hours=2)
-
+    assert todo['DURATION'].dt == timedelta(hours=2)
+    
     # And our computed property should match
     assert todo.duration == timedelta(hours=2)
 
@@ -159,11 +152,11 @@ def test_todo_duration_preserves_property_access():
 def test_event_duration_prefers_duration_property():
     """Test that Event.duration also prefers `DURATION` property over calculated duration."""
     event = Event()
-    event.add("UID", "test-event-duration")
+    event.add('UID', 'test-event-duration')
     event.start = datetime(2026, 3, 19, 12, 0)
     event.end = datetime(2026, 3, 19, 15, 0)  # This would be 3 hours
-    event.add("DURATION", timedelta(hours=2))  # But DURATION says 2 hours
-
+    event.add('DURATION', timedelta(hours=2))  # But DURATION says 2 hours
+    
     # Should return DURATION property, not calculated value
     assert event.duration == timedelta(hours=2)
 
@@ -171,9 +164,9 @@ def test_event_duration_prefers_duration_property():
 def test_event_duration_calculated_fallback():
     """Test that Event.duration falls back to calculated duration when no `DURATION` property."""
     event = Event()
-    event.add("UID", "test-event-calculated")
+    event.add('UID', 'test-event-calculated')
     event.start = datetime(2026, 3, 19, 12, 0)
     event.end = datetime(2026, 3, 19, 14, 30)
-
+    
     # Should calculate duration from start and end (no DURATION property)
     assert event.duration == timedelta(hours=2, minutes=30)
