@@ -32,7 +32,7 @@ class TestDurationSetter:
         assert "DTEND" not in event  # DTEND should be removed
 
     def test_event_duration_setter_creates_duration_property(self):
-        """Test that setting duration creates DURATION property and removes DTEND."""
+        """Test that setting duration creates `DURATION` property and removes `DTEND`."""
         event = Event()
         event.add("UID", "test-duration-property")
         event.start = datetime(2026, 1, 1, 12, 0)
@@ -66,7 +66,7 @@ class TestDurationSetter:
         assert "DUE" not in todo
 
     def test_duration_setter_without_start_raises_error(self):
-        """Test that setting duration without start raises appropriate error."""
+        """Test that setting duration without start. Raises appropriate error."""
         event = Event()
         event.add("UID", "test-no-start")
 
@@ -75,10 +75,10 @@ class TestDurationSetter:
 
 
 class TestExplicitLockingMethods:
-    """Test the explicit locking methods set_start(), set_end(), set_duration()."""
+    """Test the explicit locking methods `set_start()`, `set_end()`, `set_duration()`."""
 
     def test_set_duration_with_start_locked(self):
-        """Test set_duration() with start locked (default)."""
+        """Test `set_duration()` with start locked (default)."""
         event = Event()
         event.add("UID", "test-set-duration")
         event.start = datetime(2026, 1, 1, 12, 0)
@@ -92,7 +92,7 @@ class TestExplicitLockingMethods:
         assert event.duration == timedelta(hours=3)
 
     def test_set_duration_with_end_locked(self):
-        """Test set_duration() with end locked."""
+        """Test `set_duration()` with end locked."""
         event = Event()
         event.add("UID", "test-set-duration-end-locked")
         event.start = datetime(2026, 1, 1, 12, 0)
@@ -106,7 +106,7 @@ class TestExplicitLockingMethods:
         assert event.duration == timedelta(hours=3)
 
     def test_set_duration_convert_to_duration_property(self):
-        """Test set_duration() with None to convert to DURATION property."""
+        """Test `set_duration()` with None to convert to `DURATION` property."""
         event = Event()
         event.add("UID", "test-convert-duration")
         event.start = datetime(2026, 1, 1, 12, 0)
@@ -120,7 +120,7 @@ class TestExplicitLockingMethods:
         assert event.duration == timedelta(hours=2)
 
     def test_set_start_with_duration_locked(self):
-        """Test set_start() with duration locked."""
+        """Test `set_start()` with duration locked."""
         event = Event()
         event.add("UID", "test-set-start")
         event.start = datetime(2026, 1, 1, 12, 0)
@@ -134,7 +134,7 @@ class TestExplicitLockingMethods:
         assert event.duration == timedelta(hours=2)  # duration unchanged
 
     def test_set_start_with_end_locked(self):
-        """Test set_start() with end locked."""
+        """Test `set_start()` with end locked."""
         event = Event()
         event.add("UID", "test-set-start-end-locked")
         event.start = datetime(2026, 1, 1, 12, 0)
@@ -148,7 +148,7 @@ class TestExplicitLockingMethods:
         assert event.duration == timedelta(hours=4)  # duration adjusted
 
     def test_set_end_with_start_locked(self):
-        """Test set_end() with start locked (default)."""
+        """Test `set_end()` with start locked (default)."""
         event = Event()
         event.add("UID", "test-set-end")
         event.start = datetime(2026, 1, 1, 12, 0)
@@ -162,7 +162,7 @@ class TestExplicitLockingMethods:
         assert event.duration == timedelta(hours=4)  # duration adjusted
 
     def test_set_end_with_duration_locked(self):
-        """Test set_end() with duration locked."""
+        """Test `set_end()` with duration locked."""
         event = Event()
         event.add("UID", "test-set-end-duration-locked")
         event.start = datetime(2026, 1, 1, 12, 0)
@@ -180,7 +180,7 @@ class TestImprovedPropertySetters:
     """Test the improved property setters with smart defaults."""
 
     def test_start_setter_with_duration_property(self):
-        """Test start setter when DURATION property exists (should lock duration)."""
+        """Test start setter when `DURATION` property exists (should lock duration)."""
         event = Event()
         event.add("UID", "test-start-duration")
         event.start = datetime(2026, 1, 1, 12, 0)
@@ -194,7 +194,7 @@ class TestImprovedPropertySetters:
         assert event.duration == timedelta(hours=2)
 
     def test_start_setter_with_dtend_property(self):
-        """Test start setter when DTEND property exists (should lock end)."""
+        """Test start setter when `DTEND` property exists (should lock end)."""
         event = Event()
         event.add("UID", "test-start-dtend")
         event.start = datetime(2026, 1, 1, 12, 0)
@@ -208,7 +208,7 @@ class TestImprovedPropertySetters:
         assert event.duration == timedelta(hours=4)
 
     def test_end_setter_with_duration_property(self):
-        """Test end setter when DURATION property exists (should remove DURATION)."""
+        """Test end setter when `DURATION` property exists (should remove `DURATION`)."""
         event = Event()
         event.add("UID", "test-end-duration")
         event.start = datetime(2026, 1, 1, 12, 0)
@@ -228,7 +228,7 @@ class TestRFCCompliance:
     """Test that the improved setters maintain RFC 5545 compliance."""
 
     def test_dtend_and_duration_mutual_exclusion(self):
-        """Test that DTEND and DURATION are mutually exclusive."""
+        """Test that `DTEND` and `DURATION` are mutually exclusive."""
         event = Event()
         event.add("UID", "test-mutual-exclusion")
         event.start = datetime(2026, 1, 1, 12, 0)
@@ -245,7 +245,7 @@ class TestRFCCompliance:
         assert "DURATION" not in event
 
     def test_date_duration_validation(self):
-        """Test that date DTSTART with time-based DURATION raises error."""
+        """Test that date `DTSTART` with time-based `DURATION`. Raises error."""
         event = Event()
         event.add("UID", "test-date-duration")
         event.start = date(2026, 1, 1)  # DATE type
@@ -259,7 +259,7 @@ class TestRFCCompliance:
         assert event.duration == timedelta(days=1)
 
     def test_datetime_type_consistency(self):
-        """Test that DTSTART and DTEND must have same type."""
+        """Test that `DTSTART` and `DTEND` must have same type."""
         event = Event()
         event.add("UID", "test-type-consistency")
         event.start = datetime(2026, 1, 1, 12, 0)  # datetime type
