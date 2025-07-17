@@ -244,9 +244,9 @@ class Calendar(Component):
         missing_tzids = self.get_missing_tzids()
         if not missing_tzids:
             return
-        
+
         existing_timezone_count = len(self.timezones)
-        
+
         for tzid in missing_tzids:
             try:
                 timezone = Timezone.from_tzid(

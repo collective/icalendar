@@ -19,12 +19,12 @@ def test_single_timezone_placed_before_event():
     event.start = datetime(2026, 3, 19, 12, 30, tzinfo=ZoneInfo("Europe/London"))
     event.add("SUMMARY", "Test Event")
     calendar.add_component(event)
-    
+
     calendar.add_missing_timezones()
-    
+
     components = [comp.name for comp in calendar.subcomponents]
     assert components == ["VTIMEZONE", "VEVENT"]
-    
+
     # Verify the timezone is correct
     assert calendar.timezones[0].tz_name == "Europe/London"
 
@@ -46,13 +46,13 @@ def test_multiple_timezones_placed_before_events():
     event2.start = datetime(2026, 3, 19, 15, 30, tzinfo=ZoneInfo("America/New_York"))
     event2.add("SUMMARY", "New York Event")
     calendar.add_component(event2)
-    
+
     calendar.add_missing_timezones()
-    
+
     components = [comp.name for comp in calendar.subcomponents]
     assert components[:2] == ["VTIMEZONE", "VTIMEZONE"]
     assert components[2:] == ["VEVENT", "VEVENT"]
-    
+
     # Verify both timezones are present
     timezone_names = {tz.tz_name for tz in calendar.timezones}
     assert timezone_names == {"Europe/London", "America/New_York"}
@@ -79,13 +79,13 @@ def test_existing_timezone_preserved_new_ones_added_correctly():
     event2.start = datetime(2026, 3, 19, 15, 30, tzinfo=ZoneInfo("America/New_York"))
     event2.add("SUMMARY", "New York Event")
     calendar.add_component(event2)
-    
+
     calendar.add_missing_timezones()
-    
+
     components = [comp.name for comp in calendar.subcomponents]
     assert components[:2] == ["VTIMEZONE", "VTIMEZONE"]
     assert components[2:] == ["VEVENT", "VEVENT"]
-    
+
     # Verify both timezones are present (existing + new)
     timezone_names = {tz.tz_name for tz in calendar.timezones}
     assert timezone_names == {"Europe/Berlin", "America/New_York"}
@@ -102,11 +102,11 @@ def test_no_missing_timezones_no_changes():
     event.start = datetime(2026, 3, 19, 12, 30)  # No timezone
     event.add("SUMMARY", "No Timezone Event")
     calendar.add_component(event)
-    
+
     original_components = [comp.name for comp in calendar.subcomponents]
     calendar.add_missing_timezones()
     new_components = [comp.name for comp in calendar.subcomponents]
-    
+
     assert original_components == new_components == ["VEVENT"]
 
 
@@ -115,9 +115,9 @@ def test_empty_calendar_add_missing_timezones():
     calendar = Calendar()
     calendar.add("VERSION", "2.0")
     calendar.add("PRODID", "test calendar")
-    
+
     calendar.add_missing_timezones()
-    
+
     components = [comp.name for comp in calendar.subcomponents]
     assert components == []
 
@@ -133,22 +133,22 @@ def test_timezone_placement_in_serialized_output():
     event.start = datetime(2026, 3, 19, 12, 30, tzinfo=ZoneInfo("Europe/London"))
     event.add("SUMMARY", "Test Event")
     calendar.add_component(event)
-    
+
     calendar.add_missing_timezones()
-    
+
     # Check serialized output
     ical_content = calendar.to_ical().decode()
-    lines = ical_content.split('\n')
-    
+    lines = ical_content.split("\n")
+
     vtimezone_line = None
     vevent_line = None
-    
+
     for i, line in enumerate(lines):
         if line.strip() == "BEGIN:VTIMEZONE":
             vtimezone_line = i
         elif line.strip() == "BEGIN:VEVENT":
             vevent_line = i
-    
+
     assert vtimezone_line is not None
     assert vevent_line is not None
     assert vtimezone_line < vevent_line
@@ -175,7 +175,7 @@ TZNAME:GMT
 END:STANDARD
 END:VTIMEZONE
 END:VCALENDAR"""
-    
+
     # This should still parse correctly due to existing forward reference handling
     calendar = Calendar.from_ical(ical_content)
     assert len(calendar.events) == 1
@@ -187,16 +187,16 @@ def test_timezone_placement_without_pytz():
     """Test timezone placement. Works even if pytz is not available."""
     import sys
     import types
-    
+
     # Temporarily mock pytz to simulate nopytz environment
-    original_pytz = sys.modules.get('pytz')
-    
+    original_pytz = sys.modules.get("pytz")
+
     class MockPytz:
         def __getattr__(self, name):
             raise ImportError("No module named 'pytz'")
-    
-    sys.modules['pytz'] = MockPytz()
-    
+
+    sys.modules["pytz"] = MockPytz()
+
     try:
         calendar = Calendar()
         calendar.add("VERSION", "2.0")
@@ -207,17 +207,17 @@ def test_timezone_placement_without_pytz():
         event.start = datetime(2026, 3, 19, 12, 30, tzinfo=ZoneInfo("Europe/London"))
         event.add("SUMMARY", "Test Event")
         calendar.add_component(event)
-        
+
         calendar.add_missing_timezones()
-        
+
         components = [comp.name for comp in calendar.subcomponents]
         assert components == ["VTIMEZONE", "VEVENT"]
         assert len(calendar.timezones) == 1
         assert calendar.timezones[0].tz_name == "Europe/London"
-        
+
     finally:
         # Restore original pytz state
         if original_pytz:
-            sys.modules['pytz'] = original_pytz
+            sys.modules["pytz"] = original_pytz
         else:
-            sys.modules.pop('pytz', None)
+            sys.modules.pop("pytz", None)
