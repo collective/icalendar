@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional, Sequence
+from typing import TYPE_CHECKING, Sequence
 
 from icalendar.attr import (
     categories_property,
@@ -454,16 +454,16 @@ Description:
     def new(
         cls,
         /,
-        calscale: Optional[str] = None,
+        calscale: str | None = None,
         categories: Sequence[str] = (),
-        color: Optional[str] = None,
-        description: Optional[str] = None,
-        language: Optional[str] = None,
-        method: Optional[str] = None,
-        name: Optional[str] = None,
-        organization: Optional[str] = None,
-        prodid: Optional[str] = None,
-        uid: Optional[str | uuid.UUID] = None,
+        color: str | None = None,
+        description: str | None = None,
+        language: str | None = None,
+        method: str | None = None,
+        name: str | None = None,
+        organization: str | None = None,
+        prodid: str | None = None,
+        uid: str | uuid.UUID | None = None,
         version: str = "2.0",
     ):
         """Create a new Calendar with all required properties.
@@ -475,12 +475,12 @@ Description:
             categories: The :attr:`categories` of the component.
             color: The :attr:`color` of the component.
             description: The :attr:`description` of the component.
-            language: The language for the calendar. Used to generate localized prodid.
+            language: The language for the calendar. Used to generate localized `prodid`.
             method: The :attr:`method` of the component.
             name: The :attr:`calendar_name` of the component.
-            organization: The organization name. Used to generate prodid if not provided.
+            organization: The organization name. Used to generate `prodid` if not provided.
             prodid: The :attr:`prodid` of the component. If None and organization is provided,
-                generates a prodid in format "-//organization//name//language".
+                generates a `prodid` in format "-//organization//name//language".
             uid: The :attr:`uid` of the component.
                 If None, this is set to a new :func:`uuid.uuid4`.
             version: The :attr:`version` of the component.
@@ -494,7 +494,7 @@ Description:
         .. warning:: As time progresses, we will be stricter with the validation.
         """
         calendar = cls()
-        
+
         # Generate prodid if not provided but organization is given
         if prodid is None and organization:
             app_name = name or "Calendar"
@@ -502,7 +502,7 @@ Description:
             prodid = f"-//{organization}//{app_name}//{lang}"
         elif prodid is None:
             prodid = f"-//collective//icalendar//{__version__}//EN"
-            
+
         calendar.prodid = prodid
         calendar.version = version
         calendar.calendar_name = name
@@ -516,18 +516,20 @@ Description:
 
     def validate(self):
         """Validate that the calendar has required properties and components.
-        
+
         This method can be called explicitly to validate a calendar before output.
-        
+
         Raises:
             IncompleteComponent: If the calendar lacks required properties or components.
         """
-        if not self.get('PRODID'):
+        if not self.get("PRODID"):
             raise IncompleteComponent("Calendar must have a PRODID")
-        if not self.get('VERSION'):
+        if not self.get("VERSION"):
             raise IncompleteComponent("Calendar must have a VERSION")
         if not self.subcomponents:
-            raise IncompleteComponent("Calendar must contain at least one component (event, todo, etc.)")
+            raise IncompleteComponent(
+                "Calendar must contain at least one component (event, todo, etc.)"
+            )
 
 
 __all__ = ["Calendar"]
