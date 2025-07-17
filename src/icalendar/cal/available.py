@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional, Sequence
+from typing import TYPE_CHECKING, Sequence
 
 from icalendar.attr import (
     categories_property,
@@ -97,16 +97,16 @@ class Available(Component):
         categories: Sequence[str] = (),
         comments: list[str] | str | None = None,
         contacts: list[str] | str | None = None,
-        created: Optional[date] = None,
-        description: Optional[str] = None,
-        end: Optional[datetime] = None,
-        last_modified: Optional[date] = None,
-        location: Optional[str] = None,
-        sequence: Optional[int] = None,
-        stamp: Optional[date] = None,
-        start: Optional[datetime] = None,
-        summary: Optional[str] = None,
-        uid: Optional[str | uuid.UUID] = None,
+        created: date | None = None,
+        description: str | None = None,
+        end: datetime | None = None,
+        last_modified: date | None = None,
+        location: str | None = None,
+        sequence: int | None = None,
+        stamp: date | None = None,
+        start: datetime | None = None,
+        summary: str | None = None,
+        uid: str | uuid.UUID | None = None,
     ):
         """Create a new Available component with all required properties.
 

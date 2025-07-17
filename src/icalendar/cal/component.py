@@ -3,17 +3,19 @@
 from __future__ import annotations
 
 from datetime import date, datetime, timezone
-from typing import ClassVar, Optional
+from typing import TYPE_CHECKING, ClassVar
 
 from icalendar.attr import comments_property, single_utc_property, uid_property
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.caselessdict import CaselessDict
-from icalendar.compatibility import Self
 from icalendar.error import InvalidCalendar
 from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_split
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import TypesFactory, vDDDLists, vText
 from icalendar.timezone import tzp
+
+if TYPE_CHECKING:
+    from icalendar.compatibility import Self
 
 _marker = []
 
@@ -54,7 +56,7 @@ class Component(CaselessDict):
     # not_compliant = ['']  # List of non-compliant properties.
 
     types_factory = TypesFactory()
-    _components_factory: ClassVar[Optional[ComponentFactory]] = None
+    _components_factory: ClassVar[ComponentFactory | None] = None
 
     @classmethod
     def get_component_class(cls, name: str) -> type[Component]:
@@ -293,7 +295,7 @@ class Component(CaselessDict):
         return properties
 
     @classmethod
-    def from_ical(cls, st, multiple:bool=False) -> Self|list[Self]:
+    def from_ical(cls, st, multiple: bool = False) -> Self | list[Self]:
         """Populates the component recursively from a string."""
         stack = []  # a stack of components
         comps = []
@@ -580,10 +582,10 @@ Conformance:
     @classmethod
     def new(
         cls,
-        created: Optional[date] = None,
+        created: date | None = None,
         comments: list[str] | str | None = None,
-        last_modified: Optional[date] = None,
-        stamp: Optional[date] = None,
+        last_modified: date | None = None,
+        stamp: date | None = None,
     ) -> Component:
         """Create a new component.
 

@@ -139,7 +139,7 @@ def validate_param_value(value, quoted=True):
 
 # chars presence of which in parameter value will be cause the value
 # to be enclosed in double-quotes
-QUOTABLE = re.compile("[,;:’]")# noqa: RUF001
+QUOTABLE = re.compile("[,;:’]")  # noqa: RUF001
 
 
 def dquote(val, always_quote=False):
@@ -191,7 +191,7 @@ def single_string_parameter(func):
         """Get the value."""
         return self.get(name)
 
-    def fset(self: Parameters, value: str|None):
+    def fset(self: Parameters, value: str | None):
         """Set the value"""
         if value is None:
             fdel(self)
@@ -203,6 +203,7 @@ def single_string_parameter(func):
         self.pop(name, None)
 
     return property(fget, fset, fdel, doc=func.__doc__)
+
 
 class Parameters(CaselessDict):
     """Parser and generator of Property parameter strings. It knows nothing of
@@ -224,7 +225,7 @@ class Parameters(CaselessDict):
     # this is quoted should one of the values be present
     quote_also = {
         # This is escaped in the RFC
-        "CN" : " '",
+        "CN": " '",
     }
 
     def params(self):
@@ -242,11 +243,9 @@ class Parameters(CaselessDict):
         for key, value in items:
             upper_key = key.upper()
             check_quoteable_characters = self.quote_also.get(key.upper())
-            always_quote = (
-                upper_key in self.always_quoted or (
-                    check_quoteable_characters and
-                    any(c in value for c in check_quoteable_characters)
-                )
+            always_quote = upper_key in self.always_quoted or (
+                check_quoteable_characters
+                and any(c in value for c in check_quoteable_characters)
             )
             quoted_value = param_value(value, always_quote=always_quote)
             if isinstance(quoted_value, str):

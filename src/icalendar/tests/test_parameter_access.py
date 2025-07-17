@@ -1,24 +1,28 @@
 """Test the access to parameters via getter/setter properties."""
 
 import pytest
+
 from icalendar import Parameters
 from icalendar.enums import VALUE
 
 
-@pytest.fixture()
+@pytest.fixture
 def p():
     """Empty test property."""
     return Parameters()
 
+
 def test_value_parameter_default(p):
     """Test default value."""
     assert p.value is None
+
 
 def test_set_value(p):
     """Set the value."""
     p.value = "test"
     assert p.value == "test"
     assert p["VALUE"] == "test"
+
 
 def test_conversion(p):
     """Converted to enum."""
@@ -35,6 +39,7 @@ def test_delete_value(p):
     del p.value
     assert p.value is None
     assert "VALUE" not in p
+
 
 def test_delete_value_None(p):
     """Delete the value."""

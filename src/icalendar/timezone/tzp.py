@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING, Union
 
 from icalendar.tools import to_datetime
 
@@ -116,7 +116,7 @@ class TZP:
         """
         return tzid.strip("/")
 
-    def timezone(self, tz_id: str) -> Optional[datetime.tzinfo]:
+    def timezone(self, tz_id: str) -> datetime.tzinfo | None:
         """Return a timezone with an id or None if we cannot find it."""
         _unclean_id = tz_id
         tz_id = self.clean_timezone_id(tz_id)

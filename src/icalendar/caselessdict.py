@@ -1,6 +1,6 @@
-from icalendar.parser_tools import to_unicode
-
 from collections import OrderedDict
+
+from icalendar.parser_tools import to_unicode
 
 
 def canonsort_keys(keys, canonical_order=None):
@@ -105,4 +105,4 @@ class CaselessDict(OrderedDict):
         return canonsort_items(self, self.canonical_order)
 
 
-__all__ = ["canonsort_keys", "canonsort_items", "CaselessDict"]
+__all__ = ["CaselessDict", "canonsort_items", "canonsort_keys"]

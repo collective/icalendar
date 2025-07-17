@@ -7,7 +7,7 @@ import copyreg
 import functools
 from datetime import datetime, tzinfo
 from io import StringIO
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from dateutil.rrule import rrule, rruleset
 from dateutil.tz import tzical
@@ -41,7 +41,7 @@ class ZONEINFO(TZProvider):
             return dt.astimezone(self.utc)
         return self.localize(dt, self.utc)
 
-    def timezone(self, name: str) -> Optional[tzinfo]:
+    def timezone(self, name: str) -> tzinfo | None:
         """Return a timezone with a name or None if we cannot find it."""
         try:
             return zoneinfo.ZoneInfo(name)

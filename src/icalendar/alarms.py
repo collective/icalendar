@@ -14,7 +14,7 @@ This takes different calendar software into account and the RFC 9074 (Alarm Exte
 from __future__ import annotations
 
 from datetime import date, timedelta, tzinfo
-from typing import TYPE_CHECKING, Generator, Optional, Union
+from typing import TYPE_CHECKING, Generator, Union
 
 from icalendar.cal.event import Event
 from icalendar.cal.todo import Todo
@@ -42,9 +42,9 @@ class AlarmTime:
         self,
         alarm: Alarm,
         trigger: datetime,
-        acknowledged_until: Optional[datetime] = None,
-        snoozed_until: Optional[datetime] = None,
-        parent: Optional[Parent] = None,
+        acknowledged_until: datetime | None = None,
+        snoozed_until: datetime | None = None,
+        parent: Parent | None = None,
     ):
         """Create a new AlarmTime.
 
@@ -75,7 +75,7 @@ class AlarmTime:
         self._snooze_until = snoozed_until
 
     @property
-    def acknowledged(self) -> Optional[datetime]:
+    def acknowledged(self) -> datetime | None:
         """The time in UTC at which this alarm was last acknowledged.
 
         If the alarm was not acknowledged (dismissed), then this is None.
@@ -93,7 +93,7 @@ class AlarmTime:
         return self._alarm
 
     @property
-    def parent(self) -> Optional[Parent]:
+    def parent(self) -> Parent | None:
         """This is the component that contains the alarm.
 
         This is None if you did not use Alarms.set_component().
@@ -178,17 +178,17 @@ class Alarms:
     This is not implemented yet.
     """
 
-    def __init__(self, component: Optional[Alarm | Event | Todo] = None):
+    def __init__(self, component: Alarm | Event | Todo | None = None):
         """Start computing alarm times."""
         self._absolute_alarms: list[Alarm] = []
         self._start_alarms: list[Alarm] = []
         self._end_alarms: list[Alarm] = []
-        self._start: Optional[date] = None
-        self._end: Optional[date] = None
-        self._parent: Optional[Parent] = None
-        self._last_ack: Optional[datetime] = None
-        self._snooze_until: Optional[datetime] = None
-        self._local_tzinfo: Optional[tzinfo] = None
+        self._start: date | None = None
+        self._end: date | None = None
+        self._parent: Parent | None = None
+        self._last_ack: datetime | None = None
+        self._snooze_until: datetime | None = None
+        self._local_tzinfo: tzinfo | None = None
 
         if component is not None:
             self.add_component(component)
@@ -234,7 +234,7 @@ class Alarms:
         else:
             self._end_alarms.append(alarm)
 
-    def set_start(self, dt: Optional[date]):
+    def set_start(self, dt: date | None):
         """Set the start of the component.
 
         If you have only absolute alarms, this is not required.
@@ -242,7 +242,7 @@ class Alarms:
         """
         self._start = dt
 
-    def set_end(self, dt: Optional[date]):
+    def set_end(self, dt: date | None):
         """Set the end of the component.
 
         If you have only absolute alarms, this is not required.
@@ -258,7 +258,7 @@ class Alarms:
             dt = to_datetime(dt)
         return normalize_pytz(dt + td)
 
-    def acknowledge_until(self, dt: Optional[date]) -> None:
+    def acknowledge_until(self, dt: date | None) -> None:
         """This is the time in UTC when all the alarms of this component were acknowledged.
 
         Only the last call counts.
@@ -271,7 +271,7 @@ class Alarms:
         """
         self._last_ack = tzp.localize_utc(dt) if dt is not None else None
 
-    def snooze_until(self, dt: Optional[date]) -> None:
+    def snooze_until(self, dt: date | None) -> None:
         """This is the time in UTC when all the alarms of this component were snoozed.
 
         Only the last call counts.
@@ -281,7 +281,7 @@ class Alarms:
         """
         self._snooze_until = tzp.localize_utc(dt) if dt is not None else None
 
-    def set_local_timezone(self, tzinfo: Optional[tzinfo | str]):
+    def set_local_timezone(self, tzinfo: tzinfo | str | None):
         """Set the local timezone.
 
         Events are sometimes in local time.
