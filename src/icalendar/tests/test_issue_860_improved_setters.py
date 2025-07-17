@@ -270,7 +270,7 @@ class TestRFCCompliance:
         # Should raise error for date end with datetime start
         event.end = date(2026, 1, 1)
         with pytest.raises(InvalidCalendar):
-            event.end  # Error occurs when accessing the property
+            _ = event.end  # Error occurs when accessing the property
 
 
 class TestBackwardCompatibility:
@@ -305,3 +305,93 @@ class TestBackwardCompatibility:
         assert event.start == datetime(2026, 1, 1, 12, 0)
         assert event.end == datetime(2026, 1, 1, 14, 0)
         assert event.duration == timedelta(hours=2)
+
+
+class TestErrorConditions:
+    """Test error conditions and edge cases for improved coverage."""
+
+    def test_set_duration_invalid_locked_value(self):
+        """Test that invalid locked values raise appropriate errors."""
+        event = Event()
+        event.add("UID", "test-invalid-locked")
+        event.start = datetime(2026, 1, 1, 12, 0)
+
+        with pytest.raises(
+            ValueError, match="locked must be 'start' or 'end', not 'invalid'"
+        ):
+            event.set_duration(timedelta(hours=2), locked="invalid")
+
+    def test_set_start_invalid_locked_value(self):
+        """Test that invalid locked values raise appropriate errors."""
+        event = Event()
+        event.add("UID", "test-invalid-locked")
+        event.start = datetime(2026, 1, 1, 12, 0)
+
+        with pytest.raises(
+            ValueError, match="locked must be 'duration', 'end', or None, not 'invalid'"
+        ):
+            event.set_start(datetime(2026, 1, 1, 14, 0), locked="invalid")
+
+    def test_set_end_invalid_locked_value(self):
+        """Test that invalid locked values raise appropriate errors."""
+        event = Event()
+        event.add("UID", "test-invalid-locked")
+        event.start = datetime(2026, 1, 1, 12, 0)
+
+        with pytest.raises(
+            ValueError, match="locked must be 'start' or 'duration', not 'invalid'"
+        ):
+            event.set_end(datetime(2026, 1, 1, 14, 0), locked="invalid")
+
+    def test_duration_setter_invalid_type(self):
+        """Test that duration setter rejects invalid types."""
+        event = Event()
+        event.add("UID", "test-invalid-type")
+        event.start = datetime(2026, 1, 1, 12, 0)
+
+        with pytest.raises(TypeError, match="Use timedelta, not str"):
+            event.duration = "2 hours"
+
+    def test_set_duration_invalid_type(self):
+        """Test that set_duration rejects invalid types."""
+        event = Event()
+        event.add("UID", "test-invalid-type")
+        event.start = datetime(2026, 1, 1, 12, 0)
+
+        with pytest.raises(TypeError, match="Use timedelta, not int"):
+            event.set_duration(7200, locked="start")
+
+    def test_todo_error_conditions(self):
+        """Test error conditions for Todo class."""
+        todo = Todo()
+        todo.add("UID", "test-todo-errors")
+        todo.start = datetime(2026, 1, 1, 12, 0)
+
+        # Test invalid locked values
+        with pytest.raises(
+            ValueError, match="locked must be 'start' or 'end', not 'invalid'"
+        ):
+            todo.set_duration(timedelta(hours=2), locked="invalid")
+
+        with pytest.raises(
+            ValueError, match="locked must be 'duration', 'end', or None, not 'invalid'"
+        ):
+            todo.set_start(datetime(2026, 1, 1, 14, 0), locked="invalid")
+
+        with pytest.raises(
+            ValueError, match="locked must be 'start' or 'duration', not 'invalid'"
+        ):
+            todo.set_end(datetime(2026, 1, 1, 14, 0), locked="invalid")
+
+    def test_set_start_auto_detect_no_existing_properties(self):
+        """Test auto-detection when no existing properties exist."""
+        event = Event()
+        event.add("UID", "test-auto-detect")
+
+        # When no DURATION or DTEND exists, should default to duration
+        event.set_start(datetime(2026, 1, 1, 12, 0), locked=None)
+        assert event.start == datetime(2026, 1, 1, 12, 0)
+
+        # Adding end should trigger duration calculation
+        event.end = datetime(2026, 1, 1, 14, 0)
+        # The auto-detect should have preserved the end time calculation

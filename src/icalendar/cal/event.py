@@ -307,10 +307,11 @@ class Event(Component):
         """The duration of the VEVENT.
 
         Returns the DURATION property if set, otherwise calculated from start and end.
-        When setting duration, the end time is automatically calculated from start + duration.
+        When setting duration, the end time is automatically calculated from start +
+        duration.
         You can set the duration to automatically adjust the end time while keeping
         start locked.
-        
+
         Setting the duration will:
         1. Keep the start time locked (unchanged)
         2. Adjust the end time to start + duration
@@ -422,7 +423,7 @@ class Event(Component):
         if locked == "start":
             # Keep start locked, adjust end
             if start is None:
-                raise IncompleteComponent("No DTSTART given.")
+                raise IncompleteComponent("Cannot set duration without DTSTART. Set start time first.")
             self.DURATION = duration
         elif locked == "end":
             # Keep end locked, adjust start
