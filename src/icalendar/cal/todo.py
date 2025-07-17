@@ -219,9 +219,9 @@ class Todo(Component):
         For todos, DURATION can exist without DTSTART per RFC 5545.
         """
         # First check if DURATION property is explicitly set
-        if 'DURATION' in self:
-            return self['DURATION'].dt
-        
+        if "DURATION" in self:
+            return self["DURATION"].dt
+
         # Fall back to calculated duration from start and end
         return self.end - self.start
 
