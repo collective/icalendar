@@ -9,7 +9,7 @@ from icalendar.error import IncompleteComponent
 
 
 def test_todo_duration_without_dtstart():
-    """Test that Todo.duration works when DURATION property is set but DTSTART is missing."""
+    """Test that Todo.duration works when `DURATION` property is set but `DTSTART` is missing."""
     # This is the exact test case from issue #867
     my_task = Todo.from_ical("""BEGIN:VTODO
 UID:taskwithoutdtstart
@@ -24,7 +24,7 @@ END:VTODO""")
 
 
 def test_todo_duration_calculated_from_start_and_due():
-    """Test that Todo.duration still works for calculated duration from DTSTART and DUE."""
+    """Test that Todo.duration still works for calculated duration from `DTSTART` and `DUE`."""
     todo = Todo()
     todo.add("UID", "test-calculated")
     todo.start = datetime(2026, 3, 19, 12, 0)
@@ -35,7 +35,7 @@ def test_todo_duration_calculated_from_start_and_due():
 
 
 def test_todo_duration_prefers_duration_property():
-    """Test that explicit DURATION property takes precedence over calculated duration."""
+    """Test that explicit `DURATION` property takes precedence over calculated duration."""
     todo = Todo()
     todo.add("UID", "test-precedence")
     todo.start = datetime(2026, 3, 19, 12, 0)
@@ -47,7 +47,7 @@ def test_todo_duration_prefers_duration_property():
 
 
 def test_todo_duration_with_dtstart_and_duration():
-    """Test Todo with DTSTART and DURATION (valid per RFC 5545)."""
+    """Test Todo with `DTSTART` and `DURATION` (valid per RFC 5545)."""
     todo = Todo()
     todo.add("UID", "test-start-duration")
     todo.start = datetime(2026, 3, 19, 12, 0)
@@ -108,7 +108,7 @@ def test_todo_duration_maintains_backward_compatibility():
 
 
 def test_todo_duration_edge_case_only_dtstart():
-    """Test Todo with only DTSTART (no DUE or DURATION)."""
+    """Test Todo with only `DTSTART` (no `DUE` or `DURATION`)."""
     todo = Todo()
     todo.add("UID", "test-only-start")
     todo.start = datetime(2026, 3, 19, 12, 0)
@@ -157,7 +157,7 @@ def test_todo_duration_preserves_property_access():
 
 # Event tests - same fix applies for consistency
 def test_event_duration_prefers_duration_property():
-    """Test that Event.duration also prefers DURATION property over calculated duration."""
+    """Test that Event.duration also prefers `DURATION` property over calculated duration."""
     event = Event()
     event.add("UID", "test-event-duration")
     event.start = datetime(2026, 3, 19, 12, 0)
@@ -169,7 +169,7 @@ def test_event_duration_prefers_duration_property():
 
 
 def test_event_duration_calculated_fallback():
-    """Test that Event.duration falls back to calculated duration when no DURATION property."""
+    """Test that Event.duration falls back to calculated duration when no `DURATION` property."""
     event = Event()
     event.add("UID", "test-event-calculated")
     event.start = datetime(2026, 3, 19, 12, 0)
