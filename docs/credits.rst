@@ -37,6 +37,7 @@ icalendar contributors
 - Rok Garbas <rok@garbas.si>
 - Ronan Dunklau <ronan@dunklau.fr>
 - Russ <russ@rw.id.au>
+- `Sashank Bhamidi <https://github.com/SashankBhamidi>`_
 - Sidnei da Silva <sidnei@enfoldsystems.com>
 - Stanislav Láznička <slaznick@redhat.com>
 - Stanislav Ochotnicky <sochotnicky@redhat.com>
