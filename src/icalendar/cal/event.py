@@ -281,8 +281,8 @@ class Event(Component):
                 "Only one of DTEND and DURATION may be in a VEVENT, not both."
             )
         if (
-            isinstance(start, date)
-            and not isinstance(start, datetime)
+            start is not None
+            and is_date(start)
             and duration is not None
             and duration.seconds != 0
         ):

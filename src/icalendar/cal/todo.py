@@ -140,8 +140,8 @@ class Todo(Component):
                 "Only one of DUE and DURATION may be in a VTODO, not both."
             )
         if (
-            isinstance(start, date)
-            and not isinstance(start, datetime)
+            start is not None
+            and is_date(start)
             and duration is not None
             and duration.seconds != 0
         ):
