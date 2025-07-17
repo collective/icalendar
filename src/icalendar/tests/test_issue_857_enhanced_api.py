@@ -23,7 +23,7 @@ def test_calendar_new_with_organization_and_language():
 
 
 def test_calendar_new_with_organization_no_language():
-    """Test Calendar.new() with organization but no language defaults to EN."""
+    """Test Calendar.new() with organization but no language. Defaults to EN."""
     calendar = Calendar.new(
         organization="example.com",
         name="Test Calendar"
@@ -33,7 +33,7 @@ def test_calendar_new_with_organization_no_language():
 
 
 def test_calendar_new_with_organization_no_name():
-    """Test Calendar.new() with organization but no name uses 'Calendar'."""
+    """Test Calendar.new() with organization but no name. Uses 'Calendar'."""
     calendar = Calendar.new(
         organization="example.com",
         language="fr"
