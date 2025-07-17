@@ -16,16 +16,16 @@ See https://github.com/collective/icalendar/issues/836
      ; UTF8-2, UTF8-3, and UTF8-4 are defined in [RFC3629]
 
 """
-
 from datetime import datetime, time
-
+from icalendar import Event, Parameters, vDDDTypes, vDatetime, vPeriod, vTime
 import pytest
 
-from icalendar import Event, Parameters, vDatetime, vDDDTypes, vPeriod, vTime
 from icalendar.prop import vDDDLists
 
 # All the controls except HTAB
-CONTROL = {i for i in range(256) if 0x00 <= i <= 0x08 or 0x0A <= i <= 0x1F or i == 0x7F}
+CONTROL = {
+    i for i in range(256) if 0x00 <= i <= 0x08 or 0x0A <= i <= 0x1F or i == 0x7F
+}
 
 # Any character except CONTROL, DQUOTE, ";", ":", ","
 SAFE_CHAR = set(range(256)) - CONTROL - set(b'";:,')
@@ -35,9 +35,8 @@ param_tzid = pytest.mark.parametrize(
     [
         "Europe/London",
         "Eastern Standard Time",
-    ],
+    ]
 )
-
 
 @param_tzid
 @pytest.mark.parametrize(
@@ -48,7 +47,7 @@ param_tzid = pytest.mark.parametrize(
         vDDDTypes(datetime(2024, 10, 11, 12, 0)),
         vPeriod((datetime(2024, 10, 11, 12, 0), datetime(2024, 10, 11, 13, 0))),
         vDDDLists([datetime(2024, 10, 11, 12, 0)]),
-    ],
+    ]
 )
 def test_parameter_is_not_quoted_when_not_needed(tzid, vdt):
     """Check that serializing the value works without quoting."""
@@ -62,12 +61,15 @@ def test_parameter_is_not_quoted_when_not_needed(tzid, vdt):
     assert f'{tzid}"' not in ics
 
 
-@pytest.mark.parametrize("safe_char", list(map(chr, sorted(SAFE_CHAR))))
+@pytest.mark.parametrize(
+    "safe_char",
+    list(map(chr, sorted(SAFE_CHAR)))
+)
 def test_safe_char_is_not_escaped(safe_char):
     """Check that paramerter serialization is without quotes for safe chars."""
     params = Parameters(tzid=safe_char)
     result = params.to_ical().decode()
-    assert '"' not in result
+    assert '"'  not in result
 
 
 def test_get_calendar_and_serialize_it_wihtout_quotes(calendars):

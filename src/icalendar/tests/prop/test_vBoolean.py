@@ -12,8 +12,8 @@ def test_false():
 
 
 def test_roundtrip():
-    assert vBoolean.from_ical(vBoolean(True).to_ical())
-    assert vBoolean.from_ical("true")
+    assert vBoolean.from_ical(vBoolean(True).to_ical()) == True
+    assert vBoolean.from_ical("true") == True
 
 
 def test_error():

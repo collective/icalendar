@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from dateutil.tz import tz
 
@@ -19,13 +19,13 @@ if TYPE_CHECKING:
     from datetime import datetime, tzinfo
 
 DATEUTIL_UTC = tz.gettz("UTC")
-DATEUTIL_UTC_PATH: str | None = getattr(DATEUTIL_UTC, "_filename", None)
+DATEUTIL_UTC_PATH: Optional[str] = getattr(DATEUTIL_UTC, "_filename", None)
 DATEUTIL_ZONEINFO_PATH = (
     None if DATEUTIL_UTC_PATH is None else Path(DATEUTIL_UTC_PATH).parent
 )
 
 
-def tzids_from_tzinfo(tzinfo: tzinfo | None) -> tuple[str]:
+def tzids_from_tzinfo(tzinfo: Optional[tzinfo]) -> tuple[str]:
     """Get several timezone ids if we can identify the timezone.
 
     >>> import zoneinfo
@@ -60,7 +60,7 @@ def tzids_from_tzinfo(tzinfo: tzinfo | None) -> tuple[str]:
     return ()
 
 
-def tzid_from_tzinfo(tzinfo: tzinfo | None) -> str | None:
+def tzid_from_tzinfo(tzinfo: Optional[tzinfo]) -> Optional[str]:
     """Retrieve the timezone id from the tzinfo object.
 
     Some timezones are equivalent.
@@ -74,7 +74,7 @@ def tzid_from_tzinfo(tzinfo: tzinfo | None) -> str | None:
     return tzids[0]
 
 
-def tzid_from_dt(dt: datetime) -> str | None:
+def tzid_from_dt(dt: datetime) -> Optional[str]:
     """Retrieve the timezone id from the datetime object."""
     tzid = tzid_from_tzinfo(dt.tzinfo)
     if tzid is None:

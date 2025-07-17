@@ -425,9 +425,7 @@ def test_dates_before_and_after_are_considered():
     pytest.skip("todo")
 
 
-@pytest.mark.parametrize(
-    "tzid", zoneinfo.available_timezones() - {"Factory", "localtime"}
-)
+@pytest.mark.parametrize("tzid", zoneinfo.available_timezones() - {"Factory", "localtime"})
 def test_we_can_identify_dateutil_timezones(tzid):
     """dateutil and others were badly supported.
 

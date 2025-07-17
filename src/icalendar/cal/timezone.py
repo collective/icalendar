@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from datetime import date, datetime, timedelta, tzinfo
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 import dateutil.rrule
 import dateutil.tz
@@ -236,7 +236,7 @@ class Timezone(Component):
     def from_tzinfo(
         cls,
         timezone: tzinfo,
-        tzid: str | None = None,
+        tzid: Optional[str] = None,
         first_date: date = DEFAULT_FIRST_DATE,
         last_date: date = DEFAULT_LAST_DATE,
     ) -> Timezone:
@@ -273,7 +273,7 @@ class Timezone(Component):
             last_datetime = last_datetime.replace(tzinfo=timezone)
         # from, to, tzname, is_standard -> start
         offsets: dict[
-            tuple[timedelta | None, timedelta, str, bool], list[datetime]
+            tuple[Optional[timedelta], timedelta, str, bool], list[datetime]
         ] = defaultdict(list)
         start = first_datetime
         offset_to = None

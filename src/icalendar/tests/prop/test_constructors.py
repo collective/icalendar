@@ -1,23 +1,23 @@
-import datetime
-
 from icalendar.prop import (
     vBoolean,
-    vCalAddress,
+    vInline,
+    vUTCOffset,
     vCategory,
-    vDatetime,
+    vCalAddress,
+    vWeekday,
     vDuration,
     vFloat,
-    vFrequency,
     vGeo,
-    vInline,
     vInt,
-    vMonth,
-    vRecur,
     vText,
-    vUri,
+    vMonth,
     vUTCOffset,
-    vWeekday,
+    vFrequency,
+    vRecur,
+    vDatetime,
+    vUri,
 )
+import datetime
 
 
 def test_param_vCategory():

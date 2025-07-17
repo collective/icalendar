@@ -311,7 +311,7 @@ rrules_property = property(_get_rrules)
 
 
 def multi_language_text_property(
-    main_prop: str, compatibility_prop: str | None, doc: str
+    main_prop: str, compatibility_prop: Optional[str], doc: str
 ) -> property:
     """This creates a text property.
 
@@ -323,7 +323,7 @@ def multi_language_text_property(
         doc (str): The documentation string
     """
 
-    def fget(self: Component) -> str | None:
+    def fget(self: Component) -> Optional[str]:
         """Get the property"""
         result = self.get(main_prop)
         if result is None and compatibility_prop is not None:
@@ -334,7 +334,7 @@ def multi_language_text_property(
                     return item
         return result
 
-    def fset(self: Component, value: str | None):
+    def fset(self: Component, value: Optional[str]):
         """Set the property."""
         fdel(self)
         if value is not None:
@@ -365,7 +365,7 @@ def single_int_property(prop: str, default: int, doc: str) -> property:
         except ValueError as e:
             raise InvalidCalendar(f"{prop} must be an int") from e
 
-    def fset(self: Component, value: int | None):
+    def fset(self: Component, value: Optional[int]):
         """Set the property."""
         fdel(self)
         if value is not None:
@@ -393,7 +393,7 @@ def single_utc_property(name: str, docs: str) -> property:
         + docs
     )
 
-    def fget(self: Component) -> datetime | None:
+    def fget(self: Component) -> Optional[datetime]:
         """Get the value."""
         if name not in self:
             return None
@@ -407,7 +407,7 @@ def single_utc_property(name: str, docs: str) -> property:
             raise InvalidCalendar(f"{name} must be a datetime in UTC, not {value}")
         return tzp.localize_utc(value)
 
-    def fset(self: Component, value: datetime | None):
+    def fset(self: Component, value: Optional[datetime]):
         """Set the value"""
         if value is None:
             fdel(self)
@@ -425,7 +425,7 @@ def single_utc_property(name: str, docs: str) -> property:
 
 
 def single_string_property(
-    name: str, docs: str, other_name: str | None = None, default: str = ""
+    name: str, docs: str, other_name: Optional[str] = None, default: str = ""
 ) -> property:
     """Create a property to access a single string value."""
 
@@ -440,7 +440,7 @@ def single_string_property(
             return result[0]
         return result
 
-    def fset(self: Component, value: str | None):
+    def fset(self: Component, value: Optional[str]):
         """Set the value.
 
         Setting the value to None will delete it.
@@ -560,7 +560,7 @@ Examples:
 
 def _get_categories(component: Component) -> list[str]:
     """Get all the categories."""
-    categories: vCategory | list[vCategory] | None = component.get("CATEGORIES")
+    categories: Optional[vCategory | list[vCategory]] = component.get("CATEGORIES")
     if isinstance(categories, list):
         _set_categories(
             component,
@@ -573,7 +573,7 @@ def _get_categories(component: Component) -> list[str]:
     return categories.cats
 
 
-def _set_categories(component: Component, cats: Sequence[str] | None) -> None:
+def _set_categories(component: Component, cats: Optional[Sequence[str]]) -> None:
     """Set the categories."""
     if not cats and cats != []:
         _del_categories(component)
@@ -871,7 +871,7 @@ Examples:
 
 def create_single_property(
     prop: str,
-    value_attr: str | None,
+    value_attr: Optional[str],
     value_type: tuple[type],
     type_def: type,
     doc: str,
@@ -945,7 +945,7 @@ X_MOZ_LASTACK_property = single_utc_property(
 )
 
 
-def property_get_duration(self: Component) -> timedelta | None:
+def property_get_duration(self: Component) -> Optional[timedelta]:
     """Getter for property DURATION."""
     default = object()
     duration = self.get("duration", default)
@@ -960,7 +960,7 @@ def property_get_duration(self: Component) -> timedelta | None:
     return None
 
 
-def property_set_duration(self: Component, value: timedelta | None):
+def property_set_duration(self: Component, value: Optional[timedelta]):
     """Setter for property DURATION."""
     if value is None:
         self.pop("duration", None)
@@ -1015,7 +1015,7 @@ def multi_text_property(name: str, docs: str) -> property:
             return [descriptions]
         return descriptions
 
-    def fset(self: Component, values: str | Sequence[str] | None):
+    def fset(self: Component, values: Optional[str | Sequence[str]]):
         """Set the values."""
         fdel(self)
         if values is None:
@@ -1087,7 +1087,7 @@ Property Parameters:
 )
 
 
-def _get_organizer(self: Component) -> vCalAddress | None:
+def _get_organizer(self: Component) -> Optional[vCalAddress]:
     """ORGANIZER defines the organizer for a calendar component.
 
     Property Parameters:
@@ -1126,7 +1126,7 @@ def _get_organizer(self: Component) -> vCalAddress | None:
     return self.get("ORGANIZER")
 
 
-def _set_organizer(self: Component, value: vCalAddress | str | None):
+def _set_organizer(self: Component, value: Optional[vCalAddress | str]):
     """Set the value."""
     _del_organizer(self)
     if value is not None:
@@ -1448,7 +1448,7 @@ rfc_7953_dtend_property = timezone_datetime_property(
 
 
 @property
-def rfc_7953_duration_property(self) -> timedelta | None:
+def rfc_7953_duration_property(self) -> Optional[timedelta]:
     """Compute the duration of this component.
 
     If there is no :attr:`DTEND` or :attr:`DURATION` set, this is None.
@@ -1471,7 +1471,7 @@ def rfc_7953_duration_property(self) -> timedelta | None:
 
 
 @property
-def rfc_7953_end_property(self) -> timedelta | None:
+def rfc_7953_end_property(self) -> Optional[timedelta]:
     """Compute the duration of this component.
 
     If there is no :attr:`DTEND` or :attr:`DURATION` set, this is None.
