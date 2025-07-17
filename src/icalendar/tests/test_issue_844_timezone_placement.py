@@ -9,7 +9,7 @@ from icalendar.compatibility import ZoneInfo
 
 
 def test_single_timezone_placed_before_event():
-    """Test that single timezone is placed before event when using add_missing_timezones()."""
+    """Test that single timezone is placed before event when using `add_missing_timezones()`."""
     calendar = Calendar()
     calendar.add("VERSION", "2.0")
     calendar.add("PRODID", "test calendar")
@@ -92,7 +92,7 @@ def test_existing_timezone_preserved_new_ones_added_correctly():
 
 
 def test_no_missing_timezones_no_changes():
-    """Test that method handles case with no missing timezones gracefully."""
+    """Test that method handles case with no missing timezones. Gracefully."""
     calendar = Calendar()
     calendar.add("VERSION", "2.0")
     calendar.add("PRODID", "test calendar")
@@ -111,7 +111,7 @@ def test_no_missing_timezones_no_changes():
 
 
 def test_empty_calendar_add_missing_timezones():
-    """Test that add_missing_timezones() handles empty calendar correctly."""
+    """Test that `add_missing_timezones()` handles empty calendar correctly."""
     calendar = Calendar()
     calendar.add("VERSION", "2.0")
     calendar.add("PRODID", "test calendar")
@@ -184,7 +184,7 @@ END:VCALENDAR"""
 
 
 def test_timezone_placement_without_pytz():
-    """Test timezone placement works even if pytz is not available."""
+    """Test timezone placement. Works even if pytz is not available."""
     import sys
     import types
     
