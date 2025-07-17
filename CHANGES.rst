@@ -19,6 +19,9 @@ Minor changes:
 - Add type annotation to ``from_ical()``.
 - Fix enum documentation.
 - ``DTSTAMP``, ``LAST_MODIFIED``, and ``CREATED`` can now be set to ``None`` to delete the value.
+- Enhanced ``Calendar.new()`` to support organization and language parameters for automatic ``PRODID`` generation.
+- Added ``duration`` setter to ``Event`` class for more intuitive event creation.
+- Added ``validate()`` method to ``Calendar`` class for explicit validation of required properties and components.
 
 Breaking changes:
 
@@ -37,10 +40,12 @@ New features:
 - Add ``stamp``, ``last_modified``, ``created``, ``CREATED``, ``busy_type``, ``class``, ``comments``, ``contacts``, ``location``, ``organizer``, ``priority``, and ``url`` properties to components that use them.
 - Add ``availabilities`` attribtue to ``Calendar``.
 - Add ``status``, ``transparency``, and ``attendees`` properties. See `Issue 841 <https://github.com/collective/icalendar/issues/841>`_.
+- Add ``uid`` property that is ``''`` by default and set automatically with ``new()``. See `Issue 315 <https://github.com/collective/icalendar/issues/315>`_.
 
 Bug fixes:
 
 - Fix invalid calendar: Parsing a date with TZID results in a datetime to not loose the timezone. See `Issue 187 <https://github.com/collective/icalendar/issues/187>`_.
+- Fix timezone placement in ``add_missing_timezones()``: ``VTIMEZONE`` components now appear before ``VEVENT`` and other components that reference them. See `Issue 844 <https://github.com/collective/icalendar/issues/844>`_.
 - Fixed ``Todo.duration`` and ``Event.duration`` to return ``DURATION`` property when set, even without ``DTSTART``. See `Issue 867 <https://github.com/collective/icalendar/issues/867>`_.
 
 6.3.1 (2025-05-20)
@@ -103,7 +108,7 @@ Bug fixes:
 
 Bug fixes:
 
-- Fix to permit TZID forward references to VTIMEZONEs
+- Fix to permit TZID forward references to ``VTIMEZONE``s
 - Stabelize timezone id lookup, see `Issue 780 <https://github.com/collective/icalendar/issues/780>`_.
 
 6.1.2 (2025-03-19)
@@ -179,7 +184,7 @@ New features:
 - Add ``DTSTART``, ``TZOFFSETTO``, and ``TZOFFSETFROM`` to ``TimezoneStandard`` and ``TimezoneDaylight``
 - Use ``example`` methods of components without arguments.
 - Add ``events``, ``timezones``, and ``todos`` property to ``Calendar`` for nicer access.
-- To calculate which timezones are in use and add them to the ``Calendar`` when needed these methods are added: ``get_used_tzids``, ``get_missing_tzids``, and ``add_missing_timezones``.
+- To calculate which timezones are in use and add them to the ``Calendar`` when needed these methods are added: ``get_used_tzids``, ``get_missing_tzids``, and ``add_missing_timezones()``.
 - Identify the TZID of more timezones from dateutil.
 - Identify totally unknown timezones using a UTC offset lookup tree generated in ``icalendar.timezone.equivalent_timezone_ids`` and stored in ``icalendar.timezone.equivalent_timezone_ids``.
 - Add ``icalendar.timezone.tzid`` to identify a timezone's TZID.
@@ -710,7 +715,7 @@ New features:
 
 Bug fixes:
 
-- Fix VTIMEZONEs including RDATEs #234.  [geier]
+- Fix ``VTIMEZONE``s including RDATEs #234.  [geier]
 
 
 3.11.5 (2017-07-03)
@@ -718,10 +723,10 @@ Bug fixes:
 
 Bug fixes:
 
-- added an assertion that VTIMEZONE sub-components' DTSTART must be of type
+- added an assertion that ``VTIMEZONE`` sub-components' DTSTART must be of type
   DATETIME [geier]
 
-- Fix handling of VTIMEZONEs with subcomponents with the same DTSTARTs and
+- Fix handling of ``VTIMEZONE``s with subcomponents with the same DTSTARTs and
   OFFSETs but which are of different types  [geier]
 
 
@@ -733,7 +738,7 @@ Bug fixes:
 - Don't break on parameter values which contain equal signs, e.g. base64 encoded
   binary data [geier]
 
-- Fix handling of VTIMEZONEs with subcomponents with the same DTSTARTs.
+- Fix handling of ``VTIMEZONE``s with subcomponents with the same DTSTARTs.
   [geier]
 
 
@@ -854,7 +859,7 @@ Fixes:
 3.9.0 (2015-03-24)
 ------------------
 
-- Creating timezone objects from VTIMEZONE components.
+- Creating timezone objects from ``VTIMEZONE`` components.
   [geier]
 
 - Make ``python-dateutil`` a dependency.
@@ -1143,9 +1148,9 @@ Fixes:
 
 - Add 'recursive' argument to property_items() to switch recursive listing.
   For example when parsing a text/calendar text including multiple components
-  (e.g. a VCALENDAR with 5 VEVENTs), the previous situation required us to look
-  over all properties in VEVENTs even if we just want the properties under the
-  VCALENDAR component (VERSION, PRODID, CALSCALE, METHOD).
+  (e.g. a ``VCALENDAR`` with 5 ``VEVENT``s), the previous situation required us to look
+  over all properties in ``VEVENT``s even if we just want the properties under the
+  ``VCALENDAR`` component (VERSION, PRODID, CALSCALE, METHOD).
   [dmikurube]
 
 - All unit tests fixed.

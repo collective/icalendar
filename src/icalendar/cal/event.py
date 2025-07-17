@@ -307,6 +307,7 @@ class Event(Component):
         """The duration of the VEVENT.
 
         Returns the DURATION property if set, otherwise calculated from start and end.
+        When setting duration, the end time is automatically calculated from start + duration.
         """
         # First check if DURATION property is explicitly set
         if "DURATION" in self:
@@ -314,6 +315,24 @@ class Event(Component):
 
         # Fall back to calculated duration from start and end
         return self.end - self.start
+
+    @duration.setter
+    def duration(self, duration: timedelta):
+        """Set the duration of the event.
+
+        This automatically calculates and sets the end time as start + duration.
+        If no start time is set, raises IncompleteComponent.
+        """
+        if (
+            not hasattr(self, "_get_start_end_duration")
+            or self._get_start_end_duration()[0] is None
+        ):
+            raise IncompleteComponent(
+                "Cannot set duration without DTSTART. Set start time first."
+            )
+
+        start_time = self.start
+        self.end = start_time + duration
 
     @property
     def start(self) -> date | datetime:
