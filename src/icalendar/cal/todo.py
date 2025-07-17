@@ -218,6 +218,12 @@ class Todo(Component):
         Returns the DURATION property if set, otherwise calculated from start and end.
         You can set the duration to automatically adjust the end time while keeping
         start locked.
+        
+        Setting the duration will:
+        1. Keep the start time locked (unchanged)
+        2. Adjust the end time to start + duration
+        3. Remove any existing DUE property
+        4. Set the DURATION property
         """
         # First check if DURATION property is explicitly set
         if "DURATION" in self:
@@ -233,14 +239,6 @@ class Todo(Component):
 
     @duration.setter
     def duration(self, value: timedelta):
-        """Set the duration of the todo.
-
-        Setting the duration will:
-        1. Keep the start time locked (unchanged)
-        2. Adjust the end time to start + duration
-        3. Remove any existing DUE property
-        4. Set the DURATION property
-        """
         if not isinstance(value, timedelta):
             raise TypeError(f"Use timedelta, not {type(value).__name__}.")
 

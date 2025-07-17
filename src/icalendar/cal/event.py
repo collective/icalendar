@@ -310,6 +310,12 @@ class Event(Component):
         When setting duration, the end time is automatically calculated from start + duration.
         You can set the duration to automatically adjust the end time while keeping
         start locked.
+        
+        Setting the duration will:
+        1. Keep the start time locked (unchanged)
+        2. Adjust the end time to start + duration
+        3. Remove any existing DTEND property
+        4. Set the DURATION property
         """
         # First check if DURATION property is explicitly set
         if "DURATION" in self:
@@ -323,15 +329,6 @@ class Event(Component):
 
     @duration.setter
     def duration(self, value: timedelta):
-        """Set the duration of the event.
-
-        This automatically calculates and sets the end time as start + duration.
-        Setting the duration will:
-        1. Keep the start time locked (unchanged)
-        2. Adjust the end time to start + duration
-        3. Remove any existing DTEND property
-        4. Set the DURATION property
-        """
         if not isinstance(value, timedelta):
             raise TypeError(f"Use timedelta, not {type(value).__name__}.")
 
