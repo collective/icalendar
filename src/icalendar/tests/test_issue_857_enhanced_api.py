@@ -11,7 +11,7 @@ from icalendar.error import IncompleteComponent
 
 
 def test_calendar_new_with_organization_and_language():
-    """Test Calendar.new() with organization and language generates proper prodid."""
+    """Test Calendar.new() with organization and language. Generates proper prodid."""
     calendar = Calendar.new(
         organization="foo.org",
         name="My parties",
@@ -64,7 +64,7 @@ def test_calendar_new_no_organization_uses_default_prodid():
 
 
 def test_event_duration_setter():
-    """Test that setting event duration correctly calculates end time."""
+    """Test that setting event duration. Correctly calculates end time."""
     event = Event.new(
         summary="Test Meeting",
         start=datetime(2026, 3, 19, 12, 30)
@@ -78,7 +78,7 @@ def test_event_duration_setter():
 
 
 def test_event_duration_setter_with_timezone():
-    """Test duration setter works with timezone-aware events."""
+    """Test duration setter. Works with timezone-aware events."""
     start_time = datetime(2026, 3, 19, 12, 30, tzinfo=ZoneInfo("Europe/London"))
     event = Event.new(
         summary="Test Meeting",
@@ -93,7 +93,7 @@ def test_event_duration_setter_with_timezone():
 
 
 def test_event_duration_setter_without_start_raises_error():
-    """Test that setting duration without start time raises error."""
+    """Test that setting duration without start time. Raises error."""
     event = Event.new(summary="Incomplete Event")
     
     with pytest.raises(IncompleteComponent, match="Cannot set duration without DTSTART"):
