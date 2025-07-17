@@ -48,10 +48,10 @@ import base64
 import binascii
 import re
 from datetime import date, datetime, time, timedelta
-from typing import Any, Union
+from typing import Any, Optional, Union
 
 from icalendar.caselessdict import CaselessDict
-from icalendar.enums import Enum
+from icalendar.enums import VALUE, Enum
 from icalendar.parser import Parameters, escape_char, unescape_char
 from icalendar.parser_tools import (
     DEFAULT_ENCODING,
@@ -143,7 +143,7 @@ class vBoolean(int):
 
     BOOL_MAP = CaselessDict({"true": True, "false": False})
 
-    def __new__(cls, *args, params: dict[str, Any] | None = None, **kwargs):
+    def __new__(cls, *args, params: Optional[dict[str, Any]] = None, **kwargs):
         if params is None:
             params = {}
         self = super().__new__(cls, *args, **kwargs)
@@ -172,7 +172,7 @@ class vText(str):
         value,
         encoding=DEFAULT_ENCODING,
         /,
-        params: dict[str, Any] | None = None,
+        params: Optional[dict[str, Any]] = None,
     ):
         if params is None:
             params = {}
@@ -251,7 +251,7 @@ class vCalAddress(str):
         value,
         encoding=DEFAULT_ENCODING,
         /,
-        params: dict[str, Any] | None = None,
+        params: Optional[dict[str, Any]] = None,
     ):
         if params is None:
             params = {}
@@ -341,7 +341,7 @@ class vFloat(float):
 
     params: Parameters
 
-    def __new__(cls, *args, params: dict[str, Any] | None = None, **kwargs):
+    def __new__(cls, *args, params: Optional[dict[str, Any]] = None, **kwargs):
         if params is None:
             params = {}
         self = super().__new__(cls, *args, **kwargs)
@@ -410,7 +410,7 @@ class vInt(int):
 
     params: Parameters
 
-    def __new__(cls, *args, params: dict[str, Any] | None = None, **kwargs):
+    def __new__(cls, *args, params: Optional[dict[str, Any]] = None, **kwargs):
         if params is None:
             params = {}
         self = super().__new__(cls, *args, **kwargs)
@@ -480,7 +480,7 @@ class vCategory:
     params: Parameters
 
     def __init__(
-        self, c_list: list[str] | str, /, params: dict[str, Any] | None = None
+        self, c_list: list[str] | str, /, params: Optional[dict[str, Any]] = None
     ):
         if params is None:
             params = {}
@@ -703,7 +703,7 @@ class vDatetime(TimeBase):
 
     params: Parameters
 
-    def __init__(self, dt, /, params: dict[str, Any] | None = None):
+    def __init__(self, dt, /, params: Optional[dict[str, Any]] = None):
         if params is None:
             params = {}
         self.dt = dt
@@ -844,7 +844,7 @@ class vDuration(TimeBase):
 
     params: Parameters
 
-    def __init__(self, td, /, params: dict[str, Any] | None = None):
+    def __init__(self, td, /, params: Optional[dict[str, Any]] = None):
         if params is None:
             params = {}
         if not isinstance(td, timedelta):
@@ -1088,7 +1088,7 @@ class vWeekday(str):
         value,
         encoding=DEFAULT_ENCODING,
         /,
-        params: dict[str, Any] | None = None,
+        params: Optional[dict[str, Any]] = None,
     ):
         if params is None:
             params = {}
@@ -1144,7 +1144,7 @@ class vFrequency(str):
         value,
         encoding=DEFAULT_ENCODING,
         /,
-        params: dict[str, Any] | None = None,
+        params: Optional[dict[str, Any]] = None,
     ):
         if params is None:
             params = {}
@@ -1197,7 +1197,7 @@ class vMonth(int):
     params: Parameters
 
     def __new__(
-        cls, month: Union[str, int], /, params: dict[str, Any] | None = None
+        cls, month: Union[str, int], /, params: Optional[dict[str, Any]] = None
     ):
         if params is None:
             params = {}
@@ -1415,7 +1415,7 @@ class vRecur(CaselessDict):
         }
     )
 
-    def __init__(self, *args, params: dict[str, Any] | None = None, **kwargs):
+    def __init__(self, *args, params: Optional[dict[str, Any]] = None, **kwargs):
         if params is None:
             params = {}
         if args and isinstance(args[0], str):
@@ -1654,7 +1654,7 @@ class vUri(str):
         value,
         encoding=DEFAULT_ENCODING,
         /,
-        params: dict[str, Any] | None = None,
+        params: Optional[dict[str, Any]] = None,
     ):
         if params is None:
             params = {}
@@ -1739,7 +1739,7 @@ class vGeo:
         self,
         geo: tuple[float | str | int, float | str | int],
         /,
-        params: dict[str, Any] | None = None,
+        params: Optional[dict[str, Any]] = None,
     ):
         """Create a new vGeo from a tuple of (latitude, longitude).
 
@@ -1835,7 +1835,7 @@ class vUTCOffset:
     # it, rather than let the exception
     # propagate upwards
 
-    def __init__(self, td, /, params: dict[str, Any] | None = None):
+    def __init__(self, td, /, params: Optional[dict[str, Any]] = None):
         if params is None:
             params = {}
         if not isinstance(td, timedelta):
@@ -1909,7 +1909,7 @@ class vInline(str):
         value,
         encoding=DEFAULT_ENCODING,
         /,
-        params: dict[str, Any] | None = None,
+        params: Optional[dict[str, Any]] = None,
     ):
         if params is None:
             params = {}

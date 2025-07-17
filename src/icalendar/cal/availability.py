@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING, Optional, Sequence
 
 from icalendar.attr import (
     busy_type_property,
@@ -234,25 +234,25 @@ class Availability(Component):
     def new(
         cls,
         /,
-        busy_type: BUSYTYPE | None = None,
+        busy_type: Optional[BUSYTYPE] = None,
         categories: Sequence[str] = (),
         comments: list[str] | str | None = None,
         components: Sequence[Available] | None = (),
         contacts: list[str] | str | None = None,
-        created: date | None = None,
-        classification: CLASS | None = None,
-        description: str | None = None,
-        end: datetime | None = None,
-        last_modified: date | None = None,
-        location: str | None = None,
-        organizer: vCalAddress | str | None = None,
-        priority: int | None = None,
-        sequence: int | None = None,
-        stamp: date | None = None,
-        start: datetime | None = None,
-        summary: str | None = None,
-        uid: str | uuid.UUID | None = None,
-        url: str | None = None,
+        created: Optional[date] = None,
+        classification: Optional[CLASS] = None,
+        description: Optional[str] = None,
+        end: Optional[datetime] = None,
+        last_modified: Optional[date] = None,
+        location: Optional[str] = None,
+        organizer: Optional[vCalAddress | str] = None,
+        priority: Optional[int] = None,
+        sequence: Optional[int] = None,
+        stamp: Optional[date] = None,
+        start: Optional[datetime] = None,
+        summary: Optional[str] = None,
+        uid: Optional[str | uuid.UUID] = None,
+        url: Optional[str] = None,
     ):
         """Create a new event with all required properties.
 

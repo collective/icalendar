@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import date, datetime, timedelta
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING, Optional, Sequence
 
 from icalendar.attr import (
     attendees_property,
@@ -158,7 +158,7 @@ class Journal(Component):
         return "\r\n\r\n".join(descriptions)
 
     @description.setter
-    def description(self, description: str | None):
+    def description(self, description: Optional[str]):
         """Set the description"""
         self.descriptions = description
 
@@ -171,23 +171,23 @@ class Journal(Component):
     def new(
         cls,
         /,
-        attendees: list[vCalAddress] | None = None,
+        attendees: Optional[list[vCalAddress]] = None,
         categories: Sequence[str] = (),
-        classification: CLASS | None = None,
-        color: str | None = None,
+        classification: Optional[CLASS] = None,
+        color: Optional[str] = None,
         comments: list[str] | str | None = None,
         contacts: list[str] | str | None = None,
-        created: date | None = None,
-        description: str | Sequence[str] | None = None,
-        last_modified: date | None = None,
-        organizer: vCalAddress | str | None = None,
-        sequence: int | None = None,
-        stamp: date | None = None,
-        start: date | datetime | None = None,
-        status: STATUS | None = None,
-        summary: str | None = None,
-        uid: str | uuid.UUID | None = None,
-        url: str | None = None,
+        created: Optional[date] = None,
+        description: Optional[str | Sequence[str]] = None,
+        last_modified: Optional[date] = None,
+        organizer: Optional[vCalAddress | str] = None,
+        sequence: Optional[int] = None,
+        stamp: Optional[date] = None,
+        start: Optional[date | datetime] = None,
+        status: Optional[STATUS] = None,
+        summary: Optional[str] = None,
+        uid: Optional[str | uuid.UUID] = None,
+        url: Optional[str] = None,
     ):
         """Create a new journal entry with all required properties.
 

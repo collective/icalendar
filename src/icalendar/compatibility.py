@@ -1,5 +1,6 @@
 """This module contains compatibility code for older Python versions."""
 
+
 try:
     from typing import Self
 except ImportError:
@@ -11,7 +12,7 @@ except ImportError:
 try:
     import zoneinfo
 except ImportError:
-    from backports import zoneinfo
+    import backports.zoneinfo as zoneinfo
 
 ZoneInfo = zoneinfo.ZoneInfo
 
