@@ -1,9 +1,10 @@
 """Tests for issue #867: Todo.duration should work without DTSTART."""
 
-import pytest
 from datetime import datetime, timedelta
 
-from icalendar import Todo, Event
+import pytest
+
+from icalendar import Event, Todo
 from icalendar.error import IncompleteComponent
 
 
@@ -154,25 +155,27 @@ def test_todo_duration_preserves_property_access():
     assert todo.duration == timedelta(hours=2)
 
 
-# Event tests - same fix applies for consistency
-def test_event_duration_prefers_duration_property():
-    """Test that Event.duration also prefers `DURATION` property over calculated duration."""
-    event = Event()
-    event.add("UID", "test-event-duration")
-    event.start = datetime(2026, 3, 19, 12, 0)
-    event.end = datetime(2026, 3, 19, 15, 0)  # This would be 3 hours
-    event.add("DURATION", timedelta(hours=2))  # But DURATION says 2 hours
+# Parametrized tests for both Event and Todo components
+@pytest.mark.parametrize("component_class", [Event, Todo])
+def test_component_duration_prefers_duration_property(component_class):
+    """Test that both Event and Todo prefer `DURATION` property over calculated duration."""
+    component = component_class()
+    component.add("UID", f"test-{component_class.__name__.lower()}-duration")
+    component.start = datetime(2026, 3, 19, 12, 0)
+    component.end = datetime(2026, 3, 19, 15, 0)  # This would be 3 hours
+    component.add("DURATION", timedelta(hours=2))  # But DURATION says 2 hours
 
     # Should return DURATION property, not calculated value
-    assert event.duration == timedelta(hours=2)
+    assert component.duration == timedelta(hours=2)
 
 
-def test_event_duration_calculated_fallback():
-    """Test that Event.duration falls back to calculated duration when no `DURATION` property."""
-    event = Event()
-    event.add("UID", "test-event-calculated")
-    event.start = datetime(2026, 3, 19, 12, 0)
-    event.end = datetime(2026, 3, 19, 14, 30)
+@pytest.mark.parametrize("component_class", [Event, Todo])
+def test_component_duration_calculated_fallback(component_class):
+    """Test that both Event and Todo fall back to calculated duration when no `DURATION` property."""
+    component = component_class()
+    component.add("UID", f"test-{component_class.__name__.lower()}-calculated")
+    component.start = datetime(2026, 3, 19, 12, 0)
+    component.end = datetime(2026, 3, 19, 14, 30)
 
     # Should calculate duration from start and end (no DURATION property)
-    assert event.duration == timedelta(hours=2, minutes=30)
+    assert component.duration == timedelta(hours=2, minutes=30)
