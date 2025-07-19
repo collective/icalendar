@@ -351,6 +351,7 @@ class vCalAddress(str):
         Examples:
             Basic usage:
 
+            >>> from icalendar.prop import vCalAddress
             >>> addr = vCalAddress.new("test@test.com")
             >>> str(addr)
             'mailto:test@test.com'
