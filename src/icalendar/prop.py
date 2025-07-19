@@ -237,7 +237,7 @@ class vCalAddress(str):
             >>> jane = vCalAddress("mailto:jane_doe@example.com")
             >>> jane.name = "Jane"
             >>> event["organizer"] = jane
-            >>> print(event.to_ical())
+            >>> print(event.to_ical().decode().replace('\\r\\n', '\\n').strip())
             BEGIN:VEVENT
             ORGANIZER;CN=Jane:mailto:jane_doe@example.com
             END:VEVENT
