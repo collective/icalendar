@@ -22,6 +22,7 @@ Minor changes:
 - Enhanced ``Calendar.new()`` to support organization and language parameters for automatic ``PRODID`` generation.
 - Added ``duration`` setter to ``Event`` class for more intuitive event creation.
 - Added ``validate()`` method to ``Calendar`` class for explicit validation of required properties and components.
+- Add improved setters for ``start``, ``duration``, and ``end`` properties with explicit locking mechanisms to provide more flexible property manipulation while maintaining RFC 5545 compliance. The implementation includes comprehensive test coverage to ensure proper behavior and backward compatibility.
 
 Breaking changes:
 
