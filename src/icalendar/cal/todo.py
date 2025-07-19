@@ -227,11 +227,6 @@ class Todo(Component):
         """
         # First check if DURATION property is explicitly set
         if "DURATION" in self:
-            # For incomplete todos with only DURATION, we need to be able to compute end
-            # which requires either DTSTART or DUE
-            if self.DTSTART is None and self.DUE is None:
-                # This matches the behavior expected by the test
-                raise IncompleteComponent("No DUE or DURATION+DTSTART given.")
             return self["DURATION"].dt
 
         # Fall back to calculated duration from start and end
