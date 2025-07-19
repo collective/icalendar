@@ -292,6 +292,109 @@ class vCalAddress(str):
 
     name = CN
 
+    @staticmethod
+    def _get_email(email: str) -> str:
+        """Extract email and add mailto: prefix if needed.
+
+        Handles case-insensitive mailto: prefix checking.
+
+        Args:
+            email: Email string that may or may not have mailto: prefix
+
+        Returns:
+            Email string with mailto: prefix
+        """
+        if not email.lower().startswith("mailto:"):
+            return f"mailto:{email}"
+        return email
+
+    @classmethod
+    def new(
+        cls,
+        email: str,
+        /,
+        cn: str | None = None,
+        cutype: str | None = None,
+        delegated_from: str | None = None,
+        delegated_to: str | None = None,
+        directory: str | None = None,
+        language: str | None = None,
+        partstat: str | None = None,
+        role: str | None = None,
+        rsvp: bool | None = None,
+        sent_by: str | None = None,
+    ):
+        """Create a new vCalAddress with RFC 5545 parameters.
+
+        Creates a vCalAddress instance with automatic mailto: prefix handling
+        and support for all standard RFC 5545 parameters.
+
+        Args:
+            email: The email address (mailto: prefix added automatically if missing)
+            cn: Common Name parameter
+            cutype: Calendar user type (INDIVIDUAL, GROUP, RESOURCE, ROOM)
+            delegated_from: Email of the calendar user that delegated
+            delegated_to: Email of the calendar user that was delegated to
+            directory: Reference to directory information
+            language: Language for text values
+            partstat: Participation status (NEEDS-ACTION, ACCEPTED, DECLINED, etc.)
+            role: Role (REQ-PARTICIPANT, OPT-PARTICIPANT, NON-PARTICIPANT, CHAIR)
+            rsvp: Whether RSVP is requested
+            sent_by: Email of the calendar user acting on behalf of this user
+
+        Returns:
+            vCalAddress: A new calendar address with specified parameters
+
+        Raises:
+            TypeError: If email is not a string
+
+        Examples:
+            Basic usage:
+
+            >>> addr = vCalAddress.new("test@test.com")
+            >>> str(addr)
+            'mailto:test@test.com'
+
+            With parameters:
+
+            >>> addr = vCalAddress.new("test@test.com", cn="Test User", role="CHAIR")
+            >>> addr.params["CN"]
+            'Test User'
+            >>> addr.params["ROLE"]
+            'CHAIR'
+        """
+        if not isinstance(email, str):
+            raise TypeError(f"Email must be a string, not {type(email).__name__}")
+
+        # Handle mailto: prefix (case-insensitive)
+        email_with_prefix = cls._get_email(email)
+
+        # Create the address
+        addr = cls(email_with_prefix)
+
+        # Set parameters if provided
+        if cn is not None:
+            addr.params["CN"] = cn
+        if cutype is not None:
+            addr.params["CUTYPE"] = cutype
+        if delegated_from is not None:
+            addr.params["DELEGATED-FROM"] = cls._get_email(delegated_from)
+        if delegated_to is not None:
+            addr.params["DELEGATED-TO"] = cls._get_email(delegated_to)
+        if directory is not None:
+            addr.params["DIR"] = directory
+        if language is not None:
+            addr.params["LANGUAGE"] = language
+        if partstat is not None:
+            addr.params["PARTSTAT"] = partstat
+        if role is not None:
+            addr.params["ROLE"] = role
+        if rsvp is not None:
+            addr.params["RSVP"] = "TRUE" if rsvp else "FALSE"
+        if sent_by is not None:
+            addr.params["SENT-BY"] = cls._get_email(sent_by)
+
+        return addr
 
 class vFloat(float):
     """Float
