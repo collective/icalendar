@@ -396,6 +396,7 @@ class vCalAddress(str):
 
         return addr
 
+
 class vFloat(float):
     """Float
 
