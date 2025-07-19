@@ -320,9 +320,6 @@ class Event(Component):
         """
         # First check if DURATION property is explicitly set
         if "DURATION" in self:
-            # For Events, DURATION requires DTSTART to be valid
-            if self.DTSTART is None:
-                raise IncompleteComponent("No DTSTART given.")
             return self["DURATION"].dt
 
         # Fall back to calculated duration from start and end
