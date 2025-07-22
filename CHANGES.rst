@@ -22,6 +22,7 @@ Minor changes:
 - Enhanced ``Calendar.new()`` to support organization and language parameters for automatic ``PRODID`` generation.
 - Added ``duration`` setter to ``Event`` class for more intuitive event creation.
 - Added ``validate()`` method to ``Calendar`` class for explicit validation of required properties and components.
+- Add ``new()`` method to ``vCalAddress`` class for consistent API usage. The method supports all RFC 5545 parameters including ``CN``, ``CUTYPE``, ``DELEGATED-FROM``, ``DELEGATED-TO``, ``DIR``, ``LANGUAGE``, ``PARTSTAT``, ``ROLE``, ``RSVP``, and ``SENT-BY``, with automatic ``mailto:`` prefix handling. See `Issue 870 <https://github.com/collective/icalendar/issues/870>`_.
 
 Breaking changes:
 
