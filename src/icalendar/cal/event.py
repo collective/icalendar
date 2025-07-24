@@ -393,7 +393,7 @@ class Event(Component):
     def set_duration(
         self, duration: timedelta | None, locked: Literal["start", "end"] = "start"
     ):
-        """Set the duration with explicit locking behavior.
+        """Set the duration of the event relative to either start or end.
 
         Args:
             duration: The duration to set, or None to convert to DURATION property
@@ -420,7 +420,9 @@ class Event(Component):
         if locked == "start":
             # Keep start locked, adjust end
             if start is None:
-                raise IncompleteComponent("Cannot set duration without DTSTART. Set start time first.")
+                raise IncompleteComponent(
+                    "Cannot set duration without DTSTART. Set start time first."
+                )
             self.DURATION = duration
         elif locked == "end":
             # Keep end locked, adjust start
@@ -472,7 +474,7 @@ class Event(Component):
     def set_end(
         self, end: date | datetime, locked: Literal["start", "duration"] = "start"
     ):
-        """Set the end with explicit locking behavior.
+        """Set the end of the component, keeping either the start or the duration the same.
 
         Args:
             end: The end time to set
