@@ -12,6 +12,7 @@ We use `Semantic Versioning <https://semver.org>`_.
 
 Minor changes:
 
+- Add CodeQL static-analysis workflow, Safety CVE scan, and Ruff Bandit rules to CI  (PR #883 by @raajheshkannaa)
 - Split up ``cal.py`` into different files as sub-package.
 - Format more source code with ruff.
 - Exclude type checking block from test coverage.
