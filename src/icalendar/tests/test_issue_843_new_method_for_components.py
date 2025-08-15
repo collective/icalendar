@@ -35,6 +35,8 @@ from icalendar.enums import BUSYTYPE
 
 from .conftest import NOW_UTC, UID_DEFAULT
 
+UTC = timezone.utc
+
 # Test parametrization
 
 param_summary_components = pytest.mark.parametrize(
@@ -59,9 +61,17 @@ COMPONENTS_SEQUENCE = {Event, Todo, Journal, Availability}
 COMPONENTS_CATEGORIES = {Event, Journal, Todo, Calendar, Availability, Available}
 COMPONENTS_ORGANIZER = {Availability, Event, FreeBusy, Journal, Todo}
 COMPONENTS_LOCATION = {Availability, Available, Event, Todo}
-COMPONENTS_URL = {Availability, Event, Todo, Journal, FreeBusy}
+COMPONENTS_URL = {Availability, Event, Todo, Journal, FreeBusy, Calendar}
 COMPONENTS_BUSYTYPE = {Availability}
-COMPONENTS_DESCRIPTION = {Event, Todo, Journal, Alarm, Available, Availability}
+COMPONENTS_DESCRIPTION = {
+    Event,
+    Todo,
+    Journal,
+    Alarm,
+    Available,
+    Availability,
+    Calendar,
+}
 COMPONENTS_SUMMARY = {Event, Todo, Journal, Alarm, Available, Availability}
 COMPONENTS_COMMENT = {
     Event,
@@ -721,6 +731,36 @@ new_test_cases = [
     ),
 ]
 
+rfc_7986_test_cases = [
+    (
+        {Calendar},
+        "last_modified",
+        "LAST-MODIFIED",
+        datetime(2011, 10, 5, 13, 32, 25),
+        datetime(2011, 10, 5, 13, 32, 25, tzinfo=UTC),
+        True,
+        "value set to 2011-10-05T13:32:25 UTC",
+    ),
+    (
+        {Calendar},
+        "last_modified",
+        "LAST-MODIFIED",
+        None,
+        None,
+        False,
+        "value is not set",
+    ),
+    (
+        {Calendar},
+        "source",
+        "SOURCE",
+        "https://github.com/collective/icalendar",
+        "https://github.com/collective/icalendar",
+        True,
+        "setting a string",
+    ),
+]
+
 
 @pytest.mark.parametrize(
     (
@@ -732,7 +772,7 @@ new_test_cases = [
         "key_present",
         "message",
     ),
-    automatic_time_test_cases + new_test_cases,
+    automatic_time_test_cases + new_test_cases + rfc_7986_test_cases,
 )
 @pytest.mark.parametrize(
     "create_component_with_property", [component_setter, component_with_new]
