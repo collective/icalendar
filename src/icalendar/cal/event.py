@@ -399,38 +399,9 @@ class Event(Component):
             duration: The duration to set, or None to convert to DURATION property
             locked: Which property to keep unchanged ('start' or 'end')
         """
-        # Convert to DURATION property if duration is None
-        if duration is None:
-            if "DURATION" in self:
-                return  # Already has DURATION property
-            current_duration = self.duration
-            self.DURATION = current_duration
-            return
+        from icalendar.attr import set_duration_with_locking
 
-        if not isinstance(duration, timedelta):
-            raise TypeError(f"Use timedelta, not {type(duration).__name__}.")
-
-        # Validate date/duration compatibility
-        start = self.DTSTART
-        if start is not None and is_date(start) and duration.seconds != 0:
-            raise InvalidCalendar(
-                "When DTSTART is a date, DURATION must be of days or weeks."
-            )
-
-        if locked == "start":
-            # Keep start locked, adjust end
-            if start is None:
-                raise IncompleteComponent(
-                    "Cannot set duration without DTSTART. Set start time first."
-                )
-            self.DURATION = duration
-        elif locked == "end":
-            # Keep end locked, adjust start
-            current_end = self.end
-            self.DTSTART = current_end - duration
-            self.DURATION = duration
-        else:
-            raise ValueError(f"locked must be 'start' or 'end', not {locked!r}")
+        set_duration_with_locking(self, duration, locked, "DTEND")
 
     def set_start(
         self, start: date | datetime, locked: Literal["duration", "end"] | None = None
