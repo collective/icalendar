@@ -295,7 +295,7 @@ class Todo(Component):
     def set_end(
         self, end: date | datetime, locked: Literal["start", "duration"] = "start"
     ):
-        """Set the end of the component, keeping either the start or the duration the same.
+        """Set the end of the component, keeping either the start or the duration same.
 
         Args:
             end: The end time to set
