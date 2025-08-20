@@ -72,6 +72,7 @@ jobs:
       with:
         parallel-finished: true
         format: cobertura
+        fail-on-error: false
 
   test-distribution:
     name: Check built package
