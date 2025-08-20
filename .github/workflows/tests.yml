@@ -55,6 +55,7 @@ jobs:
         parallel: true
         file: coverage.xml
         allow-empty: true
+        fail-on-error: false
 
   coverage:
     # parallel test coverage upload
@@ -71,6 +72,7 @@ jobs:
       with:
         parallel-finished: true
         format: cobertura
+        fail-on-error: false
 
   test-distribution:
     name: Check built package
