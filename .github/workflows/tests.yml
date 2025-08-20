@@ -55,6 +55,7 @@ jobs:
         parallel: true
         file: coverage.xml
         allow-empty: true
+        fail-on-error: false
 
   coverage:
     # parallel test coverage upload
