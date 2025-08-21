@@ -18,7 +18,7 @@ Please add an entry to `CHANGES.rst` under the appropriate section:
 <!-- Write a description of the fixes or improvements -->
 
 **Checklist:**
-- [ ] Added entry to `CHANGES.rst` 
+- [ ] Added entry to `CHANGES.rst`
 - [ ] Added/updated tests
 - [ ] Added myself to `docs/credits.rst`
 - [ ] All tests pass locally
