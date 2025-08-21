@@ -3,22 +3,37 @@ icalendar contributors
 
 - Johannes Raggam <johannes@raggam.co.at> (Maintainer)
 - Max M <maxm@mxm.dk> (Original author)
+- Abe Hanoka <abe@habet.dev>
+- Alexander Pitkin <peleccom@gmail.com>
 - Andreas Zeidler <az@zitc.de>
+- Andreas Ruppen <andreas.ruppen@gmail.com>
 - Andrey Nikolaev <nikolaeff@gmail.com>
 - Barak Michener <me@barakmich.com>
+- Bastian Wegge <wegge@crossbow.de>
 - Christian Geier <contact@lostpackets.de>
 - Christophe de Vienne <cdevienne@gmail.com>
+- cillianderoiste <cillian.deroiste@gmail.com>
+- Clive Stevens <clivest2@gmail.com>
 - Dai MIKURUBE <dmikurube@acm.org>
+- Dalton Durst <github@daltondur.st>
 - Dan Stovall <dbstovall@gmail.com>
+- David Venhoff <https://github.com/david-venhoff>
 - Eric Hanchrow <erich@cozi.com>
 - Eric Wieser <wieser.eric@gmail.com>
 - Erik Simmler <tgecho@gmail.com>
+- Felix Stupp <felix.stupp@banananet.work>
+- fitnr <fitnr@fakeisthenewreal>
 - George V. Reilly <george@reilly.org>
+- hajdbo <boris@hajduk.org>
+- ilya <ilya@boltnev-pc.(none)>
+- jacadzaca <vitouejj@gmail.com>
 - Jannis Leidel <jannis@leidel.info>
+- Jeffrey Whewhetu <jeffwhewhetu@gmail.com>
 - Jeroen F.J. Laros <jlaros@fixedpoint.nl>
 - Jeroen van Meeuwen (Kolab Systems) <vanmeeuwen@kolabsys.com>
 - Jochen Sprickerhof <icalendar@jochen.sprickerhof.de>
 - Jordan Kiang <jordan@cozi.com>
+- Kamil Mańkowski <kam193@wp.pl>
 - Klaus Klein <kleink+github@kleink.org>
 - Laurent Lasudry <lasudry@gmail.com>
 - Lennart Regebro <lregebro@nuxeo.com>
@@ -27,60 +42,41 @@ icalendar contributors
 - Markus Unterwaditzer <markus@unterwaditzer.net>
 - Martijn Faassen <faassen@infrae.com>
 - Martin Melin <git@martinmelin.com>
+- Matt Lewis <git@semiprime.com>
+- Maurits van Rees <maurits@vanrees.org>
+- Mauro Amico <mauro.amico@gmail.com>
 - Michael Smith <msmith@fluendo.com>
+- Michał Górny <mgorny@gentoo.org>
 - Mikael Frykholm <mikael@frykholm.com>
+- `Natasha Mattson <https://github.com/natashamm>`_
+- `Nicco Kunzmann <https://github.com/niccokunzmann>`_
+- `NikEasY <https://github.com/NikEasY>`_
 - Olivier Grisel <ogrisel@nuxeo.com>
 - Pavel Repin <prepin@gmail.com>
 - Pedro Ferreira <jose.pedro.ferreira@cern.ch>
+- Pronoy <lukex9442@gmail.com>
 - Rembane <andeke@gmail.com>
 - Robert Niederreiter <rnix@squarewave.at>
+- Robert Spralja <robert.spralja@gmail.com>
 - Rok Garbas <rok@garbas.si>
 - Ronan Dunklau <ronan@dunklau.fr>
 - Russ <russ@rw.id.au>
 - `Sashank Bhamidi <https://github.com/SashankBhamidi>`_
+- `Serif OZ  <https://github.com/SerifOZ>`_
 - Sidnei da Silva <sidnei@enfoldsystems.com>
+- `Soham Dutta <https://github.com/NP-compete>`_
+- spanktar <spanky@kapanka.com>
 - Stanislav Láznička <slaznick@redhat.com>
 - Stanislav Ochotnicky <sochotnicky@redhat.com>
 - Stefan Schwarzer <sschwarzer@sschwarzer.net>
+- `Steve Piercy <https://github.com/stevepiercy>`_
+- `Tariq <https://github.com/Horisyre>`_
+- tgecho <tgecho@gmail.com>
 - Thomas Bruederli <thomas@roundcube.net>
 - Thomas Weißschuh <thomas@t-8ch.de>
+- tisto <tisto@plone.org>
+- Tobias Brox <tobias@redpill-linpro.com>
+- TomTry <tom.try@gmail.com>
 - Victor Varvaryuk <victor.varvariuc@gmail.com>
 - Ville Skyttä <ville.skytta@iki.fi>
 - Wichert Akkerman <wichert@wiggy.net>
-- cillianderoiste <cillian.deroiste@gmail.com>
-- fitnr <fitnr@fakeisthenewreal>
-- hajdbo <boris@hajduk.org>
-- ilya <ilya@boltnev-pc.(none)>
-- spanktar <spanky@kapanka.com>
-- tgecho <tgecho@gmail.com>
-- tisto <tisto@plone.org>
-- TomTry <tom.try@gmail.com>
-- Andreas Ruppen <andreas.ruppen@gmail.com>
-- Clive Stevens <clivest2@gmail.com>
-- Dalton Durst <github@daltondur.st>
-- Kamil Mańkowski <kam193@wp.pl>
-- Tobias Brox <tobias@redpill-linpro.com>
-- `Nicco Kunzmann <https://github.com/niccokunzmann>`_
-- Robert Spralja <robert.spralja@gmail.com>
-- Maurits van Rees <maurits@vanrees.org>
-- jacadzaca <vitouejj@gmail.com>
-- Mauro Amico <mauro.amico@gmail.com>
-- Alexander Pitkin <peleccom@gmail.com>
-- Michał Górny <mgorny@gentoo.org>
-- Pronoy <lukex9442@gmail.com>
-- Abe Hanoka <abe@habet.dev>
-- `Natasha Mattson <https://github.com/natashamm>`_
-- `NikEasY <https://github.com/NikEasY>`_
-- Matt Lewis <git@semiprime.com>
-- Felix Stupp <felix.stupp@banananet.work>
-- Bastian Wegge <wegge@crossbow.de>
-- `Steve Piercy <https://github.com/stevepiercy>`_
-- Jeffrey Whewhetu <jeffwhewhetu@gmail.com>
-- `Soham Dutta <https://github.com/NP-compete>`_
-- `Serif OZ  <https://github.com/SerifOZ>`_
-- David Venhoff <https://github.com/david-venhoff>
-- `Tariq <https://github.com/Horisyre>`_
-
-Find out who contributed::
-
-    $ git shortlog -s -e
