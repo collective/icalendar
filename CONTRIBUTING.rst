@@ -13,14 +13,31 @@ These are some contribution examples
 - Sponsor a Sprint (https://plone.org/events/sprints/whatis).
 
 
-For pull requests, keep this in mind
-------------------------------------
+Pull Request Requirements
+-------------------------
 
-- Add a test which proves your fix and make it pass.
+**Important:** Every pull request must include a changelog entry, or it will fail CI checks.
 
-- Describe your change in ``CHANGES.rst``
+Before submitting your PR, ensure you have:
 
-- Add yourself to the ``docs/credits.rst``
+1. **Add a changelog entry to ``CHANGES.rst``** - This is required and enforced by CI
+2. Add a test which proves your fix and make it pass  
+3. Add yourself to ``docs/credits.rst``
+
+Changelog Entry Format
+~~~~~~~~~~~~~~~~~~~~~
+
+Add your entry under the appropriate section in ``CHANGES.rst``:
+
+- **Minor changes:** For bug fixes, small improvements, refactoring
+- **Breaking changes:** For changes that break existing API
+- **New features:** For new functionality
+
+Example::
+
+    Minor changes:
+    
+    - Fix issue with timezone parsing in special cases. See `Issue XXX <link>`_.
 
 Setup for Development
 ---------------------
