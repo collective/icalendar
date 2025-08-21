@@ -29,9 +29,10 @@ Changelog Entry Format
 
 Add your entry under the appropriate section in ``CHANGES.rst``:
 
-- **Minor changes:** For bug fixes, small improvements, refactoring
+- **Minor changes:** For small improvements, refactoring, documentation updates
 - **Breaking changes:** For changes that break existing API
 - **New features:** For new functionality
+- **Bug fixes:** For bug fixes and error corrections
 
 Example::
 

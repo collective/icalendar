@@ -3,9 +3,10 @@
 **All pull requests must include a changelog entry or they will fail CI checks.**
 
 Please add an entry to `CHANGES.rst` under the appropriate section:
-- **Minor changes:** For bug fixes, improvements, refactoring
+- **Minor changes:** For improvements, refactoring, documentation updates
 - **Breaking changes:** For changes that break existing API  
 - **New features:** For new functionality
+- **Bug fixes:** For bug fixes and error corrections
 
 ---
 
