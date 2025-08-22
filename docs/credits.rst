@@ -62,7 +62,7 @@ icalendar contributors
 - Ronan Dunklau <ronan@dunklau.fr>
 - Russ <russ@rw.id.au>
 - `Sashank Bhamidi <https://github.com/SashankBhamidi>`_
-- `Serif OZ  <https://github.com/SerifOZ>`_
+- `Serif OZ <https://github.com/SerifOZ>`_
 - Sidnei da Silva <sidnei@enfoldsystems.com>
 - `Soham Dutta <https://github.com/NP-compete>`_
 - spanktar <spanky@kapanka.com>
