@@ -1,5 +1,5 @@
 <!--
-Please add an entry to the CHANGES.rst file as described in https://icalendar.readthedocs.io/en/stable/contributing.html
+Please add an entry to the CHANGES.rst file as described in https://icalendar.readthedocs.io/en/latest/contributing.html
 -->
 
 **Fixes #**
