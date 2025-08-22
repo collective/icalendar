@@ -80,3 +80,7 @@ icalendar contributors
 - Victor Varvaryuk <victor.varvariuc@gmail.com>
 - Ville Skyttä <ville.skytta@iki.fi>
 - Wichert Akkerman <wichert@wiggy.net>
+
+Find out who contributed::
+
+    $ git shortlog -s -e
