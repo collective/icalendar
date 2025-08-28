@@ -187,7 +187,7 @@ Further Reading
 
 You can find out more about this project:
 
-* `Contributing`_ - **Note: All PRs must include a changelog entry**
+* `Contributing`_
 * `Changelog`_
 * `License`_
 
