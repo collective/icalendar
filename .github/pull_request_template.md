@@ -13,7 +13,7 @@ Write a description of the fixes or improvements.
 - [ ] Added or updated tests if applicable.
 - [ ] All tests pass locally. See https://icalendar.readthedocs.io/en/latest/install.html#running-tests.
 - [ ] Added entry to `CHANGES.rst`.
-- [ ] Added myself to `docs/credits.rst`.
+- [ ] I've added myself to `docs/credits.rst` as a contributor in this pull request or have done so previously.
 
 ## Additional information
 
