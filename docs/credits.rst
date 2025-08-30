@@ -1,8 +1,34 @@
-icalendar contributors
-======================
+Credits
+=======
 
-- Johannes Raggam <johannes@raggam.co.at> (Maintainer)
-- Max M <maxm@mxm.dk> (Original author)
+When you contribute to icalendar, please add your name to this list of contributors.
+Please use the format of your public identity as either your name or GitHub username, followed by the URL to your GitHub profile.
+Do not use an email address, as those may get harvested or become invalid in the future.
+
+.. code-block:: rst
+
+    - GivenName Surname <https://github.com/github_username>_
+    - github_username <https://github.com/github_username>_
+
+The following people have made contributions to icalendar.
+We're grateful for their support.
+
+Maintainers
+-----------
+
+- `Nicco Kunzmann <https://github.com/niccokunzmann>`_
+- Johannes Raggam <johannes@raggam.co.at>
+
+
+Original author
+---------------
+
+- Max M <maxm@mxm.dk>
+
+
+Contributors
+------------
+
 - Abe Hanoka <abe@habet.dev>
 - Alexander Pitkin <peleccom@gmail.com>
 - Andreas Zeidler <az@zitc.de>
@@ -49,7 +75,6 @@ icalendar contributors
 - Michał Górny <mgorny@gentoo.org>
 - Mikael Frykholm <mikael@frykholm.com>
 - `Natasha Mattson <https://github.com/natashamm>`_
-- `Nicco Kunzmann <https://github.com/niccokunzmann>`_
 - `NikEasY <https://github.com/NikEasY>`_
 - Olivier Grisel <ogrisel@nuxeo.com>
 - Pavel Repin <prepin@gmail.com>
@@ -81,6 +106,16 @@ icalendar contributors
 - Ville Skyttä <ville.skytta@iki.fi>
 - Wichert Akkerman <wichert@wiggy.net>
 
-Find out who contributed::
 
-    $ git shortlog -s -e
+Complete list
+-------------
+
+Although this list might not be complete, as some contributors either didn't know that they could add their name to this file or didn't want to be added, you can find out who contributed to icalendar.
+
+On GitHub, from the icalendar home page, click the link [Contributors](https://github.com/collective/icalendar/graphs/contributors).
+
+Alternatively from your local git checkout, issue the following command, which prints a list of all contributors sorted by their name and commit email address, and the count of commits for each one.
+
+.. code-block:: shell
+
+    git shortlog -s -e
