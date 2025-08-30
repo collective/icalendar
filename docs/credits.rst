@@ -16,8 +16,9 @@ We're grateful for their support.
 Maintainers
 -----------
 
+- `@geier <https://github.com/geier>`_
+- `@jacadzaca <https://github.com/jacadzaca>`_
 - `Nicco Kunzmann <https://github.com/niccokunzmann>`_
-- Johannes Raggam <johannes@raggam.co.at>
 
 
 Original author
@@ -52,12 +53,12 @@ Contributors
 - George V. Reilly <george@reilly.org>
 - hajdbo <boris@hajduk.org>
 - ilya <ilya@boltnev-pc.(none)>
-- jacadzaca <vitouejj@gmail.com>
 - Jannis Leidel <jannis@leidel.info>
 - Jeffrey Whewhetu <jeffwhewhetu@gmail.com>
 - Jeroen F.J. Laros <jlaros@fixedpoint.nl>
 - Jeroen van Meeuwen (Kolab Systems) <vanmeeuwen@kolabsys.com>
 - Jochen Sprickerhof <icalendar@jochen.sprickerhof.de>
+- Johannes Raggam <johannes@raggam.co.at>
 - Jordan Kiang <jordan@cozi.com>
 - Kamil Mańkowski <kam193@wp.pl>
 - Klaus Klein <kleink+github@kleink.org>
