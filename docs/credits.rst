@@ -48,7 +48,7 @@ Contributors
 - Eric Wieser <wieser.eric@gmail.com>
 - Erik Simmler <tgecho@gmail.com>
 - Felix Stupp <felix.stupp@banananet.work>
-- fitnr <fitnr@fakeisthenewreal>
+- `fitnr <https://github.com/fitnr>`_
 - George V. Reilly <george@reilly.org>
 - hajdbo <boris@hajduk.org>
 - ilya <ilya@boltnev-pc.(none)>
