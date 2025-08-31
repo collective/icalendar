@@ -25,6 +25,7 @@ Minor changes:
 - Add improved setters for ``start``, ``duration``, and ``end`` properties with explicit locking mechanisms to provide more flexible property manipulation while maintaining RFC 5545 compliance. The implementation includes comprehensive test coverage to ensure proper behavior and backward compatibility.
 - Add ``new()`` method to ``vCalAddress`` class for consistent API usage. The method supports all RFC 5545 parameters including ``CN``, ``CUTYPE``, ``DELEGATED-FROM``, ``DELEGATED-TO``, ``DIR``, ``LANGUAGE``, ``PARTSTAT``, ``ROLE``, ``RSVP``, and ``SENT-BY``, with automatic ``mailto:`` prefix handling. See `Issue 870 <https://github.com/collective/icalendar/issues/870>`_.
 - Refactor ``set_duration`` methods in ``Event`` and ``Todo`` classes to eliminate code duplication by extracting common logic into shared ``set_duration_with_locking()`` function in ``icalendar.attr``. See `Issue 886 <https://github.com/collective/icalendar/issues/886>`_.
+- Improve contributing documentation by adding a change log requirement, adding a pull request template, adding clear CI enforcement warnings, and updating ``README.rst``. See `Issue 890 <https://github.com/collective/icalendar/issues/890>`_.
 - Make coverage submission optional for CI
 
 Breaking changes:
@@ -112,7 +113,7 @@ Bug fixes:
 
 Bug fixes:
 
-- Fix to permit TZID forward references to ``VTIMEZONE``s
+- Fix to permit TZID forward references to ``VTIMEZONE``\ s
 - Stabelize timezone id lookup, see `Issue 780 <https://github.com/collective/icalendar/issues/780>`_.
 
 6.1.2 (2025-03-19)
@@ -719,7 +720,7 @@ New features:
 
 Bug fixes:
 
-- Fix ``VTIMEZONE``s including RDATEs #234.  [geier]
+- Fix ``VTIMEZONE``\ s including RDATEs #234.  [geier]
 
 
 3.11.5 (2017-07-03)
@@ -730,7 +731,7 @@ Bug fixes:
 - added an assertion that ``VTIMEZONE`` sub-components' DTSTART must be of type
   DATETIME [geier]
 
-- Fix handling of ``VTIMEZONE``s with subcomponents with the same DTSTARTs and
+- Fix handling of ``VTIMEZONE``\ s with subcomponents with the same DTSTARTs and
   OFFSETs but which are of different types  [geier]
 
 
@@ -742,7 +743,7 @@ Bug fixes:
 - Don't break on parameter values which contain equal signs, e.g. base64 encoded
   binary data [geier]
 
-- Fix handling of ``VTIMEZONE``s with subcomponents with the same DTSTARTs.
+- Fix handling of ``VTIMEZONE``\ s with subcomponents with the same DTSTARTs.
   [geier]
 
 

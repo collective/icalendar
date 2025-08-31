@@ -551,16 +551,17 @@ class Component(CaselessDict):
 
     CREATED = single_utc_property(
         "CREATED",
-        """CREATED specifies the date and time that the calendar
-information was created by the calendar user agent in the calendar
-store.
+        """
+        CREATED specifies the date and time that the calendar
+        information was created by the calendar user agent in the calendar
+        store.
 
-Conformance:
-    The property can be specified once in "VEVENT",
-    "VTODO", or "VJOURNAL" calendar components.  The value MUST be
-    specified as a date with UTC time.
-
-""",
+        Conformance:
+            The property can be specified once in "VEVENT",
+            "VTODO", or "VJOURNAL" calendar components.  The value MUST be
+            specified as a date with UTC time.
+        
+        """,
     )
 
     _validate_new = True
