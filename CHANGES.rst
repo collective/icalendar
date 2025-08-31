@@ -26,6 +26,7 @@ Minor changes:
 - Add ``new()`` method to ``vCalAddress`` class for consistent API usage. The method supports all RFC 5545 parameters including ``CN``, ``CUTYPE``, ``DELEGATED-FROM``, ``DELEGATED-TO``, ``DIR``, ``LANGUAGE``, ``PARTSTAT``, ``ROLE``, ``RSVP``, and ``SENT-BY``, with automatic ``mailto:`` prefix handling. See `Issue 870 <https://github.com/collective/icalendar/issues/870>`_.
 - Refactor ``set_duration`` methods in ``Event`` and ``Todo`` classes to eliminate code duplication by extracting common logic into shared ``set_duration_with_locking()`` function in ``icalendar.attr``. See `Issue 886 <https://github.com/collective/icalendar/issues/886>`_.
 - Make coverage submission optional for CI
+- Accept and ignore non-standard empty ``RDATE`` fields when parsing ICS files.
 
 Breaking changes:
 

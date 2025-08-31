@@ -39,6 +39,7 @@ icalendar contributors
 - Russ <russ@rw.id.au>
 - `Sashank Bhamidi <https://github.com/SashankBhamidi>`_
 - Sidnei da Silva <sidnei@enfoldsystems.com>
+- Simon Ruderich <simon@ruderich.org>
 - Stanislav Láznička <slaznick@redhat.com>
 - Stanislav Ochotnicky <sochotnicky@redhat.com>
 - Stefan Schwarzer <sschwarzer@sschwarzer.net>
