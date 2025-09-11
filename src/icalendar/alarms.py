@@ -179,8 +179,6 @@ class Alarms:
 
     def __init__(self, component: Optional[Alarm | Parent] = None):
         """Start computing alarm times."""
-        from icalendar.cal.event import Event
-        from icalendar.cal.todo import Todo
         self._absolute_alarms: list[Alarm] = []
         self._start_alarms: list[Alarm] = []
         self._end_alarms: list[Alarm] = []
@@ -203,7 +201,6 @@ class Alarms:
         """
         from icalendar.cal.event import Event
         from icalendar.cal.todo import Todo
-        
         if isinstance(component, (Event, Todo)):
             self.set_parent(component)
             self.set_start(component.start)
