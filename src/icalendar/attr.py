@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import itertools
 from datetime import date, datetime, timedelta
-from typing import TYPE_CHECKING, Optional, Sequence, Union
+from typing import TYPE_CHECKING, Literal, Optional, Sequence
 
 from icalendar.enums import BUSYTYPE, CLASS, STATUS, TRANSP, StrEnum
 from icalendar.error import IncompleteComponent, InvalidCalendar
@@ -19,8 +19,9 @@ if TYPE_CHECKING:
 
 def _get_rdates(
     self: Component,
-) -> list[Union[tuple[date, None], tuple[datetime, None], tuple[datetime, datetime]]]:
-    """The RDATE property defines the list of DATE-TIME values for recurring components.
+) -> list[tuple[date, None] | tuple[datetime, None] | tuple[datetime, datetime]]:
+    """
+    Return the list of DATE-TIME values for recurring components.
 
     RDATE is defined in :rfc:`5545`.
     The return value is a list of tuples ``(start, end)``.
@@ -97,8 +98,8 @@ def _get_rdates(
     """
     result = []
     rdates = self.get("RDATE", [])
-    for rdates in (rdates,) if not isinstance(rdates, list) else rdates:
-        for dts in rdates.dts:
+    for rdate_item in (rdates,) if not isinstance(rdates, list) else rdates:
+        for dts in rdate_item.dts:
             rdate = dts.dt
             if isinstance(rdate, tuple):
                 # we have a period as rdate
@@ -116,7 +117,8 @@ rdates_property = property(_get_rdates)
 
 
 def _get_exdates(self: Component) -> list[date | datetime]:
-    """EXDATE defines the list of DATE-TIME exceptions for recurring components.
+    """
+    EXDATE defines the list of DATE-TIME exceptions for recurring components.
 
     EXDATE is defined in :rfc:`5545`.
 
@@ -186,8 +188,8 @@ def _get_exdates(self: Component) -> list[date | datetime]:
     """
     result = []
     exdates = self.get("EXDATE", [])
-    for exdates in (exdates,) if not isinstance(exdates, list) else exdates:
-        for dts in exdates.dts:
+    for exdate_item in (exdates,) if not isinstance(exdates, list) else exdates:
+        for dts in exdate_item.dts:
             exdate = dts.dt
             # we have a date/datetime
             result.append(exdate)
@@ -198,7 +200,8 @@ exdates_property = property(_get_exdates)
 
 
 def _get_rrules(self: Component) -> list[vRecur]:
-    """RRULE defines a rule or repeating pattern for recurring components.
+    """
+    RRULE defines a rule or repeating pattern for recurring components.
 
     RRULE is defined in :rfc:`5545`.
     :rfc:`7529` adds the ``SKIP`` parameter :class:`icalendar.prop.vSkip`.
@@ -301,7 +304,7 @@ def _get_rrules(self: Component) -> list[vRecur]:
 
         If you want to compute recurrences, have a look at :ref:`Related projects`.
 
-    """  # noqa: E501
+    """
     rrules = self.get("RRULE", [])
     if not isinstance(rrules, list):
         return [rrules]
@@ -312,20 +315,22 @@ rrules_property = property(_get_rrules)
 
 
 def multi_language_text_property(
-    main_prop: str, compatibility_prop: Optional[str], doc: str
+    main_prop: str, compatibility_prop: str | None, doc: str,
 ) -> property:
-    """This creates a text property.
+    """
+    Create a text property.
 
-    This property can be defined several times with different ``LANGUAGE`` parameters.
+    The property can be defined several times with different ``LANGUAGE`` parameters.
 
     Args:
         main_prop (str): The property to set and get, such as ``NAME``
         compatibility_prop (str): An old property used before, such as ``X-WR-CALNAME``
         doc (str): The documentation string
+
     """
 
-    def fget(self: Component) -> Optional[str]:
-        """Get the property"""
+    def fget(self: Component) -> str | None:
+        """Get the property."""
         result = self.get(main_prop)
         if result is None and compatibility_prop is not None:
             result = self.get(compatibility_prop)
@@ -335,13 +340,13 @@ def multi_language_text_property(
                     return item
         return result
 
-    def fset(self: Component, value: Optional[str]):
+    def fset(self: Component, value: str | None) -> None:
         """Set the property."""
         fdel(self)
         if value is not None:
             self.add(main_prop, value)
 
-    def fdel(self: Component):
+    def fdel(self: Component) -> None:
         """Delete the property."""
         self.pop(main_prop, None)
         if compatibility_prop is not None:
@@ -351,28 +356,31 @@ def multi_language_text_property(
 
 
 def single_int_property(prop: str, default: int, doc: str) -> property:
-    """Create a property for an int value that exists only once.
+    """
+    Create a property for an int value that exists only once.
 
     Args:
         prop: The name of the property
         default: The default value
         doc: The documentation string
+
     """
 
     def fget(self: Component) -> int:
-        """Get the property"""
+        """Get the property."""
         try:
             return int(self.get(prop, default))
         except ValueError as e:
-            raise InvalidCalendar(f"{prop} must be an int") from e
+            msg = f"{prop} must be an int"
+            raise InvalidCalendar(msg) from e
 
-    def fset(self: Component, value: Optional[int]):
+    def fset(self: Component, value: int | None) -> None:
         """Set the property."""
         fdel(self)
         if value is not None:
             self.add(prop, value)
 
-    def fdel(self: Component):
+    def fdel(self: Component) -> None:
         """Delete the property."""
         self.pop(prop, None)
 
@@ -380,11 +388,13 @@ def single_int_property(prop: str, default: int, doc: str) -> property:
 
 
 def single_utc_property(name: str, docs: str) -> property:
-    """Create a property to access a value of datetime in UTC timezone.
+    """
+    Create a property to access a value of datetime in UTC timezone.
 
     Args:
         name: name of the property
         docs: documentation string
+
     """
     docs = (
         f"""The {name} property. datetime in UTC
@@ -394,7 +404,7 @@ def single_utc_property(name: str, docs: str) -> property:
         + docs
     )
 
-    def fget(self: Component) -> Optional[datetime]:
+    def fget(self: Component) -> datetime | None:
         """Get the value."""
         if name not in self:
             return None
@@ -405,20 +415,22 @@ def single_utc_property(name: str, docs: str) -> property:
         else:
             value = getattr(dt, "dt", dt)
         if value is None or not isinstance(value, date):
-            raise InvalidCalendar(f"{name} must be a datetime in UTC, not {value}")
+            msg = f"{name} must be a datetime in UTC, not {value}"
+            raise InvalidCalendar(msg)
         return tzp.localize_utc(value)
 
-    def fset(self: Component, value: Optional[datetime]):
-        """Set the value"""
+    def fset(self: Component, value: datetime | None) -> None:
+        """Set the value."""
         if value is None:
             fdel(self)
             return
         if not isinstance(value, date):
-            raise TypeError(f"{name} takes a datetime in UTC, not {value}")
+            msg = f"{name} takes a datetime in UTC, not {value}"
+            raise TypeError(msg)
         fdel(self)
         self.add(name, tzp.localize_utc(value))
 
-    def fdel(self: Component):
+    def fdel(self: Component) -> None:
         """Delete the property."""
         self.pop(name, None)
 
@@ -426,14 +438,14 @@ def single_utc_property(name: str, docs: str) -> property:
 
 
 def single_string_property(
-    name: str, docs: str, other_name: Optional[str] = None, default: str = ""
+    name: str, docs: str, other_name: str | None = None, default: str = "",
 ) -> property:
     """Create a property to access a single string value."""
 
     def fget(self: Component) -> str:
         """Get the value."""
         result = self.get(
-            name, None if other_name is None else self.get(other_name, None)
+            name, None if other_name is None else self.get(other_name, None),
         )
         if result is None or result == []:
             return default
@@ -441,8 +453,9 @@ def single_string_property(
             return result[0]
         return result
 
-    def fset(self: Component, value: Optional[str]):
-        """Set the value.
+    def fset(self: Component, value: str | None) -> None:
+        """
+        Set the value.
 
         Setting the value to None will delete it.
         """
@@ -450,7 +463,7 @@ def single_string_property(
         if value is not None:
             self.add(name, value)
 
-    def fdel(self: Component):
+    def fdel(self: Component) -> None:
         """Delete the property."""
         self.pop(name, None)
         if other_name is not None:
@@ -478,7 +491,7 @@ color_property = single_string_property(
         when presenting the relevant data to a user.  Typically, this
         would appear as the "background" color of events or tasks.  The
         value is a case-insensitive color name taken from the CSS3 set of
-        names, defined in Section 4.3 of `W3C.REC-css3-color-20110607 <https://www.w3.org/TR/css-color-3/>`_.
+        names, defined in Section 4.3 of\n        `W3C.REC-css3-color-20110607 <https://www.w3.org/TR/css-color-3/>`_.
 
     Example:
         ``"turquoise"``, ``"#ffffff"``
@@ -555,13 +568,13 @@ Examples:
         >>> event = calendar.events[0]
         >>> event.sequence
         10
-    """,  # noqa: E501
+    """,
 )
 
 
 def _get_categories(component: Component) -> list[str]:
     """Get all the categories."""
-    categories: Optional[vCategory | list[vCategory]] = component.get("CATEGORIES")
+    categories: vCategory | list[vCategory] | None = component.get("CATEGORIES")
     if isinstance(categories, list):
         _set_categories(
             component,
@@ -574,7 +587,7 @@ def _get_categories(component: Component) -> list[str]:
     return categories.cats
 
 
-def _set_categories(component: Component, cats: Optional[Sequence[str]]) -> None:
+def _set_categories(component: Component, cats: Sequence[str] | None) -> None:
     """Set the categories."""
     if not cats and cats != []:
         _del_categories(component)
@@ -649,7 +662,9 @@ def _get_attendees(self: Component) -> list[vCalAddress]:
     return value
 
 
-def _set_attendees(self: Component, value: list[vCalAddress] | vCalAddress | None):
+def _set_attendees(
+    self: Component, value: list[vCalAddress] | vCalAddress | None,
+) -> None:
     """Set attendees."""
     _del_attendees(self)
     if value is None:
@@ -659,7 +674,7 @@ def _set_attendees(self: Component, value: list[vCalAddress] | vCalAddress | Non
     self["ATTENDEE"] = value
 
 
-def _del_attendees(self: Component):
+def _del_attendees(self: Component) -> None:
     """Delete all attendees."""
     self.pop("ATTENDEE", None)
 
@@ -866,19 +881,20 @@ Examples:
          design.\\nHappy Face Conference Room. Phoenix design team
          MUST attend this meeting.\\nRSVP to team leader.
 
-    """,  # noqa: E501
+    """,
 )
 
 
 def create_single_property(
     prop: str,
-    value_attr: Optional[str],
+    value_attr: str | None,
     value_type: tuple[type],
     type_def: type,
     doc: str,
     vProp: type = vDDDTypes,  # noqa: N803
-):
-    """Create a single property getter and setter.
+) -> property:
+    """
+    Create a single property getter and setter.
 
     :param prop: The name of the property.
     :param value_attr: The name of the attribute to get the value from.
@@ -888,30 +904,37 @@ def create_single_property(
     :param vProp: The type of the property from :mod:`icalendar.prop`.
     """
 
-    def p_get(self: Component):
+    def p_get(self: Component) -> type_def | None:
         default = object()
         result = self.get(prop, default)
         if result is default:
             return None
         if isinstance(result, list):
-            raise InvalidCalendar(f"Multiple {prop} defined.")
+            msg = f"Multiple {prop} defined."
+            raise InvalidCalendar(msg)
         value = result if value_attr is None else getattr(result, value_attr, result)
         if not isinstance(value, value_type):
-            raise InvalidCalendar(
+            msg = (
                 f"{prop} must be either a "
                 f"{' or '.join(t.__name__ for t in value_type)},"
                 f" not {value}."
             )
+            raise InvalidCalendar(
+                msg,
+            )
         return value
 
-    def p_set(self: Component, value) -> None:
+    def p_set(self: Component, value: type_def | None) -> None:
         if value is None:
             p_del(self)
             return
         if not isinstance(value, value_type):
-            raise TypeError(
+            msg = (
                 f"Use {' or '.join(t.__name__ for t in value_type)}, "
                 f"not {type(value).__name__}."
+            )
+            raise TypeError(
+                msg,
             )
         self[prop] = vProp(value)
         if prop in self.exclusive:
@@ -923,7 +946,7 @@ def create_single_property(
         type_def
     ]
 
-    def p_del(self: Component):
+    def p_del(self: Component) -> None:
         self.pop(prop)
 
     p_doc = f"""The {prop} property.
@@ -939,14 +962,14 @@ def create_single_property(
 
 
 X_MOZ_SNOOZE_TIME_property = single_utc_property(
-    "X-MOZ-SNOOZE-TIME", "Thunderbird: Alarms before this time are snoozed."
+    "X-MOZ-SNOOZE-TIME", "Thunderbird: Alarms before this time are snoozed.",
 )
 X_MOZ_LASTACK_property = single_utc_property(
-    "X-MOZ-LASTACK", "Thunderbird: Alarms before this time are acknowledged."
+    "X-MOZ-LASTACK", "Thunderbird: Alarms before this time are acknowledged.",
 )
 
 
-def property_get_duration(self: Component) -> Optional[timedelta]:
+def property_get_duration(self: Component) -> timedelta | None:
     """Getter for property DURATION."""
     default = object()
     duration = self.get("duration", default)
@@ -955,25 +978,27 @@ def property_get_duration(self: Component) -> Optional[timedelta]:
     if isinstance(duration, vDuration):
         return duration.td
     if duration is not default and not isinstance(duration, timedelta):
+        msg = f"DURATION must be a timedelta, not {type(duration).__name__}."
         raise InvalidCalendar(
-            f"DURATION must be a timedelta, not {type(duration).__name__}."
+            msg,
         )
     return None
 
 
-def property_set_duration(self: Component, value: Optional[timedelta]):
+def property_set_duration(self: Component, value: timedelta | None) -> None:
     """Setter for property DURATION."""
     if value is None:
         self.pop("duration", None)
         return
     if not isinstance(value, timedelta):
-        raise TypeError(f"Use timedelta, not {type(value).__name__}.")
+        msg = f"Use timedelta, not {type(value).__name__}."
+        raise TypeError(msg)
     self["duration"] = vDuration(value)
     self.pop("DTEND")
     self.pop("DUE")
 
 
-def property_del_duration(self: Component):
+def property_del_duration(self: Component) -> None:
     """Delete property DURATION."""
     self.pop("DURATION")
 
@@ -1002,7 +1027,8 @@ def duration_property(component: str) -> property:
 
 
 def multi_text_property(name: str, docs: str) -> property:
-    """Get a property that can occur several times and is text.
+    """
+    Get a property that can occur several times and is text.
 
     Examples: Journal.descriptions, Event.comments
     """
@@ -1016,7 +1042,7 @@ def multi_text_property(name: str, docs: str) -> property:
             return [descriptions]
         return descriptions
 
-    def fset(self: Component, values: Optional[str | Sequence[str]]):
+    def fset(self: Component, values: str | Sequence[str] | None) -> None:
         """Set the values."""
         fdel(self)
         if values is None:
@@ -1027,7 +1053,7 @@ def multi_text_property(name: str, docs: str) -> property:
             for description in values:
                 self.add(name, description)
 
-    def fdel(self: Component):
+    def fdel(self: Component) -> None:
         """Delete the values."""
         self.pop(name)
 
@@ -1061,7 +1087,7 @@ Examples:
          design.\\nHappy Face Conference Room. Phoenix design team
          MUST attend this meeting.\\nRSVP to team leader.
 
-""",  # noqa: E501
+""",
 )
 
 comments_property = multi_text_property(
@@ -1088,8 +1114,9 @@ Property Parameters:
 )
 
 
-def _get_organizer(self: Component) -> Optional[vCalAddress]:
-    """ORGANIZER defines the organizer for a calendar component.
+def _get_organizer(self: Component) -> vCalAddress | None:
+    """
+    ORGANIZER defines the organizer for a calendar component.
 
     Property Parameters:
         IANA, non-standard, language, common name,
@@ -1127,14 +1154,14 @@ def _get_organizer(self: Component) -> Optional[vCalAddress]:
     return self.get("ORGANIZER")
 
 
-def _set_organizer(self: Component, value: Optional[vCalAddress | str]):
+def _set_organizer(self: Component, value: vCalAddress | str | None) -> None:
     """Set the value."""
     _del_organizer(self)
     if value is not None:
         self.add("ORGANIZER", value)
 
 
-def _del_organizer(self: Component):
+def _del_organizer(self: Component) -> None:
     """Delete the value."""
     self.pop("ORGANIZER")
 
@@ -1143,7 +1170,7 @@ organizer_property = property(_get_organizer, _set_organizer, _del_organizer)
 
 
 def single_string_enum_property(
-    name: str, enum: type[StrEnum], default: StrEnum, docs: str
+    name: str, enum: type[StrEnum], default: StrEnum, docs: str,
 ) -> property:
     """Create a property to access a single string value and convert it to an enum."""
     prop = single_string_property(name, docs, default=default)
@@ -1410,9 +1437,8 @@ Example:
 )
 
 
-def timezone_datetime_property(name: str, docs: str):
+def timezone_datetime_property(name: str, docs: str) -> property:
     """Create a property to access the values with a proper timezone."""
-
     return single_utc_property(name, docs)
 
 
@@ -1449,8 +1475,9 @@ rfc_7953_dtend_property = timezone_datetime_property(
 
 
 @property
-def rfc_7953_duration_property(self) -> Optional[timedelta]:
-    """Compute the duration of this component.
+def rfc_7953_duration_property(self: Component) -> timedelta | None:
+    """
+    Compute the duration of this component.
 
     If there is no :attr:`DTEND` or :attr:`DURATION` set, this is None.
     Otherwise, the duration is calculated from :attr:`DTSTART` and
@@ -1467,13 +1494,15 @@ def rfc_7953_duration_property(self) -> Optional[timedelta]:
         return None
     start = self.DTSTART
     if start is None:
-        raise IncompleteComponent("Cannot compute duration without start.")
+        msg = "Cannot compute duration without start."
+        raise IncompleteComponent(msg)
     return end - start
 
 
 @property
-def rfc_7953_end_property(self) -> Optional[timedelta]:
-    """Compute the duration of this component.
+def rfc_7953_end_property(self: Component) -> timedelta | None:
+    """
+    Compute the duration of this component.
 
     If there is no :attr:`DTEND` or :attr:`DURATION` set, this is None.
     Otherwise, the duration is calculated from :attr:`DTSTART` and
@@ -1486,7 +1515,8 @@ def rfc_7953_end_property(self) -> Optional[timedelta]:
     if duration:
         start = self.DTSTART
         if start is None:
-            raise IncompleteComponent("Cannot compute end without start.")
+            msg = "Cannot compute end without start."
+            raise IncompleteComponent(msg)
         return start + duration
     end = self.DTEND
     if end is None:
@@ -1495,23 +1525,55 @@ def rfc_7953_end_property(self) -> Optional[timedelta]:
 
 
 @rfc_7953_end_property.setter
-def rfc_7953_end_property(self, value: datetime):
+def rfc_7953_end_property(self: Component, value: datetime) -> None:
+    """Set the RFC 7953 end property."""
     self.DTEND = value
 
 
 @rfc_7953_end_property.deleter
-def rfc_7953_end_property(self):
+def rfc_7953_end_property(self: Component) -> None:
+    """Delete the RFC 7953 end property."""
     del self.DTEND
 
 
-def set_duration_with_locking(component, duration, locked, end_property):
-    """Set the duration with explicit locking behavior for Event and Todo components.
+def _validate_duration_type(duration: timedelta | None) -> None:
+    """Validate duration type."""
+    if duration is not None and not isinstance(duration, timedelta):
+        msg = f"Use timedelta, not {type(duration).__name__}."
+        raise TypeError(msg)
+
+
+def _validate_date_duration_compatibility(
+    component: Component, duration: timedelta,
+) -> None:
+    """Validate date/duration compatibility."""
+    start = component.DTSTART
+    if start is not None and is_date(start) and duration.seconds != 0:
+        msg = "When DTSTART is a date, DURATION must be of days or weeks."
+        raise InvalidCalendar(msg)
+
+
+def _set_duration_property(component: Component, end_property: str) -> None:
+    """Set the DURATION property and remove end property."""
+    if end_property in component:
+        del component[end_property]  # Remove end property per RFC 5545
+
+
+def set_duration_with_locking(
+    component: Component,
+    duration: timedelta | None,
+    locked: Literal["start", "end"],
+    end_property: str,
+) -> None:
+    """
+    Set the duration with explicit locking behavior for Event and Todo components.
 
     Args:
         component: The component to modify (Event or Todo)
         duration: The duration to set, or None to convert to DURATION property
         locked: Which property to keep unchanged ('start' or 'end')
         end_property: The end property name ('DTEND' for Event, 'DUE' for Todo)
+
     """
     # Convert to DURATION property if duration is None
     if duration is None:
@@ -1519,32 +1581,193 @@ def set_duration_with_locking(component, duration, locked, end_property):
             return  # Already has DURATION property
         current_duration = component.duration
         component.DURATION = current_duration
+        _set_duration_property(component, end_property)
         return
 
-    if not isinstance(duration, timedelta):
-        raise TypeError(f"Use timedelta, not {type(duration).__name__}.")
-
-    # Validate date/duration compatibility
-    start = component.DTSTART
-    if start is not None and is_date(start) and duration.seconds != 0:
-        raise InvalidCalendar(
-            "When DTSTART is a date, DURATION must be of days or weeks."
-        )
+    _validate_duration_type(duration)
+    _validate_date_duration_compatibility(component, duration)
 
     if locked == "start":
         # Keep start locked, adjust end
+        start = component.DTSTART
         if start is None:
-            raise IncompleteComponent(
-                "Cannot set duration without DTSTART. Set start time first."
-            )
+            msg = "Cannot set duration without DTSTART. Set start time first."
+            raise IncompleteComponent(msg)
         component.DURATION = duration
+        _set_duration_property(component, end_property)
     elif locked == "end":
         # Keep end locked, adjust start
         current_end = component.end
         component.DTSTART = current_end - duration
         component.DURATION = duration
+        _set_duration_property(component, end_property)
     else:
-        raise ValueError(f"locked must be 'start' or 'end', not {locked!r}")
+        msg = f"locked must be 'start' or 'end', not {locked!r}"
+        raise ValueError(msg)
+
+
+def set_start_with_locking(
+    component: Component,
+    start: date | datetime,
+    locked: Literal["duration", "end"] | None,
+    end_property: str,
+) -> None:
+    """
+    Set the start with explicit locking behavior for Event and Todo components.
+
+    Args:
+        component: The component to modify (Event or Todo)
+        start: The start time to set
+        locked: Which property to keep unchanged ('duration', 'end',
+            or None for auto-detect)
+        end_property: The end property name ('DTEND' for Event, 'DUE' for Todo)
+
+    """
+    if locked is None:
+        # Auto-detect based on existing properties
+        if "DURATION" in component:
+            locked = "duration"
+        elif end_property in component:
+            locked = "end"
+        else:
+            # Default to duration if no existing properties
+            locked = "duration"
+
+    if locked == "duration":
+        # Keep duration locked, adjust end
+        # Check if we have DURATION property or can calculate duration
+        has_duration_info = "DURATION" in component or end_property in component
+        current_duration = component.duration if has_duration_info else None
+        component.DTSTART = start
+        if current_duration is not None:
+            component.DURATION = current_duration
+    elif locked == "end":
+        # Keep end locked, adjust duration
+        current_end = component.end
+        component.DTSTART = start
+        component.pop("DURATION", None)
+        setattr(component, end_property, current_end)
+    else:
+        msg = f"locked must be 'duration', 'end', or None, not {locked!r}"
+        raise ValueError(msg)
+
+
+def set_end_with_locking(
+    component: Component,
+    end: date | datetime,
+    locked: Literal["start", "duration"],
+    end_property: str,
+) -> None:
+    """
+    Set the end with explicit locking behavior for Event and Todo components.
+
+    Args:
+        component: The component to modify (Event or Todo)
+        end: The end time to set
+        locked: Which property to keep unchanged ('start' or 'duration')
+        end_property: The end property name ('DTEND' for Event, 'DUE' for Todo)
+
+    """
+    if locked == "start":
+        # Keep start locked, adjust duration
+        component.pop("DURATION", None)
+        setattr(component, end_property, end)
+    elif locked == "duration":
+        # Keep duration locked, adjust start
+        current_duration = component.duration
+        component.DTSTART = end - current_duration
+        component.DURATION = current_duration
+    else:
+        msg = f"locked must be 'start' or 'duration', not {locked!r}"
+        raise ValueError(msg)
+
+
+def get_start_end_duration_with_validation(
+    component: Component,
+    start_property: str,
+    end_property: str,
+    component_name: str,
+) -> tuple[date | datetime | None, date | datetime | None, timedelta | None]:
+    """
+    Validate and return start, end, duration for Event and Todo components.
+
+    Args:
+        component: The component to validate (Event or Todo)
+        start_property: The start property name ('DTSTART')
+        end_property: The end property name ('DTEND' for Event, 'DUE' for Todo)
+        component_name: Component name for error messages ('VEVENT' or 'VTODO')
+
+    """
+    start = getattr(component, start_property, None)
+    end = getattr(component, end_property, None)
+    duration_property = component.get("DURATION")
+    duration = duration_property.dt if duration_property is not None else None
+
+    if duration is not None and end is not None:
+        msg = (
+            f"Only one of {end_property} and DURATION may be in a "
+            f"{component_name}, not both."
+        )
+        raise InvalidCalendar(msg)
+    if (
+        start is not None
+        and is_date(start)
+        and duration is not None
+        and duration.seconds != 0
+    ):
+        msg = "When DTSTART is a date, DURATION must be of days or weeks."
+        raise InvalidCalendar(
+            msg,
+        )
+    if start is not None and end is not None and is_date(start) != is_date(end):
+        msg = (
+            f"DTSTART and {end_property} must be of the same type, "
+            "either date or datetime."
+        )
+        raise InvalidCalendar(msg)
+    return start, end, duration
+
+
+def get_duration_property(component: Component) -> timedelta:
+    """Get duration property for Event and Todo components."""
+    if "DURATION" in component:
+        return component["DURATION"].dt
+    return component.end - component.start
+
+
+def get_start_property(component: Component) -> date | datetime:
+    """Get start property for Event and Todo components."""
+    # Use appropriate end property based on component type
+    end_prop = "DTEND" if hasattr(component.__class__, "DTEND") else "DUE"
+    start, _, _ = get_start_end_duration_with_validation(
+        component, "DTSTART", end_prop, component.name,
+    )
+    if start is None:
+        msg = "No DTSTART given."
+        raise IncompleteComponent(msg)
+    return start
+
+
+def get_end_property(
+    component: Component, end_property: str,
+) -> date | datetime:
+    """Get end property for Event and Todo components."""
+    start, end, duration = get_start_end_duration_with_validation(
+        component, "DTSTART", end_property, component.name,
+    )
+    if end is None and duration is None:
+        if start is None:
+            msg = f"No {end_property} or DURATION+DTSTART given."
+            raise IncompleteComponent(msg)
+        if is_date(start):
+            return start + timedelta(days=1)
+        return start
+    if duration is not None:
+        if start is not None:
+            return start + duration
+        msg = f"No {end_property} or DURATION+DTSTART given."
+        raise IncompleteComponent(msg)
+    return end
 
 
 __all__ = [
@@ -1560,6 +1783,10 @@ __all__ = [
     "descriptions_property",
     "duration_property",
     "exdates_property",
+    "get_duration_property",
+    "get_end_property",
+    "get_start_end_duration_with_validation",
+    "get_start_property",
     "location_property",
     "multi_language_text_property",
     "organizer_property",
@@ -1576,6 +1803,8 @@ __all__ = [
     "rrules_property",
     "sequence_property",
     "set_duration_with_locking",
+    "set_end_with_locking",
+    "set_start_with_locking",
     "single_int_property",
     "single_utc_property",
     "status_property",
