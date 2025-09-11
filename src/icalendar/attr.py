@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import itertools
 from datetime import date, datetime, timedelta
-from typing import TYPE_CHECKING, Literal, Optional, Sequence
+from typing import TYPE_CHECKING, Literal, Optional, Sequence, Union
 
 from icalendar.enums import BUSYTYPE, CLASS, STATUS, TRANSP, StrEnum
 from icalendar.error import IncompleteComponent, InvalidCalendar
@@ -19,9 +19,8 @@ if TYPE_CHECKING:
 
 def _get_rdates(
     self: Component,
-) -> list[tuple[date, None] | tuple[datetime, None] | tuple[datetime, datetime]]:
-    """
-    Return the list of DATE-TIME values for recurring components.
+) -> list[Union[tuple[date, None], tuple[datetime, None], tuple[datetime, datetime]]]:
+    """The RDATE property defines the list of DATE-TIME values for recurring components.
 
     RDATE is defined in :rfc:`5545`.
     The return value is a list of tuples ``(start, end)``.
@@ -117,8 +116,7 @@ rdates_property = property(_get_rdates)
 
 
 def _get_exdates(self: Component) -> list[date | datetime]:
-    """
-    EXDATE defines the list of DATE-TIME exceptions for recurring components.
+    """EXDATE defines the list of DATE-TIME exceptions for recurring components.
 
     EXDATE is defined in :rfc:`5545`.
 
@@ -315,10 +313,9 @@ rrules_property = property(_get_rrules)
 
 
 def multi_language_text_property(
-    main_prop: str, compatibility_prop: str | None, doc: str,
+    main_prop: str, compatibility_prop: Optional[str], doc: str
 ) -> property:
-    """
-    Create a text property.
+    """This creates a text property.
 
     The property can be defined several times with different ``LANGUAGE`` parameters.
 
@@ -329,8 +326,8 @@ def multi_language_text_property(
 
     """
 
-    def fget(self: Component) -> str | None:
-        """Get the property."""
+    def fget(self: Component) -> Optional[str]:
+        """Get the property"""
         result = self.get(main_prop)
         if result is None and compatibility_prop is not None:
             result = self.get(compatibility_prop)

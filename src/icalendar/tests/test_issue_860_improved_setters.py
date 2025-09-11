@@ -18,7 +18,7 @@ from icalendar.error import IncompleteComponent, InvalidCalendar
 class TestDurationSetter:
     """Test the new duration setter functionality."""
 
-    def test_event_duration_setter_with_start_locked(self) -> None:
+    def test_event_duration_setter_with_start_locked(self):
         """Test setting duration with start locked (default behavior)."""
         event = Event()
         event.add("UID", "test-duration-setter")
