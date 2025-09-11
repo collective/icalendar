@@ -18,7 +18,7 @@ from icalendar.error import IncompleteComponent, InvalidCalendar
 class TestDurationSetter:
     """Test the new duration setter functionality."""
 
-    def test_event_duration_setter_with_start_locked(self):
+    def test_event_duration_setter_with_start_locked(self) -> None:
         """Test setting duration with start locked (default behavior)."""
         event = Event()
         event.add("UID", "test-duration-setter")
@@ -34,7 +34,7 @@ class TestDurationSetter:
         assert "DURATION" in event  # DURATION property should be set
         assert "DTEND" not in event  # DTEND should be removed
 
-    def test_event_duration_setter_creates_duration_property(self):
+    def test_event_duration_setter_creates_duration_property(self) -> None:
         """Test that setting duration creates DURATION property and removes DTEND."""
         event = Event()
         event.add("UID", "test-duration-property")
@@ -52,7 +52,7 @@ class TestDurationSetter:
         assert "DTEND" not in event
         assert event.duration == timedelta(hours=1)
 
-    def test_todo_duration_setter_with_start_locked(self):
+    def test_todo_duration_setter_with_start_locked(self) -> None:
         """Test setting duration for Todo with start locked."""
         todo = Todo()
         todo.add("UID", "test-todo-duration")
@@ -68,7 +68,7 @@ class TestDurationSetter:
         assert "DURATION" in todo
         assert "DUE" not in todo
 
-    def test_duration_setter_without_start_raises_error(self):
+    def test_duration_setter_without_start_raises_error(self) -> None:
         """Test that setting duration without start raises appropriate error."""
         event = Event()
         event.add("UID", "test-no-start")
@@ -80,7 +80,7 @@ class TestDurationSetter:
 class TestExplicitLockingMethods:
     """Test the explicit locking methods set_start(), set_end(), set_duration()."""
 
-    def test_set_duration_with_start_locked(self):
+    def test_set_duration_with_start_locked(self) -> None:
         """Test set_duration() with start locked (default)."""
         event = Event()
         event.add("UID", "test-set-duration")
@@ -94,7 +94,7 @@ class TestExplicitLockingMethods:
         assert event.end == datetime(2026, 1, 1, 15, 0)
         assert event.duration == timedelta(hours=3)
 
-    def test_set_duration_with_end_locked(self):
+    def test_set_duration_with_end_locked(self) -> None:
         """Test set_duration() with end locked."""
         event = Event()
         event.add("UID", "test-set-duration-end-locked")
@@ -108,7 +108,7 @@ class TestExplicitLockingMethods:
         assert event.end == datetime(2026, 1, 1, 14, 0)  # end unchanged
         assert event.duration == timedelta(hours=3)
 
-    def test_set_duration_convert_to_duration_property(self):
+    def test_set_duration_convert_to_duration_property(self) -> None:
         """Test set_duration() with None to convert to DURATION property."""
         event = Event()
         event.add("UID", "test-convert-duration")
@@ -122,7 +122,7 @@ class TestExplicitLockingMethods:
         assert "DTEND" not in event
         assert event.duration == timedelta(hours=2)
 
-    def test_set_start_with_duration_locked(self):
+    def test_set_start_with_duration_locked(self) -> None:
         """Test set_start() with duration locked."""
         event = Event()
         event.add("UID", "test-set-start")
@@ -136,7 +136,7 @@ class TestExplicitLockingMethods:
         assert event.end == datetime(2026, 1, 1, 12, 0)  # end adjusted
         assert event.duration == timedelta(hours=2)  # duration unchanged
 
-    def test_set_start_with_end_locked(self):
+    def test_set_start_with_end_locked(self) -> None:
         """Test set_start() with end locked."""
         event = Event()
         event.add("UID", "test-set-start-end-locked")
@@ -150,7 +150,7 @@ class TestExplicitLockingMethods:
         assert event.end == datetime(2026, 1, 1, 14, 0)  # end unchanged
         assert event.duration == timedelta(hours=4)  # duration adjusted
 
-    def test_set_end_with_start_locked(self):
+    def test_set_end_with_start_locked(self) -> None:
         """Test set_end() with start locked (default)."""
         event = Event()
         event.add("UID", "test-set-end")
@@ -164,7 +164,7 @@ class TestExplicitLockingMethods:
         assert event.end == datetime(2026, 1, 1, 16, 0)
         assert event.duration == timedelta(hours=4)  # duration adjusted
 
-    def test_set_end_with_duration_locked(self):
+    def test_set_end_with_duration_locked(self) -> None:
         """Test set_end() with duration locked."""
         event = Event()
         event.add("UID", "test-set-end-duration-locked")
@@ -182,7 +182,7 @@ class TestExplicitLockingMethods:
 class TestImprovedPropertySetters:
     """Test the improved property setters with smart defaults."""
 
-    def test_start_setter_with_duration_property(self):
+    def test_start_setter_with_duration_property(self) -> None:
         """Test start setter when DURATION property exists (should lock duration)."""
         event = Event()
         event.add("UID", "test-start-duration")
@@ -196,7 +196,7 @@ class TestImprovedPropertySetters:
         assert event.end == datetime(2026, 1, 1, 12, 0)
         assert event.duration == timedelta(hours=2)
 
-    def test_start_setter_with_dtend_property(self):
+    def test_start_setter_with_dtend_property(self) -> None:
         """Test start setter when DTEND property exists (should lock end)."""
         event = Event()
         event.add("UID", "test-start-dtend")
@@ -210,7 +210,7 @@ class TestImprovedPropertySetters:
         assert event.end == datetime(2026, 1, 1, 14, 0)
         assert event.duration == timedelta(hours=4)
 
-    def test_end_setter_with_duration_property(self):
+    def test_end_setter_with_duration_property(self) -> None:
         """Test end setter when DURATION property exists (should remove DURATION)."""
         event = Event()
         event.add("UID", "test-end-duration")
@@ -230,7 +230,7 @@ class TestImprovedPropertySetters:
 class TestRFCCompliance:
     """Test that the improved setters maintain RFC 5545 compliance."""
 
-    def test_dtend_and_duration_mutual_exclusion(self):
+    def test_dtend_and_duration_mutual_exclusion(self) -> None:
         """Test that DTEND and DURATION are mutually exclusive."""
         event = Event()
         event.add("UID", "test-mutual-exclusion")
@@ -247,7 +247,7 @@ class TestRFCCompliance:
         assert "DTEND" in event
         assert "DURATION" not in event
 
-    def test_date_duration_validation(self):
+    def test_date_duration_validation(self) -> None:
         """Test that date DTSTART with time-based DURATION raises error."""
         event = Event()
         event.add("UID", "test-date-duration")
@@ -261,7 +261,7 @@ class TestRFCCompliance:
         event.duration = timedelta(days=1)
         assert event.duration == timedelta(days=1)
 
-    def test_datetime_type_consistency(self):
+    def test_datetime_type_consistency(self) -> None:
         """Test that DTSTART and DTEND must have same type."""
         event = Event()
         event.add("UID", "test-type-consistency")
@@ -276,7 +276,7 @@ class TestRFCCompliance:
 class TestBackwardCompatibility:
     """Test that the improved setters maintain backward compatibility."""
 
-    def test_existing_simple_usage_still_works(self):
+    def test_existing_simple_usage_still_works(self) -> None:
         """Test that existing simple usage patterns still work."""
         event = Event()
         event.add("UID", "test-backward-compat")
@@ -289,7 +289,7 @@ class TestBackwardCompatibility:
         assert event.end == datetime(2026, 1, 1, 14, 0)
         assert event.duration == timedelta(hours=2)
 
-    def test_property_access_compatibility(self):
+    def test_property_access_compatibility(self) -> None:
         """Test that property access remains compatible."""
         event = Event()
         event.add("UID", "test-property-access")
@@ -310,40 +310,41 @@ class TestBackwardCompatibility:
 class TestErrorConditions:
     """Test error conditions and edge cases for improved coverage."""
 
-    def test_set_duration_invalid_locked_value(self):
+    def test_set_duration_invalid_locked_value(self) -> None:
         """Test that invalid locked values raise appropriate errors."""
         event = Event()
         event.add("UID", "test-invalid-locked")
         event.start = datetime(2026, 1, 1, 12, 0)
 
         with pytest.raises(
-            ValueError, match="locked must be 'start' or 'end', not 'invalid'"
+            ValueError, match="locked must be 'start' or 'end', not 'invalid'",
         ):
             event.set_duration(timedelta(hours=2), locked="invalid")
 
-    def test_set_start_invalid_locked_value(self):
+    def test_set_start_invalid_locked_value(self) -> None:
         """Test that invalid locked values raise appropriate errors."""
         event = Event()
         event.add("UID", "test-invalid-locked")
         event.start = datetime(2026, 1, 1, 12, 0)
 
         with pytest.raises(
-            ValueError, match="locked must be 'duration', 'end', or None, not 'invalid'"
+            ValueError,
+            match="locked must be 'duration', 'end', or None, not 'invalid'",
         ):
             event.set_start(datetime(2026, 1, 1, 14, 0), locked="invalid")
 
-    def test_set_end_invalid_locked_value(self):
+    def test_set_end_invalid_locked_value(self) -> None:
         """Test that invalid locked values raise appropriate errors."""
         event = Event()
         event.add("UID", "test-invalid-locked")
         event.start = datetime(2026, 1, 1, 12, 0)
 
         with pytest.raises(
-            ValueError, match="locked must be 'start' or 'duration', not 'invalid'"
+            ValueError, match="locked must be 'start' or 'duration', not 'invalid'",
         ):
             event.set_end(datetime(2026, 1, 1, 14, 0), locked="invalid")
 
-    def test_duration_setter_invalid_type(self):
+    def test_duration_setter_invalid_type(self) -> None:
         """Test that duration setter rejects invalid types."""
         event = Event()
         event.add("UID", "test-invalid-type")
@@ -352,7 +353,7 @@ class TestErrorConditions:
         with pytest.raises(TypeError, match="Use timedelta, not str"):
             event.duration = "2 hours"
 
-    def test_set_duration_invalid_type(self):
+    def test_set_duration_invalid_type(self) -> None:
         """Test that set_duration rejects invalid types."""
         event = Event()
         event.add("UID", "test-invalid-type")
@@ -361,7 +362,7 @@ class TestErrorConditions:
         with pytest.raises(TypeError, match="Use timedelta, not int"):
             event.set_duration(7200, locked="start")
 
-    def test_todo_error_conditions(self):
+    def test_todo_error_conditions(self) -> None:
         """Test error conditions for Todo class."""
         todo = Todo()
         todo.add("UID", "test-todo-errors")
@@ -369,21 +370,22 @@ class TestErrorConditions:
 
         # Test invalid locked values
         with pytest.raises(
-            ValueError, match="locked must be 'start' or 'end', not 'invalid'"
+            ValueError, match="locked must be 'start' or 'end', not 'invalid'",
         ):
             todo.set_duration(timedelta(hours=2), locked="invalid")
 
         with pytest.raises(
-            ValueError, match="locked must be 'duration', 'end', or None, not 'invalid'"
+            ValueError,
+            match="locked must be 'duration', 'end', or None, not 'invalid'",
         ):
             todo.set_start(datetime(2026, 1, 1, 14, 0), locked="invalid")
 
         with pytest.raises(
-            ValueError, match="locked must be 'start' or 'duration', not 'invalid'"
+            ValueError, match="locked must be 'start' or 'duration', not 'invalid'",
         ):
             todo.set_end(datetime(2026, 1, 1, 14, 0), locked="invalid")
 
-    def test_set_start_auto_detect_no_existing_properties(self):
+    def test_set_start_auto_detect_no_existing_properties(self) -> None:
         """Test auto-detection when no existing properties exist."""
         event = Event()
         event.add("UID", "test-auto-detect")
