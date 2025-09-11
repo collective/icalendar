@@ -30,7 +30,7 @@ if TYPE_CHECKING:
     from icalendar.cal.alarm import Alarm
     from icalendar.cal.event import Event
     from icalendar.cal.todo import Todo
-    
+
     Parent = Union[Event, Todo]
 
 
