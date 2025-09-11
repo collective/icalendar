@@ -6,6 +6,7 @@ import uuid
 from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Literal, Sequence
 
+from icalendar.alarms import Alarms
 from icalendar.attr import (
     X_MOZ_LASTACK_property,
     X_MOZ_SNOOZE_TIME_property,
@@ -17,6 +18,10 @@ from icalendar.attr import (
     create_single_property,
     description_property,
     exdates_property,
+    get_duration_property,
+    get_end_property,
+    get_start_end_duration_with_validation,
+    get_start_property,
     location_property,
     organizer_property,
     priority_property,
@@ -27,6 +32,9 @@ from icalendar.attr import (
     rdates_property,
     rrules_property,
     sequence_property,
+    set_duration_with_locking,
+    set_end_with_locking,
+    set_start_with_locking,
     status_property,
     summary_property,
     transparency_property,
@@ -35,17 +43,15 @@ from icalendar.attr import (
 )
 from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
-from icalendar.error import IncompleteComponent, InvalidCalendar
-from icalendar.tools import is_date
 
 if TYPE_CHECKING:
-    from icalendar.alarms import Alarms
     from icalendar.enums import CLASS, STATUS, TRANSP
     from icalendar.prop import vCalAddress
 
 
 class Event(Component):
-    """A grouping of component properties that describe an event.
+    """
+    A grouping of component properties that describe an event.
 
     Description:
         A "VEVENT" calendar component is a grouping of
@@ -232,7 +238,8 @@ class Event(Component):
 
     @property
     def alarms(self) -> Alarms:
-        """Compute the alarm times for this component.
+        """
+        Compute the alarm times for this component.
 
         >>> from icalendar import Event
         >>> event = Event.example("rfc_9074_example_1")
@@ -247,8 +254,6 @@ class Event(Component):
         Note that this only uses DTSTART and DTEND, but ignores
         RDATE, EXDATE, and RRULE properties.
         """
-        from icalendar.alarms import Alarms
-
         return Alarms(self)
 
     @classmethod
@@ -261,39 +266,23 @@ class Event(Component):
         "dt",
         (datetime, date),
         date,
-        'The "DTSTART" property for a "VEVENT" specifies the inclusive start of the event.',  # noqa: E501
+        'The "DTSTART" property for a "VEVENT" specifies the inclusive start of the event.',
     )
     DTEND = create_single_property(
         "DTEND",
         "dt",
         (datetime, date),
         date,
-        'The "DTEND" property for a "VEVENT" calendar component specifies the non-inclusive end of the event.',  # noqa: E501
+        'The "DTEND" property for a "VEVENT" calendar component specifies the non-inclusive end of the event.',
     )
 
-    def _get_start_end_duration(self):
+    def _get_start_end_duration(
+        self,
+    ) -> tuple[date | datetime | None, date | datetime | None, timedelta | None]:
         """Verify the calendar validity and return the right attributes."""
-        start = self.DTSTART
-        end = self.DTEND
-        duration = self.DURATION
-        if duration is not None and end is not None:
-            raise InvalidCalendar(
-                "Only one of DTEND and DURATION may be in a VEVENT, not both."
-            )
-        if (
-            start is not None
-            and is_date(start)
-            and duration is not None
-            and duration.seconds != 0
-        ):
-            raise InvalidCalendar(
-                "When DTSTART is a date, DURATION must be of days or weeks."
-            )
-        if start is not None and end is not None and is_date(start) != is_date(end):
-            raise InvalidCalendar(
-                "DTSTART and DTEND must be of the same type, either date or datetime."
-            )
-        return start, end, duration
+        return get_start_end_duration_with_validation(
+            self, "DTSTART", "DTEND", "VEVENT",
+        )
 
     DURATION = property(
         property_get_duration,
@@ -304,7 +293,8 @@ class Event(Component):
 
     @property
     def duration(self) -> timedelta:
-        """The duration of the VEVENT.
+        """
+        The duration of the VEVENT.
 
         Returns the DURATION property if set, otherwise calculated from start and end.
         When setting duration, the end time is automatically calculated from start +
@@ -318,24 +308,21 @@ class Event(Component):
         3. Remove any existing DTEND property
         4. Set the DURATION property
         """
-        # First check if DURATION property is explicitly set
-        if "DURATION" in self:
-            return self["DURATION"].dt
-
-        # Fall back to calculated duration from start and end
-        return self.end - self.start
+        return get_duration_property(self)
 
     @duration.setter
-    def duration(self, value: timedelta):
+    def duration(self, value: timedelta) -> None:
         if not isinstance(value, timedelta):
-            raise TypeError(f"Use timedelta, not {type(value).__name__}.")
+            msg = f"Use timedelta, not {type(value).__name__}."
+            raise TypeError(msg)
 
         # Use the set_duration method with default start-locked behavior
         self.set_duration(value, locked="start")
 
     @property
     def start(self) -> date | datetime:
-        """The start of the event.
+        """
+        The start of the event.
 
         Invalid values raise an InvalidCalendar.
         If there is no start, we also raise an IncompleteComponent error.
@@ -355,113 +342,67 @@ class Event(Component):
         DTEND:20210101T123000
         END:VEVENT
         """
-        start = self._get_start_end_duration()[0]
-        if start is None:
-            raise IncompleteComponent("No DTSTART given.")
-        return start
+        return get_start_property(self)
 
     @start.setter
-    def start(self, start: date | datetime | None):
+    def start(self, start: date | datetime | None) -> None:
         """Set the start."""
         self.DTSTART = start
 
     @property
     def end(self) -> date | datetime:
-        """The end of the event.
+        """
+        The end of the event.
 
         Invalid values raise an InvalidCalendar error.
         If there is no end, we also raise an IncompleteComponent error.
         """
-        start, end, duration = self._get_start_end_duration()
-        if end is None and duration is None:
-            if start is None:
-                raise IncompleteComponent("No DTEND or DURATION+DTSTART given.")
-            if is_date(start):
-                return start + timedelta(days=1)
-            return start
-        if duration is not None:
-            if start is not None:
-                return start + duration
-            raise IncompleteComponent("No DTEND or DURATION+DTSTART given.")
-        return end
+        return get_end_property(self, "DTEND")
 
     @end.setter
-    def end(self, end: date | datetime | None):
+    def end(self, end: date | datetime | None) -> None:
         """Set the end."""
         self.DTEND = end
 
     def set_duration(
-        self, duration: timedelta | None, locked: Literal["start", "end"] = "start"
-    ):
-        """Set the duration of the event relative to either start or end.
+        self, duration: timedelta | None, locked: Literal["start", "end"] = "start",
+    ) -> None:
+        """
+        Set the duration of the event relative to either start or end.
 
         Args:
             duration: The duration to set, or None to convert to DURATION property
             locked: Which property to keep unchanged ('start' or 'end')
-        """
-        from icalendar.attr import set_duration_with_locking
 
+        """
         set_duration_with_locking(self, duration, locked, "DTEND")
 
     def set_start(
-        self, start: date | datetime, locked: Literal["duration", "end"] | None = None
-    ):
-        """Set the start and keep the duration or end of the event.
+        self, start: date | datetime, locked: Literal["duration", "end"] | None = None,
+    ) -> None:
+        """
+        Set the start and keep the duration or end of the event.
 
         Args:
             start: The start time to set
             locked: Which property to keep unchanged ('duration', 'end', or None
                 for auto-detect)
-        """
-        if locked is None:
-            # Auto-detect based on existing properties
-            if "DURATION" in self:
-                locked = "duration"
-            elif "DTEND" in self:
-                locked = "end"
-            else:
-                # Default to duration if no existing properties
-                locked = "duration"
 
-        if locked == "duration":
-            # Keep duration locked, adjust end
-            current_duration = (
-                self.duration if "DURATION" in self or "DTEND" in self else None
-            )
-            self.DTSTART = start
-            if current_duration is not None:
-                self.DURATION = current_duration
-        elif locked == "end":
-            # Keep end locked, adjust duration
-            current_end = self.end
-            self.DTSTART = start
-            self.pop("DURATION", None)
-            self.DTEND = current_end
-        else:
-            raise ValueError(
-                f"locked must be 'duration', 'end', or None, not {locked!r}"
-            )
+        """
+        set_start_with_locking(self, start, locked, "DTEND")
 
     def set_end(
-        self, end: date | datetime, locked: Literal["start", "duration"] = "start"
-    ):
-        """Set the end of the component, keeping either the start or the duration same.
+        self, end: date | datetime, locked: Literal["start", "duration"] = "start",
+    ) -> None:
+        """
+        Set the end of the component, keeping either the start or the duration same.
 
         Args:
             end: The end time to set
             locked: Which property to keep unchanged ('start' or 'duration')
+
         """
-        if locked == "start":
-            # Keep start locked, adjust duration
-            self.pop("DURATION", None)
-            self.DTEND = end
-        elif locked == "duration":
-            # Keep duration locked, adjust start
-            current_duration = self.duration
-            self.DTSTART = end - current_duration
-            self.DURATION = current_duration
-        else:
-            raise ValueError(f"locked must be 'start' or 'duration', not {locked!r}")
+        set_end_with_locking(self, end, locked, "DTEND")
 
     X_MOZ_SNOOZE_TIME = X_MOZ_SNOOZE_TIME_property
     X_MOZ_LASTACK = X_MOZ_LASTACK_property
@@ -509,8 +450,9 @@ class Event(Component):
         summary: str | None = None,
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
-    ):
-        """Create a new event with all required properties.
+    ) -> Event:
+        """
+        Create a new event with all required properties.
 
         This creates a new Event in accordance with :rfc:`5545`.
 
@@ -520,6 +462,7 @@ class Event(Component):
             classification: The :attr:`classification` of the event.
             color: The :attr:`color` of the event.
             comments: The :attr:`Component.comments` of the event.
+            contacts: The :attr:`contacts` of the event.
             created: The :attr:`Component.created` of the event.
             description: The :attr:`description` of the event.
             end: The :attr:`end` of the event.
@@ -545,6 +488,7 @@ class Event(Component):
             InvalidCalendar: If the content is not valid according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
+
         """
         event = super().new(
             stamp=stamp if stamp is not None else cls._utc_now(),
