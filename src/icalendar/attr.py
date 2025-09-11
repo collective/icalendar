@@ -885,6 +885,38 @@ Examples:
 )
 
 
+def _validate_property_value(
+    prop: str,
+    value: object,
+    value_type: tuple[type],
+) -> None:
+    """Validate a property value against expected types."""
+    if not isinstance(value, value_type):
+        type_names = " or ".join(t.__name__ for t in value_type)
+        msg = f"{prop} must be either a {type_names}, not {value}."
+        raise InvalidCalendar(msg)
+
+
+def _validate_setter_value(
+    value: object,
+    value_type: tuple[type],
+) -> None:
+    """Validate a setter value against expected types."""
+    if not isinstance(value, value_type):
+        type_names = " or ".join(t.__name__ for t in value_type)
+        actual_type = type(value).__name__
+        msg = f"Use {type_names}, not {actual_type}."
+        raise TypeError(msg)
+
+
+def _handle_exclusive_properties(component: Component, prop: str) -> None:
+    """Handle exclusive property logic by removing conflicting properties."""
+    if prop in component.exclusive:
+        for other_prop in component.exclusive:
+            if other_prop != prop:
+                component.pop(other_prop, None)
+
+
 def create_single_property(
     prop: str,
     value_attr: str | None,
@@ -913,34 +945,16 @@ def create_single_property(
             msg = f"Multiple {prop} defined."
             raise InvalidCalendar(msg)
         value = result if value_attr is None else getattr(result, value_attr, result)
-        if not isinstance(value, value_type):
-            msg = (
-                f"{prop} must be either a "
-                f"{' or '.join(t.__name__ for t in value_type)},"
-                f" not {value}."
-            )
-            raise InvalidCalendar(
-                msg,
-            )
+        _validate_property_value(prop, value, value_type)
         return value
 
     def p_set(self: Component, value: type_def | None) -> None:
         if value is None:
             p_del(self)
             return
-        if not isinstance(value, value_type):
-            msg = (
-                f"Use {' or '.join(t.__name__ for t in value_type)}, "
-                f"not {type(value).__name__}."
-            )
-            raise TypeError(
-                msg,
-            )
+        _validate_setter_value(value, value_type)
         self[prop] = vProp(value)
-        if prop in self.exclusive:
-            for other_prop in self.exclusive:
-                if other_prop != prop:
-                    self.pop(other_prop, None)
+        _handle_exclusive_properties(self, prop)
 
     p_set.__annotations__["value"] = p_get.__annotations__["return"] = Optional[
         type_def
@@ -949,11 +963,12 @@ def create_single_property(
     def p_del(self: Component) -> None:
         self.pop(prop)
 
+    type_names = ", ".join(t.__name__ for t in value_type)
     p_doc = f"""The {prop} property.
 
     {doc}
 
-    Accepted values: {", ".join(t.__name__ for t in value_type)}.
+    Accepted values: {type_names}.
     If the attribute has invalid values, we raise InvalidCalendar.
     If the value is absent, we return None.
     You can also delete the value with del or by setting it to None.
