@@ -15,9 +15,6 @@ from __future__ import annotations
 
 from datetime import date, timedelta, tzinfo
 from typing import TYPE_CHECKING, Generator, Optional, Union
-
-from icalendar.cal.event import Event
-from icalendar.cal.todo import Todo
 from icalendar.error import (
     ComponentEndMissing,
     ComponentStartMissing,
@@ -31,8 +28,10 @@ if TYPE_CHECKING:
     from datetime import datetime
 
     from icalendar.cal.alarm import Alarm
-
-Parent = Union[Event, Todo]
+    from icalendar.cal.event import Event
+    from icalendar.cal.todo import Todo
+    
+    Parent = Union[Event, Todo]
 
 
 class AlarmTime:
@@ -44,7 +43,7 @@ class AlarmTime:
         trigger: datetime,
         acknowledged_until: Optional[datetime] = None,
         snoozed_until: Optional[datetime] = None,
-        parent: Optional[Parent] = None,
+        parent: Optional["Event | Todo"] = None,
     ):
         """Create a new AlarmTime.
 
@@ -93,7 +92,7 @@ class AlarmTime:
         return self._alarm
 
     @property
-    def parent(self) -> Optional[Parent]:
+    def parent(self) -> Optional["Event | Todo"]:
         """This is the component that contains the alarm.
 
         This is None if you did not use Alarms.set_component().
@@ -178,14 +177,16 @@ class Alarms:
     This is not implemented yet.
     """
 
-    def __init__(self, component: Optional[Alarm | Event | Todo] = None):
+    def __init__(self, component: Optional["Alarm | Event | Todo"] = None):
         """Start computing alarm times."""
+        from icalendar.cal.event import Event
+        from icalendar.cal.todo import Todo
         self._absolute_alarms: list[Alarm] = []
         self._start_alarms: list[Alarm] = []
         self._end_alarms: list[Alarm] = []
         self._start: Optional[date] = None
         self._end: Optional[date] = None
-        self._parent: Optional[Parent] = None
+        self._parent: Optional["Event | Todo"] = None
         self._last_ack: Optional[datetime] = None
         self._snooze_until: Optional[datetime] = None
         self._local_tzinfo: Optional[tzinfo] = None
@@ -193,13 +194,16 @@ class Alarms:
         if component is not None:
             self.add_component(component)
 
-    def add_component(self, component: Alarm | Parent):
+    def add_component(self, component: "Alarm | Event | Todo"):
         """Add a component.
 
         If this is an alarm, it is added.
         Events and Todos are added as a parent and all
         their alarms are added, too.
         """
+        from icalendar.cal.event import Event
+        from icalendar.cal.todo import Todo
+        
         if isinstance(component, (Event, Todo)):
             self.set_parent(component)
             self.set_start(component.start)
@@ -213,7 +217,7 @@ class Alarms:
         for alarm in component.walk("VALARM"):
             self.add_alarm(alarm)
 
-    def set_parent(self, parent: Parent):
+    def set_parent(self, parent: "Event | Todo"):
         """Set the parent of all the alarms.
 
         If you would like to collect alarms from a component, use add_component
