@@ -15,9 +15,6 @@ from __future__ import annotations
 
 from datetime import date, timedelta, tzinfo
 from typing import TYPE_CHECKING, Generator, Optional, Union
-
-from icalendar.cal.event import Event
-from icalendar.cal.todo import Todo
 from icalendar.error import (
     ComponentEndMissing,
     ComponentStartMissing,
@@ -31,8 +28,10 @@ if TYPE_CHECKING:
     from datetime import datetime
 
     from icalendar.cal.alarm import Alarm
+    from icalendar.cal.event import Event
+    from icalendar.cal.todo import Todo
 
-Parent = Union[Event, Todo]
+    Parent = Union[Event, Todo]
 
 
 class AlarmTime:
@@ -178,7 +177,7 @@ class Alarms:
     This is not implemented yet.
     """
 
-    def __init__(self, component: Optional[Alarm | Event | Todo] = None):
+    def __init__(self, component: Optional[Alarm | Parent] = None):
         """Start computing alarm times."""
         self._absolute_alarms: list[Alarm] = []
         self._start_alarms: list[Alarm] = []
@@ -200,6 +199,8 @@ class Alarms:
         Events and Todos are added as a parent and all
         their alarms are added, too.
         """
+        from icalendar.cal.event import Event
+        from icalendar.cal.todo import Todo
         if isinstance(component, (Event, Todo)):
             self.set_parent(component)
             self.set_start(component.start)
