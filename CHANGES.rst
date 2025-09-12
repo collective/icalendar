@@ -27,7 +27,8 @@ Minor changes:
 - Refactor ``set_duration`` methods in ``Event`` and ``Todo`` classes to eliminate code duplication by extracting common logic into shared ``set_duration_with_locking()`` function in ``icalendar.attr``. See `Issue 886 <https://github.com/collective/icalendar/issues/886>`_.
 - Consolidate duplicate logic patterns between ``Event`` and ``Todo`` classes by extracting all shared validation, property access, and setter functionality into ``icalendar.attr``. This includes ``set_start``, ``set_end``, ``_get_start_end_duration``, ``start``, ``end``, and ``duration`` property getters. Complete elimination of code duplication between the two classes while maintaining identical functionality and full backward compatibility. See `Issue 891 <https://github.com/collective/icalendar/issues/891>`_.
 - Improve contributing documentation by adding a change log requirement, adding a pull request template, adding clear CI enforcement warnings, and updating ``README.rst``. See `Issue 890 <https://github.com/collective/icalendar/issues/890>`_.
-- Make coverage submission optional for CI
+- Make coverage submission optional for CI.
+- Bump ``actions/setup-python`` version from 5 to 6 for CI.
 
 Breaking changes:
 
