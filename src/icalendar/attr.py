@@ -1312,6 +1312,19 @@ Description:
     the format of the resource pointed to by the property value.  If
     the URL property and Content-Location MIME header are both
     specified, they MUST point to the same resource.
+
+Conformance:
+    This property can be specified once in the "VEVENT",
+    "VTODO", "VJOURNAL", or "VFREEBUSY" calendar components.
+    Since :rfc:`7986`, this property can also be defined on a "VCALENDAR".
+
+Example:
+    The following is an example of this property:
+
+    .. code-block:: text
+
+        URL:http://example.com/pub/calendars/jsmith/mytime.ics
+
 """,
 )
 

@@ -9,6 +9,7 @@ from icalendar.attr import (
     multi_language_text_property,
     single_string_property,
     uid_property,
+    url_property,
 )
 from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
@@ -458,6 +459,7 @@ Description:
     scheduling semantic.
 """,  # noqa: E501
     )
+    url = url_property
 
     @classmethod
     def new(
@@ -473,6 +475,7 @@ Description:
         organization: str | None = None,
         prodid: str | None = None,
         uid: str | uuid.UUID | None = None,
+        url: str | None = None,
         version: str = "2.0",
     ):
         """Create a new Calendar with all required properties.
@@ -492,6 +495,7 @@ Description:
                 generates a `prodid` in format "-//organization//name//language".
             uid: The :attr:`uid` of the component.
                 If None, this is set to a new :func:`uuid.uuid4`.
+            url: The :attr:`url` of the component.
             version: The :attr:`version` of the component.
 
         Returns:
@@ -501,7 +505,7 @@ Description:
             InvalidCalendar: If the content is not valid according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
-        """
+        """  # noqa: E501
         calendar = cls()
 
         # Generate prodid if not provided but organization is given
@@ -521,6 +525,7 @@ Description:
         calendar.calscale = calscale
         calendar.categories = categories
         calendar.uid = uid
+        calendar.url = url
         return calendar
 
     def validate(self):
@@ -529,7 +534,8 @@ Description:
         This method can be called explicitly to validate a calendar before output.
 
         Raises:
-            IncompleteComponent: If the calendar lacks required properties or components.
+            IncompleteComponent: If the calendar lacks required properties or
+                components.
         """
         if not self.get("PRODID"):
             raise IncompleteComponent("Calendar must have a PRODID")
