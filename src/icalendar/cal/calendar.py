@@ -20,7 +20,7 @@ from icalendar.version import __version__
 
 if TYPE_CHECKING:
     import uuid
-    from datetime import date, timedelta
+    from datetime import date, datetime, timedelta
 
     from icalendar.cal.availability import Availability
     from icalendar.cal.event import Event
@@ -484,13 +484,13 @@ Description:
         return refresh_interval.dt if refresh_interval else None
 
     @refresh_interval.setter
-    def refreh_interval(self, value: timedelta | None):
+    def refresh_interval(self, value: timedelta | None):
         """Set the REFRESH-INTERVAL."""
         del self.refresh_interval
         if value is not None:
             self.add("REFRESH-INTERVAL", value)
 
-    @refreh_interval.deleter
+    @refresh_interval.deleter
     def refresh_interval(self):
         """Delete REFRESH-INTERVAL."""
         self.pop("REFRESH-INTERVAL")
@@ -504,6 +504,7 @@ Description:
         color: str | None = None,
         description: str | None = None,
         language: str | None = None,
+        last_modified: date | datetime | None = None,
         method: str | None = None,
         name: str | None = None,
         organization: str | None = None,
@@ -516,24 +517,25 @@ Description:
     ):
         """Create a new Calendar with all required properties.
 
-        This creates a new Calendar in accordance with :rfc:`5545`.
+        This creates a new Calendar in accordance with :rfc:`5545` and :rfc:`7986`.
 
         Arguments:
-            calscale: The :attr:`calscale` of the component.
-            categories: The :attr:`categories` of the component.
-            color: The :attr:`color` of the component.
-            description: The :attr:`description` of the component.
+            calscale: The :attr:`calscale` of the calendar.
+            categories: The :attr:`categories` of the calendar.
+            color: The :attr:`color` of the calendar.
+            description: The :attr:`description` of the calendar.
             language: The language for the calendar. Used to generate localized `prodid`.
-            method: The :attr:`method` of the component.
-            name: The :attr:`calendar_name` of the component.
+            last_modified: The :attr:`Component.last_modified` of the calendar.
+            method: The :attr:`method` of the calendar.
+            name: The :attr:`calendar_name` of the calendar.
             organization: The organization name. Used to generate `prodid` if not provided.
             prodid: The :attr:`prodid` of the component. If None and organization is provided,
                 generates a `prodid` in format "-//organization//name//language".
-            source: The :attr:`source` of the component.
-            uid: The :attr:`uid` of the component.
+            source: The :attr:`source` of the calendar.
+            uid: The :attr:`uid` of the calendar.
                 If None, this is set to a new :func:`uuid.uuid4`.
-            url: The :attr:`url` of the component.
-            version: The :attr:`version` of the component.
+            url: The :attr:`url` of the calendar.
+            version: The :attr:`version` of the calendar.
 
         Returns:
             :class:`Calendar`
@@ -563,8 +565,9 @@ Description:
         calendar.categories = categories
         calendar.uid = uid
         calendar.url = url
-        calendar.refreh_interval = refresh_interval
+        calendar.refresh_interval = refresh_interval
         calendar.source = source
+        calendar.last_modified = last_modified
         return calendar
 
     def validate(self):
