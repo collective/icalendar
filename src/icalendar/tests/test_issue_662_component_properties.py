@@ -394,16 +394,33 @@ incomplete_todo_2.add("DURATION", timedelta(hours=1))
     "incomplete_event_end",
     [
         incomplete_event_1,
-        incomplete_event_2,
         incomplete_todo_1,
-        incomplete_todo_2,
     ],
 )
 @pytest.mark.parametrize("attr", ["start", "end", "duration"])
 def test_incomplete_event(incomplete_event_end, attr):
-    """Test that the end throws the right error."""
+    """Test that components without required properties throw the right error."""
     with pytest.raises(IncompleteComponent):
         getattr(incomplete_event_end, attr)
+
+
+@pytest.mark.parametrize(
+    "component_with_duration",
+    [
+        incomplete_event_2,  # Event with DURATION property
+        incomplete_todo_2,  # Todo with DURATION property
+    ],
+)
+def test_duration_property_accessible_without_dtstart(component_with_duration):
+    """Test that DURATION property is accessible even without DTSTART (fixes issue #867)."""
+    # DURATION property should be accessible directly
+    assert component_with_duration.duration == timedelta(hours=1)
+
+    # But start and end should still raise errors for incomplete components
+    with pytest.raises(IncompleteComponent):
+        _ = component_with_duration.start
+    with pytest.raises(IncompleteComponent):
+        _ = component_with_duration.end
 
 
 @pytest.mark.parametrize(

@@ -11,6 +11,7 @@ from icalendar.error import IncompleteComponent, InvalidCalendar
 from icalendar.parser_tools import SEQUENCE_TYPES
 from icalendar.prop import vCalAddress, vCategory, vDDDTypes, vDuration, vRecur, vText
 from icalendar.timezone import tzp
+from icalendar.tools import is_date
 
 if TYPE_CHECKING:
     from icalendar.cal import Component
@@ -1503,6 +1504,49 @@ def rfc_7953_end_property(self):
     del self.DTEND
 
 
+def set_duration_with_locking(component, duration, locked, end_property):
+    """Set the duration with explicit locking behavior for Event and Todo components.
+
+    Args:
+        component: The component to modify (Event or Todo)
+        duration: The duration to set, or None to convert to DURATION property
+        locked: Which property to keep unchanged ('start' or 'end')
+        end_property: The end property name ('DTEND' for Event, 'DUE' for Todo)
+    """
+    # Convert to DURATION property if duration is None
+    if duration is None:
+        if "DURATION" in component:
+            return  # Already has DURATION property
+        current_duration = component.duration
+        component.DURATION = current_duration
+        return
+
+    if not isinstance(duration, timedelta):
+        raise TypeError(f"Use timedelta, not {type(duration).__name__}.")
+
+    # Validate date/duration compatibility
+    start = component.DTSTART
+    if start is not None and is_date(start) and duration.seconds != 0:
+        raise InvalidCalendar(
+            "When DTSTART is a date, DURATION must be of days or weeks."
+        )
+
+    if locked == "start":
+        # Keep start locked, adjust end
+        if start is None:
+            raise IncompleteComponent(
+                "Cannot set duration without DTSTART. Set start time first."
+            )
+        component.DURATION = duration
+    elif locked == "end":
+        # Keep end locked, adjust start
+        current_end = component.end
+        component.DTSTART = current_end - duration
+        component.DURATION = duration
+    else:
+        raise ValueError(f"locked must be 'start' or 'end', not {locked!r}")
+
+
 __all__ = [
     "attendees_property",
     "busy_type_property",
@@ -1531,6 +1575,7 @@ __all__ = [
     "rfc_7953_end_property",
     "rrules_property",
     "sequence_property",
+    "set_duration_with_locking",
     "single_int_property",
     "single_utc_property",
     "status_property",
