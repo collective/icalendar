@@ -759,6 +759,24 @@ rfc_7986_test_cases = [
         True,
         "setting a string",
     ),
+    (
+        {Calendar},
+        "refresh_interval",
+        "REFRESH-INTERVAL",
+        timedelta(hours=1),
+        timedelta(hours=1),
+        True,
+        "setting a timedelta",
+    ),
+    (
+        {Calendar},
+        "refresh_interval",
+        "REFRESH-INTERVAL",
+        None,
+        None,
+        False,
+        "setting nothing",
+    ),
 ]
 
 

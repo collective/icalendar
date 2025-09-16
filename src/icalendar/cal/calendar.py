@@ -8,6 +8,7 @@ from icalendar.attr import (
     categories_property,
     multi_language_text_property,
     single_string_property,
+    source_property,
     uid_property,
     url_property,
 )
@@ -19,7 +20,7 @@ from icalendar.version import __version__
 
 if TYPE_CHECKING:
     import uuid
-    from datetime import date
+    from datetime import date, timedelta
 
     from icalendar.cal.availability import Availability
     from icalendar.cal.event import Event
@@ -460,6 +461,34 @@ Description:
 """,  # noqa: E501
     )
     url = url_property
+    source = source_property
+
+    @property
+    def refresh_interval(self) -> timedelta | None:
+        """REFRESH-INTERVAL specifies a suggested minimum interval for
+        polling for changes of the calendar data from the original source
+        of that data.
+
+        Conformance:
+            This property can be specified once in an iCalendar
+            object, consisting of a positive duration of time.
+
+        Description:
+            This property specifies a positive duration that gives
+            a suggested minimum polling interval for checking for updates to
+            the calendar data.  The value of this property SHOULD be used by
+            calendar user agents to limit the polling interval for calendar
+            data updates to the minimum interval specified.
+        """
+        refresh_interval = self.get("REFRESH-INTERVAL")
+        return refresh_interval.dt if refresh_interval else None
+
+    @refresh_interval.setter
+    def refreh_interval(self, value: timedelta | None):
+        """Set the REFRESH-INTERVAL."""
+        self.pop("REFRESH-INTERVAL")
+        if value is not None:
+            self.add("REFRESH-INTERVAL", value)
 
     @classmethod
     def new(
@@ -474,6 +503,8 @@ Description:
         name: str | None = None,
         organization: str | None = None,
         prodid: str | None = None,
+        refresh_interval: timedelta | None = None,
+        source: str | None = None,
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
         version: str = "2.0",
@@ -493,6 +524,7 @@ Description:
             organization: The organization name. Used to generate `prodid` if not provided.
             prodid: The :attr:`prodid` of the component. If None and organization is provided,
                 generates a `prodid` in format "-//organization//name//language".
+            source: The :attr:`source` of the component.
             uid: The :attr:`uid` of the component.
                 If None, this is set to a new :func:`uuid.uuid4`.
             url: The :attr:`url` of the component.
@@ -526,6 +558,8 @@ Description:
         calendar.categories = categories
         calendar.uid = uid
         calendar.url = url
+        calendar.refreh_interval = refresh_interval
+        calendar.source = source
         return calendar
 
     def validate(self):

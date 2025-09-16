@@ -51,7 +51,7 @@ from datetime import date, datetime, time, timedelta
 from typing import Any, Optional, Union
 
 from icalendar.caselessdict import CaselessDict
-from icalendar.enums import VALUE, Enum
+from icalendar.enums import Enum
 from icalendar.parser import Parameters, escape_char, unescape_char
 from icalendar.parser_tools import (
     DEFAULT_ENCODING,
@@ -197,7 +197,7 @@ class vText(str):
 
 
 class vCalAddress(str):
-    """Calendar User Address
+    r"""Calendar User Address
 
     Value Name:
         CAL-ADDRESS
@@ -2118,6 +2118,7 @@ class TypesFactory(CaselessDict):
             "duration": "duration",
             "freebusy": "period",
             "transp": "text",
+            "refresh-interval": "duration",  # RFC 7986
             # Time Zone Component Properties
             "tzid": "text",
             "tzname": "text",
@@ -2131,6 +2132,7 @@ class TypesFactory(CaselessDict):
             "recurrence-id": "date-time",
             "related-to": "text",
             "url": "uri",
+            "source": "uri",
             "uid": "text",
             # Recurrence Component Properties
             "exdate": "date-time-list",

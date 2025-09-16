@@ -1328,6 +1328,31 @@ Example:
 """,
 )
 
+source_property = single_string_property(
+    "SOURCE",
+    """A URI where calendar data can be refreshed from.
+
+Description:
+    This property identifies a location where a client can
+    retrieve updated data for the calendar.  Clients SHOULD honor any
+    specified "REFRESH-INTERVAL" value when periodically retrieving
+    data.  Note that this property differs from the "URL" property in
+    that "URL" is meant to provide an alternative representation of
+    the calendar data rather than the original location of the data.
+
+Conformance:
+    This property can be specified once in an iCalendar object.
+
+Example:
+    The following is an example of this property:
+
+    .. code-block:: text
+
+        SOURCE;VALUE=URI:https://example.com/holidays.ics
+
+""",
+)
+
 location_property = multi_language_text_property(
     "LOCATION",
     None,
@@ -1591,6 +1616,7 @@ __all__ = [
     "set_duration_with_locking",
     "single_int_property",
     "single_utc_property",
+    "source_property",
     "status_property",
     "summary_property",
     "transparency_property",
