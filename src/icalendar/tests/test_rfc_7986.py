@@ -230,7 +230,7 @@ def test_refresh_interval_set_to_value_by_dict(calendar: Calendar):
     """REFRESH-INTERVAL setting."""
     calendar.add("REFRESH-INTERVAL", timedelta(days=1, hours=2))
     assert calendar.refresh_interval == timedelta(days=1, hours=2)
-    assert calendar["REFRESH-INTERVAL"].td == timedelta(days=1, hours=2)
+    assert calendar["REFRESH-INTERVAL"].dt == timedelta(days=1, hours=2)
 
 
 def get_rfc_7986_properties_calendar(calendars):

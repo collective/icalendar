@@ -486,9 +486,14 @@ Description:
     @refresh_interval.setter
     def refreh_interval(self, value: timedelta | None):
         """Set the REFRESH-INTERVAL."""
-        self.pop("REFRESH-INTERVAL")
+        del self.refresh_interval
         if value is not None:
             self.add("REFRESH-INTERVAL", value)
+
+    @refreh_interval.deleter
+    def refresh_interval(self):
+        """Delete REFRESH-INTERVAL."""
+        self.pop("REFRESH-INTERVAL")
 
     @classmethod
     def new(
