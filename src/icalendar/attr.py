@@ -1557,7 +1557,7 @@ def get_start_property(component: Component) -> date | datetime:
     Get the start property with validation.
 
     Args:
-        component: The component to get start from
+        component: The component from which to get its start property.
 
     Returns:
         The DTSTART value
