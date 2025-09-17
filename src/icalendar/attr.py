@@ -1642,10 +1642,10 @@ def set_duration_with_locking(
     Set the duration with explicit locking behavior for ``Event`` and ``Todo`` components.
 
     Args:
-        component: The component to modify (Event or Todo)
-        duration: The duration to set, or None to convert to DURATION property
-        locked: Which property to keep unchanged ('start' or 'end')
-        end_property: The end property name ('DTEND' for Event, 'DUE' for Todo)
+        component: The component to modify, either ``Event`` or ``Todo``.
+        duration: The duration to set, or ``None`` to convert to ``DURATION`` property.
+        locked: Which property to keep unchanged, either ``start`` or ``end``.
+        end_property: The end property name, either ``DTEND`` for ``Event`` or ``DUE`` for ``Todo``.
 
     """
     # Convert to DURATION property if duration is None
