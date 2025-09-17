@@ -1563,7 +1563,7 @@ def get_start_property(component: Component) -> date | datetime:
         The ``DTSTART`` value.
 
     Raises:
-        IncompleteComponent: If no DTSTART is present
+        IncompleteComponent: If no ``DTSTART`` is present.
 
     """
     # Trigger validation by calling _get_start_end_duration
