@@ -1560,7 +1560,7 @@ def get_start_property(component: Component) -> date | datetime:
         component: The component from which to get its start property.
 
     Returns:
-        The DTSTART value
+        The ``DTSTART`` value.
 
     Raises:
         IncompleteComponent: If no DTSTART is present
