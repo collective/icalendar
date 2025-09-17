@@ -1742,10 +1742,10 @@ def set_end_with_locking(
     Set the end with explicit locking behavior for Event and Todo components.
 
     Args:
-        component: The component to modify (Event or Todo)
-        end: The end time to set
-        locked: Which property to keep unchanged ('start' or 'duration')
-        end_property: The end property name ('DTEND' for Event, 'DUE' for Todo)
+        component: The component to modify, either ``Event`` or ``Todo``.
+        end: The end time to set.
+        locked: Which property to keep unchanged, either ``start`` or ``duration``.
+        end_property: The end property name, either ``DTEND`` for ``Event`` or ``DUE`` for ``Todo``.
 
     """
     if locked == "start":
