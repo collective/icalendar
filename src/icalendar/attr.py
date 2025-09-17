@@ -1511,10 +1511,10 @@ def get_start_end_duration_with_validation(
     Verify calendar validity and return start, end, and duration with RFC 5545 validation.
 
     Args:
-        component: The component to validate (Event or Todo)
-        start_property: The start property name ('DTSTART')
-        end_property: The end property name ('DTEND' for Event, 'DUE' for Todo)
-        component_name: The component name for error messages ('VEVENT' or 'VTODO')
+        component: The component to validate, either ``Event`` or ``Todo``.
+        start_property: The start property name, ``DTSTART``.
+        end_property: The end property name, either ``DTEND`` for ``Event`` or ``DUE`` for ``Todo``.
+        component_name: The component name for error messages, either ``VEVENT`` or ``VTODO``.
 
     Returns:
         tuple: (start, end, duration) values from the component
