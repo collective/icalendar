@@ -1517,10 +1517,10 @@ def get_start_end_duration_with_validation(
         component_name: The component name for error messages, either ``VEVENT`` or ``VTODO``.
 
     Returns:
-        tuple: (start, end, duration) values from the component
+        tuple: (start, end, duration) values from the component.
 
     Raises:
-        InvalidCalendar: If the component violates RFC 5545 constraints
+        InvalidCalendar: If the component violates RFC 5545 constraints.
 
     """
     start = getattr(component, start_property, None)
