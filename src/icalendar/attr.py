@@ -1583,10 +1583,10 @@ def get_end_property(component: Component, end_property: str) -> date | datetime
         end_property: The end property name ('DTEND' for Event, 'DUE' for Todo)
 
     Returns:
-        The computed end value
+        The computed end value.
 
     Raises:
-        IncompleteComponent: If insufficient information to compute end
+        IncompleteComponent: If the provided information is incomplete to compute the end property.
 
     """
     # Trigger validation by calling _get_start_end_duration
