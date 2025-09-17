@@ -1312,6 +1312,44 @@ Description:
     the format of the resource pointed to by the property value.  If
     the URL property and Content-Location MIME header are both
     specified, they MUST point to the same resource.
+
+Conformance:
+    This property can be specified once in the "VEVENT",
+    "VTODO", "VJOURNAL", or "VFREEBUSY" calendar components.
+    Since :rfc:`7986`, this property can also be defined on a "VCALENDAR".
+
+Example:
+    The following is an example of this property:
+
+    .. code-block:: text
+
+        URL:http://example.com/pub/calendars/jsmith/mytime.ics
+
+""",
+)
+
+source_property = single_string_property(
+    "SOURCE",
+    """A URI where calendar data can be refreshed from.
+
+Description:
+    This property identifies a location where a client can
+    retrieve updated data for the calendar.  Clients SHOULD honor any
+    specified "REFRESH-INTERVAL" value when periodically retrieving
+    data.  Note that this property differs from the "URL" property in
+    that "URL" is meant to provide an alternative representation of
+    the calendar data rather than the original location of the data.
+
+Conformance:
+    This property can be specified once in an iCalendar object.
+
+Example:
+    The following is an example of this property:
+
+    .. code-block:: text
+
+        SOURCE;VALUE=URI:https://example.com/holidays.ics
+
 """,
 )
 
@@ -1800,6 +1838,7 @@ __all__ = [
     "set_start_with_locking",
     "single_int_property",
     "single_utc_property",
+    "source_property",
     "status_property",
     "summary_property",
     "transparency_property",
