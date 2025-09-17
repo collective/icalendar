@@ -1580,7 +1580,7 @@ def get_end_property(component: Component, end_property: str) -> date | datetime
 
     Args:
         component: The component to get end from
-        end_property: The end property name ('DTEND' for Event, 'DUE' for Todo)
+        end_property: The end property name, either ``DTEND`` for ``Event`` or ``DUE`` for ``Todo``.
 
     Returns:
         The computed end value.
