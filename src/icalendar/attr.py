@@ -1576,7 +1576,7 @@ def get_start_property(component: Component) -> date | datetime:
 
 def get_end_property(component: Component, end_property: str) -> date | datetime:
     """
-    Get the end property with fallback logic for Event and Todo components.
+    Get the end property with fallback logic for ``Event`` and ``Todo`` components.
 
     Args:
         component: The component to get end from
