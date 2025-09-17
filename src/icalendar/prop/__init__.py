@@ -60,9 +60,10 @@ from icalendar.parser_tools import (
     from_unicode,
     to_unicode,
 )
+from icalendar.timezone import tzid_from_dt, tzid_from_tzinfo, tzp
 from icalendar.tools import to_datetime
 
-from .timezone import tzid_from_dt, tzid_from_tzinfo, tzp
+from .image import Image
 
 DURATION_REGEX = re.compile(
     r"([-+]?)P(?:(\d+)W)?(?:(\d+)D)?" r"(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$"
@@ -2208,6 +2209,7 @@ class TypesFactory(CaselessDict):
 __all__ = [
     "DURATION_REGEX",
     "WEEKDAY_RULE",
+    "Image",
     "TimeBase",
     "TypesFactory",
     "tzid_from_dt",

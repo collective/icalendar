@@ -51,6 +51,7 @@ from icalendar.parser import (
 
 # Property Data Value Types
 from icalendar.prop import (
+    Image,
     TypesFactory,
     vBinary,
     vBoolean,
@@ -106,6 +107,7 @@ __all__ = [
     "Event",
     "FeatureWillBeRemovedInFutureVersion",
     "FreeBusy",
+    "Image",
     "IncompleteAlarmInformation",
     "IncompleteComponent",
     "InvalidCalendar",
