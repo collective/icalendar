@@ -1639,7 +1639,7 @@ def set_duration_with_locking(
     end_property: str,
 ) -> None:
     """
-    Set the duration with explicit locking behavior for Event and Todo components.
+    Set the duration with explicit locking behavior for ``Event`` and ``Todo`` components.
 
     Args:
         component: The component to modify (Event or Todo)
