@@ -1618,10 +1618,10 @@ def get_duration_property(component: Component) -> timedelta:
     Get the duration property with fallback calculation from start and end.
 
     Args:
-        component: The component to get duration from
+        component: The component from which to get its duration property.
 
     Returns:
-        The duration as a timedelta
+        The duration as a timedelta.
 
     """
     # First check if DURATION property is explicitly set
