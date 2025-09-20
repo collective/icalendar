@@ -83,13 +83,13 @@ def test_no_conferenes(component):
 def test_add_conference(component, conference_1):
     """Add a new conference."""
     component.conferences = [conference_1]
-    assert component["CONFERENCE"] == conference_1.to_vUri()
+    assert component["CONFERENCE"] == conference_1.to_uri()
 
 
 def test_add_multiple_conferences(component, conference_1, conference_2):
     """Add a new conference."""
     component.conferences = [conference_1, conference_2]
-    assert component["CONFERENCE"] == [conference_1.to_vUri(), conference_2.to_vUri()]
+    assert component["CONFERENCE"] == [conference_1.to_uri(), conference_2.to_uri()]
 
 
 def test_new_component_with_conferences(component_class, conference_1, conference_2):
