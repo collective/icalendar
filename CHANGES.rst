@@ -47,6 +47,9 @@ New features:
 - Add ``availabilities`` attribtue to ``Calendar``.
 - Add ``status``, ``transparency``, and ``attendees`` properties. See `Issue 841 <https://github.com/collective/icalendar/issues/841>`_.
 - Add ``uid`` property that is ``''`` by default and set automatically with ``new()``. See `Issue 315 <https://github.com/collective/icalendar/issues/315>`_.
+- Make icalendar compatible with `RFC 7986 <https://www.rfc-editor.org/rfc/rfc7986.html>`_.
+  - Add ``url``, ``source``, ``refresh_interval``, ``conferences``, and ``images`` properties to components.
+- Add ``td`` property to ``vDDDTypes`` to make it compatible with ``timedelta`` value types.
 
 Bug fixes:
 
