@@ -13,6 +13,7 @@ from icalendar.attr import (
     categories_property,
     class_property,
     color_property,
+    conferences_property,
     contacts_property,
     create_single_property,
     description_property,
@@ -43,6 +44,7 @@ if TYPE_CHECKING:
     from icalendar.alarms import Alarms
     from icalendar.enums import CLASS, STATUS, TRANSP
     from icalendar.prop import vCalAddress
+    from icalendar.prop.conference import Conference
 
 
 class Event(Component):
@@ -485,6 +487,7 @@ class Event(Component):
     status = status_property
     attendees = attendees_property
     images = images_property
+    conferences = conferences_property
 
     @classmethod
     def new(
@@ -495,6 +498,7 @@ class Event(Component):
         classification: CLASS | None = None,
         color: str | None = None,
         comments: list[str] | str | None = None,
+        conferences: list[Conference] | None = None,
         contacts: list[str] | str | None = None,
         created: date | None = None,
         description: str | None = None,
@@ -522,6 +526,7 @@ class Event(Component):
             classification: The :attr:`classification` of the event.
             color: The :attr:`color` of the event.
             comments: The :attr:`Component.comments` of the event.
+            conferences: The :attr:`conferences` of the event.
             created: The :attr:`Component.created` of the event.
             description: The :attr:`description` of the event.
             end: The :attr:`end` of the event.
@@ -571,6 +576,7 @@ class Event(Component):
         event.contacts = contacts
         event.status = status
         event.attendees = attendees
+        event.conferences = conferences
         if cls._validate_new:
             cls._validate_start_and_end(start, end)
         return event

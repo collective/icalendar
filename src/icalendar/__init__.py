@@ -74,6 +74,7 @@ from icalendar.prop import (
     vUTCOffset,
     vWeekday,
 )
+from icalendar.prop.conference import Conference
 from icalendar.prop.image import Image
 
 # Switching the timezone provider
@@ -104,6 +105,7 @@ __all__ = [
     "ComponentEndMissing",
     "ComponentFactory",
     "ComponentStartMissing",
+    "Conference",
     "Event",
     "FeatureWillBeRemovedInFutureVersion",
     "FreeBusy",

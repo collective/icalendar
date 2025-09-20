@@ -1769,8 +1769,8 @@ class vUri(str):
 
     def __new__(
         cls,
-        value,
-        encoding=DEFAULT_ENCODING,
+        value: str,
+        encoding: str = DEFAULT_ENCODING,
         /,
         params: Optional[dict[str, Any]] = None,
     ):
@@ -2145,6 +2145,7 @@ class TypesFactory(CaselessDict):
             "recurrence-id": "date-time",
             "related-to": "text",
             "url": "uri",
+            "conference": "uri",  # RFC 7986
             "source": "uri",
             "uid": "text",
             # Recurrence Component Properties

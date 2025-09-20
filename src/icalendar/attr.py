@@ -9,7 +9,15 @@ from typing import TYPE_CHECKING, Optional, Sequence, Union
 from icalendar.enums import BUSYTYPE, CLASS, STATUS, TRANSP, StrEnum
 from icalendar.error import IncompleteComponent, InvalidCalendar
 from icalendar.parser_tools import SEQUENCE_TYPES
-from icalendar.prop import vCalAddress, vCategory, vDDDTypes, vDuration, vRecur, vText
+from icalendar.prop import (
+    vCalAddress,
+    vCategory,
+    vDDDTypes,
+    vDuration,
+    vRecur,
+    vText,
+)
+from icalendar.prop.conference import Conference
 from icalendar.prop.image import Image
 from icalendar.timezone import tzp
 from icalendar.tools import is_date
@@ -1617,6 +1625,113 @@ def _get_images(self: Component) -> list[Image]:
 
 images_property = property(_get_images)
 
+
+def _get_conferences(self: Component) -> list[Conference]:
+    """Return the CONFERENCE properties as a list.
+
+    Purpose:
+        This property specifies information for accessing a conferencing system.
+
+    Conformance:
+        This property can be specified multiple times in a
+        "VEVENT" or "VTODO" calendar component.
+
+    Description:
+        This property specifies information for accessing a
+        conferencing system for attendees of a meeting or task.  This
+        might be for a telephone-based conference number dial-in with
+        access codes included (such as a tel: URI :rfc:`3966` or a sip: or
+        sips: URI :rfc:`3261`), for a web-based video chat (such as an http:
+        or https: URI :rfc:`7230`), or for an instant messaging group chat
+        room (such as an xmpp: URI :rfc:`5122`).  If a specific URI for a
+        conferencing system is not available, a data: URI :rfc:`2397`
+        containing a text description can be used.
+
+        A conference system can be a bidirectional communication channel
+        or a uni-directional "broadcast feed".
+
+        The "FEATURE" property parameter is used to describe the key
+        capabilities of the conference system to allow a client to choose
+        the ones that give the required level of interaction from a set of
+        multiple properties.
+
+        The "LABEL" property parameter is used to convey additional
+        details on the use of the URI.  For example, the URIs or access
+        codes for the moderator and attendee of a teleconference system
+        could be different, and the "LABEL" property parameter could be
+        used to "tag" each "CONFERENCE" property to indicate which is
+        which.
+
+        The "LANGUAGE" property parameter can be used to specify the
+        language used for text values used with this property (as per
+        Section 3.2.10 of :rfc:`5545`).
+
+    Example:
+        The following are examples of this property:
+
+        .. code-block:: ical
+
+            CONFERENCE;VALUE=URI;FEATURE=PHONE,MODERATOR;
+             LABEL=Moderator dial-in:tel:+1-412-555-0123,,,654321
+            CONFERENCE;VALUE=URI;FEATURE=PHONE;
+             LABEL=Attendee dial-in:tel:+1-412-555-0123,,,555123
+            CONFERENCE;VALUE=URI;FEATURE=PHONE;
+             LABEL=Attendee dial-in:tel:+1-888-555-0456,,,555123
+            CONFERENCE;VALUE=URI;FEATURE=CHAT;
+             LABEL=Chat room:xmpp:chat-123@conference.example.com
+            CONFERENCE;VALUE=URI;FEATURE=AUDIO,VIDEO;
+             LABEL=Attendee dial-in:https://chat.example.com/audio?id=123456
+
+        Get all conferences:
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Event
+            >>> event = Event()
+            >>> event.conferences
+            []
+
+        Set a conference:
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Event, Conference
+            >>> event = Event()
+            >>> event.conferences = [
+            ...     Conference(
+            ...         "tel:+1-412-555-0123,,,654321",
+            ...         feature="PHONE,MODERATOR",
+            ...         label="Moderator dial-in",
+            ...         language="EN",
+            ...     )
+            ... ]
+            >>> print(event.to_ical())
+            BEGIN:VEVENT
+            CONFERENCE;FEATURE="PHONE,MODERATOR";LABEL=Moderator dial-in;LANGUAGE=EN:t
+             el:+1-412-555-0123,,,654321
+            END:VEVENT
+
+    """
+    conferences = self.get("CONFERENCE", [])
+    if not isinstance(conferences, Sequence):
+        conferences = [conferences]
+    return [Conference.from_uri(conference) for conference in conferences]
+
+
+def _set_conferences(self: Component, conferences: list[Conference] | None):
+    """Set the conferences."""
+    _del_conferences(self)
+    for conference in conferences or []:
+        self.add("CONFERENCE", conference.to_uri())
+
+
+def _del_conferences(self: Component):
+    """Delete all conferences."""
+    self.pop("CONFERENCE")
+
+
+conferences_property = property(_get_conferences, _set_conferences, _del_conferences)
+
 __all__ = [
     "attendees_property",
     "busy_type_property",
@@ -1624,6 +1739,7 @@ __all__ = [
     "class_property",
     "color_property",
     "comments_property",
+    "conferences_property",
     "contacts_property",
     "create_single_property",
     "description_property",
