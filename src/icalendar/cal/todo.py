@@ -19,6 +19,10 @@ from icalendar.attr import (
     description_property,
     exdates_property,
     images_property,
+    get_duration_property,
+    get_end_property,
+    get_start_end_duration_with_validation,
+    get_start_property,
     location_property,
     organizer_property,
     priority_property,
@@ -29,14 +33,15 @@ from icalendar.attr import (
     rdates_property,
     rrules_property,
     sequence_property,
+    set_duration_with_locking,
+    set_end_with_locking,
+    set_start_with_locking,
     status_property,
     summary_property,
     uid_property,
     url_property,
 )
 from icalendar.cal.component import Component
-from icalendar.error import IncompleteComponent, InvalidCalendar
-from icalendar.tools import is_date
 
 if TYPE_CHECKING:
     from icalendar.alarms import Alarms
@@ -135,27 +140,7 @@ class Todo(Component):
 
     def _get_start_end_duration(self):
         """Verify the calendar validity and return the right attributes."""
-        start = self.DTSTART
-        end = self.DUE
-        duration = self.DURATION
-        if duration is not None and end is not None:
-            raise InvalidCalendar(
-                "Only one of DUE and DURATION may be in a VTODO, not both."
-            )
-        if (
-            start is not None
-            and is_date(start)
-            and duration is not None
-            and duration.seconds != 0
-        ):
-            raise InvalidCalendar(
-                "When DTSTART is a date, DURATION must be of days or weeks."
-            )
-        if start is not None and end is not None and is_date(start) != is_date(end):
-            raise InvalidCalendar(
-                "DTSTART and DUE must be of the same type, either date or datetime."
-            )
-        return start, end, duration
+        return get_start_end_duration_with_validation(self, "DTSTART", "DUE", "VTODO")
 
     @property
     def start(self) -> date | datetime:
@@ -179,10 +164,7 @@ class Todo(Component):
         DUE:20210101T123000
         END:VTODO
         """
-        start = self._get_start_end_duration()[0]
-        if start is None:
-            raise IncompleteComponent("No DTSTART given.")
-        return start
+        return get_start_property(self)
 
     @start.setter
     def start(self, start: date | datetime | None):
@@ -196,18 +178,7 @@ class Todo(Component):
         Invalid values raise an InvalidCalendar error.
         If there is no end, we also raise an IncompleteComponent error.
         """
-        start, end, duration = self._get_start_end_duration()
-        if end is None and duration is None:
-            if start is None:
-                raise IncompleteComponent("No DUE or DURATION+DTSTART given.")
-            if is_date(start):
-                return start + timedelta(days=1)
-            return start
-        if duration is not None:
-            if start is not None:
-                return start + duration
-            raise IncompleteComponent("No DUE or DURATION+DTSTART given.")
-        return end
+        return get_end_property(self, "DUE")
 
     @end.setter
     def end(self, end: date | datetime | None):
@@ -228,12 +199,7 @@ class Todo(Component):
         3. Remove any existing DUE property
         4. Set the DURATION property
         """
-        # First check if DURATION property is explicitly set
-        if "DURATION" in self:
-            return self["DURATION"].dt
-
-        # Fall back to calculated duration from start and end
-        return self.end - self.start
+        return get_duration_property(self)
 
     @duration.setter
     def duration(self, value: timedelta):
@@ -252,8 +218,6 @@ class Todo(Component):
             duration: The duration to set, or None to convert to DURATION property
             locked: Which property to keep unchanged ('start' or 'end')
         """
-        from icalendar.attr import set_duration_with_locking
-
         set_duration_with_locking(self, duration, locked, "DUE")
 
     def set_start(
@@ -266,34 +230,7 @@ class Todo(Component):
             locked: Which property to keep unchanged ('duration', 'end', or None
                 for auto-detect)
         """
-        if locked is None:
-            # Auto-detect based on existing properties
-            if "DURATION" in self:
-                locked = "duration"
-            elif "DUE" in self:
-                locked = "end"
-            else:
-                # Default to duration if no existing properties
-                locked = "duration"
-
-        if locked == "duration":
-            # Keep duration locked, adjust end
-            current_duration = (
-                self.duration if "DURATION" in self or "DUE" in self else None
-            )
-            self.DTSTART = start
-            if current_duration is not None:
-                self.DURATION = current_duration
-        elif locked == "end":
-            # Keep end locked, adjust duration
-            current_end = self.end
-            self.DTSTART = start
-            self.pop("DURATION", None)
-            self.DUE = current_end
-        else:
-            raise ValueError(
-                f"locked must be 'duration', 'end', or None, not {locked!r}"
-            )
+        set_start_with_locking(self, start, locked, "DUE")
 
     def set_end(
         self, end: date | datetime, locked: Literal["start", "duration"] = "start"
@@ -304,17 +241,7 @@ class Todo(Component):
             end: The end time to set
             locked: Which property to keep unchanged ('start' or 'duration')
         """
-        if locked == "start":
-            # Keep start locked, adjust duration
-            self.pop("DURATION", None)
-            self.DUE = end
-        elif locked == "duration":
-            # Keep duration locked, adjust start
-            current_duration = self.duration
-            self.DTSTART = end - current_duration
-            self.DURATION = current_duration
-        else:
-            raise ValueError(f"locked must be 'start' or 'duration', not {locked!r}")
+        set_end_with_locking(self, end, locked, "DUE")
 
     X_MOZ_SNOOZE_TIME = X_MOZ_SNOOZE_TIME_property
     X_MOZ_LASTACK = X_MOZ_LASTACK_property

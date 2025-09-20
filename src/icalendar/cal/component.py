@@ -387,6 +387,9 @@ class Component(CaselessDict):
                         parsed_components = [
                             factory(factory.from_ical(vals, params["TZID"]))
                         ]
+                    # Workaround broken ICS files with empty RDATE
+                    elif name == "RDATE" and vals == "":
+                        parsed_components = []
                     else:
                         parsed_components = [factory(factory.from_ical(vals))]
                 except ValueError as e:
