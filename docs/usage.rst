@@ -18,10 +18,10 @@ This package is compatible with the following standards:
 - :rfc:`7529` - Non-Gregorian Recurrence Rules in the Internet Calendaring and Scheduling Core Object Specification (iCalendar)
 - :rfc:`9074` - "VALARM" Extensions for iCalendar
 - :rfc:`7953` - Calendar Availability
+- :rfc:`7986` - New Properties for iCalendar
 
 We do not claim compatibility to the following RFCs. They might work though.
 
-- :rfc:`7986` - New Properties for iCalendar
 - :rfc:`9073` - Event Publishing Extensions to iCalendar
 - :rfc:`9253` - Support for iCalendar Relationships
 
