@@ -10,6 +10,7 @@ from icalendar.enums import BUSYTYPE, CLASS, STATUS, TRANSP, StrEnum
 from icalendar.error import IncompleteComponent, InvalidCalendar
 from icalendar.parser_tools import SEQUENCE_TYPES
 from icalendar.prop import vCalAddress, vCategory, vDDDTypes, vDuration, vRecur, vText
+from icalendar.prop.image import Image
 from icalendar.timezone import tzp
 from icalendar.tools import is_date
 
@@ -1585,6 +1586,37 @@ def set_duration_with_locking(component, duration, locked, end_property):
         raise ValueError(f"locked must be 'start' or 'end', not {locked!r}")
 
 
+def _get_images(self: Component) -> list[Image]:
+    """IMAGE specifies an image associated with the calendar or a calendar component.
+
+    Description:
+        This property specifies an image for an iCalendar
+        object or a calendar component via a URI or directly with inline
+        data that can be used by calendar user agents when presenting the
+        calendar data to a user.  Multiple properties MAY be used to
+        specify alternative sets of images with, for example, varying
+        media subtypes, resolutions, or sizes.  When multiple properties
+        are present, calendar user agents SHOULD display only one of them,
+        picking one that provides the most appropriate image quality, or
+        display none.  The "DISPLAY" parameter is used to indicate the
+        intended display mode for the image.  The "ALTREP" parameter,
+        defined in :rfc:`5545`, can be used to provide a "clickable" image
+        where the URI in the parameter value can be "launched" by a click
+        on the image in the calendar user agent.
+
+    Conformance:
+        This property can be specified multiple times in an
+        iCalendar object or in "VEVENT", "VTODO", or "VJOURNAL" calendar
+        components.
+    """
+    images = self.get("IMAGE", [])
+    if not isinstance(images, SEQUENCE_TYPES):
+        images = [images]
+    return [Image.from_property_value(img) for img in images]
+
+
+images_property = property(_get_images)
+
 __all__ = [
     "attendees_property",
     "busy_type_property",
@@ -1598,6 +1630,7 @@ __all__ = [
     "descriptions_property",
     "duration_property",
     "exdates_property",
+    "images_property",
     "location_property",
     "multi_language_text_property",
     "organizer_property",

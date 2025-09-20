@@ -17,6 +17,7 @@ from icalendar.attr import (
     create_single_property,
     description_property,
     exdates_property,
+    images_property,
     location_property,
     organizer_property,
     priority_property,
@@ -351,6 +352,7 @@ class Todo(Component):
     contacts = contacts_property
     status = status_property
     attendees = attendees_property
+    images = images_property
 
     @classmethod
     def new(

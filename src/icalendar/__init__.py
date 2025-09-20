@@ -51,7 +51,6 @@ from icalendar.parser import (
 
 # Property Data Value Types
 from icalendar.prop import (
-    Image,
     TypesFactory,
     vBinary,
     vBoolean,
@@ -75,6 +74,7 @@ from icalendar.prop import (
     vUTCOffset,
     vWeekday,
 )
+from icalendar.prop.image import Image
 
 # Switching the timezone provider
 from icalendar.timezone import use_pytz, use_zoneinfo

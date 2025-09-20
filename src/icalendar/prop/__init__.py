@@ -63,8 +63,6 @@ from icalendar.parser_tools import (
 from icalendar.timezone import tzid_from_dt, tzid_from_tzinfo, tzp
 from icalendar.tools import to_datetime
 
-from .image import Image
-
 DURATION_REGEX = re.compile(
     r"([-+]?)P(?:(\d+)W)?(?:(\d+)D)?" r"(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$"
 )
@@ -78,10 +76,13 @@ class vBinary:
     """Binary property values are base 64 encoded."""
 
     params: Parameters
+    obj: str
 
-    def __init__(self, obj):
+    def __init__(self, obj, params: dict[str:str] | None = None):
         self.obj = to_unicode(obj)
         self.params = Parameters(encoding="BASE64", value="BINARY")
+        if params:
+            self.params.update(params)
 
     def __repr__(self):
         return f"vBinary({self.to_ical()})"
@@ -2209,7 +2210,6 @@ class TypesFactory(CaselessDict):
 __all__ = [
     "DURATION_REGEX",
     "WEEKDAY_RULE",
-    "Image",
     "TimeBase",
     "TypesFactory",
     "tzid_from_dt",

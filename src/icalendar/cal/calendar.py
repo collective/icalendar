@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Sequence
 
 from icalendar.attr import (
     categories_property,
+    images_property,
     multi_language_text_property,
     single_string_property,
     source_property,
@@ -494,6 +495,8 @@ Description:
     def refresh_interval(self):
         """Delete REFRESH-INTERVAL."""
         self.pop("REFRESH-INTERVAL")
+
+    images = images_property
 
     @classmethod
     def new(
