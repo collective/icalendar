@@ -78,7 +78,7 @@ class vBinary:
     params: Parameters
     obj: str
 
-    def __init__(self, obj, params: dict[str:str] | None = None):
+    def __init__(self, obj, params: dict[str, str] | None = None):
         self.obj = to_unicode(obj)
         self.params = Parameters(encoding="BASE64", value="BINARY")
         if params:
