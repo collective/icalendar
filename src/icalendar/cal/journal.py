@@ -15,6 +15,7 @@ from icalendar.attr import (
     create_single_property,
     descriptions_property,
     exdates_property,
+    images_property,
     organizer_property,
     rdates_property,
     rrules_property,
@@ -166,6 +167,8 @@ class Journal(Component):
     def description(self):
         """Delete all descriptions."""
         del self.descriptions
+
+    images = images_property
 
     @classmethod
     def new(
