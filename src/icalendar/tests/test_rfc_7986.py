@@ -215,7 +215,7 @@ def test_set_if_multiple_colors(
 
 def test_refresh_interval_default(calendar: Calendar):
     """REFRESH-INTERVAL default."""
-    assert calendar.get("REFESH-INTERVAL") is None
+    assert calendar.get("REFRESH-INTERVAL") is None
     assert calendar.refresh_interval is None
 
 
