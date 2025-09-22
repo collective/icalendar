@@ -73,6 +73,10 @@ class Image:
         display: str | None = None,
     ):
         """Create a new image according to :rfc:`7986`."""
+        if uri is not None and b64data is not None:
+            raise ValueError("Image cannot have both URI and binary data (RFC 7986)")
+        if uri is None and b64data is None:
+            raise ValueError("Image must have either URI or binary data")
         self.uri = uri
         self.b64data = b64data
         self.fmttype = fmttype

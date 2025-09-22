@@ -157,3 +157,11 @@ def test_create_image_with_vText_as_binary():
     assert img.fmttype is None
     assert img.altrep is None
     assert img.display is None
+
+
+def test_requires_uri_xor_binary():
+    """Test forbidden parameter combinations."""
+    with pytest.raises(ValueError):
+        Image()
+    with pytest.raises(ValueError):
+        Image(b64data="", uri="http://example.com/image.png")
