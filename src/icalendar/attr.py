@@ -1587,7 +1587,7 @@ def get_start_end_duration_with_validation(
         end_name = "DTEND" if end_property == "DTEND" else "DUE"
         msg = (
             f"Only one of {end_name} and DURATION "
-            "may be in a {component_name}, not both."
+            f"may be in a {component_name}, not both."
         )
         raise InvalidCalendar(msg)
 
