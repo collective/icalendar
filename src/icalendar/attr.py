@@ -1552,16 +1552,24 @@ def rfc_7953_end_property(self):
 
 
 def get_start_end_duration_with_validation(
-    component: Component, start_property: str, end_property: str, component_name: str,
+    component: Component,
+    start_property: str,
+    end_property: str,
+    component_name: str,
 ) -> tuple[date | datetime | None, date | datetime | None, timedelta | None]:
     """
-    Verify calendar validity and return start, end, and duration with RFC 5545 validation.
+    Validate the component and return start, end, and duration.
+
+    This tests validity according to :rfc:`5545` rules
+    for ``Event`` and ``Todo`` components.
 
     Args:
         component: The component to validate, either ``Event`` or ``Todo``.
         start_property: The start property name, ``DTSTART``.
-        end_property: The end property name, either ``DTEND`` for ``Event`` or ``DUE`` for ``Todo``.
-        component_name: The component name for error messages, either ``VEVENT`` or ``VTODO``.
+        end_property: The end property name, either ``DTEND`` for ``Event`` or
+            ``DUE`` for ``Todo``.
+        component_name: The component name for error messages,
+            either ``VEVENT`` or ``VTODO``.
 
     Returns:
         tuple: (start, end, duration) values from the component.
@@ -1577,7 +1585,10 @@ def get_start_end_duration_with_validation(
     # RFC 5545: Only one of end property and DURATION may be present
     if duration is not None and end is not None:
         end_name = "DTEND" if end_property == "DTEND" else "DUE"
-        msg = f"Only one of {end_name} and DURATION may be in a {component_name}, not both."
+        msg = (
+            f"Only one of {end_name} and DURATION "
+            "may be in a {component_name}, not both."
+        )
         raise InvalidCalendar(msg)
 
     # RFC 5545: When DTSTART is a date, DURATION must be of days or weeks
@@ -1593,7 +1604,9 @@ def get_start_end_duration_with_validation(
     # RFC 5545: DTSTART and end property must be of the same type
     if start is not None and end is not None and is_date(start) != is_date(end):
         end_name = "DTEND" if end_property == "DTEND" else "DUE"
-        msg = f"DTSTART and {end_name} must be of the same type, either date or datetime."
+        msg = (
+            f"DTSTART and {end_name} must be of the same type, either date or datetime."
+        )
         raise InvalidCalendar(msg)
 
     return start, end, duration
@@ -1627,13 +1640,15 @@ def get_end_property(component: Component, end_property: str) -> date | datetime
 
     Args:
         component: The component to get end from
-        end_property: The end property name, either ``DTEND`` for ``Event`` or ``DUE`` for ``Todo``.
+        end_property: The end property name, either ``DTEND`` for ``Event`` or
+            ``DUE`` for ``Todo``.
 
     Returns:
         The computed end value.
 
     Raises:
-        IncompleteComponent: If the provided information is incomplete to compute the end property.
+        IncompleteComponent: If the provided information is incomplete
+            to compute the end property.
 
     """
     # Trigger validation by calling _get_start_end_duration
@@ -1686,13 +1701,14 @@ def set_duration_with_locking(
     end_property: str,
 ) -> None:
     """
-    Set the duration with explicit locking behavior for ``Event`` and ``Todo`` components.
+    Set the duration with explicit locking behavior for ``Event`` and ``Todo``.
 
     Args:
         component: The component to modify, either ``Event`` or ``Todo``.
         duration: The duration to set, or ``None`` to convert to ``DURATION`` property.
         locked: Which property to keep unchanged, either ``start`` or ``end``.
-        end_property: The end property name, either ``DTEND`` for ``Event`` or ``DUE`` for ``Todo``.
+        end_property: The end property name, either ``DTEND`` for ``Event`` or
+            ``DUE`` for ``Todo``.
 
     """
     # Convert to DURATION property if duration is None
@@ -1743,8 +1759,10 @@ def set_start_with_locking(
     Args:
         component: The component to modify, either ``Event`` or ``Todo``.
         start: The start time to set.
-        locked: Which property to keep unchanged, either ``duration``, ``end``, or ``None`` for auto-detect.
-        end_property: The end property name, either ``DTEND`` for ``Event`` or ``DUE`` for ``Todo``.
+        locked: Which property to keep unchanged, either ``duration``, ``end``,
+            or ``None`` for auto-detect.
+        end_property: The end property name, either ``DTEND`` for ``Event`` or
+            ``DUE`` for ``Todo``.
 
     """
     if locked is None:
@@ -1792,7 +1810,8 @@ def set_end_with_locking(
         component: The component to modify, either ``Event`` or ``Todo``.
         end: The end time to set.
         locked: Which property to keep unchanged, either ``start`` or ``duration``.
-        end_property: The end property name, either ``DTEND`` for ``Event`` or ``DUE`` for ``Todo``.
+        end_property: The end property name, either ``DTEND`` for ``Event`` or ``DUE``
+            for ``Todo``.
 
     """
     if locked == "start":
@@ -1832,6 +1851,11 @@ def _get_images(self: Component) -> list[Image]:
         This property can be specified multiple times in an
         iCalendar object or in "VEVENT", "VTODO", or "VJOURNAL" calendar
         components.
+
+    .. note::
+
+        At the present moment, this property is read-only. If you require a setter,
+        please open an issue or a pull request.
     """
     images = self.get("IMAGE", [])
     if not isinstance(images, SEQUENCE_TYPES):
@@ -1962,11 +1986,11 @@ __all__ = [
     "descriptions_property",
     "duration_property",
     "exdates_property",
-    "images_property",
     "get_duration_property",
     "get_end_property",
     "get_start_end_duration_with_validation",
     "get_start_property",
+    "images_property",
     "location_property",
     "multi_language_text_property",
     "organizer_property",
