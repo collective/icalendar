@@ -74,7 +74,7 @@ def component(component_class):
     return component_class()
 
 
-def test_no_conferenes(component):
+def test_no_conferences(component):
     """No conferences by default."""
     assert component.conferences == []
     assert "CONFERENCE" not in component
