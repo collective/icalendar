@@ -6,7 +6,7 @@ They are also considered.
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, time, timedelta, timezone
 from typing import Union
 
 import pytest
@@ -217,6 +217,34 @@ def test_refresh_interval_default(calendar: Calendar):
     """REFRESH-INTERVAL default."""
     assert calendar.get("REFESH-INTERVAL") is None
     assert calendar.refresh_interval is None
+
+
+@pytest.mark.parametrize(
+    "invalid_value",
+    [
+        datetime(2020, 1, 1),
+        date(2020, 1, 1),
+        "invalid",
+        (date(2020, 1, 1), timedelta(days=1)),
+        time(12, 0),
+    ],
+)
+def test_invalid_refresh_interval_type(calendar: Calendar, invalid_value):
+    """Invalid REFRESH-INTERVAL"""
+    with pytest.raises(TypeError):
+        calendar.refresh_interval = invalid_value
+
+
+def test_invalid_refresh_interval(calendar: Calendar):
+    with pytest.raises(ValueError):
+        calendar.refresh_interval = timedelta(seconds=-1)
+
+
+def test_0_refresh_interval(calendar: Calendar):
+    """REFRESH-INTERVAL zero."""
+    calendar.refresh_interval = timedelta(0)
+    assert calendar.refresh_interval == timedelta(0)
+    assert calendar["REFRESH-INTERVAL"].dt == timedelta(0)
 
 
 def test_refresh_interval_set_to_value(calendar: Calendar):

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import timedelta
 from typing import TYPE_CHECKING, Sequence
 
 from icalendar.attr import (
@@ -21,7 +22,7 @@ from icalendar.version import __version__
 
 if TYPE_CHECKING:
     import uuid
-    from datetime import date, datetime, timedelta
+    from datetime import date, datetime
 
     from icalendar.cal.availability import Availability
     from icalendar.cal.event import Event
@@ -480,6 +481,9 @@ Description:
             the calendar data.  The value of this property SHOULD be used by
             calendar user agents to limit the polling interval for calendar
             data updates to the minimum interval specified.
+
+        Raises:
+            ValueError: When setting a negative duration.
         """
         refresh_interval = self.get("REFRESH-INTERVAL")
         return refresh_interval.dt if refresh_interval else None
@@ -487,6 +491,12 @@ Description:
     @refresh_interval.setter
     def refresh_interval(self, value: timedelta | None):
         """Set the REFRESH-INTERVAL."""
+        if not isinstance(value, timedelta) and value is not None:
+            raise TypeError(
+                "REFRESH-INTERVAL must be a positive timedelta or None (to delete it)."
+            )
+        if value is not None and value.total_seconds() < 0:
+            raise ValueError("REFRESH-INTERVAL must be a positive timedelta.")
         del self.refresh_interval
         if value is not None:
             self.add("REFRESH-INTERVAL", value)
