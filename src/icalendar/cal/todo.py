@@ -320,7 +320,7 @@ class Todo(Component):
             classification: The :attr:`classification` of the todo.
             color: The :attr:`color` of the todo.
             comments: The :attr:`Component.comments` of the todo.
-            conferences: The :attr:`conferences` if the todo.
+            conferences: The :attr:`conferences` of the todo.
             created: The :attr:`Component.created` of the todo.
             description: The :attr:`description` of the todo.
             end: The :attr:`end` of the todo.
