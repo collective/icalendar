@@ -142,3 +142,12 @@ def test_conferences_from_file(event_with_conferences):
     assert event_with_conferences.conferences[4].feature == ["AUDIO", "VIDEO"]
     assert event_with_conferences.conferences[4].label == "Attendee dial-in"
     assert event_with_conferences.conferences[4].language is None
+
+
+def test_conference_from_string():
+    """Create a conference from a string."""
+    conference = Conference.from_uri("tel:+1-412-555-0123")
+    assert conference.uri == "tel:+1-412-555-0123"
+    assert conference.feature is None
+    assert conference.label is None
+    assert conference.language is None
