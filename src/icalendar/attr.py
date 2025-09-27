@@ -1909,7 +1909,7 @@ def _get_conferences(self: Component) -> list[Conference]:
     Example:
         The following are examples of this property:
 
-        .. code-block:: ical
+        .. code-block:: text
 
             CONFERENCE;VALUE=URI;FEATURE=PHONE,MODERATOR;
              LABEL=Moderator dial-in:tel:+1-412-555-0123,,,654321
