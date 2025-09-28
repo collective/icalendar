@@ -7,13 +7,15 @@ Example:
 
        DTSTART;VALUE=DATE-TIME:20190616T050000Z
 equals DTSTART:20190616T050000Z
+
+See https://github.com/collective/icalendar/issues/318
 """
 
 from datetime import datetime
 
 import pytest
 
-from icalendar import Event
+from icalendar.cal.event import Event
 
 
 @pytest.mark.parametrize(

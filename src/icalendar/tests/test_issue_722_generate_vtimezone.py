@@ -7,6 +7,8 @@ When we generate VTIMEZONE from actual tzinfo instances of
 
 Then, we cannot assume that the future information stays the same but
 we should be able to create tests that work for the past.
+
+See https://github.com/collective/icalendar/issues/722
 """
 
 from datetime import date, datetime, timedelta
@@ -15,12 +17,8 @@ from re import findall
 import pytest
 from dateutil.tz import gettz
 
-try:
-    from zoneinfo import available_timezones
-except ImportError:
-    from backports.zoneinfo import available_timezones
-
 from icalendar import Calendar, Component, Event, Timezone
+from icalendar.compatibility import zoneinfo
 from icalendar.timezone import tzid_from_tzinfo, tzids_from_tzinfo
 
 tzids = pytest.mark.parametrize(
@@ -427,7 +425,7 @@ def test_dates_before_and_after_are_considered():
     pytest.skip("todo")
 
 
-@pytest.mark.parametrize("tzid", available_timezones() - {"Factory", "localtime"})
+@pytest.mark.parametrize("tzid", zoneinfo.available_timezones() - {"Factory", "localtime"})
 def test_we_can_identify_dateutil_timezones(tzid):
     """dateutil and others were badly supported.
 

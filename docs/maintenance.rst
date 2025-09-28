@@ -4,17 +4,16 @@ Maintenance
 The goal of this section is to make sure that the ``icalendar`` library receives a
 clear maintenance structure with it that is transparent.
 
+icalendar Maintainers
+---------------------
 
-Maintainers
------------
-
-Currently, the maintainers are
+Currently the maintainers are the following people.
 
 - `@geier <https://github.com/geier>`_
 - `@jacadzaca <https://github.com/jacadzaca>`_
 - `@niccokunzmann <https://github.com/niccokunzmann>`_
 
-Maintainers need this:
+Maintainers need the following.
 
 - ``Admin`` access to the `repository <https://github.com/collective/icalendar>`_.
     These can be enabled by a current maintainer or an GitHub organisation administrator

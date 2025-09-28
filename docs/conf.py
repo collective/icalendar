@@ -1,10 +1,12 @@
 # icalendar documentation build configuration file
-import importlib.metadata
 import datetime
-import os
+import importlib.metadata
 import sys
+from pathlib import Path
 
-sys.path.insert(0, os.path.abspath("../src/"))
+HERE = Path(__file__).parent
+SRC = HERE.parent / "src"
+sys.path.insert(0, str(SRC))  # update docs from icalendar source for livehtml
 
 extensions = [
     "sphinx.ext.autodoc",
@@ -20,8 +22,8 @@ source_suffix = {".rst": "restructuredtext"}
 master_doc = "index"
 
 project = "icalendar"
-this_year = datetime.date.today().year
-copyright = f"{this_year}, Plone Foundation"
+this_year = datetime.date.today().year  # noqa: DTZ011
+copyright = f"{this_year}, Plone Foundation"  # noqa: A001
 release = version = importlib.metadata.version("icalendar")
 
 
@@ -69,7 +71,6 @@ html_context = {
     "doc_path": "docs",
 }
 pygments_style = "sphinx"
-
 
 
 # -- Intersphinx configuration ----------------------------------

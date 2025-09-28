@@ -6,7 +6,9 @@ import pytest
 
 import icalendar
 from icalendar import prop
-from icalendar.cal import Calendar, Component, Event
+from icalendar.cal.calendar import Calendar
+from icalendar.cal.component import Component
+from icalendar.cal.event import Event
 from icalendar.prop import tzid_from_dt
 
 
@@ -100,18 +102,15 @@ def test_nested_component_event_ics(filled_event_component):
 def test_nested_components(calendar_component, filled_event_component):
     """Components can be nested, so You can add a subcomponent. Eg a calendar
     holds events."""
-    self.assertEqual(
-        calendar_component.subcomponents,
-        [
-            Event(
-                {
-                    "DTEND": "20000102T000000",
-                    "DTSTART": "20000101T000000",
-                    "SUMMARY": "A brief history of time",
-                }
-            )
-        ],
-    )
+    assert calendar_component.subcomponents == [
+        Event(
+            {
+                "DTEND": "20000102T000000",
+                "DTSTART": "20000101T000000",
+                "SUMMARY": "A brief history of time",
+            }
+        )
+    ]
 
 
 def test_walk_filled_calendar_component(calendar_component, filled_event_component):
@@ -273,7 +272,7 @@ def test_cal_Component_add_property_parameter(comp):
 
 
 comp_prop = pytest.mark.parametrize(
-    "component_name, property_name",
+    ("component_name", "property_name"),
     [
         ("VEVENT", "DTSTART"),
         ("VEVENT", "DTEND"),
@@ -300,7 +299,7 @@ def test_cal_Component_from_ical_2(component_name, property_name, tzp):
     component_str += property_name + ":"
     component_str += "20120404T073000\nEND:" + component_name
     component = Component.from_ical(component_str)
-    assert component[property_name].dt.tzinfo == None
+    assert component[property_name].dt.tzinfo is None
 
 
 def test_cal_Component_to_ical_property_order():
@@ -433,7 +432,7 @@ def test_calendar_with_parsing_errors_has_an_error_in_one_event(calendars):
     empty DATE.
     """
     errors = [e.errors for e in calendars.parsing_error.walk("VEVENT")]
-    assert errors == [[], [("EXDATE", "Expected datetime, date, or time, got: ''")]]
+    assert errors == [[], [("EXDATE", "Expected datetime, date, or time. Got: ''")]]
 
 
 def test_cal_strict_parsing(calendars):

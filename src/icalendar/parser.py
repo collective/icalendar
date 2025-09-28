@@ -5,15 +5,24 @@ Eg. RFC 2426 (vCard)
 It is stupid in the sense that it treats the content purely as strings. No type
 conversion is attempted.
 """
+
 from __future__ import annotations
 
+import functools
 import os
-from icalendar.caselessdict import CaselessDict
-from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE
-from icalendar.parser_tools import SEQUENCE_TYPES
-from icalendar.parser_tools import to_unicode
-
 import re
+from typing import TYPE_CHECKING
+
+from icalendar.caselessdict import CaselessDict
+from icalendar.parser_tools import (
+    DEFAULT_ENCODING,
+    ICAL_TYPE,
+    SEQUENCE_TYPES,
+    to_unicode,
+)
+
+if TYPE_CHECKING:
+    from icalendar.enums import VALUE
 
 
 def escape_char(text):
@@ -42,7 +51,7 @@ def unescape_char(text):
             .replace("\\;", ";")
             .replace("\\\\", "\\")
         )
-    elif isinstance(text, bytes):
+    if isinstance(text, bytes):
         return (
             text.replace(b"\\N", b"\\n")
             .replace(b"\r\n", b"\n")
@@ -51,6 +60,7 @@ def unescape_char(text):
             .replace(b"\\;", b";")
             .replace(b"\\\\", b"\\")
         )
+    return None
 
 
 def foldline(line, limit=75, fold_sep="\r\n "):
@@ -110,7 +120,7 @@ NAME = re.compile(r"[\w.-]+")
 UNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7f",:;]')
 QUNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7f"]')
 FOLD = re.compile(b"(\r?\n)+[ \t]")
-uFOLD = re.compile("(\r?\n)+[ \t]")
+UFOLD = re.compile("(\r?\n)+[ \t]")
 NEWLINE = re.compile(r"\r?\n")
 
 
@@ -129,7 +139,7 @@ def validate_param_value(value, quoted=True):
 
 # chars presence of which in parameter value will be cause the value
 # to be enclosed in double-quotes
-QUOTABLE = re.compile("[,;: ’']")
+QUOTABLE = re.compile("[,;:’]")# noqa: RUF001
 
 
 def dquote(val, always_quote=False):
@@ -171,11 +181,34 @@ def q_join(lst, sep=",", always_quote=False):
     return sep.join(dquote(itm, always_quote=always_quote) for itm in lst)
 
 
+def single_string_parameter(func):
+    """Create a parameter getter/setter for a single string parameter."""
+
+    name = func.__name__
+
+    @functools.wraps(func)
+    def fget(self: Parameters):
+        """Get the value."""
+        return self.get(name)
+
+    def fset(self: Parameters, value: str|None):
+        """Set the value"""
+        if value is None:
+            fdel(self)
+        else:
+            self[name] = value
+
+    def fdel(self: Parameters):
+        """Delete the value."""
+        self.pop(name, None)
+
+    return property(fget, fset, fdel, doc=func.__doc__)
+
 class Parameters(CaselessDict):
     """Parser and generator of Property parameter strings. It knows nothing of
     datatypes. Its main concern is textual structure.
     """
-    
+
     # The following paremeters must always be enclosed in double quotes
     always_quoted = (
         "ALTREP",
@@ -184,7 +217,15 @@ class Parameters(CaselessDict):
         "DIR",
         "MEMBER",
         "SENT-BY",
+        # Part of X-APPLE-STRUCTURED-LOCATION
+        "X-ADDRESS",
+        "X-TITLE",
     )
+    # this is quoted should one of the values be present
+    quote_also = {
+        # This is escaped in the RFC
+        "CN" : " '",
+    }
 
     def params(self):
         """In RFC 5545 keys are called parameters, so this is to be consitent
@@ -192,26 +233,7 @@ class Parameters(CaselessDict):
         """
         return self.keys()
 
-    # TODO?
-    # Later, when I get more time... need to finish this off now. The last major
-    # thing missing.
-    #   def _encode(self, name, value, cond=1):
-    #       # internal, for conditional convertion of values.
-    #       if cond:
-    #           klass = types_factory.for_property(name)
-    #           return klass(value)
-    #       return value
-    #
-    #   def add(self, name, value, encode=0):
-    #       "Add a parameter value and optionally encode it."
-    #       if encode:
-    #           value = self._encode(name, value, encode)
-    #       self[name] = value
-    #
-    #   def decoded(self, name):
-    #       "returns a decoded value, or list of same"
-
-    def to_ical(self, sorted=True):
+    def to_ical(self, sorted: bool = True):  # noqa: A002, FBT001
         result = []
         items = list(self.items())
         if sorted:
@@ -219,7 +241,14 @@ class Parameters(CaselessDict):
 
         for key, value in items:
             upper_key = key.upper()
-            quoted_value = param_value(value, always_quote=upper_key in self.always_quoted)
+            check_quoteable_characters = self.quote_also.get(key.upper())
+            always_quote = (
+                upper_key in self.always_quoted or (
+                    check_quoteable_characters and
+                    any(c in value for c in check_quoteable_characters)
+                )
+            )
+            quoted_value = param_value(value, always_quote=always_quote)
             if isinstance(quoted_value, str):
                 quoted_value = quoted_value.encode(DEFAULT_ENCODING)
             # CaselessDict keys are always unicode
@@ -241,9 +270,9 @@ class Parameters(CaselessDict):
                 vals = []
                 for v in q_split(val, ","):
                     if v.startswith('"') and v.endswith('"'):
-                        v = v.strip('"')
-                        validate_param_value(v, quoted=True)
-                        vals.append(rfc_6868_unescape(v))
+                        v2 = v.strip('"')
+                        validate_param_value(v2, quoted=True)
+                        vals.append(rfc_6868_unescape(v2))
                     else:
                         validate_param_value(v, quoted=False)
                         if strict:
@@ -252,14 +281,35 @@ class Parameters(CaselessDict):
                             vals.append(rfc_6868_unescape(v))
                 if not vals:
                     result[key] = val
+                elif len(vals) == 1:
+                    result[key] = vals[0]
                 else:
-                    if len(vals) == 1:
-                        result[key] = vals[0]
-                    else:
-                        result[key] = vals
-            except ValueError as exc:
-                raise ValueError(f"{param!r} is not a valid parameter string: {exc}")
+                    result[key] = vals
+            except ValueError as exc:  # noqa: PERF203
+                raise ValueError(
+                    f"{param!r} is not a valid parameter string: {exc}"
+                ) from exc
         return result
+
+    @single_string_parameter
+    def value(self) -> VALUE | str | None:
+        """The VALUE parameter from :rfc:`5545`.
+
+        Description:
+            This parameter specifies the value type and format of
+            the property value.  The property values MUST be of a single value
+            type.  For example, a "RDATE" property cannot have a combination
+            of DATE-TIME and TIME value types.
+
+            If the property's value is the default value type, then this
+            parameter need not be specified.  However, if the property's
+            default value type is overridden by some other allowable value
+            type, then this parameter MUST be specified.
+
+            Applications MUST preserve the value data for x-name and iana-
+            token values that they don't recognize without attempting to
+            interpret or parse the value data.
+        """
 
 
 def escape_string(val):
@@ -297,10 +347,13 @@ def rfc_6868_unescape(param_value: str) -> str:
         "^n": os.linesep,
         "^'": '"',
     }
-    return RFC_6868_UNESCAPE_REGEX.sub(lambda m: replacements.get(m.group(0), m.group(0)), param_value)
+    return RFC_6868_UNESCAPE_REGEX.sub(
+        lambda m: replacements.get(m.group(0), m.group(0)), param_value
+    )
 
 
 RFC_6868_ESCAPE_REGEX = re.compile(r'\^|\r\n|\r|\n|"')
+
 
 def rfc_6868_escape(param_value: str) -> str:
     """Take care of :rfc:`6868` escaping.
@@ -316,13 +369,15 @@ def rfc_6868_escape(param_value: str) -> str:
         "\r\n": "^n",
         '"': "^'",
     }
-    return RFC_6868_ESCAPE_REGEX.sub(lambda m: replacements.get(m.group(0), m.group(0)), param_value)
+    return RFC_6868_ESCAPE_REGEX.sub(
+        lambda m: replacements.get(m.group(0), m.group(0)), param_value
+    )
+
 
 def unescape_list_or_string(val):
     if isinstance(val, list):
         return [unescape_string(s) for s in val]
-    else:
-        return unescape_string(val)
+    return unescape_string(val)
 
 
 #########################################
@@ -334,23 +389,32 @@ class Contentline(str):
     parts.
     """
 
+    __slots__ = ("strict",)
+
     def __new__(cls, value, strict=False, encoding=DEFAULT_ENCODING):
         value = to_unicode(value, encoding=encoding)
         assert "\n" not in value, (
-            "Content line can not contain unescaped " "new line characters."
+            "Content line can not contain unescaped new line characters."
         )
         self = super().__new__(cls, value)
         self.strict = strict
         return self
 
     @classmethod
-    def from_parts(cls, name:ICAL_TYPE, params: Parameters, values, sorted=True):
+    def from_parts(
+        cls,
+        name: ICAL_TYPE,
+        params: Parameters,
+        values,
+        sorted: bool = True,  # noqa: A002, FBT001
+    ):
         """Turn a parts into a content line."""
         assert isinstance(params, Parameters)
         if hasattr(values, "to_ical"):
             values = values.to_ical()
         else:
             from icalendar.prop import vText
+
             values = vText(values).to_ical()
         # elif isinstance(values, basestring):
         #    values = escape_char(values)
@@ -381,12 +445,12 @@ class Contentline(str):
                     in_quotes = not in_quotes
             name = unescape_string(st[:name_split])
             if not name:
-                raise ValueError("Key name is required")
+                raise ValueError("Key name is required")  # noqa: TRY301
             validate_token(name)
             if not value_split:
                 value_split = i + 1
             if not name_split or name_split + 1 == value_split:
-                raise ValueError("Invalid content line")
+                raise ValueError("Invalid content line")  # noqa: TRY301
             params = Parameters.from_ical(
                 st[name_split + 1 : value_split], strict=self.strict
             )
@@ -395,18 +459,18 @@ class Contentline(str):
                 for key, value in iter(params.items())
             )
             values = unescape_string(st[value_split + 1 :])
-            return (name, params, values)
         except ValueError as exc:
             raise ValueError(
                 f"Content line could not be parsed into parts: '{self}': {exc}"
             ) from exc
+        return (name, params, values)
 
     @classmethod
     def from_ical(cls, ical, strict=False):
         """Unfold the content lines in an iCalendar into long content lines."""
         ical = to_unicode(ical)
         # a fold is carriage return followed by either a space or a tab
-        return cls(uFOLD.sub("", ical), strict=strict)
+        return cls(UFOLD.sub("", ical), strict=strict)
 
     def to_ical(self):
         """Long content lines are folded so they are less than 75 characters
@@ -431,24 +495,25 @@ class Contentlines(list):
         st = to_unicode(st)
         try:
             # a fold is carriage return followed by either a space or a tab
-            unfolded = uFOLD.sub("", st)
+            unfolded = UFOLD.sub("", st)
             lines = cls(Contentline(line) for line in NEWLINE.split(unfolded) if line)
             lines.append("")  # '\r\n' at the end of every content line
-            return lines
-        except Exception:
-            raise ValueError("Expected StringType with content lines")
+        except Exception as e:
+            raise ValueError("Expected StringType with content lines") from e
+        return lines
 
 
 __all__ = [
-    "Contentline",
-    "Contentlines",
     "FOLD",
     "NAME",
     "NEWLINE",
-    "Parameters",
     "QUNSAFE_CHAR",
     "QUOTABLE",
+    "UFOLD",
     "UNSAFE_CHAR",
+    "Contentline",
+    "Contentlines",
+    "Parameters",
     "dquote",
     "escape_char",
     "escape_string",
@@ -458,7 +523,6 @@ __all__ = [
     "q_split",
     "rfc_6868_escape",
     "rfc_6868_unescape",
-    "uFOLD",
     "unescape_char",
     "unescape_list_or_string",
     "unescape_string",

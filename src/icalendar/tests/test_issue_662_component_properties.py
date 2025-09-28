@@ -1,26 +1,26 @@
-"""This tests the properties of components and their types."""
+"""This tests the properties of components and their types.
+
+See https://github.com/collective/icalendar/issues/662
+"""
 
 from __future__ import annotations
+
 from datetime import date, datetime, timedelta
 
 import pytest
 
-from icalendar.error import IncompleteComponent, InvalidCalendar
-from icalendar.cal import Alarm
-
-try:
-    from zoneinfo import ZoneInfo
-except ImportError:
-    from backports.zoneinfo import ZoneInfo  # type: ignore PGH003
-
 from icalendar import (
+    Alarm,
     Event,
+    IncompleteComponent,
+    InvalidCalendar,
     Journal,
     Todo,
-    vDDDTypes,
     vDatetime,
+    vDDDTypes,
+    vDuration,
 )
-from icalendar.prop import vDuration
+from icalendar.compatibility import ZoneInfo
 
 
 def prop(component: Event | Todo, prop: str) -> str:
@@ -94,7 +94,7 @@ def set_component_start(request):
 
 def test_component_dtstart(dtstart, start_end_component):
     """Test the start of events."""
-    assert start_end_component.DTSTART == dtstart
+    assert dtstart == start_end_component.DTSTART
 
 
 def test_event_start(dtstart, start_end_component):
@@ -202,7 +202,7 @@ def set_component_end(request):
 def test_component_end_property(dtend, start_end_component):
     """Test the end of events."""
     attr = prop(start_end_component, "DTEND")
-    assert getattr(start_end_component, attr) == dtend  # noqa: SIM300
+    assert getattr(start_end_component, attr) == dtend
 
 
 def test_component_end(dtend, start_end_component):
@@ -394,16 +394,33 @@ incomplete_todo_2.add("DURATION", timedelta(hours=1))
     "incomplete_event_end",
     [
         incomplete_event_1,
-        incomplete_event_2,
         incomplete_todo_1,
-        incomplete_todo_2,
     ],
 )
 @pytest.mark.parametrize("attr", ["start", "end", "duration"])
 def test_incomplete_event(incomplete_event_end, attr):
-    """Test that the end throws the right error."""
+    """Test that components without required properties throw the right error."""
     with pytest.raises(IncompleteComponent):
         getattr(incomplete_event_end, attr)
+
+
+@pytest.mark.parametrize(
+    "component_with_duration",
+    [
+        incomplete_event_2,  # Event with DURATION property
+        incomplete_todo_2,  # Todo with DURATION property
+    ],
+)
+def test_duration_property_accessible_without_dtstart(component_with_duration):
+    """Test that DURATION property is accessible even without DTSTART (fixes issue #867)."""
+    # DURATION property should be accessible directly
+    assert component_with_duration.duration == timedelta(hours=1)
+
+    # But start and end should still raise errors for incomplete components
+    with pytest.raises(IncompleteComponent):
+        _ = component_with_duration.start
+    with pytest.raises(IncompleteComponent):
+        _ = component_with_duration.end
 
 
 @pytest.mark.parametrize(
@@ -489,7 +506,7 @@ def test_setting_duration_deletes_the_end(start_end_component):
     start_end_component.DURATION = timedelta(days=1)
     assert DTEND not in start_end_component
     assert getattr(start_end_component, DTEND) is None
-    assert start_end_component.DURATION == timedelta(days=1)
+    assert timedelta(days=1) == start_end_component.DURATION
 
 
 valid_values = pytest.mark.parametrize(
@@ -593,15 +610,15 @@ def setting_twice_does_not_duplicate_the_entry():
 def test_get_alarm_trigger_property(alarms, file, trigger, related):
     """Get the trigger property."""
     alarm = alarms[file]
-    assert alarm.TRIGGER == trigger
-    assert alarm.TRIGGER_RELATED == related
+    assert trigger == alarm.TRIGGER
+    assert related == alarm.TRIGGER_RELATED
 
 
 def test_set_alarm_trigger():
     """Set the alarm trigger."""
     a = Alarm()
     a.TRIGGER = timedelta(hours=1)
-    assert a.TRIGGER == timedelta(hours=1)
+    assert timedelta(hours=1) == a.TRIGGER
     assert a.TRIGGER_RELATED == "START"
 
 
@@ -610,7 +627,7 @@ def test_set_alarm_trigger_related():
     a = Alarm()
     a.TRIGGER = timedelta(hours=1)
     a.TRIGGER_RELATED = "END"
-    assert a.TRIGGER == timedelta(hours=1)
+    assert timedelta(hours=1) == a.TRIGGER
     assert a.TRIGGER_RELATED == "END"
 
 

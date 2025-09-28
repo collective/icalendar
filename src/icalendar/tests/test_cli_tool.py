@@ -2,11 +2,7 @@ import unittest
 from datetime import datetime
 
 from icalendar import Calendar, cli
-
-try:
-    import zoneinfo
-except ModuleNotFoundError:
-    from backports import zoneinfo
+from icalendar.compatibility import ZoneInfo
 
 INPUT = """
 BEGIN:VCALENDAR
@@ -45,7 +41,7 @@ END:VCALENDAR
 def local_datetime(dt):
     return (
         datetime.strptime(dt, "%Y%m%dT%H%M%S")
-        .replace(tzinfo=zoneinfo.ZoneInfo("Europe/Warsaw"))
+        .replace(tzinfo=ZoneInfo("Europe/Warsaw"))
         .astimezone()
         .strftime("%c")
     )
@@ -95,7 +91,7 @@ PROPER_OUTPUT = f"""    Organizer: organizer <organizer@test.test>
     Description:
      
 
-"""
+"""  # noqa: W291, W293
 
 
 class CLIToolTest(unittest.TestCase):
@@ -105,7 +101,7 @@ class CLIToolTest(unittest.TestCase):
         output = ""
         for event in calendar.walk("vevent"):
             output += cli.view(event) + "\n\n"
-        self.assertEqual(PROPER_OUTPUT, output)
+        assert output == PROPER_OUTPUT
 
 
 if __name__ == "__main__":
