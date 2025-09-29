@@ -493,7 +493,7 @@ Description:
         """Set the REFRESH-INTERVAL."""
         if not isinstance(value, timedelta) and value is not None:
             raise TypeError(
-                "REFRESH-INTERVAL must be a positive timedelta or None (to delete it)."
+                "REFRESH-INTERVAL must be either a positive timedelta, or None to delete it."
             )
         if value is not None and value.total_seconds() <= 0:
             raise ValueError("REFRESH-INTERVAL must be a positive timedelta.")
