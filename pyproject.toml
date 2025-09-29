@@ -75,6 +75,8 @@ dependencies = [
     # install requirements depending on python version, TODO: Remove with Python 3.8
     # see https://www.python.org/dev/peps/pep-0508/#environment-markers
     "backports.zoneinfo; python_version < '3.9'",
+    # tzdata: IANA timezone database fallback for zoneinfo (required on Windows,
+    # provides current timezone data on all platforms)
     "tzdata"
 ]
 
