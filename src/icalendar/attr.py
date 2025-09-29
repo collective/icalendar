@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import itertools
 from datetime import date, datetime, timedelta
-from typing import TYPE_CHECKING, Optional, Sequence, Union
+from typing import TYPE_CHECKING, Literal, Optional, Sequence, Union
 
 from icalendar.enums import BUSYTYPE, CLASS, STATUS, TRANSP, StrEnum
 from icalendar.error import IncompleteComponent, InvalidCalendar
@@ -1504,14 +1504,149 @@ def rfc_7953_end_property(self):
     del self.DTEND
 
 
-def set_duration_with_locking(component, duration, locked, end_property):
-    """Set the duration with explicit locking behavior for Event and Todo components.
+def get_start_end_duration_with_validation(
+    component: Component, start_property: str, end_property: str, component_name: str,
+) -> tuple[date | datetime | None, date | datetime | None, timedelta | None]:
+    """
+    Verify calendar validity and return start, end, and duration with RFC 5545 validation.
 
     Args:
-        component: The component to modify (Event or Todo)
-        duration: The duration to set, or None to convert to DURATION property
-        locked: Which property to keep unchanged ('start' or 'end')
-        end_property: The end property name ('DTEND' for Event, 'DUE' for Todo)
+        component: The component to validate, either ``Event`` or ``Todo``.
+        start_property: The start property name, ``DTSTART``.
+        end_property: The end property name, either ``DTEND`` for ``Event`` or ``DUE`` for ``Todo``.
+        component_name: The component name for error messages, either ``VEVENT`` or ``VTODO``.
+
+    Returns:
+        tuple: (start, end, duration) values from the component.
+
+    Raises:
+        InvalidCalendar: If the component violates RFC 5545 constraints.
+
+    """
+    start = getattr(component, start_property, None)
+    end = getattr(component, end_property, None)
+    duration = component.DURATION
+
+    # RFC 5545: Only one of end property and DURATION may be present
+    if duration is not None and end is not None:
+        end_name = "DTEND" if end_property == "DTEND" else "DUE"
+        msg = f"Only one of {end_name} and DURATION may be in a {component_name}, not both."
+        raise InvalidCalendar(msg)
+
+    # RFC 5545: When DTSTART is a date, DURATION must be of days or weeks
+    if (
+        start is not None
+        and is_date(start)
+        and duration is not None
+        and duration.seconds != 0
+    ):
+        msg = "When DTSTART is a date, DURATION must be of days or weeks."
+        raise InvalidCalendar(msg)
+
+    # RFC 5545: DTSTART and end property must be of the same type
+    if start is not None and end is not None and is_date(start) != is_date(end):
+        end_name = "DTEND" if end_property == "DTEND" else "DUE"
+        msg = f"DTSTART and {end_name} must be of the same type, either date or datetime."
+        raise InvalidCalendar(msg)
+
+    return start, end, duration
+
+
+def get_start_property(component: Component) -> date | datetime:
+    """
+    Get the start property with validation.
+
+    Args:
+        component: The component from which to get its start property.
+
+    Returns:
+        The ``DTSTART`` value.
+
+    Raises:
+        IncompleteComponent: If no ``DTSTART`` is present.
+
+    """
+    # Trigger validation by calling _get_start_end_duration
+    start, end, duration = component._get_start_end_duration()  # noqa: SLF001
+    if start is None:
+        msg = "No DTSTART given."
+        raise IncompleteComponent(msg)
+    return start
+
+
+def get_end_property(component: Component, end_property: str) -> date | datetime:
+    """
+    Get the end property with fallback logic for ``Event`` and ``Todo`` components.
+
+    Args:
+        component: The component to get end from
+        end_property: The end property name, either ``DTEND`` for ``Event`` or ``DUE`` for ``Todo``.
+
+    Returns:
+        The computed end value.
+
+    Raises:
+        IncompleteComponent: If the provided information is incomplete to compute the end property.
+
+    """
+    # Trigger validation by calling _get_start_end_duration
+    start, end, duration = component._get_start_end_duration()  # noqa: SLF001
+
+    if end is None and duration is None:
+        if start is None:
+            end_name = "DTEND" if end_property == "DTEND" else "DUE"
+            msg = f"No {end_name} or DURATION+DTSTART given."
+            raise IncompleteComponent(msg)
+
+        # Default behavior: date gets +1 day, datetime gets same time
+        if is_date(start):
+            return start + timedelta(days=1)
+        return start
+
+    if duration is not None:
+        if start is not None:
+            return start + duration
+        end_name = "DTEND" if end_property == "DTEND" else "DUE"
+        msg = f"No {end_name} or DURATION+DTSTART given."
+        raise IncompleteComponent(msg)
+
+    return end
+
+
+def get_duration_property(component: Component) -> timedelta:
+    """
+    Get the duration property with fallback calculation from start and end.
+
+    Args:
+        component: The component from which to get its duration property.
+
+    Returns:
+        The duration as a timedelta.
+
+    """
+    # First check if DURATION property is explicitly set
+    if "DURATION" in component:
+        return component["DURATION"].dt
+
+    # Fall back to calculated duration from start and end
+    return component.end - component.start
+
+
+def set_duration_with_locking(
+    component: Component,
+    duration: timedelta | None,
+    locked: Literal["start", "end"],
+    end_property: str,
+) -> None:
+    """
+    Set the duration with explicit locking behavior for ``Event`` and ``Todo`` components.
+
+    Args:
+        component: The component to modify, either ``Event`` or ``Todo``.
+        duration: The duration to set, or ``None`` to convert to ``DURATION`` property.
+        locked: Which property to keep unchanged, either ``start`` or ``end``.
+        end_property: The end property name, either ``DTEND`` for ``Event`` or ``DUE`` for ``Todo``.
+
     """
     # Convert to DURATION property if duration is None
     if duration is None:
@@ -1522,29 +1657,110 @@ def set_duration_with_locking(component, duration, locked, end_property):
         return
 
     if not isinstance(duration, timedelta):
-        raise TypeError(f"Use timedelta, not {type(duration).__name__}.")
+        msg = f"Use timedelta, not {type(duration).__name__}."
+        raise TypeError(msg)
 
     # Validate date/duration compatibility
     start = component.DTSTART
     if start is not None and is_date(start) and duration.seconds != 0:
-        raise InvalidCalendar(
-            "When DTSTART is a date, DURATION must be of days or weeks."
-        )
+        msg = "When DTSTART is a date, DURATION must be of days or weeks."
+        raise InvalidCalendar(msg)
 
     if locked == "start":
         # Keep start locked, adjust end
         if start is None:
-            raise IncompleteComponent(
-                "Cannot set duration without DTSTART. Set start time first."
-            )
+            msg = "Cannot set duration without DTSTART. Set start time first."
+            raise IncompleteComponent(msg)
+        component.pop(end_property, None)  # Remove end property
         component.DURATION = duration
     elif locked == "end":
         # Keep end locked, adjust start
         current_end = component.end
         component.DTSTART = current_end - duration
+        component.pop(end_property, None)  # Remove end property
         component.DURATION = duration
     else:
-        raise ValueError(f"locked must be 'start' or 'end', not {locked!r}")
+        msg = f"locked must be 'start' or 'end', not {locked!r}"
+        raise ValueError(msg)
+
+
+def set_start_with_locking(
+    component: Component,
+    start: date | datetime,
+    locked: Literal["duration", "end"] | None,
+    end_property: str,
+) -> None:
+    """
+    Set the start with explicit locking behavior for ``Event`` and ``Todo`` components.
+
+    Args:
+        component: The component to modify, either ``Event`` or ``Todo``.
+        start: The start time to set.
+        locked: Which property to keep unchanged, either ``duration``, ``end``, or ``None`` for auto-detect.
+        end_property: The end property name, either ``DTEND`` for ``Event`` or ``DUE`` for ``Todo``.
+
+    """
+    if locked is None:
+        # Auto-detect based on existing properties
+        if "DURATION" in component:
+            locked = "duration"
+        elif end_property in component:
+            locked = "end"
+        else:
+            # Default to duration if no existing properties
+            locked = "duration"
+
+    if locked == "duration":
+        # Keep duration locked, adjust end
+        current_duration = (
+            component.duration
+            if "DURATION" in component or end_property in component
+            else None
+        )
+        component.DTSTART = start
+        if current_duration is not None:
+            component.pop(end_property, None)  # Remove end property
+            component.DURATION = current_duration
+    elif locked == "end":
+        # Keep end locked, adjust duration
+        current_end = component.end
+        component.DTSTART = start
+        component.pop("DURATION", None)  # Remove duration property
+        setattr(component, end_property, current_end)
+    else:
+        msg = f"locked must be 'duration', 'end', or None, not {locked!r}"
+        raise ValueError(msg)
+
+
+def set_end_with_locking(
+    component: Component,
+    end: date | datetime,
+    locked: Literal["start", "duration"],
+    end_property: str,
+) -> None:
+    """
+    Set the end with explicit locking behavior for Event and Todo components.
+
+    Args:
+        component: The component to modify, either ``Event`` or ``Todo``.
+        end: The end time to set.
+        locked: Which property to keep unchanged, either ``start`` or ``duration``.
+        end_property: The end property name, either ``DTEND`` for ``Event`` or ``DUE`` for ``Todo``.
+
+    """
+    if locked == "start":
+        # Keep start locked, adjust duration
+        component.pop("DURATION", None)  # Remove duration property
+        setattr(component, end_property, end)
+    elif locked == "duration":
+        # Keep duration locked, adjust start
+        current_duration = component.duration
+        component.DTSTART = end - current_duration
+        component.pop(end_property, None)  # Remove end property
+        component.DURATION = current_duration
+    else:
+        msg = f"locked must be 'start' or 'duration', not {locked!r}"
+        raise ValueError(msg)
 
 
 __all__ = [
@@ -1560,6 +1776,10 @@ __all__ = [
     "descriptions_property",
     "duration_property",
     "exdates_property",
+    "get_duration_property",
+    "get_end_property",
+    "get_start_end_duration_with_validation",
+    "get_start_property",
     "location_property",
     "multi_language_text_property",
     "organizer_property",
@@ -1576,6 +1796,8 @@ __all__ = [
     "rrules_property",
     "sequence_property",
     "set_duration_with_locking",
+    "set_end_with_locking",
+    "set_start_with_locking",
     "single_int_property",
     "single_utc_property",
     "status_property",
