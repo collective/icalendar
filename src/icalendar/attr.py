@@ -1339,7 +1339,7 @@ Example:
 
 source_property = single_string_property(
     "SOURCE",
-    """A URI where calendar data can be refreshed from.
+    """A URI from where calendar data can be refreshed.
 
 Description:
     This property identifies a location where a client can
