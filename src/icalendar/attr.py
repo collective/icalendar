@@ -1339,7 +1339,7 @@ Example:
 
 source_property = single_string_property(
     "SOURCE",
-    """A URI where calendar data can be refreshed from.
+    """A URI from where calendar data can be refreshed.
 
 Description:
     This property identifies a location where a client can
@@ -1953,7 +1953,8 @@ def _get_conferences(self: Component) -> list[Conference]:
 
     """
     conferences = self.get("CONFERENCE", [])
-    if not isinstance(conferences, Sequence):
+    if not isinstance(conferences, SEQUENCE_TYPES):
+        conferences = [conferences]
         conferences = [conferences]
     return [Conference.from_uri(conference) for conference in conferences]
 
