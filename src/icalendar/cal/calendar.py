@@ -497,9 +497,11 @@ Description:
             )
         if value is not None and value.total_seconds() <= 0:
             raise ValueError("REFRESH-INTERVAL must be a positive timedelta.")
-        del self.refresh_interval
         if value is not None:
+            del self.refresh_interval
             self.add("REFRESH-INTERVAL", value)
+        else:
+            del self.refresh_interval
 
     @refresh_interval.deleter
     def refresh_interval(self):
