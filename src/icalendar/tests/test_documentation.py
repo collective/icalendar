@@ -70,7 +70,7 @@ def test_all_python_modules_are_documented():
     Please add documentation for them in docs/reference.
 
     If they only contain private code, you can ignore them
-    by editing the name to EXCLUDED_MODULES in this test file.
+    by adding the name to EXCLUDED_MODULES in this test file.
     """
     assert not undocumented, message
 
