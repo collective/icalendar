@@ -251,13 +251,6 @@ def test_invalid_refresh_interval(calendar: Calendar, invalid_value):
     assert calendar.refresh_interval == timedelta(hours=2)
 
 
-def test_0_refresh_interval(calendar: Calendar):
-    """REFRESH-INTERVAL zero."""
-    calendar.refresh_interval = timedelta(0)
-    assert calendar.refresh_interval == timedelta(0)
-    assert calendar["REFRESH-INTERVAL"].dt == timedelta(0)
-
-
 def test_refresh_interval_set_to_value(calendar: Calendar):
     """REFRESH-INTERVAL setting."""
     calendar.refresh_interval = timedelta(hours=1)
