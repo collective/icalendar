@@ -199,7 +199,7 @@ class vText(str):
 
 
 class vCalAddress(str):
-    r"""Calendar User Address
+    """Calendar User Address
 
     Value Name:
         CAL-ADDRESS
