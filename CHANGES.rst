@@ -30,6 +30,7 @@ Minor changes:
 - Improve contributing documentation by adding a change log requirement, adding a pull request template, adding clear CI enforcement warnings, and updating ``README.rst``. See `Issue 890 <https://github.com/collective/icalendar/issues/890>`_.
 - Make coverage submission optional for CI.
 - Bump ``actions/setup-python`` version from 5 to 6 for CI.
+- Ensure API Reference documentation matches ``icalendar``'s source code structure.
 
 Breaking changes:
 
