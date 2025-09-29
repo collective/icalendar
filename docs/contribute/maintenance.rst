@@ -1,8 +1,7 @@
 Maintenance
 ===========
 
-The goal of this section is to make sure that the ``icalendar`` library receives a
-clear maintenance structure with it that is transparent.
+This chapter describes the maintenance structure of icalendar.
 
 icalendar Maintainers
 ---------------------
@@ -13,21 +12,19 @@ Currently the maintainers are the following people.
 - `@jacadzaca <https://github.com/jacadzaca>`_
 - `@niccokunzmann <https://github.com/niccokunzmann>`_
 
-Maintainers need the following.
+Maintainers need the following permissions.
 
 - ``Admin`` access to the `repository <https://github.com/collective/icalendar>`_.
-    These can be enabled by a current maintainer or an GitHub organisation administrator
-    in the `settings <https://github.com/collective/icalendar/settings/access>`_.
-- ``Maintainer`` or ``Owner`` access to the `PyPI project  <https://pypi.org/project/icalendar/>`_.
-    The new maintainer needs a PyPI account for this with Two Factor Authentication (2FA) enabled
-    because ``icalendar`` is a critical project on PyPI.
-    The access can be given in the `collaboration Section <https://pypi.org/manage/project/icalendar/collaboration/>`_ on PyPI.
-- ``Maintainer`` access to the `Read The Docs project <https://readthedocs.org/projects/icalendar/>`_.
-    This can be given by existing maintainers listed on the project's page.
-    TODO: link to the settings
-- ``PyPI environment access for GitHub Actions`` grant new releases from tags.
-    This access can be granted in `Settings → Environments → PyPI <https://github.com/collective/icalendar/settings/environments/674266024/edit>`__
-    by adding the GitHub username to the list of "Required Reviewers".
+    These can be enabled by a current maintainer or a GitHub organization administrator in the `settings <https://github.com/collective/icalendar/settings/access>`_.
+- ``Maintainer`` or ``Owner`` access to the `PyPI project <https://pypi.org/project/icalendar/>`_.
+    Each owner and maintainer needs a PyPI account.
+    All PyPI accounts require two-factor authentication (2FA) enabled.
+    Owners can invite either new owners or maintainers in the `collaboration Section <https://pypi.org/manage/project/icalendar/collaboration/>`_ on PyPI.
+- ``Maintainer`` access to the `Read the Docs project <https://readthedocs.org/projects/icalendar/>`_.
+    Existing maintainers can invite another maintainer through the `Maintainers <https://app.readthedocs.org/dashboard/icalendar/users/create/>`_ page.
+- ``Environments/Configure PyPI`` access for GitHub Workflows to grant new releases from tags.
+    Organization owners and repository administrators can grant this access in `Settings → Environments → PyPI <https://github.com/collective/icalendar/settings/environments/674266024/edit>`_
+    by adding the GitHub username to the list of :guilabel:`Required Reviewers`.
 
 
 Collaborators
