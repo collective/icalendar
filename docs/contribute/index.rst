@@ -7,4 +7,5 @@ Contributing
 .. toctree::
     :caption: Contribute
 
+    maintenance
     credits
