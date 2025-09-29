@@ -721,11 +721,11 @@ class vDDDTypes(TimeBase):
 
     @property
     def td(self) -> timedelta:
-        """Compatibility property returning self.dt.
+        """Compatibility property returning ``self.dt``.
 
         This class is used to replace different time components.
-        Some of them contain a datetime or date (.dt).
-        Some of them contain a timedelta (.td).
+        Some of them contain a datetime or date (``.dt``).
+        Some of them contain a timedelta (``.td``).
         This property allows interoperability.
         """
         return self.dt
