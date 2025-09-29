@@ -495,7 +495,7 @@ Description:
             raise TypeError(
                 "REFRESH-INTERVAL must be a positive timedelta or None (to delete it)."
             )
-        if value is not None and value.total_seconds() < 0:
+        if value is not None and value.total_seconds() <= 0:
             raise ValueError("REFRESH-INTERVAL must be a positive timedelta.")
         del self.refresh_interval
         if value is not None:
