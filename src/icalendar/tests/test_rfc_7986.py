@@ -231,13 +231,24 @@ def test_refresh_interval_default(calendar: Calendar):
 )
 def test_invalid_refresh_interval_type(calendar: Calendar, invalid_value):
     """Invalid REFRESH-INTERVAL"""
+    calendar.refresh_interval = timedelta(hours=1)
     with pytest.raises(TypeError):
         calendar.refresh_interval = invalid_value
+    assert calendar.refresh_interval == timedelta(hours=1)
 
 
-def test_invalid_refresh_interval(calendar: Calendar):
+@pytest.mark.parametrize("invalid_value", [timedelta(seconds=-1), timedelta(seconds=0)])
+def test_invalid_refresh_interval(calendar: Calendar, invalid_value):
+    """Invalid REFRESH-INTERVAL.
+
+    Test:
+    - value validation
+    - no deletion of the current value
+    """
+    calendar.refresh_interval = timedelta(hours=2)
     with pytest.raises(ValueError):
-        calendar.refresh_interval = timedelta(seconds=-1)
+        calendar.refresh_interval = invalid_value
+    assert calendar.refresh_interval == timedelta(hours=2)
 
 
 def test_0_refresh_interval(calendar: Calendar):
