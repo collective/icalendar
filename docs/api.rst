@@ -67,6 +67,12 @@ icalendar.prop
 .. automodule:: icalendar.prop
    :members:
 
+.. automodule:: icalendar.prop.conference
+   :members:
+
+.. automodule:: icalendar.prop.image
+   :members:
+
 icalendar.tools
 +++++++++++++++
 
