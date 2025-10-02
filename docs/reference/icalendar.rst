@@ -1,5 +1,5 @@
-API
-===
+icalendar package
+=================
 
 .. automodule:: icalendar
    :members:
@@ -12,6 +12,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   icalendar.cal
    icalendar.timezone
 
 Submodules
@@ -22,9 +23,9 @@ Submodules
 
    icalendar.alarms
    icalendar.attr
-   icalendar.cal
    icalendar.caselessdict
    icalendar.cli
+   icalendar.compatibility
    icalendar.enums
    icalendar.error
    icalendar.param
