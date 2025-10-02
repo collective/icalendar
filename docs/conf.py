@@ -13,11 +13,12 @@ extensions = [
     "sphinx.ext.coverage",
     "sphinx.ext.viewcode",
     "sphinx_copybutton",
+    "sphinx_reredirects",
     "sphinx.ext.intersphinx",
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.napoleon",
 ]
-source_suffix = ".rst"
+source_suffix = {".rst": "restructuredtext"}
 master_doc = "index"
 
 project = "icalendar"
@@ -41,8 +42,8 @@ html_theme_options = {
             "attributes": {
                 "target": "_blank",
                 "rel": "noopener me",
-                "class": "nav-link custom-fancy-css",
-            },
+                "class": "nav-link custom-fancy-css"
+            }
         },
         {
             "name": "PyPI",
@@ -52,8 +53,8 @@ html_theme_options = {
             "attributes": {
                 "target": "_blank",
                 "rel": "noopener me",
-                "class": "nav-link custom-fancy-css",
-            },
+                "class": "nav-link custom-fancy-css"
+            }
         },
     ],
     "navigation_with_keys": True,
@@ -62,15 +63,14 @@ html_theme_options = {
     "show_toc_level": 2,
     "use_edit_page_button": True,
 }
-pygments_style = "sphinx"
 html_context = {
-    #     "github_url": "https://github.com", # or your GitHub Enterprise site
+#     "github_url": "https://github.com", # or your GitHub Enterprise site
     "github_user": "collective",
     "github_repo": "icalendar",
     "github_version": "main",
     "doc_path": "docs",
 }
-htmlhelp_basename = "icalendardoc"
+pygments_style = "sphinx"
 
 
 # -- Intersphinx configuration ----------------------------------
@@ -89,4 +89,14 @@ intersphinx_mapping = {
 }
 
 
+# -- sphinx-reredirects configuration ----------------------------------
+# https://documatt.com/sphinx-reredirects/usage.html
+redirects = {
+    "contributing": "/contribute/index.html",
+    "about": "/index.html#about-icalendar",
+}
+
+
 man_pages = [("index", "icalendar", "icalendar Documentation", ["Plone Foundation"], 1)]
+
+htmlhelp_basename = "icalendardoc"
