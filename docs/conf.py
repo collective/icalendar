@@ -13,6 +13,7 @@ extensions = [
     "sphinx.ext.coverage",
     "sphinx.ext.viewcode",
     "sphinx_copybutton",
+    "sphinx_design",
     "sphinx_reredirects",
     "sphinx.ext.intersphinx",
     "sphinx.ext.autosectionlabel",

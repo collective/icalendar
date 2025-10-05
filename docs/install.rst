@@ -143,39 +143,145 @@ Try it out:
     >>> icalendar.Calendar()
     VCALENDAR({})
 
-Build the documentation
------------------------
+Documentation prerequisites
+---------------------------
 
-To build the documentation, follow these steps:
+Documentation builds require that you install GNU Make and uv.
+
+
+Make
+````
+
+``make`` is used to provide an interface to developers to perform repetitive tasks with a single command.
+
+``make`` comes installed on most Linux distributions.
+On macOS, you must first [install Xcode](https://developer.apple.com/xcode/resources/), then install its command line tools.
+On Windows, it is strongly recommended to [Install Linux on Windows with WSL](https://learn.microsoft.com/en-us/windows/wsl/install), which will include ``make``.
+
+Finally, it is a good idea to update your system's version of ``make``, because some distributions, especially macOS, have an outdated version.
+Use your favorite search engine or trusted online resource for how to update ``make``.
+
+
+uv
+``
+
+`uv <https://docs.astral.sh/uv/>`_ is used for installing Python, creating a Python virtual environment, and managing dependencies for documentation.
+
+Install uv.
+Carefully read the console output for further instructions, and follow them, if needed.
+
+.. tab-set::
+
+    .. tab-item:: macOS, Linux, and Windows with WSL
+
+        .. code-block:: shell
+
+            curl -LsSf https://astral.sh/uv/install.sh | sh
+
+    .. tab-item:: Windows
+
+        .. code-block:: shell
+
+            powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+.. seealso::
+
+    [Other {term}`uv` installation methods](https://docs.astral.sh/uv/getting-started/installation/)
+
+
+Documentation builds
+--------------------
+
+All build and check commands use the file :file:`Makefile` at the root of the repository.
+
+To see descriptions of the builds, use the following command.
 
 .. code-block:: shell
 
-    source .tox/py311/bin/activate
-    pip install -r requirements_docs.txt
-    cd docs
+    make help
+
+Else you can open the :file:`Makefile` file to see other build formats.
+
+The following sections describe the most frequently used ``make`` commands.
+
+All ``make`` commands that build documentation will
+
+-   create a Python virtual environment,
+-   install requirements,
+-   initialize or update the `volto`, `plone.restapi`, and `plone.api` submodules, and
+-   finally create symlinks to the source files.
+
+
+html
+````
+
+To build the documentation as HTML, run the following command.
+
+.. code-block:: shell
+
     make html
 
-You can now open the output from ``_build/html/index.html``.
+You can now open the output from ``docs/_build/html/index.html``.
 
-To build the documentation, view it in a web browser, and automatically reload changes while you edit documentation, use the following command.
+
+livehtml
+````````
+
+``livehtml`` rebuilds documentation as you edit its files, with live reload in the browser.
 
 .. code-block:: shell
 
     make livehtml
 
-Then open a web browser at `http://127.0.0.1:8050 <http://127.0.0.1:8050>`_.
+The console will give you the URL to open in a web browser.
 
-To build the presentation-version use  the following command.
+.. code-block:: console
+
+    [sphinx-autobuild] Serving on http://127.0.0.1:8050
+
+
+linkcheckbroken
+```````````````
+
+``linkcheckbroken`` checks all links, returning a list of only broken links.
 
 .. code-block:: shell
 
-    make presentation
+    make linkcheckbroken
 
-You can open the presentation at ``presentation/index.html``.
+Open `docs/_build/linkcheck/output.txt` for the entire list of links that were checked and their result.
 
-You can also use ``tox`` to build the documentation:
+
+.. For future implementation
+.. ### `vale`
+
+.. `vale` checks for American English spelling, grammar, and syntax, and follows the Microsoft Writing Style Guide.
+.. See {ref}`authors-english-label` for configuration.
+
+.. .. code-block:: shell
+
+.. make vale
+
+.. See the output on the console for suggestions.
+
+
+clean
+`````
+
+``clean`` removes all builds and cached files of the documentation.
+Use this command before a build to troubleshoot issues with edits not showing up and to ensure that cached files do not hide errors in the documentation.
 
 .. code-block:: shell
 
-    cd icalendar
-    tox -e docs
+    make clean
+
+
+clean-python
+````````````
+
+``clean-python`` cleans the documentation build directory and Python virtual environment.
+Use this command when packages that you have installed in your virtual environment yield unexpected results.
+
+.. code-block:: shell
+
+    make clean-python
