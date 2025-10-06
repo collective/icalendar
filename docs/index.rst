@@ -40,6 +40,8 @@ Contents
     :caption: Contribute
 
     contribute/index
+    contribute/maintenance
+    contribute/credits
 
 
 .. toctree::

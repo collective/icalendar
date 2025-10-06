@@ -1,31 +1,5 @@
-You want to help and contribute? Perfect!
-=========================================
+============
+Contributing
+============
 
-These are some contribution examples
-------------------------------------
-
-- Reporting issues to the bugtracker.
-
-- Submitting pull requests from a forked icalendar repo.
-
-- Extending the documentation.
-
-- Sponsor a `sprint <https://plone.org/news-and-events/events/sprints>`_.
-
-
-For pull requests, keep this in mind
-------------------------------------
-
-- Add a test which proves your fix and make it pass.
-
-- Describe your change in ``CHANGES.rst``.
-
-- Add yourself to the ``docs/contribute/credits.rst``.
-
-Setup for Development
----------------------
-
-If you would like to setup icalendar to
-contribute changes, the `Installation Section
-<https://icalendar.readthedocs.io/en/latest/install.html>`_
-should help you further.
+See https://icalendar.readthedocs.io/en/stable/contribute/index.html.

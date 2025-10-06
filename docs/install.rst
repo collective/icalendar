@@ -29,7 +29,10 @@ for Debian or its derivatives.
 
     sudo apt-get install python3-icalendar
 
-Development Setup
+
+.. _development-setup:
+
+Development setup
 -----------------
 
 To start contributing changes to icalendar,
