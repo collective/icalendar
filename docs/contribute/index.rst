@@ -59,3 +59,8 @@ Set up for development
 ----------------------
 
 If you would like to set up icalendar to contribute changes, :ref:`development-setup` should help you further.
+
+.. toctree::
+
+    credits
+    maintenance
