@@ -1955,7 +1955,6 @@ def _get_conferences(self: Component) -> list[Conference]:
     conferences = self.get("CONFERENCE", [])
     if not isinstance(conferences, SEQUENCE_TYPES):
         conferences = [conferences]
-        conferences = [conferences]
     return [Conference.from_uri(conference) for conference in conferences]
 
 
