@@ -493,7 +493,8 @@ Description:
         """Set the REFRESH-INTERVAL."""
         if not isinstance(value, timedelta) and value is not None:
             raise TypeError(
-                "REFRESH-INTERVAL must be either a positive timedelta, or None to delete it."
+                "REFRESH-INTERVAL must be either a positive timedelta,"
+                " or None to delete it."
             )
         if value is not None and value.total_seconds() <= 0:
             raise ValueError("REFRESH-INTERVAL must be a positive timedelta.")
@@ -546,6 +547,7 @@ Description:
             organization: The organization name. Used to generate `prodid` if not provided.
             prodid: The :attr:`prodid` of the component. If None and organization is provided,
                 generates a `prodid` in format "-//organization//name//language".
+            refresh_interval: The :attr:`refresh_interval` of the calendar.
             source: The :attr:`source` of the calendar.
             uid: The :attr:`uid` of the calendar.
                 If None, this is set to a new :func:`uuid.uuid4`.
