@@ -31,6 +31,7 @@ Minor changes:
 - Make coverage submission optional for CI.
 - Bump ``actions/setup-python`` version from 5 to 6 for CI.
 - Add comment explaining tzdata dependency purpose to prevent confusion. See `Issue 900 <https://github.com/collective/icalendar/issues/900>`_.
+- Fix duplicate blank issue template by adding config.yml to disable GitHub's default blank option. See `Issue 777 <https://github.com/collective/icalendar/issues/777>`_.
 
 Breaking changes:
 
