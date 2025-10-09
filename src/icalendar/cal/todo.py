@@ -13,10 +13,12 @@ from icalendar.attr import (
     categories_property,
     class_property,
     color_property,
+    conferences_property,
     contacts_property,
     create_single_property,
     description_property,
     exdates_property,
+    images_property,
     get_duration_property,
     get_end_property,
     get_start_end_duration_with_validation,
@@ -45,6 +47,7 @@ if TYPE_CHECKING:
     from icalendar.alarms import Alarms
     from icalendar.enums import CLASS, STATUS
     from icalendar.prop import vCalAddress
+    from icalendar.prop.conference import Conference
 
 
 class Todo(Component):
@@ -278,6 +281,8 @@ class Todo(Component):
     contacts = contacts_property
     status = status_property
     attendees = attendees_property
+    images = images_property
+    conferences = conferences_property
 
     @classmethod
     def new(
@@ -289,6 +294,7 @@ class Todo(Component):
         color: str | None = None,
         comments: list[str] | str | None = None,
         contacts: list[str] | str | None = None,
+        conferences: list[Conference] | None = None,
         created: date | None = None,
         description: str | None = None,
         end: date | datetime | None = None,
@@ -314,6 +320,7 @@ class Todo(Component):
             classification: The :attr:`classification` of the todo.
             color: The :attr:`color` of the todo.
             comments: The :attr:`Component.comments` of the todo.
+            conferences: The :attr:`conferences` of the todo.
             created: The :attr:`Component.created` of the todo.
             description: The :attr:`description` of the todo.
             end: The :attr:`end` of the todo.
@@ -360,6 +367,7 @@ class Todo(Component):
         todo.contacts = contacts
         todo.status = status
         todo.attendees = attendees
+        todo.conferences = conferences
         if cls._validate_new:
             cls._validate_start_and_end(start, end)
         return todo

@@ -2,13 +2,17 @@
 
 from __future__ import annotations
 
+from datetime import timedelta
 from typing import TYPE_CHECKING, Sequence
 
 from icalendar.attr import (
     categories_property,
+    images_property,
     multi_language_text_property,
     single_string_property,
+    source_property,
     uid_property,
+    url_property,
 )
 from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
@@ -18,7 +22,7 @@ from icalendar.version import __version__
 
 if TYPE_CHECKING:
     import uuid
-    from datetime import date
+    from datetime import date, datetime
 
     from icalendar.cal.availability import Availability
     from icalendar.cal.event import Event
@@ -458,6 +462,54 @@ Description:
     scheduling semantic.
 """,  # noqa: E501
     )
+    url = url_property
+    source = source_property
+
+    @property
+    def refresh_interval(self) -> timedelta | None:
+        """REFRESH-INTERVAL specifies a suggested minimum interval for
+        polling for changes of the calendar data from the original source
+        of that data.
+
+        Conformance:
+            This property can be specified once in an iCalendar
+            object, consisting of a positive duration of time.
+
+        Description:
+            This property specifies a positive duration that gives
+            a suggested minimum polling interval for checking for updates to
+            the calendar data.  The value of this property SHOULD be used by
+            calendar user agents to limit the polling interval for calendar
+            data updates to the minimum interval specified.
+
+        Raises:
+            ValueError: When setting a negative duration.
+        """
+        refresh_interval = self.get("REFRESH-INTERVAL")
+        return refresh_interval.dt if refresh_interval else None
+
+    @refresh_interval.setter
+    def refresh_interval(self, value: timedelta | None):
+        """Set the REFRESH-INTERVAL."""
+        if not isinstance(value, timedelta) and value is not None:
+            raise TypeError(
+                "REFRESH-INTERVAL must be either a positive timedelta,"
+                " or None to delete it."
+            )
+        if value is not None and value.total_seconds() <= 0:
+            raise ValueError("REFRESH-INTERVAL must be a positive timedelta.")
+        if value is not None:
+            del self.refresh_interval
+            self.add("REFRESH-INTERVAL", value)
+        else:
+            del self.refresh_interval
+
+    @refresh_interval.deleter
+    def refresh_interval(self):
+        """Delete REFRESH-INTERVAL."""
+        self.pop("REFRESH-INTERVAL")
+
+    images = images_property
 
     @classmethod
     def new(
@@ -468,31 +520,39 @@ Description:
         color: str | None = None,
         description: str | None = None,
         language: str | None = None,
+        last_modified: date | datetime | None = None,
         method: str | None = None,
         name: str | None = None,
         organization: str | None = None,
         prodid: str | None = None,
+        refresh_interval: timedelta | None = None,
+        source: str | None = None,
         uid: str | uuid.UUID | None = None,
+        url: str | None = None,
         version: str = "2.0",
     ):
         """Create a new Calendar with all required properties.
 
-        This creates a new Calendar in accordance with :rfc:`5545`.
+        This creates a new Calendar in accordance with :rfc:`5545` and :rfc:`7986`.
 
         Arguments:
-            calscale: The :attr:`calscale` of the component.
-            categories: The :attr:`categories` of the component.
-            color: The :attr:`color` of the component.
-            description: The :attr:`description` of the component.
+            calscale: The :attr:`calscale` of the calendar.
+            categories: The :attr:`categories` of the calendar.
+            color: The :attr:`color` of the calendar.
+            description: The :attr:`description` of the calendar.
             language: The language for the calendar. Used to generate localized `prodid`.
-            method: The :attr:`method` of the component.
-            name: The :attr:`calendar_name` of the component.
+            last_modified: The :attr:`Component.last_modified` of the calendar.
+            method: The :attr:`method` of the calendar.
+            name: The :attr:`calendar_name` of the calendar.
             organization: The organization name. Used to generate `prodid` if not provided.
             prodid: The :attr:`prodid` of the component. If None and organization is provided,
                 generates a `prodid` in format "-//organization//name//language".
-            uid: The :attr:`uid` of the component.
+            refresh_interval: The :attr:`refresh_interval` of the calendar.
+            source: The :attr:`source` of the calendar.
+            uid: The :attr:`uid` of the calendar.
                 If None, this is set to a new :func:`uuid.uuid4`.
-            version: The :attr:`version` of the component.
+            url: The :attr:`url` of the calendar.
+            version: The :attr:`version` of the calendar.
 
         Returns:
             :class:`Calendar`
@@ -501,7 +561,7 @@ Description:
             InvalidCalendar: If the content is not valid according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
-        """
+        """  # noqa: E501
         calendar = cls()
 
         # Generate prodid if not provided but organization is given
@@ -521,6 +581,10 @@ Description:
         calendar.calscale = calscale
         calendar.categories = categories
         calendar.uid = uid
+        calendar.url = url
+        calendar.refresh_interval = refresh_interval
+        calendar.source = source
+        calendar.last_modified = last_modified
         return calendar
 
     def validate(self):
@@ -529,7 +593,8 @@ Description:
         This method can be called explicitly to validate a calendar before output.
 
         Raises:
-            IncompleteComponent: If the calendar lacks required properties or components.
+            IncompleteComponent: If the calendar lacks required properties or
+                components.
         """
         if not self.get("PRODID"):
             raise IncompleteComponent("Calendar must have a PRODID")

@@ -51,7 +51,7 @@ from datetime import date, datetime, time, timedelta
 from typing import Any, Optional, Union
 
 from icalendar.caselessdict import CaselessDict
-from icalendar.enums import VALUE, Enum
+from icalendar.enums import Enum
 from icalendar.parser import Parameters, escape_char, unescape_char
 from icalendar.parser_tools import (
     DEFAULT_ENCODING,
@@ -60,9 +60,8 @@ from icalendar.parser_tools import (
     from_unicode,
     to_unicode,
 )
+from icalendar.timezone import tzid_from_dt, tzid_from_tzinfo, tzp
 from icalendar.tools import to_datetime
-
-from .timezone import tzid_from_dt, tzid_from_tzinfo, tzp
 
 DURATION_REGEX = re.compile(
     r"([-+]?)P(?:(\d+)W)?(?:(\d+)D)?" r"(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$"
@@ -77,10 +76,13 @@ class vBinary:
     """Binary property values are base 64 encoded."""
 
     params: Parameters
+    obj: str
 
-    def __init__(self, obj):
+    def __init__(self, obj, params: dict[str, str] | None = None):
         self.obj = to_unicode(obj)
         self.params = Parameters(encoding="BASE64", value="BINARY")
+        if params:
+            self.params.update(params)
 
     def __repr__(self):
         return f"vBinary({self.to_ical()})"
@@ -716,6 +718,17 @@ class vDDDTypes(TimeBase):
         if len(ical) in (6, 7):
             return vTime.from_ical(ical)
         raise ValueError(f"Expected datetime, date, or time. Got: '{ical}'")
+
+    @property
+    def td(self) -> timedelta:
+        """Compatibility property returning ``self.dt``.
+
+        This class is used to replace different time components.
+        Some of them contain a datetime or date (``.dt``).
+        Some of them contain a timedelta (``.td``).
+        This property allows interoperability.
+        """
+        return self.dt
 
 
 class vDate(TimeBase):
@@ -1756,8 +1769,8 @@ class vUri(str):
 
     def __new__(
         cls,
-        value,
-        encoding=DEFAULT_ENCODING,
+        value: str,
+        encoding: str = DEFAULT_ENCODING,
         /,
         params: Optional[dict[str, Any]] = None,
     ):
@@ -2118,6 +2131,7 @@ class TypesFactory(CaselessDict):
             "duration": "duration",
             "freebusy": "period",
             "transp": "text",
+            "refresh-interval": "duration",  # RFC 7986
             # Time Zone Component Properties
             "tzid": "text",
             "tzname": "text",
@@ -2131,6 +2145,8 @@ class TypesFactory(CaselessDict):
             "recurrence-id": "date-time",
             "related-to": "text",
             "url": "uri",
+            "conference": "uri",  # RFC 7986
+            "source": "uri",
             "uid": "text",
             # Recurrence Component Properties
             "exdate": "date-time-list",
