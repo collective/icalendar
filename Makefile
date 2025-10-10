@@ -9,6 +9,7 @@ PAPER           ?=
 # Internal variables.
 SPHINXBUILD     = "$(realpath .venv/bin/sphinx-build)"
 SPHINXAUTOBUILD = "$(realpath .venv/bin/sphinx-autobuild)"
+SPHINXAPIDOC   = "$(realpath .venv/bin/sphinx-apidoc)"
 DOCS_DIR        = ./docs/
 BUILDDIR        = ../_build
 PAPEROPT_a4     = -D latex_paper_size=a4
@@ -127,6 +128,19 @@ test: clean linkcheckbroken  ## Clean docs build, then run vale and linkcheckbro
 
 
 # development
+.PHONY: apidoc
+apidoc: dev  ## Generate API documentation source files
+	cd $(DOCS_DIR) && $(SPHINXAPIDOC) \
+ 		-f -M -e -a --remove-old \
+ 		-o reference ../src \
+ 		../src/icalendar/tests
+
+.PHONY: all
+all: clean linkcheck html  ## Clean docs build, then run linkcheck, and build html
+#all: clean vale linkcheck html  ## Clean docs build, then run vale and linkcheck, and build html
+# /development
+
+# deployment
 .PHONY: rtd-prepare
 rtd-prepare:  ## Prepare environment on Read the Docs
 	asdf plugin add uv
@@ -136,8 +150,4 @@ rtd-prepare:  ## Prepare environment on Read the Docs
 .PHONY: rtd-pr-preview
 rtd-pr-preview: rtd-prepare dev ## Build pull request preview on Read the Docs
 	cd $(DOCS_DIR) && $(SPHINXBUILD) -b html $(ALLSPHINXOPTS) ${READTHEDOCS_OUTPUT}/html/
-
-.PHONY: all
-all: clean linkcheck html  ## Clean docs build, then run linkcheck, and build html
-#all: clean vale linkcheck html  ## Clean docs build, then run vale and linkcheck, and build html
-# /development
+# /deployment

@@ -288,3 +288,13 @@ Use this command when packages that you have installed in your virtual environme
 .. code-block:: shell
 
     make clean-python
+
+
+apidoc
+``````
+
+``apidoc`` generates source documentation files from which Sphinx will render the API documentation.
+
+.. code-block:: shell
+
+    make apidoc
