@@ -1,5 +1,5 @@
-Changelog
-=========
+Change log
+==========
 
 We use `Semantic Versioning <https://semver.org>`_.
 

@@ -25,6 +25,7 @@ Contents
 
     reference/icalendar
 
+    reference/changelog
 
 .. toctree::
     :maxdepth: 2
