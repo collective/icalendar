@@ -5,11 +5,9 @@ Contents
 ========
 
 .. toctree::
-    :caption: API Reference
+    :caption: Reference
 
-    reference/icalendar
-
-    reference/changelog
+    reference/index
 
 .. toctree::
     :maxdepth: 2
@@ -17,7 +15,6 @@ Contents
     install
     usage
     cli
-    changelog
 
 
 .. toctree::

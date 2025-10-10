@@ -2,7 +2,17 @@
 Reference guide
 ===============
 
+API
+===
+
 .. toctree::
-    :caption: Change log
+
+    api/icalendar
+
+
+Change log
+==========
+
+.. toctree::
 
     changelog

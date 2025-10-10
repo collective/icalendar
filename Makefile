@@ -132,7 +132,7 @@ test: clean linkcheckbroken  ## Clean docs build, then run vale and linkcheckbro
 apidoc: dev  ## Generate API documentation source files
 	cd $(DOCS_DIR) && $(SPHINXAPIDOC) \
  		-f -M -e -a --remove-old \
- 		-o reference ../src \
+ 		-o reference/api ../src \
  		../src/icalendar/tests
 
 .PHONY: all
