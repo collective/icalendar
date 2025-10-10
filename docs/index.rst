@@ -32,7 +32,6 @@ Contents
     install
     usage
     cli
-    license
     changelog
 
 
