@@ -86,6 +86,9 @@ test = [
     "coverage",
     "hypothesis",
     "pytz",
+    "mypy>=1.0",
+    "types-python-dateutil",
+    "types-pytz",
 ]
 
 [project.scripts]
