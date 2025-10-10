@@ -71,6 +71,12 @@ html_context = {
     "github_version": "main",
     "doc_path": "docs",
 }
+html_static_path = [
+    "_static",
+]
+html_js_files = [
+    ("js/custom-icons.js", {"defer": "defer"}),
+]
 pygments_style = "sphinx"
 
 
