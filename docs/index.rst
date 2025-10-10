@@ -40,8 +40,3 @@ Contents
     :caption: Contribute
 
     contribute/index
-
-
-.. toctree::
-    :titlesonly:
-    security
