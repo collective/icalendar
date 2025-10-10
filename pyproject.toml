@@ -106,7 +106,6 @@ exclude = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/icalendar"]
-include = ["src/icalendar/py.typed"]
 
 [tool.hatch.metadata.hooks.vcs.urls]
 # This is a dynamic generation of [project.urls]
