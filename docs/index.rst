@@ -23,3 +23,6 @@ Contents
     :caption: Contribute
 
     contribute/index
+
+-   :doc:`reference/glossary`
+-   :ref:`genindex`
