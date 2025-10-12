@@ -1,3 +1,4 @@
+===========
 Maintenance
 ===========
 
@@ -44,7 +45,7 @@ We want to have as many knowledgeable people with write access taking responsibi
 - future maintainers
 
 Nobody should merge their own pull requests.
-If you like to review or merge pull requests of other people and you have shown that you know how to contribute, you can ask for becoming a collaborator.
+If you like to review or merge pull requests of other people and you have shown that you know how to contribute, you can ask to become a collaborator.
 A maintainer may ask if you would like to become one.
 
 
