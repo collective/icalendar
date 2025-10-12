@@ -186,7 +186,7 @@ extend-safe-fixes = [
     "N999",   # module name
     "PT027",  # assertRaises
 ]
-"src/icalendar/prop.py" = [
+"src/icalendar/prop/__init__.py" = [
     "N801",   # Class name should use CamelCase
 ]
 "src/icalendar/fuzzing/*" = [

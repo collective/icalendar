@@ -31,6 +31,7 @@ Minor changes:
 - Make coverage submission optional for CI.
 - Bump ``actions/setup-python`` version from 5 to 6 for CI.
 - Add comment explaining tzdata dependency purpose to prevent confusion. See `Issue 900 <https://github.com/collective/icalendar/issues/900>`_.
+- Fix duplicate blank issue template by adding config.yml to disable GitHub's default blank option. See `Issue 777 <https://github.com/collective/icalendar/issues/777>`_.
 
 Breaking changes:
 
@@ -50,9 +51,13 @@ New features:
 - Add ``availabilities`` attribtue to ``Calendar``.
 - Add ``status``, ``transparency``, and ``attendees`` properties. See `Issue 841 <https://github.com/collective/icalendar/issues/841>`_.
 - Add ``uid`` property that is ``''`` by default and set automatically with ``new()``. See `Issue 315 <https://github.com/collective/icalendar/issues/315>`_.
+- Make icalendar compatible with `RFC 7986 <https://www.rfc-editor.org/rfc/rfc7986.html>`_.
+  - Add ``url``, ``source``, ``refresh_interval``, ``conferences``, and ``images`` properties to components.
+- Add ``td`` property to ``vDDDTypes`` to make it compatible with ``timedelta`` value types.
 
 Bug fixes:
 
+- Fix read from stdin issue - See `Issue 821 <https://github.com/collective/icalendar/issues/821>`_.
 - Fix invalid calendar: Parsing a date with TZID results in a datetime to not loose the timezone. See `Issue 187 <https://github.com/collective/icalendar/issues/187>`_.
 - Fix timezone placement in ``add_missing_timezones()``: ``VTIMEZONE`` components now appear before ``VEVENT`` and other components that reference them. See `Issue 844 <https://github.com/collective/icalendar/issues/844>`_.
 - Fixed ``Todo.duration`` and ``Event.duration`` to return ``DURATION`` property when set, even without ``DTSTART``. See `Issue 867 <https://github.com/collective/icalendar/issues/867>`_.

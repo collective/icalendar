@@ -9,7 +9,16 @@ from typing import TYPE_CHECKING, Literal, Optional, Sequence, Union
 from icalendar.enums import BUSYTYPE, CLASS, STATUS, TRANSP, StrEnum
 from icalendar.error import IncompleteComponent, InvalidCalendar
 from icalendar.parser_tools import SEQUENCE_TYPES
-from icalendar.prop import vCalAddress, vCategory, vDDDTypes, vDuration, vRecur, vText
+from icalendar.prop import (
+    vCalAddress,
+    vCategory,
+    vDDDTypes,
+    vDuration,
+    vRecur,
+    vText,
+)
+from icalendar.prop.conference import Conference
+from icalendar.prop.image import Image
 from icalendar.timezone import tzp
 from icalendar.tools import is_date
 
@@ -1312,6 +1321,44 @@ Description:
     the format of the resource pointed to by the property value.  If
     the URL property and Content-Location MIME header are both
     specified, they MUST point to the same resource.
+
+Conformance:
+    This property can be specified once in the "VEVENT",
+    "VTODO", "VJOURNAL", or "VFREEBUSY" calendar components.
+    Since :rfc:`7986`, this property can also be defined on a "VCALENDAR".
+
+Example:
+    The following is an example of this property:
+
+    .. code-block:: text
+
+        URL:http://example.com/pub/calendars/jsmith/mytime.ics
+
+""",
+)
+
+source_property = single_string_property(
+    "SOURCE",
+    """A URI from where calendar data can be refreshed.
+
+Description:
+    This property identifies a location where a client can
+    retrieve updated data for the calendar.  Clients SHOULD honor any
+    specified "REFRESH-INTERVAL" value when periodically retrieving
+    data.  Note that this property differs from the "URL" property in
+    that "URL" is meant to provide an alternative representation of
+    the calendar data rather than the original location of the data.
+
+Conformance:
+    This property can be specified once in an iCalendar object.
+
+Example:
+    The following is an example of this property:
+
+    .. code-block:: text
+
+        SOURCE;VALUE=URI:https://example.com/holidays.ics
+
 """,
 )
 
@@ -1505,16 +1552,24 @@ def rfc_7953_end_property(self):
 
 
 def get_start_end_duration_with_validation(
-    component: Component, start_property: str, end_property: str, component_name: str,
+    component: Component,
+    start_property: str,
+    end_property: str,
+    component_name: str,
 ) -> tuple[date | datetime | None, date | datetime | None, timedelta | None]:
     """
-    Verify calendar validity and return start, end, and duration with RFC 5545 validation.
+    Validate the component and return start, end, and duration.
+
+    This tests validity according to :rfc:`5545` rules
+    for ``Event`` and ``Todo`` components.
 
     Args:
         component: The component to validate, either ``Event`` or ``Todo``.
         start_property: The start property name, ``DTSTART``.
-        end_property: The end property name, either ``DTEND`` for ``Event`` or ``DUE`` for ``Todo``.
-        component_name: The component name for error messages, either ``VEVENT`` or ``VTODO``.
+        end_property: The end property name, either ``DTEND`` for ``Event`` or
+            ``DUE`` for ``Todo``.
+        component_name: The component name for error messages,
+            either ``VEVENT`` or ``VTODO``.
 
     Returns:
         tuple: (start, end, duration) values from the component.
@@ -1530,7 +1585,10 @@ def get_start_end_duration_with_validation(
     # RFC 5545: Only one of end property and DURATION may be present
     if duration is not None and end is not None:
         end_name = "DTEND" if end_property == "DTEND" else "DUE"
-        msg = f"Only one of {end_name} and DURATION may be in a {component_name}, not both."
+        msg = (
+            f"Only one of {end_name} and DURATION "
+            f"may be in a {component_name}, not both."
+        )
         raise InvalidCalendar(msg)
 
     # RFC 5545: When DTSTART is a date, DURATION must be of days or weeks
@@ -1546,7 +1604,9 @@ def get_start_end_duration_with_validation(
     # RFC 5545: DTSTART and end property must be of the same type
     if start is not None and end is not None and is_date(start) != is_date(end):
         end_name = "DTEND" if end_property == "DTEND" else "DUE"
-        msg = f"DTSTART and {end_name} must be of the same type, either date or datetime."
+        msg = (
+            f"DTSTART and {end_name} must be of the same type, either date or datetime."
+        )
         raise InvalidCalendar(msg)
 
     return start, end, duration
@@ -1580,13 +1640,15 @@ def get_end_property(component: Component, end_property: str) -> date | datetime
 
     Args:
         component: The component to get end from
-        end_property: The end property name, either ``DTEND`` for ``Event`` or ``DUE`` for ``Todo``.
+        end_property: The end property name, either ``DTEND`` for ``Event`` or
+            ``DUE`` for ``Todo``.
 
     Returns:
         The computed end value.
 
     Raises:
-        IncompleteComponent: If the provided information is incomplete to compute the end property.
+        IncompleteComponent: If the provided information is incomplete
+            to compute the end property.
 
     """
     # Trigger validation by calling _get_start_end_duration
@@ -1639,13 +1701,14 @@ def set_duration_with_locking(
     end_property: str,
 ) -> None:
     """
-    Set the duration with explicit locking behavior for ``Event`` and ``Todo`` components.
+    Set the duration with explicit locking behavior for ``Event`` and ``Todo``.
 
     Args:
         component: The component to modify, either ``Event`` or ``Todo``.
         duration: The duration to set, or ``None`` to convert to ``DURATION`` property.
         locked: Which property to keep unchanged, either ``start`` or ``end``.
-        end_property: The end property name, either ``DTEND`` for ``Event`` or ``DUE`` for ``Todo``.
+        end_property: The end property name, either ``DTEND`` for ``Event`` or
+            ``DUE`` for ``Todo``.
 
     """
     # Convert to DURATION property if duration is None
@@ -1696,8 +1759,10 @@ def set_start_with_locking(
     Args:
         component: The component to modify, either ``Event`` or ``Todo``.
         start: The start time to set.
-        locked: Which property to keep unchanged, either ``duration``, ``end``, or ``None`` for auto-detect.
-        end_property: The end property name, either ``DTEND`` for ``Event`` or ``DUE`` for ``Todo``.
+        locked: Which property to keep unchanged, either ``duration``, ``end``,
+            or ``None`` for auto-detect.
+        end_property: The end property name, either ``DTEND`` for ``Event`` or
+            ``DUE`` for ``Todo``.
 
     """
     if locked is None:
@@ -1745,7 +1810,8 @@ def set_end_with_locking(
         component: The component to modify, either ``Event`` or ``Todo``.
         end: The end time to set.
         locked: Which property to keep unchanged, either ``start`` or ``duration``.
-        end_property: The end property name, either ``DTEND`` for ``Event`` or ``DUE`` for ``Todo``.
+        end_property: The end property name, either ``DTEND`` for ``Event`` or ``DUE``
+            for ``Todo``.
 
     """
     if locked == "start":
@@ -1763,6 +1829,149 @@ def set_end_with_locking(
         raise ValueError(msg)
 
 
+def _get_images(self: Component) -> list[Image]:
+    """IMAGE specifies an image associated with the calendar or a calendar component.
+
+    Description:
+        This property specifies an image for an iCalendar
+        object or a calendar component via a URI or directly with inline
+        data that can be used by calendar user agents when presenting the
+        calendar data to a user.  Multiple properties MAY be used to
+        specify alternative sets of images with, for example, varying
+        media subtypes, resolutions, or sizes.  When multiple properties
+        are present, calendar user agents SHOULD display only one of them,
+        picking one that provides the most appropriate image quality, or
+        display none.  The "DISPLAY" parameter is used to indicate the
+        intended display mode for the image.  The "ALTREP" parameter,
+        defined in :rfc:`5545`, can be used to provide a "clickable" image
+        where the URI in the parameter value can be "launched" by a click
+        on the image in the calendar user agent.
+
+    Conformance:
+        This property can be specified multiple times in an
+        iCalendar object or in "VEVENT", "VTODO", or "VJOURNAL" calendar
+        components.
+
+    .. note::
+
+        At the present moment, this property is read-only. If you require a setter,
+        please open an issue or a pull request.
+    """
+    images = self.get("IMAGE", [])
+    if not isinstance(images, SEQUENCE_TYPES):
+        images = [images]
+    return [Image.from_property_value(img) for img in images]
+
+
+images_property = property(_get_images)
+
+
+def _get_conferences(self: Component) -> list[Conference]:
+    """Return the CONFERENCE properties as a list.
+
+    Purpose:
+        This property specifies information for accessing a conferencing system.
+
+    Conformance:
+        This property can be specified multiple times in a
+        "VEVENT" or "VTODO" calendar component.
+
+    Description:
+        This property specifies information for accessing a
+        conferencing system for attendees of a meeting or task.  This
+        might be for a telephone-based conference number dial-in with
+        access codes included (such as a tel: URI :rfc:`3966` or a sip: or
+        sips: URI :rfc:`3261`), for a web-based video chat (such as an http:
+        or https: URI :rfc:`7230`), or for an instant messaging group chat
+        room (such as an xmpp: URI :rfc:`5122`).  If a specific URI for a
+        conferencing system is not available, a data: URI :rfc:`2397`
+        containing a text description can be used.
+
+        A conference system can be a bidirectional communication channel
+        or a uni-directional "broadcast feed".
+
+        The "FEATURE" property parameter is used to describe the key
+        capabilities of the conference system to allow a client to choose
+        the ones that give the required level of interaction from a set of
+        multiple properties.
+
+        The "LABEL" property parameter is used to convey additional
+        details on the use of the URI.  For example, the URIs or access
+        codes for the moderator and attendee of a teleconference system
+        could be different, and the "LABEL" property parameter could be
+        used to "tag" each "CONFERENCE" property to indicate which is
+        which.
+
+        The "LANGUAGE" property parameter can be used to specify the
+        language used for text values used with this property (as per
+        Section 3.2.10 of :rfc:`5545`).
+
+    Example:
+        The following are examples of this property:
+
+        .. code-block:: text
+
+            CONFERENCE;VALUE=URI;FEATURE=PHONE,MODERATOR;
+             LABEL=Moderator dial-in:tel:+1-412-555-0123,,,654321
+            CONFERENCE;VALUE=URI;FEATURE=PHONE;
+             LABEL=Attendee dial-in:tel:+1-412-555-0123,,,555123
+            CONFERENCE;VALUE=URI;FEATURE=PHONE;
+             LABEL=Attendee dial-in:tel:+1-888-555-0456,,,555123
+            CONFERENCE;VALUE=URI;FEATURE=CHAT;
+             LABEL=Chat room:xmpp:chat-123@conference.example.com
+            CONFERENCE;VALUE=URI;FEATURE=AUDIO,VIDEO;
+             LABEL=Attendee dial-in:https://chat.example.com/audio?id=123456
+
+        Get all conferences:
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Event
+            >>> event = Event()
+            >>> event.conferences
+            []
+
+        Set a conference:
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Event, Conference
+            >>> event = Event()
+            >>> event.conferences = [
+            ...     Conference(
+            ...         "tel:+1-412-555-0123,,,654321",
+            ...         feature="PHONE,MODERATOR",
+            ...         label="Moderator dial-in",
+            ...         language="EN",
+            ...     )
+            ... ]
+            >>> print(event.to_ical())
+            BEGIN:VEVENT
+            CONFERENCE;FEATURE="PHONE,MODERATOR";LABEL=Moderator dial-in;LANGUAGE=EN:t
+             el:+1-412-555-0123,,,654321
+            END:VEVENT
+
+    """
+    conferences = self.get("CONFERENCE", [])
+    if not isinstance(conferences, SEQUENCE_TYPES):
+        conferences = [conferences]
+    return [Conference.from_uri(conference) for conference in conferences]
+
+
+def _set_conferences(self: Component, conferences: list[Conference] | None):
+    """Set the conferences."""
+    _del_conferences(self)
+    for conference in conferences or []:
+        self.add("CONFERENCE", conference.to_uri())
+
+
+def _del_conferences(self: Component):
+    """Delete all conferences."""
+    self.pop("CONFERENCE")
+
+
+conferences_property = property(_get_conferences, _set_conferences, _del_conferences)
+
 __all__ = [
     "attendees_property",
     "busy_type_property",
@@ -1770,6 +1979,7 @@ __all__ = [
     "class_property",
     "color_property",
     "comments_property",
+    "conferences_property",
     "contacts_property",
     "create_single_property",
     "description_property",
@@ -1780,6 +1990,7 @@ __all__ = [
     "get_end_property",
     "get_start_end_duration_with_validation",
     "get_start_property",
+    "images_property",
     "location_property",
     "multi_language_text_property",
     "organizer_property",
@@ -1800,6 +2011,7 @@ __all__ = [
     "set_start_with_locking",
     "single_int_property",
     "single_utc_property",
+    "source_property",
     "status_property",
     "summary_property",
     "transparency_property",

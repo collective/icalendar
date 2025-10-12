@@ -6,15 +6,14 @@ They are also considered.
 
 from __future__ import annotations
 
+from datetime import date, datetime, time, timedelta, timezone
 from typing import Union
 
 import pytest
 
-from icalendar.cal.calendar import Calendar
-from icalendar.cal.event import Event
-from icalendar.cal.journal import Journal
-from icalendar.cal.todo import Todo
-from icalendar.prop import vText
+from icalendar import Calendar, Event, Journal, Todo, vText, vUri
+
+UTC = timezone.utc
 
 
 @pytest.fixture
@@ -212,3 +211,88 @@ def test_set_if_multiple_colors(
     color_component.add("COLOR", "green")
     color_component.color = color
     assert color_component.color == color
+
+
+def test_refresh_interval_default(calendar: Calendar):
+    """REFRESH-INTERVAL default."""
+    assert calendar.get("REFRESH-INTERVAL") is None
+    assert calendar.refresh_interval is None
+
+
+@pytest.mark.parametrize(
+    "invalid_value",
+    [
+        datetime(2020, 1, 1),
+        date(2020, 1, 1),
+        "invalid",
+        (date(2020, 1, 1), timedelta(days=1)),
+        time(12, 0),
+    ],
+)
+def test_invalid_refresh_interval_type(calendar: Calendar, invalid_value):
+    """Invalid REFRESH-INTERVAL"""
+    calendar.refresh_interval = timedelta(hours=1)
+    with pytest.raises(TypeError):
+        calendar.refresh_interval = invalid_value
+    assert calendar.refresh_interval == timedelta(hours=1)
+
+
+@pytest.mark.parametrize("invalid_value", [timedelta(seconds=-1), timedelta(seconds=0)])
+def test_invalid_refresh_interval(calendar: Calendar, invalid_value):
+    """Invalid REFRESH-INTERVAL.
+
+    Test:
+    - value validation
+    - no deletion of the current value
+    """
+    calendar.refresh_interval = timedelta(hours=2)
+    with pytest.raises(ValueError):
+        calendar.refresh_interval = invalid_value
+    assert calendar.refresh_interval == timedelta(hours=2)
+
+
+def test_refresh_interval_set_to_value(calendar: Calendar):
+    """REFRESH-INTERVAL setting."""
+    calendar.refresh_interval = timedelta(hours=1)
+    assert calendar.refresh_interval == timedelta(hours=1)
+    assert calendar["REFRESH-INTERVAL"].td == timedelta(hours=1)
+
+
+def test_refresh_interval_set_to_value_by_dict(calendar: Calendar):
+    """REFRESH-INTERVAL setting."""
+    calendar.add("REFRESH-INTERVAL", timedelta(days=1, hours=2))
+    assert calendar.refresh_interval == timedelta(days=1, hours=2)
+    assert calendar["REFRESH-INTERVAL"].dt == timedelta(days=1, hours=2)
+
+
+def get_rfc_7986_properties_calendar(calendars):
+    """ICS -> obj"""
+    return calendars.rfc_7986_properties
+
+
+def get_rfc_7986_properties_calendar_serialized(calendars):
+    """ICS -> obj -> ICS -> obj"""
+    cal = calendars.rfc_7986_properties
+    return Calendar.from_ical(cal.to_ical())
+
+
+@pytest.mark.parametrize(
+    "get_calendar",
+    [get_rfc_7986_properties_calendar, get_rfc_7986_properties_calendar_serialized],
+)
+def test_attributes_from_calendar(calendars, get_calendar):
+    """Check that the attributes have a certain value."""
+    calendar: Calendar = get_calendar(calendars)
+    assert calendar.calendar_name == "RFC 7986 calendar"
+    assert calendar.color == "black"
+    assert calendar.refresh_interval == timedelta(hours=3)
+    assert calendar.last_modified == datetime(2016, 10, 29, 12, 12, 29, tzinfo=UTC), (
+        "20161029T121229Z"
+    )
+    assert calendar.uid == "5FC53010-1267-4F8E-BC28-1D7AE55A7C99"
+    assert calendar.description == "We want a lot of RFC 7986 parameters in here!"
+    assert (
+        calendar.source
+        == "https://github.com/collective/icalendar/tree/main/src/icalendar/tests/calendars/rfc_7986_properties.ics"
+    )
+    assert isinstance(calendar.source, vUri)

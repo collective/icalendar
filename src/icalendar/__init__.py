@@ -74,6 +74,8 @@ from icalendar.prop import (
     vUTCOffset,
     vWeekday,
 )
+from icalendar.prop.conference import Conference
+from icalendar.prop.image import Image
 
 # Switching the timezone provider
 from icalendar.timezone import use_pytz, use_zoneinfo
@@ -103,9 +105,11 @@ __all__ = [
     "ComponentEndMissing",
     "ComponentFactory",
     "ComponentStartMissing",
+    "Conference",
     "Event",
     "FeatureWillBeRemovedInFutureVersion",
     "FreeBusy",
+    "Image",
     "IncompleteAlarmInformation",
     "IncompleteComponent",
     "InvalidCalendar",

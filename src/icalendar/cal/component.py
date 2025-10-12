@@ -3,17 +3,19 @@
 from __future__ import annotations
 
 from datetime import date, datetime, timezone
-from typing import ClassVar, Optional
+from typing import TYPE_CHECKING, ClassVar, Optional
 
 from icalendar.attr import comments_property, single_utc_property, uid_property
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.caselessdict import CaselessDict
-from icalendar.compatibility import Self
 from icalendar.error import InvalidCalendar
 from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_split
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import TypesFactory, vDDDLists, vText
 from icalendar.timezone import tzp
+
+if TYPE_CHECKING:
+    from icalendar.compatibility import Self
 
 _marker = []
 
@@ -127,7 +129,13 @@ class Component(CaselessDict):
                     obj.params[key] = item
         return obj
 
-    def add(self, name, value, parameters=None, encode=1):
+    def add(
+        self,
+        name: str,
+        value,
+        parameters: dict[str, str] | Parameters = None,
+        encode: bool = True,  # noqa: FBT001
+    ):
         """Add a property.
 
         :param name: Name of the property.
@@ -293,7 +301,7 @@ class Component(CaselessDict):
         return properties
 
     @classmethod
-    def from_ical(cls, st, multiple:bool=False) -> Self|list[Self]:
+    def from_ical(cls, st, multiple: bool = False) -> Self | list[Self]:  # noqa: FBT001
         """Populates the component recursively from a string."""
         stack = []  # a stack of components
         comps = []
@@ -563,7 +571,7 @@ class Component(CaselessDict):
             The property can be specified once in "VEVENT",
             "VTODO", or "VJOURNAL" calendar components.  The value MUST be
             specified as a date with UTC time.
-        
+
         """,
     )
 
