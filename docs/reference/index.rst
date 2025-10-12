@@ -10,6 +10,14 @@ API
     api/icalendar
 
 
+Design
+======
+
+.. toctree::
+
+    design
+
+
 Change log
 ==========
 
