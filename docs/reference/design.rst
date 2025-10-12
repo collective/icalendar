@@ -23,12 +23,12 @@ icalendar is compatible with the following RFC standards.
     "VALARM" Extensions for iCalendar
 :rfc:`7953`
     Calendar Availability
+:rfc:`7986`
+    New Properties for iCalendar
 
 The maintainers of icalendar do not claim compatibility with the following RFCs.
 They might work though.
 
-:rfc:`7986`
-    New Properties for iCalendar
 :rfc:`9073`
     Event Publishing Extensions to iCalendar
 :rfc:`9253`
