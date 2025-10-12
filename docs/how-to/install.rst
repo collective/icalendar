@@ -298,3 +298,7 @@ apidoc
 .. code-block:: shell
 
     make apidoc
+
+.. seealso::
+
+    `sphinx-apidoc <https://www.sphinx-doc.org/en/master/man/sphinx-apidoc.html>`_
