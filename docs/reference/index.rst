@@ -24,3 +24,11 @@ Change log
 .. toctree::
 
     changelog
+
+
+Glossary
+========
+
+.. toctree::
+
+    glossary
