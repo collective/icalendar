@@ -1,19 +1,33 @@
-iCalendar utility
-=================
+============================
+Command line interface (CLI)
+============================
 
-To get more information about the command line interface, use the ``-h``
-option::
+This chapter describes how to use the command line interface (CLI) for icalendar.
 
-    $ icalendar -h
+The CLI consists of the ``icalendar`` command followed by arguments.
 
-view
-----
 
-To output a human readable summary of an event::
+Help
+====
 
-    $ icalendar myfile.ics
+To get information about all the commands, use the ``-h`` option.
 
-The output will look something like this::
+.. code-block:: shell
+
+    icalendar -h
+
+View an event
+=============
+
+To view a readable summary of an event file that is in icalendar format, pass the name of the icalendar file to ``icalendar``.
+
+.. code-block:: shell
+
+    icalendar myfile.ics
+
+The following is example output.
+
+.. code-block:: text
 
     Organiser: Secretary <secretary@company.com>
     Attendees:
@@ -27,10 +41,14 @@ The output will look something like this::
 
     Your yearly evaluation is scheduled for next Tuesday. Please be on time.
 
-To use this in terminal based e-mail clients like mutt, add a new mime type (as
-root)::
+Shell-based mail client
+=======================
 
-    # cat << EOF > /usr/lib/mime/packages/icalendar
+To use icalender in terminal-based mail clients such as mutt, add a new MIME type as the root user as shown.
+
+.. code-block:: shell
+
+    cat << EOF > /usr/lib/mime/packages/icalendar
     text/calendar; icalendar '%s'; copiousoutput; description=iCalendar text; priority=2
     EOF
-    # update-mime
+    update-mime
