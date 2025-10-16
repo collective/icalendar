@@ -1,17 +1,17 @@
-.. include:: ../README.rst
-
-
-Contents
-========
+=========
+iCalendar
+=========
 
 .. toctree::
     :caption: Reference
+    :hidden:
 
     reference/index
 
 .. toctree::
     :caption: How to guides
     :maxdepth: 2
+    :hidden:
 
     how-to/index
     install
@@ -21,6 +21,7 @@ Contents
 
 .. toctree::
     :caption: Contribute
+    :hidden:
 
     contribute/index
 
