@@ -33,6 +33,7 @@ Minor changes:
 - Add comment explaining tzdata dependency purpose to prevent confusion. See `Issue 900 <https://github.com/collective/icalendar/issues/900>`_.
 - Fix duplicate blank issue template by adding config.yml to disable GitHub's default blank option. See `Issue 777 <https://github.com/collective/icalendar/issues/777>`_.
 - Add PEP 561 py.typed marker to enable type checking support. The package now distributes inline type annotations for mypy and other type checkers. See `Issue 395 <https://github.com/collective/icalendar/issues/395>`_.
+- Bump ``github/codeql-action`` from 3 to 4 in CI fuzzing workflow.
 
 Breaking changes:
 
@@ -58,6 +59,7 @@ New features:
 
 Bug fixes:
 
+- Fix read from stdin issue - See `Issue 821 <https://github.com/collective/icalendar/issues/821>`_.
 - Fix invalid calendar: Parsing a date with TZID results in a datetime to not loose the timezone. See `Issue 187 <https://github.com/collective/icalendar/issues/187>`_.
 - Fix timezone placement in ``add_missing_timezones()``: ``VTIMEZONE`` components now appear before ``VEVENT`` and other components that reference them. See `Issue 844 <https://github.com/collective/icalendar/issues/844>`_.
 - Fixed ``Todo.duration`` and ``Event.duration`` to return ``DURATION`` property when set, even without ``DTSTART``. See `Issue 867 <https://github.com/collective/icalendar/issues/867>`_.
