@@ -86,6 +86,9 @@ test = [
     "coverage",
     "hypothesis",
     "pytz",
+    "mypy>=1.0",
+    "types-python-dateutil",
+    "types-pytz",
 ]
 
 [project.scripts]
@@ -100,6 +103,9 @@ exclude = [
   "/build",
   "/htmlcov",
 ]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/icalendar"]
 
 [tool.hatch.metadata.hooks.vcs.urls]
 # This is a dynamic generation of [project.urls]
