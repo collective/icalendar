@@ -25,7 +25,9 @@ master_doc = "index"
 project = "icalendar"
 this_year = datetime.date.today().year  # noqa: DTZ011
 copyright = f"{this_year}, Plone Foundation"  # noqa: A001
-release = version = importlib.metadata.version("icalendar")
+version = importlib.metadata.version(project)
+v = version.split(".")[:-1]
+release = version = ".".join(v)
 
 
 # -- Options for HTML output -------------------------------------------------
