@@ -28,7 +28,7 @@ def _infer_value_type(value):
 
     Returns:
         str or None: The ``VALUE`` parameter string, for example, "DATE", "TIME", or other string, or ``None``
-            if no specific VALUE is needed
+            if no specific ``VALUE`` is needed.
     """
     if isinstance(value, list):
         if not value:
