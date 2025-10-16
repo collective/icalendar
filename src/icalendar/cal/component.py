@@ -21,7 +21,7 @@ _marker = []
 
 
 def _infer_value_type(value):
-    """Infer the VALUE parameter from a Python type.
+    """Infer the ``VALUE`` parameter from a Python type.
 
     Args:
         value: Python native type (date, datetime, timedelta, time, tuple, list)
