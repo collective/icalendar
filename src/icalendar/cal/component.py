@@ -24,7 +24,7 @@ def _infer_value_type(value):
     """Infer the ``VALUE`` parameter from a Python type.
 
     Args:
-        value: Python native type (date, datetime, timedelta, time, tuple, list)
+        value: Python native type, one of :py:class:`date`, :py:mod:`datetime`, :py:class:`timedelta`, :py:mod:`time`, :py:class:`tuple`, or :py:class:`list`.
 
     Returns:
         str or None: The VALUE parameter string (e.g., "DATE", "TIME") or None
