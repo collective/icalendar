@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from datetime import date, datetime, timezone
-from typing import TYPE_CHECKING, ClassVar, Optional
+from datetime import date, datetime, time, timezone
+from typing import TYPE_CHECKING, ClassVar
 
 from icalendar.attr import comments_property, single_utc_property, uid_property
 from icalendar.cal.component_factory import ComponentFactory
@@ -18,6 +18,35 @@ if TYPE_CHECKING:
     from icalendar.compatibility import Self
 
 _marker = []
+
+
+def _infer_value_type(value):
+    """Infer the VALUE parameter from a Python type.
+
+    Args:
+        value: Python native type (date, datetime, timedelta, time, tuple, list)
+
+    Returns:
+        str or None: The VALUE parameter string (e.g., "DATE", "TIME") or None
+            if no specific VALUE is needed
+    """
+    if isinstance(value, list):
+        if not value:
+            return None
+        # Check if ALL items are date (but not datetime)
+        if all(isinstance(item, date) and not isinstance(item, datetime) for item in value):
+            return "DATE"
+        # Check if ALL items are time
+        if all(isinstance(item, time) for item in value):
+            return "TIME"
+        # Mixed types or other types - don't infer
+        return None
+    if isinstance(value, date) and not isinstance(value, datetime):
+        return "DATE"
+    if isinstance(value, time):
+        return "TIME"
+    # Don't infer PERIOD - it's too risky and vPeriod already handles it
+    return None
 
 
 class Component(CaselessDict):
@@ -56,7 +85,7 @@ class Component(CaselessDict):
     # not_compliant = ['']  # List of non-compliant properties.
 
     types_factory = TypesFactory()
-    _components_factory: ClassVar[Optional[ComponentFactory]] = None
+    _components_factory: ClassVar[ComponentFactory | None] = None
 
     @classmethod
     def get_component_class(cls, name: str) -> type[Component]:
@@ -116,7 +145,21 @@ class Component(CaselessDict):
             # Don't encode already encoded values.
             obj = value
         else:
-            klass = cls.types_factory.for_property(name)
+            # Extract VALUE parameter if present, or infer it from the Python type
+            value_param = None
+            if parameters and "VALUE" in parameters:
+                value_param = parameters["VALUE"]
+            elif not isinstance(value, cls.types_factory.all_types):
+                inferred = _infer_value_type(value)
+                if inferred:
+                    value_param = inferred
+                    # Auto-set the VALUE parameter
+                    if parameters is None:
+                        parameters = {}
+                    if "VALUE" not in parameters:
+                        parameters["VALUE"] = inferred
+
+            klass = cls.types_factory.for_property(name, value_param)
             obj = klass(value)
         if parameters:
             if not hasattr(obj, "params"):
@@ -353,7 +396,9 @@ class Component(CaselessDict):
                     tzp.cache_timezone_component(component)
             # we are adding properties to the current top of the stack
             else:
-                factory = cls.types_factory.for_property(name)
+                # Extract VALUE parameter if present
+                value_param = params.get("VALUE") if params else None
+                factory = cls.types_factory.for_property(name, value_param)
                 component = stack[-1] if stack else None
                 if not component:
                     # only accept X-COMMENT at the end of the .ics file
@@ -592,10 +637,10 @@ class Component(CaselessDict):
     @classmethod
     def new(
         cls,
-        created: Optional[date] = None,
+        created: date | None = None,
         comments: list[str] | str | None = None,
-        last_modified: Optional[date] = None,
-        stamp: Optional[date] = None,
+        last_modified: date | None = None,
+        stamp: date | None = None,
     ) -> Component:
         """Create a new component.
 
