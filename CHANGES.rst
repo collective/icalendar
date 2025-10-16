@@ -32,6 +32,7 @@ Minor changes:
 - Bump ``actions/setup-python`` version from 5 to 6 for CI.
 - Add comment explaining tzdata dependency purpose to prevent confusion. See `Issue 900 <https://github.com/collective/icalendar/issues/900>`_.
 - Fix duplicate blank issue template by adding config.yml to disable GitHub's default blank option. See `Issue 777 <https://github.com/collective/icalendar/issues/777>`_.
+- Add PEP 561 py.typed marker to enable type checking support. The package now distributes inline type annotations for mypy and other type checkers. See `Issue 395 <https://github.com/collective/icalendar/issues/395>`_.
 - Bump ``github/codeql-action`` from 3 to 4 in CI fuzzing workflow.
 
 Breaking changes:
