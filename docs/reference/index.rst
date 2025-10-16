@@ -2,17 +2,18 @@
 Reference guides
 ================
 
-API
-===
+API reference
+=============
 
 .. toctree::
     :maxdepth: 2
 
     api/icalendar
+    api/modules
 
 
-Design
-======
+Design reference
+================
 
 .. toctree::
     :maxdepth: 2
@@ -20,8 +21,8 @@ Design
     design
 
 
-Change log
-==========
+Change log history
+==================
 
 .. toctree::
     :maxdepth: 2
@@ -29,8 +30,8 @@ Change log
     changelog
 
 
-Glossary
-========
+Glossary of terms
+=================
 
 .. toctree::
 
