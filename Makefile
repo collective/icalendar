@@ -15,9 +15,8 @@ BUILDDIR        = ../_build
 PAPEROPT_a4     = -D latex_paper_size=a4
 PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
-# See https://github.com/collective/icalendar/issues/853 for future implementation
-#VALEFILES       := $(shell find $(DOCS_DIR) -type f -name "*.rst" -print)  # Also add `src` for docstrings.
-#VALEOPTS        ?=
+VALEFILES       := $(shell find $(DOCS_DIR) -type f -name "*.rst" -print)  # Also add `src` for docstrings.
+VALEOPTS        ?=
 PYTHONVERSION   = >=3.11,<3.14
 
 # Add the following 'help' target to your Makefile
@@ -107,12 +106,12 @@ linkcheckbroken: dev  ## Run linkcheck and show only broken links
 		"or in $(BUILDDIR)/linkcheck/ ."
 
 # See https://github.com/collective/icalendar/issues/853 and above comment
-#.PHONY: vale
-#vale: dev  ## Run Vale style, grammar, and spell checks
-#	@uv run vale sync
-#	@uv run vale --no-wrap $(VALEOPTS) $(VALEFILES)
-#	@echo
-#	@echo "Vale is finished; look for any errors in the above output."
+.PHONY: vale
+vale: dev  ## Run Vale style, grammar, and spell checks
+	@uv run vale sync
+	@uv run vale --no-wrap $(VALEOPTS) $(VALEFILES)
+	@echo
+	@echo "Vale is finished; look for any errors in the above output."
 
 # Not yet implemented
 #.PHONY: doctest
