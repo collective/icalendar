@@ -220,9 +220,13 @@ filterwarnings = [
 ]
 
 [dependency-groups]
-dev = [
+docs = [
     "pydata-sphinx-theme>=0.14.4",
+    "pytz>=2025.2",
+    "sphinx>=7",
     "sphinx-autobuild>=2021.3.14",
     "sphinx-copybutton>=0.5.2",
+    "sphinx-design>=0.5.0",
+    "sphinx-reredirects>=0.1.6",
 ]
 

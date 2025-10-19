@@ -1,3 +1,4 @@
+============
 Contributing
 ============
 
@@ -6,10 +7,10 @@ This guide describes how to contribute to icalendar.
 Examples of how to contribute
 -----------------------------
 
--   Report issues to the bugtracker.
+-   Report issues in the `issue tracker <https://github.com/collective/icalendar/issues>`_.
 -   Submit pull requests from your fork of the icalendar repository.
 -   Extend the documentation.
--   Sponsor development of icalendar through [Open Collective](https://opencollective.com/python-icalendar).
+-   Sponsor development of icalendar through `Open Collective <https://opencollective.com/python-icalendar>`_.
 
 
 Pull request requirements
@@ -18,7 +19,7 @@ Pull request requirements
 Before submitting your pull request, ensure you have met the following requirements.
 
 #.  Add a changelog entry to :file:`CHANGES.rst`.
-    This is required and enforced by CI.
+    This is required and enforced by GitHub checks.
     See :ref:`change-log` for details.
 #.  Add a test which proves your fix and passes.
 #.  Run all tests to ensure your changes don't break any existing functionality.
@@ -57,4 +58,13 @@ Example:
 Set up for development
 ----------------------
 
-If you would like to set up icalendar to contribute changes, :doc:`install` should help you further.
+If you would like to set up icalendar to contribute changes, see :doc:`development`.
+
+
+
+.. toctree::
+    :hidden:
+
+    development
+    credits
+    maintenance

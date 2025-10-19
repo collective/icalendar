@@ -1,3 +1,4 @@
+=======
 Credits
 =======
 
@@ -121,3 +122,12 @@ Alternatively from your local git checkout, issue the following command, which p
 .. code-block:: shell
 
     git shortlog -s -e
+
+
+History
+-------
+`Max M <http://www.mxm.dk>`_ had often needed to parse and generate iCalendar files. Finally, he got
+tired of writing ad-hoc tools. This package is his attempt at making an
+iCalendar package for Python. The inspiration has come from the email package
+in the standard lib, which he thinks is pretty simple, yet efficient and
+powerful.
