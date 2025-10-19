@@ -12,7 +12,7 @@ Do not use an email address, as those may get harvested or become invalid in the
     - github_username <https://github.com/github_username>_
 
 The following people have made contributions to icalendar.
-We're grateful for their support.
+The maintainers of icalendar are grateful for their support.
 
 Maintainers
 -----------
