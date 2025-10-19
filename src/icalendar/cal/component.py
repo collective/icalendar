@@ -203,8 +203,8 @@ class Component(CaselessDict):
         decoded = self.types_factory.from_ical(name, value)
         # TODO: remove when proper decoded is implemented in every prop.* class
         # Workaround to decode vText properly
-        if isinstance(decoded, vText):
-            decoded = decoded.encode(DEFAULT_ENCODING)
+        if hasattr(decoded, "ics_value"):
+            return decoded.ics_value
         return decoded
 
     def decoded(self, name, default=_marker):
@@ -214,9 +214,12 @@ class Component(CaselessDict):
 
         if name in self:
             value = self[name]
-            if isinstance(value, list):
-                return [self._decode(name, v) for v in value]
-            return self._decode(name, value)
+            if isinstance(value,list):
+                return [
+                    getattr(v,"ics_value",self._decode(name,v))   # addedd for getting attributes of element of list.
+                    for v in value
+                ]
+            return getattr(value,"ics_value",self._decode(name,value))
         if default is _marker:
             raise KeyError(name)
         return default

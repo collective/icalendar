@@ -46,6 +46,7 @@ Breaking changes:
 
 New features:
 
+- Add ``ics_value`` property in value types  which decodes to python native types.`Issue 876 <https://github.com/collective/icalendar/issues/876>`_.
 - Add ``new()`` to ``icalendar.Calendar`` to set required attributes. See `Issue 569 <https://github.com/collective/icalendar/issues/569>`_.
 - Add ``new()`` to ``Alarm``, ``Event``, ``Todo``, ``FreeBusy``, ``Component``, and ``Journal`` components. See `Issue 843 <https://github.com/collective/icalendar/issues/843>`_.
 - Add ``value`` to ``Parameters`` to access the ``VALUE`` parameter.
@@ -57,6 +58,7 @@ New features:
 - Make icalendar compatible with `RFC 7986 <https://www.rfc-editor.org/rfc/rfc7986.html>`_.
   - Add ``url``, ``source``, ``refresh_interval``, ``conferences``, and ``images`` properties to components.
 - Add ``td`` property to ``vDDDTypes`` to make it compatible with ``timedelta`` value types.
+
 
 Bug fixes:
 
