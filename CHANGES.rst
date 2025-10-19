@@ -60,6 +60,7 @@ New features:
 
 Bug fixes:
 
+- Fix Normalise Conference parameters list. See `Issue 908 <https://github.com/collective/icalendar/issues/908>`_.
 - Fix read from stdin issue - See `Issue 821 <https://github.com/collective/icalendar/issues/821>`_.
 - Fix invalid calendar: Parsing a date with TZID results in a datetime to not loose the timezone. See `Issue 187 <https://github.com/collective/icalendar/issues/187>`_.
 - Fix timezone placement in ``add_missing_timezones()``: ``VTIMEZONE`` components now appear before ``VEVENT`` and other components that reference them. See `Issue 844 <https://github.com/collective/icalendar/issues/844>`_.

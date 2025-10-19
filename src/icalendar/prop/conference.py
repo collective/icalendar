@@ -85,14 +85,20 @@ class Conference:
 
     def to_uri(self) -> vUri:
         """Convert the Conference to a vUri."""
-        params = {}
-        if self.feature:
-            params["FEATURE"] = self.feature
-        if self.label:
-            params["LABEL"] = self.label
-        if self.language:
-            params["LANGUAGE"] = self.language
-        return vUri(self.uri, params=params)
+        def normalize(value: str | list[str] | None) -> str | None:
+            if value is None:
+               return None
+            if isinstance(value, str):
+                return value
+            return ",".join(map(str, value))
 
+        params: dict[str, str | None] = {
+            "FEATURE": normalize(self.feature),
+            "LABEL": normalize(self.label),
+            "LANGUAGE": normalize(self.language),
+        }
+
+        params = {key: value for key, value in params.items() if value is not None}
+        return vUri(self.uri, params=params)
 
 __all__ = ["Conference"]

@@ -44,6 +44,20 @@ def test_to_uri():
     assert new_uri == uri
     assert new_uri.params == uri.params
 
+def test_conference_list_params_serialization():
+    """Ensure list parameters are correctly serialized to comma-separated strings."""
+    conf = Conference(
+        uri="https://example.com",
+        feature=["AUDIO", "VIDEO"],
+        label="Meeting room"
+    )
+
+    vuri = conf.to_uri()
+
+    assert isinstance(vuri.params["FEATURE"], str)
+    assert vuri.params["FEATURE"] == "AUDIO,VIDEO"
+    assert vuri.params["LABEL"] == "Meeting room"
+
 
 @pytest.fixture
 def conference_1():
