@@ -57,6 +57,7 @@ New features:
 - Make icalendar compatible with `RFC 7986 <https://www.rfc-editor.org/rfc/rfc7986.html>`_.
   - Add ``url``, ``source``, ``refresh_interval``, ``conferences``, and ``images`` properties to components.
 - Add ``td`` property to ``vDDDTypes`` to make it compatible with ``timedelta`` value types.
+- Add documentation linkchecker to make and CI configuration. See `Issue 854 <https://github.com/collective/icalendar/issues/854>`_.
 
 Bug fixes:
 
