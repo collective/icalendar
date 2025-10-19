@@ -142,9 +142,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         git checkout main
         git pull
         git add CHANGES.rst
-        git commit -m"Add new CHANGELOG section for future release
-
-        See https://icalendar.readthedocs.io/en/latest/maintenance.html#new-releases"
+        git commit -m "Add new CHANGELOG section for future release"
         git push upstream main # could be origin or whatever reference
 
 Links
