@@ -46,7 +46,7 @@ Breaking changes:
 
 New features:
 
-- Add ``new()`` to ``icalendar.Calendar`` to set required attributes. See `Issue 569 <https://github.com/collective/icalendar/issues/569>`_.
+- Add ``new()`` to ``icalendar.Calendar`` to set required attributes. See `Issue 569 <https://github.com/collective/icalendar/pull/569>`_.
 - Add ``new()`` to ``Alarm``, ``Event``, ``Todo``, ``FreeBusy``, ``Component``, and ``Journal`` components. See `Issue 843 <https://github.com/collective/icalendar/issues/843>`_.
 - Add ``value`` to ``Parameters`` to access the ``VALUE`` parameter.
 - Add ``Availability`` and ``Available`` components from :rfc:`7953`. See `Issue 654 <https://github.com/collective/icalendar/issues/654>`_ and `Issue 864 <https://github.com/collective/icalendar/issues/864>`_.
@@ -55,9 +55,10 @@ New features:
 - Add ``status``, ``transparency``, and ``attendees`` properties. See `Issue 841 <https://github.com/collective/icalendar/issues/841>`_.
 - Add ``uid`` property that is ``''`` by default and set automatically with ``new()``. See `Issue 315 <https://github.com/collective/icalendar/issues/315>`_.
 - Make icalendar compatible with `RFC 7986 <https://www.rfc-editor.org/rfc/rfc7986.html>`_.
-  - Add ``url``, ``source``, ``refresh_interval``, ``conferences``, and ``images`` properties to components.
+- Add ``url``, ``source``, ``refresh_interval``, ``conferences``, and ``images`` properties to components.
 - Add ``td`` property to ``vDDDTypes`` to make it compatible with ``timedelta`` value types.
 - Add documentation for how to install icalendar on Fedora. See `Issue 704 <https://github.com/collective/icalendar/issues/704>`_.
+- Add documentation linkchecker to make and CI configuration. See `Issue 854 <https://github.com/collective/icalendar/issues/854>`_.
 
 Bug fixes:
 
@@ -104,7 +105,7 @@ Minor changes:
 
 New features:
 
-- Add getters ``rrules``, ``rdates``, and ``exdates`` for unified and simple access to these properties. See `Issue 662`_.
+- Add getters ``rrules``, ``rdates``, and ``exdates`` for unified and simple access to these properties. See `Discussion 662`_.
 - Add attributes to the calendar for properties ``NAME``, ``DESCRIPTION``, and ``COLOR``. See `Issue 655 <https://github.com/collective/icalendar/issues/655>`_.
 - Add a ``color`` attribute to ``Event``, ``Todo``, and ``Journal`` components. See `Issue 655`_.
 - Add ``sequence`` attribute to ``Event``, ``Todo``, and ``Journal`` components. See `Issue 802 <https://github.com/collective/icalendar/issues/802>`_.
@@ -156,7 +157,7 @@ Minor changes:
 - Document :class:`icalendar.prop.vRecur` property. See `Issue 758 <https://github.com/collective/icalendar/issues/758>`_.
 - Print failure of doctest to aid debugging.
 - Improve documentation of :class:`icalendar.prop.vGeo`
-- Fix tests, improve code readability, fix typing. See `Issue 766 <https://github.com/collective/icalendar/issues/766>`_ and `Issue 765 <https://github.com/collective/icalendar/issues/765>`_.
+- Fix tests, improve code readability, fix typing. See `Pull request 766 <https://github.com/collective/icalendar/pull/766>`_ and `Pull request 765 <https://github.com/collective/icalendar/pull/765>`_.
 
 Breaking changes:
 
@@ -172,8 +173,8 @@ New features:
 
 Minor changes:
 
-- Add ``end``, ``start``, ``duration``, ``DTSTART``, ``DUE``, and ``DURATION`` attributes to ``Todo`` components. See `Issue 662`_.
-- Add ``DTSTART``, ``TZOFFSETTO`` and ``TZOFFSETFROM`` properties to ``TimezoneStandard`` and ``TimezoneDaylight``. See `Issue 662`_.
+- Add ``end``, ``start``, ``duration``, ``DTSTART``, ``DUE``, and ``DURATION`` attributes to ``Todo`` components. See `Discussion 662`_.
+- Add ``DTSTART``, ``TZOFFSETTO`` and ``TZOFFSETFROM`` properties to ``TimezoneStandard`` and ``TimezoneDaylight``. See `Discussion 662`_.
 - Format test code with Ruff. See `Issue 672 <https://github.com/collective/icalendar/issues/672>`_.
 - Document the Debian package. See `Issue 701 <https://github.com/collective/icalendar/issues/701>`_.
 - Document ``vDatetime.from_ical``
@@ -218,15 +219,15 @@ Bug fixes:
 
 New features:
 
-- Added ``end``, ``start``, ``duration``, ``DTSTART``, ``DUE``, and ``DURATION`` attributes to ``Event`` components. See `Issue 662`_.
-- Added ``end``, ``start``, ``duration``, and ``DTSTART`` attributes to ``Journal`` components. See `Issue 662`_.
+- Added ``end``, ``start``, ``duration``, ``DTSTART``, ``DUE``, and ``DURATION`` attributes to ``Event`` components. See `Discussion 662`_.
+- Added ``end``, ``start``, ``duration``, and ``DTSTART`` attributes to ``Journal`` components. See `Discussion 662`_.
 
 Bug fixes:
 
 - Fix a few ``__all__`` variables.
 - Added missing ``docs`` folder to distribution packages. See `Issue 712 <https://github.com/collective/icalendar/issues/712>`_.
 
-.. _`Issue 662`: https://github.com/collective/icalendar/issues/662
+.. _`Discussion 662`: https://github.com/collective/icalendar/discussions/662
 
 6.0.0 (2024-09-28)
 ------------------
@@ -1229,17 +1230,17 @@ Fixes:
 - fixed tests so they pass also under python 2.7.
   [garbas]
 
-- running tests on https://jenkins.plone.org/job/icalendar (only 2.6 for now)
+- running tests on ``https://jenkins.plone.org/job/icalendar`` (only 2.6 for now)
   with some other metrics (pylint, clonedigger, coverage).
   [garbas]
 
-- review and merge changes from https://github.com/cozi/icalendar fork.
+- review and merge changes from ``https://github.com/cozi/icalendar`` fork.
   [garbas]
 
 - created sphinx documentation and started documenting development and goals.
   [garbas]
 
-- hook out github repository to https://readthedocs.org service so sphinx
+- hook out github repository to https://about.readthedocs.com service so sphinx
   documentation is generated on each commit (for main). Documentation can be
   visible on: https://icalendar.readthedocs.io/en/latest/
   [garbas]
@@ -1297,7 +1298,7 @@ Fixes:
 - The RFC 2445 was a bit unclear on how to handle line folding when it
   happened to be in the middle of a UTF-8 character. This has been clarified
   in the following discussion:
-  http://lists.osafoundation.org/pipermail/ietf-calsify/2006-August/001126.html
+  `[Ietf-calsify] draft-ietf-calsify-rfc2445bis-01.txt / UTF-8 <https://web.archive.org/web/20121209193206/http://lists.osafoundation.org/pipermail/ietf-calsify/2006-August/001126.html>`_.
   And this is now implemented in iCalendar. It will not fold in the middle of
   a UTF-8 character, but may fold in the middle of a UTF-8 composing character
   sequence.
