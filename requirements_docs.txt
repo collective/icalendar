@@ -1,5 +1,0 @@
-Sphinx>=7
-pydata-sphinx-theme
-sphinx-autobuild
-sphinx-copybutton
-.

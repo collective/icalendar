@@ -1,24 +1,78 @@
-.. include:: ../README.rst
+=========
+iCalendar
+=========
 
-Contents
-========
+.. grid:: 1 1 2 2
+    :gutter: 3 3 4 5
+
+    .. grid-item-card::
+        :link: how-to/index
+        :link-type: doc
+
+        :octicon:`zap;1.5em;sd-text-info`
+        Get started
+        ^^^
+        This part of the documentation describes how to get started with icalendar, including how to install and use.
+        +++
+
+        .. button-ref:: how-to/index
+            :color: primary
+            :expand:
+
+            Go to How to guides
+
+    .. grid-item-card::
+        :link: reference/index
+        :link-type: doc
+
+        :octicon:`bookmark;1.5em;sd-text-info`
+        Reference guide
+        ^^^
+        This part of the documentation is a reference guide, including API, design architecture, and change log.
+        +++
+
+        .. button-ref:: reference/index
+            :ref-type: doc
+            :color: primary
+            :expand:
+
+            Go to Reference guide
+
+    .. grid-item-card::
+        :link: contribute/index
+        :link-type: doc
+
+        :octicon:`bookmark;1.5em;sd-text-info`
+        Contributing guide
+        ^^^
+        This part of the documentation describes how to contribute to icalendar.
+        +++
+
+        .. button-ref:: contribute/index
+            :ref-type: doc
+            :color: primary
+            :expand:
+
+            Go to Contributing guide
 
 .. toctree::
+    :caption: How to guides
     :maxdepth: 2
+    :hidden:
 
-    about
-    install
-    usage
-    api
-    cli
-    credits
-    maintenance
-    license
-    changelog
-
+    how-to/index
 
 .. toctree::
-    :titlesonly:
+    :caption: Reference
+    :hidden:
 
-    contributing
-    security
+    reference/index
+
+.. toctree::
+    :caption: Contribute
+    :hidden:
+
+    contribute/index
+
+-   :doc:`reference/glossary`
+-   :ref:`genindex`

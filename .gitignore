@@ -3,12 +3,12 @@
 *.sw?
 *~
 .*
+_build/
 bin/
 build/
 coverage-*
 develop-eggs/
 dist/
-docs/_build/
 eggs/
 htmlcov/
 include/
@@ -23,6 +23,7 @@ src/icalendar.egg-info/
 venv
 /ical_fuzzer.pkg.spec
 /src/icalendar/_version.py
+uv.lock
 
 coverage.xml
 !.coveragerc
