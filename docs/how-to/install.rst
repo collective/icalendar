@@ -29,3 +29,13 @@ You can install the `python-icalendar package <https://tracker.debian.org/pkg/py
 .. code-block:: shell
 
     sudo apt-get install python3-icalendar
+
+
+Fedora
+------
+
+You can install the `python3-icalendar package <https://packages.fedoraproject.org/pkgs/python-icalendar/python3-icalendar/>`_ for Fedora or its derivatives.
+
+.. code-block:: shell
+
+    sudo dnf install python3-icalendar
