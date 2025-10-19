@@ -61,7 +61,7 @@ r.C
 (?i)Regebro
 (?i)Rembane
 (?i)Repin
-RFC
+RFCs?
 (?i)Rok
 (?i)Ronan
 (?i)Ruderich

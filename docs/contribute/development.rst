@@ -62,7 +62,7 @@ The following command show how to run tox with Python 3.12:
 Code style
 ----------
 
-We strive towards a common code style.
+icalendar strives towards a common code style.
 You can run the following command to automatically format the code.
 
 .. code-block:: shell
@@ -131,7 +131,7 @@ uv
 `uv <https://docs.astral.sh/uv/>`_ is used for installing Python, creating a Python virtual environment, and managing dependencies for documentation.
 
 Install uv.
-Carefully read the console output for further instructions, and follow them, if needed.
+Read the console output for further instructions, and follow them, if needed.
 
 .. tab-set::
 

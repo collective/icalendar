@@ -37,7 +37,7 @@ As a collaborator, you can
 - merge pull requests, and
 - initiate a new release.
 
-We want to have as many knowledgeable people with write access taking responsibility as possible for these reasons:
+The maintainers of icalendar want to have as many knowledgeable people with write access taking responsibility as possible for these reasons:
 
 - a constant flow of fixes and new features
 - better code review
@@ -172,4 +172,4 @@ When adding support for a new Python version, or removing support for an old one
 :file:`docs/maintenance.rst`
     Update this list if any new files need to be modified.
 
-Remember to test the changes thoroughly, and update any documentation that mentions supported Python versions.
+Remember to test the changes, and update any documentation that mentions supported Python versions.
