@@ -5,21 +5,14 @@
 # Required
 version: 2
 
-# Build documentation in the docs/ directory with Sphinx
-sphinx:
-  configuration: docs/conf.py
-
 # Optionally build your docs in additional formats such as PDF and ePub
 formats: all
 
 build:
   os: ubuntu-22.04
   tools:
-    python: "3.11"
+    python: "3.13"
   commands:
-    - git fetch --tags
-    - pip install build
-    - python -m build
     # Cancel building pull requests when there aren't changes in the docs directory or YAML file.
     # You can add any other files or directories that you'd like here as well,
     # like your docs requirements file, or other files that will change your docs build.
@@ -27,9 +20,16 @@ build:
     # If there are no changes (git diff exits with 0) we force the command to return with 183.
     # This is a special exit code on Read the Docs that will cancel the build immediately.
     - |
-      if [ "$READTHEDOCS_VERSION_TYPE" = "external" ] && git diff --quiet origin/main -- . docs/ src/icalendar/*.py *.rst .readthedocs.yaml requirements_docs.txt ':!src/icalendar/fuzzing' ':!src/icalendar/tests' ':!src/icalendar/timezone';
+      if [ "$READTHEDOCS_VERSION_TYPE" = "external" ] && git diff --quiet origin/main -- . docs/ \
+        src/icalendar/*.py \
+        *.rst \
+        .readthedocs.yaml \
+        Makefile \
+        pyproject.toml \
+        ':!src/icalendar/fuzzing' \
+        ':!src/icalendar/tests' \
+        ':!src/icalendar/timezone';
       then
         exit 183;
       fi
-    - pip install -r requirements_docs.txt
-    - cd docs && make rtd-pr-preview
+    - make rtd-pr-preview

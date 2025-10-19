@@ -1,97 +1,21 @@
-iCalendar package
-=================
+=====
+Usage
+=====
 
-This package is used for parsing and generating iCalendar files following the
-standard in RFC 5545.
-
-It should be fully compliant, but it is possible to generate and parse invalid
-files if you really want to.
-
-Compatibility
--------------
-
-This package is compatible with the following standards:
-
-- :rfc:`2445` - obsoleted by :rfc:`5545`
-- :rfc:`5545` - Internet Calendaring and Scheduling Core Object Specification (iCalendar)
-- :rfc:`6868` - Parameter Value Encoding in iCalendar and vCard
-- :rfc:`7529` - Non-Gregorian Recurrence Rules in the Internet Calendaring and Scheduling Core Object Specification (iCalendar)
-- :rfc:`9074` - "VALARM" Extensions for iCalendar
-- :rfc:`7953` - Calendar Availability
-- :rfc:`7986` - New Properties for iCalendar
-
-We do not claim compatibility to the following RFCs. They might work though.
-
-- :rfc:`9073` - Event Publishing Extensions to iCalendar
-- :rfc:`9253` - Support for iCalendar Relationships
-
-iCalendar file structure
-------------------------
-
-An iCalendar file is a text file with UTF-8 character encoding in a special format.
-
-It consists of **content lines**,
-with each content line defining a property that has 3 parts: name, parameters, and values. Parameters are optional.
-
-Example 1: a simple content line, with only name and value.
-
-.. code-block:: text
-
-    BEGIN:VCALENDAR
-
-Example 2: a content line with parameters.
-
-.. code-block:: text
-
-    ATTENDEE;CN=Max Rasmussen;ROLE=REQ-PARTICIPANT:MAILTO:example@example.com
-
-The parts in this example are the following.
-
-.. code-block:: text
-
-    Name:   ATTENDEE
-    Params: CN=Max Rasmussen;ROLE=REQ-PARTICIPANT
-    Value:  MAILTO:example@example.com
-
-For long content lines, iCalendar usually "folds" them to less than 75 characters.
-
-On a higher level, you can think of iCalendar files' structure as having components and subcomponents.
-
-A component will have properties with values. The values
-have special types, like integer, text, and datetime. These values are
-encoded in a special text format in an iCalendar file. This package contains methods for converting to and from these encodings.
-
-Example 1: this is a VCALENDAR component representing a calendar.
-
-.. code-block:: text
-
-    BEGIN:VCALENDAR
-    ... vcalendar properties ...
-    END:VCALENDAR
-
-Example 2: The most frequent subcomponent to a VCALENDAR component is a VEVENT. This is a VCALENDAR component with a nested VEVENT subcomponent.
-
-.. code-block:: text
-
-    BEGIN:VCALENDAR
-    ... vcalendar properties ...
-    BEGIN:VEVENT
-    ... vevent properties ...
-    END:VEVENT
-    END:VCALENDAR
-
+This chapter describes how to use icalendar.
 
 Components
 ----------
 
-The remaining code snippets in the documentation will use the following important imports.
+The following code examples use the following imports.
 
 .. code-block:: pycon
 
     >>> from icalendar import Calendar, Event
 
-Components are like (Case Insensitive) dicts. So if you want to set a property
-you do it like this. The calendar is a component.
+Components are like case-insensitive dicts.
+The ``Calendar`` object is a component.
+The following example shows how to set two properties for it, then display them.
 
 .. code-block:: pycon
 
@@ -103,12 +27,12 @@ you do it like this. The calendar is a component.
     ('DTSTART', '20050404T080000')
     ('SUMMARY', 'Python meeting about calendaring')
 
-NOTE: the recommended way to add components to the calendar is to
-create the subcomponent and add it via ``Calendar.add``! The example above adds a
-string, but not a ``vText`` component.
+.. note::
 
+    To add components to the calendar, create the :ref:`subcomponent <subcomponents>`, then add it via :py:meth:`icalendar.Component.add()`.
+    The example above adds a string, but not a ``vText`` component.
 
-You can generate a string for a file with the ``to_ical()`` method.
+You can generate a string for a file with the :py:meth:`icalendar.Component.to_ical` method.
 
 .. code-block:: pycon
 
@@ -124,14 +48,14 @@ The rendered view is easier to read.
     SUMMARY:Python meeting about calendaring
     END:VCALENDAR
 
-So, let's define a function so we can easily display to_ical() output.
+You can define a function to display :py:meth:`~icalendar.Component.to_ical` output, as shown in the following example.
 
 .. code-block:: pycon
 
     >>> def display(cal):
     ...    return cal.to_ical().decode("utf-8").replace('\r\n', '\n').strip()
 
-You can set multiple properties like this.
+You can set multiple properties, as shown in the following example.
 
 .. code-block:: pycon
 
@@ -143,10 +67,9 @@ You can set multiple properties like this.
     ATTENDEE:MAILTO:test@example.com
     END:VCALENDAR
 
-If you don't want to care about whether a property value is a list or
-a single value, just use the add() method. It will automatically
-convert the property to a list of values if more than one value is
-added. Here is an example.
+If you don't want to care about whether a property value is a list or a single value, use the :py:meth:`icalendar.Component.add()` method.
+It will automatically convert the property to a list of values if more than one value is added.
+Here is an example.
 
 .. code-block:: pycon
 
@@ -159,18 +82,20 @@ added. Here is an example.
     ATTENDEE:MAILTO:test@example.com
     END:VCALENDAR
 
-Note: this version doesn't check for compliance, so you should look in
-the RFC 5545 spec for legal properties for each component, or look in
-the icalendar/calendar.py file, where it is at least defined for each
-component.
+.. note::
+
+    This example doesn't check for compliance, so you should look in the :rfc:`5545` specification for legal properties for each component.
+    You can also look in the :file:`icalendar/cal/calendar.py` file, where it is at least defined for each component.
 
 
 Subcomponents
 -------------
 
-Any component can have subcomponents. Eg. inside a calendar there can
-be events.  They can be arbitrarily nested. First by making a new
-component.
+Any component can have subcomponents.
+For example, inside a calendar, there can be events.
+They can be arbitrarily nested.
+
+To demonstrate, first, make a new component.
 
 .. code-block:: pycon
 
@@ -178,7 +103,7 @@ component.
     >>> event['uid'] = '42'
     >>> event['dtstart'] = '20050404T080000'
 
-And then appending it to a "parent".
+Then append it to a parent.
 
 .. code-block:: pycon
 
@@ -204,19 +129,16 @@ Subcomponents are appended to the subcomponents property on the component.
 Value types
 -----------
 
-Property values are utf-8 encoded strings.
+Property values are UTF-8 encoded strings.
 
 This is impractical if you want to use the data for further
-computation. The datetime format for example looks like this:
-'20050404T080000'. But the package makes it simple to parse and
-generate iCalendar formatted strings.
+computation.
+The datetime format, for example, looks like `20050404T080000`.
+icalendar can parse and generate iCalendar formatted strings.
 
-Basically you can make the add() method do the thinking, or you can do it
-yourself.
+You can either use the :py:meth:`~icalendar.Component.add()` method to do the work, or you can do it manually.
 
-To add a datetime value, you can use Pythons built in datetime types,
-and the set the encode parameter to true, and it will convert to the
-type defined in the spec.
+To add a datetime value, you can use Python's built in :py:mod:`datetime` types, and the set the encode parameter to ``True``, and it will convert to the type defined in the specification.
 
 .. code-block:: pycon
 
@@ -225,13 +147,12 @@ type defined in the spec.
     >>> cal['dtstart'].to_ical()
     b'20050404T080000'
 
-If that doesn't work satisfactorily for some reason, you can also do it
-manually.
+If that doesn't work satisfactorily for some reason, you can also do it manually.
 
-In 'icalendar.prop', all the iCalendar data types are defined. Each
-type has a class that can parse and encode the type.
+In :file:`icalendar/prop.py`, all the iCalendar data types are defined.
+Each type has a class that can parse and encode the type.
 
-So if you want to do it manually.
+Thus, to parse it manually, you would do the following.
 
 .. code-block:: pycon
 
@@ -240,13 +161,11 @@ So if you want to do it manually.
     >>> vDatetime(now).to_ical()
     b'20050404T080000'
 
-So the drill is to initialise the object with a python built in type,
-and then call the "to_ical()" method on the object. That will return an
-ical encoded string.
+To summarize, initialize the object with a Python built in type, then call the :py:meth:`~icalendar.Component.to_ical` method on the object.
+That will return an ical-encoded string.
 
-You can do it the other way around too. To parse an encoded string, just call
-the "from_ical()" method, and it will return an instance of the corresponding
-Python type.
+You can do it the other way around, too.
+To parse an encoded string, call the :py:meth:`~icalendar.Component.from_ical` method, and it will return an instance of the corresponding Python type.
 
 .. code-block:: pycon
 
@@ -256,8 +175,8 @@ Python type.
     >>> vDatetime.from_ical('20050404T080000Z')
     datetime.datetime(2005, 4, 4, 8, 0, tzinfo=ZoneInfo(key='UTC'))
 
-You can also choose to use the decoded() method, which will return a decoded
-value directly.
+You can also choose to use the :py:meth:`icalendar.Component.decoded` method, which will return a decoded value directly.
+
 
 .. code-block:: pycon
 
@@ -272,9 +191,9 @@ value directly.
 Property parameters
 -------------------
 
-Property parameters are automatically added, depending on the input value. For
-example, for date/time related properties, the value type and timezone
-identifier (if applicable) are automatically added here.
+Property parameters are automatically added, depending on the input value.
+For example, for date or time related properties, the value type and timezone
+identifier, if applicable, are automatically added.
 
 .. code-block:: pycon
 
@@ -289,8 +208,7 @@ identifier (if applicable) are automatically added here.
     ...     in lines)
 
 
-You can also add arbitrary property parameters by passing a parameters
-dictionary to the add method like so.
+You can also add arbitrary property parameters by passing a parameters dictionary to the :py:meth:`~icalendar.Component.add()` method as shown.
 
 .. code-block:: pycon
 
@@ -304,8 +222,7 @@ dictionary to the add method like so.
 Example
 -------
 
-Here is an example generating a complete iCal calendar file with a
-single event that can be loaded into the Mozilla calendar.
+The following section is an example generating a complete iCal calendar file with a single event that can be loaded into the Mozilla calendar.
 
 Initialize the calendar.
 
@@ -315,14 +232,14 @@ Initialize the calendar.
     >>> from datetime import datetime
     >>> import zoneinfo
 
-Some properties are required to be compliant.
+Add some properties to be compliant with :rfc:`5545`.
 
 .. code-block:: pycon
 
     >>> cal.add('prodid', '-//My calendar product//mxm.dk//')
     >>> cal.add('version', '2.0')
 
-We need at least one subcomponent for a calendar to be compliant.
+At least one subcomponent is required for a calendar to be compliant.
 
 .. code-block:: pycon
 
@@ -332,16 +249,15 @@ We need at least one subcomponent for a calendar to be compliant.
     >>> event.add('dtend', datetime(2005,4,4,10,0,0,tzinfo=zoneinfo.ZoneInfo("UTC")))
     >>> event.add('dtstamp', datetime(2005,4,4,0,10,0,tzinfo=zoneinfo.ZoneInfo("UTC")))
 
-A property with parameters. Notice that they are an attribute on the value.
+Create a property with parameters.
+Notice that they are an attribute on the value.
 
 .. code-block:: pycon
 
     >>> from icalendar import vCalAddress, vText
     >>> organizer = vCalAddress('MAILTO:noone@example.com')
 
-Automatic encoding is not yet implemented for parameter values, so you
-must use the 'v*' types you can import from the icalendar package
-(they're defined in ``icalendar.prop``).
+Automatic encoding is not yet implemented for parameter values, so you must use the ``v*`` types which you can import from the icalendar :py:mod:`icalendar.prop` module.
 
 .. code-block:: pycon
 
@@ -387,8 +303,8 @@ By extending the event with subcomponents, you can create multiple alarms.
     >>> alarm_24h_before.add('description', 'Reminder: Event in 24 hours')
     >>> event.add_component(alarm_24h_before)
 
-Or even recurrence, either from a dictionary or a string.
-Note that if you want to add the reccurence rule from a string, you must use the ``vRecur`` property.
+You can even add a recurrence, either from a dictionary or a string.
+Note that if you want to add the reccurence rule from a string, you must use the :py:class:`icalendar.prop.vRecur` property.
 Otherwise the rule will be escaped, making it invalid.
 
 .. code-block:: pycon
@@ -440,8 +356,10 @@ Print out the calendar.
     END:VCALENDAR
     <BLANKLINE>
 
-More documentation
-==================
 
-Have a look at the `tests <https://github.com/collective/icalendar/tree/main/src/icalendar/tests>`__ of this package to get more examples.
-All modules and classes docstrings, which document how they work.
+More examples
+-------------
+
+The docstrings in the :py:mod:`icalendar` package API documentation provide other usage examples.
+
+The `tests <https://github.com/collective/icalendar/tree/main/src/icalendar/tests>`_ of icalendar also have more examples.
