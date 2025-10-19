@@ -115,7 +115,7 @@ Complete list
 
 Although this list might not be complete, as some contributors either didn't know that they could add their name to this file or didn't want to be added, you can find out who contributed to icalendar.
 
-On GitHub, from the icalendar home page, click the link [Contributors](https://github.com/collective/icalendar/graphs/contributors).
+On GitHub, from the icalendar home page, click the link `Contributors <https://github.com/collective/icalendar/graphs/contributors>`_.
 
 Alternatively from your local git checkout, issue the following command, which prints a list of all contributors sorted by their name and commit email address, and the count of commits for each one.
 
