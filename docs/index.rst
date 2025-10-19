@@ -76,3 +76,7 @@ iCalendar
 
 -   :doc:`reference/glossary`
 -   :ref:`genindex`
+
+License
+-------
+See `LICENSE.rst <https://github.com/collective/icalendar/blob/main/LICENSE.rst>`_.
