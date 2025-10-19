@@ -21,6 +21,7 @@ src/icalendar.egg-info/
 !.github
 !.gitignore
 venv
+/docs/styles/Microsoft/
 /ical_fuzzer.pkg.spec
 /src/icalendar/_version.py
 uv.lock

@@ -228,5 +228,6 @@ docs = [
     "sphinx-copybutton>=0.5.2",
     "sphinx-design>=0.5.0",
     "sphinx-reredirects>=0.1.6",
+    "vale>=3.12.0",
 ]
 
