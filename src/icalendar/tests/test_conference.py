@@ -151,3 +151,123 @@ def test_conference_from_string():
     assert conference.feature is None
     assert conference.label is None
     assert conference.language is None
+
+
+def test_conference_string_passthrough():
+    """Test that string parameters are kept as strings, not converted to lists."""
+    # Test feature parameter
+    conference = Conference(uri="https://example.com", feature="AUDIO")
+    assert conference.feature == "AUDIO"
+    assert isinstance(conference.feature, str)
+    
+    # Test label parameter
+    conference = Conference(uri="https://example.com", label="Test Label")
+    assert conference.label == "Test Label"
+    assert isinstance(conference.label, str)
+    
+    # Test language parameter
+    conference = Conference(uri="https://example.com", language="EN")
+    assert conference.language == "EN"
+    assert isinstance(conference.language, str)
+
+
+def test_conference_empty_list_filtering():
+    """Test that empty lists are filtered out and don't produce empty parameters."""
+    # Test feature parameter with empty list
+    conference = Conference(uri="https://example.com", feature=[])
+    assert conference.feature == []
+    uri = conference.to_uri()
+    assert "FEATURE" not in uri.params
+    
+    # Test label parameter with empty list
+    conference = Conference(uri="https://example.com", label=[])
+    assert conference.label == []
+    uri = conference.to_uri()
+    assert "LABEL" not in uri.params
+    
+    # Test language parameter with empty list
+    conference = Conference(uri="https://example.com", language=[])
+    assert conference.language == []
+    uri = conference.to_uri()
+    assert "LANGUAGE" not in uri.params
+
+
+def test_conference_none_values():
+    """Test that None values don't add parameters to the URI."""
+    # Test with only URI, no other parameters
+    conference = Conference(uri="https://example.com")
+    assert conference.feature is None
+    assert conference.label is None
+    assert conference.language is None
+    
+    uri = conference.to_uri()
+    assert "FEATURE" not in uri.params
+    assert "LABEL" not in uri.params
+    assert "LANGUAGE" not in uri.params
+    
+    # Test with explicit None values
+    conference = Conference(uri="https://example.com", feature=None, label=None, language=None)
+    uri = conference.to_uri()
+    assert "FEATURE" not in uri.params
+    assert "LABEL" not in uri.params
+    assert "LANGUAGE" not in uri.params
+
+
+def test_conference_list_params_serialization():
+    """Test serialization of list parameters."""
+    # Test feature parameter with list
+    conference = Conference(uri="https://example.com", feature=["AUDIO", "VIDEO"])
+    assert conference.feature == ["AUDIO", "VIDEO"]
+    uri = conference.to_uri()
+    assert "FEATURE" in uri.params
+    assert uri.params["FEATURE"] == ["AUDIO", "VIDEO"]
+    
+    # Test label parameter with list
+    conference = Conference(uri="https://example.com", label=["Label1", "Label2"])
+    assert conference.label == ["Label1", "Label2"]
+    uri = conference.to_uri()
+    assert "LABEL" in uri.params
+    assert uri.params["LABEL"] == ["Label1", "Label2"]
+    
+    # Test language parameter with list
+    conference = Conference(uri="https://example.com", language=["EN", "DE"])
+    assert conference.language == ["EN", "DE"]
+    uri = conference.to_uri()
+    assert "LANGUAGE" in uri.params
+    assert uri.params["LANGUAGE"] == ["EN", "DE"]
+
+
+def test_conference_mixed_parameter_types():
+    """Test Conference with mixed parameter types (some strings, some lists, some None)."""
+    conference = Conference(
+        uri="https://example.com",
+        feature="AUDIO",  # string
+        label=["Label1", "Label2"],  # list
+        language=None  # None
+    )
+    
+    uri = conference.to_uri()
+    assert "FEATURE" in uri.params
+    assert "LABEL" in uri.params
+    assert "LANGUAGE" not in uri.params
+    
+    assert uri.params["FEATURE"] == "AUDIO"
+    assert uri.params["LABEL"] == ["Label1", "Label2"]
+
+
+def test_conference_falsy_values_filtering():
+    """Test that falsy values (empty string, 0, False) are filtered out."""
+    # Test empty string
+    conference = Conference(uri="https://example.com", feature="")
+    uri = conference.to_uri()
+    assert "FEATURE" not in uri.params
+    
+    # Test zero
+    conference = Conference(uri="https://example.com", feature=0)
+    uri = conference.to_uri()
+    assert "FEATURE" not in uri.params
+    
+    # Test False
+    conference = Conference(uri="https://example.com", feature=False)
+    uri = conference.to_uri()
+    assert "FEATURE" not in uri.params

@@ -35,6 +35,7 @@ Minor changes:
 - Fix duplicate blank issue template by adding config.yml to disable GitHub's default blank option. See `Issue 777 <https://github.com/collective/icalendar/issues/777>`_.
 - Add PEP 561 py.typed marker to enable type checking support. The package now distributes inline type annotations for mypy and other type checkers. See `Issue 395 <https://github.com/collective/icalendar/issues/395>`_.
 - Bump ``github/codeql-action`` from 3 to 4 in CI fuzzing workflow.
+- Add comprehensive tests for Conference parameter normalization edge cases to prevent regressions. Tests cover string passthrough, empty list filtering, None values, and falsy values for feature, label, and language parameters. See `Issue 908 <https://github.com/collective/icalendar/issues/908>`_.
 
 Breaking changes:
 
