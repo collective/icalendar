@@ -98,6 +98,19 @@ intersphinx_mapping = {
 }
 
 
+# -- linkcheck configuration ----------------------------------
+# Ignore localhost
+linkcheck_ignore = [
+    # Ignore pages that require authentication
+    r"https://app.readthedocs.org/dashboard/icalendar/users/create/",
+    r"https://github.com/collective/icalendar/fork",
+    r"https://github.com/collective/icalendar/settings/",
+    r"https://pypi.org/manage/project/icalendar/collaboration/",
+]
+linkcheck_anchors = True
+linkcheck_timeout = 5
+linkcheck_retries = 1
+
 # -- sphinx-reredirects configuration ----------------------------------
 # https://documatt.com/sphinx-reredirects/usage.html
 redirects = {
