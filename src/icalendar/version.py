@@ -1,6 +1,6 @@
 """Version information on icalendar.
 
-This module provides a stable interface to the generated _version.py file.
+This module provides a stable interface to the generated :file:`_version.py` file.
 
 Version as a string:
 
