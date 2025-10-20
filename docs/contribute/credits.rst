@@ -12,7 +12,7 @@ Do not use an email address, as those may get harvested or become invalid in the
     - github_username <https://github.com/github_username>_
 
 The following people have made contributions to icalendar.
-We're grateful for their support.
+The maintainers of icalendar are grateful for their support.
 
 Maintainers
 -----------
@@ -88,6 +88,7 @@ Contributors
 - Rok Garbas <rok@garbas.si>
 - Ronan Dunklau <ronan@dunklau.fr>
 - Russ <russ@rw.id.au>
+- `SanthoshMani1 <https://github.com/SanthoshMani1>`_
 - `Sashank Bhamidi <https://github.com/SashankBhamidi>`_
 - `Serif OZ <https://github.com/SerifOZ>`_
 - Sidnei da Silva <sidnei@enfoldsystems.com>

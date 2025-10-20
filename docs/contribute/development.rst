@@ -62,8 +62,8 @@ The following command show how to run tox with Python 3.12:
 Code style
 ----------
 
-We strive towards a common code style.
-You can run the following command to auto-format the code.
+icalendar strives towards a common code style.
+You can run the following command to automatically format the code.
 
 .. code-block:: shell
 
@@ -131,7 +131,7 @@ uv
 `uv <https://docs.astral.sh/uv/>`_ is used for installing Python, creating a Python virtual environment, and managing dependencies for documentation.
 
 Install uv.
-Carefully read the console output for further instructions, and follow them, if needed.
+Read the console output for further instructions, and follow them, if needed.
 
 .. tab-set::
 
@@ -169,14 +169,12 @@ The following sections describe the most frequently used ``make`` commands.
 
 All ``make`` commands that build documentation will
 
--   create a Python virtual environment,
--   install requirements,
--   initialize or update the `volto`, `plone.restapi`, and `plone.api` submodules, and
--   finally create symlinks to the source files.
+-   create a Python virtual environment, and
+-   install requirements.
 
 
-html
-````
+``html``
+````````
 
 To build the documentation as HTML, run the following command.
 
@@ -187,8 +185,8 @@ To build the documentation as HTML, run the following command.
 You can now open the output from ``docs/_build/html/index.html``.
 
 
-livehtml
-````````
+``livehtml``
+````````````
 
 ``livehtml`` rebuilds documentation as you edit its files, with live reload in the browser.
 
@@ -203,8 +201,8 @@ The console will give you the URL to open in a web browser.
     [sphinx-autobuild] Serving on http://127.0.0.1:8050
 
 
-linkcheckbroken
-```````````````
+``linkcheckbroken``
+```````````````````
 
 ``linkcheckbroken`` checks all links, returning a list of only broken links.
 
@@ -215,17 +213,16 @@ linkcheckbroken
 Open `docs/_build/linkcheck/output.txt` for the entire list of links that were checked and their result.
 
 
-.. For future implementation
-.. ### `vale`
+### `vale`
 
-.. `vale` checks for American English spelling, grammar, and syntax, and follows the Microsoft Writing Style Guide.
-.. See {ref}`authors-english-label` for configuration.
+`vale` checks for American English spelling, grammar, and syntax, and follows the Microsoft Writing Style Guide.
+See {ref}`authors-english-label` for configuration.
 
-.. .. code-block:: shell
+.. code-block:: shell
 
-.. make vale
+    make vale
 
-.. See the output on the console for suggestions.
+See the output on the console for suggestions.
 
 
 clean
@@ -250,8 +247,8 @@ Use this command when packages that you have installed in your virtual environme
     make clean-python
 
 
-apidoc
-``````
+``apidoc``
+``````````
 
 ``apidoc`` generates source documentation files from which Sphinx will render the API documentation.
 

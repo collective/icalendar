@@ -1,6 +1,6 @@
-============================
-Command line interface (CLI)
-============================
+======================
+Command line interface
+======================
 
 This chapter describes how to use the command line interface (CLI) for icalendar.
 
@@ -44,7 +44,7 @@ The following is example output.
 Shell-based mail client
 =======================
 
-To use icalender in terminal-based mail clients such as mutt, add a new MIME type as the root user as shown.
+To use icalendar in terminal-based mail clients such as mutt, add a new MIME type as the root user as shown.
 
 .. code-block:: shell
 

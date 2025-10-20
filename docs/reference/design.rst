@@ -3,7 +3,7 @@ Design
 ======
 
 icalendar is used for parsing and generating iCalendar files following the standard in :rfc:`5545`.
-It should be fully compliant, but it is possible to generate and parse invalid files if you really want to.
+It should be fully compliant, but it is possible to generate and parse invalid files if you want to.
 
 
 Compatibility

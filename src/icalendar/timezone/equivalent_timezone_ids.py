@@ -8,7 +8,7 @@ If they are equivalent, they are equivalent within the time that is mostly used.
 You can regenerate the information from this module.
 
 See also:
-- https://stackoverflow.com/questions/79185519/which-timezones-are-equivalent
+- https://stackoverflow.com/questions/79171631/how-do-i-determine-whether-a-zoneinfo-is-an-alias/79171734#79171734
 
 Run this module:
 
