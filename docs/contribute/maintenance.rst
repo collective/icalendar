@@ -170,4 +170,4 @@ When adding support for a new Python version, or removing support for an old one
 :file:`docs/maintenance.rst`
     Update this list if any new files need to be modified.
 
-Remember to test the changes, and update any documentation that mentions supported Python versions.
+Remember to write tests that completely cover the changes, and update any documentation that mentions supported Python versions.
