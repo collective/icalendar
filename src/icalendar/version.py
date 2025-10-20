@@ -1,4 +1,4 @@
-"""Version in formation on icalendar.
+"""Version information on icalendar.
 
 This module is the stable interface for the generated _version.py file.
 
