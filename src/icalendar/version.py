@@ -6,13 +6,21 @@ Version as a string:
 
 .. code-block:: pycon
 
+Version as a string:
+
+.. code-block:: pycon
+
     >>> from icalendar import version
+    >>> version  # doctest: +SKIP
+    '7.0.0'
 
 Version as a tuple:
 
 .. code-block:: pycon
 
     >>> from icalendar import version_tuple
+    >>> version_tuple  # doctest: +SKIP
+    (7, 0, 0)
 
 """
 
