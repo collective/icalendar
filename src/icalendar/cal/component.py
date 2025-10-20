@@ -13,40 +13,12 @@ from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_sp
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import TypesFactory, vDDDLists, vText
 from icalendar.timezone import tzp
+from icalendar.tools import is_date, is_datetime
 
 if TYPE_CHECKING:
     from icalendar.compatibility import Self
 
 _marker = []
-
-
-def _infer_value_type(value: date | datetime | timedelta | time | tuple | list) -> str | None:
-    """Infer the ``VALUE`` parameter from a Python type.
-
-    Args:
-        value: Python native type, one of :py:class:`date`, :py:mod:`datetime`, :py:class:`timedelta`, :py:mod:`time`, :py:class:`tuple`, or :py:class:`list`.
-
-    Returns:
-        str or None: The ``VALUE`` parameter string, for example, "DATE", "TIME", or other string, or ``None``
-            if no specific ``VALUE`` is needed.
-    """
-    if isinstance(value, list):
-        if not value:
-            return None
-        # Check if ALL items are date (but not datetime)
-        if all(isinstance(item, date) and not isinstance(item, datetime) for item in value):
-            return "DATE"
-        # Check if ALL items are time
-        if all(isinstance(item, time) for item in value):
-            return "TIME"
-        # Mixed types or other types - don't infer
-        return None
-    if isinstance(value, date) and not isinstance(value, datetime):
-        return "DATE"
-    if isinstance(value, time):
-        return "TIME"
-    # Don't infer PERIOD - it's too risky and vPeriod already handles it
-    return None
 
 
 class Component(CaselessDict):
@@ -97,6 +69,35 @@ class Component(CaselessDict):
         if cls._components_factory is None:
             cls._components_factory = ComponentFactory()
         return cls._components_factory.get(name, Component)
+
+    @staticmethod
+    def _infer_value_type(value: date | datetime | timedelta | time | tuple | list) -> str | None:
+        """Infer the ``VALUE`` parameter from a Python type.
+
+        Args:
+            value: Python native type, one of :py:class:`date`, :py:mod:`datetime`, :py:class:`timedelta`, :py:mod:`time`, :py:class:`tuple`, or :py:class:`list`.
+
+        Returns:
+            str or None: The ``VALUE`` parameter string, for example, "DATE", "TIME", or other string, or ``None``
+                if no specific ``VALUE`` is needed.
+        """
+        if isinstance(value, list):
+            if not value:
+                return None
+            # Check if ALL items are date (but not datetime)
+            if all(is_date(item) for item in value):
+                return "DATE"
+            # Check if ALL items are time
+            if all(isinstance(item, time) for item in value):
+                return "TIME"
+            # Mixed types or other types - don't infer
+            return None
+        if is_date(value):
+            return "DATE"
+        if isinstance(value, time):
+            return "TIME"
+        # Don't infer PERIOD - it's too risky and vPeriod already handles it
+        return None
 
     def __init__(self, *args, **kwargs):
         """Set keys to upper for initial dict."""
@@ -150,7 +151,7 @@ class Component(CaselessDict):
             if parameters and "VALUE" in parameters:
                 value_param = parameters["VALUE"]
             elif not isinstance(value, cls.types_factory.all_types):
-                inferred = _infer_value_type(value)
+                inferred = cls._infer_value_type(value)
                 if inferred:
                     value_param = inferred
                     # Auto-set the VALUE parameter
