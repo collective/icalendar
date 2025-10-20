@@ -4,6 +4,8 @@ from icalendar.alarms import (
 )
 from icalendar.cal import (
     Alarm,
+    Availability,
+    Available,
     Calendar,
     Component,
     ComponentFactory,
@@ -15,7 +17,20 @@ from icalendar.cal import (
     TimezoneStandard,
     Todo,
 )
-from icalendar.enums import CUTYPE, FBTYPE, PARTSTAT, RANGE, RELATED, RELTYPE, ROLE
+from icalendar.enums import (
+    BUSYTYPE,
+    CLASS,
+    CUTYPE,
+    FBTYPE,
+    PARTSTAT,
+    RANGE,
+    RELATED,
+    RELTYPE,
+    ROLE,
+    STATUS,
+    TRANSP,
+    VALUE,
+)
 from icalendar.error import (
     ComponentEndMissing,
     ComponentStartMissing,
@@ -59,6 +74,8 @@ from icalendar.prop import (
     vUTCOffset,
     vWeekday,
 )
+from icalendar.prop.conference import Conference
+from icalendar.prop.image import Image
 
 # Switching the timezone provider
 from icalendar.timezone import use_pytz, use_zoneinfo
@@ -66,6 +83,8 @@ from icalendar.timezone import use_pytz, use_zoneinfo
 from .version import __version__, __version_tuple__, version, version_tuple
 
 __all__ = [
+    "BUSYTYPE",
+    "CLASS",
     "CUTYPE",
     "FBTYPE",
     "PARTSTAT",
@@ -73,17 +92,24 @@ __all__ = [
     "RELATED",
     "RELTYPE",
     "ROLE",
+    "STATUS",
+    "TRANSP",
+    "VALUE",
     "Alarm",
     "AlarmTime",
     "Alarms",
+    "Availability",
+    "Available",
     "Calendar",
     "Component",
     "ComponentEndMissing",
     "ComponentFactory",
     "ComponentStartMissing",
+    "Conference",
     "Event",
     "FeatureWillBeRemovedInFutureVersion",
     "FreeBusy",
+    "Image",
     "IncompleteAlarmInformation",
     "IncompleteComponent",
     "InvalidCalendar",

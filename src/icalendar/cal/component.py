@@ -2,16 +2,21 @@
 
 from __future__ import annotations
 
-from datetime import date, datetime, timezone
-from typing import ClassVar, Optional
+from datetime import date, datetime, time, timezone
+from typing import TYPE_CHECKING, ClassVar
 
-from icalendar.attr import single_utc_property, uid_property
+from icalendar.attr import comments_property, single_utc_property, uid_property
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.caselessdict import CaselessDict
+from icalendar.error import InvalidCalendar
 from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_split
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import TypesFactory, vDDDLists, vText
 from icalendar.timezone import tzp
+from icalendar.tools import is_date, is_datetime
+
+if TYPE_CHECKING:
+    from icalendar.compatibility import Self
 
 _marker = []
 
@@ -52,7 +57,7 @@ class Component(CaselessDict):
     # not_compliant = ['']  # List of non-compliant properties.
 
     types_factory = TypesFactory()
-    _components_factory: ClassVar[Optional[ComponentFactory]] = None
+    _components_factory: ClassVar[ComponentFactory | None] = None
 
     @classmethod
     def get_component_class(cls, name: str) -> type[Component]:
@@ -64,6 +69,35 @@ class Component(CaselessDict):
         if cls._components_factory is None:
             cls._components_factory = ComponentFactory()
         return cls._components_factory.get(name, Component)
+
+    @staticmethod
+    def _infer_value_type(value: date | datetime | timedelta | time | tuple | list) -> str | None:
+        """Infer the ``VALUE`` parameter from a Python type.
+
+        Args:
+            value: Python native type, one of :py:class:`date`, :py:mod:`datetime`, :py:class:`timedelta`, :py:mod:`time`, :py:class:`tuple`, or :py:class:`list`.
+
+        Returns:
+            str or None: The ``VALUE`` parameter string, for example, "DATE", "TIME", or other string, or ``None``
+                if no specific ``VALUE`` is needed.
+        """
+        if isinstance(value, list):
+            if not value:
+                return None
+            # Check if ALL items are date (but not datetime)
+            if all(is_date(item) for item in value):
+                return "DATE"
+            # Check if ALL items are time
+            if all(isinstance(item, time) for item in value):
+                return "TIME"
+            # Mixed types or other types - don't infer
+            return None
+        if is_date(value):
+            return "DATE"
+        if isinstance(value, time):
+            return "TIME"
+        # Don't infer PERIOD - it's too risky and vPeriod already handles it
+        return None
 
     def __init__(self, *args, **kwargs):
         """Set keys to upper for initial dict."""
@@ -112,7 +146,21 @@ class Component(CaselessDict):
             # Don't encode already encoded values.
             obj = value
         else:
-            klass = cls.types_factory.for_property(name)
+            # Extract VALUE parameter if present, or infer it from the Python type
+            value_param = None
+            if parameters and "VALUE" in parameters:
+                value_param = parameters["VALUE"]
+            elif not isinstance(value, cls.types_factory.all_types):
+                inferred = cls._infer_value_type(value)
+                if inferred:
+                    value_param = inferred
+                    # Auto-set the VALUE parameter
+                    if parameters is None:
+                        parameters = {}
+                    if "VALUE" not in parameters:
+                        parameters["VALUE"] = inferred
+
+            klass = cls.types_factory.for_property(name, value_param)
             obj = klass(value)
         if parameters:
             if not hasattr(obj, "params"):
@@ -125,7 +173,13 @@ class Component(CaselessDict):
                     obj.params[key] = item
         return obj
 
-    def add(self, name, value, parameters=None, encode=1):
+    def add(
+        self,
+        name: str,
+        value,
+        parameters: dict[str, str] | Parameters = None,
+        encode: bool = True,  # noqa: FBT001
+    ):
         """Add a property.
 
         :param name: Name of the property.
@@ -293,7 +347,7 @@ class Component(CaselessDict):
         return properties
 
     @classmethod
-    def from_ical(cls, st, multiple=False):
+    def from_ical(cls, st, multiple: bool = False) -> Self | list[Self]:  # noqa: FBT001
         """Populates the component recursively from a string."""
         stack = []  # a stack of components
         comps = []
@@ -345,7 +399,9 @@ class Component(CaselessDict):
                     tzp.cache_timezone_component(component)
             # we are adding properties to the current top of the stack
             else:
-                factory = cls.types_factory.for_property(name)
+                # Extract VALUE parameter if present
+                value_param = params.get("VALUE") if params else None
+                factory = cls.types_factory.for_property(name, value_param)
                 component = stack[-1] if stack else None
                 if not component:
                     # only accept X-COMMENT at the end of the .ics file
@@ -379,6 +435,9 @@ class Component(CaselessDict):
                         parsed_components = [
                             factory(factory.from_ical(vals, params["TZID"]))
                         ]
+                    # Workaround broken ICS files with empty RDATE
+                    elif name == "RDATE" and vals == "":
+                        parsed_components = []
                     else:
                         parsed_components = [factory(factory.from_ical(vals))]
                 except ValueError as e:
@@ -465,7 +524,7 @@ class Component(CaselessDict):
 
         return True
 
-    DTSTAMP = single_utc_property(
+    DTSTAMP = stamp = single_utc_property(
         "DTSTAMP",
         """RFC 5545:
 
@@ -503,6 +562,40 @@ class Component(CaselessDict):
     """,
     )
 
+    @property
+    def last_modified(self) -> datetime:
+        """Datetime when the information associated with the component was last revised.
+
+        Since :attr:`LAST_MODIFIED` is an optional property,
+        this returns :attr:`DTSTAMP` if :attr:`LAST_MODIFIED` is not set.
+        """
+        return self.LAST_MODIFIED or self.DTSTAMP
+
+    @last_modified.setter
+    def last_modified(self, value):
+        self.LAST_MODIFIED = value
+
+    @last_modified.deleter
+    def last_modified(self):
+        del self.LAST_MODIFIED
+
+    @property
+    def created(self) -> datetime:
+        """Datetime when the information associated with the component was created.
+
+        Since :attr:`CREATED` is an optional property,
+        this returns :attr:`DTSTAMP` if :attr:`CREATED` is not set.
+        """
+        return self.CREATED or self.DTSTAMP
+
+    @created.setter
+    def created(self, value):
+        self.CREATED = value
+
+    @created.deleter
+    def created(self):
+        del self.CREATED
+
     def is_thunderbird(self) -> bool:
         """Whether this component has attributes that indicate that Mozilla Thunderbird created it."""  # noqa: E501
         return any(attr.startswith("X-MOZ-") for attr in self.keys())
@@ -513,22 +606,63 @@ class Component(CaselessDict):
         return datetime.now(timezone.utc)
 
     uid = uid_property
+    comments = comments_property
+
+    CREATED = single_utc_property(
+        "CREATED",
+        """
+        CREATED specifies the date and time that the calendar
+        information was created by the calendar user agent in the calendar
+        store.
+
+        Conformance:
+            The property can be specified once in "VEVENT",
+            "VTODO", or "VJOURNAL" calendar components.  The value MUST be
+            specified as a date with UTC time.
+
+        """,
+    )
+
+    _validate_new = True
+
+    @staticmethod
+    def _validate_start_and_end(start, end):
+        """This validates start and end.
+
+        Raises:
+            InvalidCalendar: If the information is not valid
+        """
+        if start is None or end is None:
+            return
+        if start > end:
+            raise InvalidCalendar("end must be after start")
 
     @classmethod
-    def new(cls, dtstamp: Optional[date] = None) -> Component:
+    def new(
+        cls,
+        created: date | None = None,
+        comments: list[str] | str | None = None,
+        last_modified: date | None = None,
+        stamp: date | None = None,
+    ) -> Component:
         """Create a new component.
 
         Arguments:
-            dtstamp: The :attr:`DTSTAMP` of the component.
+            comments: The :attr:`comments` of the component.
+            created: The :attr:`created` of the component.
+            last_modified: The :attr:`last_modified` of the component.
+            stamp: The :attr:`DTSTAMP` of the component.
 
         Raises:
-            IncompleteComponent: If the content is not valid according to :rfc:`5545`.
+            InvalidCalendar: If the content is not valid according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
         component = cls()
-        if dtstamp is not None:
-            component.DTSTAMP = dtstamp
+        component.DTSTAMP = stamp
+        component.created = created
+        component.last_modified = last_modified
+        component.comments = comments
         return component
 
 

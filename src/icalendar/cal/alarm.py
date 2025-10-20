@@ -6,6 +6,7 @@ from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, NamedTuple, Optional, Union
 
 from icalendar.attr import (
+    attendees_property,
     create_single_property,
     description_property,
     property_del_duration,
@@ -21,6 +22,8 @@ from icalendar.cal.component import Component
 
 if TYPE_CHECKING:
     import uuid
+
+    from icalendar.prop import vCalAddress
 
 
 class Alarm(Component):
@@ -237,11 +240,13 @@ class Alarm(Component):
     )
     summary = summary_property
     description = description_property
+    attendees = attendees_property
 
     @classmethod
     def new(
         cls,
         /,
+        attendees: Optional[list[vCalAddress]] = None,
         description: Optional[str] = None,
         summary: Optional[str] = None,
         uid: Optional[str | uuid.UUID] = None,
@@ -251,6 +256,7 @@ class Alarm(Component):
         This creates a new Alarm in accordance with :rfc:`5545`.
 
         Arguments:
+            attendees: The :attr:`attendees` of the alarm.
             description: The :attr:`description` of the alarm.
             summary: The :attr:`summary` of the alarm.
             uid: The :attr:`uid` of the alarm.
@@ -259,7 +265,7 @@ class Alarm(Component):
             :class:`Alarm`
 
         Raises:
-            IncompleteComponent: If the content is not valid according to :rfc:`5545`.
+            InvalidCalendar: If the content is not valid according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
@@ -267,6 +273,7 @@ class Alarm(Component):
         alarm.summary = summary
         alarm.description = description
         alarm.uid = uid
+        alarm.attendees = attendees
         return alarm
 
 

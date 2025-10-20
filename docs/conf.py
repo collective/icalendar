@@ -1,24 +1,33 @@
 # icalendar documentation build configuration file
-import importlib.metadata
 import datetime
-import os
+import importlib.metadata
+import sys
+from pathlib import Path
+
+HERE = Path(__file__).parent
+SRC = HERE.parent / "src"
+sys.path.insert(0, str(SRC))  # update docs from icalendar source for livehtml
 
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.coverage",
     "sphinx.ext.viewcode",
     "sphinx_copybutton",
+    "sphinx_design",
+    "sphinx_reredirects",
     "sphinx.ext.intersphinx",
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.napoleon",
 ]
-source_suffix = ".rst"
+source_suffix = {".rst": "restructuredtext"}
 master_doc = "index"
 
 project = "icalendar"
-this_year = datetime.date.today().year
-copyright = f"{this_year}, Plone Foundation"
-release = version = importlib.metadata.version("icalendar")
+this_year = datetime.date.today().year  # noqa: DTZ011
+copyright = f"{this_year}, Plone Foundation"  # noqa: A001
+version = importlib.metadata.version(project)
+v = version.split(".")[:-1]
+release = version = ".".join(v)
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -57,7 +66,6 @@ html_theme_options = {
     "show_toc_level": 2,
     "use_edit_page_button": True,
 }
-pygments_style = "sphinx"
 html_context = {
 #     "github_url": "https://github.com", # or your GitHub Enterprise site
     "github_user": "collective",
@@ -65,7 +73,13 @@ html_context = {
     "github_version": "main",
     "doc_path": "docs",
 }
-htmlhelp_basename = "icalendardoc"
+html_static_path = [
+    "_static",
+]
+html_js_files = [
+    ("js/custom-icons.js", {"defer": "defer"}),
+]
+pygments_style = "sphinx"
 
 
 # -- Intersphinx configuration ----------------------------------
@@ -84,5 +98,27 @@ intersphinx_mapping = {
 }
 
 
+# -- linkcheck configuration ----------------------------------
+# Ignore localhost
+linkcheck_ignore = [
+    # Ignore pages that require authentication
+    r"https://app.readthedocs.org/dashboard/icalendar/users/create/",
+    r"https://github.com/collective/icalendar/fork",
+    r"https://github.com/collective/icalendar/settings/",
+    r"https://pypi.org/manage/project/icalendar/collaboration/",
+]
+linkcheck_anchors = True
+linkcheck_timeout = 5
+linkcheck_retries = 1
+
+# -- sphinx-reredirects configuration ----------------------------------
+# https://documatt.com/sphinx-reredirects/usage.html
+redirects = {
+    "contributing": "/contribute/index.html",
+    "about": "/index.html#about-icalendar",
+}
+
+
 man_pages = [("index", "icalendar", "icalendar Documentation", ["Plone Foundation"], 1)]
 
+htmlhelp_basename = "icalendardoc"

@@ -1,20 +1,29 @@
-try:
-    from backports import zoneinfo  # type: ignore  # noqa: PGH003
-except ImportError:
-    import zoneinfo
+"""Test configuration"""
+
+import itertools
+import sys
+import uuid
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Generator
 
-from icalendar import TypesFactory
 import pytest
+from dateutil import tz
 
-import icalendar
-import icalendar.cal.alarm
-import icalendar.cal.calendar
-import icalendar.cal.component_factory
-import icalendar.cal.event
-import icalendar.cal.timezone
-from icalendar.cal.component import Component
+from icalendar import (
+    Alarm,
+    Availability,
+    Calendar,
+    Component,
+    ComponentFactory,
+    Event,
+    Timezone,
+    TypesFactory,
+    vUTCOffset,
+)
+from icalendar.compatibility import ZoneInfo, zoneinfo
+from icalendar.timezone import TZP
+from icalendar.timezone import tzp as _tzp
 
 from . import timezone_ids
 
@@ -22,16 +31,6 @@ try:
     import pytz
 except ImportError:
     pytz = None
-import itertools
-import sys
-import uuid
-from pathlib import Path
-
-from dateutil import tz
-
-from icalendar.cal.calendar import Calendar
-from icalendar.timezone import TZP
-from icalendar.timezone import tzp as _tzp
 
 HAS_PYTZ = pytz is not None
 if HAS_PYTZ:
@@ -108,29 +107,35 @@ CALENDARS_FOLDER = HERE / "calendars"
 TIMEZONES_FOLDER = HERE / "timezones"
 EVENTS_FOLDER = HERE / "events"
 ALARMS_FOLDER = HERE / "alarms"
+AVAILABILITIES_FOLDER = HERE / "availabilities"
 
 
 @pytest.fixture(scope="module")
 def calendars(tzp):
-    return DataSource(CALENDARS_FOLDER, icalendar.cal.calendar.Calendar.from_ical)
+    return DataSource(CALENDARS_FOLDER, Calendar.from_ical)
 
 
 @pytest.fixture(scope="module")
 def timezones(tzp):
-    return DataSource(TIMEZONES_FOLDER, icalendar.cal.timezone.Timezone.from_ical)
+    return DataSource(TIMEZONES_FOLDER, Timezone.from_ical)
 
 
 @pytest.fixture(scope="module")
 def events(tzp):
-    return DataSource(EVENTS_FOLDER, icalendar.cal.event.Event.from_ical)
+    return DataSource(EVENTS_FOLDER, Event.from_ical)
 
 
 @pytest.fixture(scope="module")
 def alarms(tzp):
-    return DataSource(ALARMS_FOLDER, icalendar.cal.alarm.Alarm.from_ical)
+    return DataSource(ALARMS_FOLDER, Alarm.from_ical)
 
 
-@pytest.fixture(params=PYTZ_UTC + [zoneinfo.ZoneInfo("UTC"), tz.UTC, tz.gettz("UTC")])
+@pytest.fixture(scope="module")
+def availabilities(tzp):
+    return DataSource(AVAILABILITIES_FOLDER, Availability.from_ical)
+
+
+@pytest.fixture(params=PYTZ_UTC + [ZoneInfo("UTC"), tz.UTC, tz.gettz("UTC")])
 def utc(request, tzp):
     return request.param
 
@@ -139,7 +144,7 @@ def utc(request, tzp):
     params=PYTZ_IN_TIMEZONE
     + [
         lambda dt, tzname: dt.replace(tzinfo=tz.gettz(tzname)),
-        lambda dt, tzname: dt.replace(tzinfo=zoneinfo.ZoneInfo(tzname)),
+        lambda dt, tzname: dt.replace(tzinfo=ZoneInfo(tzname)),
     ]
 )
 def in_timezone(request, tzp):
@@ -190,6 +195,7 @@ def types_factory():
     """Return a new types factory."""
     return TypesFactory()
 
+
 @pytest.fixture
 def x_sometime(types_factory):
     """Map x_sometime to time"""
@@ -201,14 +207,14 @@ def x_sometime(types_factory):
 @pytest.fixture
 def factory():
     """Return a new component factory."""
-    return icalendar.cal.component_factory.ComponentFactory()
+    return ComponentFactory()
 
 
 @pytest.fixture
 def vUTCOffset_ignore_exceptions():
-    icalendar.vUTCOffset.ignore_exceptions = True
+    vUTCOffset.ignore_exceptions = True
     yield
-    icalendar.vUTCOffset.ignore_exceptions = False
+    vUTCOffset.ignore_exceptions = False
 
 
 @pytest.fixture
@@ -234,6 +240,15 @@ def calendar_component(tzp):
     c = Component()
     c.name = "VCALENDAR"
     return c
+
+
+@pytest.fixture
+def dont_validate_new():
+    """Remove validation for new() of components."""
+    value = Component._validate_new
+    Component._validate_new = False
+    yield
+    Component._validate_new = value
 
 
 @pytest.fixture
@@ -327,7 +342,7 @@ def pytest_generate_tests(metafunc):
         metafunc.parametrize("tzp_name", tzp_names, scope="module")
 
 
-class DoctestZoneInfo(zoneinfo.ZoneInfo):
+class DoctestZoneInfo(ZoneInfo):
     """Constent ZoneInfo representation for tests."""
 
     def __repr__(self):
@@ -351,6 +366,12 @@ def doctest_import(name, *args, **kw):
 NOW = datetime(2025, 5, 17, 8, 6, 12)
 NOW_UTC = NOW.replace(tzinfo=timezone.utc)
 UID_DEFAULT = "d755cef5-2311-46ed-a0e1-6733c9e15c63"
+
+
+@pytest.fixture
+def test_uid() -> str:
+    """The UID that tests always create."""
+    return UID_DEFAULT
 
 
 @pytest.fixture(autouse=True)

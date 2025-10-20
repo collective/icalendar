@@ -1,7 +1,6 @@
 ---
-name: empty issue
-about: This is an unstructured issue template to use with issues that are not described,
-  yet.
+name: Blank issue
+about: Unstructured template for anything not covered by bug reports
 title: ''
 labels: ''
 assignees: ''

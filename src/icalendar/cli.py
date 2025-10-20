@@ -2,7 +2,6 @@
 """utility program that allows user to preview calendar's events"""
 
 import argparse
-import pathlib
 import sys
 from datetime import datetime
 
@@ -77,7 +76,11 @@ def view(event):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("calendar_files", nargs="+", type=pathlib.Path)
+    parser.add_argument(
+        "calendar_files", nargs="+", 
+        type=argparse.FileType("r", encoding="utf-8-sig"),
+        help="one or more .ics files (use '-' for stdin)"
+    )
     parser.add_argument(
         "--output",
         "-o",
@@ -93,11 +96,10 @@ def main():
     )
     argv = parser.parse_args()
 
-    for calendar_file in argv.calendar_files:
-        with open(calendar_file, encoding="utf-8-sig") as f:
-            calendar = Calendar.from_ical(f.read())
-            for event in calendar.walk("vevent"):
-                argv.output.write(view(event) + "\n\n")
+    for f in argv.calendar_files:
+        calendar = Calendar.from_ical(f.read())
+        for event in calendar.walk("vevent"):
+            argv.output.write(view(event) + "\n\n")
 
 
 __all__ = ["main", "view"]
