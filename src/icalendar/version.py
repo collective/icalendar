@@ -1,4 +1,20 @@
-"""Version file as a stable interface for the generated _version.py file."""
+"""Version in formation on icalendar.
+
+This module is the stable interface for the generated _version.py file.
+
+Version as a string:
+
+.. code-block:: pycon
+
+    >>> from icalendar import version
+
+Version as a tuple:
+
+.. code-block:: pycon
+
+    >>> from icalendar import version_tuple
+
+"""
 
 try:
     from ._version import __version__, __version_tuple__, version, version_tuple
@@ -8,7 +24,7 @@ except ModuleNotFoundError:
 
 __all__ = [
     "__version__",
-    "version",
     "__version_tuple__",
+    "version",
     "version_tuple",
 ]
