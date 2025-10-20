@@ -6,10 +6,6 @@ Version as a string:
 
 .. code-block:: pycon
 
-Version as a string:
-
-.. code-block:: pycon
-
     >>> from icalendar import version
     >>> version  # doctest: +SKIP
     '7.0.0'
