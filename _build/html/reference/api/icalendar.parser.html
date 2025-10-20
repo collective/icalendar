@@ -1,0 +1,908 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>icalendar.parser module &#8212; icalendar 6.3.2 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=164cab21"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/api/icalendar.parser';</script>
+    <script defer="defer" src="../../_static/js/custom-icons.js?v=c97652e3"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="icalendar.parser_tools module" href="icalendar.parser_tools.html" />
+    <link rel="prev" title="icalendar.param module" href="icalendar.param.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="6.3.2" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search"
+         aria-label="Search"
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">icalendar 6.3.2 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../how-to/index.html">
+    How to guides
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Reference guides
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contribute/index.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+            
+          
+            
+          
+            
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/collective/icalendar" title="GitHub" class="nav-link custom-fancy-css" rel="noopener me" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+            
+          
+            
+          
+            
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/icalendar" title="PyPI" class="nav-link custom-fancy-css" rel="noopener me" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-pypi fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../how-to/index.html">
+    How to guides
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Reference guides
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contribute/index.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+            
+          
+            
+          
+            
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/collective/icalendar" title="GitHub" class="nav-link custom-fancy-css" rel="noopener me" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+            
+          
+            
+          
+            
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/icalendar" title="PyPI" class="nav-link custom-fancy-css" rel="noopener me" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-pypi fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="icalendar.html">icalendar package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="icalendar.cal.html">icalendar.cal package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.cal.alarm.html">icalendar.cal.alarm module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.cal.availability.html">icalendar.cal.availability module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.cal.available.html">icalendar.cal.available module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.cal.calendar.html">icalendar.cal.calendar module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.cal.component.html">icalendar.cal.component module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.cal.component_factory.html">icalendar.cal.component_factory module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.cal.event.html">icalendar.cal.event module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.cal.examples.html">icalendar.cal.examples module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.cal.free_busy.html">icalendar.cal.free_busy module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.cal.journal.html">icalendar.cal.journal module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.cal.timezone.html">icalendar.cal.timezone module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.cal.todo.html">icalendar.cal.todo module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="icalendar.prop.html">icalendar.prop package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.prop.conference.html">icalendar.prop.conference module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.prop.image.html">icalendar.prop.image module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="icalendar.timezone.html">icalendar.timezone package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.timezone.equivalent_timezone_ids.html">icalendar.timezone.equivalent_timezone_ids module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.timezone.equivalent_timezone_ids_result.html">icalendar.timezone.equivalent_timezone_ids_result module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.timezone.provider.html">icalendar.timezone.provider module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.timezone.pytz.html">icalendar.timezone.pytz module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.timezone.tzid.html">icalendar.timezone.tzid module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.timezone.tzp.html">icalendar.timezone.tzp module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.timezone.windows_to_olson.html">icalendar.timezone.windows_to_olson module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.timezone.zoneinfo.html">icalendar.timezone.zoneinfo module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="icalendar.alarms.html">icalendar.alarms module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="icalendar.attr.html">icalendar.attr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="icalendar.caselessdict.html">icalendar.caselessdict module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="icalendar.cli.html">icalendar.cli module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="icalendar.compatibility.html">icalendar.compatibility module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="icalendar.enums.html">icalendar.enums module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="icalendar.error.html">icalendar.error module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="icalendar.param.html">icalendar.param module</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">icalendar.parser module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="icalendar.parser_tools.html">icalendar.parser_tools module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="icalendar.tools.html">icalendar.tools module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="icalendar.version.html">icalendar.version module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="modules.html">src</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="icalendar.html">icalendar package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="icalendar.cal.html">icalendar.cal package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.cal.alarm.html">icalendar.cal.alarm module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.cal.availability.html">icalendar.cal.availability module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.cal.available.html">icalendar.cal.available module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.cal.calendar.html">icalendar.cal.calendar module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.cal.component.html">icalendar.cal.component module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.cal.component_factory.html">icalendar.cal.component_factory module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.cal.event.html">icalendar.cal.event module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.cal.examples.html">icalendar.cal.examples module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.cal.free_busy.html">icalendar.cal.free_busy module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.cal.journal.html">icalendar.cal.journal module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.cal.timezone.html">icalendar.cal.timezone module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.cal.todo.html">icalendar.cal.todo module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="icalendar.prop.html">icalendar.prop package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.prop.conference.html">icalendar.prop.conference module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.prop.image.html">icalendar.prop.image module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="icalendar.timezone.html">icalendar.timezone package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.timezone.equivalent_timezone_ids.html">icalendar.timezone.equivalent_timezone_ids module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.timezone.equivalent_timezone_ids_result.html">icalendar.timezone.equivalent_timezone_ids_result module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.timezone.provider.html">icalendar.timezone.provider module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.timezone.pytz.html">icalendar.timezone.pytz module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.timezone.tzid.html">icalendar.timezone.tzid module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.timezone.tzp.html">icalendar.timezone.tzp module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.timezone.windows_to_olson.html">icalendar.timezone.windows_to_olson module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.timezone.zoneinfo.html">icalendar.timezone.zoneinfo module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.alarms.html">icalendar.alarms module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.attr.html">icalendar.attr module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.caselessdict.html">icalendar.caselessdict module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.cli.html">icalendar.cli module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.compatibility.html">icalendar.compatibility module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.enums.html">icalendar.enums module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.error.html">icalendar.error module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.param.html">icalendar.param module</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">icalendar.parser module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.parser_tools.html">icalendar.parser_tools module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.tools.html">icalendar.tools module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.version.html">icalendar.version module</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../design.html">Design</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Change log</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Reference guides</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="icalendar.html" class="nav-link">icalendar package</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">icalendar.parser module</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-icalendar.parser">
+<span id="icalendar-parser-module"></span><h1>icalendar.parser module<a class="headerlink" href="#module-icalendar.parser" title="Link to this heading">#</a></h1>
+<p>This module parses and generates contentlines as defined in RFC 5545
+(iCalendar), but will probably work for other MIME types with similar syntax.
+Eg. RFC 2426 (vCard)</p>
+<p>It is stupid in the sense that it treats the content purely as strings. No type
+conversion is attempted.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="icalendar.parser.Contentline">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">icalendar.parser.</span></span><span class="sig-name descname"><span class="pre">Contentline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'utf-8'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/parser.html#Contentline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.parser.Contentline" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+<p>A content line is basically a string that can be folded and parsed into
+parts.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="icalendar.parser.Contentline.from_ical">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_ical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ical</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/parser.html#Contentline.from_ical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.parser.Contentline.from_ical" title="Link to this definition">#</a></dt>
+<dd><p>Unfold the content lines in an iCalendar into long content lines.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="icalendar.parser.Contentline.from_parts">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_parts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.14)"><span class="pre">bytes</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#icalendar.parser.Parameters" title="icalendar.parser.Parameters"><span class="pre">Parameters</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sorted</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/parser.html#Contentline.from_parts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.parser.Contentline.from_parts" title="Link to this definition">#</a></dt>
+<dd><p>Turn a parts into a content line.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="icalendar.parser.Contentline.parts">
+<span class="sig-name descname"><span class="pre">parts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/parser.html#Contentline.parts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.parser.Contentline.parts" title="Link to this definition">#</a></dt>
+<dd><p>Split the content line up into (name, parameters, values) parts.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="icalendar.parser.Contentline.strict">
+<span class="sig-name descname"><span class="pre">strict</span></span><a class="headerlink" href="#icalendar.parser.Contentline.strict" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="icalendar.parser.Contentline.to_ical">
+<span class="sig-name descname"><span class="pre">to_ical</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/parser.html#Contentline.to_ical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.parser.Contentline.to_ical" title="Link to this definition">#</a></dt>
+<dd><p>Long content lines are folded so they are less than 75 characters
+wide.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="icalendar.parser.Contentlines">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">icalendar.parser.</span></span><span class="sig-name descname"><span class="pre">Contentlines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/parser.html#Contentlines"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.parser.Contentlines" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a></p>
+<p>I assume that iCalendar files generally are a few kilobytes in size.
+Then this should be efficient. for Huge files, an iterator should probably
+be used instead.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="icalendar.parser.Contentlines.from_ical">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_ical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">st</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/parser.html#Contentlines.from_ical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.parser.Contentlines.from_ical" title="Link to this definition">#</a></dt>
+<dd><p>Parses a string into content lines.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="icalendar.parser.Contentlines.to_ical">
+<span class="sig-name descname"><span class="pre">to_ical</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/parser.html#Contentlines.to_ical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.parser.Contentlines.to_ical" title="Link to this definition">#</a></dt>
+<dd><p>Simply join self.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="icalendar.parser.Parameters">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">icalendar.parser.</span></span><span class="sig-name descname"><span class="pre">Parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/parser.html#Parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.parser.Parameters" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="icalendar.caselessdict.html#icalendar.caselessdict.CaselessDict" title="icalendar.caselessdict.CaselessDict"><code class="xref py py-class docutils literal notranslate"><span class="pre">CaselessDict</span></code></a></p>
+<p>Parser and generator of Property parameter strings. It knows nothing of
+datatypes. Its main concern is textual structure.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="icalendar.parser.Parameters.always_quoted">
+<span class="sig-name descname"><span class="pre">always_quoted</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('ALTREP',</span> <span class="pre">'DELEGATED-FROM',</span> <span class="pre">'DELEGATED-TO',</span> <span class="pre">'DIR',</span> <span class="pre">'MEMBER',</span> <span class="pre">'SENT-BY',</span> <span class="pre">'X-ADDRESS',</span> <span class="pre">'X-TITLE')</span></em><a class="headerlink" href="#icalendar.parser.Parameters.always_quoted" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="icalendar.parser.Parameters.from_ical">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_ical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">st</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/parser.html#Parameters.from_ical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.parser.Parameters.from_ical" title="Link to this definition">#</a></dt>
+<dd><p>Parses the parameter format from ical text format.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="icalendar.parser.Parameters.params">
+<span class="sig-name descname"><span class="pre">params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/parser.html#Parameters.params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.parser.Parameters.params" title="Link to this definition">#</a></dt>
+<dd><p>In RFC 5545 keys are called parameters, so this is to be consitent
+with the naming conventions.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="icalendar.parser.Parameters.quote_also">
+<span class="sig-name descname"><span class="pre">quote_also</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'CN':</span> <span class="pre">&quot;</span> <span class="pre">'&quot;}</span></em><a class="headerlink" href="#icalendar.parser.Parameters.quote_also" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="icalendar.parser.Parameters.to_ical">
+<span class="sig-name descname"><span class="pre">to_ical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sorted</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/parser.html#Parameters.to_ical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.parser.Parameters.to_ical" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="icalendar.parser.Parameters.value">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="icalendar.html#icalendar.VALUE" title="icalendar.VALUE"><span class="pre">VALUE</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#icalendar.parser.Parameters.value" title="Link to this definition">#</a></dt>
+<dd><p>The VALUE parameter from <span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc5545.html"><strong>RFC 5545</strong></a>.</p>
+<dl>
+<dt>Description:</dt><dd><p>This parameter specifies the value type and format of
+the property value.  The property values MUST be of a single value
+type.  For example, a “RDATE” property cannot have a combination
+of DATE-TIME and TIME value types.</p>
+<p>If the property’s value is the default value type, then this
+parameter need not be specified.  However, if the property’s
+default value type is overridden by some other allowable value
+type, then this parameter MUST be specified.</p>
+<p>Applications MUST preserve the value data for x-name and iana-
+token values that they don’t recognize without attempting to
+interpret or parse the value data.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="icalendar.parser.dquote">
+<span class="sig-prename descclassname"><span class="pre">icalendar.parser.</span></span><span class="sig-name descname"><span class="pre">dquote</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">always_quote</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/parser.html#dquote"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.parser.dquote" title="Link to this definition">#</a></dt>
+<dd><p>Enclose parameter values containing [,;:] in double quotes.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="icalendar.parser.escape_char">
+<span class="sig-prename descclassname"><span class="pre">icalendar.parser.</span></span><span class="sig-name descname"><span class="pre">escape_char</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/parser.html#escape_char"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.parser.escape_char" title="Link to this definition">#</a></dt>
+<dd><p>Format value according to iCalendar TEXT escaping rules.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="icalendar.parser.escape_string">
+<span class="sig-prename descclassname"><span class="pre">icalendar.parser.</span></span><span class="sig-name descname"><span class="pre">escape_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/parser.html#escape_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.parser.escape_string" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="icalendar.parser.foldline">
+<span class="sig-prename descclassname"><span class="pre">icalendar.parser.</span></span><span class="sig-name descname"><span class="pre">foldline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">75</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fold_sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\r\n</span> <span class="pre">'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/parser.html#foldline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.parser.foldline" title="Link to this definition">#</a></dt>
+<dd><p>Make a string folded as defined in RFC5545
+Lines of text SHOULD NOT be longer than 75 octets, excluding the line
+break.  Long content lines SHOULD be split into a multiple line
+representations using a line “folding” technique.  That is, a long
+line can be split between any two characters by inserting a CRLF
+immediately followed by a single linear white-space character (i.e.,
+SPACE or HTAB).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="icalendar.parser.param_value">
+<span class="sig-prename descclassname"><span class="pre">icalendar.parser.</span></span><span class="sig-name descname"><span class="pre">param_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">always_quote</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/parser.html#param_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.parser.param_value" title="Link to this definition">#</a></dt>
+<dd><p>Returns a parameter value.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="icalendar.parser.q_join">
+<span class="sig-prename descclassname"><span class="pre">icalendar.parser.</span></span><span class="sig-name descname"><span class="pre">q_join</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">','</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">always_quote</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/parser.html#q_join"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.parser.q_join" title="Link to this definition">#</a></dt>
+<dd><p>Joins a list on sep, quoting strings with QUOTABLE chars.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="icalendar.parser.q_split">
+<span class="sig-prename descclassname"><span class="pre">icalendar.parser.</span></span><span class="sig-name descname"><span class="pre">q_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">st</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">','</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxsplit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/parser.html#q_split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.parser.q_split" title="Link to this definition">#</a></dt>
+<dd><p>Splits a string on char, taking double (q)uotes into considderation.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="icalendar.parser.rfc_6868_escape">
+<span class="sig-prename descclassname"><span class="pre">icalendar.parser.</span></span><span class="sig-name descname"><span class="pre">rfc_6868_escape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../_modules/icalendar/parser.html#rfc_6868_escape"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.parser.rfc_6868_escape" title="Link to this definition">#</a></dt>
+<dd><p>Take care of <span class="target" id="index-1"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc6868.html"><strong>RFC 6868</strong></a> escaping.</p>
+<ul class="simple">
+<li><p>^ -&gt; ^^</p></li>
+<li><p>“ -&gt; ^’</p></li>
+<li><p>newline -&gt; ^n</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="icalendar.parser.rfc_6868_unescape">
+<span class="sig-prename descclassname"><span class="pre">icalendar.parser.</span></span><span class="sig-name descname"><span class="pre">rfc_6868_unescape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../_modules/icalendar/parser.html#rfc_6868_unescape"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.parser.rfc_6868_unescape" title="Link to this definition">#</a></dt>
+<dd><p>Take care of <span class="target" id="index-2"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc6868.html"><strong>RFC 6868</strong></a> unescaping.</p>
+<ul class="simple">
+<li><p>^^ -&gt; ^</p></li>
+<li><p>^n -&gt; system specific newline</p></li>
+<li><p>^’ -&gt; “</p></li>
+<li><p>^ with others stay intact</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="icalendar.parser.unescape_char">
+<span class="sig-prename descclassname"><span class="pre">icalendar.parser.</span></span><span class="sig-name descname"><span class="pre">unescape_char</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/parser.html#unescape_char"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.parser.unescape_char" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="icalendar.parser.unescape_list_or_string">
+<span class="sig-prename descclassname"><span class="pre">icalendar.parser.</span></span><span class="sig-name descname"><span class="pre">unescape_list_or_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/parser.html#unescape_list_or_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.parser.unescape_list_or_string" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="icalendar.parser.unescape_string">
+<span class="sig-prename descclassname"><span class="pre">icalendar.parser.</span></span><span class="sig-name descname"><span class="pre">unescape_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/parser.html#unescape_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.parser.unescape_string" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="icalendar.parser.validate_param_value">
+<span class="sig-prename descclassname"><span class="pre">icalendar.parser.</span></span><span class="sig-name descname"><span class="pre">validate_param_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quoted</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/parser.html#validate_param_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.parser.validate_param_value" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="icalendar.parser.validate_token">
+<span class="sig-prename descclassname"><span class="pre">icalendar.parser.</span></span><span class="sig-name descname"><span class="pre">validate_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/parser.html#validate_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.parser.validate_token" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="icalendar.param.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">icalendar.param module</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="icalendar.parser_tools.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">icalendar.parser_tools module</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.Contentline"><code class="docutils literal notranslate"><span class="pre">Contentline</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.Contentline.from_ical"><code class="docutils literal notranslate"><span class="pre">Contentline.from_ical()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.Contentline.from_parts"><code class="docutils literal notranslate"><span class="pre">Contentline.from_parts()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.Contentline.parts"><code class="docutils literal notranslate"><span class="pre">Contentline.parts()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.Contentline.strict"><code class="docutils literal notranslate"><span class="pre">Contentline.strict</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.Contentline.to_ical"><code class="docutils literal notranslate"><span class="pre">Contentline.to_ical()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.Contentlines"><code class="docutils literal notranslate"><span class="pre">Contentlines</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.Contentlines.from_ical"><code class="docutils literal notranslate"><span class="pre">Contentlines.from_ical()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.Contentlines.to_ical"><code class="docutils literal notranslate"><span class="pre">Contentlines.to_ical()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.Parameters"><code class="docutils literal notranslate"><span class="pre">Parameters</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.Parameters.always_quoted"><code class="docutils literal notranslate"><span class="pre">Parameters.always_quoted</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.Parameters.from_ical"><code class="docutils literal notranslate"><span class="pre">Parameters.from_ical()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.Parameters.params"><code class="docutils literal notranslate"><span class="pre">Parameters.params()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.Parameters.quote_also"><code class="docutils literal notranslate"><span class="pre">Parameters.quote_also</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.Parameters.to_ical"><code class="docutils literal notranslate"><span class="pre">Parameters.to_ical()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.Parameters.value"><code class="docutils literal notranslate"><span class="pre">Parameters.value</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.dquote"><code class="docutils literal notranslate"><span class="pre">dquote()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.escape_char"><code class="docutils literal notranslate"><span class="pre">escape_char()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.escape_string"><code class="docutils literal notranslate"><span class="pre">escape_string()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.foldline"><code class="docutils literal notranslate"><span class="pre">foldline()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.param_value"><code class="docutils literal notranslate"><span class="pre">param_value()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.q_join"><code class="docutils literal notranslate"><span class="pre">q_join()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.q_split"><code class="docutils literal notranslate"><span class="pre">q_split()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.rfc_6868_escape"><code class="docutils literal notranslate"><span class="pre">rfc_6868_escape()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.rfc_6868_unescape"><code class="docutils literal notranslate"><span class="pre">rfc_6868_unescape()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.unescape_char"><code class="docutils literal notranslate"><span class="pre">unescape_char()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.unescape_list_or_string"><code class="docutils literal notranslate"><span class="pre">unescape_list_or_string()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.unescape_string"><code class="docutils literal notranslate"><span class="pre">unescape_string()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.validate_param_value"><code class="docutils literal notranslate"><span class="pre">validate_param_value()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.parser.validate_token"><code class="docutils literal notranslate"><span class="pre">validate_token()</span></code></a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/collective/icalendar/edit/main/docs/reference/api/icalendar.parser.rst">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/reference/api/icalendar.parser.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Plone Foundation.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

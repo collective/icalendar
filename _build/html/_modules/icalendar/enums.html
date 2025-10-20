@@ -1,0 +1,940 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>icalendar.enums &#8212; icalendar 6.3.2 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=164cab21"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/icalendar/enums';</script>
+    <script defer="defer" src="../../_static/js/custom-icons.js?v=c97652e3"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="6.3.2" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search"
+         aria-label="Search"
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">icalendar 6.3.2 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../how-to/index.html">
+    How to guides
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../reference/index.html">
+    Reference guides
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contribute/index.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+            
+          
+            
+          
+            
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/collective/icalendar" title="GitHub" class="nav-link custom-fancy-css" rel="noopener me" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+            
+          
+            
+          
+            
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/icalendar" title="PyPI" class="nav-link custom-fancy-css" rel="noopener me" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-pypi fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../how-to/index.html">
+    How to guides
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../reference/index.html">
+    Reference guides
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contribute/index.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+            
+          
+            
+          
+            
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/collective/icalendar" title="GitHub" class="nav-link custom-fancy-css" rel="noopener me" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+            
+          
+            
+          
+            
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/icalendar" title="PyPI" class="nav-link custom-fancy-css" rel="noopener me" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-pypi fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">icalendar.enums</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for icalendar.enums</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Enumerations for different types in the RFCs.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span> <span class="k">as</span> <span class="n">_Enum</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Enum</span><span class="p">(</span><span class="n">_Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum class that can be pickled.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__reduce_ex__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_p</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;For pickling.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name_</span><span class="p">,)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">StrEnum</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum for strings.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert to a string.</span>
+
+<span class="sd">        This is needed when we set the value directly in components.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
+
+
+<div class="viewcode-block" id="PARTSTAT">
+<a class="viewcode-back" href="../../reference/api/icalendar.enums.html#icalendar.PARTSTAT">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PARTSTAT</span><span class="p">(</span><span class="n">StrEnum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum for PARTSTAT from :rfc:`5545`.</span>
+
+<span class="sd">    Values:</span>
+<span class="sd">        ``NEEDS_ACTION``,</span>
+<span class="sd">        ``ACCEPTED``,</span>
+<span class="sd">        ``DECLINED``,</span>
+<span class="sd">        ``TENTATIVE``,</span>
+<span class="sd">        ``DELEGATED``,</span>
+<span class="sd">        ``COMPLETED``,</span>
+<span class="sd">        ``IN_PROCESS``</span>
+
+<span class="sd">    Purpose:</span>
+<span class="sd">        To specify the participation status for the calendar user</span>
+<span class="sd">        specified by the property.</span>
+
+<span class="sd">    Description:</span>
+<span class="sd">        This parameter can be specified on properties with a</span>
+<span class="sd">        CAL-ADDRESS value type.  The parameter identifies the</span>
+<span class="sd">        participation status for the calendar user specified by the</span>
+<span class="sd">        property value.  The parameter values differ depending on whether</span>
+<span class="sd">        they are associated with a group-scheduled &quot;VEVENT&quot;, &quot;VTODO&quot;, or</span>
+<span class="sd">        &quot;VJOURNAL&quot;.  The values MUST match one of the values allowed for</span>
+<span class="sd">        the given calendar component.  If not specified on a property that</span>
+<span class="sd">        allows this parameter, the default value is NEEDS-ACTION.</span>
+<span class="sd">        Applications MUST treat x-name and iana-token values they don&#39;t</span>
+<span class="sd">        recognize the same way as they would the NEEDS-ACTION value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">NEEDS_ACTION</span> <span class="o">=</span> <span class="s2">&quot;NEEDS-ACTION&quot;</span>
+    <span class="n">ACCEPTED</span> <span class="o">=</span> <span class="s2">&quot;ACCEPTED&quot;</span>
+    <span class="n">DECLINED</span> <span class="o">=</span> <span class="s2">&quot;DECLINED&quot;</span>
+    <span class="n">TENTATIVE</span> <span class="o">=</span> <span class="s2">&quot;TENTATIVE&quot;</span>
+    <span class="n">DELEGATED</span> <span class="o">=</span> <span class="s2">&quot;DELEGATED&quot;</span>
+    <span class="n">COMPLETED</span> <span class="o">=</span> <span class="s2">&quot;COMPLETED&quot;</span>
+    <span class="n">IN_PROCESS</span> <span class="o">=</span> <span class="s2">&quot;IN-PROCESS&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="STATUS">
+<a class="viewcode-back" href="../../reference/api/icalendar.enums.html#icalendar.STATUS">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">STATUS</span><span class="p">(</span><span class="n">StrEnum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum for STATUS from :rfc:`5545`.</span>
+
+<span class="sd">    Values for :class:`icalendar.cal.event.Event`:</span>
+<span class="sd">        ``CONFIRMED``,</span>
+<span class="sd">        ``TENTATIVE``,</span>
+<span class="sd">        ``CANCELLED``</span>
+
+<span class="sd">    Values for :class:`icalendar.cal.todo.Todo`:</span>
+<span class="sd">        ``NEEDS_ACTION``,</span>
+<span class="sd">        ``COMPLETED``,</span>
+<span class="sd">        ``IN_PROCESS``,</span>
+<span class="sd">        ``CANCELLED``</span>
+
+<span class="sd">    Values for :class:`icalendar.cal.journal.Journal`:</span>
+<span class="sd">        ``DRAFT``,</span>
+<span class="sd">        ``FINAL``,</span>
+<span class="sd">        ``CANCELLED``</span>
+
+<span class="sd">    Description:</span>
+<span class="sd">        In a group-scheduled calendar component, the property</span>
+<span class="sd">        is used by the &quot;Organizer&quot; to provide a confirmation of the event</span>
+<span class="sd">        to the &quot;Attendees&quot;.  For example in a &quot;VEVENT&quot; calendar component,</span>
+<span class="sd">        the &quot;Organizer&quot; can indicate that a meeting is tentative,</span>
+<span class="sd">        confirmed, or cancelled.  In a &quot;VTODO&quot; calendar component, the</span>
+<span class="sd">        &quot;Organizer&quot; can indicate that an action item needs action, is</span>
+<span class="sd">        completed, is in process or being worked on, or has been</span>
+<span class="sd">        cancelled.  In a &quot;VJOURNAL&quot; calendar component, the &quot;Organizer&quot;</span>
+<span class="sd">        can indicate that a journal entry is draft, final, or has been</span>
+<span class="sd">        cancelled or removed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Event</span>
+    <span class="n">TENTATIVE</span> <span class="o">=</span> <span class="s2">&quot;TENTATIVE&quot;</span>
+    <span class="n">CONFIRMED</span> <span class="o">=</span> <span class="s2">&quot;CONFIRMED&quot;</span>
+    <span class="n">CANCELLED</span> <span class="o">=</span> <span class="s2">&quot;CANCELLED&quot;</span>
+
+    <span class="c1"># VTodo</span>
+    <span class="n">NEEDS_ACTION</span> <span class="o">=</span> <span class="s2">&quot;NEEDS-ACTION&quot;</span>
+    <span class="n">COMPLETED</span> <span class="o">=</span> <span class="s2">&quot;COMPLETED&quot;</span>
+    <span class="n">IN_PROCESS</span> <span class="o">=</span> <span class="s2">&quot;IN-PROCESS&quot;</span>
+    <span class="c1"># CANCELLED</span>
+
+    <span class="c1"># Journal</span>
+    <span class="n">DRAFT</span> <span class="o">=</span> <span class="s2">&quot;DRAFT&quot;</span>
+    <span class="n">FINAL</span> <span class="o">=</span> <span class="s2">&quot;FINAL&quot;</span></div>
+
+    <span class="c1"># CANCELLED</span>
+
+
+<div class="viewcode-block" id="FBTYPE">
+<a class="viewcode-back" href="../../reference/api/icalendar.enums.html#icalendar.FBTYPE">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FBTYPE</span><span class="p">(</span><span class="n">StrEnum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum for FBTYPE from :rfc:`5545`.</span>
+
+<span class="sd">    Values:</span>
+<span class="sd">        ``FREE``,</span>
+<span class="sd">        ``BUSY``,</span>
+<span class="sd">        ``BUSY_UNAVAILABLE``,</span>
+<span class="sd">        ``BUSY_TENTATIVE``</span>
+
+<span class="sd">    See also :class:`BUSYTYPE`.</span>
+
+<span class="sd">    Purpose:</span>
+<span class="sd">        To specify the free or busy time type.</span>
+
+<span class="sd">    Description:</span>
+<span class="sd">        This parameter specifies the free or busy time type.</span>
+<span class="sd">        The value FREE indicates that the time interval is free for</span>
+<span class="sd">        scheduling.  The value BUSY indicates that the time interval is</span>
+<span class="sd">        busy because one or more events have been scheduled for that</span>
+<span class="sd">        interval.  The value BUSY-UNAVAILABLE indicates that the time</span>
+<span class="sd">        interval is busy and that the interval can not be scheduled.  The</span>
+<span class="sd">        value BUSY-TENTATIVE indicates that the time interval is busy</span>
+<span class="sd">        because one or more events have been tentatively scheduled for</span>
+<span class="sd">        that interval.  If not specified on a property that allows this</span>
+<span class="sd">        parameter, the default is BUSY.  Applications MUST treat x-name</span>
+<span class="sd">        and iana-token values they don&#39;t recognize the same way as they</span>
+<span class="sd">        would the BUSY value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">FREE</span> <span class="o">=</span> <span class="s2">&quot;FREE&quot;</span>
+    <span class="n">BUSY</span> <span class="o">=</span> <span class="s2">&quot;BUSY&quot;</span>
+    <span class="n">BUSY_UNAVAILABLE</span> <span class="o">=</span> <span class="s2">&quot;BUSY-UNAVAILABLE&quot;</span>
+    <span class="n">BUSY_TENTATIVE</span> <span class="o">=</span> <span class="s2">&quot;BUSY-TENTATIVE&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="CUTYPE">
+<a class="viewcode-back" href="../../reference/api/icalendar.enums.html#icalendar.CUTYPE">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CUTYPE</span><span class="p">(</span><span class="n">StrEnum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum for CTYPE from :rfc:`5545`.</span>
+
+<span class="sd">    Values:</span>
+<span class="sd">        ``INDIVIDUAL``,</span>
+<span class="sd">        ``GROUP``,</span>
+<span class="sd">        ``RESOURCE``,</span>
+<span class="sd">        ``ROOM``,</span>
+<span class="sd">        ``UNKNOWN``</span>
+
+<span class="sd">    Purpose:</span>
+<span class="sd">        To identify the type of calendar user specified by the property.</span>
+
+<span class="sd">    Description:</span>
+<span class="sd">        This parameter can be specified on properties with a</span>
+<span class="sd">        CAL-ADDRESS value type.  The parameter identifies the type of</span>
+<span class="sd">        calendar user specified by the property.  If not specified on a</span>
+<span class="sd">        property that allows this parameter, the default is INDIVIDUAL.</span>
+<span class="sd">        Applications MUST treat x-name and iana-token values they don&#39;t</span>
+<span class="sd">        recognize the same way as they would the UNKNOWN value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">INDIVIDUAL</span> <span class="o">=</span> <span class="s2">&quot;INDIVIDUAL&quot;</span>
+    <span class="n">GROUP</span> <span class="o">=</span> <span class="s2">&quot;GROUP&quot;</span>
+    <span class="n">RESOURCE</span> <span class="o">=</span> <span class="s2">&quot;RESOURCE&quot;</span>
+    <span class="n">ROOM</span> <span class="o">=</span> <span class="s2">&quot;ROOM&quot;</span>
+    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s2">&quot;UNKNOWN&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="RELTYPE">
+<a class="viewcode-back" href="../../reference/api/icalendar.enums.html#icalendar.RELTYPE">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RELTYPE</span><span class="p">(</span><span class="n">StrEnum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum for RELTYPE from :rfc:`5545`.</span>
+
+<span class="sd">    Values:</span>
+<span class="sd">        ``PARENT``,</span>
+<span class="sd">        ``CHILD``,</span>
+<span class="sd">        ``SIBLING``</span>
+
+<span class="sd">    Purpose:</span>
+<span class="sd">        To specify the type of hierarchical relationship associated</span>
+<span class="sd">        with the calendar component specified by the property.</span>
+
+<span class="sd">    Description:</span>
+<span class="sd">        This parameter can be specified on a property that</span>
+<span class="sd">        references another related calendar.  The parameter specifies the</span>
+<span class="sd">        hierarchical relationship type of the calendar component</span>
+<span class="sd">        referenced by the property.  The parameter value can be PARENT, to</span>
+<span class="sd">        indicate that the referenced calendar component is a superior of</span>
+<span class="sd">        calendar component; CHILD to indicate that the referenced calendar</span>
+<span class="sd">        component is a subordinate of the calendar component; or SIBLING</span>
+<span class="sd">        to indicate that the referenced calendar component is a peer of</span>
+<span class="sd">        the calendar component.  If this parameter is not specified on an</span>
+<span class="sd">        allowable property, the default relationship type is PARENT.</span>
+<span class="sd">        Applications MUST treat x-name and iana-token values they don&#39;t</span>
+<span class="sd">        recognize the same way as they would the PARENT value.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">PARENT</span> <span class="o">=</span> <span class="s2">&quot;PARENT&quot;</span>
+    <span class="n">CHILD</span> <span class="o">=</span> <span class="s2">&quot;CHILD&quot;</span>
+    <span class="n">SIBLING</span> <span class="o">=</span> <span class="s2">&quot;SIBLING&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="RANGE">
+<a class="viewcode-back" href="../../reference/api/icalendar.enums.html#icalendar.RANGE">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RANGE</span><span class="p">(</span><span class="n">StrEnum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum for RANGE from :rfc:`5545`.</span>
+
+<span class="sd">    Values:</span>
+<span class="sd">        ``THISANDFUTURE``,</span>
+<span class="sd">        ``THISANDPRIOR`` (deprecated)</span>
+
+<span class="sd">    Purpose:</span>
+<span class="sd">        To specify the effective range of recurrence instances from</span>
+<span class="sd">        the instance specified by the recurrence identifier specified by</span>
+<span class="sd">        the property.</span>
+
+<span class="sd">    Description:</span>
+<span class="sd">        This parameter can be specified on a property that</span>
+<span class="sd">        specifies a recurrence identifier.  The parameter specifies the</span>
+<span class="sd">        effective range of recurrence instances that is specified by the</span>
+<span class="sd">        property.  The effective range is from the recurrence identifier</span>
+<span class="sd">        specified by the property.  If this parameter is not specified on</span>
+<span class="sd">        an allowed property, then the default range is the single instance</span>
+<span class="sd">        specified by the recurrence identifier value of the property.  The</span>
+<span class="sd">        parameter value can only be &quot;THISANDFUTURE&quot; to indicate a range</span>
+<span class="sd">        defined by the recurrence identifier and all subsequent instances.</span>
+<span class="sd">        The value &quot;THISANDPRIOR&quot; is deprecated by this revision of</span>
+<span class="sd">        iCalendar and MUST NOT be generated by applications.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">THISANDFUTURE</span> <span class="o">=</span> <span class="s2">&quot;THISANDFUTURE&quot;</span>
+    <span class="n">THISANDPRIOR</span> <span class="o">=</span> <span class="s2">&quot;THISANDPRIOR&quot;</span>  <span class="c1"># deprecated</span></div>
+
+
+
+<div class="viewcode-block" id="RELATED">
+<a class="viewcode-back" href="../../reference/api/icalendar.enums.html#icalendar.RELATED">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RELATED</span><span class="p">(</span><span class="n">StrEnum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum for RELATED from :rfc:`5545`.</span>
+
+<span class="sd">    Values:</span>
+<span class="sd">        ``START``,</span>
+<span class="sd">        ``END``</span>
+
+<span class="sd">    Purpose:</span>
+<span class="sd">        To specify the relationship of the alarm trigger with</span>
+<span class="sd">        respect to the start or end of the calendar component.</span>
+
+<span class="sd">    Description:</span>
+<span class="sd">        This parameter can be specified on properties that</span>
+<span class="sd">        specify an alarm trigger with a &quot;DURATION&quot; value type.  The</span>
+<span class="sd">        parameter specifies whether the alarm will trigger relative to the</span>
+<span class="sd">        start or end of the calendar component.  The parameter value START</span>
+<span class="sd">        will set the alarm to trigger off the start of the calendar</span>
+<span class="sd">        component; the parameter value END will set the alarm to trigger</span>
+<span class="sd">        off the end of the calendar component.  If the parameter is not</span>
+<span class="sd">        specified on an allowable property, then the default is START.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">START</span> <span class="o">=</span> <span class="s2">&quot;START&quot;</span>
+    <span class="n">END</span> <span class="o">=</span> <span class="s2">&quot;END&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="ROLE">
+<a class="viewcode-back" href="../../reference/api/icalendar.enums.html#icalendar.ROLE">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ROLE</span><span class="p">(</span><span class="n">StrEnum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum for ROLE from :rfc:`5545`.</span>
+
+<span class="sd">    Values:</span>
+<span class="sd">        ``CHAIR``,</span>
+<span class="sd">        ``REQ_PARTICIPANT``,</span>
+<span class="sd">        ``OPT_PARTICIPANT``,</span>
+<span class="sd">        ``NON_PARTICIPANT``</span>
+
+<span class="sd">    Purpose:</span>
+<span class="sd">        To specify the participation role for the calendar user</span>
+<span class="sd">        specified by the property.</span>
+
+<span class="sd">    Description:</span>
+<span class="sd">        This parameter can be specified on properties with a</span>
+<span class="sd">        CAL-ADDRESS value type.  The parameter specifies the participation</span>
+<span class="sd">        role for the calendar user specified by the property in the group</span>
+<span class="sd">        schedule calendar component.  If not specified on a property that</span>
+<span class="sd">        allows this parameter, the default value is REQ-PARTICIPANT.</span>
+<span class="sd">        Applications MUST treat x-name and iana-token values they don&#39;t</span>
+<span class="sd">        recognize the same way as they would the REQ-PARTICIPANT value.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">CHAIR</span> <span class="o">=</span> <span class="s2">&quot;CHAIR&quot;</span>
+    <span class="n">REQ_PARTICIPANT</span> <span class="o">=</span> <span class="s2">&quot;REQ-PARTICIPANT&quot;</span>
+    <span class="n">OPT_PARTICIPANT</span> <span class="o">=</span> <span class="s2">&quot;OPT-PARTICIPANT&quot;</span>
+    <span class="n">NON_PARTICIPANT</span> <span class="o">=</span> <span class="s2">&quot;NON-PARTICIPANT&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="VALUE">
+<a class="viewcode-back" href="../../reference/api/icalendar.enums.html#icalendar.VALUE">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">VALUE</span><span class="p">(</span><span class="n">StrEnum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;VALUE datatypes as defined in :rfc:`5545`.</span>
+
+<span class="sd">    Attributes: ``BOOLEAN``, ``CAL_ADDRESS``, ``DATE``, ``DATE_TIME``, ``DURATION``,</span>
+<span class="sd">    ``FLOAT``, ``INTEGER``, ``PERIOD``, ``RECUR``, ``TEXT``, ``TIME``, ``URI``,</span>
+<span class="sd">    ``UTC_OFFSET``</span>
+
+<span class="sd">    Description:</span>
+<span class="sd">        This parameter specifies the value type and format of</span>
+<span class="sd">        the property value.  The property values MUST be of a single value</span>
+<span class="sd">        type.  For example, a &quot;RDATE&quot; property cannot have a combination</span>
+<span class="sd">        of DATE-TIME and TIME value types.</span>
+
+<span class="sd">        If the property&#39;s value is the default value type, then this</span>
+<span class="sd">        parameter need not be specified.  However, if the property&#39;s</span>
+<span class="sd">        default value type is overridden by some other allowable value</span>
+<span class="sd">        type, then this parameter MUST be specified.</span>
+
+<span class="sd">        Applications MUST preserve the value data for x-name and iana-</span>
+<span class="sd">        token values that they don&#39;t recognize without attempting to</span>
+<span class="sd">        interpret or parse the value data.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">BOOLEAN</span> <span class="o">=</span> <span class="s2">&quot;BOOLEAN&quot;</span>
+    <span class="n">CAL_ADDRESS</span> <span class="o">=</span> <span class="s2">&quot;CAL-ADDRESS&quot;</span>
+    <span class="n">DATE</span> <span class="o">=</span> <span class="s2">&quot;DATE&quot;</span>
+    <span class="n">DATE_TIME</span> <span class="o">=</span> <span class="s2">&quot;DATE-TIME&quot;</span>
+    <span class="n">DURATION</span> <span class="o">=</span> <span class="s2">&quot;DURATION&quot;</span>
+    <span class="n">FLOAT</span> <span class="o">=</span> <span class="s2">&quot;FLOAT&quot;</span>
+    <span class="n">INTEGER</span> <span class="o">=</span> <span class="s2">&quot;INTEGER&quot;</span>
+    <span class="n">PERIOD</span> <span class="o">=</span> <span class="s2">&quot;PERIOD&quot;</span>
+    <span class="n">RECUR</span> <span class="o">=</span> <span class="s2">&quot;RECUR&quot;</span>
+    <span class="n">TEXT</span> <span class="o">=</span> <span class="s2">&quot;TEXT&quot;</span>
+    <span class="n">TIME</span> <span class="o">=</span> <span class="s2">&quot;TIME&quot;</span>
+    <span class="n">URI</span> <span class="o">=</span> <span class="s2">&quot;URI&quot;</span>
+    <span class="n">UTC_OFFSET</span> <span class="o">=</span> <span class="s2">&quot;UTC-OFFSET&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="BUSYTYPE">
+<a class="viewcode-back" href="../../reference/api/icalendar.enums.html#icalendar.BUSYTYPE">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BUSYTYPE</span><span class="p">(</span><span class="n">StrEnum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum for BUSYTYPE from :rfc:`7953`.</span>
+
+<span class="sd">    Values:</span>
+<span class="sd">        ``BUSY``,</span>
+<span class="sd">        ``BUSY_UNAVAILABLE``,</span>
+<span class="sd">        ``BUSY_TENTATIVE``</span>
+
+<span class="sd">    Description:</span>
+<span class="sd">        This property is used to specify the default busy time</span>
+<span class="sd">        type.  The values correspond to those used by the :class:`FBTYPE`</span>
+<span class="sd">        parameter used on a &quot;FREEBUSY&quot; property, with the exception that</span>
+<span class="sd">        the &quot;FREE&quot; value is not used in this property.  If not specified</span>
+<span class="sd">        on a component that allows this property, the default is &quot;BUSY-</span>
+<span class="sd">        UNAVAILABLE&quot;.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        The following is an example of this property:</span>
+
+<span class="sd">        .. code-block:: text</span>
+
+<span class="sd">            BUSYTYPE:BUSY</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">BUSY</span> <span class="o">=</span> <span class="s2">&quot;BUSY&quot;</span>
+    <span class="n">BUSY_UNAVAILABLE</span> <span class="o">=</span> <span class="s2">&quot;BUSY-UNAVAILABLE&quot;</span>
+    <span class="n">BUSY_TENTATIVE</span> <span class="o">=</span> <span class="s2">&quot;BUSY-TENTATIVE&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="CLASS">
+<a class="viewcode-back" href="../../reference/api/icalendar.enums.html#icalendar.CLASS">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CLASS</span><span class="p">(</span><span class="n">StrEnum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum for CLASS from :rfc:`5545`.</span>
+
+<span class="sd">    Values:</span>
+<span class="sd">        ``PUBLIC``,</span>
+<span class="sd">        ``PRIVATE``,</span>
+<span class="sd">        ``CONFIDENTIAL``</span>
+
+<span class="sd">    Description:</span>
+<span class="sd">        An access classification is only one component of the</span>
+<span class="sd">        general security system within a calendar application.  It</span>
+<span class="sd">        provides a method of capturing the scope of the access the</span>
+<span class="sd">        calendar owner intends for information within an individual</span>
+<span class="sd">        calendar entry.  The access classification of an individual</span>
+<span class="sd">        iCalendar component is useful when measured along with the other</span>
+<span class="sd">        security components of a calendar system (e.g., calendar user</span>
+<span class="sd">        authentication, authorization, access rights, access role, etc.).</span>
+<span class="sd">        Hence, the semantics of the individual access classifications</span>
+<span class="sd">        cannot be completely defined by this memo alone.  Additionally,</span>
+<span class="sd">        due to the &quot;blind&quot; nature of most exchange processes using this</span>
+<span class="sd">        memo, these access classifications cannot serve as an enforcement</span>
+<span class="sd">        statement for a system receiving an iCalendar object.  Rather,</span>
+<span class="sd">        they provide a method for capturing the intention of the calendar</span>
+<span class="sd">        owner for the access to the calendar component.  If not specified</span>
+<span class="sd">        in a component that allows this property, the default value is</span>
+<span class="sd">        PUBLIC.  Applications MUST treat x-name and iana-token values they</span>
+<span class="sd">        don&#39;t recognize the same way as they would the PRIVATE value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">PUBLIC</span> <span class="o">=</span> <span class="s2">&quot;PUBLIC&quot;</span>
+    <span class="n">PRIVATE</span> <span class="o">=</span> <span class="s2">&quot;PRIVATE&quot;</span>
+    <span class="n">CONFIDENTIAL</span> <span class="o">=</span> <span class="s2">&quot;CONFIDENTIAL&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="TRANSP">
+<a class="viewcode-back" href="../../reference/api/icalendar.enums.html#icalendar.TRANSP">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TRANSP</span><span class="p">(</span><span class="n">StrEnum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum for TRANSP from :rfc:`5545`.</span>
+
+<span class="sd">    Values:</span>
+<span class="sd">        ``OPAQUE``,</span>
+<span class="sd">        ``TRANSPARENT``</span>
+
+<span class="sd">    Description:</span>
+<span class="sd">        Time Transparency is the characteristic of an event</span>
+<span class="sd">        that determines whether it appears to consume time on a calendar.</span>
+<span class="sd">        Events that consume actual time for the individual or resource</span>
+<span class="sd">        associated with the calendar SHOULD be recorded as OPAQUE,</span>
+<span class="sd">        allowing them to be detected by free/busy time searches.  Other</span>
+<span class="sd">        events, which do not take up the individual&#39;s (or resource&#39;s) time</span>
+<span class="sd">        SHOULD be recorded as TRANSPARENT, making them invisible to free/</span>
+<span class="sd">        busy time searches.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">OPAQUE</span> <span class="o">=</span> <span class="s2">&quot;OPAQUE&quot;</span>
+    <span class="n">TRANSPARENT</span> <span class="o">=</span> <span class="s2">&quot;TRANSPARENT&quot;</span></div>
+
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;BUSYTYPE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;CLASS&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;CUTYPE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;FBTYPE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PARTSTAT&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;RANGE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;RELATED&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;RELTYPE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ROLE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;STATUS&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TRANSP&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;VALUE&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Plone Foundation.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

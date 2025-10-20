@@ -1,0 +1,1325 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>icalendar.cal.calendar module &#8212; icalendar 6.3.2 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=164cab21"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/api/icalendar.cal.calendar';</script>
+    <script defer="defer" src="../../_static/js/custom-icons.js?v=c97652e3"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="icalendar.cal.component module" href="icalendar.cal.component.html" />
+    <link rel="prev" title="icalendar.cal.available module" href="icalendar.cal.available.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="6.3.2" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search"
+         aria-label="Search"
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">icalendar 6.3.2 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../how-to/index.html">
+    How to guides
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Reference guides
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contribute/index.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+            
+          
+            
+          
+            
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/collective/icalendar" title="GitHub" class="nav-link custom-fancy-css" rel="noopener me" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+            
+          
+            
+          
+            
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/icalendar" title="PyPI" class="nav-link custom-fancy-css" rel="noopener me" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-pypi fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../how-to/index.html">
+    How to guides
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Reference guides
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contribute/index.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+            
+          
+            
+          
+            
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/collective/icalendar" title="GitHub" class="nav-link custom-fancy-css" rel="noopener me" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+            
+          
+            
+          
+            
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/icalendar" title="PyPI" class="nav-link custom-fancy-css" rel="noopener me" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-pypi fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="icalendar.html">icalendar package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="icalendar.cal.html">icalendar.cal package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="icalendar.cal.alarm.html">icalendar.cal.alarm module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.cal.availability.html">icalendar.cal.availability module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.cal.available.html">icalendar.cal.available module</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">icalendar.cal.calendar module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.cal.component.html">icalendar.cal.component module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.cal.component_factory.html">icalendar.cal.component_factory module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.cal.event.html">icalendar.cal.event module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.cal.examples.html">icalendar.cal.examples module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.cal.free_busy.html">icalendar.cal.free_busy module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.cal.journal.html">icalendar.cal.journal module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.cal.timezone.html">icalendar.cal.timezone module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.cal.todo.html">icalendar.cal.todo module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="icalendar.prop.html">icalendar.prop package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.prop.conference.html">icalendar.prop.conference module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.prop.image.html">icalendar.prop.image module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="icalendar.timezone.html">icalendar.timezone package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.timezone.equivalent_timezone_ids.html">icalendar.timezone.equivalent_timezone_ids module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.timezone.equivalent_timezone_ids_result.html">icalendar.timezone.equivalent_timezone_ids_result module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.timezone.provider.html">icalendar.timezone.provider module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.timezone.pytz.html">icalendar.timezone.pytz module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.timezone.tzid.html">icalendar.timezone.tzid module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.timezone.tzp.html">icalendar.timezone.tzp module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.timezone.windows_to_olson.html">icalendar.timezone.windows_to_olson module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.timezone.zoneinfo.html">icalendar.timezone.zoneinfo module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="icalendar.alarms.html">icalendar.alarms module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="icalendar.attr.html">icalendar.attr module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="icalendar.caselessdict.html">icalendar.caselessdict module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="icalendar.cli.html">icalendar.cli module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="icalendar.compatibility.html">icalendar.compatibility module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="icalendar.enums.html">icalendar.enums module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="icalendar.error.html">icalendar.error module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="icalendar.param.html">icalendar.param module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="icalendar.parser.html">icalendar.parser module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="icalendar.parser_tools.html">icalendar.parser_tools module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="icalendar.tools.html">icalendar.tools module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="icalendar.version.html">icalendar.version module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="modules.html">src</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="icalendar.html">icalendar package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 current active has-children"><a class="reference internal" href="icalendar.cal.html">icalendar.cal package</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="icalendar.cal.alarm.html">icalendar.cal.alarm module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.cal.availability.html">icalendar.cal.availability module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.cal.available.html">icalendar.cal.available module</a></li>
+<li class="toctree-l4 current active"><a class="current reference internal" href="#">icalendar.cal.calendar module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.cal.component.html">icalendar.cal.component module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.cal.component_factory.html">icalendar.cal.component_factory module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.cal.event.html">icalendar.cal.event module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.cal.examples.html">icalendar.cal.examples module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.cal.free_busy.html">icalendar.cal.free_busy module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.cal.journal.html">icalendar.cal.journal module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.cal.timezone.html">icalendar.cal.timezone module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.cal.todo.html">icalendar.cal.todo module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="icalendar.prop.html">icalendar.prop package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.prop.conference.html">icalendar.prop.conference module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.prop.image.html">icalendar.prop.image module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="icalendar.timezone.html">icalendar.timezone package</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.timezone.equivalent_timezone_ids.html">icalendar.timezone.equivalent_timezone_ids module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.timezone.equivalent_timezone_ids_result.html">icalendar.timezone.equivalent_timezone_ids_result module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.timezone.provider.html">icalendar.timezone.provider module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.timezone.pytz.html">icalendar.timezone.pytz module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.timezone.tzid.html">icalendar.timezone.tzid module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.timezone.tzp.html">icalendar.timezone.tzp module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.timezone.windows_to_olson.html">icalendar.timezone.windows_to_olson module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="icalendar.timezone.zoneinfo.html">icalendar.timezone.zoneinfo module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.alarms.html">icalendar.alarms module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.attr.html">icalendar.attr module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.caselessdict.html">icalendar.caselessdict module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.cli.html">icalendar.cli module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.compatibility.html">icalendar.compatibility module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.enums.html">icalendar.enums module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.error.html">icalendar.error module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.param.html">icalendar.param module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.parser.html">icalendar.parser module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.parser_tools.html">icalendar.parser_tools module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.tools.html">icalendar.tools module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="icalendar.version.html">icalendar.version module</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../design.html">Design</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Change log</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../glossary.html">Glossary</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Reference guides</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="icalendar.html" class="nav-link">icalendar package</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="icalendar.cal.html" class="nav-link">icalendar.cal package</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">icalendar.cal.calendar module</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-icalendar.cal.calendar">
+<span id="icalendar-cal-calendar-module"></span><h1>icalendar.cal.calendar module<a class="headerlink" href="#module-icalendar.cal.calendar" title="Link to this heading">#</a></h1>
+<p><span class="target" id="index-0"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc5545.html"><strong>RFC 5545</strong></a> iCalendar component.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">icalendar.cal.calendar.</span></span><span class="sig-name descname"><span class="pre">Calendar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/cal/calendar.html#Calendar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.cal.calendar.Calendar" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="icalendar.cal.component.html#icalendar.cal.component.Component" title="icalendar.cal.component.Component"><code class="xref py py-class docutils literal notranslate"><span class="pre">Component</span></code></a></p>
+<blockquote>
+<div><p>The “VCALENDAR” object is a collection of calendar information.
+This information can include a variety of components, such as
+“VEVENT”, “VTODO”, “VJOURNAL”, “VFREEBUSY”, “VTIMEZONE”, or any
+other type of calendar component.</p>
+</div></blockquote>
+<p class="rubric">Examples</p>
+<p>Create a new Calendar:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">icalendar</span><span class="w"> </span><span class="kn">import</span> <span class="n">Calendar</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">calendar</span> <span class="o">=</span> <span class="n">Calendar</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;My Calendar&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">calendar</span><span class="o">.</span><span class="n">calendar_name</span><span class="p">)</span>
+<span class="go">My Calendar</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.add_missing_timezones">
+<span class="sig-name descname"><span class="pre">add_missing_timezones</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">first_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">date</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">datetime.date(1970,</span> <span class="pre">1,</span> <span class="pre">1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">date</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">datetime.date(2038,</span> <span class="pre">1,</span> <span class="pre">1)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/cal/calendar.html#Calendar.add_missing_timezones"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.cal.calendar.Calendar.add_missing_timezones" title="Link to this definition">#</a></dt>
+<dd><p>Add all missing VTIMEZONE components.</p>
+<p>This adds all the timezone components that are required.
+VTIMEZONE components are inserted at the beginning of the calendar
+to ensure they appear before other components that reference them.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Timezones that are not known will not be added.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>first_date</strong> – earlier than anything that happens in the calendar</p></li>
+<li><p><strong>last_date</strong> – later than anything happening in the calendar</p></li>
+</ul>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">icalendar</span><span class="w"> </span><span class="kn">import</span> <span class="n">Calendar</span><span class="p">,</span> <span class="n">Event</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">zoneinfo</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZoneInfo</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">calendar</span> <span class="o">=</span> <span class="n">Calendar</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">calendar</span><span class="o">.</span><span class="n">add_component</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">event</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">1990</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">ZoneInfo</span><span class="p">(</span><span class="s2">&quot;Europe/Berlin&quot;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">calendar</span><span class="o">.</span><span class="n">timezones</span>
+<span class="go">[]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">calendar</span><span class="o">.</span><span class="n">add_missing_timezones</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">calendar</span><span class="o">.</span><span class="n">timezones</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tz_name</span>
+<span class="go">&#39;Europe/Berlin&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">calendar</span><span class="o">.</span><span class="n">get_missing_tzids</span><span class="p">()</span>  <span class="c1"># check that all are added</span>
+<span class="go">set()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.availabilities">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">availabilities</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="icalendar.html#icalendar.Availability" title="icalendar.Availability"><span class="pre">Availability</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#icalendar.cal.calendar.Calendar.availabilities" title="Link to this definition">#</a></dt>
+<dd><p>All <code class="xref py py-class docutils literal notranslate"><span class="pre">Availability</span></code> components in the calendar.</p>
+<p>This is a shortcut to get all availabilities.
+Modifications do not change the calendar.
+Use <code class="xref py py-meth docutils literal notranslate"><span class="pre">Component.add_component()</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.calendar_name">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">calendar_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#icalendar.cal.calendar.Calendar.calendar_name" title="Link to this definition">#</a></dt>
+<dd><p>This property specifies the name of the calendar.</p>
+<p>This implements <span class="target" id="index-1"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc7986.html"><strong>RFC 7986</strong></a> <code class="docutils literal notranslate"><span class="pre">NAME</span></code> and <code class="docutils literal notranslate"><span class="pre">X-WR-CALNAME</span></code>.</p>
+<dl class="simple">
+<dt>Property Parameters:</dt><dd><p>IANA, non-standard, alternate text
+representation, and language property parameters can be specified
+on this property.</p>
+</dd>
+<dt>Conformance:</dt><dd><p>This property can be specified multiple times in an
+iCalendar object.  However, each property MUST represent the name
+of the calendar in a different language.</p>
+</dd>
+<dt>Description:</dt><dd><p>This property is used to specify a name of the
+iCalendar object that can be used by calendar user agents when
+presenting the calendar data to a user.  Whilst a calendar only
+has a single name, multiple language variants can be specified by
+including this property multiple times with different “LANGUAGE”
+parameter values on each.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>Below, we set the name of the calendar.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">icalendar</span><span class="w"> </span><span class="kn">import</span> <span class="n">Calendar</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">calendar</span> <span class="o">=</span> <span class="n">Calendar</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">calendar</span><span class="o">.</span><span class="n">calendar_name</span> <span class="o">=</span> <span class="s2">&quot;My Calendar&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">calendar</span><span class="o">.</span><span class="n">to_ical</span><span class="p">())</span>
+<span class="go">BEGIN:VCALENDAR</span>
+<span class="go">NAME:My Calendar</span>
+<span class="go">END:VCALENDAR</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.calscale">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">calscale</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#icalendar.cal.calendar.Calendar.calscale" title="Link to this definition">#</a></dt>
+<dd><p>CALSCALE defines the calendar scale used for the calendar information specified in the iCalendar object.</p>
+<dl class="simple">
+<dt>Compatibility:</dt><dd><p><span class="target" id="index-2"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc7529.html"><strong>RFC 7529</strong></a> makes the case that GREGORIAN stays the default and other calendar scales
+are implemented on the RRULE.</p>
+</dd>
+<dt>Conformance:</dt><dd><p>This property can be specified once in an iCalendar
+object.  The default value is “GREGORIAN”.</p>
+</dd>
+<dt>Description:</dt><dd><p>This memo is based on the Gregorian calendar scale.
+The Gregorian calendar scale is assumed if this property is not
+specified in the iCalendar object.  It is expected that other
+calendar scales will be defined in other specifications or by
+future versions of this memo.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.canonical_order">
+<span class="sig-name descname"><span class="pre">canonical_order</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('VERSION',</span> <span class="pre">'PRODID',</span> <span class="pre">'CALSCALE',</span> <span class="pre">'METHOD',</span> <span class="pre">'DESCRIPTION',</span> <span class="pre">'X-WR-CALDESC',</span> <span class="pre">'NAME',</span> <span class="pre">'X-WR-CALNAME')</span></em><a class="headerlink" href="#icalendar.cal.calendar.Calendar.canonical_order" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.categories">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">categories</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#icalendar.cal.calendar.Calendar.categories" title="Link to this definition">#</a></dt>
+<dd><p>This property defines the categories for a component.</p>
+<dl class="simple">
+<dt>Property Parameters:</dt><dd><p>IANA, non-standard, and language property parameters can be specified on this
+property.</p>
+</dd>
+<dt>Conformance:</dt><dd><p>The property can be specified within “VEVENT”, “VTODO”, or “VJOURNAL” calendar
+components.
+Since <span class="target" id="index-3"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc7986.html"><strong>RFC 7986</strong></a> it can also be defined on a “VCALENDAR” component.</p>
+</dd>
+<dt>Description:</dt><dd><p>This property is used to specify categories or subtypes
+of the calendar component.  The categories are useful in searching
+for a calendar component of a particular type and category.
+Within the “VEVENT”, “VTODO”, or “VJOURNAL” calendar components,
+more than one category can be specified as a COMMA-separated list
+of categories.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>Below, we add the categories to an event:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">icalendar</span><span class="w"> </span><span class="kn">import</span> <span class="n">Event</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">event</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">event</span><span class="o">.</span><span class="n">categories</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Work&quot;</span><span class="p">,</span> <span class="s2">&quot;Meeting&quot;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">to_ical</span><span class="p">())</span>
+<span class="go">BEGIN:VEVENT</span>
+<span class="go">CATEGORIES:Work,Meeting</span>
+<span class="go">END:VEVENT</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">event</span><span class="o">.</span><span class="n">categories</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Lecture&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">event</span><span class="o">.</span><span class="n">categories</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;Work&quot;</span><span class="p">,</span> <span class="s2">&quot;Meeting&quot;</span><span class="p">,</span> <span class="s2">&quot;Lecture&quot;</span><span class="p">]</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>At present, we do not take the LANGUAGE parameter into account.</p>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.color">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">color</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#icalendar.cal.calendar.Calendar.color" title="Link to this definition">#</a></dt>
+<dd><p>This property specifies a color used for displaying the calendar.</p>
+<p>This implements <span class="target" id="index-4"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc7986.html"><strong>RFC 7986</strong></a> <code class="docutils literal notranslate"><span class="pre">COLOR</span></code> and <code class="docutils literal notranslate"><span class="pre">X-APPLE-CALENDAR-COLOR</span></code>.
+Please note that since <span class="target" id="index-5"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc7986.html"><strong>RFC 7986</strong></a>, subcomponents can have their own color.</p>
+<dl class="simple">
+<dt>Property Parameters:</dt><dd><p>IANA and non-standard property parameters can
+be specified on this property.</p>
+</dd>
+<dt>Conformance:</dt><dd><p>This property can be specified once in an iCalendar
+object or in <code class="docutils literal notranslate"><span class="pre">VEVENT</span></code>, <code class="docutils literal notranslate"><span class="pre">VTODO</span></code>, or <code class="docutils literal notranslate"><span class="pre">VJOURNAL</span></code> calendar components.</p>
+</dd>
+<dt>Description:</dt><dd><p>This property specifies a color that clients MAY use
+when presenting the relevant data to a user.  Typically, this
+would appear as the “background” color of events or tasks.  The
+value is a case-insensitive color name taken from the CSS3 set of
+names, defined in Section 4.3 of <a class="reference external" href="https://www.w3.org/TR/css-color-3/">W3C.REC-css3-color-20110607</a>.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p><code class="docutils literal notranslate"><span class="pre">&quot;turquoise&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;#ffffff&quot;</span></code></p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">icalendar</span><span class="w"> </span><span class="kn">import</span> <span class="n">Calendar</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">calendar</span> <span class="o">=</span> <span class="n">Calendar</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">calendar</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;black&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">calendar</span><span class="o">.</span><span class="n">to_ical</span><span class="p">())</span>
+<span class="go">BEGIN:VCALENDAR</span>
+<span class="go">COLOR:black</span>
+<span class="go">END:VCALENDAR</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.description">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#icalendar.cal.calendar.Calendar.description" title="Link to this definition">#</a></dt>
+<dd><p>This property specifies the description of the calendar.</p>
+<p>This implements <span class="target" id="index-6"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc7986.html"><strong>RFC 7986</strong></a> <code class="docutils literal notranslate"><span class="pre">DESCRIPTION</span></code> and <code class="docutils literal notranslate"><span class="pre">X-WR-CALDESC</span></code>.</p>
+<dl class="simple">
+<dt>Conformance:</dt><dd><p>This property can be specified multiple times in an
+iCalendar object.  However, each property MUST represent the
+description of the calendar in a different language.</p>
+</dd>
+<dt>Description:</dt><dd><p>This property is used to specify a lengthy textual
+description of the iCalendar object that can be used by calendar
+user agents when describing the nature of the calendar data to a
+user.  Whilst a calendar only has a single description, multiple
+language variants can be specified by including this property
+multiple times with different “LANGUAGE” parameter values on each.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>Below, we add a description to a calendar.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">icalendar</span><span class="w"> </span><span class="kn">import</span> <span class="n">Calendar</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">calendar</span> <span class="o">=</span> <span class="n">Calendar</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">calendar</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;This is a calendar&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">calendar</span><span class="o">.</span><span class="n">to_ical</span><span class="p">())</span>
+<span class="go">BEGIN:VCALENDAR</span>
+<span class="go">DESCRIPTION:This is a calendar</span>
+<span class="go">END:VCALENDAR</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.events">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">events</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="icalendar.html#icalendar.Event" title="icalendar.Event"><span class="pre">Event</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#icalendar.cal.calendar.Calendar.events" title="Link to this definition">#</a></dt>
+<dd><p>All event components in the calendar.</p>
+<p>This is a shortcut to get all events.
+Modifications do not change the calendar.
+Use <code class="xref py py-meth docutils literal notranslate"><span class="pre">Component.add_component()</span></code>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">icalendar</span><span class="w"> </span><span class="kn">import</span> <span class="n">Calendar</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">calendar</span> <span class="o">=</span> <span class="n">Calendar</span><span class="o">.</span><span class="n">example</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">event</span> <span class="o">=</span> <span class="n">calendar</span><span class="o">.</span><span class="n">events</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">event</span><span class="o">.</span><span class="n">start</span>
+<span class="go">datetime.date(2022, 1, 1)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">event</span><span class="p">[</span><span class="s2">&quot;SUMMARY&quot;</span><span class="p">])</span>
+<span class="go">New Year&#39;s Day</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.example">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">example</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'example'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#icalendar.cal.calendar.Calendar" title="icalendar.cal.calendar.Calendar"><span class="pre">Calendar</span></a></span></span><a class="reference internal" href="../../_modules/icalendar/cal/calendar.html#Calendar.example"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.cal.calendar.Calendar.example" title="Link to this definition">#</a></dt>
+<dd><p>Return the calendar example with the given name.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.freebusy">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">freebusy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="icalendar.html#icalendar.FreeBusy" title="icalendar.FreeBusy"><span class="pre">FreeBusy</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#icalendar.cal.calendar.Calendar.freebusy" title="Link to this definition">#</a></dt>
+<dd><p>All FreeBusy components in the calendar.</p>
+<p>This is a shortcut to get all FreeBusy.
+Modifications do not change the calendar.
+Use <code class="xref py py-meth docutils literal notranslate"><span class="pre">Component.add_component()</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.from_ical">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_ical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">st</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/cal/calendar.html#Calendar.from_ical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.cal.calendar.Calendar.from_ical" title="Link to this definition">#</a></dt>
+<dd><p>Populates the component recursively from a string.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.get_missing_tzids">
+<span class="sig-name descname"><span class="pre">get_missing_tzids</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.14)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/icalendar/cal/calendar.html#Calendar.get_missing_tzids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.cal.calendar.Calendar.get_missing_tzids" title="Link to this definition">#</a></dt>
+<dd><p>The set of missing timezone component tzids.</p>
+<p>To create a <span class="target" id="index-7"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc5545.html"><strong>RFC 5545</strong></a> compatible calendar,
+all of these timezones should be added.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.get_used_tzids">
+<span class="sig-name descname"><span class="pre">get_used_tzids</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.14)"><span class="pre">set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/icalendar/cal/calendar.html#Calendar.get_used_tzids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.cal.calendar.Calendar.get_used_tzids" title="Link to this definition">#</a></dt>
+<dd><p>The set of TZIDs in use.</p>
+<p>This goes through the whole calendar to find all occurrences of
+timezone information like the TZID parameter in all attributes.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">icalendar</span><span class="w"> </span><span class="kn">import</span> <span class="n">Calendar</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">calendar</span> <span class="o">=</span> <span class="n">Calendar</span><span class="o">.</span><span class="n">example</span><span class="p">(</span><span class="s2">&quot;timezone_rdate&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">calendar</span><span class="o">.</span><span class="n">get_used_tzids</span><span class="p">()</span>
+<span class="go">{&#39;posix/Europe/Vaduz&#39;}</span>
+</pre></div>
+</div>
+<p>Even if you use UTC, this will not show up.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.images">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">images</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="icalendar.html#icalendar.Image" title="icalendar.Image"><span class="pre">Image</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#icalendar.cal.calendar.Calendar.images" title="Link to this definition">#</a></dt>
+<dd><p>IMAGE specifies an image associated with the calendar or a calendar component.</p>
+<dl class="simple">
+<dt>Description:</dt><dd><p>This property specifies an image for an iCalendar
+object or a calendar component via a URI or directly with inline
+data that can be used by calendar user agents when presenting the
+calendar data to a user.  Multiple properties MAY be used to
+specify alternative sets of images with, for example, varying
+media subtypes, resolutions, or sizes.  When multiple properties
+are present, calendar user agents SHOULD display only one of them,
+picking one that provides the most appropriate image quality, or
+display none.  The “DISPLAY” parameter is used to indicate the
+intended display mode for the image.  The “ALTREP” parameter,
+defined in <span class="target" id="index-8"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc5545.html"><strong>RFC 5545</strong></a>, can be used to provide a “clickable” image
+where the URI in the parameter value can be “launched” by a click
+on the image in the calendar user agent.</p>
+</dd>
+<dt>Conformance:</dt><dd><p>This property can be specified multiple times in an
+iCalendar object or in “VEVENT”, “VTODO”, or “VJOURNAL” calendar
+components.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>At the present moment, this property is read-only. If you require a setter,
+please open an issue or a pull request.</p>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.method">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">method</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#icalendar.cal.calendar.Calendar.method" title="Link to this definition">#</a></dt>
+<dd><p>METHOD defines the iCalendar object method associated with the calendar object.</p>
+<dl>
+<dt>Description:</dt><dd><p>When used in a MIME message entity, the value of this
+property MUST be the same as the Content-Type “method” parameter
+value.  If either the “METHOD” property or the Content-Type
+“method” parameter is specified, then the other MUST also be
+specified.</p>
+<p>No methods are defined by this specification.  This is the subject
+of other specifications, such as the iCalendar Transport-
+independent Interoperability Protocol (iTIP) defined by <span class="target" id="index-9"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc5546.html"><strong>RFC 5546</strong></a>.</p>
+<p>If this property is not present in the iCalendar object, then a
+scheduling transaction MUST NOT be assumed.  In such cases, the
+iCalendar object is merely being used to transport a snapshot of
+some calendar information; without the intention of conveying a
+scheduling semantic.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.multiple">
+<span class="sig-name descname"><span class="pre">multiple</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('CATEGORIES',</span> <span class="pre">'DESCRIPTION',</span> <span class="pre">'NAME')</span></em><a class="headerlink" href="#icalendar.cal.calendar.Calendar.multiple" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'VCALENDAR'</span></em><a class="headerlink" href="#icalendar.cal.calendar.Calendar.name" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.new">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">new</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">calscale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">categories</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">language</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_modified</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">date</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">datetime</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">organization</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prodid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refresh_interval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">timedelta</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/uuid.html#uuid.UUID" title="(in Python v3.14)"><span class="pre">uuid.UUID</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'2.0'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/cal/calendar.html#Calendar.new"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.cal.calendar.Calendar.new" title="Link to this definition">#</a></dt>
+<dd><p>Create a new Calendar with all required properties.</p>
+<p>This creates a new Calendar in accordance with <span class="target" id="index-10"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc5545.html"><strong>RFC 5545</strong></a> and <span class="target" id="index-11"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc7986.html"><strong>RFC 7986</strong></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>calscale</strong> – The <a class="reference internal" href="#icalendar.cal.calendar.Calendar.calscale" title="icalendar.cal.calendar.Calendar.calscale"><code class="xref py py-attr docutils literal notranslate"><span class="pre">calscale</span></code></a> of the calendar.</p></li>
+<li><p><strong>categories</strong> – The <a class="reference internal" href="#icalendar.cal.calendar.Calendar.categories" title="icalendar.cal.calendar.Calendar.categories"><code class="xref py py-attr docutils literal notranslate"><span class="pre">categories</span></code></a> of the calendar.</p></li>
+<li><p><strong>color</strong> – The <a class="reference internal" href="#icalendar.cal.calendar.Calendar.color" title="icalendar.cal.calendar.Calendar.color"><code class="xref py py-attr docutils literal notranslate"><span class="pre">color</span></code></a> of the calendar.</p></li>
+<li><p><strong>description</strong> – The <a class="reference internal" href="#icalendar.cal.calendar.Calendar.description" title="icalendar.cal.calendar.Calendar.description"><code class="xref py py-attr docutils literal notranslate"><span class="pre">description</span></code></a> of the calendar.</p></li>
+<li><p><strong>language</strong> – The language for the calendar. Used to generate localized <cite>prodid</cite>.</p></li>
+<li><p><strong>last_modified</strong> – The <code class="xref py py-attr docutils literal notranslate"><span class="pre">Component.last_modified</span></code> of the calendar.</p></li>
+<li><p><strong>method</strong> – The <a class="reference internal" href="#icalendar.cal.calendar.Calendar.method" title="icalendar.cal.calendar.Calendar.method"><code class="xref py py-attr docutils literal notranslate"><span class="pre">method</span></code></a> of the calendar.</p></li>
+<li><p><strong>name</strong> – The <a class="reference internal" href="#icalendar.cal.calendar.Calendar.calendar_name" title="icalendar.cal.calendar.Calendar.calendar_name"><code class="xref py py-attr docutils literal notranslate"><span class="pre">calendar_name</span></code></a> of the calendar.</p></li>
+<li><p><strong>organization</strong> – The organization name. Used to generate <cite>prodid</cite> if not provided.</p></li>
+<li><p><strong>prodid</strong> – The <a class="reference internal" href="#icalendar.cal.calendar.Calendar.prodid" title="icalendar.cal.calendar.Calendar.prodid"><code class="xref py py-attr docutils literal notranslate"><span class="pre">prodid</span></code></a> of the component. If None and organization is provided,
+generates a <cite>prodid</cite> in format “-//organization//name//language”.</p></li>
+<li><p><strong>refresh_interval</strong> – The <a class="reference internal" href="#icalendar.cal.calendar.Calendar.refresh_interval" title="icalendar.cal.calendar.Calendar.refresh_interval"><code class="xref py py-attr docutils literal notranslate"><span class="pre">refresh_interval</span></code></a> of the calendar.</p></li>
+<li><p><strong>source</strong> – The <a class="reference internal" href="#icalendar.cal.calendar.Calendar.source" title="icalendar.cal.calendar.Calendar.source"><code class="xref py py-attr docutils literal notranslate"><span class="pre">source</span></code></a> of the calendar.</p></li>
+<li><p><strong>uid</strong> – The <a class="reference internal" href="#icalendar.cal.calendar.Calendar.uid" title="icalendar.cal.calendar.Calendar.uid"><code class="xref py py-attr docutils literal notranslate"><span class="pre">uid</span></code></a> of the calendar.
+If None, this is set to a new <a class="reference external" href="https://docs.python.org/3/library/uuid.html#uuid.uuid4" title="(in Python v3.14)"><code class="xref py py-func docutils literal notranslate"><span class="pre">uuid.uuid4()</span></code></a>.</p></li>
+<li><p><strong>url</strong> – The <a class="reference internal" href="#icalendar.cal.calendar.Calendar.url" title="icalendar.cal.calendar.Calendar.url"><code class="xref py py-attr docutils literal notranslate"><span class="pre">url</span></code></a> of the calendar.</p></li>
+<li><p><strong>version</strong> – The <a class="reference internal" href="#icalendar.cal.calendar.Calendar.version" title="icalendar.cal.calendar.Calendar.version"><code class="xref py py-attr docutils literal notranslate"><span class="pre">version</span></code></a> of the calendar.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#icalendar.cal.calendar.Calendar" title="icalendar.cal.calendar.Calendar"><code class="xref py py-class docutils literal notranslate"><span class="pre">Calendar</span></code></a></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="icalendar.html#icalendar.InvalidCalendar" title="icalendar.InvalidCalendar"><strong>InvalidCalendar</strong></a> – If the content is not valid according to <span class="target" id="index-12"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc5545.html"><strong>RFC 5545</strong></a>.</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>As time progresses, we will be stricter with the validation.</p>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.prodid">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prodid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#icalendar.cal.calendar.Calendar.prodid" title="Link to this definition">#</a></dt>
+<dd><p>PRODID specifies the identifier for the product that created the iCalendar object.</p>
+<dl>
+<dt>Conformance:</dt><dd><p>The property MUST be specified once in an iCalendar object.</p>
+</dd>
+<dt>Description:</dt><dd><p>The vendor of the implementation SHOULD assure that
+this is a globally unique identifier; using some technique such as
+an FPI value, as defined in [ISO.9070.1991].</p>
+<p>This property SHOULD NOT be used to alter the interpretation of an
+iCalendar object beyond the semantics specified in this memo.  For
+example, it is not to be used to further the understanding of non-
+standard properties.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>The following is an example of this property. It does not
+imply that English is the default language.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>-//ABC Corporation//NONSGML My Product//EN
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.refresh_interval">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">refresh_interval</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.timedelta" title="(in Python v3.14)"><span class="pre">timedelta</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#icalendar.cal.calendar.Calendar.refresh_interval" title="Link to this definition">#</a></dt>
+<dd><p>REFRESH-INTERVAL specifies a suggested minimum interval for
+polling for changes of the calendar data from the original source
+of that data.</p>
+<dl class="simple">
+<dt>Conformance:</dt><dd><p>This property can be specified once in an iCalendar
+object, consisting of a positive duration of time.</p>
+</dd>
+<dt>Description:</dt><dd><p>This property specifies a positive duration that gives
+a suggested minimum polling interval for checking for updates to
+the calendar data.  The value of this property SHOULD be used by
+calendar user agents to limit the polling interval for calendar
+data updates to the minimum interval specified.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – When setting a negative duration.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.required">
+<span class="sig-name descname"><span class="pre">required</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('PRODID',</span> <span class="pre">'VERSION')</span></em><a class="headerlink" href="#icalendar.cal.calendar.Calendar.required" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.singletons">
+<span class="sig-name descname"><span class="pre">singletons</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('PRODID',</span> <span class="pre">'VERSION',</span> <span class="pre">'CALSCALE',</span> <span class="pre">'METHOD',</span> <span class="pre">'COLOR')</span></em><a class="headerlink" href="#icalendar.cal.calendar.Calendar.singletons" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.source">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">source</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#icalendar.cal.calendar.Calendar.source" title="Link to this definition">#</a></dt>
+<dd><p>A URI from where calendar data can be refreshed.</p>
+<dl class="simple">
+<dt>Description:</dt><dd><p>This property identifies a location where a client can
+retrieve updated data for the calendar.  Clients SHOULD honor any
+specified “REFRESH-INTERVAL” value when periodically retrieving
+data.  Note that this property differs from the “URL” property in
+that “URL” is meant to provide an alternative representation of
+the calendar data rather than the original location of the data.</p>
+</dd>
+<dt>Conformance:</dt><dd><p>This property can be specified once in an iCalendar object.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>The following is an example of this property:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>SOURCE;VALUE=URI:https://example.com/holidays.ics
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.subcomponents">
+<span class="sig-name descname"><span class="pre">subcomponents</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="icalendar.html#icalendar.Component" title="icalendar.Component"><span class="pre">Component</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#icalendar.cal.calendar.Calendar.subcomponents" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.timezones">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timezones</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="icalendar.cal.timezone.html#icalendar.cal.timezone.Timezone" title="icalendar.cal.timezone.Timezone"><span class="pre">Timezone</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#icalendar.cal.calendar.Calendar.timezones" title="Link to this definition">#</a></dt>
+<dd><p>Return the timezones components in this calendar.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">icalendar</span><span class="w"> </span><span class="kn">import</span> <span class="n">Calendar</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">calendar</span> <span class="o">=</span> <span class="n">Calendar</span><span class="o">.</span><span class="n">example</span><span class="p">(</span><span class="s2">&quot;pacific_fiji&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">timezone</span><span class="o">.</span><span class="n">tz_name</span> <span class="k">for</span> <span class="n">timezone</span> <span class="ow">in</span> <span class="n">calendar</span><span class="o">.</span><span class="n">timezones</span><span class="p">]</span>
+<span class="go">[&#39;custom_Pacific/Fiji&#39;]</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is a read-only property.</p>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.todos">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">todos</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="icalendar.html#icalendar.Todo" title="icalendar.Todo"><span class="pre">Todo</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#icalendar.cal.calendar.Calendar.todos" title="Link to this definition">#</a></dt>
+<dd><p>All todo components in the calendar.</p>
+<p>This is a shortcut to get all todos.
+Modifications do not change the calendar.
+Use <code class="xref py py-meth docutils literal notranslate"><span class="pre">Component.add_component()</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.uid">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">uid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#icalendar.cal.calendar.Calendar.uid" title="Link to this definition">#</a></dt>
+<dd><p>UID specifies the persistent, globally unique identifier for a component.</p>
+<p>We recommend using <a class="reference external" href="https://docs.python.org/3/library/uuid.html#uuid.uuid4" title="(in Python v3.14)"><code class="xref py py-func docutils literal notranslate"><span class="pre">uuid.uuid4()</span></code></a> to generate new values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The value of the UID property as a string or <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> if no value is set.</p>
+</dd>
+</dl>
+<dl>
+<dt>Description:</dt><dd><p>The “UID” itself MUST be a globally unique identifier.
+The generator of the identifier MUST guarantee that the identifier
+is unique.</p>
+<p>This is the method for correlating scheduling messages with the
+referenced “VEVENT”, “VTODO”, or “VJOURNAL” calendar component.
+The full range of calendar components specified by a recurrence
+set is referenced by referring to just the “UID” property value
+corresponding to the calendar component.  The “RECURRENCE-ID”
+property allows the reference to an individual instance within the
+recurrence set.</p>
+<p>This property is an important method for group-scheduling
+applications to match requests with later replies, modifications,
+or deletion requests.  Calendaring and scheduling applications
+MUST generate this property in “VEVENT”, “VTODO”, and “VJOURNAL”
+calendar components to assure interoperability with other group-
+scheduling applications.  This identifier is created by the
+calendar system that generates an iCalendar object.</p>
+<p>Implementations MUST be able to receive and persist values of at
+least 255 octets for this property, but they MUST NOT truncate
+values in the middle of a UTF-8 multi-octet sequence.</p>
+<p><span class="target" id="index-13"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc7986.html"><strong>RFC 7986</strong></a> states that UID can be used, for
+example, to identify duplicate calendar streams that a client may
+have been given access to.  It can be used in conjunction with the
+“LAST-MODIFIED” property also specified on the “VCALENDAR” object
+to identify the most recent version of a calendar.</p>
+</dd>
+<dt>Conformance:</dt><dd><p><span class="target" id="index-14"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc5545.html"><strong>RFC 5545</strong></a> states that the “UID” property can be specified on “VEVENT”, “VTODO”,
+and “VJOURNAL” calendar components.
+<span class="target" id="index-15"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc7986.html"><strong>RFC 7986</strong></a> modifies the definition of the “UID” property to
+allow it to be defined in an iCalendar object.
+<span class="target" id="index-16"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc9074.html"><strong>RFC 9074</strong></a>  adds a “UID” property to “VALARM” components to allow a unique
+identifier to be specified. The value of this property can then be used
+to refer uniquely to the “VALARM” component.</p>
+<p>This property can be specified once only.</p>
+</dd>
+<dt>Security:</dt><dd><p><span class="target" id="index-17"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc7986.html"><strong>RFC 7986</strong></a> states that UID values MUST NOT include any data that
+might identify a user, host, domain, or any other security- or
+privacy-sensitive information.  It is RECOMMENDED that calendar user
+agents now generate “UID” values that are hex-encoded random
+Universally Unique Identifier (UUID) values as defined in
+Sections 4.4 and 4.5 of <span class="target" id="index-18"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc4122.html"><strong>RFC 4122</strong></a>.
+You can use the <a class="reference external" href="https://docs.python.org/3/library/uuid.html#module-uuid" title="(in Python v3.14)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">uuid</span></code></a> module to generate new UUIDs.</p>
+</dd>
+<dt>Compatibility:</dt><dd><p>For Alarms, <code class="docutils literal notranslate"><span class="pre">X-ALARMUID</span></code> is also considered.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>The following is an example of such a property value:
+<code class="docutils literal notranslate"><span class="pre">5FC53010-1267-4F8E-BC28-1D7AE55A7C99</span></code>.</p>
+<p>Set the UID of a calendar:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">icalendar</span><span class="w"> </span><span class="kn">import</span> <span class="n">Calendar</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">uuid4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">calendar</span> <span class="o">=</span> <span class="n">Calendar</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">calendar</span><span class="o">.</span><span class="n">uid</span> <span class="o">=</span> <span class="n">uuid4</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">calendar</span><span class="o">.</span><span class="n">to_ical</span><span class="p">())</span>
+<span class="go">BEGIN:VCALENDAR</span>
+<span class="go">UID:d755cef5-2311-46ed-a0e1-6733c9e15c63</span>
+<span class="go">END:VCALENDAR</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.url">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#icalendar.cal.calendar.Calendar.url" title="Link to this definition">#</a></dt>
+<dd><p>A Uniform Resource Locator (URL) associated with the iCalendar object.</p>
+<dl class="simple">
+<dt>Description:</dt><dd><p>This property may be used in a calendar component to
+convey a location where a more dynamic rendition of the calendar
+information associated with the calendar component can be found.
+This memo does not attempt to standardize the form of the URI, nor
+the format of the resource pointed to by the property value.  If
+the URL property and Content-Location MIME header are both
+specified, they MUST point to the same resource.</p>
+</dd>
+<dt>Conformance:</dt><dd><p>This property can be specified once in the “VEVENT”,
+“VTODO”, “VJOURNAL”, or “VFREEBUSY” calendar components.
+Since <span class="target" id="index-19"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc7986.html"><strong>RFC 7986</strong></a>, this property can also be defined on a “VCALENDAR”.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>The following is an example of this property:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>URL:http://example.com/pub/calendars/jsmith/mytime.ics
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/icalendar/cal/calendar.html#Calendar.validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#icalendar.cal.calendar.Calendar.validate" title="Link to this definition">#</a></dt>
+<dd><p>Validate that the calendar has required properties and components.</p>
+<p>This method can be called explicitly to validate a calendar before output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="icalendar.html#icalendar.IncompleteComponent" title="icalendar.IncompleteComponent"><strong>IncompleteComponent</strong></a> – If the calendar lacks required properties or
+    components.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="icalendar.cal.calendar.Calendar.version">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">version</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#icalendar.cal.calendar.Calendar.version" title="Link to this definition">#</a></dt>
+<dd><p>VERSION of the calendar specification.</p>
+<p>The default is <code class="docutils literal notranslate"><span class="pre">&quot;2.0&quot;</span></code> for <span class="target" id="index-20"></span><a class="rfc reference external" href="https://datatracker.ietf.org/doc/html/rfc5545.html"><strong>RFC 5545</strong></a>.</p>
+<dl class="simple">
+<dt>Purpose:</dt><dd><p>This property specifies the identifier corresponding to the
+highest version number or the minimum and maximum range of the
+iCalendar specification that is required in order to interpret the
+iCalendar object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="icalendar.cal.available.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">icalendar.cal.available module</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="icalendar.cal.component.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">icalendar.cal.component module</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar"><code class="docutils literal notranslate"><span class="pre">Calendar</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.add_missing_timezones"><code class="docutils literal notranslate"><span class="pre">Calendar.add_missing_timezones()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.availabilities"><code class="docutils literal notranslate"><span class="pre">Calendar.availabilities</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.calendar_name"><code class="docutils literal notranslate"><span class="pre">Calendar.calendar_name</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.calscale"><code class="docutils literal notranslate"><span class="pre">Calendar.calscale</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.canonical_order"><code class="docutils literal notranslate"><span class="pre">Calendar.canonical_order</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.categories"><code class="docutils literal notranslate"><span class="pre">Calendar.categories</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.color"><code class="docutils literal notranslate"><span class="pre">Calendar.color</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.description"><code class="docutils literal notranslate"><span class="pre">Calendar.description</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.events"><code class="docutils literal notranslate"><span class="pre">Calendar.events</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.example"><code class="docutils literal notranslate"><span class="pre">Calendar.example()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.freebusy"><code class="docutils literal notranslate"><span class="pre">Calendar.freebusy</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.from_ical"><code class="docutils literal notranslate"><span class="pre">Calendar.from_ical()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.get_missing_tzids"><code class="docutils literal notranslate"><span class="pre">Calendar.get_missing_tzids()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.get_used_tzids"><code class="docutils literal notranslate"><span class="pre">Calendar.get_used_tzids()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.images"><code class="docutils literal notranslate"><span class="pre">Calendar.images</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.method"><code class="docutils literal notranslate"><span class="pre">Calendar.method</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.multiple"><code class="docutils literal notranslate"><span class="pre">Calendar.multiple</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.name"><code class="docutils literal notranslate"><span class="pre">Calendar.name</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.new"><code class="docutils literal notranslate"><span class="pre">Calendar.new()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.prodid"><code class="docutils literal notranslate"><span class="pre">Calendar.prodid</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.refresh_interval"><code class="docutils literal notranslate"><span class="pre">Calendar.refresh_interval</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.required"><code class="docutils literal notranslate"><span class="pre">Calendar.required</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.singletons"><code class="docutils literal notranslate"><span class="pre">Calendar.singletons</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.source"><code class="docutils literal notranslate"><span class="pre">Calendar.source</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.subcomponents"><code class="docutils literal notranslate"><span class="pre">Calendar.subcomponents</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.timezones"><code class="docutils literal notranslate"><span class="pre">Calendar.timezones</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.todos"><code class="docutils literal notranslate"><span class="pre">Calendar.todos</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.uid"><code class="docutils literal notranslate"><span class="pre">Calendar.uid</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.url"><code class="docutils literal notranslate"><span class="pre">Calendar.url</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.validate"><code class="docutils literal notranslate"><span class="pre">Calendar.validate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#icalendar.cal.calendar.Calendar.version"><code class="docutils literal notranslate"><span class="pre">Calendar.version</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  
+  <div class="tocsection editthispage">
+    <a href="https://github.com/collective/icalendar/edit/main/docs/reference/api/icalendar.cal.calendar.rst">
+      <i class="fa-solid fa-pencil"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </div>
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/reference/api/icalendar.cal.calendar.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Plone Foundation.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

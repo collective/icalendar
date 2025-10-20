@@ -1,0 +1,952 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>icalendar.cal.timezone &#8212; icalendar 6.3.2 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=164cab21"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/icalendar/cal/timezone';</script>
+    <script defer="defer" src="../../../_static/js/custom-icons.js?v=c97652e3"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="6.3.2" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search"
+         aria-label="Search"
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">icalendar 6.3.2 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../how-to/index.html">
+    How to guides
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../reference/index.html">
+    Reference guides
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../contribute/index.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+            
+          
+            
+          
+            
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/collective/icalendar" title="GitHub" class="nav-link custom-fancy-css" rel="noopener me" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+            
+          
+            
+          
+            
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/icalendar" title="PyPI" class="nav-link custom-fancy-css" rel="noopener me" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-pypi fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../how-to/index.html">
+    How to guides
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../reference/index.html">
+    Reference guides
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../contribute/index.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+            
+          
+            
+          
+            
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/collective/icalendar" title="GitHub" class="nav-link custom-fancy-css" rel="noopener me" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+            
+          
+            
+          
+            
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/icalendar" title="PyPI" class="nav-link custom-fancy-css" rel="noopener me" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-pypi fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">icalendar.cal.timezone</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for icalendar.cal.timezone</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;:rfc:`5545` components for timezone information.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">date</span><span class="p">,</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">,</span> <span class="n">tzinfo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">dateutil.rrule</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">dateutil.tz</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">icalendar.attr</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">create_single_property</span><span class="p">,</span>
+    <span class="n">exdates_property</span><span class="p">,</span>
+    <span class="n">rdates_property</span><span class="p">,</span>
+    <span class="n">rrules_property</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">icalendar.cal.component</span><span class="w"> </span><span class="kn">import</span> <span class="n">Component</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">icalendar.cal.examples</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_example</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">icalendar.prop</span><span class="w"> </span><span class="kn">import</span> <span class="n">tzid_from_tzinfo</span><span class="p">,</span> <span class="n">vUTCOffset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">icalendar.timezone</span><span class="w"> </span><span class="kn">import</span> <span class="n">TZP</span><span class="p">,</span> <span class="n">tzp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">icalendar.tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_date</span><span class="p">,</span> <span class="n">to_datetime</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">icalendar.cal.calendar</span><span class="w"> </span><span class="kn">import</span> <span class="n">Calendar</span>
+
+
+<div class="viewcode-block" id="Timezone">
+<a class="viewcode-back" href="../../../reference/api/icalendar.cal.timezone.html#icalendar.Timezone">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Timezone</span><span class="p">(</span><span class="n">Component</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A &quot;VTIMEZONE&quot; calendar component is a grouping of component</span>
+<span class="sd">    properties that defines a time zone. It is used to describe the</span>
+<span class="sd">    way in which a time zone changes its offset from UTC over time.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">subcomponents</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">TimezoneStandard</span> <span class="o">|</span> <span class="n">TimezoneDaylight</span><span class="p">]</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;VTIMEZONE&quot;</span>
+    <span class="n">canonical_order</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;TZID&quot;</span><span class="p">,)</span>
+    <span class="n">required</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;TZID&quot;</span><span class="p">,)</span>  <span class="c1"># it also requires one of components DAYLIGHT and STANDARD</span>
+    <span class="n">singletons</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;TZID&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;LAST-MODIFIED&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;TZURL&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">DEFAULT_FIRST_DATE</span> <span class="o">=</span> <span class="n">date</span><span class="p">(</span><span class="mi">1970</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">DEFAULT_LAST_DATE</span> <span class="o">=</span> <span class="n">date</span><span class="p">(</span><span class="mi">2038</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Timezone.example">
+<a class="viewcode-back" href="../../../reference/api/icalendar.cal.timezone.html#icalendar.Timezone.example">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">example</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pacific_fiji&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Calendar</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the timezone example with the given name.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_ical</span><span class="p">(</span><span class="n">get_example</span><span class="p">(</span><span class="s2">&quot;timezones&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_extract_offsets</span><span class="p">(</span><span class="n">component</span><span class="p">:</span> <span class="n">TimezoneDaylight</span> <span class="o">|</span> <span class="n">TimezoneStandard</span><span class="p">,</span> <span class="n">tzname</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;extract offsets and transition times from a VTIMEZONE component</span>
+<span class="sd">        :param component: a STANDARD or DAYLIGHT component</span>
+<span class="sd">        :param tzname: the name of the zone</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">offsetfrom</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">TZOFFSETFROM</span>
+        <span class="n">offsetto</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">TZOFFSETTO</span>
+        <span class="n">dtstart</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">DTSTART</span>
+
+        <span class="c1"># offsets need to be rounded to the next minute, we might loose up</span>
+        <span class="c1"># to 30 seconds accuracy, but it can&#39;t be helped (datetime</span>
+        <span class="c1"># supposedly cannot handle smaller offsets)</span>
+        <span class="n">offsetto_s</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">offsetto</span><span class="o">.</span><span class="n">seconds</span> <span class="o">+</span> <span class="mi">30</span><span class="p">)</span> <span class="o">/</span> <span class="mi">60</span><span class="p">)</span> <span class="o">*</span> <span class="mi">60</span>
+        <span class="n">offsetto</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">offsetto</span><span class="o">.</span><span class="n">days</span><span class="p">,</span> <span class="n">seconds</span><span class="o">=</span><span class="n">offsetto_s</span><span class="p">)</span>
+        <span class="n">offsetfrom_s</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">offsetfrom</span><span class="o">.</span><span class="n">seconds</span> <span class="o">+</span> <span class="mi">30</span><span class="p">)</span> <span class="o">/</span> <span class="mi">60</span><span class="p">)</span> <span class="o">*</span> <span class="mi">60</span>
+        <span class="n">offsetfrom</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">offsetfrom</span><span class="o">.</span><span class="n">days</span><span class="p">,</span> <span class="n">seconds</span><span class="o">=</span><span class="n">offsetfrom_s</span><span class="p">)</span>
+
+        <span class="c1"># expand recurrences</span>
+        <span class="k">if</span> <span class="s2">&quot;RRULE&quot;</span> <span class="ow">in</span> <span class="n">component</span><span class="p">:</span>
+            <span class="c1"># to be paranoid about correct weekdays</span>
+            <span class="c1"># evaluate the rrule with the current offset</span>
+            <span class="n">tzi</span> <span class="o">=</span> <span class="n">dateutil</span><span class="o">.</span><span class="n">tz</span><span class="o">.</span><span class="n">tzoffset</span><span class="p">(</span><span class="s2">&quot;(offsetfrom)&quot;</span><span class="p">,</span> <span class="n">offsetfrom</span><span class="p">)</span>
+            <span class="n">rrstart</span> <span class="o">=</span> <span class="n">dtstart</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="n">tzi</span><span class="p">)</span>
+
+            <span class="n">rrulestr</span> <span class="o">=</span> <span class="n">component</span><span class="p">[</span><span class="s2">&quot;RRULE&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_ical</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+            <span class="n">rrule</span> <span class="o">=</span> <span class="n">dateutil</span><span class="o">.</span><span class="n">rrule</span><span class="o">.</span><span class="n">rrulestr</span><span class="p">(</span><span class="n">rrulestr</span><span class="p">,</span> <span class="n">dtstart</span><span class="o">=</span><span class="n">rrstart</span><span class="p">)</span>
+            <span class="n">tzp</span><span class="o">.</span><span class="n">fix_rrule_until</span><span class="p">(</span><span class="n">rrule</span><span class="p">,</span> <span class="n">component</span><span class="p">[</span><span class="s2">&quot;RRULE&quot;</span><span class="p">])</span>
+
+            <span class="c1"># constructing the timezone requires UTC transition times.</span>
+            <span class="c1"># here we construct local times without tzinfo, the offset to UTC</span>
+            <span class="c1"># gets subtracted in to_tz().</span>
+            <span class="n">transtimes</span> <span class="o">=</span> <span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="n">rrule</span><span class="p">]</span>
+
+        <span class="c1"># or rdates</span>
+        <span class="k">elif</span> <span class="s2">&quot;RDATE&quot;</span> <span class="ow">in</span> <span class="n">component</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">component</span><span class="p">[</span><span class="s2">&quot;RDATE&quot;</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">rdates</span> <span class="o">=</span> <span class="p">[</span><span class="n">component</span><span class="p">[</span><span class="s2">&quot;RDATE&quot;</span><span class="p">]]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rdates</span> <span class="o">=</span> <span class="n">component</span><span class="p">[</span><span class="s2">&quot;RDATE&quot;</span><span class="p">]</span>
+            <span class="n">transtimes</span> <span class="o">=</span> <span class="p">[</span><span class="n">dtstart</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">leaf</span><span class="o">.</span><span class="n">dt</span> <span class="k">for</span> <span class="n">tree</span> <span class="ow">in</span> <span class="n">rdates</span> <span class="k">for</span> <span class="n">leaf</span> <span class="ow">in</span> <span class="n">tree</span><span class="o">.</span><span class="n">dts</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">transtimes</span> <span class="o">=</span> <span class="p">[</span><span class="n">dtstart</span><span class="p">]</span>
+
+        <span class="n">transitions</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">transtime</span><span class="p">,</span> <span class="n">offsetfrom</span><span class="p">,</span> <span class="n">offsetto</span><span class="p">,</span> <span class="n">tzname</span><span class="p">)</span> <span class="k">for</span> <span class="n">transtime</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">transtimes</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">component</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;STANDARD&quot;</span><span class="p">:</span>
+            <span class="n">is_dst</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">elif</span> <span class="n">component</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;DAYLIGHT&quot;</span><span class="p">:</span>
+            <span class="n">is_dst</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">is_dst</span><span class="p">,</span> <span class="n">transitions</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_make_unique_tzname</span><span class="p">(</span><span class="n">tzname</span><span class="p">,</span> <span class="n">tznames</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param tzname: Candidate tzname</span>
+<span class="sd">        :param tznames: Other tznames</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO better way of making sure tznames are unique</span>
+        <span class="k">while</span> <span class="n">tzname</span> <span class="ow">in</span> <span class="n">tznames</span><span class="p">:</span>
+            <span class="n">tzname</span> <span class="o">+=</span> <span class="s2">&quot;_1&quot;</span>
+        <span class="n">tznames</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tzname</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tzname</span>
+
+<div class="viewcode-block" id="Timezone.to_tz">
+<a class="viewcode-back" href="../../../reference/api/icalendar.cal.timezone.html#icalendar.Timezone.to_tz">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_tz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tzp</span><span class="p">:</span> <span class="n">TZP</span> <span class="o">=</span> <span class="n">tzp</span><span class="p">,</span> <span class="n">lookup_tzid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>  <span class="c1"># noqa: FBT001</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;convert this VTIMEZONE component to a timezone object</span>
+
+<span class="sd">        :param tzp: timezone provider to use</span>
+<span class="sd">        :param lookup_tzid: whether to use the TZID property to look up existing</span>
+<span class="sd">                            timezone definitions with tzp.</span>
+<span class="sd">                            If it is False, a new timezone will be created.</span>
+<span class="sd">                            If it is True, the existing timezone will be used</span>
+<span class="sd">                            if it exists, otherwise a new timezone will be created.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">lookup_tzid</span><span class="p">:</span>
+            <span class="n">tz</span> <span class="o">=</span> <span class="n">tzp</span><span class="o">.</span><span class="n">timezone</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tz_name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">tz</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">tz</span>
+        <span class="k">return</span> <span class="n">tzp</span><span class="o">.</span><span class="n">create_timezone</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tz_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the name of the timezone component.</span>
+
+<span class="sd">        Please note that the names of the timezone are different from this name</span>
+<span class="sd">        and may change with winter/summer time.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;TZID&quot;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">UnicodeEncodeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;TZID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">,</span> <span class="s2">&quot;replace&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Timezone.get_transitions">
+<a class="viewcode-back" href="../../../reference/api/icalendar.cal.timezone.html#icalendar.Timezone.get_transitions">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_transitions</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">datetime</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">timedelta</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a tuple of (transition_times, transition_info)</span>
+
+<span class="sd">        - transition_times = [datetime, ...]</span>
+<span class="sd">        - transition_info = [(TZOFFSETTO, dts_offset, tzname)]</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">zone</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tz_name</span>
+        <span class="n">transitions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">dst</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">tznames</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">walk</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="n">Timezone</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">is_date</span><span class="p">(</span><span class="n">component</span><span class="p">[</span><span class="s2">&quot;DTSTART&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="p">):</span>
+                <span class="n">component</span><span class="o">.</span><span class="n">DTSTART</span> <span class="o">=</span> <span class="n">to_datetime</span><span class="p">(</span><span class="n">component</span><span class="p">[</span><span class="s2">&quot;DTSTART&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">component</span><span class="p">[</span><span class="s2">&quot;DTSTART&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">datetime</span><span class="p">),</span> <span class="p">(</span>
+                <span class="s2">&quot;VTIMEZONEs sub-components&#39; DTSTART must be of type datetime, not date&quot;</span>
+            <span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">tzname</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">component</span><span class="p">[</span><span class="s2">&quot;TZNAME&quot;</span><span class="p">])</span>
+            <span class="k">except</span> <span class="ne">UnicodeEncodeError</span><span class="p">:</span>
+                <span class="n">tzname</span> <span class="o">=</span> <span class="n">component</span><span class="p">[</span><span class="s2">&quot;TZNAME&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">,</span> <span class="s2">&quot;replace&quot;</span><span class="p">)</span>
+                <span class="n">tzname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_unique_tzname</span><span class="p">(</span><span class="n">tzname</span><span class="p">,</span> <span class="n">tznames</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="c1"># for whatever reason this is str/unicode</span>
+                <span class="n">tzname</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">zone</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">component</span><span class="p">[</span><span class="s1">&#39;DTSTART&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_ical</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">_&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">component</span><span class="p">[</span><span class="s1">&#39;TZOFFSETFROM&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_ical</span><span class="p">()</span><span class="si">}</span><span class="s2">_&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">component</span><span class="p">[</span><span class="s1">&#39;TZOFFSETTO&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to_ical</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="n">tzname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_unique_tzname</span><span class="p">(</span><span class="n">tzname</span><span class="p">,</span> <span class="n">tznames</span><span class="p">)</span>
+
+            <span class="n">dst</span><span class="p">[</span><span class="n">tzname</span><span class="p">],</span> <span class="n">component_transitions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_offsets</span><span class="p">(</span>
+                <span class="n">component</span><span class="p">,</span> <span class="n">tzname</span>
+            <span class="p">)</span>
+            <span class="n">transitions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">component_transitions</span><span class="p">)</span>
+
+        <span class="n">transitions</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="n">transition_times</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">transtime</span> <span class="o">-</span> <span class="n">osfrom</span> <span class="k">for</span> <span class="n">transtime</span><span class="p">,</span> <span class="n">osfrom</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">transitions</span>
+        <span class="p">]</span>
+
+        <span class="c1"># transition_info is a list with tuples in the format</span>
+        <span class="c1"># (utcoffset, dstoffset, name)</span>
+        <span class="c1"># dstoffset = 0, if current transition is to standard time</span>
+        <span class="c1">#           = this_utcoffset - prev_standard_utcoffset, otherwise</span>
+        <span class="n">transition_info</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="p">(</span><span class="n">_transtime</span><span class="p">,</span> <span class="n">_osfrom</span><span class="p">,</span> <span class="n">osto</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">transitions</span><span class="p">):</span>
+            <span class="n">dst_offset</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">dst</span><span class="p">[</span><span class="n">name</span><span class="p">]:</span>
+                <span class="n">dst_offset</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># go back in time until we find a transition to dst</span>
+                <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">dst</span><span class="p">[</span><span class="n">transitions</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">3</span><span class="p">]]:</span>  <span class="c1"># [3] is the name</span>
+                        <span class="n">dst_offset</span> <span class="o">=</span> <span class="n">osto</span> <span class="o">-</span> <span class="n">transitions</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># [2] is osto</span>
+                        <span class="k">break</span>
+                <span class="c1"># when the first transition is to dst, we didn&#39;t find anything</span>
+                <span class="c1"># in the past, so we have to look into the future</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">dst_offset</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">transitions</span><span class="p">)):</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">dst</span><span class="p">[</span><span class="n">transitions</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">3</span><span class="p">]]:</span>  <span class="c1"># [3] is the name</span>
+                            <span class="n">dst_offset</span> <span class="o">=</span> <span class="n">osto</span> <span class="o">-</span> <span class="n">transitions</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># [2] is osto</span>
+                            <span class="k">break</span>
+            <span class="k">assert</span> <span class="n">dst_offset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span>
+            <span class="n">transition_info</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">osto</span><span class="p">,</span> <span class="n">dst_offset</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">transition_times</span><span class="p">,</span> <span class="n">transition_info</span></div>
+
+
+    <span class="c1"># binary search</span>
+    <span class="n">_from_tzinfo_skip_search</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">)</span> <span class="k">for</span> <span class="n">days</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">]</span> <span class="o">+</span> <span class="p">[</span>
+        <span class="c1"># we know it happens in the night usually around 1am</span>
+        <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">4</span><span class="p">),</span>
+        <span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+        <span class="c1"># adding some minutes and seconds for faster search</span>
+        <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span>
+        <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+        <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+        <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span>
+        <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+        <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="p">]</span>
+
+<div class="viewcode-block" id="Timezone.from_tzinfo">
+<a class="viewcode-back" href="../../../reference/api/icalendar.cal.timezone.html#icalendar.Timezone.from_tzinfo">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_tzinfo</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">timezone</span><span class="p">:</span> <span class="n">tzinfo</span><span class="p">,</span>
+        <span class="n">tzid</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">first_date</span><span class="p">:</span> <span class="n">date</span> <span class="o">=</span> <span class="n">DEFAULT_FIRST_DATE</span><span class="p">,</span>
+        <span class="n">last_date</span><span class="p">:</span> <span class="n">date</span> <span class="o">=</span> <span class="n">DEFAULT_LAST_DATE</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Timezone</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a VTIMEZONE component from a timezone object.</span>
+
+<span class="sd">        This works with pytz and zoneinfo and any other timezone.</span>
+<span class="sd">        The offsets are calculated from the tzinfo object.</span>
+
+<span class="sd">        Parameters:</span>
+
+<span class="sd">        :param tzinfo: the timezone object</span>
+<span class="sd">        :param tzid: the tzid for this timezone. If None, it will be extracted from the tzinfo.</span>
+<span class="sd">        :param first_date: a datetime that is earlier than anything that happens in the calendar</span>
+<span class="sd">        :param last_date: a datetime that is later than anything that happens in the calendar</span>
+<span class="sd">        :raises ValueError: If we have no tzid and cannot extract one.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            This can take some time. Please cache the results.</span>
+<span class="sd">        &quot;&quot;&quot;</span>  <span class="c1"># noqa: E501</span>
+        <span class="k">if</span> <span class="n">tzid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tzid</span> <span class="o">=</span> <span class="n">tzid_from_tzinfo</span><span class="p">(</span><span class="n">timezone</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">tzid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Cannot get TZID from </span><span class="si">{</span><span class="n">timezone</span><span class="si">}</span><span class="s2">. Please set the tzid parameter.&quot;</span>
+                <span class="p">)</span>
+        <span class="n">normalize</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">timezone</span><span class="p">,</span> <span class="s2">&quot;normalize&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">dt</span><span class="p">:</span> <span class="n">dt</span><span class="p">)</span>  <span class="c1"># pytz compatibility</span>
+        <span class="n">first_datetime</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="n">first_date</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">first_date</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="n">first_date</span><span class="o">.</span><span class="n">day</span><span class="p">)</span>  <span class="c1"># noqa: DTZ001</span>
+        <span class="n">last_datetime</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="n">last_date</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">last_date</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="n">last_date</span><span class="o">.</span><span class="n">day</span><span class="p">)</span>  <span class="c1"># noqa: DTZ001</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">timezone</span><span class="p">,</span> <span class="s2">&quot;localize&quot;</span><span class="p">):</span>  <span class="c1"># pytz compatibility</span>
+            <span class="n">first_datetime</span> <span class="o">=</span> <span class="n">timezone</span><span class="o">.</span><span class="n">localize</span><span class="p">(</span><span class="n">first_datetime</span><span class="p">)</span>
+            <span class="n">last_datetime</span> <span class="o">=</span> <span class="n">timezone</span><span class="o">.</span><span class="n">localize</span><span class="p">(</span><span class="n">last_datetime</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">first_datetime</span> <span class="o">=</span> <span class="n">first_datetime</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="n">timezone</span><span class="p">)</span>
+            <span class="n">last_datetime</span> <span class="o">=</span> <span class="n">last_datetime</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="n">timezone</span><span class="p">)</span>
+        <span class="c1"># from, to, tzname, is_standard -&gt; start</span>
+        <span class="n">offsets</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span>
+            <span class="nb">tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">timedelta</span><span class="p">],</span> <span class="n">timedelta</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">first_datetime</span>
+        <span class="n">offset_to</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">while</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="n">last_datetime</span><span class="p">:</span>
+            <span class="n">offset_from</span> <span class="o">=</span> <span class="n">offset_to</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">start</span>
+            <span class="n">offset_to</span> <span class="o">=</span> <span class="n">end</span><span class="o">.</span><span class="n">utcoffset</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">add_offset</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_tzinfo_skip_search</span><span class="p">:</span>
+                <span class="n">last_end</span> <span class="o">=</span> <span class="n">end</span>  <span class="c1"># we need to save this as we might be left and right of the time change  # noqa: E501</span>
+                <span class="n">end</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">end</span> <span class="o">+</span> <span class="n">add_offset</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">while</span> <span class="n">end</span><span class="o">.</span><span class="n">utcoffset</span><span class="p">()</span> <span class="o">==</span> <span class="n">offset_to</span><span class="p">:</span>
+                        <span class="n">last_end</span> <span class="o">=</span> <span class="n">end</span>
+                        <span class="n">end</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">end</span> <span class="o">+</span> <span class="n">add_offset</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">OverflowError</span><span class="p">:</span>
+                    <span class="c1"># zoninfo does not go all the way</span>
+                    <span class="k">break</span>
+                <span class="c1"># retract if we overshoot</span>
+                <span class="n">end</span> <span class="o">=</span> <span class="n">last_end</span>
+            <span class="c1"># Now, start (inclusive) -&gt; end (exclusive) are one timezone</span>
+            <span class="n">is_standard</span> <span class="o">=</span> <span class="n">start</span><span class="o">.</span><span class="n">dst</span><span class="p">()</span> <span class="o">==</span> <span class="n">timedelta</span><span class="p">()</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">start</span><span class="o">.</span><span class="n">tzname</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">offset_to</span><span class="p">)</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">offset_from</span><span class="p">,</span> <span class="n">offset_to</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">is_standard</span><span class="p">)</span>
+            <span class="c1"># first_key = (None,) + key[1:]</span>
+            <span class="c1"># if first_key in offsets:</span>
+            <span class="c1">#     # remove the first one and claim it changes at that day</span>
+            <span class="c1">#     offsets[first_key] = offsets.pop(first_key)</span>
+            <span class="n">offsets</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">start</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="kc">None</span><span class="p">))</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">end</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_from_tzinfo_skip_search</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">tz</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+        <span class="n">tz</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;TZID&quot;</span><span class="p">,</span> <span class="n">tzid</span><span class="p">)</span>
+        <span class="n">tz</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;COMMENT&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;This timezone only works from </span><span class="si">{</span><span class="n">first_date</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">last_date</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">offset_from</span><span class="p">,</span> <span class="n">offset_to</span><span class="p">,</span> <span class="n">tzname</span><span class="p">,</span> <span class="n">is_standard</span><span class="p">),</span> <span class="n">starts</span> <span class="ow">in</span> <span class="n">offsets</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">first_start</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">starts</span><span class="p">)</span>
+            <span class="n">starts</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">first_start</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">first_start</span><span class="o">.</span><span class="n">date</span><span class="p">()</span> <span class="o">==</span> <span class="n">last_date</span><span class="p">:</span>
+                <span class="n">first_start</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="n">last_date</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">last_date</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="n">last_date</span><span class="o">.</span><span class="n">day</span><span class="p">)</span>  <span class="c1"># noqa: DTZ001</span>
+            <span class="n">subcomponent</span> <span class="o">=</span> <span class="n">TimezoneStandard</span><span class="p">()</span> <span class="k">if</span> <span class="n">is_standard</span> <span class="k">else</span> <span class="n">TimezoneDaylight</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">offset_from</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">offset_from</span> <span class="o">=</span> <span class="n">offset_to</span>  <span class="c1"># noqa: PLW2901</span>
+            <span class="n">subcomponent</span><span class="o">.</span><span class="n">TZOFFSETFROM</span> <span class="o">=</span> <span class="n">offset_from</span>
+            <span class="n">subcomponent</span><span class="o">.</span><span class="n">TZOFFSETTO</span> <span class="o">=</span> <span class="n">offset_to</span>
+            <span class="n">subcomponent</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;TZNAME&quot;</span><span class="p">,</span> <span class="n">tzname</span><span class="p">)</span>
+            <span class="n">subcomponent</span><span class="o">.</span><span class="n">DTSTART</span> <span class="o">=</span> <span class="n">first_start</span>
+            <span class="k">if</span> <span class="n">starts</span><span class="p">:</span>
+                <span class="n">subcomponent</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;RDATE&quot;</span><span class="p">,</span> <span class="n">starts</span><span class="p">)</span>
+            <span class="n">tz</span><span class="o">.</span><span class="n">add_component</span><span class="p">(</span><span class="n">subcomponent</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tz</span></div>
+
+
+<div class="viewcode-block" id="Timezone.from_tzid">
+<a class="viewcode-back" href="../../../reference/api/icalendar.cal.timezone.html#icalendar.Timezone.from_tzid">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_tzid</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">tzid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">tzp</span><span class="p">:</span> <span class="n">TZP</span> <span class="o">=</span> <span class="n">tzp</span><span class="p">,</span>
+        <span class="n">first_date</span><span class="p">:</span> <span class="n">date</span> <span class="o">=</span> <span class="n">DEFAULT_FIRST_DATE</span><span class="p">,</span>
+        <span class="n">last_date</span><span class="p">:</span> <span class="n">date</span> <span class="o">=</span> <span class="n">DEFAULT_LAST_DATE</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Timezone</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a VTIMEZONE from a tzid like ``&quot;Europe/Berlin&quot;``.</span>
+
+<span class="sd">        :param tzid: the id of the timezone</span>
+<span class="sd">        :param tzp: the timezone provider</span>
+<span class="sd">        :param first_date: a datetime that is earlier than anything</span>
+<span class="sd">            that happens in the calendar</span>
+<span class="sd">        :param last_date: a datetime that is later than anything</span>
+<span class="sd">            that happens in the calendar</span>
+<span class="sd">        :raises ValueError: If the tzid is unknown.</span>
+
+<span class="sd">        &gt;&gt;&gt; from icalendar import Timezone</span>
+<span class="sd">        &gt;&gt;&gt; tz = Timezone.from_tzid(&quot;Europe/Berlin&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; print(tz.to_ical()[:36])</span>
+<span class="sd">        BEGIN:VTIMEZONE</span>
+<span class="sd">        TZID:Europe/Berlin</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            This can take some time. Please cache the results.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tz</span> <span class="o">=</span> <span class="n">tzp</span><span class="o">.</span><span class="n">timezone</span><span class="p">(</span><span class="n">tzid</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tz</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unkown timezone </span><span class="si">{</span><span class="n">tzid</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_tzinfo</span><span class="p">(</span><span class="n">tz</span><span class="p">,</span> <span class="n">tzid</span><span class="p">,</span> <span class="n">first_date</span><span class="p">,</span> <span class="n">last_date</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">standard</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">TimezoneStandard</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The STANDARD subcomponents as a list.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="s2">&quot;STANDARD&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">daylight</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">TimezoneDaylight</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The DAYLIGHT subcomponents as a list.</span>
+
+<span class="sd">        These are for the daylight saving time.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="s2">&quot;DAYLIGHT&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="TimezoneStandard">
+<a class="viewcode-back" href="../../../reference/api/icalendar.cal.timezone.html#icalendar.TimezoneStandard">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TimezoneStandard</span><span class="p">(</span><span class="n">Component</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The &quot;STANDARD&quot; sub-component of &quot;VTIMEZONE&quot; defines the standard</span>
+<span class="sd">    time offset from UTC for a time zone. It represents a time zone&#39;s</span>
+<span class="sd">    standard time, typically used during winter months in locations</span>
+<span class="sd">    that observe Daylight Saving Time.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;STANDARD&quot;</span>
+    <span class="n">required</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;DTSTART&quot;</span><span class="p">,</span> <span class="s2">&quot;TZOFFSETTO&quot;</span><span class="p">,</span> <span class="s2">&quot;TZOFFSETFROM&quot;</span><span class="p">)</span>
+    <span class="n">singletons</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;DTSTART&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;TZOFFSETTO&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;TZOFFSETFROM&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">multiple</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;COMMENT&quot;</span><span class="p">,</span> <span class="s2">&quot;RDATE&quot;</span><span class="p">,</span> <span class="s2">&quot;TZNAME&quot;</span><span class="p">,</span> <span class="s2">&quot;RRULE&quot;</span><span class="p">,</span> <span class="s2">&quot;EXDATE&quot;</span><span class="p">)</span>
+
+    <span class="n">DTSTART</span> <span class="o">=</span> <span class="n">create_single_property</span><span class="p">(</span>
+        <span class="s2">&quot;DTSTART&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;dt&quot;</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">datetime</span><span class="p">,),</span>
+        <span class="n">datetime</span><span class="p">,</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The mandatory &quot;DTSTART&quot; property gives the effective onset date</span>
+<span class="sd">        and local time for the time zone sub-component definition.</span>
+<span class="sd">        &quot;DTSTART&quot; in this usage MUST be specified as a date with a local</span>
+<span class="sd">        time value.&quot;&quot;&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">TZOFFSETTO</span> <span class="o">=</span> <span class="n">create_single_property</span><span class="p">(</span>
+        <span class="s2">&quot;TZOFFSETTO&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;td&quot;</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">timedelta</span><span class="p">,),</span>
+        <span class="n">timedelta</span><span class="p">,</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The mandatory &quot;TZOFFSETTO&quot; property gives the UTC offset for the</span>
+<span class="sd">        time zone sub-component (Standard Time or Daylight Saving Time)</span>
+<span class="sd">        when this observance is in use.</span>
+<span class="sd">        &quot;&quot;&quot;</span><span class="p">,</span>
+        <span class="n">vUTCOffset</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">TZOFFSETFROM</span> <span class="o">=</span> <span class="n">create_single_property</span><span class="p">(</span>
+        <span class="s2">&quot;TZOFFSETFROM&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;td&quot;</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">timedelta</span><span class="p">,),</span>
+        <span class="n">timedelta</span><span class="p">,</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The mandatory &quot;TZOFFSETFROM&quot; property gives the UTC offset that is</span>
+<span class="sd">        in use when the onset of this time zone observance begins.</span>
+<span class="sd">        &quot;TZOFFSETFROM&quot; is combined with &quot;DTSTART&quot; to define the effective</span>
+<span class="sd">        onset for the time zone sub-component definition.  For example,</span>
+<span class="sd">        the following represents the time at which the observance of</span>
+<span class="sd">        Standard Time took effect in Fall 1967 for New York City:</span>
+
+<span class="sd">            DTSTART:19671029T020000</span>
+<span class="sd">            TZOFFSETFROM:-0400</span>
+<span class="sd">        &quot;&quot;&quot;</span><span class="p">,</span>
+        <span class="n">vUTCOffset</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">rdates</span> <span class="o">=</span> <span class="n">rdates_property</span>
+    <span class="n">exdates</span> <span class="o">=</span> <span class="n">exdates_property</span>
+    <span class="n">rrules</span> <span class="o">=</span> <span class="n">rrules_property</span></div>
+
+
+
+<div class="viewcode-block" id="TimezoneDaylight">
+<a class="viewcode-back" href="../../../reference/api/icalendar.cal.timezone.html#icalendar.TimezoneDaylight">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TimezoneDaylight</span><span class="p">(</span><span class="n">Component</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The &quot;DAYLIGHT&quot; sub-component of &quot;VTIMEZONE&quot; defines the daylight</span>
+<span class="sd">    saving time offset from UTC for a time zone. It represents a time</span>
+<span class="sd">    zone&#39;s daylight saving time, typically used during summer months</span>
+<span class="sd">    in locations that observe Daylight Saving Time.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;DAYLIGHT&quot;</span>
+    <span class="n">required</span> <span class="o">=</span> <span class="n">TimezoneStandard</span><span class="o">.</span><span class="n">required</span>
+    <span class="n">singletons</span> <span class="o">=</span> <span class="n">TimezoneStandard</span><span class="o">.</span><span class="n">singletons</span>
+    <span class="n">multiple</span> <span class="o">=</span> <span class="n">TimezoneStandard</span><span class="o">.</span><span class="n">multiple</span>
+
+    <span class="n">DTSTART</span> <span class="o">=</span> <span class="n">TimezoneStandard</span><span class="o">.</span><span class="n">DTSTART</span>
+    <span class="n">TZOFFSETTO</span> <span class="o">=</span> <span class="n">TimezoneStandard</span><span class="o">.</span><span class="n">TZOFFSETTO</span>
+    <span class="n">TZOFFSETFROM</span> <span class="o">=</span> <span class="n">TimezoneStandard</span><span class="o">.</span><span class="n">TZOFFSETFROM</span>
+
+    <span class="n">rdates</span> <span class="o">=</span> <span class="n">rdates_property</span>
+    <span class="n">exdates</span> <span class="o">=</span> <span class="n">exdates_property</span>
+    <span class="n">rrules</span> <span class="o">=</span> <span class="n">rrules_property</span></div>
+
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Timezone&quot;</span><span class="p">,</span> <span class="s2">&quot;TimezoneDaylight&quot;</span><span class="p">,</span> <span class="s2">&quot;TimezoneStandard&quot;</span><span class="p">]</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Plone Foundation.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

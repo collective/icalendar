@@ -2189,7 +2189,7 @@ class TypesFactory(CaselessDict):
         }
     )
 
-    def for_property(self, name, value_param=None):
+    def for_property(self, name, value_param: str | None = None) -> type:
         """Returns the type class for a property or parameter.
 
         Args:
@@ -2201,16 +2201,15 @@ class TypesFactory(CaselessDict):
         """
         # Special case: RDATE and EXDATE always use vDDDLists to support list values
         # regardless of the VALUE parameter
-        if name.lower() in ("rdate", "exdate"):
+        if name in ("rdate", "exdate"):
             return self["date-time-list"]
 
         # Only use VALUE parameter for known properties that support multiple value types
         # (like DTSTART, DTEND, etc. which can be DATE or DATE-TIME)
         # For unknown/custom properties, always use the default type from types_map
-        if value_param and name.lower() in self.types_map:
-            value_param_lower = value_param.lower()
-            if value_param_lower in self:
-                return self[value_param_lower]
+        if value_param and name in self.types_map:
+            if value_param in self:
+                return self[value_param]
         return self[self.types_map.get(name, "text")]
 
     def to_ical(self, name, value):

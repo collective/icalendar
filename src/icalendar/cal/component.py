@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 _marker = []
 
 
-def _infer_value_type(value):
+def _infer_value_type(value: date | datetime | timedelta | time | tuple | list) -> str | None:
     """Infer the ``VALUE`` parameter from a Python type.
 
     Args:

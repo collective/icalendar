@@ -1,0 +1,886 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>icalendar.alarms &#8212; icalendar 6.3.2 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=164cab21"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/icalendar/alarms';</script>
+    <script defer="defer" src="../../_static/js/custom-icons.js?v=c97652e3"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="6.3.2" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search"
+         aria-label="Search"
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">icalendar 6.3.2 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../how-to/index.html">
+    How to guides
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../reference/index.html">
+    Reference guides
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contribute/index.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+            
+          
+            
+          
+            
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/collective/icalendar" title="GitHub" class="nav-link custom-fancy-css" rel="noopener me" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+            
+          
+            
+          
+            
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/icalendar" title="PyPI" class="nav-link custom-fancy-css" rel="noopener me" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-pypi fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../how-to/index.html">
+    How to guides
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../reference/index.html">
+    Reference guides
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contribute/index.html">
+    Contributing
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+            
+          
+            
+          
+            
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/collective/icalendar" title="GitHub" class="nav-link custom-fancy-css" rel="noopener me" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+            
+          
+            
+          
+            
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/icalendar" title="PyPI" class="nav-link custom-fancy-css" rel="noopener me" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-custom fa-pypi fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">icalendar.alarms</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for icalendar.alarms</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Compute the times and states of alarms.</span>
+
+<span class="sd">This takes different calendar software into account and the RFC 9074 (Alarm Extension).</span>
+
+<span class="sd">- RFC 9074 defines an ACKNOWLEDGED property in the VALARM.</span>
+<span class="sd">- Outlook does not export VALARM information.</span>
+<span class="sd">- Google Calendar uses the DTSTAMP to acknowledge the alarms.</span>
+<span class="sd">- Thunderbird snoozes the alarms with a X-MOZ-SNOOZE-TIME attribute in the event.</span>
+<span class="sd">- Thunderbird acknowledges the alarms with a X-MOZ-LASTACK attribute in the event.</span>
+<span class="sd">- Etar deletes alarms that are acknowledged.</span>
+<span class="sd">- Nextcloud&#39;s Webinterface does not do anything with the alarms when the time passes.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">date</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">,</span> <span class="n">tzinfo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">icalendar.cal.event</span><span class="w"> </span><span class="kn">import</span> <span class="n">Event</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">icalendar.cal.todo</span><span class="w"> </span><span class="kn">import</span> <span class="n">Todo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">icalendar.error</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ComponentEndMissing</span><span class="p">,</span>
+    <span class="n">ComponentStartMissing</span><span class="p">,</span>
+    <span class="n">IncompleteAlarmInformation</span><span class="p">,</span>
+    <span class="n">LocalTimezoneMissing</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">icalendar.timezone</span><span class="w"> </span><span class="kn">import</span> <span class="n">tzp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">icalendar.tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_date</span><span class="p">,</span> <span class="n">normalize_pytz</span><span class="p">,</span> <span class="n">to_datetime</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+
+    <span class="kn">from</span><span class="w"> </span><span class="nn">icalendar.cal.alarm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Alarm</span>
+
+<span class="n">Parent</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Event</span><span class="p">,</span> <span class="n">Todo</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="AlarmTime">
+<a class="viewcode-back" href="../../reference/api/icalendar.alarms.html#icalendar.AlarmTime">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AlarmTime</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An alarm time with all the information.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">alarm</span><span class="p">:</span> <span class="n">Alarm</span><span class="p">,</span>
+        <span class="n">trigger</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span>
+        <span class="n">acknowledged_until</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">snoozed_until</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">parent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Parent</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new AlarmTime.</span>
+
+<span class="sd">        alarm</span>
+<span class="sd">            the Alarm component</span>
+
+<span class="sd">        trigger</span>
+<span class="sd">            a date or datetime at which to trigger the alarm</span>
+
+<span class="sd">        acknowledged_until</span>
+<span class="sd">            an optional datetime in UTC until when all alarms</span>
+<span class="sd">            have been acknowledged</span>
+
+<span class="sd">        snoozed_until</span>
+<span class="sd">            an optional datetime in UTC until which all alarms of</span>
+<span class="sd">            the same parent are snoozed</span>
+
+<span class="sd">        parent</span>
+<span class="sd">            the optional parent component the alarm refers to</span>
+
+<span class="sd">        local_tzinfo</span>
+<span class="sd">            the local timezone that events without tzinfo should have</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_alarm</span> <span class="o">=</span> <span class="n">alarm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trigger</span> <span class="o">=</span> <span class="n">trigger</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_ack</span> <span class="o">=</span> <span class="n">acknowledged_until</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_snooze_until</span> <span class="o">=</span> <span class="n">snoozed_until</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">acknowledged</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The time in UTC at which this alarm was last acknowledged.</span>
+
+<span class="sd">        If the alarm was not acknowledged (dismissed), then this is None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ack</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alarm</span><span class="o">.</span><span class="n">ACKNOWLEDGED</span>
+        <span class="k">if</span> <span class="n">ack</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_ack</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_ack</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ack</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">ack</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_ack</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">alarm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Alarm</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The alarm component.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alarm</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Parent</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This is the component that contains the alarm.</span>
+
+<span class="sd">        This is None if you did not use Alarms.set_component().</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span>
+
+<div class="viewcode-block" id="AlarmTime.is_active">
+<a class="viewcode-back" href="../../reference/api/icalendar.alarms.html#icalendar.AlarmTime.is_active">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_active</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether this alarm is active (True) or acknowledged (False).</span>
+
+<span class="sd">        For example, in some calendar software, this is True until the user looks</span>
+<span class="sd">        at the alarm message and clicked the dismiss button.</span>
+
+<span class="sd">        Alarms can be in local time (without a timezone).</span>
+<span class="sd">        To calculate if the alarm really happened, we need it to be in a timezone.</span>
+<span class="sd">        If a timezone is required but not given, we throw an IncompleteAlarmInformation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">acknowledged</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">acknowledged</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">acknowledged</span><span class="p">:</span>
+            <span class="c1"># if nothing is acknowledged, this alarm counts</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_snooze_until</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_snooze_until</span> <span class="o">&gt;</span> <span class="n">acknowledged</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="n">trigger</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trigger</span>
+        <span class="k">if</span> <span class="n">trigger</span><span class="o">.</span><span class="n">tzinfo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">LocalTimezoneMissing</span><span class="p">(</span>
+                <span class="s2">&quot;A local timezone is required to check if the alarm is still active. &quot;</span>
+                <span class="s2">&quot;Use Alarms.set_local_timezone().&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">trigger</span> <span class="o">&gt;</span> <span class="n">acknowledged</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">date</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This is the time to trigger the alarm.</span>
+
+<span class="sd">        If the alarm has been snoozed, this can differ from the TRIGGER property.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_snooze_until</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_snooze_until</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trigger</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_snooze_until</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trigger</span></div>
+
+
+
+<div class="viewcode-block" id="Alarms">
+<a class="viewcode-back" href="../../reference/api/icalendar.alarms.html#icalendar.Alarms">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Alarms</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the times and states of alarms.</span>
+
+<span class="sd">    This is an example using RFC 9074.</span>
+<span class="sd">    One alarm is 30 minutes before the event and acknowledged.</span>
+<span class="sd">    Another alarm is 15 minutes before the event and still active.</span>
+
+<span class="sd">    &gt;&gt;&gt; from icalendar import Event, Alarms</span>
+<span class="sd">    &gt;&gt;&gt; event = Event.from_ical(</span>
+<span class="sd">    ... &#39;&#39;&#39;BEGIN:VEVENT</span>
+<span class="sd">    ... CREATED:20210301T151004Z</span>
+<span class="sd">    ... UID:AC67C078-CED3-4BF5-9726-832C3749F627</span>
+<span class="sd">    ... DTSTAMP:20210301T151004Z</span>
+<span class="sd">    ... DTSTART;TZID=America/New_York:20210302T103000</span>
+<span class="sd">    ... DTEND;TZID=America/New_York:20210302T113000</span>
+<span class="sd">    ... SUMMARY:Meeting</span>
+<span class="sd">    ... BEGIN:VALARM</span>
+<span class="sd">    ... UID:8297C37D-BA2D-4476-91AE-C1EAA364F8E1</span>
+<span class="sd">    ... TRIGGER:-PT30M</span>
+<span class="sd">    ... ACKNOWLEDGED:20210302T150004Z</span>
+<span class="sd">    ... DESCRIPTION:Event reminder</span>
+<span class="sd">    ... ACTION:DISPLAY</span>
+<span class="sd">    ... END:VALARM</span>
+<span class="sd">    ... BEGIN:VALARM</span>
+<span class="sd">    ... UID:8297C37D-BA2D-4476-91AE-C1EAA364F8E1</span>
+<span class="sd">    ... TRIGGER:-PT15M</span>
+<span class="sd">    ... DESCRIPTION:Event reminder</span>
+<span class="sd">    ... ACTION:DISPLAY</span>
+<span class="sd">    ... END:VALARM</span>
+<span class="sd">    ... END:VEVENT</span>
+<span class="sd">    ... &#39;&#39;&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; alarms = Alarms(event)</span>
+<span class="sd">    &gt;&gt;&gt; len(alarms.times)   # all alarms including those acknowledged</span>
+<span class="sd">    2</span>
+<span class="sd">    &gt;&gt;&gt; len(alarms.active)  # the alarms that are not acknowledged, yet</span>
+<span class="sd">    1</span>
+<span class="sd">    &gt;&gt;&gt; alarms.active[0].trigger  # this alarm triggers 15 minutes before 10:30</span>
+<span class="sd">    datetime.datetime(2021, 3, 2, 10, 15, tzinfo=ZoneInfo(key=&#39;America/New_York&#39;))</span>
+
+<span class="sd">    RFC 9074 specifies that alarms can also be triggered by proximity.</span>
+<span class="sd">    This is not implemented yet.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Alarm</span> <span class="o">|</span> <span class="n">Event</span> <span class="o">|</span> <span class="n">Todo</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Start computing alarm times.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_absolute_alarms</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Alarm</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_alarms</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Alarm</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_end_alarms</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Alarm</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">date</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_end</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">date</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Parent</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_ack</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_snooze_until</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_local_tzinfo</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">tzinfo</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">component</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_component</span><span class="p">(</span><span class="n">component</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Alarms.add_component">
+<a class="viewcode-back" href="../../reference/api/icalendar.alarms.html#icalendar.Alarms.add_component">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">:</span> <span class="n">Alarm</span> <span class="o">|</span> <span class="n">Parent</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a component.</span>
+
+<span class="sd">        If this is an alarm, it is added.</span>
+<span class="sd">        Events and Todos are added as a parent and all</span>
+<span class="sd">        their alarms are added, too.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="p">(</span><span class="n">Event</span><span class="p">,</span> <span class="n">Todo</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_parent</span><span class="p">(</span><span class="n">component</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_start</span><span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_end</span><span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">end</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">component</span><span class="o">.</span><span class="n">is_thunderbird</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">acknowledge_until</span><span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">X_MOZ_LASTACK</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">snooze_until</span><span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">X_MOZ_SNOOZE_TIME</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">acknowledge_until</span><span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">DTSTAMP</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">alarm</span> <span class="ow">in</span> <span class="n">component</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="s2">&quot;VALARM&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_alarm</span><span class="p">(</span><span class="n">alarm</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Alarms.set_parent">
+<a class="viewcode-back" href="../../reference/api/icalendar.alarms.html#icalendar.Alarms.set_parent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">Parent</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the parent of all the alarms.</span>
+
+<span class="sd">        If you would like to collect alarms from a component, use add_component</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">parent</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You can only set one parent for this alarm calculation.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span></div>
+
+
+<div class="viewcode-block" id="Alarms.add_alarm">
+<a class="viewcode-back" href="../../reference/api/icalendar.alarms.html#icalendar.Alarms.add_alarm">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_alarm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alarm</span><span class="p">:</span> <span class="n">Alarm</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Optional: Add an alarm component.&quot;&quot;&quot;</span>
+        <span class="n">trigger</span> <span class="o">=</span> <span class="n">alarm</span><span class="o">.</span><span class="n">TRIGGER</span>
+        <span class="k">if</span> <span class="n">trigger</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">trigger</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_absolute_alarms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">alarm</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">alarm</span><span class="o">.</span><span class="n">TRIGGER_RELATED</span> <span class="o">==</span> <span class="s2">&quot;START&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_start_alarms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">alarm</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_end_alarms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">alarm</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Alarms.set_start">
+<a class="viewcode-back" href="../../reference/api/icalendar.alarms.html#icalendar.Alarms.set_start">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">date</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the start of the component.</span>
+
+<span class="sd">        If you have only absolute alarms, this is not required.</span>
+<span class="sd">        If you have alarms relative to the start of a compoment, set the start here.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start</span> <span class="o">=</span> <span class="n">dt</span></div>
+
+
+<div class="viewcode-block" id="Alarms.set_end">
+<a class="viewcode-back" href="../../reference/api/icalendar.alarms.html#icalendar.Alarms.set_end">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">date</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the end of the component.</span>
+
+<span class="sd">        If you have only absolute alarms, this is not required.</span>
+<span class="sd">        If you have alarms relative to the end of a compoment, set the end here.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_end</span> <span class="o">=</span> <span class="n">dt</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">:</span> <span class="n">date</span><span class="p">,</span> <span class="n">td</span><span class="p">:</span> <span class="n">timedelta</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a timedelta to a datetime.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">is_date</span><span class="p">(</span><span class="n">dt</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">td</span><span class="o">.</span><span class="n">seconds</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">dt</span> <span class="o">+</span> <span class="n">td</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">to_datetime</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">normalize_pytz</span><span class="p">(</span><span class="n">dt</span> <span class="o">+</span> <span class="n">td</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Alarms.acknowledge_until">
+<a class="viewcode-back" href="../../reference/api/icalendar.alarms.html#icalendar.Alarms.acknowledge_until">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">acknowledge_until</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">date</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This is the time in UTC when all the alarms of this component were acknowledged.</span>
+
+<span class="sd">        Only the last call counts.</span>
+
+<span class="sd">        Since RFC 9074 (Alarm Extension) was created later,</span>
+<span class="sd">        calendar implementations differ in how they acknowledge alarms.</span>
+<span class="sd">        For example, Thunderbird and Google Calendar store the last time</span>
+<span class="sd">        an event has been acknowledged because of an alarm.</span>
+<span class="sd">        All alarms that happen before this time count as acknowledged.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_ack</span> <span class="o">=</span> <span class="n">tzp</span><span class="o">.</span><span class="n">localize_utc</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span> <span class="k">if</span> <span class="n">dt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Alarms.snooze_until">
+<a class="viewcode-back" href="../../reference/api/icalendar.alarms.html#icalendar.Alarms.snooze_until">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">snooze_until</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">date</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This is the time in UTC when all the alarms of this component were snoozed.</span>
+
+<span class="sd">        Only the last call counts.</span>
+
+<span class="sd">        The alarms are supposed to turn up again at dt when they are not acknowledged</span>
+<span class="sd">        but snoozed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_snooze_until</span> <span class="o">=</span> <span class="n">tzp</span><span class="o">.</span><span class="n">localize_utc</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span> <span class="k">if</span> <span class="n">dt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Alarms.set_local_timezone">
+<a class="viewcode-back" href="../../reference/api/icalendar.alarms.html#icalendar.Alarms.set_local_timezone">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_local_timezone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tzinfo</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">tzinfo</span> <span class="o">|</span> <span class="nb">str</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the local timezone.</span>
+
+<span class="sd">        Events are sometimes in local time.</span>
+<span class="sd">        In order to compute the exact time of the alarm, some</span>
+<span class="sd">        alarms without timezone are considered local.</span>
+
+<span class="sd">        Some computations work without setting this, others don&#39;t.</span>
+<span class="sd">        If they need this information, expect a LocalTimezoneMissing exception</span>
+<span class="sd">        somewhere down the line.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_local_tzinfo</span> <span class="o">=</span> <span class="n">tzp</span><span class="o">.</span><span class="n">timezone</span><span class="p">(</span><span class="n">tzinfo</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tzinfo</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">tzinfo</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">times</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">AlarmTime</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute and return the times of the alarms given.</span>
+
+<span class="sd">        If the information for calculation is incomplete, this will raise a</span>
+<span class="sd">        IncompleteAlarmInformation exception.</span>
+
+<span class="sd">        Please make sure to set all the required parameters before calculating.</span>
+<span class="sd">        If you forget to set the acknowledged times, that is not problem.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_end_alarm_times</span><span class="p">()</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_start_alarm_times</span><span class="p">()</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_absolute_alarm_times</span><span class="p">()</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_repeat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">alarm</span><span class="p">:</span> <span class="n">Alarm</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">datetime</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The times when the alarm is triggered relative to start.&quot;&quot;&quot;</span>
+        <span class="k">yield</span> <span class="n">first</span>  <span class="c1"># we trigger at the start</span>
+        <span class="n">repeat</span> <span class="o">=</span> <span class="n">alarm</span><span class="o">.</span><span class="n">REPEAT</span>
+        <span class="n">duration</span> <span class="o">=</span> <span class="n">alarm</span><span class="o">.</span><span class="n">DURATION</span>
+        <span class="k">if</span> <span class="n">repeat</span> <span class="ow">and</span> <span class="n">duration</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">repeat</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">duration</span> <span class="o">*</span> <span class="n">i</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_alarm_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alarm</span><span class="p">:</span> <span class="n">Alarm</span><span class="p">,</span> <span class="n">trigger</span><span class="p">:</span> <span class="n">date</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an alarm time with the additional attributes.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">trigger</span><span class="p">,</span> <span class="s2">&quot;tzinfo&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_local_tzinfo</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">trigger</span> <span class="o">=</span> <span class="n">normalize_pytz</span><span class="p">(</span><span class="n">trigger</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_local_tzinfo</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">AlarmTime</span><span class="p">(</span>
+            <span class="n">alarm</span><span class="p">,</span> <span class="n">trigger</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_ack</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_snooze_until</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_absolute_alarm_times</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">AlarmTime</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of absolute alarm times.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_alarm_time</span><span class="p">(</span><span class="n">alarm</span><span class="p">,</span> <span class="n">trigger</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">alarm</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_absolute_alarms</span>
+            <span class="k">for</span> <span class="n">trigger</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_repeat</span><span class="p">(</span><span class="n">alarm</span><span class="o">.</span><span class="n">TRIGGER</span><span class="p">,</span> <span class="n">alarm</span><span class="p">)</span>
+        <span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_start_alarm_times</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">AlarmTime</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of alarm times relative to the start of the component.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_alarms</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ComponentStartMissing</span><span class="p">(</span>
+                <span class="s2">&quot;Use Alarms.set_start because at least one alarm is relative to the start of a component.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_alarm_time</span><span class="p">(</span><span class="n">alarm</span><span class="p">,</span> <span class="n">trigger</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">alarm</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_alarms</span>
+            <span class="k">for</span> <span class="n">trigger</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_repeat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="p">,</span> <span class="n">alarm</span><span class="o">.</span><span class="n">TRIGGER</span><span class="p">),</span> <span class="n">alarm</span><span class="p">)</span>
+        <span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_end_alarm_times</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">AlarmTime</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of alarm times relative to the start of the component.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_end</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_end_alarms</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ComponentEndMissing</span><span class="p">(</span>
+                <span class="s2">&quot;Use Alarms.set_end because at least one alarm is relative to the end of a component.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_alarm_time</span><span class="p">(</span><span class="n">alarm</span><span class="p">,</span> <span class="n">trigger</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">alarm</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_end_alarms</span>
+            <span class="k">for</span> <span class="n">trigger</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_repeat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_end</span><span class="p">,</span> <span class="n">alarm</span><span class="o">.</span><span class="n">TRIGGER</span><span class="p">),</span> <span class="n">alarm</span><span class="p">)</span>
+        <span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">active</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">AlarmTime</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The alarm times that are still active and not acknowledged.</span>
+
+<span class="sd">        This considers snoozed alarms.</span>
+
+<span class="sd">        Alarms can be in local time (without a timezone).</span>
+<span class="sd">        To calculate if the alarm really happened, we need it to be in a timezone.</span>
+<span class="sd">        If a timezone is required but not given, we throw an IncompleteAlarmInformation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">alarm_time</span> <span class="k">for</span> <span class="n">alarm_time</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">times</span> <span class="k">if</span> <span class="n">alarm_time</span><span class="o">.</span><span class="n">is_active</span><span class="p">()]</span></div>
+
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;AlarmTime&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Alarms&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ComponentEndMissing&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ComponentStartMissing&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;IncompleteAlarmInformation&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Plone Foundation.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
