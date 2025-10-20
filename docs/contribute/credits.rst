@@ -88,6 +88,7 @@ Contributors
 - Rok Garbas <rok@garbas.si>
 - Ronan Dunklau <ronan@dunklau.fr>
 - Russ <russ@rw.id.au>
+- `SanthoshMani1 <https://github.com/SanthoshMani1>`_
 - `Sashank Bhamidi <https://github.com/SashankBhamidi>`_
 - `Serif OZ <https://github.com/SerifOZ>`_
 - Sidnei da Silva <sidnei@enfoldsystems.com>
