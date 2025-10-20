@@ -13,11 +13,11 @@ on:
       - 'src/icalendar/cal/*.py'
       - 'src/icalendar/prop/*.py'
       - 'src/icalendar/timezone/*.py'
-#      - 'styles/**'
+      - 'styles/**'
       - '.github/workflows/rtd-pr-preview.yml'
       - '.github/workflows/documentation.yml'
       - '.readthedocs.yaml'
-#      - '.vale.ini'
+      - '.vale.ini'
       - 'uv.lock'
 
 jobs:
@@ -50,5 +50,5 @@ jobs:
       - name: Build HTML documentation
         run: make html PYTHONVERSION=${{ matrix.python-version }}
 
-#      - name: Run vale
-#        run: make vale VALEOPTS="--minAlertLevel='warning'" PYTHONVERSION=${{ matrix.python-version }}
+      - name: Run vale
+        run: make vale VALEOPTS="--minAlertLevel='warning'" PYTHONVERSION=${{ matrix.python-version }}

@@ -59,6 +59,7 @@ New features:
 - Add ``td`` property to ``vDDDTypes`` to make it compatible with ``timedelta`` value types.
 - Add documentation for how to install icalendar on Fedora. See `Issue 704 <https://github.com/collective/icalendar/issues/704>`_.
 - Add documentation linkchecker to make and CI configuration. See `Issue 854 <https://github.com/collective/icalendar/issues/854>`_.
+- Add support for Vale as spell and style checker.
 
 Bug fixes:
 
