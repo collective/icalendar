@@ -2201,18 +2201,15 @@ class TypesFactory(CaselessDict):
         """
         # Special case: RDATE and EXDATE always use vDDDLists to support list values
         # regardless of the VALUE parameter
-        # name is used in tuple check (not CaselessDict), so lowercase it
-        if name.lower() in ("rdate", "exdate"):
+        if name.upper() in ("RDATE", "EXDATE"):
             return self["date-time-list"]
 
         # Only use VALUE parameter for known properties that support multiple value types
         # (like DTSTART, DTEND, etc. which can be DATE or DATE-TIME)
         # For unknown/custom properties, always use the default type from types_map
         if value_param and name in self.types_map:
-            # value_param is a string value, not a dict key, so we need to lowercase it manually
-            value_param_lower = value_param.lower()
-            if value_param_lower in self:
-                return self[value_param_lower]
+            if value_param in self:
+                return self[value_param]
         return self[self.types_map.get(name, "text")]
 
     def to_ical(self, name, value):
