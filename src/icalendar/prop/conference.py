@@ -86,11 +86,11 @@ class Conference:
     def to_uri(self) -> vUri:
         """Convert the Conference to a vUri."""
         def normalize(value: str | list[str] | None) -> str | None:
-            if value is None:
-               return None
+            if value is None or isinstance(value, list) and len(value) == 0:
+                return None
             if isinstance(value, str):
                 return value
-            return ",".join(map(str, value))
+            return ",".join(value)
 
         params: dict[str, str | None] = {
             "FEATURE": normalize(self.feature),
@@ -98,7 +98,7 @@ class Conference:
             "LANGUAGE": normalize(self.language),
         }
 
-        params = {key: value for key, value in params.items() if value is not None}
-        return vUri(self.uri, params=params)
+        filtered_params: dict[str, str] = {key: value for key, value in params.items() if value is not None}
+        return vUri(self.uri, params=filtered_params)
 
 __all__ = ["Conference"]
