@@ -258,6 +258,8 @@ class Component(CaselessDict):
 
         if name in self:
             value = self[name]
+            if hasattr(value, "to_ical") and hasattr(value, "from_ical"):
+                return value.from_ical(value.to_ical())
             if isinstance(value, list):
                 return [self._decode(name, v) for v in value]
             return self._decode(name, value)
