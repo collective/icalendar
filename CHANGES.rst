@@ -36,6 +36,7 @@ Minor changes:
 - Add PEP 561 py.typed marker to enable type checking support. The package now distributes inline type annotations for mypy and other type checkers. See `Issue 395 <https://github.com/collective/icalendar/issues/395>`_.
 - Bump ``github/codeql-action`` from 3 to 4 in CI fuzzing workflow.
 - Update LICENSE file heading formatting.
+- Document ``icalendar.version`` module.
 
 Breaking changes:
 
