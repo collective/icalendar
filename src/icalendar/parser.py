@@ -337,7 +337,8 @@ def unescape_backslash(val):
     per RFC 5545, not URL encoding. This preserves URL-encoded values
     like %3A in URLs.
 
-    Process escaped backslash first to avoid double-unescaping.
+    Uses a placeholder for escaped backslashes (\\\\) to prevent them from
+    being processed during other escape sequence replacements.
     """
     # Use a placeholder to avoid conflicts
     backslash_placeholder = "\x00BACKSLASH\x00"
