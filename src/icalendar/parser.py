@@ -330,6 +330,28 @@ def unescape_string(val):
     )
 
 
+def unescape_backslash(val):
+    """Unescape backslash sequences in iCalendar text.
+
+    Unlike unescape_string(), this only handles actual backslash escapes
+    per RFC 5545, not URL encoding. This preserves URL-encoded values
+    like %3A in URLs.
+
+    Process escaped backslash first to avoid double-unescaping.
+    """
+    # Use a placeholder to avoid conflicts
+    BACKSLASH_PLACEHOLDER = "\x00BACKSLASH\x00"
+    return (
+        val.replace(r"\\", BACKSLASH_PLACEHOLDER)
+        .replace(r"\,", ",")
+        .replace(r"\;", ";")
+        .replace(r"\:", ":")
+        .replace(r"\n", "\n")
+        .replace(r"\N", "\n")
+        .replace(BACKSLASH_PLACEHOLDER, "\\")
+    )
+
+
 RFC_6868_UNESCAPE_REGEX = re.compile(r"\^\^|\^n|\^'")
 
 
@@ -465,16 +487,23 @@ class Contentline(str):
             if not name_split:
                 raise ValueError("Key name is required")  # noqa: TRY301
             if not value_split:
-                raise ValueError("Invalid content line: missing value delimiter")  # noqa: TRY301
+                # No colon found - value is empty, use end of string
+                value_split = len(self)
             if name_split + 1 == value_split:
                 raise ValueError("Invalid content line")  # noqa: TRY301
 
             name = self[:name_split]
             validate_token(name)
-            params = Parameters.from_ical(
-                self[name_split + 1 : value_split], strict=self.strict
+            # Parse parameters - they still need to be escaped/unescaped
+            # for proper handling of commas, semicolons, etc. in parameter values
+            param_str = escape_string(self[name_split + 1 : value_split])
+            params = Parameters.from_ical(param_str, strict=self.strict)
+            params = Parameters(
+                (unescape_string(key), unescape_list_or_string(value))
+                for key, value in iter(params.items())
             )
-            values = self[value_split + 1 :]
+            # Unescape backslash sequences in values but preserve URL encoding
+            values = unescape_backslash(self[value_split + 1 :])
         except ValueError as exc:
             raise ValueError(
                 f"Content line could not be parsed into parts: '{self}': {exc}"
