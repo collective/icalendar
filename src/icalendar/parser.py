@@ -455,10 +455,12 @@ class Contentline(str):
         Properly handles escaping with backslashes and double-quote sections
         to avoid corrupting URL-encoded characters in values.
 
-        Example with parameter:
+        Example with parameter::
+
             DESCRIPTION;ALTREP="cid:part1.0001@example.org":The Fall'98 Wild
 
-        Example without parameters:
+        Example without parameters::
+
             DESCRIPTION:The Fall'98 Wild
         """
         try:
