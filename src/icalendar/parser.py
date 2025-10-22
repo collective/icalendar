@@ -340,15 +340,15 @@ def unescape_backslash(val):
     Process escaped backslash first to avoid double-unescaping.
     """
     # Use a placeholder to avoid conflicts
-    BACKSLASH_PLACEHOLDER = "\x00BACKSLASH\x00"
+    backslash_placeholder = "\x00BACKSLASH\x00"
     return (
-        val.replace(r"\\", BACKSLASH_PLACEHOLDER)
+        val.replace(r"\\", backslash_placeholder)
         .replace(r"\,", ",")
         .replace(r"\;", ";")
         .replace(r"\:", ":")
         .replace(r"\n", "\n")
         .replace(r"\N", "\n")
-        .replace(BACKSLASH_PLACEHOLDER, "\\")
+        .replace(backslash_placeholder, "\\")
     )
 
 
