@@ -484,16 +484,17 @@ class Contentline(str):
                 escaped = False
 
             # Validate parsing results
-            if not name_split:
-                raise ValueError("Key name is required")  # noqa: TRY301
             if not value_split:
                 # No colon found - value is empty, use end of string
                 value_split = len(self)
-            if name_split + 1 == value_split:
-                raise ValueError("Invalid content line")  # noqa: TRY301
 
-            name = self[:name_split]
+            # Extract name - if no delimiter, take whole string for validate_token to reject
+            name = self[:name_split] if name_split else self
             validate_token(name)
+
+            if not name_split or name_split + 1 == value_split:
+                # No delimiter or empty parameter section
+                raise ValueError("Invalid content line")  # noqa: TRY301
             # Parse parameters - they still need to be escaped/unescaped
             # for proper handling of commas, semicolons, etc. in parameter values
             param_str = escape_string(self[name_split + 1 : value_split])
