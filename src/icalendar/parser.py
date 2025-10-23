@@ -576,6 +576,7 @@ __all__ = [
     "q_split",
     "rfc_6868_escape",
     "rfc_6868_unescape",
+    "unescape_backslash",
     "unescape_char",
     "unescape_list_or_string",
     "unescape_string",
