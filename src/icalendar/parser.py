@@ -340,8 +340,7 @@ def unescape_backslash(val: str):
     per :rfc:`5545`, not URL encoding. This preserves URL-encoded values
     like ``%3A`` in URLs.
 
-    Uses a placeholder for escaped backslashes (``\\``) to prevent them from
-    being processed during other escape sequence replacements.
+    Processes backslash escape sequences in a single pass using regex matching.
     """
     return _unescape_backslash_regex.sub(
         lambda m: "\n" if m.group(1) in "nN" else m.group(1), val
