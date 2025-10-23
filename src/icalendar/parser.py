@@ -330,26 +330,21 @@ def unescape_string(val):
     )
 
 
-def unescape_backslash(val):
-    """Unescape backslash sequences in iCalendar text.
+_unescape_backslash_regex = re.compile(r"\\([\\,;:nN])")
+
+
+def unescape_backslash(val: str):
+    r"""Unescape backslash sequences in iCalendar text.
 
     Unlike :py:meth:`unescape_string`, this only handles actual backslash escapes
     per :rfc:`5545`, not URL encoding. This preserves URL-encoded values
     like ``%3A`` in URLs.
 
-    Uses a placeholder for escaped backslashes (``\\\\``) to prevent them from
+    Uses a placeholder for escaped backslashes (``\\``) to prevent them from
     being processed during other escape sequence replacements.
     """
-    # Use a placeholder to avoid conflicts
-    backslash_placeholder = "\x00BACKSLASH\x00"
-    return (
-        val.replace(r"\\", backslash_placeholder)
-        .replace(r"\,", ",")
-        .replace(r"\;", ";")
-        .replace(r"\:", ":")
-        .replace(r"\n", "\n")
-        .replace(r"\N", "\n")
-        .replace(backslash_placeholder, "\\")
+    return _unescape_backslash_regex.sub(
+        lambda m: "\n" if m.group(1) in "nN" else m.group(1), val
     )
 
 
@@ -457,13 +452,13 @@ class Contentline(str):
         to avoid corrupting URL-encoded characters in values.
 
         Example with parameter:
-        
+
         .. code-block:: text
 
             DESCRIPTION;ALTREP="cid:part1.0001@example.org":The Fall'98 Wild
 
         Example without parameters:
-        
+
         .. code-block:: text
 
             DESCRIPTION:The Fall'98 Wild
@@ -495,7 +490,8 @@ class Contentline(str):
                 # No colon found - value is empty, use end of string
                 value_split = len(self)
 
-            # Extract name - if no delimiter, take whole string for validate_token to reject
+            # Extract name - if no delimiter,
+            #   take whole string for validate_token to reject
             name = self[:name_split] if name_split else self
             validate_token(name)
 

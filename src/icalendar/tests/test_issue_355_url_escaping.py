@@ -3,6 +3,10 @@
 see https://github.com/collective/icalendar/issues/355
 """
 
+import pytest
+
+from icalendar.parser import unescape_backslash
+
 
 def test_facebook_link_is_correctly_parsed(events):
     """The facebook link must not be damaged.
@@ -27,3 +31,26 @@ def test_other_facebook_link_is_correctly_parsed(events):
 def test_empty_quotes(events):
     """Make sure that empty quoted parameter values are supported."""
     assert events.issue_355_url_escaping_empty_param["ORGANIZER"].params["CN"] == ""
+
+
+@pytest.mark.parametrize(
+    ("input_string", "expected_result", "message"),
+    [
+        ("test 123", "test 123", "No escapes, should remain unchanged."),
+        (r"\\n", "\\n", "No escape after escaped backslash."),
+        (r"\\,", "\\,", "No escape after escaped backslash."),
+        (r"\\;", "\\;", "No escape after escaped backslash."),
+        (r"\\:", "\\:", "No escape after escaped backslash."),
+        (r"\\N", "\\N", "No escape after escaped backslash."),
+        ("-\\n-", "-\n-", "Newline escape."),
+        ("-\\,", "-,", "Comma escape."),
+        ("-\\;", "-;", "Semicolon escape."),
+        ("-\\:", "-:", "Colon escape."),
+        ("-\\N-", "-\n-", "Newline escape."),
+    ],
+)
+def test_unescape_backslash(input_string, expected_result, message):
+    """Test unescape_backslash function with various inputs."""
+    assert unescape_backslash(input_string) == expected_result, (
+        f"{message}: {input_string} -> {expected_result}"
+    )
