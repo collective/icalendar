@@ -451,7 +451,7 @@ class Contentline(str):
         return cls(f"{name}:{values}")
 
     def parts(self) -> tuple[str, Parameters, str]:
-        """Split the content line up into (name, parameters, values) parts.
+        """Split the content line into ``name``, ``parameters``, and ``values`` parts.
 
         Properly handles escaping with backslashes and double-quote sections
         to avoid corrupting URL-encoded characters in values.
