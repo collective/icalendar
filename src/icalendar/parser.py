@@ -337,7 +337,7 @@ def unescape_backslash(val):
     per :rfc:`5545`, not URL encoding. This preserves URL-encoded values
     like %3A in URLs.
 
-    Uses a placeholder for escaped backslashes (\\\\) to prevent them from
+    Uses a placeholder for escaped backslashes (``\\\\``) to prevent them from
     being processed during other escape sequence replacements.
     """
     # Use a placeholder to avoid conflicts
