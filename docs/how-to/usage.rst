@@ -162,7 +162,7 @@ Thus, to parse it manually, you would do the following.
     b'20050404T080000'
 
 To summarize, initialize the object with a Python built in type, then call the :py:meth:`~icalendar.Component.to_ical` method on the object.
-That will return an ical-encoded string.
+That will return an iCal-encoded string.
 
 You can do it the other way around, too.
 To parse an encoded string, call the :py:meth:`~icalendar.Component.from_ical` method, and it will return an instance of the corresponding Python type.
@@ -304,7 +304,7 @@ By extending the event with subcomponents, you can create multiple alarms.
     >>> event.add_component(alarm_24h_before)
 
 You can even add a recurrence, either from a dictionary or a string.
-Note that if you want to add the reccurence rule from a string, you must use the :py:class:`icalendar.prop.vRecur` property.
+Note that if you want to add the recurrence rule from a string, you must use the :py:class:`icalendar.prop.vRecur` property.
 Otherwise the rule will be escaped, making it invalid.
 
 .. code-block:: pycon

@@ -48,7 +48,7 @@ import base64
 import binascii
 import re
 from datetime import date, datetime, time, timedelta
-from typing import Any, Optional, Union
+from typing import Any, Union
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.enums import Enum
@@ -145,7 +145,7 @@ class vBoolean(int):
 
     BOOL_MAP = CaselessDict({"true": True, "false": False})
 
-    def __new__(cls, *args, params: Optional[dict[str, Any]] = None, **kwargs):
+    def __new__(cls, *args, params: dict[str, Any] | None = None, **kwargs):
         if params is None:
             params = {}
         self = super().__new__(cls, *args, **kwargs)
@@ -174,7 +174,7 @@ class vText(str):
         value,
         encoding=DEFAULT_ENCODING,
         /,
-        params: Optional[dict[str, Any]] = None,
+        params: dict[str, Any] | None = None,
     ):
         if params is None:
             params = {}
@@ -199,7 +199,7 @@ class vText(str):
 
 
 class vCalAddress(str):
-    """Calendar User Address
+    r"""Calendar User Address
 
     Value Name:
         CAL-ADDRESS
@@ -253,7 +253,7 @@ class vCalAddress(str):
         value,
         encoding=DEFAULT_ENCODING,
         /,
-        params: Optional[dict[str, Any]] = None,
+        params: dict[str, Any] | None = None,
     ):
         if params is None:
             params = {}
@@ -448,7 +448,7 @@ class vFloat(float):
 
     params: Parameters
 
-    def __new__(cls, *args, params: Optional[dict[str, Any]] = None, **kwargs):
+    def __new__(cls, *args, params: dict[str, Any] | None = None, **kwargs):
         if params is None:
             params = {}
         self = super().__new__(cls, *args, **kwargs)
@@ -517,7 +517,7 @@ class vInt(int):
 
     params: Parameters
 
-    def __new__(cls, *args, params: Optional[dict[str, Any]] = None, **kwargs):
+    def __new__(cls, *args, params: dict[str, Any] | None = None, **kwargs):
         if params is None:
             params = {}
         self = super().__new__(cls, *args, **kwargs)
@@ -587,7 +587,7 @@ class vCategory:
     params: Parameters
 
     def __init__(
-        self, c_list: list[str] | str, /, params: Optional[dict[str, Any]] = None
+        self, c_list: list[str] | str, /, params: dict[str, Any] | None = None
     ):
         if params is None:
             params = {}
@@ -859,7 +859,7 @@ class vDatetime(TimeBase):
 
     params: Parameters
 
-    def __init__(self, dt, /, params: Optional[dict[str, Any]] = None):
+    def __init__(self, dt, /, params: dict[str, Any] | None = None):
         if params is None:
             params = {}
         self.dt = dt
@@ -979,7 +979,7 @@ class vDuration(TimeBase):
 
     params: Parameters
 
-    def __init__(self, td, /, params: Optional[dict[str, Any]] = None):
+    def __init__(self, td, /, params: dict[str, Any] | None = None):
         if params is None:
             params = {}
         if not isinstance(td, timedelta):
@@ -1223,7 +1223,7 @@ class vWeekday(str):
         value,
         encoding=DEFAULT_ENCODING,
         /,
-        params: Optional[dict[str, Any]] = None,
+        params: dict[str, Any] | None = None,
     ):
         if params is None:
             params = {}
@@ -1279,7 +1279,7 @@ class vFrequency(str):
         value,
         encoding=DEFAULT_ENCODING,
         /,
-        params: Optional[dict[str, Any]] = None,
+        params: dict[str, Any] | None = None,
     ):
         if params is None:
             params = {}
@@ -1332,7 +1332,7 @@ class vMonth(int):
     params: Parameters
 
     def __new__(
-        cls, month: Union[str, int], /, params: Optional[dict[str, Any]] = None
+        cls, month: Union[str, int], /, params: dict[str, Any] | None = None
     ):
         if params is None:
             params = {}
@@ -1550,7 +1550,7 @@ class vRecur(CaselessDict):
         }
     )
 
-    def __init__(self, *args, params: Optional[dict[str, Any]] = None, **kwargs):
+    def __init__(self, *args, params: dict[str, Any] | None = None, **kwargs):
         if params is None:
             params = {}
         if args and isinstance(args[0], str):
@@ -1789,7 +1789,7 @@ class vUri(str):
         value: str,
         encoding: str = DEFAULT_ENCODING,
         /,
-        params: Optional[dict[str, Any]] = None,
+        params: dict[str, Any] | None = None,
     ):
         if params is None:
             params = {}
@@ -1874,7 +1874,7 @@ class vGeo:
         self,
         geo: tuple[float | str | int, float | str | int],
         /,
-        params: Optional[dict[str, Any]] = None,
+        params: dict[str, Any] | None = None,
     ):
         """Create a new vGeo from a tuple of (latitude, longitude).
 
@@ -1970,7 +1970,7 @@ class vUTCOffset:
     # it, rather than let the exception
     # propagate upwards
 
-    def __init__(self, td, /, params: Optional[dict[str, Any]] = None):
+    def __init__(self, td, /, params: dict[str, Any] | None = None):
         if params is None:
             params = {}
         if not isinstance(td, timedelta):
@@ -2044,7 +2044,7 @@ class vInline(str):
         value,
         encoding=DEFAULT_ENCODING,
         /,
-        params: Optional[dict[str, Any]] = None,
+        params: dict[str, Any] | None = None,
     ):
         if params is None:
             params = {}
@@ -2206,8 +2206,27 @@ class TypesFactory(CaselessDict):
         }
     )
 
-    def for_property(self, name):
-        """Returns a the default type for a property or parameter"""
+    def for_property(self, name, value_param: str | None = None) -> type:
+        """Returns the type class for a property or parameter.
+
+        Args:
+            name: Property or parameter name
+            value_param: Optional ``VALUE`` parameter, for example, "DATE", "DATE-TIME", or other string.
+
+        Returns:
+            The appropriate value type class
+        """
+        # Special case: RDATE and EXDATE always use vDDDLists to support list values
+        # regardless of the VALUE parameter
+        if name.upper() in ("RDATE", "EXDATE"):
+            return self["date-time-list"]
+
+        # Only use VALUE parameter for known properties that support multiple value types
+        # (like DTSTART, DTEND, etc. which can be DATE or DATE-TIME)
+        # For unknown/custom properties, always use the default type from types_map
+        if value_param and name in self.types_map:
+            if value_param in self:
+                return self[value_param]
         return self[self.types_map.get(name, "text")]
 
     def to_ical(self, name, value):

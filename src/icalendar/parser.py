@@ -139,7 +139,7 @@ def validate_param_value(value, quoted=True):
 
 # chars presence of which in parameter value will be cause the value
 # to be enclosed in double-quotes
-QUOTABLE = re.compile("[,;:’]")# noqa: RUF001
+QUOTABLE = re.compile("[,;:’]")  # noqa: RUF001
 
 
 def dquote(val, always_quote=False):
@@ -191,7 +191,7 @@ def single_string_parameter(func):
         """Get the value."""
         return self.get(name)
 
-    def fset(self: Parameters, value: str|None):
+    def fset(self: Parameters, value: str | None):
         """Set the value"""
         if value is None:
             fdel(self)
@@ -203,6 +203,7 @@ def single_string_parameter(func):
         self.pop(name, None)
 
     return property(fget, fset, fdel, doc=func.__doc__)
+
 
 class Parameters(CaselessDict):
     """Parser and generator of Property parameter strings. It knows nothing of
@@ -224,7 +225,7 @@ class Parameters(CaselessDict):
     # this is quoted should one of the values be present
     quote_also = {
         # This is escaped in the RFC
-        "CN" : " '",
+        "CN": " '",
     }
 
     def params(self):
@@ -242,11 +243,9 @@ class Parameters(CaselessDict):
         for key, value in items:
             upper_key = key.upper()
             check_quoteable_characters = self.quote_also.get(key.upper())
-            always_quote = (
-                upper_key in self.always_quoted or (
-                    check_quoteable_characters and
-                    any(c in value for c in check_quoteable_characters)
-                )
+            always_quote = upper_key in self.always_quoted or (
+                check_quoteable_characters
+                and any(c in value for c in check_quoteable_characters)
             )
             quoted_value = param_value(value, always_quote=always_quote)
             if isinstance(quoted_value, str):
@@ -328,6 +327,23 @@ def unescape_string(val):
         .replace("%3A", ":")
         .replace("%3B", ";")
         .replace("%5C", "\\")
+    )
+
+
+_unescape_backslash_regex = re.compile(r"\\([\\,;:nN])")
+
+
+def unescape_backslash(val: str):
+    r"""Unescape backslash sequences in iCalendar text.
+
+    Unlike :py:meth:`unescape_string`, this only handles actual backslash escapes
+    per :rfc:`5545`, not URL encoding. This preserves URL-encoded values
+    like ``%3A`` in URLs.
+
+    Processes backslash escape sequences in a single pass using regex matching.
+    """
+    return _unescape_backslash_regex.sub(
+        lambda m: "\n" if m.group(1) in "nN" else m.group(1), val
     )
 
 
@@ -428,37 +444,69 @@ class Contentline(str):
             return cls(f"{name};{params}:{values}")
         return cls(f"{name}:{values}")
 
-    def parts(self):
-        """Split the content line up into (name, parameters, values) parts."""
+    def parts(self) -> tuple[str, Parameters, str]:
+        """Split the content line into ``name``, ``parameters``, and ``values`` parts.
+
+        Properly handles escaping with backslashes and double-quote sections
+        to avoid corrupting URL-encoded characters in values.
+
+        Example with parameter:
+
+        .. code-block:: text
+
+            DESCRIPTION;ALTREP="cid:part1.0001@example.org":The Fall'98 Wild
+
+        Example without parameters:
+
+        .. code-block:: text
+
+            DESCRIPTION:The Fall'98 Wild
+        """
         try:
-            st = escape_string(self)
-            name_split = None
-            value_split = None
-            in_quotes = False
-            for i, ch in enumerate(st):
-                if not in_quotes:
-                    if ch in ":;" and not name_split:
-                        name_split = i
-                    if ch == ":" and not value_split:
-                        value_split = i
-                if ch == '"':
+            name_split: int | None = None
+            value_split: int | None = None
+            in_quotes: bool = False
+            escaped: bool = False
+
+            for i, ch in enumerate(self):
+                if ch == '"' and not escaped:
                     in_quotes = not in_quotes
-            name = unescape_string(st[:name_split])
-            if not name:
-                raise ValueError("Key name is required")  # noqa: TRY301
-            validate_token(name)
+                elif ch == "\\" and not in_quotes:
+                    escaped = True
+                    continue
+                elif not in_quotes and not escaped:
+                    # Find first delimiter for name
+                    if ch in ":;" and name_split is None:
+                        name_split = i
+                    # Find value delimiter (first colon)
+                    if ch == ":" and value_split is None:
+                        value_split = i
+
+                escaped = False
+
+            # Validate parsing results
             if not value_split:
-                value_split = i + 1
+                # No colon found - value is empty, use end of string
+                value_split = len(self)
+
+            # Extract name - if no delimiter,
+            #   take whole string for validate_token to reject
+            name = self[:name_split] if name_split else self
+            validate_token(name)
+
             if not name_split or name_split + 1 == value_split:
+                # No delimiter or empty parameter section
                 raise ValueError("Invalid content line")  # noqa: TRY301
-            params = Parameters.from_ical(
-                st[name_split + 1 : value_split], strict=self.strict
-            )
+            # Parse parameters - they still need to be escaped/unescaped
+            # for proper handling of commas, semicolons, etc. in parameter values
+            param_str = escape_string(self[name_split + 1 : value_split])
+            params = Parameters.from_ical(param_str, strict=self.strict)
             params = Parameters(
                 (unescape_string(key), unescape_list_or_string(value))
                 for key, value in iter(params.items())
             )
-            values = unescape_string(st[value_split + 1 :])
+            # Unescape backslash sequences in values but preserve URL encoding
+            values = unescape_backslash(self[value_split + 1 :])
         except ValueError as exc:
             raise ValueError(
                 f"Content line could not be parsed into parts: '{self}': {exc}"
@@ -523,6 +571,7 @@ __all__ = [
     "q_split",
     "rfc_6868_escape",
     "rfc_6868_unescape",
+    "unescape_backslash",
     "unescape_char",
     "unescape_list_or_string",
     "unescape_string",

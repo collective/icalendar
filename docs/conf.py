@@ -9,6 +9,7 @@ SRC = HERE.parent / "src"
 sys.path.insert(0, str(SRC))  # update docs from icalendar source for livehtml
 
 extensions = [
+    "sphinx.ext.apidoc",
     "sphinx.ext.autodoc",
     "sphinx.ext.coverage",
     "sphinx.ext.viewcode",
@@ -34,6 +35,9 @@ release = version = ".".join(v)
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
+exclude_patterns = [
+    "reference/api/modules.rst",
+]
 html_theme = "pydata_sphinx_theme"
 html_theme_options = {
     "icon_links": [
@@ -97,6 +101,21 @@ intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
 }
 
+
+# -- linkcheck configuration ----------------------------------
+# Ignore localhost
+linkcheck_ignore = [
+    # Ignore pages that require authentication
+    r"https://app.readthedocs.org/dashboard/icalendar/users/create/",
+    r"https://github.com/collective/icalendar/fork",
+    r"https://github.com/collective/icalendar/settings/",
+    r"https://pypi.org/manage/project/icalendar/collaboration/",
+    # Ignore specific anchors
+    r"https://github.com/collective/icalendar/blob/main/README.rst#related-projects",
+]
+linkcheck_anchors = True
+linkcheck_timeout = 5
+linkcheck_retries = 1
 
 # -- sphinx-reredirects configuration ----------------------------------
 # https://documatt.com/sphinx-reredirects/usage.html
