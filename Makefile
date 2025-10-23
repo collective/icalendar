@@ -60,7 +60,10 @@ html: dev  ## Build html
 .PHONY: livehtml
 livehtml: dev  ## Rebuild Sphinx documentation on changes, with live-reload in the browser
 	cd "$(DOCS_DIR)" && ${SPHINXAUTOBUILD} \
-		--ignore "*.swp" \
+		--watch "../src/icalendar/" \
+		--re-ignore ".*.swp|.*.typed" \
+		--ignore "../src/icalendar/tests" \
+		--ignore "../src/icalendar/fuzzing" \
 		--port 8050 \
 		-b html . "$(BUILDDIR)/html" $(SPHINXOPTS) $(O)
 
