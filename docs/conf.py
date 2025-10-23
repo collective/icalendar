@@ -9,6 +9,7 @@ SRC = HERE.parent / "src"
 sys.path.insert(0, str(SRC))  # update docs from icalendar source for livehtml
 
 extensions = [
+    "sphinx.ext.apidoc",
     "sphinx.ext.autodoc",
     "sphinx.ext.coverage",
     "sphinx.ext.viewcode",
@@ -34,7 +35,9 @@ release = version = ".".join(v)
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-exclude_patterns = ["reference/api/modules.rst"]
+exclude_patterns = [
+    "reference/api/modules.rst",
+]
 html_theme = "pydata_sphinx_theme"
 html_theme_options = {
     "icon_links": [

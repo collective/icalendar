@@ -130,9 +130,10 @@ test: clean linkcheckbroken  ## Clean docs build, then run vale and linkcheckbro
 .PHONY: apidoc
 apidoc: dev  ## Generate API documentation source files
 	cd $(DOCS_DIR) && $(SPHINXAPIDOC) \
- 		-f -M -e -a --remove-old \
+ 		-f -M -e --remove-old \
  		-o reference/api ../src \
- 		../src/icalendar/tests
+ 		../src/icalendar/tests \
+ 		../src/icalendar/timezone/equivalent_timezone_ids_result.py
 
 .PHONY: all
 all: clean linkcheck html  ## Clean docs build, then run linkcheck, and build html
