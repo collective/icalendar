@@ -45,7 +45,7 @@ Contributors
 - Dai MIKURUBE <dmikurube@acm.org>
 - Dalton Durst <github@daltondur.st>
 - Dan Stovall <dbstovall@gmail.com>
-- David Venhoff <https://github.com/david-venhoff>
+- `David Venhoff <https://github.com/david-venhoff>`_
 - Eric Hanchrow <erich@cozi.com>
 - Eric Wieser <wieser.eric@gmail.com>
 - Erik Simmler <tgecho@gmail.com>
@@ -53,7 +53,7 @@ Contributors
 - `fitnr <https://github.com/fitnr>`_
 - George V. Reilly <george@reilly.org>
 - hajdbo <boris@hajduk.org>
-- ilya <ilya@boltnev-pc.(none)>
+- ilya
 - Jannis Leidel <jannis@leidel.info>
 - Jeffrey Whewhetu <jeffwhewhetu@gmail.com>
 - Jeroen F.J. Laros <jlaros@fixedpoint.nl>
