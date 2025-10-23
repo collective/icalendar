@@ -334,7 +334,7 @@ def unescape_backslash(val):
     """Unescape backslash sequences in iCalendar text.
 
     Unlike unescape_string(), this only handles actual backslash escapes
-    per RFC 5545, not URL encoding. This preserves URL-encoded values
+    per :rfc:`5545`, not URL encoding. This preserves URL-encoded values
     like %3A in URLs.
 
     Uses a placeholder for escaped backslashes (\\\\) to prevent them from
