@@ -456,7 +456,9 @@ class Contentline(str):
         Properly handles escaping with backslashes and double-quote sections
         to avoid corrupting URL-encoded characters in values.
 
-        Example with parameter::
+        Example with parameter:
+        
+        .. code-block:: text
 
             DESCRIPTION;ALTREP="cid:part1.0001@example.org":The Fall'98 Wild
 
