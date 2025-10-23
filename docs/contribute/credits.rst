@@ -45,7 +45,7 @@ Contributors
 - Dai MIKURUBE <dmikurube@acm.org>
 - Dalton Durst <github@daltondur.st>
 - Dan Stovall <dbstovall@gmail.com>
-- David Venhoff <https://github.com/david-venhoff>
+- `David Venhoff <https://github.com/david-venhoff>`_
 - Eric Hanchrow <erich@cozi.com>
 - Eric Wieser <wieser.eric@gmail.com>
 - Erik Simmler <tgecho@gmail.com>
@@ -53,7 +53,7 @@ Contributors
 - `fitnr <https://github.com/fitnr>`_
 - George V. Reilly <george@reilly.org>
 - hajdbo <boris@hajduk.org>
-- ilya <ilya@boltnev-pc.(none)>
+- ilya
 - Jannis Leidel <jannis@leidel.info>
 - Jeffrey Whewhetu <jeffwhewhetu@gmail.com>
 - Jeroen F.J. Laros <jlaros@fixedpoint.nl>
@@ -116,7 +116,7 @@ Complete list
 
 Although this list might not be complete, as some contributors either didn't know that they could add their name to this file or didn't want to be added, you can find out who contributed to icalendar.
 
-On GitHub, from the icalendar home page, click the link [Contributors](https://github.com/collective/icalendar/graphs/contributors).
+On GitHub, from the icalendar home page, click the link `Contributors <https://github.com/collective/icalendar/graphs/contributors>`_.
 
 Alternatively from your local git checkout, issue the following command, which prints a list of all contributors sorted by their name and commit email address, and the count of commits for each one.
 
@@ -127,8 +127,7 @@ Alternatively from your local git checkout, issue the following command, which p
 
 History
 -------
-`Max M <http://www.mxm.dk>`_ had often needed to parse and generate iCalendar files. Finally, he got
-tired of writing ad-hoc tools. This package is his attempt at making an
-iCalendar package for Python. The inspiration has come from the email package
-in the standard lib, which he thinks is pretty simple, yet efficient and
-powerful.
+`Max M <http://www.mxm.dk>`_ had often needed to parse and generate iCalendar files.
+Finally, he got tired of writing ad-hoc tools.
+This package is his attempt at making an iCalendar package for Python.
+The inspiration has come from the email package in the standard library, which he thinks is pretty simple, yet efficient and powerful.
