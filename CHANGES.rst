@@ -37,6 +37,7 @@ Minor changes:
 - Bump ``github/codeql-action`` from 3 to 4 in CI fuzzing workflow.
 - Update LICENSE file heading formatting.
 - Document ``icalendar.version`` module.
+- Use ``CONTRIBUTING.md`` in favour of ``.rst`` file.
 
 Breaking changes:
 
