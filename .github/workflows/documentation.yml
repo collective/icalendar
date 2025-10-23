@@ -42,7 +42,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Create Python virtual environment, install requirements
-        run: make dev PYTHONVERSION=${{ matrix.python-version }}
+        run: make .venv PYTHONVERSION=${{ matrix.python-version }}
 
       - name: Check for broken links
         run: make linkcheckbroken PYTHONVERSION=${{ matrix.python-version }}

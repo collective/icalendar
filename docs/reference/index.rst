@@ -9,7 +9,6 @@ API reference
     :maxdepth: 2
 
     api/icalendar
-    api/modules
 
 
 Design reference

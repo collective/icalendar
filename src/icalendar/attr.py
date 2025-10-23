@@ -101,7 +101,8 @@ def _get_rdates(
         You cannot modify the RDATE value by modifying the result.
         Use :func:`icalendar.cal.Component.add` to add values.
 
-        If you want to compute recurrences, have a look at :ref:`Related projects`.
+        If you want to compute recurrences, have a look at
+        `Related Projects <https://github.com/collective/icalendar/blob/main/README.rst#related-projects>`_.
 
     """
     result = []
@@ -190,7 +191,8 @@ def _get_exdates(self: Component) -> list[date | datetime]:
         You cannot modify the EXDATE value by modifying the result.
         Use :func:`icalendar.cal.Component.add` to add values.
 
-        If you want to compute recurrences, have a look at :ref:`Related projects`.
+        If you want to compute recurrences, have a look at
+        `Related Projects <https://github.com/collective/icalendar/blob/main/README.rst#related-projects>`_.
 
     """
     result = []
@@ -308,7 +310,8 @@ def _get_rrules(self: Component) -> list[vRecur]:
         You cannot modify the RRULE value by modifying the result.
         Use :func:`icalendar.cal.Component.add` to add values.
 
-        If you want to compute recurrences, have a look at :ref:`Related projects`.
+        If you want to compute recurrences, have a look at
+        `Related Projects <https://github.com/collective/icalendar/blob/main/README.rst#related-projects>`_.
 
     """  # noqa: E501
     rrules = self.get("RRULE", [])

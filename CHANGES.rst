@@ -170,7 +170,7 @@ Breaking changes:
 
 New features:
 
-- Add :ref:`Security Policy`
+- Add `Security Policy <https://github.com/collective/icalendar/blob/main/SECURITY.md>`_
 - Python types in documentation now link to their documentation pages using ``intersphinx``.
 
 6.1.0 (2024-11-22)

@@ -142,9 +142,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         git checkout main
         git pull
         git add CHANGES.rst
-        git commit -m"Add new CHANGELOG section for future release
-
-        See https://icalendar.readthedocs.io/en/latest/maintenance.html#new-releases"
+        git commit -m "Add new CHANGELOG section for future release"
         git push upstream main # could be origin or whatever reference
 
 Links
@@ -172,4 +170,4 @@ When adding support for a new Python version, or removing support for an old one
 :file:`docs/maintenance.rst`
     Update this list if any new files need to be modified.
 
-Remember to test the changes, and update any documentation that mentions supported Python versions.
+Remember to write tests that completely cover the changes, and update any documentation that mentions supported Python versions.
