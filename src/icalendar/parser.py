@@ -335,7 +335,7 @@ def unescape_backslash(val):
 
     Unlike :py:meth:`unescape_string`, this only handles actual backslash escapes
     per :rfc:`5545`, not URL encoding. This preserves URL-encoded values
-    like %3A in URLs.
+    like ``%3A`` in URLs.
 
     Uses a placeholder for escaped backslashes (``\\\\``) to prevent them from
     being processed during other escape sequence replacements.
