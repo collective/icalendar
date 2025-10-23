@@ -462,7 +462,9 @@ class Contentline(str):
 
             DESCRIPTION;ALTREP="cid:part1.0001@example.org":The Fall'98 Wild
 
-        Example without parameters::
+        Example without parameters:
+        
+        .. code-block:: text
 
             DESCRIPTION:The Fall'98 Wild
         """
