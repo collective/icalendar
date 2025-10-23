@@ -333,7 +333,7 @@ def unescape_string(val):
 def unescape_backslash(val):
     """Unescape backslash sequences in iCalendar text.
 
-    Unlike unescape_string(), this only handles actual backslash escapes
+    Unlike :py:meth:`unescape_string`, this only handles actual backslash escapes
     per :rfc:`5545`, not URL encoding. This preserves URL-encoded values
     like %3A in URLs.
 
