@@ -38,6 +38,7 @@ Minor changes:
 - Add docstring for ``vDatetime``. See `Issue 742 <https://github.com/collective/icalendar/issues/742>`_.
 - Update LICENSE file heading formatting.
 - Document ``icalendar.version`` module.
+- Use ``CONTRIBUTING.md`` in favour of ``.rst`` file.
 
 Breaking changes:
 
