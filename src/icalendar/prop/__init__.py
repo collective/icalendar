@@ -808,15 +808,53 @@ class vDate(TimeBase):
 
 
 class vDatetime(TimeBase):
-    """Render and generates icalendar datetime format.
+    """Date-Time
 
-    vDatetime is timezone aware and uses a timezone library.
-    When a vDatetime object is created from an
-    ical string, you can pass a valid timezone identifier. When a
-    vDatetime object is created from a python datetime object, it uses the
-    tzinfo component, if present. Otherwise a timezone-naive object is
-    created. Be aware that there are certain limitations with timezone naive
-    DATE-TIME components in the icalendar standard.
+    Value Name:  DATE-TIME
+
+    Purpose:  This value type is used to identify values that specify a
+      precise calendar date and time of day. The format is based on
+      the ISO.8601.2004 complete representation.
+
+    Format:
+            YYYYMMDDTHHMMSS
+
+    Descripiton: vDatetime is timezone aware and uses a timezone library.
+       When a vDatetime object is created from an
+       ical string, you can pass a valid timezone identifier. When a
+       vDatetime object is created from a python datetime object, it uses the
+       tzinfo component, if present. Otherwise a timezone-naive object is
+       created. Be aware that there are certain limitations with timezone naive
+       DATE-TIME components in the icalendar standard.
+
+    Example 1:  The following represents March 2, 2021 at 10:15 with local time:
+
+    .. code-block:: pycon
+
+       >>> from icalendar import vDatetime
+       >>> datetime = vDatetime.from_ical("20210302T101500")
+       >>> datetime.tzname()
+       >>> datetime.year
+       2021
+       >>> datetime.minute
+       15
+
+    Example 2:  The following represents March 2, 2021 at 10:15 in New York:
+
+    .. code-block:: pycon
+
+       >>> datetime = vDatetime.from_ical("20210302T101500", 'America/New_York')
+       >>> datetime.tzname()
+       'EST'
+
+    Example 3:  The following represents March 2, 2021 at 10:15 in Berlin:
+
+    .. code-block:: pycon
+
+       >>> from zoneinfo import ZoneInfo
+       >>> timezone = ZoneInfo("Europe/Berlin")
+       >>> vDatetime.from_ical("20210302T101500", timezone)
+       datetime.datetime(2021, 3, 2, 10, 15, tzinfo=ZoneInfo(key='Europe/Berlin'))
     """
 
     params: Parameters
@@ -843,28 +881,7 @@ class vDatetime(TimeBase):
 
     @staticmethod
     def from_ical(ical, timezone=None):
-        """Create a datetime from the RFC string.
-
-        Format:
-
-        .. code-block:: text
-
-            YYYYMMDDTHHMMSS
-
-        .. code-block:: pycon
-
-            >>> from icalendar import vDatetime
-            >>> vDatetime.from_ical("20210302T101500")
-            datetime.datetime(2021, 3, 2, 10, 15)
-
-            >>> vDatetime.from_ical("20210302T101500", "America/New_York")
-            datetime.datetime(2021, 3, 2, 10, 15, tzinfo=ZoneInfo(key='America/New_York'))
-
-            >>> from zoneinfo import ZoneInfo
-            >>> timezone = ZoneInfo("Europe/Berlin")
-            >>> vDatetime.from_ical("20210302T101500", timezone)
-            datetime.datetime(2021, 3, 2, 10, 15, tzinfo=ZoneInfo(key='Europe/Berlin'))
-        """  # noqa: E501
+        """Create a datetime from the RFC string."""
         tzinfo = None
         if isinstance(timezone, str):
             tzinfo = tzp.timezone(timezone)
