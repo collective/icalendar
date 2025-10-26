@@ -29,6 +29,7 @@ if TYPE_CHECKING:
     from icalendar.cal.event import Event
     from icalendar.cal.free_busy import FreeBusy
     from icalendar.cal.todo import Todo
+    from icalendar.prop import vUid, vUri, vXmlReference
 
 
 class Calendar(Component):
@@ -523,6 +524,7 @@ Description:
         description: str | None = None,
         language: str | None = None,
         last_modified: date | datetime | None = None,
+        links: list[str | vXmlReference | vUri | vUid] | None = None,
         method: str | None = None,
         name: str | None = None,
         organization: str | None = None,
@@ -544,6 +546,7 @@ Description:
             description: The :attr:`description` of the calendar.
             language: The language for the calendar. Used to generate localized `prodid`.
             last_modified: The :attr:`Component.last_modified` of the calendar.
+            links: The :attr:`links` of the calendar.
             method: The :attr:`method` of the calendar.
             name: The :attr:`calendar_name` of the calendar.
             organization: The organization name. Used to generate `prodid` if not provided.
@@ -564,7 +567,7 @@ Description:
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """  # noqa: E501
-        calendar = cls()
+        calendar: Calendar = super().new(last_modified=last_modified)
 
         # Generate prodid if not provided but organization is given
         if prodid is None and organization:
@@ -586,7 +589,7 @@ Description:
         calendar.url = url
         calendar.refresh_interval = refresh_interval
         calendar.source = source
-        calendar.last_modified = last_modified
+        calendar.links = links
         return calendar
 
     def validate(self):

@@ -49,7 +49,7 @@ from icalendar.cal.examples import get_example
 if TYPE_CHECKING:
     from icalendar.alarms import Alarms
     from icalendar.enums import CLASS, STATUS, TRANSP
-    from icalendar.prop import vCalAddress
+    from icalendar.prop import vCalAddress, vUid, vUri, vXmlReference
     from icalendar.prop.conference import Conference
 
 
@@ -435,6 +435,7 @@ class Event(Component):
         description: str | None = None,
         end: date | datetime | None = None,
         last_modified: date | None = None,
+        links: list[str | vXmlReference | vUri | vUid] | None = None,
         location: str | None = None,
         organizer: vCalAddress | str | None = None,
         priority: int | None = None,
@@ -462,6 +463,7 @@ class Event(Component):
             description: The :attr:`description` of the event.
             end: The :attr:`end` of the event.
             last_modified: The :attr:`Component.last_modified` of the event.
+            links: The :attr:`links` of the event.
             location: The :attr:`location` of the event.
             organizer: The :attr:`organizer` of the event.
             priority: The :attr:`priority` of the event.
@@ -484,7 +486,7 @@ class Event(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        event = super().new(
+        event: Event = super().new(
             stamp=stamp if stamp is not None else cls._utc_now(),
             created=created,
             last_modified=last_modified,
@@ -508,6 +510,7 @@ class Event(Component):
         event.status = status
         event.attendees = attendees
         event.conferences = conferences
+        event.links = links
         if cls._validate_new:
             cls._validate_start_and_end(start, end)
         return event

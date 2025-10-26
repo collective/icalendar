@@ -4,6 +4,7 @@ Related:
 
 - :rfc:`5545`, Section 3.2. Property Parameters
 - :rfc:`7986`, Section 6. Property Parameters
+- :rfc:`9253`
 - https://github.com/collective/icalendar/issues/798
 """
 
@@ -58,8 +59,11 @@ def string_parameter(
             return default()
         return convert(value) if convert else value
 
-    def fset(self: IcalendarProperty, value: str):
-        self.params[name] = convert_to(value) if convert_to else value
+    def fset(self: IcalendarProperty, value: str | None):
+        if value is None:
+            fdel(self)
+        else:
+            self.params[name] = convert_to(value) if convert_to else value
 
     def fdel(self: IcalendarProperty):
         self.params.pop(name, None)

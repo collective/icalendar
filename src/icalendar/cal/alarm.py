@@ -24,7 +24,7 @@ from icalendar.cal.component import Component
 if TYPE_CHECKING:
     import uuid
 
-    from icalendar.prop import vCalAddress
+    from icalendar.prop import vCalAddress, vUid, vUri, vXmlReference
 
 
 class Alarm(Component):
@@ -250,6 +250,7 @@ class Alarm(Component):
         /,
         attendees: Optional[list[vCalAddress]] = None,
         description: Optional[str] = None,
+        links: list[str | vXmlReference | vUri | vUid] | None = None,
         summary: Optional[str] = None,
         uid: Optional[str | uuid.UUID] = None,
     ):
@@ -260,6 +261,7 @@ class Alarm(Component):
         Arguments:
             attendees: The :attr:`attendees` of the alarm.
             description: The :attr:`description` of the alarm.
+            links: The :attr:`links` of the alarm.
             summary: The :attr:`summary` of the alarm.
             uid: The :attr:`uid` of the alarm.
 
@@ -271,11 +273,12 @@ class Alarm(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        alarm = super().new()
+        alarm: Alarm = super().new()
         alarm.summary = summary
         alarm.description = description
         alarm.uid = uid
         alarm.attendees = attendees
+        alarm.links = links
         return alarm
 
 

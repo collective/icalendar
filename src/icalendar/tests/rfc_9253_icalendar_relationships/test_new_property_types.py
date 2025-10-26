@@ -104,3 +104,73 @@ def test_not_x_pointer(no_x_pointer):
     xml = vXmlReference("http://asd#" + no_x_pointer)
     with pytest.raises(ValueError):
         xml.x_pointer  # noqa: B018
+
+
+mark_valid_values = pytest.mark.parametrize(
+    ("name", "value"),
+    [
+        ("LABEL", None),
+        ("LABEL", "Venue"),
+        ("LANGUAGE", None),
+        ("LANGUAGE", "de"),
+        ("LANGUAGE", "en-gb"),
+        ("LINKREL", None),
+        ("LINKREL", "SOURCE"),
+        ("LINKREL", "https://example.com/linkrel/derivedFrom"),
+        ("LINKREL", "icon"),
+        ("FMTTYPE", None),
+        ("FMTTYPE", "text/html"),
+    ],
+)
+
+
+def vUri_example():
+    """New example instance."""
+    return vUri("http://example.com")
+
+
+def vXmlReference_example():
+    """New example instance."""
+    return vXmlReference("http://example.com")
+
+
+mark_new_prop = pytest.mark.parametrize(
+    "new_prop", [vUri_example, vUid.new, vXmlReference_example]
+)
+
+
+@mark_new_prop
+@mark_valid_values
+def test_set_attributes(new_prop, name, value):
+    """Set the values and test"""
+    prop = new_prop()
+    assert hasattr(prop, name)
+    setattr(prop, name, value)
+    print(prop.params)
+    assert getattr(prop, name) == value
+    if value is None:
+        assert name not in prop.params
+    else:
+        assert prop.params[name] == value
+
+
+@mark_new_prop
+@mark_valid_values
+def test_delete_attribute_setting_to_none(new_prop, name, value):
+    """The attribute can be deleted by setting to None."""
+    prop = new_prop()
+    setattr(prop, name, value)
+    setattr(prop, name, None)
+    assert name not in prop.params
+    assert getattr(prop, name) is None
+
+
+@mark_new_prop
+@mark_valid_values
+def test_delete_attribute(new_prop, name, value):
+    """The attribute can be deleted."""
+    prop = new_prop()
+    setattr(prop, name, value)
+    delattr(prop, name)
+    assert name not in prop.params
+    assert getattr(prop, name) is None

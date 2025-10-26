@@ -31,7 +31,7 @@ from icalendar.error import IncompleteComponent
 
 if TYPE_CHECKING:
     from icalendar.enums import CLASS, STATUS
-    from icalendar.prop import vCalAddress
+    from icalendar.prop import vCalAddress, vUid, vUri, vXmlReference
 
 
 class Journal(Component):
@@ -185,6 +185,7 @@ class Journal(Component):
         created: Optional[date] = None,
         description: Optional[str | Sequence[str]] = None,
         last_modified: Optional[date] = None,
+        links: list[str | vXmlReference | vUri | vUid] | None = None,
         organizer: Optional[vCalAddress | str] = None,
         sequence: Optional[int] = None,
         stamp: Optional[date] = None,
@@ -208,6 +209,7 @@ class Journal(Component):
             description: The :attr:`description` of the journal.
             end: The :attr:`end` of the journal.
             last_modified: The :attr:`Component.last_modified` of the journal.
+            links: The :attr:`links` of the journal.
             organizer: The :attr:`organizer` of the journal.
             sequence: The :attr:`sequence` of the journal.
             stamp: The :attr:`Component.stamp` of the journal.
@@ -227,7 +229,7 @@ class Journal(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        journal = super().new(
+        journal: Journal = super().new(
             stamp=stamp if stamp is not None else cls._utc_now(),
             created=created,
             last_modified=last_modified,
@@ -247,6 +249,7 @@ class Journal(Component):
         journal.start = start
         journal.status = status
         journal.attendees = attendees
+        journal.links = links
         return journal
 
 

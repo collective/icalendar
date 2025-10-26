@@ -1820,6 +1820,8 @@ class vUid(vText):
 
             >>> from icalendar import vUid
             >>> vUid.new()
+            vUid('d755cef5-2311-46ed-a0e1-6733c9e15c63')
+
         """
         return vUid(uuid.uuid4())
 

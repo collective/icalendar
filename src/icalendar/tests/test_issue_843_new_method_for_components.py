@@ -32,6 +32,7 @@ from icalendar import (
 )
 from icalendar.compatibility import ZoneInfo
 from icalendar.enums import BUSYTYPE
+from icalendar.prop import vUid, vUri, vXmlReference
 
 from .conftest import NOW_UTC, UID_DEFAULT
 
@@ -86,6 +87,16 @@ COMPONENTS_CONTACT = {Event, Todo, Journal, FreeBusy, Available, Availability}
 COMPONENTS_START_END = {Event, Todo, FreeBusy, Available, Availability}
 COMPONENTS_STATUS = {Event, Todo, Journal}
 COMPONENTS_ATTENDEES = {Event, Todo, Journal, Alarm}
+COMPONENTS_LINKS = {
+    Alarm,
+    Availability,
+    Available,
+    Calendar,
+    Event,
+    FreeBusy,
+    Journal,
+    Todo,
+}
 
 
 @param_summary_components
@@ -780,6 +791,51 @@ rfc_7986_test_cases = [
 ]
 
 
+rfc_9253_link_values = [
+    vUri("https://123"),
+    vUid("123-123-123"),
+    vXmlReference("http://example.com"),
+]
+rfc_9253_test_cases = [
+    (
+        COMPONENTS_LINKS,
+        "links",
+        "LINK",
+        None,
+        [],
+        False,
+        "setting nothing",
+    ),
+    (
+        COMPONENTS_LINKS,
+        "links",
+        "LINK",
+        [],
+        [],
+        False,
+        "setting nothing",
+    ),
+    (
+        COMPONENTS_LINKS,
+        "links",
+        "LINK",
+        ["https://123"],
+        [vUri("https://123")],
+        True,
+        "set one value",
+    ),
+    (
+        COMPONENTS_LINKS,
+        "links",
+        "LINK",
+        rfc_9253_link_values,
+        rfc_9253_link_values,
+        True,
+        "set several values",
+    ),
+]
+
+
 @pytest.mark.parametrize(
     (
         "component_classes",
@@ -790,7 +846,10 @@ rfc_7986_test_cases = [
         "key_present",
         "message",
     ),
-    automatic_time_test_cases + new_test_cases + rfc_7986_test_cases,
+    automatic_time_test_cases
+    + new_test_cases
+    + rfc_7986_test_cases
+    + rfc_9253_test_cases,
 )
 @pytest.mark.parametrize(
     "create_component_with_property", [component_setter, component_with_new]

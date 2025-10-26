@@ -16,7 +16,9 @@ from icalendar.prop import (
     vDuration,
     vRecur,
     vText,
+    vUid,
     vUri,
+    vXmlReference,
 )
 from icalendar.prop.conference import Conference
 from icalendar.prop.image import Image
@@ -1979,7 +1981,7 @@ def _del_conferences(self: Component):
 conferences_property = property(_get_conferences, _set_conferences, _del_conferences)
 
 
-def _get_links(self: Component) -> list[vUri]:
+def _get_links(self: Component) -> list[vUri | vUid | vXmlReference]:
     """LINK properties as a list.
 
     Purpose:
@@ -2054,15 +2056,69 @@ def _get_links(self: Component) -> list[vUri]:
         .. code-block:: text
 
             LINK;LINKREL="https://example.com/linkrel/costStructure";
-            VALUE=XML-REFERENCE:
-            https://example.com/xmlDocs/bidFramework.xml
-            #xpointer(descendant::CostStruc/range-to(
-            following::CostStrucEND[1]))
+             VALUE=XML-REFERENCE:
+             https://example.com/xmlDocs/bidFramework.xml
+             #xpointer(descendant::CostStruc/range-to(
+             following::CostStrucEND[1]))
+
+        Set a link :class:`icalendar.vUri` to the event page:
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Event, vUri
+            >>> from datetime import datetime
+            >>> link = vUri(
+            ...     "http://example.com/event-page",
+            ...     params={"LINKREL":"SOURCE"}
+            ... )
+            >>> event = Event.new(
+            ...     start=datetime(2025, 9, 17, 12, 0),
+            ...     summary="An Example Event with a page"
+            ... )
+            >>> event.links = [link]
+            >>> print(event.to_ical())
+            BEGIN:VEVENT
+            SUMMARY:An Example Event with a page
+            DTSTART:20250917T120000
+            DTSTAMP:20250517T080612Z
+            UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
+            LINK;LINKREL=SOURCE:http://example.com/event-page
+            END:VEVENT
+
     """
-    return []
+    links = self.get("LINK", [])
+    if not isinstance(links, list):
+        links = [links]
+    return links
 
 
-links_property = property(_get_links)
+def _set_links(
+    self: Component,
+    links: str
+    | vUri
+    | vUid
+    | vXmlReference
+    | None
+    | list[str | vUri | vUid | vXmlReference],
+):
+    """Set the LINKs."""
+    _del_links(self)
+    if links is None:
+        return
+    if isinstance(links, (str, vUri, vUid, vXmlReference)):
+        links = [links]
+    for link in links:
+        if type(link) is str:
+            link = vUri(link, params={"VALUE": "URI"})  # noqa: PLW2901
+        self.add("LINK", link)
+
+
+def _del_links(self: Component):
+    """Delete all links."""
+    self.pop("LINK")
+
+
+links_property = property(_get_links, _set_links, _del_links)
 
 __all__ = [
     "attendees_property",

@@ -38,7 +38,7 @@ if TYPE_CHECKING:
 
     from icalendar.cal.available import Available
     from icalendar.enums import BUSYTYPE, CLASS
-    from icalendar.prop import vCalAddress
+    from icalendar.prop import vCalAddress, vUid, vUri, vXmlReference
 
 
 class Availability(Component):
@@ -246,6 +246,7 @@ class Availability(Component):
         description: Optional[str] = None,
         end: Optional[datetime] = None,
         last_modified: Optional[date] = None,
+        links: list[str | vXmlReference | vUri | vUid] | None = None,
         location: Optional[str] = None,
         organizer: Optional[vCalAddress | str] = None,
         priority: Optional[int] = None,
@@ -268,12 +269,15 @@ class Availability(Component):
             contacts: The :attr:`contacts` of the availability.
             created: The :attr:`Component.created` of the availability.
             description: The :attr:`description` of the availability.
+            end: The :attr:`end` of the availability.
             last_modified: The :attr:`Component.last_modified` of the availability.
+            links: The :attr:`links` of the availability.
             location: The :attr:`location` of the availability.
             organizer: The :attr:`organizer` of the availability.
             sequence: The :attr:`sequence` of the availability.
             stamp: The :attr:`Component.stamp` of the availability.
                 If None, this is set to the current time.
+            start: The :attr:`start` of the availability.
             summary: The :attr:`summary` of the availability.
             uid: The :attr:`uid` of the availability.
                 If None, this is set to a new :func:`uuid.uuid4`.
@@ -287,7 +291,7 @@ class Availability(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        availability = super().new(
+        availability: Availability = super().new(
             stamp=stamp if stamp is not None else cls._utc_now(),
             created=created,
             last_modified=last_modified,
@@ -305,6 +309,7 @@ class Availability(Component):
         availability.comments = comments
         availability.priority = priority
         availability.contacts = contacts
+        availability.links = links
         for subcomponent in components:
             availability.add_component(subcomponent)
         if cls._validate_new:
@@ -320,7 +325,7 @@ class Availability(Component):
                 raise InvalidCalendar(
                     "Availability end must be a datetime with a timezone"
                 )
-            availability._validate_start_and_end(start, end)  # noqa: SLF001
+            availability._validate_start_and_end(start, end)
         availability.start = start
         availability.end = end
         return availability

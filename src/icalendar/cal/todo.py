@@ -47,7 +47,7 @@ from icalendar.cal.component import Component
 if TYPE_CHECKING:
     from icalendar.alarms import Alarms
     from icalendar.enums import CLASS, STATUS
-    from icalendar.prop import vCalAddress
+    from icalendar.prop import vCalAddress, vUid, vUri, vXmlReference
     from icalendar.prop.conference import Conference
 
 
@@ -301,6 +301,7 @@ class Todo(Component):
         description: str | None = None,
         end: date | datetime | None = None,
         last_modified: date | None = None,
+        links: list[str | vXmlReference | vUri | vUid] | None = None,
         location: str | None = None,
         organizer: vCalAddress | str | None = None,
         priority: int | None = None,
@@ -327,6 +328,7 @@ class Todo(Component):
             description: The :attr:`description` of the todo.
             end: The :attr:`end` of the todo.
             last_modified: The :attr:`Component.last_modified` of the todo.
+            links: The :attr:`links` of the todo.
             location: The :attr:`location` of the todo.
             organizer: The :attr:`organizer` of the todo.
             sequence: The :attr:`sequence` of the todo.
@@ -347,7 +349,7 @@ class Todo(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        todo = super().new(
+        todo: Todo = super().new(
             stamp=stamp if stamp is not None else cls._utc_now(),
             created=created,
             last_modified=last_modified,
@@ -370,6 +372,7 @@ class Todo(Component):
         todo.status = status
         todo.attendees = attendees
         todo.conferences = conferences
+        todo.links = links
         if cls._validate_new:
             cls._validate_start_and_end(start, end)
         return todo

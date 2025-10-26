@@ -35,6 +35,8 @@ from .component import Component
 if TYPE_CHECKING:
     from datetime import date
 
+    from icalendar.prop import vUid, vUri, vXmlReference
+
 
 class Available(Component):
     """Sub-component of "VAVAILABILITY from :rfc:`7953`.
@@ -103,6 +105,7 @@ class Available(Component):
         description: Optional[str] = None,
         end: Optional[datetime] = None,
         last_modified: Optional[date] = None,
+        links: list[str | vXmlReference | vUri | vUid] | None = None,
         location: Optional[str] = None,
         sequence: Optional[int] = None,
         stamp: Optional[date] = None,
@@ -120,12 +123,15 @@ class Available(Component):
             contacts: The :attr:`contacts` of the Available component.
             created: The :attr:`Component.created` of the Available component.
             description: The :attr:`description` of the Available component.
+            end: The :attr:`end` of the Available component.
             last_modified: The :attr:`Component.last_modified` of the
                 Available component.
+            links: The :attr:`links` of the Available component.
             location: The :attr:`location` of the Available component.
             sequence: The :attr:`sequence` of the Available component.
             stamp: The :attr:`Component.stamp` of the Available component.
                 If None, this is set to the current time.
+            start: The :attr:`start` of the Available component.
             summary: The :attr:`summary` of the Available component.
             uid: The :attr:`uid` of the Available component.
                 If None, this is set to a new :func:`uuid.uuid4`.
@@ -138,7 +144,7 @@ class Available(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        available = super().new(
+        available: Available = super().new(
             stamp=stamp if stamp is not None else cls._utc_now(),
             created=created,
             last_modified=last_modified,
@@ -151,6 +157,7 @@ class Available(Component):
         available.location = location
         available.comments = comments
         available.contacts = contacts
+        available.links = links
         if cls._validate_new:
             if end is not None and (
                 not isinstance(end, datetime) or end.tzinfo is None
@@ -162,7 +169,7 @@ class Available(Component):
                 raise InvalidCalendar(
                     "Available start must be a datetime with a timezone"
                 )
-            available._validate_start_and_end(start, end)  # noqa: SLF001
+            available._validate_start_and_end(start, end)
         available.start = start
         available.end = end
         return available

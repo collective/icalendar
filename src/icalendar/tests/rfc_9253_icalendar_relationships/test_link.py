@@ -45,17 +45,21 @@ def link_component_class(request):
     return request.param
 
 
-@pytest.fixture(
-    params=[
-        [],
-        [vUri("https://example.com/resource1")],
-    ]
-)
-def links(request, LABEL, LANGUAGE, LINKREL, FMTTYPE):  # noqa: N803
-    """Generate a list of links that can be used."""
+@pytest.fixture
+def link_component(link_component_class):
+    """An instance of the component class to test."""
+    return link_component_class()
 
 
 def test_no_links_by_default(link_component):
     """By default, components have no LINK properties."""
     assert "LINK" not in link_component
     assert link_component.links == []
+
+
+def test_strings_are_converted_to_vUri(link_component):
+    """We set the URI."""
+    link_component.links = ["https://example.com"]
+    assert link_component.links == [vUri("https://example.com")]
+    assert isinstance(link_component.links[0], vUri)
+    assert link_component.links[0].VALUE == "URI"
