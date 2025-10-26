@@ -61,6 +61,7 @@ Contributors
 - Jochen Sprickerhof <icalendar@jochen.sprickerhof.de>
 - Johannes Raggam <johannes@raggam.co.at>
 - Jordan Kiang <jordan@cozi.com>
+- `Jouni K. Seppänen <https://github.com/jkseppan>`_
 - Kamil Mańkowski <kam193@wp.pl>
 - Klaus Klein <kleink+github@kleink.org>
 - Laurent Lasudry <lasudry@gmail.com>
