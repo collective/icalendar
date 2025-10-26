@@ -195,7 +195,7 @@ class Timezone(Component):
         # dstoffset = 0, if current transition is to standard time
         #           = this_utcoffset - prev_standard_utcoffset, otherwise
         transition_info = []
-        for num, (_transtime, _osfrom, osto, name) in enumerate(transitions):
+        for num, (_transtime, osfrom, osto, name) in enumerate(transitions):
             dst_offset = False
             if not dst[name]:
                 dst_offset = timedelta(seconds=0)
@@ -212,7 +212,11 @@ class Timezone(Component):
                         if not dst[transitions[index][3]]:  # [3] is the name
                             dst_offset = osto - transitions[index][2]  # [2] is osto
                             break
-            assert dst_offset is not False
+                # If we still haven't found a STANDARD transition
+                # (only DAYLIGHT exists), calculate dst_offset as the
+                # difference from TZOFFSETFROM. Handles Issue #321.
+                if dst_offset is False:
+                    dst_offset = osto - osfrom
             transition_info.append((osto, dst_offset, name))
         return transition_times, transition_info
 

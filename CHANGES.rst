@@ -70,6 +70,7 @@ New features:
 Bug fixes:
 
 - Fix ``Todo.end`` to return ``start`` for date-only ``DTSTART`` (not ``start + 1 day``). Events keep existing behavior. See `Issue 898 <https://github.com/collective/icalendar/issues/898>`_.
+- Fix ``AssertionError`` when converting ``VTIMEZONE`` components with only ``DAYLIGHT`` subcomponent (no ``STANDARD``) to pytz timezones. The code now handles cases where a timezone definition contains only DST transitions by calculating the DST offset from ``TZOFFSETFROM`` and ``TZOFFSETTO``. Test case contributed by @niccokunzmann in `PR 379 <https://github.com/collective/icalendar/pull/379>`_. See `Issue 321 <https://github.com/collective/icalendar/issues/321>`_.
 - Normalize Conference parameter lists (FEATURE/LABEL/LANGUAGE) to comma-separated values. See `Issue 908 <https://github.com/collective/icalendar/issues/908>`_.
 - Fix read from stdin issue - See `Issue 821 <https://github.com/collective/icalendar/issues/821>`_.
 - Fix invalid calendar: Parsing a date with TZID results in a datetime to not loose the timezone. See `Issue 187 <https://github.com/collective/icalendar/issues/187>`_.
