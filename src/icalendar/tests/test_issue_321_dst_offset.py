@@ -21,9 +21,9 @@ class TestIssue321DstOffset:
     """Test VTIMEZONE conversion with only DAYLIGHT component."""
 
     @pytest.fixture
-    def calendar_with_only_daylight(self, events):
+    def calendar_with_only_daylight(self, calendars):
         """Load calendar with VTIMEZONE containing only DAYLIGHT."""
-        return events.issue_321_assert_dst_offset_is_not_false
+        return calendars.issue_321_assert_dst_offset_is_not_false
 
     def test_vtimezone_with_only_daylight_does_not_raise_assertion(
         self, calendar_with_only_daylight
