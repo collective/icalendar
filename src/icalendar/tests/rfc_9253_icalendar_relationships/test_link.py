@@ -15,6 +15,7 @@ from icalendar import (
     TimezoneStandard,
     Todo,
 )
+from icalendar.prop import vUri
 
 
 @pytest.fixture(
@@ -44,10 +45,14 @@ def link_component_class(request):
     return request.param
 
 
-@pytest.fixture
-def link_component(link_component_class):
-    """An instance of the component class to test."""
-    return link_component_class()
+@pytest.fixture(
+    params=[
+        [],
+        [vUri("https://example.com/resource1")],
+    ]
+)
+def links(request, LABEL, LANGUAGE, LINKREL, FMTTYPE):  # noqa: N803
+    """Generate a list of links that can be used."""
 
 
 def test_no_links_by_default(link_component):

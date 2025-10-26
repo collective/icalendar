@@ -476,6 +476,137 @@ Description:
     convert=_convert_enum(enums.RELTYPE),
 )
 
+LABEL = string_parameter(
+    "LABEL",
+    """LABEL provides a human-readable label.
+
+Conformance:
+    This property parameter is specified in :rfc:`7986`,
+    iCalendar Property Extensions.
+    :rfc:`9253` makes use of this for the LINK property:
+    This parameter maps to the "title"
+    attribute defined in Section 3.4.1 of :rfc:`8288`:
+    LABEL is used to label the destination
+    of a link such that it can be used as a human-readable identifier
+    (e.g., a menu entry) in the language indicated by the LANGUAGE
+    (if present). The LABEL MUST NOT
+    appear more than once in a given link; occurrences after the first
+    MUST be ignored by parsers.
+
+Description:
+    This property parameter MAY be specified on the
+    "CONFERENCE" property.  It is anticipated that other extensions to
+    iCalendar will reuse this property parameter on new properties
+    that they define.  As a result, clients MUST expect to find this
+    property parameter present on many different properties.  It
+    provides a human-readable label that can be presented to calendar
+    users to allow them to discriminate between properties that might
+    be similar or provide additional information for properties that
+    are not self-describing.  The "LANGUAGE" property parameter can be
+    used to specify the language of the text in the parameter value
+    (as per Section 3.2.10 of :rfc:`5545`).
+
+Examples:
+    This is a label of a chat.
+
+    .. code-block: text
+
+        CONFERENCE;VALUE=URI;FEATURE=VIDEO;
+            LABEL="Web video chat, access code=76543";
+            :https://video-chat.example.com/;group-id=1234
+
+""",
+)
+
+FMTTYPE = string_parameter(
+    "FMTTYPE",
+    """FMTTYPE specfies the content type of a referenced object.
+
+Conformance:
+    :rfc:`5545` specifies the FMTTYPE.
+    :rfc:`9253: adds FMTTYPE to LINK properties. In a LINK,
+    FMTTYPE maps to the "type"
+    attribute defined in Section 3.4.1 of :rfc:`8288`.
+    See :rfc:`6838`.
+
+Description:
+    This parameter can be specified on properties that are
+    used to reference an object.  The parameter specifies the media
+    type :rfc:`4288` of the referenced object. For example, on the
+    "ATTACH" property, an FTP type URI value does not, by itself,
+    necessarily convey the type of content associated with the
+    resource.  The parameter value MUST be the text for either an
+    IANA-registered media type or a non-standard media type.
+
+Example:
+    A Microsoft Word document:
+
+    .. code-block:: text
+
+        ATTACH;FMTTYPE=application/msword:ftp://example.com/pub/docs/
+         agenda.doc
+
+    A website:
+
+    .. code-block:: text
+
+        LINK;FMTTYPE=text/html;LINKREL=SOURCE;LABEL=Venue;VALUE=URI:
+         https://example.com/venue
+
+    """,
+)
+
+VALUE = string_parameter(
+    "VALUE",
+    """VALUE explicitly specifies the value type format for a property value.
+
+Conformance:
+    VALUE is specified in :rfc:`5545`.
+
+Description:
+    This parameter specifies the value type and format of
+    the property value.  The property values MUST be of a single value
+    type.  For example, a "RDATE" property cannot have a combination
+    of DATE-TIME and TIME value types.
+
+    If the property's value is the default value type, then this
+    parameter need not be specified.  However, if the property's
+    default value type is overridden by some other allowable value
+    type, then this parameter MUST be specified.
+
+    Applications MUST preserve the value data for x-name and iana-
+    token values that they don't recognize without attempting to
+    interpret or parse the value data.
+
+""",
+)
+
+LINKREL = string_parameter(
+    "LINKREL",
+    """LINKREL
+
+Conformance:
+    LINKREL is specified in :rfc:`9253`.
+    This parameter maps to the link relation type defined in Section 2.1 of :rfc:`8288`.
+
+Description:
+    In the simplest case, a link relation type identifies the semantics
+    of a link.  For example, a link with the relation type "copyright"
+    indicates that the current link context has a copyright resource at
+    the link target.
+
+    Link relation types can also be used to indicate that the target
+    resource has particular attributes, or exhibits particular
+    behaviours; for example, a "service" link implies that the link
+    target can be used as part of a defined protocol (in this case, a
+    service description).
+
+    There are two kinds of relation types: registered and extension.
+    See also `Registered Link Relation Types
+    <https://www.iana.org/assignments/link-relations/link-relations.xhtml>`_.
+""",
+)
+
 __all__ = [
     "ALTREP",
     "CN",
@@ -484,7 +615,10 @@ __all__ = [
     "DELEGATED_TO",
     "DIR",
     "FBTYPE",
+    "FMTTYPE",
+    "LABEL",
     "LANGUAGE",
+    "LINKREL",
     "MEMBER",
     "PARTSTAT",
     "RANGE",
@@ -493,6 +627,7 @@ __all__ = [
     "RSVP",
     "SENT_BY",
     "TZID",
+    "VALUE",
     "quoted_list_parameter",
     "string_parameter",
 ]

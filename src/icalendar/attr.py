@@ -1953,8 +1953,8 @@ def _get_conferences(self: Component) -> list[Conference]:
             ... ]
             >>> print(event.to_ical())
             BEGIN:VEVENT
-            CONFERENCE;FEATURE="PHONE,MODERATOR";LABEL=Moderator dial-in;LANGUAGE=EN:t
-             el:+1-412-555-0123,,,654321
+            CONFERENCE;FEATURE="PHONE,MODERATOR";LABEL=Moderator dial-in;LANGUAGE=EN;V
+             ALUE=URI:tel:+1-412-555-0123,,,654321
             END:VEVENT
 
     """
@@ -2011,12 +2011,17 @@ def _get_links(self: Component) -> list[vUri]:
         - LABEL
             This parameter maps to the "title"
             attribute defined in Section 3.4.1 of :rfc:`8288`.
+            LABEL is used to label the destination
+            of a link such that it can be used as a human-readable identifier
+            (e.g., a menu entry) in the language indicated by the LANGUAGE
+            (if present).
         - LANGUAGE
             This parameter maps to the "hreflang" attribute defined in Section 3.4.1
-            of :rfc:`8288`.
+            of :rfc:`8288`. See :rfc:`5646`. Example: ``en``, ``de-ch``.
         - LINKREL
             This parameter maps to the link relation type defined in Section 2.1 of
-            :rfc:`8288`.
+            :rfc:`8288`. See `Registered Link Relation Types
+            <https://www.iana.org/assignments/link-relations/link-relations.xhtml>`_.
         - FMTTYPE:
             This parameter maps to the "type" attribute defined in Section 3.4.1 of
             :rfc:`8288`.
