@@ -1814,8 +1814,19 @@ class vUid(vText):
 
     @classmethod
     def new(cls):
-        """Create a new UID for convenience."""
+        """Create a new UID for convenience.
+
+        .. code-block:: pycon
+
+            >>> from icalendar import vUid
+            >>> vUid.new()
+        """
         return vUid(uuid.uuid4())
+
+    def __init__(self, uid: str):
+        """Create a vUid."""
+        super().__init__()
+        self.params.setdefault("VALUE", "UID")
 
     @property
     def uid(self) -> str:
@@ -1848,6 +1859,11 @@ class vXmlReference(vUri):
 
     This is defined in :rfc:`9253`, Section 7.
     """
+
+    def __init__(self, xml_reference: str):
+        """Create a new XML reference."""
+        super().__init__()
+        self.params.setdefault("VALUE", "XML-REFERENCE")
 
     @property
     def xml_reference(self) -> str:

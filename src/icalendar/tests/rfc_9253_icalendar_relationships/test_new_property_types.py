@@ -9,7 +9,7 @@
 
 import pytest
 
-from icalendar import vUid, vXmlReference
+from icalendar import vUid, vUri, vXmlReference
 
 
 @pytest.fixture(
@@ -62,15 +62,17 @@ def test_uid_new(test_uid):
     uid_prop = vUid.new()
     assert uid_prop.uid == test_uid
     assert_default_parameters(uid_prop)
+    assert uid_prop.params.value == "UID"
 
 
 def test_vUri_creation(uri):
     """Test creation of a URI property."""
-    uri_prop = vXmlReference(uri)
+    uri_prop = vUri(uri)
     assert str(uri_prop) == uri
     assert uri_prop.ics_value == uri
     assert uri_prop.uri == uri
     assert_default_parameters(uri_prop)
+    assert uri_prop.params.value in ("URI", None)
 
 
 def test_vXmlReference_creation(xml_reference):
@@ -82,6 +84,7 @@ def test_vXmlReference_creation(xml_reference):
     assert xml_prop.uri == uri
     assert_default_parameters(xml_prop)
     assert xml_prop.x_pointer == x_pointer
+    assert xml_prop.params.value == "XML-REFERENCE"
 
 
 def assert_default_parameters(prop):
@@ -90,9 +93,9 @@ def assert_default_parameters(prop):
     assert prop.LANGUAGE is None
     assert prop.FMTTYPE is None
     assert prop.LINKREL is None
-    assert prop.params.value in ("URI", "XML-REFERENCE", "UID")
     assert repr(prop).startswith(prop.__class__.__name__ + "(")
     assert repr(prop).endswith(")")
+    assert prop.VALUE == prop.params.value == prop.params.get("VALUE")
 
 
 @pytest.mark.parametrize("no_x_pointer", ["", "asd)", "xpointer(id('r%C3%A9sum%C3%A9'"])
