@@ -36,7 +36,11 @@ class TestIssue898TodoEnd:
         assert event.end == datetime(2026, 1, 1, 12, 0)
 
     def test_todo_with_date_dtstart_only(self):
-        """Todo with date DTSTART should have end = start (NOT start + 1 day)."""
+        """Todo with date DTSTART should have end = start (NOT start + 1 day).
+
+        The RFC doesn't specify this behavior explicitly.
+        Returning None is another option, but returning start works best.
+        """
         todo = Todo()
         todo.add("UID", "test-todo-date")
         todo.add("DTSTART", date(2026, 1, 1))
