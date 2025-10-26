@@ -74,19 +74,19 @@ class Conference:
     @classmethod
     def from_uri(cls, uri: vUri | str):
         """Create a Conference from a URI."""
-        if isinstance(uri, str) and not isinstance(uri, vUri):
-            uri = vUri(uri)
+        params = uri.params if isinstance(uri, vUri) else {}
         return cls(
             uri,
-            feature=uri.params.get("feature"),
-            label=uri.params.get("label"),
-            language=uri.params.get("language"),
+            feature=params.get("feature"),
+            label=params.get("label"),
+            language=params.get("language"),
         )
 
     def to_uri(self) -> vUri:
         """Convert the Conference to a vUri."""
+
         def normalize(value: str | list[str] | None) -> str | None:
-            if value is None or isinstance(value, list) and len(value) == 0:
+            if value is None or (isinstance(value, list) and len(value) == 0):
                 return None
             if isinstance(value, str):
                 return value
@@ -96,9 +96,13 @@ class Conference:
             "FEATURE": normalize(self.feature),
             "LABEL": normalize(self.label),
             "LANGUAGE": normalize(self.language),
+            "VALUE": "URI",
         }
 
-        filtered_params: dict[str, str] = {key: value for key, value in params.items() if value is not None}
+        filtered_params: dict[str, str] = {
+            key: value for key, value in params.items() if value is not None
+        }
         return vUri(self.uri, params=filtered_params)
+
 
 __all__ = ["Conference"]

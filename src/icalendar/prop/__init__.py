@@ -49,7 +49,7 @@ import binascii
 import re
 import uuid
 from datetime import date, datetime, time, timedelta
-from typing import Any, ClassVar, Union
+from typing import Any, Union
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.enums import Enum
@@ -165,7 +165,6 @@ class vBoolean(int):
 class vText(str):
     """Simple text."""
 
-    default_value: ClassVar[str] = "TEXT"
     params: Parameters
     __slots__ = ("encoding", "params")
 
@@ -179,7 +178,7 @@ class vText(str):
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         self.encoding = encoding
-        self.params = Parameters(params, default_value=self.default_value)
+        self.params = Parameters(params)
         return self
 
     def __repr__(self) -> str:
@@ -1760,7 +1759,6 @@ class vUri(str):
     """
 
     params: Parameters
-    default_value = "URI"
     __slots__ = ("params",)
 
     def __new__(
@@ -1772,7 +1770,7 @@ class vUri(str):
     ):
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
-        self.params = Parameters(params, default_value=self.default_value)
+        self.params = Parameters(params)
         return self
 
     def to_ical(self):
@@ -1814,8 +1812,6 @@ class vUid(vText):
     This is defined in :rfc:`9253`, Section 7.
     """
 
-    default_value = "UID"
-
     @classmethod
     def new(cls):
         """Create a new UID for convenience."""
@@ -1852,8 +1848,6 @@ class vXmlReference(vUri):
 
     This is defined in :rfc:`9253`, Section 7.
     """
-
-    default_value = "URI"
 
     @property
     def xml_reference(self) -> str:
