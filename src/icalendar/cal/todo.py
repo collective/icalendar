@@ -18,11 +18,12 @@ from icalendar.attr import (
     create_single_property,
     description_property,
     exdates_property,
-    images_property,
     get_duration_property,
     get_end_property,
     get_start_end_duration_with_validation,
     get_start_property,
+    images_property,
+    links_property,
     location_property,
     organizer_property,
     priority_property,
@@ -283,6 +284,7 @@ class Todo(Component):
     attendees = attendees_property
     images = images_property
     conferences = conferences_property
+    links = links_property
 
     @classmethod
     def new(

@@ -9,6 +9,7 @@ from icalendar.attr import (
     attendees_property,
     create_single_property,
     description_property,
+    links_property,
     property_del_duration,
     property_get_duration,
     property_set_duration,
@@ -241,6 +242,7 @@ class Alarm(Component):
     summary = summary_property
     description = description_property
     attendees = attendees_property
+    links = links_property
 
     @classmethod
     def new(

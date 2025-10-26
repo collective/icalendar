@@ -16,6 +16,7 @@ from icalendar.attr import (
     descriptions_property,
     exdates_property,
     images_property,
+    links_property,
     organizer_property,
     rdates_property,
     rrules_property,
@@ -145,6 +146,7 @@ class Journal(Component):
     contacts = contacts_property
     status = status_property
     attendees = attendees_property
+    links = links_property
 
     @property
     def description(self) -> str:

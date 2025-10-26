@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Sequence
 from icalendar.attr import (
     categories_property,
     images_property,
+    links_property,
     multi_language_text_property,
     single_string_property,
     source_property,
@@ -510,6 +511,7 @@ Description:
         self.pop("REFRESH-INTERVAL")
 
     images = images_property
+    links = links_property
 
     @classmethod
     def new(

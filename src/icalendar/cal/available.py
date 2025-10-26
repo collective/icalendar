@@ -15,6 +15,7 @@ from icalendar.attr import (
     description_property,
     duration_property,
     exdates_property,
+    links_property,
     location_property,
     rdates_property,
     rfc_7953_dtend_property,
@@ -89,6 +90,7 @@ class Available(Component):
     DURATION = duration_property("Available")
     duration = rfc_7953_duration_property
     end = rfc_7953_end_property
+    links = links_property
 
     @classmethod
     def new(

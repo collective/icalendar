@@ -16,6 +16,7 @@ from icalendar.attr import (
     contacts_property,
     description_property,
     duration_property,
+    links_property,
     location_property,
     organizer_property,
     priority_property,
@@ -219,6 +220,7 @@ class Availability(Component):
     DURATION = duration_property("Availability")
     duration = rfc_7953_duration_property
     end = rfc_7953_end_property
+    links = links_property
 
     @property
     def available(self) -> list[Available]:

@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Optional
 from icalendar.attr import (
     contacts_property,
     create_single_property,
+    links_property,
     organizer_property,
     uid_property,
     url_property,
@@ -85,6 +86,8 @@ class FreeBusy(Component):
         if self.DTSTART is None or self.DTEND is None:
             return None
         return self.DTEND - self.DTSTART
+
+    links = links_property
 
     @classmethod
     def new(
