@@ -69,6 +69,7 @@ New features:
 
 Bug fixes:
 
+- Fix ``Todo.end`` to return ``start`` for date-only ``DTSTART`` (not ``start + 1 day``). Events keep existing behavior. See `Issue 898 <https://github.com/collective/icalendar/issues/898>`_.
 - Normalize Conference parameter lists (FEATURE/LABEL/LANGUAGE) to comma-separated values. See `Issue 908 <https://github.com/collective/icalendar/issues/908>`_.
 - Fix read from stdin issue - See `Issue 821 <https://github.com/collective/icalendar/issues/821>`_.
 - Fix invalid calendar: Parsing a date with TZID results in a datetime to not loose the timezone. See `Issue 187 <https://github.com/collective/icalendar/issues/187>`_.
