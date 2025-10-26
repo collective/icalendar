@@ -1663,8 +1663,10 @@ def get_end_property(component: Component, end_property: str) -> date | datetime
             msg = f"No {end_name} or DURATION+DTSTART given."
             raise IncompleteComponent(msg)
 
-        # Default behavior: date gets +1 day, datetime gets same time
-        if is_date(start):
+        # Default behavior differs for Event vs Todo:
+        # Event: date gets +1 day, datetime gets same time
+        # Todo: both date and datetime get same time (issue #898)
+        if end_property == "DTEND" and is_date(start):
             return start + timedelta(days=1)
         return start
 
