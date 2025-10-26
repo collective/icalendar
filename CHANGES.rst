@@ -39,6 +39,7 @@ Minor changes:
 - Update LICENSE file heading formatting.
 - Document ``icalendar.version`` module.
 - Use ``CONTRIBUTING.md`` in favour of ``.rst`` file.
+- Add type hints to ``icalendar.tools`` module.
 
 Breaking changes:
 
