@@ -1,0 +1,36 @@
+# CODEOWNERS file for automatic PR review assignment
+# See https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owners
+* @niccokunzmann @stevepiercy
+
+# Documentation
+/docs/ @stevepiercy
+*.rst @stevepiercy
+*.md @stevepiercy
+/CONTRIBUTING.md @niccokunzmann @stevepiercy
+
+# Core calendar logic
+/src/icalendar/cal/ @niccokunzmann @SashankBhamidi
+/src/icalendar/attr.py @niccokunzmann @SashankBhamidi
+/src/icalendar/parser.py @niccokunzmann @SashankBhamidi
+
+# Tests
+/src/icalendar/tests/ @niccokunzmann @SashankBhamidi
+
+# Fuzzing
+/src/icalendar/fuzzing/ @ennamarie19 @niccokunzmann @SashankBhamidi
+
+# CI and infrastructure
+/.github/ @niccokunzmann @SashankBhamidi
+/.pre-commit-config.yaml @niccokunzmann @SashankBhamidi
+/.readthedocs.yml @niccokunzmann @stevepiercy
+/tox.ini @niccokunzmann
+/pyproject.toml @niccokunzmann
+/buildout.cfg @niccokunzmann
+
+# Security
+/SECURITY.md @niccokunzmann @stevepiercy
+
+# Release stuff
+/CHANGES.rst @niccokunzmann @stevepiercy
