@@ -7,7 +7,7 @@
 # Documentation, except docstrings in `src`
 *.md @stevepiercy
 *.rst @stevepiercy
-/.readthedocs.yml @niccokunzmann @stevepiercy
+/.readthedocs.yml @stevepiercy @niccokunzmann
 /.vale.ini @stevepiercy
 /CONTRIBUTING.md @niccokunzmann @stevepiercy
 /docs/ @stevepiercy
