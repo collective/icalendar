@@ -40,6 +40,7 @@ Minor changes:
 - Document ``icalendar.version`` module.
 - Use ``CONTRIBUTING.md`` in favour of ``.rst`` file.
 - Add type hints to ``icalendar.tools`` module.
+- Add CODEOWNERS file for automatic PR review assignment. See `Issue 945 <https://github.com/collective/icalendar/issues/945>`_.
 
 Breaking changes:
 
