@@ -15,7 +15,7 @@
 /styles @stevepiercy
 
 # Core calendar logic
-/src/ @niccokunzmann @SashankBhamidi @stevepiercy
+/src/ @niccokunzmann @SashankBhamidi @stevepiercy @angatha
 
 # Tests
 /src/icalendar/tests/ @niccokunzmann @SashankBhamidi
@@ -33,7 +33,7 @@
 /tox.ini @niccokunzmann @stevepiercy
 
 # Security
-/SECURITY.md @niccokunzmann @stevepiercy @abe-101
+/SECURITY.md @niccokunzmann @stevepiercy @abe-101 @angatha
 
 # Release stuff
 /CHANGES.rst @niccokunzmann @stevepiercy
