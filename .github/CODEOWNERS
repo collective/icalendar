@@ -4,16 +4,18 @@
 # Default owners
 * @niccokunzmann @stevepiercy
 
-# Documentation
-/docs/ @stevepiercy
-*.rst @stevepiercy
+# Documentation, except docstrings in `src`
 *.md @stevepiercy
+*.rst @stevepiercy
+/.readthedocs.yml @niccokunzmann @stevepiercy
+/.vale.ini @stevepiercy
 /CONTRIBUTING.md @niccokunzmann @stevepiercy
+/docs/ @stevepiercy
+/Makefile @stevepiercy
+/styles @stevepiercy
 
 # Core calendar logic
-/src/icalendar/cal/ @niccokunzmann @SashankBhamidi
-/src/icalendar/attr.py @niccokunzmann @SashankBhamidi
-/src/icalendar/parser.py @niccokunzmann @SashankBhamidi
+/src/ @niccokunzmann @SashankBhamidi @stevepiercy
 
 # Tests
 /src/icalendar/tests/ @niccokunzmann @SashankBhamidi
@@ -22,15 +24,17 @@
 /src/icalendar/fuzzing/ @ennamarie19 @niccokunzmann @SashankBhamidi
 
 # CI and infrastructure
-/.github/ @niccokunzmann @SashankBhamidi
-/.pre-commit-config.yaml @niccokunzmann @SashankBhamidi
-/.readthedocs.yml @niccokunzmann @stevepiercy
-/tox.ini @niccokunzmann
-/pyproject.toml @niccokunzmann
-/buildout.cfg @niccokunzmann
+/.coveragerc @niccokunzmann
+/.github/ @niccokunzmann @SashankBhamidi @stevepiercy
+/.pre-commit-config.yaml @niccokunzmann @SashankBhamidi @stevepiercy
+/bootstrap.py @niccokunzmann @stevepiercy
+/buildout.cfg @niccokunzmann @stevepiercy
+/pyproject.toml @niccokunzmann @stevepiercy
+/tox.ini @niccokunzmann @stevepiercy
 
 # Security
 /SECURITY.md @niccokunzmann @stevepiercy
 
 # Release stuff
 /CHANGES.rst @niccokunzmann @stevepiercy
+/MANIFEST.in @niccokunzmann
