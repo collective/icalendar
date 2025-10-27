@@ -33,7 +33,7 @@
 /tox.ini @niccokunzmann @stevepiercy
 
 # Security
-/SECURITY.md @niccokunzmann @stevepiercy
+/SECURITY.md @niccokunzmann @stevepiercy @abe-101
 
 # Release stuff
 /CHANGES.rst @niccokunzmann @stevepiercy
