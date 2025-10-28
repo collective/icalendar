@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import itertools
 from datetime import date, datetime, timedelta
-from typing import TYPE_CHECKING, Literal, Optional, Sequence, TypeAlias, Union
+from typing import TYPE_CHECKING, List, Literal, Optional, Sequence, Union
 
 from icalendar.enums import BUSYTYPE, CLASS, STATUS, TRANSP, StrEnum
 from icalendar.error import IncompleteComponent, InvalidCalendar
@@ -27,6 +27,11 @@ from icalendar.tools import is_date
 
 if TYPE_CHECKING:
     from icalendar.cal import Component
+
+try:
+    from typing import TypeAlias
+except ImportError:
+    from typing_extensions import TypeAlias
 
 
 def _get_rdates(
@@ -2120,13 +2125,13 @@ def _del_links(self: Component) -> None:
 
 links_property = property(_get_links, _set_links, _del_links)
 
-RELATED_TO_TYPE: TypeAlias = list[vText | vUri | vUid]
-RELATED_TO_TYPE_SETTER: TypeAlias = (
-    None | str | vText | vUri | vUid | list[str | vText | vUri | vUid]
-)
+RELATED_TO_TYPE: TypeAlias = List[Union[vText, vUri, vUid]]
+RELATED_TO_TYPE_SETTER: TypeAlias = Union[
+    None, str, vText, vUri, vUid, List[Union[str, vText, vUri, vUid]]
+]
 
 
-def _get_related_to(self: Component) -> list[vText | vUri | vUid]:
+def _get_related_to(self: Component) -> RELATED_TO_TYPE:
     """RELATED-TO properties as a list.
 
     Purpose:
