@@ -9,7 +9,7 @@
 
 import pytest
 
-from icalendar import Calendar, vUid, vUri, vXmlReference
+from icalendar import Calendar, Event, vUid, vUri, vXmlReference
 
 
 @pytest.fixture(
@@ -215,3 +215,12 @@ def test_parse_uid_example(calendars):
     assert links[0].FMTTYPE is None
     assert links[0].LABEL is None
     assert isinstance(links[0], vUid)
+
+
+def test_linkrel_is_always_quoted():
+    """Test that the LINKREL is always quoted."""
+    link = vUri("https://example.com", params={"LINKREL": "SOURCE"})
+    event = Event()
+    event.links = [link]
+    ical = event.to_ical().decode()
+    assert 'LINKREL="SOURCE"' in ical

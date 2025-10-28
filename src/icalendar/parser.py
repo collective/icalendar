@@ -266,6 +266,8 @@ class Parameters(CaselessDict):
         # Part of X-APPLE-STRUCTURED-LOCATION
         "X-ADDRESS",
         "X-TITLE",
+        # RFC 9253
+        "LINKREL",
     )
     # this is quoted should one of the values be present
     quote_also = {

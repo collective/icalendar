@@ -589,11 +589,27 @@ LINKREL = string_parameter(
     "LINKREL",
     """LINKREL
 
+Purpose:
+    LINKREL specifies the relationship of data referenced
+    by a LINK property.
+
 Conformance:
     LINKREL is specified in :rfc:`9253`.
-    This parameter maps to the link relation type defined in Section 2.1 of :rfc:`8288`.
+    This parameter maps to the link relation type defined in
+    Section 2.1 of :rfc:`8288`.
+    It is always quoted.
 
 Description:
+    This parameter MUST be specified on all LINK properties and define
+    the type of reference.
+    This allows programs consuming this data to automatically scan
+    for references they support.
+    There is no default relation type.Any link relation in the
+    link registry established by :rfc:`8288`, or new link relations,
+    may be used.
+    It is expected that link relation types seeing significant usage
+    in calendaring will have the calendaring usage described in an RFC.
+
     In the simplest case, a link relation type identifies the semantics
     of a link.  For example, a link with the relation type "copyright"
     indicates that the current link context has a copyright resource at
@@ -605,9 +621,21 @@ Description:
     target can be used as part of a defined protocol (in this case, a
     service description).
 
+Registration:
     There are two kinds of relation types: registered and extension.
+    These relation types are registered in :rfc:`8288`.
+
     See also `Registered Link Relation Types
     <https://www.iana.org/assignments/link-relations/link-relations.xhtml>`_.
+
+
+Examples:
+    This identifies the latest version of the event information.
+
+    .. code-block:: text
+
+        LINKREL=latest-version
+
 """,
 )
 
