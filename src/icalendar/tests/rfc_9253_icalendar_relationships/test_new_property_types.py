@@ -9,7 +9,7 @@
 
 import pytest
 
-from icalendar import vUid, vUri, vXmlReference
+from icalendar import Calendar, vUid, vUri, vXmlReference
 
 
 @pytest.fixture(
@@ -174,3 +174,44 @@ def test_delete_attribute(new_prop, name, value):
     delattr(prop, name)
     assert name not in prop.params
     assert getattr(prop, name) is None
+
+
+def test_parse_example_calendar(calendars):
+    """We should make sure that examples from the RFC work."""
+    calendar: Calendar = calendars.rfc_9253_examples
+    event = calendar.events[0]
+    links = event.links
+    assert len(links) == 3
+    assert links[0].uri == "https://example.com/events"
+    assert links[0].LINKREL == "SOURCE"
+    assert links[0].FMTTYPE is None
+    assert links[0].LABEL == "Venue"
+    assert isinstance(links[0], vUri)
+
+    assert links[1].uri == "https://example.com/tasks/01234567-abcd1234.ics"
+    assert links[1].LINKREL == "https://example.com/linkrel/derivedFrom"
+    assert links[1].FMTTYPE is None
+    assert links[1].LABEL is None
+    assert isinstance(links[1], vUri)
+
+    assert (
+        links[2].xml_reference
+        == "https://example.com/xmlDocs/bidFramework.xml#xpointer(descendant::CostStruc/range-to(following::CostStrucEND[1]))"
+    )
+    assert links[2].LINKREL == "https://example.com/linkrel/costStructure"
+    assert links[2].FMTTYPE is None
+    assert links[2].LABEL is None
+    assert isinstance(links[2], vXmlReference)
+
+
+def test_parse_uid_example(calendars):
+    """Parse the UID type."""
+    calendar: Calendar = calendars.rfc_9253_examples
+    event = calendar.events[1]
+    links = event.links
+    assert len(links) == 1
+    assert links[0].uid == "links-rfc-9253-section-8.2"
+    assert links[0].LINKREL == "REFERENCE"
+    assert links[0].FMTTYPE is None
+    assert links[0].LABEL is None
+    assert isinstance(links[0], vUid)

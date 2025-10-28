@@ -2100,7 +2100,7 @@ def _set_links(
     | vXmlReference
     | None
     | list[str | vUri | vUid | vXmlReference],
-):
+) -> None:
     """Set the LINKs."""
     _del_links(self)
     if links is None:
@@ -2113,7 +2113,7 @@ def _set_links(
         self.add("LINK", link)
 
 
-def _del_links(self: Component):
+def _del_links(self: Component) -> None:
     """Delete all links."""
     self.pop("LINK")
 

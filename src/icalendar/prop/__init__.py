@@ -2188,6 +2188,8 @@ class TypesFactory(CaselessDict):
         self["inline"] = vInline
         self["date-time-list"] = vDDDLists
         self["categories"] = vCategory
+        self["uid"] = vUid  # RFC 9253
+        self["xml-reference"] = vXmlReference  # RFC 9253
 
     #################################################
     # Property types
@@ -2215,6 +2217,10 @@ class TypesFactory(CaselessDict):
             "resources": "text",
             "status": "text",
             "summary": "text",
+            # RFC 9253
+            # link should be text but this is likely more helpful
+            # if people forget to add VALUE
+            "link": "uri",
             # Date and Time Component Properties
             "completed": "date-time",
             "dtend": "date-time",
@@ -2278,6 +2284,9 @@ class TypesFactory(CaselessDict):
             "rsvp": "boolean",
             "sent-by": "cal-address",
             "value": "text",
+            # rfc 9253 parameters
+            "label": "text",
+            "linkrel": "text",
         }
     )
 
