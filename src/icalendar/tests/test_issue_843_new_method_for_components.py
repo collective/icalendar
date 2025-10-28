@@ -32,7 +32,7 @@ from icalendar import (
 )
 from icalendar.compatibility import ZoneInfo
 from icalendar.enums import BUSYTYPE
-from icalendar.prop import vUid, vUri, vXmlReference
+from icalendar.prop import vText, vUid, vUri, vXmlReference
 
 from .conftest import NOW_UTC, UID_DEFAULT
 
@@ -87,7 +87,7 @@ COMPONENTS_CONTACT = {Event, Todo, Journal, FreeBusy, Available, Availability}
 COMPONENTS_START_END = {Event, Todo, FreeBusy, Available, Availability}
 COMPONENTS_STATUS = {Event, Todo, Journal}
 COMPONENTS_ATTENDEES = {Event, Todo, Journal, Alarm}
-COMPONENTS_LINKS = {
+COMPONENTS_LINKS = COMPONENTS_RELATED_TO = {
     Alarm,
     Availability,
     Available,
@@ -796,6 +796,12 @@ rfc_9253_link_values = [
     vUid("123-123-123"),
     vXmlReference("http://example.com"),
 ]
+
+rfc_9253_related_to_values = [
+    vUri("https://123"),
+    vUid("123-123-123"),
+    vText("nananana", params={"RELTYPE": "SIBLING"}),
+]
 rfc_9253_test_cases = [
     (
         COMPONENTS_LINKS,
@@ -830,6 +836,42 @@ rfc_9253_test_cases = [
         "LINK",
         rfc_9253_link_values,
         rfc_9253_link_values,
+        True,
+        "set several values",
+    ),
+    (
+        COMPONENTS_RELATED_TO,
+        "related_to",
+        "RELATED-TO",
+        None,
+        [],
+        False,
+        "setting nothing",
+    ),
+    (
+        COMPONENTS_RELATED_TO,
+        "related_to",
+        "RELATED-TO",
+        [],
+        [],
+        False,
+        "setting nothing",
+    ),
+    (
+        COMPONENTS_RELATED_TO,
+        "related_to",
+        "RELATED-TO",
+        ["https://123"],
+        [vText("https://123")],
+        True,
+        "set one value",
+    ),
+    (
+        COMPONENTS_RELATED_TO,
+        "related_to",
+        "RELATED-TO",
+        rfc_9253_related_to_values,
+        rfc_9253_related_to_values,
         True,
         "set several values",
     ),

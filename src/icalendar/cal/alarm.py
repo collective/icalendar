@@ -6,6 +6,7 @@ from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, NamedTuple, Optional, Union
 
 from icalendar.attr import (
+    RELATED_TO_TYPE_SETTER,
     attendees_property,
     create_single_property,
     description_property,
@@ -13,6 +14,7 @@ from icalendar.attr import (
     property_del_duration,
     property_get_duration,
     property_set_duration,
+    related_to_property,
     single_int_property,
     single_string_property,
     single_utc_property,
@@ -243,6 +245,7 @@ class Alarm(Component):
     description = description_property
     attendees = attendees_property
     links = links_property
+    related_to = related_to_property
 
     @classmethod
     def new(
@@ -251,6 +254,7 @@ class Alarm(Component):
         attendees: Optional[list[vCalAddress]] = None,
         description: Optional[str] = None,
         links: list[str | vXmlReference | vUri | vUid] | None = None,
+        related_to: RELATED_TO_TYPE_SETTER = None,
         summary: Optional[str] = None,
         uid: Optional[str | uuid.UUID] = None,
     ):
@@ -262,6 +266,7 @@ class Alarm(Component):
             attendees: The :attr:`attendees` of the alarm.
             description: The :attr:`description` of the alarm.
             links: The :attr:`links` of the alarm.
+            related_to: The :attr:`related_to` of the alarm.
             summary: The :attr:`summary` of the alarm.
             uid: The :attr:`uid` of the alarm.
 
@@ -279,6 +284,7 @@ class Alarm(Component):
         alarm.uid = uid
         alarm.attendees = attendees
         alarm.links = links
+        alarm.related_to = related_to
         return alarm
 
 

@@ -7,6 +7,7 @@ from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Optional, Sequence
 
 from icalendar.attr import (
+    RELATED_TO_TYPE_SETTER,
     attendees_property,
     categories_property,
     class_property,
@@ -19,6 +20,7 @@ from icalendar.attr import (
     links_property,
     organizer_property,
     rdates_property,
+    related_to_property,
     rrules_property,
     sequence_property,
     status_property,
@@ -171,6 +173,7 @@ class Journal(Component):
         del self.descriptions
 
     images = images_property
+    related_to = related_to_property
 
     @classmethod
     def new(
@@ -187,6 +190,7 @@ class Journal(Component):
         last_modified: Optional[date] = None,
         links: list[str | vXmlReference | vUri | vUid] | None = None,
         organizer: Optional[vCalAddress | str] = None,
+        related_to: RELATED_TO_TYPE_SETTER = None,
         sequence: Optional[int] = None,
         stamp: Optional[date] = None,
         start: Optional[date | datetime] = None,
@@ -211,6 +215,7 @@ class Journal(Component):
             last_modified: The :attr:`Component.last_modified` of the journal.
             links: The :attr:`links` of the journal.
             organizer: The :attr:`organizer` of the journal.
+            related_to: The :attr:`related_to` of the journal.
             sequence: The :attr:`sequence` of the journal.
             stamp: The :attr:`Component.stamp` of the journal.
                 If None, this is set to the current time.
@@ -250,6 +255,7 @@ class Journal(Component):
         journal.status = status
         journal.attendees = attendees
         journal.links = links
+        journal.related_to = related_to
         return journal
 
 

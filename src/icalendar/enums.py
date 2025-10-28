@@ -249,6 +249,22 @@ class RELTYPE(StrEnum):
         Note that the relationship types of PARENT, CHILD, and SIBLING
         establish a hierarchical relationship. The new types of FIRST
         and NEXT are an ordering relationship.
+
+    Examples:
+        The following is an example from :rfc:`5545`:
+
+        .. code-block:: text
+
+            RELATED-TO;RELTYPE=SIBLING:19960401-080045-4000F192713@
+             example.com
+
+        Usage inside of RELATED-TO according to :rfc:`9253`:
+
+        .. code-block:: text
+
+            RELATED-TO;VALUE=URI;RELTYPE=STARTTOFINISH:
+             https://example.com/caldav/user/jb/cal/
+             19960401-080045-4000F192713.ics
     """
 
     PARENT = "PARENT"

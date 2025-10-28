@@ -192,7 +192,12 @@ class vText(str):
         ical_unesc = unescape_char(ical)
         return cls(ical_unesc)
 
-    from icalendar.param import ALTREP, LANGUAGE, RELTYPE
+    @property
+    def ical_value(self) -> str:
+        """The string value of the text."""
+        return str(self)
+
+    from icalendar.param import ALTREP, LANGUAGE, RELTYPE, VALUE
 
 
 class vCalAddress(str):
@@ -1784,7 +1789,7 @@ class vUri(str):
             raise ValueError(f"Expected , got: {ical}") from e
 
     @property
-    def ics_value(self) -> str:
+    def ical_value(self) -> str:
         """The URI."""
         return self.uri
 
@@ -1797,13 +1802,7 @@ class vUri(str):
         """repr(self)"""
         return f"{self.__class__.__name__}({self.uri!r})"
 
-    from icalendar.param import (
-        FMTTYPE,
-        LABEL,
-        LANGUAGE,
-        LINKREL,
-        VALUE,
-    )
+    from icalendar.param import FMTTYPE, LABEL, LANGUAGE, LINKREL, RELTYPE, VALUE
 
 
 class vUid(vText):
@@ -1836,7 +1835,7 @@ class vUid(vText):
         return str(self)
 
     @property
-    def ics_value(self) -> str:
+    def ical_value(self) -> str:
         """The uid of this property."""
         return self.uid
 

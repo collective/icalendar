@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import itertools
 from datetime import date, datetime, timedelta
-from typing import TYPE_CHECKING, Literal, Optional, Sequence, Union
+from typing import TYPE_CHECKING, Literal, Optional, Sequence, TypeAlias, Union
 
 from icalendar.enums import BUSYTYPE, CLASS, STATUS, TRANSP, StrEnum
 from icalendar.error import IncompleteComponent, InvalidCalendar
@@ -2120,7 +2120,165 @@ def _del_links(self: Component) -> None:
 
 links_property = property(_get_links, _set_links, _del_links)
 
+RELATED_TO_TYPE: TypeAlias = list[vText | vUri | vUid]
+RELATED_TO_TYPE_SETTER: TypeAlias = (
+    None | str | vText | vUri | vUid | list[str | vText | vUri | vUid]
+)
+
+
+def _get_related_to(self: Component) -> list[vText | vUri | vUid]:
+    """RELATED-TO properties as a list.
+
+    Purpose:
+        This property is used to represent a relationship or reference
+        between one calendar component and another.
+        :rfc:`9523` allows URI or UID values and a GAP parameter.
+
+    Value Type:
+        :rfc:`5545`: TEXT
+        :rfc:`9253`: URI, UID
+
+    Conformance:
+        Since :rfc:`5545`. this property can be specified in the "VEVENT",
+        "VTODO", and "VJOURNAL" calendar components.
+        Since :rfc:`9523`, this property MAY be specified in any
+        iCalendar component.
+
+    Description (:rfc:`5545`):
+        The property value consists of the persistent, globally
+        unique identifier of another calendar component.  This value would
+        be represented in a calendar component by the "UID" property.
+
+        By default, the property value points to another calendar
+        component that has a PARENT relationship to the referencing
+        object.  The "RELTYPE" property parameter is used to either
+        explicitly state the default PARENT relationship type to the
+        referenced calendar component or to override the default PARENT
+        relationship type and specify either a CHILD or SIBLING
+        relationship.  The PARENT relationship indicates that the calendar
+        component is a subordinate of the referenced calendar component.
+        The CHILD relationship indicates that the calendar component is a
+        superior of the referenced calendar component.  The SIBLING
+        relationship indicates that the calendar component is a peer of
+        the referenced calendar component.
+
+        Changes to a calendar component referenced by this property can
+        have an implicit impact on the related calendar component.  For
+        example, if a group event changes its start or end date or time,
+        then the related, dependent events will need to have their start
+        and end dates changed in a corresponding way.  Similarly, if a
+        PARENT calendar component is cancelled or deleted, then there is
+        an implied impact to the related CHILD calendar components.  This
+        property is intended only to provide information on the
+        relationship of calendar components.  It is up to the target
+        calendar system to maintain any property implications of this
+        relationship.
+
+    Description (:rfc:`9253`):
+
+        By default or when VALUE=UID is specified, the property value
+        consists of the persistent, globally unique identifier of another
+        calendar component. This value would be represented in a calendar
+        component by the UID property.
+
+        By default, the property value
+        points to another calendar component that has a PARENT relationship
+        to the referencing object. The RELTYPE property parameter is used
+        to either explicitly state the default PARENT relationship type to
+        the referenced calendar component or to override the default
+        PARENT relationship type and specify either a CHILD or SIBLING
+        relationship or a temporal relationship.
+
+        The PARENT relationship
+        indicates that the calendar component is a subordinate of the
+        referenced calendar component. The CHILD relationship indicates
+        that the calendar component is a superior of the referenced calendar
+        component. The SIBLING relationship indicates that the calendar
+        component is a peer of the referenced calendar component.
+
+        To preserve backwards compatibility, the value type MUST
+        be UID when the PARENT, SIBLING, or CHILD relationships
+        are specified.
+
+        The FINISHTOSTART, FINISHTOFINISH, STARTTOFINISH,
+        or STARTTOSTART relationships define temporal relationships, as
+        specified in the RELTYPE parameter definition.
+
+        The FIRST and NEXT
+        define ordering relationships between calendar components.
+
+        The DEPENDS-ON relationship indicates that the current calendar
+        component depends on the referenced calendar component in some manner.
+        For example, a task may be blocked waiting on the other,
+        referenced, task.
+
+        The REFID and CONCEPT relationships establish
+        a reference from the current component to the referenced component.
+        Changes to a calendar component referenced by this property
+        can have an implicit impact on the related calendar component.
+        For example, if a group event changes its start or end date or
+        time, then the related, dependent events will need to have their
+        start and end dates and times changed in a corresponding way.
+        Similarly, if a PARENT calendar component is canceled or deleted,
+        then there is an implied impact to the related CHILD calendar
+        components. This property is intended only to provide information
+        on the relationship of calendar components.
+
+        Deletion of the target component, for example, the target of a
+        FIRST, NEXT, or temporal relationship, can result in broken links.
+
+        It is up to the target calendar system to maintain any property
+        implications of these relationships.
+
+    Examples:
+        :rfc:`5545` examples of this property:
+
+        .. code-block:: text
+
+            RELATED-TO:jsmith.part7.19960817T083000.xyzMail@example.com
+
+        .. code-block:: text
+
+            RELATED-TO:19960401-080045-4000F192713-0052@example.com
+
+        :rfc:`9253` examples of this property:
+
+        .. code-block:: text
+
+            RELATED-TO;VALUE=URI;RELTYPE=STARTTOFINISH:
+            https://example.com/caldav/user/jb/cal/
+            19960401-080045-4000F192713.ics
+
+    See also :class:`icalendar.enum.RELTYPE`.
+
+    """
+    result = self.get("RELATED-TO", [])
+    if not isinstance(result, list):
+        return [result]
+    return result
+
+
+def _set_related_to(self: Component, values: RELATED_TO_TYPE_SETTER) -> None:
+    """Set the RELATED-TO properties."""
+    _del_related_to(self)
+    if values is None:
+        return
+    if not isinstance(values, list):
+        values = [values]
+    for value in values:
+        self.add("RELATED-TO", value)
+
+
+def _del_related_to(self: Component):
+    """Delete the RELATED-TO properties."""
+    self.pop("RELATED-TO", None)
+
+
+related_to_property = property(_get_related_to, _set_related_to, _del_related_to)
+
 __all__ = [
+    "RELATED_TO_TYPE",
+    "RELATED_TO_TYPE_SETTER",
     "attendees_property",
     "busy_type_property",
     "categories_property",
@@ -2149,6 +2307,7 @@ __all__ = [
     "property_get_duration",
     "property_set_duration",
     "rdates_property",
+    "related_to_property",
     "rfc_7953_dtend_property",
     "rfc_7953_dtstart_property",
     "rfc_7953_duration_property",

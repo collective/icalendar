@@ -6,10 +6,12 @@ from datetime import timedelta
 from typing import TYPE_CHECKING, Sequence
 
 from icalendar.attr import (
+    RELATED_TO_TYPE_SETTER,
     categories_property,
     images_property,
     links_property,
     multi_language_text_property,
+    related_to_property,
     single_string_property,
     source_property,
     uid_property,
@@ -513,6 +515,7 @@ Description:
 
     images = images_property
     links = links_property
+    related_to = related_to_property
 
     @classmethod
     def new(
@@ -530,6 +533,7 @@ Description:
         organization: str | None = None,
         prodid: str | None = None,
         refresh_interval: timedelta | None = None,
+        related_to: RELATED_TO_TYPE_SETTER = None,
         source: str | None = None,
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
@@ -553,6 +557,7 @@ Description:
             prodid: The :attr:`prodid` of the component. If None and organization is provided,
                 generates a `prodid` in format "-//organization//name//language".
             refresh_interval: The :attr:`refresh_interval` of the calendar.
+            related_to: The :attr:`related_to` of the calendar.
             source: The :attr:`source` of the calendar.
             uid: The :attr:`uid` of the calendar.
                 If None, this is set to a new :func:`uuid.uuid4`.
@@ -590,6 +595,7 @@ Description:
         calendar.refresh_interval = refresh_interval
         calendar.source = source
         calendar.links = links
+        calendar.related_to = related_to
         return calendar
 
     def validate(self):

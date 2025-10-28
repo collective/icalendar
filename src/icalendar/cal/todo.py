@@ -7,6 +7,7 @@ from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Literal, Sequence
 
 from icalendar.attr import (
+    RELATED_TO_TYPE_SETTER,
     X_MOZ_LASTACK_property,
     X_MOZ_SNOOZE_TIME_property,
     attendees_property,
@@ -32,6 +33,7 @@ from icalendar.attr import (
     property_get_duration,
     property_set_duration,
     rdates_property,
+    related_to_property,
     rrules_property,
     sequence_property,
     set_duration_with_locking,
@@ -285,6 +287,7 @@ class Todo(Component):
     images = images_property
     conferences = conferences_property
     links = links_property
+    related_to = related_to_property
 
     @classmethod
     def new(
@@ -305,6 +308,7 @@ class Todo(Component):
         location: str | None = None,
         organizer: vCalAddress | str | None = None,
         priority: int | None = None,
+        related_to: RELATED_TO_TYPE_SETTER = None,
         sequence: int | None = None,
         stamp: date | None = None,
         start: date | datetime | None = None,
@@ -331,6 +335,7 @@ class Todo(Component):
             links: The :attr:`links` of the todo.
             location: The :attr:`location` of the todo.
             organizer: The :attr:`organizer` of the todo.
+            related_to: The :attr:`related_to` of the todo.
             sequence: The :attr:`sequence` of the todo.
             stamp: The :attr:`Component.DTSTAMP` of the todo.
                 If None, this is set to the current time.
@@ -373,6 +378,7 @@ class Todo(Component):
         todo.attendees = attendees
         todo.conferences = conferences
         todo.links = links
+        todo.related_to = related_to
         if cls._validate_new:
             cls._validate_start_and_end(start, end)
         return todo

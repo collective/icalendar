@@ -10,6 +10,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING, Optional, Sequence
 
 from icalendar.attr import (
+    RELATED_TO_TYPE_SETTER,
     busy_type_property,
     categories_property,
     class_property,
@@ -20,6 +21,7 @@ from icalendar.attr import (
     location_property,
     organizer_property,
     priority_property,
+    related_to_property,
     rfc_7953_dtend_property,
     rfc_7953_dtstart_property,
     rfc_7953_duration_property,
@@ -221,6 +223,7 @@ class Availability(Component):
     duration = rfc_7953_duration_property
     end = rfc_7953_end_property
     links = links_property
+    related_to = related_to_property
 
     @property
     def available(self) -> list[Available]:
@@ -250,6 +253,7 @@ class Availability(Component):
         location: Optional[str] = None,
         organizer: Optional[vCalAddress | str] = None,
         priority: Optional[int] = None,
+        related_to: RELATED_TO_TYPE_SETTER = None,
         sequence: Optional[int] = None,
         stamp: Optional[date] = None,
         start: Optional[datetime] = None,
@@ -274,6 +278,7 @@ class Availability(Component):
             links: The :attr:`links` of the availability.
             location: The :attr:`location` of the availability.
             organizer: The :attr:`organizer` of the availability.
+            related_to: The :attr:`related_to` of the availability.
             sequence: The :attr:`sequence` of the availability.
             stamp: The :attr:`Component.stamp` of the availability.
                 If None, this is set to the current time.
@@ -310,6 +315,7 @@ class Availability(Component):
         availability.priority = priority
         availability.contacts = contacts
         availability.links = links
+        availability.related_to = related_to
         for subcomponent in components:
             availability.add_component(subcomponent)
         if cls._validate_new:

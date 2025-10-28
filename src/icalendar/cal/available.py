@@ -10,6 +10,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING, Optional, Sequence
 
 from icalendar.attr import (
+    RELATED_TO_TYPE_SETTER,
     categories_property,
     contacts_property,
     description_property,
@@ -18,6 +19,7 @@ from icalendar.attr import (
     links_property,
     location_property,
     rdates_property,
+    related_to_property,
     rfc_7953_dtend_property,
     rfc_7953_dtstart_property,
     rfc_7953_duration_property,
@@ -93,6 +95,7 @@ class Available(Component):
     duration = rfc_7953_duration_property
     end = rfc_7953_end_property
     links = links_property
+    related_to = related_to_property
 
     @classmethod
     def new(
@@ -107,6 +110,7 @@ class Available(Component):
         last_modified: Optional[date] = None,
         links: list[str | vXmlReference | vUri | vUid] | None = None,
         location: Optional[str] = None,
+        related_to: RELATED_TO_TYPE_SETTER = None,
         sequence: Optional[int] = None,
         stamp: Optional[date] = None,
         start: Optional[datetime] = None,
@@ -128,6 +132,7 @@ class Available(Component):
                 Available component.
             links: The :attr:`links` of the Available component.
             location: The :attr:`location` of the Available component.
+            related_to: The :attr:`related_to` of the Available component.
             sequence: The :attr:`sequence` of the Available component.
             stamp: The :attr:`Component.stamp` of the Available component.
                 If None, this is set to the current time.
@@ -158,6 +163,7 @@ class Available(Component):
         available.comments = comments
         available.contacts = contacts
         available.links = links
+        available.related_to = related_to
         if cls._validate_new:
             if end is not None and (
                 not isinstance(end, datetime) or end.tzinfo is None

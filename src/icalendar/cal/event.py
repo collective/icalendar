@@ -7,6 +7,7 @@ from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Literal, Sequence
 
 from icalendar.attr import (
+    RELATED_TO_TYPE_SETTER,
     X_MOZ_LASTACK_property,
     X_MOZ_SNOOZE_TIME_property,
     attendees_property,
@@ -32,6 +33,7 @@ from icalendar.attr import (
     property_get_duration,
     property_set_duration,
     rdates_property,
+    related_to_property,
     rrules_property,
     sequence_property,
     set_duration_with_locking,
@@ -419,6 +421,7 @@ class Event(Component):
     images = images_property
     conferences = conferences_property
     links = links_property
+    related_to = related_to_property
 
     @classmethod
     def new(
@@ -439,6 +442,7 @@ class Event(Component):
         location: str | None = None,
         organizer: vCalAddress | str | None = None,
         priority: int | None = None,
+        related_to: RELATED_TO_TYPE_SETTER = None,
         sequence: int | None = None,
         stamp: date | None = None,
         start: date | datetime | None = None,
@@ -467,6 +471,7 @@ class Event(Component):
             location: The :attr:`location` of the event.
             organizer: The :attr:`organizer` of the event.
             priority: The :attr:`priority` of the event.
+            related_to: The :attr:`related_to` of the event.
             sequence: The :attr:`sequence` of the event.
             stamp: The :attr:`Component.stamp` of the event.
                 If None, this is set to the current time.
@@ -511,6 +516,7 @@ class Event(Component):
         event.attendees = attendees
         event.conferences = conferences
         event.links = links
+        event.related_to = related_to
         if cls._validate_new:
             cls._validate_start_and_end(start, end)
         return event

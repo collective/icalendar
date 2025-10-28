@@ -52,7 +52,7 @@ def test_uid_creation(uid):
     """Test creation of UID property."""
     uid_prop = vUid(uid)
     assert repr(uid_prop) == f"vUid({uid!r})"
-    assert uid_prop.ics_value == uid
+    assert uid_prop.ical_value == uid
     assert uid_prop.uid == uid
     assert_default_parameters(uid_prop)
 
@@ -69,7 +69,7 @@ def test_vUri_creation(uri):
     """Test creation of a URI property."""
     uri_prop = vUri(uri)
     assert str(uri_prop) == uri
-    assert uri_prop.ics_value == uri
+    assert uri_prop.ical_value == uri
     assert uri_prop.uri == uri
     assert_default_parameters(uri_prop)
     assert uri_prop.params.value in ("URI", None)
@@ -80,7 +80,7 @@ def test_vXmlReference_creation(xml_reference):
     uri, x_pointer = xml_reference
     xml_prop = vXmlReference(uri)
     assert str(xml_prop) == uri
-    assert xml_prop.ics_value == uri
+    assert xml_prop.ical_value == uri
     assert xml_prop.uri == uri
     assert_default_parameters(xml_prop)
     assert xml_prop.x_pointer == x_pointer
