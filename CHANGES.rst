@@ -66,6 +66,41 @@ New features:
 - Add documentation linkchecker to make and CI configuration. See `Issue 854 <https://github.com/collective/icalendar/issues/854>`_.
 - Add support for Vale as spell and style checker.
 - For ``make livehtml`` watch all files in ``src/icalendar``, but ignore ``.typed`` and contents of the ``tests`` and ``fuzzing`` directories. See `Issue 931 <https://github.com/collective/icalendar/issues/931>`_.
+- Restructure documentation, following Diátaxis framework. See `Issue 820 <https://github.com/collective/icalendar/issues/820>`_ which included the following tasks.
+
+  - Start building API Reference documentation.
+  - Add Vale with Microsoft Writing Guide style checker.
+  - Add :file:`Makefile` to automate all documentation builds with a single command for each.
+  - Write documentation of how to build documentation.
+  - Move "History" into "Credits".
+  - Add a Glossary of terms.
+  - Add version module to API reference.
+  - Exclude private Python methods and test modules from the API reference.
+  - Fix display of credits to use reStructuredText.
+  - Fix the documentation version display.
+  - Show older versions of documentation on Read the Docs.
+  - Fix the PyPI icon.
+  - Add a Security Policy.
+  - Consolidate Contributing files into the how-to Contributing guide.
+  - Move the change log into the Reference guide.
+  - Remove all rights reserved from the License file and remove from documentation, leaving it in the repository root.
+  - Move Maintenance into the Contribute guide.
+  - Move icalendar contributors into the Contribute guide.
+  - Merge about the project into Credits.
+  - Split :file:`api.rst` into separate modules.
+  - Move "icalendar utility" into a how-to guide for command line interface.
+  - Move "icalendar package" into a how-to usage guide and API reference guide.
+  - Split installation into how-to guides for usage and contributing.
+  - Redesigned home page to reflect the new structure and point readers to the proper location.
+  - Fix various Sphinx build warnings and errors.
+  - Use text for lexer of ical files.
+  - Update :file:`README.rst` to align with new documentation structure.
+  - Add documentation builds to continuous integration.
+  - Review pull requests that involve source docstrings, continuous integration, or documentation, and provide suggestions and corrections.
+- Add spell checking to documentation. See `Issue 853 <https://github.com/collective/icalendar/issues/853>`_.
+- Add link check to docs test. See `Issue 854 <https://github.com/collective/icalendar/issues/854>`_.
+- Document installation of icalendar on Fedora. See `Issue 704 <https://github.com/collective/icalendar/issues/704>`_.
+- Miscellaneous documentation follow-up fixes. See `Issue 919 <https://github.com/collective/icalendar/issues/919>`_.
 
 Bug fixes:
 
@@ -78,6 +113,8 @@ Bug fixes:
 - Fixed ``Todo.duration`` and ``Event.duration`` to return ``DURATION`` property when set, even without ``DTSTART``. See `Issue 867 <https://github.com/collective/icalendar/issues/867>`_.
 - Fix ``VALUE`` parameter handling: ``datetime.date`` objects now correctly set ``VALUE=DATE`` parameter when added to properties like ``EXDATE``, ``RDATE``, and ``DTSTART``. The ``VALUE`` parameter is also properly used when parsing iCalendar data. See `Issue 349 <https://github.com/collective/icalendar/issues/349>`_.
 - Fix URL-encoded characters being incorrectly unescaped during content line parsing. The parser now properly handles backslash escaping and double-quoted sections without corrupting URL-encoded values like ``%3A`` (colon) in DESCRIPTION fields. Added ``unescape_backslash()`` function to separate :rfc:`5545` backslash escaping from URL encoding. Optimized implementation using regex for single-pass processing. Added type hints to ``Contentline.parts()`` method and comprehensive unit tests. See `Issue 355 <https://github.com/collective/icalendar/issues/355>`_.
+- `make livehtml` now reloads with code changes. See `Issue 931 <https://github.com/collective/icalendar/issues/931>`_.
+
 
 6.3.1 (2025-05-20)
 ------------------
