@@ -2082,7 +2082,7 @@ def _get_links(self: Component) -> list[vUri | vUid | vXmlReference]:
             DTSTART:20250917T120000
             DTSTAMP:20250517T080612Z
             UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
-            LINK;LINKREL=SOURCE:http://example.com/event-page
+            LINK;LINKREL="SOURCE":http://example.com/event-page
             END:VEVENT
 
     """

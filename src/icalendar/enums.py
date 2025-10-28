@@ -179,7 +179,16 @@ class RELTYPE(StrEnum):
     Values:
         ``PARENT``,
         ``CHILD``,
-        ``SIBLING``
+        ``SIBLING``,
+        ``FINISHTOSTART``,
+        ``FINISHTOFINISH``,
+        ``STARTTOFINISH``,
+        ``STARTTOSTART``,
+        ``FIRST``,
+        ``NEXT``,
+        ``DEPENDS-ON``,
+        ``REFID``,
+        ``CONCEPT``
 
     Purpose:
         To specify the type of hierarchical relationship associated
@@ -199,11 +208,61 @@ class RELTYPE(StrEnum):
         Applications MUST treat x-name and iana-token values they don't
         recognize the same way as they would the PARENT value.
 
+    New Temporal RELTYPE Parameter Values (:rfc:`9253`):
+        * RELTYPE=FINISHTOSTART
+            Task-B cannot start until Task-A finishes.
+            For example, when painting is complete, carpet laying can begin.
+        * RELTYPE=FINISHTOFINISH
+            Task-B can only be completed after Task-A is finished.
+            The related tasks may run in parallel before completion.
+        * RELTYPE=STARTTOFINISH
+            The start of Task-A (which occurs after Task-B) controls the
+            finish of Task-B. For example, ticket sales (Task-B) end
+            after the game starts (Task-A).
+        * RELTYPE=STARTTOSTART
+            The start of Task-A triggers the start of Task-B,
+            that is, Task-B can start anytime after Task-A starts.
+
+    Additional New RELTYPE Parameter Values (:rfc:`9253`):
+        * RELTYPE=FIRST
+            This indicates that the referenced calendar component is
+            the first in a series the referencing calendar component
+            is part of.
+        * RELTYPE=NEXT
+            This indicates that the referenced calendar component
+            is the next in a series the referencing calendar component
+            is part of.
+        * RELTYPE=DEPENDS-ON
+            This indicates that the current calendar component
+            depends on the referenced calendar component in some manner.
+            For example, a task may be blocked waiting on the other,
+            referenced, task.
+        * RELTYPE=REFID
+            This establishes a reference from the current component to
+            components with a REFID property that matches the value given
+            in the associated RELATED-TO property.
+        * RELTYPE=CONCEPT
+            This establishes a reference from the current component to
+            components with a CONCEPT property that matches the value
+            given in the associated RELATED-TO property.
+
+        Note that the relationship types of PARENT, CHILD, and SIBLING
+        establish a hierarchical relationship. The new types of FIRST
+        and NEXT are an ordering relationship.
     """
 
     PARENT = "PARENT"
     CHILD = "CHILD"
     SIBLING = "SIBLING"
+    FINISHTOSTART = "FINISHTOSTART"
+    FINISHTOFINISH = "FINISHTOFINISH"
+    STARTTOFINISH = "STARTTOFINISH"
+    STARTTOSTART = "STARTTOSTART"
+    FIRST = "FIRST"
+    NEXT = "NEXT"
+    DEPENDS_ON = "DEPENDS-ON"
+    REFID = "REFID"
+    CONCEPT = "CONCEPT"
 
 
 class RANGE(StrEnum):
