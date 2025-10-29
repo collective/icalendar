@@ -2180,7 +2180,6 @@ def _get_related_to(self: Component) -> RELATED_TO_TYPE:
         relationship.
 
     Description (:rfc:`9253`):
-
         By default or when VALUE=UID is specified, the property value
         consists of the persistent, globally unique identifier of another
         calendar component. This value would be represented in a calendar
@@ -2251,8 +2250,8 @@ def _get_related_to(self: Component) -> RELATED_TO_TYPE:
         .. code-block:: text
 
             RELATED-TO;VALUE=URI;RELTYPE=STARTTOFINISH:
-            https://example.com/caldav/user/jb/cal/
-            19960401-080045-4000F192713.ics
+             https://example.com/caldav/user/jb/cal/
+             19960401-080045-4000F192713.ics
 
     See also :class:`icalendar.enum.RELTYPE`.
 

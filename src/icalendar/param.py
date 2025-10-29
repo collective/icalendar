@@ -528,7 +528,7 @@ FMTTYPE = string_parameter(
 
 Conformance:
     :rfc:`5545` specifies the FMTTYPE.
-    :rfc:`9253: adds FMTTYPE to LINK properties. In a LINK,
+    :rfc:`9253`: adds FMTTYPE to LINK properties. In a LINK,
     FMTTYPE maps to the "type"
     attribute defined in Section 3.4.1 of :rfc:`8288`.
     See :rfc:`6838`.
