@@ -7,12 +7,12 @@
 # Documentation, except docstrings in `src`
 *.md @stevepiercy @abe-101
 *.rst @stevepiercy @abe-101
-/.readthedocs.yml @stevepiercy @niccokunzmann
-/.vale.ini @stevepiercy
-/CONTRIBUTING.md @niccokunzmann @stevepiercy
+/.readthedocs.yml @stevepiercy @niccokunzmann @abe-101
+/.vale.ini @stevepiercy @abe-101
+/CONTRIBUTING.md @niccokunzmann @stevepiercy @abe-101
 /docs/ @stevepiercy @abe-101
-/Makefile @stevepiercy
-/styles @stevepiercy
+/Makefile @stevepiercy @abe-101
+/styles @stevepiercy @abe-101
 
 # Core calendar logic
 /src/ @niccokunzmann @SashankBhamidi @stevepiercy @angatha
