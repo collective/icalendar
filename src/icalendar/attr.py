@@ -2125,13 +2125,12 @@ def _del_links(self: Component) -> None:
 
 links_property = property(_get_links, _set_links, _del_links)
 
-RELATED_TO_TYPE: TypeAlias = List[Union[vText, vUri, vUid]]
 RELATED_TO_TYPE_SETTER: TypeAlias = Union[
     None, str, vText, vUri, vUid, List[Union[str, vText, vUri, vUid]]
 ]
 
 
-def _get_related_to(self: Component) -> RELATED_TO_TYPE:
+def _get_related_to(self: Component) -> list[Union[vText, vUri, vUid]]:
     """RELATED-TO properties as a list.
 
     Purpose:
@@ -2281,7 +2280,6 @@ def _del_related_to(self: Component):
 related_to_property = property(_get_related_to, _set_related_to, _del_related_to)
 
 __all__ = [
-    "RELATED_TO_TYPE",
     "RELATED_TO_TYPE_SETTER",
     "attendees_property",
     "busy_type_property",

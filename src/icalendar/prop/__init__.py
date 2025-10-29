@@ -197,7 +197,7 @@ class vText(str):
         """The string value of the text."""
         return str(self)
 
-    from icalendar.param import ALTREP, LANGUAGE, RELTYPE, VALUE
+    from icalendar.param import ALTREP, GAP, LANGUAGE, RELTYPE, VALUE
 
 
 class vCalAddress(str):
@@ -971,7 +971,9 @@ class vDuration(TimeBase):
 
     params: Parameters
 
-    def __init__(self, td, /, params: dict[str, Any] | None = None):
+    def __init__(self, td: timedelta | str, /, params: dict[str, Any] | None = None):
+        if isinstance(td, str):
+            td = vDuration.from_ical(td)
         if not isinstance(td, timedelta):
             raise TypeError("Value MUST be a timedelta instance")
         self.td = td
@@ -1802,7 +1804,7 @@ class vUri(str):
         """repr(self)"""
         return f"{self.__class__.__name__}({self.uri!r})"
 
-    from icalendar.param import FMTTYPE, LABEL, LANGUAGE, LINKREL, RELTYPE, VALUE
+    from icalendar.param import FMTTYPE, GAP, LABEL, LANGUAGE, LINKREL, RELTYPE, VALUE
 
 
 class vUid(vText):
@@ -1842,14 +1844,6 @@ class vUid(vText):
     def __repr__(self) -> str:
         """repr(self)"""
         return f"{self.__class__.__name__}({self.uid!r})"
-
-    from icalendar.param import (
-        FMTTYPE,
-        LABEL,
-        LANGUAGE,
-        LINKREL,
-        VALUE,
-    )
 
 
 class vXmlReference(vUri):
@@ -2286,6 +2280,7 @@ class TypesFactory(CaselessDict):
             # rfc 9253 parameters
             "label": "text",
             "linkrel": "text",
+            "gap": "duration",
         }
     )
 

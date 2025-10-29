@@ -16,6 +16,7 @@ from typing import TYPE_CHECKING, Callable, Optional, TypeVar
 from icalendar import enums
 
 if TYPE_CHECKING:
+    from datetime import timedelta
     from enum import Enum
 
     from icalendar.parser import Parameters
@@ -639,6 +640,81 @@ Examples:
 """,
 )
 
+
+def _get_GAP(prop) -> timedelta | None:  # noqa: N802
+    """GAP
+
+    Purpose:
+        GAP pecifies the length of the gap, positive or negative,
+        between two components with a temporal relationship.
+
+    Format Definition:
+        Same as the DURATION value type defined in :rfc:`5545`, Section 3.3.6.
+
+    Description:
+        This parameter MAY be specified on the RELATED-TO property and defines
+        the duration of time between the predecessor and successor in an interval.
+        When positive, it defines the lag time between a task and its logical successor.
+        When negative, it defines the lead time.
+
+    Examples:
+        An example of lag time might be if Task-A is "paint the room" and Task-B is
+        "lay the carpets". Then, Task-A may be related to Task-B with
+        RELTYPE=FINISHTOSTART with a gap of 1 day -- long enough for the paint to dry.
+
+        .. code-block:: text
+
+            ====================
+            |  paint the room  |--+
+            ====================  |
+                                  |(lag of one day)
+                                  |
+                                  |  ===================
+                                  +->| lay the carpet  |
+                                     ===================
+
+        For an example of lead time, in constructing a two-story building,
+        the electrical work must be done before painting. However,
+        the painter can move in to the first floor as the electricians move upstairs.
+
+        .. code-block:: text
+
+            =====================
+            |  electrical work  |--+
+            =====================  |
+                     +-------------+
+                     |(lead of estimated time)
+                     |  ==================
+                     +->|    painting    |
+                        ==================
+    """
+    value = prop.params.get("GAP")
+    if value is None:
+        return None
+    if isinstance(value, str):
+        from icalendar.prop import vDuration
+
+        return vDuration.from_ical(value)
+    return value.td
+
+
+def _set_GAP(prop, value: timedelta | str | None):  # noqa: N802
+    """Set the GAP parameter as a timedelta."""
+    if value is None:
+        prop.params.pop("GAP", None)
+        return
+    from icalendar.prop import vDuration
+
+    prop.params["GAP"] = vDuration(value)
+
+
+def _del_GAP(prop):  # noqa: N802
+    """Delete the GAP parameter."""
+    prop.params.pop("GAP", None)
+
+
+GAP = property(_get_GAP, _set_GAP, _del_GAP)
+
 __all__ = [
     "ALTREP",
     "CN",
@@ -648,6 +724,7 @@ __all__ = [
     "DIR",
     "FBTYPE",
     "FMTTYPE",
+    "GAP",
     "LABEL",
     "LANGUAGE",
     "LINKREL",
