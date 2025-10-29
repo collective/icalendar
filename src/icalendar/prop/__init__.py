@@ -1845,6 +1845,8 @@ class vUid(vText):
         """repr(self)"""
         return f"{self.__class__.__name__}({self.uid!r})"
 
+    from icalendar.param import FMTTYPE, LABEL, LINKREL
+
 
 class vXmlReference(vUri):
     """An XML-REFERENCE.
