@@ -2213,9 +2213,10 @@ class TypesFactory(CaselessDict):
             "status": "text",
             "summary": "text",
             # RFC 9253
-            # link should be text but this is likely more helpful
-            # if people forget to add VALUE
+            # link should be uri, xml-reference or uid
+            # uri is likely most helpful if people forget to set VALUE
             "link": "uri",
+            "concept": "uri",
             # Date and Time Component Properties
             "completed": "date-time",
             "dtend": "date-time",

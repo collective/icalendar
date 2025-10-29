@@ -652,7 +652,11 @@ Example:
 
 .. note::
 
-   At present, we do not take the LANGUAGE parameter into account.
+    At present, we do not take the LANGUAGE parameter into account.
+
+.. seealso::
+
+    :attr:`Component.concepts`
 """,
 )
 
@@ -2279,6 +2283,68 @@ def _del_related_to(self: Component):
 
 related_to_property = property(_get_related_to, _set_related_to, _del_related_to)
 
+
+def _get_concepts(self: Component) -> list[vUri]:
+    """CONCEPT
+
+    Purpose:
+        CONCEPT defines the formal categories for a calendar component.
+
+    Conformance:
+        This property can be specified zero or more times in any iCalendar component.
+
+    Description:
+        This property is used to specify formal categories or classifications of
+        the calendar component. The values are useful in searching for a calendar
+        component of a particular type and category.
+
+        This categorization is distinct from the more informal "tagging" of components
+        provided by the existing CATEGORIES property. It is expected that the value of
+        the CONCEPT property will reference an external resource that provides
+        information about the categorization.
+
+        In addition, a structured URI value allows for hierarchical categorization of
+        events.
+
+        Possible category resources are the various proprietary systems, for example,
+        the Library of Congress, or an open source of categorization data.
+
+    Examples:
+        The following is an example of this property.
+        It points to a server acting as the source for the calendar object.
+
+        .. code-block:: text
+
+              CONCEPT:https://example.com/event-types/arts/music
+
+    .. seealso::
+
+        :attr:`Compnent.categories`
+    """
+    concepts = self.get("CONCEPT", [])
+    if not isinstance(concepts, list):
+        concepts = [concepts]
+    return concepts
+
+
+def _set_concepts(self: Component, concepts: list[vUri] | str | vUri | None):
+    """Set the concepts."""
+    _del_concepts(self)
+    if concepts is None:
+        return
+    if not isinstance(concepts, list):
+        concepts = [concepts]
+    for value in concepts:
+        self.add("CONCEPT", value)
+
+
+def _del_concepts(self: Component):
+    """Delete the concepts."""
+    self.pop("CONCEPT", None)
+
+
+concepts_property = property(_get_concepts, _set_concepts, _del_concepts)
+
 __all__ = [
     "RELATED_TO_TYPE_SETTER",
     "attendees_property",
@@ -2287,6 +2353,7 @@ __all__ = [
     "class_property",
     "color_property",
     "comments_property",
+    "concepts_property",
     "conferences_property",
     "contacts_property",
     "create_single_property",

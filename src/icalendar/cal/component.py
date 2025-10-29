@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, ClassVar
 from icalendar.attr import (
     RELATED_TO_TYPE_SETTER,
     comments_property,
+    concepts_property,
     links_property,
     related_to_property,
     single_utc_property,
@@ -619,6 +620,7 @@ class Component(CaselessDict):
     comments = comments_property
     links = links_property
     related_to = related_to_property
+    concepts = concepts_property
 
     CREATED = single_utc_property(
         "CREATED",
@@ -654,6 +656,7 @@ class Component(CaselessDict):
         cls,
         created: date | None = None,
         comments: list[str] | str | None = None,
+        concepts: list[str | vUri] | str | vUri | None = None,
         last_modified: date | None = None,
         links: list[str | vXmlReference | vUri | vUid] | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
@@ -663,6 +666,7 @@ class Component(CaselessDict):
 
         Arguments:
             comments: The :attr:`comments` of the component.
+            concepts: The :attr:`concepts` of the component.
             created: The :attr:`created` of the component.
             last_modified: The :attr:`last_modified` of the component.
             links: The :attr:`links` of the component.
@@ -681,6 +685,7 @@ class Component(CaselessDict):
         component.comments = comments
         component.links = links
         component.related_to = related_to
+        component.concepts = concepts
         return component
 
 

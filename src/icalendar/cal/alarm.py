@@ -248,6 +248,7 @@ class Alarm(Component):
         cls,
         /,
         attendees: Optional[list[vCalAddress]] = None,
+        concepts: list[str | vUri] | str | vUri | None = None,
         description: Optional[str] = None,
         links: list[str | vXmlReference | vUri | vUid] | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
@@ -260,6 +261,7 @@ class Alarm(Component):
 
         Arguments:
             attendees: The :attr:`attendees` of the alarm.
+            concepts: The :attr:`Component.concepts` of the alarm.
             description: The :attr:`description` of the alarm.
             links: The :attr:`Component.links` of the alarm.
             related_to: The :attr:`Component.related_to` of the alarm.
@@ -274,7 +276,11 @@ class Alarm(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        alarm: Alarm = super().new(links=links, related_to=related_to)
+        alarm: Alarm = super().new(
+            links=links,
+            related_to=related_to,
+            concepts=concepts,
+        )
         alarm.summary = summary
         alarm.description = description
         alarm.uid = uid

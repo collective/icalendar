@@ -294,6 +294,7 @@ class Todo(Component):
         classification: CLASS | None = None,
         color: str | None = None,
         comments: list[str] | str | None = None,
+        concepts: list[str | vUri] | str | vUri | None = None,
         contacts: list[str] | str | None = None,
         conferences: list[Conference] | None = None,
         created: date | None = None,
@@ -323,6 +324,8 @@ class Todo(Component):
             classification: The :attr:`classification` of the todo.
             color: The :attr:`color` of the todo.
             comments: The :attr:`Component.comments` of the todo.
+            concepts: The :attr:`Component.concepts` of the todo.
+            contacts: The :attr:`contacts` of the todo.
             conferences: The :attr:`conferences` of the todo.
             created: The :attr:`Component.created` of the todo.
             description: The :attr:`description` of the todo.
@@ -357,6 +360,7 @@ class Todo(Component):
             comments=comments,
             links=links,
             related_to=related_to,
+            concepts=concepts,
         )
         todo.summary = summary
         todo.description = description

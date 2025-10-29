@@ -99,6 +99,7 @@ class Available(Component):
         /,
         categories: Sequence[str] = (),
         comments: list[str] | str | None = None,
+        concepts: list[str | vUri] | str | vUri | None = None,
         contacts: list[str] | str | None = None,
         created: Optional[date] = None,
         description: Optional[str] = None,
@@ -120,6 +121,7 @@ class Available(Component):
         Arguments:
             categories: The :attr:`categories` of the Available component.
             comments: The :attr:`Component.comments` of the Available component.
+            concepts: The :attr:`Component.concepts` of the Available component.
             contacts: The :attr:`contacts` of the Available component.
             created: The :attr:`Component.created` of the Available component.
             description: The :attr:`description` of the Available component.
@@ -152,6 +154,7 @@ class Available(Component):
             comments=comments,
             links=links,
             related_to=related_to,
+            concepts=concepts,
         )
         available.summary = summary
         available.description = description

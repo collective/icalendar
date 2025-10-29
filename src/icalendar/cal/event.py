@@ -428,6 +428,7 @@ class Event(Component):
         classification: CLASS | None = None,
         color: str | None = None,
         comments: list[str] | str | None = None,
+        concepts: list[str | vUri] | str | vUri | None = None,
         conferences: list[Conference] | None = None,
         contacts: list[str] | str | None = None,
         created: date | None = None,
@@ -458,6 +459,7 @@ class Event(Component):
             classification: The :attr:`classification` of the event.
             color: The :attr:`color` of the event.
             comments: The :attr:`Component.comments` of the event.
+            concepts: The :attr:`Component.concepts` of the event.
             conferences: The :attr:`conferences` of the event.
             created: The :attr:`Component.created` of the event.
             description: The :attr:`description` of the event.
@@ -494,6 +496,7 @@ class Event(Component):
             comments=comments,
             links=links,
             related_to=related_to,
+            concepts=concepts,
         )
         event.summary = summary
         event.description = description

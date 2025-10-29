@@ -239,6 +239,7 @@ class Availability(Component):
         categories: Sequence[str] = (),
         comments: list[str] | str | None = None,
         components: Sequence[Available] | None = (),
+        concepts: list[str | vUri] | str | vUri | None = None,
         contacts: list[str] | str | None = None,
         created: Optional[date] = None,
         classification: Optional[CLASS] = None,
@@ -266,6 +267,7 @@ class Availability(Component):
             categories: The :attr:`categories` of the availability.
             classification: The :attr:`classification` of the availability.
             comments: The :attr:`Component.comments` of the availability.
+            concepts: The :attr:`Component.concepts` of the availability.
             contacts: The :attr:`contacts` of the availability.
             created: The :attr:`Component.created` of the availability.
             description: The :attr:`description` of the availability.
@@ -299,6 +301,7 @@ class Availability(Component):
             last_modified=last_modified,
             links=links,
             related_to=related_to,
+            concepts=concepts,
         )
         availability.summary = summary
         availability.description = description

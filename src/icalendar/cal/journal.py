@@ -180,6 +180,7 @@ class Journal(Component):
         classification: Optional[CLASS] = None,
         color: Optional[str] = None,
         comments: list[str] | str | None = None,
+        concepts: list[str | vUri] | str | vUri | None = None,
         contacts: list[str] | str | None = None,
         created: Optional[date] = None,
         description: Optional[str | Sequence[str]] = None,
@@ -205,6 +206,8 @@ class Journal(Component):
             classification: The :attr:`classification` of the journal.
             color: The :attr:`color` of the journal.
             comments: The :attr:`Component.comments` of the journal.
+            concepts: The :attr:`Component.concepts` of the journal.
+            contacts: The :attr:`contacts` of the journal.
             created: The :attr:`Component.created` of the journal.
             description: The :attr:`description` of the journal.
             end: The :attr:`end` of the journal.
@@ -237,6 +240,7 @@ class Journal(Component):
             comments=comments,
             links=links,
             related_to=related_to,
+            concepts=concepts,
         )
         journal.summary = summary
         journal.descriptions = description

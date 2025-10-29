@@ -87,7 +87,7 @@ COMPONENTS_CONTACT = {Event, Todo, Journal, FreeBusy, Available, Availability}
 COMPONENTS_START_END = {Event, Todo, FreeBusy, Available, Availability}
 COMPONENTS_STATUS = {Event, Todo, Journal}
 COMPONENTS_ATTENDEES = {Event, Todo, Journal, Alarm}
-COMPONENTS_LINKS = COMPONENTS_RELATED_TO = {
+COMPONENTS_LINKS = COMPONENTS_RELATED_TO = COMPONENTS_CONCEPTS = {
     Alarm,
     Availability,
     Available,
@@ -874,6 +874,33 @@ rfc_9253_test_cases = [
         rfc_9253_related_to_values,
         True,
         "set several values",
+    ),
+    (
+        COMPONENTS_CONCEPTS,
+        "concepts",
+        "CONCEPT",
+        None,
+        [],
+        False,
+        "setting nothing",
+    ),
+    (
+        COMPONENTS_CONCEPTS,
+        "concepts",
+        "CONCEPT",
+        [],
+        [],
+        False,
+        "setting nothing",
+    ),
+    (
+        COMPONENTS_CONCEPTS,
+        "concepts",
+        "CONCEPT",
+        ["https://123", vUri("https://asd")],
+        [vUri("https://123"), vUri("https://asd")],
+        True,
+        "set two values",
     ),
 ]
 

@@ -92,6 +92,7 @@ class FreeBusy(Component):
         cls,
         /,
         comments: list[str] | str | None = None,
+        concepts: list[str | vUri] | str | vUri | None = None,
         contacts: list[str] | str | None = None,
         end: Optional[date | datetime] = None,
         links: list[str | vXmlReference | vUri | vUid] | None = None,
@@ -108,6 +109,7 @@ class FreeBusy(Component):
 
         Arguments:
             comments: The :attr:`Component.comments` of the component.
+            concepts: The :attr:`Component.concepts` of the component.
             contacts: The :attr:`contacts` of the component.
             end: The :attr:`end` of the component.
             links: The :attr:`Component.links` of the component.
@@ -133,6 +135,7 @@ class FreeBusy(Component):
             comments=comments,
             links=links,
             related_to=related_to,
+            concepts=concepts,
         )
         free_busy.uid = uid if uid is not None else uuid.uuid4()
         free_busy.url = url

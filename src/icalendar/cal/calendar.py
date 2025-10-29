@@ -520,6 +520,7 @@ Description:
         calscale: str | None = None,
         categories: Sequence[str] = (),
         color: str | None = None,
+        concepts: list[str | vUri] | str | vUri | None = None,
         description: str | None = None,
         language: str | None = None,
         last_modified: date | datetime | None = None,
@@ -543,6 +544,7 @@ Description:
             calscale: The :attr:`calscale` of the calendar.
             categories: The :attr:`categories` of the calendar.
             color: The :attr:`color` of the calendar.
+            concepts: The :attr:`Component.concepts` of the calendar.
             description: The :attr:`description` of the calendar.
             language: The language for the calendar. Used to generate localized `prodid`.
             last_modified: The :attr:`Component.last_modified` of the calendar.
@@ -569,7 +571,10 @@ Description:
         .. warning:: As time progresses, we will be stricter with the validation.
         """  # noqa: E501
         calendar: Calendar = super().new(
-            last_modified=last_modified, links=links, related_to=related_to
+            last_modified=last_modified,
+            links=links,
+            related_to=related_to,
+            concepts=concepts,
         )
 
         # Generate prodid if not provided but organization is given
