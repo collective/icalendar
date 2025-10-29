@@ -9,9 +9,7 @@ from icalendar.attr import (
     RELATED_TO_TYPE_SETTER,
     categories_property,
     images_property,
-    links_property,
     multi_language_text_property,
-    related_to_property,
     single_string_property,
     source_property,
     uid_property,
@@ -514,8 +512,6 @@ Description:
         self.pop("REFRESH-INTERVAL")
 
     images = images_property
-    links = links_property
-    related_to = related_to_property
 
     @classmethod
     def new(
@@ -550,14 +546,14 @@ Description:
             description: The :attr:`description` of the calendar.
             language: The language for the calendar. Used to generate localized `prodid`.
             last_modified: The :attr:`Component.last_modified` of the calendar.
-            links: The :attr:`links` of the calendar.
+            links: The :attr:`Component.links` of the calendar.
             method: The :attr:`method` of the calendar.
             name: The :attr:`calendar_name` of the calendar.
             organization: The organization name. Used to generate `prodid` if not provided.
             prodid: The :attr:`prodid` of the component. If None and organization is provided,
                 generates a `prodid` in format "-//organization//name//language".
             refresh_interval: The :attr:`refresh_interval` of the calendar.
-            related_to: The :attr:`related_to` of the calendar.
+            related_to: The :attr:`Component.related_to` of the calendar.
             source: The :attr:`source` of the calendar.
             uid: The :attr:`uid` of the calendar.
                 If None, this is set to a new :func:`uuid.uuid4`.
@@ -572,7 +568,9 @@ Description:
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """  # noqa: E501
-        calendar: Calendar = super().new(last_modified=last_modified)
+        calendar: Calendar = super().new(
+            last_modified=last_modified, links=links, related_to=related_to
+        )
 
         # Generate prodid if not provided but organization is given
         if prodid is None and organization:
@@ -594,8 +592,7 @@ Description:
         calendar.url = url
         calendar.refresh_interval = refresh_interval
         calendar.source = source
-        calendar.links = links
-        calendar.related_to = related_to
+
         return calendar
 
     def validate(self):

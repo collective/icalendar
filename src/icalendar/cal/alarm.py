@@ -10,11 +10,9 @@ from icalendar.attr import (
     attendees_property,
     create_single_property,
     description_property,
-    links_property,
     property_del_duration,
     property_get_duration,
     property_set_duration,
-    related_to_property,
     single_int_property,
     single_string_property,
     single_utc_property,
@@ -244,8 +242,6 @@ class Alarm(Component):
     summary = summary_property
     description = description_property
     attendees = attendees_property
-    links = links_property
-    related_to = related_to_property
 
     @classmethod
     def new(
@@ -265,8 +261,8 @@ class Alarm(Component):
         Arguments:
             attendees: The :attr:`attendees` of the alarm.
             description: The :attr:`description` of the alarm.
-            links: The :attr:`links` of the alarm.
-            related_to: The :attr:`related_to` of the alarm.
+            links: The :attr:`Component.links` of the alarm.
+            related_to: The :attr:`Component.related_to` of the alarm.
             summary: The :attr:`summary` of the alarm.
             uid: The :attr:`uid` of the alarm.
 
@@ -278,13 +274,11 @@ class Alarm(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        alarm: Alarm = super().new()
+        alarm: Alarm = super().new(links=links, related_to=related_to)
         alarm.summary = summary
         alarm.description = description
         alarm.uid = uid
         alarm.attendees = attendees
-        alarm.links = links
-        alarm.related_to = related_to
         return alarm
 
 

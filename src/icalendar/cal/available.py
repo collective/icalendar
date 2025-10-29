@@ -16,10 +16,8 @@ from icalendar.attr import (
     description_property,
     duration_property,
     exdates_property,
-    links_property,
     location_property,
     rdates_property,
-    related_to_property,
     rfc_7953_dtend_property,
     rfc_7953_dtstart_property,
     rfc_7953_duration_property,
@@ -94,8 +92,6 @@ class Available(Component):
     DURATION = duration_property("Available")
     duration = rfc_7953_duration_property
     end = rfc_7953_end_property
-    links = links_property
-    related_to = related_to_property
 
     @classmethod
     def new(
@@ -130,9 +126,9 @@ class Available(Component):
             end: The :attr:`end` of the Available component.
             last_modified: The :attr:`Component.last_modified` of the
                 Available component.
-            links: The :attr:`links` of the Available component.
+            links: The :attr:`Component.links` of the Available component.
             location: The :attr:`location` of the Available component.
-            related_to: The :attr:`related_to` of the Available component.
+            related_to: The :attr:`Component.related_to` of the Available component.
             sequence: The :attr:`sequence` of the Available component.
             stamp: The :attr:`Component.stamp` of the Available component.
                 If None, this is set to the current time.
@@ -153,6 +149,9 @@ class Available(Component):
             stamp=stamp if stamp is not None else cls._utc_now(),
             created=created,
             last_modified=last_modified,
+            comments=comments,
+            links=links,
+            related_to=related_to,
         )
         available.summary = summary
         available.description = description
@@ -160,10 +159,8 @@ class Available(Component):
         available.sequence = sequence
         available.categories = categories
         available.location = location
-        available.comments = comments
         available.contacts = contacts
-        available.links = links
-        available.related_to = related_to
+
         if cls._validate_new:
             if end is not None and (
                 not isinstance(end, datetime) or end.tzinfo is None

@@ -12,9 +12,7 @@ import dateutil.tz
 from icalendar.attr import (
     create_single_property,
     exdates_property,
-    links_property,
     rdates_property,
-    related_to_property,
     rrules_property,
 )
 from icalendar.cal.component import Component
@@ -376,9 +374,6 @@ class Timezone(Component):
         """
         return self.walk("DAYLIGHT")
 
-    links = links_property
-    related_to = related_to_property
-
 
 class TimezoneStandard(Component):
     """
@@ -438,8 +433,6 @@ class TimezoneStandard(Component):
     rdates = rdates_property
     exdates = exdates_property
     rrules = rrules_property
-    links = links_property
-    related_to = related_to_property
 
 
 class TimezoneDaylight(Component):
@@ -462,8 +455,6 @@ class TimezoneDaylight(Component):
     rdates = rdates_property
     exdates = exdates_property
     rrules = rrules_property
-    links = links_property
-    related_to = related_to_property
 
 
 __all__ = ["Timezone", "TimezoneDaylight", "TimezoneStandard"]

@@ -17,10 +17,8 @@ from icalendar.attr import (
     descriptions_property,
     exdates_property,
     images_property,
-    links_property,
     organizer_property,
     rdates_property,
-    related_to_property,
     rrules_property,
     sequence_property,
     status_property,
@@ -148,7 +146,6 @@ class Journal(Component):
     contacts = contacts_property
     status = status_property
     attendees = attendees_property
-    links = links_property
 
     @property
     def description(self) -> str:
@@ -173,7 +170,6 @@ class Journal(Component):
         del self.descriptions
 
     images = images_property
-    related_to = related_to_property
 
     @classmethod
     def new(
@@ -213,9 +209,9 @@ class Journal(Component):
             description: The :attr:`description` of the journal.
             end: The :attr:`end` of the journal.
             last_modified: The :attr:`Component.last_modified` of the journal.
-            links: The :attr:`links` of the journal.
+            links: The :attr:`Component.links` of the journal.
             organizer: The :attr:`organizer` of the journal.
-            related_to: The :attr:`related_to` of the journal.
+            related_to: The :attr:`Component.related_to` of the journal.
             sequence: The :attr:`sequence` of the journal.
             stamp: The :attr:`Component.stamp` of the journal.
                 If None, this is set to the current time.
@@ -239,6 +235,8 @@ class Journal(Component):
             created=created,
             last_modified=last_modified,
             comments=comments,
+            links=links,
+            related_to=related_to,
         )
         journal.summary = summary
         journal.descriptions = description
@@ -254,8 +252,7 @@ class Journal(Component):
         journal.start = start
         journal.status = status
         journal.attendees = attendees
-        journal.links = links
-        journal.related_to = related_to
+
         return journal
 
 

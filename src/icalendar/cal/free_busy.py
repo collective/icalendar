@@ -10,9 +10,7 @@ from icalendar.attr import (
     RELATED_TO_TYPE_SETTER,
     contacts_property,
     create_single_property,
-    links_property,
     organizer_property,
-    related_to_property,
     uid_property,
     url_property,
 )
@@ -89,9 +87,6 @@ class FreeBusy(Component):
             return None
         return self.DTEND - self.DTSTART
 
-    links = links_property
-    related_to = related_to_property
-
     @classmethod
     def new(
         cls,
@@ -115,9 +110,9 @@ class FreeBusy(Component):
             comments: The :attr:`Component.comments` of the component.
             contacts: The :attr:`contacts` of the component.
             end: The :attr:`end` of the component.
-            links: The :attr:`links` of the component.
+            links: The :attr:`Component.links` of the component.
             organizer: The :attr:`organizer` of the component.
-            related_to: The :attr:`related_to` of the component.
+            related_to: The :attr:`Component.related_to` of the component.
             stamp: The :attr:`DTSTAMP` of the component.
                 If None, this is set to the current time.
             start: The :attr:`start` of the component.
@@ -134,7 +129,10 @@ class FreeBusy(Component):
         .. warning:: As time progresses, we will be stricter with the validation.
         """
         free_busy: FreeBusy = super().new(
-            stamp=stamp if stamp is not None else cls._utc_now(), comments=comments
+            stamp=stamp if stamp is not None else cls._utc_now(),
+            comments=comments,
+            links=links,
+            related_to=related_to,
         )
         free_busy.uid = uid if uid is not None else uuid.uuid4()
         free_busy.url = url
@@ -142,8 +140,7 @@ class FreeBusy(Component):
         free_busy.contacts = contacts
         free_busy.end = end
         free_busy.start = start
-        free_busy.links = links
-        free_busy.related_to = related_to
+
         if cls._validate_new:
             cls._validate_start_and_end(start, end)
         return free_busy

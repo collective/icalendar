@@ -24,7 +24,6 @@ from icalendar.attr import (
     get_start_end_duration_with_validation,
     get_start_property,
     images_property,
-    links_property,
     location_property,
     organizer_property,
     priority_property,
@@ -33,7 +32,6 @@ from icalendar.attr import (
     property_get_duration,
     property_set_duration,
     rdates_property,
-    related_to_property,
     rrules_property,
     sequence_property,
     set_duration_with_locking,
@@ -420,8 +418,6 @@ class Event(Component):
     attendees = attendees_property
     images = images_property
     conferences = conferences_property
-    links = links_property
-    related_to = related_to_property
 
     @classmethod
     def new(
@@ -467,11 +463,11 @@ class Event(Component):
             description: The :attr:`description` of the event.
             end: The :attr:`end` of the event.
             last_modified: The :attr:`Component.last_modified` of the event.
-            links: The :attr:`links` of the event.
+            links: The :attr:`Component.links` of the event.
             location: The :attr:`location` of the event.
             organizer: The :attr:`organizer` of the event.
             priority: The :attr:`priority` of the event.
-            related_to: The :attr:`related_to` of the event.
+            related_to: The :attr:`Component.related_to` of the event.
             sequence: The :attr:`sequence` of the event.
             stamp: The :attr:`Component.stamp` of the event.
                 If None, this is set to the current time.
@@ -496,6 +492,8 @@ class Event(Component):
             created=created,
             last_modified=last_modified,
             comments=comments,
+            links=links,
+            related_to=related_to,
         )
         event.summary = summary
         event.description = description
@@ -515,8 +513,7 @@ class Event(Component):
         event.status = status
         event.attendees = attendees
         event.conferences = conferences
-        event.links = links
-        event.related_to = related_to
+
         if cls._validate_new:
             cls._validate_start_and_end(start, end)
         return event

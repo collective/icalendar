@@ -24,7 +24,6 @@ from icalendar.attr import (
     get_start_end_duration_with_validation,
     get_start_property,
     images_property,
-    links_property,
     location_property,
     organizer_property,
     priority_property,
@@ -33,7 +32,6 @@ from icalendar.attr import (
     property_get_duration,
     property_set_duration,
     rdates_property,
-    related_to_property,
     rrules_property,
     sequence_property,
     set_duration_with_locking,
@@ -286,8 +284,6 @@ class Todo(Component):
     attendees = attendees_property
     images = images_property
     conferences = conferences_property
-    links = links_property
-    related_to = related_to_property
 
     @classmethod
     def new(
@@ -332,10 +328,10 @@ class Todo(Component):
             description: The :attr:`description` of the todo.
             end: The :attr:`end` of the todo.
             last_modified: The :attr:`Component.last_modified` of the todo.
-            links: The :attr:`links` of the todo.
+            links: The :attr:`Component.links` of the todo.
             location: The :attr:`location` of the todo.
             organizer: The :attr:`organizer` of the todo.
-            related_to: The :attr:`related_to` of the todo.
+            related_to: The :attr:`Component.related_to` of the todo.
             sequence: The :attr:`sequence` of the todo.
             stamp: The :attr:`Component.DTSTAMP` of the todo.
                 If None, this is set to the current time.
@@ -359,6 +355,8 @@ class Todo(Component):
             created=created,
             last_modified=last_modified,
             comments=comments,
+            links=links,
+            related_to=related_to,
         )
         todo.summary = summary
         todo.description = description
@@ -377,8 +375,7 @@ class Todo(Component):
         todo.status = status
         todo.attendees = attendees
         todo.conferences = conferences
-        todo.links = links
-        todo.related_to = related_to
+
         if cls._validate_new:
             cls._validate_start_and_end(start, end)
         return todo

@@ -17,11 +17,9 @@ from icalendar.attr import (
     contacts_property,
     description_property,
     duration_property,
-    links_property,
     location_property,
     organizer_property,
     priority_property,
-    related_to_property,
     rfc_7953_dtend_property,
     rfc_7953_dtstart_property,
     rfc_7953_duration_property,
@@ -222,8 +220,6 @@ class Availability(Component):
     DURATION = duration_property("Availability")
     duration = rfc_7953_duration_property
     end = rfc_7953_end_property
-    links = links_property
-    related_to = related_to_property
 
     @property
     def available(self) -> list[Available]:
@@ -275,10 +271,10 @@ class Availability(Component):
             description: The :attr:`description` of the availability.
             end: The :attr:`end` of the availability.
             last_modified: The :attr:`Component.last_modified` of the availability.
-            links: The :attr:`links` of the availability.
+            links: The :attr:`Component.links` of the availability.
             location: The :attr:`location` of the availability.
             organizer: The :attr:`organizer` of the availability.
-            related_to: The :attr:`related_to` of the availability.
+            related_to: The :attr:`Component.related_to` of the availability.
             sequence: The :attr:`sequence` of the availability.
             stamp: The :attr:`Component.stamp` of the availability.
                 If None, this is set to the current time.
@@ -299,7 +295,10 @@ class Availability(Component):
         availability: Availability = super().new(
             stamp=stamp if stamp is not None else cls._utc_now(),
             created=created,
+            comments=comments,
             last_modified=last_modified,
+            links=links,
+            related_to=related_to,
         )
         availability.summary = summary
         availability.description = description
@@ -311,11 +310,8 @@ class Availability(Component):
         availability.busy_type = busy_type
         availability.organizer = organizer
         availability.location = location
-        availability.comments = comments
         availability.priority = priority
         availability.contacts = contacts
-        availability.links = links
-        availability.related_to = related_to
         for subcomponent in components:
             availability.add_component(subcomponent)
         if cls._validate_new:
