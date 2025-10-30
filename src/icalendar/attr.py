@@ -2291,7 +2291,8 @@ def _get_concepts(self: Component) -> list[vUri]:
         CONCEPT defines the formal categories for a calendar component.
 
     Conformance:
-        This property can be specified zero or more times in any iCalendar component.
+        Since :rfc:`9253`,
+        this property can be specified zero or more times in any iCalendar component.
 
     Description:
         This property is used to specify formal categories or classifications of
@@ -2345,6 +2346,83 @@ def _del_concepts(self: Component):
 
 concepts_property = property(_get_concepts, _set_concepts, _del_concepts)
 
+
+def multi_string_property(name: str, doc: str):
+    """A property for an iCalendar Property that can occur multiple times."""
+
+    def fget(self: Component) -> list[str]:
+        """Get the values of a multi-string property."""
+        value = self.get(name, [])
+        if not isinstance(value, list):
+            value = [value]
+        return value
+
+    def fset(self: Component, value: list[str] | str | None) -> None:
+        """Set the values of a multi-string property."""
+        fdel(self)
+        if value is None:
+            return
+        if not isinstance(value, list):
+            value = [value]
+        for value in value:
+            self.add(name, value)
+
+    def fdel(self: Component):
+        """Delete the values of a multi-string property."""
+        self.pop(name, None)
+
+    return property(fget, fset, fdel, doc=doc)
+
+
+refids_property = multi_string_property(
+    "REFID",
+    """REFID
+
+Purpose:
+    REFID acts as a key for associated iCalendar entities.
+
+Conformance:
+    Since :rfc:`9253`,
+    this property can be specified zero or more times in any iCalendar component.
+
+Description:
+    The value of this property is free-form text that creates an
+    identifier for associated components.
+    All components that use the same REFID value are associated through
+    that value and can be located or retrieved as a group.
+    For example, all of the events in a travel itinerary
+    would have the same REFID value, so as to be grouped together.
+
+Examples:
+    The following is an example of this property.
+
+    .. code-block:: text
+
+        REFID:itinerary-2014-11-17
+
+    Use a REFID to associate several VTODOs:
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Todo
+        >>> todo_1 = Todo.new(
+        ...     summary="turn off stove",
+        ...     refids=["travel", "alps"]
+        ... )
+        >>> todo_2 = Todo.new(
+        ...     summary="pack backpack",
+        ...     refids=["travel", "alps"]
+        ... )
+        >>> todo_1.refids == todo_2.refids
+        True
+
+.. note::
+
+    List modifications do not modify the component.
+""",
+)
+
+
 __all__ = [
     "RELATED_TO_TYPE_SETTER",
     "attendees_property",
@@ -2369,6 +2447,7 @@ __all__ = [
     "links_property",
     "location_property",
     "multi_language_text_property",
+    "multi_string_property",
     "organizer_property",
     "priority_property",
     "property_del_duration",
@@ -2376,6 +2455,7 @@ __all__ = [
     "property_get_duration",
     "property_set_duration",
     "rdates_property",
+    "refids_property",
     "related_to_property",
     "rfc_7953_dtend_property",
     "rfc_7953_dtstart_property",

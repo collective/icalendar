@@ -2217,6 +2217,7 @@ class TypesFactory(CaselessDict):
             # uri is likely most helpful if people forget to set VALUE
             "link": "uri",
             "concept": "uri",
+            "refid": "text",
             # Date and Time Component Properties
             "completed": "date-time",
             "dtend": "date-time",

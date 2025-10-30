@@ -107,6 +107,7 @@ class Available(Component):
         last_modified: Optional[date] = None,
         links: list[str | vXmlReference | vUri | vUid] | None = None,
         location: Optional[str] = None,
+        refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
         sequence: Optional[int] = None,
         stamp: Optional[date] = None,
@@ -130,7 +131,8 @@ class Available(Component):
                 Available component.
             links: The :attr:`Component.links` of the Available component.
             location: The :attr:`location` of the Available component.
-            related_to: The :attr:`Component.related_to` of the Available component.
+            refids: :attr:`Component.refids` of the Available component.
+            related_to: :attr:`Component.related_to` of the Available component.
             sequence: The :attr:`sequence` of the Available component.
             stamp: The :attr:`Component.stamp` of the Available component.
                 If None, this is set to the current time.
@@ -154,6 +156,7 @@ class Available(Component):
             comments=comments,
             links=links,
             related_to=related_to,
+            refids=refids,
             concepts=concepts,
         )
         available.summary = summary

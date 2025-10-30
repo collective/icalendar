@@ -187,6 +187,7 @@ class Journal(Component):
         last_modified: Optional[date] = None,
         links: list[str | vXmlReference | vUri | vUid] | None = None,
         organizer: Optional[vCalAddress | str] = None,
+        refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
         sequence: Optional[int] = None,
         stamp: Optional[date] = None,
@@ -214,7 +215,8 @@ class Journal(Component):
             last_modified: The :attr:`Component.last_modified` of the journal.
             links: The :attr:`Component.links` of the journal.
             organizer: The :attr:`organizer` of the journal.
-            related_to: The :attr:`Component.related_to` of the journal.
+            refids: :attr:`Component.refids` of the journal.
+            related_to: :attr:`Component.related_to` of the journal.
             sequence: The :attr:`sequence` of the journal.
             stamp: The :attr:`Component.stamp` of the journal.
                 If None, this is set to the current time.
@@ -240,6 +242,7 @@ class Journal(Component):
             comments=comments,
             links=links,
             related_to=related_to,
+            refids=refids,
             concepts=concepts,
         )
         journal.summary = summary

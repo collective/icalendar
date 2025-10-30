@@ -530,6 +530,7 @@ Description:
         organization: str | None = None,
         prodid: str | None = None,
         refresh_interval: timedelta | None = None,
+        refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
         source: str | None = None,
         uid: str | uuid.UUID | None = None,
@@ -555,7 +556,8 @@ Description:
             prodid: The :attr:`prodid` of the component. If None and organization is provided,
                 generates a `prodid` in format "-//organization//name//language".
             refresh_interval: The :attr:`refresh_interval` of the calendar.
-            related_to: The :attr:`Component.related_to` of the calendar.
+            refids: :attr:`Component.refids` of the calendar.
+            related_to: :attr:`Component.related_to` of the calendar.
             source: The :attr:`source` of the calendar.
             uid: The :attr:`uid` of the calendar.
                 If None, this is set to a new :func:`uuid.uuid4`.
@@ -574,6 +576,7 @@ Description:
             last_modified=last_modified,
             links=links,
             related_to=related_to,
+            refids=refids,
             concepts=concepts,
         )
 

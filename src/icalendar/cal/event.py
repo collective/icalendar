@@ -439,6 +439,7 @@ class Event(Component):
         location: str | None = None,
         organizer: vCalAddress | str | None = None,
         priority: int | None = None,
+        refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
         sequence: int | None = None,
         stamp: date | None = None,
@@ -469,7 +470,8 @@ class Event(Component):
             location: The :attr:`location` of the event.
             organizer: The :attr:`organizer` of the event.
             priority: The :attr:`priority` of the event.
-            related_to: The :attr:`Component.related_to` of the event.
+            refids: :attr:`Component.refids` of the event.
+            related_to: :attr:`Component.related_to` of the event.
             sequence: The :attr:`sequence` of the event.
             stamp: The :attr:`Component.stamp` of the event.
                 If None, this is set to the current time.
@@ -496,6 +498,7 @@ class Event(Component):
             comments=comments,
             links=links,
             related_to=related_to,
+            refids=refids,
             concepts=concepts,
         )
         event.summary = summary

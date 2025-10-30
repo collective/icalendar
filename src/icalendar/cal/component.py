@@ -10,6 +10,7 @@ from icalendar.attr import (
     comments_property,
     concepts_property,
     links_property,
+    refids_property,
     related_to_property,
     single_utc_property,
     uid_property,
@@ -621,6 +622,7 @@ class Component(CaselessDict):
     links = links_property
     related_to = related_to_property
     concepts = concepts_property
+    refids = refids_property
 
     CREATED = single_utc_property(
         "CREATED",
@@ -659,6 +661,7 @@ class Component(CaselessDict):
         concepts: list[str | vUri] | str | vUri | None = None,
         last_modified: date | None = None,
         links: list[str | vXmlReference | vUri | vUid] | None = None,
+        refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
         stamp: date | None = None,
     ) -> Component:
@@ -686,6 +689,7 @@ class Component(CaselessDict):
         component.links = links
         component.related_to = related_to
         component.concepts = concepts
+        component.refids = refids
         return component
 
 

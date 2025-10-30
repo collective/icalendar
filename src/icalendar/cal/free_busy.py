@@ -97,6 +97,7 @@ class FreeBusy(Component):
         end: Optional[date | datetime] = None,
         links: list[str | vXmlReference | vUri | vUid] | None = None,
         organizer: Optional[vCalAddress | str] = None,
+        refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
         stamp: Optional[date] = None,
         start: Optional[date | datetime] = None,
@@ -114,7 +115,8 @@ class FreeBusy(Component):
             end: The :attr:`end` of the component.
             links: The :attr:`Component.links` of the component.
             organizer: The :attr:`organizer` of the component.
-            related_to: The :attr:`Component.related_to` of the component.
+            refids: :attr:`Component.refids` of the component.
+            related_to: :attr:`Component.related_to` of the component.
             stamp: The :attr:`DTSTAMP` of the component.
                 If None, this is set to the current time.
             start: The :attr:`start` of the component.
@@ -135,6 +137,7 @@ class FreeBusy(Component):
             comments=comments,
             links=links,
             related_to=related_to,
+            refids=refids,
             concepts=concepts,
         )
         free_busy.uid = uid if uid is not None else uuid.uuid4()

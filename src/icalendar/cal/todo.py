@@ -305,6 +305,7 @@ class Todo(Component):
         location: str | None = None,
         organizer: vCalAddress | str | None = None,
         priority: int | None = None,
+        refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
         sequence: int | None = None,
         stamp: date | None = None,
@@ -334,7 +335,8 @@ class Todo(Component):
             links: The :attr:`Component.links` of the todo.
             location: The :attr:`location` of the todo.
             organizer: The :attr:`organizer` of the todo.
-            related_to: The :attr:`Component.related_to` of the todo.
+            refids: :attr:`Component.refids` of the todo.
+            related_to: :attr:`Component.related_to` of the todo.
             sequence: The :attr:`sequence` of the todo.
             stamp: The :attr:`Component.DTSTAMP` of the todo.
                 If None, this is set to the current time.
@@ -360,6 +362,7 @@ class Todo(Component):
             comments=comments,
             links=links,
             related_to=related_to,
+            refids=refids,
             concepts=concepts,
         )
         todo.summary = summary

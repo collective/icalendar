@@ -251,6 +251,7 @@ class Alarm(Component):
         concepts: list[str | vUri] | str | vUri | None = None,
         description: Optional[str] = None,
         links: list[str | vXmlReference | vUri | vUid] | None = None,
+        refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
         summary: Optional[str] = None,
         uid: Optional[str | uuid.UUID] = None,
@@ -264,7 +265,8 @@ class Alarm(Component):
             concepts: The :attr:`Component.concepts` of the alarm.
             description: The :attr:`description` of the alarm.
             links: The :attr:`Component.links` of the alarm.
-            related_to: The :attr:`Component.related_to` of the alarm.
+            refids: :attr:`Component.refids` of the alarm.
+            related_to: :attr:`Component.related_to` of the alarm.
             summary: The :attr:`summary` of the alarm.
             uid: The :attr:`uid` of the alarm.
 
@@ -279,6 +281,7 @@ class Alarm(Component):
         alarm: Alarm = super().new(
             links=links,
             related_to=related_to,
+            refids=refids,
             concepts=concepts,
         )
         alarm.summary = summary

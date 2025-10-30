@@ -250,6 +250,7 @@ class Availability(Component):
         location: Optional[str] = None,
         organizer: Optional[vCalAddress | str] = None,
         priority: Optional[int] = None,
+        refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
         sequence: Optional[int] = None,
         stamp: Optional[date] = None,
@@ -276,7 +277,8 @@ class Availability(Component):
             links: The :attr:`Component.links` of the availability.
             location: The :attr:`location` of the availability.
             organizer: The :attr:`organizer` of the availability.
-            related_to: The :attr:`Component.related_to` of the availability.
+            refids: :attr:`Component.refids` of the availability.
+            related_to: :attr:`Component.related_to` of the availability.
             sequence: The :attr:`sequence` of the availability.
             stamp: The :attr:`Component.stamp` of the availability.
                 If None, this is set to the current time.
@@ -301,6 +303,7 @@ class Availability(Component):
             last_modified=last_modified,
             links=links,
             related_to=related_to,
+            refids=refids,
             concepts=concepts,
         )
         availability.summary = summary

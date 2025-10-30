@@ -87,7 +87,9 @@ COMPONENTS_CONTACT = {Event, Todo, Journal, FreeBusy, Available, Availability}
 COMPONENTS_START_END = {Event, Todo, FreeBusy, Available, Availability}
 COMPONENTS_STATUS = {Event, Todo, Journal}
 COMPONENTS_ATTENDEES = {Event, Todo, Journal, Alarm}
-COMPONENTS_LINKS = COMPONENTS_RELATED_TO = COMPONENTS_CONCEPTS = {
+# RFC 9253 properties are defines on ALL
+# So, if you add new components, do not forget to add them here.
+COMPONENTS_LINKS = COMPONENTS_RELATED_TO = COMPONENTS_CONCEPTS = COMPONENTS_REFID = {
     Alarm,
     Availability,
     Available,
@@ -899,6 +901,42 @@ rfc_9253_test_cases = [
         "CONCEPT",
         ["https://123", vUri("https://asd")],
         [vUri("https://123"), vUri("https://asd")],
+        True,
+        "set two values",
+    ),
+    (
+        COMPONENTS_REFID,
+        "refids",
+        "REFID",
+        None,
+        [],
+        False,
+        "setting nothing",
+    ),
+    (
+        COMPONENTS_REFID,
+        "refids",
+        "REFID",
+        [],
+        [],
+        False,
+        "setting nothing",
+    ),
+    (
+        COMPONENTS_REFID,
+        "refids",
+        "REFID",
+        "itinerary-2014-11-17",
+        ["itinerary-2014-11-17"],
+        True,
+        "set a value",
+    ),
+    (
+        COMPONENTS_REFID,
+        "refids",
+        "REFID",
+        ["itinerary-2014-11-17", "itinerary-2014-11-17-2"],
+        ["itinerary-2014-11-17", "itinerary-2014-11-17-2"],
         True,
         "set two values",
     ),
