@@ -2005,6 +2005,7 @@ def _get_links(self: Component) -> list[vUri | vUid | vXmlReference]:
     Conformance:
         This property can be specified zero or more times in any iCalendar component.
         LINK is specified in :rfc:`9253`.
+        The LINKREL parameter is required.
 
     Description:
         When used in a component, the value of this property points to

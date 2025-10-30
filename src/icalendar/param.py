@@ -463,6 +463,10 @@ RELTYPE = string_parameter(
     "RELTYPE",
     """Specify the type of hierarchical relationship associated with a component.
 
+Conformance:
+    :rfc:`5545` introduces the RELTYPE property parameter.
+    :rfc:`9253` adds new values.
+
 Description:
     This parameter can be specified on a property that
     references another related calendar.  The parameter specifies the
@@ -488,6 +492,7 @@ LABEL = string_parameter(
 Conformance:
     This property parameter is specified in :rfc:`7986`,
     iCalendar Property Extensions.
+
     :rfc:`9253` makes use of this for the LINK property:
     This parameter maps to the "title"
     attribute defined in Section 3.4.1 of :rfc:`8288`:
@@ -626,7 +631,8 @@ Registration:
     There are two kinds of relation types: registered and extension.
     These relation types are registered in :rfc:`8288`.
 
-    See also `Registered Link Relation Types
+.. seealso::
+    `Registered Link Relation Types
     <https://www.iana.org/assignments/link-relations/link-relations.xhtml>`_.
 
 

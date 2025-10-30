@@ -68,8 +68,8 @@ class Conference:
     # see https://stackoverflow.com/a/18348004/1320237
     uri: str
     feature: list[str] | str | None = None
-    label: list[str] | str | None = None
-    language: list[str] | str | None = None
+    label: str | None = None
+    language: str | None = None
 
     @classmethod
     def from_uri(cls, uri: vUri | str):
