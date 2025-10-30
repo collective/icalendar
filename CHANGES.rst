@@ -21,11 +21,20 @@ Breaking changes:
 
 New features:
 
-- ...
+- Add compatibility to :rfc:`9253`:
+  
+  - Add new property types :class:`vUid` and :class:`vXmlReference`.
+  - Add properties to all components: :attr:`Component.concepts`, :attr:`Component.links`, :attr:`Component.refids`, :attr:`Component.related_to`.
+  - Add new values to :class:`icalendar.enum.RELTYPE`.
+  - Add ``LABEL``, ``GAP``, and ``VALUE`` parameter to property values affected by :rfc:`9253`.
+
+- Allow setting default values in :class:`icalendar.parser.Parameters`.
+- Allow :py:`None` as an argument to :class:`icalendar.parser.Parameters`.
+- Add ``ical_value`` to several property values, see `Issue 876 <https://github.com/collective/icalendar/issues/876>`_.
 
 Bug fixes:
 
-- ...
+- Make sure a component's `conferences` property adds ``VALUE=URI`` if the conference is created as a URI.
 
 7.0.0a1 (28-10-2025)
 --------------------
