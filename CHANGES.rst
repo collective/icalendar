@@ -11,11 +11,11 @@ We use `Semantic Versioning <https://semver.org>`_.
 7.x series
 ----------
 
-Developers are always concerned about upgrading to a **new major** release.
+Developers may be concerned about upgrading to a **new major** release.
 Upgrading from 6.x to 7.x should have **no complications for most developers**, because:
 
-- The core API stays compatible with 4.x.
-- The the breaking changes are likely to only affect you if you are an icalendar expert, not a normal user.
+- the core API stays compatible with 4.x
+- the breaking changes likely affect you only if you are an icalendar expert, not a normal user
 
 We still recommend checking out the new features and giving feedback in the repository.
 
