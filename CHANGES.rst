@@ -8,6 +8,17 @@ We use `Semantic Versioning <https://semver.org>`_.
 - New features increase the **minor** version number.
 - Minor changes and bug fixes increase the **patch** version number.
 
+7.x series
+----------
+
+Developers are always concerned about upgrading to a **new major** release.
+Upgrading from 6.x to 7.x should have **no complications for most developers**, because:
+
+- The core API stays compatible with 4.x.
+- The the breaking changes are likely to only affect you if you are an icalendar expert, not a normal user.
+
+We still recommend checking out the new features and giving feedback in the repository.
+
 7.0.0a2 (unreleased)
 --------------------
 
