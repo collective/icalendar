@@ -70,9 +70,11 @@ from icalendar.prop import (
     vSkip,
     vText,
     vTime,
+    vUid,
     vUri,
     vUTCOffset,
     vWeekday,
+    vXmlReference,
 )
 from icalendar.prop.conference import Conference
 from icalendar.prop.image import Image
@@ -147,8 +149,10 @@ __all__ = [
     "vText",
     "vTime",
     "vUTCOffset",
+    "vUid",
     "vUri",
     "vWeekday",
+    "vXmlReference",
     "version",
     "version_tuple",
 ]

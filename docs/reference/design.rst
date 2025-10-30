@@ -25,14 +25,14 @@ icalendar is compatible with the following RFC standards.
     Calendar Availability
 :rfc:`7986`
     New Properties for iCalendar
+:rfc:`9253`
+    Support for iCalendar Relationships
 
 The maintainers of icalendar do not claim compatibility with the following RFCs.
 They might work though.
 
 :rfc:`9073`
     Event Publishing Extensions to iCalendar
-:rfc:`9253`
-    Support for iCalendar Relationships
 
 
 iCalendar file structure

@@ -47,6 +47,7 @@ from __future__ import annotations
 import base64
 import binascii
 import re
+import uuid
 from datetime import date, datetime, time, timedelta
 from typing import Any, Union
 
@@ -146,8 +147,6 @@ class vBoolean(int):
     BOOL_MAP = CaselessDict({"true": True, "false": False})
 
     def __new__(cls, *args, params: dict[str, Any] | None = None, **kwargs):
-        if params is None:
-            params = {}
         self = super().__new__(cls, *args, **kwargs)
         self.params = Parameters(params)
         return self
@@ -176,8 +175,6 @@ class vText(str):
         /,
         params: dict[str, Any] | None = None,
     ):
-        if params is None:
-            params = {}
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         self.encoding = encoding
@@ -195,7 +192,12 @@ class vText(str):
         ical_unesc = unescape_char(ical)
         return cls(ical_unesc)
 
-    from icalendar.param import ALTREP, LANGUAGE, RELTYPE
+    @property
+    def ical_value(self) -> str:
+        """The string value of the text."""
+        return str(self)
+
+    from icalendar.param import ALTREP, GAP, LANGUAGE, RELTYPE, VALUE
 
 
 class vCalAddress(str):
@@ -255,8 +257,6 @@ class vCalAddress(str):
         /,
         params: dict[str, Any] | None = None,
     ):
-        if params is None:
-            params = {}
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         self.params = Parameters(params)
@@ -449,8 +449,6 @@ class vFloat(float):
     params: Parameters
 
     def __new__(cls, *args, params: dict[str, Any] | None = None, **kwargs):
-        if params is None:
-            params = {}
         self = super().__new__(cls, *args, **kwargs)
         self.params = Parameters(params)
         return self
@@ -518,8 +516,6 @@ class vInt(int):
     params: Parameters
 
     def __new__(cls, *args, params: dict[str, Any] | None = None, **kwargs):
-        if params is None:
-            params = {}
         self = super().__new__(cls, *args, **kwargs)
         self.params = Parameters(params)
         return self
@@ -589,8 +585,6 @@ class vCategory:
     def __init__(
         self, c_list: list[str] | str, /, params: dict[str, Any] | None = None
     ):
-        if params is None:
-            params = {}
         if not hasattr(c_list, "__iter__") or isinstance(c_list, str):
             c_list = [c_list]
         self.cats: list[vText | str] = [vText(c) for c in c_list]
@@ -860,8 +854,6 @@ class vDatetime(TimeBase):
     params: Parameters
 
     def __init__(self, dt, /, params: dict[str, Any] | None = None):
-        if params is None:
-            params = {}
         self.dt = dt
         self.params = Parameters(params)
 
@@ -979,9 +971,9 @@ class vDuration(TimeBase):
 
     params: Parameters
 
-    def __init__(self, td, /, params: dict[str, Any] | None = None):
-        if params is None:
-            params = {}
+    def __init__(self, td: timedelta | str, /, params: dict[str, Any] | None = None):
+        if isinstance(td, str):
+            td = vDuration.from_ical(td)
         if not isinstance(td, timedelta):
             raise TypeError("Value MUST be a timedelta instance")
         self.td = td
@@ -1225,8 +1217,6 @@ class vWeekday(str):
         /,
         params: dict[str, Any] | None = None,
     ):
-        if params is None:
-            params = {}
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         match = WEEKDAY_RULE.match(self)
@@ -1281,8 +1271,6 @@ class vFrequency(str):
         /,
         params: dict[str, Any] | None = None,
     ):
-        if params is None:
-            params = {}
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         if self not in vFrequency.frequencies:
@@ -1331,11 +1319,7 @@ class vMonth(int):
 
     params: Parameters
 
-    def __new__(
-        cls, month: Union[str, int], /, params: dict[str, Any] | None = None
-    ):
-        if params is None:
-            params = {}
+    def __new__(cls, month: Union[str, int], /, params: dict[str, Any] | None = None):
         if isinstance(month, vMonth):
             return cls(month.to_ical().decode())
         if isinstance(month, str):
@@ -1551,8 +1535,6 @@ class vRecur(CaselessDict):
     )
 
     def __init__(self, *args, params: dict[str, Any] | None = None, **kwargs):
-        if params is None:
-            params = {}
         if args and isinstance(args[0], str):
             # we have a string as an argument.
             args = (self.from_ical(args[0]),) + args[1:]
@@ -1766,19 +1748,21 @@ class vUri(str):
         When a property parameter value is a URI value type, the URI MUST
         be specified as a quoted-string value.
 
-        Example:
-            The following is a URI for a network file:
+    Examples:
+        The following is a URI for a network file:
 
-            .. code-block:: text
+        .. code-block:: text
 
-                http://example.com/my-report.txt
+            http://example.com/my-report.txt
 
-            .. code-block:: pycon
+        .. code-block:: pycon
 
-                >>> from icalendar.prop import vUri
-                >>> uri = vUri.from_ical('http://example.com/my-report.txt')
-                >>> uri
-                'http://example.com/my-report.txt'
+            >>> from icalendar.prop import vUri
+            >>> uri = vUri.from_ical('http://example.com/my-report.txt')
+            >>> uri
+            vUri('http://example.com/my-report.txt')
+            >>> uri.uri
+            'http://example.com/my-report.txt'
     """
 
     params: Parameters
@@ -1791,8 +1775,6 @@ class vUri(str):
         /,
         params: dict[str, Any] | None = None,
     ):
-        if params is None:
-            params = {}
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         self.params = Parameters(params)
@@ -1807,6 +1789,100 @@ class vUri(str):
             return cls(ical)
         except Exception as e:
             raise ValueError(f"Expected , got: {ical}") from e
+
+    @property
+    def ical_value(self) -> str:
+        """The URI."""
+        return self.uri
+
+    @property
+    def uri(self) -> str:
+        """The URI."""
+        return str(self)
+
+    def __repr__(self) -> str:
+        """repr(self)"""
+        return f"{self.__class__.__name__}({self.uri!r})"
+
+    from icalendar.param import FMTTYPE, GAP, LABEL, LANGUAGE, LINKREL, RELTYPE, VALUE
+
+
+class vUid(vText):
+    """A UID of a component.
+
+    This is defined in :rfc:`9253`, Section 7.
+    """
+
+    @classmethod
+    def new(cls):
+        """Create a new UID for convenience.
+
+        .. code-block:: pycon
+
+            >>> from icalendar import vUid
+            >>> vUid.new()
+            vUid('d755cef5-2311-46ed-a0e1-6733c9e15c63')
+
+        """
+        return vUid(uuid.uuid4())
+
+    def __init__(self, uid: str):
+        """Create a vUid."""
+        super().__init__()
+        self.params.setdefault("VALUE", "UID")
+
+    @property
+    def uid(self) -> str:
+        """The uid of this property."""
+        return str(self)
+
+    @property
+    def ical_value(self) -> str:
+        """The uid of this property."""
+        return self.uid
+
+    def __repr__(self) -> str:
+        """repr(self)"""
+        return f"{self.__class__.__name__}({self.uid!r})"
+
+    from icalendar.param import FMTTYPE, LABEL, LINKREL
+
+
+class vXmlReference(vUri):
+    """An XML-REFERENCE.
+
+    The associated value references an associated XML artifact and
+    is a URI with an XPointer anchor value.
+
+    This is defined in :rfc:`9253`, Section 7.
+    """
+
+    def __init__(self, xml_reference: str):
+        """Create a new XML reference."""
+        super().__init__()
+        self.params.setdefault("VALUE", "XML-REFERENCE")
+
+    @property
+    def xml_reference(self) -> str:
+        """The uid of this property."""
+        return self.uri
+
+    @property
+    def x_pointer(self) -> str:
+        """The XPointer of the URI.
+
+        The XPointer is defined in `W3C.WD-xptr-xpointer-20021219
+        <https://www.rfc-editor.org/rfc/rfc9253.html#W3C.WD-xptr-xpointer-20021219>`_,
+        and its use as an anchor is defined in `W3C.REC-xptr-framework-20030325
+        <https://www.rfc-editor.org/rfc/rfc9253.html#W3C.REC-xptr-framework-20030325>`_.
+        """
+        from urllib.parse import unquote, urlparse
+
+        parsed = urlparse(self.xml_reference)
+        fragment = unquote(parsed.fragment)
+        if not fragment.startswith("xpointer(") or not fragment.endswith(")"):
+            raise ValueError(f"No valid X Pointer found in {fragment!r}.")
+        return fragment[9:-1]
 
 
 class vGeo:
@@ -1881,8 +1957,6 @@ class vGeo:
         Raises:
             ValueError: if geo is not a tuple of (latitude, longitude)
         """
-        if params is None:
-            params = {}
         try:
             latitude, longitude = (geo[0], geo[1])
             latitude = float(latitude)
@@ -1971,8 +2045,6 @@ class vUTCOffset:
     # propagate upwards
 
     def __init__(self, td, /, params: dict[str, Any] | None = None):
-        if params is None:
-            params = {}
         if not isinstance(td, timedelta):
             raise TypeError("Offset value MUST be a timedelta instance")
         self.td = td
@@ -2046,8 +2118,6 @@ class vInline(str):
         /,
         params: dict[str, Any] | None = None,
     ):
-        if params is None:
-            params = {}
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         self.params = Parameters(params)
@@ -2113,6 +2183,8 @@ class TypesFactory(CaselessDict):
         self["inline"] = vInline
         self["date-time-list"] = vDDDLists
         self["categories"] = vCategory
+        self["uid"] = vUid  # RFC 9253
+        self["xml-reference"] = vXmlReference  # RFC 9253
 
     #################################################
     # Property types
@@ -2140,6 +2212,12 @@ class TypesFactory(CaselessDict):
             "resources": "text",
             "status": "text",
             "summary": "text",
+            # RFC 9253
+            # link should be uri, xml-reference or uid
+            # uri is likely most helpful if people forget to set VALUE
+            "link": "uri",
+            "concept": "uri",
+            "refid": "text",
             # Date and Time Component Properties
             "completed": "date-time",
             "dtend": "date-time",
@@ -2203,6 +2281,10 @@ class TypesFactory(CaselessDict):
             "rsvp": "boolean",
             "sent-by": "cal-address",
             "value": "text",
+            # rfc 9253 parameters
+            "label": "text",
+            "linkrel": "text",
+            "gap": "duration",
         }
     )
 
@@ -2211,7 +2293,8 @@ class TypesFactory(CaselessDict):
 
         Args:
             name: Property or parameter name
-            value_param: Optional ``VALUE`` parameter, for example, "DATE", "DATE-TIME", or other string.
+            value_param: Optional ``VALUE`` parameter, for example,
+            "DATE", "DATE-TIME", or other string.
 
         Returns:
             The appropriate value type class
@@ -2221,12 +2304,12 @@ class TypesFactory(CaselessDict):
         if name.upper() in ("RDATE", "EXDATE"):
             return self["date-time-list"]
 
-        # Only use VALUE parameter for known properties that support multiple value types
+        # Only use VALUE parameter for known properties
+        # that support multiple value types
         # (like DTSTART, DTEND, etc. which can be DATE or DATE-TIME)
         # For unknown/custom properties, always use the default type from types_map
-        if value_param and name in self.types_map:
-            if value_param in self:
-                return self[value_param]
+        if value_param and name in self.types_map and value_param in self:
+            return self[value_param]
         return self[self.types_map.get(name, "text")]
 
     def to_ical(self, name, value):
@@ -2272,6 +2355,8 @@ __all__ = [
     "vText",
     "vTime",
     "vUTCOffset",
+    "vUid",
     "vUri",
     "vWeekday",
+    "vXmlReference",
 ]

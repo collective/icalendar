@@ -6,6 +6,7 @@ from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, NamedTuple, Optional, Union
 
 from icalendar.attr import (
+    RELATED_TO_TYPE_SETTER,
     attendees_property,
     create_single_property,
     description_property,
@@ -23,7 +24,7 @@ from icalendar.cal.component import Component
 if TYPE_CHECKING:
     import uuid
 
-    from icalendar.prop import vCalAddress
+    from icalendar.prop import vCalAddress, vUid, vUri, vXmlReference
 
 
 class Alarm(Component):
@@ -247,7 +248,11 @@ class Alarm(Component):
         cls,
         /,
         attendees: Optional[list[vCalAddress]] = None,
+        concepts: list[str | vUri] | str | vUri | None = None,
         description: Optional[str] = None,
+        links: list[str | vXmlReference | vUri | vUid] | None = None,
+        refids: list[str] | str | None = None,
+        related_to: RELATED_TO_TYPE_SETTER = None,
         summary: Optional[str] = None,
         uid: Optional[str | uuid.UUID] = None,
     ):
@@ -257,7 +262,11 @@ class Alarm(Component):
 
         Arguments:
             attendees: The :attr:`attendees` of the alarm.
+            concepts: The :attr:`Component.concepts` of the alarm.
             description: The :attr:`description` of the alarm.
+            links: The :attr:`Component.links` of the alarm.
+            refids: :attr:`Component.refids` of the alarm.
+            related_to: :attr:`Component.related_to` of the alarm.
             summary: The :attr:`summary` of the alarm.
             uid: The :attr:`uid` of the alarm.
 
@@ -269,7 +278,12 @@ class Alarm(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        alarm = super().new()
+        alarm: Alarm = super().new(
+            links=links,
+            related_to=related_to,
+            refids=refids,
+            concepts=concepts,
+        )
         alarm.summary = summary
         alarm.description = description
         alarm.uid = uid

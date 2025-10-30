@@ -37,19 +37,23 @@ def test_to_uri():
     """Test creating a vURI."""
     uri = vUri(
         "https://chat.example.com/audio?id=123456",
-        params={"FEATURE": "PHONE", "LABEL": "Moderator", "LANGUAGE": "DE"},
+        params={
+            "FEATURE": "PHONE",
+            "LABEL": "Moderator",
+            "LANGUAGE": "DE",
+            "VALUE": "URI",
+        },
     )
     conference = Conference.from_uri(uri)
     new_uri = conference.to_uri()
     assert new_uri == uri
     assert new_uri.params == uri.params
 
+
 def test_conference_list_params_serialization():
     """Ensure list parameters are correctly serialized to comma-separated strings."""
     conf = Conference(
-        uri="https://example.com",
-        feature=["AUDIO", "VIDEO"],
-        label="Meeting room"
+        uri="https://example.com", feature=["AUDIO", "VIDEO"], label="Meeting room"
     )
 
     vuri = conf.to_uri()
@@ -165,3 +169,10 @@ def test_conference_from_string():
     assert conference.feature is None
     assert conference.label is None
     assert conference.language is None
+
+
+def test_from_uri_string_adds_value_type():
+    """Conference created from a string should add the value type."""
+    conference = Conference.from_uri("http://asd")
+    uri = conference.to_uri()
+    assert uri.VALUE == "URI"

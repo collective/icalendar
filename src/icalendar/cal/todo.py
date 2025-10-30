@@ -7,6 +7,7 @@ from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Literal, Sequence
 
 from icalendar.attr import (
+    RELATED_TO_TYPE_SETTER,
     X_MOZ_LASTACK_property,
     X_MOZ_SNOOZE_TIME_property,
     attendees_property,
@@ -18,11 +19,11 @@ from icalendar.attr import (
     create_single_property,
     description_property,
     exdates_property,
-    images_property,
     get_duration_property,
     get_end_property,
     get_start_end_duration_with_validation,
     get_start_property,
+    images_property,
     location_property,
     organizer_property,
     priority_property,
@@ -46,7 +47,7 @@ from icalendar.cal.component import Component
 if TYPE_CHECKING:
     from icalendar.alarms import Alarms
     from icalendar.enums import CLASS, STATUS
-    from icalendar.prop import vCalAddress
+    from icalendar.prop import vCalAddress, vUid, vUri, vXmlReference
     from icalendar.prop.conference import Conference
 
 
@@ -293,15 +294,19 @@ class Todo(Component):
         classification: CLASS | None = None,
         color: str | None = None,
         comments: list[str] | str | None = None,
+        concepts: list[str | vUri] | str | vUri | None = None,
         contacts: list[str] | str | None = None,
         conferences: list[Conference] | None = None,
         created: date | None = None,
         description: str | None = None,
         end: date | datetime | None = None,
         last_modified: date | None = None,
+        links: list[str | vXmlReference | vUri | vUid] | None = None,
         location: str | None = None,
         organizer: vCalAddress | str | None = None,
         priority: int | None = None,
+        refids: list[str] | str | None = None,
+        related_to: RELATED_TO_TYPE_SETTER = None,
         sequence: int | None = None,
         stamp: date | None = None,
         start: date | datetime | None = None,
@@ -320,13 +325,18 @@ class Todo(Component):
             classification: The :attr:`classification` of the todo.
             color: The :attr:`color` of the todo.
             comments: The :attr:`Component.comments` of the todo.
+            concepts: The :attr:`Component.concepts` of the todo.
+            contacts: The :attr:`contacts` of the todo.
             conferences: The :attr:`conferences` of the todo.
             created: The :attr:`Component.created` of the todo.
             description: The :attr:`description` of the todo.
             end: The :attr:`end` of the todo.
             last_modified: The :attr:`Component.last_modified` of the todo.
+            links: The :attr:`Component.links` of the todo.
             location: The :attr:`location` of the todo.
             organizer: The :attr:`organizer` of the todo.
+            refids: :attr:`Component.refids` of the todo.
+            related_to: :attr:`Component.related_to` of the todo.
             sequence: The :attr:`sequence` of the todo.
             stamp: The :attr:`Component.DTSTAMP` of the todo.
                 If None, this is set to the current time.
@@ -345,11 +355,15 @@ class Todo(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        todo = super().new(
+        todo: Todo = super().new(
             stamp=stamp if stamp is not None else cls._utc_now(),
             created=created,
             last_modified=last_modified,
             comments=comments,
+            links=links,
+            related_to=related_to,
+            refids=refids,
+            concepts=concepts,
         )
         todo.summary = summary
         todo.description = description
@@ -368,6 +382,7 @@ class Todo(Component):
         todo.status = status
         todo.attendees = attendees
         todo.conferences = conferences
+
         if cls._validate_new:
             cls._validate_start_and_end(start, end)
         return todo
