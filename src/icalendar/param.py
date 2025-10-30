@@ -632,6 +632,7 @@ Registration:
     These relation types are registered in :rfc:`8288`.
 
 .. seealso::
+
     `Registered Link Relation Types
     <https://www.iana.org/assignments/link-relations/link-relations.xhtml>`_.
 
