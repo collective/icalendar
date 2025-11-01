@@ -10,7 +10,7 @@ As a project under the `collective` GitHub organization as well as a dependency 
 ## Supported versions
 
 Security vulnerabilities are fixed only for the latest version of icalendar.
-
+It is highly recommended to upgrade to the latest release.
 
 ## Procedure
 
