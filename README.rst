@@ -112,7 +112,7 @@ in the iCalendar (:rfc:`5545`) standard.
 
 
 Have a look at `more examples
-<https://icalendar.readthedocs.io/en/latest/usage.html>`_.
+<https://icalendar.readthedocs.io/en/latest/how-to/usage.html#more-examples>`_.
 
 Use timezones of your choice
 ----------------------------
