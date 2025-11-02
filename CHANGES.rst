@@ -32,7 +32,7 @@ Breaking changes:
 
 New features:
 
-- ...
+- Added funding link to :file:`pyproject.toml`.  See `Issue 800 <https://github.com/collective/icalendar/issues/800>`_.
 
 Bug fixes:
 
