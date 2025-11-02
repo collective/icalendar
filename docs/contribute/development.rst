@@ -287,12 +287,12 @@ In the following example, you can run Vale to display warnings or errors only, n
 
 The command ``make vale`` automatically installs Vale into your Python virtual environment—which is also created via any documentation ``Makefile`` commands—when you invoke it for the first time.
 
-Vale has [integrations](https://vale.sh/docs/) with various IDEs.
+Vale has `integrations <https://vale.sh/docs/>`_ with various IDEs.
 Integration might require installing Vale using operating system's package manager.
 
--   [JetBrains](https://plugins.jetbrains.com/plugin/19613-vale-cli/docs)
--   [Vim](https://github.com/dense-analysis/ale)
--   [VS Code](https://github.com/chrischinchilla/vale-vscode)
+-   `JetBrains <https://plugins.jetbrains.com/plugin/19613-vale-cli/docs>`_
+-   `Vim <https://github.com/dense-analysis/ale>`_
+-   `VS Code <https://github.com/chrischinchilla/vale-vscode>`_
 
 icalendar configures Vale in three places:
 
