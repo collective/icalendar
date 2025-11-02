@@ -32,7 +32,7 @@ Breaking changes:
 
 New features:
 
-- ...
+- Add PyData Theme version switcher to documentation. See `Issue 825 <https://github.com/collective/icalendar/issues/825>`_.
 
 Bug fixes:
 
