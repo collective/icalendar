@@ -1,7 +1,12 @@
 # icalendar documentation build configuration file
-import importlib.metadata
 import datetime
-import os
+import importlib.metadata
+import sys
+from pathlib import Path
+
+HERE = Path(__file__).parent
+SRC = HERE.parent / "src"
+sys.path.insert(0, str(SRC))  # update docs from icalendar source for livehtml
 
 extensions = [
     "sphinx.ext.autodoc",
@@ -12,19 +17,24 @@ extensions = [
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.napoleon",
 ]
-source_suffix = ".rst"
+source_suffix = {".rst": "restructuredtext"}
 master_doc = "index"
 
 project = "icalendar"
-this_year = datetime.date.today().year
-copyright = f"{this_year}, Plone Foundation"
-release = version = importlib.metadata.version("icalendar")
+this_year = datetime.date.today().year  # noqa: DTZ011
+copyright = f"{this_year}, Plone Foundation"  # noqa: A001
+version = importlib.metadata.version(project)
+v = version.split(".")[:-1]
+release = version = ".".join(v)
 
 
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
+exclude_patterns = [
+    "reference/api/modules.rst",
+]
 html_theme = "pydata_sphinx_theme"
 html_theme_options = {
     "icon_links": [
@@ -51,13 +61,17 @@ html_theme_options = {
             }
         },
     ],
+    "navbar_start": ["navbar-logo", "version-switcher"],
     "navigation_with_keys": True,
     "search_bar_text": "Search",
     "show_nav_level": 2,
     "show_toc_level": 2,
+    "switcher": {
+        "json_url": "https://icalendar.readthedocs.io/en/stable/_static/version-switcher.json",
+        "version_match": version,
+    },
     "use_edit_page_button": True,
 }
-pygments_style = "sphinx"
 html_context = {
 #     "github_url": "https://github.com", # or your GitHub Enterprise site
     "github_user": "collective",
@@ -65,7 +79,13 @@ html_context = {
     "github_version": "main",
     "doc_path": "docs",
 }
-htmlhelp_basename = "icalendardoc"
+html_static_path = [
+    "_static",
+]
+html_js_files = [
+    ("js/custom-icons.js", {"defer": "defer"}),
+]
+pygments_style = "sphinx"
 
 
 # -- Intersphinx configuration ----------------------------------
@@ -86,3 +106,4 @@ intersphinx_mapping = {
 
 man_pages = [("index", "icalendar", "icalendar Documentation", ["Plone Foundation"], 1)]
 
+htmlhelp_basename = "icalendardoc"
