@@ -32,7 +32,7 @@ Breaking changes:
 
 New features:
 
-- Added documentation of docstring format.  See `Issue 737 <https://github.com/collective/icalendar/issues/737>`_.
+- Added documentation of docstring format. See `Issue 737 <https://github.com/collective/icalendar/issues/737>`_.
 
 Bug fixes:
 
