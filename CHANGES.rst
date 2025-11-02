@@ -32,7 +32,7 @@ Breaking changes:
 
 New features:
 
-- Added documentation of docstring format. See `Issue 737 <https://github.com/collective/icalendar/issues/737>`_.
+- Added documentation of Vale usage for icalender documentation style guide. See `Issue 815 <https://github.com/collective/icalendar/issues/815>`_.
 
 Bug fixes:
 
