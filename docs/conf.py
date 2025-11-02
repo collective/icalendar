@@ -61,6 +61,9 @@ html_theme_options = {
             }
         },
     ],
+    "logo": {
+        "text": "icalendar"
+    },
     "navbar_start": ["navbar-logo", "version-switcher"],
     "navigation_with_keys": True,
     "search_bar_text": "Search",
