@@ -67,8 +67,7 @@ html_theme_options = {
     "show_toc_level": 2,
     "show_version_warning_banner": True,
     "switcher": {
-        # "json_url": "https://icalendar.readthedocs.io/en/stable/_static/version-switcher.json",
-        "json_url": "http://127.0.0.1:8050/_static/version-switcher.json",
+        "json_url": "https://icalendar.readthedocs.io/en/stable/_static/version-switcher.json",
         "version_match": version,
     },
     "use_edit_page_button": True,
