@@ -9,16 +9,17 @@ SRC = HERE.parent / "src"
 sys.path.insert(0, str(SRC))  # update docs from icalendar source for livehtml
 
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.coverage',
-    'sphinx.ext.viewcode'
+    "sphinx.ext.autodoc",
+    "sphinx.ext.coverage",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.viewcode",
 ]
-source_suffix = '.rst'
-master_doc = 'index'
+source_suffix = {".rst": "restructuredtext"}
+master_doc = "index"
 
-project = 'icalendar'
-this_year = datetime.date.today().year
-copyright = f'{this_year}, Plone Foundation'
+project = "icalendar"
+this_year = datetime.date.today().year  # noqa: DTZ011
+copyright = f"{this_year}, Plone Foundation"  # noqa: A001
 version = importlib.metadata.version(project)
 v = version.split(".")[:-1]
 release = version = ".".join(v)
@@ -87,9 +88,6 @@ html_js_files = [
 ]
 pygments_style = "sphinx"
 
-htmlhelp_basename = 'icalendardoc'
+man_pages = [("index", "icalendar", "icalendar Documentation", ["Plone Foundation"], 1)]
 
-man_pages = [
-    ('index', 'icalendar', 'icalendar Documentation',
-     ['Plone Foundation'], 1)
-]
+htmlhelp_basename = "icalendardoc"
