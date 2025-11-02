@@ -256,7 +256,7 @@ Use this command when packages that you have installed in your virtual environme
 
     make apidoc
 
-When editing icalendar's Python source code, use `Google Styleguide <https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings>`_ for the docstring format.
+When editing icalendar's Python source code, use `Google Python Style Guide <https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings>`_ for the docstring format.
 The following is an example that will render properly.
 
 .. code-block:: python
