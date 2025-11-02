@@ -69,6 +69,7 @@ html_theme_options = {
     "search_bar_text": "Search",
     "show_nav_level": 2,
     "show_toc_level": 2,
+    "show_version_warning_banner": False,
     "switcher": {
         "json_url": "https://icalendar.readthedocs.io/en/stable/_static/version-switcher.json",
         "version_match": version,
