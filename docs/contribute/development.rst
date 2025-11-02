@@ -285,7 +285,7 @@ In the following example, you can run Vale to display warnings or errors only, n
 
     make vale VALEOPTS="--minAlertLevel='warning'" VALEFILES="docs/index.md"
 
-The command ``make vale`` automatically installs Vale into your Python virtual environment—which is also created via any documentation `Makefile` commands—when you invoke it for the first time.
+The command ``make vale`` automatically installs Vale into your Python virtual environment—which is also created via any documentation ``Makefile`` commands—when you invoke it for the first time.
 
 Vale has [integrations](https://vale.sh/docs/) with various IDEs.
 Integration might require installing Vale using operating system's package manager.
