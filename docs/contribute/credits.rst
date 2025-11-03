@@ -110,6 +110,7 @@ Contributors
 - Victor Varvaryuk <victor.varvariuc@gmail.com>
 - Ville Skyttä <ville.skytta@iki.fi>
 - Wichert Akkerman <wichert@wiggy.net>
+- Howard Liao <howard940114@gmail.com>
 
 
 Complete list

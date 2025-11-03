@@ -8,7 +8,37 @@ We use `Semantic Versioning <https://semver.org>`_.
 - New features increase the **minor** version number.
 - Minor changes and bug fixes increase the **patch** version number.
 
-7.0.0a1 (unreleased)
+7.x series
+----------
+
+Developers may be concerned about upgrading to a **new major** release.
+Upgrading from 6.x to 7.x should have **no complications for most developers**, because:
+
+- the core API stays compatible with 4.x
+- the breaking changes likely affect you only if you are an icalendar expert, not a normal user
+
+We still recommend checking out the new features and giving feedback in the repository.
+
+7.0.0a2 (unreleased)
+--------------------
+
+Minor changes:
+
+- ...
+
+Breaking changes:
+
+- ...
+
+New features:
+
+- Added documentation of Vale usage for icalender documentation style guide. See `Issue 815 <https://github.com/collective/icalendar/issues/815>`_.
+
+Bug fixes:
+
+- ...
+
+7.0.0a1 (28-10-2025)
 --------------------
 
 Minor changes:
@@ -40,6 +70,7 @@ Minor changes:
 - Document ``icalendar.version`` module.
 - Use ``CONTRIBUTING.md`` in favour of ``.rst`` file.
 - Add type hints to ``icalendar.tools`` module.
+- Fix more examples link in ``README.md``. See `Issue 958 <https://github.com/collective/icalendar/issues/958>`_.
 - Add ``CODEOWNERS`` file for automatic pull request review assignment. See `Issue 945 <https://github.com/collective/icalendar/issues/945>`_.
 
 Breaking changes:
