@@ -32,7 +32,7 @@ Breaking changes:
 
 New features:
 
-- ...
+- Added documentation of Vale usage for icalender documentation style guide. See `Issue 815 <https://github.com/collective/icalendar/issues/815>`_.
 
 Bug fixes:
 
