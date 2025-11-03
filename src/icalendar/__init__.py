@@ -1,4 +1,4 @@
-__version__ = '5.0.13'
+__version__ = '5.0.14'
 
 from icalendar.cal import (
     Calendar,
