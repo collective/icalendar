@@ -106,6 +106,8 @@ To verify installation, launch a Python interpreter, and issue the following sta
     VCALENDAR({})
 
 
+.. _documentation-prerequisites:
+
 Documentation prerequisites
 ---------------------------
 
@@ -225,8 +227,8 @@ See {ref}`authors-english-label` for configuration.
 See the output on the console for suggestions.
 
 
-clean
-`````
+``clean``
+`````````
 
 ``clean`` removes all builds and cached files of the documentation.
 Use this command before a build to troubleshoot issues with edits not showing up and to ensure that cached files do not hide errors in the documentation.
@@ -236,8 +238,8 @@ Use this command before a build to troubleshoot issues with edits not showing up
     make clean
 
 
-clean-python
-````````````
+``clean-python``
+````````````````
 
 ``clean-python`` cleans the documentation build directory and Python virtual environment.
 Use this command when packages that you have installed in your virtual environment yield unexpected results.
@@ -316,3 +318,52 @@ The following is an example that will render properly.
 .. seealso::
 
     `sphinx-apidoc <https://www.sphinx-doc.org/en/master/man/sphinx-apidoc.html>`_
+
+
+``vale``
+````````
+
+:term:`Vale` is used to check American English spelling, grammar, and syntax, and style guides.
+
+.. code-block:: shell
+
+    make vale
+
+Observe the output and adjust Vale's configuration, as described in the next section.
+
+
+Advanced Vale usage
++++++++++++++++++++
+
+You can pass options to Vale in the ``VALEOPTS`` and ``VALEFILES`` environment variables.
+In the following example, you can run Vale to display warnings or errors only, not suggestions, in the console on a single file.
+
+.. code-block:: shell
+
+    make vale VALEOPTS="--minAlertLevel='warning'" VALEFILES="docs/index.md"
+
+The command ``make vale`` automatically installs Vale into your Python virtual environment—which is also created via any documentation ``Makefile`` commands—when you invoke it for the first time.
+
+Vale has `integrations <https://vale.sh/docs/>`_ with various IDEs.
+Integration might require installing Vale using operating system's package manager.
+
+-   `JetBrains <https://plugins.jetbrains.com/plugin/19613-vale-cli/docs>`_
+-   `Vim <https://github.com/dense-analysis/ale>`_
+-   `VS Code <https://github.com/chrischinchilla/vale-vscode>`_
+
+icalendar configures Vale in three places:
+
+-   :file:`.vale.ini` is Vale's configuration file.
+    This file allows overriding rules or changing their severity.
+    It's configured to use the `Microsoft Writing Style Guide <https://learn.microsoft.com/en-us/style-guide/welcome/>`_ for its ease of use—especially for non-native English readers and writers—and attention to non-technical audiences.
+-   :file:`Makefile` passes options to the ``vale`` command, such as the files Vale checks.
+-   icalendar documentation uses a custom spelling dictionary, with accepted and rejected spellings in :file:`docs/styles/config/vocabularies/icalendar/`.
+    Authors should add new words and proper names using correct casing to :file:`docs/styles/config/vocabularies/icalendar/accept.txt`, sorted alphabetically and case-insensitive.
+
+    If Vale does not reject a spelling that should be rejected, then you can add it to {file}`docs/styles/config/vocabularies/icalendar/reject.txt`.
+-   You can add additional spellings to accept or reject in their respective files inside the {file}`docs/styles/config/vocabularies/Base/` folder.
+
+Because it's difficult to automate good American English grammar and syntax, it's not strictly enforced.
+
+You can add spellings to Vale's configuration, and submit a pull request.
+This is an easy way to become a contributor to icalendar.
