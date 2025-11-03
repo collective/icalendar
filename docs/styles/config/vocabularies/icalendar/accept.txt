@@ -11,7 +11,7 @@
 (?i)Dai
 (?i)datetime
 dicts
-docstrings
+docstrings?
 (?i)Dunklau
 (?i)Dutta
 (?i)Egli

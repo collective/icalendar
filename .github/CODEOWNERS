@@ -1,0 +1,40 @@
+# CODEOWNERS file for automatic PR review assignment
+# See https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owners
+* @niccokunzmann @stevepiercy
+
+# Documentation, except docstrings in `src`
+*.md @stevepiercy @abe-101
+*.rst @stevepiercy @abe-101
+/.readthedocs.yml @stevepiercy @niccokunzmann @abe-101
+/.vale.ini @stevepiercy @abe-101
+/CONTRIBUTING.md @niccokunzmann @stevepiercy @abe-101
+/docs/ @stevepiercy @abe-101
+/Makefile @stevepiercy @abe-101
+/styles @stevepiercy @abe-101
+
+# Core calendar logic
+/src/ @niccokunzmann @SashankBhamidi @stevepiercy @angatha
+
+# Tests
+/src/icalendar/tests/ @niccokunzmann @SashankBhamidi
+
+# Fuzzing
+/src/icalendar/fuzzing/ @ennamarie19 @niccokunzmann @SashankBhamidi
+
+# CI and infrastructure
+/.coveragerc @niccokunzmann
+/.github/ @niccokunzmann @SashankBhamidi @stevepiercy
+/.pre-commit-config.yaml @niccokunzmann @SashankBhamidi @stevepiercy
+/bootstrap.py @niccokunzmann @stevepiercy
+/buildout.cfg @niccokunzmann @stevepiercy
+/pyproject.toml @niccokunzmann @stevepiercy
+/tox.ini @niccokunzmann @stevepiercy
+
+# Security
+/SECURITY.md @niccokunzmann @stevepiercy @abe-101 @angatha
+
+# Release stuff
+/CHANGES.rst @niccokunzmann @stevepiercy
+/MANIFEST.in @niccokunzmann
