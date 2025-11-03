@@ -1,6 +1,14 @@
 Changelog
 =========
 
+5.0.14 (2025-11-03)
+------------------
+
+Minor changes:
+
+- Add PyData Theme version switcher to documentation. See `Issue 825 <https://github.com/collective/icalendar/issues/825>`_.
+
+
 5.0.13 (2024-06-20)
 -------------------
 
