@@ -41,6 +41,27 @@ Bug fixes:
 
 - ...
 
+6.3.2 (2025-11-03)
+------------------
+
+Minor changes:
+
+- Add PyData Theme version switcher to documentation. See `Issue 825`_.
+
+5.0.14 (2025-11-03)
+-------------------
+
+Minor changes:
+
+- Add PyData Theme version switcher to documentation. See `Issue 825`_.
+
+4.1.2 (2025-11-03)
+------------------
+
+Minor changes:
+
+- Add PyData Theme version switcher to documentation. See `Issue 825`_.
+
 7.0.0a1 (28-10-2025)
 --------------------
 
