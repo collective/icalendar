@@ -58,7 +58,7 @@ A code owner is a type of collaborator or maintainer who is responsible for a sp
 Code owners are automatically requested for review when someone opens a pull request that modifies code that they own.
 
 You may ask, or be invited, to become a code owner as part of becoming a collaborator or maintainer.
-When doing so, you or the inviter may submit a pull request to update the :file:`.github/CODEOWNERS` file at https://github.com/collective/icalendar/blob/main/.github/CODEOWNERS.
+When doing so, you or the inviter may submit a pull request to update the :file:`.github/CODEOWNERS` file.
 
 .. seealso:: `About code owners <https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners>`_
 
