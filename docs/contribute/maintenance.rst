@@ -15,17 +15,16 @@ Currently the maintainers are the following people.
 
 Maintainers need the following permissions.
 
-- ``Admin`` access to the `repository <https://github.com/collective/icalendar>`_.
+``Admin`` access to the `repository <https://github.com/collective/icalendar>`_.
     These can be enabled by a current maintainer or a GitHub organization administrator in the `settings <https://github.com/collective/icalendar/settings/access>`_.
-- ``Maintainer`` or ``Owner`` access to the `PyPI project <https://pypi.org/project/icalendar/>`_.
+``Maintainer`` or ``Owner`` access to the `PyPI project <https://pypi.org/project/icalendar/>`_.
     Each owner and maintainer needs a PyPI account.
     All PyPI accounts require two-factor authentication (2FA) enabled.
     Owners can invite either new owners or maintainers in the `collaboration Section <https://pypi.org/manage/project/icalendar/collaboration/>`_ on PyPI.
-- ``Maintainer`` access to the `Read the Docs project <https://app.readthedocs.org/projects/icalendar/>`_.
+``Maintainer`` access to the `Read the Docs project <https://app.readthedocs.org/projects/icalendar/>`_.
     Existing maintainers can invite another maintainer through the `Maintainers <https://app.readthedocs.org/dashboard/icalendar/users/create/>`_ page.
-- ``Environments/Configure PyPI`` access for GitHub Workflows to grant new releases from tags.
-    Organization owners and repository administrators can grant this access in `Settings → Environments → PyPI <https://github.com/collective/icalendar/settings/environments/674266024/edit>`_
-    by adding the GitHub username to the list of :guilabel:`Required Reviewers`.
+``Environments/Configure PyPI`` access for GitHub Workflows to grant new releases from tags.
+    Organization owners and repository administrators can grant this access in :menuselection:`Settings --> Environments --> PyPI`, or at https://github.com/collective/icalendar/settings/environments/674266024/edit, by adding their GitHub username to the list of :guilabel:`Required Reviewers`.
 
 
 Collaborators
@@ -34,19 +33,34 @@ Collaborators
 Collaborators have write access to the repository.
 As a collaborator, you can
 
-- merge pull requests, and
-- initiate a new release.
+-   merge pull requests,
+-   initiate a new release, and
+-   become a :ref:`code-owner`.
 
 The maintainers of icalendar want to have as many knowledgeable people with write access taking responsibility as possible for these reasons:
 
-- a constant flow of fixes and new features
-- better code review
-- lower bus factor and backup
-- future maintainers
+-   a constant flow of fixes and new features
+-   better code review
+-   lower bus factor and backup
+-   future maintainers
 
 Nobody should merge their own pull requests.
 If you like to review or merge pull requests of other people and you have shown that you know how to contribute, you can ask to become a collaborator.
 A maintainer may ask if you would like to become one.
+
+
+.. _code-owner:
+
+Code owner
+----------
+
+A code owner is a type of collaborator or maintainer who is responsible for a specific part of the code.
+Code owners are automatically requested for review when someone opens a pull request that modifies code that they own.
+
+You may ask, or be invited, to become a code owner as part of becoming a collaborator or maintainer.
+When doing so, you or the inviter may submit a pull request to update the :file:`.github/CODEOWNERS` file at https://github.com/collective/icalendar/blob/main/.github/CODEOWNERS.
+
+.. seealso:: `About code owners <https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners>`_
 
 
 New releases
