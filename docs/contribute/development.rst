@@ -258,6 +258,63 @@ Use this command when packages that you have installed in your virtual environme
 
     make apidoc
 
+When editing icalendar's Python source code, use `Google Python Style Guide <https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings>`_ for the docstring format.
+The following is an example that will render properly.
+
+.. code-block:: python
+
+    def fetch_smalltable_rows(
+        table_handle: smalltable.Table,
+        keys: Sequence[bytes | str],
+        require_all_keys: bool = False,
+    ) -> Mapping[bytes, tuple[str, ...]]:
+    """A one-line summary of the module or program, terminated by a period.
+
+    Leave one blank line.  The rest of this docstring should contain an
+    overall description of the module or program.  Optionally, it may also
+    contain a brief description of exported classes and functions and/or usage
+    examples.
+
+    Args:
+        table_handle:
+            An open ``smalltable.Table`` instance.
+        keys:
+            A sequence of strings representing the key of each table row to
+            fetch.  String keys will be UTF-8 encoded.
+        require_all_keys:
+            If True only rows with values set for all keys will be returned.
+
+    Returns:
+        A dict mapping keys to the corresponding table row data
+        fetched. Each row is represented as a tuple of strings. For
+        example:
+
+        .. code-block:: python
+
+            {b'Serak': ('Rigel VII', 'Preparer'),
+            b'Zim': ('Irk', 'Invader'),
+            b'Lrrr': ('Omicron Persei 8', 'Emperor')}
+
+        Returned keys are always bytes.  If a key from the keys argument is
+        missing from the dictionary, then that row was not found in the
+        table (and require_all_keys must have been False).
+
+    Raises:
+        IOError:
+            An error occurred accessing the smalltable.
+
+    Example:
+        The following is an example of using ``fetch_smalltable_rows``.
+
+        .. code-block: pycon
+
+            >>> fetch_smalltable_rows(my_table_handle, (b'Serak', b'Zim', b'Lrrr'))
+            {b'Serak': ('Rigel VII', 'Preparer'),
+            b'Zim': ('Irk', 'Invader'),
+            b'Lrrr': ('Omicron Persei 8', 'Emperor')}
+
+    """
+
 .. seealso::
 
     `sphinx-apidoc <https://www.sphinx-doc.org/en/master/man/sphinx-apidoc.html>`_
