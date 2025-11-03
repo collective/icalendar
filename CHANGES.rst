@@ -8,6 +8,17 @@ We use `Semantic Versioning <https://semver.org>`_.
 - New features increase the **minor** version number.
 - Minor changes and bug fixes increase the **patch** version number.
 
+7.x series
+----------
+
+Developers may be concerned about upgrading to a **new major** release.
+Upgrading from 6.x to 7.x should have **no complications for most developers**, because:
+
+- the core API stays compatible with 4.x
+- the breaking changes likely affect you only if you are an icalendar expert, not a normal user
+
+We still recommend checking out the new features and giving feedback in the repository.
+
 7.0.0a2 (unreleased)
 --------------------
 
@@ -31,6 +42,9 @@ New features:
 - Allow setting default values in :class:`icalendar.parser.Parameters`.
 - Allow ``None`` as an argument to :class:`icalendar.parser.Parameters`.
 - Add ``ical_value`` to several property values, see `Issue 876 <https://github.com/collective/icalendar/issues/876>`_.
+- Added documentation of Vale usage for icalender documentation style guide. See `Issue 815 <https://github.com/collective/icalendar/issues/815>`_.
+- Added funding link to :file:`pyproject.toml`.  See `Issue 800 <https://github.com/collective/icalendar/issues/800>`_.
+- Added documentation of docstring format. See `Issue 747 <https://github.com/collective/icalendar/issues/747>`_.
 
 Bug fixes:
 
@@ -68,6 +82,8 @@ Minor changes:
 - Document ``icalendar.version`` module.
 - Use ``CONTRIBUTING.md`` in favour of ``.rst`` file.
 - Add type hints to ``icalendar.tools`` module.
+- Fix more examples link in ``README.md``. See `Issue 958 <https://github.com/collective/icalendar/issues/958>`_.
+- Add ``CODEOWNERS`` file for automatic pull request review assignment. See `Issue 945 <https://github.com/collective/icalendar/issues/945>`_.
 
 Breaking changes:
 

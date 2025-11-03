@@ -23,7 +23,7 @@ Before submitting your pull request, ensure you have met the following requireme
     See :ref:`change-log` for details.
 #.  Add a test which proves your fix and passes.
 #.  Run all tests to ensure your changes don't break any existing functionality.
-#.  Add or edit documentation, both as docstrings to be rendered in the API documentation and narrative documentation, as necessary.
+#.  :ref:`Add or edit documentation <documentation-prerequisites>`_, both as docstrings to be rendered in the API documentation and narrative documentation, as necessary.
 #.  Add yourself to :file:`docs/credits.rst`, if you haven't already done so.
 
 
