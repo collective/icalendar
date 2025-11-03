@@ -1,43 +1,90 @@
-# -*- coding: utf-8 -*-
 # icalendar documentation build configuration file
-import pkg_resources
 import datetime
-import os
+import sys
+from pathlib import Path
 
-on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
-
-try:
-    import sphinx_rtd_theme
-    html_theme = 'sphinx_rtd_theme'
-    html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
-except ImportError:
-    html_theme = 'default'
-    if not on_rtd:
-        print('-' * 74)
-        print('Warning: sphinx-rtd-theme not installed, building with default '
-              'theme.')
-        print('-' * 74)
+HERE = Path(__file__).parent
+SRC = HERE.parent / "src"
+sys.path.insert(0, str(SRC))  # update docs from icalendar source for livehtml
 
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.coverage',
-    'sphinx.ext.viewcode'
+    "sphinx.ext.autodoc",
+    "sphinx.ext.coverage",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.viewcode",
 ]
-source_suffix = '.rst'
-master_doc = 'index'
+source_suffix = {".rst": "restructuredtext"}
+master_doc = "index"
 
-project = u'icalendar'
-this_year = datetime.date.today().year
-copyright = u'{}, Plone Foundation'.format(this_year)
-version = pkg_resources.get_distribution('icalendar').version
-release = version
+project = "icalendar"
+this_year = datetime.date.today().year  # noqa: DTZ011
+copyright = f"{this_year}, Plone Foundation"  # noqa: A001
+release = version = "4.1.2"
 
-exclude_patterns = ['_build', 'lib', 'bin', 'include', 'local']
-pygments_style = 'sphinx'
 
-htmlhelp_basename = 'icalendardoc'
+# -- Options for HTML output -------------------------------------------------
 
-man_pages = [
-    ('index', 'icalendar', u'icalendar Documentation',
-     [u'Plone Foundation'], 1)
+# The theme to use for HTML and HTML Help pages.  See the documentation for
+# a list of builtin themes.
+exclude_patterns = [
+    "reference/api/modules.rst",
 ]
+html_theme = "pydata_sphinx_theme"
+html_theme_options = {
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/collective/icalendar",
+            "icon": "fa-brands fa-square-github",
+            "type": "fontawesome",
+            "attributes": {
+                "target": "_blank",
+                "rel": "noopener me",
+                "class": "nav-link custom-fancy-css"
+            }
+        },
+        {
+            "name": "PyPI",
+            "url": "https://pypi.org/project/icalendar",
+            "icon": "fa-custom fa-pypi",
+            "type": "fontawesome",
+            "attributes": {
+                "target": "_blank",
+                "rel": "noopener me",
+                "class": "nav-link custom-fancy-css"
+            }
+        },
+    ],
+    "logo": {
+        "text": "icalendar"
+    },
+    "navbar_start": ["navbar-logo", "version-switcher"],
+    "navigation_with_keys": True,
+    "search_bar_text": "Search",
+    "show_nav_level": 2,
+    "show_toc_level": 2,
+    "show_version_warning_banner": True,
+    "switcher": {
+        "json_url": "https://icalendar.readthedocs.io/en/latest/_static/version-switcher.json",
+        "version_match": version,
+    },
+    "use_edit_page_button": True,
+}
+html_context = {
+#     "github_url": "https://github.com", # or your GitHub Enterprise site
+    "github_user": "collective",
+    "github_repo": "icalendar",
+    "github_version": "main",
+    "doc_path": "docs",
+}
+html_static_path = [
+    "_static",
+]
+html_js_files = [
+    ("js/custom-icons.js", {"defer": "defer"}),
+]
+pygments_style = "sphinx"
+
+man_pages = [("index", "icalendar", "icalendar Documentation", ["Plone Foundation"], 1)]
+
+htmlhelp_basename = "icalendardoc"
