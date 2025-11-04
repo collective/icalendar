@@ -32,6 +32,7 @@ Breaking changes:
 
 New features:
 
+- Add PyData Theme version switcher to documentation. See `Issue 825 <https://github.com/collective/icalendar/issues/825>`_.
 - Test compatibility with Python 3.14. See `Issue 973 <https://github.com/collective/icalendar/issues/973>`_.
 - Added documentation of Vale usage for icalender documentation style guide. See `Issue 815 <https://github.com/collective/icalendar/issues/815>`_.
 - Added funding link to :file:`pyproject.toml`.  See `Issue 800 <https://github.com/collective/icalendar/issues/800>`_.
@@ -40,6 +41,27 @@ New features:
 Bug fixes:
 
 - ...
+
+6.3.2 (2025-11-03)
+------------------
+
+Minor changes:
+
+- Add PyData Theme version switcher to documentation. See `Issue 825`_.
+
+5.0.14 (2025-11-03)
+-------------------
+
+Minor changes:
+
+- Add PyData Theme version switcher to documentation. See `Issue 825`_.
+
+4.1.2 (2025-11-03)
+------------------
+
+Minor changes:
+
+- Add PyData Theme version switcher to documentation. See `Issue 825`_.
 
 7.0.0a1 (28-10-2025)
 --------------------

@@ -64,10 +64,19 @@ html_theme_options = {
             }
         },
     ],
+    "logo": {
+        "text": "icalendar"
+    },
+    "navbar_start": ["navbar-logo", "version-switcher"],
     "navigation_with_keys": True,
     "search_bar_text": "Search",
     "show_nav_level": 2,
     "show_toc_level": 2,
+    "show_version_warning_banner": True,
+    "switcher": {
+        "json_url": "https://icalendar.readthedocs.io/en/latest/_static/version-switcher.json",
+        "version_match": version,
+    },
     "use_edit_page_button": True,
 }
 html_context = {
