@@ -1,6 +1,5 @@
 # icalendar documentation build configuration file
 import datetime
-import importlib.metadata
 import sys
 from pathlib import Path
 
@@ -20,9 +19,7 @@ master_doc = "index"
 project = "icalendar"
 this_year = datetime.date.today().year  # noqa: DTZ011
 copyright = f"{this_year}, Plone Foundation"  # noqa: A001
-version = importlib.metadata.version(project)
-v = version.split(".")[:-1]
-release = version = ".".join(v)
+release = version = "5.0.14"
 
 
 # -- Options for HTML output -------------------------------------------------
