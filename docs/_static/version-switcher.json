@@ -10,11 +10,11 @@
         "preferred": "true"
     },
     {
-        "version": "5.0.13",
+        "version": "5.0.14",
         "url": "https://icalendar.readthedocs.io/en/5.x/"
     },
     {
-        "version": "4.1.1",
+        "version": "4.1.2",
         "url": "https://icalendar.readthedocs.io/en/4.x/"
     }
 ]
