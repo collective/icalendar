@@ -675,9 +675,10 @@ class Component(CaselessDict):
         properties = [
         ]
         for key, value in self.items():
-            properties.append(value.to_jcal(key.lower()))
-        return self.name.lower(), properties, [
-            subcomponent.to_jcal() for subcomponent in self.subcomponents]
+            for item in value if isinstance(value, list) else [value]:
+                properties.append(item.to_jcal(key.lower()))
+        return [self.name.lower(), properties, [
+            subcomponent.to_jcal() for subcomponent in self.subcomponents]]
 
     def to_json(self) -> str:
         """Return this component as a jCal JSON string.

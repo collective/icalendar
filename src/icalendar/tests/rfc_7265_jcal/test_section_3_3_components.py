@@ -40,11 +40,11 @@ def test_nesting(component_class):
     assert jcal[0] == "vcalendar"
     assert jcal[1] == []
     assert len(jcal[2]) == 1
-    assert jcal[2][0] == (
+    assert jcal[2][0] == [
         component_class.name.lower(),
         [],
         [],
-    )
+    ]
 
 def test_apply_json_serialization():
     """Check that we can convert to JSON."""

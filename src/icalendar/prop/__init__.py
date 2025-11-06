@@ -199,6 +199,8 @@ class vText(str):
 
     def to_jcal(self, name) -> list:
         """The jcal represenation of this property."""
+        if name == "request-status":
+            return [name, {}, "text", self.split(";", 2)]
         return [name, {}, "text", str(self)]
 
 class vCalAddress(str):
@@ -1922,7 +1924,7 @@ class vGeo:
 
     def to_jcal(self, name):
         """Convert to jcal object."""
-        return [name, {}, "float", self.latitude, self.longitude]
+        return [name, {}, "float", [self.latitude, self.longitude]]
 
 class vUTCOffset:
     """UTC Offset
