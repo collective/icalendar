@@ -197,6 +197,9 @@ class vText(str):
 
     from icalendar.param import ALTREP, LANGUAGE, RELTYPE
 
+    def to_jcal(self, name) -> list:
+        """The jcal represenation of this property."""
+        return [name, {}, "text", str(self)]
 
 class vCalAddress(str):
     r"""Calendar User Address
@@ -620,6 +623,10 @@ class vCategory:
         """String representation."""
         return f"{self.__class__.__name__}({self.cats}, params={self.params})"
 
+
+    def to_jcal(self, name) -> list:
+        """The jcal represenation for categories."""
+        return [name, {}, "text"] + list(map(str, self.cats))
 
 class TimeBase:
     """Make classes with a datetime/date comparable."""

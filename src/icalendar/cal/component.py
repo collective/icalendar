@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import date, datetime, time, timezone
+from datetime import date, datetime, time, timedelta, timezone
 import json
 from typing import TYPE_CHECKING, ClassVar
 
@@ -664,7 +664,7 @@ class Component(CaselessDict):
         component.comments = comments
         return component
 
-    def to_jcal(self) -> tuple[str, list, list]:
+    def to_jcal(self) -> list[str, list, list]:
         """Convert this component to a jcal object.
 
         Returns:
@@ -672,7 +672,11 @@ class Component(CaselessDict):
 
         See also :attr:`to_json`.
         """
-        return self.name.lower(), [], [
+        properties = [
+        ]
+        for key, value in self.items():
+            properties.append(value.to_jcal(key.lower()))
+        return self.name.lower(), properties, [
             subcomponent.to_jcal() for subcomponent in self.subcomponents]
 
     def to_json(self) -> str:
