@@ -112,6 +112,7 @@ linkcheck_ignore = [
     r"https://pypi.org/manage/project/icalendar/collaboration/",
     # Ignore specific anchors
     r"https://github.com/collective/icalendar/blob/main/README.rst#related-projects",
+    r"https://www.unicode.org/cldr/cldr-aux/charts/29/supplemental/zone_tzid.html",
 ]
 linkcheck_anchors = True
 linkcheck_timeout = 5
