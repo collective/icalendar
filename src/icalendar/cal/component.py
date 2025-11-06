@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime, time, timezone
+import json
 from typing import TYPE_CHECKING, ClassVar
 
 from icalendar.attr import comments_property, single_utc_property, uid_property
@@ -662,6 +663,27 @@ class Component(CaselessDict):
         component.last_modified = last_modified
         component.comments = comments
         return component
+
+    def to_jcal(self) -> tuple[str, list, list]:
+        """Convert this component to a jcal object.
+
+        Returns:
+            jcal object
+
+        See also :attr:`to_json`.
+        """
+        return self.name.lower(), [], [
+            subcomponent.to_jcal() for subcomponent in self.subcomponents]
+
+    def to_json(self) -> str:
+        """Return this component as a jCal JSON string.
+
+        Returns:
+            JSON string
+
+        See also :attr:`to_jcal`.
+        """
+        return json.dumps(self.to_jcal())
 
 
 __all__ = ["Component"]
