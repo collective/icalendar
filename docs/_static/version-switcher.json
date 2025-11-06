@@ -1,7 +1,7 @@
 [
     {
-        "name": "7.0.0a2 (latest)",
-        "version": "7.0.0a2",
+        "name": "dev",
+        "version": "main",
         "url": "https://icalendar.readthedocs.io/en/latest/"
     },
     {
