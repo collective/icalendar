@@ -19,6 +19,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.napoleon",
+    "sphinx_autodoc_typehints",
 ]
 source_suffix = {".rst": "restructuredtext"}
 master_doc = "index"
