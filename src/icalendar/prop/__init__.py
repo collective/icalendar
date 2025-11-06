@@ -1920,6 +1920,9 @@ class vGeo:
         """repr(self)"""
         return f"{self.__class__.__name__}(({self.latitude}, {self.longitude}))"
 
+    def to_jcal(self, name):
+        """Convert to jcal object."""
+        return [name, {}, "float", self.latitude, self.longitude]
 
 class vUTCOffset:
     """UTC Offset
