@@ -310,6 +310,10 @@ class Parameters(CaselessDict):
             interpret or parse the value data.
         """
 
+    def to_jcal(self) -> dict[str, str]:
+        """Return the jcal representation of the parameters."""
+        return {k.lower(): str(v) for k, v in self.items()}
+
 
 def escape_string(val):
     # f'{i:02X}'

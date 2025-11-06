@@ -203,6 +203,7 @@ class vText(str):
             return [name, {}, "text", self.split(";", 2)]
         return [name, {}, "text", str(self)]
 
+
 class vCalAddress(str):
     r"""Calendar User Address
 
@@ -276,6 +277,11 @@ class vCalAddress(str):
     @classmethod
     def from_ical(cls, ical):
         return cls(ical)
+
+    @property
+    def ical_value(self):
+        """the mailto: part of the address"""
+        return str(self)
 
     @property
     def email(self) -> str:
@@ -403,6 +409,10 @@ class vCalAddress(str):
             addr.params["SENT-BY"] = cls._get_email(sent_by)
 
         return addr
+
+    def to_jcal(self, name) -> list:
+        """Return this property in jCal format."""
+        return [name, self.params.to_jcal(), "cal-address", self.ical_value]
 
 
 class vFloat(float):
@@ -625,10 +635,10 @@ class vCategory:
         """String representation."""
         return f"{self.__class__.__name__}({self.cats}, params={self.params})"
 
-
     def to_jcal(self, name) -> list:
         """The jcal represenation for categories."""
         return [name, {}, "text"] + list(map(str, self.cats))
+
 
 class TimeBase:
     """Make classes with a datetime/date comparable."""
@@ -1340,9 +1350,7 @@ class vMonth(int):
 
     params: Parameters
 
-    def __new__(
-        cls, month: Union[str, int], /, params: dict[str, Any] | None = None
-    ):
+    def __new__(cls, month: Union[str, int], /, params: dict[str, Any] | None = None):
         if params is None:
             params = {}
         if isinstance(month, vMonth):
@@ -1926,6 +1934,7 @@ class vGeo:
         """Convert to jcal object."""
         return [name, {}, "float", [self.latitude, self.longitude]]
 
+
 class vUTCOffset:
     """UTC Offset
 
@@ -2223,7 +2232,8 @@ class TypesFactory(CaselessDict):
 
         Args:
             name: Property or parameter name
-            value_param: Optional ``VALUE`` parameter, for example, "DATE", "DATE-TIME", or other string.
+            value_param: Optional ``VALUE`` parameter, for example, "DATE", "DATE-TIME",
+                or other string.
 
         Returns:
             The appropriate value type class
@@ -2233,12 +2243,11 @@ class TypesFactory(CaselessDict):
         if name.upper() in ("RDATE", "EXDATE"):
             return self["date-time-list"]
 
-        # Only use VALUE parameter for known properties that support multiple value types
-        # (like DTSTART, DTEND, etc. which can be DATE or DATE-TIME)
+        # Only use VALUE parameter for known properties that support multiple value
+        # types (like DTSTART, DTEND, etc. which can be DATE or DATE-TIME)
         # For unknown/custom properties, always use the default type from types_map
-        if value_param and name in self.types_map:
-            if value_param in self:
-                return self[value_param]
+        if value_param and name in self.types_map and value_param in self:
+            return self[value_param]
         return self[self.types_map.get(name, "text")]
 
     def to_ical(self, name, value):
