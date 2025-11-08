@@ -6,16 +6,18 @@
     },
     {
         "name": "6.3.2 (stable)",
-        "version": "6.3.2",
+        "version": "v6.3.2",
         "url": "https://icalendar.readthedocs.io/en/stable/",
         "preferred": "true"
     },
     {
-        "version": "5.0.14",
+        "name": "5.0.14",
+        "version": "v5.0.14",
         "url": "https://icalendar.readthedocs.io/en/5.x/"
     },
     {
-        "version": "4.1.2",
+        "name": "4.1.2",
+        "version": "v4.1.2",
         "url": "https://icalendar.readthedocs.io/en/4.x/"
     }
 ]
