@@ -54,8 +54,6 @@ if not version_match or version_match.isdigit() or version_match == "latest":
         version_match = f"v{release}"
 elif version_match == "stable":
     version_match = f"v{release}"
-print(">>> Version match:", version_match)
-print(">>> Release:", release)
 
 exclude_patterns = [
     "reference/api/modules.rst",
