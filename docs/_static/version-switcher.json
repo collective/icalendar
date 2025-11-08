@@ -1,7 +1,6 @@
 [
     {
-        "name": "dev",
-        "version": "main",
+        "version": "dev",
         "url": "https://icalendar.readthedocs.io/en/latest/"
     },
     {
