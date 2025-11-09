@@ -2,14 +2,6 @@
 Reference guides
 ================
 
-API reference
-=============
-
-.. toctree::
-    :maxdepth: 2
-
-    api/icalendar
-
 
 Design reference
 ================
@@ -35,3 +27,13 @@ Glossary of terms
 .. toctree::
 
     glossary
+
+
+API reference
+=============
+
+.. toctree::
+    :maxdepth: 2
+
+    api/icalendar
+
