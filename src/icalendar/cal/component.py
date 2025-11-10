@@ -6,6 +6,7 @@ from datetime import date, datetime, time, timedelta, timezone
 from typing import TYPE_CHECKING, ClassVar
 
 from icalendar.attr import (
+    LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
     comments_property,
     concepts_property,
@@ -20,7 +21,7 @@ from icalendar.caselessdict import CaselessDict
 from icalendar.error import InvalidCalendar
 from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_split
 from icalendar.parser_tools import DEFAULT_ENCODING
-from icalendar.prop import TypesFactory, vDDDLists, vText, vUid, vUri, vXmlReference
+from icalendar.prop import TypesFactory, vDDDLists, vText, vUri
 from icalendar.timezone import tzp
 from icalendar.tools import is_date
 
@@ -660,7 +661,7 @@ class Component(CaselessDict):
         comments: list[str] | str | None = None,
         concepts: list[str | vUri] | str | vUri | None = None,
         last_modified: date | None = None,
-        links: list[str | vXmlReference | vUri | vUid] | None = None,
+        links: LINKS_TYPE_SETTER = None,
         refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
         stamp: date | None = None,

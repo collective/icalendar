@@ -2102,15 +2102,12 @@ def _get_links(self: Component) -> list[vUri | vUid | vXmlReference]:
     return links
 
 
-def _set_links(
-    self: Component,
-    links: str
-    | vUri
-    | vUid
-    | vXmlReference
-    | None
-    | list[str | vUri | vUid | vXmlReference],
-) -> None:
+LINKS_TYPE_SETTER: TypeAlias = (
+    str | vUri | vUid | vXmlReference | None | list[str | vUri | vUid | vXmlReference]
+)
+
+
+def _set_links(self: Component, links: LINKS_TYPE_SETTER) -> None:
     """Set the LINKs."""
     _del_links(self)
     if links is None:
@@ -2425,6 +2422,7 @@ Examples:
 
 
 __all__ = [
+    "LINKS_TYPE_SETTER",
     "RELATED_TO_TYPE_SETTER",
     "attendees_property",
     "busy_type_property",

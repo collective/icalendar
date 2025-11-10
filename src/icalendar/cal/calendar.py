@@ -6,6 +6,7 @@ from datetime import timedelta
 from typing import TYPE_CHECKING, Sequence
 
 from icalendar.attr import (
+    LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
     categories_property,
     images_property,
@@ -29,7 +30,7 @@ if TYPE_CHECKING:
     from icalendar.cal.event import Event
     from icalendar.cal.free_busy import FreeBusy
     from icalendar.cal.todo import Todo
-    from icalendar.prop import vUid, vUri, vXmlReference
+    from icalendar.prop import vUri
 
 
 class Calendar(Component):
@@ -524,7 +525,7 @@ Description:
         description: str | None = None,
         language: str | None = None,
         last_modified: date | datetime | None = None,
-        links: list[str | vXmlReference | vUri | vUid] | None = None,
+        links: LINKS_TYPE_SETTER = None,
         method: str | None = None,
         name: str | None = None,
         organization: str | None = None,

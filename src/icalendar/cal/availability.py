@@ -10,6 +10,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING, Optional, Sequence
 
 from icalendar.attr import (
+    LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
     busy_type_property,
     categories_property,
@@ -38,7 +39,7 @@ if TYPE_CHECKING:
 
     from icalendar.cal.available import Available
     from icalendar.enums import BUSYTYPE, CLASS
-    from icalendar.prop import vCalAddress, vUid, vUri, vXmlReference
+    from icalendar.prop import vCalAddress, vUri
 
 
 class Availability(Component):
@@ -246,7 +247,7 @@ class Availability(Component):
         description: Optional[str] = None,
         end: Optional[datetime] = None,
         last_modified: Optional[date] = None,
-        links: list[str | vXmlReference | vUri | vUid] | None = None,
+        links: LINKS_TYPE_SETTER = None,
         location: Optional[str] = None,
         organizer: Optional[vCalAddress | str] = None,
         priority: Optional[int] = None,

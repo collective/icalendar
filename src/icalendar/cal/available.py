@@ -10,6 +10,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING, Optional, Sequence
 
 from icalendar.attr import (
+    LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
     categories_property,
     contacts_property,
@@ -35,7 +36,7 @@ from .component import Component
 if TYPE_CHECKING:
     from datetime import date
 
-    from icalendar.prop import vUid, vUri, vXmlReference
+    from icalendar.prop import vUri
 
 
 class Available(Component):
@@ -105,7 +106,7 @@ class Available(Component):
         description: Optional[str] = None,
         end: Optional[datetime] = None,
         last_modified: Optional[date] = None,
-        links: list[str | vXmlReference | vUri | vUid] | None = None,
+        links: LINKS_TYPE_SETTER = None,
         location: Optional[str] = None,
         refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
