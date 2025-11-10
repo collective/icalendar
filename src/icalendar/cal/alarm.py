@@ -6,6 +6,7 @@ from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, NamedTuple, Optional, Union
 
 from icalendar.attr import (
+    CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
     attendees_property,
@@ -25,7 +26,7 @@ from icalendar.cal.component import Component
 if TYPE_CHECKING:
     import uuid
 
-    from icalendar.prop import vCalAddress, vUri
+    from icalendar.prop import vCalAddress
 
 
 class Alarm(Component):
@@ -249,7 +250,7 @@ class Alarm(Component):
         cls,
         /,
         attendees: Optional[list[vCalAddress]] = None,
-        concepts: list[str | vUri] | str | vUri | None = None,
+        concepts: CONCEPTS_TYPE_SETTER = None,
         description: Optional[str] = None,
         links: LINKS_TYPE_SETTER = None,
         refids: list[str] | str | None = None,

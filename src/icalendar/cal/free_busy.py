@@ -7,6 +7,7 @@ from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Optional
 
 from icalendar.attr import (
+    CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
     contacts_property,
@@ -18,7 +19,7 @@ from icalendar.attr import (
 from icalendar.cal.component import Component
 
 if TYPE_CHECKING:
-    from icalendar.prop import vCalAddress, vUri
+    from icalendar.prop import vCalAddress
 
 
 class FreeBusy(Component):
@@ -93,7 +94,7 @@ class FreeBusy(Component):
         cls,
         /,
         comments: list[str] | str | None = None,
-        concepts: list[str | vUri] | str | vUri | None = None,
+        concepts: CONCEPTS_TYPE_SETTER = None,
         contacts: list[str] | str | None = None,
         end: Optional[date | datetime] = None,
         links: LINKS_TYPE_SETTER = None,

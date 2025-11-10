@@ -2326,7 +2326,10 @@ def _get_concepts(self: Component) -> list[vUri]:
     return concepts
 
 
-def _set_concepts(self: Component, concepts: list[vUri] | str | vUri | None):
+CONCEPTS_TYPE_SETTER: TypeAlias = list[vUri | str] | str | vUri | None
+
+
+def _set_concepts(self: Component, concepts: CONCEPTS_TYPE_SETTER):
     """Set the concepts."""
     _del_concepts(self)
     if concepts is None:
@@ -2422,6 +2425,7 @@ Examples:
 
 
 __all__ = [
+    "CONCEPTS_TYPE_SETTER",
     "LINKS_TYPE_SETTER",
     "RELATED_TO_TYPE_SETTER",
     "attendees_property",

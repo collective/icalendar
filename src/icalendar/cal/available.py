@@ -10,6 +10,7 @@ from datetime import datetime
 from typing import TYPE_CHECKING, Optional, Sequence
 
 from icalendar.attr import (
+    CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
     categories_property,
@@ -35,8 +36,6 @@ from .component import Component
 
 if TYPE_CHECKING:
     from datetime import date
-
-    from icalendar.prop import vUri
 
 
 class Available(Component):
@@ -100,7 +99,7 @@ class Available(Component):
         /,
         categories: Sequence[str] = (),
         comments: list[str] | str | None = None,
-        concepts: list[str | vUri] | str | vUri | None = None,
+        concepts: CONCEPTS_TYPE_SETTER = None,
         contacts: list[str] | str | None = None,
         created: Optional[date] = None,
         description: Optional[str] = None,

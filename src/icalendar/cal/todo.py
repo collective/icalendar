@@ -7,6 +7,7 @@ from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Literal, Sequence
 
 from icalendar.attr import (
+    CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
     X_MOZ_LASTACK_property,
@@ -48,7 +49,7 @@ from icalendar.cal.component import Component
 if TYPE_CHECKING:
     from icalendar.alarms import Alarms
     from icalendar.enums import CLASS, STATUS
-    from icalendar.prop import vCalAddress, vUri
+    from icalendar.prop import vCalAddress
     from icalendar.prop.conference import Conference
 
 
@@ -295,7 +296,7 @@ class Todo(Component):
         classification: CLASS | None = None,
         color: str | None = None,
         comments: list[str] | str | None = None,
-        concepts: list[str | vUri] | str | vUri | None = None,
+        concepts: CONCEPTS_TYPE_SETTER = None,
         contacts: list[str] | str | None = None,
         conferences: list[Conference] | None = None,
         created: date | None = None,

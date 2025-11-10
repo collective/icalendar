@@ -7,6 +7,7 @@ from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Optional, Sequence
 
 from icalendar.attr import (
+    CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
     attendees_property,
@@ -32,7 +33,7 @@ from icalendar.error import IncompleteComponent
 
 if TYPE_CHECKING:
     from icalendar.enums import CLASS, STATUS
-    from icalendar.prop import vCalAddress, vUri
+    from icalendar.prop import vCalAddress
 
 
 class Journal(Component):
@@ -181,7 +182,7 @@ class Journal(Component):
         classification: Optional[CLASS] = None,
         color: Optional[str] = None,
         comments: list[str] | str | None = None,
-        concepts: list[str | vUri] | str | vUri | None = None,
+        concepts: CONCEPTS_TYPE_SETTER = None,
         contacts: list[str] | str | None = None,
         created: Optional[date] = None,
         description: Optional[str | Sequence[str]] = None,

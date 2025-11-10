@@ -6,6 +6,7 @@ from datetime import timedelta
 from typing import TYPE_CHECKING, Sequence
 
 from icalendar.attr import (
+    CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
     categories_property,
@@ -30,7 +31,6 @@ if TYPE_CHECKING:
     from icalendar.cal.event import Event
     from icalendar.cal.free_busy import FreeBusy
     from icalendar.cal.todo import Todo
-    from icalendar.prop import vUri
 
 
 class Calendar(Component):
@@ -521,7 +521,7 @@ Description:
         calscale: str | None = None,
         categories: Sequence[str] = (),
         color: str | None = None,
-        concepts: list[str | vUri] | str | vUri | None = None,
+        concepts: CONCEPTS_TYPE_SETTER = None,
         description: str | None = None,
         language: str | None = None,
         last_modified: date | datetime | None = None,
