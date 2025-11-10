@@ -106,6 +106,11 @@ class vBinary:
         """self == other"""
         return isinstance(other, vBinary) and self.obj == other.obj
 
+    @classmethod
+    def examples(cls) -> list[vBinary]:
+        """Examples of vBinary."""
+        return [cls("VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZy4")]
+
 
 class vBoolean(int):
     """Boolean
@@ -167,6 +172,14 @@ class vBoolean(int):
         except Exception as e:
             raise ValueError(f"Expected 'TRUE' or 'FALSE'. Got {ical}") from e
 
+    @classmethod
+    def examples(cls) -> list[vBoolean]:
+        """Examples of vBoolean."""
+        return [
+            cls(True),  # noqa: FBT003
+            cls(False),  # noqa: FBT003
+        ]
+
 
 class vText(str):
     """Simple text."""
@@ -207,6 +220,11 @@ class vText(str):
         if name == "request-status":
             return [name, {}, "text", self.split(";", 2)]
         return [name, {}, "text", str(self)]
+
+    @classmethod
+    def examples(cls):
+        """Examples of vText."""
+        return [cls("Hello World!")]
 
 
 class vCalAddress(str):
@@ -419,6 +437,11 @@ class vCalAddress(str):
         """Return this property in jCal format."""
         return [name, self.params.to_jcal(), "cal-address", self.ical_value]
 
+    @classmethod
+    def examples(cls) -> list[vCalAddress]:
+        """Examples of vCalAddress"""
+        return [cls.new("you@example.org", cn="You There")]
+
 
 class vFloat(float):
     """Float
@@ -484,6 +507,11 @@ class vFloat(float):
             return cls(ical)
         except Exception as e:
             raise ValueError(f"Expected float value, got: {ical}") from e
+
+    @classmethod
+    def examples(cls) -> list[vFloat]:
+        """Examples of vFloat"""
+        return [vFloat(3.1415)]
 
 
 class vInt(int):
@@ -554,6 +582,11 @@ class vInt(int):
         except Exception as e:
             raise ValueError(f"Expected int, got: {ical}") from e
 
+    @classmethod
+    def examples(cls) -> list[vInt]:
+        """Examples of vInt"""
+        return [vInt(1000)]
+
 
 class vDDDLists:
     """A list of vDDDTypes values."""
@@ -602,6 +635,11 @@ class vDDDLists:
         """String representation."""
         return f"{self.__class__.__name__}({self.dts})"
 
+    @classmethod
+    def examples(cls) -> list[vDDDLists]:
+        """Examples of vDDDLists"""
+        return [vDDDLists([datetime(2025, 11, 10, 16, 50)])]  # noqa: DTZ001
+
 
 class vCategory:
     params: Parameters
@@ -643,6 +681,11 @@ class vCategory:
     def to_jcal(self, name) -> list:
         """The jcal represenation for categories."""
         return [name, {}, "text"] + list(map(str, self.cats))
+
+    @classmethod
+    def examples(cls) -> list[vCategory]:
+        """Examples of vCategory"""
+        return [cls(["HOME", "COSY"])]
 
 
 class TimeBase:
@@ -754,6 +797,11 @@ class vDDDTypes(TimeBase):
         """
         return self.dt
 
+    @classmethod
+    def examples(cls) -> list[vDDDTypes]:
+        """Examples of vDDDTypes"""
+        return [cls(date(2025, 11, 10))]
+
 
 class vDate(TimeBase):
     """Date
@@ -829,6 +877,11 @@ class vDate(TimeBase):
             return date(*timetuple)
         except Exception as e:
             raise ValueError(f"Wrong date format {ical}") from e
+
+    @classmethod
+    def examples(cls) -> list[vDate]:
+        """Examples of vDate"""
+        return [cls(date(2025, 11, 10))]
 
 
 class vDatetime(TimeBase):
@@ -931,6 +984,11 @@ class vDatetime(TimeBase):
             raise ValueError(f"Wrong datetime format: {ical}") from e
         raise ValueError(f"Wrong datetime format: {ical}")
 
+    @classmethod
+    def examples(cls) -> list[vDatetime]:
+        """Examples of vDatetime"""
+        return [cls(datetime(2025, 11, 10, 16, 52))]  # noqa: DTZ001
+
 
 class vDuration(TimeBase):
     """Duration
@@ -1003,7 +1061,7 @@ class vDuration(TimeBase):
 
     params: Parameters
 
-    def __init__(self, td, /, params: dict[str, Any] | None = None):
+    def __init__(self, td: timedelta, /, params: dict[str, Any] | None = None):
         if params is None:
             params = {}
         if not isinstance(td, timedelta):
@@ -1063,6 +1121,11 @@ class vDuration(TimeBase):
     def dt(self) -> timedelta:
         """The time delta for compatibility."""
         return self.td
+
+    @classmethod
+    def examples(cls) -> list[vDuration]:
+        """Examples of vDuration"""
+        return [cls(timedelta(1, 99))]
 
 
 class vPeriod(TimeBase):
@@ -1196,6 +1259,14 @@ class vPeriod(TimeBase):
         return (self.start, (self.duration if self.by_duration else self.end))
 
     from icalendar.param import FBTYPE
+
+    @classmethod
+    def examples(cls) -> list[vPeriod]:
+        """Examples of vPeriod"""
+        return [
+            vPeriod((datetime(2025, 11, 10, 16, 35), timedelta(hours=1, minutes=30))),  # noqa: DTZ001
+            vPeriod((datetime(2025, 11, 10, 16, 35), datetime(2025, 11, 10, 18, 5))),  # noqa: DTZ001
+        ]
 
 
 class vWeekday(str):
@@ -1624,6 +1695,11 @@ class vRecur(CaselessDict):
         except Exception as e:
             raise ValueError(f"Error in recurrence rule: {ical}") from e
 
+    @classmethod
+    def examples(cls) -> list[vRecur]:
+        """Examples of vRecur"""
+        return [cls.from_ical("FREQ=DAILY;COUNT=10")]
+
 
 class vTime(TimeBase):
     """Time
@@ -1758,6 +1834,11 @@ class vTime(TimeBase):
         except Exception as e:
             raise ValueError(f"Expected time, got: {ical}") from e
 
+    @classmethod
+    def examples(cls) -> list[vTime]:
+        """Examples of vTime"""
+        return [cls(time(12, 30))]
+
 
 class vUri(str):
     """URI
@@ -1829,6 +1910,11 @@ class vUri(str):
             return cls(ical)
         except Exception as e:
             raise ValueError(f"Expected , got: {ical}") from e
+
+    @classmethod
+    def examples(cls) -> list[vUri]:
+        """Examples of vUri"""
+        return [cls("http://example.com/my-report.txt")]
 
 
 class vGeo:
@@ -1939,6 +2025,11 @@ class vGeo:
         """Convert to jcal object."""
         return [name, {}, "float", [self.latitude, self.longitude]]
 
+    @classmethod
+    def examples(cls) -> list[vGeo]:
+        """Examples of vGeo"""
+        return [cls((37.386013, -122.082932))]
+
 
 class vUTCOffset:
     """UTC Offset
@@ -1996,7 +2087,7 @@ class vUTCOffset:
     # it, rather than let the exception
     # propagate upwards
 
-    def __init__(self, td, /, params: dict[str, Any] | None = None):
+    def __init__(self, td: timedelta, /, params: dict[str, Any] | None = None):
         if params is None:
             params = {}
         if not isinstance(td, timedelta):
@@ -2054,6 +2145,14 @@ class vUTCOffset:
 
     def __repr__(self):
         return f"vUTCOffset({self.td!r})"
+
+    @classmethod
+    def examples(cls) -> list[vUTCOffset]:
+        """Examples of vUTCOffset"""
+        return [
+            cls(timedelta(hours=3)),
+            cls(timedelta(0)),
+        ]
 
 
 class vInline(str):
@@ -2291,6 +2390,9 @@ VPROPERTY: TypeAlias = Union[
     vUTCOffset,
     vUri,
     vWeekday,
+    vInline,
+    vBinary,
+    vGeo,
 ]
 
 __all__ = [

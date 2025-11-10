@@ -19,9 +19,11 @@ from icalendar import (
     Event,
     Timezone,
     TypesFactory,
+    prop,
     vUTCOffset,
 )
 from icalendar.compatibility import ZoneInfo, zoneinfo
+from icalendar.tests.data import PROPERTY_NAMES
 from icalendar.timezone import TZP
 from icalendar.timezone import tzp as _tzp
 
@@ -402,3 +404,15 @@ def tzid(request: pytest.FixtureRequest) -> str:
     This goes through all the different timezones possible.
     """
     return request.param
+
+
+@pytest.fixture(params=PROPERTY_NAMES)
+def v_prop_name(request):
+    """Names of property types that occur as a property of a component."""
+    return request.param
+
+
+@pytest.fixture
+def v_prop(v_prop_name):
+    """Property types that occur as a property of a component."""
+    return getattr(prop, v_prop_name)
