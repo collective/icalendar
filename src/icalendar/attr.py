@@ -2102,9 +2102,9 @@ def _get_links(self: Component) -> list[vUri | vUid | vXmlReference]:
     return links
 
 
-LINKS_TYPE_SETTER: TypeAlias = (
-    str | vUri | vUid | vXmlReference | None | list[str | vUri | vUid | vXmlReference]
-)
+LINKS_TYPE_SETTER: TypeAlias = Union[
+    str, vUri, vUid, vXmlReference, None, List[Union[str, vUri, vUid, vXmlReference]]
+]
 
 
 def _set_links(self: Component, links: LINKS_TYPE_SETTER) -> None:
@@ -2326,7 +2326,7 @@ def _get_concepts(self: Component) -> list[vUri]:
     return concepts
 
 
-CONCEPTS_TYPE_SETTER: TypeAlias = list[vUri | str] | str | vUri | None
+CONCEPTS_TYPE_SETTER: TypeAlias = Union[List[Union[vUri, str]], str, vUri, None]
 
 
 def _set_concepts(self: Component, concepts: CONCEPTS_TYPE_SETTER):
