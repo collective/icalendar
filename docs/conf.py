@@ -49,6 +49,10 @@ if not version_match or version_match.isdigit() or version_match == "latest":
 elif version_match == "stable":
     version_match = f"v{release}"
 
+print(f"Using version_match: {version_match}")
+print(f"Using json_url: {json_url}")
+print(f"Using release: {release}")
+
 exclude_patterns = [
     "reference/api/modules.rst",
 ]
