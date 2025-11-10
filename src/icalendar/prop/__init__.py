@@ -63,6 +63,11 @@ from icalendar.parser_tools import (
 from icalendar.timezone import tzid_from_dt, tzid_from_tzinfo, tzp
 from icalendar.tools import to_datetime
 
+try:
+    from typing import TypeAlias
+except ImportError:
+    from typing_extensions import TypeAlias
+
 DURATION_REGEX = re.compile(
     r"([-+]?)P(?:(\d+)W)?(?:(\d+)D)?" r"(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$"
 )
@@ -2265,8 +2270,32 @@ class TypesFactory(CaselessDict):
         return type_class.from_ical(value)
 
 
+VPROPERTY: TypeAlias = Union[
+    vBoolean,
+    vCalAddress,
+    vCategory,
+    vDDDLists,
+    vDDDTypes,
+    vDate,
+    vDatetime,
+    vDuration,
+    vFloat,
+    vFrequency,
+    vInt,
+    vMonth,
+    vPeriod,
+    vRecur,
+    vSkip,
+    vText,
+    vTime,
+    vUTCOffset,
+    vUri,
+    vWeekday,
+]
+
 __all__ = [
     "DURATION_REGEX",
+    "VPROPERTY",
     "WEEKDAY_RULE",
     "TimeBase",
     "TypesFactory",
