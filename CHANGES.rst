@@ -24,7 +24,7 @@ We still recommend checking out the new features and giving feedback in the repo
 
 Minor changes:
 
-- ...
+- Move sections in Table of Content of Reference guide.
 
 Breaking changes:
 

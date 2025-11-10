@@ -1,21 +1,20 @@
 [
     {
-        "name": "7.0.0a2 (latest)",
-        "version": "7.0.0a2",
+        "version": "dev",
         "url": "https://icalendar.readthedocs.io/en/latest/"
     },
     {
-        "name": "v6.3.2 (stable)",
-        "version": "6.3.2",
+        "name": "6.x (stable)",
+        "version": "6.x",
         "url": "https://icalendar.readthedocs.io/en/stable/",
         "preferred": "true"
     },
     {
-        "version": "5.0.14",
+        "version": "5.x",
         "url": "https://icalendar.readthedocs.io/en/5.x/"
     },
     {
-        "version": "4.1.2",
+        "version": "4.x",
         "url": "https://icalendar.readthedocs.io/en/4.x/"
     }
 ]
