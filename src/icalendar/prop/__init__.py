@@ -68,6 +68,8 @@ try:
 except ImportError:
     from typing_extensions import TypeAlias
 
+from icalendar.param import create_value_property
+
 DURATION_REGEX = re.compile(
     r"([-+]?)P(?:(\d+)W)?(?:(\d+)D)?" r"(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$"
 )
@@ -110,6 +112,12 @@ class vBinary:
     def examples(cls) -> list[vBinary]:
         """Examples of vBinary."""
         return [cls("VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZy4")]
+
+    VALUE = create_value_property("BINARY")
+
+    def to_jcal(self, name: str) -> list:
+        """The jcal represenation of this property according to :rfc:`7265`."""
+        return [name, self.params.to_jcal(), self.VALUE, str(self)]
 
 
 class vBoolean(int):
@@ -180,6 +188,12 @@ class vBoolean(int):
             cls(False),  # noqa: FBT003
         ]
 
+    VALUE = create_value_property("BOOLEAN")
+
+    def to_jcal(self, name: str) -> list:
+        """The jcal represenation of this property according to :rfc:`7265`."""
+        return [name, self.params.to_jcal(), self.VALUE, str(self)]
+
 
 class vText(str):
     """Simple text."""
@@ -215,8 +229,8 @@ class vText(str):
 
     from icalendar.param import ALTREP, LANGUAGE, RELTYPE
 
-    def to_jcal(self, name) -> list:
-        """The jcal represenation of this property."""
+    def to_jcal(self, name: str) -> list:
+        """The jcal represenation of this property according to :rfc:`7265`."""
         if name == "request-status":
             return [name, {}, "text", self.split(";", 2)]
         return [name, {}, "text", str(self)]
@@ -225,6 +239,8 @@ class vText(str):
     def examples(cls):
         """Examples of vText."""
         return [cls("Hello World!")]
+
+    VALUE = create_value_property("TEXT")
 
 
 class vCalAddress(str):
@@ -433,7 +449,7 @@ class vCalAddress(str):
 
         return addr
 
-    def to_jcal(self, name) -> list:
+    def to_jcal(self, name: str) -> list:
         """Return this property in jCal format."""
         return [name, self.params.to_jcal(), "cal-address", self.ical_value]
 
@@ -441,6 +457,8 @@ class vCalAddress(str):
     def examples(cls) -> list[vCalAddress]:
         """Examples of vCalAddress"""
         return [cls.new("you@example.org", cn="You There")]
+
+    VALUE = create_value_property("CAL-ADDRESS")
 
 
 class vFloat(float):
@@ -512,6 +530,12 @@ class vFloat(float):
     def examples(cls) -> list[vFloat]:
         """Examples of vFloat"""
         return [vFloat(3.1415)]
+
+    VALUE = create_value_property("FLOAT")
+
+    def to_jcal(self, name: str) -> list:
+        """The jcal represenation of this property according to :rfc:`7265`."""
+        return [name, self.params.to_jcal(), self.VALUE, str(self)]
 
 
 class vInt(int):
@@ -587,6 +611,12 @@ class vInt(int):
         """Examples of vInt"""
         return [vInt(1000)]
 
+    VALUE = create_value_property("INT")
+
+    def to_jcal(self, name: str) -> list:
+        """The jcal represenation of this property according to :rfc:`7265`."""
+        return [name, self.params.to_jcal(), self.VALUE, str(self)]
+
 
 class vDDDLists:
     """A list of vDDDTypes values."""
@@ -640,6 +670,10 @@ class vDDDLists:
         """Examples of vDDDLists"""
         return [vDDDLists([datetime(2025, 11, 10, 16, 50)])]  # noqa: DTZ001
 
+    def to_jcal(self, name: str) -> list:
+        """The jcal represenation of this property according to :rfc:`7265`."""
+        return [name, self.params.to_jcal(), self.VALUE, str(self)]
+
 
 class vCategory:
     params: Parameters
@@ -678,7 +712,7 @@ class vCategory:
         """String representation."""
         return f"{self.__class__.__name__}({self.cats}, params={self.params})"
 
-    def to_jcal(self, name) -> list:
+    def to_jcal(self, name: str) -> list:
         """The jcal represenation for categories."""
         return [name, {}, "text"] + list(map(str, self.cats))
 
@@ -686,6 +720,8 @@ class vCategory:
     def examples(cls) -> list[vCategory]:
         """Examples of vCategory"""
         return [cls(["HOME", "COSY"])]
+
+    VALUE = create_value_property("TEXT")
 
 
 class TimeBase:
@@ -720,6 +756,10 @@ class TimeBase:
     def __repr__(self):
         """String representation."""
         return f"{self.__class__.__name__}({self.dt}, {self.params})"
+
+    def to_jcal(self, name: str) -> list:
+        """The jcal represenation of this property according to :rfc:`7265`."""
+        return [name, self.params.to_jcal(), self.VALUE, str(self)]
 
 
 class vDDDTypes(TimeBase):
@@ -883,6 +923,8 @@ class vDate(TimeBase):
         """Examples of vDate"""
         return [cls(date(2025, 11, 10))]
 
+    VALUE = create_value_property("DATE")
+
 
 class vDatetime(TimeBase):
     """Date-Time
@@ -988,6 +1030,8 @@ class vDatetime(TimeBase):
     def examples(cls) -> list[vDatetime]:
         """Examples of vDatetime"""
         return [cls(datetime(2025, 11, 10, 16, 52))]  # noqa: DTZ001
+
+    VALUE = create_value_property("DATE-TIME")
 
 
 class vDuration(TimeBase):
@@ -1126,6 +1170,8 @@ class vDuration(TimeBase):
     def examples(cls) -> list[vDuration]:
         """Examples of vDuration"""
         return [cls(timedelta(1, 99))]
+
+    VALUE = create_value_property("DURATION")
 
 
 class vPeriod(TimeBase):
@@ -1267,6 +1313,8 @@ class vPeriod(TimeBase):
             vPeriod((datetime(2025, 11, 10, 16, 35), timedelta(hours=1, minutes=30))),  # noqa: DTZ001
             vPeriod((datetime(2025, 11, 10, 16, 35), datetime(2025, 11, 10, 18, 5))),  # noqa: DTZ001
         ]
+
+    VALUE = create_value_property("PERIOD")
 
 
 class vWeekday(str):
@@ -1700,6 +1748,12 @@ class vRecur(CaselessDict):
         """Examples of vRecur"""
         return [cls.from_ical("FREQ=DAILY;COUNT=10")]
 
+    VALUE = create_value_property("RECUR")
+
+    def to_jcal(self, name: str) -> list:
+        """The jcal represenation of this property according to :rfc:`7265`."""
+        return [name, self.params.to_jcal(), self.VALUE, str(self)]
+
 
 class vTime(TimeBase):
     """Time
@@ -1839,6 +1893,8 @@ class vTime(TimeBase):
         """Examples of vTime"""
         return [cls(time(12, 30))]
 
+    VALUE = create_value_property("TIME")
+
 
 class vUri(str):
     """URI
@@ -1915,6 +1971,12 @@ class vUri(str):
     def examples(cls) -> list[vUri]:
         """Examples of vUri"""
         return [cls("http://example.com/my-report.txt")]
+
+    VALUE = create_value_property("URI")
+
+    def to_jcal(self, name: str) -> list:
+        """The jcal represenation of this property according to :rfc:`7265`."""
+        return [name, self.params.to_jcal(), self.VALUE, str(self)]
 
 
 class vGeo:
@@ -2021,7 +2083,7 @@ class vGeo:
         """repr(self)"""
         return f"{self.__class__.__name__}(({self.latitude}, {self.longitude}))"
 
-    def to_jcal(self, name):
+    def to_jcal(self, name: str) -> list:
         """Convert to jcal object."""
         return [name, {}, "float", [self.latitude, self.longitude]]
 
@@ -2029,6 +2091,8 @@ class vGeo:
     def examples(cls) -> list[vGeo]:
         """Examples of vGeo"""
         return [cls((37.386013, -122.082932))]
+
+    VALUE = create_value_property("GEO")
 
 
 class vUTCOffset:
@@ -2153,6 +2217,12 @@ class vUTCOffset:
             cls(timedelta(hours=3)),
             cls(timedelta(0)),
         ]
+
+    VALUE = create_value_property("UTC-OFFSET")
+
+    def to_jcal(self, name: str) -> list:
+        """The jcal represenation of this property according to :rfc:`7265`."""
+        return [name, self.params.to_jcal(), self.VALUE, str(self)]
 
 
 class vInline(str):

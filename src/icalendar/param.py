@@ -17,13 +17,9 @@ from icalendar import enums
 if TYPE_CHECKING:
     from enum import Enum
 
-    from icalendar.parser import Parameters
 
-
-class IcalendarProperty:
-    """Interface provided by properties in icalendar.prop."""
-
-    params: Parameters
+if TYPE_CHECKING:
+    from icalendar.prop import VPROPERTY
 
 
 def _default_return_none() -> Optional[str]:
@@ -52,16 +48,16 @@ def string_parameter(
         convert_to = convert
 
     @functools.wraps(default)
-    def fget(self: IcalendarProperty) -> Optional[str]:
+    def fget(self: VPROPERTY) -> Optional[str]:
         value = self.params.get(name)
         if value is None:
             return default()
         return convert(value) if convert else value
 
-    def fset(self: IcalendarProperty, value: str):
+    def fset(self: VPROPERTY, value: str):
         self.params[name] = convert_to(value) if convert_to else value
 
-    def fdel(self: IcalendarProperty):
+    def fdel(self: VPROPERTY):
         self.params.pop(name, None)
 
     return property(fget, fset, fdel, doc=doc)
@@ -139,7 +135,7 @@ Description:
 def quoted_list_parameter(name: str, doc: str) -> property:
     """Return a parameter that contains a quoted list."""
 
-    def fget(self: IcalendarProperty) -> tuple[str]:
+    def fget(self: VPROPERTY) -> tuple[str]:
         value = self.params.get(name)
         if value is None:
             return ()
@@ -147,13 +143,13 @@ def quoted_list_parameter(name: str, doc: str) -> property:
             return tuple(value.split(","))
         return value
 
-    def fset(self: IcalendarProperty, value: str | tuple[str]):
+    def fset(self: VPROPERTY, value: str | tuple[str]):
         if value == ():
             fdel(self)
         else:
             self.params[name] = (value,) if isinstance(value, str) else value
 
-    def fdel(self: IcalendarProperty):
+    def fdel(self: VPROPERTY):
         self.params.pop(name, None)
 
     return property(fget, fset, fdel, doc=doc)
@@ -476,6 +472,45 @@ Description:
     convert=_convert_enum(enums.RELTYPE),
 )
 
+
+def create_value_property(default_value: str) -> property:
+    """Create a property to access the VALUE parameter."""
+
+    def fget(self: VPROPERTY) -> str:
+        """The VALUE parameter or the default.
+
+        Purpose:
+            VALUE explicitly specify the value type format for a property value.
+
+        Description:
+            This parameter specifies the value type and format of
+            the property value.  The property values MUST be of a single value
+            type.  For example, a "RDATE" property cannot have a combination
+            of DATE-TIME and TIME value types.
+
+            If the property's value is the default value type, then this
+            parameter need not be specified.  However, if the property's
+            default value type is overridden by some other allowable value
+            type, then this parameter MUST be specified.
+
+            Applications MUST preserve the value data for x-name and iana-
+            token values that they don't recognize without attempting to
+            interpret or parse the value data.
+        """
+        value = self.params.value
+        return default_value if value is None else value
+
+    def fset(self: VPROPERTY, value: str):
+        """Set the VALUE parameter."""
+        self.params.value = value
+
+    def fdel(self: VPROPERTY):
+        """Delete the VALUE parameter."""
+        del self.params.value
+
+    return property(fget, fset, fdel)
+
+
 __all__ = [
     "ALTREP",
     "CN",
@@ -493,6 +528,7 @@ __all__ = [
     "RSVP",
     "SENT_BY",
     "TZID",
+    "create_value_property",
     "quoted_list_parameter",
     "string_parameter",
 ]

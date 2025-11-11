@@ -6,6 +6,7 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Generator
+from unittest.mock import Mock
 
 import pytest
 from dateutil import tz
@@ -416,3 +417,14 @@ def v_prop_name(request):
 def v_prop(v_prop_name):
     """Property types that occur as a property of a component."""
     return getattr(prop, v_prop_name)
+
+
+@pytest.fixture
+def v_prop_example(v_prop) -> prop.VPROPERTY:
+    return v_prop.examples()[0]
+
+
+@pytest.fixture
+def mock():
+    """A mock."""
+    return Mock()

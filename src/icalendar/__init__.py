@@ -51,6 +51,7 @@ from icalendar.parser import (
 
 # Property Data Value Types
 from icalendar.prop import (
+    VPROPERTY,
     TypesFactory,
     vBinary,
     vBoolean,
@@ -96,6 +97,7 @@ __all__ = [
     "STATUS",
     "TRANSP",
     "VALUE",
+    "VPROPERTY",
     "Alarm",
     "AlarmTime",
     "Alarms",

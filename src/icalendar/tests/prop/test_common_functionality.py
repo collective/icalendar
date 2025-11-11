@@ -37,3 +37,53 @@ def test_all_properties_are_part_of_the_union_type(v_prop):
 def test_if_not_part_of_properties_they_are_not_included_in_the_type(no_prop):
     """If these are not properties rather parameters, do not include them."""
     assert no_prop not in prop.VPROPERTY.__args__
+
+
+default_value_map = {
+    prop.vBoolean: "BOOLEAN",
+    prop.vCalAddress: "CAL-ADDRESS",
+    prop.vCategory: "TEXT",
+    prop.vDate: "DATE",
+    prop.vDatetime: "DATETIME",
+    prop.vDuration: "DURATION",
+    prop.vFloat: "FLOAT",
+    prop.vInt: "INT",
+    prop.vPeriod: "PERIOD",
+    prop.vRecur: "RECUR",
+    prop.vText: "TEXT",
+    prop.vTime: "TIME",
+    prop.vUTCOffset: "UTC-OFFSET",
+    prop.vUri: "URI",
+    prop.vBinary: "BINARY",
+    prop.vGeo: "GEO",
+}
+
+
+@pytest.mark.parametrize(("v_prop", "default_value"), list(default_value_map.items()))
+def test_get_default_value(v_prop_example: prop.VPROPERTY, default_value: str):
+    """Check the default value of all properties."""
+    del v_prop_example.VALUE
+    assert v_prop_example.VALUE == default_value
+    assert "VALUE" not in v_prop_example.params
+
+
+def test_set_value(v_prop_example):
+    """Test setting the VALUE parameter."""
+    v_prop_example.VALUE = "X-OTHER-VALUE"
+    assert v_prop_example.VALUE == "X-OTHER-VALUE"
+    assert v_prop_example.params.value == "X-OTHER-VALUE"
+
+
+def test_delete_the_set_value(v_prop_example, v_prop):
+    """The value is defaulting after delete."""
+    v_prop_example.VALUE = "X-VALUE"
+    del v_prop_example.VALUE
+    assert v_prop_example.VALUE != "X-VALUE"
+    if v_prop in default_value_map:
+        assert v_prop_example.VALUE == default_value_map[v_prop], (
+            "deleted value defaults"
+        )
+
+
+def test_value_of_datetime_list_and_type():
+    pytest.skip("TODO")
