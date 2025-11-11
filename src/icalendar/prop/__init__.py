@@ -2284,6 +2284,20 @@ class vInline(str):
         return cls(ical)
 
 
+class vUnknown(vText):
+    """This is text but the VALUE parameter is unknown.
+
+    Since :rfc:`7265`, it is important to record if values are unknown.
+    For :rfc:`5545`, we could just assume TEXT.
+    """
+
+    def examples() -> list[vUnknown]:
+        """Examples of vUnknown"""
+        return [vUnknown("Some property text.")]
+
+    VALUE = create_value_property("UNKNOWN")
+
+
 class TypesFactory(CaselessDict):
     """All Value types defined in RFC 5545 are registered in this factory
     class.
@@ -2336,6 +2350,7 @@ class TypesFactory(CaselessDict):
         self["inline"] = vInline
         self["date-time-list"] = vDDDLists
         self["categories"] = vCategory
+        self["unknown"] = vUnknown
 
     #################################################
     # Property types
@@ -2450,7 +2465,7 @@ class TypesFactory(CaselessDict):
         # For unknown/custom properties, always use the default type from types_map
         if value_param and name in self.types_map and value_param in self:
             return self[value_param]
-        return self[self.types_map.get(name, "text")]
+        return self[self.types_map.get(name, "unknown")]
 
     def to_ical(self, name, value):
         """Encodes a named value from a primitive python type to an icalendar
@@ -2491,6 +2506,7 @@ VPROPERTY: TypeAlias = Union[
     vInline,
     vBinary,
     vGeo,
+    vUnknown,
 ]
 
 __all__ = [
@@ -2522,6 +2538,7 @@ __all__ = [
     "vText",
     "vTime",
     "vUTCOffset",
+    "vUnknown",
     "vUri",
     "vWeekday",
 ]

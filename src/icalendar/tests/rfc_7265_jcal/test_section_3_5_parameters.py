@@ -5,8 +5,13 @@ The name of the parameter MUST be in lowercase; the original case of
 the parameter value MUST be preserved.
 """
 
+from typing import TYPE_CHECKING
+
 from icalendar import PARTSTAT, ROLE, VPROPERTY, Event, vCalAddress
 from icalendar.parser import Parameters
+
+if TYPE_CHECKING:
+    from icalendar.cal.calendar import Calendar
 
 
 def test_vCalAddressExample():
@@ -77,3 +82,23 @@ def test_all_set_values_are_preserved(v_prop_example):
     jcal = v_prop_example.to_jcal("X-NAME")
     ical_type: str = jcal[2]
     assert ical_type == "x-other-value"
+
+
+def test_unkown_value(calendars):
+    """Test unknown value.
+
+    :rfc:`7265`:
+        If the property has no "VALUE" parameter and has no default value
+        type, "unknown" is used.
+
+    """
+    calendar: Calendar = calendars.x_location
+    jcal = calendar.to_jcal()
+    props = jcal[1]
+    checked = 0
+    for prop in props:
+        print(prop)
+        if prop[0].startswith("x-"):
+            assert prop[2] == "unknown"
+            checked += 1
+    assert checked >= 3, "We checked at least some properties."
