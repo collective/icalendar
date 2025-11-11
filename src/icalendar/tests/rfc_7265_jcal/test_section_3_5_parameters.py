@@ -7,6 +7,8 @@ the parameter value MUST be preserved.
 
 from typing import TYPE_CHECKING
 
+import pytest
+
 from icalendar import PARTSTAT, ROLE, VPROPERTY, Event, vCalAddress
 from icalendar.parser import Parameters
 
@@ -102,3 +104,98 @@ def test_unkown_value(calendars):
             assert prop[2] == "unknown"
             checked += 1
     assert checked >= 3, "We checked at least some properties."
+
+
+@pytest.mark.parametrize(
+    ("event_index", "parameter_index", "expected_value"),
+    [
+        (
+            0,
+            0,
+            [
+                "attendee",
+                {
+                    "delegated-to": [
+                        "mailto:jdoe@example.com",
+                        "mailto:jqpublic@example.com",
+                    ]
+                },
+                "cal-address",
+                "mailto:jsmith@example.com",
+            ],
+        ),
+        (
+            0,
+            1,
+            [
+                "attendee",
+                {
+                    "delegated-from": [
+                        "mailto:jsmith@example.com",
+                        "mailto:jdoe@example.com",
+                    ]
+                },
+                "cal-address",
+                "mailto:jdoe@example.com",
+            ],
+        ),
+        (
+            0,
+            2,
+            [
+                "attendee",
+                {
+                    "member": [
+                        "mailto:projectA@example.com",
+                        "mailto:projectB@example.com",
+                    ]
+                },
+                "cal-address",
+                "mailto:janedoe@example.com",
+            ],
+        ),
+        (
+            1,
+            0,
+            [
+                "attendee",
+                {"delegated-to": "mailto:jdoe@example.com"},
+                "cal-address",
+                "mailto:jsmith@example.com",
+            ],
+        ),
+        (
+            1,
+            1,
+            [
+                "attendee",
+                {"delegated-from": "mailto:jsmith@example.com"},
+                "cal-address",
+                "mailto:jdoe@example.com",
+            ],
+        ),
+        (
+            1,
+            2,
+            [
+                "attendee",
+                {"member": "mailto:projectA@example.com"},
+                "cal-address",
+                "mailto:janedoe@example.com",
+            ],
+        ),
+    ],
+)
+def test_parameters_with_values_as_list(
+    calendars, event_index, parameter_index, expected_value
+):
+    """Check the conversion of list value parameters.
+
+    In [RFC5545], some parameters allow using a COMMA-separated list of
+    values.  To ease processing in jCal, the value of such parameters
+    MUST be represented in an array containing the separated values.
+    """
+    calendar: Calendar = calendars.rfc_7256_multi_value_parameters
+    event = calendar.events[event_index]
+    parameter = event.to_jcal()[1][parameter_index]
+    assert parameter == expected_value

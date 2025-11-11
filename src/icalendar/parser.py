@@ -312,7 +312,7 @@ class Parameters(CaselessDict):
 
     def to_jcal(self) -> dict[str, str]:
         """Return the jcal representation of the parameters."""
-        return {k.lower(): str(v) for k, v in self.items() if k.lower() != "value"}
+        return {k.lower(): v for k, v in self.items() if k.lower() != "value"}
 
 
 def escape_string(val):
