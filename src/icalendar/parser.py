@@ -11,7 +11,8 @@ from __future__ import annotations
 import functools
 import os
 import re
-from typing import TYPE_CHECKING
+from datetime import datetime, time
+from typing import TYPE_CHECKING, Any
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser_tools import (
@@ -20,6 +21,7 @@ from icalendar.parser_tools import (
     SEQUENCE_TYPES,
     to_unicode,
 )
+from icalendar.timezone.tzid import tzid_from_dt
 
 if TYPE_CHECKING:
     from icalendar.enums import VALUE
@@ -310,9 +312,32 @@ class Parameters(CaselessDict):
             interpret or parse the value data.
         """
 
-    def to_jcal(self) -> dict[str, str]:
-        """Return the jcal representation of the parameters."""
-        return {k.lower(): v for k, v in self.items() if k.lower() != "value"}
+    def to_jcal(self, exclude_utc=False) -> dict[str, str]:
+        """Return the jcal representation of the parameters.
+
+        Args:
+            exclude_utc (bool): Exclude the TZID parameter if it is UTC
+        """
+        jcal = {k.lower(): v for k, v in self.items() if k.lower() != "value"}
+        if exclude_utc and jcal.get("tzid") == "UTC":
+            del jcal["tzid"]
+        return jcal
+
+    @single_string_parameter
+    def tzid(self) -> str | None:
+        """The TZID parameter from :rfc:`5545`."""
+
+    def is_utc(self):
+        """Wether the TZID parameter is UTC."""
+        return self.tzid == "UTC"
+
+    def update_tzid_from(self, dt: datetime | time | Any) -> None:
+        """Update the TZID parameter from a datetime object.
+
+        This sets the TZID parameter or deletes it according to the datetime.
+        """
+        if isinstance(dt, (datetime, time)):
+            self.tzid = tzid_from_dt(dt)
 
 
 def escape_string(val):

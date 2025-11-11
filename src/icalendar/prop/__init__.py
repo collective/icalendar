@@ -61,7 +61,7 @@ from icalendar.parser_tools import (
     to_unicode,
 )
 from icalendar.timezone import tzid_from_dt, tzid_from_tzinfo, tzp
-from icalendar.tools import to_datetime
+from icalendar.tools import normalize_pytz, to_datetime
 
 try:
     from typing import TypeAlias
@@ -117,7 +117,11 @@ class vBinary:
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
-        return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
+        params = self.params.to_jcal()
+        if params.get("encoding") == "BASE64":
+            # BASE64 is the only allowed encoding
+            del params["encoding"]
+        return [name, params, self.VALUE.lower(), self.obj]
 
 
 class vBoolean(int):
@@ -192,7 +196,7 @@ class vBoolean(int):
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
-        return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
+        return [name, self.params.to_jcal(), self.VALUE.lower(), bool(self)]
 
 
 class vText(str):
@@ -535,7 +539,7 @@ class vFloat(float):
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
-        return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
+        return [name, self.params.to_jcal(), self.VALUE.lower(), float(self)]
 
 
 class vInt(int):
@@ -609,13 +613,13 @@ class vInt(int):
     @classmethod
     def examples(cls) -> list[vInt]:
         """Examples of vInt"""
-        return [vInt(1000)]
+        return [vInt(1000), vInt(-42)]
 
-    VALUE = create_value_property("INT")
+    VALUE = create_value_property("INTEGER")
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
-        return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
+        return [name, self.params.to_jcal(), self.VALUE.lower(), int(self)]
 
 
 class vDDDLists:
@@ -765,10 +769,6 @@ class TimeBase:
         """String representation."""
         return f"{self.__class__.__name__}({self.dt}, {self.params})"
 
-    def to_jcal(self, name: str) -> list:
-        """The jcal represenation of this property according to :rfc:`7265`."""
-        return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
-
 
 class vDDDTypes(TimeBase):
     """A combined Datetime, Date or Duration parser/generator. Their format
@@ -792,10 +792,7 @@ class vDDDTypes(TimeBase):
         else:  # isinstance(dt, tuple)
             self.params = Parameters({"value": "PERIOD"})
 
-        tzid = tzid_from_dt(dt) if isinstance(dt, (datetime, time)) else None
-        if tzid is not None and tzid != "UTC":
-            self.params.update({"TZID": tzid})
-
+        self.params.update_tzid_from(dt)
         self.dt = dt
 
     def to_property_type(self) -> vDatetime | vDate | vDuration | vTime | vPeriod:
@@ -864,6 +861,10 @@ class vDDDTypes(TimeBase):
 
     VALUE = create_value_property("DATE-TIME", get_default=_get_value)
     del _get_value
+
+    def to_jcal(self, name: str) -> list:
+        """The jcal represenation of this property according to :rfc:`7265`."""
+        return self.to_property_type().to_jcal(name)
 
 
 class vDate(TimeBase):
@@ -948,6 +949,15 @@ class vDate(TimeBase):
 
     VALUE = create_value_property("DATE")
 
+    def to_jcal(self, name: str) -> list:
+        """The jcal represenation of this property according to :rfc:`7265`."""
+        return [
+            name,
+            self.params.to_jcal(),
+            self.VALUE.lower(),
+            self.dt.strftime("%Y-%m-%d"),
+        ]
+
 
 class vDatetime(TimeBase):
     """Date-Time
@@ -1006,19 +1016,17 @@ class vDatetime(TimeBase):
             params = {}
         self.dt = dt
         self.params = Parameters(params)
+        self.params.update_tzid_from(dt)
 
     def to_ical(self):
         dt = self.dt
-        tzid = tzid_from_dt(dt)
 
         s = (
             f"{dt.year:04}{dt.month:02}{dt.day:02}"
             f"T{dt.hour:02}{dt.minute:02}{dt.second:02}"
         )
-        if tzid == "UTC":
+        if self.params.tzid == "UTC":
             s += "Z"
-        elif tzid:
-            self.params.update({"TZID": tzid})
         return s.encode("utf-8")
 
     @staticmethod
@@ -1055,6 +1063,13 @@ class vDatetime(TimeBase):
         return [cls(datetime(2025, 11, 10, 16, 52))]  # noqa: DTZ001
 
     VALUE = create_value_property("DATE-TIME")
+
+    def to_jcal(self, name: str) -> list:
+        """The jcal represenation of this property according to :rfc:`7265`."""
+        value = self.dt.strftime("%Y-%m-%dT%H:%M:%S")
+        if self.params.is_utc():
+            value += "Z"
+        return [name, self.params.to_jcal(exclude_utc=True), self.VALUE.lower(), value]
 
 
 class vDuration(TimeBase):
@@ -1196,6 +1211,15 @@ class vDuration(TimeBase):
 
     VALUE = create_value_property("DURATION")
 
+    def to_jcal(self, name: str) -> list:
+        """The jcal represenation of this property according to :rfc:`7265`."""
+        return [
+            name,
+            self.params.to_jcal(),
+            self.VALUE.lower(),
+            self.to_ical().decode(),
+        ]
+
 
 class vPeriod(TimeBase):
     """Period of Time
@@ -1262,8 +1286,16 @@ class vPeriod(TimeBase):
     """
 
     params: Parameters
+    by_duration: bool
+    start: datetime
+    end: datetime
+    duration: timedelta
 
-    def __init__(self, per: tuple[datetime, Union[datetime, timedelta]]):
+    def __init__(
+        self,
+        per: tuple[datetime, Union[datetime, timedelta]],
+        params: dict[str, Any] | None = None,
+    ):
         start, end_or_duration = per
         if not (isinstance(start, (datetime, date))):
             raise TypeError("Start value MUST be a datetime or date instance")
@@ -1271,23 +1303,20 @@ class vPeriod(TimeBase):
             raise TypeError(
                 "end_or_duration MUST be a datetime, date or timedelta instance"
             )
-        by_duration = 0
-        if isinstance(end_or_duration, timedelta):
-            by_duration = 1
+        by_duration = isinstance(end_or_duration, timedelta)
+        if by_duration:
             duration = end_or_duration
-            end = start + duration
+            end = normalize_pytz(start + duration)
         else:
             end = end_or_duration
-            duration = end - start
+            duration = normalize_pytz(end - start)
         if start > end:
             raise ValueError("Start time is greater than end time")
 
-        self.params = Parameters({"value": "PERIOD"})
+        self.params = Parameters(params or {"value": "PERIOD"})
         # set the timezone identifier
         # does not support different timezones for start and end
-        tzid = tzid_from_dt(start)
-        if tzid:
-            self.params["TZID"] = tzid
+        self.params.update_tzid_from(start)
 
         self.start = start
         self.end = end
@@ -1338,6 +1367,15 @@ class vPeriod(TimeBase):
         ]
 
     VALUE = create_value_property("PERIOD")
+
+    def to_jcal(self, name: str) -> list:
+        """The jcal represenation of this property according to :rfc:`7265`."""
+        value = [vDatetime(self.start).to_jcal(name)[-1]]
+        if self.by_duration:
+            value.append(vDuration(self.duration).to_jcal(name)[-1])
+        else:
+            value.append(vDatetime(self.end).to_jcal(name)[-1])
+        return [name, self.params.to_jcal(exclude_utc=True), self.VALUE.lower(), value]
 
 
 class vWeekday(str):
@@ -1775,7 +1813,11 @@ class vRecur(CaselessDict):
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
-        return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
+        value = {k.lower(): v for k, v in self.items()}
+        if "until" in value:
+            until = vDDDTypes(value["until"]).to_jcal("until")
+            value["until"] = until[-1]
+        return [name, self.params.to_jcal(), self.VALUE.lower(), value]
 
 
 class vTime(TimeBase):
@@ -1898,6 +1940,7 @@ class vTime(TimeBase):
         else:
             self.dt = time(*args)
         self.params = Parameters({"value": "TIME"})
+        self.params.update_tzid_from(self.dt)
 
     def to_ical(self):
         return self.dt.strftime("%H%M%S")
@@ -1917,6 +1960,13 @@ class vTime(TimeBase):
         return [cls(time(12, 30))]
 
     VALUE = create_value_property("TIME")
+
+    def to_jcal(self, name: str) -> list:
+        """The jcal represenation of this property according to :rfc:`7265`."""
+        value = self.dt.strftime("%H:%M:%S")
+        if self.params.is_utc():
+            value += "Z"
+        return [name, self.params.to_jcal(exclude_utc=True), self.VALUE.lower(), value]
 
 
 class vUri(str):
@@ -2187,7 +2237,22 @@ class vUTCOffset:
         self.td = td
         self.params = Parameters(params)
 
-    def to_ical(self):
+    def to_ical(self) -> str:
+        """Return the ical representation."""
+        return self.format("")
+
+    def format(self, divider: str = "") -> str:
+        """Represent the value with a possible divider.
+
+        .. code-block:: pycon
+
+            >>> from icalendar import vUTCOffset
+            >>> utc_offset = vUTCOffset.from_ical('-0500')
+            >>> utc_offset.format()
+            '-0500'
+            >>> utc_offset.format(divider=':')
+            '-05:00'
+        """
         if self.td < timedelta(0):
             sign = "-%s"
             td = timedelta(0) - self.td  # get timedelta relative to 0
@@ -2202,9 +2267,9 @@ class vUTCOffset:
         minutes = abs((seconds % 3600) // 60)
         seconds = abs(seconds % 60)
         if seconds:
-            duration = f"{hours:02}{minutes:02}{seconds:02}"
+            duration = f"{hours:02}{divider}{minutes:02}{divider}{seconds:02}"
         else:
-            duration = f"{hours:02}{minutes:02}"
+            duration = f"{hours:02}{divider}{minutes:02}"
         return sign % duration
 
     @classmethod
@@ -2250,7 +2315,7 @@ class vUTCOffset:
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
-        return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
+        return [name, self.params.to_jcal(), self.VALUE.lower(), self.format(":")]
 
 
 class vInline(str):
