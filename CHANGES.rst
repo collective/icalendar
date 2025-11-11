@@ -40,7 +40,7 @@ New features:
 
 Bug fixes:
 
-- ...
+- Create redirect for pages of old documentation to new documentation structure. See `Issue 959 <https://github.com/collective/icalendar/issues/959>`_.
 
 6.3.2 (2025-11-03)
 ------------------

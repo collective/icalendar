@@ -21,6 +21,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.napoleon",
+    "sphinx_reredirects",
 ]
 source_suffix = {".rst": "restructuredtext"}
 master_doc = "index"
@@ -69,8 +70,8 @@ html_theme_options = {
             "attributes": {
                 "target": "_blank",
                 "rel": "noopener me",
-                "class": "nav-link custom-fancy-css"
-            }
+                "class": "nav-link custom-fancy-css",
+            },
         },
         {
             "name": "PyPI",
@@ -80,13 +81,11 @@ html_theme_options = {
             "attributes": {
                 "target": "_blank",
                 "rel": "noopener me",
-                "class": "nav-link custom-fancy-css"
-            }
+                "class": "nav-link custom-fancy-css",
+            },
         },
     ],
-    "logo": {
-        "text": "icalendar"
-    },
+    "logo": {"text": "icalendar"},
     "navbar_start": ["navbar-logo", "version-switcher"],
     "navigation_with_keys": True,
     "search_bar_text": "Search",
@@ -100,7 +99,7 @@ html_theme_options = {
     "use_edit_page_button": True,
 }
 html_context = {
-#     "github_url": "https://github.com", # or your GitHub Enterprise site
+    #     "github_url": "https://github.com", # or your GitHub Enterprise site
     "github_user": "collective",
     "github_repo": "icalendar",
     "github_version": "main",
@@ -157,3 +156,17 @@ redirects = {
 man_pages = [("index", "icalendar", "icalendar Documentation", ["Plone Foundation"], 1)]
 
 htmlhelp_basename = "icalendardoc"
+
+redirects = {
+    "cli": "how-to/cli.html",
+    "about": "contribute/credits.html#History",
+    "api": "reference/api/icalendar.html",
+    "license": "https://github.com/collective/icalendar/blob/main/LICENSE.rst",
+    "install": "how-to/install.html",
+    "usage": "how-to/usage.html",
+    "security": "https://github.com/collective/icalendar/security",
+    "contributing": "contribute/index.html",
+    "changelog": "reference/changelog.html",
+    "credits": "contribute/credits.html",
+    "maintenance": "contribute/maintenance.html",
+}
