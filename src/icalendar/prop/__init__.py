@@ -117,7 +117,7 @@ class vBinary:
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
-        return [name, self.params.to_jcal(), self.VALUE, str(self)]
+        return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
 
 
 class vBoolean(int):
@@ -192,7 +192,7 @@ class vBoolean(int):
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
-        return [name, self.params.to_jcal(), self.VALUE, str(self)]
+        return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
 
 
 class vText(str):
@@ -233,7 +233,7 @@ class vText(str):
         """The jcal represenation of this property according to :rfc:`7265`."""
         if name == "request-status":
             return [name, {}, "text", self.split(";", 2)]
-        return [name, {}, "text", str(self)]
+        return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
 
     @classmethod
     def examples(cls):
@@ -451,7 +451,7 @@ class vCalAddress(str):
 
     def to_jcal(self, name: str) -> list:
         """Return this property in jCal format."""
-        return [name, self.params.to_jcal(), "cal-address", self.ical_value]
+        return [name, self.params.to_jcal(), self.VALUE.lower(), self.ical_value]
 
     @classmethod
     def examples(cls) -> list[vCalAddress]:
@@ -535,7 +535,7 @@ class vFloat(float):
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
-        return [name, self.params.to_jcal(), self.VALUE, str(self)]
+        return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
 
 
 class vInt(int):
@@ -615,14 +615,14 @@ class vInt(int):
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
-        return [name, self.params.to_jcal(), self.VALUE, str(self)]
+        return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
 
 
 class vDDDLists:
     """A list of vDDDTypes values."""
 
     params: Parameters
-    dts: list
+    dts: list[vDDDTypes]
 
     def __init__(self, dt_list):
         if not hasattr(dt_list, "__iter__"):
@@ -672,7 +672,13 @@ class vDDDLists:
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
-        return [name, self.params.to_jcal(), self.VALUE, str(self)]
+        return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
+
+    def _get_value(self):
+        return None if not self.dts else self.dts[0].VALUE
+
+    VALUE = create_value_property("DATE-TIME", get_default=_get_value)
+    del _get_value
 
 
 class vCategory:
@@ -714,7 +720,9 @@ class vCategory:
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation for categories."""
-        return [name, {}, "text"] + list(map(str, self.cats))
+        result = [name, self.params.to_jcal(), self.VALUE.lower()]
+        result.extend(map(str, self.cats))
+        return result
 
     @classmethod
     def examples(cls) -> list[vCategory]:
@@ -759,7 +767,7 @@ class TimeBase:
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
-        return [name, self.params.to_jcal(), self.VALUE, str(self)]
+        return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
 
 
 class vDDDTypes(TimeBase):
@@ -790,19 +798,27 @@ class vDDDTypes(TimeBase):
 
         self.dt = dt
 
-    def to_ical(self):
+    def to_property_type(self) -> vDatetime | vDate | vDuration | vTime | vPeriod:
+        """Convert to a property type.
+
+        Raises ValueError if the type is unknown
+        """
         dt = self.dt
         if isinstance(dt, datetime):
-            return vDatetime(dt).to_ical()
+            return vDatetime(dt)
         if isinstance(dt, date):
-            return vDate(dt).to_ical()
+            return vDate(dt)
         if isinstance(dt, timedelta):
-            return vDuration(dt).to_ical()
+            return vDuration(dt)
         if isinstance(dt, time):
-            return vTime(dt).to_ical()
+            return vTime(dt)
         if isinstance(dt, tuple) and len(dt) == 2:
-            return vPeriod(dt).to_ical()
+            return vPeriod(dt)
         raise ValueError(f"Unknown date type: {type(dt)}")
+
+    def to_ical(self) -> str:
+        """Return the ical representation."""
+        return self.to_property_type().to_ical()
 
     @classmethod
     def from_ical(cls, ical, timezone=None):
@@ -841,6 +857,13 @@ class vDDDTypes(TimeBase):
     def examples(cls) -> list[vDDDTypes]:
         """Examples of vDDDTypes"""
         return [cls(date(2025, 11, 10))]
+
+    def _get_value(self):
+        """Determine the VALUE parameter."""
+        return self.to_property_type().VALUE
+
+    VALUE = create_value_property("DATE-TIME", get_default=_get_value)
+    del _get_value
 
 
 class vDate(TimeBase):
@@ -1752,7 +1775,7 @@ class vRecur(CaselessDict):
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
-        return [name, self.params.to_jcal(), self.VALUE, str(self)]
+        return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
 
 
 class vTime(TimeBase):
@@ -1976,7 +1999,7 @@ class vUri(str):
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
-        return [name, self.params.to_jcal(), self.VALUE, str(self)]
+        return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
 
 
 class vGeo:
@@ -2085,14 +2108,19 @@ class vGeo:
 
     def to_jcal(self, name: str) -> list:
         """Convert to jcal object."""
-        return [name, {}, "float", [self.latitude, self.longitude]]
+        return [
+            name,
+            self.params.to_jcal(),
+            self.VALUE.lower(),
+            [self.latitude, self.longitude],
+        ]
 
     @classmethod
     def examples(cls) -> list[vGeo]:
         """Examples of vGeo"""
         return [cls((37.386013, -122.082932))]
 
-    VALUE = create_value_property("GEO")
+    VALUE = create_value_property("FLOAT")
 
 
 class vUTCOffset:
@@ -2222,7 +2250,7 @@ class vUTCOffset:
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
-        return [name, self.params.to_jcal(), self.VALUE, str(self)]
+        return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
 
 
 class vInline(str):

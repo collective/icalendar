@@ -473,7 +473,9 @@ Description:
 )
 
 
-def create_value_property(default_value: str) -> property:
+def create_value_property(
+    default_value: str, get_default: Optional[Callable[[VPROPERTY], str | None]] = None
+) -> property[str]:
     """Create a property to access the VALUE parameter."""
 
     def fget(self: VPROPERTY) -> str:
@@ -498,6 +500,8 @@ def create_value_property(default_value: str) -> property:
             interpret or parse the value data.
         """
         value = self.params.value
+        if value is None and get_default is not None:
+            value = get_default(self)
         return default_value if value is None else value
 
     def fset(self: VPROPERTY, value: str):

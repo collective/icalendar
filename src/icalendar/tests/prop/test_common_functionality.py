@@ -1,9 +1,11 @@
 """Check some module consistency."""
 
+from datetime import date, datetime, time, timedelta
+
 import pytest
 
 import icalendar
-from icalendar import prop
+from icalendar import Parameters, prop, vDDDLists, vDDDTypes
 from icalendar.tests.data import PARAMETER_NAMES
 
 
@@ -44,7 +46,7 @@ default_value_map = {
     prop.vCalAddress: "CAL-ADDRESS",
     prop.vCategory: "TEXT",
     prop.vDate: "DATE",
-    prop.vDatetime: "DATETIME",
+    prop.vDatetime: "DATE-TIME",
     prop.vDuration: "DURATION",
     prop.vFloat: "FLOAT",
     prop.vInt: "INT",
@@ -55,7 +57,7 @@ default_value_map = {
     prop.vUTCOffset: "UTC-OFFSET",
     prop.vUri: "URI",
     prop.vBinary: "BINARY",
-    prop.vGeo: "GEO",
+    prop.vGeo: "FLOAT",
 }
 
 
@@ -85,5 +87,34 @@ def test_delete_the_set_value(v_prop_example, v_prop):
         )
 
 
-def test_value_of_datetime_list_and_type():
-    pytest.skip("TODO")
+@pytest.mark.parametrize("v_prop", [vDDDLists, vDDDTypes])
+@pytest.mark.parametrize(
+    ("dt", "value"),
+    [
+        (datetime(2018, 1, 1), "DATE-TIME"),
+        (date(2018, 1, 1), "DATE"),
+        (time(1, 1), "TIME"),
+        (timedelta(1, 1), "DURATION"),
+    ],
+)
+def test_dt_value(v_prop, dt, value):
+    """Check that the VALUE parameter is correctly determined."""
+    assert v_prop(dt).VALUE == value
+
+
+def test_special_case_no_dts():
+    """If the list is empty, we still need a value."""
+    assert vDDDLists([]).VALUE == "DATE-TIME"
+
+
+def special_case_period():
+    """Check PERIOD for vDDDLists and vDDDTypes."""
+    assert vDDDLists([(datetime(2018, 1, 1), timedelta(1, 1))]).VALUE == "PERIOD"
+    assert vDDDTypes((datetime(2018, 1, 1), timedelta(1, 1))).VALUE == "PERIOD"
+
+
+def test_value_parameter_does_not_turn_up_in_jcal():
+    """The VALUE parameter should not turn up if set."""
+    params = Parameters()
+    params["VALUE"] = "DATE-TIME"
+    assert params.to_jcal() == {}

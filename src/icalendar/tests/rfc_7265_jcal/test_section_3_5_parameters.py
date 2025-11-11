@@ -42,12 +42,38 @@ def test_parameter_conversion_is_handed_over_to_parameter(v_prop: VPROPERTY, moc
     assert isinstance(example.params, Parameters)
     example.params = mock
     return_value = example.params.to_jcal.return_value
-    assert (
-        return_value == example.params.to_jcal.return_value == example.params.to_jcal()
-    )
     jcal = example.to_jcal("X-NAME")
     mock.to_jcal.assert_called_once()
     assert len(jcal) >= 4
     assert jcal[1] == return_value
     assert jcal[0] == "X-NAME"
-    assert jcal[2] == example.params.value
+
+
+def test_all_default_values_are_lowercase(v_prop_example):
+    """All the default values should be lowercase.
+
+    :rfc:`7265`:
+        If the property has no "VALUE" parameter but has a default value
+        type, the default value type is used.
+    """
+    jcal = v_prop_example.to_jcal("X-NAME")
+    ical_type: str = jcal[2]
+    assert ical_type.islower()
+
+
+def test_all_set_values_are_preserved(v_prop_example):
+    """Check the set value type.
+
+    :rfc:`5545`:
+        All names of [...] property parameter values are case-insensitive.
+
+    :rfc:`7265`:
+        If the property has a "VALUE" parameter, that parameter's value
+        is used as the value type.
+
+    We can convert them to lowercase but it is not stated explicitely.
+    """
+    v_prop_example.VALUE = "X-OTHER-VALUE"
+    jcal = v_prop_example.to_jcal("X-NAME")
+    ical_type: str = jcal[2]
+    assert ical_type == "x-other-value"
