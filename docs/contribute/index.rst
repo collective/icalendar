@@ -29,6 +29,28 @@ That means you must comply with :ref:`pull-request-requirements`.
 The maintainers may close pull requests without providing feedback that they deem to be spam, AI slop, abuse, or that do not comply with pull request requirements.
 The maintainers may also take further action, including suspend, ban, or report GitHub users.
 
+.. seealso::
+
+    Find open issues.
+
+    .. grid:: 1 2 3 4
+
+        .. grid-item::
+
+            .. button-link:: https://github.com/collective/icalendar/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22good%20first%20issue%22
+                :color: primary
+                :shadow:
+
+                Good First Issue
+
+        .. grid-item::
+
+            .. button-link:: https://github.com/collective/icalendar/issues?q=is%3Aissue%20state%3Aopen%20label%3Ahacktoberfest
+                :color: warning
+                :shadow:
+
+                Hacktoberfest
+
 
 .. _pull-request-requirements:
 
