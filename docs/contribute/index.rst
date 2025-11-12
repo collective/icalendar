@@ -13,6 +13,25 @@ Examples of how to contribute
 -   Sponsor development of icalendar through `Open Collective <https://opencollective.com/python-icalendar>`_.
 
 
+.. _first-time-contributors:
+
+First-time contributors
+-----------------------
+
+Contributions to icalendar from people new to icalendar are welcome.
+
+For people participating in programs to encourage first-time contributions, including `Hacktoberfest <https://hacktoberfest.com/>`_ and `Up For Grabs <https://up-for-grabs.net/#/filters?names=478>`_, you must comply with its terms and conditions to receive its recognition or rewards.
+Accordingly, you may request of the maintainers in your pull request that you would like recognition for your contribution.
+
+You may responsibly use artificial intelligence (AI) as a tool to draft a pull request.
+That means you must comply with :ref:`pull-request-requirements`.
+
+The maintainers may close pull requests without providing feedback that they deem to be spam, AI slop, abuse, or that do not comply with pull request requirements.
+The maintainers may also take further action, including suspend, ban, or report GitHub users.
+
+
+.. _pull-request-requirements:
+
 Pull request requirements
 -------------------------
 
