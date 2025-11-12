@@ -26,9 +26,6 @@ Accordingly, you may request of the maintainers in your pull request that you wo
 You may responsibly use artificial intelligence (AI) as a tool to draft a pull request.
 That means you must comply with :ref:`pull-request-requirements`.
 
-The maintainers may close pull requests without providing feedback that they deem to be spam, AI slop, abuse, or that do not comply with pull request requirements.
-The maintainers may also take further action, including suspend, ban, or report GitHub users.
-
 .. seealso::
 
     Find open issues.
@@ -66,6 +63,9 @@ Before submitting your pull request, ensure you have met the following requireme
 #.  Run all tests to ensure your changes don't break any existing functionality.
 #.  :ref:`Add or edit documentation <documentation-prerequisites>`_, both as docstrings to be rendered in the API documentation and narrative documentation, as necessary.
 #.  Add yourself to :file:`docs/credits.rst`, if you haven't already done so.
+
+The maintainers may close pull requests without providing feedback that they deem to be spam, AI slop, abuse, or that do not comply with pull request requirements.
+The maintainers may also take further action, including suspend, ban, or report GitHub users.
 
 
 .. _change-log:
