@@ -141,7 +141,7 @@ linkcheck_ignore = [
     r"https://pypi.org/manage/project/icalendar/collaboration/",
     # Ignore specific anchors
     r"https://github.com/collective/icalendar/blob/main/README.rst#related-projects",
-    r"https://up-for-grabs.net/#/filters?names=478",
+    r"https://up-for-grabs.net/#/filters",
 ]
 linkcheck_anchors = True
 linkcheck_timeout = 5
