@@ -340,6 +340,7 @@ class Parameters(CaselessDict):
             >>> params = Parameters()
             >>> params.value = "unknown"
             >>> params
+            Parameters({'VALUE': 'UNKNOWN'})
 
         """
 
@@ -501,7 +502,8 @@ class Contentline(str):
         values = to_unicode(values)
         if params:
             params = to_unicode(params.to_ical(sorted=sorted, exclude_utc=True))
-            return cls(f"{name};{params}:{values}")
+            if params:
+                return cls(f"{name};{params}:{values}")
         return cls(f"{name}:{values}")
 
     def parts(self) -> tuple[str, Parameters, str]:

@@ -802,16 +802,19 @@ class vDDDTypes(TimeBase):
         """
         dt = self.dt
         if isinstance(dt, datetime):
-            return vDatetime(dt)
-        if isinstance(dt, date):
-            return vDate(dt)
-        if isinstance(dt, timedelta):
-            return vDuration(dt)
-        if isinstance(dt, time):
-            return vTime(dt)
-        if isinstance(dt, tuple) and len(dt) == 2:
-            return vPeriod(dt)
-        raise ValueError(f"Unknown date type: {type(dt)}")
+            result = vDatetime(dt)
+        elif isinstance(dt, date):
+            result = vDate(dt)
+        elif isinstance(dt, timedelta):
+            result = vDuration(dt)
+        elif isinstance(dt, time):
+            result = vTime(dt)
+        elif isinstance(dt, tuple) and len(dt) == 2:
+            result = vPeriod(dt)
+        else:
+            raise ValueError(f"Unknown date type: {type(dt)}")
+        result.params = self.params
+        return result
 
     def to_ical(self) -> str:
         """Return the ical representation."""
@@ -1815,8 +1818,11 @@ class vRecur(CaselessDict):
         """The jcal represenation of this property according to :rfc:`7265`."""
         value = {k.lower(): v for k, v in self.items()}
         if "until" in value:
-            until = vDDDTypes(value["until"]).to_jcal("until")
-            value["until"] = until[-1]
+            until = value["until"]
+            if isinstance(until, list):
+                until = until[0]
+            until_jcal = vDDDTypes(until).to_jcal("until")
+            value["until"] = until_jcal[-1]
         return [name, self.params.to_jcal(), self.VALUE.lower(), value]
 
 
@@ -2250,7 +2256,8 @@ class vUTCOffset:
         .. code-block:: pycon
 
             >>> from icalendar import vUTCOffset
-            >>> utc_offset = vUTCOffset.from_ical('-0500')
+            >>> from datetime import timedelta
+            >>> utc_offset = vUTCOffset(timedelta(hours=-5))
             >>> utc_offset.format()
             '-0500'
             >>> utc_offset.format(divider=':')

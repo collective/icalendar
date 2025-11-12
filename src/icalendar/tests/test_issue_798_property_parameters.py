@@ -182,8 +182,9 @@ def test_set_sent_by(addr: vCalAddress):
 
 @pytest.mark.parametrize("tzid", [None, "Europe/Berlin"])
 def test_tzid(tzid, tzp: TZP):
+    """Check that the TZID parameter is determined by the datetime value."""
     dt = vDatetime(tzp.localize(datetime(2019, 12, 10), tzid))
-    assert dt.TZID is None
+    assert dt.TZID == tzid
 
 
 @pytest.mark.parametrize(
