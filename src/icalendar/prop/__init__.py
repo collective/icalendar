@@ -1025,7 +1025,7 @@ class vDatetime(TimeBase):
             f"{dt.year:04}{dt.month:02}{dt.day:02}"
             f"T{dt.hour:02}{dt.minute:02}{dt.second:02}"
         )
-        if self.params.tzid == "UTC":
+        if self.params.is_utc():
             s += "Z"
         return s.encode("utf-8")
 
@@ -1943,7 +1943,10 @@ class vTime(TimeBase):
         self.params.update_tzid_from(self.dt)
 
     def to_ical(self):
-        return self.dt.strftime("%H%M%S")
+        value = self.dt.strftime("%H%M%S")
+        if self.params.is_utc():
+            value += "Z"
+        return value
 
     @staticmethod
     def from_ical(ical):

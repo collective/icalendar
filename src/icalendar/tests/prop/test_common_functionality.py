@@ -49,7 +49,7 @@ default_value_map = {
     prop.vDatetime: "DATE-TIME",
     prop.vDuration: "DURATION",
     prop.vFloat: "FLOAT",
-    prop.vInt: "INT",
+    prop.vInt: "INTEGER",
     prop.vPeriod: "PERIOD",
     prop.vRecur: "RECUR",
     prop.vText: "TEXT",
@@ -118,3 +118,32 @@ def test_value_parameter_does_not_turn_up_in_jcal():
     params = Parameters()
     params["VALUE"] = "DATE-TIME"
     assert params.to_jcal() == {}
+
+
+def test_value_is_always_uppercase(v_prop_example):
+    """The VALUE parameter should always be uppercase."""
+    v_prop_example.VALUE = "unknown"
+    assert v_prop_example.VALUE == "UNKNOWN"
+
+
+def test_setting_the_value_turns_it_uppercase():
+    """The VALUE parameter should always be uppercase."""
+    parameters = Parameters()
+    parameters.value = "unknown"
+    assert parameters.value == "UNKNOWN"
+
+
+def test_default_value_is_always_uppercase():
+    """The default value should always be uppercase."""
+    pytest.skip("TODO at a later stage when the __init__ function is implemented.")
+    parameters = Parameters({"VALUE": "unknown1"})
+    assert parameters.value == "UNKNOWN1"
+    assert parameters["VALUE"] == "UNKNOWN1"
+
+
+@pytest.mark.parametrize("attribute", ["VALUE", "to_jcal", "to_ical"])
+def test_common_methods(v_prop, attribute):
+    """Check that common functionality is provided by all of them."""
+    assert hasattr(v_prop, attribute), (
+        f'{v_prop.__name__} is missing a function or property named "{attribute}".'
+    )

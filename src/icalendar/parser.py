@@ -183,28 +183,40 @@ def q_join(lst, sep=",", always_quote=False):
     return sep.join(dquote(itm, always_quote=always_quote) for itm in lst)
 
 
-def single_string_parameter(func):
-    """Create a parameter getter/setter for a single string parameter."""
+def single_string_parameter(upper=False):
+    """Create a parameter getter/setter for a single string parameter.
 
-    name = func.__name__
+    Args:
+        upper (bool): Convert the value to uppercase
+    """
 
-    @functools.wraps(func)
-    def fget(self: Parameters):
-        """Get the value."""
-        return self.get(name)
+    def decorator(func):
+        name = func.__name__
 
-    def fset(self: Parameters, value: str | None):
-        """Set the value"""
-        if value is None:
-            fdel(self)
-        else:
-            self[name] = value
+        @functools.wraps(func)
+        def fget(self: Parameters):
+            """Get the value."""
+            value = self.get(name)
+            if value is not None and upper:
+                value = value.upper()
+            return value
 
-    def fdel(self: Parameters):
-        """Delete the value."""
-        self.pop(name, None)
+        def fset(self: Parameters, value: str | None):
+            """Set the value"""
+            if value is None:
+                fdel(self)
+            else:
+                if upper:
+                    value = value.upper()
+                self[name] = value
 
-    return property(fget, fset, fdel, doc=func.__doc__)
+        def fdel(self: Parameters):
+            """Delete the value."""
+            self.pop(name, None)
+
+        return property(fget, fset, fdel, doc=func.__doc__)
+
+    return decorator
 
 
 class Parameters(CaselessDict):
@@ -236,13 +248,21 @@ class Parameters(CaselessDict):
         """
         return self.keys()
 
-    def to_ical(self, sorted: bool = True):  # noqa: A002, FBT001
+    def to_ical(self, sorted: bool = True, exclude_utc=False):  # noqa: A002, FBT001
+        """Returns an :rfc:`5545` representation of the parameters.
+
+        Args:
+            sorted (bool): Sort the parameters before encoding.
+            exclude_utc (bool): Exclude TZID if it is set to ``"UTC"``
+        """
         result = []
         items = list(self.items())
         if sorted:
             items.sort()
 
         for key, value in items:
+            if exclude_utc and key == "TZID" and value == "UTC":
+                continue
             upper_key = key.upper()
             check_quoteable_characters = self.quote_also.get(key.upper())
             always_quote = upper_key in self.always_quoted or (
@@ -292,7 +312,7 @@ class Parameters(CaselessDict):
                 ) from exc
         return result
 
-    @single_string_parameter
+    @single_string_parameter(upper=True)
     def value(self) -> VALUE | str | None:
         """The VALUE parameter from :rfc:`5545`.
 
@@ -310,6 +330,17 @@ class Parameters(CaselessDict):
             Applications MUST preserve the value data for x-name and iana-
             token values that they don't recognize without attempting to
             interpret or parse the value data.
+
+        For convenience, using this property, the value will be converted to
+        an uppercase string.
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Parameters
+            >>> params = Parameters()
+            >>> params.value = "unknown"
+            >>> params
+
         """
 
     def to_jcal(self, exclude_utc=False) -> dict[str, str]:
@@ -323,7 +354,7 @@ class Parameters(CaselessDict):
             del jcal["tzid"]
         return jcal
 
-    @single_string_parameter
+    @single_string_parameter()
     def tzid(self) -> str | None:
         """The TZID parameter from :rfc:`5545`."""
 
@@ -469,7 +500,7 @@ class Contentline(str):
         name = to_unicode(name)
         values = to_unicode(values)
         if params:
-            params = to_unicode(params.to_ical(sorted=sorted))
+            params = to_unicode(params.to_ical(sorted=sorted, exclude_utc=True))
             return cls(f"{name};{params}:{values}")
         return cls(f"{name}:{values}")
 

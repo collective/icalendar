@@ -498,13 +498,46 @@ def create_value_property(
             Applications MUST preserve the value data for x-name and iana-
             token values that they don't recognize without attempting to
             interpret or parse the value data.
+
+        Returns:
+            The VALUE parameter or the default.
+
+        Examples:
+            Get the value of a property:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import vBoolean
+                >>> b = vBoolean(True)
+                >>> b.VALUE
+                'BOOLEAN'
+
+            Setting the VALUE parameter of a typed property usually does not make sense.
+            For convenience, using this property, the value will be converted to
+            an uppercase string.
+            If you have some custom property, you might use it like this:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import vUnknown, Event
+                >>> v = vUnknown("Some property text.")
+                >>> v.VALUE = "x-type"  # lower case
+                >>> v.VALUE
+                'X-TYPE'
+                >>> event = Event()
+                >>> event.add("x-prop", v)
+                >>> print(event.to_ical())
+                BEGIN:VEVENT
+                X-PROP;VALUE=X-TYPE:Some property text.
+                END:VEVENT
+
         """
         value = self.params.value
         if value is None and get_default is not None:
             value = get_default(self)
         return default_value if value is None else value
 
-    def fset(self: VPROPERTY, value: str):
+    def fset(self: VPROPERTY, value: str | None):
         """Set the VALUE parameter."""
         self.params.value = value
 
