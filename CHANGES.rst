@@ -39,6 +39,7 @@ New features:
 - Added documentation of docstring format. See `Issue 747 <https://github.com/collective/icalendar/issues/747>`_.
 - Added first-time contributors section to Contributing. See `Issue 934 <https://github.com/collective/icalendar/issues/934>`_.
 - Revised check of which files trigger a documentation build on Read the Docs. See `Issue 848 <https://github.com/collective/icalendar/issues/848>`_.
+- Created a separate path to contribute to documentation. See `Issue 929 <https://github.com/collective/icalendar/issues/929>`_.
 
 Bug fixes:
 
