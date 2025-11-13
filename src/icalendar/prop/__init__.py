@@ -587,6 +587,8 @@ class vFloat(float):
     @classmethod
     def from_jcal(cls, ical_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
+        if ical_property[0].upper() == "GEO":
+            return vGeo.from_jcal(ical_property)
         return cls(
             ical_property[3],
             params=Parameters.from_jcal_property(ical_property, cls.default_value),

@@ -6,7 +6,6 @@ from pprint import pprint
 
 from icalendar import Component
 from icalendar.cal.alarm import Alarm
-from icalendar.parser_tools import to_unicode
 from icalendar.timezone.tzid import is_utc
 
 
@@ -20,12 +19,12 @@ def test_to_jcal_can_be_json_serialized(ics_file):
 def test_converting_an_example_back_and_forth_equals_the_original(ics_file: Component):
     """Check that all calendars can be converted to JCAL and back."""
     jcal = ics_file.to_jcal()
-    pprint(jcal)
+    # pprint(jcal)
     component = Component.from_jcal(jcal)
-    print("Got:")
-    print(to_unicode(component.to_ical()))
-    print("Expected:")
-    print(to_unicode(ics_file.to_ical()))
+    # print("Got:")
+    # print(to_unicode(component.to_ical())[:1000])
+    # print("Expected:")
+    # print(to_unicode(ics_file.to_ical())[:1000])
     assert component == ics_file
 
 
