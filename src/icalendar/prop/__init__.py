@@ -991,6 +991,8 @@ class vDDDTypes(TimeBase):
     @classmethod
     def from_jcal(cls, ical_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
+        if ical_property[2].upper() == "PERIOD":
+            return vPeriod.from_jcal(ical_property)
         dt = cls.parse_jcal_value(ical_property[3])
         params = Parameters.from_jcal_property(ical_property, cls.default_value)
         if params.tzid:
@@ -2854,7 +2856,7 @@ class TypesFactory(CaselessDict):
         """
         # Special case: RDATE and EXDATE always use vDDDLists to support list values
         # regardless of the VALUE parameter
-        if name.upper() in ("RDATE", "EXDATE"):
+        if name.upper() in ("RDATE", "EXDATE") and value_param is None:
             return self["date-time-list"]
 
         # Only use VALUE parameter for known properties that support multiple value
