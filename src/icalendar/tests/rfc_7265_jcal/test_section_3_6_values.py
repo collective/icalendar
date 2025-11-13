@@ -25,6 +25,7 @@ from icalendar import (
     vUTCOffset,
 )
 from icalendar.compatibility import ZoneInfo
+from icalendar.prop import vDDDLists, vDDDTypes
 
 JCAL_PAIRS = [
     (["attach", {}, "binary", "SGVsbG8gV29ybGQh"], vBinary("SGVsbG8gV29ybGQh")),
@@ -135,6 +136,10 @@ JCAL_PAIRS = [
         vUTCOffset(timedelta(hours=12, minutes=45)),
     ),
     (["x-foo", {}, "unknown", "bar"], vUnknown("bar")),
+    (
+        ["trigger", {}, "date-time", "1976-04-01T00:55:45Z"],
+        vDDDTypes(datetime(1976, 4, 1, 0, 55, 45, tzinfo=ZoneInfo("UTC"))),
+    ),
 ]
 
 mark_pairs = pytest.mark.parametrize(("jcal_value", "prop"), JCAL_PAIRS)
@@ -150,3 +155,20 @@ def test_convert_property_to_jcal(jcal_value, prop):
 def test_convert_jcal_to_property(jcal_value, prop):
     """Check converting an icalendar property type into a jcal value"""
     assert prop.from_jcal(jcal_value) == prop
+
+
+vDDD_pairs = [  # noqa: N816
+    (jcal, prop)
+    for jcal, prop in JCAL_PAIRS
+    if isinstance(prop, (vDatetime, vDate, vTime, vDuration))
+]
+
+
+@pytest.mark.parametrize(("jcal_value", "prop"), vDDD_pairs)
+@pytest.mark.parametrize("ddd_type", [vDDDTypes, vDDDLists])
+def test_parse_from_ddd(ddd_type, jcal_value, prop):
+    """The DDD types should be able to parse from a jcal value that is of a supported type."""
+    parsed = ddd_type.from_jcal(jcal_value)
+    print(parsed)
+    print(prop, "expected")
+    assert parsed == prop

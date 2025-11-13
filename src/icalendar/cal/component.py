@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from datetime import date, datetime, time, timedelta, timezone
 import json
+from datetime import date, datetime, time, timedelta, timezone
 from typing import TYPE_CHECKING, ClassVar
 
 from icalendar.attr import comments_property, single_utc_property, uid_property
@@ -12,12 +12,13 @@ from icalendar.caselessdict import CaselessDict
 from icalendar.error import InvalidCalendar
 from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_split
 from icalendar.parser_tools import DEFAULT_ENCODING
-from icalendar.prop import TypesFactory, vDDDLists, vText
+from icalendar.prop import VPROPERTY, TypesFactory, vDDDLists, vText
 from icalendar.timezone import tzp
-from icalendar.tools import is_date, is_datetime
+from icalendar.tools import is_date
 
 if TYPE_CHECKING:
     from icalendar.compatibility import Self
+    from icalendar.error import JCalParsingError  # noqa: F401
 
 _marker = []
 
@@ -69,17 +70,22 @@ class Component(CaselessDict):
         """
         if cls._components_factory is None:
             cls._components_factory = ComponentFactory()
-        return cls._components_factory.get(name, Component)
+        return cls._components_factory.get_component_class(name)
 
     @staticmethod
-    def _infer_value_type(value: date | datetime | timedelta | time | tuple | list) -> str | None:
+    def _infer_value_type(
+        value: date | datetime | timedelta | time | tuple | list,
+    ) -> str | None:
         """Infer the ``VALUE`` parameter from a Python type.
 
         Args:
-            value: Python native type, one of :py:class:`date`, :py:mod:`datetime`, :py:class:`timedelta`, :py:mod:`time`, :py:class:`tuple`, or :py:class:`list`.
+            value: Python native type, one of :py:class:`date`, :py:mod:`datetime`,
+                :py:class:`timedelta`, :py:mod:`time`, :py:class:`tuple`,
+                or :py:class:`list`.
 
         Returns:
-            str or None: The ``VALUE`` parameter string, for example, "DATE", "TIME", or other string, or ``None``
+            str or None: The ``VALUE`` parameter string, for example, "DATE", "TIME",
+                or other string, or ``None``
                 if no specific ``VALUE`` is needed.
         """
         if isinstance(value, list):
@@ -672,13 +678,15 @@ class Component(CaselessDict):
 
         See also :attr:`to_json`.
         """
-        properties = [
-        ]
+        properties = []
         for key, value in self.items():
             for item in value if isinstance(value, list) else [value]:
                 properties.append(item.to_jcal(key.lower()))
-        return [self.name.lower(), properties, [
-            subcomponent.to_jcal() for subcomponent in self.subcomponents]]
+        return [
+            self.name.lower(),
+            properties,
+            [subcomponent.to_jcal() for subcomponent in self.subcomponents],
+        ]
 
     def to_json(self) -> str:
         """Return this component as a jCal JSON string.
@@ -689,6 +697,37 @@ class Component(CaselessDict):
         See also :attr:`to_jcal`.
         """
         return json.dumps(self.to_jcal())
+
+    @classmethod
+    def from_jcal(cls, jcal: str | list) -> Component:
+        """Create a component from a jcal object.
+
+        Returns:
+            Component
+
+        Raises:
+            JCalParsingError
+
+        This reverses :attr:`to_json` and :attr:`to_jcal`.
+        """
+        if isinstance(jcal, str):
+            jcal = json.loads(jcal)
+        name, properties, subcomponents = jcal
+        if name.upper() != cls.name:
+            # delegate to correct component class
+            component_cls = cls.get_component_class(name.upper())
+            return component_cls.from_jcal(jcal)
+        component = cls()
+        for prop in properties:
+            prop_name = prop[0]
+            prop_value = prop[2]
+            prop_cls: type[VPROPERTY] = cls.types_factory.for_property(
+                prop_name, prop_value
+            )
+            component.add(prop_name, prop_cls.from_jcal(prop))
+        for subcomponent in subcomponents:
+            component.subcomponents.append(cls.from_jcal(subcomponent))
+        return component
 
 
 __all__ = ["Component"]

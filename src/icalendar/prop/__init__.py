@@ -48,7 +48,7 @@ import base64
 import binascii
 import re
 from datetime import date, datetime, time, timedelta, timezone
-from typing import Any, ClassVar, Optional, Union
+from typing import Any, ClassVar, Optional, Tuple, Union
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.enums import Enum
@@ -63,7 +63,7 @@ from icalendar.parser_tools import (
 )
 from icalendar.timezone import tzid_from_dt, tzid_from_tzinfo, tzp
 from icalendar.timezone.tzid import is_utc
-from icalendar.tools import is_datetime, normalize_pytz, to_datetime
+from icalendar.tools import is_date, is_datetime, normalize_pytz, to_datetime
 
 try:
     from typing import TypeAlias
@@ -272,8 +272,11 @@ class vText(str):
     @classmethod
     def from_jcal(cls, ical_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
+        string = ical_property[3]
+        if ical_property[0] == "request-status":
+            string = ";".join(ical_property[3])
         return cls(
-            ical_property[3],
+            string,
             params=Parameters.from_jcal_property(ical_property, cls.default_value),
         )
 
@@ -682,22 +685,23 @@ class vInt(int):
 class vDDDLists:
     """A list of vDDDTypes values."""
 
-    name = "DATE-TIME"
+    default_value: ClassVar[str] = "DATE-TIME"
     params: Parameters
     dts: list[vDDDTypes]
 
-    def __init__(self, dt_list):
+    def __init__(self, dt_list, params: dict[str, Any] | None = None):
+        if params is None:
+            params = {}
         if not hasattr(dt_list, "__iter__"):
             dt_list = [dt_list]
         vddd = []
         tzid = None
         for dt_l in dt_list:
-            dt = vDDDTypes(dt_l)
+            dt = vDDDTypes(dt_l) if not isinstance(dt_l, vDDDTypes) else dt_l
             vddd.append(dt)
             if "TZID" in dt.params:
                 tzid = dt.params["TZID"]
 
-        params = {}
         if tzid:
             # NOTE: no support for multiple timezones here!
             params["TZID"] = tzid
@@ -734,7 +738,12 @@ class vDDDLists:
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
-        return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
+        return [
+            name,
+            self.params.to_jcal(),
+            self.VALUE.lower(),
+            *[dt.to_jcal(name)[3] for dt in self.dts],
+        ]
 
     def _get_value(self) -> str | None:
         return None if not self.dts else self.dts[0].VALUE
@@ -744,9 +753,14 @@ class vDDDLists:
     @classmethod
     def from_jcal(cls, ical_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
+        values = ical_property[3:]
+        prop = ical_property[:3]
+        dts = []
+        for value in values:
+            dts.append(vDDDTypes.from_jcal(prop + [value]))
         return cls(
-            ical_property[3],
-            Parameters.from_jcal_property(ical_property, cls.default_value),
+            dts,
+            params=Parameters.from_jcal_property(ical_property, cls.default_value),
         )
 
 
@@ -845,6 +859,16 @@ class TimeBase:
         return f"{self.__class__.__name__}({self.dt}, {self.params})"
 
 
+DT_TYPE: TypeAlias = Union[
+    datetime,
+    date,
+    timedelta,
+    time,
+    Tuple[datetime, datetime],
+    Tuple[datetime, timedelta],
+]
+
+
 class vDDDTypes(TimeBase):
     """A combined Datetime, Date or Duration parser/generator. Their format
     cannot be confused, and often values can be of either types.
@@ -853,23 +877,25 @@ class vDDDTypes(TimeBase):
 
     default_value: ClassVar[str] = "DATE-TIME"
     params: Parameters
+    dt: DT_TYPE
 
-    def __init__(self, dt):
+    def __init__(self, dt, params: Optional[dict[str, Any]] = None):
+        if params is None:
+            params = {}
         if not isinstance(dt, (datetime, date, timedelta, time, tuple)):
             raise TypeError(
                 "You must use datetime, date, timedelta, time or tuple (for periods)"
             )
-        if isinstance(dt, (datetime, timedelta)):
-            self.params = Parameters()
-        elif isinstance(dt, date):
-            self.params = Parameters({"value": "DATE"})
-        elif isinstance(dt, time):
-            self.params = Parameters({"value": "TIME"})
-        else:  # isinstance(dt, tuple)
-            self.params = Parameters({"value": "PERIOD"})
-
-        self.params.update_tzid_from(dt)
         self.dt = dt
+        # if isinstance(dt, (datetime, timedelta)): pass
+        if is_date(dt):
+            params.update({"value": "DATE"})
+        elif isinstance(dt, time):
+            params.update({"value": "TIME"})
+        elif isinstance(dt, tuple):
+            params.update({"value": "PERIOD"})
+        self.params = Parameters(params)
+        self.params.update_tzid_from(dt)
 
     def to_property_type(self) -> vDatetime | vDate | vDuration | vTime | vPeriod:
         """Convert to a property type.
@@ -945,15 +971,17 @@ class vDDDTypes(TimeBase):
         return self.to_property_type().to_jcal(name)
 
     @classmethod
-    def parse_jcal_string(cls, jcal: str) -> timedelta:
-        """Parse a jcal string to a datetime.timedelta.
+    def parse_jcal_value(cls, jcal: str | list) -> timedelta:
+        """Parse a jcal value.
 
         Raises:
             JCalParsingError
         """
+        if isinstance(jcal, list):
+            return vPeriod.parse_jcal_value(jcal)
         for jcal_type in (vDatetime, vDate, vTime, vDuration):
             try:
-                return jcal_type.parse_jcal_string(jcal)
+                return jcal_type.parse_jcal_value(jcal)
             except JCalParsingError:  # noqa: PERF203
                 pass
         raise JCalParsingError(f"Cannot parse jcal string {jcal}")
@@ -961,9 +989,13 @@ class vDDDTypes(TimeBase):
     @classmethod
     def from_jcal(cls, ical_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
+        dt = cls.parse_jcal_value(ical_property[3])
+        params = Parameters.from_jcal_property(ical_property, cls.default_value)
+        if params.tzid:
+            dt = tzp.localize(dt, params.tzid)
         return cls(
-            ical_property[3],
-            Parameters.from_jcal_property(ical_property, cls.default_value),
+            dt,
+            params=params,
         )
 
 
@@ -1060,7 +1092,7 @@ class vDate(TimeBase):
         ]
 
     @classmethod
-    def parse_jcal_string(cls, jcal: str) -> datetime:
+    def parse_jcal_value(cls, jcal: str) -> datetime:
         """Parse a jcal string to a datetime.datetime.
 
         Raises:
@@ -1075,7 +1107,7 @@ class vDate(TimeBase):
     def from_jcal(cls, ical_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
         return cls(
-            cls.parse_jcal_string(ical_property[3]),
+            cls.parse_jcal_value(ical_property[3]),
             params=Parameters.from_jcal_property(ical_property, cls.default_value),
         )
 
@@ -1189,7 +1221,7 @@ class vDatetime(TimeBase):
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
         value = self.dt.strftime("%Y-%m-%dT%H:%M:%S")
-        if self.params.is_utc():
+        if self.is_utc():
             value += "Z"
         return [name, self.params.to_jcal(exclude_utc=True), self.VALUE.lower(), value]
 
@@ -1198,7 +1230,7 @@ class vDatetime(TimeBase):
         return self.params.is_utc() or is_utc(self.dt)
 
     @classmethod
-    def parse_jcal_string(cls, jcal: str) -> datetime:
+    def parse_jcal_value(cls, jcal: str) -> datetime:
         """Parse a jcal string to a datetime.datetime.
 
         Raises:
@@ -1219,7 +1251,7 @@ class vDatetime(TimeBase):
     def from_jcal(cls, ical_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
         params = Parameters.from_jcal_property(ical_property, cls.default_value)
-        dt = cls.parse_jcal_string(ical_property[3])
+        dt = cls.parse_jcal_value(ical_property[3])
         if params.tzid:
             dt = tzp.localize(dt, params.tzid)
         return cls(
@@ -1378,7 +1410,7 @@ class vDuration(TimeBase):
         ]
 
     @classmethod
-    def parse_jcal_string(cls, jcal: str) -> timedelta | None:
+    def parse_jcal_value(cls, jcal: str) -> timedelta | None:
         """Parse a jcal string to a datetime.timedelta."""
         try:
             return cls.from_ical(jcal)
@@ -1389,7 +1421,7 @@ class vDuration(TimeBase):
     def from_jcal(cls, ical_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
         return cls(
-            cls.parse_jcal_string(ical_property[3]),
+            cls.parse_jcal_value(ical_property[3]),
             Parameters.from_jcal_property(ical_property, cls.default_value),
         )
 
@@ -1552,11 +1584,23 @@ class vPeriod(TimeBase):
         return [name, self.params.to_jcal(exclude_utc=True), self.VALUE.lower(), value]
 
     @classmethod
-    def from_jcal(cls, ical_property: list) -> Self:
+    def parse_jcal_value(
+        cls, jcal: str | list
+    ) -> tuple[datetime, datetime] | tuple[datetime, timedelta]:
+        """Parse a jcal value.
+
+        Raises:
+            JCalParsingError
+        """
+        if not isinstance(jcal, list) or len(jcal) != 2:
+            raise JCalParsingError(f"Cannot parse jcal string {jcal}")
+        return vDDDTypes.parse_jcal_value(jcal[0]), vDDDTypes.parse_jcal_value(jcal[1])
+
+    @classmethod
+    def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
-        start = vDDDTypes.parse_jcal_string(ical_property[3][0])
-        end_or_duration = vDDDTypes.parse_jcal_string(ical_property[3][1])
-        params = Parameters.from_jcal_property(ical_property, cls.default_value)
+        start, end_or_duration = cls.parse_jcal_value(jcal_property[3])
+        params = Parameters.from_jcal_property(jcal_property, cls.default_value)
         tzid = params.tzid
 
         if tzid:
@@ -2018,7 +2062,7 @@ class vRecur(CaselessDict):
         Parameters.from_jcal_property(ical_property, cls.default_value)
         recur = ical_property[3].copy()
         if "until" in recur:
-            recur["until"] = vDDDTypes.parse_jcal_string(recur["until"])
+            recur["until"] = vDDDTypes.parse_jcal_value(recur["until"])
         return cls(
             recur,
             params=Parameters.from_jcal_property(ical_property, cls.default_value),
@@ -2189,7 +2233,7 @@ class vTime(TimeBase):
         return [name, self.params.to_jcal(exclude_utc=True), self.VALUE.lower(), value]
 
     @classmethod
-    def parse_jcal_string(cls, jcal: str) -> timedelta:
+    def parse_jcal_value(cls, jcal: str) -> timedelta:
         """Parse a jcal string to a datetime.time.
 
         Raises:
@@ -2208,7 +2252,7 @@ class vTime(TimeBase):
     def from_jcal(cls, ical_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
         return cls(
-            cls.parse_jcal_string(ical_property[3]),
+            cls.parse_jcal_value(ical_property[3]),
             params=Parameters.from_jcal_property(ical_property, cls.default_value),
         )
 
@@ -2590,7 +2634,8 @@ class vUTCOffset:
     def from_jcal(cls, ical_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
         match = UTC_OFFSET_JCAL_REGEX.match(ical_property[3])
-        # TODO: value error for None - invalid format
+        if match is None:
+            raise JCalParsingError(f"Cannot parse {ical_property!r} as UTC-OFFSET.")
         negative = match.group("sign") == "-"
         hours = int(match.group("hours"))
         minutes = int(match.group("minutes"))

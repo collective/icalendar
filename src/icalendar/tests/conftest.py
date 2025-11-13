@@ -176,7 +176,7 @@ ICS_FILES = [
 
 
 @pytest.fixture(params=ICS_FILES)
-def ics_file(tzp, calendars, timezones, events, request):
+def ics_file(tzp, calendars, timezones, events, request) -> Component:
     """An example ICS file."""
     ics_file = request.param
     print("example file:", ics_file)
