@@ -66,6 +66,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
 ]
@@ -117,6 +118,7 @@ source_archive = "https://github.com/collective/icalendar/archive/{commit_hash}.
 Issues = "https://github.com/collective/icalendar/issues"
 Documentation = "https://icalendar.readthedocs.io/"
 Changelog = "https://icalendar.readthedocs.io/en/latest/changelog.html"
+Funding = "https://opencollective.com/python-icalendar"
 
 [tool.hatch.version]
 # This configuration allows us to use the version from the tags and dynamically generate

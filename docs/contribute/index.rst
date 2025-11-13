@@ -8,10 +8,57 @@ Examples of how to contribute
 -----------------------------
 
 -   Report issues in the `issue tracker <https://github.com/collective/icalendar/issues>`_.
+-   Comment on and resolve issues.
 -   Submit pull requests from your fork of the icalendar repository.
--   Extend the documentation.
+-   Extend the :doc:`documentation`.
 -   Sponsor development of icalendar through `Open Collective <https://opencollective.com/python-icalendar>`_.
 
+
+.. _first-time-contributors:
+
+First-time contributors
+-----------------------
+
+Contributions to icalendar from people new to icalendar are welcome.
+
+For people participating in programs to encourage first-time contributions, including `Hacktoberfest <https://hacktoberfest.com/>`_ and `Up For Grabs <https://up-for-grabs.net/#/filters?names=478>`_, you must comply with its terms and conditions to receive its recognition or rewards.
+Accordingly, you may request of the maintainers in your pull request that you would like recognition for your contribution.
+
+You may responsibly use artificial intelligence (AI) as a tool to draft a pull request.
+That means you must comply with :ref:`pull-request-requirements`.
+
+.. seealso::
+
+    Find open issues.
+
+    .. grid:: 1 2 3 4
+
+        .. grid-item::
+
+            .. button-link:: https://github.com/collective/icalendar/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22good%20first%20issue%22
+                :color: primary
+                :shadow:
+
+                Good First Issue
+
+        .. grid-item::
+
+            .. button-link:: https://github.com/collective/icalendar/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22doc%22
+                :color: success
+                :shadow:
+
+                Documentation
+
+        .. grid-item::
+
+            .. button-link:: https://github.com/collective/icalendar/issues?q=is%3Aissue%20state%3Aopen%20label%3Ahacktoberfest
+                :color: warning
+                :shadow:
+
+                Hacktoberfest
+
+
+.. _pull-request-requirements:
 
 Pull request requirements
 -------------------------
@@ -23,8 +70,11 @@ Before submitting your pull request, ensure you have met the following requireme
     See :ref:`change-log` for details.
 #.  Add a test which proves your fix and passes.
 #.  Run all tests to ensure your changes don't break any existing functionality.
-#.  Add or edit documentation, both as docstrings to be rendered in the API documentation and narrative documentation, as necessary.
+#.  :doc:`Add or edit documentation <documentation>`, both as docstrings to be rendered in the :doc:`API reference documentation <../reference/api/icalendar>` and narrative documentation, as necessary.
 #.  Add yourself to :file:`docs/credits.rst`, if you haven't already done so.
+
+The maintainers may close pull requests without providing feedback that they deem to be spam, AI slop, abuse, or that do not comply with pull request requirements.
+The maintainers may also take further action, including suspend, ban, or report GitHub users.
 
 
 .. _change-log:
@@ -65,6 +115,7 @@ If you would like to set up icalendar to contribute changes, see :doc:`developme
 .. toctree::
     :hidden:
 
+    documentation
     development
     credits
     maintenance

@@ -24,7 +24,7 @@ We still recommend checking out the new features and giving feedback in the repo
 
 Minor changes:
 
-- ...
+- Move sections in Table of Content of Reference guide.
 
 Breaking changes:
 
@@ -32,11 +32,38 @@ Breaking changes:
 
 New features:
 
-- ...
+- Add PyData Theme version switcher to documentation. See `Issue 825 <https://github.com/collective/icalendar/issues/825>`_.
+- Test compatibility with Python 3.14. See `Issue 973 <https://github.com/collective/icalendar/issues/973>`_.
+- Added documentation of Vale usage for icalender documentation style guide. See `Issue 815 <https://github.com/collective/icalendar/issues/815>`_.
+- Added funding link to :file:`pyproject.toml`.  See `Issue 800 <https://github.com/collective/icalendar/issues/800>`_.
+- Added documentation of docstring format. See `Issue 747 <https://github.com/collective/icalendar/issues/747>`_.
+- Added first-time contributors section to Contributing. See `Issue 934 <https://github.com/collective/icalendar/issues/934>`_.
+- Created a separate path to contribute to documentation. See `Issue 929 <https://github.com/collective/icalendar/issues/929>`_.
 
 Bug fixes:
 
 - ...
+
+6.3.2 (2025-11-03)
+------------------
+
+Minor changes:
+
+- Add PyData Theme version switcher to documentation. See `Issue 825`_.
+
+5.0.14 (2025-11-03)
+-------------------
+
+Minor changes:
+
+- Add PyData Theme version switcher to documentation. See `Issue 825`_.
+
+4.1.2 (2025-11-03)
+------------------
+
+Minor changes:
+
+- Add PyData Theme version switcher to documentation. See `Issue 825`_.
 
 7.0.0a1 (28-10-2025)
 --------------------
@@ -72,6 +99,8 @@ Minor changes:
 - Add type hints to ``icalendar.tools`` module.
 - Fix more examples link failed in ``README.md`` by renewing its link. See `Issue 958 <https://github.com/collective/icalendar/issues/958>`_.
 - Fix Contributing, Changelog, License links failed in ``README.md`` by renewing its link. See `Issue 959 <https://github.com/collective/icalendar/issues/959>`_.
+- Fix more examples link in ``README.md``. See `Issue 958 <https://github.com/collective/icalendar/issues/958>`_.
+- Add ``CODEOWNERS`` file for automatic pull request review assignment. See `Issue 945 <https://github.com/collective/icalendar/issues/945>`_.
 
 Breaking changes:
 

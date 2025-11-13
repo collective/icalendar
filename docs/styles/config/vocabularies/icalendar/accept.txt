@@ -11,7 +11,7 @@
 (?i)Dai
 (?i)datetime
 dicts
-docstrings
+docstrings?
 (?i)Dunklau
 (?i)Dutta
 (?i)Egli
@@ -22,11 +22,12 @@ docstrings
 (?i)Garbas
 (?i)Geier
 (?i)Grisel
+Hacktoberfest
 (?i)hajdbo
 (?i)Hanchrow
+(?i)Hanoka
 iCal
 (?i)icalendar
-(?i)Hanoka
 (?i)ilya
 (?i)Jannis
 (?i)Jeroen

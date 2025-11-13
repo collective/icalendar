@@ -1,8 +1,10 @@
 # icalendar documentation build configuration file
 import datetime
-import importlib.metadata
+import os
 import sys
 from pathlib import Path
+
+import icalendar
 
 HERE = Path(__file__).parent
 SRC = HERE.parent / "src"
@@ -26,15 +28,33 @@ master_doc = "index"
 project = "icalendar"
 this_year = datetime.date.today().year  # noqa: DTZ011
 copyright = f"{this_year}, Plone Foundation"  # noqa: A001
-version = importlib.metadata.version(project)
-v = version.split(".")[:-1]
-release = version = ".".join(v)
-
 
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
+
+# Define the json_url for our version switcher.
+json_url = "https://icalendar.readthedocs.io/en/latest/_static/version-switcher.json"
+
+# Define the version we use for matching in the version switcher.
+version_match = os.environ.get("READTHEDOCS_VERSION")
+release = icalendar.__version__
+
+# If READTHEDOCS_VERSION doesn't exist, we're not on RTD
+# If it's an integer, we're in a PR build and the version isn't correct.
+# If it's "latest", change to "dev" in the version switcher.
+if not version_match or version_match.isdigit() or version_match == "latest":
+    # For local development, infer the version to match from the package.
+    if "a" in release or "b" in release or "rc" in release or "dev" in release:
+        # Override the fully qualified URL in dev mode.
+        json_url = "_static/version-switcher.json"
+        version_match = "dev"
+    else:
+        version_match = f"v{release}"
+elif version_match == "stable":
+    version_match = f"v{release}"
+
 exclude_patterns = [
     "reference/api/modules.rst",
 ]
@@ -64,10 +84,19 @@ html_theme_options = {
             }
         },
     ],
+    "logo": {
+        "text": "icalendar"
+    },
+    "navbar_start": ["navbar-logo", "version-switcher"],
     "navigation_with_keys": True,
     "search_bar_text": "Search",
     "show_nav_level": 2,
     "show_toc_level": 2,
+    "show_version_warning_banner": True,
+    "switcher": {
+        "json_url": json_url,
+        "version_match": version_match,
+    },
     "use_edit_page_button": True,
 }
 html_context = {
@@ -112,6 +141,7 @@ linkcheck_ignore = [
     r"https://pypi.org/manage/project/icalendar/collaboration/",
     # Ignore specific anchors
     r"https://github.com/collective/icalendar/blob/main/README.rst#related-projects",
+    r"https://up-for-grabs.net/#/filters",
 ]
 linkcheck_anchors = True
 linkcheck_timeout = 5
