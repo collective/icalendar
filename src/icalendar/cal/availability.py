@@ -228,7 +228,7 @@ class Availability(Component):
         Modifications do not change the calendar.
         Use :py:meth:`Component.add_component`.
         """
-        return self.walk("VAVAILABLE")
+        return self.walk("AVAILABLE")
 
     @classmethod
     def new(
