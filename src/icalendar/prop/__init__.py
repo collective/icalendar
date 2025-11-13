@@ -957,6 +957,11 @@ class vDDDTypes(TimeBase):
         """
         return self.dt
 
+    @property
+    def dts(self) -> list:
+        """Compatibility method to return a list of datetimes."""
+        return [self]
+
     @classmethod
     def examples(cls) -> list[vDDDTypes]:
         """Examples of vDDDTypes"""
