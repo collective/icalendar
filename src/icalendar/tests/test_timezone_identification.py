@@ -6,7 +6,11 @@ timezone database (zoneinfo, dateutil) or the package (pytz).
 We want to make sure we can roughly identify most of them.
 """
 
-from icalendar.timezone import tzid_from_tzinfo, tzids_from_tzinfo
+from datetime import datetime, timedelta, timezone
+
+import pytest
+
+from icalendar.timezone import is_utc, tzid_from_tzinfo, tzids_from_tzinfo
 from icalendar.timezone.tzp import TZP
 
 
@@ -31,3 +35,30 @@ def test_utc_is_identified(utc):
     """Test UTC because it is handled in a special way."""
     assert "UTC" in tzids_from_tzinfo(utc)
     assert tzid_from_tzinfo(utc) == "UTC"
+    assert is_utc(utc)
+
+
+def test_some_timezones_are_not_utc(tzp: TZP):
+    """If we have an offset, it is not utc."""
+    assert not is_utc(tzp.timezone("Europe/Berlin"))
+
+
+def test_some_timezones_are_recognized_as_utc():
+    """If we are at 0 offset, it is utc."""
+    tzinfo = timezone(timedelta(hours=0))
+    assert is_utc(tzinfo)
+    assert is_utc(datetime(2019, 1, 1, 0, 0, 0, 0, tzinfo=tzinfo))
+
+
+@pytest.mark.parametrize(
+    "tzinfo",
+    [
+        timezone(timedelta(hours=1)),
+        timezone(timedelta(hours=-1)),
+        timezone(timedelta(hours=2)),
+        timezone(timedelta(hours=-2)),
+    ],
+)
+def test_getting_a_timezone_name_for_timezones(tzinfo):
+    """We should get a name that we can use."""
+    assert tzid_from_tzinfo(tzinfo)

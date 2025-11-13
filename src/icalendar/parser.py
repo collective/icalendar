@@ -248,7 +248,7 @@ class Parameters(CaselessDict):
         """
         return self.keys()
 
-    def to_ical(self, sorted: bool = True, exclude_utc=False):  # noqa: A002, FBT001
+    def to_ical(self, sorted: bool = True):  # noqa: A002, FBT001
         """Returns an :rfc:`5545` representation of the parameters.
 
         Args:
@@ -261,7 +261,9 @@ class Parameters(CaselessDict):
             items.sort()
 
         for key, value in items:
-            if exclude_utc and key == "TZID" and value == "UTC":
+            if key == "TZID" and value == "UTC":
+                # The "TZID" property parameter MUST NOT be applied to DATE-TIME
+                # properties whose time values are specified in UTC.
                 continue
             upper_key = key.upper()
             check_quoteable_characters = self.quote_also.get(key.upper())
@@ -501,8 +503,9 @@ class Contentline(str):
         name = to_unicode(name)
         values = to_unicode(values)
         if params:
-            params = to_unicode(params.to_ical(sorted=sorted, exclude_utc=True))
+            params = to_unicode(params.to_ical(sorted=sorted))
             if params:
+                # some parameter values can be skipped during serialization
                 return cls(f"{name};{params}:{values}")
         return cls(f"{name}:{values}")
 

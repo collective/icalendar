@@ -61,6 +61,7 @@ from icalendar.parser_tools import (
     to_unicode,
 )
 from icalendar.timezone import tzid_from_dt, tzid_from_tzinfo, tzp
+from icalendar.timezone.tzid import is_utc
 from icalendar.tools import normalize_pytz, to_datetime
 
 try:
@@ -1028,7 +1029,7 @@ class vDatetime(TimeBase):
             f"{dt.year:04}{dt.month:02}{dt.day:02}"
             f"T{dt.hour:02}{dt.minute:02}{dt.second:02}"
         )
-        if self.params.is_utc():
+        if self.is_utc():
             s += "Z"
         return s.encode("utf-8")
 
@@ -1073,6 +1074,10 @@ class vDatetime(TimeBase):
         if self.params.is_utc():
             value += "Z"
         return [name, self.params.to_jcal(exclude_utc=True), self.VALUE.lower(), value]
+
+    def is_utc(self) -> bool:
+        """Whether this datetime is UTC."""
+        return self.params.is_utc() or is_utc(self.dt)
 
 
 class vDuration(TimeBase):
@@ -1950,9 +1955,13 @@ class vTime(TimeBase):
 
     def to_ical(self):
         value = self.dt.strftime("%H%M%S")
-        if self.params.is_utc():
+        if self.is_utc():
             value += "Z"
         return value
+
+    def is_utc(self) -> bool:
+        """Whether this time is UTC."""
+        return self.params.is_utc() or is_utc(self.dt)
 
     @staticmethod
     def from_ical(ical):

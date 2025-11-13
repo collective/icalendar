@@ -138,7 +138,9 @@ def availabilities(tzp):
     return DataSource(AVAILABILITIES_FOLDER, Availability.from_ical)
 
 
-@pytest.fixture(params=PYTZ_UTC + [ZoneInfo("UTC"), tz.UTC, tz.gettz("UTC")])
+@pytest.fixture(
+    params=PYTZ_UTC + [ZoneInfo("UTC"), tz.UTC, tz.gettz("UTC"), timezone.utc]
+)
 def utc(request, tzp):
     return request.param
 

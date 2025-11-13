@@ -81,7 +81,7 @@ from icalendar.prop.conference import Conference
 from icalendar.prop.image import Image
 
 # Switching the timezone provider
-from icalendar.timezone import use_pytz, use_zoneinfo
+from icalendar.timezone import is_utc, use_pytz, use_zoneinfo
 
 from .version import __version__, __version_tuple__, version, version_tuple
 
@@ -127,6 +127,7 @@ __all__ = [
     "TypesFactory",
     "__version__",
     "__version_tuple__",
+    "is_utc",
     "q_join",
     "q_split",
     "use_pytz",
