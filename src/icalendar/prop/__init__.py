@@ -133,7 +133,7 @@ class vBinary:
         """Parse jcal from :rfc:`7265` to a vBinary."""
         return cls(
             ical_property[3],
-            Parameters.from_jcal_property(ical_property, cls.default_value),
+            params=Parameters.from_jcal_property(ical_property, cls.default_value),
         )
 
 
@@ -217,7 +217,7 @@ class vBoolean(int):
         """Parse jcal from :rfc:`7265` to a vBoolean."""
         return cls(
             ical_property[3],
-            Parameters.from_jcal_property(ical_property, cls.default_value),
+            params=Parameters.from_jcal_property(ical_property, cls.default_value),
         )
 
 
@@ -274,7 +274,7 @@ class vText(str):
         """Parse jcal from :rfc:`7265`."""
         return cls(
             ical_property[3],
-            Parameters.from_jcal_property(ical_property, cls.default_value),
+            params=Parameters.from_jcal_property(ical_property, cls.default_value),
         )
 
 
@@ -500,7 +500,7 @@ class vCalAddress(str):
         """Parse jcal from :rfc:`7265`."""
         return cls(
             ical_property[3],
-            Parameters.from_jcal_property(ical_property, cls.default_value),
+            params=Parameters.from_jcal_property(ical_property, cls.default_value),
         )
 
 
@@ -586,7 +586,7 @@ class vFloat(float):
         """Parse jcal from :rfc:`7265`."""
         return cls(
             ical_property[3],
-            Parameters.from_jcal_property(ical_property, cls.default_value),
+            params=Parameters.from_jcal_property(ical_property, cls.default_value),
         )
 
 
@@ -675,7 +675,7 @@ class vInt(int):
         """Parse jcal from :rfc:`7265`."""
         return cls(
             ical_property[3],
-            Parameters.from_jcal_property(ical_property, cls.default_value),
+            params=Parameters.from_jcal_property(ical_property, cls.default_value),
         )
 
 
@@ -751,7 +751,7 @@ class vDDDLists:
 
 
 class vCategory:
-    name = "TEXT"
+    default_value: ClassVar[str] = "TEXT"
     params: Parameters
 
     def __init__(
@@ -1075,8 +1075,8 @@ class vDate(TimeBase):
     def from_jcal(cls, ical_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
         return cls(
-            cls.parse_jcal_string(ical_property),
-            Parameters.from_jcal_property(ical_property, cls.default_value),
+            cls.parse_jcal_string(ical_property[3]),
+            params=Parameters.from_jcal_property(ical_property, cls.default_value),
         )
 
 
@@ -1219,7 +1219,7 @@ class vDatetime(TimeBase):
     def from_jcal(cls, ical_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
         return cls(
-            cls.parse_jcal_string(ical_property),
+            cls.parse_jcal_string(ical_property[3]),
             Parameters.from_jcal_property(ical_property, cls.default_value),
         )
 
