@@ -473,79 +473,80 @@ Description:
 )
 
 
-def create_value_property(
-    default_value: str, get_default: Optional[Callable[[VPROPERTY], str | None]] = None
-) -> property[str]:
-    """Create a property to access the VALUE parameter."""
+def _get_value(self: VPROPERTY) -> str:
+    """The VALUE parameter or the default.
 
-    def fget(self: VPROPERTY) -> str:
-        """The VALUE parameter or the default.
+    Purpose:
+        VALUE explicitly specify the value type format for a property value.
 
-        Purpose:
-            VALUE explicitly specify the value type format for a property value.
+    Description:
+        This parameter specifies the value type and format of
+        the property value.  The property values MUST be of a single value
+        type.  For example, a "RDATE" property cannot have a combination
+        of DATE-TIME and TIME value types.
 
-        Description:
-            This parameter specifies the value type and format of
-            the property value.  The property values MUST be of a single value
-            type.  For example, a "RDATE" property cannot have a combination
-            of DATE-TIME and TIME value types.
+        If the property's value is the default value type, then this
+        parameter need not be specified.  However, if the property's
+        default value type is overridden by some other allowable value
+        type, then this parameter MUST be specified.
 
-            If the property's value is the default value type, then this
-            parameter need not be specified.  However, if the property's
-            default value type is overridden by some other allowable value
-            type, then this parameter MUST be specified.
+        Applications MUST preserve the value data for x-name and iana-
+        token values that they don't recognize without attempting to
+        interpret or parse the value data.
 
-            Applications MUST preserve the value data for x-name and iana-
-            token values that they don't recognize without attempting to
-            interpret or parse the value data.
+    Returns:
+        The VALUE parameter or the default.
 
-        Returns:
-            The VALUE parameter or the default.
+    Examples:
+        The VALUE defaults to the name of the property.
+        Note that it is case-insensitive but always uppercase.
 
-        Examples:
-            Get the value of a property:
+        .. code-block:: pycon
 
-            .. code-block:: pycon
+            >>> from icalendar import vBoolean
+            >>> b = vBoolean(True)
+            >>> b.VALUE
+            'BOOLEAN'
 
-                >>> from icalendar import vBoolean
-                >>> b = vBoolean(True)
-                >>> b.VALUE
-                'BOOLEAN'
+        Setting the VALUE parameter of a typed property usually does not make sense.
+        For convenience, using this property, the value will be converted to
+        an uppercase string.
+        If you have some custom property, you might use it like this:
 
-            Setting the VALUE parameter of a typed property usually does not make sense.
-            For convenience, using this property, the value will be converted to
-            an uppercase string.
-            If you have some custom property, you might use it like this:
+        .. code-block:: pycon
 
-            .. code-block:: pycon
+            >>> from icalendar import vUnknown, Event
+            >>> v = vUnknown("Some property text.")
+            >>> v.VALUE = "x-type"  # lower case
+            >>> v.VALUE
+            'X-TYPE'
+            >>> event = Event()
+            >>> event.add("x-prop", v)
+            >>> print(event.to_ical())
+            BEGIN:VEVENT
+            X-PROP;VALUE=X-TYPE:Some property text.
+            END:VEVENT
 
-                >>> from icalendar import vUnknown, Event
-                >>> v = vUnknown("Some property text.")
-                >>> v.VALUE = "x-type"  # lower case
-                >>> v.VALUE
-                'X-TYPE'
-                >>> event = Event()
-                >>> event.add("x-prop", v)
-                >>> print(event.to_ical())
-                BEGIN:VEVENT
-                X-PROP;VALUE=X-TYPE:Some property text.
-                END:VEVENT
+    """
+    value = self.params.value
+    if value is None:
+        _get_default_value = getattr(self, "_get_value", None)
+        if _get_default_value is not None:
+            value = _get_default_value()
+    return self.default_value if value is None else value
 
-        """
-        value = self.params.value
-        if value is None and get_default is not None:
-            value = get_default(self)
-        return default_value if value is None else value
 
-    def fset(self: VPROPERTY, value: str | None):
-        """Set the VALUE parameter."""
-        self.params.value = value
+def _set_value(self: VPROPERTY, value: str | None):
+    """Set the VALUE parameter."""
+    self.params.value = value
 
-    def fdel(self: VPROPERTY):
-        """Delete the VALUE parameter."""
-        del self.params.value
 
-    return property(fget, fset, fdel)
+def _del_value(self: VPROPERTY):
+    """Delete the VALUE parameter."""
+    del self.params.value
+
+
+VALUE = property(_get_value, _set_value, _del_value)
 
 
 __all__ = [
@@ -565,7 +566,7 @@ __all__ = [
     "RSVP",
     "SENT_BY",
     "TZID",
-    "create_value_property",
+    "VALUE",
     "quoted_list_parameter",
     "string_parameter",
 ]

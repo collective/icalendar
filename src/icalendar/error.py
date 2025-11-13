@@ -49,6 +49,10 @@ class FeatureWillBeRemovedInFutureVersion(DeprecationWarning):
     """This feature will be removed in a future version."""
 
 
+class JCalParsingError(ValueError):
+    """Could not parse a part of the JCal."""
+
+
 __all__ = [
     "ComponentEndMissing",
     "ComponentStartMissing",
@@ -56,5 +60,6 @@ __all__ = [
     "IncompleteAlarmInformation",
     "IncompleteComponent",
     "InvalidCalendar",
+    "JCalParsingError",
     "LocalTimezoneMissing",
 ]

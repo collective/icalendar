@@ -373,6 +373,25 @@ class Parameters(CaselessDict):
         if isinstance(dt, (datetime, time)):
             self.tzid = tzid_from_dt(dt)
 
+    @classmethod
+    def from_jcal(cls, jcal: dict[str : str | list[str]]):
+        """Parse jcal parameters."""
+        return cls(jcal)
+
+    @classmethod
+    def from_jcal_property(cls, ical_property: list, default_value: str | None = None):
+        """Create the parameters for a jcal property.
+
+        Args:
+            ical_property (list): The jcal property [name, params, value, ...]
+            default_value (str, optional): The default value of the property
+                If this is given, the default value will not be set.
+        """
+        params = cls.from_jcal(ical_property[1])
+        if default_value != ical_property[2]:
+            params.value = ical_property[2]
+        return params
+
 
 def escape_string(val):
     # f'{i:02X}'

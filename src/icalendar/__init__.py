@@ -38,6 +38,7 @@ from icalendar.error import (
     IncompleteAlarmInformation,
     IncompleteComponent,
     InvalidCalendar,
+    JCalParsingError,
     LocalTimezoneMissing,
 )
 
@@ -117,6 +118,7 @@ __all__ = [
     "IncompleteAlarmInformation",
     "IncompleteComponent",
     "InvalidCalendar",
+    "JCalParsingError",
     "Journal",
     "LocalTimezoneMissing",
     "Parameters",

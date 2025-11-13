@@ -47,11 +47,12 @@ from __future__ import annotations
 import base64
 import binascii
 import re
-from datetime import date, datetime, time, timedelta
-from typing import Any, Union
+from datetime import date, datetime, time, timedelta, timezone
+from typing import Any, ClassVar, Union
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.enums import Enum
+from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters, escape_char, unescape_char
 from icalendar.parser_tools import (
     DEFAULT_ENCODING,
@@ -62,14 +63,16 @@ from icalendar.parser_tools import (
 )
 from icalendar.timezone import tzid_from_dt, tzid_from_tzinfo, tzp
 from icalendar.timezone.tzid import is_utc
-from icalendar.tools import normalize_pytz, to_datetime
+from icalendar.tools import is_datetime, normalize_pytz, to_datetime
 
 try:
     from typing import TypeAlias
 except ImportError:
     from typing_extensions import TypeAlias
-
-from icalendar.param import create_value_property
+try:
+    from typing import Self
+except ImportError:
+    from typing_extensions import Self
 
 DURATION_REGEX = re.compile(
     r"([-+]?)P(?:(\d+)W)?(?:(\d+)D)?" r"(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$"
@@ -83,6 +86,7 @@ WEEKDAY_RULE = re.compile(
 class vBinary:
     """Binary property values are base 64 encoded."""
 
+    default_value: ClassVar[str] = "BINARY"
     params: Parameters
     obj: str
 
@@ -114,7 +118,7 @@ class vBinary:
         """Examples of vBinary."""
         return [cls("VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZy4")]
 
-    VALUE = create_value_property("BINARY")
+    from icalendar.param import VALUE
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
@@ -123,6 +127,14 @@ class vBinary:
             # BASE64 is the only allowed encoding
             del params["encoding"]
         return [name, params, self.VALUE.lower(), self.obj]
+
+    @classmethod
+    def from_jcal(cls, ical_property: list) -> vBinary:
+        """Parse jcal from :rfc:`7265` to a vBinary."""
+        return cls(
+            ical_property[3],
+            Parameters.from_jcal_property(ical_property, cls.default_value),
+        )
 
 
 class vBoolean(int):
@@ -164,6 +176,7 @@ class vBoolean(int):
         True
     """
 
+    default_value: ClassVar[str] = "BOOLEAN"
     params: Parameters
 
     BOOL_MAP = CaselessDict({"true": True, "false": False})
@@ -193,16 +206,25 @@ class vBoolean(int):
             cls(False),  # noqa: FBT003
         ]
 
-    VALUE = create_value_property("BOOLEAN")
+    from icalendar.param import VALUE
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
         return [name, self.params.to_jcal(), self.VALUE.lower(), bool(self)]
 
+    @classmethod
+    def from_jcal(cls, ical_property: list) -> vBoolean:
+        """Parse jcal from :rfc:`7265` to a vBoolean."""
+        return cls(
+            ical_property[3],
+            Parameters.from_jcal_property(ical_property, cls.default_value),
+        )
+
 
 class vText(str):
     """Simple text."""
 
+    default_value: ClassVar[str] = "TEXT"
     params: Parameters
     __slots__ = ("encoding", "params")
 
@@ -245,7 +267,15 @@ class vText(str):
         """Examples of vText."""
         return [cls("Hello World!")]
 
-    VALUE = create_value_property("TEXT")
+    from icalendar.param import VALUE
+
+    @classmethod
+    def from_jcal(cls, ical_property: list) -> Self:
+        """Parse jcal from :rfc:`7265`."""
+        return cls(
+            ical_property[3],
+            Parameters.from_jcal_property(ical_property, cls.default_value),
+        )
 
 
 class vCalAddress(str):
@@ -295,6 +325,7 @@ class vCalAddress(str):
             END:VEVENT
     """
 
+    default_value: ClassVar[str] = "CAL-ADDRESS"
     params: Parameters
     __slots__ = ("params",)
 
@@ -345,6 +376,7 @@ class vCalAddress(str):
         ROLE,
         RSVP,
         SENT_BY,
+        VALUE,
     )
 
     name = CN
@@ -463,7 +495,13 @@ class vCalAddress(str):
         """Examples of vCalAddress"""
         return [cls.new("you@example.org", cn="You There")]
 
-    VALUE = create_value_property("CAL-ADDRESS")
+    @classmethod
+    def from_jcal(cls, ical_property: list) -> Self:
+        """Parse jcal from :rfc:`7265`."""
+        return cls(
+            ical_property[3],
+            Parameters.from_jcal_property(ical_property, cls.default_value),
+        )
 
 
 class vFloat(float):
@@ -512,6 +550,7 @@ class vFloat(float):
             -3.14
     """
 
+    default_value: ClassVar[str] = "FLOAT"
     params: Parameters
 
     def __new__(cls, *args, params: dict[str, Any] | None = None, **kwargs):
@@ -536,11 +575,19 @@ class vFloat(float):
         """Examples of vFloat"""
         return [vFloat(3.1415)]
 
-    VALUE = create_value_property("FLOAT")
+    from icalendar.param import VALUE
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
         return [name, self.params.to_jcal(), self.VALUE.lower(), float(self)]
+
+    @classmethod
+    def from_jcal(cls, ical_property: list) -> Self:
+        """Parse jcal from :rfc:`7265`."""
+        return cls(
+            ical_property[3],
+            Parameters.from_jcal_property(ical_property, cls.default_value),
+        )
 
 
 class vInt(int):
@@ -592,6 +639,7 @@ class vInt(int):
             432109876
     """
 
+    default_value: ClassVar[str] = "INTEGER"
     params: Parameters
 
     def __new__(cls, *args, params: dict[str, Any] | None = None, **kwargs):
@@ -616,16 +664,25 @@ class vInt(int):
         """Examples of vInt"""
         return [vInt(1000), vInt(-42)]
 
-    VALUE = create_value_property("INTEGER")
+    from icalendar.param import VALUE
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
         return [name, self.params.to_jcal(), self.VALUE.lower(), int(self)]
 
+    @classmethod
+    def from_jcal(cls, ical_property: list) -> Self:
+        """Parse jcal from :rfc:`7265`."""
+        return cls(
+            ical_property[3],
+            Parameters.from_jcal_property(ical_property, cls.default_value),
+        )
+
 
 class vDDDLists:
     """A list of vDDDTypes values."""
 
+    name = "DATE-TIME"
     params: Parameters
     dts: list[vDDDTypes]
 
@@ -679,14 +736,22 @@ class vDDDLists:
         """The jcal represenation of this property according to :rfc:`7265`."""
         return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
 
-    def _get_value(self):
+    def _get_value(self) -> str | None:
         return None if not self.dts else self.dts[0].VALUE
 
-    VALUE = create_value_property("DATE-TIME", get_default=_get_value)
-    del _get_value
+    from icalendar.param import VALUE
+
+    @classmethod
+    def from_jcal(cls, ical_property: list) -> Self:
+        """Parse jcal from :rfc:`7265`."""
+        return cls(
+            ical_property[3],
+            Parameters.from_jcal_property(ical_property, cls.default_value),
+        )
 
 
 class vCategory:
+    name = "TEXT"
     params: Parameters
 
     def __init__(
@@ -734,12 +799,21 @@ class vCategory:
         """Examples of vCategory"""
         return [cls(["HOME", "COSY"])]
 
-    VALUE = create_value_property("TEXT")
+    from icalendar.param import VALUE
+
+    @classmethod
+    def from_jcal(cls, ical_property: list) -> Self:
+        """Parse jcal from :rfc:`7265`."""
+        return cls(
+            ical_property[3],
+            Parameters.from_jcal_property(ical_property, cls.default_value),
+        )
 
 
 class TimeBase:
     """Make classes with a datetime/date comparable."""
 
+    default_value: ClassVar[str]
     params: Parameters
     ignore_for_equality = {"TZID", "VALUE"}
 
@@ -777,6 +851,7 @@ class vDDDTypes(TimeBase):
     So this is practical.
     """
 
+    default_value: ClassVar[str] = "DATE-TIME"
     params: Parameters
 
     def __init__(self, dt):
@@ -859,16 +934,37 @@ class vDDDTypes(TimeBase):
         """Examples of vDDDTypes"""
         return [cls(date(2025, 11, 10))]
 
-    def _get_value(self):
+    def _get_value(self) -> str | None:
         """Determine the VALUE parameter."""
         return self.to_property_type().VALUE
 
-    VALUE = create_value_property("DATE-TIME", get_default=_get_value)
-    del _get_value
+    from icalendar.param import VALUE
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
         return self.to_property_type().to_jcal(name)
+
+    @classmethod
+    def parse_jcal_string(cls, jcal: str) -> timedelta:
+        """Parse a jcal string to a datetime.timedelta.
+
+        Raises:
+            JCalParsingError
+        """
+        for jcal_type in (vDatetime, vDate, vTime, vDuration):
+            try:
+                return jcal_type.parse_jcal_string(jcal)
+            except JCalParsingError:  # noqa: PERF203
+                pass
+        raise JCalParsingError(f"Cannot parse jcal string {jcal}")
+
+    @classmethod
+    def from_jcal(cls, ical_property: list) -> Self:
+        """Parse jcal from :rfc:`7265`."""
+        return cls(
+            ical_property[3],
+            Parameters.from_jcal_property(ical_property, cls.default_value),
+        )
 
 
 class vDate(TimeBase):
@@ -922,6 +1018,7 @@ class vDate(TimeBase):
             14
     """
 
+    default_value: ClassVar[str] = "DATE"
     params: Parameters
 
     def __init__(self, dt):
@@ -951,7 +1048,7 @@ class vDate(TimeBase):
         """Examples of vDate"""
         return [cls(date(2025, 11, 10))]
 
-    VALUE = create_value_property("DATE")
+    from icalendar.param import VALUE
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
@@ -961,6 +1058,26 @@ class vDate(TimeBase):
             self.VALUE.lower(),
             self.dt.strftime("%Y-%m-%d"),
         ]
+
+    @classmethod
+    def parse_jcal_string(cls, jcal: str) -> datetime:
+        """Parse a jcal string to a datetime.datetime.
+
+        Raises:
+            JCalParsingError
+        """
+        try:
+            return datetime.strptime(jcal, "%Y-%m-%d").date()  # noqa: DTZ007
+        except ValueError as e:
+            raise JCalParsingError(f"Wrong datetime format: {jcal}") from e
+
+    @classmethod
+    def from_jcal(cls, ical_property: list) -> Self:
+        """Parse jcal from :rfc:`7265`."""
+        return cls(
+            cls.parse_jcal_string(ical_property),
+            Parameters.from_jcal_property(ical_property, cls.default_value),
+        )
 
 
 class vDatetime(TimeBase):
@@ -1013,6 +1130,7 @@ class vDatetime(TimeBase):
        datetime.datetime(2021, 3, 2, 10, 15, tzinfo=ZoneInfo(key='Europe/Berlin'))
     """
 
+    default_value: ClassVar[str] = "DATE-TIME"
     params: Parameters
 
     def __init__(self, dt, /, params: dict[str, Any] | None = None):
@@ -1066,7 +1184,7 @@ class vDatetime(TimeBase):
         """Examples of vDatetime"""
         return [cls(datetime(2025, 11, 10, 16, 52))]  # noqa: DTZ001
 
-    VALUE = create_value_property("DATE-TIME")
+    from icalendar.param import VALUE
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
@@ -1078,6 +1196,32 @@ class vDatetime(TimeBase):
     def is_utc(self) -> bool:
         """Whether this datetime is UTC."""
         return self.params.is_utc() or is_utc(self.dt)
+
+    @classmethod
+    def parse_jcal_string(cls, jcal: str) -> datetime:
+        """Parse a jcal string to a datetime.datetime.
+
+        Raises:
+            JCalParsingError
+        """
+        utc = jcal[-1] == "Z"
+        if utc:
+            jcal = jcal[:-1]
+        try:
+            dt = datetime.strptime(jcal, "%Y-%m-%dT%H:%M:%S")  # noqa: DTZ007
+        except ValueError as e:
+            raise JCalParsingError(f"Wrong datetime format: {jcal}") from e
+        if utc:
+            return tzp.localize_utc(dt)
+        return dt
+
+    @classmethod
+    def from_jcal(cls, ical_property: list) -> Self:
+        """Parse jcal from :rfc:`7265`."""
+        return cls(
+            cls.parse_jcal_string(ical_property),
+            Parameters.from_jcal_property(ical_property, cls.default_value),
+        )
 
 
 class vDuration(TimeBase):
@@ -1149,6 +1293,7 @@ class vDuration(TimeBase):
             datetime.timedelta(days=49)
     """
 
+    default_value: ClassVar[str] = "DURATION"
     params: Parameters
 
     def __init__(self, td: timedelta, /, params: dict[str, Any] | None = None):
@@ -1217,7 +1362,7 @@ class vDuration(TimeBase):
         """Examples of vDuration"""
         return [cls(timedelta(1, 99))]
 
-    VALUE = create_value_property("DURATION")
+    from icalendar.param import VALUE
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
@@ -1227,6 +1372,22 @@ class vDuration(TimeBase):
             self.VALUE.lower(),
             self.to_ical().decode(),
         ]
+
+    @classmethod
+    def parse_jcal_string(cls, jcal: str) -> timedelta | None:
+        """Parse a jcal string to a datetime.timedelta."""
+        try:
+            return cls.from_ical(jcal)
+        except ValueError as e:
+            raise JCalParsingError(f"Cannot parse jcal string {jcal}") from e
+
+    @classmethod
+    def from_jcal(cls, ical_property: list) -> Self:
+        """Parse jcal from :rfc:`7265`."""
+        return cls(
+            cls.parse_jcal_string(ical_property[3]),
+            Parameters.from_jcal_property(ical_property, cls.default_value),
+        )
 
 
 class vPeriod(TimeBase):
@@ -1293,6 +1454,7 @@ class vPeriod(TimeBase):
             >>> period = vPeriod.from_ical('19970101T180000Z/PT5H30M')
     """
 
+    default_value: ClassVar[str] = "PERIOD"
     params: Parameters
     by_duration: bool
     start: datetime
@@ -1374,7 +1536,7 @@ class vPeriod(TimeBase):
             vPeriod((datetime(2025, 11, 10, 16, 35), datetime(2025, 11, 10, 18, 5))),  # noqa: DTZ001
         ]
 
-    VALUE = create_value_property("PERIOD")
+    from icalendar.param import VALUE
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
@@ -1384,6 +1546,21 @@ class vPeriod(TimeBase):
         else:
             value.append(vDatetime(self.end).to_jcal(name)[-1])
         return [name, self.params.to_jcal(exclude_utc=True), self.VALUE.lower(), value]
+
+    @classmethod
+    def from_jcal(cls, ical_property: list) -> Self:
+        """Parse jcal from :rfc:`7265`."""
+        start = vDDDTypes.parse_jcal_string(ical_property[3][0])
+        end_or_duration = vDDDTypes.parse_jcal_string(ical_property[3][1])
+        params = Parameters.from_jcal_property(ical_property, cls.default_value)
+        tzid = params.tzid
+
+        if tzid:
+            start = tzp.localize(start, tzid)
+            if is_datetime(end_or_duration):
+                end_or_duration = tzp.localize(end_or_duration, tzid)
+
+        return cls((start, end_or_duration), params=params)
 
 
 class vWeekday(str):
@@ -1705,6 +1882,7 @@ class vRecur(CaselessDict):
             [vRecur({'FREQ': ['DAILY'], 'COUNT': [10]})]
     """  # noqa: E501
 
+    default_value: ClassVar[str] = "RECUR"
     params: Parameters
 
     frequencies = [
@@ -1817,7 +1995,7 @@ class vRecur(CaselessDict):
         """Examples of vRecur"""
         return [cls.from_ical("FREQ=DAILY;COUNT=10")]
 
-    VALUE = create_value_property("RECUR")
+    from icalendar.param import VALUE
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
@@ -1829,6 +2007,23 @@ class vRecur(CaselessDict):
             until_jcal = vDDDTypes(until).to_jcal("until")
             value["until"] = until_jcal[-1]
         return [name, self.params.to_jcal(), self.VALUE.lower(), value]
+
+    @classmethod
+    def from_jcal(cls, ical_property: list) -> Self:
+        """Parse jcal from :rfc:`7265`."""
+        Parameters.from_jcal_property(ical_property, cls.default_value)
+        recur = ical_property[3].copy()
+        if "until" in recur:
+            recur["until"] = vDDDTypes.parse_jcal_string(recur["until"])
+        return cls(
+            recur,
+            params=Parameters.from_jcal_property(ical_property, cls.default_value),
+        )
+
+
+TIME_JCAL_REGEX = re.compile(
+    r"^(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2}):(?P<second>[0-9]{2})(?P<utc>Z)?$"
+)
 
 
 class vTime(TimeBase):
@@ -1943,14 +2138,17 @@ class vTime(TimeBase):
             TZID=America/New_York:083000
     """
 
-    def __init__(self, *args):
+    default_value: ClassVar[str] = "TIME"
+    params: Parameters
+
+    def __init__(self, *args, params: dict[str, Any] | None = None):
         if len(args) == 1:
             if not isinstance(args[0], (time, datetime)):
                 raise ValueError(f"Expected a datetime.time, got: {args[0]}")
             self.dt = args[0]
         else:
             self.dt = time(*args)
-        self.params = Parameters({"value": "TIME"})
+        self.params = Parameters(params or {})
         self.params.update_tzid_from(self.dt)
 
     def to_ical(self):
@@ -1977,7 +2175,7 @@ class vTime(TimeBase):
         """Examples of vTime"""
         return [cls(time(12, 30))]
 
-    VALUE = create_value_property("TIME")
+    from icalendar.param import VALUE
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
@@ -1985,6 +2183,30 @@ class vTime(TimeBase):
         if self.params.is_utc():
             value += "Z"
         return [name, self.params.to_jcal(exclude_utc=True), self.VALUE.lower(), value]
+
+    @classmethod
+    def parse_jcal_string(cls, jcal: str) -> timedelta:
+        """Parse a jcal string to a datetime.time.
+
+        Raises:
+            JCalParsingError
+        """
+        match = TIME_JCAL_REGEX.match(jcal)
+        if match is None:
+            raise JCalParsingError(f"Cannot parse {jcal!r} to a datetime.time.")
+        hour = int(match.group("hour"))
+        minute = int(match.group("minute"))
+        second = int(match.group("second") or 0)
+        utc = bool(match.group("utc"))
+        return time(hour, minute, second, tzinfo=timezone.utc if utc else None)
+
+    @classmethod
+    def from_jcal(cls, ical_property: list) -> Self:
+        """Parse jcal from :rfc:`7265`."""
+        return cls(
+            cls.parse_jcal_string(ical_property[3]),
+            params=Parameters.from_jcal_property(ical_property, cls.default_value),
+        )
 
 
 class vUri(str):
@@ -2031,6 +2253,7 @@ class vUri(str):
                 'http://example.com/my-report.txt'
     """
 
+    default_value: ClassVar[str] = "URI"
     params: Parameters
     __slots__ = ("params",)
 
@@ -2063,11 +2286,19 @@ class vUri(str):
         """Examples of vUri"""
         return [cls("http://example.com/my-report.txt")]
 
-    VALUE = create_value_property("URI")
+    from icalendar.param import VALUE
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
         return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
+
+    @classmethod
+    def from_jcal(cls, ical_property: list) -> Self:
+        """Parse jcal from :rfc:`7265`."""
+        return cls(
+            ical_property[3],
+            Parameters.from_jcal_property(ical_property, cls.default_value),
+        )
 
 
 class vGeo:
@@ -2129,6 +2360,7 @@ class vGeo:
             vGeo((37.386013, -122.082932))
     """
 
+    default_value: ClassVar[str] = "FLOAT"
     params: Parameters
 
     def __init__(
@@ -2188,7 +2420,20 @@ class vGeo:
         """Examples of vGeo"""
         return [cls((37.386013, -122.082932))]
 
-    VALUE = create_value_property("FLOAT")
+    from icalendar.param import VALUE
+
+    @classmethod
+    def from_jcal(cls, ical_property: list) -> Self:
+        """Parse jcal from :rfc:`7265`."""
+        return cls(
+            ical_property[3],
+            Parameters.from_jcal_property(ical_property, cls.default_value),
+        )
+
+
+UTC_OFFSET_JCAL_REGEX = re.compile(
+    r"^(?P<sign>[+-])?(?P<hours>\d\d):(?P<minutes>\d\d)$"
+)
 
 
 class vUTCOffset:
@@ -2239,6 +2484,7 @@ class vUTCOffset:
             datetime.timedelta(seconds=3600)
     """
 
+    default_value: ClassVar[str] = "UTC-OFFSET"
     params: Parameters
 
     ignore_exceptions = False  # if True, and we cannot parse this
@@ -2330,11 +2576,24 @@ class vUTCOffset:
             cls(timedelta(0)),
         ]
 
-    VALUE = create_value_property("UTC-OFFSET")
+    from icalendar.param import VALUE
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
         return [name, self.params.to_jcal(), self.VALUE.lower(), self.format(":")]
+
+    @classmethod
+    def from_jcal(cls, ical_property: list) -> Self:
+        """Parse jcal from :rfc:`7265`."""
+        match = UTC_OFFSET_JCAL_REGEX.match(ical_property[3])
+        # TODO: value error for None - invalid format
+        negative = match.group("sign") == "-"
+        hours = int(match.group("hours"))
+        minutes = int(match.group("minutes"))
+        t = timedelta(hours=hours, minutes=minutes)
+        if negative:
+            t = -t
+        return cls(t, Parameters.from_jcal_property(ical_property, cls.default_value))
 
 
 class vInline(str):
@@ -2375,11 +2634,13 @@ class vUnknown(vText):
     For :rfc:`5545`, we could just assume TEXT.
     """
 
+    default_value: ClassVar[str] = "UNKOWN"
+
     def examples() -> list[vUnknown]:
         """Examples of vUnknown"""
         return [vUnknown("Some property text.")]
 
-    VALUE = create_value_property("UNKNOWN")
+    from icalendar.param import VALUE
 
 
 class TypesFactory(CaselessDict):

@@ -144,3 +144,9 @@ mark_pairs = pytest.mark.parametrize(("jcal_value", "prop"), JCAL_PAIRS)
 def test_convert_property_to_jcal(jcal_value, prop):
     """Check converting an icalendar property type into a jcal value"""
     assert prop.to_jcal(jcal_value[0]) == jcal_value
+
+
+@mark_pairs
+def test_convert_jcal_to_property(jcal_value, prop):
+    """Check converting an icalendar property type into a jcal value"""
+    assert prop.from_jcal(jcal_value) == prop
