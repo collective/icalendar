@@ -272,9 +272,12 @@ class vText(str):
     @classmethod
     def from_jcal(cls, ical_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
+        name = ical_property[0]
         string = ical_property[3]
-        if ical_property[0] == "request-status":
+        if name == "request-status":
             string = ";".join(ical_property[3])
+        elif name.upper() == "CATEGORIES":
+            return vCategory.from_jcal(ical_property)
         return cls(
             string,
             params=Parameters.from_jcal_property(ical_property, cls.default_value),
