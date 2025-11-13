@@ -48,7 +48,7 @@ import base64
 import binascii
 import re
 from datetime import date, datetime, time, timedelta, timezone
-from typing import Any, ClassVar, Union
+from typing import Any, ClassVar, Optional, Union
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.enums import Enum
@@ -1021,11 +1021,11 @@ class vDate(TimeBase):
     default_value: ClassVar[str] = "DATE"
     params: Parameters
 
-    def __init__(self, dt):
+    def __init__(self, dt, params: Optional[dict[str, Any]] = None):
         if not isinstance(dt, date):
             raise TypeError("Value MUST be a date instance")
         self.dt = dt
-        self.params = Parameters({"value": "DATE"})
+        self.params = Parameters(params or {})
 
     def to_ical(self):
         s = f"{self.dt.year:04}{self.dt.month:02}{self.dt.day:02}"
@@ -1218,9 +1218,13 @@ class vDatetime(TimeBase):
     @classmethod
     def from_jcal(cls, ical_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
+        params = Parameters.from_jcal_property(ical_property, cls.default_value)
+        dt = cls.parse_jcal_string(ical_property[3])
+        if params.tzid:
+            dt = tzp.localize(dt, params.tzid)
         return cls(
-            cls.parse_jcal_string(ical_property[3]),
-            Parameters.from_jcal_property(ical_property, cls.default_value),
+            dt,
+            params=params,
         )
 
 
@@ -2634,7 +2638,7 @@ class vUnknown(vText):
     For :rfc:`5545`, we could just assume TEXT.
     """
 
-    default_value: ClassVar[str] = "UNKOWN"
+    default_value: ClassVar[str] = "UNKNOWN"
 
     def examples() -> list[vUnknown]:
         """Examples of vUnknown"""

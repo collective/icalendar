@@ -86,7 +86,7 @@ def test_all_set_values_are_preserved(v_prop_example):
     assert ical_type == "x-other-value"
 
 
-def test_unkown_value(calendars):
+def test_unknown_value(calendars):
     """Test unknown value.
 
     :rfc:`7265`:
