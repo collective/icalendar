@@ -68,17 +68,22 @@ class DataSource:
 
     def __getitem__(self, attribute):
         """Parse a file and return the result stored in the attribute."""
-        if attribute.endswith(".ics"):
-            source_file = attribute
-            attribute = attribute[:-4]
-        else:
-            source_file = attribute + ".ics"
-        source_path = self._data_source_folder / source_file
+        if "." in attribute:
+            # we have a file ending
+            attribute = attribute.rsplit(".", 1)[0]
+        for ending in [".ics", ".jcal"]:
+            source_file = attribute + ending
+            source_path = self._data_source_folder / source_file
+            if source_path.is_file():
+                break
         if not source_path.is_file():
             raise AttributeError(f"{source_path} does not exist.")
-        with source_path.open("rb") as f:
-            raw_ics = f.read()
-        source = self._parser(raw_ics)
+        if ending == ".jcal":
+            source = Component.from_jcal(source_path.read_text())
+            raw_ics = "This is a jcal file."
+        else:
+            raw_ics = source_path.read_bytes()
+            source = self._parser(raw_ics)
         if not isinstance(source, list):
             source.raw_ics = raw_ics
             source.source_file = source_file
@@ -171,7 +176,7 @@ ICS_FILES = [
     for file in itertools.chain(
         CALENDARS_FOLDER.iterdir(), TIMEZONES_FOLDER.iterdir(), EVENTS_FOLDER.iterdir()
     )
-    if file.name not in ICS_FILES_EXCLUDE
+    if file.name not in ICS_FILES_EXCLUDE and file.suffix == ".ics"
 ]
 
 

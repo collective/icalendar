@@ -172,3 +172,9 @@ def test_parse_from_ddd(ddd_type, jcal_value, prop):
     print(parsed)
     print(prop, "expected")
     assert parsed == prop
+
+
+def test_adding_unknown_value_parameter():
+    """When converting to iCalendar, [...] the VALUE parameter
+    MUST be omitted for properties that have the jCal type identifier
+    "unknown"."""
