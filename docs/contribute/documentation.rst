@@ -4,6 +4,13 @@ Documentation
 
 This chapter describes how to contribute to icalendar's documentation, including narrative documentation and docstrings in Python code which get rendered into the :doc:`API reference documentation <../reference/api/icalendar>`.
 
+.. button-link:: https://github.com/collective/icalendar/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22doc%22
+    :color: success
+    :shadow:
+
+    Find open Documentation isues
+
+
 .. _documentation-prerequisites:
 
 Documentation prerequisites
