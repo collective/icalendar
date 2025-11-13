@@ -2075,7 +2075,7 @@ class vRecur(CaselessDict):
         Parameters.from_jcal_property(ical_property, cls.default_value)
         recur = ical_property[3].copy()
         if "until" in recur:
-            recur["until"] = vDDDTypes.parse_jcal_value(recur["until"])
+            recur["until"] = [vDDDTypes.parse_jcal_value(recur["until"])]
         return cls(
             recur,
             params=Parameters.from_jcal_property(ical_property, cls.default_value),
