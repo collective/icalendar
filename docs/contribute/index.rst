@@ -9,7 +9,7 @@ Examples of how to contribute
 
 -   Report issues in the `issue tracker <https://github.com/collective/icalendar/issues>`_.
 -   Submit pull requests from your fork of the icalendar repository.
--   Extend the documentation.
+-   Extend the :doc:`documentation`.
 -   Sponsor development of icalendar through `Open Collective <https://opencollective.com/python-icalendar>`_.
 
 
@@ -106,6 +106,7 @@ If you would like to set up icalendar to contribute changes, see :doc:`developme
 .. toctree::
     :hidden:
 
+    documentation
     development
     credits
     maintenance
