@@ -2480,7 +2480,7 @@ class vGeo:
 
 
 UTC_OFFSET_JCAL_REGEX = re.compile(
-    r"^(?P<sign>[+-])?(?P<hours>\d\d):(?P<minutes>\d\d)$"
+    r"^(?P<sign>[+-])?(?P<hours>\d\d):(?P<minutes>\d\d)(?::(?P<seconds>\d\d))?$"
 )
 
 
@@ -2639,7 +2639,8 @@ class vUTCOffset:
         negative = match.group("sign") == "-"
         hours = int(match.group("hours"))
         minutes = int(match.group("minutes"))
-        t = timedelta(hours=hours, minutes=minutes)
+        seconds = int(match.group("seconds") or 0)
+        t = timedelta(hours=hours, minutes=minutes, seconds=seconds)
         if negative:
             t = -t
         return cls(t, Parameters.from_jcal_property(ical_property, cls.default_value))
