@@ -38,6 +38,7 @@ New features:
 - Added funding link to :file:`pyproject.toml`.  See `Issue 800 <https://github.com/collective/icalendar/issues/800>`_.
 - Added documentation of docstring format. See `Issue 747 <https://github.com/collective/icalendar/issues/747>`_.
 - Added first-time contributors section to Contributing. See `Issue 934 <https://github.com/collective/icalendar/issues/934>`_.
+- Created a separate path to contribute to documentation. See `Issue 929 <https://github.com/collective/icalendar/issues/929>`_.
 
 Bug fixes:
 
