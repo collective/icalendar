@@ -112,7 +112,7 @@ JCAL_PAIRS = [
                 "freq": "MONTHLY",
                 "interval": 2,
                 "bymonthday": [1, 15, -1],
-                "until": date(2013, 10, 1),
+                "until": [date(2013, 10, 1)],
             }
         ),
     ),
