@@ -235,6 +235,8 @@ class Parameters(CaselessDict):
 
         Set a default:
 
+       .. code-block:: pycon
+       
             >>> params = Parameters(value="BINARY", default_value="TEXT")
             >>> params
             Parameters({'VALUE': 'BINARY'})
