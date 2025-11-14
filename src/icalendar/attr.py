@@ -2027,7 +2027,7 @@ def _get_links(self: Component) -> list[vUri | vUid | vXmlReference]:
             of a link such that it can be used as a human-readable identifier
             (e.g., a menu entry) in the language indicated by the LANGUAGE
             (if present).
-        - LANGUAGE
+        LANGUAGE
             This parameter maps to the "hreflang" attribute defined in Section 3.4.1
             of :rfc:`8288`. See :rfc:`5646`. Example: ``en``, ``de-ch``.
         - LINKREL
