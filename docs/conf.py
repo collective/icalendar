@@ -70,8 +70,8 @@ html_theme_options = {
             "attributes": {
                 "target": "_blank",
                 "rel": "noopener me",
-                "class": "nav-link custom-fancy-css"
-            }
+                "class": "nav-link custom-fancy-css",
+            },
         },
         {
             "name": "PyPI",
@@ -81,13 +81,11 @@ html_theme_options = {
             "attributes": {
                 "target": "_blank",
                 "rel": "noopener me",
-                "class": "nav-link custom-fancy-css"
-            }
+                "class": "nav-link custom-fancy-css",
+            },
         },
     ],
-    "logo": {
-        "text": "icalendar"
-    },
+    "logo": {"text": "icalendar"},
     "navbar_start": ["navbar-logo", "version-switcher"],
     "navigation_with_keys": True,
     "search_bar_text": "Search",
@@ -101,7 +99,7 @@ html_theme_options = {
     "use_edit_page_button": True,
 }
 html_context = {
-#     "github_url": "https://github.com", # or your GitHub Enterprise site
+    #     "github_url": "https://github.com", # or your GitHub Enterprise site
     "github_user": "collective",
     "github_repo": "icalendar",
     "github_version": "main",
@@ -142,6 +140,7 @@ linkcheck_ignore = [
     r"https://pypi.org/manage/project/icalendar/collaboration/",
     # Ignore specific anchors
     r"https://github.com/collective/icalendar/blob/main/README.rst#related-projects",
+    # Ignore links that are unstable
     r"https://www.unicode.org/cldr/cldr-aux/charts/29/supplemental/zone_tzid.html",
 ]
 linkcheck_anchors = True
