@@ -24,7 +24,7 @@ We still recommend checking out the new features and giving feedback in the repo
 
 Minor changes:
 
-- ...
+- Move sections in Table of Content of Reference guide.
 
 Breaking changes:
 
@@ -58,6 +58,9 @@ New features:
     - Add ``VALUE`` parameter property.
     - Add ``examples()`` classmethod that returns examples for testing.
   
+- Added first-time contributors section to Contributing. See `Issue 934 <https://github.com/collective/icalendar/issues/934>`_.
+- Revised check of which files trigger a documentation build on Read the Docs. See `Issue 848 <https://github.com/collective/icalendar/issues/848>`_.
+- Created a separate path to contribute to documentation. See `Issue 929 <https://github.com/collective/icalendar/issues/929>`_.
 
 Bug fixes:
 
@@ -117,6 +120,8 @@ Minor changes:
 - Document ``icalendar.version`` module.
 - Use ``CONTRIBUTING.md`` in favour of ``.rst`` file.
 - Add type hints to ``icalendar.tools`` module.
+- Fix more examples link failed in ``README.md`` by renewing its link. See `Issue 958 <https://github.com/collective/icalendar/issues/958>`_.
+- Fix Contributing, Changelog, License links failed in ``README.md`` by renewing its link. See `Issue 959 <https://github.com/collective/icalendar/issues/959>`_.
 - Fix more examples link in ``README.md``. See `Issue 958 <https://github.com/collective/icalendar/issues/958>`_.
 - Add ``CODEOWNERS`` file for automatic pull request review assignment. See `Issue 945 <https://github.com/collective/icalendar/issues/945>`_.
 
