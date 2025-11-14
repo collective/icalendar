@@ -2314,7 +2314,7 @@ def _get_concepts(self: Component) -> list[vUri]:
 
         .. code-block:: text
 
-              CONCEPT:https://example.com/event-types/arts/music
+            CONCEPT:https://example.com/event-types/arts/music
 
     .. seealso::
 
