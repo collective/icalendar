@@ -379,7 +379,7 @@ class Parameters(CaselessDict):
         return cls(jcal)
 
     @classmethod
-    def from_jcal_property(cls, ical_property: list, default_value: str | None = None):
+    def from_jcal_property(cls, ical_property: list):
         """Create the parameters for a jcal property.
 
         Args:
@@ -387,10 +387,7 @@ class Parameters(CaselessDict):
             default_value (str, optional): The default value of the property
                 If this is given, the default value will not be set.
         """
-        params = cls.from_jcal(ical_property[1])
-        if default_value != ical_property[2]:
-            params.value = ical_property[2]
-        return params
+        return cls.from_jcal(ical_property[1])
 
 
 def escape_string(val):

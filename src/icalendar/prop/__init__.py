@@ -133,7 +133,7 @@ class vBinary:
         """Parse jcal from :rfc:`7265` to a vBinary."""
         return cls(
             ical_property[3],
-            params=Parameters.from_jcal_property(ical_property, cls.default_value),
+            params=Parameters.from_jcal_property(ical_property),
         )
 
 
@@ -217,7 +217,7 @@ class vBoolean(int):
         """Parse jcal from :rfc:`7265` to a vBoolean."""
         return cls(
             ical_property[3],
-            params=Parameters.from_jcal_property(ical_property, cls.default_value),
+            params=Parameters.from_jcal_property(ical_property),
         )
 
 
@@ -280,7 +280,7 @@ class vText(str):
             return vCategory.from_jcal(ical_property)
         return cls(
             string,
-            params=Parameters.from_jcal_property(ical_property, cls.default_value),
+            params=Parameters.from_jcal_property(ical_property),
         )
 
 
@@ -506,7 +506,7 @@ class vCalAddress(str):
         """Parse jcal from :rfc:`7265`."""
         return cls(
             ical_property[3],
-            params=Parameters.from_jcal_property(ical_property, cls.default_value),
+            params=Parameters.from_jcal_property(ical_property),
         )
 
 
@@ -594,7 +594,7 @@ class vFloat(float):
             return vGeo.from_jcal(ical_property)
         return cls(
             ical_property[3],
-            params=Parameters.from_jcal_property(ical_property, cls.default_value),
+            params=Parameters.from_jcal_property(ical_property),
         )
 
 
@@ -683,7 +683,7 @@ class vInt(int):
         """Parse jcal from :rfc:`7265`."""
         return cls(
             ical_property[3],
-            params=Parameters.from_jcal_property(ical_property, cls.default_value),
+            params=Parameters.from_jcal_property(ical_property),
         )
 
 
@@ -765,7 +765,7 @@ class vDDDLists:
             dts.append(vDDDTypes.from_jcal(prop + [value]))
         return cls(
             dts,
-            params=Parameters.from_jcal_property(ical_property, cls.default_value),
+            params=Parameters.from_jcal_property(ical_property),
         )
 
 
@@ -825,7 +825,7 @@ class vCategory:
         """Parse jcal from :rfc:`7265`."""
         return cls(
             ical_property[3],
-            Parameters.from_jcal_property(ical_property, cls.default_value),
+            Parameters.from_jcal_property(ical_property),
         )
 
 
@@ -1000,7 +1000,7 @@ class vDDDTypes(TimeBase):
     def from_jcal(cls, ical_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
         dt = cls.parse_jcal_value(ical_property[3])
-        params = Parameters.from_jcal_property(ical_property, cls.default_value)
+        params = Parameters.from_jcal_property(ical_property)
         if params.tzid:
             if isinstance(dt, tuple):
                 # period
@@ -1124,7 +1124,7 @@ class vDate(TimeBase):
         """Parse jcal from :rfc:`7265`."""
         return cls(
             cls.parse_jcal_value(ical_property[3]),
-            params=Parameters.from_jcal_property(ical_property, cls.default_value),
+            params=Parameters.from_jcal_property(ical_property),
         )
 
 
@@ -1266,7 +1266,7 @@ class vDatetime(TimeBase):
     @classmethod
     def from_jcal(cls, ical_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
-        params = Parameters.from_jcal_property(ical_property, cls.default_value)
+        params = Parameters.from_jcal_property(ical_property)
         dt = cls.parse_jcal_value(ical_property[3])
         if params.tzid:
             dt = tzp.localize(dt, params.tzid)
@@ -1438,7 +1438,7 @@ class vDuration(TimeBase):
         """Parse jcal from :rfc:`7265`."""
         return cls(
             cls.parse_jcal_value(ical_property[3]),
-            Parameters.from_jcal_property(ical_property, cls.default_value),
+            Parameters.from_jcal_property(ical_property),
         )
 
 
@@ -1616,7 +1616,7 @@ class vPeriod(TimeBase):
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
         start, end_or_duration = cls.parse_jcal_value(jcal_property[3])
-        params = Parameters.from_jcal_property(jcal_property, cls.default_value)
+        params = Parameters.from_jcal_property(jcal_property)
         tzid = params.tzid
 
         if tzid:
@@ -2075,13 +2075,13 @@ class vRecur(CaselessDict):
     @classmethod
     def from_jcal(cls, ical_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
-        Parameters.from_jcal_property(ical_property, cls.default_value)
+        Parameters.from_jcal_property(ical_property)
         recur = ical_property[3].copy()
         if "until" in recur:
             recur["until"] = [vDDDTypes.parse_jcal_value(recur["until"])]
         return cls(
             recur,
-            params=Parameters.from_jcal_property(ical_property, cls.default_value),
+            params=Parameters.from_jcal_property(ical_property),
         )
 
 
@@ -2269,7 +2269,7 @@ class vTime(TimeBase):
         """Parse jcal from :rfc:`7265`."""
         return cls(
             cls.parse_jcal_value(ical_property[3]),
-            params=Parameters.from_jcal_property(ical_property, cls.default_value),
+            params=Parameters.from_jcal_property(ical_property),
         )
 
 
@@ -2361,7 +2361,7 @@ class vUri(str):
         """Parse jcal from :rfc:`7265`."""
         return cls(
             ical_property[3],
-            Parameters.from_jcal_property(ical_property, cls.default_value),
+            Parameters.from_jcal_property(ical_property),
         )
 
 
@@ -2491,7 +2491,7 @@ class vGeo:
         """Parse jcal from :rfc:`7265`."""
         return cls(
             ical_property[3],
-            Parameters.from_jcal_property(ical_property, cls.default_value),
+            Parameters.from_jcal_property(ical_property),
         )
 
 
@@ -2659,7 +2659,7 @@ class vUTCOffset:
         t = timedelta(hours=hours, minutes=minutes, seconds=seconds)
         if negative:
             t = -t
-        return cls(t, Parameters.from_jcal_property(ical_property, cls.default_value))
+        return cls(t, Parameters.from_jcal_property(ical_property))
 
 
 class vInline(str):
@@ -2716,6 +2716,14 @@ class TypesFactory(CaselessDict):
     The value and parameter names don't overlap. So one factory is enough for
     both kinds.
     """
+
+    _instance: ClassVar[TypesFactory] = None
+
+    def instance() -> TypesFactory:
+        """Return a singleton instance of this class."""
+        if TypesFactory._instance is None:
+            TypesFactory._instance = TypesFactory()
+        return TypesFactory._instance
 
     def __init__(self, *args, **kwargs):
         """Set keys to upper for initial dict"""

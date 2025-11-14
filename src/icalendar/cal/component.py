@@ -58,7 +58,7 @@ class Component(CaselessDict):
     # propagate upwards
     # not_compliant = ['']  # List of non-compliant properties.
 
-    types_factory = TypesFactory()
+    types_factory = TypesFactory.instance()
     _components_factory: ClassVar[ComponentFactory | None] = None
 
     @classmethod
@@ -724,7 +724,12 @@ class Component(CaselessDict):
             prop_cls: type[VPROPERTY] = cls.types_factory.for_property(
                 prop_name, prop_value
             )
-            component.add(prop_name, prop_cls.from_jcal(prop))
+            v_prop = prop_cls.from_jcal(prop)
+            # if we use the default value for that property, we can delete the
+            # VALUE parameter
+            if prop_cls == cls.types_factory.for_property(prop_name):
+                del v_prop.VALUE
+            component.add(prop_name, v_prop)
         for subcomponent in subcomponents:
             component.subcomponents.append(cls.from_jcal(subcomponent))
         return component
