@@ -2030,7 +2030,7 @@ def _get_links(self: Component) -> list[vUri | vUid | vXmlReference]:
         LANGUAGE
             This parameter maps to the "hreflang" attribute defined in Section 3.4.1
             of :rfc:`8288`. See :rfc:`5646`. Example: ``en``, ``de-ch``.
-        - LINKREL
+        LINKREL
             This parameter maps to the link relation type defined in Section 2.1 of
             :rfc:`8288`. See `Registered Link Relation Types
             <https://www.iana.org/assignments/link-relations/link-relations.xhtml>`_.
