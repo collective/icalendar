@@ -47,6 +47,9 @@ New features:
 - Added documentation of Vale usage for icalender documentation style guide. See `Issue 815 <https://github.com/collective/icalendar/issues/815>`_.
 - Added funding link to :file:`pyproject.toml`.  See `Issue 800 <https://github.com/collective/icalendar/issues/800>`_.
 - Added documentation of docstring format. See `Issue 747 <https://github.com/collective/icalendar/issues/747>`_.
+- Added first-time contributors section to Contributing. See `Issue 934 <https://github.com/collective/icalendar/issues/934>`_.
+- Revised check of which files trigger a documentation build on Read the Docs. See `Issue 848 <https://github.com/collective/icalendar/issues/848>`_.
+- Created a separate path to contribute to documentation. See `Issue 929 <https://github.com/collective/icalendar/issues/929>`_.
 
 Bug fixes:
 
@@ -105,6 +108,8 @@ Minor changes:
 - Document ``icalendar.version`` module.
 - Use ``CONTRIBUTING.md`` in favour of ``.rst`` file.
 - Add type hints to ``icalendar.tools`` module.
+- Fix more examples link failed in ``README.md`` by renewing its link. See `Issue 958 <https://github.com/collective/icalendar/issues/958>`_.
+- Fix Contributing, Changelog, License links failed in ``README.md`` by renewing its link. See `Issue 959 <https://github.com/collective/icalendar/issues/959>`_.
 - Fix more examples link in ``README.md``. See `Issue 958 <https://github.com/collective/icalendar/issues/958>`_.
 - Add ``CODEOWNERS`` file for automatic pull request review assignment. See `Issue 945 <https://github.com/collective/icalendar/issues/945>`_.
 

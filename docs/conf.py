@@ -140,6 +140,7 @@ linkcheck_ignore = [
     r"https://pypi.org/manage/project/icalendar/collaboration/",
     # Ignore specific anchors
     r"https://github.com/collective/icalendar/blob/main/README.rst#related-projects",
+    r"https://up-for-grabs.net/#/filters",
     # Ignore links that are unstable
     r"https://www.unicode.org/cldr/cldr-aux/charts/29/supplemental/zone_tzid.html",
 ]
