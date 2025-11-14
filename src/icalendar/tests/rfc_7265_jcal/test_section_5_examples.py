@@ -4,7 +4,7 @@ from icalendar.parser_tools import to_unicode
 
 
 def test_convert_coffee(calendars):
-    """convert the unknown value propertly"""
+    """convert the unknown value property"""
     calendar = calendars.rfc_7265_unknown_parameter
     ical = calendar.to_ical().decode()
     print(to_unicode(ical))
