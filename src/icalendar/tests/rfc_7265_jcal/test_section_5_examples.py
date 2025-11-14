@@ -4,9 +4,8 @@ from pprint import pprint
 
 import pytest
 
-from icalendar.cal.event import Event
+from icalendar import Calendar, Event, vText
 from icalendar.parser_tools import to_unicode
-from icalendar.prop import vText
 
 
 def test_convert_coffee(calendars):
@@ -39,3 +38,10 @@ def test_know_attributes_do_not_receive_a_VALUE(prop_name, value, expected_value
     event2 = Event.from_jcal(jcal)
     pprint(event2.to_jcal())
     assert event2[prop_name].VALUE == expected_value
+
+
+def test_conversion_from_ical(calendars):
+    """Convert the example to jcal."""
+    calendar: Calendar = calendars.rfc_7265_property_unknown
+    jcal = calendar.to_jcal()
+    assert jcal[1][0] == ["x-complaint-deadline", {}, "unknown", "20110512T120000Z"]
