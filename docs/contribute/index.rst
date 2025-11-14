@@ -117,5 +117,6 @@ If you would like to set up icalendar to contribute changes, see :doc:`developme
 
     documentation
     development
+    code-of-conduct
     credits
     maintenance
