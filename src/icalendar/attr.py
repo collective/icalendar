@@ -2020,7 +2020,7 @@ def _get_links(self: Component) -> list[vUri | vUid | vXmlReference]:
 
         The LINK property parameters map to :rfc:`8288` attributes as follows:
 
-        - LABEL
+        LABEL
             This parameter maps to the "title"
             attribute defined in Section 3.4.1 of :rfc:`8288`.
             LABEL is used to label the destination
