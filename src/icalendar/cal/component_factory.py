@@ -13,6 +13,9 @@ if TYPE_CHECKING:
 class ComponentFactory(CaselessDict):
     """All components defined in :rfc:`5545` are registered in this factory class.
     To get a component you can use it like this.
+
+    Components for other RFCs are also added if supported.
+    If a component class is not supported, yet, it can be created.
     """
 
     def __init__(self, *args, **kwargs):

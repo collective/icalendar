@@ -1,6 +1,8 @@
 """These are tests for considerations that are specific to our implementation."""
 
 from icalendar import Event
+from icalendar.cal.component import Component
+from icalendar.cal.component_factory import ComponentFactory
 from icalendar.prop import vText
 
 
@@ -24,3 +26,13 @@ def test_adding_a_description_several_times_works():
         "text",
         "Deutsche Beschreibung",
     ]
+
+
+def test_get_new_component_class():
+    """A new component class should be created."""
+    factory = ComponentFactory()
+    cls1 = factory.get_component_class("VUNKNOWN")
+    cls2 = factory.get_component_class("VUNKNOWN")
+    assert cls1 is cls2
+    assert cls1.name == "VUNKNOWN"
+    assert cls1 is not Component
