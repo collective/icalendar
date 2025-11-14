@@ -14,7 +14,7 @@ def test_convert_coffee(calendars):
     calendar = calendars.rfc_7265_unknown_parameter
     ical = calendar.to_ical().decode()
     print(to_unicode(ical))
-    assert r"X-COFFEE-DATA:Stenophylla;Guinea\\\,Africa" in ical
+    assert r"X-COFFEE-DATA:Stenophylla\;Guinea\\\,Africa" in ical
 
 
 @pytest.mark.parametrize(
