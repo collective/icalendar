@@ -6,6 +6,7 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Generator
+from unittest.mock import Mock
 
 import pytest
 from dateutil import tz
@@ -19,9 +20,11 @@ from icalendar import (
     Event,
     Timezone,
     TypesFactory,
+    prop,
     vUTCOffset,
 )
 from icalendar.compatibility import ZoneInfo, zoneinfo
+from icalendar.tests.data import PROPERTY_NAMES
 from icalendar.timezone import TZP
 from icalendar.timezone import tzp as _tzp
 
@@ -65,17 +68,22 @@ class DataSource:
 
     def __getitem__(self, attribute):
         """Parse a file and return the result stored in the attribute."""
-        if attribute.endswith(".ics"):
-            source_file = attribute
-            attribute = attribute[:-4]
-        else:
-            source_file = attribute + ".ics"
-        source_path = self._data_source_folder / source_file
+        if "." in attribute:
+            # we have a file ending
+            attribute = attribute.rsplit(".", 1)[0]
+        for ending in [".ics", ".jcal"]:
+            source_file = attribute + ending
+            source_path = self._data_source_folder / source_file
+            if source_path.is_file():
+                break
         if not source_path.is_file():
             raise AttributeError(f"{source_path} does not exist.")
-        with source_path.open("rb") as f:
-            raw_ics = f.read()
-        source = self._parser(raw_ics)
+        if ending == ".jcal":
+            source = Component.from_jcal(source_path.read_text())
+            raw_ics = "This is a jcal file."
+        else:
+            raw_ics = source_path.read_bytes()
+            source = self._parser(raw_ics)
         if not isinstance(source, list):
             source.raw_ics = raw_ics
             source.source_file = source_file
@@ -135,7 +143,9 @@ def availabilities(tzp):
     return DataSource(AVAILABILITIES_FOLDER, Availability.from_ical)
 
 
-@pytest.fixture(params=PYTZ_UTC + [ZoneInfo("UTC"), tz.UTC, tz.gettz("UTC")])
+@pytest.fixture(
+    params=PYTZ_UTC + [ZoneInfo("UTC"), tz.UTC, tz.gettz("UTC"), timezone.utc]
+)
 def utc(request, tzp):
     return request.param
 
@@ -166,12 +176,12 @@ ICS_FILES = [
     for file in itertools.chain(
         CALENDARS_FOLDER.iterdir(), TIMEZONES_FOLDER.iterdir(), EVENTS_FOLDER.iterdir()
     )
-    if file.name not in ICS_FILES_EXCLUDE
+    if file.name not in ICS_FILES_EXCLUDE and file.suffix == ".ics"
 ]
 
 
 @pytest.fixture(params=ICS_FILES)
-def ics_file(tzp, calendars, timezones, events, request):
+def ics_file(tzp, calendars, timezones, events, request) -> Component:
     """An example ICS file."""
     ics_file = request.param
     print("example file:", ics_file)
@@ -402,3 +412,26 @@ def tzid(request: pytest.FixtureRequest) -> str:
     This goes through all the different timezones possible.
     """
     return request.param
+
+
+@pytest.fixture(params=PROPERTY_NAMES)
+def v_prop_name(request):
+    """Names of property types that occur as a property of a component."""
+    return request.param
+
+
+@pytest.fixture
+def v_prop(v_prop_name):
+    """Property types that occur as a property of a component."""
+    return getattr(prop, v_prop_name)
+
+
+@pytest.fixture
+def v_prop_example(v_prop) -> prop.VPROPERTY:
+    return v_prop.examples()[0]
+
+
+@pytest.fixture
+def mock():
+    """A mock."""
+    return Mock()

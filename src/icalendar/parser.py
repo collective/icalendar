@@ -11,7 +11,8 @@ from __future__ import annotations
 import functools
 import os
 import re
-from typing import TYPE_CHECKING
+from datetime import datetime, time
+from typing import TYPE_CHECKING, Any
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.parser_tools import (
@@ -20,6 +21,7 @@ from icalendar.parser_tools import (
     SEQUENCE_TYPES,
     to_unicode,
 )
+from icalendar.timezone.tzid import tzid_from_dt
 
 if TYPE_CHECKING:
     from icalendar.enums import VALUE
@@ -181,28 +183,40 @@ def q_join(lst, sep=",", always_quote=False):
     return sep.join(dquote(itm, always_quote=always_quote) for itm in lst)
 
 
-def single_string_parameter(func):
-    """Create a parameter getter/setter for a single string parameter."""
+def single_string_parameter(upper=False):
+    """Create a parameter getter/setter for a single string parameter.
 
-    name = func.__name__
+    Args:
+        upper (bool): Convert the value to uppercase
+    """
 
-    @functools.wraps(func)
-    def fget(self: Parameters):
-        """Get the value."""
-        return self.get(name)
+    def decorator(func):
+        name = func.__name__
 
-    def fset(self: Parameters, value: str | None):
-        """Set the value"""
-        if value is None:
-            fdel(self)
-        else:
-            self[name] = value
+        @functools.wraps(func)
+        def fget(self: Parameters):
+            """Get the value."""
+            value = self.get(name)
+            if value is not None and upper:
+                value = value.upper()
+            return value
 
-    def fdel(self: Parameters):
-        """Delete the value."""
-        self.pop(name, None)
+        def fset(self: Parameters, value: str | None):
+            """Set the value"""
+            if value is None:
+                fdel(self)
+            else:
+                if upper:
+                    value = value.upper()
+                self[name] = value
 
-    return property(fget, fset, fdel, doc=func.__doc__)
+        def fdel(self: Parameters):
+            """Delete the value."""
+            self.pop(name, None)
+
+        return property(fget, fset, fdel, doc=func.__doc__)
+
+    return decorator
 
 
 class Parameters(CaselessDict):
@@ -235,12 +249,22 @@ class Parameters(CaselessDict):
         return self.keys()
 
     def to_ical(self, sorted: bool = True):  # noqa: A002, FBT001
+        """Returns an :rfc:`5545` representation of the parameters.
+
+        Args:
+            sorted (bool): Sort the parameters before encoding.
+            exclude_utc (bool): Exclude TZID if it is set to ``"UTC"``
+        """
         result = []
         items = list(self.items())
         if sorted:
             items.sort()
 
         for key, value in items:
+            if key == "TZID" and value == "UTC":
+                # The "TZID" property parameter MUST NOT be applied to DATE-TIME
+                # properties whose time values are specified in UTC.
+                continue
             upper_key = key.upper()
             check_quoteable_characters = self.quote_also.get(key.upper())
             always_quote = upper_key in self.always_quoted or (
@@ -290,7 +314,7 @@ class Parameters(CaselessDict):
                 ) from exc
         return result
 
-    @single_string_parameter
+    @single_string_parameter(upper=True)
     def value(self) -> VALUE | str | None:
         """The VALUE parameter from :rfc:`5545`.
 
@@ -308,7 +332,62 @@ class Parameters(CaselessDict):
             Applications MUST preserve the value data for x-name and iana-
             token values that they don't recognize without attempting to
             interpret or parse the value data.
+
+        For convenience, using this property, the value will be converted to
+        an uppercase string.
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Parameters
+            >>> params = Parameters()
+            >>> params.value = "unknown"
+            >>> params
+            Parameters({'VALUE': 'UNKNOWN'})
+
         """
+
+    def to_jcal(self, exclude_utc=False) -> dict[str, str]:
+        """Return the jcal representation of the parameters.
+
+        Args:
+            exclude_utc (bool): Exclude the TZID parameter if it is UTC
+        """
+        jcal = {k.lower(): v for k, v in self.items() if k.lower() != "value"}
+        if exclude_utc and jcal.get("tzid") == "UTC":
+            del jcal["tzid"]
+        return jcal
+
+    @single_string_parameter()
+    def tzid(self) -> str | None:
+        """The TZID parameter from :rfc:`5545`."""
+
+    def is_utc(self):
+        """Wether the TZID parameter is UTC."""
+        return self.tzid == "UTC"
+
+    def update_tzid_from(self, dt: datetime | time | Any) -> None:
+        """Update the TZID parameter from a datetime object.
+
+        This sets the TZID parameter or deletes it according to the datetime.
+        """
+        if isinstance(dt, (datetime, time)):
+            self.tzid = tzid_from_dt(dt)
+
+    @classmethod
+    def from_jcal(cls, jcal: dict[str : str | list[str]]):
+        """Parse jcal parameters."""
+        return cls(jcal)
+
+    @classmethod
+    def from_jcal_property(cls, ical_property: list):
+        """Create the parameters for a jcal property.
+
+        Args:
+            ical_property (list): The jcal property [name, params, value, ...]
+            default_value (str, optional): The default value of the property
+                If this is given, the default value will not be set.
+        """
+        return cls.from_jcal(ical_property[1])
 
 
 def escape_string(val):
@@ -441,7 +520,9 @@ class Contentline(str):
         values = to_unicode(values)
         if params:
             params = to_unicode(params.to_ical(sorted=sorted))
-            return cls(f"{name};{params}:{values}")
+            if params:
+                # some parameter values can be skipped during serialization
+                return cls(f"{name};{params}:{values}")
         return cls(f"{name}:{values}")
 
     def parts(self) -> tuple[str, Parameters, str]:
