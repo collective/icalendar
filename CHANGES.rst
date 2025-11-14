@@ -99,6 +99,8 @@ Minor changes:
 - Document ``icalendar.version`` module.
 - Use ``CONTRIBUTING.md`` in favour of ``.rst`` file.
 - Add type hints to ``icalendar.tools`` module.
+- Fix more examples link failed in ``README.md`` by renewing its link. See `Issue 958 <https://github.com/collective/icalendar/issues/958>`_.
+- Fix Contributing, Changelog, License links failed in ``README.md`` by renewing its link. See `Issue 959 <https://github.com/collective/icalendar/issues/959>`_.
 - Fix more examples link in ``README.md``. See `Issue 958 <https://github.com/collective/icalendar/issues/958>`_.
 - Add ``CODEOWNERS`` file for automatic pull request review assignment. See `Issue 945 <https://github.com/collective/icalendar/issues/945>`_.
 
