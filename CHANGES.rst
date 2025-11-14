@@ -39,8 +39,8 @@ New features:
   - Add new values to :py:class:`icalendar.enum.RELTYPE`.
   - Add ``LABEL``, ``GAP``, and ``VALUE`` parameter to property values affected by :rfc:`9253`.
 
-- Allow setting default values in :class:`icalendar.parser.Parameters`.
-- Allow ``None`` as an argument to :class:`icalendar.parser.Parameters`.
+- Allow setting default values in :py:class:`icalendar.parser.Parameters`.
+- Allow ``None`` as an argument to :py:class:`icalendar.parser.Parameters`.
 - Add ``ical_value`` to several property values, see `Issue 876 <https://github.com/collective/icalendar/issues/876>`_.
 - Add PyData Theme version switcher to documentation. See `Issue 825 <https://github.com/collective/icalendar/issues/825>`_.
 - Test compatibility with Python 3.14. See `Issue 973 <https://github.com/collective/icalendar/issues/973>`_.
