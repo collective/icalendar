@@ -698,10 +698,12 @@ def _get_GAP(prop) -> timedelta | None:  # noqa: N802
     value = prop.params.get("GAP")
     if value is None:
         return None
-    if isinstance(value, str):
-        from icalendar.prop import vDuration
+    from icalendar.prop import vDuration
 
+    if isinstance(value, str):
         return vDuration.from_ical(value)
+    if not isinstance(value, vDuration):
+        raise TypeError("Value MUST be a vDuration instance")
     return value.td
 
 

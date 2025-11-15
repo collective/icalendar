@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 from icalendar import Journal
+from icalendar.error import InvalidCalendar
 from icalendar.prop import vText, vUid, vUri
 
 if TYPE_CHECKING:
@@ -84,5 +85,12 @@ def test_set_invalid_value(related_to_prop):
 def test_get_malformed_value(related_to_prop):
     """What if the value is a string?"""
     related_to_prop.params["GAP"] = "invalid"
-    with pytest.raises(ValueError):
+    with pytest.raises(InvalidCalendar):
+        related_to_prop.GAP  # noqa: B018
+
+
+def test_gap_invalid_value(related_to_prop):
+    """Other value types could be there but are problematic."""
+    related_to_prop.params["GAP"] = object()
+    with pytest.raises(TypeError):
         related_to_prop.GAP  # noqa: B018

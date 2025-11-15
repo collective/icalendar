@@ -53,6 +53,7 @@ from typing import Any, Union
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.enums import Enum
+from icalendar.error import InvalidCalendar
 from icalendar.parser import Parameters, escape_char, unescape_char
 from icalendar.parser_tools import (
     DEFAULT_ENCODING,
@@ -1011,7 +1012,7 @@ class vDuration(TimeBase):
     def from_ical(ical):
         match = DURATION_REGEX.match(ical)
         if not match:
-            raise ValueError(f"Invalid iCalendar duration: {ical}")
+            raise InvalidCalendar(f"Invalid iCalendar duration: {ical}")
 
         sign, weeks, days, hours, minutes, seconds = match.groups()
         value = timedelta(
