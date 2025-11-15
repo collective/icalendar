@@ -85,13 +85,48 @@ class JCalParsingError(ValueError):
     @classmethod
     @contextlib.contextmanager
     def reraise_with_path_added(cls, *path_components: int | str):
-        """Automatically re-raise the exception with path components added."""
+        """Automatically re-raise the exception with path components added.
+
+        Raises:
+            JCalParsingError: If there was an exception in the context.
+        """
         try:
             yield
         except JCalParsingError as e:
             raise cls(
                 path=list(path_components) + e.path, parser=e.parser, message=e.message
             ) from e
+
+    @classmethod
+    def validate_property(
+        cls,
+        jcal_property,
+        parser: str | type,
+        path: list[str | int] | None | str | int = None,
+    ):
+        """Validate a jcal property.
+
+        Raises:
+            JCalParsingError: if the property is not valid.
+        """
+        if path is None:
+            path = []
+        elif not isinstance(path, list):
+            path = [path]
+        if not isinstance(jcal_property, list) or len(jcal_property) < 4:
+            raise JCalParsingError(
+                "The property must be a list with at least 4 items.", parser, path
+            )
+        if not isinstance(jcal_property[0], str):
+            raise JCalParsingError("The name must be a string.", parser, path + [0])
+        if not isinstance(jcal_property[1], dict):
+            raise JCalParsingError(
+                "The parameters must be a mapping.", parser, path + [1]
+            )
+        if not isinstance(jcal_property[2], str):
+            raise JCalParsingError(
+                "The VALUE parameter must be a string.", parser, path + [2]
+            )
 
 
 __all__ = [
