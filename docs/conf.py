@@ -159,17 +159,17 @@ notfound_template = "404.html"
 # -- sphinx-reredirects configuration ----------------------------------
 # https://documatt.com/sphinx-reredirects/usage.html
 redirects = {
-    "about": "/index.html",
-    "api": "/reference/api/icalendar.html",
-    "changelog": "/reference/changelog.html",
-    "cli": "/how-to/cli.html",
-    "credits": "/contribute/credits.html",
-    "contributing": "/contribute/index.html",
-    "install": "/how-to/install.html",
+    "about": "index.html",
+    "api": "reference/api/icalendar.html",
+    "changelog": "reference/changelog.html",
+    "cli": "how-to/cli.html",
+    "credits": "contribute/credits.html",
+    "contributing": "contribute/index.html",
+    "install": "how-to/install.html",
     "license": "https://github.com/collective/icalendar/blob/main/LICENSE.rst",
-    "maintenance": "/contribute/maintenance.html",
+    "maintenance": "contribute/maintenance.html",
     "security": "https://github.com/collective/icalendar/blob/main/SECURITY.md",
-    "usage": "/how-to/usage.html",
+    "usage": "how-to/usage.html",
     }
 
 man_pages = [("index", "icalendar", "icalendar Documentation", ["Plone Foundation"], 1)]
