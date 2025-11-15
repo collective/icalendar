@@ -111,8 +111,8 @@ html_static_path = [
 html_js_files = [
     ("js/custom-icons.js", {"defer": "defer"}),
 ]
+napoleon_use_param = True
 pygments_style = "sphinx"
-
 
 # -- Intersphinx configuration ----------------------------------
 
