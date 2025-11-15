@@ -41,7 +41,7 @@ New features:
 
 - Allow setting default values in :py:class:`icalendar.parser.Parameters`.
 - Allow ``None`` as an argument to :py:class:`icalendar.parser.Parameters`.
-- Add ``ical_value`` to several property values, see `Issue 876 <https://github.com/collective/icalendar/issues/876>`_.
+- Add ``ical_value`` to several property values. See `Issue 876 <https://github.com/collective/icalendar/issues/876>`_.
 - Add PyData Theme version switcher to documentation. See `Issue 825 <https://github.com/collective/icalendar/issues/825>`_.
 - Test compatibility with Python 3.14. See `Issue 973 <https://github.com/collective/icalendar/issues/973>`_.
 - Added documentation of Vale usage for icalender documentation style guide. See `Issue 815 <https://github.com/collective/icalendar/issues/815>`_.
