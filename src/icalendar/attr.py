@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import itertools
 from datetime import date, datetime, timedelta
-from typing import TYPE_CHECKING, Literal, Optional, Sequence, Union
+from typing import TYPE_CHECKING, List, Literal, Optional, Sequence, Union
 
 from icalendar.enums import BUSYTYPE, CLASS, STATUS, TRANSP, StrEnum
 from icalendar.error import IncompleteComponent, InvalidCalendar
@@ -16,6 +16,9 @@ from icalendar.prop import (
     vDuration,
     vRecur,
     vText,
+    vUid,
+    vUri,
+    vXmlReference,
 )
 from icalendar.prop.conference import Conference
 from icalendar.prop.image import Image
@@ -24,6 +27,11 @@ from icalendar.tools import is_date
 
 if TYPE_CHECKING:
     from icalendar.cal import Component
+
+try:
+    from typing import TypeAlias
+except ImportError:
+    from typing_extensions import TypeAlias
 
 
 def _get_rdates(
@@ -644,7 +652,11 @@ Example:
 
 .. note::
 
-   At present, we do not take the LANGUAGE parameter into account.
+    At present, we do not take the LANGUAGE parameter into account.
+
+.. seealso::
+
+    :attr:`Component.concepts`
 """,
 )
 
@@ -1952,8 +1964,8 @@ def _get_conferences(self: Component) -> list[Conference]:
             ... ]
             >>> print(event.to_ical())
             BEGIN:VEVENT
-            CONFERENCE;FEATURE="PHONE,MODERATOR";LABEL=Moderator dial-in;LANGUAGE=EN:t
-             el:+1-412-555-0123,,,654321
+            CONFERENCE;FEATURE="PHONE,MODERATOR";LABEL=Moderator dial-in;LANGUAGE=EN;V
+             ALUE=URI:tel:+1-412-555-0123,,,654321
             END:VEVENT
 
     """
@@ -1977,13 +1989,452 @@ def _del_conferences(self: Component):
 
 conferences_property = property(_get_conferences, _set_conferences, _del_conferences)
 
+
+def _get_links(self: Component) -> list[vUri | vUid | vXmlReference]:
+    """LINK properties as a list.
+
+    Purpose:
+        LINK provides a reference to external information related to a component.
+
+    Property Parameters:
+        The VALUE parameter is required.
+        Non-standard, link relation type, format type, label, and language parameters
+        can also be specified on this property.
+        The LABEL parameter is defined in :rfc:`7986`.
+
+    Conformance:
+        This property can be specified zero or more times in any iCalendar component.
+        LINK is specified in :rfc:`9253`.
+        The LINKREL parameter is required.
+
+    Description:
+        When used in a component, the value of this property points to
+        additional information related to the component.
+        For example, it may reference the originating web server.
+
+        This property is a serialization of the model in :rfc:`8288`,
+        where the link target is carried in the property value,
+        the link context is the containing calendar entity,
+        and the link relation type and any target attributes
+        are carried in iCalendar property parameters.
+
+        The LINK property parameters map to :rfc:`8288` attributes as follows:
+
+        LABEL
+            This parameter maps to the "title"
+            attribute defined in Section 3.4.1 of :rfc:`8288`.
+            LABEL is used to label the destination
+            of a link such that it can be used as a human-readable identifier
+            (e.g., a menu entry) in the language indicated by the LANGUAGE
+            (if present).
+        LANGUAGE
+            This parameter maps to the "hreflang" attribute defined in Section 3.4.1
+            of :rfc:`8288`. See :rfc:`5646`. Example: ``en``, ``de-ch``.
+        LINKREL
+            This parameter maps to the link relation type defined in Section 2.1 of
+            :rfc:`8288`. See `Registered Link Relation Types
+            <https://www.iana.org/assignments/link-relations/link-relations.xhtml>`_.
+        FMTTYPE
+            This parameter maps to the "type" attribute defined in Section 3.4.1 of
+            :rfc:`8288`.
+
+        There is no mapping for "title*", "anchor", "rev", or "media" :rfc:`8288`.
+
+    Examples:
+        The following is an example of this property,
+        which provides a reference to the source for the calendar object.
+
+        .. code-block:: text
+
+            LINK;LINKREL=SOURCE;LABEL=Venue;VALUE=URI:
+             https://example.com/events
+
+        The following is an example of this property,
+        which provides a reference to an entity from which this one was derived.
+        The link relation is a vendor-defined value.
+
+        .. code-block:: text
+
+            LINK;LINKREL="https://example.com/linkrel/derivedFrom";
+             VALUE=URI:
+             https://example.com/tasks/01234567-abcd1234.ics
+
+        The following is an example of this property,
+        which provides a reference to a fragment of an XML document.
+        The link relation is a vendor-defined value.
+
+        .. code-block:: text
+
+            LINK;LINKREL="https://example.com/linkrel/costStructure";
+             VALUE=XML-REFERENCE:
+             https://example.com/xmlDocs/bidFramework.xml
+             #xpointer(descendant::CostStruc/range-to(
+             following::CostStrucEND[1]))
+
+        Set a link :class:`icalendar.vUri` to the event page:
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Event, vUri
+            >>> from datetime import datetime
+            >>> link = vUri(
+            ...     "http://example.com/event-page",
+            ...     params={"LINKREL":"SOURCE"}
+            ... )
+            >>> event = Event.new(
+            ...     start=datetime(2025, 9, 17, 12, 0),
+            ...     summary="An Example Event with a page"
+            ... )
+            >>> event.links = [link]
+            >>> print(event.to_ical())
+            BEGIN:VEVENT
+            SUMMARY:An Example Event with a page
+            DTSTART:20250917T120000
+            DTSTAMP:20250517T080612Z
+            UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
+            LINK;LINKREL="SOURCE":http://example.com/event-page
+            END:VEVENT
+
+    """
+    links = self.get("LINK", [])
+    if not isinstance(links, list):
+        links = [links]
+    return links
+
+
+LINKS_TYPE_SETTER: TypeAlias = Union[
+    str, vUri, vUid, vXmlReference, None, List[Union[str, vUri, vUid, vXmlReference]]
+]
+
+
+def _set_links(self: Component, links: LINKS_TYPE_SETTER) -> None:
+    """Set the LINKs."""
+    _del_links(self)
+    if links is None:
+        return
+    if isinstance(links, (str, vUri, vUid, vXmlReference)):
+        links = [links]
+    for link in links:
+        if type(link) is str:
+            link = vUri(link, params={"VALUE": "URI"})  # noqa: PLW2901
+        self.add("LINK", link)
+
+
+def _del_links(self: Component) -> None:
+    """Delete all links."""
+    self.pop("LINK")
+
+
+links_property = property(_get_links, _set_links, _del_links)
+
+RELATED_TO_TYPE_SETTER: TypeAlias = Union[
+    None, str, vText, vUri, vUid, List[Union[str, vText, vUri, vUid]]
+]
+
+
+def _get_related_to(self: Component) -> list[Union[vText, vUri, vUid]]:
+    """RELATED-TO properties as a list.
+
+    Purpose:
+        This property is used to represent a relationship or reference
+        between one calendar component and another.
+        :rfc:`9523` allows URI or UID values and a GAP parameter.
+
+    Value Type:
+        :rfc:`5545`: TEXT
+        :rfc:`9253`: URI, UID
+
+    Conformance:
+        Since :rfc:`5545`. this property can be specified in the "VEVENT",
+        "VTODO", and "VJOURNAL" calendar components.
+        Since :rfc:`9523`, this property MAY be specified in any
+        iCalendar component.
+
+    Description (:rfc:`5545`):
+        The property value consists of the persistent, globally
+        unique identifier of another calendar component.  This value would
+        be represented in a calendar component by the "UID" property.
+
+        By default, the property value points to another calendar
+        component that has a PARENT relationship to the referencing
+        object.  The "RELTYPE" property parameter is used to either
+        explicitly state the default PARENT relationship type to the
+        referenced calendar component or to override the default PARENT
+        relationship type and specify either a CHILD or SIBLING
+        relationship.  The PARENT relationship indicates that the calendar
+        component is a subordinate of the referenced calendar component.
+        The CHILD relationship indicates that the calendar component is a
+        superior of the referenced calendar component.  The SIBLING
+        relationship indicates that the calendar component is a peer of
+        the referenced calendar component.
+
+        Changes to a calendar component referenced by this property can
+        have an implicit impact on the related calendar component.  For
+        example, if a group event changes its start or end date or time,
+        then the related, dependent events will need to have their start
+        and end dates changed in a corresponding way.  Similarly, if a
+        PARENT calendar component is cancelled or deleted, then there is
+        an implied impact to the related CHILD calendar components.  This
+        property is intended only to provide information on the
+        relationship of calendar components.  It is up to the target
+        calendar system to maintain any property implications of this
+        relationship.
+
+    Description (:rfc:`9253`):
+        By default or when VALUE=UID is specified, the property value
+        consists of the persistent, globally unique identifier of another
+        calendar component. This value would be represented in a calendar
+        component by the UID property.
+
+        By default, the property value
+        points to another calendar component that has a PARENT relationship
+        to the referencing object. The RELTYPE property parameter is used
+        to either explicitly state the default PARENT relationship type to
+        the referenced calendar component or to override the default
+        PARENT relationship type and specify either a CHILD or SIBLING
+        relationship or a temporal relationship.
+
+        The PARENT relationship
+        indicates that the calendar component is a subordinate of the
+        referenced calendar component. The CHILD relationship indicates
+        that the calendar component is a superior of the referenced calendar
+        component. The SIBLING relationship indicates that the calendar
+        component is a peer of the referenced calendar component.
+
+        To preserve backwards compatibility, the value type MUST
+        be UID when the PARENT, SIBLING, or CHILD relationships
+        are specified.
+
+        The FINISHTOSTART, FINISHTOFINISH, STARTTOFINISH,
+        or STARTTOSTART relationships define temporal relationships, as
+        specified in the RELTYPE parameter definition.
+
+        The FIRST and NEXT
+        define ordering relationships between calendar components.
+
+        The DEPENDS-ON relationship indicates that the current calendar
+        component depends on the referenced calendar component in some manner.
+        For example, a task may be blocked waiting on the other,
+        referenced, task.
+
+        The REFID and CONCEPT relationships establish
+        a reference from the current component to the referenced component.
+        Changes to a calendar component referenced by this property
+        can have an implicit impact on the related calendar component.
+        For example, if a group event changes its start or end date or
+        time, then the related, dependent events will need to have their
+        start and end dates and times changed in a corresponding way.
+        Similarly, if a PARENT calendar component is canceled or deleted,
+        then there is an implied impact to the related CHILD calendar
+        components. This property is intended only to provide information
+        on the relationship of calendar components.
+
+        Deletion of the target component, for example, the target of a
+        FIRST, NEXT, or temporal relationship, can result in broken links.
+
+        It is up to the target calendar system to maintain any property
+        implications of these relationships.
+
+    Examples:
+        :rfc:`5545` examples of this property:
+
+        .. code-block:: text
+
+            RELATED-TO:jsmith.part7.19960817T083000.xyzMail@example.com
+
+        .. code-block:: text
+
+            RELATED-TO:19960401-080045-4000F192713-0052@example.com
+
+        :rfc:`9253` examples of this property:
+
+        .. code-block:: text
+
+            RELATED-TO;VALUE=URI;RELTYPE=STARTTOFINISH:
+             https://example.com/caldav/user/jb/cal/
+             19960401-080045-4000F192713.ics
+
+    See also :class:`icalendar.enum.RELTYPE`.
+
+    """
+    result = self.get("RELATED-TO", [])
+    if not isinstance(result, list):
+        return [result]
+    return result
+
+
+def _set_related_to(self: Component, values: RELATED_TO_TYPE_SETTER) -> None:
+    """Set the RELATED-TO properties."""
+    _del_related_to(self)
+    if values is None:
+        return
+    if not isinstance(values, list):
+        values = [values]
+    for value in values:
+        self.add("RELATED-TO", value)
+
+
+def _del_related_to(self: Component):
+    """Delete the RELATED-TO properties."""
+    self.pop("RELATED-TO", None)
+
+
+related_to_property = property(_get_related_to, _set_related_to, _del_related_to)
+
+
+def _get_concepts(self: Component) -> list[vUri]:
+    """CONCEPT
+
+    Purpose:
+        CONCEPT defines the formal categories for a calendar component.
+
+    Conformance:
+        Since :rfc:`9253`,
+        this property can be specified zero or more times in any iCalendar component.
+
+    Description:
+        This property is used to specify formal categories or classifications of
+        the calendar component. The values are useful in searching for a calendar
+        component of a particular type and category.
+
+        This categorization is distinct from the more informal "tagging" of components
+        provided by the existing CATEGORIES property. It is expected that the value of
+        the CONCEPT property will reference an external resource that provides
+        information about the categorization.
+
+        In addition, a structured URI value allows for hierarchical categorization of
+        events.
+
+        Possible category resources are the various proprietary systems, for example,
+        the Library of Congress, or an open source of categorization data.
+
+    Examples:
+        The following is an example of this property.
+        It points to a server acting as the source for the calendar object.
+
+        .. code-block:: text
+
+            CONCEPT:https://example.com/event-types/arts/music
+
+    .. seealso::
+
+        :attr:`Component.categories`
+    """
+    concepts = self.get("CONCEPT", [])
+    if not isinstance(concepts, list):
+        concepts = [concepts]
+    return concepts
+
+
+CONCEPTS_TYPE_SETTER: TypeAlias = Union[List[Union[vUri, str]], str, vUri, None]
+
+
+def _set_concepts(self: Component, concepts: CONCEPTS_TYPE_SETTER):
+    """Set the concepts."""
+    _del_concepts(self)
+    if concepts is None:
+        return
+    if not isinstance(concepts, list):
+        concepts = [concepts]
+    for value in concepts:
+        self.add("CONCEPT", value)
+
+
+def _del_concepts(self: Component):
+    """Delete the concepts."""
+    self.pop("CONCEPT", None)
+
+
+concepts_property = property(_get_concepts, _set_concepts, _del_concepts)
+
+
+def multi_string_property(name: str, doc: str):
+    """A property for an iCalendar Property that can occur multiple times."""
+
+    def fget(self: Component) -> list[str]:
+        """Get the values of a multi-string property."""
+        value = self.get(name, [])
+        if not isinstance(value, list):
+            value = [value]
+        return value
+
+    def fset(self: Component, value: list[str] | str | None) -> None:
+        """Set the values of a multi-string property."""
+        fdel(self)
+        if value is None:
+            return
+        if not isinstance(value, list):
+            value = [value]
+        for value in value:
+            self.add(name, value)
+
+    def fdel(self: Component):
+        """Delete the values of a multi-string property."""
+        self.pop(name, None)
+
+    return property(fget, fset, fdel, doc=doc)
+
+
+refids_property = multi_string_property(
+    "REFID",
+    """REFID
+
+Purpose:
+    REFID acts as a key for associated iCalendar entities.
+
+Conformance:
+    Since :rfc:`9253`,
+    this property can be specified zero or more times in any iCalendar component.
+
+Description:
+    The value of this property is free-form text that creates an
+    identifier for associated components.
+    All components that use the same REFID value are associated through
+    that value and can be located or retrieved as a group.
+    For example, all of the events in a travel itinerary
+    would have the same REFID value, so as to be grouped together.
+
+Examples:
+    The following is an example of this property.
+
+    .. code-block:: text
+
+        REFID:itinerary-2014-11-17
+
+    Use a REFID to associate several VTODOs:
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Todo
+        >>> todo_1 = Todo.new(
+        ...     summary="turn off stove",
+        ...     refids=["travel", "alps"]
+        ... )
+        >>> todo_2 = Todo.new(
+        ...     summary="pack backpack",
+        ...     refids=["travel", "alps"]
+        ... )
+        >>> todo_1.refids == todo_2.refids
+        True
+
+.. note::
+
+    List modifications do not modify the component.
+""",
+)
+
+
 __all__ = [
+    "CONCEPTS_TYPE_SETTER",
+    "LINKS_TYPE_SETTER",
+    "RELATED_TO_TYPE_SETTER",
     "attendees_property",
     "busy_type_property",
     "categories_property",
     "class_property",
     "color_property",
     "comments_property",
+    "concepts_property",
     "conferences_property",
     "contacts_property",
     "create_single_property",
@@ -1996,8 +2447,10 @@ __all__ = [
     "get_start_end_duration_with_validation",
     "get_start_property",
     "images_property",
+    "links_property",
     "location_property",
     "multi_language_text_property",
+    "multi_string_property",
     "organizer_property",
     "priority_property",
     "property_del_duration",
@@ -2005,6 +2458,8 @@ __all__ = [
     "property_get_duration",
     "property_set_duration",
     "rdates_property",
+    "refids_property",
+    "related_to_property",
     "rfc_7953_dtend_property",
     "rfc_7953_dtstart_property",
     "rfc_7953_duration_property",

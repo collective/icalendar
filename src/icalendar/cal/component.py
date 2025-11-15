@@ -2,10 +2,21 @@
 
 from __future__ import annotations
 
-from datetime import date, datetime, time, timezone
+from datetime import date, datetime, time, timedelta, timezone
 from typing import TYPE_CHECKING, ClassVar
 
-from icalendar.attr import comments_property, single_utc_property, uid_property
+from icalendar.attr import (
+    CONCEPTS_TYPE_SETTER,
+    LINKS_TYPE_SETTER,
+    RELATED_TO_TYPE_SETTER,
+    comments_property,
+    concepts_property,
+    links_property,
+    refids_property,
+    related_to_property,
+    single_utc_property,
+    uid_property,
+)
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.caselessdict import CaselessDict
 from icalendar.error import InvalidCalendar
@@ -13,7 +24,7 @@ from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_sp
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import TypesFactory, vDDDLists, vText
 from icalendar.timezone import tzp
-from icalendar.tools import is_date, is_datetime
+from icalendar.tools import is_date
 
 if TYPE_CHECKING:
     from icalendar.compatibility import Self
@@ -71,14 +82,19 @@ class Component(CaselessDict):
         return cls._components_factory.get(name, Component)
 
     @staticmethod
-    def _infer_value_type(value: date | datetime | timedelta | time | tuple | list) -> str | None:
+    def _infer_value_type(
+        value: date | datetime | timedelta | time | tuple | list,
+    ) -> str | None:
         """Infer the ``VALUE`` parameter from a Python type.
 
         Args:
-            value: Python native type, one of :py:class:`date`, :py:mod:`datetime`, :py:class:`timedelta`, :py:mod:`time`, :py:class:`tuple`, or :py:class:`list`.
+            value: Python native type, one of :py:class:`date`, :py:mod:`datetime`,
+                :py:class:`timedelta`, :py:mod:`time`, :py:class:`tuple`,
+                or :py:class:`list`.
 
         Returns:
-            str or None: The ``VALUE`` parameter string, for example, "DATE", "TIME", or other string, or ``None``
+            str or None: The ``VALUE`` parameter string, for example, "DATE",
+                "TIME", or other string, or ``None``
                 if no specific ``VALUE`` is needed.
         """
         if isinstance(value, list):
@@ -605,6 +621,10 @@ class Component(CaselessDict):
 
     uid = uid_property
     comments = comments_property
+    links = links_property
+    related_to = related_to_property
+    concepts = concepts_property
+    refids = refids_property
 
     CREATED = single_utc_property(
         "CREATED",
@@ -640,15 +660,22 @@ class Component(CaselessDict):
         cls,
         created: date | None = None,
         comments: list[str] | str | None = None,
+        concepts: CONCEPTS_TYPE_SETTER = None,
         last_modified: date | None = None,
+        links: LINKS_TYPE_SETTER = None,
+        refids: list[str] | str | None = None,
+        related_to: RELATED_TO_TYPE_SETTER = None,
         stamp: date | None = None,
     ) -> Component:
         """Create a new component.
 
         Arguments:
             comments: The :attr:`comments` of the component.
+            concepts: The :attr:`concepts` of the component.
             created: The :attr:`created` of the component.
             last_modified: The :attr:`last_modified` of the component.
+            links: The :attr:`links` of the component.
+            related_to: The :attr:`related_to` of the component.
             stamp: The :attr:`DTSTAMP` of the component.
 
         Raises:
@@ -661,6 +688,10 @@ class Component(CaselessDict):
         component.created = created
         component.last_modified = last_modified
         component.comments = comments
+        component.links = links
+        component.related_to = related_to
+        component.concepts = concepts
+        component.refids = refids
         return component
 
 

@@ -32,6 +32,16 @@ Breaking changes:
 
 New features:
 
+- Add compatibility to :rfc:`9253`:
+  
+  - Add new property types :class:`icalender.vUid` and :class:`icalender.vXmlReference`.
+  - Add properties to all components: :attr:`Component.concepts`, :py:attr:`Component.links`, :py:attr:`Component.refids`, :py:attr:`Component.related_to`.
+  - Add new values to :py:class:`icalendar.enum.RELTYPE`.
+  - Add ``LABEL``, ``GAP``, and ``VALUE`` parameters to property values affected by :rfc:`9253`.
+
+- Allow setting default values in :py:class:`icalendar.parser.Parameters`.
+- Allow ``None`` as an argument to :py:class:`icalendar.parser.Parameters`.
+- Add ``ical_value`` to several property values. See `Issue 876 <https://github.com/collective/icalendar/issues/876>`_.
 - Add PyData Theme version switcher to documentation. See `Issue 825 <https://github.com/collective/icalendar/issues/825>`_.
 - Test compatibility with Python 3.14. See `Issue 973 <https://github.com/collective/icalendar/issues/973>`_.
 - Added documentation of Vale usage for icalender documentation style guide. See `Issue 815 <https://github.com/collective/icalendar/issues/815>`_.
@@ -43,7 +53,7 @@ New features:
 
 Bug fixes:
 
-- ...
+- Make sure a component's ``conferences`` property adds ``VALUE=URI`` if the conference is created as a URI.
 
 6.3.2 (2025-11-03)
 ------------------
