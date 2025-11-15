@@ -21,7 +21,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.napoleon",
-    "sphinx_autodoc_typehints",
+    "sphinx_autodoc_typehints",  # must be loaded after sphinx.ext.napoleon. See https://github.com/tox-dev/sphinx-autodoc-typehints/issues/15
 ]
 source_suffix = {".rst": "restructuredtext"}
 master_doc = "index"
