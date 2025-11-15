@@ -652,7 +652,7 @@ def _get_GAP(prop) -> timedelta | None:  # noqa: N802
     """GAP
 
     Purpose:
-        GAP pecifies the length of the gap, positive or negative,
+        GAP specifies the length of the gap, positive or negative,
         between two components with a temporal relationship.
 
     Format Definition:
