@@ -2318,7 +2318,7 @@ def _get_concepts(self: Component) -> list[vUri]:
 
     .. seealso::
 
-        :py:attr:`Component.categories`
+        :attr:`Component.categories`
     """
     concepts = self.get("CONCEPT", [])
     if not isinstance(concepts, list):
