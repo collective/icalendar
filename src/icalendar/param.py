@@ -345,7 +345,7 @@ Description:
 
 """,  # noqa: E501
     default=_default_related,
-    convert=_convert_enum(enums.RANGE),
+    convert=_convert_enum(enums.RELATED),
 )
 
 
