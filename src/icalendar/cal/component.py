@@ -705,24 +705,33 @@ class Component(CaselessDict):
             Component
 
         Raises:
-            JCalParsingError
+            JCalParsingError: If the jcal provided is invalid.
+            JSONDecodeError: If the string provided not valid JSON.
 
         This reverses :attr:`to_json` and :attr:`to_jcal`.
         """
         if isinstance(jcal, str):
             jcal = json.loads(jcal)
+        if not isinstance(jcal, list):
+            raise JCalParsingError("a component must be a list", cls)
         try:
             name, properties, subcomponents = jcal
         except ValueError as e:
             raise JCalParsingError(
-                "Expected 3 values in list, but got {len(jcal)}."
+                "a component must be a list of 3 values.", cls
             ) from e
+        if not isinstance(name, str):
+            raise JCalParsingError("name must be str", cls, path=[0])
         if name.upper() != cls.name:
             # delegate to correct component class
             component_cls = cls.get_component_class(name.upper())
             return component_cls.from_jcal(jcal)
         component = cls()
-        for prop in properties:
+        if not isinstance(properties, list):
+            raise JCalParsingError("properties must be a list", cls, path=1)
+        for i, prop in enumerate(properties):
+            if not isinstance(prop, list):
+                raise JCalParsingError("a property must be a list", cls, path=[1, i])
             prop_name = prop[0]
             prop_value = prop[2]
             prop_cls: type[VPROPERTY] = cls.types_factory.for_property(
@@ -734,8 +743,11 @@ class Component(CaselessDict):
             if prop_cls == cls.types_factory.for_property(prop_name):
                 del v_prop.VALUE
             component.add(prop_name, v_prop)
-        for subcomponent in subcomponents:
-            component.subcomponents.append(cls.from_jcal(subcomponent))
+        if not isinstance(subcomponents, list):
+            raise JCalParsingError("subcomponents must be a list", cls, 2)
+        for i, subcomponent in enumerate(subcomponents):
+            with JCalParsingError.reraise_with_path_added(2, i):
+                component.subcomponents.append(cls.from_jcal(subcomponent))
         return component
 
 
