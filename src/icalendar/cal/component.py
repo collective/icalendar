@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, ClassVar
 from icalendar.attr import comments_property, single_utc_property, uid_property
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.caselessdict import CaselessDict
-from icalendar.error import InvalidCalendar
+from icalendar.error import InvalidCalendar, JCalParsingError
 from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_split
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import VPROPERTY, TypesFactory, vDDDLists, vText
@@ -18,7 +18,6 @@ from icalendar.tools import is_date
 
 if TYPE_CHECKING:
     from icalendar.compatibility import Self
-    from icalendar.error import JCalParsingError  # noqa: F401
 
 _marker = []
 
@@ -712,7 +711,12 @@ class Component(CaselessDict):
         """
         if isinstance(jcal, str):
             jcal = json.loads(jcal)
-        name, properties, subcomponents = jcal
+        try:
+            name, properties, subcomponents = jcal
+        except ValueError as e:
+            raise JCalParsingError(
+                "Expected 3 values in list, but got {len(jcal)}."
+            ) from e
         if name.upper() != cls.name:
             # delegate to correct component class
             component_cls = cls.get_component_class(name.upper())
