@@ -1864,7 +1864,7 @@ class vXmlReference(vUri):
 
     @property
     def xml_reference(self) -> str:
-        """The uid of this property."""
+        """The XML reference URI of this property."""
         return self.uri
 
     @property
