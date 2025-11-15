@@ -37,7 +37,7 @@ New features:
   - Add new property types :py:class:`vUid` and :py:class:`vXmlReference`.
   - Add properties to all components: :attr:`Component.concepts`, :py:attr:`Component.links`, :py:attr:`Component.refids`, :py:attr:`Component.related_to`.
   - Add new values to :py:class:`icalendar.enum.RELTYPE`.
-  - Add ``LABEL``, ``GAP``, and ``VALUE`` parameter to property values affected by :rfc:`9253`.
+  - Add ``LABEL``, ``GAP``, and ``VALUE`` parameters to property values affected by :rfc:`9253`.
 
 - Allow setting default values in :py:class:`icalendar.parser.Parameters`.
 - Allow ``None`` as an argument to :py:class:`icalendar.parser.Parameters`.
