@@ -168,11 +168,17 @@ class JCalParsingError(ValueError):
         jcal,
         expected_type: type[str | int | float | bool],
         parser: str | type = "",
+        path: list[str | int] | None | str | int = None,
     ):
         """Validate the type of a jcal value."""
         if not isinstance(jcal, expected_type):
             type_name = cls._type_names[expected_type]
-            raise cls(f"The value must be a {type_name}.", parser=parser, value=jcal)
+            raise cls(
+                f"The value must be a {type_name}.",
+                parser=parser,
+                value=jcal,
+                path=path,
+            )
 
 
 __all__ = [

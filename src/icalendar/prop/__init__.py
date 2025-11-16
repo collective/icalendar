@@ -132,6 +132,7 @@ class vBinary:
     def from_jcal(cls, jcal_property: list) -> vBinary:
         """Parse jcal from :rfc:`7265` to a vBinary."""
         JCalParsingError.validate_property(jcal_property, cls)
+        JCalParsingError.validate_value_type(jcal_property[3], str, cls, 3)
         return cls(
             jcal_property[3],
             params=Parameters.from_jcal_property(jcal_property),
@@ -217,6 +218,7 @@ class vBoolean(int):
     def from_jcal(cls, jcal_property: list) -> vBoolean:
         """Parse jcal from :rfc:`7265` to a vBoolean."""
         JCalParsingError.validate_property(jcal_property, cls)
+        JCalParsingError.validate_value_type(jcal_property[3], bool, cls, 3)
         return cls(
             jcal_property[3],
             params=Parameters.from_jcal_property(jcal_property),
@@ -260,7 +262,7 @@ class vText(str):
 
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
-        if name == "request-status":
+        if name == "request-status":  # TODO: maybe add a vRequestStatus class?
             return [name, {}, "text", self.split(";", 2)]
         return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
 
@@ -276,11 +278,12 @@ class vText(str):
         """Parse jcal from :rfc:`7265`."""
         JCalParsingError.validate_property(jcal_property, cls)
         name = jcal_property[0]
-        string = jcal_property[3]
-        if name == "request-status":
-            string = ";".join(jcal_property[3])
-        elif name.upper() == "CATEGORIES":
+        if name == "categories":
             return vCategory.from_jcal(jcal_property)
+        string = jcal_property[3]
+        if name == "request-status":  # TODO: maybe add a vRequestStatus class?
+            string = ";".join(jcal_property[3])
+        JCalParsingError.validate_value_type(string, str, cls, 3)
         return cls(
             string,
             params=Parameters.from_jcal_property(jcal_property),
@@ -508,6 +511,7 @@ class vCalAddress(str):
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
         JCalParsingError.validate_property(jcal_property, cls)
+        JCalParsingError.validate_value_type(jcal_property[3], str, cls, 3)
         return cls(
             jcal_property[3],
             params=Parameters.from_jcal_property(jcal_property),
@@ -597,6 +601,7 @@ class vFloat(float):
         JCalParsingError.validate_property(jcal_property, cls)
         if jcal_property[0].upper() == "GEO":
             return vGeo.from_jcal(jcal_property)
+        JCalParsingError.validate_value_type(jcal_property[3], float, cls, 3)
         return cls(
             jcal_property[3],
             params=Parameters.from_jcal_property(jcal_property),
@@ -687,6 +692,7 @@ class vInt(int):
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
         JCalParsingError.validate_property(jcal_property, cls)
+        JCalParsingError.validate_value_type(jcal_property[3], int, cls, 3)
         return cls(
             jcal_property[3],
             params=Parameters.from_jcal_property(jcal_property),
@@ -818,6 +824,8 @@ class vCategory:
         """The jcal represenation for categories."""
         result = [name, self.params.to_jcal(), self.VALUE.lower()]
         result.extend(map(str, self.cats))
+        if not self.cats:
+            result.append("")
         return result
 
     @classmethod
@@ -831,8 +839,10 @@ class vCategory:
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
         JCalParsingError.validate_property(jcal_property, cls)
+        for i, category in enumerate(jcal_property[3:], start=3):
+            JCalParsingError.validate_value_type(category, str, cls, i)
         return cls(
-            jcal_property[3],
+            jcal_property[3:],
             Parameters.from_jcal_property(jcal_property),
         )
 

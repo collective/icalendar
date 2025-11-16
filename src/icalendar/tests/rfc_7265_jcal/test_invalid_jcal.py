@@ -16,6 +16,7 @@ from icalendar import (
     vPeriod,
     vTime,
 )
+from icalendar.prop import vCategory
 
 
 def test_invalid_json():
@@ -183,7 +184,12 @@ def test_property_type(v_prop_example, v_prop, str_expected):
 def test_property_too_short_in_component(v_prop_example, v_prop, index):
     """The example is too short."""
     jcal = v_prop_example.to_jcal("X-PROP")
-    component = ["vcalendar", [jcal] * index + [jcal[:2]], []]
+    component = [
+        "vcalendar",
+        [["X-PROP-2", {}, "unknown", ""]] * index + [jcal[:2]],
+        [],
+    ]
+    print(jcal)
     with pytest.raises(
         JCalParsingError,
         match=f"\\[1\\]\\[{index}\\] in Calendar: The property must be a list with at least 4 items.",
@@ -343,3 +349,13 @@ def test_vPeriod_expects_date_time_or_duration_as_second_item():
                 ["2024-01-01T00:00:00", "2024-01-02"],
             ]
         )
+
+
+@pytest.mark.parametrize("index", [0, 4])
+def test_invalid_category_type(str_expected, index):
+    """The name is a string."""
+    with pytest.raises(
+        JCalParsingError,
+        match=f"\\[{index + 3}\\] in vCategory: The value must be a string.",
+    ):
+        vCategory.from_jcal(["categories", {}, "text"] + [""] * index + [str_expected])
