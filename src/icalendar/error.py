@@ -63,11 +63,14 @@ def _repr_index(index: str | int) -> str:
 class JCalParsingError(ValueError):
     """Could not parse a part of the JCal."""
 
+    _default_value = object()
+
     def __init__(
         self,
         message: str,
         parser: str | type = "",
         path: list[str | int] | None | str | int = None,
+        value: object = _default_value,
     ):
         """Create a new JCalParsingError."""
         if path is None:
@@ -79,6 +82,7 @@ class JCalParsingError(ValueError):
             parser = parser.__name__
         self.parser = parser
         self.message = message
+        self.value = value
         full_message = message
         repr_path = ""
         if path:
@@ -87,6 +91,8 @@ class JCalParsingError(ValueError):
             repr_path += " "
         if parser:
             full_message = f"{repr_path}in {parser}: {message}"
+        if value is not self._default_value:
+            full_message += f" got value: {value!r}"
         super().__init__(full_message)
 
     @classmethod
@@ -101,8 +107,11 @@ class JCalParsingError(ValueError):
             yield
         except JCalParsingError as e:
             raise cls(
-                path=list(path_components) + e.path, parser=e.parser, message=e.message
-            ) from e
+                path=list(path_components) + e.path,
+                parser=e.parser,
+                message=e.message,
+                value=e.value,
+            ).with_traceback(e.__traceback__) from e
 
     @classmethod
     def validate_property(
@@ -122,17 +131,28 @@ class JCalParsingError(ValueError):
             path = [path]
         if not isinstance(jcal_property, list) or len(jcal_property) < 4:
             raise JCalParsingError(
-                "The property must be a list with at least 4 items.", parser, path
+                "The property must be a list with at least 4 items.",
+                parser,
+                path,
+                value=jcal_property,
             )
         if not isinstance(jcal_property[0], str):
-            raise JCalParsingError("The name must be a string.", parser, path + [0])
+            raise JCalParsingError(
+                "The name must be a string.", parser, path + [0], value=jcal_property[0]
+            )
         if not isinstance(jcal_property[1], dict):
             raise JCalParsingError(
-                "The parameters must be a mapping.", parser, path + [1]
+                "The parameters must be a mapping.",
+                parser,
+                path + [1],
+                value=jcal_property[1],
             )
         if not isinstance(jcal_property[2], str):
             raise JCalParsingError(
-                "The VALUE parameter must be a string.", parser, path + [2]
+                "The VALUE parameter must be a string.",
+                parser,
+                path + [2],
+                value=jcal_property[2],
             )
 
 

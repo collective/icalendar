@@ -26,6 +26,7 @@ from icalendar.timezone.tzid import tzid_from_dt
 
 if TYPE_CHECKING:
     from icalendar.enums import VALUE
+    from icalendar.prop import VPROPERTY
 
 
 def escape_char(text):
@@ -347,13 +348,45 @@ class Parameters(CaselessDict):
 
         """
 
+    def _parameter_value_to_jcal(
+        self, value: str | float | list | VPROPERTY
+    ) -> str | int | float | list[str] | list[int] | list[float]:
+        """Convert a parameter value to jcal format.
+
+        Args:
+            value: The parameter value
+
+        Returns:
+            The jcal representation of the parameter value
+        """
+        if isinstance(value, list):
+            return [self._parameter_value_to_jcal(v) for v in value]
+        if hasattr(value, "to_jcal"):
+            # proprty values respond to this
+            jcal = value.to_jcal()
+            # we only need the value part
+            if len(jcal) == 4:
+                return jcal[3]
+            return jcal[3:]
+        for t in (int, float, str):
+            if isinstance(value, t):
+                return t(value)
+        raise TypeError(
+            "Unsupported parameter value type for jcal conversion: "
+            f"{type(value)} {value!r}"
+        )
+
     def to_jcal(self, exclude_utc=False) -> dict[str, str]:
         """Return the jcal representation of the parameters.
 
         Args:
             exclude_utc (bool): Exclude the TZID parameter if it is UTC
         """
-        jcal = {k.lower(): v for k, v in self.items() if k.lower() != "value"}
+        jcal = {
+            k.lower(): self._parameter_value_to_jcal(v)
+            for k, v in self.items()
+            if k.lower() != "value"
+        }
         if exclude_utc and jcal.get("tzid") == "UTC":
             del jcal["tzid"]
         return jcal
@@ -381,16 +414,23 @@ class Parameters(CaselessDict):
             raise JCalParsingError("The parameters must be a mapping.", cls)
         for name, value in jcal.items():
             if not isinstance(name, str):
-                raise JCalParsingError("All parameter names must be strings.", cls)
-            if (
-                isinstance(value, list)
-                and not all(isinstance(v, (str, int, float)) for v in value)
-            ) or not isinstance(value, (str, int, float)):
+                raise JCalParsingError(
+                    "All parameter names must be strings.", cls, value=name
+                )
+            if not (
+                (
+                    isinstance(value, list)
+                    and all(isinstance(v, (str, int, float)) for v in value)
+                    and value
+                )
+                or isinstance(value, (str, int, float))
+            ):
                 raise JCalParsingError(
                     "Parameter values must be a string, integer or "
                     "float or a list of those.",
                     cls,
                     name,
+                    value=value,
                 )
         return cls(jcal)
 

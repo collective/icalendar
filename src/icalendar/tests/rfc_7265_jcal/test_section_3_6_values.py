@@ -8,11 +8,14 @@ from datetime import date, datetime, time, timedelta
 import pytest
 
 from icalendar import (
+    Calendar,
     vBinary,
     vBoolean,
     vCalAddress,
     vDate,
     vDatetime,
+    vDDDLists,
+    vDDDTypes,
     vDuration,
     vFloat,
     vInt,
@@ -25,7 +28,6 @@ from icalendar import (
     vUTCOffset,
 )
 from icalendar.compatibility import ZoneInfo
-from icalendar.prop import vDDDLists, vDDDTypes
 
 JCAL_PAIRS = [
     (["attach", {}, "binary", "SGVsbG8gV29ybGQh"], vBinary("SGVsbG8gV29ybGQh")),
@@ -178,4 +180,10 @@ def test_adding_unknown_value_parameter():
     """When converting to iCalendar, [...] the VALUE parameter
     MUST be omitted for properties that have the jCal type identifier
     "unknown"."""
-    pytest.fail("Not implemented yet")
+    jcal = ["x-foo", {}, "unknown", "bar"]
+    prop = vUnknown.from_jcal(jcal)
+    calendar = Calendar()
+    calendar["X-FOO"] = prop
+    ical = calendar.to_ical().decode("utf-8")
+    assert "UNKNOWN" not in ical
+    assert "VALUE" not in ical

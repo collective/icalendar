@@ -4,7 +4,7 @@ from json import JSONDecodeError
 
 import pytest
 
-from icalendar import Component, JCalParsingError, Parameters
+from icalendar import Calendar, Component, JCalParsingError, Parameters
 
 
 def test_invalid_json():
@@ -199,3 +199,15 @@ def test_values_allowed_in_parameters(parameter_value_expected, key):
         match=f'\\[1\\]\\["{key}"\\] in Parameters: Parameter values must be a string, integer or float or a list of those.',
     ):
         Parameters.from_jcal_property(["", {key: parameter_value_expected}, "", ""])
+
+
+def test_failing_example_delegated_to(calendars):
+    """Check the failing example."""
+    calendar: Calendar = calendars.rfc_7256_multi_value_parameters
+    jcal = calendar.to_jcal()
+    delegated_to = jcal[2][0][1][0][1]["delegated-to"]
+    assert delegated_to == [
+        "mailto:jdoe@example.com",
+        "mailto:jqpublic@example.com",
+    ]
+    assert all(type(item) is str for item in delegated_to)
