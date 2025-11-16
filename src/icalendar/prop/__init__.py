@@ -2305,7 +2305,7 @@ class vTime(TimeBase):
             raise JCalParsingError("Cannot parse time.", cls, value=jcal)
         hour = int(match.group("hour"))
         minute = int(match.group("minute"))
-        second = int(match.group("second") or 0)
+        second = int(match.group("second"))
         utc = bool(match.group("utc"))
         return time(hour, minute, second, tzinfo=timezone.utc if utc else None)
 
