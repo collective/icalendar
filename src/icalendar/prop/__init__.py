@@ -1637,11 +1637,20 @@ class vPeriod(TimeBase):
                 "A period must be a list with exactly 2 items.", cls, value=jcal
             )
         with JCalParsingError.reraise_with_path_added(0):
-            JCalParsingError.validate_value_type(jcal[0], str, cls)
-            start = vDDDTypes.parse_jcal_value(jcal[0])
+            start = vDatetime.parse_jcal_value(jcal[0])
         with JCalParsingError.reraise_with_path_added(1):
             JCalParsingError.validate_value_type(jcal[1], str, cls)
-            end_or_duration = vDDDTypes.parse_jcal_value(jcal[1])
+            if jcal[1].startswith(("P", "-P", "+P")):
+                end_or_duration = vDuration.parse_jcal_value(jcal[1])
+            else:
+                try:
+                    end_or_duration = vDatetime.parse_jcal_value(jcal[1])
+                except JCalParsingError as e:
+                    raise JCalParsingError(
+                        "Cannot parse date-time or duration.",
+                        cls,
+                        value=jcal[1],
+                    ) from e
         return start, end_or_duration
 
     @classmethod

@@ -311,3 +311,35 @@ def test_vPeriod_too_long():
                 ["2024-01-01T00:00:00Z", "2024-01-02T00:00:00Z", "extra"],
             ]
         )
+
+
+def test_vPeriod_expects_date_time_as_start():
+    """vPeriod expects date-time as start but we hand in a duration."""
+    with pytest.raises(
+        JCalParsingError,
+        match="\\[3\\]\\[0\\] in .*: Cannot parse date-time.",
+    ):
+        vPeriod.from_jcal(
+            [
+                "rdate",
+                {},
+                "period",
+                ["P1D", "2024-01-02T00:00:00Z"],
+            ]
+        )
+
+
+def test_vPeriod_expects_date_time_or_duration_as_second_item():
+    """vPeriod expects date-time or duration as second item but we hand in a date."""
+    with pytest.raises(
+        JCalParsingError,
+        match="\\[3\\]\\[1\\] in .*: Cannot parse date-time or duration.",
+    ):
+        vPeriod.from_jcal(
+            [
+                "rdate",
+                {},
+                "period",
+                ["2024-01-01T00:00:00", "2024-01-02"],
+            ]
+        )
