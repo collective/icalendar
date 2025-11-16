@@ -12,7 +12,7 @@ import functools
 import os
 import re
 from datetime import datetime, time
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Callable
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.error import JCalParsingError
@@ -185,11 +185,16 @@ def q_join(lst, sep=",", always_quote=False):
     return sep.join(dquote(itm, always_quote=always_quote) for itm in lst)
 
 
-def single_string_parameter(upper=False):
+def single_string_parameter(func: Callable | None = None, upper=False):
     """Create a parameter getter/setter for a single string parameter.
 
     Args:
-        upper (bool): Convert the value to uppercase
+        upper: Convert the value to uppercase
+        func: The function to decorate.
+
+    Returns:
+        The property for the parameter or a decorator for the parameter
+        if func is None.
     """
 
     def decorator(func):
@@ -218,7 +223,9 @@ def single_string_parameter(upper=False):
 
         return property(fget, fset, fdel, doc=func.__doc__)
 
-    return decorator
+    if func is None:
+        return decorator
+    return decorator(func)
 
 
 class Parameters(CaselessDict):
@@ -391,7 +398,7 @@ class Parameters(CaselessDict):
             del jcal["tzid"]
         return jcal
 
-    @single_string_parameter()
+    @single_string_parameter
     def tzid(self) -> str | None:
         """The TZID parameter from :rfc:`5545`."""
 
