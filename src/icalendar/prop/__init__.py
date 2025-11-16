@@ -997,18 +997,22 @@ class vDDDTypes(TimeBase):
         """
         if isinstance(jcal, list):
             return vPeriod.parse_jcal_value(jcal)
+        JCalParsingError.validate_value_type(jcal, str, cls)
         for jcal_type in (vDatetime, vDate, vTime, vDuration):
             try:
                 return jcal_type.parse_jcal_value(jcal)
             except JCalParsingError:  # noqa: PERF203
                 pass
-        raise JCalParsingError(f"Cannot parse jcal string {jcal}")
+        raise JCalParsingError(
+            "Cannot parse date, time, date-time, duration or period.", cls, value=jcal
+        )
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
         JCalParsingError.validate_property(jcal_property, cls)
-        dt = cls.parse_jcal_value(jcal_property[3])
+        with JCalParsingError.reraise_with_path_added(3):
+            dt = cls.parse_jcal_value(jcal_property[3])
         params = Parameters.from_jcal_property(jcal_property)
         if params.tzid:
             if isinstance(dt, tuple):
@@ -1123,17 +1127,20 @@ class vDate(TimeBase):
         Raises:
             JCalParsingError
         """
+        JCalParsingError.validate_value_type(jcal, str, cls)
         try:
             return datetime.strptime(jcal, "%Y-%m-%d").date()  # noqa: DTZ007
         except ValueError as e:
-            raise JCalParsingError(f"Wrong datetime format: {jcal}") from e
+            raise JCalParsingError("Cannot parse date.", cls, value=jcal) from e
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
         JCalParsingError.validate_property(jcal_property, cls)
+        with JCalParsingError.reraise_with_path_added(3):
+            value = cls.parse_jcal_value(jcal_property[3])
         return cls(
-            cls.parse_jcal_value(jcal_property[3]),
+            value,
             params=Parameters.from_jcal_property(jcal_property),
         )
 
@@ -1262,13 +1269,14 @@ class vDatetime(TimeBase):
         Raises:
             JCalParsingError
         """
-        utc = jcal[-1] == "Z"
+        JCalParsingError.validate_value_type(jcal, str, cls)
+        utc = jcal.endswith("Z")
         if utc:
             jcal = jcal[:-1]
         try:
             dt = datetime.strptime(jcal, "%Y-%m-%dT%H:%M:%S")  # noqa: DTZ007
         except ValueError as e:
-            raise JCalParsingError(f"Wrong datetime format: {jcal}") from e
+            raise JCalParsingError("Cannot parse date-time.", cls, value=jcal) from e
         if utc:
             return tzp.localize_utc(dt)
         return dt
@@ -1278,7 +1286,8 @@ class vDatetime(TimeBase):
         """Parse jcal from :rfc:`7265`."""
         JCalParsingError.validate_property(jcal_property, cls)
         params = Parameters.from_jcal_property(jcal_property)
-        dt = cls.parse_jcal_value(jcal_property[3])
+        with JCalParsingError.reraise_with_path_added(3):
+            dt = cls.parse_jcal_value(jcal_property[3])
         if params.tzid:
             dt = tzp.localize(dt, params.tzid)
         return cls(
@@ -1439,17 +1448,20 @@ class vDuration(TimeBase):
     @classmethod
     def parse_jcal_value(cls, jcal: str) -> timedelta | None:
         """Parse a jcal string to a datetime.timedelta."""
+        JCalParsingError.validate_value_type(jcal, str, cls)
         try:
             return cls.from_ical(jcal)
         except ValueError as e:
-            raise JCalParsingError(f"Cannot parse jcal string {jcal}") from e
+            raise JCalParsingError("Cannot parse duration.", cls, value=jcal) from e
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
         JCalParsingError.validate_property(jcal_property, cls)
+        with JCalParsingError.reraise_with_path_added(3):
+            duration = cls.parse_jcal_value(jcal_property[3])
         return cls(
-            cls.parse_jcal_value(jcal_property[3]),
+            duration,
             Parameters.from_jcal_property(jcal_property),
         )
 
@@ -1621,14 +1633,23 @@ class vPeriod(TimeBase):
             JCalParsingError
         """
         if not isinstance(jcal, list) or len(jcal) != 2:
-            raise JCalParsingError(f"Cannot parse jcal string {jcal}")
-        return vDDDTypes.parse_jcal_value(jcal[0]), vDDDTypes.parse_jcal_value(jcal[1])
+            raise JCalParsingError(
+                "A period must be a list with exactly 2 items.", cls, value=jcal
+            )
+        with JCalParsingError.reraise_with_path_added(0):
+            JCalParsingError.validate_value_type(jcal[0], str, cls)
+            start = vDDDTypes.parse_jcal_value(jcal[0])
+        with JCalParsingError.reraise_with_path_added(1):
+            JCalParsingError.validate_value_type(jcal[1], str, cls)
+            end_or_duration = vDDDTypes.parse_jcal_value(jcal[1])
+        return start, end_or_duration
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
         JCalParsingError.validate_property(jcal_property, cls)
-        start, end_or_duration = cls.parse_jcal_value(jcal_property[3])
+        with JCalParsingError.reraise_with_path_added(3):
+            start, end_or_duration = cls.parse_jcal_value(jcal_property[3])
         params = Parameters.from_jcal_property(jcal_property)
         tzid = params.tzid
 
@@ -2263,15 +2284,16 @@ class vTime(TimeBase):
         return [name, self.params.to_jcal(exclude_utc=True), self.VALUE.lower(), value]
 
     @classmethod
-    def parse_jcal_value(cls, jcal: str) -> timedelta:
+    def parse_jcal_value(cls, jcal: str) -> time:
         """Parse a jcal string to a datetime.time.
 
         Raises:
             JCalParsingError
         """
+        JCalParsingError.validate_value_type(jcal, str, cls)
         match = TIME_JCAL_REGEX.match(jcal)
         if match is None:
-            raise JCalParsingError(f"Cannot parse {jcal!r} to a datetime.time.")
+            raise JCalParsingError("Cannot parse time.", cls, value=jcal)
         hour = int(match.group("hour"))
         minute = int(match.group("minute"))
         second = int(match.group("second") or 0)
@@ -2282,8 +2304,10 @@ class vTime(TimeBase):
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
         JCalParsingError.validate_property(jcal_property, cls)
+        with JCalParsingError.reraise_with_path_added(3):
+            value = cls.parse_jcal_value(jcal_property[3])
         return cls(
-            cls.parse_jcal_value(jcal_property[3]),
+            value,
             params=Parameters.from_jcal_property(jcal_property),
         )
 

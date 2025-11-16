@@ -4,7 +4,18 @@ from json import JSONDecodeError
 
 import pytest
 
-from icalendar import Calendar, Component, JCalParsingError, Parameters
+from icalendar import (
+    Calendar,
+    Component,
+    JCalParsingError,
+    Parameters,
+    vDate,
+    vDatetime,
+    vDDDTypes,
+    vDuration,
+    vPeriod,
+    vTime,
+)
 
 
 def test_invalid_json():
@@ -211,3 +222,92 @@ def test_failing_example_delegated_to(calendars):
         "mailto:jqpublic@example.com",
     ]
     assert all(type(item) is str for item in delegated_to)
+
+
+@pytest.mark.parametrize(
+    ("v_prop", "ty", "message", "value"),
+    [
+        (vDatetime, "date-time", "Cannot parse date-time.", ""),
+        (vDate, "date", "Cannot parse date.", ""),
+        (vTime, "time", "Cannot parse time.", ""),
+        (vTime, "time", "Cannot parse time.", "asd"),
+        (vDuration, "duration", "Cannot parse duration.", "PXD"),
+        (
+            vDDDTypes,
+            "date-time",
+            "Cannot parse date, time, date-time, duration or period.",
+            "",
+        ),
+    ],
+)
+def test_date_time_parsing_errors(v_prop, message, ty, value):
+    """An empty datetime should raise an error."""
+    with pytest.raises(
+        JCalParsingError,
+        match=f"\\[3\\] in {v_prop.__name__}: {message}",
+    ):
+        v_prop.from_jcal(["dt", {}, ty, value])
+
+
+@pytest.mark.parametrize(
+    "v_prop",
+    [
+        vDuration,
+        vDate,
+        vTime,
+        vDatetime,
+        vDDDTypes,
+    ],
+)
+def test_wrong_type(v_prop, str_expected):
+    """Passing an int or float where a string is expected should raise an error."""
+    if isinstance(str_expected, list) and v_prop is vDDDTypes:
+        return  # skip vPeriod
+    with pytest.raises(
+        JCalParsingError,
+        match=f"\\[3\\] in {v_prop.__name__}: The value must be a string.",
+    ):
+        v_prop.from_jcal(["dt", {}, "date-time", str_expected])
+
+
+def test_vPeriod_wrong_type(str_expected):
+    """Passing an int or float where a string is expected should raise an error."""
+    with pytest.raises(
+        JCalParsingError,
+        match="\\[3\\]\\[0\\] in .*: The value must be a string.",
+    ):
+        vPeriod.from_jcal(
+            ["rdate", {}, "period", [str_expected, "2024-01-01T00:00:00Z"]]
+        )
+    with pytest.raises(
+        JCalParsingError,
+        match="\\[3\\]\\[1\\] in .*: The value must be a string.",
+    ):
+        vPeriod.from_jcal(
+            ["rdate", {}, "period", ["2024-01-01T00:00:00Z", str_expected]]
+        )
+
+
+def test_vPeriod_too_short():
+    """A period with too few items should raise an error."""
+    with pytest.raises(
+        JCalParsingError,
+        match="\\[3\\] in vPeriod: A period must be a list with exactly 2 items.",
+    ):
+        vPeriod.from_jcal(["rdate", {}, "period", ["2024-01-01T00:00:00Z"]])
+
+
+def test_vPeriod_too_long():
+    """A period with too many items should raise an error."""
+    with pytest.raises(
+        JCalParsingError,
+        match="\\[3\\] in vPeriod: A period must be a list with exactly 2 items.",
+    ):
+        vPeriod.from_jcal(
+            [
+                "rdate",
+                {},
+                "period",
+                ["2024-01-01T00:00:00Z", "2024-01-02T00:00:00Z", "extra"],
+            ]
+        )

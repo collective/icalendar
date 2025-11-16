@@ -155,6 +155,25 @@ class JCalParsingError(ValueError):
                 value=jcal_property[2],
             )
 
+    _type_names = {
+        str: "string",
+        int: "integer",
+        float: "float",
+        bool: "boolean",
+    }
+
+    @classmethod
+    def validate_value_type(
+        cls,
+        jcal,
+        expected_type: type[str | int | float | bool],
+        parser: str | type = "",
+    ):
+        """Validate the type of a jcal value."""
+        if not isinstance(jcal, expected_type):
+            type_name = cls._type_names[expected_type]
+            raise cls(f"The value must be a {type_name}.", parser=parser, value=jcal)
+
 
 __all__ = [
     "ComponentEndMissing",
