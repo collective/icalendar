@@ -53,6 +53,13 @@ class FeatureWillBeRemovedInFutureVersion(DeprecationWarning):
     """This feature will be removed in a future version."""
 
 
+def _repr_index(index: str | int) -> str:
+    """Create a JSON compatible representation for the index."""
+    if isinstance(index, str):
+        return f'"{index}"'
+    return str(index)
+
+
 class JCalParsingError(ValueError):
     """Could not parse a part of the JCal."""
 
@@ -75,7 +82,7 @@ class JCalParsingError(ValueError):
         full_message = message
         repr_path = ""
         if path:
-            repr_path = "".join([f"[{index}]" for index in path])
+            repr_path = "".join([f"[{_repr_index(index)}]" for index in path])
             full_message = f"{repr_path}: {full_message}"
             repr_path += " "
         if parser:

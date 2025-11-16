@@ -4,8 +4,7 @@ from json import JSONDecodeError
 
 import pytest
 
-from icalendar import Component
-from icalendar.error import JCalParsingError
+from icalendar import Component, JCalParsingError, Parameters
 
 
 def test_invalid_json():
@@ -40,6 +39,12 @@ def int_expected(request):
 
 @pytest.fixture(params=["a", [], {}, None, 1])
 def float_expected(request):
+    """Return everything else"""
+    return request.param
+
+
+@pytest.fixture(params=[[], {}, None, [None], [{}], [[]]])
+def parameter_value_expected(request):
     """Return everything else"""
     return request.param
 
@@ -118,6 +123,12 @@ def test_property_too_short(length, v_prop_example, v_prop):
     ):
         v_prop.from_jcal(jcal)
 
+    with pytest.raises(
+        JCalParsingError,
+        match="in Parameters: The property must be a list with at least 4 items.",
+    ):
+        Parameters.from_jcal_property(jcal)
+
 
 def test_property_name(v_prop_example, v_prop, str_expected):
     """The name is a string."""
@@ -139,6 +150,11 @@ def test_property_params(v_prop_example, v_prop, object_expected):
         match=f"\\[1\\] in {v_prop.__name__}: The parameters must be a mapping.",
     ):
         v_prop.from_jcal(jcal)
+    with pytest.raises(
+        JCalParsingError,
+        match="\\[1\\] in Parameters: The parameters must be a mapping.",
+    ):
+        Parameters.from_jcal_property(jcal)
 
 
 def test_property_type(v_prop_example, v_prop, str_expected):
@@ -162,3 +178,24 @@ def test_property_too_short_in_component(v_prop_example, v_prop, index):
         match=f"\\[1\\]\\[{index}\\] in Calendar: The property must be a list with at least 4 items.",
     ):
         Component.from_jcal(component)
+
+
+def test_parameters_keys(str_expected):
+    """The parameter keys should be all strings."""
+    if str_expected in ([], {}):
+        return  # TypeError: unhashable type
+    with pytest.raises(
+        JCalParsingError,
+        match="in Parameters: All parameter names must be strings.",
+    ):
+        Parameters.from_jcal_property(["", {str_expected: "value"}, "", ""])
+
+
+@pytest.mark.parametrize("key", ["a", "key"])
+def test_values_allowed_in_parameters(parameter_value_expected, key):
+    """The parameter keys should be all strings."""
+    with pytest.raises(
+        JCalParsingError,
+        match=f'\\[1\\]\\["{key}"\\] in Parameters: Parameter values must be a string, integer or float or a list of those.',
+    ):
+        Parameters.from_jcal_property(["", {key: parameter_value_expected}, "", ""])

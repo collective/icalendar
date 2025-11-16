@@ -15,6 +15,7 @@ from datetime import datetime, time
 from typing import TYPE_CHECKING, Any
 
 from icalendar.caselessdict import CaselessDict
+from icalendar.error import JCalParsingError
 from icalendar.parser_tools import (
     DEFAULT_ENCODING,
     ICAL_TYPE,
@@ -376,18 +377,39 @@ class Parameters(CaselessDict):
     @classmethod
     def from_jcal(cls, jcal: dict[str : str | list[str]]):
         """Parse jcal parameters."""
+        if not isinstance(jcal, dict):
+            raise JCalParsingError("The parameters must be a mapping.", cls)
+        for name, value in jcal.items():
+            if not isinstance(name, str):
+                raise JCalParsingError("All parameter names must be strings.", cls)
+            if (
+                isinstance(value, list)
+                and not all(isinstance(v, (str, int, float)) for v in value)
+            ) or not isinstance(value, (str, int, float)):
+                raise JCalParsingError(
+                    "Parameter values must be a string, integer or "
+                    "float or a list of those.",
+                    cls,
+                    name,
+                )
         return cls(jcal)
 
     @classmethod
-    def from_jcal_property(cls, ical_property: list):
+    def from_jcal_property(cls, jcal_property: list):
         """Create the parameters for a jcal property.
 
         Args:
-            ical_property (list): The jcal property [name, params, value, ...]
+            jcal_property (list): The jcal property [name, params, value, ...]
             default_value (str, optional): The default value of the property
                 If this is given, the default value will not be set.
         """
-        return cls.from_jcal(ical_property[1])
+        if not isinstance(jcal_property, list) or len(jcal_property) < 4:
+            raise JCalParsingError(
+                "The property must be a list with at least 4 items.", cls
+            )
+        jcal_params = jcal_property[1]
+        with JCalParsingError.reraise_with_path_added(1):
+            return cls.from_jcal(jcal_params)
 
 
 def escape_string(val):

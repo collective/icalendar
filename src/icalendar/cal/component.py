@@ -731,7 +731,8 @@ class Component(CaselessDict):
             prop_cls: type[VPROPERTY] = cls.types_factory.for_property(
                 prop_name, prop_value
             )
-            v_prop = prop_cls.from_jcal(prop)
+            with JCalParsingError.reraise_with_path_added(1, i):
+                v_prop = prop_cls.from_jcal(prop)
             # if we use the default value for that property, we can delete the
             # VALUE parameter
             if prop_cls == cls.types_factory.for_property(prop_name):
