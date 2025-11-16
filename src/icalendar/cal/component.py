@@ -708,7 +708,7 @@ class Component(CaselessDict):
             JCalParsingError: If the jcal provided is invalid.
             JSONDecodeError: If the string provided not valid JSON.
 
-        This reverses :attr:`to_json` and :attr:`to_jcal`.
+        This reverses :func:`to_json` and :func:`to_jcal`.
         """
         if isinstance(jcal, str):
             jcal = json.loads(jcal)
