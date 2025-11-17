@@ -16,7 +16,7 @@ from icalendar import (
     vPeriod,
     vTime,
 )
-from icalendar.prop import vCategory
+from icalendar.prop import vCategory, vMonth, vRecur, vSkip
 
 
 def test_invalid_json():
@@ -369,3 +369,97 @@ def test_validation_of_list():
         match="\\[3\\]\\[1\\] in test: Each item in the list must be a string.",
     ):
         JCalParsingError.validate_list_type(["a", 1, "c"], str, "test", path=3)
+
+
+def test_recurrence_rule_must_be_mapping(object_expected):
+    """The recurrence rule must be a mapping."""
+    with pytest.raises(
+        JCalParsingError,
+        match="\\[3\\] in vRecur: The recurrence rule must be a mapping with string keys.",
+    ):
+        vRecur.from_jcal(["rrule", {}, "recur", object_expected])
+
+
+def test_recurrence_rule_must_be_mapping_with_str(str_expected):
+    """The recurrence rule must be a mapping."""
+    if isinstance(str_expected, (dict, list)):
+        return  # skip unhashable type
+    with pytest.raises(
+        JCalParsingError,
+        match="\\[3\\] in vRecur: The recurrence rule must be a mapping with string keys.",
+    ):
+        vRecur.from_jcal(["rrule", {}, "recur", {str_expected: 1}])
+
+
+@pytest.mark.parametrize(
+    "key",
+    [
+        "COUNT",
+        "INTERVAL",
+        "BYSECOND",
+        "BYMINUTE",
+        "BYHOUR",
+        "BYWEEKNO",
+        "BYMONTHDAY",
+        "BYYEARDAY",
+    ],
+)
+@pytest.mark.parametrize("as_list", [False, True])
+def test_int_parameters(int_expected, key, as_list):
+    """The integer parameters must be integers."""
+    correct_value = 4
+    if as_list:
+        int_expected = [int_expected]
+        correct_value = [4]
+    # parse correct value
+    recur = vRecur.from_jcal(["rrule", {}, "recur", {key: correct_value}])
+    assert recur[key] == correct_value or recur[key] == [correct_value]
+    if int_expected == []:
+        return
+    # parse bad value
+    with pytest.raises(
+        JCalParsingError,
+        match=f'\\[3\\]\\["{key}"\\](?:\\[0\\])? in vInt: The value must be an integer.',
+    ):
+        vRecur.from_jcal(["rrule", {}, "recur", {key: int_expected}])
+
+
+@pytest.mark.parametrize("valid", [1, "1", "1L"])
+def test_parse_jcal_value_month(valid):
+    """Test parsing of vMonth jcal values."""
+    month = vMonth.parse_jcal_value(valid)
+    assert month == 1
+    assert month.leap == (valid == "1L")
+
+
+@pytest.mark.parametrize("invalid", ["abc", "", 1.5, [], {}, "1LL"])
+def test_parse_jcal_value_month_invalid(invalid):
+    """Test parsing of vMonth jcal values."""
+    with pytest.raises(
+        JCalParsingError,
+        match="in vMonth: The value must be a string or an integer.",
+    ):
+        vMonth.parse_jcal_value(invalid)
+
+
+def test_skip():
+    """The skip parameter works."""
+    assert vSkip.parse_jcal_value("OMIT") is vSkip.OMIT
+    with pytest.raises(
+        JCalParsingError,
+        match="in vSkip: The value must be a valid skip value.",
+    ):
+        vSkip.parse_jcal_value("INVALID")
+
+
+def test_frequency():
+    """The FREQ parameter must be valid."""
+    # parse correct value
+    recur = vRecur.from_jcal(["rrule", {}, "recur", {"FREQ": "DAILY"}])
+    assert recur["FREQ"] == "DAILY"
+    # parse bad value
+    with pytest.raises(
+        JCalParsingError,
+        match='\\[3\\]\\["FREQ"\\] in vFrequency: The value must be a valid frequency.',
+    ):
+        vRecur.from_jcal(["rrule", {}, "recur", {"FREQ": "INVALID"}])

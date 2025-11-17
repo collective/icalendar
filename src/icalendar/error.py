@@ -88,7 +88,7 @@ class JCalParsingError(ValueError):
         if parser:
             full_message = f"{repr_path}in {parser}: {message}"
         if value is not self._default_value:
-            full_message += f" got value: {value!r}"
+            full_message += f" Got value: {value!r}"
         super().__init__(full_message)
 
     @classmethod
@@ -158,25 +158,30 @@ class JCalParsingError(ValueError):
             )
 
     _type_names = {
-        str: "string",
-        int: "integer",
-        float: "float",
-        bool: "boolean",
+        str: "a string",
+        int: "an integer",
+        float: "a float",
+        bool: "a boolean",
     }
 
     @classmethod
     def validate_value_type(
         cls,
         jcal,
-        expected_type: type[str | int | float | bool],
+        expected_type: type[str | int | float | bool]
+        | tuple[type[str | int | float | bool], ...],
         parser: str | type = "",
         path: list[str | int] | None | str | int = None,
     ):
         """Validate the type of a jcal value."""
         if not isinstance(jcal, expected_type):
-            type_name = cls._type_names[expected_type]
+            type_name = (
+                cls._type_names[expected_type]
+                if isinstance(expected_type, type)
+                else " or ".join(cls._type_names[t] for t in expected_type)
+            )
             raise cls(
-                f"The value must be a {type_name}.",
+                f"The value must be {type_name}.",
                 parser=parser,
                 value=jcal,
                 path=path,
@@ -203,7 +208,7 @@ class JCalParsingError(ValueError):
             if not isinstance(item, expected_type):
                 type_name = cls._type_names[expected_type]
                 raise cls(
-                    f"Each item in the list must be a {type_name}.",
+                    f"Each item in the list must be {type_name}.",
                     parser=parser,
                     value=item,
                     path=path + [index],

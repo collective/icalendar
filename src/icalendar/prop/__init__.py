@@ -290,6 +290,12 @@ class vText(str):
             params=Parameters.from_jcal_property(jcal_property),
         )
 
+    @classmethod
+    def parse_jcal_value(cls, jcal_value: Any) -> vText:
+        """Parse a jcal value into a vText."""
+        JCalParsingError.validate_value_type(jcal_value, (str, int, float), cls)
+        return cls(str(jcal_value))
+
 
 class vCalAddress(str):
     r"""Calendar User Address
@@ -698,6 +704,16 @@ class vInt(int):
             jcal_property[3],
             params=Parameters.from_jcal_property(jcal_property),
         )
+
+    @classmethod
+    def parse_jcal_value(cls, value: Any) -> int:
+        """Parse a jcal value for vInt.
+
+        Raises:
+            JCalParsingError: If the value is not an int.
+        """
+        JCalParsingError.validate_value_type(value, int, cls)
+        return cls(value)
 
 
 class vDDDLists:
@@ -1762,6 +1778,21 @@ class vWeekday(str):
         except Exception as e:
             raise ValueError(f"Expected weekday abbrevation, got: {ical}") from e
 
+    @classmethod
+    def parse_jcal_value(cls, value: Any) -> vWeekday:
+        """Parse a jcal value for vWeekday.
+
+        Raises:
+            JCalParsingError: If the value is not a valid weekday.
+        """
+        JCalParsingError.validate_value_type(value, str, cls)
+        try:
+            return cls(value)
+        except ValueError as e:
+            raise JCalParsingError(
+                "The value must be a valid weekday.", cls, value=value
+            ) from e
+
 
 class vFrequency(str):
     """A simple class that catches illegal values."""
@@ -1807,6 +1838,21 @@ class vFrequency(str):
         except Exception as e:
             raise ValueError(f"Expected frequency, got: {ical}") from e
 
+    @classmethod
+    def parse_jcal_value(cls, value: Any) -> vFrequency:
+        """Parse a jcal value for vFrequency.
+
+        Raises:
+            JCalParsingError: If the value is not a valid frequency.
+        """
+        JCalParsingError.validate_value_type(value, str, cls)
+        try:
+            return cls(value)
+        except ValueError as e:
+            raise JCalParsingError(
+                "The value must be a valid frequency.", cls, value=value
+            ) from e
+
 
 class vMonth(int):
     """The number of the month for recurrence.
@@ -1848,7 +1894,7 @@ class vMonth(int):
                 month_index = int(month)
                 leap = False
             else:
-                if month[-1] != "L" and month[:-1].isdigit():
+                if not month or (month[-1] != "L" and month[:-1].isdigit()):
                     raise ValueError(f"Invalid month: {month!r}")
                 month_index = int(month[:-1])
                 leap = True
@@ -1885,6 +1931,21 @@ class vMonth(int):
         """str(self)"""
         return f"{int(self)}{'L' if self.leap else ''}"
 
+    @classmethod
+    def parse_jcal_value(cls, value: Any) -> vMonth:
+        """Parse a jcal value for vMonth.
+
+        Raises:
+            JCalParsingError: If the value is not a valid month.
+        """
+        JCalParsingError.validate_value_type(value, (str, int), cls)
+        try:
+            return cls(value)
+        except ValueError as e:
+            raise JCalParsingError(
+                "The value must be a string or an integer.", cls, value=value
+            ) from e
+
 
 class vSkip(vText, Enum):
     """Skip values for RRULE.
@@ -1914,6 +1975,21 @@ class vSkip(vText, Enum):
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self._name_!r})"
+
+    @classmethod
+    def parse_jcal_value(cls, value: Any) -> vSkip:
+        """Parse a jcal value for vSkip.
+
+        Raises:
+            JCalParsingError: If the value is not a valid skip value.
+        """
+        JCalParsingError.validate_value_type(value, str, cls)
+        try:
+            return cls[value.upper()]
+        except KeyError as e:
+            raise JCalParsingError(
+                "The value must be a valid skip value.", cls, value=value
+            ) from e
 
 
 class vRecur(CaselessDict):
@@ -2052,7 +2128,8 @@ class vRecur(CaselessDict):
             "BYDAY": vWeekday,
             "FREQ": vFrequency,
             "BYWEEKDAY": vWeekday,
-            "SKIP": vSkip,
+            "SKIP": vSkip,  # RFC 7529
+            "RSCALE": vText,  # RFC 7529
         }
     )
 
@@ -2130,14 +2207,31 @@ class vRecur(CaselessDict):
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jcal from :rfc:`7265`."""
         JCalParsingError.validate_property(jcal_property, cls)
-        Parameters.from_jcal_property(jcal_property)
-        recur = jcal_property[3].copy()
-        if "until" in recur:
-            recur["until"] = [vDDDTypes.parse_jcal_value(recur["until"])]
-        return cls(
-            recur,
-            params=Parameters.from_jcal_property(jcal_property),
-        )
+        params = Parameters.from_jcal_property(jcal_property)
+        if not isinstance(jcal_property[3], dict) or not all(
+            isinstance(k, str) for k in jcal_property[3]
+        ):
+            raise JCalParsingError(
+                "The recurrence rule must be a mapping with string keys.",
+                cls,
+                3,
+                value=jcal_property[3],
+            )
+        recur = {}
+        for key, value in jcal_property[3].items():
+            value_type = cls.types.get(key, vText)
+            with JCalParsingError.reraise_with_path_added(3, key):
+                if isinstance(value, list):
+                    recur[key.lower()] = values = []
+                    for i, v in enumerate(value):
+                        with JCalParsingError.reraise_with_path_added(i):
+                            values.append(value_type.parse_jcal_value(v))
+                else:
+                    recur[key] = value_type.parse_jcal_value(value)
+        until = recur.get("until")
+        if until is not None and not isinstance(until, list):
+            recur["until"] = [until]
+        return cls(recur, params=params)
 
 
 TIME_JCAL_REGEX = re.compile(
