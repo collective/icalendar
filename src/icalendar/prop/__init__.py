@@ -280,7 +280,7 @@ class vText(str):
         name = jcal_property[0]
         if name == "categories":
             return vCategory.from_jcal(jcal_property)
-        string = jcal_property[3]
+        string = jcal_property[3]  # TODO: accept list or string but join with ;
         if name == "request-status":  # TODO: maybe add a vRequestStatus class?
             string = ";".join(jcal_property[3])
         JCalParsingError.validate_value_type(string, str, cls, 3)
