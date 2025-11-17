@@ -121,20 +121,24 @@ class Available(Component):
 
         Arguments:
             categories: The :attr:`categories` of the Available component.
-            comments: The :attr:`Component.comments` of the Available component.
-            concepts: The :attr:`Component.concepts` of the Available component.
+            comments: The :attr:`~icalendar.Component.comments` of the Available
+                component.
+            concepts: The :attr:`~icalendar.Component.concepts` of the Available
+                component.
             contacts: The :attr:`contacts` of the Available component.
-            created: The :attr:`Component.created` of the Available component.
+            created: The :attr:`~icalendar.Component.created` of the Available
+                component.
             description: The :attr:`description` of the Available component.
             end: The :attr:`end` of the Available component.
-            last_modified: The :attr:`Component.last_modified` of the
+            last_modified: The :attr:`~icalendar.Component.last_modified` of the
                 Available component.
-            links: The :attr:`Component.links` of the Available component.
+            links: The :attr:`~icalendar.Component.links` of the Available component.
             location: The :attr:`location` of the Available component.
-            refids: :attr:`Component.refids` of the Available component.
-            related_to: :attr:`Component.related_to` of the Available component.
+            refids: :attr:`~icalendar.Component.refids` of the Available component.
+            related_to: :attr:`~icalendar.Component.related_to` of the Available
+                component.
             sequence: The :attr:`sequence` of the Available component.
-            stamp: The :attr:`Component.stamp` of the Available component.
+            stamp: The :attr:`~icalendar.Component.stamp` of the Available component.
                 If None, this is set to the current time.
             start: The :attr:`start` of the Available component.
             summary: The :attr:`summary` of the Available component.

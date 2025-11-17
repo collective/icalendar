@@ -546,19 +546,19 @@ Description:
             calscale: The :attr:`calscale` of the calendar.
             categories: The :attr:`categories` of the calendar.
             color: The :attr:`color` of the calendar.
-            concepts: The :attr:`Component.concepts` of the calendar.
+            concepts: The :attr:`~icalendar.Component.concepts` of the calendar.
             description: The :attr:`description` of the calendar.
             language: The language for the calendar. Used to generate localized `prodid`.
-            last_modified: The :attr:`Component.last_modified` of the calendar.
-            links: The :attr:`Component.links` of the calendar.
+            last_modified: The :attr:`~icalendar.Component.last_modified` of the calendar.
+            links: The :attr:`~icalendar.Component.links` of the calendar.
             method: The :attr:`method` of the calendar.
             name: The :attr:`calendar_name` of the calendar.
             organization: The organization name. Used to generate `prodid` if not provided.
             prodid: The :attr:`prodid` of the component. If None and organization is provided,
                 generates a `prodid` in format "-//organization//name//language".
             refresh_interval: The :attr:`refresh_interval` of the calendar.
-            refids: :attr:`Component.refids` of the calendar.
-            related_to: :attr:`Component.related_to` of the calendar.
+            refids: :attr:`~icalendar.Component.refids` of the calendar.
+            related_to: :attr:`~icalendar.Component.related_to` of the calendar.
             source: The :attr:`source` of the calendar.
             uid: The :attr:`uid` of the calendar.
                 If None, this is set to a new :func:`uuid.uuid4`.

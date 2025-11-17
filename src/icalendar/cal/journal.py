@@ -208,19 +208,20 @@ class Journal(Component):
             categories: The :attr:`categories` of the journal.
             classification: The :attr:`classification` of the journal.
             color: The :attr:`color` of the journal.
-            comments: The :attr:`Component.comments` of the journal.
-            concepts: The :attr:`Component.concepts` of the journal.
+            comments: The :attr:`~icalendar.Component.comments` of the journal.
+            concepts: The :attr:`~icalendar.Component.concepts` of the journal.
             contacts: The :attr:`contacts` of the journal.
-            created: The :attr:`Component.created` of the journal.
+            created: The :attr:`~icalendar.Component.created` of the journal.
             description: The :attr:`description` of the journal.
             end: The :attr:`end` of the journal.
-            last_modified: The :attr:`Component.last_modified` of the journal.
-            links: The :attr:`Component.links` of the journal.
+            last_modified: The :attr:`~icalendar.Component.last_modified` of
+                the journal.
+            links: The :attr:`~icalendar.Component.links` of the journal.
             organizer: The :attr:`organizer` of the journal.
-            refids: :attr:`Component.refids` of the journal.
-            related_to: :attr:`Component.related_to` of the journal.
+            refids: :attr:`~icalendar.Component.refids` of the journal.
+            related_to: :attr:`~icalendar.Component.related_to` of the journal.
             sequence: The :attr:`sequence` of the journal.
-            stamp: The :attr:`Component.stamp` of the journal.
+            stamp: The :attr:`~icalendar.Component.stamp` of the journal.
                 If None, this is set to the current time.
             start: The :attr:`start` of the journal.
             status: The :attr:`status` of the journal.

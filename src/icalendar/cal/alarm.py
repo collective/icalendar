@@ -264,11 +264,11 @@ class Alarm(Component):
 
         Arguments:
             attendees: The :attr:`attendees` of the alarm.
-            concepts: The :attr:`Component.concepts` of the alarm.
+            concepts: The :attr:`~icalendar.Component.concepts` of the alarm.
             description: The :attr:`description` of the alarm.
-            links: The :attr:`Component.links` of the alarm.
-            refids: :attr:`Component.refids` of the alarm.
-            related_to: :attr:`Component.related_to` of the alarm.
+            links: The :attr:`~icalendar.Component.links` of the alarm.
+            refids: :attr:`~icalendar.Component.refids` of the alarm.
+            related_to: :attr:`~icalendar.Component.related_to` of the alarm.
             summary: The :attr:`summary` of the alarm.
             uid: The :attr:`uid` of the alarm.
 
