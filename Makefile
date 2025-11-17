@@ -60,6 +60,7 @@ html: .venv  ## Build html
 livehtml: .venv  ## Rebuild Sphinx documentation on changes, with live-reload in the browser
 	cd "$(DOCS_DIR)" && ${SPHINXAUTOBUILD} \
 		--watch "../src/icalendar/" \
+		--watch "../CHANGES.rst" \
 		--re-ignore ".*\\.swp|.*\\.typed" \
 		--ignore "../src/icalendar/tests" \
 		--ignore "../src/icalendar/fuzzing" \
