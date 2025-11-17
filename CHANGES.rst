@@ -34,7 +34,7 @@ New features:
 
 - Add compatibility to :rfc:`9253`:
   
-  - Add new property types :class:`icalender.vUid` and :class:`icalender.vXmlReference`.
+  - Add new property types :class:`icalendar.vUid` and :class:`icalendar.vXmlReference`.
   - Add properties to all components: :attr:`Component.concepts`, :py:attr:`Component.links`, :py:attr:`Component.refids`, :py:attr:`Component.related_to`.
   - Add new values to :py:class:`icalendar.enum.RELTYPE`.
   - Add ``LABEL``, ``GAP``, and ``VALUE`` parameters to property values affected by :rfc:`9253`.
