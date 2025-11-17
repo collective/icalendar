@@ -359,3 +359,13 @@ def test_invalid_category_type(str_expected, index):
         match=f"\\[{index + 3}\\] in vCategory: The value must be a string.",
     ):
         vCategory.from_jcal(["categories", {}, "text"] + [""] * index + [str_expected])
+
+
+def test_validation_of_list():
+    """Check the list validation."""
+    JCalParsingError.validate_list_type(["a", "b", "c"], str, "test", ["path"])
+    with pytest.raises(
+        JCalParsingError,
+        match="\\[3\\]\\[1\\] in test: Each item in the list must be a string.",
+    ):
+        JCalParsingError.validate_list_type(["a", 1, "c"], str, "test", path=3)

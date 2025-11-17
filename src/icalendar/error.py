@@ -73,11 +73,7 @@ class JCalParsingError(ValueError):
         value: object = _default_value,
     ):
         """Create a new JCalParsingError."""
-        if path is None:
-            path = []
-        elif not isinstance(path, list):
-            path = [path]
-        self.path = path
+        self.path = self._get_path(path)
         if not isinstance(parser, str):
             parser = parser.__name__
         self.parser = parser
@@ -85,8 +81,8 @@ class JCalParsingError(ValueError):
         self.value = value
         full_message = message
         repr_path = ""
-        if path:
-            repr_path = "".join([f"[{_repr_index(index)}]" for index in path])
+        if self.path:
+            repr_path = "".join([f"[{_repr_index(index)}]" for index in self.path])
             full_message = f"{repr_path}: {full_message}"
             repr_path += " "
         if parser:
@@ -113,6 +109,15 @@ class JCalParsingError(ValueError):
                 value=e.value,
             ).with_traceback(e.__traceback__) from e
 
+    @staticmethod
+    def _get_path(path: list[str | int] | None | str | int) -> list[str | int]:
+        """Return the path as a list."""
+        if path is None:
+            path = []
+        elif not isinstance(path, list):
+            path = [path]
+        return path
+
     @classmethod
     def validate_property(
         cls,
@@ -125,10 +130,7 @@ class JCalParsingError(ValueError):
         Raises:
             JCalParsingError: if the property is not valid.
         """
-        if path is None:
-            path = []
-        elif not isinstance(path, list):
-            path = [path]
+        path = cls._get_path(path)
         if not isinstance(jcal_property, list) or len(jcal_property) < 4:
             raise JCalParsingError(
                 "The property must be a list with at least 4 items.",
@@ -179,6 +181,33 @@ class JCalParsingError(ValueError):
                 value=jcal,
                 path=path,
             )
+
+    @classmethod
+    def validate_list_type(
+        cls,
+        jcal,
+        expected_type: type[str | int | float | bool],
+        parser: str | type = "",
+        path: list[str | int] | None | str | int = None,
+    ):
+        """Validate the type of each item in a jcal list."""
+        path = cls._get_path(path)
+        if not isinstance(jcal, list):
+            raise cls(
+                "The value must be a list.",
+                parser=parser,
+                value=jcal,
+                path=path,
+            )
+        for index, item in enumerate(jcal):
+            if not isinstance(item, expected_type):
+                type_name = cls._type_names[expected_type]
+                raise cls(
+                    f"Each item in the list must be a {type_name}.",
+                    parser=parser,
+                    value=item,
+                    path=path + [index],
+                )
 
 
 __all__ = [
