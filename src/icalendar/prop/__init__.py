@@ -873,7 +873,7 @@ class vDatetime(TimeBase):
             >>> datetime.tzname()
             'EST'
 
-        The following represents March 2, 2021 at 10:15 in Berlin:
+        The following represents March 2, 2021 at 10:15 AM in Berlin:
 
         .. code-block:: pycon
 
