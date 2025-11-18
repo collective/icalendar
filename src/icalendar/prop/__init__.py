@@ -847,7 +847,7 @@ class vDatetime(TimeBase):
         vDatetime is timezone aware and uses a timezone library.
         When a vDatetime object is created from an
         ical string, you can pass a valid timezone identifier. When a
-        vDatetime object is created from a python datetime object, it uses the
+        vDatetime object is created from a Python :py:mod:`datetime` object, it uses the
         tzinfo component, if present. Otherwise a timezone-naive object is
         created. Be aware that there are certain limitations with timezone naive
         DATE-TIME components in the icalendar standard.
