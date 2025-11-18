@@ -826,13 +826,16 @@ class vDatetime(TimeBase):
             date-time  = date "T" time
 
             date       = date-value
-            time       = time-hour time-minute time-second [time-utc]
-
-            date-value = date-fullyear date-month date-mday
-            time-hour  = 2DIGIT        ;00-23
-            time-minute = 2DIGIT       ;00-59
-            time-second = 2DIGIT       ;00-60
-            time-utc   = "Z"
+            date-value         = date-fullyear date-month date-mday
+            date-fullyear      = 4DIGIT
+            date-month         = 2DIGIT        ;01-12
+            date-mday          = 2DIGIT        ;01-28, 01-29, 01-30, 01-31
+                                               ;based on month/year
+            time               = time-hour time-minute time-second [time-utc]
+            time-hour          = 2DIGIT        ;00-23
+            time-minute        = 2DIGIT        ;00-59
+            time-second        = 2DIGIT        ;00-60
+            time-utc           = "Z"
 
         For example, the format looks like:
 
