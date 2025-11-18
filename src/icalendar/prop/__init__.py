@@ -853,7 +853,7 @@ class vDatetime(TimeBase):
         DATE-TIME components in the icalendar standard.
 
     Example:
-        The following represents March 2, 2021 at 10:15 with local time:
+        The following represents March 2, 2021 at 10:15 AM with local time:
 
         .. code-block:: pycon
 
