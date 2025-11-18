@@ -102,7 +102,7 @@ Minor changes:
 - Fix Contributing, Changelog, License links failed in ``README.md`` by renewing its link. See `Issue 959 <https://github.com/collective/icalendar/issues/959>`_.
 - Fix more examples link in ``README.md``. See `Issue 958 <https://github.com/collective/icalendar/issues/958>`_.
 - Add ``CODEOWNERS`` file for automatic pull request review assignment. See `Issue 945 <https://github.com/collective/icalendar/issues/945>`_.
-- Improve vDatetime documentation. See `Issue #946 <https://github.com/collective/icalendar/issues/946>`_.
+- Improve :py:class:`icalendar.prop.vDatetime` documentation. See `Issue #946 <https://github.com/collective/icalendar/issues/946>`_.
 
 Breaking changes:
 
