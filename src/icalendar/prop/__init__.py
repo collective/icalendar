@@ -837,7 +837,7 @@ class vDatetime(TimeBase):
             time-second        = 2DIGIT        ;00-60
             time-utc           = "Z"
 
-        For example, the format looks like:
+        The following is the representation of the date-time format.
 
         .. code-block:: text
 
