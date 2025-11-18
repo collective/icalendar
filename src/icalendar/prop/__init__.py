@@ -865,7 +865,7 @@ class vDatetime(TimeBase):
             >>> datetime.minute
             15
 
-        The following represents March 2, 2021 at 10:15 in New York:
+        The following represents March 2, 2021 at 10:15 AM in New York:
 
         .. code-block:: pycon
 
