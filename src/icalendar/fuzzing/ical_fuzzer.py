@@ -24,63 +24,30 @@ with atheris.instrument_imports():
     import icalendar.cal.calendar
     from icalendar.tests.fuzzed import fuzz_v1_calendar
 
-_value_error_matches = [
-    "component",
-    "parse",
-    "Expected",
-    "Wrong date format",
-    "END encountered",
-    "vDDD",
-    "recurrence",
-    "Offset must",
-    "Invalid iCalendar",
-    "alue MUST",
-    "Key name",
-    "Invalid content line",
-    "does not exist",
-    "base 64",
-    "must use datetime",
-    "Unknown date type",
-    "Wrong",
-    "Start time",
-    "iCalendar",
-    "recurrence",
-    "float, float",
-    "utc offset",
-    "parent",
-    "MUST be a datetime",
-    "Invalid month:",
-]
-
 
 @atheris.instrument_func
 def TestOneInput(data):
     fdp = atheris.FuzzedDataProvider(data)
-    try:
-        multiple = fdp.ConsumeBool()
-        should_walk = fdp.ConsumeBool()
-        calendar_string = fdp.ConsumeString(fdp.remaining_bytes())
-        print("--- start calendar ---")
-        with contextlib.suppress(UnicodeEncodeError):
-            # print the ICS file for the test case extraction
-            # see https://stackoverflow.com/a/27367173/1320237
-            print(
-                base64.b64encode(
-                    calendar_string.encode("UTF-8", "surrogateescape")
-                ).decode("ASCII")
+    multiple = fdp.ConsumeBool()
+    should_walk = fdp.ConsumeBool()
+    calendar_string = fdp.ConsumeString(fdp.remaining_bytes())
+    print("--- start calendar ---")
+    with contextlib.suppress(UnicodeEncodeError):
+        # print the ICS file for the test case extraction
+        # see https://stackoverflow.com/a/27367173/1320237
+        print(
+            base64.b64encode(calendar_string.encode("UTF-8", "surrogateescape")).decode(
+                "ASCII"
             )
-        print("--- end calendar ---")
-
-        fuzz_v1_calendar(
-            icalendar.cal.calendar.Calendar.from_ical,
-            calendar_string,
-            multiple,
-            should_walk,
         )
-    except (ValueError, TypeError) as e:
-        if any(m in str(e) for m in _value_error_matches):
-            return -1
-        raise
+
+    fuzz_v1_calendar(
+        icalendar.cal.calendar.Calendar.from_ical,
+        calendar_string,
+        multiple,
+        should_walk,
+    )
+    print("--- end calendar ---")
 
 
 def main():

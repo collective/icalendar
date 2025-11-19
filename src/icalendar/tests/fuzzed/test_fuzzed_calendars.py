@@ -5,11 +5,11 @@ To add a new calendar test, echo the base64 calendar string into a file.
 - The file is in src/icalendar/tests/calendars
 - The file name contains "fuzz_testcase" and ends with ".ics"
 
-Example:
+Templace code to create a new test case:
 
 .. code-block:: console
 
-    echo "QmVHSU46CkRVRTpQCkRVRTo=" | base64 -d > src/icalendar/tests/calendars/fuzz_testcase_0_char_in_component_name.ics
+    echo "" | base64 -d > src/icalendar/tests/calendars/fuzz_testcase_.ics
 
 """
 
