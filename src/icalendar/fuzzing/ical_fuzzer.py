@@ -22,7 +22,7 @@ import atheris
 
 with atheris.instrument_imports():
     import icalendar.cal.calendar
-    from icalendar.tests.fuzzed import fuzz_calendar_v1
+    from icalendar.tests.fuzzed import fuzz_v1_calendar
 
 _value_error_matches = [
     "component",
@@ -70,7 +70,7 @@ def TestOneInput(data):
             )
         print("--- end calendar ---")
 
-        fuzz_calendar_v1(
+        fuzz_v1_calendar(
             icalendar.cal.calendar.Calendar.from_ical,
             calendar_string,
             multiple,

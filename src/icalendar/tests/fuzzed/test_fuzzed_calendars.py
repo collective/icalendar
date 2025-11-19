@@ -1,15 +1,29 @@
-"""This test tests all fuzzed calendars."""
+"""This test tests all fuzzed calendars.
+
+To add a new calendar test, echo the base64 calendar string into a file.
+
+- The file is in src/icalendar/tests/calendars
+- The file name contains "fuzz_testcase" and ends with ".ics"
+
+Example:
+
+.. code-block:: console
+
+    echo "QmVHSU46CkRVRTpQCkRVRTo=" | base64 -d > src/icalendar/tests/calendars/fuzz_testcase_0_char_in_component_name.ics
+
+"""
 
 import icalendar.cal.calendar
-from icalendar.tests.fuzzed import fuzz_calendar_v1
+from icalendar.tests.fuzzed import fuzz_v1_calendar
 
 
-def test_fuzz_v1(fuzz_v1_calendar):
+def test_fuzz_v1(fuzz_v1_calendar_path):
     """Test a calendar."""
-    with open(fuzz_v1_calendar, "rb") as f:
-        fuzz_calendar_v1(
-            icalendar.cal.calendar.Calendar.from_ical,
-            f.read(),
-            multiple=True,
-            should_walk=True,
-        )
+    calendar = fuzz_v1_calendar_path.read_bytes()
+    print(repr(calendar))
+    fuzz_v1_calendar(
+        icalendar.cal.calendar.Calendar.from_ical,
+        calendar,
+        multiple=True,
+        should_walk=True,
+    )

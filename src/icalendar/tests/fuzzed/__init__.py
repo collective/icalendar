@@ -6,7 +6,7 @@ Some more tests can be added to make sure that the behavior works properly.
 """
 
 
-def fuzz_calendar_v1(
+def fuzz_v1_calendar(
     from_ical, calendar_string: str, multiple: bool, should_walk: bool
 ):
     """Take a from_ical function and reproduce the error.

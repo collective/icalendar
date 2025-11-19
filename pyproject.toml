@@ -195,6 +195,7 @@ extend-safe-fixes = [
     "SLF001", # Private member accessed
     "N999",   # module name
     "PT027",  # assertRaises
+    "FBT001", # Boolean positional argument in function definition
 ]
 "src/icalendar/prop/__init__.py" = [
     "N801",   # Class name should use CamelCase

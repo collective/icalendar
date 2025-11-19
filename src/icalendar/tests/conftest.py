@@ -161,6 +161,8 @@ def in_timezone(request, tzp):
     return request.param
 
 
+FUZZ_TESTCASES_BROKEN_CALENDARS = "fuzz_testcase"
+
 # exclude broken calendars here
 ICS_FILES_EXCLUDE = (
     "big_bad_calendar.ics",
@@ -176,7 +178,9 @@ ICS_FILES = [
     for file in itertools.chain(
         CALENDARS_FOLDER.iterdir(), TIMEZONES_FOLDER.iterdir(), EVENTS_FOLDER.iterdir()
     )
-    if file.name not in ICS_FILES_EXCLUDE and file.suffix == ".ics"
+    if file.name not in ICS_FILES_EXCLUDE
+    and file.suffix == ".ics"
+    and FUZZ_TESTCASES_BROKEN_CALENDARS not in file.name
 ]
 
 
@@ -191,11 +195,15 @@ def ics_file(tzp, calendars, timezones, events, request) -> Component:
     raise ValueError(f"Could not find file {ics_file}.")
 
 
-FUZZ_V1 = [key for key in CALENDARS_FOLDER.iterdir() if "fuzz-testcase" in str(key)]
+FUZZ_V1 = [
+    key
+    for key in CALENDARS_FOLDER.iterdir()
+    if FUZZ_TESTCASES_BROKEN_CALENDARS in str(key)
+]
 
 
 @pytest.fixture(params=FUZZ_V1)
-def fuzz_v1_calendar(request):
+def fuzz_v1_calendar_path(request):
     """Clusterfuzz calendars."""
     return request.param
 

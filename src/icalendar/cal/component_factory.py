@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from typing import TYPE_CHECKING
 
 from icalendar.caselessdict import CaselessDict
@@ -56,7 +57,9 @@ class ComponentFactory(CaselessDict):
         if component_class is None:
             from icalendar.cal.component import Component
 
-            component_class = type(name, (Component,), {"name": name.upper()})
+            component_class = type(
+                re.sub(r"[^\w]+", "", name), (Component,), {"name": name.upper()}
+            )
             self.add_component_class(component_class)
         return component_class
 
