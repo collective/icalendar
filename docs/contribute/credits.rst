@@ -111,7 +111,7 @@ Contributors
 - Ville Skyttä <ville.skytta@iki.fi>
 - Wichert Akkerman <wichert@wiggy.net>
 - Howard Liao <howard940114@gmail.com>
-
+- Zepyoor Khechadoorian <zepyoorkhechadoorian@gmail.com>
 
 Complete list
 -------------

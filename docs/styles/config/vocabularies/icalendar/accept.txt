@@ -22,17 +22,19 @@ docstrings?
 (?i)Garbas
 (?i)Geier
 (?i)Grisel
+Hacktoberfest
 (?i)hajdbo
 (?i)Hanchrow
+(?i)Hanoka
 iCal
 (?i)icalendar
-(?i)Hanoka
 (?i)ilya
 (?i)Jannis
 (?i)Jeroen
 (?i)Jochen
 Jouni
 (?i)Kamil
+Khechadoorian
 (?i)Kolab
 (?i)Kunzmann
 (?i)Laros
@@ -96,3 +98,4 @@ vCard
 (?i)Wichert
 (?i)Wieser
 (?i)Zeidler
+Zepyoor

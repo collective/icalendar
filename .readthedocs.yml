@@ -21,9 +21,12 @@ build:
     # This is a special exit code on Read the Docs that will cancel the build immediately.
     - |
       if [ "$READTHEDOCS_VERSION_TYPE" = "external" ] && git diff --quiet origin/main -- . docs/ \
-        src/icalendar/*.py \
-        *.rst \
+        src/icalendar/**/*.py \
+        .github/workflows/documentation.yml
+        .github/workflows/rtd-pr-preview.yml
         .readthedocs.yaml \
+        .vale.ini \
+        CHANGES.rst \
         Makefile \
         pyproject.toml \
         ':!src/icalendar/fuzzing' \
