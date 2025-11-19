@@ -34,6 +34,7 @@ iCal
 (?i)Jochen
 Jouni
 (?i)Kamil
+Khechadoorian
 (?i)Kolab
 (?i)Kunzmann
 (?i)Laros
@@ -97,3 +98,4 @@ vCard
 (?i)Wichert
 (?i)Wieser
 (?i)Zeidler
+Zepyoor

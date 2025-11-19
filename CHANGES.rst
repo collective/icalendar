@@ -24,15 +24,20 @@ We still recommend checking out the new features and giving feedback in the repo
 7.0.0a2 (unreleased)
 --------------------
 
-Minor changes:
+Minor changes
+~~~~~~~~~~~~~
 
+- Convert changelog section labels to reStructuredText subheadings for improved ReadTheDocs navigation. See `Issue 982 <https://github.com/collective/icalendar/issues/982>`_.
 - Move sections in Table of Content of Reference guide.
+- Improve :py:class:`icalendar.prop.vDatetime` documentation. See `Issue #946 <https://github.com/collective/icalendar/issues/946>`_.
 
-Breaking changes:
+Breaking changes
+~~~~~~~~~~~~~~~~
 
 - ...
 
-New features:
+New features
+~~~~~~~~~~~~
 
 - Add compatibility to :rfc:`9253`:
   
@@ -52,36 +57,43 @@ New features:
 - Added first-time contributors section to Contributing. See `Issue 934 <https://github.com/collective/icalendar/issues/934>`_.
 - Revised check of which files trigger a documentation build on Read the Docs. See `Issue 848 <https://github.com/collective/icalendar/issues/848>`_.
 - Created a separate path to contribute to documentation. See `Issue 929 <https://github.com/collective/icalendar/issues/929>`_.
+- Added a code of conduct. See `Issue 907 <https://github.com/collective/icalendar/issues/907>`_.
+- Added redirects of moved files and 404 not found page to catch any other obsolete URLs. See `Issue 959 <https://github.com/collective/icalendar/issues/959>`_.
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Make sure a component's ``conferences`` property adds ``VALUE=URI`` if the conference is created as a URI.
 
 6.3.2 (2025-11-03)
 ------------------
 
-Minor changes:
+Minor changes
+~~~~~~~~~~~~~
 
 - Add PyData Theme version switcher to documentation. See `Issue 825`_.
 
 5.0.14 (2025-11-03)
 -------------------
 
-Minor changes:
+Minor changes
+~~~~~~~~~~~~~
 
 - Add PyData Theme version switcher to documentation. See `Issue 825`_.
 
 4.1.2 (2025-11-03)
 ------------------
 
-Minor changes:
+Minor changes
+~~~~~~~~~~~~~
 
 - Add PyData Theme version switcher to documentation. See `Issue 825`_.
 
 7.0.0a1 (28-10-2025)
 --------------------
 
-Minor changes:
+Minor changes
+~~~~~~~~~~~~~
 
 - Split up ``cal.py`` into different files as sub-package.
 - Format more source code with ruff.
@@ -115,7 +127,8 @@ Minor changes:
 - Fix more examples link in ``README.md``. See `Issue 958 <https://github.com/collective/icalendar/issues/958>`_.
 - Add ``CODEOWNERS`` file for automatic pull request review assignment. See `Issue 945 <https://github.com/collective/icalendar/issues/945>`_.
 
-Breaking changes:
+Breaking changes
+~~~~~~~~~~~~~~~~
 
 - Correctly throw a ``TypeError`` for wrong types during property creation where a ``ValueError`` was thrown before.
 - Move ``types_factory`` into ``Component.types_factory``
@@ -123,7 +136,8 @@ Breaking changes:
 - Move ``icalendar.cal.IncompleteComponent`` error into ``icalendar.error``.
 - Remove ``icalendar.UIDGenerator``. Use Python's built-in `uuid library <https://docs.python.org/3/library/uuid.html>`_ instead.
 
-New features:
+New features
+~~~~~~~~~~~~
 
 - Add ``new()`` to ``icalendar.Calendar`` to set required attributes. See `Issue 569 <https://github.com/collective/icalendar/pull/569>`_.
 - Add ``new()`` to ``Alarm``, ``Event``, ``Todo``, ``FreeBusy``, ``Component``, and ``Journal`` components. See `Issue 843 <https://github.com/collective/icalendar/issues/843>`_.
@@ -176,7 +190,8 @@ New features:
 - Document installation of icalendar on Fedora. See `Issue 704 <https://github.com/collective/icalendar/issues/704>`_.
 - Miscellaneous documentation follow-up fixes. See `Issue 919 <https://github.com/collective/icalendar/issues/919>`_.
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Fix ``Todo.end`` to return ``start`` for date-only ``DTSTART`` (not ``start + 1 day``). Events keep existing behavior. See `Issue 898 <https://github.com/collective/icalendar/issues/898>`_.
 - Fix ``AssertionError`` when converting ``VTIMEZONE`` components with only ``DAYLIGHT`` subcomponent (no ``STANDARD``) to pytz timezones. The code now handles cases where a timezone definition contains only DST transitions by calculating the DST offset from ``TZOFFSETFROM`` and ``TZOFFSETTO``. Test case contributed by @niccokunzmann in `PR 379 <https://github.com/collective/icalendar/pull/379>`_. See `Issue 321 <https://github.com/collective/icalendar/issues/321>`_.
@@ -193,22 +208,26 @@ Bug fixes:
 6.3.1 (2025-05-20)
 ------------------
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Remove forced quoting from parameters with space and single quote. See `Issue 836 <https://github.com/collective/icalendar/issues/836>`_.
 
 6.3.0 (2025-05-15)
 ------------------
 
-Minor changes:
+Minor changes
+~~~~~~~~~~~~~
 
 - Deprecate ``icalendar.UIDGenerator``. See `Issue 816 <https://github.com/collective/icalendar/issues/816>`_.
 
-New features:
+New features
+~~~~~~~~~~~~
 
 - Add the ``uid`` property to ``Alarm``, ``Event``, ``Calendar``, ``Todo``, and ``Journal`` components. See `Issue 740 <https://github.com/collective/icalendar/issues/740>`_.
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Fix component equality where timezones differ for the datetimes but the times are actually equal. See `Issue 828 <https://github.com/collective/icalendar/issues/828>`_.
 - Test that we can add an RRULE as a string. See `Issue 301 <https://github.com/collective/icalendar/issues/301>`_.
@@ -218,7 +237,8 @@ Bug fixes:
 6.2.0 (2025-05-07)
 ------------------
 
-Minor changes:
+Minor changes
+~~~~~~~~~~~~~
 
 - Use ``ruff`` to format the source code.
 - Update project metadata to use License-Expression.
@@ -226,7 +246,8 @@ Minor changes:
 - Remove the HTML documentation when building with ``tox`` to force rebuild.
 - Switch to PyData Sphinx Theme for documentation. See `Issue 803 <https://github.com/collective/icalendar/issues/804>`_.
 
-New features:
+New features
+~~~~~~~~~~~~
 
 - Add getters ``rrules``, ``rdates``, and ``exdates`` for unified and simple access to these properties. See `Discussion 662`_.
 - Add attributes to the calendar for properties ``NAME``, ``DESCRIPTION``, and ``COLOR``. See `Issue 655 <https://github.com/collective/icalendar/issues/655>`_.
@@ -238,7 +259,8 @@ New features:
 - Add parameters from :rfc:`5545` to properties ``ALTREP``, ``CN``, ``CUTYPE``, ``DELEGATED_FROM``, ``DELEGATED_TO``, ``DIR``, ``FBTYPE``, ``LANGUAGE``, ``MEMBER``, ``PARTSTAT``, ``RANGE``, ``RELATED``, ``ROLE``, ``RSVP``, ``SENT_BY``, ``TZID``, and ``RELTYPE``. See `Issue 798 <https://github.com/collective/icalendar/issues/798>`_.
 - New properties from :rfc:`7986` can occur multiple times in ``VCALENDAR``. See `PR 808`_.
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Fix ``STANDARD`` and ``DAYLIGHT`` components that have a date as ``DTSTART``. See `Issue 218 <https://github.com/collective/icalendar/issues/218>`_
 - Move import at the end of ``icalendar.parser`` into a function to mitigate import errors, see `Issue 781 <https://github.com/collective/icalendar/issues/781>`_.
@@ -248,7 +270,8 @@ Bug fixes:
 6.1.3 (2025-03-19)
 ------------------
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Fix to permit TZID forward references to ``VTIMEZONE``\ s
 - Stabelize timezone id lookup, see `Issue 780 <https://github.com/collective/icalendar/issues/780>`_.
@@ -256,7 +279,8 @@ Bug fixes:
 6.1.2 (2025-03-19)
 ------------------
 
-Minor changes:
+Minor changes
+~~~~~~~~~~~~~
 
 - Add funding link to Tidelift.
 - Link to related package.
@@ -267,14 +291,16 @@ Minor changes:
 - Improve object initialization performance in ``icalendar.prop``.
 - Add type hint for ``params`` in multiple constructors in ``icalendar.prop``.
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Restrict timezones tested, see `Issue 763 <https://github.com/collective/icalendar/issues/763>`_
 
 6.1.1 (2025-01-18)
 ------------------
 
-Minor changes:
+Minor changes
+~~~~~~~~~~~~~
 
 - Add a ``weekday`` attribute to :class:`icalendar.prop.vWeekday` components. See `Issue 749 <https://github.com/collective/icalendar/issues/749>`_.
 - Document :class:`icalendar.prop.vRecur` property. See `Issue 758 <https://github.com/collective/icalendar/issues/758>`_.
@@ -282,11 +308,13 @@ Minor changes:
 - Improve documentation of :class:`icalendar.prop.vGeo`
 - Fix tests, improve code readability, fix typing. See `Pull request 766 <https://github.com/collective/icalendar/pull/766>`_ and `Pull request 765 <https://github.com/collective/icalendar/pull/765>`_.
 
-Breaking changes:
+Breaking changes
+~~~~~~~~~~~~~~~~
 
 - The ``relative`` attribute of ``vWeekday`` components has the correct sign now. See `Issue 749 <https://github.com/collective/icalendar/issues/749>`_.
 
-New features:
+New features
+~~~~~~~~~~~~
 
 - Add `Security Policy <https://github.com/collective/icalendar/blob/main/SECURITY.md>`_
 - Python types in documentation now link to their documentation pages using ``intersphinx``.
@@ -294,7 +322,8 @@ New features:
 6.1.0 (2024-11-22)
 ------------------
 
-Minor changes:
+Minor changes
+~~~~~~~~~~~~~
 
 - Add ``end``, ``start``, ``duration``, ``DTSTART``, ``DUE``, and ``DURATION`` attributes to ``Todo`` components. See `Discussion 662`_.
 - Add ``DTSTART``, ``TZOFFSETTO`` and ``TZOFFSETFROM`` properties to ``TimezoneStandard`` and ``TimezoneDaylight``. See `Discussion 662`_.
@@ -309,7 +338,8 @@ Minor changes:
 - Improve typing and fix typing issues
 
 
-New features:
+New features
+~~~~~~~~~~~~
 
 - Add ``VALARM`` properties for :rfc:`9074`. See `Issue 657 <https://github.com/collective/icalendar/issues/657>`_
 - Test compatibility with Python 3.13
@@ -331,7 +361,8 @@ New features:
 - Identify totally unknown timezones using a UTC offset lookup tree generated in ``icalendar.timezone.equivalent_timezone_ids`` and stored in ``icalendar.timezone.equivalent_timezone_ids``.
 - Add ``icalendar.timezone.tzid`` to identify a timezone's TZID.
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Add ``icalendar.timezone`` to the documentation.
 
@@ -340,12 +371,14 @@ Bug fixes:
 6.0.1 (2024-10-13)
 ------------------
 
-New features:
+New features
+~~~~~~~~~~~~
 
 - Added ``end``, ``start``, ``duration``, ``DTSTART``, ``DUE``, and ``DURATION`` attributes to ``Event`` components. See `Discussion 662`_.
 - Added ``end``, ``start``, ``duration``, and ``DTSTART`` attributes to ``Journal`` components. See `Discussion 662`_.
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Fix a few ``__all__`` variables.
 - Added missing ``docs`` folder to distribution packages. See `Issue 712 <https://github.com/collective/icalendar/issues/712>`_.
@@ -355,7 +388,8 @@ Bug fixes:
 6.0.0 (2024-09-28)
 ------------------
 
-Minor changes:
+Minor changes
+~~~~~~~~~~~~~
 
 - Add ``__all__`` variable to each modules in ``icalendar`` package
 - Improve test coverage.
@@ -363,11 +397,13 @@ Minor changes:
 - Measure branch coverage when running tests.
 - Export ``Component`` base class for typing
 
-New features:
+New features
+~~~~~~~~~~~~
 
 - Use ``pyproject.toml`` file instead of ``setup.py``
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Fix link to stable release of tox in documentation.
 - Fix a bad ``bytes`` replace in ``unescape_char``.
@@ -377,7 +413,8 @@ Bug fixes:
 6.0.0a0 (2024-07-03)
 --------------------
 
-Minor changes:
+Minor changes
+~~~~~~~~~~~~~
 
 - Test that all code works with both ``pytz`` and ``zoneinfo``.
 - Add message to GitHub release, pointing to the changelog
@@ -394,7 +431,8 @@ Minor changes:
 - Use Coveralls' GitHub Action
 - Check distribution in CI
 
-Breaking changes:
+Breaking changes
+~~~~~~~~~~~~~~~~
 
 - Use ``zoneinfo`` for ``icalendar`` objects created from strings,
   see `Issue #609 <https://github.com/collective/icalendar/issues/609>`_.
@@ -435,7 +473,8 @@ Breaking changes:
 
       pip install icalendar==6.* pytz
 
-New features:
+New features
+~~~~~~~~~~~~
 
 - Check code quality with `Ruff <https://docs.astral.sh/ruff/>`_, optional report
 - Test compatibility with Python 3.12
@@ -449,7 +488,8 @@ New features:
 - Add documentation of live HTML preview of documentation and clean up of ``install.rst``.
 - Add ``sphinx-copybutton`` to allow copying code blocks with a single click of a button.
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Change documentation to represent compatibility with Python 3.8 - 3.12, and PyPy3.
 - Rename RFC 2445 to RFC 5545, see `Issue 278
@@ -458,7 +498,8 @@ Bug fixes:
 5.0.13 (2024-06-20)
 -------------------
 
-Minor changes:
+Minor changes
+~~~~~~~~~~~~~
 
 - Guide to delete the build folder before running tests
 - Add funding information
@@ -468,11 +509,13 @@ Minor changes:
 - Document how to serve the built documentation to view with the browser
 - Improve test coverage
 
-New features:
+New features
+~~~~~~~~~~~~
 
 - Create GitHub releases for each tag.
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Parse calendars with X-COMMENT properties at the end the file by ignoring these properites
 
@@ -480,7 +523,8 @@ Bug fixes:
 5.0.12 (2024-03-19)
 -------------------
 
-Minor changes:
+Minor changes
+~~~~~~~~~~~~~
 
 - Analyse code coverage of test files
 - Added corpus to fuzzing directory
@@ -494,7 +538,8 @@ Minor changes:
 - Update GitHub Actions steps versions
 - Keep GitHub Actions up to date with GitHub's Dependabot
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Fixed index error in cal.py when attempting to pop from an empty stack
 - Fixed type error in prop.py when attempting to join strings into a byte-string
@@ -503,20 +548,23 @@ Bug fixes:
 5.0.11 (2023-11-03)
 -------------------
 
-Minor changes:
+Minor changes
+~~~~~~~~~~~~~
 
 - The cli utility now displays start and end datetimes in the user's local timezone.
   Ref: #561
   [vimpostor]
 
-New features:
+New features
+~~~~~~~~~~~~
 
 - Added fuzzing harnesses, for integration to OSSFuzz.
 - icalendar releases are deployed to Github releases
   Fixes: #563
   [jacadzaca]
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - CATEGORIES field now accepts a string as argument
   Ref: #322
@@ -536,7 +584,8 @@ Bug fixes:
 5.0.10 (2023-09-26)
 -------------------
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Component._encode stops ignoring parameters argument on native values, now merges them
   Fixes: #557
@@ -545,14 +594,16 @@ Bug fixes:
 5.0.9 (2023-09-24)
 ------------------
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - PERIOD values now set the timezone of their start and end. #556
 
 5.0.8 (2023-09-18)
 ------------------
 
-Minor changes:
+Minor changes
+~~~~~~~~~~~~~
 
 - Update build configuration to build readthedocs. #538
 - No longer run the ``plone.app.event`` tests.
@@ -562,7 +613,8 @@ Minor changes:
 - Updated about.rst for issue #527
 - Avoid ``vText.__repr__`` BytesWarning.
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Calendar components are now properly compared
   Ref: #550
@@ -572,7 +624,8 @@ Bug fixes:
 5.0.7 (2023-05-29)
 ------------------
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - to_ical() now accepts RRULE BYDAY values>=10 #518
 
@@ -580,30 +633,35 @@ Bug fixes:
 5.0.6 (2023-05-26)
 ------------------
 
-Minor changes:
+Minor changes
+~~~~~~~~~~~~~
 
 - Adjusted duration regex
 
 5.0.5 (2023-04-13)
 ------------------
 
-Minor changes:
+Minor changes
+~~~~~~~~~~~~~
 
 - Added support for BYWEEKDAY in vRecur ref: #268
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Fix problem with ORGANIZER in FREE/BUSY #348
 
 5.0.4 (2022-12-29)
 ------------------
 
-Minor changes:
+Minor changes
+~~~~~~~~~~~~~
 
 - Improved documentation
   Ref: #503, #504
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - vBoolean can now be used as an parameter
   Ref: #501
@@ -614,18 +672,21 @@ Bug fixes:
 5.0.3 (2022-11-23)
 ------------------
 
-New features:
+New features
+~~~~~~~~~~~~
 
 - vDDDTypes is hashable #487 #492 [niccokunzmann]
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - vDDDTypes' equality also checks the dt attribute #497 #492 [niccokunzmann]
 
 5.0.2 (2022-11-03)
 ------------------
 
-Minor changes:
+Minor changes
+~~~~~~~~~~~~~
 
 - Refactored cal.py, tools.py and completed remaining minimal refactoring in parser.py. Ref: #481 [pronoym99]
 - Calendar.from_ical no longer throws long errors
@@ -636,11 +697,13 @@ Minor changes:
   Fixes: #318
   [jacadzaca], [niccokunzmann]
 
-New features:
+New features
+~~~~~~~~~~~~
 
 - source code in documentation is tested using doctest #445 [niccokunzmann]
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - broken properties are not added to the parent component
   Ref: #471
@@ -650,11 +713,13 @@ Bug fixes:
 5.0.1 (2022-10-22)
 ------------------
 
-Minor changes:
+Minor changes
+~~~~~~~~~~~~~
 
 - fixed setuptools deprecation warnings [mgorny]
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - a well-known timezone timezone prefixed with a `/` is treated as if the slash wasn't present
   Ref: #467
@@ -664,7 +729,8 @@ Bug fixes:
 5.0.0 (2022-10-17)
 ------------------
 
-Minor changes:
+Minor changes
+~~~~~~~~~~~~~
 
 - removed deprecated test checks [tuergeist]
 - Fix: cli does not support DURATION #354 [mamico]
@@ -672,19 +738,22 @@ Minor changes:
 - fixed small typos #323 [rohnsha0]
 - unittest to parametrized pytest refactoring [jacadzaca]
 
-Breaking changes:
+Breaking changes
+~~~~~~~~~~~~~~~~
 
 - Require Python 3.7 as minimum Python version.  [maurits] [niccokunzmann]
 - icalendar now takes a ics file directly as an input
 - icalendar's CLI utility program's output is different
 - Drop Support for Python 3.6. Versions 3.7 - 3.11 are supported and tested.
 
-New features:
+New features
+~~~~~~~~~~~~
 
 - icalendar utility outputs a 'Duration' row
 - icalendar can take multiple ics files as an input
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Changed tools.UIDGenerator instance methods to static methods
   Ref: #345
@@ -703,24 +772,28 @@ Bug fixes:
 5.0.0a1 (2022-07-11)
 --------------------
 
-Breaking changes:
+Breaking changes
+~~~~~~~~~~~~~~~~
 
 - Drop support for Python 3.4, 3.5 and PyPy2.  [maurits]
 
-New features:
+New features
+~~~~~~~~~~~~
 
 - Document development setup
   Ref: #358
   [niccokunzmann]
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Test with GitHub Actions.  [maurits]
 
 4.1.0 (2022-07-11)
 ------------------
 
-New features:
+New features
+~~~~~~~~~~~~
 
 - No longer test on Python 3.4, 3.5 and PyPy2, because we cannot get it to work.
   Technically it should still work, it is just no longer tested.
@@ -728,14 +801,16 @@ New features:
   The main branch will be for the remaining Python versions that we support.
   [maurits]
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Test with GitHub Actions.  [maurits]
 
 4.0.9 (2021-10-16)
 ------------------
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Fix vCategories for correct en/de coding.
   [thet]
@@ -749,7 +824,8 @@ Bug fixes:
 4.0.8 (2021-10-07)
 ------------------
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Support added for Python 3.9 and 3.10 (no code changes needed).
 
@@ -759,7 +835,8 @@ Bug fixes:
 4.0.7 (2020-09-07)
 ------------------
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - fixed rrule handling, re-enabled test_create_america_new_york()
 
@@ -767,21 +844,24 @@ Bug fixes:
 4.0.6 (2020-05-06)
 ------------------
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Use ``vText`` as default type, when convert recurrence definition to ical string. [kam193]
 
 4.0.5 (2020-03-21)
 ------------------
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Fixed a docs issue related to building on Read the Docs [davidfischer]
 
 4.0.4 (2019-11-25)
 ------------------
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Reduce Hypothesis iterations to speed up testing, allowing PRs to pass
   [UniversalSuperBox]
@@ -790,7 +870,8 @@ Bug fixes:
 4.0.3 (2018-10-10)
 ------------------
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Categories are comma separated not 1 per line #265. [cleder]
 - mark test with mixed timezoneaware and naive datetimes as an expected failure. [cleder]
@@ -799,7 +880,8 @@ Bug fixes:
 4.0.2 (2018-06-20)
 ------------------
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Update all pypi.python.org URLs to pypi.org
   [jon.dufresne]
@@ -818,7 +900,8 @@ Bug fixes:
 4.0.0 (2017-11-08)
 ------------------
 
-Breaking changes:
+Breaking changes
+~~~~~~~~~~~~~~~~
 
 - Drop support for Python 2.6 and 3.3.
 
@@ -826,11 +909,13 @@ Breaking changes:
 3.12 (2017-11-07)
 -----------------
 
-New features:
+New features
+~~~~~~~~~~~~
 
 - Accept Windows timezone identifiers as valid. #242 [geier]
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Fix ResourceWarnings in setup.py when Python warnings are enabled. #244 [jdufresne]
 
@@ -846,7 +931,8 @@ Bug fixes:
 3.11.7 (2017-08-27)
 -------------------
 
-New features:
+New features
+~~~~~~~~~~~~
 
 - added vUTCOffset.ignore_exceptions to allow surpressing of failed TZOFFSET
   parsing (for now this ignores the check for offsets > 24h) [geier]
@@ -855,7 +941,8 @@ New features:
 3.11.6 (2017-08-04)
 -------------------
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Fix ``VTIMEZONE``\ s including RDATEs #234.  [geier]
 
@@ -863,7 +950,8 @@ Bug fixes:
 3.11.5 (2017-07-03)
 -------------------
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - added an assertion that ``VTIMEZONE`` sub-components' DTSTART must be of type
   DATETIME [geier]
@@ -875,7 +963,8 @@ Bug fixes:
 3.11.4 (2017-05-10)
 -------------------
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Don't break on parameter values which contain equal signs, e.g. base64 encoded
   binary data [geier]
@@ -887,7 +976,8 @@ Bug fixes:
 3.11.3 (2017-02-15)
 -------------------
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Removed ``setuptools`` as a dependency as it was only required by setup.py
   and not by the package.
@@ -898,7 +988,8 @@ Bug fixes:
 3.11.2 (2017-01-12)
 -------------------
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Run tests with python 3.5 and 3.6.
   [geier]
@@ -910,7 +1001,8 @@ Bug fixes:
 3.11.1 (2016-12-19)
 -------------------
 
-Bug fixes:
+Bug fixes
+~~~~~~~~~
 
 - Encode error message before adding it to the stack of collected error messages.
 

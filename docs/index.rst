@@ -2,6 +2,11 @@
 icalendar documentation
 =======================
 
+icalendar is an Internet Calendaring and Scheduling (iCalendar) Python package.
+
+icalendar is an :RFC:`5545` compatible parser and generator for iCalendar files.
+icalendar lets you create, inspect, and modify calendaring information with Python.
+
 .. grid:: 1 1 2 2
     :gutter: 3 3 4 5
 
