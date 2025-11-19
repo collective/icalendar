@@ -11,6 +11,7 @@ SRC = HERE.parent / "src"
 sys.path.insert(0, str(SRC))  # update docs from icalendar source for livehtml
 
 extensions = [
+    "notfound.extension",
     "sphinx.ext.apidoc",
     "sphinx.ext.autodoc",
     "sphinx.ext.coverage",
@@ -33,6 +34,9 @@ copyright = f"{this_year}, Plone Foundation"  # noqa: A001
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
+
+# Add any paths that contain templates here, relative to this directory.
+templates_path = ["_templates"]
 
 # Define the json_url for our version switcher.
 json_url = "https://icalendar.readthedocs.io/en/latest/_static/version-switcher.json"
@@ -148,13 +152,26 @@ linkcheck_anchors = True
 linkcheck_timeout = 5
 linkcheck_retries = 1
 
+# -- Options for sphinx-notfound-page ----------------------------------
+# https://sphinx-notfound-page.readthedocs.io/en/latest/configuration.html
+notfound_template = "404.html"
+
+
 # -- sphinx-reredirects configuration ----------------------------------
 # https://documatt.com/sphinx-reredirects/usage.html
 redirects = {
-    "contributing": "/contribute/index.html",
-    "about": "/index.html#about-icalendar",
-}
-
+    "about": "index.html",
+    "api": "reference/api/icalendar.html",
+    "changelog": "reference/changelog.html",
+    "cli": "how-to/cli.html",
+    "credits": "contribute/credits.html",
+    "contributing": "contribute/index.html",
+    "install": "how-to/install.html",
+    "license": "https://github.com/collective/icalendar/blob/main/LICENSE.rst",
+    "maintenance": "contribute/maintenance.html",
+    "security": "https://github.com/collective/icalendar/blob/main/SECURITY.md",
+    "usage": "how-to/usage.html",
+    }
 
 man_pages = [("index", "icalendar", "icalendar Documentation", ["Plone Foundation"], 1)]
 
