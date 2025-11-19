@@ -519,7 +519,7 @@ Description:
 Examples:
     This is a label of a chat.
 
-    .. code-block: text
+    .. code-block:: text
 
         CONFERENCE;VALUE=URI;FEATURE=VIDEO;
             LABEL="Web video chat, access code=76543";
