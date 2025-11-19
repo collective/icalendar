@@ -37,12 +37,12 @@ New features:
 - Add compatibility to :rfc:`9253`:
   
   - Add new property types :class:`vUid` and :class:`vXmlReference`.
-  - Add properties to all components: :attr:`Component.concepts`, :py:attr:`Component.links`, :py:attr:`Component.refids`, :py:attr:`Component.related_to`.
+  - Add properties to all components: :attr:`Component.concepts`, :attr:`Component.links`, :attr:`Component.refids`, :attr:`Component.related_to`.
   - Add new values to :class:`RELTYPE`.
   - Add ``LABEL``, ``GAP``, and ``VALUE`` parameters to property values affected by :rfc:`9253`.
 
-- Allow setting default values in :py:class:`Parameters`.
-- Allow ``None`` as an argument to :py:class:`Parameters`.
+- Allow setting default values in :class:`Parameters`.
+- Allow ``None`` as an argument to :class:`Parameters`.
 - Add ``ical_value`` to several property values. See `Issue 876 <https://github.com/collective/icalendar/issues/876>`_.
 - Add PyData Theme version switcher to documentation. See `Issue 825 <https://github.com/collective/icalendar/issues/825>`_.
 - Test compatibility with Python 3.14. See `Issue 973 <https://github.com/collective/icalendar/issues/973>`_.
