@@ -27,7 +27,7 @@ We still recommend checking out the new features and giving feedback in the repo
 Minor changes
 ~~~~~~~~~~~~~
 
-- Convert changelog section labels to reStructuredText subheadings for improved ReadTheDocs navigation. See `Issue 982 <https://github.com/collective/icalendar/issues/982>`_.
+- Convert changelog section labels to reStructuredText subheadings for improved Read the Docs navigation. See `Issue 982 <https://github.com/collective/icalendar/issues/982>`_.
 - Move sections in Table of Content of Reference guide.
 - Improve :py:class:`icalendar.prop.vDatetime` documentation. See `Issue #946 <https://github.com/collective/icalendar/issues/946>`_.
 
