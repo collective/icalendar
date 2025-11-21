@@ -47,6 +47,8 @@ New features
 - Created a separate path to contribute to documentation. See `Issue 929 <https://github.com/collective/icalendar/issues/929>`_.
 - Added a code of conduct. See `Issue 907 <https://github.com/collective/icalendar/issues/907>`_.
 - Added redirects of moved files and 404 not found page to catch any other obsolete URLs. See `Issue 959 <https://github.com/collective/icalendar/issues/959>`_.
+- Added artificial intelligence (AI) policy. See `Issue 933 <https://github.com/collective/icalendar/issues/933>`_.
+
 
 Bug fixes
 ~~~~~~~~~
