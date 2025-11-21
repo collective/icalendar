@@ -490,9 +490,9 @@ def _get_value(self: VPROPERTY) -> str:
         default value type is overridden by some other allowable value
         type, then this parameter MUST be specified.
 
-        Applications MUST preserve the value data for x-name and iana-
-        token values that they don't recognize without attempting to
-        interpret or parse the value data.
+        Applications MUST preserve the value data for ``x-name`` and
+        ``iana-token`` values that they don't recognize without attempting
+        to interpret or parse the value data.
 
     Returns:
         The VALUE parameter or the default.
