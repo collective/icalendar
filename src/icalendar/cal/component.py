@@ -669,7 +669,7 @@ class Component(CaselessDict):
         component.comments = comments
         return component
 
-    def to_jcal(self) -> list[str, list, list]:
+    def to_jcal(self) -> list:
         """Convert this component to a jcal object.
 
         Returns:
