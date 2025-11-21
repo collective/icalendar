@@ -194,7 +194,7 @@ def single_string_parameter(func: Callable | None = None, upper=False):
 
     Returns:
         The property for the parameter or a decorator for the parameter
-        if func is None.
+        if func is ``None``.
     """
 
     def decorator(func):
