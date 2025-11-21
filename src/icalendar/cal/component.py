@@ -706,7 +706,7 @@ class Component(CaselessDict):
 
         Raises:
             JCalParsingError: If the jcal provided is invalid.
-            JSONDecodeError: If the string provided not valid JSON.
+            :py:`~json.JSONDecodeError`: If the string provided not valid JSON.
 
         This reverses :func:`to_json` and :func:`to_jcal`.
         """
