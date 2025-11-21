@@ -2419,7 +2419,7 @@ class vTime(TimeBase):
     def to_jcal(self, name: str) -> list:
         """The jcal represenation of this property according to :rfc:`7265`."""
         value = self.dt.strftime("%H:%M:%S")
-        if self.params.is_utc():
+        if self.is_utc():
             value += "Z"
         return [name, self.params.to_jcal(exclude_utc=True), self.VALUE.lower(), value]
 
