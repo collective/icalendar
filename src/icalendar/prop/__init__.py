@@ -3050,7 +3050,7 @@ class TypesFactory(CaselessDict):
         """Returns the type class for a property or parameter.
 
         Args:
-            name: Property or parameter name
+            name: Property or parameter name.
             value_param: Optional ``VALUE`` parameter, for example, "DATE", "DATE-TIME",
                 or other string.
 
