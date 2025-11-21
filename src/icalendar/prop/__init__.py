@@ -2885,7 +2885,7 @@ class vUnknown(vText):
     default_value: ClassVar[str] = "UNKNOWN"
 
     def examples() -> list[vUnknown]:
-        """Examples of vUnknown"""
+        """Examples of vUnknown."""
         return [vUnknown("Some property text.")]
 
     from icalendar.param import VALUE
