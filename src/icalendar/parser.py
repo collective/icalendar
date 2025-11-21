@@ -447,7 +447,7 @@ class Parameters(CaselessDict):
 
         Args:
             jcal_property (list): The jcal property [name, params, value, ...]
-            default_value (str, optional): The default value of the property
+            default_value (str, optional): The default value of the property.
                 If this is given, the default value will not be set.
         """
         if not isinstance(jcal_property, list) or len(jcal_property) < 4:
