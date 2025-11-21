@@ -12,11 +12,19 @@ if TYPE_CHECKING:
 
 
 class ComponentFactory(CaselessDict):
-    """All components defined in :rfc:`5545` are registered in this factory class.
-    To get a component you can use it like this.
+    """Registered components from :rfc:`7953` and :rfc:`5545`.
 
-    Components for other RFCs are also added if supported.
-    If a component class is not supported, yet, it can be created.
+    To get a component you can use it like this:
+
+    .. code-block:: pycon
+
+        >>> from icalendar.cal.component_factory import ComponentFactory
+        >>> factory = ComponentFactory()
+        >>> event_class = factory.get_component_class('VEVENT')
+        >>> event_class()
+
+    If a component class is not supported, yet, it can be created using
+    :meth:`get_component_class` or added manually as a subclass of :class:`Component`.
     """
 
     def __init__(self, *args, **kwargs):
