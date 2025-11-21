@@ -3055,7 +3055,7 @@ class TypesFactory(CaselessDict):
                 or other string.
 
         Returns:
-            The appropriate value type class
+            The appropriate value type class.
         """
         # Special case: RDATE and EXDATE always use vDDDLists to support list values
         # regardless of the VALUE parameter
