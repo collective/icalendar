@@ -38,6 +38,7 @@ Contributors
 - Andrey Nikolaev <nikolaeff@gmail.com>
 - Barak Michener <me@barakmich.com>
 - Bastian Wegge <wegge@crossbow.de>
+- `Chase Naples <https://github.com/cnaples79>`_
 - Christian Geier <contact@lostpackets.de>
 - Christophe de Vienne <cdevienne@gmail.com>
 - cillianderoiste <cillian.deroiste@gmail.com>
@@ -111,7 +112,7 @@ Contributors
 - Ville Skyttä <ville.skytta@iki.fi>
 - Wichert Akkerman <wichert@wiggy.net>
 - Howard Liao <howard940114@gmail.com>
-
+- Zepyoor Khechadoorian <zepyoorkhechadoorian@gmail.com>
 
 Complete list
 -------------
