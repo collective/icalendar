@@ -2815,7 +2815,7 @@ class vUTCOffset:
 
     @classmethod
     def examples(cls) -> list[vUTCOffset]:
-        """Examples of vUTCOffset"""
+        """Examples of vUTCOffset."""
         return [
             cls(timedelta(hours=3)),
             cls(timedelta(0)),
