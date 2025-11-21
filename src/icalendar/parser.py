@@ -403,7 +403,7 @@ class Parameters(CaselessDict):
         """The TZID parameter from :rfc:`5545`."""
 
     def is_utc(self):
-        """Wether the TZID parameter is UTC."""
+        """Whether the TZID parameter is UTC."""
         return self.tzid == "UTC"
 
     def update_tzid_from(self, dt: datetime | time | Any) -> None:
