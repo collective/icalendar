@@ -130,7 +130,14 @@ class vBinary:
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> vBinary:
-        """Parse jcal from :rfc:`7265` to a vBinary."""
+        """Parse jcal from :rfc:`7265` to a vBinary.
+
+        Args:
+            jcal_property: The jcal property to parse.
+
+        Raises:
+            JCalParsingError: If the jcal provided is invalid.
+        """
         JCalParsingError.validate_property(jcal_property, cls)
         JCalParsingError.validate_value_type(jcal_property[3], str, cls, 3)
         return cls(
@@ -216,7 +223,14 @@ class vBoolean(int):
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> vBoolean:
-        """Parse jcal from :rfc:`7265` to a vBoolean."""
+        """Parse jcal from :rfc:`7265` to a vBoolean.
+
+        Args:
+            jcal_property: The jcal property to parse.
+
+        Raises:
+            JCalParsingError: If the jcal provided is invalid.
+        """
         JCalParsingError.validate_property(jcal_property, cls)
         JCalParsingError.validate_value_type(jcal_property[3], bool, cls, 3)
         return cls(
@@ -275,7 +289,14 @@ class vText(str):
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
-        """Parse jcal from :rfc:`7265`."""
+        """Parse jcal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jcal property to parse.
+
+        Raises:
+            JCalParsingError: If the jcal provided is invalid.
+        """
         JCalParsingError.validate_property(jcal_property, cls)
         name = jcal_property[0]
         if name == "categories":
@@ -516,7 +537,14 @@ class vCalAddress(str):
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
-        """Parse jcal from :rfc:`7265`."""
+        """Parse jcal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jcal property to parse.
+
+        Raises:
+            JCalParsingError: If the jcal provided is invalid.
+        """
         JCalParsingError.validate_property(jcal_property, cls)
         JCalParsingError.validate_value_type(jcal_property[3], str, cls, 3)
         return cls(
@@ -604,7 +632,14 @@ class vFloat(float):
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
-        """Parse jcal from :rfc:`7265`."""
+        """Parse jcal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jcal property to parse.
+
+        Raises:
+            JCalParsingError: If the jcal provided is invalid.
+        """
         JCalParsingError.validate_property(jcal_property, cls)
         if jcal_property[0].upper() == "GEO":
             return vGeo.from_jcal(jcal_property)
@@ -697,7 +732,14 @@ class vInt(int):
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
-        """Parse jcal from :rfc:`7265`."""
+        """Parse jcal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jcal property to parse.
+
+        Raises:
+            JCalParsingError: If the jcal provided is invalid.
+        """
         JCalParsingError.validate_property(jcal_property, cls)
         JCalParsingError.validate_value_type(jcal_property[3], int, cls, 3)
         return cls(
@@ -786,7 +828,14 @@ class vDDDLists:
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
-        """Parse jcal from :rfc:`7265`."""
+        """Parse jcal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jcal property to parse.
+
+        Raises:
+            JCalParsingError: If the jcal provided is invalid.
+        """
         JCalParsingError.validate_property(jcal_property, cls)
         values = jcal_property[3:]
         prop = jcal_property[:3]
@@ -854,7 +903,14 @@ class vCategory:
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
-        """Parse jcal from :rfc:`7265`."""
+        """Parse jcal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jcal property to parse.
+
+        Raises:
+            JCalParsingError: If the jcal provided is invalid.
+        """
         JCalParsingError.validate_property(jcal_property, cls)
         for i, category in enumerate(jcal_property[3:], start=3):
             JCalParsingError.validate_value_type(category, str, cls, i)
@@ -1036,7 +1092,14 @@ class vDDDTypes(TimeBase):
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
-        """Parse jcal from :rfc:`7265`."""
+        """Parse jcal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jcal property to parse.
+
+        Raises:
+            JCalParsingError: If the jcal provided is invalid.
+        """
         JCalParsingError.validate_property(jcal_property, cls)
         with JCalParsingError.reraise_with_path_added(3):
             dt = cls.parse_jcal_value(jcal_property[3])
@@ -1162,7 +1225,14 @@ class vDate(TimeBase):
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
-        """Parse jcal from :rfc:`7265`."""
+        """Parse jcal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jcal property to parse.
+
+        Raises:
+            JCalParsingError: If the jcal provided is invalid.
+        """
         JCalParsingError.validate_property(jcal_property, cls)
         with JCalParsingError.reraise_with_path_added(3):
             value = cls.parse_jcal_value(jcal_property[3])
@@ -1336,7 +1406,14 @@ class vDatetime(TimeBase):
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
-        """Parse jcal from :rfc:`7265`."""
+        """Parse jcal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jcal property to parse.
+
+        Raises:
+            JCalParsingError: If the jcal provided is invalid.
+        """
         JCalParsingError.validate_property(jcal_property, cls)
         params = Parameters.from_jcal_property(jcal_property)
         with JCalParsingError.reraise_with_path_added(3):
@@ -1509,7 +1586,14 @@ class vDuration(TimeBase):
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
-        """Parse jcal from :rfc:`7265`."""
+        """Parse jcal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jcal property to parse.
+
+        Raises:
+            JCalParsingError: If the jcal provided is invalid.
+        """
         JCalParsingError.validate_property(jcal_property, cls)
         with JCalParsingError.reraise_with_path_added(3):
             duration = cls.parse_jcal_value(jcal_property[3])
@@ -1708,7 +1792,14 @@ class vPeriod(TimeBase):
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
-        """Parse jcal from :rfc:`7265`."""
+        """Parse jcal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jcal property to parse.
+
+        Raises:
+            JCalParsingError: If the jcal provided is invalid.
+        """
         JCalParsingError.validate_property(jcal_property, cls)
         with JCalParsingError.reraise_with_path_added(3):
             start, end_or_duration = cls.parse_jcal_value(jcal_property[3])
@@ -2231,7 +2322,14 @@ class vRecur(CaselessDict):
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
-        """Parse jcal from :rfc:`7265`."""
+        """Parse jcal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jcal property to parse.
+
+        Raises:
+            JCalParsingError: If the jcal provided is invalid.
+        """
         JCalParsingError.validate_property(jcal_property, cls)
         params = Parameters.from_jcal_property(jcal_property)
         if not isinstance(jcal_property[3], dict) or not all(
@@ -2442,7 +2540,14 @@ class vTime(TimeBase):
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
-        """Parse jcal from :rfc:`7265`."""
+        """Parse jcal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jcal property to parse.
+
+        Raises:
+            JCalParsingError: If the jcal provided is invalid.
+        """
         JCalParsingError.validate_property(jcal_property, cls)
         with JCalParsingError.reraise_with_path_added(3):
             value = cls.parse_jcal_value(jcal_property[3])
@@ -2537,7 +2642,14 @@ class vUri(str):
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
-        """Parse jcal from :rfc:`7265`."""
+        """Parse jcal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jcal property to parse.
+
+        Raises:
+            JCalParsingError: If the jcal provided is invalid.
+        """
         JCalParsingError.validate_property(jcal_property, cls)
         return cls(
             jcal_property[3],
@@ -2668,7 +2780,14 @@ class vGeo:
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
-        """Parse jcal from :rfc:`7265`."""
+        """Parse jcal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jcal property to parse.
+
+        Raises:
+            JCalParsingError: If the jcal provided is invalid.
+        """
         JCalParsingError.validate_property(jcal_property, cls)
         return cls(
             jcal_property[3],
@@ -2829,7 +2948,14 @@ class vUTCOffset:
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
-        """Parse jcal from :rfc:`7265`."""
+        """Parse jcal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jcal property to parse.
+
+        Raises:
+            JCalParsingError: If the jcal provided is invalid.
+        """
         JCalParsingError.validate_property(jcal_property, cls)
         match = UTC_OFFSET_JCAL_REGEX.match(jcal_property[3])
         if match is None:
