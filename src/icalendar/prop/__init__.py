@@ -2681,12 +2681,12 @@ class vUid(vText):
 
     @property
     def uid(self) -> str:
-        """The uid of this property."""
+        """The UID of this property."""
         return str(self)
 
     @property
     def ical_value(self) -> str:
-        """The uid of this property."""
+        """The UID of this property."""
         return self.uid
 
     def __repr__(self) -> str:
