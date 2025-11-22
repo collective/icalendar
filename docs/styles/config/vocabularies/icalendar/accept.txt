@@ -30,6 +30,7 @@ iCal
 (?i)icalendar
 (?i)ilya
 (?i)Jannis
+jCal
 (?i)Jeroen
 (?i)Jochen
 Jouni
