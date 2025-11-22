@@ -374,12 +374,12 @@ class vCalAddress(str):
 
     @property
     def ical_value(self):
-        """the mailto: part of the address"""
+        """The ``mailto:`` part of the address."""
         return str(self)
 
     @property
     def email(self) -> str:
-        """The email address without mailto: at the start."""
+        """The email address without ``mailto:`` at the start."""
         if self.lower().startswith("mailto:"):
             return self[7:]
         return str(self)
@@ -511,7 +511,7 @@ class vCalAddress(str):
 
     @classmethod
     def examples(cls) -> list[vCalAddress]:
-        """Examples of vCalAddress"""
+        """Examples of vCalAddress."""
         return [cls.new("you@example.org", cn="You There")]
 
     @classmethod
@@ -593,7 +593,7 @@ class vFloat(float):
 
     @classmethod
     def examples(cls) -> list[vFloat]:
-        """Examples of vFloat"""
+        """Examples of vFloat."""
         return [vFloat(3.1415)]
 
     from icalendar.param import VALUE
@@ -686,7 +686,7 @@ class vInt(int):
 
     @classmethod
     def examples(cls) -> list[vInt]:
-        """Examples of vInt"""
+        """Examples of vInt."""
         return [vInt(1000), vInt(-42)]
 
     from icalendar.param import VALUE
@@ -767,7 +767,7 @@ class vDDDLists:
 
     @classmethod
     def examples(cls) -> list[vDDDLists]:
-        """Examples of vDDDLists"""
+        """Examples of vDDDLists."""
         return [vDDDLists([datetime(2025, 11, 10, 16, 50)])]  # noqa: DTZ001
 
     def to_jcal(self, name: str) -> list:
@@ -847,7 +847,7 @@ class vCategory:
 
     @classmethod
     def examples(cls) -> list[vCategory]:
-        """Examples of vCategory"""
+        """Examples of vCategory."""
         return [cls(["HOME", "COSY"])]
 
     from icalendar.param import VALUE
@@ -940,7 +940,7 @@ class vDDDTypes(TimeBase):
     def to_property_type(self) -> vDatetime | vDate | vDuration | vTime | vPeriod:
         """Convert to a property type.
 
-        Raises ValueError if the type is unknown
+        Raises ValueError if the type is unknown.
         """
         dt = self.dt
         if isinstance(dt, datetime):
@@ -1002,7 +1002,7 @@ class vDDDTypes(TimeBase):
 
     @classmethod
     def examples(cls) -> list[vDDDTypes]:
-        """Examples of vDDDTypes"""
+        """Examples of vDDDTypes."""
         return [cls(date(2025, 11, 10))]
 
     def _get_value(self) -> str | None:
@@ -1020,7 +1020,7 @@ class vDDDTypes(TimeBase):
         """Parse a jcal value.
 
         Raises:
-            JCalParsingError
+            JCalParsingError: If the value can't be parsed as either a date, time, date-time, duration, or period.
         """
         if isinstance(jcal, list):
             return vPeriod.parse_jcal_value(jcal)
@@ -1031,7 +1031,7 @@ class vDDDTypes(TimeBase):
             except JCalParsingError:  # noqa: PERF203
                 pass
         raise JCalParsingError(
-            "Cannot parse date, time, date-time, duration or period.", cls, value=jcal
+            "Cannot parse date, time, date-time, duration, or period.", cls, value=jcal
         )
 
     @classmethod
@@ -1133,7 +1133,7 @@ class vDate(TimeBase):
 
     @classmethod
     def examples(cls) -> list[vDate]:
-        """Examples of vDate"""
+        """Examples of vDate."""
         return [cls(date(2025, 11, 10))]
 
     from icalendar.param import VALUE
@@ -1149,10 +1149,10 @@ class vDate(TimeBase):
 
     @classmethod
     def parse_jcal_value(cls, jcal: str) -> datetime:
-        """Parse a jcal string to a datetime.datetime.
+        """Parse a jcal string to a :py:class:`datetime.datetime`.
 
         Raises:
-            JCalParsingError
+            JCalParsingError: If it can't parse a date.
         """
         JCalParsingError.validate_value_type(jcal, str, cls)
         try:
@@ -1299,7 +1299,7 @@ class vDatetime(TimeBase):
 
     @classmethod
     def examples(cls) -> list[vDatetime]:
-        """Examples of vDatetime"""
+        """Examples of vDatetime."""
         return [cls(datetime(2025, 11, 10, 16, 52))]  # noqa: DTZ001
 
     from icalendar.param import VALUE
@@ -1317,10 +1317,10 @@ class vDatetime(TimeBase):
 
     @classmethod
     def parse_jcal_value(cls, jcal: str) -> datetime:
-        """Parse a jcal string to a datetime.datetime.
+        """Parse a jcal string to a :py:class:`datetime.datetime`.
 
         Raises:
-            JCalParsingError
+            JCalParsingError: If it can't parse a date-time value.
         """
         JCalParsingError.validate_value_type(jcal, str, cls)
         utc = jcal.endswith("Z")
@@ -1484,7 +1484,7 @@ class vDuration(TimeBase):
 
     @classmethod
     def examples(cls) -> list[vDuration]:
-        """Examples of vDuration"""
+        """Examples of vDuration."""
         return [cls(timedelta(1, 99))]
 
     from icalendar.param import VALUE
@@ -1500,7 +1500,10 @@ class vDuration(TimeBase):
 
     @classmethod
     def parse_jcal_value(cls, jcal: str) -> timedelta | None:
-        """Parse a jcal string to a datetime.timedelta."""
+        """Parse a jcal string to a datetime.timedelta.
+        
+        Raises:
+            JCalParsingError: If it can't parse a duration."""
         JCalParsingError.validate_value_type(jcal, str, cls)
         try:
             return cls.from_ical(jcal)
@@ -1659,7 +1662,7 @@ class vPeriod(TimeBase):
 
     @classmethod
     def examples(cls) -> list[vPeriod]:
-        """Examples of vPeriod"""
+        """Examples of vPeriod."""
         return [
             vPeriod((datetime(2025, 11, 10, 16, 35), timedelta(hours=1, minutes=30))),  # noqa: DTZ001
             vPeriod((datetime(2025, 11, 10, 16, 35), datetime(2025, 11, 10, 18, 5))),  # noqa: DTZ001
@@ -1668,7 +1671,7 @@ class vPeriod(TimeBase):
     from icalendar.param import VALUE
 
     def to_jcal(self, name: str) -> list:
-        """The jcal represenation of this property according to :rfc:`7265`."""
+        """The jcal representation of this property according to :rfc:`7265`."""
         value = [vDatetime(self.start).to_jcal(name)[-1]]
         if self.by_duration:
             value.append(vDuration(self.duration).to_jcal(name)[-1])
@@ -1683,7 +1686,7 @@ class vPeriod(TimeBase):
         """Parse a jcal value.
 
         Raises:
-            JCalParsingError
+            JCalParsingError: If the period is not a list with exactly two items, or it can't parse a date-time or duration.
         """
         if not isinstance(jcal, list) or len(jcal) != 2:
             raise JCalParsingError(
@@ -1724,7 +1727,7 @@ class vPeriod(TimeBase):
 
 
 class vWeekday(str):
-    """Either a ``weekday`` or a ``weekdaynum``
+    """Either a ``weekday`` or a ``weekdaynum``.
 
     .. code-block:: pycon
 
@@ -2213,7 +2216,7 @@ class vRecur(CaselessDict):
 
     @classmethod
     def examples(cls) -> list[vRecur]:
-        """Examples of vRecur"""
+        """Examples of vRecur."""
         return [cls.from_ical("FREQ=DAILY;COUNT=10")]
 
     from icalendar.param import VALUE
@@ -2231,7 +2234,10 @@ class vRecur(CaselessDict):
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
-        """Parse jcal from :rfc:`7265`."""
+        """Parse jcal from :rfc:`7265`.
+        
+        Raises:
+            JCalParsingError: If the recurrence rule isn't a mapping with string keys."""
         JCalParsingError.validate_property(jcal_property, cls)
         params = Parameters.from_jcal_property(jcal_property)
         if not isinstance(jcal_property[3], dict) or not all(
@@ -2411,7 +2417,7 @@ class vTime(TimeBase):
 
     @classmethod
     def examples(cls) -> list[vTime]:
-        """Examples of vTime"""
+        """Examples of vTime."""
         return [cls(time(12, 30))]
 
     from icalendar.param import VALUE
@@ -2425,10 +2431,10 @@ class vTime(TimeBase):
 
     @classmethod
     def parse_jcal_value(cls, jcal: str) -> time:
-        """Parse a jcal string to a datetime.time.
+        """Parse a jcal string to a :py:class:`datetime.time`.
 
         Raises:
-            JCalParsingError
+            JCalParsingError: If it can't parse a time.
         """
         JCalParsingError.validate_value_type(jcal, str, cls)
         match = TIME_JCAL_REGEX.match(jcal)
@@ -2526,7 +2532,7 @@ class vUri(str):
 
     @classmethod
     def examples(cls) -> list[vUri]:
-        """Examples of vUri"""
+        """Examples of vUri."""
         return [cls("http://example.com/my-report.txt")]
 
     from icalendar.param import VALUE
@@ -2661,7 +2667,7 @@ class vGeo:
 
     @classmethod
     def examples(cls) -> list[vGeo]:
-        """Examples of vGeo"""
+        """Examples of vGeo."""
         return [cls((37.386013, -122.082932))]
 
     from icalendar.param import VALUE
