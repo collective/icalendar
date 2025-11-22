@@ -147,3 +147,21 @@ def test_common_methods(v_prop, attribute):
     assert hasattr(v_prop, attribute), (
         f'{v_prop.__name__} is missing a function or property named "{attribute}".'
     )
+
+
+def test_all_possible_value_types_are_listed(types_factory):
+    """Check that all values types added are also part of the TypesFactory."""
+    for value in types_factory.values():
+        assert value in prop.VPROPERTY.__args__, (
+            f"The value type {value} is not part of VPROPERTY."
+        )
+        assert value in types_factory.all_types, (
+            f"The value type {value} is not part of TypesFactory."
+        )
+
+
+def test_all_value_types_are_in_the_factory(v_prop, types_factory):
+    """Check that all vProperty types are part of the TypesFactory."""
+    assert v_prop in types_factory.all_types, (
+        f"The value type {v_prop} is not part of TypesFactory.all_types."
+    )

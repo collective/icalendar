@@ -4,6 +4,7 @@ Related:
 
 - :rfc:`5545`, Section 3.2. Property Parameters
 - :rfc:`7986`, Section 6. Property Parameters
+- :rfc:`9253`
 - https://github.com/collective/icalendar/issues/798
 """
 
@@ -15,6 +16,7 @@ from typing import TYPE_CHECKING, Callable, Optional, TypeVar
 from icalendar import enums
 
 if TYPE_CHECKING:
+    from datetime import timedelta
     from enum import Enum
 
 
@@ -54,8 +56,11 @@ def string_parameter(
             return default()
         return convert(value) if convert else value
 
-    def fset(self: VPROPERTY, value: str):
-        self.params[name] = convert_to(value) if convert_to else value
+    def fset(self: VPROPERTY, value: str | None):
+        if value is None:
+            fdel(self)
+        else:
+            self.params[name] = convert_to(value) if convert_to else value
 
     def fdel(self: VPROPERTY):
         self.params.pop(name, None)
@@ -336,7 +341,7 @@ Description:
 
 """,  # noqa: E501
     default=_default_related,
-    convert=_convert_enum(enums.RANGE),
+    convert=_convert_enum(enums.RELATED),
 )
 
 
@@ -454,6 +459,10 @@ RELTYPE = string_parameter(
     "RELTYPE",
     """Specify the type of hierarchical relationship associated with a component.
 
+Conformance:
+    :rfc:`5545` introduces the RELTYPE property parameter.
+    :rfc:`9253` adds new values.
+
 Description:
     This parameter can be specified on a property that
     references another related calendar.  The parameter specifies the
@@ -548,6 +557,219 @@ def _del_value(self: VPROPERTY):
 
 VALUE = property(_get_value, _set_value, _del_value)
 
+LABEL = string_parameter(
+    "LABEL",
+    """LABEL provides a human-readable label.
+
+Conformance:
+    This property parameter is specified in :rfc:`7986`,
+    iCalendar Property Extensions.
+
+    :rfc:`9253` makes use of this for the LINK property.
+    This parameter maps to the "title"
+    attribute defined in Section 3.4.1 of :rfc:`8288`.
+    LABEL is used to label the destination
+    of a link such that it can be used as a human-readable identifier
+    (e.g., a menu entry) in the language indicated by the LANGUAGE
+    (if present). The LABEL MUST NOT
+    appear more than once in a given link; occurrences after the first
+    MUST be ignored by parsers.
+
+Description:
+    This property parameter MAY be specified on the
+    "CONFERENCE" property.  It is anticipated that other extensions to
+    iCalendar will reuse this property parameter on new properties
+    that they define.  As a result, clients MUST expect to find this
+    property parameter present on many different properties.  It
+    provides a human-readable label that can be presented to calendar
+    users to allow them to discriminate between properties that might
+    be similar or provide additional information for properties that
+    are not self-describing.  The "LANGUAGE" property parameter can be
+    used to specify the language of the text in the parameter value
+    (as per Section 3.2.10 of :rfc:`5545`).
+
+Examples:
+    This is a label of a chat.
+
+    .. code-block:: text
+
+        CONFERENCE;VALUE=URI;FEATURE=VIDEO;
+            LABEL="Web video chat, access code=76543";
+            :https://video-chat.example.com/;group-id=1234
+
+""",
+)
+
+FMTTYPE = string_parameter(
+    "FMTTYPE",
+    """FMTTYPE specfies the content type of a referenced object.
+
+Conformance:
+    :rfc:`5545` specifies the FMTTYPE.
+    :rfc:`9253` adds FMTTYPE to LINK properties. In a LINK,
+    FMTTYPE maps to the "type"
+    attribute defined in Section 3.4.1 of :rfc:`8288`.
+    See :rfc:`6838`.
+
+Description:
+    This parameter can be specified on properties that are
+    used to reference an object.  The parameter specifies the media
+    type :rfc:`4288` of the referenced object. For example, on the
+    "ATTACH" property, an FTP type URI value does not, by itself,
+    necessarily convey the type of content associated with the
+    resource.  The parameter value MUST be the text for either an
+    IANA-registered media type or a non-standard media type.
+
+Example:
+    A Microsoft Word document:
+
+    .. code-block:: text
+
+        ATTACH;FMTTYPE=application/msword:ftp://example.com/pub/docs/
+         agenda.doc
+
+    A website:
+
+    .. code-block:: text
+
+        LINK;FMTTYPE=text/html;LINKREL=SOURCE;LABEL=Venue;VALUE=URI:
+         https://example.com/venue
+
+    """,
+)
+
+LINKREL = string_parameter(
+    "LINKREL",
+    """LINKREL
+
+Purpose:
+    LINKREL specifies the relationship of data referenced
+    by a LINK property.
+
+Conformance:
+    LINKREL is specified in :rfc:`9253`.
+    This parameter maps to the link relation type defined in
+    Section 2.1 of :rfc:`8288`.
+    It is always quoted.
+
+Description:
+    This parameter MUST be specified on all LINK properties and define
+    the type of reference.
+    This allows programs consuming this data to automatically scan
+    for references they support.
+    There is no default relation type.Any link relation in the
+    link registry established by :rfc:`8288`, or new link relations,
+    may be used.
+    It is expected that link relation types seeing significant usage
+    in calendaring will have the calendaring usage described in an RFC.
+
+    In the simplest case, a link relation type identifies the semantics
+    of a link.  For example, a link with the relation type "copyright"
+    indicates that the current link context has a copyright resource at
+    the link target.
+
+    Link relation types can also be used to indicate that the target
+    resource has particular attributes, or exhibits particular
+    behaviours; for example, a "service" link implies that the link
+    target can be used as part of a defined protocol (in this case, a
+    service description).
+
+Registration:
+    There are two kinds of relation types: registered and extension.
+    These relation types are registered in :rfc:`8288`.
+
+.. seealso::
+
+    `Registered Link Relation Types
+    <https://www.iana.org/assignments/link-relations/link-relations.xhtml>`_.
+
+
+Examples:
+    This identifies the latest version of the event information.
+
+    .. code-block:: text
+
+        LINKREL=latest-version
+
+""",
+)
+
+
+def _get_GAP(prop) -> timedelta | None:  # noqa: N802
+    """GAP
+
+    Purpose:
+        GAP specifies the length of the gap, positive or negative,
+        between two components with a temporal relationship.
+
+    Format Definition:
+        Same as the DURATION value type defined in :rfc:`5545`, Section 3.3.6.
+
+    Description:
+        This parameter MAY be specified on the RELATED-TO property and defines
+        the duration of time between the predecessor and successor in an interval.
+        When positive, it defines the lag time between a task and its logical successor.
+        When negative, it defines the lead time.
+
+    Examples:
+        An example of lag time might be if Task-A is "paint the room" and Task-B is
+        "lay the carpets". Then, Task-A may be related to Task-B with
+        RELTYPE=FINISHTOSTART with a gap of 1 day -- long enough for the paint to dry.
+
+        .. code-block:: text
+
+            ====================
+            |  paint the room  |--+
+            ====================  |
+                                  |(lag of one day)
+                                  |
+                                  |  ===================
+                                  +->| lay the carpet  |
+                                     ===================
+
+        For an example of lead time, in constructing a two-story building,
+        the electrical work must be done before painting. However,
+        the painter can move in to the first floor as the electricians move upstairs.
+
+        .. code-block:: text
+
+            =====================
+            |  electrical work  |--+
+            =====================  |
+                     +-------------+
+                     |(lead of estimated time)
+                     |  ==================
+                     +->|    painting    |
+                        ==================
+    """
+    value = prop.params.get("GAP")
+    if value is None:
+        return None
+    from icalendar.prop import vDuration
+
+    if isinstance(value, str):
+        return vDuration.from_ical(value)
+    if not isinstance(value, vDuration):
+        raise TypeError("Value MUST be a vDuration instance")
+    return value.td
+
+
+def _set_GAP(prop, value: timedelta | str | None):  # noqa: N802
+    """Set the GAP parameter as a timedelta."""
+    if value is None:
+        prop.params.pop("GAP", None)
+        return
+    from icalendar.prop import vDuration
+
+    prop.params["GAP"] = vDuration(value)
+
+
+def _del_GAP(prop):  # noqa: N802
+    """Delete the GAP parameter."""
+    prop.params.pop("GAP", None)
+
+
+GAP = property(_get_GAP, _set_GAP, _del_GAP)
 
 __all__ = [
     "ALTREP",
@@ -557,7 +779,11 @@ __all__ = [
     "DELEGATED_TO",
     "DIR",
     "FBTYPE",
+    "FMTTYPE",
+    "GAP",
+    "LABEL",
     "LANGUAGE",
+    "LINKREL",
     "MEMBER",
     "PARTSTAT",
     "RANGE",

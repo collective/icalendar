@@ -6,7 +6,18 @@ import json
 from datetime import date, datetime, time, timedelta, timezone
 from typing import TYPE_CHECKING, ClassVar
 
-from icalendar.attr import comments_property, single_utc_property, uid_property
+from icalendar.attr import (
+    CONCEPTS_TYPE_SETTER,
+    LINKS_TYPE_SETTER,
+    RELATED_TO_TYPE_SETTER,
+    comments_property,
+    concepts_property,
+    links_property,
+    refids_property,
+    related_to_property,
+    single_utc_property,
+    uid_property,
+)
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.caselessdict import CaselessDict
 from icalendar.error import InvalidCalendar, JCalParsingError
@@ -83,8 +94,8 @@ class Component(CaselessDict):
                 or :py:class:`list`.
 
         Returns:
-            str or None: The ``VALUE`` parameter string, for example, "DATE", "TIME",
-                or other string, or ``None``
+            str or None: The ``VALUE`` parameter string, for example, "DATE",
+                "TIME", or other string, or ``None``
                 if no specific ``VALUE`` is needed.
         """
         if isinstance(value, list):
@@ -611,6 +622,10 @@ class Component(CaselessDict):
 
     uid = uid_property
     comments = comments_property
+    links = links_property
+    related_to = related_to_property
+    concepts = concepts_property
+    refids = refids_property
 
     CREATED = single_utc_property(
         "CREATED",
@@ -646,15 +661,22 @@ class Component(CaselessDict):
         cls,
         created: date | None = None,
         comments: list[str] | str | None = None,
+        concepts: CONCEPTS_TYPE_SETTER = None,
         last_modified: date | None = None,
+        links: LINKS_TYPE_SETTER = None,
+        refids: list[str] | str | None = None,
+        related_to: RELATED_TO_TYPE_SETTER = None,
         stamp: date | None = None,
     ) -> Component:
         """Create a new component.
 
         Arguments:
             comments: The :attr:`comments` of the component.
+            concepts: The :attr:`concepts` of the component.
             created: The :attr:`created` of the component.
             last_modified: The :attr:`last_modified` of the component.
+            links: The :attr:`links` of the component.
+            related_to: The :attr:`related_to` of the component.
             stamp: The :attr:`DTSTAMP` of the component.
 
         Raises:
@@ -667,6 +689,10 @@ class Component(CaselessDict):
         component.created = created
         component.last_modified = last_modified
         component.comments = comments
+        component.links = links
+        component.related_to = related_to
+        component.concepts = concepts
+        component.refids = refids
         return component
 
     def to_jcal(self) -> list:

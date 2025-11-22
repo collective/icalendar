@@ -2,6 +2,8 @@
 Change log
 ==========
 
+.. py:currentmodule:: icalendar
+
 We use `Semantic Versioning <https://semver.org>`_.
 
 - Breaking changes increase the **major** version number.
@@ -37,6 +39,16 @@ Breaking changes
 New features
 ~~~~~~~~~~~~
 
+- Add compatibility to :rfc:`9253`:
+  
+  - Add new property types :class:`vUid` and :class:`vXmlReference`.
+  - Add properties to all components: :attr:`Component.concepts`, :attr:`Component.links`, :attr:`Component.refids`, :attr:`Component.related_to`.
+  - Add new values to :class:`RELTYPE`.
+  - Add ``LABEL``, ``GAP``, and ``VALUE`` parameters to property values affected by :rfc:`9253`.
+
+- Allow setting default values in :class:`Parameters`.
+- Allow ``None`` as an argument to :class:`Parameters`.
+- Add ``ical_value`` to several property values. See `Issue 876 <https://github.com/collective/icalendar/issues/876>`_.
 - Add PyData Theme version switcher to documentation. See `Issue 825 <https://github.com/collective/icalendar/issues/825>`_.
 - Test compatibility with Python 3.14. See `Issue 973 <https://github.com/collective/icalendar/issues/973>`_.
 - Added documentation of Vale usage for icalender documentation style guide. See `Issue 815 <https://github.com/collective/icalendar/issues/815>`_.
@@ -76,6 +88,7 @@ Bug fixes
 
 - Correct ``name`` of ``AVAILABLE`` component.
 - Fix ical serialization of :class:`icalendar.vTime`.
+- Make sure a component's ``conferences`` property adds ``VALUE=URI`` if the conference is created as a URI.
 
 6.3.2 (2025-11-03)
 ------------------

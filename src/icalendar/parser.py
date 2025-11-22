@@ -229,9 +229,56 @@ def single_string_parameter(func: Callable | None = None, upper=False):
 
 
 class Parameters(CaselessDict):
-    """Parser and generator of Property parameter strings. It knows nothing of
-    datatypes. Its main concern is textual structure.
+    """Parser and generator of Property parameter strings.
+
+    It knows nothing of datatypes.
+    Its main concern is textual structure.
+
+    Examples:
+
+        Modify parameters:
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Parameters
+            >>> params = Parameters()
+            >>> params['VALUE'] = 'TEXT'
+            >>> params.value
+            'TEXT'
+            >>> params
+            Parameters({'VALUE': 'TEXT'})
+
+        Create new parameters:
+
+        .. code-block:: pycon
+
+            >>> params = Parameters(value="BINARY")
+            >>> params.value
+            'BINARY'
+
+        Set a default:
+
+        .. code-block:: pycon
+
+            >>> params = Parameters(value="BINARY", default_value="TEXT")
+            >>> params
+            Parameters({'VALUE': 'BINARY'})
+
     """
+
+    def __init__(self, *args, **kwargs):
+        """Create new parameters."""
+        if args and args[0] is None:
+            # allow passing None
+            args = args[1:]
+        defaults = {
+            key[8:]: kwargs.pop(key)
+            for key in list(kwargs.keys())
+            if key.lower().startswith("default_")
+        }
+        super().__init__(*args, **kwargs)
+        for key, value in defaults.items():
+            self.setdefault(key, value)
 
     # The following paremeters must always be enclosed in double quotes
     always_quoted = (
@@ -244,6 +291,8 @@ class Parameters(CaselessDict):
         # Part of X-APPLE-STRUCTURED-LOCATION
         "X-ADDRESS",
         "X-TITLE",
+        # RFC 9253
+        "LINKREL",
     )
     # this is quoted should one of the values be present
     quote_also = {

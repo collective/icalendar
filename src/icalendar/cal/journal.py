@@ -7,6 +7,9 @@ from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Optional, Sequence
 
 from icalendar.attr import (
+    CONCEPTS_TYPE_SETTER,
+    LINKS_TYPE_SETTER,
+    RELATED_TO_TYPE_SETTER,
     attendees_property,
     categories_property,
     class_property,
@@ -179,11 +182,15 @@ class Journal(Component):
         classification: Optional[CLASS] = None,
         color: Optional[str] = None,
         comments: list[str] | str | None = None,
+        concepts: CONCEPTS_TYPE_SETTER = None,
         contacts: list[str] | str | None = None,
         created: Optional[date] = None,
         description: Optional[str | Sequence[str]] = None,
         last_modified: Optional[date] = None,
+        links: LINKS_TYPE_SETTER = None,
         organizer: Optional[vCalAddress | str] = None,
+        refids: list[str] | str | None = None,
+        related_to: RELATED_TO_TYPE_SETTER = None,
         sequence: Optional[int] = None,
         stamp: Optional[date] = None,
         start: Optional[date | datetime] = None,
@@ -201,14 +208,20 @@ class Journal(Component):
             categories: The :attr:`categories` of the journal.
             classification: The :attr:`classification` of the journal.
             color: The :attr:`color` of the journal.
-            comments: The :attr:`Component.comments` of the journal.
-            created: The :attr:`Component.created` of the journal.
+            comments: The :attr:`~icalendar.Component.comments` of the journal.
+            concepts: The :attr:`~icalendar.Component.concepts` of the journal.
+            contacts: The :attr:`contacts` of the journal.
+            created: The :attr:`~icalendar.Component.created` of the journal.
             description: The :attr:`description` of the journal.
             end: The :attr:`end` of the journal.
-            last_modified: The :attr:`Component.last_modified` of the journal.
+            last_modified: The :attr:`~icalendar.Component.last_modified` of
+                the journal.
+            links: The :attr:`~icalendar.Component.links` of the journal.
             organizer: The :attr:`organizer` of the journal.
+            refids: :attr:`~icalendar.Component.refids` of the journal.
+            related_to: :attr:`~icalendar.Component.related_to` of the journal.
             sequence: The :attr:`sequence` of the journal.
-            stamp: The :attr:`Component.stamp` of the journal.
+            stamp: The :attr:`~icalendar.Component.stamp` of the journal.
                 If None, this is set to the current time.
             start: The :attr:`start` of the journal.
             status: The :attr:`status` of the journal.
@@ -225,11 +238,15 @@ class Journal(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        journal = super().new(
+        journal: Journal = super().new(
             stamp=stamp if stamp is not None else cls._utc_now(),
             created=created,
             last_modified=last_modified,
             comments=comments,
+            links=links,
+            related_to=related_to,
+            refids=refids,
+            concepts=concepts,
         )
         journal.summary = summary
         journal.descriptions = description
@@ -245,6 +262,7 @@ class Journal(Component):
         journal.start = start
         journal.status = status
         journal.attendees = attendees
+
         return journal
 
 
