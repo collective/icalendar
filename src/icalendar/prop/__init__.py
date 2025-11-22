@@ -1500,7 +1500,7 @@ class vDuration(TimeBase):
 
     @classmethod
     def parse_jcal_value(cls, jcal: str) -> timedelta | None:
-        """Parse a jCal string to a datetime.timedelta.
+        """Parse a jCal string to a :py:class:`datetime.timedelta`.
         
         Raises:
             JCalParsingError: If it can't parse a duration."""
@@ -2448,7 +2448,11 @@ class vTime(TimeBase):
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
-        """Parse jCal from :rfc:`7265`."""
+        """Parse jCal from :rfc:`7265`.
+
+        Raises:
+            JCalParsingError: If the jCal can't be parsed.
+        """
         JCalParsingError.validate_property(jcal_property, cls)
         with JCalParsingError.reraise_with_path_added(3):
             value = cls.parse_jcal_value(jcal_property[3])
