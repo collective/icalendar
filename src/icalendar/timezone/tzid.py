@@ -69,7 +69,7 @@ def tzid_from_tzinfo(tzinfo: Optional[tzinfo]) -> Optional[str]:
     """Retrieve the timezone id from the tzinfo object.
 
     Some timezones are equivalent.
-    Thus, we might return one ID that is equivalant to others.
+    Thus, we might return one ID that is equivalent to others.
     """
     tzids = tzids_from_tzinfo(tzinfo)
     if "UTC" in tzids:
