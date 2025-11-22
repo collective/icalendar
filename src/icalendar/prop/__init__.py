@@ -2801,7 +2801,7 @@ class vUTCOffset:
             )
             offset = timedelta(hours=hours, minutes=minutes, seconds=seconds)
         except Exception as e:
-            raise ValueError(f"Expected utc offset, got: {ical}") from e
+            raise ValueError(f"Expected UTC offset, got: {ical}") from e
         if not cls.ignore_exceptions and offset >= timedelta(hours=24):
             raise ValueError(f"Offset must be less than 24 hours, was {ical}")
         if sign == "-":
