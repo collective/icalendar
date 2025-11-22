@@ -2835,7 +2835,11 @@ class vUTCOffset:
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
-        """Parse jCal from :rfc:`7265`."""
+        """Parse jCal from :rfc:`7265`.
+
+        Raises:
+            JCalParsingError: If it can't parse the jCal property as a UTC-OFFSET.
+        """
         JCalParsingError.validate_property(jcal_property, cls)
         match = UTC_OFFSET_JCAL_REGEX.match(jcal_property[3])
         if match is None:
