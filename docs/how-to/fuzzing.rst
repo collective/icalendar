@@ -2,7 +2,7 @@
 Fuzzing icalendar
 =================
 
-We use `OSS-Fuzz`_ to find unforseen errors in icalendar.
+The project uses `OSS-Fuzz`_ to find unforeseen errors in icalendar.
 
 The following sections should explain more how to cope with that technology.
 
@@ -46,7 +46,7 @@ Valid errors should be ignored. Invalid errors should be fixed.
 Reproduction example
 --------------------
 
-If you have a look at the :ref:`fuzzing-log`, you can find the string ``QkVHSU46VgpSUlVMRTolbjtCWU1PTlRIPQ==`` as the last calender before 
+If you have a look at the :ref:`fuzzing-log`, you can find the string ``QkVHSU46VgpSUlVMRTolbjtCWU1PTlRIPQ==`` as the last calendar before 
 ``libFuzzer: fuzz target exited``.
 The log shows the traceback somewhere up top.
 
@@ -77,8 +77,8 @@ Then, you can run the tests and see that the error is reproduced:
     ValueError: Invalid month: ''
     ...
 
-Some tests cases show us code to fix. This one shows us a valid error for a wrong month value.
-An empty month is invalid by the sepcification. As such, it is right to have this error and it should be ignored.
+Some tests cases point to code to fix. This one points to a valid error for a wrong month value.
+An empty month is invalid by the specification. As such, it is right to have this error and it should be ignored.
 
 How to reproduce fuzzing issues locally
 =======================================

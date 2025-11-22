@@ -19,6 +19,7 @@ docstrings?
 (?i)Ferreira
 (?i)fitnr
 (?i)Frykholm
+(?i)Fuzzer
 (?i)Garbas
 (?i)Geier
 (?i)Grisel
@@ -88,6 +89,7 @@ Seppänen
 (?i)Tariq
 (?i)tgecho
 (?i)tisto
+(?i)Traceback
 (?i)Unterwaditzer
 uv
 (?i)Varvaryuk
