@@ -702,6 +702,22 @@ class Component(CaselessDict):
             jCal object
 
         See also :attr:`to_json`.
+
+        In this example, we create a simple VEVENT component and convert it to jCal:
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Event
+            >>> from datetime import date
+            >>> from pprint import pprint
+            >>> event = Event.new(summary="My Event", start=date(2025, 11, 22))
+            >>> pprint(event.to_jcal())
+            ['vevent',
+             [['dtstamp', {}, 'date-time', '2025-05-17T08:06:12Z'],
+              ['summary', {}, 'text', 'My Event'],
+              ['uid', {}, 'text', 'd755cef5-2311-46ed-a0e1-6733c9e15c63'],
+              ['dtstart', {}, 'date', '2025-11-22']],
+             []]
         """
         properties = []
         for key, value in self.items():
@@ -725,16 +741,49 @@ class Component(CaselessDict):
 
     @classmethod
     def from_jcal(cls, jcal: str | list) -> Component:
-        """Create a component from a jCal object.
+        """Create a component from a jCal list.
 
-        Returns:
-            Component
+        Args:
+            jcal: jCal list or JSON string according to :rfc:`7265`.
 
         Raises:
             JCalParsingError: If the jCal provided is invalid.
             ~json.JSONDecodeError: If the string provided not valid JSON.
 
         This reverses :func:`to_json` and :func:`to_jcal`.
+
+        The following code parses an example from :rfc:`7265`:
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Component
+            >>> jcal = ["vcalendar",
+            ...   [
+            ...     ["calscale", {}, "text", "GREGORIAN"],
+            ...     ["prodid", {}, "text", "-//Example Inc.//Example Calendar//EN"],
+            ...     ["version", {}, "text", "2.0"]
+            ...   ],
+            ...   [
+            ...     ["vevent",
+            ...       [
+            ...         ["dtstamp", {}, "date-time", "2008-02-05T19:12:24Z"],
+            ...         ["dtstart", {}, "date", "2008-10-06"],
+            ...         ["summary", {}, "text", "Planning meeting"],
+            ...         ["uid", {}, "text", "4088E990AD89CB3DBB484909"]
+            ...       ],
+            ...       []
+            ...     ]
+            ...   ]
+            ... ]
+            >>> calendar = Component.from_jcal(jcal)
+            >>> print(calendar.name)
+            VCALENDAR
+            >>> print(calendar.prodid)
+            -//Example Inc.//Example Calendar//EN
+            >>> event = calendar.events[0]
+            >>> print(event.summary)
+            Planning meeting
+
         """
         if isinstance(jcal, str):
             jcal = json.loads(jcal)
