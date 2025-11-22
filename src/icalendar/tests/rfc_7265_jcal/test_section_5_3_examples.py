@@ -41,7 +41,7 @@ def test_know_attributes_do_not_receive_a_VALUE(prop_name, value, expected_value
 
 
 def test_conversion_from_ical(calendars):
-    """Convert the example to jcal."""
+    """Convert the example to jCal."""
     calendar: Calendar = calendars.rfc_7265_example_1
     jcal = calendar.to_jcal()
     assert jcal[1][0] == ["x-complaint-deadline", {}, "unknown", "20110512T120000Z"]

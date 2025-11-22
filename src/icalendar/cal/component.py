@@ -670,10 +670,10 @@ class Component(CaselessDict):
         return component
 
     def to_jcal(self) -> list:
-        """Convert this component to a jcal object.
+        """Convert this component to a jCal object.
 
         Returns:
-            jcal object
+            jCal object
 
         See also :attr:`to_json`.
         """
@@ -699,13 +699,13 @@ class Component(CaselessDict):
 
     @classmethod
     def from_jcal(cls, jcal: str | list) -> Component:
-        """Create a component from a jcal object.
+        """Create a component from a jCal object.
 
         Returns:
             Component
 
         Raises:
-            JCalParsingError: If the jcal provided is invalid.
+            JCalParsingError: If the jCal provided is invalid.
             ~json.JSONDecodeError: If the string provided not valid JSON.
 
         This reverses :func:`to_json` and :func:`to_jcal`.

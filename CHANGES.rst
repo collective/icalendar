@@ -50,7 +50,7 @@ New features
 - Add :func:`icalendar.is_utc` to check if a timezone is UTC.
 - Add support for JCal parsing and serialization, see `Issue 978 <https://github.com/collective/icalendar/issues/978>`_.
 
-  - Add :class:`icalendar.JCalParsingError` exception for jcal parsing.
+  - Add :class:`icalendar.JCalParsingError` exception for jCal parsing.
   - Add :attr:`icalendar.Parameters.tzid` and :func:`icalendar.Parameters.is_utc` for timezone handling.
   - Add :class:`icalendar.vUnknown` which is the default now for unknown properties and the same as :class:`icalendar.vText`.
   - Add :func:`icalendar.ComponentFactory.get_component_class` that also creates a new component class when it does not exist.

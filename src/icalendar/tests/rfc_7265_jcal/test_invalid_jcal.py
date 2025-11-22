@@ -426,7 +426,7 @@ def test_int_parameters(int_expected, key, as_list):
 
 @pytest.mark.parametrize("valid", [1, "1", "1L"])
 def test_parse_jcal_value_month(valid):
-    """Test parsing of vMonth jcal values."""
+    """Test parsing of vMonth jCal values."""
     month = vMonth.parse_jcal_value(valid)
     assert month == 1
     assert month.leap == (valid == "1L")
@@ -434,7 +434,7 @@ def test_parse_jcal_value_month(valid):
 
 @pytest.mark.parametrize("invalid", ["abc", "", 1.5, [], {}, "1LL"])
 def test_parse_jcal_value_month_invalid(invalid):
-    """Test parsing of vMonth jcal values."""
+    """Test parsing of vMonth jCal values."""
     with pytest.raises(
         JCalParsingError,
         match="in vMonth: The value must be a string or an integer.",

@@ -44,7 +44,7 @@ def test_vCalAddressExample():
 
 
 def test_parameter_conversion_is_handed_over_to_parameter(v_prop: VPROPERTY, mock):
-    """The parameters are part of the jcal conversion."""
+    """The parameters are part of the jCal conversion."""
     example = v_prop.examples()[0]
     assert isinstance(example.params, Parameters)
     example.params = mock

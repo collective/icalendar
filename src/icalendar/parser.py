@@ -358,13 +358,13 @@ class Parameters(CaselessDict):
     def _parameter_value_to_jcal(
         self, value: str | float | list | VPROPERTY
     ) -> str | int | float | list[str] | list[int] | list[float]:
-        """Convert a parameter value to jcal format.
+        """Convert a parameter value to jCal format.
 
         Args:
             value: The parameter value
 
         Returns:
-            The jcal representation of the parameter value
+            The jCal representation of the parameter value
         """
         if isinstance(value, list):
             return [self._parameter_value_to_jcal(v) for v in value]
@@ -379,12 +379,12 @@ class Parameters(CaselessDict):
             if isinstance(value, t):
                 return t(value)
         raise TypeError(
-            "Unsupported parameter value type for jcal conversion: "
+            "Unsupported parameter value type for jCal conversion: "
             f"{type(value)} {value!r}"
         )
 
     def to_jcal(self, exclude_utc=False) -> dict[str, str]:
-        """Return the jcal representation of the parameters.
+        """Return the jCal representation of the parameters.
 
         Args:
             exclude_utc (bool): Exclude the TZID parameter if it is UTC
@@ -416,7 +416,7 @@ class Parameters(CaselessDict):
 
     @classmethod
     def from_jcal(cls, jcal: dict[str : str | list[str]]):
-        """Parse jcal parameters."""
+        """Parse jCal parameters."""
         if not isinstance(jcal, dict):
             raise JCalParsingError("The parameters must be a mapping.", cls)
         for name, value in jcal.items():
@@ -443,10 +443,10 @@ class Parameters(CaselessDict):
 
     @classmethod
     def from_jcal_property(cls, jcal_property: list):
-        """Create the parameters for a jcal property.
+        """Create the parameters for a jCal property.
 
         Args:
-            jcal_property (list): The jcal property [name, params, value, ...]
+            jcal_property (list): The jCal property [name, params, value, ...]
             default_value (str, optional): The default value of the property.
                 If this is given, the default value will not be set.
         """

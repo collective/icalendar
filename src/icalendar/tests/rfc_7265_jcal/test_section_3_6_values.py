@@ -149,13 +149,13 @@ mark_pairs = pytest.mark.parametrize(("jcal_value", "prop"), JCAL_PAIRS)
 
 @mark_pairs
 def test_convert_property_to_jcal(jcal_value, prop):
-    """Check converting an icalendar property type into a jcal value"""
+    """Check converting an icalendar property type into a jCal value"""
     assert prop.to_jcal(jcal_value[0]) == jcal_value
 
 
 @mark_pairs
 def test_convert_jcal_to_property(jcal_value, prop):
-    """Check converting an icalendar property type into a jcal value"""
+    """Check converting an icalendar property type into a jCal value"""
     assert prop.from_jcal(jcal_value) == prop
 
 
@@ -169,7 +169,7 @@ vDDD_pairs = [  # noqa: N816
 @pytest.mark.parametrize(("jcal_value", "prop"), vDDD_pairs)
 @pytest.mark.parametrize("ddd_type", [vDDDTypes, vDDDLists])
 def test_parse_from_ddd(ddd_type, jcal_value, prop):
-    """The DDD types should be able to parse from a jcal value that is of a supported type."""
+    """The DDD types should be able to parse from a jCal value that is of a supported type."""
     parsed = ddd_type.from_jcal(jcal_value)
     print(parsed)
     print(prop, "expected")

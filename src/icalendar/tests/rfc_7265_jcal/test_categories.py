@@ -25,28 +25,28 @@ def test_categories_parse_with_more_items(v_cat):
 
 
 def test_category_jcal_with_1_item():
-    """Check converting vCategory to and from jcal."""
+    """Check converting vCategory to and from jCal."""
     cats = vCategory(["item 1"])
     jcal = cats.to_jcal("CATEGORIES")
     assert jcal == ["CATEGORIES", {}, "text", "item 1"]
 
 
 def test_category_jcal_with_0_items():
-    """Check converting vCategory to and from jcal."""
+    """Check converting vCategory to and from jCal."""
     cats = vCategory([])
     jcal = cats.to_jcal("CATEGORIES")
     assert jcal == ["CATEGORIES", {}, "text", ""]
 
 
 def test_category_jcal_with_1_empty_item():
-    """Check converting vCategory to and from jcal."""
+    """Check converting vCategory to and from jCal."""
     cats = vCategory([""])
     jcal = cats.to_jcal("CATEGORIES")
     assert jcal == ["CATEGORIES", {}, "text", ""]
 
 
 def test_category_jcal_with_3_items():
-    """Check converting vCategory to and from jcal."""
+    """Check converting vCategory to and from jCal."""
     cats = vCategory(["item 1", "item 2", "item 3"])
     jcal = cats.to_jcal("CATEGORIES")
     assert jcal == ["CATEGORIES", {}, "text", "item 1", "item 2", "item 3"]

@@ -14,7 +14,7 @@ import pytest
     ]
 )
 def test_component_conversion(component_class):
-    """test conversion of components to jcal."""
+    """test conversion of components to jCal."""
     component = component_class()
     jcal = component.to_jcal()
     assert len(jcal) == 3
