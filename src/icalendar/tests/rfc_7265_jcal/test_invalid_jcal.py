@@ -241,7 +241,7 @@ def test_failing_example_delegated_to(calendars):
         (
             vDDDTypes,
             "date-time",
-            "Cannot parse date, time, date-time, duration or period.",
+            "Cannot parse date, time, date-time, duration, or period.",
             "",
         ),
     ],
