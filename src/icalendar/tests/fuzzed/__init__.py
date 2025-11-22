@@ -30,7 +30,7 @@ _value_error_matches = [
     "utc offset",
     "parent",
     "MUST be a datetime",
-    # "Invalid month:",
+    "Invalid month:",
 ]
 
 

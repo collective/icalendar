@@ -8,3 +8,4 @@ How to guides
     install
     usage
     cli
+    fuzzing

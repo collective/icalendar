@@ -38,7 +38,7 @@ do
     echo "### No test file content for $testcase"
     exit 1
   fi
-  ICS_FILE="$PYTHON_TEST_CASE_DIRECTORY/`basename \"$testcase\"`.ics"
+  ICS_FILE="$PYTHON_TEST_CASE_DIRECTORY/`basename \fuzz_testcase_"$testcase\"`.ics"
   # decode and ignore garbage, see https://stackoverflow.com/a/15490765/1320237
   echo $TEST_FILE_CONTENT | base64 -di > /dev/null
   echo "Created $ICS_FILE"
