@@ -42,7 +42,7 @@ New features
 - Added documentation of Vale usage for icalender documentation style guide. See `Issue 815 <https://github.com/collective/icalendar/issues/815>`_.
 - Added funding link to :file:`pyproject.toml`.  See `Issue 800 <https://github.com/collective/icalendar/issues/800>`_.
 - Added documentation of docstring format. See `Issue 747 <https://github.com/collective/icalendar/issues/747>`_.
-- Add ``TypeAlias`` :class:`icalendar.VPROPERTY` as a type for all properties.
+- Add ``TypeAlias`` ``icalendar.VPROPERTY`` as a type for all properties.
 - Allow access to :class:`icalendar.TypesFactory` via :func:`icalendar.TypesFactory.instance`.
 - Classes in :mod:`icalendar.prop` can all be initialized with parameters now.
 - Allow passing :class:`icalendar.vDDDTypes` as arguments to :class:`icalendar.vDDDLists`.
@@ -57,12 +57,12 @@ New features
   - Add :func:`icalendar.ComponentFactory.add_component_class` to have a unified interface to add component classes.
   - Add :func:`icalendar.Component.to_json`, :func:`icalendar.Component.to_jcal`, and :func:`icalendar.Component.from_jcal` methods so all components can be serialized and parsed.
   - Classes in :mod:`icalendar.prop` receive the following updates:
-    
+
     - Add ``to_jcal`` and ``from_jcal`` for serialization.
     - Add ``default_value`` class attribute for the default ``VALUE`` parameter.
     - Add ``VALUE`` parameter property.
     - Add ``examples()`` classmethod that returns examples for testing.
-  
+
 - Added first-time contributors section to Contributing. See `Issue 934 <https://github.com/collective/icalendar/issues/934>`_.
 - Revised check of which files trigger a documentation build on Read the Docs. See `Issue 848 <https://github.com/collective/icalendar/issues/848>`_.
 - Created a separate path to contribute to documentation. See `Issue 929 <https://github.com/collective/icalendar/issues/929>`_.
