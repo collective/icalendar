@@ -2682,7 +2682,11 @@ class vGeo:
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
-        """Parse jCal from :rfc:`7265`."""
+        """Parse jCal from :rfc:`7265`.
+
+        Raises:
+            JCalParsingError: If the jCal can't be parsed.
+        """
         JCalParsingError.validate_property(jcal_property, cls)
         return cls(
             jcal_property[3],
