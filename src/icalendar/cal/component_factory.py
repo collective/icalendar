@@ -14,18 +14,19 @@ if TYPE_CHECKING:
 class ComponentFactory(CaselessDict):
     """Registered components from :rfc:`7953` and :rfc:`5545`.
 
-    To get a component you can use it like this:
+    To get a component you can use this class like this:
 
     .. code-block:: pycon
 
-        >>> from icalendar.cal.component_factory import ComponentFactory
+        >>> from icalendar import ComponentFactory
         >>> factory = ComponentFactory()
         >>> event_class = factory.get_component_class('VEVENT')
         >>> event_class()
         VEVENT({})
 
     If a component class is not supported, yet, it can be created using
-    :meth:`get_component_class` or added manually as a subclass of :class:`Component`.
+    :meth:`get_component_class` or added manually as a subclass of
+    :class:`~icalendar.Component`.
     """
 
     def __init__(self, *args, **kwargs):
@@ -54,13 +55,23 @@ class ComponentFactory(CaselessDict):
         self.add_component_class(Availability)
 
     def add_component_class(self, cls: type[Component]) -> None:
-        """Add a component class to the factory."""
+        """Add a component class to the factory.
+
+        Args:
+            cls: The component class to add.
+        """
         self[cls.name] = cls
 
-    def get_component_class(self, name):
+    def get_component_class(self, name: str) -> type[Component]:
         """Get the component class from the factory.
 
-        This also creates the component class if it does not exist.
+        This also creates and adds the component class if it does not exist.
+
+        Args:
+            name: The name of the component, e.g. ``"VCALENDAR"``.
+
+        Returns:
+            The registered component class.
         """
         component_class = self.get(name)
         if component_class is None:

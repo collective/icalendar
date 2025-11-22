@@ -165,3 +165,10 @@ def test_all_value_types_are_in_the_factory(v_prop, types_factory):
     assert v_prop in types_factory.all_types, (
         f"The value type {v_prop} is not part of TypesFactory.all_types."
     )
+
+
+def test_an_new_component_class_is_registered(component_factory):
+    """Check that the result is always the same."""
+    assert component_factory.get_component_class(
+        "VCUSTOM"
+    ) is component_factory.get_component_class("VCUSTOM")

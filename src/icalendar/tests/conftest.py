@@ -215,6 +215,12 @@ def types_factory():
 
 
 @pytest.fixture
+def component_factory():
+    """Return a new types factory."""
+    return ComponentFactory()
+
+
+@pytest.fixture
 def x_sometime(types_factory):
     """Map x_sometime to time"""
     types_factory.types_map["X-SOMETIME"] = "time"
