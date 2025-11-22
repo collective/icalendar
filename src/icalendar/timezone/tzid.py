@@ -121,7 +121,7 @@ def get_equivalent_tzids(tzid: str) -> tuple[str]:
 
 
 def is_utc(t: datetime | time | date | tzinfo) -> bool:
-    """Wether this date is in UTC."""
+    """Whether this date is in UTC."""
     if is_date(t):
         return False
     tzid = tzid_from_dt(t) if hasattr(t, "tzinfo") else tzid_from_tzinfo(t)
