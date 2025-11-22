@@ -121,7 +121,7 @@ class vBinary:
     from icalendar.param import VALUE
 
     def to_jcal(self, name: str) -> list:
-        """The jCal represenation of this property according to :rfc:`7265`."""
+        """The jCal representation of this property according to :rfc:`7265`."""
         params = self.params.to_jcal()
         if params.get("encoding") == "BASE64":
             # BASE64 is the only allowed encoding
@@ -211,7 +211,7 @@ class vBoolean(int):
     from icalendar.param import VALUE
 
     def to_jcal(self, name: str) -> list:
-        """The jCal represenation of this property according to :rfc:`7265`."""
+        """The jCal representation of this property according to :rfc:`7265`."""
         return [name, self.params.to_jcal(), self.VALUE.lower(), bool(self)]
 
     @classmethod
@@ -261,7 +261,7 @@ class vText(str):
     from icalendar.param import ALTREP, LANGUAGE, RELTYPE
 
     def to_jcal(self, name: str) -> list:
-        """The jCal represenation of this property according to :rfc:`7265`."""
+        """The jCal representation of this property according to :rfc:`7265`."""
         if name == "request-status":  # TODO: maybe add a vRequestStatus class?
             return [name, {}, "text", self.split(";", 2)]
         return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
@@ -599,7 +599,7 @@ class vFloat(float):
     from icalendar.param import VALUE
 
     def to_jcal(self, name: str) -> list:
-        """The jCal represenation of this property according to :rfc:`7265`."""
+        """The jCal representation of this property according to :rfc:`7265`."""
         return [name, self.params.to_jcal(), self.VALUE.lower(), float(self)]
 
     @classmethod
@@ -692,7 +692,7 @@ class vInt(int):
     from icalendar.param import VALUE
 
     def to_jcal(self, name: str) -> list:
-        """The jCal represenation of this property according to :rfc:`7265`."""
+        """The jCal representation of this property according to :rfc:`7265`."""
         return [name, self.params.to_jcal(), self.VALUE.lower(), int(self)]
 
     @classmethod
@@ -771,7 +771,7 @@ class vDDDLists:
         return [vDDDLists([datetime(2025, 11, 10, 16, 50)])]  # noqa: DTZ001
 
     def to_jcal(self, name: str) -> list:
-        """The jCal represenation of this property according to :rfc:`7265`."""
+        """The jCal representation of this property according to :rfc:`7265`."""
         return [
             name,
             self.params.to_jcal(),
@@ -838,7 +838,7 @@ class vCategory:
         return f"{self.__class__.__name__}({self.cats}, params={self.params})"
 
     def to_jcal(self, name: str) -> list:
-        """The jCal represenation for categories."""
+        """The jCal representation for categories."""
         result = [name, self.params.to_jcal(), self.VALUE.lower()]
         result.extend(map(str, self.cats))
         if not self.cats:
@@ -1012,7 +1012,7 @@ class vDDDTypes(TimeBase):
     from icalendar.param import VALUE
 
     def to_jcal(self, name: str) -> list:
-        """The jCal represenation of this property according to :rfc:`7265`."""
+        """The jCal representation of this property according to :rfc:`7265`."""
         return self.to_property_type().to_jcal(name)
 
     @classmethod
@@ -1139,7 +1139,7 @@ class vDate(TimeBase):
     from icalendar.param import VALUE
 
     def to_jcal(self, name: str) -> list:
-        """The jCal represenation of this property according to :rfc:`7265`."""
+        """The jCal representation of this property according to :rfc:`7265`."""
         return [
             name,
             self.params.to_jcal(),
@@ -1305,7 +1305,7 @@ class vDatetime(TimeBase):
     from icalendar.param import VALUE
 
     def to_jcal(self, name: str) -> list:
-        """The jCal represenation of this property according to :rfc:`7265`."""
+        """The jCal representation of this property according to :rfc:`7265`."""
         value = self.dt.strftime("%Y-%m-%dT%H:%M:%S")
         if self.is_utc():
             value += "Z"
@@ -1490,7 +1490,7 @@ class vDuration(TimeBase):
     from icalendar.param import VALUE
 
     def to_jcal(self, name: str) -> list:
-        """The jCal represenation of this property according to :rfc:`7265`."""
+        """The jCal representation of this property according to :rfc:`7265`."""
         return [
             name,
             self.params.to_jcal(),
@@ -2222,7 +2222,7 @@ class vRecur(CaselessDict):
     from icalendar.param import VALUE
 
     def to_jcal(self, name: str) -> list:
-        """The jCal represenation of this property according to :rfc:`7265`."""
+        """The jCal representation of this property according to :rfc:`7265`."""
         value = {k.lower(): v for k, v in self.items()}
         if "until" in value:
             until = value["until"]
@@ -2423,7 +2423,7 @@ class vTime(TimeBase):
     from icalendar.param import VALUE
 
     def to_jcal(self, name: str) -> list:
-        """The jCal represenation of this property according to :rfc:`7265`."""
+        """The jCal representation of this property according to :rfc:`7265`."""
         value = self.dt.strftime("%H:%M:%S")
         if self.is_utc():
             value += "Z"
@@ -2538,7 +2538,7 @@ class vUri(str):
     from icalendar.param import VALUE
 
     def to_jcal(self, name: str) -> list:
-        """The jCal represenation of this property according to :rfc:`7265`."""
+        """The jCal representation of this property according to :rfc:`7265`."""
         return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
 
     @classmethod
@@ -2830,7 +2830,7 @@ class vUTCOffset:
     from icalendar.param import VALUE
 
     def to_jcal(self, name: str) -> list:
-        """The jCal represenation of this property according to :rfc:`7265`."""
+        """The jCal representation of this property according to :rfc:`7265`."""
         return [name, self.params.to_jcal(), self.VALUE.lower(), self.format(":")]
 
     @classmethod
