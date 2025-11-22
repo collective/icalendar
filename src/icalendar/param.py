@@ -493,9 +493,9 @@ Conformance:
     This property parameter is specified in :rfc:`7986`,
     iCalendar Property Extensions.
 
-    :rfc:`9253` makes use of this for the LINK property:
+    :rfc:`9253` makes use of this for the LINK property.
     This parameter maps to the "title"
-    attribute defined in Section 3.4.1 of :rfc:`8288`:
+    attribute defined in Section 3.4.1 of :rfc:`8288`.
     LABEL is used to label the destination
     of a link such that it can be used as a human-readable identifier
     (e.g., a menu entry) in the language indicated by the LANGUAGE
@@ -534,7 +534,7 @@ FMTTYPE = string_parameter(
 
 Conformance:
     :rfc:`5545` specifies the FMTTYPE.
-    :rfc:`9253`: adds FMTTYPE to LINK properties. In a LINK,
+    :rfc:`9253` adds FMTTYPE to LINK properties. In a LINK,
     FMTTYPE maps to the "type"
     attribute defined in Section 3.4.1 of :rfc:`8288`.
     See :rfc:`6838`.
@@ -584,9 +584,9 @@ Description:
     default value type is overridden by some other allowable value
     type, then this parameter MUST be specified.
 
-    Applications MUST preserve the value data for x-name and iana-
-    token values that they don't recognize without attempting to
-    interpret or parse the value data.
+    Applications MUST preserve the value data for ``x-name`` and
+    ``iana-token`` values that they don't recognize without attempting
+    to interpret or parse the value data.
 
 """,
 )
