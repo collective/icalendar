@@ -60,7 +60,7 @@ New features
 - Allow passing :class:`icalendar.vDDDTypes` as arguments to :class:`icalendar.vDDDLists`.
 - Add support for :class:`datetime.timezone` identification.
 - Add :func:`icalendar.is_utc` to check if a timezone is UTC.
-- Add support for JCal parsing and serialization, see `Issue 978 <https://github.com/collective/icalendar/issues/978>`_.
+- Add support for JCal parsing and serialization. See `Issue 978 <https://github.com/collective/icalendar/issues/978>`_.
 
   - Add :class:`icalendar.JCalParsingError` exception for jCal parsing.
   - Add :attr:`icalendar.Parameters.tzid` and :func:`icalendar.Parameters.is_utc` for timezone handling.
@@ -75,6 +75,7 @@ New features
     - Add ``VALUE`` parameter property.
     - Add ``examples()`` classmethod that returns examples for testing.
 
+- Added documentation of how to fuzz icalendar. See `Issue 905 <https://github.com/collective/icalendar/issues/905>`_.
 - Added first-time contributors section to Contributing. See `Issue 934 <https://github.com/collective/icalendar/issues/934>`_.
 - Revised check of which files trigger a documentation build on Read the Docs. See `Issue 848 <https://github.com/collective/icalendar/issues/848>`_.
 - Created a separate path to contribute to documentation. See `Issue 929 <https://github.com/collective/icalendar/issues/929>`_.

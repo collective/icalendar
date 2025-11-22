@@ -1,5 +1,4 @@
-﻿.. code-block:: text
-
+```
 2025-11-22T11:51:33.9175548Z Current runner version: '2.329.0'
 2025-11-22T11:51:33.9199376Z ##[group]Runner Image Provisioner
 2025-11-22T11:51:33.9200136Z Hosted Compute Agent
