@@ -2908,7 +2908,7 @@ class vUnknown(vText):
 
     @classmethod
     def examples(cls) -> list[vUnknown]:
-        """Examples of vUnknown"""
+        """Examples of vUnknown."""
         return [vUnknown("Some property text.")]
 
     from icalendar.param import VALUE
