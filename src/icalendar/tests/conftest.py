@@ -80,7 +80,7 @@ class DataSource:
             raise AttributeError(f"{source_path} does not exist.")
         if ending == ".jcal":
             source = Component.from_jcal(source_path.read_text())
-            raw_ics = "This is a jcal file."
+            raw_ics = "This is a jCal file."
         else:
             raw_ics = source_path.read_bytes()
             source = self._parser(raw_ics)

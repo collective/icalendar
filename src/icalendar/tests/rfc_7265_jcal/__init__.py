@@ -1,2 +1,2 @@
-"""Test cases for jcal compatibility."""
+"""Test cases for jCal compatibility."""
 

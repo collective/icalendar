@@ -1,4 +1,4 @@
-"""Tests for jcal running on all ics files."""
+"""Tests for jCal running on all ics files."""
 
 import json
 from datetime import datetime
@@ -29,7 +29,7 @@ def test_converting_an_example_back_and_forth_equals_the_original(ics_file: Comp
 
 
 def test_trigger(tzp):
-    """Check jcal loading of TRIGGER."""
+    """Check jCal loading of TRIGGER."""
     alarm = Alarm()
     alarm.TRIGGER = tzp.localize_utc(datetime(2022, 1, 1))
     assert is_utc(alarm.TRIGGER)
@@ -41,7 +41,7 @@ def test_trigger(tzp):
 
 
 def test_trigger_from_example(events):
-    """Check jcal loading of TRIGGER."""
+    """Check jCal loading of TRIGGER."""
     alarm: Alarm = events.rfc_9074_example_proximity.subcomponents[0]
     print(alarm["TRIGGER"])
     jcal = alarm.to_jcal()

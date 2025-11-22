@@ -22,6 +22,7 @@ class ComponentFactory(CaselessDict):
         >>> factory = ComponentFactory()
         >>> event_class = factory.get_component_class('VEVENT')
         >>> event_class()
+        VEVENT({})
 
     If a component class is not supported, yet, it can be created using
     :meth:`get_component_class` or added manually as a subclass of :class:`Component`.

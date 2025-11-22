@@ -145,6 +145,7 @@ linkcheck_ignore = [
     r"https://groups.google.com/g/icalendar-coc/",
     r"https://pypi.org/manage/project/icalendar/collaboration/",
     # Ignore specific anchors
+    r"https://github.com/collective/icalendar/blob/main/CODE_OF_CONDUCT.md#enforcement",
     r"https://github.com/collective/icalendar/blob/main/README.rst#related-projects",
     r"https://up-for-grabs.net/#/filters",
 ]

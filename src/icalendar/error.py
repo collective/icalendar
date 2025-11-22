@@ -125,7 +125,7 @@ class JCalParsingError(ValueError):
         parser: str | type,
         path: list[str | int] | None | str | int = None,
     ):
-        """Validate a jcal property.
+        """Validate a jCal property.
 
         Raises:
             JCalParsingError: if the property is not valid.
@@ -173,7 +173,7 @@ class JCalParsingError(ValueError):
         parser: str | type = "",
         path: list[str | int] | None | str | int = None,
     ):
-        """Validate the type of a jcal value."""
+        """Validate the type of a jCal value."""
         if not isinstance(jcal, expected_type):
             type_name = (
                 cls._type_names[expected_type]
@@ -195,7 +195,7 @@ class JCalParsingError(ValueError):
         parser: str | type = "",
         path: list[str | int] | None | str | int = None,
     ):
-        """Validate the type of each item in a jcal list."""
+        """Validate the type of each item in a jCal list."""
         path = cls._get_path(path)
         if not isinstance(jcal, list):
             raise cls(
