@@ -4,28 +4,15 @@ import json
 from datetime import datetime
 from pprint import pprint
 
-from icalendar import Component
 from icalendar.cal.alarm import Alarm
 from icalendar.timezone.tzid import is_utc
 
 
-def test_to_jcal_can_be_json_serialized(ics_file):
+def test_to_jcal_can_be_json_serialized(source_file):
     """Check that all calendars can be converted to JCAL and serialized to JSON."""
-    jcal = ics_file.to_jcal()
+    jcal = source_file.to_jcal()
     s = json.dumps(jcal)
     assert s
-
-
-def test_converting_an_example_back_and_forth_equals_the_original(ics_file: Component):
-    """Check that all calendars can be converted to JCAL and back."""
-    jcal = ics_file.to_jcal()
-    # pprint(jcal)
-    component = Component.from_jcal(jcal)
-    # print("Got:")
-    # print(to_unicode(component.to_ical())[:1000])
-    # print("Expected:")
-    # print(to_unicode(ics_file.to_ical())[:1000])
-    assert component == ics_file
 
 
 def test_trigger(tzp):

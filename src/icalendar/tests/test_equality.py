@@ -15,7 +15,8 @@ from datetime import date, datetime, time, timedelta
 
 import pytest
 
-from icalendar.prop import (
+from icalendar import (
+    Component,
     vBinary,
     vBoolean,
     vCategory,
@@ -26,6 +27,7 @@ from icalendar.prop import (
     vDuration,
     vGeo,
     vPeriod,
+    vRecur,
     vText,
     vTime,
 )
@@ -43,13 +45,22 @@ def assert_not_equal(actual_value, expected_value):
     assert expected_value != actual_value
 
 
-def test_parsed_calendars_are_equal_if_parsed_again(ics_file, tzp):
+def test_parsed_calendars_are_equal_if_parsed_again(source_file, tzp):
     """Ensure that a calendar equals the same calendar.
 
-    ics -> calendar -> ics -> same calendar
+    source -> calendar -> ics -> same calendar
     """
-    copy_of_calendar = ics_file.__class__.from_ical(ics_file.to_ical())
-    assert_equal(copy_of_calendar, ics_file)
+    copy_of_calendar = source_file.__class__.from_ical(source_file.to_ical())
+    assert_equal(copy_of_calendar, source_file)
+
+
+def test_parsed_calendars_are_equal_if_parsed_again_jcal(source_file, tzp):
+    """Ensure that a calendar equals the same calendar.
+
+    source -> calendar -> jcal -> same calendar
+    """
+    copy_of_calendar = Component.from_jcal(source_file.to_jcal())
+    assert_equal(copy_of_calendar, source_file)
 
 
 def test_parsed_calendars_are_equal_if_from_same_source(ics_file, tzp):
@@ -63,15 +74,26 @@ def test_parsed_calendars_are_equal_if_from_same_source(ics_file, tzp):
     assert_equal(cal1, cal2)
 
 
-def test_copies_are_equal(ics_file, tzp):
+def test_parsed_calendars_are_equal_if_from_same_source_jcal(jcal_file, tzp):
+    """Ensure that a calendar equals the same calendar.
+
+    jcal -> calendar
+    jcal -> same calendar
+    """
+    cal1 = Component.from_jcal(jcal_file.raw_jcal)
+    cal2 = Component.from_jcal(jcal_file.raw_jcal)
+    assert_equal(cal1, cal2)
+
+
+def test_copies_are_equal(source_file, tzp):
     """Ensure that copies are equal."""
-    copy1 = ics_file.copy()
-    copy1.subcomponents = ics_file.subcomponents
-    copy2 = ics_file.copy()
-    copy2.subcomponents = ics_file.subcomponents[:]
+    copy1 = source_file.copy()
+    copy1.subcomponents = source_file.subcomponents
+    copy2 = source_file.copy()
+    copy2.subcomponents = source_file.subcomponents[:]
     assert_equal(copy1, copy2)
-    assert_equal(copy1, ics_file)
-    assert_equal(copy2, ics_file)
+    assert_equal(copy1, source_file)
+    assert_equal(copy2, source_file)
 
 
 def test_copy_does_not_copy_subcomponents(calendars, tzp):
@@ -80,21 +102,21 @@ def test_copy_does_not_copy_subcomponents(calendars, tzp):
     assert not calendars.timezoned.copy().subcomponents
 
 
-def test_deep_copies_are_equal(ics_file, tzp):
+def test_deep_copies_are_equal(source_file, tzp):
     """Ensure that deep copies are equal.
 
     Ignore errors when a custom time zone is used.
     This is still covered by the parsing test.
     """
     if (
-        ics_file.source_file == "issue_722_timezone_transition_ambiguity.ics"
+        source_file.source_file == "issue_722_timezone_transition_ambiguity.ics"
         and tzp.uses_zoneinfo()
     ):
         pytest.skip("This test fails for now.")
     with contextlib.suppress(UnknownTimeZoneError):
-        assert_equal(copy.deepcopy(ics_file), copy.deepcopy(ics_file))
+        assert_equal(copy.deepcopy(source_file), copy.deepcopy(source_file))
     with contextlib.suppress(UnknownTimeZoneError):
-        assert_equal(copy.deepcopy(ics_file), ics_file)
+        assert_equal(copy.deepcopy(source_file), source_file)
 
 
 def test_vGeo():
@@ -127,7 +149,7 @@ def test_vText():
 
 
 @pytest.mark.parametrize(
-    ("vType", "v1", "v2"),
+    ("v_type", "v1", "v2"),
     [
         (vDatetime, datetime(2023, 11, 1, 10, 11), datetime(2023, 11, 1, 10, 10)),
         (vDate, date(2023, 11, 1), date(2023, 10, 31)),
@@ -154,10 +176,10 @@ def test_vText():
 @pytest.mark.parametrize("cls1", [0, 1])
 @pytest.mark.parametrize("cls2", [0, 1])
 @pytest.mark.parametrize("hash", [lambda x: x, hash])
-def test_vDDDTypes_and_others(vType, v1, v2, cls1, cls2, eq, hash):
+def test_vDDDTypes_and_others(v_type, v1, v2, cls1, cls2, eq, hash):  # noqa: A002
     """Check equality and inequality."""
-    t1 = (vType, vDDDTypes)[cls1]
-    t2 = (vType, vDDDTypes)[cls2]
+    t1 = (v_type, vDDDTypes)[cls1]
+    t2 = (v_type, vDDDTypes)[cls2]
     if eq == "==":
         assert hash(v1) == hash(v1)
         assert hash(t1(v1)) == hash(t2(v1))
@@ -186,3 +208,37 @@ def test_vDDDLists(l1, l2):
     l2 = copy.deepcopy(l2)
     assert equal == (l1 == l2)
     assert equal != (l1 != l2)
+
+
+@pytest.mark.parametrize("index", [1, 2])
+def test_rfc_7265_equivalence_of_example_from_appendix(calendars, index):
+    """jcal and ical should be the same"""
+    ical = calendars[f"rfc_7265_appendix_example_{index}_ical"]
+    jcal = calendars[f"rfc_7265_appendix_example_{index}_jcal"]
+    assert_equal(ical.to_jcal(), jcal.to_jcal())
+    assert_equal(ical, jcal)
+
+
+@pytest.mark.parametrize(
+    ("a", "b"),
+    [
+        ({}, {}),
+        ({"bymonth": "4"}, {"bymonth": 4}),
+        ({"bymonthday": ["1", "15"]}, {"bymonthday": [1, 15]}),
+        ({"byday": ["MO", "TU"]}, {"byday": ["MO", "TU"]}),
+        ({"byday": ["MO"]}, {"byday": ["MO"]}),
+        ({"byday": ["-1FR"]}, {"byday": [-1, "FR"]}),
+        ({"count": "10"}, {"count": 10}),
+        ({"interval": "2"}, {"interval": 2}),
+        ({"until": "20231231T235959Z"}, {"until": datetime(2023, 12, 31, 23, 59, 59)}),
+        (
+            {"freq": "WEEKLY", "byday": ["MO", "WE"]},
+            {"freq": "WEEKLY", "byday": ["MO", "WE"]},
+        ),
+    ],
+)
+def _test_equality_of_recur(a, b):
+    """Test the equality of RECUR dictionaries."""
+    a_recur = vRecur.from_jcal(["", {}, "", a])
+    b_recur = vRecur.from_jcal(["", {}, "", b])
+    assert_equal(a_recur, b_recur)

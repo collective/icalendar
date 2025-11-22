@@ -1074,6 +1074,8 @@ class vDDDTypes(TimeBase):
         if isinstance(jcal, list):
             return vPeriod.parse_jcal_value(jcal)
         JCalParsingError.validate_value_type(jcal, str, cls)
+        if "/" in jcal:
+            return vPeriod.parse_jcal_value(jcal)
         for jcal_type in (vDatetime, vDate, vTime, vDuration):
             try:
                 return jcal_type.parse_jcal_value(jcal)
@@ -1764,6 +1766,9 @@ class vPeriod(TimeBase):
             JCalParsingError: If the period is not a list with exactly two items,
                 or it can't parse a date-time or duration.
         """
+        if isinstance(jcal, str) and "/" in jcal:
+            # only occurs in the example of RFC7265, Section B.2.2.
+            jcal = jcal.split("/")
         if not isinstance(jcal, list) or len(jcal) != 2:
             raise JCalParsingError(
                 "A period must be a list with exactly 2 items.", cls, value=jcal
