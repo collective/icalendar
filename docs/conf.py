@@ -22,6 +22,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.napoleon",
+    "sphinx_autodoc_typehints",  # must be loaded after sphinx.ext.napoleon. See https://github.com/tox-dev/sphinx-autodoc-typehints/issues/15
 ]
 source_suffix = {".rst": "restructuredtext"}
 master_doc = "index"
@@ -73,8 +74,8 @@ html_theme_options = {
             "attributes": {
                 "target": "_blank",
                 "rel": "noopener me",
-                "class": "nav-link custom-fancy-css"
-            }
+                "class": "nav-link custom-fancy-css",
+            },
         },
         {
             "name": "PyPI",
@@ -84,13 +85,11 @@ html_theme_options = {
             "attributes": {
                 "target": "_blank",
                 "rel": "noopener me",
-                "class": "nav-link custom-fancy-css"
-            }
+                "class": "nav-link custom-fancy-css",
+            },
         },
     ],
-    "logo": {
-        "text": "icalendar"
-    },
+    "logo": {"text": "icalendar"},
     "navbar_start": ["navbar-logo", "version-switcher"],
     "navigation_with_keys": True,
     "search_bar_text": "Search",
@@ -104,7 +103,7 @@ html_theme_options = {
     "use_edit_page_button": True,
 }
 html_context = {
-#     "github_url": "https://github.com", # or your GitHub Enterprise site
+    #     "github_url": "https://github.com", # or your GitHub Enterprise site
     "github_user": "collective",
     "github_repo": "icalendar",
     "github_version": "main",
@@ -116,8 +115,8 @@ html_static_path = [
 html_js_files = [
     ("js/custom-icons.js", {"defer": "defer"}),
 ]
+napoleon_use_param = True
 pygments_style = "sphinx"
-
 
 # -- Intersphinx configuration ----------------------------------
 
@@ -148,6 +147,8 @@ linkcheck_ignore = [
     r"https://github.com/collective/icalendar/blob/main/CODE_OF_CONDUCT.md#enforcement",
     r"https://github.com/collective/icalendar/blob/main/README.rst#related-projects",
     r"https://up-for-grabs.net/#/filters",
+    # Ignore links that are unstable
+    r"https://www.unicode.org/cldr/cldr-aux/charts/29/supplemental/zone_tzid.html",
 ]
 linkcheck_anchors = True
 linkcheck_timeout = 5

@@ -6,6 +6,9 @@ from datetime import timedelta
 from typing import TYPE_CHECKING, Sequence
 
 from icalendar.attr import (
+    CONCEPTS_TYPE_SETTER,
+    LINKS_TYPE_SETTER,
+    RELATED_TO_TYPE_SETTER,
     categories_property,
     images_property,
     multi_language_text_property,
@@ -518,14 +521,18 @@ Description:
         calscale: str | None = None,
         categories: Sequence[str] = (),
         color: str | None = None,
+        concepts: CONCEPTS_TYPE_SETTER = None,
         description: str | None = None,
         language: str | None = None,
         last_modified: date | datetime | None = None,
+        links: LINKS_TYPE_SETTER = None,
         method: str | None = None,
         name: str | None = None,
         organization: str | None = None,
         prodid: str | None = None,
         refresh_interval: timedelta | None = None,
+        refids: list[str] | str | None = None,
+        related_to: RELATED_TO_TYPE_SETTER = None,
         source: str | None = None,
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
@@ -539,15 +546,19 @@ Description:
             calscale: The :attr:`calscale` of the calendar.
             categories: The :attr:`categories` of the calendar.
             color: The :attr:`color` of the calendar.
+            concepts: The :attr:`~icalendar.Component.concepts` of the calendar.
             description: The :attr:`description` of the calendar.
             language: The language for the calendar. Used to generate localized `prodid`.
-            last_modified: The :attr:`Component.last_modified` of the calendar.
+            last_modified: The :attr:`~icalendar.Component.last_modified` of the calendar.
+            links: The :attr:`~icalendar.Component.links` of the calendar.
             method: The :attr:`method` of the calendar.
             name: The :attr:`calendar_name` of the calendar.
             organization: The organization name. Used to generate `prodid` if not provided.
             prodid: The :attr:`prodid` of the component. If None and organization is provided,
                 generates a `prodid` in format "-//organization//name//language".
             refresh_interval: The :attr:`refresh_interval` of the calendar.
+            refids: :attr:`~icalendar.Component.refids` of the calendar.
+            related_to: :attr:`~icalendar.Component.related_to` of the calendar.
             source: The :attr:`source` of the calendar.
             uid: The :attr:`uid` of the calendar.
                 If None, this is set to a new :func:`uuid.uuid4`.
@@ -562,7 +573,13 @@ Description:
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """  # noqa: E501
-        calendar = cls()
+        calendar: Calendar = super().new(
+            last_modified=last_modified,
+            links=links,
+            related_to=related_to,
+            refids=refids,
+            concepts=concepts,
+        )
 
         # Generate prodid if not provided but organization is given
         if prodid is None and organization:
@@ -584,7 +601,7 @@ Description:
         calendar.url = url
         calendar.refresh_interval = refresh_interval
         calendar.source = source
-        calendar.last_modified = last_modified
+
         return calendar
 
     def validate(self):
