@@ -31,17 +31,18 @@ Maintainers need the following permissions.
     Management is performed through `Google Groups icalendar-coc settings <https://groups.google.com/g/icalendar-coc/settings>`_.
 ``Registered`` access to the `OSS Fuzz issue tracker <https://issues.oss-fuzz.com/issues?q=icalendar>`_ for icalendar.
     icalendar contributors use this issue tracker for managing :doc:`../how-to/fuzz-testing` issues that arise from time to time.
-    Create a Pull Request to add your email address to `google/oss-fuzz <https://github.com/google/oss-fuzz/blob/master/projects/icalendar/project.yaml>`_ to gain the following access:
+    New issues do not get immediately disclosed to the public, and require that you register with a Google Account.
+    Add your Google Account's email address to `google/oss-fuzz <https://github.com/google/oss-fuzz/blob/master/projects/icalendar/project.yaml>`_, and create a pull request, to request the following access:
 
-    * Instant notification about fuzzing errors.
-    * Access to undisclosed fuzzing issues.
+    -   instant notification about fuzzing errors
+    -   undisclosed fuzzing issues
 
     Existing issues will be disclosed after some time to the public.
 
     .. seealso::
 
-        * `Discussion about how to be added to OSS-Fuzz <https://github.com/collective/icalendar/pull/574#issuecomment-1790554766>`_
-        * `OSS-Fuzz Integration - Issue 562 <https://github.com/collective/icalendar/issues/562>`_
+        -   `Discussion about how to be added to OSS Fuzz <https://github.com/collective/icalendar/pull/574#issuecomment-1790554766>`_
+        -   `OSS Fuzz Integration - Issue 562 <https://github.com/collective/icalendar/issues/562>`_
     
 
 Collaborators
