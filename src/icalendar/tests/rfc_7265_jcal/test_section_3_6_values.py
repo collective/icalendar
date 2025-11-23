@@ -93,7 +93,7 @@ JCAL_PAIRS = [
             "rrule",
             {},
             "recur",
-            {"freq": "YEARLY", "count": 5, "byday": ["-1SU", "2MO"], "bymonth": 10},
+            {"freq": "YEARLY", "count": 5, "byday": ["-1SU", "2MO"], "bymonth": [10]},
         ],
         vRecur({"freq": "YEARLY", "count": 5, "bymonth": 10, "byday": ["-1SU", "2MO"]}),
     ),
