@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 class ComponentFactory(CaselessDict):
     """Registered components from :rfc:`7953` and :rfc:`5545`.
 
-    To get a component you can use this class like this:
+    To get a component, use this class as shown below.
 
     .. code-block:: pycon
 
@@ -24,8 +24,8 @@ class ComponentFactory(CaselessDict):
         >>> event_class()
         VEVENT({})
 
-    If a component class is not supported, yet, it can be created using
-    :meth:`get_component_class` or added manually as a subclass of
+    If a component class is not yet supported, it can be either created
+    using :meth:`get_component_class` or added manually as a subclass of
     :class:`~icalendar.Component`.
     """
 
@@ -68,7 +68,7 @@ class ComponentFactory(CaselessDict):
         This also creates and adds the component class if it does not exist.
 
         Args:
-            name: The name of the component, e.g. ``"VCALENDAR"``.
+            name: The name of the component, for example, ``"VCALENDAR"``.
 
         Returns:
             The registered component class.

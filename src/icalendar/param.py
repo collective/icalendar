@@ -657,7 +657,7 @@ Description:
     the type of reference.
     This allows programs consuming this data to automatically scan
     for references they support.
-    There is no default relation type.Any link relation in the
+    There is no default relation type. Any link relation in the
     link registry established by :rfc:`8288`, or new link relations,
     may be used.
     It is expected that link relation types seeing significant usage
