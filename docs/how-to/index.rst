@@ -9,4 +9,4 @@ How to guides
     usage
     jcal
     cli
-    fuzzing
+    fuzz-testing
