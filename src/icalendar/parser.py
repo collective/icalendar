@@ -505,7 +505,10 @@ class Parameters(CaselessDict):
             )
         jcal_params = jcal_property[1]
         with JCalParsingError.reraise_with_path_added(1):
-            return cls.from_jcal(jcal_params)
+            self = cls.from_jcal(jcal_params)
+        if self.is_utc():
+            del self.tzid  # we do not want this parameter
+        return self
 
 
 def escape_string(val):

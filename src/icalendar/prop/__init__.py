@@ -2244,6 +2244,11 @@ class vRecur(CaselessDict):
         }
     )
 
+    # for reproducible serialization:
+    # RULE: if and only if it can be a list it will be a list
+    # look up in RFC
+    jcal_not_a_list = {"FREQ", "UNTIL", "COUNT", "INTERVAL", "WKST", "SKIP", "RSCALE"}
+
     def __init__(self, *args, params: dict[str, Any] | None = None, **kwargs):
         if args and isinstance(args[0], str):
             # we have a string as an argument.
@@ -2303,14 +2308,21 @@ class vRecur(CaselessDict):
 
     def to_jcal(self, name: str) -> list:
         """The jCal representation of this property according to :rfc:`7265`."""
-        value = {k.lower(): v for k, v in self.items()}
-        if "until" in value:
-            until = value["until"]
-            if isinstance(until, list):
-                until = until[0]
+        recur = {}
+        for k, v in self.items():
+            key = k.lower()
+            if key.upper() in self.jcal_not_a_list:
+                value = v[0] if isinstance(v, list) and len(v) == 1 else v
+            elif not isinstance(v, list):
+                value = [v]
+            else:
+                value = v
+            recur[key] = value
+        if "until" in recur:
+            until = recur["until"]
             until_jcal = vDDDTypes(until).to_jcal("until")
-            value["until"] = until_jcal[-1]
-        return [name, self.params.to_jcal(), self.VALUE.lower(), value]
+            recur["until"] = until_jcal[-1]
+        return [name, self.params.to_jcal(), self.VALUE.lower(), recur]
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
@@ -2348,6 +2360,23 @@ class vRecur(CaselessDict):
         if until is not None and not isinstance(until, list):
             recur["until"] = [until]
         return cls(recur, params=params)
+
+    def __eq__(self, other: object) -> bool:
+        """self == other"""
+        if not isinstance(other, vRecur):
+            return super().__eq__(other)
+        if self.keys() != other.keys():
+            return False
+        for key in self.keys():
+            v1 = self[key]
+            v2 = other[key]
+            if not isinstance(v1, SEQUENCE_TYPES):
+                v1 = [v1]
+            if not isinstance(v2, SEQUENCE_TYPES):
+                v2 = [v2]
+            if v1 != v2:
+                return False
+        return True
 
 
 TIME_JCAL_REGEX = re.compile(

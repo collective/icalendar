@@ -36,7 +36,7 @@
                  "recur",
                  {
                    "freq": "YEARLY",
-                   "byday": "1SU",
+                   "byday": "-1SU",
                    "bymonth": 10
                  }
                ],
@@ -79,7 +79,7 @@
            ["dtstart",
              { "tzid": "US/Eastern" },
              "date-time",
-             "2006-01-02T14:00:00"
+             "2006-01-04T14:00:00"
            ],
            ["duration", {}, "duration", "PT1H"],
            ["recurrence-id",
