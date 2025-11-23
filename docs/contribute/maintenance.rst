@@ -29,7 +29,7 @@ Maintainers need the following permissions.
     This Google Group is used for managing `Code of Conduct <https://github.com/collective/icalendar/blob/main/CODE_OF_CONDUCT.md>`_ infringement reports.
     ``Manager``\ s may manage and moderate messages, whereas ``Owner``\ s may also manage members.
     Management is performed through `Google Groups icalendar-coc settings <https://groups.google.com/g/icalendar-coc/settings>`_.
-``INSERT_ROLE_HERE`` access to the `OSS Fuzz issue tracker <https://issues.oss-fuzz.com/u/5/issues?q=icalendar>`_ for icalendar.
+``INSERT_ROLE_HERE`` access to the `OSS Fuzz issue tracker <https://issues.oss-fuzz.com/issues?q=icalendar>`_ for icalendar.
     icalendar contributors use this issue tracker for managing :doc:`../how-to/fuzz-testing` issues that arise from time to time.
 
 
