@@ -4,14 +4,15 @@ jCal - RFC 7265
 
 .. py:module:: icalendar
 
-:rfc:`7265` specifies how to convert iCalendar to jCal, a JSON based representation.
+This chapter describes how to read and write jCal files, and how to convert them between iCalendar files.
+
+:rfc:`7265` specifies how to convert the iCalendar format to and from the jCal format, a JSON based representation.
 
 
 Read jCal input
 ===============
 
-Jcal is a JSON based representation of iCalendar.
-The following calendar contains one event.
+The following jCal calendar contains one event.
 
 .. code-block:: pycon
 
@@ -36,15 +37,14 @@ The following calendar contains one event.
     ... ]
     ... """
 
-:meth:`Component.from_jcal` can be used to parse the :py:class:`list` or JSON :py:class:`str`.
+Use :meth:`Component.from_jcal` to parse the :py:class:`list` or JSON :py:class:`str`.
 
 .. code-block:: pycon
 
     >>> from icalendar import Calendar
     >>> calendar = Calendar.from_jcal(jCal)
 
-After parsing the calendar, it can be inspected and altered.
-
+After parsing the calendar, inspect it as shown.
 
 .. code-block:: pycon
 
@@ -57,7 +57,7 @@ After parsing the calendar, it can be inspected and altered.
 Write jCal output
 =================
 
-You can convert a :class:`Calendar` and any other :class:`Component` to jCal using the :meth:`~Component.to_jcal` method.
+To convert a :class:`Calendar` and any other :class:`Component` to jCal, use the :meth:`~Component.to_jcal` method.
 
 .. code-block:: pycon
 
@@ -74,8 +74,8 @@ You can convert a :class:`Calendar` and any other :class:`Component` to jCal usi
         ['uid', {}, 'text', '4088E990AD89CB3DBB484909']],
        []]]]
 
-You can directly generate JSON output and write it to a file or send it to a server using :meth:`~Component.to_json`.
-Below, we write the jCal version of the calendar to a temporary file.
+To directly generate JSON output and write it to a file or send it to a server, use :meth:`~Component.to_json`.
+The following commands writes the jCal version of the calendar to a temporary file.
 
 .. code-block:: pycon
 
@@ -83,4 +83,3 @@ Below, we write the jCal version of the calendar to a temporary file.
     >>> file = NamedTemporaryFile(suffix=".jcal")
     >>> file.write(calendar.to_json().encode("UTF-8"))
     358
-
