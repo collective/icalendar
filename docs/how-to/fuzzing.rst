@@ -6,8 +6,8 @@ The project uses `OSS-Fuzz`_ to find unforeseen errors in icalendar.
 
 The following sections should explain more how to cope with that technology.
 
-How to create a fuzzing test case from GitHub Actions
-=====================================================
+Create a fuzzing test case from GitHub Actions
+==============================================
 
 When you look at a `GitHub Actions <https://github.com/collective/icalendar/actions/workflows/cifuzz.yml>`_ log, you will find that calendars are printed out, base64 encoded.
 
@@ -80,8 +80,8 @@ Then, you can run the tests and see that the error is reproduced:
 Some tests cases point to code to fix. This one points to a valid error for a wrong month value.
 An empty month is invalid by the specification. As such, it is right to have this error and it should be ignored.
 
-How to reproduce fuzzing issues locally
-=======================================
+Reproduce fuzzing issues locally
+================================
 
 To reproduce fuzzing issues locally, you need to install `OSS-Fuzz`_ locally, following the
 `setup instructions <https://google.github.io/oss-fuzz/advanced-topics/reproducing/#reproduce-using-local-source-checkout>`.
