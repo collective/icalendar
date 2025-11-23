@@ -74,7 +74,7 @@ class Available(Component):
 
     """
 
-    name = "VAVAILABLE"
+    name = "AVAILABLE"
 
     summary = summary_property
     description = description_property

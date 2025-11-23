@@ -38,6 +38,7 @@ from icalendar.error import (
     IncompleteAlarmInformation,
     IncompleteComponent,
     InvalidCalendar,
+    JCalParsingError,
     LocalTimezoneMissing,
 )
 
@@ -51,10 +52,12 @@ from icalendar.parser import (
 
 # Property Data Value Types
 from icalendar.prop import (
+    VPROPERTY,
     TypesFactory,
     vBinary,
     vBoolean,
     vCalAddress,
+    vCategory,
     vDate,
     vDatetime,
     vDDDLists,
@@ -71,6 +74,7 @@ from icalendar.prop import (
     vText,
     vTime,
     vUid,
+    vUnknown,
     vUri,
     vUTCOffset,
     vWeekday,
@@ -80,7 +84,7 @@ from icalendar.prop.conference import Conference
 from icalendar.prop.image import Image
 
 # Switching the timezone provider
-from icalendar.timezone import use_pytz, use_zoneinfo
+from icalendar.timezone import is_utc, use_pytz, use_zoneinfo
 
 from .version import __version__, __version_tuple__, version, version_tuple
 
@@ -97,6 +101,7 @@ __all__ = [
     "STATUS",
     "TRANSP",
     "VALUE",
+    "VPROPERTY",
     "Alarm",
     "AlarmTime",
     "Alarms",
@@ -115,6 +120,7 @@ __all__ = [
     "IncompleteAlarmInformation",
     "IncompleteComponent",
     "InvalidCalendar",
+    "JCalParsingError",
     "Journal",
     "LocalTimezoneMissing",
     "Parameters",
@@ -125,6 +131,7 @@ __all__ = [
     "TypesFactory",
     "__version__",
     "__version_tuple__",
+    "is_utc",
     "q_join",
     "q_split",
     "use_pytz",
@@ -132,6 +139,7 @@ __all__ = [
     "vBinary",
     "vBoolean",
     "vCalAddress",
+    "vCategory",
     "vDDDLists",
     "vDDDTypes",
     "vDate",
@@ -150,6 +158,7 @@ __all__ = [
     "vTime",
     "vUTCOffset",
     "vUid",
+    "vUnknown",
     "vUri",
     "vWeekday",
     "vXmlReference",

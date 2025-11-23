@@ -6,6 +6,7 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Generator
+from unittest.mock import Mock
 
 import pytest
 from dateutil import tz
@@ -19,9 +20,11 @@ from icalendar import (
     Event,
     Timezone,
     TypesFactory,
+    prop,
     vUTCOffset,
 )
 from icalendar.compatibility import ZoneInfo, zoneinfo
+from icalendar.tests.data import PROPERTY_NAMES
 from icalendar.timezone import TZP
 from icalendar.timezone import tzp as _tzp
 
@@ -51,6 +54,8 @@ else:
 class DataSource:
     """A collection of parsed ICS elements (e.g calendars, timezones, events)"""
 
+    extensions = [".ics", ".jcal"]
+
     def __init__(self, data_source_folder: Path, parser):
         self._parser = parser
         self._data_source_folder = data_source_folder
@@ -60,32 +65,44 @@ class DataSource:
         return [
             p.stem
             for p in self._data_source_folder.iterdir()
-            if p.suffix.lower() == ".ics"
+            if p.suffix.lower() in self.extensions
         ]
 
     def __getitem__(self, attribute):
         """Parse a file and return the result stored in the attribute."""
-        if attribute.endswith(".ics"):
-            source_file = attribute
-            attribute = attribute[:-4]
-        else:
-            source_file = attribute + ".ics"
-        source_path = self._data_source_folder / source_file
+        extensions = self.extensions
+        if "." in attribute:
+            # we have a file ending
+            attribute, extension = attribute.rsplit(".", 1)
+            extensions = ["." + extension]
+        for extension in extensions:
+            source_file = attribute + extension
+            source_path = self._data_source_folder / source_file
+            if source_path.is_file():
+                break
         if not source_path.is_file():
-            raise AttributeError(f"{source_path} does not exist.")
-        with source_path.open("rb") as f:
-            raw_ics = f.read()
-        source = self._parser(raw_ics)
+            # usually only raised if the test is wrong
+            raise AttributeError(
+                f"{attribute} does not exist with these extensions: {', '.join(extensions)}."
+            )
+        if extension == ".jcal":
+            raw_jcal = source_path.read_text()
+            source = Component.from_jcal(raw_jcal)
+            raw_ics = None
+        else:
+            raw_ics = source_path.read_bytes()
+            source = self._parser(raw_ics)
+            raw_jcal = None
         if not isinstance(source, list):
             source.raw_ics = raw_ics
+            source.raw_jcal = raw_jcal
             source.source_file = source_file
         self.__dict__[attribute] = source
         return source
 
     def __contains__(self, key):
         """key in self.keys()"""
-        if key.endswith(".ics"):
-            key = key[:-4]
+        key = key.rsplit(".", 1)[0]
         return key in self.keys()
 
     def __getattr__(self, key):
@@ -135,7 +152,9 @@ def availabilities(tzp):
     return DataSource(AVAILABILITIES_FOLDER, Availability.from_ical)
 
 
-@pytest.fixture(params=PYTZ_UTC + [ZoneInfo("UTC"), tz.UTC, tz.gettz("UTC")])
+@pytest.fixture(
+    params=PYTZ_UTC + [ZoneInfo("UTC"), tz.UTC, tz.gettz("UTC"), timezone.utc]
+)
 def utc(request, tzp):
     return request.param
 
@@ -151,8 +170,10 @@ def in_timezone(request, tzp):
     return request.param
 
 
+FUZZ_TESTCASES_BROKEN_CALENDARS = "fuzz_testcase"
+
 # exclude broken calendars here
-ICS_FILES_EXCLUDE = (
+BROKEN_SOURCE_FILES = (
     "big_bad_calendar.ics",
     "issue_104_broken_calendar.ics",
     "small_bad_calendar.ics",
@@ -161,31 +182,86 @@ ICS_FILES_EXCLUDE = (
     "parsing_error_in_UTC_offset.ics",
     "parsing_error.ics",
 )
+SOURCE_FILES = [
+    file.name
+    for file in itertools.chain(
+        CALENDARS_FOLDER.iterdir(), TIMEZONES_FOLDER.iterdir(), EVENTS_FOLDER.iterdir()
+    )
+    if file.name not in BROKEN_SOURCE_FILES
+    and file.suffix in (".ics", ".jcal")
+    and FUZZ_TESTCASES_BROKEN_CALENDARS not in file.name
+]
+
 ICS_FILES = [
     file.name
     for file in itertools.chain(
         CALENDARS_FOLDER.iterdir(), TIMEZONES_FOLDER.iterdir(), EVENTS_FOLDER.iterdir()
     )
-    if file.name not in ICS_FILES_EXCLUDE
+    if file.name not in BROKEN_SOURCE_FILES
+    and file.suffix in (".ics",)
+    and FUZZ_TESTCASES_BROKEN_CALENDARS not in file.name
+]
+
+JCAL_FILES = [
+    file.name
+    for file in itertools.chain(
+        CALENDARS_FOLDER.iterdir(), TIMEZONES_FOLDER.iterdir(), EVENTS_FOLDER.iterdir()
+    )
+    if file.name not in BROKEN_SOURCE_FILES
+    and file.suffix in (".jcal",)
+    and FUZZ_TESTCASES_BROKEN_CALENDARS not in file.name
 ]
 
 
-@pytest.fixture(params=ICS_FILES)
-def ics_file(tzp, calendars, timezones, events, request):
-    """An example ICS file."""
-    ics_file = request.param
-    print("example file:", ics_file)
+def get_source_file(calendars, timezones, events, request) -> Component:
+    source_file = request.param
+    print("example file:", source_file)
     for data in calendars, timezones, events:
-        if ics_file in data:
-            return data[ics_file]
-    raise ValueError(f"Could not find file {ics_file}.")
+        if source_file in data:
+            return data[source_file]
+    raise ValueError(f"Could not find file {source_file}.")
 
 
-FUZZ_V1 = [key for key in CALENDARS_FOLDER.iterdir() if "fuzz-testcase" in str(key)]
+@pytest.fixture(params=SOURCE_FILES)
+def source_file(tzp, calendars, timezones, events, request) -> Component:
+    """An example file.
+
+    source_file.raw_ics - bytes if .ics file
+    source_file.raw_jcal - str if .jcal file
+
+    """
+    return get_source_file(calendars, timezones, events, request)
+
+
+@pytest.fixture(params=ICS_FILES)
+def ics_file(tzp, calendars, timezones, events, request) -> Component:
+    """An example .ica file.
+
+    source_file.raw_ics - bytes
+    source_file.raw_jcal - None
+    """
+    return get_source_file(calendars, timezones, events, request)
+
+
+@pytest.fixture(params=JCAL_FILES)
+def jcal_file(tzp, calendars, timezones, events, request) -> Component:
+    """An example .jcal file.
+
+    source_file.raw_ics - None
+    source_file.raw_jcal - str
+    """
+    return get_source_file(calendars, timezones, events, request)
+
+
+FUZZ_V1 = [
+    key
+    for key in CALENDARS_FOLDER.iterdir()
+    if FUZZ_TESTCASES_BROKEN_CALENDARS in str(key)
+]
 
 
 @pytest.fixture(params=FUZZ_V1)
-def fuzz_v1_calendar(request):
+def fuzz_v1_calendar_path(request):
     """Clusterfuzz calendars."""
     return request.param
 
@@ -194,6 +270,12 @@ def fuzz_v1_calendar(request):
 def types_factory():
     """Return a new types factory."""
     return TypesFactory()
+
+
+@pytest.fixture
+def component_factory():
+    """Return a new types factory."""
+    return ComponentFactory()
 
 
 @pytest.fixture
@@ -402,3 +484,26 @@ def tzid(request: pytest.FixtureRequest) -> str:
     This goes through all the different timezones possible.
     """
     return request.param
+
+
+@pytest.fixture(params=PROPERTY_NAMES)
+def v_prop_name(request):
+    """Names of property types that occur as a property of a component."""
+    return request.param
+
+
+@pytest.fixture
+def v_prop(v_prop_name):
+    """Property types that occur as a property of a component."""
+    return getattr(prop, v_prop_name)
+
+
+@pytest.fixture
+def v_prop_example(v_prop) -> prop.VPROPERTY:
+    return v_prop.examples()[0]
+
+
+@pytest.fixture
+def mock():
+    """A mock."""
+    return Mock()
