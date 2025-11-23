@@ -29,9 +29,20 @@ Maintainers need the following permissions.
     This Google Group is used for managing `Code of Conduct <https://github.com/collective/icalendar/blob/main/CODE_OF_CONDUCT.md>`_ infringement reports.
     ``Manager``\ s may manage and moderate messages, whereas ``Owner``\ s may also manage members.
     Management is performed through `Google Groups icalendar-coc settings <https://groups.google.com/g/icalendar-coc/settings>`_.
-``INSERT_ROLE_HERE`` access to the `OSS Fuzz issue tracker <https://issues.oss-fuzz.com/issues?q=icalendar>`_ for icalendar.
+``Registered`` access to the `OSS Fuzz issue tracker <https://issues.oss-fuzz.com/issues?q=icalendar>`_ for icalendar.
     icalendar contributors use this issue tracker for managing :doc:`../how-to/fuzz-testing` issues that arise from time to time.
+    Create a Pull Request to add your email address to `google/oss-fuzz <https://github.com/google/oss-fuzz/blob/master/projects/icalendar/project.yaml>`_ to gain the following access:
 
+    * Instant notification about fuzzing errors.
+    * Access to undisclosed fuzzing issues.
+
+    Existing issues will be disclosed after some time to the public.
+
+    .. seealso::
+
+        * `Discussion about how to be added to OSS-Fuzz <https://github.com/collective/icalendar/pull/574#issuecomment-1790554766>`_
+        * `OSS-Fuzz Integration - Issue 562 <https://github.com/collective/icalendar/issues/562>`_
+    
 
 Collaborators
 -------------
