@@ -37,7 +37,7 @@ jobs:
   check-distribution:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Do not include Apache files in the distribution.
       run: |
         src/icalendar/tests/test_create_release.sh
