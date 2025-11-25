@@ -102,6 +102,7 @@ Contributors
 - Stefan Schwarzer <sschwarzer@sschwarzer.net>
 - `Steve Piercy <https://github.com/stevepiercy>`_
 - `Tariq <https://github.com/Horisyre>`_
+- `Tanmay Maheshwari <https://github.com/LilSuperUser>`_
 - tgecho <tgecho@gmail.com>
 - Thomas Bruederli <thomas@roundcube.net>
 - Thomas Weißschuh <thomas@t-8ch.de>
@@ -113,7 +114,6 @@ Contributors
 - Wichert Akkerman <wichert@wiggy.net>
 - Howard Liao <howard940114@gmail.com>
 - Zepyoor Khechadoorian <zepyoorkhechadoorian@gmail.com>
-- `Tanmay Maheshwari <https://github.com/LilSuperUser>`
 
 Complete list
 -------------
