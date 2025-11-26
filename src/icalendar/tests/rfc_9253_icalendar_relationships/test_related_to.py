@@ -94,11 +94,14 @@ def test_no_related_to_by_default(related_to_component):
     assert related_to_component.related_to == []
 
 
-def test_strings_are_converted_to_vText(related_to_component):
-    """We set the URI."""
+def test_strings_are_converted_to_the_default_value_type(related_to_component):
+    """We set the URI.
+
+    According to :rfc:`5545`, this should be vText.
+    """
     related_to_component.related_to = ["https://example.com"]
     assert related_to_component.related_to == [vText("https://example.com")]
     assert isinstance(related_to_component.related_to[0], vText)
-    assert related_to_component.related_to[0].VALUE is None, (
-        "We do not need to specify TEXT"
+    assert related_to_component.related_to[0].params.value is None, (
+        "We do not need to specify the default value."
     )

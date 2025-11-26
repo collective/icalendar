@@ -7,6 +7,7 @@ import pytest
 
 from icalendar import vBinary, vRecur
 from icalendar.cal.calendar import Calendar
+from icalendar.cal.component_factory import ComponentFactory
 from icalendar.cal.event import Event
 from icalendar.parser import Contentline, Parameters, unescape_char
 
@@ -257,3 +258,11 @@ def test_escaped_characters_read(event_name, expected_cn, expected_ics, events):
 def test_unescape_char():
     assert unescape_char(b"123") == b"123"
     assert unescape_char(b"\\n") == b"\n"
+
+
+def test_create_a_component():
+    """Create a component with the factory."""
+    factory = ComponentFactory()
+    my_component_class = factory.get_component_class("My-Component")
+    assert my_component_class.name == "MY-COMPONENT"
+    assert my_component_class.__name__ == "MyComponent"

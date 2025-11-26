@@ -8,12 +8,14 @@ datetime.tzinfo object.
 from __future__ import annotations
 
 from collections import defaultdict
+from datetime import date, time, timezone
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
 from dateutil.tz import tz
 
 from icalendar.timezone import equivalent_timezone_ids_result
+from icalendar.tools import is_date
 
 if TYPE_CHECKING:
     from datetime import datetime, tzinfo
@@ -39,6 +41,9 @@ def tzids_from_tzinfo(tzinfo: Optional[tzinfo]) -> tuple[str]:
     """  # The example might need to change if you recreate the lookup tree  # noqa: E501
     if tzinfo is None:
         return ()
+    if isinstance(tzinfo, timezone):
+        # fixed offset timezone with name
+        return get_equivalent_tzids(tzinfo.tzname(None))
     if hasattr(tzinfo, "zone"):
         return get_equivalent_tzids(tzinfo.zone)  # pytz implementation
     if hasattr(tzinfo, "key"):
@@ -64,7 +69,7 @@ def tzid_from_tzinfo(tzinfo: Optional[tzinfo]) -> Optional[str]:
     """Retrieve the timezone id from the tzinfo object.
 
     Some timezones are equivalent.
-    Thus, we might return one ID that is equivelant to others.
+    Thus, we might return one ID that is equivalent to others.
     """
     tzids = tzids_from_tzinfo(tzinfo)
     if "UTC" in tzids:
@@ -115,4 +120,12 @@ def get_equivalent_tzids(tzid: str) -> tuple[str]:
     return (tzid,) + tuple(sorted(ids - {tzid}))
 
 
-__all__ = ["tzid_from_dt", "tzid_from_tzinfo", "tzids_from_tzinfo"]
+def is_utc(t: datetime | time | date | tzinfo) -> bool:
+    """Whether this date is in UTC."""
+    if is_date(t):
+        return False
+    tzid = tzid_from_dt(t) if hasattr(t, "tzinfo") else tzid_from_tzinfo(t)
+    return tzid == "UTC"
+
+
+__all__ = ["is_utc", "tzid_from_dt", "tzid_from_tzinfo", "tzids_from_tzinfo"]

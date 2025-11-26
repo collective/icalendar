@@ -19,13 +19,9 @@ if TYPE_CHECKING:
     from datetime import timedelta
     from enum import Enum
 
-    from icalendar.parser import Parameters
 
-
-class IcalendarProperty:
-    """Interface provided by properties in icalendar.prop."""
-
-    params: Parameters
+if TYPE_CHECKING:
+    from icalendar.prop import VPROPERTY
 
 
 def _default_return_none() -> Optional[str]:
@@ -54,19 +50,19 @@ def string_parameter(
         convert_to = convert
 
     @functools.wraps(default)
-    def fget(self: IcalendarProperty) -> Optional[str]:
+    def fget(self: VPROPERTY) -> Optional[str]:
         value = self.params.get(name)
         if value is None:
             return default()
         return convert(value) if convert else value
 
-    def fset(self: IcalendarProperty, value: str | None):
+    def fset(self: VPROPERTY, value: str | None):
         if value is None:
             fdel(self)
         else:
             self.params[name] = convert_to(value) if convert_to else value
 
-    def fdel(self: IcalendarProperty):
+    def fdel(self: VPROPERTY):
         self.params.pop(name, None)
 
     return property(fget, fset, fdel, doc=doc)
@@ -144,7 +140,7 @@ Description:
 def quoted_list_parameter(name: str, doc: str) -> property:
     """Return a parameter that contains a quoted list."""
 
-    def fget(self: IcalendarProperty) -> tuple[str]:
+    def fget(self: VPROPERTY) -> tuple[str]:
         value = self.params.get(name)
         if value is None:
             return ()
@@ -152,13 +148,13 @@ def quoted_list_parameter(name: str, doc: str) -> property:
             return tuple(value.split(","))
         return value
 
-    def fset(self: IcalendarProperty, value: str | tuple[str]):
+    def fset(self: VPROPERTY, value: str | tuple[str]):
         if value == ():
             fdel(self)
         else:
             self.params[name] = (value,) if isinstance(value, str) else value
 
-    def fdel(self: IcalendarProperty):
+    def fdel(self: VPROPERTY):
         self.params.pop(name, None)
 
     return property(fget, fset, fdel, doc=doc)
@@ -485,6 +481,82 @@ Description:
     convert=_convert_enum(enums.RELTYPE),
 )
 
+
+def _get_value(self: VPROPERTY) -> str:
+    """The VALUE parameter or the default.
+
+    Purpose:
+        VALUE explicitly specify the value type format for a property value.
+
+    Description:
+        This parameter specifies the value type and format of
+        the property value.  The property values MUST be of a single value
+        type.  For example, a "RDATE" property cannot have a combination
+        of DATE-TIME and TIME value types.
+
+        If the property's value is the default value type, then this
+        parameter need not be specified.  However, if the property's
+        default value type is overridden by some other allowable value
+        type, then this parameter MUST be specified.
+
+        Applications MUST preserve the value data for ``x-name`` and
+        ``iana-token`` values that they don't recognize without attempting
+        to interpret or parse the value data.
+
+    Returns:
+        The VALUE parameter or the default.
+
+    Examples:
+        The VALUE defaults to the name of the property.
+        Note that it is case-insensitive but always uppercase.
+
+        .. code-block:: pycon
+
+            >>> from icalendar import vBoolean
+            >>> b = vBoolean(True)
+            >>> b.VALUE
+            'BOOLEAN'
+
+        Setting the VALUE parameter of a typed property usually does not make sense.
+        For convenience, using this property, the value will be converted to
+        an uppercase string.
+        If you have some custom property, you might use it like this:
+
+        .. code-block:: pycon
+
+            >>> from icalendar import vUnknown, Event
+            >>> v = vUnknown("Some property text.")
+            >>> v.VALUE = "x-type"  # lower case
+            >>> v.VALUE
+            'X-TYPE'
+            >>> event = Event()
+            >>> event.add("x-prop", v)
+            >>> print(event.to_ical())
+            BEGIN:VEVENT
+            X-PROP;VALUE=X-TYPE:Some property text.
+            END:VEVENT
+
+    """
+    value = self.params.value
+    if value is None:
+        _get_default_value = getattr(self, "_get_value", None)
+        if _get_default_value is not None:
+            value = _get_default_value()
+    return self.default_value if value is None else value
+
+
+def _set_value(self: VPROPERTY, value: str | None):
+    """Set the VALUE parameter."""
+    self.params.value = value
+
+
+def _del_value(self: VPROPERTY):
+    """Delete the VALUE parameter."""
+    del self.params.value
+
+
+VALUE = property(_get_value, _set_value, _del_value)
+
 LABEL = string_parameter(
     "LABEL",
     """LABEL provides a human-readable label.
@@ -566,31 +638,6 @@ Example:
     """,
 )
 
-VALUE = string_parameter(
-    "VALUE",
-    """VALUE explicitly specifies the value type format for a property value.
-
-Conformance:
-    VALUE is specified in :rfc:`5545`.
-
-Description:
-    This parameter specifies the value type and format of
-    the property value.  The property values MUST be of a single value
-    type.  For example, a "RDATE" property cannot have a combination
-    of DATE-TIME and TIME value types.
-
-    If the property's value is the default value type, then this
-    parameter need not be specified.  However, if the property's
-    default value type is overridden by some other allowable value
-    type, then this parameter MUST be specified.
-
-    Applications MUST preserve the value data for ``x-name`` and
-    ``iana-token`` values that they don't recognize without attempting
-    to interpret or parse the value data.
-
-""",
-)
-
 LINKREL = string_parameter(
     "LINKREL",
     """LINKREL
@@ -610,7 +657,7 @@ Description:
     the type of reference.
     This allows programs consuming this data to automatically scan
     for references they support.
-    There is no default relation type.Any link relation in the
+    There is no default relation type. Any link relation in the
     link registry established by :rfc:`8288`, or new link relations,
     may be used.
     It is expected that link relation types seeing significant usage

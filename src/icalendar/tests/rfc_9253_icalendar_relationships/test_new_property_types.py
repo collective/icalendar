@@ -62,7 +62,7 @@ def test_uid_new(test_uid):
     uid_prop = vUid.new()
     assert uid_prop.uid == test_uid
     assert_default_parameters(uid_prop)
-    assert uid_prop.params.value == "UID"
+    assert uid_prop.VALUE == "UID"
 
 
 def test_vUri_creation(uri):
@@ -72,7 +72,7 @@ def test_vUri_creation(uri):
     assert uri_prop.ical_value == uri
     assert uri_prop.uri == uri
     assert_default_parameters(uri_prop)
-    assert uri_prop.params.value in ("URI", None)
+    assert uri_prop.VALUE == "URI"
 
 
 def test_vXmlReference_creation(xml_reference):
@@ -84,7 +84,7 @@ def test_vXmlReference_creation(xml_reference):
     assert xml_prop.uri == uri
     assert_default_parameters(xml_prop)
     assert xml_prop.x_pointer == x_pointer
-    assert xml_prop.params.value == "XML-REFERENCE"
+    assert xml_prop.VALUE == "XML-REFERENCE"
 
 
 def assert_default_parameters(prop):
@@ -95,15 +95,15 @@ def assert_default_parameters(prop):
     assert prop.LINKREL is None
     assert repr(prop).startswith(prop.__class__.__name__ + "(")
     assert repr(prop).endswith(")")
-    assert prop.VALUE == prop.params.value == prop.params.get("VALUE")
+    assert prop.params.value is None
+    assert prop.params.get("VALUE") is None
 
 
 @pytest.mark.parametrize("no_x_pointer", ["", "asd)", "xpointer(id('r%C3%A9sum%C3%A9'"])
 def test_not_x_pointer(no_x_pointer):
     """Test that the x_pointer throws a value error."""
     xml = vXmlReference("http://asd#" + no_x_pointer)
-    with pytest.raises(ValueError):
-        xml.x_pointer  # noqa: B018
+    assert xml.x_pointer is None
 
 
 mark_valid_values = pytest.mark.parametrize(

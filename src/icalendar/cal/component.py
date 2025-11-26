@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from datetime import date, datetime, time, timedelta, timezone
 from typing import TYPE_CHECKING, ClassVar
 
@@ -19,10 +20,10 @@ from icalendar.attr import (
 )
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.caselessdict import CaselessDict
-from icalendar.error import InvalidCalendar
+from icalendar.error import InvalidCalendar, JCalParsingError
 from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_split
 from icalendar.parser_tools import DEFAULT_ENCODING
-from icalendar.prop import TypesFactory, vDDDLists, vText
+from icalendar.prop import VPROPERTY, TypesFactory, vDDDLists, vText
 from icalendar.timezone import tzp
 from icalendar.tools import is_date
 
@@ -67,7 +68,7 @@ class Component(CaselessDict):
     # propagate upwards
     # not_compliant = ['']  # List of non-compliant properties.
 
-    types_factory = TypesFactory()
+    types_factory = TypesFactory.instance()
     _components_factory: ClassVar[ComponentFactory | None] = None
 
     @classmethod
@@ -79,7 +80,7 @@ class Component(CaselessDict):
         """
         if cls._components_factory is None:
             cls._components_factory = ComponentFactory()
-        return cls._components_factory.get(name, Component)
+        return cls._components_factory.get_component_class(name)
 
     @staticmethod
     def _infer_value_type(
@@ -692,6 +693,139 @@ class Component(CaselessDict):
         component.related_to = related_to
         component.concepts = concepts
         component.refids = refids
+        return component
+
+    def to_jcal(self) -> list:
+        """Convert this component to a jCal object.
+
+        Returns:
+            jCal object
+
+        See also :attr:`to_json`.
+
+        In this example, we create a simple VEVENT component and convert it to jCal:
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Event
+            >>> from datetime import date
+            >>> from pprint import pprint
+            >>> event = Event.new(summary="My Event", start=date(2025, 11, 22))
+            >>> pprint(event.to_jcal())
+            ['vevent',
+             [['dtstamp', {}, 'date-time', '2025-05-17T08:06:12Z'],
+              ['summary', {}, 'text', 'My Event'],
+              ['uid', {}, 'text', 'd755cef5-2311-46ed-a0e1-6733c9e15c63'],
+              ['dtstart', {}, 'date', '2025-11-22']],
+             []]
+        """
+        properties = []
+        for key, value in self.items():
+            for item in value if isinstance(value, list) else [value]:
+                properties.append(item.to_jcal(key.lower()))
+        return [
+            self.name.lower(),
+            properties,
+            [subcomponent.to_jcal() for subcomponent in self.subcomponents],
+        ]
+
+    def to_json(self) -> str:
+        """Return this component as a jCal JSON string.
+
+        Returns:
+            JSON string
+
+        See also :attr:`to_jcal`.
+        """
+        return json.dumps(self.to_jcal())
+
+    @classmethod
+    def from_jcal(cls, jcal: str | list) -> Component:
+        """Create a component from a jCal list.
+
+        Args:
+            jcal: jCal list or JSON string according to :rfc:`7265`.
+
+        Raises:
+            JCalParsingError: If the jCal provided is invalid.
+            ~json.JSONDecodeError: If the provided string is not valid JSON.
+
+        This reverses :func:`to_json` and :func:`to_jcal`.
+
+        The following code parses an example from :rfc:`7265`:
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Component
+            >>> jcal = ["vcalendar",
+            ...   [
+            ...     ["calscale", {}, "text", "GREGORIAN"],
+            ...     ["prodid", {}, "text", "-//Example Inc.//Example Calendar//EN"],
+            ...     ["version", {}, "text", "2.0"]
+            ...   ],
+            ...   [
+            ...     ["vevent",
+            ...       [
+            ...         ["dtstamp", {}, "date-time", "2008-02-05T19:12:24Z"],
+            ...         ["dtstart", {}, "date", "2008-10-06"],
+            ...         ["summary", {}, "text", "Planning meeting"],
+            ...         ["uid", {}, "text", "4088E990AD89CB3DBB484909"]
+            ...       ],
+            ...       []
+            ...     ]
+            ...   ]
+            ... ]
+            >>> calendar = Component.from_jcal(jcal)
+            >>> print(calendar.name)
+            VCALENDAR
+            >>> print(calendar.prodid)
+            -//Example Inc.//Example Calendar//EN
+            >>> event = calendar.events[0]
+            >>> print(event.summary)
+            Planning meeting
+
+        """
+        if isinstance(jcal, str):
+            jcal = json.loads(jcal)
+        if not isinstance(jcal, list) or len(jcal) != 3:
+            raise JCalParsingError(
+                "A component must be a list with 3 items.", cls, value=jcal
+            )
+        name, properties, subcomponents = jcal
+        if not isinstance(name, str):
+            raise JCalParsingError(
+                "The name must be a string.", cls, path=[0], value=name
+            )
+        if name.upper() != cls.name:
+            # delegate to correct component class
+            component_cls = cls.get_component_class(name.upper())
+            return component_cls.from_jcal(jcal)
+        component = cls()
+        if not isinstance(properties, list):
+            raise JCalParsingError(
+                "The properties must be a list.", cls, path=1, value=properties
+            )
+        for i, prop in enumerate(properties):
+            JCalParsingError.validate_property(prop, cls, path=[1, i])
+            prop_name = prop[0]
+            prop_value = prop[2]
+            prop_cls: type[VPROPERTY] = cls.types_factory.for_property(
+                prop_name, prop_value
+            )
+            with JCalParsingError.reraise_with_path_added(1, i):
+                v_prop = prop_cls.from_jcal(prop)
+            # if we use the default value for that property, we can delete the
+            # VALUE parameter
+            if prop_cls == cls.types_factory.for_property(prop_name):
+                del v_prop.VALUE
+            component.add(prop_name, v_prop)
+        if not isinstance(subcomponents, list):
+            raise JCalParsingError(
+                "The subcomponents must be a list.", cls, 2, value=subcomponents
+            )
+        for i, subcomponent in enumerate(subcomponents):
+            with JCalParsingError.reraise_with_path_added(2, i):
+                component.subcomponents.append(cls.from_jcal(subcomponent))
         return component
 
 
