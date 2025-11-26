@@ -30,6 +30,7 @@ Minor changes
 - Convert changelog section labels to reStructuredText subheadings for improved Read the Docs navigation. See `Issue 982 <https://github.com/collective/icalendar/issues/982>`_.
 - Move sections in Table of Content of Reference guide.
 - Improve :py:class:`icalendar.prop.vDatetime` documentation. See `Issue #946 <https://github.com/collective/icalendar/issues/946>`_.
+- CLI now writes output files using UTF-8 explicitly instead of relying on the system default. See `Issue #1005 <https://github.com/collective/icalendar/issues/1005>`_.
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
@@ -90,6 +91,7 @@ Bug fixes
 - Correct ``name`` of ``AVAILABLE`` component.
 - Fix ical serialization of :class:`icalendar.vTime`.
 - Make sure a component's ``conferences`` property adds ``VALUE=URI`` if the conference is created as a URI.
+- Fix CLI deprecated :py:class:`argparse.FileType` usage and remove ``PendingDeprecationWarning``. See `Issue #1005 <https://github.com/collective/icalendar/issues/1005>`_.
 
 6.3.2 (2025-11-03)
 ------------------

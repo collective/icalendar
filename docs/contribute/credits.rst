@@ -101,6 +101,7 @@ Contributors
 - Stanislav Ochotnicky <sochotnicky@redhat.com>
 - Stefan Schwarzer <sschwarzer@sschwarzer.net>
 - `Steve Piercy <https://github.com/stevepiercy>`_
+- `Tanmay Maheshwari <https://github.com/LilSuperUser>`_
 - `Tariq <https://github.com/Horisyre>`_
 - tgecho <tgecho@gmail.com>
 - Thomas Bruederli <thomas@roundcube.net>
