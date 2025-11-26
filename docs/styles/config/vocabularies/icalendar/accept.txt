@@ -41,6 +41,7 @@ Khechadoorian
 (?i)Lasudry
 (?i)Leidel
 (?i)Lennart
+(?i)Maheshwari
 (?i)Markus
 (?i)Martijn
 (?i)Mattson
@@ -84,6 +85,7 @@ Seppänen
 (?i)Stupp
 (?i)subcomponents?
 (?i)subpackages?
+(?i)Tanmay
 (?i)Tariq
 (?i)tgecho
 (?i)tisto
