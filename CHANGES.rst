@@ -21,6 +21,29 @@ Upgrading from 6.x to 7.x should have **no complications for most developers**, 
 
 We still recommend checking out the new features and giving feedback in the repository.
 
+7.0.0a3 (unreleased)
+--------------------
+
+Minor changes
+~~~~~~~~~~~~~
+
+- ...
+
+Breaking changes
+~~~~~~~~~~~~~~~~
+
+- ...
+
+New features
+~~~~~~~~~~~~
+
+- ...
+
+Bug fixes
+~~~~~~~~~
+
+- ...
+
 7.0.0a2 (2025-11-29)
 --------------------
 
