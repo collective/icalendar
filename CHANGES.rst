@@ -21,7 +21,7 @@ Upgrading from 6.x to 7.x should have **no complications for most developers**, 
 
 We still recommend checking out the new features and giving feedback in the repository.
 
-7.0.0a2 (unreleased)
+7.0.0a2 (2025-11-29)
 --------------------
 
 Minor changes
@@ -31,11 +31,6 @@ Minor changes
 - Move sections in Table of Content of Reference guide.
 - Improve :py:class:`icalendar.prop.vDatetime` documentation. See `Issue #946 <https://github.com/collective/icalendar/issues/946>`_.
 - CLI now writes output files using UTF-8 explicitly instead of relying on the system default. See `Issue #1005 <https://github.com/collective/icalendar/issues/1005>`_.
-
-Breaking changes
-~~~~~~~~~~~~~~~~
-
-- ...
 
 New features
 ~~~~~~~~~~~~
