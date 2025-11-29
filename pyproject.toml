@@ -89,7 +89,7 @@ test = [
     "coverage",
     "hypothesis",
     "pytz",
-    "mypy>=1.0",
+    "mypy>=1.0,<1.19.0",
     "types-python-dateutil",
     "types-pytz",
 ]
