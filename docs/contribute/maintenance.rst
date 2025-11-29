@@ -93,7 +93,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
     .. code-block:: shell
 
-        export VERSION=6.3.0
+        export VERSION=7.0.0
 
 #.  Create a commit on the ``release`` branch (or equivalent) to release this version.
 
@@ -148,22 +148,26 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
     .. code-block:: text
 
-       6.3.1 (unreleased)
+       7.0.0 (unreleased)
        ------------------
 
-       Minor changes:
+       Minor changes
+       ~~~~~~~~~~~~~
 
        - ...
 
-       Breaking changes:
+       Breaking changes
+       ~~~~~~~~~~~~~~~~
 
        - ...
 
-       New features:
+       New features
+       ~~~~~~~~~~~~
 
        - ...
 
-       Bug fixes:
+       Bug fixes
+       ~~~~~~~~~
 
        - ...
 
