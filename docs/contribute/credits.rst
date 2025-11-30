@@ -112,6 +112,7 @@ Contributors
 - Wichert Akkerman <wichert@wiggy.net>
 - Howard Liao <howard940114@gmail.com>
 - Zepyoor Khechadoorian <zepyoorkhechadoorian@gmail.com>
+- Lillian Penner <lillypenner14@gmail.com>
 
 Complete list
 -------------
