@@ -266,8 +266,7 @@ class vText(str):
 
     @classmethod
     def from_ical(cls, ical: ICAL_TYPE):
-        ical_unesc = unescape_char(ical)
-        return cls(ical_unesc)
+        return cls(ical)
 
     @property
     def ical_value(self) -> str:
