@@ -59,7 +59,7 @@ def calendar_with_name():
 
 
 def test_backslash_escape_ics(calendar_with_name):
-    """It is somehow possible that more backslashes appear."""
+    """Test for properly escaped backslashes."""
     ics = calendar_with_name.to_ical()
     cal2: Calendar = Calendar.from_ical(ics)
     assert CALENDAR_NAME == cal2.calendar_name, "ics works"
