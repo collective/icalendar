@@ -42,7 +42,7 @@ New features
 Bug fixes
 ~~~~~~~~~
 
-- Fix double-unescaping in ``vText.from_ical()`` by removing ``unescape_char()``. See `Issue #1008 <https://github.com/collective/icalendar/issues/1008>`
+- Fix double-unescaping in :meth:`vText.from_ical` by removing ``unescape_char()``. See `Issue #1008 <https://github.com/collective/icalendar/issues/1008>`_.
 
 7.0.0a2 (2025-11-29)
 --------------------
