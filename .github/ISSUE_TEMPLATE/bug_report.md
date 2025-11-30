@@ -1,39 +1,50 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Create a bug report to help us improve icalendar
 title: "[BUG] "
 labels: ''
 assignees: ''
 
 ---
 
-<!-- This template is there to guide you and help us. If you can not complete everything here, that is fine. -->
+<!-- This template is here to guide you and help us. If you can't complete everything here, that is fine. -->
+
 ## Describe the bug
-<!-- A clear and concise description of what the bug is. -->
 
-## To Reproduce
-<!-- Please add the neccesary code here to reproduce the problem on your machine. -->
+<!-- A clear and concise description of the bug. -->
 
-```
+## To reproduce
+
+<!-- Add the neccesary steps and code examples to reproduce the issue on your machine. -->
+
+```python
 import icalendar
-...
+### ...
 ```
+
 Output:
-<!-- If applicable, add logs or error outputs to help explain your problem. -->
-```
+
+<!-- Add logs, stack traces, or error outputs to help explain the issue. -->
+
+```pycon
 
 ```
 
 ## Expected behavior
+
 <!-- A clear and concise description of what you expected to happen. -->
 
 ## Environment
-<!-- please complete the following information: -->
- - [ ] OS:                               <!-- e.g. Ubuntu 22 or Windows 10 -->
- - [ ] Python version:            <!-- e.g. Python 3.10 -->
- - [ ] `icalendar` version:      <!-- python3 -c 'import icalendar; print(icalendar.__version__)' -->
+
+<!-- Complete the following information. -->
+
+ - [ ] Operating system:         <!-- For example, Ubuntu 22, macOS Tahoe 26, Windows 10 -->
+ - [ ] Python version:           <!-- For example, Python 3.13 -->
+ - [ ] `icalendar` version:      <!-- Run the command `python3 -c 'import icalendar; print(icalendar.__version__)'` to get your version of icalendar -->
 
 ## Additional context
-<!-- Add any other context about the problem here, related issues and pull requests. -->
-- [ ] I tested it with the latest version `pip3 install https://github.com/collective/icalendar.git`
-- [ ] I attached the ICS source file or there is no ICS source file
+
+<!-- Add any other context about the issue here, including related issues and pull requests. -->
+
+- [ ] I tested it with the latest version. For example, I used the command `pip3 install --upgrade https://github.com/collective/icalendar.git`.
+- [ ] I attached the `.ics` sample file, or there is no `.ics` sample file.

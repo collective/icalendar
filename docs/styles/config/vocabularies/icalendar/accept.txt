@@ -19,6 +19,7 @@ docstrings?
 (?i)Ferreira
 (?i)fitnr
 (?i)Frykholm
+(?i)Fuzzer
 (?i)Garbas
 (?i)Geier
 (?i)Grisel
@@ -30,6 +31,7 @@ iCal
 (?i)icalendar
 (?i)ilya
 (?i)Jannis
+jCal
 (?i)Jeroen
 (?i)Jochen
 Jouni
@@ -41,6 +43,7 @@ Khechadoorian
 (?i)Lasudry
 (?i)Leidel
 (?i)Lennart
+(?i)Maheshwari
 (?i)Markus
 (?i)Martijn
 (?i)Mattson
@@ -84,9 +87,11 @@ Seppänen
 (?i)Stupp
 (?i)subcomponents?
 (?i)subpackages?
+(?i)Tanmay
 (?i)Tariq
 (?i)tgecho
 (?i)tisto
+(?i)Traceback
 (?i)Unterwaditzer
 uv
 (?i)Varvaryuk

@@ -47,11 +47,13 @@ from __future__ import annotations
 import base64
 import binascii
 import re
-from datetime import date, datetime, time, timedelta
-from typing import Any, Union
+import uuid
+from datetime import date, datetime, time, timedelta, timezone
+from typing import Any, ClassVar, Optional, Tuple, Union
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.enums import Enum
+from icalendar.error import InvalidCalendar, JCalParsingError
 from icalendar.parser import Parameters, escape_char, unescape_char
 from icalendar.parser_tools import (
     DEFAULT_ENCODING,
@@ -61,7 +63,17 @@ from icalendar.parser_tools import (
     to_unicode,
 )
 from icalendar.timezone import tzid_from_dt, tzid_from_tzinfo, tzp
-from icalendar.tools import to_datetime
+from icalendar.timezone.tzid import is_utc
+from icalendar.tools import is_date, is_datetime, normalize_pytz, to_datetime
+
+try:
+    from typing import TypeAlias
+except ImportError:
+    from typing_extensions import TypeAlias
+try:
+    from typing import Self
+except ImportError:
+    from typing_extensions import Self
 
 DURATION_REGEX = re.compile(
     r"([-+]?)P(?:(\d+)W)?(?:(\d+)D)?" r"(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$"
@@ -75,6 +87,7 @@ WEEKDAY_RULE = re.compile(
 class vBinary:
     """Binary property values are base 64 encoded."""
 
+    default_value: ClassVar[str] = "BINARY"
     params: Parameters
     obj: str
 
@@ -100,6 +113,38 @@ class vBinary:
     def __eq__(self, other):
         """self == other"""
         return isinstance(other, vBinary) and self.obj == other.obj
+
+    @classmethod
+    def examples(cls) -> list[vBinary]:
+        """Examples of vBinary."""
+        return [cls("VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZy4")]
+
+    from icalendar.param import VALUE
+
+    def to_jcal(self, name: str) -> list:
+        """The jCal representation of this property according to :rfc:`7265`."""
+        params = self.params.to_jcal()
+        if params.get("encoding") == "BASE64":
+            # BASE64 is the only allowed encoding
+            del params["encoding"]
+        return [name, params, self.VALUE.lower(), self.obj]
+
+    @classmethod
+    def from_jcal(cls, jcal_property: list) -> vBinary:
+        """Parse jCal from :rfc:`7265` to a vBinary.
+
+        Args:
+            jcal_property: The jCal property to parse.
+
+        Raises:
+            JCalParsingError: If the provided jCal is invalid.
+        """
+        JCalParsingError.validate_property(jcal_property, cls)
+        JCalParsingError.validate_value_type(jcal_property[3], str, cls, 3)
+        return cls(
+            jcal_property[3],
+            params=Parameters.from_jcal_property(jcal_property),
+        )
 
 
 class vBoolean(int):
@@ -141,13 +186,12 @@ class vBoolean(int):
         True
     """
 
+    default_value: ClassVar[str] = "BOOLEAN"
     params: Parameters
 
     BOOL_MAP = CaselessDict({"true": True, "false": False})
 
     def __new__(cls, *args, params: dict[str, Any] | None = None, **kwargs):
-        if params is None:
-            params = {}
         self = super().__new__(cls, *args, **kwargs)
         self.params = Parameters(params)
         return self
@@ -162,10 +206,42 @@ class vBoolean(int):
         except Exception as e:
             raise ValueError(f"Expected 'TRUE' or 'FALSE'. Got {ical}") from e
 
+    @classmethod
+    def examples(cls) -> list[vBoolean]:
+        """Examples of vBoolean."""
+        return [
+            cls(True),  # noqa: FBT003
+            cls(False),  # noqa: FBT003
+        ]
+
+    from icalendar.param import VALUE
+
+    def to_jcal(self, name: str) -> list:
+        """The jCal representation of this property according to :rfc:`7265`."""
+        return [name, self.params.to_jcal(), self.VALUE.lower(), bool(self)]
+
+    @classmethod
+    def from_jcal(cls, jcal_property: list) -> vBoolean:
+        """Parse jCal from :rfc:`7265` to a vBoolean.
+
+        Args:
+            jcal_property: The jCal property to parse.
+
+        Raises:
+            JCalParsingError: If the provided jCal is invalid.
+        """
+        JCalParsingError.validate_property(jcal_property, cls)
+        JCalParsingError.validate_value_type(jcal_property[3], bool, cls, 3)
+        return cls(
+            jcal_property[3],
+            params=Parameters.from_jcal_property(jcal_property),
+        )
+
 
 class vText(str):
     """Simple text."""
 
+    default_value: ClassVar[str] = "TEXT"
     params: Parameters
     __slots__ = ("encoding", "params")
 
@@ -176,8 +252,6 @@ class vText(str):
         /,
         params: dict[str, Any] | None = None,
     ):
-        if params is None:
-            params = {}
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         self.encoding = encoding
@@ -195,7 +269,53 @@ class vText(str):
         ical_unesc = unescape_char(ical)
         return cls(ical_unesc)
 
-    from icalendar.param import ALTREP, LANGUAGE, RELTYPE
+    @property
+    def ical_value(self) -> str:
+        """The string value of the text."""
+        return str(self)
+
+    from icalendar.param import ALTREP, GAP, LANGUAGE, RELTYPE, VALUE
+
+    def to_jcal(self, name: str) -> list:
+        """The jCal representation of this property according to :rfc:`7265`."""
+        if name == "request-status":  # TODO: maybe add a vRequestStatus class?
+            return [name, {}, "text", self.split(";", 2)]
+        return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
+
+    @classmethod
+    def examples(cls):
+        """Examples of vText."""
+        return [cls("Hello World!")]
+
+    @classmethod
+    def from_jcal(cls, jcal_property: list) -> Self:
+        """Parse jCal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jCal property to parse.
+
+        Raises:
+            JCalParsingError: If the provided jCal is invalid.
+        """
+        JCalParsingError.validate_property(jcal_property, cls)
+        name = jcal_property[0]
+        if name == "categories":
+            return vCategory.from_jcal(jcal_property)
+        string = jcal_property[3]  # TODO: accept list or string but join with ;
+        if name == "request-status":  # TODO: maybe add a vRequestStatus class?
+            JCalParsingError.validate_list_type(jcal_property[3], str, cls, 3)
+            string = ";".join(jcal_property[3])
+        JCalParsingError.validate_value_type(string, str, cls, 3)
+        return cls(
+            string,
+            params=Parameters.from_jcal_property(jcal_property),
+        )
+
+    @classmethod
+    def parse_jcal_value(cls, jcal_value: Any) -> vText:
+        """Parse a jCal value into a vText."""
+        JCalParsingError.validate_value_type(jcal_value, (str, int, float), cls)
+        return cls(str(jcal_value))
 
 
 class vCalAddress(str):
@@ -245,6 +365,7 @@ class vCalAddress(str):
             END:VEVENT
     """
 
+    default_value: ClassVar[str] = "CAL-ADDRESS"
     params: Parameters
     __slots__ = ("params",)
 
@@ -255,8 +376,6 @@ class vCalAddress(str):
         /,
         params: dict[str, Any] | None = None,
     ):
-        if params is None:
-            params = {}
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         self.params = Parameters(params)
@@ -273,8 +392,13 @@ class vCalAddress(str):
         return cls(ical)
 
     @property
+    def ical_value(self):
+        """The ``mailto:`` part of the address."""
+        return str(self)
+
+    @property
     def email(self) -> str:
-        """The email address without mailto: at the start."""
+        """The email address without ``mailto:`` at the start."""
         if self.lower().startswith("mailto:"):
             return self[7:]
         return str(self)
@@ -290,6 +414,7 @@ class vCalAddress(str):
         ROLE,
         RSVP,
         SENT_BY,
+        VALUE,
     )
 
     name = CN
@@ -399,6 +524,32 @@ class vCalAddress(str):
 
         return addr
 
+    def to_jcal(self, name: str) -> list:
+        """Return this property in jCal format."""
+        return [name, self.params.to_jcal(), self.VALUE.lower(), self.ical_value]
+
+    @classmethod
+    def examples(cls) -> list[vCalAddress]:
+        """Examples of vCalAddress."""
+        return [cls.new("you@example.org", cn="You There")]
+
+    @classmethod
+    def from_jcal(cls, jcal_property: list) -> Self:
+        """Parse jCal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jCal property to parse.
+
+        Raises:
+            JCalParsingError: If the provided jCal is invalid.
+        """
+        JCalParsingError.validate_property(jcal_property, cls)
+        JCalParsingError.validate_value_type(jcal_property[3], str, cls, 3)
+        return cls(
+            jcal_property[3],
+            params=Parameters.from_jcal_property(jcal_property),
+        )
+
 
 class vFloat(float):
     """Float
@@ -446,11 +597,10 @@ class vFloat(float):
             -3.14
     """
 
+    default_value: ClassVar[str] = "FLOAT"
     params: Parameters
 
     def __new__(cls, *args, params: dict[str, Any] | None = None, **kwargs):
-        if params is None:
-            params = {}
         self = super().__new__(cls, *args, **kwargs)
         self.params = Parameters(params)
         return self
@@ -464,6 +614,36 @@ class vFloat(float):
             return cls(ical)
         except Exception as e:
             raise ValueError(f"Expected float value, got: {ical}") from e
+
+    @classmethod
+    def examples(cls) -> list[vFloat]:
+        """Examples of vFloat."""
+        return [vFloat(3.1415)]
+
+    from icalendar.param import VALUE
+
+    def to_jcal(self, name: str) -> list:
+        """The jCal representation of this property according to :rfc:`7265`."""
+        return [name, self.params.to_jcal(), self.VALUE.lower(), float(self)]
+
+    @classmethod
+    def from_jcal(cls, jcal_property: list) -> Self:
+        """Parse jCal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jCal property to parse.
+
+        Raises:
+            JCalParsingError: If the jCal provided is invalid.
+        """
+        JCalParsingError.validate_property(jcal_property, cls)
+        if jcal_property[0].upper() == "GEO":
+            return vGeo.from_jcal(jcal_property)
+        JCalParsingError.validate_value_type(jcal_property[3], float, cls, 3)
+        return cls(
+            jcal_property[3],
+            params=Parameters.from_jcal_property(jcal_property),
+        )
 
 
 class vInt(int):
@@ -515,11 +695,10 @@ class vInt(int):
             432109876
     """
 
+    default_value: ClassVar[str] = "INTEGER"
     params: Parameters
 
     def __new__(cls, *args, params: dict[str, Any] | None = None, **kwargs):
-        if params is None:
-            params = {}
         self = super().__new__(cls, *args, **kwargs)
         self.params = Parameters(params)
         return self
@@ -534,25 +713,65 @@ class vInt(int):
         except Exception as e:
             raise ValueError(f"Expected int, got: {ical}") from e
 
+    @classmethod
+    def examples(cls) -> list[vInt]:
+        """Examples of vInt."""
+        return [vInt(1000), vInt(-42)]
+
+    from icalendar.param import VALUE
+
+    def to_jcal(self, name: str) -> list:
+        """The jCal representation of this property according to :rfc:`7265`."""
+        return [name, self.params.to_jcal(), self.VALUE.lower(), int(self)]
+
+    @classmethod
+    def from_jcal(cls, jcal_property: list) -> Self:
+        """Parse jCal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jCal property to parse.
+
+        Raises:
+            JCalParsingError: If the provided jCal is invalid.
+        """
+        JCalParsingError.validate_property(jcal_property, cls)
+        JCalParsingError.validate_value_type(jcal_property[3], int, cls, 3)
+        return cls(
+            jcal_property[3],
+            params=Parameters.from_jcal_property(jcal_property),
+        )
+
+    @classmethod
+    def parse_jcal_value(cls, value: Any) -> int:
+        """Parse a jCal value for vInt.
+
+        Raises:
+            JCalParsingError: If the value is not an int.
+        """
+        JCalParsingError.validate_value_type(value, int, cls)
+        return cls(value)
+
 
 class vDDDLists:
     """A list of vDDDTypes values."""
 
+    default_value: ClassVar[str] = "DATE-TIME"
     params: Parameters
-    dts: list
+    dts: list[vDDDTypes]
 
-    def __init__(self, dt_list):
+    def __init__(self, dt_list, params: dict[str, Any] | None = None):
+        if params is None:
+            params = {}
         if not hasattr(dt_list, "__iter__"):
             dt_list = [dt_list]
         vddd = []
         tzid = None
         for dt_l in dt_list:
-            dt = vDDDTypes(dt_l)
+            dt = vDDDTypes(dt_l) if not isinstance(dt_l, vDDDTypes) else dt_l
             vddd.append(dt)
             if "TZID" in dt.params:
                 tzid = dt.params["TZID"]
 
-        params = {}
         if tzid:
             # NOTE: no support for multiple timezones here!
             params["TZID"] = tzid
@@ -582,15 +801,54 @@ class vDDDLists:
         """String representation."""
         return f"{self.__class__.__name__}({self.dts})"
 
+    @classmethod
+    def examples(cls) -> list[vDDDLists]:
+        """Examples of vDDDLists."""
+        return [vDDDLists([datetime(2025, 11, 10, 16, 50)])]  # noqa: DTZ001
+
+    def to_jcal(self, name: str) -> list:
+        """The jCal representation of this property according to :rfc:`7265`."""
+        return [
+            name,
+            self.params.to_jcal(),
+            self.VALUE.lower(),
+            *[dt.to_jcal(name)[3] for dt in self.dts],
+        ]
+
+    def _get_value(self) -> str | None:
+        return None if not self.dts else self.dts[0].VALUE
+
+    from icalendar.param import VALUE
+
+    @classmethod
+    def from_jcal(cls, jcal_property: list) -> Self:
+        """Parse jCal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jCal property to parse.
+
+        Raises:
+            JCalParsingError: If the jCal provided is invalid.
+        """
+        JCalParsingError.validate_property(jcal_property, cls)
+        values = jcal_property[3:]
+        prop = jcal_property[:3]
+        dts = []
+        for value in values:
+            dts.append(vDDDTypes.from_jcal(prop + [value]))
+        return cls(
+            dts,
+            params=Parameters.from_jcal_property(jcal_property),
+        )
+
 
 class vCategory:
+    default_value: ClassVar[str] = "TEXT"
     params: Parameters
 
     def __init__(
         self, c_list: list[str] | str, /, params: dict[str, Any] | None = None
     ):
-        if params is None:
-            params = {}
         if not hasattr(c_list, "__iter__") or isinstance(c_list, str):
             c_list = [c_list]
         self.cats: list[vText | str] = [vText(c) for c in c_list]
@@ -620,10 +878,44 @@ class vCategory:
         """String representation."""
         return f"{self.__class__.__name__}({self.cats}, params={self.params})"
 
+    def to_jcal(self, name: str) -> list:
+        """The jCal representation for categories."""
+        result = [name, self.params.to_jcal(), self.VALUE.lower()]
+        result.extend(map(str, self.cats))
+        if not self.cats:
+            result.append("")
+        return result
+
+    @classmethod
+    def examples(cls) -> list[vCategory]:
+        """Examples of vCategory."""
+        return [cls(["HOME", "COSY"])]
+
+    from icalendar.param import VALUE
+
+    @classmethod
+    def from_jcal(cls, jcal_property: list) -> Self:
+        """Parse jCal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jCal property to parse.
+
+        Raises:
+            JCalParsingError: If the provided jCal is invalid.
+        """
+        JCalParsingError.validate_property(jcal_property, cls)
+        for i, category in enumerate(jcal_property[3:], start=3):
+            JCalParsingError.validate_value_type(category, str, cls, i)
+        return cls(
+            jcal_property[3:],
+            Parameters.from_jcal_property(jcal_property),
+        )
+
 
 class TimeBase:
     """Make classes with a datetime/date comparable."""
 
+    default_value: ClassVar[str]
     params: Parameters
     ignore_for_equality = {"TZID", "VALUE"}
 
@@ -655,47 +947,69 @@ class TimeBase:
         return f"{self.__class__.__name__}({self.dt}, {self.params})"
 
 
+DT_TYPE: TypeAlias = Union[
+    datetime,
+    date,
+    timedelta,
+    time,
+    Tuple[datetime, datetime],
+    Tuple[datetime, timedelta],
+]
+
+
 class vDDDTypes(TimeBase):
     """A combined Datetime, Date or Duration parser/generator. Their format
     cannot be confused, and often values can be of either types.
     So this is practical.
     """
 
+    default_value: ClassVar[str] = "DATE-TIME"
     params: Parameters
+    dt: DT_TYPE
 
-    def __init__(self, dt):
+    def __init__(self, dt, params: Optional[dict[str, Any]] = None):
+        if params is None:
+            params = {}
         if not isinstance(dt, (datetime, date, timedelta, time, tuple)):
             raise TypeError(
                 "You must use datetime, date, timedelta, time or tuple (for periods)"
             )
-        if isinstance(dt, (datetime, timedelta)):
-            self.params = Parameters()
-        elif isinstance(dt, date):
-            self.params = Parameters({"value": "DATE"})
-        elif isinstance(dt, time):
-            self.params = Parameters({"value": "TIME"})
-        else:  # isinstance(dt, tuple)
-            self.params = Parameters({"value": "PERIOD"})
-
-        tzid = tzid_from_dt(dt) if isinstance(dt, (datetime, time)) else None
-        if tzid is not None and tzid != "UTC":
-            self.params.update({"TZID": tzid})
-
         self.dt = dt
+        # if isinstance(dt, (datetime, timedelta)): pass
+        if is_date(dt):
+            params.update({"value": "DATE"})
+        elif isinstance(dt, time):
+            params.update({"value": "TIME"})
+        elif isinstance(dt, tuple):
+            params.update({"value": "PERIOD"})
+        self.params = Parameters(params)
+        self.params.update_tzid_from(dt)
 
-    def to_ical(self):
+    def to_property_type(self) -> vDatetime | vDate | vDuration | vTime | vPeriod:
+        """Convert to a property type.
+
+        Raises:
+            ValueError: If the type is unknown.
+        """
         dt = self.dt
         if isinstance(dt, datetime):
-            return vDatetime(dt).to_ical()
-        if isinstance(dt, date):
-            return vDate(dt).to_ical()
-        if isinstance(dt, timedelta):
-            return vDuration(dt).to_ical()
-        if isinstance(dt, time):
-            return vTime(dt).to_ical()
-        if isinstance(dt, tuple) and len(dt) == 2:
-            return vPeriod(dt).to_ical()
-        raise ValueError(f"Unknown date type: {type(dt)}")
+            result = vDatetime(dt)
+        elif isinstance(dt, date):
+            result = vDate(dt)
+        elif isinstance(dt, timedelta):
+            result = vDuration(dt)
+        elif isinstance(dt, time):
+            result = vTime(dt)
+        elif isinstance(dt, tuple) and len(dt) == 2:
+            result = vPeriod(dt)
+        else:
+            raise ValueError(f"Unknown date type: {type(dt)}")
+        result.params = self.params
+        return result
+
+    def to_ical(self) -> str:
+        """Return the ical representation."""
+        return self.to_property_type().to_ical()
 
     @classmethod
     def from_ical(cls, ical, timezone=None):
@@ -729,6 +1043,75 @@ class vDDDTypes(TimeBase):
         This property allows interoperability.
         """
         return self.dt
+
+    @property
+    def dts(self) -> list:
+        """Compatibility method to return a list of datetimes."""
+        return [self]
+
+    @classmethod
+    def examples(cls) -> list[vDDDTypes]:
+        """Examples of vDDDTypes."""
+        return [cls(date(2025, 11, 10))]
+
+    def _get_value(self) -> str | None:
+        """Determine the VALUE parameter."""
+        return self.to_property_type().VALUE
+
+    from icalendar.param import VALUE
+
+    def to_jcal(self, name: str) -> list:
+        """The jCal representation of this property according to :rfc:`7265`."""
+        return self.to_property_type().to_jcal(name)
+
+    @classmethod
+    def parse_jcal_value(cls, jcal: str | list) -> timedelta:
+        """Parse a jCal value.
+
+        Raises:
+            JCalParsingError: If the value can't be parsed as either a date, time,
+                date-time, duration, or period.
+        """
+        if isinstance(jcal, list):
+            return vPeriod.parse_jcal_value(jcal)
+        JCalParsingError.validate_value_type(jcal, str, cls)
+        if "/" in jcal:
+            return vPeriod.parse_jcal_value(jcal)
+        for jcal_type in (vDatetime, vDate, vTime, vDuration):
+            try:
+                return jcal_type.parse_jcal_value(jcal)
+            except JCalParsingError:  # noqa: PERF203
+                pass
+        raise JCalParsingError(
+            "Cannot parse date, time, date-time, duration, or period.", cls, value=jcal
+        )
+
+    @classmethod
+    def from_jcal(cls, jcal_property: list) -> Self:
+        """Parse jCal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jCal property to parse.
+
+        Raises:
+            JCalParsingError: If the provided jCal is invalid.
+        """
+        JCalParsingError.validate_property(jcal_property, cls)
+        with JCalParsingError.reraise_with_path_added(3):
+            dt = cls.parse_jcal_value(jcal_property[3])
+        params = Parameters.from_jcal_property(jcal_property)
+        if params.tzid:
+            if isinstance(dt, tuple):
+                # period
+                start = tzp.localize(dt[0], params.tzid)
+                end = tzp.localize(dt[1], params.tzid) if is_datetime(dt[1]) else dt[1]
+                dt = (start, end)
+            else:
+                dt = tzp.localize(dt, params.tzid)
+        return cls(
+            dt,
+            params=params,
+        )
 
 
 class vDate(TimeBase):
@@ -782,13 +1165,14 @@ class vDate(TimeBase):
             14
     """
 
+    default_value: ClassVar[str] = "DATE"
     params: Parameters
 
-    def __init__(self, dt):
+    def __init__(self, dt, params: Optional[dict[str, Any]] = None):
         if not isinstance(dt, date):
             raise TypeError("Value MUST be a date instance")
         self.dt = dt
-        self.params = Parameters({"value": "DATE"})
+        self.params = Parameters(params or {})
 
     def to_ical(self):
         s = f"{self.dt.year:04}{self.dt.month:02}{self.dt.day:02}"
@@ -805,6 +1189,53 @@ class vDate(TimeBase):
             return date(*timetuple)
         except Exception as e:
             raise ValueError(f"Wrong date format {ical}") from e
+
+    @classmethod
+    def examples(cls) -> list[vDate]:
+        """Examples of vDate."""
+        return [cls(date(2025, 11, 10))]
+
+    from icalendar.param import VALUE
+
+    def to_jcal(self, name: str) -> list:
+        """The jCal representation of this property according to :rfc:`7265`."""
+        return [
+            name,
+            self.params.to_jcal(),
+            self.VALUE.lower(),
+            self.dt.strftime("%Y-%m-%d"),
+        ]
+
+    @classmethod
+    def parse_jcal_value(cls, jcal: str) -> datetime:
+        """Parse a jCal string to a :py:class:`datetime.datetime`.
+
+        Raises:
+            JCalParsingError: If it can't parse a date.
+        """
+        JCalParsingError.validate_value_type(jcal, str, cls)
+        try:
+            return datetime.strptime(jcal, "%Y-%m-%d").date()  # noqa: DTZ007
+        except ValueError as e:
+            raise JCalParsingError("Cannot parse date.", cls, value=jcal) from e
+
+    @classmethod
+    def from_jcal(cls, jcal_property: list) -> Self:
+        """Parse jCal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jCal property to parse.
+
+        Raises:
+            JCalParsingError: If the provided jCal is invalid.
+        """
+        JCalParsingError.validate_property(jcal_property, cls)
+        with JCalParsingError.reraise_with_path_added(3):
+            value = cls.parse_jcal_value(jcal_property[3])
+        return cls(
+            value,
+            params=Parameters.from_jcal_property(jcal_property),
+        )
 
 
 class vDatetime(TimeBase):
@@ -883,26 +1314,23 @@ class vDatetime(TimeBase):
             datetime.datetime(2021, 3, 2, 10, 15, tzinfo=ZoneInfo(key='Europe/Berlin'))
     """
 
+    default_value: ClassVar[str] = "DATE-TIME"
     params: Parameters
 
     def __init__(self, dt, /, params: dict[str, Any] | None = None):
-        if params is None:
-            params = {}
         self.dt = dt
         self.params = Parameters(params)
+        self.params.update_tzid_from(dt)
 
     def to_ical(self):
         dt = self.dt
-        tzid = tzid_from_dt(dt)
 
         s = (
             f"{dt.year:04}{dt.month:02}{dt.day:02}"
             f"T{dt.hour:02}{dt.minute:02}{dt.second:02}"
         )
-        if tzid == "UTC":
+        if self.is_utc():
             s += "Z"
-        elif tzid:
-            self.params.update({"TZID": tzid})
         return s.encode("utf-8")
 
     @staticmethod
@@ -932,6 +1360,64 @@ class vDatetime(TimeBase):
         except Exception as e:
             raise ValueError(f"Wrong datetime format: {ical}") from e
         raise ValueError(f"Wrong datetime format: {ical}")
+
+    @classmethod
+    def examples(cls) -> list[vDatetime]:
+        """Examples of vDatetime."""
+        return [cls(datetime(2025, 11, 10, 16, 52))]  # noqa: DTZ001
+
+    from icalendar.param import VALUE
+
+    def to_jcal(self, name: str) -> list:
+        """The jCal representation of this property according to :rfc:`7265`."""
+        value = self.dt.strftime("%Y-%m-%dT%H:%M:%S")
+        if self.is_utc():
+            value += "Z"
+        return [name, self.params.to_jcal(exclude_utc=True), self.VALUE.lower(), value]
+
+    def is_utc(self) -> bool:
+        """Whether this datetime is UTC."""
+        return self.params.is_utc() or is_utc(self.dt)
+
+    @classmethod
+    def parse_jcal_value(cls, jcal: str) -> datetime:
+        """Parse a jCal string to a :py:class:`datetime.datetime`.
+
+        Raises:
+            JCalParsingError: If it can't parse a date-time value.
+        """
+        JCalParsingError.validate_value_type(jcal, str, cls)
+        utc = jcal.endswith("Z")
+        if utc:
+            jcal = jcal[:-1]
+        try:
+            dt = datetime.strptime(jcal, "%Y-%m-%dT%H:%M:%S")  # noqa: DTZ007
+        except ValueError as e:
+            raise JCalParsingError("Cannot parse date-time.", cls, value=jcal) from e
+        if utc:
+            return tzp.localize_utc(dt)
+        return dt
+
+    @classmethod
+    def from_jcal(cls, jcal_property: list) -> Self:
+        """Parse jCal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jCal property to parse.
+
+        Raises:
+            JCalParsingError: If the provided jCal is invalid.
+        """
+        JCalParsingError.validate_property(jcal_property, cls)
+        params = Parameters.from_jcal_property(jcal_property)
+        with JCalParsingError.reraise_with_path_added(3):
+            dt = cls.parse_jcal_value(jcal_property[3])
+        if params.tzid:
+            dt = tzp.localize(dt, params.tzid)
+        return cls(
+            dt,
+            params=params,
+        )
 
 
 class vDuration(TimeBase):
@@ -1003,11 +1489,12 @@ class vDuration(TimeBase):
             datetime.timedelta(days=49)
     """
 
+    default_value: ClassVar[str] = "DURATION"
     params: Parameters
 
-    def __init__(self, td, /, params: dict[str, Any] | None = None):
-        if params is None:
-            params = {}
+    def __init__(self, td: timedelta | str, /, params: dict[str, Any] | None = None):
+        if isinstance(td, str):
+            td = vDuration.from_ical(td)
         if not isinstance(td, timedelta):
             raise TypeError("Value MUST be a timedelta instance")
         self.td = td
@@ -1045,7 +1532,7 @@ class vDuration(TimeBase):
     def from_ical(ical):
         match = DURATION_REGEX.match(ical)
         if not match:
-            raise ValueError(f"Invalid iCalendar duration: {ical}")
+            raise InvalidCalendar(f"Invalid iCalendar duration: {ical}")
 
         sign, weeks, days, hours, minutes, seconds = match.groups()
         value = timedelta(
@@ -1065,6 +1552,52 @@ class vDuration(TimeBase):
     def dt(self) -> timedelta:
         """The time delta for compatibility."""
         return self.td
+
+    @classmethod
+    def examples(cls) -> list[vDuration]:
+        """Examples of vDuration."""
+        return [cls(timedelta(1, 99))]
+
+    from icalendar.param import VALUE
+
+    def to_jcal(self, name: str) -> list:
+        """The jCal representation of this property according to :rfc:`7265`."""
+        return [
+            name,
+            self.params.to_jcal(),
+            self.VALUE.lower(),
+            self.to_ical().decode(),
+        ]
+
+    @classmethod
+    def parse_jcal_value(cls, jcal: str) -> timedelta | None:
+        """Parse a jCal string to a :py:class:`datetime.timedelta`.
+
+        Raises:
+            JCalParsingError: If it can't parse a duration."""
+        JCalParsingError.validate_value_type(jcal, str, cls)
+        try:
+            return cls.from_ical(jcal)
+        except ValueError as e:
+            raise JCalParsingError("Cannot parse duration.", cls, value=jcal) from e
+
+    @classmethod
+    def from_jcal(cls, jcal_property: list) -> Self:
+        """Parse jCal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jCal property to parse.
+
+        Raises:
+            JCalParsingError: If the provided jCal is invalid.
+        """
+        JCalParsingError.validate_property(jcal_property, cls)
+        with JCalParsingError.reraise_with_path_added(3):
+            duration = cls.parse_jcal_value(jcal_property[3])
+        return cls(
+            duration,
+            Parameters.from_jcal_property(jcal_property),
+        )
 
 
 class vPeriod(TimeBase):
@@ -1131,9 +1664,18 @@ class vPeriod(TimeBase):
             >>> period = vPeriod.from_ical('19970101T180000Z/PT5H30M')
     """
 
+    default_value: ClassVar[str] = "PERIOD"
     params: Parameters
+    by_duration: bool
+    start: datetime
+    end: datetime
+    duration: timedelta
 
-    def __init__(self, per: tuple[datetime, Union[datetime, timedelta]]):
+    def __init__(
+        self,
+        per: tuple[datetime, Union[datetime, timedelta]],
+        params: dict[str, Any] | None = None,
+    ):
         start, end_or_duration = per
         if not (isinstance(start, (datetime, date))):
             raise TypeError("Start value MUST be a datetime or date instance")
@@ -1141,23 +1683,20 @@ class vPeriod(TimeBase):
             raise TypeError(
                 "end_or_duration MUST be a datetime, date or timedelta instance"
             )
-        by_duration = 0
-        if isinstance(end_or_duration, timedelta):
-            by_duration = 1
+        by_duration = isinstance(end_or_duration, timedelta)
+        if by_duration:
             duration = end_or_duration
-            end = start + duration
+            end = normalize_pytz(start + duration)
         else:
             end = end_or_duration
-            duration = end - start
+            duration = normalize_pytz(end - start)
         if start > end:
             raise ValueError("Start time is greater than end time")
 
-        self.params = Parameters({"value": "PERIOD"})
+        self.params = Parameters(params or {"value": "PERIOD"})
         # set the timezone identifier
         # does not support different timezones for start and end
-        tzid = tzid_from_dt(start)
-        if tzid:
-            self.params["TZID"] = tzid
+        self.params.update_tzid_from(start)
 
         self.start = start
         self.end = end
@@ -1199,9 +1738,85 @@ class vPeriod(TimeBase):
 
     from icalendar.param import FBTYPE
 
+    @classmethod
+    def examples(cls) -> list[vPeriod]:
+        """Examples of vPeriod."""
+        return [
+            vPeriod((datetime(2025, 11, 10, 16, 35), timedelta(hours=1, minutes=30))),  # noqa: DTZ001
+            vPeriod((datetime(2025, 11, 10, 16, 35), datetime(2025, 11, 10, 18, 5))),  # noqa: DTZ001
+        ]
+
+    from icalendar.param import VALUE
+
+    def to_jcal(self, name: str) -> list:
+        """The jCal representation of this property according to :rfc:`7265`."""
+        value = [vDatetime(self.start).to_jcal(name)[-1]]
+        if self.by_duration:
+            value.append(vDuration(self.duration).to_jcal(name)[-1])
+        else:
+            value.append(vDatetime(self.end).to_jcal(name)[-1])
+        return [name, self.params.to_jcal(exclude_utc=True), self.VALUE.lower(), value]
+
+    @classmethod
+    def parse_jcal_value(
+        cls, jcal: str | list
+    ) -> tuple[datetime, datetime] | tuple[datetime, timedelta]:
+        """Parse a jCal value.
+
+        Raises:
+            JCalParsingError: If the period is not a list with exactly two items,
+                or it can't parse a date-time or duration.
+        """
+        if isinstance(jcal, str) and "/" in jcal:
+            # only occurs in the example of RFC7265, Section B.2.2.
+            jcal = jcal.split("/")
+        if not isinstance(jcal, list) or len(jcal) != 2:
+            raise JCalParsingError(
+                "A period must be a list with exactly 2 items.", cls, value=jcal
+            )
+        with JCalParsingError.reraise_with_path_added(0):
+            start = vDatetime.parse_jcal_value(jcal[0])
+        with JCalParsingError.reraise_with_path_added(1):
+            JCalParsingError.validate_value_type(jcal[1], str, cls)
+            if jcal[1].startswith(("P", "-P", "+P")):
+                end_or_duration = vDuration.parse_jcal_value(jcal[1])
+            else:
+                try:
+                    end_or_duration = vDatetime.parse_jcal_value(jcal[1])
+                except JCalParsingError as e:
+                    raise JCalParsingError(
+                        "Cannot parse date-time or duration.",
+                        cls,
+                        value=jcal[1],
+                    ) from e
+        return start, end_or_duration
+
+    @classmethod
+    def from_jcal(cls, jcal_property: list) -> Self:
+        """Parse jCal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jCal property to parse.
+
+        Raises:
+            JCalParsingError: If the provided jCal is invalid.
+        """
+        JCalParsingError.validate_property(jcal_property, cls)
+        with JCalParsingError.reraise_with_path_added(3):
+            start, end_or_duration = cls.parse_jcal_value(jcal_property[3])
+        params = Parameters.from_jcal_property(jcal_property)
+        tzid = params.tzid
+
+        if tzid:
+            start = tzp.localize(start, tzid)
+            if is_datetime(end_or_duration):
+                end_or_duration = tzp.localize(end_or_duration, tzid)
+
+        return cls((start, end_or_duration), params=params)
+
 
 class vWeekday(str):
-    """Either a ``weekday`` or a ``weekdaynum``
+    """Either a ``weekday`` or a ``weekdaynum``.
 
     .. code-block:: pycon
 
@@ -1251,8 +1866,6 @@ class vWeekday(str):
         /,
         params: dict[str, Any] | None = None,
     ):
-        if params is None:
-            params = {}
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         match = WEEKDAY_RULE.match(self)
@@ -1281,6 +1894,21 @@ class vWeekday(str):
         except Exception as e:
             raise ValueError(f"Expected weekday abbrevation, got: {ical}") from e
 
+    @classmethod
+    def parse_jcal_value(cls, value: Any) -> vWeekday:
+        """Parse a jCal value for vWeekday.
+
+        Raises:
+            JCalParsingError: If the value is not a valid weekday.
+        """
+        JCalParsingError.validate_value_type(value, str, cls)
+        try:
+            return cls(value)
+        except ValueError as e:
+            raise JCalParsingError(
+                "The value must be a valid weekday.", cls, value=value
+            ) from e
+
 
 class vFrequency(str):
     """A simple class that catches illegal values."""
@@ -1307,8 +1935,6 @@ class vFrequency(str):
         /,
         params: dict[str, Any] | None = None,
     ):
-        if params is None:
-            params = {}
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         if self not in vFrequency.frequencies:
@@ -1325,6 +1951,21 @@ class vFrequency(str):
             return cls(ical.upper())
         except Exception as e:
             raise ValueError(f"Expected frequency, got: {ical}") from e
+
+    @classmethod
+    def parse_jcal_value(cls, value: Any) -> vFrequency:
+        """Parse a jCal value for vFrequency.
+
+        Raises:
+            JCalParsingError: If the value is not a valid frequency.
+        """
+        JCalParsingError.validate_value_type(value, str, cls)
+        try:
+            return cls(value)
+        except ValueError as e:
+            raise JCalParsingError(
+                "The value must be a valid frequency.", cls, value=value
+            ) from e
 
 
 class vMonth(int):
@@ -1357,11 +1998,7 @@ class vMonth(int):
 
     params: Parameters
 
-    def __new__(
-        cls, month: Union[str, int], /, params: dict[str, Any] | None = None
-    ):
-        if params is None:
-            params = {}
+    def __new__(cls, month: Union[str, int], /, params: dict[str, Any] | None = None):
         if isinstance(month, vMonth):
             return cls(month.to_ical().decode())
         if isinstance(month, str):
@@ -1369,7 +2006,7 @@ class vMonth(int):
                 month_index = int(month)
                 leap = False
             else:
-                if month[-1] != "L" and month[:-1].isdigit():
+                if not month or (month[-1] != "L" and month[:-1].isdigit()):
                     raise ValueError(f"Invalid month: {month!r}")
                 month_index = int(month[:-1])
                 leap = True
@@ -1406,6 +2043,21 @@ class vMonth(int):
         """str(self)"""
         return f"{int(self)}{'L' if self.leap else ''}"
 
+    @classmethod
+    def parse_jcal_value(cls, value: Any) -> vMonth:
+        """Parse a jCal value for vMonth.
+
+        Raises:
+            JCalParsingError: If the value is not a valid month.
+        """
+        JCalParsingError.validate_value_type(value, (str, int), cls)
+        try:
+            return cls(value)
+        except ValueError as e:
+            raise JCalParsingError(
+                "The value must be a string or an integer.", cls, value=value
+            ) from e
+
 
 class vSkip(vText, Enum):
     """Skip values for RRULE.
@@ -1435,6 +2087,21 @@ class vSkip(vText, Enum):
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self._name_!r})"
+
+    @classmethod
+    def parse_jcal_value(cls, value: Any) -> vSkip:
+        """Parse a jCal value for vSkip.
+
+        Raises:
+            JCalParsingError: If the value is not a valid skip value.
+        """
+        JCalParsingError.validate_value_type(value, str, cls)
+        try:
+            return cls[value.upper()]
+        except KeyError as e:
+            raise JCalParsingError(
+                "The value must be a valid skip value.", cls, value=value
+            ) from e
 
 
 class vRecur(CaselessDict):
@@ -1521,6 +2188,7 @@ class vRecur(CaselessDict):
             [vRecur({'FREQ': ['DAILY'], 'COUNT': [10]})]
     """  # noqa: E501
 
+    default_value: ClassVar[str] = "RECUR"
     params: Parameters
 
     frequencies = [
@@ -1572,13 +2240,17 @@ class vRecur(CaselessDict):
             "BYDAY": vWeekday,
             "FREQ": vFrequency,
             "BYWEEKDAY": vWeekday,
-            "SKIP": vSkip,
+            "SKIP": vSkip,  # RFC 7529
+            "RSCALE": vText,  # RFC 7529
         }
     )
 
+    # for reproducible serialization:
+    # RULE: if and only if it can be a list it will be a list
+    # look up in RFC
+    jcal_not_a_list = {"FREQ", "UNTIL", "COUNT", "INTERVAL", "WKST", "SKIP", "RSCALE"}
+
     def __init__(self, *args, params: dict[str, Any] | None = None, **kwargs):
-        if params is None:
-            params = {}
         if args and isinstance(args[0], str):
             # we have a string as an argument.
             args = (self.from_ical(args[0]),) + args[1:]
@@ -1627,6 +2299,90 @@ class vRecur(CaselessDict):
             raise
         except Exception as e:
             raise ValueError(f"Error in recurrence rule: {ical}") from e
+
+    @classmethod
+    def examples(cls) -> list[vRecur]:
+        """Examples of vRecur."""
+        return [cls.from_ical("FREQ=DAILY;COUNT=10")]
+
+    from icalendar.param import VALUE
+
+    def to_jcal(self, name: str) -> list:
+        """The jCal representation of this property according to :rfc:`7265`."""
+        recur = {}
+        for k, v in self.items():
+            key = k.lower()
+            if key.upper() in self.jcal_not_a_list:
+                value = v[0] if isinstance(v, list) and len(v) == 1 else v
+            elif not isinstance(v, list):
+                value = [v]
+            else:
+                value = v
+            recur[key] = value
+        if "until" in recur:
+            until = recur["until"]
+            until_jcal = vDDDTypes(until).to_jcal("until")
+            recur["until"] = until_jcal[-1]
+        return [name, self.params.to_jcal(), self.VALUE.lower(), recur]
+
+    @classmethod
+    def from_jcal(cls, jcal_property: list) -> Self:
+        """Parse jCal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jCal property to parse.
+
+        Raises:
+            JCalParsingError: If the provided jCal is invalid.
+        """
+        JCalParsingError.validate_property(jcal_property, cls)
+        params = Parameters.from_jcal_property(jcal_property)
+        if not isinstance(jcal_property[3], dict) or not all(
+            isinstance(k, str) for k in jcal_property[3]
+        ):
+            raise JCalParsingError(
+                "The recurrence rule must be a mapping with string keys.",
+                cls,
+                3,
+                value=jcal_property[3],
+            )
+        recur = {}
+        for key, value in jcal_property[3].items():
+            value_type = cls.types.get(key, vText)
+            with JCalParsingError.reraise_with_path_added(3, key):
+                if isinstance(value, list):
+                    recur[key.lower()] = values = []
+                    for i, v in enumerate(value):
+                        with JCalParsingError.reraise_with_path_added(i):
+                            values.append(value_type.parse_jcal_value(v))
+                else:
+                    recur[key] = value_type.parse_jcal_value(value)
+        until = recur.get("until")
+        if until is not None and not isinstance(until, list):
+            recur["until"] = [until]
+        return cls(recur, params=params)
+
+    def __eq__(self, other: object) -> bool:
+        """self == other"""
+        if not isinstance(other, vRecur):
+            return super().__eq__(other)
+        if self.keys() != other.keys():
+            return False
+        for key in self.keys():
+            v1 = self[key]
+            v2 = other[key]
+            if not isinstance(v1, SEQUENCE_TYPES):
+                v1 = [v1]
+            if not isinstance(v2, SEQUENCE_TYPES):
+                v2 = [v2]
+            if v1 != v2:
+                return False
+        return True
+
+
+TIME_JCAL_REGEX = re.compile(
+    r"^(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2}):(?P<second>[0-9]{2})(?P<utc>Z)?$"
+)
 
 
 class vTime(TimeBase):
@@ -1741,17 +2497,28 @@ class vTime(TimeBase):
             TZID=America/New_York:083000
     """
 
-    def __init__(self, *args):
+    default_value: ClassVar[str] = "TIME"
+    params: Parameters
+
+    def __init__(self, *args, params: dict[str, Any] | None = None):
         if len(args) == 1:
             if not isinstance(args[0], (time, datetime)):
                 raise ValueError(f"Expected a datetime.time, got: {args[0]}")
             self.dt = args[0]
         else:
             self.dt = time(*args)
-        self.params = Parameters({"value": "TIME"})
+        self.params = Parameters(params or {})
+        self.params.update_tzid_from(self.dt)
 
     def to_ical(self):
-        return self.dt.strftime("%H%M%S")
+        value = self.dt.strftime("%H%M%S")
+        if self.is_utc():
+            value += "Z"
+        return value
+
+    def is_utc(self) -> bool:
+        """Whether this time is UTC."""
+        return self.params.is_utc() or is_utc(self.dt)
 
     @staticmethod
     def from_ical(ical):
@@ -1761,6 +2528,55 @@ class vTime(TimeBase):
             return time(*timetuple)
         except Exception as e:
             raise ValueError(f"Expected time, got: {ical}") from e
+
+    @classmethod
+    def examples(cls) -> list[vTime]:
+        """Examples of vTime."""
+        return [cls(time(12, 30))]
+
+    from icalendar.param import VALUE
+
+    def to_jcal(self, name: str) -> list:
+        """The jCal representation of this property according to :rfc:`7265`."""
+        value = self.dt.strftime("%H:%M:%S")
+        if self.is_utc():
+            value += "Z"
+        return [name, self.params.to_jcal(exclude_utc=True), self.VALUE.lower(), value]
+
+    @classmethod
+    def parse_jcal_value(cls, jcal: str) -> time:
+        """Parse a jCal string to a :py:class:`datetime.time`.
+
+        Raises:
+            JCalParsingError: If it can't parse a time.
+        """
+        JCalParsingError.validate_value_type(jcal, str, cls)
+        match = TIME_JCAL_REGEX.match(jcal)
+        if match is None:
+            raise JCalParsingError("Cannot parse time.", cls, value=jcal)
+        hour = int(match.group("hour"))
+        minute = int(match.group("minute"))
+        second = int(match.group("second"))
+        utc = bool(match.group("utc"))
+        return time(hour, minute, second, tzinfo=timezone.utc if utc else None)
+
+    @classmethod
+    def from_jcal(cls, jcal_property: list) -> Self:
+        """Parse jCal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jCal property to parse.
+
+        Raises:
+            JCalParsingError: If the provided jCal is invalid.
+        """
+        JCalParsingError.validate_property(jcal_property, cls)
+        with JCalParsingError.reraise_with_path_added(3):
+            value = cls.parse_jcal_value(jcal_property[3])
+        return cls(
+            value,
+            params=Parameters.from_jcal_property(jcal_property),
+        )
 
 
 class vUri(str):
@@ -1792,21 +2608,24 @@ class vUri(str):
         When a property parameter value is a URI value type, the URI MUST
         be specified as a quoted-string value.
 
-        Example:
-            The following is a URI for a network file:
+    Examples:
+        The following is a URI for a network file:
 
-            .. code-block:: text
+        .. code-block:: text
 
-                http://example.com/my-report.txt
+            http://example.com/my-report.txt
 
-            .. code-block:: pycon
+        .. code-block:: pycon
 
-                >>> from icalendar.prop import vUri
-                >>> uri = vUri.from_ical('http://example.com/my-report.txt')
-                >>> uri
-                'http://example.com/my-report.txt'
+            >>> from icalendar.prop import vUri
+            >>> uri = vUri.from_ical('http://example.com/my-report.txt')
+            >>> uri
+            vUri('http://example.com/my-report.txt')
+            >>> uri.uri
+            'http://example.com/my-report.txt'
     """
 
+    default_value: ClassVar[str] = "URI"
     params: Parameters
     __slots__ = ("params",)
 
@@ -1817,8 +2636,6 @@ class vUri(str):
         /,
         params: dict[str, Any] | None = None,
     ):
-        if params is None:
-            params = {}
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         self.params = Parameters(params)
@@ -1833,6 +2650,132 @@ class vUri(str):
             return cls(ical)
         except Exception as e:
             raise ValueError(f"Expected , got: {ical}") from e
+
+    @classmethod
+    def examples(cls) -> list[vUri]:
+        """Examples of vUri."""
+        return [cls("http://example.com/my-report.txt")]
+
+    def to_jcal(self, name: str) -> list:
+        """The jCal representation of this property according to :rfc:`7265`."""
+        return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
+
+    @classmethod
+    def from_jcal(cls, jcal_property: list) -> Self:
+        """Parse jCal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jCal property to parse.
+
+        Raises:
+            JCalParsingError: If the provided jCal is invalid.
+        """
+        JCalParsingError.validate_property(jcal_property, cls)
+        return cls(
+            jcal_property[3],
+            Parameters.from_jcal_property(jcal_property),
+        )
+
+    @property
+    def ical_value(self) -> str:
+        """The URI."""
+        return self.uri
+
+    @property
+    def uri(self) -> str:
+        """The URI."""
+        return str(self)
+
+    def __repr__(self) -> str:
+        """repr(self)"""
+        return f"{self.__class__.__name__}({self.uri!r})"
+
+    from icalendar.param import FMTTYPE, GAP, LABEL, LANGUAGE, LINKREL, RELTYPE, VALUE
+
+
+class vUid(vText):
+    """A UID of a component.
+
+    This is defined in :rfc:`9253`, Section 7.
+    """
+
+    default_value: ClassVar[str] = "UID"
+
+    @classmethod
+    def new(cls):
+        """Create a new UID for convenience.
+
+        .. code-block:: pycon
+
+            >>> from icalendar import vUid
+            >>> vUid.new()
+            vUid('d755cef5-2311-46ed-a0e1-6733c9e15c63')
+
+        """
+        return vUid(uuid.uuid4())
+
+    @property
+    def uid(self) -> str:
+        """The UID of this property."""
+        return str(self)
+
+    @property
+    def ical_value(self) -> str:
+        """The UID of this property."""
+        return self.uid
+
+    def __repr__(self) -> str:
+        """repr(self)"""
+        return f"{self.__class__.__name__}({self.uid!r})"
+
+    from icalendar.param import FMTTYPE, LABEL, LINKREL
+
+    @classmethod
+    def examples(cls) -> list[vUid]:
+        """Examples of vUid."""
+        return [cls("d755cef5-2311-46ed-a0e1-6733c9e15c63")]
+
+
+class vXmlReference(vUri):
+    """An XML-REFERENCE.
+
+    The associated value references an associated XML artifact and
+    is a URI with an XPointer anchor value.
+
+    This is defined in :rfc:`9253`, Section 7.
+    """
+
+    default_value: ClassVar[str] = "XML-REFERENCE"
+
+    @property
+    def xml_reference(self) -> str:
+        """The XML reference URI of this property."""
+        return self.uri
+
+    @property
+    def x_pointer(self) -> str | None:
+        """The XPointer of the URI.
+
+        The XPointer is defined in `W3C.WD-xptr-xpointer-20021219
+        <https://www.rfc-editor.org/rfc/rfc9253.html#W3C.WD-xptr-xpointer-20021219>`_,
+        and its use as an anchor is defined in `W3C.REC-xptr-framework-20030325
+        <https://www.rfc-editor.org/rfc/rfc9253.html#W3C.REC-xptr-framework-20030325>`_.
+
+        Returns:
+            The decoded x-pointer or ``None`` if no valid x-pointer is found.
+        """
+        from urllib.parse import unquote, urlparse
+
+        parsed = urlparse(self.xml_reference)
+        fragment = unquote(parsed.fragment)
+        if not fragment.startswith("xpointer(") or not fragment.endswith(")"):
+            return None
+        return fragment[9:-1]
+
+    @classmethod
+    def examples(cls) -> list[vXmlReference]:
+        """Examples of vXmlReference."""
+        return [cls("http://example.com/doc.xml#xpointer(/doc/element)")]
 
 
 class vGeo:
@@ -1894,6 +2837,7 @@ class vGeo:
             vGeo((37.386013, -122.082932))
     """
 
+    default_value: ClassVar[str] = "FLOAT"
     params: Parameters
 
     def __init__(
@@ -1907,8 +2851,6 @@ class vGeo:
         Raises:
             ValueError: if geo is not a tuple of (latitude, longitude)
         """
-        if params is None:
-            params = {}
         try:
             latitude, longitude = (geo[0], geo[1])
             latitude = float(latitude)
@@ -1938,6 +2880,43 @@ class vGeo:
     def __repr__(self):
         """repr(self)"""
         return f"{self.__class__.__name__}(({self.latitude}, {self.longitude}))"
+
+    def to_jcal(self, name: str) -> list:
+        """Convert to jCal object."""
+        return [
+            name,
+            self.params.to_jcal(),
+            self.VALUE.lower(),
+            [self.latitude, self.longitude],
+        ]
+
+    @classmethod
+    def examples(cls) -> list[vGeo]:
+        """Examples of vGeo."""
+        return [cls((37.386013, -122.082932))]
+
+    from icalendar.param import VALUE
+
+    @classmethod
+    def from_jcal(cls, jcal_property: list) -> Self:
+        """Parse jCal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jCal property to parse.
+
+        Raises:
+            JCalParsingError: If the provided jCal is invalid.
+        """
+        JCalParsingError.validate_property(jcal_property, cls)
+        return cls(
+            jcal_property[3],
+            Parameters.from_jcal_property(jcal_property),
+        )
+
+
+UTC_OFFSET_JCAL_REGEX = re.compile(
+    r"^(?P<sign>[+-])?(?P<hours>\d\d):(?P<minutes>\d\d)(?::(?P<seconds>\d\d))?$"
+)
 
 
 class vUTCOffset:
@@ -1988,6 +2967,7 @@ class vUTCOffset:
             datetime.timedelta(seconds=3600)
     """
 
+    default_value: ClassVar[str] = "UTC-OFFSET"
     params: Parameters
 
     ignore_exceptions = False  # if True, and we cannot parse this
@@ -1996,15 +2976,29 @@ class vUTCOffset:
     # it, rather than let the exception
     # propagate upwards
 
-    def __init__(self, td, /, params: dict[str, Any] | None = None):
-        if params is None:
-            params = {}
+    def __init__(self, td: timedelta, /, params: dict[str, Any] | None = None):
         if not isinstance(td, timedelta):
             raise TypeError("Offset value MUST be a timedelta instance")
         self.td = td
         self.params = Parameters(params)
 
-    def to_ical(self):
+    def to_ical(self) -> str:
+        """Return the ical representation."""
+        return self.format("")
+
+    def format(self, divider: str = "") -> str:
+        """Represent the value with a possible divider.
+
+        .. code-block:: pycon
+
+            >>> from icalendar import vUTCOffset
+            >>> from datetime import timedelta
+            >>> utc_offset = vUTCOffset(timedelta(hours=-5))
+            >>> utc_offset.format()
+            '-0500'
+            >>> utc_offset.format(divider=':')
+            '-05:00'
+        """
         if self.td < timedelta(0):
             sign = "-%s"
             td = timedelta(0) - self.td  # get timedelta relative to 0
@@ -2019,9 +3013,9 @@ class vUTCOffset:
         minutes = abs((seconds % 3600) // 60)
         seconds = abs(seconds % 60)
         if seconds:
-            duration = f"{hours:02}{minutes:02}{seconds:02}"
+            duration = f"{hours:02}{divider}{minutes:02}{divider}{seconds:02}"
         else:
-            duration = f"{hours:02}{minutes:02}"
+            duration = f"{hours:02}{divider}{minutes:02}"
         return sign % duration
 
     @classmethod
@@ -2037,7 +3031,7 @@ class vUTCOffset:
             )
             offset = timedelta(hours=hours, minutes=minutes, seconds=seconds)
         except Exception as e:
-            raise ValueError(f"Expected utc offset, got: {ical}") from e
+            raise ValueError(f"Expected UTC offset, got: {ical}") from e
         if not cls.ignore_exceptions and offset >= timedelta(hours=24):
             raise ValueError(f"Offset must be less than 24 hours, was {ical}")
         if sign == "-":
@@ -2054,6 +3048,43 @@ class vUTCOffset:
 
     def __repr__(self):
         return f"vUTCOffset({self.td!r})"
+
+    @classmethod
+    def examples(cls) -> list[vUTCOffset]:
+        """Examples of vUTCOffset."""
+        return [
+            cls(timedelta(hours=3)),
+            cls(timedelta(0)),
+        ]
+
+    from icalendar.param import VALUE
+
+    def to_jcal(self, name: str) -> list:
+        """The jCal representation of this property according to :rfc:`7265`."""
+        return [name, self.params.to_jcal(), self.VALUE.lower(), self.format(":")]
+
+    @classmethod
+    def from_jcal(cls, jcal_property: list) -> Self:
+        """Parse jCal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jCal property to parse.
+
+        Raises:
+            JCalParsingError: If the provided jCal is invalid.
+        """
+        JCalParsingError.validate_property(jcal_property, cls)
+        match = UTC_OFFSET_JCAL_REGEX.match(jcal_property[3])
+        if match is None:
+            raise JCalParsingError(f"Cannot parse {jcal_property!r} as UTC-OFFSET.")
+        negative = match.group("sign") == "-"
+        hours = int(match.group("hours"))
+        minutes = int(match.group("minutes"))
+        seconds = int(match.group("seconds") or 0)
+        t = timedelta(hours=hours, minutes=minutes, seconds=seconds)
+        if negative:
+            t = -t
+        return cls(t, Parameters.from_jcal_property(jcal_property))
 
 
 class vInline(str):
@@ -2072,8 +3103,6 @@ class vInline(str):
         /,
         params: dict[str, Any] | None = None,
     ):
-        if params is None:
-            params = {}
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         self.params = Parameters(params)
@@ -2087,6 +3116,23 @@ class vInline(str):
         return cls(ical)
 
 
+class vUnknown(vText):
+    """This is text but the VALUE parameter is unknown.
+
+    Since :rfc:`7265`, it is important to record if values are unknown.
+    For :rfc:`5545`, we could just assume TEXT.
+    """
+
+    default_value: ClassVar[str] = "UNKNOWN"
+
+    @classmethod
+    def examples(cls) -> list[vUnknown]:
+        """Examples of vUnknown."""
+        return [vUnknown("Some property text.")]
+
+    from icalendar.param import VALUE
+
+
 class TypesFactory(CaselessDict):
     """All Value types defined in RFC 5545 are registered in this factory
     class.
@@ -2094,6 +3140,14 @@ class TypesFactory(CaselessDict):
     The value and parameter names don't overlap. So one factory is enough for
     both kinds.
     """
+
+    _instance: ClassVar[TypesFactory] = None
+
+    def instance() -> TypesFactory:
+        """Return a singleton instance of this class."""
+        if TypesFactory._instance is None:
+            TypesFactory._instance = TypesFactory()
+        return TypesFactory._instance
 
     def __init__(self, *args, **kwargs):
         """Set keys to upper for initial dict"""
@@ -2120,6 +3174,9 @@ class TypesFactory(CaselessDict):
             vUri,
             vWeekday,
             vCategory,
+            vUid,
+            vXmlReference,
+            vUnknown,
         )
         self["binary"] = vBinary
         self["boolean"] = vBoolean
@@ -2139,6 +3196,9 @@ class TypesFactory(CaselessDict):
         self["inline"] = vInline
         self["date-time-list"] = vDDDLists
         self["categories"] = vCategory
+        self["unknown"] = vUnknown  # RFC 7265
+        self["uid"] = vUid  # RFC 9253
+        self["xml-reference"] = vXmlReference  # RFC 9253
 
     #################################################
     # Property types
@@ -2166,6 +3226,12 @@ class TypesFactory(CaselessDict):
             "resources": "text",
             "status": "text",
             "summary": "text",
+            # RFC 9253
+            # link should be uri, xml-reference or uid
+            # uri is likely most helpful if people forget to set VALUE
+            "link": "uri",
+            "concept": "uri",
+            "refid": "text",
             # Date and Time Component Properties
             "completed": "date-time",
             "dtend": "date-time",
@@ -2229,6 +3295,10 @@ class TypesFactory(CaselessDict):
             "rsvp": "boolean",
             "sent-by": "cal-address",
             "value": "text",
+            # rfc 9253 parameters
+            "label": "text",
+            "linkrel": "text",
+            "gap": "duration",
         }
     )
 
@@ -2237,23 +3307,23 @@ class TypesFactory(CaselessDict):
 
         Args:
             name: Property or parameter name
-            value_param: Optional ``VALUE`` parameter, for example, "DATE", "DATE-TIME", or other string.
+            value_param: Optional ``VALUE`` parameter, for example,
+                "DATE", "DATE-TIME", or other string.
 
         Returns:
-            The appropriate value type class
+            The appropriate value type class.
         """
         # Special case: RDATE and EXDATE always use vDDDLists to support list values
         # regardless of the VALUE parameter
-        if name.upper() in ("RDATE", "EXDATE"):
+        if name.upper() in ("RDATE", "EXDATE"):  # and value_param is None:
             return self["date-time-list"]
 
-        # Only use VALUE parameter for known properties that support multiple value types
-        # (like DTSTART, DTEND, etc. which can be DATE or DATE-TIME)
+        # Only use VALUE parameter for known properties that support multiple value
+        # types (like DTSTART, DTEND, etc. which can be DATE or DATE-TIME)
         # For unknown/custom properties, always use the default type from types_map
-        if value_param and name in self.types_map:
-            if value_param in self:
-                return self[value_param]
-        return self[self.types_map.get(name, "text")]
+        if value_param and name in self.types_map and value_param in self:
+            return self[value_param]
+        return self[self.types_map.get(name, "unknown")]
 
     def to_ical(self, name, value):
         """Encodes a named value from a primitive python type to an icalendar
@@ -2270,8 +3340,38 @@ class TypesFactory(CaselessDict):
         return type_class.from_ical(value)
 
 
+VPROPERTY: TypeAlias = Union[
+    vBoolean,
+    vCalAddress,
+    vCategory,
+    vDDDLists,
+    vDDDTypes,
+    vDate,
+    vDatetime,
+    vDuration,
+    vFloat,
+    vFrequency,
+    vInt,
+    vMonth,
+    vPeriod,
+    vRecur,
+    vSkip,
+    vText,
+    vTime,
+    vUTCOffset,
+    vUri,
+    vWeekday,
+    vInline,
+    vBinary,
+    vGeo,
+    vUnknown,
+    vXmlReference,
+    vUid,
+]
+
 __all__ = [
     "DURATION_REGEX",
+    "VPROPERTY",
     "WEEKDAY_RULE",
     "TimeBase",
     "TypesFactory",
@@ -2298,6 +3398,9 @@ __all__ = [
     "vText",
     "vTime",
     "vUTCOffset",
+    "vUid",
+    "vUnknown",
     "vUri",
     "vWeekday",
+    "vXmlReference",
 ]

@@ -25,7 +25,25 @@ Maintainers need the following permissions.
     Existing maintainers can invite another maintainer through the `Maintainers <https://app.readthedocs.org/dashboard/icalendar/users/create/>`_ page.
 ``Environments/Configure PyPI`` access for GitHub Workflows to grant new releases from tags.
     Organization owners and repository administrators can grant this access in :menuselection:`Settings --> Environments --> PyPI`, or at https://github.com/collective/icalendar/settings/environments/674266024/edit, by adding their GitHub username to the list of :guilabel:`Required Reviewers`.
+``Owner`` or ``Manager`` access to ``icalendar-coc@googlegroups.com``
+    This Google Group is used for managing `Code of Conduct <https://github.com/collective/icalendar/blob/main/CODE_OF_CONDUCT.md>`_ infringement reports.
+    ``Manager``\ s may manage and moderate messages, whereas ``Owner``\ s may also manage members.
+    Management is performed through `Google Groups icalendar-coc settings <https://groups.google.com/g/icalendar-coc/settings>`_.
+``Registered`` access to the `OSS Fuzz issue tracker <https://issues.oss-fuzz.com/issues?q=icalendar>`_ for icalendar.
+    icalendar contributors use this issue tracker for managing :doc:`../how-to/fuzz-testing` issues that arise from time to time.
+    New issues do not get immediately disclosed to the public, and require that you register with a Google Account.
+    Add your Google Account's email address to `google/oss-fuzz <https://github.com/google/oss-fuzz/blob/master/projects/icalendar/project.yaml>`_, and create a pull request, to request the following access:
 
+    -   instant notification about fuzzing errors
+    -   undisclosed fuzzing issues
+
+    Existing issues will be disclosed after some time to the public.
+
+    .. seealso::
+
+        -   `Discussion about how to be added to OSS Fuzz <https://github.com/collective/icalendar/pull/574#issuecomment-1790554766>`_
+        -   `OSS Fuzz Integration - Issue 562 <https://github.com/collective/icalendar/issues/562>`_
+    
 
 Collaborators
 -------------
@@ -75,7 +93,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
     .. code-block:: shell
 
-        export VERSION=6.3.0
+        export VERSION=7.0.0
 
 #.  Create a commit on the ``release`` branch (or equivalent) to release this version.
 
@@ -130,22 +148,26 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
     .. code-block:: text
 
-       6.3.1 (unreleased)
+       7.0.0 (unreleased)
        ------------------
 
-       Minor changes:
+       Minor changes
+       ~~~~~~~~~~~~~
 
        - ...
 
-       Breaking changes:
+       Breaking changes
+       ~~~~~~~~~~~~~~~~
 
        - ...
 
-       New features:
+       New features
+       ~~~~~~~~~~~~
 
        - ...
 
-       Bug fixes:
+       Bug fixes
+       ~~~~~~~~~
 
        - ...
 

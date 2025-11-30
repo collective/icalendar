@@ -1,6 +1,6 @@
 """This package contains all functionality for timezones."""
 
-from .tzid import tzid_from_dt, tzid_from_tzinfo, tzids_from_tzinfo
+from .tzid import is_utc, tzid_from_dt, tzid_from_tzinfo, tzids_from_tzinfo
 from .tzp import TZP
 
 tzp = TZP()
@@ -18,10 +18,11 @@ def use_zoneinfo():
 
 __all__ = [
     "TZP",
+    "is_utc",
+    "tzid_from_dt",
+    "tzid_from_tzinfo",
+    "tzids_from_tzinfo",
     "tzp",
     "use_pytz",
     "use_zoneinfo",
-    "tzid_from_tzinfo",
-    "tzid_from_dt",
-    "tzids_from_tzinfo",
 ]

@@ -7,6 +7,9 @@ from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Literal, Sequence
 
 from icalendar.attr import (
+    CONCEPTS_TYPE_SETTER,
+    LINKS_TYPE_SETTER,
+    RELATED_TO_TYPE_SETTER,
     X_MOZ_LASTACK_property,
     X_MOZ_SNOOZE_TIME_property,
     attendees_property,
@@ -18,11 +21,11 @@ from icalendar.attr import (
     create_single_property,
     description_property,
     exdates_property,
-    images_property,
     get_duration_property,
     get_end_property,
     get_start_end_duration_with_validation,
     get_start_property,
+    images_property,
     location_property,
     organizer_property,
     priority_property,
@@ -427,15 +430,19 @@ class Event(Component):
         classification: CLASS | None = None,
         color: str | None = None,
         comments: list[str] | str | None = None,
+        concepts: CONCEPTS_TYPE_SETTER = None,
         conferences: list[Conference] | None = None,
         contacts: list[str] | str | None = None,
         created: date | None = None,
         description: str | None = None,
         end: date | datetime | None = None,
         last_modified: date | None = None,
+        links: LINKS_TYPE_SETTER = None,
         location: str | None = None,
         organizer: vCalAddress | str | None = None,
         priority: int | None = None,
+        refids: list[str] | str | None = None,
+        related_to: RELATED_TO_TYPE_SETTER = None,
         sequence: int | None = None,
         stamp: date | None = None,
         start: date | datetime | None = None,
@@ -454,17 +461,21 @@ class Event(Component):
             categories: The :attr:`categories` of the event.
             classification: The :attr:`classification` of the event.
             color: The :attr:`color` of the event.
-            comments: The :attr:`Component.comments` of the event.
+            comments: The :attr:`~icalendar.Component.comments` of the event.
+            concepts: The :attr:`~icalendar.Component.concepts` of the event.
             conferences: The :attr:`conferences` of the event.
-            created: The :attr:`Component.created` of the event.
+            created: The :attr:`~icalendar.Component.created` of the event.
             description: The :attr:`description` of the event.
             end: The :attr:`end` of the event.
-            last_modified: The :attr:`Component.last_modified` of the event.
+            last_modified: The :attr:`~icalendar.Component.last_modified` of the event.
+            links: The :attr:`~icalendar.Component.links` of the event.
             location: The :attr:`location` of the event.
             organizer: The :attr:`organizer` of the event.
             priority: The :attr:`priority` of the event.
+            refids: :attr:`~icalendar.Component.refids` of the event.
+            related_to: :attr:`~icalendar.Component.related_to` of the event.
             sequence: The :attr:`sequence` of the event.
-            stamp: The :attr:`Component.stamp` of the event.
+            stamp: The :attr:`~icalendar.Component.stamp` of the event.
                 If None, this is set to the current time.
             start: The :attr:`start` of the event.
             status: The :attr:`status` of the event.
@@ -482,11 +493,15 @@ class Event(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        event = super().new(
+        event: Event = super().new(
             stamp=stamp if stamp is not None else cls._utc_now(),
             created=created,
             last_modified=last_modified,
             comments=comments,
+            links=links,
+            related_to=related_to,
+            refids=refids,
+            concepts=concepts,
         )
         event.summary = summary
         event.description = description
@@ -506,6 +521,7 @@ class Event(Component):
         event.status = status
         event.attendees = attendees
         event.conferences = conferences
+
         if cls._validate_new:
             cls._validate_start_and_end(start, end)
         return event

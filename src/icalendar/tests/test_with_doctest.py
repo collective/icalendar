@@ -13,25 +13,25 @@ This file should be tests, too:
 
 import doctest
 import importlib
-import os
 import sys
 from pathlib import Path
 
 import pytest
 
-HERE = os.path.dirname(__file__) or "."  # noqa: PTH120
-ICALENDAR_PATH = os.path.dirname(HERE)  # noqa: PTH120
+HERE = Path(__file__ or ".").absolute().parent
+ICALENDAR_PATH = HERE / ".."
 
 PYTHON_FILES = [
-    f"{dirpath}/{filename}"
-    for dirpath, dirnames, filenames in os.walk(ICALENDAR_PATH)
-    for filename in filenames
-    if filename.lower().endswith(".py") and "fuzzing" not in dirpath
+    file
+    for file in ICALENDAR_PATH.glob("**/*.py")
+    if "fuzzing" not in file.relative_to(ICALENDAR_PATH).parts
 ]
 
 MODULE_NAMES = [
     "icalendar"
-    + python_file[len(ICALENDAR_PATH) : -3].replace("\\", "/").replace("/", ".")
+    + str(python_file)[len(str(ICALENDAR_PATH)) : -3]
+    .replace("\\", "/")
+    .replace("/", ".")
     for python_file in PYTHON_FILES
 ]
 
@@ -54,19 +54,16 @@ def test_docstring_of_python_file(module_name, env_for_doctest):
 
 
 # This collection needs to exclude .tox and other subdirectories
-DOCUMENTATION_PATH = os.path.join(HERE, "../../../")  # noqa: PTH118
-
-try:
-    DOCUMENT_PATHS = [
-        os.path.join(DOCUMENTATION_PATH, subdir, filename)  # noqa: PTH118
-        for subdir in ["docs", "."]
-        for filename in os.listdir(os.path.join(DOCUMENTATION_PATH, subdir))  # noqa: PTH118, PTH208
-        if filename.lower().endswith(".rst")
-    ]
-except FileNotFoundError as e:
-    raise OSError(
-        "Could not find the documentation - remove the build folder and try again."
-    ) from e
+REPOSITORY = HERE.parent.parent.parent
+DOCUMENTATION_ROOT = REPOSITORY / "docs"
+IGNORED_DOCUMENTATION_FILES = [
+    DOCUMENTATION_ROOT / "contribute" / "documentation.rst"  # docstring
+]
+DOCUMENT_PATHS = [
+    file
+    for file in REPOSITORY.glob("**/*.rst")
+    if file not in IGNORED_DOCUMENTATION_FILES
+]
 
 
 @pytest.mark.parametrize(
@@ -77,7 +74,7 @@ except FileNotFoundError as e:
     ],
 )
 def test_files_is_included(filename):
-    assert any(path.endswith(filename) for path in DOCUMENT_PATHS)
+    assert any(path.name == filename for path in DOCUMENT_PATHS)
 
 
 @pytest.mark.parametrize("document", DOCUMENT_PATHS)

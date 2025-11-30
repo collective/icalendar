@@ -7,4 +7,6 @@ How to guides
 
     install
     usage
+    jcal
     cli
+    fuzz-testing

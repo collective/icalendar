@@ -76,31 +76,56 @@ def view(event):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+
     parser.add_argument(
-        "calendar_files", nargs="+", 
-        type=argparse.FileType("r", encoding="utf-8-sig"),
+        "calendar_files", nargs="+",
         help="one or more .ics files (use '-' for stdin)"
     )
+
     parser.add_argument(
         "--output",
         "-o",
-        type=argparse.FileType("w"),
-        default=sys.stdout,
-        help="output file",
+        default="-",
+        help="output file path (use '-' for stdout)"
     )
+
     parser.add_argument(
         "-v",
         "--version",
         action="version",
         version=f"{parser.prog} version {__version__}",
     )
+
     argv = parser.parse_args()
 
-    for f in argv.calendar_files:
-        calendar = Calendar.from_ical(f.read())
-        for event in calendar.walk("vevent"):
-            argv.output.write(view(event) + "\n\n")
+    # Open output file
+    if argv.output == "-":
+        output_file = sys.stdout
+        close_output = False
+    else:
+        output_file = open(argv.output, "w", encoding="utf-8")
+        close_output = True
 
+    try:
+        # Iterate over input paths
+        for path in argv.calendar_files:
+            if path == "-":
+                f = sys.stdin
+                close_input = False
+            else:
+                f = open(path, "r", encoding="utf-8-sig")
+                close_input = True
+
+            try:
+                calendar = Calendar.from_ical(f.read())
+                for event in calendar.walk("vevent"):
+                    output_file.write(view(event) + "\n\n")
+            finally:
+                if close_input:
+                    f.close()
+    finally:
+        if close_output:
+            output_file.close()
 
 __all__ = ["main", "view"]
 

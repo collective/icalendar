@@ -10,6 +10,9 @@ from datetime import datetime
 from typing import TYPE_CHECKING, Optional, Sequence
 
 from icalendar.attr import (
+    CONCEPTS_TYPE_SETTER,
+    LINKS_TYPE_SETTER,
+    RELATED_TO_TYPE_SETTER,
     busy_type_property,
     categories_property,
     class_property,
@@ -228,7 +231,7 @@ class Availability(Component):
         Modifications do not change the calendar.
         Use :py:meth:`Component.add_component`.
         """
-        return self.walk("VAVAILABLE")
+        return self.walk("AVAILABLE")
 
     @classmethod
     def new(
@@ -238,15 +241,19 @@ class Availability(Component):
         categories: Sequence[str] = (),
         comments: list[str] | str | None = None,
         components: Sequence[Available] | None = (),
+        concepts: CONCEPTS_TYPE_SETTER = None,
         contacts: list[str] | str | None = None,
         created: Optional[date] = None,
         classification: Optional[CLASS] = None,
         description: Optional[str] = None,
         end: Optional[datetime] = None,
         last_modified: Optional[date] = None,
+        links: LINKS_TYPE_SETTER = None,
         location: Optional[str] = None,
         organizer: Optional[vCalAddress | str] = None,
         priority: Optional[int] = None,
+        refids: list[str] | str | None = None,
+        related_to: RELATED_TO_TYPE_SETTER = None,
         sequence: Optional[int] = None,
         stamp: Optional[date] = None,
         start: Optional[datetime] = None,
@@ -262,16 +269,23 @@ class Availability(Component):
             busy_type: The :attr:`busy_type` of the availability.
             categories: The :attr:`categories` of the availability.
             classification: The :attr:`classification` of the availability.
-            comments: The :attr:`Component.comments` of the availability.
+            comments: The :attr:`~icalendar.Component.comments` of the availability.
+            concepts: The :attr:`~icalendar.Component.concepts` of the availability.
             contacts: The :attr:`contacts` of the availability.
-            created: The :attr:`Component.created` of the availability.
+            created: The :attr:`~icalendar.Component.created` of the availability.
             description: The :attr:`description` of the availability.
-            last_modified: The :attr:`Component.last_modified` of the availability.
+            end: The :attr:`end` of the availability.
+            last_modified: The :attr:`~icalendar.Component.last_modified` of the
+                availability.
+            links: The :attr:`~icalendar.Component.links` of the availability.
             location: The :attr:`location` of the availability.
             organizer: The :attr:`organizer` of the availability.
+            refids: :attr:`~icalendar.Component.refids` of the availability.
+            related_to: :attr:`~icalendar.Component.related_to` of the availability.
             sequence: The :attr:`sequence` of the availability.
-            stamp: The :attr:`Component.stamp` of the availability.
+            stamp: The :attr:`~icalendar.Component.stamp` of the availability.
                 If None, this is set to the current time.
+            start: The :attr:`start` of the availability.
             summary: The :attr:`summary` of the availability.
             uid: The :attr:`uid` of the availability.
                 If None, this is set to a new :func:`uuid.uuid4`.
@@ -285,10 +299,15 @@ class Availability(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        availability = super().new(
+        availability: Availability = super().new(
             stamp=stamp if stamp is not None else cls._utc_now(),
             created=created,
+            comments=comments,
             last_modified=last_modified,
+            links=links,
+            related_to=related_to,
+            refids=refids,
+            concepts=concepts,
         )
         availability.summary = summary
         availability.description = description
@@ -300,7 +319,6 @@ class Availability(Component):
         availability.busy_type = busy_type
         availability.organizer = organizer
         availability.location = location
-        availability.comments = comments
         availability.priority = priority
         availability.contacts = contacts
         for subcomponent in components:
@@ -318,7 +336,7 @@ class Availability(Component):
                 raise InvalidCalendar(
                     "Availability end must be a datetime with a timezone"
                 )
-            availability._validate_start_and_end(start, end)  # noqa: SLF001
+            availability._validate_start_and_end(start, end)
         availability.start = start
         availability.end = end
         return availability

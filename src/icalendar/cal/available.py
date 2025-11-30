@@ -10,6 +10,9 @@ from datetime import datetime
 from typing import TYPE_CHECKING, Optional, Sequence
 
 from icalendar.attr import (
+    CONCEPTS_TYPE_SETTER,
+    LINKS_TYPE_SETTER,
+    RELATED_TO_TYPE_SETTER,
     categories_property,
     contacts_property,
     description_property,
@@ -71,7 +74,7 @@ class Available(Component):
 
     """
 
-    name = "VAVAILABLE"
+    name = "AVAILABLE"
 
     summary = summary_property
     description = description_property
@@ -96,12 +99,16 @@ class Available(Component):
         /,
         categories: Sequence[str] = (),
         comments: list[str] | str | None = None,
+        concepts: CONCEPTS_TYPE_SETTER = None,
         contacts: list[str] | str | None = None,
         created: Optional[date] = None,
         description: Optional[str] = None,
         end: Optional[datetime] = None,
         last_modified: Optional[date] = None,
+        links: LINKS_TYPE_SETTER = None,
         location: Optional[str] = None,
+        refids: list[str] | str | None = None,
+        related_to: RELATED_TO_TYPE_SETTER = None,
         sequence: Optional[int] = None,
         stamp: Optional[date] = None,
         start: Optional[datetime] = None,
@@ -114,16 +121,26 @@ class Available(Component):
 
         Arguments:
             categories: The :attr:`categories` of the Available component.
-            comments: The :attr:`Component.comments` of the Available component.
+            comments: The :attr:`~icalendar.Component.comments` of the Available
+                component.
+            concepts: The :attr:`~icalendar.Component.concepts` of the Available
+                component.
             contacts: The :attr:`contacts` of the Available component.
-            created: The :attr:`Component.created` of the Available component.
+            created: The :attr:`~icalendar.Component.created` of the Available
+                component.
             description: The :attr:`description` of the Available component.
-            last_modified: The :attr:`Component.last_modified` of the
+            end: The :attr:`end` of the Available component.
+            last_modified: The :attr:`~icalendar.Component.last_modified` of the
                 Available component.
+            links: The :attr:`~icalendar.Component.links` of the Available component.
             location: The :attr:`location` of the Available component.
+            refids: :attr:`~icalendar.Component.refids` of the Available component.
+            related_to: :attr:`~icalendar.Component.related_to` of the Available
+                component.
             sequence: The :attr:`sequence` of the Available component.
-            stamp: The :attr:`Component.stamp` of the Available component.
+            stamp: The :attr:`~icalendar.Component.stamp` of the Available component.
                 If None, this is set to the current time.
+            start: The :attr:`start` of the Available component.
             summary: The :attr:`summary` of the Available component.
             uid: The :attr:`uid` of the Available component.
                 If None, this is set to a new :func:`uuid.uuid4`.
@@ -136,10 +153,15 @@ class Available(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        available = super().new(
+        available: Available = super().new(
             stamp=stamp if stamp is not None else cls._utc_now(),
             created=created,
             last_modified=last_modified,
+            comments=comments,
+            links=links,
+            related_to=related_to,
+            refids=refids,
+            concepts=concepts,
         )
         available.summary = summary
         available.description = description
@@ -147,8 +169,8 @@ class Available(Component):
         available.sequence = sequence
         available.categories = categories
         available.location = location
-        available.comments = comments
         available.contacts = contacts
+
         if cls._validate_new:
             if end is not None and (
                 not isinstance(end, datetime) or end.tzinfo is None
@@ -160,7 +182,7 @@ class Available(Component):
                 raise InvalidCalendar(
                     "Available start must be a datetime with a timezone"
                 )
-            available._validate_start_and_end(start, end)  # noqa: SLF001
+            available._validate_start_and_end(start, end)
         available.start = start
         available.end = end
         return available

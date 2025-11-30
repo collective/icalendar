@@ -7,6 +7,9 @@ from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Optional
 
 from icalendar.attr import (
+    CONCEPTS_TYPE_SETTER,
+    LINKS_TYPE_SETTER,
+    RELATED_TO_TYPE_SETTER,
     contacts_property,
     create_single_property,
     organizer_property,
@@ -91,9 +94,13 @@ class FreeBusy(Component):
         cls,
         /,
         comments: list[str] | str | None = None,
+        concepts: CONCEPTS_TYPE_SETTER = None,
         contacts: list[str] | str | None = None,
         end: Optional[date | datetime] = None,
+        links: LINKS_TYPE_SETTER = None,
         organizer: Optional[vCalAddress | str] = None,
+        refids: list[str] | str | None = None,
+        related_to: RELATED_TO_TYPE_SETTER = None,
         stamp: Optional[date] = None,
         start: Optional[date | datetime] = None,
         uid: Optional[str | uuid.UUID] = None,
@@ -104,10 +111,17 @@ class FreeBusy(Component):
         This creates a new Alarm in accordance with :rfc:`5545`.
 
         Arguments:
-            comments: The :attr:`Component.comments` of the component.
+            comments: The :attr:`~icalendar.Component.comments` of the component.
+            concepts: The :attr:`~icalendar.Component.concepts` of the component.
+            contacts: The :attr:`contacts` of the component.
+            end: The :attr:`end` of the component.
+            links: The :attr:`~icalendar.Component.links` of the component.
             organizer: The :attr:`organizer` of the component.
+            refids: :attr:`~icalendar.Component.refids` of the component.
+            related_to: :attr:`~icalendar.Component.related_to` of the component.
             stamp: The :attr:`DTSTAMP` of the component.
                 If None, this is set to the current time.
+            start: The :attr:`start` of the component.
             uid: The :attr:`uid` of the component.
                 If None, this is set to a new :func:`uuid.uuid4`.
             url: The :attr:`url` of the component.
@@ -120,8 +134,13 @@ class FreeBusy(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        free_busy = super().new(
-            stamp=stamp if stamp is not None else cls._utc_now(), comments=comments
+        free_busy: FreeBusy = super().new(
+            stamp=stamp if stamp is not None else cls._utc_now(),
+            comments=comments,
+            links=links,
+            related_to=related_to,
+            refids=refids,
+            concepts=concepts,
         )
         free_busy.uid = uid if uid is not None else uuid.uuid4()
         free_busy.url = url
@@ -129,6 +148,7 @@ class FreeBusy(Component):
         free_busy.contacts = contacts
         free_busy.end = end
         free_busy.start = start
+
         if cls._validate_new:
             cls._validate_start_and_end(start, end)
         return free_busy
