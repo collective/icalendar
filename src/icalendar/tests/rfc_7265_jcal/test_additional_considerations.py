@@ -66,7 +66,7 @@ def test_backslash_escape_ics(calendar_with_name):
 
 
 def test_backslash_escape_jCal(calendar_with_name):
-    """It is somehow possible that more backslashes appear."""
+    """Test for properly escaped backslashes."""
     jcal = calendar_with_name.to_jcal()
     cal3: Calendar = Calendar.from_jcal(jcal)
     assert cal3.calendar_name == CALENDAR_NAME, "jcal works"
