@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from icalendar.parser_tools import to_unicode
 
 from collections import OrderedDict
