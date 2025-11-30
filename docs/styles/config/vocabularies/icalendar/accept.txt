@@ -104,3 +104,4 @@ vCard
 (?i)Wieser
 (?i)Zeidler
 Zepyoor
+(?i)Penner
