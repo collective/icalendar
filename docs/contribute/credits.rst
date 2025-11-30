@@ -114,6 +114,7 @@ Contributors
 - Wichert Akkerman <wichert@wiggy.net>
 - Howard Liao <howard940114@gmail.com>
 - Zepyoor Khechadoorian <zepyoorkhechadoorian@gmail.com>
+- Haley Lai <haleylai1617@gmail.com>
 
 Complete list
 -------------
