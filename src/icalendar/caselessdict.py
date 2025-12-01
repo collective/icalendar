@@ -104,7 +104,7 @@ class CaselessDict(OrderedDict):
         """
         return canonsort_keys(self.keys(), self.canonical_order)
 
-    def sorted_items(self) -> list[tuple[str, Any]]:
+    def sorted_items(self) -> list[tuple[Any, Any]]:
         """Sorts items according to the canonical_order for the derived class.
         Items not specified in canonical_order will appear at the end.
         """
