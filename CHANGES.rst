@@ -27,8 +27,6 @@ We still recommend checking out the new features and giving feedback in the repo
 Minor changes
 ~~~~~~~~~~~~~
 
-- Move sections in Table of Content of Reference guide.
-- Improve :py:class:`icalendar.prop.vDatetime` documentation. See `Issue #946 <https://github.com/collective/icalendar/issues/946>`_.
 - Add type hints to ``icalendar.caselessdict`` file. See `Issue #938 <https://github.com/collective/icalendar/issues/938>`_.
 - ...
 
