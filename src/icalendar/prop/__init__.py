@@ -867,7 +867,7 @@ class vCategory:
     @staticmethod
     def from_ical(ical):
         ical = to_unicode(ical)
-        return unescape_char(ical).split(",")
+        return ical.split(",")
 
     def __eq__(self, other):
         """self == other"""
