@@ -82,7 +82,7 @@ class CaselessDict(OrderedDict):
             for key, value in mapping:
                 self[key] = value
 
-    def copy(self) -> "CaselessDict":
+    def copy(self) -> Self:
         return type(self)(super().copy())
 
     def __repr__(self) -> str:
