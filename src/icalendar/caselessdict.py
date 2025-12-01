@@ -54,15 +54,15 @@ class CaselessDict(OrderedDict):
         key = to_unicode(key)
         return super().__contains__(key.upper())
 
-    def get(self, key: Any, default: Optional[Any] = None) -> Any:
+    def get(self, key: Any, default: Any = None) -> Any:
         key = to_unicode(key)
         return super().get(key.upper(), default)
 
-    def setdefault(self, key: Any, value: Optional[Any] = None) -> Any:
+    def setdefault(self, key: Any, value: Any = None) -> Any:
         key = to_unicode(key)
         return super().setdefault(key.upper(), value)
 
-    def pop(self, key: Any, default: Optional[Any] = None) -> Any:
+    def pop(self, key: Any, default: Any = None) -> Any:
         key = to_unicode(key)
         return super().pop(key.upper(), default)
 

@@ -68,6 +68,7 @@ Contributors
 - Laurent Lasudry <lasudry@gmail.com>
 - Lennart Regebro <lregebro@nuxeo.com>
 - Léo S <leo@naeka.fr>
+- `Lillian Penner <https://github.com/lillianpenner>`_
 - Marc Egli <frog32@me.com>
 - Markus Unterwaditzer <markus@unterwaditzer.net>
 - Martijn Faassen <faassen@infrae.com>
@@ -114,7 +115,6 @@ Contributors
 - Wichert Akkerman <wichert@wiggy.net>
 - Howard Liao <howard940114@gmail.com>
 - Zepyoor Khechadoorian <zepyoorkhechadoorian@gmail.com>
-- Lillian Penner <lillypenner14@gmail.com>
 
 Complete list
 -------------
