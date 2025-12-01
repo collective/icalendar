@@ -66,7 +66,7 @@ class CaselessDict(OrderedDict):
         key = to_unicode(key)
         return super().pop(key.upper(), default)
 
-    def popitem(self) -> tuple[str, Any]:
+    def popitem(self) -> tuple[Any, Any]:
         return super().popitem()
 
     def has_key(self, key: Any) -> bool:
