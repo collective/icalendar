@@ -27,6 +27,7 @@ We still recommend checking out the new features and giving feedback in the repo
 Minor changes
 ~~~~~~~~~~~~~
 
+- Add type hints to :mod:`icalendar.caselessdict` file. See `Issue #938 <https://github.com/collective/icalendar/issues/938>`_.
 - ...
 
 Breaking changes

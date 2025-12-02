@@ -43,6 +43,7 @@ Khechadoorian
 (?i)Lasudry
 (?i)Leidel
 (?i)Lennart
+Lillian
 (?i)Maheshwari
 (?i)Markus
 (?i)Martijn
@@ -57,6 +58,7 @@ Khechadoorian
 (?i)Ochotnicky
 (?i)Pavel
 (?i)Params
+Penner
 (?i)Piercy
 (?i)Pitkin
 (?i)Plone
