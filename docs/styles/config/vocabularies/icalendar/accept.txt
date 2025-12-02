@@ -39,6 +39,7 @@ Jouni
 Khechadoorian
 (?i)Kolab
 (?i)Kunzmann
+Lai
 (?i)Laros
 (?i)Lasudry
 (?i)Leidel

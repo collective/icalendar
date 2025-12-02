@@ -59,21 +59,14 @@ def calendar_with_name():
 
 
 def test_backslash_escape_ics(calendar_with_name):
-    """It is somehow possible that more backslashes appear.
-
-    See https://github.com/collective/icalendar/issues/1008
-    """
-    pytest.skip("TODO: Fix in https://github.com/collective/icalendar/issues/1008.")
+    """Test for properly escaped backslashes."""
     ics = calendar_with_name.to_ical()
     cal2: Calendar = Calendar.from_ical(ics)
     assert CALENDAR_NAME == cal2.calendar_name, "ics works"
 
 
 def test_backslash_escape_jCal(calendar_with_name):
-    """It is somehow possible that more backslashes appear.
-
-    See https://github.com/collective/icalendar/issues/1008
-    """
+    """Test for properly escaped backslashes."""
     jcal = calendar_with_name.to_jcal()
     cal3: Calendar = Calendar.from_jcal(jcal)
     assert cal3.calendar_name == CALENDAR_NAME, "jcal works"

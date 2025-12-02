@@ -50,8 +50,6 @@ def test_parsed_calendars_are_equal_if_parsed_again(source_file, tzp):
 
     source -> calendar -> ics -> same calendar
     """
-    if source_file.source_file in ("rfc_7265_example_2.jcal",):
-        pytest.skip("TODO: Fix in https://github.com/collective/icalendar/issues/1008.")
     copy_of_calendar = source_file.__class__.from_ical(source_file.to_ical())
     assert_equal(copy_of_calendar, source_file)
 
