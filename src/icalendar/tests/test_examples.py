@@ -51,7 +51,7 @@ def test_creating_calendar_with_unicode_fields(calendars, utc):
         (Todo, "example")
     ],
 )
-def test_component_has_examples(tzp, calendars, timezones, events,todos, component, example):
+def test_component_has_examples(tzp, calendars, timezones, events, todos, component, example):
     """Check that the examples function works."""
     mapping = {Calendar: calendars, Event: events, Timezone: timezones, Todo: todos}
     example_component = component.example(example)
@@ -67,7 +67,7 @@ def test_invalid_examples_lists_the_others():
 
 
 @pytest.mark.parametrize(
-    "component", [Calendar, Event, Timezone, Available, Availability,Todo]
+    "component", [Calendar, Event, Timezone, Available, Availability, Todo]
 )
 def test_default_example(component):
     """Check that we have a default example."""
