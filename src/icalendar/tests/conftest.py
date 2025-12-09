@@ -126,7 +126,7 @@ TIMEZONES_FOLDER = HERE / "timezones"
 EVENTS_FOLDER = HERE / "events"
 ALARMS_FOLDER = HERE / "alarms"
 AVAILABILITIES_FOLDER = HERE / "availabilities"
-TODOS_FOlDER= HERE / "todos" 
+TODOS_FOLDER = HERE / "todos"
 
 @pytest.fixture(scope="module")
 def calendars(tzp):
