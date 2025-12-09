@@ -390,8 +390,8 @@ class Todo(Component):
             cls._validate_start_and_end(start, end)
         return todo
   
-    @classmethod 
-    def example(cls, name:str="example")-> "Todo":
+    @classmethod
+    def example(cls, name: str = "example") -> "Todo":
         """Return the todo example with the given name."""
         return cls.from_ical(get_example("todos", name))
 
