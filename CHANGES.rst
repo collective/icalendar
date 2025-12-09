@@ -26,7 +26,7 @@ We still recommend checking out the new features and giving feedback in the repo
 
 Minor changes
 ~~~~~~~~~~~~~
-- Created an :meth:`~cal.todo.example` method for the :mod:`Todo` component. See `Issue 743 <https://github.com/collective/icalendar/issues/743>`_.
+- Created an :meth:`~cal.todo.Todo.example` method for the :class:`~cal.todo.Todo` component. See `Issue 743 <https://github.com/collective/icalendar/issues/743>`_.
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
