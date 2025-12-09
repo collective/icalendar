@@ -30,6 +30,7 @@ Original author
 
 Contributors
 ------------
+.. Sort alphabetically and use template: `your name <https://github.com/github_username>`_
 
 - Abe Hanoka <abe@habet.dev>
 - Alexander Pitkin <peleccom@gmail.com>
@@ -54,6 +55,7 @@ Contributors
 - `fitnr <https://github.com/fitnr>`_
 - George V. Reilly <george@reilly.org>
 - hajdbo <boris@hajduk.org>
+- `Howard Liao <https://github.com/Howardisme>`_
 - ilya
 - Jannis Leidel <jannis@leidel.info>
 - Jeffrey Whewhetu <jeffwhewhetu@gmail.com>
@@ -113,8 +115,9 @@ Contributors
 - Victor Varvaryuk <victor.varvariuc@gmail.com>
 - Ville Skyttä <ville.skytta@iki.fi>
 - Wichert Akkerman <wichert@wiggy.net>
-- Howard Liao <howard940114@gmail.com>
 - Zepyoor Khechadoorian <zepyoorkhechadoorian@gmail.com>
+.. Sort alphabetically and use template: `your name <https://github.com/github_username>`_
+
 
 Complete list
 -------------
