@@ -30,7 +30,9 @@ Original author
 
 Contributors
 ------------
-.. Sort alphabetically and use template: `your name <https://github.com/github_username>`_
+.. Sort alphabetically and use the following template.
+.. `your name <https://github.com/github_username>`_
+.. Don't disclose your email address to spam harvesters.
 
 - Abe Hanoka <abe@habet.dev>
 - Alexander Pitkin <peleccom@gmail.com>
@@ -116,7 +118,9 @@ Contributors
 - Ville Skyttä <ville.skytta@iki.fi>
 - Wichert Akkerman <wichert@wiggy.net>
 - Zepyoor Khechadoorian <zepyoorkhechadoorian@gmail.com>
-.. Sort alphabetically and use template: `your name <https://github.com/github_username>`_
+.. Sort alphabetically and use the following template.
+.. `your name <https://github.com/github_username>`_
+.. Don't disclose your email address to spam harvesters.
 
 
 Complete list
