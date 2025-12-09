@@ -153,9 +153,11 @@ def availabilities(tzp):
     return DataSource(AVAILABILITIES_FOLDER, Availability.from_ical)
 
 
+
 @pytest.fixture(scope="module")
 def todos(tzp):
-    return DataSource(TODOS_FOlDER, Todo.from_ical)
+    return DataSource(TODOS_FOLDER, Todo.from_ical)
+
 
 @pytest.fixture(
     params=PYTZ_UTC + [ZoneInfo("UTC"), tz.UTC, tz.gettz("UTC"), timezone.utc]
