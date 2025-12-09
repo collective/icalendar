@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any
 
 from dateutil.tz import tz
 
@@ -19,13 +19,13 @@ if TYPE_CHECKING:
     from datetime import datetime, tzinfo
 
 DATEUTIL_UTC = tz.gettz("UTC")
-DATEUTIL_UTC_PATH: Optional[str] = getattr(DATEUTIL_UTC, "_filename", None)
+DATEUTIL_UTC_PATH: str | None = getattr(DATEUTIL_UTC, "_filename", None)
 DATEUTIL_ZONEINFO_PATH = (
     None if DATEUTIL_UTC_PATH is None else Path(DATEUTIL_UTC_PATH).parent
 )
 
 
-def tzids_from_tzinfo(tzinfo: Optional[tzinfo]) -> tuple[str]:
+def tzids_from_tzinfo(tzinfo: tzinfo | None) -> tuple[str]:
     """Get several timezone ids if we can identify the timezone.
 
     >>> import zoneinfo
@@ -57,10 +57,27 @@ def tzids_from_tzinfo(tzinfo: Optional[tzinfo]) -> tuple[str]:
             return get_equivalent_tzids(path)
     if isinstance(tzinfo, tz.tzutc):
         return get_equivalent_tzids("UTC")
+
+    # Fallback: try to identify timezone by behavior (utcoffset at different times)
+    # This is needed for dateutil timezones that don't have easily accessible names
+    # or when the filename approach doesn't work
+    try:
+        matching_tzids = _identify_tzid_by_behavior(
+            tzinfo, equivalent_timezone_ids_result.lookup
+        )
+        if matching_tzids:
+            # Return all equivalent timezone IDs for the first match
+            first_tzid = next(iter(matching_tzids))
+            return get_equivalent_tzids(first_tzid)
+    except (ValueError, OSError, OverflowError, KeyError):
+        # If identification by behavior fails, return empty tuple
+        # These exceptions can occur with historical dates or invalid timezone data
+        pass
+
     return ()
 
 
-def tzid_from_tzinfo(tzinfo: Optional[tzinfo]) -> Optional[str]:
+def tzid_from_tzinfo(tzinfo: tzinfo | None) -> str | None:
     """Retrieve the timezone id from the tzinfo object.
 
     Some timezones are equivalent.
@@ -74,7 +91,7 @@ def tzid_from_tzinfo(tzinfo: Optional[tzinfo]) -> Optional[str]:
     return tzids[0]
 
 
-def tzid_from_dt(dt: datetime) -> Optional[str]:
+def tzid_from_dt(dt: datetime) -> str | None:
     """Retrieve the timezone id from the datetime object."""
     tzid = tzid_from_tzinfo(dt.tzinfo)
     if tzid is None:
@@ -113,6 +130,65 @@ def get_equivalent_tzids(tzid: str) -> tuple[str]:
     """This returns the tzids which are equivalent to this one."""
     ids = _EQUIVALENT_IDS.get(tzid, set())
     return (tzid,) + tuple(sorted(ids - {tzid}))
+
+
+def _identify_tzid_by_behavior(
+    tzinfo: tzinfo,
+    lookup_node: Any,  # Recursive: set[str] | tuple[datetime, dict[timedelta, ...]]
+) -> set[str]:
+    """Identify timezone by traversing the lookup tree based on utcoffset behavior.
+
+    The lookup tree is structured as:
+    - A set of timezone IDs (terminal node)
+    - A tuple of (datetime, dict) where:
+      - datetime is a transition point
+      - dict maps timedelta (utcoffset) to either another tuple or a set
+
+    We use midday (12:00) instead of midnight to avoid timezone transitions,
+    as suggested in the issue description.
+    """
+    if isinstance(lookup_node, set):
+        return lookup_node
+
+    if not isinstance(lookup_node, tuple) or len(lookup_node) != 2:
+        return set()
+
+    transition_dt, offset_map = lookup_node
+
+    # Use midday (12:00) instead of the transition time to avoid ambiguous
+    # timezone definitions around midnight transitions
+    # This approach was introduced in issue #776 for generating the lookup tree
+    # Make sure the datetime is naive (no tzinfo) as required by utcoffset
+    query_dt = transition_dt.replace(hour=12, minute=0, second=0, microsecond=0)
+    if query_dt.tzinfo is not None:
+        query_dt = query_dt.replace(tzinfo=None)
+
+    try:
+        # Get the utcoffset at this point in time
+        offset = tzinfo.utcoffset(query_dt)
+        if offset is None:
+            return set()
+
+        # Find the matching branch in the lookup tree
+        if offset in offset_map:
+            return _identify_tzid_by_behavior(tzinfo, offset_map[offset])
+
+        # If exact match not found, try to find the closest match
+        # This handles cases where the offset might be slightly different
+        # due to different timezone database versions
+        for candidate_offset, subtree in offset_map.items():
+            # Allow small differences (up to 1 hour) to handle DST transitions
+            offset_diff = abs((offset - candidate_offset).total_seconds())
+            if offset_diff < 3600:  # 1 hour tolerance
+                result = _identify_tzid_by_behavior(tzinfo, subtree)
+                if result:
+                    return result
+    except (ValueError, OSError, OverflowError):
+        # Handle errors that might occur with historical dates
+        # or invalid timezone data
+        pass
+
+    return set()
 
 
 __all__ = ["tzid_from_dt", "tzid_from_tzinfo", "tzids_from_tzinfo"]

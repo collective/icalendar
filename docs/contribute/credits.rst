@@ -111,6 +111,7 @@ Contributors
 - Ville Skyttä <ville.skytta@iki.fi>
 - Wichert Akkerman <wichert@wiggy.net>
 - Howard Liao <howard940114@gmail.com>
+- Michael Njoku <mnjoku@umich.edu>`_
 
 
 Complete list

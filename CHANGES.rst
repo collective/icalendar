@@ -40,7 +40,10 @@ New features:
 
 Bug fixes:
 
-- ...
+- Fix timezone identification for dateutil timezones with incorrect historical definitions or missing filename attributes
+- Added fallback mechanism that identifies timezones by their utcoffset behavior at different historical points.
+- Uses midday (12:00) instead of midnight to avoid ambiguous timezone transitions, building on the approach from issue #776.
+- See `Issue 763 <https://github.com/collective/icalendar/issues/763>`_, `Issue 775 <https://github.com/collective/icalendar/issues/775>`_, `Issue 776 <https://github.com/collective/icalendar/issues/776>`_, `Issue 780 <https://github.com/collective/icalendar/issues/780>`_, and `Issue 791 <https://github.com/collective/icalendar/issues/791>`_.
 
 6.3.2 (2025-11-03)
 ------------------
