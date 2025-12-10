@@ -4,7 +4,7 @@ import datetime
 
 import pytest
 
-from icalendar import Availability, Available, Calendar, Event, Timezone, Todo
+from icalendar import Availability, Available, Calendar, Event, Timezone, Todo, Alarm
 
 
 def test_creating_calendar_with_unicode_fields(calendars, utc):
@@ -51,9 +51,9 @@ def test_creating_calendar_with_unicode_fields(calendars, utc):
         (Todo, "example")
     ],
 )
-def test_component_has_examples(tzp, calendars, timezones, events, todos, component, example):
+def test_component_has_examples(tzp, calendars, timezones, events, todos, component, example, alarms):
     """Check that the examples function works."""
-    mapping = {Calendar: calendars, Event: events, Timezone: timezones, Todo: todos}
+    mapping = {Calendar: calendars, Event: events, Timezone: timezones, Todo: todos, Alarm: alarms}
     example_component = component.example(example)
     expected_component = mapping[component][example]
     assert example_component == expected_component
@@ -67,7 +67,7 @@ def test_invalid_examples_lists_the_others():
 
 
 @pytest.mark.parametrize(
-    "component", [Calendar, Event, Timezone, Available, Availability, Todo]
+    "component", [Calendar, Event, Timezone, Available, Availability, Todo, Alarm]
 )
 def test_default_example(component):
     """Check that we have a default example."""
