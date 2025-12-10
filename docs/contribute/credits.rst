@@ -33,8 +33,8 @@ Contributors
 
 - Abe Hanoka <abe@habet.dev>
 - Alexander Pitkin <peleccom@gmail.com>
-- Andreas Zeidler <az@zitc.de>
 - Andreas Ruppen <andreas.ruppen@gmail.com>
+- Andreas Zeidler <az@zitc.de>
 - Andrey Nikolaev <nikolaeff@gmail.com>
 - Barak Michener <me@barakmich.com>
 - Bastian Wegge <wegge@crossbow.de>
@@ -54,6 +54,7 @@ Contributors
 - `fitnr <https://github.com/fitnr>`_
 - George V. Reilly <george@reilly.org>
 - hajdbo <boris@hajduk.org>
+- Howard Liao <howard940114@gmail.com>
 - ilya
 - Jannis Leidel <jannis@leidel.info>
 - Jeffrey Whewhetu <jeffwhewhetu@gmail.com>
@@ -67,9 +68,9 @@ Contributors
 - Klaus Klein <kleink+github@kleink.org>
 - Laurent Lasudry <lasudry@gmail.com>
 - Lennart Regebro <lregebro@nuxeo.com>
-- Léo S <leo@naeka.fr>
 - `Lillian Penner <https://github.com/lillianpenner>`_
 - `Londyn J <https://github.com/londynj>`_
+- Léo S <leo@naeka.fr>
 - Marc Egli <frog32@me.com>
 - Markus Unterwaditzer <markus@unterwaditzer.net>
 - Martijn Faassen <faassen@infrae.com>
@@ -114,7 +115,6 @@ Contributors
 - Victor Varvaryuk <victor.varvariuc@gmail.com>
 - Ville Skyttä <ville.skytta@iki.fi>
 - Wichert Akkerman <wichert@wiggy.net>
-- Howard Liao <howard940114@gmail.com>
 - Zepyoor Khechadoorian <zepyoorkhechadoorian@gmail.com>
 
 Complete list
