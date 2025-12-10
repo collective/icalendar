@@ -8,8 +8,8 @@ Do not use an email address, as those may get harvested or become invalid in the
 
 .. code-block:: rst
 
-    - `GivenName Surname <https://github.com/github_username>`_
-    - `github_username <https://github.com/github_username>`_
+    - GivenName Surname <https://github.com/github_username>_
+    - github_username <https://github.com/github_username>_
 
 The following people have made contributions to icalendar.
 The maintainers of icalendar are grateful for their support.
@@ -30,92 +30,100 @@ Original author
 
 Contributors
 ------------
+.. Sort alphabetically and use the following template.
+.. `your name <https://github.com/github_username>`_
+.. Don't disclose your email address to spam harvesters.
 
-- `Abe Hanoka <https://github.com/abehanoka>`_
-- `Alexander Pitkin <https://github.com/peleccom>`_
-- `Andreas Ruppen <https://github.com/ruppen>`_
-- `Andreas Zeidler <https://github.com/azeidler>`_
-- `Andrey Nikolaev <https://github.com/nikolaeff>`_
-- `Barak Michener <https://github.com/barakmichener>`_
-- `Bastian Wegge <https://github.com/bwegge>`_
+- Abe Hanoka <abe@habet.dev>
+- Alexander Pitkin <peleccom@gmail.com>
+- Andreas Ruppen <andreas.ruppen@gmail.com>
+- Andreas Zeidler <az@zitc.de>
+- Andrey Nikolaev <nikolaeff@gmail.com>
+- Barak Michener <me@barakmich.com>
+- Bastian Wegge <wegge@crossbow.de>
 - `Chase Naples <https://github.com/cnaples79>`_
-- `Christian Geier <https://github.com/geier>`_
-- `Christophe de Vienne <https://github.com/cdevienne>`_
-- `cillianderoiste <https://github.com/cillianderoiste>`_
-- `Clive Stevens <https://github.com/clive-stevens>`_
-- `Dai MIKURUBE <https://github.com/dmikurube>`_
-- `Dalton Durst <https://github.com/daltondurst>`_
-- `Dan Stovall <https://github.com/dbstovall>`_
+- Christian Geier <contact@lostpackets.de>
+- Christophe de Vienne <cdevienne@gmail.com>
+- cillianderoiste <cillian.deroiste@gmail.com>
+- Clive Stevens <clivest2@gmail.com>
+- Dai MIKURUBE <dmikurube@acm.org>
+- Dalton Durst <github@daltondur.st>
+- Dan Stovall <dbstovall@gmail.com>
 - `David Venhoff <https://github.com/david-venhoff>`_
-- `Eric Hanchrow <https://github.com/offby1>`_
-- `Eric Wieser <https://github.com/eric-wieser>`_
-- `Erik Simmler <https://github.com/tgecho>`_
-- `Felix Stupp <https://github.com/fex01>`_
+- Eric Hanchrow <erich@cozi.com>
+- Eric Wieser <wieser.eric@gmail.com>
+- Erik Simmler <tgecho@gmail.com>
+- Felix Stupp <felix.stupp@banananet.work>
 - `fitnr <https://github.com/fitnr>`_
-- `George V. Reilly <https://github.com/GeorgeLReilly>`_
-- `hajdbo <https://github.com/hajdbo>`_
+- George V. Reilly <george@reilly.org>
+- hajdbo <boris@hajduk.org>
 - `Howard Liao <https://github.com/Howardisme>`_
 - ilya
-- `Jannis Leidel <https://github.com/jezdez>`_
-- `Jeffrey Whewhetu <https://github.com/jeffwhewhetu>`_
-- `Jeroen F.J. Laros <https://github.com/jfjlaros>`_
-- `Jeroen van Meeuwen (Kolab Systems) <https://github.com/kanarip>`_
-- `Jochen Sprickerhof <https://github.com/jspricke>`_
-- `Johannes Raggam <https://github.com/thet>`_
-- `Jordan Kiang <https://github.com/jkiang>`_
+- Jannis Leidel <jannis@leidel.info>
+- Jeffrey Whewhetu <jeffwhewhetu@gmail.com>
+- Jeroen F.J. Laros <jlaros@fixedpoint.nl>
+- Jeroen van Meeuwen (Kolab Systems) <vanmeeuwen@kolabsys.com>
+- Jochen Sprickerhof <icalendar@jochen.sprickerhof.de>
+- Johannes Raggam <johannes@raggam.co.at>
+- Jordan Kiang <jordan@cozi.com>
 - `Jouni K. Seppänen <https://github.com/jkseppan>`_
-- `Kamil Mańkowski <https://github.com/kam193>`_
-- `Klaus Klein <https://github.com/kleink>`_
-- `Laurent Lasudry <https://github.com/laulaz>`_
-- `Lennart Regebro <https://github.com/regebro>`_
-- `Léo S <https://github.com/leomelin>`_
+- Kamil Mańkowski <kam193@wp.pl>
+- Klaus Klein <kleink+github@kleink.org>
+- Laurent Lasudry <lasudry@gmail.com>
+- Lennart Regebro <lregebro@nuxeo.com>
+- Léo S <leo@naeka.fr>
 - `Lillian Penner <https://github.com/lillianpenner>`_
 - `Londyn J <https://github.com/londynj>`_
-- `Marc Egli <https://github.com/frog32>`_
-- `Markus Unterwaditzer <https://github.com/untitaker>`_
-- `Martijn Faassen <https://github.com/faassen>`_
-- `Martin Melin <https://github.com/martinmelin>`_
+- Marc Egli <frog32@me.com>
+- Markus Unterwaditzer <markus@unterwaditzer.net>
+- Martijn Faassen <faassen@infrae.com>
+- Martin Melin <git@martinmelin.com>
 - Matt Lewis <git@semiprime.com>
-- `Maurits van Rees <https://github.com/mauritsvanrees>`_
-- `Mauro Amico <https://github.com/mamico>`_
-- `Michael Smith <https://github.com/msmith>`_
-- `Michał Górny <https://github.com/mgorny>`_
-- `Mikael Frykholm <https://github.com/micke>`_
+- Maurits van Rees <maurits@vanrees.org>
+- Mauro Amico <mauro.amico@gmail.com>
+- Michael Smith <msmith@fluendo.com>
+- Michał Górny <mgorny@gentoo.org>
+- Mikael Frykholm <mikael@frykholm.com>
 - `Natasha Mattson <https://github.com/natashamm>`_
 - `NikEasY <https://github.com/NikEasY>`_
-- `Olivier Grisel <https://github.com/ogrisel>`_
-- `Pavel Repin <https://github.com/pavelrepin>`_
-- `Pedro Ferreira <https://github.com/pferreir>`_
-- `Pronoy <https://github.com/lukex9442>`_
-- `Rembane <https://github.com/rembane>`_
-- `Robert Niederreiter <https://github.com/rnix>`_
-- `Robert Spralja <https://github.com/spralja>`_
-- `Rok Garbas <https://github.com/garbas>`_
-- `Ronan Dunklau <https://github.com/rdunklau>`_
-- `Russ <https://github.com/russkel>`_
+- Olivier Grisel <ogrisel@nuxeo.com>
+- Pavel Repin <prepin@gmail.com>
+- Pedro Ferreira <jose.pedro.ferreira@cern.ch>
+- Pronoy <lukex9442@gmail.com>
+- Rembane <andeke@gmail.com>
+- Robert Niederreiter <rnix@squarewave.at>
+- Robert Spralja <robert.spralja@gmail.com>
+- Rok Garbas <rok@garbas.si>
+- Ronan Dunklau <ronan@dunklau.fr>
+- Russ <russ@rw.id.au>
 - `SanthoshMani1 <https://github.com/SanthoshMani1>`_
 - `Sashank Bhamidi <https://github.com/SashankBhamidi>`_
 - `Serif OZ <https://github.com/SerifOZ>`_
-- `Sidnei da Silva <https://github.com/sidnei>`_
-- `Simon Ruderich <https://github.com/SimonRuderich>`_
+- Sidnei da Silva <sidnei@enfoldsystems.com>
+- Simon Ruderich <simon@ruderich.org>
 - `Soham Dutta <https://github.com/NP-compete>`_
-- `spanktar <https://github.com/spanktar>`_
-- `Stanislav Láznička <https://github.com/slaz0>`_
-- `Stanislav Ochotnicky <https://github.com/sochotnicky>`_
-- `Stefan Schwarzer <https://github.com/sschwarzer>`_
+- spanktar <spanky@kapanka.com>
+- Stanislav Láznička <slaznick@redhat.com>
+- Stanislav Ochotnicky <sochotnicky@redhat.com>
+- Stefan Schwarzer <sschwarzer@sschwarzer.net>
 - `Steve Piercy <https://github.com/stevepiercy>`_
 - `Tanmay Maheshwari <https://github.com/LilSuperUser>`_
 - `Tariq <https://github.com/Horisyre>`_
-- `tgecho <https://github.com/tgecho>`_
-- `Thomas Bruederli <https://github.com/thomasbruederli>`_
-- `Thomas Weißschuh <https://github.com/th0rex>`_
-- `tisto <https://github.com/tisto>`_
-- `Tobias Brox <https://github.com/tobixen>`_
-- `TomTry <https://github.com/tomtry>`_
-- `Victor Varvaryuk <https://github.com/vvv>`_
-- `Ville Skyttä <https://github.com/scop>`_
-- `Wichert Akkerman <https://github.com/wichert>`_
-- `Zepyoor Khechadoorian <https://github.com/zepyoor>`_
+- tgecho <tgecho@gmail.com>
+- Thomas Bruederli <thomas@roundcube.net>
+- Thomas Weißschuh <thomas@t-8ch.de>
+- tisto <tisto@plone.org>
+- Tobias Brox <tobias@redpill-linpro.com>
+- TomTry <tom.try@gmail.com>
+- Victor Varvaryuk <victor.varvariuc@gmail.com>
+- Ville Skyttä <ville.skytta@iki.fi>
+- Wichert Akkerman <wichert@wiggy.net>
+- Zepyoor Khechadoorian <zepyoorkhechadoorian@gmail.com>
+.. Sort alphabetically and use the following template.
+.. `your name <https://github.com/github_username>`_
+.. Don't disclose your email address to spam harvesters.
+
+
 Complete list
 -------------
 

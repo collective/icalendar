@@ -39,7 +39,8 @@ Breaking changes
 New features
 ~~~~~~~~~~~~
 
-- ...
+- Added contributor list format and sorting instructions.
+
 
 Bug fixes
 ~~~~~~~~~
