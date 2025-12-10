@@ -36,8 +36,8 @@ Contributors
 
 - Abe Hanoka <abe@habet.dev>
 - Alexander Pitkin <peleccom@gmail.com>
-- Andreas Zeidler <az@zitc.de>
 - Andreas Ruppen <andreas.ruppen@gmail.com>
+- Andreas Zeidler <az@zitc.de>
 - Andrey Nikolaev <nikolaeff@gmail.com>
 - Barak Michener <me@barakmich.com>
 - Bastian Wegge <wegge@crossbow.de>
