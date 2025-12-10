@@ -57,6 +57,7 @@ Contributors
 - `fitnr <https://github.com/fitnr>`_
 - George V. Reilly <george@reilly.org>
 - hajdbo <boris@hajduk.org>
+- `Haley Lai <https://github.com/Haley-1617>`_
 - `Howard Liao <https://github.com/Howardisme>`_
 - ilya
 - Jannis Leidel <jannis@leidel.info>
