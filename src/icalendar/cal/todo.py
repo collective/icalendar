@@ -45,6 +45,7 @@ from icalendar.attr import (
     url_property,
 )
 from icalendar.cal.component import Component
+from icalendar.cal.examples import get_example
 
 if TYPE_CHECKING:
     from icalendar.alarms import Alarms
@@ -388,6 +389,10 @@ class Todo(Component):
         if cls._validate_new:
             cls._validate_start_and_end(start, end)
         return todo
-
+  
+    @classmethod
+    def example(cls, name: str = "example") -> "Todo":
+        """Return the todo example with the given name."""
+        return cls.from_ical(get_example("todos", name))
 
 __all__ = ["Todo"]

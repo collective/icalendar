@@ -19,6 +19,7 @@ from icalendar import (
     ComponentFactory,
     Event,
     Timezone,
+    Todo,
     TypesFactory,
     prop,
     vUTCOffset,
@@ -125,7 +126,7 @@ TIMEZONES_FOLDER = HERE / "timezones"
 EVENTS_FOLDER = HERE / "events"
 ALARMS_FOLDER = HERE / "alarms"
 AVAILABILITIES_FOLDER = HERE / "availabilities"
-
+TODOS_FOLDER = HERE / "todos"
 
 @pytest.fixture(scope="module")
 def calendars(tzp):
@@ -150,6 +151,12 @@ def alarms(tzp):
 @pytest.fixture(scope="module")
 def availabilities(tzp):
     return DataSource(AVAILABILITIES_FOLDER, Availability.from_ical)
+
+
+
+@pytest.fixture(scope="module")
+def todos(tzp):
+    return DataSource(TODOS_FOLDER, Todo.from_ical)
 
 
 @pytest.fixture(
