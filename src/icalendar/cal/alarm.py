@@ -22,6 +22,7 @@ from icalendar.attr import (
     uid_property,
 )
 from icalendar.cal.component import Component
+from icalendar.cal.examples import get_example
 
 if TYPE_CHECKING:
     import uuid
@@ -35,6 +36,21 @@ class Alarm(Component):
     properties that defines an alarm or reminder for an event or a
     to-do. For example, it may be used to define a reminder for a
     pending event or an overdue to-do.
+
+    Examples:
+
+        Load the bundled audio alarm example (tests/alarms/example.ics):
+        
+        >>> from icalendar import Alarm
+        >>> alarm = Alarm.example()
+        >>> print(alarm.to_ical().decode())
+        BEGIN:VALARM
+        ACTION:AUDIO
+        ATTACH;FMTTYPE=audio/basic:ftp://example.com/pub/sounds/bell-01.aud
+        DURATION:PT15M
+        REPEAT:4
+        TRIGGER;VALUE=DATE-TIME:19970317T133000Z
+        END:VALARM
     """
 
     name = "VALARM"
@@ -291,6 +307,9 @@ class Alarm(Component):
         alarm.uid = uid
         alarm.attendees = attendees
         return alarm
-
+    @classmethod
+    def example(cls, name: str = "example") -> "Alarm":
+        """Return the alarm example with the given name."""
+        return cls.from_ical(get_example("alarms", name))
 
 __all__ = ["Alarm"]

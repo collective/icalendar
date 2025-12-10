@@ -73,6 +73,28 @@ class Todo(Component):
             UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
             END:VTODO
 
+        Complete the bundled example Todo (tests/todos/example.ics):
+
+            >>> from datetime import datetime, timezone
+            >>> from icalendar import Todo
+            >>> from icalendar.enums import STATUS
+            >>> todo = Todo.example()
+            >>> todo["PERCENT-COMPLETE"] = 100
+            >>> todo["COMPLETED"] = datetime(2007, 5, 1, 12, tzinfo=timezone.utc)
+            >>> todo.status = STATUS.COMPLETED
+            >>> print(todo.to_ical().decode())
+            BEGIN:VTODO
+            CATEGORIES:FAMILY,FINANCE
+            CLASS:CONFIDENTIAL
+            COMPLETED:2007-05-01 12:00:00+00:00
+            DTSTAMP:20070313T123432Z
+            DUE;VALUE=DATE:20070501
+            PERCENT-COMPLETE:100
+            STATUS:COMPLETED
+            SUMMARY:Submit Quebec Income Tax Return for 2006
+            UID:20070313T123432Z-456553@example.com
+            END:VTODO
+
     """
 
     name = "VTODO"
@@ -389,7 +411,7 @@ class Todo(Component):
         if cls._validate_new:
             cls._validate_start_and_end(start, end)
         return todo
-  
+    
     @classmethod
     def example(cls, name: str = "example") -> "Todo":
         """Return the todo example with the given name."""
