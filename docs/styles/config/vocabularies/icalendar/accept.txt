@@ -44,6 +44,7 @@ Khechadoorian
 (?i)Leidel
 (?i)Lennart
 Londyn
+Lillian
 (?i)Maheshwari
 (?i)Markus
 (?i)Martijn
@@ -58,6 +59,7 @@ Londyn
 (?i)Ochotnicky
 (?i)Pavel
 (?i)Params
+Penner
 (?i)Piercy
 (?i)Pitkin
 (?i)Plone

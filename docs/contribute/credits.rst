@@ -69,6 +69,7 @@ Contributors
 - Lennart Regebro <lregebro@nuxeo.com>
 - Léo S <leo@naeka.fr>
 - `Londyn J <https://github.com/londynj>`_
+- `Lillian Penner <https://github.com/lillianpenner>`_
 - Marc Egli <frog32@me.com>
 - Markus Unterwaditzer <markus@unterwaditzer.net>
 - Martijn Faassen <faassen@infrae.com>
