@@ -30,11 +30,14 @@ Original author
 
 Contributors
 ------------
+.. Sort alphabetically and use the following template.
+.. `your name <https://github.com/github_username>`_
+.. Don't disclose your email address to spam harvesters.
 
 - Abe Hanoka <abe@habet.dev>
 - Alexander Pitkin <peleccom@gmail.com>
-- Andreas Zeidler <az@zitc.de>
 - Andreas Ruppen <andreas.ruppen@gmail.com>
+- Andreas Zeidler <az@zitc.de>
 - Andrey Nikolaev <nikolaeff@gmail.com>
 - Barak Michener <me@barakmich.com>
 - Bastian Wegge <wegge@crossbow.de>
@@ -54,6 +57,8 @@ Contributors
 - `fitnr <https://github.com/fitnr>`_
 - George V. Reilly <george@reilly.org>
 - hajdbo <boris@hajduk.org>
+- `Haley Lai <https://github.com/Haley-1617>`_
+- `Howard Liao <https://github.com/Howardisme>`_
 - ilya
 - Jannis Leidel <jannis@leidel.info>
 - Jeffrey Whewhetu <jeffwhewhetu@gmail.com>
@@ -68,6 +73,8 @@ Contributors
 - Laurent Lasudry <lasudry@gmail.com>
 - Lennart Regebro <lregebro@nuxeo.com>
 - Léo S <leo@naeka.fr>
+- `Lillian Penner <https://github.com/lillianpenner>`_
+- `Londyn J <https://github.com/londynj>`_
 - Marc Egli <frog32@me.com>
 - Markus Unterwaditzer <markus@unterwaditzer.net>
 - Martijn Faassen <faassen@infrae.com>
@@ -112,9 +119,11 @@ Contributors
 - Victor Varvaryuk <victor.varvariuc@gmail.com>
 - Ville Skyttä <ville.skytta@iki.fi>
 - Wichert Akkerman <wichert@wiggy.net>
-- Howard Liao <howard940114@gmail.com>
 - Zepyoor Khechadoorian <zepyoorkhechadoorian@gmail.com>
-- `Haley Lai <https://github.com/Haley-1617>`_
+.. Sort alphabetically and use the following template.
+.. `your name <https://github.com/github_username>`_
+.. Don't disclose your email address to spam harvesters.
+
 
 Complete list
 -------------
