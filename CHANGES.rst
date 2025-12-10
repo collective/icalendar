@@ -29,6 +29,9 @@ Minor changes
 - Created an :meth:`~cal.todo.Todo.example` method for the :class:`~cal.todo.Todo` component. See `Issue 743 <https://github.com/collective/icalendar/issues/743>`_.
 
 - Add type hints to :mod:`icalendar.caselessdict` file. See `Issue #938 <https://github.com/collective/icalendar/issues/938>`_.
+
+- Replaced 32 email addresses with verified GitHub profile links in ``docs/contribute/credits.rst`` to prevent email harvesting and follow contributing guidelines.
+
 - ...
 
 Breaking changes
