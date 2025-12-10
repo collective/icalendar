@@ -68,9 +68,9 @@ Contributors
 - Klaus Klein <kleink+github@kleink.org>
 - Laurent Lasudry <lasudry@gmail.com>
 - Lennart Regebro <lregebro@nuxeo.com>
+- Léo S <leo@naeka.fr>
 - `Lillian Penner <https://github.com/lillianpenner>`_
 - `Londyn J <https://github.com/londynj>`_
-- Léo S <leo@naeka.fr>
 - Marc Egli <frog32@me.com>
 - Markus Unterwaditzer <markus@unterwaditzer.net>
 - Martijn Faassen <faassen@infrae.com>
