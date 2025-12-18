@@ -145,6 +145,7 @@ def test_recursive_property_items(calendar_component, filled_event_component):
 
 def test_flat_property_items(calendar_component, filled_event_component):
     """We can also enumerate property items just under the component."""
+    calendar_component.add("attendee", "Max M")
     assert calendar_component.property_items(recursive=False) == [
         ("BEGIN", b"VCALENDAR"),
         ("ATTENDEE", prop.vCalAddress("Max M")),
