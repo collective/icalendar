@@ -34,7 +34,7 @@ Minor changes
 Breaking changes
 ~~~~~~~~~~~~~~~~
 
-- ...
+- :meth:`Component.decoded` now returns a string instead of bytes for text properties.
 
 New features
 ~~~~~~~~~~~~

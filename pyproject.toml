@@ -196,6 +196,8 @@ extend-safe-fixes = [
     "N999",   # module name
     "PT027",  # assertRaises
     "FBT001", # Boolean positional argument in function definition
+    "N803",   # Argument name {name} for {param_type} should be lowercase
+    "B018",   # useless expression, used to test attributes error
 ]
 "src/icalendar/prop/__init__.py" = [
     "N801",   # Class name should use CamelCase
