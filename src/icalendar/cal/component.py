@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from datetime import date, datetime, time, timedelta, timezone
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
@@ -251,15 +251,13 @@ class Component(CaselessDict):
                 value = [oldval, value]
         self[name] = value
 
-    def _decode(self, name: str, value: VPROPERTY):
+    def _decode(self, name, value):
         """Internal for decoding property values."""
 
         # TODO: Currently the decoded method calls the icalendar.prop instances
         # from_ical. We probably want to decode properties into Python native
         # types here. But when parsing from an ical string with from_ical, we
         # want to encode the string into a real icalendar.prop property.
-        if hasattr(value, "ical_value"):
-            return value.ical_value
         if isinstance(value, vDDDLists):
             # TODO: Workaround unfinished decoding
             return value
@@ -270,12 +268,11 @@ class Component(CaselessDict):
             decoded = decoded.encode(DEFAULT_ENCODING)
         return decoded
 
-    def decoded(self, name: str, default: Any = _marker) -> Any:
-        """Returns decoded value of property.
+    def decoded(self, name, default=_marker):
+        """Returns decoded value of property."""
+        # XXX: fail. what's this function supposed to do in the end?
+        # -rnix
 
-        A component maps keys to icalendar property value types.
-        This function returns values compatible to native Python types.
-        """
         if name in self:
             value = self[name]
             if isinstance(value, list):

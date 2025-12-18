@@ -54,7 +54,7 @@ from typing import Any, ClassVar, Optional, Tuple, Union
 from icalendar.caselessdict import CaselessDict
 from icalendar.enums import Enum
 from icalendar.error import InvalidCalendar, JCalParsingError
-from icalendar.parser import Parameters, escape_char
+from icalendar.parser import Parameters, escape_char, unescape_char
 from icalendar.parser_tools import (
     DEFAULT_ENCODING,
     ICAL_TYPE,
@@ -909,11 +909,6 @@ class vCategory:
             jcal_property[3:],
             Parameters.from_jcal_property(jcal_property),
         )
-
-    @property
-    def ical_value(self) -> list[str]:
-        """The list of categories as strings."""
-        return [str(cat) for cat in self.cats]
 
 
 class TimeBase:
