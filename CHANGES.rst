@@ -46,6 +46,7 @@ Bug fixes
 ~~~~~~~~~
 
 - Fix double-unescaping in :meth:`vText.from_ical` and :meth:`vCategory.from_ical` by removing ``unescape_char()``. See `Issue #1008 <https://github.com/collective/icalendar/issues/1008>`_.
+- Fix decoding of categories. See `Issue 279 <https://github.com/collective/icalendar/issues/279>`_.
 
 7.0.0a2 (2025-11-29)
 --------------------
