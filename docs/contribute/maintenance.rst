@@ -95,6 +95,8 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
         export VERSION=7.0.0
 
+#.  If you want to cut a new release of a stable version, then in the ``main`` or development branch, update :file:`docs/_static/version-switcher.json` to match that version.
+
 #.  Create a commit on the ``release`` branch (or equivalent) to release this version.
 
     .. code-block:: shell
