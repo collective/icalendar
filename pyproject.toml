@@ -119,6 +119,16 @@ exclude = [
 [tool.hatch.build.targets.wheel]
 packages = ["src/icalendar"]
 
+[tool.hatch.metadata.hooks.vcs.urls]
+# Dynamic URLs for built packages - includes source_archive with commit hash
+Homepage = "https://icalendar.readthedocs.io/"
+Repository = "https://github.com/collective/icalendar/"
+source_archive = "https://github.com/collective/icalendar/archive/{commit_hash}.zip"
+Issues = "https://github.com/collective/icalendar/issues"
+Documentation = "https://icalendar.readthedocs.io/"
+Changelog = "https://icalendar.readthedocs.io/en/latest/changelog.html"
+Funding = "https://opencollective.com/python-icalendar"
+
 [tool.hatch.version]
 # This configuration allows us to use the version from the tags and dynamically generate
 # version files. This speeds up the release process.
