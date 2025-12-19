@@ -120,7 +120,7 @@ exclude = [
 packages = ["src/icalendar"]
 
 [tool.hatch.metadata.hooks.vcs.urls]
-# Dynamic URLs for built packages - includes source_archive with commit hash
+# Dynamic URLs for built packages
 Homepage = "https://icalendar.readthedocs.io/"
 Repository = "https://github.com/collective/icalendar/"
 source_archive = "https://github.com/collective/icalendar/archive/{commit_hash}.zip"
