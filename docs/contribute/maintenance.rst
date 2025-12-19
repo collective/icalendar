@@ -136,6 +136,12 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         git tag "v$VERSION"
         git push upstream "v$VERSION" # could be origin or whatever reference
 
+    .. warning::
+
+        Once a tag is pushed to the repository, it must not be re-tagged or deleted.
+        This creates issues for downstream repositories.
+        See `Issue 1033 <https://github.com/collective/icalendar/issues/1033>`_.
+
 #.  Once the tag is pushed and its `CI-tests`_ are passing, maintainers will get an e-mail:
 
     .. code-block:: text
