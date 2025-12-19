@@ -26,10 +26,11 @@ We still recommend checking out the new features and giving feedback in the repo
 
 Minor changes
 ~~~~~~~~~~~~~
-- Created an :meth:`~cal.todo.Todo.example` method for the :class:`~cal.todo.Todo` component. See `Issue 743 <https://github.com/collective/icalendar/issues/743>`_.
 
+- Created an :meth:`~cal.todo.Todo.example` method for the :class:`~cal.todo.Todo` component. See `Issue 743 <https://github.com/collective/icalendar/issues/743>`_.
 - Add type hints to :mod:`icalendar.caselessdict` file. See `Issue #938 <https://github.com/collective/icalendar/issues/938>`_.
-- ...
+- For releases, added a step to update the version switcher for documentation.
+
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
