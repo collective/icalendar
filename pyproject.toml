@@ -121,7 +121,7 @@ packages = ["src/icalendar"]
 
 [tool.hatch.metadata.hooks.vcs.urls]
 # Dynamic URLs for built packages
-Homepage = "https://icalendar.readthedocs.io/"
+Homepage = "https://icalendar.readthedocs.io/en/stable/"
 Repository = "https://github.com/collective/icalendar"
 source_archive = "https://github.com/collective/icalendar/archive/{commit_hash}.zip"
 Issues = "https://github.com/collective/icalendar/issues"
