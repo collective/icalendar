@@ -126,7 +126,7 @@ Repository = "https://github.com/collective/icalendar"
 source_archive = "https://github.com/collective/icalendar/archive/{commit_hash}.zip"
 Issues = "https://github.com/collective/icalendar/issues"
 Documentation = "https://icalendar.readthedocs.io/en/stable/"
-Changelog = "https://icalendar.readthedocs.io/en/latest/changelog.html"
+Changelog = "https://icalendar.readthedocs.io/en/stable/changelog.html"
 Funding = "https://opencollective.com/python-icalendar"
 
 [tool.hatch.version]
