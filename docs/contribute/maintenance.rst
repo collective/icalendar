@@ -91,6 +91,8 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
 #.  Check that the file :file:`CHANGES.rst` is up to date with the `latest merged pull requests <https://github.com/collective/icalendar/pulls?q=is%3Apr+is%3Amerged>`_, and the version you want to release is correctly named.
 
+#.  Set an environment variable to use in subsequent commands during the release process.
+
     .. code-block:: shell
 
         export VERSION=7.0.0
