@@ -86,7 +86,7 @@ dependencies = [
 # See https://github.com/collective/icalendar/issues/1035
 [project.urls]
 Homepage = "https://icalendar.readthedocs.io/"
-Repository = "https://github.com/collective/icalendar/"
+Repository = "https://github.com/collective/icalendar"
 Issues = "https://github.com/collective/icalendar/issues"
 Documentation = "https://icalendar.readthedocs.io/"
 Changelog = "https://icalendar.readthedocs.io/en/latest/changelog.html"
@@ -122,7 +122,7 @@ packages = ["src/icalendar"]
 [tool.hatch.metadata.hooks.vcs.urls]
 # Dynamic URLs for built packages
 Homepage = "https://icalendar.readthedocs.io/"
-Repository = "https://github.com/collective/icalendar/"
+Repository = "https://github.com/collective/icalendar"
 source_archive = "https://github.com/collective/icalendar/archive/{commit_hash}.zip"
 Issues = "https://github.com/collective/icalendar/issues"
 Documentation = "https://icalendar.readthedocs.io/"
