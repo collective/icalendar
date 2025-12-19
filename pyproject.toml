@@ -85,11 +85,11 @@ dependencies = [
 # Static URLs for GitHub dependency graph compatibility
 # See https://github.com/collective/icalendar/issues/1035
 [project.urls]
-Homepage = "https://icalendar.readthedocs.io/"
+Homepage = "https://icalendar.readthedocs.io/en/stable/"
 Repository = "https://github.com/collective/icalendar"
 Issues = "https://github.com/collective/icalendar/issues"
-Documentation = "https://icalendar.readthedocs.io/"
-Changelog = "https://icalendar.readthedocs.io/en/latest/changelog.html"
+Documentation = "https://icalendar.readthedocs.io/en/stable/"
+Changelog = "https://icalendar.readthedocs.io/en/stable/changelog.html"
 Funding = "https://opencollective.com/python-icalendar"
 
 [project.optional-dependencies]
@@ -125,7 +125,7 @@ Homepage = "https://icalendar.readthedocs.io/"
 Repository = "https://github.com/collective/icalendar"
 source_archive = "https://github.com/collective/icalendar/archive/{commit_hash}.zip"
 Issues = "https://github.com/collective/icalendar/issues"
-Documentation = "https://icalendar.readthedocs.io/"
+Documentation = "https://icalendar.readthedocs.io/en/stable/"
 Changelog = "https://icalendar.readthedocs.io/en/latest/changelog.html"
 Funding = "https://opencollective.com/python-icalendar"
 
