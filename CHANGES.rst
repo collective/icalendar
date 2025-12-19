@@ -26,6 +26,7 @@ We still recommend checking out the new features and giving feedback in the repo
 
 Minor changes
 ~~~~~~~~~~~~~
+- Add static ``[project.urls]`` to ``pyproject.toml`` for GitHub dependency graph compatibility. See `Issue 1035 <https://github.com/collective/icalendar/issues/1035>`_.
 - Created an :meth:`~cal.todo.Todo.example` method for the :class:`~cal.todo.Todo` component. See `Issue 743 <https://github.com/collective/icalendar/issues/743>`_.
 
 - Add type hints to :mod:`icalendar.caselessdict` file. See `Issue #938 <https://github.com/collective/icalendar/issues/938>`_.
