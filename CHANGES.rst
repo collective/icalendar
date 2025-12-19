@@ -32,17 +32,10 @@ Minor changes
 - Add type hints to :mod:`icalendar.caselessdict` file. See `Issue #938 <https://github.com/collective/icalendar/issues/938>`_.
 - For releases, added a step to update the version switcher for documentation.
 
-
-Breaking changes
-~~~~~~~~~~~~~~~~
-
-- ...
-
 New features
 ~~~~~~~~~~~~
 
 - Added contributor list format and sorting instructions.
-
 
 Bug fixes
 ~~~~~~~~~

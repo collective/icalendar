@@ -91,6 +91,8 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
 #.  Check that the file :file:`CHANGES.rst` is up to date with the `latest merged pull requests <https://github.com/collective/icalendar/pulls?q=is%3Apr+is%3Amerged>`_, and the version you want to release is correctly named.
 
+#.  Set an environment variable to use in subsequent commands during the release process.
+
     .. code-block:: shell
 
         export VERSION=7.0.0
@@ -103,8 +105,8 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
         git checkout main
         git pull
-        git checkout -b release main
-        git add CHANGES.rst
+        git checkout -b release-$VERSION main
+        git add CHANGES.rst docs/_static/version-switcher.json
         git commit -m"version $VERSION"
 
 #.  Push the commit and `create a pull request <https://github.com/collective/icalendar/compare?expand=1>`_.
@@ -112,7 +114,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
     .. code-block:: shell
 
-        git push -u origin release
+        git push -u origin release-$VERSION
 
 #.  See if the `CI-tests <https://github.com/collective/icalendar/actions>`_ are running on the pull request.
     If they are not running, no new release can be issued.
@@ -124,8 +126,8 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
         git checkout main
         git pull
-        git branch -d release
-        git push -d origin release
+        git branch -d release-$VERSION
+        git push -d origin release-$VERSION
 
 #.  Create a tag for the release and see if the `CI-tests`_ are running.
 
