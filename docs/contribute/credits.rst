@@ -36,6 +36,17 @@ Alternatively from your local git checkout, issue the following command, which p
     git shortlog -s -e
 
 
+Supporters
+----------
+
+icalendar development is made possible partly through the kind financial support of `Nicco Kunzmann <https://github.com/niccokunzmann>`_ by the following people and organizations.
+
+-   `Kraken Tech <https://github.com/kraken-tech>`_
+-   `Abe Hanoka <https://github.com/abe-101>`_
+-   `RPdenBoer <https://github.com/RPdenBoer>`_
+
+
+
 History
 -------
 `Max M <http://www.mxm.dk>`_ had often needed to parse and generate iCalendar files.
