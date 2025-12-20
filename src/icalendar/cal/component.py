@@ -84,7 +84,7 @@ class Component(CaselessDict):
 
     @staticmethod
     def _infer_value_type(
-        value: date | datetime | timedelta | time | tuple | list,
+        value: date | datetime | datetime.timedelta | time | tuple | list,
     ) -> str | None:
         """Infer the ``VALUE`` parameter from a Python type.
 

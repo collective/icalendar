@@ -83,7 +83,7 @@ class FreeBusy(Component):
     )
 
     @property
-    def duration(self) -> Optional[timedelta]:
+    def duration(self) -> Optional[datetime.timedelta]:
         """The duration computed from start and end."""
         if self.DTSTART is None or self.DTEND is None:
             return None

@@ -147,7 +147,7 @@ class Timezone(Component):
 
     def get_transitions(
         self,
-    ) -> tuple[list[datetime], list[tuple[timedelta, timedelta, str]]]:
+    ) -> tuple[list[datetime], list[tuple[datetime.timedelta, datetime.timedelta, str]]]:
         """Return a tuple of (transition_times, transition_info)
 
         - transition_times = [datetime, ...]

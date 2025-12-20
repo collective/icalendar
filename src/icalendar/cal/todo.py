@@ -190,7 +190,7 @@ class Todo(Component):
         self.DUE = end
 
     @property
-    def duration(self) -> timedelta:
+    def duration(self) -> datetime.timedelta:
         """The duration of the VTODO.
 
         Returns the DURATION property if set, otherwise calculated from start and end.
@@ -206,7 +206,7 @@ class Todo(Component):
         return get_duration_property(self)
 
     @duration.setter
-    def duration(self, value: timedelta):
+    def duration(self, value: datetime.timedelta):
         if not isinstance(value, timedelta):
             raise TypeError(f"Use timedelta, not {type(value).__name__}.")
 
@@ -214,7 +214,7 @@ class Todo(Component):
         self.set_duration(value, locked="start")
 
     def set_duration(
-        self, duration: timedelta | None, locked: Literal["start", "end"] = "start"
+        self, duration: datetime.timedelta | None, locked: Literal["start", "end"] = "start"
     ):
         """Set the duration of the event relative to either start or end.
 

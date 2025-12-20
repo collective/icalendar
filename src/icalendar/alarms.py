@@ -250,7 +250,7 @@ class Alarms:
         """
         self._end = dt
 
-    def _add(self, dt: date, td: timedelta):
+    def _add(self, dt: date, td: datetime.timedelta):
         """Add a timedelta to a datetime."""
         if is_date(dt):
             if td.seconds == 0:

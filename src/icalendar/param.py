@@ -10,6 +10,7 @@ Related:
 
 from __future__ import annotations
 
+import datetime
 import functools
 from typing import TYPE_CHECKING, Callable, Optional, TypeVar
 
@@ -695,7 +696,7 @@ Examples:
 )
 
 
-def _get_GAP(prop) -> timedelta | None:  # noqa: N802
+def _get_GAP(prop) -> datetime.timedelta | None:  # noqa: N802
     """GAP
 
     Purpose:
@@ -754,7 +755,7 @@ def _get_GAP(prop) -> timedelta | None:  # noqa: N802
     return value.td
 
 
-def _set_GAP(prop, value: timedelta | str | None):  # noqa: N802
+def _set_GAP(prop, value: datetime.timedelta | str | None):  # noqa: N802
     """Set the GAP parameter as a timedelta."""
     if value is None:
         prop.params.pop("GAP", None)
