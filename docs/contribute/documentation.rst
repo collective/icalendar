@@ -161,8 +161,8 @@ icalendar configures Vale in three places:
 -   icalendar documentation uses a custom spelling dictionary, with accepted and rejected spellings in :file:`docs/styles/config/vocabularies/icalendar/`.
     Authors should add new words and proper names using correct casing to :file:`docs/styles/config/vocabularies/icalendar/accept.txt`, sorted alphabetically and case-insensitive.
 
-    If Vale does not reject a spelling that should be rejected, then you can add it to {file}`docs/styles/config/vocabularies/icalendar/reject.txt`.
--   You can add additional spellings to accept or reject in their respective files inside the {file}`docs/styles/config/vocabularies/Base/` folder.
+    If Vale does not reject a spelling that should be rejected, then you can add it to :file:`docs/styles/config/vocabularies/icalendar/reject.txt`.
+-   You can add additional spellings to accept or reject in their respective files inside the :file:`docs/styles/config/vocabularies/Base/` folder.
 
 Because it's difficult to automate good American English grammar and syntax, it's not strictly enforced.
 
