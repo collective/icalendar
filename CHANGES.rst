@@ -21,7 +21,30 @@ Upgrading from 6.x to 7.x should have **no complications for most developers**, 
 
 We still recommend checking out the new features and giving feedback in the repository.
 
-7.0.0a3 (unreleased)
+7.0.0a4 (unreleased)
+--------------------
+
+Minor changes
+~~~~~~~~~~~~~
+
+- ...
+
+Breaking changes
+~~~~~~~~~~~~~~~~
+
+- ...
+
+New features
+~~~~~~~~~~~~
+
+- ...
+
+Bug fixes
+~~~~~~~~~
+
+- ...
+
+7.0.0a3 (2025-12-19)
 --------------------
 
 Minor changes
@@ -32,17 +55,10 @@ Minor changes
 - Add type hints to :mod:`icalendar.caselessdict` file. See `Issue #938 <https://github.com/collective/icalendar/issues/938>`_.
 - For releases, added a step to update the version switcher for documentation.
 
-
-Breaking changes
-~~~~~~~~~~~~~~~~
-
-- ...
-
 New features
 ~~~~~~~~~~~~
 
 - Added contributor list format and sorting instructions.
-
 
 Bug fixes
 ~~~~~~~~~
