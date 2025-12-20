@@ -4,11 +4,12 @@ dicts
 docstrings?
 fuzzer
 Hacktoberfest
+Hanoka
 iCal
 (?i)icalendar
 jCal
-(?i)Kunzmann
-(?i)Nicco
+Kunzmann
+Nicco
 Params
 Penner
 (?i)Plone
