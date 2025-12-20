@@ -14,7 +14,6 @@ Write a description of the fixes or improvements.
 - [ ] I've added or updated tests if applicable.
 - [ ] I've run and ensured all tests pass locally by following [Run tests](https://icalendar.readthedocs.io/en/latest/contribute/development.html#run-tests).
 - [ ] I've added or edited documentation, both as docstrings to be rendered in the API documentation and narrative documentation, as necessary.
-- [ ] I've added myself to `docs/credits.rst` as a contributor in this pull request or have done so previously.
 
 ## Additional information
 
