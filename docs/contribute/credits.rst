@@ -2,7 +2,7 @@
 Credits
 =======
 
-When you contribute to icalendar, your name will appear as in the list of contributors, provided you have not set your GitHub profile to be anonymous.
+When you :doc:`contribute <index>` to icalendar, your name will appear as in the list of contributors, provided you have not set your GitHub profile to be anonymous.
 
 The following people have made contributions to icalendar.
 The maintainers of icalendar are grateful for their support.
@@ -24,12 +24,15 @@ Original author
 Contributors
 ------------
 
+Become part of the list of :doc:`contributors <index>`.
+
 .. image:: https://contrib.rocks/image?repo=collective/icalendar&max=120&columns=10
     :alt: icalendar contributors
     :target: https://github.com/collective/icalendar/graphs/contributors
     :loading: lazy
 
-Alternatively from your local git checkout, issue the following command, which prints a list of all contributors sorted by their name and commit email address, and the count of commits for each one.
+
+To print complete a list of all contributors sorted by their name and commit email address with their count of commits, issue the following command from your checkout.
 
 .. code-block:: shell
 
