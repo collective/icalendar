@@ -42,12 +42,15 @@ To print complete a list of all contributors sorted by their name and commit ema
 Supporters
 ----------
 
-icalendar development is made possible partly through the kind financial support of `Nicco Kunzmann <https://github.com/niccokunzmann>`_ by the following people and organizations.
+Financial support of the developers of icalendar makes it possible to add features, fix bugs, write documentation, and create an amazing community around the project.
+
+We're grateful for the financial support of `Nicco Kunzmann <https://github.com/niccokunzmann>`_ by the following kind people and organizations through `Nicco's GitHub Sponsors page <https://github.com/sponsors/niccokunzmann>`_.
 
 -   `Kraken Tech <https://github.com/kraken-tech>`_
 -   `Abe Hanoka <https://github.com/abe-101>`_
 -   `RPdenBoer <https://github.com/RPdenBoer>`_
 
+You can also donate to the icalendar project through `icalendar's Open Collective donation page <https://opencollective.com/python-icalendar>`_.
 
 
 History
