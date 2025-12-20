@@ -181,6 +181,7 @@ Related projects
 * `ics-query <http://pypi.org/project/ics-query>`_. Command line tool to query iCalendar files for occurrences of events and other components.
 * `icalendar-compatibility <https://icalendar-compatibility.readthedocs.io/en/latest/>`_ - access to event data compatible with RFC5545 and different implementations
 * `caldav <https://caldav.readthedocs.io/>`_ is based on ``icalendar``.
+* `icalendar-anonymizer <https://pypi.org/project/icalendar-anonymizer/>`_ is a tool to anonymize ical files so they can be published or shared for debugging and other purposes without revealing personal information.
 
 Further Reading
 ===============
