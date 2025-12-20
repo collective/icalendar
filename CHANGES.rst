@@ -42,7 +42,7 @@ New features
 Bug fixes
 ~~~~~~~~~
 
-- ...
+- Link ``timedelta`` to :py:class:`datetime.timedelta` in the Python standard library documentation. See `Issue 951 <https://github.com/collective/icalendar/issues/951>`_.
 
 7.0.0a3 (2025-12-19)
 --------------------
