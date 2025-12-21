@@ -44,6 +44,12 @@ Bug fixes
 
 - ...
 
+Documentation
+~~~~~~~~~~~~~
+
+- Add a section in the change log for Documentation. See `Issue 1043 <https://github.com/collective/icalendar/issues/1043>`_.
+
+
 7.0.0a3 (2025-12-19)
 --------------------
 
