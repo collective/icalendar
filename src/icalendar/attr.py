@@ -970,7 +970,7 @@ X_MOZ_LASTACK_property = single_utc_property(
 )
 
 
-def property_get_duration(self: Component) -> Optional[datetime.timedelta]:
+def property_get_duration(self: Component) -> Optional[timedelta]:
     """Getter for property DURATION."""
     default = object()
     duration = self.get("duration", default)
@@ -985,7 +985,7 @@ def property_get_duration(self: Component) -> Optional[datetime.timedelta]:
     return None
 
 
-def property_set_duration(self: Component, value: Optional[datetime.timedelta]):
+def property_set_duration(self: Component, value: Optional[timedelta]):
     """Setter for property DURATION."""
     if value is None:
         self.pop("duration", None)

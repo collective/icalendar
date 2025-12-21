@@ -296,12 +296,13 @@ class Event(Component):
     )
 
     @property
-    def duration(self) -> datetime.timedelta:
+    def duration(self) -> timedelta:
         """The duration of the VEVENT.
 
         Returns the DURATION property if set, otherwise calculated from start and end.
         When setting duration, the end time is automatically calculated from start +
         duration.
+
         You can set the duration to automatically adjust the end time while keeping
         start locked.
 
@@ -315,7 +316,8 @@ class Event(Component):
         return get_duration_property(self)
 
     @duration.setter
-    def duration(self, value: datetime.timedelta):
+    def duration(self, value: timedelta):
+        """Set the duration of the event with the start locked."""
         if not isinstance(value, timedelta):
             raise TypeError(f"Use timedelta, not {type(value).__name__}.")
 
@@ -366,7 +368,7 @@ class Event(Component):
         self.DTEND = end
 
     def set_duration(
-        self, duration: datetime.timedelta | None, locked: Literal["start", "end"] = "start"
+        self, duration: timedelta | None, locked: Literal["start", "end"] = "start"
     ):
         """Set the duration of the event relative to either start or end.
 

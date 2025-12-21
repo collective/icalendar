@@ -128,7 +128,7 @@ class Journal(Component):
     end = start
 
     @property
-    def duration(self) -> datetime.timedelta:
+    def duration(self) -> timedelta:
         """The journal has no duration: timedelta(0)."""
         return timedelta(0)
 
