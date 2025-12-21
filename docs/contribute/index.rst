@@ -108,7 +108,6 @@ Before submitting your pull request, ensure you have met the following requireme
 #.  Add a test which proves your fix and passes.
 #.  Run all tests to ensure your changes don't break any existing functionality.
 #.  :doc:`Add or edit documentation <documentation>`, both as docstrings to be rendered in the :doc:`API reference documentation <../reference/api/icalendar>` and narrative documentation, as necessary.
-#.  Add yourself to :file:`docs/credits.rst`, if you haven't already done so.
 
 The maintainers may close pull requests without providing feedback that they deem to be spam, AI slop, abuse, or that do not comply with pull request requirements.
 The maintainers may also take further action, including suspend, ban, or report GitHub users, as described in icalendar's `Code of Conduct <https://github.com/collective/icalendar/blob/main/CODE_OF_CONDUCT.md>`_.
