@@ -306,10 +306,11 @@ class Event(Component):
         start locked.
 
         Setting the duration will:
-        1. Keep the start time locked (unchanged)
-        2. Adjust the end time to start + duration
-        3. Remove any existing DTEND property
-        4. Set the DURATION property
+
+        1.  Keep the start time locked (unchanged)
+        2.  Adjust the end time to start + duration
+        3.  Remove any existing DTEND property
+        4.  Set the DURATION property
         """
         return get_duration_property(self)
 
