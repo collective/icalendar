@@ -37,7 +37,7 @@ Breaking changes
 New features
 ~~~~~~~~~~~~
 
-- ...
+- Lazy parsing for Event components improves performance by deferring property value parsing until first access. Properties with parsing errors now fall back to vText, allowing access to other valid properties. Fixes `#158 <https://github.com/collective/icalendar/issues/158>`_.
 
 Bug fixes
 ~~~~~~~~~

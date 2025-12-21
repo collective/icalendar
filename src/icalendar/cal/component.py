@@ -19,6 +19,7 @@ from icalendar.attr import (
     uid_property,
 )
 from icalendar.cal.component_factory import ComponentFactory
+from icalendar.cal.lazy import LazyProperty
 from icalendar.caselessdict import CaselessDict
 from icalendar.error import InvalidCalendar, JCalParsingError
 from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_split
@@ -127,6 +128,36 @@ class Component(CaselessDict):
     def __bool__(self):
         """Returns True, CaselessDict would return False if it had no items."""
         return True
+
+    def __getitem__(self, key):
+        """Get property value, unwrapping lazy properties transparently."""
+        value = super().__getitem__(key)
+
+        # Handle list of properties
+        if isinstance(value, list):
+            if any(isinstance(item, LazyProperty) for item in value):
+                parsed_values = [
+                    item.get_parsed_value() if isinstance(item, LazyProperty) else item
+                    for item in value
+                ]
+                super().__setitem__(key, parsed_values)
+                return parsed_values
+            return value
+
+        # Handle single property
+        if isinstance(value, LazyProperty):
+            parsed = value.get_parsed_value()
+            super().__setitem__(key, parsed)
+            return parsed
+
+        return value
+
+    def get(self, key, default=None):
+        """Get property value with default, unwrapping lazy properties."""
+        try:
+            return self[key]
+        except KeyError:
+            return default
 
     def is_empty(self):
         """Returns True if Component has no items or subcomponents, else False."""
@@ -434,35 +465,54 @@ class Component(CaselessDict):
                     "RDATE",
                     "EXDATE",
                 )
-                try:
-                    if name == "FREEBUSY":
-                        vals = vals.split(",")
-                        if "TZID" in params:
-                            parsed_components = [
-                                factory(factory.from_ical(val, params["TZID"]))
-                                for val in vals
-                            ]
-                        else:
-                            parsed_components = [
-                                factory(factory.from_ical(val)) for val in vals
-                            ]
-                    elif name in datetime_names and "TZID" in params:
-                        parsed_components = [
-                            factory(factory.from_ical(vals, params["TZID"]))
-                        ]
-                    # Workaround broken ICS files with empty RDATE
-                    elif name == "RDATE" and vals == "":
-                        parsed_components = []
-                    else:
-                        parsed_components = [factory(factory.from_ical(vals))]
-                except ValueError as e:
-                    if not component.ignore_exceptions:
-                        raise
-                    component.errors.append((uname, str(e)))
+
+                # Determine TZID for datetime properties
+                tzid = params.get("TZID") if params and name in datetime_names else None
+
+                # Handle FREEBUSY comma-separated values
+                if name == "FREEBUSY":
+                    vals_list = vals.split(",")
+                # Workaround broken ICS files with empty RDATE
+                # (not EXDATE - let it parse and fail)
+                elif name == "RDATE" and vals == "":
+                    vals_list = []
                 else:
-                    for parsed_component in parsed_components:
-                        parsed_component.params = params
-                        component.add(name, parsed_component, encode=0)
+                    vals_list = [vals]
+
+                # Use lazy parsing only for components with ignore_exceptions
+                # This coupling exists because:
+                # - ignore_exceptions=True (Event): errors recorded on access
+                # - ignore_exceptions=False (VTIMEZONE, etc.): errors raised immediately
+                # Lazy parsing defers errors to access time, incompatible with strict mode
+                if component.ignore_exceptions:
+                    # Create lazy property wrappers
+                    for val in vals_list:
+                        lazy_prop = LazyProperty(
+                            raw_value=val,
+                            params=params,
+                            property_name=name,
+                            factory=cls.types_factory,
+                            value_param=value_param,
+                            tzid=tzid,
+                            component=component,
+                        )
+                        component.add(name, lazy_prop, encode=0)
+                else:
+                    # Parse eagerly for strict components (maintain current behavior)
+                    for val in vals_list:
+                        try:
+                            if tzid:
+                                parsed_val = factory.from_ical(val, tzid)
+                            else:
+                                parsed_val = factory.from_ical(val)
+                        except ValueError:
+                            if not component.ignore_exceptions:
+                                raise
+                            component.errors.append((uname, str(val)))
+                        else:
+                            vals_inst = factory(parsed_val)
+                            vals_inst.params = params
+                            component.add(name, vals_inst, encode=0)
 
         if multiple:
             return comps
@@ -523,6 +573,15 @@ class Component(CaselessDict):
     def __eq__(self, other):
         if len(self.subcomponents) != len(other.subcomponents):
             return False
+
+        # Unwrap lazy properties before comparison
+        # LazyProperty instances won't compare equal to parsed values,
+        # so we must access all properties to trigger parsing first.
+        # Performance tradeoff: correctness over speed for large calendars.
+        for key in self.keys():
+            _ = self[key]
+        for key in other:
+            _ = other[key]
 
         properties_equal = super().__eq__(other)
         if not properties_equal:
