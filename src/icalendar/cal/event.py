@@ -317,7 +317,6 @@ class Event(Component):
 
     @duration.setter
     def duration(self, value: timedelta):
-        """Set the duration of the event with the start locked."""
         if not isinstance(value, timedelta):
             raise TypeError(f"Use timedelta, not {type(value).__name__}.")
 
