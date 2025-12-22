@@ -1,0 +1,99 @@
+{
+    "$schema": "https://fundingjson.org/schema/v1.1.0.json",
+
+    "version": "v1.0.0",
+
+    "entity": {
+        "type": "organisation",
+        "role": "maintainer",
+        "name": "icalendar Open Source Collective",
+        "email": "icalendar-coc@googlegroups.com",
+        "phone": "+447726466688",
+        "description": "We support the development of the icalendar library for Python, an RFC 5545 compatible parser/generator for iCalendar files.",
+        "webpageUrl": {
+            "url": "https://opencollective.com/python-icalendar",
+            // TODO: Should this be the github url?
+            "wellKnown": ""             // Optional. If the above URL's hostname does not match the hostname of the funding.json manifest, this establishes provenance. Starts with https:// or http://. Max len 250.
+        }
+    },
+
+    "projects": [{
+        "guid": "python-icalendar",         
+        "name": "icalendar",     
+        "description": "The icalendar package is a RFC 5545 compatible parser/generator for iCalendar files.",     
+        "webpageUrl": {
+            "url": "https://icalendar.readthedocs.io",
+            "wellKnown": ""  // TODO: Can we add this on readthedocs? Should we use github?           // Optional. If the above URL's hostname does not match the hostname of the funding.json manifest, this establishes provenance. Starts with https:// or http://. Max len 250.
+        },
+        "repositoryUrl": {
+            "url": "https://github.com/collective/icalendar/",
+            "wellKnown": ""             // Optional. If the above URL's hostname does not match the hostname of the funding.json manifest, this establishes provenance. Starts with https:// or http://. Max len 250.
+        },
+        "licenses": ["BSD-2-Clause"],               
+        "tags": ["icalendar", "rfc5545", "parser", "generator", "programming", "python"]
+    }],
+
+    "funding": {
+        "channels": [{
+            "guid": "icalendar-open-source-collective",
+            "type": "payment-provider",
+            "address": "https://opencollective.com/python-icalendar",     
+            "description": "Fund icalender development through Open Source Collective" 
+        },
+        {
+            "guid": "github-sponsors-niccokunzmann",
+            "type": "payment-provider",
+            "address": "https://github.com/sponsors/niccokunzmann",
+            "description": "Fund the maintainer of icalendar directly via GitHub Sponsors."
+        }],
+
+        "plans": [{
+            "guid": "fund-once-any-amount-usd",  
+            "status": "active",       
+            "name": "One-time donation",  
+            "description": "Choose any amount to give to icalendar.",    
+            "amount": 0,    
+            "currency": "USD", 
+            "frequency": "one-time", 
+            "channels": [
+                "icalendar-open-source-collective",
+                "github-sponsors-niccokunzmann"
+            ]
+        }, {
+            "guid": "fund-monthly-5-usd",  
+            "status": "active",       
+            "name": "Backer",  
+            "description": "Support icalendar with a monthly donation of $5 USD.",    
+            "amount": 5,    
+            "currency": "USD", 
+            "frequency": "monthly", 
+            "channels": [
+                "icalendar-open-source-collective",
+                "github-sponsors-niccokunzmann"
+            ]
+        }, {
+            "guid": "fund-monthly-100-usd",  
+            "status": "active",       
+            "name": "Sponsor",  
+            "description": "Support icalendar with a monthly donation of $100 USD.",    
+            "amount": 5,    
+            "currency": "USD", 
+            "frequency": "monthly", 
+            "channels": [
+                "icalendar-open-source-collective",
+                "github-sponsors-niccokunzmann"
+            ]
+        }],
+
+        "history": [{
+            "year": 2024,
+            "income": 202,
+            "currency": "USD"
+        }, {
+            "year": 2025,
+            "income": 12,
+            "currency": "USD"
+        }]
+    }
+}
+
