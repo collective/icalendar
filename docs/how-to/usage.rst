@@ -88,6 +88,8 @@ Here is an example.
     You can also look in the :file:`icalendar/cal/calendar.py` file, where it is at least defined for each component.
 
 
+.. _subcomponents:
+
 Subcomponents
 -------------
 
