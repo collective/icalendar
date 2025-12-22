@@ -649,7 +649,7 @@ class Component(CaselessDict):
         """This validates start and end.
 
         Raises:
-            InvalidCalendar: If the information is not valid
+            ~error.InvalidCalendar: If the information is not valid
         """
         if start is None or end is None:
             return
@@ -680,7 +680,7 @@ class Component(CaselessDict):
             stamp: The :attr:`DTSTAMP` of the component.
 
         Raises:
-            InvalidCalendar: If the content is not valid according to :rfc:`5545`.
+            ~error.InvalidCalendar: If the content is not valid according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
@@ -747,7 +747,7 @@ class Component(CaselessDict):
             jcal: jCal list or JSON string according to :rfc:`7265`.
 
         Raises:
-            JCalParsingError: If the jCal provided is invalid.
+            ~error.JCalParsingError: If the jCal provided is invalid.
             ~json.JSONDecodeError: If the provided string is not valid JSON.
 
         This reverses :func:`to_json` and :func:`to_jcal`.

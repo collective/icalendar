@@ -569,7 +569,7 @@ Description:
             :class:`Calendar`
 
         Raises:
-            InvalidCalendar: If the content is not valid according to :rfc:`5545`.
+            ~error.InvalidCalendar: If the content is not valid according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """  # noqa: E501
@@ -610,7 +610,7 @@ Description:
         This method can be called explicitly to validate a calendar before output.
 
         Raises:
-            IncompleteComponent: If the calendar lacks required properties or
+            ~error.IncompleteComponent: If the calendar lacks required properties or
                 components.
         """
         if not self.get("PRODID"):
