@@ -132,6 +132,9 @@ New features
 Bug fixes
     For bug fixes and error corrections.
 
+Documentation
+    For changes to the documentation, docstrings, spelling dictionary, or any other documentation matter.
+
 Example:
 
 .. code-block:: rst
