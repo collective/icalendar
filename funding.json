@@ -75,7 +75,7 @@
             "status": "active",       
             "name": "Sponsor",  
             "description": "Support icalendar with a monthly donation of $100 USD.",    
-            "amount": 5,    
+            "amount": 100,    
             "currency": "USD", 
             "frequency": "monthly", 
             "channels": [
