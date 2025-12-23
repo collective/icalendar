@@ -505,7 +505,7 @@ class Component(CaselessDict):
                                 parsed_val = factory.from_ical(val, tzid)
                             else:
                                 parsed_val = factory.from_ical(val)
-                        except (ValueError, TypeError):
+                        except ValueError:
                             # Strict components (ignore_exceptions=False) always propagate errors
                             raise
                         else:
