@@ -82,9 +82,8 @@ class LazyProperty:
         tzid = object.__getattribute__(self, "_tzid")
         component = object.__getattribute__(self, "_component")
 
-        factory_class = factory.for_property(property_name, value_param)
-
         try:
+            factory_class = factory.for_property(property_name, value_param)
             if tzid:
                 parsed = factory_class.from_ical(raw_value, tzid)
             else:
@@ -94,8 +93,8 @@ class LazyProperty:
             parsed_value.params = params
             object.__setattr__(self, "_parsed_value", parsed_value)
 
-        except (ValueError, TypeError) as e:
-            # Fall back to vText for unparseable values
+        except (ValueError, TypeError, KeyError) as e:
+            # Fall back to vText for unparseable values or unknown property types
             parse_error = str(e)
             vtext_factory = factory["text"]
             parsed_value = vtext_factory(raw_value)
