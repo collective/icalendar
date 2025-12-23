@@ -4,15 +4,15 @@
     "version": "v1.0.0",
 
     "entity": {
-        "type": "organisation",
+        "type": "group",
         "role": "maintainer",
-        "name": "icalendar Open Source Collective",
+        "name": "icalendar developer community",
         "email": "icalendar-coc@googlegroups.com",
         "phone": "+447726466688",
         "description": "We support the development of the icalendar library for Python, an RFC 5545 compatible parser/generator for iCalendar files.",
         "webpageUrl": {
-            "url": "https://github.com/collective/icalendar/",
-            "wellKnown": ""
+            "url": "https://icalendar.readthedocs.io/",
+            "wellKnown": "https://icalendar.readthedocs.io/.well-known/funding-manifest-urls"
         }
     },
 
@@ -21,12 +21,12 @@
         "name": "icalendar",     
         "description": "The icalendar package is a RFC 5545 compatible parser/generator for iCalendar files.",     
         "webpageUrl": {
-            "url": "https://github.com/collective/icalendar/",
-            "wellKnown": ""
+            "url": "https://icalendar.readthedocs.io/",
+            "wellKnown": "https://icalendar.readthedocs.io/.well-known/funding-manifest-urls"
         },
         "repositoryUrl": {
             "url": "https://github.com/collective/icalendar/",
-            "wellKnown": ""
+            "wellKnown": "https://github.com/collective/icalendar/raw/main/.github/.well-known/funding-manifest-urls"
         },
         "licenses": ["spdx:BSD-2-Clause"],               
         "tags": ["icalendar", "rfc5545", "parser", "generator", "programming", "python"]
