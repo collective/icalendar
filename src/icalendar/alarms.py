@@ -21,7 +21,7 @@ from icalendar.cal.todo import Todo
 from icalendar.error import (
     ComponentEndMissing,
     ComponentStartMissing,
-    # IncompleteAlarmInformation,
+    IncompleteAlarmInformation,
     LocalTimezoneMissing,
 )
 from icalendar.timezone import tzp
@@ -375,7 +375,7 @@ class Alarms:
 __all__ = [
     "AlarmTime",
     "Alarms",
-    # "ComponentEndMissing",
-    # "ComponentStartMissing",
-    # "IncompleteAlarmInformation",
+    "ComponentEndMissing",
+    "ComponentStartMissing",
+    "IncompleteAlarmInformation",
 ]
