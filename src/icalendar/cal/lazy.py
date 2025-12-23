@@ -97,7 +97,7 @@ class LazyProperty:
             # Fall back to vText for any parsing errors
             # This is error-tolerant mode (ignore_exceptions=True), so we catch
             # all exceptions to ensure broken properties don't break the calendar
-            parse_error = f"{type(e).__name__}: {e}"
+            parse_error = str(e)
             vtext_factory = factory["text"]
             parsed_value = vtext_factory(raw_value)
             parsed_value.params = params
