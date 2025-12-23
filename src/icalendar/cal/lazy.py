@@ -98,9 +98,16 @@ class LazyProperty:
             # This is error-tolerant mode (ignore_exceptions=True), so we catch
             # all exceptions to ensure broken properties don't break the calendar
             parse_error = str(e)
-            vtext_factory = factory["text"]
-            parsed_value = vtext_factory(raw_value)
-            parsed_value.params = params
+            try:
+                vtext_factory = factory["text"]
+                parsed_value = vtext_factory(raw_value)
+                parsed_value.params = params
+            except Exception:
+                # If even vText creation fails, create a minimal vText manually
+                from icalendar.prop import vText
+                parsed_value = vText(raw_value)
+                parsed_value.params = params
+
             object.__setattr__(self, "_parsed_value", parsed_value)
             object.__setattr__(self, "_parse_error", parse_error)
 
