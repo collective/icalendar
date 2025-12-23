@@ -137,7 +137,7 @@ class vBinary:
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         JCalParsingError.validate_value_type(jcal_property[3], str, cls, 3)
@@ -228,7 +228,7 @@ class vBoolean(int):
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         JCalParsingError.validate_value_type(jcal_property[3], bool, cls, 3)
@@ -266,8 +266,7 @@ class vText(str):
 
     @classmethod
     def from_ical(cls, ical: ICAL_TYPE):
-        ical_unesc = unescape_char(ical)
-        return cls(ical_unesc)
+        return cls(ical)
 
     @property
     def ical_value(self) -> str:
@@ -295,7 +294,7 @@ class vText(str):
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         name = jcal_property[0]
@@ -541,7 +540,7 @@ class vCalAddress(str):
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         JCalParsingError.validate_value_type(jcal_property[3], str, cls, 3)
@@ -634,7 +633,7 @@ class vFloat(float):
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the jCal provided is invalid.
+            ~error.JCalParsingError: If the jCal provided is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         if jcal_property[0].upper() == "GEO":
@@ -732,7 +731,7 @@ class vInt(int):
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         JCalParsingError.validate_value_type(jcal_property[3], int, cls, 3)
@@ -746,7 +745,7 @@ class vInt(int):
         """Parse a jCal value for vInt.
 
         Raises:
-            JCalParsingError: If the value is not an int.
+            ~error.JCalParsingError: If the value is not an int.
         """
         JCalParsingError.validate_value_type(value, int, cls)
         return cls(value)
@@ -828,7 +827,7 @@ class vDDDLists:
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the jCal provided is invalid.
+            ~error.JCalParsingError: If the jCal provided is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         values = jcal_property[3:]
@@ -868,7 +867,7 @@ class vCategory:
     @staticmethod
     def from_ical(ical):
         ical = to_unicode(ical)
-        return unescape_char(ical).split(",")
+        return ical.split(",")
 
     def __eq__(self, other):
         """self == other"""
@@ -901,7 +900,7 @@ class vCategory:
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         for i, category in enumerate(jcal_property[3:], start=3):
@@ -1069,7 +1068,7 @@ class vDDDTypes(TimeBase):
         """Parse a jCal value.
 
         Raises:
-            JCalParsingError: If the value can't be parsed as either a date, time,
+            ~error.JCalParsingError: If the value can't be parsed as either a date, time,
                 date-time, duration, or period.
         """
         if isinstance(jcal, list):
@@ -1094,7 +1093,7 @@ class vDDDTypes(TimeBase):
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         with JCalParsingError.reraise_with_path_added(3):
@@ -1211,7 +1210,7 @@ class vDate(TimeBase):
         """Parse a jCal string to a :py:class:`datetime.datetime`.
 
         Raises:
-            JCalParsingError: If it can't parse a date.
+            ~error.JCalParsingError: If it can't parse a date.
         """
         JCalParsingError.validate_value_type(jcal, str, cls)
         try:
@@ -1227,7 +1226,7 @@ class vDate(TimeBase):
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         with JCalParsingError.reraise_with_path_added(3):
@@ -1384,7 +1383,7 @@ class vDatetime(TimeBase):
         """Parse a jCal string to a :py:class:`datetime.datetime`.
 
         Raises:
-            JCalParsingError: If it can't parse a date-time value.
+            ~error.JCalParsingError: If it can't parse a date-time value.
         """
         JCalParsingError.validate_value_type(jcal, str, cls)
         utc = jcal.endswith("Z")
@@ -1406,7 +1405,7 @@ class vDatetime(TimeBase):
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         params = Parameters.from_jcal_property(jcal_property)
@@ -1574,7 +1573,7 @@ class vDuration(TimeBase):
         """Parse a jCal string to a :py:class:`datetime.timedelta`.
 
         Raises:
-            JCalParsingError: If it can't parse a duration."""
+            ~error.JCalParsingError: If it can't parse a duration."""
         JCalParsingError.validate_value_type(jcal, str, cls)
         try:
             return cls.from_ical(jcal)
@@ -1589,7 +1588,7 @@ class vDuration(TimeBase):
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         with JCalParsingError.reraise_with_path_added(3):
@@ -1764,7 +1763,7 @@ class vPeriod(TimeBase):
         """Parse a jCal value.
 
         Raises:
-            JCalParsingError: If the period is not a list with exactly two items,
+            ~error.JCalParsingError: If the period is not a list with exactly two items,
                 or it can't parse a date-time or duration.
         """
         if isinstance(jcal, str) and "/" in jcal:
@@ -1799,7 +1798,7 @@ class vPeriod(TimeBase):
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         with JCalParsingError.reraise_with_path_added(3):
@@ -1899,7 +1898,7 @@ class vWeekday(str):
         """Parse a jCal value for vWeekday.
 
         Raises:
-            JCalParsingError: If the value is not a valid weekday.
+            ~error.JCalParsingError: If the value is not a valid weekday.
         """
         JCalParsingError.validate_value_type(value, str, cls)
         try:
@@ -1957,7 +1956,7 @@ class vFrequency(str):
         """Parse a jCal value for vFrequency.
 
         Raises:
-            JCalParsingError: If the value is not a valid frequency.
+            ~error.JCalParsingError: If the value is not a valid frequency.
         """
         JCalParsingError.validate_value_type(value, str, cls)
         try:
@@ -2048,7 +2047,7 @@ class vMonth(int):
         """Parse a jCal value for vMonth.
 
         Raises:
-            JCalParsingError: If the value is not a valid month.
+            ~error.JCalParsingError: If the value is not a valid month.
         """
         JCalParsingError.validate_value_type(value, (str, int), cls)
         try:
@@ -2093,7 +2092,7 @@ class vSkip(vText, Enum):
         """Parse a jCal value for vSkip.
 
         Raises:
-            JCalParsingError: If the value is not a valid skip value.
+            ~error.JCalParsingError: If the value is not a valid skip value.
         """
         JCalParsingError.validate_value_type(value, str, cls)
         try:
@@ -2333,7 +2332,7 @@ class vRecur(CaselessDict):
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         params = Parameters.from_jcal_property(jcal_property)
@@ -2548,7 +2547,7 @@ class vTime(TimeBase):
         """Parse a jCal string to a :py:class:`datetime.time`.
 
         Raises:
-            JCalParsingError: If it can't parse a time.
+            ~error.JCalParsingError: If it can't parse a time.
         """
         JCalParsingError.validate_value_type(jcal, str, cls)
         match = TIME_JCAL_REGEX.match(jcal)
@@ -2568,7 +2567,7 @@ class vTime(TimeBase):
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         with JCalParsingError.reraise_with_path_added(3):
@@ -2668,7 +2667,7 @@ class vUri(str):
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         return cls(
@@ -2905,7 +2904,7 @@ class vGeo:
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         return cls(
@@ -3071,7 +3070,7 @@ class vUTCOffset:
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         match = UTC_OFFSET_JCAL_REGEX.match(jcal_property[3])
