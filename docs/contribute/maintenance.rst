@@ -181,6 +181,11 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
        - ...
 
+       Documentation
+       ~~~~~~~~~~~~~
+
+       - ...
+
 #.  Push the new ``CHANGELOG`` so it is used for future changes.
 
     .. code-block:: shell

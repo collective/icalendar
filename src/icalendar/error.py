@@ -97,7 +97,7 @@ class JCalParsingError(ValueError):
         """Automatically re-raise the exception with path components added.
 
         Raises:
-            JCalParsingError: If there was an exception in the context.
+            ~error.JCalParsingError: If there was an exception in the context.
         """
         try:
             yield
@@ -128,7 +128,7 @@ class JCalParsingError(ValueError):
         """Validate a jCal property.
 
         Raises:
-            JCalParsingError: if the property is not valid.
+            ~error.JCalParsingError: if the property is not valid.
         """
         path = cls._get_path(path)
         if not isinstance(jcal_property, list) or len(jcal_property) < 4:
