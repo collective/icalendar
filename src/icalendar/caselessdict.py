@@ -4,7 +4,12 @@ from icalendar.parser_tools import to_unicode
 
 from collections import OrderedDict
 
-from typing import Any, Optional, Iterable, Mapping, Self, TypeVar
+from typing import Any, Optional, Iterable, Mapping, TypeVar
+
+try:
+    from typing import Self
+except ImportError:
+    from typing_extensions import Self
 
 KT = TypeVar("KT")
 VT = TypeVar("VT")
