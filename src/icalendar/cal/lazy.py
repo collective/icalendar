@@ -130,10 +130,16 @@ class LazyProperty:
 
     def __eq__(self, other):
         """Delegate equality to parsed value."""
+        # Handle comparison with another LazyProperty
+        if isinstance(other, LazyProperty):
+            return self.get_parsed_value() == other.get_parsed_value()
         return self.get_parsed_value() == other
 
     def __ne__(self, other):
         """Delegate inequality to parsed value."""
+        # Handle comparison with another LazyProperty
+        if isinstance(other, LazyProperty):
+            return self.get_parsed_value() != other.get_parsed_value()
         return self.get_parsed_value() != other
 
     def __hash__(self):
