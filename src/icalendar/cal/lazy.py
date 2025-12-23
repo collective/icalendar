@@ -93,9 +93,11 @@ class LazyProperty:
             parsed_value.params = params
             object.__setattr__(self, "_parsed_value", parsed_value)
 
-        except (ValueError, TypeError, KeyError) as e:
-            # Fall back to vText for unparseable values or unknown property types
-            parse_error = str(e)
+        except Exception as e:
+            # Fall back to vText for any parsing errors
+            # This is error-tolerant mode (ignore_exceptions=True), so we catch
+            # all exceptions to ensure broken properties don't break the calendar
+            parse_error = f"{type(e).__name__}: {e}"
             vtext_factory = factory["text"]
             parsed_value = vtext_factory(raw_value)
             parsed_value.params = params
