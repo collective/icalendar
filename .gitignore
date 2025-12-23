@@ -28,3 +28,6 @@ uv.lock
 
 coverage.xml
 !.coveragerc
+
+# Fuzzer artifacts
+/ical_fuzzer/
