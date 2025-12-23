@@ -41,7 +41,6 @@ class Component(CaselessDict):
     directly, but rather one of the subclasses.
 
     Attributes:
-        name: The name of the component. Example: ``VCALENDAR``.
         required: These properties are required.
         singletons: These properties must only appear once.
         multiple: These properties may occur more than once.
@@ -53,7 +52,11 @@ class Component(CaselessDict):
         types_factory: Factory for property types
     """
 
-    name = None  # should be defined in each component
+    name: str | None  # should be defined in each component
+    """The name of the component.
+
+    Example: ``VCALENDAR``.
+    """
     required = ()  # These properties are required
     singletons = ()  # These properties must only appear once
     multiple = ()  # may occur more than once
