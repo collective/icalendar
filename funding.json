@@ -40,7 +40,7 @@
             "guid": "github-sponsors-niccokunzmann",
             "type": "payment-provider",
             "address": "https://github.com/sponsors/niccokunzmann",
-            "description": "GitHub supports payment via credit card or invoice-based billing."
+            "description": "Through GitHub Sponsors, icalendar accepts payment via credit card or invoice-based billing."
         }],
         "plans": [{
             "guid": "fund-once-any-amount-usd",  
