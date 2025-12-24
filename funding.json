@@ -34,12 +34,6 @@
             "type": "payment-provider",
             "address": "https://opencollective.com/python-icalendar",
             "description": "Through Open Collective, icalendar accepts payment via credit card, Google Pay, or US bank ACH transfer."
-        },
-        {
-            "guid": "github-sponsors-niccokunzmann",
-            "type": "payment-provider",
-            "address": "https://github.com/sponsors/niccokunzmann",
-            "description": "Through GitHub Sponsors, icalendar accepts payment via credit card or invoice-based billing."
         }],
         "plans": [{
             "guid": "fund-once-any-amount-usd",
@@ -50,8 +44,7 @@
             "currency": "USD",
             "frequency": "one-time",
             "channels": [
-                "icalendar-open-source-collective",
-                "github-sponsors-niccokunzmann"
+                "icalendar-open-source-collective"
             ]
         }, {
             "guid": "fund-monthly-any-amount-usd",
@@ -62,8 +55,7 @@
             "currency": "USD",
             "frequency": "monthly",
             "channels": [
-                "icalendar-open-source-collective",
-                "github-sponsors-niccokunzmann"
+                "icalendar-open-source-collective"
             ]
         }, {
             "guid": "fund-monthly-5-usd",  
@@ -74,8 +66,7 @@
             "currency": "USD", 
             "frequency": "monthly", 
             "channels": [
-                "icalendar-open-source-collective",
-                "github-sponsors-niccokunzmann"
+                "icalendar-open-source-collective"
             ]
         }, {
             "guid": "fund-monthly-100-usd",  
@@ -86,8 +77,7 @@
             "currency": "USD", 
             "frequency": "monthly", 
             "channels": [
-                "icalendar-open-source-collective",
-                "github-sponsors-niccokunzmann"
+                "icalendar-open-source-collective"
             ]
         }],
 
