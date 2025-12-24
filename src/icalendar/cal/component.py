@@ -57,21 +57,21 @@ class Component(CaselessDict):
 
     Example: ``VCALENDAR``.
     """
-    required = ()  # These properties are required
-    singletons = ()  # These properties must only appear once
-    multiple = ()  # may occur more than once
-    exclusive = ()  # These properties are mutually exclusive
-    inclusive: (
+    required: ClassVar[tuple[()]] = ()  # These properties are required
+    singletons: ClassVar[tuple[()]] = ()  # These properties must only appear once
+    multiple: ClassVar[tuple[()]] = ()  # may occur more than once
+    exclusive: ClassVar[tuple[()]] = ()  # These properties are mutually exclusive
+    inclusive: ClassVar[(
         tuple[str] | tuple[tuple[str, str]]
-    ) = ()  # if any occurs the other(s) MUST occur
+    )] = ()  # if any occurs the other(s) MUST occur
     # ('duration', 'repeat')
-    ignore_exceptions = False  # if True, and we cannot parse this
+    ignore_exceptions: ClassVar[bool] = False  # if True, and we cannot parse this
     # component, we will silently ignore
     # it, rather than let the exception
     # propagate upwards
     # not_compliant = ['']  # List of non-compliant properties.
 
-    types_factory = TypesFactory.instance()
+    types_factory: ClassVar[TypesFactory] = TypesFactory.instance()
     _components_factory: ClassVar[ComponentFactory | None] = None
 
     @classmethod
