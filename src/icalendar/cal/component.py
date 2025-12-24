@@ -52,7 +52,7 @@ class Component(CaselessDict):
         types_factory: Factory for property types
     """
 
-    name = None  # should be defined in each component
+    name: ClassVar[str|None] = None  # should be defined in each component
     """The name of the component.
 
     Example: ``VCALENDAR``.
