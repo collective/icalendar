@@ -6,13 +6,12 @@
         "role": "maintainer",
         "name": "icalendar developer community",
         "email": "icalendar-coc@googlegroups.com",
-        "description": "We support the development of the icalendar library for Python, an RFC 5545 compatible parser/generator for iCalendar files.",
+        "description": "We support the development of the icalendar library for Python, an RFC 5545 compatible parser and generator of iCalendar files.",
         "webpageUrl": {
             "url": "https://github.com/collective/icalendar/",
             "wellKnown": "https://github.com/collective/icalendar/raw/main/.github/.well-known/funding-manifest-urls"
         }
     },
-
     "projects": [{
         "guid": "python-icalendar",         
         "name": "icalendar",     
@@ -40,9 +39,8 @@
             "guid": "github-sponsors-niccokunzmann",
             "type": "payment-provider",
             "address": "https://github.com/sponsors/niccokunzmann",
-            "description": "GitHub supports payment via credit card or invoice-based billing."
+            "description": "Through GitHub Sponsors, icalendar accepts payment via credit card or invoice-based billing."
         }],
-
         "plans": [{
             "guid": "fund-once-any-amount-usd",  
             "status": "active",       
