@@ -42,7 +42,6 @@
             "address": "https://github.com/sponsors/niccokunzmann",
             "description": "GitHub supports payment via credit card or invoice-based billing."
         }],
-
         "plans": [{
             "guid": "fund-once-any-amount-usd",  
             "status": "active",       
