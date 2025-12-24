@@ -16,7 +16,7 @@
     "projects": [{
         "guid": "python-icalendar",         
         "name": "icalendar",     
-        "description": "The icalendar package is a RFC 5545 compatible parser/generator for iCalendar files.",
+        "description": "The icalendar package is an RFC 5545 compatible parser and generator of iCalendar files.",
         "webpageUrl": {
             "url": "https://github.com/collective/icalendar/",
             "wellKnown": "https://github.com/collective/icalendar/raw/main/.github/.well-known/funding-manifest-urls"
@@ -25,7 +25,7 @@
             "url": "https://github.com/collective/icalendar/",
             "wellKnown": "https://github.com/collective/icalendar/raw/main/.github/.well-known/funding-manifest-urls"
         },
-        "licenses": ["spdx:BSD-2-Clause"],               
+        "licenses": ["spdx:BSD-2-Clause"],
         "tags": ["icalendar", "rfc5545", "parser", "generator", "programming", "python"]
     }],
 
@@ -34,7 +34,7 @@
             "guid": "icalendar-open-source-collective",
             "type": "payment-provider",
             "address": "https://opencollective.com/python-icalendar",
-            "description": "OpenCollective supports payment via credit card, Google Pay, or US bank ACH transfer."
+            "description": "Through Open Collective, icalendar accepts payment via credit card, Google Pay, or US bank ACH transfer."
         },
         {
             "guid": "github-sponsors-niccokunzmann",
