@@ -42,13 +42,25 @@
             "description": "Through GitHub Sponsors, icalendar accepts payment via credit card or invoice-based billing."
         }],
         "plans": [{
-            "guid": "fund-once-any-amount-usd",  
-            "status": "active",       
-            "name": "One-time donation",  
-            "description": "Choose any amount to give to icalendar.",    
-            "amount": 0,    
-            "currency": "USD", 
-            "frequency": "one-time", 
+            "guid": "fund-once-any-amount-usd",
+            "status": "active",
+            "name": "One-time donation",
+            "description": "Choose any amount to give to icalendar.",
+            "amount": 0,
+            "currency": "USD",
+            "frequency": "one-time",
+            "channels": [
+                "icalendar-open-source-collective",
+                "github-sponsors-niccokunzmann"
+            ]
+        }, {
+            "guid": "fund-monthly-any-amount-usd",
+            "status": "active",
+            "name": "Monthly donation",
+            "description": "Choose any amount to give to icalendar.",
+            "amount": 0,
+            "currency": "USD",
+            "frequency": "monthly",
             "channels": [
                 "icalendar-open-source-collective",
                 "github-sponsors-niccokunzmann"
