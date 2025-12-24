@@ -1,23 +1,23 @@
 # Makefile for Sphinx documentation
-.DEFAULT_GOAL   	   = help
-SHELL           	   = bash
+.DEFAULT_GOAL   = help
+SHELL           = bash
 
 # You can set these variables from the command line.
-SPHINXOPTS      	   ?=
-PAPER           	   ?=
+SPHINXOPTS      ?=
+PAPER           ?=
 
 # Internal variables.
-SPHINXBUILD     	   = "$(realpath .venv/bin/sphinx-build)"
-SPHINXAUTOBUILD 	   = "$(realpath .venv/bin/sphinx-autobuild)"
-SPHINXAPIDOC    	   = "$(realpath .venv/bin/sphinx-apidoc)"
-DOCS_DIR        	   = ./docs/
-BUILDDIR        	   = ../_build
-PAPEROPT_a4     	   = -D latex_paper_size=a4
-PAPEROPT_letter 	   = -D latex_paper_size=letter
-ALLSPHINXOPTS   	   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
-VALEFILES       	   := $(shell find $(DOCS_DIR) -type f -name "*.rst" -print)  # Also add `src` for docstrings.
-VALEOPTS        	   ?=
-PYTHONVERSION   	   = >=3.11,<3.14
+SPHINXBUILD     = "$(realpath .venv/bin/sphinx-build)"
+SPHINXAUTOBUILD = "$(realpath .venv/bin/sphinx-autobuild)"
+SPHINXAPIDOC    = "$(realpath .venv/bin/sphinx-apidoc)"
+DOCS_DIR        = ./docs/
+BUILDDIR        = ../_build
+PAPEROPT_a4     = -D latex_paper_size=a4
+PAPEROPT_letter = -D latex_paper_size=letter
+ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
+VALEFILES       := $(shell find $(DOCS_DIR) -type f -name "*.rst" -print)  # Also add `src` for docstrings.
+VALEOPTS        ?=
+PYTHONVERSION   = >=3.11,<3.14
 
 # Add the following 'help' target to your Makefile
 # And add help text after each target name starting with '\#\#'
