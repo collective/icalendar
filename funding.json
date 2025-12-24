@@ -12,7 +12,6 @@
             "wellKnown": "https://github.com/collective/icalendar/raw/main/.github/.well-known/funding-manifest-urls"
         }
     },
-
     "projects": [{
         "guid": "python-icalendar",         
         "name": "icalendar",     
