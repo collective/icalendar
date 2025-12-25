@@ -9,7 +9,7 @@
         "description": "We support the development of the icalendar library for Python, an RFC 5545 compatible parser and generator of iCalendar files.",
         "webpageUrl": {
             "url": "https://github.com/collective/icalendar/",
-            "wellKnown": "https://github.com/collective/icalendar/raw/main/.github/.well-known/funding-manifest-urls"
+            "wellKnown": "https://github.com/collective/icalendar/raw/main/.well-known/funding-manifest-urls"
         }
     },
     "projects": [
@@ -19,11 +19,11 @@
             "description": "The icalendar package is an RFC 5545 compatible parser and generator of iCalendar files.",
             "webpageUrl": {
                 "url": "https://github.com/collective/icalendar/",
-                "wellKnown": "https://github.com/collective/icalendar/raw/main/.github/.well-known/funding-manifest-urls"
+                "wellKnown": "https://github.com/collective/icalendar/raw/main/.well-known/funding-manifest-urls"
             },
             "repositoryUrl": {
                 "url": "https://github.com/collective/icalendar/",
-                "wellKnown": "https://github.com/collective/icalendar/raw/main/.github/.well-known/funding-manifest-urls"
+                "wellKnown": "https://github.com/collective/icalendar/raw/main/.well-known/funding-manifest-urls"
             },
             "licenses": [
                 "spdx:BSD-2-Clause"
