@@ -3,3 +3,4 @@ graft docs
 recursive-include src/icalendar *
 recursive-exclude src/icalendar *.pyc *~
 recursive-exclude src/icalendar/fuzzing *.py *.sh *.ics
+include funding.json
