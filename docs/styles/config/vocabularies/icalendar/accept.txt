@@ -1,7 +1,7 @@
 (?i)da
 (?i)datetime
 dicts
-docstrings?
+[Dd]ocstrings?
 fuzzer
 Hacktoberfest
 Hanoka

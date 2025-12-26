@@ -8,7 +8,7 @@ For quick or small edits through the GitHub web interface, read the :doc:`small-
 
 For larger edits, the :ref:`build-check` chapter provides a comprehensive command reference to build and check the quality of documentation.
 
-Refer to the the :doc:`style-guide` when you need examples of language, terminology, code, or markup.
+Refer to the :doc:`style-guide` when you need examples of language, terminology, code, or markup.
 
 
 
