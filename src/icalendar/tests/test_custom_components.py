@@ -12,9 +12,7 @@ According to RFC 5545:
 icalendar preserves all custom components through dynamic component creation.
 """
 
-import pytest
-
-from icalendar import Calendar, Component
+from icalendar import Calendar, Component, Event
 from icalendar.cal.component_factory import ComponentFactory
 
 
@@ -199,8 +197,6 @@ class TestCustomComponentAPI:
 
     def test_add_subcomponent_to_custom_component(self):
         """Can add subcomponents to custom component."""
-        from icalendar import Event
-
         container = Component(name="X-CONTAINER")
         event = Event()
         event.add("uid", "123")

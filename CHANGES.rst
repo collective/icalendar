@@ -27,7 +27,12 @@ We still recommend checking out the new features and giving feedback in the repo
 Minor changes
 ~~~~~~~~~~~~~
 
-- ...
+- Clarified custom component (X-* and IANA-registered) parsing behavior through enhanced
+  documentation and comprehensive how-to guide. Custom components are automatically handled
+  by the library with no special configuration required. Addresses issue #432.
+- Reorganized custom component tests into dedicated ``test_custom_components.py`` file
+  with expanded test coverage for ``Component.from_ical()``, ``Calendar.from_ical()``,
+  and ``ComponentFactory`` usage. Addresses issue #433.
 
 Breaking changes
 ~~~~~~~~~~~~~~~~

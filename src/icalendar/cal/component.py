@@ -363,7 +363,7 @@ class Component(CaselessDict):
 
     @classmethod
     def from_ical(cls, st, multiple: bool = False) -> Self | list[Self]:  # noqa: FBT001
-        """Parse iCalendar data into component instances.
+        r"""Parse iCalendar data into component instances.
 
         Handles standard and custom components (X-*, IANA-registered).
 
