@@ -50,8 +50,8 @@ Documentation
 - Simplify contributors and add supporters in credits. See `pull request 1035 <https://github.com/collective/icalendar/pull/1041>`_.
 - Add a section in the change log for Documentation. See `Issue 1043 <https://github.com/collective/icalendar/issues/1043>`_.
 - Fixed multiple ``more than one target found for cross-reference`` warnings, and stopped using ``sphinx.ext.autosectionlabel``, in documentation. See `Issue 952 <https://github.com/collective/icalendar/issues/952>`_.
+- Add ``funding.json`` manifest for funding information. See `Issue 1047 <https://github.com/collective/icalendar/issues/1047>`_.
 - Improve documentation contribute guide by adding sections for small and larger edits, Vale usage, Diátaxis framework, narrative and API documentation and style guides for each type of documentation, and fixing all spelling errors. See `Issue 991 <https://github.com/collective/icalendar/issues/991>`_.
-
 
 7.0.0a3 (2025-12-19)
 --------------------
