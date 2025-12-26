@@ -363,7 +363,21 @@ class Component(CaselessDict):
 
     @classmethod
     def from_ical(cls, st, multiple: bool = False) -> Self | list[Self]:  # noqa: FBT001
-        """Populates the component recursively from a string."""
+        """Parse iCalendar data into component instances.
+
+        Handles standard and custom components (X-*, IANA-registered).
+
+        Args:
+            st: iCalendar data as bytes or string
+            multiple: If True, returns list. If False, returns single component.
+
+        Returns:
+            Component or list of components
+
+        Example:
+            >>> Component.from_ical(b"BEGIN:VEVENT\\r\\nEND:VEVENT\\r\\n")
+            >>> Component.from_ical(b"BEGIN:X-CUSTOM\\r\\nEND:X-CUSTOM\\r\\n")
+        """
         stack = []  # a stack of components
         comps = []
         for line in Contentlines.from_ical(st):  # raw parsing

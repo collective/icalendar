@@ -24,9 +24,23 @@ class ComponentFactory(CaselessDict):
         >>> event_class()
         VEVENT({})
 
+    **Custom Components:**
+
+    Automatically creates component classes for unknown names (X-components,
+    IANA-components). Custom components are never dropped (RFC 5545).
+
+    .. code-block:: pycon
+
+        >>> factory = ComponentFactory()
+        >>> custom_class = factory.get_component_class('X-VENDOR')
+        >>> custom_class()
+        X-VENDOR({})
+
     If a component class is not yet supported, it can be either created
     using :meth:`get_component_class` or added manually as a subclass of
     :class:`~icalendar.Component`.
+
+    See :doc:`/how-to/custom-components` for details.
     """
 
     def __init__(self, *args, **kwargs):
