@@ -91,7 +91,7 @@ Narrative documentation files are located in the `docs <https://github.com/colle
 Documentation builds
 --------------------
 
-With all `prerequisites <documentation-prerequisites>`_ installed, you can make various builds of the documentation, some of which perform quality checks.
+With all :ref:`prerequisites <documentation-prerequisites>` installed, you can make various builds of the documentation, some of which perform quality checks.
 All build and check commands use the file :file:`Makefile` at the root of the repository.
 
 To see descriptions of the ``make`` commands, use the following command.
