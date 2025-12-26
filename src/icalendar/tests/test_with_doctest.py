@@ -57,7 +57,7 @@ def test_docstring_of_python_file(module_name, env_for_doctest):
 REPOSITORY = HERE.parent.parent.parent
 DOCUMENTATION_ROOT = REPOSITORY / "docs"
 IGNORED_DOCUMENTATION_FILES = [
-    DOCUMENTATION_ROOT / "contribute" / "documentation.rst"  # docstring
+    DOCUMENTATION_ROOT / "contribute" / "documentation" / "build-check.rst"  # docstring example
 ]
 DOCUMENT_PATHS = [
     file
