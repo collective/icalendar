@@ -7,6 +7,7 @@ How to guides
 
     install
     usage
+    custom-components
     jcal
     cli
     fuzz-testing

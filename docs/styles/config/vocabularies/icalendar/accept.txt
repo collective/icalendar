@@ -13,7 +13,6 @@ Nicco
 Params
 Penner
 (?i)Plone
-r.C
 RFCs?
 src
 (?i)subcomponents?

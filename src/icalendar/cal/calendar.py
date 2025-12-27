@@ -85,6 +85,18 @@ class Calendar(Component):
 
     @classmethod
     def from_ical(cls, st, multiple=False):
+        """Parse iCalendar data into Calendar instances.
+
+        Wraps :meth:`Component.from_ical() <icalendar.cal.component.Component.from_ical>` with
+        timezone forward-reference resolution and VTIMEZONE caching.
+
+        Args:
+            st: iCalendar data as bytes or string
+            multiple: If ``True``, returns list. If ``False``, returns single calendar.
+
+        Returns:
+            Calendar or list of Calendars
+        """
         comps = Component.from_ical(st, multiple=True)
         all_timezones_so_far = True
         for comp in comps:
