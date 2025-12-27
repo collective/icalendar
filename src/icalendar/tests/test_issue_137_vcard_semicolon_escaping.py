@@ -97,6 +97,20 @@ class TestVAdr:
         # Comma within street field should be escaped
         assert b"\\," in ical
 
+    def test_adr_semicolons_in_field_are_escaped(self):
+        """Semicolons within ADR field values ARE escaped (different from field separators)."""
+        adr = vAdr(("", "", "123 Main St; Apt 4", "Springfield", "IL", "62701", "USA"))
+        ical = adr.to_ical()
+        # Semicolon within street field value should be escaped
+        assert b"\\;" in ical
+        # Should have 6 unescaped semicolons (field separators) + 1 escaped (within field)
+        # Total semicolons in bytes: 7, but 1 is preceded by backslash
+        assert ical.count(b";") == 7  # 6 separators + 1 escaped
+
+        # Round-trip: should preserve the semicolon in the field value
+        parsed = vAdr.from_ical(ical)
+        assert parsed[2] == "123 Main St; Apt 4"  # Street field with semicolon
+
     def test_adr_empty_fields(self):
         """Empty fields are preserved in ADR."""
         adr = vAdr(("", "", "123 Main St", "City", "", "12345", "USA"))
