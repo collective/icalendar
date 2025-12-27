@@ -82,6 +82,40 @@ class Component(CaselessDict):
             cls._components_factory = ComponentFactory()
         return cls._components_factory.get_component_class(name)
 
+    @classmethod
+    def register(cls, component_class: type[Component]) -> None:
+        """Register a custom component class.
+
+        Args:
+            component_class: Component subclass to register. Must have a ``name`` attribute.
+
+        Raises:
+            ValueError: If component_class has no ``name`` attribute.
+            ValueError: If a component with this name is already registered.
+
+        Example:
+            >>> from icalendar import Component
+            >>> class XMyComponent(Component):
+            ...     name = "X-MY-COMPONENT"
+            ...     def custom_method(self):
+            ...         return "custom"
+            >>> Component.register(XMyComponent)
+        """
+        if not hasattr(component_class, 'name') or component_class.name is None:
+            raise ValueError(f"{component_class} must have a 'name' attribute")
+
+        if cls._components_factory is None:
+            cls._components_factory = ComponentFactory()
+
+        # Check if already registered
+        existing = cls._components_factory.get(component_class.name)
+        if existing is not None and existing is not component_class:
+            raise ValueError(
+                f"Component '{component_class.name}' is already registered as {existing}"
+            )
+
+        cls._components_factory.add_component_class(component_class)
+
     @staticmethod
     def _infer_value_type(
         value: date | datetime | timedelta | time | tuple | list,

@@ -167,61 +167,49 @@ The following example shows the different usage of both methods.
     >>> len(cal.subcomponents)
     1
 
-Create custom component subclasses
+
+Register custom component classes
 ==================================
 
-While the dynamic component creation works for most cases, you can create explicit component subclasses for custom components that need special behavior.
-
-Subclass Component and override ``get_component_class()``:
+Register custom component classes with special behavior.
+The following example shows how to create and register a custom component with validation and helper methods.
 
 .. code-block:: python
 
-    from icalendar import Component, ComponentFactory
+    from icalendar import Component
 
     class XVendorComponent(Component):
-        """Custom vendor-specific component with special behavior."""
+        """Custom vendor component with validation."""
 
         name = "X-VENDOR"
 
         def validate(self):
-            """Custom validation logic."""
-            required_props = ["UID", "X-VENDOR-ID"]
-            for prop in required_props:
+            """Validate required properties."""
+            required = ["UID", "X-VENDOR-ID"]
+            for prop in required:
                 if prop not in self:
-                    raise ValueError(f"Missing required property: {prop}")
+                    raise ValueError(f"Missing {prop}")
 
         def get_vendor_id(self):
-            """Convenience method for vendor ID."""
+            """Get vendor ID."""
             return self.get("X-VENDOR-ID")
 
-    class CustomComponent(Component):
-        """Component subclass with custom factory."""
+    # Register the component
+    Component.register(XVendorComponent)
 
-        _components_factory = ComponentFactory()
-        _components_factory.add_component_class(XVendorComponent)
+After registration, parsing ``BEGIN:X-VENDOR`` uses your custom class:
 
-    # Now parse using your custom component class
-    ics_data = b"""BEGIN:X-VENDOR
-    UID:123
-    X-VENDOR-ID:vendor-1
-    END:X-VENDOR
-    """
-    comp = CustomComponent.from_ical(ics_data)
-    comp.validate()  # Custom validation
-    comp.get_vendor_id()  # Custom method
+.. code-block:: pycon
 
-Alternatively, create your own ComponentFactory and use it directly:
-
-.. code-block:: python
-
-    factory = ComponentFactory()
-    factory.add_component_class(XVendorComponent)
-
-    # Use factory to get component classes
-    XVendor = factory.get_component_class("X-VENDOR")
-    comp = XVendor()
-    comp.add("uid", "123")
-    comp.add("x-vendor-id", "vendor-1")
+    >>> ical_data = b"""BEGIN:X-VENDOR
+    ... UID:123
+    ... X-VENDOR-ID:vendor-1
+    ... END:X-VENDOR
+    ... """
+    >>> comp = Component.from_ical(ical_data)
+    >>> comp.validate()
+    >>> str(comp.get_vendor_id())
+    'vendor-1'
 
 
 :rfc:`5545` compliance
