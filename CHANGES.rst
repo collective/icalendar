@@ -42,7 +42,7 @@ New features
 Bug fixes
 ~~~~~~~~~
 
-- Fixed :py:class:`CaselessDict.__eq__ <icalendar.caselessdict.CaselessDict>` to return ``NotImplemented`` when comparing with non-dict types instead of raising ``AttributeError``. See `Issue #1016 <https://github.com/collective/icalendar/issues/1016>`_.
+- Fixed :meth:`icalendar.caselessdict.CaselessDict.__eq__` to return ``NotImplemented`` when comparing with non-dict types instead of raising ``AttributeError``. See `Issue #1016 <https://github.com/collective/icalendar/issues/1016>`_.
 - Link ``timedelta`` to :py:class:`datetime.timedelta` in the Python standard library documentation. See `Issue 951 <https://github.com/collective/icalendar/issues/951>`_.
 
 Documentation
