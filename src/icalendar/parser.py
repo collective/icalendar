@@ -547,6 +547,60 @@ def unescape_backslash(val: str):
     )
 
 
+def split_on_unescaped_semicolon(text: str) -> list[str]:
+    r"""Split text on unescaped semicolons and unescape each part.
+
+    Splits only on semicolons not preceded by backslash.
+    After splitting, unescapes backslash sequences in each part.
+    Used by vCard structured properties (ADR, N, ORG) per :rfc:`6350`.
+
+    Args:
+        text: Text with potential escaped semicolons (e.g., "field1\;with;field2")
+
+    Returns:
+        List of unescaped field strings
+
+    Examples:
+        .. code-block:: pycon
+
+            >>> from icalendar.parser import split_on_unescaped_semicolon
+            >>> split_on_unescaped_semicolon(r"field1\;with;field2")
+            ['field1;with', 'field2']
+            >>> split_on_unescaped_semicolon("a;b;c")
+            ['a', 'b', 'c']
+            >>> split_on_unescaped_semicolon(r"a\;b\;c")
+            ['a;b;c']
+            >>> split_on_unescaped_semicolon(r"PO Box 123\;Suite 200;City")
+            ['PO Box 123;Suite 200', 'City']
+    """
+    if not text:
+        return [""]
+
+    result = []
+    current = []
+    i = 0
+
+    while i < len(text):
+        if text[i] == "\\" and i + 1 < len(text):
+            # Escaped character - keep both backslash and next char
+            current.append(text[i])
+            current.append(text[i + 1])
+            i += 2
+        elif text[i] == ";":
+            # Unescaped semicolon - split point
+            result.append(unescape_backslash("".join(current)))
+            current = []
+            i += 1
+        else:
+            current.append(text[i])
+            i += 1
+
+    # Add final part
+    result.append(unescape_backslash("".join(current)))
+
+    return result
+
+
 RFC_6868_UNESCAPE_REGEX = re.compile(r"\^\^|\^n|\^'")
 
 
@@ -773,6 +827,7 @@ __all__ = [
     "q_split",
     "rfc_6868_escape",
     "rfc_6868_unescape",
+    "split_on_unescaped_semicolon",
     "unescape_backslash",
     "unescape_char",
     "unescape_list_or_string",
