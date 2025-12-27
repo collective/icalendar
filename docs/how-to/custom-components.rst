@@ -206,17 +206,25 @@ After registration, parsing ``BEGIN:X-VENDOR`` will use your custom class instea
     You must register custom classes with this shared instance, not a new ComponentFactory.
 
 
-:rfc:`5545` Compliance
+:rfc:`5545` compliance
 ======================
 
-The icalendar library is fully compliant with RFC 5545 requirements for custom components.
+The icalendar library is fully compliant with :rfc:`5545` requirements for custom components.
 
-- **Preserves unknown components**: Custom components are never dropped
-- **Maintains data integrity**: All properties and subcomponents are preserved
-- **Round-trip safe**: Parse → serialize → parse produces equivalent results
-- **No special handling**: X-components and IANA-components are treated identically
+Preserves unknown components
+    Custom components are never dropped.
 
-The library implements a permissive approach: rather than rejecting unknown components, it preserves them while making them accessible through the same API as standard components.
+Maintains data integrity
+    All properties and subcomponents are preserved.
+
+Round-trip safe
+    Parse to serialize, and back to parse, produces equivalent results.
+
+No special handling
+    X-components and IANA-components are treated identically.
+
+icalendar implements a permissive approach.
+Rather than rejecting unknown components, it preserves them while making them accessible through the same API as standard components.
 
 
 Nested custom components
