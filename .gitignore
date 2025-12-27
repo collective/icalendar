@@ -25,9 +25,7 @@ venv
 /ical_fuzzer.pkg.spec
 /src/icalendar/_version.py
 uv.lock
-
 coverage.xml
 !.coveragerc
-
-# Fuzzer artifacts
+!.well-known
 /ical_fuzzer/

@@ -125,3 +125,40 @@ class TestCaselessdict(unittest.TestCase):
 
         keys = sorted(ncd.keys())
         self.assertEqual(keys, ["KEY1", "KEY2", "KEY3", "KEY5", "KEY6"])
+
+    def test_eq_with_non_dict_types(self):
+        """Test that CaselessDict.__eq__ handles non-dict comparisons correctly."""
+        CaselessDict = icalendar.caselessdict.CaselessDict
+
+        d = CaselessDict()
+        d['test'] = 1
+
+        # Should return False for non-dict types, not crash
+        self.assertFalse(d == "string")
+        self.assertFalse(d == 123)
+        self.assertFalse(d == None)
+        self.assertFalse(d == [])
+        self.assertFalse(d == ())
+        self.assertFalse(d == set())
+
+        # Should still work correctly with dicts
+        self.assertTrue(d == {'TEST': 1})
+        self.assertFalse(d == {'TEST': 2})
+        self.assertFalse(d == {'OTHER': 1})
+
+    def test_ne_with_non_dict_types(self):
+        """Test that CaselessDict.__ne__ handles non-dict comparisons correctly."""
+        CaselessDict = icalendar.caselessdict.CaselessDict
+
+        d = CaselessDict()
+        d['test'] = 1
+
+        # Should return True for non-dict types
+        self.assertTrue(d != "string")
+        self.assertTrue(d != 123)
+        self.assertTrue(d != None)
+        self.assertTrue(d != [])
+
+        # Should still work correctly with dicts
+        self.assertFalse(d != {'TEST': 1})
+        self.assertTrue(d != {'TEST': 2})
