@@ -42,6 +42,7 @@ New features
 Bug fixes
 ~~~~~~~~~
 
+- Fixed :meth:`icalendar.caselessdict.CaselessDict.__eq__` to return ``NotImplemented`` when comparing with non-dict types instead of raising ``AttributeError``. See `Issue #1016 <https://github.com/collective/icalendar/issues/1016>`_.
 - Link ``timedelta`` to :py:class:`datetime.timedelta` in the Python standard library documentation. See `Issue 951 <https://github.com/collective/icalendar/issues/951>`_.
 - Fix round-trip parsing of :class:`~icalendar.prop.vCategory` (CATEGORIES property) when category values contain commas. Categories like ``'Meeting, John'`` now correctly survive round trips between :meth:`Component.to_ical <icalendar.cal.component.Component.to_ical>` and :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>` instead of being split into multiple categories. Added :func:`~icalendar.parser.split_on_unescaped_comma` helper function. See `Issue #127 <https://github.com/collective/icalendar/issues/127>`_.
 
