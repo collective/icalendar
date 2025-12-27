@@ -1,5 +1,5 @@
 =================
-Custom Components
+Custom components
 =================
 
 icalendar automatically handles X-components and IANA-components not in RFC 5545.
@@ -14,13 +14,14 @@ RFC 5545 defines two custom component types:
 
 The library preserves all custom components through dynamic component creation using :py:class:`~icalendar.cal.component_factory.ComponentFactory`. No configuration needed.
 
-Parsing Custom Components
-=========================
+
+Parse custom components
+=======================
 
 You can parse custom components using either :py:meth:`Component.from_ical() <icalendar.Component.from_ical>` or :py:meth:`Calendar.from_ical() <icalendar.Calendar.from_ical>`.
 
-Using Component.from_ical()
----------------------------
+``Component.from_ical()``
+-------------------------
 
 Parse any component type, including custom ones:
 
@@ -38,8 +39,8 @@ Parse any component type, including custom ones:
     >>> str(component['SUMMARY'])
     'Custom component example'
 
-Using Calendar.from_ical()
---------------------------
+``Calendar.from_ical()``
+------------------------
 
 Parse a calendar containing custom components:
 
@@ -62,8 +63,8 @@ Parse a calendar containing custom components:
     >>> str(custom['UID'])
     'custom-1'
 
-Accessing Custom Components
-===========================
+Access custom components
+========================
 
 Custom components work exactly like standard components:
 
@@ -94,7 +95,7 @@ Custom components work exactly like standard components:
     >>> len(comp.subcomponents)
     1
 
-Round-Trip Preservation
+Round-trip preservation
 =======================
 
 Custom components are fully preserved during round-trip parsing:
@@ -119,8 +120,8 @@ Custom components are fully preserved during round-trip parsing:
     >>> b'X-VENDOR-PROP' in regenerated
     True
 
-Component.from_ical() vs Calendar.from_ical()
-=============================================
+``Component.from_ical()`` vs. ``Calendar.from_ical()``
+======================================================
 
 - **Component.from_ical()**: Standalone components, fragments
 - **Calendar.from_ical()**: Complete .ics files, handles timezones
@@ -151,8 +152,8 @@ Component.from_ical() vs Calendar.from_ical()
     >>> len(cal.subcomponents)
     1
 
-Advanced: Creating Custom Component Subclasses
-==============================================
+Create custom component subclasses
+==================================
 
 While the dynamic component creation works for most cases, you can create explicit component subclasses for custom components that need special behavior:
 
@@ -188,8 +189,8 @@ After registration, parsing ``BEGIN:X-VENDOR`` will use your custom class instea
     Component parsing uses a singleton ``Component._components_factory``. You must register custom
     classes with this shared instance, not a new ComponentFactory.
 
-RFC 5545 Compliance
-===================
+:rfc:`5545` Compliance
+======================
 
 The icalendar library is fully compliant with RFC 5545 requirements for custom components:
 
@@ -200,7 +201,7 @@ The icalendar library is fully compliant with RFC 5545 requirements for custom c
 
 The library implements a permissive approach: rather than rejecting unknown components, it preserves them while making them accessible through the same API as standard components.
 
-Nested Custom Components
+Nested custom components
 ========================
 
 Custom components can contain standard components, and vice versa:
@@ -227,7 +228,7 @@ Custom components can contain standard components, and vice versa:
     >>> str(event['SUMMARY'])
     'Event inside custom component'
 
-Use Cases
+Use cases
 =========
 
 - Vendor extensions (proprietary features)
@@ -255,6 +256,8 @@ Example
 
 See Also
 ========
+Related content
+===============
 
 - :py:class:`icalendar.Component` - Base component class
 - :py:class:`icalendar.cal.component_factory.ComponentFactory` - Component factory
