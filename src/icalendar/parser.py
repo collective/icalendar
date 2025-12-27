@@ -547,6 +547,57 @@ def unescape_backslash(val: str):
     )
 
 
+def split_on_unescaped_comma(text: str) -> list[str]:
+    r"""Split text on unescaped commas and unescape each part.
+
+    Splits only on commas not preceded by backslash.
+    After splitting, unescapes backslash sequences in each part.
+
+    Args:
+        text: Text with potential escaped commas (e.g., "foo\\, bar,baz")
+
+    Returns:
+        List of unescaped category strings
+
+    Examples:
+        >>> from icalendar.parser import split_on_unescaped_comma
+        >>> split_on_unescaped_comma(r"foo\, bar,baz")
+        ['foo, bar', 'baz']
+        >>> split_on_unescaped_comma("a,b,c")
+        ['a', 'b', 'c']
+        >>> split_on_unescaped_comma(r"a\,b\,c")
+        ['a,b,c']
+        >>> split_on_unescaped_comma(r"Work,Personal\,Urgent")
+        ['Work', 'Personal,Urgent']
+    """
+    if not text:
+        return [""]
+
+    result = []
+    current = []
+    i = 0
+
+    while i < len(text):
+        if text[i] == "\\" and i + 1 < len(text):
+            # Escaped character - keep both backslash and next char
+            current.append(text[i])
+            current.append(text[i + 1])
+            i += 2
+        elif text[i] == ",":
+            # Unescaped comma - split point
+            result.append(unescape_backslash("".join(current)))
+            current = []
+            i += 1
+        else:
+            current.append(text[i])
+            i += 1
+
+    # Add final part
+    result.append(unescape_backslash("".join(current)))
+
+    return result
+
+
 RFC_6868_UNESCAPE_REGEX = re.compile(r"\^\^|\^n|\^'")
 
 
@@ -773,6 +824,7 @@ __all__ = [
     "q_split",
     "rfc_6868_escape",
     "rfc_6868_unescape",
+    "split_on_unescaped_comma",
     "unescape_backslash",
     "unescape_char",
     "unescape_list_or_string",

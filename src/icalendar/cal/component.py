@@ -21,7 +21,14 @@ from icalendar.attr import (
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.caselessdict import CaselessDict
 from icalendar.error import InvalidCalendar, JCalParsingError
-from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_split
+from icalendar.parser import (
+    Contentline,
+    Contentlines,
+    Parameters,
+    q_join,
+    q_split,
+    split_on_unescaped_comma,
+)
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import VPROPERTY, TypesFactory, vDDDLists, vText
 from icalendar.timezone import tzp
@@ -435,7 +442,19 @@ class Component(CaselessDict):
                     "EXDATE",
                 )
                 try:
-                    if name == "FREEBUSY":
+                    if name.upper() == "CATEGORIES":
+                        # Special handling for CATEGORIES - need raw value
+                        # before unescaping to properly split on unescaped commas
+                        line_str = str(line)
+                        colon_idx = line_str.find(":")
+                        if colon_idx > 0:
+                            raw_value = line_str[colon_idx + 1:]
+                            category_list = split_on_unescaped_comma(raw_value)
+                            parsed_components = [factory(category_list)]
+                        else:
+                            # Fallback to normal processing if we can't find colon
+                            parsed_components = [factory(factory.from_ical(vals))]
+                    elif name == "FREEBUSY":
                         vals = vals.split(",")
                         if "TZID" in params:
                             parsed_components = [

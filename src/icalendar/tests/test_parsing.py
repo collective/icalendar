@@ -260,6 +260,38 @@ def test_unescape_char():
     assert unescape_char(b"\\n") == b"\n"
 
 
+def test_split_on_unescaped_comma():
+    """Test splitting on unescaped commas."""
+    from icalendar.parser import split_on_unescaped_comma
+
+    # Simple case
+    assert split_on_unescaped_comma("a,b,c") == ["a", "b", "c"]
+
+    # Escaped comma
+    assert split_on_unescaped_comma("a\\,b,c") == ["a,b", "c"]
+
+    # Multiple escaped commas
+    assert split_on_unescaped_comma("a\\,b\\,c") == ["a,b,c"]
+
+    # Mixed
+    assert split_on_unescaped_comma("Work,Personal\\, Urgent") == ["Work", "Personal, Urgent"]
+
+    # Empty string
+    assert split_on_unescaped_comma("") == [""]
+
+    # Only commas
+    assert split_on_unescaped_comma(",,,") == ["", "", "", ""]
+
+    # Trailing comma
+    assert split_on_unescaped_comma("a,b,") == ["a", "b", ""]
+
+    # Leading comma
+    assert split_on_unescaped_comma(",a,b") == ["", "a", "b"]
+
+    # Other escaped chars
+    assert split_on_unescaped_comma("a\\;b,c\\nd") == ["a;b", "c\nd"]
+
+
 def test_create_a_component():
     """Create a component with the factory."""
     factory = ComponentFactory()
