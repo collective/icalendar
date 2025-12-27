@@ -82,7 +82,6 @@ class Component(CaselessDict):
     If ``True``, and this component can't be parsed, then it will silently
     ignore it, rather than let the exception propagate upwards.
     """
-    # not_compliant = ['']  # List of non-compliant properties.
 
     types_factory: ClassVar[TypesFactory] = TypesFactory.instance()
     _components_factory: ClassVar[ComponentFactory | None] = None
