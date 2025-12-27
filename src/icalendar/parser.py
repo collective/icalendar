@@ -559,17 +559,18 @@ def split_on_unescaped_comma(text: str) -> list[str]:
     Returns:
         List of unescaped category strings
 
-    .. code-block:: pycon
+    Examples:
+        .. code-block:: pycon
 
-        >>> from icalendar.parser import split_on_unescaped_comma
-        >>> split_on_unescaped_comma(r"foo\, bar,baz")
-        ['foo, bar', 'baz']
-        >>> split_on_unescaped_comma("a,b,c")
-        ['a', 'b', 'c']
-        >>> split_on_unescaped_comma(r"a\,b\,c")
-        ['a,b,c']
-        >>> split_on_unescaped_comma(r"Work,Personal\,Urgent")
-        ['Work', 'Personal,Urgent']
+            >>> from icalendar.parser import split_on_unescaped_comma
+            >>> split_on_unescaped_comma(r"foo\, bar,baz")
+            ['foo, bar', 'baz']
+            >>> split_on_unescaped_comma("a,b,c")
+            ['a', 'b', 'c']
+            >>> split_on_unescaped_comma(r"a\,b\,c")
+            ['a,b,c']
+            >>> split_on_unescaped_comma(r"Work,Personal\,Urgent")
+            ['Work', 'Personal,Urgent']
     """
     if not text:
         return [""]
