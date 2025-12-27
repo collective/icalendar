@@ -2,17 +2,19 @@
 Custom components
 =================
 
-icalendar automatically handles X-components and IANA-components not in RFC 5545.
+This chapter describes how to use custom components in icalendar.
 
-Overview
-========
+icalendar automatically handles X-components and IANA-components not in :rfc:`5545`.
 
-RFC 5545 defines two custom component types:
+:rfc:`5545` defines two custom component types.
 
-- **X-Components**: Vendor-specific (for example, ``X-MYAPP-SETTINGS``)
-- **IANA-Components**: IANA-registered but not in RFC 5545
+X-Components
+    Vendor-specific components, for example, ``X-MYAPP-SETTINGS``.
 
-The library preserves all custom components through dynamic component creation using :py:class:`~icalendar.cal.component_factory.ComponentFactory`. No configuration needed.
+IANA-Components
+    IANA-registered components, but not in :rfc:`5545`.
+
+icalendar preserves all custom components through dynamic component creation using :class:`~icalendar.cal.component_factory.ComponentFactory`.
 
 
 Parse custom components
