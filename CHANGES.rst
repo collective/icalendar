@@ -21,7 +21,7 @@ Upgrading from 6.x to 7.x should have **no complications for most developers**, 
 
 We still recommend checking out the new features and giving feedback in the repository.
 
-7.0.0a3 (unreleased)
+7.0.0a4 (unreleased)
 --------------------
 
 Minor changes
@@ -49,7 +49,36 @@ New features
 Bug fixes
 ~~~~~~~~~
 
-- ...
+- Link ``timedelta`` to :py:class:`datetime.timedelta` in the Python standard library documentation. See `Issue 951 <https://github.com/collective/icalendar/issues/951>`_.
+
+Documentation
+~~~~~~~~~~~~~
+
+- Simplify contributors and add supporters in credits. See `pull request 1035 <https://github.com/collective/icalendar/pull/1041>`_.
+- Add a section in the change log for Documentation. See `Issue 1043 <https://github.com/collective/icalendar/issues/1043>`_.
+- Fixed multiple ``more than one target found for cross-reference`` warnings, and stopped using ``sphinx.ext.autosectionlabel``, in documentation. See `Issue 952 <https://github.com/collective/icalendar/issues/952>`_.
+- Add ``funding.json`` manifest for funding information. See `Issue 1047 <https://github.com/collective/icalendar/issues/1047>`_.
+
+7.0.0a3 (2025-12-19)
+--------------------
+
+Minor changes
+~~~~~~~~~~~~~
+
+- Add static ``[project.urls]`` to ``pyproject.toml`` for GitHub dependency graph compatibility. See `Issue 1035 <https://github.com/collective/icalendar/issues/1035>`_.
+- Created an :meth:`~cal.todo.Todo.example` method for the :class:`~cal.todo.Todo` component. See `Issue 743 <https://github.com/collective/icalendar/issues/743>`_.
+- Add type hints to :mod:`icalendar.caselessdict` file. See `Issue #938 <https://github.com/collective/icalendar/issues/938>`_.
+- For releases, added a step to update the version switcher for documentation.
+
+New features
+~~~~~~~~~~~~
+
+- Added contributor list format and sorting instructions.
+
+Bug fixes
+~~~~~~~~~
+
+- Fix double-unescaping in :meth:`vText.from_ical` and :meth:`vCategory.from_ical` by removing ``unescape_char()``. See `Issue #1008 <https://github.com/collective/icalendar/issues/1008>`_.
 
 7.0.0a2 (2025-11-29)
 --------------------

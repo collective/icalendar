@@ -11,12 +11,12 @@ Related:
 from __future__ import annotations
 
 import functools
+from datetime import timedelta
 from typing import TYPE_CHECKING, Callable, Optional, TypeVar
 
 from icalendar import enums
 
 if TYPE_CHECKING:
-    from datetime import timedelta
     from enum import Enum
 
 

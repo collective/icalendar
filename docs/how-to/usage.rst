@@ -93,6 +93,8 @@ Here is an example.
     See :doc:`custom-components` for details on working with vendor-specific or non-standard components.
 
 
+.. _subcomponents:
+
 Subcomponents
 -------------
 

@@ -302,14 +302,16 @@ class Event(Component):
         Returns the DURATION property if set, otherwise calculated from start and end.
         When setting duration, the end time is automatically calculated from start +
         duration.
+
         You can set the duration to automatically adjust the end time while keeping
         start locked.
 
         Setting the duration will:
-        1. Keep the start time locked (unchanged)
-        2. Adjust the end time to start + duration
-        3. Remove any existing DTEND property
-        4. Set the DURATION property
+
+        1.  Keep the start time locked (unchanged)
+        2.  Adjust the end time to start + duration
+        3.  Remove any existing DTEND property
+        4.  Set the DURATION property
         """
         return get_duration_property(self)
 
@@ -489,7 +491,7 @@ class Event(Component):
             :class:`Event`
 
         Raises:
-            InvalidCalendar: If the content is not valid according to :rfc:`5545`.
+            ~error.InvalidCalendar: If the content is not valid according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
