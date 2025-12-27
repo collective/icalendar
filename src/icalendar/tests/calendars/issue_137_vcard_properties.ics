@@ -1,7 +1,0 @@
-BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Test vCard Properties//EN
-ADR;TYPE=POSTAL:;2822 Email HQ;Suite 2821;RFCVille;PA;1521$;USA
-N:Doe;John;Michael;Dr.;Jr.
-ORG:ABC Inc.;North American Division;Marketing
-END:VCALENDAR
