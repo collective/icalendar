@@ -95,11 +95,11 @@ class Component(CaselessDict):
 
         Example:
             >>> from icalendar import Component
-            >>> class XMyComponent(Component):
-            ...     name = "X-MY-COMPONENT"
+            >>> class XExample(Component):
+            ...     name = "X-EXAMPLE"
             ...     def custom_method(self):
             ...         return "custom"
-            >>> Component.register(XMyComponent)
+            >>> Component.register(XExample)
         """
         if not hasattr(component_class, 'name') or component_class.name is None:
             raise ValueError(f"{component_class} must have a 'name' attribute")

@@ -178,38 +178,52 @@ The following example shows how to create and register a custom component with v
 
     from icalendar import Component
 
-    class XVendorComponent(Component):
-        """Custom vendor component with validation."""
+    class XAcmeComponent(Component):
+        """Custom ACME component with validation."""
 
-        name = "X-VENDOR"
+        name = "X-ACME"
 
         def validate(self):
             """Validate required properties."""
-            required = ["UID", "X-VENDOR-ID"]
+            required = ["UID", "X-ACME-ID"]
             for prop in required:
                 if prop not in self:
                     raise ValueError(f"Missing {prop}")
 
-        def get_vendor_id(self):
-            """Get vendor ID."""
-            return self.get("X-VENDOR-ID")
+        def get_acme_id(self):
+            """Get ACME ID."""
+            return self.get("X-ACME-ID")
 
     # Register the component
-    Component.register(XVendorComponent)
+    Component.register(XAcmeComponent)
 
-After registration, parsing ``BEGIN:X-VENDOR`` uses your custom class:
+After registration, parsing ``BEGIN:X-ACME`` uses your custom class:
 
 .. code-block:: pycon
 
-    >>> ical_data = b"""BEGIN:X-VENDOR
+    >>> from icalendar import Component
+    >>> class XAcmeComponent(Component):
+    ...     """Custom ACME component with validation."""
+    ...     name = "X-ACME"
+    ...     def validate(self):
+    ...         """Validate required properties."""
+    ...         required = ["UID", "X-ACME-ID"]
+    ...         for prop in required:
+    ...             if prop not in self:
+    ...                 raise ValueError(f"Missing {prop}")
+    ...     def get_acme_id(self):
+    ...         """Get ACME ID."""
+    ...         return self.get("X-ACME-ID")
+    >>> Component.register(XAcmeComponent)
+    >>> ical_data = b"""BEGIN:X-ACME
     ... UID:123
-    ... X-VENDOR-ID:vendor-1
-    ... END:X-VENDOR
+    ... X-ACME-ID:acme-1
+    ... END:X-ACME
     ... """
     >>> comp = Component.from_ical(ical_data)
     >>> comp.validate()
-    >>> str(comp.get_vendor_id())
-    'vendor-1'
+    >>> str(comp.get_acme_id())
+    'acme-1'
 
 
 :rfc:`5545` compliance
