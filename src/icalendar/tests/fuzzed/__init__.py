@@ -31,6 +31,8 @@ _value_error_matches = [
     "parent",
     "MUST be a datetime",
     "Invalid month:",
+    "must have exactly",  # vCard field count validation (ADR, N)
+    "must have at least",  # vCard ORG minimum field validation
 ]
 
 
