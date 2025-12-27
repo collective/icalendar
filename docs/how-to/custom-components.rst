@@ -26,7 +26,8 @@ Parse custom components using either :py:meth:`Component.from_ical() <icalendar.
 ``Component.from_ical()``
 -------------------------
 
-Parse any component type, including custom ones
+Parse any component type, including custom ones.
+The following example shows how to parse a component, then display its name and ``SUMMARY``.
 
 .. code-block:: pycon
 
@@ -42,10 +43,12 @@ Parse any component type, including custom ones
     >>> str(component["SUMMARY"])
     'Custom component example'
 
+
 ``Calendar.from_ical()``
 ------------------------
 
-Parse a calendar containing custom components:
+Parse a calendar containing custom components.
+The following example shows how to parse a component, get its subcomponents, then display its name and ``UID``.
 
 .. code-block:: pycon
 
@@ -66,10 +69,12 @@ Parse a calendar containing custom components:
     >>> str(custom["UID"])
     'custom-1'
 
+
 Access custom components
 ========================
 
-Custom components work exactly like standard components:
+Custom components work exactly like standard components.
+The following example shows how to access a custom component to display its name and other attributes.
 
 .. code-block:: pycon
 
@@ -98,10 +103,12 @@ Custom components work exactly like standard components:
     >>> len(comp.subcomponents)
     1
 
+
 Round-trip preservation
 =======================
 
-Custom components are fully preserved during round-trip parsing:
+Custom components are fully preserved during round-trip parsing.
+The following example demonstrates this feature.
 
 .. code-block:: pycon
 
@@ -123,11 +130,16 @@ Custom components are fully preserved during round-trip parsing:
     >>> b"X-VENDOR-PROP" in regenerated
     True
 
-``Component.from_ical()`` vs. ``Calendar.from_ical()``
-======================================================
 
-- **Component.from_ical()**: Standalone components, fragments
-- **Calendar.from_ical()**: Complete .ics files, handles timezones
+Which ``from_ical()``?
+======================
+
+Use ``Component.from_ical()`` for standalone components and fragments.
+
+Use ``Calendar.from_ical()`` for complete iCalendar files.
+It also handles timezones.
+
+The following example shows the different usage of both methods.
 
 .. code-block:: pycon
 
@@ -158,7 +170,8 @@ Custom components are fully preserved during round-trip parsing:
 Create custom component subclasses
 ==================================
 
-While the dynamic component creation works for most cases, you can create explicit component subclasses for custom components that need special behavior:
+While the dynamic component creation works for most cases, you can create explicit component subclasses for custom components that need special behavior.
+The following example shows how to do so.
 
 .. code-block:: python
 
@@ -189,13 +202,14 @@ After registration, parsing ``BEGIN:X-VENDOR`` will use your custom class instea
 
 .. note::
 
-    Component parsing uses a singleton ``Component._components_factory``. You must register custom
-    classes with this shared instance, not a new ComponentFactory.
+    Component parsing uses a singleton ``Component._components_factory``.
+    You must register custom classes with this shared instance, not a new ComponentFactory.
+
 
 :rfc:`5545` Compliance
 ======================
 
-The icalendar library is fully compliant with RFC 5545 requirements for custom components:
+The icalendar library is fully compliant with RFC 5545 requirements for custom components.
 
 - **Preserves unknown components**: Custom components are never dropped
 - **Maintains data integrity**: All properties and subcomponents are preserved
@@ -204,10 +218,11 @@ The icalendar library is fully compliant with RFC 5545 requirements for custom c
 
 The library implements a permissive approach: rather than rejecting unknown components, it preserves them while making them accessible through the same API as standard components.
 
+
 Nested custom components
 ========================
 
-Custom components can contain standard components, and vice versa:
+Custom components can contain standard components, and vice versa.
 
 .. code-block:: pycon
 
@@ -231,16 +246,19 @@ Custom components can contain standard components, and vice versa:
     >>> str(event["SUMMARY"])
     'Event inside custom component'
 
+
 Use cases
 =========
 
-- Vendor extensions (proprietary features)
-- Experimental/draft component types
-- Legacy system support
-- Data preservation during round-trips
+Custom components extend the functionality beyond icalendar's core.
+Use cases include the following:
 
-Example
--------
+-   vendor extensions and proprietary features
+-   experimental or draft component types
+-   legacy system support
+-   data preservation during round-trips
+
+The following example shows how to add a feature for a calendar, where an application supports dark mode in its theme.
 
 .. code-block:: pycon
 
@@ -256,6 +274,7 @@ Example
     >>> cal.add_component(custom)
     >>> b"BEGIN:X-MYAPP-SETTINGS" in cal.to_ical()
     True
+
 
 Related content
 ===============
