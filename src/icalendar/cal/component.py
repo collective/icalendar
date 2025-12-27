@@ -446,7 +446,9 @@ class Component(CaselessDict):
                         # Special handling for CATEGORIES - need raw value
                         # before unescaping to properly split on unescaped commas
                         line_str = str(line)
-                        colon_idx = line_str.find(":")
+                        # Use rfind to get the last colon (value separator)
+                        # to handle parameters with colons like ALTREP="http://..."
+                        colon_idx = line_str.rfind(":")
                         if colon_idx > 0:
                             raw_value = line_str[colon_idx + 1:]
                             category_list = split_on_unescaped_comma(raw_value)
