@@ -365,11 +365,11 @@ class Component(CaselessDict):
     def from_ical(cls, st, multiple: bool = False) -> Self | list[Self]:  # noqa: FBT001
         """Parse iCalendar data into component instances.
 
-        Handles standard and custom components (X-*, IANA-registered).
+        Handles standard and custom components (``X-*``, IANA-registered).
 
         Args:
             st: iCalendar data as bytes or string
-            multiple: If True, returns list. If False, returns single component.
+            multiple: If ``True``, returns list. If ``False``, returns single component.
 
         Returns:
             Component or list of components
