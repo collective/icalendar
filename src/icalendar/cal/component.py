@@ -39,36 +39,51 @@ class Component(CaselessDict):
     Component is the base object for calendar, Event and the other
     components defined in :rfc:`5545`. Normally you will not use this class
     directly, but rather one of the subclasses.
-
-    Attributes:
-        name: The name of the component. Example: ``VCALENDAR``.
-        required: These properties are required.
-        singletons: These properties must only appear once.
-        multiple: These properties may occur more than once.
-        exclusive: These properties are mutually exclusive.
-        inclusive: If the first in a tuple occurs, the second one must also occur.
-        ignore_exceptions: If True, and we cannot parse this
-            component, we will silently ignore it, rather than let the
-            exception propagate upwards.
-        types_factory: Factory for property types
     """
 
-    name = None  # should be defined in each component
-    required = ()  # These properties are required
-    singletons = ()  # These properties must only appear once
-    multiple = ()  # may occur more than once
-    exclusive = ()  # These properties are mutually exclusive
-    inclusive: (
-        tuple[str] | tuple[tuple[str, str]]
-    ) = ()  # if any occurs the other(s) MUST occur
-    # ('duration', 'repeat')
-    ignore_exceptions = False  # if True, and we cannot parse this
-    # component, we will silently ignore
-    # it, rather than let the exception
-    # propagate upwards
-    # not_compliant = ['']  # List of non-compliant properties.
+    name: ClassVar[str|None] = None
+    """The name of the component.
+    
+    This should be defined in each component class.
 
-    types_factory = TypesFactory.instance()
+    Example: ``VCALENDAR``.
+    """
+
+    required: ClassVar[tuple[()]] = ()
+    """These properties are required."""
+
+    singletons: ClassVar[tuple[()]] = ()
+    """These properties must appear only once."""
+
+    multiple: ClassVar[tuple[()]] = ()
+    """These properties may occur more than once."""
+
+    exclusive: ClassVar[tuple[()]] = ()
+    """These properties are mutually exclusive."""
+
+    inclusive: ClassVar[(
+        tuple[str] | tuple[tuple[str, str]]
+    )] = ()
+    """These properties are inclusive.
+     
+    In other words, if the first property in the tuple occurs, then the
+    second one must also occur.
+    
+    Example:
+        
+        .. code-block:: python
+
+            ('duration', 'repeat')
+    """
+
+    ignore_exceptions: ClassVar[bool] = False
+    """Whether or not to ignore exceptions when parsing.
+    
+    If ``True``, and this component can't be parsed, then it will silently
+    ignore it, rather than let the exception propagate upwards.
+    """
+
+    types_factory: ClassVar[TypesFactory] = TypesFactory.instance()
     _components_factory: ClassVar[ComponentFactory | None] = None
 
     @classmethod

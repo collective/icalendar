@@ -2,6 +2,7 @@ icalendar.prop package
 ======================
 
 .. automodule:: icalendar.prop
+   :ignore-module-all:
    :members:
    :show-inheritance:
    :undoc-members:
