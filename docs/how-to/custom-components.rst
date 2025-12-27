@@ -39,7 +39,7 @@ Parse any component type, including custom ones
     >>> component = Component.from_ical(ics_data)
     >>> component.name
     'X-MYCOMPONENT'
-    >>> str(component['SUMMARY'])
+    >>> str(component["SUMMARY"])
     'Custom component example'
 
 ``Calendar.from_ical()``
@@ -63,7 +63,7 @@ Parse a calendar containing custom components:
     >>> custom = cal.subcomponents[0]
     >>> custom.name
     'X-CUSTOM'
-    >>> str(custom['UID'])
+    >>> str(custom["UID"])
     'custom-1'
 
 Access custom components
@@ -75,25 +75,25 @@ Custom components work exactly like standard components:
 
     >>> from icalendar import Component
     >>> # Create custom component using factory
-    >>> MyComp = Component.get_component_class('MYCOMP')
+    >>> MyComp = Component.get_component_class("MYCOMP")
     >>> comp = MyComp()
     >>> comp.name
     'MYCOMP'
     >>>
     >>> # Add properties
-    >>> comp.add('summary', 'Test Summary')
-    >>> comp.add('x-custom-field', 'Custom Value')
+    >>> comp.add("summary", "Test Summary")
+    >>> comp.add("x-custom-field", "Custom Value")
     >>>
     >>> # Access properties
-    >>> str(comp['SUMMARY'])
+    >>> str(comp["SUMMARY"])
     'Test Summary'
-    >>> str(comp.get('X-CUSTOM-FIELD'))
+    >>> str(comp.get("X-CUSTOM-FIELD"))
     'Custom Value'
     >>>
     >>> # Add subcomponents
     >>> from icalendar import Event
     >>> event = Event()
-    >>> event.add('uid', '123')
+    >>> event.add("uid", "123")
     >>> comp.add_component(event)
     >>> len(comp.subcomponents)
     1
@@ -118,9 +118,9 @@ Custom components are fully preserved during round-trip parsing:
     >>> cal = Calendar.from_ical(original)
     >>> regenerated = cal.to_ical()
     >>> # Custom component and its properties are preserved
-    >>> b'X-VENDOR-COMPONENT' in regenerated
+    >>> b"X-VENDOR-COMPONENT" in regenerated
     True
-    >>> b'X-VENDOR-PROP' in regenerated
+    >>> b"X-VENDOR-PROP" in regenerated
     True
 
 ``Component.from_ical()`` vs. ``Calendar.from_ical()``
@@ -171,18 +171,18 @@ While the dynamic component creation works for most cases, you can create explic
 
         def validate(self):
             """Custom validation logic."""
-            required_props = ['UID', 'X-VENDOR-ID']
+            required_props = ["UID", "X-VENDOR-ID"]
             for prop in required_props:
                 if prop not in self:
                     raise ValueError(f"Missing required property: {prop}")
 
         def get_vendor_id(self):
             """Convenience method for vendor ID."""
-            return self.get('X-VENDOR-ID')
+            return self.get("X-VENDOR-ID")
 
     # Register with the singleton factory
     # First call to get_component_class() initializes the factory
-    Component.get_component_class('VEVENT')  # Ensure factory exists
+    Component.get_component_class("VEVENT")  # Ensure factory exists
     Component._components_factory.add_component_class(XVendorComponent)
 
 After registration, parsing ``BEGIN:X-VENDOR`` will use your custom class instead of the dynamic one.
@@ -228,7 +228,7 @@ Custom components can contain standard components, and vice versa:
     >>> event = container.subcomponents[0]
     >>> event.name
     'VEVENT'
-    >>> str(event['SUMMARY'])
+    >>> str(event["SUMMARY"])
     'Event inside custom component'
 
 Use cases
@@ -246,15 +246,15 @@ Example
 
     >>> from icalendar import Calendar, Component
     >>> cal = Calendar()
-    >>> cal.add('prodid', '-//My App//EN')
-    >>> cal.add('version', '2.0')
+    >>> cal.add("prodid", "-//My App//EN")
+    >>> cal.add("version", "2.0")
     >>> # Create custom component using factory
-    >>> CustomSettings = Component.get_component_class('X-MYAPP-SETTINGS')
+    >>> CustomSettings = Component.get_component_class("X-MYAPP-SETTINGS")
     >>> custom = CustomSettings()
-    >>> custom.add('uid', 'settings-1')
-    >>> custom.add('x-theme', 'dark')
+    >>> custom.add("uid", "settings-1")
+    >>> custom.add("x-theme", "dark")
     >>> cal.add_component(custom)
-    >>> b'BEGIN:X-MYAPP-SETTINGS' in cal.to_ical()
+    >>> b"BEGIN:X-MYAPP-SETTINGS" in cal.to_ical()
     True
 
 Related content
