@@ -10,7 +10,7 @@ Examples of how to contribute
 -   Report issues in the `issue tracker <https://github.com/collective/icalendar/issues>`_.
 -   Comment on and resolve issues.
 -   Submit pull requests from your fork of the icalendar repository.
--   Extend the :doc:`documentation`.
+-   Extend the :doc:`documentation/index`.
 -   Sponsor development of icalendar through `Open Collective <https://opencollective.com/python-icalendar>`_.
 
 
@@ -107,7 +107,7 @@ Before submitting your pull request, ensure you have met the following requireme
     See :ref:`change-log` for details.
 #.  Add a test which proves your fix and passes.
 #.  Run all tests to ensure your changes don't break any existing functionality.
-#.  :doc:`Add or edit documentation <documentation>`, both as docstrings to be rendered in the :doc:`API reference documentation <../reference/api/icalendar>` and narrative documentation, as necessary.
+#.  :doc:`Add or edit documentation <documentation/index>`, both as docstrings to be rendered in the :doc:`API reference documentation <../reference/api/icalendar>` and narrative documentation, as necessary.
 
 The maintainers may close pull requests without providing feedback that they deem to be spam, AI slop, abuse, or that do not comply with pull request requirements.
 The maintainers may also take further action, including suspend, ban, or report GitHub users, as described in icalendar's `Code of Conduct <https://github.com/collective/icalendar/blob/main/CODE_OF_CONDUCT.md>`_.
@@ -154,7 +154,7 @@ If you would like to set up icalendar to contribute changes, see :doc:`developme
 .. toctree::
     :hidden:
 
-    documentation
+    documentation/index
     development
     code-of-conduct
     credits
