@@ -20,12 +20,13 @@ icalendar preserves all custom components through dynamic component creation usi
 Parse custom components
 =======================
 
-You can parse custom components using either :py:meth:`Component.from_ical() <icalendar.Component.from_ical>` or :py:meth:`Calendar.from_ical() <icalendar.Calendar.from_ical>`.
+Parse custom components using either :py:meth:`Component.from_ical() <icalendar.cal.component.Component.from_ical>` or :py:meth:`Calendar.from_ical() <icalendar.cal.calendar.Calendar.from_ical>`.
+
 
 ``Component.from_ical()``
 -------------------------
 
-Parse any component type, including custom ones:
+Parse any component type, including custom ones
 
 .. code-block:: pycon
 
