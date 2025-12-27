@@ -171,11 +171,12 @@ Create custom component subclasses
 ==================================
 
 While the dynamic component creation works for most cases, you can create explicit component subclasses for custom components that need special behavior.
-The following example shows how to do so.
+
+Subclass Component and override ``get_component_class()``:
 
 .. code-block:: python
 
-    from icalendar import Component
+    from icalendar import Component, ComponentFactory
 
     class XVendorComponent(Component):
         """Custom vendor-specific component with special behavior."""
@@ -193,17 +194,34 @@ The following example shows how to do so.
             """Convenience method for vendor ID."""
             return self.get("X-VENDOR-ID")
 
-    # Register with the singleton factory
-    # First call to get_component_class() initializes the factory
-    Component.get_component_class("VEVENT")  # Ensure factory exists
-    Component._components_factory.add_component_class(XVendorComponent)
+    class CustomComponent(Component):
+        """Component subclass with custom factory."""
 
-After registration, parsing ``BEGIN:X-VENDOR`` will use your custom class instead of the dynamic one.
+        _components_factory = ComponentFactory()
+        _components_factory.add_component_class(XVendorComponent)
 
-.. note::
+    # Now parse using your custom component class
+    ics_data = b"""BEGIN:X-VENDOR
+    UID:123
+    X-VENDOR-ID:vendor-1
+    END:X-VENDOR
+    """
+    comp = CustomComponent.from_ical(ics_data)
+    comp.validate()  # Custom validation
+    comp.get_vendor_id()  # Custom method
 
-    Component parsing uses a singleton ``Component._components_factory``.
-    You must register custom classes with this shared instance, not a new ComponentFactory.
+Alternatively, create your own ComponentFactory and use it directly:
+
+.. code-block:: python
+
+    factory = ComponentFactory()
+    factory.add_component_class(XVendorComponent)
+
+    # Use factory to get component classes
+    XVendor = factory.get_component_class("X-VENDOR")
+    comp = XVendor()
+    comp.add("uid", "123")
+    comp.add("x-vendor-id", "vendor-1")
 
 
 :rfc:`5545` compliance
