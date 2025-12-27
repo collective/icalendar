@@ -31,6 +31,7 @@ _value_error_matches = [
     "parent",
     "MUST be a datetime",
     "Invalid month:",
+    "attribute",
 ]
 
 
@@ -52,7 +53,7 @@ def fuzz_v1_calendar(
                     event.to_ical()
             else:
                 c.to_ical()
-    except (ValueError, TypeError) as e:
+    except (ValueError, TypeError, AttributeError) as e:
         if any(m in str(e) for m in _value_error_matches):
             return -1
         raise

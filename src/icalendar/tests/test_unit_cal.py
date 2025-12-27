@@ -94,8 +94,8 @@ def test_nested_component_event_ics(filled_event_component):
     """Check the ical string of the event component."""
     assert filled_event_component.to_ical() == (
         b"BEGIN:VEVENT\r\nDTEND:20000102T000000\r\n"
-        + b"DTSTART:20000101T000000\r\nSUMMARY:A brief history of time\r"
-        + b"\nEND:VEVENT\r\n"
+         b"DTSTART:20000101T000000\r\nSUMMARY:A brief history of time\r"
+         b"\nEND:VEVENT\r\n"
     )
 
 
@@ -169,7 +169,7 @@ def test_indent():
     c["description"] = "Paragraph one\n\nParagraph two"
     assert c.to_ical() == (
         b"BEGIN:VCALENDAR\r\nDESCRIPTION:Paragraph one\\n\\nParagraph two"
-        + b"\r\nEND:VCALENDAR\r\n"
+         b"\r\nEND:VCALENDAR\r\n"
     )
 
 
@@ -182,7 +182,7 @@ def test_INLINE_properties(calendar_with_resources):
     )
     assert calendar_with_resources.to_ical() == (
         b'BEGIN:VCALENDAR\r\nRESOURCES:Chair\\, Table\\, "Room: 42"\r\n'
-        + b"END:VCALENDAR\r\n"
+         b"END:VCALENDAR\r\n"
     )
 
 
@@ -223,7 +223,7 @@ def test_set_inline(calendar_with_resources):
 def test_inline_free_busy_inline(c):
     c["freebusy"] = (
         "19970308T160000Z/PT3H,19970308T200000Z/PT1H,"
-        + "19970308T230000Z/19970309T000000Z"
+         "19970308T230000Z/19970309T000000Z"
     )
     assert c.get_inline("freebusy", decode=0) == [
         "19970308T160000Z/PT3H",
@@ -408,8 +408,8 @@ def test_minimal_calendar_component_with_one_event():
     assert (
         cal.subcomponents[0].to_ical()
         == b"BEGIN:VEVENT\r\nSUMMARY:Python meeting about calendaring\r\n"
-        + b"DTSTART:20050404T080000\r\nUID:42\r\n"
-        + b"END:VEVENT\r\n"
+         b"DTSTART:20050404T080000\r\nUID:42\r\n"
+         b"END:VEVENT\r\n"
     )
 
 
@@ -431,7 +431,14 @@ def test_calendar_with_parsing_errors_has_an_error_in_one_event(calendars):
     attribute. The error in the following is the third EXDATE: it has an
     empty DATE.
     """
-    errors = [e.errors for e in calendars.parsing_error.walk("VEVENT")]
+    # Access EXDATE properties to trigger lazy parsing and error recording.
+    # With lazy parsing, errors are only recorded when properties are accessed,
+    # not during from_ical(). This is intentional for performance.
+    events = calendars.parsing_error.walk("VEVENT")
+    for e in events:
+        _ = e.get("EXDATE", [])
+
+    errors = [e.errors for e in events]
     assert errors == [[], [("EXDATE", "Expected datetime, date, or time. Got: ''")]]
 
 
