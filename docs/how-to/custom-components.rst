@@ -1,6 +1,6 @@
-==================
+=================
 Custom Components
-==================
+=================
 
 icalendar automatically handles X-components and IANA-components not in RFC 5545.
 
@@ -9,18 +9,18 @@ Overview
 
 RFC 5545 defines two custom component types:
 
-- **X-Components**: Vendor-specific (e.g., ``X-MYAPP-SETTINGS``)
+- **X-Components**: Vendor-specific (for example, ``X-MYAPP-SETTINGS``)
 - **IANA-Components**: IANA-registered but not in RFC 5545
 
 The library preserves all custom components through dynamic component creation using :py:class:`~icalendar.cal.component_factory.ComponentFactory`. No configuration needed.
 
 Parsing Custom Components
-==========================
+=========================
 
 You can parse custom components using either :py:meth:`Component.from_ical() <icalendar.Component.from_ical>` or :py:meth:`Calendar.from_ical() <icalendar.Calendar.from_ical>`.
 
 Using Component.from_ical()
-----------------------------
+---------------------------
 
 Parse any component type, including custom ones:
 
@@ -35,11 +35,11 @@ Parse any component type, including custom ones:
     >>> component = Component.from_ical(ics_data)
     >>> component.name
     'X-MYCOMPONENT'
-    >>> component['SUMMARY']
+    >>> str(component['SUMMARY'])
     'Custom component example'
 
 Using Calendar.from_ical()
----------------------------
+--------------------------
 
 Parse a calendar containing custom components:
 
@@ -59,19 +59,20 @@ Parse a calendar containing custom components:
     >>> custom = cal.subcomponents[0]
     >>> custom.name
     'X-CUSTOM'
-    >>> custom['UID']
+    >>> str(custom['UID'])
     'custom-1'
 
 Accessing Custom Components
-============================
+===========================
 
 Custom components work exactly like standard components:
 
 .. code-block:: pycon
 
     >>> from icalendar import Component
-    >>> # Parse custom component
-    >>> comp = Component.from_ical(b"BEGIN:MYCOMP\\r\\nEND:MYCOMP\\r\\n")
+    >>> # Create custom component using factory
+    >>> MyComp = Component.get_component_class('MYCOMP')
+    >>> comp = MyComp()
     >>> comp.name
     'MYCOMP'
     >>>
@@ -80,9 +81,9 @@ Custom components work exactly like standard components:
     >>> comp.add('x-custom-field', 'Custom Value')
     >>>
     >>> # Access properties
-    >>> comp['SUMMARY']
+    >>> str(comp['SUMMARY'])
     'Test Summary'
-    >>> comp.get('X-CUSTOM-FIELD')
+    >>> str(comp.get('X-CUSTOM-FIELD'))
     'Custom Value'
     >>>
     >>> # Add subcomponents
@@ -119,7 +120,7 @@ Custom components are fully preserved during round-trip parsing:
     True
 
 Component.from_ical() vs Calendar.from_ical()
-==============================================
+=============================================
 
 - **Component.from_ical()**: Standalone components, fragments
 - **Calendar.from_ical()**: Complete .ics files, handles timezones
@@ -129,26 +130,35 @@ Component.from_ical() vs Calendar.from_ical()
     >>> from icalendar import Component, Calendar
     >>>
     >>> # Standalone custom component - use Component.from_ical()
-    >>> standalone = b"BEGIN:X-MYCOMP\\r\\nEND:X-MYCOMP\\r\\n"
+    >>> standalone = b"""BEGIN:X-MYCOMP
+    ... UID:123
+    ... END:X-MYCOMP
+    ... """
     >>> comp = Component.from_ical(standalone)
+    >>> comp.name
+    'X-MYCOMP'
     >>>
     >>> # Complete calendar - use Calendar.from_ical()
     >>> calendar_data = b"""BEGIN:VCALENDAR
     ... VERSION:2.0
+    ... PRODID:-//Test//EN
     ... BEGIN:X-MYCOMP
+    ... UID:123
     ... END:X-MYCOMP
     ... END:VCALENDAR
     ... """
     >>> cal = Calendar.from_ical(calendar_data)
+    >>> len(cal.subcomponents)
+    1
 
 Advanced: Creating Custom Component Subclasses
-===============================================
+==============================================
 
 While the dynamic component creation works for most cases, you can create explicit component subclasses for custom components that need special behavior:
 
 .. code-block:: python
 
-    from icalendar import Component, ComponentFactory
+    from icalendar import Component
 
     class XVendorComponent(Component):
         """Custom vendor-specific component with special behavior."""
@@ -166,18 +176,24 @@ While the dynamic component creation works for most cases, you can create explic
             """Convenience method for vendor ID."""
             return self.get('X-VENDOR-ID')
 
-    # Register with the factory
-    factory = ComponentFactory()
-    factory.add_component_class(XVendorComponent)
+    # Register with the singleton factory
+    # First call to get_component_class() initializes the factory
+    Component.get_component_class('VEVENT')  # Ensure factory exists
+    Component._components_factory.add_component_class(XVendorComponent)
 
 After registration, parsing ``BEGIN:X-VENDOR`` will use your custom class instead of the dynamic one.
+
+.. note::
+
+    Component parsing uses a singleton ``Component._components_factory``. You must register custom
+    classes with this shared instance, not a new ComponentFactory.
 
 RFC 5545 Compliance
 ===================
 
 The icalendar library is fully compliant with RFC 5545 requirements for custom components:
 
-- **Preserves unknown components**: Custom components are never silently dropped
+- **Preserves unknown components**: Custom components are never dropped
 - **Maintains data integrity**: All properties and subcomponents are preserved
 - **Round-trip safe**: Parse → serialize → parse produces equivalent results
 - **No special handling**: X-components and IANA-components are treated identically
@@ -185,7 +201,7 @@ The icalendar library is fully compliant with RFC 5545 requirements for custom c
 The library implements a permissive approach: rather than rejecting unknown components, it preserves them while making them accessible through the same API as standard components.
 
 Nested Custom Components
-=========================
+========================
 
 Custom components can contain standard components, and vice versa:
 
@@ -208,7 +224,7 @@ Custom components can contain standard components, and vice versa:
     >>> event = container.subcomponents[0]
     >>> event.name
     'VEVENT'
-    >>> event['SUMMARY']
+    >>> str(event['SUMMARY'])
     'Event inside custom component'
 
 Use Cases
@@ -228,7 +244,10 @@ Example
     >>> cal = Calendar()
     >>> cal.add('prodid', '-//My App//EN')
     >>> cal.add('version', '2.0')
-    >>> custom = Component(name='X-MYAPP-SETTINGS')
+    >>> # Create custom component using factory
+    >>> CustomSettings = Component.get_component_class('X-MYAPP-SETTINGS')
+    >>> custom = CustomSettings()
+    >>> custom.add('uid', 'settings-1')
     >>> custom.add('x-theme', 'dark')
     >>> cal.add_component(custom)
     >>> b'BEGIN:X-MYAPP-SETTINGS' in cal.to_ical()

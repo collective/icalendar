@@ -363,7 +363,7 @@ class Component(CaselessDict):
 
     @classmethod
     def from_ical(cls, st, multiple: bool = False) -> Self | list[Self]:  # noqa: FBT001
-        r"""Parse iCalendar data into component instances.
+        """Parse iCalendar data into component instances.
 
         Handles standard and custom components (X-*, IANA-registered).
 
@@ -374,9 +374,8 @@ class Component(CaselessDict):
         Returns:
             Component or list of components
 
-        Example:
-            >>> Component.from_ical(b"BEGIN:VEVENT\\r\\nEND:VEVENT\\r\\n")
-            >>> Component.from_ical(b"BEGIN:X-CUSTOM\\r\\nEND:X-CUSTOM\\r\\n")
+        See Also:
+            :doc:`/how-to/custom-components` for examples of parsing custom components
         """
         stack = []  # a stack of components
         comps = []

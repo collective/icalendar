@@ -7,7 +7,6 @@ import pytest
 
 from icalendar import vBinary, vRecur
 from icalendar.cal.calendar import Calendar
-from icalendar.cal.component_factory import ComponentFactory
 from icalendar.cal.event import Event
 from icalendar.parser import Contentline, Parameters, unescape_char
 
