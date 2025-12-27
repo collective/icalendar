@@ -28,3 +28,4 @@ uv.lock
 
 coverage.xml
 !.coveragerc
+!.well-known
