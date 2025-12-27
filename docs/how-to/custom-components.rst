@@ -256,13 +256,20 @@ Example
     >>> b'BEGIN:X-MYAPP-SETTINGS' in cal.to_ical()
     True
 
-See Also
-========
 Related content
 ===============
 
-- :py:class:`icalendar.Component` - Base component class
-- :py:class:`icalendar.cal.component_factory.ComponentFactory` - Component factory
-- :py:meth:`icalendar.Component.from_ical` - Parse components
-- :py:meth:`icalendar.Calendar.from_ical` - Parse calendars
-- :rfc:`5545` - iCalendar specification
+:class:`icalendar.Component`
+    Base component class
+
+:class:`icalendar.cal.component_factory.ComponentFactory`
+    Component factory
+
+:meth:`icalendar.Component.from_ical`
+    Parse components
+
+:meth:`icalendar.Calendar.from_ical`
+    Parse calendars
+
+:rfc:`5545`
+    iCalendar specification
