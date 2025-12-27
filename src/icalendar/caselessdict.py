@@ -94,6 +94,8 @@ class CaselessDict(OrderedDict):
         return f"{type(self).__name__}({dict(self)})"
 
     def __eq__(self, other: object) -> bool:
+        if not isinstance(other, dict):
+            return NotImplemented
         return self is other or dict(self.items()) == dict(other.items())
 
     def __ne__(self, other: object) -> bool:
