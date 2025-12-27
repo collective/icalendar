@@ -124,3 +124,36 @@ def test_categories_edge_cases():
     cal3 = Calendar.from_ical(ical3)
     cats3 = list(cal3.walk("VEVENT")[0].get("categories"))
     assert str(cats3[0]) == "A , B"
+
+
+def test_categories_escaped_escape_sequences():
+    """Test escaped backslash followed by comma and double escaped comma."""
+    # Category with literal "\," (backslash-comma as two chars)
+    event = Event()
+    event.add("categories", ["\\,", "Work"])
+    ical = event.to_ical()
+
+    # Should have escaped backslash AND escaped comma: \\\\,
+    assert b"\\\\\\," in ical
+
+    # Round-trip
+    cal = Calendar.from_ical(ical)
+    cats = list(cal.walk("VEVENT")[0].get("categories"))
+    assert len(cats) == 2
+    assert str(cats[0]) == "\\,"
+    assert str(cats[1]) == "Work"
+
+    # Category with literal "\\," (backslash, backslash, comma)
+    event2 = Event()
+    event2.add("categories", ["\\\\,", "Personal"])
+    ical2 = event2.to_ical()
+
+    # Should have double escaped backslash and escaped comma
+    assert b"\\\\\\\\\\," in ical2
+
+    # Round-trip
+    cal2 = Calendar.from_ical(ical2)
+    cats2 = list(cal2.walk("VEVENT")[0].get("categories"))
+    assert len(cats2) == 2
+    assert str(cats2[0]) == "\\\\,"
+    assert str(cats2[1]) == "Personal"
