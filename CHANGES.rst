@@ -43,7 +43,7 @@ Bug fixes
 ~~~~~~~~~
 
 - Link ``timedelta`` to :py:class:`datetime.timedelta` in the Python standard library documentation. See `Issue 951 <https://github.com/collective/icalendar/issues/951>`_.
-- Fix round-trip parsing of :class:`~icalendar.prop.vCategory` (CATEGORIES property) when category values contain commas. Categories like ``'Meeting, John'`` now correctly survive to_ical() → from_ical() round-trips instead of being split into multiple categories. Added :func:`~icalendar.parser.split_on_unescaped_comma` helper function. See `Issue #127 <https://github.com/collective/icalendar/issues/127>`_.
+- Fix round-trip parsing of :class:`~icalendar.prop.vCategory` (CATEGORIES property) when category values contain commas. Categories like ``'Meeting, John'`` now correctly survive round trips between :meth:`~icalendar.Component.to_ical` and :meth:`~icalendar.Component.from_ical` instead of being split into multiple categories. Added :func:`~icalendar.parser.split_on_unescaped_comma` helper function. See `Issue #127 <https://github.com/collective/icalendar/issues/127>`_.
 
 Documentation
 ~~~~~~~~~~~~~
