@@ -42,6 +42,7 @@ New features
 Bug fixes
 ~~~~~~~~~
 
+- Fixed :meth:`icalendar.caselessdict.CaselessDict.__eq__` to return ``NotImplemented`` when comparing with non-dict types instead of raising ``AttributeError``. See `Issue #1016 <https://github.com/collective/icalendar/issues/1016>`_.
 - Link ``timedelta`` to :py:class:`datetime.timedelta` in the Python standard library documentation. See `Issue 951 <https://github.com/collective/icalendar/issues/951>`_.
 - Fix semicolon escaping in vCard structured properties (ADR, N, ORG). Semicolons are now correctly treated as field separators per :rfc:`6350`, not escaped as in iCalendar TEXT values. Added :func:`~icalendar.parser.split_on_unescaped_semicolon` helper function and :class:`~icalendar.prop.vAdr`, :class:`~icalendar.prop.vN`, :class:`~icalendar.prop.vOrg` property types. See `Issue #137 <https://github.com/collective/icalendar/issues/137>`_.
 
