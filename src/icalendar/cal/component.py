@@ -46,36 +46,51 @@ class Component(CaselessDict):
     Component is the base object for calendar, Event and the other
     components defined in :rfc:`5545`. Normally you will not use this class
     directly, but rather one of the subclasses.
-
-    Attributes:
-        name: The name of the component. Example: ``VCALENDAR``.
-        required: These properties are required.
-        singletons: These properties must only appear once.
-        multiple: These properties may occur more than once.
-        exclusive: These properties are mutually exclusive.
-        inclusive: If the first in a tuple occurs, the second one must also occur.
-        ignore_exceptions: If True, and we cannot parse this
-            component, we will silently ignore it, rather than let the
-            exception propagate upwards.
-        types_factory: Factory for property types
     """
 
-    name = None  # should be defined in each component
-    required = ()  # These properties are required
-    singletons = ()  # These properties must only appear once
-    multiple = ()  # may occur more than once
-    exclusive = ()  # These properties are mutually exclusive
-    inclusive: (
-        tuple[str] | tuple[tuple[str, str]]
-    ) = ()  # if any occurs the other(s) MUST occur
-    # ('duration', 'repeat')
-    ignore_exceptions = False  # if True, and we cannot parse this
-    # component, we will silently ignore
-    # it, rather than let the exception
-    # propagate upwards
-    # not_compliant = ['']  # List of non-compliant properties.
+    name: ClassVar[str|None] = None
+    """The name of the component.
+    
+    This should be defined in each component class.
 
-    types_factory = TypesFactory.instance()
+    Example: ``VCALENDAR``.
+    """
+
+    required: ClassVar[tuple[()]] = ()
+    """These properties are required."""
+
+    singletons: ClassVar[tuple[()]] = ()
+    """These properties must appear only once."""
+
+    multiple: ClassVar[tuple[()]] = ()
+    """These properties may occur more than once."""
+
+    exclusive: ClassVar[tuple[()]] = ()
+    """These properties are mutually exclusive."""
+
+    inclusive: ClassVar[(
+        tuple[str] | tuple[tuple[str, str]]
+    )] = ()
+    """These properties are inclusive.
+     
+    In other words, if the first property in the tuple occurs, then the
+    second one must also occur.
+    
+    Example:
+        
+        .. code-block:: python
+
+            ('duration', 'repeat')
+    """
+
+    ignore_exceptions: ClassVar[bool] = False
+    """Whether or not to ignore exceptions when parsing.
+    
+    If ``True``, and this component can't be parsed, then it will silently
+    ignore it, rather than let the exception propagate upwards.
+    """
+
+    types_factory: ClassVar[TypesFactory] = TypesFactory.instance()
     _components_factory: ClassVar[ComponentFactory | None] = None
 
     @classmethod
@@ -88,6 +103,40 @@ class Component(CaselessDict):
         if cls._components_factory is None:
             cls._components_factory = ComponentFactory()
         return cls._components_factory.get_component_class(name)
+
+    @classmethod
+    def register(cls, component_class: type[Component]) -> None:
+        """Register a custom component class.
+
+        Args:
+            component_class: Component subclass to register. Must have a ``name`` attribute.
+
+        Raises:
+            ValueError: If ``component_class`` has no ``name`` attribute.
+            ValueError: If a component with this name is already registered.
+
+        Example:
+            >>> from icalendar import Component
+            >>> class XExample(Component):
+            ...     name = "X-EXAMPLE"
+            ...     def custom_method(self):
+            ...         return "custom"
+            >>> Component.register(XExample)
+        """
+        if not hasattr(component_class, "name") or component_class.name is None:
+            raise ValueError(f"{component_class} must have a 'name' attribute")
+
+        if cls._components_factory is None:
+            cls._components_factory = ComponentFactory()
+
+        # Check if already registered
+        existing = cls._components_factory.get(component_class.name)
+        if existing is not None and existing is not component_class:
+            raise ValueError(
+                f"Component '{component_class.name}' is already registered as {existing}"
+            )
+
+        cls._components_factory.add_component_class(component_class)
 
     @staticmethod
     def _infer_value_type(
@@ -370,7 +419,20 @@ class Component(CaselessDict):
 
     @classmethod
     def from_ical(cls, st, multiple: bool = False) -> Self | list[Self]:  # noqa: FBT001
-        """Populates the component recursively from a string."""
+        """Parse iCalendar data into component instances.
+
+        Handles standard and custom components (``X-*``, IANA-registered).
+
+        Args:
+            st: iCalendar data as bytes or string
+            multiple: If ``True``, returns list. If ``False``, returns single component.
+
+        Returns:
+            Component or list of components
+
+        See Also:
+            :doc:`/how-to/custom-components` for examples of parsing custom components
+        """
         stack = []  # a stack of components
         comps = []
         for line in Contentlines.from_ical(st):  # raw parsing

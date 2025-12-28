@@ -27,7 +27,8 @@ We still recommend checking out the new features and giving feedback in the repo
 Minor changes
 ~~~~~~~~~~~~~
 
-- ...
+- Clarified custom component (X-* and IANA-registered) parsing behavior through enhanced documentation and comprehensive how-to guide. Custom components are automatically handled by the library with no special configuration required. See `Issue #432 <https://github.com/collective/icalendar/issues/432>`_.
+- Reorganized custom component tests into a dedicated :file:`test_custom_components.py` file with expanded test coverage for :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`, :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>`, and :class:`~icalendar.cal.component_factory.ComponentFactory` usage. See `Issue #433 <https://github.com/collective/icalendar/issues/433>`_.
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
@@ -53,6 +54,9 @@ Documentation
 - Add a section in the change log for Documentation. See `Issue 1043 <https://github.com/collective/icalendar/issues/1043>`_.
 - Fixed multiple ``more than one target found for cross-reference`` warnings, and stopped using ``sphinx.ext.autosectionlabel``, in documentation. See `Issue 952 <https://github.com/collective/icalendar/issues/952>`_.
 - Add ``funding.json`` manifest for funding information. See `Issue 1047 <https://github.com/collective/icalendar/issues/1047>`_.
+- Resolved ``Cannot resolve forward reference in type annotations`` warning in documentation.
+  Added ``SPHINX_APIDOC_OPTIONS`` to ``make apidoc`` command, excluding ``__all__`` items from being duplicated in the documentation, and rebuilt the API documentation source files.
+  See `Issue 952 <https://github.com/collective/icalendar/issues/952>`_.
 
 7.0.0a3 (2025-12-19)
 --------------------

@@ -3,6 +3,7 @@ jCal - RFC 7265
 ===============
 
 .. py:module:: icalendar
+    :no-index:
 
 This chapter describes how to read and write jCal files, and how to convert them between iCalendar files.
 
