@@ -236,7 +236,7 @@ This command should be used when either:
 
 .. seealso::
 
-    `sphinx-apidoc <https://www.sphinx-doc.org/en/master/man/sphinx-apidoc.html>`_
+    :doc:`sphinx:man/sphinx-apidoc`
 
 Purge builds
 ''''''''''''
