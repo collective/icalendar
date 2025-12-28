@@ -97,6 +97,40 @@ class Component(CaselessDict):
             cls._components_factory = ComponentFactory()
         return cls._components_factory.get_component_class(name)
 
+    @classmethod
+    def register(cls, component_class: type[Component]) -> None:
+        """Register a custom component class.
+
+        Args:
+            component_class: Component subclass to register. Must have a ``name`` attribute.
+
+        Raises:
+            ValueError: If ``component_class`` has no ``name`` attribute.
+            ValueError: If a component with this name is already registered.
+
+        Example:
+            >>> from icalendar import Component
+            >>> class XExample(Component):
+            ...     name = "X-EXAMPLE"
+            ...     def custom_method(self):
+            ...         return "custom"
+            >>> Component.register(XExample)
+        """
+        if not hasattr(component_class, "name") or component_class.name is None:
+            raise ValueError(f"{component_class} must have a 'name' attribute")
+
+        if cls._components_factory is None:
+            cls._components_factory = ComponentFactory()
+
+        # Check if already registered
+        existing = cls._components_factory.get(component_class.name)
+        if existing is not None and existing is not component_class:
+            raise ValueError(
+                f"Component '{component_class.name}' is already registered as {existing}"
+            )
+
+        cls._components_factory.add_component_class(component_class)
+
     @staticmethod
     def _infer_value_type(
         value: date | datetime | timedelta | time | tuple | list,
@@ -378,7 +412,20 @@ class Component(CaselessDict):
 
     @classmethod
     def from_ical(cls, st, multiple: bool = False) -> Self | list[Self]:  # noqa: FBT001
-        """Populates the component recursively from a string."""
+        """Parse iCalendar data into component instances.
+
+        Handles standard and custom components (``X-*``, IANA-registered).
+
+        Args:
+            st: iCalendar data as bytes or string
+            multiple: If ``True``, returns list. If ``False``, returns single component.
+
+        Returns:
+            Component or list of components
+
+        See Also:
+            :doc:`/how-to/custom-components` for examples of parsing custom components
+        """
         stack = []  # a stack of components
         comps = []
         for line in Contentlines.from_ical(st):  # raw parsing
