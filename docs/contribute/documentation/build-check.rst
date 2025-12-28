@@ -135,6 +135,8 @@ To build the documentation as HTML without live reload, run the following comman
 
 You can now open the output file :file:`_build/html/index.html` in a web browser to view static content.
 
+This build must be successful in the :ref:`continuous-integration-checks` for your pull request to be merged.
+
 
 Check links
 '''''''''''
@@ -146,6 +148,8 @@ Check links
     make linkcheckbroken
 
 Open :file:`_build/linkcheck/output.txt` for the entire list of links that were checked and their result.
+
+This build must be successful in the :ref:`continuous-integration-checks` for your pull request to be merged.
 
 
 .. _make-vale:
@@ -175,6 +179,8 @@ In the following example, run Vale to display warnings or errors only, not sugge
     make vale VALEOPTS="--minAlertLevel='warning'" VALEFILES="docs/index.rst"
 
 The command ``make vale`` automatically installs Vale into your Python virtual environment when you invoke it the first time.
+
+This build must be successful in the :ref:`continuous-integration-checks` for your pull request to be merged.
 
 
 .. _vale-integration:
@@ -260,3 +266,22 @@ Use this command when packages that you have installed in your virtual environme
 .. code-block:: shell
 
     make clean-python
+
+
+Pull request previews
+---------------------
+
+On every pull request, Read the Docs generates a pull request preview of the documentation.
+It will append a link to the preview in the description of the pull request that the author creates.
+
+`View all builds of documentation on Read the Docs <https://app.readthedocs.org/projects/icalendar/builds/>`_.
+
+
+.. _continuous-integration-checks:
+
+Continuous integration checks
+-----------------------------
+
+On every pull request, continuous integration checks attempt to build the documentation, run Vale checks, and check for broken links.
+If any of these checks fail, then the pull request cannot be merged.
+You must resolve the build failures, preferably locally, before the pull request can be merged.
