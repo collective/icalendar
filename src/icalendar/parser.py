@@ -550,12 +550,12 @@ def unescape_backslash(val: str):
 def split_on_unescaped_semicolon(text: str) -> list[str]:
     r"""Split text on unescaped semicolons and unescape each part.
 
-    Splits only on semicolons not preceded by backslash.
+    Splits only on semicolons not preceded by a backslash.
     After splitting, unescapes backslash sequences in each part.
     Used by vCard structured properties (ADR, N, ORG) per :rfc:`6350`.
 
     Args:
-        text: Text with potential escaped semicolons (e.g., "field1\;with;field2")
+        text: Text with potential escaped semicolons (e.g., "field1\\;with;field2")
 
     Returns:
         List of unescaped field strings

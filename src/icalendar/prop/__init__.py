@@ -912,11 +912,21 @@ class vCategory:
 
 
 class vAdr:
-    """vCard ADR (Address) structured property per :rfc:`6350` Section 6.3.1.
+    """vCard ADR (Address) structured property per :rfc:`6350` `Section 6.3.1 <https://datatracker.ietf.org/doc/html/rfc6350.html#section-6.3.1>`_.
 
-    The ADR property represents a delivery address with 7 semicolon-separated fields:
-    PO-box, extended-address, street, locality (city), region (state/province),
-    postal-code, country.
+    The ADR property represents a delivery address as a single text value.
+    The structured type value consists of a sequence of seven address components.
+    The component values must be specified in their corresponding position.
+
+    -   post office box
+    -   extended address (e.g., apartment or suite number)
+    -   street address
+    -   locality (e.g., city)
+    -   region (e.g., state or province)
+    -   postal code
+    -   country name (full name)
+
+    When a component value is missing, the associated component separator MUST still be specified.
 
     Semicolons are field separators and are NOT escaped.
     Commas and backslashes within field values ARE escaped per :rfc:`6350`.
@@ -952,10 +962,10 @@ class vAdr:
         /,
         params: dict[str, Any] | None = None,
     ):
-        """Initialize ADR with 7 fields or parse from vCard format string.
+        """Initialize ADR with seven fields or parse from vCard format string.
 
         Args:
-            fields: Either tuple/list of 7 strings (one per field) or
+            fields: Either a tuple or list of seven strings, one per field, or a
                     vCard format string with semicolon-separated fields
             params: Optional property parameters
         """
@@ -975,13 +985,13 @@ class vAdr:
 
     @staticmethod
     def from_ical(ical: str | bytes) -> tuple[str, ...]:
-        """Parse vCard ADR format into tuple of 7 fields.
+        """Parse vCard ADR format into a tuple of seven fields.
 
         Args:
             ical: vCard format string with semicolon-separated fields
 
         Returns:
-            Tuple of 7 field values (empty string if field is empty)
+            Tuple of seven field values, or the empty string if the field is empty.
         """
         from icalendar.parser import split_on_unescaped_semicolon
 
@@ -1039,10 +1049,19 @@ class vAdr:
 
 
 class vN:
-    """vCard N (Name) structured property per :rfc:`6350` Section 6.2.2.
+    """vCard N (Name) structured property per :rfc:`6350` `Section 6.2.2 <https://datatracker.ietf.org/doc/html/rfc6350.html#section-6.2.2>`_.
 
-    The N property represents a person's name with 5 semicolon-separated fields:
-    family-name, given-name, additional-names, honorific-prefixes, honorific-suffixes.
+    The N property represents a person's name.
+    It consists of a single structured text value.
+    Each component in the structure may have multiple values, separated by commas.
+
+    The structured property value corresponds, in sequence, to the following fields:
+
+    -   family names (also known as surnames)
+    -   given names
+    -   additional names
+    -   honorific prefixes
+    -   honorific suffixes
 
     Semicolons are field separators and are NOT escaped.
     Commas and backslashes within field values ARE escaped per :rfc:`6350`.
@@ -1051,11 +1070,11 @@ class vN:
         .. code-block:: pycon
 
             >>> from icalendar.prop import vN
-            >>> n = vN(("Doe", "John", "M.", "Dr.", "Jr."))
+            >>> n = vN(("Doe", "John", "M.", "Dr.", "Jr.,M.D.,A.C.P."))
             >>> n.to_ical()
-            b'Doe;John;M.;Dr.;Jr.'
-            >>> vN.from_ical("Doe;John;M.;Dr.;Jr.")
-            ('Doe', 'John', 'M.', 'Dr.', 'Jr.')
+            b'Doe;John;M.;Dr.;Jr.\\,M.D.\\,A.C.P.'
+            >>> vN.from_ical(r"Doe;John;M.;Dr.;Jr.\,M.D.\,A.C.P.")
+            ('Doe', 'John', 'M.', 'Dr.', 'Jr.,M.D.,A.C.P.')
     """
 
     default_value: ClassVar[str] = "TEXT"
@@ -1070,10 +1089,10 @@ class vN:
         /,
         params: dict[str, Any] | None = None,
     ):
-        """Initialize N with 5 fields or parse from vCard format string.
+        """Initialize N with five fields or parse from vCard format string.
 
         Args:
-            fields: Either tuple/list of 5 strings (one per field) or
+            fields: Either a tuple or list of five strings, one per field, or a
                     vCard format string with semicolon-separated fields
             params: Optional property parameters
         """
@@ -1091,13 +1110,13 @@ class vN:
 
     @staticmethod
     def from_ical(ical: str | bytes) -> tuple[str, ...]:
-        """Parse vCard N format into tuple of 5 fields.
+        """Parse vCard N format into a tuple of five fields.
 
         Args:
             ical: vCard format string with semicolon-separated fields
 
         Returns:
-            Tuple of 5 field values (empty string if field is empty)
+            Tuple of five field values, or the empty string if the field is empty
         """
         from icalendar.parser import split_on_unescaped_semicolon
 
@@ -1153,26 +1172,35 @@ class vN:
 
 
 class vOrg:
-    """vCard ORG (Organization) structured property per :rfc:`6350` Section 6.6.4.
+    """vCard ORG (Organization) structured property per :rfc:`6350` `Section 6.6.4 <https://datatracker.ietf.org/doc/html/rfc6350.html#section-6.6.4>`_.
 
-    The ORG property represents an organization with variable semicolon-separated fields:
-    organization-name, organizational-unit-1, organizational-unit-2, ...
+    The ORG property specifies the organizational name and units associated with the vCard.
 
-    At least one field (organization name) is required. Additional organizational units
-    are optional.
+    Its value is a structured type consisting of components separated by semicolons.
+    The components are the organization name, followed by zero or more levels of organizational unit names:
+    organization-name; organizational-unit-1; organizational-unit-2; ...
 
     Semicolons are field separators and are NOT escaped.
     Commas and backslashes within field values ARE escaped per :rfc:`6350`.
 
     Examples:
+        A property value consisting of an organizational name,
+        organizational unit #1 name, and organizational unit #2 name.
+
+        .. code-block:: text
+
+            ORG:ABC\, Inc.;North American Division;Marketing
+
+        The same example in icalendar.
+
         .. code-block:: pycon
 
             >>> from icalendar.prop import vOrg
-            >>> org = vOrg(("ABC Inc.", "Marketing", "Sales"))
+            >>> org = vOrg(("ABC, Inc.", "North American Division", "Marketing"))
             >>> org.to_ical()
-            b'ABC Inc.;Marketing;Sales'
-            >>> vOrg.from_ical("ABC Inc.;Marketing;Sales")
-            ('ABC Inc.', 'Marketing', 'Sales')
+            b'ABC\\, Inc.;North American Division;Marketing'
+            >>> vOrg.from_ical(r"ABC\, Inc.;North American Division;Marketing")
+            ('ABC, Inc.', 'North American Division', 'Marketing')
     """
 
     default_value: ClassVar[str] = "TEXT"
