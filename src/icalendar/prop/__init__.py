@@ -1172,13 +1172,16 @@ class vN:
 
 
 class vOrg:
-    """vCard ORG (Organization) structured property per :rfc:`6350` `Section 6.6.4 <https://datatracker.ietf.org/doc/html/rfc6350.html#section-6.6.4>`_.
+    r"""vCard ORG (Organization) structured property per :rfc:`6350` `Section 6.6.4 <https://datatracker.ietf.org/doc/html/rfc6350.html#section-6.6.4>`_.
 
     The ORG property specifies the organizational name and units associated with the vCard.
 
     Its value is a structured type consisting of components separated by semicolons.
     The components are the organization name, followed by zero or more levels of organizational unit names:
-    organization-name; organizational-unit-1; organizational-unit-2; ...
+
+    .. code-block:: text
+
+        organization-name; organizational-unit-1; organizational-unit-2; ...
 
     Semicolons are field separators and are NOT escaped.
     Commas and backslashes within field values ARE escaped per :rfc:`6350`.
@@ -1198,7 +1201,7 @@ class vOrg:
             >>> from icalendar.prop import vOrg
             >>> org = vOrg(("ABC, Inc.", "North American Division", "Marketing"))
             >>> org.to_ical()
-            b'ABC\\\\, Inc.;North American Division;Marketing'
+            b'ABC\\, Inc.;North American Division;Marketing'
             >>> vOrg.from_ical(r"ABC\, Inc.;North American Division;Marketing")
             ('ABC, Inc.', 'North American Division', 'Marketing')
     """
@@ -1215,7 +1218,7 @@ class vOrg:
         """Initialize ORG with variable fields or parse from vCard format string.
 
         Args:
-            fields: Either tuple/list of strings (at least 1) or
+            fields: Either a tuple or list of one or more strings, or a
                     vCard format string with semicolon-separated fields
             params: Optional property parameters
         """
@@ -1233,13 +1236,13 @@ class vOrg:
 
     @staticmethod
     def from_ical(ical: str | bytes) -> tuple[str, ...]:
-        """Parse vCard ORG format into tuple of fields.
+        """Parse vCard ORG format into a tuple of fields.
 
         Args:
             ical: vCard format string with semicolon-separated fields
 
         Returns:
-            Tuple of field values (at least 1 field)
+            Tuple of field values with one or more fields
         """
         from icalendar.parser import split_on_unescaped_semicolon
 
@@ -1291,7 +1294,7 @@ class vOrg:
     @classmethod
     def examples(cls) -> list[vOrg]:
         """Examples of vOrg."""
-        return [cls(("ABC Inc.", "Marketing", "Sales"))]
+        return [cls(("ABC Inc.", "North American Division", "Marketing"))]
 
 
 class TimeBase:
