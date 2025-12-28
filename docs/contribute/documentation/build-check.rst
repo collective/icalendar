@@ -14,20 +14,20 @@ Prerequisites
 
 You'll need to first install prerequisites on, and clone the icalendar repository to, your local computer.
 
-Documentation builds and checks require that you install GNU Make and uv.
+Documentation builds and checks require that you install :program:`GNU Make` and :program:`uv`.
 
 
-Make
-''''
+:program:`Make`
+'''''''''''''''
 
-``make`` is used to provide an interface to developers to perform repetitive tasks with a single command.
+:program:`Make` is used to provide an interface to developers to perform repetitive tasks with a single command.
 
-``make`` comes installed on most Linux distributions.
+:program:`Make` comes installed on most Linux distributions.
 On macOS, you must first `install Xcode <https://developer.apple.com/xcode/resources/>`_, then install its command line tools.
-On Windows, it is strongly recommended to `Install Linux on Windows with WSL <https://learn.microsoft.com/en-us/windows/wsl/install>`_, which will include ``make``.
+On Windows, it is strongly recommended to `Install Linux on Windows with WSL <https://learn.microsoft.com/en-us/windows/wsl/install>`_, which will include :program:`Make`.
 
-Finally, it is a good idea to update your system's version of ``make``, because some distributions, especially macOS, have an outdated version.
-Use your favorite search engine or trusted online resource for how to update ``make``.
+Finally, it is a good idea to update your system's version of :program:`Make`, because some distributions, especially macOS, have an outdated version.
+Use your favorite search engine or trusted online resource for how to update :program:`Make`.
 
 
 uv
@@ -35,7 +35,7 @@ uv
 
 `uv <https://docs.astral.sh/uv/>`_ is used for installing Python, creating a Python virtual environment, and managing dependencies for documentation.
 
-Install uv.
+Install :program:`uv`.
 Read the console output for further instructions, and follow them, if needed.
 
 .. tab-set::
@@ -73,8 +73,6 @@ Change your working directory into the cloned project.
 
     cd documentation
 
-From this point, you can build and check the quality of documentation with any of the ``make`` commands described in .
-
 
 .. _file-locations:
 
@@ -86,35 +84,34 @@ Narrative documentation files are located in the `docs <https://github.com/colle
 :doc:`API reference documentation files </reference/api/icalendar>` are located in the `src <https://github.com/collective/icalendar/tree/main/docs>`_ directory.
 
 
-.. _documentation-builds:
+.. _make-commands:
 
-Documentation builds
---------------------
+:program:`Make` commands
+------------------------
 
-With all :ref:`prerequisites <documentation-prerequisites>` installed, you can make various builds of the documentation, some of which perform quality checks.
-All build and check commands use the file :file:`Makefile` at the root of the repository.
+With all :ref:`prerequisites <documentation-prerequisites>` installed, you can make various documentation builds, perform quality checks, and clean your environment.
+All :program:`Make` commands use the file :file:`Makefile` at the root of the repository.
 
-To see descriptions of the ``make`` commands, use the following command.
+
+Help
+''''
+
+To get help and see descriptions of the ``make`` commands, use the following command.
 
 .. code-block:: shell
 
     make help
 
-Else you can open the :file:`Makefile` file at the root of the repository to see other build formats.
+Alternatively, the :file:`Makefile` file at the root of the repository contains all available commands.
 
-The following sections describe the most frequently used ``make`` commands.
-
-All ``make`` commands that build documentation will:
-
--   create a Python virtual environment, and
--   install requirements.
+All commands except the "clean" commands will create a Python virtual environment, and install requirements.
 
 
-``livehtml``
-''''''''''''
+Live HTML preview
+'''''''''''''''''
 
-``livehtml`` rebuilds documentation as you edit its files, with live reload in the browser.
-This is the most useful build when editing documentation.
+``livehtml`` rebuilds documentation as you edit its files, providing a preview with live reload in the browser.
+This is the most useful command when editing documentation.
 
 .. code-block:: shell
 
@@ -127,8 +124,8 @@ The console will give you the URL to open in a web browser.
     [sphinx-autobuild] Serving on http://127.0.0.1:8050
 
 
-``html``
-''''''''
+HTML
+''''
 
 To build the documentation as HTML without live reload, run the following command.
 
@@ -136,11 +133,11 @@ To build the documentation as HTML without live reload, run the following comman
 
     make html
 
-You can now open the output from ``docs/_build/html/index.html``.
+You can now open the output file :file:`_build/html/index.html` in a web browser to view static content.
 
 
-``linkcheckbroken``
-'''''''''''''''''''
+Check links
+'''''''''''
 
 ``linkcheckbroken`` checks all links, returning a list of only broken links.
 
@@ -148,15 +145,15 @@ You can now open the output from ``docs/_build/html/index.html``.
 
     make linkcheckbroken
 
-Open `docs/_build/linkcheck/output.txt` for the entire list of links that were checked and their result.
+Open :file:`_build/linkcheck/output.txt` for the entire list of links that were checked and their result.
 
 
 .. _make-vale:
 
-``vale``
-''''''''
+Spelling, grammar, and style
+''''''''''''''''''''''''''''
 
-``vale`` checks for American English spelling, grammar, and syntax, and follows the Microsoft Writing Style Guide.
+``vale`` checks American English spelling, grammar, and syntax, and follows the Microsoft Writing Style Guide.
 
 .. code-block:: shell
 
@@ -165,28 +162,40 @@ Open `docs/_build/linkcheck/output.txt` for the entire list of links that were c
 Observe the output and adjust Vale's configuration, as described in the next section.
 
 
-.. _authors-advanced-vale-usage-label:
+.. _vale-options:
 
-Advanced Vale usage
-```````````````````
+Vale options
+````````````
 
-You can pass options to Vale in the ``VALEOPTS`` and ``VALEFILES`` environment variables.
-In the following example, you can run Vale to display warnings or errors only, not suggestions, in the console on a single file.
+Pass options to Vale in the ``VALEOPTS`` and ``VALEFILES`` environment variables.
+In the following example, run Vale to display warnings or errors only, not suggestions, in the console on a single file.
 
 .. code-block:: shell
 
     make vale VALEOPTS="--minAlertLevel='warning'" VALEFILES="docs/index.rst"
 
-The command ``make vale`` automatically installs Vale into your Python virtual environment—which is also created via any documentation ``Makefile`` commands—when you invoke it for the first time.
+The command ``make vale`` automatically installs Vale into your Python virtual environment when you invoke it the first time.
+
+
+.. _vale-integration:
+
+Vale integration
+````````````````
 
 Vale has `integrations <https://vale.sh/docs/>`_ with various IDEs.
-Integration might require installing Vale using operating system's package manager.
+Integration might require installing Vale using your operating system's package manager.
 
 -   `JetBrains <https://plugins.jetbrains.com/plugin/19613-vale-cli/docs>`_
 -   `Vim <https://github.com/dense-analysis/ale>`_
 -   `VS Code <https://github.com/chrischinchilla/vale-vscode>`_
 
-icalendar configures Vale in three places:
+
+.. _vale-configuration:
+
+Vale configuration
+``````````````````
+
+icalendar configures Vale in the following places:
 
 -   :file:`.vale.ini` is Vale's configuration file.
     This file allows overriding rules or changing their severity.
@@ -194,10 +203,17 @@ icalendar configures Vale in three places:
 -   :file:`Makefile` passes options to the ``vale`` command, such as the files Vale checks.
 -   icalendar documentation uses a custom spelling dictionary, with accepted and rejected spellings in :file:`docs/styles/config/vocabularies/icalendar/`.
     Authors should add new words and proper names using correct casing to :file:`docs/styles/config/vocabularies/icalendar/accept.txt`, sorted alphabetically and case-insensitive.
-    All entries support regular expressions.
 
     If Vale does not reject a spelling that should be rejected, then you can add it to :file:`docs/styles/config/vocabularies/icalendar/reject.txt`.
--   You can add additional spellings to accept or reject in their respective files inside the :file:`docs/styles/config/vocabularies/Base/` folder.
+
+    All entries in both files support regular expressions.
+    Use https://regex101.com/ with the :guilabel:`Golang` option selected to test regular expressions.
+
+    .. seealso::
+
+        Vale's `regex guide <https://vale.sh/docs/guides/regex>`_
+
+-   Add generic spellings to accept or reject in their respective files inside the :file:`docs/styles/config/vocabularies/Base/` folder.
 
 Because it's difficult to automate good American English grammar and syntax, it's not strictly enforced.
 
@@ -205,19 +221,38 @@ You can add spellings to Vale's configuration, and submit a pull request.
 This is an easy way to become a contributor to icalendar.
 
 
-``clean``
-'''''''''
+Build API source files
+''''''''''''''''''''''
+
+``apidoc`` generates source documentation files from which Sphinx will render the API documentation.
+This command should be used when either:
+
+- adding a new module, that is, a Python file in the :file:`src/icalendar` directory
+- changing the options of source reStructuredText files to build API documentation
+
+.. code-block:: shell
+
+    make apidoc
+
+.. seealso::
+
+    `sphinx-apidoc <https://www.sphinx-doc.org/en/master/man/sphinx-apidoc.html>`_
+
+Purge builds
+''''''''''''
 
 ``clean`` removes all builds and cached files of the documentation.
 Use this command before a build to troubleshoot issues with edits not showing up and to ensure that cached files do not hide errors in the documentation.
+This is especially useful when adding a new page to the documentation and it doesn't appear in the navigation.
+Sphinx only rebuilds changed files.
 
 .. code-block:: shell
 
     make clean
 
 
-``clean-python``
-''''''''''''''''
+Purge environment
+'''''''''''''''''
 
 ``clean-python`` cleans the documentation build directory and Python virtual environment.
 Use this command when packages that you have installed in your virtual environment yield unexpected results.
@@ -225,75 +260,3 @@ Use this command when packages that you have installed in your virtual environme
 .. code-block:: shell
 
     make clean-python
-
-
-``apidoc``
-''''''''''
-
-``apidoc`` generates source documentation files from which Sphinx will render the API documentation.
-
-.. code-block:: shell
-
-    make apidoc
-
-When editing icalendar's Python source code, use `Google Python Style Guide <https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings>`_ for the docstring format.
-The following is an example that will render properly.
-
-.. code-block:: python
-
-    def fetch_smalltable_rows(
-        table_handle: smalltable.Table,
-        keys: Sequence[bytes | str],
-        require_all_keys: bool = False,
-    ) -> Mapping[bytes, tuple[str, ...]]:
-    """A one-line summary of the module or program, terminated by a period.
-
-    Leave one blank line.  The rest of this docstring should contain an
-    overall description of the module or program.  Optionally, it may also
-    contain a brief description of exported classes and functions and/or usage
-    examples.
-
-    Args:
-        table_handle:
-            An open ``smalltable.Table`` instance.
-        keys:
-            A sequence of strings representing the key of each table row to
-            fetch.  String keys will be UTF-8 encoded.
-        require_all_keys:
-            If True only rows with values set for all keys will be returned.
-
-    Returns:
-        A dict mapping keys to the corresponding table row data
-        fetched. Each row is represented as a tuple of strings. For
-        example:
-
-        .. code-block:: python
-
-            {b'Serak': ('Rigel VII', 'Preparer'),
-            b'Zim': ('Irk', 'Invader'),
-            b'Lrrr': ('Omicron Persei 8', 'Emperor')}
-
-        Returned keys are always bytes.  If a key from the keys argument is
-        missing from the dictionary, then that row was not found in the
-        table (and require_all_keys must have been False).
-
-    Raises:
-        IOError:
-            An error occurred accessing the smalltable.
-
-    Example:
-        The following is an example of using ``fetch_smalltable_rows``.
-
-        .. code-block:: pycon
-
-            >>> fetch_smalltable_rows(my_table_handle, (b'Serak', b'Zim', b'Lrrr'))
-            {b'Serak': ('Rigel VII', 'Preparer'),
-            b'Zim': ('Irk', 'Invader'),
-            b'Lrrr': ('Omicron Persei 8', 'Emperor')}
-
-    """
-
-.. seealso::
-
-    `sphinx-apidoc <https://www.sphinx-doc.org/en/master/man/sphinx-apidoc.html>`_
-
