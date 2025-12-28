@@ -2,6 +2,7 @@ icalendar package
 =================
 
 .. automodule:: icalendar
+   :ignore-module-all:
    :members:
    :show-inheritance:
    :undoc-members:
