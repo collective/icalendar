@@ -4,15 +4,18 @@ Documentation
 
 This part of the documentation describes how to contribute to icalendar's documentation.
 
-For quick or small edits through the GitHub web interface, read the :doc:`small-edits` chapter.
+For quick or small edits through the GitHub web interface, read the chapter :doc:`small-edits`.
 
-For larger edits, the :ref:`build-check` chapter provides a comprehensive command reference to build and check the quality of documentation.
+For larger edits, the chapter :ref:`build-check` provides a comprehensive command reference to build and check the quality of documentation.
 
-Refer to the :doc:`style-guide` when you need examples of language, terminology, code, or markup.
+Refer to the chapter :doc:`style-guide` when you need examples of language, terminology, code, or markup.
 
 
+Find issues
+-----------
 
 icalendar's documentation may have errors and omissions.
+Open issues are available to work on.
 Contributions to improve the documentation are welcome.
 This is a good way for first-time contributors to participate in the icalendar community.
 
