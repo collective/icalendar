@@ -1072,7 +1072,7 @@ class vN:
             >>> from icalendar.prop import vN
             >>> n = vN(("Doe", "John", "M.", "Dr.", "Jr.,M.D.,A.C.P."))
             >>> n.to_ical()
-            b'Doe;John;M.;Dr.;Jr.\\,M.D.\\,A.C.P.'
+            b'Doe;John;M.;Dr.;Jr.\\\\,M.D.\\\\,A.C.P.'
             >>> vN.from_ical(r"Doe;John;M.;Dr.;Jr.\,M.D.\,A.C.P.")
             ('Doe', 'John', 'M.', 'Dr.', 'Jr.,M.D.,A.C.P.')
     """
@@ -1198,7 +1198,7 @@ class vOrg:
             >>> from icalendar.prop import vOrg
             >>> org = vOrg(("ABC, Inc.", "North American Division", "Marketing"))
             >>> org.to_ical()
-            b'ABC\\, Inc.;North American Division;Marketing'
+            b'ABC\\\\, Inc.;North American Division;Marketing'
             >>> vOrg.from_ical(r"ABC\, Inc.;North American Division;Marketing")
             ('ABC, Inc.', 'North American Division', 'Marketing')
     """
