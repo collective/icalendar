@@ -34,8 +34,7 @@ class ComponentFactory(CaselessDict):
         >>> custom_class()
         X-VENDOR({})
 
-    If a component class is not yet supported, it can be either created using :meth:`get_component_class` or added manually as a subclass of :class:`~icalendar.Component`.
-
+    If a component class is not yet supported, it can be either created using :meth:`get_component_class` or added manually as a subclass of :class:`~icalendar.cal.component.Component`.
     See :doc:`/how-to/custom-components` for details.
     """
 

@@ -28,7 +28,7 @@ Minor changes
 ~~~~~~~~~~~~~
 
 - Clarified custom component (X-* and IANA-registered) parsing behavior through enhanced documentation and comprehensive how-to guide. Custom components are automatically handled by the library with no special configuration required. See `Issue #432 <https://github.com/collective/icalendar/issues/432>`_.
-- Reorganized custom component tests into dedicated ``test_custom_components.py`` file with expanded test coverage for :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`, :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>`, and :class:`~icalendar.cal.component_factory.ComponentFactory` usage. See `Issue #433 <https://github.com/collective/icalendar/issues/433>`_.
+- Reorganized custom component tests into a dedicated :file:`test_custom_components.py` file with expanded test coverage for :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`, :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>`, and :class:`~icalendar.cal.component_factory.ComponentFactory` usage. See `Issue #433 <https://github.com/collective/icalendar/issues/433>`_.
 
 Breaking changes
 ~~~~~~~~~~~~~~~~

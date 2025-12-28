@@ -105,7 +105,7 @@ class Component(CaselessDict):
             component_class: Component subclass to register. Must have a ``name`` attribute.
 
         Raises:
-            ValueError: If component_class has no ``name`` attribute.
+            ValueError: If ``component_class`` has no ``name`` attribute.
             ValueError: If a component with this name is already registered.
 
         Example:
@@ -116,7 +116,7 @@ class Component(CaselessDict):
             ...         return "custom"
             >>> Component.register(XExample)
         """
-        if not hasattr(component_class, 'name') or component_class.name is None:
+        if not hasattr(component_class, "name") or component_class.name is None:
             raise ValueError(f"{component_class} must have a 'name' attribute")
 
         if cls._components_factory is None:

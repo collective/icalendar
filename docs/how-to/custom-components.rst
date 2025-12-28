@@ -307,16 +307,16 @@ The following example shows how to add a feature for a calendar, where an applic
 Related content
 ===============
 
-:class:`icalendar.Component`
+:class:`~icalendar.cal.component.Component`
     Base component class
 
 :class:`icalendar.cal.component_factory.ComponentFactory`
     Component factory
 
-:meth:`icalendar.Component.from_ical`
+:meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`
     Parse components
 
-:meth:`icalendar.Calendar.from_ical`
+:meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>`
     Parse calendars
 
 :rfc:`5545`
