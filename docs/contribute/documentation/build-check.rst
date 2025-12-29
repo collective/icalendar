@@ -92,6 +92,8 @@ Narrative documentation files are located in the `docs <https://github.com/colle
 With all :ref:`prerequisites <documentation-prerequisites>` installed, you can make various documentation builds, perform quality checks, and clean your environment.
 All :program:`Make` commands use the file :file:`Makefile` at the root of the repository.
 
+The :program:`Make` commands may invoke :program:`Sphinx`, :program:`uv`, :program:`Vale`, shell commands, and other programs.
+
 
 Help
 ''''
@@ -268,6 +270,51 @@ Use this command when packages that you have installed in your virtual environme
     make clean-python
 
 
+Add features
+------------
+
+To add features to documentation through Sphinx extensions and other programs, you might need to perform the following tasks.
+
+
+Add a package
+'''''''''''''
+
+To add a package for documentation, such as a Sphinx extension or other third application, use :program:`uv`.
+
+.. code-block:: shell
+
+    uv add --docs new-requirement
+
+This will add ``new-requirement`` to the list of documentation requirements in the ``docs`` group in the :file:`pyproject.toml` file.
+
+
+Configure a package
+'''''''''''''''''''
+
+Most packages require configuration in Sphinx and in the :file:`Makefile` file.
+Follow the specific directions of the package.
+
+For Sphinx, you would typically edit the file :file:`docs/conf.py`, and add both the package's Python name to the ``extensions`` list and its configuration options as a new section.
+For the latter, use a comment with a visual separator, such as that for configuring the Napolean extension.
+
+.. code-block:: python
+
+    # -- Napolean configuration ----------------------------------
+    napoleon_use_param = True
+    napoleon_google_docstring = True
+    napoleon_attr_annotations = True
+
+If your feature adds a shell command, add helpful options to the :file:`Makefile` file.
+
+
+Document a package
+''''''''''''''''''
+
+    "If it ain't documented, it's broken."
+
+After adding and configuring a package, it's imporotant to inform other people what the feature does and how to use it.
+
+
 Pull request previews
 ---------------------
 
@@ -275,6 +322,8 @@ On every pull request, Read the Docs generates a pull request preview of the doc
 It will append a link to the preview in the description of the pull request that the author creates.
 
 `View all builds of documentation on Read the Docs <https://app.readthedocs.org/projects/icalendar/builds/>`_.
+
+This feature is configured in the files :file:`.readthedocs.yml` and :file:`.github/workflows/rtd-pr-preview.yml`.
 
 
 .. _continuous-integration-checks:
@@ -285,3 +334,5 @@ Continuous integration checks
 On every pull request, continuous integration checks attempt to build the documentation, run Vale checks, and check for broken links.
 If any of these checks fail, then the pull request cannot be merged.
 You must resolve the build failures, preferably locally, before the pull request can be merged.
+
+This feature is configured in the file :file:`.github/workflows/documentation.yml`.
