@@ -2,6 +2,7 @@ icalendar.timezone package
 ==========================
 
 .. automodule:: icalendar.timezone
+   :ignore-module-all:
    :members:
    :show-inheritance:
    :undoc-members:
