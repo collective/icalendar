@@ -14,7 +14,7 @@ def test_decode_categories_empty():
 
 
 def test_decode_categories_when_set():
-    """We can decode no categories."""
+    """We can decode categories when set."""
     todo = Todo()
     todo.categories = ["cat1", "cat2"]
     categories = todo.decoded("categories", [])
