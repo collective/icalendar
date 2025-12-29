@@ -245,5 +245,6 @@ docs = [
     "sphinx-reredirects>=0.1.6",
     "vale>=3.12.0",
     "sphinx-autodoc-typehints",
+    "sphinx-examples>=0.0.5",
 ]
 

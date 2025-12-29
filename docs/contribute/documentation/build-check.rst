@@ -283,7 +283,7 @@ To add a package for documentation, such as a Sphinx extension or other third ap
 
 .. code-block:: shell
 
-    uv add --docs new-requirement
+    uv add --group docs new-requirement
 
 This will add ``new-requirement`` to the list of documentation requirements in the ``docs`` group in the :file:`pyproject.toml` file.
 
