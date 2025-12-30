@@ -314,7 +314,7 @@ Document a package
 
     "If it ain't documented, it's broken."
 
-After adding and configuring a package, it's imporotant to inform other people what the feature does and how to use it.
+After adding and configuring a package, it's important to inform other people what the feature does and how to use it.
 
 
 Pull request previews

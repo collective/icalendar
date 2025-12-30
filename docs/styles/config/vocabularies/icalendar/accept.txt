@@ -9,11 +9,15 @@ iCal
 (?i)icalendar
 jCal
 Kunzmann
+Napolean
 Nicco
 Params
 Penner
 (?i)Plone
 RFCs?
+sphinx_copybutton
+sphinx_design
+sphinx_reredirects
 src
 (?i)subcomponents?
 (?i)subpackages?
