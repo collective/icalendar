@@ -74,6 +74,57 @@ Sphinx and its extensions enhance core reStructuredText with additional features
 For configuration of these features, see :ref:`configure-a-package`.
 
 
+Markup examples
+---------------
+
+All of the following markup examples will work in both narrative and API documentation.
+API documentation has additional syntax usage.
+
+
+Reference Python objects
+''''''''''''''''''''''''
+
+There are three different reStructuredText forms that display the text label of the reference link to Python objects.
+The following reStructuredText source examples render to as shown.
+
+-   full dotted Python path
+
+    .. code-block:: rst
+
+        :class:`icalendar.prop.vXmlReference`
+
+    :class:`icalendar.prop.vXmlReference`
+
+-   object only
+
+    .. code-block:: rst
+
+        :class:`~icalendar.prop.vXmlReference`
+
+    :class:`~icalendar.prop.vXmlReference`
+
+-   custom display
+
+    .. code-block:: rst
+
+        :class:`prop.vXmlReference <icalendar.prop.vXmlReference>`
+
+    :class:`prop.vXmlReference <icalendar.prop.vXmlReference>`
+
+The form to use depends on the context of the narrative.
+If it's obvious that the object is within the current class or module, then the object only form may be best.
+If it's unclear where the object is located, then the full dotted Python path or custom display forms may be better.
+Use your best judgment.
+
+.. seealso::
+
+    :doc:`sphinx:usage/domains/python`
+
+    .. note::
+
+        Because icalendar uses the Python domain exclusively, it's safe to omit the ``:py`` prefix when creating references to Python objects.
+
+
 Style and quality checks
 ------------------------
 
@@ -107,5 +158,4 @@ Please ask!
 .. seealso::
 
     See how to use :ref:`Vale <make-vale>`.
-
 
