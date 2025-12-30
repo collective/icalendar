@@ -58,6 +58,8 @@ When writing documentation, use the `reStructuredText <https://docutils.sourcefo
 When writing API reference documentation, write `docstrings <https://peps.python.org/pep-0257/#what-is-a-docstring>`_ inside the Python code following the `Google Python Style Guide, Comments and Docstrings <https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings>`_ format.
 These docstrings get rendered into the :doc:`API reference documentation <../../reference/api/icalendar>`.
 
+.. -   documentation coverage reporting of Python source files through :doc:`sphinx.ext.coverage <sphinx:usage/extensions/coverage>`
+.. -   doctest reporting of Python docstring and narrative documentation code examples through :doc:`sphinx.ext.doctest <sphinx:usage/extensions/doctest>`
 
 Style and quality checks
 ------------------------

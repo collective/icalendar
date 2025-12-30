@@ -117,6 +117,13 @@ vale: .venv  ## Run Vale style, grammar, and spell checks
 	@echo "Vale is finished; look for any errors in the above output."
 
 # Not yet implemented
+# https://www.sphinx-doc.org/en/master/usage/extensions/coverage.html
+#.PHONY: coverage
+#coverage: .venv  ## Collect documentation coverage statistics of Python source files
+#	cd $(DOCS_DIR) && $(SPHINXBUILD) -M coverage $(ALLSPHINXOPTS) $(BUILDDIR)/coverage
+
+# Not yet implemented
+# https://www.sphinx-doc.org/en/master/usage/extensions/doctest.html
 #.PHONY: doctest
 #doctest: .venv  ## Test snippets in the documentation
 #	cd $(DOCS_DIR) && $(SPHINXBUILD) -b doctest $(ALLSPHINXOPTS) $(BUILDDIR)/doctest
