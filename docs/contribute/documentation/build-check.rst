@@ -288,6 +288,8 @@ To add a package for documentation, such as a Sphinx extension or other third ap
 This will add ``new-requirement`` to the list of documentation requirements in the ``docs`` group in the :file:`pyproject.toml` file.
 
 
+.. _configure-a-package:
+
 Configure a package
 '''''''''''''''''''
 

@@ -58,8 +58,21 @@ When writing documentation, use the `reStructuredText <https://docutils.sourcefo
 When writing API reference documentation, write `docstrings <https://peps.python.org/pep-0257/#what-is-a-docstring>`_ inside the Python code following the `Google Python Style Guide, Comments and Docstrings <https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings>`_ format.
 These docstrings get rendered into the :doc:`API reference documentation <../../reference/api/icalendar>`.
 
+Sphinx and its extensions enhance core reStructuredText with additional features.
+
+-   automatic API documentation file generation in reStructuredText through :doc:`sphinx:man/sphinx-apidoc`
+-   rendering of API documentation files and Python docstrings to HTML through :doc:`sphinx.ext.apidoc <sphinx:usage/extensions/autodoc>`, :doc:`sphinx.ext.napoleon <sphinx:usage/extensions/napoleon>`, and `sphinx_autodoc_typehints <https://github.com/tox-dev/sphinx-autodoc-typehints?tab=readme-ov-file>`_
+-   rendering of Python source files to HTML through :doc:`sphinx.ext.viewcode <sphinx:usage/extensions/viewcode>`
+-   hyperlinking to internal and external documentation through :doc:`sphinx.ext.intersphinx <sphinx:usage/extensions/intersphinx>`
+-   display and one-click copying of code blocks through `sphinx_copybutton <https://sphinx-copybutton.readthedocs.io/en/latest/index.html>`_
+-   user interface enhancements, including tabular interfaces, cards, and buttons through `sphinx_design <https://sphinx-design.readthedocs.io/en/latest/index.html>`_
+-   redirects for moved files through `sphinx_reredirects <https://documatt.com/sphinx-reredirects/usage/>`_
+-   404 not found page through `notfound.extension <https://sphinx-notfound-page.readthedocs.io/en/latest/autoapi/notfound/extension/index.html>`_
 .. -   documentation coverage reporting of Python source files through :doc:`sphinx.ext.coverage <sphinx:usage/extensions/coverage>`
 .. -   doctest reporting of Python docstring and narrative documentation code examples through :doc:`sphinx.ext.doctest <sphinx:usage/extensions/doctest>`
+
+For configuration of these features, see :ref:`configure-a-package`.
+
 
 Style and quality checks
 ------------------------
@@ -89,7 +102,7 @@ Please ask!
 .. note::
     More corrections to spellings and Vale's configuration are welcome by submitting a pull request.
     This is an easy way to become a contributor to icalendar.
-    See :ref:`authors-advanced-vale-usage-label` for details.
+    See :ref:`vale-configuration` for details.
 
 .. seealso::
 
