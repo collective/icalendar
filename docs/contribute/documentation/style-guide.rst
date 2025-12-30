@@ -81,13 +81,34 @@ All of the following markup examples will work in both narrative and API documen
 API documentation has additional syntax usage.
 
 
-Reference Python objects
+General cross-references
 ''''''''''''''''''''''''
 
-There are three different reStructuredText forms that display the text label of the reference link to Python objects.
-The following reStructuredText source examples render to as shown.
+Sphinx supports various cross-referencing roles to create hyperlinks to other elements in the documentation.
 
--   full dotted Python path
+In icalendar's documentation, the most frequently used roles are the following.
+
+-   :rst:role:`doc` to link to a file
+-   :rst:role:`ref` to link to an arbitrary label
+-   :rst:role:`term` to link to a glossary term
+
+.. seealso::
+
+    :doc:`sphinx:usage/referencing`
+
+
+Cross-reference Python objects
+''''''''''''''''''''''''''''''
+
+In addition to the general cross-references, Sphinx supports various cross-referencing roles to create hyperlinks to Python objects.
+As with all cross-references, these forms consist of a role, a target, an optional custom label, and an optional modifier.
+
+The target must be either a full dotted Python path or use a shortcut to disambiguate to which object it should be hyperlinked.
+
+The following reStructuredText source examples describe which form to use to get the preferred display.
+
+full dotted Python path
+    Use the following syntax consisting of a role and target only.
 
     .. code-block:: rst
 
@@ -95,7 +116,8 @@ The following reStructuredText source examples render to as shown.
 
     :class:`icalendar.prop.vXmlReference`
 
--   object only
+object only
+    Use the tilde character ``~`` as a modifier, along with the role and target, to display only the object when rendered.
 
     .. code-block:: rst
 
@@ -103,7 +125,8 @@ The following reStructuredText source examples render to as shown.
 
     :class:`~icalendar.prop.vXmlReference`
 
--   custom display
+custom text label
+    As a compromise to showing the full dotted Python path, while retaining sufficient context of the object's location when displayed, use a custom text label.
 
     .. code-block:: rst
 
@@ -111,10 +134,30 @@ The following reStructuredText source examples render to as shown.
 
     :class:`prop.vXmlReference <icalendar.prop.vXmlReference>`
 
-The form to use depends on the context of the narrative.
+The form to use depends on the context of the narrative text.
 If it's obvious that the object is within the current class or module, then the object only form may be best.
 If it's unclear where the object is located, then the full dotted Python path or custom display forms may be better.
 Use your best judgment.
+
+In addition to the above forms, you can use a shortcut to avoid repeating the full dotted path in the target.
+In the page in which the reference appears, you may use the :rst:dir:`currentmodule <py:currentmodule>` directive and omit the name of the current module.
+
+.. code-block:: rst
+
+    .. currentmodule:: icalendar.prop
+
+    The class :class:`vXmlReference` is useful.
+
+.. currentmodule:: icalendar.prop
+
+The class :class:`vXmlReference` is useful.
+
+In icalendar's documentation, the most frequently used roles in the Python domain are the following.
+
+-   :rst:role:`class <py:class>`
+-   :rst:role:`mod <py:mod>`
+-   :rst:role:`func <py:func>`
+-   :rst:role:`attr <py:attr>`
 
 .. seealso::
 
