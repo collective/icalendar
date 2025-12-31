@@ -229,6 +229,18 @@ You can add spellings to Vale's configuration, and submit a pull request.
 This is an easy way to become a contributor to icalendar.
 
 
+Test code snippets and docstrings
+'''''''''''''''''''''''''''''''''
+
+To run tests on code snippets and docstrings, use the following command.
+
+.. code-block:: shell
+
+    make doctest
+
+This is a shortcut that calls pytest to run on a single test file.
+
+
 Build API source files
 ''''''''''''''''''''''
 
@@ -245,6 +257,7 @@ This command should be used when either:
 .. seealso::
 
     :doc:`sphinx:man/sphinx-apidoc`
+
 
 Purge builds
 ''''''''''''
