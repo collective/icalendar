@@ -28,6 +28,7 @@ from icalendar.attr import (
     rfc_7953_end_property,
     sequence_property,
     summary_property,
+    uid_property,
     url_property,
 )
 from icalendar.cal.examples import get_example
@@ -216,6 +217,7 @@ class Availability(Component):
     categories = categories_property
     priority = priority_property
     contacts = contacts_property
+    uid = uid_property
 
     start = DTSTART = rfc_7953_dtstart_property
     DTEND = rfc_7953_dtend_property
@@ -288,7 +290,7 @@ class Availability(Component):
             start: The :attr:`start` of the availability.
             summary: The :attr:`summary` of the availability.
             uid: The :attr:`uid` of the availability.
-                If None, this is set to a new :func:`uuid.uuid4`.
+                If ``None``, this is set to a new :func:`uuid.uuid4`.
             url: The :attr:`url` of the availability.
 
         Returns:
