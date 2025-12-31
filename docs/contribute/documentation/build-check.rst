@@ -242,7 +242,7 @@ To run tests on code snippets and docstrings, use the following command.
 
     make doctest
 
-This is a shortcut that calls pytest to run on a single test file.
+This is a shortcut that calls :program:`pytest` to run on a single test file.
 
 
 Build API source files
