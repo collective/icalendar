@@ -109,6 +109,8 @@ Alternatively, the :file:`Makefile` file at the root of the repository contains 
 All commands except the "clean" commands will create a Python virtual environment, and install requirements.
 
 
+.. _make-livehtml:
+
 Live HTML preview
 '''''''''''''''''
 
@@ -139,6 +141,8 @@ You can now open the output file :file:`_build/html/index.html` in a web browser
 
 This build must be successful in the :ref:`continuous-integration-checks` for your pull request to be merged.
 
+
+.. _make-linkcheckbroken:
 
 Check links
 '''''''''''

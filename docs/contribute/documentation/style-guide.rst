@@ -68,8 +68,6 @@ Sphinx and its extensions enhance core reStructuredText with additional features
 -   user interface enhancements, including tabular interfaces, cards, and buttons through `sphinx_design <https://sphinx-design.readthedocs.io/en/latest/index.html>`_
 -   redirects for moved files through `sphinx_reredirects <https://documatt.com/sphinx-reredirects/usage/>`_
 -   404 not found page through `notfound.extension <https://sphinx-notfound-page.readthedocs.io/en/latest/autoapi/notfound/extension/index.html>`_
-.. -   documentation coverage reporting of Python source files through :doc:`sphinx.ext.coverage <sphinx:usage/extensions/coverage>`
-.. -   doctest reporting of Python docstring and narrative documentation code examples through :doc:`sphinx.ext.doctest <sphinx:usage/extensions/doctest>`
 
 For configuration of these features, see :ref:`configure-a-package`.
 
@@ -179,36 +177,130 @@ The above example will render as shown.
 
     The class :class:`vXmlReference` is useful.
 
-In icalendar's documentation, the most frequently used roles in the Python domain are the following.
 
--   :rst:role:`class <py:class>`
--   :rst:role:`mod <py:mod>`
--   :rst:role:`func <py:func>`
--   :rst:role:`attr <py:attr>`
+Python docstrings
+-----------------
+
+Python docstrings provide clear explanations of what code does, making it easier for people to use and maintain it.
+Sphinx generates documentation automatically from docstrings into the :doc:`icalendar API reference guide <../../reference/api/icalendar>`, enhancing code readability and usability.
+
+Python docstrings typically include reStructuredText markup, often including cross-references to narrative and API documentation.
+
+:pep:`257` describes core docstring conventions.
+To enhance the display of its API documentation, icalendar uses the Sphinx extensions :doc:`sphinx.ext.napoleon <sphinx:usage/extensions/napoleon>` and `sphinx_autodoc_typehints <https://github.com/tox-dev/sphinx-autodoc-typehints?tab=readme-ov-file>`_.
+The former extension supports Google style docstrings, which are easier to write and read, especially when Sphinx renders them to HTML.
+The latter extension supports Python 3 annotations, or type hints, for documenting acceptable argument types and return value types of functions.
 
 .. seealso::
 
-    :doc:`sphinx:usage/domains/python`
+    `Google Python Style Guide <https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings>`_ for more examples of docstrings and their format.
 
-    .. note::
 
-        Because icalendar uses the Python domain exclusively, it's safe to omit the ``:py`` prefix when creating references to Python objects.
+Docstring structure
+-------------------
+
+In addition to the structure of docstrings as defined by :pep:`257`, icalendar has adopted conventions from the `Google Python Style Guide <https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings>`_.
+
+The summary, description, and sections of a docstring should appear in that order.
+To create a :ref:`docstring section <sphinx:Sections>`, use one of the valid section headers and a colon followed by a block of indented text.
+All item descriptions should terminate with a period.
+
+Summary
+    Docstrings must begin with a one-line summary of the Python object, terminated by a period.
+
+Description
+    When the one-line summary is insufficient to describe the Python object, then write an overall description of what it does, without going into details of how it does it.
+    Leave implementation details to the code, and optionally inline code comments.
+    Separate the summary and description with a blank line.
+
+``Attributes``
+    Each attribute should consist of its name and a brief description.
+    By virtue of Sphinx extensions and the use of type hints for the Python object, you may omit the argument's type, allowing Sphinx to automatically render it for you.
+
+``Arguments`` or ``Parameters``
+    Each argument or parameter should consist of its name and a brief description.
+    By virtue of Sphinx extensions and the use of type hints for the Python object, you may omit the argument's type, allowing Sphinx to automatically render it for you.
+
+``Returns``
+    The return value consists of its return type and a brief description.
+
+``Raises``
+    The ``Raises`` section is a list of all exceptions that are relevant to the interface.
+
+``Examples``
+    Usage examples of the Python object.
+    These must be valid examples, including imports, as they must pass tests.
+    Not only are these helpful to developers, but they're fun to write, and rewarding when they pass.
+
+.. seealso::
+
+    :ref:`sphinx:Sections`
+
+
+Docstring examples
+------------------
+
+The following examples are actual docstrings in icalendar that will render properly.
+
+``Event.new()``
+'''''''''''''''
+
+See the rendered view of this class method at :meth:`Event.new() <icalendar.cal.event.Event.new>`.
+
+.. literalinclude:: ../../../src/icalendar/cal/event.py
+    :pyobject: Event.new
+
+
+``Component.register``
+''''''''''''''''''''''
+
+See the rendered view of this class method at :meth:`Component.register <icalendar.cal.component.Component.register>`.
+
+.. literalinclude:: ../../../src/icalendar/cal/component.py
+    :pyobject: Component.register
+
+
+``parser.split_on_unescaped_semicolon``
+'''''''''''''''''''''''''''''''''''''''
+
+See the rendered view of this class method at :meth:`parser.split_on_unescaped_semicolon <icalendar.parser.split_on_unescaped_semicolon>`.
+
+.. literalinclude:: ../../../src/icalendar/parser.py
+    :pyobject: split_on_unescaped_semicolon
 
 
 Style and quality checks
 ------------------------
 
-- Sphinx errors and warnings
-- Visual checks
+When making a contribution to documentation, style and quality checks must pass both locally while developing and in continuous integration after opening a pull request.
 
-  - Local
-  - PR previews
+.. seealso::
 
-- Spelling
-- English grammar and Syntax
-- Style
-- Link check
+    See :doc:`build-check` for how to set up and run the builds and checks on documentation.
 
+In addition to automated checks, perform visual checks to ensure that documentation renders as intended.
+
+icalendar is configured with Read the Docs to build pull request previews of documentation.
+When a pull request is opened on a branch and there are changes to any documentation files, Read the Docs will build a preview of the documentation, and insert a link to the build in the pull request description.
+If there's no link, either there are no changes to documentation files or the branch isn't in the icalendar repository.
+All pull request preview builds are listed on Read the Docs at `icalendar builds <https://app.readthedocs.org/projects/icalendar/builds/>`_.
+
+Always pay attention to errors and continuous integration failures, and attempt to resolve them.
+Warnings may provide helpful information.
+
+
+Link checks
+'''''''''''
+
+All links must be valid.
+
+.. seealso::
+
+    See how to check links in :ref:`make-linkcheckbroken`.
+
+
+Spelling and grammar
+''''''''''''''''''''
 
 `Vale <https://vale.sh/>`_ is a linter for narrative text.
 It checks spelling, English grammar and syntax, and style guides.
