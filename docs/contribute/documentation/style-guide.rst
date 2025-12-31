@@ -114,7 +114,9 @@ full dotted Python path
 
         :class:`icalendar.prop.vXmlReference`
 
-    :class:`icalendar.prop.vXmlReference`
+    The above example will render as shown.
+
+        :class:`icalendar.prop.vXmlReference`
 
 object only
     Use the tilde character ``~`` as a modifier, along with the role and target, to display only the object when rendered.
@@ -123,7 +125,9 @@ object only
 
         :class:`~icalendar.prop.vXmlReference`
 
-    :class:`~icalendar.prop.vXmlReference`
+    The above example will render as shown.
+
+        :class:`~icalendar.prop.vXmlReference`
 
 custom text label
     As a compromise to showing the full dotted Python path, while retaining sufficient context of the object's location when displayed, use a custom text label.
@@ -132,14 +136,28 @@ custom text label
 
         :class:`prop.vXmlReference <icalendar.prop.vXmlReference>`
 
-    :class:`prop.vXmlReference <icalendar.prop.vXmlReference>`
+    The above example will render as shown.
+
+        :class:`prop.vXmlReference <icalendar.prop.vXmlReference>`
 
 The form to use depends on the context of the narrative text.
 If it's obvious that the object is within the current class or module, then the object only form may be best.
 If it's unclear where the object is located, then the full dotted Python path or custom display forms may be better.
 Use your best judgment.
 
-In addition to the above forms, you can use a shortcut to avoid repeating the full dotted path in the target.
+.. seealso::
+
+    :doc:`sphinx:usage/domains/python`
+
+    .. note::
+
+        Because icalendar uses the Python domain exclusively, it's safe to omit the ``:py`` prefix when creating references to Python objects.
+
+
+Target shortcut
+```````````````
+
+As well as the above forms, you can use a shortcut to avoid repeating the full dotted path in the target.
 In the page in which the reference appears, you may use the :rst:dir:`currentmodule <py:currentmodule>` directive and omit the name of the current module.
 
 .. code-block:: rst
@@ -150,7 +168,9 @@ In the page in which the reference appears, you may use the :rst:dir:`currentmod
 
 .. currentmodule:: icalendar.prop
 
-The class :class:`vXmlReference` is useful.
+The above example will render as shown.
+
+    The class :class:`vXmlReference` is useful.
 
 In icalendar's documentation, the most frequently used roles in the Python domain are the following.
 
