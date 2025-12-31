@@ -103,9 +103,16 @@ Cross-reference Python objects
 In addition to the general cross-references, Sphinx supports various cross-referencing roles to create hyperlinks to Python objects.
 As with all cross-references, these forms consist of a role, a target, an optional custom label, and an optional modifier.
 
+In icalendar's documentation, the most frequently used roles in the Python domain are the following.
+
+-   :rst:role:`class <py:class>`
+-   :rst:role:`mod <py:mod>`
+-   :rst:role:`func <py:func>`
+-   :rst:role:`attr <py:attr>`
+
 The target must be either a full dotted Python path or use a shortcut to disambiguate to which object it should be hyperlinked.
 
-The following reStructuredText source examples describe which form to use to get the preferred display.
+The following reStructuredText source examples show which form to use to get the preferred display.
 
 full dotted Python path
     Use the following syntax consisting of a role and target only.
