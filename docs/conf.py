@@ -14,8 +14,6 @@ extensions = [
     "notfound.extension",
     "sphinx.ext.apidoc",
     "sphinx.ext.autodoc",
-    # "sphinx.ext.coverage",
-    # "sphinx.ext.doctest",
     "sphinx.ext.viewcode",
     "sphinx_copybutton",
     "sphinx_design",
