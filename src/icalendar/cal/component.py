@@ -109,12 +109,15 @@ class Component(CaselessDict):
             ValueError: If a component with this name is already registered.
 
         Example:
-            >>> from icalendar import Component
-            >>> class XExample(Component):
-            ...     name = "X-EXAMPLE"
-            ...     def custom_method(self):
-            ...         return "custom"
-            >>> Component.register(XExample)
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Component
+                >>> class XExample(Component):
+                ...     name = "X-EXAMPLE"
+                ...     def custom_method(self):
+                ...         return "custom"
+                >>> Component.register(XExample)
         """
         if not hasattr(component_class, "name") or component_class.name is None:
             raise ValueError(f"{component_class} must have a 'name' attribute")
