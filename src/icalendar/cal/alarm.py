@@ -39,7 +39,7 @@ class Alarm(Component):
 
     Examples:
 
-        Load the bundled audio alarm example (tests/alarms/example.ics):
+        Below, you can see an example alarm using an audio file from an FTP server.
         
         >>> from icalendar import Alarm
         >>> alarm = Alarm.example()
