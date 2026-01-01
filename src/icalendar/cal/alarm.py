@@ -41,16 +41,19 @@ class Alarm(Component):
 
         Below, you can see an example alarm using an audio file from an FTP server.
         
-        >>> from icalendar import Alarm
-        >>> alarm = Alarm.example()
-        >>> print(alarm.to_ical().decode())
-        BEGIN:VALARM
-        ACTION:AUDIO
-        ATTACH;FMTTYPE=audio/basic:ftp://example.com/pub/sounds/bell-01.aud
-        DURATION:PT15M
-        REPEAT:4
-        TRIGGER;VALUE=DATE-TIME:19970317T133000Z
-        END:VALARM
+        
+        .. code-block:: pycon
+
+            >>> from icalendar import Alarm
+            >>> alarm = Alarm.example()
+            >>> print(alarm.to_ical().decode())
+            BEGIN:VALARM
+            ACTION:AUDIO
+            ATTACH;FMTTYPE=audio/basic:ftp://example.com/pub/sounds/bell-01.aud
+            DURATION:PT15M
+            REPEAT:4
+            TRIGGER;VALUE=DATE-TIME:19970317T133000Z
+            END:VALARM
     """
 
     name = "VALARM"
