@@ -222,10 +222,11 @@ class Todo(Component):
         start locked.
 
         Setting the duration will:
-        1. Keep the start time locked (unchanged)
-        2. Adjust the end time to start + duration
-        3. Remove any existing DUE property
-        4. Set the DURATION property
+
+        1.  Keep the start time locked (unchanged)
+        2.  Adjust the end time to start + duration
+        3.  Remove any existing DUE property
+        4.  Set the DURATION property
         """
         return get_duration_property(self)
 
@@ -378,7 +379,7 @@ class Todo(Component):
             :class:`Todo`
 
         Raises:
-            InvalidCalendar: If the content is not valid according to :rfc:`5545`.
+            ~error.InvalidCalendar: If the content is not valid according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """

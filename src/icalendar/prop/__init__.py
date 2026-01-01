@@ -54,7 +54,7 @@ from typing import Any, ClassVar, Optional, Tuple, Union
 from icalendar.caselessdict import CaselessDict
 from icalendar.enums import Enum
 from icalendar.error import InvalidCalendar, JCalParsingError
-from icalendar.parser import Parameters, escape_char, unescape_char
+from icalendar.parser import Parameters, escape_char
 from icalendar.parser_tools import (
     DEFAULT_ENCODING,
     ICAL_TYPE,
@@ -137,7 +137,7 @@ class vBinary:
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         JCalParsingError.validate_value_type(jcal_property[3], str, cls, 3)
@@ -228,7 +228,7 @@ class vBoolean(int):
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         JCalParsingError.validate_value_type(jcal_property[3], bool, cls, 3)
@@ -294,7 +294,7 @@ class vText(str):
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         name = jcal_property[0]
@@ -540,7 +540,7 @@ class vCalAddress(str):
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         JCalParsingError.validate_value_type(jcal_property[3], str, cls, 3)
@@ -633,7 +633,7 @@ class vFloat(float):
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the jCal provided is invalid.
+            ~error.JCalParsingError: If the jCal provided is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         if jcal_property[0].upper() == "GEO":
@@ -731,7 +731,7 @@ class vInt(int):
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         JCalParsingError.validate_value_type(jcal_property[3], int, cls, 3)
@@ -745,7 +745,7 @@ class vInt(int):
         """Parse a jCal value for vInt.
 
         Raises:
-            JCalParsingError: If the value is not an int.
+            ~error.JCalParsingError: If the value is not an int.
         """
         JCalParsingError.validate_value_type(value, int, cls)
         return cls(value)
@@ -827,7 +827,7 @@ class vDDDLists:
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the jCal provided is invalid.
+            ~error.JCalParsingError: If the jCal provided is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         values = jcal_property[3:]
@@ -900,7 +900,7 @@ class vCategory:
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         for i, category in enumerate(jcal_property[3:], start=3):
@@ -909,6 +909,397 @@ class vCategory:
             jcal_property[3:],
             Parameters.from_jcal_property(jcal_property),
         )
+
+    @property
+    def ical_value(self) -> list[str]:
+        """The list of categories as strings."""
+        return [str(cat) for cat in self.cats]
+
+
+class vAdr:
+    """vCard ADR (Address) structured property per :rfc:`6350` `Section 6.3.1 <https://datatracker.ietf.org/doc/html/rfc6350.html#section-6.3.1>`_.
+
+    The ADR property represents a delivery address as a single text value.
+    The structured type value consists of a sequence of seven address components.
+    The component values must be specified in their corresponding position.
+
+    -   post office box
+    -   extended address (e.g., apartment or suite number)
+    -   street address
+    -   locality (e.g., city)
+    -   region (e.g., state or province)
+    -   postal code
+    -   country name (full name)
+
+    When a component value is missing, the associated component separator MUST still be specified.
+
+    Semicolons are field separators and are NOT escaped.
+    Commas and backslashes within field values ARE escaped per :rfc:`6350`.
+
+    Examples:
+        .. code-block:: pycon
+
+            >>> from icalendar.prop import vAdr
+            >>> adr = vAdr(("", "", "123 Main St", "Springfield", "IL", "62701", "USA"))
+            >>> adr.to_ical()
+            b';;123 Main St;Springfield;IL;62701;USA'
+            >>> vAdr.from_ical(";;123 Main St;Springfield;IL;62701;USA")
+            ('', '', '123 Main St', 'Springfield', 'IL', '62701', 'USA')
+    """
+
+    default_value: ClassVar[str] = "TEXT"
+    params: Parameters
+
+    # 7 ADR fields per RFC 6350
+    FIELDS = [
+        "po_box",
+        "extended",
+        "street",
+        "locality",
+        "region",
+        "postal_code",
+        "country",
+    ]
+
+    def __init__(
+        self,
+        fields: tuple[str, ...] | list[str] | str,
+        /,
+        params: dict[str, Any] | None = None,
+    ):
+        """Initialize ADR with seven fields or parse from vCard format string.
+
+        Args:
+            fields: Either a tuple or list of seven strings, one per field, or a
+                    vCard format string with semicolon-separated fields
+            params: Optional property parameters
+        """
+        if isinstance(fields, str):
+            fields = self.from_ical(fields)
+        if len(fields) != 7:
+            raise ValueError(f"ADR must have exactly 7 fields, got {len(fields)}")
+        self.fields = tuple(str(f) for f in fields)
+        self.params = Parameters(params)
+
+    def to_ical(self) -> bytes:
+        """Generate vCard format with semicolon-separated fields."""
+        # Each field is vText (handles comma/backslash escaping)
+        # but we join with unescaped semicolons (field separators)
+        parts = [vText(f).to_ical().decode(DEFAULT_ENCODING) for f in self.fields]
+        return ";".join(parts).encode(DEFAULT_ENCODING)
+
+    @staticmethod
+    def from_ical(ical: str | bytes) -> tuple[str, ...]:
+        """Parse vCard ADR format into a tuple of seven fields.
+
+        Args:
+            ical: vCard format string with semicolon-separated fields
+
+        Returns:
+            Tuple of seven field values, or the empty string if the field is empty.
+        """
+        from icalendar.parser import split_on_unescaped_semicolon
+
+        ical = to_unicode(ical)
+        fields = split_on_unescaped_semicolon(ical)
+        if len(fields) != 7:
+            raise ValueError(
+                f"ADR must have exactly 7 fields, got {len(fields)}: {ical}"
+            )
+        return tuple(fields)
+
+    def __eq__(self, other):
+        """self == other"""
+        return isinstance(other, vAdr) and self.fields == other.fields
+
+    def __repr__(self):
+        """String representation."""
+        return f"{self.__class__.__name__}({self.fields}, params={self.params})"
+
+    from icalendar.param import VALUE
+
+    def to_jcal(self, name: str) -> list:
+        """The jCal representation of this property according to :rfc:`7265`."""
+        result = [name, self.params.to_jcal(), self.VALUE.lower()]
+        result.extend(self.fields)
+        return result
+
+    @classmethod
+    def from_jcal(cls, jcal_property: list) -> Self:
+        """Parse jCal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jCal property to parse.
+
+        Raises:
+            ~error.JCalParsingError: If the provided jCal is invalid.
+        """
+        JCalParsingError.validate_property(jcal_property, cls)
+        if len(jcal_property) != 10:  # name, params, value_type, 7 fields
+            raise JCalParsingError(
+                f"ADR must have 10 elements (name, params, value_type, 7 fields), "
+                f"got {len(jcal_property)}"
+            )
+        for i, field in enumerate(jcal_property[3:], start=3):
+            JCalParsingError.validate_value_type(field, str, cls, i)
+        return cls(
+            tuple(jcal_property[3:]),
+            Parameters.from_jcal_property(jcal_property),
+        )
+
+    @classmethod
+    def examples(cls) -> list[vAdr]:
+        """Examples of vAdr."""
+        return [cls(("", "", "123 Main St", "Springfield", "IL", "62701", "USA"))]
+
+
+class vN:
+    """vCard N (Name) structured property per :rfc:`6350` `Section 6.2.2 <https://datatracker.ietf.org/doc/html/rfc6350.html#section-6.2.2>`_.
+
+    The N property represents a person's name.
+    It consists of a single structured text value.
+    Each component in the structure may have multiple values, separated by commas.
+
+    The structured property value corresponds, in sequence, to the following fields:
+
+    -   family names (also known as surnames)
+    -   given names
+    -   additional names
+    -   honorific prefixes
+    -   honorific suffixes
+
+    Semicolons are field separators and are NOT escaped.
+    Commas and backslashes within field values ARE escaped per :rfc:`6350`.
+
+    Examples:
+        .. code-block:: pycon
+
+            >>> from icalendar.prop import vN
+            >>> n = vN(("Doe", "John", "M.", "Dr.", "Jr.,M.D.,A.C.P."))
+            >>> n.to_ical()
+            b'Doe;John;M.;Dr.;Jr.\\\\,M.D.\\\\,A.C.P.'
+            >>> vN.from_ical(r"Doe;John;M.;Dr.;Jr.\,M.D.\,A.C.P.")
+            ('Doe', 'John', 'M.', 'Dr.', 'Jr.,M.D.,A.C.P.')
+    """
+
+    default_value: ClassVar[str] = "TEXT"
+    params: Parameters
+
+    # 5 N fields per RFC 6350
+    FIELDS = ["family", "given", "additional", "prefix", "suffix"]
+
+    def __init__(
+        self,
+        fields: tuple[str, ...] | list[str] | str,
+        /,
+        params: dict[str, Any] | None = None,
+    ):
+        """Initialize N with five fields or parse from vCard format string.
+
+        Args:
+            fields: Either a tuple or list of five strings, one per field, or a
+                    vCard format string with semicolon-separated fields
+            params: Optional property parameters
+        """
+        if isinstance(fields, str):
+            fields = self.from_ical(fields)
+        if len(fields) != 5:
+            raise ValueError(f"N must have exactly 5 fields, got {len(fields)}")
+        self.fields = tuple(str(f) for f in fields)
+        self.params = Parameters(params)
+
+    def to_ical(self) -> bytes:
+        """Generate vCard format with semicolon-separated fields."""
+        parts = [vText(f).to_ical().decode(DEFAULT_ENCODING) for f in self.fields]
+        return ";".join(parts).encode(DEFAULT_ENCODING)
+
+    @staticmethod
+    def from_ical(ical: str | bytes) -> tuple[str, ...]:
+        """Parse vCard N format into a tuple of five fields.
+
+        Args:
+            ical: vCard format string with semicolon-separated fields
+
+        Returns:
+            Tuple of five field values, or the empty string if the field is empty
+        """
+        from icalendar.parser import split_on_unescaped_semicolon
+
+        ical = to_unicode(ical)
+        fields = split_on_unescaped_semicolon(ical)
+        if len(fields) != 5:
+            raise ValueError(f"N must have exactly 5 fields, got {len(fields)}: {ical}")
+        return tuple(fields)
+
+    def __eq__(self, other):
+        """self == other"""
+        return isinstance(other, vN) and self.fields == other.fields
+
+    def __repr__(self):
+        """String representation."""
+        return f"{self.__class__.__name__}({self.fields}, params={self.params})"
+
+    from icalendar.param import VALUE
+
+    def to_jcal(self, name: str) -> list:
+        """The jCal representation of this property according to :rfc:`7265`."""
+        result = [name, self.params.to_jcal(), self.VALUE.lower()]
+        result.extend(self.fields)
+        return result
+
+    @classmethod
+    def from_jcal(cls, jcal_property: list) -> Self:
+        """Parse jCal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jCal property to parse.
+
+        Raises:
+            ~error.JCalParsingError: If the provided jCal is invalid.
+        """
+        JCalParsingError.validate_property(jcal_property, cls)
+        if len(jcal_property) != 8:  # name, params, value_type, 5 fields
+            raise JCalParsingError(
+                f"N must have 8 elements (name, params, value_type, 5 fields), "
+                f"got {len(jcal_property)}"
+            )
+        for i, field in enumerate(jcal_property[3:], start=3):
+            JCalParsingError.validate_value_type(field, str, cls, i)
+        return cls(
+            tuple(jcal_property[3:]),
+            Parameters.from_jcal_property(jcal_property),
+        )
+
+    @classmethod
+    def examples(cls) -> list[vN]:
+        """Examples of vN."""
+        return [cls(("Doe", "John", "M.", "Dr.", "Jr."))]
+
+
+class vOrg:
+    r"""vCard ORG (Organization) structured property per :rfc:`6350` `Section 6.6.4 <https://datatracker.ietf.org/doc/html/rfc6350.html#section-6.6.4>`_.
+
+    The ORG property specifies the organizational name and units associated with the vCard.
+
+    Its value is a structured type consisting of components separated by semicolons.
+    The components are the organization name, followed by zero or more levels of organizational unit names:
+
+    .. code-block:: text
+
+        organization-name; organizational-unit-1; organizational-unit-2; ...
+
+    Semicolons are field separators and are NOT escaped.
+    Commas and backslashes within field values ARE escaped per :rfc:`6350`.
+
+    Examples:
+        A property value consisting of an organizational name,
+        organizational unit #1 name, and organizational unit #2 name.
+
+        .. code-block:: text
+
+            ORG:ABC\, Inc.;North American Division;Marketing
+
+        The same example in icalendar.
+
+        .. code-block:: pycon
+
+            >>> from icalendar.prop import vOrg
+            >>> org = vOrg(("ABC, Inc.", "North American Division", "Marketing"))
+            >>> org.to_ical()
+            b'ABC\\, Inc.;North American Division;Marketing'
+            >>> vOrg.from_ical(r"ABC\, Inc.;North American Division;Marketing")
+            ('ABC, Inc.', 'North American Division', 'Marketing')
+    """
+
+    default_value: ClassVar[str] = "TEXT"
+    params: Parameters
+
+    def __init__(
+        self,
+        fields: tuple[str, ...] | list[str] | str,
+        /,
+        params: dict[str, Any] | None = None,
+    ):
+        """Initialize ORG with variable fields or parse from vCard format string.
+
+        Args:
+            fields: Either a tuple or list of one or more strings, or a
+                    vCard format string with semicolon-separated fields
+            params: Optional property parameters
+        """
+        if isinstance(fields, str):
+            fields = self.from_ical(fields)
+        if len(fields) < 1:
+            raise ValueError("ORG must have at least 1 field (organization name)")
+        self.fields = tuple(str(f) for f in fields)
+        self.params = Parameters(params)
+
+    def to_ical(self) -> bytes:
+        """Generate vCard format with semicolon-separated fields."""
+        parts = [vText(f).to_ical().decode(DEFAULT_ENCODING) for f in self.fields]
+        return ";".join(parts).encode(DEFAULT_ENCODING)
+
+    @staticmethod
+    def from_ical(ical: str | bytes) -> tuple[str, ...]:
+        """Parse vCard ORG format into a tuple of fields.
+
+        Args:
+            ical: vCard format string with semicolon-separated fields
+
+        Returns:
+            Tuple of field values with one or more fields
+        """
+        from icalendar.parser import split_on_unescaped_semicolon
+
+        ical = to_unicode(ical)
+        fields = split_on_unescaped_semicolon(ical)
+        if len(fields) < 1:
+            raise ValueError(f"ORG must have at least 1 field: {ical}")
+        return tuple(fields)
+
+    def __eq__(self, other):
+        """self == other"""
+        return isinstance(other, vOrg) and self.fields == other.fields
+
+    def __repr__(self):
+        """String representation."""
+        return f"{self.__class__.__name__}({self.fields}, params={self.params})"
+
+    from icalendar.param import VALUE
+
+    def to_jcal(self, name: str) -> list:
+        """The jCal representation of this property according to :rfc:`7265`."""
+        result = [name, self.params.to_jcal(), self.VALUE.lower()]
+        result.extend(self.fields)
+        return result
+
+    @classmethod
+    def from_jcal(cls, jcal_property: list) -> Self:
+        """Parse jCal from :rfc:`7265`.
+
+        Args:
+            jcal_property: The jCal property to parse.
+
+        Raises:
+            ~error.JCalParsingError: If the provided jCal is invalid.
+        """
+        JCalParsingError.validate_property(jcal_property, cls)
+        if len(jcal_property) < 4:  # name, params, value_type, at least 1 field
+            raise JCalParsingError(
+                f"ORG must have at least 4 elements (name, params, value_type, org name), "
+                f"got {len(jcal_property)}"
+            )
+        for i, field in enumerate(jcal_property[3:], start=3):
+            JCalParsingError.validate_value_type(field, str, cls, i)
+        return cls(
+            tuple(jcal_property[3:]),
+            Parameters.from_jcal_property(jcal_property),
+        )
+
+    @classmethod
+    def examples(cls) -> list[vOrg]:
+        """Examples of vOrg."""
+        return [cls(("ABC Inc.", "North American Division", "Marketing"))]
 
 
 class TimeBase:
@@ -966,7 +1357,7 @@ class vDDDTypes(TimeBase):
     params: Parameters
     dt: DT_TYPE
 
-    def __init__(self, dt, params: Optional[dict[str, Any]] = None):
+    def __init__(self, dt, params: dict[str, Any] | None = None):
         if params is None:
             params = {}
         if not isinstance(dt, (datetime, date, timedelta, time, tuple)):
@@ -1068,7 +1459,7 @@ class vDDDTypes(TimeBase):
         """Parse a jCal value.
 
         Raises:
-            JCalParsingError: If the value can't be parsed as either a date, time,
+            ~error.JCalParsingError: If the value can't be parsed as either a date, time,
                 date-time, duration, or period.
         """
         if isinstance(jcal, list):
@@ -1093,7 +1484,7 @@ class vDDDTypes(TimeBase):
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         with JCalParsingError.reraise_with_path_added(3):
@@ -1167,7 +1558,7 @@ class vDate(TimeBase):
     default_value: ClassVar[str] = "DATE"
     params: Parameters
 
-    def __init__(self, dt, params: Optional[dict[str, Any]] = None):
+    def __init__(self, dt, params: dict[str, Any] | None = None):
         if not isinstance(dt, date):
             raise TypeError("Value MUST be a date instance")
         self.dt = dt
@@ -1210,7 +1601,7 @@ class vDate(TimeBase):
         """Parse a jCal string to a :py:class:`datetime.datetime`.
 
         Raises:
-            JCalParsingError: If it can't parse a date.
+            ~error.JCalParsingError: If it can't parse a date.
         """
         JCalParsingError.validate_value_type(jcal, str, cls)
         try:
@@ -1226,7 +1617,7 @@ class vDate(TimeBase):
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         with JCalParsingError.reraise_with_path_added(3):
@@ -1383,7 +1774,7 @@ class vDatetime(TimeBase):
         """Parse a jCal string to a :py:class:`datetime.datetime`.
 
         Raises:
-            JCalParsingError: If it can't parse a date-time value.
+            ~error.JCalParsingError: If it can't parse a date-time value.
         """
         JCalParsingError.validate_value_type(jcal, str, cls)
         utc = jcal.endswith("Z")
@@ -1405,7 +1796,7 @@ class vDatetime(TimeBase):
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         params = Parameters.from_jcal_property(jcal_property)
@@ -1573,7 +1964,7 @@ class vDuration(TimeBase):
         """Parse a jCal string to a :py:class:`datetime.timedelta`.
 
         Raises:
-            JCalParsingError: If it can't parse a duration."""
+            ~error.JCalParsingError: If it can't parse a duration."""
         JCalParsingError.validate_value_type(jcal, str, cls)
         try:
             return cls.from_ical(jcal)
@@ -1588,7 +1979,7 @@ class vDuration(TimeBase):
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         with JCalParsingError.reraise_with_path_added(3):
@@ -1763,7 +2154,7 @@ class vPeriod(TimeBase):
         """Parse a jCal value.
 
         Raises:
-            JCalParsingError: If the period is not a list with exactly two items,
+            ~error.JCalParsingError: If the period is not a list with exactly two items,
                 or it can't parse a date-time or duration.
         """
         if isinstance(jcal, str) and "/" in jcal:
@@ -1798,7 +2189,7 @@ class vPeriod(TimeBase):
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         with JCalParsingError.reraise_with_path_added(3):
@@ -1898,7 +2289,7 @@ class vWeekday(str):
         """Parse a jCal value for vWeekday.
 
         Raises:
-            JCalParsingError: If the value is not a valid weekday.
+            ~error.JCalParsingError: If the value is not a valid weekday.
         """
         JCalParsingError.validate_value_type(value, str, cls)
         try:
@@ -1956,7 +2347,7 @@ class vFrequency(str):
         """Parse a jCal value for vFrequency.
 
         Raises:
-            JCalParsingError: If the value is not a valid frequency.
+            ~error.JCalParsingError: If the value is not a valid frequency.
         """
         JCalParsingError.validate_value_type(value, str, cls)
         try:
@@ -2047,7 +2438,7 @@ class vMonth(int):
         """Parse a jCal value for vMonth.
 
         Raises:
-            JCalParsingError: If the value is not a valid month.
+            ~error.JCalParsingError: If the value is not a valid month.
         """
         JCalParsingError.validate_value_type(value, (str, int), cls)
         try:
@@ -2092,7 +2483,7 @@ class vSkip(vText, Enum):
         """Parse a jCal value for vSkip.
 
         Raises:
-            JCalParsingError: If the value is not a valid skip value.
+            ~error.JCalParsingError: If the value is not a valid skip value.
         """
         JCalParsingError.validate_value_type(value, str, cls)
         try:
@@ -2332,7 +2723,7 @@ class vRecur(CaselessDict):
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         params = Parameters.from_jcal_property(jcal_property)
@@ -2547,7 +2938,7 @@ class vTime(TimeBase):
         """Parse a jCal string to a :py:class:`datetime.time`.
 
         Raises:
-            JCalParsingError: If it can't parse a time.
+            ~error.JCalParsingError: If it can't parse a time.
         """
         JCalParsingError.validate_value_type(jcal, str, cls)
         match = TIME_JCAL_REGEX.match(jcal)
@@ -2567,7 +2958,7 @@ class vTime(TimeBase):
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         with JCalParsingError.reraise_with_path_added(3):
@@ -2667,7 +3058,7 @@ class vUri(str):
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         return cls(
@@ -2904,7 +3295,7 @@ class vGeo:
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         return cls(
@@ -3070,7 +3461,7 @@ class vUTCOffset:
             jcal_property: The jCal property to parse.
 
         Raises:
-            JCalParsingError: If the provided jCal is invalid.
+            ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         match = UTC_OFFSET_JCAL_REGEX.match(jcal_property[3])
@@ -3173,6 +3564,9 @@ class TypesFactory(CaselessDict):
             vUri,
             vWeekday,
             vCategory,
+            vAdr,
+            vN,
+            vOrg,
             vUid,
             vXmlReference,
             vUnknown,
@@ -3195,6 +3589,9 @@ class TypesFactory(CaselessDict):
         self["inline"] = vInline
         self["date-time-list"] = vDDDLists
         self["categories"] = vCategory
+        self["adr"] = vAdr  # RFC 6350 vCard
+        self["n"] = vN  # RFC 6350 vCard
+        self["org"] = vOrg  # RFC 6350 vCard
         self["unknown"] = vUnknown  # RFC 7265
         self["uid"] = vUid  # RFC 9253
         self["xml-reference"] = vXmlReference  # RFC 9253
@@ -3216,6 +3613,10 @@ class TypesFactory(CaselessDict):
             "attach": "uri",
             "categories": "categories",
             "class": "text",
+            # vCard Properties (RFC 6350)
+            "adr": "adr",
+            "n": "n",
+            "org": "org",
             "comment": "text",
             "description": "text",
             "geo": "geo",
@@ -3340,6 +3741,7 @@ class TypesFactory(CaselessDict):
 
 
 VPROPERTY: TypeAlias = Union[
+    vAdr,
     vBoolean,
     vCalAddress,
     vCategory,
@@ -3352,6 +3754,8 @@ VPROPERTY: TypeAlias = Union[
     vFrequency,
     vInt,
     vMonth,
+    vN,
+    vOrg,
     vPeriod,
     vRecur,
     vSkip,
@@ -3376,6 +3780,7 @@ __all__ = [
     "TypesFactory",
     "tzid_from_dt",
     "tzid_from_tzinfo",
+    "vAdr",
     "vBinary",
     "vBoolean",
     "vCalAddress",
@@ -3391,6 +3796,8 @@ __all__ = [
     "vInline",
     "vInt",
     "vMonth",
+    "vN",
+    "vOrg",
     "vPeriod",
     "vRecur",
     "vSkip",

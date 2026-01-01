@@ -6,6 +6,11 @@ from collections import OrderedDict
 
 from typing import Any, Optional, Iterable, Mapping, TypeVar
 
+try:
+    from typing import Self
+except ImportError:
+    from typing_extensions import Self
+
 KT = TypeVar("KT")
 VT = TypeVar("VT")
 
@@ -89,6 +94,8 @@ class CaselessDict(OrderedDict):
         return f"{type(self).__name__}({dict(self)})"
 
     def __eq__(self, other: object) -> bool:
+        if not isinstance(other, dict):
+            return NotImplemented
         return self is other or dict(self.items()) == dict(other.items())
 
     def __ne__(self, other: object) -> bool:

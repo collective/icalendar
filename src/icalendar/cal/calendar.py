@@ -85,6 +85,18 @@ class Calendar(Component):
 
     @classmethod
     def from_ical(cls, st, multiple=False):
+        """Parse iCalendar data into Calendar instances.
+
+        Wraps :meth:`Component.from_ical() <icalendar.cal.component.Component.from_ical>` with
+        timezone forward-reference resolution and VTIMEZONE caching.
+
+        Args:
+            st: iCalendar data as bytes or string
+            multiple: If ``True``, returns list. If ``False``, returns single calendar.
+
+        Returns:
+            Calendar or list of Calendars
+        """
         comps = Component.from_ical(st, multiple=True)
         all_timezones_so_far = True
         for comp in comps:
@@ -569,7 +581,7 @@ Description:
             :class:`Calendar`
 
         Raises:
-            InvalidCalendar: If the content is not valid according to :rfc:`5545`.
+            ~error.InvalidCalendar: If the content is not valid according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """  # noqa: E501
@@ -610,7 +622,7 @@ Description:
         This method can be called explicitly to validate a calendar before output.
 
         Raises:
-            IncompleteComponent: If the calendar lacks required properties or
+            ~error.IncompleteComponent: If the calendar lacks required properties or
                 components.
         """
         if not self.get("PRODID"):

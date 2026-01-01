@@ -87,6 +87,13 @@ Here is an example.
     This example doesn't check for compliance, so you should look in the :rfc:`5545` specification for legal properties for each component.
     You can also look in the :file:`icalendar/cal/calendar.py` file, where it is at least defined for each component.
 
+.. note::
+
+    icalendar automatically handles custom components (X-components and IANA-components) without special configuration.
+    See :doc:`custom-components` for details on working with vendor-specific or non-standard components.
+
+
+.. _subcomponents:
 
 Subcomponents
 -------------
