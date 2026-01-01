@@ -80,7 +80,6 @@ class Todo(Component):
 
             >>> from datetime import datetime, timezone
             >>> from icalendar import Todo, STATUS
-            >>> from icalendar.enums import STATUS
             >>> todo = Todo.example()
             >>> todo["PERCENT-COMPLETE"] = 100
             >>> todo["COMPLETED"] = datetime(2007, 5, 1, 12, tzinfo=timezone.utc)
