@@ -73,7 +73,7 @@ class Todo(Component):
             UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
             END:VTODO
 
-        Complete the bundled example Todo (tests/todos/example.ics):
+        Complete the example Todo.
 
 
         .. code-block:: pycon
