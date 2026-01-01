@@ -79,7 +79,7 @@ class Todo(Component):
         .. code-block:: pycon
 
             >>> from datetime import datetime, timezone
-            >>> from icalendar import Todo
+            >>> from icalendar import Todo, STATUS
             >>> from icalendar.enums import STATUS
             >>> todo = Todo.example()
             >>> todo["PERCENT-COMPLETE"] = 100
