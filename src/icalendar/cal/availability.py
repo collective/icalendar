@@ -289,7 +289,7 @@ class Availability(Component):
                 If None, this is set to the current time.
             start: The :attr:`start` of the availability.
             summary: The :attr:`summary` of the availability.
-            uid: The :attr:`Component.uid <icalendar.cal.component.Component.uid>` of the availability.
+            uid: The :attr:`~icalendar.cal.availability.Availability.uid` of the availability.
                 If ``None``, this is set to a new :func:`uuid.uuid4`.
             url: The :attr:`url` of the availability.
 
