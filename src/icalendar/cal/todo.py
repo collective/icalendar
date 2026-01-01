@@ -75,6 +75,9 @@ class Todo(Component):
 
         Complete the bundled example Todo (tests/todos/example.ics):
 
+
+        .. code-block:: pycon
+
             >>> from datetime import datetime, timezone
             >>> from icalendar import Todo
             >>> from icalendar.enums import STATUS
