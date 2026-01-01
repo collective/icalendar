@@ -6,7 +6,7 @@ This part of the documentation describes how to contribute to icalendar's docume
 
 For quick or small edits through the GitHub web interface, read the chapter :doc:`small-edits`.
 
-For larger edits, the chapter :ref:`build-check` provides a comprehensive command reference to build and check the quality of documentation.
+For larger edits, the chapter :doc:`build-check` provides a comprehensive command reference to build and check the quality of documentation.
 
 Refer to the chapter :doc:`style-guide` when you need examples of language, terminology, code, or markup.
 

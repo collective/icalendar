@@ -1,8 +1,8 @@
-.. _small-edits:
+.. _make-small-edits-via-github:
 
-===========
-Small edits
-===========
+===========================
+Make small edits via GitHub
+===========================
 
 For small edits to the documentation, use the GitHub web interface.
 

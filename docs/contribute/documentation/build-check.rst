@@ -1,8 +1,8 @@
-.. _build-check:
+.. _build-check-documentation:
 
-===============
-Build and check
-===============
+=============================
+Build and check documentation
+=============================
 
 This chapter describes how to build and check the quality of documentation.
 
