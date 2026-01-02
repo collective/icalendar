@@ -201,9 +201,14 @@ Docstring structure
 
 In addition to the structure of docstrings as defined by :pep:`257`, icalendar has adopted conventions from the `Google Python Style Guide <https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings>`_.
 
-The summary, description, and sections of a docstring should appear in that order.
-To create a :ref:`docstring section <sphinx:Sections>`, use one of the valid section headers and a colon followed by a block of indented text.
-All item descriptions should terminate with a period.
+A docstring consists of a summary, followed by a possible description, then any helpful sections usually ordered by inputs then outputs.
+
+To create a docstring section, use either one of the supported :ref:`section headers <sphinx:Sections>` or any string for a custom section header, followed by a colon ``:``, followed by a block of indented text.
+Supported section headers enhance formatting, such as structuring method arguments or code examples, whereas custom section headers render as just a heading and content.
+
+All items should terminate with a period.
+
+The following docstrings items are the most frequently used in icalendar, although they may be others.
 
 Summary
     Docstrings must begin with a one-line summary of the Python object, terminated by a period.
