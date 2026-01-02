@@ -111,20 +111,12 @@ In icalendar's documentation, the most frequently used roles in the Python domai
 The target must be either a full dotted Python path or use a shortcut to disambiguate to which object it should be hyperlinked.
 
 The following reStructuredText source examples show which form to use to get the preferred display.
-
-full dotted Python path
-    Use the following syntax consisting of a role and target only.
-
-    .. code-block:: rst
-
-        :class:`icalendar.prop.vXmlReference`
-
-    The above example will render as shown.
-
-        :class:`icalendar.prop.vXmlReference`
+These examples are ordered from most to least preferred.
 
 object only
-    Use the tilde character ``~`` as a modifier, along with the role and target, to display only the object when rendered.
+    Use this form only when the object exists in the rendered HTML page.
+    Thus the object's context is clear to be that within its Python module or class.
+    To do so, use the tilde character ``~`` as a modifier, along with the role and target, to display only the object when rendered.
 
     .. code-block:: rst
 
@@ -133,9 +125,22 @@ object only
     The above example will render as shown.
 
         :class:`~icalendar.prop.vXmlReference`
+
+full dotted Python path
+    Use this form only when the object exists outside the rendered HTML page, such as in a superclass.
+    To do so, use the following syntax consisting of a role and target only.
+
+    .. code-block:: rst
+
+        :class:`icalendar.prop.vXmlReference`
+
+    The above example will render as shown.
+
+        :class:`icalendar.prop.vXmlReference`
 
 custom text label
     As a compromise to showing the full dotted Python path, while retaining sufficient context of the object's location when displayed, use a custom text label.
+    Use this form only when horizontal space is constrained when rendered to HTML.
 
     .. code-block:: rst
 
@@ -144,11 +149,6 @@ custom text label
     The above example will render as shown.
 
         :class:`prop.vXmlReference <icalendar.prop.vXmlReference>`
-
-The form to use depends on the context of the narrative text.
-If it's obvious that the object is within the current class or module, then the object only form may be best.
-If it's unclear where the object is located, then the full dotted Python path or custom display forms may be better.
-Use your best judgment.
 
 .. seealso::
 
