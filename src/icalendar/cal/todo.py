@@ -75,7 +75,6 @@ class Todo(Component):
 
         Complete the example Todo.
 
-
         .. code-block:: pycon
 
             >>> from datetime import datetime, timezone

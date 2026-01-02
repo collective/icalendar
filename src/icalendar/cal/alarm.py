@@ -37,10 +37,9 @@ class Alarm(Component):
     to-do. For example, it may be used to define a reminder for a
     pending event or an overdue to-do.
 
-    Examples:
+    Example:
 
-        Below, you can see an example alarm using an audio file from an FTP server.
-        
+        The following example creates an alarm which uses an audio file from an FTP server.        
         
         .. code-block:: pycon
 
