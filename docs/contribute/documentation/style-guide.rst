@@ -89,6 +89,23 @@ In icalendar's documentation, the most frequently used roles are the following.
 -   :rst:role:`doc` to link to a file
 -   :rst:role:`ref` to link to an arbitrary label
 -   :rst:role:`term` to link to a glossary term
+-   :rst:role:`rfc` to link to an RFC
+
+When referencing a specific section in an RFC, copy the anchor name from the URL, that is, the part of the URL including and after the pound sign ``#``, and use the following syntax.
+
+.. code-block:: text
+
+    :rfc:`number#anchor`
+
+The following example shows how to link to RFC 6350, Section 6.2.2.
+
+.. code-block:: rst
+
+    :rfc:`6350#section-6.2.2`
+
+Which renders as shown.
+
+:rfc:`6350#section-6.2.2`
 
 .. seealso::
 
@@ -222,9 +239,9 @@ Description
     Each attribute should consist of its name and a brief description.
     By virtue of Sphinx extensions and the use of type hints for the Python object, you may omit the argument's type, allowing Sphinx to automatically render it for you.
 
-``Arguments`` or ``Parameters``
-    Each argument or parameter should consist of its name and a brief description.
-    By virtue of Sphinx extensions and the use of type hints for the Python object, you may omit the argument's type, allowing Sphinx to automatically render it for you.
+``Parameters``
+    Each parameter should consist of its name and a brief description.
+    By virtue of Sphinx extensions and the use of type hints for the Python object, you may omit the parameter's type, allowing Sphinx to automatically render it for you.
 
 ``Returns``
     The return value consists of its return type and a brief description.
