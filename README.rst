@@ -2,16 +2,16 @@
 Internet Calendaring and Scheduling (iCalendar) for Python
 ==========================================================
 
-The `icalendar`_ package is an :rfc:`5545` compatible parser and generator of iCalendar files.
+The `icalendar <https://pypi.org/project/icalendar/>`_ package is an :rfc:`5545` compatible parser and generator of iCalendar files.
 
 ----
 
-:Homepage: https://icalendar.readthedocs.io
+:Homepage: https://icalendar.readthedocs.io/en/stable/
 :Community Discussions: https://github.com/collective/icalendar/discussions
 :Issue Tracker: https://github.com/collective/icalendar/issues
 :Code: https://github.com/collective/icalendar
-:Dependencies: `python-dateutil`_ and `tzdata`_.
-:License: `BSD`_
+:Dependencies: `python-dateutil <https://pypi.org/project/python-dateutil/>`_ and `tzdata <https://pypi.org/project/tzdata/>`_.
+:License: `BSD 2-Clause "Simplified" License <https://github.com/collective/icalendar/blob/main/LICENSE.rst>`_
 
 ----
 
@@ -39,11 +39,6 @@ The `icalendar`_ package is an :rfc:`5545` compatible parser and generator of iC
     :target: https://coveralls.io/github/collective/icalendar
     :alt: Test Coverage
 
-
-.. _`icalendar`: https://pypi.org/project/icalendar/
-.. _`python-dateutil`: https://github.com/dateutil/dateutil/
-.. _`tzdata`: https://pypi.org/project/tzdata/
-.. _`BSD`: https://github.com/collective/icalendar/issues/2
 
 Quick start guide
 =================
