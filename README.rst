@@ -4,6 +4,8 @@ Internet Calendaring and Scheduling (iCalendar) for Python
 
 The `icalendar <https://pypi.org/project/icalendar/>`_ package is an :rfc:`5545` compatible parser and generator of iCalendar files.
 
+icalendar can create, inspect, and modify calendaring information with Python.
+
 ----
 
 :Homepage: https://icalendar.readthedocs.io/en/stable/
@@ -48,15 +50,10 @@ The `icalendar <https://pypi.org/project/icalendar/>`_ package is an :rfc:`5545`
     :alt: Funding
 
 
-Quick start guide
+Install icalendar
 =================
 
-``icalendar`` enables you to **create**, **inspect** and **modify**
-calendaring information with Python.
-
-To **install** the package, run::
-
-    pip install icalendar
+https://icalendar.readthedocs.io/en/stable/install.html
 
 
 Inspect Files
