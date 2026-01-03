@@ -19,10 +19,10 @@ For professional technical documentation writing guidance, the icalendar communi
 Key concepts from that guide include the following.
 
 -   Documentation should be informational, but friendly.
--   Address the reader by using "you" and "your" instead of "the user" or "the user's".
+-   Address the reader by using "you" and "your" instead of "the user" or "the user's."
 -   When giving instructions and in headings, use the `imperative mood of verbs <https://learn.microsoft.com/en-us/style-guide/grammar/verbs#mood-of-verbs>`_.
 -   Use the `active voice <https://learn.microsoft.com/en-us/style-guide/grammar/verbs#active-and-passive-voice>`_ whenever possible, avoiding the passive voice.
--   Headings should be "Sentence cased", not "Title Cased".
+-   Headings should be "Sentence cased," not "Title Cased."
 -   Keep sentences short and understandable.
 
 .. note::
