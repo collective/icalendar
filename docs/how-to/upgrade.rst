@@ -119,7 +119,7 @@ However, if it becomes impractical for the icalendar community to provide suppor
 .. seealso::
 
     -   `Status of Python versions <https://devguide.python.org/versions/#versions>`_
-    -   `GitHub Actions Python support policy <https://github.com/actions/python-versions?tab=readme-ov-file#support-policy>`_
+    -   `GitHub Actions Python support policy <https://github.com/actions/python-versions#support-policy>`_
 
 
 ``pytz`` support
