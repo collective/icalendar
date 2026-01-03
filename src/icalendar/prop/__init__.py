@@ -1054,7 +1054,7 @@ class vAdr:
 
 
 class vN:
-    """vCard N (Name) structured property per :rfc:`6350` `Section 6.2.2 <https://datatracker.ietf.org/doc/html/rfc6350.html#section-6.2.2>`_.
+    r"""vCard N (Name) structured property per :rfc:`6350` `Section 6.2.2 <https://datatracker.ietf.org/doc/html/rfc6350.html#section-6.2.2>`_.
 
     The N property represents a person's name.
     It consists of a single structured text value.
@@ -1072,12 +1072,13 @@ class vN:
     Commas and backslashes within field values ARE escaped per :rfc:`6350`.
 
     Examples:
+
         .. code-block:: pycon
 
             >>> from icalendar.prop import vN
             >>> n = vN(("Doe", "John", "M.", "Dr.", "Jr.,M.D.,A.C.P."))
             >>> n.to_ical()
-            b'Doe;John;M.;Dr.;Jr.\\\\,M.D.\\\\,A.C.P.'
+            b'Doe;John;M.;Dr.;Jr.\\,M.D.\\,A.C.P.'
             >>> vN.from_ical(r"Doe;John;M.;Dr.;Jr.\,M.D.\,A.C.P.")
             ('Doe', 'John', 'M.', 'Dr.', 'Jr.,M.D.,A.C.P.')
     """
