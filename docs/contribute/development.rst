@@ -4,8 +4,6 @@ Development
 
 This chapter describes how to set up icalendar for development and to contribute changes.
 
-
-
 To start contributing changes to icalendar, you can clone the project to your file system using Git.
 You can `fork <https://github.com/collective/icalendar/fork>`_
 the project first and clone your fork, too.
