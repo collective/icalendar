@@ -458,7 +458,7 @@ class Event(Component):
 
         This creates a new Event in accordance with :rfc:`5545`.
 
-        Arguments:
+        Parameters:
             attendees: The :attr:`attendees` of the event.
             categories: The :attr:`categories` of the event.
             classification: The :attr:`classification` of the event.
