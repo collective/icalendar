@@ -55,8 +55,13 @@ icalendar can create, inspect, and modify calendaring information with Python.
 Install icalendar
 =================
 
-https://icalendar.readthedocs.io/en/stable/install.html
 See how to `install icalendar <https://icalendar.readthedocs.io/en/stable/install.html>`_.
+
+
+Usage
+=====
+
+For how to use icalendar, including how to read, modify, and write iCalendar files, see the `Usage <https://icalendar.readthedocs.io/en/latest/how-to/usage.html>`_ guide.
 
 
 Inspect Files
