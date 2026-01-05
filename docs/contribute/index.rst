@@ -1,6 +1,6 @@
-============
-Contributing
-============
+==========
+Contribute
+==========
 
 This guide describes how to contribute to icalendar.
 
