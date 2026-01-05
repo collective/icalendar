@@ -300,10 +300,10 @@ Show free/busy times.
     VFREEBUSY({})
 
 
-Todo items
-``````````
+To-do items
+```````````
 
-Show todo items.
+Show to-do items.
 
 .. code:: pycon
 
