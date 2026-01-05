@@ -371,6 +371,6 @@ Print out the calendar.
 More examples
 -------------
 
-The docstrings in the :py:mod:`icalendar` package API documentation provide other usage examples.
+The docstrings in the :mod:`icalendar` package API documentation provide other usage examples.
 
 The `tests <https://github.com/collective/icalendar/tree/main/src/icalendar/tests>`_ of icalendar also have more examples.
