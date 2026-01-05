@@ -337,6 +337,60 @@ Show journal entries.
     VJOURNAL({})
 
 
+timezone implementations
+''''''''''''''''''''''''
+
+You can localize your events to take place in different timezones.
+
+icalendar supports multiple timezone implementations, including :mod:`zoneinfo`, `dateutil.tz <https://dateutil.readthedocs.io/en/latest/tz.html>`_, and `pytz <https://pypi.org/project/pytz/>`_.
+To demonstrate icalendar's flexibility, the following example creates an event that uses all of the timezone implementations with the same result.
+
+.. code:: pycon
+
+    >>> import pytz, zoneinfo, dateutil.tz  # timezone libraries
+    >>> import datetime, icalendar
+    >>> e = icalendar.Event()
+    >>> tz = dateutil.tz.tzstr("Europe/London")
+    >>> e["X-DT-DATEUTIL"] = icalendar.vDatetime(datetime.datetime(2024, 6, 19, 10, 1, tzinfo=tz))
+    >>> tz = pytz.timezone("Europe/London")
+    >>> e["X-DT-USE-PYTZ"] = icalendar.vDatetime(datetime.datetime(2024, 6, 19, 10, 1, tzinfo=tz))
+    >>> tz = zoneinfo.ZoneInfo("Europe/London")
+    >>> e["X-DT-ZONEINFO"] = icalendar.vDatetime(datetime.datetime(2024, 6, 19, 10, 1, tzinfo=tz))
+    >>> print(e.to_ical())  # the libraries yield the same result
+    BEGIN:VEVENT
+    X-DT-DATEUTIL;TZID=Europe/London:20240619T100100
+    X-DT-USE-PYTZ;TZID=Europe/London:20240619T100100
+    X-DT-ZONEINFO;TZID=Europe/London:20240619T100100
+    END:VEVENT
+
+
+``zoneinfo`` default implementation
+'''''''''''''''''''''''''''''''''''
+
+.. versionchanged:: 6.0.0
+
+Version 6 of icalendar switches the default timezone implementation from ``pytz`` to :mod:`zoneinfo`.
+This only affects you if you parse icalendar objects with :meth:`from_ical <icalendar.cal.component.Component.from_ical>`.
+The functionality is extended and tested since 6.0.0 with both timezone implementations ``pytz`` and :mod:`zoneinfo`.
+
+Since 6.0.0 by default, :mod:`zoneinfo` timezones are created.
+
+.. code:: pycon
+
+    >>> dt = icalendar.Calendar.example("timezoned").events[0].start
+    >>> dt.tzinfo
+    ZoneInfo(key='Europe/Vienna')
+
+To continue to receive ``pytz`` timezones in parsed results, you can receive all the latest updates, and switch back to earlier behavior.
+
+.. code:: pycon
+
+    >>> icalendar.use_pytz()
+    >>> dt = icalendar.Calendar.example("timezoned").events[0].start
+    >>> dt.tzinfo
+    <DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>
+
+
 Complete recurring meeting
 ''''''''''''''''''''''''''
 

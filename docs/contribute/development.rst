@@ -13,6 +13,15 @@ the project first and clone your fork, too.
     git clone https://github.com/collective/icalendar.git
     cd icalendar
 
+Branches
+--------
+
+The ``main`` branch receives the latest updates and features.
+Active development takes on this branch.
+
+icalendar version 6 is on the branch `6.x <https://github.com/collective/icalendar/tree/6.x/>`_.
+It is compatible with Python versions 3.8 - 3.13, and PyPy3.
+
 
 Install Python
 --------------

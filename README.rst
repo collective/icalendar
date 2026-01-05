@@ -6,6 +6,9 @@ The `icalendar <https://pypi.org/project/icalendar/>`_ package is an :rfc:`5545`
 
 icalendar can create, inspect, and modify calendaring information with Python.
 
+icalendar supports multiple timezone implementations, including `zoneinfo <https://docs.python.org/3/library/zoneinfo.html>`_, `dateutil.tz <https://dateutil.readthedocs.io/en/latest/tz.html>`_, and `pytz <https://pypi.org/project/pytz/>`_.
+
+
 ----
 
 :Homepage: https://icalendar.readthedocs.io/en/stable/
@@ -63,69 +66,6 @@ Usage
 
 For how to use icalendar, including how to read, modify, and write iCalendar files, see the `Usage <https://icalendar.readthedocs.io/en/latest/how-to/usage.html>`_ guide.
 
-
-Modify Content
---------------
-
-Such a calendar can then be edited and saved again.
-
-
-Use timezones of your choice
-----------------------------
-
-With ``icalendar``, you can localize your events to take place in different
-timezones.
-``zoneinfo``, ``dateutil.tz`` and ``pytz`` are compatible with ``icalendar``.
-This example creates an event that uses all of the timezone implementations
-with the same result:
-
-.. code:: python
-
-    >>> import pytz, zoneinfo, dateutil.tz  # timezone libraries
-    >>> import datetime, icalendar
-    >>> e = icalendar.Event()
-    >>> tz = dateutil.tz.tzstr("Europe/London")
-    >>> e["X-DT-DATEUTIL"] = icalendar.vDatetime(datetime.datetime(2024, 6, 19, 10, 1, tzinfo=tz))
-    >>> tz = pytz.timezone("Europe/London")
-    >>> e["X-DT-USE-PYTZ"] = icalendar.vDatetime(datetime.datetime(2024, 6, 19, 10, 1, tzinfo=tz))
-    >>> tz = zoneinfo.ZoneInfo("Europe/London")
-    >>> e["X-DT-ZONEINFO"] = icalendar.vDatetime(datetime.datetime(2024, 6, 19, 10, 1, tzinfo=tz))
-    >>> print(e.to_ical())  # the libraries yield the same result
-    BEGIN:VEVENT
-    X-DT-DATEUTIL;TZID=Europe/London:20240619T100100
-    X-DT-USE-PYTZ;TZID=Europe/London:20240619T100100
-    X-DT-ZONEINFO;TZID=Europe/London:20240619T100100
-    END:VEVENT
-
-Version 6 with zoneinfo
------------------------
-
-Version 6 of ``icalendar`` switches the timezone implementation to ``zoneinfo``.
-This only affects you if you parse ``icalendar`` objects with ``from_ical()``.
-The functionality is extended and is tested since 6.0.0 with both timezone
-implementations ``pytz`` and ``zoneinfo``.
-
-By default and since 6.0.0, ``zoneinfo`` timezones are created.
-
-.. code:: python
-
-    >>> dt = icalendar.Calendar.example("timezoned").events[0].start
-    >>> dt.tzinfo
-    ZoneInfo(key='Europe/Vienna')
-
-If you would like to continue to receive ``pytz`` timezones in parse results,
-you can receive all the latest updates, and switch back to earlier behavior:
-
-.. code:: python
-
-    >>> icalendar.use_pytz()
-    >>> dt = icalendar.Calendar.example("timezoned").events[0].start
-    >>> dt.tzinfo
-    <DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>
-
-Version 6 is on `branch main <https://github.com/collective/icalendar/>`_.
-It is compatible with Python versions 3.8 - 3.13, and PyPy3.
-We expect the ``main`` branch with versions ``6+`` to receive the latest updates and features.
 
 Related projects
 ================
