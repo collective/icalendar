@@ -6,11 +6,14 @@ ICAL_TYPE = Union[str, bytes]
 
 
 def from_unicode(value: ICAL_TYPE, encoding="utf-8") -> bytes:
-    """
-    Converts a value to bytes, even if it already is bytes
-    :param value: The value to convert
-    :param encoding: The encoding to use in the conversion
-    :return: The bytes representation of the value
+    """Converts a value to bytes, even if it is already bytes.
+
+    Parameters:
+        value: The value to convert.
+        encoding: The encoding to use in the conversion.
+
+    Returns:
+        The bytes representation of the value.
     """
     if isinstance(value, bytes):
         return value
@@ -24,7 +27,12 @@ def from_unicode(value: ICAL_TYPE, encoding="utf-8") -> bytes:
 
 
 def to_unicode(value: ICAL_TYPE, encoding="utf-8-sig") -> str:
-    """Converts a value to unicode, even if it is already a unicode string."""
+    """Converts a value to Unicode, even if it is already a Unicode string.
+
+    Parameters:
+        value: The value to convert.
+        encoding: The encoding to use in the conversion.
+    """
     if isinstance(value, str):
         return value
     elif isinstance(value, bytes):
@@ -40,7 +48,11 @@ def data_encode(
     data: Union[ICAL_TYPE, dict, list], encoding=DEFAULT_ENCODING
 ) -> Union[bytes, List[bytes], dict]:
     """Encode all datastructures to the given encoding.
-    Currently unicode strings, dicts and lists are supported.
+
+    Currently Unicode strings, dicts, and lists are supported.
+
+    Parameters:
+        data: The datastructure to encode.
     """
     # https://stackoverflow.com/questions/1254454/fastest-way-to-convert-a-dicts-keys-values-from-unicode-to-str
     if isinstance(data, str):
