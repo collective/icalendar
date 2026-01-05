@@ -5,15 +5,32 @@ Development
 This chapter describes how to set up icalendar for development and to contribute changes.
 
 
+Set up your environment
+-----------------------
 
-To start contributing changes to icalendar, you can clone the project to your file system using Git.
-You can `fork <https://github.com/collective/icalendar/fork>`_
-the project first and clone your fork, too.
+Unless you're a maintainer or administrator, you don't have write access to push commits to GitHub repositories under the Collective organization or the icalendar repository.
+You can, however, push commits to your fork.
+Thus, a typical workflow will be circular in nature.
+You'll pull code from the upstream icalendar repository, push your work from your local clone to your remote fork, then make a pull request from your fork to the upstream icalendar repository.
 
-.. code-block:: shell
+.. card::
 
-    git clone https://github.com/collective/icalendar.git
-    cd icalendar
+    .. image:: /_static/contributing/development-icalendar-git-workflow.svg
+        :alt: icalendar git workflow
+        :target: /_static/contributing/development-icalendar-git-workflow.svg
+
+    +++
+    *icalendar git workflow*
+
+#.  Start by `forking icalendar's repository <https://github.com/collective/icalendar/fork>`_ to your account through the GitHub interface.
+
+    .. seealso::
+
+        `Fork a repository <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo>`_
+
+#.  `Clone your forked repository <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo#cloning-your-forked-repository>`_.
+
+#.  `Configure Git to sync your fork with the upstream repository <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo#configuring-git-to-sync-your-fork-with-the-upstream-repository>`_.
 
 
 Install Python
