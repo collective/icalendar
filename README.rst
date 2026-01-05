@@ -64,23 +64,6 @@ Usage
 For how to use icalendar, including how to read, modify, and write iCalendar files, see the `Usage <https://icalendar.readthedocs.io/en/latest/how-to/usage.html>`_ guide.
 
 
-Inspect Files
--------------
-
-You can open an ``.ics`` file and see all the events:
-
-.. code:: python
-
-  >>> import icalendar
-  >>> from pathlib import Path
-  >>> ics_path = Path("src/icalendar/tests/calendars/example.ics")
-  >>> calendar = icalendar.Calendar.from_ical(ics_path.read_bytes())
-  >>> for event in calendar.events:
-  ...     print(event.get("SUMMARY"))
-  New Year's Day
-  Orthodox Christmas
-  International Women's Day
-
 Modify Content
 --------------
 

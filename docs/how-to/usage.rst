@@ -27,8 +27,8 @@ The following example shows how to set two properties for it, then display them.
     >>> cal["summary"] = "Python meeting about calendaring"
     >>> for k,v in cal.items():
     ...     k,v
-    ("DTSTART", "20050404T080000")
-    ("SUMMARY", "Python meeting about calendaring")
+    ('DTSTART', '20050404T080000')
+    ('SUMMARY', 'Python meeting about calendaring')
 
 .. note::
 
@@ -40,7 +40,7 @@ You can generate a string for a file with the :py:meth:`icalendar.Component.to_i
 .. code-block:: pycon
 
     >>> cal.to_ical()
-    b"BEGIN:VCALENDAR\r\nDTSTART:20050404T080000\r\nSUMMARY:Python meeting about calendaring\r\nEND:VCALENDAR\r\n"
+    b'BEGIN:VCALENDAR\r\nDTSTART:20050404T080000\r\nSUMMARY:Python meeting about calendaring\r\nEND:VCALENDAR\r\n'
 
 The rendered view is easier to read.
 
@@ -133,7 +133,7 @@ Subcomponents are appended to the subcomponents property on the component.
 .. code-block:: pycon
 
     >>> cal.subcomponents
-    [VEVENT({"UID": "42", "DTSTART": "20050404T080000"})]
+    [VEVENT({'UID': '42', 'DTSTART': '20050404T080000'})]
 
 
 Value types
@@ -155,7 +155,7 @@ To add a datetime value, you can use Python's built in :py:mod:`datetime` types,
     >>> from datetime import datetime
     >>> cal.add("dtstart", datetime(2005,4,4,8,0,0))
     >>> cal["dtstart"].to_ical()
-    b"20050404T080000"
+    b'20050404T080000'
 
 If that doesn't work satisfactorily for some reason, you can also do it manually.
 
@@ -169,7 +169,7 @@ Thus, to parse it manually, you would do the following.
     >>> from icalendar import vDatetime
     >>> now = datetime(2005,4,4,8,0,0)
     >>> vDatetime(now).to_ical()
-    b"20050404T080000"
+    b'20050404T080000'
 
 To summarize, initialize the object with a Python built in type, then call the :py:meth:`~icalendar.Component.to_ical` method on the object.
 That will return an iCal-encoded string.
@@ -183,7 +183,7 @@ To parse an encoded string, call the :py:meth:`~icalendar.Component.from_ical` m
     datetime.datetime(2005, 4, 4, 8, 0)
 
     >>> vDatetime.from_ical("20050404T080000Z")
-    datetime.datetime(2005, 4, 4, 8, 0, tzinfo=ZoneInfo(key="UTC"))
+    datetime.datetime(2005, 4, 4, 8, 0, tzinfo=ZoneInfo(key='UTC'))
 
 You can also choose to use the :py:meth:`icalendar.Component.decoded` method, which will return a decoded value directly.
 
@@ -193,7 +193,7 @@ You can also choose to use the :py:meth:`icalendar.Component.decoded` method, wh
     >>> cal = Calendar()
     >>> cal.add("dtstart", datetime(2005,4,4,8,0,0))
     >>> cal["dtstart"].to_ical()
-    b"20050404T080000"
+    b'20050404T080000'
     >>> cal.decoded("dtstart")
     datetime.datetime(2005, 4, 4, 8, 0)
 
@@ -214,7 +214,7 @@ identifier, if applicable, are automatically added.
 
     >>> lines = event.to_ical().splitlines()
     >>> assert (
-    ...     b"DTSTART;TZID=Europe/Vienna:20101010T100000"
+    ...     b'DTSTART;TZID=Europe/Vienna:20101010T100000'
     ...     in lines)
 
 
@@ -226,11 +226,35 @@ You can also add arbitrary property parameters by passing a parameters dictionar
     >>> event.add("X-TEST-PROP", "tryout.",
     ...           parameters={"prop1":"val1", "prop2":"val2"})
     >>> lines = event.to_ical().splitlines()
-    >>> assert b"X-TEST-PROP;PROP1=val1;PROP2=val2:tryout." in lines
+    >>> assert b'X-TEST-PROP;PROP1=val1;PROP2=val2:tryout.' in lines
 
 
-Example
--------
+Examples
+--------
+
+This section describes how to use icalendar's essential features.
+
+
+Inspect files
+'''''''''''''
+
+Open an :file:`.ics` file and view its events.
+
+.. code:: python
+
+    >>> import icalendar
+    >>> from pathlib import Path
+    >>> ics_path = Path("src/icalendar/tests/calendars/example.ics")
+    >>> calendar = icalendar.Calendar.from_ical(ics_path.read_bytes())
+    >>> for event in calendar.events:
+    ...     print(event.get("SUMMARY"))
+    New Year's Day
+    Orthodox Christmas
+    International Women's Day
+
+
+Complete example
+----------------
 
 This section shows how create a complete and typical iCalendar file of a single event, then add some properties to it, including a location, organizer, attendees, alarms, recurrence, and other properties.
 This file can be loaded into any application that supports iCalendar files.
