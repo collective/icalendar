@@ -23,12 +23,12 @@ The following example shows how to set two properties for it, then display them.
 .. code-block:: pycon
 
     >>> cal = Calendar()
-    >>> cal['dtstart'] = '20050404T080000'
-    >>> cal['summary'] = 'Python meeting about calendaring'
+    >>> cal["dtstart"] = "20050404T080000"
+    >>> cal["summary"] = "Python meeting about calendaring"
     >>> for k,v in cal.items():
     ...     k,v
-    ('DTSTART', '20050404T080000')
-    ('SUMMARY', 'Python meeting about calendaring')
+    ("DTSTART", "20050404T080000")
+    ("SUMMARY", "Python meeting about calendaring")
 
 .. note::
 
@@ -40,7 +40,7 @@ You can generate a string for a file with the :py:meth:`icalendar.Component.to_i
 .. code-block:: pycon
 
     >>> cal.to_ical()
-    b'BEGIN:VCALENDAR\r\nDTSTART:20050404T080000\r\nSUMMARY:Python meeting about calendaring\r\nEND:VCALENDAR\r\n'
+    b"BEGIN:VCALENDAR\r\nDTSTART:20050404T080000\r\nSUMMARY:Python meeting about calendaring\r\nEND:VCALENDAR\r\n"
 
 The rendered view is easier to read.
 
@@ -56,14 +56,14 @@ You can define a function to display :py:meth:`~icalendar.Component.to_ical` out
 .. code-block:: pycon
 
     >>> def display(cal):
-    ...    return cal.to_ical().decode("utf-8").replace('\r\n', '\n').strip()
+    ...    return cal.to_ical().decode("utf-8").replace("\r\n", "\n").strip()
 
 You can set multiple properties, as shown in the following example.
 
 .. code-block:: pycon
 
     >>> cal = Calendar()
-    >>> cal['attendee'] = ['MAILTO:maxm@mxm.dk','MAILTO:test@example.com']
+    >>> cal["attendee"] = ["MAILTO:maxm@mxm.dk","MAILTO:test@example.com"]
     >>> print(display(cal))
     BEGIN:VCALENDAR
     ATTENDEE:MAILTO:maxm@mxm.dk
@@ -77,8 +77,8 @@ Here is an example.
 .. code-block:: pycon
 
     >>> cal = Calendar()
-    >>> cal.add('attendee', 'MAILTO:maxm@mxm.dk')
-    >>> cal.add('attendee', 'MAILTO:test@example.com')
+    >>> cal.add("attendee", "MAILTO:maxm@mxm.dk")
+    >>> cal.add("attendee", "MAILTO:test@example.com")
     >>> print(display(cal))
     BEGIN:VCALENDAR
     ATTENDEE:MAILTO:maxm@mxm.dk
@@ -110,8 +110,8 @@ To demonstrate, first, make a new component.
 .. code-block:: pycon
 
     >>> event = Event()
-    >>> event['uid'] = '42'
-    >>> event['dtstart'] = '20050404T080000'
+    >>> event["uid"] = "42"
+    >>> event["dtstart"] = "20050404T080000"
 
 Then append it to a parent.
 
@@ -133,7 +133,7 @@ Subcomponents are appended to the subcomponents property on the component.
 .. code-block:: pycon
 
     >>> cal.subcomponents
-    [VEVENT({'UID': '42', 'DTSTART': '20050404T080000'})]
+    [VEVENT({"UID": "42", "DTSTART": "20050404T080000"})]
 
 
 Value types
@@ -153,9 +153,9 @@ To add a datetime value, you can use Python's built in :py:mod:`datetime` types,
 .. code-block:: pycon
 
     >>> from datetime import datetime
-    >>> cal.add('dtstart', datetime(2005,4,4,8,0,0))
-    >>> cal['dtstart'].to_ical()
-    b'20050404T080000'
+    >>> cal.add("dtstart", datetime(2005,4,4,8,0,0))
+    >>> cal["dtstart"].to_ical()
+    b"20050404T080000"
 
 If that doesn't work satisfactorily for some reason, you can also do it manually.
 
@@ -169,7 +169,7 @@ Thus, to parse it manually, you would do the following.
     >>> from icalendar import vDatetime
     >>> now = datetime(2005,4,4,8,0,0)
     >>> vDatetime(now).to_ical()
-    b'20050404T080000'
+    b"20050404T080000"
 
 To summarize, initialize the object with a Python built in type, then call the :py:meth:`~icalendar.Component.to_ical` method on the object.
 That will return an iCal-encoded string.
@@ -179,11 +179,11 @@ To parse an encoded string, call the :py:meth:`~icalendar.Component.from_ical` m
 
 .. code-block:: pycon
 
-    >>> vDatetime.from_ical('20050404T080000')
+    >>> vDatetime.from_ical("20050404T080000")
     datetime.datetime(2005, 4, 4, 8, 0)
 
-    >>> vDatetime.from_ical('20050404T080000Z')
-    datetime.datetime(2005, 4, 4, 8, 0, tzinfo=ZoneInfo(key='UTC'))
+    >>> vDatetime.from_ical("20050404T080000Z")
+    datetime.datetime(2005, 4, 4, 8, 0, tzinfo=ZoneInfo(key="UTC"))
 
 You can also choose to use the :py:meth:`icalendar.Component.decoded` method, which will return a decoded value directly.
 
@@ -191,10 +191,10 @@ You can also choose to use the :py:meth:`icalendar.Component.decoded` method, wh
 .. code-block:: pycon
 
     >>> cal = Calendar()
-    >>> cal.add('dtstart', datetime(2005,4,4,8,0,0))
-    >>> cal['dtstart'].to_ical()
-    b'20050404T080000'
-    >>> cal.decoded('dtstart')
+    >>> cal.add("dtstart", datetime(2005,4,4,8,0,0))
+    >>> cal["dtstart"].to_ical()
+    b"20050404T080000"
+    >>> cal.decoded("dtstart")
     datetime.datetime(2005, 4, 4, 8, 0)
 
 
@@ -209,7 +209,7 @@ identifier, if applicable, are automatically added.
 
     >>> import zoneinfo
     >>> event = Event()
-    >>> event.add('dtstart', datetime(2010, 10, 10, 10, 0, 0,
+    >>> event.add("dtstart", datetime(2010, 10, 10, 10, 0, 0,
     ...                               tzinfo=zoneinfo.ZoneInfo("Europe/Vienna")))
 
     >>> lines = event.to_ical().splitlines()
@@ -223,8 +223,8 @@ You can also add arbitrary property parameters by passing a parameters dictionar
 .. code-block:: pycon
 
     >>> event = Event()
-    >>> event.add('X-TEST-PROP', 'tryout.',
-    ...           parameters={'prop1':'val1', 'prop2':'val2'})
+    >>> event.add("X-TEST-PROP", "tryout.",
+    ...           parameters={"prop1":"val1", "prop2":"val2"})
     >>> lines = event.to_ical().splitlines()
     >>> assert b"X-TEST-PROP;PROP1=val1;PROP2=val2:tryout." in lines
 
@@ -232,7 +232,8 @@ You can also add arbitrary property parameters by passing a parameters dictionar
 Example
 -------
 
-The following section is an example generating a complete iCal calendar file with a single event that can be loaded into any iCalendar application.
+This section shows how create a complete and typical iCalendar file of a single event, then add some properties to it, including a location, organizer, attendees, alarms, recurrence, and other properties.
+This file can be loaded into any application that supports iCalendar files.
 
 Initialize the calendar.
 
@@ -246,18 +247,18 @@ Add some properties to be compliant with :rfc:`5545`.
 
 .. code-block:: pycon
 
-    >>> cal.add('prodid', '-//My calendar product//mxm.dk//')
-    >>> cal.add('version', '2.0')
+    >>> cal.add("prodid", "-//My calendar product//mxm.dk//")
+    >>> cal.add("version", "2.0")
 
 At least one subcomponent is required for a calendar to be compliant.
 
 .. code-block:: pycon
 
     >>> event = Event()
-    >>> event.add('summary', 'Python meeting about calendaring')
-    >>> event.add('dtstart', datetime(2005,4,4,8,0,0,tzinfo=zoneinfo.ZoneInfo("UTC")))
-    >>> event.add('dtend', datetime(2005,4,4,10,0,0,tzinfo=zoneinfo.ZoneInfo("UTC")))
-    >>> event.add('dtstamp', datetime(2005,4,4,0,10,0,tzinfo=zoneinfo.ZoneInfo("UTC")))
+    >>> event.add("summary", "Python meeting about calendaring")
+    >>> event.add("dtstart", datetime(2005,4,4,8,0,0,tzinfo=zoneinfo.ZoneInfo("UTC")))
+    >>> event.add("dtend", datetime(2005,4,4,10,0,0,tzinfo=zoneinfo.ZoneInfo("UTC")))
+    >>> event.add("dtstamp", datetime(2005,4,4,0,10,0,tzinfo=zoneinfo.ZoneInfo("UTC")))
 
 Create a property with parameters.
 Notice that they are an attribute on the value.
@@ -265,29 +266,29 @@ Notice that they are an attribute on the value.
 .. code-block:: pycon
 
     >>> from icalendar import vCalAddress, vText
-    >>> organizer = vCalAddress('MAILTO:noone@example.com')
+    >>> organizer = vCalAddress("MAILTO:noone@example.com")
 
 Automatic encoding is not yet implemented for parameter values, so you must use the ``v*`` types which you can import from the icalendar :mod:`icalendar.prop` module.
 
 .. code-block:: pycon
 
-    >>> organizer.params['cn'] = vText('Max Rasmussen')
-    >>> organizer.params['role'] = vText('CHAIR')
-    >>> event['organizer'] = organizer
-    >>> event['location'] = vText('Odense, Denmark')
+    >>> organizer.params["cn"] = vText("Max Rasmussen")
+    >>> organizer.params["role"] = vText("CHAIR")
+    >>> event["organizer"] = organizer
+    >>> event["location"] = vText("Odense, Denmark")
 
-    >>> event['uid'] = '20050115T101010/27346262376@mxm.dk'
-    >>> event.add('priority', 5)
+    >>> event["uid"] = "20050115T101010/27346262376@mxm.dk"
+    >>> event.add("priority", 5)
 
-    >>> attendee = vCalAddress('MAILTO:maxm@example.com')
-    >>> attendee.params['cn'] = vText('Max Rasmussen')
-    >>> attendee.params['ROLE'] = vText('REQ-PARTICIPANT')
-    >>> event.add('attendee', attendee, encode=0)
+    >>> attendee = vCalAddress("MAILTO:maxm@example.com")
+    >>> attendee.params["cn"] = vText("Max Rasmussen")
+    >>> attendee.params["ROLE"] = vText("REQ-PARTICIPANT")
+    >>> event.add("attendee", attendee, encode=0)
 
-    >>> attendee = vCalAddress('MAILTO:the-dude@example.com')
-    >>> attendee.params['cn'] = vText('The Dude')
-    >>> attendee.params['ROLE'] = vText('REQ-PARTICIPANT')
-    >>> event.add('attendee', attendee, encode=0)
+    >>> attendee = vCalAddress("MAILTO:the-dude@example.com")
+    >>> attendee.params["cn"] = vText("The Dude")
+    >>> attendee.params["ROLE"] = vText("REQ-PARTICIPANT")
+    >>> event.add("attendee", attendee, encode=0)
 
 Add the event to the calendar.
 
@@ -302,15 +303,15 @@ By extending the event with subcomponents, you can create multiple alarms.
     >>> from icalendar import Alarm
     >>> from datetime import timedelta
     >>> alarm_1h_before = Alarm()
-    >>> alarm_1h_before.add('action', 'DISPLAY')
-    >>> alarm_1h_before.add('trigger', timedelta(hours=-1))
-    >>> alarm_1h_before.add('description', 'Reminder: Event in 1 hour')
+    >>> alarm_1h_before.add("action", "DISPLAY")
+    >>> alarm_1h_before.add("trigger", timedelta(hours=-1))
+    >>> alarm_1h_before.add("description", "Reminder: Event in 1 hour")
     >>> event.add_component(alarm_1h_before)
 
     >>> alarm_24h_before = Alarm()
-    >>> alarm_24h_before.add('action', 'DISPLAY')
-    >>> alarm_24h_before.add('trigger', timedelta(hours=-24))
-    >>> alarm_24h_before.add('description', 'Reminder: Event in 24 hours')
+    >>> alarm_24h_before.add("action", "DISPLAY")
+    >>> alarm_24h_before.add("trigger", timedelta(hours=-24))
+    >>> alarm_24h_before.add("description", "Reminder: Event in 24 hours")
     >>> event.add_component(alarm_24h_before)
 
 You can even add a recurrence, either from a dictionary or a string.
@@ -319,7 +320,7 @@ Otherwise the rule will be escaped, making it invalid.
 
 .. code-block:: pycon
 
-    >>> event.add('rrule', {'freq': 'daily'})
+    >>> event.add("rrule", {"freq": "daily"})
 
 Write to disk.
 
@@ -327,7 +328,7 @@ Write to disk.
 
     >>> import tempfile, os
     >>> directory = tempfile.mkdtemp()
-    >>> f = open(os.path.join(directory, 'example.ics'), 'wb')
+    >>> f = open(os.path.join(directory, "example.ics"), "wb")
     >>> f.write(cal.to_ical())
     733
     >>> f.close()
@@ -336,7 +337,7 @@ Print out the calendar.
 
 .. code-block:: pycon
 
-    >>> print(cal.to_ical().decode('utf-8')) # doctest: +NORMALIZE_WHITESPACE
+    >>> print(cal.to_ical().decode("utf-8")) # doctest: +NORMALIZE_WHITESPACE
     BEGIN:VCALENDAR
     VERSION:2.0
     PRODID:-//My calendar product//mxm.dk//
