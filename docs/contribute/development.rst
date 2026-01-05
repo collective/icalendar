@@ -21,6 +21,7 @@ Active development takes on this branch.
 
 icalendar version 6 is on the branch `6.x <https://github.com/collective/icalendar/tree/6.x/>`_.
 It is compatible with Python versions 3.8 - 3.13, and PyPy3.
+Security updates and bugfixes may be backported and added to ``6.x``.
 
 
 Install Python
