@@ -4,16 +4,19 @@ Usage
 
 This chapter describes how to use icalendar.
 
+.. note::
+
+    To avoid repetition, the code examples in this chapter use the following imports.
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Calendar, Event
+
+
 Components
 ----------
 
-The following code examples use the following imports.
-
-.. code-block:: pycon
-
-    >>> from icalendar import Calendar, Event
-
-Components are like case-insensitive dicts.
+Components are case-insensitive Python dicts.
 The ``Calendar`` object is a component.
 The following example shows how to set two properties for it, then display them.
 
@@ -229,7 +232,7 @@ You can also add arbitrary property parameters by passing a parameters dictionar
 Example
 -------
 
-The following section is an example generating a complete iCal calendar file with a single event that can be loaded into the Mozilla calendar.
+The following section is an example generating a complete iCal calendar file with a single event that can be loaded into any iCalendar application.
 
 Initialize the calendar.
 
@@ -264,7 +267,7 @@ Notice that they are an attribute on the value.
     >>> from icalendar import vCalAddress, vText
     >>> organizer = vCalAddress('MAILTO:noone@example.com')
 
-Automatic encoding is not yet implemented for parameter values, so you must use the ``v*`` types which you can import from the icalendar :py:mod:`icalendar.prop` module.
+Automatic encoding is not yet implemented for parameter values, so you must use the ``v*`` types which you can import from the icalendar :mod:`icalendar.prop` module.
 
 .. code-block:: pycon
 
@@ -311,7 +314,7 @@ By extending the event with subcomponents, you can create multiple alarms.
     >>> event.add_component(alarm_24h_before)
 
 You can even add a recurrence, either from a dictionary or a string.
-Note that if you want to add the recurrence rule from a string, you must use the :py:class:`icalendar.prop.vRecur` property.
+Note that if you want to add the recurrence rule from a string, you must use the :class:`icalendar.prop.vRecur` property.
 Otherwise the rule will be escaped, making it invalid.
 
 .. code-block:: pycon
