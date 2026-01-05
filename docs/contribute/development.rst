@@ -4,8 +4,6 @@ Development
 
 This chapter describes how to set up icalendar for development and to contribute changes.
 
-
-
 To start contributing changes to icalendar, you can clone the project to your file system using Git.
 You can `fork <https://github.com/collective/icalendar/fork>`_
 the project first and clone your fork, too.
@@ -14,6 +12,16 @@ the project first and clone your fork, too.
 
     git clone https://github.com/collective/icalendar.git
     cd icalendar
+
+Branches
+--------
+
+The ``main`` branch receives the latest updates and features.
+Active development takes on this branch.
+
+icalendar version 6 is on the branch `6.x <https://github.com/collective/icalendar/tree/6.x/>`_.
+It is compatible with Python versions 3.8 - 3.13, and PyPy3.
+Security updates and bug fixes may be backported and added to ``6.x``.
 
 
 Install Python
