@@ -69,40 +69,6 @@ Modify Content
 
 Such a calendar can then be edited and saved again.
 
-.. code:: python
-
-    >>> calendar.calendar_name = "My Modified Calendar"  # modify
-    >>> print(calendar.to_ical()[:121])  # save modification
-    BEGIN:VCALENDAR
-    VERSION:2.0
-    PRODID:collective/icalendar
-    CALSCALE:GREGORIAN
-    METHOD:PUBLISH
-    NAME:My Modified Calendar
-
-
-Create Events, TODOs, Journals, Alarms, ...
--------------------------------------------
-
-``icalendar`` supports the creation and parsing of all kinds of objects
-in the iCalendar (:rfc:`5545`) standard.
-
-.. code:: python
-
-    >>> icalendar.Event()  # events
-    VEVENT({})
-    >>> icalendar.FreeBusy()  # free/busy times
-    VFREEBUSY({})
-    >>> icalendar.Todo()  # Todo list entries
-    VTODO({})
-    >>> icalendar.Alarm()  # Alarms e.g. for events
-    VALARM({})
-    >>> icalendar.Journal()   # Journal entries
-    VJOURNAL({})
-
-
-Have a look at `more examples
-<https://icalendar.readthedocs.io/en/latest/how-to/usage.html>`_.
 
 Use timezones of your choice
 ----------------------------

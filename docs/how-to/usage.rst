@@ -240,7 +240,7 @@ Inspect files
 
 Open an :file:`.ics` file and view its events.
 
-.. code:: python
+.. code:: pycon
 
     >>> import icalendar
     >>> from pathlib import Path
@@ -253,10 +253,94 @@ Open an :file:`.ics` file and view its events.
     International Women's Day
 
 
-Complete example
-----------------
+Modify content
+''''''''''''''
 
-This section shows how create a complete and typical iCalendar file of a single event, then add some properties to it, including a location, organizer, attendees, alarms, recurrence, and other properties.
+After loading the example file, edit and save it.
+
+.. code:: pycon
+
+    >>> calendar.calendar_name = "My Modified Calendar"  # modify
+    >>> print(calendar.to_ical()[:121])  # save modification
+    BEGIN:VCALENDAR
+    VERSION:2.0
+    PRODID:collective/icalendar
+    CALSCALE:GREGORIAN
+    METHOD:PUBLISH
+    NAME:My Modified Calendar
+
+
+iCalendar objects
+'''''''''''''''''
+
+``icalendar`` supports the creation and parsing of all kinds of objects
+in the :rfc:`5545` iCalendar standard.
+
+.. seealso::
+
+    For a complete list of all supported objects, see the :doc:`icalendar API reference guide <../reference/api/icalendar>`.
+
+
+Events
+``````
+
+Show events.
+
+.. code:: pycon
+
+    >>> icalendar.Event()
+    VEVENT({})
+
+
+Free/busy times
+```````````````
+
+Show free/busy times.
+
+.. code:: pycon
+
+    >>> icalendar.FreeBusy()
+    VFREEBUSY({})
+
+
+Todo items
+``````````
+
+Show todo items.
+
+.. code:: pycon
+
+    >>> icalendar.Todo()
+    VTODO({})
+
+
+
+Alarms
+``````
+
+Show alarms.
+
+.. code:: pycon
+
+    >>> icalendar.Alarm()
+    VALARM({})
+
+
+Journal entries
+```````````````
+
+Show journal entries.
+
+.. code:: pycon
+
+    >>> icalendar.Journal()
+    VJOURNAL({})
+
+
+Complete recurring meeting
+''''''''''''''''''''''''''
+
+This section shows how create a complete and typical iCalendar file of a recurring meeting event, then add some properties to it, including a location, organizer, attendees, alarms, recurrence, and other properties.
 This file can be loaded into any application that supports iCalendar files.
 
 Initialize the calendar.
