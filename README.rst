@@ -13,7 +13,9 @@ icalendar can create, inspect, and modify calendaring information with Python.
 :Issue Tracker: https://github.com/collective/icalendar/issues
 :Code: https://github.com/collective/icalendar
 :Dependencies: `python-dateutil <https://pypi.org/project/python-dateutil/>`_ and `tzdata <https://pypi.org/project/tzdata/>`_.
-:License: `BSD 2-Clause "Simplified" License <https://github.com/collective/icalendar/blob/main/LICENSE.rst>`_
+:License: `2-Clause BSD License <https://github.com/collective/icalendar/blob/main/LICENSE.rst>`_
+:Contribute: `Contribute to icalendar <https://icalendar.readthedocs.io/en/latest/contribute/index.html>`_
+:Funding: `Open Collective <https://opencollective.com/python-icalendar>`_
 
 ----
 
@@ -54,6 +56,7 @@ Install icalendar
 =================
 
 https://icalendar.readthedocs.io/en/stable/install.html
+See how to `install icalendar <https://icalendar.readthedocs.io/en/stable/install.html>`_.
 
 
 Inspect Files
@@ -182,15 +185,8 @@ Related projects
 * `caldav <https://caldav.readthedocs.io/>`_ is based on ``icalendar``.
 * `icalendar-anonymizer <https://pypi.org/project/icalendar-anonymizer/>`_ is a tool to anonymize ical files so they can be published or shared for debugging and other purposes without revealing personal information.
 
-Further Reading
-===============
 
-You can find out more about this project:
+Change log
+==========
 
-* `Contributing`_
-* `Changelog`_
-* `License`_
-
-.. _`Contributing`: https://icalendar.readthedocs.io/en/latest/contribute/index.html
-.. _`Changelog`: https://icalendar.readthedocs.io/en/latest/reference/changelog.html
-.. _`License`: https://icalendar.readthedocs.io/en/latest/index.html#license
+See the `change log <https://icalendar.readthedocs.io/en/latest/reference/changelog.html>`_ for the latest updates to icalendar.
