@@ -70,14 +70,30 @@ For how to use icalendar, including how to read, modify, and write iCalendar fil
 Related projects
 ================
 
-* `vobject <https://github.com/py-vobject/vobject>`_ is a different Python library for iCalendar.
-* `icalevents <https://github.com/irgangla/icalevents>`_. It is built on top of icalendar and allows you to query iCal files and get the events happening on specific dates. It manages recurrent events as well.
-* `recurring-ical-events <https://pypi.org/project/recurring-ical-events/>`_. Library to query an ``icalendar.Calendar`` object for events and other components happening at a certain date or within a certain time.
-* `x-wr-timezone <https://pypi.org/project/x-wr-timezone/>`_. Library and command line tool to make ``icalendar.Calendar`` objects and files from Google Calendar (using the non-standard ``X-WR-TIMEZONE`` property) compliant with the standard (:rfc:`5545`).
-* `ics-query <http://pypi.org/project/ics-query>`_. Command line tool to query iCalendar files for occurrences of events and other components.
-* `icalendar-compatibility <https://icalendar-compatibility.readthedocs.io/en/latest/>`_ - access to event data compatible with RFC5545 and different implementations
-* `caldav <https://caldav.readthedocs.io/>`_ is based on ``icalendar``.
-* `icalendar-anonymizer <https://pypi.org/project/icalendar-anonymizer/>`_ is a tool to anonymize ical files so they can be published or shared for debugging and other purposes without revealing personal information.
+`VObject <https://github.com/py-vobject/vobject>`_
+    VObject is intended to be a full-featured Python package for parsing and generating Card and Calendar files.
+
+`iCalEvents <https://github.com/jazzband/icalevents>`_
+    iCalEvents is built on top of icalendar, and allows you to query iCalendar files to get the events happening on specific dates.
+    It manages recurrent events as well.
+
+`recurring-ical-events <https://pypi.org/project/recurring-ical-events/>`_
+    Library to query an ``icalendar.Calendar`` object for events and other components happening at a certain date or within a certain time.
+
+`x-wr-timezone <https://pypi.org/project/x-wr-timezone/>`_
+    Library and command line tool to make ``icalendar.Calendar`` objects and files from Google Calendar, using the non-standard ``X-WR-TIMEZONE`` property, compliant with the :rfc:`5545` standard.
+
+`ics-query <http://pypi.org/project/ics-query>`_
+    Command line tool to query iCalendar files for occurrences of events and other components.
+
+`icalendar-compatibility <https://icalendar-compatibility.readthedocs.io/en/latest/>`_
+    Access event data compatible with :rfc:`5545` and different implementations.
+
+`caldav <https://caldav.readthedocs.io/>`_
+    CalDAV is a :rfc:`4791` client library for Python based on icalendar.
+
+`icalendar-anonymizer <https://pypi.org/project/icalendar-anonymizer/>`_
+    Anonymize iCalendar files by stripping personal data while preserving technical properties for bug reproduction.
 
 
 Change log
