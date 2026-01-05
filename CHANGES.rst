@@ -60,6 +60,13 @@ Documentation
 - Resolved ``Cannot resolve forward reference in type annotations`` warning in documentation.
   Added ``SPHINX_APIDOC_OPTIONS`` to ``make apidoc`` command, excluding ``__all__`` items from being duplicated in the documentation, and rebuilt the API documentation source files.
   See `Issue 952 <https://github.com/collective/icalendar/issues/952>`_.
+- Moved content from the README into documentation to reduce maintenance and point to the authoritative source of information.
+  See `Issue 1006 <https://github.com/collective/icalendar/issues/1006>`_.
+- Added "Code conventions" section to the Development contributing guide.
+  See `Issue 1004 <https://github.com/collective/icalendar/issues/1004>`_.
+- Use Google style docstrings in :mod:`~icalendar.parser_tools`.
+  See `Issue 1017 <https://github.com/collective/icalendar/issues/1017>`_.
+
 
 7.0.0a3 (2025-12-19)
 --------------------

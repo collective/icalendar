@@ -32,6 +32,16 @@ You'll pull code from the upstream icalendar repository, push your work from you
 
 #.  `Configure Git to sync your fork with the upstream repository <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo#configuring-git-to-sync-your-fork-with-the-upstream-repository>`_.
 
+Branches
+--------
+
+The ``main`` branch receives the latest updates and features.
+Active development takes on this branch.
+
+icalendar version 6 is on the branch `6.x <https://github.com/collective/icalendar/tree/6.x/>`_.
+It is compatible with Python versions 3.8 - 3.13, and PyPy3.
+Security updates and bug fixes may be backported and added to ``6.x``.
+
 
 Install Python
 --------------
