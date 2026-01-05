@@ -141,8 +141,7 @@ Value types
 
 Property values are UTF-8 encoded strings.
 
-This is impractical if you want to use the data for further
-computation.
+This is impractical if you want to use the data for further computation.
 The datetime format, for example, looks like `20050404T080000`.
 icalendar can parse and generate iCalendar formatted strings.
 
@@ -202,8 +201,7 @@ Property parameters
 -------------------
 
 Property parameters are automatically added, depending on the input value.
-For example, for date or time related properties, the value type and timezone
-identifier, if applicable, are automatically added.
+For example, for date or time related properties, the value type and timezone identifier, if applicable, are automatically added.
 
 .. code-block:: pycon
 
@@ -273,8 +271,7 @@ After loading the example file, edit and save it.
 iCalendar objects
 '''''''''''''''''
 
-``icalendar`` supports the creation and parsing of all kinds of objects
-in the :rfc:`5545` iCalendar standard.
+``icalendar`` supports the creation and parsing of all kinds of objects in the :rfc:`5545` iCalendar standard.
 
 .. seealso::
 
