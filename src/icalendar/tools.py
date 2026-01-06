@@ -3,12 +3,11 @@
 from __future__ import annotations
 
 from datetime import date, datetime, tzinfo
-from typing import Union, cast
+from typing import TYPE_CHECKING, Union, cast
 
-try:
-    from typing import TypeIs
-except ImportError:
-    from typing_extensions import TypeIs
+
+if TYPE_CHECKING:
+    from icalendar.compatibility import TypeGuard, TypeIs
 
 
 def is_date(dt: Union[date, datetime]) -> bool:
@@ -33,7 +32,7 @@ def is_pytz(tz: tzinfo) -> bool:
     return hasattr(tz, "localize")
 
 
-def is_pytz_dt(dt: Union[date, datetime]) -> TypeIs[datetime]:
+def is_pytz_dt(dt: Union[date, datetime]) -> TypeGuard[datetime]:
     """Whether the time requires localize() and normalize()."""
     return is_datetime(dt) and (tzinfo := dt.tzinfo) is not None and is_pytz(tzinfo)
 
