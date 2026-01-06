@@ -27,6 +27,8 @@ We still recommend checking out the new features and giving feedback in the repo
 Minor changes
 ~~~~~~~~~~~~~
 
+- Created an :meth:`~cal.todo.Todo.example` method for the :class:`~cal.todo.Todo` component. See `Issue 743 <https://github.com/collective/icalendar/issues/743>`_.
+- Created an :meth:`~cal.alarm.Alarm.example` method for the :class:`~cal.alarm.Alarm` component. See `Issue 743`_.
 - Clarified custom component (X-* and IANA-registered) parsing behavior through enhanced documentation and comprehensive how-to guide. Custom components are automatically handled by the library with no special configuration required. See `Issue #432 <https://github.com/collective/icalendar/issues/432>`_.
 - Reorganized custom component tests into a dedicated :file:`test_custom_components.py` file with expanded test coverage for :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`, :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>`, and :class:`~icalendar.cal.component_factory.ComponentFactory` usage. See `Issue #433 <https://github.com/collective/icalendar/issues/433>`_.
 
@@ -58,6 +60,14 @@ Documentation
 - Resolved ``Cannot resolve forward reference in type annotations`` warning in documentation.
   Added ``SPHINX_APIDOC_OPTIONS`` to ``make apidoc`` command, excluding ``__all__`` items from being duplicated in the documentation, and rebuilt the API documentation source files.
   See `Issue 952 <https://github.com/collective/icalendar/issues/952>`_.
+- Improve documentation contribution guide by adding chapters for small edits, builds and checks, and a style guide. Added details for Vale usage, Diátaxis framework, narrative and API documentation, and fixing all spelling errors. See `Issue 991 <https://github.com/collective/icalendar/issues/991>`_.
+- Moved content from the README into documentation to reduce maintenance and point to the authoritative source of information.
+  See `Issue 1006 <https://github.com/collective/icalendar/issues/1006>`_.
+- Added "Code conventions" section to the Development contributing guide.
+  See `Issue 1004 <https://github.com/collective/icalendar/issues/1004>`_.
+- Use Google style docstrings in :mod:`~icalendar.parser_tools`.
+  See `Issue 1017 <https://github.com/collective/icalendar/issues/1017>`_.
+
 
 7.0.0a3 (2025-12-19)
 --------------------

@@ -554,7 +554,7 @@ def split_on_unescaped_semicolon(text: str) -> list[str]:
     After splitting, unescapes backslash sequences in each part.
     Used by vCard structured properties (ADR, N, ORG) per :rfc:`6350`.
 
-    Args:
+    Parameters:
         text: Text with potential escaped semicolons (e.g., "field1\\;with;field2")
 
     Returns:

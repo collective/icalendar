@@ -101,20 +101,24 @@ class Component(CaselessDict):
     def register(cls, component_class: type[Component]) -> None:
         """Register a custom component class.
 
-        Args:
+        Parameters:
             component_class: Component subclass to register. Must have a ``name`` attribute.
 
         Raises:
             ValueError: If ``component_class`` has no ``name`` attribute.
             ValueError: If a component with this name is already registered.
 
-        Example:
-            >>> from icalendar import Component
-            >>> class XExample(Component):
-            ...     name = "X-EXAMPLE"
-            ...     def custom_method(self):
-            ...         return "custom"
-            >>> Component.register(XExample)
+        Examples:
+            Create a custom icalendar component with the name ``X-EXAMPLE``:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Component
+                >>> class XExample(Component):
+                ...     name = "X-EXAMPLE"
+                ...     def custom_method(self):
+                ...         return "custom"
+                >>> Component.register(XExample)
         """
         if not hasattr(component_class, "name") or component_class.name is None:
             raise ValueError(f"{component_class} must have a 'name' attribute")
