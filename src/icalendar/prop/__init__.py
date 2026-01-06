@@ -1054,7 +1054,7 @@ class vAdr:
 
 
 class vN:
-    """vCard N (Name) structured property per :rfc:`6350#section-6.2.2`.
+    r"""vCard N (Name) structured property per :rfc:`6350#section-6.2.2`.
 
     The N property represents a person's name.
     It consists of a single structured text value.
