@@ -122,6 +122,13 @@ However, if it becomes impractical for the icalendar community to provide suppor
     -   `GitHub Actions Python support policy <https://github.com/actions/python-versions#support-policy>`_
 
 
+.. _upgrade-6.0.0:
+
+6.0.0
+=====
+
+This section describes the major changes to icalendar in version 6.0.0.
+
 ``pytz`` support
 ''''''''''''''''
 
