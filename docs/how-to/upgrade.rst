@@ -129,6 +129,15 @@ However, if it becomes impractical for the icalendar community to provide suppor
 
 This section describes the major changes to icalendar in version 6.0.0.
 
+
+.. _upgrade-6.0.0-deprecation:
+
+Deprecations
+------------
+
+The following deprecation notice describes which features may be removed in a future major release of icalendar.
+
+
 ``pytz`` support
 ''''''''''''''''
 
