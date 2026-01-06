@@ -917,7 +917,7 @@ class vCategory:
 
 
 class vAdr:
-    """vCard ADR (Address) structured property per :rfc:`6350` `Section 6.3.1 <https://datatracker.ietf.org/doc/html/rfc6350.html#section-6.3.1>`_.
+    """vCard ADR (Address) structured property per :rfc:`6350#section-6.3.1`.
 
     The ADR property represents a delivery address as a single text value.
     The structured type value consists of a sequence of seven address components.
@@ -1054,7 +1054,7 @@ class vAdr:
 
 
 class vN:
-    r"""vCard N (Name) structured property per :rfc:`6350` `Section 6.2.2 <https://datatracker.ietf.org/doc/html/rfc6350.html#section-6.2.2>`_.
+    """vCard N (Name) structured property per :rfc:`6350#section-6.2.2`.
 
     The N property represents a person's name.
     It consists of a single structured text value.
@@ -1178,7 +1178,7 @@ class vN:
 
 
 class vOrg:
-    r"""vCard ORG (Organization) structured property per :rfc:`6350` `Section 6.6.4 <https://datatracker.ietf.org/doc/html/rfc6350.html#section-6.6.4>`_.
+    r"""vCard ORG (Organization) structured property per :rfc:`6350#section-6.6.4`.
 
     The ORG property specifies the organizational name and units associated with the vCard.
 
@@ -2221,7 +2221,7 @@ class vWeekday(str):
         >>> vWeekday("-1SU").relative # Last Sunday
         -1
 
-    Definition from `RFC 5545, Section 3.3.10 <https://www.rfc-editor.org/rfc/rfc5545#section-3.3.10>`_:
+    Definition from :rfc:`5545#section-3.3.10`:
 
     .. code-block:: text
 

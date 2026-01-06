@@ -116,12 +116,9 @@ vale: .venv  ## Run Vale style, grammar, and spell checks
 	@echo
 	@echo "Vale is finished; look for any errors in the above output."
 
-# Not yet implemented
-#.PHONY: doctest
-#doctest: .venv  ## Test snippets in the documentation
-#	cd $(DOCS_DIR) && $(SPHINXBUILD) -b doctest $(ALLSPHINXOPTS) $(BUILDDIR)/doctest
-#	@echo "Testing of doctests in the sources finished, look at the " \
-#	      "results in $(BUILDDIR)/doctest/output.txt."
+.PHONY: doctest
+doctest: .venv  ## Test snippets and docstrings in the documentation
+	@pytest src/icalendar/tests/test_with_doctest.py
 
 .PHONY: test
 #test: clean vale linkcheckbroken doctest  ## Clean docs build, then run vale and linkcheckbroken
