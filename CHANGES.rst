@@ -69,6 +69,7 @@ Documentation
   See `Issue 1004 <https://github.com/collective/icalendar/issues/1004>`_.
 - Use Google style docstrings in :mod:`~icalendar.parser_tools`.
   See `Issue 1017 <https://github.com/collective/icalendar/issues/1017>`_.
+- Added Upgrade guide. See `Issue 997 <https://github.com/collective/icalendar/issues/997>`_.
 
 
 7.0.0a3 (2025-12-19)
