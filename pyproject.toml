@@ -78,8 +78,6 @@ dependencies = [
     # tzdata: IANA timezone database fallback for zoneinfo (required on Windows,
     # provides current timezone data on all platforms)
     "tzdata",
-    # typing.TypeIs was added in Python 3.13
-    "typing-extensions~=4.10; python_version < '3.13'",
 ]
 
 # Static URLs for GitHub dependency graph compatibility
@@ -103,13 +101,15 @@ dev = [
 ]
 
 test = [
-    "pytest",
     "coverage",
     "hypothesis",
-    "pytz",
     "mypy>=1.0,<1.19.0",
+    "pytest",
+    "pytz>=2025.2",
     "types-python-dateutil",
     "types-pytz",
+    # typing.TypeIs was added in Python 3.13
+    "typing-extensions~=4.10; python_version < '3.13'",
 ]
 
 docs = [
