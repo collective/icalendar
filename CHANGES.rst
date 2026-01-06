@@ -31,6 +31,8 @@ Minor changes
 - Created an :meth:`~cal.alarm.Alarm.example` method for the :class:`~cal.alarm.Alarm` component. See `Issue 743`_.
 - Clarified custom component (X-* and IANA-registered) parsing behavior through enhanced documentation and comprehensive how-to guide. Custom components are automatically handled by the library with no special configuration required. See `Issue #432 <https://github.com/collective/icalendar/issues/432>`_.
 - Reorganized custom component tests into a dedicated :file:`test_custom_components.py` file with expanded test coverage for :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`, :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>`, and :class:`~icalendar.cal.component_factory.ComponentFactory` usage. See `Issue #433 <https://github.com/collective/icalendar/issues/433>`_.
+- The ``typing-extensions`` dependency on Python < 3.13 is now optional, part of the ``test`` extra.
+- The :func:`icalendar.tools.is_pytz_dt` return value is now hinted as ``TypeGuard[datetime]``, not ``TypeIs[datetime]``, since returning ``False`` should not allow narrowing it as non-datetime.
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
@@ -67,6 +69,7 @@ Documentation
   See `Issue 1004 <https://github.com/collective/icalendar/issues/1004>`_.
 - Use Google style docstrings in :mod:`~icalendar.parser_tools`.
   See `Issue 1017 <https://github.com/collective/icalendar/issues/1017>`_.
+- Added Upgrade guide. See `Issue 997 <https://github.com/collective/icalendar/issues/997>`_.
 
 
 7.0.0a3 (2025-12-19)
