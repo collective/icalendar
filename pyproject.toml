@@ -77,7 +77,7 @@ dependencies = [
     "backports.zoneinfo; python_version < '3.9'",
     # tzdata: IANA timezone database fallback for zoneinfo (required on Windows,
     # provides current timezone data on all platforms)
-    "tzdata",
+    "tzdata>=2025.3",
 ]
 
 # Static URLs for GitHub dependency graph compatibility
