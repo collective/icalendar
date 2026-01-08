@@ -103,7 +103,7 @@ linkcheck: .venv  ## Run linkcheck
 
 .PHONY: linkcheckbroken
 linkcheckbroken: .venv  ## Run linkcheck and show only broken links
-	cd $(DOCS_DIR) && $(SPHINXBUILD) -b linkcheck $(ALLSPHINXOPTS) $(BUILDDIR)/linkcheck | GREP_COLORS='0;31' grep -wi "broken\|redirect" --color=always | GREP_COLORS='0;31' grep -vi "https://github.com/plone/volto/issues/" --color=always && if test $$? = 0; then exit 1; fi || test $$? = 1
+	cd $(DOCS_DIR) && $(SPHINXBUILD) -b linkcheck $(ALLSPHINXOPTS) $(BUILDDIR)/linkcheck | GREP_COLORS='0;31' grep -wi "broken\|redirect" --color=always | GREP_COLORS='0;31' grep -vi "https://github.com/collective/icalendar/issues/" --color=always && if test $$? = 0; then exit 1; fi || test $$? = 1
 	@echo
 	@echo "Link check complete; look for any errors in the above output " \
 		"or in $(BUILDDIR)/linkcheck/ ."
@@ -116,12 +116,9 @@ vale: .venv  ## Run Vale style, grammar, and spell checks
 	@echo
 	@echo "Vale is finished; look for any errors in the above output."
 
-# Not yet implemented
-#.PHONY: doctest
-#doctest: .venv  ## Test snippets in the documentation
-#	cd $(DOCS_DIR) && $(SPHINXBUILD) -b doctest $(ALLSPHINXOPTS) $(BUILDDIR)/doctest
-#	@echo "Testing of doctests in the sources finished, look at the " \
-#	      "results in $(BUILDDIR)/doctest/output.txt."
+.PHONY: doctest
+doctest: .venv  ## Test snippets and docstrings in the documentation
+	@pytest src/icalendar/tests/test_with_doctest.py
 
 .PHONY: test
 #test: clean vale linkcheckbroken doctest  ## Clean docs build, then run vale and linkcheckbroken

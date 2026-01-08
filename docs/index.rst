@@ -17,7 +17,7 @@ icalendar lets you create, inspect, and modify calendaring information with Pyth
         :octicon:`zap;1.5em;sd-text-info`
         Get started
         ^^^
-        This part of the documentation describes how to get started with icalendar, including how to install and use.
+        This part of the documentation describes how to get started with icalendar, including how to install, upgrade, and use icalendar.
         +++
 
         .. button-ref:: how-to/index
