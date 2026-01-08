@@ -38,7 +38,7 @@ maintainers = [
 dynamic = [
     "version"
 ]
-description = "iCalendar parser/generator"
+description = "RFC 5545 compatible parser and generator of iCalendar files"
 readme = { file = "README.rst", content-type = "text/x-rst" }
 
 #
