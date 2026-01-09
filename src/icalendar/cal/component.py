@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from datetime import date, datetime, time, timedelta, timezone
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
@@ -108,20 +108,24 @@ class Component(CaselessDict):
     def register(cls, component_class: type[Component]) -> None:
         """Register a custom component class.
 
-        Args:
+        Parameters:
             component_class: Component subclass to register. Must have a ``name`` attribute.
 
         Raises:
             ValueError: If ``component_class`` has no ``name`` attribute.
             ValueError: If a component with this name is already registered.
 
-        Example:
-            >>> from icalendar import Component
-            >>> class XExample(Component):
-            ...     name = "X-EXAMPLE"
-            ...     def custom_method(self):
-            ...         return "custom"
-            >>> Component.register(XExample)
+        Examples:
+            Create a custom icalendar component with the name ``X-EXAMPLE``:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Component
+                >>> class XExample(Component):
+                ...     name = "X-EXAMPLE"
+                ...     def custom_method(self):
+                ...         return "custom"
+                >>> Component.register(XExample)
         """
         if not hasattr(component_class, "name") or component_class.name is None:
             raise ValueError(f"{component_class} must have a 'name' attribute")
@@ -307,13 +311,15 @@ class Component(CaselessDict):
                 value = [oldval, value]
         self[name] = value
 
-    def _decode(self, name, value):
+    def _decode(self, name: str, value: VPROPERTY):
         """Internal for decoding property values."""
 
         # TODO: Currently the decoded method calls the icalendar.prop instances
         # from_ical. We probably want to decode properties into Python native
         # types here. But when parsing from an ical string with from_ical, we
         # want to encode the string into a real icalendar.prop property.
+        if hasattr(value, "ical_value"):
+            return value.ical_value
         if isinstance(value, vDDDLists):
             # TODO: Workaround unfinished decoding
             return value
@@ -324,11 +330,12 @@ class Component(CaselessDict):
             decoded = decoded.encode(DEFAULT_ENCODING)
         return decoded
 
-    def decoded(self, name, default=_marker):
-        """Returns decoded value of property."""
-        # XXX: fail. what's this function supposed to do in the end?
-        # -rnix
+    def decoded(self, name: str, default: Any = _marker) -> Any:
+        """Returns decoded value of property.
 
+        A component maps keys to icalendar property value types.
+        This function returns values compatible to native Python types.
+        """
         if name in self:
             value = self[name]
             if isinstance(value, list):
