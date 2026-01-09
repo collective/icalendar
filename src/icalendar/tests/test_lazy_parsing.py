@@ -1,13 +1,11 @@
-"""Tests for lazy parsing of property values."""
+"""Tests for error-tolerant parsing of property values."""
 
 from icalendar import Calendar, Event
-from icalendar.cal.lazy import LazyProperty
-from icalendar.caselessdict import CaselessDict
-from icalendar.prop import vDDDLists, vDDDTypes, vRecur, vText
+from icalendar.prop import vBrokenProperty, vDDDLists, vDDDTypes, vRecur, vText
 
 
-def test_lazy_property_defers_parsing():
-    """Verify properties are not parsed during from_ical()."""
+def test_properties_parsed_immediately():
+    """Verify properties are parsed immediately during from_ical()."""
     ical_str = b"""BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:test
@@ -22,41 +20,15 @@ END:VCALENDAR"""
     cal = Calendar.from_ical(ical_str)
     event = cal.walk("VEVENT")[0]
 
-    # Access raw dict via CaselessDict.__getitem__ to avoid Component's override
-    raw_rrule = CaselessDict.__getitem__(event, "RRULE")
-
-    # Should be LazyProperty before access
-    assert isinstance(raw_rrule, LazyProperty)
-    assert raw_rrule._parsed_value is None
-
-
-def test_lazy_property_parsed_on_access():
-    """Verify properties are parsed on first access."""
-    ical_str = b"""BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:test
-BEGIN:VEVENT
-UID:test-123
-DTSTART:20250101T100000Z
-RRULE:FREQ=DAILY;COUNT=10
-SUMMARY:Test Event
-END:VEVENT
-END:VCALENDAR"""
-
-    cal = Calendar.from_ical(ical_str)
-    event = cal.walk("VEVENT")[0]
-
-    # Access through __getitem__ triggers parsing
+    # Properties should already be parsed
     rrule = event["RRULE"]
-
-    # Should be parsed vRecur object
     assert isinstance(rrule, vRecur)
     assert rrule["FREQ"] == ["DAILY"]
     assert rrule["COUNT"] == [10]
 
 
-def test_params_accessible_without_parsing():
-    """Verify params are accessible without triggering parse."""
+def test_params_accessible():
+    """Verify params are accessible on parsed properties."""
     ical_str = b"""BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:test
@@ -70,19 +42,15 @@ END:VCALENDAR"""
     cal = Calendar.from_ical(ical_str)
     event = cal.walk("VEVENT")[0]
 
-    # Access raw property
-    raw_dtstart = CaselessDict.__getitem__(event, "DTSTART")
+    # Access property
+    dtstart = event["DTSTART"]
 
-    # Should be LazyProperty
-    assert isinstance(raw_dtstart, LazyProperty)
-
-    # Can access params without parsing
-    assert raw_dtstart.params["TZID"] == "America/New_York"
-    assert raw_dtstart._parsed_value is None  # Still not parsed
+    # Can access params
+    assert dtstart.params["TZID"] == "America/New_York"
 
 
-def test_broken_property_vtext_fallback():
-    """Verify broken properties fall back to vText."""
+def test_broken_property_vbroken_fallback():
+    """Verify broken properties fall back to vBrokenProperty."""
     ical_str = b"""BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:test
@@ -99,14 +67,19 @@ END:VCALENDAR"""
     # Access broken property
     dtstart = event["DTSTART"]
 
-    # Should fall back to vText
-    assert isinstance(dtstart, vText)
+    # Should fall back to vBrokenProperty (which is vText subclass)
+    assert isinstance(dtstart, vBrokenProperty)
+    assert isinstance(dtstart, vText)  # vBrokenProperty inherits from vText
     assert str(dtstart) == "INVALID-DATE-FORMAT"
 
-    # Error should be recorded
+    # Metadata should be present
+    assert dtstart.property_name == "DTSTART"
+    assert dtstart.expected_type is not None
+    assert dtstart.parse_error is not None
+
+    # Error should be recorded immediately
     assert len(event.errors) == 1
     assert event.errors[0][0] == "DTSTART"
-    assert "INVALID-DATE-FORMAT" in event.errors[0][1]
 
 
 def test_broken_property_doesnt_block_others():
@@ -130,16 +103,16 @@ END:VCALENDAR"""
     assert isinstance(dtend, vDDDTypes)
     assert dtend.dt.year == 2025
 
-    # Access broken property should work (as vText)
+    # Access broken property should work (as vBrokenProperty)
     dtstart = event["DTSTART"]
-    assert isinstance(dtstart, vText)
+    assert isinstance(dtstart, vBrokenProperty)
 
     # Other properties accessible
     summary = event["SUMMARY"]
     assert str(summary) == "Test Event"
 
 
-def test_lazy_property_equality():
+def test_property_equality():
     """Verify equality comparisons work with lazy properties."""
     ical_str = b"""BEGIN:VCALENDAR
 VERSION:2.0
@@ -280,14 +253,15 @@ END:VCALENDAR"""
     assert "RDATE" not in event
 
 
-def test_lazy_property_caching():
-    """Verify parsed values are cached after first access."""
+
+def test_vbroken_property_repr():
+    """Verify vBrokenProperty repr includes metadata."""
     ical_str = b"""BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:test
 BEGIN:VEVENT
 UID:test-123
-RRULE:FREQ=DAILY;COUNT=10
+DTSTART:INVALID-DATE
 SUMMARY:Test Event
 END:VEVENT
 END:VCALENDAR"""
@@ -295,47 +269,14 @@ END:VCALENDAR"""
     cal = Calendar.from_ical(ical_str)
     event = cal.walk("VEVENT")[0]
 
-    # First access
-    rrule1 = event["RRULE"]
+    # Access broken property
+    dtstart = event["DTSTART"]
 
-    # Access raw dict to check caching
-    raw_rrule = super(Event, event).__getitem__("RRULE")
-
-    # Should no longer be LazyProperty
-    assert not isinstance(raw_rrule, LazyProperty)
-    assert isinstance(raw_rrule, vRecur)
-
-    # Second access should return same cached object
-    rrule2 = event["RRULE"]
-    assert rrule1 is rrule2
-
-
-def test_lazy_property_repr():
-    """Verify LazyProperty repr works before and after parsing."""
-    ical_str = b"""BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:test
-BEGIN:VEVENT
-UID:test-123
-SUMMARY:Test Event
-END:VEVENT
-END:VCALENDAR"""
-
-    cal = Calendar.from_ical(ical_str)
-    event = cal.walk("VEVENT")[0]
-
-    # Access raw property
-    raw_summary = CaselessDict.__getitem__(event, "SUMMARY")
-
-    # Repr before parsing
-    assert "LazyProperty" in repr(raw_summary)
-    assert "SUMMARY" in repr(raw_summary)
-
-    # Access to trigger parsing
-    summary = event["SUMMARY"]
-
-    # Repr after parsing (through the parsed object)
-    assert "Test Event" in repr(summary)
+    # Repr should include metadata
+    assert "vBrokenProperty" in repr(dtstart)
+    assert "INVALID-DATE" in repr(dtstart)
+    assert "expected_type" in repr(dtstart)
+    assert "property_name" in repr(dtstart)
 
 
 def test_ignore_exceptions_flag_respected():
@@ -354,14 +295,14 @@ END:VCALENDAR"""
     cal = Calendar.from_ical(ical_str_event)
     event = cal.walk("VEVENT")[0]
 
-    # Should not raise, falls back to vText
+    # Should not raise, falls back to vBrokenProperty
     dtstart = event["DTSTART"]
-    assert isinstance(dtstart, vText)
+    assert isinstance(dtstart, vBrokenProperty)
     assert len(event.errors) > 0
 
 
-def test_lazy_property_str():
-    """Verify __str__ delegation works."""
+def test_property_str():
+    """Verify __str__ works."""
     ical_str = b"""BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:test
@@ -376,3 +317,46 @@ END:VCALENDAR"""
 
     summary = event["SUMMARY"]
     assert str(summary) == "Test Event"
+
+
+def test_vbroken_property_metadata():
+    """Verify vBrokenProperty stores parse error metadata."""
+    ical_str = b"""BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:test
+BEGIN:VEVENT
+UID:test-123
+DTSTART:INVALID-DATE
+END:VEVENT
+END:VCALENDAR"""
+
+    cal = Calendar.from_ical(ical_str)
+    event = cal.walk("VEVENT")[0]
+    dtstart = event["DTSTART"]
+
+    assert isinstance(dtstart, vBrokenProperty)
+    assert dtstart.property_name == "DTSTART"
+    assert dtstart.expected_type is not None
+    assert dtstart.parse_error is not None
+
+
+def test_errors_populated_immediately():
+    """Verify errors available after from_ical without property access."""
+    ical_str = b"""BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:test
+BEGIN:VEVENT
+UID:test-123
+DTSTART:INVALID-DATE
+DTEND:ALSO-INVALID
+SUMMARY:Test
+END:VEVENT
+END:VCALENDAR"""
+
+    cal = Calendar.from_ical(ical_str)
+    event = cal.walk("VEVENT")[0]
+
+    # Errors should be populated WITHOUT accessing properties
+    assert len(event.errors) == 2
+    assert event.errors[0][0] == "DTSTART"
+    assert event.errors[1][0] == "DTEND"

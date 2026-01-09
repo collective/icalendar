@@ -13,7 +13,6 @@ from .component_factory import ComponentFactory
 from .event import Event
 from .free_busy import FreeBusy
 from .journal import Journal
-from .lazy import LazyProperty
 from .timezone import Timezone, TimezoneDaylight, TimezoneStandard
 from .todo import Todo
 
@@ -27,7 +26,6 @@ __all__ = [
     "Event",
     "FreeBusy",
     "Journal",
-    "LazyProperty",
     "Timezone",
     "TimezoneDaylight",
     "TimezoneStandard",
