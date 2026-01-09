@@ -14,7 +14,6 @@ extensions = [
     "notfound.extension",
     "sphinx.ext.apidoc",
     "sphinx.ext.autodoc",
-    "sphinx.ext.coverage",
     "sphinx.ext.viewcode",
     "sphinx_copybutton",
     "sphinx_design",
@@ -114,8 +113,14 @@ html_static_path = [
 html_js_files = [
     ("js/custom-icons.js", {"defer": "defer"}),
 ]
-napoleon_use_param = True
 pygments_style = "sphinx"
+
+
+# -- Napolean configuration ----------------------------------
+napoleon_use_param = True
+napoleon_google_docstring = True
+napoleon_attr_annotations = True
+
 
 # -- Intersphinx configuration ----------------------------------
 
@@ -130,6 +135,7 @@ pygments_style = "sphinx"
 # https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
+    "sphinx": ("https://www.sphinx-doc.org/en/master/", None),
 }
 
 
@@ -143,6 +149,7 @@ linkcheck_ignore = [
     r"https://groups.google.com/g/icalendar-coc/",
     r"https://pypi.org/manage/project/icalendar/collaboration/",
     # Ignore specific anchors
+    r"https://github.com/actions/python-versions#support-policy",
     r"https://github.com/collective/icalendar/blob/main/CODE_OF_CONDUCT.md#enforcement",
     r"https://github.com/collective/icalendar/blob/main/README.rst#related-projects",
     r"https://up-for-grabs.net/#/filters",
