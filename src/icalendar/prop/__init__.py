@@ -854,7 +854,7 @@ class vCategory:
         self.params = Parameters(params)
 
     def __iter__(self):
-        return iter(vCategory.from_ical(self.to_ical()))
+        return iter(self.cats)
 
     def to_ical(self):
         return b",".join(
@@ -865,7 +865,29 @@ class vCategory:
         )
 
     @staticmethod
-    def from_ical(ical):
+    def from_ical(ical: list[str] | str) -> list[str]:
+        """Parse a CATEGORIES value from iCalendar format.
+
+        This helper is normally called by :meth:`Component.from_ical`, which
+        already splits the CATEGORIES property into a list of unescaped
+        category strings. New code should therefore pass a list of strings.
+
+        Passing a single comma-separated string is supported only for
+        backwards compatibility with older parsing code and is considered
+        legacy behavior.
+
+        Args:
+            ical: A list of category strings (preferred, as provided by
+                :meth:`Component.from_ical`), or a single comma-separated
+                string from a legacy caller.
+
+        Returns:
+            A list of category strings.
+        """
+        if isinstance(ical, list):
+            # Already split by Component.from_ical()
+            return ical
+        # Legacy: simple comma split (no escaping handled)
         ical = to_unicode(ical)
         return ical.split(",")
 

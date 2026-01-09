@@ -50,6 +50,7 @@ Bug fixes
 - Fixed :meth:`icalendar.caselessdict.CaselessDict.__eq__` to return ``NotImplemented`` when comparing with non-dict types instead of raising ``AttributeError``. See `Issue #1016 <https://github.com/collective/icalendar/issues/1016>`_.
 - Fixed decoding of categories. See `Issue 279 <https://github.com/collective/icalendar/issues/279>`_.
 - Link ``timedelta`` to :py:class:`datetime.timedelta` in the Python standard library documentation. See `Issue 951 <https://github.com/collective/icalendar/issues/951>`_.
+- Fix round-trip parsing of :class:`~icalendar.prop.vCategory` (CATEGORIES property) when category values contain commas. Categories like ``'Meeting, John'`` now correctly survive round trips between :meth:`Component.to_ical <icalendar.cal.component.Component.to_ical>` and :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>` instead of being split into multiple categories. Added :func:`~icalendar.parser.split_on_unescaped_comma` helper function. See `Issue #127 <https://github.com/collective/icalendar/issues/127>`_.
 - Fixed semicolon escaping in vCard structured properties (ADR, N, ORG). Semicolons are now correctly treated as field separators per :rfc:`6350`, not escaped as in iCalendar TEXT values. Added :func:`~icalendar.parser.split_on_unescaped_semicolon` helper function and :class:`~icalendar.prop.vAdr`, :class:`~icalendar.prop.vN`, :class:`~icalendar.prop.vOrg` property types. See `Issue #137 <https://github.com/collective/icalendar/issues/137>`_.
 
 Documentation
