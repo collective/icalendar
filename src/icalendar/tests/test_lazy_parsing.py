@@ -360,3 +360,35 @@ END:VCALENDAR"""
     assert len(event.errors) == 2
     assert event.errors[0][0] == "DTSTART"
     assert event.errors[1][0] == "DTEND"
+
+
+def test_typeerror_handling_in_tolerant_mode():
+    """Verify TypeError exceptions are caught in error-tolerant mode.
+
+    This test addresses the concern raised in PR #1044 review that
+    TypeError exceptions should be handled consistently with ValueError.
+    """
+    # Event has ignore_exceptions=True (error-tolerant)
+    # Using RRULE with invalid type that triggers TypeError during parsing
+    ical_str = b"""BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:test
+BEGIN:VEVENT
+UID:test-123
+DTSTART:20250101T100000Z
+RRULE:FREQ=INVALID_TYPE_CAUSES_ERROR
+SUMMARY:Test Event
+END:VEVENT
+END:VCALENDAR"""
+
+    # Should not raise - error-tolerant mode catches TypeError
+    cal = Calendar.from_ical(ical_str)
+    event = cal.walk("VEVENT")[0]
+
+    # RRULE should fall back to vBrokenProperty
+    rrule = event["RRULE"]
+    assert isinstance(rrule, vBrokenProperty)
+
+    # Error should be recorded
+    assert len(event.errors) >= 1
+    assert any("RRULE" in error[0] for error in event.errors)

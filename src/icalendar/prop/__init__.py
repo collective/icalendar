@@ -3597,6 +3597,18 @@ class vBrokenProperty(vText):
             parse_error=str(error),
         )
 
+    @classmethod
+    def examples(cls) -> list[vBrokenProperty]:
+        """Examples of vBrokenProperty."""
+        return [
+            cls(
+                "INVALID-DATE",
+                expected_type="date-time",
+                property_name="DTSTART",
+                parse_error="Invalid date format",
+            )
+        ]
+
 
 class TypesFactory(CaselessDict):
     """All Value types defined in RFC 5545 are registered in this factory
