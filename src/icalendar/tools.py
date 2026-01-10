@@ -24,11 +24,14 @@ def is_date(dt: Union[date, datetime]) -> bool:
         ``False`` otherwise.
 
     Example:
-        >>> from datetime import date, datetime
-        >>> is_date(date(2024, 1, 15))
-        True
-        >>> is_date(datetime(2024, 1, 15, 10, 30))
-        False
+        .. code-block:: pycon
+
+            >>> from datetime import date, datetime
+            >>> from icalendar.tools import is_date
+            >>> is_date(date(2024, 1, 15))
+            True
+            >>> is_date(datetime(2024, 1, 15, 10, 30))
+            False
     """
     return isinstance(dt, date) and not isinstance(dt, datetime)
 
@@ -44,11 +47,14 @@ def is_datetime(dt: Union[date, datetime]) -> TypeIs[datetime]:
         only a ``date``.
 
     Example:
-        >>> from datetime import date, datetime
-        >>> is_datetime(datetime(2024, 1, 15, 10, 30))
-        True
-        >>> is_datetime(date(2024, 1, 15))
-        False
+        .. code-block:: pycon
+
+            >>> from datetime import date, datetime
+            >>> from icalendar.tools import is_datetime
+            >>> is_datetime(datetime(2024, 1, 15, 10, 30))
+            True
+            >>> is_datetime(date(2024, 1, 15))
+            False
     """
     return isinstance(dt, datetime)
 
@@ -67,11 +73,14 @@ def to_datetime(dt: Union[date, datetime]) -> datetime:
         component will be set to midnight (00:00:00).
 
     Example:
-        >>> from datetime import date, datetime
-        >>> to_datetime(date(2024, 1, 15))
-        datetime.datetime(2024, 1, 15, 0, 0)
-        >>> to_datetime(datetime(2024, 1, 15, 10, 30))
-        datetime.datetime(2024, 1, 15, 10, 30)
+        .. code-block:: pycon
+
+            >>> from datetime import date, datetime
+            >>> from icalendar.tools import to_datetime
+            >>> to_datetime(date(2024, 1, 15))
+            datetime.datetime(2024, 1, 15, 0, 0)
+            >>> to_datetime(datetime(2024, 1, 15, 10, 30))
+            datetime.datetime(2024, 1, 15, 10, 30)
     """
     if is_date(dt):
         return datetime(dt.year, dt.month, dt.day)  # noqa: DTZ001
