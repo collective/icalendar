@@ -18,6 +18,7 @@ _value_error_matches = [
     "alue MUST",
     "Key name",
     "Invalid content line",
+    "Content line could not be parsed",
     "does not exist",
     "base 64",
     "must use datetime",
