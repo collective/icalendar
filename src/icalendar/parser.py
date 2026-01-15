@@ -30,7 +30,27 @@ if TYPE_CHECKING:
 
 
 def escape_char(text):
-    """Format value according to iCalendar TEXT escaping rules."""
+    """Format value according to iCalendar TEXT escaping rules.
+
+    Escapes special characters in text values according to :rfc:`5545` rules.
+    The order of replacements matters to avoid double-escaping.
+
+    Parameters:
+        text: The text to escape (str or bytes).
+
+    Returns:
+        The escaped text with special characters escaped.
+
+    Note:
+        The replacement order is critical:
+
+        1. ``\\N`` -> newline (to handle existing escapes)
+        2. ``\\`` -> ``\\\\`` (escape backslashes)
+        3. ``;`` -> ``\\;`` (escape semicolons)
+        4. ``,`` -> ``\\,`` (escape commas)
+        5. ``\\r\\n`` -> ``\\n`` (normalize line endings)
+        6. ``\\n`` -> ``\\n`` (escape newlines)
+    """
     assert isinstance(text, (str, bytes))
     # NOTE: ORDER MATTERS!
     return (
@@ -44,6 +64,27 @@ def escape_char(text):
 
 
 def unescape_char(text):
+    """Unescape iCalendar TEXT values.
+
+    Reverses the escaping applied by :py:func:`escape_char` according to
+    :rfc:`5545` TEXT escaping rules.
+
+    Parameters:
+        text: The escaped text (str or bytes).
+
+    Returns:
+        The unescaped text, or None if text is neither str nor bytes.
+
+    Note:
+        The replacement order is critical to avoid double-unescaping:
+
+        1. ``\\N`` -> ``\\n`` (intermediate step)
+        2. ``\\r\\n`` -> ``\\n`` (normalize line endings)
+        3. ``\\n`` -> newline (unescape newlines)
+        4. ``\\,`` -> ``,`` (unescape commas)
+        5. ``\\;`` -> ``;`` (unescape semicolons)
+        6. ``\\\\`` -> ``\\`` (unescape backslashes last)
+    """
     assert isinstance(text, (str, bytes))
     # NOTE: ORDER MATTERS!
     if isinstance(text, str):
@@ -107,7 +148,20 @@ def foldline(line, limit=75, fold_sep="\r\n "):
 
 
 def param_value(value, always_quote=False):
-    """Returns a parameter value."""
+    """Convert a parameter value to its iCalendar representation.
+
+    Applies :rfc:`6868` escaping and optionally quotes the value according
+    to :rfc:`5545` parameter value formatting rules.
+
+    Parameters:
+        value: The parameter value to convert. Can be a sequence, string, or
+            object with a ``to_ical()`` method.
+        always_quote: If True, always enclose the value in double quotes.
+            Defaults to False (only quote when necessary).
+
+    Returns:
+        The formatted parameter value, escaped and quoted as needed.
+    """
     if isinstance(value, SEQUENCE_TYPES):
         return q_join(map(rfc_6868_escape, value), always_quote=always_quote)
     if isinstance(value, str):
@@ -129,6 +183,17 @@ NEWLINE = re.compile(r"\r?\n")
 
 
 def validate_token(name):
+    """Validate that a name is a valid iCalendar token.
+
+    Checks if the name matches the :rfc:`5545` token syntax using the NAME
+    regex pattern (``[\\w.-]+``).
+
+    Parameters:
+        name: The token name to validate.
+
+    Raises:
+        ValueError: If the name is not a valid token.
+    """
     match = NAME.findall(name)
     if len(match) == 1 and name == match[0]:
         return
@@ -136,6 +201,19 @@ def validate_token(name):
 
 
 def validate_param_value(value, quoted=True):
+    """Validate a parameter value for unsafe characters.
+
+    Checks parameter values for characters that are not allowed according to
+    :rfc:`5545`. Uses different validation rules for quoted and unquoted values.
+
+    Parameters:
+        value: The parameter value to validate.
+        quoted: If True, validate as a quoted value (allows more characters).
+            If False, validate as an unquoted value (stricter). Defaults to True.
+
+    Raises:
+        ValueError: If the value contains unsafe characters for its quote state.
+    """
     validator = QUNSAFE_CHAR if quoted else UNSAFE_CHAR
     if validator.findall(value):
         raise ValueError(value)
@@ -147,7 +225,21 @@ QUOTABLE = re.compile("[,;:’]")  # noqa: RUF001
 
 
 def dquote(val, always_quote=False):
-    """Enclose parameter values containing [,;:] in double quotes."""
+    """Enclose parameter values in double quotes when needed.
+
+    Parameter values containing special characters ``[,;:']`` must be enclosed
+    in double quotes according to :rfc:`5545`. Double-quote characters in the
+    value are replaced with single quotes since they're forbidden in parameter
+    values.
+
+    Parameters:
+        val: The parameter value to quote.
+        always_quote: If True, always enclose in quotes regardless of content.
+            Defaults to False (only quote when necessary).
+
+    Returns:
+        The value, enclosed in double quotes if needed or requested.
+    """
     # a double-quote character is forbidden to appear in a parameter value
     # so replace it with a single-quote character
     val = val.replace('"', "'")
@@ -158,7 +250,32 @@ def dquote(val, always_quote=False):
 
 # parsing helper
 def q_split(st, sep=",", maxsplit=-1):
-    """Splits a string on char, taking double (q)uotes into considderation."""
+    """Split a string on separator, respecting double quotes.
+
+    Splits the string on the separator character, but ignores separators that
+    appear inside double-quoted sections. This is needed for parsing parameter
+    values that may contain quoted strings.
+
+    Parameters:
+        st: The string to split.
+        sep: The separator character. Defaults to ",".
+        maxsplit: Maximum number of splits to perform. If -1 (default),
+            perform all possible splits.
+
+    Returns:
+        The split string parts.
+
+    Examples:
+        .. code-block:: pycon
+
+            >>> from icalendar.parser import q_split
+            >>> q_split('a,b,c')
+            ['a', 'b', 'c']
+            >>> q_split('a,"b,c",d')
+            ['a', '"b,c"', 'd']
+            >>> q_split('a;b;c', sep=';')
+            ['a', 'b', 'c']
+    """
     if maxsplit == 0:
         return [st]
 
@@ -181,7 +298,29 @@ def q_split(st, sep=",", maxsplit=-1):
 
 
 def q_join(lst, sep=",", always_quote=False):
-    """Joins a list on sep, quoting strings with QUOTABLE chars."""
+    """Join a list with a separator, quoting items as needed.
+
+    Joins list items with the separator, applying :py:func:`dquote` to each item
+    to add double quotes when they contain special characters.
+
+    Parameters:
+        lst: The list of items to join.
+        sep: The separator to use. Defaults to ",".
+        always_quote: If True, always quote all items. Defaults to False
+            (only quote when necessary).
+
+    Returns:
+        The joined string with items quoted as needed.
+
+    Examples:
+        .. code-block:: pycon
+
+            >>> from icalendar.parser import q_join
+            >>> q_join(['a', 'b', 'c'])
+            'a,b,c'
+            >>> q_join(['plain', 'has,comma'])
+            'plain,"has,comma"'
+    """
     return sep.join(dquote(itm, always_quote=always_quote) for itm in lst)
 
 
@@ -512,6 +651,26 @@ class Parameters(CaselessDict):
 
 
 def escape_string(val):
+    """Escape backslash sequences to URL-encoded hex values.
+
+    Converts backslash-escaped characters to their percent-encoded hex
+    equivalents. This is used for parameter parsing to preserve escaped
+    characters during processing.
+
+    Parameters:
+        val: The string with backslash escapes.
+
+    Returns:
+        The string with backslash escapes converted to percent encoding.
+
+    Note:
+        Conversions:
+
+        - ``\\,`` -> ``%2C``
+        - ``\\:`` -> ``%3A``
+        - ``\\;`` -> ``%3B``
+        - ``\\\\`` -> ``%5C``
+    """
     # f'{i:02X}'
     return (
         val.replace(r"\,", "%2C")
@@ -522,6 +681,25 @@ def escape_string(val):
 
 
 def unescape_string(val):
+    """Unescape URL-encoded hex values to their original characters.
+
+    Reverses :py:func:`escape_string` by converting percent-encoded hex values
+    back to their original characters. This is used for parameter parsing.
+
+    Parameters:
+        val: The string with percent-encoded values.
+
+    Returns:
+        The string with percent encoding converted to characters.
+
+    Note:
+        Conversions:
+
+        - ``%2C`` -> ``,``
+        - ``%3A`` -> ``:``
+        - ``%3B`` -> ``;``
+        - ``%5C`` -> ``\\``
+    """
     return (
         val.replace("%2C", ",")
         .replace("%3A", ":")
@@ -698,6 +876,17 @@ def rfc_6868_escape(param_value: str) -> str:
 
 
 def unescape_list_or_string(val):
+    """Unescape a value that may be a string or list of strings.
+
+    Applies :py:func:`unescape_string` to the value. If the value is a list,
+    unescapes each element.
+
+    Parameters:
+        val: A string or list of strings to unescape.
+
+    Returns:
+        The unescaped value(s).
+    """
     if isinstance(val, list):
         return [unescape_string(s) for s in val]
     return unescape_string(val)
