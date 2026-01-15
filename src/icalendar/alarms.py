@@ -36,7 +36,29 @@ Parent = Union[Event, Todo]
 
 
 class AlarmTime:
-    """An alarm time with all the information."""
+    """
+    Represent a computed alarm occurrence with its timing and state.
+
+    An AlarmTime instance combines an alarm component with its resolved
+    trigger time and additional state information such as acknowledgment
+    and snoozing. It is used to determine whether an alarm is currently
+    active or has already been dismissed.
+
+    :param alarm: The underlying VALARM component.
+    :type alarm: Alarm
+    :param trigger: The datetime at which the alarm is triggered.
+    :type trigger: datetime
+    :param acknowledged_until: The time in UTC until which the alarm
+        has been acknowledged, if any.
+    :type acknowledged_until: datetime | None
+    :param snoozed_until: The time in UTC until which the alarm is
+        snoozed, if any.
+    :type snoozed_until: datetime | None
+    :param parent: The parent calendar component (Event or Todo)
+        that contains this alarm.
+    :type parent: Event | Todo | None
+    """
+
 
     def __init__(
         self,
