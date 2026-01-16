@@ -25,9 +25,7 @@ def test_rdate_dosent_become_none_on_invalid_input_issue_464(events):
     """Issue #464 - [BUG] RDATE can become None if value is invalid
     https://github.com/collective/icalendar/issues/464
     """
-    # With lazy parsing, we need to access RDATE to trigger parsing and error recording
     event = events.issue_464_invalid_rdate
-    _ = event.get("RDATE")  # Trigger lazy parsing
 
     # After VALUE parameter fix, the assertion checks for the full value string
     # in the error message, making the test more flexible

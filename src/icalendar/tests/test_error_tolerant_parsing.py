@@ -113,7 +113,7 @@ END:VCALENDAR"""
 
 
 def test_property_equality():
-    """Verify equality comparisons work with lazy properties."""
+    """Verify equality comparisons work with properties."""
     ical_str = b"""BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:test
@@ -134,8 +134,8 @@ END:VCALENDAR"""
     assert event1["SUMMARY"] == "Test Event"
 
 
-def test_lazy_property_to_ical():
-    """Verify to_ical() works correctly with lazy properties."""
+def test_property_to_ical():
+    """Verify to_ical() works correctly with properties."""
     ical_str = b"""BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:test
@@ -158,8 +158,8 @@ END:VCALENDAR"""
     assert b"SUMMARY:Test Event" in output
 
 
-def test_multiple_lazy_properties_in_list():
-    """Verify lists of lazy properties work correctly."""
+def test_multiple_properties_in_list():
+    """Verify lists of properties work correctly."""
     ical_str = b"""BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:test
@@ -184,7 +184,7 @@ END:VCALENDAR"""
     assert all(isinstance(dt, vDDDLists) for dt in exdates)
 
 
-def test_lazy_property_with_tzid():
+def test_property_with_tzid():
     """Verify TZID parameter is handled correctly."""
     ical_str = b"""BEGIN:VCALENDAR
 VERSION:2.0
@@ -210,7 +210,7 @@ END:VCALENDAR"""
 
 
 def test_freebusy_comma_separated_values():
-    """Verify FREEBUSY comma-separated values work with lazy parsing."""
+    """Verify FREEBUSY comma-separated values work with error-tolerant parsing."""
     ical_str = b"""BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:test

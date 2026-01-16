@@ -430,14 +430,7 @@ def test_calendar_with_parsing_errors_has_an_error_in_one_event(calendars):
     attribute. The error in the following is the third EXDATE: it has an
     empty DATE.
     """
-    # Access EXDATE properties to trigger lazy parsing and error recording.
-    # With lazy parsing, errors are only recorded when properties are accessed,
-    # not during from_ical(). This is intentional for performance.
-    events = calendars.parsing_error.walk("VEVENT")
-    for e in events:
-        _ = e.get("EXDATE", [])
-
-    errors = [e.errors for e in events]
+    errors = [e.errors for e in calendars.parsing_error.walk("VEVENT")]
     assert errors == [[], [("EXDATE", "Expected datetime, date, or time. Got: ''")]]
 
 

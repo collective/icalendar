@@ -42,7 +42,7 @@ Breaking changes
 New features
 ~~~~~~~~~~~~
 
-- Event components now have error-tolerant property parsing. Properties with parsing errors fall back to vText, preserving the raw value and allowing access to other valid properties. Errors are recorded in ``component.errors``. Partially addresses `#158 <https://github.com/collective/icalendar/issues/158>`_.
+- Event components now have error-tolerant property parsing. Properties with parsing errors fall back to :class:`~icalendar.prop.vBrokenProperty`, preserving the raw value and allowing access to other valid properties. Errors are recorded in ``component.errors``. Partially addresses `#158 <https://github.com/collective/icalendar/issues/158>`_.
 
 Bug fixes
 ~~~~~~~~~

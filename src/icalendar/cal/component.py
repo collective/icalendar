@@ -647,15 +647,6 @@ class Component(CaselessDict):
         if len(self.subcomponents) != len(other.subcomponents):
             return False
 
-        # Unwrap lazy properties before comparison
-        # LazyProperty instances won't compare equal to parsed values,
-        # so we must access all properties to trigger parsing first.
-        # Performance tradeoff: correctness over speed for large calendars.
-        for key in self.keys():
-            _ = self[key]
-        for key in other:
-            _ = other[key]
-
         properties_equal = super().__eq__(other)
         if not properties_equal:
             return False

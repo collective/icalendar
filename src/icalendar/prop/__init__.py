@@ -3547,7 +3547,7 @@ class vUnknown(vText):
 
 
 class vBrokenProperty(vText):
-    """Property that failed to parse - preserves raw value as text.
+    """Property that failed to parse, preserving raw value as text.
 
     Represents property values that failed to parse with their expected
     type. The raw iCalendar string is preserved for round-trip serialization.
