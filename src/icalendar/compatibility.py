@@ -1,6 +1,12 @@
-"""This module contains compatibility code for older Python versions."""
+"""This module contains compatibility code for different Python versions.
 
-import sys
+All compatibility checks and imports should go here.
+This way, we can centralize the handling of different Python versions.
+
+Do NOT import this module directly if you use icalendar.
+Members will be added and removed without deprecation warnings.
+"""
+
 from typing import TYPE_CHECKING
 
 try:
@@ -12,6 +18,7 @@ except ImportError:
         Self = "Self"
 
 if TYPE_CHECKING:
+    import sys
     from typing import TypeGuard
 
     if sys.version_info >= (3, 13):

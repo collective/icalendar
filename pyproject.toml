@@ -51,6 +51,7 @@ readme = { file = "README.rst", content-type = "text/x-rst" }
 ##   - docs/how-to/upgrade.rst
 ## - dependencies - some are for compatibility and can be removed
 ## - tool.ruff.target-version
+## - src/icalendar/compatibility.py
 ##
 requires-python = ">=3.10"
 
