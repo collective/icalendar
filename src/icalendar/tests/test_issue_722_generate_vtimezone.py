@@ -11,6 +11,7 @@ we should be able to create tests that work for the past.
 See https://github.com/collective/icalendar/issues/722
 """
 
+import zoneinfo
 from datetime import date, datetime, timedelta
 from re import findall
 
@@ -18,7 +19,6 @@ import pytest
 from dateutil.tz import gettz
 
 from icalendar import Calendar, Component, Event, Timezone
-from icalendar.compatibility import zoneinfo
 from icalendar.timezone import tzid_from_tzinfo, tzids_from_tzinfo
 
 tzids = pytest.mark.parametrize(
@@ -38,7 +38,7 @@ def assert_components_equal(c1: Component, c2: Component):
     ll2 = c2.to_ical().decode().splitlines()
     pad = max(len(l) for l in ll1 if len(l) <= ML)
     diff = 0
-    for l1, l2 in zip(ll1, ll2):
+    for l1, l2 in zip(ll1, ll2, strict=False):
         a = len(l1) > 32 or len(l2) > 32
         print(
             a * "  " + l1,
@@ -425,7 +425,9 @@ def test_dates_before_and_after_are_considered():
     pytest.skip("todo")
 
 
-@pytest.mark.parametrize("tzid", zoneinfo.available_timezones() - {"Factory", "localtime"})
+@pytest.mark.parametrize(
+    "tzid", zoneinfo.available_timezones() - {"Factory", "localtime"}
+)
 def test_we_can_identify_dateutil_timezones(tzid):
     """dateutil and others were badly supported.
 
