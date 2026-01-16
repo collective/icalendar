@@ -36,8 +36,7 @@ Parent = Union[Event, Todo]
 
 
 class AlarmTime:
-    """
-    Represent a computed alarm occurrence with its timing and state.
+    """Represent a computed alarm occurrence with its timing and state.
 
     An AlarmTime instance combines an alarm component with its resolved
     trigger time and additional state information such as acknowledgment
