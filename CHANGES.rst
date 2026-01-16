@@ -56,6 +56,7 @@ Bug fixes
 Documentation
 ~~~~~~~~~~~~~
 
+- Applied Google-style docstrings to :mod:`icalendar.tools` utility functions with Args, Returns, and Example sections. See `Issue 1072 <https://github.com/collective/icalendar/issues/1072>`_.
 - Simplify contributors and add supporters in credits. See `pull request 1035 <https://github.com/collective/icalendar/pull/1041>`_.
 - Add a section in the change log for Documentation. See `Issue 1043 <https://github.com/collective/icalendar/issues/1043>`_.
 - Fixed multiple ``more than one target found for cross-reference`` warnings, and stopped using ``sphinx.ext.autosectionlabel``, in documentation. See `Issue 952 <https://github.com/collective/icalendar/issues/952>`_.
