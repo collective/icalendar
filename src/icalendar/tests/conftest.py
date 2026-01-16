@@ -3,10 +3,12 @@
 import itertools
 import sys
 import uuid
+import zoneinfo
+from collections.abc import Generator
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Generator
 from unittest.mock import Mock
+from zoneinfo import ZoneInfo
 
 import pytest
 from dateutil import tz
@@ -24,7 +26,6 @@ from icalendar import (
     prop,
     vUTCOffset,
 )
-from zoneinfo import ZoneInfo, zoneinfo
 from icalendar.tests.data import PROPERTY_NAMES
 from icalendar.timezone import TZP
 from icalendar.timezone import tzp as _tzp
@@ -152,7 +153,6 @@ def alarms(tzp):
 @pytest.fixture(scope="module")
 def availabilities(tzp):
     return DataSource(AVAILABILITIES_FOLDER, Availability.from_ical)
-
 
 
 @pytest.fixture(scope="module")
