@@ -154,7 +154,6 @@ def availabilities(tzp):
     return DataSource(AVAILABILITIES_FOLDER, Availability.from_ical)
 
 
-
 @pytest.fixture(scope="module")
 def todos(tzp):
     return DataSource(TODOS_FOLDER, Todo.from_ical)
@@ -439,11 +438,10 @@ class DoctestZoneInfo(ZoneInfo):
         return f"ZoneInfo(key={self.key!r})"
 
 
-def doctest_print(obj):
+def doctest_print(*args):
     """doctest print"""
-    if isinstance(obj, bytes):
-        obj = obj.decode("UTF-8")
-    print(str(obj).strip().replace("\r\n", "\n").replace("\r", "\n"))
+    args = [arg.decode("UTF-8") if isinstance(arg, bytes) else arg for arg in args]
+    print(*(str(arg).strip().replace("\r\n", "\n").replace("\r", "\n") for arg in args))
 
 
 def doctest_import(name, *args, **kw):
