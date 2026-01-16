@@ -12,6 +12,7 @@ See https://github.com/collective/icalendar/issues/722
 """
 
 import zoneinfo
+from copy import deepcopy
 from datetime import date, datetime, timedelta
 from re import findall
 
@@ -284,7 +285,7 @@ queries = [
 @pytest.mark.parametrize("query", queries)
 def test_add_missing_timezones_to_example(calendars, query):
     """Add the missing timezones to the calendar."""
-    cal = calendars.issue_722_missing_timezones
+    cal: Calendar = calendars.issue_722_missing_timezones
     tzid = query_tzid(query, cal)
     tzs = cal.get_missing_tzids()
     assert tzid in tzs
@@ -394,7 +395,9 @@ def test_timezone_is_not_missing(calendars, calendar):
 
 def test_add_missing_known_timezones(calendars):
     """Add all timezones specified."""
-    cal: Calendar = calendars.issue_722_missing_timezones
+    cal: Calendar = deepcopy(
+        calendars.issue_722_missing_timezones
+    )  # avoid side effects
     assert len(cal.timezones) == 0
     cal.add_missing_timezones()
     assert len(cal.timezones) == len(queries), "all timezones are known"
