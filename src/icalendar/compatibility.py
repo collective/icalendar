@@ -11,18 +11,8 @@ except ImportError:
     except ImportError:
         Self = "Self"
 
-try:
-    import zoneinfo
-except ImportError:
-    import backports.zoneinfo as zoneinfo
-
-ZoneInfo = zoneinfo.ZoneInfo
-
 if TYPE_CHECKING:
-    if sys.version_info >= (3, 10):
-        from typing import TypeGuard
-    else:
-        from typing_extensions import TypeGuard
+    from typing import TypeGuard
 
     if sys.version_info >= (3, 13):
         from typing import TypeIs
@@ -34,8 +24,6 @@ else:
 
 __all__ = [
     "Self",
-    "TypeIs",
     "TypeGuard",
-    "ZoneInfo",
-    "zoneinfo",
+    "TypeIs",
 ]

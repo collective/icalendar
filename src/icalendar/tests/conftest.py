@@ -24,7 +24,7 @@ from icalendar import (
     prop,
     vUTCOffset,
 )
-from icalendar.compatibility import ZoneInfo, zoneinfo
+from zoneinfo import ZoneInfo, zoneinfo
 from icalendar.tests.data import PROPERTY_NAMES
 from icalendar.timezone import TZP
 from icalendar.timezone import tzp as _tzp

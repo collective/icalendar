@@ -5,7 +5,7 @@ from datetime import datetime
 
 from icalendar import Calendar, Event
 from icalendar.cal.timezone import Timezone
-from icalendar.compatibility import ZoneInfo
+from zoneinfo import ZoneInfo
 
 
 def test_single_timezone_placed_before_event():
