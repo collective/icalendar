@@ -23,6 +23,17 @@ Breaking changes
 
 This section describes the breaking changes in icalendar 7.0.0, and how to adapt your code to these changes.
 
+Python 3.8 and 3.9 support
+''''''''''''''''''''''''''
+
+Python 3.8 and 3.9 have reached end of life.
+
+Support for Python 3.8 and 3.9 is removed in icalendar 7.0.0.
+
+.. seealso::
+
+    -   `Status of Python versions <https://devguide.python.org/versions/#versions>`_
+    -   `GitHub Actions Python support policy <https://github.com/actions/python-versions#support-policy>`_
 
 ``Component.decoded`` return type changed
 '''''''''''''''''''''''''''''''''''''''''
@@ -97,29 +108,6 @@ Removed ``icalendar.UIDGenerator``
 
 ``icalendar.UIDGenerator`` was removed.
 Use the Python standard library's :mod:`uuid` module instead.
-
-
-.. _upgrade-7.0.0-deprecation:
-
-Deprecations
-------------
-
-The following deprecation notices describe which features may be removed in a future major release of icalendar.
-
-
-Python 3.8 and 3.9 support
-''''''''''''''''''''''''''
-
-Python 3.8 and 3.9 have reached end of life.
-
-Nonetheless icalendar continues to be tested, and still works, on both Python 3.8 and 3.9.
-
-However, if it becomes impractical for the icalendar community to provide support for these versions, then support for them would be removed in a future major release of icalendar.
-
-.. seealso::
-
-    -   `Status of Python versions <https://devguide.python.org/versions/#versions>`_
-    -   `GitHub Actions Python support policy <https://github.com/actions/python-versions#support-policy>`_
 
 
 .. _upgrade-6.0.0:

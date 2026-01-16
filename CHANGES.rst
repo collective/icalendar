@@ -37,6 +37,7 @@ Minor changes
 Breaking changes
 ~~~~~~~~~~~~~~~~
 
+- Drop support for Python 3.8 and 3.9. See `Issue 977 <https://github.com/collective/icalendar/issues/977>`_.
 - :meth:`Component.decoded` now returns a string instead of bytes for text properties.
 
 New features
