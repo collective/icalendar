@@ -35,7 +35,7 @@ Then create the attendee object and set its parameters.
 .. note::
 
     Apart from the email, all parameters are optional.
-    Using the enumerations defined in :mod:`icalendar.enums` is recommended to ensure valid values.
+    Use the enumerations defined in :mod:`icalendar.enums` to ensure valid values.
 
 Finally, add the attendee to the event.
 
