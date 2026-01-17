@@ -13,7 +13,7 @@ Attendees are present inside of events, alarms and other calendar components and
 Add attendees to an event
 -------------------------
 
-To add attendees to an event in icalendar, you need to import the required classes.
+To add attendees to an event in icalendar, import the required classes.
 
 .. code-block:: pycon
 
