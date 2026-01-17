@@ -99,7 +99,7 @@ class DataSource:
             source.raw_ics = raw_ics
             source.raw_jcal = raw_jcal
             source.source_file = source_file
-        self.__dict__[attribute] = source  # required for speed but creates site effects
+        self.__dict__[attribute] = source  # required for speed but creates side effects
         return source
 
     def __contains__(self, key):
