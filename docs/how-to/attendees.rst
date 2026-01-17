@@ -60,9 +60,7 @@ The resulting event looks like this:
 Access attendee information
 ---------------------------
 
-
-Once you have parsed a calendar file with :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>`,
-you can access all the events.
+After parsing an iCalendar file with :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>`, access any of its events.
 
 .. code-block:: pycon
 
