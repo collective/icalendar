@@ -76,7 +76,7 @@ Access them using the :attr:`~icalendar.cal.event.Event.attendees` property.
     >>> attendees = event.attendees  # get the attendees
 
 The standard parameters of each attendee can be accessed as attributes.
-In this example prints the email, common name, participation status, role, and RSVP requirement of each attendee.
+The following example prints the email, common name, participation status, role, and RSVP requirement of each attendee.
 
 .. code-block:: pycon
 
