@@ -3,7 +3,7 @@ Event attendees
 ===============
 
 This chapter explains how to use the event attendee information in iCalendar files with the icalendar library.
-Attendees are encoded as a :class:`~icalendar.prop.vCalAddress` events, alarms and other calendar components.
+Attendees are present inside of events, alarms and other calendar components and occur as a :class:`~icalendar.prop.vCalAddress`. 
 
 .. seealso::
 
