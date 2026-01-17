@@ -11,8 +11,9 @@ from __future__ import annotations
 import functools
 import os
 import re
+from collections.abc import Sequence
 from datetime import datetime, time
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any, Callable, Protocol
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.error import JCalParsingError
@@ -27,6 +28,14 @@ from icalendar.timezone.tzid import tzid_from_dt
 if TYPE_CHECKING:
     from icalendar.enums import VALUE
     from icalendar.prop import VPROPERTY
+
+
+class HasToIcal(Protocol):
+    """Protocol for objects with a to_ical method."""
+
+    def to_ical(self) -> bytes:
+        """Convert to iCalendar format."""
+        ...
 
 
 def escape_char(text: str | bytes) -> str | bytes:
@@ -66,7 +75,7 @@ def escape_char(text: str | bytes) -> str | bytes:
 def unescape_char(text: str | bytes) -> str | bytes | None:
     r"""Unescape iCalendar TEXT values.
 
-    Reverses the escaping applied by :py:func:`escape_char` according to
+    Reverses the escaping applied by :func:`escape_char` according to
     :rfc:`5545#section-3.3.11` TEXT escaping rules.
 
     Parameters:
@@ -147,7 +156,7 @@ def foldline(line, limit=75, fold_sep="\r\n "):
 # Property parameter stuff
 
 
-def param_value(value: Any, always_quote: bool = False) -> str:
+def param_value(value: Sequence[str] | str | HasToIcal, always_quote: bool = False) -> str:
     """Convert a parameter value to its iCalendar representation.
 
     Applies :rfc:`6868` escaping and optionally quotes the value according
@@ -300,7 +309,7 @@ def q_split(st: str, sep: str = ",", maxsplit: int = -1) -> list[str]:
 def q_join(lst: list[str], sep: str = ",", always_quote: bool = False) -> str:
     """Join a list with a separator, quoting items as needed.
 
-    Joins list items with the separator, applying :py:func:`dquote` to each item
+    Joins list items with the separator, applying :func:`dquote` to each item
     to add double quotes when they contain special characters.
 
     Parameters:
@@ -683,7 +692,7 @@ def escape_string(val: str) -> str:
 def unescape_string(val: str) -> str:
     r"""Unescape URL-encoded hex values to their original characters.
 
-    Reverses :py:func:`escape_string` by converting percent-encoded hex values
+    Reverses :func:`escape_string` by converting percent-encoded hex values
     back to their original characters. This is used for parameter parsing.
 
     Parameters:
@@ -878,7 +887,7 @@ def rfc_6868_escape(param_value: str) -> str:
 def unescape_list_or_string(val: str | list[str]) -> str | list[str]:
     """Unescape a value that may be a string or list of strings.
 
-    Applies :py:func:`unescape_string` to the value. If the value is a list,
+    Applies :func:`unescape_string` to the value. If the value is a list,
     unescapes each element.
 
     Parameters:
