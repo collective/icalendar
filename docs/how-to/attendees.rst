@@ -71,7 +71,7 @@ you can access all the events.
     >>> event = calendar.events[0]                      # get the first event
 
 Events can have multiple attendees.
-You can access them using the :attr:`~icalendar.cal.event.Event.attendees` property.
+Access them using the :attr:`~icalendar.cal.event.Event.attendees` property.
 
 .. code-block:: pycon
 
