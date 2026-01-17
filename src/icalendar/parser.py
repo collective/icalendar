@@ -29,14 +29,14 @@ if TYPE_CHECKING:
     from icalendar.prop import VPROPERTY
 
 
-def escape_char(text):
+def escape_char(text: str | bytes) -> str | bytes:
     r"""Format value according to iCalendar TEXT escaping rules.
 
     Escapes special characters in text values according to :rfc:`5545#section-3.3.11` rules.
     The order of replacements matters to avoid double-escaping.
 
     Parameters:
-        text: The text to escape (``str`` or ``bytes``).
+        text: The text to escape.
 
     Returns:
         The escaped text with special characters escaped.
@@ -63,17 +63,17 @@ def escape_char(text):
     )
 
 
-def unescape_char(text):
+def unescape_char(text: str | bytes) -> str | bytes | None:
     r"""Unescape iCalendar TEXT values.
 
     Reverses the escaping applied by :py:func:`escape_char` according to
     :rfc:`5545#section-3.3.11` TEXT escaping rules.
 
     Parameters:
-        text: The escaped text (``str`` or ``bytes``).
+        text: The escaped text.
 
     Returns:
-        The unescaped text, or ``None`` if text is neither ``str`` nor ``bytes``.
+        The unescaped text, or ``None`` if ``text`` is neither ``str`` nor ``bytes``.
 
     Note:
         The replacement order is critical to avoid double-unescaping:
@@ -147,7 +147,7 @@ def foldline(line, limit=75, fold_sep="\r\n "):
 # Property parameter stuff
 
 
-def param_value(value, always_quote=False):
+def param_value(value: Any, always_quote: bool = False) -> str:
     """Convert a parameter value to its iCalendar representation.
 
     Applies :rfc:`6868` escaping and optionally quotes the value according
@@ -182,11 +182,11 @@ UFOLD = re.compile("(\r?\n)+[ \t]")
 NEWLINE = re.compile(r"\r?\n")
 
 
-def validate_token(name):
-    """Validate that a name is a valid iCalendar token.
+def validate_token(name: str) -> None:
+    r"""Validate that a name is a valid iCalendar token.
 
     Checks if the name matches the :rfc:`5545` token syntax using the NAME
-    regex pattern (``[\\w.-]+``).
+    regex pattern (``[\w.-]+``).
 
     Parameters:
         name: The token name to validate.
@@ -200,7 +200,7 @@ def validate_token(name):
     raise ValueError(name)
 
 
-def validate_param_value(value, quoted=True):
+def validate_param_value(value: str, quoted: bool = True) -> None:
     """Validate a parameter value for unsafe characters.
 
     Checks parameter values for characters that are not allowed according to
@@ -224,7 +224,7 @@ def validate_param_value(value, quoted=True):
 QUOTABLE = re.compile("[,;:’]")  # noqa: RUF001
 
 
-def dquote(val, always_quote=False):
+def dquote(val: str, always_quote: bool = False) -> str:
     """Enclose parameter values in double quotes when needed.
 
     Parameter values containing special characters ``,``, ``;``, ``:``, or ``'`` must be enclosed
@@ -249,7 +249,7 @@ def dquote(val, always_quote=False):
 
 
 # parsing helper
-def q_split(st, sep=",", maxsplit=-1):
+def q_split(st: str, sep: str = ",", maxsplit: int = -1) -> list[str]:
     """Split a string on a separator, respecting double quotes.
 
     Splits the string on the separator character, but ignores separators that
@@ -297,7 +297,7 @@ def q_split(st, sep=",", maxsplit=-1):
     return result
 
 
-def q_join(lst, sep=",", always_quote=False):
+def q_join(lst: list[str], sep: str = ",", always_quote: bool = False) -> str:
     """Join a list with a separator, quoting items as needed.
 
     Joins list items with the separator, applying :py:func:`dquote` to each item
@@ -650,7 +650,7 @@ class Parameters(CaselessDict):
         return self
 
 
-def escape_string(val):
+def escape_string(val: str) -> str:
     r"""Escape backslash sequences to URL-encoded hex values.
 
     Converts backslash-escaped characters to their percent-encoded hex
@@ -680,7 +680,7 @@ def escape_string(val):
     )
 
 
-def unescape_string(val):
+def unescape_string(val: str) -> str:
     r"""Unescape URL-encoded hex values to their original characters.
 
     Reverses :py:func:`escape_string` by converting percent-encoded hex values
@@ -875,7 +875,7 @@ def rfc_6868_escape(param_value: str) -> str:
     )
 
 
-def unescape_list_or_string(val):
+def unescape_list_or_string(val: str | list[str]) -> str | list[str]:
     """Unescape a value that may be a string or list of strings.
 
     Applies :py:func:`unescape_string` to the value. If the value is a list,
