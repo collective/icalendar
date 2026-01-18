@@ -5,9 +5,10 @@ from __future__ import annotations
 import copy
 import copyreg
 import functools
+import threading
 from datetime import datetime, tzinfo
 from io import StringIO
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from dateutil.rrule import rrule, rruleset
 from dateutil.tz import tzical
@@ -28,8 +29,33 @@ class ZONEINFO(TZProvider):
     """Provide icalendar with timezones from zoneinfo."""
 
     name = "zoneinfo"
-    utc = zoneinfo.ZoneInfo("UTC")
-    _available_timezones = zoneinfo.available_timezones()
+    # Use lazy initialization via properties to avoid import-time failures
+    # in environments without timezone data (e.g., Pyodide/WebAssembly).
+    # See https://github.com/collective/icalendar/issues/1073
+    _utc: zoneinfo.ZoneInfo | None = None
+    _available_timezones_cache: set | None = None
+    # Class-level lock is intentional: caches are shared by all instances.
+    _init_lock = threading.Lock()
+
+    @property
+    def utc(self) -> zoneinfo.ZoneInfo:
+        """Return the UTC timezone, initializing lazily on first access."""
+        if self._utc is None:
+            with self._init_lock:
+                # Double-check after acquiring lock
+                if self._utc is None:
+                    ZONEINFO._utc = zoneinfo.ZoneInfo("UTC")
+        return self._utc  # type: ignore[return-value]
+
+    @property
+    def _available_timezones(self) -> set:
+        """Return available timezones, initializing lazily on first access."""
+        if self._available_timezones_cache is None:
+            with self._init_lock:
+                # Double-check after acquiring lock
+                if self._available_timezones_cache is None:
+                    ZONEINFO._available_timezones_cache = zoneinfo.available_timezones()
+        return self._available_timezones_cache  # type: ignore[return-value]
 
     def localize(self, dt: datetime, tz: zoneinfo.ZoneInfo) -> datetime:
         """Localize a datetime to a timezone."""
@@ -41,7 +67,7 @@ class ZONEINFO(TZProvider):
             return dt.astimezone(self.utc)
         return self.localize(dt, self.utc)
 
-    def timezone(self, name: str) -> Optional[tzinfo]:
+    def timezone(self, name: str) -> tzinfo | None:
         """Return a timezone with a name or None if we cannot find it."""
         try:
             return zoneinfo.ZoneInfo(name)
@@ -75,7 +101,7 @@ class ZONEINFO(TZProvider):
                         sub.pop(attr)
             for sub in tz.subcomponents:
                 start: vDDDTypes = sub.get("DTSTART")
-                if start and is_date(start.dt):
+                if start and hasattr(start, 'dt') and is_date(start.dt):
                     # ValueError: Unsupported DTSTART param in VTIMEZONE: VALUE=DATE
                     sub.DTSTART = to_datetime(start.dt)
             return self._create_timezone(tz)
