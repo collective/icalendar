@@ -8,6 +8,7 @@ How to guides
     install
     upgrade
     usage
+    parse-errors
     custom-components
     jcal
     cli
