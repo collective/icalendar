@@ -35,7 +35,7 @@ This attribute is a list of tuples containing the property name and error inform
     >>> cal = Calendar.from_ical(ical_str)
     >>> event = cal.walk("VEVENT")[0]
     >>> event.errors
-    [('DTSTART', "ValueError(\"Unsupported date format: 'INVALID-DATE'\")")]
+    [('DTSTART', "Expected datetime, date, or time. Got: 'INVALID-DATE'")]
 
 Errors are populated immediately after parsing, without needing to access the problematic properties.
 
@@ -62,8 +62,8 @@ The broken property includes metadata about the parsing failure.
     'DTSTART'
     >>> dtstart.expected_type
     'vDDDTypes'
-    >>> dtstart.parse_error  # doctest: +ELLIPSIS
-    "ValueError(\"Unsupported date format:..."
+    >>> dtstart.parse_error
+    "Expected datetime, date, or time. Got: 'INVALID-DATE'"
 
 
 Working with partially valid data
@@ -111,8 +111,8 @@ You can iterate over errors to log or handle them.
 .. code-block:: pycon
 
     >>> for prop_name, error_msg in event.errors:
-    ...     print(f"{prop_name}: {error_msg}")  # doctest: +ELLIPSIS
-    DTSTART: ValueError("Unsupported date format:...
+    ...     print(f"{prop_name}: {error_msg}")
+    DTSTART: Expected datetime, date, or time. Got: 'INVALID-DATE'
 
 To check if a specific property failed to parse, check if it is a :class:`~icalendar.prop.vBrokenProperty`.
 
