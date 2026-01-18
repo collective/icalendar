@@ -7,7 +7,6 @@ Attendees are present inside of events, alarms and other calendar components and
 
 .. seealso::
 
-    :class:`~icalendar.prop.vCalAddress`
     :attr:`Event.attendees <icalendar.cal.event.Event.attendees>`
 
 Add attendees to an event
