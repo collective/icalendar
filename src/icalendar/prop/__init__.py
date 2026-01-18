@@ -1280,6 +1280,7 @@ class vOrg:
 
     default_value: ClassVar[str] = "TEXT"
     params: Parameters
+    fields: tuple[str, ...]
 
     def __init__(
         self,
