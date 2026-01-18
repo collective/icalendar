@@ -53,6 +53,8 @@ from icalendar.parser import (
 # Property Data Value Types
 from icalendar.prop import (
     VPROPERTY,
+    AdrFields,
+    NFields,
     TypesFactory,
     vAdr,
     vBinary,
@@ -106,6 +108,7 @@ __all__ = [
     "TRANSP",
     "VALUE",
     "VPROPERTY",
+    "AdrFields",
     "Alarm",
     "AlarmTime",
     "Alarms",
@@ -127,6 +130,7 @@ __all__ = [
     "JCalParsingError",
     "Journal",
     "LocalTimezoneMissing",
+    "NFields",
     "Parameters",
     "Timezone",
     "TimezoneDaylight",
@@ -160,7 +164,6 @@ __all__ = [
     "vOrg",
     "vPeriod",
     "vRecur",
-    "vSkip",
     "vSkip",
     "vText",
     "vTime",
