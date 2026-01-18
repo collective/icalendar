@@ -58,7 +58,7 @@ def escape_char(text: str | bytes) -> str | bytes:
         3. ``;`` -> ``\;`` (escape semicolons)
         4. ``,`` -> ``\,`` (escape commas)
         5. ``\r\n`` -> ``\n`` (normalize line endings)
-        6. ``\n`` -> ``\n`` (escape newlines with raw string)
+        6. ``"\n"`` -> ``r"\n"`` (transform a newline character to a literal, or raw, newline character)
     """
     assert isinstance(text, (str, bytes))
     # NOTE: ORDER MATTERS!
