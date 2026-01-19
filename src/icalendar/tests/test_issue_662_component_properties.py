@@ -20,7 +20,7 @@ from icalendar import (
     vDDDTypes,
     vDuration,
 )
-from icalendar.compatibility import ZoneInfo
+from zoneinfo import ZoneInfo
 
 
 def prop(component: Event | Todo, prop: str) -> str:

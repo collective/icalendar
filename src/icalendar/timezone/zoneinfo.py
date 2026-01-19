@@ -14,7 +14,7 @@ from dateutil.rrule import rrule, rruleset
 from dateutil.tz import tzical
 from dateutil.tz.tz import _tzicalvtz
 
-from icalendar.compatibility import zoneinfo
+import zoneinfo
 from icalendar.tools import is_date, to_datetime
 
 from .provider import TZProvider
