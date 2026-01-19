@@ -9,7 +9,7 @@ from datetime import date, datetime, timedelta, timezone
 import pytest
 
 from icalendar import Event, Journal, vDate, vDatetime, vDDDLists, vDDDTypes
-from icalendar.compatibility import ZoneInfo
+from zoneinfo import ZoneInfo
 
 
 def to_dt(a: date) -> date:

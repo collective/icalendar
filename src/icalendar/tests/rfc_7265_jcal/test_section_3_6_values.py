@@ -27,7 +27,7 @@ from icalendar import (
     vUri,
     vUTCOffset,
 )
-from icalendar.compatibility import ZoneInfo
+from zoneinfo import ZoneInfo
 
 JCAL_PAIRS = [
     (["attach", {}, "binary", "SGVsbG8gV29ybGQh"], vBinary("SGVsbG8gV29ybGQh")),

@@ -37,16 +37,19 @@ Minor changes
 Breaking changes
 ~~~~~~~~~~~~~~~~
 
+- Drop support for Python 3.8 and 3.9. See `Issue 977 <https://github.com/collective/icalendar/issues/977>`_.
 - :meth:`Component.decoded` now returns a string instead of bytes for text properties.
 
 New features
 ~~~~~~~~~~~~
 
-- ...
+- Event components now have error-tolerant property parsing. Properties with parsing errors fall back to :class:`~icalendar.prop.vBrokenProperty`, preserving the raw value and allowing access to other valid properties. Errors are recorded in ``component.errors``. Partially addresses `#158 <https://github.com/collective/icalendar/issues/158>`_.
+- Added :class:`~icalendar.prop.AdrFields` and :class:`~icalendar.prop.NFields` named tuples for structured access to vCard ADR and N property fields. The ``fields`` attribute and ``from_ical()`` return value of :class:`~icalendar.prop.vAdr` and :class:`~icalendar.prop.vN` now return these typed named tuples, enabling access like ``adr.fields.street`` and ``n.fields.family``. Since named tuples are tuple subclasses, existing code using tuple indexing or unpacking remains compatible. Added ``name`` and ``units`` properties to :class:`~icalendar.prop.vOrg` for convenient access to the organization name and organizational units. Added ``ical_value`` property to all three classes. See `Issue #1060 <https://github.com/collective/icalendar/issues/1060>`_.
 
 Bug fixes
 ~~~~~~~~~
 
+- Fixed import failure in Pyodide/WebAssembly environments by using lazy initialization for timezone data in the zoneinfo provider. The library can now be imported in environments without timezone data (e.g., Cloudflare Workers, PyScript, JupyterLite). See `Issue #1073 <https://github.com/collective/icalendar/issues/1073>`_.
 - Fixed :meth:`icalendar.caselessdict.CaselessDict.__eq__` to return ``NotImplemented`` when comparing with non-dict types instead of raising ``AttributeError``. See `Issue #1016 <https://github.com/collective/icalendar/issues/1016>`_.
 - Fixed decoding of categories. See `Issue 279 <https://github.com/collective/icalendar/issues/279>`_.
 - Link ``timedelta`` to :py:class:`datetime.timedelta` in the Python standard library documentation. See `Issue 951 <https://github.com/collective/icalendar/issues/951>`_.

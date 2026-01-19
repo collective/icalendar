@@ -30,7 +30,7 @@ from icalendar import (
     Todo,
     vCalAddress,
 )
-from icalendar.compatibility import ZoneInfo
+from zoneinfo import ZoneInfo
 from icalendar.enums import BUSYTYPE
 from icalendar.prop import vText, vUid, vUri, vXmlReference
 
