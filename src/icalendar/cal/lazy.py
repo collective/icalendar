@@ -33,17 +33,19 @@ class LazyCalendar(Calendar):
     - Counting events without full parsing overhead
     - Working with very large calendars (1000+ events)
 
-    Example:
-        >>> from icalendar import LazyCalendar
-        >>> # Parse a large calendar file
-        >>> with open("large_calendar.ics", "rb") as f:
-        ...     cal = LazyCalendar.from_ical(f.read())
-        >>> # Access metadata immediately (no event parsing)
-        >>> cal["VERSION"]
-        vText('2.0')
-        >>> # Events are parsed on first access
-        >>> len(cal.events)
-        1500
+    Example::
+
+        from icalendar import LazyCalendar
+
+        # Parse a large calendar file
+        with open("large_calendar.ics", "rb") as f:
+            cal = LazyCalendar.from_ical(f.read())
+
+        # Access metadata immediately (no event parsing)
+        cal["VERSION"]  # Returns vText('2.0')
+
+        # Events are parsed on first access
+        len(cal.events)  # Returns 1500
 
     Note:
         Once accessed, components are fully parsed and cached.
@@ -141,6 +143,7 @@ class LazyCalendar(Calendar):
                                     elif n.upper() == "END":
                                         depth -= 1
                                 except ValueError:
+                                    # Malformed line while scanning BEGIN/END blocks
                                     pass
                             line_index += 1
                         end_idx = line_index
@@ -215,6 +218,7 @@ class LazyCalendar(Calendar):
                     vals_inst.params = params
                     cal.add(name, vals_inst, encode=0)
                 except ValueError:
+                    # Invalid CATEGORIES value, skip property
                     pass
                 return
 
@@ -250,7 +254,9 @@ class LazyCalendar(Calendar):
             for comp in self.subcomponents:
                 if comp.name == comp_name:
                     return comp
-            return None  # Should not happen
+            raise AssertionError(
+                f"Parsed component {comp_name!r} at index {index} not in subcomponents"
+            )
 
         comp_name, raw_lines = self._raw_components[index]
         raw_str = "\r\n".join(str(ln) for ln in raw_lines)
