@@ -59,6 +59,7 @@ Bug fixes
 Documentation
 ~~~~~~~~~~~~~
 
+- Updated 11 function docstrings in :mod:`icalendar.parser` to follow the Google Style guide, improving API documentation clarity and consistency. See `Issue #1072 <https://github.com/collective/icalendar/issues/1072>`_.
 - Applied Google-style docstrings to :mod:`icalendar.tools` utility functions with Args, Returns, and Example sections. See `Issue 1072 <https://github.com/collective/icalendar/issues/1072>`_.
 - Simplify contributors and add supporters in credits. See `pull request 1035 <https://github.com/collective/icalendar/pull/1041>`_.
 - Add a section in the change log for Documentation. See `Issue 1043 <https://github.com/collective/icalendar/issues/1043>`_.
