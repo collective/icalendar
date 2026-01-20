@@ -77,7 +77,7 @@ Documentation
 - Use Google style docstrings in :mod:`~icalendar.parser_tools`.
   See `Issue 1017 <https://github.com/collective/icalendar/issues/1017>`_.
 - Added Upgrade guide. See `Issue 997 <https://github.com/collective/icalendar/issues/997>`_.
-- Enable sphinx-issues extension. (:issue:'1091')
+- Enable sphinx-issues extension. (:issue:`1091``)
 
 7.0.0a3 (2025-12-19)
 --------------------
