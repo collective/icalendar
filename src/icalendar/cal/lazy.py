@@ -48,7 +48,7 @@ class LazyCalendar(Calendar):
         # Events are parsed on first access
         len(cal.events)  # Returns 1500
 
-    Note:
+    .. note::
         Once accessed, components are fully parsed and cached.
         Subsequent accesses return the same parsed objects.
 

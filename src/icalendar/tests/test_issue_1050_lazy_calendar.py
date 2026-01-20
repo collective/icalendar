@@ -431,3 +431,64 @@ class TestLazyCalendarJournals:
         journals = cal.journals
         assert len(journals) == 1
         assert str(journals[0]["SUMMARY"]) == "Test Journal 1"
+
+
+class TestLazyCalendarAccessPatterns:
+    """Test different access patterns work correctly."""
+
+    def test_access_events_then_todos(self):
+        """Accessing events then todos works correctly."""
+        cal = LazyCalendar.from_ical(CALENDAR_WITH_EVENTS_AND_TODOS)
+
+        events = cal.events
+        assert len(events) == 2
+
+        todos = cal.todos
+        assert len(todos) == 1
+
+        # All should be accessible
+        assert len(cal.events) == 2
+        assert len(cal.todos) == 1
+
+    def test_access_todos_then_events(self):
+        """Accessing todos then events works correctly."""
+        cal = LazyCalendar.from_ical(CALENDAR_WITH_EVENTS_AND_TODOS)
+
+        todos = cal.todos
+        assert len(todos) == 1
+
+        events = cal.events
+        assert len(events) == 2
+
+    def test_access_journals_then_events_then_todos(self):
+        """Accessing in journals -> events -> todos order works."""
+        cal = LazyCalendar.from_ical(CALENDAR_WITH_EVENTS_AND_TODOS)
+
+        journals = cal.journals
+        assert len(journals) == 1
+
+        events = cal.events
+        assert len(events) == 2
+
+        todos = cal.todos
+        assert len(todos) == 1
+
+    def test_access_mixed_with_walk(self):
+        """Mixing property access with walk() works correctly."""
+        cal = LazyCalendar.from_ical(CALENDAR_WITH_EVENTS_AND_TODOS)
+
+        # Access events first
+        events = cal.events
+        assert len(events) == 2
+
+        # Then walk for todos
+        todos = cal.walk("VTODO")
+        assert len(todos) == 1
+
+        # Then use journals property
+        journals = cal.journals
+        assert len(journals) == 1
+
+        # All should still work
+        assert len(cal.events) == 2
+        assert len(cal.todos) == 1
