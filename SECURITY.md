@@ -1,4 +1,4 @@
-# Security policy
+sou# Security policy
 
 As a project under the `collective` GitHub organization as well as a dependency of Plone, icalendar follows the security policy of Plone.
 
