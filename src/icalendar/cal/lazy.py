@@ -1,6 +1,6 @@
 """Lazy subcomponent parsing for large calendars.
 
-See :issue:`1050`.
+See `Issue #1050 <https://github.com/collective/icalendar/issues/1050>`_.
 """
 
 from __future__ import annotations
@@ -21,9 +21,9 @@ if TYPE_CHECKING:
 
 
 class LazyCalendar(Calendar):
-    """A :class:`Calendar` with lazy subcomponent parsing for large files.
+    """A :class:`~icalendar.cal.calendar.Calendar` with lazy subcomponent parsing for large files.
 
-    Parses :class:`Calendar` properties and VTIMEZONE components eagerly, but
+    Parses :class:`~icalendar.cal.calendar.Calendar` properties and VTIMEZONE components eagerly, but
     defers parsing of VEVENT, VTODO, VJOURNAL, VFREEBUSY, and VAVAILABILITY
     until accessed via ``.events``, ``.todos``, ``.walk()``, or other component
     methods.
@@ -52,7 +52,7 @@ class LazyCalendar(Calendar):
         Once accessed, components are fully parsed and cached.
         Subsequent accesses return the same parsed objects.
 
-        The :meth:`to_ical` method produces correct output whether
+        The :meth:`~icalendar.cal.component.Component.to_ical` method produces correct output whether
         components have been parsed or not.
     """
 
@@ -81,7 +81,7 @@ class LazyCalendar(Calendar):
     ) -> LazyCalendar | list[LazyCalendar]:
         """Parse iCalendar data with lazy subcomponent parsing.
 
-        :class:`Calendar` properties and VTIMEZONE are parsed immediately.
+        :class:`~icalendar.cal.calendar.Calendar` properties and VTIMEZONE are parsed immediately.
         Other subcomponents—such as VEVENT or VTODO—are stored as raw
         content lines and parsed on first access.
 
@@ -303,45 +303,45 @@ class LazyCalendar(Calendar):
 
     @property
     def events(self) -> list[Event]:
-        """All :class:`Event`\\ s in the calendar.
+        """All :class:`~icalendar.cal.event.Event`\\ s in the calendar.
 
-        :class:`Event`\\ s are parsed on first access.
+        :class:`~icalendar.cal.event.Event`\\ s are parsed on first access.
         """
         self._parse_all_of_type("VEVENT")
         return super().events
 
     @property
     def todos(self) -> list[Todo]:
-        """All :class:`Todo`\\ s in the calendar.
+        """All :class:`~icalendar.cal.todo.Todo`\\ s in the calendar.
 
-        :class:`Todo`\\ s are parsed on first access.
+        :class:`~icalendar.cal.todo.Todo`\\ s are parsed on first access.
         """
         self._parse_all_of_type("VTODO")
         return super().todos
 
     @property
     def journals(self) -> list[Journal]:
-        """All :class:`Journal`\\ s in the calendar.
+        """All :class:`~icalendar.cal.journal.Journal`\\ s in the calendar.
 
-        :class:`Journal`\\ s are parsed on first access.
+        :class:`~icalendar.cal.journal.Journal`\\ s are parsed on first access.
         """
         self._parse_all_of_type("VJOURNAL")
         return super().walk("VJOURNAL")
 
     @property
     def freebusy(self) -> list[FreeBusy]:
-        """All :class:`FreeBusy` components in the calendar.
+        """All :class:`~icalendar.cal.free_busy.FreeBusy` components in the calendar.
 
-        :class:`FreeBusy` components are parsed on first access.
+        :class:`~icalendar.cal.free_busy.FreeBusy` components are parsed on first access.
         """
         self._parse_all_of_type("VFREEBUSY")
         return super().freebusy
 
     @property
     def availabilities(self) -> list[Availability]:
-        """All :class:`Availability` components in the calendar.
+        """All :class:`~icalendar.cal.availability.Availability` components in the calendar.
 
-        :class:`Availability` components are parsed on first access.
+        :class:`~icalendar.cal.availability.Availability` components are parsed on first access.
         """
         self._parse_all_of_type("VAVAILABILITY")
         return super().availabilities
@@ -357,6 +357,9 @@ class LazyCalendar(Calendar):
         Parameters:
             recursive: Include subcomponents.
             sorted: Sort property names.
+
+        Returns:
+            List of (name, value) tuples.
         """
         v_text = self.types_factory["text"]
         properties = [("BEGIN", v_text(self.name).to_ical())]
