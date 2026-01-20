@@ -5,7 +5,7 @@ See :issue:`1050`.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from icalendar.cal.calendar import Calendar
 from icalendar.cal.component import Component
@@ -283,7 +283,7 @@ class LazyCalendar(Calendar):
             if i not in self._parsed_indices:
                 self._parse_raw_component(i)
 
-    def walk(self, name=None, select=lambda _: True):
+    def walk(self, name=None, select=lambda _: True) -> list[Component]:
         """Recursively traverse component and subcomponents.
 
         Parses lazy components as needed.
@@ -305,7 +305,7 @@ class LazyCalendar(Calendar):
     def events(self) -> list[Event]:
         """All :class:`Event`\\ s in the calendar.
 
-        Events are parsed on first access.
+        :class:`Event`\\ s are parsed on first access.
         """
         self._parse_all_of_type("VEVENT")
         return super().events
@@ -314,7 +314,7 @@ class LazyCalendar(Calendar):
     def todos(self) -> list[Todo]:
         """All :class:`Todo`\\ s in the calendar.
 
-        Todos are parsed on first access.
+        :class:`Todo`\\ s are parsed on first access.
         """
         self._parse_all_of_type("VTODO")
         return super().todos
@@ -323,7 +323,7 @@ class LazyCalendar(Calendar):
     def journals(self) -> list[Journal]:
         """All :class:`Journal`\\ s in the calendar.
 
-        Journals are parsed on first access.
+        :class:`Journal`\\ s are parsed on first access.
         """
         self._parse_all_of_type("VJOURNAL")
         return super().walk("VJOURNAL")
@@ -332,7 +332,7 @@ class LazyCalendar(Calendar):
     def freebusy(self) -> list[FreeBusy]:
         """All :class:`FreeBusy` components in the calendar.
 
-        FreeBusy components are parsed on first access.
+        :class:`FreeBusy` components are parsed on first access.
         """
         self._parse_all_of_type("VFREEBUSY")
         return super().freebusy
@@ -341,12 +341,14 @@ class LazyCalendar(Calendar):
     def availabilities(self) -> list[Availability]:
         """All :class:`Availability` components in the calendar.
 
-        Availability components are parsed on first access.
+        :class:`Availability` components are parsed on first access.
         """
         self._parse_all_of_type("VAVAILABILITY")
         return super().availabilities
 
-    def property_items(self, recursive=True, sorted: bool = True):
+    def property_items(
+        self, recursive: bool = True, sorted: bool = True
+    ) -> list[tuple[str, Any]]:
         """Returns properties in this component and subcomponents.
 
         For unparsed components, reconstructs from stored raw lines
@@ -355,9 +357,6 @@ class LazyCalendar(Calendar):
         Parameters:
             recursive: Include subcomponents.
             sorted: Sort property names.
-
-        Returns:
-            List of (name, value) tuples.
         """
         v_text = self.types_factory["text"]
         properties = [("BEGIN", v_text(self.name).to_ical())]
