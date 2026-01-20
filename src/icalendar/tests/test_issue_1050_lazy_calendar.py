@@ -3,87 +3,27 @@
 See https://github.com/collective/icalendar/issues/1050
 """
 
+from pathlib import Path
+
 from icalendar import Calendar, LazyCalendar
 
-# Test calendar with multiple component types
-CALENDAR_WITH_EVENTS_AND_TODOS = b"""BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Test//Test//EN
-BEGIN:VTIMEZONE
-TZID:America/New_York
-BEGIN:STANDARD
-DTSTART:19701101T020000
-RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
-TZOFFSETFROM:-0400
-TZOFFSETTO:-0500
-TZNAME:EST
-END:STANDARD
-BEGIN:DAYLIGHT
-DTSTART:19700308T020000
-RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
-TZOFFSETFROM:-0500
-TZOFFSETTO:-0400
-TZNAME:EDT
-END:DAYLIGHT
-END:VTIMEZONE
-BEGIN:VEVENT
-UID:event-1@example.com
-DTSTART;TZID=America/New_York:20250115T100000
-DTEND;TZID=America/New_York:20250115T110000
-SUMMARY:Test Event 1
-END:VEVENT
-BEGIN:VEVENT
-UID:event-2@example.com
-DTSTART;TZID=America/New_York:20250116T100000
-DTEND;TZID=America/New_York:20250116T110000
-SUMMARY:Test Event 2
-END:VEVENT
-BEGIN:VTODO
-UID:todo-1@example.com
-SUMMARY:Test Todo 1
-STATUS:NEEDS-ACTION
-END:VTODO
-BEGIN:VJOURNAL
-UID:journal-1@example.com
-SUMMARY:Test Journal 1
-END:VJOURNAL
-END:VCALENDAR"""
+# Path to test data
+CALENDARS_FOLDER = Path(__file__).parent / "calendars"
 
 
-# Simple calendar with just events
-SIMPLE_CALENDAR = b"""BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Test//Test//EN
-BEGIN:VEVENT
-UID:simple-event@example.com
-DTSTART:20250101T100000Z
-SUMMARY:Simple Event
-END:VEVENT
-END:VCALENDAR"""
+def load_calendar(filename):
+    """Load a calendar file from the calendars folder."""
+    return (CALENDARS_FOLDER / filename).read_bytes()
 
 
-# Calendar with only VTIMEZONE
-TIMEZONE_ONLY_CALENDAR = b"""BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Test//Test//EN
-BEGIN:VTIMEZONE
-TZID:Europe/London
-BEGIN:STANDARD
-DTSTART:19701025T020000
-RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
-TZOFFSETFROM:+0100
-TZOFFSETTO:+0000
-TZNAME:GMT
-END:STANDARD
-END:VTIMEZONE
-END:VCALENDAR"""
-
-
-# Empty calendar
-EMPTY_CALENDAR = b"""BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Test//Test//EN
-END:VCALENDAR"""
+CALENDAR_WITH_EVENTS_AND_TODOS = load_calendar(
+    "issue_1050_calendar_with_events_and_todos.ics"
+)
+SIMPLE_CALENDAR = load_calendar("issue_1050_simple_calendar.ics")
+TIMEZONE_ONLY_CALENDAR = load_calendar("issue_1050_timezone_only_calendar.ics")
+EMPTY_CALENDAR = load_calendar("issue_1050_empty_calendar.ics")
+FORWARD_REF_CALENDAR = load_calendar("issue_1050_forward_timezone_reference.ics")
+MULTI_CAL = load_calendar("issue_1050_multiple_calendars.ics")
 
 
 class TestLazyCalendarBasicParsing:
@@ -303,28 +243,7 @@ class TestLazyCalendarTimezoneHandling:
 
     def test_forward_timezone_reference(self):
         """VTIMEZONE defined after events still works."""
-        # Calendar with VEVENT before VTIMEZONE
-        forward_ref_calendar = b"""BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Test//Test//EN
-BEGIN:VEVENT
-UID:event@example.com
-DTSTART;TZID=Europe/Berlin:20250115T100000
-SUMMARY:Event with forward TZ ref
-END:VEVENT
-BEGIN:VTIMEZONE
-TZID:Europe/Berlin
-BEGIN:STANDARD
-DTSTART:19701025T030000
-RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
-TZOFFSETFROM:+0200
-TZOFFSETTO:+0100
-TZNAME:CET
-END:STANDARD
-END:VTIMEZONE
-END:VCALENDAR"""
-
-        cal = LazyCalendar.from_ical(forward_ref_calendar)
+        cal = LazyCalendar.from_ical(FORWARD_REF_CALENDAR)
 
         # VTIMEZONE should still be parsed eagerly (appears after VEVENT in file)
         # Note: Current implementation parses in order, so VEVENT is stored
@@ -396,24 +315,7 @@ class TestLazyCalendarMultiple:
 
     def test_multiple_calendars(self):
         """Parsing multiple calendars works."""
-        multi_cal = b"""BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Test1//EN
-BEGIN:VEVENT
-UID:event1@example.com
-SUMMARY:Event 1
-END:VEVENT
-END:VCALENDAR
-BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Test2//EN
-BEGIN:VEVENT
-UID:event2@example.com
-SUMMARY:Event 2
-END:VEVENT
-END:VCALENDAR"""
-
-        cals = LazyCalendar.from_ical(multi_cal, multiple=True)
+        cals = LazyCalendar.from_ical(MULTI_CAL, multiple=True)
         assert len(cals) == 2
 
         # Each should have one event
