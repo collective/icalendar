@@ -21,11 +21,12 @@ if TYPE_CHECKING:
 
 
 class LazyCalendar(Calendar):
-    """Calendar with lazy subcomponent parsing for large files.
+    """A :class:`Calendar` with lazy subcomponent parsing for large files.
 
-    Parses Calendar properties and VTIMEZONE components eagerly, but defers
-    parsing of VEVENT, VTODO, VJOURNAL, VFREEBUSY, and VAVAILABILITY
-    until accessed via ``.events``, ``.todos``, ``.walk()``, etc.
+    Parses :class:`Calendar` properties and VTIMEZONE components eagerly, but
+    defers parsing of VEVENT, VTODO, VJOURNAL, VFREEBUSY, and VAVAILABILITY
+    until accessed via ``.events``, ``.todos``, ``.walk()``, or other component
+    methods.
 
     This is useful for:
 
@@ -51,16 +52,16 @@ class LazyCalendar(Calendar):
         Once accessed, components are fully parsed and cached.
         Subsequent accesses return the same parsed objects.
 
-        The ``to_ical()`` method produces correct output whether
+        The :meth:`to_ical` method produces correct output whether
         components have been parsed or not.
     """
 
-    # Components that should be parsed lazily
+    #: Components that should be parsed lazily.
     LAZY_COMPONENTS: ClassVar[frozenset[str]] = frozenset(
         {"VEVENT", "VTODO", "VJOURNAL", "VFREEBUSY", "VAVAILABILITY"}
     )
 
-    # Components that must be parsed eagerly (needed for timezone resolution)
+    #: Components that must be parsed eagerly (needed for timezone resolution).
     EAGER_COMPONENTS: ClassVar[frozenset[str]] = frozenset({"VTIMEZONE"})
 
     # Marker for raw content lines in property_items() output
@@ -75,19 +76,22 @@ class LazyCalendar(Calendar):
         self._parsed_indices: set[int] = set()
 
     @classmethod
-    def from_ical(cls, st, multiple: bool = False):
+    def from_ical(
+        cls, st: bytes | str, multiple: bool = False
+    ) -> LazyCalendar | list[LazyCalendar]:
         """Parse iCalendar data with lazy subcomponent parsing.
 
-        Calendar properties and VTIMEZONE are parsed immediately.
-        Other subcomponents (VEVENT, VTODO, etc.) are stored as raw
+        :class:`Calendar` properties and VTIMEZONE are parsed immediately.
+        Other subcomponents—such as VEVENT or VTODO—are stored as raw
         content lines and parsed on first access.
 
-        Args:
-            st: iCalendar data as bytes or string
-            multiple: If ``True``, returns list. If ``False``, returns single calendar.
+        Parameters:
+            st (bytes | str): iCalendar data as bytes or string.
+            multiple (bool): If ``True``, returns list. If ``False``, returns
+                single calendar.
 
         Returns:
-            LazyCalendar or list of LazyCalendars
+            LazyCalendar or list of LazyCalendar instances.
         """
         calendars: list[LazyCalendar] = []
         lines = Contentlines.from_ical(st)
@@ -242,8 +246,8 @@ class LazyCalendar(Calendar):
         If the component at the given index has already been parsed,
         returns the previously parsed component from subcomponents.
 
-        Args:
-            index: Index into self._raw_components
+        Parameters:
+            index: Index into self._raw_components.
 
         Returns:
             The parsed Component object.
@@ -284,7 +288,7 @@ class LazyCalendar(Calendar):
 
         Parses lazy components as needed.
 
-        Args:
+        Parameters:
             name: If provided, only return components with this name.
             select: Optional filter function.
 
@@ -299,7 +303,7 @@ class LazyCalendar(Calendar):
 
     @property
     def events(self) -> list[Event]:
-        """All event components in the calendar.
+        """All :class:`Event`\\ s in the calendar.
 
         Events are parsed on first access.
         """
@@ -308,7 +312,7 @@ class LazyCalendar(Calendar):
 
     @property
     def todos(self) -> list[Todo]:
-        """All todo components in the calendar.
+        """All :class:`Todo`\\ s in the calendar.
 
         Todos are parsed on first access.
         """
@@ -317,7 +321,7 @@ class LazyCalendar(Calendar):
 
     @property
     def journals(self) -> list[Journal]:
-        """All journal components in the calendar.
+        """All :class:`Journal`\\ s in the calendar.
 
         Journals are parsed on first access.
         """
@@ -326,7 +330,7 @@ class LazyCalendar(Calendar):
 
     @property
     def freebusy(self) -> list[FreeBusy]:
-        """All FreeBusy components in the calendar.
+        """All :class:`FreeBusy` components in the calendar.
 
         FreeBusy components are parsed on first access.
         """
@@ -335,7 +339,7 @@ class LazyCalendar(Calendar):
 
     @property
     def availabilities(self) -> list[Availability]:
-        """All Availability components in the calendar.
+        """All :class:`Availability` components in the calendar.
 
         Availability components are parsed on first access.
         """
@@ -348,7 +352,7 @@ class LazyCalendar(Calendar):
         For unparsed components, reconstructs from stored raw lines
         to ensure correct round-trip serialization.
 
-        Args:
+        Parameters:
             recursive: Include subcomponents.
             sorted: Sort property names.
 
