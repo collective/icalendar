@@ -68,6 +68,7 @@ Documentation
 - Resolved ``Cannot resolve forward reference in type annotations`` warning in documentation.
   Added ``SPHINX_APIDOC_OPTIONS`` to ``make apidoc`` command, excluding ``__all__`` items from being duplicated in the documentation, and rebuilt the API documentation source files.
   See `Issue 952 <https://github.com/collective/icalendar/issues/952>`_.
+- Document how to create and read attendee information in events. See `Issue 130 <https://github.com/collective/icalendar/issues/130>`_.
 - Improve documentation contribution guide by adding chapters for small edits, builds and checks, and a style guide. Added details for Vale usage, Diátaxis framework, narrative and API documentation, and fixing all spelling errors. See `Issue 991 <https://github.com/collective/icalendar/issues/991>`_.
 - Moved content from the README into documentation to reduce maintenance and point to the authoritative source of information.
   See `Issue 1006 <https://github.com/collective/icalendar/issues/1006>`_.
