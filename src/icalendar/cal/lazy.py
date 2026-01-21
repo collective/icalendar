@@ -37,17 +37,17 @@ class LazyCalendar(Calendar):
     Example:
         .. code-block:: py
 
-                from icalendar import LazyCalendar
+            from icalendar import LazyCalendar
 
-                # Parse a large calendar file
-                with open("large_calendar.ics", "rb") as f:
-                    cal = LazyCalendar.from_ical(f.read())
+            # Parse a large calendar file
+            with open("large_calendar.ics", "rb") as f:
+                cal = LazyCalendar.from_ical(f.read())
 
-                # Access metadata immediately (no event parsing)
-                cal["VERSION"]  # Returns vText('2.0')
+            # Access metadata immediately (no event parsing)
+            cal["VERSION"]  # Returns vText('2.0')
 
-                # Events are parsed on first access
-                len(cal.events)  # Returns 1500
+            # Events are parsed on first access
+            len(cal.events)  # Returns 1500
 
     Note:
         Once accessed, components are fully parsed and cached.
