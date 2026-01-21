@@ -34,21 +34,22 @@ class LazyCalendar(Calendar):
     - Counting events without full parsing overhead
     - Working with very large calendars (1000+ events)
 
-    Example::
+    Example:
+        .. code-block:: py
 
-        from icalendar import LazyCalendar
+                from icalendar import LazyCalendar
 
-        # Parse a large calendar file
-        with open("large_calendar.ics", "rb") as f:
-            cal = LazyCalendar.from_ical(f.read())
+                # Parse a large calendar file
+                with open("large_calendar.ics", "rb") as f:
+                    cal = LazyCalendar.from_ical(f.read())
 
-        # Access metadata immediately (no event parsing)
-        cal["VERSION"]  # Returns vText('2.0')
+                # Access metadata immediately (no event parsing)
+                cal["VERSION"]  # Returns vText('2.0')
 
-        # Events are parsed on first access
-        len(cal.events)  # Returns 1500
+                # Events are parsed on first access
+                len(cal.events)  # Returns 1500
 
-    .. note::
+    Note:
         Once accessed, components are fully parsed and cached.
         Subsequent accesses return the same parsed objects.
 
