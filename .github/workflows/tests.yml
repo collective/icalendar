@@ -17,12 +17,10 @@ jobs:
       matrix:
         config:
         # [Python version, tox env]
-        - ["3.8",   "py38"]
-        - ["3.8",   "nopytz"]
-        - ["3.9",   "py39"]
+        # see https://github.com/actions/setup-python/tree/v6/?tab=readme-ov-file#basic-usage
+        - ["3.10",   "nopytz"]  # use lowest allowed version for nopytz
         - ["3.10",  "py310"]
-        - ["pypy-3.9", "pypy3"]
-#        - ["3.10",  "docs"]  # disable as readthedocs builds it
+        - ["pypy3.10", "pypy3"]
         - ["3.11",  "py311"]
         - ["3.12",  "py312"]
         - ["3.13",  "py313"]

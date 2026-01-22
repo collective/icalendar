@@ -37,16 +37,19 @@ Minor changes
 Breaking changes
 ~~~~~~~~~~~~~~~~
 
+- Drop support for Python 3.8 and 3.9. See :issue:`977`.
 - :meth:`Component.decoded` now returns a string instead of bytes for text properties.
 
 New features
 ~~~~~~~~~~~~
 
-- ...
+- Event components now have error-tolerant property parsing. Properties with parsing errors fall back to :class:`~icalendar.prop.vBrokenProperty`, preserving the raw value and allowing access to other valid properties. Errors are recorded in ``component.errors``. Partially addresses :issue:`158`.
+- Added :class:`~icalendar.prop.AdrFields` and :class:`~icalendar.prop.NFields` named tuples for structured access to vCard ADR and N property fields. The ``fields`` attribute and ``from_ical()`` return value of :class:`~icalendar.prop.vAdr` and :class:`~icalendar.prop.vN` now return these typed named tuples, enabling access like ``adr.fields.street`` and ``n.fields.family``. Since named tuples are tuple subclasses, existing code using tuple indexing or unpacking remains compatible. Added ``name`` and ``units`` properties to :class:`~icalendar.prop.vOrg` for convenient access to the organization name and organizational units. Added ``ical_value`` property to all three classes. See :issue:`1060`.
 
 Bug fixes
 ~~~~~~~~~
 
+- Fixed import failure in Pyodide/WebAssembly environments by using lazy initialization for timezone data in the zoneinfo provider. The library can now be imported in environments without timezone data (e.g., Cloudflare Workers, PyScript, JupyterLite). See :issue:`1073`.
 - Fixed :meth:`icalendar.caselessdict.CaselessDict.__eq__` to return ``NotImplemented`` when comparing with non-dict types instead of raising ``AttributeError``. See :issue:`1016`.
 - Fixed decoding of categories. See :issue:`279`.
 - Link ``timedelta`` to :py:class:`datetime.timedelta` in the Python standard library documentation. See :issue:`951`.
@@ -65,6 +68,7 @@ Documentation
 - Resolved ``Cannot resolve forward reference in type annotations`` warning in documentation.
   Added ``SPHINX_APIDOC_OPTIONS`` to ``make apidoc`` command, excluding ``__all__`` items from being duplicated in the documentation, and rebuilt the API documentation source files.
   See :issue:`952`.
+- Document how to create and read attendee information in events. See :issue:`130`.
 - Improve documentation contribution guide by adding chapters for small edits, builds and checks, and a style guide. Added details for Vale usage, Diátaxis framework, narrative and API documentation, and fixing all spelling errors. See :issue:`991`.
 - Moved content from the README into documentation to reduce maintenance and point to the authoritative source of information.
   See :issue:`1006`.
@@ -73,7 +77,7 @@ Documentation
 - Use Google style docstrings in :mod:`~icalendar.parser_tools`.
   See :issue:`1017`.
 - Added Upgrade guide. See :issue:`997`.
-
+- Enable sphinx-issues extension. :issue:`1091`
 
 7.0.0a3 (2025-12-19)
 --------------------

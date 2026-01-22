@@ -188,6 +188,17 @@ class Component(CaselessDict):
         """Returns True, CaselessDict would return False if it had no items."""
         return True
 
+    def __getitem__(self, key):
+        """Get property value from the component dictionary."""
+        return super().__getitem__(key)
+
+    def get(self, key, default=None):
+        """Get property value with default."""
+        try:
+            return self[key]
+        except KeyError:
+            return default
+
     def is_empty(self):
         """Returns True if Component has no items or subcomponents, else False."""
         return bool(not list(self.values()) + self.subcomponents)
@@ -510,49 +521,71 @@ class Component(CaselessDict):
                     "RDATE",
                     "EXDATE",
                 )
-                try:
-                    if name.upper() == "CATEGORIES":
-                        # Special handling for CATEGORIES - need raw value
-                        # before unescaping to properly split on unescaped commas
-                        line_str = str(line)
-                        # Use rfind to get the last colon (value separator)
-                        # to handle parameters with colons like ALTREP="http://..."
-                        colon_idx = line_str.rfind(":")
-                        if colon_idx > 0:
-                            raw_value = line_str[colon_idx + 1:]
+
+                # Determine TZID for datetime properties
+                tzid = params.get("TZID") if params and name in datetime_names else None
+
+                # Handle special cases for value list preparation
+                if name.upper() == "CATEGORIES":
+                    # Special handling for CATEGORIES - need raw value
+                    # before unescaping to properly split on unescaped commas
+                    from icalendar.parser import split_on_unescaped_comma
+                    line_str = str(line)
+                    # Use rfind to get the last colon (value separator)
+                    # to handle parameters with colons like ALTREP="http://..."
+                    colon_idx = line_str.rfind(":")
+                    if colon_idx > 0:
+                        raw_value = line_str[colon_idx + 1:]
+                        # Parse categories immediately (not lazily) for both strict and tolerant components
+                        # This is because CATEGORIES needs special comma handling
+                        try:
                             category_list = split_on_unescaped_comma(raw_value)
-                            parsed_components = [factory(category_list)]
-                        else:
-                            # Fallback to normal processing if we can't find colon
-                            parsed_components = [factory(factory.from_ical(vals))]
-                    elif name == "FREEBUSY":
-                        vals = vals.split(",")
-                        if "TZID" in params:
-                            parsed_components = [
-                                factory(factory.from_ical(val, params["TZID"]))
-                                for val in vals
-                            ]
-                        else:
-                            parsed_components = [
-                                factory(factory.from_ical(val)) for val in vals
-                            ]
-                    elif name in datetime_names and "TZID" in params:
-                        parsed_components = [
-                            factory(factory.from_ical(vals, params["TZID"]))
-                        ]
-                    # Workaround broken ICS files with empty RDATE
-                    elif name == "RDATE" and vals == "":
-                        parsed_components = []
+                            vals_inst = factory(category_list)
+                            vals_inst.params = params
+                            component.add(name, vals_inst, encode=0)
+                        except ValueError as e:
+                            if not component.ignore_exceptions:
+                                raise
+                            component.errors.append((uname, str(e)))
+                        continue
                     else:
-                        parsed_components = [factory(factory.from_ical(vals))]
-                except ValueError as e:
-                    if not component.ignore_exceptions:
-                        raise
-                    component.errors.append((uname, str(e)))
+                        # Fallback to normal processing if we can't find colon
+                        vals_list = [vals]
+                elif name == "FREEBUSY":
+                    # Handle FREEBUSY comma-separated values
+                    vals_list = vals.split(",")
+                # Workaround broken ICS files with empty RDATE
+                # (not EXDATE - let it parse and fail)
+                elif name == "RDATE" and vals == "":
+                    vals_list = []
                 else:
-                    for parsed_component in parsed_components:
-                        parsed_component.params = params
-                        component.add(name, parsed_component, encode=0)
+                    vals_list = [vals]
+
+                # Parse all properties eagerly
+                for val in vals_list:
+                    try:
+                        if tzid:
+                            parsed_val = factory.from_ical(val, tzid)
+                        else:
+                            parsed_val = factory.from_ical(val)
+                        vals_inst = factory(parsed_val)
+                        vals_inst.params = params
+                        component.add(name, vals_inst, encode=0)
+                    except Exception as e:
+                        if not component.ignore_exceptions:
+                            raise
+                        # Error-tolerant mode: create vBrokenProperty
+                        from icalendar.prop import vBrokenProperty
+                        expected_type = getattr(factory, '__name__', 'unknown')
+                        broken_prop = vBrokenProperty.from_parse_error(
+                            raw_value=val,
+                            params=params,
+                            property_name=name,
+                            expected_type=expected_type,
+                            error=e,
+                        )
+                        component.errors.append((name, str(e)))
+                        component.add(name, broken_prop, encode=0)
 
         if multiple:
             return comps

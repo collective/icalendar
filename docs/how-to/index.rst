@@ -8,6 +8,7 @@ How to guides
     install
     upgrade
     usage
+    attendees
     custom-components
     jcal
     cli
