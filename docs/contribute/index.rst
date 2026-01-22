@@ -21,11 +21,7 @@ First-time contributors
 
 Contributions to icalendar from people new to icalendar are welcome.
 
-For people participating in programs to encourage first-time contributions, including
-`Hacktoberfest <https://hacktoberfest.com/>`_,
-`Good First Issue <https://goodfirstissue.dev/>`_,
-and `Up For Grabs <https://up-for-grabs.net/#/filters?tags=icalendar%2Cics%2Crfc5545>`_,
-you must comply with its terms and conditions to receive its recognition or rewards.
+For people participating in programs to encourage first-time contributions, including `Hacktoberfest <https://hacktoberfest.com/>`_ and `Up For Grabs <https://up-for-grabs.net/#/filters?names=478>`_, you must comply with its terms and conditions to receive its recognition or rewards.
 Accordingly, you may request of the maintainers in your pull request that you would like recognition for your contribution.
 
 .. seealso::
@@ -73,6 +69,15 @@ Contributors to icalendar must follow icalendar's AI policy as described in this
 Responsible AI use
 ``````````````````
 
+You may responsibly use AI as a tool to draft a pull request.
+That means you must comply with :ref:`pull-request-requirements` and follow icalendar's `Code of Conduct <https://github.com/collective/icalendar/blob/main/CODE_OF_CONDUCT.md>`_.
+It also means that you must take responsibility for the output, including reviewing and validating the output for accuracy and ensuring it resolves an issue.
+You shall be held accountable for your AI-generated content.
+
+
+AI abuse
+````````
+
 You may not abuse AI to generate a pull request that is disruptive to the icalendar community.
 Examples of such abuse include the following actions.
 
@@ -113,7 +118,6 @@ The maintainers may also take further action, including suspend, ban, or report 
 Change log entry format
 ```````````````````````
 
-
 Add your entry under the appropriate section in :file:`CHANGES.rst`.
 
 Minor changes
@@ -146,6 +150,7 @@ Set up for development
 If you would like to set up icalendar to contribute changes, see :doc:`development`.
 
 
+
 .. toctree::
     :hidden:
 
@@ -154,4 +159,3 @@ If you would like to set up icalendar to contribute changes, see :doc:`developme
     code-of-conduct
     credits
     maintenance
-

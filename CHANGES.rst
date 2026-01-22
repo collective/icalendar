@@ -78,6 +78,8 @@ Documentation
   See `Issue 1017 <https://github.com/collective/icalendar/issues/1017>`_.
 - Added Upgrade guide. See `Issue 997 <https://github.com/collective/icalendar/issues/997>`_.
 - Enable sphinx-issues extension. (:issue:`1091`)
+- Clarified guidance for first-time contributors in the contribution documentation.
+
 
 7.0.0a3 (2025-12-19)
 --------------------
