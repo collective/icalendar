@@ -61,7 +61,7 @@ Documentation
 
 - Updated 11 function docstrings in :mod:`icalendar.parser` to follow the Google Style guide, improving API documentation clarity and consistency. See :issue:`1072`.
 - Applied Google-style docstrings to :mod:`icalendar.tools` utility functions with Args, Returns, and Example sections. See :issue:`1072`.
-- Simplify contributors and add supporters in credits. See :issue:`1035`.
+- Simplify contributors and add supporters in credits. See :pr:`1035`.
 - Add a section in the change log for Documentation. See :issue:`1043`.
 - Fixed multiple ``more than one target found for cross-reference`` warnings, and stopped using ``sphinx.ext.autosectionlabel``, in documentation. See :issue:`952`.
 - Add ``funding.json`` manifest for funding information. See :issue:`1047`.
@@ -85,7 +85,7 @@ Documentation
 Minor changes
 ~~~~~~~~~~~~~
 
-- Add static ``[project.urls]`` to ``pyproject.toml`` for GitHub dependency graph compatibility. See :issue:`1035`.
+- Add static ``[project.urls]`` to ``pyproject.toml`` for GitHub dependency graph compatibility. See :pr:`1035`.
 - Created an :meth:`~cal.todo.Todo.example` method for the :class:`~cal.todo.Todo` component. See :issue:`743`.
 - Add type hints to :mod:`icalendar.caselessdict` file. See :issue:`938`.
 - For releases, added a step to update the version switcher for documentation.
@@ -296,7 +296,7 @@ Bug fixes
 ~~~~~~~~~
 
 - Fix ``Todo.end`` to return ``start`` for date-only ``DTSTART`` (not ``start + 1 day``). Events keep existing behavior. See :issue:`898`.
-- Fix ``AssertionError`` when converting ``VTIMEZONE`` components with only ``DAYLIGHT`` subcomponent (no ``STANDARD``) to pytz timezones. The code now handles cases where a timezone definition contains only DST transitions by calculating the DST offset from ``TZOFFSETFROM`` and ``TZOFFSETTO``. Test case contributed by @niccokunzmann in :issue:`379`. See :issue:`321`.
+- Fix ``AssertionError`` when converting ``VTIMEZONE`` components with only ``DAYLIGHT`` subcomponent (no ``STANDARD``) to pytz timezones. The code now handles cases where a timezone definition contains only DST transitions by calculating the DST offset from ``TZOFFSETFROM`` and ``TZOFFSETTO``. Test case contributed by @niccokunzmann in :pr:`379`. See :issue:`321`.
 - Normalize Conference parameter lists (FEATURE/LABEL/LANGUAGE) to comma-separated values. See :issue:`908`.
 - Fix read from stdin issue - See :issue:`821`.
 - Fix invalid calendar: Parsing a date with TZID results in a datetime to not loose the timezone. See :issue:`187`.
@@ -359,7 +359,7 @@ New features
 - Add compatibility to :rfc:`6868`. See :issue:`652`.
 - Add ``freebusy`` property to the ``Calendar`` to get this type of subcomponents easier.
 - Add parameters from :rfc:`5545` to properties ``ALTREP``, ``CN``, ``CUTYPE``, ``DELEGATED_FROM``, ``DELEGATED_TO``, ``DIR``, ``FBTYPE``, ``LANGUAGE``, ``MEMBER``, ``PARTSTAT``, ``RANGE``, ``RELATED``, ``ROLE``, ``RSVP``, ``SENT_BY``, ``TZID``, and ``RELTYPE``. See :issue:`798`.
-- New properties from :rfc:`7986` can occur multiple times in ``VCALENDAR``. See :issue:`808`.
+- New properties from :rfc:`7986` can occur multiple times in ``VCALENDAR``. See :pr:`808`.
 
 Bug fixes
 ~~~~~~~~~
@@ -367,7 +367,7 @@ Bug fixes
 - Fix ``STANDARD`` and ``DAYLIGHT`` components that have a date as ``DTSTART``. See :issue:`218`
 - Move import at the end of ``icalendar.parser`` into a function to mitigate import errors, see :issue:`781`.
 - ``ALTREP``, ``DELEGATED-FROM``, ``DELEGATED-TO``, ``DIR``, ``MEMBER``, and ``SENT-BY`` require double quotes. These are now always added.
-- Classify ``CATEGORIES`` as multiple in ``VEVENT``. See :issue:`808`.
+- Classify ``CATEGORIES`` as multiple in ``VEVENT``. See :pr:`808`.
 
 6.1.3 (2025-03-19)
 ------------------
@@ -408,7 +408,7 @@ Minor changes
 - Document :class:`icalendar.prop.vRecur` property. See :issue:`758`.
 - Print failure of doctest to aid debugging.
 - Improve documentation of :class:`icalendar.prop.vGeo`
-- Fix tests, improve code readability, fix typing. See :issue:`766` and :issue:`765`.
+- Fix tests, improve code readability, fix typing. See :pr:`766` and :pr:`765`.
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
