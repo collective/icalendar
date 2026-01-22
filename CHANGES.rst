@@ -59,6 +59,7 @@ Bug fixes
 Documentation
 ~~~~~~~~~~~~~
 
+- Added how-to guide for handling parsing errors with :class:`~icalendar.prop.vBrokenProperty` and the ``component.errors`` attribute. See `Issue 1085 <https://github.com/collective/icalendar/issues/1085>`_.
 - Updated 11 function docstrings in :mod:`icalendar.parser` to follow the Google Style guide, improving API documentation clarity and consistency. See `Issue #1072 <https://github.com/collective/icalendar/issues/1072>`_.
 - Applied Google-style docstrings to :mod:`icalendar.tools` utility functions with Args, Returns, and Example sections. See `Issue 1072 <https://github.com/collective/icalendar/issues/1072>`_.
 - Simplify contributors and add supporters in credits. See `pull request 1035 <https://github.com/collective/icalendar/pull/1041>`_.
