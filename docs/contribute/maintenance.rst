@@ -42,7 +42,7 @@ Maintainers need the following permissions.
     .. seealso::
 
         -   `Discussion about how to be added to OSS Fuzz <https://github.com/collective/icalendar/pull/574#issuecomment-1790554766>`_
-        -   `OSS Fuzz Integration - Issue 562 <https://github.com/collective/icalendar/issues/562>`_
+        -   :issue:`562`
     
 
 Collaborators
@@ -142,7 +142,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
         Once a tag is pushed to the repository, it must not be re-tagged or deleted.
         This creates issues for downstream repositories.
-        See `Issue 1033 <https://github.com/collective/icalendar/issues/1033>`_.
+        See :issue:`1033`.
 
 #.  Once the tag is pushed and its `CI-tests`_ are passing, maintainers will get an e-mail:
 

@@ -141,7 +141,7 @@ Example:
 
     Minor changes:
 
-    - Fix issue with timezone parsing in special cases. See `Issue XXX <link>`_.
+    - Fix issue with timezone parsing in special cases. :issue:`1050`
 
 
 Set up for development
