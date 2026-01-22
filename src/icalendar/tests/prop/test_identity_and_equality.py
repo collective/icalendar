@@ -1,9 +1,9 @@
 """Test the identity and equality between properties."""
 
 from datetime import date, datetime, time
+from zoneinfo import ZoneInfo
 
 from icalendar import vDDDTypes
-from icalendar.timezone.zoneinfo import zoneinfo
 
 try:
     import pytz
@@ -22,7 +22,7 @@ vDDDTypes_list = [
             day=22,
             hour=12,
             minute=7,
-            tzinfo=zoneinfo.ZoneInfo("Europe/London"),
+            tzinfo=ZoneInfo("Europe/London"),
         )
     ),
     vDDDTypes(datetime(year=2022, month=7, day=22, hour=12, minute=7)),

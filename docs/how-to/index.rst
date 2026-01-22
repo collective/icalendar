@@ -9,6 +9,7 @@ How to guides
     upgrade
     usage
     parse-errors
+    attendees
     custom-components
     jcal
     cli
