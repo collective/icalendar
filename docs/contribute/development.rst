@@ -104,15 +104,34 @@ The following command show how to run tox with Python 3.12:
     tox's `documentation <https://tox.wiki/en/stable/user_guide.html#cli>`_.
 
 
-Code style
-----------
+Code format
+-----------
 
-icalendar strives towards a common code style.
+icalendar strives towards a common code format.
 You can run the following command to automatically format the code.
 
 .. code-block:: shell
 
     tox -e ruff
+
+
+Code conventions
+----------------
+
+icalendar has adopted code conventions to help make its code more legible and understandable.
+
+
+Internal use only
+'''''''''''''''''
+
+There are no truly private methods in Python.
+However, icalendar follows the :pep:`8` Python style guide regarding the use of a single leading underscore character ``_`` to the object as "internal use only."
+
+"Internal use only" methods and variables are not part of icalendar's public API, and developers should not use them in their code.
+These are implementation details that may change without notice.
+
+In addition, "internal use only" objects are not displayed in the documentation.
+Their docstrings, of course, remain in the Python source code.
 
 
 Activate a tox environment
