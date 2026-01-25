@@ -21,6 +21,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
     "sphinx_autodoc_typehints",  # must be loaded after sphinx.ext.napoleon. See https://github.com/tox-dev/sphinx-autodoc-typehints/issues/15
+    "sphinx_issues",
 ]
 source_suffix = {".rst": "restructuredtext"}
 master_doc = "index"
@@ -121,6 +122,8 @@ napoleon_use_param = True
 napoleon_google_docstring = True
 napoleon_attr_annotations = True
 
+# -- sphinx-Issues configuration ----------------------------------
+issues_github_path = "collective/icalendar"
 
 # -- Intersphinx configuration ----------------------------------
 

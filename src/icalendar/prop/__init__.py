@@ -49,7 +49,7 @@ import binascii
 import re
 import uuid
 from datetime import date, datetime, time, timedelta, timezone
-from typing import Any, ClassVar, Optional, Tuple, Union
+from typing import Any, ClassVar, NamedTuple, Tuple, Union
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.enums import Enum
@@ -854,7 +854,7 @@ class vCategory:
         self.params = Parameters(params)
 
     def __iter__(self):
-        return iter(vCategory.from_ical(self.to_ical()))
+        return iter(self.cats)
 
     def to_ical(self):
         return b",".join(
@@ -865,7 +865,29 @@ class vCategory:
         )
 
     @staticmethod
-    def from_ical(ical):
+    def from_ical(ical: list[str] | str) -> list[str]:
+        """Parse a CATEGORIES value from iCalendar format.
+
+        This helper is normally called by :meth:`Component.from_ical`, which
+        already splits the CATEGORIES property into a list of unescaped
+        category strings. New code should therefore pass a list of strings.
+
+        Passing a single comma-separated string is supported only for
+        backwards compatibility with older parsing code and is considered
+        legacy behavior.
+
+        Args:
+            ical: A list of category strings (preferred, as provided by
+                :meth:`Component.from_ical`), or a single comma-separated
+                string from a legacy caller.
+
+        Returns:
+            A list of category strings.
+        """
+        if isinstance(ical, list):
+            # Already split by Component.from_ical()
+            return ical
+        # Legacy: simple comma split (no escaping handled)
         ical = to_unicode(ical)
         return ical.split(",")
 
@@ -916,6 +938,46 @@ class vCategory:
         return [str(cat) for cat in self.cats]
 
 
+class AdrFields(NamedTuple):
+    """Named fields for vCard ADR (Address) property per :rfc:`6350#section-6.3.1`.
+
+    Provides named access to the seven address components.
+    """
+
+    po_box: str
+    """Post office box."""
+    extended: str
+    """Extended address (e.g., apartment or suite number)."""
+    street: str
+    """Street address."""
+    locality: str
+    """Locality (e.g., city)."""
+    region: str
+    """Region (e.g., state or province)."""
+    postal_code: str
+    """Postal code."""
+    country: str
+    """Country name (full name)."""
+
+
+class NFields(NamedTuple):
+    """Named fields for vCard N (Name) property per :rfc:`6350#section-6.2.2`.
+
+    Provides named access to the five name components.
+    """
+
+    family: str
+    """Family names (also known as surnames)."""
+    given: str
+    """Given names."""
+    additional: str
+    """Additional names."""
+    prefix: str
+    """Honorific prefixes."""
+    suffix: str
+    """Honorific suffixes."""
+
+
 class vAdr:
     """vCard ADR (Address) structured property per :rfc:`6350#section-6.3.1`.
 
@@ -944,41 +1006,34 @@ class vAdr:
             >>> adr.to_ical()
             b';;123 Main St;Springfield;IL;62701;USA'
             >>> vAdr.from_ical(";;123 Main St;Springfield;IL;62701;USA")
-            ('', '', '123 Main St', 'Springfield', 'IL', '62701', 'USA')
+            AdrFields(po_box='', extended='', street='123 Main St', locality='Springfield', region='IL', postal_code='62701', country='USA')
     """
 
     default_value: ClassVar[str] = "TEXT"
     params: Parameters
-
-    # 7 ADR fields per RFC 6350
-    FIELDS = [
-        "po_box",
-        "extended",
-        "street",
-        "locality",
-        "region",
-        "postal_code",
-        "country",
-    ]
+    fields: AdrFields
 
     def __init__(
         self,
-        fields: tuple[str, ...] | list[str] | str,
+        fields: tuple[str, ...] | list[str] | str | AdrFields,
         /,
         params: dict[str, Any] | None = None,
     ):
         """Initialize ADR with seven fields or parse from vCard format string.
 
         Args:
-            fields: Either a tuple or list of seven strings, one per field, or a
-                    vCard format string with semicolon-separated fields
+            fields: Either an AdrFields, tuple, or list of seven strings, one per field,
+                    or a vCard format string with semicolon-separated fields
             params: Optional property parameters
         """
         if isinstance(fields, str):
             fields = self.from_ical(fields)
-        if len(fields) != 7:
-            raise ValueError(f"ADR must have exactly 7 fields, got {len(fields)}")
-        self.fields = tuple(str(f) for f in fields)
+        if isinstance(fields, AdrFields):
+            self.fields = fields
+        else:
+            if len(fields) != 7:
+                raise ValueError(f"ADR must have exactly 7 fields, got {len(fields)}")
+            self.fields = AdrFields(*(str(f) for f in fields))
         self.params = Parameters(params)
 
     def to_ical(self) -> bytes:
@@ -989,14 +1044,14 @@ class vAdr:
         return ";".join(parts).encode(DEFAULT_ENCODING)
 
     @staticmethod
-    def from_ical(ical: str | bytes) -> tuple[str, ...]:
-        """Parse vCard ADR format into a tuple of seven fields.
+    def from_ical(ical: str | bytes) -> AdrFields:
+        """Parse vCard ADR format into an AdrFields named tuple.
 
         Args:
             ical: vCard format string with semicolon-separated fields
 
         Returns:
-            Tuple of seven field values, or the empty string if the field is empty.
+            AdrFields named tuple with seven field values.
         """
         from icalendar.parser import split_on_unescaped_semicolon
 
@@ -1006,7 +1061,7 @@ class vAdr:
             raise ValueError(
                 f"ADR must have exactly 7 fields, got {len(fields)}: {ical}"
             )
-        return tuple(fields)
+        return AdrFields(*fields)
 
     def __eq__(self, other):
         """self == other"""
@@ -1015,6 +1070,11 @@ class vAdr:
     def __repr__(self):
         """String representation."""
         return f"{self.__class__.__name__}({self.fields}, params={self.params})"
+
+    @property
+    def ical_value(self) -> AdrFields:
+        """The address fields as a named tuple."""
+        return self.fields
 
     from icalendar.param import VALUE
 
@@ -1080,33 +1140,34 @@ class vN:
             >>> n.to_ical()
             b'Doe;John;M.;Dr.;Jr.\\,M.D.\\,A.C.P.'
             >>> vN.from_ical(r"Doe;John;M.;Dr.;Jr.\,M.D.\,A.C.P.")
-            ('Doe', 'John', 'M.', 'Dr.', 'Jr.,M.D.,A.C.P.')
+            NFields(family='Doe', given='John', additional='M.', prefix='Dr.', suffix='Jr.,M.D.,A.C.P.')
     """
 
     default_value: ClassVar[str] = "TEXT"
     params: Parameters
-
-    # 5 N fields per RFC 6350
-    FIELDS = ["family", "given", "additional", "prefix", "suffix"]
+    fields: NFields
 
     def __init__(
         self,
-        fields: tuple[str, ...] | list[str] | str,
+        fields: tuple[str, ...] | list[str] | str | NFields,
         /,
         params: dict[str, Any] | None = None,
     ):
         """Initialize N with five fields or parse from vCard format string.
 
         Args:
-            fields: Either a tuple or list of five strings, one per field, or a
-                    vCard format string with semicolon-separated fields
+            fields: Either an NFields, tuple, or list of five strings, one per field,
+                    or a vCard format string with semicolon-separated fields
             params: Optional property parameters
         """
         if isinstance(fields, str):
             fields = self.from_ical(fields)
-        if len(fields) != 5:
-            raise ValueError(f"N must have exactly 5 fields, got {len(fields)}")
-        self.fields = tuple(str(f) for f in fields)
+        if isinstance(fields, NFields):
+            self.fields = fields
+        else:
+            if len(fields) != 5:
+                raise ValueError(f"N must have exactly 5 fields, got {len(fields)}")
+            self.fields = NFields(*(str(f) for f in fields))
         self.params = Parameters(params)
 
     def to_ical(self) -> bytes:
@@ -1115,14 +1176,14 @@ class vN:
         return ";".join(parts).encode(DEFAULT_ENCODING)
 
     @staticmethod
-    def from_ical(ical: str | bytes) -> tuple[str, ...]:
-        """Parse vCard N format into a tuple of five fields.
+    def from_ical(ical: str | bytes) -> NFields:
+        """Parse vCard N format into an NFields named tuple.
 
         Args:
             ical: vCard format string with semicolon-separated fields
 
         Returns:
-            Tuple of five field values, or the empty string if the field is empty
+            NFields named tuple with five field values.
         """
         from icalendar.parser import split_on_unescaped_semicolon
 
@@ -1130,7 +1191,7 @@ class vN:
         fields = split_on_unescaped_semicolon(ical)
         if len(fields) != 5:
             raise ValueError(f"N must have exactly 5 fields, got {len(fields)}: {ical}")
-        return tuple(fields)
+        return NFields(*fields)
 
     def __eq__(self, other):
         """self == other"""
@@ -1139,6 +1200,11 @@ class vN:
     def __repr__(self):
         """String representation."""
         return f"{self.__class__.__name__}({self.fields}, params={self.params})"
+
+    @property
+    def ical_value(self) -> NFields:
+        """The name fields as a named tuple."""
+        return self.fields
 
     from icalendar.param import VALUE
 
@@ -1214,6 +1280,7 @@ class vOrg:
 
     default_value: ClassVar[str] = "TEXT"
     params: Parameters
+    fields: tuple[str, ...]
 
     def __init__(
         self,
@@ -1265,6 +1332,21 @@ class vOrg:
     def __repr__(self):
         """String representation."""
         return f"{self.__class__.__name__}({self.fields}, params={self.params})"
+
+    @property
+    def name(self) -> str:
+        """The organization name (first field)."""
+        return self.fields[0]
+
+    @property
+    def units(self) -> tuple[str, ...]:
+        """The organizational unit names (remaining fields after the name)."""
+        return self.fields[1:]
+
+    @property
+    def ical_value(self) -> tuple[str, ...]:
+        """The organization fields as a tuple."""
+        return self.fields
 
     from icalendar.param import VALUE
 
@@ -3524,6 +3606,70 @@ class vUnknown(vText):
     from icalendar.param import VALUE
 
 
+class vBrokenProperty(vText):
+    """Property that failed to parse, preserving raw value as text.
+
+    Represents property values that failed to parse with their expected
+    type. The raw iCalendar string is preserved for round-trip serialization.
+    """
+
+    default_value: ClassVar[str] = "TEXT"
+    __slots__ = ("expected_type", "parse_error", "property_name")
+
+    def __new__(
+        cls,
+        value,
+        encoding=DEFAULT_ENCODING,
+        /,
+        params: dict[str, Any] | None = None,
+        expected_type: str | None = None,
+        property_name: str | None = None,
+        parse_error: str | None = None,
+    ):
+        self = super().__new__(cls, value, encoding, params=params)
+        object.__setattr__(self, "expected_type", expected_type)
+        object.__setattr__(self, "property_name", property_name)
+        object.__setattr__(self, "parse_error", parse_error)
+        return self
+
+    def __repr__(self) -> str:
+        return (
+            f"vBrokenProperty({str(self)!r}, "
+            f"expected_type={self.expected_type!r}, "
+            f"property_name={self.property_name!r})"
+        )
+
+    @classmethod
+    def from_parse_error(
+        cls,
+        raw_value: str,
+        params: Parameters,
+        property_name: str,
+        expected_type: str,
+        error: Exception,
+    ):
+        """Create vBrokenProperty from parse failure."""
+        return cls(
+            raw_value,
+            params=params,
+            expected_type=expected_type,
+            property_name=property_name,
+            parse_error=str(error),
+        )
+
+    @classmethod
+    def examples(cls) -> list[vBrokenProperty]:
+        """Examples of vBrokenProperty."""
+        return [
+            cls(
+                "INVALID-DATE",
+                expected_type="date-time",
+                property_name="DTSTART",
+                parse_error="Invalid date format",
+            )
+        ]
+
+
 class TypesFactory(CaselessDict):
     """All Value types defined in RFC 5545 are registered in this factory
     class.
@@ -3744,6 +3890,7 @@ class TypesFactory(CaselessDict):
 VPROPERTY: TypeAlias = Union[
     vAdr,
     vBoolean,
+    vBrokenProperty,
     vCalAddress,
     vCategory,
     vDDDLists,
@@ -3777,6 +3924,8 @@ __all__ = [
     "DURATION_REGEX",
     "VPROPERTY",
     "WEEKDAY_RULE",
+    "AdrFields",
+    "NFields",
     "TimeBase",
     "TypesFactory",
     "tzid_from_dt",
@@ -3784,6 +3933,7 @@ __all__ = [
     "vAdr",
     "vBinary",
     "vBoolean",
+    "vBrokenProperty",
     "vCalAddress",
     "vCategory",
     "vDDDLists",

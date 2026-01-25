@@ -37,24 +37,31 @@ Minor changes
 Breaking changes
 ~~~~~~~~~~~~~~~~
 
+- Drop support for Python 3.8 and 3.9. See `Issue 977 <https://github.com/collective/icalendar/issues/977>`_.
 - :meth:`Component.decoded` now returns a string instead of bytes for text properties.
 
 New features
 ~~~~~~~~~~~~
 
-- ...
+- Event components now have error-tolerant property parsing. Properties with parsing errors fall back to :class:`~icalendar.prop.vBrokenProperty`, preserving the raw value and allowing access to other valid properties. Errors are recorded in ``component.errors``. Partially addresses `#158 <https://github.com/collective/icalendar/issues/158>`_.
+- Added :class:`~icalendar.prop.AdrFields` and :class:`~icalendar.prop.NFields` named tuples for structured access to vCard ADR and N property fields. The ``fields`` attribute and ``from_ical()`` return value of :class:`~icalendar.prop.vAdr` and :class:`~icalendar.prop.vN` now return these typed named tuples, enabling access like ``adr.fields.street`` and ``n.fields.family``. Since named tuples are tuple subclasses, existing code using tuple indexing or unpacking remains compatible. Added ``name`` and ``units`` properties to :class:`~icalendar.prop.vOrg` for convenient access to the organization name and organizational units. Added ``ical_value`` property to all three classes. See `Issue #1060 <https://github.com/collective/icalendar/issues/1060>`_.
 
 Bug fixes
 ~~~~~~~~~
 
+- Fixed import failure in Pyodide/WebAssembly environments by using lazy initialization for timezone data in the zoneinfo provider. The library can now be imported in environments without timezone data (e.g., Cloudflare Workers, PyScript, JupyterLite). See `Issue #1073 <https://github.com/collective/icalendar/issues/1073>`_.
 - Fixed :meth:`icalendar.caselessdict.CaselessDict.__eq__` to return ``NotImplemented`` when comparing with non-dict types instead of raising ``AttributeError``. See `Issue #1016 <https://github.com/collective/icalendar/issues/1016>`_.
 - Fixed decoding of categories. See `Issue 279 <https://github.com/collective/icalendar/issues/279>`_.
 - Link ``timedelta`` to :py:class:`datetime.timedelta` in the Python standard library documentation. See `Issue 951 <https://github.com/collective/icalendar/issues/951>`_.
+- Fix round-trip parsing of :class:`~icalendar.prop.vCategory` (CATEGORIES property) when category values contain commas. Categories like ``'Meeting, John'`` now correctly survive round trips between :meth:`Component.to_ical <icalendar.cal.component.Component.to_ical>` and :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>` instead of being split into multiple categories. Added :func:`~icalendar.parser.split_on_unescaped_comma` helper function. See `Issue #127 <https://github.com/collective/icalendar/issues/127>`_.
 - Fixed semicolon escaping in vCard structured properties (ADR, N, ORG). Semicolons are now correctly treated as field separators per :rfc:`6350`, not escaped as in iCalendar TEXT values. Added :func:`~icalendar.parser.split_on_unescaped_semicolon` helper function and :class:`~icalendar.prop.vAdr`, :class:`~icalendar.prop.vN`, :class:`~icalendar.prop.vOrg` property types. See `Issue #137 <https://github.com/collective/icalendar/issues/137>`_.
 
 Documentation
 ~~~~~~~~~~~~~
 
+- Added how-to guide for handling parsing errors with :class:`~icalendar.prop.vBrokenProperty` and the ``component.errors`` attribute. See `Issue 1085 <https://github.com/collective/icalendar/issues/1085>`_.
+- Updated 11 function docstrings in :mod:`icalendar.parser` to follow the Google Style guide, improving API documentation clarity and consistency. See `Issue #1072 <https://github.com/collective/icalendar/issues/1072>`_.
+- Applied Google-style docstrings to :mod:`icalendar.tools` utility functions with Args, Returns, and Example sections. See `Issue 1072 <https://github.com/collective/icalendar/issues/1072>`_.
 - Simplify contributors and add supporters in credits. See `pull request 1035 <https://github.com/collective/icalendar/pull/1041>`_.
 - Add a section in the change log for Documentation. See `Issue 1043 <https://github.com/collective/icalendar/issues/1043>`_.
 - Fixed multiple ``more than one target found for cross-reference`` warnings, and stopped using ``sphinx.ext.autosectionlabel``, in documentation. See `Issue 952 <https://github.com/collective/icalendar/issues/952>`_.
@@ -62,6 +69,7 @@ Documentation
 - Resolved ``Cannot resolve forward reference in type annotations`` warning in documentation.
   Added ``SPHINX_APIDOC_OPTIONS`` to ``make apidoc`` command, excluding ``__all__`` items from being duplicated in the documentation, and rebuilt the API documentation source files.
   See `Issue 952 <https://github.com/collective/icalendar/issues/952>`_.
+- Document how to create and read attendee information in events. See `Issue 130 <https://github.com/collective/icalendar/issues/130>`_.
 - Improve documentation contribution guide by adding chapters for small edits, builds and checks, and a style guide. Added details for Vale usage, Diátaxis framework, narrative and API documentation, and fixing all spelling errors. See `Issue 991 <https://github.com/collective/icalendar/issues/991>`_.
 - Moved content from the README into documentation to reduce maintenance and point to the authoritative source of information.
   See `Issue 1006 <https://github.com/collective/icalendar/issues/1006>`_.
@@ -70,7 +78,7 @@ Documentation
 - Use Google style docstrings in :mod:`~icalendar.parser_tools`.
   See `Issue 1017 <https://github.com/collective/icalendar/issues/1017>`_.
 - Added Upgrade guide. See `Issue 997 <https://github.com/collective/icalendar/issues/997>`_.
-
+- Enable sphinx-issues extension. (:issue:`1091`)
 
 7.0.0a3 (2025-12-19)
 --------------------
