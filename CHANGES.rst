@@ -49,6 +49,7 @@ New features
 Bug fixes
 ~~~~~~~~~
 
+- Fixed :meth:`Calendar.new <icalendar.cal.calendar.Calendar.new>` to automatically generate a UID when not provided, matching the documented behavior. Previously, the documentation stated that ``uid`` would be set to a new :func:`uuid.uuid4` if ``None``, but the implementation did not generate it. See :issue:`1066`.
 - Fixed import failure in Pyodide/WebAssembly environments by using lazy initialization for timezone data in the zoneinfo provider. The library can now be imported in environments without timezone data (e.g., Cloudflare Workers, PyScript, JupyterLite). See :issue:`1073`.
 - Fixed :meth:`icalendar.caselessdict.CaselessDict.__eq__` to return ``NotImplemented`` when comparing with non-dict types instead of raising ``AttributeError``. See :issue:`1016`.
 - Fixed decoding of categories. See :issue:`279`.
@@ -59,6 +60,7 @@ Bug fixes
 Documentation
 ~~~~~~~~~~~~~
 
+- Added how-to guide for handling parsing errors with :class:`~icalendar.prop.vBrokenProperty` and the ``component.errors`` attribute. See :issue:`1085`.
 - Updated 11 function docstrings in :mod:`icalendar.parser` to follow the Google Style guide, improving API documentation clarity and consistency. See :issue:`1072`.
 - Applied Google-style docstrings to :mod:`icalendar.tools` utility functions with Args, Returns, and Example sections. See :issue:`1072`.
 - Simplify contributors and add supporters in credits. See :pr:`1035`.
