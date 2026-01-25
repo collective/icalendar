@@ -76,7 +76,7 @@ dependencies = [
     "python-dateutil",
     # tzdata: IANA timezone database fallback for zoneinfo (required on Windows,
     # provides current timezone data on all platforms)
-    "tzdata>=2025.3",
+    "tzdata",
 ]
 
 # Static URLs for GitHub dependency graph compatibility
