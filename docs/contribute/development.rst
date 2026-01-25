@@ -15,9 +15,9 @@ You'll pull code from the upstream icalendar repository, push your work from you
 
 .. card::
 
-    .. image:: /_static/contributing/development-icalendar-git-workflow.svg
+    .. image:: ../_static/contributing/development-icalendar-git-workflow.svg
         :alt: icalendar git workflow
-        :target: /_static/contributing/development-icalendar-git-workflow.svg
+        :target: ../_static/contributing/development-icalendar-git-workflow.svg
 
     +++
     *icalendar git workflow*
