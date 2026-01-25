@@ -104,7 +104,7 @@ test = [
     "hypothesis",
     "mypy>=1.0",
     "pytest",
-    "pytz>=2025.2",
+    "pytz",
     "types-python-dateutil",
     # typing.TypeIs was added in Python 3.13
     "typing-extensions~=4.10; python_version < '3.13'",
