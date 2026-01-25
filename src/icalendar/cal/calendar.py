@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import uuid
 from datetime import timedelta
 from typing import TYPE_CHECKING, Sequence
 
@@ -609,7 +610,7 @@ Description:
         calendar.method = method
         calendar.calscale = calscale
         calendar.categories = categories
-        calendar.uid = uid
+        calendar.uid = uid if uid is not None else uuid.uuid4()
         calendar.url = url
         calendar.refresh_interval = refresh_interval
         calendar.source = source
