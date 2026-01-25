@@ -36,7 +36,22 @@ Parent = Union[Event, Todo]
 
 
 class AlarmTime:
-    """An alarm time with all the information."""
+    """Represent a computed alarm occurrence with its timing and state.
+
+    An AlarmTime instance combines an alarm component with its resolved
+    trigger time and additional state information such as acknowledgment
+    and snoozing.
+
+    Attributes:
+        alarm (Alarm): The underlying VALARM component.
+        trigger (datetime): The computed trigger time.
+        acknowledged_until (datetime | None): Time in UTC until which the
+            alarm has been acknowledged, if any.
+        snoozed_until (datetime | None): Time in UTC until which the alarm
+            is snoozed, if any.
+        parent (Event | Todo | None): The parent calendar component that
+            contains this alarm.
+    """
 
     def __init__(
         self,
@@ -46,34 +61,12 @@ class AlarmTime:
         snoozed_until: Optional[datetime] = None,
         parent: Optional[Parent] = None,
     ):
-        """Create a new AlarmTime.
-
-        alarm
-            the Alarm component
-
-        trigger
-            a date or datetime at which to trigger the alarm
-
-        acknowledged_until
-            an optional datetime in UTC until when all alarms
-            have been acknowledged
-
-        snoozed_until
-            an optional datetime in UTC until which all alarms of
-            the same parent are snoozed
-
-        parent
-            the optional parent component the alarm refers to
-
-        local_tzinfo
-            the local timezone that events without tzinfo should have
-        """
         self._alarm = alarm
         self._parent = parent
         self._trigger = trigger
         self._last_ack = acknowledged_until
         self._snooze_until = snoozed_until
-
+        
     @property
     def acknowledged(self) -> Optional[datetime]:
         """The time in UTC at which this alarm was last acknowledged.
