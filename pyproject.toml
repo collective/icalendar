@@ -105,7 +105,6 @@ test = [
     "hypothesis",
     "mypy>=1.0,<1.19.0",
     "pytest",
-    "pytz>=2025.2",
     "types-python-dateutil",
     "types-pytz",
     # typing.TypeIs was added in Python 3.13
@@ -114,7 +113,6 @@ test = [
 
 docs = [
     "pydata-sphinx-theme>=0.14.4",
-    "pytz>=2025.2",
     "sphinx>=7",
     "sphinx-autobuild>=2021.3.14",
     "sphinx-autodoc-typehints",
