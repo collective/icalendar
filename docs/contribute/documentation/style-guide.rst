@@ -68,7 +68,7 @@ Sphinx and its extensions enhance core reStructuredText with additional features
 -   user interface enhancements, including tabular interfaces, cards, and buttons through `sphinx_design <https://sphinx-design.readthedocs.io/en/latest/index.html>`_
 -   redirects for moved files through `sphinx_reredirects <https://documatt.com/sphinx-reredirects/usage/>`_
 -   404 not found page through `notfound.extension <https://sphinx-notfound-page.readthedocs.io/en/latest/autoapi/notfound/extension/index.html>`_
--   automatic linking to GitHub issues and pull requests through `sphinx-issues <https://pypi.org/project/sphinx-issues/>`_
+-   automatic linking to GitHub issues and pull requests through `sphinx-issues <https://github.com/sloria/sphinx-issues>`_
 
 For configuration of these features, see :ref:`configure-a-package`.
 
@@ -91,7 +91,7 @@ In icalendar's documentation, the most frequently used roles are the following.
 -   :rst:role:`ref` to link to an arbitrary label
 -   :rst:role:`term` to link to a glossary term
 -   :rst:role:`rfc` to link to an RFC
--   ``issue`` or ``pr`` to link to a GitHub issue or pull request, provided by `sphinx-issues <https://github.com/sloria/sphinx-issues>`_
+-   ``issue`` or ``pr`` to link to a GitHub issue or pull request, provided by `sphinx-issues <https://github.com/sloria/sphinx-issues>`__
 
 When referencing a specific section in an RFC, copy the anchor name from the URL, that is, the part of the URL including and after the pound sign ``#``, and use the following syntax.
 
