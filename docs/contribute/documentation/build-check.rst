@@ -255,8 +255,8 @@ This happens automatically with every build of the HTML documentation.
 
 .. seealso::
 
-    - :doc:`sphinx:man/sphinx-apidoc`
-    - :doc:`sphinx:man/sphinx-autodoc`
+    - :mod:`sphinx:sphinx.ext.apidoc`
+    - :mod:`sphinx:sphinx.ext.autodoc`
 
 
 Purge builds
