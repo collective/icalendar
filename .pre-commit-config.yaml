@@ -9,7 +9,7 @@ repos:
     hooks:
       # Run the linter.
       - id: ruff-check
-        args: [--config, "pyproject.toml"]
+        args: [--config, "pyproject.toml", --fix]
       # Run the formatter.
       - id: ruff-format
         args: [--config, "pyproject.toml"]

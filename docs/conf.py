@@ -115,6 +115,7 @@ html_js_files = [
     ("js/custom-icons.js", {"defer": "defer"}),
 ]
 pygments_style = "sphinx"
+smartquotes = False
 
 
 # -- Napolean configuration ----------------------------------
@@ -182,7 +183,7 @@ redirects = {
     "maintenance": "contribute/maintenance.html",
     "security": "https://github.com/collective/icalendar/blob/main/SECURITY.md",
     "usage": "how-to/usage.html",
-    }
+}
 
 man_pages = [("index", "icalendar", "icalendar Documentation", ["Plone Foundation"], 1)]
 
