@@ -29,7 +29,7 @@ class Image:
         where the URI in the parameter value can be "launched" by a click
         on the image in the calendar user agent.
 
-    Arguments:
+    Parameters:
         uri: The URI of the image.
         b64data: The data of the image, base64 encoded.
         fmttype: The format type, e.g. ``"image/png"``.

@@ -97,7 +97,7 @@ class Component(CaselessDict):
     def get_component_class(cls, name: str) -> type[Component]:
         """Return a component with this name.
 
-        Arguments:
+        Parameters:
             name: Name of the component, i.e. ``VCALENDAR``
         """
         if cls._components_factory is None:
@@ -148,7 +148,7 @@ class Component(CaselessDict):
     ) -> str | None:
         """Infer the ``VALUE`` parameter from a Python type.
 
-        Args:
+        Parameters:
             value: Python native type, one of :py:class:`date`, :py:mod:`datetime`,
                 :py:class:`timedelta`, :py:mod:`time`, :py:class:`tuple`,
                 or :py:class:`list`.
@@ -441,7 +441,7 @@ class Component(CaselessDict):
 
         Handles standard and custom components (``X-*``, IANA-registered).
 
-        Args:
+        Parameters:
             st: iCalendar data as bytes or string
             multiple: If ``True``, returns list. If ``False``, returns single component.
 
@@ -793,7 +793,7 @@ class Component(CaselessDict):
     ) -> Component:
         """Create a new component.
 
-        Arguments:
+        Parameters:
             comments: The :attr:`comments` of the component.
             concepts: The :attr:`concepts` of the component.
             created: The :attr:`created` of the component.
@@ -866,7 +866,7 @@ class Component(CaselessDict):
     def from_jcal(cls, jcal: str | list) -> Component:
         """Create a component from a jCal list.
 
-        Args:
+        Parameters:
             jcal: jCal list or JSON string according to :rfc:`7265`.
 
         Raises:
