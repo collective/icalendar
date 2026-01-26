@@ -33,6 +33,7 @@ Minor changes
 - Reorganized custom component tests into a dedicated :file:`test_custom_components.py` file with expanded test coverage for :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`, :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>`, and :class:`~icalendar.cal.component_factory.ComponentFactory` usage. See :issue:`433`.
 - The ``typing-extensions`` dependency on Python < 3.13 is now optional, part of the ``test`` extra.
 - The :func:`icalendar.tools.is_pytz_dt` return value is now hinted as ``TypeGuard[datetime]``, not ``TypeIs[datetime]``, since returning ``False`` should not allow narrowing it as non-datetime.
+- Regroup dependencies in, and remove obsolete ones, from :file:`pyproject.toml`. :issue:`906`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
@@ -80,6 +81,8 @@ Documentation
   See :issue:`1017`.
 - Added Upgrade guide. See :issue:`997`.
 - Enable sphinx-issues extension. :issue:`1091`
+- Added documentation of how to set up a development environment with git. :issue:`906`
+
 
 7.0.0a3 (2025-12-19)
 --------------------
