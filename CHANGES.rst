@@ -63,7 +63,7 @@ Documentation
 - Added how-to guide for handling parsing errors with :class:`~icalendar.prop.vBrokenProperty` and the ``component.errors`` attribute. See :issue:`1085`.
 - Updated 11 function docstrings in :mod:`icalendar.parser` to follow the Google Style guide, improving API documentation clarity and consistency. See :issue:`1072`.
 - Applied Google-style docstrings to :mod:`icalendar.tools` utility functions with Args, Returns, and Example sections. See :issue:`1072`.
-- Simplify contributors and add supporters in credits. See :pr:`1035`.
+- Simplify contributors and add supporters in credits. See :issue:`1035`.
 - Add a section in the change log for Documentation. See :issue:`1043`.
 - Fixed multiple ``more than one target found for cross-reference`` warnings, and stopped using ``sphinx.ext.autosectionlabel``, in documentation. See :issue:`952`.
 - Add ``funding.json`` manifest for funding information. See :issue:`1047`.
@@ -243,7 +243,7 @@ Breaking changes
 New features
 ~~~~~~~~~~~~
 
-- Add ``new()`` to ``icalendar.Calendar`` to set required attributes. See :issue:`569`.
+- Add ``new()`` to ``icalendar.Calendar`` to set required attributes. See :pr:`569`.
 - Add ``new()`` to ``Alarm``, ``Event``, ``Todo``, ``FreeBusy``, ``Component``, and ``Journal`` components. See :issue:`843`.
 - Add ``value`` to ``Parameters`` to access the ``VALUE`` parameter.
 - Add ``Availability`` and ``Available`` components from :rfc:`7953`. See :issue:`654` and :issue:`864`.
@@ -348,7 +348,7 @@ Minor changes
 - Update project metadata to use License-Expression.
 - Use ``tzp.localize(dt, None)`` to remove the timezone from a datetime.
 - Remove the HTML documentation when building with ``tox`` to force rebuild.
-- Switch to PyData Sphinx Theme for documentation. See :issue:`803`.
+- Switch to PyData Sphinx Theme for documentation. See :pr:`803`.
 
 New features
 ~~~~~~~~~~~~
