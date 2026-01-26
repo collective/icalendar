@@ -91,7 +91,7 @@ class Calendar(Component):
         Wraps :meth:`Component.from_ical() <icalendar.cal.component.Component.from_ical>` with
         timezone forward-reference resolution and VTIMEZONE caching.
 
-        Args:
+        Parameters:
             st: iCalendar data as bytes or string
             multiple: If ``True``, returns list. If ``False``, returns single calendar.
 
@@ -555,7 +555,7 @@ Description:
 
         This creates a new Calendar in accordance with :rfc:`5545` and :rfc:`7986`.
 
-        Arguments:
+        Parameters:
             calscale: The :attr:`calscale` of the calendar.
             categories: The :attr:`categories` of the calendar.
             color: The :attr:`color` of the calendar.
