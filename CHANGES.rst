@@ -80,6 +80,8 @@ Documentation
   See :issue:`1017`.
 - Added Upgrade guide. See :issue:`997`.
 - Enable sphinx-issues extension. :issue:`1091`
+- Documented ``__init__`` and ``__new__`` methods. :issue:`1079`
+
 
 7.0.0a3 (2025-12-19)
 --------------------

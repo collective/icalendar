@@ -117,6 +117,16 @@ html_js_files = [
 pygments_style = "sphinx"
 
 
+# -- Options autodoc output -------------------------------------------------
+autodoc_default_options = {
+    "ignore-module-all": True,
+    "members": True,
+    "show-inheritance": True,
+    "special-members": "__init__,__new__",
+    "undoc-members": True,
+}
+
+
 # -- Napolean configuration ----------------------------------
 napoleon_use_param = True
 napoleon_google_docstring = True
@@ -182,7 +192,7 @@ redirects = {
     "maintenance": "contribute/maintenance.html",
     "security": "https://github.com/collective/icalendar/blob/main/SECURITY.md",
     "usage": "how-to/usage.html",
-    }
+}
 
 man_pages = [("index", "icalendar", "icalendar Documentation", ["Plone Foundation"], 1)]
 
