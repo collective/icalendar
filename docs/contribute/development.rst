@@ -75,7 +75,7 @@ That command installs a supported Python, creates a Python virtual environment, 
 
 When you commit code to icalendar with ``git commit``, pre-commit runs the following code quality checks and reformats code automatically for you.
 
-`debug-statements <https://github.com/pre-commit/pre-commit-hooks?tab=readme-ov-file#debug-statements>`_
+`debug-statements <https://github.com/pre-commit/pre-commit-hooks#debug-statements>`_
     Checks for debugger imports and Python 3.7+ ``breakpoint()`` calls in Python source code.
 `ruff check --fix <https://docs.astral.sh/ruff/linter/#ruff-check>`_
     Runs the Ruff linter on Python files and fixes issues according to the configuration in :file:`pyproject.toml`.
