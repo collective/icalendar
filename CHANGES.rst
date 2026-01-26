@@ -80,7 +80,7 @@ Documentation
   See :issue:`1017`.
 - Added Upgrade guide. See :issue:`997`.
 - Enable sphinx-issues extension. :issue:`1091`
-- Document how to install and use pre-commit. :issue:`996`
+- Documented how to install and use pre-commit. :issue:`996`
 
 7.0.0a3 (2025-12-19)
 --------------------
