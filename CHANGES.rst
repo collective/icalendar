@@ -87,7 +87,7 @@ Documentation
 Minor changes
 ~~~~~~~~~~~~~
 
-- Add static ``[project.urls]`` to ``pyproject.toml`` for GitHub dependency graph compatibility. See :pr:`1035`.
+- Add static ``[project.urls]`` to ``pyproject.toml`` for GitHub dependency graph compatibility. See :issue:`1035`.
 - Created an :meth:`~cal.todo.Todo.example` method for the :class:`~cal.todo.Todo` component. See :issue:`743`.
 - Add type hints to :mod:`icalendar.caselessdict` file. See :issue:`938`.
 - For releases, added a step to update the version switcher for documentation.
