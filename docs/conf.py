@@ -117,7 +117,29 @@ html_js_files = [
 pygments_style = "sphinx"
 
 
+# -- Options apidoc output -------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/extensions/apidoc.html#
+apidoc_modules = [
+    {
+        "path": "../src/icalendar",
+        "destination": "reference/api",
+        "exclude_patterns": [
+            "**/tests*",
+            "**/timezone/equivalent_timezone_ids_result*",
+        ],
+        "separate_modules": True,
+        "automodule_options": {
+            "ignore-module-all",
+            "members",
+            "show-inheritance",
+            "undoc-members",
+        },
+    }
+]
+
+
 # -- Options autodoc output -------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html
 autodoc_default_options = {
     "ignore-module-all": True,
     "members": True,

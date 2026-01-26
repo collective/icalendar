@@ -248,19 +248,15 @@ This is a shortcut that calls :program:`pytest` to run on a single test file.
 Build API source files
 ''''''''''''''''''''''
 
-``apidoc`` generates source documentation files from which Sphinx will render the API documentation.
-This command should be used when either:
+Beginning with Sphinx 8.2.0, the extension ``sphinx.ext.apidoc`` generates source documentation files from which the Sphinx extension ``sphinx.ext.autodoc`` will render the API documentation.
+See the file :file:`docs/conf.py` for both of their configuration options.
 
-- adding a new module, that is, a Python file in the :file:`src/icalendar` directory
-- changing the options of source reStructuredText files to build API documentation
-
-.. code-block:: shell
-
-    make apidoc
+This happens automatically with every build of the HTML documentation.
 
 .. seealso::
 
-    :doc:`sphinx:man/sphinx-apidoc`
+    - :doc:`sphinx:man/sphinx-apidoc`
+    - :doc:`sphinx:man/sphinx-autodoc`
 
 
 Purge builds

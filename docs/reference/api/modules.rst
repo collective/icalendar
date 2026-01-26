@@ -1,5 +1,5 @@
-src
-===
+icalendar
+=========
 
 .. toctree::
    :maxdepth: 4

@@ -9,7 +9,6 @@ PAPER           ?=
 # Internal variables.
 SPHINXBUILD     = "$(realpath .venv/bin/sphinx-build)"
 SPHINXAUTOBUILD = "$(realpath .venv/bin/sphinx-autobuild)"
-SPHINXAPIDOC    = "$(realpath .venv/bin/sphinx-apidoc)"
 DOCS_DIR        = ./docs/
 BUILDDIR        = ../_build
 PAPEROPT_a4     = -D latex_paper_size=a4
@@ -127,15 +126,6 @@ test: clean linkcheckbroken  ## Clean docs build, then run vale and linkcheckbro
 
 
 # development
-.PHONY: apidoc
-apidoc: .venv  ## Generate API documentation source files
-	export SPHINX_APIDOC_OPTIONS="members,show-inheritance,undoc-members,ignore-module-all" && \
-	cd $(DOCS_DIR) && $(SPHINXAPIDOC) \
- 		-f -M -e --remove-old \
- 		-o reference/api ../src \
- 		../src/icalendar/tests \
- 		../src/icalendar/timezone/equivalent_timezone_ids_result.py
-
 .PHONY: all
 all: clean linkcheck html  ## Clean docs build, then run linkcheck, and build html
 #all: clean vale linkcheck html  ## Clean docs build, then run vale and linkcheck, and build html

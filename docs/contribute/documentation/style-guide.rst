@@ -68,6 +68,7 @@ Sphinx and its extensions enhance core reStructuredText with additional features
 -   user interface enhancements, including tabular interfaces, cards, and buttons through `sphinx_design <https://sphinx-design.readthedocs.io/en/latest/index.html>`_
 -   redirects for moved files through `sphinx_reredirects <https://documatt.com/sphinx-reredirects/usage/>`_
 -   404 not found page through `notfound.extension <https://sphinx-notfound-page.readthedocs.io/en/latest/autoapi/notfound/extension/index.html>`_
+-   automatic linking to GitHub issues and pull requests through `sphinx-issues <https://pypi.org/project/sphinx-issues/>`_
 
 For configuration of these features, see :ref:`configure-a-package`.
 
