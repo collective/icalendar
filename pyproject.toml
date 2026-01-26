@@ -237,6 +237,10 @@ filterwarnings = [
 ]
 
 [dependency-groups]
+dev = [
+  {include-group = "test"},
+  {include-group = "docs"}
+]
 docs = [
     "pydata-sphinx-theme>=0.14.4",
     "pytz>=2025.2",
@@ -249,5 +253,8 @@ docs = [
     "vale>=3.12.0",
     "sphinx-autodoc-typehints",
     "sphinx-issues",
+]
+test = [
+    "pre-commit>=4.5.1",
 ]
 
