@@ -1,13 +1,15 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: debug-statements
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.9
+    rev: v0.14.14
     hooks:
-      - id: ruff
-        args: [--config, "pyproject.toml", --fix]
+      # Run the linter.
+      - id: ruff-check
+        args: [--config, "pyproject.toml"]
+      # Run the formatter.
       - id: ruff-format
         args: [--config, "pyproject.toml"]

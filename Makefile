@@ -136,6 +136,11 @@ apidoc: .venv  ## Generate API documentation source files
  		../src/icalendar/tests \
  		../src/icalendar/timezone/equivalent_timezone_ids_result.py
 
+.PHONY: dev
+dev: .venv  ## Install required Python, create Python virtual environment, install package and development requirements
+	@uv sync --group dev
+	@pre-commit install
+
 .PHONY: all
 all: clean linkcheck html  ## Clean docs build, then run linkcheck, and build html
 #all: clean vale linkcheck html  ## Clean docs build, then run vale and linkcheck, and build html
