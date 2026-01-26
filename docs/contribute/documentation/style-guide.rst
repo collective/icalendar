@@ -90,6 +90,7 @@ In icalendar's documentation, the most frequently used roles are the following.
 -   :rst:role:`ref` to link to an arbitrary label
 -   :rst:role:`term` to link to a glossary term
 -   :rst:role:`rfc` to link to an RFC
+-   ``issue`` or ``pr`` to link to a GitHub issue or pull request, provided by `sphinx-issues <https://github.com/sloria/sphinx-issues>`_
 
 When referencing a specific section in an RFC, copy the anchor name from the URL, that is, the part of the URL including and after the pound sign ``#``, and use the following syntax.
 
@@ -107,9 +108,33 @@ Which renders as shown.
 
 :rfc:`6350#section-6.2.2`
 
+When referencing a GitHub issue, use the following syntax.
+
+.. code-block:: rst
+
+    :issue:`1050`
+
+Which renders as a hyperlink to the issue on GitHub.
+
+:issue:`1050`
+
+Similarly, for a pull request, the syntax would be the following.
+
+.. code-block:: rst
+
+    :pr:`808`
+
+Which renders as a hyperlink to the pull request on GitHub.
+
+:pr:`808`
+
 .. seealso::
 
     :doc:`sphinx:usage/referencing`
+        For general Sphinx cross-referencing.
+
+    `sphinx-issues <https://github.com/sloria/sphinx-issues>`_
+        For additional usage examples of the ``issue``, ``pr``, and other GitHub roles.
 
 
 Cross-reference Python objects

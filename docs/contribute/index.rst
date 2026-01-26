@@ -135,13 +135,21 @@ Bug fixes
 Documentation
     For changes to the documentation, docstrings, spelling dictionary, or any other documentation matter.
 
-Example:
+Examples:
 
 .. code-block:: rst
 
     Minor changes:
 
-    - Fix issue with timezone parsing in special cases. See `Issue XXX <link>`_.
+    - Fix issue with timezone parsing in special cases. :issue:`1050`
+
+For a pull request, use the following syntax.
+
+.. code-block:: rst
+
+    New features:
+
+    - Added :attr:`~icalendar.cal.calendar.Calendar.categories` property. :pr:`808`
 
 
 Set up for development
