@@ -97,6 +97,7 @@ dev = [
 ]
 
 test = [
+    "coverage",
     "hypothesis",
     "mypy>=1.0",
     "pytest",
