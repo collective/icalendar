@@ -126,6 +126,11 @@ test: clean linkcheckbroken  ## Clean docs build, then run vale and linkcheckbro
 
 
 # development
+.PHONY: dev
+dev: .venv  ## Install required Python, create Python virtual environment, install package and development requirements
+	@uv sync --group dev
+	@pre-commit install
+
 .PHONY: all
 all: clean linkcheck html  ## Clean docs build, then run linkcheck, and build html
 #all: clean vale linkcheck html  ## Clean docs build, then run vale and linkcheck, and build html

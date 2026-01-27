@@ -115,6 +115,7 @@ html_js_files = [
     ("js/custom-icons.js", {"defer": "defer"}),
 ]
 pygments_style = "sphinx"
+smartquotes = False
 
 
 # -- Options apidoc output -------------------------------------------------
@@ -187,6 +188,7 @@ linkcheck_ignore = [
     r"https://github.com/actions/python-versions#support-policy",
     r"https://github.com/collective/icalendar/blob/main/CODE_OF_CONDUCT.md#enforcement",
     r"https://github.com/collective/icalendar/blob/main/README.rst#related-projects",
+    r"https://github.com/pre-commit/pre-commit-hooks#debug-statements",
     r"https://up-for-grabs.net/#/filters",
     # Ignore links that are unstable
     r"https://www.unicode.org/cldr/cldr-aux/charts/29/supplemental/zone_tzid.html",
