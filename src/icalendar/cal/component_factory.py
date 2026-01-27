@@ -66,7 +66,7 @@ class ComponentFactory(CaselessDict):
     def add_component_class(self, cls: type[Component]) -> None:
         """Add a component class to the factory.
 
-        Args:
+        Parameters:
             cls: The component class to add.
         """
         self[cls.name] = cls
@@ -76,7 +76,7 @@ class ComponentFactory(CaselessDict):
 
         This also creates and adds the component class if it does not exist.
 
-        Args:
+        Parameters:
             name: The name of the component, for example, ``"VCALENDAR"``.
 
         Returns:

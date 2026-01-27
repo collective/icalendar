@@ -133,7 +133,7 @@ class vBinary:
     def from_jcal(cls, jcal_property: list) -> vBinary:
         """Parse jCal from :rfc:`7265` to a vBinary.
 
-        Args:
+        Parameters:
             jcal_property: The jCal property to parse.
 
         Raises:
@@ -224,7 +224,7 @@ class vBoolean(int):
     def from_jcal(cls, jcal_property: list) -> vBoolean:
         """Parse jCal from :rfc:`7265` to a vBoolean.
 
-        Args:
+        Parameters:
             jcal_property: The jCal property to parse.
 
         Raises:
@@ -290,7 +290,7 @@ class vText(str):
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jCal from :rfc:`7265`.
 
-        Args:
+        Parameters:
             jcal_property: The jCal property to parse.
 
         Raises:
@@ -424,7 +424,7 @@ class vCalAddress(str):
 
         Handles case-insensitive mailto: prefix checking.
 
-        Args:
+        Parameters:
             email: Email string that may or may not have mailto: prefix
 
         Returns:
@@ -455,7 +455,7 @@ class vCalAddress(str):
         Creates a vCalAddress instance with automatic mailto: prefix handling
         and support for all standard RFC 5545 parameters.
 
-        Args:
+        Parameters:
             email: The email address (mailto: prefix added automatically if missing)
             cn: Common Name parameter
             cutype: Calendar user type (INDIVIDUAL, GROUP, RESOURCE, ROOM)
@@ -536,7 +536,7 @@ class vCalAddress(str):
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jCal from :rfc:`7265`.
 
-        Args:
+        Parameters:
             jcal_property: The jCal property to parse.
 
         Raises:
@@ -629,7 +629,7 @@ class vFloat(float):
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jCal from :rfc:`7265`.
 
-        Args:
+        Parameters:
             jcal_property: The jCal property to parse.
 
         Raises:
@@ -727,7 +727,7 @@ class vInt(int):
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jCal from :rfc:`7265`.
 
-        Args:
+        Parameters:
             jcal_property: The jCal property to parse.
 
         Raises:
@@ -823,7 +823,7 @@ class vDDDLists:
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jCal from :rfc:`7265`.
 
-        Args:
+        Parameters:
             jcal_property: The jCal property to parse.
 
         Raises:
@@ -876,7 +876,7 @@ class vCategory:
         backwards compatibility with older parsing code and is considered
         legacy behavior.
 
-        Args:
+        Parameters:
             ical: A list of category strings (preferred, as provided by
                 :meth:`Component.from_ical`), or a single comma-separated
                 string from a legacy caller.
@@ -918,7 +918,7 @@ class vCategory:
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jCal from :rfc:`7265`.
 
-        Args:
+        Parameters:
             jcal_property: The jCal property to parse.
 
         Raises:
@@ -1021,7 +1021,7 @@ class vAdr:
     ):
         """Initialize ADR with seven fields or parse from vCard format string.
 
-        Args:
+        Parameters:
             fields: Either an AdrFields, tuple, or list of seven strings, one per field,
                     or a vCard format string with semicolon-separated fields
             params: Optional property parameters
@@ -1047,7 +1047,7 @@ class vAdr:
     def from_ical(ical: str | bytes) -> AdrFields:
         """Parse vCard ADR format into an AdrFields named tuple.
 
-        Args:
+        Parameters:
             ical: vCard format string with semicolon-separated fields
 
         Returns:
@@ -1088,7 +1088,7 @@ class vAdr:
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jCal from :rfc:`7265`.
 
-        Args:
+        Parameters:
             jcal_property: The jCal property to parse.
 
         Raises:
@@ -1155,7 +1155,7 @@ class vN:
     ):
         """Initialize N with five fields or parse from vCard format string.
 
-        Args:
+        Parameters:
             fields: Either an NFields, tuple, or list of five strings, one per field,
                     or a vCard format string with semicolon-separated fields
             params: Optional property parameters
@@ -1179,7 +1179,7 @@ class vN:
     def from_ical(ical: str | bytes) -> NFields:
         """Parse vCard N format into an NFields named tuple.
 
-        Args:
+        Parameters:
             ical: vCard format string with semicolon-separated fields
 
         Returns:
@@ -1218,7 +1218,7 @@ class vN:
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jCal from :rfc:`7265`.
 
-        Args:
+        Parameters:
             jcal_property: The jCal property to parse.
 
         Raises:
@@ -1290,7 +1290,7 @@ class vOrg:
     ):
         """Initialize ORG with variable fields or parse from vCard format string.
 
-        Args:
+        Parameters:
             fields: Either a tuple or list of one or more strings, or a
                     vCard format string with semicolon-separated fields
             params: Optional property parameters
@@ -1311,7 +1311,7 @@ class vOrg:
     def from_ical(ical: str | bytes) -> tuple[str, ...]:
         """Parse vCard ORG format into a tuple of fields.
 
-        Args:
+        Parameters:
             ical: vCard format string with semicolon-separated fields
 
         Returns:
@@ -1360,7 +1360,7 @@ class vOrg:
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jCal from :rfc:`7265`.
 
-        Args:
+        Parameters:
             jcal_property: The jCal property to parse.
 
         Raises:
@@ -1563,7 +1563,7 @@ class vDDDTypes(TimeBase):
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jCal from :rfc:`7265`.
 
-        Args:
+        Parameters:
             jcal_property: The jCal property to parse.
 
         Raises:
@@ -1696,7 +1696,7 @@ class vDate(TimeBase):
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jCal from :rfc:`7265`.
 
-        Args:
+        Parameters:
             jcal_property: The jCal property to parse.
 
         Raises:
@@ -1875,7 +1875,7 @@ class vDatetime(TimeBase):
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jCal from :rfc:`7265`.
 
-        Args:
+        Parameters:
             jcal_property: The jCal property to parse.
 
         Raises:
@@ -2058,7 +2058,7 @@ class vDuration(TimeBase):
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jCal from :rfc:`7265`.
 
-        Args:
+        Parameters:
             jcal_property: The jCal property to parse.
 
         Raises:
@@ -2268,7 +2268,7 @@ class vPeriod(TimeBase):
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jCal from :rfc:`7265`.
 
-        Args:
+        Parameters:
             jcal_property: The jCal property to parse.
 
         Raises:
@@ -2802,7 +2802,7 @@ class vRecur(CaselessDict):
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jCal from :rfc:`7265`.
 
-        Args:
+        Parameters:
             jcal_property: The jCal property to parse.
 
         Raises:
@@ -3037,7 +3037,7 @@ class vTime(TimeBase):
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jCal from :rfc:`7265`.
 
-        Args:
+        Parameters:
             jcal_property: The jCal property to parse.
 
         Raises:
@@ -3137,7 +3137,7 @@ class vUri(str):
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jCal from :rfc:`7265`.
 
-        Args:
+        Parameters:
             jcal_property: The jCal property to parse.
 
         Raises:
@@ -3374,7 +3374,7 @@ class vGeo:
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jCal from :rfc:`7265`.
 
-        Args:
+        Parameters:
             jcal_property: The jCal property to parse.
 
         Raises:
@@ -3540,7 +3540,7 @@ class vUTCOffset:
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jCal from :rfc:`7265`.
 
-        Args:
+        Parameters:
             jcal_property: The jCal property to parse.
 
         Raises:
@@ -3852,7 +3852,7 @@ class TypesFactory(CaselessDict):
     def for_property(self, name, value_param: str | None = None) -> type:
         """Returns the type class for a property or parameter.
 
-        Args:
+        Parameters:
             name: Property or parameter name
             value_param: Optional ``VALUE`` parameter, for example,
                 "DATE", "DATE-TIME", or other string.

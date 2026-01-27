@@ -371,7 +371,7 @@ class Event(Component):
     ):
         """Set the duration of the event relative to either start or end.
 
-        Args:
+        Parameters:
             duration: The duration to set, or None to convert to DURATION property
             locked: Which property to keep unchanged ('start' or 'end')
         """
@@ -382,7 +382,7 @@ class Event(Component):
     ):
         """Set the start and keep the duration or end of the event.
 
-        Args:
+        Parameters:
             start: The start time to set
             locked: Which property to keep unchanged ('duration', 'end', or None
                 for auto-detect)
@@ -394,7 +394,7 @@ class Event(Component):
     ):
         """Set the end of the component, keeping either the start or the duration same.
 
-        Args:
+        Parameters:
             end: The end time to set
             locked: Which property to keep unchanged ('start' or 'duration')
         """

@@ -16,7 +16,7 @@ def is_date(dt: Union[date, datetime]) -> bool:
     This function distinguishes between ``date`` and ``datetime`` objects,
     returning ``True`` only for pure ``date`` instances.
 
-    Args:
+    Parameters:
         dt: The date or datetime object to check.
 
     Returns:
@@ -39,7 +39,7 @@ def is_date(dt: Union[date, datetime]) -> bool:
 def is_datetime(dt: Union[date, datetime]) -> TypeIs[datetime]:
     """Check if a value is a datetime.
 
-    Args:
+    Parameters:
         dt: The date or datetime object to check.
 
     Returns:
@@ -65,7 +65,7 @@ def to_datetime(dt: Union[date, datetime]) -> datetime:
     If the input is already a ``datetime``, it is returned unchanged.
     If the input is a ``date``, it is converted to a ``datetime`` at midnight.
 
-    Args:
+    Parameters:
         dt: The date or datetime to convert.
 
     Returns:
@@ -93,7 +93,7 @@ def is_pytz(tz: tzinfo) -> bool:
     pytz timezones require special handling with ``localize()`` and
     ``normalize()`` methods for correct timezone calculations.
 
-    Args:
+    Parameters:
         tz: The timezone info object to check.
 
     Returns:
@@ -109,7 +109,7 @@ def is_pytz_dt(dt: Union[date, datetime]) -> TypeGuard[datetime]:
     This function checks whether the datetime has a timezone attached
     and whether that timezone is a pytz timezone requiring special handling.
 
-    Args:
+    Parameters:
         dt: The date or datetime object to check.
 
     Returns:
@@ -126,7 +126,7 @@ def normalize_pytz(dt: Union[date, datetime]) -> Union[date, datetime]:
     operations to correctly adjust the timezone offset, especially around
     daylight saving time transitions.
 
-    Args:
+    Parameters:
         dt: The date or datetime to normalize.
 
     Returns:

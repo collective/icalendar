@@ -119,7 +119,7 @@ class Available(Component):
 
         This creates a new Available component in accordance with :rfc:`7953`.
 
-        Arguments:
+        Parameters:
             categories: The :attr:`categories` of the Available component.
             comments: The :attr:`~icalendar.Component.comments` of the Available
                 component.
