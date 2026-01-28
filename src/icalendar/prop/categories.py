@@ -1,6 +1,5 @@
 """CATEGORIES property."""
 
-
 from typing import Any, ClassVar
 
 from icalendar.compatibility import Self
@@ -64,6 +63,10 @@ class vCategory:
         """self == other"""
         return isinstance(other, vCategory) and self.cats == other.cats
 
+    def __hash__(self):
+        """Hash of the vCategory object."""
+        return hash(tuple(self.cats))
+
     def __repr__(self):
         """String representation."""
         return f"{self.__class__.__name__}({self.cats}, params={self.params})"
@@ -106,3 +109,5 @@ class vCategory:
         """The list of categories as strings."""
         return [str(cat) for cat in self.cats]
 
+
+__all__ = ["vCategory"]
