@@ -71,6 +71,7 @@ from .cal_address import vCalAddress
 from .categories import vCategory
 from .float import vFloat
 from .geo import vGeo
+from .inline import vInline
 from .n import NFields, vN
 from .org import vOrg
 from .text import vText
@@ -2165,35 +2166,6 @@ class vUTCOffset:
         if negative:
             t = -t
         return cls(t, Parameters.from_jcal_property(jcal_property))
-
-
-class vInline(str):
-    """This is an especially dumb class that just holds raw unparsed text and
-    has parameters. Conversion of inline values are handled by the Component
-    class, so no further processing is needed.
-    """
-
-    params: Parameters
-    __slots__ = ("params",)
-
-    def __new__(
-        cls,
-        value,
-        encoding=DEFAULT_ENCODING,
-        /,
-        params: dict[str, Any] | None = None,
-    ):
-        value = to_unicode(value, encoding=encoding)
-        self = super().__new__(cls, value)
-        self.params = Parameters(params)
-        return self
-
-    def to_ical(self):
-        return self.encode(DEFAULT_ENCODING)
-
-    @classmethod
-    def from_ical(cls, ical):
-        return cls(ical)
 
 
 class vUnknown(vText):

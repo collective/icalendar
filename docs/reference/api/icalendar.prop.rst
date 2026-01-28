@@ -22,6 +22,7 @@ Submodules
    icalendar.prop.float
    icalendar.prop.geo
    icalendar.prop.image
+   icalendar.prop.inline
    icalendar.prop.n
    icalendar.prop.org
    icalendar.prop.text
