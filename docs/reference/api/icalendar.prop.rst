@@ -14,5 +14,6 @@ Submodules
    :maxdepth: 4
 
    icalendar.prop.binary
+   icalendar.prop.boolean
    icalendar.prop.conference
    icalendar.prop.image
