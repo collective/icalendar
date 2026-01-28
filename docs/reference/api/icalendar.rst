@@ -1,12 +1,6 @@
 icalendar package
 =================
 
-.. automodule:: icalendar
-   :ignore-module-all:
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
 Subpackages
 -----------
 
@@ -35,3 +29,11 @@ Submodules
    icalendar.parser_tools
    icalendar.tools
    icalendar.version
+
+Module contents
+---------------
+
+.. automodule:: icalendar
+   :members:
+   :show-inheritance:
+   :undoc-members:

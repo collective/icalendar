@@ -1,12 +1,6 @@
 icalendar.cal package
 =====================
 
-.. automodule:: icalendar.cal
-   :ignore-module-all:
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
 Submodules
 ----------
 
@@ -25,3 +19,11 @@ Submodules
    icalendar.cal.journal
    icalendar.cal.timezone
    icalendar.cal.todo
+
+Module contents
+---------------
+
+.. automodule:: icalendar.cal
+   :members:
+   :show-inheritance:
+   :undoc-members:

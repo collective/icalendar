@@ -1,12 +1,6 @@
 icalendar.timezone package
 ==========================
 
-.. automodule:: icalendar.timezone
-   :ignore-module-all:
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
 Submodules
 ----------
 
@@ -20,3 +14,11 @@ Submodules
    icalendar.timezone.tzp
    icalendar.timezone.windows_to_olson
    icalendar.timezone.zoneinfo
+
+Module contents
+---------------
+
+.. automodule:: icalendar.timezone
+   :members:
+   :show-inheritance:
+   :undoc-members:
