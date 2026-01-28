@@ -47,7 +47,7 @@ from __future__ import annotations
 import re
 import uuid
 from datetime import date, datetime, time, timedelta, timezone
-from typing import Any, ClassVar, NamedTuple, Tuple, Union
+from typing import TYPE_CHECKING, Any, ClassVar, NamedTuple, Tuple, TypeAlias, Union
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.enums import Enum
@@ -67,14 +67,8 @@ from icalendar.tools import is_date, is_datetime, normalize_pytz, to_datetime
 from .binary import vBinary
 from .boolean import vBoolean
 
-try:
-    from typing import TypeAlias
-except ImportError:
-    from typing_extensions import TypeAlias
-try:
-    from typing import Self
-except ImportError:
-    from typing_extensions import Self
+if TYPE_CHECKING:
+    from icalendar.compatibility import Self
 
 DURATION_REGEX = re.compile(
     r"([-+]?)P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$"
