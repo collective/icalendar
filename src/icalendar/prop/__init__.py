@@ -44,8 +44,6 @@ them directly.
 
 from __future__ import annotations
 
-import base64
-import binascii
 import re
 import uuid
 from datetime import date, datetime, time, timedelta, timezone
@@ -79,11 +77,11 @@ except ImportError:
     from typing_extensions import Self
 
 DURATION_REGEX = re.compile(
-    r"([-+]?)P(?:(\d+)W)?(?:(\d+)D)?" r"(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$"
+    r"([-+]?)P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$"
 )
 
 WEEKDAY_RULE = re.compile(
-    r"(?P<signal>[+-]?)(?P<relative>[\d]{0,2})" r"(?P<weekday>[\w]{2})$"
+    r"(?P<signal>[+-]?)(?P<relative>[\d]{0,2})(?P<weekday>[\w]{2})$"
 )
 
 
