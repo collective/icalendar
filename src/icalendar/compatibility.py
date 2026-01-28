@@ -25,11 +25,16 @@ if TYPE_CHECKING:
         from typing import TypeIs
     else:
         from typing_extensions import TypeIs
+    if sys.version_info >= (3, 11):
+        from typing import Self
+    else:
+        from typing_extensions import Self
 else:
     # we cannot use a TypeGuard = "TypeGuard" hack since it's used with a parameter
-    TypeGuard = TypeIs = None
+    TypeGuard = TypeIs = Self = None
 
 __all__ = [
+    "Self",
     "Self",
     "TypeGuard",
     "TypeIs",

@@ -1,8 +1,10 @@
 """BINARY property value class."""
+
 import base64
 import binascii
-from typing import ClassVar, Self
+from typing import ClassVar
 
+from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser_tools import to_unicode
@@ -38,6 +40,10 @@ class vBinary:
         """self == other"""
         return isinstance(other, vBinary) and self.obj == other.obj
 
+    def __hash__(self):
+        """Hash of the vBinary object."""
+        return hash(self.obj)
+
     @classmethod
     def examples(cls) -> list[Self]:
         """Examples of vBinary."""
@@ -69,5 +75,6 @@ class vBinary:
             jcal_property[3],
             params=Parameters.from_jcal_property(jcal_property),
         )
-        
+
+
 __all__ = ["vBinary"]

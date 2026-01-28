@@ -229,7 +229,8 @@ extend-safe-fixes = [
     "E721",   # comparing types with ==
 ]
 "src/icalendar/prop/*.py" = [
-    "N801",   # Class name should use CamelCase
+    "N801",    # Class name should use CamelCase
+    "PLC0415", # Import property within class
 ]
 "src/icalendar/fuzzing/*" = [
     "T201",   # print found
