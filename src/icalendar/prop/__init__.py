@@ -60,14 +60,14 @@ from icalendar.parser_tools import (
     from_unicode,
     to_unicode,
 )
+from icalendar.prop.binary import vBinary
+from icalendar.prop.boolean import vBoolean
+from icalendar.prop.cal_address import vCalAddress
+from icalendar.prop.float import vFloat
+from icalendar.prop.text import vText
 from icalendar.timezone import tzid_from_dt, tzid_from_tzinfo, tzp
 from icalendar.timezone.tzid import is_utc
 from icalendar.tools import is_date, is_datetime, normalize_pytz, to_datetime
-
-from .binary import vBinary
-from .boolean import vBoolean
-from .cal_address import vCalAddress
-from .text import vText
 
 if TYPE_CHECKING:
     from icalendar.compatibility import Self
@@ -79,101 +79,6 @@ DURATION_REGEX = re.compile(
 WEEKDAY_RULE = re.compile(
     r"(?P<signal>[+-]?)(?P<relative>[\d]{0,2})(?P<weekday>[\w]{2})$"
 )
-
-
-class vFloat(float):
-    """Float
-
-    Value Name:
-        FLOAT
-
-    Purpose:
-        This value type is used to identify properties that contain
-        a real-number value.
-
-    Format Definition:
-        This value type is defined by the following notation:
-
-        .. code-block:: text
-
-            float      = (["+"] / "-") 1*DIGIT ["." 1*DIGIT]
-
-    Description:
-        If the property permits, multiple "float" values are
-        specified by a COMMA-separated list of values.
-
-        Example:
-
-        .. code-block:: text
-
-            1000000.0000001
-            1.333
-            -3.14
-
-        .. code-block:: pycon
-
-            >>> from icalendar.prop import vFloat
-            >>> float = vFloat.from_ical('1000000.0000001')
-            >>> float
-            1000000.0000001
-            >>> float = vFloat.from_ical('1.333')
-            >>> float
-            1.333
-            >>> float = vFloat.from_ical('+1.333')
-            >>> float
-            1.333
-            >>> float = vFloat.from_ical('-3.14')
-            >>> float
-            -3.14
-    """
-
-    default_value: ClassVar[str] = "FLOAT"
-    params: Parameters
-
-    def __new__(cls, *args, params: dict[str, Any] | None = None, **kwargs):
-        self = super().__new__(cls, *args, **kwargs)
-        self.params = Parameters(params)
-        return self
-
-    def to_ical(self):
-        return str(self).encode("utf-8")
-
-    @classmethod
-    def from_ical(cls, ical):
-        try:
-            return cls(ical)
-        except Exception as e:
-            raise ValueError(f"Expected float value, got: {ical}") from e
-
-    @classmethod
-    def examples(cls) -> list[vFloat]:
-        """Examples of vFloat."""
-        return [vFloat(3.1415)]
-
-    from icalendar.param import VALUE
-
-    def to_jcal(self, name: str) -> list:
-        """The jCal representation of this property according to :rfc:`7265`."""
-        return [name, self.params.to_jcal(), self.VALUE.lower(), float(self)]
-
-    @classmethod
-    def from_jcal(cls, jcal_property: list) -> Self:
-        """Parse jCal from :rfc:`7265`.
-
-        Parameters:
-            jcal_property: The jCal property to parse.
-
-        Raises:
-            ~error.JCalParsingError: If the jCal provided is invalid.
-        """
-        JCalParsingError.validate_property(jcal_property, cls)
-        if jcal_property[0].upper() == "GEO":
-            return vGeo.from_jcal(jcal_property)
-        JCalParsingError.validate_value_type(jcal_property[3], float, cls, 3)
-        return cls(
-            jcal_property[3],
-            params=Parameters.from_jcal_property(jcal_property),
-        )
 
 
 class vInt(int):
