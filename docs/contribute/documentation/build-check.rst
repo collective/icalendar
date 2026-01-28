@@ -71,7 +71,7 @@ Change your working directory into the cloned project.
 
 .. code-block:: shell
 
-    cd documentation
+    cd icalendar
 
 
 .. _file-locations:
