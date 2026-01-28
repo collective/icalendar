@@ -4,14 +4,33 @@ Development
 
 This chapter describes how to set up icalendar for development and to contribute changes.
 
-To start contributing changes to icalendar, you can clone the project to your file system using Git.
-You can `fork <https://github.com/collective/icalendar/fork>`_
-the project first and clone your fork, too.
 
-.. code-block:: shell
+Set up your environment
+-----------------------
 
-    git clone https://github.com/collective/icalendar.git
-    cd icalendar
+Unless you're a maintainer or administrator, you don't have write access to push commits to GitHub repositories under the Collective organization or the icalendar repository.
+You can, however, push commits to your fork.
+Thus, a typical workflow will be circular in nature.
+You'll pull code from the upstream icalendar repository, push your work from your local clone to your remote fork, then make a pull request from your fork to the upstream icalendar repository.
+
+.. card::
+
+    .. image:: ../_static/contributing/development-icalendar-git-workflow.svg
+        :alt: icalendar git workflow
+        :target: ../_static/contributing/development-icalendar-git-workflow.svg
+
+    +++
+    *icalendar git workflow*
+
+#.  Start by `forking icalendar's repository <https://github.com/collective/icalendar/fork>`_ to your account through the GitHub interface.
+
+    .. seealso::
+
+        `Fork a repository <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo>`_
+
+#.  `Clone your forked repository <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo#cloning-your-forked-repository>`_.
+
+#.  `Configure Git to sync your fork with the upstream repository <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo#configuring-git-to-sync-your-fork-with-the-upstream-repository>`_.
 
 Branches
 --------
@@ -60,6 +79,52 @@ First, install `tox <https://pypi.org/project/tox/>`_.
     pip install tox
 
 From now on, tox will manage Python versions and test commands for you.
+
+
+pre-commit
+----------
+
+`pre-commit <https://pre-commit.com/>`_ is automatically installed as one of the development requirements when running the following command.
+
+.. code-block:: shell
+
+    make dev
+
+That command installs a supported Python, creates a Python virtual environment, and installs package and development requirements.
+
+When you commit code to icalendar with ``git commit``, pre-commit runs the following code quality checks and reformats code automatically for you.
+
+`debug-statements <https://github.com/pre-commit/pre-commit-hooks#debug-statements>`_
+    Checks for debugger imports and Python 3.7+ ``breakpoint()`` calls in Python source code.
+`ruff check --fix <https://docs.astral.sh/ruff/linter/#ruff-check>`_
+    Runs the Ruff linter on Python files and fixes issues according to the configuration in :file:`pyproject.toml`.
+`ruff format <https://docs.astral.sh/ruff/formatter/#ruff-format>`_
+    Runs the Ruff formatter on Python files and fixes issues according to the configuration in :file:`pyproject.toml`.
+
+The configuration file for pre-commit, :file:`.pre-commit-config.yaml`, is located at the root of the repository.
+
+Contributors to icalendar are encouraged to use pre-commit.
+Any issues that would be caught by pre-commit shall be caught by GitHub workflows when you push commits to a pull request for icalendar.
+This could delay merging of your pull request.
+
+However, you may opt out of using pre-commit.
+You can use the ``--no-validate`` flag for the ``git commit`` command.
+
+.. code-block:: shell
+
+    git commit -m "My commit message" --no-validate
+
+Alternatively, configure your editor to use ``--no-validate`` for all commits.
+The screenshot below shows how to configure PyCharm to disable pre-commit by searching for "git commit hooks" in its settings.
+
+.. card::
+
+    .. image:: ../_static/contributing/development-disable-pre-commit.png
+        :alt: Disable pre-commit in PyCharm settings
+        :target: ../_static/contributing/development-disable-pre-commit.png
+
+    +++
+    *Disable pre-commit in PyCharm settings*
 
 
 Run tests

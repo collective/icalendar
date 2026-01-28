@@ -90,6 +90,7 @@ In icalendar's documentation, the most frequently used roles are the following.
 -   :rst:role:`ref` to link to an arbitrary label
 -   :rst:role:`term` to link to a glossary term
 -   :rst:role:`rfc` to link to an RFC
+-   ``issue`` or ``pr`` to link to a GitHub issue or pull request, provided by `sphinx-issues <https://github.com/sloria/sphinx-issues>`_
 
 When referencing a specific section in an RFC, copy the anchor name from the URL, that is, the part of the URL including and after the pound sign ``#``, and use the following syntax.
 
@@ -107,9 +108,33 @@ Which renders as shown.
 
 :rfc:`6350#section-6.2.2`
 
+When referencing a GitHub issue, use the following syntax.
+
+.. code-block:: rst
+
+    :issue:`1050`
+
+Which renders as a hyperlink to the issue on GitHub.
+
+:issue:`1050`
+
+Similarly, for a pull request, the syntax would be the following.
+
+.. code-block:: rst
+
+    :pr:`808`
+
+Which renders as a hyperlink to the pull request on GitHub.
+
+:pr:`808`
+
 .. seealso::
 
     :doc:`sphinx:usage/referencing`
+        For general Sphinx cross-referencing.
+
+    `sphinx-issues <https://github.com/sloria/sphinx-issues>`_
+        For additional usage examples of the ``issue``, ``pr``, and other GitHub roles.
 
 
 Cross-reference Python objects
@@ -206,7 +231,7 @@ Python docstrings typically include reStructuredText markup, often including cro
 :pep:`257` describes core docstring conventions.
 To enhance the display of its API documentation, icalendar uses the Sphinx extensions :doc:`sphinx.ext.napoleon <sphinx:usage/extensions/napoleon>` and `sphinx_autodoc_typehints <https://github.com/tox-dev/sphinx-autodoc-typehints?tab=readme-ov-file>`_.
 The former extension supports Google style docstrings, which are easier to write and read, especially when Sphinx renders them to HTML.
-The latter extension supports Python 3 annotations, or type hints, for documenting acceptable argument types and return value types of functions.
+The latter extension supports Python 3 annotations, or type hints, for documenting acceptable parameter types and return value types of functions.
 
 .. seealso::
 
@@ -221,7 +246,7 @@ In addition to the structure of docstrings as defined by :pep:`257`, icalendar h
 A docstring consists of a summary, followed by a possible description, then any helpful sections usually ordered by inputs then outputs.
 
 To create a docstring section, use either one of the supported :ref:`section headers <sphinx:Sections>` or any string for a custom section header, followed by a colon ``:``, followed by a block of indented text.
-Supported section headers enhance formatting, such as structuring method arguments or code examples, whereas custom section headers render as just a heading and content.
+Supported section headers enhance formatting, such as structuring method parameters or code examples, whereas custom section headers render as just a heading and content.
 
 All items should terminate with a period.
 
@@ -237,7 +262,7 @@ Description
 
 ``Attributes``
     Each attribute should consist of its name and a brief description.
-    By virtue of Sphinx extensions and the use of type hints for the Python object, you may omit the argument's type, allowing Sphinx to automatically render it for you.
+    By virtue of Sphinx extensions and the use of type hints for the Python object, you may omit the parameter's type, allowing Sphinx to automatically render it for you.
 
 ``Parameters``
     Each parameter should consist of its name and a brief description.
