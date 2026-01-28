@@ -13,6 +13,7 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
+   icalendar.prop.adr
    icalendar.prop.binary
    icalendar.prop.boolean
    icalendar.prop.cal_address
