@@ -1,4 +1,5 @@
-"""FLOAT property."""
+"""FLOAT property from :rfc:`5545`."""
+
 from typing import Any, ClassVar
 
 from icalendar.compatibility import Self
@@ -94,11 +95,13 @@ class vFloat(float):
         JCalParsingError.validate_property(jcal_property, cls)
         if jcal_property[0].upper() == "GEO":
             from icalendar.prop import vGeo
+
             return vGeo.from_jcal(jcal_property)
         JCalParsingError.validate_value_type(jcal_property[3], float, cls, 3)
         return cls(
             jcal_property[3],
             params=Parameters.from_jcal_property(jcal_property),
         )
+
 
 __all__ = ["vFloat"]

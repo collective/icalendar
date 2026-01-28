@@ -1,5 +1,4 @@
-"""CAL-ADDRESS property."""
-
+"""CAL-ADDRESS property from :rfc:`5545`."""
 
 from typing import Any, ClassVar
 
@@ -139,7 +138,7 @@ class vCalAddress(str):
         language: str | None = None,
         partstat: str | None = None,
         role: str | None = None,
-        rsvp: bool | None = None,
+        rsvp: bool | None = None,  # noqa: FBT001, RUF100
         sent_by: str | None = None,
     ):
         """Create a new vCalAddress with RFC 5545 parameters.
@@ -240,5 +239,6 @@ class vCalAddress(str):
             jcal_property[3],
             params=Parameters.from_jcal_property(jcal_property),
         )
+
 
 __all__ = ["vCalAddress"]

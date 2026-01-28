@@ -1,5 +1,4 @@
-"""BOOLEAN property implementation."""
-
+"""BOOLEAN property from :rfc:`5545`."""
 
 from typing import Any, ClassVar
 
@@ -98,5 +97,6 @@ class vBoolean(int):
             jcal_property[3],
             params=Parameters.from_jcal_property(jcal_property),
         )
+
 
 __all__ = ["vBoolean"]

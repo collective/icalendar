@@ -1,5 +1,4 @@
-"""GEO property."""
-
+"""GEO property from :rfc:`5545`."""
 
 from typing import Any, ClassVar
 
@@ -107,6 +106,10 @@ class vGeo:
     def __eq__(self, other):
         return self.to_ical() == other.to_ical()
 
+    def __hash__(self):
+        """Hash of the vGeo object."""
+        return hash((self.latitude, self.longitude))
+
     def __repr__(self):
         """repr(self)"""
         return f"{self.__class__.__name__}(({self.latitude}, {self.longitude}))"
@@ -142,5 +145,6 @@ class vGeo:
             jcal_property[3],
             Parameters.from_jcal_property(jcal_property),
         )
+
 
 __all__ = ["vGeo"]

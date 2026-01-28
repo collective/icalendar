@@ -1,5 +1,4 @@
-"""TEXT property."""
-
+"""TEXT property from :rfc:`5545`."""
 
 from typing import Any, ClassVar
 
@@ -71,6 +70,7 @@ class vText(str):
         name = jcal_property[0]
         if name == "categories":
             from icalendar.prop import vCategory
+
             return vCategory.from_jcal(jcal_property)
         string = jcal_property[3]  # TODO: accept list or string but join with ;
         if name == "request-status":  # TODO: maybe add a vRequestStatus class?
@@ -87,5 +87,6 @@ class vText(str):
         """Parse a jCal value into a vText."""
         JCalParsingError.validate_value_type(jcal_value, (str, int, float), cls)
         return cls(str(jcal_value))
+
 
 __all__ = ["vText"]

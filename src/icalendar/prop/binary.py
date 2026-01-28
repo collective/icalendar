@@ -1,4 +1,4 @@
-"""BINARY property value class."""
+"""BINARY property from :rfc:`5545`."""
 
 import base64
 import binascii
