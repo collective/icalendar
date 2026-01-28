@@ -13,5 +13,6 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
+   icalendar.prop.binary
    icalendar.prop.conference
    icalendar.prop.image

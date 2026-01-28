@@ -66,6 +66,8 @@ from icalendar.timezone import tzid_from_dt, tzid_from_tzinfo, tzp
 from icalendar.timezone.tzid import is_utc
 from icalendar.tools import is_date, is_datetime, normalize_pytz, to_datetime
 
+from .binary import vBinary
+
 try:
     from typing import TypeAlias
 except ImportError:
@@ -82,69 +84,6 @@ DURATION_REGEX = re.compile(
 WEEKDAY_RULE = re.compile(
     r"(?P<signal>[+-]?)(?P<relative>[\d]{0,2})" r"(?P<weekday>[\w]{2})$"
 )
-
-
-class vBinary:
-    """Binary property values are base 64 encoded."""
-
-    default_value: ClassVar[str] = "BINARY"
-    params: Parameters
-    obj: str
-
-    def __init__(self, obj, params: dict[str, str] | None = None):
-        self.obj = to_unicode(obj)
-        self.params = Parameters(encoding="BASE64", value="BINARY")
-        if params:
-            self.params.update(params)
-
-    def __repr__(self):
-        return f"vBinary({self.to_ical()})"
-
-    def to_ical(self):
-        return binascii.b2a_base64(self.obj.encode("utf-8"))[:-1]
-
-    @staticmethod
-    def from_ical(ical):
-        try:
-            return base64.b64decode(ical)
-        except ValueError as e:
-            raise ValueError("Not valid base 64 encoding.") from e
-
-    def __eq__(self, other):
-        """self == other"""
-        return isinstance(other, vBinary) and self.obj == other.obj
-
-    @classmethod
-    def examples(cls) -> list[vBinary]:
-        """Examples of vBinary."""
-        return [cls("VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZy4")]
-
-    from icalendar.param import VALUE
-
-    def to_jcal(self, name: str) -> list:
-        """The jCal representation of this property according to :rfc:`7265`."""
-        params = self.params.to_jcal()
-        if params.get("encoding") == "BASE64":
-            # BASE64 is the only allowed encoding
-            del params["encoding"]
-        return [name, params, self.VALUE.lower(), self.obj]
-
-    @classmethod
-    def from_jcal(cls, jcal_property: list) -> vBinary:
-        """Parse jCal from :rfc:`7265` to a vBinary.
-
-        Parameters:
-            jcal_property: The jCal property to parse.
-
-        Raises:
-            ~error.JCalParsingError: If the provided jCal is invalid.
-        """
-        JCalParsingError.validate_property(jcal_property, cls)
-        JCalParsingError.validate_value_type(jcal_property[3], str, cls, 3)
-        return cls(
-            jcal_property[3],
-            params=Parameters.from_jcal_property(jcal_property),
-        )
 
 
 class vBoolean(int):

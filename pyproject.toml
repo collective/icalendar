@@ -228,7 +228,7 @@ extend-safe-fixes = [
     "E741",   # ambiguous variable name
     "E721",   # comparing types with ==
 ]
-"src/icalendar/prop/__init__.py" = [
+"src/icalendar/prop/*.py" = [
     "N801",   # Class name should use CamelCase
 ]
 "src/icalendar/fuzzing/*" = [
