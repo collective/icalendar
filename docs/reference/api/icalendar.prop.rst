@@ -18,5 +18,6 @@ Submodules
    icalendar.prop.cal_address
    icalendar.prop.conference
    icalendar.prop.float
+   icalendar.prop.geo
    icalendar.prop.image
    icalendar.prop.text
