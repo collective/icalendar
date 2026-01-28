@@ -16,6 +16,7 @@ Submodules
    icalendar.prop.binary
    icalendar.prop.boolean
    icalendar.prop.cal_address
+   icalendar.prop.categories
    icalendar.prop.conference
    icalendar.prop.float
    icalendar.prop.geo
