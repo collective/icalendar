@@ -79,11 +79,12 @@ Documentation
   See :issue:`1004`.
 - Use Google style docstrings in :mod:`~icalendar.parser_tools`.
 - Added Upgrade guide. See :issue:`997`.
-- Enable sphinx-issues extension. See :issue:`1091`.
-- Replaced "Arguments" and "Args" with "Parameters". See :issue:`1076`.
-- Added documentation of how to set up a development environment with git. See :issue:`906`.
-- Documented how to install and use pre-commit. See :issue:`996`.
-- Clarified guidance for first-time contributors in the contribution documentation. See :issue:`1017`.
+- Enable sphinx-issues extension. :issue:`1091`
+- Replaced "Arguments" and "Args" with "Parameters". :issue:`1076`
+- Added documentation of how to set up a development environment with git. :issue:`906`
+- Documented how to install and use pre-commit. :issue:`996`
+- Clarified guidance for first-time contributors in the contribution documentation. :issue:`1017`.
+- Added a new rule to our docstring style guide to escape docstrings, and added a new section for type hints in the code conventions section. :issue:`1080`
 
 7.0.0a3 (2025-12-19)
 --------------------
