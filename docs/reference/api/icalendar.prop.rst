@@ -27,4 +27,5 @@ Submodules
    icalendar.prop.org
    icalendar.prop.text
    icalendar.prop.uid
+   icalendar.prop.unknown
    icalendar.prop.uri

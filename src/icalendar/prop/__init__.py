@@ -76,6 +76,7 @@ from .n import NFields, vN
 from .org import vOrg
 from .text import vText
 from .uid import vUid
+from .unknown import vUnknown
 from .uri import vUri
 
 if TYPE_CHECKING:
@@ -2166,23 +2167,6 @@ class vUTCOffset:
         if negative:
             t = -t
         return cls(t, Parameters.from_jcal_property(jcal_property))
-
-
-class vUnknown(vText):
-    """This is text but the VALUE parameter is unknown.
-
-    Since :rfc:`7265`, it is important to record if values are unknown.
-    For :rfc:`5545`, we could just assume TEXT.
-    """
-
-    default_value: ClassVar[str] = "UNKNOWN"
-
-    @classmethod
-    def examples(cls) -> list[vUnknown]:
-        """Examples of vUnknown."""
-        return [vUnknown("Some property text.")]
-
-    from icalendar.param import VALUE
 
 
 class vBrokenProperty(vText):
