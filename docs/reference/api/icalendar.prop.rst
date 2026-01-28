@@ -23,4 +23,5 @@ Submodules
    icalendar.prop.geo
    icalendar.prop.image
    icalendar.prop.n
+   icalendar.prop.org
    icalendar.prop.text
