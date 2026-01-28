@@ -1,4 +1,4 @@
-"""FLOAT property from :rfc:`5545`."""
+"""FLOAT values from :rfc:`5545`."""
 
 from typing import Any, ClassVar
 

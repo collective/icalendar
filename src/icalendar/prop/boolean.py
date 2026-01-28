@@ -1,4 +1,4 @@
-"""BOOLEAN property from :rfc:`5545`."""
+"""BOOLEAN values from :rfc:`5545`."""
 
 from typing import Any, ClassVar
 

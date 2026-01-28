@@ -1,4 +1,4 @@
-"""CAL-ADDRESS property from :rfc:`5545`."""
+"""CAL-ADDRESS values from :rfc:`5545`."""
 
 from typing import Any, ClassVar
 

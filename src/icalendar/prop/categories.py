@@ -1,4 +1,4 @@
-"""CATEGORIES property from :rfc:`5545`."""
+"""CATEGORIES property values from :rfc:`5545`."""
 
 from typing import Any, ClassVar
 

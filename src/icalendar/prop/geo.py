@@ -1,4 +1,4 @@
-"""GEO property from :rfc:`5545`."""
+"""GEO property values from :rfc:`5545`."""
 
 from typing import Any, ClassVar
 
