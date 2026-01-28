@@ -52,7 +52,7 @@ from typing import TYPE_CHECKING, Any, ClassVar, NamedTuple, Tuple, TypeAlias, U
 from icalendar.caselessdict import CaselessDict
 from icalendar.enums import Enum
 from icalendar.error import InvalidCalendar, JCalParsingError
-from icalendar.parser import Parameters, escape_char
+from icalendar.parser import Parameters
 from icalendar.parser_tools import (
     DEFAULT_ENCODING,
     ICAL_TYPE,
@@ -66,6 +66,7 @@ from icalendar.tools import is_date, is_datetime, normalize_pytz, to_datetime
 
 from .binary import vBinary
 from .boolean import vBoolean
+from .text import vText
 
 if TYPE_CHECKING:
     from icalendar.compatibility import Self
@@ -77,85 +78,6 @@ DURATION_REGEX = re.compile(
 WEEKDAY_RULE = re.compile(
     r"(?P<signal>[+-]?)(?P<relative>[\d]{0,2})(?P<weekday>[\w]{2})$"
 )
-
-
-class vText(str):
-    """Simple text."""
-
-    default_value: ClassVar[str] = "TEXT"
-    params: Parameters
-    __slots__ = ("encoding", "params")
-
-    def __new__(
-        cls,
-        value,
-        encoding=DEFAULT_ENCODING,
-        /,
-        params: dict[str, Any] | None = None,
-    ):
-        value = to_unicode(value, encoding=encoding)
-        self = super().__new__(cls, value)
-        self.encoding = encoding
-        self.params = Parameters(params)
-        return self
-
-    def __repr__(self) -> str:
-        return f"vText({self.to_ical()!r})"
-
-    def to_ical(self) -> bytes:
-        return escape_char(self).encode(self.encoding)
-
-    @classmethod
-    def from_ical(cls, ical: ICAL_TYPE):
-        return cls(ical)
-
-    @property
-    def ical_value(self) -> str:
-        """The string value of the text."""
-        return str(self)
-
-    from icalendar.param import ALTREP, GAP, LANGUAGE, RELTYPE, VALUE
-
-    def to_jcal(self, name: str) -> list:
-        """The jCal representation of this property according to :rfc:`7265`."""
-        if name == "request-status":  # TODO: maybe add a vRequestStatus class?
-            return [name, {}, "text", self.split(";", 2)]
-        return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
-
-    @classmethod
-    def examples(cls):
-        """Examples of vText."""
-        return [cls("Hello World!")]
-
-    @classmethod
-    def from_jcal(cls, jcal_property: list) -> Self:
-        """Parse jCal from :rfc:`7265`.
-
-        Parameters:
-            jcal_property: The jCal property to parse.
-
-        Raises:
-            ~error.JCalParsingError: If the provided jCal is invalid.
-        """
-        JCalParsingError.validate_property(jcal_property, cls)
-        name = jcal_property[0]
-        if name == "categories":
-            return vCategory.from_jcal(jcal_property)
-        string = jcal_property[3]  # TODO: accept list or string but join with ;
-        if name == "request-status":  # TODO: maybe add a vRequestStatus class?
-            JCalParsingError.validate_list_type(jcal_property[3], str, cls, 3)
-            string = ";".join(jcal_property[3])
-        JCalParsingError.validate_value_type(string, str, cls, 3)
-        return cls(
-            string,
-            params=Parameters.from_jcal_property(jcal_property),
-        )
-
-    @classmethod
-    def parse_jcal_value(cls, jcal_value: Any) -> vText:
-        """Parse a jCal value into a vText."""
-        JCalParsingError.validate_value_type(jcal_value, (str, int, float), cls)
-        return cls(str(jcal_value))
 
 
 class vCalAddress(str):

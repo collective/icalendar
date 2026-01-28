@@ -17,3 +17,4 @@ Submodules
    icalendar.prop.boolean
    icalendar.prop.conference
    icalendar.prop.image
+   icalendar.prop.text
