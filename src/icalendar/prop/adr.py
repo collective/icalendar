@@ -5,7 +5,6 @@ from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
-from icalendar.prop.text import vText
 
 
 class AdrFields(NamedTuple):
@@ -28,24 +27,6 @@ class AdrFields(NamedTuple):
     """Postal code."""
     country: str
     """Country name (full name)."""
-
-
-class NFields(NamedTuple):
-    """Named fields for vCard N (Name) property per :rfc:`6350#section-6.2.2`.
-
-    Provides named access to the five name components.
-    """
-
-    family: str
-    """Family names (also known as surnames)."""
-    given: str
-    """Given names."""
-    additional: str
-    """Additional names."""
-    prefix: str
-    """Honorific prefixes."""
-    suffix: str
-    """Honorific suffixes."""
 
 
 class vAdr:
@@ -110,6 +91,7 @@ class vAdr:
         """Generate vCard format with semicolon-separated fields."""
         # Each field is vText (handles comma/backslash escaping)
         # but we join with unescaped semicolons (field separators)
+        from icalendar.prop.text import vText
         parts = [vText(f).to_ical().decode(DEFAULT_ENCODING) for f in self.fields]
         return ";".join(parts).encode(DEFAULT_ENCODING)
 
@@ -184,4 +166,4 @@ class vAdr:
 
 
 
-__all__ = ["AdrFields", "NFields", "vAdr"]
+__all__ = ["AdrFields", "vAdr"]
