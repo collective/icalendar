@@ -11,7 +11,7 @@ Accessing components by their properties is preferred over using the `Dictionary
 
 * Values are checked for correctness.
 * Values are converted to the correct type.
-* Properties and parameters are typed for type checking and auto-completion.
+* Properties and parameters are typed for type checking and auto completion.
 * Default values require less if/else checks for presence.
 
 Below, we create an event with useful default values, using :meth:`~icalendar.cal.event.Event.new`.
@@ -107,7 +107,7 @@ are directly accessing the parameters (capital case).
     >>> print(attendee.CN)  # direct access
     Max Rasmussen
 
-The parameters turn up the the ical representation.
+The parameters turn up the iCal representation.
 
 .. code-block:: pycon
     
@@ -127,8 +127,8 @@ Dictionary access
 The lowest level is the dictionary interface.
 It is stable since version 4.0.
 
-While you can set :obj:`str` values directly, is is recommended to use
-:meth:`~icalendar.cal.component.Component.add()`:
+While you can set :obj:`str` values directly, use
+:meth:`~icalendar.cal.component.Component.add()` instead:
 
 .. code-block:: pycon
 
