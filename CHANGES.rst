@@ -67,6 +67,7 @@ Documentation
 - Applied Google-style docstrings to :mod:`icalendar.tools` utility functions with Args, Returns, and Example sections. See :issue:`1072`.
 - Simplify contributors and add supporters in credits. See :issue:`1035`.
 - Add a section in the change log for Documentation. See :issue:`1043`.
+- Added ❌ and ✅ emoji to the list of supported RFCs.
 - Fixed multiple ``more than one target found for cross-reference`` warnings, and stopped using ``sphinx.ext.autosectionlabel``, in documentation. See :issue:`952`.
 - Add ``funding.json`` manifest for funding information. See :issue:`1047`.
 - Resolved ``Cannot resolve forward reference in type annotations`` warning in documentation.
