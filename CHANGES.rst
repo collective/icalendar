@@ -85,7 +85,8 @@ Documentation
 - Replaced "Arguments" and "Args" with "Parameters". :issue:`1076`
 - Added documentation of how to set up a development environment with git. :issue:`906`
 - Documented how to install and use pre-commit. :issue:`996`
-- Documented ``__init__`` and ``__new__`` methods. :issue:`1079`
+- Added a new rule to our docstring style guide to escape docstrings, and added a new section for type hints in the code conventions section. :issue:`1080`
+- Documented ``__init__`` methods. :issue:`1079`
 
 
 7.0.0a3 (2025-12-19)
