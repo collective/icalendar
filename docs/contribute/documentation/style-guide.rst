@@ -50,6 +50,8 @@ Instead, what you want to achieve matters.
 By keeping each page focused on one category, readers can focus on getting work done, understanding, or experimenting.
 
 
+.. _markup-and-formatting:
+
 Markup and formatting
 ---------------------
 
@@ -285,6 +287,19 @@ Description
     :ref:`sphinx:Sections`
 
 
+Escape docstrings
+-----------------
+
+Avoid double-escaping in docstrings.
+Use the raw ``r`` indicator immediately before the leading docstring delimiter ``"""``.
+Thus the docstring and the rendered content will have the same level of escapes.
+It will also be less confusing for readers of the source code.
+
+.. seealso::
+
+    :ref:`parser-split_on_unescaped_semicolon` example.
+
+
 Docstring examples
 ------------------
 
@@ -307,6 +322,8 @@ See the rendered view of this class method at :meth:`Component.register <icalend
 .. literalinclude:: ../../../src/icalendar/cal/component.py
     :pyobject: Component.register
 
+
+.. _parser-split_on_unescaped_semicolon:
 
 ``parser.split_on_unescaped_semicolon``
 '''''''''''''''''''''''''''''''''''''''

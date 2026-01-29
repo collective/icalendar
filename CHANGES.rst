@@ -34,6 +34,7 @@ Minor changes
 - The ``typing-extensions`` dependency on Python < 3.13 is now optional, part of the ``test`` extra.
 - The :func:`icalendar.tools.is_pytz_dt` return value is now hinted as ``TypeGuard[datetime]``, not ``TypeIs[datetime]``, since returning ``False`` should not allow narrowing it as non-datetime.
 - Regroup dependencies in, and remove obsolete ones, from :file:`pyproject.toml`. :issue:`906`
+- Add type hints to internal helper functions. :issue:`938`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
@@ -84,7 +85,7 @@ Documentation
 - Replaced "Arguments" and "Args" with "Parameters". :issue:`1076`
 - Added documentation of how to set up a development environment with git. :issue:`906`
 - Documented how to install and use pre-commit. :issue:`996`
-- Documented ``__init__`` method. :issue:`1079`
+- Documented ``__init__`` and ``__new__`` methods. :issue:`1079`
 
 
 7.0.0a3 (2025-12-19)
