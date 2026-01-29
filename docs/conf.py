@@ -145,7 +145,7 @@ autodoc_default_options = {
     "ignore-module-all": True,
     "members": True,
     "show-inheritance": True,
-    "special-members": "__init__,__new__",
+    "special-members": "__init__",
     "undoc-members": True,
 }
 
