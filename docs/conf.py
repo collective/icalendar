@@ -172,6 +172,7 @@ issues_github_path = "collective/icalendar"
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "sphinx": ("https://www.sphinx-doc.org/en/master/", None),
+    "typing": ("https://typing.python.org/en/latest/", None),
 }
 
 

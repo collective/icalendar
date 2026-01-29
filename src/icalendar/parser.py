@@ -117,7 +117,7 @@ def unescape_char(text: str | bytes) -> str | bytes | None:
     return None
 
 
-def foldline(line, limit=75, fold_sep="\r\n "):
+def foldline(line: str, limit: int=75, fold_sep: str="\r\n ") -> str:
     """Make a string folded as defined in RFC5545
     Lines of text SHOULD NOT be longer than 75 octets, excluding the line
     break.  Long content lines SHOULD be split into a multiple line
@@ -139,7 +139,7 @@ def foldline(line, limit=75, fold_sep="\r\n "):
             line[i : i + limit - 1] for i in range(0, len(line), limit - 1)
         )
 
-    ret_chars = []
+    ret_chars: list[str] = []
     byte_count = 0
     for char in line:
         char_byte_len = len(char.encode(DEFAULT_ENCODING))

@@ -180,6 +180,37 @@ In addition, "internal use only" objects are not displayed in the documentation.
 Their docstrings, of course, remain in the Python source code.
 
 
+Type hints
+''''''''''
+
+Type hints in Python help developers catch errors early, improve code documentation, and enhance the functionality of IDEs and linters.
+icalendar uses type hints, and supports rendering them in its :doc:`reference API documentation </reference/api/icalendar>`.
+
+icalendar was originally written before the existence of type hints in Python.
+As such, there are many Python objects in the code base that lack type hints.
+The icalendar team welcomes contributions to add type hints.
+
+When the type hints in the standard library are not sufficient, you can use subtyping through :doc:`protocols <typing:spec/protocol>`.
+The following example demonstrates subtyping through the usage of a protocol and a method using a literal :ref:`ellipsis <bltin-ellipsis-object>` ``...`` to indicate that the method signature exists, but the implementation details aren't necessary.
+
+.. code-block:: python
+
+    class HasToIcal(Protocol):
+        """Protocol for objects with a to_ical method."""
+
+        def to_ical(self) -> bytes:
+            """Convert to iCalendar format."""
+            ...
+
+.. seealso::
+
+    - GitHub issue :issue:`Add type hints <938>`
+    - :ref:`markup-and-formatting`
+    - :doc:`typing:index`
+    - Python standard library :mod:`typing`
+    - :ref:`annotating-callables`
+
+
 Activate a tox environment
 --------------------------
 
