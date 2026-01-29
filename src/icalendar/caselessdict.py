@@ -15,8 +15,25 @@ KT = TypeVar("KT")
 VT = TypeVar("VT")
 
 def canonsort_keys(keys: Iterable[KT], canonical_order: Optional[Iterable[KT]] = None) -> list[KT]:
-    """Sorts leading keys according to canonical_order.  Keys not specified in
-    canonical_order will appear alphabetically at the end.
+    """Sort keys according to a canonical order with remaining keys alphabetically at the end.
+
+    Keys specified in canonical_order appear first in the order they are defined,
+    followed by any remaining keys sorted alphabetically.
+
+    Args:
+        keys: An iterable of keys to be sorted.
+        canonical_order: An optional iterable defining the preferred order for leading keys.
+            Keys not in this iterable will appear alphabetically at the end.
+
+    Returns:
+        A list of keys sorted according to the canonical order, with unspecified
+        keys appearing alphabetically at the end.
+
+    Examples:
+        >>> canonsort_keys(['b', 'a', 'c'], ['c', 'a'])
+        ['c', 'a', 'b']
+        >>> canonsort_keys(['x', 'y', 'z'])
+        ['x', 'y', 'z']
     """
     canonical_map = {k: i for i, k in enumerate(canonical_order or [])}
     head = [k for k in keys if k in canonical_map]
@@ -25,17 +42,40 @@ def canonsort_keys(keys: Iterable[KT], canonical_order: Optional[Iterable[KT]] =
 
 
 def canonsort_items(dict1: Mapping[KT, VT], canonical_order: Optional[Iterable[KT]] = None) -> list[tuple[KT, VT]]:
-    """Returns a list of items from dict1, sorted by canonical_order."""
+    """Return a list of key-value pairs from a dictionary, sorted by canonical order.
+
+    This function extracts items from the given dictionary and returns them as a list
+    of tuples, sorted according to the specified canonical order.
+
+    Args:
+        dict1: The dictionary whose items are to be sorted.
+        canonical_order: An optional iterable defining the preferred order for keys.
+            Keys not in this iterable will appear alphabetically at the end.
+
+    Returns:
+        A list of (key, value) tuples sorted according to the canonical order.
+
+    Examples:
+        >>> canonsort_items({'b': 2, 'a': 1, 'c': 3}, ['c', 'a'])
+        [('c', 3), ('a', 1), ('b', 2)]
+    """
     return [(k, dict1[k]) for k in canonsort_keys(dict1.keys(), canonical_order)]
 
 
 class CaselessDict(OrderedDict):
     """A dictionary that isn't case sensitive, and only uses strings as keys.
-    Values retain their case.
+
+    Values retain their case. All keys are converted to uppercase internally,
+    but lookups are case-insensitive.
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Set keys to upper for initial dict."""
+        """Initialize the CaselessDict and convert all keys to uppercase.
+
+        Args:
+            *args: Positional arguments passed to OrderedDict.
+            **kwargs: Keyword arguments passed to OrderedDict.
+        """
         super().__init__(*args, **kwargs)
         for key, value in self.items():
             key_upper = to_unicode(key).upper()
@@ -106,14 +146,25 @@ class CaselessDict(OrderedDict):
     canonical_order = None
 
     def sorted_keys(self) -> list[str]:
-        """Sorts keys according to the canonical_order for the derived class.
-        Keys not specified in canonical_order will appear at the end.
+        """Return keys sorted according to the canonical order for this class.
+
+        Keys specified in the class's canonical_order attribute appear first,
+        followed by remaining keys in alphabetical order.
+
+        Returns:
+            A list of keys sorted by canonical order, with unspecified keys
+            appearing alphabetically at the end.
         """
         return canonsort_keys(self.keys(), self.canonical_order)
 
     def sorted_items(self) -> list[tuple[Any, Any]]:
-        """Sorts items according to the canonical_order for the derived class.
-        Items not specified in canonical_order will appear at the end.
+        """Return items sorted according to the canonical order for this class.
+
+        Items are sorted by their keys according to the class's canonical_order
+        attribute, with unspecified keys appearing alphabetically at the end.
+
+        Returns:
+            A list of (key, value) tuples sorted by canonical order.
         """
         return canonsort_items(self, self.canonical_order)
 
