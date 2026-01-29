@@ -950,7 +950,7 @@ class Component(CaselessDict):
                 component.subcomponents.append(cls.from_jcal(subcomponent))
         return component
 
-    def copy(self, recursive=False):
+    def copy(self, recursive:bool=False) -> Self:  # noqa: FBT001
         """Copy the component.
 
         Parameters:
