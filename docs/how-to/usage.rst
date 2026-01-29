@@ -221,7 +221,7 @@ You can also add arbitrary property parameters by passing a parameters dictionar
 .. code-block:: pycon
 
     >>> event = Event()
-    >>> event.add("X-TEST-PROP", "tryout.",
+    >>> event.add("X-TEST-PROP", "tryout",
     ...           parameters={"prop1":"val1", "prop2":"val2"})
     >>> lines = event.to_ical().splitlines()
     >>> assert b'X-TEST-PROP;PROP1=val1;PROP2=val2:tryout.' in lines
@@ -334,7 +334,7 @@ Show journal entries.
     VJOURNAL({})
 
 
-timezone implementations
+Timezone Implementations
 ''''''''''''''''''''''''
 
 You can localize your events to take place in different timezones.
@@ -361,7 +361,7 @@ To demonstrate icalendar's flexibility, the following example creates an event t
     END:VEVENT
 
 
-``zoneinfo`` default implementation
+``zoneinfo`` Default Implementation
 '''''''''''''''''''''''''''''''''''
 
 .. versionchanged:: 6.0.0
@@ -388,7 +388,7 @@ To continue to receive ``pytz`` timezones in parsed results, you can receive all
     <DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>
 
 
-Complete recurring meeting
+Complete Recurring Meeting
 ''''''''''''''''''''''''''
 
 This section shows how create a complete and typical iCalendar file of a recurring meeting event, then add some properties to it, including a location, organizer, attendees, alarms, recurrence, and other properties.

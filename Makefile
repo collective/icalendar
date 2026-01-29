@@ -15,7 +15,7 @@ BUILDDIR        = ../_build
 PAPEROPT_a4     = -D latex_paper_size=a4
 PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
-VALEFILES       := $(shell find $(DOCS_DIR) -type f -name "*.rst" -print)  # Also add `src` for docstrings.
+VALEFILES       := $(shell find $(DOCS_DIR) -type f -name "*.rst" -print) $(shell find src/icalendar -type f -name "*.py" -not -path "*/tests/*" -not -path "*/fuzzing/*" -print)
 VALEOPTS        ?=
 PYTHONVERSION   = >=3.11,<3.15
 
