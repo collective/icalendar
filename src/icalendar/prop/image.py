@@ -3,8 +3,13 @@
 from __future__ import annotations
 
 import base64
+from typing import TYPE_CHECKING
 
-from icalendar.prop import vBinary, vText, vUri
+from icalendar.prop.binary import vBinary
+from icalendar.prop.uri import vUri
+
+if TYPE_CHECKING:
+    from icalendar.prop.text import vText
 
 
 class Image:

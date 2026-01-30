@@ -92,6 +92,7 @@ html_theme_options = {
     "navbar_start": ["navbar-logo", "version-switcher"],
     "navigation_with_keys": True,
     "search_bar_text": "Search",
+    "secondary_sidebar_items": ["edit-this-page", "page-toc", "sourcelink"],
     "show_nav_level": 2,
     "show_toc_level": 2,
     "show_version_warning_banner": True,
@@ -181,6 +182,7 @@ intersphinx_mapping = {
 linkcheck_ignore = [
     # Ignore pages that require authentication
     r"https://app.readthedocs.org/dashboard/icalendar/users/create/",
+    r"https://docutils.sourceforge.io/rst.html",
     r"https://github.com/collective/icalendar/fork",
     r"https://github.com/collective/icalendar/settings/",
     r"https://groups.google.com/g/icalendar-coc/",
