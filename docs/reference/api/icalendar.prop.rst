@@ -1,12 +1,6 @@
 icalendar.prop package
 ======================
 
-.. automodule:: icalendar.prop
-   :ignore-module-all:
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
 Submodules
 ----------
 
@@ -31,3 +25,11 @@ Submodules
    icalendar.prop.unknown
    icalendar.prop.uri
    icalendar.prop.xml_reference
+
+Module contents
+---------------
+
+.. automodule:: icalendar.prop
+   :members:
+   :show-inheritance:
+   :undoc-members:
