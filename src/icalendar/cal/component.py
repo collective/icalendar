@@ -405,7 +405,7 @@ class Component(CaselessDict):
             name = name.upper()
         return self._walk(name, select)
 
-    def with_uid(self, uid):
+    def with_uid(self, uid:str) -> Component:
         """Return a list of components with the given UID."""
         return [c for c in self.walk() if c.get('uid') == uid]
 
