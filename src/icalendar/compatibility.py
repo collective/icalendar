@@ -35,7 +35,6 @@ else:
 
 __all__ = [
     "Self",
-    "Self",
     "TypeGuard",
     "TypeIs",
 ]
