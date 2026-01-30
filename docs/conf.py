@@ -182,6 +182,7 @@ intersphinx_mapping = {
 linkcheck_ignore = [
     # Ignore pages that require authentication
     r"https://app.readthedocs.org/dashboard/icalendar/users/create/",
+    r"https://docutils.sourceforge.io/rst.html",
     r"https://github.com/collective/icalendar/fork",
     r"https://github.com/collective/icalendar/settings/",
     r"https://groups.google.com/g/icalendar-coc/",

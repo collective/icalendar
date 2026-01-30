@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from icalendar.prop import vUri
+from icalendar.prop.uri import vUri
 
 
 @dataclass
