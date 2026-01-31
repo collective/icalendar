@@ -955,7 +955,7 @@ class Component(CaselessDict):
 
         Parameters:
             recursive:
-                If ``True`, this creates copies of the component, its subcomponents,
+                If ``True``, this creates copies of the component, its subcomponents,
                 and all its properties.
                 If ``False``, this only creates a shallow copy of the component.
 
