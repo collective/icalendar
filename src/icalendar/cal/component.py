@@ -955,12 +955,12 @@ class Component(CaselessDict):
 
         Parameters:
             recursive:
-                If True, this creates copies of the component, its subcomponents and
-                all its properties.
-                If False, this only creates a shallow copy of the component.
+                If ``True`, this creates copies of the component, its subcomponents,
+                and all its properties.
+                If ``False``, this only creates a shallow copy of the component.
 
         Returns:
-            A copy of the component
+            A copy of the component.
 
         Examples:
 
@@ -974,7 +974,7 @@ class Component(CaselessDict):
                 >>> str(event_copy.description)
                 'Event to be copied'
 
-            Shallow copies loose their subcomponents:
+            Shallow copies lose their subcomponents:
 
             .. code-block:: pycon
 
