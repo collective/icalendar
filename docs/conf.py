@@ -92,6 +92,7 @@ html_theme_options = {
     "navbar_start": ["navbar-logo", "version-switcher"],
     "navigation_with_keys": True,
     "search_bar_text": "Search",
+    "secondary_sidebar_items": ["edit-this-page", "page-toc", "sourcelink"],
     "show_nav_level": 2,
     "show_toc_level": 2,
     "show_version_warning_banner": True,
@@ -116,6 +117,38 @@ html_js_files = [
 ]
 pygments_style = "sphinx"
 smartquotes = False
+
+
+# -- Options apidoc output -------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/extensions/apidoc.html#
+apidoc_modules = [
+    {
+        "path": "../src/icalendar",
+        "destination": "reference/api",
+        "exclude_patterns": [
+            "**/tests*",
+            "**/timezone/equivalent_timezone_ids_result*",
+        ],
+        "separate_modules": True,
+        "automodule_options": {
+            "ignore-module-all",
+            "members",
+            "show-inheritance",
+            "undoc-members",
+        },
+    }
+]
+
+
+# -- Options autodoc output -------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html
+autodoc_default_options = {
+    "ignore-module-all": True,
+    "members": True,
+    "show-inheritance": True,
+    "special-members": "__init__",
+    "undoc-members": True,
+}
 
 
 # -- Napolean configuration ----------------------------------
@@ -149,6 +182,7 @@ intersphinx_mapping = {
 linkcheck_ignore = [
     # Ignore pages that require authentication
     r"https://app.readthedocs.org/dashboard/icalendar/users/create/",
+    r"https://docutils.sourceforge.io/rst.html",
     r"https://github.com/collective/icalendar/fork",
     r"https://github.com/collective/icalendar/settings/",
     r"https://groups.google.com/g/icalendar-coc/",

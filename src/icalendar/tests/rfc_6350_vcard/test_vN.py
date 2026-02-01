@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from icalendar.prop import NFields, vN
+from icalendar.prop import vN
+from icalendar.prop.n import NFields
 
 
 class TestVNCreation:
