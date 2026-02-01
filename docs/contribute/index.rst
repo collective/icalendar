@@ -21,7 +21,7 @@ First-time contributors
 
 Contributions to icalendar from people new to icalendar are welcome.
 
-For people participating in programs to encourage first-time contributions, including `Hacktoberfest <https://hacktoberfest.com/>`_, `Good First Issue <https://goodfirstissue.dev/language/python>`_, and `Up For Grabs <https://up-for-grabs.net/#/filters?names=478>`_, you must comply with their terms and conditions to receive their recognition or rewards.
+For people participating in programs to encourage first-time contributions, including `Hacktoberfest <https://hacktoberfest.com/>`_, `Good First Issue <https://goodfirstissue.dev/language/python>`_, and `Up For Grabs <https://up-for-grabs.net/#/filters?tags=ical%2Cicalendar%2Cics%2Crfc5545>`_, you must comply with their terms and conditions to receive their recognition or rewards.
 Accordingly, you may request of the maintainers in your pull request that you would like recognition for your contribution.
 
 .. seealso::
