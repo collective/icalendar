@@ -117,7 +117,7 @@ def unescape_char(text: str | bytes) -> str | bytes | None:
     return None
 
 
-def foldline(line, limit=75, fold_sep="\r\n "):
+def foldline(line: str, limit: int=75, fold_sep: str="\r\n ") -> str:
     """Make a string folded as defined in RFC5545
     Lines of text SHOULD NOT be longer than 75 octets, excluding the line
     break.  Long content lines SHOULD be split into a multiple line
@@ -139,7 +139,7 @@ def foldline(line, limit=75, fold_sep="\r\n "):
             line[i : i + limit - 1] for i in range(0, len(line), limit - 1)
         )
 
-    ret_chars = []
+    ret_chars: list[str] = []
     byte_count = 0
     for char in line:
         char_byte_len = len(char.encode(DEFAULT_ENCODING))
@@ -336,7 +336,7 @@ def q_join(lst: list[str], sep: str = ",", always_quote: bool = False) -> str:
 def single_string_parameter(func: Callable | None = None, upper=False):
     """Create a parameter getter/setter for a single string parameter.
 
-    Args:
+    Parameters:
         upper: Convert the value to uppercase
         func: The function to decorate.
 
@@ -457,7 +457,7 @@ class Parameters(CaselessDict):
     def to_ical(self, sorted: bool = True):  # noqa: A002, FBT001
         """Returns an :rfc:`5545` representation of the parameters.
 
-        Args:
+        Parameters:
             sorted (bool): Sort the parameters before encoding.
             exclude_utc (bool): Exclude TZID if it is set to ``"UTC"``
         """
@@ -557,7 +557,7 @@ class Parameters(CaselessDict):
     ) -> str | int | float | list[str] | list[int] | list[float]:
         """Convert a parameter value to jCal format.
 
-        Args:
+        Parameters:
             value: The parameter value
 
         Returns:
@@ -583,7 +583,7 @@ class Parameters(CaselessDict):
     def to_jcal(self, exclude_utc=False) -> dict[str, str]:
         """Return the jCal representation of the parameters.
 
-        Args:
+        Parameters:
             exclude_utc (bool): Exclude the TZID parameter if it is UTC
         """
         jcal = {
@@ -642,7 +642,7 @@ class Parameters(CaselessDict):
     def from_jcal_property(cls, jcal_property: list):
         """Create the parameters for a jCal property.
 
-        Args:
+        Parameters:
             jcal_property (list): The jCal property [name, params, value, ...]
             default_value (str, optional): The default value of the property.
                 If this is given, the default value will not be set.
@@ -740,7 +740,7 @@ def split_on_unescaped_comma(text: str) -> list[str]:
     Splits only on commas not preceded by backslash.
     After splitting, unescapes backslash sequences in each part.
 
-    Args:
+    Parameters:
         text: Text with potential escaped commas (e.g., "foo\\, bar,baz")
 
     Returns:

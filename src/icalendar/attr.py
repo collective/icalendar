@@ -338,7 +338,7 @@ def multi_language_text_property(
 
     This property can be defined several times with different ``LANGUAGE`` parameters.
 
-    Args:
+    Parameters:
         main_prop (str): The property to set and get, such as ``NAME``
         compatibility_prop (str): An old property used before, such as ``X-WR-CALNAME``
         doc (str): The documentation string
@@ -373,7 +373,7 @@ def multi_language_text_property(
 def single_int_property(prop: str, default: int, doc: str) -> property:
     """Create a property for an int value that exists only once.
 
-    Args:
+    Parameters:
         prop: The name of the property
         default: The default value
         doc: The documentation string
@@ -402,7 +402,7 @@ def single_int_property(prop: str, default: int, doc: str) -> property:
 def single_utc_property(name: str, docs: str) -> property:
     """Create a property to access a value of datetime in UTC timezone.
 
-    Args:
+    Parameters:
         name: name of the property
         docs: documentation string
     """
@@ -1578,7 +1578,7 @@ def get_start_end_duration_with_validation(
     This tests validity according to :rfc:`5545` rules
     for ``Event`` and ``Todo`` components.
 
-    Args:
+    Parameters:
         component: The component to validate, either ``Event`` or ``Todo``.
         start_property: The start property name, ``DTSTART``.
         end_property: The end property name, either ``DTEND`` for ``Event`` or
@@ -1631,7 +1631,7 @@ def get_start_property(component: Component) -> date | datetime:
     """
     Get the start property with validation.
 
-    Args:
+    Parameters:
         component: The component from which to get its start property.
 
     Returns:
@@ -1653,7 +1653,7 @@ def get_end_property(component: Component, end_property: str) -> date | datetime
     """
     Get the end property with fallback logic for ``Event`` and ``Todo`` components.
 
-    Args:
+    Parameters:
         component: The component to get end from
         end_property: The end property name, either ``DTEND`` for ``Event`` or
             ``DUE`` for ``Todo``.
@@ -1696,7 +1696,7 @@ def get_duration_property(component: Component) -> timedelta:
     """
     Get the duration property with fallback calculation from start and end.
 
-    Args:
+    Parameters:
         component: The component from which to get its duration property.
 
     Returns:
@@ -1720,7 +1720,7 @@ def set_duration_with_locking(
     """
     Set the duration with explicit locking behavior for ``Event`` and ``Todo``.
 
-    Args:
+    Parameters:
         component: The component to modify, either ``Event`` or ``Todo``.
         duration: The duration to set, or ``None`` to convert to ``DURATION`` property.
         locked: Which property to keep unchanged, either ``start`` or ``end``.
@@ -1773,7 +1773,7 @@ def set_start_with_locking(
     """
     Set the start with explicit locking behavior for ``Event`` and ``Todo`` components.
 
-    Args:
+    Parameters:
         component: The component to modify, either ``Event`` or ``Todo``.
         start: The start time to set.
         locked: Which property to keep unchanged, either ``duration``, ``end``,
@@ -1823,7 +1823,7 @@ def set_end_with_locking(
     """
     Set the end with explicit locking behavior for Event and Todo components.
 
-    Args:
+    Parameters:
         component: The component to modify, either ``Event`` or ``Todo``.
         end: The end time to set.
         locked: Which property to keep unchanged, either ``start`` or ``duration``.

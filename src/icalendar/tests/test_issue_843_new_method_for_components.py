@@ -56,7 +56,7 @@ COMPONENTS_DTSTAMP = {
     Availability,
 }
 COMPONENTS_DTSTAMP_AUTOMATIC = {Event, Journal, Todo, FreeBusy, Available, Availability}
-COMPONENTS_UID_AUTOMATIC = {Event, Todo, Journal, Available, Availability}
+COMPONENTS_UID_AUTOMATIC = {Event, Todo, Journal, Available, Availability, Calendar}
 COMPONENTS_UID = {Event, Todo, Journal, Alarm, Calendar, Available, Availability}
 COMPONENTS_SEQUENCE = {Event, Todo, Journal, Availability}
 COMPONENTS_CATEGORIES = {Event, Journal, Todo, Calendar, Availability, Available}

@@ -9,7 +9,6 @@ PAPER           ?=
 # Internal variables.
 SPHINXBUILD     = "$(realpath .venv/bin/sphinx-build)"
 SPHINXAUTOBUILD = "$(realpath .venv/bin/sphinx-autobuild)"
-SPHINXAPIDOC    = "$(realpath .venv/bin/sphinx-apidoc)"
 DOCS_DIR        = ./docs/
 BUILDDIR        = ../_build
 PAPEROPT_a4     = -D latex_paper_size=a4
@@ -103,7 +102,7 @@ linkcheck: .venv  ## Run linkcheck
 
 .PHONY: linkcheckbroken
 linkcheckbroken: .venv  ## Run linkcheck and show only broken links
-	cd $(DOCS_DIR) && $(SPHINXBUILD) -b linkcheck $(ALLSPHINXOPTS) $(BUILDDIR)/linkcheck | GREP_COLORS='0;31' grep -wi "broken\|redirect" --color=always | GREP_COLORS='0;31' grep -vi "https://github.com/collective/icalendar/issues/" --color=always && if test $$? = 0; then exit 1; fi || test $$? = 1
+	cd $(DOCS_DIR) && $(SPHINXBUILD) -b linkcheck $(ALLSPHINXOPTS) $(BUILDDIR)/linkcheck | GREP_COLORS='0;31' grep -wi "[^.]broken\|redirect" --color=always && if test $$? = 0; then exit 1; fi || test $$? = 1
 	@echo
 	@echo "Link check complete; look for any errors in the above output " \
 		"or in $(BUILDDIR)/linkcheck/ ."
@@ -127,14 +126,10 @@ test: clean linkcheckbroken  ## Clean docs build, then run vale and linkcheckbro
 
 
 # development
-.PHONY: apidoc
-apidoc: .venv  ## Generate API documentation source files
-	export SPHINX_APIDOC_OPTIONS="members,show-inheritance,undoc-members,ignore-module-all" && \
-	cd $(DOCS_DIR) && $(SPHINXAPIDOC) \
- 		-f -M -e --remove-old \
- 		-o reference/api ../src \
- 		../src/icalendar/tests \
- 		../src/icalendar/timezone/equivalent_timezone_ids_result.py
+.PHONY: dev
+dev: .venv  ## Install required Python, create Python virtual environment, install package and development requirements
+	@uv sync --group dev
+	@pre-commit install
 
 .PHONY: all
 all: clean linkcheck html  ## Clean docs build, then run linkcheck, and build html

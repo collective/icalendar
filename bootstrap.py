@@ -147,7 +147,7 @@ if version is None and not options.accept_buildout_test_releases:
 
     _final_parts = "*final-", "*final"
 
-    def _final_version(parsed_version):
+    def _final_version(parsed_version: Iterable[str]) -> bool:
         for part in parsed_version:
             if (part.startswith("*")) and (part not in _final_parts):
                 return False

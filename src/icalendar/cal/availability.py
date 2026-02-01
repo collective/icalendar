@@ -265,7 +265,7 @@ class Availability(Component):
 
         This creates a new Availability in accordance with :rfc:`7953`.
 
-        Arguments:
+        Parameters:
             busy_type: The :attr:`busy_type` of the availability.
             categories: The :attr:`categories` of the availability.
             classification: The :attr:`classification` of the availability.

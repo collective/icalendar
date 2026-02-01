@@ -2,7 +2,7 @@
 
 See
 - doctest documentation: https://docs.python.org/3/library/doctest.html
-- Issue 443: https://github.com/collective/icalendar/issues/443
+- :issue:`443`
 
 This file should be tests, too:
 

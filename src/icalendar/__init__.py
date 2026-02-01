@@ -55,7 +55,6 @@ from icalendar.parser import (
 from icalendar.prop import (
     VPROPERTY,
     AdrFields,
-    NFields,
     TypesFactory,
     vAdr,
     vBinary,
@@ -91,6 +90,7 @@ from icalendar.prop.conference import Conference
 from icalendar.prop.image import Image
 
 # Switching the timezone provider
+from icalendar.prop.n import NFields
 from icalendar.timezone import is_utc, use_pytz, use_zoneinfo
 
 from .version import __version__, __version_tuple__, version, version_tuple

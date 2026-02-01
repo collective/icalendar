@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from copy import deepcopy
 from datetime import date, datetime, time, timedelta, timezone
 from typing import TYPE_CHECKING, Any, ClassVar
 
@@ -27,7 +28,6 @@ from icalendar.parser import (
     Parameters,
     q_join,
     q_split,
-    split_on_unescaped_comma,
 )
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import VPROPERTY, TypesFactory, vDDDLists, vText
@@ -50,7 +50,7 @@ class Component(CaselessDict):
 
     name: ClassVar[str | None] = None
     """The name of the component.
-    
+
     This should be defined in each component class.
 
     Example: ``VCALENDAR``.
@@ -70,12 +70,12 @@ class Component(CaselessDict):
 
     inclusive: ClassVar[(tuple[str] | tuple[tuple[str, str]])] = ()
     """These properties are inclusive.
-     
+
     In other words, if the first property in the tuple occurs, then the
     second one must also occur.
-    
+
     Example:
-        
+
         .. code-block:: python
 
             ('duration', 'repeat')
@@ -83,7 +83,7 @@ class Component(CaselessDict):
 
     ignore_exceptions: ClassVar[bool] = False
     """Whether or not to ignore exceptions when parsing.
-    
+
     If ``True``, and this component can't be parsed, then it will silently
     ignore it, rather than let the exception propagate upwards.
     """
@@ -95,7 +95,7 @@ class Component(CaselessDict):
     def get_component_class(cls, name: str) -> type[Component]:
         """Return a component with this name.
 
-        Arguments:
+        Parameters:
             name: Name of the component, i.e. ``VCALENDAR``
         """
         if cls._components_factory is None:
@@ -146,7 +146,7 @@ class Component(CaselessDict):
     ) -> str | None:
         """Infer the ``VALUE`` parameter from a Python type.
 
-        Args:
+        Parameters:
             value: Python native type, one of :py:class:`date`, :py:mod:`datetime`,
                 :py:class:`timedelta`, :py:mod:`time`, :py:class:`tuple`,
                 or :py:class:`list`.
@@ -565,7 +565,7 @@ class Component(CaselessDict):
 
         Handles standard and custom components (``X-*``, IANA-registered).
 
-        Args:
+        Parameters:
             st: iCalendar data as bytes or string
             multiple: If ``True``, returns list. If ``False``, returns single component.
 
@@ -842,7 +842,7 @@ class Component(CaselessDict):
     ) -> Component:
         """Create a new component.
 
-        Arguments:
+        Parameters:
             comments: The :attr:`comments` of the component.
             concepts: The :attr:`concepts` of the component.
             created: The :attr:`created` of the component.
@@ -915,7 +915,7 @@ class Component(CaselessDict):
     def from_jcal(cls, jcal: str | list) -> Component:
         """Create a component from a jCal list.
 
-        Args:
+        Parameters:
             jcal: jCal list or JSON string according to :rfc:`7265`.
 
         Raises:
@@ -999,6 +999,59 @@ class Component(CaselessDict):
             with JCalParsingError.reraise_with_path_added(2, i):
                 component.subcomponents.append(cls.from_jcal(subcomponent))
         return component
+
+    def copy(self, recursive: bool = False) -> Self:  # noqa: FBT001
+        """Copy the component.
+
+        Parameters:
+            recursive:
+                If ``True``, this creates copies of the component, its subcomponents,
+                and all its properties.
+                If ``False``, this only creates a shallow copy of the component.
+
+        Returns:
+            A copy of the component.
+
+        Examples:
+
+            Create a shallow copy of a component:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Event
+                >>> event = Event.new(description="Event to be copied")
+                >>> event_copy = event.copy()
+                >>> str(event_copy.description)
+                'Event to be copied'
+
+            Shallow copies lose their subcomponents:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Calendar
+                >>> calendar = Calendar.example()
+                >>> len(calendar.subcomponents)
+                3
+                >>> calendar_copy = calendar.copy()
+                >>> len(calendar_copy.subcomponents)
+                0
+
+            A recursive copy also copies all the subcomponents:
+
+            .. code-block:: pycon
+
+                >>> full_calendar_copy = calendar.copy(recursive=True)
+                >>> len(full_calendar_copy.subcomponents)
+                3
+                >>> full_calendar_copy.events[0] == calendar.events[0]
+                True
+                >>> full_calendar_copy.events[0] is calendar.events[0]
+                False
+
+        """
+        if recursive:
+            return deepcopy(self)
+        return super().copy()
 
 
 __all__ = ["Component"]

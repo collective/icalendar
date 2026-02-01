@@ -92,6 +92,7 @@ html_theme_options = {
     "navbar_start": ["navbar-logo", "version-switcher"],
     "navigation_with_keys": True,
     "search_bar_text": "Search",
+    "secondary_sidebar_items": ["edit-this-page", "page-toc", "sourcelink"],
     "show_nav_level": 2,
     "show_toc_level": 2,
     "show_version_warning_banner": True,
@@ -115,6 +116,39 @@ html_js_files = [
     ("js/custom-icons.js", {"defer": "defer"}),
 ]
 pygments_style = "sphinx"
+smartquotes = False
+
+
+# -- Options apidoc output -------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/extensions/apidoc.html#
+apidoc_modules = [
+    {
+        "path": "../src/icalendar",
+        "destination": "reference/api",
+        "exclude_patterns": [
+            "**/tests*",
+            "**/timezone/equivalent_timezone_ids_result*",
+        ],
+        "separate_modules": True,
+        "automodule_options": {
+            "ignore-module-all",
+            "members",
+            "show-inheritance",
+            "undoc-members",
+        },
+    }
+]
+
+
+# -- Options autodoc output -------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html
+autodoc_default_options = {
+    "ignore-module-all": True,
+    "members": True,
+    "show-inheritance": True,
+    "special-members": "__init__",
+    "undoc-members": True,
+}
 
 
 # -- Napolean configuration ----------------------------------
@@ -139,6 +173,7 @@ issues_github_path = "collective/icalendar"
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "sphinx": ("https://www.sphinx-doc.org/en/master/", None),
+    "typing": ("https://typing.python.org/en/latest/", None),
 }
 
 
@@ -147,6 +182,7 @@ intersphinx_mapping = {
 linkcheck_ignore = [
     # Ignore pages that require authentication
     r"https://app.readthedocs.org/dashboard/icalendar/users/create/",
+    r"https://docutils.sourceforge.io/rst.html",
     r"https://github.com/collective/icalendar/fork",
     r"https://github.com/collective/icalendar/settings/",
     r"https://groups.google.com/g/icalendar-coc/",
@@ -155,6 +191,7 @@ linkcheck_ignore = [
     r"https://github.com/actions/python-versions#support-policy",
     r"https://github.com/collective/icalendar/blob/main/CODE_OF_CONDUCT.md#enforcement",
     r"https://github.com/collective/icalendar/blob/main/README.rst#related-projects",
+    r"https://github.com/pre-commit/pre-commit-hooks#debug-statements",
     r"https://up-for-grabs.net/#/filters",
     # Ignore links that are unstable
     r"https://www.unicode.org/cldr/cldr-aux/charts/29/supplemental/zone_tzid.html",
@@ -182,7 +219,7 @@ redirects = {
     "maintenance": "contribute/maintenance.html",
     "security": "https://github.com/collective/icalendar/blob/main/SECURITY.md",
     "usage": "how-to/usage.html",
-    }
+}
 
 man_pages = [("index", "icalendar", "icalendar Documentation", ["Plone Foundation"], 1)]
 

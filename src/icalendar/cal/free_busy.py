@@ -110,7 +110,7 @@ class FreeBusy(Component):
 
         This creates a new Alarm in accordance with :rfc:`5545`.
 
-        Arguments:
+        Parameters:
             comments: The :attr:`~icalendar.Component.comments` of the component.
             concepts: The :attr:`~icalendar.Component.concepts` of the component.
             contacts: The :attr:`contacts` of the component.
