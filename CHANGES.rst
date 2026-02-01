@@ -83,6 +83,7 @@ Documentation
 - Use Google style docstrings in :mod:`~icalendar.parser_tools`.
   See :issue:`1017`.
 - Added Upgrade guide. See :issue:`997`.
+- Fixed links in jcal documentation.
 - Enable sphinx-issues extension. :issue:`1091`
 - Replaced "Arguments" and "Args" with "Parameters". :issue:`1076`
 - Added documentation of how to set up a development environment with git. :issue:`906`
