@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import timedelta
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING
 
 from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
@@ -25,7 +25,7 @@ from icalendar.error import IncompleteComponent
 from icalendar.version import __version__
 
 if TYPE_CHECKING:
-    import uuid
+    from collections.abc import Iterable, Sequence
     from datetime import date, datetime
 
     from icalendar.cal.availability import Availability
@@ -547,6 +547,7 @@ Description:
         refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
         source: str | None = None,
+        subcomponents: Iterable[Component] | None = None,
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
         version: str = "2.0",
@@ -573,6 +574,7 @@ Description:
             refids: :attr:`~icalendar.Component.refids` of the calendar.
             related_to: :attr:`~icalendar.Component.related_to` of the calendar.
             source: The :attr:`source` of the calendar.
+            subcomponents: The subcomponents of the calendar.
             uid: The :attr:`uid` of the calendar.
                 If None, this is set to a new :func:`uuid.uuid4`.
             url: The :attr:`url` of the calendar.
@@ -614,6 +616,8 @@ Description:
         calendar.url = url
         calendar.refresh_interval = refresh_interval
         calendar.source = source
+        if subcomponents is not None:
+            calendar.subcomponents = list(subcomponents)
 
         return calendar
 

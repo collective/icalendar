@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from copy import deepcopy
 from datetime import date, datetime, time, timedelta, timezone
 from typing import TYPE_CHECKING, Any, ClassVar
 
@@ -27,7 +28,6 @@ from icalendar.parser import (
     Parameters,
     q_join,
     q_split,
-    split_on_unescaped_comma,
 )
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import VPROPERTY, TypesFactory, vDDDLists, vText
@@ -48,9 +48,9 @@ class Component(CaselessDict):
     directly, but rather one of the subclasses.
     """
 
-    name: ClassVar[str|None] = None
+    name: ClassVar[str | None] = None
     """The name of the component.
-    
+
     This should be defined in each component class.
 
     Example: ``VCALENDAR``.
@@ -68,16 +68,14 @@ class Component(CaselessDict):
     exclusive: ClassVar[tuple[()]] = ()
     """These properties are mutually exclusive."""
 
-    inclusive: ClassVar[(
-        tuple[str] | tuple[tuple[str, str]]
-    )] = ()
+    inclusive: ClassVar[(tuple[str] | tuple[tuple[str, str]])] = ()
     """These properties are inclusive.
-     
+
     In other words, if the first property in the tuple occurs, then the
     second one must also occur.
-    
+
     Example:
-        
+
         .. code-block:: python
 
             ('duration', 'repeat')
@@ -85,7 +83,7 @@ class Component(CaselessDict):
 
     ignore_exceptions: ClassVar[bool] = False
     """Whether or not to ignore exceptions when parsing.
-    
+
     If ``True``, and this component can't be parsed, then it will silently
     ignore it, rather than let the exception propagate upwards.
     """
@@ -533,12 +531,13 @@ class Component(CaselessDict):
                     # Special handling for CATEGORIES - need raw value
                     # before unescaping to properly split on unescaped commas
                     from icalendar.parser import split_on_unescaped_comma
+
                     line_str = str(line)
                     # Use rfind to get the last colon (value separator)
                     # to handle parameters with colons like ALTREP="http://..."
                     colon_idx = line_str.rfind(":")
                     if colon_idx > 0:
-                        raw_value = line_str[colon_idx + 1:]
+                        raw_value = line_str[colon_idx + 1 :]
                         # Parse categories immediately (not lazily) for both strict and tolerant components
                         # This is because CATEGORIES needs special comma handling
                         try:
@@ -551,9 +550,8 @@ class Component(CaselessDict):
                                 raise
                             component.errors.append((uname, str(e)))
                         continue
-                    else:
-                        # Fallback to normal processing if we can't find colon
-                        vals_list = [vals]
+                    # Fallback to normal processing if we can't find colon
+                    vals_list = [vals]
                 elif name == "FREEBUSY":
                     # Handle FREEBUSY comma-separated values
                     vals_list = vals.split(",")
@@ -579,7 +577,8 @@ class Component(CaselessDict):
                             raise
                         # Error-tolerant mode: create vBrokenProperty
                         from icalendar.prop import vBrokenProperty
-                        expected_type = getattr(factory, '__name__', 'unknown')
+
+                        expected_type = getattr(factory, "__name__", "unknown")
                         broken_prop = vBrokenProperty.from_parse_error(
                             raw_value=val,
                             params=params,
@@ -953,6 +952,59 @@ class Component(CaselessDict):
             with JCalParsingError.reraise_with_path_added(2, i):
                 component.subcomponents.append(cls.from_jcal(subcomponent))
         return component
+
+    def copy(self, recursive:bool=False) -> Self:  # noqa: FBT001
+        """Copy the component.
+
+        Parameters:
+            recursive:
+                If ``True``, this creates copies of the component, its subcomponents,
+                and all its properties.
+                If ``False``, this only creates a shallow copy of the component.
+
+        Returns:
+            A copy of the component.
+
+        Examples:
+
+            Create a shallow copy of a component:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Event
+                >>> event = Event.new(description="Event to be copied")
+                >>> event_copy = event.copy()
+                >>> str(event_copy.description)
+                'Event to be copied'
+
+            Shallow copies lose their subcomponents:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Calendar
+                >>> calendar = Calendar.example()
+                >>> len(calendar.subcomponents)
+                3
+                >>> calendar_copy = calendar.copy()
+                >>> len(calendar_copy.subcomponents)
+                0
+
+            A recursive copy also copies all the subcomponents:
+
+            .. code-block:: pycon
+
+                >>> full_calendar_copy = calendar.copy(recursive=True)
+                >>> len(full_calendar_copy.subcomponents)
+                3
+                >>> full_calendar_copy.events[0] == calendar.events[0]
+                True
+                >>> full_calendar_copy.events[0] is calendar.events[0]
+                False
+
+        """
+        if recursive:
+            return deepcopy(self)
+        return super().copy()
 
 
 __all__ = ["Component"]
