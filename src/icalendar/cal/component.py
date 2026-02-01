@@ -48,7 +48,7 @@ class Component(CaselessDict):
     directly, but rather one of the subclasses.
     """
 
-    name: ClassVar[str|None] = None
+    name: ClassVar[str | None] = None
     """The name of the component.
     
     This should be defined in each component class.
@@ -68,9 +68,7 @@ class Component(CaselessDict):
     exclusive: ClassVar[tuple[()]] = ()
     """These properties are mutually exclusive."""
 
-    inclusive: ClassVar[(
-        tuple[str] | tuple[tuple[str, str]]
-    )] = ()
+    inclusive: ClassVar[(tuple[str] | tuple[tuple[str, str]])] = ()
     """These properties are inclusive.
      
     In other words, if the first property in the tuple occurs, then the
@@ -408,6 +406,26 @@ class Component(CaselessDict):
     #####################
     # Generation
 
+    def _iter_property_items_subcomponents(
+        self, sorted: bool = True
+    ) -> list[tuple[str, object]]:
+        """Iterate over subcomponents for property_items().
+
+        This is a hook method that can be overridden by subclasses to customize
+        how subcomponents are serialized. For example, LazyCalendar overrides
+        this to handle unparsed raw components.
+
+        Args:
+            sorted: Whether to sort property names in subcomponents.
+
+        Returns:
+            List of (name, value) tuples from subcomponents.
+        """
+        properties = []
+        for subcomponent in self.subcomponents:
+            properties += subcomponent.property_items(sorted=sorted)
+        return properties
+
     def property_items(
         self,
         recursive=True,
@@ -429,11 +447,117 @@ class Component(CaselessDict):
             else:
                 properties.append((name, values))
         if recursive:
-            # recursion is fun!
-            for subcomponent in self.subcomponents:
-                properties += subcomponent.property_items(sorted=sorted)
+            # Use hook method for subcomponent iteration
+            properties += self._iter_property_items_subcomponents(sorted=sorted)
         properties.append(("END", v_text(self.name).to_ical()))
         return properties
+
+    #: Property names that may have TZID parameters for timezone-aware parsing.
+    _datetime_property_names: ClassVar[tuple[str, ...]] = (
+        "DTSTART",
+        "DTEND",
+        "RECURRENCE-ID",
+        "DUE",
+        "RDATE",
+        "EXDATE",
+    )
+
+    @classmethod
+    def _parse_single_property(
+        cls,
+        component: Self,
+        name: str,
+        params,
+        vals: str,
+        line,
+        *,
+        ignore_errors: bool = False,
+    ) -> None:
+        """Parse a single property and add it to a component.
+
+        This is a helper method that handles property parsing logic shared between
+        :meth:`from_ical` and :class:`~icalendar.cal.lazy.LazyCalendar`.
+
+        Args:
+            component: The component to add the property to.
+            name: Property name (e.g., "SUMMARY", "DTSTART").
+            params: Property parameters.
+            vals: Raw property value string.
+            line: The original content line (for CATEGORIES special handling).
+            ignore_errors: If True, silently ignore parsing errors.
+                          If False, raise exceptions on parse errors.
+        """
+        from icalendar.parser import Parameters, split_on_unescaped_comma
+
+        uname = name.upper()
+        value_param = params.get("VALUE") if params else None
+        factory = cls.types_factory.for_property(name, value_param)
+
+        # Determine TZID for datetime properties
+        tzid = (
+            params.get("TZID")
+            if params and name in cls._datetime_property_names
+            else None
+        )
+
+        # Handle special cases for value list preparation
+        if uname == "CATEGORIES":
+            # Special handling for CATEGORIES - need raw value
+            # before unescaping to properly split on unescaped commas
+            line_str = str(line)
+            colon_idx = line_str.rfind(":")
+            if colon_idx > 0:
+                raw_value = line_str[colon_idx + 1 :]
+                try:
+                    category_list = split_on_unescaped_comma(raw_value)
+                    vals_inst = factory(category_list)
+                    vals_inst.params = params if params else Parameters()
+                    component.add(name, vals_inst, encode=0)
+                except ValueError as e:
+                    if not ignore_errors and not component.ignore_exceptions:
+                        raise
+                    component.errors.append((uname, str(e)))
+                return
+            # Fallback to normal processing if we can't find colon
+            vals_list = [vals]
+        elif name == "FREEBUSY":
+            # Handle FREEBUSY comma-separated values
+            vals_list = vals.split(",")
+        # Workaround broken ICS files with empty RDATE
+        # (not EXDATE - let it parse and fail)
+        elif name == "RDATE" and vals == "":
+            vals_list = []
+        else:
+            vals_list = [vals]
+
+        # Parse all property values
+        for val in vals_list:
+            try:
+                if tzid:
+                    parsed_val = factory.from_ical(val, tzid)
+                else:
+                    parsed_val = factory.from_ical(val)
+                vals_inst = factory(parsed_val)
+                vals_inst.params = params if params else Parameters()
+                component.add(name, vals_inst, encode=0)
+            except Exception as e:
+                if ignore_errors:
+                    return
+                if not component.ignore_exceptions:
+                    raise
+                # Error-tolerant mode: create vBrokenProperty
+                from icalendar.prop import vBrokenProperty
+
+                expected_type = getattr(factory, "__name__", "unknown")
+                broken_prop = vBrokenProperty.from_parse_error(
+                    raw_value=val,
+                    params=params,
+                    property_name=name,
+                    expected_type=expected_type,
+                    error=e,
+                )
+                component.errors.append((name, str(e)))
+                component.add(name, broken_prop, encode=0)
 
     @classmethod
     def from_ical(cls, st, multiple: bool = False) -> Self | list[Self]:  # noqa: FBT001
@@ -501,9 +625,6 @@ class Component(CaselessDict):
                     tzp.cache_timezone_component(component)
             # we are adding properties to the current top of the stack
             else:
-                # Extract VALUE parameter if present
-                value_param = params.get("VALUE") if params else None
-                factory = cls.types_factory.for_property(name, value_param)
                 component = stack[-1] if stack else None
                 if not component:
                     # only accept X-COMMENT at the end of the .ics file
@@ -513,79 +634,7 @@ class Component(CaselessDict):
                     raise ValueError(
                         f'Property "{name}" does not have a parent component.'
                     )
-                datetime_names = (
-                    "DTSTART",
-                    "DTEND",
-                    "RECURRENCE-ID",
-                    "DUE",
-                    "RDATE",
-                    "EXDATE",
-                )
-
-                # Determine TZID for datetime properties
-                tzid = params.get("TZID") if params and name in datetime_names else None
-
-                # Handle special cases for value list preparation
-                if name.upper() == "CATEGORIES":
-                    # Special handling for CATEGORIES - need raw value
-                    # before unescaping to properly split on unescaped commas
-                    from icalendar.parser import split_on_unescaped_comma
-                    line_str = str(line)
-                    # Use rfind to get the last colon (value separator)
-                    # to handle parameters with colons like ALTREP="http://..."
-                    colon_idx = line_str.rfind(":")
-                    if colon_idx > 0:
-                        raw_value = line_str[colon_idx + 1:]
-                        # Parse categories immediately (not lazily) for both strict and tolerant components
-                        # This is because CATEGORIES needs special comma handling
-                        try:
-                            category_list = split_on_unescaped_comma(raw_value)
-                            vals_inst = factory(category_list)
-                            vals_inst.params = params
-                            component.add(name, vals_inst, encode=0)
-                        except ValueError as e:
-                            if not component.ignore_exceptions:
-                                raise
-                            component.errors.append((uname, str(e)))
-                        continue
-                    else:
-                        # Fallback to normal processing if we can't find colon
-                        vals_list = [vals]
-                elif name == "FREEBUSY":
-                    # Handle FREEBUSY comma-separated values
-                    vals_list = vals.split(",")
-                # Workaround broken ICS files with empty RDATE
-                # (not EXDATE - let it parse and fail)
-                elif name == "RDATE" and vals == "":
-                    vals_list = []
-                else:
-                    vals_list = [vals]
-
-                # Parse all properties eagerly
-                for val in vals_list:
-                    try:
-                        if tzid:
-                            parsed_val = factory.from_ical(val, tzid)
-                        else:
-                            parsed_val = factory.from_ical(val)
-                        vals_inst = factory(parsed_val)
-                        vals_inst.params = params
-                        component.add(name, vals_inst, encode=0)
-                    except Exception as e:
-                        if not component.ignore_exceptions:
-                            raise
-                        # Error-tolerant mode: create vBrokenProperty
-                        from icalendar.prop import vBrokenProperty
-                        expected_type = getattr(factory, '__name__', 'unknown')
-                        broken_prop = vBrokenProperty.from_parse_error(
-                            raw_value=val,
-                            params=params,
-                            property_name=name,
-                            expected_type=expected_type,
-                            error=e,
-                        )
-                        component.errors.append((name, str(e)))
-                        component.add(name, broken_prop, encode=0)
+                cls._parse_single_property(component, name, params, vals, line)
 
         if multiple:
             return comps

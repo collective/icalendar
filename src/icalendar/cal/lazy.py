@@ -5,19 +5,12 @@ See `Issue #1050 <https://github.com/collective/icalendar/issues/1050>`_.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import Any, ClassVar
 
 from icalendar.cal.calendar import Calendar
 from icalendar.cal.component import Component
 from icalendar.parser import Contentline, Contentlines
 from icalendar.timezone import tzp
-
-if TYPE_CHECKING:
-    from icalendar.cal.availability import Availability
-    from icalendar.cal.event import Event
-    from icalendar.cal.free_busy import FreeBusy
-    from icalendar.cal.journal import Journal
-    from icalendar.cal.todo import Todo
 
 
 class LazyCalendar(Calendar):
@@ -200,46 +193,9 @@ class LazyCalendar(Calendar):
     def _parse_calendar_property(cls, cal, name, params, vals, line):
         """Parse a single calendar-level property.
 
-        Reuses the property parsing logic from Component.from_ical.
+        Uses the shared property parsing logic from Component._parse_single_property.
         """
-        from icalendar.parser import Parameters, split_on_unescaped_comma
-
-        uname = name.upper()
-        value_param = params.get("VALUE") if params else None
-        factory = cls.types_factory.for_property(name, value_param)
-
-        datetime_names = ("DTSTART", "DTEND", "RECURRENCE-ID", "DUE", "RDATE", "EXDATE")
-        tzid = params.get("TZID") if params and name in datetime_names else None
-
-        # Handle CATEGORIES specially
-        if uname == "CATEGORIES":
-            line_str = str(line)
-            colon_idx = line_str.rfind(":")
-            if colon_idx > 0:
-                raw_value = line_str[colon_idx + 1 :]
-                try:
-                    category_list = split_on_unescaped_comma(raw_value)
-                    vals_inst = factory(category_list)
-                    vals_inst.params = params
-                    cal.add(name, vals_inst, encode=0)
-                except ValueError:
-                    # Invalid CATEGORIES value, skip property
-                    pass
-                return
-
-        # Normal property parsing
-        try:
-            if tzid:
-                parsed_val = factory.from_ical(vals, tzid)
-            else:
-                parsed_val = factory.from_ical(vals)
-            vals_inst = factory(parsed_val)
-            vals_inst.params = params if params else Parameters()
-            cal.add(name, vals_inst, encode=0)
-        except Exception:
-            # Calendar is strict, so we should raise, but for robustness
-            # just add as text if it fails
-            pass
+        cls._parse_single_property(cal, name, params, vals, line, ignore_errors=True)
 
     def _parse_raw_component(self, index: int) -> Component:
         """Parse a raw component by index and add to subcomponents.
@@ -271,7 +227,12 @@ class LazyCalendar(Calendar):
         return component
 
     def _parse_all_of_type(self, name: str) -> None:
-        """Parse all raw components of a given type."""
+        """Parse all raw components of a given type.
+
+        Args:
+            name: Component type name (case-insensitive, e.g., "VEVENT" or "vevent").
+        """
+        name = name.upper()
         for i, (comp_name, _raw_lines) in enumerate(self._raw_components):
             if i in self._parsed_indices:
                 continue
@@ -297,98 +258,32 @@ class LazyCalendar(Calendar):
             List of matching components.
         """
         if name is not None:
-            self._parse_all_of_type(name.upper())
+            self._parse_all_of_type(name)
         else:
             self._parse_all_raw()
         return super().walk(name, select)
 
-    @property
-    def events(self) -> list[Event]:
-        """All :class:`~icalendar.cal.event.Event`\\ s in the calendar.
-
-        :class:`~icalendar.cal.event.Event`\\ s are parsed on first access.
-        """
-        self._parse_all_of_type("VEVENT")
-        return super().events
-
-    @property
-    def todos(self) -> list[Todo]:
-        """All :class:`~icalendar.cal.todo.Todo`\\ s in the calendar.
-
-        :class:`~icalendar.cal.todo.Todo`\\ s are parsed on first access.
-        """
-        self._parse_all_of_type("VTODO")
-        return super().todos
-
-    @property
-    def journals(self) -> list[Journal]:
-        """All :class:`~icalendar.cal.journal.Journal`\\ s in the calendar.
-
-        :class:`~icalendar.cal.journal.Journal`\\ s are parsed on first access.
-        """
-        self._parse_all_of_type("VJOURNAL")
-        return super().walk("VJOURNAL")
-
-    @property
-    def freebusy(self) -> list[FreeBusy]:
-        """All :class:`~icalendar.cal.free_busy.FreeBusy` components in the calendar.
-
-        :class:`~icalendar.cal.free_busy.FreeBusy` components are parsed on first access.
-        """
-        self._parse_all_of_type("VFREEBUSY")
-        return super().freebusy
-
-    @property
-    def availabilities(self) -> list[Availability]:
-        """All :class:`~icalendar.cal.availability.Availability` components in the calendar.
-
-        :class:`~icalendar.cal.availability.Availability` components are parsed on first access.
-        """
-        self._parse_all_of_type("VAVAILABILITY")
-        return super().availabilities
-
-    def property_items(
-        self, recursive: bool = True, sorted: bool = True
+    def _iter_property_items_subcomponents(
+        self, sorted: bool = True
     ) -> list[tuple[str, Any]]:
-        """Returns properties in this component and subcomponents.
+        """Iterate over subcomponents for property_items().
 
-        For unparsed components, reconstructs from stored raw lines
-        to ensure correct round-trip serialization.
-
-        Parameters:
-            recursive: Include subcomponents.
-            sorted: Sort property names.
-
-        Returns:
-            List of (name, value) tuples.
+        Overrides the base class to handle unparsed raw components,
+        ensuring correct round-trip serialization without parsing.
         """
-        v_text = self.types_factory["text"]
-        properties = [("BEGIN", v_text(self.name).to_ical())]
+        properties = []
+        # First: already-parsed subcomponents (includes VTIMEZONE)
+        for subcomponent in self.subcomponents:
+            properties += subcomponent.property_items(sorted=sorted)
 
-        # Calendar's own properties
-        property_names = self.sorted_keys() if sorted else self.keys()
-        for name in property_names:
-            values = self[name]
-            if isinstance(values, list):
-                for value in values:
-                    properties.append((name, value))
-            else:
-                properties.append((name, values))
+        # Then: unparsed raw components
+        for i, (_comp_name, raw_lines) in enumerate(self._raw_components):
+            if i not in self._parsed_indices:
+                # Output raw lines directly
+                for raw_line in raw_lines:
+                    # Use marker that content_line will handle
+                    properties.append((self._RAW_LINE_MARKER, raw_line))
 
-        if recursive:
-            # First: already-parsed subcomponents (includes VTIMEZONE)
-            for subcomponent in self.subcomponents:
-                properties += subcomponent.property_items(sorted=sorted)
-
-            # Then: unparsed raw components
-            for i, (_comp_name, raw_lines) in enumerate(self._raw_components):
-                if i not in self._parsed_indices:
-                    # Output raw lines directly
-                    for raw_line in raw_lines:
-                        # Use marker that content_line will handle
-                        properties.append((self._RAW_LINE_MARKER, raw_line))
-
-        properties.append(("END", v_text(self.name).to_ical()))
         return properties
 
     def content_line(self, name, value, sorted: bool = True):
