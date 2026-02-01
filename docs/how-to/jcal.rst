@@ -2,9 +2,6 @@
 jCal - RFC 7265
 ===============
 
-.. py:module:: icalendar
-    :no-index:
-
 This chapter describes how to read and write jCal files, and how to convert them between iCalendar files.
 
 :rfc:`7265` specifies how to convert the iCalendar format to and from the jCal format, a JSON based representation.
@@ -38,7 +35,7 @@ The following jCal calendar contains one event.
     ... ]
     ... """
 
-Use :meth:`Component.from_jcal` to parse the :py:class:`list` or JSON :py:class:`str`.
+Use :meth:`icalendar.cal.component.Component.from_jcal` to parse the :py:class:`list` or JSON :py:class:`str`.
 
 .. code-block:: pycon
 
@@ -58,7 +55,7 @@ After parsing the calendar, inspect it as shown.
 Write jCal output
 =================
 
-To convert a :class:`Calendar` and any other :class:`Component` to jCal, use the :meth:`~Component.to_jcal` method.
+To convert a :class:`~icalendar.cal.calendar.Calendar` and any other :class:`~icalendar.cal.component.Component` to jCal, use the :meth:`~icalendar.cal.component.Component.to_jcal` method.
 
 .. code-block:: pycon
 
@@ -75,7 +72,7 @@ To convert a :class:`Calendar` and any other :class:`Component` to jCal, use the
         ['uid', {}, 'text', '4088E990AD89CB3DBB484909']],
        []]]]
 
-To directly generate JSON output and write it to a file or send it to a server, use :meth:`~Component.to_json`.
+To directly generate JSON output and write it to a file or send it to a server, use :meth:`~icalendar.cal.component.Component.to_json`.
 The following commands writes the jCal version of the calendar to a temporary file.
 
 .. code-block:: pycon
