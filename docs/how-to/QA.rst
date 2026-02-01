@@ -56,7 +56,7 @@ and if they have a specific word ``Christmas`` in their summary, we make the sum
 Dates with times in icalendar can be timezone specific.
 ``UTC`` is such a timezone. Other examples are ``Europe/Berlin``, ``America/New_York``, and ``Asia/Tokyo``.
 
-In this example, we create a calendar with an event happening in ``Europe/Zurich`` and and add all needed timezones just before saving the calendar.
+In this example, we create a calendar with an event happening in ``Europe/Zurich`` and add all needed timezones just before saving the calendar.
 
 .. code-block:: pycon
 
