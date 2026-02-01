@@ -3,7 +3,7 @@ How do I …
 ==========
 
 This document collects questions and their answers about how to solve a specific problem with icalendar.
-
+If you have a question on how to solve a specific problem with icalendar, please post it on the `icalendar forum <https://github.com/collective/icalendar/discussions/categories/q-a>`_.
 
 … convert icalendar to JSON?
 ============================
