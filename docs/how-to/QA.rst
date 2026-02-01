@@ -49,3 +49,31 @@ and if they have a specific word ``Christmas`` in their summary, we make the sum
     ...     component["SUMMARY"] = component["SUMMARY"].upper()
     >>> print(calendar.events[1].summary)
     ORTHODOX CHRISTMAS
+
+… add timezones to a calendar?
+==============================
+
+Dates with times in icalendar can be timezone specific.
+``UTC`` is such a timezone. Other examples are ``Europe/Berlin``, ``America/New_York``, and ``Asia/Tokyo``.
+
+In this example, we create a calendar with an event happening in ``Europe/Zurich`` and and add all needed timezones just before saving the calendar.
+
+.. code-block:: pycon
+
+    >>> from icalendar import Calendar, Event
+    >>> from datetime import datetime
+    >>> from zoneinfo import ZoneInfo
+    >>> event = Event.new(
+    ...     summary="Meeting in Zurich",
+    ...     start=datetime(2022, 1, 1, 12, 0, 0, tzinfo=ZoneInfo("Europe/Zurich")),
+    ...     end=datetime(2022, 1, 1, 13, 0, 0, tzinfo=ZoneInfo("Europe/Zurich")),
+    ...     location="Zurich, Switzerland",
+    ... )
+    >>> calendar = Calendar.new(
+    ...     subcomponents=[event],    
+    ... )
+    >>> calendar.add_missing_timezones()
+    >>> 'Europe/Zurich' in [tz.tz_name for tz in calendar.timezones]
+    True
+
+After running :meth:`~icalendar.cal.calendar.Calendar.add_missing_timezones`, the calendar now contains all needed timezones and can be saved as a file with :meth:`~icalendar.cal.component.Component.to_ical`.
