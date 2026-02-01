@@ -73,6 +73,7 @@ Documentation
   Added ``SPHINX_APIDOC_OPTIONS`` to ``make apidoc`` command, excluding ``__all__`` items from being duplicated in the documentation, and rebuilt the API documentation source files.
   See :issue:`952`.
 - Document how to create and read attendee information in events. See :issue:`130`.
+- Start a Q&A section for :issue:`443`.
 - Improve documentation contribution guide by adding chapters for small edits, builds and checks, and a style guide. Added details for Vale usage, Diátaxis framework, narrative and API documentation, and fixing all spelling errors. See :issue:`991`.
 - Moved content from the README into documentation to reduce maintenance and point to the authoritative source of information.
   See :issue:`1006`.
