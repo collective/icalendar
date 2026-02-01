@@ -4,7 +4,7 @@ import unittest
 import hypothesis.strategies as st
 from hypothesis import given, settings
 
-from icalendar.parser import Contentline, Contentlines, Parameters
+from icalendar.parser import _Contentline, _Contentlines, Parameters
 
 
 def printable_characters(**kw):
@@ -21,14 +21,14 @@ class TestFuzzing(unittest.TestCase):
     )
     @settings(max_examples=10**3)
     def test_main(self, lines):
-        cl = Contentlines()
+        cl = _Contentlines()
         for key, params, value in lines:
             try:
                 params = Parameters(**params)
             except TypeError:
                 # Happens when there is a random parameter 'self'...
                 continue
-            cl.append(Contentline.from_parts(key, params, value))
+            cl.append(_Contentline.from_parts(key, params, value))
         cl.append("")
 
-        assert Contentlines.from_ical(cl.to_ical()) == cl
+        assert _Contentlines.from_ical(cl.to_ical()) == cl

@@ -14,7 +14,7 @@ except ImportError:
 KT = TypeVar("KT")
 VT = TypeVar("VT")
 
-def canonsort_keys(keys: Iterable[KT], canonical_order: Optional[Iterable[KT]] = None) -> list[KT]:
+def _canonsort_keys(keys: Iterable[KT], canonical_order: Optional[Iterable[KT]] = None) -> list[KT]:
     """Sorts leading keys according to canonical_order.  Keys not specified in
     canonical_order will appear alphabetically at the end.
     """
@@ -24,12 +24,12 @@ def canonsort_keys(keys: Iterable[KT], canonical_order: Optional[Iterable[KT]] =
     return sorted(head, key=lambda k: canonical_map[k]) + sorted(tail)
 
 
-def canonsort_items(dict1: Mapping[KT, VT], canonical_order: Optional[Iterable[KT]] = None) -> list[tuple[KT, VT]]:
+def _canonsort_items(dict1: Mapping[KT, VT], canonical_order: Optional[Iterable[KT]] = None) -> list[tuple[KT, VT]]:
     """Returns a list of items from dict1, sorted by canonical_order."""
-    return [(k, dict1[k]) for k in canonsort_keys(dict1.keys(), canonical_order)]
+    return [(k, dict1[k]) for k in _canonsort_keys(dict1.keys(), canonical_order)]
 
 
-class CaselessDict(OrderedDict):
+class _CaselessDict(OrderedDict):
     """A dictionary that isn't case sensitive, and only uses strings as keys.
     Values retain their case.
     """
@@ -109,7 +109,7 @@ class CaselessDict(OrderedDict):
         """Sorts keys according to the canonical_order for the derived class.
         Keys not specified in canonical_order will appear at the end.
         """
-        return canonsort_keys(self.keys(), self.canonical_order)
+        return _canonsort_keys(self.keys(), self.canonical_order)
 
     def sorted_items(self) -> list[tuple[Any, Any]]:
         """Sorts items according to the canonical_order for the derived class.
@@ -118,4 +118,4 @@ class CaselessDict(OrderedDict):
         return canonsort_items(self, self.canonical_order)
 
 
-__all__ = ["canonsort_keys", "canonsort_items", "CaselessDict"]
+__all__ = ["_canonsort_keys", "_canonsort_items", "_CaselessDict"]

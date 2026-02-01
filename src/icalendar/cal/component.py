@@ -20,11 +20,11 @@ from icalendar.attr import (
     uid_property,
 )
 from icalendar.cal.component_factory import ComponentFactory
-from icalendar.caselessdict import CaselessDict
+from icalendar.caselessdict import _CaselessDict
 from icalendar.error import InvalidCalendar, JCalParsingError
 from icalendar.parser import (
-    Contentline,
-    Contentlines,
+    _Contentline,
+    _Contentlines,
     Parameters,
     q_join,
     q_split,
@@ -40,7 +40,7 @@ if TYPE_CHECKING:
 _marker = []
 
 
-class Component(CaselessDict):
+class Component(_CaselessDict):
     """Base class for calendar components.
 
     Component is the base object for calendar, Event and the other
@@ -183,7 +183,7 @@ class Component(CaselessDict):
         # parsing a property, contains error strings
 
     def __bool__(self):
-        """Returns True, CaselessDict would return False if it had no items."""
+        """Returns True, _CaselessDict would return False if it had no items."""
         return True
 
     def __getitem__(self, key):
@@ -451,7 +451,7 @@ class Component(CaselessDict):
         """
         stack = []  # a stack of components
         comps = []
-        for line in Contentlines.from_ical(st):  # raw parsing
+        for line in _Contentlines.from_ical(st):  # raw parsing
             if not line:
                 continue
 
@@ -614,11 +614,11 @@ class Component(CaselessDict):
     def content_line(self, name, value, sorted: bool = True):  # noqa: A002, FBT001
         """Returns property as content line."""
         params = getattr(value, "params", Parameters())
-        return Contentline.from_parts(name, params, value, sorted=sorted)
+        return _Contentline.from_parts(name, params, value, sorted=sorted)
 
     def content_lines(self, sorted: bool = True):  # noqa: A002, FBT001
         """Converts the Component and subcomponents into content lines."""
-        contentlines = Contentlines()
+        contentlines = _Contentlines()
         for name, value in self.property_items(sorted=sorted):
             cl = self.content_line(name, value, sorted=sorted)
             contentlines.append(cl)

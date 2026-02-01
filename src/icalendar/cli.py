@@ -35,7 +35,7 @@ def _format_attendees(attendees):
     return "\n".join(s.rjust(len(s) + 5) for s in map(_format_name, attendees))
 
 
-def view(event):
+def _view(event):
     """Make a human readable summary of an iCalendar file.
 
     :returns str: Human readable summary.
@@ -74,7 +74,7 @@ def view(event):
 {description}"""
 
 
-def main():
+def _main():
     parser = argparse.ArgumentParser(description=__doc__)
 
     parser.add_argument(
@@ -119,7 +119,7 @@ def main():
             try:
                 calendar = Calendar.from_ical(f.read())
                 for event in calendar.walk("vevent"):
-                    output_file.write(view(event) + "\n\n")
+                    output_file.write(_view(event) + "\n\n")
             finally:
                 if close_input:
                     f.close()
@@ -127,7 +127,7 @@ def main():
         if close_output:
             output_file.close()
 
-__all__ = ["main", "view"]
+__all__ = ["_main", "_view"]
 
 if __name__ == "__main__":
-    main()
+    _main()
