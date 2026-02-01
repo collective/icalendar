@@ -90,6 +90,7 @@ Documentation
 - Added a new rule to our docstring style guide to escape docstrings, and added a new section for type hints in the code conventions section. :issue:`1080`
 - Documented ``__init__`` methods. :issue:`1079`
 - Moved "Edit this page" link to above the page table of contents. :issue:`1106`
+- Added Good First Issue link and fixed Up For Grabs link in Contribute guide. :issue:`1095`
 
 
 7.0.0a3 (2025-12-19)
