@@ -412,10 +412,10 @@ class Component(CaselessDict):
         """Iterate over subcomponents for property_items().
 
         This is a hook method that can be overridden by subclasses to customize
-        how subcomponents are serialized. For example, LazyCalendar overrides
+        how subcomponents are serialized. For example, :class:`~icalendar.cal.lazy.LazyCalendar` overrides
         this to handle unparsed raw components.
 
-        Args:
+        Parameters:
             sorted: Whether to sort property names in subcomponents.
 
         Returns:
@@ -478,7 +478,7 @@ class Component(CaselessDict):
         This is a helper method that handles property parsing logic shared between
         :meth:`from_ical` and :class:`~icalendar.cal.lazy.LazyCalendar`.
 
-        Args:
+        Parameters:
             component: The component to add the property to.
             name: Property name (e.g., "SUMMARY", "DTSTART").
             params: Property parameters.

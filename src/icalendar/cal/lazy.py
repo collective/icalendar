@@ -1,6 +1,6 @@
 """Lazy subcomponent parsing for large calendars.
 
-See `Issue #1050 <https://github.com/collective/icalendar/issues/1050>`_.
+See issue :issue:`1050`.
 """
 
 from __future__ import annotations
@@ -18,8 +18,9 @@ class LazyCalendar(Calendar):
 
     Parses :class:`~icalendar.cal.calendar.Calendar` properties and VTIMEZONE components eagerly, but
     defers parsing of VEVENT, VTODO, VJOURNAL, VFREEBUSY, and VAVAILABILITY
-    until accessed via ``.events``, ``.todos``, ``.walk()``, or other component
-    methods.
+    until accessed via :attr:`~icalendar.cal.calendar.Calendar.events`,
+    :attr:`~icalendar.cal.calendar.Calendar.todos`,
+    :meth:`~icalendar.cal.component.Component.walk`, or other component methods.
 
     This is useful for:
 
@@ -85,7 +86,7 @@ class LazyCalendar(Calendar):
                 single calendar.
 
         Returns:
-            LazyCalendar or list of LazyCalendar instances.
+            :class:`~icalendar.cal.lazy.LazyCalendar` or list of :class:`~icalendar.cal.lazy.LazyCalendar` instances.
         """
         calendars: list[LazyCalendar] = []
         lines = Contentlines.from_ical(st)
@@ -207,7 +208,7 @@ class LazyCalendar(Calendar):
             index: Index into self._raw_components.
 
         Returns:
-            The parsed Component object.
+            The parsed :class:`~icalendar.cal.component.Component` object.
         """
         if index in self._parsed_indices:
             # Already parsed - find and return the component from subcomponents
@@ -229,7 +230,7 @@ class LazyCalendar(Calendar):
     def _parse_all_of_type(self, name: str) -> None:
         """Parse all raw components of a given type.
 
-        Args:
+        Parameters:
             name: Component type name (case-insensitive, e.g., "VEVENT" or "vevent").
         """
         name = name.upper()
