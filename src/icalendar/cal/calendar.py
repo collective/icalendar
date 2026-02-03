@@ -96,7 +96,9 @@ class Calendar(Component):
 
     @classmethod
     def from_ical(
-        cls, st: bytes | str, multiple: bool = False
+        cls,
+        st: bytes | str,
+        multiple: bool = False,  # noqa: FBT001
     ) -> Calendar | list[Calendar]:
         """Parse iCalendar data into Calendar instances.
 
