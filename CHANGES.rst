@@ -64,6 +64,7 @@ Bug fixes
 Documentation
 ~~~~~~~~~~~~~
 
+- Improved docstrings and formatting for the :class:`~icalendar.alarms.AlarmTime` class. See :pr:`1078`.
 - Added how-to guide for handling parsing errors with :class:`~icalendar.prop.vBrokenProperty` and the ``component.errors`` attribute. See :issue:`1085`.
 - Updated 11 function docstrings in :mod:`icalendar.parser` to follow the Google Style guide, improving API documentation clarity and consistency. See :issue:`1072`.
 - Applied Google-style docstrings to :mod:`icalendar.tools` utility functions with Args, Returns, and Example sections. See :issue:`1072`.
