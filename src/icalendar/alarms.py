@@ -34,9 +34,23 @@ if TYPE_CHECKING:
 
 Parent = Union[Event, Todo]
 
-
 class AlarmTime:
-    """An alarm time with all the information."""
+    """Represents a computed alarm occurrence with its timing and state.
+
+    An AlarmTime instance combines an alarm component with its resolved
+    trigger time and additional state information, such as acknowledgment
+    and snoozing.
+
+    Attributes:
+        alarm (Alarm): The underlying VALARM component.
+        trigger (datetime): The computed trigger time.
+        acknowledged_until (datetime | None): Time in UTC until which the
+            alarm has been acknowledged, if any.
+        snoozed_until (datetime | None): Time in UTC until which the alarm
+            is snoozed, if any.
+        parent (Event | Todo | None): The parent calendar component that
+            contains this alarm.
+    """
 
     def __init__(
         self,
@@ -48,25 +62,15 @@ class AlarmTime:
     ):
         """Create a new AlarmTime.
 
-        alarm
-            the Alarm component
-
-        trigger
-            a date or datetime at which to trigger the alarm
-
-        acknowledged_until
-            an optional datetime in UTC until when all alarms
-            have been acknowledged
-
-        snoozed_until
-            an optional datetime in UTC until which all alarms of
-            the same parent are snoozed
-
-        parent
-            the optional parent component the alarm refers to
-
-        local_tzinfo
-            the local timezone that events without tzinfo should have
+        Parameters:
+            alarm (Alarm): The underlying alarm component.
+            trigger (datetime): A date or datetime at which to trigger the alarm.
+            acknowledged_until (Optional[datetime]): Optional datetime in UTC
+                until which the alarm has been acknowledged.
+            snoozed_until (Optional[datetime]): Optional datetime in UTC until
+                which the alarm has been snoozed.
+            parent (Optional[Parent]): Optional parent component to which
+                the alarm refers.
         """
         self._alarm = alarm
         self._parent = parent
@@ -94,25 +98,26 @@ class AlarmTime:
 
     @property
     def parent(self) -> Optional[Parent]:
-        """This is the component that contains the alarm.
+        """The component that contains the alarm.
 
-        This is None if you did not use Alarms.set_component().
+        This is None if you did not use ``Alarms.add_component()``.
         """
         return self._parent
 
     def is_active(self) -> bool:
-        """Whether this alarm is active (True) or acknowledged (False).
+        """Whether this alarm is active (``True``) or acknowledged (``False``).
 
-        For example, in some calendar software, this is True until the user looks
-        at the alarm message and clicked the dismiss button.
+        For example, in some calendar software, this is ``True`` until the user
+        views the alarm message and dismisses it.
 
-        Alarms can be in local time (without a timezone).
-        To calculate if the alarm really happened, we need it to be in a timezone.
-        If a timezone is required but not given, we throw an IncompleteAlarmInformation.
+        Alarms can be in local time (without a timezone). To calculate whether
+        the alarm has occurred, the time must include timezone information.
+
+        Raises:
+            LocalTimezoneMissing: If a timezone is required but not given.
         """
         acknowledged = self.acknowledged
         if not acknowledged:
-            # if nothing is acknowledged, this alarm counts
             return True
         if self._snooze_until is not None and self._snooze_until > acknowledged:
             return True
@@ -126,9 +131,9 @@ class AlarmTime:
 
     @property
     def trigger(self) -> date:
-        """This is the time to trigger the alarm.
+        """The time at which the alarm triggers.
 
-        If the alarm has been snoozed, this can differ from the TRIGGER property.
+        If the alarm has been snoozed, this may differ from the TRIGGER property.
         """
         if self._snooze_until is not None and self._snooze_until > self._trigger:
             return self._snooze_until
