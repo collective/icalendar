@@ -36,6 +36,7 @@ Minor changes
 - The :func:`icalendar.tools.is_pytz_dt` return value is now hinted as ``TypeGuard[datetime]``, not ``TypeIs[datetime]``, since returning ``False`` should not allow narrowing it as non-datetime.
 - Regroup dependencies in, and remove obsolete ones, from :file:`pyproject.toml`. :issue:`906`
 - Add type hints to internal helper functions. :issue:`938`
+- Add type hints to :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>`. :issue:`1129`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
