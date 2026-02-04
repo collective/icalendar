@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from datetime import date, datetime, time, timedelta, timezone
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar, Literal, overload
 
 from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
@@ -27,7 +27,6 @@ from icalendar.parser import (
     Parameters,
     q_join,
     q_split,
-    split_on_unescaped_comma,
 )
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import VPROPERTY, TypesFactory, vDDDLists, vText
@@ -48,9 +47,9 @@ class Component(CaselessDict):
     directly, but rather one of the subclasses.
     """
 
-    name: ClassVar[str|None] = None
+    name: ClassVar[str | None] = None
     """The name of the component.
-    
+
     This should be defined in each component class.
 
     Example: ``VCALENDAR``.
@@ -68,16 +67,14 @@ class Component(CaselessDict):
     exclusive: ClassVar[tuple[()]] = ()
     """These properties are mutually exclusive."""
 
-    inclusive: ClassVar[(
-        tuple[str] | tuple[tuple[str, str]]
-    )] = ()
+    inclusive: ClassVar[(tuple[str] | tuple[tuple[str, str]])] = ()
     """These properties are inclusive.
-     
+
     In other words, if the first property in the tuple occurs, then the
     second one must also occur.
-    
+
     Example:
-        
+
         .. code-block:: python
 
             ('duration', 'repeat')
@@ -85,7 +82,7 @@ class Component(CaselessDict):
 
     ignore_exceptions: ClassVar[bool] = False
     """Whether or not to ignore exceptions when parsing.
-    
+
     If ``True``, and this component can't be parsed, then it will silently
     ignore it, rather than let the exception propagate upwards.
     """
@@ -414,7 +411,7 @@ class Component(CaselessDict):
         Returns:
             list[Component]: List of components with the given UID.
         """
-        return [c for c in self.walk() if c.get('uid') == uid]
+        return [c for c in self.walk() if c.get("uid") == uid]
 
     #####################
     # Generation
@@ -446,8 +443,16 @@ class Component(CaselessDict):
         properties.append(("END", v_text(self.name).to_ical()))
         return properties
 
+    @overload
     @classmethod
-    def from_ical(cls, st, multiple: bool = False) -> Self | list[Self]:  # noqa: FBT001
+    def from_ical(cls, st: str | bytes, multiple: Literal[False] = False) -> Self: ...
+
+    @overload
+    @classmethod
+    def from_ical(cls, st: str | bytes, multiple: Literal[True]) -> list[Self]: ...
+
+    @classmethod
+    def from_ical(cls, st: str | bytes, multiple: bool = False) -> Self | list[Self]:  # noqa: FBT001
         """Parse iCalendar data into component instances.
 
         Handles standard and custom components (``X-*``, IANA-registered).
@@ -541,12 +546,13 @@ class Component(CaselessDict):
                     # Special handling for CATEGORIES - need raw value
                     # before unescaping to properly split on unescaped commas
                     from icalendar.parser import split_on_unescaped_comma
+
                     line_str = str(line)
                     # Use rfind to get the last colon (value separator)
                     # to handle parameters with colons like ALTREP="http://..."
                     colon_idx = line_str.rfind(":")
                     if colon_idx > 0:
-                        raw_value = line_str[colon_idx + 1:]
+                        raw_value = line_str[colon_idx + 1 :]
                         # Parse categories immediately (not lazily) for both strict and tolerant components
                         # This is because CATEGORIES needs special comma handling
                         try:
@@ -559,9 +565,8 @@ class Component(CaselessDict):
                                 raise
                             component.errors.append((uname, str(e)))
                         continue
-                    else:
-                        # Fallback to normal processing if we can't find colon
-                        vals_list = [vals]
+                    # Fallback to normal processing if we can't find colon
+                    vals_list = [vals]
                 elif name == "FREEBUSY":
                     # Handle FREEBUSY comma-separated values
                     vals_list = vals.split(",")
@@ -587,7 +592,8 @@ class Component(CaselessDict):
                             raise
                         # Error-tolerant mode: create vBrokenProperty
                         from icalendar.prop import vBrokenProperty
-                        expected_type = getattr(factory, '__name__', 'unknown')
+
+                        expected_type = getattr(factory, "__name__", "unknown")
                         broken_prop = vBrokenProperty.from_parse_error(
                             raw_value=val,
                             params=params,
