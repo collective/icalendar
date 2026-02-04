@@ -228,8 +228,9 @@ extend-safe-fixes = [
     "E741",   # ambiguous variable name
     "E721",   # comparing types with ==
 ]
-"src/icalendar/prop/__init__.py" = [
-    "N801",   # Class name should use CamelCase
+"src/icalendar/prop/*.py" = [
+    "N801",    # Class name should use CamelCase
+    "PLC0415", # Import property within class
 ]
 "src/icalendar/fuzzing/*" = [
     "T201",   # print found
