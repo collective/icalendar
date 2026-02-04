@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from copy import deepcopy
 from datetime import date, datetime, time, timedelta, timezone
 from typing import TYPE_CHECKING, Any, ClassVar, Literal, overload
 
@@ -967,6 +968,59 @@ class Component(CaselessDict):
             with JCalParsingError.reraise_with_path_added(2, i):
                 component.subcomponents.append(cls.from_jcal(subcomponent))
         return component
+
+    def copy(self, recursive:bool=False) -> Self:  # noqa: FBT001
+        """Copy the component.
+
+        Parameters:
+            recursive:
+                If ``True``, this creates copies of the component, its subcomponents,
+                and all its properties.
+                If ``False``, this only creates a shallow copy of the component.
+
+        Returns:
+            A copy of the component.
+
+        Examples:
+
+            Create a shallow copy of a component:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Event
+                >>> event = Event.new(description="Event to be copied")
+                >>> event_copy = event.copy()
+                >>> str(event_copy.description)
+                'Event to be copied'
+
+            Shallow copies lose their subcomponents:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Calendar
+                >>> calendar = Calendar.example()
+                >>> len(calendar.subcomponents)
+                3
+                >>> calendar_copy = calendar.copy()
+                >>> len(calendar_copy.subcomponents)
+                0
+
+            A recursive copy also copies all the subcomponents:
+
+            .. code-block:: pycon
+
+                >>> full_calendar_copy = calendar.copy(recursive=True)
+                >>> len(full_calendar_copy.subcomponents)
+                3
+                >>> full_calendar_copy.events[0] == calendar.events[0]
+                True
+                >>> full_calendar_copy.events[0] is calendar.events[0]
+                False
+
+        """
+        if recursive:
+            return deepcopy(self)
+        return super().copy()
 
 
 __all__ = ["Component"]
