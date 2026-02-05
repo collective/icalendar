@@ -45,9 +45,8 @@ them directly.
 from __future__ import annotations
 
 import re
-import uuid
 from datetime import date, datetime, time, timedelta, timezone
-from typing import TYPE_CHECKING, Any, ClassVar, NamedTuple, Tuple, TypeAlias, Union
+from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.enums import Enum
@@ -336,6 +335,10 @@ class vDDDLists:
             params=Parameters.from_jcal_property(jcal_property),
         )
 
+    def __hash__(self) -> int:
+        """Cannot hash as this is mutable."""
+        return NotImplemented
+
 
 class TimeBase:
     """Make classes with a datetime/date comparable."""
@@ -372,14 +375,14 @@ class TimeBase:
         return f"{self.__class__.__name__}({self.dt}, {self.params})"
 
 
-DT_TYPE: TypeAlias = Union[
-    datetime,
-    date,
-    timedelta,
-    time,
-    Tuple[datetime, datetime],
-    Tuple[datetime, timedelta],
-]
+DT_TYPE: TypeAlias = (
+    datetime
+    | date
+    | timedelta
+    | time
+    | tuple[datetime, datetime]
+    | tuple[datetime, timedelta]
+)
 
 
 class vDDDTypes(TimeBase):
@@ -494,8 +497,8 @@ class vDDDTypes(TimeBase):
         """Parse a jCal value.
 
         Raises:
-            ~error.JCalParsingError: If the value can't be parsed as either a date, time,
-                date-time, duration, or period.
+            ~error.JCalParsingError: If the value can't be parsed as either a date,
+                 time, date-time, duration, or period.
         """
         if isinstance(jcal, list):
             return vPeriod.parse_jcal_value(jcal)
@@ -1098,7 +1101,7 @@ class vPeriod(TimeBase):
 
     def __init__(
         self,
-        per: tuple[datetime, Union[datetime, timedelta]],
+        per: tuple[datetime, datetime | timedelta],
         params: dict[str, Any] | None = None,
     ):
         start, end_or_duration = per
@@ -1423,7 +1426,7 @@ class vMonth(int):
 
     params: Parameters
 
-    def __new__(cls, month: Union[str, int], /, params: dict[str, Any] | None = None):
+    def __new__(cls, month: str | int, /, params: dict[str, Any] | None = None):
         if isinstance(month, vMonth):
             return cls(month.to_ical().decode())
         if isinstance(month, str):
@@ -1529,7 +1532,7 @@ class vSkip(vText, Enum):
             ) from e
 
 
-class vRecur(CaselessDict):
+class vRecur(CaselessDict):  # noqa: PLW1641, RUF100
     """Recurrence definition.
 
     Property Name:
@@ -2394,38 +2397,38 @@ class TypesFactory(CaselessDict):
         return type_class.from_ical(value)
 
 
-VPROPERTY: TypeAlias = Union[
-    vAdr,
-    vBoolean,
-    vBrokenProperty,
-    vCalAddress,
-    vCategory,
-    vDDDLists,
-    vDDDTypes,
-    vDate,
-    vDatetime,
-    vDuration,
-    vFloat,
-    vFrequency,
-    vInt,
-    vMonth,
-    vN,
-    vOrg,
-    vPeriod,
-    vRecur,
-    vSkip,
-    vText,
-    vTime,
-    vUTCOffset,
-    vUri,
-    vWeekday,
-    vInline,
-    vBinary,
-    vGeo,
-    vUnknown,
-    vXmlReference,
-    vUid,
-]
+VPROPERTY: TypeAlias = (
+    vAdr
+    | vBoolean
+    | vBrokenProperty
+    | vCalAddress
+    | vCategory
+    | vDDDLists
+    | vDDDTypes
+    | vDate
+    | vDatetime
+    | vDuration
+    | vFloat
+    | vFrequency
+    | vInt
+    | vMonth
+    | vN
+    | vOrg
+    | vPeriod
+    | vRecur
+    | vSkip
+    | vText
+    | vTime
+    | vUTCOffset
+    | vUri
+    | vWeekday
+    | vInline
+    | vBinary
+    | vGeo
+    | vUnknown
+    | vXmlReference
+    | vUid
+)
 
 __all__ = [
     "DURATION_REGEX",
