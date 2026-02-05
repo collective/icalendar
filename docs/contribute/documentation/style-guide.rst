@@ -273,7 +273,7 @@ Description
 
     .. note::
 
-        Use "Parameters" instead of "Args" or "Arguments".
+        Use "Parameters" instead of "Args" or "Arguments."
         Although ``Args`` is common in Google style docstrings, :mod:`sphinx.ext.napoleon` supports both ``Parameters`` and ``Args``.
         The term "Parameters" is preferred for consistency with Python's official terminology.
         See `Python FAQ on arguments and parameters <https://docs.python.org/3/faq/programming.html#what-is-the-difference-between-arguments-and-parameters>`_ and :ref:`Napoleon's supported sections <sphinx:Sections>`.
