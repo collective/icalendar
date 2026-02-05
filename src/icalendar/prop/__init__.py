@@ -96,19 +96,25 @@ WEEKDAY_RULE = re.compile(
 class vInt(int):
     """Integer
 
+
     Value Name:
         INTEGER
+
 
     Purpose:
         This value type is used to identify properties that contain a
         signed integer value.
 
+
     Format Definition:
         This value type is defined by the following notation:
 
+
         .. code-block:: text
 
+
             integer    = (["+"] / "-") 1*DIGIT
+
 
     Description:
         If the property permits, multiple "integer" values are
@@ -116,16 +122,34 @@ class vInt(int):
         for "integer" is -2147483648 to 2147483647.  If the sign is not
         specified, then the value is assumed to be positive.
 
-        Example:
+
+    The ``__new__`` method creates a vInt instance:
+
+
+    Parameters:
+        value: Integer value to encode. Can be positive or negative within
+            the range -2147483648 to 2147483647.
+        params: Optional parameter dictionary for the property.
+
+
+    Returns:
+        vInt instance
+
+
+    Example:
+
 
         .. code-block:: text
+
 
             1234567890
             -1234567890
             +1234567890
             432109876
 
+
         .. code-block:: pycon
+
 
             >>> from icalendar.prop import vInt
             >>> integer = vInt.from_ical('1234567890')
@@ -140,6 +164,30 @@ class vInt(int):
             >>> integer = vInt.from_ical('432109876')
             >>> integer
             432109876
+
+
+        Creating a PRIORITY property (1 = highest priority):
+
+
+        .. code-block:: pycon
+
+
+            >>> priority = vInt(1)
+            >>> priority
+            1
+            >>> priority.to_ical()
+            b'1'
+
+
+        Creating a SEQUENCE property (for versioning):
+
+
+        .. code-block:: pycon
+
+
+            >>> sequence = vInt(3)
+            >>> sequence.to_ical()
+            b'3'
     """
 
     default_value: ClassVar[str] = "INTEGER"

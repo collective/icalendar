@@ -68,7 +68,7 @@ Bug fixes
 
 Documentation
 ~~~~~~~~~~~~~
-
+- Document ``vInt.__new__`` method parameters in class docstring with RFC 5545 examples. :issue:`1118`
 - Added how-to guide for handling parsing errors with :class:`~icalendar.prop.vBrokenProperty` and the ``component.errors`` attribute. See :issue:`1085`.
 - Updated 11 function docstrings in :mod:`icalendar.parser` to follow the Google Style guide, improving API documentation clarity and consistency. See :issue:`1072`.
 - Applied Google-style docstrings to :mod:`icalendar.tools` utility functions with Args, Returns, and Example sections. See :issue:`1072`.
