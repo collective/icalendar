@@ -64,6 +64,7 @@ Bug fixes
 - Link ``timedelta`` to :py:class:`datetime.timedelta` in the Python standard library documentation. See :issue:`951`.
 - Fix round-trip parsing of :class:`~icalendar.prop.vCategory` (CATEGORIES property) when category values contain commas. Categories like ``'Meeting, John'`` now correctly survive round trips between :meth:`Component.to_ical <icalendar.cal.component.Component.to_ical>` and :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>` instead of being split into multiple categories. Added :func:`~icalendar.parser.split_on_unescaped_comma` helper function. See :issue:`127`.
 - Fixed semicolon escaping in vCard structured properties (ADR, N, ORG). Semicolons are now correctly treated as field separators per :rfc:`6350`, not escaped as in iCalendar TEXT values. Added :func:`~icalendar.parser.split_on_unescaped_semicolon` helper function and :class:`~icalendar.prop.vAdr`, :class:`~icalendar.prop.vN`, :class:`~icalendar.prop.vOrg` property types. See :issue:`137`.
+- Fix :meth:`Image.from_property_value <icalendar.prop.image.Image.from_property_value>` to raise ``TypeError`` instead of ``AttributeError`` when ``value.params`` isn't valid (most notably, isn't dict-like). :issue:`909`
 
 Documentation
 ~~~~~~~~~~~~~
