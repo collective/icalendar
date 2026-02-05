@@ -15,7 +15,7 @@ def component_with_subcomponent() -> Calendar:
 
 
 def test_shallow_copy_without_subcomponent(component_with_subcomponent):
-    """We can copy a component and loose the subcomponent"""
+    """We can copy a component and lose the subcomponent"""
     calendar2 = component_with_subcomponent.copy()
     assert len(calendar2.subcomponents) == 0
     assert calendar2 is not component_with_subcomponent

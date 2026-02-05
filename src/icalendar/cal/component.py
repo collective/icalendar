@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from copy import deepcopy
 from datetime import date, datetime, time, timedelta, timezone
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar, Literal, overload
 
 from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
@@ -403,6 +403,17 @@ class Component(CaselessDict):
             name = name.upper()
         return self._walk(name, select)
 
+    def with_uid(self, uid: str) -> list[Component]:
+        """Return a list of components with the given UID.
+
+        Parameters:
+            uid: The UID of the component.
+
+        Returns:
+            list[Component]: List of components with the given UID.
+        """
+        return [c for c in self.walk() if c.get("uid") == uid]
+
     #####################
     # Generation
 
@@ -433,8 +444,16 @@ class Component(CaselessDict):
         properties.append(("END", v_text(self.name).to_ical()))
         return properties
 
+    @overload
     @classmethod
-    def from_ical(cls, st, multiple: bool = False) -> Self | list[Self]:  # noqa: FBT001
+    def from_ical(cls, st: str | bytes, multiple: Literal[False] = False) -> Self: ...
+
+    @overload
+    @classmethod
+    def from_ical(cls, st: str | bytes, multiple: Literal[True]) -> list[Self]: ...
+
+    @classmethod
+    def from_ical(cls, st: str | bytes, multiple: bool = False) -> Self | list[Self]:  # noqa: FBT001
         """Parse iCalendar data into component instances.
 
         Handles standard and custom components (``X-*``, IANA-registered).
@@ -955,12 +974,12 @@ class Component(CaselessDict):
 
         Parameters:
             recursive:
-                If True, this creates copies of the component, its subcomponents and
-                all its properties.
-                If False, this only creates a shallow copy of the component.
+                If ``True``, this creates copies of the component, its subcomponents,
+                and all its properties.
+                If ``False``, this only creates a shallow copy of the component.
 
         Returns:
-            A copy of the component
+            A copy of the component.
 
         Examples:
 
@@ -974,7 +993,7 @@ class Component(CaselessDict):
                 >>> str(event_copy.description)
                 'Event to be copied'
 
-            Shallow copies loose their subcomponents:
+            Shallow copies lose their subcomponents:
 
             .. code-block:: pycon
 
