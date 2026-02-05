@@ -37,6 +37,7 @@ Minor changes
 - Regroup dependencies in, and remove obsolete ones, from :file:`pyproject.toml`. :issue:`906`
 - Add type hints to internal helper functions. :issue:`938`
 - Added type hints and overloads to :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>` to support ``multiple=True/False`` return types. :issue:`1129`
+- CI: Print a link to Vale documentation when the spell checker fails.
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
