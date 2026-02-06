@@ -7,8 +7,12 @@ from typing import TYPE_CHECKING, Any, ClassVar
 
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
-from icalendar.prop import vDate, vDatetime, vDuration, vPeriod, vTime
 from icalendar.prop.dt.base import TimeBase
+from icalendar.prop.dt.date import vDate
+from icalendar.prop.dt.datetime import vDatetime
+from icalendar.prop.dt.duration import vDuration
+from icalendar.prop.dt.period import vPeriod
+from icalendar.prop.dt.time import vTime
 from icalendar.timezone import tzp
 from icalendar.tools import is_date, is_datetime, to_datetime
 

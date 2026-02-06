@@ -3,8 +3,6 @@ from typing import ClassVar
 
 from icalendar.parser import Parameters
 
-from .list import vDDDLists
-
 
 class TimeBase:
     """Make classes with a datetime/date comparable."""
@@ -27,6 +25,8 @@ class TimeBase:
                 ) != other.params.get(key, default):
                     return False
             return self.dt == other.dt
+        from .list import vDDDLists
+
         if isinstance(other, vDDDLists):
             return other == self
         return False

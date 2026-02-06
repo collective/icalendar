@@ -6,7 +6,7 @@ from typing import Any, ClassVar
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
-from icalendar.prop.dt import TimeBase, vDDDTypes
+from icalendar.prop.dt.base import TimeBase
 from icalendar.prop.dt.datetime import vDatetime
 from icalendar.prop.dt.duration import vDuration
 from icalendar.timezone import tzp
@@ -132,6 +132,8 @@ class vPeriod(TimeBase):
 
     @staticmethod
     def from_ical(ical, timezone=None):
+        from icalendar.prop.dt.types import vDDDTypes
+
         try:
             start, end_or_duration = ical.split("/")
             start = vDDDTypes.from_ical(start, timezone=timezone)
