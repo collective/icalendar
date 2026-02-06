@@ -1,13 +1,14 @@
+"""TIME property type from :rfc:`5545`."""
+
 import re
+from datetime import datetime, time, timezone
+from typing import Any, ClassVar
+
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.prop.dt import TimeBase
 from icalendar.timezone.tzid import is_utc
-
-
-from datetime import datetime, time, timezone
-from typing import Any, ClassVar
 
 TIME_JCAL_REGEX = re.compile(
     r"^(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2}):(?P<second>[0-9]{2})(?P<utc>Z)?$"
@@ -159,7 +160,7 @@ class vTime(TimeBase):
             raise ValueError(f"Expected time, got: {ical}") from e
 
     @classmethod
-    def examples(cls) -> list[vTime]:
+    def examples(cls) -> list[Self]:
         """Examples of vTime."""
         return [cls(time(12, 30))]
 
@@ -206,3 +207,6 @@ class vTime(TimeBase):
             value,
             params=Parameters.from_jcal_property(jcal_property),
         )
+
+
+__all__ = ["vTime"]
