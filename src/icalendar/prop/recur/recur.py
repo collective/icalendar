@@ -1,9 +1,14 @@
+"""RECUR property type from :rfc:`5545`."""
+
+from typing import Any, ClassVar
+
 from icalendar.caselessdict import CaselessDict
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser_tools import DEFAULT_ENCODING, SEQUENCE_TYPES
 from icalendar.prop.dt import vDDDTypes
+from icalendar.prop.integer import vInt
 from icalendar.prop.recur.frequency import vFrequency
 from icalendar.prop.recur.month import vMonth
 from icalendar.prop.recur.skip import vSkip
@@ -11,10 +16,7 @@ from icalendar.prop.recur.weekday import vWeekday
 from icalendar.prop.text import vText
 
 
-from typing import Any, ClassVar
-
-
-class vRecur(CaselessDict):  # noqa: PLW1641, RUF100
+class vRecur(CaselessDict):
     """Recurrence definition.
 
     Property Name:
@@ -211,7 +213,7 @@ class vRecur(CaselessDict):  # noqa: PLW1641, RUF100
             raise ValueError(f"Error in recurrence rule: {ical}") from e
 
     @classmethod
-    def examples(cls) -> list[vRecur]:
+    def examples(cls) -> list[Self]:
         """Examples of vRecur."""
         return [cls.from_ical("FREQ=DAILY;COUNT=10")]
 
@@ -288,3 +290,10 @@ class vRecur(CaselessDict):  # noqa: PLW1641, RUF100
             if v1 != v2:
                 return False
         return True
+
+    def __hash__(self) -> int:
+        """Cannot hash as this is mutable."""
+        return NotImplemented
+
+
+__all__ = ["vRecur"]
