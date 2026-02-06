@@ -36,6 +36,7 @@ Minor changes
 - The :func:`icalendar.tools.is_pytz_dt` return value is now hinted as ``TypeGuard[datetime]``, not ``TypeIs[datetime]``, since returning ``False`` should not allow narrowing it as non-datetime.
 - Regroup dependencies in, and remove obsolete ones, from :file:`pyproject.toml`. :issue:`906`
 - Add type hints to internal helper functions. :issue:`938`
+- Add type hints to prop value classes (vBoolean, vFloat, vUri, vBinary, vInline). :issue:`938`
 - Added type hints and overloads to :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>` and :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>` to support ``multiple=True/False`` return types. :issue:`1129`
 - CI: Print a link to Vale documentation when the spell checker fails.
 
@@ -68,7 +69,7 @@ Bug fixes
 
 Documentation
 ~~~~~~~~~~~~~
-- Document ``vInt.__new__`` method parameters in class docstring with RFC 5545 examples. :issue:`1118`
+
 - Added how-to guide for handling parsing errors with :class:`~icalendar.prop.vBrokenProperty` and the ``component.errors`` attribute. See :issue:`1085`.
 - Updated 11 function docstrings in :mod:`icalendar.parser` to follow the Google Style guide, improving API documentation clarity and consistency. See :issue:`1072`.
 - Applied Google-style docstrings to :mod:`icalendar.tools` utility functions with Args, Returns, and Example sections. See :issue:`1072`.
@@ -96,7 +97,9 @@ Documentation
 - Added a new rule to our docstring style guide to escape docstrings, and added a new section for type hints in the code conventions section. :issue:`1080`
 - Documented ``__init__`` methods. :issue:`1079`
 - Moved "Edit this page" link to above the page table of contents. :issue:`1106`
-- Updated CONTRIBUTING.rst to explicitly state not to use Args sections in docstrings. :issue:`1076`
+- Updated ``CONTRIBUTING.rst`` to explicitly state not to use Args sections in docstrings. :issue:`1076`
+- Document ``vInt.__new__`` method parameters in class docstring with RFC 5545 examples. :issue:`1118`
+- Improved ``make vale`` command to provide guidance on failure or success. :issue:`1137`
 
 
 7.0.0a3 (2025-12-19)

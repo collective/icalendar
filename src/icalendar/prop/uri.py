@@ -1,6 +1,5 @@
 """URI values from :rfc:`5545`."""
 
-
 from typing import Any, ClassVar
 
 from icalendar.compatibility import Self
@@ -71,11 +70,11 @@ class vUri(str):
         self.params = Parameters(params)
         return self
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         return self.encode(DEFAULT_ENCODING)
 
     @classmethod
-    def from_ical(cls, ical):
+    def from_ical(cls, ical: str | bytes) -> Self:
         try:
             return cls(ical)
         except Exception as e:
@@ -121,5 +120,6 @@ class vUri(str):
         return f"{self.__class__.__name__}({self.uri!r})"
 
     from icalendar.param import FMTTYPE, GAP, LABEL, LANGUAGE, LINKREL, RELTYPE, VALUE
+
 
 __all__ = ["vUri"]
