@@ -1,10 +1,12 @@
+"""Parameter value type for FREQUENCY from :rfc:`5545`."""
+
+from typing import Any
+
 from icalendar.caselessdict import CaselessDict
+from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
-
-
-from typing import Any
 
 
 class vFrequency(str):
@@ -50,7 +52,7 @@ class vFrequency(str):
             raise ValueError(f"Expected frequency, got: {ical}") from e
 
     @classmethod
-    def parse_jcal_value(cls, value: Any) -> vFrequency:
+    def parse_jcal_value(cls, value: Any) -> Self:
         """Parse a jCal value for vFrequency.
 
         Raises:
@@ -63,3 +65,6 @@ class vFrequency(str):
             raise JCalParsingError(
                 "The value must be a valid frequency.", cls, value=value
             ) from e
+
+
+__all__ = ["vFrequency"]
