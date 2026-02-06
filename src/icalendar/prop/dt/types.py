@@ -1,3 +1,5 @@
+"""Combined property type for the date and time properties from :rfc:`5545`."""
+
 from __future__ import annotations
 
 from datetime import date, datetime, time, timedelta
@@ -111,7 +113,7 @@ class vDDDTypes(TimeBase):
     @classmethod
     def examples(cls) -> list[vDDDTypes]:
         """Examples of vDDDTypes."""
-        return [cls(date(2025, 11, 10))]
+        return [cls(date(2025, 11, 10)), cls(timedelta(days=1, hours=5))]
 
     def _get_value(self) -> str | None:
         """Determine the VALUE parameter."""
@@ -171,3 +173,6 @@ class vDDDTypes(TimeBase):
             dt,
             params=params,
         )
+
+
+__all__ = ["vDDDTypes"]

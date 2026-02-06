@@ -8,7 +8,7 @@ from .duration import vDuration
 from .list import vDDDLists
 from .period import vPeriod
 from .time import vTime
-from .type import vDDDTypes
+from .types import vDDDTypes
 from .utc_offset import vUTCOffset
 
 __all__ = [
@@ -21,5 +21,5 @@ __all__ = [
     "vDuration",
     "vPeriod",
     "vTime",
-    "vUTCOffset"
+    "vUTCOffset",
 ]
