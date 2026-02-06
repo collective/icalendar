@@ -1,13 +1,14 @@
+"""DATE-TIME property type from :rfc:`5545`."""
+
+from datetime import datetime
+from typing import Any, ClassVar
+
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.prop.dt import TimeBase
 from icalendar.timezone import tzp
 from icalendar.timezone.tzid import is_utc
-
-
-from datetime import datetime
-from typing import Any, ClassVar
 
 
 class vDatetime(TimeBase):
@@ -134,7 +135,7 @@ class vDatetime(TimeBase):
         raise ValueError(f"Wrong datetime format: {ical}")
 
     @classmethod
-    def examples(cls) -> list[vDatetime]:
+    def examples(cls) -> list[Self]:
         """Examples of vDatetime."""
         return [cls(datetime(2025, 11, 10, 16, 52))]  # noqa: DTZ001
 
@@ -190,3 +191,6 @@ class vDatetime(TimeBase):
             dt,
             params=params,
         )
+
+
+__all__ = ["vDatetime"]
