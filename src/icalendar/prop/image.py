@@ -49,7 +49,10 @@ class Image:
         params: dict[str, str] = {}
         if not hasattr(value, "params"):
             raise TypeError("Value must be URI or BINARY.")
-        value_type = value.params.get("VALUE", "").upper()
+        try:
+            value_type = value.params.get("VALUE", "").upper()
+        except (AttributeError, TypeError):
+            raise TypeError("Value must have a valid params attribute.")
         if value_type == "URI" or isinstance(value, vUri):
             params["uri"] = str(value)
         elif isinstance(value, vBinary):
