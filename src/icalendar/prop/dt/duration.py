@@ -1,13 +1,15 @@
-from icalendar.compatibility import Self
-from icalendar.error import InvalidCalendar, JCalParsingError
-from icalendar.parser import Parameters
-from icalendar.prop import DURATION_REGEX
-from icalendar.prop.dt import TimeBase
-
-
+import re
 from datetime import timedelta
 from typing import Any, ClassVar
 
+from icalendar.compatibility import Self
+from icalendar.error import InvalidCalendar, JCalParsingError
+from icalendar.parser import Parameters
+from icalendar.prop.dt import TimeBase
+
+DURATION_REGEX = re.compile(
+    r"([-+]?)P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$"
+)
 
 class vDuration(TimeBase):
     """Duration
@@ -143,7 +145,7 @@ class vDuration(TimeBase):
         return self.td
 
     @classmethod
-    def examples(cls) -> list[vDuration]:
+    def examples(cls) -> list[Self]:
         """Examples of vDuration."""
         return [cls(timedelta(1, 99))]
 
@@ -187,3 +189,5 @@ class vDuration(TimeBase):
             duration,
             Parameters.from_jcal_property(jcal_property),
         )
+
+__all__ = ["vDuration"]

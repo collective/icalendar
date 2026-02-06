@@ -84,9 +84,6 @@ from .xml_reference import vXmlReference
 if TYPE_CHECKING:
     from icalendar.compatibility import Self
 
-DURATION_REGEX = re.compile(
-    r"([-+]?)P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$"
-)
 
 TIME_JCAL_REGEX = re.compile(
     r"^(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2}):(?P<second>[0-9]{2})(?P<utc>Z)?$"
