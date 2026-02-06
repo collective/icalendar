@@ -1,13 +1,16 @@
+"""PERIOD property type from :rfc:`5545`."""
+
+from datetime import date, datetime, timedelta
+from typing import Any, ClassVar
+
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.prop.dt import TimeBase, vDDDTypes
+from icalendar.prop.dt.datetime import vDatetime
+from icalendar.prop.dt.duration import vDuration
 from icalendar.timezone import tzp
 from icalendar.tools import is_datetime, normalize_pytz
-
-
-from datetime import date, datetime, timedelta
-from typing import Any, ClassVar
 
 
 class vPeriod(TimeBase):
@@ -149,7 +152,7 @@ class vPeriod(TimeBase):
     from icalendar.param import FBTYPE
 
     @classmethod
-    def examples(cls) -> list[vPeriod]:
+    def examples(cls) -> list[Self]:
         """Examples of vPeriod."""
         return [
             vPeriod((datetime(2025, 11, 10, 16, 35), timedelta(hours=1, minutes=30))),  # noqa: DTZ001
@@ -223,3 +226,6 @@ class vPeriod(TimeBase):
                 end_or_duration = tzp.localize(end_or_duration, tzid)
 
         return cls((start, end_or_duration), params=params)
+
+
+__all__ = ["vPeriod"]
