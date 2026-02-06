@@ -2,7 +2,24 @@
 
 from .base import TimeBase
 from .common import DT_TYPE
+from .date import vDate
+from .datetime import vDatetime
+from .duration import vDuration
 from .list import vDDDLists
+from .period import vPeriod
+from .time import vTime
 from .type import vDDDTypes
+from .utc_offset import vUTCOffset
 
-__all__ = ["DT_TYPE", "TimeBase", "vDDDLists", "vDDDTypes"]
+__all__ = [
+    "DT_TYPE",
+    "TimeBase",
+    "vDDDLists",
+    "vDDDTypes",
+    "vDate",
+    "vDatetime",
+    "vDuration",
+    "vPeriod",
+    "vTime",
+    "vUTCOffset"
+]
