@@ -1,8 +1,10 @@
-from icalendar.error import JCalParsingError
-from icalendar.parser import Parameters
-
+"""MONTH parameter value type from :rfc:`5545` and :rfc:`7529`."""
 
 from typing import Any
+
+from icalendar.compatibility import Self
+from icalendar.error import JCalParsingError
+from icalendar.parser import Parameters
 
 
 class vMonth(int):
@@ -81,7 +83,7 @@ class vMonth(int):
         return f"{int(self)}{'L' if self.leap else ''}"
 
     @classmethod
-    def parse_jcal_value(cls, value: Any) -> vMonth:
+    def parse_jcal_value(cls, value: Any) -> Self:
         """Parse a jCal value for vMonth.
 
         Raises:
@@ -94,3 +96,6 @@ class vMonth(int):
             raise JCalParsingError(
                 "The value must be a string or an integer.", cls, value=value
             ) from e
+
+
+__all__ = ["vMonth"]
