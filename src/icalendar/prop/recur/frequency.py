@@ -1,4 +1,4 @@
-"""Parameter value type for FREQUENCY from :rfc:`5545`."""
+"""FREQ value type of RECUR from :rfc:`5545`."""
 
 from typing import Any
 

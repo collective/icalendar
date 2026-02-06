@@ -1,4 +1,4 @@
-"""MONTH parameter value type from :rfc:`5545` and :rfc:`7529`."""
+"""BYMONTH value type of RECUR from :rfc:`5545` and :rfc:`7529`."""
 
 from typing import Any
 

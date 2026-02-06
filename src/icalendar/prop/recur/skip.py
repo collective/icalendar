@@ -1,9 +1,11 @@
+"""SKIP value type of RECUR from :rfc:`7529`."""
+
+from typing import Any
+
+from icalendar.compatibility import Self
 from icalendar.enums import Enum
 from icalendar.error import JCalParsingError
 from icalendar.prop.text import vText
-
-
-from typing import Any
 
 
 class vSkip(vText, Enum):
@@ -36,7 +38,7 @@ class vSkip(vText, Enum):
         return f"{self.__class__.__name__}({self._name_!r})"
 
     @classmethod
-    def parse_jcal_value(cls, value: Any) -> vSkip:
+    def parse_jcal_value(cls, value: Any) -> Self:
         """Parse a jCal value for vSkip.
 
         Raises:
@@ -49,3 +51,6 @@ class vSkip(vText, Enum):
             raise JCalParsingError(
                 "The value must be a valid skip value.", cls, value=value
             ) from e
+
+
+__all__ = ["vSkip"]

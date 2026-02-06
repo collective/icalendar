@@ -1,11 +1,13 @@
+"""BYWEEKDAY, BYDAY, and WKST value type of RECUR from :rfc:`5545`."""
+
 import re
+from typing import Any
 
 from icalendar.caselessdict import CaselessDict
+from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
-from typing import Any
-
 
 WEEKDAY_RULE = re.compile(
     r"(?P<signal>[+-]?)(?P<relative>[\d]{0,2})(?P<weekday>[\w]{2})$"
@@ -92,7 +94,7 @@ class vWeekday(str):
             raise ValueError(f"Expected weekday abbrevation, got: {ical}") from e
 
     @classmethod
-    def parse_jcal_value(cls, value: Any) -> vWeekday:
+    def parse_jcal_value(cls, value: Any) -> Self:
         """Parse a jCal value for vWeekday.
 
         Raises:
@@ -105,3 +107,6 @@ class vWeekday(str):
             raise JCalParsingError(
                 "The value must be a valid weekday.", cls, value=value
             ) from e
+
+
+__all__ = ["vWeekday"]
