@@ -65,7 +65,7 @@ from .factory import TypesFactory
 from .float import vFloat
 from .geo import vGeo
 from .inline import vInline
-from .int import vInt
+from .integer import vInt
 from .n import NFields, vN
 from .org import vOrg
 from .recur import vFrequency, vMonth, vRecur, vSkip, vWeekday
