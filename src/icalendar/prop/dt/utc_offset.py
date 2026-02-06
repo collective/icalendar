@@ -1,12 +1,12 @@
-from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError
-from icalendar.parser import Parameters
-from icalendar.prop import UTC_OFFSET_JCAL_REGEX
+"""UTC-Offset property type from :rfc:`5545`."""
 
-
+import re
 from datetime import timedelta
 from typing import Any, ClassVar
 
+from icalendar.compatibility import Self
+from icalendar.error import JCalParsingError
+from icalendar.parser import Parameters
 
 UTC_OFFSET_JCAL_REGEX = re.compile(
     r"^(?P<sign>[+-])?(?P<hours>\d\d):(?P<minutes>\d\d)(?::(?P<seconds>\d\d))?$"
@@ -144,7 +144,7 @@ class vUTCOffset:
         return f"vUTCOffset({self.td!r})"
 
     @classmethod
-    def examples(cls) -> list[vUTCOffset]:
+    def examples(cls) -> list[Self]:
         """Examples of vUTCOffset."""
         return [
             cls(timedelta(hours=3)),
@@ -179,3 +179,6 @@ class vUTCOffset:
         if negative:
             t = -t
         return cls(t, Parameters.from_jcal_property(jcal_property))
+
+
+__all__ = ["vUTCOffset"]
