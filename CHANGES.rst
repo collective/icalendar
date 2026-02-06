@@ -68,7 +68,7 @@ Bug fixes
 
 Documentation
 ~~~~~~~~~~~~~
-- Document ``vInt.__new__`` method parameters in class docstring with RFC 5545 examples. :issue:`1118`
+
 - Added how-to guide for handling parsing errors with :class:`~icalendar.prop.vBrokenProperty` and the ``component.errors`` attribute. See :issue:`1085`.
 - Updated 11 function docstrings in :mod:`icalendar.parser` to follow the Google Style guide, improving API documentation clarity and consistency. See :issue:`1072`.
 - Applied Google-style docstrings to :mod:`icalendar.tools` utility functions with Args, Returns, and Example sections. See :issue:`1072`.
@@ -96,7 +96,9 @@ Documentation
 - Added a new rule to our docstring style guide to escape docstrings, and added a new section for type hints in the code conventions section. :issue:`1080`
 - Documented ``__init__`` methods. :issue:`1079`
 - Moved "Edit this page" link to above the page table of contents. :issue:`1106`
-- Updated CONTRIBUTING.rst to explicitly state not to use Args sections in docstrings. :issue:`1076`
+- Updated ``CONTRIBUTING.rst`` to explicitly state not to use Args sections in docstrings. :issue:`1076`
+- Document ``vInt.__new__`` method parameters in class docstring with RFC 5545 examples. :issue:`1118`
+- Improved ``make vale`` command to provide guidance on failure or success. :issue:`1137`
 
 
 7.0.0a3 (2025-12-19)
