@@ -41,6 +41,7 @@ primitive Python datatype. So it should always be true that:
 These types are mainly used for parsing and file generation. But you can set
 them directly.
 """
+
 from typing import TypeAlias
 
 from .adr import AdrFields, vAdr
@@ -108,15 +109,11 @@ VPROPERTY: TypeAlias = (
 )
 
 __all__ = [
-    "DURATION_REGEX",
     "VPROPERTY",
-    "WEEKDAY_RULE",
     "AdrFields",
     "NFields",
     "TimeBase",
     "TypesFactory",
-    "tzid_from_dt",
-    "tzid_from_tzinfo",
     "vAdr",
     "vBinary",
     "vBoolean",
