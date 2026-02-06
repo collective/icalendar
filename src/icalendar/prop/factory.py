@@ -1,28 +1,42 @@
+"""Factory class for all the property types."""
+
+from __future__ import annotations
+
+from typing import ClassVar
+
 from icalendar.caselessdict import CaselessDict
 from icalendar.prop.adr import vAdr
 from icalendar.prop.binary import vBinary
 from icalendar.prop.boolean import vBoolean
 from icalendar.prop.cal_address import vCalAddress
 from icalendar.prop.categories import vCategory
-from icalendar.prop.dt import vDDDLists, vDDDTypes
+from icalendar.prop.dt import (
+    vDate,
+    vDatetime,
+    vDDDLists,
+    vDDDTypes,
+    vDuration,
+    vPeriod,
+    vTime,
+    vUTCOffset,
+)
 from icalendar.prop.float import vFloat
 from icalendar.prop.geo import vGeo
 from icalendar.prop.inline import vInline
 from icalendar.prop.n import vN
 from icalendar.prop.org import vOrg
+from icalendar.prop.recur import vFrequency, vRecur, vWeekday
 from icalendar.prop.text import vText
 from icalendar.prop.uid import vUid
 from icalendar.prop.unknown import vUnknown
 from icalendar.prop.uri import vUri
 from icalendar.prop.xml_reference import vXmlReference
 
-
-from typing import ClassVar
+from .integer import vInt
 
 
 class TypesFactory(CaselessDict):
-    """All Value types defined in RFC 5545 are registered in this factory
-    class.
+    """Factory for all value types defined in :rfc:`5545` and subsequent.
 
     The value and parameter names don't overlap. So one factory is enough for
     both kinds.
@@ -235,3 +249,6 @@ class TypesFactory(CaselessDict):
         """
         type_class = self.for_property(name)
         return type_class.from_ical(value)
+
+
+__all__ = ["TypesFactory"]
