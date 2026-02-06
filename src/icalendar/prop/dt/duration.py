@@ -1,3 +1,5 @@
+"""DURATION property type from :rfc:`5545`."""
+
 import re
 from datetime import timedelta
 from typing import Any, ClassVar
@@ -10,6 +12,7 @@ from icalendar.prop.dt import TimeBase
 DURATION_REGEX = re.compile(
     r"([-+]?)P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$"
 )
+
 
 class vDuration(TimeBase):
     """Duration
@@ -189,5 +192,6 @@ class vDuration(TimeBase):
             duration,
             Parameters.from_jcal_property(jcal_property),
         )
+
 
 __all__ = ["vDuration"]
