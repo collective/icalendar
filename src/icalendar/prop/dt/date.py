@@ -1,11 +1,12 @@
+"""DATE property type from :rfc:`5545`."""
+
+from datetime import date, datetime
+from typing import Any, ClassVar
+
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.prop.dt import TimeBase
-
-
-from datetime import date, datetime
-from typing import Any, ClassVar
 
 
 class vDate(TimeBase):
@@ -85,7 +86,7 @@ class vDate(TimeBase):
             raise ValueError(f"Wrong date format {ical}") from e
 
     @classmethod
-    def examples(cls) -> list[vDate]:
+    def examples(cls) -> list[Self]:
         """Examples of vDate."""
         return [cls(date(2025, 11, 10))]
 
@@ -130,3 +131,6 @@ class vDate(TimeBase):
             value,
             params=Parameters.from_jcal_property(jcal_property),
         )
+
+
+__all__ = ["vDate"]
