@@ -64,7 +64,7 @@ class vUri(str):
         encoding: str = DEFAULT_ENCODING,
         /,
         params: dict[str, Any] | None = None,
-    ):
+    ) -> Self:
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         self.params = Parameters(params)
