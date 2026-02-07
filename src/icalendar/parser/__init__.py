@@ -24,7 +24,6 @@ from .property import (
     unescape_list_or_string,
 )
 from .string import (
-    NAME,
     escape_char,
     escape_string,
     foldline,
@@ -34,7 +33,6 @@ from .string import (
 )
 
 __all__ = [
-    "NAME",
     "Contentline",
     "Contentlines",
     "Parameters",
