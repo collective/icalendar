@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING, Any, Protocol
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.error import JCalParsingError
-from icalendar.parser.common import HasToIcal
 from icalendar.parser.string import validate_token
 from icalendar.parser_tools import (
     DEFAULT_ENCODING,
@@ -25,8 +24,6 @@ if TYPE_CHECKING:
     from icalendar.prop import VPROPERTY
 
 
-
-
 class HasToIcal(Protocol):
     """Protocol for objects with a to_ical method."""
 
@@ -34,7 +31,10 @@ class HasToIcal(Protocol):
         """Convert to iCalendar format."""
         ...
 
-def param_value(value: Sequence[str] | str | HasToIcal, always_quote: bool = False) -> str:
+
+def param_value(
+    value: Sequence[str] | str | HasToIcal, always_quote: bool = False
+) -> str:
     """Convert a parameter value to its iCalendar representation.
 
     Applies :rfc:`6868` escaping and optionally quotes the value according
@@ -61,7 +61,6 @@ def param_value(value: Sequence[str] | str | HasToIcal, always_quote: bool = Fal
 
 UNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7f",:;]')
 QUNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7f"]')
-
 
 
 def validate_param_value(value: str, quoted: bool = True) -> None:
@@ -555,6 +554,7 @@ def rfc_6868_escape(param_value: str) -> str:
     return RFC_6868_ESCAPE_REGEX.sub(
         lambda m: replacements.get(m.group(0), m.group(0)), param_value
     )
+
 
 __all__ = [
     "Parameters",
