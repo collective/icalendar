@@ -2,7 +2,11 @@
 API design
 ==========
 
-The components have different levels of API access to properties, subcomponents and parameters.
+This chapter describes the API design of icalendar.
+
+At their core, iCalendar components are dictionaries with case insensitive keys.
+The preferred way to access their values is through lower case properties as described in :ref:`property-access`.
+Advantages and disadvantages of the other approches are discussed below.
 
 .. _property-access:
 
@@ -17,8 +21,8 @@ Accessing components by their properties is preferred over using the :ref:`dicti
 * Default values require fewer logical coding checks for presence.
 
 The example below creates an event with useful default values, using :meth:`~icalendar.cal.event.Event.new`.
-:rfc:`5545` requires ``DTSTAMP`` and ``UID`` values to be present, and if not set, they are automatically added.
-
+:rfc:`5545` requires ``DTSTAMP`` and ``UID`` values to be present.
+They are automatically added.
 
 .. code-block:: pycon
     :emphasize-lines: 3-6, 11-12
@@ -36,6 +40,16 @@ The example below creates an event with useful default values, using :meth:`~ica
     DTSTAMP:20250517T080612Z
     UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
     END:VEVENT
+
+
+Based on the created event above, the following example shows how to access values by their properties.
+
+.. code-block:: pycon
+
+    >>> print(event.summary)
+    New Year's Day Celebration
+    >>> print(event.start)
+    2022-01-01
 
 Lower case properties
 ---------------------
