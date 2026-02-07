@@ -21,14 +21,14 @@ class vBrokenProperty(vText):
 
     def __new__(
         cls,
-        value,
-        encoding=DEFAULT_ENCODING,
+        value: str | bytes,
+        encoding: str = DEFAULT_ENCODING,
         /,
         params: dict[str, Any] | None = None,
         expected_type: str | None = None,
         property_name: str | None = None,
         parse_error: str | None = None,
-    ):
+    ) -> Self:
         self = super().__new__(cls, value, encoding, params=params)
         object.__setattr__(self, "expected_type", expected_type)
         object.__setattr__(self, "property_name", property_name)
@@ -50,7 +50,7 @@ class vBrokenProperty(vText):
         property_name: str,
         expected_type: str,
         error: Exception,
-    ):
+    ) -> Self:
         """Create vBrokenProperty from parse failure."""
         return cls(
             raw_value,
