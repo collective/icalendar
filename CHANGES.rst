@@ -47,6 +47,7 @@ Breaking changes
 
 - Drop support for Python 3.8 and 3.9. See :issue:`977`.
 - :meth:`Component.decoded` now returns a string instead of bytes for text properties.
+- Remove constants ``FOLD``, ``NAME``, ``NEWLINE``, ``QUNSAFE_CHAR``, ``QUOTABLE``, ``UFOLD``, and ``UNSAFE_CHAR`` from :mod:`icalendar.parser`'s export. See :issue:`987`.
 
 New features
 ~~~~~~~~~~~~
