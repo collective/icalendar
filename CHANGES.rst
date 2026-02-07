@@ -98,7 +98,7 @@ Documentation
 - Documented ``__init__`` methods. :issue:`1079`
 - Moved "Edit this page" link to above the page table of contents. :issue:`1106`
 - Updated ``CONTRIBUTING.rst`` to explicitly state not to use Args sections in docstrings. :issue:`1076`
-- Document ``vInt.__new__`` method parameters in class docstring with RFC 5545 examples. :issue:`1118`
+- Document ``vInt.__new__`` method parameters in class docstring with :rfc:`5545` examples. :issue:`1118`
 - Improved ``make vale`` command to provide guidance on failure or success. :issue:`1137`
 
 
