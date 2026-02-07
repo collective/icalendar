@@ -1,33 +1,30 @@
-"""This module parses and generates contentlines as defined in RFC 5545
-(iCalendar), but will probably work for other MIME types with similar syntax.
-Eg. RFC 2426 (vCard)
-
-It is stupid in the sense that it treats the content purely as strings. No type
-conversion is attempted.
-"""
+"""Functions for parsing parameters."""
 
 from __future__ import annotations
 
 import functools
 import os
 import re
-from collections.abc import Sequence
 from datetime import datetime, time
-from typing import TYPE_CHECKING, Any, Callable, Protocol
+from typing import TYPE_CHECKING, Any, Protocol
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.error import JCalParsingError
+from icalendar.parser.common import HasToIcal
+from icalendar.parser.string import validate_token
 from icalendar.parser_tools import (
     DEFAULT_ENCODING,
-    ICAL_TYPE,
     SEQUENCE_TYPES,
-    to_unicode,
 )
 from icalendar.timezone.tzid import tzid_from_dt
 
 if TYPE_CHECKING:
+    from collections.abc import Callable, Sequence
+
     from icalendar.enums import VALUE
     from icalendar.prop import VPROPERTY
+
+
 
 
 class HasToIcal(Protocol):
@@ -36,125 +33,6 @@ class HasToIcal(Protocol):
     def to_ical(self) -> bytes:
         """Convert to iCalendar format."""
         ...
-
-
-def escape_char(text: str | bytes) -> str | bytes:
-    r"""Format value according to iCalendar TEXT escaping rules.
-
-    Escapes special characters in text values according to :rfc:`5545#section-3.3.11` rules.
-    The order of replacements matters to avoid double-escaping.
-
-    Parameters:
-        text: The text to escape.
-
-    Returns:
-        The escaped text with special characters escaped.
-
-    Note:
-        The replacement order is critical:
-
-        1. ``\N`` -> ``\n`` (normalize newlines to lowercase)
-        2. ``\`` -> ``\\`` (escape backslashes)
-        3. ``;`` -> ``\;`` (escape semicolons)
-        4. ``,`` -> ``\,`` (escape commas)
-        5. ``\r\n`` -> ``\n`` (normalize line endings)
-        6. ``"\n"`` -> ``r"\n"`` (transform a newline character to a literal, or raw, newline character)
-    """
-    assert isinstance(text, (str, bytes))
-    # NOTE: ORDER MATTERS!
-    return (
-        text.replace(r"\N", "\n")
-        .replace("\\", "\\\\")
-        .replace(";", r"\;")
-        .replace(",", r"\,")
-        .replace("\r\n", r"\n")
-        .replace("\n", r"\n")
-    )
-
-
-def unescape_char(text: str | bytes) -> str | bytes | None:
-    r"""Unescape iCalendar TEXT values.
-
-    Reverses the escaping applied by :func:`escape_char` according to
-    :rfc:`5545#section-3.3.11` TEXT escaping rules.
-
-    Parameters:
-        text: The escaped text.
-
-    Returns:
-        The unescaped text, or ``None`` if ``text`` is neither ``str`` nor ``bytes``.
-
-    Note:
-        The replacement order is critical to avoid double-unescaping:
-
-        1. ``\N`` -> ``\n`` (intermediate step)
-        2. ``\r\n`` -> ``\n`` (normalize line endings)
-        3. ``\n`` -> newline (unescape newlines)
-        4. ``\,`` -> ``,`` (unescape commas)
-        5. ``\;`` -> ``;`` (unescape semicolons)
-        6. ``\\`` -> ``\`` (unescape backslashes last)
-    """
-    assert isinstance(text, (str, bytes))
-    # NOTE: ORDER MATTERS!
-    if isinstance(text, str):
-        return (
-            text.replace("\\N", "\\n")
-            .replace("\r\n", "\n")
-            .replace("\\n", "\n")
-            .replace("\\,", ",")
-            .replace("\\;", ";")
-            .replace("\\\\", "\\")
-        )
-    if isinstance(text, bytes):
-        return (
-            text.replace(b"\\N", b"\\n")
-            .replace(b"\r\n", b"\n")
-            .replace(b"\\n", b"\n")
-            .replace(b"\\,", b",")
-            .replace(b"\\;", b";")
-            .replace(b"\\\\", b"\\")
-        )
-    return None
-
-
-def foldline(line: str, limit: int=75, fold_sep: str="\r\n ") -> str:
-    """Make a string folded as defined in RFC5545
-    Lines of text SHOULD NOT be longer than 75 octets, excluding the line
-    break.  Long content lines SHOULD be split into a multiple line
-    representations using a line "folding" technique.  That is, a long
-    line can be split between any two characters by inserting a CRLF
-    immediately followed by a single linear white-space character (i.e.,
-    SPACE or HTAB).
-    """
-    assert isinstance(line, str)
-    assert "\n" not in line
-
-    # Use a fast and simple variant for the common case that line is all ASCII.
-    try:
-        line.encode("ascii")
-    except (UnicodeEncodeError, UnicodeDecodeError):
-        pass
-    else:
-        return fold_sep.join(
-            line[i : i + limit - 1] for i in range(0, len(line), limit - 1)
-        )
-
-    ret_chars: list[str] = []
-    byte_count = 0
-    for char in line:
-        char_byte_len = len(char.encode(DEFAULT_ENCODING))
-        byte_count += char_byte_len
-        if byte_count >= limit:
-            ret_chars.append(fold_sep)
-            byte_count = char_byte_len
-        ret_chars.append(char)
-
-    return "".join(ret_chars)
-
-
-#################################################################
-# Property parameter stuff
-
 
 def param_value(value: Sequence[str] | str | HasToIcal, always_quote: bool = False) -> str:
     """Convert a parameter value to its iCalendar representation.
@@ -180,33 +58,10 @@ def param_value(value: Sequence[str] | str | HasToIcal, always_quote: bool = Fal
 
 # Could be improved
 
-# [\w-] because of the iCalendar RFC
-# . because of the vCard RFC
-NAME = re.compile(r"[\w.-]+")
 
 UNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7f",:;]')
 QUNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7f"]')
-FOLD = re.compile(b"(\r?\n)+[ \t]")
-UFOLD = re.compile("(\r?\n)+[ \t]")
-NEWLINE = re.compile(r"\r?\n")
 
-
-def validate_token(name: str) -> None:
-    r"""Validate that a name is a valid iCalendar token.
-
-    Checks if the name matches the :rfc:`5545` token syntax using the NAME
-    regex pattern (``[\w.-]+``).
-
-    Parameters:
-        name: The token name to validate.
-
-    Raises:
-        ValueError: If the name is not a valid token.
-    """
-    match = NAME.findall(name)
-    if len(match) == 1 and name == match[0]:
-        return
-    raise ValueError(name)
 
 
 def validate_param_value(value: str, quoted: bool = True) -> None:
@@ -306,7 +161,7 @@ def q_split(st: str, sep: str = ",", maxsplit: int = -1) -> list[str]:
     return result
 
 
-def q_join(lst: list[str], sep: str = ",", always_quote: bool = False) -> str:
+def q_join(lst: Sequence[str], sep: str = ",", always_quote: bool = False) -> str:
     """Join a list with a separator, quoting items as needed.
 
     Joins list items with the separator, applying :func:`dquote` to each item
@@ -659,188 +514,6 @@ class Parameters(CaselessDict):
         return self
 
 
-def escape_string(val: str) -> str:
-    r"""Escape backslash sequences to URL-encoded hex values.
-
-    Converts backslash-escaped characters to their percent-encoded hex
-    equivalents. This is used for parameter parsing to preserve escaped
-    characters during processing.
-
-    Parameters:
-        val: The string with backslash escapes.
-
-    Returns:
-        The string with backslash escapes converted to percent encoding.
-
-    Note:
-        Conversions:
-
-        - ``\,`` -> ``%2C``
-        - ``\:`` -> ``%3A``
-        - ``\;`` -> ``%3B``
-        - ``\\`` -> ``%5C``
-    """
-    # f'{i:02X}'
-    return (
-        val.replace(r"\,", "%2C")
-        .replace(r"\:", "%3A")
-        .replace(r"\;", "%3B")
-        .replace(r"\\", "%5C")
-    )
-
-
-def unescape_string(val: str) -> str:
-    r"""Unescape URL-encoded hex values to their original characters.
-
-    Reverses :func:`escape_string` by converting percent-encoded hex values
-    back to their original characters. This is used for parameter parsing.
-
-    Parameters:
-        val: The string with percent-encoded values.
-
-    Returns:
-        The string with percent encoding converted to characters.
-
-    Note:
-        Conversions:
-
-        - ``%2C`` -> ``,``
-        - ``%3A`` -> ``:``
-        - ``%3B`` -> ``;``
-        - ``%5C`` -> ``\``
-    """
-    return (
-        val.replace("%2C", ",")
-        .replace("%3A", ":")
-        .replace("%3B", ";")
-        .replace("%5C", "\\")
-    )
-
-
-_unescape_backslash_regex = re.compile(r"\\([\\,;:nN])")
-
-
-def unescape_backslash(val: str):
-    r"""Unescape backslash sequences in iCalendar text.
-
-    Unlike :py:meth:`unescape_string`, this only handles actual backslash escapes
-    per :rfc:`5545`, not URL encoding. This preserves URL-encoded values
-    like ``%3A`` in URLs.
-
-    Processes backslash escape sequences in a single pass using regex matching.
-    """
-    return _unescape_backslash_regex.sub(
-        lambda m: "\n" if m.group(1) in "nN" else m.group(1), val
-    )
-
-
-def split_on_unescaped_comma(text: str) -> list[str]:
-    r"""Split text on unescaped commas and unescape each part.
-
-    Splits only on commas not preceded by backslash.
-    After splitting, unescapes backslash sequences in each part.
-
-    Parameters:
-        text: Text with potential escaped commas (e.g., "foo\\, bar,baz")
-
-    Returns:
-        List of unescaped category strings
-
-    Examples:
-        .. code-block:: pycon
-
-            >>> from icalendar.parser import split_on_unescaped_comma
-            >>> split_on_unescaped_comma(r"foo\, bar,baz")
-            ['foo, bar', 'baz']
-            >>> split_on_unescaped_comma("a,b,c")
-            ['a', 'b', 'c']
-            >>> split_on_unescaped_comma(r"a\,b\,c")
-            ['a,b,c']
-            >>> split_on_unescaped_comma(r"Work,Personal\,Urgent")
-            ['Work', 'Personal,Urgent']
-    """
-    if not text:
-        return [""]
-
-    result = []
-    current = []
-    i = 0
-
-    while i < len(text):
-        if text[i] == "\\" and i + 1 < len(text):
-            # Escaped character - keep both backslash and next char
-            current.append(text[i])
-            current.append(text[i + 1])
-            i += 2
-        elif text[i] == ",":
-            # Unescaped comma - split point
-            result.append(unescape_backslash("".join(current)))
-            current = []
-            i += 1
-        else:
-            current.append(text[i])
-            i += 1
-
-    # Add final part
-    result.append(unescape_backslash("".join(current)))
-
-    return result
-
-
-def split_on_unescaped_semicolon(text: str) -> list[str]:
-    r"""Split text on unescaped semicolons and unescape each part.
-
-    Splits only on semicolons not preceded by a backslash.
-    After splitting, unescapes backslash sequences in each part.
-    Used by vCard structured properties (ADR, N, ORG) per :rfc:`6350`.
-
-    Parameters:
-        text: Text with potential escaped semicolons (e.g., "field1\\;with;field2")
-
-    Returns:
-        List of unescaped field strings
-
-    Examples:
-        .. code-block:: pycon
-
-            >>> from icalendar.parser import split_on_unescaped_semicolon
-            >>> split_on_unescaped_semicolon(r"field1\;with;field2")
-            ['field1;with', 'field2']
-            >>> split_on_unescaped_semicolon("a;b;c")
-            ['a', 'b', 'c']
-            >>> split_on_unescaped_semicolon(r"a\;b\;c")
-            ['a;b;c']
-            >>> split_on_unescaped_semicolon(r"PO Box 123\;Suite 200;City")
-            ['PO Box 123;Suite 200', 'City']
-    """
-    if not text:
-        return [""]
-
-    result = []
-    current = []
-    i = 0
-
-    while i < len(text):
-        if text[i] == "\\" and i + 1 < len(text):
-            # Escaped character - keep both backslash and next char
-            current.append(text[i])
-            current.append(text[i + 1])
-            i += 2
-        elif text[i] == ";":
-            # Unescaped semicolon - split point
-            result.append(unescape_backslash("".join(current)))
-            current = []
-            i += 1
-        else:
-            current.append(text[i])
-            i += 1
-
-    # Add final part
-    result.append(unescape_backslash("".join(current)))
-
-    return result
-
-
 RFC_6868_UNESCAPE_REGEX = re.compile(r"\^\^|\^n|\^'")
 
 
@@ -883,207 +556,12 @@ def rfc_6868_escape(param_value: str) -> str:
         lambda m: replacements.get(m.group(0), m.group(0)), param_value
     )
 
-
-def unescape_list_or_string(val: str | list[str]) -> str | list[str]:
-    """Unescape a value that may be a string or list of strings.
-
-    Applies :func:`unescape_string` to the value. If the value is a list,
-    unescapes each element.
-
-    Parameters:
-        val: A string or list of strings to unescape.
-
-    Returns:
-        The unescaped values.
-    """
-    if isinstance(val, list):
-        return [unescape_string(s) for s in val]
-    return unescape_string(val)
-
-
-#########################################
-# parsing and generation of content lines
-
-
-class Contentline(str):
-    """A content line is basically a string that can be folded and parsed into
-    parts.
-    """
-
-    __slots__ = ("strict",)
-
-    def __new__(cls, value, strict=False, encoding=DEFAULT_ENCODING):
-        value = to_unicode(value, encoding=encoding)
-        assert "\n" not in value, (
-            "Content line can not contain unescaped new line characters."
-        )
-        self = super().__new__(cls, value)
-        self.strict = strict
-        return self
-
-    @classmethod
-    def from_parts(
-        cls,
-        name: ICAL_TYPE,
-        params: Parameters,
-        values,
-        sorted: bool = True,  # noqa: A002, FBT001
-    ):
-        """Turn a parts into a content line."""
-        assert isinstance(params, Parameters)
-        if hasattr(values, "to_ical"):
-            values = values.to_ical()
-        else:
-            from icalendar.prop import vText
-
-            values = vText(values).to_ical()
-        # elif isinstance(values, basestring):
-        #    values = escape_char(values)
-
-        # TODO: after unicode only, remove this
-        # Convert back to unicode, after to_ical encoded it.
-        name = to_unicode(name)
-        values = to_unicode(values)
-        if params:
-            params = to_unicode(params.to_ical(sorted=sorted))
-            if params:
-                # some parameter values can be skipped during serialization
-                return cls(f"{name};{params}:{values}")
-        return cls(f"{name}:{values}")
-
-    def parts(self) -> tuple[str, Parameters, str]:
-        """Split the content line into ``name``, ``parameters``, and ``values`` parts.
-
-        Properly handles escaping with backslashes and double-quote sections
-        to avoid corrupting URL-encoded characters in values.
-
-        Example with parameter:
-
-        .. code-block:: text
-
-            DESCRIPTION;ALTREP="cid:part1.0001@example.org":The Fall'98 Wild
-
-        Example without parameters:
-
-        .. code-block:: text
-
-            DESCRIPTION:The Fall'98 Wild
-        """
-        try:
-            name_split: int | None = None
-            value_split: int | None = None
-            in_quotes: bool = False
-            escaped: bool = False
-
-            for i, ch in enumerate(self):
-                if ch == '"' and not escaped:
-                    in_quotes = not in_quotes
-                elif ch == "\\" and not in_quotes:
-                    escaped = True
-                    continue
-                elif not in_quotes and not escaped:
-                    # Find first delimiter for name
-                    if ch in ":;" and name_split is None:
-                        name_split = i
-                    # Find value delimiter (first colon)
-                    if ch == ":" and value_split is None:
-                        value_split = i
-
-                escaped = False
-
-            # Validate parsing results
-            if not value_split:
-                # No colon found - value is empty, use end of string
-                value_split = len(self)
-
-            # Extract name - if no delimiter,
-            #   take whole string for validate_token to reject
-            name = self[:name_split] if name_split else self
-            validate_token(name)
-
-            if not name_split or name_split + 1 == value_split:
-                # No delimiter or empty parameter section
-                raise ValueError("Invalid content line")  # noqa: TRY301
-            # Parse parameters - they still need to be escaped/unescaped
-            # for proper handling of commas, semicolons, etc. in parameter values
-            param_str = escape_string(self[name_split + 1 : value_split])
-            params = Parameters.from_ical(param_str, strict=self.strict)
-            params = Parameters(
-                (unescape_string(key), unescape_list_or_string(value))
-                for key, value in iter(params.items())
-            )
-            # Unescape backslash sequences in values but preserve URL encoding
-            values = unescape_backslash(self[value_split + 1 :])
-        except ValueError as exc:
-            raise ValueError(
-                f"Content line could not be parsed into parts: '{self}': {exc}"
-            ) from exc
-        return (name, params, values)
-
-    @classmethod
-    def from_ical(cls, ical, strict=False):
-        """Unfold the content lines in an iCalendar into long content lines."""
-        ical = to_unicode(ical)
-        # a fold is carriage return followed by either a space or a tab
-        return cls(UFOLD.sub("", ical), strict=strict)
-
-    def to_ical(self):
-        """Long content lines are folded so they are less than 75 characters
-        wide.
-        """
-        return foldline(self).encode(DEFAULT_ENCODING)
-
-
-class Contentlines(list):
-    """I assume that iCalendar files generally are a few kilobytes in size.
-    Then this should be efficient. for Huge files, an iterator should probably
-    be used instead.
-    """
-
-    def to_ical(self):
-        """Simply join self."""
-        return b"\r\n".join(line.to_ical() for line in self if line) + b"\r\n"
-
-    @classmethod
-    def from_ical(cls, st):
-        """Parses a string into content lines."""
-        st = to_unicode(st)
-        try:
-            # a fold is carriage return followed by either a space or a tab
-            unfolded = UFOLD.sub("", st)
-            lines = cls(Contentline(line) for line in NEWLINE.split(unfolded) if line)
-            lines.append("")  # '\r\n' at the end of every content line
-        except Exception as e:
-            raise ValueError("Expected StringType with content lines") from e
-        return lines
-
-
 __all__ = [
-    "FOLD",
-    "NAME",
-    "NEWLINE",
-    "QUNSAFE_CHAR",
-    "QUOTABLE",
-    "UFOLD",
-    "UNSAFE_CHAR",
-    "Contentline",
-    "Contentlines",
     "Parameters",
     "dquote",
-    "escape_char",
-    "escape_string",
-    "foldline",
     "param_value",
     "q_join",
     "q_split",
     "rfc_6868_escape",
     "rfc_6868_unescape",
-    "split_on_unescaped_comma",
-    "split_on_unescaped_semicolon",
-    "unescape_backslash",
-    "unescape_char",
-    "unescape_list_or_string",
-    "unescape_string",
-    "validate_param_value",
-    "validate_token",
 ]
