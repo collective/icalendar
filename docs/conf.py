@@ -116,8 +116,7 @@ html_js_files = [
     ("js/custom-icons.js", {"defer": "defer"}),
 ]
 pygments_style = "sphinx"
-smartquotes = False
-
+smartquotes_action = "De"
 
 # -- Options apidoc output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/extensions/apidoc.html#
