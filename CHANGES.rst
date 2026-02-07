@@ -90,6 +90,7 @@ Documentation
   See :issue:`1004`.
 - Use Google style docstrings in :mod:`~icalendar.parser_tools`.
   See :issue:`1017`.
+- Document compatibility of icalendar with RFCs. See :issue:`1147`.
 - Added Upgrade guide. See :issue:`997`.
 - Enable sphinx-issues extension. :issue:`1091`
 - Replaced "Arguments" and "Args" with "Parameters". :issue:`1076`
