@@ -71,6 +71,7 @@ Bug fixes
 Documentation
 ~~~~~~~~~~~~~
 
+- Improved docstrings and formatting for the :class:`~icalendar.alarms.AlarmTime` class. :issue:`1072`
 - Added how-to guide for handling parsing errors with :class:`~icalendar.prop.vBrokenProperty` and the ``component.errors`` attribute. See :issue:`1085`.
 - Updated 11 function docstrings in :mod:`icalendar.parser` to follow the Google Style guide, improving API documentation clarity and consistency. See :issue:`1072`.
 - Applied Google-style docstrings to :mod:`icalendar.tools` utility functions with Args, Returns, and Example sections. See :issue:`1072`.
@@ -98,10 +99,14 @@ Documentation
 - Added a new rule to our docstring style guide to escape docstrings, and added a new section for type hints in the code conventions section. :issue:`1080`
 - Documented ``__init__`` methods. :issue:`1079`
 - Moved "Edit this page" link to above the page table of contents. :issue:`1106`
+- Added Good First Issue link and fixed Up For Grabs link in Contribute guide. :issue:`1095`
 - Updated ``CONTRIBUTING.rst`` to explicitly state not to use Args sections in docstrings. :issue:`1076`
 - Document ``vInt.__new__`` method parameters in class docstring with :rfc:`5545` examples. :issue:`1118`
 - Improved ``make vale`` command to provide guidance on failure or success. :issue:`1137`
 - Add ``sphinx_copybutton`` configuration to exclude line numbers, prompts, and console output when copying code blocks.
+- Change Sphinx configuration to convert ``--`` to en dash ``-``, ``---`` to em dash ``—``, and ``...`` to ellipsis ``…``, but doesn't transform quote marks as they should be preserved.
+  This restores cleaner and consistent rendering of docstrings in the :doc:`API Reference <../reference/api/icalendar>`.
+  See `smartquotes_action <https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-smartquotes_action>`_.
 
 
 7.0.0a3 (2025-12-19)

@@ -116,8 +116,7 @@ html_js_files = [
     ("js/custom-icons.js", {"defer": "defer"}),
 ]
 pygments_style = "sphinx"
-smartquotes = False
-
+smartquotes_action = "De"
 
 # -- linkcheck builder configuration ----------------------------------
 # Ignore localhost
