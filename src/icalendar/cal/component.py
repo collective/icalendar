@@ -446,14 +446,14 @@ class Component(CaselessDict):
 
     @overload
     @classmethod
-    def from_ical(cls, st: str | bytes, multiple: Literal[False] = False) -> Self: ...
+    def from_ical(cls, st: str | bytes, multiple: Literal[False] = False) -> Component: ...
 
     @overload
     @classmethod
-    def from_ical(cls, st: str | bytes, multiple: Literal[True]) -> list[Self]: ...
+    def from_ical(cls, st: str | bytes, multiple: Literal[True]) -> list[Component]: ...
 
     @classmethod
-    def from_ical(cls, st: str | bytes, multiple: bool = False) -> Self | list[Self]:  # noqa: FBT001
+    def from_ical(cls, st: str | bytes, multiple: bool = False) -> Component | list[Component]:  # noqa: FBT001
         """Parse iCalendar data into component instances.
 
         Handles standard and custom components (``X-*``, IANA-registered).
