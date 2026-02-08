@@ -61,28 +61,28 @@ class vCalAddress(str):
 
     def __new__(
         cls,
-        value,
-        encoding=DEFAULT_ENCODING,
+        value: str | bytes,
+        encoding: str = DEFAULT_ENCODING,
         /,
         params: dict[str, Any] | None = None,
-    ):
+    ) -> Self:
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         self.params = Parameters(params)
         return self
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"vCalAddress('{self}')"
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         return self.encode(DEFAULT_ENCODING)
 
     @classmethod
-    def from_ical(cls, ical) -> Self:
+    def from_ical(cls, ical: str | bytes) -> Self:
         return cls(ical)
 
     @property
-    def ical_value(self):
+    def ical_value(self) -> str:
         """The ``mailto:`` part of the address."""
         return str(self)
 
@@ -140,7 +140,7 @@ class vCalAddress(str):
         role: str | None = None,
         rsvp: bool | None = None,  # noqa: FBT001, RUF100
         sent_by: str | None = None,
-    ):
+    ) -> Self:
         """Create a new vCalAddress with RFC 5545 parameters.
 
         Creates a vCalAddress instance with automatic mailto: prefix handling

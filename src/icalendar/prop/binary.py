@@ -17,30 +17,30 @@ class vBinary:
     params: Parameters
     obj: str
 
-    def __init__(self, obj, params: dict[str, str] | None = None):
+    def __init__(self, obj: str | bytes, params: dict[str, str] | None = None) -> None:
         self.obj = to_unicode(obj)
         self.params = Parameters(encoding="BASE64", value="BINARY")
         if params:
             self.params.update(params)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"vBinary({self.to_ical()})"
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         return binascii.b2a_base64(self.obj.encode("utf-8"))[:-1]
 
     @staticmethod
-    def from_ical(ical):
+    def from_ical(ical: str | bytes) -> bytes:
         try:
             return base64.b64decode(ical)
         except ValueError as e:
             raise ValueError("Not valid base 64 encoding.") from e
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """self == other"""
         return isinstance(other, vBinary) and self.obj == other.obj
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Hash of the vBinary object."""
         return hash(self.obj)
 

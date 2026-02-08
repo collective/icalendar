@@ -92,25 +92,25 @@ class vGeo:
         self.longitude = longitude
         self.params = Parameters(params)
 
-    def to_ical(self):
+    def to_ical(self) -> str:
         return f"{self.latitude};{self.longitude}"
 
     @staticmethod
-    def from_ical(ical):
+    def from_ical(ical: str) -> tuple[float, float]:
         try:
             latitude, longitude = ical.split(";")
             return (float(latitude), float(longitude))
         except Exception as e:
             raise ValueError(f"Expected 'float;float' , got: {ical}") from e
 
-    def __eq__(self, other):
-        return self.to_ical() == other.to_ical()
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, vGeo) and self.to_ical() == other.to_ical()
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Hash of the vGeo object."""
         return hash((self.latitude, self.longitude))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """repr(self)"""
         return f"{self.__class__.__name__}(({self.latitude}, {self.longitude}))"
 

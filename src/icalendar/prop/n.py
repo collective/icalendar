@@ -108,11 +108,11 @@ class vN:
             raise ValueError(f"N must have exactly 5 fields, got {len(fields)}: {ical}")
         return NFields(*fields)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """self == other"""
         return isinstance(other, vN) and self.fields == other.fields
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """String representation."""
         return f"{self.__class__.__name__}({self.fields}, params={self.params})"
 
