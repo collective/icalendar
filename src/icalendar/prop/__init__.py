@@ -51,6 +51,7 @@ from .broken import vBrokenProperty
 from .cal_address import vCalAddress
 from .categories import vCategory
 from .dt import (
+    DT_TYPE,
     TimeBase,
     vDate,
     vDatetime,
@@ -109,6 +110,7 @@ VPROPERTY: TypeAlias = (
 )
 
 __all__ = [
+    "DT_TYPE",
     "VPROPERTY",
     "AdrFields",
     "NFields",

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime, time, timedelta
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
@@ -20,7 +20,14 @@ from .time import vTime
 if TYPE_CHECKING:
     from icalendar.compatibility import Self
 
-    from .common import DT_TYPE
+DT_TYPE: TypeAlias = (
+    datetime
+    | date
+    | timedelta
+    | time
+    | tuple[datetime, datetime]
+    | tuple[datetime, timedelta]
+)
 
 
 class vDDDTypes(TimeBase):
@@ -180,4 +187,4 @@ class vDDDTypes(TimeBase):
         )
 
 
-__all__ = ["vDDDTypes"]
+__all__ = ["DT_TYPE", "vDDDTypes"]

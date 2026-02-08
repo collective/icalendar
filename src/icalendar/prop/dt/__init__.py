@@ -1,14 +1,13 @@
 """Property types related to dates and times."""
 
 from .base import TimeBase
-from .common import DT_TYPE
 from .date import vDate
 from .datetime import vDatetime
 from .duration import vDuration
 from .list import vDDDLists
 from .period import vPeriod
 from .time import vTime
-from .types import vDDDTypes
+from .types import DT_TYPE, vDDDTypes
 from .utc_offset import vUTCOffset
 
 __all__ = [
