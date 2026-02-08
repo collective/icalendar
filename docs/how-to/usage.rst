@@ -361,7 +361,7 @@ To demonstrate icalendar's flexibility, the following example creates an event t
     END:VEVENT
 
 
-``zoneinfo`` Default Implementation
+``zoneinfo`` default implementation
 '''''''''''''''''''''''''''''''''''
 
 .. versionchanged:: 6.0.0
@@ -388,7 +388,7 @@ To continue to receive ``pytz`` timezones in parsed results, you can receive all
     <DstTzInfo 'Europe/Vienna' CET+1:00:00 STD>
 
 
-Complete Recurring Meeting
+Complete recurring meeting
 ''''''''''''''''''''''''''
 
 This section shows how create a complete and typical iCalendar file of a recurring meeting event, then add some properties to it, including a location, organizer, attendees, alarms, recurrence, and other properties.
