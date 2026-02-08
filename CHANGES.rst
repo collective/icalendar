@@ -45,6 +45,8 @@ Breaking changes
 ~~~~~~~~~~~~~~~~
 
 - Drop support for Python 3.8 and 3.9. See :issue:`977`.
+- ``DURATION_REGEX`` moved from :mod:`icalendar.prop` to :mod:`icalendar.prop.dt.duration`. See :issue:`987`.
+- ``WEEKDAY_RULE`` moved from :mod:`icalendar.prop` to :mod:`icalendar.prop.recur.weekday`. See :issue:`987`.
 - :meth:`Component.decoded` now returns a string instead of bytes for text properties.
 
 New features
