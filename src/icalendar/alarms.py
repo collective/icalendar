@@ -63,14 +63,13 @@ class AlarmTime:
         """Create a new AlarmTime.
 
         Parameters:
-            alarm (Alarm): The underlying alarm component.
-            trigger (datetime): A date or datetime at which to trigger the alarm.
-            acknowledged_until (Optional[datetime]): Optional datetime in UTC
-                until which the alarm has been acknowledged.
-            snoozed_until (Optional[datetime]): Optional datetime in UTC until
-                which the alarm has been snoozed.
-            parent (Optional[Parent]): Optional parent component to which
-                the alarm refers.
+            alarm: The underlying alarm component.
+            trigger: A date or datetime at which to trigger the alarm.
+            acknowledged_until: Optional datetime in UTC until which
+                the alarm has been acknowledged.
+            snoozed_until: Optional datetime in UTC until which
+                the alarm has been snoozed.
+            parent: Optional parent component to which the alarm refers.
         """
         self._alarm = alarm
         self._parent = parent
@@ -100,7 +99,7 @@ class AlarmTime:
     def parent(self) -> Optional[Parent]:
         """The component that contains the alarm.
 
-        This is None if you did not use ``Alarms.add_component()``.
+        This is ``None`` if you didn't use :meth:`Alarms.add_component() <icalendar.alarms.Alarms.add_component>`.
         """
         return self._parent
 
@@ -110,7 +109,7 @@ class AlarmTime:
         For example, in some calendar software, this is ``True`` until the user
         views the alarm message and dismisses it.
 
-        Alarms can be in local time (without a timezone). To calculate whether
+        Alarms can be in local time without a timezone. To calculate whether
         the alarm has occurred, the time must include timezone information.
 
         Raises:
