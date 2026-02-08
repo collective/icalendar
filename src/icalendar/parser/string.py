@@ -200,7 +200,6 @@ def validate_token(name: str) -> None:
     raise ValueError(name)
 
 
-
 __all__ = [
     "escape_char",
     "escape_string",
