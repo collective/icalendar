@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from icalendar.prop import vUri
+from icalendar.prop.uri import vUri
 
 
 @dataclass
@@ -72,7 +72,7 @@ class Conference:
     language: str | None = None
 
     @classmethod
-    def from_uri(cls, uri: vUri | str):
+    def from_uri(cls, uri: vUri | str) -> Conference:
         """Create a Conference from a URI."""
         params = uri.params if isinstance(uri, vUri) else {}
         return cls(

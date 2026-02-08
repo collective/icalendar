@@ -3,8 +3,13 @@
 from __future__ import annotations
 
 import base64
+from typing import TYPE_CHECKING
 
-from icalendar.prop import vBinary, vText, vUri
+from icalendar.prop.binary import vBinary
+from icalendar.prop.uri import vUri
+
+if TYPE_CHECKING:
+    from icalendar.prop.text import vText
 
 
 class Image:
@@ -39,12 +44,15 @@ class Image:
     """
 
     @classmethod
-    def from_property_value(cls, value: vUri | vBinary | vText):
+    def from_property_value(cls, value: vUri | vBinary | vText) -> Image:
         """Create an Image from a property value."""
         params: dict[str, str] = {}
         if not hasattr(value, "params"):
             raise TypeError("Value must be URI or BINARY.")
-        value_type = value.params.get("VALUE", "").upper()
+        try:
+            value_type = value.params.get("VALUE", "").upper()
+        except (AttributeError, TypeError):
+            raise TypeError("Value must have a valid params attribute.")
         if value_type == "URI" or isinstance(value, vUri):
             params["uri"] = str(value)
         elif isinstance(value, vBinary):
@@ -71,7 +79,7 @@ class Image:
         fmttype: str | None = None,
         altrep: str | None = None,
         display: str | None = None,
-    ):
+    ) -> None:
         """Create a new image according to :rfc:`7986`."""
         if uri is not None and b64data is not None:
             raise ValueError("Image cannot have both URI and binary data (RFC 7986)")
