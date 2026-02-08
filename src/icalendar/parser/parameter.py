@@ -72,7 +72,8 @@ def validate_param_value(value: str, quoted: bool = True) -> None:
     Parameters:
         value: The parameter value to validate.
         quoted: If ``True``, validate as a quoted value (allows more characters).
-            If ``False``, validate as an unquoted value (stricter). Defaults to ``True``.
+            If ``False``, validate as an unquoted value (stricter).
+            Defaults to ``True``.
 
     Raises:
         ValueError: If the value contains unsafe characters for its quote state.
