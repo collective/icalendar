@@ -35,7 +35,7 @@ The following jCal calendar contains one event.
     ... ]
     ... """
 
-Use :meth:`~icalendar.cal.component.Component.from_jcal` to parse the :py:class:`list` or JSON :py:class:`str`.
+Use :meth:`~icalendar.cal.component.Component.from_jcal` to parse the :class:`list` or JSON :class:`str`.
 
 .. code-block:: pycon
 
