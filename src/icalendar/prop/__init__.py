@@ -46,7 +46,7 @@ from __future__ import annotations
 
 import re
 import uuid
-from datetime import date, datetime, time, timedelta, timezone
+from datetime import date, datetime, time, timedelta, timezone, tzinfo
 from typing import TYPE_CHECKING, Any, ClassVar, NamedTuple, Tuple, TypeAlias, Union
 
 from icalendar.caselessdict import CaselessDict
@@ -173,7 +173,7 @@ class vInt(int):
     default_value: ClassVar[str] = "INTEGER"
     params: Parameters
 
-    def __new__(cls, *args, params: dict[str, Any] | None = None, **kwargs):
+    def __new__(cls, *args, params: dict[str, Any] | None = None, **kwargs) -> Self:
         self = super().__new__(cls, *args, **kwargs)
         self.params = Parameters(params)
         return self
@@ -182,7 +182,7 @@ class vInt(int):
         return str(self).encode("utf-8")
 
     @classmethod
-    def from_ical(cls, ical: ICAL_TYPE):
+    def from_ical(cls, ical: ICAL_TYPE) -> Self:
         try:
             return cls(ical)
         except Exception as e:
@@ -234,7 +234,7 @@ class vDDDLists:
     params: Parameters
     dts: list[vDDDTypes]
 
-    def __init__(self, dt_list, params: dict[str, Any] | None = None):
+    def __init__(self, dt_list, params: dict[str, Any] | None = None) -> None:
         if params is None:
             params = {}
         if not hasattr(dt_list, "__iter__"):
@@ -253,26 +253,26 @@ class vDDDLists:
         self.params = Parameters(params)
         self.dts = vddd
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         dts_ical = (from_unicode(dt.to_ical()) for dt in self.dts)
         return b",".join(dts_ical)
 
     @staticmethod
-    def from_ical(ical, timezone=None):
+    def from_ical(ical: str, timezone: str | None = None) -> list:
         out = []
         ical_dates = ical.split(",")
         for ical_dt in ical_dates:
             out.append(vDDDTypes.from_ical(ical_dt, timezone=timezone))
         return out
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if isinstance(other, vDDDLists):
             return self.dts == other.dts
         if isinstance(other, (TimeBase, date)):
             return self.dts == [other]
         return False
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """String representation."""
         return f"{self.__class__.__name__}({self.dts})"
 
@@ -324,7 +324,7 @@ class TimeBase:
     params: Parameters
     ignore_for_equality = {"TZID", "VALUE"}
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """self == other"""
         if isinstance(other, date):
             return self.dt == other
@@ -342,12 +342,12 @@ class TimeBase:
             return other == self
         return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.dt)
 
     from icalendar.param import RANGE, RELATED, TZID
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """String representation."""
         return f"{self.__class__.__name__}({self.dt}, {self.params})"
 
@@ -372,7 +372,7 @@ class vDDDTypes(TimeBase):
     params: Parameters
     dt: DT_TYPE
 
-    def __init__(self, dt, params: dict[str, Any] | None = None):
+    def __init__(self, dt: DT_TYPE, params: dict[str, Any] | None = None) -> None:
         if params is None:
             params = {}
         if not isinstance(dt, (datetime, date, timedelta, time, tuple)):
@@ -417,7 +417,7 @@ class vDDDTypes(TimeBase):
         return self.to_property_type().to_ical()
 
     @classmethod
-    def from_ical(cls, ical, timezone=None):
+    def from_ical(cls, ical: str | vDDDTypes, timezone: str | None = None) -> DT_TYPE:
         if isinstance(ical, cls):
             return ical.dt
         u = ical.upper()
@@ -573,18 +573,18 @@ class vDate(TimeBase):
     default_value: ClassVar[str] = "DATE"
     params: Parameters
 
-    def __init__(self, dt, params: dict[str, Any] | None = None):
+    def __init__(self, dt: date, params: dict[str, Any] | None = None) -> None:
         if not isinstance(dt, date):
             raise TypeError("Value MUST be a date instance")
         self.dt = dt
         self.params = Parameters(params or {})
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         s = f"{self.dt.year:04}{self.dt.month:02}{self.dt.day:02}"
         return s.encode("utf-8")
 
     @staticmethod
-    def from_ical(ical):
+    def from_ical(ical: str) -> date:
         try:
             timetuple = (
                 int(ical[:4]),  # year
@@ -612,8 +612,8 @@ class vDate(TimeBase):
         ]
 
     @classmethod
-    def parse_jcal_value(cls, jcal: str) -> datetime:
-        """Parse a jCal string to a :py:class:`datetime.datetime`.
+    def parse_jcal_value(cls, jcal: str) -> date:
+        """Parse a jCal string to a :py:class:`datetime.date`.
 
         Raises:
             ~error.JCalParsingError: If it can't parse a date.
@@ -722,12 +722,12 @@ class vDatetime(TimeBase):
     default_value: ClassVar[str] = "DATE-TIME"
     params: Parameters
 
-    def __init__(self, dt, /, params: dict[str, Any] | None = None):
+    def __init__(self, dt: datetime, /, params: dict[str, Any] | None = None) -> None:
         self.dt = dt
         self.params = Parameters(params)
         self.params.update_tzid_from(dt)
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         dt = self.dt
 
         s = (
@@ -739,7 +739,7 @@ class vDatetime(TimeBase):
         return s.encode("utf-8")
 
     @staticmethod
-    def from_ical(ical, timezone=None):
+    def from_ical(ical: str, timezone: str | tzinfo | None = None) -> datetime:
         """Create a datetime from the RFC string."""
         tzinfo = None
         if isinstance(timezone, str):
@@ -897,7 +897,9 @@ class vDuration(TimeBase):
     default_value: ClassVar[str] = "DURATION"
     params: Parameters
 
-    def __init__(self, td: timedelta | str, /, params: dict[str, Any] | None = None):
+    def __init__(
+        self, td: timedelta | str, /, params: dict[str, Any] | None = None
+    ) -> None:
         if isinstance(td, str):
             td = vDuration.from_ical(td)
         if not isinstance(td, timedelta):
@@ -905,7 +907,7 @@ class vDuration(TimeBase):
         self.td = td
         self.params = Parameters(params)
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         sign = ""
         td = self.td
         if td.days < 0:
@@ -934,7 +936,7 @@ class vDuration(TimeBase):
         )
 
     @staticmethod
-    def from_ical(ical):
+    def from_ical(ical: str) -> timedelta:
         match = DURATION_REGEX.match(ical)
         if not match:
             raise InvalidCalendar(f"Invalid iCalendar duration: {ical}")
@@ -1080,7 +1082,7 @@ class vPeriod(TimeBase):
         self,
         per: tuple[datetime, datetime | timedelta],
         params: dict[str, Any] | None = None,
-    ):
+    ) -> None:
         start, end_or_duration = per
         if not (isinstance(start, (datetime, date))):
             raise TypeError("Start value MUST be a datetime or date instance")
@@ -1108,12 +1110,12 @@ class vPeriod(TimeBase):
         self.by_duration = by_duration
         self.duration = duration
 
-    def overlaps(self, other):
+    def overlaps(self, other: vPeriod) -> bool:
         if self.start > other.start:
             return other.overlaps(self)
         return self.start <= other.start < self.end
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         if self.by_duration:
             return (
                 vDatetime(self.start).to_ical()
@@ -1123,7 +1125,9 @@ class vPeriod(TimeBase):
         return vDatetime(self.start).to_ical() + b"/" + vDatetime(self.end).to_ical()
 
     @staticmethod
-    def from_ical(ical, timezone=None):
+    def from_ical(
+        ical: str, timezone: str | None = None
+    ) -> tuple[datetime, datetime | timedelta]:
         try:
             start, end_or_duration = ical.split("/")
             start = vDDDTypes.from_ical(start, timezone=timezone)
@@ -1132,12 +1136,12 @@ class vPeriod(TimeBase):
             raise ValueError(f"Expected period format, got: {ical}") from e
         return (start, end_or_duration)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         p = (self.start, self.duration) if self.by_duration else (self.start, self.end)
         return f"vPeriod({p!r})"
 
     @property
-    def dt(self):
+    def dt(self) -> tuple[datetime, datetime | timedelta]:
         """Make this cooperate with the other vDDDTypes."""
         return (self.start, (self.duration if self.by_duration else self.end))
 
@@ -1266,11 +1270,11 @@ class vWeekday(str):
 
     def __new__(
         cls,
-        value,
-        encoding=DEFAULT_ENCODING,
+        value: str | bytes,
+        encoding: str = DEFAULT_ENCODING,
         /,
         params: dict[str, Any] | None = None,
-    ):
+    ) -> Self:
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         match = WEEKDAY_RULE.match(self)
@@ -1289,11 +1293,11 @@ class vWeekday(str):
         self.params = Parameters(params)
         return self
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         return self.encode(DEFAULT_ENCODING).upper()
 
     @classmethod
-    def from_ical(cls, ical):
+    def from_ical(cls, ical: str) -> Self:
         try:
             return cls(ical.upper())
         except Exception as e:
@@ -1335,11 +1339,11 @@ class vFrequency(str):
 
     def __new__(
         cls,
-        value,
-        encoding=DEFAULT_ENCODING,
+        value: str | bytes,
+        encoding: str = DEFAULT_ENCODING,
         /,
         params: dict[str, Any] | None = None,
-    ):
+    ) -> Self:
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         if self not in vFrequency.frequencies:
@@ -1347,11 +1351,11 @@ class vFrequency(str):
         self.params = Parameters(params)
         return self
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         return self.encode(DEFAULT_ENCODING).upper()
 
     @classmethod
-    def from_ical(cls, ical):
+    def from_ical(cls, ical: str) -> Self:
         try:
             return cls(ical.upper())
         except Exception as e:
@@ -1403,7 +1407,7 @@ class vMonth(int):
 
     params: Parameters
 
-    def __new__(cls, month: str | int, /, params: dict[str, Any] | None = None):
+    def __new__(cls, month: str | int, /, params: dict[str, Any] | None = None) -> Self:
         if isinstance(month, vMonth):
             return cls(month.to_ical().decode())
         if isinstance(month, str):
@@ -1428,7 +1432,7 @@ class vMonth(int):
         return str(self).encode("utf-8")
 
     @classmethod
-    def from_ical(cls, ical: str):
+    def from_ical(cls, ical: str) -> Self:
         return cls(ical)
 
     @property
@@ -1490,7 +1494,7 @@ class vSkip(vText, Enum):
 
     __reduce_ex__ = Enum.__reduce_ex__
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self._name_!r})"
 
     @classmethod
@@ -1655,7 +1659,7 @@ class vRecur(CaselessDict):
     # look up in RFC
     jcal_not_a_list = {"FREQ", "UNTIL", "COUNT", "INTERVAL", "WKST", "SKIP", "RSCALE"}
 
-    def __init__(self, *args, params: dict[str, Any] | None = None, **kwargs):
+    def __init__(self, *args, params: dict[str, Any] | None = None, **kwargs) -> None:
         if args and isinstance(args[0], str):
             # we have a string as an argument.
             args = (self.from_ical(args[0]),) + args[1:]
@@ -1665,7 +1669,7 @@ class vRecur(CaselessDict):
         super().__init__(*args, **kwargs)
         self.params = Parameters(params)
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         result = []
         for key, vals in self.sorted_items():
             typ = self.types.get(key, vText)
@@ -1680,13 +1684,13 @@ class vRecur(CaselessDict):
         return b";".join(result)
 
     @classmethod
-    def parse_type(cls, key, values):
+    def parse_type(cls, key: str, values: str) -> list:
         # integers
         parser = cls.types.get(key, vText)
         return [parser.from_ical(v) for v in values.split(",")]
 
     @classmethod
-    def from_ical(cls, ical: str):
+    def from_ical(cls, ical: str) -> Self:
         if isinstance(ical, cls):
             return ical
         try:
@@ -1905,7 +1909,7 @@ class vTime(TimeBase):
     default_value: ClassVar[str] = "TIME"
     params: Parameters
 
-    def __init__(self, *args, params: dict[str, Any] | None = None):
+    def __init__(self, *args, params: dict[str, Any] | None = None) -> None:
         if len(args) == 1:
             if not isinstance(args[0], (time, datetime)):
                 raise ValueError(f"Expected a datetime.time, got: {args[0]}")
@@ -1915,7 +1919,7 @@ class vTime(TimeBase):
         self.params = Parameters(params or {})
         self.params.update_tzid_from(self.dt)
 
-    def to_ical(self):
+    def to_ical(self) -> str:
         value = self.dt.strftime("%H%M%S")
         if self.is_utc():
             value += "Z"
@@ -1926,7 +1930,7 @@ class vTime(TimeBase):
         return self.params.is_utc() or is_utc(self.dt)
 
     @staticmethod
-    def from_ical(ical):
+    def from_ical(ical: str) -> time:
         # TODO: timezone support
         try:
             timetuple = (int(ical[:2]), int(ical[2:4]), int(ical[4:6]))
@@ -2089,7 +2093,7 @@ class vUTCOffset:
         return sign % duration
 
     @classmethod
-    def from_ical(cls, ical):
+    def from_ical(cls, ical: str | vUTCOffset) -> timedelta:
         if isinstance(ical, cls):
             return ical.td
         try:
@@ -2108,15 +2112,15 @@ class vUTCOffset:
             return -offset
         return offset
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, vUTCOffset):
             return False
         return self.td == other.td
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.td)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"vUTCOffset({self.td!r})"
 
     @classmethod
@@ -2173,7 +2177,7 @@ class TypesFactory(CaselessDict):
             TypesFactory._instance = TypesFactory()
         return TypesFactory._instance
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         """Set keys to upper for initial dict"""
         super().__init__(*args, **kwargs)
         self.all_types = (
@@ -2336,7 +2340,7 @@ class TypesFactory(CaselessDict):
         }
     )
 
-    def for_property(self, name, value_param: str | None = None) -> type:
+    def for_property(self, name: str, value_param: str | None = None) -> type:
         """Returns the type class for a property or parameter.
 
         Parameters:
@@ -2359,14 +2363,14 @@ class TypesFactory(CaselessDict):
             return self[value_param]
         return self[self.types_map.get(name, "unknown")]
 
-    def to_ical(self, name, value):
+    def to_ical(self, name: str, value: Any) -> str | bytes:
         """Encodes a named value from a primitive python type to an icalendar
         encoded string.
         """
         type_class = self.for_property(name)
         return type_class(value).to_ical()
 
-    def from_ical(self, name, value):
+    def from_ical(self, name: str, value: str) -> Any:
         """Decodes a named property or parameter value from an icalendar
         encoded string to a primitive python type.
         """
