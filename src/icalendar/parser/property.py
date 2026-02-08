@@ -1,6 +1,5 @@
 """Tools for parsing properties."""
 
-
 import re
 
 from icalendar.parser.string import unescape_string
@@ -22,7 +21,9 @@ def unescape_list_or_string(val: str | list[str]) -> str | list[str]:
         return [unescape_string(s) for s in val]
     return unescape_string(val)
 
+
 _unescape_backslash_regex = re.compile(r"\\([\\,;:nN])")
+
 
 def unescape_backslash(val: str):
     r"""Unescape backslash sequences in iCalendar text.
@@ -36,7 +37,6 @@ def unescape_backslash(val: str):
     return _unescape_backslash_regex.sub(
         lambda m: "\n" if m.group(1) in "nN" else m.group(1), val
     )
-
 
 
 def split_on_unescaped_comma(text: str) -> list[str]:
@@ -145,4 +145,10 @@ def split_on_unescaped_semicolon(text: str) -> list[str]:
 
     return result
 
-__all__ = ["split_on_unescaped_comma", "split_on_unescaped_semicolon", "unescape_backslash", "unescape_list_or_string"]
+
+__all__ = [
+    "split_on_unescaped_comma",
+    "split_on_unescaped_semicolon",
+    "unescape_backslash",
+    "unescape_list_or_string",
+]
