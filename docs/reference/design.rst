@@ -33,10 +33,12 @@ Unsupported RFCs
 
 The maintainers of icalendar do not claim compatibility with the following RFCs.
 
-* :rfc:`9073`
-    Event Publishing Extensions to iCalendar. This might work partially. See :issue:`656`
 * :rfc:`6321`
     xCal: The XML Format for iCalendar. See :issue:`1135`
+* :rfc:`6350`
+    vCard 4.0. See :issue:`859`
+* :rfc:`9073`
+    Event Publishing Extensions to iCalendar. This might work partially. See :issue:`656`
 
 iCalendar file structure
 ------------------------
