@@ -12,21 +12,21 @@ Supported RFCs
 
 icalendar supports the following RFC standards.
 
-* :rfc:`2445`
+:rfc:`2445`
     obsoleted by :rfc:`5545`
-* :rfc:`5545`
+:rfc:`5545`
     Internet Calendaring and Scheduling Core Object Specification (iCalendar)
-* :rfc:`6868`
+:rfc:`6868`
     Parameter Value Encoding in iCalendar and vCard
-* :rfc:`7529`
+:rfc:`7529`
     Non-Gregorian Recurrence Rules in the Internet Calendaring and Scheduling Core Object Specification (iCalendar)
-* :rfc:`9074`
+:rfc:`9074`
     "VALARM" Extensions for iCalendar
-* :rfc:`7953`
+:rfc:`7953`
     Calendar Availability
-* :rfc:`7986`
+:rfc:`7986`
     New Properties for iCalendar
-* :rfc:`9253`
+:rfc:`9253`
     Support for iCalendar Relationships
 
 Unsupported RFCs
