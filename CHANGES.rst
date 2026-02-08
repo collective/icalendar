@@ -98,6 +98,7 @@ Documentation
 - Added a new rule to our docstring style guide to escape docstrings, and added a new section for type hints in the code conventions section. :issue:`1080`
 - Documented ``__init__`` methods. :issue:`1079`
 - Moved "Edit this page" link to above the page table of contents. :issue:`1106`
+- Added Good First Issue link and fixed Up For Grabs link in Contribute guide. :issue:`1095`
 - Updated ``CONTRIBUTING.rst`` to explicitly state not to use Args sections in docstrings. :issue:`1076`
 - Document ``vInt.__new__`` method parameters in class docstring with :rfc:`5545` examples. :issue:`1118`
 - Improved ``make vale`` command to provide guidance on failure or success. :issue:`1137`
