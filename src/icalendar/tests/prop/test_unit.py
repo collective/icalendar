@@ -191,7 +191,7 @@ class TestProp(unittest.TestCase):
 
     def test_prop_vText(self):
         from icalendar.prop import vText
-        from icalendar.parser import Contentline
+        from icalendar.parser import _Contentline
 
         assert vText("Simple text").to_ical() == b"Simple text"
 
@@ -211,10 +211,10 @@ class TestProp(unittest.TestCase):
         assert t.to_ical() == b"international chars \xc3\xa4\xc3\xb6\xc3\xbc"
 
         # and parsing?
-        _, _, value = Contentline("SUMMARY:Text \\; with escaped\\, chars").parts()
+        _, _, value = _Contentline("SUMMARY:Text \\; with escaped\\, chars").parts()
         assert vText.from_ical(value) == "Text ; with escaped, chars"
 
-        _, _, value = Contentline("SUMMARY:A string with\\; some\\\\ characters in\\it").parts()
+        _, _, value = _Contentline("SUMMARY:A string with\\; some\\\\ characters in\\it").parts()
         assert vText.from_ical(value) == "A string with; some\\ characters in\\it"
 
         # We are forgiving to utf-8 encoding errors:

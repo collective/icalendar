@@ -4,17 +4,17 @@ import icalendar
 
 
 class TestCaselessdict(unittest.TestCase):
-    def test_caselessdict_canonsort_keys(self):
-        canonsort_keys = icalendar.caselessdict.canonsort_keys
+    def test_caselessdict__canonsort_keys(self):
+        _canonsort_keys = icalendar.caselessdict._canonsort_keys
 
         keys = ["DTEND", "DTSTAMP", "DTSTART", "UID", "SUMMARY", "LOCATION"]
 
-        out = canonsort_keys(keys)
+        out = _canonsort_keys(keys)
         self.assertEqual(
             out, ["DTEND", "DTSTAMP", "DTSTART", "LOCATION", "SUMMARY", "UID"]
         )
 
-        out = canonsort_keys(
+        out = _canonsort_keys(
             keys,
             (
                 "SUMMARY",
@@ -26,7 +26,7 @@ class TestCaselessdict(unittest.TestCase):
             out, ["SUMMARY", "DTSTART", "DTEND", "DTSTAMP", "LOCATION", "UID"]
         )
 
-        out = canonsort_keys(
+        out = _canonsort_keys(
             keys,
             (
                 "UID",
@@ -38,7 +38,7 @@ class TestCaselessdict(unittest.TestCase):
             out, ["UID", "DTSTART", "DTEND", "DTSTAMP", "LOCATION", "SUMMARY"]
         )
 
-        out = canonsort_keys(keys, ("UID", "DTSTART", "DTEND", "RRULE", "EXDATE"))
+        out = _canonsort_keys(keys, ("UID", "DTSTART", "DTEND", "RRULE", "EXDATE"))
         self.assertEqual(
             out, ["UID", "DTSTART", "DTEND", "DTSTAMP", "LOCATION", "SUMMARY"]
         )

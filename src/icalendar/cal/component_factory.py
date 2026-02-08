@@ -5,13 +5,13 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING
 
-from icalendar.caselessdict import CaselessDict
+from icalendar.caselessdict import _CaselessDict
 
 if TYPE_CHECKING:
     from icalendar import Component
 
 
-class ComponentFactory(CaselessDict):
+class ComponentFactory(_CaselessDict):
     """Registered components from :rfc:`7953` and :rfc:`5545`.
 
     To get a component, use this class as shown below.

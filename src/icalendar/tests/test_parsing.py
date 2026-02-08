@@ -9,7 +9,7 @@ from icalendar import vBinary, vRecur
 from icalendar.cal.calendar import Calendar
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.cal.event import Event
-from icalendar.parser import Contentline, Parameters, unescape_char
+from icalendar.parser import _Contentline, Parameters, _unescape_char
 
 
 @pytest.mark.parametrize(
@@ -42,7 +42,7 @@ from icalendar.parser import Contentline, Parameters, unescape_char
     ],
 )
 def test_content_lines_parsed_properly(raw_content_line, expected_output):
-    assert Contentline.from_ical(raw_content_line).parts() == expected_output
+    assert _Contentline.from_ical(raw_content_line).parts() == expected_output
 
 
 @pytest.mark.parametrize(
@@ -234,9 +234,9 @@ def test_escaped_characters_read(event_name, expected_cn, expected_ics, events):
     assert event["ORGANIZER"].to_ical() == expected_ics.encode("utf-8")
 
 
-def test_unescape_char():
-    assert unescape_char(b"123") == b"123"
-    assert unescape_char(b"\\n") == b"\n"
+def test__unescape_char():
+    assert _unescape_char(b"123") == b"123"
+    assert _unescape_char(b"\\n") == b"\n"
 
 
 def test_split_on_unescaped_comma():

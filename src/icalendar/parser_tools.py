@@ -5,7 +5,7 @@ DEFAULT_ENCODING = "utf-8"
 ICAL_TYPE = Union[str, bytes]
 
 
-def from_unicode(value: ICAL_TYPE, encoding="utf-8") -> bytes:
+def _from_unicode(value: ICAL_TYPE, encoding="utf-8") -> bytes:
     """Converts a value to bytes, even if it is already bytes.
 
     Parameters:
@@ -26,7 +26,7 @@ def from_unicode(value: ICAL_TYPE, encoding="utf-8") -> bytes:
         return value
 
 
-def to_unicode(value: ICAL_TYPE, encoding="utf-8-sig") -> str:
+def _to_unicode(value: ICAL_TYPE, encoding="utf-8-sig") -> str:
     """Converts a value to Unicode, even if it is already a Unicode string.
 
     Parameters:
@@ -44,7 +44,7 @@ def to_unicode(value: ICAL_TYPE, encoding="utf-8-sig") -> str:
         return value
 
 
-def data_encode(
+def _data_encode(
     data: Union[ICAL_TYPE, dict, list], encoding=DEFAULT_ENCODING
 ) -> Union[bytes, List[bytes], dict]:
     """Encode all datastructures to the given encoding.
@@ -69,7 +69,7 @@ __all__ = [
     "DEFAULT_ENCODING",
     "SEQUENCE_TYPES",
     "ICAL_TYPE",
-    "data_encode",
-    "from_unicode",
-    "to_unicode",
+    "_data_encode",
+    "_from_unicode",
+    "_to_unicode",
 ]

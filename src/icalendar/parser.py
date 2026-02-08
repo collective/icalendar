@@ -15,7 +15,7 @@ from collections.abc import Sequence
 from datetime import datetime, time
 from typing import TYPE_CHECKING, Any, Callable, Protocol
 
-from icalendar.caselessdict import CaselessDict
+from icalendar.caselessdict import _CaselessDict
 from icalendar.error import JCalParsingError
 from icalendar.parser_tools import (
     DEFAULT_ENCODING,
@@ -30,7 +30,7 @@ if TYPE_CHECKING:
     from icalendar.prop import VPROPERTY
 
 
-class HasToIcal(Protocol):
+class _HasToIcal(Protocol):
     """Protocol for objects with a to_ical method."""
 
     def to_ical(self) -> bytes:
@@ -38,7 +38,7 @@ class HasToIcal(Protocol):
         ...
 
 
-def escape_char(text: str | bytes) -> str | bytes:
+def _escape_char(text: str | bytes) -> str | bytes:
     r"""Format value according to iCalendar TEXT escaping rules.
 
     Escapes special characters in text values according to :rfc:`5545#section-3.3.11` rules.
@@ -72,10 +72,10 @@ def escape_char(text: str | bytes) -> str | bytes:
     )
 
 
-def unescape_char(text: str | bytes) -> str | bytes | None:
+def _unescape_char(text: str | bytes) -> str | bytes | None:
     r"""Unescape iCalendar TEXT values.
 
-    Reverses the escaping applied by :func:`escape_char` according to
+    Reverses the escaping applied by :func:`_escape_char` according to
     :rfc:`5545#section-3.3.11` TEXT escaping rules.
 
     Parameters:
@@ -117,7 +117,7 @@ def unescape_char(text: str | bytes) -> str | bytes | None:
     return None
 
 
-def foldline(line: str, limit: int=75, fold_sep: str="\r\n ") -> str:
+def _foldline(line: str, limit: int=75, fold_sep: str="\r\n ") -> str:
     """Make a string folded as defined in RFC5545
     Lines of text SHOULD NOT be longer than 75 octets, excluding the line
     break.  Long content lines SHOULD be split into a multiple line
@@ -156,7 +156,7 @@ def foldline(line: str, limit: int=75, fold_sep: str="\r\n ") -> str:
 # Property parameter stuff
 
 
-def param_value(value: Sequence[str] | str | HasToIcal, always_quote: bool = False) -> str:
+def _param_value(value: Sequence[str] | str | _HasToIcal, always_quote: bool = False) -> str:
     """Convert a parameter value to its iCalendar representation.
 
     Applies :rfc:`6868` escaping and optionally quotes the value according
@@ -333,7 +333,7 @@ def q_join(lst: list[str], sep: str = ",", always_quote: bool = False) -> str:
     return sep.join(dquote(itm, always_quote=always_quote) for itm in lst)
 
 
-def single_string_parameter(func: Callable | None = None, upper=False):
+def _single_string_parameter(func: Callable | None = None, upper=False):
     """Create a parameter getter/setter for a single string parameter.
 
     Parameters:
@@ -376,7 +376,7 @@ def single_string_parameter(func: Callable | None = None, upper=False):
     return decorator(func)
 
 
-class Parameters(CaselessDict):
+class Parameters(_CaselessDict):
     """Parser and generator of Property parameter strings.
 
     It knows nothing of datatypes.
@@ -477,10 +477,10 @@ class Parameters(CaselessDict):
                 check_quoteable_characters
                 and any(c in value for c in check_quoteable_characters)
             )
-            quoted_value = param_value(value, always_quote=always_quote)
+            quoted_value = _param_value(value, always_quote=always_quote)
             if isinstance(quoted_value, str):
                 quoted_value = quoted_value.encode(DEFAULT_ENCODING)
-            # CaselessDict keys are always unicode
+            # _CaselessDict keys are always unicode
             result.append(upper_key.encode(DEFAULT_ENCODING) + b"=" + quoted_value)
         return b";".join(result)
 
@@ -520,7 +520,7 @@ class Parameters(CaselessDict):
                 ) from exc
         return result
 
-    @single_string_parameter(upper=True)
+    @_single_string_parameter(upper=True)
     def value(self) -> VALUE | str | None:
         """The VALUE parameter from :rfc:`5545`.
 
@@ -595,7 +595,7 @@ class Parameters(CaselessDict):
             del jcal["tzid"]
         return jcal
 
-    @single_string_parameter
+    @_single_string_parameter
     def tzid(self) -> str | None:
         """The TZID parameter from :rfc:`5545`."""
 
@@ -905,7 +905,7 @@ def unescape_list_or_string(val: str | list[str]) -> str | list[str]:
 # parsing and generation of content lines
 
 
-class Contentline(str):
+class _Contentline(str):
     """A content line is basically a string that can be folded and parsed into
     parts.
     """
@@ -938,7 +938,7 @@ class Contentline(str):
 
             values = vText(values).to_ical()
         # elif isinstance(values, basestring):
-        #    values = escape_char(values)
+        #    values = _escape_char(values)
 
         # TODO: after unicode only, remove this
         # Convert back to unicode, after to_ical encoded it.
@@ -1031,10 +1031,10 @@ class Contentline(str):
         """Long content lines are folded so they are less than 75 characters
         wide.
         """
-        return foldline(self).encode(DEFAULT_ENCODING)
+        return _foldline(self).encode(DEFAULT_ENCODING)
 
 
-class Contentlines(list):
+class _Contentlines(list):
     """I assume that iCalendar files generally are a few kilobytes in size.
     Then this should be efficient. for Huge files, an iterator should probably
     be used instead.
@@ -1051,7 +1051,7 @@ class Contentlines(list):
         try:
             # a fold is carriage return followed by either a space or a tab
             unfolded = UFOLD.sub("", st)
-            lines = cls(Contentline(line) for line in NEWLINE.split(unfolded) if line)
+            lines = cls(_Contentline(line) for line in NEWLINE.split(unfolded) if line)
             lines.append("")  # '\r\n' at the end of every content line
         except Exception as e:
             raise ValueError("Expected StringType with content lines") from e
@@ -1066,14 +1066,9 @@ __all__ = [
     "QUOTABLE",
     "UFOLD",
     "UNSAFE_CHAR",
-    "Contentline",
-    "Contentlines",
     "Parameters",
     "dquote",
-    "escape_char",
     "escape_string",
-    "foldline",
-    "param_value",
     "q_join",
     "q_split",
     "rfc_6868_escape",
@@ -1081,7 +1076,6 @@ __all__ = [
     "split_on_unescaped_comma",
     "split_on_unescaped_semicolon",
     "unescape_backslash",
-    "unescape_char",
     "unescape_list_or_string",
     "unescape_string",
     "validate_param_value",

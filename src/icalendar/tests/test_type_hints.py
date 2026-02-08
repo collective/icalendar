@@ -1,7 +1,7 @@
-from icalendar.caselessdict import CaselessDict, canonsort_keys, canonsort_items
+from icalendar.caselessdict import _CaselessDict, _canonsort_keys, _canonsort_items
 
 def test_caselessdict_basic_behavior():
-    d = CaselessDict()
+    d = _CaselessDict()
 
     # test __setitem__ and key normalization
     d["a"] = 1
@@ -12,7 +12,7 @@ def test_caselessdict_basic_behavior():
     assert set(d.keys()) == {"A", "B"}
 
     # test sorted_keys and sorted_items
-    class MyDict(CaselessDict):
+    class MyDict(_CaselessDict):
         canonical_order = ["A"]
 
     m = MyDict()
@@ -26,7 +26,7 @@ def test_canonsort_keys_basic():
     keys = ["C", "A", "B"]
     canonical = ["B", "A"]
 
-    sorted_keys = canonsort_keys(keys, canonical)
+    sorted_keys = _canonsort_keys(keys, canonical)
 
     # canonical keys come first, in order
     assert sorted_keys[:2] == ["B", "A"]

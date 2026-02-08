@@ -3,11 +3,11 @@ import unittest
 import pytest
 
 from icalendar.parser import (
-    Contentline,
-    Contentlines,
+    __Contentline,
+    ___Contentlines,
     Parameters,
     dquote,
-    foldline,
+    _foldline,
     q_join,
     q_split,
 )
@@ -20,8 +20,8 @@ class IcalendarTestCase(unittest.TestCase):
             self.assertRaisesRegex = self.assertRaisesRegexp
 
     def test_long_lines(self):
-        c = Contentlines([Contentline("BEGIN:VEVENT")])
-        c.append(Contentline("".join("123456789 " * 10)))
+        c = ___Contentlines([__Contentline("BEGIN:VEVENT")])
+        c.append(__Contentline("".join("123456789 " * 10)))
         assert (
             c.to_ical()
             == b"BEGIN:VEVENT\r\n123456789 123456789 123456789 123456789 "  # noqa: ISC003
@@ -33,23 +33,23 @@ class IcalendarTestCase(unittest.TestCase):
         # Notice that there is an extra empty string in the end of the content
         # lines. That is so they can be easily joined with:
         # '\r\n'.join(contentlines))
-        assert Contentlines.from_ical("A short line\r\n") == ["A short line", ""]
-        assert Contentlines.from_ical("A faked\r\n  long line\r\n") == [
+        assert __Contentlines.from_ical("A short line\r\n") == ["A short line", ""]
+        assert __Contentlines.from_ical("A faked\r\n  long line\r\n") == [
             "A faked long line",
             "",
         ]
-        assert Contentlines.from_ical(
+        assert __Contentlines.from_ical(
             "A faked\r\n  long line\r\nAnd another lin\r\n\te that is folded\r\n"
         ) == ["A faked long line", "And another line that is folded", ""]
 
     def test_contentline_class(self):
         assert (
-            Contentline("Si meliora dies, ut vina, poemata reddit").to_ical()
+            _Contentline("Si meliora dies, ut vina, poemata reddit").to_ical()
             == b"Si meliora dies, ut vina, poemata reddit"
         )
 
         # A long line gets folded
-        c = Contentline("".join(["123456789 "] * 10)).to_ical()
+        c = _Contentline("".join(["123456789 "] * 10)).to_ical()
         assert (
             c
             == b"123456789 123456789 123456789 123456789 123456789 123456789 "  # noqa: ISC003
@@ -58,7 +58,7 @@ class IcalendarTestCase(unittest.TestCase):
 
         # A folded line gets unfolded
         assert (
-            Contentline.from_ical(c)
+            _Contentline.from_ical(c)
             == "123456789 123456789 123456789 123456789 123456789 123456789 "  # noqa: ISC003
             + "123456789 123456789 123456789 123456789 "
         )
@@ -70,12 +70,12 @@ class IcalendarTestCase(unittest.TestCase):
         # N or a LATIN CAPITAL LETTER N, that is "\n" or "\N".
 
         # Newlines are not allowed in content lines
-        self.assertRaises(AssertionError, Contentline, b"1234\r\n\r\n1234")
+        self.assertRaises(AssertionError, _Contentline, b"1234\r\n\r\n1234")
 
-        assert Contentline("1234\\n\\n1234").to_ical() == b"1234\\n\\n1234"
+        assert _Contentline("1234\\n\\n1234").to_ical() == b"1234\\n\\n1234"
 
         # We do not fold within a UTF-8 character
-        c = Contentline(
+        c = _Contentline(
             b"This line has a UTF-8 character where it should be "
             b"folded. Make sure it g\xc3\xabts folded before that "
             b"character."
@@ -84,29 +84,29 @@ class IcalendarTestCase(unittest.TestCase):
         assert b"\xc3\xab" in c.to_ical()
 
         # Another test of the above
-        c = Contentline(b"x" * 73 + b"\xc3\xab" + b"\\n " + b"y" * 10)
+        c = _Contentline(b"x" * 73 + b"\xc3\xab" + b"\\n " + b"y" * 10)
 
         assert c.to_ical().count(b"\xc3") == 1
 
         # Don't fail if we fold a line that is exactly X times 74 characters
         # long
-        Contentline("".join(["x"] * 148)).to_ical()
+        _Contentline("".join(["x"] * 148)).to_ical()
 
         # It can parse itself into parts,
         # which is a tuple of (name, params, vals)
-        assert Contentline("dtstart:20050101T120000").parts() == (
+        assert _Contentline("dtstart:20050101T120000").parts() == (
             "dtstart",
             Parameters({}),
             "20050101T120000",
         )
 
-        assert Contentline("dtstart;value=datetime:20050101T120000").parts() == (
+        assert _Contentline("dtstart;value=datetime:20050101T120000").parts() == (
             "dtstart",
             Parameters({"VALUE": "datetime"}),
             "20050101T120000",
         )
 
-        c = Contentline(
+        c = _Contentline(
             "ATTENDEE;CN=Max Rasmussen;ROLE=REQ-PARTICIPANT:MAILTO:maxm@example.com"
         )
         assert c.parts() == (
@@ -127,25 +127,25 @@ class IcalendarTestCase(unittest.TestCase):
             "MAILTO:maxm@example.com",
         )
         assert (
-            Contentline.from_parts(*parts)
+            _Contentline.from_parts(*parts)
             == 'ATTENDEE;CN="Max Rasmussen";ROLE=REQ-PARTICIPANT:MAILTO:maxm@example.com'
         )
 
         # and again
         parts = ("ATTENDEE", Parameters(), "MAILTO:maxm@example.com")
-        assert Contentline.from_parts(*parts) == "ATTENDEE:MAILTO:maxm@example.com"
+        assert _Contentline.from_parts(*parts) == "ATTENDEE:MAILTO:maxm@example.com"
 
         # A value can also be any of the types defined in PropertyValues
         parts = ("ATTENDEE", Parameters(), vText("MAILTO:test@example.com"))
-        assert Contentline.from_parts(*parts) == "ATTENDEE:MAILTO:test@example.com"
+        assert _Contentline.from_parts(*parts) == "ATTENDEE:MAILTO:test@example.com"
 
         # A value in UTF-8
         parts = ("SUMMARY", Parameters(), vText("INternational char æ ø å"))
-        assert Contentline.from_parts(*parts) == "SUMMARY:INternational char æ ø å"
+        assert _Contentline.from_parts(*parts) == "SUMMARY:INternational char æ ø å"
 
         # A value can also be unicode
         parts = ("SUMMARY", Parameters(), vText("INternational char æ ø å"))
-        assert Contentline.from_parts(*parts) == "SUMMARY:INternational char æ ø å"
+        assert _Contentline.from_parts(*parts) == "SUMMARY:INternational char æ ø å"
 
         # Traversing could look like this.
         name, params, vals = c.parts()
@@ -159,21 +159,21 @@ class IcalendarTestCase(unittest.TestCase):
         with pytest.raises(
             ValueError, match="Content line could not be parsed into parts"
         ):
-            Contentline("ATTENDEE;maxm@example.com").parts()
+            _Contentline("ATTENDEE;maxm@example.com").parts()
 
         # Another failure:
         with pytest.raises(
             ValueError, match="Content line could not be parsed into parts"
         ):
-            Contentline(":maxm@example.com").parts()
+            _Contentline(":maxm@example.com").parts()
 
-        assert Contentline("key;param=:value").parts() == (
+        assert _Contentline("key;param=:value").parts() == (
             "key",
             Parameters({"PARAM": ""}),
             "value",
         )
 
-        assert Contentline('key;param="pvalue":value').parts() == (
+        assert _Contentline('key;param="pvalue":value').parts() == (
             "key",
             Parameters({"PARAM": "pvalue"}),
             "value",
@@ -183,9 +183,9 @@ class IcalendarTestCase(unittest.TestCase):
         with pytest.raises(
             ValueError, match="Content line could not be parsed into parts"
         ):
-            Contentline.from_ical("k;:no param").parts()
+            _Contentline.from_ical("k;:no param").parts()
 
-        assert Contentline("key;param=pvalue:value", strict=False).parts() == (
+        assert _Contentline("key;param=pvalue:value", strict=False).parts() == (
             "key",
             Parameters({"PARAM": "pvalue"}),
             "value",
@@ -194,13 +194,13 @@ class IcalendarTestCase(unittest.TestCase):
         # If strict is set to True, uppercase param values that are not
         # double-quoted, this is because the spec says non-quoted params are
         # case-insensitive.
-        assert Contentline("key;param=pvalue:value", strict=True).parts() == (
+        assert _Contentline("key;param=pvalue:value", strict=True).parts() == (
             "key",
             Parameters({"PARAM": "PVALUE"}),
             "value",
         )
 
-        assert Contentline('key;param="pValue":value', strict=True).parts() == (
+        assert _Contentline('key;param="pValue":value', strict=True).parts() == (
             "key",
             Parameters({"PARAM": "pValue"}),
             "value",
@@ -214,7 +214,7 @@ class IcalendarTestCase(unittest.TestCase):
             b"X-TITLE=Heldenplatz:geo:48.206686,16.363235"
         )
 
-        assert Contentline(contains_base64, strict=True).parts() == (
+        assert _Contentline(contains_base64, strict=True).parts() == (
             "X-APPLE-STRUCTURED-LOCATION",
             Parameters(
                 {
@@ -230,9 +230,9 @@ class IcalendarTestCase(unittest.TestCase):
         )
 
     def test_fold_line(self):
-        assert foldline("foo") == "foo"
+        assert _foldline("foo") == "foo"
         assert (
-            foldline(
+            _foldline(
                 "Lorem ipsum dolor sit amet, consectetur adipiscing "
                 "elit. Vestibulum convallis imperdiet dui posuere.",
             )
@@ -244,11 +244,11 @@ class IcalendarTestCase(unittest.TestCase):
         # at least just but bytes in there
         # porting it to "run" under python 2 & 3 makes it not much better
         with pytest.raises(AssertionError):
-            foldline("привет".encode(), limit=3)
+            _foldline("привет".encode(), limit=3)
 
-        assert foldline("foobar", limit=4) == "foo\r\n bar"
+        assert _foldline("foobar", limit=4) == "foo\r\n bar"
         assert (
-            foldline(
+            _foldline(
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
                 ". Vestibulum convallis imperdiet dui posuere.",
             )
@@ -256,7 +256,7 @@ class IcalendarTestCase(unittest.TestCase):
             + " Vestibulum conval\r\n lis imperdiet dui posuere."
         )
         assert (
-            foldline("DESCRIPTION:АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯ")
+            _foldline("DESCRIPTION:АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯ")
             == "DESCRIPTION:АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭ\r\n ЮЯ"
         )
 
