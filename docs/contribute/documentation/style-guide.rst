@@ -334,9 +334,9 @@ See the rendered view of this class method at :meth:`Component.register <icalend
 ``parser.split_on_unescaped_semicolon``
 '''''''''''''''''''''''''''''''''''''''
 
-See the rendered view of this class method at :meth:`parser.split_on_unescaped_semicolon <icalendar.parser.split_on_unescaped_semicolon>`.
+See the rendered view of this class method at :meth:`parser.split_on_unescaped_semicolon <icalendar.parser.property.split_on_unescaped_semicolon>`.
 
-.. literalinclude:: ../../../src/icalendar/parser.py
+.. literalinclude:: ../../../src/icalendar/parser/property.py
     :pyobject: split_on_unescaped_semicolon
 
 
