@@ -1,6 +1,5 @@
 """parsing and generation of content lines"""
 
-
 import re
 
 from icalendar.parser.parameter import Parameters
