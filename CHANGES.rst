@@ -91,6 +91,7 @@ Documentation
   See :issue:`1004`.
 - Use Google style docstrings in :mod:`~icalendar.parser_tools`.
   See :issue:`1017`.
+- Document compatibility of icalendar with RFCs. See :issue:`1147`.
 - Added Upgrade guide. See :issue:`997`.
 - Fixed links in jCal usage documentation.
 - Enable sphinx-issues extension. :issue:`1091`
