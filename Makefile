@@ -107,16 +107,24 @@ linkcheckbroken: .venv  ## Run linkcheck and show only broken links
 	@echo "Link check complete; look for any errors in the above output " \
 		"or in $(BUILDDIR)/linkcheck/ ."
 
-# See https://github.com/collective/icalendar/issues/853 and above comment
 .PHONY: vale
 vale: .venv  ## Run Vale style, grammar, and spell checks
 	@uv run vale sync
-	@uv run vale --no-wrap $(VALEOPTS) $(VALEFILES)
-	@echo
-	@echo "Vale is finished; look for any errors in the above output."
+	@uv run vale --no-wrap $(VALEOPTS) $(VALEFILES); \
+	if [ $$? = 0 ]; then \
+		echo; \
+		echo "Vale passed!"; \
+	else \
+		echo; \
+		echo "Vale spell, style, and grammar check failed."; \
+		echo "Read the error messages above to see what didn't pass."; \
+		echo "For guidance of how to correct the errors, see:"; \
+		echo "https://icalendar.readthedocs.io/en/latest/contribute/documentation/build-check.html#spelling-grammar-and-style"; \
+	fi
 
 .PHONY: doctest
 doctest: .venv  ## Test snippets and docstrings in the documentation
+	@echo;
 	@pytest src/icalendar/tests/test_with_doctest.py
 
 .PHONY: test

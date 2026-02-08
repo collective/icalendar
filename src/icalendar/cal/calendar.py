@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import timedelta
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal, overload
 
 from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
@@ -84,8 +84,22 @@ class Calendar(Component):
         """Return the calendar example with the given name."""
         return cls.from_ical(get_example("calendars", name))
 
+    @overload
     @classmethod
-    def from_ical(cls, st, multiple=False):
+    def from_ical(
+        cls, st: bytes | str, multiple: Literal[False] = False
+    ) -> Calendar: ...
+
+    @overload
+    @classmethod
+    def from_ical(cls, st: bytes | str, multiple: Literal[True]) -> list[Calendar]: ...
+
+    @classmethod
+    def from_ical(
+        cls,
+        st: bytes | str,
+        multiple: bool = False,  # noqa: FBT001
+    ) -> Calendar | list[Calendar]:
         """Parse iCalendar data into Calendar instances.
 
         Wraps :meth:`Component.from_ical() <icalendar.cal.component.Component.from_ical>` with
