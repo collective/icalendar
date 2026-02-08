@@ -13,7 +13,6 @@ from icalendar.parser.string import (
 )
 from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
 
-FOLD = re.compile(b"(\r?\n)+[ \t]")
 UFOLD = re.compile("(\r?\n)+[ \t]")
 NEWLINE = re.compile(r"\r?\n")
 

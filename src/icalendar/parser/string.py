@@ -1,5 +1,6 @@
 """Functions for manipulating strings and bytes."""
 import re
+
 from icalendar.parser_tools import DEFAULT_ENCODING
 
 
@@ -83,7 +84,7 @@ def unescape_char(text: str | bytes) -> str | bytes | None:
     return None
 
 
-def foldline(line: str, limit: int=75, fold_sep: str="\r\n ") -> str:
+def foldline(line: str, limit: int = 75, fold_sep: str = "\r\n ") -> str:
     """Make a string folded as defined in RFC5545
     Lines of text SHOULD NOT be longer than 75 octets, excluding the line
     break.  Long content lines SHOULD be split into a multiple line
@@ -174,6 +175,7 @@ def unescape_string(val: str) -> str:
         .replace("%3B", ";")
         .replace("%5C", "\\")
     )
+
 
 # [\w-] because of the iCalendar RFC
 # . because of the vCard RFC
