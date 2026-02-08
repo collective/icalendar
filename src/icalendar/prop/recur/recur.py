@@ -291,9 +291,7 @@ class vRecur(CaselessDict):
                 return False
         return True
 
-    def __hash__(self) -> int:
-        """Cannot hash as this is mutable."""
-        return NotImplemented
+    __hash__ = None
 
 
 __all__ = ["vRecur"]

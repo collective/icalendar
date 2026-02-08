@@ -98,9 +98,7 @@ class vDDDLists:
             params=Parameters.from_jcal_property(jcal_property),
         )
 
-    def __hash__(self) -> int:
-        """Cannot hash as this is mutable."""
-        return NotImplemented
+    __hash__ = None
 
 
 __all__ = ["vDDDLists"]
