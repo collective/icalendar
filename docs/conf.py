@@ -204,6 +204,12 @@ napoleon_google_docstring = True
 napoleon_attr_annotations = True
 
 
+# -- sphinx_copybutton configuration ----------------------------------
+# https://sphinx-copybutton.readthedocs.io/en/latest/use.html
+# Exclude line numbers, prompts, and console output when copying code blocks.
+copybutton_exclude = ".linenos, .gp, .go"
+
+
 # -- sphinx_issues configuration ----------------------------------
 issues_github_path = "collective/icalendar"
 
