@@ -265,11 +265,11 @@ Description
 
 ``Attributes``
     Each attribute should consist of its name and a brief description.
-    By virtue of Sphinx extensions and the use of type hints for the Python object, you may omit the parameter's type, allowing Sphinx to automatically render it for you.
+    You must omit the attribute's type, allowing Sphinx extensions and the use of type hints to automatically render it for you.
 
 ``Parameters``
     Each parameter should consist of its name and a brief description.
-    By virtue of Sphinx extensions and the use of type hints for the Python object, you may omit the parameter's type, allowing Sphinx to automatically render it for you.
+    You must omit the parameter's type, allowing Sphinx extensions and the use of type hints to automatically render it for you.
 
     .. note::
 
