@@ -91,7 +91,8 @@ QUOTABLE = re.compile("[,;:’]")  # noqa: RUF001
 def dquote(val: str, always_quote: bool = False) -> str:
     """Enclose parameter values in double quotes when needed.
 
-    Parameter values containing special characters ``,``, ``;``, ``:``, or ``'`` must be enclosed
+    Parameter values containing special characters ``,``, ``;``,
+    ``:`` or ``'`` must be enclosed
     in double quotes according to :rfc:`5545`. Double-quote characters in the
     value are replaced with single quotes since they're forbidden in parameter
     values.
