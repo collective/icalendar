@@ -2,7 +2,6 @@
 Design
 ======
 
-icalendar is used for parsing and generating iCalendar files following the standard in :rfc:`5545`.
 icalendar is used for parsing and generating iCalendar files following the standards in several RFCs.
 Support for specific RFCs, or no claim of support, is described in the following sections.
 
