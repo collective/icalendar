@@ -7,7 +7,6 @@ How to guides
 
     install
     upgrade
-    QA
     usage
     parse-errors
     attendees
