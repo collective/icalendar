@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from datetime import date, datetime, timedelta, tzinfo
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 import dateutil.rrule
 import dateutil.tz
@@ -17,8 +17,9 @@ from icalendar.attr import (
 )
 from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
-from icalendar.prop import tzid_from_tzinfo, vUTCOffset
+from icalendar.prop import vUTCOffset
 from icalendar.timezone import TZP, tzp
+from icalendar.timezone.tzid import tzid_from_tzinfo
 from icalendar.tools import is_date, to_datetime
 
 if TYPE_CHECKING:
@@ -240,7 +241,7 @@ class Timezone(Component):
     def from_tzinfo(
         cls,
         timezone: tzinfo,
-        tzid: Optional[str] = None,
+        tzid: str | None = None,
         first_date: date = DEFAULT_FIRST_DATE,
         last_date: date = DEFAULT_LAST_DATE,
     ) -> Timezone:
@@ -276,9 +277,9 @@ class Timezone(Component):
             first_datetime = first_datetime.replace(tzinfo=timezone)
             last_datetime = last_datetime.replace(tzinfo=timezone)
         # from, to, tzname, is_standard -> start
-        offsets: dict[
-            tuple[Optional[timedelta], timedelta, str, bool], list[datetime]
-        ] = defaultdict(list)
+        offsets: dict[tuple[timedelta | None, timedelta, str, bool], list[datetime]] = (
+            defaultdict(list)
+        )
         start = first_datetime
         offset_to = None
         while start < last_datetime:
