@@ -221,7 +221,7 @@ You can also add arbitrary property parameters by passing a parameters dictionar
 .. code-block:: pycon
 
     >>> event = Event()
-    >>> event.add("X-TEST-PROP", "tryout",
+    >>> event.add("X-TEST-PROP", "tryout.",
     ...           parameters={"prop1":"val1", "prop2":"val2"})
     >>> lines = event.to_ical().splitlines()
     >>> assert b'X-TEST-PROP;PROP1=val1;PROP2=val2:tryout.' in lines
@@ -334,7 +334,7 @@ Show journal entries.
     VJOURNAL({})
 
 
-Timezone Implementations
+Timezone implementations
 ''''''''''''''''''''''''
 
 You can localize your events to take place in different timezones.
