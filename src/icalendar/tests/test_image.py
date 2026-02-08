@@ -112,6 +112,16 @@ def test_create_image_invalid_type():
         Image.from_property_value(vText("http://example.com/image.png"))
 
 
+def test_create_image_invalid_params():
+    """Test that creating an image with invalid params raises TypeError."""
+
+    class DummyValue:
+        params = "invalid"
+
+    with pytest.raises(TypeError):
+        Image.from_property_value(DummyValue())
+
+
 def test_create_with_vBinary():
     """Test creating an Image from a vBinary property."""
     b64data = base64.b64encode(TRANSPARENT_PIXEL).decode("ascii")
