@@ -7,8 +7,9 @@ from typing import Any, ClassVar
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
-from icalendar.prop.dt import TimeBase
 from icalendar.timezone.tzid import is_utc
+
+from .base import TimeBase
 
 TIME_JCAL_REGEX = re.compile(
     r"^(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2}):(?P<second>[0-9]{2})(?P<utc>Z)?$"

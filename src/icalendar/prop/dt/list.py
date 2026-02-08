@@ -5,8 +5,9 @@ from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser_tools import from_unicode
-from icalendar.prop.dt.base import TimeBase
-from icalendar.prop.dt.types import vDDDTypes
+
+from .base import TimeBase
+from .types import vDDDTypes
 
 
 class vDDDLists:

@@ -6,9 +6,10 @@ from typing import Any, ClassVar
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
-from icalendar.prop.dt import TimeBase
 from icalendar.timezone import tzp
 from icalendar.timezone.tzid import is_utc
+
+from .base import TimeBase
 
 
 class vDatetime(TimeBase):

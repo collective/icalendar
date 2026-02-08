@@ -7,7 +7,8 @@ from typing import Any, ClassVar
 from icalendar.compatibility import Self
 from icalendar.error import InvalidCalendar, JCalParsingError
 from icalendar.parser import Parameters
-from icalendar.prop.dt import TimeBase
+
+from .base import TimeBase
 
 DURATION_REGEX = re.compile(
     r"([-+]?)P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$"

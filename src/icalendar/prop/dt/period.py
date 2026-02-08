@@ -6,11 +6,12 @@ from typing import Any, ClassVar
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
-from icalendar.prop.dt.base import TimeBase
-from icalendar.prop.dt.datetime import vDatetime
-from icalendar.prop.dt.duration import vDuration
 from icalendar.timezone import tzp
 from icalendar.tools import is_datetime, normalize_pytz
+
+from .base import TimeBase
+from .datetime import vDatetime
+from .duration import vDuration
 
 
 class vPeriod(TimeBase):
