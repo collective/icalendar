@@ -1,19 +1,19 @@
-==========
-How do I …
-==========
+Miscellaneous examples
+======================
 
-This document collects questions and their answers about how to solve a specific problem with icalendar.
-If you have a question on how to solve a specific problem with icalendar, please post it on the `icalendar forum <https://github.com/collective/icalendar/discussions/categories/q-a>`_.
+This section describes how to solve specific usage issues with icalendar.
+Post your usage question to the `icalendar discussion Q&A category <https://github.com/collective/icalendar/discussions/categories/q-a>`_.
+You may :doc:`contribute answered questions to this section of the documentation <../contribute/documentation/index>` through a pull request, too.
 
-… convert icalendar to JSON?
-============================
+Convert iCalendar to JSON
+=========================
 
-The :doc:`jcal` documentation answers this question.
+See the :doc:`jcal` documentation for how to convert iCalendar data to JSON.
 
-… print event information?
-==========================
+Print event information
+=======================
 
-You can iterate over all events of icalendar, and print them like this:
+To print all events of an iCalendar, iterate through them and print each as shown.
 
 .. code-block:: pycon
 
@@ -31,14 +31,12 @@ You can iterate over all events of icalendar, and print them like this:
     :attr:`~icalendar.cal.component.Component.subcomponents`
     :meth:`~icalendar.cal.component.Component.walk`
 
-… modify specific events?
-=========================
+Modify specific events
+======================
 
-To find :attr:`~icalendar.cal.component.Component.subcomponents` that match specific requirements,
-you can use :meth:`~icalendar.cal.component.Component.walk`.
+To find :attr:`~icalendar.cal.component.Component.subcomponents` that match specific requirements, use :meth:`~icalendar.cal.component.Component.walk`.
 
-In this example, we filter through all subcomponents of the calendar,
-and if they have a specific word ``Christmas`` in their summary, we make the summary uppercase.
+The following example filters through all subcomponents of the calendar, and if they have a specific word ``Christmas`` in their summary, makes the summary uppercase.
 
 .. code-block:: pycon
 
@@ -50,13 +48,14 @@ and if they have a specific word ``Christmas`` in their summary, we make the sum
     >>> print(calendar.events[1].summary)
     ORTHODOX CHRISTMAS
 
-… add timezones to a calendar?
-==============================
+Add timezones to a calendar
+===========================
 
 Dates with times in icalendar can be timezone specific.
-``UTC`` is such a timezone. Other examples are ``Europe/Berlin``, ``America/New_York``, and ``Asia/Tokyo``.
+``UTC`` is such a timezone.
+Other examples are ``Europe/Berlin``, ``America/New_York``, and ``Asia/Tokyo``.
 
-In this example, we create a calendar with an event happening in ``Europe/Zurich`` and add all needed timezones just before saving the calendar.
+The following example creates a calendar with an event in ``Europe/Zurich``, and adds all needed timezones just before saving the calendar.
 
 .. code-block:: pycon
 
