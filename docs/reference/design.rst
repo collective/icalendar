@@ -3,7 +3,8 @@ Design
 ======
 
 icalendar is used for parsing and generating iCalendar files following the standard in :rfc:`5545`.
-It should be fully compliant, but it is possible to generate and parse invalid files if you want to.
+icalendar is used for parsing and generating iCalendar files following the standards in several RFCs.
+Support for specific RFCs, or no claim of support, is described in the following sections.
 
 
 Supported RFCs
@@ -33,12 +34,12 @@ Unsupported RFCs
 
 The maintainers of icalendar do not claim compatibility with the following RFCs.
 
-* :rfc:`6321`
-    xCal: The XML Format for iCalendar. See :issue:`1135`
-* :rfc:`6350`
-    vCard 4.0. See :issue:`859`
-* :rfc:`9073`
-    Event Publishing Extensions to iCalendar. This might work partially. See :issue:`656`
+:rfc:`6321`
+    xCal: The XML Format for iCalendar. See :issue:`1135`.
+:rfc:`6350`
+    vCard 4.0. See :issue:`859`.
+:rfc:`9073`
+    Event Publishing Extensions to iCalendar. This might work partially. See :issue:`656`.
 
 iCalendar file structure
 ------------------------
