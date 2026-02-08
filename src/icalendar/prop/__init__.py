@@ -116,7 +116,17 @@ class vInt(int):
         for "integer" is -2147483648 to 2147483647.  If the sign is not
         specified, then the value is assumed to be positive.
 
-        Example:
+    The ``__new__`` method creates a vInt instance:
+
+    Parameters:
+        value: Integer value to encode. Can be positive or negative within
+            the range -2147483648 to 2147483647.
+        params: Optional parameter dictionary for the property.
+
+    Returns:
+        vInt instance
+
+    Examples:
 
         .. code-block:: text
 
@@ -140,6 +150,24 @@ class vInt(int):
             >>> integer = vInt.from_ical('432109876')
             >>> integer
             432109876
+
+        Create a PRIORITY property (1 = highest priority):
+
+        .. code-block:: pycon
+
+            >>> priority = vInt(1)
+            >>> priority
+            1
+            >>> priority.to_ical()
+            b'1'
+
+        Create SEQUENCE property (for versioning):
+
+        .. code-block:: pycon
+
+            >>> sequence = vInt(3)
+            >>> sequence.to_ical()
+            b'3'
     """
 
     default_value: ClassVar[str] = "INTEGER"
@@ -324,14 +352,14 @@ class TimeBase:
         return f"{self.__class__.__name__}({self.dt}, {self.params})"
 
 
-DT_TYPE: TypeAlias = Union[
-    datetime,
-    date,
-    timedelta,
-    time,
-    Tuple[datetime, datetime],
-    Tuple[datetime, timedelta],
-]
+DT_TYPE: TypeAlias = (
+    datetime
+    | date
+    | timedelta
+    | time
+    | tuple[datetime, datetime]
+    | tuple[datetime, timedelta]
+)
 
 
 class vDDDTypes(TimeBase):
@@ -1050,7 +1078,7 @@ class vPeriod(TimeBase):
 
     def __init__(
         self,
-        per: tuple[datetime, Union[datetime, timedelta]],
+        per: tuple[datetime, datetime | timedelta],
         params: dict[str, Any] | None = None,
     ):
         start, end_or_duration = per
@@ -1375,7 +1403,7 @@ class vMonth(int):
 
     params: Parameters
 
-    def __new__(cls, month: Union[str, int], /, params: dict[str, Any] | None = None):
+    def __new__(cls, month: str | int, /, params: dict[str, Any] | None = None):
         if isinstance(month, vMonth):
             return cls(month.to_ical().decode())
         if isinstance(month, str):
@@ -2346,38 +2374,38 @@ class TypesFactory(CaselessDict):
         return type_class.from_ical(value)
 
 
-VPROPERTY: TypeAlias = Union[
-    vAdr,
-    vBoolean,
-    vBrokenProperty,
-    vCalAddress,
-    vCategory,
-    vDDDLists,
-    vDDDTypes,
-    vDate,
-    vDatetime,
-    vDuration,
-    vFloat,
-    vFrequency,
-    vInt,
-    vMonth,
-    vN,
-    vOrg,
-    vPeriod,
-    vRecur,
-    vSkip,
-    vText,
-    vTime,
-    vUTCOffset,
-    vUri,
-    vWeekday,
-    vInline,
-    vBinary,
-    vGeo,
-    vUnknown,
-    vXmlReference,
-    vUid,
-]
+VPROPERTY: TypeAlias = (
+    vAdr
+    | vBoolean
+    | vBrokenProperty
+    | vCalAddress
+    | vCategory
+    | vDDDLists
+    | vDDDTypes
+    | vDate
+    | vDatetime
+    | vDuration
+    | vFloat
+    | vFrequency
+    | vInt
+    | vMonth
+    | vN
+    | vOrg
+    | vPeriod
+    | vRecur
+    | vSkip
+    | vText
+    | vTime
+    | vUTCOffset
+    | vUri
+    | vWeekday
+    | vInline
+    | vBinary
+    | vGeo
+    | vUnknown
+    | vXmlReference
+    | vUid
+)
 
 __all__ = [
     "DURATION_REGEX",

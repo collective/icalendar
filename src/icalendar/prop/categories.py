@@ -1,5 +1,6 @@
 """CATEGORIES property values from :rfc:`5545`."""
 
+from collections.abc import Iterator
 from typing import Any, ClassVar
 
 from icalendar.compatibility import Self
@@ -21,10 +22,10 @@ class vCategory:
         self.cats: list[vText | str] = [vText(c) for c in c_list]
         self.params = Parameters(params)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[vText | str]:
         return iter(self.cats)
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         return b",".join(
             [
                 c.to_ical() if hasattr(c, "to_ical") else vText(c).to_ical()
@@ -59,15 +60,15 @@ class vCategory:
         ical = to_unicode(ical)
         return ical.split(",")
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """self == other"""
         return isinstance(other, vCategory) and self.cats == other.cats
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """Hash of the vCategory object."""
         return hash(tuple(self.cats))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """String representation."""
         return f"{self.__class__.__name__}({self.cats}, params={self.params})"
 

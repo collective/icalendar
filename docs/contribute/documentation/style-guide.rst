@@ -271,6 +271,12 @@ Description
     Each parameter should consist of its name and a brief description.
     By virtue of Sphinx extensions and the use of type hints for the Python object, you may omit the parameter's type, allowing Sphinx to automatically render it for you.
 
+    .. note::
+
+        Use "Parameters" instead of "Args" or "Arguments."
+        The term "Parameters" is preferred for consistency with Python's official terminology.
+        See `Python FAQ on arguments and parameters <https://docs.python.org/3/faq/programming.html#what-is-the-difference-between-arguments-and-parameters>`_ and :ref:`Napoleon's supported sections <sphinx:Sections>`.
+
 ``Returns``
     The return value consists of its return type and a brief description.
 
