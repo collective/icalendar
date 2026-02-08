@@ -17,11 +17,11 @@ class vText(str):
 
     def __new__(
         cls,
-        value,
-        encoding=DEFAULT_ENCODING,
+        value: ICAL_TYPE,
+        encoding: str = DEFAULT_ENCODING,
         /,
         params: dict[str, Any] | None = None,
-    ):
+    ) -> Self:
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         self.encoding = encoding
@@ -35,7 +35,7 @@ class vText(str):
         return escape_char(self).encode(self.encoding)
 
     @classmethod
-    def from_ical(cls, ical: ICAL_TYPE):
+    def from_ical(cls, ical: ICAL_TYPE) -> Self:
         return cls(ical)
 
     @property
@@ -52,7 +52,7 @@ class vText(str):
         return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
 
     @classmethod
-    def examples(cls):
+    def examples(cls) -> list[Self]:
         """Examples of vText."""
         return [cls("Hello World!")]
 
