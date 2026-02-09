@@ -563,9 +563,9 @@ To print all events of an iCalendar, iterate through them and print each as show
 
 .. seealso::
 
-    :attr:`Calendar.events <icalendar.cal.calendar.Calendar.events>`
-    :attr:`~icalendar.cal.component.Component.subcomponents`
-    :meth:`~icalendar.cal.component.Component.walk`
+    -   :attr:`Calendar.events <icalendar.cal.calendar.Calendar.events>`
+    -   :attr:`~icalendar.cal.component.Component.subcomponents`
+    -   :meth:`~icalendar.cal.component.Component.walk`
 
 Modify specific events
 ----------------------
