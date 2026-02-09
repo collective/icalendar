@@ -20,6 +20,7 @@ from icalendar import (
     Component,
     ComponentFactory,
     Event,
+    LazyCalendar,
     Timezone,
     Todo,
     TypesFactory,
@@ -130,9 +131,35 @@ AVAILABILITIES_FOLDER = HERE / "availabilities"
 TODOS_FOLDER = HERE / "todos"
 
 
+@pytest.fixture(params=[Calendar, LazyCalendar], ids=["Calendar", "LazyCalendar"])
+def calendar_class(request):
+    """Calendar class to use for tests - parametrized for Calendar and LazyCalendar.
+
+    This ensures all calendar parsing tests run with both implementations.
+    """
+    return request.param
+
+
 @pytest.fixture(scope="module")
 def calendars(tzp):
     return DataSource(CALENDARS_FOLDER, Calendar.from_ical)
+
+
+@pytest.fixture(scope="module")
+def lazy_calendars(tzp):
+    """DataSource using LazyCalendar for parsing."""
+    return DataSource(CALENDARS_FOLDER, LazyCalendar.from_ical)
+
+
+@pytest.fixture(
+    scope="module", params=[Calendar, LazyCalendar], ids=["Calendar", "LazyCalendar"]
+)
+def any_calendars(tzp, request):
+    """DataSource parametrized to use both Calendar and LazyCalendar.
+
+    Use this fixture for tests that should run with both calendar implementations.
+    """
+    return DataSource(CALENDARS_FOLDER, request.param.from_ical)
 
 
 @pytest.fixture(scope="module")
@@ -184,6 +211,7 @@ FUZZ_TESTCASES_BROKEN_CALENDARS = "fuzz_testcase"
 BROKEN_SOURCE_FILES = (
     "big_bad_calendar.ics",
     "issue_104_broken_calendar.ics",
+    "issue_1050_multiple_calendars.ics",  # Multiple calendars in one file
     "small_bad_calendar.ics",
     "multiple_calendar_components.ics",
     "pr_480_summary_with_colon.ics",
