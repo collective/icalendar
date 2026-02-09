@@ -336,7 +336,7 @@ See the rendered view of this class method at :meth:`Component.register <icalend
 .. _parser-split_on_unescaped_semicolon:
 
 ``parser.property.split_on_unescaped_semicolon``
-'''''''''''''''''''''''''''''''''''''''''''''''''
+''''''''''''''''''''''''''''''''''''''''''''''''
 
 See the rendered view of this class method at :meth:`parser.property.split_on_unescaped_semicolon <icalendar.parser.property.split_on_unescaped_semicolon>`.
 
