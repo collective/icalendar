@@ -50,6 +50,8 @@ Instead, what you want to achieve matters.
 By keeping each page focused on one category, readers can focus on getting work done, understanding, or experimenting.
 
 
+.. _markup-and-formatting:
+
 Markup and formatting
 ---------------------
 
@@ -60,14 +62,15 @@ These docstrings get rendered into the :doc:`API reference documentation <../../
 
 Sphinx and its extensions enhance core reStructuredText with additional features.
 
--   automatic API documentation file generation in reStructuredText through :doc:`sphinx:man/sphinx-apidoc`
--   rendering of API documentation files and Python docstrings to HTML through :doc:`sphinx.ext.apidoc <sphinx:usage/extensions/autodoc>`, :doc:`sphinx.ext.napoleon <sphinx:usage/extensions/napoleon>`, and `sphinx_autodoc_typehints <https://github.com/tox-dev/sphinx-autodoc-typehints?tab=readme-ov-file>`_
+-   automatic API documentation file generation in reStructuredText through :mod:`sphinx:sphinx.ext.apidoc`
+-   rendering of API documentation files and Python docstrings to HTML through :mod:`sphinx:sphinx.ext.autodoc`, :mod:`sphinx.ext.napoleon`, and `sphinx_autodoc_typehints <https://github.com/tox-dev/sphinx-autodoc-typehints?tab=readme-ov-file>`_
 -   rendering of Python source files to HTML through :doc:`sphinx.ext.viewcode <sphinx:usage/extensions/viewcode>`
 -   hyperlinking to internal and external documentation through :doc:`sphinx.ext.intersphinx <sphinx:usage/extensions/intersphinx>`
 -   display and one-click copying of code blocks through `sphinx_copybutton <https://sphinx-copybutton.readthedocs.io/en/latest/index.html>`_
 -   user interface enhancements, including tabular interfaces, cards, and buttons through `sphinx_design <https://sphinx-design.readthedocs.io/en/latest/index.html>`_
 -   redirects for moved files through `sphinx_reredirects <https://documatt.com/sphinx-reredirects/usage/>`_
 -   404 not found page through `notfound.extension <https://sphinx-notfound-page.readthedocs.io/en/latest/autoapi/notfound/extension/index.html>`_
+-   automatic linking to GitHub issues and pull requests through `sphinx-issues <https://github.com/sloria/sphinx-issues>`_
 
 For configuration of these features, see :ref:`configure-a-package`.
 
@@ -90,6 +93,7 @@ In icalendar's documentation, the most frequently used roles are the following.
 -   :rst:role:`ref` to link to an arbitrary label
 -   :rst:role:`term` to link to a glossary term
 -   :rst:role:`rfc` to link to an RFC
+-   ``issue`` or ``pr`` to link to a GitHub issue or pull request, provided by `sphinx-issues <https://github.com/sloria/sphinx-issues>`__
 
 When referencing a specific section in an RFC, copy the anchor name from the URL, that is, the part of the URL including and after the pound sign ``#``, and use the following syntax.
 
@@ -107,9 +111,33 @@ Which renders as shown.
 
 :rfc:`6350#section-6.2.2`
 
+When referencing a GitHub issue, use the following syntax.
+
+.. code-block:: rst
+
+    :issue:`1050`
+
+Which renders as a hyperlink to the issue on GitHub.
+
+:issue:`1050`
+
+Similarly, for a pull request, the syntax would be the following.
+
+.. code-block:: rst
+
+    :pr:`808`
+
+Which renders as a hyperlink to the pull request on GitHub.
+
+:pr:`808`
+
 .. seealso::
 
     :doc:`sphinx:usage/referencing`
+        For general Sphinx cross-referencing.
+
+    `sphinx-issues <https://github.com/sloria/sphinx-issues>`_
+        For additional usage examples of the ``issue``, ``pr``, and other GitHub roles.
 
 
 Cross-reference Python objects
@@ -204,9 +232,9 @@ Sphinx generates documentation automatically from docstrings into the :doc:`ical
 Python docstrings typically include reStructuredText markup, often including cross-references to narrative and API documentation.
 
 :pep:`257` describes core docstring conventions.
-To enhance the display of its API documentation, icalendar uses the Sphinx extensions :doc:`sphinx.ext.napoleon <sphinx:usage/extensions/napoleon>` and `sphinx_autodoc_typehints <https://github.com/tox-dev/sphinx-autodoc-typehints?tab=readme-ov-file>`_.
+To enhance the display of its API documentation, icalendar uses the Sphinx extensions :mod:`sphinx.ext.napoleon` and `sphinx_autodoc_typehints <https://github.com/tox-dev/sphinx-autodoc-typehints?tab=readme-ov-file>`_.
 The former extension supports Google style docstrings, which are easier to write and read, especially when Sphinx renders them to HTML.
-The latter extension supports Python 3 annotations, or type hints, for documenting acceptable argument types and return value types of functions.
+The latter extension supports Python 3 annotations, or type hints, for documenting acceptable parameter types and return value types of functions.
 
 .. seealso::
 
@@ -221,7 +249,7 @@ In addition to the structure of docstrings as defined by :pep:`257`, icalendar h
 A docstring consists of a summary, followed by a possible description, then any helpful sections usually ordered by inputs then outputs.
 
 To create a docstring section, use either one of the supported :ref:`section headers <sphinx:Sections>` or any string for a custom section header, followed by a colon ``:``, followed by a block of indented text.
-Supported section headers enhance formatting, such as structuring method arguments or code examples, whereas custom section headers render as just a heading and content.
+Supported section headers enhance formatting, such as structuring method parameters or code examples, whereas custom section headers render as just a heading and content.
 
 All items should terminate with a period.
 
@@ -236,12 +264,22 @@ Description
     Separate the summary and description with a blank line.
 
 ``Attributes``
-    Each attribute should consist of its name and a brief description.
-    By virtue of Sphinx extensions and the use of type hints for the Python object, you may omit the argument's type, allowing Sphinx to automatically render it for you.
+    Each attribute should consist of its name, type, and a brief description.
+    
+    .. note::
+
+        If you know how to avoid manually entering the type for an attribute, please see :issue:`1156`.
 
 ``Parameters``
     Each parameter should consist of its name and a brief description.
-    By virtue of Sphinx extensions and the use of type hints for the Python object, you may omit the parameter's type, allowing Sphinx to automatically render it for you.
+    You must omit the parameter's type, allowing Sphinx extensions and the use of type hints to automatically render it for you.
+    This is especially true in a class's ``__init__`` method.
+
+    .. note::
+
+        Use "Parameters" instead of "Args" or "Arguments."
+        The term "Parameters" is preferred for consistency with Python's official terminology.
+        See `Python FAQ on arguments and parameters <https://docs.python.org/3/faq/programming.html#what-is-the-difference-between-arguments-and-parameters>`_ and :ref:`Napoleon's supported sections <sphinx:Sections>`.
 
 ``Returns``
     The return value consists of its return type and a brief description.
@@ -257,6 +295,19 @@ Description
 .. seealso::
 
     :ref:`sphinx:Sections`
+
+
+Escape docstrings
+-----------------
+
+Avoid double-escaping in docstrings.
+Use the raw ``r`` indicator immediately before the leading docstring delimiter ``"""``.
+Thus the docstring and the rendered content will have the same level of escapes.
+It will also be less confusing for readers of the source code.
+
+.. seealso::
+
+    :ref:`parser-split_on_unescaped_semicolon` example.
 
 
 Docstring examples
@@ -281,6 +332,8 @@ See the rendered view of this class method at :meth:`Component.register <icalend
 .. literalinclude:: ../../../src/icalendar/cal/component.py
     :pyobject: Component.register
 
+
+.. _parser-split_on_unescaped_semicolon:
 
 ``parser.split_on_unescaped_semicolon``
 '''''''''''''''''''''''''''''''''''''''

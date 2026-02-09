@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import pytest
 
 from icalendar import Calendar, Event
-from icalendar.compatibility import ZoneInfo
+from zoneinfo import ZoneInfo
 from icalendar.error import IncompleteComponent
 
 

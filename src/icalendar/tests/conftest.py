@@ -3,10 +3,12 @@
 import itertools
 import sys
 import uuid
+import zoneinfo
+from collections.abc import Generator
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Generator
 from unittest.mock import Mock
+from zoneinfo import ZoneInfo
 
 import pytest
 from dateutil import tz
@@ -24,7 +26,6 @@ from icalendar import (
     prop,
     vUTCOffset,
 )
-from icalendar.compatibility import ZoneInfo, zoneinfo
 from icalendar.tests.data import PROPERTY_NAMES
 from icalendar.timezone import TZP
 from icalendar.timezone import tzp as _tzp
@@ -98,7 +99,7 @@ class DataSource:
             source.raw_ics = raw_ics
             source.raw_jcal = raw_jcal
             source.source_file = source_file
-        self.__dict__[attribute] = source
+        self.__dict__[attribute] = source  # required for speed but creates side effects
         return source
 
     def __contains__(self, key):
@@ -152,7 +153,6 @@ def alarms(tzp):
 @pytest.fixture(scope="module")
 def availabilities(tzp):
     return DataSource(AVAILABILITIES_FOLDER, Availability.from_ical)
-
 
 
 @pytest.fixture(scope="module")
@@ -439,11 +439,10 @@ class DoctestZoneInfo(ZoneInfo):
         return f"ZoneInfo(key={self.key!r})"
 
 
-def doctest_print(obj):
+def doctest_print(*args):
     """doctest print"""
-    if isinstance(obj, bytes):
-        obj = obj.decode("UTF-8")
-    print(str(obj).strip().replace("\r\n", "\n").replace("\r", "\n"))
+    args = [arg.decode("UTF-8") if isinstance(arg, bytes) else arg for arg in args]
+    print(*(str(arg).strip().replace("\r\n", "\n").replace("\r", "\n") for arg in args))
 
 
 def doctest_import(name, *args, **kw):

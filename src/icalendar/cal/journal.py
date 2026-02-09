@@ -203,7 +203,7 @@ class Journal(Component):
 
         This creates a new Journal in accordance with :rfc:`5545`.
 
-        Arguments:
+        Parameters:
             attendees: The :attr:`attendees` of the journal.
             categories: The :attr:`categories` of the journal.
             classification: The :attr:`classification` of the journal.

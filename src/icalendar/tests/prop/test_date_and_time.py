@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 from icalendar import Component, vDatetime, vDDDLists, vDDDTypes, vTime
-from icalendar.compatibility import ZoneInfo
+from zoneinfo import ZoneInfo
 from icalendar.parser_tools import to_unicode
 from icalendar.prop import VPROPERTY
 from icalendar.timezone.tzid import is_utc

@@ -11,37 +11,126 @@ if TYPE_CHECKING:
 
 
 def is_date(dt: Union[date, datetime]) -> bool:
-    """Whether this is a date and not a datetime."""
+    """Check if a value is a date but not a datetime.
+
+    This function distinguishes between ``date`` and ``datetime`` objects,
+    returning ``True`` only for pure ``date`` instances.
+
+    Parameters:
+        dt: The date or datetime object to check.
+
+    Returns:
+        ``True`` if the value is a ``date`` but not a ``datetime``,
+        ``False`` otherwise.
+
+    Example:
+        .. code-block:: pycon
+
+            >>> from datetime import date, datetime
+            >>> from icalendar.tools import is_date
+            >>> is_date(date(2024, 1, 15))
+            True
+            >>> is_date(datetime(2024, 1, 15, 10, 30))
+            False
+    """
     return isinstance(dt, date) and not isinstance(dt, datetime)
 
 
 def is_datetime(dt: Union[date, datetime]) -> TypeIs[datetime]:
-    """Whether this is a datetime and not just a date."""
+    """Check if a value is a datetime.
+
+    Parameters:
+        dt: The date or datetime object to check.
+
+    Returns:
+        ``True`` if the value is a ``datetime``, ``False`` if it is
+        only a ``date``.
+
+    Example:
+        .. code-block:: pycon
+
+            >>> from datetime import date, datetime
+            >>> from icalendar.tools import is_datetime
+            >>> is_datetime(datetime(2024, 1, 15, 10, 30))
+            True
+            >>> is_datetime(date(2024, 1, 15))
+            False
+    """
     return isinstance(dt, datetime)
 
 
 def to_datetime(dt: Union[date, datetime]) -> datetime:
-    """Make sure we have a datetime, not a date."""
+    """Convert a date to a datetime.
+
+    If the input is already a ``datetime``, it is returned unchanged.
+    If the input is a ``date``, it is converted to a ``datetime`` at midnight.
+
+    Parameters:
+        dt: The date or datetime to convert.
+
+    Returns:
+        A ``datetime`` object. If the input was a ``date``, the time
+        component will be set to midnight (00:00:00).
+
+    Example:
+        .. code-block:: pycon
+
+            >>> from datetime import date, datetime
+            >>> from icalendar.tools import to_datetime
+            >>> to_datetime(date(2024, 1, 15))
+            datetime.datetime(2024, 1, 15, 0, 0)
+            >>> to_datetime(datetime(2024, 1, 15, 10, 30))
+            datetime.datetime(2024, 1, 15, 10, 30)
+    """
     if is_date(dt):
         return datetime(dt.year, dt.month, dt.day)  # noqa: DTZ001
     return cast("datetime", dt)
 
 
 def is_pytz(tz: tzinfo) -> bool:
-    """Whether the timezone requires localize() and normalize()."""
+    """Check if a timezone is a pytz timezone.
+
+    pytz timezones require special handling with ``localize()`` and
+    ``normalize()`` methods for correct timezone calculations.
+
+    Parameters:
+        tz: The timezone info object to check.
+
+    Returns:
+        ``True`` if the timezone is a pytz timezone (has a ``localize``
+        attribute), ``False`` otherwise.
+    """
     return hasattr(tz, "localize")
 
 
 def is_pytz_dt(dt: Union[date, datetime]) -> TypeGuard[datetime]:
-    """Whether the time requires localize() and normalize()."""
+    """Check if a datetime uses a pytz timezone.
+
+    This function checks whether the datetime has a timezone attached
+    and whether that timezone is a pytz timezone requiring special handling.
+
+    Parameters:
+        dt: The date or datetime object to check.
+
+    Returns:
+        ``True`` if the value is a ``datetime`` with a pytz timezone,
+        ``False`` otherwise.
+    """
     return is_datetime(dt) and (tzinfo := dt.tzinfo) is not None and is_pytz(tzinfo)
 
 
 def normalize_pytz(dt: Union[date, datetime]) -> Union[date, datetime]:
-    """We have to normalize the time after a calculation if we use pytz.
+    """Normalize a datetime after calculations when using pytz.
 
-    pytz requires this function to be used in order to correctly calculate the
-    timezone's offset after calculations.
+    pytz requires the ``normalize()`` function to be called after arithmetic
+    operations to correctly adjust the timezone offset, especially around
+    daylight saving time transitions.
+
+    Parameters:
+        dt: The date or datetime to normalize.
+
+    Returns:
+        The normalized datetime if it uses pytz, otherwise the input unchanged.
     """
     if is_pytz_dt(dt):
         return dt.tzinfo.normalize(dt)  # type: ignore[attr-defined]

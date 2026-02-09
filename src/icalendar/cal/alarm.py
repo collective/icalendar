@@ -280,7 +280,7 @@ class Alarm(Component):
 
         This creates a new Alarm in accordance with :rfc:`5545`.
 
-        Arguments:
+        Parameters:
             attendees: The :attr:`attendees` of the alarm.
             concepts: The :attr:`~icalendar.Component.concepts` of the alarm.
             description: The :attr:`description` of the alarm.

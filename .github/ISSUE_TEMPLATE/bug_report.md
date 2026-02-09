@@ -1,10 +1,10 @@
 ---
 name: Bug report
 about: Create a bug report to help us improve icalendar
-title: "[BUG] "
+title: '[Bug] '
 labels: ''
 assignees: ''
-
+type: 'Bug'
 ---
 
 <!-- This template is here to guide you and help us. If you can't complete everything here, that is fine. -->

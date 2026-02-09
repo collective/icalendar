@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import json
+from copy import deepcopy
 from datetime import date, datetime, time, timedelta, timezone
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar, Literal, overload
 
 from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
@@ -21,7 +22,13 @@ from icalendar.attr import (
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.caselessdict import CaselessDict
 from icalendar.error import InvalidCalendar, JCalParsingError
-from icalendar.parser import Contentline, Contentlines, Parameters, q_join, q_split
+from icalendar.parser import (
+    Contentline,
+    Contentlines,
+    Parameters,
+    q_join,
+    q_split,
+)
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import VPROPERTY, TypesFactory, vDDDLists, vText
 from icalendar.timezone import tzp
@@ -41,9 +48,9 @@ class Component(CaselessDict):
     directly, but rather one of the subclasses.
     """
 
-    name: ClassVar[str|None] = None
+    name: ClassVar[str | None] = None
     """The name of the component.
-    
+
     This should be defined in each component class.
 
     Example: ``VCALENDAR``.
@@ -61,16 +68,14 @@ class Component(CaselessDict):
     exclusive: ClassVar[tuple[()]] = ()
     """These properties are mutually exclusive."""
 
-    inclusive: ClassVar[(
-        tuple[str] | tuple[tuple[str, str]]
-    )] = ()
+    inclusive: ClassVar[(tuple[str] | tuple[tuple[str, str]])] = ()
     """These properties are inclusive.
-     
+
     In other words, if the first property in the tuple occurs, then the
     second one must also occur.
-    
+
     Example:
-        
+
         .. code-block:: python
 
             ('duration', 'repeat')
@@ -78,7 +83,7 @@ class Component(CaselessDict):
 
     ignore_exceptions: ClassVar[bool] = False
     """Whether or not to ignore exceptions when parsing.
-    
+
     If ``True``, and this component can't be parsed, then it will silently
     ignore it, rather than let the exception propagate upwards.
     """
@@ -90,7 +95,7 @@ class Component(CaselessDict):
     def get_component_class(cls, name: str) -> type[Component]:
         """Return a component with this name.
 
-        Arguments:
+        Parameters:
             name: Name of the component, i.e. ``VCALENDAR``
         """
         if cls._components_factory is None:
@@ -141,7 +146,7 @@ class Component(CaselessDict):
     ) -> str | None:
         """Infer the ``VALUE`` parameter from a Python type.
 
-        Args:
+        Parameters:
             value: Python native type, one of :py:class:`date`, :py:mod:`datetime`,
                 :py:class:`timedelta`, :py:mod:`time`, :py:class:`tuple`,
                 or :py:class:`list`.
@@ -180,6 +185,17 @@ class Component(CaselessDict):
     def __bool__(self):
         """Returns True, CaselessDict would return False if it had no items."""
         return True
+
+    def __getitem__(self, key):
+        """Get property value from the component dictionary."""
+        return super().__getitem__(key)
+
+    def get(self, key, default=None):
+        """Get property value with default."""
+        try:
+            return self[key]
+        except KeyError:
+            return default
 
     def is_empty(self):
         """Returns True if Component has no items or subcomponents, else False."""
@@ -387,6 +403,17 @@ class Component(CaselessDict):
             name = name.upper()
         return self._walk(name, select)
 
+    def with_uid(self, uid: str) -> list[Component]:
+        """Return a list of components with the given UID.
+
+        Parameters:
+            uid: The UID of the component.
+
+        Returns:
+            list[Component]: List of components with the given UID.
+        """
+        return [c for c in self.walk() if c.get("uid") == uid]
+
     #####################
     # Generation
 
@@ -417,13 +444,21 @@ class Component(CaselessDict):
         properties.append(("END", v_text(self.name).to_ical()))
         return properties
 
+    @overload
     @classmethod
-    def from_ical(cls, st, multiple: bool = False) -> Self | list[Self]:  # noqa: FBT001
+    def from_ical(cls, st: str | bytes, multiple: Literal[False] = False) -> Component: ...
+
+    @overload
+    @classmethod
+    def from_ical(cls, st: str | bytes, multiple: Literal[True]) -> list[Component]: ...
+
+    @classmethod
+    def from_ical(cls, st: str | bytes, multiple: bool = False) -> Component | list[Component]:  # noqa: FBT001
         """Parse iCalendar data into component instances.
 
         Handles standard and custom components (``X-*``, IANA-registered).
 
-        Args:
+        Parameters:
             st: iCalendar data as bytes or string
             multiple: If ``True``, returns list. If ``False``, returns single component.
 
@@ -503,35 +538,72 @@ class Component(CaselessDict):
                     "RDATE",
                     "EXDATE",
                 )
-                try:
-                    if name == "FREEBUSY":
-                        vals = vals.split(",")
-                        if "TZID" in params:
-                            parsed_components = [
-                                factory(factory.from_ical(val, params["TZID"]))
-                                for val in vals
-                            ]
-                        else:
-                            parsed_components = [
-                                factory(factory.from_ical(val)) for val in vals
-                            ]
-                    elif name in datetime_names and "TZID" in params:
-                        parsed_components = [
-                            factory(factory.from_ical(vals, params["TZID"]))
-                        ]
-                    # Workaround broken ICS files with empty RDATE
-                    elif name == "RDATE" and vals == "":
-                        parsed_components = []
-                    else:
-                        parsed_components = [factory(factory.from_ical(vals))]
-                except ValueError as e:
-                    if not component.ignore_exceptions:
-                        raise
-                    component.errors.append((uname, str(e)))
+
+                # Determine TZID for datetime properties
+                tzid = params.get("TZID") if params and name in datetime_names else None
+
+                # Handle special cases for value list preparation
+                if name.upper() == "CATEGORIES":
+                    # Special handling for CATEGORIES - need raw value
+                    # before unescaping to properly split on unescaped commas
+                    from icalendar.parser import split_on_unescaped_comma
+
+                    line_str = str(line)
+                    # Use rfind to get the last colon (value separator)
+                    # to handle parameters with colons like ALTREP="http://..."
+                    colon_idx = line_str.rfind(":")
+                    if colon_idx > 0:
+                        raw_value = line_str[colon_idx + 1 :]
+                        # Parse categories immediately (not lazily) for both strict and tolerant components
+                        # This is because CATEGORIES needs special comma handling
+                        try:
+                            category_list = split_on_unescaped_comma(raw_value)
+                            vals_inst = factory(category_list)
+                            vals_inst.params = params
+                            component.add(name, vals_inst, encode=0)
+                        except ValueError as e:
+                            if not component.ignore_exceptions:
+                                raise
+                            component.errors.append((uname, str(e)))
+                        continue
+                    # Fallback to normal processing if we can't find colon
+                    vals_list = [vals]
+                elif name == "FREEBUSY":
+                    # Handle FREEBUSY comma-separated values
+                    vals_list = vals.split(",")
+                # Workaround broken ICS files with empty RDATE
+                # (not EXDATE - let it parse and fail)
+                elif name == "RDATE" and vals == "":
+                    vals_list = []
                 else:
-                    for parsed_component in parsed_components:
-                        parsed_component.params = params
-                        component.add(name, parsed_component, encode=0)
+                    vals_list = [vals]
+
+                # Parse all properties eagerly
+                for val in vals_list:
+                    try:
+                        if tzid:
+                            parsed_val = factory.from_ical(val, tzid)
+                        else:
+                            parsed_val = factory.from_ical(val)
+                        vals_inst = factory(parsed_val)
+                        vals_inst.params = params
+                        component.add(name, vals_inst, encode=0)
+                    except Exception as e:
+                        if not component.ignore_exceptions:
+                            raise
+                        # Error-tolerant mode: create vBrokenProperty
+                        from icalendar.prop import vBrokenProperty
+
+                        expected_type = getattr(factory, "__name__", "unknown")
+                        broken_prop = vBrokenProperty.from_parse_error(
+                            raw_value=val,
+                            params=params,
+                            property_name=name,
+                            expected_type=expected_type,
+                            error=e,
+                        )
+                        component.errors.append((name, str(e)))
+                        component.add(name, broken_prop, encode=0)
 
         if multiple:
             return comps
@@ -739,7 +811,7 @@ class Component(CaselessDict):
     ) -> Component:
         """Create a new component.
 
-        Arguments:
+        Parameters:
             comments: The :attr:`comments` of the component.
             concepts: The :attr:`concepts` of the component.
             created: The :attr:`created` of the component.
@@ -812,7 +884,7 @@ class Component(CaselessDict):
     def from_jcal(cls, jcal: str | list) -> Component:
         """Create a component from a jCal list.
 
-        Args:
+        Parameters:
             jcal: jCal list or JSON string according to :rfc:`7265`.
 
         Raises:
@@ -896,6 +968,59 @@ class Component(CaselessDict):
             with JCalParsingError.reraise_with_path_added(2, i):
                 component.subcomponents.append(cls.from_jcal(subcomponent))
         return component
+
+    def copy(self, recursive:bool=False) -> Self:  # noqa: FBT001
+        """Copy the component.
+
+        Parameters:
+            recursive:
+                If ``True``, this creates copies of the component, its subcomponents,
+                and all its properties.
+                If ``False``, this only creates a shallow copy of the component.
+
+        Returns:
+            A copy of the component.
+
+        Examples:
+
+            Create a shallow copy of a component:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Event
+                >>> event = Event.new(description="Event to be copied")
+                >>> event_copy = event.copy()
+                >>> str(event_copy.description)
+                'Event to be copied'
+
+            Shallow copies lose their subcomponents:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Calendar
+                >>> calendar = Calendar.example()
+                >>> len(calendar.subcomponents)
+                3
+                >>> calendar_copy = calendar.copy()
+                >>> len(calendar_copy.subcomponents)
+                0
+
+            A recursive copy also copies all the subcomponents:
+
+            .. code-block:: pycon
+
+                >>> full_calendar_copy = calendar.copy(recursive=True)
+                >>> len(full_calendar_copy.subcomponents)
+                3
+                >>> full_calendar_copy.events[0] == calendar.events[0]
+                True
+                >>> full_calendar_copy.events[0] is calendar.events[0]
+                False
+
+        """
+        if recursive:
+            return deepcopy(self)
+        return super().copy()
 
 
 __all__ = ["Component"]

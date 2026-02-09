@@ -27,50 +27,90 @@ We still recommend checking out the new features and giving feedback in the repo
 Minor changes
 ~~~~~~~~~~~~~
 
-- Created an :meth:`~cal.todo.Todo.example` method for the :class:`~cal.todo.Todo` component. See `Issue 743 <https://github.com/collective/icalendar/issues/743>`_.
-- Created an :meth:`~cal.alarm.Alarm.example` method for the :class:`~cal.alarm.Alarm` component. See `Issue 743`_.
-- Clarified custom component (X-* and IANA-registered) parsing behavior through enhanced documentation and comprehensive how-to guide. Custom components are automatically handled by the library with no special configuration required. See `Issue #432 <https://github.com/collective/icalendar/issues/432>`_.
-- Reorganized custom component tests into a dedicated :file:`test_custom_components.py` file with expanded test coverage for :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`, :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>`, and :class:`~icalendar.cal.component_factory.ComponentFactory` usage. See `Issue #433 <https://github.com/collective/icalendar/issues/433>`_.
+- Created an :meth:`~cal.todo.Todo.example` method for the :class:`~cal.todo.Todo` component. See :issue:`743`.
+- Created an :meth:`~cal.alarm.Alarm.example` method for the :class:`~cal.alarm.Alarm` component. See :issue:`743`.
+- Move property classes from :mod:`icalendar.prop` into their own files. See :issue:`987`.
+- Clarified custom component (X-* and IANA-registered) parsing behavior through enhanced documentation and comprehensive how-to guide. Custom components are automatically handled by the library with no special configuration required. See :issue:`432`.
+- Reorganized custom component tests into a dedicated :file:`test_custom_components.py` file with expanded test coverage for :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`, :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>`, and :class:`~icalendar.cal.component_factory.ComponentFactory` usage. See :issue:`433`.
 - The ``typing-extensions`` dependency on Python < 3.13 is now optional, part of the ``test`` extra.
 - The :func:`icalendar.tools.is_pytz_dt` return value is now hinted as ``TypeGuard[datetime]``, not ``TypeIs[datetime]``, since returning ``False`` should not allow narrowing it as non-datetime.
+- Regroup dependencies in, and remove obsolete ones, from :file:`pyproject.toml`. :issue:`906`
+- Add type hints to internal helper functions. :issue:`938`
+- Add type hints to prop value classes (vBoolean, vFloat, vUri, vBinary, vInline). :issue:`938`
+- Add type hints to remaining prop value classes (vText, vCalAddress, vCategory, vGeo, vN, vOrg, vAdr, vBrokenProperty, vUid, Conference, Image). :issue:`938`
+- Added type hints and overloads to :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>` and :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>` to support ``multiple=True/False`` return types. :issue:`1129`
+- CI: Print a link to Vale documentation when the spell checker fails.
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
 
+- Drop support for Python 3.8 and 3.9. See :issue:`977`.
 - :meth:`Component.decoded` now returns a string instead of bytes for text properties.
 
 New features
 ~~~~~~~~~~~~
 
-- ...
+- Added ``recursive`` parameter to :meth:`Component.copy` to control copying of subcomponents and properties. :issue:`899`
+- Event components now have error-tolerant property parsing. Properties with parsing errors fall back to :class:`~icalendar.prop.vBrokenProperty`, preserving the raw value and allowing access to other valid properties. Errors are recorded in ``component.errors``. Partially addresses :issue:`158`.
+- Added :class:`~icalendar.prop.AdrFields` and :class:`~icalendar.prop.NFields` named tuples for structured access to vCard ADR and N property fields. The ``fields`` attribute and ``from_ical()`` return value of :class:`~icalendar.prop.vAdr` and :class:`~icalendar.prop.vN` now return these typed named tuples, enabling access like ``adr.fields.street`` and ``n.fields.family``. Since named tuples are tuple subclasses, existing code using tuple indexing or unpacking remains compatible. Added ``name`` and ``units`` properties to :class:`~icalendar.prop.vOrg` for convenient access to the organization name and organizational units. Added ``ical_value`` property to all three classes. See :issue:`1060`.
+- Added ``with_uid`` method to ``Component`` to filter subcomponents by UID. See :issue:`950`.
+
 
 Bug fixes
 ~~~~~~~~~
 
-- Fixed :meth:`icalendar.caselessdict.CaselessDict.__eq__` to return ``NotImplemented`` when comparing with non-dict types instead of raising ``AttributeError``. See `Issue #1016 <https://github.com/collective/icalendar/issues/1016>`_.
-- Fixed decoding of categories. See `Issue 279 <https://github.com/collective/icalendar/issues/279>`_.
-- Link ``timedelta`` to :py:class:`datetime.timedelta` in the Python standard library documentation. See `Issue 951 <https://github.com/collective/icalendar/issues/951>`_.
-- Fixed semicolon escaping in vCard structured properties (ADR, N, ORG). Semicolons are now correctly treated as field separators per :rfc:`6350`, not escaped as in iCalendar TEXT values. Added :func:`~icalendar.parser.split_on_unescaped_semicolon` helper function and :class:`~icalendar.prop.vAdr`, :class:`~icalendar.prop.vN`, :class:`~icalendar.prop.vOrg` property types. See `Issue #137 <https://github.com/collective/icalendar/issues/137>`_.
+- Fixed :meth:`Calendar.new <icalendar.cal.calendar.Calendar.new>` to automatically generate a UID when not provided, matching the documented behavior. Previously, the documentation stated that ``uid`` would be set to a new :func:`uuid.uuid4` if ``None``, but the implementation did not generate it. See :issue:`1066`.
+- Fixed import failure in Pyodide/WebAssembly environments by using lazy initialization for timezone data in the zoneinfo provider. The library can now be imported in environments without timezone data (e.g., Cloudflare Workers, PyScript, JupyterLite). See :issue:`1073`.
+- Fixed :meth:`icalendar.caselessdict.CaselessDict.__eq__` to return ``NotImplemented`` when comparing with non-dict types instead of raising ``AttributeError``. See :issue:`1016`.
+- Fixed decoding of categories. See :issue:`279`.
+- Link ``timedelta`` to :py:class:`datetime.timedelta` in the Python standard library documentation. See :issue:`951`.
+- Fix round-trip parsing of :class:`~icalendar.prop.vCategory` (CATEGORIES property) when category values contain commas. Categories like ``'Meeting, John'`` now correctly survive round trips between :meth:`Component.to_ical <icalendar.cal.component.Component.to_ical>` and :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>` instead of being split into multiple categories. Added :func:`~icalendar.parser.split_on_unescaped_comma` helper function. See :issue:`127`.
+- Fixed semicolon escaping in vCard structured properties (ADR, N, ORG). Semicolons are now correctly treated as field separators per :rfc:`6350`, not escaped as in iCalendar TEXT values. Added :func:`~icalendar.parser.split_on_unescaped_semicolon` helper function and :class:`~icalendar.prop.vAdr`, :class:`~icalendar.prop.vN`, :class:`~icalendar.prop.vOrg` property types. See :issue:`137`.
+- Fix :meth:`Image.from_property_value <icalendar.prop.image.Image.from_property_value>` to raise ``TypeError`` instead of ``AttributeError`` when ``value.params`` isn't valid (most notably, isn't dict-like). :issue:`909`
 
 Documentation
 ~~~~~~~~~~~~~
 
-- Simplify contributors and add supporters in credits. See `pull request 1035 <https://github.com/collective/icalendar/pull/1041>`_.
-- Add a section in the change log for Documentation. See `Issue 1043 <https://github.com/collective/icalendar/issues/1043>`_.
-- Fixed multiple ``more than one target found for cross-reference`` warnings, and stopped using ``sphinx.ext.autosectionlabel``, in documentation. See `Issue 952 <https://github.com/collective/icalendar/issues/952>`_.
-- Add ``funding.json`` manifest for funding information. See `Issue 1047 <https://github.com/collective/icalendar/issues/1047>`_.
+- Improved docstrings and formatting for the :class:`~icalendar.alarms.AlarmTime` class. :issue:`1072`
+- Added how-to guide for handling parsing errors with :class:`~icalendar.prop.vBrokenProperty` and the ``component.errors`` attribute. See :issue:`1085`.
+- Updated 11 function docstrings in :mod:`icalendar.parser` to follow the Google Style guide, improving API documentation clarity and consistency. See :issue:`1072`.
+- Applied Google-style docstrings to :mod:`icalendar.tools` utility functions with Args, Returns, and Example sections. See :issue:`1072`.
+- Simplify contributors and add supporters in credits. See :issue:`1035`.
+- Add a section in the change log for Documentation. See :issue:`1043`.
+- Added ❌ and ✅ emoji to the list of supported RFCs.
+- Fixed multiple ``more than one target found for cross-reference`` warnings, and stopped using ``sphinx.ext.autosectionlabel``, in documentation. See :issue:`952`.
+- Add ``funding.json`` manifest for funding information. See :issue:`1047`.
 - Resolved ``Cannot resolve forward reference in type annotations`` warning in documentation.
   Added ``SPHINX_APIDOC_OPTIONS`` to ``make apidoc`` command, excluding ``__all__`` items from being duplicated in the documentation, and rebuilt the API documentation source files.
-  See `Issue 952 <https://github.com/collective/icalendar/issues/952>`_.
-- Improve documentation contribution guide by adding chapters for small edits, builds and checks, and a style guide. Added details for Vale usage, Diátaxis framework, narrative and API documentation, and fixing all spelling errors. See `Issue 991 <https://github.com/collective/icalendar/issues/991>`_.
+  See :issue:`952`.
+- Document how to create and read attendee information in events. See :issue:`130`.
+- Improve documentation contribution guide by adding chapters for small edits, builds and checks, and a style guide. Added details for Vale usage, Diátaxis framework, narrative and API documentation, and fixing all spelling errors. See :issue:`991`.
 - Moved content from the README into documentation to reduce maintenance and point to the authoritative source of information.
-  See `Issue 1006 <https://github.com/collective/icalendar/issues/1006>`_.
+  See :issue:`1006`.
 - Added "Code conventions" section to the Development contributing guide.
-  See `Issue 1004 <https://github.com/collective/icalendar/issues/1004>`_.
+  See :issue:`1004`.
 - Use Google style docstrings in :mod:`~icalendar.parser_tools`.
-  See `Issue 1017 <https://github.com/collective/icalendar/issues/1017>`_.
-- Added Upgrade guide. See `Issue 997 <https://github.com/collective/icalendar/issues/997>`_.
-
+  See :issue:`1017`.
+- Document compatibility of icalendar with RFCs. See :issue:`1147`.
+- Added Upgrade guide. See :issue:`997`.
+- Fixed links in jCal usage documentation.
+- Enable sphinx-issues extension. :issue:`1091`
+- Replaced "Arguments" and "Args" with "Parameters". :issue:`1076`
+- Added documentation of how to set up a development environment with git. :issue:`906`
+- Documented how to install and use pre-commit. :issue:`996`
+- Added a new rule to our docstring style guide to escape docstrings, and added a new section for type hints in the code conventions section. :issue:`1080`
+- Documented ``__init__`` methods. :issue:`1079`
+- Moved "Edit this page" link to above the page table of contents. :issue:`1106`
+- Added Good First Issue link and fixed Up For Grabs link in Contribute guide. :issue:`1095`
+- Updated ``CONTRIBUTING.rst`` to explicitly state not to use Args sections in docstrings. :issue:`1076`
+- Document ``vInt.__new__`` method parameters in class docstring with :rfc:`5545` examples. :issue:`1118`
+- Improved ``make vale`` command to provide guidance on failure or success. :issue:`1137`
+- Add ``sphinx_copybutton`` configuration to exclude line numbers, prompts, and console output when copying code blocks.
+- Change Sphinx configuration to convert ``--`` to en dash ``-``, ``---`` to em dash ``—``, and ``...`` to ellipsis ``…``, but doesn't transform quote marks as they should be preserved.
+  This restores cleaner and consistent rendering of docstrings in the :doc:`API Reference <../reference/api/icalendar>`.
+  See `smartquotes_action <https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-smartquotes_action>`_.
+- Fix incorrect return type annotation in :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`. :issue:`1141`
+- Fixed broken links in ``docs/how-to/usage.rst`` documentation. Part of :issue:`1158`
 
 7.0.0a3 (2025-12-19)
 --------------------
@@ -78,9 +118,9 @@ Documentation
 Minor changes
 ~~~~~~~~~~~~~
 
-- Add static ``[project.urls]`` to ``pyproject.toml`` for GitHub dependency graph compatibility. See `Issue 1035 <https://github.com/collective/icalendar/issues/1035>`_.
-- Created an :meth:`~cal.todo.Todo.example` method for the :class:`~cal.todo.Todo` component. See `Issue 743 <https://github.com/collective/icalendar/issues/743>`_.
-- Add type hints to :mod:`icalendar.caselessdict` file. See `Issue #938 <https://github.com/collective/icalendar/issues/938>`_.
+- Add static ``[project.urls]`` to ``pyproject.toml`` for GitHub dependency graph compatibility. See :issue:`1035`.
+- Created an :meth:`~cal.todo.Todo.example` method for the :class:`~cal.todo.Todo` component. See :issue:`743`.
+- Add type hints to :mod:`icalendar.caselessdict` file. See :issue:`938`.
 - For releases, added a step to update the version switcher for documentation.
 
 New features
@@ -91,7 +131,7 @@ New features
 Bug fixes
 ~~~~~~~~~
 
-- Fix double-unescaping in :meth:`vText.from_ical` and :meth:`vCategory.from_ical` by removing ``unescape_char()``. See `Issue #1008 <https://github.com/collective/icalendar/issues/1008>`_.
+- Fix double-unescaping in :meth:`vText.from_ical` and :meth:`vCategory.from_ical` by removing ``unescape_char()``. See :issue:`1008`.
 
 7.0.0a2 (2025-11-29)
 --------------------
@@ -99,10 +139,10 @@ Bug fixes
 Minor changes
 ~~~~~~~~~~~~~
 
-- Convert changelog section labels to reStructuredText subheadings for improved Read the Docs navigation. See `Issue 982 <https://github.com/collective/icalendar/issues/982>`_.
+- Convert changelog section labels to reStructuredText subheadings for improved Read the Docs navigation. See :issue:`982`.
 - Move sections in Table of Content of Reference guide.
-- Improve :py:class:`icalendar.prop.vDatetime` documentation. See `Issue #946 <https://github.com/collective/icalendar/issues/946>`_.
-- CLI now writes output files using UTF-8 explicitly instead of relying on the system default. See `Issue #1005 <https://github.com/collective/icalendar/issues/1005>`_.
+- Improve :py:class:`icalendar.prop.vDatetime` documentation. See :issue:`946`.
+- CLI now writes output files using UTF-8 explicitly instead of relying on the system default. See :issue:`1005`.
 
 New features
 ~~~~~~~~~~~~
@@ -116,19 +156,19 @@ New features
 
 - Allow setting default values in :class:`Parameters`.
 - Allow ``None`` as an argument to :class:`Parameters`.
-- Add ``ical_value`` to several property values. See `Issue 876 <https://github.com/collective/icalendar/issues/876>`_.
-- Add PyData Theme version switcher to documentation. See `Issue 825 <https://github.com/collective/icalendar/issues/825>`_.
-- Test compatibility with Python 3.14. See `Issue 973 <https://github.com/collective/icalendar/issues/973>`_.
-- Added documentation of Vale usage for icalender documentation style guide. See `Issue 815 <https://github.com/collective/icalendar/issues/815>`_.
-- Added funding link to :file:`pyproject.toml`.  See `Issue 800 <https://github.com/collective/icalendar/issues/800>`_.
-- Added documentation of docstring format. See `Issue 747 <https://github.com/collective/icalendar/issues/747>`_.
+- Add ``ical_value`` to several property values. See :issue:`876`.
+- Add PyData Theme version switcher to documentation. See :issue:`825`.
+- Test compatibility with Python 3.14. See :issue:`973`.
+- Added documentation of Vale usage for icalender documentation style guide. See :issue:`815`.
+- Added funding link to :file:`pyproject.toml`.  See :issue:`800`.
+- Added documentation of docstring format. See :issue:`747`.
 - Add ``TypeAlias`` ``icalendar.VPROPERTY`` as a type for all properties.
 - Allow access to :class:`icalendar.TypesFactory` via :func:`icalendar.TypesFactory.instance`.
 - Classes in :mod:`icalendar.prop` can all be initialized with parameters now.
 - Allow passing :class:`icalendar.vDDDTypes` as arguments to :class:`icalendar.vDDDLists`.
 - Add support for :class:`datetime.timezone` identification.
 - Add :func:`icalendar.is_utc` to check if a timezone is UTC.
-- Add support for JCal parsing and serialization. See `Issue 978 <https://github.com/collective/icalendar/issues/978>`_.
+- Add support for JCal parsing and serialization. See :issue:`978`.
 
   - Add :class:`icalendar.JCalParsingError` exception for jCal parsing.
   - Add :attr:`icalendar.Parameters.tzid` and :func:`icalendar.Parameters.is_utc` for timezone handling.
@@ -143,13 +183,13 @@ New features
     - Add ``VALUE`` parameter property.
     - Add ``examples()`` classmethod that returns examples for testing.
 
-- Added documentation of how to fuzz icalendar. See `Issue 905 <https://github.com/collective/icalendar/issues/905>`_.
-- Added first-time contributors section to Contributing. See `Issue 934 <https://github.com/collective/icalendar/issues/934>`_.
-- Revised check of which files trigger a documentation build on Read the Docs. See `Issue 848 <https://github.com/collective/icalendar/issues/848>`_.
-- Created a separate path to contribute to documentation. See `Issue 929 <https://github.com/collective/icalendar/issues/929>`_.
-- Added a code of conduct. See `Issue 907 <https://github.com/collective/icalendar/issues/907>`_.
-- Added redirects of moved files and 404 not found page to catch any other obsolete URLs. See `Issue 959 <https://github.com/collective/icalendar/issues/959>`_.
-- Added artificial intelligence (AI) policy. See `Issue 933 <https://github.com/collective/icalendar/issues/933>`_.
+- Added documentation of how to fuzz icalendar. See :issue:`905`.
+- Added first-time contributors section to Contributing. See :issue:`934`.
+- Revised check of which files trigger a documentation build on Read the Docs. See :issue:`848`.
+- Created a separate path to contribute to documentation. See :issue:`929`.
+- Added a code of conduct. See :issue:`907`.
+- Added redirects of moved files and 404 not found page to catch any other obsolete URLs. See :issue:`959`.
+- Added artificial intelligence (AI) policy. See :issue:`933`.
 
 
 Bug fixes
@@ -158,7 +198,7 @@ Bug fixes
 - Correct ``name`` of ``AVAILABLE`` component.
 - Fix ical serialization of :class:`icalendar.vTime`.
 - Make sure a component's ``conferences`` property adds ``VALUE=URI`` if the conference is created as a URI.
-- Fix CLI deprecated :py:class:`argparse.FileType` usage and remove ``PendingDeprecationWarning``. See `Issue #1005 <https://github.com/collective/icalendar/issues/1005>`_.
+- Fix CLI deprecated :py:class:`argparse.FileType` usage and remove ``PendingDeprecationWarning``. See :issue:`1005`.
 
 6.3.2 (2025-11-03)
 ------------------
@@ -166,7 +206,7 @@ Bug fixes
 Minor changes
 ~~~~~~~~~~~~~
 
-- Add PyData Theme version switcher to documentation. See `Issue 825`_.
+- Add PyData Theme version switcher to documentation. See :issue:`825`.
 
 5.0.14 (2025-11-03)
 -------------------
@@ -174,7 +214,7 @@ Minor changes
 Minor changes
 ~~~~~~~~~~~~~
 
-- Add PyData Theme version switcher to documentation. See `Issue 825`_.
+- Add PyData Theme version switcher to documentation. See :issue:`825`.
 
 4.1.2 (2025-11-03)
 ------------------
@@ -182,7 +222,7 @@ Minor changes
 Minor changes
 ~~~~~~~~~~~~~
 
-- Add PyData Theme version switcher to documentation. See `Issue 825`_.
+- Add PyData Theme version switcher to documentation. See :issue:`825`.
 
 7.0.0a1 (28-10-2025)
 --------------------
@@ -201,26 +241,26 @@ Minor changes
 - Added ``duration`` setter to ``Event`` class for more intuitive event creation.
 - Added ``validate()`` method to ``Calendar`` class for explicit validation of required properties and components.
 - Add improved setters for ``start``, ``duration``, and ``end`` properties with explicit locking mechanisms to provide more flexible property manipulation while maintaining RFC 5545 compliance. The implementation includes comprehensive test coverage to ensure proper behavior and backward compatibility.
-- Add ``new()`` method to ``vCalAddress`` class for consistent API usage. The method supports all RFC 5545 parameters including ``CN``, ``CUTYPE``, ``DELEGATED-FROM``, ``DELEGATED-TO``, ``DIR``, ``LANGUAGE``, ``PARTSTAT``, ``ROLE``, ``RSVP``, and ``SENT-BY``, with automatic ``mailto:`` prefix handling. See `Issue 870 <https://github.com/collective/icalendar/issues/870>`_.
-- Refactor ``set_duration`` methods in ``Event`` and ``Todo`` classes to eliminate code duplication by extracting common logic into shared ``set_duration_with_locking()`` function in ``icalendar.attr``. See `Issue 886 <https://github.com/collective/icalendar/issues/886>`_.
-- Consolidate duplicate logic patterns between ``Event`` and ``Todo`` classes by extracting shared functions in ``icalendar.attr`` for property setters, validation logic, and property access. This eliminates approximately 150 lines of duplicate code while maintaining 100% backward compatibility and RFC 5545 compliance. See `Issue 891 <https://github.com/collective/icalendar/issues/891>`_.
+- Add ``new()`` method to ``vCalAddress`` class for consistent API usage. The method supports all RFC 5545 parameters including ``CN``, ``CUTYPE``, ``DELEGATED-FROM``, ``DELEGATED-TO``, ``DIR``, ``LANGUAGE``, ``PARTSTAT``, ``ROLE``, ``RSVP``, and ``SENT-BY``, with automatic ``mailto:`` prefix handling. See :issue:`870`.
+- Refactor ``set_duration`` methods in ``Event`` and ``Todo`` classes to eliminate code duplication by extracting common logic into shared ``set_duration_with_locking()`` function in ``icalendar.attr``. See :issue:`886`.
+- Consolidate duplicate logic patterns between ``Event`` and ``Todo`` classes by extracting shared functions in ``icalendar.attr`` for property setters, validation logic, and property access. This eliminates approximately 150 lines of duplicate code while maintaining 100% backward compatibility and RFC 5545 compliance. See :issue:`891`.
 - Accept and ignore non-standard empty ``RDATE`` fields when parsing ICS files.
-- Improve contributing documentation by adding a change log requirement, adding a pull request template, adding clear CI enforcement warnings, and updating ``README.rst``. See `Issue 890 <https://github.com/collective/icalendar/issues/890>`_.
+- Improve contributing documentation by adding a change log requirement, adding a pull request template, adding clear CI enforcement warnings, and updating ``README.rst``. See :issue:`890`.
 - Make coverage submission optional for CI.
 - Bump ``actions/setup-python`` version from 5 to 6 for CI.
-- Add comment explaining tzdata dependency purpose to prevent confusion. See `Issue 900 <https://github.com/collective/icalendar/issues/900>`_.
-- Fix duplicate blank issue template by adding config.yml to disable GitHub's default blank option. See `Issue 777 <https://github.com/collective/icalendar/issues/777>`_.
-- Add PEP 561 py.typed marker to enable type checking support. The package now distributes inline type annotations for mypy and other type checkers. See `Issue 395 <https://github.com/collective/icalendar/issues/395>`_.
+- Add comment explaining tzdata dependency purpose to prevent confusion. See :issue:`900`.
+- Fix duplicate blank issue template by adding config.yml to disable GitHub's default blank option. See :issue:`777`.
+- Add PEP 561 py.typed marker to enable type checking support. The package now distributes inline type annotations for mypy and other type checkers. See :issue:`395`.
 - Bump ``github/codeql-action`` from 3 to 4 in CI fuzzing workflow.
-- Add docstring for ``vDatetime``. See `Issue 742 <https://github.com/collective/icalendar/issues/742>`_.
+- Add docstring for ``vDatetime``. See :issue:`742`.
 - Update LICENSE file heading formatting.
 - Document ``icalendar.version`` module.
 - Use ``CONTRIBUTING.md`` in favour of ``.rst`` file.
 - Add type hints to ``icalendar.tools`` module.
-- Fix more examples link failed in ``README.md`` by renewing its link. See `Issue 958 <https://github.com/collective/icalendar/issues/958>`_.
-- Fix Contributing, Changelog, License links failed in ``README.md`` by renewing its link. See `Issue 959 <https://github.com/collective/icalendar/issues/959>`_.
-- Fix more examples link in ``README.md``. See `Issue 958 <https://github.com/collective/icalendar/issues/958>`_.
-- Add ``CODEOWNERS`` file for automatic pull request review assignment. See `Issue 945 <https://github.com/collective/icalendar/issues/945>`_.
+- Fix more examples link failed in ``README.md`` by renewing its link. See :issue:`958`.
+- Fix Contributing, Changelog, License links failed in ``README.md`` by renewing its link. See :issue:`959`.
+- Fix more examples link in ``README.md``. See :issue:`958`.
+- Add ``CODEOWNERS`` file for automatic pull request review assignment. See :issue:`945`.
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
@@ -234,22 +274,22 @@ Breaking changes
 New features
 ~~~~~~~~~~~~
 
-- Add ``new()`` to ``icalendar.Calendar`` to set required attributes. See `Issue 569 <https://github.com/collective/icalendar/pull/569>`_.
-- Add ``new()`` to ``Alarm``, ``Event``, ``Todo``, ``FreeBusy``, ``Component``, and ``Journal`` components. See `Issue 843 <https://github.com/collective/icalendar/issues/843>`_.
+- Add ``new()`` to ``icalendar.Calendar`` to set required attributes. See :pr:`569`.
+- Add ``new()`` to ``Alarm``, ``Event``, ``Todo``, ``FreeBusy``, ``Component``, and ``Journal`` components. See :issue:`843`.
 - Add ``value`` to ``Parameters`` to access the ``VALUE`` parameter.
-- Add ``Availability`` and ``Available`` components from :rfc:`7953`. See `Issue 654 <https://github.com/collective/icalendar/issues/654>`_ and `Issue 864 <https://github.com/collective/icalendar/issues/864>`_.
+- Add ``Availability`` and ``Available`` components from :rfc:`7953`. See :issue:`654` and :issue:`864`.
 - Add ``stamp``, ``last_modified``, ``created``, ``CREATED``, ``busy_type``, ``class``, ``comments``, ``contacts``, ``location``, ``organizer``, ``priority``, and ``url`` properties to components that use them.
 - Add ``availabilities`` attribtue to ``Calendar``.
-- Add ``status``, ``transparency``, and ``attendees`` properties. See `Issue 841 <https://github.com/collective/icalendar/issues/841>`_.
-- Add ``uid`` property that is ``''`` by default and set automatically with ``new()``. See `Issue 315 <https://github.com/collective/icalendar/issues/315>`_.
+- Add ``status``, ``transparency``, and ``attendees`` properties. See :issue:`841`.
+- Add ``uid`` property that is ``''`` by default and set automatically with ``new()``. See :issue:`315`.
 - Make icalendar compatible with `RFC 7986 <https://www.rfc-editor.org/rfc/rfc7986.html>`_.
 - Add ``url``, ``source``, ``refresh_interval``, ``conferences``, and ``images`` properties to components.
 - Add ``td`` property to ``vDDDTypes`` to make it compatible with ``timedelta`` value types.
-- Add documentation for how to install icalendar on Fedora. See `Issue 704 <https://github.com/collective/icalendar/issues/704>`_.
-- Add documentation linkchecker to make and CI configuration. See `Issue 854 <https://github.com/collective/icalendar/issues/854>`_.
+- Add documentation for how to install icalendar on Fedora. See :issue:`704`.
+- Add documentation linkchecker to make and CI configuration. See :issue:`854`.
 - Add support for Vale as spell and style checker.
-- For ``make livehtml`` watch all files in ``src/icalendar``, but ignore ``.typed`` and contents of the ``tests`` and ``fuzzing`` directories. See `Issue 931 <https://github.com/collective/icalendar/issues/931>`_.
-- Restructure documentation, following Diátaxis framework. See `Issue 820 <https://github.com/collective/icalendar/issues/820>`_ which included the following tasks.
+- For ``make livehtml`` watch all files in ``src/icalendar``, but ignore ``.typed`` and contents of the ``tests`` and ``fuzzing`` directories. See :issue:`931`.
+- Restructure documentation, following Diátaxis framework. See :issue:`820` which included the following tasks.
 
   - Start building API Reference documentation.
   - Add Vale with Microsoft Writing Guide style checker.
@@ -280,24 +320,24 @@ New features
   - Update :file:`README.rst` to align with new documentation structure.
   - Add documentation builds to continuous integration.
   - Review pull requests that involve source docstrings, continuous integration, or documentation, and provide suggestions and corrections.
-- Add spell checking to documentation. See `Issue 853 <https://github.com/collective/icalendar/issues/853>`_.
-- Add link check to docs test. See `Issue 854 <https://github.com/collective/icalendar/issues/854>`_.
-- Document installation of icalendar on Fedora. See `Issue 704 <https://github.com/collective/icalendar/issues/704>`_.
-- Miscellaneous documentation follow-up fixes. See `Issue 919 <https://github.com/collective/icalendar/issues/919>`_.
+- Add spell checking to documentation. See :issue:`853`.
+- Add link check to docs test. See :issue:`854`.
+- Document installation of icalendar on Fedora. See :issue:`704`.
+- Miscellaneous documentation follow-up fixes. See :issue:`919`.
 
 Bug fixes
 ~~~~~~~~~
 
-- Fix ``Todo.end`` to return ``start`` for date-only ``DTSTART`` (not ``start + 1 day``). Events keep existing behavior. See `Issue 898 <https://github.com/collective/icalendar/issues/898>`_.
-- Fix ``AssertionError`` when converting ``VTIMEZONE`` components with only ``DAYLIGHT`` subcomponent (no ``STANDARD``) to pytz timezones. The code now handles cases where a timezone definition contains only DST transitions by calculating the DST offset from ``TZOFFSETFROM`` and ``TZOFFSETTO``. Test case contributed by @niccokunzmann in `PR 379 <https://github.com/collective/icalendar/pull/379>`_. See `Issue 321 <https://github.com/collective/icalendar/issues/321>`_.
-- Normalize Conference parameter lists (FEATURE/LABEL/LANGUAGE) to comma-separated values. See `Issue 908 <https://github.com/collective/icalendar/issues/908>`_.
-- Fix read from stdin issue - See `Issue 821 <https://github.com/collective/icalendar/issues/821>`_.
-- Fix invalid calendar: Parsing a date with TZID results in a datetime to not loose the timezone. See `Issue 187 <https://github.com/collective/icalendar/issues/187>`_.
-- Fix timezone placement in ``add_missing_timezones()``: ``VTIMEZONE`` components now appear before ``VEVENT`` and other components that reference them. See `Issue 844 <https://github.com/collective/icalendar/issues/844>`_.
-- Fixed ``Todo.duration`` and ``Event.duration`` to return ``DURATION`` property when set, even without ``DTSTART``. See `Issue 867 <https://github.com/collective/icalendar/issues/867>`_.
-- Fix ``VALUE`` parameter handling: ``datetime.date`` objects now correctly set ``VALUE=DATE`` parameter when added to properties like ``EXDATE``, ``RDATE``, and ``DTSTART``. The ``VALUE`` parameter is also properly used when parsing iCalendar data. See `Issue 349 <https://github.com/collective/icalendar/issues/349>`_.
-- Fix URL-encoded characters being incorrectly unescaped during content line parsing. The parser now properly handles backslash escaping and double-quoted sections without corrupting URL-encoded values like ``%3A`` (colon) in DESCRIPTION fields. Added ``unescape_backslash()`` function to separate :rfc:`5545` backslash escaping from URL encoding. Optimized implementation using regex for single-pass processing. Added type hints to ``Contentline.parts()`` method and comprehensive unit tests. See `Issue 355 <https://github.com/collective/icalendar/issues/355>`_.
-- `make livehtml` now reloads with code changes. See `Issue 931 <https://github.com/collective/icalendar/issues/931>`_.
+- Fix ``Todo.end`` to return ``start`` for date-only ``DTSTART`` (not ``start + 1 day``). Events keep existing behavior. See :issue:`898`.
+- Fix ``AssertionError`` when converting ``VTIMEZONE`` components with only ``DAYLIGHT`` subcomponent (no ``STANDARD``) to pytz timezones. The code now handles cases where a timezone definition contains only DST transitions by calculating the DST offset from ``TZOFFSETFROM`` and ``TZOFFSETTO``. Test case contributed by @niccokunzmann in :pr:`379`. See :issue:`321`.
+- Normalize Conference parameter lists (FEATURE/LABEL/LANGUAGE) to comma-separated values. See :issue:`908`.
+- Fix read from stdin issue - See :issue:`821`.
+- Fix invalid calendar: Parsing a date with TZID results in a datetime to not loose the timezone. See :issue:`187`.
+- Fix timezone placement in ``add_missing_timezones()``: ``VTIMEZONE`` components now appear before ``VEVENT`` and other components that reference them. See :issue:`844`.
+- Fixed ``Todo.duration`` and ``Event.duration`` to return ``DURATION`` property when set, even without ``DTSTART``. See :issue:`867`.
+- Fix ``VALUE`` parameter handling: ``datetime.date`` objects now correctly set ``VALUE=DATE`` parameter when added to properties like ``EXDATE``, ``RDATE``, and ``DTSTART``. The ``VALUE`` parameter is also properly used when parsing iCalendar data. See :issue:`349`.
+- Fix URL-encoded characters being incorrectly unescaped during content line parsing. The parser now properly handles backslash escaping and double-quoted sections without corrupting URL-encoded values like ``%3A`` (colon) in DESCRIPTION fields. Added ``unescape_backslash()`` function to separate :rfc:`5545` backslash escaping from URL encoding. Optimized implementation using regex for single-pass processing. Added type hints to ``Contentline.parts()`` method and comprehensive unit tests. See :issue:`355`.
+- `make livehtml` now reloads with code changes. See :issue:`931`.
 
 
 6.3.1 (2025-05-20)
@@ -306,7 +346,7 @@ Bug fixes
 Bug fixes
 ~~~~~~~~~
 
-- Remove forced quoting from parameters with space and single quote. See `Issue 836 <https://github.com/collective/icalendar/issues/836>`_.
+- Remove forced quoting from parameters with space and single quote. See :issue:`836`.
 
 6.3.0 (2025-05-15)
 ------------------
@@ -314,20 +354,20 @@ Bug fixes
 Minor changes
 ~~~~~~~~~~~~~
 
-- Deprecate ``icalendar.UIDGenerator``. See `Issue 816 <https://github.com/collective/icalendar/issues/816>`_.
+- Deprecate ``icalendar.UIDGenerator``. See :issue:`816`.
 
 New features
 ~~~~~~~~~~~~
 
-- Add the ``uid`` property to ``Alarm``, ``Event``, ``Calendar``, ``Todo``, and ``Journal`` components. See `Issue 740 <https://github.com/collective/icalendar/issues/740>`_.
+- Add the ``uid`` property to ``Alarm``, ``Event``, ``Calendar``, ``Todo``, and ``Journal`` components. See :issue:`740`.
 
 Bug fixes
 ~~~~~~~~~
 
-- Fix component equality where timezones differ for the datetimes but the times are actually equal. See `Issue 828 <https://github.com/collective/icalendar/issues/828>`_.
-- Test that we can add an RRULE as a string. See `Issue 301 <https://github.com/collective/icalendar/issues/301>`_.
-- Test that we support dateutil timezones as outlined in `Issue 336 <https://github.com/collective/icalendar/issues/336>`_.
-- Build documentation on Read the Docs with the version identifier. See `Issue 826 <https://github.com/collective/icalendar/issues/826>`_.
+- Fix component equality where timezones differ for the datetimes but the times are actually equal. See :issue:`828`.
+- Test that we can add an RRULE as a string. See :issue:`301`.
+- Test that we support dateutil timezones as outlined in :issue:`336`.
+- Build documentation on Read the Docs with the version identifier. See :issue:`826`.
 
 6.2.0 (2025-05-07)
 ------------------
@@ -339,28 +379,28 @@ Minor changes
 - Update project metadata to use License-Expression.
 - Use ``tzp.localize(dt, None)`` to remove the timezone from a datetime.
 - Remove the HTML documentation when building with ``tox`` to force rebuild.
-- Switch to PyData Sphinx Theme for documentation. See `Issue 803 <https://github.com/collective/icalendar/issues/804>`_.
+- Switch to PyData Sphinx Theme for documentation. See :pr:`803`.
 
 New features
 ~~~~~~~~~~~~
 
 - Add getters ``rrules``, ``rdates``, and ``exdates`` for unified and simple access to these properties. See `Discussion 662`_.
-- Add attributes to the calendar for properties ``NAME``, ``DESCRIPTION``, and ``COLOR``. See `Issue 655 <https://github.com/collective/icalendar/issues/655>`_.
-- Add a ``color`` attribute to ``Event``, ``Todo``, and ``Journal`` components. See `Issue 655`_.
-- Add ``sequence`` attribute to ``Event``, ``Todo``, and ``Journal`` components. See `Issue 802 <https://github.com/collective/icalendar/issues/802>`_.
-- Add ``categories`` attribute to ``Calendar``, ``Event``, ``Todo``, and ``Journal`` components. See `Issue 655 <https://github.com/collective/icalendar/issues/655>`_.
-- Add compatibility to :rfc:`6868`. See `Issue 652 <https://github.com/collective/icalendar/issues/652>`_.
+- Add attributes to the calendar for properties ``NAME``, ``DESCRIPTION``, and ``COLOR``. See :issue:`655`.
+- Add a ``color`` attribute to ``Event``, ``Todo``, and ``Journal`` components. See :issue:`655`.
+- Add ``sequence`` attribute to ``Event``, ``Todo``, and ``Journal`` components. See :issue:`802`.
+- Add ``categories`` attribute to ``Calendar``, ``Event``, ``Todo``, and ``Journal`` components. See :issue:`655`.
+- Add compatibility to :rfc:`6868`. See :issue:`652`.
 - Add ``freebusy`` property to the ``Calendar`` to get this type of subcomponents easier.
-- Add parameters from :rfc:`5545` to properties ``ALTREP``, ``CN``, ``CUTYPE``, ``DELEGATED_FROM``, ``DELEGATED_TO``, ``DIR``, ``FBTYPE``, ``LANGUAGE``, ``MEMBER``, ``PARTSTAT``, ``RANGE``, ``RELATED``, ``ROLE``, ``RSVP``, ``SENT_BY``, ``TZID``, and ``RELTYPE``. See `Issue 798 <https://github.com/collective/icalendar/issues/798>`_.
-- New properties from :rfc:`7986` can occur multiple times in ``VCALENDAR``. See `PR 808`_.
+- Add parameters from :rfc:`5545` to properties ``ALTREP``, ``CN``, ``CUTYPE``, ``DELEGATED_FROM``, ``DELEGATED_TO``, ``DIR``, ``FBTYPE``, ``LANGUAGE``, ``MEMBER``, ``PARTSTAT``, ``RANGE``, ``RELATED``, ``ROLE``, ``RSVP``, ``SENT_BY``, ``TZID``, and ``RELTYPE``. See :issue:`798`.
+- New properties from :rfc:`7986` can occur multiple times in ``VCALENDAR``. See :pr:`808`.
 
 Bug fixes
 ~~~~~~~~~
 
-- Fix ``STANDARD`` and ``DAYLIGHT`` components that have a date as ``DTSTART``. See `Issue 218 <https://github.com/collective/icalendar/issues/218>`_
-- Move import at the end of ``icalendar.parser`` into a function to mitigate import errors, see `Issue 781 <https://github.com/collective/icalendar/issues/781>`_.
+- Fix ``STANDARD`` and ``DAYLIGHT`` components that have a date as ``DTSTART``. See :issue:`218`
+- Move import at the end of ``icalendar.parser`` into a function to mitigate import errors, see :issue:`781`.
 - ``ALTREP``, ``DELEGATED-FROM``, ``DELEGATED-TO``, ``DIR``, ``MEMBER``, and ``SENT-BY`` require double quotes. These are now always added.
-- Classify ``CATEGORIES`` as multiple in ``VEVENT``. See `PR 808 <https://github.com/collective/icalendar/pull/808>`_.
+- Classify ``CATEGORIES`` as multiple in ``VEVENT``. See :pr:`808`.
 
 6.1.3 (2025-03-19)
 ------------------
@@ -369,7 +409,7 @@ Bug fixes
 ~~~~~~~~~
 
 - Fix to permit TZID forward references to ``VTIMEZONE``\ s
-- Stabelize timezone id lookup, see `Issue 780 <https://github.com/collective/icalendar/issues/780>`_.
+- Stabelize timezone id lookup, see :issue:`780`.
 
 6.1.2 (2025-03-19)
 ------------------
@@ -389,7 +429,7 @@ Minor changes
 Bug fixes
 ~~~~~~~~~
 
-- Restrict timezones tested, see `Issue 763 <https://github.com/collective/icalendar/issues/763>`_
+- Restrict timezones tested, see :issue:`763`
 
 6.1.1 (2025-01-18)
 ------------------
@@ -397,16 +437,16 @@ Bug fixes
 Minor changes
 ~~~~~~~~~~~~~
 
-- Add a ``weekday`` attribute to :class:`icalendar.prop.vWeekday` components. See `Issue 749 <https://github.com/collective/icalendar/issues/749>`_.
-- Document :class:`icalendar.prop.vRecur` property. See `Issue 758 <https://github.com/collective/icalendar/issues/758>`_.
+- Add a ``weekday`` attribute to :class:`icalendar.prop.vWeekday` components. See :issue:`749`.
+- Document :class:`icalendar.prop.vRecur` property. See :issue:`758`.
 - Print failure of doctest to aid debugging.
 - Improve documentation of :class:`icalendar.prop.vGeo`
-- Fix tests, improve code readability, fix typing. See `Pull request 766 <https://github.com/collective/icalendar/pull/766>`_ and `Pull request 765 <https://github.com/collective/icalendar/pull/765>`_.
+- Fix tests, improve code readability, fix typing. See :pr:`766` and :pr:`765`.
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
 
-- The ``relative`` attribute of ``vWeekday`` components has the correct sign now. See `Issue 749 <https://github.com/collective/icalendar/issues/749>`_.
+- The ``relative`` attribute of ``vWeekday`` components has the correct sign now. See :issue:`749`.
 
 New features
 ~~~~~~~~~~~~
@@ -422,12 +462,12 @@ Minor changes
 
 - Add ``end``, ``start``, ``duration``, ``DTSTART``, ``DUE``, and ``DURATION`` attributes to ``Todo`` components. See `Discussion 662`_.
 - Add ``DTSTART``, ``TZOFFSETTO`` and ``TZOFFSETFROM`` properties to ``TimezoneStandard`` and ``TimezoneDaylight``. See `Discussion 662`_.
-- Format test code with Ruff. See `Issue 672 <https://github.com/collective/icalendar/issues/672>`_.
-- Document the Debian package. See `Issue 701 <https://github.com/collective/icalendar/issues/701>`_.
+- Format test code with Ruff. See :issue:`672`.
+- Document the Debian package. See :issue:`701`.
 - Document ``vDatetime.from_ical``
 - Allow passing a ``datetime.date`` to ``TZP.localize_utc`` and ``TZP.localize`` methods.
 - Document component classes with description from :rfc:`5545`.
-- Merge "File Structure" and "Overview" sections in the docs. See `Issue 626 <https://github.com/collective/icalendar/issues/626>`_.
+- Merge "File Structure" and "Overview" sections in the docs. See :issue:`626`.
 - Update code blocks in ``usage.rst`` with the correct lexer.
 - Tidy up the docstring for ``icalendar.prop.vPeriod``.
 - Improve typing and fix typing issues
@@ -436,18 +476,18 @@ Minor changes
 New features
 ~~~~~~~~~~~~
 
-- Add ``VALARM`` properties for :rfc:`9074`. See `Issue 657 <https://github.com/collective/icalendar/issues/657>`_
+- Add ``VALARM`` properties for :rfc:`9074`. See :issue:`657`
 - Test compatibility with Python 3.13
-- Add ``Timezone.from_tzinfo()`` and ``Timezone.from_tzid()`` to create a ``Timezone`` component from a ``datetime.tzinfo`` timezone. See `Issue 722`_.
+- Add ``Timezone.from_tzinfo()`` and ``Timezone.from_tzid()`` to create a ``Timezone`` component from a ``datetime.tzinfo`` timezone. See :issue:`722`.
 - Add ``icalendar.prop.tzid_from_tzinfo``.
-- Add ``icalendar.alarms`` module to calculate alarm times. See `Issue 716 <https://github.com/collective/icalendar/issues/716>`_.
+- Add ``icalendar.alarms`` module to calculate alarm times. See :issue:`716`.
 - Add ``Event.alarms`` and ``Todo.alarms`` to access alarm calculation.
 - Add ``Component.DTSTAMP`` and ``Component.LAST_MODIFIED`` properties for datetime in UTC.
 - Add ``Component.is_thunderbird()`` to check if the component uses custom properties by Thunderbird.
 - Add ``X_MOZ_SNOOZE_TIME`` and ``X_MOZ_LASTACK`` properties to ``Event`` and ``Todo``.
 - Add ``Alarm.ACKNOWLEDGED``, ``Alarm.TRIGGER``, ``Alarm.REPEAT``, and ``Alarm.DURATION`` properties
   as well as ``Alarm.triggers`` to calculate alarm triggers.
-- Add ``__doc__`` string documentation for ``vDate``, ``vBoolean``, ``vCalAddress``, ``vDuration``, ``vFloat``, ``vGeo``, ``vInt``, ``vPeriod``, ``vTime``, ``vUTCOffset`` and ``vUri``. See `Issue 742 <https://github.com/collective/icalendar/issues/742>`_.
+- Add ``__doc__`` string documentation for ``vDate``, ``vBoolean``, ``vCalAddress``, ``vDuration``, ``vFloat``, ``vGeo``, ``vInt``, ``vPeriod``, ``vTime``, ``vUTCOffset`` and ``vUri``. See :issue:`742`.
 - Add ``DTSTART``, ``TZOFFSETTO``, and ``TZOFFSETFROM`` to ``TimezoneStandard`` and ``TimezoneDaylight``
 - Use ``example`` methods of components without arguments.
 - Add ``events``, ``timezones``, and ``todos`` property to ``Calendar`` for nicer access.
@@ -461,7 +501,6 @@ Bug fixes
 
 - Add ``icalendar.timezone`` to the documentation.
 
-.. _`Issue 722`: https://github.com/collective/icalendar/issues/722
 
 6.0.1 (2024-10-13)
 ------------------
@@ -476,7 +515,7 @@ Bug fixes
 ~~~~~~~~~
 
 - Fix a few ``__all__`` variables.
-- Added missing ``docs`` folder to distribution packages. See `Issue 712 <https://github.com/collective/icalendar/issues/712>`_.
+- Added missing ``docs`` folder to distribution packages. See :issue:`712`.
 
 .. _`Discussion 662`: https://github.com/collective/icalendar/discussions/662
 
@@ -530,7 +569,7 @@ Breaking changes
 ~~~~~~~~~~~~~~~~
 
 - Use ``zoneinfo`` for ``icalendar`` objects created from strings,
-  see `Issue #609 <https://github.com/collective/icalendar/issues/609>`_.
+  see :issue:`609`.
 
   This is an tested extension of the functionality, not a restriction:
   If you create ``icalendar`` objects with ``pytz`` timezones in your code,
@@ -555,10 +594,10 @@ Breaking changes
 
 - Remove ``is_broken`` property. Use ``errors`` instead to check if a
   component had suppressed parsing errors.
-  See `Issue 424 <https://github.com/collective/icalendar/issues/424>`_.
+  See :issue:`424`.
 
 - Remove untested and broken ``LocalTimezone`` and ``FixedOffset`` tzinfo
-  sub-classes, see `Issue 67 <https://github.com/collective/icalendar/issues/67>`_
+  sub-classes, see :issue:`67`
 
 - Remove Python 3.7 as compatible. icalendar is compatible with Python
   versions 3.8 - 3.12, and PyPy3.

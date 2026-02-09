@@ -1,6 +1,12 @@
-"""This module contains compatibility code for older Python versions."""
+"""This module contains compatibility code for different Python versions.
 
-import sys
+All compatibility checks and imports should go here.
+This way, we can centralize the handling of different Python versions.
+
+Do NOT import this module directly if you use icalendar.
+Members will be added and removed without deprecation warnings.
+"""
+
 from typing import TYPE_CHECKING
 
 try:
@@ -11,31 +17,24 @@ except ImportError:
     except ImportError:
         Self = "Self"
 
-try:
-    import zoneinfo
-except ImportError:
-    import backports.zoneinfo as zoneinfo
-
-ZoneInfo = zoneinfo.ZoneInfo
-
 if TYPE_CHECKING:
-    if sys.version_info >= (3, 10):
-        from typing import TypeGuard
-    else:
-        from typing_extensions import TypeGuard
+    import sys
+    from typing import TypeGuard
 
     if sys.version_info >= (3, 13):
         from typing import TypeIs
     else:
         from typing_extensions import TypeIs
+    if sys.version_info >= (3, 11):
+        from typing import Self
+    else:
+        from typing_extensions import Self
 else:
     # we cannot use a TypeGuard = "TypeGuard" hack since it's used with a parameter
-    TypeGuard = TypeIs = None
+    TypeGuard = TypeIs = Self = None
 
 __all__ = [
     "Self",
-    "TypeIs",
     "TypeGuard",
-    "ZoneInfo",
-    "zoneinfo",
+    "TypeIs",
 ]

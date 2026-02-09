@@ -14,13 +14,14 @@ extensions = [
     "notfound.extension",
     "sphinx.ext.apidoc",
     "sphinx.ext.autodoc",
-    "sphinx.ext.viewcode",
-    "sphinx_copybutton",
-    "sphinx_design",
-    "sphinx_reredirects",
     "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
+    "sphinx.ext.viewcode",
     "sphinx_autodoc_typehints",  # must be loaded after sphinx.ext.napoleon. See https://github.com/tox-dev/sphinx-autodoc-typehints/issues/15
+    "sphinx_copybutton",
+    "sphinx_design",
+    "sphinx_issues",
+    "sphinx_reredirects",
 ]
 source_suffix = {".rst": "restructuredtext"}
 master_doc = "index"
@@ -91,6 +92,7 @@ html_theme_options = {
     "navbar_start": ["navbar-logo", "version-switcher"],
     "navigation_with_keys": True,
     "search_bar_text": "Search",
+    "secondary_sidebar_items": ["edit-this-page", "page-toc", "sourcelink"],
     "show_nav_level": 2,
     "show_toc_level": 2,
     "show_version_warning_banner": True,
@@ -114,15 +116,70 @@ html_js_files = [
     ("js/custom-icons.js", {"defer": "defer"}),
 ]
 pygments_style = "sphinx"
+smartquotes_action = "De"
+
+# -- linkcheck builder configuration ----------------------------------
+# Ignore localhost
+linkcheck_ignore = [
+    # Ignore pages that require authentication
+    r"https://app.readthedocs.org/dashboard/icalendar/users/create/",
+    r"https://docutils.sourceforge.io/rst.html",
+    r"https://github.com/collective/icalendar/fork",
+    r"https://github.com/collective/icalendar/settings/",
+    r"https://groups.google.com/g/icalendar-coc/",
+    r"https://pypi.org/manage/project/icalendar/collaboration/",
+    # Ignore specific anchors
+    r"https://github.com/actions/python-versions#support-policy",
+    r"https://github.com/collective/icalendar/blob/main/CODE_OF_CONDUCT.md#enforcement",
+    r"https://github.com/collective/icalendar/blob/main/README.rst#related-projects",
+    r"https://github.com/pre-commit/pre-commit-hooks#debug-statements",
+    r"https://up-for-grabs.net/#/filters",
+    # Ignore links that are unstable
+    r"https://www.unicode.org/cldr/cldr-aux/charts/29/supplemental/zone_tzid.html",
+]
+linkcheck_anchors = True
+linkcheck_timeout = 5
+linkcheck_retries = 1
 
 
-# -- Napolean configuration ----------------------------------
-napoleon_use_param = True
-napoleon_google_docstring = True
-napoleon_attr_annotations = True
+# -- notfound.extension configuration ----------------------------------
+# https://sphinx-notfound-page.readthedocs.io/en/latest/configuration.html
+notfound_template = "404.html"
 
 
-# -- Intersphinx configuration ----------------------------------
+# -- sphinx.ext.apidoc options -------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/extensions/apidoc.html#
+apidoc_modules = [
+    {
+        "path": "../src/icalendar",
+        "destination": "reference/api",
+        "exclude_patterns": [
+            "**/tests*",
+            "**/timezone/equivalent_timezone_ids_result*",
+        ],
+        "separate_modules": True,
+        "automodule_options": {
+            "ignore-module-all",
+            "members",
+            "show-inheritance",
+            "undoc-members",
+        },
+    }
+]
+
+
+# -- sphinx.ext.autodoc options -------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html
+autodoc_default_options = {
+    "ignore-module-all": True,
+    "members": True,
+    "show-inheritance": True,
+    "special-members": "__init__",
+    "undoc-members": True,
+}
+
+
+# -- sphinx.ext.intersphinx configuration ----------------------------------
 
 # This extension can generate automatic links to the documentation of objects
 # in other projects. Usage is simple: whenever Sphinx encounters a
@@ -136,36 +193,27 @@ napoleon_attr_annotations = True
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "sphinx": ("https://www.sphinx-doc.org/en/master/", None),
+    "typing": ("https://typing.python.org/en/latest/", None),
 }
 
 
-# -- linkcheck configuration ----------------------------------
-# Ignore localhost
-linkcheck_ignore = [
-    # Ignore pages that require authentication
-    r"https://app.readthedocs.org/dashboard/icalendar/users/create/",
-    r"https://github.com/collective/icalendar/fork",
-    r"https://github.com/collective/icalendar/settings/",
-    r"https://groups.google.com/g/icalendar-coc/",
-    r"https://pypi.org/manage/project/icalendar/collaboration/",
-    # Ignore specific anchors
-    r"https://github.com/actions/python-versions#support-policy",
-    r"https://github.com/collective/icalendar/blob/main/CODE_OF_CONDUCT.md#enforcement",
-    r"https://github.com/collective/icalendar/blob/main/README.rst#related-projects",
-    r"https://up-for-grabs.net/#/filters",
-    # Ignore links that are unstable
-    r"https://www.unicode.org/cldr/cldr-aux/charts/29/supplemental/zone_tzid.html",
-]
-linkcheck_anchors = True
-linkcheck_timeout = 5
-linkcheck_retries = 1
-
-# -- Options for sphinx-notfound-page ----------------------------------
-# https://sphinx-notfound-page.readthedocs.io/en/latest/configuration.html
-notfound_template = "404.html"
+# -- sphinx.ext.napoleon configuration ----------------------------------
+napoleon_use_param = True
+napoleon_google_docstring = True
+napoleon_attr_annotations = True
 
 
-# -- sphinx-reredirects configuration ----------------------------------
+# -- sphinx_copybutton configuration ----------------------------------
+# https://sphinx-copybutton.readthedocs.io/en/latest/use.html
+# Exclude line numbers, prompts, and console output when copying code blocks.
+copybutton_exclude = ".linenos, .gp, .go"
+
+
+# -- sphinx_issues configuration ----------------------------------
+issues_github_path = "collective/icalendar"
+
+
+# -- sphinx_reredirects configuration ----------------------------------
 # https://documatt.com/sphinx-reredirects/usage.html
 redirects = {
     "about": "index.html",
@@ -179,7 +227,7 @@ redirects = {
     "maintenance": "contribute/maintenance.html",
     "security": "https://github.com/collective/icalendar/blob/main/SECURITY.md",
     "usage": "how-to/usage.html",
-    }
+}
 
 man_pages = [("index", "icalendar", "icalendar Documentation", ["Plone Foundation"], 1)]
 

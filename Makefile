@@ -9,7 +9,6 @@ PAPER           ?=
 # Internal variables.
 SPHINXBUILD     = "$(realpath .venv/bin/sphinx-build)"
 SPHINXAUTOBUILD = "$(realpath .venv/bin/sphinx-autobuild)"
-SPHINXAPIDOC    = "$(realpath .venv/bin/sphinx-apidoc)"
 DOCS_DIR        = ./docs/
 BUILDDIR        = ../_build
 PAPEROPT_a4     = -D latex_paper_size=a4
@@ -17,7 +16,7 @@ PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 VALEFILES       := $(shell find $(DOCS_DIR) -type f -name "*.rst" -print)  # Also add `src` for docstrings.
 VALEOPTS        ?=
-PYTHONVERSION   = >=3.11,<3.14
+PYTHONVERSION   = >=3.11,<3.15
 
 # Add the following 'help' target to your Makefile
 # And add help text after each target name starting with '\#\#'
@@ -103,21 +102,29 @@ linkcheck: .venv  ## Run linkcheck
 
 .PHONY: linkcheckbroken
 linkcheckbroken: .venv  ## Run linkcheck and show only broken links
-	cd $(DOCS_DIR) && $(SPHINXBUILD) -b linkcheck $(ALLSPHINXOPTS) $(BUILDDIR)/linkcheck | GREP_COLORS='0;31' grep -wi "broken\|redirect" --color=always | GREP_COLORS='0;31' grep -vi "https://github.com/collective/icalendar/issues/" --color=always && if test $$? = 0; then exit 1; fi || test $$? = 1
+	cd $(DOCS_DIR) && $(SPHINXBUILD) -b linkcheck $(ALLSPHINXOPTS) $(BUILDDIR)/linkcheck | GREP_COLORS='0;31' grep -wi "[^.]broken\|redirect" --color=always && if test $$? = 0; then exit 1; fi || test $$? = 1
 	@echo
 	@echo "Link check complete; look for any errors in the above output " \
 		"or in $(BUILDDIR)/linkcheck/ ."
 
-# See https://github.com/collective/icalendar/issues/853 and above comment
 .PHONY: vale
 vale: .venv  ## Run Vale style, grammar, and spell checks
 	@uv run vale sync
-	@uv run vale --no-wrap $(VALEOPTS) $(VALEFILES)
-	@echo
-	@echo "Vale is finished; look for any errors in the above output."
+	@uv run vale --no-wrap $(VALEOPTS) $(VALEFILES); \
+	if [ $$? = 0 ]; then \
+		echo; \
+		echo "Vale passed!"; \
+	else \
+		echo; \
+		echo "Vale spell, style, and grammar check failed."; \
+		echo "Read the error messages above to see what didn't pass."; \
+		echo "For guidance of how to correct the errors, see:"; \
+		echo "https://icalendar.readthedocs.io/en/latest/contribute/documentation/build-check.html#spelling-grammar-and-style"; \
+	fi
 
 .PHONY: doctest
 doctest: .venv  ## Test snippets and docstrings in the documentation
+	@echo;
 	@pytest src/icalendar/tests/test_with_doctest.py
 
 .PHONY: test
@@ -127,14 +134,10 @@ test: clean linkcheckbroken  ## Clean docs build, then run vale and linkcheckbro
 
 
 # development
-.PHONY: apidoc
-apidoc: .venv  ## Generate API documentation source files
-	export SPHINX_APIDOC_OPTIONS="members,show-inheritance,undoc-members,ignore-module-all" && \
-	cd $(DOCS_DIR) && $(SPHINXAPIDOC) \
- 		-f -M -e --remove-old \
- 		-o reference/api ../src \
- 		../src/icalendar/tests \
- 		../src/icalendar/timezone/equivalent_timezone_ids_result.py
+.PHONY: dev
+dev: .venv  ## Install required Python, create Python virtual environment, install package and development requirements
+	@uv sync --group dev
+	@pre-commit install
 
 .PHONY: all
 all: clean linkcheck html  ## Clean docs build, then run linkcheck, and build html

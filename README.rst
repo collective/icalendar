@@ -95,6 +95,8 @@ Related projects
 `icalendar-anonymizer <https://pypi.org/project/icalendar-anonymizer/>`_
     Anonymize iCalendar files by stripping personal data while preserving technical properties for bug reproduction.
 
+`ical2jcal <https://pypi.org/project/ical2jcal>`_
+    Convert between iCalendar and jCalendar.
 
 Change log
 ==========

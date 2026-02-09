@@ -53,10 +53,12 @@ from icalendar.parser import (
 # Property Data Value Types
 from icalendar.prop import (
     VPROPERTY,
+    AdrFields,
     TypesFactory,
     vAdr,
     vBinary,
     vBoolean,
+    vBrokenProperty,
     vCalAddress,
     vCategory,
     vDate,
@@ -87,6 +89,7 @@ from icalendar.prop.conference import Conference
 from icalendar.prop.image import Image
 
 # Switching the timezone provider
+from icalendar.prop.n import NFields
 from icalendar.timezone import is_utc, use_pytz, use_zoneinfo
 
 from .version import __version__, __version_tuple__, version, version_tuple
@@ -105,6 +108,7 @@ __all__ = [
     "TRANSP",
     "VALUE",
     "VPROPERTY",
+    "AdrFields",
     "Alarm",
     "AlarmTime",
     "Alarms",
@@ -126,6 +130,7 @@ __all__ = [
     "JCalParsingError",
     "Journal",
     "LocalTimezoneMissing",
+    "NFields",
     "Parameters",
     "Timezone",
     "TimezoneDaylight",
@@ -142,6 +147,7 @@ __all__ = [
     "vAdr",
     "vBinary",
     "vBoolean",
+    "vBrokenProperty",
     "vCalAddress",
     "vCategory",
     "vDDDLists",
@@ -158,7 +164,6 @@ __all__ = [
     "vOrg",
     "vPeriod",
     "vRecur",
-    "vSkip",
     "vSkip",
     "vText",
     "vTime",
