@@ -578,7 +578,7 @@ The following example filters through all subcomponents of the calendar, and if 
 
     >>> from icalendar import Calendar
     >>> calendar = Calendar.example()  # open a calendar
-    >>> find_christmas = lambda c: "christmas" in  c.get("SUMMARY", "").lower()
+    >>> find_christmas = lambda c: "christmas" in c.get("SUMMARY", "").lower()
     >>> for component in calendar.walk(select=find_christmas):
     ...     component["SUMMARY"] = component["SUMMARY"].upper()
     >>> print(calendar.events[1].summary)
