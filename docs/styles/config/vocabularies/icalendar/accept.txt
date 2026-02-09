@@ -28,4 +28,5 @@ subtyping
 (?i)unescaped
 uv
 vCard
+xCal
 Xcode
