@@ -91,6 +91,9 @@ class Component(CaselessDict):
     types_factory: ClassVar[TypesFactory] = TypesFactory.instance()
     _components_factory: ClassVar[ComponentFactory | None] = None
 
+    subcomponents: list[Component]
+    """All subcomponents of this component."""
+
     @classmethod
     def get_component_class(cls, name: str) -> type[Component]:
         """Return a component with this name.
