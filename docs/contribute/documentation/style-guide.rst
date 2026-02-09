@@ -264,12 +264,22 @@ Description
     Separate the summary and description with a blank line.
 
 ``Attributes``
-    Each attribute should consist of its name and a brief description.
-    By virtue of Sphinx extensions and the use of type hints for the Python object, you may omit the parameter's type, allowing Sphinx to automatically render it for you.
+    Each attribute should consist of its name, type, and a brief description.
+    
+    .. note::
+
+        If you know how to avoid manually entering the type for an attribute, please see :issue:`1156`.
 
 ``Parameters``
     Each parameter should consist of its name and a brief description.
-    By virtue of Sphinx extensions and the use of type hints for the Python object, you may omit the parameter's type, allowing Sphinx to automatically render it for you.
+    You must omit the parameter's type, allowing Sphinx extensions and the use of type hints to automatically render it for you.
+    This is especially true in a class's ``__init__`` method.
+
+    .. note::
+
+        Use "Parameters" instead of "Args" or "Arguments."
+        The term "Parameters" is preferred for consistency with Python's official terminology.
+        See `Python FAQ on arguments and parameters <https://docs.python.org/3/faq/programming.html#what-is-the-difference-between-arguments-and-parameters>`_ and :ref:`Napoleon's supported sections <sphinx:Sections>`.
 
 ``Returns``
     The return value consists of its return type and a brief description.

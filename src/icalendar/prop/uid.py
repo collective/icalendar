@@ -18,7 +18,7 @@ class vUid(vText):
     default_value: ClassVar[str] = "UID"
 
     @classmethod
-    def new(cls):
+    def new(cls) -> Self:
         """Create a new UID for convenience.
 
         .. code-block:: pycon

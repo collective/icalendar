@@ -56,16 +56,18 @@ class vFloat(float):
     default_value: ClassVar[str] = "FLOAT"
     params: Parameters
 
-    def __new__(cls, *args, params: dict[str, Any] | None = None, **kwargs):
+    def __new__(
+        cls, *args: Any, params: dict[str, Any] | None = None, **kwargs: Any
+    ) -> Self:
         self = super().__new__(cls, *args, **kwargs)
         self.params = Parameters(params)
         return self
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         return str(self).encode("utf-8")
 
     @classmethod
-    def from_ical(cls, ical):
+    def from_ical(cls, ical: str | float) -> Self:
         try:
             return cls(ical)
         except Exception as e:
