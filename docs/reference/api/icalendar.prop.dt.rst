@@ -8,7 +8,6 @@ Submodules
    :maxdepth: 4
 
    icalendar.prop.dt.base
-   icalendar.prop.dt.common
    icalendar.prop.dt.date
    icalendar.prop.dt.datetime
    icalendar.prop.dt.duration
