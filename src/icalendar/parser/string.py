@@ -1,4 +1,5 @@
 """Functions for manipulating strings and bytes."""
+
 import re
 
 from icalendar.parser_tools import DEFAULT_ENCODING
