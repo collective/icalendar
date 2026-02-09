@@ -255,20 +255,22 @@ All items should terminate with a period.
 
 The following docstrings items are the most frequently used in icalendar, although they may be others.
 
+.. important::
+
+    Classes should not have ``Attributes``, ``Parameters``,  ``Returns``, or ``Raises`` sections in their docstrings.
+    The ``__init__`` method's docstring gets automatically appended to its class's docstring by Sphinx.
+
 Summary
     Docstrings must begin with a one-line summary of the Python object, terminated by a period.
 
 Description
     When the one-line summary is insufficient to describe the Python object, then write an overall description of what it does, without going into details of how it does it.
     Leave implementation details to the code, and optionally inline code comments.
+
     Separate the summary and description with a blank line.
 
 ``Attributes``
     Each attribute should consist of its name, type, and a brief description.
-    
-    .. note::
-
-        If you know how to avoid manually entering the type for an attribute, please see :issue:`1156`.
 
 ``Parameters``
     Each parameter should consist of its name and a brief description.
