@@ -1,4 +1,7 @@
-"""This adds tests for refactoring."""
+"""Tests for issue #987: property class modularization.
+
+Verifies that mutable property types (vDDDLists, vRecur) are not hashable.
+"""
 
 from datetime import timedelta
 
