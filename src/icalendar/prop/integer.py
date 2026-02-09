@@ -41,7 +41,7 @@ class vInt(int):
     Returns:
         vInt instance
 
-    Example:
+    Examples:
 
         .. code-block:: text
 
@@ -66,7 +66,7 @@ class vInt(int):
             >>> integer
             432109876
 
-        Creating a PRIORITY property (1 = highest priority):
+        Create a PRIORITY property (1 = highest priority):
 
         .. code-block:: pycon
 
@@ -76,7 +76,7 @@ class vInt(int):
             >>> priority.to_ical()
             b'1'
 
-        Creating a SEQUENCE property (for versioning):
+        Create SEQUENCE property (for versioning):
 
         .. code-block:: pycon
 
