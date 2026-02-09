@@ -15,6 +15,7 @@ Nicco
 Params
 Penner
 (?i)Plone
+recur.recur
 reformats
 RFCs?
 sphinx_copybutton
