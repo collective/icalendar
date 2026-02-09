@@ -93,7 +93,9 @@ Documentation
   See :issue:`1004`.
 - Use Google style docstrings in :mod:`~icalendar.parser_tools`.
   See :issue:`1017`.
+- Document compatibility of icalendar with RFCs. See :issue:`1147`.
 - Added Upgrade guide. See :issue:`997`.
+- Fixed links in jCal usage documentation.
 - Enable sphinx-issues extension. :issue:`1091`
 - Replaced "Arguments" and "Args" with "Parameters". :issue:`1076`
 - Added documentation of how to set up a development environment with git. :issue:`906`
@@ -110,6 +112,7 @@ Documentation
   This restores cleaner and consistent rendering of docstrings in the :doc:`API Reference <../reference/api/icalendar>`.
   See `smartquotes_action <https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-smartquotes_action>`_.
 - Fix incorrect return type annotation in :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`. :issue:`1141`
+- Fixed broken links in ``docs/how-to/usage.rst`` documentation. Part of :issue:`1158`
 
 7.0.0a3 (2025-12-19)
 --------------------
