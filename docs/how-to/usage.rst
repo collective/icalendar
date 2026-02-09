@@ -605,7 +605,7 @@ The following example creates a calendar with an event in ``Europe/Zurich``, and
     ...     location="Zurich, Switzerland",
     ... )
     >>> calendar = Calendar.new(
-    ...     subcomponents=[event],    
+    ...     subcomponents=[event],
     ... )
     >>> calendar.add_missing_timezones()
     >>> 'Europe/Zurich' in [tz.tz_name for tz in calendar.timezones]
