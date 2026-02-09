@@ -542,12 +542,12 @@ Post your usage question to the `icalendar discussion Q&A category <https://gith
 You may :doc:`contribute answered questions to this section of the documentation <../contribute/documentation/index>` through a pull request, too.
 
 Convert iCalendar to JSON
--------------------------
++++++++++++++++++++++++++
 
 See the :doc:`jcal` documentation for how to convert iCalendar data to JSON.
 
 Print event information
------------------------
++++++++++++++++++++++++
 
 To print all events of an iCalendar, iterate through them and print each as shown.
 
@@ -568,7 +568,7 @@ To print all events of an iCalendar, iterate through them and print each as show
     -   :meth:`~icalendar.cal.component.Component.walk`
 
 Modify specific events
-----------------------
+++++++++++++++++++++++
 
 To find :attr:`~icalendar.cal.component.Component.subcomponents` that match specific requirements, use :meth:`~icalendar.cal.component.Component.walk`.
 
@@ -585,7 +585,7 @@ The following example filters through all subcomponents of the calendar, and if 
     ORTHODOX CHRISTMAS
 
 Add timezones to a calendar
----------------------------
++++++++++++++++++++++++++++
 
 Dates with times in icalendar can be timezone specific.
 ``UTC`` is such a timezone.
