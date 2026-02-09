@@ -111,6 +111,8 @@ Documentation
   See `smartquotes_action <https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-smartquotes_action>`_.
 - Fix incorrect return type annotation in :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`. :issue:`1141`
 - Fixed broken links in ``docs/how-to/usage.rst`` documentation. Part of :issue:`1158`
+- Configured Sphinx to append the docstring from the `__init__` method into its class docstring. :issue:`1156`
+
 
 7.0.0a3 (2025-12-19)
 --------------------
