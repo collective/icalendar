@@ -1,8 +1,6 @@
-from typing import List, Union
-
 SEQUENCE_TYPES = (list, tuple)
 DEFAULT_ENCODING = "utf-8"
-ICAL_TYPE = Union[str, bytes]
+ICAL_TYPE = str | bytes
 
 
 def from_unicode(value: ICAL_TYPE, encoding="utf-8") -> bytes:
@@ -17,7 +15,7 @@ def from_unicode(value: ICAL_TYPE, encoding="utf-8") -> bytes:
     """
     if isinstance(value, bytes):
         return value
-    elif isinstance(value, str):
+    if isinstance(value, str):
         try:
             return value.encode(encoding)
         except UnicodeEncodeError:
@@ -35,7 +33,7 @@ def to_unicode(value: ICAL_TYPE, encoding="utf-8-sig") -> str:
     """
     if isinstance(value, str):
         return value
-    elif isinstance(value, bytes):
+    if isinstance(value, bytes):
         try:
             return value.decode(encoding)
         except UnicodeDecodeError:
@@ -45,8 +43,8 @@ def to_unicode(value: ICAL_TYPE, encoding="utf-8-sig") -> str:
 
 
 def data_encode(
-    data: Union[ICAL_TYPE, dict, list], encoding=DEFAULT_ENCODING
-) -> Union[bytes, List[bytes], dict]:
+    data: ICAL_TYPE | dict | list, encoding=DEFAULT_ENCODING
+) -> bytes | list[bytes] | dict:
     """Encode all datastructures to the given encoding.
 
     Currently Unicode strings, dicts, and lists are supported.
@@ -57,18 +55,17 @@ def data_encode(
     # https://stackoverflow.com/questions/1254454/fastest-way-to-convert-a-dicts-keys-values-from-unicode-to-str
     if isinstance(data, str):
         return data.encode(encoding)
-    elif isinstance(data, dict):
+    if isinstance(data, dict):
         return dict(map(data_encode, iter(data.items())))
-    elif isinstance(data, list) or isinstance(data, tuple):
+    if isinstance(data, (list, tuple)):
         return list(map(data_encode, data))
-    else:
-        return data
+    return data
 
 
 __all__ = [
     "DEFAULT_ENCODING",
-    "SEQUENCE_TYPES",
     "ICAL_TYPE",
+    "SEQUENCE_TYPES",
     "data_encode",
     "from_unicode",
     "to_unicode",
