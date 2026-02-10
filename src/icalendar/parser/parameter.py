@@ -310,7 +310,7 @@ class Parameters(CaselessDict):
         """
         return self.keys()
 
-    def to_ical(self, sorted: bool = True):  # noqa: A002, FBT001
+    def to_ical(self, sorted: bool = True):  # noqa: A002
         """Returns an :rfc:`5545` representation of the parameters.
 
         Parameters:

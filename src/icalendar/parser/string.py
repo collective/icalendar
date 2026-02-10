@@ -8,7 +8,8 @@ from icalendar.parser_tools import DEFAULT_ENCODING
 def escape_char(text: str | bytes) -> str | bytes:
     r"""Format value according to iCalendar TEXT escaping rules.
 
-    Escapes special characters in text values according to :rfc:`5545#section-3.3.11` rules.
+    Escapes special characters in text values according to :rfc:`5545#section-3.3.11`
+    rules.
     The order of replacements matters to avoid double-escaping.
 
     Parameters:
