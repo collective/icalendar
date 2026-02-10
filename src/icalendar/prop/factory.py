@@ -42,7 +42,7 @@ class TypesFactory(CaselessDict):
     both kinds.
     """
 
-    _instance: ClassVar[TypesFactory] = None
+    _instance: ClassVar[TypesFactory | None] = None
 
     def instance() -> TypesFactory:
         """Return a singleton instance of this class."""
@@ -226,7 +226,7 @@ class TypesFactory(CaselessDict):
         """
         # Special case: RDATE and EXDATE always use vDDDLists to support list values
         # regardless of the VALUE parameter
-        if name.upper() in ("RDATE", "EXDATE"):  # and value_param is None:
+        if name.upper() in ("RDATE", "EXDATE"):
             return self["date-time-list"]
 
         # Only use VALUE parameter for known properties that support multiple value

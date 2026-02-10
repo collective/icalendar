@@ -165,7 +165,7 @@ class vDuration(TimeBase):
         ]
 
     @classmethod
-    def parse_jcal_value(cls, jcal: str) -> timedelta | None:
+    def parse_jcal_value(cls, jcal: str) -> timedelta:
         """Parse a jCal string to a :py:class:`datetime.timedelta`.
 
         Raises:
