@@ -85,8 +85,7 @@ While some attributes might be empty, they can have useful default values.
 Upper case properties
 ---------------------
 
-Upper case properties refer to both the component properties and the iCalendar :rfc:`5545` property name.
-They're empty, or :obj:`None` if they're not set.
+Upper case properties are either empty, or :obj:`None`, if they're not set.
 They can be accessed as attributes.
 
 .. code-block:: pycon
