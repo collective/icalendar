@@ -54,8 +54,6 @@ Based on the created event above, the following example shows how to access valu
 Lower case properties
 ---------------------
 
-Lower case properties refer to the calculated attributes of the component, but not to the iCalendar :rfc:`5545` property name.
-
 Continuing from the previous example, the next example shows how to access values by attributes.
 
 .. code-block:: pycon
