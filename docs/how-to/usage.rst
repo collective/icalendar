@@ -474,7 +474,7 @@ By extending the event with subcomponents, you can create multiple alarms.
     >>> event.add_component(alarm_24h_before)
 
 You can even add a recurrence, either from a dictionary or a string.
-Note that if you want to add the recurrence rule from a string, you must use the :class:`icalendar.prop.vRecur` property.
+Note that if you want to add the recurrence rule from a string, you must use the :class:`~icalendar.prop.recur.recur.vRecur` property.
 Otherwise the rule will be escaped, making it invalid.
 
 .. code-block:: pycon
