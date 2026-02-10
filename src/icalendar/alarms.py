@@ -50,7 +50,8 @@ class AlarmTime:
         snoozed_until: Optional[datetime] = None,
         parent: Optional[Parent] = None,
     ):
-        """Create a new AlarmTime.
+        """You can create an instance of ``AlarmTime`` with any of its
+        parameters.
 
         Parameters:
             alarm: The underlying alarm component.
