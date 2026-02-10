@@ -7,8 +7,6 @@ See
 - https://www.rfc-editor.org/rfc/rfc7529.html
 """
 
-from typing import Union
-
 import pytest
 
 from icalendar.cal.calendar import Calendar
@@ -16,7 +14,7 @@ from icalendar.cal.event import Event
 from icalendar.cal.journal import Journal
 from icalendar.cal.todo import Todo
 
-CTJE = Union[Calendar, Event, Journal, Todo]
+CTJE = Calendar | Event | Journal | Todo
 
 
 @pytest.fixture(params=[Event, Calendar, Todo, Journal])

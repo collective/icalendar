@@ -253,7 +253,10 @@ def test_split_on_unescaped_comma():
     assert split_on_unescaped_comma("a\\,b\\,c") == ["a,b,c"]
 
     # Mixed
-    assert split_on_unescaped_comma("Work,Personal\\, Urgent") == ["Work", "Personal, Urgent"]
+    assert split_on_unescaped_comma("Work,Personal\\, Urgent") == [
+        "Work",
+        "Personal, Urgent",
+    ]
 
     # Empty string
     assert split_on_unescaped_comma("") == [""]
