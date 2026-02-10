@@ -232,10 +232,8 @@ extend-safe-fixes = [
     "A002",    # argument shadowing builtin (sorted)
     "DTZ001",  # datetime() called without tzinfo
     "E501",    # line too long (docstrings with RFC references)
-    "FBT001",  # boolean positional argument
     "N802",    # function name should be lowercase (TRIGGER_RELATED etc.)
     "PERF203", # try-except in loop (parsing loop)
-    "PLC0415", # import outside top-level (circular import avoidance)
     "PLW1641", # eq without hash (Component intentionally unhashable)
     "PLW2901", # loop variable overwritten
     "SLF001",  # private member access
@@ -244,12 +242,15 @@ extend-safe-fixes = [
     "DTZ001",  # datetime() called without tzinfo
     "DTZ007",  # naive datetime from strptime
     "E501",    # line too long (docstrings with code examples)
-    "FBT003",  # boolean positional value in function call
     "N801",    # Class name should use CamelCase
     "PERF203", # try-except in loop
-    "PLC0415", # import outside top-level (circular import avoidance)
     "PLW1641", # eq without hash (mutable structured types)
     "PLW2901", # loop variable overwritten
+]
+"src/icalendar/**" = [
+    "FBT001",  # boolean positional argument
+    "FBT003",  # boolean positional value in function call
+    "PLC0415", # import outside top-level (circular import avoidance)
 ]
 "src/icalendar/fuzzing/*" = [
     "T201",   # print found
