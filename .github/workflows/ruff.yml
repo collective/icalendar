@@ -15,7 +15,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install . --group formatting
       - name: Run the ruff formatter to change files
-        run: ruff format .
+        run: ruff format --check .
       - name: Run ruff checks on the files
         run: ruff check --fix
       - name: Fail if we detect any changes on the file system
