@@ -2,11 +2,11 @@
 
 from datetime import datetime, time
 from typing import TYPE_CHECKING
+from zoneinfo import ZoneInfo
 
 import pytest
 
 from icalendar import Component, vDatetime, vDDDLists, vDDDTypes, vTime
-from zoneinfo import ZoneInfo
 from icalendar.parser_tools import to_unicode
 from icalendar.prop import VPROPERTY
 from icalendar.timezone.tzid import is_utc

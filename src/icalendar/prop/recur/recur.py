@@ -98,7 +98,7 @@ class vRecur(CaselessDict):
             >>> event.add('RRULE', 'FREQ=DAILY;COUNT=10')
             >>> event.rrules
             [vRecur({'FREQ': ['DAILY'], 'COUNT': [10]})]
-    """  # noqa: E501
+    """
 
     default_value: ClassVar[str] = "RECUR"
     params: Parameters
@@ -177,7 +177,7 @@ class vRecur(CaselessDict):
         for key, vals in self.sorted_items():
             typ = self.types.get(key, vText)
             if not isinstance(vals, SEQUENCE_TYPES):
-                vals = [vals]  # noqa: PLW2901
+                vals = [vals]
             param_vals = b",".join(typ(val).to_ical() for val in vals)
 
             # CaselessDict keys are always unicode

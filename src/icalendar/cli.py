@@ -4,6 +4,7 @@
 import argparse
 import sys
 from datetime import datetime
+from pathlib import Path
 
 from icalendar import __version__
 from icalendar.cal.calendar import Calendar
@@ -78,15 +79,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
 
     parser.add_argument(
-        "calendar_files", nargs="+",
-        help="one or more .ics files (use '-' for stdin)"
+        "calendar_files", nargs="+", help="one or more .ics files (use '-' for stdin)"
     )
 
     parser.add_argument(
-        "--output",
-        "-o",
-        default="-",
-        help="output file path (use '-' for stdout)"
+        "--output", "-o", default="-", help="output file path (use '-' for stdout)"
     )
 
     parser.add_argument(
@@ -103,7 +100,7 @@ def main():
         output_file = sys.stdout
         close_output = False
     else:
-        output_file = open(argv.output, "w", encoding="utf-8")
+        output_file = Path(argv.output).open("w", encoding="utf-8")  # noqa: SIM115
         close_output = True
 
     try:
@@ -113,19 +110,21 @@ def main():
                 f = sys.stdin
                 close_input = False
             else:
-                f = open(path, "r", encoding="utf-8-sig")
+                f = Path(path).open(encoding="utf-8-sig")  # noqa: SIM115
                 close_input = True
 
             try:
                 calendar = Calendar.from_ical(f.read())
-                for event in calendar.walk("vevent"):
-                    output_file.write(view(event) + "\n\n")
+                output_file.writelines(
+                    view(event) + "\n\n" for event in calendar.walk("vevent")
+                )
             finally:
                 if close_input:
                     f.close()
     finally:
         if close_output:
             output_file.close()
+
 
 __all__ = ["main", "view"]
 
