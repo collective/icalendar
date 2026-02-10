@@ -13,5 +13,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install . --group dev
-      - name: Run Ruff
-        run: ruff check .
+      - name: Run the ruff formatter to change files
+        run: ruff format .
+      - name: Run ruff checks on the files
+        run: ruff check --fix
+      - name: Fail if we detect any changes on the file system
+        run: git diff --exit-code
