@@ -38,8 +38,7 @@ class PYTZ(TZProvider):
         return tzid in pytz.all_timezones
 
     def fix_rrule_until(self, rrule: rrule, ical_rrule: prop.vRecur) -> None:
-        """Make sure the until value works for the rrule generated from the ical_rrule.
-        """
+        """Make sure the until value works for rrules generated from the ical_rrule."""
         if not {"UNTIL", "COUNT"}.intersection(ical_rrule.keys()):
             # pytz.timezones don't know any transition dates after 2038
             # either
