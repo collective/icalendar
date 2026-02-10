@@ -206,7 +206,7 @@ ICS_FILES = [
         CALENDARS_FOLDER.iterdir(), TIMEZONES_FOLDER.iterdir(), EVENTS_FOLDER.iterdir()
     )
     if file.name not in BROKEN_SOURCE_FILES
-    and file.suffix in (".ics",)
+    and file.suffix == ".ics"
     and FUZZ_TESTCASES_BROKEN_CALENDARS not in file.name
 ]
 
@@ -216,7 +216,7 @@ JCAL_FILES = [
         CALENDARS_FOLDER.iterdir(), TIMEZONES_FOLDER.iterdir(), EVENTS_FOLDER.iterdir()
     )
     if file.name not in BROKEN_SOURCE_FILES
-    and file.suffix in (".jcal",)
+    and file.suffix == ".jcal"
     and FUZZ_TESTCASES_BROKEN_CALENDARS not in file.name
 ]
 
