@@ -240,9 +240,16 @@ extend-safe-fixes = [
     "PLW2901", # loop variable overwritten
     "SLF001",  # private member access
 ]
-"src/icalendar/prop/*.py" = [
+"src/icalendar/prop/**" = [
+    "DTZ001",  # datetime() called without tzinfo
+    "DTZ007",  # naive datetime from strptime
+    "E501",    # line too long (docstrings with code examples)
+    "FBT003",  # boolean positional value in function call
     "N801",    # Class name should use CamelCase
-    "PLC0415", # Import property within class
+    "PERF203", # try-except in loop
+    "PLC0415", # import outside top-level (circular import avoidance)
+    "PLW1641", # eq without hash (mutable structured types)
+    "PLW2901", # loop variable overwritten
 ]
 "src/icalendar/fuzzing/*" = [
     "T201",   # print found

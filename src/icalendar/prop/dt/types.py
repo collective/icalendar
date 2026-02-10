@@ -153,7 +153,7 @@ class vDDDTypes(TimeBase):
         for jcal_type in (vDatetime, vDate, vTime, vDuration):
             try:
                 return jcal_type.parse_jcal_value(jcal)
-            except JCalParsingError:  # noqa: PERF203
+            except JCalParsingError:
                 pass
         raise JCalParsingError(
             "Cannot parse date, time, date-time, duration, or period.", cls, value=jcal

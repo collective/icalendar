@@ -1,6 +1,5 @@
 """The ORG property from :rfc:`6350`."""
 
-
 from typing import Any, ClassVar
 
 from icalendar.compatibility import Self
@@ -12,10 +11,12 @@ from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
 class vOrg:
     r"""vCard ORG (Organization) structured property per :rfc:`6350#section-6.6.4`.
 
-    The ORG property specifies the organizational name and units associated with the vCard.
+    The ORG property specifies the organizational name and units
+    associated with the vCard.
 
-    Its value is a structured type consisting of components separated by semicolons.
-    The components are the organization name, followed by zero or more levels of organizational unit names:
+    Its value is a structured type consisting of components separated
+    by semicolons. The components are the organization name, followed
+    by zero or more levels of organizational unit names:
 
     .. code-block:: text
 
@@ -71,6 +72,7 @@ class vOrg:
     def to_ical(self) -> bytes:
         """Generate vCard format with semicolon-separated fields."""
         from icalendar.prop.text import vText
+
         parts = [vText(f).to_ical().decode(DEFAULT_ENCODING) for f in self.fields]
         return ";".join(parts).encode(DEFAULT_ENCODING)
 
@@ -136,8 +138,9 @@ class vOrg:
         JCalParsingError.validate_property(jcal_property, cls)
         if len(jcal_property) < 4:  # name, params, value_type, at least 1 field
             raise JCalParsingError(
-                f"ORG must have at least 4 elements (name, params, value_type, org name), "
-                f"got {len(jcal_property)}"
+                "ORG must have at least 4 elements"
+                " (name, params, value_type, org name),"
+                f" got {len(jcal_property)}"
             )
         for i, field in enumerate(jcal_property[3:], start=3):
             JCalParsingError.validate_value_type(field, str, cls, i)
@@ -150,5 +153,6 @@ class vOrg:
     def examples(cls) -> list[Self]:
         """Examples of vOrg."""
         return [cls(("ABC Inc.", "North American Division", "Marketing"))]
+
 
 __all__ = ["vOrg"]
