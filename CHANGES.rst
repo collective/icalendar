@@ -41,6 +41,7 @@ Minor changes
 - Add type hints to remaining prop value classes (vText, vCalAddress, vCategory, vGeo, vN, vOrg, vAdr, vBrokenProperty, vUid, Conference, Image). :issue:`938`
 - Added type hints and overloads to :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>` and :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>` to support ``multiple=True/False`` return types. :issue:`1129`
 - CI: Print a link to Vale documentation when the spell checker fails.
+- Remove ``bootstrap.py`` and ``buildout.cfg`` files as they are old build configurations. :pull:`1171`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
