@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime, tzinfo
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 import pytz
 from pytz.tzinfo import DstTzInfo
@@ -33,16 +33,17 @@ class PYTZ(TZProvider):
         """Localize a datetime to a timezone."""
         return tz.localize(dt)
 
-    def knows_timezone_id(self, id: str) -> bool:
+    def knows_timezone_id(self, tzid: str) -> bool:
         """Whether the timezone is already cached by the implementation."""
-        return id in pytz.all_timezones
+        return tzid in pytz.all_timezones
 
     def fix_rrule_until(self, rrule: rrule, ical_rrule: prop.vRecur) -> None:
-        """Make sure the until value works for the rrule generated from the ical_rrule."""
+        """Make sure the until value works for the rrule generated from the ical_rrule.
+        """
         if not {"UNTIL", "COUNT"}.intersection(ical_rrule.keys()):
             # pytz.timezones don't know any transition dates after 2038
             # either
-            rrule._until = datetime(2038, 12, 31, tzinfo=pytz.UTC)
+            rrule._until = datetime(2038, 12, 31, tzinfo=pytz.UTC)  # noqa: SLF001
 
     def create_timezone(self, tz: Timezone.Timezone) -> tzinfo:
         """Create a pytz timezone from the given information."""
@@ -59,7 +60,7 @@ class PYTZ(TZProvider):
         )
         return cls()
 
-    def timezone(self, name: str) -> Optional[tzinfo]:
+    def timezone(self, name: str) -> tzinfo | None:
         """Return a timezone with a name or None if we cannot find it."""
         try:
             return pytz.timezone(name)

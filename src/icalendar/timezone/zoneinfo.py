@@ -6,6 +6,7 @@ import copy
 import copyreg
 import functools
 import threading
+import zoneinfo
 from datetime import datetime, tzinfo
 from io import StringIO
 from typing import TYPE_CHECKING
@@ -14,7 +15,6 @@ from dateutil.rrule import rrule, rruleset
 from dateutil.tz import tzical
 from dateutil.tz.tz import _tzicalvtz
 
-import zoneinfo
 from icalendar.tools import is_date, to_datetime
 
 from .provider import TZProvider
@@ -101,7 +101,7 @@ class ZONEINFO(TZProvider):
                         sub.pop(attr)
             for sub in tz.subcomponents:
                 start: vDDDTypes = sub.get("DTSTART")
-                if start and hasattr(start, 'dt') and is_date(start.dt):
+                if start and hasattr(start, "dt") and is_date(start.dt):
                     # ValueError: Unsupported DTSTART param in VTIMEZONE: VALUE=DATE
                     sub.DTSTART = to_datetime(start.dt)
             return self._create_timezone(tz)
