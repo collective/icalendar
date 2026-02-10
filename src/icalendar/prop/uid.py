@@ -1,6 +1,5 @@
 """UID values from :rfc:`9253`."""
 
-
 import uuid
 from typing import ClassVar
 
@@ -50,5 +49,6 @@ class vUid(vText):
     def examples(cls) -> list[Self]:
         """Examples of vUid."""
         return [cls("d755cef5-2311-46ed-a0e1-6733c9e15c63")]
+
 
 __all__ = ["vUid"]

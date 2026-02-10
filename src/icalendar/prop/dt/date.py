@@ -111,7 +111,7 @@ class vDate(TimeBase):
         """
         JCalParsingError.validate_value_type(jcal, str, cls)
         try:
-            return datetime.strptime(jcal, "%Y-%m-%d").date()  # noqa: DTZ007
+            return datetime.strptime(jcal, "%Y-%m-%d").date()
         except ValueError as e:
             raise JCalParsingError("Cannot parse date.", cls, value=jcal) from e
 
