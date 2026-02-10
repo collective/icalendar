@@ -111,6 +111,9 @@ Documentation
   See `smartquotes_action <https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-smartquotes_action>`_.
 - Fix incorrect return type annotation in :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`. :issue:`1141`
 - Fixed broken links in ``docs/how-to/usage.rst`` documentation. Part of :issue:`1158`
+- Changed Sphinx configuration to inherit from ``CaselessDict`` and display all of its members in the in-page navigation.
+  Fixed broken cross-component links in ``Availability.new()``. :issue:`994`
+
 
 7.0.0a3 (2025-12-19)
 --------------------
