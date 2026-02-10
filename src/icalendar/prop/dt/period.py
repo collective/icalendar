@@ -158,8 +158,8 @@ class vPeriod(TimeBase):
     def examples(cls) -> list[Self]:
         """Examples of vPeriod."""
         return [
-            vPeriod((datetime(2025, 11, 10, 16, 35), timedelta(hours=1, minutes=30))),  # noqa: DTZ001
-            vPeriod((datetime(2025, 11, 10, 16, 35), datetime(2025, 11, 10, 18, 5))),  # noqa: DTZ001
+            vPeriod((datetime(2025, 11, 10, 16, 35), timedelta(hours=1, minutes=30))),
+            vPeriod((datetime(2025, 11, 10, 16, 35), datetime(2025, 11, 10, 18, 5))),
         ]
 
     from icalendar.param import VALUE

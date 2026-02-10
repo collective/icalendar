@@ -126,11 +126,11 @@ class vDatetime(TimeBase):
                 int(ical[13:15]),  # second
             )
             if tzinfo:
-                return tzp.localize(datetime(*timetuple), tzinfo)  # noqa: DTZ001
+                return tzp.localize(datetime(*timetuple), tzinfo)
             if not ical[15:]:
-                return datetime(*timetuple)  # noqa: DTZ001
+                return datetime(*timetuple)
             if ical[15:16] == "Z":
-                return tzp.localize_utc(datetime(*timetuple))  # noqa: DTZ001
+                return tzp.localize_utc(datetime(*timetuple))
         except Exception as e:
             raise ValueError(f"Wrong datetime format: {ical}") from e
         raise ValueError(f"Wrong datetime format: {ical}")
@@ -138,7 +138,7 @@ class vDatetime(TimeBase):
     @classmethod
     def examples(cls) -> list[Self]:
         """Examples of vDatetime."""
-        return [cls(datetime(2025, 11, 10, 16, 52))]  # noqa: DTZ001
+        return [cls(datetime(2025, 11, 10, 16, 52))]
 
     from icalendar.param import VALUE
 
@@ -165,7 +165,7 @@ class vDatetime(TimeBase):
         if utc:
             jcal = jcal[:-1]
         try:
-            dt = datetime.strptime(jcal, "%Y-%m-%dT%H:%M:%S")  # noqa: DTZ007
+            dt = datetime.strptime(jcal, "%Y-%m-%dT%H:%M:%S")
         except ValueError as e:
             raise JCalParsingError("Cannot parse date-time.", cls, value=jcal) from e
         if utc:
