@@ -118,7 +118,7 @@ class Timezone(Component):
         tznames.add(tzname)
         return tzname
 
-    def to_tz(self, tzp: TZP = tzp, lookup_tzid: bool = True):  # noqa: FBT001
+    def to_tz(self, tzp: TZP = tzp, lookup_tzid: bool = True):
         """convert this VTIMEZONE component to a timezone object
 
         :param tzp: timezone provider to use
@@ -260,7 +260,7 @@ class Timezone(Component):
 
         .. note::
             This can take some time. Please cache the results.
-        """  # noqa: E501
+        """
         if tzid is None:
             tzid = tzid_from_tzinfo(timezone)
             if tzid is None:
@@ -268,8 +268,8 @@ class Timezone(Component):
                     f"Cannot get TZID from {timezone}. Please set the tzid parameter."
                 )
         normalize = getattr(timezone, "normalize", lambda dt: dt)  # pytz compatibility
-        first_datetime = datetime(first_date.year, first_date.month, first_date.day)  # noqa: DTZ001
-        last_datetime = datetime(last_date.year, last_date.month, last_date.day)  # noqa: DTZ001
+        first_datetime = datetime(first_date.year, first_date.month, first_date.day)
+        last_datetime = datetime(last_date.year, last_date.month, last_date.day)
         if hasattr(timezone, "localize"):  # pytz compatibility
             first_datetime = timezone.localize(first_datetime)
             last_datetime = timezone.localize(last_datetime)
@@ -287,7 +287,7 @@ class Timezone(Component):
             end = start
             offset_to = end.utcoffset()
             for add_offset in cls._from_tzinfo_skip_search:
-                last_end = end  # we need to save this as we might be left and right of the time change  # noqa: E501
+                last_end = end  # we need to save this as we might be left and right of the time change
                 end = normalize(end + add_offset)
                 try:
                     while end.utcoffset() == offset_to:
@@ -317,10 +317,10 @@ class Timezone(Component):
             first_start = min(starts)
             starts.remove(first_start)
             if first_start.date() == last_date:
-                first_start = datetime(last_date.year, last_date.month, last_date.day)  # noqa: DTZ001
+                first_start = datetime(last_date.year, last_date.month, last_date.day)
             subcomponent = TimezoneStandard() if is_standard else TimezoneDaylight()
             if offset_from is None:
-                offset_from = offset_to  # noqa: PLW2901
+                offset_from = offset_to
             subcomponent.TZOFFSETFROM = offset_from
             subcomponent.TZOFFSETTO = offset_to
             subcomponent.add("TZNAME", tzname)

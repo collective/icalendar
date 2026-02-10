@@ -228,6 +228,18 @@ extend-safe-fixes = [
     "T201",   # print found
     "T203",   # `pprint` found
 ]
+"src/icalendar/cal/**" = [
+    "A002",    # argument shadowing builtin (sorted)
+    "DTZ001",  # datetime() called without tzinfo
+    "E501",    # line too long (docstrings with RFC references)
+    "FBT001",  # boolean positional argument
+    "N802",    # function name should be lowercase (TRIGGER_RELATED etc.)
+    "PERF203", # try-except in loop (parsing loop)
+    "PLC0415", # import outside top-level (circular import avoidance)
+    "PLW1641", # eq without hash (Component intentionally unhashable)
+    "PLW2901", # loop variable overwritten
+    "SLF001",  # private member access
+]
 "src/icalendar/prop/*.py" = [
     "N801",    # Class name should use CamelCase
     "PLC0415", # Import property within class
