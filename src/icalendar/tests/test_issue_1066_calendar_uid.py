@@ -5,8 +5,6 @@ See https://github.com/collective/icalendar/issues/1066
 
 import uuid
 
-import pytest
-
 from icalendar import Calendar
 
 

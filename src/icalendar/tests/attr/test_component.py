@@ -76,7 +76,7 @@ def test_get_invalid_value(invalid_value, dtstamp_comp):
     """Check handling of invalid values."""
     dtstamp_comp["DTSTAMP"] = invalid_value
     with pytest.raises(InvalidCalendar) as e:
-        dtstamp_comp.DTSTAMP  # noqa: B018
+        dtstamp_comp.DTSTAMP
     assert (
         e.value.args[0]
         == f"DTSTAMP must be a datetime in UTC, not {getattr(invalid_value, 'dt', invalid_value)}"

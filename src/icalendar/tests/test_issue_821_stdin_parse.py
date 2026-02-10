@@ -1,16 +1,15 @@
 # tests/test_cli_stdin_argparse.py
-import io
-import os
-import sys
-import unittest
-import tempfile
 import contextlib
+import io
+import sys
+import tempfile
+import unittest
 from datetime import datetime
+from pathlib import Path
 from unittest import mock
-
-from icalendar import Calendar, cli
 from zoneinfo import ZoneInfo
 
+from icalendar import Calendar, cli
 
 INPUT = """
 BEGIN:VCALENDAR
@@ -86,22 +85,22 @@ PROPER_OUTPUT = f"""    Organizer: organizer <organizer@test.test>
     End        : {_secondend}
     Duration   : 0:30:00
     Location   : New Amsterdam, 1010 Test Street
-    Comment    : 
+    Comment    :
     Description:
      Test Description
      This one is multiline
 
-    Organizer: 
+    Organizer:
     Attendees:
 
     Summary    : TEST
     Starts     : Wed May 11 00:00:00 2022
     End        : Mon May 16 00:00:00 2022
     Duration   : 5 days, 0:00:00
-    Location   : 
-    Comment    : 
+    Location   :
+    Comment    :
     Description:
-     
+
 
 """.replace("\r\n", "\n")  # normalize newlines just in case
 
@@ -116,12 +115,14 @@ class TestIcalendarCLIArgparseStdin(unittest.TestCase):
         fake_stdin = io.StringIO(INPUT)
         captured = io.StringIO()
 
-        with mock.patch.object(sys, "stdin", fake_stdin), \
-             mock.patch.object(sys, "argv", ["icalendar", "-"]), \
-             contextlib.redirect_stdout(captured):
+        with (
+            mock.patch.object(sys, "stdin", fake_stdin),
+            mock.patch.object(sys, "argv", ["icalendar", "-"]),
+            contextlib.redirect_stdout(captured),
+        ):
             cli.main()
 
-        self.assertEqual(captured.getvalue(), PROPER_OUTPUT)
+        assert captured.getvalue() == PROPER_OUTPUT
 
     def test_cli_with_file_path(self):
         """
@@ -133,12 +134,14 @@ class TestIcalendarCLIArgparseStdin(unittest.TestCase):
 
         try:
             captured = io.StringIO()
-            with mock.patch.object(sys, "argv", ["icalendar", tmpname]), \
-                 contextlib.redirect_stdout(captured):
+            with (
+                mock.patch.object(sys, "argv", ["icalendar", tmpname]),
+                contextlib.redirect_stdout(captured),
+            ):
                 cli.main()
-            self.assertEqual(captured.getvalue(), PROPER_OUTPUT)
+            assert captured.getvalue() == PROPER_OUTPUT
         finally:
-            os.unlink(tmpname)
+            Path(tmpname).unlink()
 
     def test_view_direct_matches_cli(self):
         """
@@ -152,7 +155,7 @@ class TestIcalendarCLIArgparseStdin(unittest.TestCase):
             manual.append("")  # the CLI prints a blank line after each event
         manual_output = "\n".join(manual) + "\n"  # trailing newline
 
-        self.assertEqual(manual_output, PROPER_OUTPUT)
+        assert manual_output == PROPER_OUTPUT
 
 
 if __name__ == "__main__":

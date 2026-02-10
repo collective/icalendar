@@ -1,6 +1,6 @@
 """Tests for error-tolerant parsing of property values."""
 
-from icalendar import Calendar, Event
+from icalendar import Calendar
 from icalendar.prop import vBrokenProperty, vDDDLists, vDDDTypes, vRecur, vText
 
 
@@ -251,7 +251,6 @@ END:VCALENDAR"""
 
     # RDATE should not be in the event
     assert "RDATE" not in event
-
 
 
 def test_vbroken_property_repr():

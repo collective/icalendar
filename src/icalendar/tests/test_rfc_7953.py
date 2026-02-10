@@ -131,7 +131,7 @@ def test_missing_info_for_end(rfc_7953_component):
     """We miss information and cannot compute the end."""
     rfc_7953_component.DURATION = timedelta(hours=1)
     with pytest.raises(IncompleteComponent) as e:
-        rfc_7953_component.end  # noqa: B018
+        rfc_7953_component.end
     assert "Cannot compute end without start" in str(e.value)
 
 
@@ -139,7 +139,7 @@ def test_missing_info_for_duration(rfc_7953_component, tzp):
     """We only have a duration."""
     rfc_7953_component.end = tzp.localize_utc(datetime(2011, 10, 5, 13, 32, 25))
     with pytest.raises(IncompleteComponent) as e:
-        rfc_7953_component.duration  # noqa: B018
+        rfc_7953_component.duration
     assert "Cannot compute duration without start" in str(e.value)
 
 
