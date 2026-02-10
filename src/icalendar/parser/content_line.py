@@ -38,7 +38,7 @@ class Contentline(str):
         name: ICAL_TYPE,
         params: Parameters,
         values,
-        sorted: bool = True,  # noqa: A002, FBT001
+        sorted: bool = True,  # noqa: A002
     ):
         """Turn a parts into a content line."""
         assert isinstance(params, Parameters)

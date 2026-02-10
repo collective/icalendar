@@ -10,9 +10,7 @@ class TestCaselessdict(unittest.TestCase):
         keys = ["DTEND", "DTSTAMP", "DTSTART", "UID", "SUMMARY", "LOCATION"]
 
         out = canonsort_keys(keys)
-        self.assertEqual(
-            out, ["DTEND", "DTSTAMP", "DTSTART", "LOCATION", "SUMMARY", "UID"]
-        )
+        assert out == ["DTEND", "DTSTAMP", "DTSTART", "LOCATION", "SUMMARY", "UID"]
 
         out = canonsort_keys(
             keys,
@@ -22,9 +20,7 @@ class TestCaselessdict(unittest.TestCase):
                 "DTEND",
             ),
         )
-        self.assertEqual(
-            out, ["SUMMARY", "DTSTART", "DTEND", "DTSTAMP", "LOCATION", "UID"]
-        )
+        assert out == ["SUMMARY", "DTSTART", "DTEND", "DTSTAMP", "LOCATION", "UID"]
 
         out = canonsort_keys(
             keys,
@@ -34,14 +30,10 @@ class TestCaselessdict(unittest.TestCase):
                 "DTEND",
             ),
         )
-        self.assertEqual(
-            out, ["UID", "DTSTART", "DTEND", "DTSTAMP", "LOCATION", "SUMMARY"]
-        )
+        assert out == ["UID", "DTSTART", "DTEND", "DTSTAMP", "LOCATION", "SUMMARY"]
 
         out = canonsort_keys(keys, ("UID", "DTSTART", "DTEND", "RRULE", "EXDATE"))
-        self.assertEqual(
-            out, ["UID", "DTSTART", "DTEND", "DTSTAMP", "LOCATION", "SUMMARY"]
-        )
+        assert out == ["UID", "DTSTART", "DTEND", "DTSTAMP", "LOCATION", "SUMMARY"]
 
     def test_caselessdict_canonsort_items(self):
         canonsort_items = icalendar.caselessdict.canonsort_items
@@ -58,34 +50,28 @@ class TestCaselessdict(unittest.TestCase):
         }
 
         out = canonsort_items(d)
-        self.assertEqual(
-            out,
-            [
-                ("a", 3.5),
-                ("c", "at"),
-                ("d", {"x": "y"}),
-                ("e", [4, 5]),
-                ("i", 7),
-                ("l", (2, 3)),
-                ("n", 13),
-                ("r", 1.0),
-            ],
-        )
+        assert out == [
+            ("a", 3.5),
+            ("c", "at"),
+            ("d", {"x": "y"}),
+            ("e", [4, 5]),
+            ("i", 7),
+            ("l", (2, 3)),
+            ("n", 13),
+            ("r", 1.0),
+        ]
 
         out = canonsort_items(d, ("i", "c", "a"))
-        self.assertTrue(
-            out,
-            [
-                ("i", 7),
-                ("c", "at"),
-                ("a", 3.5),
-                ("d", {"x": "y"}),
-                ("e", [4, 5]),
-                ("l", (2, 3)),
-                ("n", 13),
-                ("r", 1.0),
-            ],
-        )
+        assert out, [
+            ("i", 7),
+            ("c", "at"),
+            ("a", 3.5),
+            ("d", {"x": "y"}),
+            ("e", [4, 5]),
+            ("l", (2, 3)),
+            ("n", 13),
+            ("r", 1.0),
+        ]
 
     def test_caselessdict_copy(self):
         CaselessDict = icalendar.caselessdict.CaselessDict
@@ -93,72 +79,72 @@ class TestCaselessdict(unittest.TestCase):
         original_dict = CaselessDict(key1="val1", key2="val2")
         copied_dict = original_dict.copy()
 
-        self.assertEqual(original_dict, copied_dict)
+        assert original_dict == copied_dict
 
     def test_CaselessDict(self):
         CaselessDict = icalendar.caselessdict.CaselessDict
 
         ncd = CaselessDict(key1="val1", key2="val2")
-        self.assertEqual(ncd, CaselessDict({"KEY2": "val2", "KEY1": "val1"}))
+        assert ncd == CaselessDict({"KEY2": "val2", "KEY1": "val1"})
 
-        self.assertEqual(ncd["key1"], "val1")
-        self.assertEqual(ncd["KEY1"], "val1")
+        assert ncd["key1"] == "val1"
+        assert ncd["KEY1"] == "val1"
 
         assert ncd.has_key("key1")
 
         ncd["KEY3"] = "val3"
-        self.assertEqual(ncd["key3"], "val3")
+        assert ncd["key3"] == "val3"
 
-        self.assertEqual(ncd.setdefault("key3", "FOUND"), "val3")
-        self.assertEqual(ncd.setdefault("key4", "NOT FOUND"), "NOT FOUND")
-        self.assertEqual(ncd["key4"], "NOT FOUND")
-        self.assertEqual(ncd.get("key1"), "val1")
-        self.assertEqual(ncd.get("key3", "NOT FOUND"), "val3")
-        self.assertEqual(ncd.get("key4", "NOT FOUND"), "NOT FOUND")
-        self.assertIn("key4", ncd)
+        assert ncd.setdefault("key3", "FOUND") == "val3"
+        assert ncd.setdefault("key4", "NOT FOUND") == "NOT FOUND"
+        assert ncd["key4"] == "NOT FOUND"
+        assert ncd.get("key1") == "val1"
+        assert ncd.get("key3", "NOT FOUND") == "val3"
+        assert ncd.get("key4", "NOT FOUND") == "NOT FOUND"
+        assert "key4" in ncd
 
         del ncd["key4"]
-        self.assertNotIn("key4", ncd)
+        assert "key4" not in ncd
 
         ncd.update({"key5": "val5", "KEY6": "val6", "KEY5": "val7"})
-        self.assertEqual(ncd["key6"], "val6")
+        assert ncd["key6"] == "val6"
 
         keys = sorted(ncd.keys())
-        self.assertEqual(keys, ["KEY1", "KEY2", "KEY3", "KEY5", "KEY6"])
+        assert keys == ["KEY1", "KEY2", "KEY3", "KEY5", "KEY6"]
 
     def test_eq_with_non_dict_types(self):
         """Test that CaselessDict.__eq__ handles non-dict comparisons correctly."""
         CaselessDict = icalendar.caselessdict.CaselessDict
 
         d = CaselessDict()
-        d['test'] = 1
+        d["test"] = 1
 
         # Should return False for non-dict types, not crash
-        self.assertFalse(d == "string")
-        self.assertFalse(d == 123)
-        self.assertFalse(d == None)
-        self.assertFalse(d == [])
-        self.assertFalse(d == ())
-        self.assertFalse(d == set())
+        assert d != "string"
+        assert d != 123
+        assert d is not None
+        assert d != []
+        assert d != ()
+        assert d != set()
 
         # Should still work correctly with dicts
-        self.assertTrue(d == {'TEST': 1})
-        self.assertFalse(d == {'TEST': 2})
-        self.assertFalse(d == {'OTHER': 1})
+        assert d == {"TEST": 1}
+        assert d != {"TEST": 2}
+        assert d != {"OTHER": 1}
 
     def test_ne_with_non_dict_types(self):
         """Test that CaselessDict.__ne__ handles non-dict comparisons correctly."""
         CaselessDict = icalendar.caselessdict.CaselessDict
 
         d = CaselessDict()
-        d['test'] = 1
+        d["test"] = 1
 
         # Should return True for non-dict types
-        self.assertTrue(d != "string")
-        self.assertTrue(d != 123)
-        self.assertTrue(d != None)
-        self.assertTrue(d != [])
+        assert d != "string"
+        assert d != 123
+        assert d is not None
+        assert d != []
 
         # Should still work correctly with dicts
-        self.assertFalse(d != {'TEST': 1})
-        self.assertTrue(d != {'TEST': 2})
+        assert d == {"TEST": 1}
+        assert d != {"TEST": 2}

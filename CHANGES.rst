@@ -41,6 +41,8 @@ Minor changes
 - Add type hints to remaining prop value classes (vText, vCalAddress, vCategory, vGeo, vN, vOrg, vAdr, vBrokenProperty, vUid, Conference, Image). :issue:`938`
 - Added type hints and overloads to :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>` and :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>` to support ``multiple=True/False`` return types. :issue:`1129`
 - CI: Print a link to Vale documentation when the spell checker fails.
+- Remove ``bootstrap.py`` and ``buildout.cfg`` files as they are old build configurations. :pull:`1171`
+- Enforce ruff formatting and linting across the entire codebase, with CI check to prevent regressions. See :issue:`672`, :pull:`1171`, :pull:`1172`, :pull:`1173`, :pull:`1174`, :pull:`1175`, :pull:`1176`, :pull:`1177`, :pull:`1178`, :pull:`1179`, :pull:`1180`, :pull:`1181`.
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
@@ -59,7 +61,7 @@ New features
 - Event components now have error-tolerant property parsing. Properties with parsing errors fall back to :class:`~icalendar.prop.vBrokenProperty`, preserving the raw value and allowing access to other valid properties. Errors are recorded in ``component.errors``. Partially addresses :issue:`158`.
 - Added :class:`~icalendar.prop.AdrFields` and :class:`~icalendar.prop.NFields` named tuples for structured access to vCard ADR and N property fields. The ``fields`` attribute and ``from_ical()`` return value of :class:`~icalendar.prop.vAdr` and :class:`~icalendar.prop.vN` now return these typed named tuples, enabling access like ``adr.fields.street`` and ``n.fields.family``. Since named tuples are tuple subclasses, existing code using tuple indexing or unpacking remains compatible. Added ``name`` and ``units`` properties to :class:`~icalendar.prop.vOrg` for convenient access to the organization name and organizational units. Added ``ical_value`` property to all three classes. See :issue:`1060`.
 - Added ``with_uid`` method to ``Component`` to filter subcomponents by UID. See :issue:`950`.
-
+- Enforce linting of code with Ruff in CI. :issue:`672`
 
 Bug fixes
 ~~~~~~~~~

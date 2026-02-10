@@ -11,12 +11,13 @@ Related:
 from __future__ import annotations
 
 import functools
-from datetime import timedelta
-from typing import TYPE_CHECKING, Callable, Optional, TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
 from icalendar import enums
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+    from datetime import timedelta
     from enum import Enum
 
 
@@ -24,7 +25,7 @@ if TYPE_CHECKING:
     from icalendar.prop import VPROPERTY
 
 
-def _default_return_none() -> Optional[str]:
+def _default_return_none() -> str | None:
     """Return None by default."""
     return None
 
@@ -41,8 +42,8 @@ def string_parameter(
     name: str,
     doc: str,
     default: Callable = _default_return_none,
-    convert: Optional[Callable[[str], T]] = None,
-    convert_to: Optional[Callable[[T], str]] = None,
+    convert: Callable[[str], T] | None = None,
+    convert_to: Callable[[T], str] | None = None,
 ) -> property:
     """Return a parameter with a quoted value (case sensitive)."""
 
@@ -50,7 +51,7 @@ def string_parameter(
         convert_to = convert
 
     @functools.wraps(default)
-    def fget(self: VPROPERTY) -> Optional[str]:
+    def fget(self: VPROPERTY) -> str | None:
         value = self.params.get(name)
         if value is None:
             return default()
@@ -295,7 +296,7 @@ Description:
 )
 
 
-def _default_range_none() -> Optional[enums.RANGE | str]:
+def _default_range_none() -> enums.RANGE | str | None:
     return None
 
 
@@ -367,7 +368,7 @@ Description:
 )
 
 
-def boolean_parameter(name: str, default: bool, doc: str) -> property:  # noqa: FBT001
+def boolean_parameter(name: str, default: bool, doc: str) -> property:
     def _default() -> bool:
         return default
 
@@ -382,7 +383,7 @@ def boolean_parameter(name: str, default: bool, doc: str) -> property:  # noqa: 
 
 RSVP = boolean_parameter(
     "RSVP",
-    False,  # noqa: FBT003
+    False,
     """Specify whether there is an expectation of a favor of anreply from the calendar user specified by the property value.
 
 Description:

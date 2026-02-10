@@ -1,4 +1,5 @@
-from icalendar.caselessdict import CaselessDict, canonsort_keys, canonsort_items
+from icalendar.caselessdict import CaselessDict, canonsort_items, canonsort_keys
+
 
 def test_caselessdict_basic_behavior():
     d = CaselessDict()
@@ -21,6 +22,7 @@ def test_caselessdict_basic_behavior():
 
     assert m.sorted_keys() == ["A", "B"]
     assert [k for k, _ in m.sorted_items()] == ["A", "B"]
+
 
 def test_canonsort_keys_basic():
     keys = ["C", "A", "B"]
