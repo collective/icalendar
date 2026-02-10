@@ -19,6 +19,6 @@ jobs:
       - name: Run ruff checks on the files
         run: ruff check --fix
       - name: Fail if we detect any changes on the file system
-        run:
+        run: |
           git status
           git diff --exit-code
