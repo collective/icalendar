@@ -1,6 +1,5 @@
 """Parsing error value preservation."""
 
-
 from typing import Any, ClassVar
 
 from icalendar.compatibility import Self
@@ -71,5 +70,6 @@ class vBrokenProperty(vText):
                 parse_error="Invalid date format",
             )
         ]
+
 
 __all__ = ["vBrokenProperty"]
