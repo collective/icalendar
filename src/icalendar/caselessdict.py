@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from collections import OrderedDict
+from typing import TYPE_CHECKING, Any, TypeVar
+
 from icalendar.parser_tools import to_unicode
 
-from collections import OrderedDict
-
-from typing import Any, Optional, Iterable, Mapping, TypeVar
+if TYPE_CHECKING:
+    from collections.abc import Iterable, Mapping
 
 try:
     from typing import Self
@@ -14,7 +16,10 @@ except ImportError:
 KT = TypeVar("KT")
 VT = TypeVar("VT")
 
-def canonsort_keys(keys: Iterable[KT], canonical_order: Optional[Iterable[KT]] = None) -> list[KT]:
+
+def canonsort_keys(
+    keys: Iterable[KT], canonical_order: Iterable[KT] | None = None
+) -> list[KT]:
     """Sorts leading keys according to canonical_order.  Keys not specified in
     canonical_order will appear alphabetically at the end.
     """
@@ -24,7 +29,9 @@ def canonsort_keys(keys: Iterable[KT], canonical_order: Optional[Iterable[KT]] =
     return sorted(head, key=lambda k: canonical_map[k]) + sorted(tail)
 
 
-def canonsort_items(dict1: Mapping[KT, VT], canonical_order: Optional[Iterable[KT]] = None) -> list[tuple[KT, VT]]:
+def canonsort_items(
+    dict1: Mapping[KT, VT], canonical_order: Iterable[KT] | None = None
+) -> list[tuple[KT, VT]]:
     """Returns a list of items from dict1, sorted by canonical_order."""
     return [(k, dict1[k]) for k in canonsort_keys(dict1.keys(), canonical_order)]
 
@@ -42,6 +49,8 @@ class CaselessDict(OrderedDict):
             if key != key_upper:
                 super().__delitem__(key)
                 self[key_upper] = value
+
+    __hash__ = None
 
     def __getitem__(self, key: Any) -> Any:
         key = to_unicode(key)
@@ -83,7 +92,7 @@ class CaselessDict(OrderedDict):
         mappings = list(args) + [kwargs]
         for mapping in mappings:
             if hasattr(mapping, "items"):
-                mapping = iter(mapping.items())
+                mapping = iter(mapping.items())  # noqa: PLW2901
             for key, value in mapping:
                 self[key] = value
 
@@ -118,4 +127,4 @@ class CaselessDict(OrderedDict):
         return canonsort_items(self, self.canonical_order)
 
 
-__all__ = ["canonsort_keys", "canonsort_items", "CaselessDict"]
+__all__ = ["CaselessDict", "canonsort_items", "canonsort_keys"]

@@ -59,8 +59,10 @@ def test_parsed_calendars_are_equal_if_parsed_again_jcal(source_file, tzp):
 
     source -> calendar -> jcal -> same calendar
     """
-    if source_file.source_file in ("issue_464_invalid_rdate.ics",):
-        pytest.skip("Invalid RDATE falls back to vBrokenProperty, which can't round-trip to jCal.")
+    if source_file.source_file == "issue_464_invalid_rdate.ics":
+        pytest.skip(
+            "Invalid RDATE falls back to vBrokenProperty, which can't round-trip to jCal."
+        )
     copy_of_calendar = Component.from_jcal(source_file.to_jcal())
     assert_equal(copy_of_calendar, source_file)
 

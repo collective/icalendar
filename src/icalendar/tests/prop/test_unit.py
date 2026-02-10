@@ -190,8 +190,8 @@ class TestProp(unittest.TestCase):
         assert vRecur(r).to_ical() == b"FREQ=MONTHLY;BYEASTER=-3;BYOTHER=TEXT"
 
     def test_prop_vText(self):
-        from icalendar.prop import vText
         from icalendar.parser import Contentline
+        from icalendar.prop import vText
 
         assert vText("Simple text").to_ical() == b"Simple text"
 
@@ -214,7 +214,9 @@ class TestProp(unittest.TestCase):
         _, _, value = Contentline("SUMMARY:Text \\; with escaped\\, chars").parts()
         assert vText.from_ical(value) == "Text ; with escaped, chars"
 
-        _, _, value = Contentline("SUMMARY:A string with\\; some\\\\ characters in\\it").parts()
+        _, _, value = Contentline(
+            "SUMMARY:A string with\\; some\\\\ characters in\\it"
+        ).parts()
         assert vText.from_ical(value) == "A string with; some\\ characters in\\it"
 
         # We are forgiving to utf-8 encoding errors:
