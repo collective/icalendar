@@ -239,6 +239,10 @@ extend-safe-fixes = [
 "docs/conf.py" = [
     "INP001", # needs __init__.py
 ]
+"src/icalendar/timezone/equivalent_timezone_ids_result.py" = [
+    "DTZ001", # `datetime.datetime()` called without a `tzinfo` argument
+    "E501",   # line too long
+]
 
 [tool.pytest.ini_options]
 # see https://docs.pytest.org/en/6.2.x/customize.html
