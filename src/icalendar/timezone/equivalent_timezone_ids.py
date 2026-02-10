@@ -37,9 +37,9 @@ DTS = []
 dt = START
 while dt <= END:
     DTS.append(dt)
-    dt += timedelta(hours=25)
     # This must be big enough to be fast and small enough to identify the timeszones
     # before it is the present year
+    dt += timedelta(hours=25)
 del dt
 
 
@@ -103,9 +103,9 @@ def main(
                 start += step
                 continue
             lookup = {}
-            for offset, tzs2 in offsets.items():
+            for offset, tz2 in offsets.items():
                 lookup[offset] = generate_tree(
-                    tzs=tzs2, step=step, start=start + step, end=end, todo=todo
+                    tzs=tz2, step=step, start=start + step, end=end, todo=todo
                 )
             return start, lookup
         result = set()
