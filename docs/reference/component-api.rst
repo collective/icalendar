@@ -6,7 +6,7 @@ This chapter describes the API design of icalendar.
 
 At their core, iCalendar components are dictionaries with case insensitive keys.
 The preferred way to access their values is through lower case properties as described in :ref:`property-access`.
-Advantages and disadvantages of the other approches are discussed below.
+Advantages and disadvantages of the other approaches are discussed below.
 
 .. _property-access:
 
@@ -118,7 +118,7 @@ The following example creates a new attendee for the previously created event fr
     >>> print(attendee.ROLE)
     REQ-PARTICIPANT
 
-Similar to the casing of names of properties, lower case parameters calculate the property, whereas capital case parameters directly access the iCalendar property.
+Similar to the casing of names of properties, lower case parameters calculate the property, whereas upper case parameters directly access the iCalendar property.
 
 .. code-block:: pycon
     
