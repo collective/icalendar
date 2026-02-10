@@ -1,6 +1,15 @@
 icalendar.prop package
 ======================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   icalendar.prop.dt
+   icalendar.prop.recur
+
 Submodules
 ----------
 
@@ -14,10 +23,12 @@ Submodules
    icalendar.prop.cal_address
    icalendar.prop.categories
    icalendar.prop.conference
+   icalendar.prop.factory
    icalendar.prop.float
    icalendar.prop.geo
    icalendar.prop.image
    icalendar.prop.inline
+   icalendar.prop.integer
    icalendar.prop.n
    icalendar.prop.org
    icalendar.prop.text
