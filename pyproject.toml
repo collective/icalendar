@@ -93,8 +93,8 @@ Funding = "https://opencollective.com/python-icalendar"
 [dependency-groups]
 dev = [
   {include-group = "test"},
-  {include-group = "docs"}
-  {include-group = "formatting"}
+  {include-group = "docs"},
+  {include-group = "formatting"},
 ]
 
 test = [
