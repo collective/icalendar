@@ -94,6 +94,7 @@ Funding = "https://opencollective.com/python-icalendar"
 dev = [
   {include-group = "test"},
   {include-group = "docs"}
+  {include-group = "formatting"}
 ]
 
 test = [
@@ -106,6 +107,11 @@ test = [
     "types-pytz",
     # typing.TypeIs was added in Python 3.13
     "typing-extensions~=4.10; python_version < '3.13'",
+]
+
+formatting = [
+    "ruff==0.15.0", # also update .pre-commit-config.yaml
+    "pre-commit",
 ]
 
 docs = [
