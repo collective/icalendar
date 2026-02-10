@@ -85,22 +85,22 @@ PROPER_OUTPUT = f"""    Organizer: organizer <organizer@test.test>
     End        : {_secondend}
     Duration   : 0:30:00
     Location   : New Amsterdam, 1010 Test Street
-    Comment    :
+    Comment    :{" "}
     Description:
      Test Description
      This one is multiline
 
-    Organizer:
+    Organizer:{" "}
     Attendees:
 
     Summary    : TEST
     Starts     : Wed May 11 00:00:00 2022
     End        : Mon May 16 00:00:00 2022
     Duration   : 5 days, 0:00:00
-    Location   :
-    Comment    :
+    Location   :{" "}
+    Comment    :{" "}
     Description:
-
+    {" "}
 
 """.replace("\r\n", "\n")  # normalize newlines just in case
 

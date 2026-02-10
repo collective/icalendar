@@ -45,7 +45,7 @@ def test_invalid_repeat_value():
         a.REPEAT = "asd"
     a["REPEAT"] = "asd"
     with pytest.raises(InvalidCalendar):
-        a.REPEAT
+        a.REPEAT  # noqa: B018, RUF100
 
 
 def test_alarm_to_string():

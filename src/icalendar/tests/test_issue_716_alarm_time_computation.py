@@ -92,7 +92,7 @@ def alarm_before_start(calendars, request):
 def test_cannot_compute_relative_alarm_without_start(alarm_before_start):
     """We have an alarm without a start of a component."""
     with pytest.raises(IncompleteAlarmInformation) as e:
-        Alarms(alarm_before_start).times
+        Alarms(alarm_before_start).times  # noqa: B018, RUF100
     assert (
         e.value.args[0]
         == f"Use {Alarms.__name__}.{Alarms.set_start.__name__} because at least one alarm is relative to the start of a component."
@@ -141,7 +141,7 @@ def test_start_as_date_with_delta_as_date_stays_date(alarms, dtstart):
 def test_cannot_compute_relative_alarm_without_end(alarms):
     """We have an alarm without an end of a component."""
     with pytest.raises(IncompleteAlarmInformation) as e:
-        Alarms(alarms.rfc_5545_end).times
+        Alarms(alarms.rfc_5545_end).times  # noqa: B018, RUF100
     assert (
         e.value.args[0]
         == f"Use {Alarms.__name__}.{Alarms.set_end.__name__} because at least one alarm is relative to the end of a component."
@@ -192,10 +192,10 @@ def test_add_multiple_alarms(alarms):
     a.add_alarm(alarms.rfc_5545_end)
     a.add_alarm(alarms.rfc_5545_absolute_alarm_example)
     with pytest.raises(IncompleteAlarmInformation):
-        a.times
+        a.times  # noqa: B018, RUF100
     a.set_start(datetime(2012, 3, 5))
     with pytest.raises(IncompleteAlarmInformation):
-        a.times
+        a.times  # noqa: B018, RUF100
     a.set_end(datetime(2012, 3, 5))
     assert len(a.times) == 7
 
@@ -336,7 +336,7 @@ def test_incomplete_alarm_information_for_active_state(tzp):
     a.set_start(date(2017, 12, 1))
     a.acknowledge_until(tzp.localize_utc(datetime(2012, 10, 10, 12)))
     with pytest.raises(IncompleteAlarmInformation) as e:
-        a.active
+        a.active  # noqa: B018, RUF100
     assert (
         e.value.args[0]
         == f"A local timezone is required to check if the alarm is still active. Use Alarms.{Alarms.set_local_timezone.__name__}()."

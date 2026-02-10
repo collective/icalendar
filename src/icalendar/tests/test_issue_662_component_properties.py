@@ -128,9 +128,9 @@ invalid_start_todo_3 = Todo(invalid_start_event_3)
 def test_multiple_dtstart(invalid_event):
     """Check that we get the right error."""
     with pytest.raises(InvalidCalendar):
-        invalid_event.start
+        invalid_event.start  # noqa: B018, RUF100
     with pytest.raises(InvalidCalendar):
-        invalid_event.DTSTART
+        invalid_event.DTSTART  # noqa: B018, RUF100
 
 
 def test_no_dtstart(start_end_component):
@@ -144,7 +144,7 @@ def test_no_dtstart(start_end_component):
     """
     assert start_end_component.DTSTART is None
     with pytest.raises(IncompleteComponent):
-        start_end_component.start
+        start_end_component.start  # noqa: B018, RUF100
 
 
 @pytest.fixture(
@@ -480,7 +480,7 @@ def test_check_invalid_duration(start_end_component, invalid_value):
     """Check that we get the right error."""
     start_end_component["DURATION"] = invalid_value
     with pytest.raises(InvalidCalendar) as e:
-        start_end_component.DURATION
+        start_end_component.DURATION  # noqa: B018, RUF100
     assert (
         e.value.args[0]
         == f"DURATION must be a timedelta, not {type(invalid_value).__name__}."
