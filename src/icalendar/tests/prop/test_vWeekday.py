@@ -22,6 +22,6 @@ def test_roundtrip():
 
 
 def test_error():
-    r"""Error: Expected weekday abbrevation, got: \"-100MO\" """
+    """Error: Expected weekday abbrevation, got: -100MO"""
     with pytest.raises(ValueError):
         vWeekday.from_ical("-100MO")
