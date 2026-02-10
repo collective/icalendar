@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import itertools
 from datetime import date, datetime, timedelta
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Literal, TypeAlias
 
 from icalendar.enums import BUSYTYPE, CLASS, STATUS, TRANSP, StrEnum
 from icalendar.error import IncompleteComponent, InvalidCalendar
@@ -29,11 +29,6 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from icalendar.cal import Component
-
-try:
-    from typing import TypeAlias
-except ImportError:
-    from typing import TypeAlias
 
 
 def _get_rdates(
