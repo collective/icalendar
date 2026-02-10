@@ -29,7 +29,8 @@ Minor changes
 
 - Created an :meth:`~cal.todo.Todo.example` method for the :class:`~cal.todo.Todo` component. See :issue:`743`.
 - Created an :meth:`~cal.alarm.Alarm.example` method for the :class:`~cal.alarm.Alarm` component. See :issue:`743`.
-- Move property classes from :mod:`icalendar.prop` into their own files. See :issue:`987`.
+- Move property classes from :mod:`icalendar.prop` into their own files with sub-packages :mod:`icalendar.prop.recur` and :mod:`icalendar.prop.dt`. See :issue:`987`.
+- Move classes and functions in :mod:`icalendar.parser` into their own files. See :issue:`987`.
 - Clarified custom component (X-* and IANA-registered) parsing behavior through enhanced documentation and comprehensive how-to guide. Custom components are automatically handled by the library with no special configuration required. See :issue:`432`.
 - Reorganized custom component tests into a dedicated :file:`test_custom_components.py` file with expanded test coverage for :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`, :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>`, and :class:`~icalendar.cal.component_factory.ComponentFactory` usage. See :issue:`433`.
 - The ``typing-extensions`` dependency on Python < 3.13 is now optional, part of the ``test`` extra.
@@ -45,7 +46,11 @@ Breaking changes
 ~~~~~~~~~~~~~~~~
 
 - Drop support for Python 3.8 and 3.9. See :issue:`977`.
+- ``DURATION_REGEX`` moved from :mod:`icalendar.prop` to :mod:`icalendar.prop.dt.duration`. See :issue:`987`.
+- ``WEEKDAY_RULE`` moved from :mod:`icalendar.prop` to :mod:`icalendar.prop.recur.weekday`. See :issue:`987`.
+- Removed ``tzid_from_dt`` and ``tzid_from_tzinfo`` from :mod:`icalendar.prop` as they exist in :mod:`icalendar.timezone`. See :issue:`987`.
 - :meth:`Component.decoded` now returns a string instead of bytes for text properties.
+- Remove constants ``FOLD``, ``NAME``, ``NEWLINE``, ``QUNSAFE_CHAR``, ``QUOTABLE``, ``UFOLD``, and ``UNSAFE_CHAR`` from :mod:`icalendar.parser`'s export. See :issue:`987`.
 
 New features
 ~~~~~~~~~~~~
@@ -84,6 +89,7 @@ Documentation
   Added ``SPHINX_APIDOC_OPTIONS`` to ``make apidoc`` command, excluding ``__all__`` items from being duplicated in the documentation, and rebuilt the API documentation source files.
   See :issue:`952`.
 - Document how to create and read attendee information in events. See :issue:`130`.
+- Add usage examples. :issue:`443`
 - Improve documentation contribution guide by adding chapters for small edits, builds and checks, and a style guide. Added details for Vale usage, Diátaxis framework, narrative and API documentation, and fixing all spelling errors. See :issue:`991`.
 - Document dictionary and property accessors. :issue:`124`.
 - Moved content from the README into documentation to reduce maintenance and point to the authoritative source of information.
