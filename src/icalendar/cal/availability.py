@@ -28,7 +28,6 @@ from icalendar.attr import (
     rfc_7953_end_property,
     sequence_property,
     summary_property,
-    uid_property,
     url_property,
 )
 from icalendar.cal.examples import get_example
@@ -217,7 +216,6 @@ class Availability(Component):
     categories = categories_property
     priority = priority_property
     contacts = contacts_property
-    uid = uid_property
 
     start = DTSTART = rfc_7953_dtstart_property
     DTEND = rfc_7953_dtend_property
@@ -271,25 +269,25 @@ class Availability(Component):
             busy_type: The :attr:`busy_type` of the availability.
             categories: The :attr:`categories` of the availability.
             classification: The :attr:`classification` of the availability.
-            comments: The :attr:`~icalendar.Component.comments` of the availability.
-            concepts: The :attr:`~icalendar.Component.concepts` of the availability.
+            comments: The :attr:`comments` of the availability.
+            concepts: The :attr:`concepts` of the availability.
             contacts: The :attr:`contacts` of the availability.
-            created: The :attr:`~icalendar.Component.created` of the availability.
+            created: The :attr:`created` of the availability.
             description: The :attr:`description` of the availability.
             end: The :attr:`end` of the availability.
-            last_modified: The :attr:`~icalendar.Component.last_modified` of the
+            last_modified: The :attr:`last_modified` of the
                 availability.
-            links: The :attr:`~icalendar.Component.links` of the availability.
+            links: The :attr:`links` of the availability.
             location: The :attr:`location` of the availability.
             organizer: The :attr:`organizer` of the availability.
-            refids: :attr:`~icalendar.Component.refids` of the availability.
-            related_to: :attr:`~icalendar.Component.related_to` of the availability.
+            refids: :attr:`refids` of the availability.
+            related_to: :attr:`related_to` of the availability.
             sequence: The :attr:`sequence` of the availability.
-            stamp: The :attr:`~icalendar.Component.stamp` of the availability.
+            stamp: The :attr:`stamp` of the availability.
                 If None, this is set to the current time.
             start: The :attr:`start` of the availability.
             summary: The :attr:`summary` of the availability.
-            uid: The :attr:`~icalendar.cal.availability.Availability.uid` of the availability.
+            uid: The :attr:`uid` of the availability.
                 If ``None``, this is set to a new :func:`uuid.uuid4`.
             url: The :attr:`url` of the availability.
 
