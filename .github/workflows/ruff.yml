@@ -1,4 +1,4 @@
-name: Ruff
+name: Check code style with ruff
 on: [push, pull_request]
 jobs:
   ruff:
