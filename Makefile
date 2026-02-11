@@ -138,6 +138,10 @@ test: clean linkcheckbroken  ## Clean docs build, then run vale and linkcheckbro
 dev: .venv  ## Install required Python, create Python virtual environment, install package and development requirements
 	@uv sync --group dev
 	@pre-commit install
+	@git remote add collective https://github.com/collective/icalendar.git || git remote set-url collective https://github.com/collective/icalendar.git  # add collective/icalendar as a remote
+	@git remote add collective+ssh git@github.com:collective/icalendar.git || git remote set-url collective+ssh git@github.com:collective/icalendar.git  # add collective/icalendar as a remote
+	@git config branch.main.remote collective     # set remote tracking branch
+    @git config branch.main.merge refs/heads/main
 
 .PHONY: all
 all: clean linkcheck html  ## Clean docs build, then run linkcheck, and build html
