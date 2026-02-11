@@ -58,7 +58,7 @@ class vBroken(vText):
 
     def __repr__(self) -> str:
         return (
-            f"vBroken({str(self)!r}, "
+            f"{self.__class__.__name__}({str(self)!r}, "
             f"expected_type={self.expected_type!r}, "
             f"property_name={self.property_name!r})"
         )
@@ -94,6 +94,4 @@ class vBroken(vText):
         ]
 
 
-vBrokenProperty = vBroken  # noqa: N816
-
-__all__ = ["vBroken", "vBrokenProperty"]
+__all__ = ["vBroken"]

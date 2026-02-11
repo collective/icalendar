@@ -47,7 +47,7 @@ from typing import TypeAlias
 from .adr import AdrFields, vAdr
 from .binary import vBinary
 from .boolean import vBoolean
-from .broken import vBroken, vBrokenProperty
+from .broken import vBroken
 from .cal_address import vCalAddress
 from .categories import vCategory
 from .dt import (
@@ -120,7 +120,6 @@ __all__ = [
     "vBinary",
     "vBoolean",
     "vBroken",
-    "vBrokenProperty",
     "vCalAddress",
     "vCategory",
     "vDDDLists",

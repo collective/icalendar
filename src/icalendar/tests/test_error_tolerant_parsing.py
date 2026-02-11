@@ -4,7 +4,7 @@ import pytest
 
 from icalendar import Calendar
 from icalendar.error import BrokenCalendarProperty
-from icalendar.prop import vBroken, vBrokenProperty, vDDDLists, vDDDTypes, vRecur, vText
+from icalendar.prop import vBroken, vDDDLists, vDDDTypes, vRecur, vText
 
 
 def test_properties_parsed_immediately():
@@ -396,18 +396,9 @@ END:VCALENDAR"""
     assert any("RRULE" in error[0] for error in event.errors)
 
 
-def test_parse_error_is_exception_object():
+def test_parse_error_is_exception_object(calendars):
     """Verify parse_error stores the actual exception, not a string."""
-    ical_str = b"""BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:test
-BEGIN:VEVENT
-UID:test-123
-DTSTART:INVALID-DATE
-END:VEVENT
-END:VCALENDAR"""
-
-    cal = Calendar.from_ical(ical_str)
+    cal = calendars["broken_dtstart"]
     event = cal.walk("VEVENT")[0]
     dtstart = event["DTSTART"]
 
@@ -449,35 +440,12 @@ def test_vbroken_getattr_preserves_existing_attributes():
     assert broken.encoding is not None
 
 
-def test_event_dtstart_raises_broken_calendar_property():
+def test_event_dtstart_raises_broken_calendar_property(calendars):
     """Verify event.DTSTART raises BrokenCalendarProperty for broken values."""
-    ical_str = b"""BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:test
-BEGIN:VEVENT
-UID:test-123
-DTSTART:INVALID-DATE
-END:VEVENT
-END:VCALENDAR"""
-
-    cal = Calendar.from_ical(ical_str)
+    cal = calendars["broken_dtstart"]
     event = cal.walk("VEVENT")[0]
 
     with pytest.raises(BrokenCalendarProperty) as exc_info:
         event.DTSTART
 
     assert exc_info.value.__cause__ is not None
-
-
-def test_backward_compat_alias():
-    """Verify vBrokenProperty alias still works."""
-    assert vBrokenProperty is vBroken
-
-    broken = vBrokenProperty(
-        "INVALID",
-        property_name="DTSTART",
-        expected_type="vDDDTypes",
-        parse_error=ValueError("bad"),
-    )
-    assert isinstance(broken, vBroken)
-    assert isinstance(broken, vBrokenProperty)
