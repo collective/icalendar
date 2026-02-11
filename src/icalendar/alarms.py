@@ -42,16 +42,6 @@ class AlarmTime:
     An AlarmTime instance combines an alarm component with its resolved
     trigger time and additional state information, such as acknowledgment
     and snoozing.
-
-    Attributes:
-        alarm (Alarm): The underlying VALARM component.
-        trigger (datetime): The computed trigger time.
-        acknowledged_until (datetime | None): Time in UTC until which the
-            alarm has been acknowledged, if any.
-        snoozed_until (datetime | None): Time in UTC until which the alarm
-            is snoozed, if any.
-        parent (Event | Todo | None): The parent calendar component that
-            contains this alarm.
     """
 
     def __init__(
@@ -62,7 +52,7 @@ class AlarmTime:
         snoozed_until: datetime | None = None,
         parent: Parent | None = None,
     ):
-        """Create a new AlarmTime.
+        """Create an instance of ``AlarmTime`` with any of its parameters.
 
         Parameters:
             alarm: The underlying alarm component.

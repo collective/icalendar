@@ -120,6 +120,7 @@ Documentation
 - Fix incorrect return type annotation in :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`. :issue:`1141`
 - Fixed broken links in ``docs/how-to/usage.rst`` documentation. Part of :issue:`1158`
 - Enhanced the first-time contributors section, in hopes that fewer contributors ask permission before starting work. :issue:`1165`
+- Configured Sphinx to append the docstring from the ``__init__`` method into its class docstring. :issue:`1156`
 
 7.0.0a3 (2025-12-19)
 --------------------
