@@ -51,6 +51,19 @@ Based on the created event above, the following example shows how to access valu
     >>> print(event.start)
     2022-01-01
 
+Property naming convention
+==========================
+Property names are either in lower case or upper case.
+
+-   Upper case property names refer simultaneously to both the Python component property name and the iCalender :rfc:`5545` property name.
+    For example, ``DTEND`` occurs in :rfc:`5545` and as a property in :class:`~icalendar.cal.event.Event`.
+-   Lower case property names refer to only the Python component property name.
+    These properties are calculated from one or more upper case properties.
+    For example, :attr:`~icalendar.cal.event.Event.end` is calculated either from :attr:`~icalendar.cal.event.Event.DTEND` or from both :attr:`~icalendar.cal.event.Event.DTSTART` and :attr:`~icalendar.cal.event.Event.DURATION`.
+
+All properties can be accessed as attributes.
+
+
 Lower case properties
 ---------------------
 
