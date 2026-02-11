@@ -21,8 +21,8 @@ Upgrading from 6.x to 7.x should have **no complications for most developers**, 
 
 We still recommend checking out the new features and giving feedback in the repository.
 
-7.0.0a4 (unreleased)
---------------------
+7.0.0 (2026-02-11)
+------------------
 
 Minor changes
 ~~~~~~~~~~~~~
@@ -86,7 +86,6 @@ Documentation
 - Applied Google-style docstrings to :mod:`icalendar.tools` utility functions with Args, Returns, and Example sections. See :issue:`1072`.
 - Simplify contributors and add supporters in credits. See :issue:`1035`.
 - Add a section in the change log for Documentation. See :issue:`1043`.
-- Added ❌ and ✅ emoji to the list of supported RFCs.
 - Fixed multiple ``more than one target found for cross-reference`` warnings, and stopped using ``sphinx.ext.autosectionlabel``, in documentation. See :issue:`952`.
 - Add ``funding.json`` manifest for funding information. See :issue:`1047`.
 - Resolved ``Cannot resolve forward reference in type annotations`` warning in documentation.
