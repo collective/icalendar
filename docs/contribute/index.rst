@@ -21,6 +21,13 @@ First-time contributors
 
 Contributions to icalendar from people new to icalendar are welcome.
 
+Like most free and open source software, icalendar promotes the "free" part, meaning freedom or liberty.
+
+-   You're free to start work on issues without asking.
+-   You're free to ask questions to clarify the scope of work before you start.
+-   We don't assign issues.
+-   Free other contributors from duplicating your effort by opening a pull request as soon as you can.
+
 For people participating in programs to encourage first-time contributions, including `Hacktoberfest <https://hacktoberfest.com/>`_, `Good First Issue <https://goodfirstissue.dev/language/python#repo-2222138>`_, and `Up For Grabs <https://up-for-grabs.net/#/filters?tags=ical%2Cicalendar%2Cics%2Crfc5545>`_, you must comply with their terms and conditions to receive their recognition or rewards.
 Accordingly, you may request of the maintainers in your pull request that you would like recognition for your contribution.
 
