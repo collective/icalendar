@@ -69,13 +69,13 @@ class vWeekday(str):
         self = super().__new__(cls, value)
         match = WEEKDAY_RULE.match(self)
         if match is None:
-            raise ValueError(f"Expected weekday abbrevation, got: {self}")
+            raise ValueError(f"Expected weekday abbreviation, got: {self}")
         match = match.groupdict()
         sign = match["signal"]
         weekday = match["weekday"]
         relative = match["relative"]
         if weekday not in vWeekday.week_days or sign not in "+-":
-            raise ValueError(f"Expected weekday abbrevation, got: {self}")
+            raise ValueError(f"Expected weekday abbreviation, got: {self}")
         self.weekday = weekday or None
         self.relative = (relative and int(relative)) or None
         if sign == "-" and self.relative:
@@ -91,7 +91,7 @@ class vWeekday(str):
         try:
             return cls(ical.upper())
         except Exception as e:
-            raise ValueError(f"Expected weekday abbrevation, got: {ical}") from e
+            raise ValueError(f"Expected weekday abbreviation, got: {ical}") from e
 
     @classmethod
     def parse_jcal_value(cls, value: Any) -> Self:

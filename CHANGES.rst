@@ -42,7 +42,7 @@ Minor changes
 - Added type hints and overloads to :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>` and :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>` to support ``multiple=True/False`` return types. :issue:`1129`
 - CI: Print a link to Vale documentation when the spell checker fails.
 - Remove ``bootstrap.py`` and ``buildout.cfg`` files as they are old build configurations. :pull:`1171`
-- Enforce ruff formatting and linting across the entire codebase, with CI check to prevent regressions. See :issue:`672`, :pull:`1171`, :pull:`1172`, :pull:`1173`, :pull:`1174`, :pull:`1175`, :pull:`1176`, :pull:`1177`, :pull:`1178`, :pull:`1179`, :pull:`1180`, :pull:`1181`.
+- Fix type annotations, typos, and validation logic in prop module: corrected return type hints in ``parse_jcal_value`` methods, fixed ``to_ical()`` return type in vDDDTypes, updated ClassVar type hint in TypesFactory, removed dead code, fixed "abbrevation" typo in vWeekday, and corrected validation logic in vMonth. :issue:`1185`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
