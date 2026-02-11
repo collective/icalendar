@@ -166,7 +166,7 @@ apidoc_modules = [
         },
     }
 ]
-
+autoclass_content = "both"
 
 # -- sphinx.ext.autodoc options -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html
@@ -175,7 +175,6 @@ autodoc_default_options = {
     "inherited-members": "CaselessDict",
     "members": True,
     "show-inheritance": True,
-    "special-members": "__init__",
     "undoc-members": True,
 }
 
