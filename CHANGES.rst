@@ -44,6 +44,8 @@ Minor changes
 - Remove ``bootstrap.py`` and ``buildout.cfg`` files as they are old build configurations. :pull:`1171`
 - Enforce ruff formatting and linting across the entire codebase, with CI check to prevent regressions. See :issue:`672`, :pull:`1171`, :pull:`1172`, :pull:`1173`, :pull:`1174`, :pull:`1175`, :pull:`1176`, :pull:`1177`, :pull:`1178`, :pull:`1179`, :pull:`1180`, :pull:`1181`.
 
+- Rename :class:`~icalendar.prop.vBrokenProperty` to :class:`~icalendar.prop.vBroken` to match naming convention. The old name is kept as an alias. :class:`~icalendar.prop.vBroken` now stores the actual exception object in ``parse_error`` instead of a string, and raises :class:`~icalendar.error.BrokenCalendarProperty` when accessing attributes like ``.dt`` that the expected type would have. See :issue:`1087`.
+
 Breaking changes
 ~~~~~~~~~~~~~~~~
 
