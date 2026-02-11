@@ -173,7 +173,7 @@ class vDuration(TimeBase):
         JCalParsingError.validate_value_type(jcal, str, cls)
         try:
             return cls.from_ical(jcal)
-        except ValueError as e:
+        except (ValueError, InvalidCalendar) as e:
             raise JCalParsingError("Cannot parse duration.", cls, value=jcal) from e
 
     @classmethod
