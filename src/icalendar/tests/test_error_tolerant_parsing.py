@@ -52,19 +52,9 @@ END:VCALENDAR"""
     assert dtstart.params["TZID"] == "America/New_York"
 
 
-def test_broken_property_vbroken_fallback():
+def test_broken_property_vbroken_fallback(calendars):
     """Verify broken properties fall back to vBroken."""
-    ical_str = b"""BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:test
-BEGIN:VEVENT
-UID:test-123
-DTSTART:INVALID-DATE-FORMAT
-SUMMARY:Test Event
-END:VEVENT
-END:VCALENDAR"""
-
-    cal = Calendar.from_ical(ical_str)
+    cal = calendars["broken_dtstart"]
     event = cal.walk("VEVENT")[0]
 
     # Access broken property
@@ -73,7 +63,7 @@ END:VCALENDAR"""
     # Should fall back to vBroken (which is vText subclass)
     assert isinstance(dtstart, vBroken)
     assert isinstance(dtstart, vText)  # vBroken inherits from vText
-    assert str(dtstart) == "INVALID-DATE-FORMAT"
+    assert str(dtstart) == "INVALID-DATE"
 
     # Metadata should be present
     assert dtstart.property_name == "DTSTART"
@@ -256,19 +246,9 @@ END:VCALENDAR"""
     assert "RDATE" not in event
 
 
-def test_vbroken_repr():
+def test_vbroken_repr(calendars):
     """Verify vBroken repr includes metadata."""
-    ical_str = b"""BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:test
-BEGIN:VEVENT
-UID:test-123
-DTSTART:INVALID-DATE
-SUMMARY:Test Event
-END:VEVENT
-END:VCALENDAR"""
-
-    cal = Calendar.from_ical(ical_str)
+    cal = calendars["broken_dtstart"]
     event = cal.walk("VEVENT")[0]
 
     # Access broken property
@@ -321,18 +301,9 @@ END:VCALENDAR"""
     assert str(summary) == "Test Event"
 
 
-def test_vbroken_metadata():
+def test_vbroken_metadata(calendars):
     """Verify vBroken stores parse error metadata."""
-    ical_str = b"""BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:test
-BEGIN:VEVENT
-UID:test-123
-DTSTART:INVALID-DATE
-END:VEVENT
-END:VCALENDAR"""
-
-    cal = Calendar.from_ical(ical_str)
+    cal = calendars["broken_dtstart"]
     event = cal.walk("VEVENT")[0]
     dtstart = event["DTSTART"]
 

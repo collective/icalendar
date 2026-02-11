@@ -43,7 +43,7 @@ Errors are populated immediately after parsing, without needing to access the pr
 Access broken properties
 ------------------------
 
-Properties that fail to parse are converted to :class:`~icalendar.prop.vBroken` instances.
+Properties that fail to parse are converted to :class:`~icalendar.prop.broken.vBroken` instances.
 This preserves the raw value for inspection or round-trip serialization.
 
 .. code-block:: pycon
@@ -114,7 +114,7 @@ You can iterate over errors to log or handle them.
     ...     print(f"{prop_name}: {error_msg}")
     DTSTART: Expected datetime, date, or time. Got: 'INVALID-DATE'
 
-To check if a specific property failed to parse, check if it is a :class:`~icalendar.prop.vBroken`.
+To check if a specific property failed to parse, check if it is a :class:`~icalendar.prop.broken.vBroken`.
 
 .. code-block:: pycon
 
