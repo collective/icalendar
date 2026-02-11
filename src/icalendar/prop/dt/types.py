@@ -48,7 +48,6 @@ class vDDDTypes(TimeBase):
                 "You must use datetime, date, timedelta, time or tuple (for periods)"
             )
         self.dt = dt
-        # if isinstance(dt, (datetime, timedelta)): pass
         if is_date(dt):
             params.update({"value": "DATE"})
         elif isinstance(dt, time):
@@ -80,7 +79,7 @@ class vDDDTypes(TimeBase):
         result.params = self.params
         return result
 
-    def to_ical(self) -> str:
+    def to_ical(self) -> bytes:
         """Return the ical representation."""
         return self.to_property_type().to_ical()
 

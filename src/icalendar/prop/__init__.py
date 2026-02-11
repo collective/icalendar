@@ -47,7 +47,7 @@ from typing import TypeAlias
 from .adr import AdrFields, vAdr
 from .binary import vBinary
 from .boolean import vBoolean
-from .broken import vBrokenProperty
+from .broken import vBroken
 from .cal_address import vCalAddress
 from .categories import vCategory
 from .dt import (
@@ -79,7 +79,7 @@ from .xml_reference import vXmlReference
 VPROPERTY: TypeAlias = (
     vAdr
     | vBoolean
-    | vBrokenProperty
+    | vBroken
     | vCalAddress
     | vCategory
     | vDDDLists
@@ -119,7 +119,7 @@ __all__ = [
     "vAdr",
     "vBinary",
     "vBoolean",
-    "vBrokenProperty",
+    "vBroken",
     "vCalAddress",
     "vCategory",
     "vDDDLists",

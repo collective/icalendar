@@ -50,6 +50,10 @@ icalendar supports multiple timezone implementations, including `zoneinfo <https
     :target: https://coveralls.io/github/collective/icalendar?branch=main
     :alt: Test coverage
 
+.. image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
+    :target: https://github.com/astral-sh/ruff
+    :alt: Ruff
+
 .. image:: https://img.shields.io/badge/%F0%9F%A4%91-Funding-brightgreen
     :target: https://opencollective.com/python-icalendar
     :alt: Funding
