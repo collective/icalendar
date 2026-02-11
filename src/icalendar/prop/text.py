@@ -9,7 +9,7 @@ from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
 
 
 class vText(str):
-    """Text
+    r"""Text
     
     Value Name:
         TEXT
