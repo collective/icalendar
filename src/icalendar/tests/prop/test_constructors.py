@@ -96,17 +96,17 @@ def test_vMonth_validation():
     assert vMonth("1") == 1
     assert vMonth("5L") == 5
     assert vMonth("5L").leap
-    
+
     # Invalid cases
     with pytest.raises(ValueError, match="Invalid month"):
         vMonth("L")  # Just L without digits
-    
+
     with pytest.raises(ValueError, match="Invalid month"):
         vMonth("1LL")  # Double L
-    
+
     with pytest.raises(ValueError, match="Invalid month"):
         vMonth("abc")  # Letters not in valid format
-    
+
     with pytest.raises(ValueError, match="Invalid month"):
         vMonth("")  # Empty string
 
