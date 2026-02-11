@@ -31,6 +31,7 @@ authors = [
 ]
 maintainers = [
   { name="Nicco Kunzmann", email="niccokunzmann@rambler.ru" },
+  { name="Sashank Bhamidi" },
   { name="Christian Geier" },
   { name="Jaca", email="vitouejj@gmail.com" },
 ]
