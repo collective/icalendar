@@ -38,11 +38,13 @@ Minor changes
 - Regroup dependencies in, and remove obsolete ones, from :file:`pyproject.toml`. :issue:`906`
 - Add type hints to internal helper functions. :issue:`938`
 - Add type hints to prop value classes (vBoolean, vFloat, vUri, vBinary, vInline). :issue:`938`
-- Add type hints to remaining prop value classes (vText, vCalAddress, vCategory, vGeo, vN, vOrg, vAdr, vBrokenProperty, vUid, Conference, Image). :issue:`938`
+- Add type hints to remaining prop value classes (vText, vCalAddress, vCategory, vGeo, vN, vOrg, vAdr, vBroken, vUid, Conference, Image). :issue:`938`
 - Added type hints and overloads to :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>` and :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>` to support ``multiple=True/False`` return types. :issue:`1129`
 - CI: Print a link to Vale documentation when the spell checker fails.
 - Remove ``bootstrap.py`` and ``buildout.cfg`` files as they are old build configurations. :pull:`1171`
 - Fix type annotations, typos, and validation logic in prop module: corrected return type hints in ``parse_jcal_value`` methods, fixed ``to_ical()`` return type in vDDDTypes, updated ClassVar type hint in TypesFactory, removed dead code, fixed "abbrevation" typo in vWeekday, and corrected validation logic in vMonth. :issue:`1185`
+
+- Rename :class:`~icalendar.prop.vBrokenProperty` to :class:`~icalendar.prop.vBroken` to match naming convention. :class:`~icalendar.prop.vBroken` now stores the actual exception object in ``parse_error`` instead of a string, and raises :class:`~icalendar.error.BrokenCalendarProperty` when accessing attributes like ``.dt`` that the expected type would have. See :issue:`1087`.
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
@@ -58,7 +60,7 @@ New features
 ~~~~~~~~~~~~
 
 - Added ``recursive`` parameter to :meth:`Component.copy` to control copying of subcomponents and properties. :issue:`899`
-- Event components now have error-tolerant property parsing. Properties with parsing errors fall back to :class:`~icalendar.prop.vBrokenProperty`, preserving the raw value and allowing access to other valid properties. Errors are recorded in ``component.errors``. Partially addresses :issue:`158`.
+- Event components now have error-tolerant property parsing. Properties with parsing errors fall back to :class:`~icalendar.prop.vBroken`, preserving the raw value and allowing access to other valid properties. Errors are recorded in ``component.errors``. Partially addresses :issue:`158`.
 - Added :class:`~icalendar.prop.AdrFields` and :class:`~icalendar.prop.NFields` named tuples for structured access to vCard ADR and N property fields. The ``fields`` attribute and ``from_ical()`` return value of :class:`~icalendar.prop.vAdr` and :class:`~icalendar.prop.vN` now return these typed named tuples, enabling access like ``adr.fields.street`` and ``n.fields.family``. Since named tuples are tuple subclasses, existing code using tuple indexing or unpacking remains compatible. Added ``name`` and ``units`` properties to :class:`~icalendar.prop.vOrg` for convenient access to the organization name and organizational units. Added ``ical_value`` property to all three classes. See :issue:`1060`.
 - Added ``with_uid`` method to ``Component`` to filter subcomponents by UID. See :issue:`950`.
 - Enforce linting of code with Ruff in CI. :issue:`672`
@@ -79,7 +81,7 @@ Documentation
 ~~~~~~~~~~~~~
 
 - Improved docstrings and formatting for the :class:`~icalendar.alarms.AlarmTime` class. :issue:`1072`
-- Added how-to guide for handling parsing errors with :class:`~icalendar.prop.vBrokenProperty` and the ``component.errors`` attribute. See :issue:`1085`.
+- Added how-to guide for handling parsing errors with :class:`~icalendar.prop.vBroken` and the ``component.errors`` attribute. See :issue:`1085`.
 - Updated 11 function docstrings in :mod:`icalendar.parser` to follow the Google Style guide, improving API documentation clarity and consistency. See :issue:`1072`.
 - Applied Google-style docstrings to :mod:`icalendar.tools` utility functions with Args, Returns, and Example sections. See :issue:`1072`.
 - Simplify contributors and add supporters in credits. See :issue:`1035`.

@@ -477,6 +477,8 @@ class Component(CaselessDict):
         See Also:
             :doc:`/how-to/custom-components` for examples of parsing custom components
         """
+        from icalendar.prop import vBroken
+
         stack = []  # a stack of components
         comps = []
         for line in Contentlines.from_ical(st):  # raw parsing
@@ -603,11 +605,9 @@ class Component(CaselessDict):
                     except Exception as e:
                         if not component.ignore_exceptions:
                             raise
-                        # Error-tolerant mode: create vBrokenProperty
-                        from icalendar.prop import vBrokenProperty
-
+                        # Error-tolerant mode: create vBroken
                         expected_type = getattr(factory, "__name__", "unknown")
-                        broken_prop = vBrokenProperty.from_parse_error(
+                        broken_prop = vBroken.from_parse_error(
                             raw_value=val,
                             params=params,
                             property_name=name,
