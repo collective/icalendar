@@ -122,6 +122,7 @@ Documentation
 - Document how to create and read attendee information in events. See :issue:`130`.
 - Add usage examples. :issue:`443`
 - Improve documentation contribution guide by adding chapters for small edits, builds and checks, and a style guide. Added details for Vale usage, Diátaxis framework, narrative and API documentation, and fixing all spelling errors. See :issue:`991`.
+- Document dictionary and property accessors. :issue:`124`.
 - Moved content from the README into documentation to reduce maintenance and point to the authoritative source of information.
   See :issue:`1006`.
 - Added "Code conventions" section to the Development contributing guide.
