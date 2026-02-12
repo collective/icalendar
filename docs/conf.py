@@ -89,7 +89,7 @@ html_theme_options = {
     "search_bar_text": "Search",
     "show_nav_level": 2,
     "show_toc_level": 2,
-    "show_version_warning_banner": False,
+    "show_version_warning_banner": True,
     "switcher": {
         "json_url": json_url,
         "version_match": version_match,
