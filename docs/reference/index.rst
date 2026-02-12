@@ -10,6 +10,7 @@ Design reference
     :maxdepth: 2
 
     design
+    component-api
 
 
 Change log history

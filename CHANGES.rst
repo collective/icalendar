@@ -21,8 +21,37 @@ Upgrading from 6.x to 7.x should have **no complications for most developers**, 
 
 We still recommend checking out the new features and giving feedback in the repository.
 
-7.0.0a4 (unreleased)
---------------------
+7.0.1 (unreleased)
+------------------
+
+Minor changes
+~~~~~~~~~~~~~
+
+- ...
+
+Breaking changes
+~~~~~~~~~~~~~~~~
+
+- ...
+
+New features
+~~~~~~~~~~~~
+
+- ...
+
+Bug fixes
+~~~~~~~~~
+
+- ...
+
+Documentation
+~~~~~~~~~~~~~
+
+- Fixed the version switcher on Read the Docs, and documented the process for a major release. :issue:`1194`
+
+
+7.0.0 (2026-02-11)
+------------------
 
 Minor changes
 ~~~~~~~~~~~~~
@@ -86,7 +115,6 @@ Documentation
 - Applied Google-style docstrings to :mod:`icalendar.tools` utility functions with Args, Returns, and Example sections. See :issue:`1072`.
 - Simplify contributors and add supporters in credits. See :issue:`1035`.
 - Add a section in the change log for Documentation. See :issue:`1043`.
-- Added ❌ and ✅ emoji to the list of supported RFCs.
 - Fixed multiple ``more than one target found for cross-reference`` warnings, and stopped using ``sphinx.ext.autosectionlabel``, in documentation. See :issue:`952`.
 - Add ``funding.json`` manifest for funding information. See :issue:`1047`.
 - Resolved ``Cannot resolve forward reference in type annotations`` warning in documentation.
@@ -95,6 +123,7 @@ Documentation
 - Document how to create and read attendee information in events. See :issue:`130`.
 - Add usage examples. :issue:`443`
 - Improve documentation contribution guide by adding chapters for small edits, builds and checks, and a style guide. Added details for Vale usage, Diátaxis framework, narrative and API documentation, and fixing all spelling errors. See :issue:`991`.
+- Document dictionary and property accessors. :issue:`124`.
 - Moved content from the README into documentation to reduce maintenance and point to the authoritative source of information.
   See :issue:`1006`.
 - Added "Code conventions" section to the Development contributing guide.
@@ -121,10 +150,10 @@ Documentation
   See `smartquotes_action <https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-smartquotes_action>`_.
 - Fix incorrect return type annotation in :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`. :issue:`1141`
 - Fixed broken links in ``docs/how-to/usage.rst`` documentation. Part of :issue:`1158`
+- Enhanced the first-time contributors section, in hopes that fewer contributors ask permission before starting work. :issue:`1165`
 - Changed Sphinx configuration to inherit from ``CaselessDict``, displaying all of its class members in the in-page navigation.
   Fixed broken cross-component links in ``Availability.new()``. :issue:`994`
 - Configured Sphinx to append the docstring from the ``__init__`` method into its class docstring. :issue:`1156`
-
 
 7.0.0a3 (2025-12-19)
 --------------------
