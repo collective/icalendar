@@ -262,7 +262,7 @@ The following docstrings items are the most frequently used in icalendar, althou
     -   A class's docstring must not contain ``Attributes``, ``Parameters``,  ``Returns``, or ``Raises`` sections.
     -   ``Parameters``, ``Returns``, and ``Raises`` sections may be in the ``__init__`` method's docstring.
     -   The ``__init__`` method's docstring gets automatically appended to its class's docstring by Sphinx.
-        See :pull:`1164` for an example.
+        See :pr:`1164` for an example.
     -   The one-line summary in the ``__init__`` method's docstring should serve as a narrative bridge from the ending of its class docstring.
 
 Summary
