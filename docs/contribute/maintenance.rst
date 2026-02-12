@@ -90,20 +90,33 @@ This section explains how to create a new release on `PyPI <https://pypi.org/pro
 Since collaborators and maintainers have write access to the repository, they can start the release process.
 However, only people with ``Environments/Configure PyPI`` access can approve an automated release to PyPI.
 
-#.  Check that the file :file:`CHANGES.rst` is up to date with the `latest merged pull requests <https://github.com/collective/icalendar/pulls?q=is%3Apr+is%3Amerged>`_, and the version you want to release is correctly named.
-
 #.  Set an environment variable to use in subsequent commands during the release process.
 
     .. code-block:: shell
 
         export VERSION=7.0.0
 
-#.  Create a commit on the ``release`` branch (or equivalent) to release this version.
+#.  Update the ``main`` branch.
 
     .. code-block:: shell
 
         git checkout main
         git pull
+
+#.  If you want to cut a new release of a stable version, then in the ``main`` or development branch, update :file:`docs/_static/version-switcher.json` to match that version.
+
+#.  Check that the file :file:`CHANGES.rst` is up to date with the `latest merged pull requests <https://github.com/collective/icalendar/pulls?q=is%3Apr+is%3Amerged>`_, and the version you want to release is correctly named.
+    Change the date of the release, and remove empty sections.
+
+    .. code-block:: diff
+
+        -7.0.0 (unreleased)
+        +7.0.0 (2026-02-11)
+
+#.  Create a commit on a ``release`` branch to release this version.
+
+    .. code-block:: shell
+
         git checkout -b release-$VERSION main
         git add CHANGES.rst docs/_static/version-switcher.json
         git commit -m"version $VERSION"
@@ -128,14 +141,17 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         git branch -d release-$VERSION
         git push -d origin release-$VERSION
 
-#.  Create a tag for the release and see if the `CI-tests`_ are running.
+#.  Create a tag for the release on its release branch ``*.x`` and see if the `CI-tests`_ are running.
 
     .. code-block:: shell
 
         git checkout main
         git pull
+        git checkout 7.x
+        git rebase main
+        git push 7.x  # to collective/icalendar
         git tag "v$VERSION"
-        git push upstream "v$VERSION" # could be origin or whatever reference
+        git push upstream "v$VERSION" # to collective/icalendar
 
     .. warning::
 
@@ -143,7 +159,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         This creates issues for downstream repositories.
         See :issue:`1033`.
 
-#.  Once the tag is pushed and its `CI-tests`_ are passing, maintainers will get an e-mail:
+#.  Once the tag is pushed and its `CI-tests`_ pass, check the `GitHub Actions <https://github.com/collective/icalendar/actions>`_, and wait for maintainers to get an email:
 
     .. code-block:: text
 
@@ -152,8 +168,12 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         tests: PyPI is waiting for your review
 
 #.  If the release is approved by a maintainer, it will be pushed to `PyPI`_.
-    If that happens, notify the issues that were fixed about this release.
-#.  Copy this to the start of ``CHANGES.rst``.
+#.  Copy this to the start of :file:`CHANGES.rst`, and increase the version number.
+
+    .. code-block:: shell
+
+        git checkout main
+        git pull
 
     .. code-block:: text
 
@@ -189,11 +209,16 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
     .. code-block:: shell
 
-        git checkout main
-        git pull
         git add CHANGES.rst
         git commit -m "Add new CHANGELOG section for future release"
-        git push upstream main # could be origin or whatever reference
+        git push upstream main # to collective/icalendar
+
+#.  Once the release is pushed to `PyPI`_, notify the issues mentioned on the new release of the new release.
+    Example:
+
+    .. code-block:: text
+
+        This is included in v7.0.0.
 
 #.  Update :file:`docs/_static/version-switcher.json`.
 
