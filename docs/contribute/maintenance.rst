@@ -104,7 +104,15 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         git checkout main
         git pull
 
-#.  If you want to cut a new release of a stable version, then in the ``main`` or development branch, update :file:`docs/_static/version-switcher.json` to match that version.
+#.  When cutting any new release that you'll tag and want to be considered as "stable", on the ``main`` or development branch, update the Sphinx configuration file :file:`docs/conf.py` to match that version.
+
+    Hide the warning banner.
+
+    .. code-block:: python
+
+        html_theme_options = {
+            # ...
+            "show_version_warning_banner": False,
 
 #.  Check that the file :file:`CHANGES.rst` is up to date with the `latest merged pull requests <https://github.com/collective/icalendar/pulls?q=is%3Apr+is%3Amerged>`_, and the version you want to release is correctly named.
     Change the date of the release, and remove empty sections.
@@ -221,14 +229,21 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
         This is included in v7.0.0.
 
-#.  Update :file:`docs/_static/version-switcher.json`.
+#.  Update the version switcher file :file:`docs/_static/version-switcher.json`.
+
+    .. note::
+
+        The remaining steps may be performed after the release because they pertain exclusively to documentation, which isn't included in the release.
+
+    .. note::
+
+        The following examples were used for the 7.0.0 release.
 
     .. important::
 
         Making a pull request won't have any effect to the version switcher on Read the Docs until it gets on to the ``main`` branch, so you might as well edit and push directly on the ``main`` branch for this step.
 
-    #.  When cutting a new *stable release* version, on the ``main`` or development branch, update :file:`docs/_static/version-switcher.json` to match that version.
-        The following examples were used for the 7.0.0 release.
+    #.  When cutting a new *stable release* version, on the ``main`` branch, update :file:`docs/_static/version-switcher.json` to match that version.
 
         #.  Copy the second previous major version and renumber it to the first previous version, in other words, copy ``5.x`` and renumber the copy to ``6.x``.
 
@@ -261,6 +276,24 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
                 "preferred": "true"
             },
 
+#.  When cutting a new *stable release* version, update the Sphinx configuration file :file:`docs/conf.py` as shown.
+
+    #.  On the ``main`` branch, which is now the development branch, show the warning banner.
+
+        .. code-block:: python
+
+            html_theme_options = {
+                # ...
+                "show_version_warning_banner": True,
+
+    #.  On the previous numbered major release branch, show the warning banner.
+
+        .. code-block:: python
+
+            html_theme_options = {
+                # ...
+                "show_version_warning_banner": True,
+
 #.  Configure `Read the Docs <https://app.readthedocs.org/projects/icalendar/>`_.
 
     #.  Deactivate any non-stable releases.
@@ -271,16 +304,6 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         Search for the previous major version ``#.x``.
         Click on the version that appears in the select menu that matches your search.
         Toggle the :guilabel:`Active` switch to activate the version.
-
-#.  For a major release, on the previous version branch, in :file:`conf.py`, update the configuration as shown.
-
-    .. code-block:: python
-
-    html_theme_options = {
-        # ...
-        "show_version_warning_banner": True,
-        # ...
-    }
 
 
 Links
