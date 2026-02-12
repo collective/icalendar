@@ -104,7 +104,8 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
 #.  If you want to cut a new release of a stable version, then in the ``main`` or development branch, update :file:`docs/_static/version-switcher.json` to match that version.
 
-#.  Check that the file :file:`CHANGES.rst` is up to date with the `latest merged pull requests <https://github.com/collective/icalendar/pulls?q=is%3Apr+is%3Amerged>`_, and the version you want to release is correctly named. Change the date of the release and remove empty sections.
+#.  Check that the file :file:`CHANGES.rst` is up to date with the `latest merged pull requests <https://github.com/collective/icalendar/pulls?q=is%3Apr+is%3Amerged>`_, and the version you want to release is correctly named.
+    Change the date of the release, and remove empty sections.
 
     .. code-block:: diff
 
@@ -157,8 +158,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         This creates issues for downstream repositories.
         See :issue:`1033`.
 
-#.  Once the tag is pushed and its `CI-tests`_ are passing.
-    You can check the `GitHub Actions <https://github.com/collective/icalendar/actions>`_ and wait for maintainers to get an e-mail:
+#.  Once the tag is pushed and its `CI-tests`_ pass, check the `GitHub Actions <https://github.com/collective/icalendar/actions>`_, and wait for maintainers to get an email:
 
     .. code-block:: text
 
@@ -167,7 +167,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         tests: PyPI is waiting for your review
 
 #.  If the release is approved by a maintainer, it will be pushed to `PyPI`_.
-#.  Copy this to the start of ``CHANGES.rst`` and increase the version number.
+#.  Copy this to the start of :file:`CHANGES.rst`, and increase the version number.
 
     .. code-block:: shell
 
