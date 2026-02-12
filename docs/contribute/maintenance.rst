@@ -246,6 +246,16 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         Click on the version that appears in the select menu that matches your search.
         Toggle the :guilabel:`Active` switch to activate the version.
 
+#.  For a major release, on the previous version branch, in :file:`conf.py`, update the configuration as shown.
+
+    .. code-block:: python
+
+    html_theme_options = {
+        # ...
+        "show_version_warning_banner": True,
+        # ...
+    }
+
 
 Links
 -----
