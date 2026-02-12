@@ -27,7 +27,7 @@ We still recommend checking out the new features and giving feedback in the repo
 Minor changes
 ~~~~~~~~~~~~~
 
-- ...
+- Add `collective` remotes for documentation in `make dev`. :pull:`1193`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
