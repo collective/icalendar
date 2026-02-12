@@ -98,8 +98,6 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
         export VERSION=7.0.0
 
-#.  If you want to cut a new release of a stable version, then in the ``main`` or development branch, update :file:`docs/_static/version-switcher.json` to match that version.
-
 #.  Create a commit on the ``release`` branch (or equivalent) to release this version.
 
     .. code-block:: shell
@@ -196,6 +194,58 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         git add CHANGES.rst
         git commit -m "Add new CHANGELOG section for future release"
         git push upstream main # could be origin or whatever reference
+
+#.  Update :file:`docs/_static/version-switcher.json`.
+
+    .. important::
+
+        Making a pull request won't have any effect to the version switcher on Read the Docs until it gets on to the ``main`` branch, so you might as well edit and push directly on the ``main`` branch for this step.
+
+    #.  When cutting a new *stable release* version, on the ``main`` or development branch, update :file:`docs/_static/version-switcher.json` to match that version.
+        The following examples were used for the 7.0.0 release.
+
+        #.  Copy the second previous major version and renumber it to the first previous version, in other words, copy ``5.x`` and renumber the copy to ``6.x``.
+
+            .. code-block:: json
+
+                {
+                    "version": "6.x",
+                    "url": "https://icalendar.readthedocs.io/en/6.x/"
+                },
+
+        #.  Next, edit the array item for the previous version to reflect the current major release.
+
+            .. code-block:: json
+
+                {
+                    "name": "7.x (stable)",
+                    "version": "v7.0.0",
+                    "url": "https://icalendar.readthedocs.io/en/stable/",
+                    "preferred": "true"
+                },
+
+    #.  When cutting a *minor or patch release* version, on the ``main`` or development branch, update :file:`docs/_static/version-switcher.json` to match that version's tag name.
+
+        .. code-block:: json
+
+            {
+                "name": "7.x (stable)",
+                "version": "v7.0.1",
+                "url": "https://icalendar.readthedocs.io/en/stable/",
+                "preferred": "true"
+            },
+
+#.  Configure `Read the Docs <https://app.readthedocs.org/projects/icalendar/>`_.
+
+    #.  Deactivate any non-stable releases.
+        Click on the ellipsis icon, and select :guilabel:`Configure version`.
+        Toggle the :guilabel:`Active` switch to deactivate the version.
+
+    #.  Click `Add version <https://app.readthedocs.org/dashboard/icalendar/version/create/>`_ to do just that.
+        Search for the previous major version ``#.x``.
+        Click on the version that appears in the select menu that matches your search.
+        Toggle the :guilabel:`Active` switch to activate the version.
+
 
 Links
 -----

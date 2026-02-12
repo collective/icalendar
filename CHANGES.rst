@@ -47,7 +47,8 @@ Bug fixes
 Documentation
 ~~~~~~~~~~~~~
 
-- ...
+- Fixed the version switcher on Read the Docs, and documented the process for a major release. :issue:`1194`
+
 
 7.0.0 (2026-02-11)
 ------------------
