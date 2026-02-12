@@ -12,6 +12,7 @@ Currently the maintainers are the following people.
 - `@geier <https://github.com/geier>`_
 - `@jacadzaca <https://github.com/jacadzaca>`_
 - `@niccokunzmann <https://github.com/niccokunzmann>`_
+- `@SashankBhamidi <https://github.com/SashankBhamidi>`_
 
 Maintainers need the following permissions.
 
