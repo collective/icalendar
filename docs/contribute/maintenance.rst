@@ -43,8 +43,8 @@ Maintainers need the following permissions.
 
         -   `Discussion about how to be added to OSS Fuzz <https://github.com/collective/icalendar/pull/574#issuecomment-1790554766>`_
         -   :issue:`562`
-Maintainer in ``pyproject.toml``
-    Maintainers should be mentioned with or without email address in the ``pyproject.toml`` file's `maintainers' section <https://github.com/collective/icalendar/blob/7ca9db18c0847d1530520e01baf75f8ab8f4fa06/pyproject.toml#L32>`_.
+Maintainer in :file:`pyproject.toml`
+    Maintainers should be mentioned with or without email address in the :file:`pyproject.toml` file's `maintainers' section <https://github.com/collective/icalendar/blob/7ca9db18c0847d1530520e01baf75f8ab8f4fa06/pyproject.toml#L32>`_.
 
 Collaborators
 -------------
