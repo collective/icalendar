@@ -334,7 +334,7 @@ Show journal entries.
     VJOURNAL({})
 
 
-timezone implementations
+Timezone implementations
 ''''''''''''''''''''''''
 
 You can localize your events to take place in different timezones.
