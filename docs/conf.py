@@ -172,7 +172,7 @@ autoclass_content = "both"
 # https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html
 autodoc_default_options = {
     "ignore-module-all": True,
-    "inherited-members": "object, CaselessDict, str, bool, NamedTuple, int, float, Enum",
+    "inherited-members": "object,CaselessDict,str,bool,NamedTuple,int,float,Enum",
     "members": True,
     "show-inheritance": True,
     "undoc-members": True,
