@@ -48,7 +48,7 @@ Documentation
 ~~~~~~~~~~~~~
 
 - Fixed the version switcher on Read the Docs, and documented the process for a major release. :issue:`1194`
-
+- Removed methods of ``str``, ``int``, and others from the documentation in :mod:`icalendar.prop`.
 
 7.0.0 (2026-02-11)
 ------------------
