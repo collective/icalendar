@@ -16,6 +16,7 @@ from dateutil import tz
 from icalendar import (
     Alarm,
     Availability,
+    BigCalendar,
     Calendar,
     Component,
     ComponentFactory,
@@ -130,7 +131,7 @@ AVAILABILITIES_FOLDER = HERE / "availabilities"
 TODOS_FOLDER = HERE / "todos"
 
 
-@pytest.fixture(scope="module", params=[Calendar])
+@pytest.fixture(scope="module", params=[Calendar, BigCalendar])
 def calendars(tzp):
     """Return the data source for calendar files.
 

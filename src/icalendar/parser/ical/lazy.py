@@ -25,12 +25,7 @@ class LazyCalendarIcalParser(ComponentIcalParser):
     meta data.
     """
 
-    parse_instantly: ClassVar[tuple[str, ...]] = (
-        "VTIMEZONE",
-        "STANDARD",
-        "DAYLIGHT",
-        "VCALENDAR",
-    )
+    parse_instantly: ClassVar[tuple[str, ...]] = ("VCALENDAR",)
     """Parse these components instantly, instead of lazily.
 
     All other components are parsed lazily.
@@ -66,7 +61,6 @@ class LazyCalendarIcalParser(ComponentIcalParser):
         self._components.append(
             LazySubcomponent(
                 component_name,
-                content_lines,
                 self.get_subcomponent_parser(content_lines),
             )
         )
@@ -83,6 +77,15 @@ class LazyCalendarIcalParser(ComponentIcalParser):
             content_lines, self._component_factory, self._types_factory
         )
 
+    def prepare_components(self):
+        """Prepare the lazily parsed components."""
+        for component in self._components:
+            if component.name not in self.parse_instantly:
+                raise ValueError(
+                    f"Expected {', '.join(self.parse_instantly)} as root component "
+                    f"but got {component.name}."
+                )
+
 
 class LazySubcomponent:
     """A subcomponent that is evaluated lazily.
@@ -90,12 +93,9 @@ class LazySubcomponent:
     This class holds the raw data of the subcomponent ready for parsing.
     """
 
-    def __init__(
-        self, name: str, content_lines: list[Contentline], parser: ComponentIcalParser
-    ):
+    def __init__(self, name: str, parser: ComponentIcalParser):
         """Initialize the lazy subcomponent with the raw data."""
         self._name = name
-        self._content_lines = content_lines
         self._parser = parser
         self._component: Component | None = None
 
@@ -107,9 +107,22 @@ class LazySubcomponent:
         """
         return self._name
 
+    def is_parsed(self) -> bool:
+        """Return whether the subcomponent is already parsed."""
+        return self._component is not None
+
     def parse(self) -> Component:
         """Parse the raw data and return the component."""
         if self._component is None:
-            self._component = self._parser.from_ical(self._content_lines)
-            self._content_lines = []  # Free memory
+            components = self._parser.parse()
+            if len(components) != 1:
+                raise ValueError(
+                    f"Expected exactly one component in the subcomponent, "
+                    f"but got {len(components)}."
+                )
+            self._component = components[0]
+            self._parser = None  # free memory
         return self._component
+
+
+__all__ = ["LazyCalendarIcalParser", "LazySubcomponent"]

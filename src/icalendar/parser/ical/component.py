@@ -57,9 +57,9 @@ class ComponentIcalParser:
         self._stack = []
         self._components = []
         self._content_lines = (
-            Contentlines.from_ical(self._data)
-            if isinstance(self._data, bytes)
-            else self._data
+            self._data
+            if isinstance(self._data, list)
+            else Contentlines.from_ical(self._data)
         )
         self._content_lines_iterator = iter(self._content_lines)
         self._tzp = tzp
@@ -120,7 +120,7 @@ class ComponentIcalParser:
 
     def parse_content_lines(self) -> None:
         """Parse the content lines."""
-        for line in self._content_lines_iterator:  # raw parsing
+        for line in self._content_lines_iterator:
             if not line:
                 continue
             try:
