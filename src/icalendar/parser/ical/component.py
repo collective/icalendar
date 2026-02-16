@@ -38,7 +38,7 @@ class ComponentIcalParser:
 
     def __init__(
         self,
-        data: bytes | list[Contentline],
+        data: bytes | str | list[Contentline],
         component_factory: ComponentFactory,
         types_factory: TypesFactory,
     ):
@@ -52,17 +52,17 @@ class ComponentIcalParser:
         self._data = data
         self._component_factory = component_factory
         self._types_factory = types_factory
+        self._tzp = tzp
 
     def initialize_parsing(self):
-        self._stack = []
-        self._components = []
-        self._content_lines = (
+        self._stack: list[Component] = []
+        self._components: list[Component] = []
+        self._content_lines: list[Contentline] = (
             self._data
             if isinstance(self._data, list)
             else Contentlines.from_ical(self._data)
         )
         self._content_lines_iterator = iter(self._content_lines)
-        self._tzp = tzp
 
     def handle_line_parse_error(self, exception: Exception):
         """Handle a line parsing error."""
