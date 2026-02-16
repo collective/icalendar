@@ -101,7 +101,7 @@ Documentation
 - Updated ``CONTRIBUTING.rst`` to explicitly state not to use Args sections in docstrings. :issue:`1076`
 - Document ``vInt.__new__`` method parameters in class docstring with :rfc:`5545` examples. :issue:`1118`
 - Improved ``make vale`` command to provide guidance on failure or success. :issue:`1137`
-- Document ``vText.__new__`` method parameters in class docstring with :rfc:`5545` examples. :issue:`1118`
+- Document ``vText.__new__`` method parameters in class docstring with :rfc:`5545` examples. :issue:`742`
 
 
 7.0.0a3 (2025-12-19)
