@@ -91,6 +91,9 @@ class Component(CaselessDict):
     types_factory: ClassVar[TypesFactory] = TypesFactory.instance()
     _components_factory: ClassVar[ComponentFactory | None] = None
 
+    subcomponents: list[Component]
+    """All subcomponents of this component."""
+
     @classmethod
     def get_component_class(cls, name: str) -> type[Component]:
         """Return a component with this name.
@@ -107,7 +110,8 @@ class Component(CaselessDict):
         """Register a custom component class.
 
         Parameters:
-            component_class: Component subclass to register. Must have a ``name`` attribute.
+            component_class: Component subclass to register.
+                Must have a ``name`` attribute.
 
         Raises:
             ValueError: If ``component_class`` has no ``name`` attribute.
@@ -135,7 +139,8 @@ class Component(CaselessDict):
         existing = cls._components_factory.get(component_class.name)
         if existing is not None and existing is not component_class:
             raise ValueError(
-                f"Component '{component_class.name}' is already registered as {existing}"
+                f"Component '{component_class.name}' is already registered"
+                f" as {existing}"
             )
 
         cls._components_factory.add_component_class(component_class)
@@ -264,7 +269,7 @@ class Component(CaselessDict):
         name: str,
         value,
         parameters: dict[str, str] | Parameters = None,
-        encode: bool = True,  # noqa: FBT001
+        encode: bool = True,
     ):
         """Add a property.
 
@@ -386,7 +391,7 @@ class Component(CaselessDict):
         if (name is None or self.name == name) and select(self):
             result.append(self)
         for subcomponent in self.subcomponents:
-            result += subcomponent._walk(name, select)  # noqa: SLF001
+            result += subcomponent._walk(name, select)
         return result
 
     def walk(self, name=None, select=lambda _: True) -> list[Component]:
@@ -420,7 +425,7 @@ class Component(CaselessDict):
     def property_items(
         self,
         recursive=True,
-        sorted: bool = True,  # noqa: A002, FBT001
+        sorted: bool = True,
     ) -> list[tuple[str, object]]:
         """Returns properties in this component and subcomponents as:
         [(name, value), ...]
@@ -446,14 +451,18 @@ class Component(CaselessDict):
 
     @overload
     @classmethod
-    def from_ical(cls, st: str | bytes, multiple: Literal[False] = False) -> Self: ...
+    def from_ical(
+        cls, st: str | bytes, multiple: Literal[False] = False
+    ) -> Component: ...
 
     @overload
     @classmethod
-    def from_ical(cls, st: str | bytes, multiple: Literal[True]) -> list[Self]: ...
+    def from_ical(cls, st: str | bytes, multiple: Literal[True]) -> list[Component]: ...
 
     @classmethod
-    def from_ical(cls, st: str | bytes, multiple: bool = False) -> Self | list[Self]:  # noqa: FBT001
+    def from_ical(
+        cls, st: str | bytes, multiple: bool = False
+    ) -> Component | list[Component]:
         """Parse iCalendar data into component instances.
 
         Handles standard and custom components (``X-*``, IANA-registered).
@@ -468,6 +477,8 @@ class Component(CaselessDict):
         See Also:
             :doc:`/how-to/custom-components` for examples of parsing custom components
         """
+        from icalendar.prop import vBroken
+
         stack = []  # a stack of components
         comps = []
         for line in Contentlines.from_ical(st):  # raw parsing
@@ -546,7 +557,9 @@ class Component(CaselessDict):
                 if name.upper() == "CATEGORIES":
                     # Special handling for CATEGORIES - need raw value
                     # before unescaping to properly split on unescaped commas
-                    from icalendar.parser import split_on_unescaped_comma
+                    from icalendar.parser import (
+                        split_on_unescaped_comma,
+                    )
 
                     line_str = str(line)
                     # Use rfind to get the last colon (value separator)
@@ -554,8 +567,9 @@ class Component(CaselessDict):
                     colon_idx = line_str.rfind(":")
                     if colon_idx > 0:
                         raw_value = line_str[colon_idx + 1 :]
-                        # Parse categories immediately (not lazily) for both strict and tolerant components
-                        # This is because CATEGORIES needs special comma handling
+                        # Parse categories immediately (not lazily) for both
+                        # strict and tolerant components.
+                        # CATEGORIES needs special comma handling
                         try:
                             category_list = split_on_unescaped_comma(raw_value)
                             vals_inst = factory(category_list)
@@ -591,11 +605,9 @@ class Component(CaselessDict):
                     except Exception as e:
                         if not component.ignore_exceptions:
                             raise
-                        # Error-tolerant mode: create vBrokenProperty
-                        from icalendar.prop import vBrokenProperty
-
+                        # Error-tolerant mode: create vBroken
                         expected_type = getattr(factory, "__name__", "unknown")
-                        broken_prop = vBrokenProperty.from_parse_error(
+                        broken_prop = vBroken.from_parse_error(
                             raw_value=val,
                             params=params,
                             property_name=name,
@@ -630,12 +642,12 @@ class Component(CaselessDict):
             return f"{error_description}: {bad_input[:truncate_to]} {elipsis}"
         return f"{error_description}: {bad_input}"
 
-    def content_line(self, name, value, sorted: bool = True):  # noqa: A002, FBT001
+    def content_line(self, name, value, sorted: bool = True):
         """Returns property as content line."""
         params = getattr(value, "params", Parameters())
         return Contentline.from_parts(name, params, value, sorted=sorted)
 
-    def content_lines(self, sorted: bool = True):  # noqa: A002, FBT001
+    def content_lines(self, sorted: bool = True):
         """Converts the Component and subcomponents into content lines."""
         contentlines = Contentlines()
         for name, value in self.property_items(sorted=sorted):
@@ -644,7 +656,7 @@ class Component(CaselessDict):
         contentlines.append("")  # remember the empty string in the end
         return contentlines
 
-    def to_ical(self, sorted: bool = True):  # noqa: A002, FBT001
+    def to_ical(self, sorted: bool = True):
         """
         :param sorted: Whether parameters and properties should be
                        lexicographically sorted.
@@ -753,7 +765,7 @@ class Component(CaselessDict):
         del self.CREATED
 
     def is_thunderbird(self) -> bool:
-        """Whether this component has attributes that indicate that Mozilla Thunderbird created it."""  # noqa: E501
+        """Whether this component has attributes that indicate that Mozilla Thunderbird created it."""
         return any(attr.startswith("X-MOZ-") for attr in self.keys())
 
     @staticmethod
@@ -821,9 +833,11 @@ class Component(CaselessDict):
             stamp: The :attr:`DTSTAMP` of the component.
 
         Raises:
-            ~error.InvalidCalendar: If the content is not valid according to :rfc:`5545`.
+            ~error.InvalidCalendar: If the content is not valid
+                according to :rfc:`5545`.
 
-        .. warning:: As time progresses, we will be stricter with the validation.
+        .. warning:: As time progresses, we will be stricter with the
+            validation.
         """
         component = cls()
         component.DTSTAMP = stamp
@@ -969,7 +983,7 @@ class Component(CaselessDict):
                 component.subcomponents.append(cls.from_jcal(subcomponent))
         return component
 
-    def copy(self, recursive:bool=False) -> Self:  # noqa: FBT001
+    def copy(self, recursive: bool = False) -> Self:
         """Copy the component.
 
         Parameters:

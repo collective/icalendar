@@ -106,4 +106,6 @@ def test_zoneinfo_thread_safe_initialization():
     # All threads should get the same UTC timezone
     assert len(errors) == 0, f"Errors occurred: {errors}"
     assert len(results) == 10
-    assert all(r is results[0] for r in results), "All threads should get same UTC instance"
+    assert all(r is results[0] for r in results), (
+        "All threads should get same UTC instance"
+    )

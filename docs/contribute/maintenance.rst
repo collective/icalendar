@@ -12,6 +12,7 @@ Currently the maintainers are the following people.
 - `@geier <https://github.com/geier>`_
 - `@jacadzaca <https://github.com/jacadzaca>`_
 - `@niccokunzmann <https://github.com/niccokunzmann>`_
+- `@SashankBhamidi <https://github.com/SashankBhamidi>`_
 
 Maintainers need the following permissions.
 
@@ -43,7 +44,8 @@ Maintainers need the following permissions.
 
         -   `Discussion about how to be added to OSS Fuzz <https://github.com/collective/icalendar/pull/574#issuecomment-1790554766>`_
         -   :issue:`562`
-    
+Maintainer in :file:`pyproject.toml`
+    Maintainers should be mentioned with or without email address in the :file:`pyproject.toml` file's `maintainers' section <https://github.com/collective/icalendar/blob/7ca9db18c0847d1530520e01baf75f8ab8f4fa06/pyproject.toml#L32>`_.
 
 Collaborators
 -------------
@@ -89,22 +91,41 @@ This section explains how to create a new release on `PyPI <https://pypi.org/pro
 Since collaborators and maintainers have write access to the repository, they can start the release process.
 However, only people with ``Environments/Configure PyPI`` access can approve an automated release to PyPI.
 
-#.  Check that the file :file:`CHANGES.rst` is up to date with the `latest merged pull requests <https://github.com/collective/icalendar/pulls?q=is%3Apr+is%3Amerged>`_, and the version you want to release is correctly named.
-
 #.  Set an environment variable to use in subsequent commands during the release process.
 
     .. code-block:: shell
 
         export VERSION=7.0.0
 
-#.  If you want to cut a new release of a stable version, then in the ``main`` or development branch, update :file:`docs/_static/version-switcher.json` to match that version.
-
-#.  Create a commit on the ``release`` branch (or equivalent) to release this version.
+#.  Update the ``main`` branch.
 
     .. code-block:: shell
 
         git checkout main
         git pull
+
+#.  When cutting any new release that you'll tag and want to be considered as "stable", on the ``main`` or development branch, update the Sphinx configuration file :file:`docs/conf.py` to match that version.
+
+    Hide the warning banner.
+
+    .. code-block:: python
+
+        html_theme_options = {
+            # ...
+            "show_version_warning_banner": False,
+
+#.  Check that the file :file:`CHANGES.rst` is up to date with the `latest merged pull requests <https://github.com/collective/icalendar/pulls?q=is%3Apr+is%3Amerged>`_, and the version you want to release is correctly named.
+    Change the date of the release, and remove empty sections.
+
+    .. code-block:: diff
+
+        -7.0.0 (unreleased)
+        +7.0.0 (2026-02-11)
+
+#.  Create a commit on a ``release`` branch to release this version.
+
+    .. code-block:: shell
+
         git checkout -b release-$VERSION main
         git add CHANGES.rst docs/_static/version-switcher.json
         git commit -m"version $VERSION"
@@ -129,14 +150,17 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         git branch -d release-$VERSION
         git push -d origin release-$VERSION
 
-#.  Create a tag for the release and see if the `CI-tests`_ are running.
+#.  Create a tag for the release on its release branch ``*.x`` and see if the `CI-tests`_ are running.
 
     .. code-block:: shell
 
         git checkout main
         git pull
+        git checkout 7.x
+        git rebase main
+        git push 7.x  # to collective/icalendar
         git tag "v$VERSION"
-        git push upstream "v$VERSION" # could be origin or whatever reference
+        git push upstream "v$VERSION" # to collective/icalendar
 
     .. warning::
 
@@ -144,7 +168,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         This creates issues for downstream repositories.
         See :issue:`1033`.
 
-#.  Once the tag is pushed and its `CI-tests`_ are passing, maintainers will get an e-mail:
+#.  Once the tag is pushed and its `CI-tests`_ pass, check the `GitHub Actions <https://github.com/collective/icalendar/actions>`_, and wait for maintainers to get an email:
 
     .. code-block:: text
 
@@ -153,8 +177,12 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         tests: PyPI is waiting for your review
 
 #.  If the release is approved by a maintainer, it will be pushed to `PyPI`_.
-    If that happens, notify the issues that were fixed about this release.
-#.  Copy this to the start of ``CHANGES.rst``.
+#.  Copy this to the start of :file:`CHANGES.rst`, and increase the version number.
+
+    .. code-block:: shell
+
+        git checkout main
+        git pull
 
     .. code-block:: text
 
@@ -190,11 +218,93 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
     .. code-block:: shell
 
-        git checkout main
-        git pull
         git add CHANGES.rst
         git commit -m "Add new CHANGELOG section for future release"
-        git push upstream main # could be origin or whatever reference
+        git push upstream main # to collective/icalendar
+
+#.  Once the release is pushed to `PyPI`_, notify the issues mentioned on the new release of the new release.
+    Example:
+
+    .. code-block:: text
+
+        This is included in v7.0.0.
+
+#.  Update the version switcher file :file:`docs/_static/version-switcher.json`.
+
+    .. note::
+
+        The remaining steps may be performed after the release because they pertain exclusively to documentation, which isn't included in the release.
+
+    .. note::
+
+        The following examples were used for the 7.0.0 release.
+
+    .. important::
+
+        Making a pull request won't have any effect to the version switcher on Read the Docs until it gets on to the ``main`` branch, so you might as well edit and push directly on the ``main`` branch for this step.
+
+    #.  When cutting a new *stable release* version, on the ``main`` branch, update :file:`docs/_static/version-switcher.json` to match that version.
+
+        #.  Copy the second previous major version and renumber it to the first previous version, in other words, copy ``5.x`` and renumber the copy to ``6.x``.
+
+            .. code-block:: json
+
+                {
+                    "version": "6.x",
+                    "url": "https://icalendar.readthedocs.io/en/6.x/"
+                },
+
+        #.  Next, edit the array item for the previous version to reflect the current major release.
+
+            .. code-block:: json
+
+                {
+                    "name": "7.x (stable)",
+                    "version": "v7.0.0",
+                    "url": "https://icalendar.readthedocs.io/en/stable/",
+                    "preferred": "true"
+                },
+
+    #.  When cutting a *minor or patch release* version, on the ``main`` or development branch, update :file:`docs/_static/version-switcher.json` to match that version's tag name.
+
+        .. code-block:: json
+
+            {
+                "name": "7.x (stable)",
+                "version": "v7.0.1",
+                "url": "https://icalendar.readthedocs.io/en/stable/",
+                "preferred": "true"
+            },
+
+#.  When cutting a new *stable release* version, update the Sphinx configuration file :file:`docs/conf.py` as shown.
+
+    #.  On the ``main`` branch, which is now the development branch, show the warning banner.
+
+        .. code-block:: python
+
+            html_theme_options = {
+                # ...
+                "show_version_warning_banner": True,
+
+    #.  On the previous numbered major release branch, show the warning banner.
+
+        .. code-block:: python
+
+            html_theme_options = {
+                # ...
+                "show_version_warning_banner": True,
+
+#.  Configure `Read the Docs <https://app.readthedocs.org/projects/icalendar/>`_.
+
+    #.  Deactivate any non-stable releases.
+        Click on the ellipsis icon, and select :guilabel:`Configure version`.
+        Toggle the :guilabel:`Active` switch to deactivate the version.
+
+    #.  Click `Add version <https://app.readthedocs.org/dashboard/icalendar/version/create/>`_ to do just that.
+        Search for the previous major version ``#.x``.
+        Click on the version that appears in the select menu that matches your search.
+        Toggle the :guilabel:`Active` switch to activate the version.
+
 
 Links
 -----

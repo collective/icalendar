@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import date, datetime, timedelta
-from typing import TYPE_CHECKING, Literal, Sequence
+from typing import TYPE_CHECKING, Literal
 
 from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
@@ -49,6 +49,8 @@ from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from icalendar.alarms import Alarms
     from icalendar.enums import CLASS, STATUS, TRANSP
     from icalendar.prop import vCalAddress
@@ -272,14 +274,14 @@ class Event(Component):
         "dt",
         (datetime, date),
         date,
-        'The "DTSTART" property for a "VEVENT" specifies the inclusive start of the event.',  # noqa: E501
+        'The "DTSTART" property for a "VEVENT" specifies the inclusive start of the event.',
     )
     DTEND = create_single_property(
         "DTEND",
         "dt",
         (datetime, date),
         date,
-        'The "DTEND" property for a "VEVENT" calendar component specifies the non-inclusive end of the event.',  # noqa: E501
+        'The "DTEND" property for a "VEVENT" calendar component specifies the non-inclusive end of the event.',
     )
 
     def _get_start_end_duration(self):
@@ -491,7 +493,8 @@ class Event(Component):
             :class:`Event`
 
         Raises:
-            ~error.InvalidCalendar: If the content is not valid according to :rfc:`5545`.
+            ~error.InvalidCalendar: If the content is not valid
+                according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """

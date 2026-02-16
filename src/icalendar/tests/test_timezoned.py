@@ -6,7 +6,7 @@ import icalendar
 import icalendar.cal.calendar
 import icalendar.cal.event
 import icalendar.cal.timezone
-from icalendar.prop import tzid_from_dt
+from icalendar.timezone import tzid_from_dt
 
 
 def test_create_from_ical(calendars, other_tzp):

@@ -21,15 +21,45 @@ Upgrading from 6.x to 7.x should have **no complications for most developers**, 
 
 We still recommend checking out the new features and giving feedback in the repository.
 
-7.0.0a4 (unreleased)
---------------------
+7.0.1 (unreleased)
+------------------
+
+Minor changes
+~~~~~~~~~~~~~
+
+- ...
+
+Breaking changes
+~~~~~~~~~~~~~~~~
+
+- ...
+
+New features
+~~~~~~~~~~~~
+
+- ...
+
+Bug fixes
+~~~~~~~~~
+
+- ...
+
+Documentation
+~~~~~~~~~~~~~
+
+- Fixed the version switcher on Read the Docs, and documented the process for a major release. :issue:`1194`
+
+
+7.0.0 (2026-02-11)
+------------------
 
 Minor changes
 ~~~~~~~~~~~~~
 
 - Created an :meth:`~cal.todo.Todo.example` method for the :class:`~cal.todo.Todo` component. See :issue:`743`.
 - Created an :meth:`~cal.alarm.Alarm.example` method for the :class:`~cal.alarm.Alarm` component. See :issue:`743`.
-- Move property classes from :mod:`icalendar.prop` into their own files. See :issue:`987`.
+- Move property classes from :mod:`icalendar.prop` into their own files with sub-packages :mod:`icalendar.prop.recur` and :mod:`icalendar.prop.dt`. See :issue:`987`.
+- Move classes and functions in :mod:`icalendar.parser` into their own files. See :issue:`987`.
 - Clarified custom component (X-* and IANA-registered) parsing behavior through enhanced documentation and comprehensive how-to guide. Custom components are automatically handled by the library with no special configuration required. See :issue:`432`.
 - Reorganized custom component tests into a dedicated :file:`test_custom_components.py` file with expanded test coverage for :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`, :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>`, and :class:`~icalendar.cal.component_factory.ComponentFactory` usage. See :issue:`433`.
 - The ``typing-extensions`` dependency on Python < 3.13 is now optional, part of the ``test`` extra.
@@ -37,24 +67,34 @@ Minor changes
 - Regroup dependencies in, and remove obsolete ones, from :file:`pyproject.toml`. :issue:`906`
 - Add type hints to internal helper functions. :issue:`938`
 - Add type hints to prop value classes (vBoolean, vFloat, vUri, vBinary, vInline). :issue:`938`
-- Add type hints to remaining prop value classes (vText, vCalAddress, vCategory, vGeo, vN, vOrg, vAdr, vBrokenProperty, vUid, Conference, Image). :issue:`938`
+- Add type hints to remaining prop value classes (vText, vCalAddress, vCategory, vGeo, vN, vOrg, vAdr, vBroken, vUid, Conference, Image). :issue:`938`
 - Added type hints and overloads to :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>` and :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>` to support ``multiple=True/False`` return types. :issue:`1129`
 - CI: Print a link to Vale documentation when the spell checker fails.
+- Remove :file:`bootstrap.py` and :file:`buildout.cfg` files as they are old build configurations. :pr:`1171`
+- Enforce ruff formatting and linting across the entire codebase, with CI check to prevent regressions.
+  See :issue:`672`, :pr:`1171`, :pr:`1172`, :pr:`1173`, :pr:`1174`, :pr:`1175`, :pr:`1176`, :pr:`1177`, :pr:`1178`, :pr:`1179`, :pr:`1180`, and :pr:`1181`.
+- Fix type annotations, typos, and validation logic in prop module: corrected return type hints in ``parse_jcal_value`` methods, fixed ``to_ical()`` return type in vDDDTypes, updated ClassVar type hint in TypesFactory, removed dead code, fixed "abbrevation" typo in vWeekday, and corrected validation logic in vMonth. :issue:`1185`
+- Rename :class:`~icalendar.prop.vBrokenProperty` to :class:`~icalendar.prop.vBroken` to match naming convention. :class:`~icalendar.prop.vBroken` now stores the actual exception object in ``parse_error`` instead of a string, and raises :class:`~icalendar.error.BrokenCalendarProperty` when accessing attributes like ``.dt`` that the expected type would have. See :issue:`1087`.
+
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
 
 - Drop support for Python 3.8 and 3.9. See :issue:`977`.
+- ``DURATION_REGEX`` moved from :mod:`icalendar.prop` to :mod:`icalendar.prop.dt.duration`. See :issue:`987`.
+- ``WEEKDAY_RULE`` moved from :mod:`icalendar.prop` to :mod:`icalendar.prop.recur.weekday`. See :issue:`987`.
+- Removed ``tzid_from_dt`` and ``tzid_from_tzinfo`` from :mod:`icalendar.prop` as they exist in :mod:`icalendar.timezone`. See :issue:`987`.
 - :meth:`Component.decoded` now returns a string instead of bytes for text properties.
+- Remove constants ``FOLD``, ``NAME``, ``NEWLINE``, ``QUNSAFE_CHAR``, ``QUOTABLE``, ``UFOLD``, and ``UNSAFE_CHAR`` from :mod:`icalendar.parser`'s export. See :issue:`987`.
 
 New features
 ~~~~~~~~~~~~
 
 - Added ``recursive`` parameter to :meth:`Component.copy` to control copying of subcomponents and properties. :issue:`899`
-- Event components now have error-tolerant property parsing. Properties with parsing errors fall back to :class:`~icalendar.prop.vBrokenProperty`, preserving the raw value and allowing access to other valid properties. Errors are recorded in ``component.errors``. Partially addresses :issue:`158`.
+- Event components now have error-tolerant property parsing. Properties with parsing errors fall back to :class:`~icalendar.prop.vBroken`, preserving the raw value and allowing access to other valid properties. Errors are recorded in ``component.errors``. Partially addresses :issue:`158`.
 - Added :class:`~icalendar.prop.AdrFields` and :class:`~icalendar.prop.NFields` named tuples for structured access to vCard ADR and N property fields. The ``fields`` attribute and ``from_ical()`` return value of :class:`~icalendar.prop.vAdr` and :class:`~icalendar.prop.vN` now return these typed named tuples, enabling access like ``adr.fields.street`` and ``n.fields.family``. Since named tuples are tuple subclasses, existing code using tuple indexing or unpacking remains compatible. Added ``name`` and ``units`` properties to :class:`~icalendar.prop.vOrg` for convenient access to the organization name and organizational units. Added ``ical_value`` property to all three classes. See :issue:`1060`.
 - Added ``with_uid`` method to ``Component`` to filter subcomponents by UID. See :issue:`950`.
-
+- Enforce linting of code with Ruff in CI. :issue:`672`
 
 Bug fixes
 ~~~~~~~~~
@@ -71,26 +111,30 @@ Bug fixes
 Documentation
 ~~~~~~~~~~~~~
 
-- Added how-to guide for handling parsing errors with :class:`~icalendar.prop.vBrokenProperty` and the ``component.errors`` attribute. See :issue:`1085`.
+- Improved docstrings and formatting for the :class:`~icalendar.alarms.AlarmTime` class. :issue:`1072`
+- Added how-to guide for handling parsing errors with :class:`~icalendar.prop.vBroken` and the ``component.errors`` attribute. See :issue:`1085`.
 - Updated 11 function docstrings in :mod:`icalendar.parser` to follow the Google Style guide, improving API documentation clarity and consistency. See :issue:`1072`.
 - Applied Google-style docstrings to :mod:`icalendar.tools` utility functions with Args, Returns, and Example sections. See :issue:`1072`.
 - Simplify contributors and add supporters in credits. See :issue:`1035`.
 - Add a section in the change log for Documentation. See :issue:`1043`.
-- Added ❌ and ✅ emoji to the list of supported RFCs.
 - Fixed multiple ``more than one target found for cross-reference`` warnings, and stopped using ``sphinx.ext.autosectionlabel``, in documentation. See :issue:`952`.
 - Add ``funding.json`` manifest for funding information. See :issue:`1047`.
 - Resolved ``Cannot resolve forward reference in type annotations`` warning in documentation.
   Added ``SPHINX_APIDOC_OPTIONS`` to ``make apidoc`` command, excluding ``__all__`` items from being duplicated in the documentation, and rebuilt the API documentation source files.
   See :issue:`952`.
 - Document how to create and read attendee information in events. See :issue:`130`.
+- Add usage examples. :issue:`443`
 - Improve documentation contribution guide by adding chapters for small edits, builds and checks, and a style guide. Added details for Vale usage, Diátaxis framework, narrative and API documentation, and fixing all spelling errors. See :issue:`991`.
+- Document dictionary and property accessors. :issue:`124`.
 - Moved content from the README into documentation to reduce maintenance and point to the authoritative source of information.
   See :issue:`1006`.
 - Added "Code conventions" section to the Development contributing guide.
   See :issue:`1004`.
 - Use Google style docstrings in :mod:`~icalendar.parser_tools`.
   See :issue:`1017`.
+- Document compatibility of icalendar with RFCs. See :issue:`1147`.
 - Added Upgrade guide. See :issue:`997`.
+- Fixed links in jCal usage documentation.
 - Enable sphinx-issues extension. :issue:`1091`
 - Replaced "Arguments" and "Args" with "Parameters". :issue:`1076`
 - Added documentation of how to set up a development environment with git. :issue:`906`
@@ -98,11 +142,20 @@ Documentation
 - Added a new rule to our docstring style guide to escape docstrings, and added a new section for type hints in the code conventions section. :issue:`1080`
 - Documented ``__init__`` methods. :issue:`1079`
 - Moved "Edit this page" link to above the page table of contents. :issue:`1106`
+- Added Good First Issue link and fixed Up For Grabs link in Contribute guide. :issue:`1095`
 - Updated ``CONTRIBUTING.rst`` to explicitly state not to use Args sections in docstrings. :issue:`1076`
 - Document ``vInt.__new__`` method parameters in class docstring with :rfc:`5545` examples. :issue:`1118`
 - Improved ``make vale`` command to provide guidance on failure or success. :issue:`1137`
-- Document ``vText.__new__`` method parameters in class docstring with :rfc:`5545` examples. :issue:`742`
-
+- Add ``sphinx_copybutton`` configuration to exclude line numbers, prompts, and console output when copying code blocks.
+- Change Sphinx configuration to convert ``--`` to en dash ``-``, ``---`` to em dash ``—``, and ``...`` to ellipsis ``…``, but doesn't transform quote marks as they should be preserved.
+  This restores cleaner and consistent rendering of docstrings in the :doc:`API Reference <../reference/api/icalendar>`.
+  See `smartquotes_action <https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-smartquotes_action>`_.
+- Fix incorrect return type annotation in :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`. :issue:`1141`
+- Fixed broken links in ``docs/how-to/usage.rst`` documentation. Part of :issue:`1158`
+- Enhanced the first-time contributors section, in hopes that fewer contributors ask permission before starting work. :issue:`1165`
+- Changed Sphinx configuration to inherit from ``CaselessDict``, displaying all of its class members in the in-page navigation.
+  Fixed broken cross-component links in ``Availability.new()``. :issue:`994`
+- Configured Sphinx to append the docstring from the ``__init__`` method into its class docstring. :issue:`1156`
 
 7.0.0a3 (2025-12-19)
 --------------------

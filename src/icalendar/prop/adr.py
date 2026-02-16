@@ -1,4 +1,5 @@
 """ADR property of :rfc:`6350`."""
+
 from typing import Any, ClassVar, NamedTuple
 
 from icalendar.compatibility import Self
@@ -44,7 +45,8 @@ class vAdr:
     -   postal code
     -   country name (full name)
 
-    When a component value is missing, the associated component separator MUST still be specified.
+    When a component value is missing, the associated component separator
+    MUST still be specified.
 
     Semicolons are field separators and are NOT escaped.
     Commas and backslashes within field values ARE escaped per :rfc:`6350`.
@@ -92,6 +94,7 @@ class vAdr:
         # Each field is vText (handles comma/backslash escaping)
         # but we join with unescaped semicolons (field separators)
         from icalendar.prop.text import vText
+
         parts = [vText(f).to_ical().decode(DEFAULT_ENCODING) for f in self.fields]
         return ";".join(parts).encode(DEFAULT_ENCODING)
 
@@ -163,7 +166,6 @@ class vAdr:
     def examples(cls) -> list[Self]:
         """Examples of vAdr."""
         return [cls(("", "", "123 Main St", "Springfield", "IL", "62701", "USA"))]
-
 
 
 __all__ = ["AdrFields", "vAdr"]
