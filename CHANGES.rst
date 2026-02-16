@@ -156,6 +156,7 @@ Documentation
 - Changed Sphinx configuration to inherit from ``CaselessDict``, displaying all of its class members in the in-page navigation.
   Fixed broken cross-component links in ``Availability.new()``. :issue:`994`
 - Configured Sphinx to append the docstring from the ``__init__`` method into its class docstring. :issue:`1156`
+- Document ``vText`` properties with :rfc:`5545`. :issue:`742`
 
 7.0.0a3 (2025-12-19)
 --------------------

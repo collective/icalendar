@@ -42,7 +42,7 @@ class vText(str):
     .. code-block:: pycon
 
         >>> from icalendar.prop import vText
-        >>> desc = ‘Project XYZ Final Review\nConference Room - 3B\nCome Prepared.’
+        >>> desc = 'Project XYZ Final Review\nConference Room - 3B\nCome Prepared.'
         >>> text = vText.from_ical(desc)
         >>> text
         vText(b'Project XYZ Final Review\\nConference Room - 3B\\nCome Prepared.')
@@ -53,8 +53,8 @@ class vText(str):
         >>>
         >>> from icalendar import Event
         >>> event = Event()
-        >>> event.add(‘TEXT’, desc)
-        >>> event[‘TEXT’]
+        >>> event.add('TEXT', desc)
+        >>> event['TEXT']
         vText(b'Project XYZ Final Review\\nConference Room - 3B\\nCome Prepared.')
     """
 
