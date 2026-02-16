@@ -7,6 +7,8 @@ from typing import TYPE_CHECKING
 from .calendar import Calendar
 
 if TYPE_CHECKING:
+    from icalendar.parser.ical.lazy import LazySubcomponent
+
     from .component import Component
 
 
@@ -40,25 +42,6 @@ class BigCalendar(Calendar):
         If the name is None, all subcomponents are parsed.
         """
         return super()._walk(name, select)
-
-
-class LazySubcomponent:
-    """A subcomponent that is evaluated lazily.
-
-    This class is used to represent a subcomponent of a calendar that is not parsed until it is accessed.
-    """
-
-    def __init__(self, data: bytes, parser: type[Component]):
-        """Initialize the lazy subcomponent with the raw data."""
-        self._data = data
-        self._parser = parser
-        self._component: Component | None = None
-
-    def parse(self) -> Component:
-        """Parse the raw data and return the component."""
-        if self._component is None:
-            self._component = self._parser.from_ical(self._data)
-        return self._component
 
 
 __all__ = ["BigCalendar"]

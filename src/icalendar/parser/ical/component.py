@@ -38,11 +38,17 @@ class ComponentIcalParser:
 
     def __init__(
         self,
-        data: bytes,
+        data: bytes | list[Contentline],
         component_factory: ComponentFactory,
         types_factory: TypesFactory,
     ):
-        """Initialize the parser with the raw data."""
+        """Initialize the parser with the raw data.
+
+        Parameters:
+            data: The raw ical data to parse, as bytes or a list of content lines.
+            component_factory: The factory to use for creating components.
+            types_factory: The factory to use for creating property values.
+        """
         self._data = data
         self._component_factory = component_factory
         self._types_factory = types_factory
@@ -50,7 +56,12 @@ class ComponentIcalParser:
     def initialize_parsing(self):
         self._stack = []
         self._components = []
-        self._content_lines = Contentlines.from_ical(self._data)
+        self._content_lines = (
+            Contentlines.from_ical(self._data)
+            if isinstance(self._data, bytes)
+            else self._data
+        )
+        self._content_lines_iterator = iter(self._content_lines)
         self._tzp = tzp
 
     def handle_line_parse_error(self, exception: Exception):
@@ -63,7 +74,7 @@ class ComponentIcalParser:
             raise exception
         component.errors.append((None, str(exception)))
 
-    def handle_begin_component(self, vals: str):
+    def handle_begin_component(self, vals: str) -> None:
         """Handle the beginning of a component."""
         # try and create one of the components defined in the spec,
         # otherwise get a general Components for robustness.
@@ -78,7 +89,7 @@ class ComponentIcalParser:
             component.name = c_name
         self._stack.append(component)
 
-    def handle_end_component(self, vals: str):
+    def handle_end_component(self, vals: str) -> None:
         """Handle the end of a component."""
         # we are done adding properties to this component
         # so pop it from the stack and add it to the new top.
@@ -100,16 +111,16 @@ class ComponentIcalParser:
         This is called when all components are parsed.
         """
 
-    def parse(self):
+    def parse(self) -> list[Component]:
         """Parse the raw data."""
         self.initialize_parsing()
         self.parse_content_lines()
         self.prepare_components()
         return self._components
 
-    def parse_content_lines(self):
+    def parse_content_lines(self) -> None:
         """Parse the content lines."""
-        for line in self._content_lines:  # raw parsing
+        for line in self._content_lines_iterator:  # raw parsing
             if not line:
                 continue
             try:
@@ -136,7 +147,7 @@ class ComponentIcalParser:
 
     def handle_property(
         self, name: str, params: Parameters, vals: str, line: Contentline
-    ):
+    ) -> None:
         """Handle a property line.
 
         We are adding properties to the current top of the stack

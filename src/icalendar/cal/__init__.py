@@ -7,7 +7,7 @@ These are the defined components.
 from .alarm import Alarm
 from .availability import Availability
 from .available import Available
-from .big import BigCalendar
+from .big_calendar import BigCalendar
 from .calendar import Calendar
 from .component import Component
 from .component_factory import ComponentFactory
