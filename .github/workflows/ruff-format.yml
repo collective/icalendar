@@ -30,7 +30,7 @@ jobs:
       - name: Show the changes
         run: |
           git status
-          git diff --exit-code
+          git diff
       - name: Commit and push the changes if there are any
         uses: EndBug/add-and-commit@v9
         with:
