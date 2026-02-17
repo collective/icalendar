@@ -9,7 +9,7 @@ jobs:
       pull-requests: write
     name: Format the code with ruff and push the changes
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/') == false && 'refs/heads/main' != github.ref && ! (startsWith(github.ref, 'refs/heads/' && endsWith(github.ref, '.x')))
+    if: ! startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/main' && ! (startsWith(github.ref, 'refs/heads/') && endsWith(github.ref, '.x')) && ! startsWith(github.ref, 'refs/heads/release')
     env:
       GIT_COMMIT_MESSAGE: |
         Format with ruff
