@@ -21,23 +21,13 @@ Upgrading from 6.x to 7.x should have **no complications for most developers**, 
 
 We still recommend checking out the new features and giving feedback in the repository.
 
-7.0.1 (unreleased)
+7.0.1 (2026-02-17)
 ------------------
 
 Minor changes
 ~~~~~~~~~~~~~
 
 - Setting :attr:`~cal.calendar.Calendar.calendar_name` now also writes ``X-WR-CALNAME``, and setting :attr:`~cal.calendar.Calendar.description` now also writes ``X-WR-CALDESC``, for improved client compatibility. See `Issue #918 <https://github.com/collective/icalendar/issues/918>`_.
-
-Breaking changes
-~~~~~~~~~~~~~~~~
-
-- ...
-
-New features
-~~~~~~~~~~~~
-
-- ...
 
 Bug fixes
 ~~~~~~~~~
