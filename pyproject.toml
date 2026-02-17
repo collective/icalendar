@@ -79,6 +79,8 @@ dependencies = [
     # provides current timezone data on all platforms)
     "tzdata>=2025.3",
     # typing.TypeIs was added in Python 3.13
+    # TODO: remove this dependency here and throughout code
+    # when we eventually drop support for Python 3.12.
     "typing-extensions~=4.10; python_version < '3.13'",
 ]
 
