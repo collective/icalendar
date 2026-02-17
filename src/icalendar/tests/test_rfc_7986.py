@@ -35,10 +35,11 @@ def test_get_calendar_name(prop, name, calendar):
 
 @param_name
 def test_set_calendar_name(name, calendar):
-    """Setting the name overrides the old attributes."""
+    """Setting the name overrides the old attributes and sets both NAME and X-WR-CALNAME."""
     calendar.calendar_name = name
     assert calendar.calendar_name == name
     assert calendar["NAME"] == name
+    assert calendar["X-WR-CALNAME"] == name
 
 
 @param_name
@@ -65,12 +66,12 @@ def test_default_name(calendar):
 
 
 @param_name
-def test_setting_the_name_deletes_the_non_standard_attribute(calendar, name):
-    """The default_attr is deleted when setting the name."""
-    calendar["X-WR-CALNAME"] = name
-    assert "X-WR-CALNAME" in calendar
-    calendar.calendar_name = "other name"
-    assert "X-WR-CALNAME" not in calendar
+def test_setting_the_name_sets_both_properties(calendar, name):
+    """Setting calendar_name sets both NAME and X-WR-CALNAME for compatibility."""
+    calendar.calendar_name = name
+    assert calendar.calendar_name == name
+    assert calendar["NAME"] == name
+    assert calendar["X-WR-CALNAME"] == name
 
 
 @param_name
