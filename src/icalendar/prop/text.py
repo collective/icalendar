@@ -18,21 +18,20 @@ class vText(str):
         A data type that contains human-readable text values.
     
     Description:
-        This class is used to add text descriptions to calendar
-        events. To create a TEXT object, pass in the text you
-        want when creating the object. To add a line break, use
-        "\n" or "\N". Use the LANGUAGE property parameter to set
-        the language of the text. If the property allows it, you
-        can separate multiple TEXT values with a COMMA-separated
-        list of values.
+        This value type is used by various iCalendar properties
+        to show free-form text that others can read.
 
-    Parameters:
-        value: Text value to encode
-        encoding: The encoding to use when encoding the value
-        params: Optional parameter dictionary for the property
-    
-    Returns:
-        vText instance
+        This class can be created from Python strings and can be
+        used to add text descriptions to calendar events.
+        To create a TEXT object, pass in the string you want when
+        creating the object.
+        To add a line break, use “\n” or “\N”. Use the LANGUAGE
+        property parameter to set the language of the text.
+
+        When the TEXT object is serialized to an iCalendar stream,
+        certain characters are escaped/changed.
+        These characters include the COMMA, SEMICOLON, BACKSLASH,
+        and line breaks.
     
     Example:
     .. code-block:: text
