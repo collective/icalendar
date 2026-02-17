@@ -27,7 +27,7 @@ We still recommend checking out the new features and giving feedback in the repo
 Minor changes
 ~~~~~~~~~~~~~
 
-- Pull Requests are formatted automatically. :pr:`1208`
+- Pull requests from remote forks are formatted automatically. :pr:`1208`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
