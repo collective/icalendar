@@ -42,7 +42,7 @@ New features
 Bug fixes
 ~~~~~~~~~
 
-- ...
+- Make ``typing_extensions`` a dependency. :issue:`1202`
 
 Documentation
 ~~~~~~~~~~~~~
