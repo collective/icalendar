@@ -1,18 +1,17 @@
 name: Automaticallly format the code with ruff
 on:
-  pull_request:
-    branches:
-      - 'main'
+  push:
     paths:
       - '**.py'
 
 jobs:
-  ruff:
+  ruff-format:
     permissions:
       contents: write
       pull-requests: write
     name: Format the code with ruff and push the changes
     runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/') == false && 'refs/heads/main' != github.ref && ! (startsWith(github.ref, 'refs/heads/' && endsWith(github.ref, '.x')))
     env:
       GIT_COMMIT_MESSAGE: |
         Format with ruff
@@ -21,7 +20,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.head_ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 0
       - name: Set up Python
         uses: actions/setup-python@v6
