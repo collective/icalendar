@@ -30,8 +30,13 @@ jobs:
       - name: Create
         run: |
           git status
-          git diff
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git config user.name "github-actions[bot]"
-          git commit -am "Format with ruff"
-          git push origin HEAD:${{ github.head_ref }} --no-verify
+          if ! git diff --exit-code; then
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git config user.name "github-actions[bot]"
+            git commit -am "Format with ruff
+            
+            See https://icalendar--1199.org.readthedocs.build/en/1199/contribute/development.html#code-format"
+            git push origin HEAD:${{ github.head_ref }} --no-verify
+          else
+            echo "No changes to commit"
+          fi
