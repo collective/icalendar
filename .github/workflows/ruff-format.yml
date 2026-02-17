@@ -27,16 +27,27 @@ jobs:
         run: ruff format
       - name: Format the code with ruff check
         run: ruff check --fix
-      - name: Create
+      - name: Show the changes
         run: |
           git status
-          if ! git diff --exit-code; then
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git config user.name "github-actions[bot]"
-            git commit -am "Format with ruff
-            
-            See https://icalendar--1199.org.readthedocs.build/en/1199/contribute/development.html#code-format"
-            git push origin HEAD:${{ github.head_ref }} --no-verify
-          else
-            echo "No changes to commit"
-          fi
+          git diff --exit-code
+      - name: Commit and push the changes if there are any
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: GitHub Actions Bot
+          author_email: github-actions[bot]@users.noreply.github.com
+          message: |
+            Format with ruff
+
+            See https://icalendar.readthedocs.io/en/stable/contribute/development.html#code-format
+
+          # The way the action should handle pathspec errors from the add and remove commands. Three options are available:
+          # - ignore -> errors will be logged but the step won't fail
+          # - exitImmediately -> the action will stop right away, and the step will fail
+          # - exitAtEnd -> the action will go on, every pathspec error will be logged at the end, the step will fail.
+          # Default: ignore
+          pathspec_error_handling: ignore
+
+          # Whether to push the commit and, if any, its tags to the repo. It can also be used to set the git push arguments (see the paragraph below for more info)
+          # Default: true
+          push: true
