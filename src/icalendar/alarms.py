@@ -37,6 +37,7 @@ Parent = Event | Todo
 
 
 class AlarmTime:
+    """TODO: Add description."""
     """Represents a computed alarm occurrence with its timing and state.
 
     An AlarmTime instance combines an alarm component with its resolved
