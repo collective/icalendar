@@ -1,8 +1,6 @@
 name: Automaticallly format the code with ruff
 on:
-  push:
-    paths:
-      - '**.py'
+  - push
 
 jobs:
   ruff-format:
