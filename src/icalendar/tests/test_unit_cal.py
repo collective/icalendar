@@ -9,7 +9,7 @@ from icalendar import prop
 from icalendar.cal.calendar import Calendar
 from icalendar.cal.component import Component
 from icalendar.cal.event import Event
-from icalendar.prop import tzid_from_dt
+from icalendar.timezone import tzid_from_dt
 
 
 def test_cal_Component(calendar_component):

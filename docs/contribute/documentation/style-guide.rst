@@ -255,21 +255,38 @@ All items should terminate with a period.
 
 The following docstrings items are the most frequently used in icalendar, although they may be others.
 
+.. important::
+
+    When writing docstrings for both a class and its ``__init__`` method, consider the following points.
+
+    -   A class's docstring must not contain ``Attributes``, ``Parameters``,  ``Returns``, or ``Raises`` sections.
+    -   ``Parameters``, ``Returns``, and ``Raises`` sections may be in the ``__init__`` method's docstring.
+    -   The ``__init__`` method's docstring gets automatically appended to its class's docstring by Sphinx.
+        See :pr:`1164` for an example.
+    -   The one-line summary in the ``__init__`` method's docstring should serve as a narrative bridge from the ending of its class docstring.
+
 Summary
     Docstrings must begin with a one-line summary of the Python object, terminated by a period.
 
 Description
     When the one-line summary is insufficient to describe the Python object, then write an overall description of what it does, without going into details of how it does it.
     Leave implementation details to the code, and optionally inline code comments.
+
     Separate the summary and description with a blank line.
 
 ``Attributes``
-    Each attribute should consist of its name and a brief description.
-    By virtue of Sphinx extensions and the use of type hints for the Python object, you may omit the parameter's type, allowing Sphinx to automatically render it for you.
+    Each attribute should consist of its name, type, and a brief description.
 
 ``Parameters``
     Each parameter should consist of its name and a brief description.
-    By virtue of Sphinx extensions and the use of type hints for the Python object, you may omit the parameter's type, allowing Sphinx to automatically render it for you.
+    You must omit the parameter's type, allowing Sphinx extensions and the use of type hints to automatically render it for you.
+    This is especially true in a class's ``__init__`` method.
+
+    .. note::
+
+        Use "Parameters" instead of "Args" or "Arguments."
+        The term "Parameters" is preferred for consistency with Python's official terminology.
+        See `Python FAQ on arguments and parameters <https://docs.python.org/3/faq/programming.html#what-is-the-difference-between-arguments-and-parameters>`_ and :ref:`Napoleon's supported sections <sphinx:Sections>`.
 
 ``Returns``
     The return value consists of its return type and a brief description.
@@ -325,12 +342,12 @@ See the rendered view of this class method at :meth:`Component.register <icalend
 
 .. _parser-split_on_unescaped_semicolon:
 
-``parser.split_on_unescaped_semicolon``
-'''''''''''''''''''''''''''''''''''''''
+``parser.property.split_on_unescaped_semicolon``
+''''''''''''''''''''''''''''''''''''''''''''''''
 
-See the rendered view of this class method at :meth:`parser.split_on_unescaped_semicolon <icalendar.parser.split_on_unescaped_semicolon>`.
+See the rendered view of this class method at :meth:`parser.property.split_on_unescaped_semicolon <icalendar.parser.property.split_on_unescaped_semicolon>`.
 
-.. literalinclude:: ../../../src/icalendar/parser.py
+.. literalinclude:: ../../../src/icalendar/parser/property.py
     :pyobject: split_on_unescaped_semicolon
 
 

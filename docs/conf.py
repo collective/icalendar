@@ -14,14 +14,14 @@ extensions = [
     "notfound.extension",
     "sphinx.ext.apidoc",
     "sphinx.ext.autodoc",
-    "sphinx.ext.viewcode",
-    "sphinx_copybutton",
-    "sphinx_design",
-    "sphinx_reredirects",
     "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
+    "sphinx.ext.viewcode",
     "sphinx_autodoc_typehints",  # must be loaded after sphinx.ext.napoleon. See https://github.com/tox-dev/sphinx-autodoc-typehints/issues/15
+    "sphinx_copybutton",
+    "sphinx_design",
     "sphinx_issues",
+    "sphinx_reredirects",
 ]
 source_suffix = {".rst": "restructuredtext"}
 master_doc = "index"
@@ -95,7 +95,7 @@ html_theme_options = {
     "secondary_sidebar_items": ["edit-this-page", "page-toc", "sourcelink"],
     "show_nav_level": 2,
     "show_toc_level": 2,
-    "show_version_warning_banner": True,
+    "show_version_warning_banner": False,
     "switcher": {
         "json_url": json_url,
         "version_match": version_match,
@@ -116,68 +116,9 @@ html_js_files = [
     ("js/custom-icons.js", {"defer": "defer"}),
 ]
 pygments_style = "sphinx"
-smartquotes = False
+smartquotes_action = "De"
 
-
-# -- Options apidoc output -------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/extensions/apidoc.html#
-apidoc_modules = [
-    {
-        "path": "../src/icalendar",
-        "destination": "reference/api",
-        "exclude_patterns": [
-            "**/tests*",
-            "**/timezone/equivalent_timezone_ids_result*",
-        ],
-        "separate_modules": True,
-        "automodule_options": {
-            "ignore-module-all",
-            "members",
-            "show-inheritance",
-            "undoc-members",
-        },
-    }
-]
-
-
-# -- Options autodoc output -------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html
-autodoc_default_options = {
-    "ignore-module-all": True,
-    "members": True,
-    "show-inheritance": True,
-    "special-members": "__init__",
-    "undoc-members": True,
-}
-
-
-# -- Napolean configuration ----------------------------------
-napoleon_use_param = True
-napoleon_google_docstring = True
-napoleon_attr_annotations = True
-
-# -- sphinx-Issues configuration ----------------------------------
-issues_github_path = "collective/icalendar"
-
-# -- Intersphinx configuration ----------------------------------
-
-# This extension can generate automatic links to the documentation of objects
-# in other projects. Usage is simple: whenever Sphinx encounters a
-# cross-reference that has no matching target in the current documentation set,
-# it looks for targets in the documentation sets configured in
-# intersphinx_mapping. A reference like :py:class:`zipfile.ZipFile` can then
-# linkto the Python documentation for the ZipFile class, without you having to
-# specify where it is located exactly.
-#
-# https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html
-intersphinx_mapping = {
-    "python": ("https://docs.python.org/3", None),
-    "sphinx": ("https://www.sphinx-doc.org/en/master/", None),
-    "typing": ("https://typing.python.org/en/latest/", None),
-}
-
-
-# -- linkcheck configuration ----------------------------------
+# -- linkcheck builder configuration ----------------------------------
 # Ignore localhost
 linkcheck_ignore = [
     # Ignore pages that require authentication
@@ -200,12 +141,79 @@ linkcheck_anchors = True
 linkcheck_timeout = 5
 linkcheck_retries = 1
 
-# -- Options for sphinx-notfound-page ----------------------------------
+
+# -- notfound.extension configuration ----------------------------------
 # https://sphinx-notfound-page.readthedocs.io/en/latest/configuration.html
 notfound_template = "404.html"
 
 
-# -- sphinx-reredirects configuration ----------------------------------
+# -- sphinx.ext.apidoc options -------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/extensions/apidoc.html#
+apidoc_modules = [
+    {
+        "path": "../src/icalendar",
+        "destination": "reference/api",
+        "exclude_patterns": [
+            "**/tests*",
+            "**/timezone/equivalent_timezone_ids_result*",
+        ],
+        "separate_modules": True,
+        "automodule_options": {
+            "ignore-module-all",
+            "members",
+            "show-inheritance",
+            "undoc-members",
+        },
+    }
+]
+autoclass_content = "both"
+
+# -- sphinx.ext.autodoc options -------------------------------------------------
+# https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html
+autodoc_default_options = {
+    "ignore-module-all": True,
+    "inherited-members": "CaselessDict",
+    "members": True,
+    "show-inheritance": True,
+    "undoc-members": True,
+}
+
+
+# -- sphinx.ext.intersphinx configuration ----------------------------------
+
+# This extension can generate automatic links to the documentation of objects
+# in other projects. Usage is simple: whenever Sphinx encounters a
+# cross-reference that has no matching target in the current documentation set,
+# it looks for targets in the documentation sets configured in
+# intersphinx_mapping. A reference like :py:class:`zipfile.ZipFile` can then
+# linkto the Python documentation for the ZipFile class, without you having to
+# specify where it is located exactly.
+#
+# https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
+    "sphinx": ("https://www.sphinx-doc.org/en/master/", None),
+    "typing": ("https://typing.python.org/en/latest/", None),
+}
+
+
+# -- sphinx.ext.napoleon configuration ----------------------------------
+napoleon_use_param = True
+napoleon_google_docstring = True
+napoleon_attr_annotations = True
+
+
+# -- sphinx_copybutton configuration ----------------------------------
+# https://sphinx-copybutton.readthedocs.io/en/latest/use.html
+# Exclude line numbers, prompts, and console output when copying code blocks.
+copybutton_exclude = ".linenos, .gp, .go"
+
+
+# -- sphinx_issues configuration ----------------------------------
+issues_github_path = "collective/icalendar"
+
+
+# -- sphinx_reredirects configuration ----------------------------------
 # https://documatt.com/sphinx-reredirects/usage.html
 redirects = {
     "about": "index.html",

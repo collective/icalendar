@@ -14,7 +14,8 @@ from __future__ import annotations
 import itertools
 import traceback
 from datetime import date, datetime, timedelta, timezone
-from typing import Any, Callable, Optional
+from typing import TYPE_CHECKING, Any
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -30,11 +31,13 @@ from icalendar import (
     Todo,
     vCalAddress,
 )
-from zoneinfo import ZoneInfo
 from icalendar.enums import BUSYTYPE
 from icalendar.prop import vText, vUid, vUri, vXmlReference
 
 from .conftest import NOW_UTC, UID_DEFAULT
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 UTC = timezone.utc
 
@@ -145,17 +148,17 @@ param_description = pytest.mark.parametrize(
 )
 
 
-def assert_summary_equals(component: Component, summary: Optional[str]):
+def assert_summary_equals(component: Component, summary: str | None):
     """Check this is the summary."""
     assert_property_equals(component, "summary", summary)
 
 
-def assert_description_equals(component: Component, summary: Optional[str]):
+def assert_description_equals(component: Component, summary: str | None):
     """Check this is the summary."""
     assert_property_equals(component, "description", summary)
 
 
-def assert_property_equals(component: Component, name: str, text: Optional[str]):
+def assert_property_equals(component: Component, name: str, text: str | None):
     """Check the property."""
     assert getattr(component, name.lower()) == text
     if text is None:

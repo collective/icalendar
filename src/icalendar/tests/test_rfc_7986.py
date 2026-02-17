@@ -7,7 +7,6 @@ They are also considered.
 from __future__ import annotations
 
 from datetime import date, datetime, time, timedelta, timezone
-from typing import Union
 
 import pytest
 
@@ -153,7 +152,7 @@ def test_get_COLOR_first(calendar, color):
 
 
 @pytest.fixture(params=[Calendar, Event, Todo, Journal])
-def color_component(request) -> Union[Calendar, Event, Todo, Journal]:
+def color_component(request) -> Calendar | Event | Todo | Journal:
     """An empty component that should have a color attribute."""
     return request.param()
 
@@ -164,23 +163,19 @@ def color(request) -> str:
     return request.param
 
 
-def test_default_color(color_component: Union[Calendar, Event, Todo, Journal]):
+def test_default_color(color_component: Calendar | Event | Todo | Journal):
     """There is no color by default."""
     assert color_component.color == ""
 
 
-def test_set_the_color(
-    color: str, color_component: Union[Calendar, Event, Todo, Journal]
-):
+def test_set_the_color(color: str, color_component: Calendar | Event | Todo | Journal):
     """We set the value and get it."""
     color_component.color = color
     assert color_component.color == color
     assert color_component["COLOR"] == color
 
 
-def test_replace_color(
-    color: str, color_component: Union[Calendar, Event, Todo, Journal]
-):
+def test_replace_color(color: str, color_component: Calendar | Event | Todo | Journal):
     """Replace the color."""
     color_component.color = "blue"
     color_component.color = color
@@ -188,14 +183,14 @@ def test_replace_color(
     assert color_component["COLOR"] == color
 
 
-def test_multiple_colors(color_component: Union[Calendar, Event, Todo, Journal]):
+def test_multiple_colors(color_component: Calendar | Event | Todo | Journal):
     """Add several colors and use the first one."""
     color_component.add("COLOR", "blue")
     color_component.add("COLOR", "green")
     assert color_component.color == "blue"
 
 
-def test_delete_the_color(color_component: Union[Calendar, Event, Todo, Journal]):
+def test_delete_the_color(color_component: Calendar | Event | Todo | Journal):
     """Delete the color."""
     color_component.color = "blue"
     del color_component.color
@@ -204,7 +199,7 @@ def test_delete_the_color(color_component: Union[Calendar, Event, Todo, Journal]
 
 
 def test_set_if_multiple_colors(
-    color: str, color_component: Union[Calendar, Event, Todo, Journal]
+    color: str, color_component: Calendar | Event | Todo | Journal
 ):
     """Add several colors and use the first one."""
     color_component.add("COLOR", "blue")

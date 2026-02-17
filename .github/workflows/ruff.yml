@@ -1,9 +1,24 @@
-name: Ruff
+name: Check code style with ruff
 on: [push, pull_request]
 jobs:
   ruff:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: chartboost/ruff-action@v1
-        continue-on-error: true
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: 3.14
+          cache: pip
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install . --group formatting
+      - name: Run the ruff formatter to change files
+        run: ruff format --check .
+      - name: Run ruff checks on the files
+        run: ruff check --fix
+      - name: Fail if we detect any changes on the file system
+        run: |
+          git status
+          git diff --exit-code

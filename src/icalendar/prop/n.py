@@ -1,6 +1,5 @@
 """N property from :rfc:`6350`."""
 
-
 from typing import Any, ClassVar, NamedTuple
 
 from icalendar.compatibility import Self
@@ -87,6 +86,7 @@ class vN:
     def to_ical(self) -> bytes:
         """Generate vCard format with semicolon-separated fields."""
         from icalendar.prop.text import vText
+
         parts = [vText(f).to_ical().decode(DEFAULT_ENCODING) for f in self.fields]
         return ";".join(parts).encode(DEFAULT_ENCODING)
 
@@ -108,11 +108,11 @@ class vN:
             raise ValueError(f"N must have exactly 5 fields, got {len(fields)}: {ical}")
         return NFields(*fields)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """self == other"""
         return isinstance(other, vN) and self.fields == other.fields
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """String representation."""
         return f"{self.__class__.__name__}({self.fields}, params={self.params})"
 
@@ -156,5 +156,6 @@ class vN:
     def examples(cls) -> list[Self]:
         """Examples of vN."""
         return [cls(("Doe", "John", "M.", "Dr.", "Jr."))]
+
 
 __all__ = ["NFields", "vN"]

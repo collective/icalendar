@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import Union
 
 import pytest
 
@@ -15,7 +14,7 @@ from icalendar import (
     Todo,
 )
 
-C_EXDATE = Union[Event, Todo, Journal, TimezoneDaylight, TimezoneStandard]
+C_EXDATE = Event | Todo | Journal | TimezoneDaylight | TimezoneStandard
 
 
 @pytest.fixture(params=[Event, Todo, Journal, TimezoneDaylight, TimezoneStandard])

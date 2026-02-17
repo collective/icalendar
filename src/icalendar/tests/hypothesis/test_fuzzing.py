@@ -24,7 +24,7 @@ class TestFuzzing(unittest.TestCase):
         cl = Contentlines()
         for key, params, value in lines:
             try:
-                params = Parameters(**params)
+                params = Parameters(**params)  # noqa: PLW2901
             except TypeError:
                 # Happens when there is a random parameter 'self'...
                 continue

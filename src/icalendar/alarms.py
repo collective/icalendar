@@ -14,7 +14,7 @@ This takes different calendar software into account and the RFC 9074 (Alarm Exte
 from __future__ import annotations
 
 from datetime import date, timedelta, tzinfo
-from typing import TYPE_CHECKING, Generator, Optional, Union
+from typing import TYPE_CHECKING
 
 from icalendar.cal.event import Event
 from icalendar.cal.todo import Todo
@@ -28,45 +28,40 @@ from icalendar.timezone import tzp
 from icalendar.tools import is_date, normalize_pytz, to_datetime
 
 if TYPE_CHECKING:
+    from collections.abc import Generator
     from datetime import datetime
 
     from icalendar.cal.alarm import Alarm
 
-Parent = Union[Event, Todo]
+Parent = Event | Todo
 
 
 class AlarmTime:
-    """An alarm time with all the information."""
+    """Represents a computed alarm occurrence with its timing and state.
+
+    An AlarmTime instance combines an alarm component with its resolved
+    trigger time and additional state information, such as acknowledgment
+    and snoozing.
+    """
 
     def __init__(
         self,
         alarm: Alarm,
         trigger: datetime,
-        acknowledged_until: Optional[datetime] = None,
-        snoozed_until: Optional[datetime] = None,
-        parent: Optional[Parent] = None,
+        acknowledged_until: datetime | None = None,
+        snoozed_until: datetime | None = None,
+        parent: Parent | None = None,
     ):
-        """Create a new AlarmTime.
+        """Create an instance of ``AlarmTime`` with any of its parameters.
 
-        alarm
-            the Alarm component
-
-        trigger
-            a date or datetime at which to trigger the alarm
-
-        acknowledged_until
-            an optional datetime in UTC until when all alarms
-            have been acknowledged
-
-        snoozed_until
-            an optional datetime in UTC until which all alarms of
-            the same parent are snoozed
-
-        parent
-            the optional parent component the alarm refers to
-
-        local_tzinfo
-            the local timezone that events without tzinfo should have
+        Parameters:
+            alarm: The underlying alarm component.
+            trigger: A date or datetime at which to trigger the alarm.
+            acknowledged_until: Optional datetime in UTC until which
+                the alarm has been acknowledged.
+            snoozed_until: Optional datetime in UTC until which
+                the alarm has been snoozed.
+            parent: Optional parent component to which the alarm refers.
         """
         self._alarm = alarm
         self._parent = parent
@@ -75,7 +70,7 @@ class AlarmTime:
         self._snooze_until = snoozed_until
 
     @property
-    def acknowledged(self) -> Optional[datetime]:
+    def acknowledged(self) -> datetime | None:
         """The time in UTC at which this alarm was last acknowledged.
 
         If the alarm was not acknowledged (dismissed), then this is None.
@@ -93,26 +88,28 @@ class AlarmTime:
         return self._alarm
 
     @property
-    def parent(self) -> Optional[Parent]:
-        """This is the component that contains the alarm.
+    def parent(self) -> Parent | None:
+        """The component that contains the alarm.
 
-        This is None if you did not use Alarms.set_component().
+        This is ``None`` if you didn't use :meth:`Alarms.add_component()
+        <icalendar.alarms.Alarms.add_component>`.
         """
         return self._parent
 
     def is_active(self) -> bool:
-        """Whether this alarm is active (True) or acknowledged (False).
+        """Whether this alarm is active (``True``) or acknowledged (``False``).
 
-        For example, in some calendar software, this is True until the user looks
-        at the alarm message and clicked the dismiss button.
+        For example, in some calendar software, this is ``True`` until the user
+        views the alarm message and dismisses it.
 
-        Alarms can be in local time (without a timezone).
-        To calculate if the alarm really happened, we need it to be in a timezone.
-        If a timezone is required but not given, we throw an IncompleteAlarmInformation.
+        Alarms can be in local time without a timezone. To calculate whether
+        the alarm has occurred, the time must include timezone information.
+
+        Raises:
+            LocalTimezoneMissing: If a timezone is required but not given.
         """
         acknowledged = self.acknowledged
         if not acknowledged:
-            # if nothing is acknowledged, this alarm counts
             return True
         if self._snooze_until is not None and self._snooze_until > acknowledged:
             return True
@@ -126,9 +123,9 @@ class AlarmTime:
 
     @property
     def trigger(self) -> date:
-        """This is the time to trigger the alarm.
+        """The time at which the alarm triggers.
 
-        If the alarm has been snoozed, this can differ from the TRIGGER property.
+        If the alarm has been snoozed, this may differ from the TRIGGER property.
         """
         if self._snooze_until is not None and self._snooze_until > self._trigger:
             return self._snooze_until
@@ -178,17 +175,17 @@ class Alarms:
     This is not implemented yet.
     """
 
-    def __init__(self, component: Optional[Alarm | Event | Todo] = None):
+    def __init__(self, component: Alarm | Event | Todo | None = None):
         """Start computing alarm times."""
         self._absolute_alarms: list[Alarm] = []
         self._start_alarms: list[Alarm] = []
         self._end_alarms: list[Alarm] = []
-        self._start: Optional[date] = None
-        self._end: Optional[date] = None
-        self._parent: Optional[Parent] = None
-        self._last_ack: Optional[datetime] = None
-        self._snooze_until: Optional[datetime] = None
-        self._local_tzinfo: Optional[tzinfo] = None
+        self._start: date | None = None
+        self._end: date | None = None
+        self._parent: Parent | None = None
+        self._last_ack: datetime | None = None
+        self._snooze_until: datetime | None = None
+        self._local_tzinfo: tzinfo | None = None
 
         if component is not None:
             self.add_component(component)
@@ -234,7 +231,7 @@ class Alarms:
         else:
             self._end_alarms.append(alarm)
 
-    def set_start(self, dt: Optional[date]):
+    def set_start(self, dt: date | None):
         """Set the start of the component.
 
         If you have only absolute alarms, this is not required.
@@ -242,7 +239,7 @@ class Alarms:
         """
         self._start = dt
 
-    def set_end(self, dt: Optional[date]):
+    def set_end(self, dt: date | None):
         """Set the end of the component.
 
         If you have only absolute alarms, this is not required.
@@ -258,8 +255,8 @@ class Alarms:
             dt = to_datetime(dt)
         return normalize_pytz(dt + td)
 
-    def acknowledge_until(self, dt: Optional[date]) -> None:
-        """This is the time in UTC when all the alarms of this component were acknowledged.
+    def acknowledge_until(self, dt: date | None) -> None:
+        """The time in UTC when all the alarms of this component were acknowledged.
 
         Only the last call counts.
 
@@ -271,7 +268,7 @@ class Alarms:
         """
         self._last_ack = tzp.localize_utc(dt) if dt is not None else None
 
-    def snooze_until(self, dt: Optional[date]) -> None:
+    def snooze_until(self, dt: date | None) -> None:
         """This is the time in UTC when all the alarms of this component were snoozed.
 
         Only the last call counts.
@@ -281,7 +278,7 @@ class Alarms:
         """
         self._snooze_until = tzp.localize_utc(dt) if dt is not None else None
 
-    def set_local_timezone(self, tzinfo: Optional[tzinfo | str]):
+    def set_local_timezone(self, tzinfo: tzinfo | str | None):
         """Set the local timezone.
 
         Events are sometimes in local time.
@@ -339,7 +336,8 @@ class Alarms:
         """Return a list of alarm times relative to the start of the component."""
         if self._start is None and self._start_alarms:
             raise ComponentStartMissing(
-                "Use Alarms.set_start because at least one alarm is relative to the start of a component."
+                "Use Alarms.set_start because at least one alarm is relative to the "
+                "start of a component."
             )
         return [
             self._alarm_time(alarm, trigger)
@@ -351,7 +349,8 @@ class Alarms:
         """Return a list of alarm times relative to the start of the component."""
         if self._end is None and self._end_alarms:
             raise ComponentEndMissing(
-                "Use Alarms.set_end because at least one alarm is relative to the end of a component."
+                "Use Alarms.set_end because at least one alarm is relative to the end "
+                "of a component."
             )
         return [
             self._alarm_time(alarm, trigger)
