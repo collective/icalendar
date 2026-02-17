@@ -1,4 +1,4 @@
-name: Automaticallly format the code with ruff
+name: Automatically format the code with ruff
 on:
   - push
 
