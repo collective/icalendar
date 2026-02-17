@@ -1,0 +1,37 @@
+name: Automaticallly format the code with ruff
+on:
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - '**.py'
+
+jobs:
+  ruff:
+    permissions:
+      contents: write
+    name: Format the code with ruff and push the changes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: 3.14
+          cache: pip
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install . --group formatting
+      - name: Format the code with ruff
+        run: ruff format
+      - name: Format the code with ruff check
+        run: ruff check --fix
+      - name: Create
+        run: |
+          git status
+          git diff
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git commit -am "Format with ruff"
+          git push origin HEAD:${{ github.head_ref }} --no-verify
