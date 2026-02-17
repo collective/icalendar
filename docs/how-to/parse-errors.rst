@@ -124,11 +124,9 @@ To check if a specific property failed to parse, check if it is a :class:`~icale
 
 
 Catch broken property access
------------------------------
+----------------------------
 
-When you access a property descriptor (like ``event.DTSTART``) on a broken property,
-a :class:`~icalendar.error.BrokenCalendarProperty` is raised with the original parse
-error chained as ``__cause__``.
+When you access a property descriptor like :attr:`event.DTSTART <icalendar.cal.event.Event.DTSTART>` on a broken property, a :class:`~icalendar.error.BrokenCalendarProperty` is raised with the original parse error chained as ``__cause__``.
 
 .. code-block:: pycon
 
@@ -140,6 +138,4 @@ error chained as ``__cause__``.
     Broken: Cannot access 'dt' on broken property 'DTSTART' (expected 'vDDDTypes'): Expected datetime, date, or time. Got: 'INVALID-DATE'
     Original error: Expected datetime, date, or time. Got: 'INVALID-DATE'
 
-:class:`~icalendar.error.BrokenCalendarProperty` is a subclass of
-:class:`~icalendar.error.InvalidCalendar`, so existing ``except InvalidCalendar``
-handlers will still catch it.
+:class:`~icalendar.error.BrokenCalendarProperty` is a subclass of :class:`~icalendar.error.InvalidCalendar`, so existing ``except InvalidCalendar`` handlers will still catch it.

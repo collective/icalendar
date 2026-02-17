@@ -95,7 +95,7 @@ html_theme_options = {
     "secondary_sidebar_items": ["edit-this-page", "page-toc", "sourcelink"],
     "show_nav_level": 2,
     "show_toc_level": 2,
-    "show_version_warning_banner": True,
+    "show_version_warning_banner": False,
     "switcher": {
         "json_url": json_url,
         "version_match": version_match,
