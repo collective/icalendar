@@ -42,7 +42,7 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git commit -a -m "${GIT_COMMIT_MESSAGE}" || echo "No changes to commit"
       - name: Push changes
-        uses: ad-m/github-push-action@master
+        uses: ad-m/github-push-action@v1.0.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref_name }}
