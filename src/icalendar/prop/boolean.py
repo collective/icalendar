@@ -60,6 +60,7 @@ class vBoolean(int):
         return self
 
     def to_ical(self) -> bytes:
+        """The iCalendar representation of the vBoolean."""
         return b"TRUE" if self else b"FALSE"
 
     @property
