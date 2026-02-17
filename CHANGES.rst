@@ -38,6 +38,7 @@ Minor changes
 - Add type hints to internal helper functions. :issue:`938`
 - Added type hints and overloads to :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>` to support ``multiple=True/False`` return types. :issue:`1129`
 - CI: Print a link to Vale documentation when the spell checker fails.
+- Add Repology badge and distribution installation instructions to install documentation. :issue:`ISSUE_NUMBER`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
