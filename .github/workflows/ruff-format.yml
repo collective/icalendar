@@ -1,4 +1,12 @@
 name: Automatically format the code with ruff
+#
+# This files solves the problem that files might be committed without prior formatting.
+#
+# - New contributors might forget to properly install the pre-commit hooks
+# - Web edits might not be properly formatted. (line too long, bad spacing, ...)
+#
+# This file runs on the repository of the branch and updates the branch with fixes.
+#
 on:
   - push
 
@@ -9,6 +17,16 @@ jobs:
       pull-requests: write
     name: Format the code with ruff and push the changes
     runs-on: ubuntu-latest
+    #
+    # Run conditions as safeguards
+    #
+    # This workflow EXCLUDES:
+    #
+    # - branch "main"
+    # - tags
+    # - branches that end with ".x" (e.g. "6.x", "7.x")
+    # - branches that start with "release" (e.g. "release-7.0.2")
+    #
     if: github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/') && !(startsWith(github.ref, 'refs/heads/') && endsWith(github.ref, '.x')) && !startsWith(github.ref, 'refs/heads/release')
     env:
       GIT_COMMIT_MESSAGE: |
