@@ -29,6 +29,7 @@ from icalendar.parser import (
     q_join,
     q_split,
 )
+from icalendar.parser.ical.component import ComponentIcalParser
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import VPROPERTY, TypesFactory, vDDDLists, vText
 from icalendar.timezone import tzp
@@ -95,15 +96,20 @@ class Component(CaselessDict):
     """All subcomponents of this component."""
 
     @classmethod
+    def _get_component_factory(cls) -> ComponentFactory:
+        """Get the component factory."""
+        if cls._components_factory is None:
+            cls._components_factory = ComponentFactory()
+        return cls._components_factory
+
+    @classmethod
     def get_component_class(cls, name: str) -> type[Component]:
         """Return a component with this name.
 
         Parameters:
             name: Name of the component, i.e. ``VCALENDAR``
         """
-        if cls._components_factory is None:
-            cls._components_factory = ComponentFactory()
-        return cls._components_factory.get_component_class(name)
+        return cls._get_component_factory().get_component_class(name)
 
     @classmethod
     def register(cls, component_class: type[Component]) -> None:
@@ -132,18 +138,16 @@ class Component(CaselessDict):
         if not hasattr(component_class, "name") or component_class.name is None:
             raise ValueError(f"{component_class} must have a 'name' attribute")
 
-        if cls._components_factory is None:
-            cls._components_factory = ComponentFactory()
-
         # Check if already registered
-        existing = cls._components_factory.get(component_class.name)
+        component_factory = cls._get_component_factory()
+        existing = component_factory.get(component_class.name)
         if existing is not None and existing is not component_class:
             raise ValueError(
                 f"Component '{component_class.name}' is already registered"
                 f" as {existing}"
             )
 
-        cls._components_factory.add_component_class(component_class)
+        component_factory.add_component_class(component_class)
 
     @staticmethod
     def _infer_value_type(
@@ -460,6 +464,11 @@ class Component(CaselessDict):
     def from_ical(cls, st: str | bytes, multiple: Literal[True]) -> list[Component]: ...
 
     @classmethod
+    def _get_ical_parser(cls, st: str | bytes) -> ComponentIcalParser:
+        """Get the iCal parser for the given input string."""
+        return ComponentIcalParser(st, cls._get_component_factory(), cls.types_factory)
+
+    @classmethod
     def from_ical(
         cls, st: str | bytes, multiple: bool = False
     ) -> Component | list[Component]:
@@ -477,161 +486,23 @@ class Component(CaselessDict):
         See Also:
             :doc:`/how-to/custom-components` for examples of parsing custom components
         """
-        from icalendar.prop import vBroken
-
-        stack = []  # a stack of components
-        comps = []
-        for line in Contentlines.from_ical(st):  # raw parsing
-            if not line:
-                continue
-
-            try:
-                name, params, vals = line.parts()
-            except ValueError as e:
-                # if unable to parse a line within a component
-                # that ignores exceptions, mark the component
-                # as broken and skip the line. otherwise raise.
-                component = stack[-1] if stack else None
-                if not component or not component.ignore_exceptions:
-                    raise
-                component.errors.append((None, str(e)))
-                continue
-
-            uname = name.upper()
-            # check for start of component
-            if uname == "BEGIN":
-                # try and create one of the components defined in the spec,
-                # otherwise get a general Components for robustness.
-                c_name = vals.upper()
-                c_class = cls.get_component_class(c_name)
-                # If component factory cannot resolve ``c_name``, the generic
-                # ``Component`` class is used which does not have the name set.
-                # That's opposed to the usage of ``cls``, which represents a
-                # more concrete subclass with a name set (e.g. VCALENDAR).
-                component = c_class()
-                if not getattr(component, "name", ""):  # undefined components
-                    component.name = c_name
-                stack.append(component)
-            # check for end of event
-            elif uname == "END":
-                # we are done adding properties to this component
-                # so pop it from the stack and add it to the new top.
-                if not stack:
-                    # The stack is currently empty, the input must be invalid
-                    raise ValueError("END encountered without an accompanying BEGIN!")
-
-                component = stack.pop()
-                if not stack:  # we are at the end
-                    comps.append(component)
-                else:
-                    stack[-1].add_component(component)
-                if vals == "VTIMEZONE" and "TZID" in component:
-                    tzp.cache_timezone_component(component)
-            # we are adding properties to the current top of the stack
-            else:
-                # Extract VALUE parameter if present
-                value_param = params.get("VALUE") if params else None
-                factory = cls.types_factory.for_property(name, value_param)
-                component = stack[-1] if stack else None
-                if not component:
-                    # only accept X-COMMENT at the end of the .ics file
-                    # ignore these components in parsing
-                    if uname == "X-COMMENT":
-                        break
-                    raise ValueError(
-                        f'Property "{name}" does not have a parent component.'
-                    )
-                datetime_names = (
-                    "DTSTART",
-                    "DTEND",
-                    "RECURRENCE-ID",
-                    "DUE",
-                    "RDATE",
-                    "EXDATE",
-                )
-
-                # Determine TZID for datetime properties
-                tzid = params.get("TZID") if params and name in datetime_names else None
-
-                # Handle special cases for value list preparation
-                if name.upper() == "CATEGORIES":
-                    # Special handling for CATEGORIES - need raw value
-                    # before unescaping to properly split on unescaped commas
-                    from icalendar.parser import (
-                        split_on_unescaped_comma,
-                    )
-
-                    line_str = str(line)
-                    # Use rfind to get the last colon (value separator)
-                    # to handle parameters with colons like ALTREP="http://..."
-                    colon_idx = line_str.rfind(":")
-                    if colon_idx > 0:
-                        raw_value = line_str[colon_idx + 1 :]
-                        # Parse categories immediately (not lazily) for both
-                        # strict and tolerant components.
-                        # CATEGORIES needs special comma handling
-                        try:
-                            category_list = split_on_unescaped_comma(raw_value)
-                            vals_inst = factory(category_list)
-                            vals_inst.params = params
-                            component.add(name, vals_inst, encode=0)
-                        except ValueError as e:
-                            if not component.ignore_exceptions:
-                                raise
-                            component.errors.append((uname, str(e)))
-                        continue
-                    # Fallback to normal processing if we can't find colon
-                    vals_list = [vals]
-                elif name == "FREEBUSY":
-                    # Handle FREEBUSY comma-separated values
-                    vals_list = vals.split(",")
-                # Workaround broken ICS files with empty RDATE
-                # (not EXDATE - let it parse and fail)
-                elif name == "RDATE" and vals == "":
-                    vals_list = []
-                else:
-                    vals_list = [vals]
-
-                # Parse all properties eagerly
-                for val in vals_list:
-                    try:
-                        if tzid:
-                            parsed_val = factory.from_ical(val, tzid)
-                        else:
-                            parsed_val = factory.from_ical(val)
-                        vals_inst = factory(parsed_val)
-                        vals_inst.params = params
-                        component.add(name, vals_inst, encode=0)
-                    except Exception as e:
-                        if not component.ignore_exceptions:
-                            raise
-                        # Error-tolerant mode: create vBroken
-                        expected_type = getattr(factory, "__name__", "unknown")
-                        broken_prop = vBroken.from_parse_error(
-                            raw_value=val,
-                            params=params,
-                            property_name=name,
-                            expected_type=expected_type,
-                            error=e,
-                        )
-                        component.errors.append((name, str(e)))
-                        component.add(name, broken_prop, encode=0)
-
+        parser = cls._get_ical_parser(st)
+        components = parser.parse()
         if multiple:
-            return comps
-        if len(comps) > 1:
+            return components
+        if len(components) > 1:
             raise ValueError(
                 cls._format_error(
                     "Found multiple components where only one is allowed", st
                 )
             )
-        if len(comps) < 1:
+        if len(components) < 1:
             raise ValueError(
                 cls._format_error(
                     "Found no components where exactly one is required", st
                 )
             )
-        return comps[0]
+        return components[0]
 
     @staticmethod
     def _format_error(error_description, bad_input, elipsis="[...]"):

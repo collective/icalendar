@@ -145,7 +145,7 @@ class Contentline(str):
         return foldline(self).encode(DEFAULT_ENCODING)
 
 
-class Contentlines(list):
+class Contentlines(list[Contentline]):
     """I assume that iCalendar files generally are a few kilobytes in size.
     Then this should be efficient. for Huge files, an iterator should probably
     be used instead.
