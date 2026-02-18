@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional, Sequence
+from typing import TYPE_CHECKING
 
 from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
@@ -36,6 +36,7 @@ from icalendar.error import InvalidCalendar
 from .component import Component
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
     from datetime import date
 
     from icalendar.cal.available import Available
@@ -237,29 +238,29 @@ class Availability(Component):
     def new(
         cls,
         /,
-        busy_type: Optional[BUSYTYPE] = None,
+        busy_type: BUSYTYPE | None = None,
         categories: Sequence[str] = (),
         comments: list[str] | str | None = None,
         components: Sequence[Available] | None = (),
         concepts: CONCEPTS_TYPE_SETTER = None,
         contacts: list[str] | str | None = None,
-        created: Optional[date] = None,
-        classification: Optional[CLASS] = None,
-        description: Optional[str] = None,
-        end: Optional[datetime] = None,
-        last_modified: Optional[date] = None,
+        created: date | None = None,
+        classification: CLASS | None = None,
+        description: str | None = None,
+        end: datetime | None = None,
+        last_modified: date | None = None,
         links: LINKS_TYPE_SETTER = None,
-        location: Optional[str] = None,
-        organizer: Optional[vCalAddress | str] = None,
-        priority: Optional[int] = None,
+        location: str | None = None,
+        organizer: vCalAddress | str | None = None,
+        priority: int | None = None,
         refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
-        sequence: Optional[int] = None,
-        stamp: Optional[date] = None,
-        start: Optional[datetime] = None,
-        summary: Optional[str] = None,
-        uid: Optional[str | uuid.UUID] = None,
-        url: Optional[str] = None,
+        sequence: int | None = None,
+        stamp: date | None = None,
+        start: datetime | None = None,
+        summary: str | None = None,
+        uid: str | uuid.UUID | None = None,
+        url: str | None = None,
     ):
         """Create a new event with all required properties.
 
@@ -269,33 +270,34 @@ class Availability(Component):
             busy_type: The :attr:`busy_type` of the availability.
             categories: The :attr:`categories` of the availability.
             classification: The :attr:`classification` of the availability.
-            comments: The :attr:`~icalendar.Component.comments` of the availability.
-            concepts: The :attr:`~icalendar.Component.concepts` of the availability.
+            comments: The :attr:`comments` of the availability.
+            concepts: The :attr:`concepts` of the availability.
             contacts: The :attr:`contacts` of the availability.
-            created: The :attr:`~icalendar.Component.created` of the availability.
+            created: The :attr:`created` of the availability.
             description: The :attr:`description` of the availability.
             end: The :attr:`end` of the availability.
-            last_modified: The :attr:`~icalendar.Component.last_modified` of the
+            last_modified: The :attr:`last_modified` of the
                 availability.
-            links: The :attr:`~icalendar.Component.links` of the availability.
+            links: The :attr:`links` of the availability.
             location: The :attr:`location` of the availability.
             organizer: The :attr:`organizer` of the availability.
-            refids: :attr:`~icalendar.Component.refids` of the availability.
-            related_to: :attr:`~icalendar.Component.related_to` of the availability.
+            refids: :attr:`refids` of the availability.
+            related_to: :attr:`related_to` of the availability.
             sequence: The :attr:`sequence` of the availability.
-            stamp: The :attr:`~icalendar.Component.stamp` of the availability.
+            stamp: The :attr:`stamp` of the availability.
                 If None, this is set to the current time.
             start: The :attr:`start` of the availability.
             summary: The :attr:`summary` of the availability.
             uid: The :attr:`uid` of the availability.
-                If None, this is set to a new :func:`uuid.uuid4`.
+                If ``None``, this is set to a new :func:`uuid.uuid4`.
             url: The :attr:`url` of the availability.
 
         Returns:
             :class:`Availability`
 
         Raises:
-            ~error.InvalidCalendar: If the content is not valid according to :rfc:`7953`.
+            ~error.InvalidCalendar: If the content is not valid
+                according to :rfc:`7953`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """

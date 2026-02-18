@@ -52,10 +52,3 @@ jobs:
 
       - name: Run vale
         run: make vale VALEOPTS="--minAlertLevel='warning'" PYTHONVERSION=${{ matrix.python-version }}
-      
-      - name: Spellchecker guidance on failure
-        if: failure()
-        run: |
-          echo "❌ Vale spell checker failed."
-          echo "📘 For how to fix messages and add new dictionary words, see:"
-          echo "👉 https://github.com/collective/icalendar/blob/main/docs/contribute/documentation/build-check.rst#spelling-grammar-and-style"

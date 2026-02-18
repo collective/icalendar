@@ -43,13 +43,6 @@ from icalendar.cal.event import Event
         # We can also parse parameter strings
         (
             Parameters(
-                {"MEMBER": ["MAILTO:projectA@host.com", "MAILTO:projectB@host.com"]}
-            ),
-            b'MEMBER="MAILTO:projectA@host.com","MAILTO:projectB@host.com"',
-        ),
-        # We can also parse parameter strings
-        (
-            Parameters(
                 {
                     "PARAMETER1": "Value1",
                     "ALTREP": ["http://www.wiz.org", "value4"],

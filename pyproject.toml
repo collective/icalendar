@@ -31,6 +31,7 @@ authors = [
 ]
 maintainers = [
   { name="Nicco Kunzmann", email="niccokunzmann@rambler.ru" },
+  { name="Sashank Bhamidi" },
   { name="Christian Geier" },
   { name="Jaca", email="vitouejj@gmail.com" },
 ]
@@ -77,6 +78,10 @@ dependencies = [
     # tzdata: IANA timezone database fallback for zoneinfo (required on Windows,
     # provides current timezone data on all platforms)
     "tzdata>=2025.3",
+    # typing.TypeIs was added in Python 3.13
+    # TODO: remove this dependency here and throughout code
+    # when we eventually drop support for Python 3.12.
+    "typing-extensions~=4.10; python_version < '3.13'",
 ]
 
 # Static URLs for GitHub dependency graph compatibility
@@ -93,7 +98,8 @@ Funding = "https://opencollective.com/python-icalendar"
 [dependency-groups]
 dev = [
   {include-group = "test"},
-  {include-group = "docs"}
+  {include-group = "docs"},
+  {include-group = "formatting"},
 ]
 
 test = [
@@ -104,8 +110,11 @@ test = [
     "pytz>=2025.2",
     "types-python-dateutil",
     "types-pytz",
-    # typing.TypeIs was added in Python 3.13
-    "typing-extensions~=4.10; python_version < '3.13'",
+]
+
+formatting = [
+    "ruff==0.15.0", # also update .pre-commit-config.yaml
+    "pre-commit",
 ]
 
 docs = [
@@ -203,34 +212,54 @@ extend-safe-fixes = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"src/icalendar/tests/test_timezoned.py" = [
-    "SLF001", # private member
-]
-"src/icalendar/tests/*" = [
+"src/icalendar/tests/**" = [
     "B011",   # Do not assert False (python -O removes these calls), raise AssertionError()
+    "B018",   # useless expression, used to test property access errors
     "DTZ001", # datetime.datetime() called without a tzinfo argument
-    "E501",   # Indentation is not a multiple of {indent_size}
+    "E501",   # line too long
+    "E721",   # comparing types with ==
+    "E741",   # ambiguous variable name
+    "FBT001", # Boolean positional argument in function definition
+    "FBT003", # Boolean positional value in function call
+    "INP001", # implicit namespace package
     "N802",   # Function name {name} should be lowercase
-    "PT011",  # pytest.raises({exception}) is too broad, set the match parameter or use a more specific exception
+    "N803",   # Argument name {name} for {param_type} should be lowercase
+    "N806",   # Variable should be lowercase
+    "N999",   # module name
+    "PLC0415", # import outside top-level - common in tests for isolation
+    "PT011",  # pytest.raises({exception}) is too broad
     "PT012",  # pytest.raises() block should contain a single simple statement
     "PT015",  # Assertion always fails, replace with pytest.fail()
-    "T201",   # print found
-    "T203",   # `pprint` found
+    "PT027",  # assertRaises
     "RUF001", # String contains ambiguous character
     "SIM300", # Yoda condition
     "SLF001", # Private member accessed
-    "N999",   # module name
-    "PT027",  # assertRaises
-    "FBT001", # Boolean positional argument in function definition
-    "N803",   # Argument name {name} for {param_type} should be lowercase
-    "B018",   # useless expression, used to test attributes error
-    "N806",   # Variable should be lowercase
-    "E741",   # ambiguous variable name
-    "E721",   # comparing types with ==
+    "T201",   # print found
+    "T203",   # `pprint` found
 ]
-"src/icalendar/prop/*.py" = [
+"src/icalendar/cal/**" = [
+    "A002",    # argument shadowing builtin (sorted)
+    "DTZ001",  # datetime() called without tzinfo
+    "E501",    # line too long (docstrings with RFC references)
+    "N802",    # function name should be lowercase (TRIGGER_RELATED etc.)
+    "PERF203", # try-except in loop (parsing loop)
+    "PLW1641", # eq without hash (Component intentionally unhashable)
+    "PLW2901", # loop variable overwritten
+    "SLF001",  # private member access
+]
+"src/icalendar/prop/**" = [
+    "DTZ001",  # datetime() called without tzinfo
+    "DTZ007",  # naive datetime from strptime
+    "E501",    # line too long (docstrings with code examples)
     "N801",    # Class name should use CamelCase
-    "PLC0415", # Import property within class
+    "PERF203", # try-except in loop
+    "PLW1641", # eq without hash (mutable structured types)
+    "PLW2901", # loop variable overwritten
+]
+"src/icalendar/**" = [
+    "FBT001",  # boolean positional argument
+    "FBT003",  # boolean positional value in function call
+    "PLC0415", # import outside top-level (circular import avoidance)
 ]
 "src/icalendar/fuzzing/*" = [
     "T201",   # print found
@@ -238,6 +267,14 @@ extend-safe-fixes = [
 ]
 "docs/conf.py" = [
     "INP001", # needs __init__.py
+]
+"src/icalendar/timezone/equivalent_timezone_ids_result.py" = [
+    "DTZ001", # `datetime.datetime()` called without a `tzinfo` argument
+    "E501",   # line too long
+]
+"src/icalendar/timezone/equivalent_timezone_ids.py" = [
+    "T201",   # print
+    "T203",   # pprint
 ]
 
 [tool.pytest.ini_options]

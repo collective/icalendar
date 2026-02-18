@@ -10,6 +10,7 @@ class TestComponentRegister:
 
     def test_register_custom_component(self):
         """Register a custom component and use it."""
+
         class XMyComponent(Component):
             name = "X-MY-COMPONENT"
 
@@ -29,6 +30,7 @@ class TestComponentRegister:
 
     def test_register_component_without_name_raises(self):
         """Registering component without name attribute raises ValueError."""
+
         class BadComponent(Component):
             pass  # No name attribute
 
@@ -37,6 +39,7 @@ class TestComponentRegister:
 
     def test_register_component_with_none_name_raises(self):
         """Registering component with None name raises ValueError."""
+
         class BadComponent(Component):
             name = None
 
@@ -45,6 +48,7 @@ class TestComponentRegister:
 
     def test_register_duplicate_component_raises(self):
         """Registering same component name twice raises ValueError."""
+
         class XComponent1(Component):
             name = "X-DUPLICATE"
 
@@ -58,6 +62,7 @@ class TestComponentRegister:
 
     def test_register_same_class_twice_allowed(self):
         """Registering the exact same class twice is allowed (idempotent)."""
+
         class XComponent(Component):
             name = "X-IDEMPOTENT"
 
@@ -66,6 +71,7 @@ class TestComponentRegister:
 
     def test_parse_uses_registered_component(self):
         """Parsing uses the registered custom component class."""
+
         class XVendor(Component):
             name = "X-VENDOR"
 

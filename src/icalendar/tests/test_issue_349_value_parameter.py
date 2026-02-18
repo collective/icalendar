@@ -60,7 +60,10 @@ class TestValueParameterEncoding:
         ev = Event()
         ev.add("UID", "test-dtstart-datetime")
         ev.add("DTSTAMP", datetime.datetime.now(datetime.timezone.utc))
-        ev.add("DTSTART", datetime.datetime(2022, 1, 1, 10, 0, 0, tzinfo=datetime.timezone.utc))
+        ev.add(
+            "DTSTART",
+            datetime.datetime(2022, 1, 1, 10, 0, 0, tzinfo=datetime.timezone.utc),
+        )
 
         ical_str = ev.to_ical().decode()
         # DATE-TIME is the default, so VALUE parameter should not be explicitly set
@@ -154,7 +157,9 @@ END:VCALENDAR"""
 
         # Should be parsed as datetime
         assert isinstance(dtstart.dt, datetime.datetime)
-        assert dtstart.dt == datetime.datetime(2022, 1, 1, 10, 0, 0, tzinfo=datetime.timezone.utc)
+        assert dtstart.dt == datetime.datetime(
+            2022, 1, 1, 10, 0, 0, tzinfo=datetime.timezone.utc
+        )
 
 
 class TestValueParameterRoundTrip:
@@ -173,7 +178,11 @@ class TestValueParameterRoundTrip:
         ical_bytes = ev1.to_ical()
 
         # Decode back
-        cal = Calendar.from_ical(b"BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:test\n" + ical_bytes + b"\nEND:VCALENDAR")
+        cal = Calendar.from_ical(
+            b"BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:test\n"
+            + ical_bytes
+            + b"\nEND:VCALENDAR"
+        )
         ev2 = cal.walk("VEVENT")[0]
 
         # Check that types are preserved
@@ -208,7 +217,11 @@ class TestExplicitValueParameter:
         ev = Event()
         ev.add("UID", "test-params-preserved")
         ev.add("DTSTAMP", datetime.datetime.now(datetime.timezone.utc))
-        ev.add("DTSTART", datetime.datetime(2022, 1, 1, 10, 0, 0), parameters={"TZID": "America/New_York"})
+        ev.add(
+            "DTSTART",
+            datetime.datetime(2022, 1, 1, 10, 0, 0),
+            parameters={"TZID": "America/New_York"},
+        )
 
         dtstart = ev["DTSTART"]
         assert "TZID" in dtstart.params

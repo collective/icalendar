@@ -14,7 +14,7 @@ from copy import deepcopy
 import pytest
 from dateutil import tz
 
-vDDDTypes_list = [
+v_ddd_types_list = [
     vDDDTypes(
         datetime(
             year=2022,
@@ -32,7 +32,7 @@ vDDDTypes_list = [
     vDDDTypes(time(hour=22, minute=7, second=2)),
 ]
 if pytz:
-    vDDDTypes_list.append(
+    v_ddd_types_list.append(
         vDDDTypes(
             pytz.timezone("EST").localize(
                 datetime(year=2022, month=7, day=22, hour=12, minute=7)
@@ -46,25 +46,33 @@ def identity(x):
 
 
 @pytest.mark.parametrize(
-    "map",
+    "transform",
     [
         deepcopy,
         identity,
         hash,
     ],
 )
-@pytest.mark.parametrize("v_type", vDDDTypes_list)
-@pytest.mark.parametrize("other", vDDDTypes_list)
-def test_vDDDTypes_equivalance(map, v_type, other):
+@pytest.mark.parametrize("v_type", v_ddd_types_list)
+@pytest.mark.parametrize("other", v_ddd_types_list)
+def test_vDDDTypes_equivalance(transform, v_type, other):
     if v_type is other:
-        assert map(v_type) == map(other), f"identity implies equality: {map.__name__}()"
-        assert map(v_type) == map(other), f"identity implies equality: {map.__name__}()"
+        assert transform(v_type) == transform(other), (
+            f"identity implies equality: {transform.__name__}()"
+        )
+        assert transform(v_type) == transform(other), (
+            f"identity implies equality: {transform.__name__}()"
+        )
     else:
-        assert map(v_type) != map(other), f"expected inequality: {map.__name__}()"
-        assert map(v_type) != map(other), f"expected inequality: {map.__name__}()"
+        assert transform(v_type) != transform(other), (
+            f"expected inequality: {transform.__name__}()"
+        )
+        assert transform(v_type) != transform(other), (
+            f"expected inequality: {transform.__name__}()"
+        )
 
 
-@pytest.mark.parametrize("v_type", vDDDTypes_list)
+@pytest.mark.parametrize("v_type", v_ddd_types_list)
 def test_inequality_with_different_types(v_type):
     assert v_type != 42
     assert v_type != "test"
