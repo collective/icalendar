@@ -16,7 +16,7 @@ jobs:
 
         See https://icalendar.readthedocs.io/en/stable/contribute/development.html#code-format
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 1
       - name: Set up Python

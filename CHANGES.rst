@@ -27,7 +27,7 @@ We still recommend checking out the new features and giving feedback in the repo
 Minor changes
 ~~~~~~~~~~~~~
 
-- Pull requests from remote forks are formatted automatically. :pr:`1208`
+- Branches pushed to the repository are formatted automatically with ruff. :pr:`1208`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
