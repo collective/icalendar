@@ -11,7 +11,7 @@ Distribution Packages
 The `icalendar` package is also published in many Linux distributions.  
 The following badge shows where it is available and which versions are packaged:
 
-.. image:: https://repology.org/badge/vertical-allrepos/python%3Aicalendar.svg
+.. image:: https://repology.org/badge/vertical-allrepos/python%3Aicalendar.svg?columns=4
    :target: https://repology.org/project/python%3Aicalendar/versions
    :alt: Packaging status across distributions
 
