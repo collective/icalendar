@@ -111,7 +111,7 @@ class Calendar(Component):
 
         Parameters:
             st: iCalendar data as bytes or string, or a path to an iCalendar file as
-                pathlib.Path or string.
+                :class:`pathlib.Path` or string.
             multiple: If ``True``, returns list. If ``False``, returns single calendar.
 
         Returns:

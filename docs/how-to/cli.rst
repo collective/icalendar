@@ -20,7 +20,7 @@ To get information about all the commands, use the ``-h`` option.
 Read calendar from file
 =======================
 
-To view a readable summary of an event file that is in icalendar format, pass the path of the icalendar file to ``icalendar``.
+To view a readable summary of an event file that is in iCalendar format, pass the path of the iCalendar file to icalendar.
 
 .. code-block:: shell
 
@@ -46,7 +46,7 @@ The following is example output.
 Read calendar from URL
 ======================
 
-Download the :file:`.ics` file first, then pass it to ``icalendar``.
+Download the :file:`.ics` file first, then pass it to icalendar.
 
 .. code-block:: shell
 

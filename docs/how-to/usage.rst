@@ -254,7 +254,7 @@ Read a calendar from a local :file:`.ics` file and view its events.
 Read calendar from URL
 ''''''''''''''''''''''
 
-Read a calendar from a URL to an :file:`.ics` file. Download the data first, then parse it.
+To read a calendar from a URL, retrieve the data first, then parse it in icalendar.
 
 .. code-block:: python
 
