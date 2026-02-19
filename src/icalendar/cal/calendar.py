@@ -344,6 +344,7 @@ class Calendar(Component):
             >>> print(calendar.to_ical())
             BEGIN:VCALENDAR
             NAME:My Calendar
+            X-WR-CALNAME:My Calendar
             END:VCALENDAR
     """,
     )
@@ -379,6 +380,7 @@ class Calendar(Component):
             >>> print(calendar.to_ical())
             BEGIN:VCALENDAR
             DESCRIPTION:This is a calendar
+            X-WR-CALDESC:This is a calendar
             END:VCALENDAR
     """,
     )
