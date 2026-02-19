@@ -119,7 +119,7 @@ class Calendar(Component):
         """
         if isinstance(st, Path):
             st = st.read_bytes()
-        elif isinstance(st, str):
+        elif isinstance(st, str) and "\n" not in st and "\r" not in st:
             path = Path(st)
             try:
                 is_file = path.is_file()
