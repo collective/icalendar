@@ -42,19 +42,25 @@ class vText(str):
 
         >>> from icalendar.prop import vText
         >>> desc = 'Project XYZ Final Review\nConference Room - 3B\nCome Prepared.'
-        >>> text = vText.from_ical(desc)
+        >>> text = vText(desc)
         >>> text
         vText(b'Project XYZ Final Review\\nConference Room - 3B\\nCome Prepared.')
         >>> print(text.ical_value)
         Project XYZ Final Review
         Conference Room - 3B
         Come Prepared.
-        >>>
+    
+    Add a SUMMARY to an event:
+
+    .. code-block:: pycon
+
         >>> from icalendar import Event
         >>> event = Event()
-        >>> event.add('TEXT', desc)
-        >>> event['TEXT']
+        >>> event.add('SUMMARY', desc)
+        >>> event['SUMMARY']
         vText(b'Project XYZ Final Review\\nConference Room - 3B\\nCome Prepared.')
+        >>> print(event.to_ical())
+        b'BEGIN:VEVENT\r\nSUMMARY:Project XYZ Final Review\\nConference Room - 3B\\nCome Prepared.\r\nEND:VEVENT\r\n'
     """
 
     default_value: ClassVar[str] = "TEXT"
