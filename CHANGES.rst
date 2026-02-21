@@ -27,7 +27,7 @@ We still recommend checking out the new features and giving feedback in the repo
 Minor changes
 ~~~~~~~~~~~~~
 
-- ...
+- Show required code changes in the CI output to help contributors solve the formatting issues. :pr:`1216` 
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
