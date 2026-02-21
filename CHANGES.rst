@@ -55,7 +55,7 @@ Documentation
 Minor changes
 ~~~~~~~~~~~~~
 
-- Setting :attr:`~cal.calendar.Calendar.calendar_name` now also writes ``X-WR-CALNAME``, and setting :attr:`~cal.calendar.Calendar.description` now also writes ``X-WR-CALDESC``, for improved client compatibility. See `Issue #918 <https://github.com/collective/icalendar/issues/918>`_.
+- Setting :attr:`~cal.calendar.Calendar.calendar_name` now also writes ``X-WR-CALNAME``, and setting :attr:`~cal.calendar.Calendar.description` now also writes ``X-WR-CALDESC``, for improved client compatibility. :issue:`918`
 
 Bug fixes
 ~~~~~~~~~
