@@ -27,7 +27,7 @@ We still recommend checking out the new features and giving feedback in the repo
 Minor changes
 ~~~~~~~~~~~~~
 
-- Use ruff ``0.15.0`` for code formatting in :file:`tox.ini`. :pr:`1215`
+- Use ruff 0.15.0 for code formatting in :file:`tox.ini`. :pr:`1215`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
