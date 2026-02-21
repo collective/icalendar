@@ -5,7 +5,7 @@ repos:
       - id: debug-statements
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.0 # also update pyproject.toml
+    rev: v0.15.2 # also update pyproject.toml
     hooks:
       # Run the linter.
       - id: ruff-check
