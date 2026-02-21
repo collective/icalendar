@@ -248,7 +248,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
         The remaining steps may be performed after the release because they pertain exclusively to documentation, which isn't included in the release.
         The following examples were used for the 7.0.0 release.
-        Making a pull request won't have any effect to the version switcher on Read the Docs until it gets on to the ``main`` branch.
+        Making a pull request won't effect the version switcher on Read the Docs until it gets on the ``main`` branch.
 
     .. important::
 
@@ -281,7 +281,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
                     "preferred": "true"
                 },
     
-        #.  On the previous numbered major release branch (e.g. ``6.x`` if you release ``7.x`` now), show the warning banner.
+        #.  On the previous numbered major release branch, for example, ``6.x`` when releasing ``7.x``, show the warning banner.
 
             .. code-block:: python
     
@@ -289,12 +289,12 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
                     # ...
                     "show_version_warning_banner": True,
 
-            .. code-block: shell
+            .. code-block:: shell
     
                 git checkout 7.x
                 git pull
 
-    #.  When cutting a *minor or patch release* version, on the ``main`` banch, update :file:`docs/_static/version-switcher.json` to match that version's tag name.
+    #.  When cutting a *minor or patch release* version, on the ``main`` branch, update :file:`docs/_static/version-switcher.json` to match that version's tag name.
 
         .. code-block:: json
 
