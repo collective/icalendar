@@ -113,7 +113,7 @@ test = [
 ]
 
 formatting = [
-    "ruff==0.15.0", # also update .pre-commit-config.yaml
+    "ruff==0.15.2", # also update .pre-commit-config.yaml
     "pre-commit",
 ]
 
