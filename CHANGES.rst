@@ -47,7 +47,7 @@ Bug fixes
 Documentation
 ~~~~~~~~~~~~~
 
-- Removed methods of ``str``, ``int``, and others from the documentation in :mod:`icalendar.prop`.
+- Removed methods of ``str``, ``int``, and other classes and methods in the Python standard library from the documentation.
 
 7.0.1 (2026-02-17)
 ------------------
