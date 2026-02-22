@@ -9,7 +9,59 @@ from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
 
 
 class vText(str):
-    """Simple text."""
+    r"""Text
+    
+    Value Name:
+        TEXT
+    
+    Summary:
+        A data type that contains human-readable text values.
+    
+    Description:
+        This value type is used by various iCalendar properties
+        to show free-form text that others can read.
+
+        This class can be created from Python strings and can be
+        used to add text descriptions to calendar events.
+        To create a TEXT object, pass in the string you want when
+        creating the object.
+        To add a line break, use “\n” or “\N”. Use the LANGUAGE
+        property parameter to set the language of the text.
+
+        When the TEXT object is serialized to an iCalendar stream,
+        certain characters are escaped/changed.
+        These characters include the COMMA, SEMICOLON, BACKSLASH,
+        and line breaks.
+    
+    Example:
+    .. code-block:: text
+
+        Project XYZ Final Review\nConference Room - 3B\nCome Prepared.
+
+    .. code-block:: pycon
+
+        >>> from icalendar.prop import vText
+        >>> desc = 'Project XYZ Final Review\nConference Room - 3B\nCome Prepared.'
+        >>> text = vText(desc)
+        >>> text
+        vText(b'Project XYZ Final Review\\nConference Room - 3B\\nCome Prepared.')
+        >>> print(text.ical_value)
+        Project XYZ Final Review
+        Conference Room - 3B
+        Come Prepared.
+    
+    Add a SUMMARY to an event:
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Event
+        >>> event = Event()
+        >>> event.add('SUMMARY', desc)
+        >>> event['SUMMARY']
+        vText(b'Project XYZ Final Review\\nConference Room - 3B\\nCome Prepared.')
+        >>> print(event.to_ical())
+        b'BEGIN:VEVENT\r\nSUMMARY:Project XYZ Final Review\\nConference Room - 3B\\nCome Prepared.\r\nEND:VEVENT\r\n'
+    """
 
     default_value: ClassVar[str] = "TEXT"
     params: Parameters
