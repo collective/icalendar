@@ -82,6 +82,19 @@ When doing so, you or the inviter may submit a pull request to update the :file:
 
 .. seealso:: `About code owners <https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners>`_
 
+Release Glossary
+----------------
+
+major release:
+    Increase of the first version number. E.g. ``7.0.0`` to ``8.0.0``
+minor release:
+    Increase of the second version number. E.g. ``7.0.0`` to ``7.1.0``
+patch release:
+    Increase of the third version number. E.g. ``7.0.0`` to ``7.0.1``
+stable release:
+    A release with three numbers divided by two dots. E.g. ``7.0.0``, ``6.3.12``
+unstable release:
+    A release of an alpha or beta version. E.g. ``7.0.0a1``
 
 New releases
 ------------
@@ -127,7 +140,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
     .. code-block:: shell
 
         git checkout -b release-$VERSION main
-        git add CHANGES.rst docs/_static/version-switcher.json
+        git add CHANGES.rst docs/conf.py
         git commit -m"version $VERSION"
 
 #.  Push the commit and `create a pull request <https://github.com/collective/icalendar/compare?expand=1>`_.
@@ -157,8 +170,8 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         git checkout main
         git pull
         git checkout 7.x
-        git rebase main
-        git push 7.x  # to collective/icalendar
+        git merge main
+        git push upstream 7.x  # to collective/icalendar
         git tag "v$VERSION"
         git push upstream "v$VERSION" # to collective/icalendar
 
@@ -234,16 +247,19 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
     .. note::
 
         The remaining steps may be performed after the release because they pertain exclusively to documentation, which isn't included in the release.
-
-    .. note::
-
         The following examples were used for the 7.0.0 release.
+        Making a pull request won't effect the version switcher on Read the Docs until it gets on the ``main`` branch.
 
     .. important::
 
-        Making a pull request won't have any effect to the version switcher on Read the Docs until it gets on to the ``main`` branch, so you might as well edit and push directly on the ``main`` branch for this step.
+        Edit and push directly on the ``main`` branch after these steps.
 
-    #.  When cutting a new *stable release* version, on the ``main`` branch, update :file:`docs/_static/version-switcher.json` to match that version.
+        .. code-block: shell
+
+            git checkout main
+            git pull
+
+    #.  When cutting a new *major release* version, on the ``main`` branch, update :file:`docs/_static/version-switcher.json` to match that version.
 
         #.  Copy the second previous major version and renumber it to the first previous version, in other words, copy ``5.x`` and renumber the copy to ``6.x``.
 
@@ -264,8 +280,21 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
                     "url": "https://icalendar.readthedocs.io/en/stable/",
                     "preferred": "true"
                 },
+    
+        #.  On the previous numbered major release branch, for example, ``6.x`` when releasing ``7.x``, show the warning banner.
 
-    #.  When cutting a *minor or patch release* version, on the ``main`` or development branch, update :file:`docs/_static/version-switcher.json` to match that version's tag name.
+            .. code-block:: python
+    
+                html_theme_options = {
+                    # ...
+                    "show_version_warning_banner": True,
+
+            .. code-block:: shell
+    
+                git checkout 7.x
+                git pull
+
+    #.  When cutting a *minor or patch release* version, on the ``main`` branch, update :file:`docs/_static/version-switcher.json` to match that version's tag name.
 
         .. code-block:: json
 
@@ -278,15 +307,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
 #.  When cutting a new *stable release* version, update the Sphinx configuration file :file:`docs/conf.py` as shown.
 
-    #.  On the ``main`` branch, which is now the development branch, show the warning banner.
-
-        .. code-block:: python
-
-            html_theme_options = {
-                # ...
-                "show_version_warning_banner": True,
-
-    #.  On the previous numbered major release branch, show the warning banner.
+    #.  On the ``main`` branch, show the warning banner.
 
         .. code-block:: python
 
@@ -296,11 +317,13 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
 #.  Configure `Read the Docs <https://app.readthedocs.org/projects/icalendar/>`_.
 
-    #.  Deactivate any non-stable releases.
+    #.  After an *unstable release*:
+        Deactivate any unstable releases.
         Click on the ellipsis icon, and select :guilabel:`Configure version`.
         Toggle the :guilabel:`Active` switch to deactivate the version.
 
-    #.  Click `Add version <https://app.readthedocs.org/dashboard/icalendar/version/create/>`_ to do just that.
+    #.  After a *major release*:
+        Click `Add version <https://app.readthedocs.org/dashboard/icalendar/version/create/>`_ to do just that.
         Search for the previous major version ``#.x``.
         Click on the version that appears in the select menu that matches your search.
         Toggle the :guilabel:`Active` switch to activate the version.

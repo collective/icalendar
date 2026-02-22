@@ -4,23 +4,6 @@ Change log
 
 .. py:currentmodule:: icalendar
 
-We use `Semantic Versioning <https://semver.org>`_.
-
-- Breaking changes increase the **major** version number.
-- New features increase the **minor** version number.
-- Minor changes and bug fixes increase the **patch** version number.
-
-7.x series
-----------
-
-Developers may be concerned about upgrading to a **new major** release.
-Upgrading from 6.x to 7.x should have **no complications for most developers**, because:
-
-- the core API stays compatible with 4.x
-- the breaking changes likely affect you only if you are an icalendar expert, not a normal user
-
-We still recommend checking out the new features and giving feedback in the repository.
-
 7.0.2 (unreleased)
 ------------------
 
