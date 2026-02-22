@@ -127,7 +127,7 @@ def _main():
         if close_output:
             output_file.close()
 
-__all__ = ["_main", "_view"]
+__all__ = []
 
 if __name__ == "__main__":
     _main()
