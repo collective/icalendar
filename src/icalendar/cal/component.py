@@ -385,7 +385,7 @@ class Component(CaselessDict):
     #########################
     # Handling of components
 
-    def add_component(self, component: Component):
+    def add_component(self, component: Component) -> None:
         """Add a subcomponent to this component."""
         self.subcomponents.append(component)
 
@@ -906,6 +906,18 @@ class Component(CaselessDict):
         if recursive:
             return deepcopy(self)
         return super().copy()
+
+    def is_lazy(self) -> bool:
+        """This component is fully parsed."""
+        return False
+
+    def parse(self) -> Self:
+        """Return the fully parsed component.
+
+        For non-lazy components, this returns self.
+        For lazy components, this parses the component and returns the result.
+        """
+        return self
 
 
 __all__ = ["Component"]

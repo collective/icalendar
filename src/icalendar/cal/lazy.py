@@ -16,6 +16,80 @@ if TYPE_CHECKING:
     from .component import Component
 
 
+class ParsedSubcomponentsStrategy:
+    """All the subcomponents are parsed and available as a list."""
+
+    def __init__(self):
+        self._components: list[Component] = []
+
+    def get_components(self) -> list[Component]:
+        """Get the subcomponents of the calendar."""
+        return self._components
+
+    def set_components(self, components: list[Component]) -> None:
+        """Set the subcomponents of the calendar."""
+        self._components = components
+
+    def add_component(self, component: Component) -> None:
+        """Add a component to the calendar."""
+        self._components.append(component.parse())
+
+    def is_lazy(self) -> bool:
+        """Return whether the components are lazy."""
+        return False
+
+
+class LazySubcomponentsStrategy:
+    """All the subcomponents are parsed lazily."""
+
+    initial_components_to_parse: tuple[str, ...] = ("VTIMEZONE",)
+    """The components that are parsed immediately, instead of lazily."""
+
+    def __init__(self, calendar: BigCalendar):
+        self._components: list[LazySubcomponent] = []
+        self._calendar = calendar
+
+    def parse_initial_components(self) -> None:
+        """Parse the components that are required by other components.
+
+        This mainly concerns the timezone components.
+        They are required by other components that have a TZID parameter.
+        """
+        for component in self._components:
+            if component.name in self.initial_components_to_parse:
+                component.parse()
+
+    def parse_all_components(self) -> None:
+        """Parse all the subcomponents of the calendar."""
+        self._calendar.parse_all_subcomponents()
+
+    def get_components(self) -> list[Component]:
+        """Get the subcomponents of the calendar.
+
+        Parse all subcomponents of the calendar and return them as a list.
+        """
+        self.parse_all_components()
+        return self._calendar.subcomponents
+
+    def set_components(self, components: list[Component]) -> None:
+        """Set the subcomponents of the calendar."""
+        assert all(not component.is_lazy() for component in components), (
+            "All components must be fully parsed."
+        )
+        self._components = []  # there is nothing to parse
+        if components:
+            self.parse_all_components()
+            self._calendar.subcomponents = components
+
+    def add_component(self, component: Component | LazySubcomponent) -> None:
+        """Add a component to the calendar."""
+        self._components.append(component)
+
+    def is_lazy(self) -> bool:
+        """Return whether the components are lazy."""
+        return True
+
+
 class BigCalendar(Calendar):
     """A calendar that can handle big files.
 
@@ -27,12 +101,12 @@ class BigCalendar(Calendar):
     just the subcomponents are not.
     """
 
-    _subcomponents: list[Component]
+    _subcomponents: LazySubcomponentsStrategy | ParsedSubcomponentsStrategy
 
     def __init__(self, *args, **kwargs):
         """Initialize the calendar."""
+        self._subcomponents = LazySubcomponentsStrategy(self)
         super().__init__(*args, **kwargs)
-        self._lazy_subcomponents: list[LazySubcomponent] | None = []
 
     @property
     def subcomponents(self) -> list[Component]:
@@ -40,30 +114,21 @@ class BigCalendar(Calendar):
 
         Parse all subcomponents of the calendar and return them as a list.
         """
-        self.parse_initial_components()
-        if not self._subcomponents:
-            self._subcomponents = [
-                lazy_subcomponent.parse()
-                for lazy_subcomponent in self._lazy_subcomponents
-            ]
-        return self._subcomponents
+        return self._subcomponents.get_components()
 
     @subcomponents.setter
     def subcomponents(self, value: list[Component]) -> None:
         """Set the subcomponents of the calendar."""
-        self._subcomponents = value
+        self._subcomponents.set_components(value)
 
-    def parse_initial_components(self):
-        """Parse the components that are required by other components.
+    @subcomponents.deleter
+    def subcomponents(self) -> None:
+        """Delete the subcomponents of the calendar."""
+        self._subcomponents.set_components([])
 
-        This mainly concerns the timezone components.
-        They are required by other components that have a TZID parameter.
-        """
-        for component in self._lazy_subcomponents:
-            if component.name == "VTIMEZONE":
-                component.parse()
-
-    # TODO: test setter
+    def parse_all_subcomponents(self, components: list[Component]) -> None:
+        """Switch to the strategy where all subcomponents are parsed."""
+        self._subcomponents = ParsedSubcomponentsStrategy(components)
 
     @classmethod
     def _get_ical_parser(cls, st: str | bytes) -> ComponentIcalParser:
@@ -78,6 +143,10 @@ class BigCalendar(Calendar):
         factory = ComponentFactory()
         factory.add_component_class(cls)
         return factory
+
+    def add_component(self, component: Component) -> None:
+        """Add a component to the calendar."""
+        self._subcomponents.add_component(component)
 
 
 __all__ = ["BigCalendar"]

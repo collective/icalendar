@@ -58,7 +58,7 @@ class LazyCalendarIcalParser(ComponentIcalParser):
                 and line[4:].strip().upper() == component_name
             ):
                 break
-        self._components.append(
+        self.component.add_component(
             LazySubcomponent(
                 component_name,
                 self.get_subcomponent_parser(content_lines),
@@ -123,6 +123,10 @@ class LazySubcomponent:
             self._component = components[0]
             self._parser = None  # free memory
         return self._component
+
+    def is_lazy(self) -> bool:
+        """You need to call :meth:`parse` to get the fully parsed component."""
+        return True
 
 
 __all__ = ["LazyCalendarIcalParser", "LazySubcomponent"]
