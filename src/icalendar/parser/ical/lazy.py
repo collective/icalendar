@@ -127,5 +127,8 @@ class LazySubcomponent:
         """You need to call :meth:`parse` to get the fully parsed component."""
         return True
 
+    def __repr__(self) -> str:
+        return f"LazySubcomponent(name={self._name}, parsed={self.is_parsed()})"
+
 
 __all__ = ["LazyCalendarIcalParser", "LazySubcomponent"]

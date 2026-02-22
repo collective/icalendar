@@ -35,6 +35,21 @@ from icalendar import (
 
 def assert_equal(actual_value, expected_value):
     """Make sure both values are equal"""
+    if isinstance(actual_value, dict) and isinstance(expected_value, dict):
+        assert set(actual_value.keys()) == set(expected_value.keys())
+        for key in actual_value:
+            (
+                assert_equal(actual_value[key], expected_value[key]),
+                f"Value for key {key} is not equal.",
+            )
+    if isinstance(actual_value, Component) and isinstance(expected_value, Component):
+        assert len(actual_value.subcomponents) == len(expected_value.subcomponents), (
+            "Number of subcomponents is not equal."
+        )
+        for sub1, sub2 in zip(
+            actual_value.subcomponents, expected_value.subcomponents, strict=True
+        ):
+            print(f"Comparing subcomponents: \n\t{sub1} and \n\t{sub2}")
     assert actual_value == expected_value
     assert expected_value == actual_value
 
@@ -75,6 +90,7 @@ def test_parsed_calendars_are_equal_if_from_same_source(ics_file, tzp):
     """
     cal1 = ics_file.__class__.from_ical(ics_file.raw_ics)
     cal2 = ics_file.__class__.from_ical(ics_file.raw_ics)
+    print(ics_file.raw_ics)
     assert_equal(cal1, cal2)
 
 
