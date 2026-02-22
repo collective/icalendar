@@ -57,6 +57,7 @@ class LazySubcomponentsStrategy:
 
         Parse all subcomponents of the calendar and return them as a list.
         """
+        self.parse_initial_components()
         new_strategy = ParsedSubcomponentsStrategy().set_components(
             [component.parse() for component in self._components]
         )
