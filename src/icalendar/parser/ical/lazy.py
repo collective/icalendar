@@ -37,7 +37,11 @@ class LazyCalendarIcalParser(ComponentIcalParser):
         This could well be the first component.
         """
         c_name = vals.upper()
-        if c_name in self.parse_instantly or not self.component:
+        if (
+            c_name in self.parse_instantly
+            or not self.component
+            or not self.component.is_lazy()
+        ):
             # these components are parsed instantly
             super().handle_begin_component(vals)
         else:
@@ -58,7 +62,7 @@ class LazyCalendarIcalParser(ComponentIcalParser):
                 and line[4:].strip().upper() == component_name
             ):
                 break
-        assert self.component is not None
+        assert self.component is not None, "We assume a component is already started."
         self.component.add_component(
             LazySubcomponent(
                 component_name,
