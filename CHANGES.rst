@@ -27,6 +27,7 @@ We still recommend checking out the new features and giving feedback in the repo
 Minor changes
 ~~~~~~~~~~~~~
 
+- Show required code changes in the CI output to help contributors solve the formatting issues. :pr:`1216` 
 - Use ruff 0.15.0 for code formatting in :file:`tox.ini`. :pr:`1215`
 
 Breaking changes
