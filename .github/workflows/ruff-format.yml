@@ -1,0 +1,66 @@
+name: Automatically format the code with ruff
+#
+# This files solves the problem that files might be committed without prior formatting.
+#
+# - New contributors might forget to properly install the pre-commit hooks
+# - Web edits might not be properly formatted. (line too long, bad spacing, ...)
+#
+# This file runs on the repository of the branch and updates the branch with fixes.
+#
+on:
+  - push
+
+jobs:
+  ruff-format:
+    permissions:
+      contents: write
+      pull-requests: write
+    name: Format the code with ruff and push the changes
+    runs-on: ubuntu-latest
+    #
+    # Run conditions as safeguards
+    #
+    # This workflow EXCLUDES:
+    #
+    # - branch "main"
+    # - tags
+    # - branches that end with ".x" (e.g. "6.x", "7.x")
+    # - branches that start with "release" (e.g. "release-7.0.2")
+    #
+    if: github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/') && !(startsWith(github.ref, 'refs/heads/') && endsWith(github.ref, '.x')) && !startsWith(github.ref, 'refs/heads/release')
+    env:
+      GIT_COMMIT_MESSAGE: |
+        Format with ruff
+
+        See https://icalendar.readthedocs.io/en/stable/contribute/development.html#code-format
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: 3.14
+          cache: pip
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install . --group formatting
+      - name: Format the code with ruff
+        run: ruff format
+      - name: Format the code with ruff check
+        run: ruff check --fix
+      - name: Show the changes
+        run: |
+          git status
+          git diff
+      - name: Commit changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -a -m "${GIT_COMMIT_MESSAGE}" || echo "No changes to commit"
+      - name: Push changes
+        uses: ad-m/github-push-action@v1.0.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref_name }}

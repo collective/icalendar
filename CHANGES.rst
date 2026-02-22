@@ -27,6 +27,7 @@ We still recommend checking out the new features and giving feedback in the repo
 Minor changes
 ~~~~~~~~~~~~~
 
+- Branches pushed to the repository are formatted automatically with ruff. :pr:`1208`
 - Use ruff 0.15.0 for code formatting in :file:`tox.ini`. :pr:`1215`
 
 Breaking changes
