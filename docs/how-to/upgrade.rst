@@ -18,6 +18,14 @@ This section describes the major changes to icalendar in version 7.0.0.
 
 .. _upgrade-7.0.0-breaking:
 
+Developers may be concerned about upgrading to a **new major** release.
+Upgrading from 6.x to 7.x should have **no complications for most developers**, because:
+
+- the core API stays compatible with 4.x
+- the breaking changes likely affect you only if you are an icalendar expert, not a normal user
+
+We still recommend checking out the new features and giving feedback in the repository.
+
 Breaking changes
 ----------------
 
