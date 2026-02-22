@@ -60,7 +60,12 @@ class vBoolean(int):
         return self
 
     def to_ical(self) -> bytes:
+        """The iCalendar representation of the vBoolean."""
         return b"TRUE" if self else b"FALSE"
+
+    @property
+    def ical_value(self) -> bool:
+        return bool(self)
 
     @classmethod
     def from_ical(cls, ical: str) -> bool:
@@ -99,6 +104,8 @@ class vBoolean(int):
             jcal_property[3],
             params=Parameters.from_jcal_property(jcal_property),
         )
+
+
 
 
 __all__ = ["vBoolean"]
