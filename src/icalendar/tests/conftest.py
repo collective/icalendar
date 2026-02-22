@@ -142,7 +142,7 @@ def calendars(tzp, request):
     return DataSource(CALENDARS_FOLDER, request.param.from_ical)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def big_calendars(tzp):
     """Return the data source for calendar files."""
     return DataSource(CALENDARS_FOLDER, BigCalendar.from_ical)

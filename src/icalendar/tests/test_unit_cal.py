@@ -437,7 +437,7 @@ def test_calendar_with_parsing_errors_has_an_error_in_one_event(calendars):
 def test_cal_strict_parsing(calendars):
     """If components are damaged, we raise an exception."""
     with pytest.raises(ValueError):
-        calendars.parsing_error_in_UTC_offset
+        calendars.parsing_error_in_UTC_offset.subcomponents
 
 
 def test_cal_ignore_errors_parsing(calendars, vUTCOffset_ignore_exceptions):

@@ -37,7 +37,7 @@ class LazyCalendarIcalParser(ComponentIcalParser):
         This could well be the first component.
         """
         c_name = vals.upper()
-        if c_name in self.parse_instantly:
+        if c_name in self.parse_instantly or not self.component:
             # these components are parsed instantly
             super().handle_begin_component(vals)
         else:
@@ -58,6 +58,7 @@ class LazyCalendarIcalParser(ComponentIcalParser):
                 and line[4:].strip().upper() == component_name
             ):
                 break
+        assert self.component is not None
         self.component.add_component(
             LazySubcomponent(
                 component_name,
@@ -79,12 +80,6 @@ class LazyCalendarIcalParser(ComponentIcalParser):
 
     def prepare_components(self):
         """Prepare the lazily parsed components."""
-        for component in self._components:
-            if component.name not in self.parse_instantly:
-                raise ValueError(
-                    f"Expected {', '.join(self.parse_instantly)} as root component "
-                    f"but got {component.name}."
-                )
 
 
 class LazySubcomponent:

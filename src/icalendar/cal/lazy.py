@@ -22,17 +22,21 @@ class ParsedSubcomponentsStrategy:
     def __init__(self):
         self._components: list[Component] = []
 
-    def get_components(self) -> list[Component]:
+    def get_components(self) -> tuple[ParsedSubcomponentsStrategy, list[Component]]:
         """Get the subcomponents of the calendar."""
-        return self._components
+        return self, self._components
 
-    def set_components(self, components: list[Component]) -> None:
+    def set_components(
+        self, components: list[Component]
+    ) -> ParsedSubcomponentsStrategy:
         """Set the subcomponents of the calendar."""
         self._components = components
+        return self
 
-    def add_component(self, component: Component) -> None:
+    def add_component(self, component: Component) -> ParsedSubcomponentsStrategy:
         """Add a component to the calendar."""
         self._components.append(component.parse())
+        return self
 
     def is_lazy(self) -> bool:
         """Return whether the components are lazy."""
@@ -45,9 +49,35 @@ class LazySubcomponentsStrategy:
     initial_components_to_parse: tuple[str, ...] = ("VTIMEZONE",)
     """The components that are parsed immediately, instead of lazily."""
 
-    def __init__(self, calendar: BigCalendar):
+    def __init__(self):
         self._components: list[LazySubcomponent] = []
-        self._calendar = calendar
+
+    def get_components(self) -> tuple[ParsedSubcomponentsStrategy, list[Component]]:
+        """Get the subcomponents of the calendar.
+
+        Parse all subcomponents of the calendar and return them as a list.
+        """
+        new_strategy = ParsedSubcomponentsStrategy().set_components(
+            [component.parse() for component in self._components]
+        )
+        return new_strategy.get_components()
+
+    def set_components(
+        self, components: list[Component]
+    ) -> ParsedSubcomponentsStrategy:
+        """Set the subcomponents of the calendar."""
+        return ParsedSubcomponentsStrategy().set_components(components)
+
+    def add_component(
+        self, component: Component | LazySubcomponent
+    ) -> LazyCalendarIcalParser:
+        """Add a component to the calendar."""
+        self._components.append(component)
+        return self
+
+    def is_lazy(self) -> bool:
+        """Return whether the components are lazy."""
+        return True
 
     def parse_initial_components(self) -> None:
         """Parse the components that are required by other components.
@@ -59,35 +89,12 @@ class LazySubcomponentsStrategy:
             if component.name in self.initial_components_to_parse:
                 component.parse()
 
-    def parse_all_components(self) -> None:
-        """Parse all the subcomponents of the calendar."""
-        self._calendar.parse_all_subcomponents()
 
-    def get_components(self) -> list[Component]:
-        """Get the subcomponents of the calendar.
-
-        Parse all subcomponents of the calendar and return them as a list.
-        """
-        self.parse_all_components()
-        return self._calendar.subcomponents
-
-    def set_components(self, components: list[Component]) -> None:
+class InitialSubcomponentsStrategy:
+    def set_components(self, components: list[Component]) -> LazySubcomponentsStrategy:
         """Set the subcomponents of the calendar."""
-        assert all(not component.is_lazy() for component in components), (
-            "All components must be fully parsed."
-        )
-        self._components = []  # there is nothing to parse
-        if components:
-            self.parse_all_components()
-            self._calendar.subcomponents = components
-
-    def add_component(self, component: Component | LazySubcomponent) -> None:
-        """Add a component to the calendar."""
-        self._components.append(component)
-
-    def is_lazy(self) -> bool:
-        """Return whether the components are lazy."""
-        return True
+        assert components == []
+        return LazySubcomponentsStrategy()
 
 
 class BigCalendar(Calendar):
@@ -101,11 +108,16 @@ class BigCalendar(Calendar):
     just the subcomponents are not.
     """
 
-    _subcomponents: LazySubcomponentsStrategy | ParsedSubcomponentsStrategy
+    _subcomponents: (
+        LazySubcomponentsStrategy
+        | ParsedSubcomponentsStrategy
+        | InitialSubcomponentsStrategy
+    )
+    """The stategy pattern for subcomponents of the calendar."""
 
     def __init__(self, *args, **kwargs):
         """Initialize the calendar."""
-        self._subcomponents = LazySubcomponentsStrategy(self)
+        self._subcomponents = InitialSubcomponentsStrategy()
         super().__init__(*args, **kwargs)
 
     @property
@@ -114,21 +126,13 @@ class BigCalendar(Calendar):
 
         Parse all subcomponents of the calendar and return them as a list.
         """
-        return self._subcomponents.get_components()
+        self._subcomponents, result = self._subcomponents.get_components()
+        return result
 
     @subcomponents.setter
     def subcomponents(self, value: list[Component]) -> None:
         """Set the subcomponents of the calendar."""
-        self._subcomponents.set_components(value)
-
-    @subcomponents.deleter
-    def subcomponents(self) -> None:
-        """Delete the subcomponents of the calendar."""
-        self._subcomponents.set_components([])
-
-    def parse_all_subcomponents(self, components: list[Component]) -> None:
-        """Switch to the strategy where all subcomponents are parsed."""
-        self._subcomponents = ParsedSubcomponentsStrategy(components)
+        self._subcomponents = self._subcomponents.set_components(value)
 
     @classmethod
     def _get_ical_parser(cls, st: str | bytes) -> ComponentIcalParser:
@@ -146,7 +150,11 @@ class BigCalendar(Calendar):
 
     def add_component(self, component: Component) -> None:
         """Add a component to the calendar."""
-        self._subcomponents.add_component(component)
+        self._subcomponents = self._subcomponents.add_component(component)
+
+    def is_lazy(self):
+        """Wether subcomponents will be evaluated lazily."""
+        return self._subcomponents.is_lazy()
 
 
 __all__ = ["BigCalendar"]
