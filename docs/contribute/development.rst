@@ -32,34 +32,9 @@ You'll pull code from the upstream icalendar repository, push your work from you
 
 #.  `Configure Git to sync your fork with the upstream repository <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo#configuring-git-to-sync-your-fork-with-the-upstream-repository>`_.
 
-Branches
---------
-
-This section describes the branches used in icalendar development.
-
-``main``
-    The `main <https://github.com/collective/icalendar/tree/main/>`_ branch receives the latest updates and features.
-    Active development takes place on this branch.
-    It is compatible with Python versions 3.10 - 3.14, and PyPy3.10.
-
-``6.x``
-    icalendar version 6 is on the branch `6.x <https://github.com/collective/icalendar/tree/6.x/>`_.
-    It is compatible with Python versions 3.8 - 3.13, and PyPy3.9.
-    Security updates and bug fixes can be backported and added to ``6.x`` on request.
-
-``5.x``
-    icalendar version 5 is on the branch `5.x <https://github.com/collective/icalendar/tree/5.x/>`_.
-    It is compatible with Python versions 3.7 - 3.11, and PyPy3.9.
-    Security updates and bug fixes can be backported and added to ``5.x`` on request.
-
-``4.x``
-    icalendar version 4 is on the branch `4.x <https://github.com/collective/icalendar/tree/4.x/>`_.
-    It is compatible with Python versions 2.7, 3.4 - 3.10, and PyPy2.7 and PyPy3.9.
-    Security updates and bug fixes can be backported and added to ``4.x`` on request.
-
 .. seealso::
 
-    `icalendar security policy <https://github.com/collective/icalendar/security/policy>`_.
+    :ref:`branch-policy`
 
 Install Python
 --------------
