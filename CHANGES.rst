@@ -28,6 +28,7 @@ Minor changes
 ~~~~~~~~~~~~~
 
 - Show required code changes in the CI output to help contributors solve the formatting issues. :pr:`1216` 
+- Use ruff 0.15.0 for code formatting in :file:`tox.ini`. :pr:`1215`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
@@ -47,7 +48,7 @@ Bug fixes
 Documentation
 ~~~~~~~~~~~~~
 
-- ...
+- Removed methods of ``str``, ``int``, and other classes and methods in the Python standard library from the documentation.
 
 7.0.1 (2026-02-17)
 ------------------
@@ -55,7 +56,7 @@ Documentation
 Minor changes
 ~~~~~~~~~~~~~
 
-- Setting :attr:`~cal.calendar.Calendar.calendar_name` now also writes ``X-WR-CALNAME``, and setting :attr:`~cal.calendar.Calendar.description` now also writes ``X-WR-CALDESC``, for improved client compatibility. See `Issue #918 <https://github.com/collective/icalendar/issues/918>`_.
+- Setting :attr:`~cal.calendar.Calendar.calendar_name` now also writes ``X-WR-CALNAME``, and setting :attr:`~cal.calendar.Calendar.description` now also writes ``X-WR-CALDESC``, for improved client compatibility. :issue:`918`
 
 Bug fixes
 ~~~~~~~~~
