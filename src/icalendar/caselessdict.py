@@ -118,4 +118,27 @@ class _CaselessDict(OrderedDict):
         return canonsort_items(self, self.canonical_order)
 
 
-__all__ = ["_canonsort_keys", "_canonsort_items", "_CaselessDict"]
+# Backwards-compatible public aliases without leading underscores.
+def canonsort_keys(
+    keys: Iterable[KT],
+    canonical_order: Optional[Iterable[KT]] = None,
+) -> list[KT]:
+    """Public alias for :func:`_canonsort_keys`."""
+    return _canonsort_keys(keys, canonical_order)
+
+
+def canonsort_items(
+    dict1: Mapping[KT, VT],
+    canonical_order: Optional[Iterable[KT]] = None,
+) -> list[tuple[KT, VT]]:
+    """Public alias for :func:`_canonsort_items`."""
+    return _canonsort_items(dict1, canonical_order)
+
+
+# Public class alias for backwards compatibility.
+class CaselessDict(_CaselessDict):
+    """Public, non-underscored alias for :class:`_CaselessDict`."""
+    pass
+
+
+__all__ = ["canonsort_keys", "canonsort_items", "CaselessDict"]
