@@ -4,13 +4,13 @@ Change log
 
 .. py:currentmodule:: icalendar
 
-7.0.1 (unreleased)
+7.0.2 (unreleased)
 ------------------
 
 Minor changes
 ~~~~~~~~~~~~~
 
-- Setting :attr:`~cal.calendar.Calendar.calendar_name` now also writes ``X-WR-CALNAME``, and setting :attr:`~cal.calendar.Calendar.description` now also writes ``X-WR-CALDESC``, for improved client compatibility. See `Issue #918 <https://github.com/collective/icalendar/issues/918>`_.
+- Use ruff 0.15.0 for code formatting in :file:`tox.ini`. :pr:`1215`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
@@ -20,7 +20,25 @@ Breaking changes
 New features
 ~~~~~~~~~~~~
 
+- Enabled :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>` to read calendars from files. :issue:`756`
+
+Bug fixes
+~~~~~~~~~
+
 - ...
+
+Documentation
+~~~~~~~~~~~~~
+
+- Removed methods of ``str``, ``int``, and other classes and methods in the Python standard library from the documentation.
+
+7.0.1 (2026-02-17)
+------------------
+
+Minor changes
+~~~~~~~~~~~~~
+
+- Setting :attr:`~cal.calendar.Calendar.calendar_name` now also writes ``X-WR-CALNAME``, and setting :attr:`~cal.calendar.Calendar.description` now also writes ``X-WR-CALDESC``, for improved client compatibility. :issue:`918`
 
 Bug fixes
 ~~~~~~~~~
@@ -31,6 +49,7 @@ Documentation
 ~~~~~~~~~~~~~
 
 - Fixed the version switcher on Read the Docs, and documented the process for a major release. :issue:`1194`
+- Added usage examples for reading calendars from files and URL. :issue:`756`
 
 
 7.0.0 (2026-02-11)

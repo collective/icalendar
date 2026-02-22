@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import timedelta
+from pathlib import Path
 from typing import TYPE_CHECKING, Literal, overload
 
 from icalendar.attr import (
@@ -87,17 +88,19 @@ class Calendar(Component):
     @overload
     @classmethod
     def from_ical(
-        cls, st: bytes | str, multiple: Literal[False] = False
+        cls, st: bytes | str | Path, multiple: Literal[False] = False
     ) -> Calendar: ...
 
     @overload
     @classmethod
-    def from_ical(cls, st: bytes | str, multiple: Literal[True]) -> list[Calendar]: ...
+    def from_ical(
+        cls, st: bytes | str | Path, multiple: Literal[True]
+    ) -> list[Calendar]: ...
 
     @classmethod
     def from_ical(
         cls,
-        st: bytes | str,
+        st: bytes | str | Path,
         multiple: bool = False,
     ) -> Calendar | list[Calendar]:
         """Parse iCalendar data into Calendar instances.
@@ -107,12 +110,24 @@ class Calendar(Component):
         forward-reference resolution and VTIMEZONE caching.
 
         Parameters:
-            st: iCalendar data as bytes or string
+            st: iCalendar data as bytes or string, or a path to an iCalendar file as
+                :class:`pathlib.Path` or string.
             multiple: If ``True``, returns list. If ``False``, returns single calendar.
 
         Returns:
             Calendar or list of Calendars
         """
+        if isinstance(st, Path):
+            st = st.read_bytes()
+        elif isinstance(st, str) and "\n" not in st and "\r" not in st:
+            path = Path(st)
+            try:
+                is_file = path.is_file()
+            except OSError:
+                is_file = False
+            if is_file:
+                st = path.read_bytes()
+
         comps = Component.from_ical(st, multiple=True)
         all_timezones_so_far = True
         for comp in comps:
