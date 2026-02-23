@@ -79,9 +79,9 @@ def test_parse_into_lazy_component(component_name):
     """Test that these components are parsed into lazy components."""
 
 
-def test_big_calendar_returns_a_calendar(big_calendars):
+def test_big_calendar_returns_a_calendar(lazy_calendars):
     """Test that the BigCalendar returns a Calendar."""
-    assert isinstance(big_calendars.empty, LazyCalendar)
+    assert isinstance(lazy_calendars.empty, LazyCalendar)
 
 
 @pytest.mark.parametrize(
@@ -94,32 +94,39 @@ def test_can_only_parse_calendar_components(component_name):
     assert not component.is_lazy()
 
 
-def test_big_calendar_is_initially_lazy(big_calendars):
+def test_big_calendar_is_initially_lazy(lazy_calendars):
     """Test that the BigCalendar is initially lazy."""
-    calendar = big_calendars.example
+    calendar = lazy_calendars.example
     assert_is_lazy_calendar(calendar)
 
 
-def test_adding_a_component_to_a_lazy_calendar(big_calendars):
+def test_adding_a_component_to_a_lazy_calendar(lazy_calendars):
     """Test that we can add a component to a lazy calendar."""
-    calendar: LazyCalendar = big_calendars.empty
+    calendar: LazyCalendar = lazy_calendars.empty
     calendar.add_component(Event())
     assert_is_lazy_calendar(calendar)
 
 
-def test_getting_the_subcomponents_of_a_lazy_calendar(big_calendars, calendars):
+def test_getting_the_subcomponents_of_a_lazy_calendar(lazy_calendars, calendars):
     """Test that we can get the subcomponents of a lazy calendar."""
-    calendar: LazyCalendar = big_calendars.example
+    calendar: LazyCalendar = lazy_calendars.example
     subcomponents = calendar.subcomponents
     assert len(subcomponents) == 3
     assert_is_parsed_calendar(calendar)
     assert calendars.example.subcomponents == subcomponents
 
 
-def test_parsing_a_lazy_calendar_twice(big_calendars):
+def test_parsing_a_lazy_calendar_twice(lazy_calendars):
     """Test that parsing a lazy calendar twice does not change the result."""
-    calendar: LazyCalendar = big_calendars.example
+    calendar: LazyCalendar = lazy_calendars.example
     subcomponents1 = calendar.subcomponents
     subcomponents2 = calendar.subcomponents
     assert subcomponents1 is subcomponents2
     assert_is_parsed_calendar(calendar)
+
+
+# TODO: add calendar with different components and test lazy parsing on access
+# override .events and such
+# also override timezones
+# also override with_uid
+# also override walk

@@ -1,5 +1,6 @@
 """Test configuration"""
 
+import functools
 import itertools
 import sys
 import uuid
@@ -132,6 +133,13 @@ class DataSource:
         """Return a list of all components parsed."""
         return self.__class__(self._data_source_folder, self._parser, multiple=True)
 
+    @classmethod
+    @functools.cache
+    def from_folder(cls, data_source_folder: Path, parser: type[Component]):
+        """Parse all files in a folder and return a DataSource with the results."""
+        new_cls = type(f"DataSource{parser.name}", (cls,), {})
+        return new_cls(data_source_folder, parser)
+
 
 HERE = Path(__file__).parent
 CALENDARS_FOLDER = HERE / "calendars"
@@ -150,38 +158,38 @@ def calendars(tzp, request):
     - Instantly
     - Lazily with BigCalendar
     """
-    return DataSource(CALENDARS_FOLDER, request.param)
+    return DataSource.from_folder(CALENDARS_FOLDER, request.param)
 
 
 @pytest.fixture
-def big_calendars(tzp):
+def lazy_calendars(tzp):
     """Return the data source for calendar files."""
-    return DataSource(CALENDARS_FOLDER, LazyCalendar)
+    return DataSource.from_folder(CALENDARS_FOLDER, LazyCalendar)
 
 
 @pytest.fixture(scope="module")
 def timezones(tzp):
-    return DataSource(TIMEZONES_FOLDER, Timezone)
+    return DataSource.from_folder(TIMEZONES_FOLDER, Timezone)
 
 
 @pytest.fixture(scope="module")
 def events(tzp):
-    return DataSource(EVENTS_FOLDER, Event)
+    return DataSource.from_folder(EVENTS_FOLDER, Event)
 
 
 @pytest.fixture(scope="module")
 def alarms(tzp):
-    return DataSource(ALARMS_FOLDER, Alarm)
+    return DataSource.from_folder(ALARMS_FOLDER, Alarm)
 
 
 @pytest.fixture(scope="module")
 def availabilities(tzp):
-    return DataSource(AVAILABILITIES_FOLDER, Availability)
+    return DataSource.from_folder(AVAILABILITIES_FOLDER, Availability)
 
 
 @pytest.fixture(scope="module")
 def todos(tzp):
-    return DataSource(TODOS_FOLDER, Todo)
+    return DataSource.from_folder(TODOS_FOLDER, Todo)
 
 
 @pytest.fixture(
