@@ -95,7 +95,7 @@ html_theme_options = {
     "secondary_sidebar_items": ["edit-this-page", "page-toc", "sourcelink"],
     "show_nav_level": 2,
     "show_toc_level": 2,
-    "show_version_warning_banner": False,
+    "show_version_warning_banner": True,
     "switcher": {
         "json_url": json_url,
         "version_match": version_match,
@@ -172,7 +172,7 @@ autoclass_content = "both"
 # https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html
 autodoc_default_options = {
     "ignore-module-all": True,
-    "inherited-members": "CaselessDict",
+    "no-inherited-members": "object,CaselessDict,str,bool,NamedTuple,int,float,Enum",
     "members": True,
     "show-inheritance": True,
     "undoc-members": True,

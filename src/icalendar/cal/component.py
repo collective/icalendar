@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from copy import deepcopy
 from datetime import date, datetime, time, timedelta, timezone
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, ClassVar, Literal, overload
 
 from icalendar.attr import (
@@ -470,14 +471,15 @@ class Component(CaselessDict):
 
     @classmethod
     def from_ical(
-        cls, st: str | bytes, multiple: bool = False
+        cls, st: str | bytes | Path, multiple: bool = False
     ) -> Component | list[Component]:
         """Parse iCalendar data into component instances.
 
         Handles standard and custom components (``X-*``, IANA-registered).
 
         Parameters:
-            st: iCalendar data as bytes or string
+            st: iCalendar data as bytes or string, or a path to an iCalendar file as
+                :class:`pathlib.Path` or string.
             multiple: If ``True``, returns list. If ``False``, returns single component.
 
         Returns:
@@ -486,6 +488,16 @@ class Component(CaselessDict):
         See Also:
             :doc:`/how-to/custom-components` for examples of parsing custom components
         """
+        if isinstance(st, Path):
+            st = st.read_bytes()
+        elif isinstance(st, str) and "\n" not in st and "\r" not in st:
+            path = Path(st)
+            try:
+                is_file = path.is_file()
+            except OSError:
+                is_file = False
+            if is_file:
+                st = path.read_bytes()
         parser = cls._get_ical_parser(st)
         components = parser.parse()
         if multiple:

@@ -233,22 +233,35 @@ Examples
 This section describes how to use icalendar's essential features.
 
 
-Inspect files
-'''''''''''''
+Read calendar from file
+'''''''''''''''''''''''
 
-Open an :file:`.ics` file and view its events.
+Read a calendar from a local :file:`.ics` file and view its events.
 
 .. code:: pycon
 
     >>> import icalendar
     >>> from pathlib import Path
     >>> ics_path = Path("src/icalendar/tests/calendars/example.ics")
-    >>> calendar = icalendar.Calendar.from_ical(ics_path.read_bytes())
+    >>> calendar = icalendar.Calendar.from_ical(ics_path)
     >>> for event in calendar.events:
     ...     print(event.get("SUMMARY"))
     New Year's Day
     Orthodox Christmas
     International Women's Day
+
+
+Read calendar from URL
+''''''''''''''''''''''
+
+To read a calendar from a URL, retrieve the data first, then parse it in icalendar.
+
+.. code-block:: python
+
+    from urllib.request import urlopen
+    url = "https://www.gov.uk/bank-holidays/england-and-wales.ics"
+    ics_data = urlopen(url).read()
+    calendar = icalendar.Calendar.from_ical(ics_data)
 
 
 Modify content

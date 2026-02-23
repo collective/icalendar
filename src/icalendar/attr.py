@@ -357,6 +357,8 @@ def multi_language_text_property(
         fdel(self)
         if value is not None:
             self.add(main_prop, value)
+            if compatibility_prop is not None:
+                self.add(compatibility_prop, value)
 
     def fdel(self: Component):
         """Delete the property."""
