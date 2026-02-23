@@ -5,19 +5,19 @@ See https://github.com/collective/icalendar/issues/1050
 
 import pytest
 
-from icalendar import BigCalendar, Event
+from icalendar import Event, LazyCalendar
 from icalendar.parser.ical.lazy import LazySubcomponent
 
 
-def assert_is_lazy_calendar(calendar: BigCalendar) -> None:
+def assert_is_lazy_calendar(calendar: LazyCalendar) -> None:
     """Assert that the calendar is a lazy calendar."""
-    assert isinstance(calendar, BigCalendar)
+    assert isinstance(calendar, LazyCalendar)
     assert calendar._subcomponents.is_lazy()
 
 
-def assert_is_parsed_calendar(calendar: BigCalendar) -> None:
+def assert_is_parsed_calendar(calendar: LazyCalendar) -> None:
     """Assert that the calendar is a parsed calendar."""
-    assert isinstance(calendar, BigCalendar)
+    assert isinstance(calendar, LazyCalendar)
     assert not calendar._subcomponents.is_lazy()
 
 
@@ -81,7 +81,7 @@ def test_parse_into_lazy_component(component_name):
 
 def test_big_calendar_returns_a_calendar(big_calendars):
     """Test that the BigCalendar returns a Calendar."""
-    assert isinstance(big_calendars.empty, BigCalendar)
+    assert isinstance(big_calendars.empty, LazyCalendar)
 
 
 @pytest.mark.parametrize(
@@ -89,11 +89,9 @@ def test_big_calendar_returns_a_calendar(big_calendars):
 )
 def test_can_only_parse_calendar_components(component_name):
     """Test that we still get a component even if the string contains other components."""
-    with pytest.raises(
-        ValueError,
-        match=rf"Expected VCALENDAR as root component but got {component_name}\.",
-    ):
-        BigCalendar.from_ical(f"BEGIN:{component_name}\nEND:{component_name}")
+    component = LazyCalendar.from_ical(f"BEGIN:{component_name}\nEND:{component_name}")
+    assert component.name == component_name
+    assert not component.is_lazy()
 
 
 def test_big_calendar_is_initially_lazy(big_calendars):
@@ -104,14 +102,14 @@ def test_big_calendar_is_initially_lazy(big_calendars):
 
 def test_adding_a_component_to_a_lazy_calendar(big_calendars):
     """Test that we can add a component to a lazy calendar."""
-    calendar: BigCalendar = big_calendars.empty
+    calendar: LazyCalendar = big_calendars.empty
     calendar.add_component(Event())
     assert_is_lazy_calendar(calendar)
 
 
 def test_getting_the_subcomponents_of_a_lazy_calendar(big_calendars, calendars):
     """Test that we can get the subcomponents of a lazy calendar."""
-    calendar: BigCalendar = big_calendars.example
+    calendar: LazyCalendar = big_calendars.example
     subcomponents = calendar.subcomponents
     assert len(subcomponents) == 3
     assert_is_parsed_calendar(calendar)
@@ -120,7 +118,7 @@ def test_getting_the_subcomponents_of_a_lazy_calendar(big_calendars, calendars):
 
 def test_parsing_a_lazy_calendar_twice(big_calendars):
     """Test that parsing a lazy calendar twice does not change the result."""
-    calendar: BigCalendar = big_calendars.example
+    calendar: LazyCalendar = big_calendars.example
     subcomponents1 = calendar.subcomponents
     subcomponents2 = calendar.subcomponents
     assert subcomponents1 is subcomponents2

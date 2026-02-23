@@ -16,11 +16,11 @@ from dateutil import tz
 from icalendar import (
     Alarm,
     Availability,
-    BigCalendar,
     Calendar,
     Component,
     ComponentFactory,
     Event,
+    LazyCalendar,
     Timezone,
     Todo,
     TypesFactory,
@@ -131,7 +131,7 @@ AVAILABILITIES_FOLDER = HERE / "availabilities"
 TODOS_FOLDER = HERE / "todos"
 
 
-@pytest.fixture(scope="module", params=[Calendar, BigCalendar])
+@pytest.fixture(scope="module", params=[Calendar, LazyCalendar])
 def calendars(tzp, request):
     """Return the data source for calendar files.
 
@@ -145,7 +145,7 @@ def calendars(tzp, request):
 @pytest.fixture
 def big_calendars(tzp):
     """Return the data source for calendar files."""
-    return DataSource(CALENDARS_FOLDER, BigCalendar.from_ical)
+    return DataSource(CALENDARS_FOLDER, LazyCalendar.from_ical)
 
 
 @pytest.fixture(scope="module")

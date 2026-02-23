@@ -98,7 +98,7 @@ class InitialSubcomponentsStrategy:
         return LazySubcomponentsStrategy()
 
 
-class BigCalendar(Calendar):
+class LazyCalendar(Calendar):
     """A calendar that can handle big files.
 
     Subcomponents of this calendar are evaluated lazily,
@@ -158,4 +158,4 @@ class BigCalendar(Calendar):
         return self._subcomponents.is_lazy()
 
 
-__all__ = ["BigCalendar"]
+__all__ = ["LazyCalendar"]

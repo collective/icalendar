@@ -35,7 +35,12 @@ from icalendar import (
 
 def assert_equal(actual_value, expected_value):
     """Make sure both values are equal"""
-    if isinstance(actual_value, dict) and isinstance(expected_value, dict):
+    if (
+        isinstance(actual_value, dict)
+        and isinstance(expected_value, dict)
+        and not isinstance(actual_value, vRecur)
+        and not isinstance(expected_value, vRecur)
+    ):
         assert set(actual_value.keys()) == set(expected_value.keys())
         for key in actual_value:
             (
