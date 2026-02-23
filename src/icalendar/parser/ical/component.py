@@ -163,7 +163,7 @@ class ComponentIcalParser:
             # only accept X-COMMENT at the end of the .ics file
             # ignore these components in parsing
             if name == "X-COMMENT":
-                return  # TODO: This was a break
+                return
             raise ValueError(f'Property "{name}" does not have a parent component.')
         # Determine TZID for datetime properties
         tzid = params.get("TZID") if params and name in self.datetime_names else None

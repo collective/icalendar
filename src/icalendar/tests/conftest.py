@@ -59,9 +59,12 @@ class DataSource:
 
     extensions = [".ics", ".jcal"]
 
-    def __init__(self, data_source_folder: Path, parser):
+    def __init__(
+        self, data_source_folder: Path, parser: type[Component], multiple=False
+    ):
         self._parser = parser
         self._data_source_folder = data_source_folder
+        self._multiple = multiple
 
     def keys(self):
         """Return all the files that could be used."""
@@ -73,6 +76,7 @@ class DataSource:
 
     def __getitem__(self, attribute):
         """Parse a file and return the result stored in the attribute."""
+        # parse the file ending
         extensions = self.extensions
         if "." in attribute:
             # we have a file ending
@@ -88,20 +92,29 @@ class DataSource:
             raise AttributeError(
                 f"{attribute} does not exist with these extensions: {', '.join(extensions)}."
             )
+        # check different source types
+        raw_ics: bytes | None = None
+        raw_jcal: str | None = None
         if extension == ".jcal":
             raw_jcal = source_path.read_text()
-            source = Component.from_jcal(raw_jcal)
-            raw_ics = None
         else:
             raw_ics = source_path.read_bytes()
-            source = self._parser(raw_ics)
-            raw_jcal = None
-        if not isinstance(source, list):
+
+        def get_parsed(self):
+            source = (
+                self._parser.from_ical(raw_ics, multiple=self._multiple)
+                if raw_ics
+                else self._parser.from_jcal(raw_jcal)
+            )
+            if self._multiple:
+                return source
             source.raw_ics = raw_ics
             source.raw_jcal = raw_jcal
             source.source_file = source_file
-        self.__dict__[attribute] = source  # required for speed but creates side effects
-        return source
+            return source
+
+        setattr(self.__class__, attribute, property(get_parsed))
+        return getattr(self, attribute)
 
     def __contains__(self, key):
         """key in self.keys()"""
@@ -117,9 +130,7 @@ class DataSource:
     @property
     def multiple(self):
         """Return a list of all components parsed."""
-        return self.__class__(
-            self._data_source_folder, lambda data: self._parser(data, multiple=True)
-        )
+        return self.__class__(self._data_source_folder, self._parser, multiple=True)
 
 
 HERE = Path(__file__).parent
@@ -139,38 +150,38 @@ def calendars(tzp, request):
     - Instantly
     - Lazily with BigCalendar
     """
-    return DataSource(CALENDARS_FOLDER, request.param.from_ical)
+    return DataSource(CALENDARS_FOLDER, request.param)
 
 
 @pytest.fixture
 def big_calendars(tzp):
     """Return the data source for calendar files."""
-    return DataSource(CALENDARS_FOLDER, LazyCalendar.from_ical)
+    return DataSource(CALENDARS_FOLDER, LazyCalendar)
 
 
 @pytest.fixture(scope="module")
 def timezones(tzp):
-    return DataSource(TIMEZONES_FOLDER, Timezone.from_ical)
+    return DataSource(TIMEZONES_FOLDER, Timezone)
 
 
 @pytest.fixture(scope="module")
 def events(tzp):
-    return DataSource(EVENTS_FOLDER, Event.from_ical)
+    return DataSource(EVENTS_FOLDER, Event)
 
 
 @pytest.fixture(scope="module")
 def alarms(tzp):
-    return DataSource(ALARMS_FOLDER, Alarm.from_ical)
+    return DataSource(ALARMS_FOLDER, Alarm)
 
 
 @pytest.fixture(scope="module")
 def availabilities(tzp):
-    return DataSource(AVAILABILITIES_FOLDER, Availability.from_ical)
+    return DataSource(AVAILABILITIES_FOLDER, Availability)
 
 
 @pytest.fixture(scope="module")
 def todos(tzp):
-    return DataSource(TODOS_FOLDER, Todo.from_ical)
+    return DataSource(TODOS_FOLDER, Todo)
 
 
 @pytest.fixture(
