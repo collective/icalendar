@@ -2068,7 +2068,7 @@ def _get_links(self: Component) -> list[vUri | vUid | vXmlReference]:
              #xpointer(descendant::CostStruc/range-to(
              following::CostStrucEND[1]))
 
-        Set a link :class:`icalendar.vUri` to the event page:
+        Set a link :class:`icalendar.prop.uri.vUri` to the event page:
 
         .. code-block:: pycon
 
@@ -2251,7 +2251,7 @@ def _get_related_to(self: Component) -> list[vText | vUri | vUid]:
              https://example.com/caldav/user/jb/cal/
              19960401-080045-4000F192713.ics
 
-    See also :class:`icalendar.enum.RELTYPE`.
+    See also :class:`icalendar.enums.RELTYPE`.
 
     """
     result = self.get("RELATED-TO", [])
@@ -2315,7 +2315,7 @@ def _get_concepts(self: Component) -> list[vUri]:
 
     .. seealso::
 
-        :attr:`Component.categories`
+        :attr:`icalendar.cal.component.Component.categories`
     """
     concepts = self.get("CONCEPT", [])
     if not isinstance(concepts, list):
