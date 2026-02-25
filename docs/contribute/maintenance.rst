@@ -366,7 +366,7 @@ When adding support for a new Python version, or removing support for an old one
     Update the ``envlist`` to include or remove the Python version.
 :file:`pyproject.toml`
     Update the ``requires-python`` line and the ``classifiers`` list.
-:file:`README.rst`
+:file:`docs/reference/versions-branches.rst`
     Update the compatibility information.
 :file:`docs/maintenance.rst`
     Update this list if any new files need to be modified.
