@@ -32,6 +32,7 @@ if TYPE_CHECKING:
     from icalendar.cal.availability import Availability
     from icalendar.cal.event import Event
     from icalendar.cal.free_busy import FreeBusy
+    from icalendar.cal.journal import Journal
     from icalendar.cal.todo import Todo
 
 
@@ -193,6 +194,16 @@ class Calendar(Component):
         Use :py:meth:`Component.add_component`.
         """
         return self.walk("VTODO")
+
+    @property
+    def journals(self) -> list[Journal]:
+        """All journal components in the calendar.
+
+        This is a shortcut to get all journals.
+        Modifications do not change the calendar.
+        Use :py:meth:`Component.add_component`.
+        """
+        return self.walk("VJOURNAL")
 
     @property
     def availabilities(self) -> list[Availability]:
