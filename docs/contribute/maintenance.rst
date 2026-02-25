@@ -82,19 +82,11 @@ When doing so, you or the inviter may submit a pull request to update the :file:
 
 .. seealso:: `About code owners <https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners>`_
 
-Release Glossary
+Release versions
 ----------------
 
-major release:
-    Increase of the first version number. E.g. ``7.0.0`` to ``8.0.0``
-minor release:
-    Increase of the second version number. E.g. ``7.0.0`` to ``7.1.0``
-patch release:
-    Increase of the third version number. E.g. ``7.0.0`` to ``7.0.1``
-stable release:
-    A release with three numbers divided by two dots. E.g. ``7.0.0``, ``6.3.12``
-unstable release:
-    A release of an alpha or beta version. E.g. ``7.0.0a1``
+..  seealso:: 
+    :doc:`reference/versions-branches`
 
 New releases
 ------------
@@ -328,7 +320,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         For example, when releasing 7.0.0, checkout ``6.x``, and update it as shown.
 
         .. code-block:: python
-    
+
             html_theme_options = {
                 # ...
                 "show_version_warning_banner": True,
@@ -339,11 +331,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         Click on the ellipsis icon, and select :guilabel:`Configure version`.
         Toggle the :guilabel:`Active` switch to deactivate the version.
 
-    #.  After a *major release*, activate its version.
-        Click `Add version <https://app.readthedocs.org/dashboard/icalendar/version/create/>`_.
-        Search for the new major version ``#.x``.
-        Click on the version that appears in the select menu that matches your search.
-        Toggle the :guilabel:`Active` switch to activate the version.
+    #.  After a *major release*, verify that the version was activated automatically on Read the Docs.
 
 
 Links
