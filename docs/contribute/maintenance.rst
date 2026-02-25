@@ -101,6 +101,9 @@ New releases
 
 This section explains how to create a new release on `PyPI <https://pypi.org/project/icalendar/>`_.
 
+Its examples were used for the 7.0.0 release of icalendar, a major release.
+Adjust the examples for the current release as needed.
+
 Since collaborators and maintainers have write access to the repository, they can start the release process.
 However, only people with ``Environments/Configure PyPI`` access can approve an automated release to PyPI.
 
@@ -150,7 +153,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
         git push -u origin release-$VERSION
 
-#.  See if the `CI-tests <https://github.com/collective/icalendar/actions>`_ are running on the pull request.
+#.  See if the `CI tests <https://github.com/collective/icalendar/actions>`_ are running on the pull request.
     If they are not running, no new release can be issued.
     If the CI passes, merge the pull request.
 
@@ -163,7 +166,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         git branch -d release-$VERSION
         git push -d origin release-$VERSION
 
-#.  Create a tag for the release on its release branch ``*.x`` and see if the `CI-tests`_ are running.
+#.  Create a tag for the release on its release branch ``*.x`` and see if the `CI tests`_ are running.
 
     .. code-block:: shell
 
@@ -181,7 +184,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         This creates issues for downstream repositories.
         See :issue:`1033`.
 
-#.  Once the tag is pushed and its `CI-tests`_ pass, check the `GitHub Actions <https://github.com/collective/icalendar/actions>`_, and wait for maintainers to get an email:
+#.  Once the tag is pushed and its `CI tests`_ pass, check the `GitHub Actions <https://github.com/collective/icalendar/actions>`_, and wait for maintainers to get an email:
 
     .. code-block:: text
 
@@ -199,7 +202,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
     .. code-block:: text
 
-       7.0.0 (unreleased)
+       7.0.1 (unreleased)
        ------------------
 
        Minor changes
@@ -227,7 +230,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
        - ...
 
-#.  Push the new ``CHANGELOG`` so it is used for future changes.
+#.  Push the changes to :file:`CHANGES.rst` so it is used for future changes.
 
     .. code-block:: shell
 
@@ -259,9 +262,15 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
             git checkout main
             git pull
 
-    #.  When cutting a new *major release* version, on the ``main`` branch, update :file:`docs/_static/version-switcher.json` to match that version.
+    #.  When cutting a new *major release* version, checkout the ``main`` branch, and update :file:`docs/_static/version-switcher.json` to match that version.
+    
+        ..  code-block:: shell
+        
+            git checkout main
+            git pull
 
-        #.  Copy the second previous major version and renumber it to the first previous version, in other words, copy ``5.x`` and renumber the copy to ``6.x``.
+        #.  Duplicate the second previous major version stanza and renumber it to the first previous version.
+            In other words, duplicate the ``5.x`` stanza, and renumber the copy to ``6.x``.
 
             .. code-block:: json
 
@@ -315,16 +324,24 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
                 # ...
                 "show_version_warning_banner": True,
 
+    #.  On the previous numbered major release branch, show the warning banner.
+        For example, when releasing 7.0.0, checkout ``6.x``, and update it as shown.
+
+        .. code-block:: python
+    
+            html_theme_options = {
+                # ...
+                "show_version_warning_banner": True,
+
 #.  Configure `Read the Docs <https://app.readthedocs.org/projects/icalendar/>`_.
 
-    #.  After an *unstable release*:
-        Deactivate any unstable releases.
+    #.  After a *minor release*, *patch release*, or an *unstable release*, deactivate previous releases in that release line.
         Click on the ellipsis icon, and select :guilabel:`Configure version`.
         Toggle the :guilabel:`Active` switch to deactivate the version.
 
-    #.  After a *major release*:
-        Click `Add version <https://app.readthedocs.org/dashboard/icalendar/version/create/>`_ to do just that.
-        Search for the previous major version ``#.x``.
+    #.  After a *major release*, activate its version.
+        Click `Add version <https://app.readthedocs.org/dashboard/icalendar/version/create/>`_.
+        Search for the new major version ``#.x``.
         Click on the version that appears in the select menu that matches your search.
         Toggle the :guilabel:`Active` switch to activate the version.
 
