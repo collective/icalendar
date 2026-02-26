@@ -9,7 +9,7 @@ from icalendar import vBinary, vRecur
 from icalendar.cal.calendar import Calendar
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.cal.event import Event
-from icalendar.parser import Contentline, Parameters, unescape_char
+from icalendar.parser import Contentline, Parameters, escape_char, unescape_char
 
 
 @pytest.mark.parametrize(
@@ -237,6 +237,20 @@ def test_escaped_characters_read(event_name, expected_cn, expected_ics, events):
 def test_unescape_char():
     assert unescape_char(b"123") == b"123"
     assert unescape_char(b"\\n") == b"\n"
+
+
+def test_escape_char_with_bytes():
+    """Test that escape_char handles bytes input correctly."""
+    # Basic bytes input
+    assert escape_char(b"123") == "123"
+    # Bytes with characters that need escaping
+    assert escape_char(b"test;value") == r"test\;value"
+    assert escape_char(b"test,value") == r"test\,value"
+    assert escape_char(b"test\\value") == r"test\\value"
+    # Bytes with newlines get escaped to literal \n
+    assert escape_char(b"line1\nline2") == r"line1\nline2"
+    # Bytes with \N should be converted to newline, then escaped to \n
+    assert escape_char(b"test\\Nvalue") == r"test\nvalue"
 
 
 def test_split_on_unescaped_comma():
