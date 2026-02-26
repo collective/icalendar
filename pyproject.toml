@@ -276,6 +276,10 @@ extend-safe-fixes = [
     "T201",   # print
     "T203",   # pprint
 ]
+".github/workflows/test_generate_matrix.py" = [
+    "T201",   # print
+    "INP001", # needs __init__.py
+]
 
 [tool.pytest.ini_options]
 # see https://docs.pytest.org/en/6.2.x/customize.html
