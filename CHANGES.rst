@@ -27,7 +27,7 @@ We still recommend checking out the new features and giving feedback in the repo
 Minor changes
 ~~~~~~~~~~~~~
 
-- ...
+- Convert docstrings in ``attr.py`` and ``cal/calendar.py`` to Google Style format.
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
