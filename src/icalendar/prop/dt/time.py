@@ -176,7 +176,7 @@ class vTime(TimeBase):
 
     @classmethod
     def parse_jcal_value(cls, jcal: str) -> time:
-        """Parse a jCal string to a :py:class:`datetime.time`.
+        """Parse a jCal string to a :class:`datetime.time`.
 
         Raises:
             ~error.JCalParsingError: If it can't parse a time.

@@ -166,7 +166,7 @@ class vDuration(TimeBase):
 
     @classmethod
     def parse_jcal_value(cls, jcal: str) -> timedelta:
-        """Parse a jCal string to a :py:class:`datetime.timedelta`.
+        """Parse a jCal string to a :class:`datetime.timedelta`.
 
         Raises:
             ~error.JCalParsingError: If it can't parse a duration."""
