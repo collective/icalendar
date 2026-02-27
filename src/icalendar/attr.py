@@ -903,7 +903,7 @@ def create_single_property(
 ):
     """Create a single property getter and setter.
 
-    Args:
+    Parameters:
         prop: The name of the property.
         value_attr: The name of the attribute to get the value from.
         value_type: The type of the value.
