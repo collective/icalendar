@@ -229,7 +229,7 @@ New features
 Bug fixes
 ~~~~~~~~~
 
-- Fix double-unescaping in :meth:`vText.from_ical` and :meth:`vCategory.from_ical` by removing ``unescape_char()``. See :issue:`1008`.
+- Fix double-unescaping in :meth:`vText.from_ical` and :meth:`vCategory.from_ical` by using private ``_unescape_char()`` function internally instead of the public version. The public ``escape_char()`` and ``unescape_char()`` functions are now deprecated with warnings for external users. See :issue:`1008`.
 
 7.0.0a2 (2025-11-29)
 --------------------
