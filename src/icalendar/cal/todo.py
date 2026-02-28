@@ -313,6 +313,7 @@ class Todo(Component):
     attendees = attendees_property
     images = images_property
     conferences = conferences_property
+    from icalendar.attr import RECURRENCE_ID
 
     @classmethod
     def new(
@@ -334,6 +335,7 @@ class Todo(Component):
         location: str | None = None,
         organizer: vCalAddress | str | None = None,
         priority: int | None = None,
+        recurrence_id: date | datetime | None = None,
         refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
         sequence: int | None = None,
@@ -364,6 +366,7 @@ class Todo(Component):
             links: The :attr:`~icalendar.Component.links` of the todo.
             location: The :attr:`location` of the todo.
             organizer: The :attr:`organizer` of the todo.
+            recurrence_id: The :attr:`RECURRENCE_ID` of the todo.
             refids: :attr:`~icalendar.Component.refids` of the todo.
             related_to: :attr:`~icalendar.Component.related_to` of the todo.
             sequence: The :attr:`sequence` of the todo.
@@ -412,6 +415,7 @@ class Todo(Component):
         todo.status = status
         todo.attendees = attendees
         todo.conferences = conferences
+        todo.RECURRENCE_ID = recurrence_id
 
         if cls._validate_new:
             cls._validate_start_and_end(start, end)

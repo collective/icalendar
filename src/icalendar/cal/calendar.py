@@ -173,7 +173,7 @@ class Calendar(Component):
 
         This is a shortcut to get all events.
         Modifications do not change the calendar.
-        Use :py:meth:`Component.add_component`.
+        Use :py:meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
 
         >>> from icalendar import Calendar
         >>> calendar = Calendar.example()
@@ -191,7 +191,7 @@ class Calendar(Component):
 
         This is a shortcut to get all todos.
         Modifications do not change the calendar.
-        Use :py:meth:`Component.add_component`.
+        Use :py:meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
         """
         return self.walk("VTODO")
 
@@ -201,7 +201,7 @@ class Calendar(Component):
 
         This is a shortcut to get all journals.
         Modifications do not change the calendar.
-        Use :py:meth:`Component.add_component`.
+        Use :py:meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
         """
         return self.walk("VJOURNAL")
 
@@ -211,7 +211,7 @@ class Calendar(Component):
 
         This is a shortcut to get all availabilities.
         Modifications do not change the calendar.
-        Use :py:meth:`Component.add_component`.
+        Use :py:meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
         """
         return self.walk("VAVAILABILITY")
 
@@ -221,7 +221,7 @@ class Calendar(Component):
 
         This is a shortcut to get all FreeBusy.
         Modifications do not change the calendar.
-        Use :py:meth:`Component.add_component`.
+        Use :py:meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
         """
         return self.walk("VFREEBUSY")
 
@@ -249,10 +249,15 @@ class Calendar(Component):
 
         To create a :rfc:`5545` compatible calendar,
         all of these timezones should be added.
+
+        UTC is excluded: per :rfc:`5545` section 3.2.19, UTC datetimes use
+        the ``Z`` suffix and never require a VTIMEZONE component.
         """
-        tzids = self.get_used_tzids()
+        tzids = self.get_used_tzids() - {"UTC"}
         for timezone in self.timezones:
-            tzids.remove(timezone.tz_name)
+            # discard (not remove) — a VTIMEZONE may exist for a timezone not
+            # referenced by any event TZID (e.g. added by x-wr-timezone conversion)
+            tzids.discard(timezone.tz_name)
         return tzids
 
     @property

@@ -10,7 +10,8 @@ Change log
 Minor changes
 ~~~~~~~~~~~~~
 
-- ...
+- Show colorful required code changes in the CI output to help contributors solve the formatting issues. :pr:`1216`
+- Use ruff 0.15.0 for code formatting in :file:`tox.ini`. :pr:`1215`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
@@ -20,12 +21,24 @@ Breaking changes
 New features
 ~~~~~~~~~~~~
 
-- ...
+- Added :attr:`Event.RECURRENCE_ID <icalendar.cal.event.Event.RECURRENCE_ID>`,
+  :attr:`Todo.RECURRENCE_ID <icalendar.cal.todo.Todo.RECURRENCE_ID>` and
+  :attr:`Journal.RECURRENCE_ID <icalendar.cal.journal.Journal.RECURRENCE_ID>`
+  properties, including support in their ``new()`` constructors. :issue:`1231`
 
 Bug fixes
 ~~~~~~~~~
 
-- ...
+- Fixed :meth:`Calendar.get_missing_tzids <icalendar.cal.calendar.Calendar.get_missing_tzids>`
+  raising ``KeyError`` when a VTIMEZONE exists for a timezone not referenced by any event TZID
+  (e.g. added by x-wr-timezone conversion). :issue:`1124`
+- Fixed :meth:`Calendar.get_missing_tzids <icalendar.cal.calendar.Calendar.get_missing_tzids>`
+  and :meth:`Calendar.add_missing_timezones <icalendar.cal.calendar.Calendar.add_missing_timezones>`
+  generating a spurious ``VTIMEZONE`` for UTC. :rfc:`5545` section 3.2.19 requires UTC datetimes
+  to use the ``Z`` suffix; no ``VTIMEZONE`` component is needed or permitted. :issue:`1124`
+- Fixed :meth:`Parameters.update_tzid_from <icalendar.parser.parameter.Parameters.update_tzid_from>`
+  incorrectly setting ``TZID=UTC`` on UTC datetimes. :rfc:`5545` section 3.2.19 requires UTC datetimes to
+  use the ``Z`` suffix without a ``TZID`` parameter. :issue:`1124`
 
 Documentation
 ~~~~~~~~~~~~~
@@ -70,6 +83,7 @@ Documentation
 
 - Fixed the version switcher on Read the Docs, and documented the process for a major release. :issue:`1194`
 - Added usage examples for reading calendars from files and URL. :issue:`756`
+- Add type hints and convert docstrings to Google Style in :file:`cli.py`. :issue:`938`
 
 
 7.0.0 (2026-02-11)
@@ -198,7 +212,7 @@ New features
 Bug fixes
 ~~~~~~~~~
 
-- Fix double-unescaping in :meth:`vText.from_ical` and :meth:`vCategory.from_ical` by removing ``unescape_char()``. See :issue:`1008`.
+- Fix double-unescaping in :meth:`vText.from_ical` and :meth:`vCategory.from_ical` by using private ``_unescape_char()`` function internally instead of the public version. The public ``escape_char()`` and ``unescape_char()`` functions are now deprecated with warnings for external users. See :issue:`1008`.
 
 7.0.0a2 (2025-11-29)
 --------------------

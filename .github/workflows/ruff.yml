@@ -6,7 +6,7 @@ jobs:
     env:
       MESSAGE: |
         Your code is not formatted!
-        Please setup your development environment and run the formatting command.
+        Please set up your development environment and run the formatting command.
         https://icalendar.readthedocs.io/en/stable/contribute/development.html#code-format
     steps:
       - uses: actions/checkout@v6
@@ -19,15 +19,18 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install . --group formatting
+          sudo apt install -y git-delta
       - name: Run the ruff formatter to change files
         run: ruff format .
       - name: Fail if we detect any changes on the file system
         run: |
-          git status
-          if ! git diff --exit-code; then
+          git diff | delta --light --keep-plus-minus-markers
+          if ! git diff --exit-code --quiet; then
             echo "$MESSAGE"
             exit 1;
           fi
+        env:
+          FORCE_COLOR: '1'
       - name: Run ruff checks on the files
         run: |
           if ! ruff check; then

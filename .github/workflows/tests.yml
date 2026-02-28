@@ -10,30 +10,35 @@ on:
   schedule:
     - cron: '14 7 * * 0'  # run once a week on Sunday
   workflow_dispatch:
+  pull_request_review:
+    types: [submitted]
 
 jobs:
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      include: ${{ steps.set-matrix.outputs.include }}
+    steps:
+    - uses: actions/checkout@v6
+    - name: Set matrix
+      id: set-matrix
+      run: |
+        echo "include=$(python .github/workflows/generate-matrix.py '${{ github.ref }}' '${{ github.event.review.state }}' )" >> $GITHUB_OUTPUT
+
   run-tests:
+    needs: generate-matrix
     strategy:
       matrix:
-        config:
-        # [Python version, tox env]
-        # see https://github.com/actions/setup-python/tree/v6/?tab=readme-ov-file#basic-usage
-        - ["3.10",   "nopytz"]  # use lowest allowed version for nopytz
-        - ["3.10",  "py310"]
-        - ["pypy3.10", "pypy3"]
-        - ["3.11",  "py311"]
-        - ["3.12",  "py312"]
-        - ["3.13",  "py313"]
-        - ["3.14",  "py314"]
-
+        include: ${{ fromJSON(needs.generate-matrix.outputs.include) }}
+  
     runs-on: ubuntu-latest
-    name: ${{ matrix.config[1] }}
+    name: ${{ matrix.test_name }}
     steps:
     - uses: actions/checkout@v6
     - name: Set up Python
       uses: actions/setup-python@v6
       with:
-        python-version: ${{ matrix.config[0] }}
+        python-version: ${{ matrix.python_version }}
         # for caching, see
         # https://github.com/actions/setup-python/blob/main/docs/advanced-usage.md#caching-packages
         cache: 'pip'
@@ -46,11 +51,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install tox coveralls coverage-python-version
     - name: Test
-      run: tox -e ${{ matrix.config[1] }}
+      run: tox -e ${{ matrix.tox_env }}
     - name: Coveralls Parallel
       uses: coverallsapp/github-action@v2
       with:
-        flag-name: run-${{ matrix.config[1] }}
+        flag-name: run-${{ matrix.python_version }}-${{ matrix.tox_env }}
         parallel: true
         file: coverage.xml
         allow-empty: true

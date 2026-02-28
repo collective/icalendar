@@ -1,11 +1,12 @@
 """Functions for manipulating strings and bytes."""
 
 import re
+import warnings
 
 from icalendar.parser_tools import DEFAULT_ENCODING
 
 
-def escape_char(text: str | bytes) -> str | bytes:
+def _escape_char(text: str | bytes) -> str | bytes:
     r"""Format value according to iCalendar TEXT escaping rules.
 
     Escapes special characters in text values according to :rfc:`5545#section-3.3.11`
@@ -41,10 +42,48 @@ def escape_char(text: str | bytes) -> str | bytes:
     )
 
 
-def unescape_char(text: str | bytes) -> str | bytes | None:
+def escape_char(text: str | bytes) -> str | bytes:
+    r"""Format value according to iCalendar TEXT escaping rules.
+
+    .. deprecated:: 7.0.0
+        Use the private :func:`_escape_char` internally. For external use,
+        this function is deprecated. Please use alternative escaping methods
+        or contact the maintainers.
+
+    Escapes special characters in text values according to :rfc:`5545#section-3.3.11`
+    rules.
+    The order of replacements matters to avoid double-escaping.
+
+    Parameters:
+        text: The text to escape.
+
+    Returns:
+        The escaped text with special characters escaped.
+
+    Note:
+        The replacement order is critical:
+
+        1. ``\N`` -> ``\n`` (normalize newlines to lowercase)
+        2. ``\`` -> ``\\`` (escape backslashes)
+        3. ``;`` -> ``\;`` (escape semicolons)
+        4. ``,`` -> ``\,`` (escape commas)
+        5. ``\r\n`` -> ``\n`` (normalize line endings)
+        6. ``"\n"`` -> ``r"\n"`` (transform a newline character to a literal, or raw,
+           newline character)
+    """
+    warnings.warn(
+        "escape_char is deprecated and will be removed in a future version. "
+        "If you are using this function externally, please contact the maintainers.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return _escape_char(text)
+
+
+def _unescape_char(text: str | bytes) -> str | bytes | None:
     r"""Unescape iCalendar TEXT values.
 
-    Reverses the escaping applied by :func:`escape_char` according to
+    Reverses the escaping applied by :func:`_escape_char` according to
     :rfc:`5545#section-3.3.11` TEXT escaping rules.
 
     Parameters:
@@ -84,6 +123,42 @@ def unescape_char(text: str | bytes) -> str | bytes | None:
             .replace(b"\\\\", b"\\")
         )
     return None
+
+
+def unescape_char(text: str | bytes) -> str | bytes | None:
+    r"""Unescape iCalendar TEXT values.
+
+    .. deprecated:: 7.0.0
+        Use the private :func:`_unescape_char` internally. For external use,
+        this function is deprecated. Please use alternative unescaping methods
+        or contact the maintainers.
+
+    Reverses the escaping applied by :func:`escape_char` according to
+    :rfc:`5545#section-3.3.11` TEXT escaping rules.
+
+    Parameters:
+        text: The escaped text.
+
+    Returns:
+        The unescaped text, or ``None`` if ``text`` is neither ``str`` nor ``bytes``.
+
+    Note:
+        The replacement order is critical to avoid double-unescaping:
+
+        1. ``\N`` -> ``\n`` (intermediate step)
+        2. ``\r\n`` -> ``\n`` (normalize line endings)
+        3. ``\n`` -> newline (unescape newlines)
+        4. ``\,`` -> ``,`` (unescape commas)
+        5. ``\;`` -> ``;`` (unescape semicolons)
+        6. ``\\`` -> ``\`` (unescape backslashes last)
+    """
+    warnings.warn(
+        "unescape_char is deprecated and will be removed in a future version. "
+        "If you are using this function externally, please contact the maintainers.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return _unescape_char(text)
 
 
 def foldline(line: str, limit: int = 75, fold_sep: str = "\r\n ") -> str:
@@ -203,6 +278,8 @@ def validate_token(name: str) -> None:
 
 
 __all__ = [
+    "_escape_char",
+    "_unescape_char",
     "escape_char",
     "escape_string",
     "foldline",
