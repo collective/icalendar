@@ -56,6 +56,10 @@ Bug fixes
 - Fixed :meth:`Parameters.update_tzid_from <icalendar.parser.parameter.Parameters.update_tzid_from>`
   incorrectly setting ``TZID=UTC`` on UTC datetimes. :rfc:`5545` section 3.2.19 requires UTC datetimes to
   use the ``Z`` suffix without a ``TZID`` parameter. :issue:`1124`
+- Renamed the public functions ``escape_char`` and ``unescape_char`` to implicit private methods ``_escape_char`` and ``_unescape_char``.
+  Fixed regression from :issue:`1008` by restoring :func:`~icalendar.parser.string.escape_char` and :func:`~icalendar.parser.string.unescape_char` as public functions.
+  The public functions :func:`~icalendar.parser.string.escape_char` and :func:`~icalendar.parser.string.unescape_char` are now deprecated with warnings for external users.
+  :pr:`1241`.
 
 Documentation
 ~~~~~~~~~~~~~
@@ -229,7 +233,7 @@ New features
 Bug fixes
 ~~~~~~~~~
 
-- Fix double-unescaping in :meth:`vText.from_ical` and :meth:`vCategory.from_ical` by using private ``_unescape_char()`` function internally instead of the public version. The public ``escape_char()`` and ``unescape_char()`` functions are now deprecated with warnings for external users. See :issue:`1008`.
+- Fix double-unescaping in :meth:`vText.from_ical` and :meth:`vCategory.from_ical` by removing ``unescape_char()``. See :issue:`1008`.
 
 7.0.0a2 (2025-11-29)
 --------------------
