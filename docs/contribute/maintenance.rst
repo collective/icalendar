@@ -86,7 +86,7 @@ Release versions
 ----------------
 
 ..  seealso:: 
-    :doc:`reference/versions-branches`
+    :doc:`/reference/versions-branches`
 
 New releases
 ------------
