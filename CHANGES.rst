@@ -64,6 +64,7 @@ Bug fixes
 Documentation
 ~~~~~~~~~~~~~
 
+- Add ``icalendar`` as a local workspace dependency to the ``docs`` dependency group in :file:`pyproject.toml` to fix dependency resolution issues with ``uv lock`` during documentation builds. :issue:`1253` :pr:`1254`
 - ...
 
 7.0.2 (2026-02-24)
