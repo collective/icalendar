@@ -44,7 +44,7 @@ class vUTCOffset:
             New York (five hours behind UTC) and Geneva (one hour ahead of
             UTC):
 
-        .. code-block:: text
+        .. code-block:: ics
 
             -0500
 

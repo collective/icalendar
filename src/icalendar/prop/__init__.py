@@ -7,7 +7,7 @@ prefer) for the classes/datatypes that are used in iCalendar:
 
 4.2 Defined property parameters are:
 
-.. code-block:: text
+.. code-block:: ics
 
      ALTREP, CN, CUTYPE, DELEGATED-FROM, DELEGATED-TO, DIR, ENCODING, FMTTYPE,
      FBTYPE, LANGUAGE, MEMBER, PARTSTAT, RANGE, RELATED, RELTYPE, ROLE, RSVP,
@@ -15,7 +15,7 @@ prefer) for the classes/datatypes that are used in iCalendar:
 
 4.3 Defined value data types are:
 
-.. code-block:: text
+.. code-block:: ics
 
     BINARY, BOOLEAN, CAL-ADDRESS, DATE, DATE-TIME, DURATION, FLOAT, INTEGER,
     PERIOD, RECUR, TEXT, TIME, URI, UTC-OFFSET
