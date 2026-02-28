@@ -44,7 +44,6 @@ class vText(str):
             Project XYZ Final Review
             Conference Room - 3B
             Come Prepared.
-        
         Add a SUMMARY to an event:
 
         .. code-block:: pycon
