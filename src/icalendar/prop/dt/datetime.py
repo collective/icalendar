@@ -44,7 +44,7 @@ class vDatetime(TimeBase):
 
         The following is the representation of the date-time format.
 
-        .. code-block:: ics
+        .. code-block:: text
 
             YYYYMMDDTHHMMSS
 
