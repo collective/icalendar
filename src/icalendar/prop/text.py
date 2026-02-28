@@ -10,20 +10,23 @@ from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
 
 class vText(str):
     r"""vText is a data type that contains human-readable text values.
-    
+
     The vText property uses the :rfc:`5545#section-3.3.11` TEXT value type
     in various icalendar properties to show free-form text that others can read.
     This class can be created from Python strings, and can be used to add text
     descriptions to calendar events.
+
     To create a TEXT object, pass in the string you want when creating the
     object.
+
     To add a line break, use ``\n`` or ``\N``.
-    
+
     Use the LANGUAGE property parameter to set the language of the text.
+
     When the TEXT object is serialized to an icalendar stream, certain
     characters are escaped or changed.
     These characters include the COMMA, SEMICOLON, BACKSLASH, and line breaks.
-    
+
     Examples:
 
         .. code-block:: text
