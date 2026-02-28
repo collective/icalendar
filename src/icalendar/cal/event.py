@@ -424,6 +424,7 @@ class Event(Component):
     attendees = attendees_property
     images = images_property
     conferences = conferences_property
+    from icalendar.attr import RECURRENCE_ID
 
     @classmethod
     def new(
@@ -445,6 +446,7 @@ class Event(Component):
         location: str | None = None,
         organizer: vCalAddress | str | None = None,
         priority: int | None = None,
+        recurrence_id: date | datetime | None = None,
         refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
         sequence: int | None = None,
@@ -476,6 +478,7 @@ class Event(Component):
             location: The :attr:`location` of the event.
             organizer: The :attr:`organizer` of the event.
             priority: The :attr:`priority` of the event.
+            recurrence_id: The :attr:`RECURRENCE_ID` of the event.
             refids: :attr:`~icalendar.Component.refids` of the event.
             related_to: :attr:`~icalendar.Component.related_to` of the event.
             sequence: The :attr:`sequence` of the event.
@@ -526,6 +529,7 @@ class Event(Component):
         event.status = status
         event.attendees = attendees
         event.conferences = conferences
+        event.RECURRENCE_ID = recurrence_id
 
         if cls._validate_new:
             cls._validate_start_and_end(start, end)

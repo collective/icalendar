@@ -87,6 +87,7 @@ class Available(Component):
     exdates = exdates_property
     rdates = rdates_property
     rrules = rrules_property
+    from icalendar.attr import RECURRENCE_ID
 
     start = DTSTART = rfc_7953_dtstart_property
     DTEND = rfc_7953_dtend_property
@@ -108,6 +109,7 @@ class Available(Component):
         last_modified: date | None = None,
         links: LINKS_TYPE_SETTER = None,
         location: str | None = None,
+        recurrence_id: date | datetime | None = None,
         refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
         sequence: int | None = None,
@@ -135,6 +137,7 @@ class Available(Component):
                 Available component.
             links: The :attr:`~icalendar.Component.links` of the Available component.
             location: The :attr:`location` of the Available component.
+            recurrence_id: The :attr:`RECURRENCE_ID` of the Available component.
             refids: :attr:`~icalendar.Component.refids` of the Available component.
             related_to: :attr:`~icalendar.Component.related_to` of the Available
                 component.
@@ -172,6 +175,7 @@ class Available(Component):
         available.categories = categories
         available.location = location
         available.contacts = contacts
+        available.RECURRENCE_ID = recurrence_id
 
         if cls._validate_new:
             if end is not None and (

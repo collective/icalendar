@@ -9,7 +9,7 @@ from icalendar import vBinary, vRecur
 from icalendar.cal.calendar import Calendar
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.cal.event import Event
-from icalendar.parser import Contentline, Parameters, unescape_char
+from icalendar.parser import Contentline, Parameters, _unescape_char
 
 
 @pytest.mark.parametrize(
@@ -235,8 +235,8 @@ def test_escaped_characters_read(event_name, expected_cn, expected_ics, events):
 
 
 def test_unescape_char():
-    assert unescape_char(b"123") == b"123"
-    assert unescape_char(b"\\n") == b"\n"
+    assert _unescape_char(b"123") == b"123"
+    assert _unescape_char(b"\\n") == b"\n"
 
 
 def test_split_on_unescaped_comma():
