@@ -5,6 +5,22 @@ Install
 This chapter describes how to install icalendar as a Python package for use in your projects.
 
 
+Python package with pip
+-----------------------
+
+The following command will install the icalendar package with pip.
+
+.. code-block:: shell
+
+    pip install icalendar
+
+If installation is successful, you will be able to import the iCalendar package from a Python interpreter as shown.
+
+.. code-block:: pycon
+
+    >>> import icalendar
+
+
 Distribution Packages
 ---------------------
 
@@ -16,23 +32,8 @@ The following badge shows where it is available and which versions are packaged:
    :alt: Packaging status across distributions
 
 Repology is a service that tracks the availability and versions of packages across many Linux distributions.
-Clicking the badge above will take you to the Repology page where you can inspect distribution support.
 
-
-Python package with pip
------------------------
-
-The following command will install the icalendar package with pip.
-
-.. code-block:: shell
-
-    pip install icalendar
-
-If installation is successful, you will be able to import the iCalendar package from a Python interpreter as shown. 
-
-.. code-block:: pycon
-
-    >>> import icalendar
+`View the packaging status of icalendar across distributions <https://repology.org/project/python%3Aicalendar/versions>`_.
 
 
 Debian or Ubuntu
@@ -48,7 +49,7 @@ You can install the `python-icalendar package <https://tracker.debian.org/pkg/py
 Arch Linux
 -----------
 
-On Arch Linux and derivatives, the package is available in the community repository:
+On Arch Linux and derivatives, the package is available in the community repository.
 
 .. code-block:: shell
 
