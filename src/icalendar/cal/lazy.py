@@ -232,3 +232,25 @@ class LazyCalendar(Calendar):
 
 
 __all__ = ["LazyCalendar"]
+
+if __name__ == "__main__":
+    import timeit
+
+    calendar = Calendar.example("issue_1050_all_components")
+    COUNT = 10000
+    calendar.subcomponents *= COUNT
+    ics = calendar.to_ical()
+
+    def _benchmark(cal: type[Calendar]):
+        """Check out how fast this is."""
+        cal = cal.from_ical(ics)
+        assert len(cal.events) == COUNT
+
+    for cal in [Calendar, LazyCalendar]:
+        print("Benchmarking:", cal.__name__)  # noqa: T201
+        print(timeit.timeit("_benchmark(cal)", globals=locals(), number=1))  # noqa: T201
+
+    # Benchmarking: Calendar
+    # 12.277852076000272
+    # Benchmarking: LazyCalendar
+    # 5.738950790999297

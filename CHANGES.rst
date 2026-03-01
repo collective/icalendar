@@ -21,7 +21,7 @@ Upgrading from 6.x to 7.x should have **no complications for most developers**, 
 
 We still recommend checking out the new features and giving feedback in the repository.
 
-7.0.3 (unreleased)
+7.1.0 (unreleased)
 ------------------
 
 Minor changes
@@ -42,6 +42,7 @@ New features
   :attr:`Todo.RECURRENCE_ID <icalendar.cal.todo.Todo.RECURRENCE_ID>` and
   :attr:`Journal.RECURRENCE_ID <icalendar.cal.journal.Journal.RECURRENCE_ID>`
   properties, including support in their ``new()`` constructors. :issue:`1231`
+- Added :class:`~icalendar.cal.lazy.LazyCalendar` for lazy parsing of subcomponents. :issue:`158`, :issue:`1050`
 
 Bug fixes
 ~~~~~~~~~
