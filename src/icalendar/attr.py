@@ -1111,6 +1111,28 @@ Property Parameters:
 """,
 )
 
+RECURRENCE_ID = create_single_property(
+    "RECURRENCE-ID",
+    "dt",
+    (date, datetime),
+    date | datetime,
+    """
+Identify a specific occurrence of a recurring calendar object.
+
+This property is used together with ``UID`` and ``SEQUENCE`` to refer to one
+particular instance in a recurrence set. The value is the original start
+date or date-time of that instance, not the rescheduled time.
+
+The value is usually a DATE-TIME and must use the same value type as the
+``DTSTART`` property in the same component. A DATE value may be used for
+all-day items instead.
+
+This property corresponds to ``RECURRENCE-ID`` as defined in RFC 5545 and
+may appear in recurring ``VEVENT``, ``VTODO``, and ``VJOURNAL`` components.
+""",
+    vDDDTypes,
+)
+
 
 def _get_organizer(self: Component) -> vCalAddress | None:
     """ORGANIZER defines the organizer for a calendar component.
@@ -1345,7 +1367,7 @@ Conformance:
 Example:
     The following is an example of this property:
 
-    .. code-block:: text
+    .. code-block:: ics
 
         URL:http://example.com/pub/calendars/jsmith/mytime.ics
 
@@ -1370,7 +1392,7 @@ Conformance:
 Example:
     The following is an example of this property:
 
-    .. code-block:: text
+    .. code-block:: ics
 
         SOURCE;VALUE=URI:https://example.com/holidays.ics
 
@@ -1436,7 +1458,7 @@ Example:
     The following is an example of this property referencing
     textual contact information:
 
-    .. code-block:: text
+    .. code-block:: ics
 
         CONTACT:Jim Dolittle\\, ABC Industries\\, +1-919-555-1234
 
@@ -1444,7 +1466,7 @@ Example:
     representation of an LDAP URI to a directory entry containing the
     contact information:
 
-    .. code-block:: text
+    .. code-block:: ics
 
         CONTACT;ALTREP="ldap://example.com:6666/o=ABC%20Industries\\,
         c=US???(cn=Jim%20Dolittle)":Jim Dolittle\\, ABC Industries\\,
@@ -1455,7 +1477,7 @@ Example:
     information, such as a vCard :rfc:`2426` embedded in a text/
     directory media type :rfc:`2425`:
 
-    .. code-block:: text
+    .. code-block:: ics
 
         CONTACT;ALTREP="CID:part3.msg970930T083000SILVER@example.com":
          Jim Dolittle\\, ABC Industries\\, +1-919-555-1234
@@ -1464,7 +1486,7 @@ Example:
     resource, such as a vCard :rfc:`2426` object containing the contact
     information:
 
-    .. code-block:: text
+    .. code-block:: ics
 
         CONTACT;ALTREP="http://example.com/pdi/jdoe.vcf":Jim
          Dolittle\\, ABC Industries\\, +1-919-555-1234
@@ -1926,7 +1948,7 @@ def _get_conferences(self: Component) -> list[Conference]:
     Example:
         The following are examples of this property:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             CONFERENCE;VALUE=URI;FEATURE=PHONE,MODERATOR;
              LABEL=Moderator dial-in:tel:+1-412-555-0123,,,654321
@@ -2044,7 +2066,7 @@ def _get_links(self: Component) -> list[vUri | vUid | vXmlReference]:
         The following is an example of this property,
         which provides a reference to the source for the calendar object.
 
-        .. code-block:: text
+        .. code-block:: ics
 
             LINK;LINKREL=SOURCE;LABEL=Venue;VALUE=URI:
              https://example.com/events
@@ -2053,7 +2075,7 @@ def _get_links(self: Component) -> list[vUri | vUid | vXmlReference]:
         which provides a reference to an entity from which this one was derived.
         The link relation is a vendor-defined value.
 
-        .. code-block:: text
+        .. code-block:: ics
 
             LINK;LINKREL="https://example.com/linkrel/derivedFrom";
              VALUE=URI:
@@ -2063,7 +2085,7 @@ def _get_links(self: Component) -> list[vUri | vUid | vXmlReference]:
         which provides a reference to a fragment of an XML document.
         The link relation is a vendor-defined value.
 
-        .. code-block:: text
+        .. code-block:: ics
 
             LINK;LINKREL="https://example.com/linkrel/costStructure";
              VALUE=XML-REFERENCE:
@@ -2238,17 +2260,17 @@ def _get_related_to(self: Component) -> list[vText | vUri | vUid]:
     Examples:
         :rfc:`5545` examples of this property:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             RELATED-TO:jsmith.part7.19960817T083000.xyzMail@example.com
 
-        .. code-block:: text
+        .. code-block:: ics
 
             RELATED-TO:19960401-080045-4000F192713-0052@example.com
 
         :rfc:`9253` examples of this property:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             RELATED-TO;VALUE=URI;RELTYPE=STARTTOFINISH:
              https://example.com/caldav/user/jb/cal/
@@ -2312,7 +2334,7 @@ def _get_concepts(self: Component) -> list[vUri]:
         The following is an example of this property.
         It points to a server acting as the source for the calendar object.
 
-        .. code-block:: text
+        .. code-block:: ics
 
             CONCEPT:https://example.com/event-types/arts/music
 
@@ -2397,7 +2419,7 @@ Description:
 Examples:
     The following is an example of this property.
 
-    .. code-block:: text
+    .. code-block:: ics
 
         REFID:itinerary-2014-11-17
 
@@ -2427,6 +2449,7 @@ Examples:
 __all__ = [
     "CONCEPTS_TYPE_SETTER",
     "LINKS_TYPE_SETTER",
+    "RECURRENCE_ID",
     "RELATED_TO_TYPE_SETTER",
     "attendees_property",
     "busy_type_property",

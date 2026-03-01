@@ -101,7 +101,7 @@ class Availability(Component):
         available Monday through Friday, 9:00 am to 5:00 pm in the
         America/Montreal time zone:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             BEGIN:VAVAILABILITY
             ORGANIZER:mailto:bernard@example.com
@@ -132,7 +132,7 @@ class Availability(Component):
         America/Montreal time zone between October 2nd and December 2nd
         2011:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             BEGIN:VAVAILABILITY
             ORGANIZER:mailto:bernard@example.com

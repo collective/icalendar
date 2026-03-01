@@ -40,7 +40,7 @@ class vUri(str):
     Examples:
         The following is a URI for a network file:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             http://example.com/my-report.txt
 

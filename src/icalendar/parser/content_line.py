@@ -70,13 +70,13 @@ class Contentline(str):
 
         Example with parameter:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             DESCRIPTION;ALTREP="cid:part1.0001@example.org":The Fall'98 Wild
 
         Example without parameters:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             DESCRIPTION:The Fall'98 Wild
         """

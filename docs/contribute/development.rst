@@ -157,7 +157,7 @@ The following command show how to run tox with Python 3.12:
 Code format
 -----------
 
-icalendar strives towards a common code format.
+icalendar requires code formatting.
 You can run the following command to automatically format the code.
 
 .. code-block:: shell

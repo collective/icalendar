@@ -3,6 +3,11 @@ on: [push, pull_request]
 jobs:
   ruff:
     runs-on: ubuntu-latest
+    env:
+      MESSAGE: |
+        Your code is not formatted!
+        Please set up your development environment and run the formatting command.
+        https://icalendar.readthedocs.io/en/stable/contribute/development.html#code-format
     steps:
       - uses: actions/checkout@v6
       - name: Set up Python
@@ -14,11 +19,21 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install . --group formatting
+          sudo apt install -y git-delta
       - name: Run the ruff formatter to change files
-        run: ruff format --check .
-      - name: Run ruff checks on the files
-        run: ruff check --fix
+        run: ruff format .
       - name: Fail if we detect any changes on the file system
         run: |
-          git status
-          git diff --exit-code
+          git diff | delta --light --keep-plus-minus-markers
+          if ! git diff --exit-code --quiet; then
+            echo "$MESSAGE"
+            exit 1;
+          fi
+        env:
+          FORCE_COLOR: '1'
+      - name: Run ruff checks on the files
+        run: |
+          if ! ruff check; then
+            echo "$MESSAGE"
+            exit 1;
+          fi
