@@ -115,6 +115,10 @@ def generate_matrix(git_ref, review):
     #
     # Generate tests names for the matrix
     #
+    # Note: If you change test names, also make sure that the
+    #       branch protection rules are adjusted to the new names.
+    #       https://github.com/collective/icalendar/settings/branches
+    #
 
     for run in matrix:
         if "test_name" not in run:
