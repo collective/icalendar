@@ -48,14 +48,14 @@ Bug fixes
 ~~~~~~~~~
 
 - Fixed :meth:`Calendar.get_missing_tzids <icalendar.cal.calendar.Calendar.get_missing_tzids>`
-  raising ``KeyError`` when a VTIMEZONE exists for a timezone not referenced by any event TZID
-  (e.g. added by x-wr-timezone conversion). :issue:`1124`
+  raising ``KeyError`` when a VTIMEZONE exists for a timezone not referenced by any event TZID,
+  for example, when added by the ``x-wr-timezone`` conversion. :issue:`1124`
 - Fixed :meth:`Calendar.get_missing_tzids <icalendar.cal.calendar.Calendar.get_missing_tzids>`
   and :meth:`Calendar.add_missing_timezones <icalendar.cal.calendar.Calendar.add_missing_timezones>`
-  generating a spurious ``VTIMEZONE`` for UTC. :rfc:`5545` section 3.2.19 requires UTC datetimes
+  generating a spurious ``VTIMEZONE`` for UTC. :rfc:`5545#section-3.2.19` requires UTC datetimes
   to use the ``Z`` suffix; no ``VTIMEZONE`` component is needed or permitted. :issue:`1124`
 - Fixed :meth:`Parameters.update_tzid_from <icalendar.parser.parameter.Parameters.update_tzid_from>`
-  incorrectly setting ``TZID=UTC`` on UTC datetimes. :rfc:`5545` section 3.2.19 requires UTC datetimes to
+  incorrectly setting ``TZID=UTC`` on UTC datetimes. :rfc:`5545#section-3.2.19` requires UTC datetimes to
   use the ``Z`` suffix without a ``TZID`` parameter. :issue:`1124`
 - Renamed the public functions ``escape_char`` and ``unescape_char`` to implicit private methods ``_escape_char`` and ``_unescape_char``.
   Fixed regression from :issue:`1008` by restoring :func:`~icalendar.parser.string.escape_char` and :func:`~icalendar.parser.string.unescape_char` as public functions.

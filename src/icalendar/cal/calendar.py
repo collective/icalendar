@@ -175,7 +175,7 @@ class Calendar(Component):
         To create a :rfc:`5545` compatible calendar,
         all of these timezones should be added.
 
-        UTC is excluded: per :rfc:`5545` section 3.2.19, UTC datetimes use
+        UTC is excluded: per :rfc:`5545#section-3.2.19`, UTC datetimes use
         the ``Z`` suffix and never require a VTIMEZONE component.
         """
         tzids = self.get_used_tzids() - {"UTC"}
