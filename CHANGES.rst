@@ -48,6 +48,7 @@ Documentation
 ~~~~~~~~~~~~~
 
 - Removed methods of ``str``, ``int``, and other classes and methods in the Python standard library from the documentation.
+- Add Repology badge and distribution installation instructions to install documentation. :issue:`1119`
 
 7.0.1 (2026-02-17)
 ------------------
