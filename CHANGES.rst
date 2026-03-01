@@ -27,7 +27,7 @@ We still recommend checking out the new features and giving feedback in the repo
 Minor changes
 ~~~~~~~~~~~~~
 
-- ...
+- Use ruff 0.15.0 for code formatting in :file:`tox.ini`. :pr:`1215`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
@@ -37,7 +37,7 @@ Breaking changes
 New features
 ~~~~~~~~~~~~
 
-- ...
+- Enabled :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>` to read calendars from files. :issue:`756`
 
 Bug fixes
 ~~~~~~~~~
@@ -47,7 +47,8 @@ Bug fixes
 Documentation
 ~~~~~~~~~~~~~
 
-- ...
+- Removed methods of ``str``, ``int``, and other classes and methods in the Python standard library from the documentation.
+- Add Repology badge and distribution installation instructions to install documentation. :issue:`1119`
 
 7.0.1 (2026-02-17)
 ------------------
@@ -55,7 +56,7 @@ Documentation
 Minor changes
 ~~~~~~~~~~~~~
 
-- Setting :attr:`~cal.calendar.Calendar.calendar_name` now also writes ``X-WR-CALNAME``, and setting :attr:`~cal.calendar.Calendar.description` now also writes ``X-WR-CALDESC``, for improved client compatibility. See `Issue #918 <https://github.com/collective/icalendar/issues/918>`_.
+- Setting :attr:`~cal.calendar.Calendar.calendar_name` now also writes ``X-WR-CALNAME``, and setting :attr:`~cal.calendar.Calendar.description` now also writes ``X-WR-CALDESC``, for improved client compatibility. :issue:`918`
 
 Bug fixes
 ~~~~~~~~~
@@ -66,6 +67,7 @@ Documentation
 ~~~~~~~~~~~~~
 
 - Fixed the version switcher on Read the Docs, and documented the process for a major release. :issue:`1194`
+- Added usage examples for reading calendars from files and URL. :issue:`756`
 
 
 7.0.0 (2026-02-11)
@@ -88,7 +90,6 @@ Minor changes
 - Add type hints to remaining prop value classes (vText, vCalAddress, vCategory, vGeo, vN, vOrg, vAdr, vBroken, vUid, Conference, Image). :issue:`938`
 - Added type hints and overloads to :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>` and :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>` to support ``multiple=True/False`` return types. :issue:`1129`
 - CI: Print a link to Vale documentation when the spell checker fails.
-- Add Repology badge and distribution installation instructions to install documentation. :issue:`ISSUE_NUMBER`
 - Remove :file:`bootstrap.py` and :file:`buildout.cfg` files as they are old build configurations. :pr:`1171`
 - Enforce ruff formatting and linting across the entire codebase, with CI check to prevent regressions.
   See :issue:`672`, :pr:`1171`, :pr:`1172`, :pr:`1173`, :pr:`1174`, :pr:`1175`, :pr:`1176`, :pr:`1177`, :pr:`1178`, :pr:`1179`, :pr:`1180`, and :pr:`1181`.
