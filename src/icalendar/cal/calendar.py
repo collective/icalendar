@@ -225,16 +225,6 @@ class Calendar(Component):
         """
         return self.walk("VFREEBUSY")
 
-    @property
-    def journals(self) -> list[Journal]:
-        """All journal components in the calendar.
-
-        This is a shortcut to get all journals.
-        Modifications do not change the calendar.
-        Use :py:meth:`Component.add_component`.
-        """
-        return self.walk("VJOURNAL")
-
     def get_used_tzids(self) -> set[str]:
         """The set of TZIDs in use.
 

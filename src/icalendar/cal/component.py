@@ -527,7 +527,7 @@ class Component(CaselessDict):
                 try:
                     category_list = split_on_unescaped_comma(raw_value)
                     vals_inst = factory(category_list)
-                    vals_inst.params = params if params else Parameters()
+                    vals_inst.params = params or Parameters()
                     component.add(name, vals_inst, encode=0)
                 except ValueError as e:
                     if not ignore_errors and not component.ignore_exceptions:
@@ -554,7 +554,7 @@ class Component(CaselessDict):
                 else:
                     parsed_val = factory.from_ical(val)
                 vals_inst = factory(parsed_val)
-                vals_inst.params = params if params else Parameters()
+                vals_inst.params = params or Parameters()
                 component.add(name, vals_inst, encode=0)
             except Exception as e:
                 if ignore_errors:

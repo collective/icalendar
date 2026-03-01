@@ -136,7 +136,7 @@ class LazyCalendar(Calendar):
                             line = lines[line_index]
                             if line:
                                 try:
-                                    n, _, v = line.parts()
+                                    n, _, _v = line.parts()
                                     if n.upper() == "BEGIN":
                                         depth += 1
                                     elif n.upper() == "END":
