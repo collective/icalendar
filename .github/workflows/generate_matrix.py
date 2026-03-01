@@ -38,6 +38,7 @@ def generate_matrix(git_ref, review):
     #
     runs_on_main = git_ref == "refs/heads/main"
     runs_on_stable = bool(re.match(r"refs/heads/\d+\.x", git_ref))
+    runs_on_release = git_ref.startswith("refs/heads/release-")
     runs_on_tag = git_ref.startswith("refs/tags/v")
 
     #
@@ -51,12 +52,14 @@ def generate_matrix(git_ref, review):
     # Which push to a branch or tag triggered the workflow
     # The trigger is either a push or a review, never both
     triggered_by_push_to_main = runs_on_main and not review_submitted
+    triggered_by_push_to_release = runs_on_release and not review_submitted
     triggered_by_push_to_stable = runs_on_stable and not review_submitted
     triggered_by_push_to_tag = runs_on_tag and not review_submitted
 
     run_all_jobs = (
         triggered_by_push_to_tag
         or triggered_by_push_to_main
+        or triggered_by_push_to_release
         or triggered_by_push_to_stable
         or review_approved
     )
@@ -105,16 +108,19 @@ def generate_matrix(git_ref, review):
             )
 
         # pypy is slow but good to test
-        matrix.append({"tox_env": "pypy3", "python_version": "pypy3.10"})
+        matrix.insert(
+            0, {"tox_env": "pypy3", "python_version": "pypy3.10", "test_name": "pypy3"}
+        )
 
     #
     # Generate tests names for the matrix
     #
 
     for run in matrix:
-        run["test_name"] = run["python_version"]
-        if run["tox_env"] != "py":
-            run["test_name"] += f" ({run['tox_env']})"
+        if "test_name" not in run:
+            run["test_name"] = run["python_version"]
+            if run["tox_env"] != "py":
+                run["test_name"] += f" ({run['tox_env']})"
 
     return matrix
 
