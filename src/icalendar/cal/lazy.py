@@ -22,7 +22,7 @@ class ParsedSubcomponentsStrategy:
     def __init__(self):
         self._components: list[Component] = []
 
-    def get_components(self) -> tuple[ParsedSubcomponentsStrategy, list[Component]]:
+    def get_all_components(self) -> tuple[ParsedSubcomponentsStrategy, list[Component]]:
         """Get the subcomponents of the calendar."""
         return self, self._components
 
@@ -42,6 +42,22 @@ class ParsedSubcomponentsStrategy:
         """Return whether the components are lazy."""
         return False
 
+    def walk(self, name: str) -> tuple[ParsedSubcomponentsStrategy, list[Component]]:
+        """Get the subcomponents of the calendar with the given name."""
+        result = []
+        for component in self._components:
+            result += component.walk(name)
+        return self, result
+
+    def with_uid(
+        self, name: str
+    ) -> tuple[ParsedSubcomponentsStrategy, list[Component]]:
+        """Get the subcomponents of the calendar with the given uid."""
+        result = []
+        for component in self._components:
+            result += component.with_uid(name)
+        return self, result
+
 
 class LazySubcomponentsStrategy:
     """All the subcomponents are parsed lazily."""
@@ -50,18 +66,23 @@ class LazySubcomponentsStrategy:
     """The components that are parsed immediately, instead of lazily."""
 
     def __init__(self):
-        self._components: list[LazySubcomponent] = []
+        self._components: list[LazySubcomponent | Component] = []
+        self._initial_parsed: bool = False
 
-    def get_components(self) -> tuple[ParsedSubcomponentsStrategy, list[Component]]:
-        """Get the subcomponents of the calendar.
-
-        Parse all subcomponents of the calendar and return them as a list.
-        """
-        self.parse_initial_components()
-        new_strategy = ParsedSubcomponentsStrategy().set_components(
+    @property
+    def as_parsed(self) -> ParsedSubcomponentsStrategy:
+        """The same components just fully parsed."""
+        return ParsedSubcomponentsStrategy().set_components(
             [component.parse() for component in self._components]
         )
-        return new_strategy.get_components()
+
+    def get_all_components(self) -> tuple[ParsedSubcomponentsStrategy, list[Component]]:
+        """Get the subcomponents of the calendar.
+
+        Parse all subcomponents.
+        """
+        self.parse_initial_components()
+        return self.as_parsed.get_all_components()
 
     def set_components(
         self, components: list[Component]
@@ -86,9 +107,38 @@ class LazySubcomponentsStrategy:
         This mainly concerns the timezone components.
         They are required by other components that have a TZID parameter.
         """
+        if self._initial_parsed:
+            return
+        self._initial_parsed = True
         for component in self._components:
             if component.name in self.initial_components_to_parse:
                 component.parse()
+
+    def walk(
+        self, name: str | None
+    ) -> tuple[ParsedSubcomponentsStrategy, list[Component]]:
+        """Get the subcomponents of the calendar with the given name.
+
+        Parse only the minumal number of subcomponents.
+        """
+        if name is None:
+            return self.as_parsed.walk(name)
+        self.parse_initial_components()
+        result = []
+        for component in self._components:
+            result += component.walk(name)
+        return self, result
+
+    def with_uid(self, uid: str) -> tuple[ParsedSubcomponentsStrategy, list[Component]]:
+        """Get the subcomponents of the calendar with the given uid.
+
+        Parse only the minumal number of subcomponents.
+        """
+        self.parse_initial_components()
+        result = []
+        for component in self._components:
+            result += component.with_uid(uid)
+        return self, result
 
 
 class InitialSubcomponentsStrategy:
@@ -103,7 +153,8 @@ class LazyCalendar(Calendar):
 
     Subcomponents of this calendar are evaluated lazily,
     meaning that they are not parsed until they are accessed.
-    This allows the calendar to handle large files without consuming too much memory.
+    This allows the calendar to handle large files without
+    consuming too much memory or time.
 
     All the properties of the calendar are parsed immediately,
     just the subcomponents are not.
@@ -127,7 +178,7 @@ class LazyCalendar(Calendar):
 
         Parse all subcomponents of the calendar and return them as a list.
         """
-        self._subcomponents, result = self._subcomponents.get_components()
+        self._subcomponents, result = self._subcomponents.get_all_components()
         return result
 
     @subcomponents.setter
@@ -154,8 +205,30 @@ class LazyCalendar(Calendar):
         self._subcomponents = self._subcomponents.add_component(component)
 
     def is_lazy(self):
-        """Wether subcomponents will be evaluated lazily."""
+        """Whether the subcomponents will be parsed lazily.
+
+        Returns:
+            False if all subcomponents are parsed.
+            True if subcomponents are parsed before they get accessed.
+        """
         return self._subcomponents.is_lazy()
+
+    def _walk(
+        self, name: str | None, select: callable[[Component], bool]
+    ) -> list[Component]:
+        self._subcomponents, result = self._subcomponents.walk(name)
+        result = [component for component in result if select(component)]
+        if (name is None or self.name == name) and select(self):
+            result.insert(0, self)
+        return result
+
+    def with_uid(self, uid: str) -> list[Component]:
+        self._subcomponents, result = self._subcomponents.with_uid(uid)
+        if self.uid == uid:
+            result.insert(0, self)
+        return result
+
+    with_uid.__doc__ = Calendar.with_uid.__doc__
 
 
 __all__ = ["LazyCalendar"]

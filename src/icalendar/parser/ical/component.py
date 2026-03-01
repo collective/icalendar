@@ -54,10 +54,25 @@ class ComponentIcalParser:
         self._types_factory = types_factory
         self._tzp = tzp
 
+    _content_lines: list[Contentline]
+
+    def contains_component(self, name: str) -> bool:
+        """Check if the parser contains a component."""
+        self.initialize_parsing()
+        begin_line = "BEGIN:" + name.upper()
+        return any(
+            len(content_line) == len(begin_line) and content_line.upper() == begin_line
+            for content_line in self._content_lines
+        )
+
+    def contains_uid(self, uid: str) -> bool:
+        self.initialize_parsing()
+        return any(uid in line for line in self._content_lines)
+
     def initialize_parsing(self):
         self._stack: list[Component] = []
         self._components: list[Component] = []
-        self._content_lines: list[Contentline] = (
+        self._data = self._content_lines = (
             self._data
             if isinstance(self._data, list)
             else Contentlines.from_ical(self._data)

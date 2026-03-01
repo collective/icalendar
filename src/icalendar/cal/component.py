@@ -390,7 +390,9 @@ class Component(CaselessDict):
         """Add a subcomponent to this component."""
         self.subcomponents.append(component)
 
-    def _walk(self, name, select):
+    def _walk(
+        self, name: str | None, select: callable[[Component], bool]
+    ) -> list[Component]:
         """Walk to given component."""
         result = []
         if (name is None or self.name == name) and select(self):
@@ -399,7 +401,11 @@ class Component(CaselessDict):
             result += subcomponent._walk(name, select)
         return result
 
-    def walk(self, name=None, select=lambda _: True) -> list[Component]:
+    def walk(
+        self,
+        name: str | None = None,
+        select: callable[[Component], bool] = lambda _: True,
+    ) -> list[Component]:
         """Recursively traverses component and subcomponents. Returns sequence
         of same. If name is passed, only components with name will be returned.
 
@@ -422,7 +428,7 @@ class Component(CaselessDict):
         Returns:
             list[Component]: List of components with the given UID.
         """
-        return [c for c in self.walk() if c.get("uid") == uid]
+        return self.walk(select=lambda c: c.uid == uid)
 
     #####################
     # Generation

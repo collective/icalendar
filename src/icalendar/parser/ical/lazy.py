@@ -130,5 +130,32 @@ class LazySubcomponent:
     def __repr__(self) -> str:
         return f"LazySubcomponent(name={self._name}, parsed={self.is_parsed()})"
 
+    def walk(self, name: str) -> list[Component]:
+        """Walk through this component.
+
+        This only parses the component if necessary.
+
+        Parameters:
+            name: The name of the component to walk to.
+        """
+        assert name is not None
+        if name == self.name or (
+            self._parser and self._parser.contains_component(name)
+        ):
+            return self.parse().walk(name)
+        return []
+
+    def with_uid(self, uid: str) -> list[Component]:
+        """Return the components with the uid.
+
+        This only parses the component if necessary.
+
+        Parameters:
+            uid: The UID of the components.
+        """
+        if self._parser and not self._parser.contains_uid(uid):
+            return []
+        return self.parse().with_uid(uid)
+
 
 __all__ = ["LazyCalendarIcalParser", "LazySubcomponent"]
