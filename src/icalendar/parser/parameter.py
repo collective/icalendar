@@ -463,8 +463,8 @@ class Parameters(CaselessDict):
         """Update the TZID parameter from a datetime object.
 
         This sets the TZID parameter or deletes it according to the datetime.
-        :rfc:`5545` section 3.2.19 prohibits TZID on UTC datetimes,
-        which use the Z suffix instead.
+        :rfc:`5545#section-3.2.19` prohibits TZID on UTC datetimes,
+        which use the ``Z`` suffix instead.
         """
         if isinstance(dt, (datetime, time)):
             tzid = tzid_from_dt(dt)
