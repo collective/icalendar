@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from datetime import date, datetime, timedelta, tzinfo
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 import dateutil.rrule
 import dateutil.tz
@@ -17,8 +17,9 @@ from icalendar.attr import (
 )
 from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
-from icalendar.prop import tzid_from_tzinfo, vUTCOffset
+from icalendar.prop import vUTCOffset
 from icalendar.timezone import TZP, tzp
+from icalendar.timezone.tzid import tzid_from_tzinfo
 from icalendar.tools import is_date, to_datetime
 
 if TYPE_CHECKING:
@@ -117,7 +118,7 @@ class Timezone(Component):
         tznames.add(tzname)
         return tzname
 
-    def to_tz(self, tzp: TZP = tzp, lookup_tzid: bool = True):  # noqa: FBT001
+    def to_tz(self, tzp: TZP = tzp, lookup_tzid: bool = True):
         """convert this VTIMEZONE component to a timezone object
 
         :param tzp: timezone provider to use
@@ -240,7 +241,7 @@ class Timezone(Component):
     def from_tzinfo(
         cls,
         timezone: tzinfo,
-        tzid: Optional[str] = None,
+        tzid: str | None = None,
         first_date: date = DEFAULT_FIRST_DATE,
         last_date: date = DEFAULT_LAST_DATE,
     ) -> Timezone:
@@ -259,7 +260,7 @@ class Timezone(Component):
 
         .. note::
             This can take some time. Please cache the results.
-        """  # noqa: E501
+        """
         if tzid is None:
             tzid = tzid_from_tzinfo(timezone)
             if tzid is None:
@@ -267,8 +268,8 @@ class Timezone(Component):
                     f"Cannot get TZID from {timezone}. Please set the tzid parameter."
                 )
         normalize = getattr(timezone, "normalize", lambda dt: dt)  # pytz compatibility
-        first_datetime = datetime(first_date.year, first_date.month, first_date.day)  # noqa: DTZ001
-        last_datetime = datetime(last_date.year, last_date.month, last_date.day)  # noqa: DTZ001
+        first_datetime = datetime(first_date.year, first_date.month, first_date.day)
+        last_datetime = datetime(last_date.year, last_date.month, last_date.day)
         if hasattr(timezone, "localize"):  # pytz compatibility
             first_datetime = timezone.localize(first_datetime)
             last_datetime = timezone.localize(last_datetime)
@@ -276,9 +277,9 @@ class Timezone(Component):
             first_datetime = first_datetime.replace(tzinfo=timezone)
             last_datetime = last_datetime.replace(tzinfo=timezone)
         # from, to, tzname, is_standard -> start
-        offsets: dict[
-            tuple[Optional[timedelta], timedelta, str, bool], list[datetime]
-        ] = defaultdict(list)
+        offsets: dict[tuple[timedelta | None, timedelta, str, bool], list[datetime]] = (
+            defaultdict(list)
+        )
         start = first_datetime
         offset_to = None
         while start < last_datetime:
@@ -286,7 +287,7 @@ class Timezone(Component):
             end = start
             offset_to = end.utcoffset()
             for add_offset in cls._from_tzinfo_skip_search:
-                last_end = end  # we need to save this as we might be left and right of the time change  # noqa: E501
+                last_end = end  # we need to save this as we might be left and right of the time change
                 end = normalize(end + add_offset)
                 try:
                     while end.utcoffset() == offset_to:
@@ -316,10 +317,10 @@ class Timezone(Component):
             first_start = min(starts)
             starts.remove(first_start)
             if first_start.date() == last_date:
-                first_start = datetime(last_date.year, last_date.month, last_date.day)  # noqa: DTZ001
+                first_start = datetime(last_date.year, last_date.month, last_date.day)
             subcomponent = TimezoneStandard() if is_standard else TimezoneDaylight()
             if offset_from is None:
-                offset_from = offset_to  # noqa: PLW2901
+                offset_from = offset_to
             subcomponent.TZOFFSETFROM = offset_from
             subcomponent.TZOFFSETTO = offset_to
             subcomponent.add("TZNAME", tzname)

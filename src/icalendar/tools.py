@@ -3,14 +3,13 @@
 from __future__ import annotations
 
 from datetime import date, datetime, tzinfo
-from typing import TYPE_CHECKING, Union, cast
-
+from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
     from icalendar.compatibility import TypeGuard, TypeIs
 
 
-def is_date(dt: Union[date, datetime]) -> bool:
+def is_date(dt: date | datetime) -> bool:
     """Check if a value is a date but not a datetime.
 
     This function distinguishes between ``date`` and ``datetime`` objects,
@@ -36,7 +35,7 @@ def is_date(dt: Union[date, datetime]) -> bool:
     return isinstance(dt, date) and not isinstance(dt, datetime)
 
 
-def is_datetime(dt: Union[date, datetime]) -> TypeIs[datetime]:
+def is_datetime(dt: date | datetime) -> TypeIs[datetime]:
     """Check if a value is a datetime.
 
     Parameters:
@@ -59,7 +58,7 @@ def is_datetime(dt: Union[date, datetime]) -> TypeIs[datetime]:
     return isinstance(dt, datetime)
 
 
-def to_datetime(dt: Union[date, datetime]) -> datetime:
+def to_datetime(dt: date | datetime) -> datetime:
     """Convert a date to a datetime.
 
     If the input is already a ``datetime``, it is returned unchanged.
@@ -103,7 +102,7 @@ def is_pytz(tz: tzinfo) -> bool:
     return hasattr(tz, "localize")
 
 
-def is_pytz_dt(dt: Union[date, datetime]) -> TypeGuard[datetime]:
+def is_pytz_dt(dt: date | datetime) -> TypeGuard[datetime]:
     """Check if a datetime uses a pytz timezone.
 
     This function checks whether the datetime has a timezone attached
@@ -119,7 +118,7 @@ def is_pytz_dt(dt: Union[date, datetime]) -> TypeGuard[datetime]:
     return is_datetime(dt) and (tzinfo := dt.tzinfo) is not None and is_pytz(tzinfo)
 
 
-def normalize_pytz(dt: Union[date, datetime]) -> Union[date, datetime]:
+def normalize_pytz(dt: date | datetime) -> date | datetime:
     """Normalize a datetime after calculations when using pytz.
 
     pytz requires the ``normalize()`` function to be called after arithmetic

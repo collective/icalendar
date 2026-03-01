@@ -12,6 +12,16 @@ class InvalidCalendar(ValueError):
     """
 
 
+class BrokenCalendarProperty(InvalidCalendar):
+    """A property could not be parsed and its value is broken.
+
+    This error is raised when accessing attributes on a
+    :class:`~icalendar.prop.vBroken` property that would normally
+    be present on the expected type. The original parse error
+    is chained as ``__cause__``.
+    """
+
+
 class IncompleteComponent(ValueError):
     """The component is missing attributes.
 
@@ -216,6 +226,7 @@ class JCalParsingError(ValueError):
 
 
 __all__ = [
+    "BrokenCalendarProperty",
     "ComponentEndMissing",
     "ComponentStartMissing",
     "FeatureWillBeRemovedInFutureVersion",

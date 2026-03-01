@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING
 
 from icalendar.tools import to_datetime
 
@@ -27,19 +27,19 @@ class TZP:
     All of icalendar will then use this timezone implementation.
     """
 
-    def __init__(self, provider: Union[str, TZProvider] = DEFAULT_TIMEZONE_PROVIDER):
+    def __init__(self, provider: str | TZProvider = DEFAULT_TIMEZONE_PROVIDER):
         """Create a new timezone implementation proxy."""
         self.use(provider)
 
     def use_pytz(self) -> None:
         """Use pytz as the timezone provider."""
-        from .pytz import PYTZ
+        from .pytz import PYTZ  # noqa: PLC0415, RUF100
 
         self._use(PYTZ())
 
     def use_zoneinfo(self) -> None:
         """Use zoneinfo as the timezone provider."""
-        from .zoneinfo import ZONEINFO
+        from .zoneinfo import ZONEINFO  # noqa: PLC0415, RUF100
 
         self._use(ZONEINFO())
 
@@ -48,7 +48,7 @@ class TZP:
         self.__tz_cache = {}
         self.__provider = provider
 
-    def use(self, provider: Union[str, TZProvider]):
+    def use(self, provider: str | TZProvider):
         """Switch to a different timezone provider."""
         if isinstance(provider, str):
             use_provider = getattr(self, f"use_{provider}", None)
@@ -72,7 +72,7 @@ class TZP:
         return self.__provider.localize_utc(to_datetime(dt))
 
     def localize(
-        self, dt: datetime.date, tz: Union[datetime.tzinfo, str, None]
+        self, dt: datetime.date, tz: datetime.tzinfo | str | None
     ) -> datetime.datetime:
         """Localize a datetime to a timezone."""
         if isinstance(tz, str):
@@ -116,7 +116,7 @@ class TZP:
         """
         return tzid.strip("/")
 
-    def timezone(self, tz_id: str) -> Optional[datetime.tzinfo]:
+    def timezone(self, tz_id: str) -> datetime.tzinfo | None:
         """Return a timezone with an id or None if we cannot find it."""
         _unclean_id = tz_id
         tz_id = self.clean_timezone_id(tz_id)

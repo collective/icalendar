@@ -42,6 +42,10 @@ This section describes the branches used in icalendar development.
     Active development takes place on this branch.
     It is compatible with Python versions 3.10 - 3.14, and PyPy3.10.
 
+``7.x``
+    icalendar version 7 is on the branch `7.x <https://github.com/collective/icalendar/tree/7.x/>`_.
+    It is compatible with Python versions 3.10 - 3.14, and PyPy3.10.
+
 ``6.x``
     icalendar version 6 is on the branch `6.x <https://github.com/collective/icalendar/tree/6.x/>`_.
     It is compatible with Python versions 3.8 - 3.13, and PyPy3.9.
@@ -153,7 +157,7 @@ The following command show how to run tox with Python 3.12:
 Code format
 -----------
 
-icalendar strives towards a common code format.
+icalendar requires code formatting.
 You can run the following command to automatically format the code.
 
 .. code-block:: shell

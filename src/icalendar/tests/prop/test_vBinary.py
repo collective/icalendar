@@ -39,7 +39,7 @@ def test_repr():
 
 
 def test_from_ical():
-    with pytest.raises(ValueError, match="Not valid base 64 encoding."):
+    with pytest.raises(ValueError, match=r"Not valid base 64 encoding\."):
         vBinary.from_ical("value")
-    with pytest.raises(ValueError, match="Not valid base 64 encoding."):
+    with pytest.raises(ValueError, match=r"Not valid base 64 encoding\."):
         vBinary.from_ical("áèਮ")

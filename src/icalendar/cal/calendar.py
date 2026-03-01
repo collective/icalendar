@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import timedelta
+from pathlib import Path
 from typing import TYPE_CHECKING, Literal, overload
 
 from icalendar.attr import (
@@ -88,31 +89,46 @@ class Calendar(Component):
     @overload
     @classmethod
     def from_ical(
-        cls, st: bytes | str, multiple: Literal[False] = False
+        cls, st: bytes | str | Path, multiple: Literal[False] = False
     ) -> Calendar: ...
 
     @overload
     @classmethod
-    def from_ical(cls, st: bytes | str, multiple: Literal[True]) -> list[Calendar]: ...
+    def from_ical(
+        cls, st: bytes | str | Path, multiple: Literal[True]
+    ) -> list[Calendar]: ...
 
     @classmethod
     def from_ical(
         cls,
-        st: bytes | str,
-        multiple: bool = False,  # noqa: FBT001
+        st: bytes | str | Path,
+        multiple: bool = False,
     ) -> Calendar | list[Calendar]:
         """Parse iCalendar data into Calendar instances.
 
-        Wraps :meth:`Component.from_ical() <icalendar.cal.component.Component.from_ical>` with
-        timezone forward-reference resolution and VTIMEZONE caching.
+        Wraps :meth:`Component.from_ical()
+        <icalendar.cal.component.Component.from_ical>` with timezone
+        forward-reference resolution and VTIMEZONE caching.
 
         Parameters:
-            st: iCalendar data as bytes or string
+            st: iCalendar data as bytes or string, or a path to an iCalendar file as
+                :class:`pathlib.Path` or string.
             multiple: If ``True``, returns list. If ``False``, returns single calendar.
 
         Returns:
             Calendar or list of Calendars
         """
+        if isinstance(st, Path):
+            st = st.read_bytes()
+        elif isinstance(st, str) and "\n" not in st and "\r" not in st:
+            path = Path(st)
+            try:
+                is_file = path.is_file()
+            except OSError:
+                is_file = False
+            if is_file:
+                st = path.read_bytes()
+
         comps = Component.from_ical(st, multiple=True)
         all_timezones_so_far = True
         for comp in comps:
@@ -157,7 +173,7 @@ class Calendar(Component):
 
         This is a shortcut to get all events.
         Modifications do not change the calendar.
-        Use :py:meth:`Component.add_component`.
+        Use :py:meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
 
         >>> from icalendar import Calendar
         >>> calendar = Calendar.example()
@@ -175,9 +191,19 @@ class Calendar(Component):
 
         This is a shortcut to get all todos.
         Modifications do not change the calendar.
-        Use :py:meth:`Component.add_component`.
+        Use :py:meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
         """
         return self.walk("VTODO")
+
+    @property
+    def journals(self) -> list[Journal]:
+        """All journal components in the calendar.
+
+        This is a shortcut to get all journals.
+        Modifications do not change the calendar.
+        Use :py:meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
+        """
+        return self.walk("VJOURNAL")
 
     @property
     def availabilities(self) -> list[Availability]:
@@ -185,7 +211,7 @@ class Calendar(Component):
 
         This is a shortcut to get all availabilities.
         Modifications do not change the calendar.
-        Use :py:meth:`Component.add_component`.
+        Use :py:meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
         """
         return self.walk("VAVAILABILITY")
 
@@ -195,7 +221,7 @@ class Calendar(Component):
 
         This is a shortcut to get all FreeBusy.
         Modifications do not change the calendar.
-        Use :py:meth:`Component.add_component`.
+        Use :py:meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
         """
         return self.walk("VFREEBUSY")
 
@@ -233,10 +259,15 @@ class Calendar(Component):
 
         To create a :rfc:`5545` compatible calendar,
         all of these timezones should be added.
+
+        UTC is excluded: per :rfc:`5545#section-3.2.19`, UTC datetimes use
+        the ``Z`` suffix and never require a VTIMEZONE component.
         """
-        tzids = self.get_used_tzids()
+        tzids = self.get_used_tzids() - {"UTC"}
         for timezone in self.timezones:
-            tzids.remove(timezone.tz_name)
+            # discard (not remove) — a VTIMEZONE may exist for a timezone not
+            # referenced by any event TZID (e.g. added by x-wr-timezone conversion)
+            tzids.discard(timezone.tz_name)
         return tzids
 
     @property
@@ -339,6 +370,7 @@ class Calendar(Component):
             >>> print(calendar.to_ical())
             BEGIN:VCALENDAR
             NAME:My Calendar
+            X-WR-CALNAME:My Calendar
             END:VCALENDAR
     """,
     )
@@ -374,6 +406,7 @@ class Calendar(Component):
             >>> print(calendar.to_ical())
             BEGIN:VCALENDAR
             DESCRIPTION:This is a calendar
+            X-WR-CALDESC:This is a calendar
             END:VCALENDAR
     """,
     )
@@ -442,7 +475,7 @@ Example:
     .. code-block:: text
 
         -//ABC Corporation//NONSGML My Product//EN
-""",  # noqa: E501
+""",
     )
     version = single_string_property(
         "VERSION",
@@ -478,7 +511,7 @@ Description:
     specified in the iCalendar object.  It is expected that other
     calendar scales will be defined in other specifications or by
     future versions of this memo.
-        """,  # noqa: E501
+        """,
         default="GREGORIAN",
     )
     method = single_string_property(
@@ -501,7 +534,7 @@ Description:
     iCalendar object is merely being used to transport a snapshot of
     some calendar information; without the intention of conveying a
     scheduling semantic.
-""",  # noqa: E501
+""",
     )
     url = url_property
     source = source_property
@@ -612,7 +645,7 @@ Description:
             ~error.InvalidCalendar: If the content is not valid according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
-        """  # noqa: E501
+        """
         calendar: Calendar = super().new(
             last_modified=last_modified,
             links=links,

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import date, datetime, timedelta
-from typing import TYPE_CHECKING, Literal, Sequence
+from typing import TYPE_CHECKING, Literal
 
 from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
@@ -49,6 +49,8 @@ from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from icalendar.alarms import Alarms
     from icalendar.enums import CLASS, STATUS, TRANSP
     from icalendar.prop import vCalAddress
@@ -102,7 +104,7 @@ class Event(Component):
         component used to represent a meeting that will also be opaque to
         searches for busy time:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             BEGIN:VEVENT
             UID:19970901T130000Z-123401@example.com
@@ -118,7 +120,7 @@ class Event(Component):
         used to represent a reminder that will not be opaque, but rather
         transparent, to searches for busy time:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             BEGIN:VEVENT
             UID:19970901T130000Z-123402@example.com
@@ -134,7 +136,7 @@ class Event(Component):
         The following is an example of the "VEVENT" calendar component
         used to represent an anniversary that will occur annually:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             BEGIN:VEVENT
             UID:19970901T130000Z-123403@example.com
@@ -153,7 +155,7 @@ class Event(Component):
         set to July 9th, 2007, since the "DTEND" property specifies the
         non-inclusive end of the event.
 
-        .. code-block:: text
+        .. code-block:: ics
 
             BEGIN:VEVENT
             UID:20070423T123432Z-541111@example.com
@@ -272,14 +274,14 @@ class Event(Component):
         "dt",
         (datetime, date),
         date,
-        'The "DTSTART" property for a "VEVENT" specifies the inclusive start of the event.',  # noqa: E501
+        'The "DTSTART" property for a "VEVENT" specifies the inclusive start of the event.',
     )
     DTEND = create_single_property(
         "DTEND",
         "dt",
         (datetime, date),
         date,
-        'The "DTEND" property for a "VEVENT" calendar component specifies the non-inclusive end of the event.',  # noqa: E501
+        'The "DTEND" property for a "VEVENT" calendar component specifies the non-inclusive end of the event.',
     )
 
     def _get_start_end_duration(self):
@@ -422,6 +424,7 @@ class Event(Component):
     attendees = attendees_property
     images = images_property
     conferences = conferences_property
+    from icalendar.attr import RECURRENCE_ID
 
     @classmethod
     def new(
@@ -443,6 +446,7 @@ class Event(Component):
         location: str | None = None,
         organizer: vCalAddress | str | None = None,
         priority: int | None = None,
+        recurrence_id: date | datetime | None = None,
         refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
         sequence: int | None = None,
@@ -474,6 +478,7 @@ class Event(Component):
             location: The :attr:`location` of the event.
             organizer: The :attr:`organizer` of the event.
             priority: The :attr:`priority` of the event.
+            recurrence_id: The :attr:`RECURRENCE_ID` of the event.
             refids: :attr:`~icalendar.Component.refids` of the event.
             related_to: :attr:`~icalendar.Component.related_to` of the event.
             sequence: The :attr:`sequence` of the event.
@@ -491,7 +496,8 @@ class Event(Component):
             :class:`Event`
 
         Raises:
-            ~error.InvalidCalendar: If the content is not valid according to :rfc:`5545`.
+            ~error.InvalidCalendar: If the content is not valid
+                according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
@@ -523,6 +529,7 @@ class Event(Component):
         event.status = status
         event.attendees = attendees
         event.conferences = conferences
+        event.RECURRENCE_ID = recurrence_id
 
         if cls._validate_new:
             cls._validate_start_and_end(start, end)

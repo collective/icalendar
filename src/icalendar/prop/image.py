@@ -51,8 +51,8 @@ class Image:
             raise TypeError("Value must be URI or BINARY.")
         try:
             value_type = value.params.get("VALUE", "").upper()
-        except (AttributeError, TypeError):
-            raise TypeError("Value must have a valid params attribute.")
+        except (AttributeError, TypeError) as err:
+            raise TypeError("Value must have a valid params attribute.") from err
         if value_type == "URI" or isinstance(value, vUri):
             params["uri"] = str(value)
         elif isinstance(value, vBinary):

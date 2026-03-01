@@ -5,11 +5,11 @@ See https://github.com/collective/icalendar/issues/828
 
 import contextlib
 from datetime import date, datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 
 import pytest
 
 from icalendar import Event, Journal, vDate, vDatetime, vDDDLists, vDDDTypes
-from zoneinfo import ZoneInfo
 
 
 def to_dt(a: date) -> date:

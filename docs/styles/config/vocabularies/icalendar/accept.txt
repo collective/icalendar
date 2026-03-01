@@ -15,6 +15,7 @@ Nicco
 Params
 Penner
 (?i)Plone
+recur.recur
 reformats
 RFCs?
 sphinx_copybutton
@@ -28,4 +29,5 @@ subtyping
 (?i)unescaped
 uv
 vCard
+xCal
 Xcode

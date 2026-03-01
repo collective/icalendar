@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import date, datetime, timedelta
-from typing import TYPE_CHECKING, Literal, Sequence
+from typing import TYPE_CHECKING, Literal
 
 from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
@@ -48,6 +48,8 @@ from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from icalendar.alarms import Alarms
     from icalendar.enums import CLASS, STATUS
     from icalendar.prop import vCalAddress
@@ -149,14 +151,14 @@ class Todo(Component):
         "dt",
         (datetime, date),
         date,
-        'The "DTSTART" property for a "VTODO" specifies the inclusive start of the Todo.',  # noqa: E501
+        'The "DTSTART" property for a "VTODO" specifies the inclusive start of the Todo.',
     )
     DUE = create_single_property(
         "DUE",
         "dt",
         (datetime, date),
         date,
-        'The "DUE" property for a "VTODO" calendar component specifies the non-inclusive end of the Todo.',  # noqa: E501
+        'The "DUE" property for a "VTODO" calendar component specifies the non-inclusive end of the Todo.',
     )
     DURATION = property(
         property_get_duration,
@@ -311,6 +313,7 @@ class Todo(Component):
     attendees = attendees_property
     images = images_property
     conferences = conferences_property
+    from icalendar.attr import RECURRENCE_ID
 
     @classmethod
     def new(
@@ -332,6 +335,7 @@ class Todo(Component):
         location: str | None = None,
         organizer: vCalAddress | str | None = None,
         priority: int | None = None,
+        recurrence_id: date | datetime | None = None,
         refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
         sequence: int | None = None,
@@ -362,6 +366,7 @@ class Todo(Component):
             links: The :attr:`~icalendar.Component.links` of the todo.
             location: The :attr:`location` of the todo.
             organizer: The :attr:`organizer` of the todo.
+            recurrence_id: The :attr:`RECURRENCE_ID` of the todo.
             refids: :attr:`~icalendar.Component.refids` of the todo.
             related_to: :attr:`~icalendar.Component.related_to` of the todo.
             sequence: The :attr:`sequence` of the todo.
@@ -378,7 +383,8 @@ class Todo(Component):
             :class:`Todo`
 
         Raises:
-            ~error.InvalidCalendar: If the content is not valid according to :rfc:`5545`.
+            ~error.InvalidCalendar: If the content is not valid
+                according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
@@ -409,15 +415,16 @@ class Todo(Component):
         todo.status = status
         todo.attendees = attendees
         todo.conferences = conferences
+        todo.RECURRENCE_ID = recurrence_id
 
         if cls._validate_new:
             cls._validate_start_and_end(start, end)
         return todo
-    
-  
+
     @classmethod
-    def example(cls, name: str = "example") -> "Todo":
+    def example(cls, name: str = "example") -> Todo:
         """Return the todo example with the given name."""
         return cls.from_ical(get_example("todos", name))
+
 
 __all__ = ["Todo"]

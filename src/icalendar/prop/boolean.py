@@ -73,8 +73,8 @@ class vBoolean(int):
     def examples(cls) -> list[Self]:
         """Examples of vBoolean."""
         return [
-            cls(True),  # noqa: FBT003
-            cls(False),  # noqa: FBT003
+            cls(True),
+            cls(False),
         ]
 
     from icalendar.param import VALUE

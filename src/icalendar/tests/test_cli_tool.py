@@ -1,8 +1,8 @@
 import unittest
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from icalendar import Calendar, cli
-from zoneinfo import ZoneInfo
 
 INPUT = """
 BEGIN:VCALENDAR

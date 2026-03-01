@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional, Sequence
+from typing import TYPE_CHECKING
 
 from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
@@ -35,6 +35,7 @@ from icalendar.error import InvalidCalendar
 from .component import Component
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
     from datetime import date
 
 
@@ -52,7 +53,7 @@ class Available(Component):
     Examples:
         This is a recurring "AVAILABLE" subcomponent:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             BEGIN:AVAILABLE
             UID:57DD4AAF-3835-46B5-8A39-B3B253157F01
@@ -86,6 +87,7 @@ class Available(Component):
     exdates = exdates_property
     rdates = rdates_property
     rrules = rrules_property
+    from icalendar.attr import RECURRENCE_ID
 
     start = DTSTART = rfc_7953_dtstart_property
     DTEND = rfc_7953_dtend_property
@@ -101,19 +103,20 @@ class Available(Component):
         comments: list[str] | str | None = None,
         concepts: CONCEPTS_TYPE_SETTER = None,
         contacts: list[str] | str | None = None,
-        created: Optional[date] = None,
-        description: Optional[str] = None,
-        end: Optional[datetime] = None,
-        last_modified: Optional[date] = None,
+        created: date | None = None,
+        description: str | None = None,
+        end: datetime | None = None,
+        last_modified: date | None = None,
         links: LINKS_TYPE_SETTER = None,
-        location: Optional[str] = None,
+        location: str | None = None,
+        recurrence_id: date | datetime | None = None,
         refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
-        sequence: Optional[int] = None,
-        stamp: Optional[date] = None,
-        start: Optional[datetime] = None,
-        summary: Optional[str] = None,
-        uid: Optional[str | uuid.UUID] = None,
+        sequence: int | None = None,
+        stamp: date | None = None,
+        start: datetime | None = None,
+        summary: str | None = None,
+        uid: str | uuid.UUID | None = None,
     ):
         """Create a new Available component with all required properties.
 
@@ -134,6 +137,7 @@ class Available(Component):
                 Available component.
             links: The :attr:`~icalendar.Component.links` of the Available component.
             location: The :attr:`location` of the Available component.
+            recurrence_id: The :attr:`RECURRENCE_ID` of the Available component.
             refids: :attr:`~icalendar.Component.refids` of the Available component.
             related_to: :attr:`~icalendar.Component.related_to` of the Available
                 component.
@@ -149,7 +153,8 @@ class Available(Component):
             :class:`Available`
 
         Raises:
-            ~error.InvalidCalendar: If the content is not valid according to :rfc:`7953`.
+            ~error.InvalidCalendar: If the content is not valid
+                according to :rfc:`7953`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
@@ -170,6 +175,7 @@ class Available(Component):
         available.categories = categories
         available.location = location
         available.contacts = contacts
+        available.RECURRENCE_ID = recurrence_id
 
         if cls._validate_new:
             if end is not None and (

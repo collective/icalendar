@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import itertools
 from datetime import date, datetime, timedelta
-from typing import TYPE_CHECKING, List, Literal, Optional, Sequence, Union
+from typing import TYPE_CHECKING, Literal, TypeAlias
 
 from icalendar.enums import BUSYTYPE, CLASS, STATUS, TRANSP, StrEnum
 from icalendar.error import IncompleteComponent, InvalidCalendar
@@ -26,17 +26,14 @@ from icalendar.timezone import tzp
 from icalendar.tools import is_date
 
 if TYPE_CHECKING:
-    from icalendar.cal import Component
+    from collections.abc import Sequence
 
-try:
-    from typing import TypeAlias
-except ImportError:
-    from typing_extensions import TypeAlias
+    from icalendar.cal import Component
 
 
 def _get_rdates(
     self: Component,
-) -> list[Union[tuple[date, None], tuple[datetime, None], tuple[datetime, datetime]]]:
+) -> list[tuple[date, None] | tuple[datetime, None] | tuple[datetime, datetime]]:
     """The RDATE property defines the list of DATE-TIME values for recurring components.
 
     RDATE is defined in :rfc:`5545`.
@@ -332,7 +329,7 @@ rrules_property = property(_get_rrules)
 
 
 def multi_language_text_property(
-    main_prop: str, compatibility_prop: Optional[str], doc: str
+    main_prop: str, compatibility_prop: str | None, doc: str
 ) -> property:
     """This creates a text property.
 
@@ -344,7 +341,7 @@ def multi_language_text_property(
         doc (str): The documentation string
     """
 
-    def fget(self: Component) -> Optional[str]:
+    def fget(self: Component) -> str | None:
         """Get the property"""
         result = self.get(main_prop)
         if result is None and compatibility_prop is not None:
@@ -355,11 +352,13 @@ def multi_language_text_property(
                     return item
         return result
 
-    def fset(self: Component, value: Optional[str]):
+    def fset(self: Component, value: str | None):
         """Set the property."""
         fdel(self)
         if value is not None:
             self.add(main_prop, value)
+            if compatibility_prop is not None:
+                self.add(compatibility_prop, value)
 
     def fdel(self: Component):
         """Delete the property."""
@@ -386,7 +385,7 @@ def single_int_property(prop: str, default: int, doc: str) -> property:
         except ValueError as e:
             raise InvalidCalendar(f"{prop} must be an int") from e
 
-    def fset(self: Component, value: Optional[int]):
+    def fset(self: Component, value: int | None):
         """Set the property."""
         fdel(self)
         if value is not None:
@@ -414,7 +413,7 @@ def single_utc_property(name: str, docs: str) -> property:
         + docs
     )
 
-    def fget(self: Component) -> Optional[datetime]:
+    def fget(self: Component) -> datetime | None:
         """Get the value."""
         if name not in self:
             return None
@@ -428,7 +427,7 @@ def single_utc_property(name: str, docs: str) -> property:
             raise InvalidCalendar(f"{name} must be a datetime in UTC, not {value}")
         return tzp.localize_utc(value)
 
-    def fset(self: Component, value: Optional[datetime]):
+    def fset(self: Component, value: datetime | None):
         """Set the value"""
         if value is None:
             fdel(self)
@@ -446,7 +445,7 @@ def single_utc_property(name: str, docs: str) -> property:
 
 
 def single_string_property(
-    name: str, docs: str, other_name: Optional[str] = None, default: str = ""
+    name: str, docs: str, other_name: str | None = None, default: str = ""
 ) -> property:
     """Create a property to access a single string value."""
 
@@ -461,7 +460,7 @@ def single_string_property(
             return result[0]
         return result
 
-    def fset(self: Component, value: Optional[str]):
+    def fset(self: Component, value: str | None):
         """Set the value.
 
         Setting the value to None will delete it.
@@ -581,7 +580,7 @@ Examples:
 
 def _get_categories(component: Component) -> list[str]:
     """Get all the categories."""
-    categories: Optional[vCategory | list[vCategory]] = component.get("CATEGORIES")
+    categories: vCategory | list[vCategory] | None = component.get("CATEGORIES")
     if isinstance(categories, list):
         _set_categories(
             component,
@@ -594,7 +593,7 @@ def _get_categories(component: Component) -> list[str]:
     return categories.cats
 
 
-def _set_categories(component: Component, cats: Optional[Sequence[str]]) -> None:
+def _set_categories(component: Component, cats: Sequence[str] | None) -> None:
     """Set the categories."""
     if not cats and cats != []:
         _del_categories(component)
@@ -896,7 +895,7 @@ Examples:
 
 def create_single_property(
     prop: str,
-    value_attr: Optional[str],
+    value_attr: str | None,
     value_type: tuple[type],
     type_def: type,
     doc: str,
@@ -943,9 +942,7 @@ def create_single_property(
                 if other_prop != prop:
                     self.pop(other_prop, None)
 
-    p_set.__annotations__["value"] = p_get.__annotations__["return"] = Optional[
-        type_def
-    ]
+    p_set.__annotations__["value"] = p_get.__annotations__["return"] = type_def | None
 
     def p_del(self: Component):
         self.pop(prop)
@@ -970,7 +967,7 @@ X_MOZ_LASTACK_property = single_utc_property(
 )
 
 
-def property_get_duration(self: Component) -> Optional[timedelta]:
+def property_get_duration(self: Component) -> timedelta | None:
     """Getter for property DURATION."""
     default = object()
     duration = self.get("duration", default)
@@ -985,7 +982,7 @@ def property_get_duration(self: Component) -> Optional[timedelta]:
     return None
 
 
-def property_set_duration(self: Component, value: Optional[timedelta]):
+def property_set_duration(self: Component, value: timedelta | None):
     """Setter for property DURATION."""
     if value is None:
         self.pop("duration", None)
@@ -1040,7 +1037,7 @@ def multi_text_property(name: str, docs: str) -> property:
             return [descriptions]
         return descriptions
 
-    def fset(self: Component, values: Optional[str | Sequence[str]]):
+    def fset(self: Component, values: str | Sequence[str] | None):
         """Set the values."""
         fdel(self)
         if values is None:
@@ -1111,8 +1108,30 @@ Property Parameters:
 """,
 )
 
+RECURRENCE_ID = create_single_property(
+    "RECURRENCE-ID",
+    "dt",
+    (date, datetime),
+    date | datetime,
+    """
+Identify a specific occurrence of a recurring calendar object.
 
-def _get_organizer(self: Component) -> Optional[vCalAddress]:
+This property is used together with ``UID`` and ``SEQUENCE`` to refer to one
+particular instance in a recurrence set. The value is the original start
+date or date-time of that instance, not the rescheduled time.
+
+The value is usually a DATE-TIME and must use the same value type as the
+``DTSTART`` property in the same component. A DATE value may be used for
+all-day items instead.
+
+This property corresponds to ``RECURRENCE-ID`` as defined in RFC 5545 and
+may appear in recurring ``VEVENT``, ``VTODO``, and ``VJOURNAL`` components.
+""",
+    vDDDTypes,
+)
+
+
+def _get_organizer(self: Component) -> vCalAddress | None:
     """ORGANIZER defines the organizer for a calendar component.
 
     Property Parameters:
@@ -1151,7 +1170,7 @@ def _get_organizer(self: Component) -> Optional[vCalAddress]:
     return self.get("ORGANIZER")
 
 
-def _set_organizer(self: Component, value: Optional[vCalAddress | str]):
+def _set_organizer(self: Component, value: vCalAddress | str | None):
     """Set the value."""
     _del_organizer(self)
     if value is not None:
@@ -1345,7 +1364,7 @@ Conformance:
 Example:
     The following is an example of this property:
 
-    .. code-block:: text
+    .. code-block:: ics
 
         URL:http://example.com/pub/calendars/jsmith/mytime.ics
 
@@ -1370,7 +1389,7 @@ Conformance:
 Example:
     The following is an example of this property:
 
-    .. code-block:: text
+    .. code-block:: ics
 
         SOURCE;VALUE=URI:https://example.com/holidays.ics
 
@@ -1436,7 +1455,7 @@ Example:
     The following is an example of this property referencing
     textual contact information:
 
-    .. code-block:: text
+    .. code-block:: ics
 
         CONTACT:Jim Dolittle\\, ABC Industries\\, +1-919-555-1234
 
@@ -1444,7 +1463,7 @@ Example:
     representation of an LDAP URI to a directory entry containing the
     contact information:
 
-    .. code-block:: text
+    .. code-block:: ics
 
         CONTACT;ALTREP="ldap://example.com:6666/o=ABC%20Industries\\,
         c=US???(cn=Jim%20Dolittle)":Jim Dolittle\\, ABC Industries\\,
@@ -1455,7 +1474,7 @@ Example:
     information, such as a vCard :rfc:`2426` embedded in a text/
     directory media type :rfc:`2425`:
 
-    .. code-block:: text
+    .. code-block:: ics
 
         CONTACT;ALTREP="CID:part3.msg970930T083000SILVER@example.com":
          Jim Dolittle\\, ABC Industries\\, +1-919-555-1234
@@ -1464,7 +1483,7 @@ Example:
     resource, such as a vCard :rfc:`2426` object containing the contact
     information:
 
-    .. code-block:: text
+    .. code-block:: ics
 
         CONTACT;ALTREP="http://example.com/pdi/jdoe.vcf":Jim
          Dolittle\\, ABC Industries\\, +1-919-555-1234
@@ -1511,7 +1530,7 @@ rfc_7953_dtend_property = timezone_datetime_property(
 
 
 @property
-def rfc_7953_duration_property(self) -> Optional[timedelta]:
+def rfc_7953_duration_property(self) -> timedelta | None:
     """Compute the duration of this component.
 
     If there is no :attr:`DTEND` or :attr:`DURATION` set, this is None.
@@ -1534,7 +1553,7 @@ def rfc_7953_duration_property(self) -> Optional[timedelta]:
 
 
 @property
-def rfc_7953_end_property(self) -> Optional[timedelta]:
+def rfc_7953_end_property(self) -> timedelta | None:
     """Compute the duration of this component.
 
     If there is no :attr:`DTEND` or :attr:`DURATION` set, this is None.
@@ -1642,7 +1661,7 @@ def get_start_property(component: Component) -> date | datetime:
 
     """
     # Trigger validation by calling _get_start_end_duration
-    start, end, duration = component._get_start_end_duration()  # noqa: SLF001
+    start, _end, _duration = component._get_start_end_duration()  # noqa: SLF001
     if start is None:
         msg = "No DTSTART given."
         raise IncompleteComponent(msg)
@@ -1926,7 +1945,7 @@ def _get_conferences(self: Component) -> list[Conference]:
     Example:
         The following are examples of this property:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             CONFERENCE;VALUE=URI;FEATURE=PHONE,MODERATOR;
              LABEL=Moderator dial-in:tel:+1-412-555-0123,,,654321
@@ -2044,7 +2063,7 @@ def _get_links(self: Component) -> list[vUri | vUid | vXmlReference]:
         The following is an example of this property,
         which provides a reference to the source for the calendar object.
 
-        .. code-block:: text
+        .. code-block:: ics
 
             LINK;LINKREL=SOURCE;LABEL=Venue;VALUE=URI:
              https://example.com/events
@@ -2053,7 +2072,7 @@ def _get_links(self: Component) -> list[vUri | vUid | vXmlReference]:
         which provides a reference to an entity from which this one was derived.
         The link relation is a vendor-defined value.
 
-        .. code-block:: text
+        .. code-block:: ics
 
             LINK;LINKREL="https://example.com/linkrel/derivedFrom";
              VALUE=URI:
@@ -2063,7 +2082,7 @@ def _get_links(self: Component) -> list[vUri | vUid | vXmlReference]:
         which provides a reference to a fragment of an XML document.
         The link relation is a vendor-defined value.
 
-        .. code-block:: text
+        .. code-block:: ics
 
             LINK;LINKREL="https://example.com/linkrel/costStructure";
              VALUE=XML-REFERENCE:
@@ -2102,9 +2121,9 @@ def _get_links(self: Component) -> list[vUri | vUid | vXmlReference]:
     return links
 
 
-LINKS_TYPE_SETTER: TypeAlias = Union[
-    str, vUri, vUid, vXmlReference, None, List[Union[str, vUri, vUid, vXmlReference]]
-]
+LINKS_TYPE_SETTER: TypeAlias = (
+    str | vUri | vUid | vXmlReference | None | list[str | vUri | vUid | vXmlReference]
+)
 
 
 def _set_links(self: Component, links: LINKS_TYPE_SETTER) -> None:
@@ -2127,12 +2146,12 @@ def _del_links(self: Component) -> None:
 
 links_property = property(_get_links, _set_links, _del_links)
 
-RELATED_TO_TYPE_SETTER: TypeAlias = Union[
-    None, str, vText, vUri, vUid, List[Union[str, vText, vUri, vUid]]
-]
+RELATED_TO_TYPE_SETTER: TypeAlias = (
+    None | str | vText | vUri | vUid | list[str | vText | vUri | vUid]
+)
 
 
-def _get_related_to(self: Component) -> list[Union[vText, vUri, vUid]]:
+def _get_related_to(self: Component) -> list[vText | vUri | vUid]:
     """RELATED-TO properties as a list.
 
     Purpose:
@@ -2238,17 +2257,17 @@ def _get_related_to(self: Component) -> list[Union[vText, vUri, vUid]]:
     Examples:
         :rfc:`5545` examples of this property:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             RELATED-TO:jsmith.part7.19960817T083000.xyzMail@example.com
 
-        .. code-block:: text
+        .. code-block:: ics
 
             RELATED-TO:19960401-080045-4000F192713-0052@example.com
 
         :rfc:`9253` examples of this property:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             RELATED-TO;VALUE=URI;RELTYPE=STARTTOFINISH:
              https://example.com/caldav/user/jb/cal/
@@ -2312,7 +2331,7 @@ def _get_concepts(self: Component) -> list[vUri]:
         The following is an example of this property.
         It points to a server acting as the source for the calendar object.
 
-        .. code-block:: text
+        .. code-block:: ics
 
             CONCEPT:https://example.com/event-types/arts/music
 
@@ -2326,7 +2345,7 @@ def _get_concepts(self: Component) -> list[vUri]:
     return concepts
 
 
-CONCEPTS_TYPE_SETTER: TypeAlias = Union[List[Union[vUri, str]], str, vUri, None]
+CONCEPTS_TYPE_SETTER: TypeAlias = list[vUri | str] | str | vUri | None
 
 
 def _set_concepts(self: Component, concepts: CONCEPTS_TYPE_SETTER):
@@ -2397,7 +2416,7 @@ Description:
 Examples:
     The following is an example of this property.
 
-    .. code-block:: text
+    .. code-block:: ics
 
         REFID:itinerary-2014-11-17
 
@@ -2427,6 +2446,7 @@ Examples:
 __all__ = [
     "CONCEPTS_TYPE_SETTER",
     "LINKS_TYPE_SETTER",
+    "RECURRENCE_ID",
     "RELATED_TO_TYPE_SETTER",
     "attendees_property",
     "busy_type_property",

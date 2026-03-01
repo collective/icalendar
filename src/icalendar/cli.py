@@ -1,44 +1,56 @@
 #!/usr/bin/env python3
-"""utility program that allows user to preview calendar's events"""
+"""Utility program that allows user to preview calendar's events"""
 
 import argparse
 import sys
 from datetime import datetime
+from pathlib import Path
 
-from icalendar import __version__
+from icalendar import __version__, vCalAddress
 from icalendar.cal.calendar import Calendar
+from icalendar.cal.event import Event
 
 
-def _format_name(address):
-    """Retrieve the e-mail and the name from an address.
+def _format_name(address: str) -> str:
+    """Format a display name and email from an address string.
 
-    :arg an address object, e.g. mailto:test@test.test
+    Parameters:
+        address: An address object, such as mailto:name@example.com.
 
-    :returns str: The name and the e-mail address.
+    Returns:
+        A formatted string, like 'name <name@example.com>',
+        or an empty string if no email is found.
     """
-    email = address.split(":")[-1]
+    email = address.rsplit(":", maxsplit=1)[-1]
     name = email.split("@")[0]
     if not email:
         return ""
     return f"{name} <{email}>"
 
 
-def _format_attendees(attendees):
+def _format_attendees(attendees: list | str | vCalAddress) -> str:
     """Format the list of attendees.
 
-    :arg any attendees: Either a list, a string or a vCalAddress object.
+    Parameters:
+        attendees: Either a list, a string, or a vCalAddress object.
 
-    :returns str: Formatted list of attendees.
+    Returns:
+        A formatted string of attendees, each indented by 5 spaces.
     """
     if isinstance(attendees, str):
         attendees = [attendees]
     return "\n".join(s.rjust(len(s) + 5) for s in map(_format_name, attendees))
 
 
-def view(event):
+def view(event: Event) -> str:
     """Make a human readable summary of an iCalendar file.
 
-    :returns str: Human readable summary.
+    Parameters:
+        event: An iCalendar event containing fields such as
+               summary, organizer, attendees, location, and timing.
+
+    Returns:
+        A human readable summary of the event.
     """
     summary = event.get("summary", default="")
     organizer = _format_name(event.get("organizer", default=""))
@@ -78,15 +90,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
 
     parser.add_argument(
-        "calendar_files", nargs="+",
-        help="one or more .ics files (use '-' for stdin)"
+        "calendar_files", nargs="+", help="one or more .ics files (use '-' for stdin)"
     )
 
     parser.add_argument(
-        "--output",
-        "-o",
-        default="-",
-        help="output file path (use '-' for stdout)"
+        "--output", "-o", default="-", help="output file path (use '-' for stdout)"
     )
 
     parser.add_argument(
@@ -103,7 +111,7 @@ def main():
         output_file = sys.stdout
         close_output = False
     else:
-        output_file = open(argv.output, "w", encoding="utf-8")
+        output_file = Path(argv.output).open("w", encoding="utf-8")  # noqa: SIM115
         close_output = True
 
     try:
@@ -113,19 +121,21 @@ def main():
                 f = sys.stdin
                 close_input = False
             else:
-                f = open(path, "r", encoding="utf-8-sig")
+                f = Path(path).open(encoding="utf-8-sig")  # noqa: SIM115
                 close_input = True
 
             try:
                 calendar = Calendar.from_ical(f.read())
-                for event in calendar.walk("vevent"):
-                    output_file.write(view(event) + "\n\n")
+                output_file.writelines(
+                    view(event) + "\n\n" for event in calendar.walk("vevent")
+                )
             finally:
                 if close_input:
                     f.close()
     finally:
         if close_output:
             output_file.close()
+
 
 __all__ = ["main", "view"]
 

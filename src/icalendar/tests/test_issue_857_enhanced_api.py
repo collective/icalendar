@@ -1,12 +1,11 @@
 """Tests for issue #857: enhanced API usability improvements."""
 
-import uuid
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 import pytest
 
 from icalendar import Calendar, Event
-from zoneinfo import ZoneInfo
 from icalendar.error import IncompleteComponent
 
 
@@ -199,4 +198,6 @@ def test_enhanced_api_compared_to_original_example():
     assert "DTSTAMP:" in ical_output
     # 4. Proper timezone handling and duration usage
     assert "DTSTART" in ical_output
-    assert "DURATION" in ical_output  # Uses DURATION instead of DTEND when duration is set
+    assert (
+        "DURATION" in ical_output
+    )  # Uses DURATION instead of DTEND when duration is set

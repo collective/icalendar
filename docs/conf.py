@@ -20,6 +20,7 @@ extensions = [
     "sphinx_autodoc_typehints",  # must be loaded after sphinx.ext.napoleon. See https://github.com/tox-dev/sphinx-autodoc-typehints/issues/15
     "sphinx_copybutton",
     "sphinx_design",
+    "sphinx_icalendar",
     "sphinx_issues",
     "sphinx_reredirects",
 ]
@@ -166,15 +167,15 @@ apidoc_modules = [
         },
     }
 ]
-
+autoclass_content = "both"
 
 # -- sphinx.ext.autodoc options -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html
 autodoc_default_options = {
     "ignore-module-all": True,
+    "no-inherited-members": "object,CaselessDict,str,bool,NamedTuple,int,float,Enum",
     "members": True,
     "show-inheritance": True,
-    "special-members": "__init__",
     "undoc-members": True,
 }
 

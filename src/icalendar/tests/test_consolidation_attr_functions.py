@@ -113,7 +113,10 @@ class TestConsolidatedSetters:
 
         # Auto-detect should choose duration
         set_start_with_locking(
-            event, datetime(2026, 1, 1, 10, 0), None, "DTEND",
+            event,
+            datetime(2026, 1, 1, 10, 0),
+            None,
+            "DTEND",
         )
 
         assert event.start == datetime(2026, 1, 1, 10, 0)
@@ -128,17 +131,26 @@ class TestConsolidatedSetters:
         # Invalid locked parameter
         with pytest.raises(ValueError, match="locked must be"):
             set_start_with_locking(
-                event, datetime(2026, 1, 1, 12, 0), "invalid", "DTEND",
+                event,
+                datetime(2026, 1, 1, 12, 0),
+                "invalid",
+                "DTEND",
             )
 
         with pytest.raises(ValueError, match="locked must be"):
             set_end_with_locking(
-                event, datetime(2026, 1, 1, 12, 0), "invalid", "DTEND",
+                event,
+                datetime(2026, 1, 1, 12, 0),
+                "invalid",
+                "DTEND",
             )
 
         with pytest.raises(ValueError, match="locked must be"):
             set_duration_with_locking(
-                event, timedelta(hours=1), "invalid", "DTEND",
+                event,
+                timedelta(hours=1),
+                "invalid",
+                "DTEND",
             )
 
     def test_consolidated_functions_maintain_identical_behavior(self) -> None:
@@ -156,7 +168,10 @@ class TestConsolidatedSetters:
 
         # Use consolidated function vs direct property
         set_start_with_locking(
-            event1, datetime(2026, 1, 1, 10, 0), "end", "DTEND",
+            event1,
+            datetime(2026, 1, 1, 10, 0),
+            "end",
+            "DTEND",
         )
         event2.set_start(datetime(2026, 1, 1, 10, 0), locked="end")
 
@@ -250,7 +265,10 @@ class TestConsolidatedPropertyGetters:
         event.add("DTEND", datetime(2026, 1, 1, 15, 0))
 
         start, end, duration = get_start_end_duration_with_validation(
-            event, "DTSTART", "DTEND", "VEVENT",
+            event,
+            "DTSTART",
+            "DTEND",
+            "VEVENT",
         )
         assert start == datetime(2026, 1, 1, 12, 0)
         assert end == datetime(2026, 1, 1, 15, 0)
@@ -267,7 +285,10 @@ class TestConsolidatedPropertyGetters:
 
         with pytest.raises(InvalidCalendar, match="Only one of DTEND and DURATION"):
             get_start_end_duration_with_validation(
-                event, "DTSTART", "DTEND", "VEVENT",
+                event,
+                "DTSTART",
+                "DTEND",
+                "VEVENT",
             )
 
         # Test invalid duration for date DTSTART
@@ -278,7 +299,10 @@ class TestConsolidatedPropertyGetters:
 
         with pytest.raises(InvalidCalendar, match="DURATION must be of days"):
             get_start_end_duration_with_validation(
-                event2, "DTSTART", "DTEND", "VEVENT",
+                event2,
+                "DTSTART",
+                "DTEND",
+                "VEVENT",
             )
 
         # Test type mismatch
@@ -289,5 +313,8 @@ class TestConsolidatedPropertyGetters:
 
         with pytest.raises(InvalidCalendar, match="must be of the same type"):
             get_start_end_duration_with_validation(
-                event3, "DTSTART", "DTEND", "VEVENT",
+                event3,
+                "DTSTART",
+                "DTEND",
+                "VEVENT",
             )

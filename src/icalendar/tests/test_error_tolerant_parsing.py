@@ -1,7 +1,10 @@
 """Tests for error-tolerant parsing of property values."""
 
-from icalendar import Calendar, Event
-from icalendar.prop import vBrokenProperty, vDDDLists, vDDDTypes, vRecur, vText
+import pytest
+
+from icalendar import Calendar
+from icalendar.error import BrokenCalendarProperty
+from icalendar.prop import vBroken, vDDDLists, vDDDTypes, vRecur, vText
 
 
 def test_properties_parsed_immediately():
@@ -49,28 +52,18 @@ END:VCALENDAR"""
     assert dtstart.params["TZID"] == "America/New_York"
 
 
-def test_broken_property_vbroken_fallback():
-    """Verify broken properties fall back to vBrokenProperty."""
-    ical_str = b"""BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:test
-BEGIN:VEVENT
-UID:test-123
-DTSTART:INVALID-DATE-FORMAT
-SUMMARY:Test Event
-END:VEVENT
-END:VCALENDAR"""
-
-    cal = Calendar.from_ical(ical_str)
+def test_broken_property_vbroken_fallback(calendars):
+    """Verify broken properties fall back to vBroken."""
+    cal = calendars["broken_dtstart"]
     event = cal.walk("VEVENT")[0]
 
     # Access broken property
     dtstart = event["DTSTART"]
 
-    # Should fall back to vBrokenProperty (which is vText subclass)
-    assert isinstance(dtstart, vBrokenProperty)
-    assert isinstance(dtstart, vText)  # vBrokenProperty inherits from vText
-    assert str(dtstart) == "INVALID-DATE-FORMAT"
+    # Should fall back to vBroken (which is vText subclass)
+    assert isinstance(dtstart, vBroken)
+    assert isinstance(dtstart, vText)  # vBroken inherits from vText
+    assert str(dtstart) == "INVALID-DATE"
 
     # Metadata should be present
     assert dtstart.property_name == "DTSTART"
@@ -103,9 +96,9 @@ END:VCALENDAR"""
     assert isinstance(dtend, vDDDTypes)
     assert dtend.dt.year == 2025
 
-    # Access broken property should work (as vBrokenProperty)
+    # Access broken property should work (as vBroken)
     dtstart = event["DTSTART"]
-    assert isinstance(dtstart, vBrokenProperty)
+    assert isinstance(dtstart, vBroken)
 
     # Other properties accessible
     summary = event["SUMMARY"]
@@ -253,27 +246,16 @@ END:VCALENDAR"""
     assert "RDATE" not in event
 
 
-
-def test_vbroken_property_repr():
-    """Verify vBrokenProperty repr includes metadata."""
-    ical_str = b"""BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:test
-BEGIN:VEVENT
-UID:test-123
-DTSTART:INVALID-DATE
-SUMMARY:Test Event
-END:VEVENT
-END:VCALENDAR"""
-
-    cal = Calendar.from_ical(ical_str)
+def test_vbroken_repr(calendars):
+    """Verify vBroken repr includes metadata."""
+    cal = calendars["broken_dtstart"]
     event = cal.walk("VEVENT")[0]
 
     # Access broken property
     dtstart = event["DTSTART"]
 
     # Repr should include metadata
-    assert "vBrokenProperty" in repr(dtstart)
+    assert "vBroken" in repr(dtstart)
     assert "INVALID-DATE" in repr(dtstart)
     assert "expected_type" in repr(dtstart)
     assert "property_name" in repr(dtstart)
@@ -295,9 +277,9 @@ END:VCALENDAR"""
     cal = Calendar.from_ical(ical_str_event)
     event = cal.walk("VEVENT")[0]
 
-    # Should not raise, falls back to vBrokenProperty
+    # Should not raise, falls back to vBroken
     dtstart = event["DTSTART"]
-    assert isinstance(dtstart, vBrokenProperty)
+    assert isinstance(dtstart, vBroken)
     assert len(event.errors) > 0
 
 
@@ -319,22 +301,13 @@ END:VCALENDAR"""
     assert str(summary) == "Test Event"
 
 
-def test_vbroken_property_metadata():
-    """Verify vBrokenProperty stores parse error metadata."""
-    ical_str = b"""BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:test
-BEGIN:VEVENT
-UID:test-123
-DTSTART:INVALID-DATE
-END:VEVENT
-END:VCALENDAR"""
-
-    cal = Calendar.from_ical(ical_str)
+def test_vbroken_metadata(calendars):
+    """Verify vBroken stores parse error metadata."""
+    cal = calendars["broken_dtstart"]
     event = cal.walk("VEVENT")[0]
     dtstart = event["DTSTART"]
 
-    assert isinstance(dtstart, vBrokenProperty)
+    assert isinstance(dtstart, vBroken)
     assert dtstart.property_name == "DTSTART"
     assert dtstart.expected_type is not None
     assert dtstart.parse_error is not None
@@ -385,10 +358,65 @@ END:VCALENDAR"""
     cal = Calendar.from_ical(ical_str)
     event = cal.walk("VEVENT")[0]
 
-    # RRULE should fall back to vBrokenProperty
+    # RRULE should fall back to vBroken
     rrule = event["RRULE"]
-    assert isinstance(rrule, vBrokenProperty)
+    assert isinstance(rrule, vBroken)
 
     # Error should be recorded
     assert len(event.errors) >= 1
     assert any("RRULE" in error[0] for error in event.errors)
+
+
+def test_parse_error_is_exception_object(calendars):
+    """Verify parse_error stores the actual exception, not a string."""
+    cal = calendars["broken_dtstart"]
+    event = cal.walk("VEVENT")[0]
+    dtstart = event["DTSTART"]
+
+    assert isinstance(dtstart, vBroken)
+    assert isinstance(dtstart.parse_error, Exception)
+
+
+def test_vbroken_getattr_raises_broken_calendar_property():
+    """Verify accessing missing attributes raises BrokenCalendarProperty."""
+    broken = vBroken(
+        "INVALID",
+        property_name="DTSTART",
+        expected_type="vDDDTypes",
+        parse_error=ValueError("bad value"),
+    )
+
+    with pytest.raises(BrokenCalendarProperty) as exc_info:
+        broken.dt
+
+    assert exc_info.value.__cause__ is broken.parse_error
+    assert "DTSTART" in str(exc_info.value)
+    assert "vDDDTypes" in str(exc_info.value)
+
+
+def test_vbroken_getattr_preserves_existing_attributes():
+    """Verify normal attributes still work on vBroken."""
+    broken = vBroken(
+        "INVALID",
+        property_name="DTSTART",
+        expected_type="vDDDTypes",
+        parse_error=ValueError("bad value"),
+    )
+
+    # These should all work without raising
+    assert broken.property_name == "DTSTART"
+    assert broken.expected_type == "vDDDTypes"
+    assert isinstance(broken.parse_error, ValueError)
+    assert isinstance(broken.params, dict)
+    assert broken.encoding is not None
+
+
+def test_event_dtstart_raises_broken_calendar_property(calendars):
+    """Verify event.DTSTART raises BrokenCalendarProperty for broken values."""
+    cal = calendars["broken_dtstart"]
+    event = cal.walk("VEVENT")[0]
+
+    with pytest.raises(BrokenCalendarProperty) as exc_info:
+        event.DTSTART
+
+    assert exc_info.value.__cause__ is not None

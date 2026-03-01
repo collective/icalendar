@@ -1,6 +1,5 @@
 """N property from :rfc:`6350`."""
 
-
 from typing import Any, ClassVar, NamedTuple
 
 from icalendar.compatibility import Self
@@ -87,6 +86,7 @@ class vN:
     def to_ical(self) -> bytes:
         """Generate vCard format with semicolon-separated fields."""
         from icalendar.prop.text import vText
+
         parts = [vText(f).to_ical().decode(DEFAULT_ENCODING) for f in self.fields]
         return ";".join(parts).encode(DEFAULT_ENCODING)
 
@@ -156,5 +156,6 @@ class vN:
     def examples(cls) -> list[Self]:
         """Examples of vN."""
         return [cls(("Doe", "John", "M.", "Dr.", "Jr."))]
+
 
 __all__ = ["NFields", "vN"]

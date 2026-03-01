@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import date, datetime, timedelta
-from typing import TYPE_CHECKING, Optional, Sequence
+from typing import TYPE_CHECKING
 
 from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
@@ -32,6 +32,8 @@ from icalendar.cal.component import Component
 from icalendar.error import IncompleteComponent
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from icalendar.enums import CLASS, STATUS
     from icalendar.prop import vCalAddress
 
@@ -104,7 +106,7 @@ class Journal(Component):
         "dt",
         (datetime, date),
         date,
-        'The "DTSTART" property for a "VJOURNAL" that specifies the exact date at which the journal entry was made.',  # noqa: E501
+        'The "DTSTART" property for a "VJOURNAL" that specifies the exact date at which the journal entry was made.',
     )
 
     @property
@@ -148,6 +150,7 @@ class Journal(Component):
     contacts = contacts_property
     status = status_property
     attendees = attendees_property
+    from icalendar.attr import RECURRENCE_ID
 
     @property
     def description(self) -> str:
@@ -162,7 +165,7 @@ class Journal(Component):
         return "\r\n\r\n".join(descriptions)
 
     @description.setter
-    def description(self, description: Optional[str]):
+    def description(self, description: str | None):
         """Set the description"""
         self.descriptions = description
 
@@ -177,27 +180,28 @@ class Journal(Component):
     def new(
         cls,
         /,
-        attendees: Optional[list[vCalAddress]] = None,
+        attendees: list[vCalAddress] | None = None,
         categories: Sequence[str] = (),
-        classification: Optional[CLASS] = None,
-        color: Optional[str] = None,
+        classification: CLASS | None = None,
+        color: str | None = None,
         comments: list[str] | str | None = None,
         concepts: CONCEPTS_TYPE_SETTER = None,
         contacts: list[str] | str | None = None,
-        created: Optional[date] = None,
-        description: Optional[str | Sequence[str]] = None,
-        last_modified: Optional[date] = None,
+        created: date | None = None,
+        description: str | Sequence[str] | None = None,
+        last_modified: date | None = None,
         links: LINKS_TYPE_SETTER = None,
-        organizer: Optional[vCalAddress | str] = None,
+        organizer: vCalAddress | str | None = None,
+        recurrence_id: date | datetime | None = None,
         refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
-        sequence: Optional[int] = None,
-        stamp: Optional[date] = None,
-        start: Optional[date | datetime] = None,
-        status: Optional[STATUS] = None,
-        summary: Optional[str] = None,
-        uid: Optional[str | uuid.UUID] = None,
-        url: Optional[str] = None,
+        sequence: int | None = None,
+        stamp: date | None = None,
+        start: date | datetime | None = None,
+        status: STATUS | None = None,
+        summary: str | None = None,
+        uid: str | uuid.UUID | None = None,
+        url: str | None = None,
     ):
         """Create a new journal entry with all required properties.
 
@@ -218,6 +222,7 @@ class Journal(Component):
                 the journal.
             links: The :attr:`~icalendar.Component.links` of the journal.
             organizer: The :attr:`organizer` of the journal.
+            recurrence_id: The :attr:`RECURRENCE_ID` of the journal.
             refids: :attr:`~icalendar.Component.refids` of the journal.
             related_to: :attr:`~icalendar.Component.related_to` of the journal.
             sequence: The :attr:`sequence` of the journal.
@@ -234,7 +239,8 @@ class Journal(Component):
             :class:`Journal`
 
         Raises:
-            ~error.InvalidCalendar: If the content is not valid according to :rfc:`5545`.
+            ~error.InvalidCalendar: If the content is not valid
+                according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
@@ -262,6 +268,7 @@ class Journal(Component):
         journal.start = start
         journal.status = status
         journal.attendees = attendees
+        journal.RECURRENCE_ID = recurrence_id
 
         return journal
 
