@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.parser.ical.lazy import LazyCalendarIcalParser
@@ -38,7 +38,7 @@ class ParsedSubcomponentsStrategy:
         self._components.append(component.parse())
         return self
 
-    def is_lazy(self) -> bool:
+    def is_lazy(self) -> Literal[False]:
         """Return whether the components are lazy."""
         return False
 
@@ -116,7 +116,7 @@ class LazySubcomponentsStrategy:
 
     def walk(
         self, name: str | None
-    ) -> tuple[ParsedSubcomponentsStrategy, list[Component]]:
+    ) -> tuple[LazySubcomponentsStrategy, list[Component]]:
         """Get the subcomponents of the calendar with the given name.
 
         Parse only the minumal number of subcomponents.
@@ -129,7 +129,7 @@ class LazySubcomponentsStrategy:
             result += component.walk(name)
         return self, result
 
-    def with_uid(self, uid: str) -> tuple[ParsedSubcomponentsStrategy, list[Component]]:
+    def with_uid(self, uid: str) -> tuple[LazySubcomponentsStrategy, list[Component]]:
         """Get the subcomponents of the calendar with the given uid.
 
         Parse only the minumal number of subcomponents.
@@ -142,6 +142,11 @@ class LazySubcomponentsStrategy:
 
 
 class InitialSubcomponentsStrategy:
+    """Initial strategy for the calendar.
+
+    No subcomponents.
+    """
+
     def set_components(self, components: list[Component]) -> LazySubcomponentsStrategy:
         """Set the subcomponents of the calendar."""
         assert components == []
@@ -158,6 +163,34 @@ class LazyCalendar(Calendar):
 
     All the properties of the calendar are parsed immediately,
     just the subcomponents are not.
+
+    Examples:
+
+        By accessing the :attr:`~icalendar.cal.calendar.Calendar.events` of the calendar,
+        only :class:`~icalendar.cal.event.Event` and
+        :class:`~icalendar.cal.timezone.Timezone` are parsed.
+
+        .. code-block:: pycon
+
+            >>> from icalendar import LazyCalendar
+            >>> calendar = LazyCalendar.example("issue_1050_all_components")
+            >>> len(calendar.events) == 1
+            True
+
+        Other subcomponents are not parsed.
+        The calendar is still lazy.
+
+            >>> calendar.is_lazy()
+            True
+
+        After you access all :attr:`subcomponents` of the calendar,
+        the whole calendar has been parsed.
+
+            >>> len(calendar.subcomponents)
+            5
+            >>> calendar.is_lazy()
+            False
+
     """
 
     _subcomponents: (
@@ -177,6 +210,9 @@ class LazyCalendar(Calendar):
         """The subcomponents of the calendar.
 
         Parse all subcomponents of the calendar and return them as a list.
+
+        You can manipulate this list or set it.
+        It has the same behavior as in :class:`~icalendar.cal.calendar.Calendar`.
         """
         self._subcomponents, result = self._subcomponents.get_all_components()
         return result
@@ -201,11 +237,19 @@ class LazyCalendar(Calendar):
         return factory
 
     def add_component(self, component: Component) -> None:
-        """Add a component to the calendar."""
+        """Add a component to the calendar.
+
+        Use this instead of appending to
+        :attr:`~icalendar.cal.lazy.LazyCalendar.subcomponents`'
+        as it does not parse the whole calendar.
+        """
         self._subcomponents = self._subcomponents.add_component(component)
 
     def is_lazy(self):
         """Whether the subcomponents will be parsed lazily.
+
+        .. note:: If you believe that the calendar parses more than it should,
+            please open an issue.
 
         Returns:
             False if all subcomponents are parsed.
