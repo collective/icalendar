@@ -48,7 +48,7 @@ from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Iterable, Sequence
 
     from icalendar.alarms import Alarms
     from icalendar.enums import CLASS, STATUS
@@ -342,6 +342,7 @@ class Todo(Component):
         stamp: date | None = None,
         start: date | datetime | None = None,
         status: STATUS | None = None,
+        subcomponents: Iterable[Component] | None = None,
         summary: str | None = None,
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
@@ -374,6 +375,7 @@ class Todo(Component):
                 If None, this is set to the current time.
             start: The :attr:`start` of the todo.
             status: The :attr:`status` of the todo.
+            subcomponents: The subcomponents of the todo.
             summary: The :attr:`summary` of the todo.
             uid: The :attr:`uid` of the todo.
                 If None, this is set to a new :func:`uuid.uuid4`.
@@ -417,6 +419,8 @@ class Todo(Component):
         todo.conferences = conferences
         todo.RECURRENCE_ID = recurrence_id
 
+        if subcomponents is not None:
+            todo.subcomponents = list(subcomponents)
         if cls._validate_new:
             cls._validate_start_and_end(start, end)
         return todo
