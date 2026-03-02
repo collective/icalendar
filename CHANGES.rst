@@ -46,6 +46,10 @@ New features
 Bug fixes
 ~~~~~~~~~
 
+- Fixed :func:`~icalendar.timezone.tzid.tzids_from_tzinfo` not recognizing
+  ``dateutil.tz.win.tzwin`` objects on Windows. UTC datetimes using
+  ``dateutil.tz.gettz("UTC")`` now correctly serialize with the ``Z`` suffix
+  instead of ``TZID=Coordinated Universal Time``. :issue:`1056`
 - Fixed :meth:`Calendar.get_missing_tzids <icalendar.cal.calendar.Calendar.get_missing_tzids>`
   raising ``KeyError`` when a VTIMEZONE exists for a timezone not referenced by any event TZID,
   for example, when added by the ``x-wr-timezone`` conversion. :issue:`1124`
