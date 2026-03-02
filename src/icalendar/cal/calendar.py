@@ -4,8 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import timedelta
-from pathlib import Path
-from typing import TYPE_CHECKING, Literal, overload
+from typing import TYPE_CHECKING
 
 from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
@@ -23,6 +22,7 @@ from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
 from icalendar.cal.timezone import Timezone
 from icalendar.error import IncompleteComponent
+from icalendar.parser.ical.calendar import CalendarIcalParser
 from icalendar.version import __version__
 
 if TYPE_CHECKING:
@@ -34,6 +34,7 @@ if TYPE_CHECKING:
     from icalendar.cal.free_busy import FreeBusy
     from icalendar.cal.journal import Journal
     from icalendar.cal.todo import Todo
+    from icalendar.parser.ical.component import ComponentIcalParser
 
 
 class Calendar(Component):
@@ -86,86 +87,10 @@ class Calendar(Component):
         """Return the calendar example with the given name."""
         return cls.from_ical(get_example("calendars", name))
 
-    @overload
     @classmethod
-    def from_ical(
-        cls, st: bytes | str | Path, multiple: Literal[False] = False
-    ) -> Calendar: ...
-
-    @overload
-    @classmethod
-    def from_ical(
-        cls, st: bytes | str | Path, multiple: Literal[True]
-    ) -> list[Calendar]: ...
-
-    @classmethod
-    def from_ical(
-        cls,
-        st: bytes | str | Path,
-        multiple: bool = False,
-    ) -> Calendar | list[Calendar]:
-        """Parse iCalendar data into Calendar instances.
-
-        Wraps :meth:`Component.from_ical()
-        <icalendar.cal.component.Component.from_ical>` with timezone
-        forward-reference resolution and VTIMEZONE caching.
-
-        Parameters:
-            st: iCalendar data as bytes or string, or a path to an iCalendar file as
-                :class:`pathlib.Path` or string.
-            multiple: If ``True``, returns list. If ``False``, returns single calendar.
-
-        Returns:
-            Calendar or list of Calendars
-        """
-        if isinstance(st, Path):
-            st = st.read_bytes()
-        elif isinstance(st, str) and "\n" not in st and "\r" not in st:
-            path = Path(st)
-            try:
-                is_file = path.is_file()
-            except OSError:
-                is_file = False
-            if is_file:
-                st = path.read_bytes()
-
-        comps = Component.from_ical(st, multiple=True)
-        all_timezones_so_far = True
-        for comp in comps:
-            for component in comp.subcomponents:
-                if component.name == "VTIMEZONE":
-                    if not all_timezones_so_far:
-                        # If a preceding component refers to a VTIMEZONE defined
-                        # later in the source st
-                        # (forward references are allowed by RFC 5545), then the
-                        # earlier component may have
-                        # the wrong timezone attached.
-                        # However, during computation of comps, all VTIMEZONEs
-                        # observed do end up in
-                        # the timezone cache. So simply re-running from_ical will
-                        # rely on the cache
-                        # for those forward references to produce the correct result.
-                        # See test_create_america_new_york_forward_reference.
-                        return Component.from_ical(st, multiple)
-                else:
-                    all_timezones_so_far = False
-
-        # No potentially forward VTIMEZONEs to worry about
-        if multiple:
-            return comps
-        if len(comps) > 1:
-            raise ValueError(
-                cls._format_error(
-                    "Found multiple components where only one is allowed", st
-                )
-            )
-        if len(comps) < 1:
-            raise ValueError(
-                cls._format_error(
-                    "Found no components where exactly one is required", st
-                )
-            )
-        return comps[0]
+    def _get_ical_parser(cls, st: str | bytes) -> ComponentIcalParser:
+        """Get the iCal parser for the given input string."""
+        return CalendarIcalParser(st, cls._get_component_factory(), cls.types_factory)
 
     @property
     def events(self) -> list[Event]:

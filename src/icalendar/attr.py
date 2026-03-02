@@ -900,6 +900,7 @@ def create_single_property(
     type_def: type,
     doc: str,
     vProp: type = vDDDTypes,  # noqa: N803
+    convert: callable[object, object] | None = None,
 ):
     """Create a single property getter and setter.
 
@@ -919,6 +920,7 @@ def create_single_property(
         if isinstance(result, list):
             raise InvalidCalendar(f"Multiple {prop} defined.")
         value = result if value_attr is None else getattr(result, value_attr, result)
+        value = value if convert is None else convert(value)
         if not isinstance(value, value_type):
             raise InvalidCalendar(
                 f"{prop} must be either a "
@@ -931,6 +933,7 @@ def create_single_property(
         if value is None:
             p_del(self)
             return
+        value = convert(value) if convert is not None else value
         if not isinstance(value, value_type):
             raise TypeError(
                 f"Use {' or '.join(t.__name__ for t in value_type)}, "
