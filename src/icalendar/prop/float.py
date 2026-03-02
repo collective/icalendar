@@ -84,6 +84,10 @@ class vFloat(float):
         """The jCal representation of this property according to :rfc:`7265`."""
         return [name, self.params.to_jcal(), self.VALUE.lower(), float(self)]
 
+    def ical_value(self) -> float:
+        """FLOAT property type according to :rfc:`5545#section-3.3.7"""
+        return float(self)
+
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jCal from :rfc:`7265`.
