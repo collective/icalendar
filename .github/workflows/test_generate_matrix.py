@@ -58,7 +58,7 @@ def test_count_test_runs(arg_ref, arg_pr, expected):
     ],
 )
 def test_pypy_is_first(arg_ref, arg_pr):
-    """PyPy should be first so that it gets triggered first.
+    """PyPy takes longest to run, so it should be triggered first.
 
     See https://github.com/collective/icalendar/pull/1239#discussion_r2868711107
     """
