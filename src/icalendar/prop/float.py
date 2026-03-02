@@ -85,7 +85,7 @@ class vFloat(float):
         return [name, self.params.to_jcal(), self.VALUE.lower(), float(self)]
 
     def ical_value(self) -> float:
-        """FLOAT property type according to :rfc:`5545#section-3.3.7"""
+        """FLOAT property type according to :rfc:`5545#section-3.3.7`"""
         return float(self)
 
     @classmethod
