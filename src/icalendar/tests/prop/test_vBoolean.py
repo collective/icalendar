@@ -20,3 +20,9 @@ def test_error():
     """Error: key not exists"""
     with pytest.raises(ValueError):
         vBoolean.from_ical("ture")
+
+
+def test_ical_value():
+    """ical_value property returns the boolean value."""
+    assert vBoolean(True).ical_value is True
+    assert vBoolean(False).ical_value is False
