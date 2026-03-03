@@ -21,7 +21,7 @@ Upgrading from 6.x to 7.x should have **no complications for most developers**, 
 
 We still recommend checking out the new features and giving feedback in the repository.
 
-7.0.3 (unreleased)
+7.0.3 (2026-03-03)
 ------------------
 
 Minor changes
@@ -29,11 +29,6 @@ Minor changes
 
 - Show colorful required code changes in the CI output to help contributors solve the formatting issues. :pr:`1216`
 - Use ruff 0.15.0 for code formatting in :file:`tox.ini`. :pr:`1215`
-
-Breaking changes
-~~~~~~~~~~~~~~~~
-
-- ...
 
 New features
 ~~~~~~~~~~~~
