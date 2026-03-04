@@ -49,7 +49,7 @@ from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Iterable, Sequence
 
     from icalendar.alarms import Alarms
     from icalendar.enums import CLASS, STATUS, TRANSP
@@ -453,6 +453,7 @@ class Event(Component):
         stamp: date | None = None,
         start: date | datetime | None = None,
         status: STATUS | None = None,
+        subcomponents: Iterable[Component] | None = None,
         transparency: TRANSP | None = None,
         summary: str | None = None,
         uid: str | uuid.UUID | None = None,
@@ -486,6 +487,7 @@ class Event(Component):
                 If None, this is set to the current time.
             start: The :attr:`start` of the event.
             status: The :attr:`status` of the event.
+            subcomponents: The subcomponents of the event.
             summary: The :attr:`summary` of the event.
             transparency: The :attr:`transparency` of the event.
             uid: The :attr:`uid` of the event.
@@ -531,6 +533,8 @@ class Event(Component):
         event.conferences = conferences
         event.RECURRENCE_ID = recurrence_id
 
+        if subcomponents is not None:
+            event.subcomponents = list(subcomponents)
         if cls._validate_new:
             cls._validate_start_and_end(start, end)
         return event

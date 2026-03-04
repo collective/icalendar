@@ -65,6 +65,10 @@ New features
   :attr:`Todo.RECURRENCE_ID <icalendar.cal.todo.Todo.RECURRENCE_ID>` and
   :attr:`Journal.RECURRENCE_ID <icalendar.cal.journal.Journal.RECURRENCE_ID>`
   properties, including support in their ``new()`` constructors. :issue:`1231`
+- Added ``subcomponents`` parameter to
+  :meth:`Component.new <icalendar.cal.component.Component.new>`,
+  :meth:`Event.new <icalendar.cal.event.Event.new>`, and
+  :meth:`Todo.new <icalendar.cal.todo.Todo.new>`. :issue:`1065`
 
 Bug fixes
 ~~~~~~~~~
