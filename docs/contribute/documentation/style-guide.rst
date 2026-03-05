@@ -71,6 +71,7 @@ Sphinx and its extensions enhance core reStructuredText with additional features
 -   redirects for moved files through `sphinx_reredirects <https://documatt.com/sphinx-reredirects/usage/>`_
 -   404 not found page through `notfound.extension <https://sphinx-notfound-page.readthedocs.io/en/latest/autoapi/notfound/extension/index.html>`_
 -   automatic linking to GitHub issues and pull requests through `sphinx-issues <https://github.com/sloria/sphinx-issues>`_
+-   ``.ics`` and jCal file syntax highlighting through `sphinx-icalendar <https://sphinx-icalendar.readthedocs.io/en/latest/>`_
 
 For configuration of these features, see :ref:`configure-a-package`.
 
@@ -221,6 +222,25 @@ In the page in which the reference appears, you may use the :rst:dir:`currentmod
 The above example will render as shown.
 
     The class :class:`vXmlReference` is useful.
+
+
+Calendar file code blocks
+'''''''''''''''''''''''''
+
+Sometimes reading raw calendar files is challenging, especially when the file contains multiple events.
+To make them easier to read, use either the ``literalinclude`` or ``code-block`` directive with one of three different lexers, ``calendar``, ``ics``, or ``jcal``.
+
+The ``calendar`` lexer will generate a tabbed interface.
+The first tab displays the calendar's event names and their start and end dates.
+The second tab displays the file in ``.ics`` format, and the third in ``jCal`` format.
+
+sphinx-icalendar supports both ``.ics`` and ``jCal`` source file formats.
+
+..  literalinclude:: ../../../src/icalendar/tests/calendars/example.ics
+    :language: calendar
+
+..  seealso::
+    See more examples and usage in the documentation of `sphinx-icalendar <https://sphinx-icalendar.readthedocs.io/en/latest/>`_.
 
 
 Python docstrings
