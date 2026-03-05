@@ -53,7 +53,7 @@ class Available(Component):
     Examples:
         This is a recurring "AVAILABLE" subcomponent:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             BEGIN:AVAILABLE
             UID:57DD4AAF-3835-46B5-8A39-B3B253157F01
