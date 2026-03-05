@@ -27,7 +27,9 @@ We still recommend checking out the new features and giving feedback in the repo
 Minor changes
 ~~~~~~~~~~~~~
 
-- ...
+- Make icalendar an explicit editable install for clarity.
+  Add documentation for usage of the Sphinx extension `sphinx-icalendar <https://sphinx-icalendar.readthedocs.io/en/latest/>`_. :pr:`1268`
+
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
@@ -57,8 +59,6 @@ Minor changes
 
 - Show colorful required code changes in the CI output to help contributors solve the formatting issues. :pr:`1216`
 - Use ruff 0.15.0 for code formatting in :file:`tox.ini`. :pr:`1215`
-- Make icalendar an editable install for better development.
-  Add documentation for usage of the Sphinx extension `sphinx-icalendar <https://sphinx-icalendar.readthedocs.io/en/latest/>`_. :pr:`1268`
 
 New features
 ~~~~~~~~~~~~
