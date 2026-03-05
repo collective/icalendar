@@ -21,7 +21,35 @@ Upgrading from 6.x to 7.x should have **no complications for most developers**, 
 
 We still recommend checking out the new features and giving feedback in the repository.
 
-7.0.3 (unreleased)
+7.0.4 (unreleased)
+------------------
+
+Minor changes
+~~~~~~~~~~~~~
+
+- ...
+
+Breaking changes
+~~~~~~~~~~~~~~~~
+
+- ...
+
+New features
+~~~~~~~~~~~~
+
+- ...
+
+Bug fixes
+~~~~~~~~~
+
+- ...
+
+Documentation
+~~~~~~~~~~~~~
+
+- ...
+
+7.0.3 (2026-03-03)
 ------------------
 
 Minor changes
@@ -31,11 +59,6 @@ Minor changes
 - Use ruff 0.15.0 for code formatting in :file:`tox.ini`. :pr:`1215`
 - Make icalendar an editable install for better development.
   Add documentation for usage of the Sphinx extension `sphinx-icalendar <https://sphinx-icalendar.readthedocs.io/en/latest/>`_. :pr:`1268`
-
-Breaking changes
-~~~~~~~~~~~~~~~~
-
-- ...
 
 New features
 ~~~~~~~~~~~~
@@ -48,6 +71,10 @@ New features
 Bug fixes
 ~~~~~~~~~
 
+- Fixed :func:`~icalendar.timezone.tzid.tzids_from_tzinfo` not recognizing
+  ``dateutil.tz.win.tzwin`` objects on Windows. UTC datetimes using
+  ``dateutil.tz.gettz("UTC")`` now correctly serialize with the ``Z`` suffix
+  instead of ``TZID=Coordinated Universal Time``. :issue:`1056`
 - Fixed :meth:`Calendar.get_missing_tzids <icalendar.cal.calendar.Calendar.get_missing_tzids>`
   raising ``KeyError`` when a VTIMEZONE exists for a timezone not referenced by any event TZID,
   for example, when added by the ``x-wr-timezone`` conversion. :issue:`1124`
