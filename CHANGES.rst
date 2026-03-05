@@ -27,8 +27,7 @@ We still recommend checking out the new features and giving feedback in the repo
 Minor changes
 ~~~~~~~~~~~~~
 
-- Make icalendar an explicit editable install for clarity.
-  Add documentation for usage of the Sphinx extension `sphinx-icalendar <https://sphinx-icalendar.readthedocs.io/en/latest/>`_. :pr:`1268`
+- Make icalendar an explicit editable install for clarity. :pr:`1268`
 
 
 Breaking changes
@@ -49,7 +48,7 @@ Bug fixes
 Documentation
 ~~~~~~~~~~~~~
 
-- ...
+- Add documentation for usage of the Sphinx extension `sphinx-icalendar <https://sphinx-icalendar.readthedocs.io/en/latest/>`_. :pr:`1268`
 
 7.0.3 (2026-03-03)
 ------------------
