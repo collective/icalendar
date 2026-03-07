@@ -2,12 +2,12 @@
 Getting started
 ===============
 
-This chapter will help you quicky get started using icalendar.
+In this tutorial, we will create an iCalendar file with events and attendees.
 
 Creating a calendar
 -------------------
 
-A Calendaris the highest component type which can containe one ore more subcomponents. The calendar component itself also contains its own properties. By creating a calendar using the :meth:`~icalendar.cal.calendar.Calendar.new()` method we ensure the minimal required properties are set.
+First, you create a Calendar, the highest component type which can contain one or more subcomponents. The Calendar component itself contains its own properties. When you create one using the :meth:`~icalendar.cal.calendar.Calendar.new()` method, it automatically sets the minimal required properties.
 
 .. code-block:: py
 
@@ -16,7 +16,7 @@ A Calendaris the highest component type which can containe one ore more subcompo
     calendar = Calendar.new()
     print(calendar.to_ical().decode())
 
-After creating a new calendar we can view its properties by using :meth:`~icalendar.cal.component.Component.to_ical()`, which generates a bytes object of the component, and ``decode()`` which converts the output to Unicode making it easier to read.
+After creating a new calendar you can view its properties by using :meth:`~icalendar.cal.component.Component.to_ical()`, which generates a bytes object of the component, and ``decode()`` which converts the output to Unicode making it easier to read.
 
 .. code-block::
 
@@ -26,14 +26,14 @@ After creating a new calendar we can view its properties by using :meth:`~icalen
     UID:79f3cdd8-4562-4e06-9ea3-ac4fc5f6b802
     END:VCALENDAR
 
-By default a calender contains the version, product identifier (``PRODID``), and a unique identifier (``UID``). All ofo which are required properties for a calendar. We can also set and change these properties.
+Notice that by default a calendar contains the version, product identifier (``PRODID``), and a unique identifier (``UID``). All these are required properties for a calendar. You can also set and change these properties.
 
 .. code-block:: py
 
     calendar['PRODID'] = "-//icalendar//example.com//EN"
     print(cal.to_ical().decode())
 
-Here we change the product identifier and print the revised component.
+Here you change the product identifier and print the revised component. The output confirms the change:
 
 .. code-block::
 
@@ -46,7 +46,7 @@ Here we change the product identifier and print the revised component.
 Adding an event
 ---------------
 
-With the base calendar created, we can start to add events. An Event subcomponent can similarly be created using the :meth:`~icalendar.cal.event.Event.new()` method which includes appropriate defaults. However, we can also choose to set these properties on creation.
+Now that you have a base calendar, you can add an event to it. An Event subcomponent can similarly be created using the :meth:`~icalendar.cal.event.Event.new()` method which includes appropriate defaults. However, you can also choose to set these properties on creation.
 
 .. code-block:: py
 
@@ -60,7 +60,7 @@ With the base calendar created, we can start to add events. An Event subcomponen
     )
     print(event.to_ical().decode())
 
-This creates an event with a start and end time defined using datetime with a timezone. Using the same approach to print this component we can view our event.
+This creates an event with a start and end time defined using ``datetime`` with a timezone. The output shows your new event:
 
 .. code-block::
 
@@ -71,24 +71,24 @@ This creates an event with a start and end time defined using datetime with a ti
     UID:a3d2479f-7127-48e6-bbca-d9e0637f02b7
     END:VEVENT
 
-The event component includes the start and end dates with their times (``DTSTART`` and ``DTEND``) along with a unique identifier (``UID``), and information about when this event was created (``DTSTAMP``).
+Notice that the event component includes the start and end dates with their times (``DTSTART`` and ``DTEND``) along with a unique identifier (``UID``), and information about when this event was created (``DTSTAMP``).
 
-Similarly to the calendar event we can edit these properties or add new ones.
+Similarly to the calendar event you can edit these properties or add new ones.
 
 .. code-block:: py
 
     event.add('summary', 'Pickup bicycle from the workshop.')
 
-Using the :meth:`~icalendar.cal.component.Component.add()` method on a component we can add new properties with their name and value. The summary property represents the title of an event.
+Using the :meth:`~icalendar.cal.component.Component.add()` method on a component you can add new properties with their name and value. The summary property represents the title of an event.
 
-To use an event we must add it to the calendar.
+To use an event you must add it to the calendar.
 
 .. code-block:: py
 
     calendar.add_component(event)
     print(calendar.to_ical().decode())
 
-Our newly created event can be added to the previously created calendar using :meth:`~icalendar.cal.component.Component.add_component()`. We can then print out the calendar to verify everything it contains.
+The newly created event can be added to the previously created calendar using :meth:`~icalendar.cal.component.Component.add_component()`. Now print the calendar to verify everything it contains:
 
 .. code-block::
 
@@ -105,12 +105,12 @@ Our newly created event can be added to the previously created calendar using :m
     END:VEVENT
     END:VCALENDAR
 
-We can now see our calendar with the event nested inside.
+You can now see your calendar with the event nested inside.
 
 Creating events with attendees
 ------------------------------
 
-Now weare going to create a second event in our calendar which includes attendees.
+Next, you create  a second event in your calendar which includes attendees.
 
 .. code-block:: py
 
@@ -125,7 +125,7 @@ Now weare going to create a second event in our calendar which includes attendee
     )
     print(ride_event.to_ical().decode())
 
-We have now created an event with a set start and end time, including a timezone, the event has a title and lists two attendees by their email address.
+You have now created an event with a set start and end time, including a timezone, the event has a title and lists two attendees by their email address. The output confirms our additions:
 
 .. code-block::
 
@@ -139,7 +139,7 @@ We have now created an event with a set start and end time, including a timezone
     ATTENDEE:mailto:another_friend@example.com
     END:VEVENT
 
-The ouput confirms both attendees were added to the event, along with the custom start and end timestamps.
+You can see that both attendees were added to the event, along with the custom start and end timestamps.
 
 The list of attendees can also be updated after the event was created to add new attendees.
 
@@ -147,16 +147,16 @@ The list of attendees can also be updated after the event was created to add new
 
     ride_event.attendees.append(vCalAddress("mailto:late_joiner@example.com"))
 
-Lastly, we can add this event to the same calendar we created in the beginning.
+Lastly, add this event to the same calendar you created in the beginning.
 
 .. code-block:: py
 
     calendar.add_component(ride_event)
 
-Creating an .ical file
+Creating an .iCal file
 ----------------------
 
-After we're complete with creating our calendar we can write our calendr to a file.
+Now that you have finished creating your calendar, you can write it to a file.
 
 .. code-block:: py
 
