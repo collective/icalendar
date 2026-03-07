@@ -7,7 +7,7 @@ This chapter will help you quicky get started using icalendar.
 Creating a calendar
 -------------------
 
-A Calendaris the highest component type which can containe one ore more subcomponents. The calendar component itself also contains its own properties. By creating a calendar using the ``new()`` method we ensure the minimal required properties are set.
+A Calendaris the highest component type which can containe one ore more subcomponents. The calendar component itself also contains its own properties. By creating a calendar using the :meth:`~icalendar.cal.calendar.Calendar.new()` method we ensure the minimal required properties are set.
 
 .. code-block:: py
 
@@ -16,7 +16,7 @@ A Calendaris the highest component type which can containe one ore more subcompo
     calendar = Calendar.new()
     print(calendar.to_ical().decode())
 
-After creating a new calendar we can view its properties by using ``to_ical()``, which generates a bytes object of the component, and ``decode()`` which converts the output to Unicode making it easier to read.
+After creating a new calendar we can view its properties by using :meth:`~icalendar.cal.component.Component.to_ical()`, which generates a bytes object of the component, and ``decode()`` which converts the output to Unicode making it easier to read.
 
 .. code-block::
 
@@ -46,7 +46,7 @@ Here we change the product identifier and print the revised component.
 Adding an event
 ---------------
 
-With the base calendar created, we can start to add events. An Event subcomponent can similarly be created using the ``new()`` method which includes appropriate defaults. However, we can also choose to set these properties on creation.
+With the base calendar created, we can start to add events. An Event subcomponent can similarly be created using the :meth:`~icalendar.cal.event.Event.new()` method which includes appropriate defaults. However, we can also choose to set these properties on creation.
 
 .. code-block:: py
 
@@ -79,7 +79,7 @@ Similarly to the calendar event we can edit these properties or add new ones.
 
     event.add('summary', 'Pickup bicycle from the workshop.')
 
-Using the ``add()`` method on a component we can add new properties with their name and value. The summary property represents the title of an event.
+Using the :meth:`~icalendar.cal.component.Component.add()` method on a component we can add new properties with their name and value. The summary property represents the title of an event.
 
 To use an event we must add it to the calendar.
 
@@ -88,7 +88,7 @@ To use an event we must add it to the calendar.
     calendar.add_component(event)
     print(calendar.to_ical().decode())
 
-Our newly created event can be added to the previously created calendar using ``add_component()``. We can then print out the calendar to verify everything it contains.
+Our newly created event can be added to the previously created calendar using :meth:`~icalendar.cal.component.Component.add_component()`. We can then print out the calendar to verify everything it contains.
 
 .. code-block::
 
@@ -163,4 +163,4 @@ After we're complete with creating our calendar we can write our calendr to a fi
     with open("example.ics", "wb") as f:
         f.write(calendar.to_ical())
 
-This creates a new file called ``example.ics`` and writes the bytes objet returned by ``to_ical()`` to the file.
+This creates a new file called ``example.ics`` and writes the bytes objet returned by :meth:`~icalendar.cal.component.Component.to_ical()` to the file.
