@@ -512,6 +512,7 @@ class Event(Component):
             related_to=related_to,
             refids=refids,
             concepts=concepts,
+            subcomponents=subcomponents,
         )
         event.summary = summary
         event.description = description
@@ -533,8 +534,6 @@ class Event(Component):
         event.conferences = conferences
         event.RECURRENCE_ID = recurrence_id
 
-        if subcomponents is not None:
-            event.subcomponents = list(subcomponents)
         if cls._validate_new:
             cls._validate_start_and_end(start, end)
         return event

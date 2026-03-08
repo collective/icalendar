@@ -399,6 +399,7 @@ class Todo(Component):
             related_to=related_to,
             refids=refids,
             concepts=concepts,
+            subcomponents=subcomponents,
         )
         todo.summary = summary
         todo.description = description
@@ -419,8 +420,6 @@ class Todo(Component):
         todo.conferences = conferences
         todo.RECURRENCE_ID = recurrence_id
 
-        if subcomponents is not None:
-            todo.subcomponents = list(subcomponents)
         if cls._validate_new:
             cls._validate_start_and_end(start, end)
         return todo

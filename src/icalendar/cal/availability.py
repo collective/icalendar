@@ -36,7 +36,7 @@ from icalendar.error import InvalidCalendar
 from .component import Component
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Iterable, Sequence
     from datetime import date
 
     from icalendar.cal.available import Available
@@ -258,6 +258,7 @@ class Availability(Component):
         sequence: int | None = None,
         stamp: date | None = None,
         start: datetime | None = None,
+        subcomponents: Iterable[Component] | None = None,
         summary: str | None = None,
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
@@ -310,6 +311,7 @@ class Availability(Component):
             related_to=related_to,
             refids=refids,
             concepts=concepts,
+            subcomponents=subcomponents,
         )
         availability.summary = summary
         availability.description = description

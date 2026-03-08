@@ -44,8 +44,9 @@ New features
   properties, including support in their ``new()`` constructors. :issue:`1231`
 - Added ``subcomponents`` parameter to
   :meth:`Component.new <icalendar.cal.component.Component.new>`,
-  :meth:`Event.new <icalendar.cal.event.Event.new>`, and
-  :meth:`Todo.new <icalendar.cal.todo.Todo.new>`. :issue:`1065`
+  :meth:`Event.new <icalendar.cal.event.Event.new>`,
+  :meth:`Todo.new <icalendar.cal.todo.Todo.new>`, and
+  :meth:`Availability.new <icalendar.cal.availability.Availability.new>`. :issue:`1065`
 
 Bug fixes
 ~~~~~~~~~

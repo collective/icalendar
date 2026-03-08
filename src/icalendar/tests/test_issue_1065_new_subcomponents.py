@@ -1,51 +1,61 @@
 """Tests for issue #1065: new() subcomponents parameter."""
 
-from datetime import timedelta
+import pytest
 
-from icalendar import Alarm, Event, Todo
-from icalendar.cal.component import Component
-
-
-def _make_alarm() -> Alarm:
-    """Create a minimal valid Alarm with a TRIGGER."""
-    alarm = Alarm()
-    alarm["ACTION"] = "DISPLAY"
-    alarm.TRIGGER = timedelta(minutes=-15)
-    return alarm
+from icalendar import (
+    Availability,
+    Calendar,
+    Component,
+    Event,
+    Timezone,
+    Todo,
+)
 
 
-def test_component_new_with_subcomponents():
+def _make_child() -> Component:
+    """Create a minimal child component."""
     child = Component()
     child["X-TEST"] = "value"
-    parent = Component.new(subcomponents=[child])
-    assert len(parent.subcomponents) == 1
-    assert parent.subcomponents[0] is child
+    return child
 
 
-def test_component_new_without_subcomponents():
-    component = Component.new()
-    assert component.subcomponents == []
+# Classes that accept subcomponents in new(), with any required extra kwargs.
+CLASSES_WITH_NEW = [
+    pytest.param(Component, {}, id="Component"),
+    pytest.param(Event, {"summary": "Test"}, id="Event"),
+    pytest.param(Todo, {"summary": "Test"}, id="Todo"),
+    pytest.param(Calendar, {}, id="Calendar"),
+    pytest.param(Timezone, {}, id="Timezone"),
+    pytest.param(Availability, {}, id="Availability"),
+]
 
 
-def test_event_new_with_subcomponents():
-    alarm = _make_alarm()
-    event = Event.new(summary="Test", subcomponents=[alarm])
-    assert len(event.subcomponents) == 1
-    assert event.subcomponents[0] is alarm
+@pytest.mark.parametrize(("cls", "kwargs"), CLASSES_WITH_NEW)
+def test_new_with_subcomponents(cls, kwargs):
+    child = _make_child()
+    obj = cls.new(**kwargs, subcomponents=[child])
+    assert len(obj.subcomponents) == 1
+    assert obj.subcomponents[0] is child
 
 
-def test_todo_new_with_subcomponents():
-    alarm = _make_alarm()
-    todo = Todo.new(summary="Test", subcomponents=[alarm])
-    assert len(todo.subcomponents) == 1
-    assert todo.subcomponents[0] is alarm
+@pytest.mark.parametrize(("cls", "kwargs"), CLASSES_WITH_NEW)
+def test_new_without_subcomponents(cls, kwargs):
+    obj = cls.new(**kwargs)
+    assert obj.subcomponents == []
 
 
-def test_event_new_without_subcomponents():
-    event = Event.new(summary="Test")
-    assert event.subcomponents == []
+@pytest.mark.parametrize(("cls", "kwargs"), CLASSES_WITH_NEW)
+def test_subcomponents_list_identity(cls, kwargs):
+    child = _make_child()
+    original_list = [child]
+    obj = cls.new(**kwargs, subcomponents=original_list)
+    assert obj.subcomponents is original_list
 
 
-def test_todo_new_without_subcomponents():
-    todo = Todo.new(summary="Test")
-    assert todo.subcomponents == []
+@pytest.mark.parametrize(("cls", "kwargs"), CLASSES_WITH_NEW)
+def test_subcomponents_tuple_becomes_list(cls, kwargs):
+    child = _make_child()
+    obj = cls.new(**kwargs, subcomponents=(child,))
+    assert isinstance(obj.subcomponents, list)
+    assert len(obj.subcomponents) == 1
+    assert obj.subcomponents[0] is child
