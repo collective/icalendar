@@ -15,7 +15,13 @@ from typing import TYPE_CHECKING
 from dateutil.tz import tz
 
 from icalendar.timezone import equivalent_timezone_ids_result
+from icalendar.timezone.windows_to_olson import WINDOWS_TO_OLSON
 from icalendar.tools import is_date
+
+try:
+    from dateutil.tz.win import tzwin as _tzwin
+except ImportError:
+    _tzwin = None  # not on Windows
 
 if TYPE_CHECKING:
     from datetime import datetime, tzinfo
@@ -52,6 +58,11 @@ def tzids_from_tzinfo(tzinfo: tzinfo | None) -> tuple[str]:
         return get_equivalent_tzids(tzinfo._tzid)  # noqa: SLF001
     if isinstance(tzinfo, tz.tzstr):
         return get_equivalent_tzids(tzinfo._s)  # noqa: SLF001
+    if _tzwin is not None and isinstance(tzinfo, _tzwin):
+        olson = WINDOWS_TO_OLSON.get(tzinfo._name)  # noqa: SLF001
+        if olson is not None:
+            return get_equivalent_tzids(olson)
+        return get_equivalent_tzids(tzinfo._name)  # noqa: SLF001
     if hasattr(tzinfo, "_filename"):  # dateutil.tz.tzfile  # noqa: SIM102
         if DATEUTIL_ZONEINFO_PATH is not None:
             # tzfile('/usr/share/zoneinfo/Europe/Berlin')
