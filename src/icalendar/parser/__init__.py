@@ -24,6 +24,8 @@ from .property import (
     unescape_list_or_string,
 )
 from .string import (
+    _escape_char,
+    _unescape_char,
     escape_char,
     escape_string,
     foldline,
@@ -36,6 +38,8 @@ __all__ = [
     "Contentline",
     "Contentlines",
     "Parameters",
+    "_escape_char",
+    "_unescape_char",
     "dquote",
     "escape_char",
     "escape_string",

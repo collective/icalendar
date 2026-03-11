@@ -52,13 +52,13 @@ The following examples illustrate the file structure.
 
 The following example iCalendar file consists of a single content line, with only a name and value.
 
-.. code-block:: text
+.. code-block:: ics
 
     BEGIN:VCALENDAR
 
 The next example iCalendar file consists of a content line with parameters.
 
-.. code-block:: text
+.. code-block:: ics
 
     ATTENDEE;CN=Max Rasmussen;ROLE=REQ-PARTICIPANT:MAILTO:example@example.com
 
@@ -82,7 +82,7 @@ icalendar contains methods for converting to and from these encodings.
 
 The following example is a ``VCALENDAR`` component representing a calendar.
 
-.. code-block:: text
+.. code-block:: ics
 
     BEGIN:VCALENDAR
     ... vcalendar properties ...
@@ -91,7 +91,7 @@ The following example is a ``VCALENDAR`` component representing a calendar.
 The most frequent subcomponent to a ``VCALENDAR`` component is a ``VEVENT``.
 This following example is a ``VCALENDAR`` component with a nested ``VEVENT`` subcomponent.
 
-.. code-block:: text
+.. code-block:: ics
 
     BEGIN:VCALENDAR
     ... vcalendar properties ...

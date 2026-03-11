@@ -75,7 +75,7 @@ class vRecur(CaselessDict):
     Examples:
         The following RRULE specifies daily events for 10 occurrences.
 
-        .. code-block:: text
+        .. code-block:: ics
 
             RRULE:FREQ=DAILY;COUNT=10
 

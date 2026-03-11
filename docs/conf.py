@@ -20,6 +20,7 @@ extensions = [
     "sphinx_autodoc_typehints",  # must be loaded after sphinx.ext.napoleon. See https://github.com/tox-dev/sphinx-autodoc-typehints/issues/15
     "sphinx_copybutton",
     "sphinx_design",
+    "sphinx_icalendar",
     "sphinx_issues",
     "sphinx_reredirects",
 ]

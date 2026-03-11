@@ -102,6 +102,9 @@ Related projects
 `ical2jcal <https://pypi.org/project/ical2jcal>`_
     Convert between iCalendar and jCalendar.
 
+`sphinx-icalendar <https://pypi.org/project/sphinx-icalendar/>`_
+    Provides calendar code blocks and syntax highlighting in a tabbed interface for documentation as an extension to Sphinx.
+
 Change log
 ==========
 
