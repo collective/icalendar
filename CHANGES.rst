@@ -27,7 +27,7 @@ We still recommend checking out the new features and giving feedback in the repo
 Minor changes
 ~~~~~~~~~~~~~
 
-- ...
+- Created an :meth:`~icalendar.prop.vBoolean.ical_value` method for the :class:`~icalendar.prop.vBoolean` component. See :issue:`876`.
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
@@ -57,7 +57,6 @@ Minor changes
 
 - Show colorful required code changes in the CI output to help contributors solve the formatting issues. :pr:`1216`
 - Use ruff 0.15.0 for code formatting in :file:`tox.ini`. :pr:`1215`
-- Created an :meth:`~icalendar.prop.vBoolean.ical_value` method for the :class:`~icalendar.prop.vBoolean` component. See :issue:`876`.
 
 New features
 ~~~~~~~~~~~~
