@@ -60,7 +60,19 @@ class vBoolean(int):
         return self
 
     def to_ical(self) -> bytes:
+        """Converts a :class:`~icalendar.prop.boolean.vBoolean` to a BOOLEAN property type.
+
+        This class method takes a ``vBoolean``—a Python boolean value—and converts it to an iCalendar BOOLEAN property type, in compliance with :rfc:`5545#section-3.3.2`.
+
+        Returns:
+            Either "TRUE" or "FALSE" as bytes, depending on the value of the ``vBoolean``.
+        """
         return b"TRUE" if self else b"FALSE"
+
+    @property
+    def ical_value(self) -> bool:
+        """BOOLEAN property type according to :rfc:`5545#section-3.3.2"""
+        return bool(self)
 
     @classmethod
     def from_ical(cls, ical: str) -> bool:
