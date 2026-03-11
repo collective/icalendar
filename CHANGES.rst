@@ -113,6 +113,7 @@ Documentation
 ~~~~~~~~~~~~~
 
 - Removed methods of ``str``, ``int``, and other classes and methods in the Python standard library from the documentation.
+- Document ``vText`` properties according to :rfc:`5545#section-3.3.11`. :issue:`742`
 
 7.0.1 (2026-02-17)
 ------------------
