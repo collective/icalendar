@@ -4,7 +4,7 @@ from typing import Any, ClassVar
 
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
-from icalendar.parser import Parameters, escape_char
+from icalendar.parser import Parameters, _escape_char
 from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
 
 
@@ -32,7 +32,7 @@ class vText(str):
         return f"vText({self.to_ical()!r})"
 
     def to_ical(self) -> bytes:
-        return escape_char(self).encode(self.encoding)
+        return _escape_char(self).encode(self.encoding)
 
     @classmethod
     def from_ical(cls, ical: ICAL_TYPE) -> Self:

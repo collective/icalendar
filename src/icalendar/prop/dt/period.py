@@ -60,14 +60,14 @@ class vPeriod(TimeBase):
         The period starting at 18:00:00 UTC, on January 1, 1997 and
         ending at 07:00:00 UTC on January 2, 1997 would be:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             19970101T180000Z/19970102T070000Z
 
         The period start at 18:00:00 on January 1, 1997 and lasting 5 hours
         and 30 minutes would be:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             19970101T180000Z/PT5H30M
 
