@@ -104,7 +104,7 @@ class Event(Component):
         component used to represent a meeting that will also be opaque to
         searches for busy time:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             BEGIN:VEVENT
             UID:19970901T130000Z-123401@example.com
@@ -120,7 +120,7 @@ class Event(Component):
         used to represent a reminder that will not be opaque, but rather
         transparent, to searches for busy time:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             BEGIN:VEVENT
             UID:19970901T130000Z-123402@example.com
@@ -136,7 +136,7 @@ class Event(Component):
         The following is an example of the "VEVENT" calendar component
         used to represent an anniversary that will occur annually:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             BEGIN:VEVENT
             UID:19970901T130000Z-123403@example.com
@@ -155,7 +155,7 @@ class Event(Component):
         set to July 9th, 2007, since the "DTEND" property specifies the
         non-inclusive end of the event.
 
-        .. code-block:: text
+        .. code-block:: ics
 
             BEGIN:VEVENT
             UID:20070423T123432Z-541111@example.com

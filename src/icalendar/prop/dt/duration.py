@@ -63,13 +63,13 @@ class vDuration(TimeBase):
     Example:
         A duration of 15 days, 5 hours, and 20 seconds would be:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             P15DT5H0M20S
 
         A duration of 7 weeks would be:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             P7W
 
