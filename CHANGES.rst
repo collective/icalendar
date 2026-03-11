@@ -27,7 +27,7 @@ We still recommend checking out the new features and giving feedback in the repo
 Minor changes
 ~~~~~~~~~~~~~
 
-- ...
+- Do not run some tests until a pull request is approved. :pr:`1246`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
