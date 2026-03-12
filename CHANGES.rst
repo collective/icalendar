@@ -49,7 +49,7 @@ Bug fixes
 Documentation
 ~~~~~~~~~~~~~
 
-- ...
+- Convert docstrings in ``attr.py`` and ``cal/calendar.py`` to Google Style format. See :issue:`1072`.
 
 7.0.3 (2026-03-03)
 ------------------
