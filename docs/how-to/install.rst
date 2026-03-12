@@ -20,21 +20,6 @@ If installation is successful, you will be able to import the iCalendar package 
 
     >>> import icalendar
 
-
-Distribution Packages
----------------------
-
-The `icalendar` package is also published in many Linux distributions.  
-The following badge shows where it is available and which versions are packaged:
-
-.. image:: https://repology.org/badge/vertical-allrepos/python%3Aicalendar.svg?columns=4
-   :target: https://repology.org/project/python%3Aicalendar/versions
-   :alt: Packaging status across distributions
-
-Repology is a service that tracks the availability and versions of packages across many Linux distributions.
-
-`View the packaging status of icalendar across distributions <https://repology.org/project/python%3Aicalendar/versions>`_.
-
 Distribution packages
 ---------------------
 
