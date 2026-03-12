@@ -236,6 +236,11 @@ The second tab displays the file in ``.ics`` format, and the third in ``jCal`` f
 
 sphinx-icalendar supports both ``.ics`` and ``jCal`` source file formats.
 
+..  code-block:: rst
+
+    ..  literalinclude:: ../../../src/icalendar/tests/calendars/example.ics
+        :language: calendar
+
 ..  literalinclude:: ../../../src/icalendar/tests/calendars/example.ics
     :language: calendar
 
