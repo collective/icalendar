@@ -28,7 +28,8 @@ Minor changes
 ~~~~~~~~~~~~~
 
 - Make icalendar an explicit editable install for clarity. :pr:`1268`
-
+- Created an :meth:`~icalendar.prop.vBoolean.ical_value` method for the :class:`~icalendar.prop.vBoolean` component. See :issue:`876`.
+- Created an :meth:`~icalendar.prop.vFloat.ical_value` method for the :class:`~icalendar.prop.vFloat` component. See :issue:`876`.
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
@@ -49,6 +50,7 @@ Documentation
 ~~~~~~~~~~~~~
 
 - Add documentation for usage of the Sphinx extension `sphinx-icalendar <https://sphinx-icalendar.readthedocs.io/en/latest/>`_. :pr:`1268`
+- Convert docstrings in ``attr.py`` and ``cal/calendar.py`` to Google Style format. See :issue:`1072`.
 
 7.0.3 (2026-03-03)
 ------------------

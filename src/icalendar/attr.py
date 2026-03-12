@@ -903,12 +903,13 @@ def create_single_property(
 ):
     """Create a single property getter and setter.
 
-    :param prop: The name of the property.
-    :param value_attr: The name of the attribute to get the value from.
-    :param value_type: The type of the value.
-    :param type_def: The type of the property.
-    :param doc: The docstring of the property.
-    :param vProp: The type of the property from :mod:`icalendar.prop`.
+    Parameters:
+        prop: The name of the property.
+        value_attr: The name of the attribute to get the value from.
+        value_type: The type of the value.
+        type_def: The type of the property.
+        doc: The docstring of the property.
+        vProp: The type of the property from :mod:`icalendar.prop`.
     """
 
     def p_get(self: Component):
