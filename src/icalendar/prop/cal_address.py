@@ -27,7 +27,7 @@ class vCalAddress(str):
     Example:
         ``mailto:`` is in front of the address.
 
-        .. code-block:: text
+        .. code-block:: ics
 
             mailto:jane_doe@example.com
 

@@ -253,14 +253,14 @@ class RELTYPE(StrEnum):
     Examples:
         The following is an example from :rfc:`5545`:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             RELATED-TO;RELTYPE=SIBLING:19960401-080045-4000F192713@
              example.com
 
         Usage inside of RELATED-TO according to :rfc:`9253`:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             RELATED-TO;VALUE=URI;RELTYPE=STARTTOFINISH:
              https://example.com/caldav/user/jb/cal/
@@ -425,7 +425,7 @@ class BUSYTYPE(StrEnum):
     Example:
         The following is an example of this property:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             BUSYTYPE:BUSY
     """

@@ -197,7 +197,7 @@ Parameter dictionary
 --------------------
 
 All property values are defined in :mod:`icalendar.prop` and have parameters.
-:class:`~icalendar.prop.vText` is used for ``VERSION``, ``PRODID``, and ``DESCRIPTION``.
+:class:`~icalendar.prop.text.vText` is used for ``VERSION``, ``PRODID``, and ``DESCRIPTION``.
 Preferably, use the :ref:`parameter-properties` to get and set the values.
 You can also access them using ``.params``.
 

@@ -9,6 +9,7 @@ from icalendar import prop
 from icalendar.cal.calendar import Calendar
 from icalendar.cal.component import Component
 from icalendar.cal.event import Event
+from icalendar.cal.journal import Journal
 from icalendar.timezone import tzid_from_dt
 
 
@@ -410,6 +411,13 @@ def test_minimal_calendar_component_with_one_event():
         b"DTSTART:20050404T080000\r\nUID:42\r\n"
         b"END:VEVENT\r\n"
     )
+
+
+def test_calendar_journals_property(calendars):
+    """Calendar.journals returns all VJOURNAL components."""
+    journals = calendars.rfc_7986_image.journals
+    assert len(journals) == 2
+    assert all(isinstance(j, Journal) for j in journals)
 
 
 def test_calendar_with_parsing_errors_includes_all_events(calendars):

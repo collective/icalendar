@@ -32,7 +32,7 @@ def test_setting_a_utc_datetime_value_does_not_include_a_TZID(
     """Check that the VALUE parameter is correctly determined."""
     if convert:
         utc_prop = convert(utc_prop.dt)
-    assert utc_prop.params.is_utc()
+    assert not utc_prop.params.tzid, "UTC datetimes must not carry a TZID parameter"
     component = Component()
     component.add("X-PROP", utc_prop)
     component.add("DTSTAMP", utc_prop)
