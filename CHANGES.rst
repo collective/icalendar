@@ -48,7 +48,7 @@ Bug fixes
 Documentation
 ~~~~~~~~~~~~~
 
-- ...
+- Add Repology badge and distribution installation instructions to install documentation. :issue:`1119`
 
 7.0.3 (2026-03-03)
 ------------------
