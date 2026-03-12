@@ -59,6 +59,10 @@ class vBinary:
             del params["encoding"]
         return [name, params, self.VALUE.lower(), self.obj]
 
+    def ical_value(self) -> str:
+        """INTEGER property type according to :rfc:`5545#section-3.3.1`"""
+        return self.obj
+
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jCal from :rfc:`7265` to a vBinary.
