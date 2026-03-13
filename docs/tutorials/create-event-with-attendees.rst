@@ -20,7 +20,7 @@ When you create one using the :meth:`~icalendar.cal.calendar.Calendar.new()` met
 
 After creating a new calendar, you can view its properties by using :meth:`~icalendar.cal.component.Component.to_ical()`, which generates a bytes object of the component, and :meth:`~bytes.decode`, which converts the output to Unicode, making it easier to read.
 
-..  code-block:: calendar
+..  code-block::
 
     BEGIN:VCALENDAR
     VERSION:2.0

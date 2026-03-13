@@ -27,6 +27,22 @@ icalendar lets you create, inspect, and modify calendaring information with Pyth
             Go to How to guides
 
     .. grid-item-card::
+        :link: tutorials/index
+        :link-type: doc
+
+        :octicon:`zap;1.5em;sd-text-info`
+        Tutorials
+        ^^^
+        This part of the documentation contains lessons that guide you through various iCalendar concepts step by step.
+        +++
+
+        .. button-ref:: tutorials/index
+            :color: primary
+            :expand:
+
+            Go to Tutorials
+
+    .. grid-item-card::
         :link: reference/index
         :link-type: doc
 
@@ -66,6 +82,13 @@ icalendar lets you create, inspect, and modify calendaring information with Pyth
     :hidden:
 
     how-to/index
+
+.. toctree::
+    :caption: Tutorials 
+    :maxdepth: 2
+    :hidden:
+
+    tutorials/index
 
 .. toctree::
     :caption: Reference
