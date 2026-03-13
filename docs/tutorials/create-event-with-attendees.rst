@@ -23,7 +23,7 @@ After creating a new calendar, you can view its properties by using :meth:`~ical
     >>> print(calendar.to_ical().decode())
     BEGIN:VCALENDAR
     VERSION:2.0
-    PRODID:-//collective//icalendar//7.0.2//EN
+    PRODID:-//collective//icalendar//0.1.dev3721//EN
     UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
     END:VCALENDAR
 
