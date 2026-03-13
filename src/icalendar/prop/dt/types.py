@@ -102,7 +102,7 @@ class vDDDTypes(TimeBase):
                     return to_datetime(vDate.from_ical(ical)).replace(tzinfo=tzinfo)
             return vDate.from_ical(ical)
         if len(ical) in (6, 7):
-            return vTime.from_ical(ical)
+            return vTime.from_ical(ical, timezone=timezone)
         raise ValueError(f"Expected datetime, date, or time. Got: '{ical}'")
 
     @property
