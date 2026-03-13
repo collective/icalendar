@@ -27,6 +27,7 @@ We still recommend checking out the new features and giving feedback in the repo
 Minor changes
 ~~~~~~~~~~~~~
 
+- Make icalendar an explicit editable install for clarity. :pr:`1268`
 - Created an :meth:`~icalendar.prop.vBoolean.ical_value` method for the :class:`~icalendar.prop.vBoolean` component. See :issue:`876`.
 - Created an :meth:`~icalendar.prop.vFloat.ical_value` method for the :class:`~icalendar.prop.vFloat` component. See :issue:`876`.
 - Created an :meth:`~icalendar.prop.vInt.ical_value` method for the :class:`~icalendar.prop.vInt` component. See :issue:`876`.
@@ -49,6 +50,7 @@ Bug fixes
 Documentation
 ~~~~~~~~~~~~~
 
+- Add documentation for usage of the Sphinx extension `sphinx-icalendar <https://sphinx-icalendar.readthedocs.io/en/latest/>`_. :pr:`1268`
 - Add Repology badge and distribution installation instructions to install documentation. :issue:`1119`
 - Convert docstrings in ``attr.py`` and ``cal/calendar.py`` to Google Style format. See :issue:`1072`.
 
