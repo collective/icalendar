@@ -26,10 +26,9 @@ We still recommend checking out the new features and giving feedback in the repo
 
 Minor changes
 ~~~~~~~~~~~~~
-
-- Created an :meth:`~icalendar.prop.vBoolean.ical_value` method for the :class:`~icalendar.prop.vBoolean` component. See :issue:`876`.
-- Created an :meth:`~icalendar.prop.vFloat.ical_value` method for the :class:`~icalendar.prop.vFloat` component. See :issue:`876`.
-- Created an :meth:`~icalendar.prop.vBinary.ical_value` method for the :class:`~icalendar.prop.vBinary` component. See :issue:`876`.
+- Created an :meth:`~icalendar.prop.boolean.vBoolean.ical_value` method for the :class:`~icalendar.prop.boolean.vBoolean` component. :issue:`876`
+- Created an :meth:`~icalendar.prop.float.vFloat.ical_value` method for the :class:`~icalendar.prop.float.vFloat` component. :issue:`876`
+- Created an :meth:`~icalendar.prop.binary.vBinary.ical_value` method for the :class:`~icalendar.binary.prop.vBinary` component. :issue:`876`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
