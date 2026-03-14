@@ -30,7 +30,7 @@ icalendar lets you create, inspect, and modify calendaring information with Pyth
         :link: tutorials/index
         :link-type: doc
 
-        :octicon:`zap;1.5em;sd-text-info`
+        :octicon:`mortar-board;1.5em;sd-text-info`
         Tutorials
         ^^^
         This part of the documentation contains lessons that guide you through various iCalendar concepts step by step.
@@ -63,7 +63,7 @@ icalendar lets you create, inspect, and modify calendaring information with Pyth
         :link: contribute/index
         :link-type: doc
 
-        :octicon:`bookmark;1.5em;sd-text-info`
+        :octicon:`heart;1.5em;sd-text-info`
         Contributing guide
         ^^^
         This part of the documentation describes how to contribute to icalendar.
