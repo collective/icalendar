@@ -27,8 +27,6 @@ After creating a new calendar, you can view its properties by using :meth:`~ical
     UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
     END:VCALENDAR
 
-    >>>
-
 Notice that by default a calendar contains the version, product identifier (``PRODID``), and a unique identifier (``UID``).
 All these are required properties for a calendar.
 You can also set and change these properties.
@@ -48,8 +46,6 @@ The output confirms the change:
     PRODID:-//icalendar//example.com//EN
     UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
     END:VCALENDAR
-
-    >>> 
 
 Adding an event
 ---------------
@@ -81,8 +77,6 @@ The output shows your new event:
     DTSTAMP:20250517T080612Z
     UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
     END:VEVENT
-
-    >>> 
 
 Notice that the event component includes the start and end dates with their times (``DTSTART`` and ``DTEND``) along with a unique identifier (``UID``), and information about when this event was created (``DTSTAMP``).
 
@@ -120,8 +114,6 @@ Now print the calendar to verify everything that it contains:
     END:VEVENT
     END:VCALENDAR
 
-    >>> 
-
 You can now see your calendar with the event nested inside.
 
 Creating events with attendees
@@ -141,7 +133,6 @@ Next, create a second event in your calendar that includes attendees.
     ...         vCalAddress("mailto:another_friend@example.com"),
     ...     ]
     ... )
-    >>> 
 
 You've now created an event with a set start and end date and time, including a timezone, the event has a title, and lists two attendees by their email address.
 The output confirms your additions:
@@ -158,8 +149,6 @@ The output confirms your additions:
     ATTENDEE:mailto:me@example.com
     ATTENDEE:mailto:another_friend@example.com
     END:VEVENT
-
-    >>>
 
 You can see that both attendees were added to the event, along with the custom start and end timestamps.
 
@@ -186,6 +175,5 @@ Now that you have finished creating your calendar, you can write it to a file.
     ...     f.write(calendar.to_ical())
     ... 
     610
-    >>> 
 
 This creates a new file called :file:`example.ics` and writes the bytes object returned by :meth:`~icalendar.cal.component.Component.to_ical()` to the file.
