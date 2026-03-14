@@ -164,6 +164,34 @@ Lastly, add this event to the same calendar you created in the beginning.
 
     >>> calendar.add_component(ride_event)
 
+Now print the calendar to view everything you've added so far, this should include the calender component with two events.
+
+.. code-block:: pycon
+
+    >>> print(calendar.to_ical().decode())
+    BEGIN:VCALENDAR
+    VERSION:2.0
+    PRODID:-//icalendar//example.com//EN
+    UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
+    BEGIN:VEVENT
+    SUMMARY:Pickup bicycle from the workshop.
+    DTSTART:20260321T063000Z
+    DTEND:20260321T073000Z
+    DTSTAMP:20250517T080612Z
+    UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
+    END:VEVENT
+    BEGIN:VEVENT
+    SUMMARY:Morning ride with the team.
+    DTSTART:20260328T070000Z
+    DTEND:20260328T133000Z
+    DTSTAMP:20250517T080612Z
+    UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
+    ATTENDEE:mailto:me@example.com
+    ATTENDEE:mailto:another_friend@example.com
+    ATTENDEE:mailto:late_joiner@example.com
+    END:VEVENT
+    END:VCALENDAR
+
 Creating an .ics file
 ---------------------
 
@@ -176,4 +204,10 @@ Now that you have finished creating your calendar, you can write it to a file.
     ... 
     610
 
-This creates a new file called :file:`example.ics` and writes the bytes object returned by :meth:`~icalendar.cal.component.Component.to_ical()` to the file.
+This creates a new file called :download:`example.ics` and writes the bytes object returned by :meth:`~icalendar.cal.component.Component.to_ical()` to the file.
+
+Look on your file system for the file, local to where you issued commands.
+Its contents should be the following.
+
+..  literalinclude:: example.ics
+    :language: ics
