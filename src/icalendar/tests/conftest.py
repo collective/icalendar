@@ -457,6 +457,7 @@ NOW_UTC = NOW.replace(tzinfo=timezone.utc)
 UID_DEFAULT = "d755cef5-2311-46ed-a0e1-6733c9e15c63"
 PRODID_DEFAULT = "-//collective//icalendar//7.0.3.dev78//EN"
 
+
 @pytest.fixture
 def test_uid() -> str:
     """The UID that tests always create."""
