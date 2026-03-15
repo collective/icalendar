@@ -288,6 +288,7 @@ class Availability(Component):
             stamp: The :attr:`stamp` of the availability.
                 If None, this is set to the current time.
             start: The :attr:`start` of the availability.
+            subcomponents: The :attr:`subcomponents` of the availability.
             summary: The :attr:`summary` of the availability.
             uid: The :attr:`uid` of the availability.
                 If ``None``, this is set to a new :func:`uuid.uuid4`.
