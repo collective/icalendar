@@ -104,7 +104,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         git checkout main
         git pull
 
-#.  When cutting any new release that you'll tag and want to be considered as "stable", on the ``main`` or development branch, update the Sphinx configuration file :file:`docs/conf.py` to match that version.
+#.  When cutting any new release that you'll tag and want to be considered as "stable," on the ``main`` or development branch, update the Sphinx configuration file :file:`docs/conf.py` to match that version.
 
     Hide the warning banner.
 
@@ -112,7 +112,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
         html_theme_options = {
             # ...
-            "show_version_warning_banner": False,
+            "show_version_warning_banner": False},
 
 #.  Check that the file :file:`CHANGES.rst` is up to date with the `latest merged pull requests <https://github.com/collective/icalendar/pulls?q=is%3Apr+is%3Amerged>`_, and the version you want to release is correctly named.
     Change the date of the release, and remove empty sections.
@@ -284,7 +284,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
             html_theme_options = {
                 # ...
-                "show_version_warning_banner": True,
+                "show_version_warning_banner": True},
 
     #.  On the previous numbered major release branch, show the warning banner.
 
@@ -292,7 +292,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
             html_theme_options = {
                 # ...
-                "show_version_warning_banner": True,
+                "show_version_warning_banner": True},
 
 #.  Configure `Read the Docs <https://app.readthedocs.org/projects/icalendar/>`_.
 

@@ -1,6 +1,7 @@
 Args
 backported
 (?i)datetime
+Repology
 dicts
 [Dd]ocstrings?
 fuzzer
