@@ -44,8 +44,7 @@ New features
 Bug fixes
 ~~~~~~~~~
 
-- Fixed ``Makefile`` ``vale`` target to return the correct exit code on failure. :issue:`1277`
-- Fixed various typos in documentation and added "Repology" to Vale vocabulary. :issue:`1277`
+- ...
 
 Documentation
 ~~~~~~~~~~~~~
