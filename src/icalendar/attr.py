@@ -2337,7 +2337,7 @@ def _get_concepts(self: Component) -> list[vUri]:
 
     .. seealso::
 
-        :attr:`icalendar.cal.component.Component.categories`
+        :attr:`icalendar.prop.categories.vCategory`
     """
     concepts = self.get("CONCEPT", [])
     if not isinstance(concepts, list):
