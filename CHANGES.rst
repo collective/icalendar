@@ -50,7 +50,8 @@ Documentation
 ~~~~~~~~~~~~~
 
 - Add Repology badge and distribution installation instructions to install documentation. :issue:`1119`
-- Convert docstrings in ``attr.py`` and ``cal/calendar.py`` to Google Style format. See :issue:`1072`.
+- Convert docstrings in ``attr.py`` and ``cal/calendar.py`` to Google Style format. :issue:`1072`
+- Explained import shortcuts in :doc:`component-api` documentation. :issue:`1161`
 
 7.0.3 (2026-03-03)
 ------------------
