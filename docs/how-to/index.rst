@@ -7,7 +7,6 @@ How to guides
 
     install
     upgrade
-    getting-started
     usage
     parse-errors
     attendees

@@ -78,13 +78,13 @@ The output shows your new event:
     UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
     END:VEVENT
 
-Notice that the event component includes the start and end dates with their times (``DTSTART`` and ``DTEND``) along with a unique identifier (``UID``), and information about when this event was created (``DTSTAMP``).
+Notice that the event component includes the start and end dates with their times (``DTSTART`` and ``DTEND``) along with a unique identifier (``UID``), and its creation timestamp (``DTSTAMP``).
 
 Similar to the calendar event, you can edit these properties or add new ones.
 
 .. code-block:: pycon
 
-    >>> event.add("summary", "Pickup bicycle from the workshop.")
+    >>> event.add("summary", "Pick up bicycle from the workshop.")
 
 Using the :meth:`~icalendar.cal.component.Component.add()` method on a component, you can add new properties with their name and value.
 The summary property represents the title of an event.
@@ -106,7 +106,7 @@ Now print the calendar to verify everything that it contains:
     PRODID:-//icalendar//example.com//EN
     UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
     BEGIN:VEVENT
-    SUMMARY:Pickup bicycle from the workshop.
+    SUMMARY:Pick up bicycle from the workshop.
     DTSTART:20260321T063000Z
     DTEND:20260321T073000Z
     DTSTAMP:20250517T080612Z
@@ -164,7 +164,7 @@ Lastly, add this event to the same calendar you created in the beginning.
 
     >>> calendar.add_component(ride_event)
 
-Now print the calendar to view everything you've added so far, this should include the calender component with two events.
+Now print the calendar to view everything you've added so far, this should include the calendar component with two events.
 
 .. code-block:: pycon
 
@@ -174,7 +174,7 @@ Now print the calendar to view everything you've added so far, this should inclu
     PRODID:-//icalendar//example.com//EN
     UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
     BEGIN:VEVENT
-    SUMMARY:Pickup bicycle from the workshop.
+    SUMMARY:Pick up bicycle from the workshop.
     DTSTART:20260321T063000Z
     DTEND:20260321T073000Z
     DTSTAMP:20250517T080612Z

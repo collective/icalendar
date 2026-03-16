@@ -3,7 +3,7 @@ VERSION:2.0
 PRODID:-//icalendar//example.com//EN
 UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
 BEGIN:VEVENT
-SUMMARY:Pickup bicycle from the workshop.
+SUMMARY:Pick up bicycle from the workshop.
 DTSTART:20260321T063000Z
 DTEND:20260321T073000Z
 DTSTAMP:20250517T080612Z
