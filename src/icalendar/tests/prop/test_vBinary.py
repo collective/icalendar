@@ -44,6 +44,7 @@ def test_from_ical():
     with pytest.raises(ValueError, match=r"Not valid base 64 encoding\."):
         vBinary.from_ical("áèਮ")
 
+
 def test_ical_value():
     """ical_value property returns the string value."""
     assert vBinary("dmFsdWU=").ical_value() == "dmFsdWU="
