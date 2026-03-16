@@ -28,7 +28,7 @@ After creating a new calendar, you can view its properties by using :meth:`~ical
     END:VCALENDAR
 
 Notice that by default a calendar contains the version, product identifier (``PRODID``), and a unique identifier (``UID``).
-All these are required properties for a calendar.
+All these properties are required for a calendar.
 You can also set and change these properties.
 
 .. code-block:: pycon
