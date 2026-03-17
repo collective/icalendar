@@ -17,7 +17,7 @@ class CalendarIcalParser(ComponentIcalParser):
                 if component.name == "VTIMEZONE":
                     if not all_timezones_so_far:
                         # If a preceding component refers to a VTIMEZONE defined
-                        # later in the source st
+                        # later in the source string
                         # (forward references are allowed by RFC 5545), then the
                         # earlier component may have
                         # the wrong timezone attached.
