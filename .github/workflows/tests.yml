@@ -23,7 +23,7 @@ jobs:
     - name: Set matrix
       id: set-matrix
       run: |
-        echo "include=$(python .github/workflows/generate-matrix.py '${{ github.ref }}' '${{ github.event.review.state }}' )" >> $GITHUB_OUTPUT
+        echo "include=$(python .github/workflows/generate_matrix.py '${{ github.ref }}' '${{ github.event.review.state }}' )" >> $GITHUB_OUTPUT
 
   run-tests:
     needs: generate-matrix
