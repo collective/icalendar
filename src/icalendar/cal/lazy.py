@@ -94,7 +94,7 @@ class LazySubcomponentsStrategy:
 
     def add_component(
         self, component: Component | LazySubcomponent
-    ) -> LazyCalendarIcalParser:
+    ) -> LazySubcomponentsStrategy:
         """Add a component to the calendar."""
         self._components.append(component)
         return self
