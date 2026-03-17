@@ -36,6 +36,9 @@ if TYPE_CHECKING:
     from icalendar.cal.todo import Todo
 
 
+DEFAULT_PRODID = f"-//collective//icalendar//{__version__}//EN"
+
+
 class Calendar(Component):
     """
         The "VCALENDAR" object is a collection of calendar information.
@@ -651,7 +654,7 @@ Description:
             lang = language.upper() if language else "EN"
             prodid = f"-//{organization}//{app_name}//{lang}"
         elif prodid is None:
-            prodid = f"-//collective//icalendar//{__version__}//EN"
+            prodid = DEFAULT_PRODID
 
         calendar.prodid = prodid
         calendar.version = version

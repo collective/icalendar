@@ -29,3 +29,5 @@ coverage.xml
 !.coveragerc
 !.well-known
 /ical_fuzzer/
+# from tutorials
+/example.ics

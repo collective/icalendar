@@ -23,7 +23,7 @@ After creating a new calendar, you can view its properties by using :meth:`~ical
     >>> print(calendar.to_ical().decode())
     BEGIN:VCALENDAR
     VERSION:2.0
-    PRODID:-//collective//icalendar//7.0.3.dev78//EN
+    PRODID:-//collective//icalendar//7.0.0//EN
     UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
     END:VCALENDAR
 
@@ -33,7 +33,7 @@ You can also set and change these properties.
 
 .. code-block:: pycon
 
-    >>> calendar['PRODID'] = "-//icalendar//example.com//EN" 
+    >>> calendar.prodid = "-//icalendar//example.com//EN" 
 
 Here you change the product identifier and print the revised component.
 The output confirms the change:
@@ -84,7 +84,7 @@ Similar to the calendar event, you can edit these properties or add new ones.
 
 .. code-block:: pycon
 
-    >>> event.add("summary", "Pick up bicycle from the workshop.")
+    >>> event.summary = "Pick up bicycle from the workshop."
 
 Using the :meth:`~icalendar.cal.component.Component.add()` method on a component, you can add new properties with their name and value.
 The summary property represents the title of an event.
@@ -199,10 +199,10 @@ Now that you have finished creating your calendar, you can write it to a file.
 
 .. code-block:: pycon
 
-    >>> with open("example.ics", "wb") as f:
-    ...     f.write(calendar.to_ical())
-    ... 
-    610
+    >>> from pathlib import Path
+    >>> path = Path("example.ics")
+    >>> path.write_bytes(calendar.to_ical())
+    611
 
 This creates a new file called :download:`example.ics` and writes the bytes object returned by :meth:`~icalendar.cal.component.Component.to_ical()` to the file.
 
