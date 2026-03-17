@@ -141,7 +141,8 @@ class LazySubcomponent:
         Parameters:
             name: The name of the component to walk to.
         """
-        assert name is not None
+        if not isinstance(name, str):
+            raise TypeError("name must be a string.")
         if name == self.name or (
             self._parser and self._parser.contains_component(name)
         ):
