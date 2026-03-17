@@ -41,8 +41,6 @@ def test_timezone(event: Event):
 def test_dtstart_of_timezone_is_datetime(calendars):
     """Test the failing test case and try to narrow down the problem."""
     calendar: Calendar = calendars.issue_218_bad_tzid
-    print(calendar.raw_ics.decode())
-    print(calendar.to_ical().decode())
     tz = calendar.timezones[0]
     assert tz["TZID"] == "UTC+11"
     standard = tz.standard[0]

@@ -62,7 +62,10 @@ class LazyCalendarIcalParser(ComponentIcalParser):
                 and line[4:].strip().upper() == component_name
             ):
                 break
-        assert self.component is not None, "We assume a component is already started."
+        if self.component is None:
+            raise ValueError(
+                f"BEGIN:{component_name} encountered outside of a parent component."
+            )
         self.component.add_component(
             LazySubcomponent(
                 component_name,

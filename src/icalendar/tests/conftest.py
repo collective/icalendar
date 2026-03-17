@@ -156,7 +156,7 @@ def calendars(tzp, request):
 
     We have two ways of parsing those:
     - Instantly
-    - Lazily with BigCalendar
+    - Lazily with LazyCalendar
     """
     return DataSource.from_folder(CALENDARS_FOLDER, request.param)
 

@@ -117,7 +117,7 @@ class ComponentIcalParser:
             self._components.append(component)
         else:
             self._stack[-1].add_component(component)
-        if vals == "VTIMEZONE" and "TZID" in component:
+        if vals.upper() == "VTIMEZONE" and "TZID" in component:
             tzp.cache_timezone_component(component)
 
     def prepare_components(self) -> None:

@@ -10,8 +10,8 @@ import pytest
 from icalendar import Alarm, Event, LazyCalendar
 from icalendar.parser.ical.lazy import LazySubcomponent
 
-if TYPE_CHECKING:
-    from calendar import Calendar
+    if TYPE_CHECKING:
+        from icalendar import Calendar
 
 
 def assert_is_lazy_calendar(calendar: LazyCalendar) -> None:
@@ -52,7 +52,7 @@ def lazy_subcomponent(mock_parser):
 
 
 def test_lazy_subcomponent_is_not_parsed_when_created(mock_parser, lazy_subcomponent):
-    """The component is inisially not parsed."""
+    """The component is initially not parsed."""
     assert not lazy_subcomponent.is_parsed()
     assert lazy_subcomponent._parser is mock_parser
     assert mock_parser._calls == 0
@@ -81,8 +81,8 @@ def test_when_parsed_parser_is_freed(lazy_subcomponent, mock_parser):
     assert lazy_subcomponent._parser is None
 
 
-def test_big_calendar_returns_a_calendar(lazy_calendars):
-    """Test that the BigCalendar returns a Calendar."""
+def test_lazy_calendar_returns_a_calendar(lazy_calendars):
+    """LazyCalendar.from_ical returns a LazyCalendar instance."""
     assert isinstance(lazy_calendars.empty, LazyCalendar)
 
 

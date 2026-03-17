@@ -75,7 +75,6 @@ def test_parsed_calendars_are_equal_if_from_same_source(ics_file, tzp):
     """
     cal1 = ics_file.__class__.from_ical(ics_file.raw_ics)
     cal2 = ics_file.__class__.from_ical(ics_file.raw_ics)
-    print(ics_file.raw_ics)
     assert_equal(cal1, cal2)
 
 
