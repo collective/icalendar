@@ -691,8 +691,8 @@ class Component(CaselessDict):
         for subcomponent in self.subcomponents:
             if subcomponent not in other.subcomponents:
                 return False
-        
-        # We now know the other component's subcomponents are not a strict subset 
+
+        # We now know the other component's subcomponents are not a strict subset
         # of this component's. However, we still need to check the other way around.
         for subcomponent in other.subcomponents:
             if subcomponent not in self.subcomponents:

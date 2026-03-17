@@ -117,8 +117,6 @@ def test_calendar_equality_order():
     assert_equal(copy1 == copy2, False)
     assert_equal(copy2 == copy1, False)
 
-    
-
 
 def test_component_equality_order():
     """Ensure inequality of components when subcomponents are strict subset, regardless of order."""
