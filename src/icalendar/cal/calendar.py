@@ -215,8 +215,9 @@ class Calendar(Component):
 
             Timezones that are not known will not be added.
 
-        :param first_date: earlier than anything that happens in the calendar
-        :param last_date: later than anything happening in the calendar
+        Parameters:
+            first_date: Earlier than anything that happens in the calendar.
+            last_date: Later than anything happening in the calendar.
 
         >>> from icalendar import Calendar, Event
         >>> from datetime import datetime
@@ -567,6 +568,7 @@ Description:
             related_to=related_to,
             refids=refids,
             concepts=concepts,
+            subcomponents=subcomponents,
         )
 
         # Generate prodid if not provided but organization is given
@@ -589,8 +591,6 @@ Description:
         calendar.url = url
         calendar.refresh_interval = refresh_interval
         calendar.source = source
-        if subcomponents is not None:
-            calendar.subcomponents = list(subcomponents)
 
         return calendar
 

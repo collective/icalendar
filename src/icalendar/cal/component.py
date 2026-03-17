@@ -37,6 +37,8 @@ from icalendar.timezone import tzp
 from icalendar.tools import is_date
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
+
     from icalendar.compatibility import Self
 
 _marker = []
@@ -709,6 +711,7 @@ class Component(CaselessDict):
         refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
         stamp: date | None = None,
+        subcomponents: Iterable[Component] | None = None,
     ) -> Component:
         """Create a new component.
 
@@ -720,6 +723,7 @@ class Component(CaselessDict):
             links: The :attr:`links` of the component.
             related_to: The :attr:`related_to` of the component.
             stamp: The :attr:`DTSTAMP` of the component.
+            subcomponents: The subcomponents of the component.
 
         Raises:
             ~error.InvalidCalendar: If the content is not valid
@@ -737,6 +741,12 @@ class Component(CaselessDict):
         component.related_to = related_to
         component.concepts = concepts
         component.refids = refids
+        if subcomponents is not None:
+            component.subcomponents = (
+                subcomponents
+                if isinstance(subcomponents, list)
+                else list(subcomponents)
+            )
         return component
 
     def to_jcal(self) -> list:
