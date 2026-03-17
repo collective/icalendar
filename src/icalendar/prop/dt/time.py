@@ -153,7 +153,8 @@ class vTime(TimeBase):
         return self.params.is_utc() or is_utc(self.dt)
 
     @staticmethod
-    def from_ical(ical, timezone=None):
+    def from_ical(ical:str, timezone:str|None|datetime.tzinfo=None) -> time:
+        """Convert an ical string into a time."""
         tzinfo = None
         if isinstance(timezone, str):
             tzinfo = tzp.timezone(timezone)
