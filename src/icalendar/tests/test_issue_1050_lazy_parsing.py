@@ -219,3 +219,13 @@ def test_absent_uid(calendars):
     calendar = calendars.issue_1050_all_components
     components = calendar.with_uid("non-existent-uid")
     assert len(components) == 0
+
+
+def test_uid_is_present_but_not_in_the_uid_property(calendars):
+    """Check that even if the UID is present somewhere the component is not
+    returned.
+
+    See https://github.com/collective/icalendar/pull/1201/changes#r2869287074
+    """
+    components = calendars.issue_1050_all_components.with_uid("alarm")
+    assert len(components) == 0
