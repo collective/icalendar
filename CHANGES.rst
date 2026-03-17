@@ -31,6 +31,8 @@ New features
 Bug fixes
 ~~~~~~~~~
 
+- Fixed :func:`~icalendar.attr.get_end_property` to avoid allowing the creating of VEVENT 
+components with negative durations. Only VTODO components are allowed to have negative durations. See :issue:`999`.
 - GitHub Actions: conditional tests now show as "skipped" instead of "pending". See :issue:`1264`.
 
 Documentation
