@@ -150,8 +150,11 @@ class InitialSubcomponentsStrategy:
     """
 
     def set_components(self, components: list[Component]) -> LazySubcomponentsStrategy:
-        """Set the subcomponents of the calendar."""
-        assert components == []
+        if components:
+            raise ValueError(
+                "Cannot set subcomponents on an uninitialised LazyCalendar. "
+                "Parse it first or add components via add_component()."
+            )
         return LazySubcomponentsStrategy()
 
 
