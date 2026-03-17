@@ -89,8 +89,8 @@ def test_big_calendar_returns_a_calendar(lazy_calendars):
 @pytest.mark.parametrize(
     "component_name", ["VEVENT", "VTODO", "VALARM", "X-COMPONENT", "VTIMEZONE"]
 )
-def test_can_only_parse_calendar_components(component_name):
-    """Test that we still get a component even if the string contains other components."""
+def test_non_calendar_components_are_parsed_correctly(component_name):
+    """LazyCalendar.from_ical() returns components as Calendar and as Component do."""
     component = LazyCalendar.from_ical(f"BEGIN:{component_name}\nEND:{component_name}")
     assert component.name == component_name
     assert not component.is_lazy()
