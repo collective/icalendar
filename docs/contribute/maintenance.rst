@@ -321,6 +321,8 @@ Updating Python versions
 When adding support for a new Python version, or removing support for an old one, the following files need to be updated:
 
 :file:`.github/workflows/tests.yml`
+    Upgrade Python versions.
+:file:`.github/workflows/*.py`
     Add or remove the Python version from the test matrix.
 :file:`tox.ini`
     Update the ``envlist`` to include or remove the Python version.
@@ -330,5 +332,7 @@ When adding support for a new Python version, or removing support for an old one
     Update the compatibility information.
 :file:`docs/maintenance.rst`
     Update this list if any new files need to be modified.
+`Branch Protection Rules <https://github.com/collective/icalendar/settings/branch_protection_rules>`_
+    Update the branch protection rules so that they match the required test names.
 
 Remember to write tests that completely cover the changes, and update any documentation that mentions supported Python versions.
