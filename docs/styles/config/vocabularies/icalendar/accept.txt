@@ -31,3 +31,4 @@ uv
 vCard
 xCal
 Xcode
+Repology
