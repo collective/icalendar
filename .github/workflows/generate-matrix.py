@@ -64,24 +64,44 @@ matrix = []
 # jobs that always run
 #
 # RULE: always test the lowest allowed version
-matrix.append({"tox_env": "py", "python_version": f"3.{PYTHON_MINOR_VERSION_MIN}"})
+matrix.append(
+    {"tox_env": "py", "python_version": f"3.{PYTHON_MINOR_VERSION_MIN}", "skip": False}
+)
 # RULE: use lowest allowed version for nopytz
-matrix.append({"tox_env": "nopytz", "python_version": f"3.{PYTHON_MINOR_VERSION_MIN}"})
+matrix.append(
+    {
+        "tox_env": "nopytz",
+        "python_version": f"3.{PYTHON_MINOR_VERSION_MIN}",
+        "skip": False,
+    }
+)
 # RULE: always test the latest version
-matrix.append({"tox_env": "py", "python_version": f"3.{PYTHON_MINOR_VERSION_MAX}"})
+matrix.append(
+    {"tox_env": "py", "python_version": f"3.{PYTHON_MINOR_VERSION_MAX}", "skip": False}
+)
 
 #
-# create full job list if required
+# Conditionally run additional jobs.
+# Always include them in the matrix so that required checks show as "skipped"
+# instead of "pending" when the conditions are not met.
+# See https://github.com/collective/icalendar/issues/1264
 #
 
-if RUN_ALL_JOBS:
-    for minor_python_version in range(
-        PYTHON_MINOR_VERSION_MIN + 1, PYTHON_MINOR_VERSION_MAX
-    ):
-        matrix.append({"tox_env": "py", "python_version": f"3.{minor_python_version}"})
+for minor_python_version in range(
+    PYTHON_MINOR_VERSION_MIN + 1, PYTHON_MINOR_VERSION_MAX
+):
+    matrix.append(
+        {
+            "tox_env": "py",
+            "python_version": f"3.{minor_python_version}",
+            "skip": not RUN_ALL_JOBS,
+        }
+    )
 
-    # pypy is slow but good to test
-    matrix.append({"tox_env": "pypy3", "python_version": "pypy3.10"})
+# pypy is slow but good to test
+matrix.append(
+    {"tox_env": "pypy3", "python_version": "pypy3.10", "skip": not RUN_ALL_JOBS}
+)
 
 #
 # Generate tests names for the matrix
