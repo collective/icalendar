@@ -10,6 +10,8 @@ from icalendar.parser.ical.lazy import LazyCalendarIcalParser
 from .calendar import Calendar
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from icalendar.parser.ical.component import ComponentIcalParser
     from icalendar.parser.ical.lazy import LazySubcomponent
 
@@ -258,7 +260,7 @@ class LazyCalendar(Calendar):
         return self._subcomponents.is_lazy()
 
     def _walk(
-        self, name: str | None, select: callable[[Component], bool]
+        self, name: str | None, select: Callable[[Component], bool]
     ) -> list[Component]:
         self._subcomponents, result = self._subcomponents.walk(name)
         result = [component for component in result if select(component)]
