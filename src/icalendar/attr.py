@@ -26,7 +26,7 @@ from icalendar.timezone import tzp
 from icalendar.tools import is_date
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Callable, Sequence
 
     from icalendar.cal import Component
 
@@ -900,7 +900,7 @@ def create_single_property(
     type_def: type,
     doc: str,
     vProp: type = vDDDTypes,  # noqa: N803
-    convert: callable[object, object] | None = None,
+    convert: Callable[[object], object] | None = None,
 ):
     """Create a single property getter and setter.
 
