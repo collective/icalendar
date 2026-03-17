@@ -15,6 +15,95 @@ from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
 UFOLD = re.compile("(\r?\n)+[ \t]")
 NEWLINE = re.compile(r"\r?\n")
 
+OWS = " \t"
+
+
+def _strip_ows_around_delimiters(st: str, delimiters: str = ";=") -> str:
+    """Strip optional whitespace around delimiters outside of quoted sections,
+    respecting backslash escapes so that escaped delimiters are not treated as
+    separators.
+
+    This is a lenient parsing helper (used when strict=False) to support
+    iCalendar content lines that contain extra whitespace around tokens.
+    """
+    if not st:
+        return st
+
+    out: list[str] = []
+    pending_ws: list[str] = []
+    in_quotes = False
+    escaped = False
+    last_was_delimiter = False  # True only if the last appended char was a raw delimiter
+
+    for ch in st:
+        # Handle escaped character (the backslash set escaped in previous iteration)
+        if escaped:
+            if pending_ws:
+                if last_was_delimiter:
+                    pending_ws.clear()
+                else:
+                    out.extend(pending_ws)
+                    pending_ws.clear()
+            out.append(ch)
+            escaped = False
+            last_was_delimiter = False
+            continue
+
+        # Handle backslash to escape next character
+        if ch == '\\' and not in_quotes:
+            if pending_ws:
+                if last_was_delimiter:
+                    pending_ws.clear()
+                else:
+                    out.extend(pending_ws)
+                    pending_ws.clear()
+            out.append(ch)
+            escaped = True
+            last_was_delimiter = False
+            continue
+
+        # Handle quote toggling
+        if ch == '"' and not escaped:
+            in_quotes = not in_quotes
+            if pending_ws:
+                if last_was_delimiter:
+                    pending_ws.clear()
+                else:
+                    out.extend(pending_ws)
+                    pending_ws.clear()
+            out.append(ch)
+            last_was_delimiter = False
+            continue
+
+        # Whitespace outside quotes is buffered
+        if not in_quotes and not escaped and ch in OWS:
+            pending_ws.append(ch)
+            continue
+
+        # Raw delimiter (unescaped and outside quotes)
+        if not in_quotes and not escaped and ch in delimiters:
+            pending_ws.clear()
+            while out and out[-1] in OWS:
+                out.pop()
+            out.append(ch)
+            last_was_delimiter = True
+            continue
+
+        # Regular character
+        if pending_ws:
+            if last_was_delimiter:
+                pending_ws.clear()
+            else:
+                out.extend(pending_ws)
+                pending_ws.clear()
+        out.append(ch)
+        last_was_delimiter = False
+
+    if pending_ws and not last_was_delimiter:
+        out.extend(pending_ws)
+
+    return "".join(out).strip()
+
 
 class Contentline(str):
     """A content line is basically a string that can be folded and parsed into
@@ -110,6 +199,8 @@ class Contentline(str):
             # Extract name - if no delimiter,
             #   take whole string for validate_token to reject
             name = self[:name_split] if name_split else self
+            if not self.strict:
+                name = re.sub(r"[ \t]+", "", name.strip())
             validate_token(name)
 
             if not name_split or name_split + 1 == value_split:
@@ -117,7 +208,10 @@ class Contentline(str):
                 raise ValueError("Invalid content line")  # noqa: TRY301
             # Parse parameters - they still need to be escaped/unescaped
             # for proper handling of commas, semicolons, etc. in parameter values
-            param_str = escape_string(self[name_split + 1 : value_split])
+            raw_param_str = self[name_split + 1 : value_split]
+            if not self.strict:
+                raw_param_str = _strip_ows_around_delimiters(raw_param_str)
+            param_str = escape_string(raw_param_str)
             params = Parameters.from_ical(param_str, strict=self.strict)
             params = Parameters(
                 (unescape_string(key), unescape_list_or_string(value))
