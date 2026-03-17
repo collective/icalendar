@@ -592,7 +592,7 @@ Description:
 Examples:
     This is a label of a chat.
 
-    .. code-block:: text
+    .. code-block:: ics
 
         CONFERENCE;VALUE=URI;FEATURE=VIDEO;
             LABEL="Web video chat, access code=76543";
@@ -624,14 +624,14 @@ Description:
 Example:
     A Microsoft Word document:
 
-    .. code-block:: text
+    .. code-block:: ics
 
         ATTACH;FMTTYPE=application/msword:ftp://example.com/pub/docs/
          agenda.doc
 
     A website:
 
-    .. code-block:: text
+    .. code-block:: ics
 
         LINK;FMTTYPE=text/html;LINKREL=SOURCE;LABEL=Venue;VALUE=URI:
          https://example.com/venue
@@ -688,7 +688,7 @@ Registration:
 Examples:
     This identifies the latest version of the event information.
 
-    .. code-block:: text
+    .. code-block:: ics
 
         LINKREL=latest-version
 

@@ -1,6 +1,6 @@
 """UTC datetimes must not generate a spurious VTIMEZONE component.
 
-Per :rfc:`5545` section 3.2.19, the TZID parameter MUST NOT be applied to
+Per :rfc:`5545#section-3.2.19`, the TZID parameter MUST NOT be applied to
 DATE-TIME or TIME properties whose time values are specified in UTC.
 
 See https://github.com/collective/icalendar/issues/1124
@@ -36,7 +36,7 @@ def test_utc_not_in_missing_tzids():
     Even if UTC were present in get_used_tzids() (e.g. from a legacy calendar
     with TZID=UTC), get_missing_tzids() must filter it out so that
     add_missing_timezones() never creates a VTIMEZONE for UTC.
-    Per :rfc:`5545` section 3.2.19, UTC datetimes use the Z suffix instead.
+    Per :rfc:`5545#section-3.2.19`, UTC datetimes use the Z suffix instead.
     """
     calendar = Calendar()
     event = Event()

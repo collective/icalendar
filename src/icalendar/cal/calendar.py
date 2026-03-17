@@ -250,7 +250,7 @@ class Calendar(Component):
         To create a :rfc:`5545` compatible calendar,
         all of these timezones should be added.
 
-        UTC is excluded: per :rfc:`5545` section 3.2.19, UTC datetimes use
+        UTC is excluded: per :rfc:`5545#section-3.2.19`, UTC datetimes use
         the ``Z`` suffix and never require a VTIMEZONE component.
         """
         tzids = self.get_used_tzids() - {"UTC"}
@@ -290,8 +290,9 @@ class Calendar(Component):
 
             Timezones that are not known will not be added.
 
-        :param first_date: earlier than anything that happens in the calendar
-        :param last_date: later than anything happening in the calendar
+        Parameters:
+            first_date: Earlier than anything that happens in the calendar.
+            last_date: Later than anything happening in the calendar.
 
         >>> from icalendar import Calendar, Event
         >>> from datetime import datetime

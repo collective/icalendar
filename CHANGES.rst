@@ -4,7 +4,38 @@ Change log
 
 .. py:currentmodule:: icalendar
 
-7.0.3 (unreleased)
+7.0.4 (unreleased)
+------------------
+
+Minor changes
+~~~~~~~~~~~~~
+
+- Created an :meth:`~icalendar.prop.vBoolean.ical_value` method for the :class:`~icalendar.prop.vBoolean` component. See :issue:`876`.
+- Created an :meth:`~icalendar.prop.vFloat.ical_value` method for the :class:`~icalendar.prop.vFloat` component. See :issue:`876`.
+- Created an :meth:`~icalendar.prop.vInt.ical_value` method for the :class:`~icalendar.prop.vInt` component. See :issue:`876`.
+
+Breaking changes
+~~~~~~~~~~~~~~~~
+
+- ...
+
+New features
+~~~~~~~~~~~~
+
+- ...
+
+Bug fixes
+~~~~~~~~~
+
+- ...
+
+Documentation
+~~~~~~~~~~~~~
+
+- Add Repology badge and distribution installation instructions to install documentation. :issue:`1119`
+- Convert docstrings in ``attr.py`` and ``cal/calendar.py`` to Google Style format. See :issue:`1072`.
+
+7.0.3 (2026-03-03)
 ------------------
 
 Minor changes
@@ -12,11 +43,6 @@ Minor changes
 
 - Show colorful required code changes in the CI output to help contributors solve the formatting issues. :pr:`1216`
 - Use ruff 0.15.0 for code formatting in :file:`tox.ini`. :pr:`1215`
-
-Breaking changes
-~~~~~~~~~~~~~~~~
-
-- ...
 
 New features
 ~~~~~~~~~~~~
@@ -29,21 +55,30 @@ New features
 Bug fixes
 ~~~~~~~~~
 
+- Fixed :func:`~icalendar.timezone.tzid.tzids_from_tzinfo` not recognizing
+  ``dateutil.tz.win.tzwin`` objects on Windows. UTC datetimes using
+  ``dateutil.tz.gettz("UTC")`` now correctly serialize with the ``Z`` suffix
+  instead of ``TZID=Coordinated Universal Time``. :issue:`1056`
 - Fixed :meth:`Calendar.get_missing_tzids <icalendar.cal.calendar.Calendar.get_missing_tzids>`
-  raising ``KeyError`` when a VTIMEZONE exists for a timezone not referenced by any event TZID
-  (e.g. added by x-wr-timezone conversion). :issue:`1124`
+  raising ``KeyError`` when a VTIMEZONE exists for a timezone not referenced by any event TZID,
+  for example, when added by the ``x-wr-timezone`` conversion. :issue:`1124`
 - Fixed :meth:`Calendar.get_missing_tzids <icalendar.cal.calendar.Calendar.get_missing_tzids>`
   and :meth:`Calendar.add_missing_timezones <icalendar.cal.calendar.Calendar.add_missing_timezones>`
-  generating a spurious ``VTIMEZONE`` for UTC. :rfc:`5545` section 3.2.19 requires UTC datetimes
+  generating a spurious ``VTIMEZONE`` for UTC. :rfc:`5545#section-3.2.19` requires UTC datetimes
   to use the ``Z`` suffix; no ``VTIMEZONE`` component is needed or permitted. :issue:`1124`
 - Fixed :meth:`Parameters.update_tzid_from <icalendar.parser.parameter.Parameters.update_tzid_from>`
-  incorrectly setting ``TZID=UTC`` on UTC datetimes. :rfc:`5545` section 3.2.19 requires UTC datetimes to
+  incorrectly setting ``TZID=UTC`` on UTC datetimes. :rfc:`5545#section-3.2.19` requires UTC datetimes to
   use the ``Z`` suffix without a ``TZID`` parameter. :issue:`1124`
+- Renamed the public functions ``escape_char`` and ``unescape_char`` to implicit private methods ``_escape_char`` and ``_unescape_char``.
+  Fixed regression from :issue:`1008` by restoring :func:`~icalendar.parser.string.escape_char` and :func:`~icalendar.parser.string.unescape_char` as public functions.
+  The public functions :func:`~icalendar.parser.string.escape_char` and :func:`~icalendar.parser.string.unescape_char` are now deprecated with warnings for external users.
+  :pr:`1241`.
 
 Documentation
 ~~~~~~~~~~~~~
 
-- ...
+- Add ``icalendar`` as a local workspace dependency to the ``docs`` dependency group in :file:`pyproject.toml` to fix dependency resolution issues with ``uv lock`` during documentation builds. :issue:`1253` :pr:`1254`
+- Use ``sphinx-icalendar`` to add syntax highlighting to iCalendar text
 
 7.0.2 (2026-02-24)
 ------------------
@@ -64,6 +99,7 @@ Documentation
 ~~~~~~~~~~~~~
 
 - Removed methods of ``str``, ``int``, and other classes and methods in the Python standard library from the documentation.
+- Add Repology badge and distribution installation instructions to install documentation. :issue:`1119`
 
 7.0.1 (2026-02-17)
 ------------------
@@ -111,7 +147,6 @@ Minor changes
   See :issue:`672`, :pr:`1171`, :pr:`1172`, :pr:`1173`, :pr:`1174`, :pr:`1175`, :pr:`1176`, :pr:`1177`, :pr:`1178`, :pr:`1179`, :pr:`1180`, and :pr:`1181`.
 - Fix type annotations, typos, and validation logic in prop module: corrected return type hints in ``parse_jcal_value`` methods, fixed ``to_ical()`` return type in vDDDTypes, updated ClassVar type hint in TypesFactory, removed dead code, fixed "abbrevation" typo in vWeekday, and corrected validation logic in vMonth. :issue:`1185`
 - Rename :class:`~icalendar.prop.vBrokenProperty` to :class:`~icalendar.prop.vBroken` to match naming convention. :class:`~icalendar.prop.vBroken` now stores the actual exception object in ``parse_error`` instead of a string, and raises :class:`~icalendar.error.BrokenCalendarProperty` when accessing attributes like ``.dt`` that the expected type would have. See :issue:`1087`.
-
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
@@ -212,7 +247,7 @@ New features
 Bug fixes
 ~~~~~~~~~
 
-- Fix double-unescaping in :meth:`vText.from_ical` and :meth:`vCategory.from_ical` by using private ``_unescape_char()`` function internally instead of the public version. The public ``escape_char()`` and ``unescape_char()`` functions are now deprecated with warnings for external users. See :issue:`1008`.
+- Fix double-unescaping in :meth:`vText.from_ical` and :meth:`vCategory.from_ical` by removing ``unescape_char()``. See :issue:`1008`.
 
 7.0.0a2 (2025-11-29)
 --------------------

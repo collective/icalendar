@@ -903,12 +903,13 @@ def create_single_property(
 ):
     """Create a single property getter and setter.
 
-    :param prop: The name of the property.
-    :param value_attr: The name of the attribute to get the value from.
-    :param value_type: The type of the value.
-    :param type_def: The type of the property.
-    :param doc: The docstring of the property.
-    :param vProp: The type of the property from :mod:`icalendar.prop`.
+    Parameters:
+        prop: The name of the property.
+        value_attr: The name of the attribute to get the value from.
+        value_type: The type of the value.
+        type_def: The type of the property.
+        doc: The docstring of the property.
+        vProp: The type of the property from :mod:`icalendar.prop`.
     """
 
     def p_get(self: Component):
@@ -1364,7 +1365,7 @@ Conformance:
 Example:
     The following is an example of this property:
 
-    .. code-block:: text
+    .. code-block:: ics
 
         URL:http://example.com/pub/calendars/jsmith/mytime.ics
 
@@ -1389,7 +1390,7 @@ Conformance:
 Example:
     The following is an example of this property:
 
-    .. code-block:: text
+    .. code-block:: ics
 
         SOURCE;VALUE=URI:https://example.com/holidays.ics
 
@@ -1455,7 +1456,7 @@ Example:
     The following is an example of this property referencing
     textual contact information:
 
-    .. code-block:: text
+    .. code-block:: ics
 
         CONTACT:Jim Dolittle\\, ABC Industries\\, +1-919-555-1234
 
@@ -1463,7 +1464,7 @@ Example:
     representation of an LDAP URI to a directory entry containing the
     contact information:
 
-    .. code-block:: text
+    .. code-block:: ics
 
         CONTACT;ALTREP="ldap://example.com:6666/o=ABC%20Industries\\,
         c=US???(cn=Jim%20Dolittle)":Jim Dolittle\\, ABC Industries\\,
@@ -1474,7 +1475,7 @@ Example:
     information, such as a vCard :rfc:`2426` embedded in a text/
     directory media type :rfc:`2425`:
 
-    .. code-block:: text
+    .. code-block:: ics
 
         CONTACT;ALTREP="CID:part3.msg970930T083000SILVER@example.com":
          Jim Dolittle\\, ABC Industries\\, +1-919-555-1234
@@ -1483,7 +1484,7 @@ Example:
     resource, such as a vCard :rfc:`2426` object containing the contact
     information:
 
-    .. code-block:: text
+    .. code-block:: ics
 
         CONTACT;ALTREP="http://example.com/pdi/jdoe.vcf":Jim
          Dolittle\\, ABC Industries\\, +1-919-555-1234
@@ -1945,7 +1946,7 @@ def _get_conferences(self: Component) -> list[Conference]:
     Example:
         The following are examples of this property:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             CONFERENCE;VALUE=URI;FEATURE=PHONE,MODERATOR;
              LABEL=Moderator dial-in:tel:+1-412-555-0123,,,654321
@@ -2063,7 +2064,7 @@ def _get_links(self: Component) -> list[vUri | vUid | vXmlReference]:
         The following is an example of this property,
         which provides a reference to the source for the calendar object.
 
-        .. code-block:: text
+        .. code-block:: ics
 
             LINK;LINKREL=SOURCE;LABEL=Venue;VALUE=URI:
              https://example.com/events
@@ -2072,7 +2073,7 @@ def _get_links(self: Component) -> list[vUri | vUid | vXmlReference]:
         which provides a reference to an entity from which this one was derived.
         The link relation is a vendor-defined value.
 
-        .. code-block:: text
+        .. code-block:: ics
 
             LINK;LINKREL="https://example.com/linkrel/derivedFrom";
              VALUE=URI:
@@ -2082,7 +2083,7 @@ def _get_links(self: Component) -> list[vUri | vUid | vXmlReference]:
         which provides a reference to a fragment of an XML document.
         The link relation is a vendor-defined value.
 
-        .. code-block:: text
+        .. code-block:: ics
 
             LINK;LINKREL="https://example.com/linkrel/costStructure";
              VALUE=XML-REFERENCE:
@@ -2257,17 +2258,17 @@ def _get_related_to(self: Component) -> list[vText | vUri | vUid]:
     Examples:
         :rfc:`5545` examples of this property:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             RELATED-TO:jsmith.part7.19960817T083000.xyzMail@example.com
 
-        .. code-block:: text
+        .. code-block:: ics
 
             RELATED-TO:19960401-080045-4000F192713-0052@example.com
 
         :rfc:`9253` examples of this property:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             RELATED-TO;VALUE=URI;RELTYPE=STARTTOFINISH:
              https://example.com/caldav/user/jb/cal/
@@ -2331,7 +2332,7 @@ def _get_concepts(self: Component) -> list[vUri]:
         The following is an example of this property.
         It points to a server acting as the source for the calendar object.
 
-        .. code-block:: text
+        .. code-block:: ics
 
             CONCEPT:https://example.com/event-types/arts/music
 
@@ -2416,7 +2417,7 @@ Description:
 Examples:
     The following is an example of this property.
 
-    .. code-block:: text
+    .. code-block:: ics
 
         REFID:itinerary-2014-11-17
 
