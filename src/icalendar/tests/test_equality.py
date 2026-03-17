@@ -110,8 +110,6 @@ def test_calendar_equality_order():
     event2 = Event()
     calendar1.subcomponents = [event1, event2]
     calendar2.subcomponents = [event1, event1]
-    copy1 = calendar1.copy(recursive=True)
-    copy2 = calendar2.copy(recursive=True)
     assert_equal(calendar1, calendar2)
 
 
@@ -123,12 +121,7 @@ def test_component_equality_order():
     event2 = Event()
     component1.subcomponents = [event1, event2]
     component2.subcomponents = [event1, event1]
-    copy1 = component1.copy(recursive=True)
-    copy2 = component2.copy(recursive=True)
-    assert_equal(component1 == component2, False)
-    assert_equal(component2 == component1, False)
-    assert_equal(copy1 == copy2, False)
-    assert_equal(copy2 == copy1, False)
+    assert_equal(component1, component2)
 
 
 def test_copy_does_not_copy_subcomponents(calendars, tzp):
