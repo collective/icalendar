@@ -121,7 +121,7 @@ class LazySubcomponentsStrategy:
     ) -> tuple[LazySubcomponentsStrategy, list[Component]]:
         """Get the subcomponents of the calendar with the given name.
 
-        Parse only the minumal number of subcomponents.
+        Parse only the minimal number of subcomponents.
         """
         if name is None:
             return self.as_parsed.walk(name)
@@ -134,7 +134,7 @@ class LazySubcomponentsStrategy:
     def with_uid(self, uid: str) -> tuple[LazySubcomponentsStrategy, list[Component]]:
         """Get the subcomponents of the calendar with the given uid.
 
-        Parse only the minumal number of subcomponents.
+        Parse only the minimal number of subcomponents.
         """
         self.parse_initial_components()
         result = []
