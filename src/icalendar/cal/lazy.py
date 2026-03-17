@@ -250,16 +250,17 @@ class LazyCalendar(Calendar):
         """
         self._subcomponents = self._subcomponents.add_component(component)
 
-    def is_lazy(self):
+    def is_lazy(self) -> bool:
         """Whether the subcomponents will be parsed lazily.
 
         .. note:: If you believe that the calendar parses more than it should,
             please open an issue.
 
         Returns:
-            False if all subcomponents are parsed.
-            True if subcomponents are parsed before they get accessed.
+            True if subcomponents are deferred and not yet parsed.
+            False if all subcomponents have been parsed.
         """
+        return self._subcomponents.is_lazy()
         return self._subcomponents.is_lazy()
 
     def _walk(
