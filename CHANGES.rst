@@ -48,7 +48,7 @@ New features
 Bug fixes
 ~~~~~~~~~
 
-- ...
+- GitHub Actions: conditional tests now show as "skipped" instead of "pending". See :issue:`1264`.
 
 Documentation
 ~~~~~~~~~~~~~
