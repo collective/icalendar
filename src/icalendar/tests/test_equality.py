@@ -112,10 +112,7 @@ def test_calendar_equality_order():
     calendar2.subcomponents = [event1, event1]
     copy1 = calendar1.copy(recursive=True)
     copy2 = calendar2.copy(recursive=True)
-    assert_equal(calendar1 == calendar2, False)
-    assert_equal(calendar2 == calendar1, False)
-    assert_equal(copy1 == copy2, False)
-    assert_equal(copy2 == copy1, False)
+    assert_equal(calendar1, calendar2)
 
 
 def test_component_equality_order():
