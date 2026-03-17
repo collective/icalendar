@@ -377,7 +377,7 @@ def test_event_new_datetime_no_dtend_implicit_zero_duration():
     assert "DTEND" not in event
 
 
-def test_event_new_datetime_tzaware_no_dtend_implicit_zero_duration():
+def test_event_new_datetime_tzaware_no_dtend_implicit_zero_duration(tzp):
     """Event.new() with a timezone-aware datetime and no end/duration: implicit zero duration.
 
     See https://github.com/collective/icalendar/issues/1275
@@ -385,8 +385,7 @@ def test_event_new_datetime_tzaware_no_dtend_implicit_zero_duration():
     This is the exact case reported in the issue: timezone-aware DTSTART with
     neither DTEND nor DURATION should yield zero duration, not raise an error.
     """
-    tz = ZoneInfo("Europe/Berlin")
-    start = datetime(2026, 3, 21, 6, 30, 0, tzinfo=tz)
+    start = tzp.localize(datetime(2026, 3, 21, 6, 30, 0), "Europe/Berlin")
     event = Event.new(start=start)
     assert event.end == start
     assert event.duration == timedelta(0)
