@@ -43,7 +43,7 @@ New features
 
 Bug fixes
 ~~~~~~~~~
-
+- Fix CI logic to correctly report Vale errors and fix misspellings. (#1277) [stradivariuskein]
 - ...
 
 Documentation
