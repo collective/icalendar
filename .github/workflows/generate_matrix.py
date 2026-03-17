@@ -11,6 +11,11 @@ Documentation:
 - for pull request approval
   https://stackoverflow.com/a/70441157/1320237
 
+Run tests with:
+
+    pytest .github/workflows/test_generate_matrix.py
+
+
 """
 
 import json
@@ -81,36 +86,56 @@ def generate_matrix(git_ref, review):
     #
     # minimal set of jobs
     #
-    if not run_no_jobs:
-        # RULE: always test the lowest allowed version
-        matrix.append(
-            {"tox_env": "py", "python_version": f"3.{PYTHON_MINOR_VERSION_MIN}"}
-        )
-        # RULE: use lowest allowed version for nopytz
-        matrix.append(
-            {"tox_env": "nopytz", "python_version": f"3.{PYTHON_MINOR_VERSION_MIN}"}
-        )
-        # RULE: always test the latest version
-        matrix.append(
-            {"tox_env": "py", "python_version": f"3.{PYTHON_MINOR_VERSION_MAX}"}
-        )
+    # RULE: always test the lowest allowed version
+    matrix.append(
+        {
+            "tox_env": "py",
+            "python_version": f"3.{PYTHON_MINOR_VERSION_MIN}",
+            "skip": run_no_jobs,
+        }
+    )
+    # RULE: use lowest allowed version for nopytz
+    matrix.append(
+        {
+            "tox_env": "nopytz",
+            "python_version": f"3.{PYTHON_MINOR_VERSION_MIN}",
+            "skip": run_no_jobs,
+        }
+    )
+    # RULE: always test the latest version
+    matrix.append(
+        {
+            "tox_env": "py",
+            "python_version": f"3.{PYTHON_MINOR_VERSION_MAX}",
+            "skip": run_no_jobs,
+        }
+    )
 
     #
     # create full job list if required
     #
 
-    if run_all_jobs:
-        for minor_python_version in range(
-            PYTHON_MINOR_VERSION_MIN + 1, PYTHON_MINOR_VERSION_MAX
-        ):
-            matrix.append(
-                {"tox_env": "py", "python_version": f"3.{minor_python_version}"}
-            )
-
-        # pypy is slow but good to test
-        matrix.insert(
-            0, {"tox_env": "pypy3", "python_version": "pypy3.10", "test_name": "pypy3"}
+    for minor_python_version in range(
+        PYTHON_MINOR_VERSION_MIN + 1, PYTHON_MINOR_VERSION_MAX
+    ):
+        matrix.append(
+            {
+                "tox_env": "py",
+                "python_version": f"3.{minor_python_version}",
+                "skip": not run_all_jobs,
+            }
         )
+
+    # pypy is slow but good to test
+    matrix.insert(
+        0,
+        {
+            "tox_env": "pypy3",
+            "python_version": "pypy3.10",
+            "test_name": "pypy3",
+            "skip": not run_all_jobs,
+        },
+    )
 
     #
     # Generate tests names for the matrix

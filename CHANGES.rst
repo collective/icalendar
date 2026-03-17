@@ -28,6 +28,9 @@ Minor changes
 ~~~~~~~~~~~~~
 
 - Do not run some tests until a pull request is approved. :pr:`1246`
+- Created an :meth:`~icalendar.prop.vBoolean.ical_value` method for the :class:`~icalendar.prop.vBoolean` component. See :issue:`876`.
+- Created an :meth:`~icalendar.prop.vFloat.ical_value` method for the :class:`~icalendar.prop.vFloat` component. See :issue:`876`.
+- Created an :meth:`~icalendar.prop.vInt.ical_value` method for the :class:`~icalendar.prop.vInt` component. See :issue:`876`.
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
@@ -37,17 +40,22 @@ Breaking changes
 New features
 ~~~~~~~~~~~~
 
-- ...
+- Added ``subcomponents`` parameter to
+  :meth:`Component.new <icalendar.cal.component.Component.new>`,
+  :meth:`Event.new <icalendar.cal.event.Event.new>`,
+  :meth:`Todo.new <icalendar.cal.todo.Todo.new>`, and
+  :meth:`Availability.new <icalendar.cal.availability.Availability.new>`. :issue:`1065`
 
 Bug fixes
 ~~~~~~~~~
 
-- ...
+- GitHub Actions: conditional tests now show as "skipped" instead of "pending". See :issue:`1264`.
 
 Documentation
 ~~~~~~~~~~~~~
 
-- ...
+- Add Repology badge and distribution installation instructions to install documentation. :issue:`1119`
+- Convert docstrings in ``attr.py`` and ``cal/calendar.py`` to Google Style format. See :issue:`1072`.
 
 7.0.3 (2026-03-03)
 ------------------
@@ -65,7 +73,6 @@ New features
   :attr:`Todo.RECURRENCE_ID <icalendar.cal.todo.Todo.RECURRENCE_ID>` and
   :attr:`Journal.RECURRENCE_ID <icalendar.cal.journal.Journal.RECURRENCE_ID>`
   properties, including support in their ``new()`` constructors. :issue:`1231`
-
 Bug fixes
 ~~~~~~~~~
 
@@ -113,6 +120,7 @@ Documentation
 ~~~~~~~~~~~~~
 
 - Removed methods of ``str``, ``int``, and other classes and methods in the Python standard library from the documentation.
+- Add Repology badge and distribution installation instructions to install documentation. :issue:`1119`
 
 7.0.1 (2026-02-17)
 ------------------
@@ -160,7 +168,6 @@ Minor changes
   See :issue:`672`, :pr:`1171`, :pr:`1172`, :pr:`1173`, :pr:`1174`, :pr:`1175`, :pr:`1176`, :pr:`1177`, :pr:`1178`, :pr:`1179`, :pr:`1180`, and :pr:`1181`.
 - Fix type annotations, typos, and validation logic in prop module: corrected return type hints in ``parse_jcal_value`` methods, fixed ``to_ical()`` return type in vDDDTypes, updated ClassVar type hint in TypesFactory, removed dead code, fixed "abbrevation" typo in vWeekday, and corrected validation logic in vMonth. :issue:`1185`
 - Rename :class:`~icalendar.prop.vBrokenProperty` to :class:`~icalendar.prop.vBroken` to match naming convention. :class:`~icalendar.prop.vBroken` now stores the actual exception object in ``parse_error`` instead of a string, and raises :class:`~icalendar.error.BrokenCalendarProperty` when accessing attributes like ``.dt`` that the expected type would have. See :issue:`1087`.
-
 
 Breaking changes
 ~~~~~~~~~~~~~~~~

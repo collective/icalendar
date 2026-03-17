@@ -9,44 +9,49 @@ Run with:
 import pytest
 from generate_matrix import generate_matrix
 
-COUNT_ALL = 7
-COUNT_MIN = 3
+CASES_ALL = {"3.10", "3.11", "3.12", "3.13", "3.14", "3.10 (nopytz)", "pypy3"}
+CASES_MIN = {"3.10", "3.14", "3.10 (nopytz)"}
+CASES_0 = set()
 
 
 @pytest.mark.parametrize(
     ("arg_pr", "expected", "arg_ref"),
     [
         # push
-        ("", COUNT_ALL, "refs/heads/main"),
-        ("", COUNT_ALL, "refs/heads/7.x"),
-        ("", COUNT_ALL, "refs/heads/6.x"),
-        ("", COUNT_ALL, "refs/heads/5.x"),
-        ("", COUNT_ALL, "refs/heads/release-1"),
-        ("", COUNT_ALL, "refs/tags/v7.0.2"),
-        ("", COUNT_MIN, "refs/heads/pr-branch"),
+        ("", CASES_ALL, "refs/heads/main"),
+        ("", CASES_ALL, "refs/heads/7.x"),
+        ("", CASES_ALL, "refs/heads/6.x"),
+        ("", CASES_ALL, "refs/heads/5.x"),
+        ("", CASES_ALL, "refs/heads/release-1"),
+        ("", CASES_ALL, "refs/tags/v7.0.2"),
+        ("", CASES_MIN, "refs/heads/pr-branch"),
         # review
-        ("changes_requested", 0, "refs/heads/main"),
-        ("changes_requested", 0, "refs/heads/7.x"),
-        ("changes_requested", 0, "refs/heads/6.x"),
-        ("changes_requested", 0, "refs/heads/5.x"),
-        ("changes_requested", 0, "refs/heads/release-2"),
-        ("changes_requested", 0, "refs/tags/v7.0.2"),
-        ("changes_requested", 0, "refs/heads/pr-branch"),
-        ("approved", COUNT_ALL, "refs/heads/main"),
-        ("approved", COUNT_ALL, "refs/heads/7.x"),
-        ("approved", COUNT_ALL, "refs/heads/6.x"),
-        ("approved", COUNT_ALL, "refs/heads/5.x"),
-        ("approved", COUNT_ALL, "refs/heads/release-3"),
-        ("approved", COUNT_ALL, "refs/tags/v7.0.2"),
-        ("approved", COUNT_ALL, "refs/heads/pr-branch"),
+        ("changes_requested", CASES_0, "refs/heads/main"),
+        ("changes_requested", CASES_0, "refs/heads/7.x"),
+        ("changes_requested", CASES_0, "refs/heads/6.x"),
+        ("changes_requested", CASES_0, "refs/heads/5.x"),
+        ("changes_requested", CASES_0, "refs/heads/release-2"),
+        ("changes_requested", CASES_0, "refs/tags/v7.0.2"),
+        ("changes_requested", CASES_0, "refs/heads/pr-branch"),
+        ("approved", CASES_ALL, "refs/heads/main"),
+        ("approved", CASES_ALL, "refs/heads/7.x"),
+        ("approved", CASES_ALL, "refs/heads/6.x"),
+        ("approved", CASES_ALL, "refs/heads/5.x"),
+        ("approved", CASES_ALL, "refs/heads/release-3"),
+        ("approved", CASES_ALL, "refs/tags/v7.0.2"),
+        ("approved", CASES_ALL, "refs/heads/pr-branch"),
     ],
 )
 def test_count_test_runs(arg_ref, arg_pr, expected):
     """Check which values we get."""
     matrix = generate_matrix(arg_ref, arg_pr)
-    for case in matrix:
-        print(f"- {case['test_name']}")
-    assert len(matrix) == expected, f"Expected {expected} test runs, got {len(matrix)}"
+    print("Cases:")
+    for case in sorted(matrix, key=lambda case: (case["skip"], case["test_name"])):
+        print(f"- {case['skip']}\t{case['test_name']}")
+    running = {case["test_name"] for case in matrix if not case["skip"]}
+    assert running == expected, (
+        f"Expected {len(expected)} test runs, got {len(running)}"
+    )
 
 
 @pytest.mark.parametrize(
