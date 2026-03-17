@@ -10,8 +10,8 @@ import pytest
 from icalendar import Alarm, Event, LazyCalendar
 from icalendar.parser.ical.lazy import LazySubcomponent
 
-    if TYPE_CHECKING:
-        from icalendar import Calendar
+if TYPE_CHECKING:
+    from icalendar import Calendar
 
 
 def assert_is_lazy_calendar(calendar: LazyCalendar) -> None:
