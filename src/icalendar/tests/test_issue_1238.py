@@ -6,20 +6,31 @@ not fall back to vUnknown.
 import pytest
 from icalendar import Calendar
 from icalendar.prop.dt import vPeriod
+from icalendar.prop.broken import vBroken
+from datetime import datetime
 
-
-@pytest.mark.parametrize(("cal_str", "prop_name", "expected_type"), [
-    (
-        "BEGIN:VCALENDAR\r\nX-FILTER-DATE-RANGE;VALUE=PERIOD:20250202T000000/20250203T000000\r\nEND:VCALENDAR\r\n",
-        "X-FILTER-DATE-RANGE",
-        vPeriod,
-    ),
-])
-
-def test_x_property_respects_value_param(cal_str, prop_name, expected_type):
-    """X-properties with a VALUE parameter should be parsed as that type (issue #1238)."""
-    calendar = Calendar.from_ical(cal_str)
-    result = calendar[prop_name]
-    assert isinstance(result, expected_type), (
-        f"Expected {expected_type.__name__}, got {type(result).__name__}"
+def test_x_property_respects_value_param(calendars):
+    """X-properties with a VALUE parameter are parsed as the correct type (issue #1238)."""
+    calendar = calendars.issue_1238
+    result = calendar["X-FILTER-DATE-RANGE"]
+    assert isinstance(result, vPeriod), (
+        f"Expected vPeriod, got {type(result).__name__}"
     )
+    assert result.start == datetime(2025, 2, 2, 0, 0)
+    assert result.end == datetime(2025, 2, 3, 0, 0)
+
+
+def test_x_property_broken_value():
+    """X-properties with VALUE=PERIOD but invalid content should yield vBroken (issue #1238)."""
+
+    cal_str = "BEGIN:VCALENDAR\r\nX-FILTER-DATE-RANGE;VALUE=PERIOD:this-is-not-a-period\r\nEND:VCALENDAR\r\n"
+
+    Calendar.ignore_exceptions = True
+    try:
+        calendar = Calendar.from_ical(cal_str)
+    finally:
+        Calendar.ignore_exceptions = False  # always restore default
+
+    result = calendar["X-FILTER-DATE-RANGE"]
+    assert isinstance(result, vBroken)
+    assert result.expected_type == "vPeriod"

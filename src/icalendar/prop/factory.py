@@ -235,8 +235,8 @@ class TypesFactory(CaselessDict):
         if value_param and name in self.types_map and value_param in self:
             return self[value_param]
         
-        if(value_param and value_param.lower() in self):
-            return self[value_param.lower()]
+        if(value_param and value_param in self):
+            return self[value_param]
         
         return self[self.types_map.get(name, "unknown")]
 
