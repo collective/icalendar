@@ -1,7 +1,7 @@
 """TIME property type from :rfc:`5545`."""
 
 import re
-from datetime import datetime, time, timezone
+from datetime import datetime, time, timezone, tzinfo
 from typing import Any, ClassVar
 
 from icalendar.compatibility import Self
@@ -153,8 +153,20 @@ class vTime(TimeBase):
         return self.params.is_utc() or is_utc(self.dt)
 
     @staticmethod
-    def from_ical(ical:str, timezone:str|None|datetime.tzinfo=None) -> time:
-        """Convert an ical string into a time."""
+    def from_ical(ical: str, timezone: str | None | tzinfo = None) -> time:
+        """Convert an ical string into a time.
+
+        Description:
+            This method supports parsing the three forms of time values defined in :rfc:`5545`:
+                - Local time (floating)
+                - UTC time
+                - Local time with time zone reference
+
+        Returns: A datetime.time object representing the parsed time, with
+                timezone information if applicable.
+
+        Raises: ValueError if the provided string cannot be parsed as a time.
+        """
         tzinfo = None
         if isinstance(timezone, str):
             tzinfo = tzp.timezone(timezone)
