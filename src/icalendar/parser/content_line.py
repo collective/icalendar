@@ -33,7 +33,8 @@ def _strip_ows_around_delimiters(st: str, delimiters: str = ";=") -> str:
     pending_ws: list[str] = []
     in_quotes = False
     escaped = False
-    last_was_delimiter = False  # True only if the last appended char was a raw delimiter
+    # True only if the last appended char was a raw delimiter.
+    last_was_delimiter = False
 
     for ch in st:
         # Handle escaped character (the backslash set escaped in previous iteration)
@@ -50,7 +51,7 @@ def _strip_ows_around_delimiters(st: str, delimiters: str = ";=") -> str:
             continue
 
         # Handle backslash to escape next character
-        if ch == '\\' and not in_quotes:
+        if ch == "\\" and not in_quotes:
             if pending_ws:
                 if last_was_delimiter:
                     pending_ws.clear()

@@ -44,6 +44,10 @@ New features
 Bug fixes
 ~~~~~~~~~
 
+- Allow lenient parsing of content lines with optional whitespace around property
+  and parameter delimiters (for example,
+  ``REFRESH - INTERVAL; VALUE = DURATION:PT48H``) when parsing calendars with
+  ``strict=False``. See :issue:`351`.
 - ...
 
 Documentation
