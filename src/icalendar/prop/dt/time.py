@@ -162,10 +162,11 @@ class vTime(TimeBase):
                 - UTC time
                 - Local time with time zone reference
 
-        Returns: A datetime.time object representing the parsed time, with
-                timezone information if applicable.
+        Returns:
+            A datetime.time object representing the parsed time, with timezone information if applicable.
 
-        Raises: ValueError if the provided string cannot be parsed as a time.
+        Raises:
+            ~error.ValueError: if the provided string cannot be parsed as a time.
         """
         tzinfo = None
         if isinstance(timezone, str):
