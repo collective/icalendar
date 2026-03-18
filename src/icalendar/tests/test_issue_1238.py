@@ -3,19 +3,19 @@ Test for GitHub issue #1238:
 X-properties with VALUE=<type> should be parsed using that type,
 not fall back to vUnknown.
 """
-import pytest
-from icalendar import Calendar
-from icalendar.prop.dt import vPeriod
-from icalendar.prop.broken import vBroken
+
 from datetime import datetime
+
+from icalendar import Calendar
+from icalendar.prop.broken import vBroken
+from icalendar.prop.dt import vPeriod
+
 
 def test_x_property_respects_value_param(calendars):
     """X-properties with a VALUE parameter are parsed as the correct type (issue #1238)."""
     calendar = calendars.issue_1238
     result = calendar["X-FILTER-DATE-RANGE"]
-    assert isinstance(result, vPeriod), (
-        f"Expected vPeriod, got {type(result).__name__}"
-    )
+    assert isinstance(result, vPeriod), f"Expected vPeriod, got {type(result).__name__}"
     assert result.start == datetime(2025, 2, 2, 0, 0)
     assert result.end == datetime(2025, 2, 3, 0, 0)
 
