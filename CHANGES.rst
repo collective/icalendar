@@ -44,6 +44,9 @@ New features
   :attr:`Journal.RECURRENCE_ID <icalendar.cal.journal.Journal.RECURRENCE_ID>`
   properties, including support in their ``new()`` constructors. :issue:`1231`
 
+- Updated :func:`icalendar.prop.dt.time.from_ical` to support parsing time values 
+  with TZID parameters, returning timezone-aware ``datetime.time`` objects. :issue:`1142`
+
 Bug fixes
 ~~~~~~~~~
 
