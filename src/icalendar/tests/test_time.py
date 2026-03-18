@@ -2,6 +2,7 @@ import datetime
 import os
 
 from icalendar import Calendar
+from icalendar.prop.dt.time import vTime
 
 
 def test_value_type_is_not_mapped(types_factory):
@@ -45,3 +46,11 @@ def test_vtime_multiple_timezones(calendars):
     assert str(utc.tzinfo) == "UTC"
 
     assert floating.tzinfo is None
+
+
+def test_vtime_with_tzinfo_object():
+    tz = datetime.timezone.utc
+
+    parsed = vTime.from_ical("083000", timezone=tz)
+
+    assert parsed.tzinfo == tz
