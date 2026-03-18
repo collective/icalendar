@@ -29,12 +29,9 @@ def test_create_to_ical(x_sometime):
     cal.add("X-SOMETIME", datetime.time(17, 20, 10))
     assert b"X-SOMETIME;VALUE=TIME:172010" in cal.to_ical().splitlines()
 
-def test_vtime_multiple_timezones():
-    directory = os.path.dirname(__file__)
-    path = os.path.join(directory, "calendars", "multiple_timezones.ics")
 
-    with open(path, "rb") as f:
-        cal = Calendar.from_ical(f.read())
+def test_vtime_multiple_timezones(calendars):
+    cal = calendars["multiple_timezones.ics"]
 
     events = list(cal.walk("VEVENT"))
 
@@ -42,11 +39,9 @@ def test_vtime_multiple_timezones():
     utc = events[1]["RDATE"].dts[0].dt
     floating = events[2]["RDATE"].dts[0].dt
 
-    # Named timezone
     assert named.tzinfo is not None
+    assert "America/New_York" in str(named.tzinfo)
 
-    # UTC timezone
-    assert utc.tzinfo is not None
+    assert str(utc.tzinfo) == "UTC"
 
-    # Floating time
     assert floating.tzinfo is None
