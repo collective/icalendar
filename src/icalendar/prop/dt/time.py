@@ -182,7 +182,11 @@ class vTime(TimeBase):
                 ical = ical[:-1]
             timetuple = (int(ical[:2]), int(ical[2:4]), int(ical[4:6]))
             if tzinfo:
-                return tzp.localize(time(*timetuple), tzinfo)
+                dt = datetime.combine(
+                    2020, 1, 1, time(*timetuple)
+                )  # reference date is arbitrary, we only care about the time and tzinfo
+                localized = tzp.localize(dt, tzinfo)
+                return localized.timetz()
             if utc:
                 return tzp.localize_utc(time(*timetuple))
             return time(*timetuple)
