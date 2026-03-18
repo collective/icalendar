@@ -60,6 +60,8 @@ Bug fixes
 - Fixed :meth:`Parameters.update_tzid_from <icalendar.parser.parameter.Parameters.update_tzid_from>`
   incorrectly setting ``TZID=UTC`` on UTC datetimes. :rfc:`5545` section 3.2.19 requires UTC datetimes to
   use the ``Z`` suffix without a ``TZID`` parameter. :issue:`1124`
+- Fixed :func:`icalendar.prop.dt.types.vDDDTypes.from_jcal` to correctly parse 
+  time values with TZID parameters, returning timezone-aware ``datetime.time`` objects. :issue:`1142`
 
 Documentation
 ~~~~~~~~~~~~~

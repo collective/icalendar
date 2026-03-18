@@ -1,7 +1,7 @@
 """TIME property type from :rfc:`5545`."""
 
 import re
-from datetime import datetime, time, timezone, tzinfo
+from datetime import date, datetime, time, timezone, tzinfo
 from typing import Any, ClassVar
 
 from icalendar.compatibility import Self
@@ -183,7 +183,7 @@ class vTime(TimeBase):
             timetuple = (int(ical[:2]), int(ical[2:4]), int(ical[4:6]))
             if tzinfo:
                 dt = datetime.combine(
-                    2020, 1, 1, time(*timetuple)
+                    date(2020, 1, 1), time(*timetuple)
                 )  # reference date is arbitrary, we only care about the time and tzinfo
                 localized = tzp.localize(dt, tzinfo)
                 return localized.timetz()
