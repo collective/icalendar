@@ -45,6 +45,7 @@ Bug fixes
 ~~~~~~~~~
 
 - X-properties with a ``VALUE`` parameter are now parsed using the correct type instead of falling back to ``vUnknown`` (fixes `#1238 <https://github.com/collective/icalendar/issues/1238>`_).
+
 Documentation
 ~~~~~~~~~~~~~
 
