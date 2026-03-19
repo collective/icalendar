@@ -59,6 +59,7 @@ class vBinary:
             del params["encoding"]
         return [name, params, self.VALUE.lower(), self.obj]
 
+    @property
     def ical_value(self) -> str:
         """BINARY property type according to :rfc:`5545#section-3.3.1`."""
         return self.obj

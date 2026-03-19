@@ -47,4 +47,4 @@ def test_from_ical():
 
 def test_ical_value():
     """ical_value property returns the string value."""
-    assert vBinary("dmFsdWU=").ical_value() == "dmFsdWU="
+    assert vBinary("dmFsdWU=").ical_value == "dmFsdWU="
