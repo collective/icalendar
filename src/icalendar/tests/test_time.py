@@ -1,5 +1,6 @@
 import datetime
 import os
+from datetime import time
 
 from icalendar import Calendar
 from icalendar.prop.dt.time import vTime
@@ -54,3 +55,23 @@ def test_vtime_with_tzinfo_object():
     parsed = vTime.from_ical("083000", timezone=tz)
 
     assert parsed.tzinfo == tz
+
+
+def test_localize_time(tzp):
+    t = time(8, 30)
+    tz = tzp.timezone("America/New_York")
+
+    localized = tzp.localize(t, tz)
+
+    assert isinstance(localized, time)
+    assert localized.tzinfo is not None
+    assert "America/New_York" in str(localized.tzinfo)
+
+
+def test_localized_time_utc(tzp):
+    t = time(8, 30)
+
+    localized = tzp.localize_utc(t)
+
+    assert isinstance(localized, time)
+    assert str(localized.tzinfo) == "UTC"
