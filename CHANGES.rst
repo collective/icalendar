@@ -11,6 +11,7 @@ Minor changes
 ~~~~~~~~~~~~~
 
 - Do not run some tests until a pull request is approved. :pr:`1246`
+- Include ``Makefile`` in documentation workflow path filters so documentation CI runs when Makefile logic changes, and keep Vale failures visible in CI output. :issue:`1277`
 - Created an :meth:`~icalendar.prop.vBoolean.ical_value` method for the :class:`~icalendar.prop.vBoolean` component. See :issue:`876`.
 - Created an :meth:`~icalendar.prop.vFloat.ical_value` method for the :class:`~icalendar.prop.vFloat` component. See :issue:`876`.
 - Created an :meth:`~icalendar.prop.vInt.ical_value` method for the :class:`~icalendar.prop.vInt` component. See :issue:`876`.

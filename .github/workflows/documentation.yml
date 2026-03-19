@@ -5,10 +5,12 @@ on:
       - main
     paths:
       - 'docs/**'
+      - 'Makefile'
   # Build pull requests
   pull_request:
     paths:
       - 'docs/**'
+      - 'Makefile'
       - 'src/icalendar/*.py'
       - 'src/icalendar/cal/*.py'
       - 'src/icalendar/prop/*.py'
