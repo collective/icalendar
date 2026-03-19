@@ -643,6 +643,7 @@ Description:
             related_to=related_to,
             refids=refids,
             concepts=concepts,
+            subcomponents=subcomponents,
         )
 
         # Generate prodid if not provided but organization is given
@@ -665,8 +666,6 @@ Description:
         calendar.url = url
         calendar.refresh_interval = refresh_interval
         calendar.source = source
-        if subcomponents is not None:
-            calendar.subcomponents = list(subcomponents)
 
         return calendar
 
