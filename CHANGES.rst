@@ -51,7 +51,7 @@ Minor changes
 
 - Show colorful required code changes in the CI output to help contributors solve the formatting issues. :pr:`1216`
 - Use ruff 0.15.0 for code formatting in :file:`tox.ini`. :pr:`1215`
-- Extended :func:`~icalendar.timezone.pytz.localize` to support localizing both 
+- Extended :func:`~icalendar.timezone.tzp.localize` to support localizing both 
   :class:`datetime.datetime` and :class:`datetime.time` objects, returning timezone-aware 
   :class:`datetime.time` objects for the latter. :issue:`1142`
 
