@@ -1,5 +1,7 @@
 """Test vBinary"""
 
+import base64
+
 import pytest
 
 from icalendar import vBinary
@@ -47,4 +49,5 @@ def test_from_ical():
 
 def test_ical_value():
     """ical_value property returns the string value."""
-    assert vBinary("dmFsdWU=").ical_value == "dmFsdWU="
+    magic_string = base64.b64encode(b"magic string")
+    assert vBinary(magic_string).ical_value == base64.b64decode(magic_string)
