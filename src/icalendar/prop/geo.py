@@ -40,7 +40,7 @@ class vGeo:
 
         Example:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             GEO:37.386013;-122.082932
 

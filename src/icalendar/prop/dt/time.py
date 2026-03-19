@@ -62,7 +62,7 @@ class vTime(TimeBase):
         The form of time with UTC offset MUST NOT be used.  For example,
         the following is not valid for a time value:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             230000-0800        ;Invalid time format
 
@@ -72,7 +72,7 @@ class vTime(TimeBase):
         the UTC designator nor does it reference a time zone.  For
         example, 11:00 PM:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             230000
 
@@ -105,7 +105,7 @@ class vTime(TimeBase):
         LETTER Z suffix character, the UTC designator, appended to the
         time value.  For example, the following represents 07:00 AM UTC:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             070000Z
 
@@ -122,7 +122,7 @@ class vTime(TimeBase):
             The following represents 8:30 AM in New York in winter,
             five hours behind UTC, in each of the three formats:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             083000
             133000Z
