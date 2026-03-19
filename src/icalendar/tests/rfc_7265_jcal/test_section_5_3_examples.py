@@ -1,11 +1,13 @@
 """Check that we convert the examples propertly."""
 
-from pprint import pprint
 
-import pytest
 
-from icalendar import Calendar, Event, vText
+from typing import TYPE_CHECKING
+
 from icalendar.parser_tools import to_unicode
+
+if TYPE_CHECKING:
+    from icalendar import Calendar
 
 
 def test_convert_coffee(calendars):
@@ -14,7 +16,6 @@ def test_convert_coffee(calendars):
     ical = calendar.to_ical().decode()
     print(to_unicode(ical))
     assert r"X-COFFEE-DATA:Stenophylla\;Guinea\\\,Africa" in ical
-
 
 
 def test_conversion_from_ical(calendars):

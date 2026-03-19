@@ -234,13 +234,15 @@ class TypesFactory(CaselessDict):
         # For unknown/custom properties, always use the default type from types_map
         if value_param and name in self.types_map and value_param in self:
             return self[value_param]
-                 
+
         if name.upper() == "IMAGE":
-            return self["unknown"]  # IMAGE is always unknown, even if VALUE is URI or BINARY
-        
-        if(value_param and (value_param in self) and value_param != "IMAGE"):
+            return self[
+                "unknown"
+            ]  # IMAGE is always unknown, even if VALUE is URI or BINARY
+
+        if value_param and (value_param in self) and value_param != "IMAGE":
             return self[value_param]
-        
+
         return self[self.types_map.get(name, "unknown")]
 
     def to_ical(self, name, value):
