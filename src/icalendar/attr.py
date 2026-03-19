@@ -1704,6 +1704,8 @@ def get_end_property(component: Component, end_property: str) -> date | datetime
 
     if duration is not None:
         if start is not None:
+            if component.name == "VEVENT" and duration.total_seconds() <= 0:
+                return start
             return start + duration
         end_name = "DTEND" if end_property == "DTEND" else "DUE"
         msg = f"No {end_name} or DURATION+DTSTART given."

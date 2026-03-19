@@ -4,23 +4,6 @@ Change log
 
 .. py:currentmodule:: icalendar
 
-We use `Semantic Versioning <https://semver.org>`_.
-
-- Breaking changes increase the **major** version number.
-- New features increase the **minor** version number.
-- Minor changes and bug fixes increase the **patch** version number.
-
-7.x series
-----------
-
-Developers may be concerned about upgrading to a **new major** release.
-Upgrading from 6.x to 7.x should have **no complications for most developers**, because:
-
-- the core API stays compatible with 4.x
-- the breaking changes likely affect you only if you are an icalendar expert, not a normal user
-
-We still recommend checking out the new features and giving feedback in the repository.
-
 7.0.4 (unreleased)
 ------------------
 
@@ -28,6 +11,7 @@ Minor changes
 ~~~~~~~~~~~~~
 
 - Make icalendar an explicit editable install for clarity. :pr:`1268`
+- Do not run some tests until a pull request is approved. :pr:`1246`
 - Created an :meth:`~icalendar.prop.vBoolean.ical_value` method for the :class:`~icalendar.prop.vBoolean` component. See :issue:`876`.
 - Created an :meth:`~icalendar.prop.vFloat.ical_value` method for the :class:`~icalendar.prop.vFloat` component. See :issue:`876`.
 - Created an :meth:`~icalendar.prop.vInt.ical_value` method for the :class:`~icalendar.prop.vInt` component. See :issue:`876`.
@@ -40,12 +24,19 @@ Breaking changes
 New features
 ~~~~~~~~~~~~
 
-- ...
+- Added ``subcomponents`` parameter to
+  :meth:`Component.new <icalendar.cal.component.Component.new>`,
+  :meth:`Event.new <icalendar.cal.event.Event.new>`,
+  :meth:`Todo.new <icalendar.cal.todo.Todo.new>`, and
+  :meth:`Availability.new <icalendar.cal.availability.Availability.new>`. :issue:`1065`
 
 Bug fixes
 ~~~~~~~~~
 
-- ...
+- Fixed :func:`~icalendar.attr.get_end_property` to avoid allowing the creating of VEVENT 
+components with negative durations. Only VTODO components are allowed to have negative durations. See :issue:`999`.
+- GitHub Actions: conditional tests now show as "skipped" instead of "pending". See :issue:`1264`.
+- Fixed :meth:`Component.__eq__ <icalendar.cal.component.Component.__eq__>` method not being commutative when comparing subcomponents. See :issue:`1224`.
 
 Documentation
 ~~~~~~~~~~~~~
@@ -53,6 +44,7 @@ Documentation
 - Add documentation for usage of the Sphinx extension `sphinx-icalendar <https://sphinx-icalendar.readthedocs.io/en/latest/>`_. :pr:`1268`
 - Add Repology badge and distribution installation instructions to install documentation. :issue:`1119`
 - Convert docstrings in ``attr.py`` and ``cal/calendar.py`` to Google Style format. See :issue:`1072`.
+- Added tutorial for creating a calendar with events with attendees. :pr:`1262`.
 
 7.0.3 (2026-03-03)
 ------------------
@@ -70,7 +62,6 @@ New features
   :attr:`Todo.RECURRENCE_ID <icalendar.cal.todo.Todo.RECURRENCE_ID>` and
   :attr:`Journal.RECURRENCE_ID <icalendar.cal.journal.Journal.RECURRENCE_ID>`
   properties, including support in their ``new()`` constructors. :issue:`1231`
-
 Bug fixes
 ~~~~~~~~~
 
