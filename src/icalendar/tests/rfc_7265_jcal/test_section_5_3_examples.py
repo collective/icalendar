@@ -1,7 +1,5 @@
 """Check that we convert the examples propertly."""
 
-
-
 from typing import TYPE_CHECKING
 
 from icalendar.parser_tools import to_unicode
