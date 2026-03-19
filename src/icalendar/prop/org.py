@@ -29,7 +29,7 @@ class vOrg:
         A property value consisting of an organizational name,
         organizational unit #1 name, and organizational unit #2 name.
 
-        .. code-block:: text
+        .. code-block:: ics
 
             ORG:ABC\, Inc.;North American Division;Marketing
 
