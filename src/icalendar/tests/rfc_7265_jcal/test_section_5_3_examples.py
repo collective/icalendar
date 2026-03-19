@@ -23,6 +23,7 @@ def test_convert_coffee(calendars):
         ("SUMMARY", "URI", "URI"),
         ("DESCRIPTION", "URI", "URI"),
         ("X-ALT-DESC", "UNKNOWN", "UNKNOWN"),
+        ("X-ALT-DESC", "TEXT", "TEXT"),
         ("DESCRIPTION", "TEXT", "TEXT"),
     ],
 )
