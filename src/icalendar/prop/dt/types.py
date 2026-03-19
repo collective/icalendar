@@ -174,23 +174,10 @@ class vDDDTypes(TimeBase):
         params = Parameters.from_jcal_property(jcal_property)
         if params.tzid:
             if isinstance(dt, tuple):
-                start, end = dt
-
-                def _localize(value):
-                    if isinstance(value, time):
-                        dt_full = datetime.combine(date(2020, 1, 1), value)
-                        return tzp.localize(dt_full, params.tzid).timetz()
-                    return tzp.localize(value, params.tzid)
-
-                start = _localize(start)
-                end = _localize(end) if is_datetime(end) else end
+                # period
+                start = tzp.localize(dt[0], params.tzid)
+                end = tzp.localize(dt[1], params.tzid) if is_datetime(dt[1]) else dt[1]
                 dt = (start, end)
-
-            elif isinstance(dt, time):
-                dt_full = datetime.combine(date(2020, 1, 1), dt)
-                localized = tzp.localize(dt_full, params.tzid)
-                dt = localized.timetz()
-
             else:
                 dt = tzp.localize(dt, params.tzid)
         return cls(

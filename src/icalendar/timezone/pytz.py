@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from datetime import datetime, tzinfo
-from typing import TYPE_CHECKING
+from datetime import datetime, time, tzinfo
+from typing import TYPE_CHECKING, overload
 
 import pytz
 from pytz.tzinfo import DstTzInfo
@@ -29,8 +29,18 @@ class PYTZ(TZProvider):
         # assume UTC for naive datetime instances
         return pytz.utc.localize(dt)
 
-    def localize(self, dt: datetime, tz: tzinfo) -> datetime:
-        """Localize a datetime to a timezone."""
+    @overload
+    def localize(self, dt: datetime, tz: tzinfo) -> datetime: ...
+
+    @overload
+    def localize(self, dt: datetime.time, tz: tzinfo) -> datetime.time: ...
+
+    def localize(self, dt: datetime | time, tz: tzinfo) -> datetime | datetime.time:
+        """Localize a datetime or a time to a timezone."""
+        if isinstance(dt, time):
+            dt_full = datetime.combine(datetime(2020, 1, 1), dt)  # noqa: DTZ001
+            localized = tz.localize(dt_full)
+            return localized.timetz()
         return tz.localize(dt)
 
     def knows_timezone_id(self, tzid: str) -> bool:
