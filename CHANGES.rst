@@ -51,6 +51,9 @@ Minor changes
 
 - Show colorful required code changes in the CI output to help contributors solve the formatting issues. :pr:`1216`
 - Use ruff 0.15.0 for code formatting in :file:`tox.ini`. :pr:`1215`
+- Extended :func:`~icalendar.timezone.pytz.localize` to support localizing both 
+  :class:`datetime.datetime` and :class:`datetime.time` objects, returning timezone-aware 
+  :class:`datetime.time` objects for the latter. :issue:`1142`
 
 New features
 ~~~~~~~~~~~~
@@ -79,8 +82,6 @@ Bug fixes
 - Fixed :meth:`Parameters.update_tzid_from <icalendar.parser.parameter.Parameters.update_tzid_from>`
   incorrectly setting ``TZID=UTC`` on UTC datetimes. :rfc:`5545#section-3.2.19` requires UTC datetimes to
   use the ``Z`` suffix without a ``TZID`` parameter. :issue:`1124`
-- Fixed :func:`icalendar.prop.dt.types.vDDDTypes.from_jcal` to correctly parse 
-  time values with TZID parameters, returning timezone-aware :class:`datetime.time` objects. :issue:`1142`
 - Renamed the public functions ``escape_char`` and ``unescape_char`` to implicit private methods ``_escape_char`` and ``_unescape_char``.
   Fixed regression from :issue:`1008` by restoring :func:`~icalendar.parser.string.escape_char` and :func:`~icalendar.parser.string.unescape_char` as public functions.
   The public functions :func:`~icalendar.parser.string.escape_char` and :func:`~icalendar.parser.string.unescape_char` are now deprecated with warnings for external users.
