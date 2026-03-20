@@ -605,7 +605,10 @@ class Component(CaselessDict):
                         vals_inst.params = params
                         component.add(name, vals_inst, encode=0)
                     except Exception as e:
-                        if not component.ignore_exceptions and not name[:2].upper() == "X-":
+                        if (
+                            not component.ignore_exceptions
+                            and not name[:2].upper() == "X-"
+                        ):
                             raise
                         # Error-tolerant mode: create vBroken
                         expected_type = getattr(factory, "__name__", "unknown")
