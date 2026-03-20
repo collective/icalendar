@@ -25,12 +25,9 @@ def test_x_property_broken_value():
 
     cal_str = "BEGIN:VCALENDAR\r\nX-FILTER-DATE-RANGE;VALUE=PERIOD:this-is-not-a-period\r\nEND:VCALENDAR\r\n"
 
-    Calendar.ignore_exceptions = True
-    try:
-        calendar = Calendar.from_ical(cal_str)
-    finally:
-        Calendar.ignore_exceptions = False  # always restore default
+    calendar = Calendar.from_ical(cal_str)
 
     result = calendar["X-FILTER-DATE-RANGE"]
     assert isinstance(result, vBroken)
+    assert str(result) == "this-is-not-a-period"
     assert result.expected_type == "vPeriod"
