@@ -234,7 +234,7 @@ class ComponentIcalParser:
         line: Contentline,
     ):
         """Handle the parse error for a property."""
-        if not self.component.ignore_exceptions:
+        if not self.component.ignore_exceptions and not name[:2].upper() == "X-":
             raise exception
         # Error-tolerant mode: create vBroken
         factory = self.get_factory_for_property(name, params)
