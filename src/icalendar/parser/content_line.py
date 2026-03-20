@@ -29,6 +29,11 @@ def _strip_ows_around_delimiters(st: str, delimiters: str = ";=") -> str:
     if not st:
         return st
 
+    # Fast path for the common case in non-strict mode:
+    # no whitespace in the parameter section means there is nothing to normalize.
+    if " " not in st and "\t" not in st:
+        return st
+
     out: list[str] = []
     pending_ws: list[str] = []
     in_quotes = False
@@ -36,15 +41,18 @@ def _strip_ows_around_delimiters(st: str, delimiters: str = ";=") -> str:
     # True only if the last appended char was a raw delimiter.
     last_was_delimiter = False
 
+    def flush_pending() -> None:
+        nonlocal pending_ws
+        if not pending_ws:
+            return
+        if not last_was_delimiter:
+            out.extend(pending_ws)
+        pending_ws.clear()
+
     for ch in st:
         # Handle escaped character (the backslash set escaped in previous iteration)
         if escaped:
-            if pending_ws:
-                if last_was_delimiter:
-                    pending_ws.clear()
-                else:
-                    out.extend(pending_ws)
-                    pending_ws.clear()
+            flush_pending()
             out.append(ch)
             escaped = False
             last_was_delimiter = False
@@ -52,12 +60,7 @@ def _strip_ows_around_delimiters(st: str, delimiters: str = ";=") -> str:
 
         # Handle backslash to escape next character
         if ch == "\\" and not in_quotes:
-            if pending_ws:
-                if last_was_delimiter:
-                    pending_ws.clear()
-                else:
-                    out.extend(pending_ws)
-                    pending_ws.clear()
+            flush_pending()
             out.append(ch)
             escaped = True
             last_was_delimiter = False
@@ -66,12 +69,7 @@ def _strip_ows_around_delimiters(st: str, delimiters: str = ";=") -> str:
         # Handle quote toggling
         if ch == '"' and not escaped:
             in_quotes = not in_quotes
-            if pending_ws:
-                if last_was_delimiter:
-                    pending_ws.clear()
-                else:
-                    out.extend(pending_ws)
-                    pending_ws.clear()
+            flush_pending()
             out.append(ch)
             last_was_delimiter = False
             continue
@@ -91,12 +89,7 @@ def _strip_ows_around_delimiters(st: str, delimiters: str = ";=") -> str:
             continue
 
         # Regular character
-        if pending_ws:
-            if last_was_delimiter:
-                pending_ws.clear()
-            else:
-                out.extend(pending_ws)
-                pending_ws.clear()
+        flush_pending()
         out.append(ch)
         last_was_delimiter = False
 
