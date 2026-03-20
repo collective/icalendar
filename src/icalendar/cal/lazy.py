@@ -261,7 +261,6 @@ class LazyCalendar(Calendar):
             False if all subcomponents have been parsed.
         """
         return self._subcomponents.is_lazy()
-        return self._subcomponents.is_lazy()
 
     def _walk(
         self, name: str | None, select: Callable[[Component], bool]
