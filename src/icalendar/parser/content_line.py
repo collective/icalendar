@@ -16,6 +16,7 @@ UFOLD = re.compile("(\r?\n)+[ \t]")
 NEWLINE = re.compile(r"\r?\n")
 
 OWS = " \t"
+OWS_AROUND_DELIMITERS_RE = re.compile(r"[ \t]*([;=])[ \t]*")
 
 
 def _strip_ows_around_delimiters(st: str, delimiters: str = ";=") -> str:
@@ -33,6 +34,10 @@ def _strip_ows_around_delimiters(st: str, delimiters: str = ";=") -> str:
     # no whitespace in the parameter section means there is nothing to normalize.
     if " " not in st and "\t" not in st:
         return st
+
+    # Fast regex-based path for simple parameter sections without quoting/escaping.
+    if delimiters == ";=" and '"' not in st and "\\" not in st:
+        return OWS_AROUND_DELIMITERS_RE.sub(r"\1", st).strip()
 
     out: list[str] = []
     pending_ws: list[str] = []
