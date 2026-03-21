@@ -6,11 +6,23 @@ This chapter describes the API design of icalendar.
 
 icalendar's API aligns with iCalendar components and properties as defined in :rfc:`5545`.
 
+
 At their core, iCalendar components are dictionaries with case insensitive keys.
 The preferred way to access their values is through lower case properties as described in :ref:`property-access`.
 Advantages and disadvantages of the other approaches are discussed below.
 
-As a convenience, icalendar offers shortcuts to import its classes instead of using their fully qualified Python path.
+
+Components
+==========
+
+Components are the building blocks of an iCalendar file.
+Typically, you would create a calendar, then create a component, such as an event, and add the event component to the calendar.
+Components may be nested.
+
+Components are represented in icalendar as Python classes.
+icalendar offers shortcuts to import its classes.
+This is the preferred, stable, public interface.
+Avoid using their fully qualified Python path, as these paths may change, and break your project.
 
 
 .. _property-access:
@@ -18,7 +30,7 @@ As a convenience, icalendar offers shortcuts to import its classes instead of us
 Property access
 ===============
 
-icalendar builds components and subcomponents.
+As described in the foregoing section, icalendar builds components and subcomponents.
 It then adds, modifies, or removes properties to components and subcomponents, all within the RFC requirements.
 This is done in the :doc:`prop <../reference/api/icalendar.prop>` module.
 
