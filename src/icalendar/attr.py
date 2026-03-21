@@ -903,12 +903,13 @@ def create_single_property(
 ):
     """Create a single property getter and setter.
 
-    :param prop: The name of the property.
-    :param value_attr: The name of the attribute to get the value from.
-    :param value_type: The type of the value.
-    :param type_def: The type of the property.
-    :param doc: The docstring of the property.
-    :param vProp: The type of the property from :mod:`icalendar.prop`.
+    Parameters:
+        prop: The name of the property.
+        value_attr: The name of the attribute to get the value from.
+        value_type: The type of the value.
+        type_def: The type of the property.
+        doc: The docstring of the property.
+        vProp: The type of the property from :mod:`icalendar.prop`.
     """
 
     def p_get(self: Component):
@@ -1703,6 +1704,8 @@ def get_end_property(component: Component, end_property: str) -> date | datetime
 
     if duration is not None:
         if start is not None:
+            if component.name == "VEVENT" and duration.total_seconds() <= 0:
+                return start
             return start + duration
         end_name = "DTEND" if end_property == "DTEND" else "DUE"
         msg = f"No {end_name} or DURATION+DTSTART given."

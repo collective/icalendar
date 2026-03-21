@@ -35,6 +35,8 @@ from icalendar.timezone import tzp
 from icalendar.tools import is_date
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
+
     from icalendar.compatibility import Self
 
 _marker = []
@@ -603,7 +605,10 @@ class Component(CaselessDict):
                         vals_inst.params = params
                         component.add(name, vals_inst, encode=0)
                     except Exception as e:
-                        if not component.ignore_exceptions:
+                        if (
+                            not component.ignore_exceptions
+                            and not name[:2].upper() == "X-"
+                        ):
                             raise
                         # Error-tolerant mode: create vBroken
                         expected_type = getattr(factory, "__name__", "unknown")
@@ -688,6 +693,12 @@ class Component(CaselessDict):
         # and look for each of them in the list.
         for subcomponent in self.subcomponents:
             if subcomponent not in other.subcomponents:
+                return False
+
+        # We now know the other component's subcomponents are not a strict subset
+        # of this component's. However, we still need to check the other way around.
+        for subcomponent in other.subcomponents:
+            if subcomponent not in self.subcomponents:
                 return False
 
         return True
@@ -820,6 +831,7 @@ class Component(CaselessDict):
         refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
         stamp: date | None = None,
+        subcomponents: Iterable[Component] | None = None,
     ) -> Component:
         """Create a new component.
 
@@ -831,6 +843,7 @@ class Component(CaselessDict):
             links: The :attr:`links` of the component.
             related_to: The :attr:`related_to` of the component.
             stamp: The :attr:`DTSTAMP` of the component.
+            subcomponents: The subcomponents of the component.
 
         Raises:
             ~error.InvalidCalendar: If the content is not valid
@@ -848,6 +861,12 @@ class Component(CaselessDict):
         component.related_to = related_to
         component.concepts = concepts
         component.refids = refids
+        if subcomponents is not None:
+            component.subcomponents = (
+                subcomponents
+                if isinstance(subcomponents, list)
+                else list(subcomponents)
+            )
         return component
 
     def to_jcal(self) -> list:
