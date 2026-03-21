@@ -71,7 +71,7 @@ Sphinx and its extensions enhance core reStructuredText with additional features
 -   redirects for moved files through `sphinx_reredirects <https://documatt.com/sphinx-reredirects/usage/>`_
 -   404 not found page through `notfound.extension <https://sphinx-notfound-page.readthedocs.io/en/latest/autoapi/notfound/extension/index.html>`_
 -   automatic linking to GitHub issues and pull requests through `sphinx-issues <https://github.com/sloria/sphinx-issues>`_
--   ``.ics`` and jCal file syntax highlighting through `sphinx-icalendar <https://sphinx-icalendar.readthedocs.io/en/latest/>`_
+-   iCalendar and jCal file syntax highlighting through `sphinx-icalendar <https://sphinx-icalendar.readthedocs.io/en/latest/>`_
 
 For configuration of these features, see :ref:`configure-a-package`.
 
@@ -232,9 +232,9 @@ To make them easier to read, use either the ``literalinclude`` or ``code-block``
 
 The ``calendar`` lexer will generate a tabbed interface.
 The first tab displays the calendar's event names and their start and end dates.
-The second tab displays the file in ``.ics`` format, and the third in ``jCal`` format.
+The second tab displays the file in iCalendar format, and the third in jCal format.
 
-sphinx-icalendar supports both ``.ics`` and ``jCal`` source file formats.
+sphinx-icalendar supports both iCalendar and jCal source file formats.
 
 ..  code-block:: rst
 
