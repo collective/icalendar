@@ -43,3 +43,8 @@ def test_from_ical():
         vBinary.from_ical("value")
     with pytest.raises(ValueError, match=r"Not valid base 64 encoding\."):
         vBinary.from_ical("áèਮ")
+
+
+def test_hash():
+    obj = vBinary(b"hashed text")
+    assert hash(obj) == hash(b"hashed text")

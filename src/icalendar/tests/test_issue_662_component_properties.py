@@ -774,3 +774,25 @@ def test_get_alarm_triggers_repeated(alarms, file, triggers, duration, repeat):
         assert triggers[0] == expected[0]
         for x, y in itertools.pairwise(triggers):
             assert y - x == duration
+
+
+@pytest.mark.parametrize(
+    "invalid_value",
+    [
+        object(),
+        "invalid string",
+        123,
+        date(2024, 1, 1),
+    ],
+)
+@pytest.mark.parametrize("Component", [Todo])
+def test_set_duration_invalid_type(Component, invalid_value):
+    """Test that setting duration with a non-timedelta raises TypeError.
+
+    This ensures that we get the expected error message:
+    'Use timedelta, not {type}.'
+    """
+    component = Component()
+    with pytest.raises(TypeError) as e:
+        component.duration = invalid_value
+    assert e.value.args[0] == f"Use timedelta, not {type(invalid_value).__name__}."
