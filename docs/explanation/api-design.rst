@@ -6,7 +6,6 @@ This chapter describes the API design of icalendar.
 
 icalendar's API aligns with iCalendar components and properties as defined in :rfc:`5545`.
 
-
 At their core, iCalendar components are dictionaries with case insensitive keys.
 The preferred way to access their values is through lower case properties as described in :ref:`property-access`.
 Advantages and disadvantages of the other approaches are discussed below.
