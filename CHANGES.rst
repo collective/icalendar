@@ -33,6 +33,11 @@ New features
 Bug fixes
 ~~~~~~~~~
 
+- Allow lenient parsing of content lines with optional whitespace around property
+  and parameter delimiters (for example,
+  ``REFRESH - INTERVAL; VALUE = DURATION:PT48H``) when parsing calendars with
+  ``strict=False``. See :issue:`351`.
+- X-properties with a ``VALUE`` parameter are now parsed using the correct type instead of falling back to :class:`~icalendar.prop.unkown.vUnknown`. :issue:`1238`
 - Fixed :func:`~icalendar.attr.get_end_property` to avoid allowing the creating of VEVENT 
 components with negative durations. Only VTODO components are allowed to have negative durations. See :issue:`999`.
 - GitHub Actions: conditional tests now show as "skipped" instead of "pending". See :issue:`1264`.
