@@ -206,6 +206,19 @@ class IcalendarTestCase(unittest.TestCase):
             "value",
         )
 
+        assert Contentline("REFRESH - INTERVAL; VALUE = DURATION:PT48H").parts() == (
+            "REFRESH-INTERVAL",
+            Parameters({"VALUE": "DURATION"}),
+            "PT48H",
+        )
+
+        with pytest.raises(
+            ValueError, match="Content line could not be parsed into parts"
+        ):
+            Contentline(
+                "REFRESH - INTERVAL; VALUE = DURATION:PT48H", strict=True
+            ).parts()
+
         contains_base64 = (
             b"X-APPLE-STRUCTURED-LOCATION;"
             b'VALUE=URI;X-ADDRESS="Kaiserliche Hofburg, 1010 Wien";'
