@@ -41,6 +41,7 @@ components with negative durations. Only VTODO components are allowed to have ne
 Documentation
 ~~~~~~~~~~~~~
 
+- Document how to install icalendar on Alpine Linux.
 - Add Repology badge and distribution installation instructions to install documentation. :issue:`1119`
 - Convert docstrings in ``attr.py`` and ``cal/calendar.py`` to Google Style format. See :issue:`1072`.
 - Added tutorial for creating a calendar with events with attendees. :pr:`1262`.
