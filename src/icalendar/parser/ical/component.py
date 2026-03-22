@@ -1,4 +1,4 @@
-"""Parsing a component's ical data."""
+"""Parsing a component's iCalendar data."""
 
 from __future__ import annotations
 
@@ -16,10 +16,10 @@ if TYPE_CHECKING:
 
 
 class ComponentIcalParser:
-    """A parser for a component's ical data.
+    """A parser for a component's iCalendar data.
 
-    This uses the template method pattern,
-    where the main parsing logic can be refined in the base class,
+    This uses the template method pattern, where the main parsing
+    logic can be refined in subclasses.
     """
 
     datetime_names: ClassVar[tuple[str, ...]] = (
@@ -32,7 +32,7 @@ class ComponentIcalParser:
     )
     """Names to check for TZID parameter when parsing datetimes.
 
-    Their from_ical methods take an optional tzid argument,
+    Their ``from_ical`` methods take an optional ``tzid`` argument,
     which is used if the property has a TZID parameter.
     """
 
@@ -45,7 +45,7 @@ class ComponentIcalParser:
         """Initialize the parser with the raw data.
 
         Parameters:
-            data: The raw ical data to parse, as bytes or a list of content lines.
+            data: The raw iCalendar data to parse, either as bytes or a list of content lines.
             component_factory: The factory to use for creating components.
             types_factory: The factory to use for creating property values.
         """
@@ -66,6 +66,11 @@ class ComponentIcalParser:
         )
 
     def contains_uid(self, uid: str) -> bool:
+    """Determines whether the component contains a ``uid``.
+    
+    Returns:
+        ``True`` if the component contains a ``uid``, else ``False``.
+    """
         self.initialize_parsing()
         return any(uid in line for line in self._content_lines)
 
@@ -165,7 +170,7 @@ class ComponentIcalParser:
     ) -> None:
         """Handle a property line.
 
-        We are adding properties to the current top of the stack
+        Add properties to the top of the current stack.
 
         Parameters:
             name: The name of the property, uppercased.
@@ -255,7 +260,7 @@ class ComponentIcalParser:
         """Handle the special case of CATEGORIES property.
 
         Returns:
-            True if handled, False if not.
+            ``True`` if handled, else ``False``.
         """
         # Special handling for CATEGORIES - need raw value
         # before unescaping to properly split on unescaped commas

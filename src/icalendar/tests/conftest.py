@@ -155,7 +155,7 @@ def calendars(tzp, request):
     """Return the data source for calendar files.
 
     We have two ways of parsing those:
-    - Instantly
+    - Immediately
     - Lazily with LazyCalendar
     """
     return DataSource.from_folder(CALENDARS_FOLDER, request.param)

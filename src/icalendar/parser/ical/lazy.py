@@ -18,15 +18,14 @@ class LazyCalendarIcalParser(ComponentIcalParser):
     Instead of parsing the components, LazyComponents are created.
     Parsing can happen on demand.
 
-    We assume that a calendar grows over time and that the subcomponents
-    of the calendar become more in number.
-    This optimization allows us to parse big calendar files without consuming
-    more memory than necessary and reducing the initial time it takes to access
-    meta data.
+    A calendar may grow over time, with its subcomponents greatly increasing
+    in number, and requiring more memory and time to fully parse. This
+    optimization lazily parses calendar files without consuming more memory
+    than necessary, reducing the initial time it takes to access meta data.
     """
 
     parse_instantly: ClassVar[tuple[str, ...]] = ("VCALENDAR",)
-    """Parse these components instantly, instead of lazily.
+    """Parse these components immediately, instead of lazily.
 
     All other components are parsed lazily.
     """
@@ -34,7 +33,7 @@ class LazyCalendarIcalParser(ComponentIcalParser):
     def handle_begin_component(self, vals):
         """Begin a new component.
 
-        This could well be the first component.
+        This may be the first component.
         """
         c_name = vals.upper()
         if (
@@ -42,7 +41,7 @@ class LazyCalendarIcalParser(ComponentIcalParser):
             or not self.component
             or not self.component.is_lazy()
         ):
-            # these components are parsed instantly
+            # these components are parsed immediately
             super().handle_begin_component(vals)
         else:
             self.handle_lazy_begin_component(c_name)
@@ -105,7 +104,7 @@ class LazySubcomponent:
     def name(self) -> str:
         """The name of the subcomponent.
 
-        This is upper case, as per RFC 5545.
+        The name is uppercased, per :rfc:`5545#section-2.1`.
         """
         return self._name
 
@@ -127,7 +126,10 @@ class LazySubcomponent:
         return self._component
 
     def is_lazy(self) -> bool:
-        """You need to call :meth:`parse` to get the fully parsed component."""
+        """Return whether the subcomponents were accessed and parsed lazily.
+
+        Call :meth:`parse` to get the fully parsed component.
+        """
         return True
 
     def __repr__(self) -> str:
@@ -150,7 +152,7 @@ class LazySubcomponent:
         return []
 
     def with_uid(self, uid: str) -> list[Component]:
-        """Return the components with the uid.
+        """Return the components containing the given ``uid``.
 
         This only parses the component if necessary.
 

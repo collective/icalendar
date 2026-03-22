@@ -16,16 +16,15 @@ class CalendarIcalParser(ComponentIcalParser):
             for component in comp.subcomponents:
                 if component.name == "VTIMEZONE":
                     if not all_timezones_so_far:
-                        # If a preceding component refers to a VTIMEZONE defined
-                        # later in the source string
-                        # (forward references are allowed by RFC 5545), then the
-                        # earlier component may have
-                        # the wrong timezone attached.
+                        # If a preceding component refers to a VTIMEZONE
+                        # defined later in the source string (forward
+                        # references are allowed by RFC 5545), then the
+                        # earlier component may have the wrong timezone
+                        # attached.
                         # However, during computation of comps, all VTIMEZONEs
-                        # observed do end up in
-                        # the timezone cache. So simply re-running from_ical will
-                        # rely on the cache
-                        # for those forward references to produce the correct result.
+                        # observed do end up in the timezone cache. So simply
+                        # re-running from_ical will rely on the cache for those
+                        # forward references to produce the correct result.
                         # See test_create_america_new_york_forward_reference.
                         self.initialize_parsing()
                         self.parse_content_lines()

@@ -132,7 +132,7 @@ class LazySubcomponentsStrategy:
         return self, result
 
     def with_uid(self, uid: str) -> tuple[LazySubcomponentsStrategy, list[Component]]:
-        """Get the subcomponents of the calendar with the given uid.
+        """Get the subcomponents of the calendar with the given ``uid``.
 
         Parse only the minimal number of subcomponents.
         """
@@ -173,7 +173,7 @@ class LazyCalendar(Calendar):
 
         By accessing the :attr:`~icalendar.cal.calendar.Calendar.events` of the calendar,
         only :class:`~icalendar.cal.event.Event` and
-        :class:`~icalendar.cal.timezone.Timezone` are parsed.
+        :class:`~icalendar.cal.timezone.Timezone` are immediately parsed.
 
         .. code-block:: pycon
 
@@ -188,8 +188,9 @@ class LazyCalendar(Calendar):
             >>> calendar.is_lazy()
             True
 
-        After you access all :attr:`subcomponents` of the calendar,
-        the whole calendar has been parsed.
+        When you access all :attr:`subcomponents` of the calendar,
+        for example by getting their count, the entire calendar is
+        parsed and becomes not lazy.
 
             >>> len(calendar.subcomponents)
             5
@@ -245,8 +246,8 @@ class LazyCalendar(Calendar):
         """Add a component to the calendar.
 
         Use this instead of appending to
-        :attr:`~icalendar.cal.lazy.LazyCalendar.subcomponents`'
-        as it does not parse the whole calendar.
+        :attr:`~icalendar.cal.lazy.LazyCalendar.subcomponents`,
+        as the latter does not parse the whole calendar.
         """
         self._subcomponents = self._subcomponents.add_component(component)
 
@@ -254,11 +255,11 @@ class LazyCalendar(Calendar):
         """Whether the subcomponents will be parsed lazily.
 
         .. note:: If you believe that the calendar parses more than it should,
-            please open an issue.
+            please `open an issue <https://github.com/collective/icalendar/issues/new?template=bug_report.md>`_.
 
         Returns:
-            True if subcomponents are deferred and not yet parsed.
-            False if all subcomponents have been parsed.
+            ``True`` if subcomponents are deferred and not yet parsed.
+            ``False`` if all subcomponents have been parsed.
         """
         return self._subcomponents.is_lazy()
 
