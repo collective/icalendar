@@ -96,6 +96,7 @@ class vInt(int):
     def to_ical(self) -> bytes:
         return str(self).encode("utf-8")
 
+    @property
     def ical_value(self) -> int:
         """INTEGER property type according to :rfc:`5545#section-3.3.8`"""
         return int(self)
