@@ -31,7 +31,7 @@ Property access
 
 As described in the foregoing section, icalendar builds components and subcomponents.
 It then adds, modifies, or removes properties to components and subcomponents, all within the RFC requirements.
-This is done in the :doc:`prop <../reference/api/icalendar.prop>` module.
+All property value data types specified by :rfc:`5545#section-3.3` and subsequent RFCs can be found in :mod:`icalendar.prop`.
 
 Accessing components by their properties is preferred over using the :ref:`dictionary-access` for the following reasons.
 
