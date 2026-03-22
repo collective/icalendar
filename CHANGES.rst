@@ -10,6 +10,7 @@ Change log
 Minor changes
 ~~~~~~~~~~~~~
 
+- Make icalendar an explicit editable install for clarity. :pr:`1268`
 - Do not run some tests until a pull request is approved. :pr:`1246`
 - Created an :meth:`~icalendar.prop.vBoolean.ical_value` method for the :class:`~icalendar.prop.vBoolean` component. See :issue:`876`.
 - Created an :meth:`~icalendar.prop.vFloat.ical_value` method for the :class:`~icalendar.prop.vFloat` component. See :issue:`876`.
@@ -32,6 +33,10 @@ New features
 Bug fixes
 ~~~~~~~~~
 
+- Allow lenient parsing of content lines with optional whitespace around property
+  and parameter delimiters (for example,
+  ``REFRESH - INTERVAL; VALUE = DURATION:PT48H``) when parsing calendars with
+  ``strict=False``. See :issue:`351`.
 - X-properties with a ``VALUE`` parameter are now parsed using the correct type instead of falling back to :class:`~icalendar.prop.unkown.vUnknown`. :issue:`1238`
 - Fixed :func:`~icalendar.attr.get_end_property` to avoid allowing the creating of VEVENT 
 components with negative durations. Only VTODO components are allowed to have negative durations. See :issue:`999`.
@@ -41,6 +46,7 @@ components with negative durations. Only VTODO components are allowed to have ne
 Documentation
 ~~~~~~~~~~~~~
 
+- Add documentation for usage of the Sphinx extension `sphinx-icalendar <https://sphinx-icalendar.readthedocs.io/en/latest/>`_. :pr:`1268`
 - Add Repology badge and distribution installation instructions to install documentation. :issue:`1119`
 - Convert docstrings in ``attr.py`` and ``cal/calendar.py`` to Google Style format. See :issue:`1072`.
 - Added tutorial for creating a calendar with events with attendees. :pr:`1262`.
