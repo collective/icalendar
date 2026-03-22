@@ -16,6 +16,7 @@ Minor changes
 - Created an :meth:`~icalendar.prop.float.vFloat.ical_value` property for the :class:`~icalendar.prop.float.vFloat` component. :issue:`876`
 - Created an :meth:`~icalendar.prop.integer.vInt.ical_value` property for the :class:`~icalendar.prop.integer.vInt` component. :issue:`876`
 - Created an :meth:`~icalendar.prop.binary.vBinary.ical_value` property for the :class:`~icalendar.prop.binary.vBinary` component. :issue:`876`
+- Put the link check as the last documentation CI task, allowing the documentation build and Vale to run first and fail faster. :pr:`1295`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
