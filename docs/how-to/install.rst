@@ -37,7 +37,7 @@ Repology is a service that tracks the availability and versions of packages acro
 Alpine Linux
 ------------
 
-On Alpine Linux the [py3-icalendar](https://pkgs.alpinelinux.org/package/edge/community/ppc64le/py3-icalendar) package can be installed using ``apk``:
+On Alpine Linux the `py3-icalendar <https://pkgs.alpinelinux.org/packages?name=py3-icalendar&branch=edge&repo=&arch=&origin=&flagged=&maintainer=>`_ package can be installed using ``apk``:
 
 .. code-block:: shell
 
@@ -55,7 +55,7 @@ On Arch Linux and derivatives, the package is available in the community reposit
 Debian or Ubuntu
 ----------------
 
-You can install the `python-icalendar package <https://tracker.debian.org/pkg/python-icalendar>`_ for Debian or its derivatives.
+You can install the `python-icalendar <https://tracker.debian.org/pkg/python-icalendar>`_ package for Debian or its derivatives.
 
 .. code-block:: shell
 
