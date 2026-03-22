@@ -66,6 +66,7 @@ jobs:
 
   report-skipped:
     needs: generate-matrix
+    if: ${{ needs.generate-matrix.outputs.skipped != '[]' }}
     runs-on: ubuntu-latest
     permissions:
       checks: write
@@ -77,21 +78,29 @@ jobs:
       with:
         script: |
           const skipped = JSON.parse(process.env.SKIPPED_TESTS || '[]');
+          if (skipped.length === 0) return;
+
           const headSha = context.payload.pull_request?.head?.sha || context.sha;
 
           for (const name of skipped) {
-            await github.rest.checks.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              name,
-              head_sha: headSha,
-              status: 'completed',
-              conclusion: 'skipped',
-              output: {
-                title: name,
-                summary: 'Skipped by the workflow test matrix.',
-              },
-            });
+            try {
+              await github.rest.checks.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name,
+                head_sha: headSha,
+                status: 'completed',
+                conclusion: 'skipped',
+                output: {
+                  title: name,
+                  summary: 'Skipped by the workflow test matrix.',
+                },
+              });
+            } catch (err) {
+              // checks.create requires write permission, which is not
+              // available for workflows triggered by fork pull requests.
+              core.info(`Could not report ${name} as skipped: ${err.message}`);
+            }
           }
 
   coverage:
