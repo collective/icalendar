@@ -45,7 +45,8 @@ class ComponentIcalParser:
         """Initialize the parser with the raw data.
 
         Parameters:
-            data: The raw iCalendar data to parse, either as bytes or a list of content lines.
+            data: The raw iCalendar data to parse, either as bytes
+                or a list of content lines.
             component_factory: The factory to use for creating components.
             types_factory: The factory to use for creating property values.
         """
@@ -66,11 +67,11 @@ class ComponentIcalParser:
         )
 
     def contains_uid(self, uid: str) -> bool:
-    """Determines whether the component contains a ``uid``.
-    
-    Returns:
-        ``True`` if the component contains a ``uid``, else ``False``.
-    """
+        """Determines whether the component contains a ``uid``.
+
+        Returns:
+            ``True`` if the component contains a ``uid``, else ``False``.
+        """
         self.initialize_parsing()
         return any(uid in line for line in self._content_lines)
 
