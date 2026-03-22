@@ -62,10 +62,10 @@ class ParsedSubcomponentsStrategy:
 
 
 class LazySubcomponentsStrategy:
-    """All the subcomponents are parsed lazily."""
+    """Allow lazy parsing of subcomponents on access."""
 
     initial_components_to_parse: tuple[str, ...] = ("VTIMEZONE",)
-    """The components that are parsed immediately, instead of lazily."""
+    """Before parsing other subcomponents, these will be parsed first."""
 
     def __init__(self):
         self._components: list[LazySubcomponent | Component] = []
