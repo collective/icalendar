@@ -81,7 +81,7 @@ def generate_matrix(git_ref, review):
     #
     # Create matrix
     #
-    matrix: list[dict[str, str]] = []
+    matrix: list[dict[str, str | bool]] = []
 
     #
     # minimal set of jobs
@@ -151,7 +151,15 @@ def generate_matrix(git_ref, review):
             if run["tox_env"] != "py":
                 run["test_name"] += f" ({run['tox_env']})"
 
-    return matrix
+    include = []
+    skipped = []
+    for run in matrix:
+        if run["skip"]:
+            skipped.append(run["test_name"])
+            continue
+        include.append({k: v for k, v in run.items() if k != "skip"})
+
+    return {"include": include, "skipped": skipped}
 
 
 if __name__ == "__main__":
