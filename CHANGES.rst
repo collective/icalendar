@@ -44,6 +44,7 @@ Bug fixes
 Documentation
 ~~~~~~~~~~~~~
 
+- Document how to install icalendar on Alpine Linux.
 - Add documentation for usage of the Sphinx extension `sphinx-icalendar <https://sphinx-icalendar.readthedocs.io/en/latest/>`_. :pr:`1268`
 - Add Repology badge and distribution installation instructions to install documentation. :issue:`1119`
 - Convert docstrings in ``attr.py`` and ``cal/calendar.py`` to Google Style format. :issue:`1072`
