@@ -15,6 +15,7 @@ Nicco
 Params
 Penner
 (?i)Plone
+Repology
 recur.recur
 reformats
 RFCs?

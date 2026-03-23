@@ -44,7 +44,9 @@ Bug fixes
 Documentation
 ~~~~~~~~~~~~~
 
-- Document how to install icalendar on Alpine Linux.
+- Fixed CI Vale check reporting and resolved Vale errors. :pr:`1278`
+- Include :file:`Makefile` in documentation workflow path filters so documentation CI runs when Makefile logic changes, and keep Vale failures visible in CI output. :issue:`1277`
+- Document how to install icalendar on Alpine Linux. :pr:`1290`
 - Add documentation for usage of the Sphinx extension `sphinx-icalendar <https://sphinx-icalendar.readthedocs.io/en/latest/>`_. :pr:`1268`
 - Add Repology badge and distribution installation instructions to install documentation. :issue:`1119`
 - Convert docstrings in ``attr.py`` and ``cal/calendar.py`` to Google Style format. :issue:`1072`
