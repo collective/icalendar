@@ -73,7 +73,7 @@ class LazySubcomponentsStrategy:
 
     @property
     def as_parsed(self) -> ParsedSubcomponentsStrategy:
-        """The same components just fully parsed."""
+        """Return the parsed components."""
         return ParsedSubcomponentsStrategy().set_components(
             [component.parse() for component in self._components]
         )
@@ -166,8 +166,8 @@ class LazyCalendar(Calendar):
     This allows the calendar to handle large files without
     consuming too much memory or time.
 
-    All the properties of the calendar are parsed immediately,
-    just the subcomponents are not.
+    All properties of the calendar component are parsed immediately.
+    Subcomponents and their properties are parsed lazily.
 
     Examples:
 
