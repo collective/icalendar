@@ -156,11 +156,10 @@ class vTime(TimeBase):
     def from_ical(ical: str, timezone: str | None | tzinfo = None) -> time:
         """Convert an ical string into a time.
 
-        Description:
-            This method supports parsing the three forms of time values defined in :rfc:`5545`:
-                - Local time (floating)
-                - UTC time
-                - Local time with time zone reference
+        This method supports parsing the three forms of time values defined in :rfc:`5545#section-3.3.12`:
+            - Local time (floating)
+            - UTC time
+            - Local time with time zone reference
 
         Returns:
             A datetime.time object representing the parsed time, with timezone information if applicable.
