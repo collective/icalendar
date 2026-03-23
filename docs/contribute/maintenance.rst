@@ -112,7 +112,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         git checkout main
         git pull
 
-#.  When cutting any new release that you'll tag and want to be considered stable, on the ``main`` or development branch, update the Sphinx configuration file :file:`docs/conf.py` to match that version.
+#.  When cutting any new release that you'll tag and want to be considered "stable" on either the ``main`` or development branch, update the Sphinx configuration file :file:`docs/conf.py` to match that version.
 
     Hide the warning banner.
 
