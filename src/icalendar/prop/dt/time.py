@@ -162,7 +162,7 @@ class vTime(TimeBase):
             - Local time with time zone reference
 
         Returns:
-            A datetime.time object representing the parsed time, with timezone information if applicable.
+            A :class:`datetime.time` object representing the parsed time, with timezone information if applicable.
 
         Raises:
             ~error.ValueError: if the provided string cannot be parsed as a time.
