@@ -17,8 +17,8 @@ jobs:
   generate-matrix:
     runs-on: ubuntu-latest
     outputs:
+      # See https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/passing-information-between-jobs#example-defining-outputs-for-a-job
       include: ${{ steps.set-matrix.outputs.include }}
-      skipped: ${{ steps.set-matrix.outputs.skipped }}
     steps:
     - uses: actions/checkout@v6
     - name: Set matrix
@@ -26,7 +26,6 @@ jobs:
       run: |
         matrix_json="$(python .github/workflows/generate_matrix.py '${{ github.ref }}' '${{ github.event.review.state }}' )"
         echo "include=$(echo "$matrix_json" | python -c 'import json,sys; print(json.dumps(json.load(sys.stdin)["include"]))')" >> $GITHUB_OUTPUT
-        echo "skipped=$(echo "$matrix_json" | python -c 'import json,sys; print(json.dumps(json.load(sys.stdin)["skipped"]))')" >> $GITHUB_OUTPUT
 
   run-tests:
     needs: generate-matrix
@@ -63,45 +62,6 @@ jobs:
         file: coverage.xml
         allow-empty: true
         fail-on-error: false
-
-  report-skipped:
-    needs: generate-matrix
-    if: ${{ needs.generate-matrix.outputs.skipped != '[]' }}
-    runs-on: ubuntu-latest
-    permissions:
-      checks: write
-    steps:
-    - name: Report skipped tests
-      uses: actions/github-script@v8
-      env:
-        SKIPPED_TESTS: ${{ needs.generate-matrix.outputs.skipped }}
-      with:
-        script: |
-          const skipped = JSON.parse(process.env.SKIPPED_TESTS || '[]');
-          if (skipped.length === 0) return;
-
-          const headSha = context.payload.pull_request?.head?.sha || context.sha;
-
-          for (const name of skipped) {
-            try {
-              await github.rest.checks.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                name,
-                head_sha: headSha,
-                status: 'completed',
-                conclusion: 'skipped',
-                output: {
-                  title: name,
-                  summary: 'Skipped by the workflow test matrix.',
-                },
-              });
-            } catch (err) {
-              // checks.create requires write permission, which is not
-              // available for workflows triggered by fork pull requests.
-              core.info(`Could not report ${name} as skipped: ${err.message}`);
-            }
-          }
 
   coverage:
     # parallel test coverage upload
