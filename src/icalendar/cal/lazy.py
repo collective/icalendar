@@ -41,7 +41,7 @@ class ParsedSubcomponentsStrategy:
         return self
 
     def is_lazy(self) -> Literal[False]:
-        """Return whether the components are lazy."""
+        """Returns ``False`` because subcomponents are not lazily parsed."""
         return False
 
     def walk(self, name: str) -> tuple[ParsedSubcomponentsStrategy, list[Component]]:
