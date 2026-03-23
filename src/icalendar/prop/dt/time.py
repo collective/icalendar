@@ -165,7 +165,7 @@ class vTime(TimeBase):
             A :class:`datetime.time` object representing the parsed time, with timezone information if applicable.
 
         Raises:
-            ~error.ValueError: if the provided string cannot be parsed as a time.
+            ValueError: if the provided string cannot be parsed as a time.
         """
         tzinfo = None
         if isinstance(timezone, str):
