@@ -62,10 +62,10 @@ class ParsedSubcomponentsStrategy:
 
 
 class LazySubcomponentsStrategy:
-    """Allow lazy parsing of subcomponents on access."""
+    """Parse subcomponents only when accessed."""
 
     initial_components_to_parse: tuple[str, ...] = ("VTIMEZONE",)
-    """Before parsing other subcomponents, these will be parsed first."""
+    """Parse these subcomponents before any others."""
 
     def __init__(self):
         self._components: list[LazySubcomponent | Component] = []
@@ -100,7 +100,7 @@ class LazySubcomponentsStrategy:
         return self
 
     def is_lazy(self) -> bool:
-        """Return whether the components are lazy."""
+        """Return whether the subcomponents may be lazily parsed."""
         return True
 
     def parse_initial_components(self) -> None:
@@ -182,7 +182,7 @@ class LazyCalendar(Calendar):
             >>> len(calendar.events) == 1
             True
 
-        Other subcomponents are not parsed.
+        The calendar's subcomponents were not parsed because they were not accessed.
         The calendar is still lazy.
 
             >>> calendar.is_lazy()

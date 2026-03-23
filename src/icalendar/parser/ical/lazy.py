@@ -141,7 +141,7 @@ class LazySubcomponent:
         This only parses the component if necessary.
 
         Parameters:
-            name: The name of the component to walk to.
+            name: The name to match for all components in the calendar, then walk through and parse the resulting matches.
         """
         if not isinstance(name, str):
             raise TypeError("name must be a string.")
