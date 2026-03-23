@@ -1,14 +1,13 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from datetime import datetime, time
+from typing import TYPE_CHECKING, overload
 
 from icalendar.tools import to_datetime
 
 from .windows_to_olson import WINDOWS_TO_OLSON
 
 if TYPE_CHECKING:
-    import datetime
-
     from dateutil.rrule import rrule
 
     from icalendar import prop
@@ -71,14 +70,35 @@ class TZP:
         """
         return self.__provider.localize_utc(to_datetime(dt))
 
+    @overload
     def localize(
-        self, dt: datetime.date, tz: datetime.tzinfo | str | None
-    ) -> datetime.datetime:
-        """Localize a datetime to a timezone."""
+        self, dt: datetime.datetime, tz: datetime.tzinfo | str | None
+    ) -> datetime.datetime: ...
+
+    @overload
+    def localize(
+        self, dt: datetime.time, tz: datetime.tzinfo | str | None
+    ) -> datetime.time: ...
+
+    def localize(
+        self, dt: datetime.date | datetime.time, tz: datetime.tzinfo | str | None
+    ) -> datetime.datetime | datetime.time:
+        """Localize a datetime or time to a timezone.
+
+        Returns:
+            -   A localized :class:`datetime.datetime` when a
+                :class:`datetime.datetime` is given.
+            -   A localized :class:`datetime.time` when a
+                :class:`datetime.time` is given.
+        """
         if isinstance(tz, str):
             tz = self.timezone(tz)
         if tz is None:
             return dt.replace(tzinfo=None)
+        if isinstance(dt, time):
+            dt_full = datetime.combine(datetime(2020, 1, 1), dt)  # noqa: DTZ001
+            localized = self.__provider.localize(dt_full, tz)
+            return localized.timetz()
         return self.__provider.localize(to_datetime(dt), tz)
 
     def cache_timezone_component(self, timezone_component: Timezone.Timezone) -> None:

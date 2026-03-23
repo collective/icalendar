@@ -17,6 +17,7 @@ Minor changes
 - Created an :meth:`~icalendar.prop.integer.vInt.ical_value` property for the :class:`~icalendar.prop.integer.vInt` component. :issue:`876`
 - Created an :meth:`~icalendar.prop.binary.vBinary.ical_value` property for the :class:`~icalendar.prop.binary.vBinary` component. :issue:`876`
 - Put the link check as the last documentation CI task, allowing the documentation build and Vale to run first and fail faster. :pr:`1295`
+- Extended :func:`~icalendar.timezone.tzp.TZP.localize` to support localizing both :class:`datetime.datetime` and :class:`datetime.time` objects, returning timezone-aware :class:`datetime.time` objects for the latter. :issue:`1142`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
@@ -26,11 +27,8 @@ Breaking changes
 New features
 ~~~~~~~~~~~~
 
-- Added ``subcomponents`` parameter to
-  :meth:`Component.new <icalendar.cal.component.Component.new>`,
-  :meth:`Event.new <icalendar.cal.event.Event.new>`,
-  :meth:`Todo.new <icalendar.cal.todo.Todo.new>`, and
-  :meth:`Availability.new <icalendar.cal.availability.Availability.new>`. :issue:`1065`
+- Updated :func:`icalendar.prop.dt.time.vTime.from_ical` to support parsing time values with TZID parameters, returning timezone-aware :class:`datetime.time` objects. :issue:`1142`
+- Added ``subcomponents`` parameter to :meth:`Component.new <icalendar.cal.component.Component.new>`, :meth:`Event.new <icalendar.cal.event.Event.new>`, :meth:`Todo.new <icalendar.cal.todo.Todo.new>`, and :meth:`Availability.new <icalendar.cal.availability.Availability.new>`. :issue:`1065`
 
 Bug fixes
 ~~~~~~~~~

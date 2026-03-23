@@ -1,7 +1,9 @@
 import datetime
 import os
+from datetime import time
 
 from icalendar import Calendar
+from icalendar.prop.dt.time import vTime
 
 
 def test_value_type_is_not_mapped(types_factory):
@@ -28,3 +30,48 @@ def test_create_to_ical(x_sometime):
     cal = Calendar()
     cal.add("X-SOMETIME", datetime.time(17, 20, 10))
     assert b"X-SOMETIME;VALUE=TIME:172010" in cal.to_ical().splitlines()
+
+
+def test_vtime_multiple_timezones(calendars):
+    cal = calendars["multiple_timezones.ics"]
+
+    events = list(cal.walk("VEVENT"))
+
+    named = events[0]["RDATE"].dts[0].dt
+    utc = events[1]["RDATE"].dts[0].dt
+    floating = events[2]["RDATE"].dts[0].dt
+
+    assert named.tzinfo is not None
+    assert "America/New_York" in str(named.tzinfo)
+
+    assert str(utc.tzinfo) == "UTC"
+
+    assert floating.tzinfo is None
+
+
+def test_vtime_with_tzinfo_object():
+    tz = datetime.timezone.utc
+
+    parsed = vTime.from_ical("083000", timezone=tz)
+
+    assert parsed.tzinfo == tz
+
+
+def test_localize_time(tzp):
+    t = time(8, 30)
+    tz = tzp.timezone("America/New_York")
+
+    localized = tzp.localize(t, tz)
+
+    assert isinstance(localized, time)
+    assert localized.tzinfo is not None
+    assert "America/New_York" in str(localized.tzinfo)
+
+
+def test_localized_time_utc(tzp):
+    t = time(8, 30)
+
+    localized = tzp.localize_utc(t)
+
+    assert isinstance(localized, time)
+    assert str(localized.tzinfo) == "UTC"
