@@ -84,10 +84,12 @@ class TZP:
         self, dt: datetime.date | datetime.time, tz: datetime.tzinfo | str | None
     ) -> datetime.datetime | datetime.time:
         """Localize a datetime or time to a timezone.
-        
+
         Returns:
-            -   A localized :class:`datetime.datetime` when a :class:`datetime.datetime` is given.
-            -   A localized :class:`datetime.time` when a :class:`datetime.time` is given.
+            -   A localized :class:`datetime.datetime` when a
+                :class:`datetime.datetime` is given.
+            -   A localized :class:`datetime.time` when a
+                :class:`datetime.time` is given.
         """
         if isinstance(tz, str):
             tz = self.timezone(tz)
