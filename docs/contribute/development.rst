@@ -122,7 +122,7 @@ The following command show how to run tox with Python 3.12:
 
 .. seealso::
 
-    tox's `documentation <https://tox.wiki/en/stable/user_guide.html#cli>`_.
+    tox's `CLI interface documentation <https://tox.wiki/en/stable/reference/cli.html>`_.
 
 
 Code format

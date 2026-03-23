@@ -20,5 +20,5 @@ def test_error():
 
 def test_ical_value():
     """ical_value property returns the int value."""
-    assert vInt(1).ical_value() == 1
-    assert vInt(0).ical_value() == 0
+    assert vInt(1).ical_value == 1
+    assert vInt(0).ical_value == 0
