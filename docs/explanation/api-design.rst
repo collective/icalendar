@@ -4,14 +4,34 @@ API design
 
 This chapter describes the API design of icalendar.
 
+icalendar's API aligns with iCalendar components and properties as defined in :rfc:`5545`.
+
 At their core, iCalendar components are dictionaries with case insensitive keys.
 The preferred way to access their values is through lower case properties as described in :ref:`property-access`.
 Advantages and disadvantages of the other approaches are discussed below.
+
+
+Components
+==========
+
+Components are the building blocks of an iCalendar file.
+Typically, you would create a calendar, then create a component, such as an event, and add the event component to the calendar.
+Components may be nested.
+
+Components are represented in icalendar as Python classes.
+icalendar offers shortcuts to import its classes.
+This is the preferred, stable, public interface.
+Avoid using their fully qualified Python path, as these paths may change, and break your project.
+
 
 .. _property-access:
 
 Property access
 ===============
+
+As described in the foregoing section, icalendar builds components and subcomponents.
+It then adds, modifies, or removes properties to components and subcomponents, all within the RFC requirements.
+All property value data types specified by :rfc:`5545#section-3.3` and subsequent RFCs can be found in :mod:`icalendar.prop`.
 
 Accessing components by their properties is preferred over using the :ref:`dictionary-access` for the following reasons.
 
@@ -215,3 +235,26 @@ The following example sets the ``DESCRIPTION`` from  :rfc:`7986#section-5.1`, an
     PRODID:-//My calendar product//mxm.dk//
     DESCRIPTION;LANGUAGE=en:This is my personal calendar.
     END:VCALENDAR
+
+
+.. _import-shortcuts:
+
+Import shortcuts
+================
+
+icalendar offers shortcuts to import its Python classes, which align with their counterpart iCalendar components.
+The iCalendar :rfc:`5545` refers to components, such as events and alarms.
+In the foregoing examples, you might have noticed imports such as the following.
+
+..  code-block:: pycon
+
+    >>> from icalendar import Event
+
+By virtue of placing imports into each module's :file:`__init.py__` file, it brings in its Python classes and functions to the root of the icalendar package.
+Without this convenience, imports would require the fully qualified Python path.
+
+..  code-block:: pycon
+
+    >>> from icalendar.cal.event import Event
+
+This provides a nice API for developers, and establishes consistency across the API, ensuring backward compatibility as much as practical.
