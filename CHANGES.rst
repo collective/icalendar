@@ -17,6 +17,7 @@ Minor changes
 - Created an :meth:`~icalendar.prop.integer.vInt.ical_value` property for the :class:`~icalendar.prop.integer.vInt` component. :issue:`876`
 - Created an :meth:`~icalendar.prop.binary.vBinary.ical_value` property for the :class:`~icalendar.prop.binary.vBinary` component. :issue:`876`
 - Put the link check as the last documentation CI task, allowing the documentation build and Vale to run first and fail faster. :pr:`1295`
+- Extended :func:`~icalendar.timezone.tzp.TZP.localize` to support localizing both :class:`datetime.datetime` and :class:`datetime.time` objects, returning timezone-aware :class:`datetime.time` objects for the latter. :issue:`1142`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
@@ -26,11 +27,8 @@ Breaking changes
 New features
 ~~~~~~~~~~~~
 
-- Added ``subcomponents`` parameter to
-  :meth:`Component.new <icalendar.cal.component.Component.new>`,
-  :meth:`Event.new <icalendar.cal.event.Event.new>`,
-  :meth:`Todo.new <icalendar.cal.todo.Todo.new>`, and
-  :meth:`Availability.new <icalendar.cal.availability.Availability.new>`. :issue:`1065`
+- Updated :func:`icalendar.prop.dt.time.vTime.from_ical` to support parsing time values with TZID parameters, returning timezone-aware :class:`datetime.time` objects. :issue:`1142`
+- Added ``subcomponents`` parameter to :meth:`Component.new <icalendar.cal.component.Component.new>`, :meth:`Event.new <icalendar.cal.event.Event.new>`, :meth:`Todo.new <icalendar.cal.todo.Todo.new>`, and :meth:`Availability.new <icalendar.cal.availability.Availability.new>`. :issue:`1065`
 
 Bug fixes
 ~~~~~~~~~
@@ -62,15 +60,10 @@ Minor changes
 
 - Show colorful required code changes in the CI output to help contributors solve the formatting issues. :pr:`1216`
 - Use ruff 0.15.0 for code formatting in :file:`tox.ini`. :pr:`1215`
-- Extended :func:`~icalendar.timezone.tzp.TZP.localize` to support localizing both 
-  :class:`datetime.datetime` and :class:`datetime.time` objects, returning timezone-aware 
-  :class:`datetime.time` objects for the latter. :issue:`1142`
 
 New features
 ~~~~~~~~~~~~
 
-- Updated :func:`icalendar.prop.dt.time.vTime.from_ical` to support parsing time values 
-  with TZID parameters, returning timezone-aware :class:`datetime.time` objects. :issue:`1142`
 - Added :attr:`Event.RECURRENCE_ID <icalendar.cal.event.Event.RECURRENCE_ID>`, :attr:`Todo.RECURRENCE_ID <icalendar.cal.todo.Todo.RECURRENCE_ID>`, and :attr:`Journal.RECURRENCE_ID <icalendar.cal.journal.Journal.RECURRENCE_ID>` properties, including support in their ``new()`` constructors. :issue:`1231`
 
 Bug fixes
