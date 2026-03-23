@@ -47,7 +47,7 @@ components with negative durations. Only VTODO components are allowed to have ne
 
 Documentation
 ~~~~~~~~~~~~~
-- Fix CI Vale check reporting and resolve Vale errors. :pr:`1278`
+- Fixed CI Vale check reporting and resolved Vale errors. :pr:`1278`
 
 - Add documentation for usage of the Sphinx extension `sphinx-icalendar <https://sphinx-icalendar.readthedocs.io/en/latest/>`_. :pr:`1268`
 - Add Repology badge and distribution installation instructions to install documentation. :issue:`1119`
