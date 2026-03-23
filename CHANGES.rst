@@ -50,6 +50,7 @@ Documentation
 - Convert docstrings in ``attr.py`` and ``cal/calendar.py`` to Google Style format. :issue:`1072`
 - Explained import shortcuts in :doc:`component-api` documentation. :issue:`1161`
 - Added tutorial for creating a calendar with events with attendees. :pr:`1262`
+- Added recognition of NLnet Foundation for its funding and Open Collective for donations to the documentation footer. :issue:`1214`
 
 
 7.0.3 (2026-03-03)
