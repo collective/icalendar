@@ -50,13 +50,16 @@ def test_count_test_runs(arg_ref, arg_pr, expected):
         print(f"- running\t{case['test_name']}")
     for case in sorted(result["skipped"]):
         print(f"- skipped\t{case}")
-    running = {case["test_name"] for case in result["include"]}
+    running = {case["test_name"] for case in result["include"] if not case.get("skip")}
     skipped = set(result["skipped"])
     assert running == expected, (
         f"Expected {len(expected)} test runs, got {len(running)}"
     )
     assert running.isdisjoint(skipped)
     assert running | skipped == CASES_ALL
+    # All cases appear in include (for branch protection visibility)
+    all_in_matrix = {case["test_name"] for case in result["include"]}
+    assert all_in_matrix == CASES_ALL
 
 
 @pytest.mark.parametrize(

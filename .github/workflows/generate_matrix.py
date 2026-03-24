@@ -151,7 +151,7 @@ def generate_matrix(git_ref, review):
             if run["tox_env"] != "py":
                 run["test_name"] += f" ({run['tox_env']})"
 
-    include = [run for run in matrix if not run["skip"]]
+    include = list(matrix)
     skipped = [run["test_name"] for run in matrix if run["skip"]]
 
     return {"include": include, "skipped": skipped}
