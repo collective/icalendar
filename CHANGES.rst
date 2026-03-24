@@ -115,11 +115,6 @@ Documentation
 ~~~~~~~~~~~~~
 
 - Removed methods of ``str``, ``int``, and other classes and methods in the Python standard library from the documentation.
-<<<<<<< HEAD
-- Document ``vText`` properties according to :rfc:`5545#section-3.3.11`. :issue:`742`
-=======
-- Add Repology badge and distribution installation instructions to install documentation. :issue:`1119`
->>>>>>> 9195067f2b853edbea6676441984033fdacd87f7
 
 7.0.1 (2026-02-17)
 ------------------
