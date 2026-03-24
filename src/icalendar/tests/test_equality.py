@@ -16,7 +16,9 @@ from datetime import date, datetime, time, timedelta
 import pytest
 
 from icalendar import (
+    Calendar,
     Component,
+    Event,
     vBinary,
     vBoolean,
     vCategory,
@@ -98,6 +100,28 @@ def test_copies_are_equal(source_file, tzp):
     assert_equal(copy1, copy2)
     assert_equal(copy1, source_file)
     assert_equal(copy2, source_file)
+
+
+def test_calendar_equality_order():
+    """Ensure inequality of calendars when subcomponents are strict subset, regardless of order."""
+    calendar1 = Calendar()
+    calendar2 = Calendar()
+    event1 = Event.new(start=datetime(2021, 1, 1, 12, 30, 0))
+    event2 = Event()
+    calendar1.subcomponents = [event1, event2]
+    calendar2.subcomponents = [event1, event1]
+    assert_not_equal(calendar1, calendar2)
+
+
+def test_component_equality_order():
+    """Ensure inequality of components when subcomponents are strict subset, regardless of order."""
+    component1 = Component()
+    component2 = Component()
+    event1 = Event.new(start=datetime(2021, 1, 1, 12, 30, 0))
+    event2 = Event()
+    component1.subcomponents = [event1, event2]
+    component2.subcomponents = [event1, event1]
+    assert_not_equal(component1, component2)
 
 
 def test_copy_does_not_copy_subcomponents(calendars, tzp):

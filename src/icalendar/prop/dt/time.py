@@ -1,12 +1,13 @@
 """TIME property type from :rfc:`5545`."""
 
 import re
-from datetime import datetime, time, timezone
+from datetime import datetime, time, timezone, tzinfo
 from typing import Any, ClassVar
 
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
+from icalendar.timezone import tzp
 from icalendar.timezone.tzid import is_utc
 
 from .base import TimeBase
@@ -61,7 +62,7 @@ class vTime(TimeBase):
         The form of time with UTC offset MUST NOT be used.  For example,
         the following is not valid for a time value:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             230000-0800        ;Invalid time format
 
@@ -71,7 +72,7 @@ class vTime(TimeBase):
         the UTC designator nor does it reference a time zone.  For
         example, 11:00 PM:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             230000
 
@@ -104,7 +105,7 @@ class vTime(TimeBase):
         LETTER Z suffix character, the UTC designator, appended to the
         time value.  For example, the following represents 07:00 AM UTC:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             070000Z
 
@@ -121,7 +122,7 @@ class vTime(TimeBase):
             The following represents 8:30 AM in New York in winter,
             five hours behind UTC, in each of the three formats:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             083000
             133000Z
@@ -152,10 +153,37 @@ class vTime(TimeBase):
         return self.params.is_utc() or is_utc(self.dt)
 
     @staticmethod
-    def from_ical(ical):
-        # TODO: timezone support
+    def from_ical(ical: str, timezone: str | None | tzinfo = None) -> time:
+        """Convert an ical string into a time.
+
+        This method supports parsing the three forms of time values defined in :rfc:`5545#section-3.3.12`:
+            - Local time (floating)
+            - UTC time
+            - Local time with time zone reference
+
+        Returns:
+            A :class:`datetime.time` object representing the parsed time, with timezone information if applicable.
+
+        Raises:
+            ValueError: if the provided string cannot be parsed as a time.
+        """
+        tzinfo = None
+        if isinstance(timezone, str):
+            tzinfo = tzp.timezone(timezone)
+        elif timezone is not None:
+            tzinfo = timezone
+
         try:
+            if isinstance(ical, bytes):
+                ical = ical.decode()
+            utc = ical.endswith("Z")
+            if utc:
+                ical = ical[:-1]
             timetuple = (int(ical[:2]), int(ical[2:4]), int(ical[4:6]))
+            if tzinfo:
+                return tzp.localize(time(*timetuple), tzinfo)
+            if utc:
+                return tzp.localize_utc(time(*timetuple))
             return time(*timetuple)
         except Exception as e:
             raise ValueError(f"Expected time, got: {ical}") from e

@@ -36,6 +36,9 @@ if TYPE_CHECKING:
     from icalendar.cal.todo import Todo
 
 
+DEFAULT_PRODID = f"-//collective//icalendar//{__version__}//EN"
+
+
 class Calendar(Component):
     """
         The "VCALENDAR" object is a collection of calendar information.
@@ -250,7 +253,7 @@ class Calendar(Component):
         To create a :rfc:`5545` compatible calendar,
         all of these timezones should be added.
 
-        UTC is excluded: per :rfc:`5545` section 3.2.19, UTC datetimes use
+        UTC is excluded: per :rfc:`5545#section-3.2.19`, UTC datetimes use
         the ``Z`` suffix and never require a VTIMEZONE component.
         """
         tzids = self.get_used_tzids() - {"UTC"}
@@ -290,8 +293,9 @@ class Calendar(Component):
 
             Timezones that are not known will not be added.
 
-        :param first_date: earlier than anything that happens in the calendar
-        :param last_date: later than anything happening in the calendar
+        Parameters:
+            first_date: Earlier than anything that happens in the calendar.
+            last_date: Later than anything happening in the calendar.
 
         >>> from icalendar import Calendar, Event
         >>> from datetime import datetime
@@ -642,6 +646,7 @@ Description:
             related_to=related_to,
             refids=refids,
             concepts=concepts,
+            subcomponents=subcomponents,
         )
 
         # Generate prodid if not provided but organization is given
@@ -650,7 +655,7 @@ Description:
             lang = language.upper() if language else "EN"
             prodid = f"-//{organization}//{app_name}//{lang}"
         elif prodid is None:
-            prodid = f"-//collective//icalendar//{__version__}//EN"
+            prodid = DEFAULT_PRODID
 
         calendar.prodid = prodid
         calendar.version = version
@@ -664,8 +669,6 @@ Description:
         calendar.url = url
         calendar.refresh_interval = refresh_interval
         calendar.source = source
-        if subcomponents is not None:
-            calendar.subcomponents = list(subcomponents)
 
         return calendar
 

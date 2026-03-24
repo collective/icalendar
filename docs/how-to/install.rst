@@ -20,16 +20,46 @@ If installation is successful, you will be able to import the iCalendar package 
 
     >>> import icalendar
 
+Distribution packages
+---------------------
+
+The icalendar package is also published in many Linux distributions.
+The following badge shows where it is available, and which versions are packaged.
+
+..  image:: https://repology.org/badge/vertical-allrepos/python%3Aicalendar.svg?columns=4
+    :target: https://repology.org/project/python%3Aicalendar/versions
+    :alt: Packaging status of icalendar across distributions
+
+Repology is a service that tracks the availability and versions of packages across many Linux distributions.
+`View the packaging status of icalendar across distributions <https://repology.org/project/python%3Aicalendar/versions>`_.
+
+
+Alpine Linux
+------------
+
+On Alpine Linux the `py3-icalendar <https://pkgs.alpinelinux.org/packages?name=py3-icalendar&branch=edge&repo=&arch=&origin=&flagged=&maintainer=>`_ package can be installed using ``apk``:
+
+.. code-block:: shell
+
+    sudo apk add py3-icalendar
+
+Arch Linux
+-----------
+
+On Arch Linux and derivatives, the package is available in the community repository.
+
+.. code-block:: shell
+
+    sudo pacman -S python-icalendar
 
 Debian or Ubuntu
 ----------------
 
-You can install the `python-icalendar package <https://tracker.debian.org/pkg/python-icalendar>`_ for Debian or its derivatives.
+You can install the `python-icalendar <https://tracker.debian.org/pkg/python-icalendar>`_ package for Debian or its derivatives.
 
 .. code-block:: shell
 
     sudo apt-get install python3-icalendar
-
 
 Fedora
 ------

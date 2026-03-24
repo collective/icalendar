@@ -4,31 +4,20 @@ Change log
 
 .. py:currentmodule:: icalendar
 
-We use `Semantic Versioning <https://semver.org>`_.
-
-- Breaking changes increase the **major** version number.
-- New features increase the **minor** version number.
-- Minor changes and bug fixes increase the **patch** version number.
-
-7.x series
-----------
-
-Developers may be concerned about upgrading to a **new major** release.
-Upgrading from 6.x to 7.x should have **no complications for most developers**, because:
-
-- the core API stays compatible with 4.x
-- the breaking changes likely affect you only if you are an icalendar expert, not a normal user
-
-We still recommend checking out the new features and giving feedback in the repository.
-
-7.0.3 (unreleased)
+7.0.4 (unreleased)
 ------------------
 
 Minor changes
 ~~~~~~~~~~~~~
 
-- Show colorful required code changes in the CI output to help contributors solve the formatting issues. :pr:`1216`
-- Use ruff 0.15.0 for code formatting in :file:`tox.ini`. :pr:`1215`
+- Make icalendar an explicit editable install for clarity. :pr:`1268`
+- Do not run some tests until a pull request is approved. :pr:`1246`
+- Created an :meth:`~icalendar.prop.boolean.vBoolean.ical_value` property for the :class:`~icalendar.prop.boolean.vBoolean` component. :issue:`876`
+- Created an :meth:`~icalendar.prop.float.vFloat.ical_value` property for the :class:`~icalendar.prop.float.vFloat` component. :issue:`876`
+- Created an :meth:`~icalendar.prop.integer.vInt.ical_value` property for the :class:`~icalendar.prop.integer.vInt` component. :issue:`876`
+- Created an :meth:`~icalendar.prop.binary.vBinary.ical_value` property for the :class:`~icalendar.prop.binary.vBinary` component. :issue:`876`
+- Put the link check as the last documentation CI task, allowing the documentation build and Vale to run first and fail faster. :pr:`1295`
+- Extended :func:`~icalendar.timezone.tzp.TZP.localize` to support localizing both :class:`datetime.datetime` and :class:`datetime.time` objects, returning timezone-aware :class:`datetime.time` objects for the latter. :issue:`1142`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
@@ -38,33 +27,73 @@ Breaking changes
 New features
 ~~~~~~~~~~~~
 
-- Added :attr:`Event.RECURRENCE_ID <icalendar.cal.event.Event.RECURRENCE_ID>`,
-  :attr:`Todo.RECURRENCE_ID <icalendar.cal.todo.Todo.RECURRENCE_ID>` and
-  :attr:`Journal.RECURRENCE_ID <icalendar.cal.journal.Journal.RECURRENCE_ID>`
-  properties, including support in their ``new()`` constructors. :issue:`1231`
+- Updated :func:`icalendar.prop.dt.time.vTime.from_ical` to support parsing time values with TZID parameters, returning timezone-aware :class:`datetime.time` objects. :issue:`1142`
+- Added ``subcomponents`` parameter to :meth:`Component.new <icalendar.cal.component.Component.new>`, :meth:`Event.new <icalendar.cal.event.Event.new>`, :meth:`Todo.new <icalendar.cal.todo.Todo.new>`, and :meth:`Availability.new <icalendar.cal.availability.Availability.new>`. :issue:`1065`
 
 Bug fixes
 ~~~~~~~~~
 
-- Fixed :meth:`Calendar.get_missing_tzids <icalendar.cal.calendar.Calendar.get_missing_tzids>`
-  raising ``KeyError`` when a VTIMEZONE exists for a timezone not referenced by any event TZID
-  (e.g. added by x-wr-timezone conversion). :issue:`1124`
-- Fixed :meth:`Calendar.get_missing_tzids <icalendar.cal.calendar.Calendar.get_missing_tzids>`
-  and :meth:`Calendar.add_missing_timezones <icalendar.cal.calendar.Calendar.add_missing_timezones>`
-  generating a spurious ``VTIMEZONE`` for UTC. :rfc:`5545` section 3.2.19 requires UTC datetimes
-  to use the ``Z`` suffix; no ``VTIMEZONE`` component is needed or permitted. :issue:`1124`
-- Fixed :meth:`Parameters.update_tzid_from <icalendar.parser.parameter.Parameters.update_tzid_from>`
-  incorrectly setting ``TZID=UTC`` on UTC datetimes. :rfc:`5545` section 3.2.19 requires UTC datetimes to
-  use the ``Z`` suffix without a ``TZID`` parameter. :issue:`1124`
-- Renamed the public functions ``escape_char`` and ``unescape_char`` to implicit private methods ``_escape_char`` and ``_unescape_char``.
-  Fixed regression from :issue:`1008` by restoring :func:`~icalendar.parser.string.escape_char` and :func:`~icalendar.parser.string.unescape_char` as public functions.
-  The public functions :func:`~icalendar.parser.string.escape_char` and :func:`~icalendar.parser.string.unescape_char` are now deprecated with warnings for external users.
-  :pr:`1241`.
+- Allow lenient parsing of content lines with optional whitespace around property and parameter delimiters (for example, ``REFRESH - INTERVAL; VALUE = DURATION:PT48H``) when parsing calendars with ``strict=False``. :issue:`351`
+- X-properties with a ``VALUE`` parameter are now parsed using the correct type instead of falling back to :class:`~icalendar.prop.unkown.vUnknown`. :issue:`1238`
+- Fixed :func:`~icalendar.attr.get_end_property` to avoid allowing the creating of VEVENT components with negative durations. Only VTODO components are allowed to have negative durations. :issue:`999`
+- GitHub Actions: conditional tests now show as "skipped" instead of "pending". :issue:`1264`
+- Fixed :meth:`Component.__eq__ <icalendar.cal.component.Component.__eq__>` method not being commutative when comparing subcomponents. :issue:`1224`
 
 Documentation
 ~~~~~~~~~~~~~
 
-- ...
+- Fixed CI Vale check reporting and resolved Vale errors. :pr:`1278`
+- Include :file:`Makefile` in documentation workflow path filters so documentation CI runs when Makefile logic changes, and keep Vale failures visible in CI output. :issue:`1277`
+- Document how to install icalendar on Alpine Linux. :pr:`1290`
+- Add documentation for usage of the Sphinx extension `sphinx-icalendar <https://sphinx-icalendar.readthedocs.io/en/latest/>`_. :pr:`1268`
+- Add Repology badge and distribution installation instructions to install documentation. :issue:`1119`
+- Convert docstrings in ``attr.py`` and ``cal/calendar.py`` to Google Style format. :issue:`1072`
+- Explained import shortcuts in :doc:`component-api` documentation. :issue:`1161`
+- Added tutorial for creating a calendar with events with attendees. :pr:`1262`
+- Added recognition of NLnet Foundation for its funding and Open Collective for donations to the documentation footer. :issue:`1214`
+
+
+7.0.3 (2026-03-03)
+------------------
+
+Minor changes
+~~~~~~~~~~~~~
+
+- Show colorful required code changes in the CI output to help contributors solve the formatting issues. :pr:`1216`
+- Use ruff 0.15.0 for code formatting in :file:`tox.ini`. :pr:`1215`
+
+New features
+~~~~~~~~~~~~
+
+- Added :attr:`Event.RECURRENCE_ID <icalendar.cal.event.Event.RECURRENCE_ID>`, :attr:`Todo.RECURRENCE_ID <icalendar.cal.todo.Todo.RECURRENCE_ID>`, and :attr:`Journal.RECURRENCE_ID <icalendar.cal.journal.Journal.RECURRENCE_ID>` properties, including support in their ``new()`` constructors. :issue:`1231`
+
+Bug fixes
+~~~~~~~~~
+
+- Fixed :func:`~icalendar.timezone.tzid.tzids_from_tzinfo` not recognizing
+  ``dateutil.tz.win.tzwin`` objects on Windows. UTC datetimes using
+  ``dateutil.tz.gettz("UTC")`` now correctly serialize with the ``Z`` suffix
+  instead of ``TZID=Coordinated Universal Time``. :issue:`1056`
+- Fixed :meth:`Calendar.get_missing_tzids <icalendar.cal.calendar.Calendar.get_missing_tzids>`
+  raising ``KeyError`` when a VTIMEZONE exists for a timezone not referenced by any event TZID,
+  for example, when added by the ``x-wr-timezone`` conversion. :issue:`1124`
+- Fixed :meth:`Calendar.get_missing_tzids <icalendar.cal.calendar.Calendar.get_missing_tzids>`
+  and :meth:`Calendar.add_missing_timezones <icalendar.cal.calendar.Calendar.add_missing_timezones>`
+  generating a spurious ``VTIMEZONE`` for UTC. :rfc:`5545#section-3.2.19` requires UTC datetimes
+  to use the ``Z`` suffix; no ``VTIMEZONE`` component is needed or permitted. :issue:`1124`
+- Fixed :meth:`Parameters.update_tzid_from <icalendar.parser.parameter.Parameters.update_tzid_from>`
+  incorrectly setting ``TZID=UTC`` on UTC datetimes. :rfc:`5545#section-3.2.19` requires UTC datetimes to
+  use the ``Z`` suffix without a ``TZID`` parameter. :issue:`1124`
+- Renamed the public functions ``escape_char`` and ``unescape_char`` to implicit private methods ``_escape_char`` and ``_unescape_char``
+  Fixed regression from :issue:`1008` by restoring :func:`~icalendar.parser.string.escape_char` and :func:`~icalendar.parser.string.unescape_char` as public functions.
+  The public functions :func:`~icalendar.parser.string.escape_char` and :func:`~icalendar.parser.string.unescape_char` are now deprecated with warnings for external users.
+  :pr:`1241`
+
+Documentation
+~~~~~~~~~~~~~
+
+- Add ``icalendar`` as a local workspace dependency to the ``docs`` dependency group in :file:`pyproject.toml` to fix dependency resolution issues with ``uv lock`` during documentation builds. :issue:`1253` :pr:`1254`
+- Use ``sphinx-icalendar`` to add syntax highlighting to iCalendar text
 
 7.0.2 (2026-02-24)
 ------------------
@@ -85,7 +114,11 @@ Documentation
 ~~~~~~~~~~~~~
 
 - Removed methods of ``str``, ``int``, and other classes and methods in the Python standard library from the documentation.
+<<<<<<< HEAD
 - Document ``vText`` properties according to :rfc:`5545#section-3.3.11`. :issue:`742`
+=======
+- Add Repology badge and distribution installation instructions to install documentation. :issue:`1119`
+>>>>>>> 9195067f2b853edbea6676441984033fdacd87f7
 
 7.0.1 (2026-02-17)
 ------------------
@@ -114,12 +147,12 @@ Documentation
 Minor changes
 ~~~~~~~~~~~~~
 
-- Created an :meth:`~cal.todo.Todo.example` method for the :class:`~cal.todo.Todo` component. See :issue:`743`.
-- Created an :meth:`~cal.alarm.Alarm.example` method for the :class:`~cal.alarm.Alarm` component. See :issue:`743`.
-- Move property classes from :mod:`icalendar.prop` into their own files with sub-packages :mod:`icalendar.prop.recur` and :mod:`icalendar.prop.dt`. See :issue:`987`.
-- Move classes and functions in :mod:`icalendar.parser` into their own files. See :issue:`987`.
-- Clarified custom component (X-* and IANA-registered) parsing behavior through enhanced documentation and comprehensive how-to guide. Custom components are automatically handled by the library with no special configuration required. See :issue:`432`.
-- Reorganized custom component tests into a dedicated :file:`test_custom_components.py` file with expanded test coverage for :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`, :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>`, and :class:`~icalendar.cal.component_factory.ComponentFactory` usage. See :issue:`433`.
+- Created an :meth:`~cal.todo.Todo.example` method for the :class:`~cal.todo.Todo` component. :issue:`743`
+- Created an :meth:`~cal.alarm.Alarm.example` method for the :class:`~cal.alarm.Alarm` component. :issue:`743`
+- Move property classes from :mod:`icalendar.prop` into their own files with sub-packages :mod:`icalendar.prop.recur` and :mod:`icalendar.prop.dt`. :issue:`987`
+- Move classes and functions in :mod:`icalendar.parser` into their own files. :issue:`987`
+- Clarified custom component (X-* and IANA-registered) parsing behavior through enhanced documentation and comprehensive how-to guide. Custom components are automatically handled by the library with no special configuration required. :issue:`432`
+- Reorganized custom component tests into a dedicated :file:`test_custom_components.py` file with expanded test coverage for :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`, :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>`, and :class:`~icalendar.cal.component_factory.ComponentFactory` usage. :issue:`433`
 - The ``typing-extensions`` dependency on Python < 3.13 is now optional, part of the ``test`` extra.
 - The :func:`icalendar.tools.is_pytz_dt` return value is now hinted as ``TypeGuard[datetime]``, not ``TypeIs[datetime]``, since returning ``False`` should not allow narrowing it as non-datetime.
 - Regroup dependencies in, and remove obsolete ones, from :file:`pyproject.toml`. :issue:`906`
@@ -130,68 +163,67 @@ Minor changes
 - CI: Print a link to Vale documentation when the spell checker fails.
 - Remove :file:`bootstrap.py` and :file:`buildout.cfg` files as they are old build configurations. :pr:`1171`
 - Enforce ruff formatting and linting across the entire codebase, with CI check to prevent regressions.
-  See :issue:`672`, :pr:`1171`, :pr:`1172`, :pr:`1173`, :pr:`1174`, :pr:`1175`, :pr:`1176`, :pr:`1177`, :pr:`1178`, :pr:`1179`, :pr:`1180`, and :pr:`1181`.
+  :issue:`672`, :pr:`1171`, :pr:`1172`, :pr:`1173`, :pr:`1174`, :pr:`1175`, :pr:`1176`, :pr:`1177`, :pr:`1178`, :pr:`1179`, :pr:`1180`, and :pr:`1181`
 - Fix type annotations, typos, and validation logic in prop module: corrected return type hints in ``parse_jcal_value`` methods, fixed ``to_ical()`` return type in vDDDTypes, updated ClassVar type hint in TypesFactory, removed dead code, fixed "abbrevation" typo in vWeekday, and corrected validation logic in vMonth. :issue:`1185`
-- Rename :class:`~icalendar.prop.vBrokenProperty` to :class:`~icalendar.prop.vBroken` to match naming convention. :class:`~icalendar.prop.vBroken` now stores the actual exception object in ``parse_error`` instead of a string, and raises :class:`~icalendar.error.BrokenCalendarProperty` when accessing attributes like ``.dt`` that the expected type would have. See :issue:`1087`.
-
+- Rename :class:`~icalendar.prop.vBrokenProperty` to :class:`~icalendar.prop.vBroken` to match naming convention. :class:`~icalendar.prop.vBroken` now stores the actual exception object in ``parse_error`` instead of a string, and raises :class:`~icalendar.error.BrokenCalendarProperty` when accessing attributes like ``.dt`` that the expected type would have. :issue:`1087`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
 
-- Drop support for Python 3.8 and 3.9. See :issue:`977`.
-- ``DURATION_REGEX`` moved from :mod:`icalendar.prop` to :mod:`icalendar.prop.dt.duration`. See :issue:`987`.
-- ``WEEKDAY_RULE`` moved from :mod:`icalendar.prop` to :mod:`icalendar.prop.recur.weekday`. See :issue:`987`.
-- Removed ``tzid_from_dt`` and ``tzid_from_tzinfo`` from :mod:`icalendar.prop` as they exist in :mod:`icalendar.timezone`. See :issue:`987`.
+- Drop support for Python 3.8 and 3.9. :issue:`977`
+- ``DURATION_REGEX`` moved from :mod:`icalendar.prop` to :mod:`icalendar.prop.dt.duration`. :issue:`987`
+- ``WEEKDAY_RULE`` moved from :mod:`icalendar.prop` to :mod:`icalendar.prop.recur.weekday`. :issue:`987`
+- Removed ``tzid_from_dt`` and ``tzid_from_tzinfo`` from :mod:`icalendar.prop` as they exist in :mod:`icalendar.timezone`. :issue:`987`
 - :meth:`Component.decoded` now returns a string instead of bytes for text properties.
-- Remove constants ``FOLD``, ``NAME``, ``NEWLINE``, ``QUNSAFE_CHAR``, ``QUOTABLE``, ``UFOLD``, and ``UNSAFE_CHAR`` from :mod:`icalendar.parser`'s export. See :issue:`987`.
+- Remove constants ``FOLD``, ``NAME``, ``NEWLINE``, ``QUNSAFE_CHAR``, ``QUOTABLE``, ``UFOLD``, and ``UNSAFE_CHAR`` from :mod:`icalendar.parser`'s export. :issue:`987`
 
 New features
 ~~~~~~~~~~~~
 
 - Added ``recursive`` parameter to :meth:`Component.copy` to control copying of subcomponents and properties. :issue:`899`
-- Event components now have error-tolerant property parsing. Properties with parsing errors fall back to :class:`~icalendar.prop.vBroken`, preserving the raw value and allowing access to other valid properties. Errors are recorded in ``component.errors``. Partially addresses :issue:`158`.
-- Added :class:`~icalendar.prop.AdrFields` and :class:`~icalendar.prop.NFields` named tuples for structured access to vCard ADR and N property fields. The ``fields`` attribute and ``from_ical()`` return value of :class:`~icalendar.prop.vAdr` and :class:`~icalendar.prop.vN` now return these typed named tuples, enabling access like ``adr.fields.street`` and ``n.fields.family``. Since named tuples are tuple subclasses, existing code using tuple indexing or unpacking remains compatible. Added ``name`` and ``units`` properties to :class:`~icalendar.prop.vOrg` for convenient access to the organization name and organizational units. Added ``ical_value`` property to all three classes. See :issue:`1060`.
-- Added ``with_uid`` method to ``Component`` to filter subcomponents by UID. See :issue:`950`.
+- Event components now have error-tolerant property parsing. Properties with parsing errors fall back to :class:`~icalendar.prop.vBroken`, preserving the raw value and allowing access to other valid properties. Errors are recorded in ``component.errors``. Partially addresses :issue:`158`
+- Added :class:`~icalendar.prop.AdrFields` and :class:`~icalendar.prop.NFields` named tuples for structured access to vCard ADR and N property fields. The ``fields`` attribute and ``from_ical()`` return value of :class:`~icalendar.prop.vAdr` and :class:`~icalendar.prop.vN` now return these typed named tuples, enabling access like ``adr.fields.street`` and ``n.fields.family``. Since named tuples are tuple subclasses, existing code using tuple indexing or unpacking remains compatible. Added ``name`` and ``units`` properties to :class:`~icalendar.prop.vOrg` for convenient access to the organization name and organizational units. Added ``ical_value`` property to all three classes. :issue:`1060`
+- Added ``with_uid`` method to ``Component`` to filter subcomponents by UID. :issue:`950`
 - Enforce linting of code with Ruff in CI. :issue:`672`
 
 Bug fixes
 ~~~~~~~~~
 
-- Fixed :meth:`Calendar.new <icalendar.cal.calendar.Calendar.new>` to automatically generate a UID when not provided, matching the documented behavior. Previously, the documentation stated that ``uid`` would be set to a new :func:`uuid.uuid4` if ``None``, but the implementation did not generate it. See :issue:`1066`.
-- Fixed import failure in Pyodide/WebAssembly environments by using lazy initialization for timezone data in the zoneinfo provider. The library can now be imported in environments without timezone data (e.g., Cloudflare Workers, PyScript, JupyterLite). See :issue:`1073`.
-- Fixed :meth:`icalendar.caselessdict.CaselessDict.__eq__` to return ``NotImplemented`` when comparing with non-dict types instead of raising ``AttributeError``. See :issue:`1016`.
-- Fixed decoding of categories. See :issue:`279`.
-- Link ``timedelta`` to :py:class:`datetime.timedelta` in the Python standard library documentation. See :issue:`951`.
-- Fix round-trip parsing of :class:`~icalendar.prop.vCategory` (CATEGORIES property) when category values contain commas. Categories like ``'Meeting, John'`` now correctly survive round trips between :meth:`Component.to_ical <icalendar.cal.component.Component.to_ical>` and :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>` instead of being split into multiple categories. Added :func:`~icalendar.parser.split_on_unescaped_comma` helper function. See :issue:`127`.
-- Fixed semicolon escaping in vCard structured properties (ADR, N, ORG). Semicolons are now correctly treated as field separators per :rfc:`6350`, not escaped as in iCalendar TEXT values. Added :func:`~icalendar.parser.split_on_unescaped_semicolon` helper function and :class:`~icalendar.prop.vAdr`, :class:`~icalendar.prop.vN`, :class:`~icalendar.prop.vOrg` property types. See :issue:`137`.
+- Fixed :meth:`Calendar.new <icalendar.cal.calendar.Calendar.new>` to automatically generate a UID when not provided, matching the documented behavior. Previously, the documentation stated that ``uid`` would be set to a new :func:`uuid.uuid4` if ``None``, but the implementation did not generate it. :issue:`1066`
+- Fixed import failure in Pyodide/WebAssembly environments by using lazy initialization for timezone data in the zoneinfo provider. The library can now be imported in environments without timezone data (e.g., Cloudflare Workers, PyScript, JupyterLite). :issue:`1073`
+- Fixed :meth:`icalendar.caselessdict.CaselessDict.__eq__` to return ``NotImplemented`` when comparing with non-dict types instead of raising ``AttributeError``. :issue:`1016`
+- Fixed decoding of categories. :issue:`279`
+- Link ``timedelta`` to :py:class:`datetime.timedelta` in the Python standard library documentation. :issue:`951`
+- Fix round-trip parsing of :class:`~icalendar.prop.vCategory` (CATEGORIES property) when category values contain commas. Categories like ``'Meeting, John'`` now correctly survive round trips between :meth:`Component.to_ical <icalendar.cal.component.Component.to_ical>` and :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>` instead of being split into multiple categories. Added :func:`~icalendar.parser.split_on_unescaped_comma` helper function. :issue:`127`
+- Fixed semicolon escaping in vCard structured properties (ADR, N, ORG). Semicolons are now correctly treated as field separators per :rfc:`6350`, not escaped as in iCalendar TEXT values. Added :func:`~icalendar.parser.split_on_unescaped_semicolon` helper function and :class:`~icalendar.prop.vAdr`, :class:`~icalendar.prop.vN`, :class:`~icalendar.prop.vOrg` property types. :issue:`137`
 - Fix :meth:`Image.from_property_value <icalendar.prop.image.Image.from_property_value>` to raise ``TypeError`` instead of ``AttributeError`` when ``value.params`` isn't valid (most notably, isn't dict-like). :issue:`909`
 
 Documentation
 ~~~~~~~~~~~~~
 
 - Improved docstrings and formatting for the :class:`~icalendar.alarms.AlarmTime` class. :issue:`1072`
-- Added how-to guide for handling parsing errors with :class:`~icalendar.prop.vBroken` and the ``component.errors`` attribute. See :issue:`1085`.
-- Updated 11 function docstrings in :mod:`icalendar.parser` to follow the Google Style guide, improving API documentation clarity and consistency. See :issue:`1072`.
-- Applied Google-style docstrings to :mod:`icalendar.tools` utility functions with Args, Returns, and Example sections. See :issue:`1072`.
-- Simplify contributors and add supporters in credits. See :issue:`1035`.
-- Add a section in the change log for Documentation. See :issue:`1043`.
-- Fixed multiple ``more than one target found for cross-reference`` warnings, and stopped using ``sphinx.ext.autosectionlabel``, in documentation. See :issue:`952`.
-- Add ``funding.json`` manifest for funding information. See :issue:`1047`.
+- Added how-to guide for handling parsing errors with :class:`~icalendar.prop.vBroken` and the ``component.errors`` attribute. :issue:`1085`
+- Updated 11 function docstrings in :mod:`icalendar.parser` to follow the Google Style guide, improving API documentation clarity and consistency. :issue:`1072`
+- Applied Google-style docstrings to :mod:`icalendar.tools` utility functions with Args, Returns, and Example sections. :issue:`1072`
+- Simplify contributors and add supporters in credits. :issue:`1035`
+- Add a section in the change log for Documentation. :issue:`1043`
+- Fixed multiple ``more than one target found for cross-reference`` warnings, and stopped using ``sphinx.ext.autosectionlabel``, in documentation. :issue:`952`
+- Add ``funding.json`` manifest for funding information. :issue:`1047`
 - Resolved ``Cannot resolve forward reference in type annotations`` warning in documentation.
   Added ``SPHINX_APIDOC_OPTIONS`` to ``make apidoc`` command, excluding ``__all__`` items from being duplicated in the documentation, and rebuilt the API documentation source files.
-  See :issue:`952`.
-- Document how to create and read attendee information in events. See :issue:`130`.
+  :issue:`952`
+- Document how to create and read attendee information in events. :issue:`130`
 - Add usage examples. :issue:`443`
-- Improve documentation contribution guide by adding chapters for small edits, builds and checks, and a style guide. Added details for Vale usage, Diátaxis framework, narrative and API documentation, and fixing all spelling errors. See :issue:`991`.
-- Document dictionary and property accessors. :issue:`124`.
+- Improve documentation contribution guide by adding chapters for small edits, builds and checks, and a style guide. Added details for Vale usage, Diátaxis framework, narrative and API documentation, and fixing all spelling errors. :issue:`991`
+- Document dictionary and property accessors. :issue:`124`
 - Moved content from the README into documentation to reduce maintenance and point to the authoritative source of information.
-  See :issue:`1006`.
+  :issue:`1006`
 - Added "Code conventions" section to the Development contributing guide.
-  See :issue:`1004`.
-- Use Google style docstrings in :mod:`~icalendar.parser_tools`.
-  See :issue:`1017`.
-- Document compatibility of icalendar with RFCs. See :issue:`1147`.
-- Added Upgrade guide. See :issue:`997`.
+  :issue:`1004`
+- Use Google style docstrings in :mod:`~icalendar.parser_tools`
+  :issue:`1017`
+- Document compatibility of icalendar with RFCs. :issue:`1147`
+- Added Upgrade guide. :issue:`997`
 - Fixed links in jCal usage documentation.
 - Enable sphinx-issues extension. :issue:`1091`
 - Replaced "Arguments" and "Args" with "Parameters". :issue:`1076`
@@ -206,7 +238,7 @@ Documentation
 - Improved ``make vale`` command to provide guidance on failure or success. :issue:`1137`
 - Add ``sphinx_copybutton`` configuration to exclude line numbers, prompts, and console output when copying code blocks.
 - Change Sphinx configuration to convert ``--`` to en dash ``-``, ``---`` to em dash ``—``, and ``...`` to ellipsis ``…``, but doesn't transform quote marks as they should be preserved.
-  This restores cleaner and consistent rendering of docstrings in the :doc:`API Reference <../reference/api/icalendar>`.
+  This restores cleaner and consistent rendering of docstrings in the :doc:`API Reference <../reference/api/icalendar>`
   See `smartquotes_action <https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-smartquotes_action>`_.
 - Fix incorrect return type annotation in :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`. :issue:`1141`
 - Fixed broken links in ``docs/how-to/usage.rst`` documentation. Part of :issue:`1158`
@@ -221,9 +253,9 @@ Documentation
 Minor changes
 ~~~~~~~~~~~~~
 
-- Add static ``[project.urls]`` to ``pyproject.toml`` for GitHub dependency graph compatibility. See :issue:`1035`.
-- Created an :meth:`~cal.todo.Todo.example` method for the :class:`~cal.todo.Todo` component. See :issue:`743`.
-- Add type hints to :mod:`icalendar.caselessdict` file. See :issue:`938`.
+- Add static ``[project.urls]`` to ``pyproject.toml`` for GitHub dependency graph compatibility. :issue:`1035`
+- Created an :meth:`~cal.todo.Todo.example` method for the :class:`~cal.todo.Todo` component. :issue:`743`
+- Add type hints to :mod:`icalendar.caselessdict` file. :issue:`938`
 - For releases, added a step to update the version switcher for documentation.
 
 New features
@@ -234,7 +266,7 @@ New features
 Bug fixes
 ~~~~~~~~~
 
-- Fix double-unescaping in :meth:`vText.from_ical` and :meth:`vCategory.from_ical` by removing ``unescape_char()``. See :issue:`1008`.
+- Fix double-unescaping in :meth:`vText.from_ical` and :meth:`vCategory.from_ical` by removing ``unescape_char()``. :issue:`1008`
 
 7.0.0a2 (2025-11-29)
 --------------------
@@ -242,40 +274,40 @@ Bug fixes
 Minor changes
 ~~~~~~~~~~~~~
 
-- Convert changelog section labels to reStructuredText subheadings for improved Read the Docs navigation. See :issue:`982`.
+- Convert changelog section labels to reStructuredText subheadings for improved Read the Docs navigation. :issue:`982`
 - Move sections in Table of Content of Reference guide.
-- Improve :py:class:`icalendar.prop.vDatetime` documentation. See :issue:`946`.
-- CLI now writes output files using UTF-8 explicitly instead of relying on the system default. See :issue:`1005`.
+- Improve :py:class:`icalendar.prop.vDatetime` documentation. :issue:`946`
+- CLI now writes output files using UTF-8 explicitly instead of relying on the system default. :issue:`1005`
 
 New features
 ~~~~~~~~~~~~
 
 - Add compatibility to :rfc:`9253`:
   
-  - Add new property types :class:`vUid` and :class:`vXmlReference`.
-  - Add properties to all components: :attr:`Component.concepts`, :attr:`Component.links`, :attr:`Component.refids`, :attr:`Component.related_to`.
-  - Add new values to :class:`RELTYPE`.
-  - Add ``LABEL``, ``GAP``, and ``VALUE`` parameters to property values affected by :rfc:`9253`.
+  - Add new property types :class:`vUid` and :class:`vXmlReference`
+  - Add properties to all components: :attr:`Component.concepts`, :attr:`Component.links`, :attr:`Component.refids`, :attr:`Component.related_to`
+  - Add new values to :class:`RELTYPE`
+  - Add ``LABEL``, ``GAP``, and ``VALUE`` parameters to property values affected by :rfc:`9253`
 
-- Allow setting default values in :class:`Parameters`.
-- Allow ``None`` as an argument to :class:`Parameters`.
-- Add ``ical_value`` to several property values. See :issue:`876`.
-- Add PyData Theme version switcher to documentation. See :issue:`825`.
-- Test compatibility with Python 3.14. See :issue:`973`.
-- Added documentation of Vale usage for icalender documentation style guide. See :issue:`815`.
-- Added funding link to :file:`pyproject.toml`.  See :issue:`800`.
-- Added documentation of docstring format. See :issue:`747`.
+- Allow setting default values in :class:`Parameters`
+- Allow ``None`` as an argument to :class:`Parameters`
+- Add ``ical_value`` to several property values. :issue:`876`
+- Add PyData Theme version switcher to documentation. :issue:`825`
+- Test compatibility with Python 3.14. :issue:`973`
+- Added documentation of Vale usage for icalender documentation style guide. :issue:`815`
+- Added funding link to :file:`pyproject.toml`.  :issue:`800`
+- Added documentation of docstring format. :issue:`747`
 - Add ``TypeAlias`` ``icalendar.VPROPERTY`` as a type for all properties.
-- Allow access to :class:`icalendar.TypesFactory` via :func:`icalendar.TypesFactory.instance`.
+- Allow access to :class:`icalendar.TypesFactory` via :func:`icalendar.TypesFactory.instance`
 - Classes in :mod:`icalendar.prop` can all be initialized with parameters now.
-- Allow passing :class:`icalendar.vDDDTypes` as arguments to :class:`icalendar.vDDDLists`.
+- Allow passing :class:`icalendar.vDDDTypes` as arguments to :class:`icalendar.vDDDLists`
 - Add support for :class:`datetime.timezone` identification.
 - Add :func:`icalendar.is_utc` to check if a timezone is UTC.
-- Add support for JCal parsing and serialization. See :issue:`978`.
+- Add support for JCal parsing and serialization. :issue:`978`
 
   - Add :class:`icalendar.JCalParsingError` exception for jCal parsing.
   - Add :attr:`icalendar.Parameters.tzid` and :func:`icalendar.Parameters.is_utc` for timezone handling.
-  - Add :class:`icalendar.vUnknown` which is the default now for unknown properties and the same as :class:`icalendar.vText`.
+  - Add :class:`icalendar.vUnknown` which is the default now for unknown properties and the same as :class:`icalendar.vText`
   - Add :func:`icalendar.ComponentFactory.get_component_class` that also creates a new component class when it does not exist.
   - Add :func:`icalendar.ComponentFactory.add_component_class` to have a unified interface to add component classes.
   - Add :func:`icalendar.Component.to_json`, :func:`icalendar.Component.to_jcal`, and :func:`icalendar.Component.from_jcal` methods so all components can be serialized and parsed.
@@ -286,22 +318,22 @@ New features
     - Add ``VALUE`` parameter property.
     - Add ``examples()`` classmethod that returns examples for testing.
 
-- Added documentation of how to fuzz icalendar. See :issue:`905`.
-- Added first-time contributors section to Contributing. See :issue:`934`.
-- Revised check of which files trigger a documentation build on Read the Docs. See :issue:`848`.
-- Created a separate path to contribute to documentation. See :issue:`929`.
-- Added a code of conduct. See :issue:`907`.
-- Added redirects of moved files and 404 not found page to catch any other obsolete URLs. See :issue:`959`.
-- Added artificial intelligence (AI) policy. See :issue:`933`.
+- Added documentation of how to fuzz icalendar. :issue:`905`
+- Added first-time contributors section to Contributing. :issue:`934`
+- Revised check of which files trigger a documentation build on Read the Docs. :issue:`848`
+- Created a separate path to contribute to documentation. :issue:`929`
+- Added a code of conduct. :issue:`907`
+- Added redirects of moved files and 404 not found page to catch any other obsolete URLs. :issue:`959`
+- Added artificial intelligence (AI) policy. :issue:`933`
 
 
 Bug fixes
 ~~~~~~~~~
 
 - Correct ``name`` of ``AVAILABLE`` component.
-- Fix ical serialization of :class:`icalendar.vTime`.
+- Fix ical serialization of :class:`icalendar.vTime`
 - Make sure a component's ``conferences`` property adds ``VALUE=URI`` if the conference is created as a URI.
-- Fix CLI deprecated :py:class:`argparse.FileType` usage and remove ``PendingDeprecationWarning``. See :issue:`1005`.
+- Fix CLI deprecated :py:class:`argparse.FileType` usage and remove ``PendingDeprecationWarning``. :issue:`1005`.
 
 6.3.2 (2025-11-03)
 ------------------

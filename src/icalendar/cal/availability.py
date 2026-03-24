@@ -36,7 +36,7 @@ from icalendar.error import InvalidCalendar
 from .component import Component
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Iterable, Sequence
     from datetime import date
 
     from icalendar.cal.available import Available
@@ -101,7 +101,7 @@ class Availability(Component):
         available Monday through Friday, 9:00 am to 5:00 pm in the
         America/Montreal time zone:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             BEGIN:VAVAILABILITY
             ORGANIZER:mailto:bernard@example.com
@@ -132,7 +132,7 @@ class Availability(Component):
         America/Montreal time zone between October 2nd and December 2nd
         2011:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             BEGIN:VAVAILABILITY
             ORGANIZER:mailto:bernard@example.com
@@ -258,6 +258,7 @@ class Availability(Component):
         sequence: int | None = None,
         stamp: date | None = None,
         start: datetime | None = None,
+        subcomponents: Iterable[Component] | None = None,
         summary: str | None = None,
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
@@ -287,6 +288,7 @@ class Availability(Component):
             stamp: The :attr:`stamp` of the availability.
                 If None, this is set to the current time.
             start: The :attr:`start` of the availability.
+            subcomponents: The :attr:`subcomponents` of the availability.
             summary: The :attr:`summary` of the availability.
             uid: The :attr:`uid` of the availability.
                 If ``None``, this is set to a new :func:`uuid.uuid4`.
@@ -310,6 +312,7 @@ class Availability(Component):
             related_to=related_to,
             refids=refids,
             concepts=concepts,
+            subcomponents=subcomponents,
         )
         availability.summary = summary
         availability.description = description

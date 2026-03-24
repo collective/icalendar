@@ -6,6 +6,7 @@ timezone database (zoneinfo, dateutil) or the package (pytz).
 We want to make sure we can roughly identify most of them.
 """
 
+import sys
 from datetime import datetime, timedelta, timezone
 
 import pytest
@@ -62,3 +63,28 @@ def test_some_timezones_are_recognized_as_utc():
 def test_getting_a_timezone_name_for_timezones(tzinfo):
     """We should get a name that we can use."""
     assert tzid_from_tzinfo(tzinfo)
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="tzwin only exists on Windows")
+def test_tzwin_utc_is_identified():
+    """tzwin('UTC') from dateutil.tz.gettz('UTC') must be recognized as UTC.
+
+    On Windows, dateutil.tz.gettz('UTC') returns tzwin('UTC') whose tzname()
+    is 'Coordinated Universal Time', not 'UTC'. This must still be identified
+    as UTC so that datetimes use the Z suffix instead of a TZID parameter.
+    """
+    from dateutil.tz import gettz
+
+    tzinfo = gettz("UTC")  # returns tzwin('UTC') on Windows
+    assert "UTC" in tzids_from_tzinfo(tzinfo)
+    assert tzid_from_tzinfo(tzinfo) == "UTC"
+    assert is_utc(tzinfo)
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="tzwin only exists on Windows")
+def test_tzwin_non_utc_is_identified():
+    """tzwin for a non-UTC Windows timezone maps to its IANA equivalent."""
+    from dateutil.tz import gettz
+
+    tzinfo = gettz("Eastern Standard Time")
+    assert tzid_from_tzinfo(tzinfo) == "America/New_York"

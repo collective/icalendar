@@ -361,6 +361,53 @@ def test_event_duration_one_day():
     assert event.duration == timedelta(days=1)
 
 
+def test_event_new_datetime_no_dtend_implicit_zero_duration():
+    """Event.new() with a naive datetime and no end/duration: implicit zero duration.
+
+    See https://github.com/collective/icalendar/issues/1275
+
+    RFC 5545 §3.6.1: "For cases where a VEVENT specifies a DTSTART with a
+    DATE-TIME value type but no DTEND property, the event ends on the same
+    calendar date and time of day specified by DTSTART."
+    """
+    start = datetime(2026, 3, 21, 6, 30, 0)
+    event = Event.new(start=start)
+    assert event.end == start
+    assert event.duration == timedelta(0)
+    assert "DTEND" not in event
+
+
+def test_event_new_datetime_tzaware_no_dtend_implicit_zero_duration(tzp):
+    """Event.new() with a timezone-aware datetime and no end/duration: implicit zero duration.
+
+    See https://github.com/collective/icalendar/issues/1275
+
+    This is the exact case reported in the issue: timezone-aware DTSTART with
+    neither DTEND nor DURATION should yield zero duration, not raise an error.
+    """
+    start = tzp.localize(datetime(2026, 3, 21, 6, 30, 0), "Europe/Berlin")
+    event = Event.new(start=start)
+    assert event.end == start
+    assert event.duration == timedelta(0)
+    assert "DTEND" not in event
+
+
+def test_event_new_date_no_dtend_implicit_one_day():
+    """Event.new() with a date and no end/duration: implicit one-day duration.
+
+    See https://github.com/collective/icalendar/issues/1275
+
+    RFC 5545 §3.6.1: "For cases where a VEVENT specifies a DTSTART with a
+    DATE value type but no DTEND nor DURATION property, the event's duration
+    is taken to be one day."
+    """
+    start = date(2026, 3, 21)
+    event = Event.new(start=start)
+    assert event.end == start + timedelta(days=1)
+    assert event.duration == timedelta(days=1)
+    assert "DTEND" not in event
+
+
 def test_todo_duration_zero():
     """We do not know about the duration of a todo really."""
     todo = Todo()

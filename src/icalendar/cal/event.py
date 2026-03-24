@@ -49,7 +49,7 @@ from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Iterable, Sequence
 
     from icalendar.alarms import Alarms
     from icalendar.enums import CLASS, STATUS, TRANSP
@@ -104,7 +104,7 @@ class Event(Component):
         component used to represent a meeting that will also be opaque to
         searches for busy time:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             BEGIN:VEVENT
             UID:19970901T130000Z-123401@example.com
@@ -120,7 +120,7 @@ class Event(Component):
         used to represent a reminder that will not be opaque, but rather
         transparent, to searches for busy time:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             BEGIN:VEVENT
             UID:19970901T130000Z-123402@example.com
@@ -136,7 +136,7 @@ class Event(Component):
         The following is an example of the "VEVENT" calendar component
         used to represent an anniversary that will occur annually:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             BEGIN:VEVENT
             UID:19970901T130000Z-123403@example.com
@@ -155,7 +155,7 @@ class Event(Component):
         set to July 9th, 2007, since the "DTEND" property specifies the
         non-inclusive end of the event.
 
-        .. code-block:: text
+        .. code-block:: ics
 
             BEGIN:VEVENT
             UID:20070423T123432Z-541111@example.com
@@ -453,6 +453,7 @@ class Event(Component):
         stamp: date | None = None,
         start: date | datetime | None = None,
         status: STATUS | None = None,
+        subcomponents: Iterable[Component] | None = None,
         transparency: TRANSP | None = None,
         summary: str | None = None,
         uid: str | uuid.UUID | None = None,
@@ -486,6 +487,7 @@ class Event(Component):
                 If None, this is set to the current time.
             start: The :attr:`start` of the event.
             status: The :attr:`status` of the event.
+            subcomponents: The subcomponents of the event.
             summary: The :attr:`summary` of the event.
             transparency: The :attr:`transparency` of the event.
             uid: The :attr:`uid` of the event.
@@ -510,6 +512,7 @@ class Event(Component):
             related_to=related_to,
             refids=refids,
             concepts=concepts,
+            subcomponents=subcomponents,
         )
         event.summary = summary
         event.description = description

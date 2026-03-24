@@ -45,7 +45,7 @@ class vDate(TimeBase):
     Example:
         The following represents July 14, 1997:
 
-        .. code-block:: text
+        .. code-block:: ics
 
             19970714
 

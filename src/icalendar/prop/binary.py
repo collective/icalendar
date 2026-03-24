@@ -59,6 +59,11 @@ class vBinary:
             del params["encoding"]
         return [name, params, self.VALUE.lower(), self.obj]
 
+    @property
+    def ical_value(self) -> bytes:
+        """The bytes value of the BINARY property."""
+        return base64.b64decode(self.obj)
+
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jCal from :rfc:`7265` to a vBinary.
