@@ -53,8 +53,11 @@ class vText(str):
             >>> event.add('SUMMARY', desc)
             >>> event['SUMMARY']
             vText(b'Project XYZ Final Review\\nConference Room - 3B\\nCome Prepared.')
-            >>> print(event.to_ical())
-            b'BEGIN:VEVENT\r\nSUMMARY:Project XYZ Final Review\\nConference Room - 3B\\nCome Prepared.\r\nEND:VEVENT\r\n'
+            >>> print(event.to_ical().decode())
+            BEGIN:VEVENT
+            SUMMARY:Project XYZ Final Review\nConference Room - 3B\nCome Prepared.
+            END:VEVENT
+
     """
 
     default_value: ClassVar[str] = "TEXT"

@@ -51,6 +51,7 @@ Documentation
 - Explained import shortcuts in :doc:`component-api` documentation. :issue:`1161`
 - Added tutorial for creating a calendar with events with attendees. :pr:`1262`
 - Added recognition of NLnet Foundation for its funding and Open Collective for donations to the documentation footer. :issue:`1214`
+- Documented ``vText`` attributes with :rfc:`5545` examples. :issue:`1210`
 
 
 7.0.3 (2026-03-03)
