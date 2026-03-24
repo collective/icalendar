@@ -1,6 +1,14 @@
 icalendar.parser package
 ========================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   icalendar.parser.ical
+
 Submodules
 ----------
 
