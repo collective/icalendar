@@ -30,13 +30,13 @@ class vText(str):
     Examples:
 
         vText property as a TEXT value type.
-        
+
         .. code-block:: text
 
             Project XYZ Final Review\nConference Room - 3B\nCome Prepared.
 
         Create a vText property, and display it in a readable format.
-        
+
         .. code-block:: pycon
 
             >>> from icalendar.prop import vText
@@ -48,7 +48,7 @@ class vText(str):
             Project XYZ Final Review
             Conference Room - 3B
             Come Prepared.
-        
+
         Add a SUMMARY to an event, then display its value as a vText property then in a readable format:
 
         .. code-block:: pycon
