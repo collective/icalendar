@@ -52,6 +52,7 @@ Documentation
 - Explained import shortcuts in :doc:`component-api` documentation. :issue:`1161`
 - Added tutorial for creating a calendar with events with attendees. :pr:`1262`
 - Added recognition of NLnet Foundation for its funding and Open Collective for donations to the documentation footer. :issue:`1214`
+- Documented ``vText`` properties according to :rfc:`5545#section-3.3.11`. :issue:`742`
 
 
 7.0.3 (2026-03-03)
@@ -115,7 +116,6 @@ Documentation
 ~~~~~~~~~~~~~
 
 - Removed methods of ``str``, ``int``, and other classes and methods in the Python standard library from the documentation.
-- Add Repology badge and distribution installation instructions to install documentation. :issue:`1119`
 
 7.0.1 (2026-02-17)
 ------------------
