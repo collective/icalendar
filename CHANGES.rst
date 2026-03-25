@@ -27,6 +27,7 @@ Breaking changes
 New features
 ~~~~~~~~~~~~
 
+- Added :class:`~icalendar.cal.lazy.LazyCalendar` for lazy parsing of subcomponents. :issue:`158`, :issue:`1050`
 - Updated :func:`icalendar.prop.dt.time.vTime.from_ical` to support parsing time values with TZID parameters, returning timezone-aware :class:`datetime.time` objects. :issue:`1142`
 - Added ``subcomponents`` parameter to :meth:`Component.new <icalendar.cal.component.Component.new>`, :meth:`Event.new <icalendar.cal.event.Event.new>`, :meth:`Todo.new <icalendar.cal.todo.Todo.new>`, and :meth:`Availability.new <icalendar.cal.availability.Availability.new>`. :issue:`1065`
 
