@@ -12,6 +12,7 @@ Minor changes
 
 - Make icalendar an explicit editable install for clarity. :pr:`1268`
 - Do not run some tests until a pull request is approved. :pr:`1246`
+- Mark skipped CI tasks as skipped instead of running them. :issue:`1286`
 - Created an :meth:`~icalendar.prop.boolean.vBoolean.ical_value` property for the :class:`~icalendar.prop.boolean.vBoolean` component. :issue:`876`
 - Created an :meth:`~icalendar.prop.float.vFloat.ical_value` property for the :class:`~icalendar.prop.float.vFloat` component. :issue:`876`
 - Created an :meth:`~icalendar.prop.integer.vInt.ical_value` property for the :class:`~icalendar.prop.integer.vInt` component. :issue:`876`
