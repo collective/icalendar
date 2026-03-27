@@ -18,6 +18,7 @@ Minor changes
 - Created an :meth:`~icalendar.prop.integer.vInt.ical_value` property for the :class:`~icalendar.prop.integer.vInt` component. :issue:`876`
 - Created an :meth:`~icalendar.prop.binary.vBinary.ical_value` property for the :class:`~icalendar.prop.binary.vBinary` component. :issue:`876`
 - Put the link check as the last documentation CI task, allowing the documentation build and Vale to run first and fail faster. :pr:`1295`
+- Extended :func:`~icalendar.timezone.tzp.TZP.localize` to support localizing both :class:`datetime.datetime` and :class:`datetime.time` objects, returning timezone-aware :class:`datetime.time` objects for the latter. :issue:`1142`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
@@ -27,11 +28,9 @@ Breaking changes
 New features
 ~~~~~~~~~~~~
 
-- Added ``subcomponents`` parameter to
-  :meth:`Component.new <icalendar.cal.component.Component.new>`,
-  :meth:`Event.new <icalendar.cal.event.Event.new>`,
-  :meth:`Todo.new <icalendar.cal.todo.Todo.new>`, and
-  :meth:`Availability.new <icalendar.cal.availability.Availability.new>`. :issue:`1065`
+- Added :class:`~icalendar.cal.lazy.LazyCalendar` for lazy parsing of subcomponents. :issue:`158`, :issue:`1050`
+- Updated :func:`icalendar.prop.dt.time.vTime.from_ical` to support parsing time values with TZID parameters, returning timezone-aware :class:`datetime.time` objects. :issue:`1142`
+- Added ``subcomponents`` parameter to :meth:`Component.new <icalendar.cal.component.Component.new>`, :meth:`Event.new <icalendar.cal.event.Event.new>`, :meth:`Todo.new <icalendar.cal.todo.Todo.new>`, and :meth:`Availability.new <icalendar.cal.availability.Availability.new>`. :issue:`1065`
 
 Bug fixes
 ~~~~~~~~~
@@ -45,11 +44,17 @@ Bug fixes
 Documentation
 ~~~~~~~~~~~~~
 
-- Document how to install icalendar on Alpine Linux.
+- Fixed CI Vale check reporting and resolved Vale errors. :pr:`1278`
+- Include :file:`Makefile` in documentation workflow path filters so documentation CI runs when Makefile logic changes, and keep Vale failures visible in CI output. :issue:`1277`
+- Document how to install icalendar on Alpine Linux. :pr:`1290`
 - Add documentation for usage of the Sphinx extension `sphinx-icalendar <https://sphinx-icalendar.readthedocs.io/en/latest/>`_. :pr:`1268`
 - Add Repology badge and distribution installation instructions to install documentation. :issue:`1119`
 - Convert docstrings in ``attr.py`` and ``cal/calendar.py`` to Google Style format. :issue:`1072`
+- Explained import shortcuts in :doc:`component-api` documentation. :issue:`1161`
 - Added tutorial for creating a calendar with events with attendees. :pr:`1262`
+- Added recognition of NLnet Foundation for its funding and Open Collective for donations to the documentation footer. :issue:`1214`
+- Documented ``vText`` properties according to :rfc:`5545#section-3.3.11`. :issue:`742`
+
 
 7.0.3 (2026-03-03)
 ------------------
@@ -112,7 +117,6 @@ Documentation
 ~~~~~~~~~~~~~
 
 - Removed methods of ``str``, ``int``, and other classes and methods in the Python standard library from the documentation.
-- Add Repology badge and distribution installation instructions to install documentation. :issue:`1119`
 
 7.0.1 (2026-02-17)
 ------------------

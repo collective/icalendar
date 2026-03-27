@@ -12,7 +12,6 @@ See https://github.com/collective/icalendar/issues/722
 """
 
 import zoneinfo
-from copy import deepcopy
 from datetime import date, datetime, timedelta
 from re import findall
 
@@ -395,9 +394,7 @@ def test_timezone_is_not_missing(calendars, calendar):
 
 def test_add_missing_known_timezones(calendars):
     """Add all timezones specified."""
-    cal: Calendar = deepcopy(
-        calendars.issue_722_missing_timezones
-    )  # avoid side effects
+    cal: Calendar = calendars.issue_722_missing_timezones
     assert len(cal.timezones) == 0
     cal.add_missing_timezones()
     assert len(cal.timezones) == len(queries), "all timezones are known"

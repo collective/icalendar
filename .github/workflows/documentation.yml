@@ -9,6 +9,7 @@ on:
   pull_request:
     paths:
       - 'docs/**'
+      - 'Makefile'
       - 'src/icalendar/*.py'
       - 'src/icalendar/cal/*.py'
       - 'src/icalendar/prop/*.py'
