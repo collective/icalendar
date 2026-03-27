@@ -120,6 +120,7 @@ vale: .venv  ## Run Vale style, grammar, and spell checks
 		echo "Read the error messages above to see what didn't pass."; \
 		echo "For guidance of how to correct the errors, see:"; \
 		echo "https://icalendar.readthedocs.io/en/latest/contribute/documentation/build-check.html#spelling-grammar-and-style"; \
+		exit 1; \
 	fi
 
 .PHONY: doctest

@@ -9,6 +9,7 @@ on:
   pull_request:
     paths:
       - 'docs/**'
+      - 'Makefile'
       - 'src/icalendar/*.py'
       - 'src/icalendar/cal/*.py'
       - 'src/icalendar/prop/*.py'
@@ -47,11 +48,11 @@ jobs:
       - name: Create Python virtual environment, install requirements
         run: make .venv PYTHONVERSION=${{ matrix.python-version }}
 
-      - name: Check for broken links
-        run: make linkcheckbroken PYTHONVERSION=${{ matrix.python-version }}
-
       - name: Build HTML documentation
         run: make html PYTHONVERSION=${{ matrix.python-version }}
 
       - name: Run vale
         run: make vale VALEOPTS="--minAlertLevel='warning'" PYTHONVERSION=${{ matrix.python-version }}
+
+      - name: Check for broken links
+        run: make linkcheckbroken PYTHONVERSION=${{ matrix.python-version }}
