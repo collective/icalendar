@@ -785,7 +785,7 @@ def test_get_alarm_triggers_repeated(alarms, file, triggers, duration, repeat):
         date(2024, 1, 1),
     ],
 )
-@pytest.mark.parametrize("Component", [Todo])
+@pytest.mark.parametrize("Component", [Todo, Event])
 def test_set_duration_invalid_type(Component, invalid_value):
     """Test that setting duration with a non-timedelta raises TypeError.
 
