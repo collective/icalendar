@@ -1,42 +1,30 @@
-"""Tests for LazyCalendar behavioral coverage not in test_issue_1050_lazy_parsing.py.
+"""Behavioral tests for :class:`~icalendar.cal.lazy.LazyCalendar`.
+
+Tests here cover serialization round-trips, property accessors, timezone
+handling, and ``with_uid()`` edge cases not covered by
+:mod:`test_issue_1050_lazy_parsing`.
 
 See :issue:`1050`.
 """
 
 from datetime import datetime
-from pathlib import Path
 
-from icalendar import Calendar, Event, LazyCalendar
+import pytest
 
-CALENDARS_FOLDER = Path(__file__).parent / "calendars"
-
-
-def load_calendar(filename):
-    return (CALENDARS_FOLDER / filename).read_bytes()
+from icalendar import Calendar, Event
 
 
-CALENDAR_WITH_EVENTS_AND_TODOS = load_calendar(
-    "issue_1050_calendar_with_events_and_todos.ics"
-)
-SIMPLE_CALENDAR = load_calendar("issue_1050_simple_calendar.ics")
-TIMEZONE_ONLY_CALENDAR = load_calendar("issue_1050_timezone_only_calendar.ics")
-EMPTY_CALENDAR = load_calendar("issue_1050_empty_calendar.ics")
-FORWARD_REF_CALENDAR = load_calendar("issue_1050_forward_timezone_reference.ics")
-MULTI_CAL = load_calendar("issue_1050_multiple_calendars.ics")
+def test_empty_calendar_has_no_subcomponents(lazy_calendars):
+    """An empty calendar has no subcomponents after accessing them."""
+    cal = lazy_calendars.issue_1050_empty_calendar
 
-
-def test_empty_calendar():
-    """Empty calendar has no subcomponents and is not lazy."""
-    cal = LazyCalendar.from_ical(EMPTY_CALENDAR)
-
-    assert str(cal["VERSION"]) == "2.0"
     assert len(cal.subcomponents) == 0
     assert not cal.is_lazy()
 
 
-def test_timezone_only_calendar_stays_lazy():
-    """Calendar with only VTIMEZONE stays lazy until subcomponents are accessed."""
-    cal = LazyCalendar.from_ical(TIMEZONE_ONLY_CALENDAR)
+def test_timezone_only_calendar_stays_lazy(lazy_calendars):
+    """A calendar with only ``VTIMEZONE`` stays lazy after accessing timezones."""
+    cal = lazy_calendars.issue_1050_timezone_only_calendar
 
     assert cal.is_lazy()
     timezones = cal.walk("VTIMEZONE")
@@ -44,86 +32,43 @@ def test_timezone_only_calendar_stays_lazy():
     assert cal.is_lazy()
 
 
-def test_todos_property():
-    """Accessing .todos parses and returns todo components."""
-    cal = LazyCalendar.from_ical(CALENDAR_WITH_EVENTS_AND_TODOS)
+@pytest.mark.parametrize(
+    ("prop", "summary"),
+    [
+        ("todos", "Test Todo 1"),
+        ("journals", "Test Journal 1"),
+    ],
+)
+def test_component_property(calendars, prop, summary):
+    """Accessing ``.todos`` and ``.journals`` returns the correct components."""
+    cal = calendars.issue_1050_calendar_with_events_and_todos
 
-    todos = cal.todos
-    assert len(todos) == 1
-    assert str(todos[0]["SUMMARY"]) == "Test Todo 1"
-
-
-def test_journals_property():
-    """Accessing .journals returns journal components."""
-    cal = LazyCalendar.from_ical(CALENDAR_WITH_EVENTS_AND_TODOS)
-
-    journals = cal.journals
-    assert len(journals) == 1
-    assert str(journals[0]["SUMMARY"]) == "Test Journal 1"
+    components = getattr(cal, prop)
+    assert len(components) == 1
+    assert str(components[0]["SUMMARY"]) == summary
 
 
-def test_to_ical_before_access():
-    """to_ical() produces correct output without prior property access."""
-    cal = LazyCalendar.from_ical(CALENDAR_WITH_EVENTS_AND_TODOS)
+def test_tzid_accessible_on_events(calendars):
+    """Events carry their ``TZID`` parameter after parsing."""
+    cal = calendars.issue_1050_calendar_with_events_and_todos
 
-    ical_output = cal.to_ical()
-
-    assert b"BEGIN:VCALENDAR" in ical_output
-    assert b"END:VCALENDAR" in ical_output
-    assert b"BEGIN:VTIMEZONE" in ical_output
-    assert b"BEGIN:VEVENT" in ical_output
-    assert b"BEGIN:VTODO" in ical_output
-    assert b"BEGIN:VJOURNAL" in ical_output
+    assert cal.events[0]["DTSTART"].params.get("TZID") == "America/New_York"
 
 
-def test_to_ical_after_partial_access():
-    """to_ical() produces correct output after accessing only some component types."""
-    cal = LazyCalendar.from_ical(CALENDAR_WITH_EVENTS_AND_TODOS)
+def test_property_and_walk_access(calendars):
+    """Mixing property access and ``walk()`` in any order returns correct counts."""
+    cal = calendars.issue_1050_calendar_with_events_and_todos
 
-    _ = cal.events
-    ical_output = cal.to_ical()
-
-    assert b"BEGIN:VTIMEZONE" in ical_output
-    assert b"BEGIN:VEVENT" in ical_output
-    assert b"BEGIN:VTODO" in ical_output
-
-
-def test_round_trip_preserves_component_counts():
-    """Full round-trip parse → access → serialize → re-parse preserves component counts."""
-    cal = LazyCalendar.from_ical(CALENDAR_WITH_EVENTS_AND_TODOS)
-
-    _ = cal.walk()
-    ical_output = cal.to_ical()
-
-    cal2 = Calendar.from_ical(ical_output)
-    assert len(cal2.walk("VEVENT")) == 2
-    assert len(cal2.walk("VTODO")) == 1
-    assert len(cal2.walk("VJOURNAL")) == 1
-    assert len(cal2.walk("VTIMEZONE")) == 1
+    assert len(cal.journals) == 1
+    assert len(cal.events) == 2
+    assert len(cal.walk("VTODO")) == 1
+    assert len(cal.todos) == 1
+    assert len(cal.events) == 2
 
 
-def test_round_trip_without_access():
-    """Serializing without accessing lazy components preserves all data."""
-    cal = LazyCalendar.from_ical(CALENDAR_WITH_EVENTS_AND_TODOS)
-
-    ical_output = cal.to_ical()
-
-    cal2 = Calendar.from_ical(ical_output)
-    assert len(cal2.walk("VEVENT")) == 2
-    assert len(cal2.walk("VTODO")) == 1
-
-
-def test_tzid_accessible_on_lazy_events():
-    """VTIMEZONE is available when lazy events are parsed."""
-    cal = LazyCalendar.from_ical(CALENDAR_WITH_EVENTS_AND_TODOS)
-
-    event = cal.events[0]
-    assert event["DTSTART"].params.get("TZID") == "America/New_York"
-
-
-def test_forward_timezone_reference():
-    """VTIMEZONE defined after events in the file is still resolved correctly."""
-    cal = LazyCalendar.from_ical(FORWARD_REF_CALENDAR)
+def test_forward_timezone_reference(calendars):
+    """``VTIMEZONE`` defined after its referencing event is still resolved."""
+    cal = calendars.issue_1050_forward_timezone_reference
 
     assert len(cal.events) == 1
     dtstart = cal.events[0]["DTSTART"].dt
@@ -131,9 +76,27 @@ def test_forward_timezone_reference():
     assert str(dtstart.tzinfo) == "Europe/Berlin"
 
 
-def test_add_component_appears_in_events():
-    """add_component() appends to the parsed event list."""
-    cal = LazyCalendar.from_ical(SIMPLE_CALENDAR)
+@pytest.mark.parametrize("access", ["none", "partial", "full"])
+def test_to_ical_roundtrip(calendars, access):
+    """Serializing at any parse state preserves all component counts."""
+    cal = calendars.issue_1050_calendar_with_events_and_todos
+
+    if access == "partial":
+        _ = cal.events
+    elif access == "full":
+        _ = cal.walk()
+
+    output = cal.to_ical()
+    cal2 = Calendar.from_ical(output)
+    assert len(cal2.walk("VEVENT")) == 2
+    assert len(cal2.walk("VTODO")) == 1
+    assert len(cal2.walk("VJOURNAL")) == 1
+    assert len(cal2.walk("VTIMEZONE")) == 1
+
+
+def test_add_component_appears_in_events(calendars):
+    """``add_component()`` appends to the parsed event list."""
+    cal = calendars.issue_1050_simple_calendar
 
     new_event = Event()
     new_event.add("UID", "new-event@example.com")
@@ -145,50 +108,26 @@ def test_add_component_appears_in_events():
     assert uids == ["new-event@example.com", "simple-event@example.com"]
 
 
-def test_multiple_calendars():
-    """from_ical(..., multiple=True) returns all calendars."""
-    cals = LazyCalendar.from_ical(MULTI_CAL, multiple=True)
+def test_multiple_calendars(calendars):
+    """``from_ical(..., multiple=True)`` returns all calendars."""
+    cals = calendars.multiple.issue_1050_multiple_calendars
+
     assert len(cals) == 2
     assert len(cals[0].events) == 1
     assert len(cals[1].events) == 1
 
 
-def test_sequential_property_access():
-    """Accessing different component type properties in sequence returns correct results."""
-    cal = LazyCalendar.from_ical(CALENDAR_WITH_EVENTS_AND_TODOS)
+def test_uid_substring_in_description(calendars):
+    """``with_uid()`` returns only the component whose ``UID`` matches exactly.
 
-    assert len(cal.journals) == 1
-    assert len(cal.events) == 2
-    assert len(cal.todos) == 1
-    assert len(cal.events) == 2
-
-
-def test_mixed_property_and_walk_access():
-    """Mixing property access and walk() returns correct results."""
-    cal = LazyCalendar.from_ical(CALENDAR_WITH_EVENTS_AND_TODOS)
-
-    assert len(cal.events) == 2
-    assert len(cal.walk("VTODO")) == 1
-    assert len(cal.journals) == 1
-    assert len(cal.todos) == 1
-
-
-def test_contains_uid_substring_match_parses_more():
-    """with_uid() may parse components whose content contains the UID as a substring.
-
-    :class:`~icalendar.parser.ical.component.ComponentIcalParser` does a substring
-    scan of raw lines to decide whether to parse a component for ``with_uid()``.
-    A DESCRIPTION that happens to contain the UID string causes that component
-    to be parsed even though it is not the target. This is intentional: parse more,
-    never miss.
+    :class:`~icalendar.parser.ical.lazy.LazySubcomponent` scans raw lines to
+    decide whether to parse a component for ``with_uid()``. A ``DESCRIPTION``
+    that contains the target UID string causes that component to be parsed as a
+    false positive — this is intentional (parse more, never miss) — but the
+    returned list must contain only the exact match.
     """
-    ics = (
-        b"BEGIN:VCALENDAR\r\nVERSION:2.0\r\n"
-        b"BEGIN:VEVENT\r\nUID:abc\r\nSUMMARY:target\r\nEND:VEVENT\r\n"
-        b"BEGIN:VEVENT\r\nUID:xyz\r\nDESCRIPTION:contains abc in text\r\nEND:VEVENT\r\n"
-        b"END:VCALENDAR\r\n"
-    )
-    cal = LazyCalendar.from_ical(ics)
+    cal = calendars.issue_1050_uid_in_description
+
     result = cal.with_uid("abc")
     assert len(result) == 1
     assert result[0]["SUMMARY"] == "target"
