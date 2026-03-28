@@ -61,8 +61,8 @@ You can also set these properties on creation.
     >>> import zoneinfo
     >>>
     >>> event = Event.new(
-    ...     start=dt.datetime(2026, 3, 21, 6, 30,0, tzinfo=zoneinfo.ZoneInfo("UTC")),
-    ...     end=dt.datetime(2026, 3, 21, 7, 30,0, tzinfo=zoneinfo.ZoneInfo("UTC")),
+    ...     start=dt.datetime(2026, 3, 21, 6, 30, 0, tzinfo=zoneinfo.ZoneInfo("UTC")),
+    ...     end=dt.datetime(2026, 3, 21, 7, 30, 0, tzinfo=zoneinfo.ZoneInfo("UTC")),
     ... )
 
 This creates an event with a start and end date and time defined using :class:`~datetime.datetime` with a timezone.
