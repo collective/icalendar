@@ -12,6 +12,7 @@ Minor changes
 
 - Make icalendar an explicit editable install for clarity. :pr:`1268`
 - Do not run some tests until a pull request is approved. :pr:`1246`
+- Mark skipped CI tasks as skipped instead of running them. :issue:`1286`
 - Created an :meth:`~icalendar.prop.boolean.vBoolean.ical_value` property for the :class:`~icalendar.prop.boolean.vBoolean` component. :issue:`876`
 - Created an :meth:`~icalendar.prop.float.vFloat.ical_value` property for the :class:`~icalendar.prop.float.vFloat` component. :issue:`876`
 - Created an :meth:`~icalendar.prop.integer.vInt.ical_value` property for the :class:`~icalendar.prop.integer.vInt` component. :issue:`876`
@@ -48,6 +49,7 @@ Documentation
 - Document how to install icalendar on Alpine Linux. :pr:`1290`
 - Add documentation for usage of the Sphinx extension `sphinx-icalendar <https://sphinx-icalendar.readthedocs.io/en/latest/>`_. :pr:`1268`
 - Add Repology badge and distribution installation instructions to install documentation. :issue:`1119`
+- Updated references to :class:`~icalendar.prop.uri.vUri` and :class:`~icalendar.enums.RELTYPE` classes in :file:`attr.py`. :issue:`1158`
 - Convert docstrings in ``attr.py`` and ``cal/calendar.py`` to Google Style format. :issue:`1072`
 - Explained import shortcuts in :doc:`component-api` documentation. :issue:`1161`
 - Added tutorial for creating a calendar with events with attendees. :pr:`1262`

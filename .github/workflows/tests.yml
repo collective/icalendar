@@ -17,13 +17,15 @@ jobs:
   generate-matrix:
     runs-on: ubuntu-latest
     outputs:
+      # See https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/passing-information-between-jobs#example-defining-outputs-for-a-job
       include: ${{ steps.set-matrix.outputs.include }}
     steps:
     - uses: actions/checkout@v6
     - name: Set matrix
       id: set-matrix
       run: |
-        echo "include=$(python .github/workflows/generate_matrix.py '${{ github.ref }}' '${{ github.event.review.state }}' )" >> $GITHUB_OUTPUT
+        matrix_json="$(python .github/workflows/generate_matrix.py '${{ github.ref }}' '${{ github.event.review.state }}' )"
+        echo "include=$(echo "$matrix_json" | python -c 'import json,sys; print(json.dumps(json.load(sys.stdin)["include"]))')" >> $GITHUB_OUTPUT
 
   run-tests:
     needs: generate-matrix
@@ -34,6 +36,9 @@ jobs:
     runs-on: ubuntu-latest
     name: ${{ matrix.test_name }}
     steps:
+    - name: Skip notice
+      if: ${{ matrix.skip }}
+      run: echo "Skipped ${{ matrix.test_name }} (not required for this trigger)"
     - uses: actions/checkout@v6
       if: ${{ !matrix.skip }}
     - name: Set up Python
