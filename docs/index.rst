@@ -91,6 +91,13 @@ icalendar lets you create, inspect, and modify calendaring information with Pyth
     tutorials/index
 
 .. toctree::
+    :caption: Explanation
+    :maxdepth: 2
+    :hidden:
+
+    explanation/index
+
+.. toctree::
     :caption: Reference
     :hidden:
 

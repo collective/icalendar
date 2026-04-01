@@ -44,6 +44,7 @@ Bug fixes
 Documentation
 ~~~~~~~~~~~~~
 
+- Added `sphinx-llms-txt <https://sphinx-llms-txt.readthedocs.io/en/stable/>`_ extension to generate :file:`llms.txt` and :file:`llms-full.txt` files for AI/LLM documentation consumption. :issue:`1302`
 - Fixed CI Vale check reporting and resolved Vale errors. :pr:`1278`
 - Include :file:`Makefile` in documentation workflow path filters so documentation CI runs when Makefile logic changes, and keep Vale failures visible in CI output. :issue:`1277`
 - Document how to install icalendar on Alpine Linux. :pr:`1290`
@@ -52,7 +53,7 @@ Documentation
 - Updated references to :class:`~icalendar.prop.uri.vUri` and :class:`~icalendar.enums.RELTYPE` classes in :file:`attr.py`. :issue:`1158`
 - Convert docstrings in :mod:`icalendar.caselessdict` to Google Style format with Args, Returns, Raises, and Example sections. :issue:`1072`
 - Convert docstrings in ``attr.py`` and ``cal/calendar.py`` to Google Style format. :issue:`1072`
-- Explained import shortcuts in :doc:`component-api` documentation. :issue:`1161`
+- Explained import shortcuts in :doc:`../explanation/api-design` documentation. :issue:`1161`
 - Added tutorial for creating a calendar with events with attendees. :pr:`1262`
 - Added recognition of NLnet Foundation for its funding and Open Collective for donations to the documentation footer. :issue:`1214`
 - Documented ``vText`` properties according to :rfc:`5545#section-3.3.11`. :issue:`742`

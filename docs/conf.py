@@ -22,6 +22,7 @@ extensions = [
     "sphinx_design",
     "sphinx_icalendar",
     "sphinx_issues",
+    "sphinx_llms_txt",
     "sphinx_reredirects",
 ]
 source_suffix = {".rst": "restructuredtext"}
