@@ -44,6 +44,7 @@ Bug fixes
 Documentation
 ~~~~~~~~~~~~~
 
+- Run ``sphinx-build`` with ``-W`` to turn warnings into errors. :issue:`1306`
 - Added `sphinx-llms-txt <https://sphinx-llms-txt.readthedocs.io/en/stable/>`_ extension to generate :file:`llms.txt` and :file:`llms-full.txt` files for AI/LLM documentation consumption. :issue:`1302`
 - Fixed CI Vale check reporting and resolved Vale errors. :pr:`1278`
 - Include :file:`Makefile` in documentation workflow path filters so documentation CI runs when Makefile logic changes, and keep Vale failures visible in CI output. :issue:`1277`
