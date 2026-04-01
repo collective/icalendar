@@ -100,6 +100,7 @@ dev = [
   {include-group = "test"},
   {include-group = "docs"},
   {include-group = "formatting"},
+  "icalendar",
 ]
 
 test = [
@@ -118,7 +119,6 @@ formatting = [
 ]
 
 docs = [
-    "icalendar",
     "pydata-sphinx-theme>=0.14.4",
     "sphinx>=7",
     "sphinx-autobuild>=2021.3.14",
@@ -127,6 +127,7 @@ docs = [
     "sphinx-design>=0.5.0",
     "sphinx-icalendar>=0.1.0",
     "sphinx-issues>=5.0.1",
+    "sphinx-llms-txt>=0.7.1",
     "sphinx-notfound-page>=1.1.0",
     "sphinx-reredirects>=0.1.6",
     "vale>=3.12.0",
@@ -172,14 +173,6 @@ version-file = "src/icalendar/_version.py"
 
 [tool.hatch.metadata]
 allow-direct-references = true
-
-[tool.uv.sources]
-icalendar = { workspace = true }
-
-[tool.uv.workspace]
-members = [
-    ".",
-]
 
 [tool.ruff]
 target-version = "py310"
@@ -306,3 +299,11 @@ norecursedirs = [
 filterwarnings = [
     "ignore::DeprecationWarning",
 ]
+
+[tool.uv.workspace]
+members = [
+    ".",
+]
+
+[tool.uv.sources]
+icalendar = { workspace = true, editable = true }

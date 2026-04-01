@@ -13,7 +13,7 @@ DOCS_DIR        = ./docs/
 BUILDDIR        = ../_build
 PAPEROPT_a4     = -D latex_paper_size=a4
 PAPEROPT_letter = -D latex_paper_size=letter
-ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
+ALLSPHINXOPTS   = -W -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 VALEFILES       := $(shell find $(DOCS_DIR) -type f -name "*.rst" -print)  # Also add `src` for docstrings.
 VALEOPTS        ?=
 PYTHONVERSION   = >=3.11,<3.15
@@ -120,6 +120,7 @@ vale: .venv  ## Run Vale style, grammar, and spell checks
 		echo "Read the error messages above to see what didn't pass."; \
 		echo "For guidance of how to correct the errors, see:"; \
 		echo "https://icalendar.readthedocs.io/en/latest/contribute/documentation/build-check.html#spelling-grammar-and-style"; \
+		exit 1; \
 	fi
 
 .PHONY: doctest

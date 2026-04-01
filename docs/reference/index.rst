@@ -10,7 +10,6 @@ Design reference
     :maxdepth: 2
 
     design
-    component-api
     versions-branches
 
 

@@ -22,6 +22,7 @@ extensions = [
     "sphinx_design",
     "sphinx_icalendar",
     "sphinx_issues",
+    "sphinx_llms_txt",
     "sphinx_reredirects",
 ]
 source_suffix = {".rst": "restructuredtext"}
@@ -89,6 +90,9 @@ html_theme_options = {
             },
         },
     ],
+    "footer_start": ["nlnet", "donate"],
+    "footer_center": "copyright",
+    "footer_end": ["rtd-pr-previews", "theme-version", "sphinx-version"],
     "logo": {"text": "icalendar"},
     "navbar_start": ["navbar-logo", "version-switcher"],
     "navigation_with_keys": True,
@@ -131,6 +135,7 @@ linkcheck_ignore = [
     r"https://pypi.org/manage/project/icalendar/collaboration/",
     # Ignore specific anchors
     r"https://github.com/actions/python-versions#support-policy",
+    r"https://github.com/collective/icalendar/blob/7ca9db18c0847d1530520e01baf75f8ab8f4fa06/pyproject.toml#L32",
     r"https://github.com/collective/icalendar/blob/main/CODE_OF_CONDUCT.md#enforcement",
     r"https://github.com/collective/icalendar/blob/main/README.rst#related-projects",
     r"https://github.com/pre-commit/pre-commit-hooks#debug-statements",

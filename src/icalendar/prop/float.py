@@ -84,6 +84,7 @@ class vFloat(float):
         """The jCal representation of this property according to :rfc:`7265`."""
         return [name, self.params.to_jcal(), self.VALUE.lower(), float(self)]
 
+    @property
     def ical_value(self) -> float:
         """Converts the FLOAT property type according to :rfc:`5545#section-3.3.7` to a Python float."""
         return float(self)
