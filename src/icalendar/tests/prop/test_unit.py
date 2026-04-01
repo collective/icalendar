@@ -11,7 +11,7 @@ class TestProp(unittest.TestCase):
         assert vFloat(1.0).to_ical() == b"1.0"
         assert vFloat.from_ical("42") == 42.0
         assert vFloat(42).to_ical() == b"42.0"
-        assert vFloat(1.2).ical_value() == 1.2
+        assert vFloat(1.2).ical_value == 1.2
         self.assertRaises(ValueError, vFloat.from_ical, "1s3")
 
     def test_prop_vInt(self):
