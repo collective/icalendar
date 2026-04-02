@@ -92,15 +92,12 @@ class CaselessDict(OrderedDict):
             True
     """
 
-   """
-
-def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Create a new ``CaselessDict`` and normalize existing keys to uppercase.
 
         Parameters:
             *args: Positional arguments passed to :class:`~collections.OrderedDict`.
             **kwargs: Keyword arguments passed to :class:`~collections.OrderedDict`.
-
 
         Example:
             .. code-block:: pycon
