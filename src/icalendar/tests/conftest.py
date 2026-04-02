@@ -216,6 +216,7 @@ FUZZ_TESTCASES_BROKEN_CALENDARS = "fuzz_testcase"
 BROKEN_SOURCE_FILES = (
     "big_bad_calendar.ics",
     "issue_104_broken_calendar.ics",
+    "issue_1050_multiple_calendars.ics",
     "small_bad_calendar.ics",
     "multiple_calendar_components.ics",
     "pr_480_summary_with_colon.ics",
