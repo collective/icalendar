@@ -25,7 +25,7 @@ def canonsort_keys(
     Keys specified in ``canonical_order`` appear first in that order.
     Remaining keys appear alphabetically at the end.
 
-    Args:
+    Parameters:
         keys: The keys to sort.
         canonical_order: The preferred order for leading keys.
             Keys not in this sequence are sorted alphabetically after
@@ -33,7 +33,7 @@ def canonsort_keys(
             alphabetically.
 
     Returns:
-        A new list of keys sorted by canonical order, then alphabetically.
+        A new list of keys sorted by canonical order first, then alphabetically.
 
     Example:
         .. code-block:: pycon
@@ -55,7 +55,7 @@ def canonsort_items(
 
     Returns ``(key, value)`` pairs sorted using :func:`canonsort_keys`.
 
-    Args:
+    Parameters:
         dict1: The mapping whose items to sort.
         canonical_order: The preferred order for leading keys.
             If ``None``, all keys are sorted alphabetically.
@@ -92,12 +92,25 @@ class CaselessDict(OrderedDict):
             True
     """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+   """
+
+def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Create a new ``CaselessDict`` and normalize existing keys to uppercase.
 
-        Args:
+        Parameters:
             *args: Positional arguments passed to :class:`~collections.OrderedDict`.
             **kwargs: Keyword arguments passed to :class:`~collections.OrderedDict`.
+
+
+        Example:
+            .. code-block:: pycon
+
+                >>> from icalendar.caselessdict import CaselessDict
+                >>> d = CaselessDict(summary="Meeting")
+                >>> d["SUMMARY"]
+                'Meeting'
+                >>> "summary" in d
+                True
         """
         super().__init__(*args, **kwargs)
         for key, value in self.items():
@@ -111,8 +124,8 @@ class CaselessDict(OrderedDict):
     def __getitem__(self, key: Any) -> Any:
         """Return the value for ``key``, case-insensitively.
 
-        Args:
-            key: The key to look up (case-insensitive).
+        Parameters:
+            key: The key to look up, case-insensitively.
 
         Returns:
             The value associated with the uppercased key.
@@ -126,7 +139,7 @@ class CaselessDict(OrderedDict):
     def __setitem__(self, key: Any, value: Any) -> None:
         """Set a value, storing the key in uppercase.
 
-        Args:
+        Parameters:
             key: The key to set (case-insensitive).
             value: The value to associate with the key.
         """
@@ -134,10 +147,10 @@ class CaselessDict(OrderedDict):
         super().__setitem__(key.upper(), value)
 
     def __delitem__(self, key: Any) -> None:
-        """Delete a key-value pair, case-insensitively.
+        """Delete a key-value tuple by its case-insensitive key.
 
-        Args:
-            key: The key to delete (case-insensitive).
+        Parameters:
+            key: The key to delete, case-insensitively.
 
         Raises:
             KeyError: If the key is not found.
@@ -148,8 +161,8 @@ class CaselessDict(OrderedDict):
     def __contains__(self, key: Any) -> bool:
         """Check whether a key exists, case-insensitively.
 
-        Args:
-            key: The key to check (case-insensitive).
+        Parameters:
+            key: The key to check case-insensitively.
 
         Returns:
             ``True`` if the uppercased key exists, ``False`` otherwise.
@@ -160,8 +173,8 @@ class CaselessDict(OrderedDict):
     def get(self, key: Any, default: Any = None) -> Any:
         """Return the value for ``key`` if present, otherwise ``default``.
 
-        Args:
-            key: The key to look up (case-insensitive).
+        Parameters:
+            key: The key to look up, case-insensitively.
             default: The value to return if the key is not found.
 
         Returns:
@@ -173,8 +186,8 @@ class CaselessDict(OrderedDict):
     def setdefault(self, key: Any, value: Any = None) -> Any:
         """Return the value for ``key``, setting it to ``value`` if not present.
 
-        Args:
-            key: The key to look up or create (case-insensitive).
+        Parameters:
+            key: The key to look up or create, case-insensitively.
             value: The default value to set if the key does not exist.
 
         Returns:
@@ -186,8 +199,8 @@ class CaselessDict(OrderedDict):
     def pop(self, key: Any, default: Any = None) -> Any:
         """Remove and return the value for ``key``, or ``default`` if not found.
 
-        Args:
-            key: The key to remove (case-insensitive).
+        Parameters:
+            key: The key to remove, case-insensitively.
             default: The value to return if the key is not found.
 
         Returns:
@@ -212,8 +225,8 @@ class CaselessDict(OrderedDict):
 
         This is a legacy method; prefer using ``key in dict`` instead.
 
-        Args:
-            key: The key to check (case-insensitive).
+        Parameters:
+            key: The key to check case-insensitively.
 
         Returns:
             ``True`` if the uppercased key exists, ``False`` otherwise.
@@ -227,7 +240,7 @@ class CaselessDict(OrderedDict):
         Multiple keys that differ only in case will overwrite each other;
         only the last value is retained.
 
-        Args:
+        Parameters:
             *args: Mappings or iterables of ``(key, value)`` pairs.
             **kwargs: Additional key-value pairs.
         """
@@ -262,7 +275,7 @@ class CaselessDict(OrderedDict):
         key-value pairs (after uppercasing keys). Comparison with a regular
         ``dict`` also works.
 
-        Args:
+        Parameters:
             other: The object to compare.
 
         Returns:
@@ -275,7 +288,7 @@ class CaselessDict(OrderedDict):
     def __ne__(self, other: object) -> bool:
         """Check inequality with another dictionary.
 
-        Args:
+        Parameters:
             other: The object to compare.
 
         Returns:
