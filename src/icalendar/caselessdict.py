@@ -53,8 +53,6 @@ def canonsort_items(
 ) -> list[tuple[KT, VT]]:
     """Sort items from a mapping according to a canonical key order.
 
-    Returns ``(key, value)`` pairs sorted using :func:`canonsort_keys`.
-
     Parameters:
         dict1: The mapping whose items to sort.
         canonical_order: The preferred order for leading keys.
@@ -77,19 +75,9 @@ class CaselessDict(OrderedDict):
     """A case-insensitive dictionary that uses strings as keys.
 
     All keys are stored in uppercase internally, but values retain
-    their original case. Keys can be provided as ``str`` or ``bytes``;
-    they are converted to Unicode via :func:`~icalendar.parser_tools.to_unicode`
-    and then uppercased before storage.
-
-    Example:
-        .. code-block:: pycon
-
-            >>> from icalendar.caselessdict import CaselessDict
-            >>> d = CaselessDict(summary="Meeting")
-            >>> d["SUMMARY"]
-            'Meeting'
-            >>> "summary" in d
-            True
+    their original case. Keys can be provided as ``str`` or ``bytes``.
+    They are converted to Unicode via :func:`~icalendar.parser_tools.to_unicode`,
+    then uppercased before storage.
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -207,7 +195,7 @@ class CaselessDict(OrderedDict):
         return super().pop(key.upper(), default)
 
     def popitem(self) -> tuple[Any, Any]:
-        """Remove and return the last inserted ``(key, value)`` pair.
+        """Remove and return the last inserted ``(key, value)`` tuple.
 
         Returns:
             A ``(key, value)`` tuple.
@@ -289,7 +277,7 @@ class CaselessDict(OrderedDict):
             other: The object to compare.
 
         Returns:
-            ``True`` if not equal.
+            ``True`` if not equal, else ``False``.
         """
         return not self == other
 
