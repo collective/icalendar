@@ -10,6 +10,7 @@ Change log
 Minor changes
 ~~~~~~~~~~~~~
 
+- Deprecate ``icalendar.parser.escape_string`` and ``icalendar.parser.unescape_string`` for icalendar version 8. Use ``_escape_string`` and ``_unescape_string`` internally. :issue:`1011`
 - Added behavioral tests for :class:`~icalendar.cal.lazy.LazyCalendar` covering serialization round-trips, ``.todos``, ``.journals``, forward timezone references, and ``with_uid()`` substring false-positives. :issue:`1050`
 - Make icalendar an explicit editable install for clarity. :pr:`1268`
 - Do not run some tests until a pull request is approved. :pr:`1246`
