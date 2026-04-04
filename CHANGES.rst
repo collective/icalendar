@@ -476,6 +476,7 @@ Bug fixes
 - Fix ``VALUE`` parameter handling: ``datetime.date`` objects now correctly set ``VALUE=DATE`` parameter when added to properties like ``EXDATE``, ``RDATE``, and ``DTSTART``. The ``VALUE`` parameter is also properly used when parsing iCalendar data. See :issue:`349`.
 - Fix URL-encoded characters being incorrectly unescaped during content line parsing. The parser now properly handles backslash escaping and double-quoted sections without corrupting URL-encoded values like ``%3A`` (colon) in DESCRIPTION fields. Added ``unescape_backslash()`` function to separate :rfc:`5545` backslash escaping from URL encoding. Optimized implementation using regex for single-pass processing. Added type hints to ``Contentline.parts()`` method and comprehensive unit tests. See :issue:`355`.
 - `make livehtml` now reloads with code changes. See :issue:`931`.
+- Added tests for tools, vFloat, vBinary, vGeo, and vTodo to improve unit test coverage. :issue:`698`
 
 
 6.3.1 (2025-05-20)
