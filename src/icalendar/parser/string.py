@@ -196,7 +196,7 @@ def foldline(line: str, limit: int = 75, fold_sep: str = "\r\n ") -> str:
     return "".join(ret_chars)
 
 
-def escape_string(val: str) -> str:
+def _escape_string(val: str) -> str:
     r"""Escape backslash sequences to URL-encoded hex values.
 
     Converts backslash-escaped characters to their percent-encoded hex
@@ -226,10 +226,26 @@ def escape_string(val: str) -> str:
     )
 
 
-def unescape_string(val: str) -> str:
+def escape_string(val: str) -> str:
+    r"""Escape backslash sequences to URL-encoded hex values.
+
+    .. deprecated:: 7.0.0
+        Use the private :func:`_escape_string` internally. For external use,
+        this function is deprecated.
+    """
+    warnings.warn(
+        "escape_string is deprecated and will be removed in icalendar 8. "
+        "If you are using this function externally, please contact the maintainers.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return _escape_string(val)
+
+
+def _unescape_string(val: str) -> str:
     r"""Unescape URL-encoded hex values to their original characters.
 
-    Reverses :func:`escape_string` by converting percent-encoded hex values
+    Reverses :func:`_escape_string` by converting percent-encoded hex values
     back to their original characters. This is used for parameter parsing.
 
     Parameters:
@@ -252,6 +268,22 @@ def unescape_string(val: str) -> str:
         .replace("%3B", ";")
         .replace("%5C", "\\")
     )
+
+
+def unescape_string(val: str) -> str:
+    r"""Unescape URL-encoded hex values to their original characters.
+
+    .. deprecated:: 7.0.0
+        Use the private :func:`_unescape_string` internally. For external use,
+        this function is deprecated.
+    """
+    warnings.warn(
+        "unescape_string is deprecated and will be removed in icalendar 8. "
+        "If you are using this function externally, please contact the maintainers.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return _unescape_string(val)
 
 
 # [\w-] because of the iCalendar RFC
@@ -279,7 +311,9 @@ def validate_token(name: str) -> None:
 
 __all__ = [
     "_escape_char",
+    "_escape_string",
     "_unescape_char",
+    "_unescape_string",
     "escape_char",
     "escape_string",
     "foldline",
