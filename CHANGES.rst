@@ -10,6 +10,7 @@ Change log
 Minor changes
 ~~~~~~~~~~~~~
 
+- Added behavioral tests for :class:`~icalendar.cal.lazy.LazyCalendar` covering serialization round-trips, ``.todos``, ``.journals``, forward timezone references, and ``with_uid()`` substring false-positives. :issue:`1050`
 - Make icalendar an explicit editable install for clarity. :pr:`1268`
 - Do not run some tests until a pull request is approved. :pr:`1246`
 - Mark skipped CI tasks as skipped instead of running them. :issue:`1286`
