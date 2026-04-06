@@ -200,7 +200,7 @@ def test_none_feature_omitted():
 
 
 @pytest.mark.parametrize(
-    "param_name,kwargs",
+    ("param_name", "kwargs"),
     [
         ("FEATURE", {"feature": "AUDIO"}),
         ("LABEL", {"label": "Room A"}),
@@ -215,7 +215,7 @@ def test_string_passthrough_all_params(param_name, kwargs):
 
 
 @pytest.mark.parametrize(
-    "param_name,kwargs",
+    ("param_name", "kwargs"),
     [
         ("FEATURE", {"feature": []}),
         ("LABEL", {"label": []}),
