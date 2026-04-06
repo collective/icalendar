@@ -22,6 +22,7 @@ extensions = [
     "sphinx_design",
     "sphinx_icalendar",
     "sphinx_issues",
+    "sphinx_llms_txt",
     "sphinx_reredirects",
 ]
 source_suffix = {".rst": "restructuredtext"}
@@ -89,6 +90,9 @@ html_theme_options = {
             },
         },
     ],
+    "footer_start": ["nlnet", "donate"],
+    "footer_center": "copyright",
+    "footer_end": ["rtd-pr-previews", "theme-version", "sphinx-version"],
     "logo": {"text": "icalendar"},
     "navbar_start": ["navbar-logo", "version-switcher"],
     "navigation_with_keys": True,

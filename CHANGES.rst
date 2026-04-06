@@ -10,8 +10,12 @@ Change log
 Minor changes
 ~~~~~~~~~~~~~
 
+- Deprecate ``icalendar.parser.escape_string`` and ``icalendar.parser.unescape_string`` for icalendar version 8. Use ``_escape_string`` and ``_unescape_string`` internally. :issue:`1011`
+- Added behavioral tests for :class:`~icalendar.cal.lazy.LazyCalendar` covering serialization round-trips, ``.todos``, ``.journals``, forward timezone references, and ``with_uid()`` substring false-positives. :issue:`1050`
+- Added edge case tests for :class:`~icalendar.prop.conference.Conference` parameter normalization covering string passthrough, empty list filtering, and None omission. :issue:`925`
 - Make icalendar an explicit editable install for clarity. :pr:`1268`
 - Do not run some tests until a pull request is approved. :pr:`1246`
+- Mark skipped CI tasks as skipped instead of running them. :issue:`1286`
 - Created an :meth:`~icalendar.prop.boolean.vBoolean.ical_value` property for the :class:`~icalendar.prop.boolean.vBoolean` component. :issue:`876`
 - Created an :meth:`~icalendar.prop.float.vFloat.ical_value` property for the :class:`~icalendar.prop.float.vFloat` component. :issue:`876`
 - Created an :meth:`~icalendar.prop.integer.vInt.ical_value` property for the :class:`~icalendar.prop.integer.vInt` component. :issue:`876`
@@ -27,6 +31,7 @@ Breaking changes
 New features
 ~~~~~~~~~~~~
 
+- Added :class:`~icalendar.cal.lazy.LazyCalendar` for lazy parsing of subcomponents. :issue:`158`, :issue:`1050`
 - Updated :func:`icalendar.prop.dt.time.vTime.from_ical` to support parsing time values with TZID parameters, returning timezone-aware :class:`datetime.time` objects. :issue:`1142`
 - Added ``subcomponents`` parameter to :meth:`Component.new <icalendar.cal.component.Component.new>`, :meth:`Event.new <icalendar.cal.event.Event.new>`, :meth:`Todo.new <icalendar.cal.todo.Todo.new>`, and :meth:`Availability.new <icalendar.cal.availability.Availability.new>`. :issue:`1065`
 
@@ -42,14 +47,20 @@ Bug fixes
 Documentation
 ~~~~~~~~~~~~~
 
+- Run ``sphinx-build`` with ``-W`` to turn warnings into errors. :issue:`1306`
+- Added `sphinx-llms-txt <https://sphinx-llms-txt.readthedocs.io/en/stable/>`_ extension to generate :file:`llms.txt` and :file:`llms-full.txt` files for AI/LLM documentation consumption. :issue:`1302`
 - Fixed CI Vale check reporting and resolved Vale errors. :pr:`1278`
 - Include :file:`Makefile` in documentation workflow path filters so documentation CI runs when Makefile logic changes, and keep Vale failures visible in CI output. :issue:`1277`
 - Document how to install icalendar on Alpine Linux. :pr:`1290`
 - Add documentation for usage of the Sphinx extension `sphinx-icalendar <https://sphinx-icalendar.readthedocs.io/en/latest/>`_. :pr:`1268`
 - Add Repology badge and distribution installation instructions to install documentation. :issue:`1119`
-- Convert docstrings in ``attr.py`` and ``cal/calendar.py`` to Google Style format. :issue:`1072`
-- Explained import shortcuts in :doc:`component-api` documentation. :issue:`1161`
+- Updated references to :class:`~icalendar.prop.uri.vUri` and :class:`~icalendar.enums.RELTYPE` classes in :file:`attr.py`. :issue:`1158`
+- Convert docstrings in :file:`attr.py` and :file:`cal/calendar.py` to Google Style format. :issue:`1072`
+- Explained import shortcuts in :doc:`../explanation/api-design` documentation. :issue:`1161`
 - Added tutorial for creating a calendar with events with attendees. :pr:`1262`
+- Added recognition of NLnet Foundation for its funding and Open Collective for donations to the documentation footer. :issue:`1214`
+- Documented ``vText`` properties according to :rfc:`5545#section-3.3.11`. :issue:`742`
+- Convert docstrings in :mod:`icalendar.caselessdict` to Google Style format with ``Parameters``, ``Returns``, ``Raises``, and ``Example`` sections as appropriate. :issue:`1072`
 
 
 7.0.3 (2026-03-03)
@@ -113,7 +124,6 @@ Documentation
 ~~~~~~~~~~~~~
 
 - Removed methods of ``str``, ``int``, and other classes and methods in the Python standard library from the documentation.
-- Add Repology badge and distribution installation instructions to install documentation. :issue:`1119`
 
 7.0.1 (2026-02-17)
 ------------------
@@ -468,6 +478,7 @@ Bug fixes
 - Fix ``VALUE`` parameter handling: ``datetime.date`` objects now correctly set ``VALUE=DATE`` parameter when added to properties like ``EXDATE``, ``RDATE``, and ``DTSTART``. The ``VALUE`` parameter is also properly used when parsing iCalendar data. See :issue:`349`.
 - Fix URL-encoded characters being incorrectly unescaped during content line parsing. The parser now properly handles backslash escaping and double-quoted sections without corrupting URL-encoded values like ``%3A`` (colon) in DESCRIPTION fields. Added ``unescape_backslash()`` function to separate :rfc:`5545` backslash escaping from URL encoding. Optimized implementation using regex for single-pass processing. Added type hints to ``Contentline.parts()`` method and comprehensive unit tests. See :issue:`355`.
 - `make livehtml` now reloads with code changes. See :issue:`931`.
+- Added tests for tools, vFloat, vBinary, vGeo, and vTodo to improve unit test coverage. :issue:`698`
 
 
 6.3.1 (2025-05-20)

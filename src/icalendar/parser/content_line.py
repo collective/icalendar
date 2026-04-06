@@ -5,9 +5,9 @@ import re
 from icalendar.parser.parameter import Parameters
 from icalendar.parser.property import unescape_backslash, unescape_list_or_string
 from icalendar.parser.string import (
-    escape_string,
+    _escape_string,
+    _unescape_string,
     foldline,
-    unescape_string,
     validate_token,
 )
 from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
@@ -210,10 +210,10 @@ class Contentline(str):
             raw_param_str = self[name_split + 1 : value_split]
             if not self.strict:
                 raw_param_str = _strip_ows_around_delimiters(raw_param_str)
-            param_str = escape_string(raw_param_str)
+            param_str = _escape_string(raw_param_str)
             params = Parameters.from_ical(param_str, strict=self.strict)
             params = Parameters(
-                (unescape_string(key), unescape_list_or_string(value))
+                (_unescape_string(key), unescape_list_or_string(value))
                 for key, value in iter(params.items())
             )
             # Unescape backslash sequences in values but preserve URL encoding
@@ -238,7 +238,7 @@ class Contentline(str):
         return foldline(self).encode(DEFAULT_ENCODING)
 
 
-class Contentlines(list):
+class Contentlines(list[Contentline]):
     """I assume that iCalendar files generally are a few kilobytes in size.
     Then this should be efficient. for Huge files, an iterator should probably
     be used instead.

@@ -6,6 +6,7 @@ dicts
 fuzzer
 Hacktoberfest
 Hanoka
+\.ical
 iCal
 (?i)icalendar
 jCal

@@ -44,14 +44,22 @@ CASES_0 = set()
 )
 def test_count_test_runs(arg_ref, arg_pr, expected):
     """Check which values we get."""
-    matrix = generate_matrix(arg_ref, arg_pr)
+    result = generate_matrix(arg_ref, arg_pr)
     print("Cases:")
-    for case in sorted(matrix, key=lambda case: (case["skip"], case["test_name"])):
-        print(f"- {case['skip']}\t{case['test_name']}")
-    running = {case["test_name"] for case in matrix if not case["skip"]}
+    for case in sorted(result["include"], key=lambda case: case["test_name"]):
+        print(f"- running\t{case['test_name']}")
+    for case in sorted(result["skipped"]):
+        print(f"- skipped\t{case}")
+    running = {case["test_name"] for case in result["include"] if not case.get("skip")}
+    skipped = set(result["skipped"])
     assert running == expected, (
         f"Expected {len(expected)} test runs, got {len(running)}"
     )
+    assert running.isdisjoint(skipped)
+    assert running | skipped == CASES_ALL
+    # All cases appear in include (for branch protection visibility)
+    all_in_matrix = {case["test_name"] for case in result["include"]}
+    assert all_in_matrix == CASES_ALL
 
 
 @pytest.mark.parametrize(
@@ -67,5 +75,5 @@ def test_pypy_is_first(arg_ref, arg_pr):
 
     See https://github.com/collective/icalendar/pull/1239#discussion_r2868711107
     """
-    matrix = generate_matrix(arg_ref, arg_pr)
-    assert matrix[0]["test_name"] == "pypy3"
+    result = generate_matrix(arg_ref, arg_pr)
+    assert result["include"][0]["test_name"] == "pypy3"

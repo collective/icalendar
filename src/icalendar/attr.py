@@ -26,7 +26,7 @@ from icalendar.timezone import tzp
 from icalendar.tools import is_date
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Callable, Sequence
 
     from icalendar.cal import Component
 
@@ -900,6 +900,7 @@ def create_single_property(
     type_def: type,
     doc: str,
     vProp: type = vDDDTypes,  # noqa: N803
+    convert: Callable[[object], object] | None = None,
 ):
     """Create a single property getter and setter.
 
@@ -920,6 +921,7 @@ def create_single_property(
         if isinstance(result, list):
             raise InvalidCalendar(f"Multiple {prop} defined.")
         value = result if value_attr is None else getattr(result, value_attr, result)
+        value = value if convert is None else convert(value)
         if not isinstance(value, value_type):
             raise InvalidCalendar(
                 f"{prop} must be either a "
@@ -932,6 +934,7 @@ def create_single_property(
         if value is None:
             p_del(self)
             return
+        value = convert(value) if convert is not None else value
         if not isinstance(value, value_type):
             raise TypeError(
                 f"Use {' or '.join(t.__name__ for t in value_type)}, "
@@ -2093,7 +2096,7 @@ def _get_links(self: Component) -> list[vUri | vUid | vXmlReference]:
              #xpointer(descendant::CostStruc/range-to(
              following::CostStrucEND[1]))
 
-        Set a link :class:`icalendar.vUri` to the event page:
+        Set a link :class:`icalendar.prop.uri.vUri` to the event page:
 
         .. code-block:: pycon
 
@@ -2276,7 +2279,7 @@ def _get_related_to(self: Component) -> list[vText | vUri | vUid]:
              https://example.com/caldav/user/jb/cal/
              19960401-080045-4000F192713.ics
 
-    See also :class:`icalendar.enum.RELTYPE`.
+    See also :class:`icalendar.enums.RELTYPE`.
 
     """
     result = self.get("RELATED-TO", [])
@@ -2340,7 +2343,7 @@ def _get_concepts(self: Component) -> list[vUri]:
 
     .. seealso::
 
-        :attr:`Component.categories`
+        :attr:`icalendar.prop.categories.vCategory`
     """
     concepts = self.get("CONCEPT", [])
     if not isinstance(concepts, list):

@@ -51,3 +51,8 @@ def test_ical_value():
     """ical_value property returns the string value."""
     magic_string = base64.b64encode(b"magic string")
     assert vBinary(magic_string).ical_value == base64.b64decode(magic_string)
+
+
+def test_hash():
+    obj = vBinary(b"hashed text")
+    assert hash(obj) == hash(b"hashed text")

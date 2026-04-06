@@ -20,7 +20,7 @@ from icalendar.cal.examples import get_example
 from icalendar.prop import vUTCOffset
 from icalendar.timezone import TZP, tzp
 from icalendar.timezone.tzid import tzid_from_tzinfo
-from icalendar.tools import is_date, to_datetime
+from icalendar.tools import to_datetime
 
 if TYPE_CHECKING:
     from icalendar.cal.calendar import Calendar
@@ -162,11 +162,6 @@ class Timezone(Component):
         for component in self.walk():
             if isinstance(component, Timezone):
                 continue
-            if is_date(component["DTSTART"].dt):
-                component.DTSTART = to_datetime(component["DTSTART"].dt)
-            assert isinstance(component["DTSTART"].dt, datetime), (
-                "VTIMEZONEs sub-components' DTSTART must be of type datetime, not date"
-            )
             try:
                 tzname = str(component["TZNAME"])
             except UnicodeEncodeError:
@@ -402,7 +397,9 @@ class TimezoneStandard(Component):
         and local time for the time zone sub-component definition.
         "DTSTART" in this usage MUST be specified as a date with a local
         time value.""",
+        convert=to_datetime,
     )
+
     TZOFFSETTO = create_single_property(
         "TZOFFSETTO",
         "td",
