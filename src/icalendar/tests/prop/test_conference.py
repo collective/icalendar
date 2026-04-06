@@ -176,3 +176,62 @@ def test_from_uri_string_adds_value_type():
     conference = Conference.from_uri("http://asd")
     uri = conference.to_uri()
     assert uri.VALUE == "URI"
+
+
+def test_string_feature_passthrough():
+    """A string feature should be kept as-is, not wrapped in a list."""
+    conf = Conference(uri="https://example.com", feature="AUDIO")
+    vuri = conf.to_uri()
+    assert vuri.params["FEATURE"] == "AUDIO"
+
+
+def test_empty_list_feature_filtered():
+    """An empty list feature should be omitted from params entirely."""
+    conf = Conference(uri="https://example.com", feature=[])
+    vuri = conf.to_uri()
+    assert "FEATURE" not in vuri.params
+
+
+def test_none_feature_omitted():
+    """A None feature should not appear in params."""
+    conf = Conference(uri="https://example.com")
+    vuri = conf.to_uri()
+    assert "FEATURE" not in vuri.params
+
+
+@pytest.mark.parametrize(
+    "param_name,kwargs",
+    [
+        ("FEATURE", {"feature": "AUDIO"}),
+        ("LABEL", {"label": "Room A"}),
+        ("LANGUAGE", {"language": "EN"}),
+    ],
+)
+def test_string_passthrough_all_params(param_name, kwargs):
+    """String values for feature, label, and language should pass through unchanged."""
+    conf = Conference(uri="https://example.com", **kwargs)
+    vuri = conf.to_uri()
+    assert vuri.params[param_name] == list(kwargs.values())[0]
+
+
+@pytest.mark.parametrize(
+    "param_name,kwargs",
+    [
+        ("FEATURE", {"feature": []}),
+        ("LABEL", {"label": []}),
+        ("LANGUAGE", {"language": []}),
+    ],
+)
+def test_empty_list_filtered_all_params(param_name, kwargs):
+    """Empty lists for feature, label, and language should be omitted from params."""
+    conf = Conference(uri="https://example.com", **kwargs)
+    vuri = conf.to_uri()
+    assert param_name not in vuri.params
+
+
+@pytest.mark.parametrize("param_name", ["FEATURE", "LABEL", "LANGUAGE"])
+def test_none_omitted_all_params(param_name):
+    """None values for feature, label, and language should not appear in params."""
+    conf = Conference(uri="https://example.com")
+    vuri = conf.to_uri()
+    assert param_name not in vuri.params
