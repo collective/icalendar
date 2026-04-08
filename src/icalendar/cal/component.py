@@ -159,9 +159,9 @@ class Component(CaselessDict):
         """Infer the ``VALUE`` parameter from a Python type.
 
         Parameters:
-            value: Python native type, one of :py:class:`date`, :py:mod:`datetime`,
-                :py:class:`timedelta`, :py:mod:`time`, :py:class:`tuple`,
-                or :py:class:`list`.
+            value: Python native type, one of :class:`date`, :mod:`datetime`,
+                :class:`timedelta`, :mod:`time`, :class:`tuple`,
+                or :class:`list`.
 
         Returns:
             str or None: The ``VALUE`` parameter string, for example, "DATE",

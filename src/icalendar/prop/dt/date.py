@@ -104,7 +104,7 @@ class vDate(TimeBase):
 
     @classmethod
     def parse_jcal_value(cls, jcal: str) -> date:
-        """Parse a jCal string to a :py:class:`datetime.date`.
+        """Parse a jCal string to a :class:`datetime.date`.
 
         Raises:
             ~error.JCalParsingError: If it can't parse a date.

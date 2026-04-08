@@ -101,7 +101,7 @@ class Calendar(Component):
 
         This is a shortcut to get all events.
         Modifications do not change the calendar.
-        Use :py:meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
+        Use :meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
 
         >>> from icalendar import Calendar
         >>> calendar = Calendar.example()
@@ -119,7 +119,7 @@ class Calendar(Component):
 
         This is a shortcut to get all todos.
         Modifications do not change the calendar.
-        Use :py:meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
+        Use :meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
         """
         return self.walk("VTODO")
 
@@ -129,7 +129,7 @@ class Calendar(Component):
 
         This is a shortcut to get all journals.
         Modifications do not change the calendar.
-        Use :py:meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
+        Use :meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
         """
         return self.walk("VJOURNAL")
 
@@ -139,7 +139,7 @@ class Calendar(Component):
 
         This is a shortcut to get all availabilities.
         Modifications do not change the calendar.
-        Use :py:meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
+        Use :meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
         """
         return self.walk("VAVAILABILITY")
 
@@ -149,7 +149,7 @@ class Calendar(Component):
 
         This is a shortcut to get all FreeBusy.
         Modifications do not change the calendar.
-        Use :py:meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
+        Use :meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
         """
         return self.walk("VFREEBUSY")
 
