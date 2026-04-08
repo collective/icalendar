@@ -73,7 +73,7 @@ As such, we take a strong stance against artificial intelligence (AI) abuse.
 Contributors to icalendar must follow icalendar's AI policy as described in this section and its subsections.
 
 
-.. _responsible-ai-use::
+.. _responsible-ai-use:
 
 Responsible AI use
 ``````````````````
