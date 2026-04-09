@@ -230,7 +230,7 @@ class Availability(Component):
 
         This is a shortcut to get all VAVAILABLE sub-components.
         Modifications do not change the calendar.
-        Use :meth:`icalendar.cal.component.Component.add_component`.
+        Use :meth:`~icalendar.cal.component.Component.add_component`.
         """
         return self.walk("AVAILABLE")
 
