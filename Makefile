@@ -128,9 +128,12 @@ doctest: .venv  ## Test snippets and docstrings in the documentation
 	@echo;
 	@pytest src/icalendar/tests/test_with_doctest.py
 
+.PHONY: docs-all
+docs-all: .venv clean vale doctest html linkcheckbroken  ## Clean docs build, then run vale, doctest, html, and linkcheckbroken
+
 .PHONY: test
-#test: clean vale linkcheckbroken doctest  ## Clean docs build, then run vale and linkcheckbroken
-test: clean linkcheckbroken  ## Clean docs build, then run vale and linkcheckbroken
+test: .venv
+	@tox
 # /test
 
 
@@ -139,10 +142,6 @@ test: clean linkcheckbroken  ## Clean docs build, then run vale and linkcheckbro
 dev: .venv  ## Install required Python, create Python virtual environment, install package and development requirements
 	@uv sync --group dev
 	@pre-commit install
-
-.PHONY: all
-all: clean linkcheck html  ## Clean docs build, then run linkcheck, and build html
-#all: clean vale linkcheck html  ## Clean docs build, then run vale and linkcheck, and build html
 # /development
 
 # deployment
