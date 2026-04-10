@@ -109,6 +109,7 @@ test = [
     "mypy>=1.0",
     "pytest",
     "pytz>=2025.2",
+    "tox",
     "types-python-dateutil",
     "types-pytz",
 ]
