@@ -7,7 +7,8 @@
 
 [build-system]
 requires = ["hatchling>=1.27.0", "hatch-vcs"]
-build-backend = "hatchling.build"
+#build-backend = "hatchling.build"
+build-backend = "tool.uv.build-backend"
 
 [project]
 name = "icalendar"
@@ -305,9 +306,9 @@ filterwarnings = [
 [tool.uv]
 python-preference = "managed"
 
-#[tool.uv.build-backend]
-#namespace = true
-#module-name = "icalendar"
+[tool.uv.build-backend]
+namespace = true
+module-name = "icalendar"
 
 [tool.uv.sources]
 icalendar = { workspace = true, editable = true }
