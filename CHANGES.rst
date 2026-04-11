@@ -12,7 +12,7 @@ Minor changes
 
 - Deprecate ``icalendar.parser.escape_string`` and ``icalendar.parser.unescape_string`` for icalendar version 8. Use ``_escape_string`` and ``_unescape_string`` internally. :issue:`1011`
 - Added behavioral tests for :class:`~icalendar.cal.lazy.LazyCalendar` covering serialization round-trips, ``.todos``, ``.journals``, forward timezone references, and ``with_uid()`` substring false-positives. :issue:`1050`
-- Added edge case tests for :class:`~icalendar.prop.conference.Conference` parameter normalization covering string passthrough, empty list filtering, and None omission. :issue:`925`
+- Added edge case tests for :class:`~icalendar.prop.conference.Conference` parameter normalization covering string passthrough, empty list filtering, and ``None`` omission. :issue:`925`
 - Make icalendar an explicit editable install for clarity. :pr:`1268`
 - Do not run some tests until a pull request is approved. :pr:`1246`
 - Mark skipped CI tasks as skipped instead of running them. :issue:`1286`
@@ -40,16 +40,16 @@ Bug fixes
 
 - Allow lenient parsing of content lines with optional whitespace around property and parameter delimiters (for example, ``REFRESH - INTERVAL; VALUE = DURATION:PT48H``) when parsing calendars with ``strict=False``. :issue:`351`
 - X-properties with a ``VALUE`` parameter are now parsed using the correct type instead of falling back to :class:`~icalendar.prop.unkown.vUnknown`. :issue:`1238`
-- Fixed :func:`~icalendar.attr.get_end_property` to avoid allowing the creating of VEVENT components with negative durations. Only VTODO components are allowed to have negative durations. :issue:`999`
+- Fixed :func:`~icalendar.attr.get_end_property` to avoid allowing the creation of VEVENT components with negative durations. Only VTODO components are allowed to have negative durations. :issue:`999`
 - GitHub Actions: conditional tests now show as "skipped" instead of "pending". :issue:`1264`
-- Fixed :meth:`Component.__eq__ <icalendar.cal.component.Component.__eq__>` method not being commutative when comparing subcomponents. :issue:`1224`
+- Fixed ``Component.__eq__`` method not being commutative when comparing subcomponents. :issue:`1224`
 
 Documentation
 ~~~~~~~~~~~~~
 
 - Run ``sphinx-build`` with ``-W`` to turn warnings into errors. :issue:`1306`
-- Added `sphinx-llms-txt <https://sphinx-llms-txt.readthedocs.io/en/stable/>`_ extension to generate :file:`llms.txt` and :file:`llms-full.txt` files for AI/LLM documentation consumption. :issue:`1302`
-- Fixed CI Vale check reporting and resolved Vale errors. :pr:`1278`
+- Added `sphinx-llms-txt <https://sphinx-llms-txt.readthedocs.io/en/stable/>`_ extension to generate :file:`llms.txt` and :file:`llms-full.txt` files for AI or LLM documentation consumption. :issue:`1302`
+- Fixed CI Vale check reporting and resolved Vale errors. :pr:`1295`
 - Include :file:`Makefile` in documentation workflow path filters so documentation CI runs when Makefile logic changes, and keep Vale failures visible in CI output. :issue:`1277`
 - Document how to install icalendar on Alpine Linux. :pr:`1290`
 - Add documentation for usage of the Sphinx extension `sphinx-icalendar <https://sphinx-icalendar.readthedocs.io/en/latest/>`_. :pr:`1268`
@@ -243,7 +243,7 @@ Documentation
 - Improved ``make vale`` command to provide guidance on failure or success. :issue:`1137`
 - Add ``sphinx_copybutton`` configuration to exclude line numbers, prompts, and console output when copying code blocks.
 - Change Sphinx configuration to convert ``--`` to en dash ``-``, ``---`` to em dash ``—``, and ``...`` to ellipsis ``…``, but doesn't transform quote marks as they should be preserved.
-  This restores cleaner and consistent rendering of docstrings in the :doc:`API Reference <../reference/api/icalendar>`
+  This restores cleaner and consistent rendering of docstrings in the :doc:`API Reference <../reference/api/icalendar>`.
   See `smartquotes_action <https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-smartquotes_action>`_.
 - Fix incorrect return type annotation in :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`. :issue:`1141`
 - Fixed broken links in ``docs/how-to/usage.rst`` documentation. Part of :issue:`1158`
