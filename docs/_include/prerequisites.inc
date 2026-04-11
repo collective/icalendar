@@ -45,9 +45,9 @@ Read the console output for further instructions, and follow them, if needed.
 
             powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 
-.. seealso::
+    .. tab-item:: Other
 
-    `Other uv installation methods <https://docs.astral.sh/uv/getting-started/installation/>`_
+        `Other uv installation methods <https://docs.astral.sh/uv/getting-started/installation/>`_
 
 Git
 '''
