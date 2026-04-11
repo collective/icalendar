@@ -101,6 +101,8 @@ dev = [
   {include-group = "docs"},
   {include-group = "formatting"},
   "icalendar",
+  "tox",
+  "tox-uv",
 ]
 
 test = [
@@ -109,7 +111,6 @@ test = [
     "mypy>=1.0",
     "pytest",
     "pytz>=2025.2",
-    "tox",
     "types-python-dateutil",
     "types-pytz",
 ]

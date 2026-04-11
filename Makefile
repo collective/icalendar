@@ -5,8 +5,10 @@ SHELL           = bash
 # You can set these variables from the command line.
 SPHINXOPTS      ?=
 PAPER           ?=
+TOXENV			?=
 
 # Internal variables.
+RUFFPATH        = "$(realpath .venv/bin/ruff)"
 SPHINXBUILD     = "$(realpath .venv/bin/sphinx-build)"
 SPHINXAUTOBUILD = "$(realpath .venv/bin/sphinx-autobuild)"
 DOCS_DIR        = ./docs/
@@ -29,14 +31,14 @@ help:  # This help message
 .venv:  ## Install required Python, create Python virtual environment, and install package requirements
 	@uv python install "$(PYTHONVERSION)"
 	@uv venv --python "$(PYTHONVERSION)"
-	@uv sync --group docs
+	@uv sync --group dev
 
 .PHONY: sync
 sync:  ## Sync package requirements
 	@uv sync
 
 .PHONY: init
-init: clean clean-python .venv docs  ## Clean docs build directory and initialize Python virtual environment
+init: clean clean-python .venv  ## Clean docs build directory, Python virtual environment, and initialize Python virtual environment
 
 .PHONY: clean
 clean:  ## Clean docs build directory
@@ -132,7 +134,7 @@ doctest: .venv  ## Test snippets and docstrings in the documentation
 docs-all: .venv clean vale doctest html linkcheckbroken  ## Clean docs build, then run vale, doctest, html, and linkcheckbroken
 
 .PHONY: test
-test: .venv
+test:  ## Run code tests and coverage
 	@tox
 # /test
 
@@ -142,6 +144,11 @@ test: .venv
 dev: .venv  ## Install required Python, create Python virtual environment, install package and development requirements
 	@uv sync --group dev
 	@pre-commit install
+
+.PHONY: format
+format: .venv  ## Format the code base with ruff
+	$(RUFFPATH) format
+	$(RUFFPATH) check --fix
 # /development
 
 # deployment
