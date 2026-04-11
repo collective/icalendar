@@ -41,26 +41,18 @@ jobs:
       run: echo "Skipped ${{ matrix.test_name }} (not required for this trigger)"
     - uses: actions/checkout@v6
       if: ${{ !matrix.skip }}
-    - name: Install uv
-      uses: astral-sh/setup-uv@v7
-    - name: Set up Python
+    - name: Install uv and Python ${{ matrix.test_name }}
       if: ${{ !matrix.skip }}
-      uses: actions/setup-python@v6
+      uses: astral-sh/setup-uv@v7
       with:
-        python-version: ${{ matrix.python_version }}
-        # for caching, see
-        # https://github.com/actions/setup-python/blob/main/docs/advanced-usage.md#caching-packages
-        cache: 'pip'
-        cache-dependency-path: |
-          setup.*
-          tox.ini
-          requirements*.txt
+        enable-cache: true
+        # Install a specific version of uv.
+        version: "0.9.26"
+        python-version: ${{ matrixpython_version }}
     - name: Install dependencies
       if: ${{ !matrix.skip }}
       run: |
-        python -m pip install --upgrade pip
-        pip install tox coverage-python-version tox-uv
-        uv sync
+        uv sync --group dev
     - name: Test
       if: ${{ !matrix.skip }}
       run: tox -e ${{ matrix.tox_env }}
