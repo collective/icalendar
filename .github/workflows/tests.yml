@@ -53,7 +53,7 @@ jobs:
       if: ${{ !matrix.skip }}
       run: |
         uv sync --group test
-        uv tool install tox tox-uv
+        uv tool install tox --with tox-uv
     - name: Test
       if: ${{ !matrix.skip }}
       run: tox -e ${{ matrix.tox_env }}
