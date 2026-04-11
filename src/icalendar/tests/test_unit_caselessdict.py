@@ -5,7 +5,7 @@ import icalendar
 
 class TestCaselessdict(unittest.TestCase):
     def test_caselessdict_canonsort_keys(self):
-        canonsort_keys = icalendar.caselessdict._canonsort_keys
+        canonsort_keys = icalendar.caselessdict.canonsort_keys
 
         keys = ["DTEND", "DTSTAMP", "DTSTART", "UID", "SUMMARY", "LOCATION"]
 
@@ -36,7 +36,7 @@ class TestCaselessdict(unittest.TestCase):
         assert out == ["UID", "DTSTART", "DTEND", "DTSTAMP", "LOCATION", "SUMMARY"]
 
     def test_caselessdict_canonsort_items(self):
-        canonsort_items = icalendar.caselessdict._canonsort_items
+        canonsort_items = icalendar.caselessdict.canonsort_items
 
         d = {
             "i": 7,
