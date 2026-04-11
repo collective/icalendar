@@ -98,7 +98,7 @@ The following command shows how to run tests in the Python 3.14.
 
 ..  code-block:: shell
 
-    make test TOXENV=py314
+    make test TOX_ENV=py314
 
 .. seealso::
 

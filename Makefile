@@ -5,7 +5,7 @@ SHELL           = bash
 # You can set these variables from the command line.
 SPHINXOPTS      ?=
 PAPER           ?=
-TOXENV			?=
+TOX_ENV			?=
 
 # Internal variables.
 RUFFPATH        = "$(realpath .venv/bin/ruff)"
