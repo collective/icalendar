@@ -5,55 +5,36 @@ Development
 This chapter describes how to set up icalendar for development and to contribute changes.
 
 
-Set up your environment
------------------------
+.. _development-prerequisites:
 
-Unless you're a maintainer or administrator, you don't have write access to push commits to GitHub repositories under the Collective organization or the icalendar repository.
-You can, however, push commits to your fork.
-Thus, a typical workflow will be circular in nature.
-You'll pull code from the upstream icalendar repository, push your work from your local clone to your remote fork, then make a pull request from your fork to the upstream icalendar repository.
+.. include:: ../_include/prerequisites.inc
 
-.. card::
+.. _development-configure-git:
 
-    .. image:: ../_static/contributing/development-icalendar-git-workflow.svg
-        :alt: icalendar git workflow
-        :target: ../_static/contributing/development-icalendar-git-workflow.svg
-
-    +++
-    *icalendar git workflow*
-
-#.  Start by `forking icalendar's repository <https://github.com/collective/icalendar/fork>`_ to your account through the GitHub interface.
-
-    .. seealso::
-
-        `Fork a repository <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo>`_
-
-#.  `Clone your forked repository <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo#cloning-your-forked-repository>`_.
-
-#.  `Configure Git to sync your fork with the upstream repository <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo#configuring-git-to-sync-your-fork-with-the-upstream-repository>`_.
-
-.. seealso::
-
-    :ref:`branch-policy`
-
-Install Python
---------------
-
-You will need a version of Python installed on your system to run the tests and execute the code.
-The latest version of Python 3 should work and will be enough to get you started.
-If you like to run the tests across multiple Python versions, then the following setup process should work the same.
+.. include:: ../_include/configure-git.inc
+.. include:: ../_include/configure-git-card-dev.inc
+.. include:: ../_include/configure-git-steps.inc
 
 
-Install tox
------------
+Install icalendar for development
+---------------------------------
 
-First, install `tox <https://pypi.org/project/tox/>`_.
+To install icalendar for development—including all of its dependencies for tests, documentation, and formatting code, as well as a Python virtual environment—run the following command.
 
 .. code-block:: shell
 
-    pip install tox
+    make dev
 
-From now on, tox will manage Python versions and test commands for you.
+
+.. _development-make-commands:
+
+:program:`Make` commands
+------------------------
+
+With all :ref:`prerequisites <development-prerequisites>` installed, you can run tests, reformat code, make various documentation builds, perform quality checks, and clean your environment.
+All :program:`Make` commands use the file :file:`Makefile` at the root of the repository.
+
+The :program:`Make` commands may invoke :program:`uv`, :program:`tox`, :program:`Sphinx`, :program:`Vale`, shell commands, and other programs.
 
 
 pre-commit
@@ -105,35 +86,34 @@ The screenshot below shows how to configure PyCharm to disable pre-commit by sea
 Run tests
 ---------
 
-tox manages all test environments in all Python versions.
+Through :program:`uv`, :program:`tox` manages all test environments across all Python versions.
 
-To run all tests in all environments, run the command ``tox``.
+To run all tests in all environments, run the following command.
 
-.. code-block:: shell
+..  code-block:: shell
 
-    tox
+    make test
 
-You might not have all Python versions installed or you may want to run a specific one.
-The following command show how to run tox with Python 3.12:
+The following command shows how to run tests in the Python 3.14.
 
-.. code-block:: shell
+..  code-block:: shell
 
-    tox -e py312
+    make test TOXENV=py314
 
 .. seealso::
 
     tox's `CLI interface documentation <https://tox.wiki/en/stable/reference/cli.html>`_.
 
 
-Code format
+Format code
 -----------
 
 icalendar requires code formatting.
 You can run the following command to automatically format the code.
 
-.. code-block:: shell
+..  code-block:: shell
 
-    tox -e ruff
+    make format
 
 
 Code conventions
