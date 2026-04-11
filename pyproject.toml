@@ -7,8 +7,7 @@
 
 [build-system]
 requires = ["hatchling>=1.27.0", "hatch-vcs"]
-#build-backend = "hatchling.build"
-build-backend = "tool.uv.build-backend"
+build-backend = "hatchling.build"
 
 [project]
 name = "icalendar"
