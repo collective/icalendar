@@ -305,9 +305,9 @@ filterwarnings = [
 [tool.uv]
 python-preference = "managed"
 
-[tool.uv.build-backend]
-namespace = true
-module-name = "icalendar"
+#[tool.uv.build-backend]
+#namespace = true
+#module-name = "icalendar"
 
 [tool.uv.sources]
 icalendar = { workspace = true, editable = true }
