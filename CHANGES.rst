@@ -61,7 +61,7 @@ Documentation
 - Added recognition of NLnet Foundation for its funding and Open Collective for donations to the documentation footer. :issue:`1214`
 - Documented ``vText`` properties according to :rfc:`5545#section-3.3.11`. :issue:`742`
 - Convert docstrings in :mod:`icalendar.caselessdict` to Google Style format with ``Parameters``, ``Returns``, ``Raises``, and ``Example`` sections as appropriate. :issue:`1072`
-
+- Fix broken docstring for :meth:`~icalendar.cal.component.Component.add_component` link in :attr:`~icalendar.cal.availability.Availability.available`. :issue:`1158`
 
 7.0.3 (2026-03-03)
 ------------------
