@@ -198,15 +198,7 @@ def _foldline(line: str, limit: int = 75, fold_sep: str = "\r\n ") -> str:
     return "".join(ret_chars)
 
 
-def foldline(line: str, limit: int = 75, fold_sep: str = "\r\n ") -> str:
-    """Make a string folded as defined in RFC5545.
-
-    .. deprecated:: 7.0.0
-        Use the private :func:`_foldline` internally. For external use,
-        this function is deprecated and will be removed in icalendar 8.
-    """
-    deprecate_for_version_8("foldline")
-    return _foldline(line, limit, fold_sep)
+foldline = deprecate_for_version_8(_foldline)
 
 
 def _escape_string(val: str) -> str:

@@ -11,9 +11,10 @@ Minor changes
 ~~~~~~~~~~~~~
 
 - Deprecate ``icalendar.parser.escape_string`` and ``icalendar.parser.unescape_string`` for icalendar version 8. Use ``_escape_string`` and ``_unescape_string`` internally. :issue:`1011`
-- Deprecate ``icalendar.parser.q_split`` for icalendar version 8. Use the private ``_q_split`` internally.
-- Deprecate ``icalendar.parser.q_join`` for icalendar version 8. Use the private ``_q_join`` internally.
-- Deprecate ``icalendar.parser.foldline`` for icalendar version 8. Use the private ``_foldline`` internally.
+- Deprecate ``icalendar.parser.q_split``, ``icalendar.parser.q_join``, and ``icalendar.parser.foldline`` for icalendar version 8. Use ``_q_split``, ``_q_join``, and ``_foldline`` internally. :issue:`1011`
+- Deprecate ``icalendar.parser.dquote``, ``icalendar.parser.param_value``, ``icalendar.parser.validate_param_value``, ``icalendar.parser.rfc_6868_escape``, and ``icalendar.parser.rfc_6868_unescape`` for icalendar version 8. Use ``_dquote``, ``_param_value``, ``_validate_param_value``, ``_rfc_6868_escape``, and ``_rfc_6868_unescape`` internally. :issue:`1011`
+- Deprecate ``icalendar.parser.escape_char``, ``icalendar.parser.unescape_char``, and ``icalendar.parser.validate_token`` for icalendar version 8. Use ``_escape_char``, ``_unescape_char``, and ``_validate_token`` internally. :issue:`1011`
+- Deprecate ``icalendar.parser.unescape_list_or_string``, ``icalendar.parser.unescape_backslash``, ``icalendar.parser.split_on_unescaped_comma``, and ``icalendar.parser.split_on_unescaped_semicolon`` for icalendar version 8. Use ``_unescape_list_or_string``, ``_unescape_backslash``, ``_split_on_unescaped_comma``, and ``_split_on_unescaped_semicolon`` internally. :issue:`1011`
 - Added behavioral tests for :class:`~icalendar.cal.lazy.LazyCalendar` covering serialization round-trips, ``.todos``, ``.journals``, forward timezone references, and ``with_uid()`` substring false-positives. :issue:`1050`
 - Added edge case tests for :class:`~icalendar.prop.conference.Conference` parameter normalization covering string passthrough, empty list filtering, and None omission. :issue:`925`
 - Make icalendar an explicit editable install for clarity. :pr:`1268`

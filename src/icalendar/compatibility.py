@@ -7,26 +7,48 @@ Do NOT import this module directly if you use icalendar.
 Members will be added and removed without deprecation warnings.
 """
 
+import functools
 import warnings
 from typing import TYPE_CHECKING
 
 
-def deprecate_for_version_8(name: str) -> None:
-    """Emit a DeprecationWarning for a function scheduled for removal in icalendar 8.
+def deprecate_for_version_8(func):
+    """Return a deprecated public alias for *func*.
 
-    Call this as the first statement inside a deprecated public wrapper function.
-    ``stacklevel=3`` makes the warning point at the external caller's line, not at
-    the wrapper or at this helper.
+    Wraps *func* so that every call emits a :exc:`DeprecationWarning` and
+    then delegates to the original implementation.  The public name used in
+    the warning message is derived from ``func.__name__`` by stripping a
+    leading underscore.
+
+    Use like this::
+
+        def _q_join(...):
+            \"\"\"docstring...\"\"\"
+            ...
+
+        q_join = deprecate_for_version_8(_q_join)
 
     Parameters:
-        name: The public name of the deprecated function (e.g. ``"q_split"``).
+        func: The private implementation to wrap.
+
+    Returns:
+        A wrapper with the same signature and docstring as *func* that emits
+        a :exc:`DeprecationWarning` on every call.
     """
-    warnings.warn(
-        f"{name} is deprecated and will be removed in icalendar 8. "
-        "If you are using this function externally, please contact the maintainers.",
-        DeprecationWarning,
-        stacklevel=3,
-    )
+    public_name = func.__name__.lstrip("_")
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        warnings.warn(
+            f"{public_name} is deprecated and will be removed in icalendar 8. "
+            "If you are using this function externally, "
+            "please contact the maintainers.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return func(*args, **kwargs)
+
+    return wrapper
 
 
 try:
