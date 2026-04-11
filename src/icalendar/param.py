@@ -46,14 +46,14 @@ def string_parameter(
     convert_to: Callable[[T], str] | None = None,
 ) -> property:
     """Create a property for a string parameter with optional conversion.
-    
+
     Args:
         name (str): Name of the parameter in the params dictionary.
         doc (str): Documentation for the property.
         default (Callable): Function that returns a default value if the parameter is not found.
         convert (Callable[[str], T] | None): Function that converts stored string value to desired type for usage.
         convert_to (Callable[[T], str] | None): Function to convert value back to string for storage in the params dictionary.
-        
+
     Returns:
         property: A property object with a getter, setter, and deleter for the parameter.
     """
