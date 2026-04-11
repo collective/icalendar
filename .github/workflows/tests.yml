@@ -40,17 +40,17 @@ jobs:
       if: ${{ matrix.skip }}
       run: echo "Skipped ${{ matrix.test_name }} (not required for this trigger)"
     - uses: actions/checkout@v6
-#      if: ${{ !matrix.skip }}
+      if: ${{ !matrix.skip }}
     - name: Install uv and Python ${{ matrix.test_name }}
-#      if: ${{ !matrix.skip }}
+      if: ${{ !matrix.skip }}
       uses: astral-sh/setup-uv@v7
       with:
         enable-cache: true
         # Install a specific version of uv.
         version: "0.9.26"
-        python-version: ${{ matrixpython_version }}
+        python-version: ${{ matrix.python_version }}
     - name: Install dependencies
-#      if: ${{ !matrix.skip }}
+      if: ${{ !matrix.skip }}
       run: |
         uv sync --group test
         uv tool install tox --with tox-uv
