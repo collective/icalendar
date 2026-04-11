@@ -32,8 +32,9 @@ def unescape_list_or_string(val: str | list[str]) -> str | list[str]:
         maintainers if you rely on this function.
     """
     warnings.warn(
-        "unescape_list_or_string is deprecated and will be removed in a future version. "
-        "If you are using this function externally, please contact the maintainers.",
+        "unescape_list_or_string is deprecated and will be removed in a future"
+        " version. If you are using this function externally, please"
+        " contact the maintainers.",
         DeprecationWarning,
         stacklevel=2,
     )
@@ -136,8 +137,9 @@ def split_on_unescaped_comma(text: str) -> list[str]:
         maintainers if you rely on this function.
     """
     warnings.warn(
-        "split_on_unescaped_comma is deprecated and will be removed in a future version. "
-        "If you are using this function externally, please contact the maintainers.",
+        "split_on_unescaped_comma is deprecated and will be removed in a future"
+        " version. If you are using this function externally, please"
+        " contact the maintainers.",
         DeprecationWarning,
         stacklevel=2,
     )
@@ -207,8 +209,9 @@ def split_on_unescaped_semicolon(text: str) -> list[str]:
         maintainers if you rely on this function.
     """
     warnings.warn(
-        "split_on_unescaped_semicolon is deprecated and will be removed in a future version. "
-        "If you are using this function externally, please contact the maintainers.",
+        "split_on_unescaped_semicolon is deprecated and will be removed in a future"
+        " version. If you are using this function externally, please"
+        " contact the maintainers.",
         DeprecationWarning,
         stacklevel=2,
     )

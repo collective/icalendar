@@ -342,9 +342,9 @@ def validate_token(name: str) -> None:
 __all__ = [
     "_escape_char",
     "_escape_string",
+    "_foldline",
     "_unescape_char",
     "_unescape_string",
-    "_foldline",
     "_validate_token",
     "escape_char",
     "escape_string",
