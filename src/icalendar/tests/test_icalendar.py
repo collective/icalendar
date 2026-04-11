@@ -6,10 +6,10 @@ from icalendar.parser import (
     Contentline,
     Contentlines,
     Parameters,
-    dquote,
-    foldline,
-    q_join,
-    q_split,
+    _dquote,
+    _foldline,
+    _q_join,
+    _q_split,
 )
 from icalendar.prop import vText
 
@@ -243,9 +243,9 @@ class IcalendarTestCase(unittest.TestCase):
         )
 
     def test_fold_line(self):
-        assert foldline("foo") == "foo"
+        assert _foldline("foo") == "foo"
         assert (
-            foldline(
+            _foldline(
                 "Lorem ipsum dolor sit amet, consectetur adipiscing "
                 "elit. Vestibulum convallis imperdiet dui posuere.",
             )
@@ -257,11 +257,11 @@ class IcalendarTestCase(unittest.TestCase):
         # at least just but bytes in there
         # porting it to "run" under python 2 & 3 makes it not much better
         with pytest.raises(AssertionError):
-            foldline("привет".encode(), limit=3)
+            _foldline("привет".encode(), limit=3)
 
-        assert foldline("foobar", limit=4) == "foo\r\n bar"
+        assert _foldline("foobar", limit=4) == "foo\r\n bar"
         assert (
-            foldline(
+            _foldline(
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
                 ". Vestibulum convallis imperdiet dui posuere.",
             )
@@ -269,17 +269,17 @@ class IcalendarTestCase(unittest.TestCase):
             + " Vestibulum conval\r\n lis imperdiet dui posuere."
         )
         assert (
-            foldline("DESCRIPTION:АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯ")
+            _foldline("DESCRIPTION:АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯ")
             == "DESCRIPTION:АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭ\r\n ЮЯ"
         )
 
     def test_value_double_quoting(self):
-        assert dquote("Max") == "Max"
-        assert dquote("Rasmussen, Max") == '"Rasmussen, Max"'
-        assert dquote("name:value") == '"name:value"'
+        assert _dquote("Max") == "Max"
+        assert _dquote("Rasmussen, Max") == '"Rasmussen, Max"'
+        assert _dquote("name:value") == '"name:value"'
 
     def test_q_split(self):
-        assert q_split('Max,Moller,"Rasmussen, Max"') == [
+        assert _q_split('Max,Moller,"Rasmussen, Max"') == [
             "Max",
             "Moller",
             '"Rasmussen, Max"',
@@ -288,9 +288,9 @@ class IcalendarTestCase(unittest.TestCase):
     def test_q_split_bin(self):
         for s in ("X-SOMETHING=ABCDE==", ",,,"):
             for maxsplit in range(-1, 3):
-                assert q_split(s, "=", maxsplit=maxsplit) == s.split("=", maxsplit)
+                assert _q_split(s, "=", maxsplit=maxsplit) == s.split("=", maxsplit)
 
     def test_q_join(self):
         assert (
-            q_join(["Max", "Moller", "Rasmussen, Max"]) == 'Max,Moller,"Rasmussen, Max"'
+            _q_join(["Max", "Moller", "Rasmussen, Max"]) == 'Max,Moller,"Rasmussen, Max"'
         )

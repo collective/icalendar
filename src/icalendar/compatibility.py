@@ -7,7 +7,26 @@ Do NOT import this module directly if you use icalendar.
 Members will be added and removed without deprecation warnings.
 """
 
+import warnings
 from typing import TYPE_CHECKING
+
+
+def deprecate_for_version_8(name: str) -> None:
+    """Emit a DeprecationWarning for a function scheduled for removal in icalendar 8.
+
+    Call this as the first statement inside a deprecated public wrapper function.
+    ``stacklevel=3`` makes the warning point at the external caller's line, not at
+    the wrapper or at this helper.
+
+    Parameters:
+        name: The public name of the deprecated function (e.g. ``"q_split"``).
+    """
+    warnings.warn(
+        f"{name} is deprecated and will be removed in icalendar 8. "
+        "If you are using this function externally, please contact the maintainers.",
+        DeprecationWarning,
+        stacklevel=3,
+    )
 
 try:
     from typing import Self
@@ -37,4 +56,5 @@ __all__ = [
     "Self",
     "TypeGuard",
     "TypeIs",
+    "deprecate_for_version_8",
 ]

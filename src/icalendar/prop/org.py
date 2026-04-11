@@ -5,7 +5,7 @@ from typing import Any, ClassVar
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
-from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
+from icalendar.parser_tools import DEFAULT_ENCODING, _to_unicode
 
 
 class vOrg:
@@ -86,10 +86,10 @@ class vOrg:
         Returns:
             Tuple of field values with one or more fields
         """
-        from icalendar.parser import split_on_unescaped_semicolon
+        from icalendar.parser import _split_on_unescaped_semicolon
 
-        ical = to_unicode(ical)
-        fields = split_on_unescaped_semicolon(ical)
+        ical = _to_unicode(ical)
+        fields = _split_on_unescaped_semicolon(ical)
         if len(fields) < 1:
             raise ValueError(f"ORG must have at least 1 field: {ical}")
         return tuple(fields)

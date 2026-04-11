@@ -5,7 +5,7 @@ see https://github.com/collective/icalendar/issues/355
 
 import pytest
 
-from icalendar.parser import unescape_backslash
+from icalendar.parser import _unescape_backslash
 
 
 def test_facebook_link_is_correctly_parsed(events):
@@ -51,6 +51,6 @@ def test_empty_quotes(events):
 )
 def test_unescape_backslash(input_string, expected_result, message):
     """Test unescape_backslash function with various inputs."""
-    assert unescape_backslash(input_string) == expected_result, (
+    assert _unescape_backslash(input_string) == expected_result, (
         f"{message}: {input_string} -> {expected_result}"
     )

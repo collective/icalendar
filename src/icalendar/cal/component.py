@@ -27,8 +27,8 @@ from icalendar.parser import (
     Contentline,
     Contentlines,
     Parameters,
-    q_join,
-    q_split,
+    _q_join,
+    _q_split,
 )
 from icalendar.parser.ical.component import ComponentIcalParser
 from icalendar.parser_tools import DEFAULT_ENCODING
@@ -372,7 +372,7 @@ class Component(CaselessDict):
 
     def get_inline(self, name, decode=1):
         """Returns a list of values (split on comma)."""
-        vals = [v.strip('" ') for v in q_split(self[name])]
+        vals = [v.strip('" ') for v in _q_split(self[name])]
         if decode:
             return [self._decode(name, val) for val in vals]
         return vals
@@ -383,7 +383,7 @@ class Component(CaselessDict):
         """
         if encode:
             values = [self._encode(name, value, encode=1) for value in values]
-        self[name] = self.types_factory["inline"](q_join(values))
+        self[name] = self.types_factory["inline"](_q_join(values))
 
     #########################
     # Handling of components

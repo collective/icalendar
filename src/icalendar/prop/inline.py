@@ -2,7 +2,7 @@ from typing import Any
 
 from icalendar.compatibility import Self
 from icalendar.parser import Parameters
-from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
+from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, _to_unicode
 
 
 class vInline(str):
@@ -21,7 +21,7 @@ class vInline(str):
         /,
         params: dict[str, Any] | None = None,
     ) -> Self:
-        value = to_unicode(value, encoding=encoding)
+        value = _to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         self.params = Parameters(params)
         return self

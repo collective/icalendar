@@ -7,7 +7,7 @@ from icalendar.caselessdict import CaselessDict
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
-from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
+from icalendar.parser_tools import DEFAULT_ENCODING, _to_unicode
 
 WEEKDAY_RULE = re.compile(
     r"(?P<signal>[+-]?)(?P<relative>[\d]{0,2})(?P<weekday>[\w]{2})$"
@@ -65,7 +65,7 @@ class vWeekday(str):
         /,
         params: dict[str, Any] | None = None,
     ):
-        value = to_unicode(value, encoding=encoding)
+        value = _to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         match = WEEKDAY_RULE.match(self)
         if match is None:

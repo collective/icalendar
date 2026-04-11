@@ -5,12 +5,14 @@ from __future__ import annotations
 import functools
 import os
 import re
+import warnings
 from datetime import datetime, time
 from typing import TYPE_CHECKING, Any, Protocol
 
 from icalendar.caselessdict import CaselessDict
+from icalendar.compatibility import deprecate_for_version_8
 from icalendar.error import JCalParsingError
-from icalendar.parser.string import validate_token
+from icalendar.parser.string import _validate_token
 from icalendar.parser_tools import (
     DEFAULT_ENCODING,
     SEQUENCE_TYPES,
@@ -32,7 +34,7 @@ class HasToIcal(Protocol):
         ...
 
 
-def param_value(
+def _param_value(
     value: Sequence[str] | str | HasToIcal, always_quote: bool = False
 ) -> str:
     """Convert a parameter value to its iCalendar representation.
@@ -50,10 +52,29 @@ def param_value(
         The formatted parameter value, escaped and quoted as needed.
     """
     if isinstance(value, SEQUENCE_TYPES):
-        return q_join(map(rfc_6868_escape, value), always_quote=always_quote)
+        return _q_join(map(_rfc_6868_escape, value), always_quote=always_quote)
     if isinstance(value, str):
-        return dquote(rfc_6868_escape(value), always_quote=always_quote)
-    return dquote(rfc_6868_escape(value.to_ical().decode(DEFAULT_ENCODING)))
+        return _dquote(_rfc_6868_escape(value), always_quote=always_quote)
+    return _dquote(_rfc_6868_escape(value.to_ical().decode(DEFAULT_ENCODING)))
+
+
+def param_value(
+    value: Sequence[str] | str | HasToIcal, always_quote: bool = False
+) -> str:
+    """Convert a parameter value to its iCalendar representation.
+
+    .. deprecated:: 7.0.0
+        Use the private :func:`_param_value` internally. For external use,
+        this function is deprecated. Please contact the maintainers if you
+        rely on this function.
+    """
+    warnings.warn(
+        "param_value is deprecated and will be removed in a future version. "
+        "If you are using this function externally, please contact the maintainers.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return _param_value(value, always_quote)
 
 
 # Could be improved
@@ -63,7 +84,7 @@ UNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7f",:;]')
 QUNSAFE_CHAR = re.compile('[\x00-\x08\x0a-\x1f\x7f"]')
 
 
-def validate_param_value(value: str, quoted: bool = True) -> None:
+def _validate_param_value(value: str, quoted: bool = True) -> None:
     """Validate a parameter value for unsafe characters.
 
     Checks parameter values for characters that are not allowed according to
@@ -83,12 +104,29 @@ def validate_param_value(value: str, quoted: bool = True) -> None:
         raise ValueError(value)
 
 
+def validate_param_value(value: str, quoted: bool = True) -> None:
+    """Validate a parameter value for unsafe characters.
+
+    .. deprecated:: 7.0.0
+        Use the private :func:`_validate_param_value` internally. For external
+        use, this function is deprecated. Please contact the maintainers if you
+        rely on this function.
+    """
+    warnings.warn(
+        "validate_param_value is deprecated and will be removed in a future version. "
+        "If you are using this function externally, please contact the maintainers.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    _validate_param_value(value, quoted)
+
+
 # chars presence of which in parameter value will be cause the value
 # to be enclosed in double-quotes
 QUOTABLE = re.compile("[,;:’]")  # noqa: RUF001
 
 
-def dquote(val: str, always_quote: bool = False) -> str:
+def _dquote(val: str, always_quote: bool = False) -> str:
     """Enclose parameter values in double quotes when needed.
 
     Parameter values containing special characters ``,``, ``;``,
@@ -113,8 +151,25 @@ def dquote(val: str, always_quote: bool = False) -> str:
     return val
 
 
+def dquote(val: str, always_quote: bool = False) -> str:
+    """Enclose parameter values in double quotes when needed.
+
+    .. deprecated:: 7.0.0
+        Use the private :func:`_dquote` internally. For external use,
+        this function is deprecated. Please contact the maintainers if you
+        rely on this function.
+    """
+    warnings.warn(
+        "dquote is deprecated and will be removed in a future version. "
+        "If you are using this function externally, please contact the maintainers.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return _dquote(val, always_quote)
+
+
 # parsing helper
-def q_split(st: str, sep: str = ",", maxsplit: int = -1) -> list[str]:
+def _q_split(st: str, sep: str = ",", maxsplit: int = -1) -> list[str]:
     """Split a string on a separator, respecting double quotes.
 
     Splits the string on the separator character, but ignores separators that
@@ -133,12 +188,12 @@ def q_split(st: str, sep: str = ",", maxsplit: int = -1) -> list[str]:
     Examples:
         .. code-block:: pycon
 
-            >>> from icalendar.parser import q_split
-            >>> q_split('a,b,c')
+            >>> from icalendar.parser import _q_split
+            >>> _q_split('a,b,c')
             ['a', 'b', 'c']
-            >>> q_split('a,"b,c",d')
+            >>> _q_split('a,"b,c",d')
             ['a', '"b,c"', 'd']
-            >>> q_split('a;b;c', sep=';')
+            >>> _q_split('a;b;c', sep=';')
             ['a', 'b', 'c']
     """
     if maxsplit == 0:
@@ -162,10 +217,21 @@ def q_split(st: str, sep: str = ",", maxsplit: int = -1) -> list[str]:
     return result
 
 
-def q_join(lst: Sequence[str], sep: str = ",", always_quote: bool = False) -> str:
+def q_split(st: str, sep: str = ",", maxsplit: int = -1) -> list[str]:
+    """Split a string on a separator, respecting double quotes.
+
+    .. deprecated:: 7.0.0
+        Use the private :func:`_q_split` internally. For external use,
+        this function is deprecated and will be removed in icalendar 8.
+    """
+    deprecate_for_version_8("q_split")
+    return _q_split(st, sep, maxsplit)
+
+
+def _q_join(lst: Sequence[str], sep: str = ",", always_quote: bool = False) -> str:
     """Join a list with a separator, quoting items as needed.
 
-    Joins list items with the separator, applying :func:`dquote` to each item
+    Joins list items with the separator, applying :func:`_dquote` to each item
     to add double quotes when they contain special characters.
 
     Parameters:
@@ -180,13 +246,24 @@ def q_join(lst: Sequence[str], sep: str = ",", always_quote: bool = False) -> st
     Examples:
         .. code-block:: pycon
 
-            >>> from icalendar.parser import q_join
-            >>> q_join(['a', 'b', 'c'])
+            >>> from icalendar.parser import _q_join
+            >>> _q_join(['a', 'b', 'c'])
             'a,b,c'
-            >>> q_join(['plain', 'has,comma'])
+            >>> _q_join(['plain', 'has,comma'])
             'plain,"has,comma"'
     """
-    return sep.join(dquote(itm, always_quote=always_quote) for itm in lst)
+    return sep.join(_dquote(itm, always_quote=always_quote) for itm in lst)
+
+
+def q_join(lst: Sequence[str], sep: str = ",", always_quote: bool = False) -> str:
+    """Join a list with a separator, quoting items as needed.
+
+    .. deprecated:: 7.0.0
+        Use the private :func:`_q_join` internally. For external use,
+        this function is deprecated and will be removed in icalendar 8.
+    """
+    deprecate_for_version_8("q_join")
+    return _q_join(lst, sep, always_quote)
 
 
 def single_string_parameter(func: Callable | None = None, upper=False):
@@ -333,7 +410,7 @@ class Parameters(CaselessDict):
                 check_quoteable_characters
                 and any(c in value for c in check_quoteable_characters)
             )
-            quoted_value = param_value(value, always_quote=always_quote)
+            quoted_value = _param_value(value, always_quote=always_quote)
             if isinstance(quoted_value, str):
                 quoted_value = quoted_value.encode(DEFAULT_ENCODING)
             # CaselessDict keys are always unicode
@@ -346,24 +423,24 @@ class Parameters(CaselessDict):
 
         # parse into strings
         result = cls()
-        for param in q_split(st, ";"):
+        for param in _q_split(st, ";"):
             try:
-                key, val = q_split(param, "=", maxsplit=1)
-                validate_token(key)
+                key, val = _q_split(param, "=", maxsplit=1)
+                _validate_token(key)
                 # Property parameter values that are not in quoted
                 # strings are case insensitive.
                 vals = []
-                for v in q_split(val, ","):
+                for v in _q_split(val, ","):
                     if v.startswith('"') and v.endswith('"'):
                         v2 = v.strip('"')
-                        validate_param_value(v2, quoted=True)
-                        vals.append(rfc_6868_unescape(v2))
+                        _validate_param_value(v2, quoted=True)
+                        vals.append(_rfc_6868_unescape(v2))
                     else:
-                        validate_param_value(v, quoted=False)
+                        _validate_param_value(v, quoted=False)
                         if strict:
-                            vals.append(rfc_6868_unescape(v.upper()))
+                            vals.append(_rfc_6868_unescape(v.upper()))
                         else:
-                            vals.append(rfc_6868_unescape(v))
+                            vals.append(_rfc_6868_unescape(v))
                 if not vals:
                     result[key] = val
                 elif len(vals) == 1:
@@ -523,7 +600,7 @@ class Parameters(CaselessDict):
 RFC_6868_UNESCAPE_REGEX = re.compile(r"\^\^|\^n|\^'")
 
 
-def rfc_6868_unescape(param_value: str) -> str:
+def _rfc_6868_unescape(param_value: str) -> str:
     """Take care of :rfc:`6868` unescaping.
 
     - ^^ -> ^
@@ -541,10 +618,27 @@ def rfc_6868_unescape(param_value: str) -> str:
     )
 
 
+def rfc_6868_unescape(param_value: str) -> str:
+    """Take care of :rfc:`6868` unescaping.
+
+    .. deprecated:: 7.0.0
+        Use the private :func:`_rfc_6868_unescape` internally. For external
+        use, this function is deprecated. Please contact the maintainers if you
+        rely on this function.
+    """
+    warnings.warn(
+        "rfc_6868_unescape is deprecated and will be removed in a future version. "
+        "If you are using this function externally, please contact the maintainers.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return _rfc_6868_unescape(param_value)
+
+
 RFC_6868_ESCAPE_REGEX = re.compile(r'\^|\r\n|\r|\n|"')
 
 
-def rfc_6868_escape(param_value: str) -> str:
+def _rfc_6868_escape(param_value: str) -> str:
     """Take care of :rfc:`6868` escaping.
 
     - ^ -> ^^
@@ -563,10 +657,34 @@ def rfc_6868_escape(param_value: str) -> str:
     )
 
 
+def rfc_6868_escape(param_value: str) -> str:
+    """Take care of :rfc:`6868` escaping.
+
+    .. deprecated:: 7.0.0
+        Use the private :func:`_rfc_6868_escape` internally. For external use,
+        this function is deprecated. Please contact the maintainers if you
+        rely on this function.
+    """
+    warnings.warn(
+        "rfc_6868_escape is deprecated and will be removed in a future version. "
+        "If you are using this function externally, please contact the maintainers.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return _rfc_6868_escape(param_value)
+
+
 __all__ = [
     "Parameters",
+    "_dquote",
+    "_param_value",
+    "_rfc_6868_escape",
+    "_rfc_6868_unescape",
+    "_validate_param_value",
     "dquote",
     "param_value",
+    "_q_join",
+    "_q_split",
     "q_join",
     "q_split",
     "rfc_6868_escape",
