@@ -55,7 +55,7 @@ def string_parameter(
         convert (Callable[[str], T] | None):
             Function that converts stored string value to desired type for usage.
         convert_to (Callable[[T], str] | None):
-            Function to convert value back to string for storage in the params dictionary.
+            Function to convert value back to string for storage.
 
     Returns:
         property:
