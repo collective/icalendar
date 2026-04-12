@@ -10,7 +10,7 @@ requires = ["hatchling>=1.27.0", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
-name = "icalendar"
+name = "not_icalendar"
 license = "BSD-2-Clause"
 license-files = ["LICENSE.rst"]
 keywords = [
