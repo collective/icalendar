@@ -47,13 +47,13 @@ jobs:
       with:
         enable-cache: true
         # Install a specific version of uv.
-        version: "0.9.26"
+        version: "0.11.6"
         python-version: ${{ matrix.python_version }}
     - name: Install dependencies
       if: ${{ !matrix.skip }}
       run: |
-        uv tool install tox --with tox-uv
         uv sync --no-dev --group test
+        uv tool install tox --with tox-uv
     - name: Test
       if: ${{ !matrix.skip }}
       run: tox -e ${{ matrix.tox_env }}
