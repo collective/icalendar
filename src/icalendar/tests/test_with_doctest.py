@@ -36,12 +36,12 @@ MODULE_NAMES = [
 ]
 
 
-def test_this_module_is_among_them():
+def test_this_module_is_among_them() -> None:
     assert __name__ in MODULE_NAMES
 
 
 @pytest.mark.parametrize("module_name", MODULE_NAMES)
-def test_docstring_of_python_file(module_name, env_for_doctest):
+def test_docstring_of_python_file(module_name: str, env_for_doctest) -> None:
     """This test runs doctest on the Python module."""
     try:
         module = importlib.import_module(module_name)
@@ -65,7 +65,7 @@ DOCUMENT_PATHS = list(REPOSITORY.glob("**/*.rst"))
         "index.rst",
     ],
 )
-def test_files_is_included(filename):
+def test_files_is_included(filename: str) -> None:
     assert any(path.name == filename for path in DOCUMENT_PATHS)
 
 
@@ -91,6 +91,6 @@ def test_documentation_file(document, zoneinfo_only, env_for_doctest, tzp):
     )
 
 
-def test_can_import_zoneinfo(env_for_doctest):
+def test_can_import_zoneinfo(env_for_doctest) -> None:
     """Allow importing zoneinfo for tests."""
     assert "zoneinfo" in sys.modules
