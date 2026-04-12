@@ -10,7 +10,7 @@ from unittest import mock
 from icalendar.timezone.zoneinfo import ZONEINFO
 
 
-def test_zoneinfo_class_does_not_initialize_at_import_time():
+def test_zoneinfo_class_does_not_initialize_at_import_time() -> None:
     """Test that ZONEINFO class attributes are not computed at class definition.
 
     The class should have None placeholders for _utc and _available_timezones_cache
@@ -30,7 +30,7 @@ def test_zoneinfo_class_does_not_initialize_at_import_time():
     assert isinstance(ZONEINFO.__dict__["_available_timezones"], property)
 
 
-def test_zoneinfo_utc_property_works():
+def test_zoneinfo_utc_property_works() -> None:
     """Test that UTC timezone property returns a valid ZoneInfo."""
     z = ZONEINFO()
 
@@ -42,7 +42,7 @@ def test_zoneinfo_utc_property_works():
     assert z.utc is utc
 
 
-def test_zoneinfo_available_timezones_property_works():
+def test_zoneinfo_available_timezones_property_works() -> None:
     """Test that available_timezones property returns a valid set."""
     z = ZONEINFO()
 
@@ -55,7 +55,7 @@ def test_zoneinfo_available_timezones_property_works():
     assert z._available_timezones is timezones
 
 
-def test_zoneinfo_knows_timezone_id():
+def test_zoneinfo_knows_timezone_id() -> None:
     """Test that knows_timezone_id correctly uses the lazy _available_timezones."""
     z = ZONEINFO()
 
@@ -64,7 +64,7 @@ def test_zoneinfo_knows_timezone_id():
     assert z.knows_timezone_id("NonExistent/Timezone") is False
 
 
-def test_zoneinfo_can_be_instantiated_before_timezone_access():
+def test_zoneinfo_can_be_instantiated_before_timezone_access() -> None:
     """Test that ZONEINFO can be instantiated without triggering timezone lookups.
 
     This is the key test for Pyodide compatibility - we need to be able to create
@@ -83,13 +83,13 @@ def test_zoneinfo_can_be_instantiated_before_timezone_access():
             assert z.name == "zoneinfo"
 
 
-def test_zoneinfo_thread_safe_initialization():
+def test_zoneinfo_thread_safe_initialization() -> None:
     """Test that lazy initialization is thread-safe."""
     z = ZONEINFO()
     results = []
     errors = []
 
-    def access_utc():
+    def access_utc() -> None:
         try:
             utc = z.utc
             results.append(utc)
