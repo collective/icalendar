@@ -65,6 +65,36 @@ class vUri(str):
         /,
         params: dict[str, Any] | None = None,
     ) -> Self:
+        """Create a new :class:`~icalendar.prop.uri.vUri` instance.
+
+        This method overrides :py:meth:`str.__new__` because URI values inherit
+        from :class:`str`, which is immutable. The ``__new__`` method decodes
+        bytes if needed, creates the string instance, and attaches iCalendar
+        property parameters.
+
+        Parameters:
+            value: URI string or bytes decoded with ``encoding``, passed through
+                :func:`~icalendar.parser_tools.to_unicode`.
+            encoding: Encoding used when ``value`` is :class:`bytes`.
+            params: Optional property parameters according to :rfc:`5545`.
+
+        Returns:
+            A new :class:`~icalendar.prop.uri.vUri` instance with associated
+            parameters.
+
+        Examples:
+            .. code-block:: pycon
+
+                >>> from icalendar.prop import vUri
+                >>> u = vUri(
+                ...     "http://example.com/agenda.doc",
+                ...     params={"VALUE": "URI"},
+                ... )
+                >>> u.uri
+                'http://example.com/agenda.doc'
+                >>> u.params["VALUE"]
+                'URI'
+        """
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         self.params = Parameters(params)

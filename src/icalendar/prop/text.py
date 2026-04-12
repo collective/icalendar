@@ -76,6 +76,35 @@ class vText(str):
         /,
         params: dict[str, Any] | None = None,
     ) -> Self:
+        """Create a new :class:`~icalendar.prop.text.vText` instance.
+
+        This method overrides :py:meth:`str.__new__` because TEXT values
+        inherit from :class:`str`, which is immutable. The ``__new__`` method
+        decodes bytes if needed, creates the string instance, and attaches
+        encoding metadata and iCalendar property parameters.
+
+        Parameters:
+            value: Raw text passed to :func:`~icalendar.parser_tools.to_unicode`
+                before constructing the :class:`str` value.
+            encoding: Encoding used when ``value`` is :class:`bytes`.
+            params: Optional property parameters according to :rfc:`5545`.
+
+        Returns:
+            A new :class:`~icalendar.prop.text.vText` instance with
+            associated parameters.
+
+        Examples:
+            .. code-block:: pycon
+
+                >>> from icalendar.prop import vText
+                >>> t = vText("Hello", params={"LANGUAGE": "en"})
+                >>> str(t)
+                'Hello'
+                >>> t.encoding
+                'utf-8'
+                >>> t.params
+                Parameters({'LANGUAGE': 'en'})
+        """
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         self.encoding = encoding

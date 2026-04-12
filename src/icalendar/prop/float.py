@@ -59,6 +59,34 @@ class vFloat(float):
     def __new__(
         cls, *args: Any, params: dict[str, Any] | None = None, **kwargs: Any
     ) -> Self:
+        """Create a new :class:`~icalendar.prop.float.vFloat` instance.
+
+        This method overrides :py:meth:`float.__new__` because FLOAT values
+        inherit from :class:`float`, which is immutable. The ``__new__`` method
+        creates the instance and attaches iCalendar property parameters.
+
+        Parameters:
+            *args: Positional arguments passed to :py:meth:`float.__new__`.
+                Typically a single numeric value or string accepted by
+                :class:`float`.
+            params: Optional property parameters according to :rfc:`5545`.
+            **kwargs: Additional keyword arguments passed to
+                :py:meth:`float.__new__`.
+
+        Returns:
+            A new :class:`~icalendar.prop.float.vFloat` instance with
+            associated parameters.
+
+        Examples:
+            .. code-block:: pycon
+
+                >>> from icalendar.prop import vFloat
+                >>> x = vFloat(1.333, params={"VALUE": "FLOAT"})
+                >>> float(x)
+                1.333
+                >>> x.params
+                Parameters({'VALUE': 'FLOAT'})
+        """
         self = super().__new__(cls, *args, **kwargs)
         self.params = Parameters(params)
         return self

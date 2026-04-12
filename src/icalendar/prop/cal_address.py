@@ -66,6 +66,37 @@ class vCalAddress(str):
         /,
         params: dict[str, Any] | None = None,
     ) -> Self:
+        """Create a new :class:`~icalendar.prop.cal_address.vCalAddress` instance.
+
+        This method overrides :py:meth:`str.__new__` because CAL-ADDRESS values
+        inherit from :class:`str`, which is immutable. The ``__new__`` method
+        decodes bytes if needed, creates the string instance, and attaches
+        iCalendar property parameters.
+
+        Parameters:
+            value: Calendar user address, usually a ``mailto`` URI as defined in
+                :rfc:`5545#section-3.3.3`, passed through
+                :func:`~icalendar.parser_tools.to_unicode`.
+            encoding: Encoding used when ``value`` is :class:`bytes`.
+            params: Optional property parameters according to :rfc:`5545`.
+
+        Returns:
+            A new :class:`~icalendar.prop.cal_address.vCalAddress` instance with
+            associated parameters.
+
+        Examples:
+            .. code-block:: pycon
+
+                >>> from icalendar.prop import vCalAddress
+                >>> a = vCalAddress(
+                ...     "mailto:jsmith@example.com",
+                ...     params={"CN": "John Smith"},
+                ... )
+                >>> str(a)
+                'mailto:jsmith@example.com'
+                >>> a.params["CN"]
+                'John Smith'
+        """
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         self.params = Parameters(params)

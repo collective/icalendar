@@ -55,6 +55,33 @@ class vBoolean(int):
     def __new__(
         cls, *args: Any, params: dict[str, Any] | None = None, **kwargs: Any
     ) -> Self:
+        """Create a new :class:`~icalendar.prop.boolean.vBoolean` instance.
+
+        This method overrides :py:meth:`int.__new__` because BOOLEAN values
+        inherit from :class:`int`, which is immutable. The ``__new__`` method
+        creates the instance and attaches iCalendar property parameters.
+
+        Parameters:
+            *args: Positional arguments passed to :py:meth:`int.__new__`.
+                Typically a single Python :class:`bool` or ``0`` / ``1``.
+            params: Optional property parameters according to :rfc:`5545`.
+            **kwargs: Additional keyword arguments passed to
+                :py:meth:`int.__new__`.
+
+        Returns:
+            A new :class:`~icalendar.prop.boolean.vBoolean` instance with
+            associated parameters.
+
+        Examples:
+            .. code-block:: pycon
+
+                >>> from icalendar.prop import vBoolean
+                >>> b = vBoolean(True, params={"VALUE": "BOOLEAN"})
+                >>> bool(b)
+                True
+                >>> b.params
+                Parameters({'VALUE': 'BOOLEAN'})
+        """
         self = super().__new__(cls, *args, **kwargs)
         self.params = Parameters(params)
         return self
