@@ -52,7 +52,7 @@ jobs:
     - name: Install dependencies
       if: ${{ !matrix.skip }}
       run: |
-        uv sync --group test
+        uv sync --no-default-groups --group test
         uv tool install tox --with tox-uv
     - name: Test
       if: ${{ !matrix.skip }}
