@@ -35,7 +35,7 @@ class vBoolean(int):
 
     .. code-block:: pycon
 
-        >>> from icalendar import vBoolean
+        >>> from icalendar.prop import vBoolean
         >>> boolean = vBoolean.from_ical('TRUE')
         >>> boolean
         True
