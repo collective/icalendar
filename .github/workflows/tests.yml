@@ -52,8 +52,8 @@ jobs:
     - name: Install dependencies
       if: ${{ !matrix.skip }}
       run: |
-        uv sync --no-group dev --group test
         uv tool install tox --with tox-uv
+        uv sync --no-dev --group test
     - name: Test
       if: ${{ !matrix.skip }}
       run: tox -e ${{ matrix.tox_env }}
