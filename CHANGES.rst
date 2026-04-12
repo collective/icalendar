@@ -48,7 +48,7 @@ Bug fixes
 Documentation
 ~~~~~~~~~~~~~
 
-- Document ``__new__`` for :class:`~icalendar.prop.boolean.vBoolean`, :class:`~icalendar.prop.float.vFloat`, :class:`~icalendar.prop.text.vText`, :class:`~icalendar.prop.cal_address.vCalAddress`, and :class:`~icalendar.prop.uri.vUri`, and use the simple ``from icalendar import ...`` style in related docstring examples.
+- Document ``__new__`` for :class:`~icalendar.prop.boolean.vBoolean`, :class:`~icalendar.prop.float.vFloat`, :class:`~icalendar.prop.text.vText`, :class:`~icalendar.prop.cal_address.vCalAddress`, and :class:`~icalendar.prop.uri.vUri` in related docstring examples. :issue: `1118`
 - Run ``sphinx-build`` with ``-W`` to turn warnings into errors. :issue:`1306`
 - Added `sphinx-llms-txt <https://sphinx-llms-txt.readthedocs.io/en/stable/>`_ extension to generate :file:`llms.txt` and :file:`llms-full.txt` files for AI/LLM documentation consumption. :issue:`1302`
 - Fixed CI Vale check reporting and resolved Vale errors. :pr:`1278`
