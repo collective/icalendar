@@ -87,7 +87,7 @@ class vCalAddress(str):
         Examples:
             .. code-block:: pycon
 
-                >>> from icalendar.prop import vCalAddress
+                >>> from icalendar import vCalAddress
                 >>> a = vCalAddress(
                 ...     "mailto:jsmith@example.com",
                 ...     params={"CN": "John Smith"},

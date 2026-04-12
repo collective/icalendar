@@ -38,7 +38,7 @@ class vFloat(float):
 
         .. code-block:: pycon
 
-            >>> from icalendar.prop import vFloat
+            >>> from icalendar import vFloat
             >>> float = vFloat.from_ical('1000000.0000001')
             >>> float
             1000000.0000001
@@ -80,7 +80,7 @@ class vFloat(float):
         Examples:
             .. code-block:: pycon
 
-                >>> from icalendar.prop import vFloat
+                >>> from icalendar import vFloat
                 >>> x = vFloat(1.333, params={"VALUE": "FLOAT"})
                 >>> float(x)
                 1.333
@@ -129,7 +129,7 @@ class vFloat(float):
         """
         JCalParsingError.validate_property(jcal_property, cls)
         if jcal_property[0].upper() == "GEO":
-            from icalendar.prop import vGeo
+            from icalendar import vGeo
 
             return vGeo.from_jcal(jcal_property)
         JCalParsingError.validate_value_type(jcal_property[3], float, cls, 3)

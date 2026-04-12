@@ -85,7 +85,7 @@ class vUri(str):
         Examples:
             .. code-block:: pycon
 
-                >>> from icalendar.prop import vUri
+                >>> from icalendar import vUri
                 >>> u = vUri(
                 ...     "http://example.com/agenda.doc",
                 ...     params={"VALUE": "URI"},

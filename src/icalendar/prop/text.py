@@ -96,7 +96,7 @@ class vText(str):
         Examples:
             .. code-block:: pycon
 
-                >>> from icalendar.prop import vText
+                >>> from icalendar import vText
                 >>> t = vText("Hello", params={"LANGUAGE": "en"})
                 >>> str(t)
                 'Hello'
