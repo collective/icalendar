@@ -118,7 +118,7 @@ class Timezone(Component):
         tznames.add(tzname)
         return tzname
 
-    def to_tz(self, tzp: TZP = tzp, lookup_tzid: bool = True):
+    def to_tz(self, tzp: TZP = tzp, lookup_tzid: bool = True) -> tzinfo:
         """convert this VTIMEZONE component to a timezone object
 
         :param tzp: timezone provider to use

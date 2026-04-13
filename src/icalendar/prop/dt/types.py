@@ -84,7 +84,7 @@ class vDDDTypes(TimeBase):
         return self.to_property_type().to_ical()
 
     @classmethod
-    def from_ical(cls, ical, timezone=None):
+    def from_ical(cls, ical: str, timezone: str | None = None) -> DT_TYPE:
         if isinstance(ical, cls):
             return ical.dt
         u = ical.upper()

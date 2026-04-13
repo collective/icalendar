@@ -142,7 +142,7 @@ class vTime(TimeBase):
         self.params = Parameters(params or {})
         self.params.update_tzid_from(self.dt)
 
-    def to_ical(self):
+    def to_ical(self) -> str:
         value = self.dt.strftime("%H%M%S")
         if self.is_utc():
             value += "Z"

@@ -46,7 +46,7 @@ del dt
 def main(
     create_timezones: list[Callable[[str], tzinfo]],
     name: str,
-):
+) -> dict[str, set[str]]:
     """Generate a lookup table for timezone information if unknown timezones.
 
     We cannot create one lookup for all because they seem to be all equivalent

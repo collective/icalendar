@@ -62,7 +62,7 @@ class vMonth(int):
         return str(self).encode("utf-8")
 
     @classmethod
-    def from_ical(cls, ical: str):
+    def from_ical(cls, ical: str) -> Self:
         return cls(ical)
 
     @property

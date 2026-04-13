@@ -105,7 +105,7 @@ class FreeBusy(Component):
         start: date | datetime | None = None,
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
-    ):
+    ) -> FreeBusy:
         """Create a new alarm with all required properties.
 
         This creates a new Alarm in accordance with :rfc:`5545`.

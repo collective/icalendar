@@ -102,7 +102,7 @@ class vInt(int):
         return int(self)
 
     @classmethod
-    def from_ical(cls, ical: ICAL_TYPE):
+    def from_ical(cls, ical: ICAL_TYPE) -> Self:
         try:
             return cls(ical)
         except Exception as e:
