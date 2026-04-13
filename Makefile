@@ -32,6 +32,7 @@ help:  # This help message
 	@uv python install "$(PYTHONVERSION)"
 	@uv venv --python "$(PYTHONVERSION)"
 	@uv sync --group dev
+	@pre-commit install
 
 .PHONY: sync
 sync:  ## Sync package requirements
@@ -134,16 +135,14 @@ doctest: .venv  ## Test snippets and docstrings in the documentation
 docs-all: .venv clean vale doctest html linkcheckbroken  ## Clean docs build, then run vale, doctest, html, and linkcheckbroken
 
 .PHONY: test
-test:  ## Run code tests and coverage
-	@tox
+test: .venv  ## Run code tests and coverage
+	@uv run tox
 # /test
 
 
 # development
 .PHONY: dev
 dev: .venv  ## Install required Python, create Python virtual environment, install package and development requirements
-	@uv sync --group dev
-	@pre-commit install
 
 .PHONY: format
 format: .venv  ## Format the code base with ruff
