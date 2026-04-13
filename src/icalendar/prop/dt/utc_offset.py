@@ -113,7 +113,7 @@ class vUTCOffset:
         return sign % duration
 
     @classmethod
-    def from_ical(cls, ical):
+    def from_ical(cls, ical: str | bytes) -> timedelta:
         if isinstance(ical, cls):
             return ical.td
         try:

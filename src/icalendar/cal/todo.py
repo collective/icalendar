@@ -196,7 +196,7 @@ class Todo(Component):
         return get_start_property(self)
 
     @start.setter
-    def start(self, start: date | datetime | None):
+    def start(self, start: date | datetime | None) -> None:
         """Set the start."""
         self.DTSTART = start
 
@@ -210,7 +210,7 @@ class Todo(Component):
         return get_end_property(self, "DUE")
 
     @end.setter
-    def end(self, end: date | datetime | None):
+    def end(self, end: date | datetime | None) -> None:
         """Set the end."""
         self.DUE = end
 
@@ -232,7 +232,7 @@ class Todo(Component):
         return get_duration_property(self)
 
     @duration.setter
-    def duration(self, value: timedelta):
+    def duration(self, value: timedelta) -> None:
         if not isinstance(value, timedelta):
             raise TypeError(f"Use timedelta, not {type(value).__name__}.")
 

@@ -127,7 +127,7 @@ class Contentline(str):
         params: Parameters,
         values,
         sorted: bool = True,  # noqa: A002
-    ):
+    ) -> Self:
         """Turn a parts into a content line."""
         assert isinstance(params, Parameters)
         if hasattr(values, "to_ical"):
@@ -225,7 +225,7 @@ class Contentline(str):
         return (name, params, values)
 
     @classmethod
-    def from_ical(cls, ical, strict=False):
+    def from_ical(cls, ical: str | bytes, strict: bool = False) -> Self:
         """Unfold the content lines in an iCalendar into long content lines."""
         ical = to_unicode(ical)
         # a fold is carriage return followed by either a space or a tab
@@ -249,7 +249,7 @@ class Contentlines(list[Contentline]):
         return b"\r\n".join(line.to_ical() for line in self if line) + b"\r\n"
 
     @classmethod
-    def from_ical(cls, st):
+    def from_ical(cls, st: str | bytes) -> ContentLines:
         """Parses a string into content lines."""
         st = to_unicode(st)
         try:

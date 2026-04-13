@@ -25,7 +25,7 @@ def unescape_list_or_string(val: str | list[str]) -> str | list[str]:
 _unescape_backslash_regex = re.compile(r"\\([\\,;:nN])")
 
 
-def unescape_backslash(val: str):
+def unescape_backslash(val: str) -> str:
     r"""Unescape backslash sequences in iCalendar text.
 
     Unlike :py:meth:`unescape_string`, this only handles actual backslash escapes

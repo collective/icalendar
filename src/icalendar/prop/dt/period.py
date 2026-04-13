@@ -117,12 +117,12 @@ class vPeriod(TimeBase):
         self.by_duration = by_duration
         self.duration = duration
 
-    def overlaps(self, other):
+    def overlaps(self, other: vPeriod) -> bool:
         if self.start > other.start:
             return other.overlaps(self)
         return self.start <= other.start < self.end
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         if self.by_duration:
             return (
                 vDatetime(self.start).to_ical()
@@ -132,7 +132,7 @@ class vPeriod(TimeBase):
         return vDatetime(self.start).to_ical() + b"/" + vDatetime(self.end).to_ical()
 
     @staticmethod
-    def from_ical(ical, timezone=None):
+    def from_ical(ical: str | bytes, timezone: tzinfo | None = None) -> vPeriod:
         from icalendar.prop.dt.types import vDDDTypes
 
         try:

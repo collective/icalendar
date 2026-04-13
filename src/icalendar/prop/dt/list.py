@@ -36,12 +36,12 @@ class vDDDLists:
         self.params = Parameters(params)
         self.dts = vddd
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         dts_ical = (from_unicode(dt.to_ical()) for dt in self.dts)
         return b",".join(dts_ical)
 
     @staticmethod
-    def from_ical(ical, timezone=None):
+    def from_ical(ical: str | bytes, timezone: tzinfo | None = None) -> vDDDLists:
         out = []
         ical_dates = ical.split(",")
         for ical_dt in ical_dates:

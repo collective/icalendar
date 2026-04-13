@@ -202,14 +202,14 @@ class Component(CaselessDict):
         """Get property value from the component dictionary."""
         return super().__getitem__(key)
 
-    def get(self, key, default=None):
+    def get(self, key: str, default: Any | None = None) -> Any:
         """Get property value with default."""
         try:
             return self[key]
         except KeyError:
             return default
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         """Returns True if Component has no items or subcomponents, else False."""
         return bool(not list(self.values()) + self.subcomponents)
 
@@ -370,14 +370,14 @@ class Component(CaselessDict):
     # Inline values. A few properties have multiple values inlined in in one
     # property line. These methods are used for splitting and joining these.
 
-    def get_inline(self, name, decode=1):
+    def get_inline(self, name: str, decode=1):
         """Returns a list of values (split on comma)."""
         vals = [v.strip('" ') for v in q_split(self[name])]
         if decode:
             return [self._decode(name, val) for val in vals]
         return vals
 
-    def set_inline(self, name, values, encode=1):
+    def set_inline(self, name: str, values, encode=1):
         """Converts a list of values into comma separated string and sets value
         to that.
         """

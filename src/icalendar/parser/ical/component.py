@@ -75,7 +75,7 @@ class ComponentIcalParser:
         self.initialize_parsing()
         return any(uid in line for line in self._content_lines)
 
-    def initialize_parsing(self):
+    def initialize_parsing(self) -> None:
         self._stack: list[Component] = []
         self._components: list[Component] = []
         self._data = self._content_lines = (

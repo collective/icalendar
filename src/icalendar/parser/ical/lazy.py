@@ -30,7 +30,7 @@ class LazyCalendarIcalParser(ComponentIcalParser):
     All other components are parsed lazily.
     """
 
-    def handle_begin_component(self, vals):
+    def handle_begin_component(self, vals: list) -> None:
         """Begin a new component.
 
         This may be the first component.
@@ -84,7 +84,7 @@ class LazyCalendarIcalParser(ComponentIcalParser):
             content_lines, self._component_factory, self._types_factory
         )
 
-    def prepare_components(self):
+    def prepare_components(self) -> None:
         """Prepare the lazily parsed components."""
 
 

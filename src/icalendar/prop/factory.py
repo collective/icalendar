@@ -245,14 +245,14 @@ class TypesFactory(CaselessDict):
 
         return self[self.types_map.get(name, "unknown")]
 
-    def to_ical(self, name, value):
+    def to_ical(self, name: str, value: Any) -> bytes:
         """Encodes a named value from a primitive python type to an icalendar
         encoded string.
         """
         type_class = self.for_property(name)
         return type_class(value).to_ical()
 
-    def from_ical(self, name, value):
+    def from_ical(self, name: str, value: str | bytes) -> Any:
         """Decodes a named property or parameter value from an icalendar
         encoded string to a primitive python type.
         """

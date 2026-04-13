@@ -95,7 +95,7 @@ class vDuration(TimeBase):
         self.td = td
         self.params = Parameters(params)
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         sign = ""
         td = self.td
         if td.days < 0:
@@ -124,7 +124,7 @@ class vDuration(TimeBase):
         )
 
     @staticmethod
-    def from_ical(ical):
+    def from_ical(ical: str | bytes) -> timedelta:
         match = DURATION_REGEX.match(ical)
         if not match:
             raise InvalidCalendar(f"Invalid iCalendar duration: {ical}")

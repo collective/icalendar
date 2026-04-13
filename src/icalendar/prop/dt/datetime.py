@@ -96,7 +96,7 @@ class vDatetime(TimeBase):
         self.params = Parameters(params)
         self.params.update_tzid_from(dt)
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         dt = self.dt
 
         s = (
@@ -108,7 +108,7 @@ class vDatetime(TimeBase):
         return s.encode("utf-8")
 
     @staticmethod
-    def from_ical(ical, timezone=None):
+    def from_ical(ical: str | bytes, timezone: tzinfo | None = None) -> datetime:
         """Create a datetime from the RFC string."""
         tzinfo = None
         if isinstance(timezone, str):

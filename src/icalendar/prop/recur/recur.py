@@ -172,7 +172,7 @@ class vRecur(CaselessDict):
         super().__init__(*args, **kwargs)
         self.params = Parameters(params)
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         result = []
         for key, vals in self.sorted_items():
             typ = self.types.get(key, vText)

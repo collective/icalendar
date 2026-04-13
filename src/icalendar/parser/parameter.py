@@ -189,7 +189,7 @@ def q_join(lst: Sequence[str], sep: str = ",", always_quote: bool = False) -> st
     return sep.join(dquote(itm, always_quote=always_quote) for itm in lst)
 
 
-def single_string_parameter(func: Callable | None = None, upper=False):
+def single_string_parameter(func: Callable | None = None, upper: bool = False) -> Callable:
     """Create a parameter getter/setter for a single string parameter.
 
     Parameters:
@@ -201,7 +201,7 @@ def single_string_parameter(func: Callable | None = None, upper=False):
         if func is ``None``.
     """
 
-    def decorator(func):
+    def decorator(func: Callable) -> Callable:
         name = func.__name__
 
         @functools.wraps(func)
@@ -304,13 +304,13 @@ class Parameters(CaselessDict):
         "CN": " '",
     }
 
-    def params(self):
+    def params(self) -> list[str]:
         """In RFC 5545 keys are called parameters, so this is to be consitent
         with the naming conventions.
         """
         return self.keys()
 
-    def to_ical(self, sorted: bool = True):  # noqa: A002
+    def to_ical(self, sorted: bool = True) -> bytes:  # noqa: A002
         """Returns an :rfc:`5545` representation of the parameters.
 
         Parameters:
@@ -341,7 +341,7 @@ class Parameters(CaselessDict):
         return b";".join(result)
 
     @classmethod
-    def from_ical(cls, st, strict=False):
+    def from_ical(cls, st: str | bytes, strict: bool = False) -> Parameters:
         """Parses the parameter format from ical text format."""
 
         # parse into strings

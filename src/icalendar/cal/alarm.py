@@ -188,7 +188,7 @@ class Alarm(Component):
         return trigger.params.get("RELATED", "START")
 
     @TRIGGER_RELATED.setter
-    def TRIGGER_RELATED(self, value: str):
+    def TRIGGER_RELATED(self, value: str) -> None:
         """Set "START" or "END"."""
         trigger = self.get("TRIGGER")
         if trigger is None:
