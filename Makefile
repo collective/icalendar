@@ -18,7 +18,7 @@ PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = -W -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 VALEFILES       := $(shell find $(DOCS_DIR) -type f -name "*.rst" -print)  # Also add `src` for docstrings.
 VALEOPTS        ?=
-PYTHONVERSION   = >=3.11,<3.15
+PYTHONVERSION   = >=3.10,<3.15
 
 # Add the following 'help' target to your Makefile
 # And add help text after each target name starting with '\#\#'
