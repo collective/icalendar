@@ -32,7 +32,7 @@ help:  # This help message
 	@uv python install "$(PYTHONVERSION)"
 	@uv venv --python "$(PYTHONVERSION)"
 	@uv sync --group dev
-	@pre-commit install
+	@uv run pre-commit install
 
 .PHONY: sync
 sync:  ## Sync package requirements
