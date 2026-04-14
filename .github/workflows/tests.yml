@@ -53,6 +53,7 @@ jobs:
       if: ${{ !matrix.skip }}
       run: |
         make dev PYTHONVERSION=${{ matrix.python_version }}
+        uv run pip list
         ${{ matrix.install_command }}
     - name: Test
       if: ${{ !matrix.skip }}
