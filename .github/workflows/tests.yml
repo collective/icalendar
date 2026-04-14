@@ -41,7 +41,7 @@ jobs:
       run: echo "Skipped ${{ matrix.test_name }} (not required for this trigger)"
     - uses: actions/checkout@v6
       if: ${{ !matrix.skip }}
-    - name: Install uv and Python ${{ matrix.test_name }}
+    - name: Install uv and Python ${{ matrix.python_version }}
       if: ${{ !matrix.skip }}
       uses: astral-sh/setup-uv@v7
       with:
@@ -52,16 +52,16 @@ jobs:
     - name: Install dependencies
       if: ${{ !matrix.skip }}
       run: |
-        uv sync
-        uv tool install tox --with tox-uv
+        make dev PYTHONVERSION=${{ matrix.python_version }}
+        ${{ matrix.install_command }}
     - name: Test
       if: ${{ !matrix.skip }}
-      run: tox -e ${{ matrix.tox_env }}
+      run: ${{ matrix.test_command }}
     - name: Coveralls Parallel
       if: ${{ !matrix.skip }}
       uses: coverallsapp/github-action@v2
       with:
-        flag-name: run-${{ matrix.python_version }}-${{ matrix.tox_env }}
+        flag-name: run-${{ matrix.test_name }}
         parallel: true
         file: coverage.xml
         allow-empty: true

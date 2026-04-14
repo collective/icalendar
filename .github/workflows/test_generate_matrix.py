@@ -14,9 +14,8 @@ CASES_MIN = {"3.10", "3.14", "3.10 (nopytz)"}
 CASES_0 = set()
 
 
-@pytest.mark.parametrize(
-    ("arg_pr", "expected", "arg_ref"),
-    [
+@pytest.fixture(
+    params=[
         # push
         ("", CASES_ALL, "refs/heads/main"),
         ("", CASES_ALL, "refs/heads/7.x"),
@@ -42,24 +41,85 @@ CASES_0 = set()
         ("approved", CASES_ALL, "refs/heads/pr-branch"),
     ],
 )
-def test_count_test_runs(arg_ref, arg_pr, expected):
-    """Check which values we get."""
-    result = generate_matrix(arg_ref, arg_pr)
+def cases(request):
+    """All test cases."""
+    return request.param
+
+
+@pytest.fixture
+def arg_pr(cases):
+    """The pr event name."""
+    return cases[0]
+
+
+@pytest.fixture
+def arg_ref(cases):
+    """The branch or tag reference."""
+    return cases[2]
+
+
+@pytest.fixture
+def expected(cases):
+    """All expected case names."""
+    return cases[1]
+
+
+@pytest.fixture
+def matrix(arg_ref, arg_pr):
+    """The generated test matrix."""
+    matrix = generate_matrix(arg_ref, arg_pr)
     print("Cases:")
-    for case in sorted(result["include"], key=lambda case: case["test_name"]):
+    for case in sorted(matrix["include"], key=lambda case: case["test_name"]):
         print(f"- running\t{case['test_name']}")
-    for case in sorted(result["skipped"]):
+    for case in sorted(matrix["skipped"]):
         print(f"- skipped\t{case}")
-    running = {case["test_name"] for case in result["include"] if not case.get("skip")}
-    skipped = set(result["skipped"])
-    assert running == expected, (
-        f"Expected {len(expected)} test runs, got {len(running)}"
+    return matrix
+
+
+@pytest.fixture
+def skipped_names(matrix):
+    """All skipped test cases."""
+    return set(matrix["skipped"])
+
+
+@pytest.fixture
+def running_names(matrix):
+    """All running test cases"""
+    return {case["test_name"] for case in matrix["include"] if not case["skip"]}
+
+
+def test_count_test_runs(running_names, expected):
+    """Check which values we get."""
+    assert running_names == expected, (
+        f"Expected {len(expected)} test runs, got {len(running_names)}"
     )
-    assert running.isdisjoint(skipped)
-    assert running | skipped == CASES_ALL
-    # All cases appear in include (for branch protection visibility)
-    all_in_matrix = {case["test_name"] for case in result["include"]}
+
+
+def test_running_is_not_skipped(running_names, skipped_names):
+    """Running means not skipped."""
+    assert running_names.isdisjoint(skipped_names)
+
+
+def test_all_cases_are_always_included(running_names, skipped_names, matrix):
+    """The matirx always needs to be complete or we might wait for required checks."""
+    assert running_names | skipped_names == CASES_ALL
+    all_in_matrix = {case["test_name"] for case in matrix["include"]}
     assert all_in_matrix == CASES_ALL
+
+
+@pytest.mark.parametrize(
+    "attribute",
+    [
+        "test_name",
+        "python_version",
+        "skip",
+        "install_command",
+        "test_command",
+    ],
+)
+def test_parameters_are_present(matrix, attribute):
+    for case in matrix["include"]:
+        assert attribute in case, f"Missing {attribute} in {case}"
 
 
 @pytest.mark.parametrize(
