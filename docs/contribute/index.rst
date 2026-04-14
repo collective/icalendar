@@ -84,10 +84,9 @@ That means you must comply with :ref:`pull-request-requirements` and follow ical
 If you use AI in your work:
 
 -   You must take responsibility for the output, including reviewing and validating the output for accuracy and ensuring it resolves an issue.
--   You must disclose the AI's terms of use.
--   You must ensure that outputs are not reconstructed from copyrighted sources.
+-   You must check the AI's terms of use, and ensure that outputs are not reconstructed from copyrighted sources.
 -   You are expected to understand and be able to explain design and code decisions.
--   You must distinguish git commits that add generated code and include the used model and prompts in your commit message.
+-   In your git commit messages, you must specify both (1) which AI model and version you used, and (2) how you used it, by either including the prompts and interactions you used or summarizing them.
 -   You must disclose that you used AI in your change log entry.
 -   You shall be held accountable for your AI-generated content.
 
