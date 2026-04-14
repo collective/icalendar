@@ -55,7 +55,7 @@ def string_parameter(
         convert:
             Function that converts the stored string value to the desired type for usage.
         convert_to:
-            Function to convert value back to string for storage.
+            Function to convert a value back to a string for storage.
 
     Returns:
         A property object with a getter, setter, and deleter for the parameter.
