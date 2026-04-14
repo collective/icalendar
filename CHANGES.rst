@@ -51,7 +51,7 @@ Documentation
 - Convert docstring of :func:`~icalendar.param.string_parameter` to Google style. :issue:`1072`, :pr:`1316`
 - Run ``sphinx-build`` with ``-W`` to turn warnings into errors. :issue:`1306`
 - Added `sphinx-llms-txt <https://sphinx-llms-txt.readthedocs.io/en/stable/>`_ extension to generate :file:`llms.txt` and :file:`llms-full.txt` files for AI/LLM documentation consumption. :issue:`1302`
-- Fixed CI Vale check reporting and resolved Vale errors. :pr:`1278`
+- Fixed CI Vale check reporting and resolved Vale errors. :issue:`1277`
 - Include :file:`Makefile` in documentation workflow path filters so documentation CI runs when Makefile logic changes, and keep Vale failures visible in CI output. :issue:`1277`
 - Document how to install icalendar on Alpine Linux. :pr:`1290`
 - Add documentation for usage of the Sphinx extension `sphinx-icalendar <https://sphinx-icalendar.readthedocs.io/en/latest/>`_. :pr:`1268`
@@ -64,6 +64,7 @@ Documentation
 - Documented ``vText`` properties according to :rfc:`5545#section-3.3.11`. :issue:`742`
 - Convert docstrings in :mod:`icalendar.caselessdict` to Google Style format with ``Parameters``, ``Returns``, ``Raises``, and ``Example`` sections as appropriate. :issue:`1072`
 - Fix broken docstring for :meth:`~icalendar.cal.component.Component.add_component` link in :attr:`~icalendar.cal.availability.Availability.available`. :issue:`1158`
+- Revise AI policy, per NLnet advice. See discussion under `pycal.org issue #24 <https://github.com/pycalendar/pycal.org/issues/24>`_.
 
 7.0.3 (2026-03-03)
 ------------------
