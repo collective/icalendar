@@ -31,6 +31,7 @@ help:  # This help message
 .venv:  ## Install required Python, create Python virtual environment, and install package requirements
 	@uv python install "$(PYTHONVERSION)"
 	@uv venv --python "$(PYTHONVERSION)"
+	@uv run pip install --upgrade pip
 	@uv sync --group dev
 	@uv run pre-commit install
 
