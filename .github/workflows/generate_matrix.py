@@ -30,7 +30,7 @@ PYTHON_MINOR_VERSION_MIN = 10
 # Update this when a new Python minor version is released
 PYTHON_MINOR_VERSION_MAX = 14
 
-COMMAND_TEST = "make test"
+COMMAND_TEST = "uv run tox -e py"
 COMMAND_INSTALL_REMOVE_PYTZ = "uv run pip uninstall -y pytz"
 
 
@@ -99,7 +99,7 @@ def generate_matrix(git_ref, review):
     # RULE: use lowest allowed version for nopytz
     matrix.append(
         {
-            "install_command": COMMAND_INSTALL_REMOVE_PYTZ,
+            "test_command": "uv run tox -e nopytz",
             "test_name": f"3.{PYTHON_MINOR_VERSION_MIN} (nopytz)",
             "python_version": f"3.{PYTHON_MINOR_VERSION_MIN}",
             "skip": run_no_jobs,
