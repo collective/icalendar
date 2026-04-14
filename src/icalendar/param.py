@@ -47,6 +47,10 @@ def string_parameter(
 ) -> property:
     """Create a property for a string parameter with optional conversion.
 
+    This helper function is used to define properties that read from and write to
+    ``self.params`` while optionally converting values between their stored
+    string representation and a more convenient Python type.
+
     Parameters:
         name: Name of the parameter in the params dictionary.
         doc: Documentation for the property.
@@ -59,6 +63,28 @@ def string_parameter(
 
     Returns:
         A property object with a getter, setter, and deleter for the parameter.
+
+    Example:
+    Define a parameter that is stored as a string but used as an integer:
+
+    priority = string_parameter(
+        "PRIORITY",
+        "Priority of the component",
+        default=lambda: 0,
+        convert=int,
+        convert_to=str,
+    )
+
+    Accessing the property converts the stored value:
+
+    >>> obj.priority
+    5
+
+    Setting the property stores it as a string:
+
+    >>> obj.priority = 10
+    >>> obj.params["PRIORITY"]
+    "10"
     """
 
     if convert_to is None:
