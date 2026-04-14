@@ -65,26 +65,27 @@ def string_parameter(
         A property object with a getter, setter, and deleter for the parameter.
 
     Example:
-    Define a parameter that is stored as a string but used as an integer:
+        Define a parameter that is stored as a string but used as an integer:
 
-    priority = string_parameter(
-        "PRIORITY",
-        "Priority of the component",
-        default=lambda: 0,
-        convert=int,
-        convert_to=str,
-    )
+        priority = string_parameter(
+            "PRIORITY",
+            "Priority of the component",
+            default=lambda: 0,
+            convert=int,
+            convert_to=str,
+        )
 
-    Accessing the property converts the stored value:
+        Accessing the property converts the stored value:
 
-    >>> obj.priority
-    5
+        >>> obj.params["PRIORITY"] = "5"
+        >>> obj.priority
+        5
 
-    Setting the property stores it as a string:
+        Setting the property stores it as a string:
 
-    >>> obj.priority = 10
-    >>> obj.params["PRIORITY"]
-    "10"
+        >>> obj.priority = 10
+        >>> obj.params["PRIORITY"]
+        "10"
     """
 
     if convert_to is None:
