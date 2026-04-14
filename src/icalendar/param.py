@@ -57,7 +57,7 @@ def string_parameter(
         default:
             Function that returns a default value if the parameter is not found.
         convert:
-            Function that converts the stored string value to the desired type for usage.
+            Function that converts the stored string value to the desired type.
         convert_to:
             Function to convert a value back to a string for storage.
 
