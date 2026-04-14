@@ -48,7 +48,7 @@ Bug fixes
 Documentation
 ~~~~~~~~~~~~~
 
-- Convert docstring of ``string_parameter`` to Google style. :issue:`1072`, :pr:`1316`
+- Convert docstring of :func:`~icalendar.param.string_parameter` to Google style. :issue:`1072`, :pr:`1316`
 - Run ``sphinx-build`` with ``-W`` to turn warnings into errors. :issue:`1306`
 - Added `sphinx-llms-txt <https://sphinx-llms-txt.readthedocs.io/en/stable/>`_ extension to generate :file:`llms.txt` and :file:`llms-full.txt` files for AI/LLM documentation consumption. :issue:`1302`
 - Fixed CI Vale check reporting and resolved Vale errors. :pr:`1278`
