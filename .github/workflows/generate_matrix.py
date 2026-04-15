@@ -31,7 +31,6 @@ PYTHON_MINOR_VERSION_MIN = 10
 PYTHON_MINOR_VERSION_MAX = 14
 
 COMMAND_TEST = "uv run tox -e py"
-COMMAND_INSTALL_REMOVE_PYTZ = "uv remove pytz"
 
 
 def generate_matrix(git_ref, review):
@@ -148,7 +147,6 @@ def generate_matrix(git_ref, review):
     for run in matrix:
         run.setdefault("test_name", run["python_version"])
         run.setdefault("test_command", COMMAND_TEST)
-        run.setdefault("install_command", "")
 
     include = list(matrix)
     skipped = [run["test_name"] for run in matrix if run["skip"]]

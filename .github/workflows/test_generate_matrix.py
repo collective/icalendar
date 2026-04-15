@@ -113,7 +113,6 @@ def test_all_cases_are_always_included(running_names, skipped_names, matrix):
         "test_name",
         "python_version",
         "skip",
-        "install_command",
         "test_command",
     ],
 )
