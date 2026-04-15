@@ -9,7 +9,7 @@ from icalendar import vBinary, vRecur
 from icalendar.cal.calendar import Calendar
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.cal.event import Event
-from icalendar.parser import Contentline, Parameters, _unescape_char
+from icalendar.parser import Contentline, Parameters, _escape_char, _unescape_char
 
 
 @pytest.mark.parametrize(
@@ -232,6 +232,13 @@ def test_escaped_characters_read(event_name, expected_cn, expected_ics, events):
     event = events[event_name]
     assert event["ORGANIZER"].params["CN"] == expected_cn
     assert event["ORGANIZER"].to_ical() == expected_ics.encode("utf-8")
+
+
+def test_escape_char_bytes():
+    """_escape_char accepts bytes and returns str (issue #1226)."""
+    assert _escape_char(b"hello") == "hello"
+    assert _escape_char(b"hello,world") == r"hello\,world"
+    assert _escape_char(b"line\nbreak") == r"line\nbreak"
 
 
 def test_unescape_char():

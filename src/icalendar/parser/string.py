@@ -3,10 +3,10 @@
 import re
 import warnings
 
-from icalendar.parser_tools import DEFAULT_ENCODING
+from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
 
 
-def _escape_char(text: str | bytes) -> str | bytes:
+def _escape_char(text: str | bytes) -> str:
     r"""Format value according to iCalendar TEXT escaping rules.
 
     Escapes special characters in text values according to :rfc:`5545#section-3.3.11`
@@ -14,7 +14,8 @@ def _escape_char(text: str | bytes) -> str | bytes:
     The order of replacements matters to avoid double-escaping.
 
     Parameters:
-        text: The text to escape.
+        text: The text to escape. If ``bytes`` are provided, they are decoded
+            to a Unicode string before escaping.
 
     Returns:
         The escaped text with special characters escaped.
@@ -31,6 +32,7 @@ def _escape_char(text: str | bytes) -> str | bytes:
            newline character)
     """
     assert isinstance(text, (str, bytes))
+    text = to_unicode(text)
     # NOTE: ORDER MATTERS!
     return (
         text.replace(r"\N", "\n")
@@ -42,7 +44,7 @@ def _escape_char(text: str | bytes) -> str | bytes:
     )
 
 
-def escape_char(text: str | bytes) -> str | bytes:
+def escape_char(text: str | bytes) -> str:
     r"""Format value according to iCalendar TEXT escaping rules.
 
     .. deprecated:: 7.0.0
