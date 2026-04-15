@@ -101,7 +101,7 @@ def test_running_is_not_skipped(running_names, skipped_names):
 
 
 def test_all_cases_are_always_included(running_names, skipped_names, matrix):
-    """The matirx always needs to be complete or we might wait for required checks."""
+    """The matrix always needs to be complete or we might wait for required checks."""
     assert running_names | skipped_names == CASES_ALL
     all_in_matrix = {case["test_name"] for case in matrix["include"]}
     assert all_in_matrix == CASES_ALL
