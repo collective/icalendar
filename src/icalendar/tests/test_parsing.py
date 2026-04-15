@@ -9,7 +9,7 @@ from icalendar import vBinary, vRecur
 from icalendar.cal.calendar import Calendar
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.cal.event import Event
-from icalendar.parser import Contentline, Parameters, _unescape_char
+from icalendar.parser import Contentline, Parameters, _escape_char, _unescape_char
 
 
 @pytest.mark.parametrize(
@@ -237,6 +237,21 @@ def test_escaped_characters_read(event_name, expected_cn, expected_ics, events):
 def test_unescape_char():
     assert _unescape_char(b"123") == b"123"
     assert _unescape_char(b"\\n") == b"\n"
+
+
+def test_escape_char():
+    """Test that _escape_char works with both str and bytes input."""
+    # str input
+    assert _escape_char("hello;world") == r"hello\;world"
+    assert _escape_char("one,two") == r"one\,two"
+    assert _escape_char("back\\slash") == r"back\\slash"
+    assert _escape_char("line\nbreak") == r"line\nbreak"
+
+    # bytes input
+    assert _escape_char(b"hello;world") == r"hello\;world"
+    assert _escape_char(b"one,two") == r"one\,two"
+    assert _escape_char(b"back\\slash") == r"back\\slash"
+    assert _escape_char(b"line\nbreak") == r"line\nbreak"
 
 
 def test_split_on_unescaped_comma():
