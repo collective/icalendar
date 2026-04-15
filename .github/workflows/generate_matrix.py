@@ -31,7 +31,7 @@ PYTHON_MINOR_VERSION_MIN = 10
 PYTHON_MINOR_VERSION_MAX = 14
 
 COMMAND_TEST = "uv run tox -e py"
-COMMAND_INSTALL_REMOVE_PYTZ = "uv run pip uninstall -y pytz"
+COMMAND_INSTALL_REMOVE_PYTZ = "uv remove pytz"
 
 
 def generate_matrix(git_ref, review):
