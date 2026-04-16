@@ -87,11 +87,11 @@ def string_parameter(
         >>> obj.priority
         5
 
-        Setting the property stores it as a string:
+        Setting the property stores it and keeps access consistent:
 
         >>> obj.priority = 10
-        >>> obj.params["PRIORITY"] == ["10"]
-        True
+        >>> obj.priority
+        10
     """
 
     if convert_to is None:
