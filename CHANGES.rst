@@ -35,6 +35,7 @@ New features
 - Added :class:`~icalendar.cal.lazy.LazyCalendar` for lazy parsing of subcomponents. :issue:`158`, :issue:`1050`
 - Updated :func:`icalendar.prop.dt.time.vTime.from_ical` to support parsing time values with TZID parameters, returning timezone-aware :class:`datetime.time` objects. :issue:`1142`
 - Added ``subcomponents`` parameter to :meth:`Component.new <icalendar.cal.component.Component.new>`, :meth:`Event.new <icalendar.cal.event.Event.new>`, :meth:`Todo.new <icalendar.cal.todo.Todo.new>`, and :meth:`Availability.new <icalendar.cal.availability.Availability.new>`. :issue:`1065`
+- Switch to uv for development. :issue:`1102`
 
 Bug fixes
 ~~~~~~~~~
@@ -64,6 +65,7 @@ Documentation
 - Convert docstrings in :mod:`icalendar.caselessdict` to Google Style format with ``Parameters``, ``Returns``, ``Raises``, and ``Example`` sections as appropriate. :issue:`1072`
 - Fix broken docstring for :meth:`~icalendar.cal.component.Component.add_component` link in :attr:`~icalendar.cal.availability.Availability.available`. :issue:`1158`
 - Revise AI policy, per NLnet advice. See discussion under `pycal.org issue #24 <https://github.com/pycalendar/pycal.org/issues/24>`_.
+- Add documentation for how to use uv for development. :issue:`1102`
 
 7.0.3 (2026-03-03)
 ------------------
