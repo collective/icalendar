@@ -68,6 +68,8 @@ def string_parameter(
 
         Define a parameter that is stored as a string but used as an integer:
 
+        >>> from icalendar.param import string_parameter
+
         >>> class Dummy:
         ...     def __init__(self):
         ...         self.params = {}
