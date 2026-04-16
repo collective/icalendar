@@ -94,7 +94,7 @@ To run all tests in all environments, run the following command.
 
     make test
 
-The following command shows how to run tests in the Python 3.14.
+The following command shows how to run tests in Python 3.14.
 
 ..  code-block:: shell
 
