@@ -63,7 +63,7 @@ def string_parameter(
 
     Returns:
         A property object with a getter, setter, and deleter for the parameter.
-    
+
     Example:
 
         Define a parameter that is stored as a string but used as an integer:
