@@ -5,8 +5,10 @@ SHELL           = bash
 # You can set these variables from the command line.
 SPHINXOPTS      ?=
 PAPER           ?=
+TOX_ENV			?=
 
 # Internal variables.
+RUFFPATH        = "$(realpath .venv/bin/ruff)"
 SPHINXBUILD     = "$(realpath .venv/bin/sphinx-build)"
 SPHINXAUTOBUILD = "$(realpath .venv/bin/sphinx-autobuild)"
 DOCS_DIR        = ./docs/
@@ -16,7 +18,7 @@ PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = -W -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 VALEFILES       := $(shell find $(DOCS_DIR) -type f -name "*.rst" -print)  # Also add `src` for docstrings.
 VALEOPTS        ?=
-PYTHONVERSION   = >=3.11,<3.15
+PYTHONVERSION   = >=3.10,<3.15
 
 # Add the following 'help' target to your Makefile
 # And add help text after each target name starting with '\#\#'
@@ -29,14 +31,15 @@ help:  # This help message
 .venv:  ## Install required Python, create Python virtual environment, and install package requirements
 	@uv python install "$(PYTHONVERSION)"
 	@uv venv --python "$(PYTHONVERSION)"
-	@uv sync --group docs
+	@uv sync --group dev
+	@uv run pre-commit install
 
 .PHONY: sync
 sync:  ## Sync package requirements
 	@uv sync
 
 .PHONY: init
-init: clean clean-python .venv docs  ## Clean docs build directory and initialize Python virtual environment
+init: clean clean-python .venv  ## Clean docs build directory, Python virtual environment, and initialize Python virtual environment
 
 .PHONY: clean
 clean:  ## Clean docs build directory
@@ -128,21 +131,23 @@ doctest: .venv  ## Test snippets and docstrings in the documentation
 	@echo;
 	@pytest src/icalendar/tests/test_with_doctest.py
 
+.PHONY: docs-all
+docs-all: .venv clean vale doctest html linkcheckbroken  ## Clean docs build, then run vale, doctest, html, and linkcheckbroken
+
 .PHONY: test
-#test: clean vale linkcheckbroken doctest  ## Clean docs build, then run vale and linkcheckbroken
-test: clean linkcheckbroken  ## Clean docs build, then run vale and linkcheckbroken
+test: .venv  ## Run code tests and coverage
+	@uv run tox
 # /test
 
 
 # development
 .PHONY: dev
 dev: .venv  ## Install required Python, create Python virtual environment, install package and development requirements
-	@uv sync --group dev
-	@pre-commit install
 
-.PHONY: all
-all: clean linkcheck html  ## Clean docs build, then run linkcheck, and build html
-#all: clean vale linkcheck html  ## Clean docs build, then run vale and linkcheck, and build html
+.PHONY: format
+format: .venv  ## Format the code base with ruff
+	$(RUFFPATH) format
+	$(RUFFPATH) check --fix
 # /development
 
 # deployment
