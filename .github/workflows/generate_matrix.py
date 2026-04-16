@@ -30,6 +30,8 @@ PYTHON_MINOR_VERSION_MIN = 10
 # Update this when a new Python minor version is released
 PYTHON_MINOR_VERSION_MAX = 14
 
+COMMAND_TEST = "uv run tox -e py"
+
 
 def generate_matrix(git_ref, review):
     """Generate a matrix of test runs.
@@ -89,7 +91,6 @@ def generate_matrix(git_ref, review):
     # RULE: always test the lowest allowed version
     matrix.append(
         {
-            "tox_env": "py",
             "python_version": f"3.{PYTHON_MINOR_VERSION_MIN}",
             "skip": run_no_jobs,
         }
@@ -97,7 +98,8 @@ def generate_matrix(git_ref, review):
     # RULE: use lowest allowed version for nopytz
     matrix.append(
         {
-            "tox_env": "nopytz",
+            "test_command": "uv run tox -e nopytz",
+            "test_name": f"3.{PYTHON_MINOR_VERSION_MIN} (nopytz)",
             "python_version": f"3.{PYTHON_MINOR_VERSION_MIN}",
             "skip": run_no_jobs,
         }
@@ -105,7 +107,6 @@ def generate_matrix(git_ref, review):
     # RULE: always test the latest version
     matrix.append(
         {
-            "tox_env": "py",
             "python_version": f"3.{PYTHON_MINOR_VERSION_MAX}",
             "skip": run_no_jobs,
         }
@@ -120,7 +121,6 @@ def generate_matrix(git_ref, review):
     ):
         matrix.append(
             {
-                "tox_env": "py",
                 "python_version": f"3.{minor_python_version}",
                 "skip": not run_all_jobs,
             }
@@ -130,7 +130,6 @@ def generate_matrix(git_ref, review):
     matrix.insert(
         0,
         {
-            "tox_env": "pypy3",
             "python_version": "pypy3.10",
             "test_name": "pypy3",
             "skip": not run_all_jobs,
@@ -146,10 +145,8 @@ def generate_matrix(git_ref, review):
     #
 
     for run in matrix:
-        if "test_name" not in run:
-            run["test_name"] = run["python_version"]
-            if run["tox_env"] != "py":
-                run["test_name"] += f" ({run['tox_env']})"
+        run.setdefault("test_name", run["python_version"])
+        run.setdefault("test_command", COMMAND_TEST)
 
     include = list(matrix)
     skipped = [run["test_name"] for run in matrix if run["skip"]]

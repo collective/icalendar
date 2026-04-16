@@ -130,6 +130,7 @@ linkcheck_ignore = [
     r"https://app.readthedocs.org/dashboard/icalendar/users/create/",
     r"https://docutils.sourceforge.io/rst.html",
     r"https://github.com/collective/icalendar/fork",
+    r"https://github.com/collective/icalendar/issues/new",
     r"https://github.com/collective/icalendar/settings/",
     r"https://groups.google.com/g/icalendar-coc/",
     r"https://pypi.org/manage/project/icalendar/collaboration/",

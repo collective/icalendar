@@ -41,31 +41,27 @@ jobs:
       run: echo "Skipped ${{ matrix.test_name }} (not required for this trigger)"
     - uses: actions/checkout@v6
       if: ${{ !matrix.skip }}
-    - name: Set up Python
+    - name: Install uv and Python ${{ matrix.python_version }}
       if: ${{ !matrix.skip }}
-      uses: actions/setup-python@v6
+      uses: astral-sh/setup-uv@v7
       with:
+        enable-cache: true
+        # Install a specific version of uv.
+        version: "0.11.6"
         python-version: ${{ matrix.python_version }}
-        # for caching, see
-        # https://github.com/actions/setup-python/blob/main/docs/advanced-usage.md#caching-packages
-        cache: 'pip'
-        cache-dependency-path: |
-          setup.*
-          tox.ini
-          requirements*.txt
     - name: Install dependencies
       if: ${{ !matrix.skip }}
       run: |
-        python -m pip install --upgrade pip
-        pip install tox coverage-python-version
+        make dev PYTHONVERSION=${{ matrix.python_version }}
+        uv tree
     - name: Test
       if: ${{ !matrix.skip }}
-      run: tox -e ${{ matrix.tox_env }}
+      run: ${{ matrix.test_command }}
     - name: Coveralls Parallel
       if: ${{ !matrix.skip }}
       uses: coverallsapp/github-action@v2
       with:
-        flag-name: run-${{ matrix.python_version }}-${{ matrix.tox_env }}
+        flag-name: run-${{ matrix.test_name }}
         parallel: true
         file: coverage.xml
         allow-empty: true
