@@ -54,7 +54,6 @@ jobs:
       run: |
         make dev PYTHONVERSION=${{ matrix.python_version }}
         uv tree
-        ${{ matrix.install_command }}
     - name: Test
       if: ${{ !matrix.skip }}
       run: ${{ matrix.test_command }}
