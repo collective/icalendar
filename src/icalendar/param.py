@@ -83,7 +83,7 @@ def string_parameter(
         ... )
         >>> obj = Dummy()
 
-        Accessing the property converts the stored value:
+        Accessing the property converts the stored string value to the type specified by the ``convert`` parameter, in this case, an ``int``.
 
         >>> obj.params["PRIORITY"] = "5"
         >>> obj.priority
