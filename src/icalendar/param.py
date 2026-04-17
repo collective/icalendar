@@ -89,7 +89,7 @@ def string_parameter(
         >>> obj.priority
         5
 
-        Setting the property stores it and keeps access consistent:
+        Setting the property stores the new value.
 
         >>> obj.priority = 10
         >>> obj.priority
