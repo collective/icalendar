@@ -86,7 +86,7 @@ def string_parameter(
         Accessing the property converts the stored string value to the type
         specified by the ``convert`` parameter, in this case, an ``int``.
 
-        >>> obj.priority = 5
+        >>> obj.priority = "5"
         >>> obj.priority
         5
 
