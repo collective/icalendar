@@ -2,4 +2,4 @@
 Code of Conduct
 ===============
 
-Contributors are expected to follow icalendar's `Code of Conduct <https://github.com/collective/icalendar/blob/main/CODE_OF_CONDUCT.md>`_.
+Contributors are expected to follow the Python Calendaring Ecosystem's `Code of Conduct <https://pycal.org/code-of-conduct/>`_.

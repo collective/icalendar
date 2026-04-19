@@ -27,7 +27,7 @@ Maintainers need the following permissions.
 ``Environments/Configure PyPI`` access for GitHub Workflows to grant new releases from tags.
     Organization owners and repository administrators can grant this access in :menuselection:`Settings --> Environments --> PyPI`, or at https://github.com/collective/icalendar/settings/environments/674266024/edit, by adding their GitHub username to the list of :guilabel:`Required Reviewers`.
 ``Owner`` or ``Manager`` access to ``icalendar-coc@googlegroups.com``
-    This Google Group is used for managing `Code of Conduct <https://github.com/collective/icalendar/blob/main/CODE_OF_CONDUCT.md>`_ infringement reports.
+    This Google Group is used for managing `Code of Conduct <https://pycal.org/code-of-conduct/>`_ infringement reports.
     ``Manager``\ s may manage and moderate messages, whereas ``Owner``\ s may also manage members.
     Management is performed through `Google Groups icalendar-coc settings <https://groups.google.com/g/icalendar-coc/settings>`_.
 ``Registered`` access to the `OSS Fuzz issue tracker <https://issues.oss-fuzz.com/issues?q=icalendar>`_ for icalendar.
