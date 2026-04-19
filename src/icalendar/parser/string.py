@@ -2,10 +2,10 @@
 
 import re
 
-from icalendar.parser_tools import DEFAULT_ENCODING
+from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
 
 
-def escape_char(text: str | bytes) -> str | bytes:
+def escape_char(text: str | bytes) -> str:
     r"""Format value according to iCalendar TEXT escaping rules.
 
     Escapes special characters in text values according to :rfc:`5545#section-3.3.11`
@@ -29,7 +29,7 @@ def escape_char(text: str | bytes) -> str | bytes:
         6. ``"\n"`` -> ``r"\n"`` (transform a newline character to a literal, or raw,
            newline character)
     """
-    assert isinstance(text, (str, bytes))
+    text = to_unicode(text)
     # NOTE: ORDER MATTERS!
     return (
         text.replace(r"\N", "\n")

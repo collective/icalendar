@@ -42,6 +42,7 @@ New features
 Bug fixes
 ~~~~~~~~~
 
+- Fixed :func:`~icalendar.parser.string.escape_char` to accept :class:`bytes` input by converting it to :class:`str` with :func:`~icalendar.parser_tools.to_unicode` before applying replacements. :issue:`1226`
 - ...
 
 Documentation

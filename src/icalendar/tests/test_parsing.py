@@ -9,7 +9,7 @@ from icalendar import vBinary, vRecur
 from icalendar.cal.calendar import Calendar
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.cal.event import Event
-from icalendar.parser import Contentline, Parameters, unescape_char
+from icalendar.parser import Contentline, Parameters, unescape_char, escape_char
 
 
 @pytest.mark.parametrize(
@@ -280,3 +280,14 @@ def test_create_a_component():
     my_component_class = factory.get_component_class("My-Component")
     assert my_component_class.name == "MY-COMPONENT"
     assert my_component_class.__name__ == "MyComponent"
+
+
+def test_escape_char_bytes():
+    """Test that escape_char accepts bytes input and returns str."""
+    assert escape_char(b"hello,world") == "hello\\,world"
+    assert escape_char(b"hello;world") == "hello\\;world"
+    assert escape_char(b"hello\\world") == "hello\\\\world"
+    assert escape_char(b"hello\nworld") == "hello\\nworld"
+    assert escape_char(b"hello\r\nworld") == "hello\\nworld"
+    assert escape_char(b"hello\\Nworld") == "hello\\nworld"
+    assert escape_char("hello,world") == "hello\\,world"
