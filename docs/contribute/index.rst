@@ -79,7 +79,7 @@ Responsible AI use
 ``````````````````
 
 You may responsibly use AI as a tool to draft a pull request.
-That means you must comply with :ref:`pull-request-requirements` and follow icalendar's `Code of Conduct <https://github.com/collective/icalendar/blob/main/CODE_OF_CONDUCT.md>`_.
+That means you must comply with :ref:`pull-request-requirements` and follow the Python Calendaring Ecosystem's `Code of Conduct <https://pycal.org/code-of-conduct/>`_.
 
 If you use AI in your work:
 
@@ -107,9 +107,9 @@ Examples of such abuse and irresponsible use include the following actions.
 Report suspected violations
 ```````````````````````````
 
-To report a suspected violation of this AI policy, see the `Enforcement <https://github.com/collective/icalendar/blob/main/CODE_OF_CONDUCT.md#enforcement>`_ section in the Code of Conduct.
+To report a suspected violation of this AI policy, see the `Reporting an issue <https://pycal.org/code-of-conduct/#reporting-an-issue>`_ section in the Python Calendaring Ecosystem's Code of Conduct.
 The maintainers may close pull requests without providing feedback that they deem to be spam, AI slop, abuse, or that do not comply with :ref:`pull request requirements <pull-request-requirements>`.
-The maintainers may also take further action, including suspend, ban, or report GitHub users, as described in icalendar's `Code of Conduct <https://github.com/collective/icalendar/blob/main/CODE_OF_CONDUCT.md>`_.
+The maintainers may also take further action, including suspend, ban, or report GitHub users, as described in Python Calendaring Ecosystem's `Code of Conduct <https://pycal.org/code-of-conduct/>`_.
 
 
 .. _pull-request-requirements:
@@ -127,7 +127,7 @@ Before submitting your pull request, ensure you have met the following requireme
 #.  :doc:`Add or edit documentation <documentation/index>`, both as docstrings to be rendered in the :doc:`API reference documentation <../reference/api/icalendar>` and narrative documentation, as necessary.
 
 The maintainers may close pull requests without providing feedback that they deem to be spam, AI slop, abuse, or that do not comply with pull request requirements.
-The maintainers may also take further action, including suspend, ban, or report GitHub users, as described in icalendar's `Code of Conduct <https://github.com/collective/icalendar/blob/main/CODE_OF_CONDUCT.md>`_.
+The maintainers may also take further action, including suspend, ban, or report GitHub users, as described in Python Calendaring Ecosystem's `Code of Conduct <https://pycal.org/code-of-conduct/>`_.
 
 
 .. _change-log:

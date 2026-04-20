@@ -23,6 +23,7 @@ Minor changes
 - Put the link check as the last documentation CI task, allowing the documentation build and Vale to run first and fail faster. :pr:`1295`
 - Extended :func:`~icalendar.timezone.tzp.TZP.localize` to support localizing both :class:`datetime.datetime` and :class:`datetime.time` objects, returning timezone-aware :class:`datetime.time` objects for the latter. :issue:`1142`
 - Add type hints to tests directory functions. :issue:`938`
+- Update to Contributor Covenant 3.0 Code of Conduct, hosted at https://pycal.org/code-of-conduct/.
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
