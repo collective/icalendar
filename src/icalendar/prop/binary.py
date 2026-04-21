@@ -7,7 +7,7 @@ from typing import ClassVar
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
-from icalendar.parser_tools import to_unicode
+from icalendar.parser_tools import _to_unicode
 
 
 class vBinary:
@@ -18,7 +18,7 @@ class vBinary:
     obj: str
 
     def __init__(self, obj: str | bytes, params: dict[str, str] | None = None) -> None:
-        self.obj = to_unicode(obj)
+        self.obj = _to_unicode(obj)
         self.params = Parameters(encoding="BASE64", value="BINARY")
         if params:
             self.params.update(params)

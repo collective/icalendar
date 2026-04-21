@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, ClassVar
 
 from icalendar.parser.content_line import Contentline, Contentlines
-from icalendar.parser.property import split_on_unescaped_comma
+from icalendar.parser.property import _split_on_unescaped_comma
 from icalendar.prop import vBroken
 from icalendar.timezone import tzp
 
@@ -275,7 +275,7 @@ class ComponentIcalParser:
             # strict and tolerant components.
             # CATEGORIES needs special comma handling
             try:
-                category_list = split_on_unescaped_comma(raw_value)
+                category_list = _split_on_unescaped_comma(raw_value)
                 factory = self.get_factory_for_property("CATEGORIES", params)
                 vals_inst = factory(category_list)
                 vals_inst.params = params

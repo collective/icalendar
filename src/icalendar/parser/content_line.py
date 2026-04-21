@@ -3,14 +3,14 @@
 import re
 
 from icalendar.parser.parameter import Parameters
-from icalendar.parser.property import unescape_backslash, unescape_list_or_string
+from icalendar.parser.property import _unescape_backslash, _unescape_list_or_string
 from icalendar.parser.string import (
     _escape_string,
+    _foldline,
     _unescape_string,
-    foldline,
-    validate_token,
+    _validate_token,
 )
-from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
+from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, _to_unicode
 
 UFOLD = re.compile("(\r?\n)+[ \t]")
 NEWLINE = re.compile(r"\r?\n")
@@ -112,7 +112,7 @@ class Contentline(str):
     __slots__ = ("strict",)
 
     def __new__(cls, value, strict=False, encoding=DEFAULT_ENCODING):
-        value = to_unicode(value, encoding=encoding)
+        value = _to_unicode(value, encoding=encoding)
         assert "\n" not in value, (
             "Content line can not contain unescaped new line characters."
         )
@@ -141,10 +141,10 @@ class Contentline(str):
 
         # TODO: after unicode only, remove this
         # Convert back to unicode, after to_ical encoded it.
-        name = to_unicode(name)
-        values = to_unicode(values)
+        name = _to_unicode(name)
+        values = _to_unicode(values)
         if params:
-            params = to_unicode(params.to_ical(sorted=sorted))
+            params = _to_unicode(params.to_ical(sorted=sorted))
             if params:
                 # some parameter values can be skipped during serialization
                 return cls(f"{name};{params}:{values}")
@@ -200,7 +200,7 @@ class Contentline(str):
             name = self[:name_split] if name_split else self
             if not self.strict:
                 name = re.sub(r"[ \t]+", "", name.strip())
-            validate_token(name)
+            _validate_token(name)
 
             if not name_split or name_split + 1 == value_split:
                 # No delimiter or empty parameter section
@@ -213,11 +213,11 @@ class Contentline(str):
             param_str = _escape_string(raw_param_str)
             params = Parameters.from_ical(param_str, strict=self.strict)
             params = Parameters(
-                (_unescape_string(key), unescape_list_or_string(value))
+                (_unescape_string(key), _unescape_list_or_string(value))
                 for key, value in iter(params.items())
             )
             # Unescape backslash sequences in values but preserve URL encoding
-            values = unescape_backslash(self[value_split + 1 :])
+            values = _unescape_backslash(self[value_split + 1 :])
         except ValueError as exc:
             raise ValueError(
                 f"Content line could not be parsed into parts: '{self}': {exc}"
@@ -227,7 +227,7 @@ class Contentline(str):
     @classmethod
     def from_ical(cls, ical, strict=False):
         """Unfold the content lines in an iCalendar into long content lines."""
-        ical = to_unicode(ical)
+        ical = _to_unicode(ical)
         # a fold is carriage return followed by either a space or a tab
         return cls(UFOLD.sub("", ical), strict=strict)
 
@@ -235,7 +235,7 @@ class Contentline(str):
         """Long content lines are folded so they are less than 75 characters
         wide.
         """
-        return foldline(self).encode(DEFAULT_ENCODING)
+        return _foldline(self).encode(DEFAULT_ENCODING)
 
 
 class Contentlines(list[Contentline]):
@@ -251,7 +251,7 @@ class Contentlines(list[Contentline]):
     @classmethod
     def from_ical(cls, st):
         """Parses a string into content lines."""
-        st = to_unicode(st)
+        st = _to_unicode(st)
         try:
             # a fold is carriage return followed by either a space or a tab
             unfolded = UFOLD.sub("", st)

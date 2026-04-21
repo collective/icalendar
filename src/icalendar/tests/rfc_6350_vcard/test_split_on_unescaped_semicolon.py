@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from icalendar.parser import split_on_unescaped_semicolon
+from icalendar.parser import _split_on_unescaped_semicolon
 
 
 @pytest.mark.parametrize(
@@ -48,5 +48,5 @@ from icalendar.parser import split_on_unescaped_semicolon
 )
 def test_split_on_unescaped_semicolon(input_str: str, expected: list[str]) -> None:
     """Test splitting strings on unescaped semicolons."""
-    result = split_on_unescaped_semicolon(input_str)
+    result = _split_on_unescaped_semicolon(input_str)
     assert result == expected

@@ -5,7 +5,7 @@ from typing import Any, ClassVar
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
-from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
+from icalendar.parser_tools import DEFAULT_ENCODING, _to_unicode
 
 
 class vCalAddress(str):
@@ -66,7 +66,7 @@ class vCalAddress(str):
         /,
         params: dict[str, Any] | None = None,
     ) -> Self:
-        value = to_unicode(value, encoding=encoding)
+        value = _to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         self.params = Parameters(params)
         return self

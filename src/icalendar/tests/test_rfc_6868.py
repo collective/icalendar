@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 from icalendar.cal.calendar import Calendar
-from icalendar.parser import dquote, rfc_6868_escape, rfc_6868_unescape
+from icalendar.parser import _dquote, _rfc_6868_escape, _rfc_6868_unescape
 
 if TYPE_CHECKING:
     from icalendar import vCalAddress, vText
@@ -61,7 +61,7 @@ def test_unknown_character(calendars, duplicate):
 )
 def test_unescape(text, expected, modify):
     """Check unescaping."""
-    result = rfc_6868_unescape(modify(text))
+    result = _rfc_6868_unescape(modify(text))
     assert result == modify(expected)
 
 
@@ -69,7 +69,7 @@ def test_unescape(text, expected, modify):
 def test_unescape_newline(newline, monkeypatch):
     """Unescape the newline."""
     monkeypatch.setattr(os, "linesep", newline)
-    assert rfc_6868_unescape("^n") == newline
+    assert _rfc_6868_unescape("^n") == newline
 
 
 param_values = pytest.mark.parametrize(
@@ -87,9 +87,9 @@ param_values = pytest.mark.parametrize(
 @param_values
 def test_escape_rfc_6868(text, expected):
     """Check that we can escape the content with special characters."""
-    escaped = rfc_6868_escape(text)
+    escaped = _rfc_6868_escape(text)
     assert escaped == expected, f"{escaped!r} == {expected!r}"
-    assert rfc_6868_escape(rfc_6868_unescape(escaped)) == expected
+    assert _rfc_6868_escape(_rfc_6868_unescape(escaped)) == expected
 
 
 @param_values
@@ -100,7 +100,7 @@ def test_escaping_parameters(text, expected):
     param.params["RFC6868"] = text
     ical = cal.to_ical().decode()
     print(ical)
-    assert "X-PARAM;RFC6868=" + dquote(expected) in ical
+    assert "X-PARAM;RFC6868=" + _dquote(expected) in ical
 
 
 def test_encode_example_again(calendars):

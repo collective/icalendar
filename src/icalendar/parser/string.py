@@ -3,6 +3,7 @@
 import re
 import warnings
 
+from icalendar.compatibility import deprecate_for_version_8
 from icalendar.parser_tools import DEFAULT_ENCODING
 
 
@@ -161,8 +162,9 @@ def unescape_char(text: str | bytes) -> str | bytes | None:
     return _unescape_char(text)
 
 
-def foldline(line: str, limit: int = 75, fold_sep: str = "\r\n ") -> str:
-    """Make a string folded as defined in RFC5545
+def _foldline(line: str, limit: int = 75, fold_sep: str = "\r\n ") -> str:
+    """Make a string folded as defined in RFC5545.
+
     Lines of text SHOULD NOT be longer than 75 octets, excluding the line
     break.  Long content lines SHOULD be split into a multiple line
     representations using a line "folding" technique.  That is, a long
@@ -194,6 +196,9 @@ def foldline(line: str, limit: int = 75, fold_sep: str = "\r\n ") -> str:
         ret_chars.append(char)
 
     return "".join(ret_chars)
+
+
+foldline = deprecate_for_version_8(_foldline)
 
 
 def _escape_string(val: str) -> str:
@@ -291,7 +296,7 @@ def unescape_string(val: str) -> str:
 NAME = re.compile(r"[\w.-]+")
 
 
-def validate_token(name: str) -> None:
+def _validate_token(name: str) -> None:
     r"""Validate that a name is a valid iCalendar token.
 
     Checks if the name matches the :rfc:`5545` token syntax using the NAME
@@ -309,11 +314,30 @@ def validate_token(name: str) -> None:
     raise ValueError(name)
 
 
+def validate_token(name: str) -> None:
+    r"""Validate that a name is a valid iCalendar token.
+
+    .. deprecated:: 7.0.0
+        Use the private :func:`_validate_token` internally. For external use,
+        this function is deprecated. Please contact the maintainers if you
+        rely on this function.
+    """
+    warnings.warn(
+        "validate_token is deprecated and will be removed in a future version. "
+        "If you are using this function externally, please contact the maintainers.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    _validate_token(name)
+
+
 __all__ = [
     "_escape_char",
     "_escape_string",
+    "_foldline",
     "_unescape_char",
     "_unescape_string",
+    "_validate_token",
     "escape_char",
     "escape_string",
     "foldline",

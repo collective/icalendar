@@ -5,14 +5,14 @@ from pprint import pprint
 import pytest
 
 from icalendar import Calendar, Event, vText
-from icalendar.parser_tools import to_unicode
+from icalendar.parser_tools import _to_unicode
 
 
 def test_convert_coffee(calendars):
     """convert the unknown value property"""
     calendar = calendars.rfc_7265_example_2
     ical = calendar.to_ical().decode()
-    print(to_unicode(ical))
+    print(_to_unicode(ical))
     assert r"X-COFFEE-DATA:Stenophylla\;Guinea\\\,Africa" in ical
 
 

@@ -6,7 +6,7 @@ from icalendar.caselessdict import CaselessDict
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
-from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
+from icalendar.parser_tools import DEFAULT_ENCODING, _to_unicode
 
 
 class vFrequency(str):
@@ -34,7 +34,7 @@ class vFrequency(str):
         /,
         params: dict[str, Any] | None = None,
     ):
-        value = to_unicode(value, encoding=encoding)
+        value = _to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         if self not in vFrequency.frequencies:
             raise ValueError(f"Expected frequency, got: {self}")
