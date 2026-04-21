@@ -7,4 +7,3 @@ def test__escape_char_accepts_bytes():
 
 def test_escape_char_accepts_bytes():
     assert escape_char(b"hello,world;test") == r"hello\,world\;test"
-    
