@@ -46,7 +46,7 @@ Bug fixes
 - Fixed :func:`~icalendar.attr.get_end_property` to avoid allowing the creation of VEVENT components with negative durations. Only VTODO components are allowed to have negative durations. :issue:`999`
 - GitHub Actions: conditional tests now show as "skipped" instead of "pending". :issue:`1264`
 - Fixed ``Component.__eq__`` method not being commutative when comparing subcomponents. :issue:`1224`
-
+- Fix `escape_char` handling of `bytes` input by converting with `to_unicode` before escaping. :issue:`1226`
 Documentation
 ~~~~~~~~~~~~~
 
