@@ -1,7 +1,5 @@
 """Test vBinary"""
 
-import base64
-
 import pytest
 
 from icalendar import vBinary
@@ -48,6 +46,17 @@ def test_from_ical():
 
 
 def test_ical_value():
-    """ical_value property returns the string value."""
-    magic_string = base64.b64encode(b"magic string")
-    assert vBinary(magic_string).ical_value == base64.b64decode(magic_string)
+    """ical_value property returns the raw bytes value."""
+    raw_bytes = b"magic string"
+    assert vBinary(raw_bytes).ical_value == raw_bytes
+
+
+def test_round_trip_preserves_non_utf8_bytes():
+    original_bytes = (
+        b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01"
+    )
+
+    vb = vBinary(original_bytes)
+    decoded_bytes = vBinary.from_ical(vb.to_ical())
+
+    assert decoded_bytes == original_bytes

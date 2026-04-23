@@ -40,6 +40,7 @@ Bug fixes
 - Fixed :func:`~icalendar.attr.get_end_property` to avoid allowing the creating of VEVENT components with negative durations. Only VTODO components are allowed to have negative durations. :issue:`999`
 - GitHub Actions: conditional tests now show as "skipped" instead of "pending". :issue:`1264`
 - Fixed :meth:`Component.__eq__ <icalendar.cal.component.Component.__eq__>` method not being commutative when comparing subcomponents. :issue:`1224`
+- Fix `vBinary` corrupting non-UTF-8 bytes during iCal round-trip serialization by preserving raw bytes instead of converting them through Unicode before base64 encoding. :issue:`1289`
 
 Documentation
 ~~~~~~~~~~~~~

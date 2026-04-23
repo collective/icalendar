@@ -30,7 +30,7 @@ from icalendar import (
 )
 
 JCAL_PAIRS = [
-    (["attach", {}, "binary", "SGVsbG8gV29ybGQh"], vBinary("SGVsbG8gV29ybGQh")),
+    (["attach", {}, "binary", "SGVsbG8gV29ybGQh"], vBinary(b"Hello World!")),
     (["x-non-smoking", {}, "boolean", True], vBoolean(True)),
     (["x-non-smoking", {}, "boolean", False], vBoolean(False)),
     (
