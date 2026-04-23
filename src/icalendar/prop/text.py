@@ -1,5 +1,6 @@
 """TEXT values from :rfc:`5545`."""
 
+import unicodedata
 from typing import Any, ClassVar
 
 from icalendar.compatibility import Self
@@ -23,6 +24,8 @@ class vText(str):
         params: dict[str, Any] | None = None,
     ) -> Self:
         value = to_unicode(value, encoding=encoding)
+        if isinstance(value, str):
+            value = unicodedata.normalize("NFC", value)
         self = super().__new__(cls, value)
         self.encoding = encoding
         self.params = Parameters(params)
