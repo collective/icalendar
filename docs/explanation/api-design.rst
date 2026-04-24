@@ -4,12 +4,97 @@ API design
 
 This chapter describes the API design of icalendar.
 
-icalendar's API aligns with iCalendar components and properties as defined in :rfc:`5545`.
+icalendar's API aligns with iCalendar components and properties as defined in :rfc:`5545` and related RFCs.
+
+..  seealso::
+
+    :doc:`../reference/rfc-support`
+
+This chapter begins with a description of the structure of an iCalendar file, then proceeds into details of its parts.
 
 At their core, iCalendar components are dictionaries with case insensitive keys.
 The preferred way to access their values is through lower case properties as described in :ref:`property-access`.
 Advantages and disadvantages of the other approaches are discussed below.
 
+
+..  _icalendar-files:
+
+iCalendar files
+===============
+
+iCalendar files have both a format and a structure.
+
+
+..  _icalendar-file-format:
+
+iCalendar file format
+=====================
+
+An iCalendar file is a text file with UTF-8 character encoding in a special format.
+
+It consists of content lines, with each content line defining a :term:`property` that has three parts: name, parameters, and values.
+Parameters are optional.
+
+The following examples illustrate the file structure.
+
+The following example iCalendar file consists of a single content line, with only a name and value.
+
+.. code-block:: ics
+
+    BEGIN:VCALENDAR
+
+The next example iCalendar file consists of a property with a name, parameters separated by a semicolon (``;``), and a value.
+
+.. code-block:: ics
+
+    ATTENDEE;CN=Max Rasmussen;ROLE=REQ-PARTICIPANT:MAILTO:example@example.com
+
+In the previous iCalendar file example, its parts are the following.
+
+name
+    ``ATTENDEE``
+parameters
+    ``CN=Max Rasmussen;ROLE=REQ-PARTICIPANT``
+value
+    ``MAILTO:example@example.com``
+
+For long content lines, icalendar usually "folds" them to less than 75 characters.
+
+
+..  _icalendar-file-structure:
+
+iCalendar file structure
+========================
+
+An iCalendar file's structure has :term:`components` and may have nested subcomponents.
+
+A component consists of one or more properties with values.
+The values have special types, including integer, text, and datetime.
+These values are encoded in a special text format in an iCalendar file.
+icalendar contains methods for converting to and from these encodings.
+
+The following example is a ``VCALENDAR`` component representing a calendar.
+
+..  code-block:: ics
+
+    BEGIN:VCALENDAR
+    ... vcalendar properties ...
+    END:VCALENDAR
+
+The most frequent subcomponent to a ``VCALENDAR`` component is a ``VEVENT``.
+This following example is a ``VCALENDAR`` component with a nested ``VEVENT`` subcomponent.
+
+..  code-block:: ics
+
+    BEGIN:VCALENDAR
+    ... vcalendar properties ...
+    BEGIN:VEVENT
+    ... vevent properties ...
+    END:VEVENT
+    END:VCALENDAR
+
+
+..  _api-design-components:
 
 Components
 ==========

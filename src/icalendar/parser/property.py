@@ -2,13 +2,13 @@
 
 import re
 
-from icalendar.parser.string import unescape_string
+from icalendar.parser.string import _unescape_string
 
 
 def unescape_list_or_string(val: str | list[str]) -> str | list[str]:
     """Unescape a value that may be a string or list of strings.
 
-    Applies :func:`unescape_string` to the value. If the value is a list,
+    Applies :func:`_unescape_string` to the value. If the value is a list,
     unescapes each element.
 
     Parameters:
@@ -18,8 +18,8 @@ def unescape_list_or_string(val: str | list[str]) -> str | list[str]:
         The unescaped values.
     """
     if isinstance(val, list):
-        return [unescape_string(s) for s in val]
-    return unescape_string(val)
+        return [_unescape_string(s) for s in val]
+    return _unescape_string(val)
 
 
 _unescape_backslash_regex = re.compile(r"\\([\\,;:nN])")

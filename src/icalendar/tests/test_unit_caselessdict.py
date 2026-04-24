@@ -4,7 +4,7 @@ import icalendar
 
 
 class TestCaselessdict(unittest.TestCase):
-    def test_caselessdict_canonsort_keys(self):
+    def test_caselessdict_canonsort_keys(self) -> None:
         canonsort_keys = icalendar.caselessdict.canonsort_keys
 
         keys = ["DTEND", "DTSTAMP", "DTSTART", "UID", "SUMMARY", "LOCATION"]
@@ -35,7 +35,7 @@ class TestCaselessdict(unittest.TestCase):
         out = canonsort_keys(keys, ("UID", "DTSTART", "DTEND", "RRULE", "EXDATE"))
         assert out == ["UID", "DTSTART", "DTEND", "DTSTAMP", "LOCATION", "SUMMARY"]
 
-    def test_caselessdict_canonsort_items(self):
+    def test_caselessdict_canonsort_items(self) -> None:
         canonsort_items = icalendar.caselessdict.canonsort_items
 
         d = {
@@ -73,7 +73,7 @@ class TestCaselessdict(unittest.TestCase):
             ("r", 1.0),
         ]
 
-    def test_caselessdict_copy(self):
+    def test_caselessdict_copy(self) -> None:
         CaselessDict = icalendar.caselessdict.CaselessDict
 
         original_dict = CaselessDict(key1="val1", key2="val2")
@@ -81,7 +81,7 @@ class TestCaselessdict(unittest.TestCase):
 
         assert original_dict == copied_dict
 
-    def test_CaselessDict(self):
+    def test_CaselessDict(self) -> None:
         CaselessDict = icalendar.caselessdict.CaselessDict
 
         ncd = CaselessDict(key1="val1", key2="val2")
@@ -112,7 +112,7 @@ class TestCaselessdict(unittest.TestCase):
         keys = sorted(ncd.keys())
         assert keys == ["KEY1", "KEY2", "KEY3", "KEY5", "KEY6"]
 
-    def test_eq_with_non_dict_types(self):
+    def test_eq_with_non_dict_types(self) -> None:
         """Test that CaselessDict.__eq__ handles non-dict comparisons correctly."""
         CaselessDict = icalendar.caselessdict.CaselessDict
 
@@ -132,7 +132,7 @@ class TestCaselessdict(unittest.TestCase):
         assert d != {"TEST": 2}
         assert d != {"OTHER": 1}
 
-    def test_ne_with_non_dict_types(self):
+    def test_ne_with_non_dict_types(self) -> None:
         """Test that CaselessDict.__ne__ handles non-dict comparisons correctly."""
         CaselessDict = icalendar.caselessdict.CaselessDict
 

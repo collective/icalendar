@@ -5,15 +5,15 @@
 * @niccokunzmann @stevepiercy
 
 # Documentation, except docstrings in `src`
-*.md @stevepiercy @abe-101
-*.rst @stevepiercy @abe-101
-/.readthedocs.yml @stevepiercy @niccokunzmann @abe-101
-/.vale.ini @stevepiercy @abe-101
-/CONTRIBUTING.md @niccokunzmann @stevepiercy @abe-101
-/docs/ @stevepiercy @abe-101
-/docs/tutorials/ @stevepiercy @abe-101 @peskypotato
-/Makefile @stevepiercy @abe-101
-/styles @stevepiercy @abe-101
+*.md @stevepiercy
+*.rst @stevepiercy
+/.readthedocs.yml @stevepiercy @niccokunzmann
+/.vale.ini @stevepiercy
+/CONTRIBUTING.md @niccokunzmann @stevepiercy
+/docs/ @stevepiercy
+/docs/tutorials/ @stevepiercy @peskypotato
+/Makefile @stevepiercy
+/styles @stevepiercy
 
 # Core calendar logic
 /src/ @niccokunzmann @SashankBhamidi @stevepiercy @angatha
@@ -34,7 +34,7 @@
 /tox.ini @niccokunzmann @stevepiercy
 
 # Security
-/SECURITY.md @niccokunzmann @stevepiercy @abe-101 @angatha
+/SECURITY.md @niccokunzmann @stevepiercy @angatha
 
 # Release stuff
 /CHANGES.rst @niccokunzmann @stevepiercy

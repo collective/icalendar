@@ -11,6 +11,7 @@ class TestProp(unittest.TestCase):
         assert vFloat(1.0).to_ical() == b"1.0"
         assert vFloat.from_ical("42") == 42.0
         assert vFloat(42).to_ical() == b"42.0"
+        assert vFloat(1.2).ical_value == 1.2
         self.assertRaises(ValueError, vFloat.from_ical, "1s3")
 
     def test_prop_vInt(self):
@@ -257,6 +258,8 @@ class TestProp(unittest.TestCase):
         assert g == (float("37.386013"), float("-122.082932"))
 
         assert vGeo(g).to_ical() == "37.386013;-122.082932"
+
+        assert hash(vGeo(g)) == hash(g)
 
         self.assertRaises(ValueError, vGeo, "g")
         self.assertRaises(ValueError, vGeo.from_ical, "1s3;1s3")

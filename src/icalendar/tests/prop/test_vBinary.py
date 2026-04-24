@@ -60,3 +60,8 @@ def test_round_trip_preserves_non_utf8_bytes():
     decoded_bytes = vBinary.from_ical(vb.to_ical())
 
     assert decoded_bytes == original_bytes
+
+
+def test_hash():
+    obj = vBinary(b"hashed text")
+    assert hash(obj) == hash(b"hashed text")

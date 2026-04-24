@@ -70,36 +70,46 @@ Artificial intelligence policy
 We want to protect the joy, goodwill, and volunteer time of the maintainers and contributors of icalendar.
 As such, we take a strong stance against artificial intelligence (AI) abuse.
 
-Contributors to icalendar must follow icalendar's AI policy as described in this section.
+Contributors to icalendar must follow icalendar's AI policy as described in this section and its subsections.
 
+
+.. _responsible-ai-use:
 
 Responsible AI use
 ``````````````````
 
 You may responsibly use AI as a tool to draft a pull request.
-That means you must comply with :ref:`pull-request-requirements` and follow icalendar's `Code of Conduct <https://github.com/collective/icalendar/blob/main/CODE_OF_CONDUCT.md>`_.
-It also means that you must take responsibility for the output, including reviewing and validating the output for accuracy and ensuring it resolves an issue.
-You shall be held accountable for your AI-generated content.
+That means you must comply with :ref:`pull-request-requirements` and follow the Python Calendaring Ecosystem's `Code of Conduct <https://pycal.org/code-of-conduct/>`_.
+
+If you use AI in your work:
+
+-   You must take responsibility for the output, including reviewing and validating the output for accuracy and ensuring it resolves an issue.
+-   You must check the AI's terms of use, and ensure that outputs are not reconstructed from copyrighted sources.
+-   You are expected to understand and be able to explain design and code decisions.
+-   In your git commit messages, you must specify both (1) which AI model and version you used, and (2) how you used it, by either including the prompts and interactions you used or summarizing them.
+-   You must disclose that you used AI in your change log entry.
+-   You shall be held accountable for your AI-generated content.
 
 
 AI abuse
 ````````
 
-You may not abuse AI to generate a pull request that is disruptive to the icalendar community.
-Examples of such abuse include the following actions.
+You may not abuse AI to generate a pull request that is disruptive to the icalendar community or does not adhere to :ref:`responsible-ai-use` described in the previous subsection.
+Examples of such abuse and irresponsible use include the following actions.
 
 -   You claim no responsibility for the output of AI generated content.
 -   Your pull request demonstrates no understanding or thought whatsoever to solve an issue.
 -   Your pull request plagiarizes copyrighted or other material to which you have no legal claim.
 -   You ignore or don't respond to feedback.
+-   The GitHub account is itself an AI agent.
 
 
 Report suspected violations
 ```````````````````````````
 
-To report a suspected violation of this AI policy, see the `Enforcement <https://github.com/collective/icalendar/blob/main/CODE_OF_CONDUCT.md#enforcement>`_ section in the Code of Conduct.
+To report a suspected violation of this AI policy, see the `Reporting an issue <https://pycal.org/code-of-conduct/#reporting-an-issue>`_ section in the Python Calendaring Ecosystem's Code of Conduct.
 The maintainers may close pull requests without providing feedback that they deem to be spam, AI slop, abuse, or that do not comply with :ref:`pull request requirements <pull-request-requirements>`.
-The maintainers may also take further action, including suspend, ban, or report GitHub users, as described in icalendar's `Code of Conduct <https://github.com/collective/icalendar/blob/main/CODE_OF_CONDUCT.md>`_.
+The maintainers may also take further action, including suspend, ban, or report GitHub users, as described in Python Calendaring Ecosystem's `Code of Conduct <https://pycal.org/code-of-conduct/>`_.
 
 
 .. _pull-request-requirements:
@@ -117,7 +127,7 @@ Before submitting your pull request, ensure you have met the following requireme
 #.  :doc:`Add or edit documentation <documentation/index>`, both as docstrings to be rendered in the :doc:`API reference documentation <../reference/api/icalendar>` and narrative documentation, as necessary.
 
 The maintainers may close pull requests without providing feedback that they deem to be spam, AI slop, abuse, or that do not comply with pull request requirements.
-The maintainers may also take further action, including suspend, ban, or report GitHub users, as described in icalendar's `Code of Conduct <https://github.com/collective/icalendar/blob/main/CODE_OF_CONDUCT.md>`_.
+The maintainers may also take further action, including suspend, ban, or report GitHub users, as described in Python Calendaring Ecosystem's `Code of Conduct <https://pycal.org/code-of-conduct/>`_.
 
 
 .. _change-log:
