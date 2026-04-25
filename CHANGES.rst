@@ -24,6 +24,7 @@ Minor changes
 - Extended :func:`~icalendar.timezone.tzp.TZP.localize` to support localizing both :class:`datetime.datetime` and :class:`datetime.time` objects, returning timezone-aware :class:`datetime.time` objects for the latter. :issue:`1142`
 - Add type hints to tests directory functions. :issue:`938`
 - Update to Contributor Covenant 3.0 Code of Conduct, hosted at https://pycal.org/code-of-conduct/.
+- Added ``view()`` method to ``Component`` for human-readable ICS output. :issue:`1257`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
