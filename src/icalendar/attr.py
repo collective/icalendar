@@ -616,27 +616,36 @@ categories_property = property(
     _del_categories,
     """This property defines the categories for a component.
 
-Property Parameters:
-    IANA, non-standard, and language property parameters can be specified on this
-    property.
+The categories property is used to specify categories or subtypes of the
+calendar component. The categories are useful to search for a calendar
+component of a particular type and category.
 
-Conformance:
-    The property can be specified within "VEVENT", "VTODO", or "VJOURNAL" calendar
-    components.
-    Since :rfc:`7986` it can also be defined on a "VCALENDAR" component.
+Within the calendar components, specify categories as a list of strings.
+You can get, set, and delete categories for a component.
 
-Description:
-    This property is used to specify categories or subtypes
-    of the calendar component.  The categories are useful in searching
-    for a calendar component of a particular type and category.
-    Within the "VEVENT", "VTODO", or "VJOURNAL" calendar components,
-    more than one category can be specified as a COMMA-separated list
-    of categories.
+This property can be used in icalendar through its Python attributes of:
+
+-   :attr:`Calendar.categories <icalendar.cal.calendar.Calendar.categories>`
+-   :attr:`Event.categories <icalendar.cal.event.Event.categories>`
+-   :attr:`Journal.categories <icalendar.cal.journal.Journal.categories>`
+-   :attr:`Todo.categories <icalendar.cal.todo.Todo.categories>`
+
+The categories property for ``Event``, ``Journal``, and ``Todo`` complies
+with :rfc:`5545#section-3.8.1.2`, and for ``Calendar`` with :rfc:`7986#section-5.6`.
+
+Note:
+    At present, icalendar doesn't take the LANGUAGE parameter as defined
+    in :rfc:`5545#section-3.2.10` into account.
+
+Parameters:
+    categories(list[str]): A list of categories as strings.
 
 Example:
-    Below, we add the categories to an event:
+    Create an event, add categories to it, print its ical representation,
+    append another category, and finally compare the result
+    against its expected value.
 
-    .. code-block:: pycon
+    ..  code-block:: pycon
 
         >>> from icalendar import Event
         >>> event = Event()
@@ -649,13 +658,8 @@ Example:
         >>> event.categories == ["Work", "Meeting", "Lecture"]
         True
 
-.. note::
-
-    At present, we do not take the LANGUAGE parameter into account.
-
-.. seealso::
-
-    :attr:`Component.concepts`
+See also:
+    :attr:`Component.concepts <icalendar.cal.component.Component.concepts>`
 """,
 )
 
