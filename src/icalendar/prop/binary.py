@@ -7,7 +7,7 @@ from typing import ClassVar
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
-from icalendar.parser_tools import to_unicode
+from icalendar.parser_tools import from_unicode
 
 
 class vBinary:
@@ -15,10 +15,10 @@ class vBinary:
 
     default_value: ClassVar[str] = "BINARY"
     params: Parameters
-    obj: str
+    obj: bytes
 
     def __init__(self, obj: str | bytes, params: dict[str, str] | None = None) -> None:
-        self.obj = to_unicode(obj)
+        self.obj = from_unicode(obj)
         self.params = Parameters(encoding="BASE64", value="BINARY")
         if params:
             self.params.update(params)
@@ -27,7 +27,7 @@ class vBinary:
         return f"vBinary({self.to_ical()})"
 
     def to_ical(self) -> bytes:
-        return binascii.b2a_base64(self.obj.encode("utf-8"))[:-1]
+        return binascii.b2a_base64(self.obj)[:-1]
 
     @staticmethod
     def from_ical(ical: str | bytes) -> bytes:
@@ -47,7 +47,7 @@ class vBinary:
     @classmethod
     def examples(cls) -> list[Self]:
         """Examples of vBinary."""
-        return [cls("VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZy4")]
+        return [cls(b"The quick brown fox jumps over the lazy dog.")]
 
     from icalendar.param import VALUE
 
@@ -57,12 +57,17 @@ class vBinary:
         if params.get("encoding") == "BASE64":
             # BASE64 is the only allowed encoding
             del params["encoding"]
-        return [name, params, self.VALUE.lower(), self.obj]
+        return [
+            name,
+            params,
+            self.VALUE.lower(),
+            base64.b64encode(self.obj).decode("ascii"),
+        ]
 
     @property
     def ical_value(self) -> bytes:
         """The bytes value of the BINARY property."""
-        return base64.b64decode(self.obj)
+        return self.obj
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
@@ -77,7 +82,7 @@ class vBinary:
         JCalParsingError.validate_property(jcal_property, cls)
         JCalParsingError.validate_value_type(jcal_property[3], str, cls, 3)
         return cls(
-            jcal_property[3],
+            base64.b64decode(jcal_property[3]),
             params=Parameters.from_jcal_property(jcal_property),
         )
 
