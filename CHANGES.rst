@@ -70,6 +70,7 @@ Documentation
 - Revise AI policy, per NLnet advice. See discussion under `pycal.org issue #24 <https://github.com/pycalendar/pycal.org/issues/24>`_.
 - Add documentation for how to use uv for development. :issue:`1102`
 - Reorganize Design documentation. :issue:`1292`
+- Improve docstring for ``categories_property``, which renders to HTML in :attr:`Calendar.categories <icalendar.cal.calendar.Calendar.categories>`, :attr:`Event.categories <icalendar.cal.event.Event.categories>`, :attr:`Journal.categories <icalendar.cal.journal.Journal.categories>`, and :attr:`Todo.categories <icalendar.cal.todo.Todo.categories>`. :issue:`1244`
 
 7.0.3 (2026-03-03)
 ------------------
