@@ -239,3 +239,5 @@ redirects = {
 man_pages = [("index", "icalendar", "icalendar Documentation", ["Plone Foundation"], 1)]
 
 htmlhelp_basename = "icalendardoc"
+
+// Contributed via automated bounty system
