@@ -975,15 +975,14 @@ def property_get_duration(self: Component) -> timedelta | None:
     """Getter for property DURATION."""
     default = object()
     duration = self.get("duration", default)
-    if isinstance(duration, vDDDTypes):
-        return duration.dt
-    if isinstance(duration, vDuration):
-        return duration.td
-    if duration is not default and not isinstance(duration, timedelta):
+    if duration is default:
+        return None
+    result = getattr(duration, "td", None)
+    if result is None:
         raise InvalidCalendar(
             f"DURATION must be a timedelta, not {type(duration).__name__}."
         )
-    return None
+    return result
 
 
 def property_set_duration(self: Component, value: timedelta | None):
