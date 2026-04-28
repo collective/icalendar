@@ -55,9 +55,17 @@ class Component(CaselessDict):
     name: ClassVar[str | None] = None
     """The name of the component.
 
-    This should be defined in each component class.
+    This is defined in each component class.
 
-    Example: ``VCALENDAR``.
+    Example:
+
+        ..  code-block:: pycon
+
+            >>> from icalendar import Calendar
+            >>> cal = Calendar.new()
+            >>> cal.name
+            'VCALENDAR'
+
     """
 
     required: ClassVar[tuple[()]] = ()

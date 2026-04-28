@@ -45,7 +45,57 @@ def string_parameter(
     convert: Callable[[str], T] | None = None,
     convert_to: Callable[[T], str] | None = None,
 ) -> property:
-    """Return a parameter with a quoted value (case sensitive)."""
+    """Create a property for a string parameter with optional conversion.
+
+    This helper function is used to define properties that read from and write to
+    ``self.params`` while optionally converting values between their stored
+    string representation and a more convenient Python type.
+
+    Parameters:
+        name: Name of the parameter in the params dictionary.
+        doc: Documentation for the property.
+        default:
+            Function that returns a default value if the parameter is not found.
+        convert:
+            Function that converts the stored string value to the desired type.
+        convert_to:
+            Function to convert a value back to a string for storage.
+
+    Returns:
+        A property object with a getter, setter, and deleter for the parameter.
+
+    Example:
+
+        Define a parameter that is stored as a string but used as an integer:
+
+        >>> from icalendar.param import string_parameter
+
+        >>> class Dummy:
+        ...     def __init__(self):
+        ...         self.params = {}
+        ...
+        >>> Dummy.priority = string_parameter(
+        ...     "PRIORITY",
+        ...     "Priority of the component",
+        ...     default=lambda: 0,
+        ...     convert=int,
+        ...     convert_to=str,
+        ... )
+        >>> obj = Dummy()
+
+        Accessing the property converts the stored string value to the type
+        specified by the ``convert`` parameter, in this case, an ``int``.
+
+        >>> obj.priority = "5"
+        >>> obj.priority
+        5
+
+        Setting the property stores the new value.
+
+        >>> obj.priority = 10
+        >>> obj.priority
+        10
+    """
 
     if convert_to is None:
         convert_to = convert
