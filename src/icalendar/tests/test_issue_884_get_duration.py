@@ -1,5 +1,5 @@
-"""If the duration property exist (so it's not default object) and it's already a timedelta instance,
-then currently None is returned.
+"""If the duration property exists, and it's not a ``default`` object but a
+``timedelta`` instance, then it should return a ``duration``, not ``None``.
 
 See https://github.com/collective/icalendar/issues/884
 """
