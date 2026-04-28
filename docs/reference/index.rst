@@ -9,7 +9,7 @@ Design reference
 .. toctree::
     :maxdepth: 2
 
-    design
+    rfc-support
     versions-branches
 
 

@@ -9,69 +9,14 @@ This chapter describes how to build and check the quality of documentation.
 
 .. _documentation-prerequisites:
 
-Prerequisites
--------------
-
-You'll need to first install prerequisites on, and clone the icalendar repository to, your local computer.
-
-Documentation builds and checks require that you install :program:`GNU Make` and :program:`uv`.
+.. include:: ../../_include/prerequisites.inc
 
 
-:program:`Make`
-'''''''''''''''
+.. _documentation-configure-git:
 
-:program:`Make` is used to provide an interface to developers to perform repetitive tasks with a single command.
-
-:program:`Make` comes installed on most Linux distributions.
-On macOS, you must first `install Xcode <https://developer.apple.com/xcode/resources/>`_, then install its command line tools.
-On Windows, it is strongly recommended to `Install Linux on Windows with WSL <https://learn.microsoft.com/en-us/windows/wsl/install>`_, which will include :program:`Make`.
-
-Finally, it is a good idea to update your system's version of :program:`Make`, because some distributions, especially macOS, have an outdated version.
-Use your favorite search engine or trusted online resource for how to update :program:`Make`.
-
-
-uv
-''
-
-`uv <https://docs.astral.sh/uv/>`_ is used for installing Python, creating a Python virtual environment, and managing dependencies for documentation.
-
-Install :program:`uv`.
-Read the console output for further instructions, and follow them, if needed.
-
-.. tab-set::
-
-    .. tab-item:: macOS, Linux, and Windows with WSL
-
-        .. code-block:: shell
-
-            curl -LsSf https://astral.sh/uv/install.sh | sh
-
-    .. tab-item:: Windows
-
-        .. code-block:: shell
-
-            powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-
-.. seealso::
-
-    `Other uv installation methods <https://docs.astral.sh/uv/getting-started/installation/>`_
-
-
-Clone repository
-''''''''''''''''
-
-To clone the icalendar repository, open a terminal session, and use the following command.
-
-.. code-block:: shell
-
-    git clone https://github.com/collective/icalendar.git
-
-
-Change your working directory into the cloned project.
-
-.. code-block:: shell
-
-    cd icalendar
+.. include:: ../../_include/configure-git.inc
+.. include:: ../../_include/configure-git-card-doc.inc
+.. include:: ../../_include/configure-git-steps.inc
 
 
 .. _file-locations:
@@ -84,7 +29,7 @@ Narrative documentation files are located in the `docs <https://github.com/colle
 :doc:`API reference documentation files </reference/api/icalendar>` are located in the `src <https://github.com/collective/icalendar/tree/main/docs>`_ directory.
 
 
-.. _make-commands:
+.. _documentation-make-commands:
 
 :program:`Make` commands
 ------------------------
