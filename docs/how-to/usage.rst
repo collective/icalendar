@@ -267,18 +267,32 @@ To read a calendar from a URL, retrieve the data first, then parse it in icalend
 Modify content
 ''''''''''''''
 
-After loading the example file, edit and save it.
+After loading the example file, edit it.
 
 .. code:: pycon
 
     >>> calendar.calendar_name = "My Modified Calendar"  # modify
-    >>> print(calendar.to_ical()[:121])  # save modification
+    >>> print(calendar.to_ical()[:121])
     BEGIN:VCALENDAR
     VERSION:2.0
     PRODID:collective/icalendar
     CALSCALE:GREGORIAN
     METHOD:PUBLISH
     NAME:My Modified Calendar
+
+
+Save calendar to file
+'''''''''''''''''''''
+
+Use :meth:`~icalendar.cal.component.Component.to_ical` to serialize the
+calendar, then write the bytes to a :file:`.ics` file.
+
+.. code:: pycon
+
+    >>> output_path = Path("modified-calendar.ics")
+    >>> output_path.write_bytes(calendar.to_ical()) > 0
+    True
+    >>> output_path.unlink()
 
 
 iCalendar objects
