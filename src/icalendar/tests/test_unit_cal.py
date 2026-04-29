@@ -1,5 +1,6 @@
 import itertools
 import re
+import sys
 from datetime import datetime, timedelta
 
 import pytest
@@ -126,6 +127,23 @@ def test_filter_walk(calendar_component, filled_event_component):
     assert [i["dtstart"] for i in calendar_component.walk("VEVENT")] == [
         "20000101T000000"
     ]
+
+def test_walk_handles_deeply_nested_components():
+    """Deeply nested input should not exceed Python's recursion limit."""
+    depth = sys.getrecursionlimit() + 50
+    ical = (
+        "BEGIN:VCALENDAR\r\n"
+        + ("BEGIN:X-DEEP\r\n" * depth)
+        + ("END:X-DEEP\r\n" * depth)
+        + "END:VCALENDAR\r\n"
+    )
+    calendar = Calendar.from_ical(ical)
+
+    walked = calendar.walk()
+
+    assert len(walked) == depth + 1
+    assert walked[0].name == "VCALENDAR"
+    assert all(component.name == "X-DEEP" for component in walked[1:])
 
 
 def test_recursive_property_items(calendar_component, filled_event_component):
