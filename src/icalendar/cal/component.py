@@ -447,30 +447,45 @@ class Component(CaselessDict):
 
     def property_items(
         self,
-        recursive=True,
+        recursive: bool = True,
         sorted: bool = True,
     ) -> list[tuple[str, object]]:
         """Returns properties in this component and subcomponents as:
         [(name, value), ...]
         """
+        # Iterative implementation to avoid RecursionError
+        result = []
         v_text = self.types_factory["text"]
-        properties = [("BEGIN", v_text(self.name).to_ical())]
-        property_names = self.sorted_keys() if sorted else self.keys()
-
-        for name in property_names:
-            values = self[name]
-            if isinstance(values, list):
-                # normally one property is one line
-                for value in values:
-                    properties.append((name, value))
+        # Stack stores (component, state)
+        # state: True means we are processing the END of the component
+        # state: False means we are processing the BEGIN and properties of the component
+        stack = [(self, False)]
+        while stack:
+            comp, is_end = stack.pop()
+            if is_end:
+                result.append(("END", v_text(comp.name).to_ical()))
             else:
-                properties.append((name, values))
-        if recursive:
-            # recursion is fun!
-            for subcomponent in self.subcomponents:
-                properties += subcomponent.property_items(sorted=sorted)
-        properties.append(("END", v_text(self.name).to_ical()))
-        return properties
+                result.append(("BEGIN", v_text(comp.name).to_ical()))
+                property_names = comp.sorted_keys() if sorted else comp.keys()
+
+                for name in property_names:
+                    values = comp[name]
+                    if isinstance(values, list):
+                        # normally one property is one line
+                        for value in values:
+                            result.append((name, value))
+                    else:
+                        result.append((name, values))
+
+                # Push the END marker for this component
+                stack.append((comp, True))
+                # Push subcomponents if recursion is enabled
+                if recursive:
+                    # Push in reverse order to maintain original order in result
+                    for subcomponent in reversed(comp.subcomponents):
+                        stack.append((subcomponent, False))
+
+        return result
 
     @overload
     @classmethod

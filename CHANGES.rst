@@ -49,7 +49,7 @@ Bug fixes
 - Fixed :meth:`Component.__eq__ <icalendar.cal.component.Component.__eq__>` method not being commutative when comparing subcomponents. :issue:`1224`
 - Verified that the ``VALUE`` parameter of jCal components is used for the type of the component property. :issue:`1237`
 - Fix :func:`~icalendar.parser.string.escape_char` handling of ``bytes`` input by converting with :func:`icalendar.parser_tools.to_unicode` before escaping. :issue:`1226`
-- Fixed ``RecursionError`` in ``walk()``, ``property_items()``, and ``to_ical()`` by using iterative implementations for component traversal and property extraction. :pr:`1346`
+- Fixed ``RecursionError`` in ``walk()``, ``property_items()``, and ``to_ical()`` by using iterative implementations for component traversal and property extraction. :pr:`1348`
 
 Documentation
 ~~~~~~~~~~~~~
