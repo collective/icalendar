@@ -17,7 +17,7 @@ Components
 ----------
 
 Components are case-insensitive Python dictionaries.
-The ``icalendar.cal.Calendar`` object is a component.
+The :class:`~icalendar.cal.Calendar` object is a component.
 The following example shows how to set two properties for it, then display them.
 
 .. code-block:: pycon
