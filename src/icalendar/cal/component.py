@@ -405,10 +405,12 @@ class Component(CaselessDict):
     ) -> list[Component]:
         """Walk to given component."""
         result = []
-        if (name is None or self.name == name) and select(self):
-            result.append(self)
-        for subcomponent in self.subcomponents:
-            result += subcomponent._walk(name, select)
+        stack = [self]
+        while stack:
+            component = stack.pop()
+            if (name is None or component.name == name) and select(component):
+                result.append(component)
+            stack.extend(reversed(component.subcomponents))
         return result
 
     def walk(
