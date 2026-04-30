@@ -112,16 +112,6 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         git checkout main
         git pull
 
-#.  When cutting any new release that you'll tag and want to be considered "stable" on either the ``main`` or development branch, update the Sphinx configuration file :file:`docs/conf.py` to match that version.
-
-    Hide the warning banner.
-
-    .. code-block:: python
-
-        html_theme_options = {
-            # ...
-            "show_version_warning_banner": False,
-
 #.  Check that the file :file:`CHANGES.rst` is up to date with the `latest merged pull requests <https://github.com/collective/icalendar/pulls?q=is%3Apr+is%3Amerged>`_, and the version you want to release is correctly named.
     Change the date of the release, and remove empty sections.
 
@@ -130,33 +120,18 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         -7.0.0 (unreleased)
         +7.0.0 (2026-02-11)
 
-#.  Create a commit on a ``release`` branch to release this version.
-
-    .. code-block:: shell
-
-        git checkout -b release-$VERSION main
-        git add CHANGES.rst docs/conf.py
-        git commit -m"version $VERSION"
-
-#.  Push the commit and `create a pull request <https://github.com/collective/icalendar/compare?expand=1>`_.
-    Here is an `example pull request #457 <https://github.com/collective/icalendar/pull/457>`_.
-
-    .. code-block:: shell
-
-        git push -u origin release-$VERSION
-
-#.  See if the `CI tests <https://github.com/collective/icalendar/actions>`_ are running on the pull request.
-    If they are not running, no new release can be issued.
-    If the CI passes, merge the pull request.
-
-#.  Clean up behind you!
+#.  Create a commit on a ``main`` branch to release this version.
 
     .. code-block:: shell
 
         git checkout main
-        git pull
-        git branch -d release-$VERSION
-        git push -d origin release-$VERSION
+        git add CHANGES.rst
+        git commit -m"version $VERSION"
+        git push # to collective/icalendar
+
+#.  See if the `CI tests <https://github.com/collective/icalendar/actions>`_ are running on commit.
+    If they are not running, no new release can be issued.
+    If the CI passes, go ahead.
 
 #.  Create a tag for the release on its release branch ``*.x`` and see if the `CI tests`_ are running.
 
@@ -165,8 +140,9 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         git checkout main
         git pull
         git checkout 7.x
+        git pull
         git merge main
-        git push upstream 7.x  # to collective/icalendar
+        git push  # to collective/icalendar
         git tag "v$VERSION"
         git push upstream "v$VERSION" # to collective/icalendar
 
@@ -184,7 +160,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
         tests: PyPI is waiting for your review
 
-#.  If the release is approved by a maintainer, it will be pushed to `PyPI`_.
+#.  If the release is approved by a maintainer, it will be pushed to `PyPI`_. Do not wait for that, continue.
 #.  Copy this to the start of :file:`CHANGES.rst`, and increase the version number.
 
     .. code-block:: shell
@@ -228,7 +204,13 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
         git add CHANGES.rst
         git commit -m "Add new CHANGELOG section for future release"
-        git push upstream main # to collective/icalendar
+        git push # to collective/icalendar
+
+#.  Go through all open PRs and tell them to adjust their changelog entries to the new section.
+
+    .. code-block:: text
+
+        Hi, we created a new release, please move your edits in CHANGES.rst to the new section.
 
 #.  Once the release is pushed to `PyPI`_, notify the issues mentioned on the new release of the new release.
     Example:
@@ -272,6 +254,16 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
                     "preferred": "true"
                 },
     
+        #.  Also update :file:`.github/workflows/tests.yml` to include the new release branch in the list of branches that trigger the CI tests.
+
+            .. code-block:: yaml
+
+                push:
+                  branches:
+                  - main
+                  - 7.x
+                  tags:
+                  - v*
 
     #.  When cutting a *minor or patch release* version, on the ``main`` branch, update :file:`docs/_static/version-switcher.json` to match that version's tag name.
 
@@ -283,33 +275,27 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
                 "url": "https://icalendar.readthedocs.io/en/stable/",
                 "preferred": "true"
             },
+        
+        .. code-block:: shell
 
-#.  When cutting a new *stable release* version, update the Sphinx configuration file :file:`docs/conf.py` as shown.
+            git checkout main
+            git pull
+            git add docs/_static/version-switcher.json
+            git commit -m "Update version switcher for $VERSION"
+            git push # to collective/icalendar
 
-    #.  On the ``main`` branch, show the warning banner.
+#.  When cutting a new *major stable release* version, update the Sphinx configuration file :file:`docs/conf.py` as shown.
+    On the previous numbered major release branch, show the warning banner.
+    For example, when releasing 7.0.0, checkout ``6.x``, and update it as shown.
 
-        .. code-block:: python
+    .. code-block:: python
 
-            html_theme_options = {
-                # ...
-                "show_version_warning_banner": True,
+        html_theme_options = {
+            # ...
+            "show_version_warning_banner": True,
 
-    #.  On the previous numbered major release branch, show the warning banner.
-        For example, when releasing 7.0.0, checkout ``6.x``, and update it as shown.
-
-        .. code-block:: python
-
-            html_theme_options = {
-                # ...
-                "show_version_warning_banner": True,
-
-#.  Configure `Read the Docs <https://app.readthedocs.org/projects/icalendar/>`_.
-
-    #.  After a *minor release*, *patch release*, or an *unstable release*, deactivate previous releases in that release line.
-        Click on the ellipsis icon, and select :guilabel:`Configure version`.
-        Toggle the :guilabel:`Active` switch to deactivate the version.
-
-    #.  After a *major release*, verify that the version was activated automatically on Read the Docs.
+#.  After a *major release*, configure `Read the Docs <https://app.readthedocs.org/projects/icalendar/>`_.
+    Verify that the version was activated automatically on Read the Docs.
 
 
 Links
