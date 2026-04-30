@@ -4,6 +4,34 @@ Change log
 
 .. py:currentmodule:: icalendar
 
+7.1.1 (unreleased)
+------------------
+
+Minor changes
+~~~~~~~~~~~~~
+
+- ...
+
+Breaking changes
+~~~~~~~~~~~~~~~~
+
+- ...
+
+New features
+~~~~~~~~~~~~
+
+- ...
+
+Bug fixes
+~~~~~~~~~
+
+- ...
+
+Documentation
+~~~~~~~~~~~~~
+
+- ...
+
 7.1.0 (2026-04-30)
 ------------------
 
