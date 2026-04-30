@@ -128,6 +128,7 @@ def test_filter_walk(calendar_component, filled_event_component):
         "20000101T000000"
     ]
 
+
 def test_walk_handles_deeply_nested_components():
     """Deeply nested input should not exceed Python's recursion limit."""
     depth = sys.getrecursionlimit() + 50
