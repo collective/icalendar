@@ -22,7 +22,7 @@ The following example shows how to set two properties for it, then display them.
 
 .. code-block:: pycon
 
-    >>> cal = Calendar()                                      # create a calendar object
+    >>> cal = Calendar()                                      # create a Calendar object
     >>> cal["dtstart"] = "20050404T080000"                    # set start date
     >>> cal["summary"] = "Python meeting about calendaring"   # add event summary
     >>> for k,v in cal.items():
