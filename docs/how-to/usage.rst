@@ -140,7 +140,6 @@ Value types
 -----------
 
 Property values are UTF-8 encoded strings.
-For better understanding, these values can also be converted into Python objects such as datetime for easier manipulation and computation.
 
 This is impractical if you want to use the data for further computation.
 The datetime format, for example, looks like `20050404T080000`.
