@@ -239,7 +239,7 @@ Read calendar from file
 
 Read a calendar from a local :file:`.ics` file and view its events.
 
-.. .. code-block:: pycon
+.. code-block:: pycon
 
     >>> import icalendar
     >>> from pathlib import Path
