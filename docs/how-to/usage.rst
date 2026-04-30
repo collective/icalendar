@@ -101,7 +101,7 @@ Here is an example.
 
 Subcomponents
 -------------
-Subcomponents help in organizing related calendar data such as events within a calendar structure.
+Subcomponents help organize related calendar data, such as events, within a calendar structure.
 Any component can have subcomponents.
 For example, inside a calendar, there can be events.
 They can be arbitrarily nested.
