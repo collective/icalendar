@@ -46,6 +46,7 @@ The rendered view is easier to read and understand.
 
 .. code-block:: pycon
 
+    >>> print(cal.to_ical().decode())
     BEGIN:VCALENDAR
     DTSTART:20050404T080000
     SUMMARY:Python meeting about calendaring
