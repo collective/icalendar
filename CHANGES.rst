@@ -25,7 +25,7 @@ New features
 Bug fixes
 ~~~~~~~~~
 
-- Strictly validate BINARY property values in ``vBinary.from_ical()`` and reject malformed Base64 input instead of silently accepting invalid characters. :pr:`1349`
+- Strictly validate BINARY property values in :attr:`vBinary.from_ical() <icalendar.prop.binary.vBinary.from_ical>` and reject malformed Base64 input instead of silently accepting invalid characters. :pr:`1349`
 
 Documentation
 ~~~~~~~~~~~~~
