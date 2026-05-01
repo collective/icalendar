@@ -25,7 +25,12 @@ New features
 Bug fixes
 ~~~~~~~~~
 
-- Strictly validate BINARY property values in ``vBinary.from_ical()`` and reject malformed Base64 input instead of silently accepting invalid characters. :pr:`1349`
+- ...
+
+Documentation
+~~~~~~~~~~~~~
+
+- ...
 
 Documentation
 ~~~~~~~~~~~~~
@@ -52,11 +57,6 @@ Minor changes
 - Extended :func:`~icalendar.timezone.tzp.TZP.localize` to support localizing both :class:`datetime.datetime` and :class:`datetime.time` objects, returning timezone-aware :class:`datetime.time` objects for the latter. :issue:`1142`
 - Add type hints to tests directory functions. :issue:`938`
 - Update to Contributor Covenant 3.0 Code of Conduct, hosted at https://pycal.org/code-of-conduct/.
-
-Breaking changes
-~~~~~~~~~~~~~~~~
-
-- ...
 
 New features
 ~~~~~~~~~~~~
