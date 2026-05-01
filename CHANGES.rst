@@ -25,7 +25,10 @@ New features
 Bug fixes
 ~~~~~~~~~
 
-- ...
+- Strictly validate BINARY property values in
+  :attr:`vBinary.from_ical() <icalendar.prop.binary.vBinary.from_ical>`
+  and reject malformed Base64 input instead of silently accepting invalid
+  characters. :pr:`1349`
 
 Documentation
 ~~~~~~~~~~~~~
@@ -324,7 +327,7 @@ New features
 ~~~~~~~~~~~~
 
 - Add compatibility to :rfc:`9253`:
-  
+
   - Add new property types :class:`vUid` and :class:`vXmlReference`
   - Add properties to all components: :attr:`Component.concepts`, :attr:`Component.links`, :attr:`Component.refids`, :attr:`Component.related_to`
   - Add new values to :class:`RELTYPE`
