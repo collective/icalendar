@@ -7,10 +7,30 @@ Change log
 7.1.1 (unreleased)
 ------------------
 
+Minor changes
+~~~~~~~~~~~~~
+
+- ...
+
+Breaking changes
+~~~~~~~~~~~~~~~~
+
+- ...
+
+New features
+~~~~~~~~~~~~
+
+- ...
+
 Bug fixes
 ~~~~~~~~~
 
 - Strictly validate BINARY property values in ``vBinary.from_ical()`` and reject malformed Base64 input instead of silently accepting invalid characters. :pr:`1349`
+
+Documentation
+~~~~~~~~~~~~~
+
+- ...
 
 7.1.0 (2026-04-30)
 ------------------
