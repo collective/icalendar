@@ -18,10 +18,7 @@ class vBinary:
 
     def __init__(self, obj: str | bytes, params: dict[str, str] | None = None) -> None:
         if isinstance(obj, str):
-            try:
-                self.obj = self.from_ical(obj)
-            except ValueError:
-                self.obj = obj.encode("utf-8")
+            self.obj = obj.encode("utf-8")
         else:
             self.obj = obj
         self.params = Parameters(encoding="BASE64", value="BINARY")
@@ -52,7 +49,7 @@ class vBinary:
     @classmethod
     def examples(cls) -> list[Self]:
         """Examples of vBinary."""
-        return [cls("VGhlIHF1aWNrIGJyb3duIGZveCBqdW1wcyBvdmVyIHRoZSBsYXp5IGRvZy4")]
+        return [cls(b"The quick brown fox jumps over the lazy dog.")]
 
     from icalendar.param import VALUE
 

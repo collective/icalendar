@@ -65,9 +65,9 @@ def test_ical_value():
 
 
 def test_ical_value_with_string():
-    """ical_value property still decodes strings for backward compatibility."""
-    b64_str = "SGVsbG8="
-    assert vBinary(b64_str).ical_value == b"Hello"
+    """ical_value property treats strings as raw data for consistency."""
+    raw_str = "Hello"
+    assert vBinary(raw_str).ical_value == b"Hello"
 
 
 def test_hash():
