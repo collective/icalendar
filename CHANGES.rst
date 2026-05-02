@@ -31,7 +31,7 @@ Bug fixes
   characters. :pr:`1349`
 - Fix data corruption in :class:`~icalendar.prop.binary.vBinary` by preserving
   raw bytes for binary data instead of incorrectly attempting to encode it
-  as UTF-8. :issue:`1402`
+  as UTF-8. :pr:`1353`
 
 Documentation
 ~~~~~~~~~~~~~

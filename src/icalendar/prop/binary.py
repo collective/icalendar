@@ -58,7 +58,9 @@ class vBinary:
         if params.get("encoding") == "BASE64":
             # BASE64 is the only allowed encoding
             del params["encoding"]
-        return [name, params, self.VALUE.lower(), self.obj]
+        # jCal requires a string value for binary data (Base64)
+        value = self.to_ical().decode("ascii")
+        return [name, params, self.VALUE.lower(), value]
 
     @property
     def ical_value(self) -> bytes:
@@ -80,7 +82,7 @@ class vBinary:
         JCalParsingError.validate_property(jcal_property, cls)
         JCalParsingError.validate_value_type(jcal_property[3], str, cls, 3)
         return cls(
-            jcal_property[3],
+            cls.from_ical(jcal_property[3]),
             params=Parameters.from_jcal_property(jcal_property),
         )
 
