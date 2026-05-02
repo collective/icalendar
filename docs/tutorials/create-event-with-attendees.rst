@@ -20,7 +20,7 @@ After creating a new calendar, you can view its properties by using :meth:`~ical
 
 ..  code-block:: pycon
 
-    >>> print(calendar.to_ical().decode())
+    >>> calendar.to_ical().decode()
     BEGIN:VCALENDAR
     VERSION:2.0
     PRODID:-//collective//icalendar//7.0.0//EN
@@ -40,7 +40,7 @@ The output confirms the change:
 
 .. code-block:: pycon
 
-    >>> print(calendar.to_ical().decode())
+    >>> calendar.to_ical().decode()
     BEGIN:VCALENDAR
     VERSION:2.0
     PRODID:-//icalendar//example.com//EN
@@ -70,7 +70,7 @@ The output shows your new event:
 
 .. code-block:: pycon
 
-    >>> print(event.to_ical().decode())
+    >>> event.to_ical().decode()
     BEGIN:VEVENT
     DTSTART:20260321T063000Z
     DTEND:20260321T073000Z
@@ -100,7 +100,7 @@ Now print the calendar to verify everything that it contains:
 
 .. code-block:: pycon
 
-    >>> print(calendar.to_ical().decode())
+    >>> calendar.to_ical().decode()
     BEGIN:VCALENDAR
     VERSION:2.0
     PRODID:-//icalendar//example.com//EN
@@ -139,7 +139,7 @@ The output confirms your additions:
 
 .. code-block:: pycon
 
-    >>> print(ride_event.to_ical().decode())
+    >>> ride_event.to_ical().decode()
     BEGIN:VEVENT
     SUMMARY:Morning ride with the team.
     DTSTART:20260328T070000Z
@@ -168,7 +168,7 @@ Now print the calendar to view everything you've added so far, this should inclu
 
 .. code-block:: pycon
 
-    >>> print(calendar.to_ical().decode())
+    >>> calendar.to_ical().decode()
     BEGIN:VCALENDAR
     VERSION:2.0
     PRODID:-//icalendar//example.com//EN
