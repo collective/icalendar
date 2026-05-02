@@ -33,7 +33,9 @@ Bug fixes
 Documentation
 ~~~~~~~~~~~~~
 
-- ...
+- Remove ``print()`` calls from the create-event-with-attendees tutorial,
+  replacing them with direct expression calls for cleaner output.
+  :issue:`1257`
 
 7.1.0 (2026-04-30)
 ------------------
