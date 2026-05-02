@@ -7,7 +7,6 @@ from typing import ClassVar
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
-from icalendar.parser_tools import to_unicode
 
 
 class vBinary:
@@ -15,10 +14,10 @@ class vBinary:
 
     default_value: ClassVar[str] = "BINARY"
     params: Parameters
-    obj: str
+    obj: str | bytes
 
     def __init__(self, obj: str | bytes, params: dict[str, str] | None = None) -> None:
-        self.obj = to_unicode(obj)
+        self.obj = obj
         self.params = Parameters(encoding="BASE64", value="BINARY")
         if params:
             self.params.update(params)
@@ -27,7 +26,9 @@ class vBinary:
         return f"vBinary({self.to_ical()})"
 
     def to_ical(self) -> bytes:
-        return binascii.b2a_base64(self.obj.encode("utf-8"))[:-1]
+        if isinstance(self.obj, str):
+            return binascii.b2a_base64(self.obj.encode("utf-8"))[:-1]
+        return binascii.b2a_base64(self.obj)[:-1]
 
     @staticmethod
     def from_ical(ical: str | bytes) -> bytes:
@@ -62,6 +63,8 @@ class vBinary:
     @property
     def ical_value(self) -> bytes:
         """The bytes value of the BINARY property."""
+        if isinstance(self.obj, bytes):
+            return self.obj
         return self.from_ical(self.obj)
 
     @classmethod

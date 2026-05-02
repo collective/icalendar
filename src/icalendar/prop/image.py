@@ -56,7 +56,11 @@ class Image:
         if value_type == "URI" or isinstance(value, vUri):
             params["uri"] = str(value)
         elif isinstance(value, vBinary):
-            params["b64data"] = value.obj
+            if isinstance(value.obj, bytes):
+                # raw bytes are converted to base64 string for Image
+                params["b64data"] = base64.b64encode(value.obj).decode("ascii")
+            else:
+                params["b64data"] = value.obj
         elif value_type == "BINARY":
             params["b64data"] = str(value)
         else:
