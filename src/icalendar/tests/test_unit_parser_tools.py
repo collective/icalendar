@@ -1,5 +1,7 @@
 import unittest
 
+import pytest
+
 from icalendar.parser_tools import data_encode, from_unicode, to_unicode
 
 
@@ -11,8 +13,10 @@ class TestParserTools(unittest.TestCase):
         assert to_unicode(b"\xc6\xb5") == "Ƶ"
         assert to_unicode(b"\xc6\xb5") == "Ƶ"
         assert to_unicode(b"\xc6\xb5", encoding="ascii") == "Ƶ"
-        assert to_unicode(1) == 1
-        assert to_unicode(None) is None
+        with pytest.raises(TypeError, match="Expected str or bytes"):
+            to_unicode(1)
+        with pytest.raises(TypeError, match="Expected str or bytes"):
+            to_unicode(None)
 
     def test_parser_tools_from_unicode(self):
         assert from_unicode("Ƶ", encoding="ascii") == b"\xc6\xb5"

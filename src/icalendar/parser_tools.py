@@ -20,8 +20,7 @@ def from_unicode(value: ICAL_TYPE, encoding="utf-8") -> bytes:
             return value.encode(encoding)
         except UnicodeEncodeError:
             return value.encode("utf-8", "replace")
-    else:
-        return value
+    raise TypeError(f"Expected str or bytes, got {type(value).__name__}")
 
 
 def to_unicode(value: ICAL_TYPE, encoding="utf-8-sig") -> str:
@@ -38,8 +37,7 @@ def to_unicode(value: ICAL_TYPE, encoding="utf-8-sig") -> str:
             return value.decode(encoding)
         except UnicodeDecodeError:
             return value.decode("utf-8-sig", "replace")
-    else:
-        return value
+    raise TypeError(f"Expected str or bytes, got {type(value).__name__}")
 
 
 def data_encode(
