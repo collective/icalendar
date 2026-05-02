@@ -29,9 +29,9 @@ Bug fixes
   :attr:`vBinary.from_ical() <icalendar.prop.binary.vBinary.from_ical>`
   and reject malformed Base64 input instead of silently accepting invalid
   characters. :pr:`1349`
-- Fix data corruption in :class:`~icalendar.prop.binary.vBinary` by preserving
-  raw bytes for binary data instead of incorrectly attempting to encode it
-  as UTF-8. :pr:`1353`
+- Fix data corruption and double-encoding in :class:`~icalendar.prop.binary.vBinary` 
+  by ensuring internal storage is always raw bytes and correctly handling 
+  serialization to iCalendar and jCal. :pr:`1353`
 
 Documentation
 ~~~~~~~~~~~~~

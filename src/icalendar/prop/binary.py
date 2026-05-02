@@ -17,7 +17,13 @@ class vBinary:
     obj: str | bytes
 
     def __init__(self, obj: str | bytes, params: dict[str, str] | None = None) -> None:
-        self.obj = obj
+        if isinstance(obj, str):
+            try:
+                self.obj = self.from_ical(obj)
+            except ValueError:
+                self.obj = obj.encode("utf-8")
+        else:
+            self.obj = obj
         self.params = Parameters(encoding="BASE64", value="BINARY")
         if params:
             self.params.update(params)
@@ -26,8 +32,6 @@ class vBinary:
         return f"vBinary({self.to_ical()})"
 
     def to_ical(self) -> bytes:
-        if isinstance(self.obj, str):
-            return binascii.b2a_base64(self.obj.encode("utf-8"))[:-1]
         return binascii.b2a_base64(self.obj)[:-1]
 
     @staticmethod
@@ -65,9 +69,7 @@ class vBinary:
     @property
     def ical_value(self) -> bytes:
         """The bytes value of the BINARY property."""
-        if isinstance(self.obj, bytes):
-            return self.obj
-        return self.from_ical(self.obj)
+        return self.obj
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
