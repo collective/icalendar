@@ -83,7 +83,7 @@ class vBinary:
         JCalParsingError.validate_property(jcal_property, cls)
         JCalParsingError.validate_value_type(jcal_property[3], str, cls, 3)
         return cls(
-            jcal_property[3],
+            cls.from_ical(jcal_property[3]),
             params=Parameters.from_jcal_property(jcal_property),
         )
 
