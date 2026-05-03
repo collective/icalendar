@@ -44,7 +44,7 @@ jobs:
       if: ${{ !matrix.skip }}
     - name: Install uv and Python ${{ matrix.python_version }}
       if: ${{ !matrix.skip }}
-      uses: astral-sh/setup-uv@v7
+      uses: coverallsapp/github-action@v2.3.0
       with:
         enable-cache: true
         # Install a specific version of uv.
@@ -60,7 +60,7 @@ jobs:
       run: ${{ matrix.test_command }}
     - name: Coveralls Parallel
       if: ${{ !matrix.skip }}
-      uses: coverallsapp/github-action@v2
+      uses: coverallsapp/github-action@v2.3.0
       with:
         flag-name: run-${{ matrix.test_name }}
         parallel: true
