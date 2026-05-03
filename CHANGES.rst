@@ -29,6 +29,7 @@ Bug fixes
   :attr:`vBinary.from_ical() <icalendar.prop.binary.vBinary.from_ical>`
   and reject malformed Base64 input instead of silently accepting invalid
   characters. :pr:`1349`
+- Refactored :class:`~icalendar.prop.binary.vBinary` to store raw ``bytes`` internally, ensuring lossless round-tripping of non-UTF-8 binary data. Updated :class:`~icalendar.prop.image.Image` to handle this change correctly. :pr:`1356`
 
 Documentation
 ~~~~~~~~~~~~~
