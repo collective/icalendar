@@ -1,7 +1,5 @@
 """Test vBinary"""
 
-import base64
-
 import pytest
 
 from icalendar import vBinary
@@ -23,8 +21,8 @@ def test_binary():
 
 
 def test_param():
-    assert isinstance(vBinary("txt").params, Parameters)
-    assert vBinary("txt").params == {"VALUE": "BINARY", "ENCODING": "BASE64"}
+    assert isinstance(vBinary(b"txt").params, Parameters)
+    assert vBinary(b"txt").params == {"VALUE": "BINARY", "ENCODING": "BASE64"}
 
 
 def test_long_data():
@@ -61,14 +59,9 @@ def test_from_ical_rejects_non_base64_characters(value):
 
 
 def test_ical_value():
-    """ical_value property returns the string value."""
-    magic_string = base64.b64encode(b"magic string")
-    assert vBinary(magic_string).ical_value == base64.b64decode(magic_string)
-
-
-def test_ical_value_rejects_non_base64_characters():
-    with pytest.raises(ValueError, match=r"Not valid base 64 encoding\."):
-        vBinary("!!!!dGV4dA==@@@@").ical_value
+    """ical_value property returns the binary value."""
+    raw_data = b"magic string"
+    assert vBinary(raw_data).ical_value == raw_data
 
 
 def test_hash():

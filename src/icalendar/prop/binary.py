@@ -7,18 +7,19 @@ from typing import ClassVar
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
-from icalendar.parser_tools import to_unicode
 
 
 class vBinary:
     """Binary property values are base 64 encoded."""
 
     default_value: ClassVar[str] = "BINARY"
-    params: Parameters
-    obj: str
+    obj: bytes
 
     def __init__(self, obj: str | bytes, params: dict[str, str] | None = None) -> None:
-        self.obj = to_unicode(obj)
+        if isinstance(obj, str):
+            self.obj = obj.encode("utf-8")
+        else:
+            self.obj = obj
         self.params = Parameters(encoding="BASE64", value="BINARY")
         if params:
             self.params.update(params)
@@ -27,7 +28,7 @@ class vBinary:
         return f"vBinary({self.to_ical()})"
 
     def to_ical(self) -> bytes:
-        return binascii.b2a_base64(self.obj.encode("utf-8"))[:-1]
+        return base64.b64encode(self.obj)
 
     @staticmethod
     def from_ical(ical: str | bytes) -> bytes:
@@ -57,12 +58,17 @@ class vBinary:
         if params.get("encoding") == "BASE64":
             # BASE64 is the only allowed encoding
             del params["encoding"]
-        return [name, params, self.VALUE.lower(), self.obj]
+        return [
+            name,
+            params,
+            self.VALUE.lower(),
+            base64.b64encode(self.obj).decode("ascii"),
+        ]
 
     @property
     def ical_value(self) -> bytes:
         """The bytes value of the BINARY property."""
-        return self.from_ical(self.obj)
+        return self.obj
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
