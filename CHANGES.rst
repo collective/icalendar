@@ -101,6 +101,7 @@ Documentation
 - Reorganize Design documentation. :issue:`1292`
 - Improve docstring for ``categories_property``, which renders to HTML in :attr:`Calendar.categories <icalendar.cal.calendar.Calendar.categories>`, :attr:`Event.categories <icalendar.cal.event.Event.categories>`, :attr:`Journal.categories <icalendar.cal.journal.Journal.categories>`, and :attr:`Todo.categories <icalendar.cal.todo.Todo.categories>`. :issue:`1244`
 - Fixed Python object cross-references in ``icalendar.cal.component.Component._infer_value_type``. :issue:`1158`, :pr:`1344`
+- Replace the RFC quotations in the docstrings for :attr:`Alarm.REPEAT <icalendar.cal.alarm.Alarm.REPEAT>` and :attr:`Alarm.DURATION <icalendar.cal.alarm.Alarm.DURATION>` with Pythonic descriptions, including parameter notes, conformance references, and worked examples. :issue:`1244`
 
 7.0.3 (2026-03-03)
 ------------------
