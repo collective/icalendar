@@ -29,11 +29,11 @@ class vFrequency(str):
 
     def __new__(
         cls,
-        value,
-        encoding=DEFAULT_ENCODING,
+        value: Any,
+        encoding: str = DEFAULT_ENCODING,
         /,
         params: dict[str, Any] | None = None,
-    ):
+    ) -> Self:
         value = to_unicode(value, encoding=encoding)
         self = super().__new__(cls, value)
         if self not in vFrequency.frequencies:
@@ -41,11 +41,11 @@ class vFrequency(str):
         self.params = Parameters(params)
         return self
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         return self.encode(DEFAULT_ENCODING).upper()
 
     @classmethod
-    def from_ical(cls, ical):
+    def from_ical(cls, ical: Any) -> Self:
         try:
             return cls(ical.upper())
         except Exception as e:
