@@ -10,7 +10,7 @@ Change log
 Minor changes
 ~~~~~~~~~~~~~
 
-- ...
+- Add type hints to :class:`~icalendar.prop.recur.frequency.vFrequency`. :issue:`938`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
