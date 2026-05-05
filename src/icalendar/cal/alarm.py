@@ -97,10 +97,9 @@ class Alarm(Component):
         triggers, so a ``REPEAT`` of ``2`` produces three alarms in total
         (the initial trigger plus two repeats).
 
-        Conformance:
-            Defined by :rfc:`5545#section-3.8.6.2`. The property can appear
-            once in a "VALARM" component and must be paired with
-            :attr:`DURATION`.
+        Conforming with :rfc:`5545#section-3.8.6.2`, this property can appear
+        once in an :class:`~icalendar.cal.alarm.Alarm` component and must be
+        paired with :attr:`DURATION`.
 
         Example:
             Build an alarm that fires once and then repeats twice at
@@ -126,7 +125,7 @@ class Alarm(Component):
         """The delay between repeated triggers of a repeating alarm.
 
         Returns a :class:`datetime.timedelta` or ``None`` when the alarm
-        has no DURATION set. Setting this attribute accepts a
+        has no :attr:`DURATION` set. Setting this attribute accepts a
         :class:`~datetime.timedelta`; deleting it removes the property
         from the component.
 
@@ -135,9 +134,8 @@ class Alarm(Component):
         ``REPEAT`` additional triggers, each spaced by ``DURATION`` after
         the initial trigger.
 
-        Conformance:
-            Defined by :rfc:`5545#section-3.8.2.5`. The property can
-            appear once in a "VALARM" component.
+        Conforming with :rfc:`5545#section-3.8.2.5`, the ``DURATION`` property
+        can appear once in an :class:`~icalendar.cal.alarm.Alarm` component.
 
         Example:
             Pair :attr:`DURATION` with :attr:`REPEAT` to produce three
