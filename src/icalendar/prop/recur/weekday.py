@@ -93,6 +93,14 @@ class vWeekday(str):
         except Exception as e:
             raise ValueError(f"Expected weekday abbreviation, got: {ical}") from e
 
+    @property
+    def ical_value(self) -> str:
+        """The weekday value (e.g. ``MO``, ``+2TH``, ``-1SU``).
+
+        See :rfc:`5545#section-3.3.10` for the ``BYDAY`` rule grammar.
+        """
+        return str(self)
+
     @classmethod
     def parse_jcal_value(cls, value: Any) -> Self:
         """Parse a jCal value for vWeekday.
