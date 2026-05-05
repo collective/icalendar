@@ -10,7 +10,7 @@ Change log
 Minor changes
 ~~~~~~~~~~~~~
 
-- Created an :attr:`~icalendar.prop.dt.period.vPeriod.ical_value` property for the :class:`~icalendar.prop.dt.period.vPeriod` component. See :issue:`876`
+- Created an :attr:`~icalendar.prop.dt.period.vPeriod.ical_value` property for the :class:`~icalendar.prop.dt.period.vPeriod` component. :issue:`876`
 
 
 Breaking changes
