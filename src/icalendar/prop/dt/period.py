@@ -153,7 +153,7 @@ class vPeriod(TimeBase):
         return (self.start, (self.duration if self.by_duration else self.end))
 
     @property
-    def ical_value(self) -> tuple[date | datetime, date | datetime | timedelta]:
+    def ical_value(self) -> tuple[datetime, timedelta | datetime]:
         """The start and end or duration as a tuple."""
         return self.dt
 
