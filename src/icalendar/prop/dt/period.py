@@ -154,7 +154,10 @@ class vPeriod(TimeBase):
 
     @property
     def ical_value(self) -> tuple[datetime, timedelta | datetime]:
-        """The start and end or duration as a tuple."""
+        """
+        Returns the period as a tuple of its start datetime
+        and either its end datetime or duration.
+        """
         return self.dt
 
     from icalendar.param import FBTYPE
