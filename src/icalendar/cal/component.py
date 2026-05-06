@@ -490,12 +490,14 @@ class Component(CaselessDict):
     @overload
     @classmethod
     def from_ical(
-        cls, st: str | bytes, multiple: Literal[False] = False
+        cls, st: str | bytes | Path, multiple: Literal[False] = False
     ) -> Component: ...
 
     @overload
     @classmethod
-    def from_ical(cls, st: str | bytes, multiple: Literal[True]) -> list[Component]: ...
+    def from_ical(
+        cls, st: str | bytes | Path, multiple: Literal[True]
+    ) -> list[Component]: ...
 
     @classmethod
     def _get_ical_parser(cls, st: str | bytes) -> ComponentIcalParser:
@@ -512,7 +514,7 @@ class Component(CaselessDict):
 
         Parameters:
             st: iCalendar data as bytes or string, or a path to an iCalendar file as
-                :class:`pathlib.Path` or string.
+                :class:`pathlib.Path`.
             multiple: If ``True``, returns list. If ``False``, returns single component.
 
         Returns:
@@ -523,14 +525,6 @@ class Component(CaselessDict):
         """
         if isinstance(st, Path):
             st = st.read_bytes()
-        elif isinstance(st, str) and "\n" not in st and "\r" not in st:
-            path = Path(st)
-            try:
-                is_file = path.is_file()
-            except OSError:
-                is_file = False
-            if is_file:
-                st = path.read_bytes()
         parser = cls._get_ical_parser(st)
         components = parser.parse()
         if multiple:
