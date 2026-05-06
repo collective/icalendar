@@ -29,6 +29,11 @@ def test_bad_ical():
         vDatetime.from_ical("20010101T000000A")
 
 
+def test_bad_ical_short_string():
+    with pytest.raises(ValueError):
+        vDatetime.from_ical("2000")
+
+
 def test_roundtrip():
     utc = vDatetime.from_ical("20010101T000000Z")
     assert vDatetime(utc).to_ical() == b"20010101T000000Z"
