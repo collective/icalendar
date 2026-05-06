@@ -6,10 +6,13 @@ from typing import Any, ClassVar
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser_tools import to_unicode
 from icalendar.timezone import tzp
 from icalendar.timezone.tzid import is_utc
 
 from .base import TimeBase
+
+__all__ = ["vDatetime"]
 
 
 class vDatetime(TimeBase):
@@ -110,11 +113,15 @@ class vDatetime(TimeBase):
     @staticmethod
     def from_ical(ical, timezone=None):
         """Create a datetime from the RFC string."""
+        ical = to_unicode(ical)
         tzinfo = None
         if isinstance(timezone, str):
             tzinfo = tzp.timezone(timezone)
         elif timezone is not None:
             tzinfo = timezone
+
+        if len(ical) < 15 or ical[8] != "T":
+            raise ValueError(f"Wrong datetime format: {ical}")
 
         try:
             timetuple = (
@@ -192,6 +199,3 @@ class vDatetime(TimeBase):
             dt,
             params=params,
         )
-
-
-__all__ = ["vDatetime"]

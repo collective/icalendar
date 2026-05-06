@@ -10,7 +10,7 @@ Change log
 Minor changes
 ~~~~~~~~~~~~~
 
-- ...
+- Cleaned up duplicate code and fixed import ordering in :file:`datetime.py`. :pr:`1361`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
