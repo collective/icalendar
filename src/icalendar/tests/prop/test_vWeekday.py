@@ -25,3 +25,11 @@ def test_error():
     """Error: Expected weekday abbrevation, got: -100MO"""
     with pytest.raises(ValueError):
         vWeekday.from_ical("-100MO")
+
+
+def test_ical_value():
+    """ical_value property returns the weekday string value."""
+    assert vWeekday("MO").ical_value == "MO"
+    assert vWeekday("+2TH").ical_value == "+2TH"
+    assert vWeekday("-1SU").ical_value == "-1SU"
+    assert isinstance(vWeekday("MO").ical_value, str)
