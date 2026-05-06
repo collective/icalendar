@@ -95,9 +95,11 @@ class vWeekday(str):
 
     @property
     def ical_value(self) -> str:
-        """The weekday value (e.g. ``MO``, ``+2TH``, ``-1SU``).
+        """Returns the weekday value as a string, for example, ``MO``, ``+2TH``, or ``-1SU``.
 
-        See :rfc:`5545#section-3.3.10` for the ``BYDAY`` rule grammar.
+        See Also:
+
+            :rfc:`5545#section-3.3.10` for the ``BYDAY`` rule grammar.
         """
         return str(self)
 
