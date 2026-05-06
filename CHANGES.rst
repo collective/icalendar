@@ -10,7 +10,8 @@ Change log
 Minor changes
 ~~~~~~~~~~~~~
 
-- ...
+- Cleaned up duplicate code and fixed import ordering in :file:`datetime.py`. :pr:`1361`
+- Hardened :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>` by requiring an explicit :class:`pathlib.Path` object to read from the filesystem, preventing unintended file access from string inputs. :pr:`1362`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
