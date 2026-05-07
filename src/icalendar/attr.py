@@ -1498,7 +1498,7 @@ Example:
 )
 
 
-def timezone_datetime_property(name: str, docs: str):
+def timezone_datetime_property(name: str, docs: str) -> property:
     """Create a property to access the values with a proper timezone."""
 
     return single_utc_property(name, docs)
@@ -2376,7 +2376,7 @@ def _del_concepts(self: Component):
 concepts_property = property(_get_concepts, _set_concepts, _del_concepts)
 
 
-def multi_string_property(name: str, doc: str):
+def multi_string_property(name: str, doc: str) -> property:
     """A property for an iCalendar Property that can occur multiple times."""
 
     def fget(self: Component) -> list[str]:

@@ -120,7 +120,7 @@ class ZONEINFO(TZProvider):
         return True
 
 
-def pickle_tzicalvtz(tzicalvtz: _tzicalvtz):
+def pickle_tzicalvtz(tzicalvtz: _tzicalvtz) -> tuple[type[_tzicalvtz], tuple]:
     """Because we use dateutil.tzical, we need to make it pickle-able."""
     return _tzicalvtz, (tzicalvtz._tzid, tzicalvtz._comps)  # noqa: SLF001
 
@@ -128,7 +128,7 @@ def pickle_tzicalvtz(tzicalvtz: _tzicalvtz):
 copyreg.pickle(_tzicalvtz, pickle_tzicalvtz)
 
 
-def pickle_rrule_with_cache(self: rrule):
+def pickle_rrule_with_cache(self: rrule) -> tuple[functools.partial, tuple]:
     """Make sure we can also pickle rrules that cache.
 
     This is mainly copied from rrule.replace.
@@ -150,7 +150,7 @@ def pickle_rrule_with_cache(self: rrule):
 copyreg.pickle(rrule, pickle_rrule_with_cache)
 
 
-def pickle_rruleset_with_cache(rs: rruleset):
+def pickle_rruleset_with_cache(rs: rruleset) -> tuple[type[unpickle_rruleset_with_cache], tuple]:
     """Pickle an rruleset."""
     return unpickle_rruleset_with_cache, (
         rs._rrule,  # noqa: SLF001
@@ -161,7 +161,7 @@ def pickle_rruleset_with_cache(rs: rruleset):
     )
 
 
-def unpickle_rruleset_with_cache(rrule, rdate, exrule, exdate, cache):
+def unpickle_rruleset_with_cache(rrule, rdate, exrule, exdate, cache) -> rruleset:
     """unpickling the rruleset."""
     rs = rruleset(cache)
     for o in rrule:

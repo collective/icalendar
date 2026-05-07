@@ -50,7 +50,7 @@ def TestOneInput(data):
     print("--- end calendar ---")
 
 
-def main():
+def main() -> None:
     atheris.Setup(sys.argv, TestOneInput)
     atheris.Fuzz()
 
