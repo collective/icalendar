@@ -40,6 +40,11 @@ class vDDDLists:
         dts_ical = (from_unicode(dt.to_ical()) for dt in self.dts)
         return b",".join(dts_ical)
 
+    @property
+    def ical_value(self) -> list[vDDDTypes]:
+        """List of date/time values according to :rfc:`5545`"""
+        return self.dts
+
     @staticmethod
     def from_ical(ical, timezone=None):
         out = []

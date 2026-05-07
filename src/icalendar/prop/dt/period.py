@@ -122,6 +122,11 @@ class vPeriod(TimeBase):
             return other.overlaps(self)
         return self.start <= other.start < self.end
 
+    @property
+    def ical_value(self) -> tuple[datetime, datetime | timedelta]:
+        """Period value type according to :rfc:`5545#section-3.3.9`"""
+        return (self.start, self.duration if self.by_duration else self.end)
+
     def to_ical(self):
         if self.by_duration:
             return (
