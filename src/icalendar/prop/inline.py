@@ -29,6 +29,11 @@ class vInline(str):
     def to_ical(self) -> bytes:
         return self.encode(DEFAULT_ENCODING)
 
+    @property
+    def ical_value(self) -> str:
+        """Inline value type (unparsed text)"""
+        return str(self)
+
     @classmethod
     def from_ical(cls, ical: ICAL_TYPE) -> Self:
         return cls(ical)

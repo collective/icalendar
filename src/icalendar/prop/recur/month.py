@@ -61,6 +61,11 @@ class vMonth(int):
         """The ical representation."""
         return str(self).encode("utf-8")
 
+    @property
+    def ical_value(self) -> int:
+        """BYMONTH value type according to :rfc:`5545#section-3.3.10` and :rfc:`7529`"""
+        return int(self)
+
     @classmethod
     def from_ical(cls, ical: str):
         return cls(ical)
