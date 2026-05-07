@@ -83,6 +83,11 @@ class vDDDTypes(TimeBase):
         """Return the ical representation."""
         return self.to_property_type().to_ical()
 
+    @property
+    def ical_value(self) -> DT_TYPE:
+        """Combined date/time value type according to :rfc:`5545`"""
+        return self.dt
+
     @classmethod
     def from_ical(cls, ical, timezone=None):
         if isinstance(ical, cls):

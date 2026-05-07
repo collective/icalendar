@@ -186,6 +186,11 @@ class vRecur(CaselessDict):
 
         return b";".join(result)
 
+    @property
+    def ical_value(self) -> dict[str, Any]:
+        """Recurrence rule value type according to :rfc:`5545#section-3.3.10`"""
+        return dict(self)
+
     @classmethod
     def parse_type(cls, key, values):
         # integers

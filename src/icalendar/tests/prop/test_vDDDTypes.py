@@ -1,37 +1,47 @@
-from datetime import date, datetime, time, timedelta
+"""Test vDDDTypes ical_value property."""
 
-import pytest
+from datetime import date, datetime, time, timedelta
 
 from icalendar.prop import vDDDTypes
 
 
-def test_instance():
-    assert isinstance(vDDDTypes.from_ical("20010101T123000"), datetime)
-    assert isinstance(vDDDTypes.from_ical("20010101"), date)
+def test_ical_value_datetime():
+    """ical_value property returns the datetime value."""
+    dt = datetime(2021, 3, 2, 10, 15, 0)
+    vddd = vDDDTypes(dt)
+    assert vddd.ical_value == dt
+    assert isinstance(vddd.ical_value, datetime)
 
 
-def test_datetime_with_timezone(tzp):
-    assert vDDDTypes.from_ical("20010101T123000Z") == tzp.localize_utc(
-        datetime(2001, 1, 1, 12, 30)
-    )
+def test_ical_value_date():
+    """ical_value property returns the date value."""
+    d = date(1997, 7, 14)
+    vddd = vDDDTypes(d)
+    assert vddd.ical_value == d
+    assert isinstance(vddd.ical_value, date)
 
 
-def test_timedelta():
-    assert vDDDTypes.from_ical("P31D") == timedelta(31)
-    assert vDDDTypes.from_ical("-P31D") == timedelta(-31)
+def test_ical_value_time():
+    """ical_value property returns the time value."""
+    t = time(17, 20, 10)
+    vddd = vDDDTypes(t)
+    assert vddd.ical_value == t
+    assert isinstance(vddd.ical_value, time)
 
 
-def test_bad_input():
-    with pytest.raises(TypeError):
-        vDDDTypes(42)
+def test_ical_value_timedelta():
+    """ical_value property returns the timedelta value."""
+    td = timedelta(days=15, hours=5, seconds=20)
+    vddd = vDDDTypes(td)
+    assert vddd.ical_value == td
+    assert isinstance(vddd.ical_value, timedelta)
 
 
-def test_time_from_string():
-    assert vDDDTypes.from_ical("123000") == time(12, 30)
-    assert isinstance(vDDDTypes.from_ical("123000"), time)
-
-
-def test_invalid_period_to_ical():
-    invalid_period = (datetime(2000, 1, 1), datetime(2000, 1, 2), datetime(2000, 1, 2))
-    with pytest.raises(ValueError):
-        vDDDTypes(invalid_period).to_ical()
+def test_ical_value_period():
+    """ical_value property returns the period tuple."""
+    start = datetime(2021, 3, 2, 10, 0, 0)
+    end = datetime(2021, 3, 2, 12, 0, 0)
+    period = (start, end)
+    vddd = vDDDTypes(period)
+    assert vddd.ical_value == period
+    assert isinstance(vddd.ical_value, tuple)

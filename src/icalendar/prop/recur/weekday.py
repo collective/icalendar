@@ -86,6 +86,11 @@ class vWeekday(str):
     def to_ical(self):
         return self.encode(DEFAULT_ENCODING).upper()
 
+    @property
+    def ical_value(self) -> str:
+        """Weekday value type according to :rfc:`5545#section-3.3.10`"""
+        return str(self)
+
     @classmethod
     def from_ical(cls, ical):
         try:
