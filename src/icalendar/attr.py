@@ -1583,12 +1583,12 @@ def rfc_7953_end_property(self) -> timedelta | None:
 
 
 @rfc_7953_end_property.setter
-def rfc_7953_end_property(self, value: datetime):
+def rfc_7953_end_property(self, value: datetime) -> None:
     self.DTEND = value
 
 
 @rfc_7953_end_property.deleter
-def rfc_7953_end_property(self):
+def rfc_7953_end_property(self) -> None:
     del self.DTEND
 
 
