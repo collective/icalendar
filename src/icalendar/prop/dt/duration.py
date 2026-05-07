@@ -123,6 +123,11 @@ class vDuration(TimeBase):
             + str(timepart).encode("utf-8")
         )
 
+    @property
+    def ical_value(self) -> timedelta:
+        """DURATION property type according to :rfc:`5545#section-3.3.6`"""
+        return self.td
+
     @staticmethod
     def from_ical(ical):
         match = DURATION_REGEX.match(ical)

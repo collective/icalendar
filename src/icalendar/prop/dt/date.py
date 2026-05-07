@@ -74,6 +74,11 @@ class vDate(TimeBase):
         s = f"{self.dt.year:04}{self.dt.month:02}{self.dt.day:02}"
         return s.encode("utf-8")
 
+    @property
+    def ical_value(self) -> date:
+        """DATE property type according to :rfc:`5545#section-3.3.4`"""
+        return self.dt
+
     @staticmethod
     def from_ical(ical):
         try:

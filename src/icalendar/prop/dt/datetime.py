@@ -107,6 +107,11 @@ class vDatetime(TimeBase):
             s += "Z"
         return s.encode("utf-8")
 
+    @property
+    def ical_value(self) -> datetime:
+        """DATE-TIME property type according to :rfc:`5545#section-3.3.5`"""
+        return self.dt
+
     @staticmethod
     def from_ical(ical, timezone=None):
         """Create a datetime from the RFC string."""
