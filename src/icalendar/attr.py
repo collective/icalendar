@@ -989,7 +989,7 @@ def property_get_duration(self: Component) -> timedelta | None:
     return result
 
 
-def property_set_duration(self: Component, value: timedelta | None):
+def property_set_duration(self: Component, value: timedelta | None) -> None:
     """Setter for property DURATION."""
     if value is None:
         self.pop("duration", None)
@@ -1001,7 +1001,7 @@ def property_set_duration(self: Component, value: timedelta | None):
     self.pop("DUE")
 
 
-def property_del_duration(self: Component):
+def property_del_duration(self: Component) -> None:
     """Delete property DURATION."""
     self.pop("DURATION")
 
