@@ -95,6 +95,11 @@ class vGeo:
     def to_ical(self) -> str:
         return f"{self.latitude};{self.longitude}"
 
+    @property
+    def ical_value(self) -> tuple[float, float]:
+        """GEO property type according to :rfc:`5545#section-3.4.1`"""
+        return (self.latitude, self.longitude)
+
     @staticmethod
     def from_ical(ical: str) -> tuple[float, float]:
         try:

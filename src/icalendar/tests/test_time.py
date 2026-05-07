@@ -75,3 +75,11 @@ def test_localized_time_utc(tzp):
 
     assert isinstance(localized, time)
     assert str(localized.tzinfo) == "UTC"
+
+
+def test_ical_value():
+    """ical_value property returns the time value."""
+    t = time(17, 20, 10)
+    vt = vTime(t)
+    assert vt.ical_value == t
+    assert isinstance(vt.ical_value, time)

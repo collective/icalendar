@@ -148,6 +148,11 @@ class vTime(TimeBase):
             value += "Z"
         return value
 
+    @property
+    def ical_value(self) -> time:
+        """TIME property type according to :rfc:`5545#section-3.3.12`"""
+        return self.dt
+
     def is_utc(self) -> bool:
         """Whether this time is UTC."""
         return self.params.is_utc() or is_utc(self.dt)

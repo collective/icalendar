@@ -80,6 +80,11 @@ class vUTCOffset:
         """Return the ical representation."""
         return self.format("")
 
+    @property
+    def ical_value(self) -> timedelta:
+        """UTC-OFFSET property type according to :rfc:`5545#section-3.3.14`"""
+        return self.td
+
     def format(self, divider: str = "") -> str:
         """Represent the value with a possible divider.
 
