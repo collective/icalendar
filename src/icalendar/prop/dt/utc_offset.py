@@ -76,6 +76,32 @@ class vUTCOffset:
         self.td = td
         self.params = Parameters(params)
 
+    @property
+    def ical_value(self) -> timedelta:
+        """Return the Python timedelta value.
+
+        This property provides access to the underlying :class:`datetime.timedelta`
+        object representing the UTC offset.
+
+        Returns:
+            timedelta: The UTC offset as a timedelta object.
+                Positive values indicate offsets ahead of UTC (east).
+                Negative values indicate offsets behind UTC (west).
+
+        Example:
+            >>> from icalendar.prop import vUTCOffset
+            >>> from datetime import timedelta
+            >>> offset = vUTCOffset(timedelta(hours=-5))
+            >>> offset.ical_value
+            datetime.timedelta(days=-1, seconds=68400)
+            >>> offset.ical_value.total_seconds() / 3600
+            -5.0
+
+        See Also:
+            :rfc:`5545#section-3.3.14` for the UTC-OFFSET value type specification.
+        """
+        return self.td
+
     def to_ical(self) -> str:
         """Return the ical representation."""
         return self.format("")
