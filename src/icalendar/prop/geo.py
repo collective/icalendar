@@ -92,6 +92,29 @@ class vGeo:
         self.longitude = longitude
         self.params = Parameters(params)
 
+    @property
+    def ical_value(self) -> tuple[float, float]:
+        """Return the Python tuple value (latitude, longitude).
+
+        This property provides access to the underlying geographic coordinates
+        as a tuple of floats.
+
+        Returns:
+            tuple[float, float]: A tuple of (latitude, longitude) in decimal degrees.
+                Latitude ranges from -90 to 90 (south to north).
+                Longitude ranges from -180 to 180 (west to east).
+
+        Example:
+            >>> from icalendar.prop import vGeo
+            >>> geo = vGeo((37.386013, -122.082932))
+            >>> geo.ical_value
+            (37.386013, -122.082932)
+
+        See Also:
+            :rfc:`5545#section-3.8.1.6` for the GEO property specification.
+        """
+        return (self.latitude, self.longitude)
+
     def to_ical(self) -> str:
         return f"{self.latitude};{self.longitude}"
 
