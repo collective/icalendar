@@ -172,6 +172,32 @@ class vRecur(CaselessDict):
         super().__init__(*args, **kwargs)
         self.params = Parameters(params)
 
+    @property
+    def ical_value(self) -> dict[str, list[Any]]:
+        """Return the Python dict value.
+
+        This property provides access to the underlying recurrence rule as a dictionary.
+        Each key represents a recurrence rule part (FREQ, COUNT, INTERVAL, etc.) and
+        each value is a list of the corresponding values.
+
+        Returns:
+            dict[str, list[Any]]: The recurrence rule dictionary with rule parts as keys
+                and lists of values.
+
+        Example:
+            >>> from icalendar.prop import vRecur
+            >>> rrule = vRecur.from_ical('FREQ=DAILY;COUNT=10')
+            >>> rrule.ical_value
+            {'FREQ': ['DAILY'], 'COUNT': [10]}
+            >>> rrule2 = vRecur.from_ical('FREQ=WEEKLY;BYDAY=MO,WE,FR')
+            >>> rrule2.ical_value
+            {'FREQ': ['WEEKLY'], 'BYDAY': ['MO', 'WE', 'FR']}
+
+        See Also:
+            :rfc:`5545#section-3.3.10` for the RECUR value type specification.
+        """
+        return dict(self)
+
     def to_ical(self):
         result = []
         for key, vals in self.sorted_items():
