@@ -95,6 +95,32 @@ class vDuration(TimeBase):
         self.td = td
         self.params = Parameters(params)
 
+    @property
+    def ical_value(self) -> timedelta:
+        """Return the Python timedelta value.
+
+        This property provides access to the underlying :class:`datetime.timedelta`
+        object representing the duration.
+
+        Returns:
+            timedelta: The duration as a timedelta object.
+
+        Example:
+            >>> from icalendar.prop import vDuration
+            >>> from datetime import timedelta
+            >>> dur = vDuration(timedelta(days=15, hours=5, seconds=20))
+            >>> dur.ical_value
+            datetime.timedelta(days=15, seconds=18020)
+            >>> dur.ical_value.days
+            15
+            >>> dur.ical_value.total_seconds()
+            1314020.0
+
+        See Also:
+            :rfc:`5545#section-3.3.6` for the DURATION value type specification.
+        """
+        return self.td
+
     def to_ical(self):
         sign = ""
         td = self.td
