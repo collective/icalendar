@@ -96,6 +96,33 @@ class vDatetime(TimeBase):
         self.params = Parameters(params)
         self.params.update_tzid_from(dt)
 
+    @property
+    def ical_value(self) -> datetime:
+        """Return the Python datetime value.
+
+        This property provides access to the underlying :class:`datetime.datetime`
+        object that this iCalendar DATE-TIME value wraps.
+
+        Returns:
+            datetime: The Python datetime object, which may be timezone-aware
+                or timezone-naive depending on how the vDatetime was created.
+
+        Example:
+            >>> from icalendar.prop import vDatetime
+            >>> from datetime import datetime
+            >>> from zoneinfo import ZoneInfo
+            >>> dt = vDatetime(datetime(2021, 3, 2, 10, 15))
+            >>> dt.ical_value
+            datetime.datetime(2021, 3, 2, 10, 15)
+            >>> dt_tz = vDatetime(datetime(2021, 3, 2, 10, 15, tzinfo=ZoneInfo('America/New_York')))
+            >>> dt_tz.ical_value.tzname()
+            'EST'
+
+        See Also:
+            :rfc:`5545#section-3.3.5` for the DATE-TIME value type specification.
+        """
+        return self.dt
+
     def to_ical(self):
         dt = self.dt
 
