@@ -152,6 +152,26 @@ class vTime(TimeBase):
         """Whether this time is UTC."""
         return self.params.is_utc() or is_utc(self.dt)
 
+    @property
+    def ical_value(self) -> time:
+        """Return the Python time value.
+
+        This property provides access to the underlying Python :class:`datetime.time`
+        object that this iCalendar TIME value wraps.
+
+        Returns:
+            time: The Python time object, potentially with timezone information.
+
+        Example:
+            >>> from datetime import time
+            >>> vTime(time(12, 30, 0)).ical_value
+            datetime.time(12, 30, 0)
+
+        See Also:
+            :rfc:`5545#section-3.3.12` for the TIME value type specification.
+        """
+        return self.dt
+
     @staticmethod
     def from_ical(ical: str, timezone: str | None | tzinfo = None) -> time:
         """Convert an ical string into a time.
