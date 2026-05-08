@@ -70,6 +70,30 @@ class vDate(TimeBase):
         self.dt = dt
         self.params = Parameters(params or {})
 
+    @property
+    def ical_value(self) -> date:
+        """Return the Python date value.
+
+        This property provides access to the underlying :class:`datetime.date`
+        object that this iCalendar DATE value wraps.
+
+        Returns:
+            date: The Python date object.
+
+        Example:
+            >>> from icalendar.prop import vDate
+            >>> from datetime import date
+            >>> d = vDate(date(1997, 7, 14))
+            >>> d.ical_value
+            datetime.date(1997, 7, 14)
+            >>> d.ical_value.year
+            1997
+
+        See Also:
+            :rfc:`5545#section-3.3.4` for the DATE value type specification.
+        """
+        return self.dt
+
     def to_ical(self):
         s = f"{self.dt.year:04}{self.dt.month:02}{self.dt.day:02}"
         return s.encode("utf-8")
