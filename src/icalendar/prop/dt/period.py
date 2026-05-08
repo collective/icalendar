@@ -117,6 +117,38 @@ class vPeriod(TimeBase):
         self.by_duration = by_duration
         self.duration = duration
 
+    @property
+    def ical_value(self) -> tuple[datetime, datetime | timedelta]:
+        """Return the Python tuple value (start, end_or_duration).
+
+        This property provides access to the underlying period representation
+        as a tuple. The second element is either an end datetime (explicit period)
+        or a duration timedelta (period by duration).
+
+        Returns:
+            tuple[datetime, datetime | timedelta]: A tuple of (start, end_or_duration).
+                If the period was created with an end datetime, returns (start, end).
+                If the period was created with a duration, returns (start, duration).
+
+        Example:
+            >>> from icalendar.prop import vPeriod
+            >>> from datetime import datetime, timedelta
+            >>> # Explicit period (start/end)
+            >>> p1 = vPeriod((datetime(1997, 1, 1, 18, 0, 0), datetime(1997, 1, 2, 7, 0, 0)))
+            >>> p1.ical_value
+            (datetime.datetime(1997, 1, 1, 18, 0), datetime.datetime(1997, 1, 2, 7, 0))
+            >>> # Period by duration
+            >>> p2 = vPeriod((datetime(1997, 1, 1, 18, 0, 0), timedelta(hours=5, minutes=30)))
+            >>> p2.ical_value
+            (datetime.datetime(1997, 1, 1, 18, 0), datetime.timedelta(seconds=19800))
+
+        See Also:
+            :rfc:`5545#section-3.3.9` for the PERIOD value type specification.
+        """
+        if self.by_duration:
+            return (self.start, self.duration)
+        return (self.start, self.end)
+
     def overlaps(self, other):
         if self.start > other.start:
             return other.overlaps(self)
