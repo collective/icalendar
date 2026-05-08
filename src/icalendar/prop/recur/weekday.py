@@ -83,6 +83,34 @@ class vWeekday(str):
         self.params = Parameters(params)
         return self
 
+    @property
+    def ical_value(self) -> str:
+        """Return the Python string value.
+
+        This property provides access to the underlying weekday string value,
+        which may be a simple weekday (e.g., "MO") or a weekday with relative
+        position (e.g., "2FR" for second Friday, "-1SU" for last Sunday).
+
+        Returns:
+            str: The weekday string value.
+
+        Example:
+            >>> from icalendar.prop import vWeekday
+            >>> wd = vWeekday("MO")
+            >>> wd.ical_value
+            'MO'
+            >>> wd2 = vWeekday("2FR")
+            >>> wd2.ical_value
+            '2FR'
+            >>> wd3 = vWeekday("-1SU")
+            >>> wd3.ical_value
+            '-1SU'
+
+        See Also:
+            :rfc:`5545#section-3.3.10` for the weekday value type specification.
+        """
+        return str(self)
+
     def to_ical(self):
         return self.encode(DEFAULT_ENCODING).upper()
 
