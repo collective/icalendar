@@ -57,6 +57,34 @@ class vMonth(int):
         self.params = Parameters(params)
         return self
 
+    @property
+    def ical_value(self) -> int:
+        """Return the Python int value.
+
+        This property provides access to the underlying month number as an integer.
+        The leap month indicator is not included in the integer value; use the
+        :attr:`leap` property to check if this is a leap month.
+
+        Returns:
+            int: The month number (1-12 for standard months).
+
+        Example:
+            >>> from icalendar.prop import vMonth
+            >>> m = vMonth(5)
+            >>> m.ical_value
+            5
+            >>> m_leap = vMonth("5L")
+            >>> m_leap.ical_value
+            5
+            >>> m_leap.leap
+            True
+
+        See Also:
+            :rfc:`5545#section-3.3.10` for the BYMONTH value type specification.
+            :rfc:`7529` for leap month support.
+        """
+        return int(self)
+
     def to_ical(self) -> bytes:
         """The ical representation."""
         return str(self).encode("utf-8")
