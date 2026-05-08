@@ -41,6 +41,31 @@ class vFrequency(str):
         self.params = Parameters(params)
         return self
 
+    @property
+    def ical_value(self) -> str:
+        """Return the Python string value.
+
+        This property provides access to the underlying frequency string value,
+        which must be one of the valid recurrence frequencies defined in RFC 5545.
+
+        Returns:
+            str: The frequency string value (SECONDLY, MINUTELY, HOURLY, DAILY,
+                WEEKLY, MONTHLY, or YEARLY).
+
+        Example:
+            >>> from icalendar.prop import vFrequency
+            >>> freq = vFrequency("DAILY")
+            >>> freq.ical_value
+            'DAILY'
+            >>> freq2 = vFrequency("WEEKLY")
+            >>> freq2.ical_value
+            'WEEKLY'
+
+        See Also:
+            :rfc:`5545#section-3.3.10` for the FREQ value type specification.
+        """
+        return str(self)
+
     def to_ical(self):
         return self.encode(DEFAULT_ENCODING).upper()
 
