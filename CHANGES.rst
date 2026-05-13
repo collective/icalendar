@@ -10,7 +10,7 @@ Change log
 Minor changes
 ~~~~~~~~~~~~~
 
-- ...
+- Bump PyPy from 3.10 to 3.11 for testing. :pr:`1383`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
