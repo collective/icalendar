@@ -34,7 +34,7 @@ Bug fixes
 Documentation
 ~~~~~~~~~~~~~
 
-- ...
+- Replace the RFC quotations in the docstrings for :attr:`Alarm.REPEAT <icalendar.cal.alarm.Alarm.REPEAT>` and :attr:`Alarm.DURATION <icalendar.cal.alarm.Alarm.DURATION>` with Pythonic descriptions, including parameter notes, conformance references, and worked examples. :issue:`1244`
 
 7.1.0 (2026-04-30)
 ------------------
