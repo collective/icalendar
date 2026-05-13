@@ -30,7 +30,7 @@ Bug fixes
   :attr:`vBinary.from_ical() <icalendar.prop.binary.vBinary.from_ical>`
   and reject malformed Base64 input instead of silently accepting invalid
   characters. :pr:`1349`
-- Add strict length validation to :method:`vDatetime.from_ical() <icalendar.prop.dt.datetime.vDatetime.from_ical>`. :pr:`1361`
+- Add strict length validation to :meth:`vDatetime.from_ical() <icalendar.prop.dt.datetime.vDatetime.from_ical>`. :pr:`1361`
 
 Documentation
 ~~~~~~~~~~~~~
