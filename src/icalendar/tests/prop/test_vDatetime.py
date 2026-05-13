@@ -29,9 +29,15 @@ def test_bad_ical():
         vDatetime.from_ical("20010101T000000A")
 
 
-def test_bad_ical_short_string():
-    with pytest.raises(ValueError):
-        vDatetime.from_ical("2000")
+def test_from_ical_form_3():
+    # TZID=America/New_York:19980119T020000
+    dt = vDatetime.from_ical("TZID=America/New_York:19980119T020000")
+    assert dt == datetime(1998, 1, 19, 2, 0, 0)
+
+
+def test_from_ical_no_t():
+    with pytest.raises(ValueError, match="Wrong datetime format: 20010101-000000"):
+        vDatetime.from_ical("20010101-000000")
 
 
 def test_roundtrip():

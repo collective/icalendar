@@ -12,8 +12,6 @@ from icalendar.timezone.tzid import is_utc
 
 from .base import TimeBase
 
-__all__ = ["vDatetime"]
-
 
 class vDatetime(TimeBase):
     """Date-Time
@@ -120,23 +118,27 @@ class vDatetime(TimeBase):
         elif timezone is not None:
             tzinfo = timezone
 
-        if len(ical) < 15 or ical[8] != "T":
+        # Extract the value part if parameters are present (Form #3)
+        # Form #3: TZID=America/New_York:19980119T020000
+        ical_value = ical.rpartition(":")[2]
+
+        if len(ical_value) < 15 or ical_value[8] != "T":
             raise ValueError(f"Wrong datetime format: {ical}")
 
         try:
             timetuple = (
-                int(ical[:4]),  # year
-                int(ical[4:6]),  # month
-                int(ical[6:8]),  # day
-                int(ical[9:11]),  # hour
-                int(ical[11:13]),  # minute
-                int(ical[13:15]),  # second
+                int(ical_value[:4]),  # year
+                int(ical_value[4:6]),  # month
+                int(ical_value[6:8]),  # day
+                int(ical_value[9:11]),  # hour
+                int(ical_value[11:13]),  # minute
+                int(ical_value[13:15]),  # second
             )
             if tzinfo:
                 return tzp.localize(datetime(*timetuple), tzinfo)
-            if not ical[15:]:
+            if not ical_value[15:]:
                 return datetime(*timetuple)
-            if ical[15:16] == "Z":
+            if ical_value[15:16] == "Z":
                 return tzp.localize_utc(datetime(*timetuple))
         except Exception as e:
             raise ValueError(f"Wrong datetime format: {ical}") from e
@@ -199,3 +201,6 @@ class vDatetime(TimeBase):
             dt,
             params=params,
         )
+
+
+__all__ = ["vDatetime"]
