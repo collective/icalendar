@@ -40,6 +40,12 @@ def test_from_ical_no_t():
         vDatetime.from_ical("20010101-000000")
 
 
+def test_from_ical_wrong_t_position():
+    # T is at index 9 instead of 8
+    with pytest.raises(ValueError, match="Wrong datetime format: 200101011T00000"):
+        vDatetime.from_ical("200101011T00000")
+
+
 def test_roundtrip():
     utc = vDatetime.from_ical("20010101T000000Z")
     assert vDatetime(utc).to_ical() == b"20010101T000000Z"
