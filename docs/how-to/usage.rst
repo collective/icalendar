@@ -32,10 +32,10 @@ The following example shows how to set two properties for it, then display them.
 
 .. note::
 
-    To add components to the calendar, create the :ref:`subcomponent <subcomponents>`, then add it via :meth:`icalendar.cal.component.Component.add`.
+    To add components to the calendar, create the :ref:`subcomponent <subcomponents>`, then add it via :meth:`icalendar.cal.component.Component.add()`.
     The example above adds a string, but not a ``vText`` component.
 
-You can generate a string for a file with the :meth:`icalendar.cal.component.Component.to_ical` method.
+You can generate a string for a file with the :meth:`icalendar.cal.component.Component.to_ical()` method.
 
 .. code-block:: pycon
 
@@ -51,7 +51,7 @@ The rendered view is easier to read.
     SUMMARY:Python meeting about calendaring
     END:VCALENDAR
 
-You can define a function to display :meth:`icalendar.cal.component.Component.to_ical` output, as shown in the following example.
+You can define a function to display :meth:`icalendar.cal.component.Component.to_ical()` output, as shown in the following example.
 
 .. code-block:: pycon
 
@@ -70,7 +70,7 @@ You can set multiple properties, as shown in the following example.
     ATTENDEE:MAILTO:test@example.com
     END:VCALENDAR
 
-If you don't want to care about whether a property value is a list or a single value, use the :meth:`icalendar.cal.component.Component.add` method.
+If you don't want to care about whether a property value is a list or a single value, use the :meth:`icalendar.cal.component.Component.add()` method.
 It will automatically convert the property to a list of values if more than one value is added.
 Here is an example.
 
@@ -145,7 +145,7 @@ This is impractical if you want to use the data for further computation.
 The datetime format, for example, looks like `20050404T080000`.
 icalendar can parse and generate iCalendar formatted strings.
 
-You can either use the :meth:`icalendar.cal.component.Component.add` method to do the work, or you can do it manually.
+You can either use the :meth:`icalendar.cal.component.Component.add()` method to do the work, or you can do it manually.
 
 To add a datetime value, you can use Python's built in :mod:`datetime` types, and the set the encode parameter to ``True``, and it will convert to the type defined in the specification.
 
@@ -170,11 +170,11 @@ Thus, to parse it manually, you would do the following.
     >>> vDatetime(now).to_ical()
     b'20050404T080000'
 
-To summarize, initialize the object with a Python built in type, then call the :meth:`icalendar.cal.component.Component.to_ical` method on the object.
+To summarize, initialize the object with a Python built in type, then call the :meth:`icalendar.cal.component.Component.to_ical()` method on the object.
 That will return an iCal-encoded string.
 
 You can do it the other way around, too.
-To parse an encoded string, call the :meth:`icalendar.cal.component.Component.from_ical` method, and it will return an instance of the corresponding Python type.
+To parse an encoded string, call the :meth:`icalendar.cal.component.Component.from_ical()` method, and it will return an instance of the corresponding Python type.
 
 .. code-block:: pycon
 
@@ -184,7 +184,7 @@ To parse an encoded string, call the :meth:`icalendar.cal.component.Component.fr
     >>> vDatetime.from_ical("20050404T080000Z")
     datetime.datetime(2005, 4, 4, 8, 0, tzinfo=ZoneInfo(key='UTC'))
 
-You can also choose to use the :meth:`icalendar.cal.component.Component.decoded` method, which will return a decoded value directly.
+You can also choose to use the :meth:`icalendar.cal.component.Component.decoded()` method, which will return a decoded value directly.
 
 
 .. code-block:: pycon
@@ -216,7 +216,7 @@ For example, for date or time related properties, the value type and timezone id
     ...     in lines)
 
 
-You can also add arbitrary property parameters by passing a parameters dictionary to the :meth:`icalendar.cal.component.Component.add` method as shown.
+You can also add arbitrary property parameters by passing a parameters dictionary to the :meth:`icalendar.cal.component.Component.add()` method as shown.
 
 .. code-block:: pycon
 
@@ -380,7 +380,7 @@ To demonstrate icalendar's flexibility, the following example creates an event t
 .. versionchanged:: 6.0.0
 
 Version 6 of icalendar switches the default timezone implementation from ``pytz`` to :mod:`zoneinfo`.
-This only affects you if you parse icalendar objects with :meth:`from_ical <icalendar.cal.component.Component.from_ical>`.
+This only affects you if you parse icalendar objects with :meth:`from_ical <icalendar.cal.component.Component.from_ical()>`.
 The functionality is extended and tested since 6.0.0 with both timezone implementations ``pytz`` and :mod:`zoneinfo`.
 
 Since 6.0.0 by default, :mod:`zoneinfo` timezones are created.
@@ -578,12 +578,12 @@ To print all events of an iCalendar, iterate through them and print each as show
 
     -   :attr:`Calendar.events <icalendar.cal.calendar.Calendar.events>`
     -   :attr:`icalendar.cal.component.Component.subcomponents`
-    -   :meth:`icalendar.cal.component.Component.walk`
+    -   :meth:`icalendar.cal.component.Component.walk()`
 
 Modify specific events
 ''''''''''''''''''''''
 
-To find :attr:`icalendar.cal.component.Component.subcomponents` that match specific requirements, use :meth:`icalendar.cal.component.Component.walk`.
+To find :attr:`icalendar.cal.component.Component.subcomponents` that match specific requirements, use :meth:`icalendar.cal.component.Component.walk()`.
 
 The following example filters through all subcomponents of the calendar, and if they have a specific word ``Christmas`` in their summary, makes the summary uppercase.
 
@@ -624,4 +624,4 @@ The following example creates a calendar with an event in ``Europe/Zurich``, and
     >>> 'Europe/Zurich' in [tz.tz_name for tz in calendar.timezones]
     True
 
-After running :meth:`icalendar.cal.calendar.Calendar.add_missing_timezones`, the calendar now contains all needed timezones and can be saved as a file with :meth:`icalendar.cal.component.Component.to_ical`.
+After running :meth:`icalendar.cal.calendar.Calendar.add_missing_timezones()`, the calendar now contains all needed timezones and can be saved as a file with :meth:`icalendar.cal.component.Component.to_ical()`.
