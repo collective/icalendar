@@ -10,7 +10,8 @@ Change log
 Minor changes
 ~~~~~~~~~~~~~
 
-- ...
+- Bump PyPy from 3.10 to 3.11 for testing. :pr:`1383`
+- Created an :attr:`~icalendar.prop.dt.period.vPeriod.ical_value` property for the :class:`~icalendar.prop.dt.period.vPeriod` component. :issue:`876`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~

@@ -130,7 +130,7 @@ def generate_matrix(git_ref, review):
     matrix.insert(
         0,
         {
-            "python_version": "pypy3.10",
+            "python_version": "pypy3.11",
             "test_name": "pypy3",
             "skip": not run_all_jobs,
         },
