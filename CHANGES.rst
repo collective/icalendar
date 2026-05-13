@@ -10,7 +10,8 @@ Change log
 Minor changes
 ~~~~~~~~~~~~~
 
-- Cleaned up duplicate code and fixed import ordering in :file:`datetime.py`. :pr:`1361`
+- Bump PyPy from 3.10 to 3.11 for testing. :pr:`1383`
+- Created an :attr:`~icalendar.prop.dt.period.vPeriod.ical_value` property for the :class:`~icalendar.prop.dt.period.vPeriod` component. :issue:`876`
 
 Breaking changes
 ~~~~~~~~~~~~~~~~
@@ -20,7 +21,7 @@ Breaking changes
 New features
 ~~~~~~~~~~~~
 
-- ...
+- Created a :meth:`~icalendar.prop.recur.weekday.vWeekday.ical_value` property for the :class:`~icalendar.prop.recur.weekday.vWeekday` component, mirroring the existing pattern on :class:`~icalendar.prop.boolean.vBoolean`. :pr:`1360`
 
 Bug fixes
 ~~~~~~~~~
@@ -33,7 +34,7 @@ Bug fixes
 Documentation
 ~~~~~~~~~~~~~
 
-- ...
+- Replace the RFC quotations in the docstrings for :attr:`Alarm.REPEAT <icalendar.cal.alarm.Alarm.REPEAT>` and :attr:`Alarm.DURATION <icalendar.cal.alarm.Alarm.DURATION>` with Pythonic descriptions, including parameter notes, conformance references, and worked examples. :issue:`1244`
 
 7.1.0 (2026-04-30)
 ------------------
