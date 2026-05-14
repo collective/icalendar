@@ -725,46 +725,55 @@ class Component(CaselessDict):
 
     DTSTAMP = stamp = single_utc_property(
         "DTSTAMP",
-        """RFC 5545:
+        """The UTC datetime stamp recording when this component instance was created or last revised.
 
-        Conformance:  This property MUST be included in the "VEVENT",
-        "VTODO", "VJOURNAL", or "VFREEBUSY" calendar components.
+    Defined in :rfc:`5545#section-3.8.7.2` and required in
+    ``VEVENT``, ``VTODO``, ``VJOURNAL``, and ``VFREEBUSY`` components.
 
-        Description: In the case of an iCalendar object that specifies a
-        "METHOD" property, this property specifies the date and time that
-        the instance of the iCalendar object was created.  In the case of
-        an iCalendar object that doesn't specify a "METHOD" property, this
-        property specifies the date and time that the information
-        associated with the calendar component was last revised in the
-        calendar store.
+    When the calendar object carries a ``METHOD`` property (e.g., for
+    scheduling), this value is the creation time of *this particular revision*.
+    Without a ``METHOD`` property it is equivalent to :attr:`LAST_MODIFIED`.
 
-        The value MUST be specified in the UTC time format.
+    The value is always in UTC. Also accessible as :attr:`stamp`.
 
-        In the case of an iCalendar object that doesn't specify a "METHOD"
-        property, this property is equivalent to the "LAST-MODIFIED"
-        property.
+    Example:
+        .. code-block:: pycon
+
+            >>> from datetime import timezone, datetime
+            >>> from icalendar import Event
+            >>> event = Event()
+            >>> event.DTSTAMP = datetime(2024, 6, 1, 12, 0, 0, tzinfo=timezone.utc)
+            >>> event.DTSTAMP
+            datetime.datetime(2024, 6, 1, 12, 0, tzinfo=datetime.timezone.utc)
+
+    See also:
+        :attr:`LAST_MODIFIED`, :attr:`CREATED`, :attr:`stamp`
     """,
     )
 
     LAST_MODIFIED = single_utc_property(
         "LAST-MODIFIED",
-        """The date and time when a calendar component was last modified.
+        """The UTC datetime when this component's information was last revised, per :rfc:`5545#section-3.8.7.3`.
 
-        This property is commonly used to track revisions to calendar
-        components such as VEVENT, VTODO, VJOURNAL, and VTIMEZONE.
+    Analogous to a file's modification timestamp. This property is optional;
+    when absent, :attr:`last_modified` falls back to :attr:`DTSTAMP`.
 
-        Example:
-            Set the LAST-MODIFIED property of an event to a UTC time.
+    Applicable to ``VEVENT``, ``VTODO``, ``VJOURNAL``, and ``VTIMEZONE``
+    components. The value is always in UTC.
 
-            .. code-block:: pycon
+    Example:
+        .. code-block:: pycon
 
-                >>> from datetime import datetime, timezone
-                >>> from icalendar import Event
-                >>> event = Event()
-                >>> event.last_modified = datetime(2026, 5, 31, 23, 52, 45, tzinfo=timezone.utc)
-                >>> event.last_modified
-                datetime.datetime(2026, 5, 31, 23, 52, 45, tzinfo=ZoneInfo(key='UTC'))
-        """,
+            >>> from datetime import timezone, datetime
+            >>> from icalendar import Event
+            >>> event = Event()
+            >>> event.LAST_MODIFIED = datetime(2024, 6, 1, 9, 0, 0, tzinfo=timezone.utc)
+            >>> event.LAST_MODIFIED
+            datetime.datetime(2024, 6, 1, 9, 0, tzinfo=datetime.timezone.utc)
+
+    See also:
+        :attr:`last_modified`, :attr:`DTSTAMP`, :attr:`CREATED`
+    """,
     )
 
     @property
@@ -819,17 +828,28 @@ class Component(CaselessDict):
 
     CREATED = single_utc_property(
         "CREATED",
-        """
-        CREATED specifies the date and time that the calendar
-        information was created by the calendar user agent in the calendar
-        store.
+        """The UTC datetime when this calendar component was first created, per :rfc:`5545#section-3.8.7.1`.
 
-        Conformance:
-            The property can be specified once in "VEVENT",
-            "VTODO", or "VJOURNAL" calendar components.  The value MUST be
-            specified as a date with UTC time.
+    Records when the calendar user agent originally stored the component.
+    This property is optional; when absent, :attr:`created` falls back to
+    :attr:`DTSTAMP`.
 
-        """,
+    Applicable to ``VEVENT``, ``VTODO``, and ``VJOURNAL`` components.
+    The value is always in UTC.
+
+    Example:
+        .. code-block:: pycon
+
+            >>> from datetime import timezone, datetime
+            >>> from icalendar import Event
+            >>> event = Event()
+            >>> event.CREATED = datetime(2024, 1, 1, 8, 0, 0, tzinfo=timezone.utc)
+            >>> event.CREATED
+            datetime.datetime(2024, 1, 1, 8, 0, tzinfo=datetime.timezone.utc)
+
+    See also:
+        :attr:`created`, :attr:`DTSTAMP`, :attr:`LAST_MODIFIED`
+    """,
     )
 
     _validate_new = True
