@@ -262,7 +262,7 @@ def query_tzid(query: str, cal: Calendar) -> str:
     """The tzid from the query."""
     try:
         tzinfo = eval(query, {"cal": cal})  # noqa: S307
-    except Exception as e:
+    except (SyntaxError, NameError, TypeError, ValueError) as e:
         raise ValueError(query) from e
     return tzid_from_tzinfo(tzinfo)
 
