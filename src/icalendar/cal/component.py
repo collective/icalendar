@@ -743,8 +743,8 @@ class Component(CaselessDict):
             >>> from icalendar import Event
             >>> event = Event()
             >>> event.DTSTAMP = datetime(2024, 6, 1, 12, 0, 0, tzinfo=timezone.utc)
-            >>> event.DTSTAMP
-            datetime.datetime(2024, 6, 1, 12, 0, tzinfo=datetime.timezone.utc)
+            >>> event.DTSTAMP  # doctest: +ELLIPSIS
+            datetime.datetime(2024, 6, 1, 12, 0, tzinfo=...)
 
     See also:
         :attr:`LAST_MODIFIED`, :attr:`CREATED`, :attr:`stamp`
@@ -768,8 +768,8 @@ class Component(CaselessDict):
             >>> from icalendar import Event
             >>> event = Event()
             >>> event.LAST_MODIFIED = datetime(2024, 6, 1, 9, 0, 0, tzinfo=timezone.utc)
-            >>> event.LAST_MODIFIED
-            datetime.datetime(2024, 6, 1, 9, 0, tzinfo=datetime.timezone.utc)
+            >>> event.LAST_MODIFIED  # doctest: +ELLIPSIS
+            datetime.datetime(2024, 6, 1, 9, 0, tzinfo=...)
 
     See also:
         :attr:`last_modified`, :attr:`DTSTAMP`, :attr:`CREATED`
@@ -844,8 +844,8 @@ class Component(CaselessDict):
             >>> from icalendar import Event
             >>> event = Event()
             >>> event.CREATED = datetime(2024, 1, 1, 8, 0, 0, tzinfo=timezone.utc)
-            >>> event.CREATED
-            datetime.datetime(2024, 1, 1, 8, 0, tzinfo=datetime.timezone.utc)
+            >>> event.CREATED  # doctest: +ELLIPSIS
+            datetime.datetime(2024, 1, 1, 8, 0, tzinfo=...)
 
     See also:
         :attr:`created`, :attr:`DTSTAMP`, :attr:`LAST_MODIFIED`

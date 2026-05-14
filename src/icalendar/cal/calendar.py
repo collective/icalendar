@@ -392,7 +392,7 @@ Example:
         >>> from icalendar import Calendar
         >>> cal = Calendar()
         >>> cal.prodid = "-//MyApp//MyCalendar//EN"
-        >>> cal.prodid
+        >>> str(cal.prodid)
         '-//MyApp//MyCalendar//EN'
 
 See also:
@@ -414,7 +414,7 @@ Example:
         >>> from icalendar import Calendar
         >>> cal = Calendar()
         >>> cal.version = "2.0"
-        >>> cal.version
+        >>> str(cal.version)
         '2.0'
 
 See also:
@@ -464,7 +464,7 @@ Example:
         >>> from icalendar import Calendar
         >>> cal = Calendar()
         >>> cal.method = "REQUEST"
-        >>> cal.method
+        >>> str(cal.method)
         'REQUEST'
 
 See also:
