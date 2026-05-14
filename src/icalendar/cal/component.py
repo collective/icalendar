@@ -582,12 +582,49 @@ class Component(CaselessDict):
         return content_lines.to_ical()
 
     def __repr__(self):
-        """String representation of class with all of it's subcomponents."""
-        subs = ", ".join(str(it) for it in self.subcomponents)
-        return (
-            f"{self.name or type(self).__name__}"
-            f"({dict(self)}{', ' + subs if subs else ''})"
-        )
+        """String representation of class with all of its subcomponents.
+
+        Implemented iteratively rather than recursively so that calendars
+        with deeply nested subcomponents do not raise ``RecursionError``.
+        A pathological ``.ics`` payload of only ~13 KB can otherwise nest
+        ``BEGIN:VEVENT`` ~500 levels and crash any caller that performs
+        ``repr()``/``str()``/``f"{cal}"`` on the parsed calendar
+        (e.g. logging, error reporting, debug pages).
+        """
+        # Stack-based traversal. Each frame is one of:
+        #   ("open", component)   -> emit "Name({props}" and schedule children
+        #   ("close",)            -> emit ")"
+        #   ("comma",)            -> emit ", "
+        out: list[str] = []
+        stack: list[tuple] = [("open", self)]
+        while stack:
+            frame = stack.pop()
+            kind = frame[0]
+            if kind == "comma":
+                out.append(", ")
+            elif kind == "close":
+                out.append(")")
+            else:  # "open"
+                node = frame[1]
+                if isinstance(node, Component):
+                    out.append(f"{node.name or type(node).__name__}({dict(node)}")
+                    subs = node.subcomponents
+                    if subs:
+                        # Defer ")" then push children in reverse so that
+                        # popping yields original order, with ", " separators
+                        # (the first popped comma serves as the separator
+                        # between the component's dict and its first child).
+                        stack.append(("close",))
+                        for sub in reversed(subs):
+                            stack.append(("open", sub))
+                            stack.append(("comma",))
+                    else:
+                        out.append(")")
+                else:
+                    # Should not normally occur (subcomponents are Components),
+                    # but be safe and fall back to non-recursive str().
+                    out.append(str(node))
+        return "".join(out)
 
     def __eq__(self, other):
         if len(self.subcomponents) != len(other.subcomponents):

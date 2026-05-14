@@ -26,6 +26,15 @@ New features
 Bug fixes
 ~~~~~~~~~
 
+- Replace the recursive
+  :meth:`Component.__repr__ <icalendar.cal.component.Component.__repr__>`
+  implementation with an iterative stack-based walk so that deeply nested
+  calendars no longer raise :exc:`RecursionError` when formatted via
+  ``repr()``, ``str()``, or f-strings. The parser itself was already
+  iterative and accepted such inputs; only the rendering path was
+  affected. The output format is unchanged for normally-shaped calendars.
+  :issue:`1370`
+
 - Strictly validate BINARY property values in
   :attr:`vBinary.from_ical() <icalendar.prop.binary.vBinary.from_ical>`
   and reject malformed Base64 input instead of silently accepting invalid
