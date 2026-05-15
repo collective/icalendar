@@ -122,13 +122,11 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
             # ...
             "show_version_warning_banner": False,
 
-#.  Check that the file :file:`CHANGES.rst` is up to date with the `latest merged pull requests <https://github.com/collective/icalendar/pulls?q=is%3Apr+is%3Amerged>`_, and the version you want to release is correctly named.
-    Change the date of the release, and remove empty sections.
+#.  Update the change log :file:`CHANGES.rst` with the change log entries in :file:`/news` with `towncrier <https://pypi.org/project/towncrier/>`_.
 
-    .. code-block:: diff
+    ..  code-block:: shell
 
-        -7.0.0 (unreleased)
-        +7.0.0 (2026-02-11)
+        make changes
 
 #.  Create a commit on a ``release`` branch to release this version.
 
@@ -185,50 +183,6 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         tests: PyPI is waiting for your review
 
 #.  If the release is approved by a maintainer, it will be pushed to `PyPI`_.
-#.  Copy this to the start of :file:`CHANGES.rst`, and increase the version number.
-
-    .. code-block:: shell
-
-        git checkout main
-        git pull
-
-    .. code-block:: text
-
-       7.0.1 (unreleased)
-       ------------------
-
-       Minor changes
-       ~~~~~~~~~~~~~
-
-       - ...
-
-       Breaking changes
-       ~~~~~~~~~~~~~~~~
-
-       - ...
-
-       New features
-       ~~~~~~~~~~~~
-
-       - ...
-
-       Bug fixes
-       ~~~~~~~~~
-
-       - ...
-
-       Documentation
-       ~~~~~~~~~~~~~
-
-       - ...
-
-#.  Push the changes to :file:`CHANGES.rst` so it is used for future changes.
-
-    .. code-block:: shell
-
-        git add CHANGES.rst
-        git commit -m "Add new CHANGELOG section for future release"
-        git push upstream main # to collective/icalendar
 
 #.  Once the release is pushed to `PyPI`_, notify the issues mentioned on the new release of the new release.
     Example:
