@@ -133,7 +133,9 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
     .. code-block:: shell
 
         git checkout -b release-$VERSION main
-        git add CHANGES.rst docs/conf.py
+        git checkout -b release-$VERSION main
+        git add CHANGES.rst docs/conf.py news/
+        git commit -m"version $VERSION"
         git commit -m"version $VERSION"
 
 #.  Push the commit and `create a pull request <https://github.com/collective/icalendar/compare?expand=1>`_.
