@@ -166,9 +166,11 @@ rtd-pr-preview: rtd-prepare .venv ## Build pull request preview on Read the Docs
 # release
 .PHONY: changes-draft
 changes-draft: dev
+	@test -n "$(VERSION)" || (echo "VERSION is not set. Run 'export VERSION=x.y.z' first." && exit 1)
 	$(TOWNCRIERPATH) build --draft --version ${VERSION} --yes
 
 .PHONY: changes
 changes: dev
+	@test -n "$(VERSION)" || (echo "VERSION is not set. Run 'export VERSION=x.y.z' first." && exit 1)
 	$(TOWNCRIERPATH) build --version ${VERSION} --yes
 # /release
