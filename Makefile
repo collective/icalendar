@@ -88,8 +88,8 @@ text: .venv
 	@echo
 	@echo "Build finished. The text files are in $(BUILDDIR)/text."
 
-.PHONY: changes
-changes: .venv
+.PHONY: sphinx-changes
+sphinx-changes: .venv
 	cd $(DOCS_DIR) && $(SPHINXBUILD) -b changes $(ALLSPHINXOPTS) $(BUILDDIR)/changes
 	@echo
 	@echo "The overview file is in $(BUILDDIR)/changes."
