@@ -123,8 +123,15 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
           tags:
           - v*
 
-#.  When cutting a new release that you'll tag and want to be considered "stable" on Read the Docs, update the Sphinx configuration file :file:`docs/conf.py` to hide the version warning banner.
-    Later during clean up, you'll revert this setting on ``main``, so that the "latest" version on Read the Docs continues to display the version warning banner.
+.. _hide-version-warning-banner::
+
+#.  Hide the version warning banner on the "stable" version on Read the Docs.
+    Update the Sphinx configuration file :file:`docs/conf.py`, which you'll commit and tag.
+    Then Read the Docs will recognize the highest version tag as the "stable" version.
+
+    ..  note::
+
+        Toward the end of this process, you'll revert this setting on ``main``, so that the "latest" version on Read the Docs continues to display the version warning banner.
 
     .. code-block:: python
 
@@ -184,16 +191,23 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
     .. note::
 
-        The remaining steps may be performed after the release because they pertain exclusively to documentation, which isn't included in the release.
+        This file is configured in :file:`docs/conf.py` on *all* branches to use the version in ``main``, which is "latest" on Read the Docs.
+
+        ..  code-block:: python
+
+            json_url = "https://icalendar.readthedocs.io/en/latest/_static/version-switcher.json"
+
         The following examples were used for the 7.0.0 release.
 
-    #.  When cutting a new *major release* version, checkout the ``main`` branch, and update :file:`docs/_static/version-switcher.json` to match that version.
-    
+    #.  Check out the ``main`` branch and update it.
+
         ..  code-block:: shell
-        
+
             git checkout main
             git pull
 
+    #.  When cutting a new *major release* version, and update :file:`docs/_static/version-switcher.json` to match that version.
+    
         #.  Duplicate the second previous major version stanza and renumber it to the first previous version.
             In other words, duplicate the ``5.x`` stanza, and renumber the copy to ``6.x``.
 
@@ -207,6 +221,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         #.  Next, edit the array item for the previous version to reflect the current major release.
 
             .. code-block:: json
+                :emphasize-lines: 2-3
 
                 {
                     "name": "7.x (stable)",
@@ -214,11 +229,11 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
                     "url": "https://icalendar.readthedocs.io/en/stable/",
                     "preferred": "true"
                 },
-    
 
-    #.  When cutting a *minor or patch release* version, on the ``main`` branch, update :file:`docs/_static/version-switcher.json` to match that version's tag name.
+    #.  When cutting a *minor or patch release* version, update :file:`docs/_static/version-switcher.json` to match that version's tag name.
 
         .. code-block:: json
+            :emphasize-lines: 2-3
 
             {
                 "name": "7.x (stable)",
@@ -226,18 +241,41 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
                 "url": "https://icalendar.readthedocs.io/en/stable/",
                 "preferred": "true"
             },
-        
+
+    #.  For all releases, add, commit, and push the changes.
+
         .. code-block:: shell
 
-            git checkout main
-            git pull
             git add docs/_static/version-switcher.json
             git commit -m "Update version switcher for $VERSION"
-            git push # to collective/icalendar
+            git push  # to collective/icalendar
 
-#.  When cutting a new *major stable release* version, update the Sphinx configuration file :file:`docs/conf.py` as shown.
-    On the previous numbered major release branch, show the warning banner.
+#.  Revert the change in the :ref:`earlier step <hide-version-warning-banner>` by updating the Sphinx configuration file :file:`docs/conf.py` to show the version warning banner on the ``main`` branch, which is "latest" on Read the Docs.
+
+    ..  code-block:: shell
+
+        git checkout main
+        git pull
+
+    ..  code-block:: python
+
+        html_theme_options = {
+            # ...
+            "show_version_warning_banner": True,
+
+    ..  code-block:: shell
+
+        git add docs/conf.py
+        git commit -m "Restore version warning banner for 'latest' on Read the Docs"
+        git push  # to collective/icalendar
+
+#.  If you cut a new *major release* version, update the Sphinx configuration file :file:`docs/conf.py` on the *previous* numbered major release branch to show the version warning banner.
     For example, when releasing 7.0.0, checkout ``6.x``, and update it as shown.
+
+    .. code-block:: shell
+
+        git checkout 6.x
+        git pull
 
     .. code-block:: python
 
@@ -245,8 +283,20 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
             # ...
             "show_version_warning_banner": True,
 
-#.  After a *major release*, configure `Read the Docs <https://app.readthedocs.org/projects/icalendar/>`_.
-    Verify that the version was activated automatically on Read the Docs.
+    ..  code-block:: shell
+
+        git add docs/conf.py
+        git commit -m "Show version warning banner for previous major version 6.x on Read the Docs"
+        git push  # to collective/icalendar
+
+#.  Configure `Read the Docs <https://app.readthedocs.org/projects/icalendar/>`_.
+
+    #.  Verify that the "stable" version was activated automatically on Read the Docs.
+
+    #.  Deactivate previous releases in that current stable release line.
+        Click on the ellipsis icon, and select :guilabel:`Configure version`.
+        Toggle the :guilabel:`Active` switch to deactivate the version.
+
 
 #.  Add a comment to each of the issues mentioned in the new release of the new release.
     Example:
