@@ -161,25 +161,42 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
 #.  Create a tag for the release on its release branch ``*.x``, push, and make sure the `CI tests`_ are running.
 
-    .. code-block:: shell
+    a.  First, make sure you're on the ``main`` branch and it's current, in case someone else updated ``main`` while tests ran.
 
-        git checkout main  # You should already be on ``main``.
-        git pull  # In case someone else updated ``main`` while tests ran.
-        # For a major release, create a new branch and check it out.
-        git checkout -b 7.x
-        # For a minor or patch release, check out the existing branch.
-        git checkout 7.x
-        git pull
-        git merge main
-        git push  # to collective/icalendar
-        git tag "v$VERSION"
-        git push upstream "v$VERSION" # to collective/icalendar
+        .. code-block:: shell
 
-    .. warning::
+            git checkout main
+            git pull
 
-        Once a tag is pushed to the repository, it must not be re-tagged or deleted.
-        This creates issues for downstream repositories.
-        See :issue:`1033`.
+    #.  Next, depending on the release type, do one of the following.
+
+        -   For a major release, create a new branch, check it out, and set the tracked branch.
+
+            .. code-block:: shell
+
+                git switch -c 7.x -t upstream/main
+
+        -   For a minor or patch release, check out the existing branch.
+
+            .. code-block:: shell
+
+                git checkout 7.x
+
+    #.  Continue to update the release branch, merge ``main`` into the branch, push changes, tag it, and push the tag.
+
+        .. code-block:: shell
+
+            git pull
+            git merge main
+            git push  # to collective/icalendar
+            git tag "v$VERSION"
+            git push upstream "v$VERSION" # to collective/icalendar
+
+        .. warning::
+
+            Once a tag is pushed to the repository, it must not be re-tagged or deleted.
+            This creates issues for downstream repositories.
+            See :issue:`1033`.
 
 #.  Once the tag is pushed and its `CI tests`_ pass, check the `GitHub Actions <https://github.com/collective/icalendar/actions>`_, and wait for maintainers to get an email:
 
