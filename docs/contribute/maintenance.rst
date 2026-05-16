@@ -222,16 +222,6 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
                     "preferred": "true"
                 },
     
-        #.  Also update :file:`.github/workflows/tests.yml` to include the new release branch in the list of branches that trigger the CI tests.
-
-            .. code-block:: yaml
-
-                push:
-                  branches:
-                  - main
-                  - 7.x
-                  tags:
-                  - v*
 
     #.  When cutting a *minor or patch release* version, on the ``main`` branch, update :file:`docs/_static/version-switcher.json` to match that version's tag name.
 
