@@ -202,7 +202,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
             json_url = "https://icalendar.readthedocs.io/en/latest/_static/version-switcher.json"
 
-        The following examples were used for the 7.0.0 release.
+    The following examples were used for the 7.0.0 release.
 
     #.  Check out the ``main`` branch and update it.
 
