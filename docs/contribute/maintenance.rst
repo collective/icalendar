@@ -212,7 +212,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
             git pull
 
     #.  When cutting a new *major* release version, update :file:`docs/_static/version-switcher.json` to match that version.
-    
+
         -   Duplicate the second previous major version stanza and renumber it to the first previous version.
             In other words, duplicate the ``5.x`` stanza, and renumber the copy to ``6.x``.
 
