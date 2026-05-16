@@ -1,0 +1,1 @@
+Strictly validate BINARY property values in :attr:`vBinary.from_ical() <icalendar.prop.binary.vBinary.from_ical>` and reject malformed Base64 input instead of silently accepting invalid characters. @uwezkhan

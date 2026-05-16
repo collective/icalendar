@@ -4,37 +4,13 @@ Change log
 
 .. py:currentmodule:: icalendar
 
-7.1.1 (unreleased)
-------------------
+.. Do *NOT* add new change log entries to this file.
+   Instead create a file in the news directory.
+   For helpful instructions, see:
+   https://icalendar.readthedocs.io/en/latest/contribute/#change-log-entry-format
 
-Minor changes
-~~~~~~~~~~~~~
+.. towncrier release notes start
 
-- Cleaned up duplicate code and fixed import ordering in :file:`datetime.py`. :pr:`1361`
-- Hardened :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>` by requiring an explicit :class:`pathlib.Path` object to read from the filesystem, preventing unintended file access from string inputs. :pr:`1362`
-
-Breaking changes
-~~~~~~~~~~~~~~~~
-
-- ...
-
-New features
-~~~~~~~~~~~~
-
-- ...
-
-Bug fixes
-~~~~~~~~~
-
-- Strictly validate BINARY property values in
-  :attr:`vBinary.from_ical() <icalendar.prop.binary.vBinary.from_ical>`
-  and reject malformed Base64 input instead of silently accepting invalid
-  characters. :pr:`1349`
-
-Documentation
-~~~~~~~~~~~~~
-
-- ...
 
 7.1.0 (2026-04-30)
 ------------------
