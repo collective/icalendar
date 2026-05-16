@@ -136,7 +136,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         git commit -m"version $VERSION"
         git push  # to collective/icalendar
 
-#.  See if the `CI tests <https://github.com/collective/icalendar/actions>`_ are running on commit.
+#.  See if the `CI tests <https://github.com/collective/icalendar/actions>`_ are running on the commit.
     If they are not running, no new release can be issued.
     If the CI passes, go ahead.
 
