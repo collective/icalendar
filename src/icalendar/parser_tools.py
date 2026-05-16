@@ -2,6 +2,8 @@ SEQUENCE_TYPES = (list, tuple)
 DEFAULT_ENCODING = "utf-8"
 ICAL_TYPE = str | bytes
 
+import uuid
+
 
 def from_unicode(value: ICAL_TYPE, encoding="utf-8") -> bytes:
     """Converts a value to bytes, even if it is already bytes.
@@ -37,6 +39,8 @@ def to_unicode(value: ICAL_TYPE, encoding="utf-8-sig") -> str:
             return value.decode(encoding)
         except UnicodeDecodeError:
             return value.decode("utf-8-sig", "replace")
+    if isinstance(value, uuid.UUID):
+        return str(value)
     raise TypeError(f"Expected str or bytes, got {type(value).__name__}")
 
 

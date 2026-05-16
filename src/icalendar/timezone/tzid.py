@@ -70,7 +70,9 @@ def tzids_from_tzinfo(tzinfo: tzinfo | None) -> tuple[str]:
             if path.startswith(str(DATEUTIL_ZONEINFO_PATH)):
                 tzid = str(Path(path).relative_to(DATEUTIL_ZONEINFO_PATH))
                 return get_equivalent_tzids(tzid)
-            return get_equivalent_tzids(path)
+        # Use _filename directly if it's just a timezone name (not a full path)
+        path = tzinfo._filename  # noqa: SLF001
+        return get_equivalent_tzids(path)
     if isinstance(tzinfo, tz.tzutc):
         return get_equivalent_tzids("UTC")
     return ()

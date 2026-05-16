@@ -452,7 +452,7 @@ class Component(CaselessDict):
         [(name, value), ...]
         """
         v_text = self.types_factory["text"]
-        properties = [("BEGIN", v_text(self.name).to_ical())]
+        properties = [("BEGIN", v_text(self.name or "").to_ical())]
         property_names = self.sorted_keys() if sorted else self.keys()
 
         for name in property_names:
@@ -467,7 +467,7 @@ class Component(CaselessDict):
             # recursion is fun!
             for subcomponent in self.subcomponents:
                 properties += subcomponent.property_items(sorted=sorted)
-        properties.append(("END", v_text(self.name).to_ical()))
+        properties.append(("END", v_text(self.name or "").to_ical()))
         return properties
 
     @overload
