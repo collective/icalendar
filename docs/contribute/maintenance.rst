@@ -226,7 +226,6 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         -   Next, edit the array item for the previous version to reflect the current major release.
 
             .. code-block:: json
-                :emphasize-lines: 2-3
 
                 {
                     "name": "7.x (stable)",
@@ -238,7 +237,6 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
     #.  When cutting a *minor* or *patch* release version, update :file:`docs/_static/version-switcher.json` to match that version's tag name.
 
         .. code-block:: json
-            :emphasize-lines: 2-3
 
             {
                 "name": "7.x (stable)",
