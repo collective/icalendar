@@ -112,22 +112,29 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         git checkout main
         git pull
 
-#.  Check that the file :file:`CHANGES.rst` is up to date with the `latest merged pull requests <https://github.com/collective/icalendar/pulls?q=is%3Apr+is%3Amerged>`_, and the version you want to release is correctly named.
-    Change the date of the release, and remove empty sections.
+#.  When cutting any new release that you'll tag and want to be considered "stable" on either the ``main`` or development branch, update the Sphinx configuration file :file:`docs/conf.py` to match that version.
 
-    .. code-block:: diff
+    Hide the warning banner.
 
-        -7.0.0 (unreleased)
-        +7.0.0 (2026-02-11)
+    .. code-block:: python
+
+        html_theme_options = {
+            # ...
+            "show_version_warning_banner": False,
+
+#.  Update the change log :file:`CHANGES.rst` with the change log entries in :file:`/news` with `towncrier <https://pypi.org/project/towncrier/>`_.
+
+    ..  code-block:: shell
+
+        make changes
 
 #.  Create a commit on a ``main`` branch to release this version.
 
     .. code-block:: shell
 
-        git checkout main
-        git add CHANGES.rst
+        git add CHANGES.rst docs/conf.py news/
         git commit -m"version $VERSION"
-        git push # to collective/icalendar
+        git push  # to collective/icalendar
 
 #.  See if the `CI tests <https://github.com/collective/icalendar/actions>`_ are running on commit.
     If they are not running, no new release can be issued.
@@ -161,56 +168,6 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         tests: PyPI is waiting for your review
 
 #.  If the release is approved by a maintainer, it will be pushed to `PyPI`_. Do not wait for that, continue.
-#.  Copy this to the start of :file:`CHANGES.rst`, and increase the version number.
-
-    .. code-block:: shell
-
-        git checkout main
-        git pull
-
-    .. code-block:: text
-
-       7.0.1 (unreleased)
-       ------------------
-
-       Minor changes
-       ~~~~~~~~~~~~~
-
-       - ...
-
-       Breaking changes
-       ~~~~~~~~~~~~~~~~
-
-       - ...
-
-       New features
-       ~~~~~~~~~~~~
-
-       - ...
-
-       Bug fixes
-       ~~~~~~~~~
-
-       - ...
-
-       Documentation
-       ~~~~~~~~~~~~~
-
-       - ...
-
-#.  Push the changes to :file:`CHANGES.rst` so it is used for future changes.
-
-    .. code-block:: shell
-
-        git add CHANGES.rst
-        git commit -m "Add new CHANGELOG section for future release"
-        git push # to collective/icalendar
-
-#.  Go through all open PRs and tell them to adjust their changelog entries to the new section.
-
-    .. code-block:: text
-
-        Hi, we created a new release, please move your edits in CHANGES.rst to the new section.
 
 #.  Once the release is pushed to `PyPI`_, notify the issues mentioned on the new release of the new release.
     Example:

@@ -4,33 +4,13 @@ Change log
 
 .. py:currentmodule:: icalendar
 
-7.1.1 (unreleased)
-------------------
+.. Do *NOT* add new change log entries to this file.
+   Instead create a file in the news directory.
+   For helpful instructions, see:
+   https://icalendar.readthedocs.io/en/latest/contribute/#change-log-entry-format
 
-Minor changes
-~~~~~~~~~~~~~
+.. towncrier release notes start
 
-- ...
-
-Breaking changes
-~~~~~~~~~~~~~~~~
-
-- ...
-
-New features
-~~~~~~~~~~~~
-
-- ...
-
-Bug fixes
-~~~~~~~~~
-
-- ...
-
-Documentation
-~~~~~~~~~~~~~
-
-- ...
 
 7.1.0 (2026-04-30)
 ------------------
@@ -324,7 +304,7 @@ New features
 ~~~~~~~~~~~~
 
 - Add compatibility to :rfc:`9253`:
-  
+
   - Add new property types :class:`vUid` and :class:`vXmlReference`
   - Add properties to all components: :attr:`Component.concepts`, :attr:`Component.links`, :attr:`Component.refids`, :attr:`Component.related_to`
   - Add new values to :class:`RELTYPE`
