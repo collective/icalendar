@@ -1,0 +1,1 @@
+Avoid implicit file reads from string calendar input in :meth:`~icalendar.cal.component.Component.from_ical` by removing support for passing file paths as strings. Use :class:`pathlib.Path` instead to read from a file. @uwezkhan
