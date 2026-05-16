@@ -159,7 +159,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
     If they are not running, no new release can be issued.
     If the CI passes, go ahead.
 
-#.  Create a tag for the release on its release branch ``*.x`` and see if the `CI tests`_ are running.
+#.  Create a tag for the release on its release branch ``*.x``, push, and make sure the `CI tests`_ are running.
 
     .. code-block:: shell
 
