@@ -213,7 +213,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
     #.  When cutting a new *major* release version, update :file:`docs/_static/version-switcher.json` to match that version.
     
-        #.  Duplicate the second previous major version stanza and renumber it to the first previous version.
+        -   Duplicate the second previous major version stanza and renumber it to the first previous version.
             In other words, duplicate the ``5.x`` stanza, and renumber the copy to ``6.x``.
 
             .. code-block:: json
@@ -223,7 +223,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
                     "url": "https://icalendar.readthedocs.io/en/6.x/"
                 },
 
-        #.  Next, edit the array item for the previous version to reflect the current major release.
+        -   Next, edit the array item for the previous version to reflect the current major release.
 
             .. code-block:: json
                 :emphasize-lines: 2-3
