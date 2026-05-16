@@ -4,38 +4,13 @@ Change log
 
 .. py:currentmodule:: icalendar
 
-7.1.1 (unreleased)
-------------------
+.. Do *NOT* add new change log entries to this file.
+   Instead create a file in the news directory.
+   For helpful instructions, see:
+   https://icalendar.readthedocs.io/en/latest/contribute/#change-log-entry-format
 
-Minor changes
-~~~~~~~~~~~~~
+.. towncrier release notes start
 
-- Bump PyPy from 3.10 to 3.11 for testing. :pr:`1383`
-- Created an :attr:`~icalendar.prop.dt.period.vPeriod.ical_value` property for the :class:`~icalendar.prop.dt.period.vPeriod` component. :issue:`876`
-
-Breaking changes
-~~~~~~~~~~~~~~~~
-
-- ...
-
-New features
-~~~~~~~~~~~~
-
-- Created a :meth:`~icalendar.prop.recur.weekday.vWeekday.ical_value` property for the :class:`~icalendar.prop.recur.weekday.vWeekday` component, mirroring the existing pattern on :class:`~icalendar.prop.boolean.vBoolean`. :pr:`1360`
-
-Bug fixes
-~~~~~~~~~
-
-- Strictly validate BINARY property values in
-  :attr:`vBinary.from_ical() <icalendar.prop.binary.vBinary.from_ical>`
-  and reject malformed Base64 input instead of silently accepting invalid
-  characters. :pr:`1349`
-- Add strict length validation to :meth:`vDatetime.from_ical() <icalendar.prop.dt.datetime.vDatetime.from_ical>`. :pr:`1361`
-
-Documentation
-~~~~~~~~~~~~~
-
-- Replace the RFC quotations in the docstrings for :attr:`Alarm.REPEAT <icalendar.cal.alarm.Alarm.REPEAT>` and :attr:`Alarm.DURATION <icalendar.cal.alarm.Alarm.DURATION>` with Pythonic descriptions, including parameter notes, conformance references, and worked examples. :issue:`1244`
 
 7.1.0 (2026-04-30)
 ------------------

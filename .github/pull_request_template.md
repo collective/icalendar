@@ -10,7 +10,7 @@ Write a description of the fixes or improvements.
 
 ## Checklist
 
-- [ ] I've added a change log entry to `CHANGES.rst`.
+- [ ] I've added a change log entry to `/news`, following the instructions in [Change log entry format](https://icalendar.readthedocs.io/en/latest/contribute/#change-log-entry-format).
 - [ ] I've added or updated tests if applicable.
 - [ ] I've run and ensured all tests pass locally by following [Run tests](https://icalendar.readthedocs.io/en/latest/contribute/development.html#run-tests).
 - [ ] I've added or edited documentation, both as docstrings to be rendered in the API documentation and narrative documentation, as necessary.
