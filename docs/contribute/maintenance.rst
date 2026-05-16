@@ -112,9 +112,19 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         git checkout main
         git pull
 
-#.  When cutting any new release that you'll tag and want to be considered "stable" on either the ``main`` or development branch, update the Sphinx configuration file :file:`docs/conf.py` to match that version.
+#.  If you create a new *major* release, update :file:`.github/workflows/tests.yml` to include the new release branch in the list of branches that trigger the CI tests.
 
-    Hide the warning banner.
+    .. code-block:: yaml
+
+        push:
+          branches:
+          - main
+          - 7.x  # Update the major version
+          tags:
+          - v*
+
+#.  When cutting a new release that you'll tag and want to be considered "stable" on Read the Docs, update the Sphinx configuration file :file:`docs/conf.py` to hide the version warning banner.
+    Later during clean up, you'll revert this setting on ``main``, so that the "latest" version on Read the Docs continues to display the version warning banner.
 
     .. code-block:: python
 
