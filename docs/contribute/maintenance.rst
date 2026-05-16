@@ -128,7 +128,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
         make changes
 
-#.  Create a commit on a ``main`` branch to release this version.
+#.  Create a commit on the ``main`` branch to release this version.
 
     .. code-block:: shell
 
