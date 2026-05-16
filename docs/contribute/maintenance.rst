@@ -196,7 +196,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
     .. note::
 
-        This file is configured in :file:`docs/conf.py` on *all* branches to use the version in ``main``, which is "latest" on Read the Docs.
+        This file is configured in :file:`docs/conf.py` on *all* branches to use the version on the ``main`` branch, which is "latest" on Read the Docs.
 
         ..  code-block:: python
 
