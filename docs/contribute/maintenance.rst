@@ -154,8 +154,8 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
     .. code-block:: shell
 
-        git checkout main
-        git pull
+        git checkout main  # You should already be on ``main``.
+        git pull  # In case someone else updated ``main`` while tests ran.
         git checkout 7.x
         git pull
         git merge main
