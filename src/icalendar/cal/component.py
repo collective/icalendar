@@ -286,25 +286,35 @@ class Component(CaselessDict):
         parameters: dict[str, str] | Parameters = None,
         encode: bool = True,
     ):
-        """Add a property.
+        """Add a property to this component.
 
-        :param name: Name of the property.
-        :type name: string
+        If the property already exists, the new value is appended so the
+        property carries a list of values rather than replacing the previous
+        one. When ``name`` is ``DTSTAMP``, ``CREATED``, or ``LAST-MODIFIED``
+        and ``value`` is a ``datetime``, the value is converted to UTC as the
+        RFC requires.
 
-        :param value: Value of the property. Either of a basic Python type of
-                      any of the icalendar's own property types.
-        :type value: Python native type or icalendar property type.
+        Parameters:
+            name: Name of the property.
+            value:
+                Value of the property. Either a basic Python type or any of
+                icalendar's own property types.
+            parameters:
+                Property parameter dictionary for the value. Only consulted
+                when ``encode`` is ``True``.
+            encode:
+                ``True`` if the value should be encoded to one of icalendar's
+                own property types (fallback is ``vText``); ``False`` to
+                store the value as-is.
 
-        :param parameters: Property parameter dictionary for the value. Only
-                           available, if encode is set to True.
-        :type parameters: Dictionary
+        Example:
 
-        :param encode: True, if the value should be encoded to one of
-                       icalendar's own property types (Fallback is "vText")
-                       or False, if not.
-        :type encode: Boolean
+            >>> from icalendar import Event
+            >>> event = Event()
+            >>> event.add("summary", "Team sync")
+            >>> event["summary"]
+            vText(b'Team sync')
 
-        :returns: None
         """
         if isinstance(value, datetime) and name.lower() in (
             "dtstamp",
