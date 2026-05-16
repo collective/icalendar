@@ -211,7 +211,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
             git checkout main
             git pull
 
-    #.  When cutting a new *major release* version, update :file:`docs/_static/version-switcher.json` to match that version.
+    #.  When cutting a new *major* release version, update :file:`docs/_static/version-switcher.json` to match that version.
     
         #.  Duplicate the second previous major version stanza and renumber it to the first previous version.
             In other words, duplicate the ``5.x`` stanza, and renumber the copy to ``6.x``.
@@ -235,7 +235,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
                     "preferred": "true"
                 },
 
-    #.  When cutting a *minor or patch release* version, update :file:`docs/_static/version-switcher.json` to match that version's tag name.
+    #.  When cutting a *minor* or *patch* release version, update :file:`docs/_static/version-switcher.json` to match that version's tag name.
 
         .. code-block:: json
             :emphasize-lines: 2-3
@@ -274,7 +274,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         git commit -m "Restore version warning banner for 'latest' on Read the Docs"
         git push  # to collective/icalendar
 
-#.  If you cut a new *major release* version, update the Sphinx configuration file :file:`docs/conf.py` on the *previous* numbered major release branch to show the version warning banner.
+#.  If you cut a new *major* release version, update the Sphinx configuration file :file:`docs/conf.py` on the *previous* numbered major release branch to show the version warning banner.
     For example, when releasing 7.0.0, checkout ``6.x``, and update it as shown.
 
     .. code-block:: shell
