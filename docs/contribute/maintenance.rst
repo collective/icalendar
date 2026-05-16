@@ -114,12 +114,13 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
 #.  If you'll create a new *major* release, update :file:`.github/workflows/tests.yml` to include the new release branch in the list of branches that trigger the CI tests.
 
-    .. code-block:: yaml
+    ..  code-block:: yaml
+        :emphasize-lines: 4
 
         push:
           branches:
           - main
-          - 7.x  # Update the major version
+          - 7.x
           tags:
           - v*
 
