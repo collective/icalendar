@@ -225,7 +225,10 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
         -   Next, edit the array item for the previous version to reflect the current major release.
 
+            .. vale off
+
             .. code-block:: json
+                :emphasize-lines: 2-3
 
                 {
                     "name": "7.x (stable)",
@@ -234,9 +237,14 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
                     "preferred": "true"
                 },
 
+            .. vale on
+
     #.  When cutting a *minor* or *patch* release version, update :file:`docs/_static/version-switcher.json` to match that version's tag name.
 
+        .. vale off
+
         .. code-block:: json
+            :emphasize-lines: 2-3
 
             {
                 "name": "7.x (stable)",
@@ -244,6 +252,8 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
                 "url": "https://icalendar.readthedocs.io/en/stable/",
                 "preferred": "true"
             },
+
+        .. vale on
 
     #.  For all releases, add, commit, and push the changes.
 
