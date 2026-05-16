@@ -140,7 +140,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
             # ...
             "show_version_warning_banner": False,
 
-#.  Update the change log :file:`CHANGES.rst` with the change log entries in :file:`/news` with `towncrier <https://pypi.org/project/towncrier/>`_.
+#.  Update the change log :file:`CHANGES.rst` with the change log entries in :file:`/news` using `towncrier <https://pypi.org/project/towncrier/>`_.
 
     ..  code-block:: shell
 
