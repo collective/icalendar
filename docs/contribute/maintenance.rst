@@ -123,7 +123,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
           tags:
           - v*
 
-.. _hide-version-warning-banner::
+    .. _hide-version-warning-banner:
 
 #.  Hide the version warning banner on the "stable" version on Read the Docs.
     Update the Sphinx configuration file :file:`docs/conf.py`, which you'll commit and tag.
