@@ -149,7 +149,8 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
     .. code-block:: shell
 
-        git add CHANGES.rst docs/conf.py news/
+        git add CHANGES.rst news/
+        git add .github/workflows/tests.yml  # Only for a new major release
         git commit -m"version $VERSION"
         git push  # to collective/icalendar
 
@@ -163,6 +164,9 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
         git checkout main  # You should already be on ``main``.
         git pull  # In case someone else updated ``main`` while tests ran.
+        # For a major release, create a new branch and check it out.
+        git checkout -b 7.x
+        # For a minor or patch release, check out the existing branch.
         git checkout 7.x
         git pull
         git merge main
@@ -304,7 +308,6 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
     .. code-block:: text
 
         This is included in v7.0.0.
-
 
 
 Links
