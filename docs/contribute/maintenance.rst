@@ -311,7 +311,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         Toggle the :guilabel:`Active` switch to deactivate the version.
 
 
-#.  Add a comment to each of the issues mentioned in the new release of the new release.
+#.  Add a comment to each of the issues mentioned in the new release.
     Example:
 
     .. code-block:: text
