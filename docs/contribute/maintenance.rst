@@ -112,7 +112,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         git checkout main
         git pull
 
-#.  If you create a new *major* release, update :file:`.github/workflows/tests.yml` to include the new release branch in the list of branches that trigger the CI tests.
+#.  If you'll create a new *major* release, update :file:`.github/workflows/tests.yml` to include the new release branch in the list of branches that trigger the CI tests.
 
     .. code-block:: yaml
 
@@ -145,7 +145,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
         make changes
 
-#.  Create a commit on the ``main`` branch to release this version.
+#.  Add the changes, create a commit on the ``main`` branch, and push the changes to prepare a release of this version.
 
     .. code-block:: shell
 
