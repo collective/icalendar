@@ -180,13 +180,6 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 #.  If the release is approved by a maintainer, it will be pushed to `PyPI`_.
     Don't wait for that, continue.
 
-#.  Once the release is pushed to `PyPI`_, notify the issues mentioned on the new release of the new release.
-    Example:
-
-    .. code-block:: text
-
-        This is included in v7.0.0.
-
 #.  Update the version switcher file :file:`docs/_static/version-switcher.json`.
 
     .. note::
@@ -254,6 +247,14 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
 #.  After a *major release*, configure `Read the Docs <https://app.readthedocs.org/projects/icalendar/>`_.
     Verify that the version was activated automatically on Read the Docs.
+
+#.  Add a comment to each of the issues mentioned in the new release of the new release.
+    Example:
+
+    .. code-block:: text
+
+        This is included in v7.0.0.
+
 
 
 Links
