@@ -204,7 +204,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
     The following examples were used for the 7.0.0 release.
 
-    #.  Check out the ``main`` branch and update it.
+    a.  Check out the ``main`` branch and update it.
 
         ..  code-block:: shell
 
@@ -296,7 +296,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
 #.  Configure `Read the Docs <https://app.readthedocs.org/projects/icalendar/>`_.
 
-    #.  Verify that the "stable" version was activated automatically on Read the Docs.
+    a.  Verify that the "stable" version was activated automatically on Read the Docs.
 
     #.  Deactivate previous releases in that current stable release line.
         Click on the ellipsis icon, and select :guilabel:`Configure version`.
