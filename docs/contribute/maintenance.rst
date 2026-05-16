@@ -167,7 +167,8 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
         tests: PyPI is waiting for your review
 
-#.  If the release is approved by a maintainer, it will be pushed to `PyPI`_. Do not wait for that, continue.
+#.  If the release is approved by a maintainer, it will be pushed to `PyPI`_.
+    Don't wait for that, continue.
 
 #.  Once the release is pushed to `PyPI`_, notify the issues mentioned on the new release of the new release.
     Example:
