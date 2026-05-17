@@ -4,37 +4,13 @@ Change log
 
 .. py:currentmodule:: icalendar
 
-7.1.1 (unreleased)
-------------------
+.. Do *NOT* add new change log entries to this file.
+   Instead create a file in the news directory.
+   For helpful instructions, see:
+   https://icalendar.readthedocs.io/en/latest/contribute/#change-log-entry-format
 
-Minor changes
-~~~~~~~~~~~~~
+.. towncrier release notes start
 
-- ...
-
-Breaking changes
-~~~~~~~~~~~~~~~~
-
-- ...
-
-New features
-~~~~~~~~~~~~
-
-- ...
-
-Bug fixes
-~~~~~~~~~
-
-- Strictly validate BINARY property values in
-  :attr:`vBinary.from_ical() <icalendar.prop.binary.vBinary.from_ical>`
-  and reject malformed Base64 input instead of silently accepting invalid
-  characters. :pr:`1349`
-- Refactored :class:`~icalendar.prop.binary.vBinary` to store raw ``bytes`` internally, ensuring lossless round-tripping of non-UTF-8 binary data. Updated :class:`~icalendar.prop.image.Image` to handle this change correctly. :pr:`1356`
-
-Documentation
-~~~~~~~~~~~~~
-
-- ...
 
 7.1.0 (2026-04-30)
 ------------------
