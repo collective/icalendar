@@ -170,25 +170,43 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
     #.  Next, depending on the release type, do one of the following.
 
-        -   For a major release, create a new branch, check it out, and set the tracked branch.
+        -   For a major release, create a new branch, and check it out.
 
             .. code-block:: shell
 
                 git switch -c 7.x
 
-        -   For a minor or patch release, check out the existing branch.
+        -   For a minor or patch release, check out the existing branch, and update it.
 
             .. code-block:: shell
 
                 git checkout 7.x
+                git pull
 
-    #.  Continue to update the release branch, merge ``main`` into the branch, push changes, tag it, and push the tag.
+    #.  Next, merge ``main`` into the release branch.
 
         .. code-block:: shell
 
-            git pull
             git merge main
-            git push  # to collective/icalendar
+
+    #.  Next, push changes upstream, changing the command according to the release type.
+
+        -   For a major release, push, create, and track the upstream branch.
+
+            .. code-block:: shell
+
+                git push -u upstream 7.x  # to collective/icalendar
+
+        -   For a minor or patch release, just push.
+
+            .. code-block:: shell
+
+                git push  # to collective/icalendar
+
+    #.  Next create a tag, and push the tag.
+
+        .. code-block:: shell
+
             git tag "v$VERSION"
             git push upstream "v$VERSION" # to collective/icalendar
 
