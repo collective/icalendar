@@ -4,7 +4,7 @@ from typing import Any, ClassVar
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
-from icalendar.parser_tools import from_unicode
+from icalendar.parser_tools import _from_unicode
 
 from .base import TimeBase
 from .types import vDDDTypes
@@ -37,7 +37,7 @@ class vDDDLists:
         self.dts = vddd
 
     def to_ical(self):
-        dts_ical = (from_unicode(dt.to_ical()) for dt in self.dts)
+        dts_ical = (_from_unicode(dt.to_ical()) for dt in self.dts)
         return b",".join(dts_ical)
 
     @staticmethod

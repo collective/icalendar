@@ -48,6 +48,8 @@ from icalendar.error import (
 # chars.
 from icalendar.parser import (
     Parameters,
+    _q_join,
+    _q_split,
     q_join,
     q_split,
 )
@@ -144,6 +146,8 @@ __all__ = [
     "__version__",
     "__version_tuple__",
     "is_utc",
+    "_q_join",
+    "_q_split",
     "q_join",
     "q_split",
     "use_pytz",

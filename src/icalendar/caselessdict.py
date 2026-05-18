@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+import warnings
 from collections import OrderedDict
 from typing import TYPE_CHECKING, Any, TypeVar
 
-from icalendar.parser_tools import to_unicode
+from icalendar.parser_tools import _to_unicode
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping
@@ -17,7 +18,7 @@ KT = TypeVar("KT")
 VT = TypeVar("VT")
 
 
-def canonsort_keys(
+def _canonsort_keys(
     keys: Iterable[KT], canonical_order: Iterable[KT] | None = None
 ) -> list[KT]:
     """Sort leading keys according to a canonical order.
@@ -38,8 +39,8 @@ def canonsort_keys(
     Example:
         ..  code-block:: pycon
 
-            >>> from icalendar.caselessdict import canonsort_keys
-            >>> canonsort_keys(["C", "A", "B"], ["B", "C"])
+            >>> from icalendar.caselessdict import _canonsort_keys
+            >>> _canonsort_keys(["C", "A", "B"], ["B", "C"])
             ['B', 'C', 'A']
     """
     canonical_map = {k: i for i, k in enumerate(canonical_order or [])}
@@ -48,7 +49,26 @@ def canonsort_keys(
     return sorted(head, key=lambda k: canonical_map[k]) + sorted(tail)
 
 
-def canonsort_items(
+def canonsort_keys(
+    keys: Iterable[KT], canonical_order: Iterable[KT] | None = None
+) -> list[KT]:
+    """Sort leading keys according to a canonical order.
+
+    .. deprecated:: 7.0.0
+        Use the private :func:`_canonsort_keys` internally. For external use,
+        this function is deprecated. Please contact the maintainers if you
+        rely on this function.
+    """
+    warnings.warn(
+        "canonsort_keys is deprecated and will be removed in a future version. "
+        "If you are using this function externally, please contact the maintainers.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return _canonsort_keys(keys, canonical_order)
+
+
+def _canonsort_items(
     dict1: Mapping[KT, VT], canonical_order: Iterable[KT] | None = None
 ) -> list[tuple[KT, VT]]:
     """Sort items from a mapping according to a canonical key order.
@@ -64,11 +84,30 @@ def canonsort_items(
     Example:
         ..  code-block:: pycon
 
-            >>> from icalendar.caselessdict import canonsort_items
-            >>> canonsort_items({"C": 3, "A": 1, "B": 2}, ["B", "C"])
+            >>> from icalendar.caselessdict import _canonsort_items
+            >>> _canonsort_items({"C": 3, "A": 1, "B": 2}, ["B", "C"])
             [('B', 2), ('C', 3), ('A', 1)]
     """
-    return [(k, dict1[k]) for k in canonsort_keys(dict1.keys(), canonical_order)]
+    return [(k, dict1[k]) for k in _canonsort_keys(dict1.keys(), canonical_order)]
+
+
+def canonsort_items(
+    dict1: Mapping[KT, VT], canonical_order: Iterable[KT] | None = None
+) -> list[tuple[KT, VT]]:
+    """Sort items from a mapping according to a canonical key order.
+
+    .. deprecated:: 7.0.0
+        Use the private :func:`_canonsort_items` internally. For external use,
+        this function is deprecated. Please contact the maintainers if you
+        rely on this function.
+    """
+    warnings.warn(
+        "canonsort_items is deprecated and will be removed in a future version. "
+        "If you are using this function externally, please contact the maintainers.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return _canonsort_items(dict1, canonical_order)
 
 
 class CaselessDict(OrderedDict):
@@ -100,7 +139,7 @@ class CaselessDict(OrderedDict):
         """
         super().__init__(*args, **kwargs)
         for key, value in self.items():
-            key_upper = to_unicode(key).upper()
+            key_upper = _to_unicode(key).upper()
             if key != key_upper:
                 super().__delitem__(key)
                 self[key_upper] = value
@@ -120,7 +159,7 @@ class CaselessDict(OrderedDict):
         Raises:
             KeyError: If the key is not found.
         """
-        key = to_unicode(key)
+        key = _to_unicode(key)
         return super().__getitem__(key.upper())
 
     def __setitem__(self, key: Any, value: Any) -> None:
@@ -130,7 +169,7 @@ class CaselessDict(OrderedDict):
             key: The key of the pair, case-insensitive.
             value: The value to associate with the key.
         """
-        key = to_unicode(key)
+        key = _to_unicode(key)
         super().__setitem__(key.upper(), value)
 
     def __delitem__(self, key: Any) -> None:
@@ -142,7 +181,7 @@ class CaselessDict(OrderedDict):
         Raises:
             KeyError: If the key is not found.
         """
-        key = to_unicode(key)
+        key = _to_unicode(key)
         super().__delitem__(key.upper())
 
     def __contains__(self, key: Any) -> bool:
@@ -154,7 +193,7 @@ class CaselessDict(OrderedDict):
         Returns:
             ``True`` if the uppercased key exists, else ``False``.
         """
-        key = to_unicode(key)
+        key = _to_unicode(key)
         return super().__contains__(key.upper())
 
     def get(self, key: Any, default: Any = None) -> Any:
@@ -167,7 +206,7 @@ class CaselessDict(OrderedDict):
         Returns:
             The value for the key, if present, else the value specified by ``default``.
         """
-        key = to_unicode(key)
+        key = _to_unicode(key)
         return super().get(key.upper(), default)
 
     def setdefault(self, key: Any, value: Any = None) -> Any:
@@ -182,7 +221,7 @@ class CaselessDict(OrderedDict):
         Returns:
             The value for the key.
         """
-        key = to_unicode(key)
+        key = _to_unicode(key)
         return super().setdefault(key.upper(), value)
 
     def pop(self, key: Any, default: Any = None) -> Any:
@@ -195,7 +234,7 @@ class CaselessDict(OrderedDict):
         Returns:
             The removed value, or the value of ``default``.
         """
-        key = to_unicode(key)
+        key = _to_unicode(key)
         return super().pop(key.upper(), default)
 
     def popitem(self) -> tuple[Any, Any]:
@@ -220,7 +259,7 @@ class CaselessDict(OrderedDict):
         Returns:
             ``True`` if the key exists, else ``False``.
         """
-        key = to_unicode(key)
+        key = _to_unicode(key)
         return super().__contains__(key.upper())
 
     def update(self, *args: Any, **kwargs: Any) -> None:
@@ -298,7 +337,7 @@ class CaselessDict(OrderedDict):
         Returns:
             A sorted list of keys.
         """
-        return canonsort_keys(self.keys(), self.canonical_order)
+        return _canonsort_keys(self.keys(), self.canonical_order)
 
     def sorted_items(self) -> list[tuple[Any, Any]]:
         """Sort items according to the canonical order for this class.
@@ -309,7 +348,7 @@ class CaselessDict(OrderedDict):
         Returns:
             A sorted list of (key, value) tuples.
         """
-        return canonsort_items(self, self.canonical_order)
+        return _canonsort_items(self, self.canonical_order)
 
 
-__all__ = ["CaselessDict", "canonsort_items", "canonsort_keys"]
+__all__ = ["CaselessDict", "_canonsort_items", "_canonsort_keys", "canonsort_items", "canonsort_keys"]

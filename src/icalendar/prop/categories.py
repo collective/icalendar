@@ -6,7 +6,7 @@ from typing import Any, ClassVar
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
-from icalendar.parser_tools import to_unicode
+from icalendar.parser_tools import _to_unicode
 from icalendar.prop.text import vText
 
 
@@ -57,7 +57,7 @@ class vCategory:
             # Already split by Component.from_ical()
             return ical
         # Legacy: simple comma split (no escaping handled)
-        ical = to_unicode(ical)
+        ical = _to_unicode(ical)
         return ical.split(",")
 
     def __eq__(self, other: object) -> bool:

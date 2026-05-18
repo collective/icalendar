@@ -5,7 +5,7 @@ from typing import Any, ClassVar, NamedTuple
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
-from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
+from icalendar.parser_tools import DEFAULT_ENCODING, _to_unicode
 
 
 class NFields(NamedTuple):
@@ -100,10 +100,10 @@ class vN:
         Returns:
             NFields named tuple with five field values.
         """
-        from icalendar.parser import split_on_unescaped_semicolon
+        from icalendar.parser import _split_on_unescaped_semicolon
 
-        ical = to_unicode(ical)
-        fields = split_on_unescaped_semicolon(ical)
+        ical = _to_unicode(ical)
+        fields = _split_on_unescaped_semicolon(ical)
         if len(fields) != 5:
             raise ValueError(f"N must have exactly 5 fields, got {len(fields)}: {ical}")
         return NFields(*fields)
