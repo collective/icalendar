@@ -174,7 +174,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
             .. code-block:: shell
 
-                git switch -c 7.x -t upstream/main
+                git switch -c 7.x
 
         -   For a minor or patch release, check out the existing branch.
 
