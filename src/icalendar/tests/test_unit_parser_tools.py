@@ -1,21 +1,21 @@
 import unittest
 
-from icalendar.parser_tools import _data_encode, _from_unicode, _to_unicode
+from icalendar.parser_tools import data_encode, from_unicode, to_unicode
 
 
 class TestParserTools(unittest.TestCase):
     def test_parser_tools_to_unicode(self):
-        assert _to_unicode(b"spam") == "spam"
-        assert _to_unicode("spam") == "spam"
-        assert _to_unicode(b"spam") == "spam"
-        assert _to_unicode(b"\xc6\xb5") == "Ƶ"
-        assert _to_unicode(b"\xc6\xb5") == "Ƶ"
-        assert _to_unicode(b"\xc6\xb5", encoding="ascii") == "Ƶ"
-        assert _to_unicode(1) == 1
-        assert _to_unicode(None) is None
+        assert to_unicode(b"spam") == "spam"
+        assert to_unicode("spam") == "spam"
+        assert to_unicode(b"spam") == "spam"
+        assert to_unicode(b"\xc6\xb5") == "Ƶ"
+        assert to_unicode(b"\xc6\xb5") == "Ƶ"
+        assert to_unicode(b"\xc6\xb5", encoding="ascii") == "Ƶ"
+        assert to_unicode(1) == 1
+        assert to_unicode(None) is None
 
     def test_parser_tools_from_unicode(self):
-        assert _from_unicode("Ƶ", encoding="ascii") == b"\xc6\xb5"
+        assert from_unicode("Ƶ", encoding="ascii") == b"\xc6\xb5"
 
     def test_parser_tools_data_encode(self):
         data1 = {
@@ -30,4 +30,4 @@ class TestParserTools(unittest.TestCase):
             b"k1": b"v1",
             b"li1": [b"it1", b"it2", {b"k5": b"v5", b"k4": b"v4"}, 123],
         }
-        assert _data_encode(data1) == res
+        assert data_encode(data1) == res
