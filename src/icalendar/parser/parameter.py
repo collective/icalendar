@@ -217,15 +217,7 @@ def _q_split(st: str, sep: str = ",", maxsplit: int = -1) -> list[str]:
     return result
 
 
-def q_split(st: str, sep: str = ",", maxsplit: int = -1) -> list[str]:
-    """Split a string on a separator, respecting double quotes.
-
-    .. deprecated:: 7.0.0
-        Use the private :func:`_q_split` internally. For external use,
-        this function is deprecated and will be removed in icalendar 8.
-    """
-    deprecate_for_version_8("q_split")
-    return _q_split(st, sep, maxsplit)
+q_split = deprecate_for_version_8(_q_split)
 
 
 def _q_join(lst: Sequence[str], sep: str = ",", always_quote: bool = False) -> str:
@@ -255,15 +247,7 @@ def _q_join(lst: Sequence[str], sep: str = ",", always_quote: bool = False) -> s
     return sep.join(_dquote(itm, always_quote=always_quote) for itm in lst)
 
 
-def q_join(lst: Sequence[str], sep: str = ",", always_quote: bool = False) -> str:
-    """Join a list with a separator, quoting items as needed.
-
-    .. deprecated:: 7.0.0
-        Use the private :func:`_q_join` internally. For external use,
-        this function is deprecated and will be removed in icalendar 8.
-    """
-    deprecate_for_version_8("q_join")
-    return _q_join(lst, sep, always_quote)
+q_join = deprecate_for_version_8(_q_join)
 
 
 def single_string_parameter(func: Callable | None = None, upper=False):
