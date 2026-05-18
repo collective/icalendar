@@ -152,6 +152,14 @@ class vPeriod(TimeBase):
         """Make this cooperate with the other vDDDTypes."""
         return (self.start, (self.duration if self.by_duration else self.end))
 
+    @property
+    def ical_value(self) -> tuple[datetime, timedelta | datetime]:
+        """
+        Returns the period as a tuple of its start datetime
+        and either its end datetime or duration.
+        """
+        return self.dt
+
     from icalendar.param import FBTYPE
 
     @classmethod

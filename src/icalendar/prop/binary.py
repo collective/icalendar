@@ -32,8 +32,8 @@ class vBinary:
     @staticmethod
     def from_ical(ical: str | bytes) -> bytes:
         try:
-            return base64.b64decode(ical)
-        except ValueError as e:
+            return base64.b64decode(ical, validate=True)
+        except (binascii.Error, ValueError) as e:
             raise ValueError("Not valid base 64 encoding.") from e
 
     def __eq__(self, other: object) -> bool:
@@ -62,7 +62,7 @@ class vBinary:
     @property
     def ical_value(self) -> bytes:
         """The bytes value of the BINARY property."""
-        return base64.b64decode(self.obj)
+        return self.from_ical(self.obj)
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
