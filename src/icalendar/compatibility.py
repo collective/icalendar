@@ -28,6 +28,7 @@ def deprecate_for_version_8(name: str) -> None:
         stacklevel=3,
     )
 
+
 try:
     from typing import Self
 except ImportError:

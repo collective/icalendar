@@ -292,5 +292,6 @@ class IcalendarTestCase(unittest.TestCase):
 
     def test_q_join(self):
         assert (
-            _q_join(["Max", "Moller", "Rasmussen, Max"]) == 'Max,Moller,"Rasmussen, Max"'
+            _q_join(["Max", "Moller", "Rasmussen, Max"])
+            == 'Max,Moller,"Rasmussen, Max"'
         )

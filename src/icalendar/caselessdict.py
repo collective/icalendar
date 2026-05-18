@@ -351,4 +351,10 @@ class CaselessDict(OrderedDict):
         return _canonsort_items(self, self.canonical_order)
 
 
-__all__ = ["CaselessDict", "_canonsort_items", "_canonsort_keys", "canonsort_items", "canonsort_keys"]
+__all__ = [
+    "CaselessDict",
+    "_canonsort_items",
+    "_canonsort_keys",
+    "canonsort_items",
+    "canonsort_keys",
+]
