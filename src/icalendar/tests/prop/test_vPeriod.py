@@ -61,3 +61,15 @@ def test_invalid_parameters(period, error):
     """The parameters are of wrong type or of wrong order."""
     with pytest.raises(error):
         vPeriod(period)
+
+
+def test_ical_value_with_end():
+    """ical_value property returns the start/end tuple."""
+    value = (datetime(2000, 1, 1), datetime(2000, 1, 2))
+    assert vPeriod(value).ical_value == value
+
+
+def test_ical_value_with_duration():
+    """ical_value property returns the start/duration tuple."""
+    value = (datetime(2000, 1, 1), timedelta(days=31))
+    assert vPeriod(value).ical_value == value
