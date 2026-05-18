@@ -1,1 +1,0 @@
-Switched from manual change log management to `towncrier <https://pypi.org/project/towncrier/>`_ to automate the process. @stevepiercy
