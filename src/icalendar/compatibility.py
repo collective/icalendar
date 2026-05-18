@@ -9,7 +9,6 @@ Members will be added and removed without deprecation warnings.
 
 import functools
 import warnings
-
 from typing import TYPE_CHECKING
 
 try:

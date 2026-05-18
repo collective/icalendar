@@ -6,8 +6,8 @@ from icalendar.parser import (
     Contentline,
     Contentlines,
     Parameters,
-    dquote,
     _foldline,
+    dquote,
     q_join,
     q_split,
 )

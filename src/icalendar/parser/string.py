@@ -3,8 +3,8 @@
 import re
 import warnings
 
-from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
 from icalendar.compatibility import deprecate_for_version_8
+from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
 
 
 def _escape_char(text: str | bytes) -> str:
@@ -317,12 +317,12 @@ def validate_token(name: str) -> None:
 __all__ = [
     "_escape_char",
     "_escape_string",
+    "_foldline",
     "_unescape_char",
     "_unescape_string",
     "escape_char",
     "escape_string",
     "foldline",
-    "_foldline",
     "unescape_char",
     "unescape_string",
     "validate_token",

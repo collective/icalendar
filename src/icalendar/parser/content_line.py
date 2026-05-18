@@ -6,8 +6,8 @@ from icalendar.parser.parameter import Parameters
 from icalendar.parser.property import unescape_backslash, unescape_list_or_string
 from icalendar.parser.string import (
     _escape_string,
-    _unescape_string,
     _foldline,
+    _unescape_string,
     validate_token,
 )
 from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
