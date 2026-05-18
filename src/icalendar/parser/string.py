@@ -6,6 +6,7 @@ import warnings
 from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
 from icalendar.compatibility import deprecate_for_version_8
 
+
 def _escape_char(text: str | bytes) -> str:
     r"""Format value according to iCalendar TEXT escaping rules.
 
@@ -195,6 +196,7 @@ def _foldline(line: str, limit: int = 75, fold_sep: str = "\r\n ") -> str:
         ret_chars.append(char)
 
     return "".join(ret_chars)
+
 
 foldline = deprecate_for_version_8(_foldline)
 

@@ -6,6 +6,7 @@ This way, we can centralize the handling of different Python versions.
 Do NOT import this module directly if you use icalendar.
 Members will be added and removed without deprecation warnings.
 """
+
 import functools
 import warnings
 
@@ -45,7 +46,9 @@ def deprecate_for_version_8(func):
             stacklevel=2,
         )
         return func(*args, **kwargs)
+
     return wrapper
+
 
 __all__ = [
     "Self",
