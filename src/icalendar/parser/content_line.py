@@ -7,7 +7,7 @@ from icalendar.parser.property import unescape_backslash, unescape_list_or_strin
 from icalendar.parser.string import (
     _escape_string,
     _unescape_string,
-    foldline,
+    _foldline,
     validate_token,
 )
 from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
@@ -235,7 +235,7 @@ class Contentline(str):
         """Long content lines are folded so they are less than 75 characters
         wide.
         """
-        return foldline(self).encode(DEFAULT_ENCODING)
+        return _foldline(self).encode(DEFAULT_ENCODING)
 
 
 class Contentlines(list[Contentline]):
