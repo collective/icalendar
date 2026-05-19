@@ -979,17 +979,18 @@ class Component(CaselessDict):
         return self
     
     def view(self) -> str:
-        """Return component as readable ICS string.
-
-        Unlike 'to_ical' function, this returns decoded string with
-        Unix line endings instead of raw bytes with CRLF line endings.
-        Should help with inspecting output
-
-        >>> from icalendar import Calendar
-        >>> cal = Calendar()
-        >>> cal['summary'] = 'My Calendar'
-        >>> cal.view()
-        'BEGIN:VCALENDAR\\nSUMMARY:My Calendar\\nEND:VCALENDAR'
+        """Return the component as a readable iCalendar string.
+        Unlike the ``to_ical`` function, this function returns a decoded
+        string with LF line endings instead of raw bytes with CRLF line endings.
+        This may help with inspecting output.
+        Example:
+        
+            .. code-block:: pycon
+                >>> from icalendar import Calendar
+                >>> cal = Calendar()
+                >>> cal['summary'] = 'My Calendar'
+                >>> cal.view()
+               'BEGIN:VCALENDAR\\nSUMMARY:My Calendar\\nEND:VCALENDAR'
         """
         return self.to_ical().decode("utf-8").replace("\r\n", "\n").strip()
 
