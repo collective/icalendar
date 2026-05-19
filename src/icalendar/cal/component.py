@@ -990,8 +990,10 @@ class Component(CaselessDict):
                 >>> from icalendar import Calendar
                 >>> cal = Calendar()
                 >>> cal['summary'] = 'My Calendar'
-                >>> cal.view()
-                'BEGIN:VCALENDAR\\nSUMMARY:My Calendar\\nEND:VCALENDAR'
+                >>> print(cal.view())
+                BEGIN:VCALENDAR
+                SUMMARY:My Calendar
+                END:VCALENDAR
         """
         return self.to_ical().decode("utf-8").replace("\r\n", "\n").strip()
 
