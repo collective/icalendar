@@ -986,11 +986,12 @@ class Component(CaselessDict):
         Example:
         
             .. code-block:: pycon
+
                 >>> from icalendar import Calendar
                 >>> cal = Calendar()
                 >>> cal['summary'] = 'My Calendar'
                 >>> cal.view()
-               'BEGIN:VCALENDAR\\nSUMMARY:My Calendar\\nEND:VCALENDAR'
+                'BEGIN:VCALENDAR\\nSUMMARY:My Calendar\\nEND:VCALENDAR'
         """
         return self.to_ical().decode("utf-8").replace("\r\n", "\n").strip()
 
