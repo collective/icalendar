@@ -979,7 +979,7 @@ class Component(CaselessDict):
         return self
 
     def view(self) -> str:
-        """Return the component as a readable iCalendar string.
+        r"""Return the component as a readable iCalendar string.
         Unlike the ``to_ical`` function, this function returns a decoded
         string with LF line endings instead of raw bytes with CRLF line endings.
         This may help with inspecting output.

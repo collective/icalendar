@@ -4,8 +4,8 @@ Replace print() in documentation
 """
 
 from icalendar import Calendar
-from icalendar.cal.event import Event
 from icalendar.cal.component import Component
+from icalendar.cal.event import Event
 
 
 def test_view_returns_string():
