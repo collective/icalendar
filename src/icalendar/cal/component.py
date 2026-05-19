@@ -977,14 +977,14 @@ class Component(CaselessDict):
         For lazy components, this parses the component and returns the result.
         """
         return self
-    
+
     def view(self) -> str:
         """Return the component as a readable iCalendar string.
         Unlike the ``to_ical`` function, this function returns a decoded
         string with LF line endings instead of raw bytes with CRLF line endings.
         This may help with inspecting output.
         Example:
-        
+
             .. code-block:: pycon
 
                 >>> from icalendar import Calendar
@@ -994,5 +994,6 @@ class Component(CaselessDict):
                 'BEGIN:VCALENDAR\\nSUMMARY:My Calendar\\nEND:VCALENDAR'
         """
         return self.to_ical().decode("utf-8").replace("\r\n", "\n").strip()
+
 
 __all__ = ["Component"]
