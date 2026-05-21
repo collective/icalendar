@@ -1,0 +1,1 @@
+Fully qualify :class:`~icalendar.enums.FBTYPE` and :class:`~icalendar.enums.BUSYTYPE` cross-references in :class:`~icalendar.enums.FBTYPE` and :class:`~icalendar.enums.BUSYTYPE` docstrings so Sphinx can resolve the links correctly. @Godzilaa
