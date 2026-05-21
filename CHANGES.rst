@@ -14,12 +14,6 @@ Change log
 7.1.1 (2026-05-18)
 ------------------
 
-Minor changes
-~~~~~~~~~~~~~
-
-- Added :meth:`Component.view <icalendar.cal.component.Component.view>` method for human-readable iCalendar output. :issue:`1257`
-
-
 New features
 ~~~~~~~~~~~~
 

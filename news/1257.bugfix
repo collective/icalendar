@@ -1,0 +1,1 @@
+Added :meth:`Component.view <icalendar.cal.component.Component.view>` method for human-readable iCalendar output. @arpeddi
