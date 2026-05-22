@@ -167,9 +167,9 @@ class Component(CaselessDict):
         """Infer the ``VALUE`` parameter from a Python type.
 
         Parameters:
-            value: Python native type, one of :py:class:`date`, :py:mod:`datetime`,
-                :py:class:`timedelta`, :py:mod:`time`, :py:class:`tuple`,
-                or :py:class:`list`.
+            value: Python native type, one of :class:`datetime.date`, :class:`datetime.datetime`,
+                :class:`datetime.timedelta`, :class:`datetime.time`, :class:`tuple`,
+                or :class:`list`.
 
         Returns:
             str or None: The ``VALUE`` parameter string, for example, "DATE",
@@ -405,10 +405,12 @@ class Component(CaselessDict):
     ) -> list[Component]:
         """Walk to given component."""
         result = []
-        if (name is None or self.name == name) and select(self):
-            result.append(self)
-        for subcomponent in self.subcomponents:
-            result += subcomponent._walk(name, select)
+        stack = [self]
+        while stack:
+            component = stack.pop()
+            if (name is None or component.name == name) and select(component):
+                result.append(component)
+            stack.extend(reversed(component.subcomponents))
         return result
 
     def walk(
@@ -445,30 +447,45 @@ class Component(CaselessDict):
 
     def property_items(
         self,
-        recursive=True,
+        recursive: bool = True,
         sorted: bool = True,
     ) -> list[tuple[str, object]]:
         """Returns properties in this component and subcomponents as:
         [(name, value), ...]
         """
+        # Iterative implementation to avoid RecursionError
+        result = []
         v_text = self.types_factory["text"]
-        properties = [("BEGIN", v_text(self.name or "").to_ical())]
-        property_names = self.sorted_keys() if sorted else self.keys()
-
-        for name in property_names:
-            values = self[name]
-            if isinstance(values, list):
-                # normally one property is one line
-                for value in values:
-                    properties.append((name, value))
+        # Stack stores (component, state)
+        # state: True means we are processing the END of the component
+        # state: False means we are processing the BEGIN and properties of the component
+        stack = [(self, False)]
+        while stack:
+            comp, is_end = stack.pop()
+            if is_end:
+                result.append(("END", v_text(comp.name).to_ical()))
             else:
-                properties.append((name, values))
-        if recursive:
-            # recursion is fun!
-            for subcomponent in self.subcomponents:
-                properties += subcomponent.property_items(sorted=sorted)
-        properties.append(("END", v_text(self.name or "").to_ical()))
-        return properties
+                result.append(("BEGIN", v_text(comp.name).to_ical()))
+                property_names = comp.sorted_keys() if sorted else comp.keys()
+
+                for name in property_names:
+                    values = comp[name]
+                    if isinstance(values, list):
+                        # normally one property is one line
+                        for value in values:
+                            result.append((name, value))
+                    else:
+                        result.append((name, values))
+
+                # Push the END marker for this component
+                stack.append((comp, True))
+                # Push subcomponents if recursion is enabled
+                if recursive:
+                    # Push in reverse order to maintain original order in result
+                    for subcomponent in reversed(comp.subcomponents):
+                        stack.append((subcomponent, False))
+
+        return result
 
     @overload
     @classmethod
@@ -565,12 +582,49 @@ class Component(CaselessDict):
         return content_lines.to_ical()
 
     def __repr__(self):
-        """String representation of class with all of it's subcomponents."""
-        subs = ", ".join(str(it) for it in self.subcomponents)
-        return (
-            f"{self.name or type(self).__name__}"
-            f"({dict(self)}{', ' + subs if subs else ''})"
-        )
+        """String representation of class with all of its subcomponents.
+
+        Implemented iteratively rather than recursively so that calendars
+        with deeply nested subcomponents do not raise ``RecursionError``.
+        A pathological ``.ics`` payload of only ~13 KB can otherwise nest
+        ``BEGIN:VEVENT`` ~500 levels and crash any caller that performs
+        ``repr()``/``str()``/``f"{cal}"`` on the parsed calendar
+        (e.g. logging, error reporting, debug pages).
+        """
+        # Stack-based traversal. Each frame is one of:
+        #   ("open", component)   -> emit "Name({props}" and schedule children
+        #   ("close",)            -> emit ")"
+        #   ("comma",)            -> emit ", "
+        out: list[str] = []
+        stack: list[tuple] = [("open", self)]
+        while stack:
+            frame = stack.pop()
+            kind = frame[0]
+            if kind == "comma":
+                out.append(", ")
+            elif kind == "close":
+                out.append(")")
+            else:  # "open"
+                node = frame[1]
+                if isinstance(node, Component):
+                    out.append(f"{node.name or type(node).__name__}({dict(node)}")
+                    subs = node.subcomponents
+                    if subs:
+                        # Defer ")" then push children in reverse so that
+                        # popping yields original order, with ", " separators
+                        # (the first popped comma serves as the separator
+                        # between the component's dict and its first child).
+                        stack.append(("close",))
+                        for sub in reversed(subs):
+                            stack.append(("open", sub))
+                            stack.append(("comma",))
+                    else:
+                        out.append(")")
+                else:
+                    # Should not normally occur (subcomponents are Components),
+                    # but be safe and fall back to non-recursive str().
+                    out.append(str(node))
+        return "".join(out)
 
     def __eq__(self, other):
         if len(self.subcomponents) != len(other.subcomponents):

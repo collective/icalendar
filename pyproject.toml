@@ -100,6 +100,7 @@ dev = [
   {include-group = "test"},
   {include-group = "docs"},
   {include-group = "formatting"},
+  "towncrier>=25.8.0",
   "tox",
   "tox-uv",
 ]
@@ -300,6 +301,57 @@ norecursedirs = [
 filterwarnings = [
     "ignore::DeprecationWarning",
 ]
+
+[tool.towncrier]
+directory = "news/"
+filename = "CHANGES.rst"
+issue_format = "`Issue #{issue} <https://github.com/collective/icalendar/issues/{issue}>`_"
+start_string = ".. towncrier release notes start\n"
+title_format = "{version} ({project_date})"
+# First underline is used for version/date header.
+# Second underline is used for the type names (like 'Bug fixes:').
+underlines = ["-", "~", "`"]
+
+[[tool.towncrier.type]]
+directory = "breaking"
+name = "Breaking changes"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "removal"
+name = "Removals and deprecations"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "feature"
+name = "New features"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "bugfix"
+name = "Bug fixes"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "documentation"
+name = "Documentation"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "deps"
+name = "Dependency changes"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "internal"
+name = "Internal changes"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "chore"
+name = "Other tasks"
+showcontent = false
+
 
 [tool.uv]
 python-preference = "managed"

@@ -4,7 +4,51 @@ Change log
 
 .. py:currentmodule:: icalendar
 
-7.0.4 (unreleased)
+.. Do *NOT* add new change log entries to this file.
+   Instead create a file in the news directory.
+   For helpful instructions, see:
+   https://icalendar.readthedocs.io/en/latest/contribute/#change-log-entry-format
+
+.. towncrier release notes start
+
+7.1.1 (2026-05-18)
+------------------
+
+New features
+~~~~~~~~~~~~
+
+- Created an :attr:`~icalendar.prop.dt.period.vPeriod.ical_value` property for the :class:`~icalendar.prop.dt.period.vPeriod` component. @ZairKSM (`Issue #876 <https://github.com/collective/icalendar/issues/876>`_)
+- Created a :meth:`~icalendar.prop.recur.weekday.vWeekday.ical_value` property for the :class:`~icalendar.prop.recur.weekday.vWeekday` component, mirroring the existing pattern on :class:`~icalendar.prop.boolean.vBoolean`. @mvanhorn (`Issue #1360 <https://github.com/collective/icalendar/issues/1360>`_)
+
+
+Bug fixes
+~~~~~~~~~
+
+- Strictly validate BINARY property values in :attr:`vBinary.from_ical() <icalendar.prop.binary.vBinary.from_ical>` and reject malformed Base64 input instead of silently accepting invalid characters. @uwezkhan (`Issue #1349 <https://github.com/collective/icalendar/issues/1349>`_)
+
+
+Documentation
+~~~~~~~~~~~~~
+
+- Replace the RFC quotations in the docstrings for :attr:`Alarm.REPEAT <icalendar.cal.alarm.Alarm.REPEAT>` and :attr:`Alarm.DURATION <icalendar.cal.alarm.Alarm.DURATION>` with Pythonic descriptions, including parameter notes, conformance references, and worked examples. @tmchow (`Issue #1244 <https://github.com/collective/icalendar/issues/1244>`_)
+- Edited contributor documentation for how to add a change log entry, and maintenance documentation for how to process news fragments. @stevepiercy (`Issue #1256 <https://github.com/collective/icalendar/issues/1256>`_)
+- Updated release process documentation. @niccokunzmann @stevepiercy @SashankBhamidi (`Issue #1293 <https://github.com/collective/icalendar/issues/1293>`_)
+
+
+Dependency changes
+~~~~~~~~~~~~~~~~~~
+
+- Added `towncrier <https://pypi.org/project/towncrier/>`_ to development dependencies. @stevepiercy (`Issue #1256 <https://github.com/collective/icalendar/issues/1256>`_)
+
+
+Internal changes
+~~~~~~~~~~~~~~~~
+
+- Switched from manual change log management to `towncrier <https://pypi.org/project/towncrier/>`_ to automate the process. @stevepiercy (`Issue #1256 <https://github.com/collective/icalendar/issues/1256>`_)
+- Bump PyPy from 3.10 to 3.11 for testing. @stevepiercy (`Issue #1383 <https://github.com/collective/icalendar/issues/1383>`_)
+
+
+7.1.0 (2026-04-30)
 ------------------
 
 Minor changes
@@ -26,11 +70,6 @@ Minor changes
 - Add type hints to tests directory functions. :issue:`938`
 - Update to Contributor Covenant 3.0 Code of Conduct, hosted at https://pycal.org/code-of-conduct/.
 
-Breaking changes
-~~~~~~~~~~~~~~~~
-
-- ...
-
 New features
 ~~~~~~~~~~~~
 
@@ -44,10 +83,13 @@ Bug fixes
 
 - Allow lenient parsing of content lines with optional whitespace around property and parameter delimiters (for example, ``REFRESH - INTERVAL; VALUE = DURATION:PT48H``) when parsing calendars with ``strict=False``. :issue:`351`
 - X-properties with a ``VALUE`` parameter are now parsed using the correct type instead of falling back to :class:`~icalendar.prop.unkown.vUnknown`. :issue:`1238`
-- Fixed :func:`~icalendar.attr.get_end_property` to avoid allowing the creation of VEVENT components with negative durations. Only VTODO components are allowed to have negative durations. :issue:`999`
+- Test that the ``DURATION`` property catches :class:`datetime.timedelta` objects without vProperty wrappers. :issue:`884`
+- Fixed :func:`~icalendar.attr.get_end_property` to avoid allowing the creating of VEVENT components with negative durations. Only VTODO components are allowed to have negative durations. :issue:`999`
 - GitHub Actions: conditional tests now show as "skipped" instead of "pending". :issue:`1264`
-- Fixed ``Component.__eq__`` method not being commutative when comparing subcomponents. :issue:`1224`
+- Fixed :meth:`Component.__eq__ <icalendar.cal.component.Component.__eq__>` method not being commutative when comparing subcomponents. :issue:`1224`
+- Verified that the ``VALUE`` parameter of jCal components is used for the type of the component property. :issue:`1237`
 - Fix :func:`~icalendar.parser.string.escape_char` handling of ``bytes`` input by converting with :func:`icalendar.parser_tools.to_unicode` before escaping. :issue:`1226`
+- Fixed ``RecursionError`` in ``walk()``, ``property_items()``, and ``to_ical()`` by using iterative implementations for component traversal and property extraction. :pr:`1348`
 
 Documentation
 ~~~~~~~~~~~~~
@@ -72,6 +114,7 @@ Documentation
 - Add documentation for how to use uv for development. :issue:`1102`
 - Reorganize Design documentation. :issue:`1292`
 - Improve docstring for ``categories_property``, which renders to HTML in :attr:`Calendar.categories <icalendar.cal.calendar.Calendar.categories>`, :attr:`Event.categories <icalendar.cal.event.Event.categories>`, :attr:`Journal.categories <icalendar.cal.journal.Journal.categories>`, and :attr:`Todo.categories <icalendar.cal.todo.Todo.categories>`. :issue:`1244`
+- Fixed Python object cross-references in ``icalendar.cal.component.Component._infer_value_type``. :issue:`1158`, :pr:`1344`
 
 7.0.3 (2026-03-03)
 ------------------
@@ -298,7 +341,7 @@ New features
 ~~~~~~~~~~~~
 
 - Add compatibility to :rfc:`9253`:
-  
+
   - Add new property types :class:`vUid` and :class:`vXmlReference`
   - Add properties to all components: :attr:`Component.concepts`, :attr:`Component.links`, :attr:`Component.refids`, :attr:`Component.related_to`
   - Add new values to :class:`RELTYPE`

@@ -89,15 +89,32 @@ class Alarm(Component):
     REPEAT = single_int_property(
         "REPEAT",
         0,
-        """The REPEAT property of an alarm component.
+        """The number of additional times the alarm is triggered after the initial trigger.
 
-        The alarm can be defined such that it triggers repeatedly.  A
-        definition of an alarm with a repeating trigger MUST include both
-        the "DURATION" and "REPEAT" properties.  The "DURATION" property
-        specifies the delay period, after which the alarm will repeat.
-        The "REPEAT" property specifies the number of additional
-        repetitions that the alarm will be triggered.  This repetition
-        count is in addition to the initial triggering of the alarm.
+        Defaults to ``0``, meaning the alarm fires once. To repeat the alarm,
+        set both :attr:`REPEAT` and :attr:`DURATION`. The :attr:`DURATION`
+        sets the gap between repetitions. ``REPEAT`` is the count of *additional*
+        triggers, so a ``REPEAT`` of ``2`` produces three alarms in total
+        (the initial trigger plus two repeats).
+
+        Conforming with :rfc:`5545#section-3.8.6.2`, this property can appear
+        once in an :class:`~icalendar.cal.alarm.Alarm` component and must be
+        paired with :attr:`DURATION`.
+
+        Example:
+            Build an alarm that fires once and then repeats twice at
+            five-minute intervals.
+
+            .. code-block:: pycon
+
+                >>> from datetime import timedelta
+                >>> from icalendar import Alarm
+                >>> alarm = Alarm()
+                >>> alarm.TRIGGER = timedelta(minutes=-15)
+                >>> alarm.DURATION = timedelta(minutes=5)
+                >>> alarm.REPEAT = 2
+                >>> alarm.REPEAT
+                2
         """,
     )
 
@@ -105,13 +122,36 @@ class Alarm(Component):
         property_get_duration,
         property_set_duration,
         property_del_duration,
-        """The DURATION property of an alarm component.
+        """The delay between repeated triggers of a repeating alarm.
 
-    The alarm can be defined such that it triggers repeatedly.  A
-    definition of an alarm with a repeating trigger MUST include both
-    the "DURATION" and "REPEAT" properties.  The "DURATION" property
-    specifies the delay period, after which the alarm will repeat.
-    """,
+        Returns a :class:`datetime.timedelta` or ``None`` when the alarm
+        has no :attr:`DURATION` set. Setting this attribute accepts a
+        :class:`~datetime.timedelta`; deleting it removes the property
+        from the component.
+
+        :attr:`DURATION` is meaningful only for repeating alarms and must
+        be paired with :attr:`REPEAT`. The two together produce
+        ``REPEAT`` additional triggers, each spaced by ``DURATION`` after
+        the initial trigger.
+
+        Conforming with :rfc:`5545#section-3.8.2.5`, the ``DURATION`` property
+        can appear once in an :class:`~icalendar.cal.alarm.Alarm` component.
+
+        Example:
+            Pair :attr:`DURATION` with :attr:`REPEAT` to produce three
+            triggers spaced ten minutes apart.
+
+            .. code-block:: pycon
+
+                >>> from datetime import timedelta
+                >>> from icalendar import Alarm
+                >>> alarm = Alarm()
+                >>> alarm.TRIGGER = timedelta(minutes=-30)
+                >>> alarm.DURATION = timedelta(minutes=10)
+                >>> alarm.REPEAT = 2
+                >>> alarm.DURATION
+                datetime.timedelta(seconds=600)
+        """,
     )
 
     ACKNOWLEDGED = single_utc_property(

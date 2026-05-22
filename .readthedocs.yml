@@ -35,4 +35,5 @@ build:
       then
         exit 183;
       fi
+    - git fetch --tags || true
     - make rtd-pr-preview
