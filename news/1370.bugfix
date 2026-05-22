@@ -1,1 +1,0 @@
-Replaced the recursive :meth:`Component.__repr__ <icalendar.cal.component.Component.__repr__>` implementation with an iterative stack-based walk so that deeply nested calendars no longer raise :exc:`RecursionError` when formatted via ``repr()``, ``str()``, or f-strings. The output format is unchanged for normally-shaped calendars. @gistrec
