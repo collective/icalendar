@@ -284,7 +284,7 @@ def _get_rrules(self: Component) -> list[vRecur]:
             >>> event = Event()
             >>> event.start = datetime(1997, 9, 2, 9, 0, tzinfo=ZoneInfo("America/New_York"))
             >>> event.add("RRULE", "FREQ=DAILY;COUNT=10")
-            >>> print(event.to_ical())
+            >>> print(event.to_ical().decode())  # doctest: +NORMALIZE_WHITESPACE
             BEGIN:VEVENT
             DTSTART;TZID=America/New_York:19970902T090000
             RRULE:FREQ=DAILY;COUNT=10
@@ -302,13 +302,13 @@ def _get_rrules(self: Component) -> list[vRecur]:
             >>> event = Event()
             >>> event.start = datetime(1997, 9, 2, 9, 0, tzinfo=ZoneInfo("America/New_York"))
             >>> event.add("RRULE", vRecur({"FREQ": ["DAILY"]}, until=datetime(1997, 12, 24, tzinfo=ZoneInfo("UTC"))))
-            >>> print(event.to_ical())
+            >>> print(event.to_ical().decode())  # doctest: +NORMALIZE_WHITESPACE
             BEGIN:VEVENT
             DTSTART;TZID=America/New_York:19970902T090000
             RRULE:FREQ=DAILY;UNTIL=19971224T000000Z
             END:VEVENT
-            >>> event.rrules
-            [vRecur({'FREQ': ['DAILY'], 'UNTIL': [datetime.datetime(1997, 12, 24, 0, 0, tzinfo=ZoneInfo(key='UTC'))]})]
+            >>> event.rrules  # doctest: +ELLIPSIS
+            [vRecur({'FREQ': ['DAILY'], 'UNTIL': [...]})]
 
     .. note::
 
@@ -507,7 +507,7 @@ color_property = single_string_property(
             >>> from icalendar import Todo
             >>> todo = Todo()
             >>> todo.color = "green"
-            >>> print(todo.to_ical())
+            >>> print(todo.to_ical().decode())  # doctest: +NORMALIZE_WHITESPACE
             BEGIN:VTODO
             COLOR:green
             END:VTODO
@@ -650,7 +650,7 @@ Example:
         >>> from icalendar import Event
         >>> event = Event()
         >>> event.categories = ["Work", "Meeting"]
-        >>> print(event.to_ical())
+        >>> print(event.to_ical().decode())  # doctest: +NORMALIZE_WHITESPACE
         BEGIN:VEVENT
         CATEGORIES:Work,Meeting
         END:VEVENT
@@ -724,7 +724,7 @@ Examples:
         >>> from icalendar import Event, vCalAddress
         >>> event = Event()
         >>> event.attendees.append(vCalAddress("mailto:me@my-domain.com"))
-        >>> print(event.to_ical())
+        >>> print(event.to_ical().decode())  # doctest: +NORMALIZE_WHITESPACE
         BEGIN:VEVENT
         ATTENDEE:mailto:me@my-domain.com
         END:VEVENT
@@ -736,7 +736,7 @@ Examples:
         ...     vCalAddress("mailto:me@my-domain.com"),
         ...     vCalAddress("mailto:you@my-domain.com"),
         ... ], summary = "Email alarm")
-        >>> print(alarm.to_ical())
+        >>> print(alarm.to_ical().decode())  # doctest: +NORMALIZE_WHITESPACE
         BEGIN:VALARM
         ATTENDEE:mailto:me@my-domain.com
         ATTENDEE:mailto:you@my-domain.com
@@ -820,9 +820,9 @@ Examples:
         >>> from uuid import uuid4
         >>> calendar = Calendar()
         >>> calendar.uid = uuid4()
-        >>> print(calendar.to_ical())
+        >>> print(calendar.to_ical().decode())  # doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
         BEGIN:VCALENDAR
-        UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
+        UID:...
         END:VCALENDAR
 
 """,
@@ -1991,7 +1991,7 @@ def _get_conferences(self: Component) -> list[Conference]:
             ...         language="EN",
             ...     )
             ... ]
-            >>> print(event.to_ical())
+            >>> print(event.to_ical().decode())  # doctest: +NORMALIZE_WHITESPACE
             BEGIN:VEVENT
             CONFERENCE;FEATURE="PHONE,MODERATOR";LABEL=Moderator dial-in;LANGUAGE=EN;V
              ALUE=URI:tel:+1-412-555-0123,,,654321

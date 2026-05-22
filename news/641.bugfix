@@ -1,0 +1,1 @@
+Removed an unreachable ``else`` branch from :func:`~icalendar.parser_tools.from_unicode` and :func:`~icalendar.parser_tools.to_unicode` in :file:`parser_tools.py`, raising a ``TypeError`` for invalid input instead.

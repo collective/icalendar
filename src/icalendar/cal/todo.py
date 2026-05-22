@@ -69,10 +69,10 @@ class Todo(Component):
 
             >>> from icalendar import Todo
             >>> todo = Todo.new()
-            >>> print(todo.to_ical())
+            >>> print(todo.to_ical().decode())  # doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
             BEGIN:VTODO
-            DTSTAMP:20250517T080612Z
-            UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
+            DTSTAMP:...
+            UID:...
             END:VTODO
 
         Complete the example Todo.
@@ -82,14 +82,14 @@ class Todo(Component):
             >>> from datetime import datetime, timezone
             >>> from icalendar import Todo, STATUS
             >>> todo = Todo.example()
-            >>> todo["PERCENT-COMPLETE"] = 100
-            >>> todo["COMPLETED"] = datetime(2007, 5, 1, 12, tzinfo=timezone.utc)
+            >>> todo.add('PERCENT-COMPLETE', 100)
+            >>> todo.add('COMPLETED', datetime(2007, 5, 1, 12, tzinfo=timezone.utc))
             >>> todo.status = STATUS.COMPLETED
-            >>> print(todo.to_ical().decode())
+            >>> print(todo.to_ical().decode())  # doctest: +NORMALIZE_WHITESPACE
             BEGIN:VTODO
             CATEGORIES:FAMILY,FINANCE
             CLASS:CONFIDENTIAL
-            COMPLETED:2007-05-01 12:00:00+00:00
+            COMPLETED:20070501T120000Z
             DTSTAMP:20070313T123432Z
             DUE;VALUE=DATE:20070501
             PERCENT-COMPLETE:100
@@ -187,7 +187,7 @@ class Todo(Component):
         >>> todo.end = datetime(2021, 1, 1, 12, 30) # 30 minutes
         >>> todo.duration  # 1800 seconds == 30 minutes
         datetime.timedelta(seconds=1800)
-        >>> print(todo.to_ical())
+        >>> print(todo.to_ical().decode())  # doctest: +NORMALIZE_WHITESPACE
         BEGIN:VTODO
         DTSTART:20210101T120000
         DUE:20210101T123000
