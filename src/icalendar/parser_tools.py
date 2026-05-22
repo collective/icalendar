@@ -3,7 +3,7 @@ DEFAULT_ENCODING = "utf-8"
 ICAL_TYPE = str | bytes
 
 
-def from_unicode(value: ICAL_TYPE, encoding="utf-8") -> bytes:
+def from_unicode(value: ICAL_TYPE, encoding: str = "utf-8") -> bytes:
     """Converts a value to bytes, even if it is already bytes.
 
     Parameters:
@@ -24,7 +24,7 @@ def from_unicode(value: ICAL_TYPE, encoding="utf-8") -> bytes:
         return value
 
 
-def to_unicode(value: ICAL_TYPE, encoding="utf-8-sig") -> str:
+def to_unicode(value: ICAL_TYPE, encoding: str = "utf-8-sig") -> str:
     """Converts a value to Unicode, even if it is already a Unicode string.
 
     Parameters:
