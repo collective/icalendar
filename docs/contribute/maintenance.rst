@@ -337,14 +337,8 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         git commit -m "Show version warning banner for previous major version 6.x on Read the Docs"
         git push  # to collective/icalendar
 
-#.  Configure `Read the Docs <https://app.readthedocs.org/projects/icalendar/>`_.
-
-    a.  Verify that the "stable" version was activated automatically on Read the Docs.
-
-    #.  Deactivate previous releases in that current stable release line.
-        Click on the ellipsis icon, and select :guilabel:`Configure version`.
-        Toggle the :guilabel:`Active` switch to deactivate the version.
-
+#.  Manually trigger the "latest" version on `Read the Docs <https://app.readthedocs.org/projects/icalendar/>`_.
+    To the right in the row for "latest," click the ellipsis :guilabel:`…`, and from the pop-up menu select :guilabel:`Rebuild version`.
 
 #.  Add a comment to each of the issues mentioned in the new release.
     Example:
