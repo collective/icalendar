@@ -286,7 +286,8 @@ class Alarms:
         alarms without timezone are considered local.
 
         Some computations work without setting this, others don't.
-        If they need this information, expect a LocalTimezoneMissing exception
+        If they need this information, expect a
+        :exc:`~icalendar.error.LocalTimezoneMissing` exception
         somewhere down the line.
         """
         self._local_tzinfo = tzp.timezone(tzinfo) if isinstance(tzinfo, str) else tzinfo
@@ -296,7 +297,7 @@ class Alarms:
         """Compute and return the times of the alarms given.
 
         If the information for calculation is incomplete, this will raise a
-        IncompleteAlarmInformation exception.
+        :exc:`~icalendar.error.IncompleteAlarmInformation` exception.
 
         Please make sure to set all the required parameters before calculating.
         If you forget to set the acknowledged times, that is not problem.
@@ -366,7 +367,8 @@ class Alarms:
 
         Alarms can be in local time (without a timezone).
         To calculate if the alarm really happened, we need it to be in a timezone.
-        If a timezone is required but not given, we throw an IncompleteAlarmInformation.
+        If a timezone is required but not given, we throw an
+        :exc:`~icalendar.error.IncompleteAlarmInformation`.
         """
         return [alarm_time for alarm_time in self.times if alarm_time.is_active()]
 
