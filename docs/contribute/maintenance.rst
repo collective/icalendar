@@ -338,6 +338,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
         git push  # to collective/icalendar
 
 #.  Manually trigger the "latest" version on `Read the Docs <https://app.readthedocs.org/projects/icalendar/>`_.
+    To the right in the row for "latest", click the ellipsis :guilabel:`…`, and from the pop-up menu select :guilabel:`Rebuild version`.
 
 #.  Add a comment to each of the issues mentioned in the new release.
     Example:
