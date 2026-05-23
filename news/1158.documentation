@@ -1,1 +1,2 @@
 Fixed broken links and removed `:py` prefix in :class:`icalendar.cal.calendar.Calendar` documentation. @lcampanella98
+Qualify ambiguous cross-references and remove remaining ``:py`` prefixed roles. @wahajahmed010
