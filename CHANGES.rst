@@ -11,6 +11,21 @@ Change log
 
 .. towncrier release notes start
 
+7.1.2 (2026-05-22)
+------------------
+
+Bug fixes
+~~~~~~~~~
+
+- Replaced the recursive :meth:`Component.__repr__ <icalendar.cal.component.Component.__repr__>` implementation with an iterative stack-based walk so that deeply nested calendars no longer raise :exc:`RecursionError` when formatted via ``repr()``, ``str()``, or f-strings. The output format is unchanged for normally-shaped calendars. @gistrec (`Issue #1370 <https://github.com/collective/icalendar/issues/1370>`_)
+
+
+Documentation
+~~~~~~~~~~~~~
+
+- Update maintenance documentation. Fix the version switcher on "stable" on Read the Docs. @stevepiercy (`Issue #1352 <https://github.com/collective/icalendar/issues/1352>`_)
+
+
 7.1.1 (2026-05-18)
 ------------------
 
