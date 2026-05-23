@@ -9,7 +9,7 @@ on:
     # documentation files.
     paths:
       - "docs/**"
-      - "src/icalendar/*.py"
+      - "src/icalendar/**/*.py"
       - .github/workflows/documentation.yml
       - .github/workflows/rtd-pr-preview.yml
       - .readthedocs.yaml
