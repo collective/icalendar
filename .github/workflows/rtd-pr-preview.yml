@@ -17,9 +17,9 @@ on:
       - CHANGES.rst
       - Makefile
       - pyproject.toml
-      - "!src/icalendar/fuzzing"
-      - "!src/icalendar/tests"
-      - "!src/icalendar/timezone"
+      - "!src/icalendar/fuzzing/**"
+      - "!src/icalendar/tests/**"
+      - "!src/icalendar/timezone/**"
 
 permissions:
   pull-requests: write
