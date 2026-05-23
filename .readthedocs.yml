@@ -22,9 +22,9 @@ build:
     - |
       if [ "$READTHEDOCS_VERSION_TYPE" = "external" ] && git diff --quiet origin/main -- . docs/ \
         src/icalendar/**/*.py \
-        .github/workflows/documentation.yml
-        .github/workflows/rtd-pr-preview.yml
-        .readthedocs.yaml \
+        .github/workflows/documentation.yml \
+        .github/workflows/rtd-pr-preview.yml \
+        .readthedocs.yml \
         .vale.ini \
         CHANGES.rst \
         Makefile \
