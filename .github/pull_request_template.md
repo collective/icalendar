@@ -1,8 +1,16 @@
-## Closes issue
+## Linked issue
 
-Replace `ISSUE_NUMBER` with the issue number that your pull request fixes. Then GitHub will link and automatically close the related issue.
+Replace `ISSUE_NUMBER` with the issue number that your pull request addresses. This links the pull request to the related issue. Choose the appropriate form.
+
+If you completely resolve the issue, then use `"Closes"`.
+GitHub will automatically close the related issue when the PR gets merged.
 
 - [ ] Closes #ISSUE_NUMBER
+
+If you resolve only a part of the issue, then use `"See"`.
+This form keeps the issue open for future work. 
+
+- [ ] See #ISSUE_NUMBER
 
 ## Description
 
