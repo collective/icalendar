@@ -37,13 +37,17 @@ else:
 
 
 def deprecate_for_version_8(func):
+    """Issue a warning for deprecated functions to be removed in version 8."""
+    public_name = func.__name__.removeprefix("_")
+
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         warnings.warn(
-            f"{func.__name__} is deprecated and will be removed in icalendar 8",
+            f"{public_name} is deprecated and will be removed in icalendar 8",
             DeprecationWarning,
             stacklevel=2,
         )
+        wrapper.__name__ = public_name
         return func(*args, **kwargs)
 
     return wrapper

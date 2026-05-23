@@ -1,1 +1,1 @@
-Deprecated ``icalendar.parser.string.foldline``. The private ``_foldline`` function should be used instead. It will be removed in icalendar 8. @IoannaGiag
+Deprecated :func:`icalendar.parser.string.foldline` as a private function for icalendar version 8. @IoannaGiag
