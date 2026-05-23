@@ -1,4 +1,4 @@
-## Closes issue
+## Linked issue
 
 Replace `ISSUE_NUMBER` with the issue number that your pull request addresses. This links the pull request to the related issue. Choose the appropriate form.
 
