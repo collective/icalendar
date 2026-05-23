@@ -62,7 +62,7 @@ class vBinary:
     @property
     def ical_value(self) -> bytes:
         """The bytes value of the BINARY property."""
-        return self.from_ical(self.obj)
+        return base64.b64decode(self.obj, validate=True)
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
