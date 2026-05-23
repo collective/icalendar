@@ -285,7 +285,7 @@ class Component(CaselessDict):
         value,
         parameters: dict[str, str] | Parameters = None,
         encode: bool = True,
-    ):
+    ) -> None:
         """Add a property to this component.
 
         If the property already exists, the new value is appended so the
@@ -306,6 +306,9 @@ class Component(CaselessDict):
                 ``True`` if the value should be encoded to one of icalendar's
                 own property types (fallback is ``vText``); ``False`` to
                 store the value as-is.
+
+        Returns:
+            ``None``
 
         Example:
 
