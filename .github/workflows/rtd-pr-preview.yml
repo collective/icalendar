@@ -12,7 +12,7 @@ on:
       - "src/icalendar/**/*.py"
       - .github/workflows/documentation.yml
       - .github/workflows/rtd-pr-preview.yml
-      - .readthedocs.yaml
+      - .readthedocs.yml
       - .vale.ini
       - CHANGES.rst
       - Makefile
