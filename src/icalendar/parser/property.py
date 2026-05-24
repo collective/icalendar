@@ -28,9 +28,9 @@ _unescape_backslash_regex = re.compile(r"\\([\\,;:nN])")
 def unescape_backslash(val: str):
     r"""Unescape backslash sequences in iCalendar text.
 
-    Unlike :func:`~icalendar.parser.string.unescape_string`, this only handles actual backslash escapes
-    per :rfc:`5545`, not URL encoding. This preserves URL-encoded values
-    like ``%3A`` in URLs.
+    Unlike :func:`~icalendar.parser.string.unescape_string`, this only handles
+    actual backslash escapes per :rfc:`5545`, not URL encoding. This preserves
+    URL-encoded values like ``%3A`` in URLs.
 
     Processes backslash escape sequences in a single pass using regex matching.
     """
