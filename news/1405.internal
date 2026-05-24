@@ -1,1 +1,1 @@
-Use ``deprecate_for_version_8`` wrapper for ``escape_char``, ``unescape_char``, ``escape_string``, and ``unescape_string``. @klouds27
+Use :func:`~icalendar.compatibility.deprecate_for_version_8` wrapper for deprecated functions ``escape_char``, ``unescape_char``, ``escape_string``, and ``unescape_string``. @klouds27
