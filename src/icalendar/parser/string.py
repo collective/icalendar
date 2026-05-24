@@ -1,7 +1,6 @@
 """Functions for manipulating strings and bytes."""
 
 import re
-import warnings
 
 from icalendar.compatibility import deprecate_for_version_8
 from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
@@ -44,42 +43,7 @@ def _escape_char(text: str | bytes) -> str:
     )
 
 
-def escape_char(text: str | bytes) -> str:
-    r"""Format value according to iCalendar TEXT escaping rules.
-
-    .. deprecated:: 7.0.0
-        Use the private :func:`_escape_char` internally. For external use,
-        this function is deprecated. Please use alternative escaping methods
-        or contact the maintainers.
-
-    Escapes special characters in text values according to :rfc:`5545#section-3.3.11`
-    rules.
-    The order of replacements matters to avoid double-escaping.
-
-    Parameters:
-        text: The text to escape.
-
-    Returns:
-        The escaped text with special characters escaped.
-
-    Note:
-        The replacement order is critical:
-
-        1. ``\N`` -> ``\n`` (normalize newlines to lowercase)
-        2. ``\`` -> ``\\`` (escape backslashes)
-        3. ``;`` -> ``\;`` (escape semicolons)
-        4. ``,`` -> ``\,`` (escape commas)
-        5. ``\r\n`` -> ``\n`` (normalize line endings)
-        6. ``"\n"`` -> ``r"\n"`` (transform a newline character to a literal, or raw,
-           newline character)
-    """
-    warnings.warn(
-        "escape_char is deprecated and will be removed in a future version. "
-        "If you are using this function externally, please contact the maintainers.",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-    return _escape_char(text)
+escape_char = deprecate_for_version_8(_escape_char)
 
 
 def _unescape_char(text: str | bytes) -> str | bytes | None:
@@ -127,40 +91,7 @@ def _unescape_char(text: str | bytes) -> str | bytes | None:
     return None
 
 
-def unescape_char(text: str | bytes) -> str | bytes | None:
-    r"""Unescape iCalendar TEXT values.
-
-    .. deprecated:: 7.0.0
-        Use the private :func:`_unescape_char` internally. For external use,
-        this function is deprecated. Please use alternative unescaping methods
-        or contact the maintainers.
-
-    Reverses the escaping applied by :func:`escape_char` according to
-    :rfc:`5545#section-3.3.11` TEXT escaping rules.
-
-    Parameters:
-        text: The escaped text.
-
-    Returns:
-        The unescaped text, or ``None`` if ``text`` is neither ``str`` nor ``bytes``.
-
-    Note:
-        The replacement order is critical to avoid double-unescaping:
-
-        1. ``\N`` -> ``\n`` (intermediate step)
-        2. ``\r\n`` -> ``\n`` (normalize line endings)
-        3. ``\n`` -> newline (unescape newlines)
-        4. ``\,`` -> ``,`` (unescape commas)
-        5. ``\;`` -> ``;`` (unescape semicolons)
-        6. ``\\`` -> ``\`` (unescape backslashes last)
-    """
-    warnings.warn(
-        "unescape_char is deprecated and will be removed in a future version. "
-        "If you are using this function externally, please contact the maintainers.",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-    return _unescape_char(text)
+unescape_char = deprecate_for_version_8(_unescape_char)
 
 
 def _foldline(line: str, limit: int = 75, fold_sep: str = "\r\n ") -> str:
@@ -231,20 +162,7 @@ def _escape_string(val: str) -> str:
     )
 
 
-def escape_string(val: str) -> str:
-    r"""Escape backslash sequences to URL-encoded hex values.
-
-    .. deprecated:: 7.0.0
-        Use the private :func:`_escape_string` internally. For external use,
-        this function is deprecated.
-    """
-    warnings.warn(
-        "escape_string is deprecated and will be removed in icalendar 8. "
-        "If you are using this function externally, please contact the maintainers.",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-    return _escape_string(val)
+escape_string = deprecate_for_version_8(_escape_string)
 
 
 def _unescape_string(val: str) -> str:
@@ -275,20 +193,7 @@ def _unescape_string(val: str) -> str:
     )
 
 
-def unescape_string(val: str) -> str:
-    r"""Unescape URL-encoded hex values to their original characters.
-
-    .. deprecated:: 7.0.0
-        Use the private :func:`_unescape_string` internally. For external use,
-        this function is deprecated.
-    """
-    warnings.warn(
-        "unescape_string is deprecated and will be removed in icalendar 8. "
-        "If you are using this function externally, please contact the maintainers.",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-    return _unescape_string(val)
+unescape_string = deprecate_for_version_8(_unescape_string)
 
 
 # [\w-] because of the iCalendar RFC
