@@ -1,0 +1,1 @@
+"Fix unqualified cross-references in Event docstrings." 
