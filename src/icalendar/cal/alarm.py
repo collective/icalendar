@@ -156,9 +156,9 @@ class Alarm(Component):
 
     ACKNOWLEDGED = single_utc_property(
         "ACKNOWLEDGED",
-        """The UTC datetime at which this alarm was last sent or acknowledged.
+        """This property is the UTC datetime at which this alarm was last sent or acknowledged as defined in :rfc:`9074`.
 
-    Defined in :rfc:`9074`. Setting this property allows calendar clients to
+    Setting this property allows calendar clients to
     dismiss or suppress an alarm across multiple devices. Once set to a value
     greater than or equal to the alarm's computed trigger time, conforming clients
     will not re-fire the alarm.
@@ -187,7 +187,7 @@ class Alarm(Component):
         "dt",
         (datetime, timedelta),
         timedelta | datetime | None,
-        """The time at which this alarm fires, per :rfc:`5545#section-3.8.6.3`.
+        """The time at which this alarm fires, per :rfc:`5545`.
 
     The value is either a :class:`~datetime.timedelta` (relative trigger) or a
     UTC :class:`~datetime.datetime` (absolute trigger).
