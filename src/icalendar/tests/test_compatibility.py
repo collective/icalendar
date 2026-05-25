@@ -20,3 +20,17 @@ def test_deprecate_for_version_8_warns_and_delegates() -> None:
         assert deprecated("left", right="right") == "left-right"
 
     assert deprecated.__name__ == "join_parts"
+
+
+def test_deprecate_for_version_8_no_leading_underscore() -> None:
+    """A function without a leading underscore should still warn and keep its name."""
+
+    def my_func() -> str:
+        return "ok"
+
+    deprecated = deprecate_for_version_8(my_func)
+
+    with pytest.warns(DeprecationWarning, match="my_func is deprecated"):
+        assert deprecated() == "ok"
+
+    assert deprecated.__name__ == "my_func"
