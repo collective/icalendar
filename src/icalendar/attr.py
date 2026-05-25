@@ -960,7 +960,8 @@ def create_single_property(
     {doc}
 
     Accepted values: {", ".join(t.__name__ for t in value_type)}.
-    If the attribute has invalid values, we raise InvalidCalendar.
+    If the attribute has invalid values, we raise
+    :exc:`~icalendar.error.InvalidCalendar`.
     If the value is absent, we return None.
     You can also delete the value with del or by setting it to None.
     """
