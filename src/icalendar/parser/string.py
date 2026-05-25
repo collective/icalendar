@@ -3,6 +3,7 @@
 import re
 import warnings
 
+from icalendar.compatibility import deprecate_for_version_8
 from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
 
 
@@ -162,7 +163,7 @@ def unescape_char(text: str | bytes) -> str | bytes | None:
     return _unescape_char(text)
 
 
-def foldline(line: str, limit: int = 75, fold_sep: str = "\r\n ") -> str:
+def _foldline(line: str, limit: int = 75, fold_sep: str = "\r\n ") -> str:
     """Make a string folded as defined in RFC5545
     Lines of text SHOULD NOT be longer than 75 octets, excluding the line
     break.  Long content lines SHOULD be split into a multiple line
@@ -195,6 +196,9 @@ def foldline(line: str, limit: int = 75, fold_sep: str = "\r\n ") -> str:
         ret_chars.append(char)
 
     return "".join(ret_chars)
+
+
+foldline = deprecate_for_version_8(_foldline)
 
 
 def _escape_string(val: str) -> str:
@@ -313,6 +317,7 @@ def validate_token(name: str) -> None:
 __all__ = [
     "_escape_char",
     "_escape_string",
+    "_foldline",
     "_unescape_char",
     "_unescape_string",
     "escape_char",
