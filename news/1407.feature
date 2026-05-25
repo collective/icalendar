@@ -1,0 +1,1 @@
+Added test coverage for :func:`icalendar.compatibility.deprecate_for_version_8`. AI disclosure: I used GPT-5 Codex to help draft and refine the test and pull request text. I reviewed the output and validated the change locally. @iccccccccccccc
