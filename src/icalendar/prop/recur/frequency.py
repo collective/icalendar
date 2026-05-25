@@ -66,5 +66,15 @@ class vFrequency(str):
                 "The value must be a valid frequency.", cls, value=value
             ) from e
 
+    @property
+    def ical_value(self) -> str:
+        """Returns the frequency value as a string, for example, ``WEEKLY`` or ``DAILY``.
+
+        See Also:
+
+            :rfc:`5545#section-3.3.10` for the ``FREQ`` rule grammar.
+        """
+        return str(self)
+
 
 __all__ = ["vFrequency"]
