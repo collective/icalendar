@@ -16,15 +16,15 @@ This chapter describes how to use icalendar.
 Components
 ----------
 
-Components are case-insensitive Python dicts.
-The ``Calendar`` object is a component.
+Components are case-insensitive Python dictionaries.
+The :class:`~icalendar.cal.Calendar` object is a component.
 The following example shows how to set two properties for it, then display them.
 
 .. code-block:: pycon
 
-    >>> cal = Calendar()
-    >>> cal["dtstart"] = "20050404T080000"
-    >>> cal["summary"] = "Python meeting about calendaring"
+    >>> cal = Calendar()                                      # create a Calendar object
+    >>> cal["dtstart"] = "20050404T080000"                    # set start date
+    >>> cal["summary"] = "Python meeting about calendaring"   # add event summary
     >>> for k,v in cal.items():
     ...     k,v
     ('DTSTART', '20050404T080000')
@@ -42,10 +42,11 @@ You can generate a string for a file with the :meth:`icalendar.cal.component.Com
     >>> cal.to_ical()
     b'BEGIN:VCALENDAR\r\nDTSTART:20050404T080000\r\nSUMMARY:Python meeting about calendaring\r\nEND:VCALENDAR\r\n'
 
-The rendered view is easier to read.
+The rendered view is easier to read and understand.
 
 .. code-block:: pycon
 
+    >>> print(cal.to_ical().decode())
     BEGIN:VCALENDAR
     DTSTART:20050404T080000
     SUMMARY:Python meeting about calendaring
@@ -100,7 +101,7 @@ Here is an example.
 
 Subcomponents
 -------------
-
+Subcomponents help organize related calendar data, such as events, within a calendar structure.
 Any component can have subcomponents.
 For example, inside a calendar, there can be events.
 They can be arbitrarily nested.
@@ -109,9 +110,9 @@ To demonstrate, first, make a new component.
 
 .. code-block:: pycon
 
-    >>> event = Event()
-    >>> event["uid"] = "42"
-    >>> event["dtstart"] = "20050404T080000"
+    >>> event = icalendar.cal.Event()          # create a new event
+    >>> event["uid"] = "42"                    # assign unique ID
+    >>> event["dtstart"] = "20050404T080000"   # set start time
 
 Then append it to a parent.
 
@@ -151,8 +152,8 @@ To add a datetime value, you can use Python's built in :mod:`datetime` types, an
 
 .. code-block:: pycon
 
-    >>> from datetime import datetime
-    >>> cal.add("dtstart", datetime(2005,4,4,8,0,0))
+    >>> from datetime import datetime                   # import datetime module
+    >>> cal.add("dtstart", datetime(2005,4,4,8,0,0))    # add datetime value
     >>> cal["dtstart"].to_ical()
     b'20050404T080000'
 
@@ -189,8 +190,8 @@ You can also choose to use the :meth:`icalendar.cal.component.Component.decoded`
 
 .. code-block:: pycon
 
-    >>> cal = Calendar()
-    >>> cal.add("dtstart", datetime(2005,4,4,8,0,0))
+    >>> cal = Calendar()                             # create a calendar object
+    >>> cal.add("dtstart", datetime(2005,4,4,8,0,0)) # set start date
     >>> cal["dtstart"].to_ical()
     b'20050404T080000'
     >>> cal.decoded("dtstart")
@@ -238,7 +239,7 @@ Read calendar from file
 
 Read a calendar from a local :file:`.ics` file and view its events.
 
-.. code:: pycon
+.. code-block:: pycon
 
     >>> import icalendar
     >>> from pathlib import Path
@@ -269,7 +270,7 @@ Modify content
 
 After loading the example file, edit and save it.
 
-.. code:: pycon
+.. .. code-block:: pycon
 
     >>> calendar.calendar_name = "My Modified Calendar"  # modify
     >>> print(calendar.to_ical()[:121])  # save modification
@@ -296,7 +297,7 @@ Events
 
 Show events.
 
-.. code:: pycon
+.. .. code-block:: pycon
 
     >>> icalendar.Event()
     VEVENT({})
@@ -307,7 +308,7 @@ Free/busy times
 
 Show free/busy times.
 
-.. code:: pycon
+.. .. code-block:: pycon
 
     >>> icalendar.FreeBusy()
     VFREEBUSY({})
@@ -318,7 +319,7 @@ To-do items
 
 Show to-do items.
 
-.. code:: pycon
+.. .. code-block:: pycon
 
     >>> icalendar.Todo()
     VTODO({})
@@ -330,7 +331,7 @@ Alarms
 
 Show alarms.
 
-.. code:: pycon
+.. .. code-block:: pycon
 
     >>> icalendar.Alarm()
     VALARM({})
@@ -341,7 +342,7 @@ Journal entries
 
 Show journal entries.
 
-.. code:: pycon
+.. .. code-block:: pycon
 
     >>> icalendar.Journal()
     VJOURNAL({})
@@ -355,7 +356,7 @@ You can localize your events to take place in different timezones.
 icalendar supports multiple timezone implementations, including :mod:`zoneinfo`, `dateutil.tz <https://dateutil.readthedocs.io/en/latest/tz.html>`_, and `pytz <https://pypi.org/project/pytz/>`_.
 To demonstrate icalendar's flexibility, the following example creates an event that uses all of the timezone implementations with the same result.
 
-.. code:: pycon
+.. .. code-block:: pycon
 
     >>> import pytz, zoneinfo, dateutil.tz  # timezone libraries
     >>> import datetime, icalendar
@@ -385,7 +386,7 @@ The functionality is extended and tested since 6.0.0 with both timezone implemen
 
 Since 6.0.0 by default, :mod:`zoneinfo` timezones are created.
 
-.. code:: pycon
+.. .. code-block:: pycon
 
     >>> dt = icalendar.Calendar.example("timezoned").events[0].start
     >>> dt.tzinfo
@@ -393,7 +394,7 @@ Since 6.0.0 by default, :mod:`zoneinfo` timezones are created.
 
 To continue to receive ``pytz`` timezones in parsed results, you can receive all the latest updates, and switch back to earlier behavior.
 
-.. code:: pycon
+.. .. code-block:: pycon
 
     >>> icalendar.use_pytz()
     >>> dt = icalendar.Calendar.example("timezoned").events[0].start
