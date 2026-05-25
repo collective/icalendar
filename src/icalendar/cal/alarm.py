@@ -23,6 +23,7 @@ from icalendar.attr import (
 )
 from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
+from icalendar.error import InvalidCalendar
 
 if TYPE_CHECKING:
     import uuid
@@ -350,6 +351,253 @@ class Alarm(Component):
         alarm.description = description
         alarm.uid = uid
         alarm.attendees = attendees
+        return alarm
+
+    @classmethod
+    def new_display(
+        cls,
+        /,
+        description: str,
+        trigger: timedelta | datetime,
+        duration: timedelta | None = None,
+        repeat: int | None = None,
+        uid: str | uuid.UUID | None = None,
+    ) -> Alarm:
+        """Create a new DISPLAY alarm that shows a text reminder.
+
+        A DISPLAY alarm pops up a text notification at the trigger time.
+        This is the most common alarm type used by calendar clients.
+
+        Conforms to :rfc:`5545#section-3.6.6`.
+
+        Parameters:
+            description: The text to display when the alarm fires.
+                Corresponds to the :attr:`description` property.
+            trigger: When the alarm fires, as a :class:`~datetime.timedelta`
+                relative to the event start (negative means before) or as an
+                absolute UTC :class:`~datetime.datetime`.
+            duration: Gap between repeated triggers. Must be paired with
+                ``repeat``. Corresponds to the :attr:`DURATION` property.
+            repeat: Number of *additional* times to fire after the initial
+                trigger. Must be paired with ``duration``.
+                Corresponds to the :attr:`REPEAT` property.
+            uid: Unique identifier for the alarm. Generated automatically
+                when ``None``.
+
+        Returns:
+            :class:`Alarm` with ``ACTION:DISPLAY`` set.
+
+        Raises:
+            ~icalendar.error.InvalidCalendar: If required fields are missing
+                or ``duration`` and ``repeat`` are not both provided together.
+
+        Example:
+            Create a display alarm that fires 15 minutes before the event:
+
+            .. code-block:: pycon
+
+                >>> from datetime import timedelta
+                >>> from icalendar import Alarm
+                >>> alarm = Alarm.new_display(
+                ...     description="Team meeting in 15 minutes",
+                ...     trigger=timedelta(minutes=-15),
+                ... )
+                >>> print(alarm.to_ical().decode())
+                BEGIN:VALARM
+                ACTION:DISPLAY
+                DESCRIPTION:Team meeting in 15 minutes
+                TRIGGER:-PT15M
+                END:VALARM
+        """
+        if not description:
+            raise InvalidCalendar("DISPLAY alarm requires a description")
+        if trigger is None:
+            raise InvalidCalendar("DISPLAY alarm requires a trigger")
+        alarm: Alarm = cls()
+        alarm.add("ACTION", "DISPLAY")
+        alarm.description = description
+        alarm.TRIGGER = trigger
+        alarm.uid = uid
+        if duration is not None or repeat is not None:
+            if duration is None or repeat is None:
+                raise InvalidCalendar(
+                    "DURATION and REPEAT must be set together or not at all"
+                )
+            alarm.DURATION = duration
+            alarm.REPEAT = repeat
+        return alarm
+
+    @classmethod
+    def new_audio(
+        cls,
+        /,
+        trigger: timedelta | datetime,
+        attach: str | None = None,
+        duration: timedelta | None = None,
+        repeat: int | None = None,
+        uid: str | uuid.UUID | None = None,
+    ) -> Alarm:
+        """Create a new AUDIO alarm that plays a sound.
+
+        An AUDIO alarm plays a sound at the trigger time. An optional
+        ``attach`` URI points to the audio file to play; when omitted,
+        the client uses its default alert sound.
+
+        Conforms to :rfc:`5545#section-3.6.6`.
+
+        Parameters:
+            trigger: When the alarm fires, as a :class:`~datetime.timedelta`
+                relative to the event start (negative means before) or as an
+                absolute UTC :class:`~datetime.datetime`.
+            attach: Optional URI of the audio file to play, e.g.
+                ``"ftp://example.com/pub/sounds/bell.aud"``. When ``None``
+                the client uses its default sound.
+            duration: Gap between repeated triggers. Must be paired with
+                ``repeat``. Corresponds to the :attr:`DURATION` property.
+            repeat: Number of *additional* times to fire after the initial
+                trigger. Must be paired with ``duration``.
+                Corresponds to the :attr:`REPEAT` property.
+            uid: Unique identifier for the alarm. Generated automatically
+                when ``None``.
+
+        Returns:
+            :class:`Alarm` with ``ACTION:AUDIO`` set.
+
+        Raises:
+            ~icalendar.error.InvalidCalendar: If required fields are missing
+                or ``duration`` and ``repeat`` are not both provided together.
+
+        Example:
+            Create an audio alarm using a custom sound file:
+
+            .. code-block:: pycon
+
+                >>> from datetime import timedelta
+                >>> from icalendar import Alarm
+                >>> alarm = Alarm.new_audio(
+                ...     trigger=timedelta(minutes=-5),
+                ...     attach="ftp://example.com/pub/sounds/bell-01.aud",
+                ... )
+                >>> print(alarm.to_ical().decode())
+                BEGIN:VALARM
+                ACTION:AUDIO
+                TRIGGER:-PT5M
+                ATTACH:ftp://example.com/pub/sounds/bell-01.aud
+                END:VALARM
+        """
+        if trigger is None:
+            raise InvalidCalendar("AUDIO alarm requires a trigger")
+        alarm: Alarm = cls()
+        alarm.add("ACTION", "AUDIO")
+        alarm.TRIGGER = trigger
+        alarm.uid = uid
+        if attach is not None:
+            alarm.add("ATTACH", attach)
+        if duration is not None or repeat is not None:
+            if duration is None or repeat is None:
+                raise InvalidCalendar(
+                    "DURATION and REPEAT must be set together or not at all"
+                )
+            alarm.DURATION = duration
+            alarm.REPEAT = repeat
+        return alarm
+
+    @classmethod
+    def new_email(
+        cls,
+        /,
+        summary: str,
+        description: str,
+        trigger: timedelta | datetime,
+        attendees: list[vCalAddress],
+        attachments: list[str] | None = None,
+        duration: timedelta | None = None,
+        repeat: int | None = None,
+        uid: str | uuid.UUID | None = None,
+    ) -> Alarm:
+        """Create a new EMAIL alarm that sends an email notification.
+
+        An EMAIL alarm sends an email to each address in ``attendees`` when
+        the alarm fires.
+
+        Conforms to :rfc:`5545#section-3.6.6`.
+
+        Parameters:
+            summary: Subject line of the email.
+                Corresponds to the :attr:`summary` property.
+            description: Body of the email.
+                Corresponds to the :attr:`description` property.
+            trigger: When the alarm fires, as a :class:`~datetime.timedelta`
+                relative to the event start (negative means before) or as an
+                absolute UTC :class:`~datetime.datetime`.
+            attendees: One or more recipient addresses as
+                :class:`~icalendar.vCalAddress` instances, e.g.
+                ``[vCalAddress("mailto:user@example.com")]``.
+                At least one address is required.
+            attachments: Optional list of URIs to attach to the email.
+            duration: Gap between repeated triggers. Must be paired with
+                ``repeat``. Corresponds to the :attr:`DURATION` property.
+            repeat: Number of *additional* times to fire after the initial
+                trigger. Must be paired with ``duration``.
+                Corresponds to the :attr:`REPEAT` property.
+            uid: Unique identifier for the alarm. Generated automatically
+                when ``None``.
+
+        Returns:
+            :class:`Alarm` with ``ACTION:EMAIL`` set.
+
+        Raises:
+            ~icalendar.error.InvalidCalendar: If required fields are missing,
+                ``attendees`` is empty, or ``duration`` and ``repeat`` are not
+                both provided together.
+
+        Example:
+            Create an email alarm sent to two recipients:
+
+            .. code-block:: pycon
+
+                >>> from datetime import timedelta
+                >>> from icalendar import Alarm, vCalAddress
+                >>> alarm = Alarm.new_email(
+                ...     summary="Meeting reminder",
+                ...     description="Your meeting starts in 30 minutes.",
+                ...     trigger=timedelta(minutes=-30),
+                ...     attendees=[vCalAddress("mailto:user@example.com")],
+                ... )
+                >>> print(alarm.to_ical().decode())
+                BEGIN:VALARM
+                ACTION:EMAIL
+                SUMMARY:Meeting reminder
+                DESCRIPTION:Your meeting starts in 30 minutes.
+                TRIGGER:-PT30M
+                ATTENDEE:mailto:user@example.com
+                END:VALARM
+        """
+        if not summary:
+            raise InvalidCalendar("EMAIL alarm requires a summary")
+        if not description:
+            raise InvalidCalendar("EMAIL alarm requires a description")
+        if trigger is None:
+            raise InvalidCalendar("EMAIL alarm requires a trigger")
+        if not attendees:
+            raise InvalidCalendar("EMAIL alarm requires at least one attendee")
+        alarm: Alarm = cls()
+        alarm.add("ACTION", "EMAIL")
+        alarm.summary = summary
+        alarm.description = description
+        alarm.TRIGGER = trigger
+        alarm.attendees = attendees
+        alarm.uid = uid
+        if attachments:
+            for attachment in attachments:
+                alarm.add("ATTACH", attachment)
+        if duration is not None or repeat is not None:
+            if duration is None or repeat is None:
+                raise InvalidCalendar(
+                    "DURATION and REPEAT must be set together or not at all"
+                )
+            alarm.DURATION = duration
+            alarm.REPEAT = repeat
         return alarm
 
     @classmethod
