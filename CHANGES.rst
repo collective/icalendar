@@ -7,6 +7,8 @@ Change log
 7.1.1 (unreleased)
 ------------------
 
+- Added tests for ``FreeBusy.duration`` coverage. (@kyriakikrimitza)
+
 Minor changes
 ~~~~~~~~~~~~~
 
