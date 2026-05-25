@@ -448,7 +448,7 @@ class Alarm(Component):
         Parameters:
             trigger: When the alarm fires, as a :class:`~datetime.timedelta`
                 relative to the event start (negative means before) or as an
-                absolute UTC :class:`~datetime.datetime`.
+                absolute :class:`~datetime.datetime` (recommend UTC-aware).
             attach: Optional URI of the audio file to play, e.g.
                 ``"ftp://example.com/pub/sounds/bell.aud"``. When ``None``
                 the client uses its default sound.
@@ -481,8 +481,8 @@ class Alarm(Component):
                 >>> print(alarm.to_ical().decode())
                 BEGIN:VALARM
                 ACTION:AUDIO
-                TRIGGER:-PT5M
                 ATTACH:ftp://example.com/pub/sounds/bell-01.aud
+                TRIGGER:-PT5M
                 END:VALARM
         """
         if trigger is None:
@@ -529,7 +529,7 @@ class Alarm(Component):
                 Corresponds to the :attr:`description` property.
             trigger: When the alarm fires, as a :class:`~datetime.timedelta`
                 relative to the event start (negative means before) or as an
-                absolute UTC :class:`~datetime.datetime`.
+                absolute :class:`~datetime.datetime` (recommend UTC-aware).
             attendees: One or more recipient addresses as
                 :class:`~icalendar.vCalAddress` instances, e.g.
                 ``[vCalAddress("mailto:user@example.com")]``.
@@ -567,10 +567,10 @@ class Alarm(Component):
                 >>> print(alarm.to_ical().decode())
                 BEGIN:VALARM
                 ACTION:EMAIL
-                SUMMARY:Meeting reminder
-                DESCRIPTION:Your meeting starts in 30 minutes.
-                TRIGGER:-PT30M
                 ATTENDEE:mailto:user@example.com
+                DESCRIPTION:Your meeting starts in 30 minutes.
+                SUMMARY:Meeting reminder
+                TRIGGER:-PT30M
                 END:VALARM
         """
         if not summary:

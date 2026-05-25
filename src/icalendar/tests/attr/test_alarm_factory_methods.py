@@ -108,6 +108,11 @@ def test_new_audio_duration_without_repeat_raises():
         Alarm.new_audio(timedelta(minutes=-5), duration=timedelta(minutes=1))
 
 
+def test_new_audio_repeat_without_duration_raises():
+    with pytest.raises(InvalidCalendar, match="DURATION and REPEAT"):
+        Alarm.new_audio(timedelta(minutes=-5), repeat=3)
+
+
 # ---------------------------------------------------------------------------
 # new_email
 # ---------------------------------------------------------------------------
@@ -207,4 +212,15 @@ def test_new_email_duration_without_repeat_raises():
             trigger=timedelta(minutes=-30),
             attendees=[vCalAddress("mailto:user@example.com")],
             duration=timedelta(minutes=5),
+        )
+
+
+def test_new_email_repeat_without_duration_raises():
+    with pytest.raises(InvalidCalendar, match="DURATION and REPEAT"):
+        Alarm.new_email(
+            summary="S",
+            description="D",
+            trigger=timedelta(minutes=-30),
+            attendees=[vCalAddress("mailto:user@example.com")],
+            repeat=2,
         )
