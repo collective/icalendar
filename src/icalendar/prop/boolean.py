@@ -16,7 +16,7 @@ class vBoolean(int):
     parsed from iCalendar text are case insensitive. ``True``, ``true``, and ``TRUE``
     are all accepted when converting from iCalendar to Python.
 
-    Comforming with :rfc:`5545#section-3.3.2`, boolean values are represented in
+    Conforming with :rfc:`5545#section-3.3.2`, boolean values are represented in
     iCalendar data as either ``TRUE`` or ``FALSE``.
 
     Example:
