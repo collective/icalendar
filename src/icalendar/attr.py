@@ -1353,29 +1353,56 @@ Description:
 
 url_property = single_string_property(
     "URL",
-    """A Uniform Resource Locator (URL) associated with the iCalendar object.
+    """A Uniform Resource Locator (URL) associated with a calendar component.
 
-Description:
-    This property may be used in a calendar component to
-    convey a location where a more dynamic rendition of the calendar
-    information associated with the calendar component can be found.
-    This memo does not attempt to standardize the form of the URI, nor
-    the format of the resource pointed to by the property value.  If
-    the URL property and Content-Location MIME header are both
-    specified, they MUST point to the same resource.
+This property specifies a URI where a more dynamic rendition of the calendar
+information can be found. It is commonly used to reference related resources
+or provide additional information about the component.
 
 Conformance:
-    This property can be specified once in the "VEVENT",
-    "VTODO", "VJOURNAL", or "VFREEBUSY" calendar components.
-    Since :rfc:`7986`, this property can also be defined on a "VCALENDAR".
+    According to :rfc:`5545#section-3.8.4.6`, this property can be specified
+    once in "VEVENT", "VTODO", "VJOURNAL", or "VFREEBUSY" calendar components.
+    Since :rfc:`7986#section-5.12`, this property can also be defined on a
+    "VCALENDAR". :rfc:`7953` allows this property in "VAVAILABILITY" components.
+
+Description:
+    This property may be used in a calendar component to convey a location 
+    where a more dynamic rendition of the calendar information can be found. 
+    If both the URL property and Content-Location MIME header are specified, 
+    they MUST point to the same resource.
+
+    This differs from the SOURCE property, which identifies where calendar 
+    data can be refreshed from, whereas URL provides an alternative 
+    representation of the current calendar data.
 
 Example:
-    The following is an example of this property:
+    Set a URL for an event that references additional information:
 
-    .. code-block:: ics
+    .. code-block:: pycon
 
+        >>> from icalendar import Event
+        >>> event = Event()
+        >>> event.add('url', 'http://example.com/events/meeting-2025')
+        >>> print(event.to_ical().decode('utf-8'))
+        BEGIN:VEVENT
+        URL:http://example.com/events/meeting-2025
+        END:VEVENT
+
+    Set a URL for a calendar:
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Calendar
+        >>> calendar = Calendar()
+        >>> calendar.add('url', 'http://example.com/pub/calendars/jsmith/mytime.ics')
+        >>> print(calendar.to_ical().decode('utf-8'))
+        BEGIN:VCALENDAR
         URL:http://example.com/pub/calendars/jsmith/mytime.ics
+        END:VCALENDAR
 
+See also:
+    :attr:`~icalendar.cal.calendar.Calendar.source` for specifying where
+    calendar data can be refreshed from.
 """,
 )
 
