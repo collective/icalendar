@@ -1366,13 +1366,13 @@ Conformance:
     "VCALENDAR". :rfc:`7953` allows this property in "VAVAILABILITY" components.
 
 Description:
-    This property may be used in a calendar component to convey a location 
-    where a more dynamic rendition of the calendar information can be found. 
-    If both the URL property and Content-Location MIME header are specified, 
+    This property may be used in a calendar component to convey a location
+    where a more dynamic rendition of the calendar information can be found.
+    If both the URL property and Content-Location MIME header are specified,
     they MUST point to the same resource.
 
-    This differs from the SOURCE property, which identifies where calendar 
-    data can be refreshed from, whereas URL provides an alternative 
+    This differs from the SOURCE property, which identifies where calendar
+    data can be refreshed from, whereas URL provides an alternative
     representation of the current calendar data.
 
 Example:
