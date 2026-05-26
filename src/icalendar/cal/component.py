@@ -686,20 +686,19 @@ class Component(CaselessDict):
         property.
     """,
     )
+
     LAST_MODIFIED = single_utc_property(
         "LAST-MODIFIED",
-        """RFC 5545:
+        """The date and time when different calendar components were last modified.
 
-        Purpose:  This property specifies the date and time that the
-        information associated with the calendar component was last
-        revised in the calendar store.
+        This property is commonly used to track revisions to calendar
+        components such as VEVENTS, VTODOs, VJOURNALS, and VTIMEZONES.
 
-        Note: This is analogous to the modification date and time for a
-        file in the file system.
-
-        Conformance:  This property can be specified in the "VEVENT",
-        "VTODO", "VJOURNAL", or "VTIMEZONE" calendar components.
-    """,
+        Example usage:
+            >>> from icalendar import Event
+                event.last_modified = datetime.now(timezone.utc)
+            In this example, we set the LAST-MODIFIED property of an event to the current UTC time.
+        """,
     )
 
     @property
