@@ -135,38 +135,91 @@ The maintainers may also take further action, including suspend, ban, or report 
 Change log entry format
 ```````````````````````
 
-Add your entry under the appropriate section in :file:`CHANGES.rst`.
+To create a change log entry or news item, create a file in the :file:`news` directory, located in the root of the package.
 
-Minor changes
-    For small improvements, refactoring, and documentation updates.
+The change log entry's format must be ``#.type``, where ``#`` is the referenced GitHub issue or pull request number, ``.`` is the literal extension delimiter, and ``type`` is one of the following strings.
 
-Breaking changes
+``breaking``
     For changes that break the existing API.
 
-New features
+``removal``
+    For removals and deprecations.
+
+``feature``
     For new functionality.
 
-Bug fixes
+``bugfix``
     For bug fixes and error corrections.
 
-Documentation
+``documentation``
     For changes to the documentation, docstrings, spelling dictionary, or any other documentation matter.
 
-Examples:
+``deps``
+    For changes to project dependencies.
 
-.. code-block:: rst
+``internal``
+    For internal changes, such as issue templates.
 
-    Minor changes:
+``chore``
+    For routine tasks that shouldn't be published, but will satisfy the checker for the presence of a change log entry.
 
-    - Fix issue with timezone parsing in special cases. :issue:`1050`
+To avoid a conflict with another pull request for the same issue number, append an integer to the filename.
+Don't edit a change log entry from another pull request.
 
-For a pull request, use the following syntax.
+..  code-block:: text
 
-.. code-block:: rst
+    1158.documentation.1
 
-    New features:
+For orphan change log entries—that is, those that don't need to be linked to any issue ID or other identifier—start the file name with ``+``.
+The content will still be included in the change log, at the end of the category corresponding to the file extension.
 
-    - Added :attr:`~icalendar.cal.calendar.Calendar.categories` property. :pr:`808`
+..  code-block:: text
+
+    +anything.bugfix
+
+.. note::
+
+    icalendar uses `towncrier <https://pypi.org/project/towncrier/>`_ to automatically update the change log from entries stored in the :file:`/news` directory at the root of the project.
+
+
+.. _write-a-good-change-log-entry-label:
+
+Write a good change log entry
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. important::
+
+    These change log entries become narrative documentation.
+
+The content of this file must include the following.
+
+-   A brief message that summarizes the changes in your contribution.
+-   An attribution to yourself, in the format of ``@github_username``.
+
+You can write a good change log entry with the following guidance.
+
+-   Use a narrative format, in the past tense, proper English spelling and grammar, and inline markup as needed.
+-   Write your change log entry for its appropriate audience.
+
+    -   Most entries should address *users* of the software.
+    -   An entry for a change to a public API should address *developers*.
+
+-   If you fix a bug, write what was broken and is now fixed.
+    You should not write *how* you fixed it.
+-   If you add or change a feature or public API, write a summary of previous behavior, what it does now, and how to use it.
+-   Refer to narrative documentation as needed.
+
+The following text is an example of a good change log entry, placed inside :file:`/news/1360.feature`.
+
+..  code-block:: rst
+
+    Created a :meth:`~icalendar.prop.recur.weekday.vWeekday.ical_value` property for the :class:`~icalendar.prop.recur.weekday.vWeekday` component, mirroring the existing pattern on :class:`~icalendar.prop.boolean.vBoolean`. @mvanhorn
+
+The following would be a poor change log entry.
+
+..  code-block:: rst
+
+    Fix #123456 by chaning config of file [did_not_read_this_guide]
 
 
 Set up for development

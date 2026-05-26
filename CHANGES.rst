@@ -4,39 +4,64 @@ Change log
 
 .. py:currentmodule:: icalendar
 
-7.1.1 (unreleased)
+.. Do *NOT* add new change log entries to this file.
+   Instead create a file in the news directory.
+   For helpful instructions, see:
+   https://icalendar.readthedocs.io/en/latest/contribute/#change-log-entry-format
+
+.. towncrier release notes start
+
+7.1.2 (2026-05-22)
 ------------------
-
-- Added tests for ``FreeBusy.duration`` coverage. (@kyriakikrimitza)
-
-Minor changes
-~~~~~~~~~~~~~
-
-- Bump PyPy from 3.10 to 3.11 for testing. :pr:`1383`
-- Created an :attr:`~icalendar.prop.dt.period.vPeriod.ical_value` property for the :class:`~icalendar.prop.dt.period.vPeriod` component. :issue:`876`
-
-Breaking changes
-~~~~~~~~~~~~~~~~
-
-- ...
-
-New features
-~~~~~~~~~~~~
-
-- Created a :meth:`~icalendar.prop.recur.weekday.vWeekday.ical_value` property for the :class:`~icalendar.prop.recur.weekday.vWeekday` component, mirroring the existing pattern on :class:`~icalendar.prop.boolean.vBoolean`. :pr:`1360`
 
 Bug fixes
 ~~~~~~~~~
 
-- Strictly validate BINARY property values in
-  :attr:`vBinary.from_ical() <icalendar.prop.binary.vBinary.from_ical>`
-  and reject malformed Base64 input instead of silently accepting invalid
-  characters. :pr:`1349`
+- Replaced the recursive :meth:`Component.__repr__ <icalendar.cal.component.Component.__repr__>` implementation with an iterative stack-based walk so that deeply nested calendars no longer raise :exc:`RecursionError` when formatted via ``repr()``, ``str()``, or f-strings. The output format is unchanged for normally-shaped calendars. @gistrec (`Issue #1370 <https://github.com/collective/icalendar/issues/1370>`_)
+
 
 Documentation
 ~~~~~~~~~~~~~
 
-- Replace the RFC quotations in the docstrings for :attr:`Alarm.REPEAT <icalendar.cal.alarm.Alarm.REPEAT>` and :attr:`Alarm.DURATION <icalendar.cal.alarm.Alarm.DURATION>` with Pythonic descriptions, including parameter notes, conformance references, and worked examples. :issue:`1244`
+- Update maintenance documentation. Fix the version switcher on "stable" on Read the Docs. @stevepiercy (`Issue #1352 <https://github.com/collective/icalendar/issues/1352>`_)
+
+
+7.1.1 (2026-05-18)
+------------------
+
+New features
+~~~~~~~~~~~~
+
+- Created an :attr:`~icalendar.prop.dt.period.vPeriod.ical_value` property for the :class:`~icalendar.prop.dt.period.vPeriod` component. @ZairKSM (`Issue #876 <https://github.com/collective/icalendar/issues/876>`_)
+- Created a :meth:`~icalendar.prop.recur.weekday.vWeekday.ical_value` property for the :class:`~icalendar.prop.recur.weekday.vWeekday` component, mirroring the existing pattern on :class:`~icalendar.prop.boolean.vBoolean`. @mvanhorn (`Issue #1360 <https://github.com/collective/icalendar/issues/1360>`_)
+
+
+Bug fixes
+~~~~~~~~~
+
+- Strictly validate BINARY property values in :attr:`vBinary.from_ical() <icalendar.prop.binary.vBinary.from_ical>` and reject malformed Base64 input instead of silently accepting invalid characters. @uwezkhan (`Issue #1349 <https://github.com/collective/icalendar/issues/1349>`_)
+
+
+Documentation
+~~~~~~~~~~~~~
+
+- Replace the RFC quotations in the docstrings for :attr:`Alarm.REPEAT <icalendar.cal.alarm.Alarm.REPEAT>` and :attr:`Alarm.DURATION <icalendar.cal.alarm.Alarm.DURATION>` with Pythonic descriptions, including parameter notes, conformance references, and worked examples. @tmchow (`Issue #1244 <https://github.com/collective/icalendar/issues/1244>`_)
+- Edited contributor documentation for how to add a change log entry, and maintenance documentation for how to process news fragments. @stevepiercy (`Issue #1256 <https://github.com/collective/icalendar/issues/1256>`_)
+- Updated release process documentation. @niccokunzmann @stevepiercy @SashankBhamidi (`Issue #1293 <https://github.com/collective/icalendar/issues/1293>`_)
+
+
+Dependency changes
+~~~~~~~~~~~~~~~~~~
+
+- Added `towncrier <https://pypi.org/project/towncrier/>`_ to development dependencies. @stevepiercy (`Issue #1256 <https://github.com/collective/icalendar/issues/1256>`_)
+
+
+Internal changes
+~~~~~~~~~~~~~~~~
+
+- Switched from manual change log management to `towncrier <https://pypi.org/project/towncrier/>`_ to automate the process. @stevepiercy (`Issue #1256 <https://github.com/collective/icalendar/issues/1256>`_)
+- Bump PyPy from 3.10 to 3.11 for testing. @stevepiercy (`Issue #1383 <https://github.com/collective/icalendar/issues/1383>`_)
+
 
 7.1.0 (2026-04-30)
 ------------------

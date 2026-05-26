@@ -27,6 +27,7 @@ src
 (?i)subcomponents?
 (?i)subpackages?
 subtyping
+towncrier
 (?i)Traceback
 (?i)unescaped
 uv

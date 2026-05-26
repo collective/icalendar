@@ -7,6 +7,8 @@ Do NOT import this module directly if you use icalendar.
 Members will be added and removed without deprecation warnings.
 """
 
+import functools
+import warnings
 from typing import TYPE_CHECKING
 
 try:
@@ -33,8 +35,27 @@ else:
     # we cannot use a TypeGuard = "TypeGuard" hack since it's used with a parameter
     TypeGuard = TypeIs = Self = None
 
+
+def deprecate_for_version_8(func):
+    """Issue a warning for deprecated functions to be removed in version 8."""
+    public_name = func.__name__.removeprefix("_")
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        warnings.warn(
+            f"{public_name} is deprecated and will be removed in icalendar 8",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        wrapper.__name__ = public_name
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
 __all__ = [
     "Self",
     "TypeGuard",
     "TypeIs",
+    "deprecate_for_version_8",
 ]
