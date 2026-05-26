@@ -356,7 +356,6 @@ class Alarm(Component):
     @classmethod
     def new_display(
         cls,
-        /,
         description: str,
         trigger: timedelta | datetime,
         duration: timedelta | None = None,
@@ -381,8 +380,7 @@ class Alarm(Component):
             repeat: Number of *additional* times to fire after the initial
                 trigger. Must be paired with ``duration``.
                 Corresponds to the :attr:`REPEAT` property.
-            uid: Unique identifier for the alarm. Generated automatically
-                when ``None``.
+            uid: Unique identifier for the alarm or ``None``.
 
         Returns:
             :class:`Alarm` with ``ACTION:DISPLAY`` set.
@@ -430,7 +428,6 @@ class Alarm(Component):
     @classmethod
     def new_audio(
         cls,
-        /,
         trigger: timedelta | datetime,
         attach: str | None = None,
         duration: timedelta | None = None,
@@ -449,7 +446,7 @@ class Alarm(Component):
             trigger: When the alarm fires, as a :class:`~datetime.timedelta`
                 relative to the event start (negative means before) or as an
                 absolute :class:`~datetime.datetime` (recommend UTC-aware).
-            attach: Optional URI of the audio file to play, e.g.
+            attach: Optional URI of the audio file to play, such as
                 ``"ftp://example.com/pub/sounds/bell.aud"``. When ``None``
                 the client uses its default sound.
             duration: Gap between repeated triggers. Must be paired with
@@ -457,8 +454,7 @@ class Alarm(Component):
             repeat: Number of *additional* times to fire after the initial
                 trigger. Must be paired with ``duration``.
                 Corresponds to the :attr:`REPEAT` property.
-            uid: Unique identifier for the alarm. Generated automatically
-                when ``None``.
+            uid: Unique identifier for the alarm or ``None``.
 
         Returns:
             :class:`Alarm` with ``ACTION:AUDIO`` set.
@@ -505,7 +501,6 @@ class Alarm(Component):
     @classmethod
     def new_email(
         cls,
-        /,
         summary: str,
         description: str,
         trigger: timedelta | datetime,
@@ -531,7 +526,7 @@ class Alarm(Component):
                 relative to the event start (negative means before) or as an
                 absolute :class:`~datetime.datetime` (recommend UTC-aware).
             attendees: One or more recipient addresses as
-                :class:`~icalendar.vCalAddress` instances, e.g.
+                :class:`~icalendar.prop.cal_address.vCalAddress` instances, such as
                 ``[vCalAddress("mailto:user@example.com")]``.
                 At least one address is required.
             attachments: Optional list of URIs to attach to the email.
@@ -540,8 +535,7 @@ class Alarm(Component):
             repeat: Number of *additional* times to fire after the initial
                 trigger. Must be paired with ``duration``.
                 Corresponds to the :attr:`REPEAT` property.
-            uid: Unique identifier for the alarm. Generated automatically
-                when ``None``.
+            uid: Unique identifier for the alarm or ``None``.
 
         Returns:
             :class:`Alarm` with ``ACTION:EMAIL`` set.

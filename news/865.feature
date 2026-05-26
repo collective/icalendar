@@ -1,1 +1,1 @@
-Add :meth:`Alarm.new_display() <icalendar.cal.alarm.Alarm.new_display>`, :meth:`Alarm.new_audio() <icalendar.cal.alarm.Alarm.new_audio>`, and :meth:`Alarm.new_email() <icalendar.cal.alarm.Alarm.new_email>` factory methods for creating RFC 5545 VALARM components. @klouds27
+Add :meth:`Alarm.new_display() <icalendar.cal.alarm.Alarm.new_display>`, :meth:`Alarm.new_audio() <icalendar.cal.alarm.Alarm.new_audio>`, and :meth:`Alarm.new_email() <icalendar.cal.alarm.Alarm.new_email>` factory methods for creating :rfc:`5545#section-3.6.6` VALARM components. @klouds27
