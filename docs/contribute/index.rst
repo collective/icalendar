@@ -163,6 +163,13 @@ The change log entry's format must be ``#.type``, where ``#`` is the referenced 
 ``chore``
     For routine tasks that shouldn't be published, but will satisfy the checker for the presence of a change log entry.
 
+To avoid a conflict with another pull request for the same issue number, append an integer to the filename.
+Don't edit a change log entry from another pull request.
+
+..  code-block:: text
+
+    1158.documentation.1
+
 For orphan change log entries—that is, those that don't need to be linked to any issue ID or other identifier—start the file name with ``+``.
 The content will still be included in the change log, at the end of the category corresponding to the file extension.
 
