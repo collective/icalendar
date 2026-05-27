@@ -1,1 +1,1 @@
-Added tests for ``FreeBusy.duration`` coverage. @kyriakikrimitza
+Added tests for :attr:`FreeBusy.duration <icalendar.cal.free_busy.FreeBusy.duration>` coverage. @kyriakikrimitza
