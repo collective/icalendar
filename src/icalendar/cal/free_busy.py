@@ -111,15 +111,15 @@ class FreeBusy(Component):
         This creates a new Alarm in accordance with :rfc:`5545`.
 
         Parameters:
-            comments: The :attr:`~icalendar.Component.comments` of the component.
-            concepts: The :attr:`~icalendar.Component.concepts` of the component.
+            comments: The :attr:`~icalendar.cal.component.Component.comments` of the component.
+            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the component.
             contacts: The :attr:`contacts` of the component.
             end: The :attr:`end` of the component.
-            links: The :attr:`~icalendar.Component.links` of the component.
+            links: The :attr:`~icalendar.cal.component.Component.links` of the component.
             organizer: The :attr:`organizer` of the component.
-            refids: :attr:`~icalendar.Component.refids` of the component.
-            related_to: :attr:`~icalendar.Component.related_to` of the component.
-            stamp: The :attr:`DTSTAMP` of the component.
+            refids: :attr:`~icalendar.cal.component.Component.refids` of the component.
+            related_to: :attr:`~icalendar.cal.component.Component.related_to` of the component.
+            stamp: The :attr:`~icalendar.cal.component.Component.DTSTAMP` of the component.
                 If None, this is set to the current time.
             start: The :attr:`start` of the component.
             uid: The :attr:`uid` of the component.
