@@ -264,6 +264,8 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vGeo, "g")
         self.assertRaises(ValueError, vGeo.from_ical, "1s3;1s3")
 
+        assert vGeo((37.386013, -122.082932)).ical_value == (37.386013, -122.082932)
+
     def test_prop_vUTCOffset(self):
         from icalendar.prop import vUTCOffset
 
