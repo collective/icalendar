@@ -329,8 +329,8 @@ class Event(Component):
     def start(self) -> date | datetime:
         """The start of the event.
 
-        Invalid values raise an InvalidCalendar.
-        If there is no start, we also raise an IncompleteComponent error.
+        Invalid values raise an :exc:`~icalendar.error.InvalidCalendar`.
+        If there is no start, we also raise an :exc:`~icalendar.error.IncompleteComponent` error.
 
         You can get the start, end and duration of an event as follows:
 
@@ -358,8 +358,8 @@ class Event(Component):
     def end(self) -> date | datetime:
         """The end of the event.
 
-        Invalid values raise an InvalidCalendar error.
-        If there is no end, we also raise an IncompleteComponent error.
+        Invalid values raise an :exc:`~icalendar.error.InvalidCalendar` error.
+        If there is no end, we also raise an :exc:`~icalendar.error.IncompleteComponent` error.
         """
         return get_end_property(self, "DTEND")
 
@@ -498,7 +498,7 @@ class Event(Component):
             :class:`Event`
 
         Raises:
-            ~error.InvalidCalendar: If the content is not valid
+            :exc:`~icalendar.error.InvalidCalendar`: If the content is not valid
                 according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
