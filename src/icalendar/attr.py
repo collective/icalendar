@@ -1361,7 +1361,7 @@ or provide additional information about the component.
 
     According to :rfc:`5545#section-3.8.4.6`, this property can be specified
     once in "VEVENT", "VTODO", "VJOURNAL", or "VFREEBUSY" calendar components.
-    Since :rfc:`7986#section-5.12`, this property can also be defined on a
+    Since :rfc:`7986#section-5.5`, this property can also be defined on a
     "VCALENDAR". :rfc:`7953` allows this property in "VAVAILABILITY" components.
 
 Description:
