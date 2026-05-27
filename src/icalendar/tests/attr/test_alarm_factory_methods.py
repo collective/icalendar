@@ -90,6 +90,11 @@ def test_new_audio_with_attach():
     assert str(alarm["ATTACH"]) == uri
 
 
+def test_new_audio_with_empty_attach_ignored():
+    alarm = Alarm.new_audio(timedelta(minutes=-5), attach="")
+    assert alarm.get("ATTACH") is None
+
+
 def test_new_audio_with_repeat():
     alarm = Alarm.new_audio(
         timedelta(minutes=-5), duration=timedelta(minutes=2), repeat=3

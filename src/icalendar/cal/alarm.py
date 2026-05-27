@@ -354,6 +354,21 @@ class Alarm(Component):
         return alarm
 
     @classmethod
+    def _apply_duration_repeat(
+        cls,
+        alarm: Alarm,
+        duration: timedelta | None,
+        repeat: int | None,
+    ) -> None:
+        if duration is not None or repeat is not None:
+            if duration is None or repeat is None:
+                raise InvalidCalendar(
+                    "DURATION and REPEAT must be set together or not at all"
+                )
+            alarm.DURATION = duration
+            alarm.REPEAT = repeat
+
+    @classmethod
     def new_display(
         cls,
         description: str,
@@ -374,7 +389,7 @@ class Alarm(Component):
                 Corresponds to the :attr:`description` property.
             trigger: When the alarm fires, as a :class:`~datetime.timedelta`
                 relative to the event start (negative means before) or as an
-                absolute UTC :class:`~datetime.datetime`.
+                absolute :class:`~datetime.datetime` (recommend UTC-aware).
             duration: Gap between repeated triggers. Must be paired with
                 ``repeat``. Corresponds to the :attr:`DURATION` property.
             repeat: Number of *additional* times to fire after the initial
@@ -406,6 +421,23 @@ class Alarm(Component):
                 DESCRIPTION:Team meeting in 15 minutes
                 TRIGGER:-PT15M
                 END:VALARM
+
+            Attach the alarm to an event:
+
+            .. code-block:: python
+
+                from datetime import datetime, timedelta, timezone
+                from icalendar import Alarm, Event
+
+                event = Event.new(
+                    summary="Team meeting",
+                    start=datetime(2025, 6, 1, 10, 0, tzinfo=timezone.utc),
+                    end=datetime(2025, 6, 1, 11, 0, tzinfo=timezone.utc),
+                )
+                event.add_component(Alarm.new_display(
+                    description="Team meeting in 15 minutes",
+                    trigger=timedelta(minutes=-15),
+                ))
         """
         if not description:
             raise InvalidCalendar("DISPLAY alarm requires a description")
@@ -416,13 +448,7 @@ class Alarm(Component):
         alarm.description = description
         alarm.TRIGGER = trigger
         alarm.uid = uid
-        if duration is not None or repeat is not None:
-            if duration is None or repeat is None:
-                raise InvalidCalendar(
-                    "DURATION and REPEAT must be set together or not at all"
-                )
-            alarm.DURATION = duration
-            alarm.REPEAT = repeat
+        cls._apply_duration_repeat(alarm, duration, repeat)
         return alarm
 
     @classmethod
@@ -487,15 +513,9 @@ class Alarm(Component):
         alarm.add("ACTION", "AUDIO")
         alarm.TRIGGER = trigger
         alarm.uid = uid
-        if attach is not None:
+        if attach:
             alarm.add("ATTACH", attach)
-        if duration is not None or repeat is not None:
-            if duration is None or repeat is None:
-                raise InvalidCalendar(
-                    "DURATION and REPEAT must be set together or not at all"
-                )
-            alarm.DURATION = duration
-            alarm.REPEAT = repeat
+        cls._apply_duration_repeat(alarm, duration, repeat)
         return alarm
 
     @classmethod
@@ -585,13 +605,7 @@ class Alarm(Component):
         if attachments:
             for attachment in attachments:
                 alarm.add("ATTACH", attachment)
-        if duration is not None or repeat is not None:
-            if duration is None or repeat is None:
-                raise InvalidCalendar(
-                    "DURATION and REPEAT must be set together or not at all"
-                )
-            alarm.DURATION = duration
-            alarm.REPEAT = repeat
+        cls._apply_duration_repeat(alarm, duration, repeat)
         return alarm
 
     @classmethod
