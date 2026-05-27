@@ -1359,7 +1359,6 @@ This property specifies a URI where a more dynamic rendition of the calendar
 information can be found. It is commonly used to reference related resources
 or provide additional information about the component.
 
-Conformance:
     According to :rfc:`5545#section-3.8.4.6`, this property can be specified
     once in "VEVENT", "VTODO", "VJOURNAL", or "VFREEBUSY" calendar components.
     Since :rfc:`7986#section-5.12`, this property can also be defined on a
