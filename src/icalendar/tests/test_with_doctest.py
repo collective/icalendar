@@ -53,9 +53,11 @@ def test_docstring_of_python_file(module_name: str, env_for_doctest) -> None:
     assert test_result.failed == 0, f"{test_result.failed} errors in {module_name}"
 
 
-# This collection needs to exclude .tox and other subdirectories
+# This collection includes only the root and docs subdirectory
 REPOSITORY = HERE.parent.parent.parent
-DOCUMENT_PATHS = list(REPOSITORY.glob("**/*.rst"))
+DOCS_PATHS = list(REPOSITORY.glob("docs/**/*.rst"))
+ROOT_DOCS_PATHS = list(REPOSITORY.glob("*.rst"))
+DOCUMENT_PATHS = DOCS_PATHS + ROOT_DOCS_PATHS
 
 
 @pytest.mark.parametrize(
