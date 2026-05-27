@@ -1400,8 +1400,17 @@ Example:
         END:VCALENDAR
 
 See also:
-    :attr:`~icalendar.cal.calendar.Calendar.source` for specifying where
-    calendar data can be refreshed from.
+    :attr:`~icalendar.cal.calendar.Calendar.source` for specifying from where
+    calendar data can be refreshed.
+
+    icalendar implementations:
+    - :attr:`Availability.url <icalendar.cal.availability.Availability.url>`
+    - :attr:`Calendar.url <icalendar.cal.calendar.Calendar.url>`
+    - :attr:`Event.url <icalendar.cal.event.Event.url>`
+    - :attr:`FreeBusy.url <icalendar.cal.free_busy.FreeBusy.url>`
+    - :attr:`Journal.url <icalendar.cal.journal.Journal.url>`
+    - :attr:`Todo.url <icalendar.cal.todo.Todo.url>`
+
 """,
 )
 
