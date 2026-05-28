@@ -1,1 +1,1 @@
-Improved the documentation for ``attr.url_property`` by converting raw RFC text into a comprehensive Python docstring with usage examples and explicit RFC cross-references. Assisting tool: Gemini 1.5. @samrodri911
+Replaced the RFC quotation in the docstring for :class:`vBoolean <icalendar.prop.boolean.vBoolean>` with a Pythonic description, including parsing behavior, a conformance reference, and a working example. @tsai135
