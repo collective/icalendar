@@ -1359,45 +1359,43 @@ This property specifies a URI where a more dynamic rendition of the calendar
 information can be found. It is commonly used to reference related resources
 or provide additional information about the component.
 
-    According to :rfc:`5545#section-3.8.4.6`, this property can be specified
-    once in "VEVENT", "VTODO", "VJOURNAL", or "VFREEBUSY" calendar components.
-    Since :rfc:`7986#section-5.5`, this property can also be defined on a
-    "VCALENDAR". :rfc:`7953#section-3.1` allows this property in "VAVAILABILITY" components.
+According to :rfc:`5545#section-3.8.4.6`, this property can be specified
+once in "VEVENT", "VTODO", "VJOURNAL", or "VFREEBUSY" calendar components.
+Since :rfc:`7986#section-5.5`, this property can also be defined on a
+"VCALENDAR". :rfc:`7953#section-3.1` allows this property in "VAVAILABILITY" components.
 
-Description:
-    This property may be used in a calendar component to convey a location
-    where a more dynamic rendition of the calendar information can be found.
-    If both the URL property and Content-Location MIME header are specified,
-    they MUST point to the same resource.
+This property may be used in a calendar component to convey a location
+where a more dynamic rendition of the calendar information can be found.
+If both the URL property and Content-Location MIME header are specified,
+they MUST point to the same resource.
 
-    This differs from the SOURCE property, which identifies where calendar
-    data can be refreshed from, whereas URL provides an alternative
-    representation of the current calendar data.
+This differs from the SOURCE property, which identifies where calendar
+data can be refreshed from, whereas URL provides an alternative
+representation of the current calendar data.
 
-Example:
-    Set a URL for an event that references additional information:
+Set a URL for an event that references additional information:
 
-    .. code-block:: pycon
+.. code-block:: pycon
 
-        >>> from icalendar import Event
-        >>> event = Event()
-        >>> event.add('url', 'http://example.com/events/meeting-2025')
-        >>> print(event.to_ical().decode('utf-8'))
-        BEGIN:VEVENT
-        URL:http://example.com/events/meeting-2025
-        END:VEVENT
+    >>> from icalendar import Event
+    >>> event = Event()
+    >>> event.add('url', 'http://example.com/events/meeting-2025')
+    >>> print(event.to_ical().decode('utf-8'))
+    BEGIN:VEVENT
+    URL:http://example.com/events/meeting-2025
+    END:VEVENT
 
-    Set a URL for a calendar:
+Set a URL for a calendar:
 
-    .. code-block:: pycon
+.. code-block:: pycon
 
-        >>> from icalendar import Calendar
-        >>> calendar = Calendar()
-        >>> calendar.add('url', 'http://example.com/pub/calendars/jsmith/mytime.ics')
-        >>> print(calendar.to_ical().decode('utf-8'))
-        BEGIN:VCALENDAR
-        URL:http://example.com/pub/calendars/jsmith/mytime.ics
-        END:VCALENDAR
+    >>> from icalendar import Calendar
+    >>> calendar = Calendar()
+    >>> calendar.add('url', 'http://example.com/pub/calendars/jsmith/mytime.ics')
+    >>> print(calendar.to_ical().decode('utf-8'))
+    BEGIN:VCALENDAR
+    URL:http://example.com/pub/calendars/jsmith/mytime.ics
+    END:VCALENDAR
 
 See also:
     :attr:`~icalendar.cal.calendar.Calendar.source` for specifying from where
