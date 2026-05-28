@@ -1353,34 +1353,6 @@ Description:
 
 url_property = single_string_property(
     "URL",
-    """A Uniform Resource Locator (URL) associated with the iCalendar object.
-
-Description:
-    This property may be used in a calendar component to
-    convey a location where a more dynamic rendition of the calendar
-    information associated with the calendar component can be found.
-    This memo does not attempt to standardize the form of the URI, nor
-    the format of the resource pointed to by the property value.  If
-    the URL property and Content-Location MIME header are both
-    specified, they MUST point to the same resource.
-
-Conformance:
-    This property can be specified once in the "VEVENT",
-    "VTODO", "VJOURNAL", or "VFREEBUSY" calendar components.
-    Since :rfc:`7986`, this property can also be defined on a "VCALENDAR".
-
-Example:
-    The following is an example of this property:
-
-    .. code-block:: ics
-
-        URL:http://example.com/pub/calendars/jsmith/mytime.ics
-
-""",
-)
-
-url_property = single_string_property(
-    "URL",
     """A Uniform Resource Locator (URL) associated with a calendar component.
 
 This property specifies a URI where a more dynamic rendition of the calendar
@@ -1438,6 +1410,31 @@ See also:
     - :attr:`FreeBusy.url <icalendar.cal.free_busy.FreeBusy.url>`
     - :attr:`Journal.url <icalendar.cal.journal.Journal.url>`
     - :attr:`Todo.url <icalendar.cal.todo.Todo.url>`
+
+""",
+)
+
+source_property = single_string_property(
+    "SOURCE",
+    """A URI from where calendar data can be refreshed.
+
+Description:
+    This property identifies a location where a client can
+    retrieve updated data for the calendar.  Clients SHOULD honor any
+    specified "REFRESH-INTERVAL" value when periodically retrieving
+    data.  Note that this property differs from the "URL" property in
+    that "URL" is meant to provide an alternative representation of
+    the calendar data rather than the original location of the data.
+
+Conformance:
+    This property can be specified once in an iCalendar object.
+
+Example:
+    The following is an example of this property:
+
+    .. code-block:: ics
+
+        SOURCE;VALUE=URI:https://example.com/holidays.ics
 
 """,
 )
