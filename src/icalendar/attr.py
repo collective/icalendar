@@ -1373,29 +1373,31 @@ This differs from the SOURCE property, which identifies where calendar
 data can be refreshed from, whereas URL provides an alternative
 representation of the current calendar data.
 
-Set a URL for an event that references additional information:
+Examples:
 
-.. code-block:: pycon
+    Set a URL for an event that references additional information:
 
-    >>> from icalendar import Event
-    >>> event = Event()
-    >>> event.add('url', 'http://example.com/events/meeting-2025')
-    >>> print(event.to_ical().decode('utf-8'))
-    BEGIN:VEVENT
-    URL:http://example.com/events/meeting-2025
-    END:VEVENT
+    .. code-block:: pycon
 
-Set a URL for a calendar:
+        >>> from icalendar import Event
+        >>> event = Event()
+        >>> event.add('url', 'http://example.com/events/meeting-2025')
+        >>> print(event.to_ical().decode('utf-8'))
+        BEGIN:VEVENT
+        URL:http://example.com/events/meeting-2025
+        END:VEVENT
 
-.. code-block:: pycon
+    Set a URL for a calendar:
 
-    >>> from icalendar import Calendar
-    >>> calendar = Calendar()
-    >>> calendar.add('url', 'http://example.com/pub/calendars/jsmith/mytime.ics')
-    >>> print(calendar.to_ical().decode('utf-8'))
-    BEGIN:VCALENDAR
-    URL:http://example.com/pub/calendars/jsmith/mytime.ics
-    END:VCALENDAR
+    .. code-block:: pycon
+
+        >>> from icalendar import Calendar
+        >>> calendar = Calendar()
+        >>> calendar.add('url', 'http://example.com/pub/calendars/jsmith/mytime.ics')
+        >>> print(calendar.to_ical().decode('utf-8'))
+        BEGIN:VCALENDAR
+        URL:http://example.com/pub/calendars/jsmith/mytime.ics
+        END:VCALENDAR
 
 See also:
     :attr:`~icalendar.cal.calendar.Calendar.source` for specifying from where
