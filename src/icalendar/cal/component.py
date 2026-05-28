@@ -693,20 +693,21 @@ class Component(CaselessDict):
 
         This property is commonly used to track revisions to calendar
         components such as VEVENT, VTODO, VJOURNAL, and VTIMEZONE.
-        
+
         Example:
-            Set the LAST-MODIFIED property of an event to the current UTC time. 
-        
+            Set the LAST-MODIFIED property of an event to the current UTC time.
+
             .. code-block:: pycon
-            
+
                 >>> from datetime import datetime, timezone
                 >>> from icalendar import Event
                 >>> event = Event()
                 >>> event.last_modified = datetime.now(timezone.utc)
                 >>> event.last_modified
-                datetime.datetime(..., tzinfo=datetime.timezone.utc)
+                datetime.datetime(..., tzinfo=...)
         """,
     )
+
 
     @property
     def last_modified(self) -> datetime:
