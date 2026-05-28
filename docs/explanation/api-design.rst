@@ -138,7 +138,7 @@ They are automatically added.
     ...     summary="New Year's Day Celebration",
     ...     start=date(2022, 1, 1)
     ... )
-    >>> print(event.to_ical())
+    >>> event.to_ical()
     BEGIN:VEVENT
     SUMMARY:New Year's Day Celebration
     DTSTART;VALUE=DATE:20220101
@@ -151,9 +151,9 @@ Based on the created event above, the following example shows how to access valu
 
 .. code-block:: pycon
 
-    >>> print(event.summary)
+    >>> event.summary
     New Year's Day Celebration
-    >>> print(event.start)
+    >>> event.start
     2022-01-01
 
 Property naming convention
@@ -176,7 +176,7 @@ Continuing from the previous example, the next example shows how to access value
 
 .. code-block:: pycon
 
-    >>> print(event.summary)
+    >>> event.summary
     New Year's Day Celebration
 
 While some values are not set, they can be calculated from other values.
@@ -208,9 +208,9 @@ They can be accessed as attributes.
 
     >>> event.DTSTART
     datetime.date(2022, 1, 1)
-    >>> print(event.DURATION)
+    >>> event.DURATION
     None
-    >>> print(event.DTEND)
+    >>> event.DTEND
     None
 
 .. _parameter-properties:
@@ -230,16 +230,16 @@ The following example creates a new attendee for the previously created event fr
     ...     cn="Max Rasmussen",
     ...     role=ROLE.REQ_PARTICIPANT
     ... )
-    >>> print(attendee.ROLE)
+    >>> attendee.ROLE
     REQ-PARTICIPANT
 
 Similar to the casing of names of properties, lower case parameters calculate the property, whereas upper case parameters directly access the iCalendar property.
 
 .. code-block:: pycon
     
-    >>> print(attendee.email)  # calculated
+    >>> attendee.email  # calculated
     maxm@example.com
-    >>> print(attendee.CN)  # direct access
+    >>> attendee.CN  # direct access
     Max Rasmussen
 
 The parameters turn up the iCal representation.
@@ -247,7 +247,7 @@ The parameters turn up the iCal representation.
 .. code-block:: pycon
     
     >>> event.attendees = [attendee]
-    >>> print(event.to_ical())
+    >>> event.to_ical()
     BEGIN:VEVENT
     SUMMARY:New Year's Day Celebration
     DTSTART;VALUE=DATE:20220101
@@ -273,7 +273,7 @@ As mentioned in :ref:`property-access` above, some properties won't get set or v
     >>> calendar = Calendar()  # create and empty calendar
     >>> calendar.add("prodid", "-//My calendar product//mxm.dk//")
     >>> calendar.add("version", "2.0")
-    >>> print(calendar.to_ical())
+    >>> calendar.to_ical()
     BEGIN:VCALENDAR
     VERSION:2.0
     PRODID:-//My calendar product//mxm.dk//
@@ -314,7 +314,7 @@ The following example sets the ``DESCRIPTION`` from  :rfc:`7986#section-5.1`, an
     >>> description = vText("This is my personal calendar.")
     >>> description.params["language"] = "en"  # set language to English
     >>> calendar["description"] = description
-    >>> print(calendar.to_ical())
+    >>> calendar.to_ical()
     BEGIN:VCALENDAR
     VERSION:2.0
     PRODID:-//My calendar product//mxm.dk//
