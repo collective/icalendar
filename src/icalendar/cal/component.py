@@ -708,7 +708,6 @@ class Component(CaselessDict):
         """,
     )
 
-
     @property
     def last_modified(self) -> datetime:
         """Datetime when the information associated with the component was last revised.
