@@ -1,2 +1,2 @@
-Improved the last_modified docstring in component.py to a clearer Pythonic docstring.
+Improved the :attr:`~icalendar.cal.component.Component.LAST_MODIFIED` docstring to a clearer Pythonic docstring.
 @valemm13
