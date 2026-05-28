@@ -137,7 +137,37 @@ Change log entry format
 
 To create a change log entry or news item, create a file in the :file:`news` directory, located in the root of the package.
 
-The change log entry's format must be ``#.type``, where ``#`` is the referenced GitHub issue or pull request number, ``.`` is the literal extension delimiter, and ``type`` is one of the following strings.
+..  important::
+
+    Never edit a change log entry that you didn't create.
+
+The change log entry's format must be ``#.type``, where ``#`` is the referenced GitHub issue or pull request number, ``.`` is the literal extension delimiter, and ``type`` is one of the following strings described in the next section, :ref:`change-log-types`
+
+To avoid a filename conflict with an existing file or another pull request for the same issue number, append a period (``.``) and an integer to the filename, incrementing it as needed to make the entire filename unique.
+
+..  code-block:: text
+
+    1158.documentation
+    1158.documentation.1
+    1158.documentation.2
+
+For orphan change log entries—that is, those that don't need to be linked to any issue ID or other identifier—start the file name with ``+``.
+The content will still be included in the change log, at the end of the category corresponding to the file extension.
+
+..  code-block:: text
+
+    +anything.bugfix
+
+.. note::
+
+    icalendar uses `towncrier <https://pypi.org/project/towncrier/>`_ to automatically update the :doc:`../reference/changelog` from entries stored in the :file:`/news` directory at the root of the project.
+    It generates links to the issue numbers and organizes the change log entries according to their filename issue numbers and types for each release.
+
+
+..  _change-log-types:
+
+Change log types
+````````````````
 
 ``breaking``
     For changes that break the existing API.
@@ -162,24 +192,6 @@ The change log entry's format must be ``#.type``, where ``#`` is the referenced 
 
 ``chore``
     For routine tasks that shouldn't be published, but will satisfy the checker for the presence of a change log entry.
-
-To avoid a conflict with another pull request for the same issue number, append an integer to the filename.
-Don't edit a change log entry from another pull request.
-
-..  code-block:: text
-
-    1158.documentation.1
-
-For orphan change log entries—that is, those that don't need to be linked to any issue ID or other identifier—start the file name with ``+``.
-The content will still be included in the change log, at the end of the category corresponding to the file extension.
-
-..  code-block:: text
-
-    +anything.bugfix
-
-.. note::
-
-    icalendar uses `towncrier <https://pypi.org/project/towncrier/>`_ to automatically update the change log from entries stored in the :file:`/news` directory at the root of the project.
 
 
 .. _write-a-good-change-log-entry-label:
