@@ -703,7 +703,7 @@ class Component(CaselessDict):
                 >>> from icalendar import Event
                 >>> event = Event()
                 >>> event.last_modified = datetime.now(timezone.utc)
-                >>> event.last_modified.dt
+                >>> event.last_modified
                 datetime.datetime(..., tzinfo=datetime.timezone.utc)
         """,
     )
