@@ -64,7 +64,7 @@ You can set multiple properties, as shown in the following example.
 
     >>> cal = Calendar()
     >>> cal["attendee"] = ["MAILTO:maxm@mxm.dk","MAILTO:test@example.com"]
-    >>> print(display(cal))
+    >>> display(cal)
     BEGIN:VCALENDAR
     ATTENDEE:MAILTO:maxm@mxm.dk
     ATTENDEE:MAILTO:test@example.com
@@ -79,7 +79,7 @@ Here is an example.
     >>> cal = Calendar()
     >>> cal.add("attendee", "MAILTO:maxm@mxm.dk")
     >>> cal.add("attendee", "MAILTO:test@example.com")
-    >>> print(display(cal))
+    >>> display(cal)
     BEGIN:VCALENDAR
     ATTENDEE:MAILTO:maxm@mxm.dk
     ATTENDEE:MAILTO:test@example.com
@@ -118,7 +118,7 @@ Then append it to a parent.
 .. code-block:: pycon
 
     >>> cal.add_component(event)
-    >>> print(display(cal))
+    >>> display(cal)
     BEGIN:VCALENDAR
     ATTENDEE:MAILTO:maxm@mxm.dk
     ATTENDEE:MAILTO:test@example.com
@@ -272,7 +272,7 @@ After loading the example file, edit and save it.
 .. code-block:: pycon
 
     >>> calendar.calendar_name = "My Modified Calendar"  # modify
-    >>> print(calendar.to_ical()[:121])  # save modification
+    >>> calendar.to_ical()[:121]  # save modification
     BEGIN:VCALENDAR
     VERSION:2.0
     PRODID:collective/icalendar
@@ -366,7 +366,7 @@ To demonstrate icalendar's flexibility, the following example creates an event t
     >>> e["X-DT-USE-PYTZ"] = icalendar.vDatetime(datetime.datetime(2024, 6, 19, 10, 1, tzinfo=tz))
     >>> tz = zoneinfo.ZoneInfo("Europe/London")
     >>> e["X-DT-ZONEINFO"] = icalendar.vDatetime(datetime.datetime(2024, 6, 19, 10, 1, tzinfo=tz))
-    >>> print(e.to_ical())  # the libraries yield the same result
+    >>> e.to_ical()  # the libraries yield the same result
     BEGIN:VEVENT
     X-DT-DATEUTIL;TZID=Europe/London:20240619T100100
     X-DT-USE-PYTZ;TZID=Europe/London:20240619T100100
@@ -594,7 +594,7 @@ The following example filters through all subcomponents of the calendar, and if 
     >>> find_christmas = lambda c: "christmas" in c.get("SUMMARY", "").lower()
     >>> for component in calendar.walk(select=find_christmas):
     ...     component["SUMMARY"] = component["SUMMARY"].upper()
-    >>> print(calendar.events[1].summary)
+    >>> calendar.events[1].summary
     ORTHODOX CHRISTMAS
 
 Add timezones to a calendar
