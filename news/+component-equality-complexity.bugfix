@@ -1,0 +1,1 @@
+Comparing components with :meth:`Component.__eq__ <icalendar.cal.component.Component.__eq__>` is no longer exponential in the subcomponent nesting depth, removing a denial-of-service vector where a deeply nested component could take minutes to compare. See `GHSA-cv84-9p8j-fj68 <https://github.com/collective/icalendar/security/advisories/GHSA-cv84-9p8j-fj68>`_. @tidusec

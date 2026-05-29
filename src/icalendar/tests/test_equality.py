@@ -124,6 +124,38 @@ def test_component_equality_order():
     assert_not_equal(component1, component2)
 
 
+def _nested_component(depth: int) -> Event:
+    """Build a component nested depth subcomponents deep."""
+    root = node = Event()
+    for _ in range(depth):
+        child = Event()
+        node.add_component(child)
+        node = child
+    return root
+
+
+def test_deeply_nested_equality_at_depth_50():
+    """Regression test for GHSA-cv84-9p8j-fj68.
+
+    Comparing deeply nested components used to recurse and re-compare both
+    directions at every level, which is exponential in the nesting depth: a
+    depth-30 structure took minutes. The fix walks an explicit stack and
+    compares each pair of nested components exactly once, which is linear.
+    """
+    depth = 50
+    # equality and its commutative counterpart, see #1224
+    assert_equal(_nested_component(depth), _nested_component(depth))
+
+    # A difference at depth 50 gets detected
+    left = _nested_component(depth)
+    right = _nested_component(depth)
+    deepest = right
+    while deepest.subcomponents:
+        deepest = deepest.subcomponents[0]
+    deepest.add("summary", "different")
+    assert_not_equal(left, right)
+
+
 def test_copy_does_not_copy_subcomponents(calendars, tzp):
     """If we copy the subcomponents, assumptions around copies will be broken."""
     assert calendars.timezoned.subcomponents
