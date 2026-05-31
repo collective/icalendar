@@ -1,1 +1,0 @@
-Replaced the RFC quotation in the docstring for :class:`vBoolean <icalendar.prop.boolean.vBoolean>` with a Pythonic description, including parsing behavior, a conformance reference, and a working example. @tsai135
