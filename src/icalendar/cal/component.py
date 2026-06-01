@@ -695,7 +695,7 @@ class Component(CaselessDict):
         components such as VEVENT, VTODO, VJOURNAL, and VTIMEZONE.
 
         Example:
-            Set the LAST-MODIFIED property of an event to the current UTC time.
+            Set the LAST-MODIFIED property of an event to a UTC time.
 
             .. code-block:: pycon
 
