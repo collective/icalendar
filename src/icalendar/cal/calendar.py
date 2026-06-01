@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import timedelta
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal, cast, overload
 
 from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
@@ -28,6 +28,7 @@ from icalendar.version import __version__
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
     from datetime import date, datetime
+    from pathlib import Path
 
     from icalendar.cal.availability import Availability
     from icalendar.cal.event import Event
@@ -94,6 +95,36 @@ class Calendar(Component):
     def _get_ical_parser(cls, st: str | bytes) -> ComponentIcalParser:
         """Get the iCal parser for the given input string."""
         return CalendarIcalParser(st, cls._get_component_factory(), cls.types_factory)
+
+    @overload
+    @classmethod
+    def from_ical(
+        cls, st: str | bytes | Path, multiple: Literal[False] = False
+    ) -> Calendar: ...
+
+    @overload
+    @classmethod
+    def from_ical(
+        cls, st: str | bytes | Path, multiple: Literal[True]
+    ) -> list[Calendar]: ...
+
+    @classmethod
+    def from_ical(
+        cls, st: str | bytes | Path, multiple: bool = False
+    ) -> Calendar | list[Calendar]:
+        """Parse iCalendar data into calendar instances.
+
+        Parameters:
+            st: iCalendar data as bytes or string, or a path to an iCalendar file.
+            multiple: If ``True``, returns a list. If ``False``, returns a single
+                calendar.
+
+        Returns:
+            Calendar or list of calendars
+        """
+        return cast(
+            "Calendar | list[Calendar]", super().from_ical(st, multiple=multiple)
+        )
 
     @property
     def events(self) -> list[Event]:
