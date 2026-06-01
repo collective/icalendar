@@ -1226,7 +1226,7 @@ Returns:
 
 Description:
     This property is used to specify the default busy time
-    type. The values correspond to those used by the FBTYPE"
+    type. The values correspond to those used by the "FBTYPE"
     parameter used on a "FREEBUSY" property, with the exception that
     the "FREE" value is not used in this property.  If not specified
     on a component that allows this property, the default is "BUSY-
@@ -1509,7 +1509,8 @@ rfc_7953_dtstart_property = timezone_datetime_property(
     "DTSTART",
     """Start of the component.
 
-    This is almost the same as :attr:`Event.DTSTART` with one exception:
+    This is almost the same as
+    :attr:`Event.DTSTART <icalendar.cal.event.Event.DTSTART>` with one exception:
     The values MUST have a timezone and DATE is not allowed.
 
     Description:
@@ -1525,7 +1526,8 @@ rfc_7953_dtend_property = timezone_datetime_property(
     "DTEND",
     """Start of the component.
 
-    This is almost the same as :attr:`Event.DTEND` with one exception:
+    This is almost the same as
+    :attr:`Event.DTEND <icalendar.cal.event.Event.DTEND>` with one exception:
     The values MUST have a timezone and DATE is not allowed.
 
     Description:
