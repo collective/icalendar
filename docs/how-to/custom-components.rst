@@ -20,7 +20,7 @@ icalendar preserves all custom components through dynamic component creation usi
 Parse custom components
 =======================
 
-Parse custom components using either :meth:`Component.from_ical() <icalendar.cal.component.Component.from_ical>` or :meth:`Calendar.from_ical() <icalendar.cal.calendar.Calendar.from_ical>`.
+Parse custom components using either :meth:`Component.from_ical() <icalendar.cal.component.Component.from_ical>` or :meth:`Calendar.from_ical() <icalendar.cal.component.Component.from_ical>`.
 
 
 ``Component.from_ical()``
@@ -316,7 +316,7 @@ Related content
 :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`
     Parse components
 
-:meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>`
+:meth:`Calendar.from_ical <icalendar.cal.component.Component.from_ical>`
     Parse calendars
 
 :rfc:`5545`
