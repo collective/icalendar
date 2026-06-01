@@ -1,1 +1,0 @@
-Fixed the broken ``Calendar.from_ical`` links in the custom components how-to guide to point to their correct definition on :meth:`~icalendar.cal.component.Component.from_ical`. AI disclosure: I used Gemini 3.5 Flash to identify the broken references, locate the target definition, and draft the fix. @aniketaggarwal

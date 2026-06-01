@@ -1,0 +1,1 @@
+Added a documented and type-annotated :meth:`~icalendar.cal.calendar.Calendar.from_ical` classmethod to the :class:`~icalendar.cal.calendar.Calendar` class, resolving broken links in the documentation. AI disclosure: I used Gemini 3.5 Flash to identify the missing method definition on Calendar, implement it, and document the change. @aniketaggarwal
