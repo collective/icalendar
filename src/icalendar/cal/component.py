@@ -49,7 +49,7 @@ _marker = []
 class _ComponentEqFrame:
     """A pending component-equality comparison on the iterative stack.
 
-    See :meth:`Component.__eq__` for how the fields are used.
+    See ``Component.__eq__`` for how the fields are used.
     """
 
     #: the two components being compared
