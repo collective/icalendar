@@ -190,6 +190,21 @@ def test_adding_unknown_value_parameter():
     assert "VALUE" not in ical
 
 
+def test_unknown_jcal_type_does_not_add_value_parameter():
+    """The "unknown" jCal type must not produce a VALUE parameter.
+
+    Per :rfc:`7265#section-5.2` a value type of "unknown" yields no VALUE
+    parameter, even for a registered property such as DTSTART (whose default
+    is DATE-TIME) reached through ``Component.from_jcal``. UNKNOWN is reserved
+    from iCalendar.
+    """
+    jcal = ["vevent", [["uid", {}, "text", "1"], ["dtstart", {}, "unknown", "x"]], []]
+    event = Event.from_jcal(jcal)
+
+    assert "VALUE" not in event["DTSTART"].params
+    assert b"VALUE=UNKNOWN" not in event.to_ical()
+
+
 @pytest.mark.parametrize(
     ("ics_line", "prop_name", "expected_value"),
     [

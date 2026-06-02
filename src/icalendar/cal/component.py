@@ -960,9 +960,14 @@ class Component(CaselessDict):
             # parameter when the type differs from the property's default, so
             # explicit value types such as ``RDATE;VALUE=PERIOD`` or
             # ``TRIGGER;VALUE=DATE-TIME`` survive the round-trip (GH #1426).
-            # A type equal to the default needs no VALUE parameter.
+            # A type equal to the default needs no VALUE parameter, and the
+            # reserved ``unknown`` type must never become ``VALUE=UNKNOWN``
+            # (RFC 7265, section 5.2).
             default_type = cls.types_factory.default_value_type(prop_name)
-            if isinstance(prop_value, str) and prop_value.lower() != default_type:
+            if isinstance(prop_value, str) and prop_value.lower() not in (
+                "unknown",
+                default_type,
+            ):
                 v_prop.VALUE = prop_value.upper()
             elif "VALUE" in v_prop.params:
                 del v_prop.VALUE
