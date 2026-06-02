@@ -10,6 +10,7 @@ import pytest
 
 from icalendar import (
     Calendar,
+    Event,
     vBinary,
     vBoolean,
     vCalAddress,
@@ -187,3 +188,32 @@ def test_adding_unknown_value_parameter():
     ical = calendar.to_ical().decode("utf-8")
     assert "UNKNOWN" not in ical
     assert "VALUE" not in ical
+
+
+@pytest.mark.parametrize(
+    ("ics_line", "prop_name", "expected_value"),
+    [
+        # Explicit, non-default value types must survive the jCal round-trip.
+        ("RDATE;VALUE=PERIOD:19970101T180000Z/19970102T070000Z", "RDATE", "PERIOD"),
+        ("TRIGGER;VALUE=DATE-TIME:19760401T005545Z", "TRIGGER", "DATE-TIME"),
+        ("DTEND;VALUE=DATE:19961230", "DTEND", "DATE"),
+        # Default value types must not gain a spurious VALUE parameter, even for
+        # properties whose jCal type differs from the internal type name (such
+        # as CATEGORIES, whose jCal type is "text").
+        ("DTSTART:19961230T020000Z", "DTSTART", None),
+        ("RDATE:19970101T180000Z", "RDATE", None),
+        ("TRIGGER:PT15M", "TRIGGER", None),
+        ("CATEGORIES:a,b,c", "CATEGORIES", None),
+        ("SUMMARY:hello", "SUMMARY", None),
+    ],
+)
+def test_jcal_round_trip_preserves_value_parameter(ics_line, prop_name, expected_value):
+    """jCal encodes the value type in the type field rather than as a VALUE
+    parameter. A round-trip must restore an explicit, non-default VALUE
+    parameter and must not introduce one for default value types (GH #1426)."""
+    event = Event.from_ical(f"BEGIN:VEVENT\r\n{ics_line}\r\nEND:VEVENT\r\n")
+    restored = Event.from_jcal(event.to_jcal())
+    prop = restored[prop_name]
+    if isinstance(prop, list):
+        prop = prop[0]
+    assert prop.params.get("VALUE") == expected_value

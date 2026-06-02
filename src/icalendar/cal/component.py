@@ -955,9 +955,16 @@ class Component(CaselessDict):
             )
             with JCalParsingError.reraise_with_path_added(1, i):
                 v_prop = prop_cls.from_jcal(prop)
-            # if we use the default value for that property, we can delete the
-            # VALUE parameter
-            if prop_cls == cls.types_factory.for_property(prop_name):
+            # jCal encodes the value type in the type field (``prop[2]``)
+            # instead of as a ``VALUE`` parameter (RFC 7265). Restore that
+            # parameter when the type differs from the property's default, so
+            # explicit value types such as ``RDATE;VALUE=PERIOD`` or
+            # ``TRIGGER;VALUE=DATE-TIME`` survive the round-trip (GH #1426).
+            # A type equal to the default needs no VALUE parameter.
+            default_type = cls.types_factory.default_value_type(prop_name)
+            if isinstance(prop_value, str) and prop_value.lower() != default_type:
+                v_prop.VALUE = prop_value.upper()
+            elif "VALUE" in v_prop.params:
                 del v_prop.VALUE
             component.add(prop_name, v_prop)
         if not isinstance(subcomponents, list):
