@@ -702,8 +702,6 @@ class Component(CaselessDict):
                 >>> from datetime import datetime, timezone
                 >>> from icalendar import Event
                 >>> event = Event()
-                >>> event.last_modified = datetime.now(timezone.utc)
-                >>> event.last_modified  # doctest: +ELLIPSIS
                 >>> event.last_modified = datetime(2026, 5, 31, 23, 52, 45, tzinfo=timezone.utc)
                 >>> event.last_modified
                 datetime.datetime(2026, 5, 31, 23, 52, 45, tzinfo=zoneinfo.ZoneInfo(key='UTC'))
