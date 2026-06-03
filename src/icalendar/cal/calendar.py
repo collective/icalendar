@@ -109,7 +109,8 @@ class Calendar(Component):
 
         Parameters:
             st: iCalendar data as bytes, string, or a path to an iCalendar file.
-            multiple: If ``True``, returns list. If ``False``, returns single Calendar.
+            multiple: If ``True``, returns a list of components.
+                If ``False``, returns a calendar.
 
         Returns:
             Calendar or list of components
