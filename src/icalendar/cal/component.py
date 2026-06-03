@@ -285,26 +285,39 @@ class Component(CaselessDict):
         value,
         parameters: dict[str, str] | Parameters = None,
         encode: bool = True,
-    ):
-        """Add a property.
+    ) -> None:
+        """Add a property to this component.
 
-        :param name: Name of the property.
-        :type name: string
+        If the property already exists, the new value is appended so the
+        property carries a list of values rather than replacing the previous
+        one. When ``name`` is ``DTSTAMP``, ``CREATED``, or ``LAST-MODIFIED``
+        and ``value`` is a ``datetime``, the value is converted to UTC as the
+        RFC requires.
 
-        :param value: Value of the property. Either of a basic Python type of
-                      any of the icalendar's own property types.
-        :type value: Python native type or icalendar property type.
+        Parameters:
+            name: Name of the property.
+            value:
+                Value of the property. Either a basic Python type or any of
+                icalendar's own property types.
+            parameters:
+                Property parameter dictionary for the value. Only consulted
+                when ``encode`` is ``True``.
+            encode:
+                ``True`` if the value should be encoded to one of icalendar's
+                own property types (fallback is ``vText``); ``False`` to
+                store the value as-is.
 
-        :param parameters: Property parameter dictionary for the value. Only
-                           available, if encode is set to True.
-        :type parameters: Dictionary
+        Returns:
+            ``None``
 
-        :param encode: True, if the value should be encoded to one of
-                       icalendar's own property types (Fallback is "vText")
-                       or False, if not.
-        :type encode: Boolean
+        Example:
 
-        :returns: None
+            >>> from icalendar import Event
+            >>> event = Event()
+            >>> event.add("summary", "Team sync")
+            >>> event["summary"]
+            vText(b'Team sync')
+
         """
         if isinstance(value, datetime) and name.lower() in (
             "dtstamp",
@@ -576,12 +589,49 @@ class Component(CaselessDict):
         return content_lines.to_ical()
 
     def __repr__(self):
-        """String representation of class with all of it's subcomponents."""
-        subs = ", ".join(str(it) for it in self.subcomponents)
-        return (
-            f"{self.name or type(self).__name__}"
-            f"({dict(self)}{', ' + subs if subs else ''})"
-        )
+        """String representation of class with all of its subcomponents.
+
+        Implemented iteratively rather than recursively so that calendars
+        with deeply nested subcomponents do not raise ``RecursionError``.
+        A pathological ``.ics`` payload of only ~13 KB can otherwise nest
+        ``BEGIN:VEVENT`` ~500 levels and crash any caller that performs
+        ``repr()``/``str()``/``f"{cal}"`` on the parsed calendar
+        (e.g. logging, error reporting, debug pages).
+        """
+        # Stack-based traversal. Each frame is one of:
+        #   ("open", component)   -> emit "Name({props}" and schedule children
+        #   ("close",)            -> emit ")"
+        #   ("comma",)            -> emit ", "
+        out: list[str] = []
+        stack: list[tuple] = [("open", self)]
+        while stack:
+            frame = stack.pop()
+            kind = frame[0]
+            if kind == "comma":
+                out.append(", ")
+            elif kind == "close":
+                out.append(")")
+            else:  # "open"
+                node = frame[1]
+                if isinstance(node, Component):
+                    out.append(f"{node.name or type(node).__name__}({dict(node)}")
+                    subs = node.subcomponents
+                    if subs:
+                        # Defer ")" then push children in reverse so that
+                        # popping yields original order, with ", " separators
+                        # (the first popped comma serves as the separator
+                        # between the component's dict and its first child).
+                        stack.append(("close",))
+                        for sub in reversed(subs):
+                            stack.append(("open", sub))
+                            stack.append(("comma",))
+                    else:
+                        out.append(")")
+                else:
+                    # Should not normally occur (subcomponents are Components),
+                    # but be safe and fall back to non-recursive str().
+                    out.append(str(node))
+        return "".join(out)
 
     def __eq__(self, other):
         if len(self.subcomponents) != len(other.subcomponents):
@@ -630,20 +680,26 @@ class Component(CaselessDict):
         property.
     """,
     )
+
     LAST_MODIFIED = single_utc_property(
         "LAST-MODIFIED",
-        """RFC 5545:
+        """The date and time when a calendar component was last modified.
 
-        Purpose:  This property specifies the date and time that the
-        information associated with the calendar component was last
-        revised in the calendar store.
+        This property is commonly used to track revisions to calendar
+        components such as VEVENT, VTODO, VJOURNAL, and VTIMEZONE.
 
-        Note: This is analogous to the modification date and time for a
-        file in the file system.
+        Example:
+            Set the LAST-MODIFIED property of an event to a UTC time.
 
-        Conformance:  This property can be specified in the "VEVENT",
-        "VTODO", "VJOURNAL", or "VTIMEZONE" calendar components.
-    """,
+            .. code-block:: pycon
+
+                >>> from datetime import datetime, timezone
+                >>> from icalendar import Event
+                >>> event = Event()
+                >>> event.last_modified = datetime(2026, 5, 31, 23, 52, 45, tzinfo=timezone.utc)
+                >>> event.last_modified
+                datetime.datetime(2026, 5, 31, 23, 52, 45, tzinfo=ZoneInfo(key='UTC'))
+        """,
     )
 
     @property

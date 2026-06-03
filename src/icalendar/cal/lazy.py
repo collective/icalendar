@@ -188,7 +188,7 @@ class LazyCalendar(Calendar):
             >>> calendar.is_lazy()
             True
 
-        When you access all :attr:`subcomponents` of the calendar,
+        When you access all :attr:`~icalendar.cal.component.Component.subcomponents` of the calendar,
         for example by getting their count, the entire calendar is
         parsed and becomes not lazy.
 

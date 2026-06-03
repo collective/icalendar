@@ -1,4 +1,5 @@
 # .github/workflows/rtd-pr-preview.yml
+# Usage: https://github.com/readthedocs/actions/blob/v1/preview/README.md
 name: readthedocs/actions
 on:
   pull_request_target:
@@ -8,10 +9,17 @@ on:
     # documentation files.
     paths:
       - "docs/**"
-      - "*.rst"
-      - "src/icalendar/*.py"
-      - .readthedocs.yaml
-      - requirements_docs.txt
+      - "src/icalendar/**/*.py"
+      - .github/workflows/documentation.yml
+      - .github/workflows/rtd-pr-preview.yml
+      - .readthedocs.yml
+      - .vale.ini
+      - CHANGES.rst
+      - Makefile
+      - pyproject.toml
+      - "!src/icalendar/fuzzing/**"
+      - "!src/icalendar/tests/**"
+      - "!src/icalendar/timezone/**"
 
 permissions:
   pull-requests: write
@@ -23,4 +31,3 @@ jobs:
       - uses: readthedocs/actions/preview@v1
         with:
           project-slug: "icalendar"
-          single-version: "true"
