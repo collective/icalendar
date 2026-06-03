@@ -1,0 +1,1 @@
+Deprecated :func:`icalendar.parser.string.escape_char`, :func:`icalendar.parser.string.unescape_char`, :func:`icalendar.parser.string.escape_string`, and :func:`icalendar.parser.string.unescape_string` using the standard ``deprecate_for_version_8`` wrapper as per issue #1405.
