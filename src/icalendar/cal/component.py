@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import warnings
 from copy import deepcopy
 from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
@@ -22,7 +23,11 @@ from icalendar.attr import (
 )
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.caselessdict import CaselessDict
-from icalendar.error import InvalidCalendar, JCalParsingError
+from icalendar.error import (
+    FeatureWillBeRemovedInFutureVersion,
+    InvalidCalendar,
+    JCalParsingError,
+)
 from icalendar.parser import (
     Contentline,
     Contentlines,
@@ -525,7 +530,12 @@ class Component(CaselessDict):
 
         Parameters:
             st: iCalendar data as bytes or string, or a path to an iCalendar file as
-                :class:`pathlib.Path` or string.
+                :class:`pathlib.Path`.
+
+                .. deprecated:: 7.2.0
+                    Passing a file path as a :class:`str` is deprecated and will be
+                    removed in icalendar 8. A ``str`` will then always be parsed as
+                    iCalendar data. Pass a :class:`pathlib.Path` to read from a file.
             multiple: If ``True``, returns list. If ``False``, returns single component.
 
         Returns:
@@ -543,6 +553,14 @@ class Component(CaselessDict):
             except OSError:
                 is_file = False
             if is_file:
+                warnings.warn(
+                    "Passing a file path as a string to from_ical() is deprecated "
+                    "and will be removed in icalendar 8. A string will then always "
+                    "be parsed as iCalendar data. Pass a pathlib.Path instead to "
+                    "read iCalendar data from a file.",
+                    FeatureWillBeRemovedInFutureVersion,
+                    stacklevel=2,
+                )
                 st = path.read_bytes()
         parser = cls._get_ical_parser(st)
         components = parser.parse()

@@ -1,0 +1,1 @@
+``Component.from_ical`` now warns when you hand it a file path as a string. It still reads the file as before, but this is deprecated: in icalendar 8 a string will always be parsed as calendar data, never treated as a path. If you want to read from a file, pass a :class:`pathlib.Path`. @uwezkhan

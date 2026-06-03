@@ -3,12 +3,14 @@
 See issue: https://github.com/collective/icalendar/issues/756
 """
 
+import warnings
 from pathlib import Path
 
 import pytest
 
 from icalendar import Calendar
 from icalendar.cal.examples import get_example
+from icalendar.error import FeatureWillBeRemovedInFutureVersion
 
 
 @pytest.fixture
@@ -28,10 +30,19 @@ def test_reading_cal_from_path(dummy_cal):
     assert actual_cal.to_ical() == expected_cal.to_ical()
 
 
+def test_reading_cal_from_path_does_not_warn(dummy_cal):
+    """Reading from a :class:`~pathlib.Path` is the explicit API and must not warn."""
+    _, path = dummy_cal
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", FeatureWillBeRemovedInFutureVersion)
+        Calendar.from_ical(path)
+
+
 def test_reading_cal_from_string_path(dummy_cal):
-    """Test reading a calendar from a valid string path."""
+    """Reading from a string path still works but is deprecated (see issue #1362)."""
     expected_cal, path = dummy_cal
-    actual_cal = Calendar.from_ical(str(path))
+    with pytest.warns(FeatureWillBeRemovedInFutureVersion):
+        actual_cal = Calendar.from_ical(str(path))
 
     assert actual_cal.to_ical() == expected_cal.to_ical()
 
