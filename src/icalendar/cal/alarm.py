@@ -298,7 +298,7 @@ class Alarm(Component):
     uid = single_string_property(
         "UID",
         uid_property.__doc__,
-        "X-ALARMUID",
+        ["X-ALARMUID", "X-EVOLUTION-ALARM-UID"],
     )
     summary = summary_property
     description = description_property
