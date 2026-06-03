@@ -1,1 +1,1 @@
-Strictly validate :class:`~icalendar.prop.dt.datetime.vDatetime` values in :meth:`~icalendar.prop.dt.datetime.vDatetime.from_ical` and reject malformed input. This also improves handling of values with a ``TZID`` prefix (Form #3). @uwezkhan
+Strictly validate :class:`~icalendar.prop.dt.datetime.vDatetime` values in :meth:`~icalendar.prop.dt.datetime.vDatetime.from_ical` and reject malformed input. This also improves handling of values with a ``TZID`` prefix, per :rfc:`5545#section-3.3.5`, Form #3. @uwezkhan

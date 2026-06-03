@@ -118,7 +118,8 @@ class vDatetime(TimeBase):
         elif timezone is not None:
             tzinfo = timezone
 
-        # Extract the value part if parameters are present (Form #3)
+        # Extract the value part if parameters are present per
+        # https://datatracker.ietf.org/doc/html/rfc5545.html#section-3.3.5
         # Form #3: TZID=America/New_York:19980119T020000
         ical_value = ical.rpartition(":")[2]
 
@@ -138,7 +139,7 @@ class vDatetime(TimeBase):
                 return tzp.localize(datetime(*timetuple), tzinfo)
             if not ical_value[15:]:
                 return datetime(*timetuple)
-            if ical_value[15:16] == "Z":
+            if ical_value[15:] == "Z":
                 return tzp.localize_utc(datetime(*timetuple))
         except Exception as e:
             raise ValueError(f"Wrong datetime format: {ical}") from e
