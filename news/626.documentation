@@ -1,0 +1,1 @@
+Switch :file:`docs/how-to/usage.rst` from the deprecated ``.. code:: pycon`` directive to ``.. code-block:: pycon`` for consistency with the rest of the documentation. @mvanhorn
