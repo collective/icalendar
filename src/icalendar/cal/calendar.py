@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import timedelta
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal, overload
 
 from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
@@ -28,6 +28,7 @@ from icalendar.version import __version__
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
     from datetime import date, datetime
+    from pathlib import Path
 
     from icalendar.cal.availability import Availability
     from icalendar.cal.event import Event
@@ -89,6 +90,32 @@ class Calendar(Component):
     def example(cls, name: str = "example") -> Calendar:
         """Return the calendar example with the given name."""
         return cls.from_ical(get_example("calendars", name))
+
+    @overload
+    @classmethod
+    def from_ical(
+        cls, st: str | bytes, multiple: Literal[False] = False
+    ) -> Calendar: ...
+
+    @overload
+    @classmethod
+    def from_ical(cls, st: str | bytes, multiple: Literal[True]) -> list[Component]: ...
+
+    @classmethod
+    def from_ical(
+        cls, st: str | bytes | Path, multiple: bool = False
+    ) -> Calendar | list[Component]:
+        """Parse iCalendar data into a Calendar instance.
+
+        Parameters:
+            st: iCalendar data as bytes, string, or a path to an iCalendar file.
+            multiple: If ``True``, returns a list of components.
+                If ``False``, returns a calendar.
+
+        Returns:
+            Calendar or list of components
+        """
+        return super().from_ical(st, multiple)
 
     @classmethod
     def _get_ical_parser(cls, st: str | bytes) -> ComponentIcalParser:
