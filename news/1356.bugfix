@@ -1,1 +1,0 @@
-Refactored :class:`~icalendar.prop.binary.vBinary` to store raw ``bytes`` internally, ensuring lossless round-tripping of non-UTF-8 binary data, and updated :class:`~icalendar.prop.image.Image` to handle this change correctly. @uwezkhan

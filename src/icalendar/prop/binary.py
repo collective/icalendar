@@ -4,22 +4,23 @@ import base64
 import binascii
 from typing import ClassVar
 
-from icalendar.compatibility import Self
+from icalendar.compatibility import Self, deprecate_for_version_8
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser_tools import to_unicode
 
 
 class vBinary:
     """Binary property values are base 64 encoded."""
 
     default_value: ClassVar[str] = "BINARY"
-    obj: bytes
+    bytes: bytes
 
     def __init__(self, obj: str | bytes, params: dict[str, str] | None = None) -> None:
         if isinstance(obj, str):
-            self.obj = obj.encode("utf-8")
+            self.bytes = obj.encode("utf-8")
         else:
-            self.obj = obj
+            self.bytes = obj
         self.params = Parameters(encoding="BASE64", value="BINARY")
         if params:
             self.params.update(params)
@@ -28,7 +29,7 @@ class vBinary:
         return f"vBinary({self.to_ical()})"
 
     def to_ical(self) -> bytes:
-        return base64.b64encode(self.obj)
+        return base64.b64encode(self.bytes)
 
     @staticmethod
     def from_ical(ical: str | bytes) -> bytes:
@@ -37,13 +38,25 @@ class vBinary:
         except (binascii.Error, ValueError) as e:
             raise ValueError("Not valid base 64 encoding.") from e
 
+    @property
+    @deprecate_for_version_8
+    def obj(self) -> str:
+        """Deprecated string view of the value.
+
+        .. deprecated:: 7.1.1
+            Use :attr:`bytes` for the raw binary value. ``obj`` decodes
+            :attr:`bytes` as text and is lossy for non-UTF-8 data. It will
+            be removed in icalendar 8.
+        """
+        return to_unicode(self.bytes)
+
     def __eq__(self, other: object) -> bool:
         """self == other"""
-        return isinstance(other, vBinary) and self.obj == other.obj
+        return isinstance(other, vBinary) and self.bytes == other.bytes
 
     def __hash__(self) -> int:
         """Hash of the vBinary object."""
-        return hash(self.obj)
+        return hash(self.bytes)
 
     @classmethod
     def examples(cls) -> list[Self]:
@@ -62,13 +75,19 @@ class vBinary:
             name,
             params,
             self.VALUE.lower(),
-            base64.b64encode(self.obj).decode("ascii"),
+            base64.b64encode(self.bytes).decode("ascii"),
         ]
 
     @property
     def ical_value(self) -> bytes:
-        """The bytes value of the BINARY property."""
-        return self.obj
+        """The raw ``bytes`` value of the BINARY property.
+
+        .. versionchanged:: 7.1.1
+            Returns the raw stored bytes. Previously the stored value was
+            base64-decoded, which raised :class:`ValueError` for non-base64
+            input. See ``news/1356.breaking``.
+        """
+        return self.bytes
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
