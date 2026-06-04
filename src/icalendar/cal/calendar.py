@@ -116,11 +116,11 @@ class Calendar(Component):
 
         Parameters:
             st: iCalendar data as bytes or string, or a path to an iCalendar file.
-            multiple: If ``True``, returns a list. If ``False``, returns a single
-                calendar.
+            multiple: If ``True``, returns a list of calendars.
+                If ``False``, returns a single calendar.
 
         Returns:
-            Calendar or list of calendars
+            Calendar or list of calendars.
         """
         return cast(
             "Calendar | list[Calendar]", super().from_ical(st, multiple=multiple)
