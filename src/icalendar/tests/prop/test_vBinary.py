@@ -91,6 +91,14 @@ def test_obj_is_deprecated_string_view():
         assert vBinary(b"txt").obj == "txt"
 
 
+def test_obj_setter_updates_bytes():
+    """Setting .obj still works for backward compatibility and writes .bytes."""
+    binary = vBinary(b"old")
+    with pytest.warns(DeprecationWarning, match="obj is deprecated"):
+        binary.obj = "new"
+    assert binary.bytes == b"new"
+
+
 def test_hash():
     obj = vBinary(b"hashed text")
     assert hash(obj) == hash(b"hashed text")
