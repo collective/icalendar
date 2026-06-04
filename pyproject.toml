@@ -253,6 +253,7 @@ extend-safe-fixes = [
     "SLF001",  # private member access
 ]
 "src/icalendar/prop/**" = [
+    "A003",    # class attribute shadowing builtin (vBinary.bytes, see #1289)
     "DTZ001",  # datetime() called without tzinfo
     "DTZ007",  # naive datetime from strptime
     "E501",    # line too long (docstrings with code examples)
