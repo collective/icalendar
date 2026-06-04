@@ -44,3 +44,14 @@ def test_reading_cal_from_long_string(dummy_cal):
     actual_cal = Calendar.from_ical(long_string)
 
     assert actual_cal.to_ical() == expected_cal.to_ical()
+
+
+def test_calendar_from_ical_is_declared_for_api_documentation():
+    """Test Calendar.from_ical is documented as a Calendar API method."""
+    cal_bytes = get_example("calendars", "example")
+
+    assert "from_ical" in Calendar.__dict__
+    assert (
+        Calendar.from_ical(cal_bytes).to_ical()
+        == Calendar.from_ical(cal_bytes).to_ical()
+    )
