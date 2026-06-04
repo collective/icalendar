@@ -1,6 +1,8 @@
 import unittest
 from datetime import date, datetime, time, timedelta
 
+import pytest
+
 from icalendar.parser import Parameters
 
 
@@ -356,3 +358,93 @@ class TestProp(unittest.TestCase):
             factory.from_ical("cn", b"Rasmussen\\, Max M\xc3\xb8ller")
             == "Rasmussen\\, Max Møller"
         )
+
+
+# Property name -> its RFC default value type (a jCal type identifier).
+# Contributed by @lcampanella98.
+RFC_DEFAULT_VALUE_TYPES = {
+    # DATE-TIME
+    "DTSTART": "date-time",
+    "DTEND": "date-time",
+    "DUE": "date-time",
+    "COMPLETED": "date-time",
+    "DTSTAMP": "date-time",
+    "CREATED": "date-time",
+    "LAST-MODIFIED": "date-time",
+    "RECURRENCE-ID": "date-time",
+    "RDATE": "date-time",
+    "EXDATE": "date-time",
+    "ACKNOWLEDGED": "date-time",
+    # DURATION -- note TRIGGER's default is DURATION, not DATE-TIME
+    "DURATION": "duration",
+    "TRIGGER": "duration",
+    "REFRESH-INTERVAL": "duration",
+    # PERIOD
+    "FREEBUSY": "period",
+    # INTEGER
+    "PERCENT-COMPLETE": "integer",
+    "PRIORITY": "integer",
+    "REPEAT": "integer",
+    "SEQUENCE": "integer",
+    # TEXT
+    "SUMMARY": "text",
+    "DESCRIPTION": "text",
+    "COMMENT": "text",
+    "LOCATION": "text",
+    "UID": "text",
+    "RELATED-TO": "text",
+    "TZID": "text",
+    "TZNAME": "text",
+    "STATUS": "text",
+    "ACTION": "text",
+    "TRANSP": "text",
+    "CLASS": "text",
+    "METHOD": "text",
+    "VERSION": "text",
+    "PRODID": "text",
+    "CALSCALE": "text",
+    "CATEGORIES": "text",
+    "CONTACT": "text",
+    "RESOURCES": "text",
+    "REQUEST-STATUS": "text",
+    # URI
+    "ATTACH": "uri",
+    "URL": "uri",
+    "TZURL": "uri",
+    "SOURCE": "uri",
+    "CONFERENCE": "uri",
+    # UTC-OFFSET
+    "TZOFFSETFROM": "utc-offset",
+    "TZOFFSETTO": "utc-offset",
+    # CAL-ADDRESS
+    "ATTENDEE": "cal-address",
+    "ORGANIZER": "cal-address",
+    # RECUR
+    "RRULE": "recur",
+    "EXRULE": "recur",
+    # FLOAT
+    "GEO": "float",
+    # UNKNOWN -- no default value type (IMAGE requires an explicit VALUE;
+    # X- properties are unrecognized).
+    "IMAGE": "unknown",
+    "X-WR-CALNAME": "unknown",
+    "X-APPLE-STRUCTURED-LOCATION": "unknown",
+}
+
+
+@pytest.mark.parametrize(("name", "expected"), sorted(RFC_DEFAULT_VALUE_TYPES.items()))
+def test_default_value_type_matches_rfc(name, expected):
+    """default_value_type returns the RFC default value type for a property.
+
+    The expected types in ``RFC_DEFAULT_VALUE_TYPES`` are written by hand from
+    the RFCs, so this verifies ``TypesFactory.default_value_type()``
+    independently of ``Component.from_jcal`` -- the production code that also
+    relies on it (RFC 7265 section 3.5.1) to decide whether a property needs a
+    VALUE parameter.
+    """
+    from icalendar.prop import TypesFactory
+
+    factory = TypesFactory()
+    assert factory.default_value_type(name) == expected
+    # Property names are case-insensitive.
+    assert factory.default_value_type(name.lower()) == expected
