@@ -11,20 +11,16 @@ from icalendar.parser_tools import to_unicode
 
 
 class vBinary:
-    """Binary property values are base 64 encoded.
-
-    Attributes:
-        bytes: The raw binary value of the BINARY property. This is the
-            authoritative storage and round-trips losslessly, including for
-            non-UTF-8 data.
-        params: The :class:`~icalendar.parser.Parameters` of the property.
-        obj: Deprecated string view of :attr:`bytes`. Use :attr:`bytes`
-            instead; it is removed in icalendar 8.
-    """
+    """Binary property values are base 64 encoded."""
 
     default_value: ClassVar[str] = "BINARY"
     params: Parameters
     bytes: bytes
+    """The raw binary value of the BINARY property.
+
+    This is the authoritative storage and round-trips losslessly, including
+    for non-UTF-8 data. Use this instead of the deprecated :attr:`obj`.
+    """
 
     def __init__(self, obj: str | bytes, params: dict[str, str] | None = None) -> None:
         if isinstance(obj, str):
