@@ -119,9 +119,8 @@ Pull request requirements
 
 Before submitting your pull request, ensure you have met the following requirements.
 
-#.  Add a changelog entry to :file:`CHANGES.rst`.
+#.  Add a change log entry as described in :ref:`change-log`.
     This is required and enforced by GitHub checks.
-    See :ref:`change-log` for details.
 #.  Add a test which proves your fix and passes.
 #.  Run all tests to ensure your changes don't break any existing functionality.
 #.  :doc:`Add or edit documentation <documentation/index>`, both as docstrings to be rendered in the :doc:`API reference documentation <../reference/api/icalendar>` and narrative documentation, as necessary.
