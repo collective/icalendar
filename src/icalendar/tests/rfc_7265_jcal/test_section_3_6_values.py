@@ -220,6 +220,11 @@ def test_unknown_jcal_type_does_not_add_value_parameter():
         ("TRIGGER:PT15M", "TRIGGER", None),
         ("CATEGORIES:a,b,c", "CATEGORIES", None),
         ("SUMMARY:hello", "SUMMARY", None),
+        # Unregistered X- properties: an explicit VALUE must survive, while a
+        # bare X- property (jCal type "unknown") must not gain a VALUE parameter
+        # -- in particular never the reserved VALUE=UNKNOWN (RFC 7265 section 5.2).
+        ("X-FOO;VALUE=DATE:19961230", "X-FOO", "DATE"),
+        ("X-FOO:plain text", "X-FOO", None),
     ],
 )
 def test_jcal_round_trip_preserves_value_parameter(ics_line, prop_name, expected_value):
