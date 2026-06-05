@@ -445,15 +445,25 @@ def single_utc_property(name: str, docs: str) -> property:
 
 
 def single_string_property(
-    name: str, docs: str, other_name: str | None = None, default: str = ""
+    name: str, docs: str, other_name: str | list[str] | None = None, default: str = ""
 ) -> property:
     """Create a property to access a single string value."""
+    other_names = (
+        []
+        if other_name is None
+        else [other_name]
+        if isinstance(other_name, str)
+        else list(other_name)
+    )
 
     def fget(self: Component) -> str:
         """Get the value."""
-        result = self.get(
-            name, None if other_name is None else self.get(other_name, None)
-        )
+        result = self.get(name, None)
+        if result is None:
+            for alias in other_names:
+                result = self.get(alias, None)
+                if result is not None:
+                    break
         if result is None or result == []:
             return default
         if isinstance(result, list):
@@ -472,8 +482,8 @@ def single_string_property(
     def fdel(self: Component):
         """Delete the property."""
         self.pop(name, None)
-        if other_name is not None:
-            self.pop(other_name, None)
+        for alias in other_names:
+            self.pop(alias, None)
 
     return property(fget, fset, fdel, doc=docs)
 
