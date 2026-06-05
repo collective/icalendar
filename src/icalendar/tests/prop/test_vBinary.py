@@ -65,11 +65,12 @@ def test_ical_value():
 
 
 def test_ical_value_returns_raw_bytes_not_decoded():
-    """ical_value returns the raw stored bytes; it does not base64-decode them.
+    """Test that ``ical_value`` returns the raw stored bytes.
 
-    This is the breaking change from #1356. Previously ical_value decoded the
-    stored value as base64 (so ``vBinary("SGVsbG8=").ical_value`` was ``b"Hello"``)
-    and raised ValueError for non-base64 input. See news/1356.breaking.
+    With the release of icalendar 7.1.0, and previous to PR #1356,
+    ``ical_value`` Base64-decoded the raw stored bytes. For example,
+    ``vBinary("SGVsbG8=").ical_value`` was decoded to ``b"Hello"``
+    and raised ``ValueError`` for non-Base64 input.
     """
     assert vBinary(b"SGVsbG8=").ical_value == b"SGVsbG8="
     # Non-base64 input no longer raises; it is just stored and returned as-is.
@@ -77,7 +78,10 @@ def test_ical_value_returns_raw_bytes_not_decoded():
 
 
 def test_bytes_holds_raw_lossless_data():
-    """The .bytes attribute exposes the raw value, including non-UTF-8 data."""
+    """The .bytes attribute exposes the raw value, including non-UTF-8 data.
+
+    See PR #1356.
+    """
     raw = bytes(range(256))
     binary = vBinary(raw)
     assert binary.bytes == raw
@@ -86,13 +90,19 @@ def test_bytes_holds_raw_lossless_data():
 
 
 def test_obj_is_deprecated_string_view():
-    """.obj is kept for backward compatibility but deprecated in favour of .bytes."""
+    """.obj is kept for backward compatibility but deprecated in favour of .bytes.
+
+    See PR #1356.
+    """
     with pytest.warns(DeprecationWarning, match="obj is deprecated"):
         assert vBinary(b"txt").obj == "txt"
 
 
 def test_obj_setter_updates_bytes():
-    """Setting .obj still works for backward compatibility and writes .bytes."""
+    """Setting .obj still works for backward compatibility and writes .bytes.
+
+    See PR #1356.
+    """
     binary = vBinary(b"old")
     with pytest.warns(DeprecationWarning, match="obj is deprecated"):
         binary.obj = "new"

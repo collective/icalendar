@@ -11,7 +11,7 @@ from icalendar.parser_tools import to_unicode
 
 
 class vBinary:
-    """Binary property values are base 64 encoded."""
+    """Binary property values are Base64 encoded."""
 
     default_value: ClassVar[str] = "BINARY"
     params: Parameters
@@ -93,10 +93,12 @@ class vBinary:
     def ical_value(self) -> bytes:
         """The raw ``bytes`` value of the BINARY property.
 
+        .. versionadded:: 7.1.0
+
         .. versionchanged:: 7.1.3
             Returns the raw stored bytes. Previously the stored value was
-            base64-decoded, which raised :class:`ValueError` for non-base64
-            input. See ``news/1356.breaking``.
+            Base64-decoded, which raised :class:`ValueError` for non-Base64
+            input. See :pr:`1356`.
         """
         return self.bytes
 
