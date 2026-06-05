@@ -4,7 +4,7 @@ from datetime import date, datetime, timedelta
 
 import pytest
 
-from icalendar import Event, Todo
+from icalendar import Alarm, Event, Todo
 from icalendar.attr import (
     get_duration_property,
     get_end_property,
@@ -318,3 +318,61 @@ class TestConsolidatedPropertyGetters:
                 "DTEND",
                 "VEVENT",
             )
+
+
+class TestUidVendorFallback:
+    """Test UID access for vendor-specific UID properties."""
+
+    def test_uid_uses_evolution_alarm_uid_fallback(self) -> None:
+        """Use X-EVOLUTION-ALARM-UID when UID is absent."""
+        alarm = Alarm()
+        alarm.add("X-EVOLUTION-ALARM-UID", "evo-123")
+
+        assert alarm.uid == "evo-123"
+
+    def test_uid_prefers_canonical_uid(self) -> None:
+        """Prefer UID over vendor-specific UID properties."""
+        alarm = Alarm()
+        alarm.add("UID", "canonical-123")
+        alarm.add("X-EVOLUTION-ALARM-UID", "evo-123")
+
+        assert alarm.uid == "canonical-123"
+
+    def test_uid_defaults_to_empty_string(self) -> None:
+        """Return the empty-string default when no UID is present."""
+        alarm = Alarm()
+
+        assert alarm.uid == ""
+
+    def test_setting_uid_to_none_removes_evolution_alarm_uid(self) -> None:
+        """Setting uid to None removes canonical and vendor UID properties."""
+        alarm = Alarm()
+        alarm.add("UID", "canonical-123")
+        alarm.add("X-EVOLUTION-ALARM-UID", "evo-123")
+
+        alarm.uid = None
+
+        assert "UID" not in alarm
+        assert "X-EVOLUTION-ALARM-UID" not in alarm
+
+    def test_deleting_uid_removes_evolution_alarm_uid(self) -> None:
+        """Deleting uid removes canonical and vendor UID properties."""
+        alarm = Alarm()
+        alarm.add("UID", "canonical-123")
+        alarm.add("X-EVOLUTION-ALARM-UID", "evo-123")
+
+        del alarm.uid
+
+        assert "UID" not in alarm
+        assert "X-EVOLUTION-ALARM-UID" not in alarm
+
+    def test_alarm_uid_keeps_x_alarmuid_fallback(self) -> None:
+        """Keep the existing single-string other_name fallback behavior."""
+        alarm = Alarm()
+        alarm.add("X-ALARMUID", "alarm-123")
+
+        assert alarm.uid == "alarm-123"
+
+        del alarm.uid
+
+        assert "X-ALARMUID" not in alarm
