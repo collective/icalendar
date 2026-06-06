@@ -87,6 +87,8 @@ If you use AI in your work:
 -   You must check the AI's terms of use, and ensure that outputs are not reconstructed from copyrighted sources.
 -   You are expected to understand and be able to explain design and code decisions.
 -   In your git commit messages, you must specify both (1) which AI model and version you used, and (2) how you used it, by either including the prompts and interactions you used or summarizing them.
+    You can automate this by using the :program:`ai-prompt-auto-commit` pre-commit hook.
+    See :ref:`AI prompt automation <pre-commit-ai-prompts>` for setup instructions.
 -   You must disclose that you used AI in your change log entry.
 -   You shall be held accountable for your AI-generated content.
 

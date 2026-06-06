@@ -56,8 +56,31 @@ When you commit code to icalendar with ``git commit``, pre-commit runs the follo
     Runs the Ruff linter on Python files and fixes issues according to the configuration in :file:`pyproject.toml`.
 `ruff format <https://docs.astral.sh/ruff/formatter/#ruff-format>`_
     Runs the Ruff formatter on Python files and fixes issues according to the configuration in :file:`pyproject.toml`.
+:program:`ai-prompt-auto-commit`
+    Automatically records AI prompts and appends them to your commit messages.
 
 The configuration file for pre-commit, :file:`.pre-commit-config.yaml`, is located at the root of the repository.
+
+.. _pre-commit-ai-prompts:
+
+AI prompt automation
+''''''''''''''''''''
+
+To comply with the :ref:`artificial-intelligence-policy`, you must include AI prompts in your commit messages.
+You can automate this by using the :program:`ai-prompt-auto-commit` hooks.
+
+If you use :program:`Claude Code`, recording is automatic, once the repository is prepared.
+For other AI tools, you may need to manually record prompts or instruct the AI to do so.
+Consider adding support for your AI tool in the `project repository <https://github.com/pycalendar/ai-prompt-auto-commit>`_.
+
+To set up AI prompt recording, run:
+
+.. code-block:: shell
+
+    pre-commit install
+    pre-commit run --hook-stage manual prepare-ai-repository
+
+This will create a :file:`.prompts/` directory, ignored by Git, where prompts are stored before being appended to your next commit message.
 
 Contributors to icalendar are encouraged to use pre-commit.
 Any issues that would be caught by pre-commit shall be caught by GitHub workflows when you push commits to a pull request for icalendar.

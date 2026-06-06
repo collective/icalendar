@@ -1,5 +1,7 @@
+(?i)ai-prompt-auto-commit
 Args
 backported
+Claude
 (?i)datetime
 dicts
 [Dd]ocstrings?
@@ -16,6 +18,8 @@ Nicco
 Params
 Penner
 (?i)Plone
+(?i)pycal
+(?i)pycalendar
 Repology
 recur.recur
 reformats
