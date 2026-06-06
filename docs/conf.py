@@ -225,16 +225,34 @@ issues_github_path = "collective/icalendar"
 redirects = {
     "about": "index.html",
     "api": "reference/api/icalendar.html",
+    "api/index": "../reference/api/icalendar.html",
     "changelog": "reference/changelog.html",
     "cli": "how-to/cli.html",
-    "credits": "contribute/credits.html",
+    "contribute": "contribute/index.html",
+    "contribute/documentation": "documentation/index.html",
     "contributing": "contribute/index.html",
+    "credits": "contribute/credits.html",
+    "development": "contribute/development.html",
+    "examples": "how-to/usage.html",
+    "explanation": "explanation/index.html",
+    "how-to": "how-to/index.html",
     "install": "how-to/install.html",
     "license": "https://github.com/collective/icalendar/blob/main/LICENSE.rst",
     "maintenance": "contribute/maintenance.html",
+    "reference": "reference/index.html",
+    "reference/api/modules": "icalendar.html",
+    "reference/component-api": "../explanation/api-design.html",
+    "reference/design": "rfc-support.html",
     "security": "https://github.com/collective/icalendar/blob/main/SECURITY.md",
+    "tutorials": "tutorials/index.html",
+    "upgrade": "how-to/upgrade.html",
     "usage": "how-to/usage.html",
 }
+
+# Do not apply redirects to the latest branch, as it is not considered a stable target.
+# https://github.com/collective/icalendar/issues/1337
+if os.environ.get("READTHEDOCS_VERSION") == "latest":
+    redirects = {}
 
 man_pages = [("index", "icalendar", "icalendar Documentation", ["Plone Foundation"], 1)]
 
