@@ -107,7 +107,7 @@ class vGeo:
             latitude, longitude = ical.split(";")
             latitude, longitude = float(latitude), float(longitude)
             if not (math.isfinite(latitude) and math.isfinite(longitude)):
-                raise ValueError
+                raise ValueError(f"Expected finite 'float;float', got: {ical}")
             return (latitude, longitude)
         except Exception as e:
             raise ValueError(f"Expected 'float;float' , got: {ical}") from e
