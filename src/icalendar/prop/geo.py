@@ -1,5 +1,6 @@
 """GEO property values from :rfc:`5545`."""
 
+import math
 from typing import Any, ClassVar
 
 from icalendar.compatibility import Self
@@ -104,7 +105,10 @@ class vGeo:
     def from_ical(ical: str) -> tuple[float, float]:
         try:
             latitude, longitude = ical.split(";")
-            return (float(latitude), float(longitude))
+            latitude, longitude = float(latitude), float(longitude)
+            if not (math.isfinite(latitude) and math.isfinite(longitude)):
+                raise ValueError
+            return (latitude, longitude)
         except Exception as e:
             raise ValueError(f"Expected 'float;float' , got: {ical}") from e
 
