@@ -73,15 +73,6 @@ If you use :program:`Claude Code`, recording is automatic, once the repository i
 For other AI tools, you may need to manually record prompts or instruct the AI to do so.
 Consider adding support for your AI tool in the `project repository <https://github.com/pycalendar/ai-prompt-auto-commit>`_.
 
-To set up AI prompt recording, run:
-
-.. code-block:: shell
-
-    pre-commit install
-    pre-commit run --hook-stage manual prepare-ai-repository
-
-This will create a :file:`.prompts/` directory, ignored by Git, where prompts are stored before being appended to your next commit message.
-
 Contributors to icalendar are encouraged to use pre-commit.
 Any issues that would be caught by pre-commit shall be caught by GitHub workflows when you push commits to a pull request for icalendar.
 This could delay merging of your pull request.
