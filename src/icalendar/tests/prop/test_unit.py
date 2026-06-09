@@ -275,6 +275,9 @@ class TestProp(unittest.TestCase):
 
         self.assertRaises(ValueError, vGeo, "g")
         self.assertRaises(ValueError, vGeo.from_ical, "1s3;1s3")
+        self.assertRaises(ValueError, vGeo.from_ical, "nan;0.0")
+        self.assertRaises(ValueError, vGeo.from_ical, "0.0;inf")
+        self.assertRaises(ValueError, vGeo.from_ical, "1e999;0.0")
 
         assert vGeo((37.386013, -122.082932)).ical_value == (37.386013, -122.082932)
 
