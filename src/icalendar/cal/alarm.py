@@ -24,9 +24,11 @@ from icalendar.attr import (
 from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
 from icalendar.error import InvalidCalendar
+from icalendar.prop.binary import vBinary
 
 if TYPE_CHECKING:
     import uuid
+    from collections.abc import Sequence
 
     from icalendar.prop import vCalAddress
 
@@ -455,7 +457,7 @@ class Alarm(Component):
     def new_audio(
         cls,
         trigger: timedelta | datetime,
-        attach: str | None = None,
+        attach: str | bytes | None = None,
         duration: timedelta | None = None,
         repeat: int | None = None,
         uid: str | uuid.UUID | None = None,
@@ -472,9 +474,11 @@ class Alarm(Component):
             trigger: When the alarm fires, as a :class:`~datetime.timedelta`
                 relative to the event start (negative means before) or as an
                 absolute :class:`~datetime.datetime` (recommend UTC-aware).
-            attach: Optional URI of the audio file to play, such as
-                ``"ftp://example.com/pub/sounds/bell.aud"``. When ``None``
-                the client uses its default sound.
+            attach: Optional audio attachment. Pass a URI string such as
+                ``"ftp://example.com/pub/sounds/bell.aud"`` for a linked
+                sound file, or :class:`bytes` for inline binary audio data
+                (stored as ``VALUE=BINARY``). When ``None`` the client uses
+                its default sound.
             duration: Gap between repeated triggers. Must be paired with
                 ``repeat``. Corresponds to the :attr:`DURATION` property.
             repeat: Number of *additional* times to fire after the initial
@@ -514,7 +518,9 @@ class Alarm(Component):
         alarm.TRIGGER = trigger
         alarm.uid = uid
         if attach:
-            alarm.add("ATTACH", attach)
+            alarm.add(
+                "ATTACH", vBinary(attach) if isinstance(attach, bytes) else attach
+            )
         cls._apply_duration_repeat(alarm, duration, repeat)
         return alarm
 
@@ -524,8 +530,8 @@ class Alarm(Component):
         summary: str,
         description: str,
         trigger: timedelta | datetime,
-        attendees: list[vCalAddress],
-        attachments: list[str] | None = None,
+        attendees: Sequence[vCalAddress] | vCalAddress,
+        attachments: Sequence[str] | str | None = None,
         duration: timedelta | None = None,
         repeat: int | None = None,
         uid: str | uuid.UUID | None = None,
@@ -546,10 +552,11 @@ class Alarm(Component):
                 relative to the event start (negative means before) or as an
                 absolute :class:`~datetime.datetime` (recommend UTC-aware).
             attendees: One or more recipient addresses as
-                :class:`~icalendar.prop.cal_address.vCalAddress` instances, such as
-                ``[vCalAddress("mailto:user@example.com")]``.
-                At least one address is required.
-            attachments: Optional list of URIs to attach to the email.
+                :class:`~icalendar.prop.cal_address.vCalAddress` instances. A
+                single address or a sequence of addresses. At least one is
+                required.
+            attachments: Optional URI or sequence of URIs to attach to the
+                email.
             duration: Gap between repeated triggers. Must be paired with
                 ``repeat``. Corresponds to the :attr:`DURATION` property.
             repeat: Number of *additional* times to fire after the initial
@@ -587,6 +594,10 @@ class Alarm(Component):
                 TRIGGER:-PT30M
                 END:VALARM
         """
+        if isinstance(attendees, str):
+            attendees = [attendees]
+        if isinstance(attachments, str):
+            attachments = [attachments]
         if not summary:
             raise InvalidCalendar("EMAIL alarm requires a summary")
         if not description:

@@ -53,14 +53,46 @@ def test_new_display_requires_trigger():
         Alarm.new_display("desc", None)
 
 
-def test_new_display_duration_without_repeat_raises():
+@pytest.mark.parametrize(
+    "alarm_fn",
+    [
+        lambda: Alarm.new_display(
+            "desc", timedelta(minutes=-5), duration=timedelta(minutes=1)
+        ),
+        lambda: Alarm.new_audio(timedelta(minutes=-5), duration=timedelta(minutes=1)),
+        lambda: Alarm.new_email(
+            "S",
+            "D",
+            timedelta(minutes=-30),
+            vCalAddress("mailto:a@example.com"),
+            duration=timedelta(minutes=5),
+        ),
+    ],
+    ids=["display", "audio", "email"],
+)
+def test_duration_without_repeat_raises(alarm_fn):
     with pytest.raises(InvalidCalendar, match="DURATION and REPEAT"):
-        Alarm.new_display("desc", timedelta(minutes=-5), duration=timedelta(minutes=1))
+        alarm_fn()
 
 
-def test_new_display_repeat_without_duration_raises():
+@pytest.mark.parametrize(
+    "alarm_fn",
+    [
+        lambda: Alarm.new_display("desc", timedelta(minutes=-5), repeat=3),
+        lambda: Alarm.new_audio(timedelta(minutes=-5), repeat=3),
+        lambda: Alarm.new_email(
+            "S",
+            "D",
+            timedelta(minutes=-30),
+            vCalAddress("mailto:a@example.com"),
+            repeat=2,
+        ),
+    ],
+    ids=["display", "audio", "email"],
+)
+def test_repeat_without_duration_raises(alarm_fn):
     with pytest.raises(InvalidCalendar, match="DURATION and REPEAT"):
-        Alarm.new_display("desc", timedelta(minutes=-5), repeat=3)
+        alarm_fn()
 
 
 # ---------------------------------------------------------------------------
@@ -106,16 +138,6 @@ def test_new_audio_with_repeat():
 def test_new_audio_requires_trigger():
     with pytest.raises(InvalidCalendar, match="trigger"):
         Alarm.new_audio(None)
-
-
-def test_new_audio_duration_without_repeat_raises():
-    with pytest.raises(InvalidCalendar, match="DURATION and REPEAT"):
-        Alarm.new_audio(timedelta(minutes=-5), duration=timedelta(minutes=1))
-
-
-def test_new_audio_repeat_without_duration_raises():
-    with pytest.raises(InvalidCalendar, match="DURATION and REPEAT"):
-        Alarm.new_audio(timedelta(minutes=-5), repeat=3)
 
 
 # ---------------------------------------------------------------------------
@@ -209,23 +231,30 @@ def test_new_email_requires_attendees():
         )
 
 
-def test_new_email_duration_without_repeat_raises():
-    with pytest.raises(InvalidCalendar, match="DURATION and REPEAT"):
-        Alarm.new_email(
-            summary="S",
-            description="D",
-            trigger=timedelta(minutes=-30),
-            attendees=[vCalAddress("mailto:user@example.com")],
-            duration=timedelta(minutes=5),
-        )
+def test_new_audio_with_bytes_attach():
+    data = b"\x00\x01\x02\x03"
+    alarm = Alarm.new_audio(timedelta(minutes=-5), attach=data)
+    from icalendar.prop.binary import vBinary
+
+    assert isinstance(alarm["ATTACH"], vBinary)
 
 
-def test_new_email_repeat_without_duration_raises():
-    with pytest.raises(InvalidCalendar, match="DURATION and REPEAT"):
-        Alarm.new_email(
-            summary="S",
-            description="D",
-            trigger=timedelta(minutes=-30),
-            attendees=[vCalAddress("mailto:user@example.com")],
-            repeat=2,
-        )
+def test_new_email_single_attendee():
+    alarm = Alarm.new_email(
+        summary="S",
+        description="D",
+        trigger=timedelta(minutes=-30),
+        attendees=vCalAddress("mailto:user@example.com"),
+    )
+    assert len(alarm.attendees) == 1
+
+
+def test_new_email_single_attachment():
+    alarm = Alarm.new_email(
+        summary="S",
+        description="D",
+        trigger=timedelta(minutes=-30),
+        attendees=[vCalAddress("mailto:user@example.com")],
+        attachments="https://example.com/file.pdf",
+    )
+    assert "ATTACH" in alarm
