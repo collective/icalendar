@@ -74,7 +74,7 @@ class vFloat(float):
         except Exception as e:
             raise ValueError(f"Expected float value, got: {ical}") from e
         if not math.isfinite(self):
-            raise ValueError(f"Expected float value, got: {ical}")
+            raise ValueError(f"Expected finite float value, got: {ical}")
         return self
 
     @classmethod
