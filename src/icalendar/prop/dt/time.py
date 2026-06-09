@@ -179,6 +179,10 @@ class vTime(TimeBase):
             utc = ical.endswith("Z")
             if utc:
                 ical = ical[:-1]
+            # time = time-hour time-minute time-second [time-utc], six digits,
+            # per https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.12
+            if len(ical) != 6 or not ical.isascii() or not ical.isdigit():
+                raise ValueError(f"Expected time, got: {ical}")
             timetuple = (int(ical[:2]), int(ical[2:4]), int(ical[4:6]))
             if tzinfo:
                 return tzp.localize(time(*timetuple), tzinfo)

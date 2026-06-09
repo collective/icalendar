@@ -6,6 +6,7 @@ from typing import Any, ClassVar
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser_tools import to_unicode
 
 from .base import TimeBase
 
@@ -76,6 +77,11 @@ class vDate(TimeBase):
 
     @staticmethod
     def from_ical(ical):
+        ical = to_unicode(ical)
+        # date-value = 4DIGIT 2DIGIT 2DIGIT, no separators,
+        # per https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.4
+        if len(ical) != 8 or not ical.isascii() or not ical.isdigit():
+            raise ValueError(f"Wrong date format {ical}")
         try:
             timetuple = (
                 int(ical[:4]),  # year
