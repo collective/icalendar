@@ -27,6 +27,12 @@ class vText(str):
     characters are escaped or changed.
     These characters include the COMMA, SEMICOLON, BACKSLASH, and line breaks.
 
+    Contrast with :class:`~icalendar.prop.unknown.vUnknown`, the :rfc:`7265`
+    ``unknown`` type: that class does **not** apply this escaping and preserves
+    its value verbatim, because the escaping rules of an unrecognized value type
+    are not known. ``vUnknown`` deliberately does not inherit from ``vText`` so
+    the two cannot silently share escaping behaviour.
+
     Examples:
 
         vText property as a TEXT value type.

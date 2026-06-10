@@ -17,6 +17,7 @@ from icalendar.prop import (
     vRecur,
     vText,
     vUid,
+    vUnknown,
     vUri,
     vXmlReference,
 )
@@ -418,7 +419,7 @@ def single_utc_property(name: str, docs: str) -> property:
         if name not in self:
             return None
         dt = self.get(name)
-        if isinstance(dt, vText):
+        if isinstance(dt, (vText, vUnknown)):
             # we might be in an attribute that is not typed
             value = vDDDTypes.from_ical(dt)
         else:

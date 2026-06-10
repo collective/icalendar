@@ -168,6 +168,15 @@ class Contentline(str):
 
             DESCRIPTION:The Fall'98 Wild
         """
+        return self._parts()
+
+    def _parts(self, should_unescape: bool = True) -> tuple[str, Parameters, str]:
+        """Implementation of :meth:`parts`.
+
+        When ``should_unescape`` is ``False`` the value is returned raw, without
+        backslash unescaping. This is used for :rfc:`7265` ``unknown`` values,
+        which must be preserved verbatim.
+        """
         try:
             name_split: int | None = None
             value_split: int | None = None
@@ -217,7 +226,10 @@ class Contentline(str):
                 for key, value in iter(params.items())
             )
             # Unescape backslash sequences in values but preserve URL encoding
-            values = unescape_backslash(self[value_split + 1 :])
+            if should_unescape:
+                values = unescape_backslash(self[value_split + 1 :])
+            else:
+                values = self[value_split + 1 :]
         except ValueError as exc:
             raise ValueError(
                 f"Content line could not be parsed into parts: '{self}': {exc}"

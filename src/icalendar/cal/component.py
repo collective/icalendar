@@ -32,7 +32,7 @@ from icalendar.parser import (
 )
 from icalendar.parser.ical.component import ComponentIcalParser
 from icalendar.parser_tools import DEFAULT_ENCODING
-from icalendar.prop import VPROPERTY, TypesFactory, vDDDLists, vText
+from icalendar.prop import VPROPERTY, TypesFactory, vDDDLists, vText, vUnknown
 from icalendar.timezone import tzp
 from icalendar.tools import is_date
 
@@ -367,8 +367,9 @@ class Component(CaselessDict):
             return value
         decoded = self.types_factory.from_ical(name, value)
         # TODO: remove when proper decoded is implemented in every prop.* class
-        # Workaround to decode vText properly
-        if isinstance(decoded, vText):
+        # Workaround to decode vText properly. vUnknown is no longer a vText
+        # subclass (RFC 7265), but its value is decoded the same way here.
+        if isinstance(decoded, (vText, vUnknown)):
             decoded = decoded.encode(DEFAULT_ENCODING)
         return decoded
 
