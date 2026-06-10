@@ -175,6 +175,10 @@ class vTime(TimeBase):
 
         if isinstance(ical, bytes):
             ical = ical.decode()
+        # Extract the value part if parameters are present per
+        # https://datatracker.ietf.org/doc/html/rfc5545.html#section-3.3.5
+        # Form #3: TZID=America/New_York:083000
+        ical = ical.rpartition(":")[2]
         utc = ical.endswith("Z")
         if utc:
             ical = ical[:-1]

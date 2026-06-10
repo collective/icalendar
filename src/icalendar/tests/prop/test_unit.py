@@ -251,6 +251,9 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vTime.from_ical, "12300")
         self.assertRaises(ValueError, vTime.from_ical, "12 000")
 
+        # Form #3: local time with a TZID reference still parses
+        assert vTime.from_ical("TZID=America/New_York:083000") == time(8, 30)
+
     def test_prop_vUri(self):
         from icalendar.prop import vUri
 
