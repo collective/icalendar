@@ -179,8 +179,7 @@ class vTime(TimeBase):
         # https://datatracker.ietf.org/doc/html/rfc5545.html#section-3.3.5
         # Form #3: TZID=America/New_York:083000
         ical = ical.rpartition(":")[2]
-        utc = ical.endswith("Z")
-        if utc:
+        if utc := ical.endswith("Z"):
             ical = ical[:-1]
         # time = time-hour time-minute time-second [time-utc], six digits,
         # per https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.12
