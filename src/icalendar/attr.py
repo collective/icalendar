@@ -445,15 +445,25 @@ def single_utc_property(name: str, docs: str) -> property:
 
 
 def single_string_property(
-    name: str, docs: str, other_name: str | None = None, default: str = ""
+    name: str, docs: str, other_name: str | list[str] | None = None, default: str = ""
 ) -> property:
     """Create a property to access a single string value."""
+    other_names = (
+        []
+        if other_name is None
+        else [other_name]
+        if isinstance(other_name, str)
+        else list(other_name)
+    )
 
     def fget(self: Component) -> str:
         """Get the value."""
-        result = self.get(
-            name, None if other_name is None else self.get(other_name, None)
-        )
+        result = self.get(name, None)
+        if result is None:
+            for alias in other_names:
+                result = self.get(alias, None)
+                if result is not None:
+                    break
         if result is None or result == []:
             return default
         if isinstance(result, list):
@@ -472,8 +482,8 @@ def single_string_property(
     def fdel(self: Component):
         """Delete the property."""
         self.pop(name, None)
-        if other_name is not None:
-            self.pop(other_name, None)
+        for alias in other_names:
+            self.pop(alias, None)
 
     return property(fget, fset, fdel, doc=docs)
 
@@ -1226,7 +1236,7 @@ Returns:
 
 Description:
     This property is used to specify the default busy time
-    type. The values correspond to those used by the FBTYPE"
+    type. The values correspond to those used by the "FBTYPE"
     parameter used on a "FREEBUSY" property, with the exception that
     the "FREE" value is not used in this property.  If not specified
     on a component that allows this property, the default is "BUSY-
@@ -1353,28 +1363,65 @@ Description:
 
 url_property = single_string_property(
     "URL",
-    """A Uniform Resource Locator (URL) associated with the iCalendar object.
+    """A Uniform Resource Locator (URL) associated with a calendar component.
 
-Description:
-    This property may be used in a calendar component to
-    convey a location where a more dynamic rendition of the calendar
-    information associated with the calendar component can be found.
-    This memo does not attempt to standardize the form of the URI, nor
-    the format of the resource pointed to by the property value.  If
-    the URL property and Content-Location MIME header are both
-    specified, they MUST point to the same resource.
+This property specifies a URI where a more dynamic rendition of the calendar
+information can be found. It is commonly used to reference related resources
+or provide additional information about the component.
 
-Conformance:
-    This property can be specified once in the "VEVENT",
-    "VTODO", "VJOURNAL", or "VFREEBUSY" calendar components.
-    Since :rfc:`7986`, this property can also be defined on a "VCALENDAR".
+According to :rfc:`5545#section-3.8.4.6`, this property can be specified
+once in "VEVENT", "VTODO", "VJOURNAL", or "VFREEBUSY" calendar components.
+Since :rfc:`7986#section-5.5`, this property can also be defined on a
+"VCALENDAR". :rfc:`7953#section-3.1` allows this property in "VAVAILABILITY" components.
 
-Example:
-    The following is an example of this property:
+This property may be used in a calendar component to convey a location
+where a more dynamic rendition of the calendar information can be found.
+If both the URL property and Content-Location MIME header are specified,
+they MUST point to the same resource.
 
-    .. code-block:: ics
+This differs from the SOURCE property, which identifies where calendar
+data can be refreshed from, whereas URL provides an alternative
+representation of the current calendar data.
 
+Examples:
+
+    Set a URL for an event that references additional information:
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Event
+        >>> event = Event()
+        >>> event.add('url', 'http://example.com/events/meeting-2025')
+        >>> print(event.to_ical().decode('utf-8'))
+        BEGIN:VEVENT
+        URL:http://example.com/events/meeting-2025
+        END:VEVENT
+
+    Set a URL for a calendar:
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Calendar
+        >>> calendar = Calendar()
+        >>> calendar.add('url', 'http://example.com/pub/calendars/jsmith/mytime.ics')
+        >>> print(calendar.to_ical().decode('utf-8'))
+        BEGIN:VCALENDAR
         URL:http://example.com/pub/calendars/jsmith/mytime.ics
+        END:VCALENDAR
+
+See also:
+    :attr:`~icalendar.cal.calendar.Calendar.source` for specifying from where
+    calendar data can be refreshed.
+
+    icalendar implementations:
+
+    -   :attr:`Availability.url <icalendar.cal.availability.Availability.url>`
+    -   :attr:`Calendar.url <icalendar.cal.calendar.Calendar.url>`
+    -   :attr:`Event.url <icalendar.cal.event.Event.url>`
+    -   :attr:`FreeBusy.url <icalendar.cal.free_busy.FreeBusy.url>`
+    -   :attr:`Journal.url <icalendar.cal.journal.Journal.url>`
+    -   :attr:`Todo.url <icalendar.cal.todo.Todo.url>`
+
 
 """,
 )
@@ -1509,7 +1556,8 @@ rfc_7953_dtstart_property = timezone_datetime_property(
     "DTSTART",
     """Start of the component.
 
-    This is almost the same as :attr:`Event.DTSTART` with one exception:
+    This is almost the same as
+    :attr:`Event.DTSTART <icalendar.cal.event.Event.DTSTART>` with one exception:
     The values MUST have a timezone and DATE is not allowed.
 
     Description:
@@ -1525,7 +1573,8 @@ rfc_7953_dtend_property = timezone_datetime_property(
     "DTEND",
     """Start of the component.
 
-    This is almost the same as :attr:`Event.DTEND` with one exception:
+    This is almost the same as
+    :attr:`Event.DTEND <icalendar.cal.event.Event.DTEND>` with one exception:
     The values MUST have a timezone and DATE is not allowed.
 
     Description:

@@ -87,6 +87,8 @@ If you use AI in your work:
 -   You must check the AI's terms of use, and ensure that outputs are not reconstructed from copyrighted sources.
 -   You are expected to understand and be able to explain design and code decisions.
 -   In your git commit messages, you must specify both (1) which AI model and version you used, and (2) how you used it, by either including the prompts and interactions you used or summarizing them.
+    You can automate this by using the :program:`ai-prompt-auto-commit` pre-commit hook.
+    See :ref:`AI prompt automation <pre-commit-ai-prompts>` for setup instructions.
 -   You must disclose that you used AI in your change log entry.
 -   You shall be held accountable for your AI-generated content.
 
@@ -119,9 +121,8 @@ Pull request requirements
 
 Before submitting your pull request, ensure you have met the following requirements.
 
-#.  Add a changelog entry to :file:`CHANGES.rst`.
+#.  Add a change log entry as described in :ref:`change-log`.
     This is required and enforced by GitHub checks.
-    See :ref:`change-log` for details.
 #.  Add a test which proves your fix and passes.
 #.  Run all tests to ensure your changes don't break any existing functionality.
 #.  :doc:`Add or edit documentation <documentation/index>`, both as docstrings to be rendered in the :doc:`API reference documentation <../reference/api/icalendar>` and narrative documentation, as necessary.
@@ -137,7 +138,37 @@ Change log entry format
 
 To create a change log entry or news item, create a file in the :file:`news` directory, located in the root of the package.
 
-The change log entry's format must be ``#.type``, where ``#`` is the referenced GitHub issue or pull request number, ``.`` is the literal extension delimiter, and ``type`` is one of the following strings.
+..  important::
+
+    Never edit a change log entry that you didn't create.
+
+The change log entry's format must be ``#.type``, where ``#`` is the referenced GitHub issue or pull request number, ``.`` is the literal extension delimiter, and ``type`` is one of the following strings described in the next section, :ref:`change-log-types`
+
+To avoid a filename conflict with an existing file or another pull request for the same issue number, append a period (``.``) and an integer to the filename, incrementing it as needed to make the entire filename unique.
+
+..  code-block:: text
+
+    1158.documentation
+    1158.documentation.1
+    1158.documentation.2
+
+For orphan change log entries—that is, those that don't need to be linked to any issue ID or other identifier—start the file name with ``+``.
+The content will still be included in the change log, at the end of the category corresponding to the file extension.
+
+..  code-block:: text
+
+    +anything.bugfix
+
+.. note::
+
+    icalendar uses `towncrier <https://pypi.org/project/towncrier/>`_ to automatically update the :doc:`../reference/changelog` from entries stored in the :file:`/news` directory at the root of the project.
+    It generates links to the issue numbers and organizes the change log entries according to their filename issue numbers and types for each release.
+
+
+..  _change-log-types:
+
+Change log types
+````````````````
 
 ``breaking``
     For changes that break the existing API.
@@ -162,24 +193,6 @@ The change log entry's format must be ``#.type``, where ``#`` is the referenced 
 
 ``chore``
     For routine tasks that shouldn't be published, but will satisfy the checker for the presence of a change log entry.
-
-To avoid a conflict with another pull request for the same issue number, append an integer to the filename.
-Don't edit a change log entry from another pull request.
-
-..  code-block:: text
-
-    1158.documentation.1
-
-For orphan change log entries—that is, those that don't need to be linked to any issue ID or other identifier—start the file name with ``+``.
-The content will still be included in the change log, at the end of the category corresponding to the file extension.
-
-..  code-block:: text
-
-    +anything.bugfix
-
-.. note::
-
-    icalendar uses `towncrier <https://pypi.org/project/towncrier/>`_ to automatically update the change log from entries stored in the :file:`/news` directory at the root of the project.
 
 
 .. _write-a-good-change-log-entry-label:

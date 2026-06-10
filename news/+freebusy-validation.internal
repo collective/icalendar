@@ -1,0 +1,1 @@
+Added validation test for :attr:`FreeBusy.duration <icalendar.cal.free_busy.FreeBusy.duration>`. @kyriakikrimitza

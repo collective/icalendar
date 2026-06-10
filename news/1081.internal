@@ -1,0 +1,1 @@
+Refactored :file:`test_error_tolerant_parsing.py` to use ``.ics`` fixture files. @lcampanella98

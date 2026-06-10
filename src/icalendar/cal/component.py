@@ -537,13 +537,21 @@ class Component(CaselessDict):
         if isinstance(st, Path):
             st = st.read_bytes()
         elif isinstance(st, str) and "\n" not in st and "\r" not in st:
-            path = Path(st)
+            # A string is only probed as a file path when it contains no line
+            # breaks. Valid iCalendar data is always folded with CRLF line
+            # endings (RFC 5545), so real calendar content never reaches this
+            # branch and is never read from disk. File paths, conversely, do
+            # not contain line breaks on the platforms we support.
             try:
-                is_file = path.is_file()
-            except OSError:
+                is_file = Path(st).is_file()
+            except (OSError, ValueError):
+                # The string is not usable as a path on this platform (e.g. it
+                # is too long, or contains characters the OS rejects such as an
+                # embedded null byte). Treat it as calendar data, not a file, so
+                # the parser raises a consistent ValueError across platforms.
                 is_file = False
             if is_file:
-                st = path.read_bytes()
+                st = Path(st).read_bytes()
         parser = cls._get_ical_parser(st)
         components = parser.parse()
         if multiple:
@@ -686,20 +694,26 @@ class Component(CaselessDict):
         property.
     """,
     )
+
     LAST_MODIFIED = single_utc_property(
         "LAST-MODIFIED",
-        """RFC 5545:
+        """The date and time when a calendar component was last modified.
 
-        Purpose:  This property specifies the date and time that the
-        information associated with the calendar component was last
-        revised in the calendar store.
+        This property is commonly used to track revisions to calendar
+        components such as VEVENT, VTODO, VJOURNAL, and VTIMEZONE.
 
-        Note: This is analogous to the modification date and time for a
-        file in the file system.
+        Example:
+            Set the LAST-MODIFIED property of an event to a UTC time.
 
-        Conformance:  This property can be specified in the "VEVENT",
-        "VTODO", "VJOURNAL", or "VTIMEZONE" calendar components.
-    """,
+            .. code-block:: pycon
+
+                >>> from datetime import datetime, timezone
+                >>> from icalendar import Event
+                >>> event = Event()
+                >>> event.last_modified = datetime(2026, 5, 31, 23, 52, 45, tzinfo=timezone.utc)
+                >>> event.last_modified
+                datetime.datetime(2026, 5, 31, 23, 52, 45, tzinfo=ZoneInfo(key='UTC'))
+        """,
     )
 
     @property
@@ -949,9 +963,21 @@ class Component(CaselessDict):
             )
             with JCalParsingError.reraise_with_path_added(1, i):
                 v_prop = prop_cls.from_jcal(prop)
-            # if we use the default value for that property, we can delete the
-            # VALUE parameter
-            if prop_cls == cls.types_factory.for_property(prop_name):
+            # jCal encodes the value type in the type field (``prop[2]``)
+            # instead of as a ``VALUE`` parameter (RFC 7265). Restore that
+            # parameter when the type differs from the property's default, so
+            # explicit value types such as ``RDATE;VALUE=PERIOD`` or
+            # ``TRIGGER;VALUE=DATE-TIME`` survive the round-trip (GH #1426).
+            # A type equal to the default needs no VALUE parameter, and the
+            # reserved ``unknown`` type must never become ``VALUE=UNKNOWN``
+            # (RFC 7265, section 5.2).
+            default_type = cls.types_factory.default_value_type(prop_name)
+            if isinstance(prop_value, str) and prop_value.lower() not in (
+                "unknown",
+                default_type,
+            ):
+                v_prop.VALUE = prop_value.upper()
+            elif "VALUE" in v_prop.params:
                 del v_prop.VALUE
             component.add(prop_name, v_prop)
         if not isinstance(subcomponents, list):

@@ -245,6 +245,56 @@ class TypesFactory(CaselessDict):
 
         return self[self.types_map.get(name, "unknown")]
 
+    #: jCal value types defined by :rfc:`7265` that are used verbatim as the
+    #: type field. Internal type keys outside of this set (for example
+    #: ``"categories"`` or ``"date-time-list"``) are mapped to their concrete
+    #: jCal type via the value class.
+    _jcal_value_types = frozenset(
+        {
+            "binary",
+            "boolean",
+            "cal-address",
+            "date",
+            "date-time",
+            "duration",
+            "float",
+            "integer",
+            "period",
+            "recur",
+            "text",
+            "time",
+            "uri",
+            "utc-offset",
+            "unknown",
+        }
+    )
+
+    def default_value_type(self, name: str) -> str:
+        """Return the default jCal value type for a property.
+
+        The result is a lowercase :rfc:`7265` value type, for example
+        ``"date-time"`` for ``DTSTART`` or ``"duration"`` for ``TRIGGER``.
+        This is the value type a property uses when no explicit ``VALUE``
+        parameter is given, so it tells :func:`Component.from_jcal` whether a
+        ``VALUE`` parameter has to be restored from the jCal type field.
+
+        Parameters:
+            name: Property name.
+
+        Returns:
+            The default jCal value type as a lowercase string.
+        """
+        internal = self.types_map.get(name.lower(), "unknown")
+        if internal in self._jcal_value_types:
+            return internal
+        # Internal keys such as ``categories`` or ``date-time-list`` are not
+        # jCal value types themselves; ask the value class for the type it
+        # actually serialises to.
+        try:
+            return self[internal].examples()[0].VALUE.lower()
+        except (KeyError, IndexError, AttributeError):
+            return "unknown"
+
     def to_ical(self, name, value):
         """Encodes a named value from a primitive python type to an icalendar
         encoded string.
