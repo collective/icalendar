@@ -36,7 +36,9 @@ def test_pathological_input_parses_quickly(payload):
     if payload.startswith("\n"):
         ics = "BEGIN:VCALENDAR\r\n" + payload + "END:VCALENDAR\r\n"
     else:
-        ics = "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nX;" + payload + ":v\r\nEND:VCALENDAR\r\n"
+        ics = (
+            "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nX;" + payload + ":v\r\nEND:VCALENDAR\r\n"
+        )
     start = time.perf_counter()
     Calendar.from_ical(ics)
     # the unpatched regexes need minutes for this input; the bound is generous
