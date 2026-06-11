@@ -355,10 +355,8 @@ class Alarm(Component):
         alarm.attendees = attendees
         return alarm
 
-    @classmethod
     def _apply_duration_repeat(
-        cls,
-        alarm: Alarm,
+        self,
         duration: timedelta | None,
         repeat: int | None,
     ) -> None:
@@ -367,8 +365,8 @@ class Alarm(Component):
                 raise InvalidCalendar(
                     "DURATION and REPEAT must be set together or not at all"
                 )
-            alarm.DURATION = duration
-            alarm.REPEAT = repeat
+            self.DURATION = duration
+            self.REPEAT = repeat
 
     @classmethod
     def new_display(
@@ -450,7 +448,7 @@ class Alarm(Component):
         alarm.description = description
         alarm.TRIGGER = trigger
         alarm.uid = uid
-        cls._apply_duration_repeat(alarm, duration, repeat)
+        alarm._apply_duration_repeat(duration, repeat)
         return alarm
 
     @classmethod
@@ -521,7 +519,7 @@ class Alarm(Component):
             alarm.add(
                 "ATTACH", vBinary(attach) if isinstance(attach, bytes) else attach
             )
-        cls._apply_duration_repeat(alarm, duration, repeat)
+        alarm._apply_duration_repeat(duration, repeat)
         return alarm
 
     @classmethod
@@ -616,7 +614,7 @@ class Alarm(Component):
         if attachments:
             for attachment in attachments:
                 alarm.add("ATTACH", attachment)
-        cls._apply_duration_repeat(alarm, duration, repeat)
+        alarm._apply_duration_repeat(duration, repeat)
         return alarm
 
     @classmethod
