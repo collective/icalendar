@@ -138,7 +138,7 @@ class JCalParsingError(ValueError):
     @classmethod
     def validate_property(
         cls,
-        jcal_property: list,
+        jcal_property: list[object],
         parser: str | type,
         path: list[str | int] | None | str | int = None,
     ) -> None:
@@ -207,7 +207,7 @@ class JCalParsingError(ValueError):
     @classmethod
     def validate_list_type(
         cls,
-        jcal: list,
+        jcal: object,
         expected_type: type[str | int | float | bool],
         parser: str | type = "",
         path: list[str | int] | None | str | int = None,
