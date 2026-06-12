@@ -389,7 +389,23 @@ class Component(CaselessDict):
     # Handling of components
 
     def add_component(self, component: Component) -> None:
-        """Add a subcomponent to this component."""
+        """Add a subcomponent to this component.
+
+        Raises:
+            TypeError: If ``component`` is not an instance of :class:`Component`.
+                The subcomponents list is type-hinted as ``list[Component]`` and
+                ``property_items``/``to_ical``/``walk`` all call methods on
+                whatever is stored there, so a stray non-Component entry
+                (string, dict, None) used to crash the next serialization
+                with ``AttributeError: 'str' object has no attribute
+                'property_items'``. The type check here turns that into a
+                clear, immediate TypeError at the call site.
+        """
+        if not isinstance(component, Component):
+            raise TypeError(
+                f"add_component requires a Component instance, got "
+                f"{type(component).__name__}: {component!r}"
+            )
         self.subcomponents.append(component)
 
     def _walk(
