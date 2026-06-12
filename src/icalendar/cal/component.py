@@ -206,7 +206,7 @@ class Component(CaselessDict):
         """Returns True, CaselessDict would return False if it had no items."""
         return True
 
-    def __getitem__(self, key) -> Any:
+    def __getitem__(self, key) -> VPROPERTY:
         """Get property value from the component dictionary."""
         return super().__getitem__(key)
 
@@ -647,7 +647,7 @@ class Component(CaselessDict):
                     out.append(str(node))
         return "".join(out)
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Component) -> bool:
         if len(self.subcomponents) != len(other.subcomponents):
             return False
 
