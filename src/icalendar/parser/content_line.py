@@ -150,11 +150,20 @@ class Contentline(str):
                 return cls(f"{name};{params}:{values}")
         return cls(f"{name}:{values}")
 
-    def parts(self) -> tuple[str, Parameters, str]:
+    def parts(self, should_unescape: bool = True) -> tuple[str, Parameters, str]:
         """Split the content line into ``name``, ``parameters``, and ``values`` parts.
 
         Properly handles escaping with backslashes and double-quote sections
         to avoid corrupting URL-encoded characters in values.
+
+        When ``should_unescape`` is ``True``, unescape backslashes. This is used
+        for the values of ``TEXT`` properties.
+
+        When ``should_unescape`` is ``False`` the value is returned raw, without
+        backslash unescaping. This is used for :rfc:`7265` ``UNKNOWN`` values,
+        which must be preserved verbatim.
+
+        The default is ``True``.
 
         Example with parameter:
 
@@ -167,15 +176,6 @@ class Contentline(str):
         .. code-block:: ics
 
             DESCRIPTION:The Fall'98 Wild
-        """
-        return self._parts()
-
-    def _parts(self, should_unescape: bool = True) -> tuple[str, Parameters, str]:
-        """Implementation of :meth:`parts`.
-
-        When ``should_unescape`` is ``False`` the value is returned raw, without
-        backslash unescaping. This is used for :rfc:`7265` ``unknown`` values,
-        which must be preserved verbatim.
         """
         try:
             name_split: int | None = None
@@ -226,7 +226,8 @@ class Contentline(str):
                 for key, value in iter(params.items())
             )
             if should_unescape:
-                # Unescape backslash sequences in TEXT values, while preserving URL encoding
+                # Unescape backslash sequences in TEXT values,
+                # while preserving URL encoding
                 values = unescape_backslash(self[value_split + 1 :])
             else:
                 # Preserve both backslash sequences and URL encoding in UNKNOWN values

@@ -1,12 +1,4 @@
-"""UNKNOWN values from :rfc:`7265`.
-
-:class:`vUnknown` is a deliberate near-duplicate of
-:class:`~icalendar.prop.text.vText`. It does **not** inherit from ``vText`` even
-though most of the plumbing is identical: the one method that differs,
-:meth:`vUnknown.to_ical`, is the entire reason the class exists, and inheriting
-from ``vText`` is what made the value get re-escaped (see :rfc:`7265#section-5.1`).
-Keeping them as separate classes stops that from silently coming back.
-"""
+"""UNKNOWN values from :rfc:`7265`."""
 
 from typing import Any, ClassVar
 
@@ -19,8 +11,8 @@ from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
 class vUnknown(str):
     """A property value of the :rfc:`7265#section-5` reserved UNKNOWN value data type.
 
-    ..  versionchanged:: 7.1.4
-    
+    ..  versionchanged:: 7.2.0
+
         Previously ``vUnknown`` inherited from ``vText``, which unescapes values.
         Now ``vUnknown`` doesn't unescape its values, which is the correct behavior.
 
@@ -63,6 +55,17 @@ class vUnknown(str):
         :meth:`~icalendar.prop.text.vText.to_ical` method escapes ``;``, ``,``,
         ``\``, and newlines.
 
+        Example:
+
+            The semicolon is kept verbatim, unlike a TEXT value which would
+            escape it as ``\;``.
+
+            .. code-block:: pycon
+
+                >>> from icalendar.prop import vUnknown
+                >>> vUnknown("a;b").to_ical()
+                b'a;b'
+
         See also:
 
             :rfc:`7265#section-5.2`
@@ -85,11 +88,10 @@ class vUnknown(str):
     def to_jcal(self, name: str) -> list:
         """The jCal representation of this property, according to :rfc:`7265#section-5.1`.
 
-        The value is passed through unchanged. The type field is the lowercased
-        ``VALUE`` -- ``"unknown"`` by default, or a preserved unrecognized value
-        If the property doesn't include a VALUE property parameter and its value type is not known, then its value type is set to ``"unknown"``.
-        Else the property's value type is converted to lowercase.
-        
+        If the property doesn't include a VALUE property parameter and its value
+        type is not known, then its value type is set to ``"unknown"``. Else the
+        property's value type is converted to lowercase.
+
         The property's value is the unprocessed value text, aside from standard
         JSON string escaping.
         """

@@ -208,7 +208,7 @@ class ComponentIcalParser:
             if factory is vUnknown:
                 # RFC 7265 unknown values are taken verbatim, so skip the
                 # backslash unescaping that parts() applies.
-                _, _, vals = line._parts(should_unescape=False)  # noqa: SLF001
+                _, _, vals = line.parts(should_unescape=False)
             vals_list = [vals]
 
         # Parse all properties eagerly
