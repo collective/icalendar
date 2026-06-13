@@ -1,4 +1,14 @@
+default_install_hook_types: [pre-commit, prepare-commit-msg, post-commit]
+
 repos:
+  - repo: https://github.com/pycalendar/ai-prompt-auto-commit
+    rev: v0.0.8
+    hooks:
+      - id: prepare-ai-repository
+      - id: unstage-ai-prompts
+      - id: append-ai-prompts
+      - id: archive-ai-prompts
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
