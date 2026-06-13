@@ -184,7 +184,7 @@ class JCalParsingError(ValueError):
     @classmethod
     def validate_value_type(
         cls,
-        jcal: str | float | bool,
+        jcal: object,
         expected_type: type[str | int | float | bool]
         | tuple[type[str | int | float | bool], ...],
         parser: str | type = "",
