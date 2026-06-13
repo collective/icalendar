@@ -1,0 +1,1 @@
+For iCalendar files that have thousands of bare line breaks, reduce the content line parse time by a quadratic order of magnitude when reading a component with :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`. @alhudz
