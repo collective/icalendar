@@ -17,13 +17,22 @@ from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
 
 
 class vUnknown(str):
-    r"""A property value of the :rfc:`7265` reserved ``unknown`` type.
+    """A property value of the :rfc:`7265#section-5` reserved UNKNOWN value data type.
 
-    Unlike :class:`~icalendar.prop.text.vText`, the value is preserved
-    **verbatim** -- taken into and out of iCalendar without :rfc:`5545` escaping
-    or unescaping. The real value type of an unrecognized property is not known,
-    so no escaping rules can be applied and the value must round-trip
-    byte-for-byte (:rfc:`7265#section-5.1`).
+    ..  versionchanged:: 7.1.4
+    
+        Previously ``vUnknown`` inherited from ``vText``, which unescapes values.
+        Now ``vUnknown`` doesn't unescape its values, which is the correct behavior.
+
+    Unlike :class:`~icalendar.prop.text.vText`, the value is preserved verbatim
+    when imported from and exported to iCalendar data, without :rfc:`5545` escaping
+    or unescaping. When the value type of an unrecognized property is not known,
+    then no escaping rules can be applied, and the value must be preserved as is
+    round-trip.
+
+    See also:
+
+        :rfc:`7265#section-5.1`
     """
 
     default_value: ClassVar[str] = "UNKNOWN"
@@ -47,11 +56,17 @@ class vUnknown(str):
         return f"vUnknown({self.to_ical()!r})"
 
     def to_ical(self) -> bytes:
-        r"""Return the value verbatim, without :rfc:`5545` escaping (:rfc:`7265#section-5.2`).
+        r"""Return the value verbatim, without :rfc:`5545` escaping.
 
-        This is the one place ``vUnknown`` deliberately differs from
-        :class:`~icalendar.prop.text.vText`, whose ``to_ical`` escapes ``;`` ``,``
-        ``\\`` and newlines.
+        This method's implementation is different from that in
+        :class:`~icalendar.prop.text.vText`, whose
+        :meth:`~icalendar.prop.text.vText.to_ical` method escapes ``;``, ``,``,
+        ``\``, and newlines.
+
+        See also:
+
+            :rfc:`7265#section-5.2`
+
         """
         return self.encode(self.encoding)
 
@@ -68,11 +83,15 @@ class vUnknown(str):
     from icalendar.param import ALTREP, GAP, LANGUAGE, RELTYPE, VALUE
 
     def to_jcal(self, name: str) -> list:
-        """The jCal representation of this property according to :rfc:`7265`.
+        """The jCal representation of this property, according to :rfc:`7265#section-5.1`.
 
         The value is passed through unchanged. The type field is the lowercased
         ``VALUE`` -- ``"unknown"`` by default, or a preserved unrecognized value
-        type if one was set.
+        If the property doesn't include a VALUE property parameter and its value type is not known, then its value type is set to ``"unknown"``.
+        Else the property's value type is converted to lowercase.
+        
+        The property's value is the unprocessed value text, aside from standard
+        JSON string escaping.
         """
         return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
 

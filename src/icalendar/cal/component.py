@@ -367,7 +367,7 @@ class Component(CaselessDict):
             return value
         decoded = self.types_factory.from_ical(name, value)
         # TODO: remove when proper decoded is implemented in every prop.* class
-        # Workaround to decode vText properly. vUnknown is no longer a vText
+        # Workaround to decode vText properly. vUnknown is not a vText
         # subclass (RFC 7265), but its value is decoded the same way here.
         if isinstance(decoded, (vText, vUnknown)):
             decoded = decoded.encode(DEFAULT_ENCODING)

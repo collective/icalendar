@@ -225,10 +225,11 @@ class Contentline(str):
                 (_unescape_string(key), unescape_list_or_string(value))
                 for key, value in iter(params.items())
             )
-            # Unescape backslash sequences in values but preserve URL encoding
             if should_unescape:
+                # Unescape backslash sequences in TEXT values, while preserving URL encoding
                 values = unescape_backslash(self[value_split + 1 :])
             else:
+                # Preserve both backslash sequences and URL encoding in UNKNOWN values
                 values = self[value_split + 1 :]
         except ValueError as exc:
             raise ValueError(
