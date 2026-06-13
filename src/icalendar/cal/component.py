@@ -868,15 +868,27 @@ class Component(CaselessDict):
               ['dtstart', {}, 'date', '2025-11-22']],
              []]
         """
-        properties = []
-        for key, value in self.items():
-            for item in value if isinstance(value, list) else [value]:
-                properties.append(item.to_jcal(key.lower()))
-        return [
-            self.name.lower(),
-            properties,
-            [subcomponent.to_jcal() for subcomponent in self.subcomponents],
-        ]
+        # Iterative tree walk to avoid RecursionError on deeply nested
+        # components, mirroring the iterative iCal parser/serializer (GH #1370).
+        root_node: list | None = None
+        # stack of (component, list to append this component's jCal node to)
+        stack: list[tuple[Component, list | None]] = [(self, None)]
+        while stack:
+            comp, parent_children = stack.pop()
+            properties = []
+            for key, value in comp.items():
+                for item in value if isinstance(value, list) else [value]:
+                    properties.append(item.to_jcal(key.lower()))
+            children: list = []
+            node = [comp.name.lower(), properties, children]
+            if parent_children is None:
+                root_node = node
+            else:
+                parent_children.append(node)
+            # Push in reverse so subcomponents are emitted in their original order.
+            for subcomponent in reversed(comp.subcomponents):
+                stack.append((subcomponent, children))
+        return root_node
 
     def to_json(self) -> str:
         """Return this component as a jCal JSON string.
@@ -936,29 +948,71 @@ class Component(CaselessDict):
         """
         if isinstance(jcal, str):
             jcal = json.loads(jcal)
+        # Iterative tree build to avoid RecursionError on deeply nested jCal,
+        # mirroring the iterative iCal parser (GH #1370). ``_node_from_jcal``
+        # parses a single component (without its subcomponents); the stack walks
+        # the subcomponent tree, accumulating the jCal error path ([2, i] per
+        # nesting level) so error messages match the recursive implementation.
+        root, root_subcomponents = cls._node_from_jcal(jcal, cls)
+        stack: list[tuple[Component, list, list]] = [(root, root_subcomponents, [])]
+        while stack:
+            parent, subcomponents, prefix = stack.pop()
+            for i, subcomponent in enumerate(subcomponents):
+                child_prefix = [*prefix, 2, i]
+                try:
+                    child, child_subcomponents = cls._node_from_jcal(
+                        subcomponent, type(parent)
+                    )
+                except JCalParsingError as e:
+                    raise JCalParsingError(
+                        e.message, e.parser, path=child_prefix + e.path
+                    ) from e
+                parent.subcomponents.append(child)
+                stack.append((child, child_subcomponents, child_prefix))
+        return root
+
+    @staticmethod
+    def _node_from_jcal(jcal, starting_cls: type[Component]) -> tuple[Component, list]:
+        """Parse a single jCal component without recursing into subcomponents.
+
+        Parameters:
+            jcal: The jCal list for one component.
+            starting_cls: The class used as the parser for structural validation
+                before the component type is resolved from its name (the entry
+                class for the root, the parent's resolved class for a child).
+
+        Returns:
+            A ``(component, raw_subcomponents)`` tuple. The raw subcomponents are
+            returned for the caller to walk iteratively.
+
+        Raises:
+            ~error.JCalParsingError: If this component node is invalid. The path
+                is relative to this node; callers prepend the nesting path.
+        """
         if not isinstance(jcal, list) or len(jcal) != 3:
             raise JCalParsingError(
-                "A component must be a list with 3 items.", cls, value=jcal
+                "A component must be a list with 3 items.", starting_cls, value=jcal
             )
         name, properties, subcomponents = jcal
         if not isinstance(name, str):
             raise JCalParsingError(
-                "The name must be a string.", cls, path=[0], value=name
+                "The name must be a string.", starting_cls, path=[0], value=name
             )
-        if name.upper() != cls.name:
+        if name.upper() != starting_cls.name:
             # delegate to correct component class
-            component_cls = cls.get_component_class(name.upper())
-            return component_cls.from_jcal(jcal)
-        component = cls()
+            component_cls = starting_cls.get_component_class(name.upper())
+        else:
+            component_cls = starting_cls
+        component = component_cls()
         if not isinstance(properties, list):
             raise JCalParsingError(
-                "The properties must be a list.", cls, path=1, value=properties
+                "The properties must be a list.", component_cls, path=1, value=properties
             )
         for i, prop in enumerate(properties):
-            JCalParsingError.validate_property(prop, cls, path=[1, i])
+            JCalParsingError.validate_property(prop, component_cls, path=[1, i])
             prop_name = prop[0]
             prop_value = prop[2]
-            prop_cls: type[VPROPERTY] = cls.types_factory.for_property(
+            prop_cls: type[VPROPERTY] = component_cls.types_factory.for_property(
                 prop_name, prop_value
             )
             with JCalParsingError.reraise_with_path_added(1, i):
@@ -971,7 +1025,7 @@ class Component(CaselessDict):
             # A type equal to the default needs no VALUE parameter, and the
             # reserved ``unknown`` type must never become ``VALUE=UNKNOWN``
             # (RFC 7265, section 5.2).
-            default_type = cls.types_factory.default_value_type(prop_name)
+            default_type = component_cls.types_factory.default_value_type(prop_name)
             if isinstance(prop_value, str) and prop_value.lower() not in (
                 "unknown",
                 default_type,
@@ -982,12 +1036,9 @@ class Component(CaselessDict):
             component.add(prop_name, v_prop)
         if not isinstance(subcomponents, list):
             raise JCalParsingError(
-                "The subcomponents must be a list.", cls, 2, value=subcomponents
+                "The subcomponents must be a list.", component_cls, 2, value=subcomponents
             )
-        for i, subcomponent in enumerate(subcomponents):
-            with JCalParsingError.reraise_with_path_added(2, i):
-                component.subcomponents.append(cls.from_jcal(subcomponent))
-        return component
+        return component, subcomponents
 
     def copy(self, recursive: bool = False) -> Self:
         """Copy the component.
