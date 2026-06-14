@@ -29,9 +29,9 @@ def test_error():
 
 @pytest.mark.parametrize("value", ["2MO\n", "MO\n", "+2TH\n", "-1SU\n"])
 def test_trailing_newline_rejected(value):
-    """A trailing line break must not be accepted and carried into the value.
+    r"""A trailing line break must not be accepted and carried into the value.
 
-    ``$`` matches just before a final ``\\n``, so the newline survived in the
+    ``$`` matches just before a final ``\n``, so the newline survived in the
     ``str`` value and was re-emitted into RECUR output (content-line injection).
     """
     with pytest.raises(ValueError):
