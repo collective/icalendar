@@ -868,26 +868,27 @@ class Component(CaselessDict):
               ['dtstart', {}, 'date', '2025-11-22']],
              []]
         """
+
         # Iterative tree walk to avoid RecursionError on deeply nested
         # components, mirroring the iterative iCal parser/serializer (GH #1370).
-        root_node: list | None = None
-        # stack of (component, list to append this component's jCal node to)
-        stack: list[tuple[Component, list | None]] = [(self, None)]
+        def make_node(comp: Component) -> list:
+            properties = [
+                item.to_jcal(key.lower())
+                for key, value in comp.items()
+                for item in (value if isinstance(value, list) else [value])
+            ]
+            return [comp.name.lower(), properties, []]
+
+        root_node = make_node(self)
+        # stack of (component, jCal node) pairs still to expand
+        stack: list[tuple[Component, list]] = [(self, root_node)]
         while stack:
-            comp, parent_children = stack.pop()
-            properties = []
-            for key, value in comp.items():
-                for item in value if isinstance(value, list) else [value]:
-                    properties.append(item.to_jcal(key.lower()))
-            children: list = []
-            node = [comp.name.lower(), properties, children]
-            if parent_children is None:
-                root_node = node
-            else:
-                parent_children.append(node)
-            # Push in reverse so subcomponents are emitted in their original order.
-            for subcomponent in reversed(comp.subcomponents):
-                stack.append((subcomponent, children))
+            comp, node = stack.pop()
+            children = node[2]
+            for subcomponent in comp.subcomponents:
+                child_node = make_node(subcomponent)
+                children.append(child_node)
+                stack.append((subcomponent, child_node))
         return root_node
 
     def to_json(self) -> str:
@@ -959,14 +960,13 @@ class Component(CaselessDict):
             parent, subcomponents, prefix = stack.pop()
             for i, subcomponent in enumerate(subcomponents):
                 child_prefix = [*prefix, 2, i]
-                try:
+                # Prepend the full nesting path so errors match the recursive
+                # implementation. This also preserves the error value and
+                # traceback, like the nested context managers did before.
+                with JCalParsingError.reraise_with_path_added(*child_prefix):
                     child, child_subcomponents = cls._node_from_jcal(
                         subcomponent, type(parent)
                     )
-                except JCalParsingError as e:
-                    raise JCalParsingError(
-                        e.message, e.parser, path=child_prefix + e.path
-                    ) from e
                 parent.subcomponents.append(child)
                 stack.append((child, child_subcomponents, child_prefix))
         return root
@@ -1006,7 +1006,10 @@ class Component(CaselessDict):
         component = component_cls()
         if not isinstance(properties, list):
             raise JCalParsingError(
-                "The properties must be a list.", component_cls, path=1, value=properties
+                "The properties must be a list.",
+                component_cls,
+                path=1,
+                value=properties,
             )
         for i, prop in enumerate(properties):
             JCalParsingError.validate_property(prop, component_cls, path=[1, i])
@@ -1036,7 +1039,10 @@ class Component(CaselessDict):
             component.add(prop_name, v_prop)
         if not isinstance(subcomponents, list):
             raise JCalParsingError(
-                "The subcomponents must be a list.", component_cls, 2, value=subcomponents
+                "The subcomponents must be a list.",
+                component_cls,
+                2,
+                value=subcomponents,
             )
         return component, subcomponents
 
