@@ -57,14 +57,16 @@ class vUnknown(str):
 
         Example:
 
-            The semicolon is kept verbatim, unlike a TEXT value which would
-            escape it as ``\;``.
+            The semicolon is kept verbatim for UNKNOWN, unlike a TEXT value
+            which would escape it as ``\\;``.
 
             .. code-block:: pycon
 
-                >>> from icalendar.prop import vUnknown
+                >>> from icalendar.prop import vText, vUnknown
                 >>> vUnknown("a;b").to_ical()
                 b'a;b'
+                >>> vText("a;b").to_ical()
+                b'a\\;b'
 
         See also:
 
