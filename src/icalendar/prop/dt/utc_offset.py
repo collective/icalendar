@@ -9,7 +9,7 @@ from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 
 UTC_OFFSET_JCAL_REGEX = re.compile(
-    r"^(?P<sign>[+-])?(?P<hours>\d\d):(?P<minutes>\d\d)(?::(?P<seconds>\d\d))?$"
+    r"^(?P<sign>[+-])?(?P<hours>\d\d):(?P<minutes>\d\d)(?::(?P<seconds>\d\d))?\Z"
 )
 
 
