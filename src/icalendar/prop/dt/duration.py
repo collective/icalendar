@@ -11,7 +11,7 @@ from icalendar.parser import Parameters
 from .base import TimeBase
 
 DURATION_REGEX = re.compile(
-    r"([-+]?)P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$"
+    r"([-+]?)P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?\Z"
 )
 
 
