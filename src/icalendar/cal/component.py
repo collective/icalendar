@@ -222,22 +222,22 @@ class Component(CaselessDict):
         self.errors = []  # If we ignored exception(s) while
         # parsing a property, contains error strings
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """Returns True, CaselessDict would return False if it had no items."""
         return True
 
-    def __getitem__(self, key):
+    def __getitem__(self, key) -> VPROPERTY:
         """Get property value from the component dictionary."""
         return super().__getitem__(key)
 
-    def get(self, key, default=None):
+    def get(self, key, default=None) -> Any:
         """Get property value with default."""
         try:
             return self[key]
         except KeyError:
             return default
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         """Returns True if Component has no items or subcomponents, else False."""
         return bool(not list(self.values()) + self.subcomponents)
 
@@ -622,7 +622,7 @@ class Component(CaselessDict):
         content_lines = self.content_lines(sorted=sorted)
         return content_lines.to_ical()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """String representation of class with all of its subcomponents.
 
         Implemented iteratively rather than recursively so that calendars
@@ -667,7 +667,7 @@ class Component(CaselessDict):
                     out.append(str(node))
         return "".join(out)
 
-    def __eq__(self, other):
+    def __eq__(self, other: Component) -> bool:
         if not isinstance(other, Component):
             return NotImplemented
 
@@ -806,7 +806,7 @@ class Component(CaselessDict):
         return any(attr.startswith("X-MOZ-") for attr in self.keys())
 
     @staticmethod
-    def _utc_now():
+    def _utc_now() -> datetime:
         """Return now as UTC value."""
         return datetime.now(timezone.utc)
 
