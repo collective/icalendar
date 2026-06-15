@@ -241,6 +241,54 @@ def test_set_rdates_via_property(c_rdate):
     assert c_rdate.rdates == [(SINGLE_DATE, None)]
 
 
+def test_set_rdates_via_property_all_value_types(c_rdate, tzp):
+    """Assigning ``.rdates`` a list with one of every accepted value type sets
+    them all through the property setter (#1442, part 1)."""
+    utc_dt = tzp.localize_utc(datetime(2031, 12, 1, 23, 59))
+    zoned_dt = tzp.localize(datetime(1984, 1, 13, 13, 1), "Europe/Athens")
+    period_start, period_end = (
+        datetime(2000, 1, 13, 12, 1),
+        datetime(2000, 1, 13, 12, 2),
+    )
+    dur_start = datetime(2032, 6, 1, 9, 0)
+    values = [
+        date(2019, 10, 11),  # a bare date
+        datetime(2000, 1, 13, 12, 1),  # a naive datetime
+        utc_dt,  # a UTC datetime
+        zoned_dt,  # a zoned datetime
+        (period_start, period_end),  # a period
+        (dur_start, timedelta(hours=2)),  # a period given as (start, duration)
+        (SINGLE_DATE, None),  # the (dt, None) single-date form
+    ]
+    c_rdate.rdates = values
+    assert c_rdate.rdates == [
+        (date(2019, 10, 11), None),
+        (datetime(2000, 1, 13, 12, 1), None),
+        (utc_dt, None),
+        (zoned_dt, None),
+        (period_start, period_end),
+        (dur_start, dur_start + timedelta(hours=2)),
+        (SINGLE_DATE, None),
+    ]
+
+
+def test_set_rdates_via_property_its_own_output_round_trips(c_rdate, tzp):
+    """Assigning ``.rdates`` its own getter output (``c.rdates = c.rdates[:]``)
+    after setting every value type leaves value, length and content unchanged
+    (#1442, part 2)."""
+    c_rdate.rdates = [
+        date(2019, 10, 11),
+        datetime(2000, 1, 13, 12, 1),
+        tzp.localize_utc(datetime(2031, 12, 1, 23, 59)),
+        (datetime(2000, 1, 13, 12, 1), datetime(2000, 1, 13, 12, 2)),
+        (SINGLE_DATE, None),
+    ]
+    before = c_rdate.rdates
+    c_rdate.rdates = c_rdate.rdates[:]
+    assert c_rdate.rdates == before
+    assert len(c_rdate.rdates) == len(before)
+
+
 def test_set_rdates_round_trips(c_rdate, rdate):
     """Assigning ``.rdates`` its own value leaves it unchanged for every value
     type (#1442)."""
