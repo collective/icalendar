@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from copy import deepcopy
+from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, ClassVar, Literal, overload
@@ -42,6 +43,25 @@ if TYPE_CHECKING:
     from icalendar.compatibility import Self
 
 _marker = []
+
+
+@dataclass
+class _ComponentEqFrame:
+    """A pending component-equality comparison on the iterative stack.
+
+    See ``Component.__eq__`` for how the fields are used.
+    """
+
+    #: the two components being compared
+    a: Component
+    b: Component
+    #: ``b``'s subcomponents not yet matched against one of ``a``'s. ``None``
+    #: until ``a`` and ``b``'s own properties have been compared and found equal.
+    unmatched: list | None = None
+    #: index of the ``a`` subcomponent we are currently trying to match
+    a_index: int = 0
+    #: index of the unmatched ``b`` subcomponent we are currently testing
+    candidate_index: int = 0
 
 
 class Component(CaselessDict):
@@ -627,29 +647,60 @@ class Component(CaselessDict):
         return "".join(out)
 
     def __eq__(self, other):
-        if len(self.subcomponents) != len(other.subcomponents):
-            return False
+        if not isinstance(other, Component):
+            return NotImplemented
 
-        properties_equal = super().__eq__(other)
-        if not properties_equal:
-            return False
-
-        # The subcomponents might not be in the same order,
-        # neither there's a natural key we can sort the subcomponents by nor
-        # are the subcomponent types hashable, so  we cant put them in a set to
-        # check for set equivalence. We have to iterate over the subcomponents
-        # and look for each of them in the list.
-        for subcomponent in self.subcomponents:
-            if subcomponent not in other.subcomponents:
-                return False
-
-        # We now know the other component's subcomponents are not a strict subset
-        # of this component's. However, we still need to check the other way around.
-        for subcomponent in other.subcomponents:
-            if subcomponent not in self.subcomponents:
-                return False
-
-        return True
+        # Two components are equal when their own properties are equal and their
+        # subcomponents are equal as a multiset: order does not matter, and each
+        # nested pair is compared the same way recursively. Subcomponents are
+        # neither sortable nor hashable, so we can't use a set; we have to match
+        # each one by searching. Done recursively that search is exponential for
+        # deeply nested components (GHSA-cv84-9p8j-fj68), so we walk an explicit
+        # stack instead of recursing.
+        #
+        # Each frame holds the pair being compared plus b's subcomponents
+        # still unmatched. child_result carries the outcome of the comparison
+        # that just finished back up to its parent frame: a successful child
+        # match removes that subcomponent from unmatched and advances to the
+        # next a subcomponent, while a failure tries the next candidate.
+        # Exhausting a's subcomponents means every one found a partner ->
+        # equal; running out of candidates for some subcomponent -> not equal.
+        # (Greedy matching is sufficient because equality is transitive, so equal
+        # candidates are interchangeable.)
+        stack = [_ComponentEqFrame(self, other)]
+        child_result = None
+        while stack:
+            frame = stack[-1]
+            if frame.unmatched is None:
+                if len(frame.a.subcomponents) != len(frame.b.subcomponents) or not (
+                    CaselessDict.__eq__(frame.a, frame.b)
+                ):
+                    stack.pop()
+                    child_result = False
+                    continue
+                frame.unmatched = list(frame.b.subcomponents)
+            elif child_result is not None:
+                if child_result:
+                    del frame.unmatched[frame.candidate_index]
+                    frame.a_index += 1
+                    frame.candidate_index = 0
+                else:
+                    frame.candidate_index += 1
+                child_result = None
+            if frame.a_index >= len(frame.a.subcomponents):
+                stack.pop()
+                child_result = True
+            elif frame.candidate_index >= len(frame.unmatched):
+                stack.pop()
+                child_result = False
+            else:
+                stack.append(
+                    _ComponentEqFrame(
+                        frame.a.subcomponents[frame.a_index],
+                        frame.unmatched[frame.candidate_index],
+                    )
+                )
+        return child_result
 
     DTSTAMP = stamp = single_utc_property(
         "DTSTAMP",
