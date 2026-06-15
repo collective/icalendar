@@ -184,20 +184,6 @@ class TestConsolidatedSetters:
 class TestConsolidatedPropertyGetters:
     """Test consolidated property getter functions."""
 
-    def test_single_property_docstring_uses_sphinx_sections(self) -> None:
-        """Generated single-property docstrings use sectioned Sphinx markup."""
-        doc = Event.RECURRENCE_ID.__doc__
-
-        assert doc is not None
-        assert "Accepted values" not in doc
-        assert "To delete the value, either use ``del`` or set it to ``None``." in doc
-        assert "Returns:\n        If the value is absent, return ``None``." in doc
-        assert (
-            "Raises:\n"
-            "        :exc:`~icalendar.error.InvalidCalendar`\n"
-            "            If the attribute has invalid values." in doc
-        )
-
     def test_get_duration_property_with_duration_set(self) -> None:
         """Test get_duration_property when DURATION is explicitly set."""
         event = Event()

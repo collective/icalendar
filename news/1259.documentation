@@ -1,1 +1,1 @@
-Tidied the auto-generated property docstrings by removing the redundant accepted-values sentence and formatting return and error details as Sphinx sections. @mvanhorn
+Tidied the auto-generated property docstrings by removing the redundant accepted values sentence and formatting return and error details as Sphinx sections. @mvanhorn
