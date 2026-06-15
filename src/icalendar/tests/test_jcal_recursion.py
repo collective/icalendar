@@ -71,7 +71,21 @@ def test_deeply_nested_jcal_round_trips():
     jcal = _nested_jcal(depth)
     once = Component.from_jcal(jcal).to_jcal()
     twice = Component.from_jcal(once).to_jcal()
-    assert once == twice
+    # Compare by walking the chain: a plain ``once == twice`` would compare the
+    # nested lists recursively and hit RecursionError at this depth, even though
+    # producing them did not.
+    a, b = once, twice
+    levels = 0
+    while True:
+        assert a[0] == b[0]  # component name
+        assert a[1] == b[1]  # properties (a shallow list)
+        if not a[2]:
+            assert not b[2]
+            break
+        assert len(a[2]) == len(b[2]) == 1
+        a, b = a[2][0], b[2][0]
+        levels += 1
+    assert levels == depth
 
 
 def test_error_path_is_preserved_for_nested_jcal():
