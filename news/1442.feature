@@ -1,0 +1,1 @@
+The ``rdates`` and ``exdates`` properties are now writable: assigning a list replaces the ``RDATE``/``EXDATE`` values, ``del`` (or assigning an empty list or ``None``) clears them, and assigning the value the getter returns round-trips. Prepared with the assistance of an AI coding agent (Anthropic's Claude). @gaoflow

@@ -61,3 +61,34 @@ def test_set_and_retrieve_exdates_twice(exdate, c_exdate):
     c_exdate.add("exdate", [exdate])
     result = [exdate, exdate]
     assert c_exdate.exdates == result
+
+
+def test_set_exdates_via_property(exdate, c_exdate):
+    """``.exdates`` is settable and replaces any existing EXDATE (#1442)."""
+    c_exdate.add("exdate", [datetime(2020, 1, 1, 12, 0)])
+    c_exdate.exdates = [exdate]
+    assert c_exdate.exdates == [exdate]
+
+
+def test_set_exdates_round_trips(exdate, c_exdate):
+    """Assigning ``.exdates`` its own value leaves it unchanged (#1442)."""
+    c_exdate.add("exdate", [exdate])
+    before = c_exdate.exdates
+    c_exdate.exdates = before
+    assert c_exdate.exdates == before
+
+
+def test_del_exdates(exdate, c_exdate):
+    """Deleting ``.exdates`` removes the EXDATE property (#1442)."""
+    c_exdate.add("exdate", [exdate])
+    del c_exdate.exdates
+    assert c_exdate.exdates == []
+    assert "EXDATE" not in c_exdate
+
+
+@pytest.mark.parametrize("empty", [[], None])
+def test_set_exdates_empty_clears(exdate, c_exdate, empty):
+    """Setting ``.exdates`` to an empty list or ``None`` clears it (#1442)."""
+    c_exdate.add("exdate", [exdate])
+    c_exdate.exdates = empty
+    assert c_exdate.exdates == []

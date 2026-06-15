@@ -11,6 +11,15 @@ Change log
 
 .. towncrier release notes start
 
+7.1.3 (2026-06-15)
+------------------
+
+Bug fixes
+~~~~~~~~~
+
+- Comparing components with ``Component.__eq__`` is no longer exponential in the subcomponent nesting depth, removing a denial-of-service vector where a deeply nested component could take minutes to compare. See `GHSA-cv84-9p8j-fj68 <https://github.com/collective/icalendar/security/advisories/GHSA-cv84-9p8j-fj68>`_. @tidusec
+
+
 7.1.2 (2026-05-22)
 ------------------
 

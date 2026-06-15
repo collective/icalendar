@@ -12,6 +12,7 @@ except ImportError:
 
 
 from datetime import date, datetime, time, timedelta
+from time import time as time_time
 
 import pytest
 
@@ -122,6 +123,59 @@ def test_component_equality_order():
     component1.subcomponents = [event1, event2]
     component2.subcomponents = [event1, event1]
     assert_not_equal(component1, component2)
+
+
+def _nested_component(depth: int) -> Event:
+    """Build a component nested depth subcomponents deep."""
+    root = node = Event()
+    for _ in range(depth):
+        child = Event()
+        node.add_component(child)
+        node = child
+    return root
+
+
+def test_deeply_nested_equality_at_depth_50():
+    """Regression test for GHSA-cv84-9p8j-fj68.
+
+    Comparing deeply nested components used to recurse and re-compare both
+    directions at every level, which is exponential in the nesting depth: a
+    depth-30 structure took minutes. The fix walks an explicit stack and
+    compares each pair of nested components exactly once, which is linear.
+
+    We try at a few depths and fail when the first one takes too long.
+    We could try just one large depth, but if there really is a regression,
+    the tests could take ten or a hundred times as long.
+    At depth 20 the comparison already takes 2.85 seconds on my fast laptop
+    when using the original implementation.
+    We give each depth more time.  The main thing is that this should not be
+    exponential.
+    """
+    for seconds in range(1, 6):
+        depth = 10 * seconds
+        # equality and its commutative counterpart, see #1224
+        t1 = time_time()
+        assert_equal(_nested_component(depth), _nested_component(depth))
+        t2 = time_time()
+        total = t2 - t1
+        assert total < seconds, (
+            f"equal nested {depth=} takes too long: {total} > {seconds}"
+        )
+
+        # A difference at the deepest end gets detected
+        left = _nested_component(depth)
+        right = _nested_component(depth)
+        deepest = right
+        while deepest.subcomponents:
+            deepest = deepest.subcomponents[0]
+        deepest.add("summary", "different")
+        t3 = time_time()
+        assert_not_equal(left, right)
+        t4 = time_time()
+        total = t4 - t3
+        assert total < seconds, (
+            f"unequal nested {depth=} takes too long: {total} > {seconds}"
+        )
 
 
 def test_copy_does_not_copy_subcomponents(calendars, tzp):
