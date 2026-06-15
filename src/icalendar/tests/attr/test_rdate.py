@@ -232,3 +232,35 @@ def test_set_all_rdate_value_types_then_round_trip(c_rdate, tzp):
     restored = c_rdate.__class__()
     restored.add("RDATE", c_rdate.rdates[:])
     assert restored.rdates == c_rdate.rdates
+
+
+def test_set_rdates_via_property(c_rdate):
+    """``.rdates`` is settable and replaces any existing RDATE (#1442)."""
+    c_rdate.add("RDATE", datetime(2020, 1, 1, 12, 0))
+    c_rdate.rdates = [SINGLE_DATE]
+    assert c_rdate.rdates == [(SINGLE_DATE, None)]
+
+
+def test_set_rdates_round_trips(c_rdate, rdate):
+    """Assigning ``.rdates`` its own value leaves it unchanged for every value
+    type (#1442)."""
+    c_rdate.add("RDATE", [rdate])
+    before = c_rdate.rdates
+    c_rdate.rdates = before
+    assert c_rdate.rdates == before
+
+
+def test_del_rdates(c_rdate):
+    """Deleting ``.rdates`` removes the RDATE property (#1442)."""
+    c_rdate.add("RDATE", SINGLE_DATE)
+    del c_rdate.rdates
+    assert c_rdate.rdates == []
+    assert "RDATE" not in c_rdate
+
+
+@pytest.mark.parametrize("empty", [[], None])
+def test_set_rdates_empty_clears(c_rdate, empty):
+    """Setting ``.rdates`` to an empty list or ``None`` clears it (#1442)."""
+    c_rdate.add("RDATE", SINGLE_DATE)
+    c_rdate.rdates = empty
+    assert c_rdate.rdates == []
