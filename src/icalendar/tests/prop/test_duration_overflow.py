@@ -55,6 +55,20 @@ def test_overflowing_duration_in_calendar_is_recorded_not_raised():
     assert any(name == "DURATION" for name, _ in event.errors)
 
 
+def test_invalid_duration_calendar_keeps_original_value(calendars):
+    """A calendar with an impractical duration keeps the raw value on to_ical.
+
+    The value cannot be decoded to a :class:`datetime.timedelta`, so it is kept
+    as a broken value. Serializing the calendar again must reproduce the
+    original ``DURATION`` text unchanged rather than dropping it. Runs against
+    both ``Calendar`` and ``LazyCalendar`` via the ``calendars`` fixture.
+    """
+    calendar = calendars.invalid_duration
+    event = calendar.walk("VEVENT")[0]
+    assert any(name == "DURATION" for name, _ in event.errors)
+    assert b"DURATION:P999999999999999999W" in calendar.to_ical()
+
+
 def test_valid_durations_still_parse():
     """The guard must not affect durations within range."""
     from datetime import timedelta
