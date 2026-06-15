@@ -142,7 +142,7 @@ class vDuration(TimeBase):
             # ``timedelta`` rejects values that are too large for its C
             # implementation. Raise the same error as other invalid durations
             # instead of leaking ``OverflowError`` to callers.
-            raise InvalidCalendar(f"Invalid iCalendar duration: {ical}") from e
+            raise InvalidCalendar(f"Impractical iCalendar duration: {ical}") from e
 
         if sign == "-":
             value = -value
