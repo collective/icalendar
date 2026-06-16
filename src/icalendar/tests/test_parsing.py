@@ -249,7 +249,7 @@ def test_unescape_char():
     ],
 )
 def test_escape_char_escapes_lone_carriage_return(value, expected):
-    """A lone ``\\r`` must be escaped, not left raw in the content line."""
+    r"""A lone ``\r`` must be escaped, not left raw in the content line."""
     assert _escape_char(value) == expected
 
 
