@@ -30,6 +30,7 @@ from icalendar.parser import (
     Parameters,
     q_join,
     q_split,
+    validate_token,
 )
 from icalendar.parser.ical.component import ComponentIcalParser
 from icalendar.parser_tools import DEFAULT_ENCODING
@@ -1008,6 +1009,15 @@ class Component(CaselessDict):
         for i, prop in enumerate(properties):
             JCalParsingError.validate_property(prop, cls, path=[1, i])
             prop_name = prop[0]
+            try:
+                validate_token(prop_name)
+            except ValueError:
+                raise JCalParsingError(
+                    "The property name is not a valid token.",
+                    cls,
+                    path=[1, i, 0],
+                    value=prop_name,
+                ) from None
             prop_value = prop[2]
             prop_cls: type[VPROPERTY] = cls.types_factory.for_property(
                 prop_name, prop_value

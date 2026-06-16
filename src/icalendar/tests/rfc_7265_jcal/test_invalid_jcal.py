@@ -453,6 +453,43 @@ def test_skip():
         vSkip.parse_jcal_value("INVALID")
 
 
+INVALID_NAME_TOKENS = ["x-foo:INJECT", "x-foo\rRRULE", "a;b", "a=b", "a,b", "a b", ""]
+
+
+@pytest.mark.parametrize("name", INVALID_NAME_TOKENS)
+def test_invalid_property_name_token(name):
+    """A jCal property name that is not a valid token is rejected.
+
+    Otherwise the name is re-emitted verbatim into the content line, so a ``:``
+    or a lone carriage return injects structure on serialisation.
+    """
+    with pytest.raises(
+        JCalParsingError,
+        match=r"The property name is not a valid token\.",
+    ):
+        Component.from_jcal(["vcalendar", [[name, {}, "text", "x"]], []])
+
+
+@pytest.mark.parametrize("name", INVALID_NAME_TOKENS)
+def test_invalid_parameter_name_token(name):
+    """A jCal parameter name that is not a valid token is rejected."""
+    with pytest.raises(
+        JCalParsingError,
+        match=r"The parameter name is not a valid token\.",
+    ):
+        Parameters.from_jcal_property(["x-prop", {name: "v"}, "text", "x"])
+
+
+@pytest.mark.parametrize("key", ["FREQ:INJECT", "FREQ\rINJECT", "a;b", "a=b", ""])
+def test_invalid_recur_part_name_token(key):
+    """A jCal RRULE part name that is not a valid token is rejected."""
+    with pytest.raises(
+        JCalParsingError,
+        match=r"The recurrence rule part name is not a valid token\.",
+    ):
+        vRecur.from_jcal(["rrule", {}, "recur", {key: "DAILY"}])
+
+
 def test_frequency():
     """The FREQ parameter must be valid."""
     # parse correct value

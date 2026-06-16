@@ -5,7 +5,7 @@ from typing import Any, ClassVar
 from icalendar.caselessdict import CaselessDict
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
-from icalendar.parser import Parameters
+from icalendar.parser import Parameters, validate_token
 from icalendar.parser_tools import DEFAULT_ENCODING, SEQUENCE_TYPES
 from icalendar.prop.dt import vDDDTypes
 from icalendar.prop.integer import vInt
@@ -260,6 +260,15 @@ class vRecur(CaselessDict):
             )
         recur = {}
         for key, value in jcal_property[3].items():
+            try:
+                validate_token(key)
+            except ValueError:
+                raise JCalParsingError(
+                    "The recurrence rule part name is not a valid token.",
+                    cls,
+                    path=[3, key],
+                    value=key,
+                ) from None
             value_type = cls.types.get(key, vText)
             with JCalParsingError.reraise_with_path_added(3, key):
                 if isinstance(value, list):
