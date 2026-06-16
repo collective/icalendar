@@ -35,3 +35,22 @@ def test_invalid_period_to_ical():
     invalid_period = (datetime(2000, 1, 1), datetime(2000, 1, 2), datetime(2000, 1, 2))
     with pytest.raises(ValueError):
         vDDDTypes(invalid_period).to_ical()
+
+
+@pytest.mark.parametrize(
+    "bad_input",
+    [None, 42, 3.14, datetime(2025, 1, 1), date(2025, 1, 1), ["20250101"], {"dt": "20250101"}],
+    ids=["None", "int", "float", "datetime", "date", "list", "dict"],
+)
+def test_from_ical_rejects_non_str_input(bad_input):
+    """Non-str/bytes input should raise ValueError, not AttributeError.
+
+    Previously vDDDTypes.from_ical called ``ical.upper()`` without guarding
+    against non-string input, so passing None, a number, or a datetime
+    instance surfaced a confusing ``AttributeError: 'NoneType' object has
+    no attribute 'upper'``. The new path raises a clear ValueError naming
+    the offending type, matching the wrapping pattern used by the sibling
+    vDate / vDatetime / vTime / vPeriod / vDuration.from_ical helpers.
+    """
+    with pytest.raises(ValueError, match="Expected datetime, date, or time as str or bytes"):
+        vDDDTypes.from_ical(bad_input)

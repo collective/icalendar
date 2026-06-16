@@ -87,7 +87,18 @@ class vDDDTypes(TimeBase):
     def from_ical(cls, ical, timezone=None):
         if isinstance(ical, cls):
             return ical.dt
-        u = ical.upper()
+        try:
+            u = ical.upper()
+        except (AttributeError, TypeError) as e:
+            # `ical` is not a str/bytes (e.g. int, None, datetime) or is bytes
+            # whose .upper() returns bytes that can't be matched against the str
+            # prefixes/tuples below. Surface a clear ValueError naming the
+            # offending input's type, matching the wrapping pattern used by
+            # vDate / vDatetime / vTime / vPeriod / vDuration.from_ical.
+            raise ValueError(
+                f"Expected datetime, date, or time as str or bytes, "
+                f"got {type(ical).__name__}: {ical!r}"
+            ) from e
         if u.startswith(("P", "-P", "+P")):
             return vDuration.from_ical(ical)
         if "/" in u:
