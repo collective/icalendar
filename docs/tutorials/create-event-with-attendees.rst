@@ -7,16 +7,16 @@ In this tutorial, you'll create an iCalendar file with events and attendees.
 Creating a calendar
 -------------------
 
-First, you create a :class:`~icalendar.cal.calendar.Calendar`, the highest component type which can contain one or more subcomponents.
+First, you create a :class:`icalendar.cal.calendar.Calendar`, the highest component type which can contain one or more subcomponents.
 The Calendar component itself contains its own properties.
-When you create one using the :meth:`~icalendar.cal.calendar.Calendar.new()` method, it automatically sets the minimal required properties.
+When you create one using the :meth:`icalendar.cal.calendar.Calendar.new()` method, it automatically sets the minimal required properties.
 
 .. code-block:: pycon
 
     >>> from icalendar import Calendar
     >>> calendar = Calendar.new()
 
-After creating a new calendar, you can view its properties by using :meth:`~icalendar.cal.component.Component.to_ical()`, which generates a bytes object of the component, and :meth:`~bytes.decode`, which converts the output to Unicode, making it easier to read.
+After creating a new calendar, you can view its properties by using :meth:`icalendar.cal.component.Component.to_ical()`, which generates a bytes object of the component, and :meth:`bytes.decode`, which converts the output to Unicode, making it easier to read.
 
 ..  code-block:: pycon
 
@@ -51,7 +51,7 @@ Adding an event
 ---------------
 
 Now that you have a base calendar, you can add an event to it.
-You can similarly create an :class:`~icalendar.cal.event.Event` subcomponent using the :meth:`~icalendar.cal.event.Event.new()` method, which includes appropriate defaults.
+You can similarly create an :class:`icalendar.cal.event.Event` subcomponent using the :meth:`icalendar.cal.event.Event.new()` method, which includes appropriate defaults.
 You can also set these properties on creation.
 
 .. code-block:: pycon
@@ -65,7 +65,7 @@ You can also set these properties on creation.
     ...     end=dt.datetime(2026, 3, 21, 7, 30, 0, tzinfo=zoneinfo.ZoneInfo("UTC")),
     ... )
 
-This creates an event with a start and end date and time defined using :class:`~datetime.datetime` with a timezone.
+This creates an event with a start and end date and time defined using :class:`datetime.datetime` with a timezone.
 The output shows your new event:
 
 .. code-block:: pycon
@@ -86,7 +86,7 @@ Similar to the calendar event, you can edit these properties or add new ones.
 
     >>> event.summary = "Pick up bicycle from the workshop."
 
-Using the :meth:`~icalendar.cal.component.Component.add()` method on a component, you can add new properties with their name and value.
+Using the :meth:`icalendar.cal.component.Component.add()` method on a component, you can add new properties with their name and value.
 The summary property represents the title of an event.
 
 To use an event, you must add it to the calendar.
@@ -95,7 +95,7 @@ To use an event, you must add it to the calendar.
 
     >>> calendar.add_component(event)
 
-You can add the newly created event to the previously created calendar using :meth:`~icalendar.cal.component.Component.add_component()`.
+You can add the newly created event to the previously created calendar using :meth:`icalendar.cal.component.Component.add_component()`.
 Now print the calendar to verify everything that it contains:
 
 .. code-block:: pycon
@@ -204,7 +204,7 @@ Now that you have finished creating your calendar, you can write it to a file.
     >>> path.write_bytes(calendar.to_ical())
     611
 
-This creates a new file called :download:`example.ics` and writes the bytes object returned by :meth:`~icalendar.cal.component.Component.to_ical()` to the file.
+This creates a new file called :download:`example.ics` and writes the bytes object returned by :meth:`icalendar.cal.component.Component.to_ical()` to the file.
 
 Look on your file system for the file, local to where you issued commands.
 Its contents should be the following.
