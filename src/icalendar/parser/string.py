@@ -29,6 +29,7 @@ def _escape_char(text: str | bytes) -> str:
         5. ``\r\n`` -> ``\n`` (normalize line endings)
         6. ``"\n"`` -> ``r"\n"`` (transform a newline character to a literal, or raw,
            newline character)
+        7. ``"\r"`` -> ``r"\n"`` (escape a lone carriage return left over from above)
     """
     assert isinstance(text, (str, bytes))
     text = to_unicode(text)
@@ -40,6 +41,7 @@ def _escape_char(text: str | bytes) -> str:
         .replace(",", r"\,")
         .replace("\r\n", r"\n")
         .replace("\n", r"\n")
+        .replace("\r", r"\n")
     )
 
 
