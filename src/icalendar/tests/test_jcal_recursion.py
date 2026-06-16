@@ -77,6 +77,10 @@ def test_deeply_nested_jcal_round_trips():
     a, b = once, twice
     levels = 0
     while True:
+        # A jCal component is exactly [name, properties, subcomponents]; assert
+        # the length so the element-by-element comparison cannot skip an entry.
+        assert len(a) == 3
+        assert len(b) == 3
         assert a[0] == b[0]  # component name
         assert a[1] == b[1]  # properties (a shallow list)
         if not a[2]:
