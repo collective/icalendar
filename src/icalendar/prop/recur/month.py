@@ -41,13 +41,19 @@ class vMonth(int):
         if isinstance(month, vMonth):
             return cls(month.to_ical().decode())
         if isinstance(month, str):
-            if month.isdigit():
+            # ``str.isdigit`` is True for non-ASCII digits (e.g. "١٢") that
+            # ``int`` then either accepts as a different value or rejects, so
+            # gate on ASCII digits to match what ``int`` parses below.
+            if month.isascii() and month.isdigit():
                 month_index = int(month)
                 leap = False
             else:
-                if not month or month[-1] != "L" or not month[:-1].isdigit():
+                digits = month[:-1]
+                if not month or month[-1] != "L" or not (
+                    digits.isascii() and digits.isdigit()
+                ):
                     raise ValueError(f"Invalid month: {month!r}")
-                month_index = int(month[:-1])
+                month_index = int(digits)
                 leap = True
         else:
             leap = False
