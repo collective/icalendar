@@ -138,6 +138,56 @@ def test_start_as_date_with_delta_as_date_stays_date(alarms, dtstart):
     assert a.times[0].trigger == dtstart - timedelta(days=2)
 
 
+@pytest.mark.parametrize("dtstart", [date(1998, 10, 1), date(2023, 12, 31)])
+def test_start_as_date_with_local_timezone_promotes_to_datetime(alarms, dtstart, tzp):
+    """A day-based alarm on a DATE-typed DTSTART should still resolve when a local timezone is set.
+
+    The trigger is computed as a date, but ``_alarm_time`` previously tried
+    ``trigger.replace(tzinfo=...)`` which raises TypeError on a ``date``.
+    The fix promotes the date to a midnight datetime before applying the
+    local timezone, so the trigger becomes a tz-aware datetime at 00:00.
+    """
+    a = Alarms(alarms.start_date)
+    a.set_start(dtstart)
+    a.set_local_timezone("UTC")
+    times = a.times
+    assert len(times) == 1
+    trigger = times[0].trigger
+    assert isinstance(trigger, datetime)
+    assert trigger == tzp.localize(datetime(dtstart.year, dtstart.month, dtstart.day), "UTC") - timedelta(days=2)
+
+
+def test_start_as_date_with_ack_and_local_timezone_uses_tz(alarms, tzp):
+    """Computing .active on a date trigger with local timezone must not raise AttributeError.
+
+    Previously, is_active read ``trigger.tzinfo`` directly, which raises on
+    a pure ``date`` instance; combined with ``_alarm_time`` failing on
+    ``date.replace(tzinfo=...)``, the whole Alarms.times property crashed
+    with a TypeError before is_active could even run.
+
+    With the fix, the trigger becomes 2025-01-08 00:00 UTC; an acknowledge
+    time of 2025-02-01 is after the trigger, so the alarm is no longer
+    active. This exercises the same comparison path that previously raised
+    AttributeError on a date, now working through a tz-aware datetime.
+    """
+    a = Alarms(alarms.start_date)
+    a.set_start(date(2025, 1, 10))
+    a.set_local_timezone("UTC")
+    a.acknowledge_until(tzp.localize_utc(datetime(2025, 2, 1)))
+    active = a.active
+    assert active == []
+
+
+def test_start_as_date_no_ack_with_local_timezone_is_active(alarms, tzp):
+    """Without an acknowledge time, a date-trigger alarm with a local timezone should still be active."""
+    a = Alarms(alarms.start_date)
+    a.set_start(date(2025, 1, 10))
+    a.set_local_timezone("UTC")
+    active = a.active
+    assert len(active) == 1
+    assert active[0].trigger == tzp.localize(datetime(2025, 1, 8), "UTC")
+
+
 def test_cannot_compute_relative_alarm_without_end(alarms):
     """We have an alarm without an end of a component."""
     with pytest.raises(IncompleteAlarmInformation) as e:

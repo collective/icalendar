@@ -319,6 +319,11 @@ class Alarms:
     def _alarm_time(self, alarm: Alarm, trigger: date):
         """Create an alarm time with the additional attributes."""
         if getattr(trigger, "tzinfo", None) is None and self._local_tzinfo is not None:
+            # A pure date has no tzinfo attribute and does not accept
+            # ``tzinfo=`` in ``replace()``. Promote it to a midnight
+            # datetime first so the local timezone can be applied.
+            if is_date(trigger):
+                trigger = to_datetime(trigger)
             trigger = normalize_pytz(trigger.replace(tzinfo=self._local_tzinfo))
         return AlarmTime(
             alarm, trigger, self._last_ack, self._snooze_until, self._parent
