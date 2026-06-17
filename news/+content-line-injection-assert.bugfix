@@ -1,0 +1,1 @@
+Reject unescaped newlines in content lines with an explicit :exc:`ValueError` instead of an ``assert``. ``assert`` statements are removed under ``python -O`` / ``PYTHONOPTIMIZE``, which silently disabled the guard and allowed a crafted property name to inject extra content lines (and forge components) during :meth:`~icalendar.cal.component.Component.to_ical`. @arshsmith
