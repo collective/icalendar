@@ -576,9 +576,9 @@ Description:
             method: The :attr:`method` of the calendar.
             name: The :attr:`calendar_name` of the calendar.
             organization: The organization name. Used to generate `prodid` if not provided.
-            prodid: The :attr:`prodid` of the component. If None and organization is provided,
-                generates a `prodid` in format "-//organization//name//language".
-                If None and organization is not provided, sets it to
+            prodid: The :attr:`prodid` of the component. If ``None`` and ``organization`` is provided,
+                generates a `prodid` in the format of "-//organization//name//language".
+                If ``None`` and ``organization`` is not provided, sets it to
                 :attr:`~icalendar.cal.calendar.DEFAULT_PRODID`.
             refresh_interval: The :attr:`refresh_interval` of the calendar.
             refids: :attr:`~icalendar.cal.component.Component.refids` of the calendar.
