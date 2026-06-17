@@ -1018,6 +1018,13 @@ class Component(CaselessDict):
                     path=[1, i, 0],
                     value=prop_name,
                 ) from None
+            if prop_name != prop_name.lower():
+                raise JCalParsingError(
+                    "The property name must be lower case.",
+                    cls,
+                    path=[1, i, 0],
+                    value=prop_name,
+                )
             prop_value = prop[2]
             prop_cls: type[VPROPERTY] = cls.types_factory.for_property(
                 prop_name, prop_value

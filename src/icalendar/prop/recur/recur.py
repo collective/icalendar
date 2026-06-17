@@ -269,6 +269,13 @@ class vRecur(CaselessDict):
                     path=[3, key],
                     value=key,
                 ) from None
+            if key != key.lower():
+                raise JCalParsingError(
+                    "The recurrence rule part name must be lower case.",
+                    cls,
+                    path=[3, key],
+                    value=key,
+                )
             value_type = cls.types.get(key, vText)
             with JCalParsingError.reraise_with_path_added(3, key):
                 if isinstance(value, list):

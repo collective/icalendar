@@ -184,10 +184,10 @@ def test_property_type(v_prop_example, v_prop, str_expected):
 @pytest.mark.parametrize("index", [0, 3])
 def test_property_too_short_in_component(v_prop_example, v_prop, index):
     """The example is too short."""
-    jcal = v_prop_example.to_jcal("X-PROP")
+    jcal = v_prop_example.to_jcal("x-prop")
     component = [
         "vcalendar",
-        [["X-PROP-2", {}, "unknown", ""]] * index + [jcal[:2]],
+        [["x-prop-2", {}, "unknown", ""]] * index + [jcal[:2]],
         [],
     ]
     print(jcal)
@@ -395,14 +395,14 @@ def test_recurrence_rule_must_be_mapping_with_str(str_expected):
 @pytest.mark.parametrize(
     "key",
     [
-        "COUNT",
-        "INTERVAL",
-        "BYSECOND",
-        "BYMINUTE",
-        "BYHOUR",
-        "BYWEEKNO",
-        "BYMONTHDAY",
-        "BYYEARDAY",
+        "count",
+        "interval",
+        "bysecond",
+        "byminute",
+        "byhour",
+        "byweekno",
+        "bymonthday",
+        "byyearday",
     ],
 )
 @pytest.mark.parametrize("as_list", [False, True])
@@ -490,14 +490,48 @@ def test_invalid_recur_part_name_token(key):
         vRecur.from_jcal(["rrule", {}, "recur", {key: "DAILY"}])
 
 
+# valid tokens that are not lower case (RFC 7265 sections 3.4, 3.5 and 3.6.10)
+UPPER_CASE_NAMES = ["SUMMARY", "Summary", "X-Foo", "x-Foo"]
+
+
+@pytest.mark.parametrize("name", UPPER_CASE_NAMES)
+def test_property_name_must_be_lower_case(name):
+    """A jCal property name must be lower case (RFC 7265 section 3.4)."""
+    with pytest.raises(
+        JCalParsingError,
+        match=r"The property name must be lower case\.",
+    ):
+        Component.from_jcal(["vcalendar", [[name, {}, "text", "x"]], []])
+
+
+@pytest.mark.parametrize("name", UPPER_CASE_NAMES)
+def test_parameter_name_must_be_lower_case(name):
+    """A jCal parameter name must be lower case (RFC 7265 section 3.5)."""
+    with pytest.raises(
+        JCalParsingError,
+        match=r"The parameter name must be lower case\.",
+    ):
+        Parameters.from_jcal_property(["x-prop", {name: "v"}, "text", "x"])
+
+
+@pytest.mark.parametrize("key", ["FREQ", "Freq", "COUNT", "ByDay"])
+def test_recur_part_name_must_be_lower_case(key):
+    """A jCal RRULE part name must be lower case (RFC 7265 section 3.6.10)."""
+    with pytest.raises(
+        JCalParsingError,
+        match=r"The recurrence rule part name must be lower case\.",
+    ):
+        vRecur.from_jcal(["rrule", {}, "recur", {key: "DAILY"}])
+
+
 def test_frequency():
     """The FREQ parameter must be valid."""
     # parse correct value
-    recur = vRecur.from_jcal(["rrule", {}, "recur", {"FREQ": "DAILY"}])
+    recur = vRecur.from_jcal(["rrule", {}, "recur", {"freq": "DAILY"}])
     assert recur["FREQ"] == "DAILY"
     # parse bad value
     with pytest.raises(
         JCalParsingError,
-        match=r'\[3\]\["FREQ"\] in vFrequency: The value must be a valid frequency\.',
+        match=r'\[3\]\["freq"\] in vFrequency: The value must be a valid frequency\.',
     ):
-        vRecur.from_jcal(["rrule", {}, "recur", {"FREQ": "INVALID"}])
+        vRecur.from_jcal(["rrule", {}, "recur", {"freq": "INVALID"}])
