@@ -234,6 +234,28 @@ class Contentline(str):
             ) from exc
         return (name, params, values)
 
+    def value_separator_index(self) -> int:
+        r"""Return the index of the colon that separates the value.
+
+        This is the first colon that is not inside a quoted parameter section,
+        matching the value boundary used by :meth:`parts`. A colon inside a
+        quoted parameter value (for example ``ALTREP="http://x"``) is skipped,
+        and a colon that belongs to the value (``TEXT`` does not escape ``:``)
+        is not mistaken for the separator. Returns ``-1`` if there is none.
+        """
+        in_quotes = False
+        escaped = False
+        for i, ch in enumerate(self):
+            if ch == '"' and not escaped:
+                in_quotes = not in_quotes
+            elif ch == "\\" and not in_quotes:
+                escaped = True
+                continue
+            elif not in_quotes and not escaped and ch == ":":
+                return i
+            escaped = False
+        return -1
+
     @classmethod
     def from_ical(cls, ical, strict=False):
         """Unfold the content lines in an iCalendar into long content lines."""

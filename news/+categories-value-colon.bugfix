@@ -1,0 +1,1 @@
+Parse a ``CATEGORIES`` value that contains an unescaped colon correctly. ``TEXT`` values do not escape ``:``, so a category such as ``CATEGORIES:CONFIDENTIAL,http://example.com/tag`` was truncated to a single ``//example.com/tag`` because the value boundary was found with the last colon on the line instead of the first one outside the parameters. @alhudz
