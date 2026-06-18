@@ -70,7 +70,7 @@ class IcalendarTestCase(unittest.TestCase):
         # N or a LATIN CAPITAL LETTER N, that is "\n" or "\N".
 
         # Newlines are not allowed in content lines
-        self.assertRaises(AssertionError, Contentline, b"1234\r\n\r\n1234")
+        self.assertRaises(ValueError, Contentline, b"1234\r\n\r\n1234")
 
         assert Contentline("1234\\n\\n1234").to_ical() == b"1234\\n\\n1234"
 
