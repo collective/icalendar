@@ -145,7 +145,29 @@ class TZP:
             return tz
         if tz_id in WINDOWS_TO_OLSON:
             tz = self.__provider.timezone(WINDOWS_TO_OLSON[tz_id])
-        return tz or self.__provider.timezone(_unclean_id) or self.__tz_cache.get(tz_id)
+        tz = tz or self.__provider.timezone(_unclean_id) or self.__tz_cache.get(tz_id)
+        if tz is not None:
+            return tz
+        return self._timezone_from_global_id(_unclean_id)
+
+    def _timezone_from_global_id(self, tz_id: str) -> datetime.tzinfo | None:
+        """Resolve a globally unique TZID (RFC 5545, section 3.2.19).
+
+        A TZID beginning with a ``/`` is a "globally unique" identifier, which
+        clients such as libical/Evolution emit as ``/<vendor>/<Olson/Name>``
+        (e.g. ``/freeassociation.sourceforge.net/Europe/Berlin``). The vendor
+        prefix is not a real timezone, so strip it and resolve the trailing
+        Olson identifier. Try the longest suffix first so multi-part names such
+        as ``America/Argentina/Buenos_Aires`` still match.
+        """
+        if not tz_id.startswith("/"):
+            return None
+        parts = tz_id.strip("/").split("/")
+        for start in range(1, len(parts)):
+            tz = self.__provider.timezone("/".join(parts[start:]))
+            if tz is not None:
+                return tz
+        return None
 
     def uses_pytz(self) -> bool:
         """Whether we use pytz at all."""
