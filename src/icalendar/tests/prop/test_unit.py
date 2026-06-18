@@ -249,15 +249,15 @@ class TestProp(unittest.TestCase):
         from icalendar.prop import vGeo
 
         # Pass a list
-        assert vGeo([1.2, 3.0]).to_ical() == "1.2;3.0"
+        assert vGeo([1.2, 3.0]).to_ical() == b"1.2;3.0"
 
         # Pass a tuple
-        assert vGeo((1.2, 3.0)).to_ical() == "1.2;3.0"
+        assert vGeo((1.2, 3.0)).to_ical() == b"1.2;3.0"
 
         g = vGeo.from_ical("37.386013;-122.082932")
         assert g == (float("37.386013"), float("-122.082932"))
 
-        assert vGeo(g).to_ical() == "37.386013;-122.082932"
+        assert vGeo(g).to_ical() == b"37.386013;-122.082932"
 
         assert hash(vGeo(g)) == hash(g)
 

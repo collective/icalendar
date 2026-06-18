@@ -92,8 +92,8 @@ class vGeo:
         self.longitude = longitude
         self.params = Parameters(params)
 
-    def to_ical(self) -> str:
-        return f"{self.latitude};{self.longitude}"
+    def to_ical(self) -> bytes:
+        return f"{self.latitude};{self.longitude}".encode()
 
     @staticmethod
     def from_ical(ical: str) -> tuple[float, float]:
