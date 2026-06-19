@@ -54,3 +54,12 @@ def test_colon_in_a_quoted_parameter_is_not_the_value_separator():
 def test_value_separator_index_skips_quoted_colon():
     line = Contentline('CATEGORIES;ALTREP="http://p":A,B')
     assert line.value_separator_index() == line.index(":A,B")
+
+
+def test_value_separator_index_does_not_treat_backslash_as_escape():
+    # Backslash has no special meaning in the parameter grammar (RFC 5545
+    # §3.1), so the first colon after ``X-A=\`` is the value separator and
+    # the category is the single ``:``.
+    line = Contentline(r"CATEGORIES;X-A=\::")
+    assert line.value_separator_index() == 16
+    assert str(line)[line.value_separator_index() + 1 :] == ":"

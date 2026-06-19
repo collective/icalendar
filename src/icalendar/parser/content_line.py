@@ -237,23 +237,20 @@ class Contentline(str):
     def value_separator_index(self) -> int:
         r"""Return the index of the colon that separates the value.
 
-        This is the first colon that is not inside a quoted parameter section,
-        matching the value boundary used by :meth:`parts`. A colon inside a
-        quoted parameter value (for example ``ALTREP="http://x"``) is skipped,
-        and a colon that belongs to the value (``TEXT`` does not escape ``:``)
-        is not mistaken for the separator. Returns ``-1`` if there is none.
+        This is the first colon that is not inside a quoted parameter section.
+        A colon inside a quoted parameter value (for example
+        ``ALTREP="http://x"``) is skipped, and a colon that belongs to the
+        value (``TEXT`` does not escape ``:``) is not mistaken for the
+        separator. Backslash has no special meaning in the parameter grammar
+        (RFC 5545 §3.1), so it is treated as an ordinary character. Returns
+        ``-1`` if there is none.
         """
         in_quotes = False
-        escaped = False
         for i, ch in enumerate(self):
-            if ch == '"' and not escaped:
+            if ch == '"':
                 in_quotes = not in_quotes
-            elif ch == "\\" and not in_quotes:
-                escaped = True
-                continue
-            elif not in_quotes and not escaped and ch == ":":
+            elif ch == ":" and not in_quotes:
                 return i
-            escaped = False
         return -1
 
     @classmethod
