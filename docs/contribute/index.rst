@@ -7,7 +7,8 @@ This guide describes how to contribute to icalendar.
 Examples of how to contribute
 -----------------------------
 
--   Report issues in the `issue tracker <https://github.com/collective/icalendar/issues>`_.
+-   Report security issues per the `Security Policy <https://github.com/collective/icalendar/blob/main/SECURITY.md>`_.
+-   Report all other issues in the `issue tracker <https://github.com/collective/icalendar/issues>`_.
 -   Comment on and resolve issues.
 -   Submit pull requests from your fork of the icalendar repository.
 -   Extend the :doc:`documentation/index`.
