@@ -437,3 +437,25 @@ def test_delete_TRIGGER():
     a.TRIGGER = datetime(2017, 12, 1, 10, 1)
     del a.TRIGGER
     assert a.TRIGGER is None
+
+
+def test_add_promotes_date_for_microsecond_timedelta():
+    """Alarms._add must promote a date to a datetime when the timedelta has
+    a sub-day microseconds component.
+
+    Previously the early return only checked td.seconds == 0, which silently
+    dropped the microseconds on date + timedelta(microseconds=N) — date
+    arithmetic always ignores sub-day components, so callers saw 00:00:00.000000
+    instead of the expected fractional seconds.
+    """
+    a = Alarms()
+    # pure microseconds — no seconds/days component
+    assert a._add(date(2024, 1, 15), timedelta(microseconds=500000)) == datetime(
+        2024, 1, 15, 0, 0, 0, 500000
+    )
+    # pure days — still stays a date
+    assert a._add(date(2024, 1, 15), timedelta(days=2)) == date(2024, 1, 17)
+    # mixed days + microseconds — becomes datetime with full precision
+    assert a._add(date(2024, 1, 15), timedelta(days=2, microseconds=500000)) == (
+        datetime(2024, 1, 17, 0, 0, 0, 500000)
+    )

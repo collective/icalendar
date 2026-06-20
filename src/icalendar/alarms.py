@@ -250,7 +250,12 @@ class Alarms:
     def _add(self, dt: date, td: timedelta):
         """Add a timedelta to a datetime."""
         if is_date(dt):
-            if td.seconds == 0:
+            # Only promote a date to a datetime when the timedelta actually has
+            # a sub-day time component (seconds OR microseconds). td.seconds alone
+            # misses timedelta(microseconds=N) — its value is always 0 even when
+            # td.microseconds > 0 — which would silently let date + timedelta
+            # drop the microseconds at the day boundary.
+            if td.seconds == 0 and td.microseconds == 0:
                 return dt + td
             dt = to_datetime(dt)
         return normalize_pytz(dt + td)
