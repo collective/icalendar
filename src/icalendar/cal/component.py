@@ -483,8 +483,9 @@ class Component(CaselessDict):
         recursive: bool = True,
         sorted: bool = True,
     ) -> list[tuple[str, object]]:
-        """Returns properties in this component and subcomponents as:
-        [(name, value), ...]
+        """Returns properties in this component and subcomponents as a list.
+
+        The list contains ``(name, value)`` tuples.
         """
         # Iterative implementation to avoid RecursionError
         result = []
