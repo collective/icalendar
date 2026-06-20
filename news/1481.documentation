@@ -1,0 +1,1 @@
+Add tests that flag deprecated ``Args`` and ``Arguments`` section headings in public docstrings. This contribution was drafted with AI assistance and reviewed by @kingrubic.
