@@ -222,7 +222,7 @@ class Todo(Component):
         You can set the duration to automatically adjust the end time while keeping
         start locked.
 
-        Setting the duration will:
+        Setting the duration will do the following.
 
         1.  Keep the start time locked (unchanged)
         2.  Adjust the end time to start + duration

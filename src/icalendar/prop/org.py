@@ -16,7 +16,7 @@ class vOrg:
 
     Its value is a structured type consisting of components separated
     by semicolons. The components are the organization name, followed
-    by zero or more levels of organizational unit names:
+    by zero or more levels of organizational unit names.
 
     .. code-block:: text
 
