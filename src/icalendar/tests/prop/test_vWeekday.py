@@ -27,6 +27,21 @@ def test_error():
         vWeekday.from_ical("-100MO")
 
 
+@pytest.mark.parametrize("value", ["١٢MO", "٥SU", "۱۲FR", "١MO"])
+def test_non_ascii_ordwk_digits_rejected(value):
+    r"""Non-ASCII digits must not be accepted in the ``ordwk`` (relative) part.
+
+    ``\d`` is ``True`` for non-ASCII digits (e.g. Arabic-Indic ones), and
+    ``int`` parses them, so an Arabic-Indic ``"12MO"`` was silently accepted
+    as ``relative == 12``, contrary to :rfc:`5545#section-3.3.10`, which allows
+    only ASCII ``DIGIT`` (``ordwk = 1*2DIGIT``).
+    """
+    with pytest.raises(ValueError):
+        vWeekday(value)
+    with pytest.raises(ValueError):
+        vWeekday.from_ical(value)
+
+
 @pytest.mark.parametrize("value", ["2MO\n", "MO\n", "+2TH\n", "-1SU\n"])
 def test_trailing_newline_rejected(value):
     r"""A trailing line break must not be accepted and carried into the value.
