@@ -46,6 +46,27 @@ def test_content_lines_parsed_properly(raw_content_line, expected_output):
 
 
 @pytest.mark.parametrize(
+    ("raw_content_line", "expected_altrep"),
+    [
+        # Literal percent escapes in a parameter value (common in URIs) must
+        # survive parsing. They collided with the parser's internal
+        # ``\\,`` -> ``%2C`` transport encoding and were silently decoded.
+        ('X-P;ALTREP="http://x/a%2Cb%3Ac%3Bd%5Ce":v', "http://x/a%2Cb%3Ac%3Bd%5Ce"),
+        ('X-P;ALTREP="http://x/%2520":v', "http://x/%2520"),
+        # Same value unquoted, with a backslash-escaped colon protecting the
+        # URI scheme separator. Percent escapes must survive here too.
+        ("X-P;ALTREP=http\\://x/a%2Cb%3Ac%3Bd%5Ce:v", "http://x/a%2Cb%3Ac%3Bd%5Ce"),
+        # A backslash-escaped delimiter still decodes to the bare character.
+        ("X-P;ALTREP=a\\,b:v", "a,b"),
+    ],
+)
+def test_percent_escapes_in_parameter_values_are_preserved(
+    raw_content_line, expected_altrep
+):
+    assert Contentline(raw_content_line).parts()[1]["ALTREP"] == expected_altrep
+
+
+@pytest.mark.parametrize(
     "timezone_info",
     [
         # General timezone aware dates in ical string
