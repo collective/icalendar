@@ -123,9 +123,13 @@ class Contentline(str):
 
     def __new__(cls, value, strict=False, encoding=DEFAULT_ENCODING):
         value = to_unicode(value, encoding=encoding)
-        assert "\n" not in value, (
-            "Content line can not contain unescaped new line characters."
-        )
+        # Use an explicit check rather than ``assert``: this guards against
+        # content-line (CRLF) injection, and ``assert`` is stripped under
+        # ``python -O``, which would silently disable the protection.
+        if "\n" in value:
+            raise ValueError(
+                "Content line can not contain unescaped new line characters."
+            )
         self = super().__new__(cls, value)
         self.strict = strict
         return self

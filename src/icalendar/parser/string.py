@@ -119,7 +119,10 @@ def _foldline(line: str, limit: int = 75, fold_sep: str = "\r\n ") -> str:
     SPACE or HTAB).
     """
     assert isinstance(line, str)
-    assert "\n" not in line
+    # Explicit check (not ``assert``): a newline here would fold into an
+    # injected content line, and ``assert`` is removed under ``python -O``.
+    if "\n" in line:
+        raise ValueError("Folded line can not contain unescaped new line characters.")
 
     # Use a fast and simple variant for the common case that line is all ASCII.
     try:
