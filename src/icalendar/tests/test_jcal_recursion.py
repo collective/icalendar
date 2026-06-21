@@ -92,6 +92,54 @@ def test_deeply_nested_jcal_round_trips():
     assert levels == depth
 
 
+def test_branching_jcal_round_trips():
+    """to_jcal preserves sibling order in branching (non-linear) trees.
+
+    The round-trip test above only exercises a single child per node. The
+    iterative stack walk appends each child to its parent before pushing it,
+    so sibling order must be independent of the LIFO pop order -- this locks
+    that in with multiple siblings at two levels.
+    """
+    jcal = [
+        "vcalendar",
+        [["version", {}, "text", "2.0"], ["prodid", {}, "text", "-//test//EN"]],
+        [
+            [
+                "vevent",
+                [["uid", {}, "text", "first@test"]],
+                [
+                    [
+                        "valarm",
+                        [
+                            ["action", {}, "text", "DISPLAY"],
+                            ["description", {}, "text", "A"],
+                            ["trigger", {}, "duration", "-PT15M"],
+                        ],
+                        [],
+                    ],
+                    [
+                        "valarm",
+                        [
+                            ["action", {}, "text", "AUDIO"],
+                            ["trigger", {}, "duration", "-PT5M"],
+                        ],
+                        [],
+                    ],
+                ],
+            ],
+            ["vevent", [["uid", {}, "text", "second@test"]], []],
+        ],
+    ]
+    result = Component.from_jcal(jcal).to_jcal()
+    # Sibling VEVENTs keep their order.
+    assert result[2][0][1][0][3] == "first@test"
+    assert result[2][1][1][0][3] == "second@test"
+    # The first VEVENT keeps both of its VALARM subcomponents, in order.
+    assert len(result[2][0][2]) == 2
+    assert result[2][0][2][0][1][0][3] == "DISPLAY"
+    assert result[2][0][2][1][1][0][3] == "AUDIO"
+
+
 def test_error_path_is_preserved_for_nested_jcal():
     """Errors deep in the tree still report the accumulated jCal path."""
     # A malformed (non-list) subcomponent nested two levels deep.
