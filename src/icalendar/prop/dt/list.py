@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from datetime import date, datetime
 from typing import Any, ClassVar
 
@@ -20,7 +21,11 @@ class vDDDLists:
     def __init__(self, dt_list, params: dict[str, Any] | None = None):
         if params is None:
             params = {}
-        if not hasattr(dt_list, "__iter__"):
+        if not hasattr(dt_list, "__iter__") or (
+            isinstance(dt_list, Sequence) and len(dt_list) == 2 and dt_list[1] is None
+        ):
+            # A ``(dt, None)`` pair (tuple or list) is the rdates form of a single
+            # date, not a list of two values, so don't iterate it element-wise (#1439).
             dt_list = [dt_list]
         vddd = []
         tzid = None

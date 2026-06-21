@@ -266,9 +266,10 @@ class ComponentIcalParser:
         # Special handling for CATEGORIES - need raw value
         # before unescaping to properly split on unescaped commas
         line_str = str(line)
-        # Use rfind to get the last colon (value separator)
-        # to handle parameters with colons like ALTREP="http://..."
-        colon_idx = line_str.rfind(":")
+        # The value separator is the first colon outside a quoted parameter
+        # section. ``rfind`` here would pick a colon that belongs to the value
+        # (``TEXT`` does not escape ``:``) and truncate the categories.
+        colon_idx = line.value_separator_index()
         if colon_idx > 0:
             raw_value = line_str[colon_idx + 1 :]
             # Parse categories immediately (not lazily) for both

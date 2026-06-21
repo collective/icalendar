@@ -1,0 +1,1 @@
+Raise :class:`~icalendar.error.InvalidCalendar` instead of leaking :exc:`OverflowError` when a ``DURATION`` value is too large for :class:`datetime.timedelta`, for example, ``P999999999999999999W``. Parsing a whole calendar now records such a value as an error, like any other invalid property, rather than aborting the parse. @arshsmith
