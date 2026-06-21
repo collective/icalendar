@@ -323,6 +323,13 @@ class Parameters(CaselessDict):
             items.sort()
 
         for key, value in items:
+            if value is None:
+                # single_string_parameter setters delete the key when
+                # assigned None, but direct dict-style assignment
+                # (params['CN'] = None) stores None as the value and
+                # bypasses that setter. Treat None as absent everywhere
+                # here so to_ical never crashes on it.
+                continue
             if key == "TZID" and value == "UTC":
                 # The "TZID" property parameter MUST NOT be applied to DATE-TIME
                 # properties whose time values are specified in UTC.
@@ -333,6 +340,13 @@ class Parameters(CaselessDict):
                 check_quoteable_characters
                 and any(c in value for c in check_quoteable_characters)
             )
+            if isinstance(value, SEQUENCE_TYPES):
+                # Drop individual None entries from list/tuple values
+                # before delegating to param_value; the underlying
+                # q_join / dquote path can only handle strings.
+                value = [v for v in value if v is not None]
+                if not value:
+                    continue
             quoted_value = param_value(value, always_quote=always_quote)
             if isinstance(quoted_value, str):
                 quoted_value = quoted_value.encode(DEFAULT_ENCODING)

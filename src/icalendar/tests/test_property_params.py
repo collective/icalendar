@@ -138,3 +138,54 @@ def test_repr():
     """Test correct class representation."""
     it = Parameters(parameter1="Value1")
     assert re.match(r"Parameters\({u?'PARAMETER1': u?'Value1'}\)", str(it))
+
+
+def test_to_ical_skips_none_scalar_values():
+    """Dict-style assignment of None to a parameter must not crash to_ical.
+
+    The single_string_parameter setter removes the key when assigned None,
+    but params['CN'] = None goes through __setitem__ (inherited from
+    CaselessDict) and stores the literal None. to_ical must treat that
+    as "absent" rather than failing in any(c in value for c in chars)
+    or in param_value's decode branch.
+    """
+    for key in ("CN", "ALTREP", "DELEGATED-FROM", "DIR", "MEMBER",
+                "SENT-BY", "X-ADDRESS", "X-TITLE", "LINKREL"):
+        params = Parameters()
+        params[key] = None
+        assert params.to_ical() == b"", f"to_ical should skip None for {key!r}"
+
+
+def test_to_ical_skips_none_entries_in_sequence_values():
+    """Individual None entries in list/tuple values must be dropped, not crash.
+
+    params['MEMBER'] = ['mailto:a@x.com', None, 'mailto:b@x.com'] used to raise
+    'expected string or bytes-like object, got NoneType' inside dquote.
+    """
+    params = Parameters()
+    params["MEMBER"] = ["mailto:a@x.com", None, "mailto:b@x.com"]
+    assert params.to_ical() == b'MEMBER="mailto:a@x.com","mailto:b@x.com"'
+
+    # An all-None sequence should drop the whole key (consistent with the
+    # scalar None behavior above).
+    params = Parameters()
+    params["MEMBER"] = [None, None]
+    assert params.to_ical() == b""
+
+
+def test_to_ical_event_organizer_with_none_cn_serializes():
+    """The realistic organizer-without-CN path must round-trip.
+
+    An organizer vCalAddress is created, a CN key is set to None via
+    dict-style assignment (simulating data that arrived via from_ical
+    with a missing CN), and the calendar is serialized. Before the fix
+    this raised TypeError: argument of type 'NoneType' is not iterable.
+    """
+    event = Event()
+    organizer = vCalAddress("mailto:foo@example.com")
+    organizer.params["CN"] = None
+    event["ORGANIZER"] = organizer
+    out = event.to_ical()
+    # The CN parameter must be absent; the organizer URI still serializes.
+    assert b"CN" not in out
+    assert b"mailto:foo@example.com" in out
