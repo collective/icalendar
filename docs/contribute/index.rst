@@ -7,7 +7,8 @@ This guide describes how to contribute to icalendar.
 Examples of how to contribute
 -----------------------------
 
--   Report issues in the `issue tracker <https://github.com/collective/icalendar/issues>`_.
+-   Report security issues per the `Security Policy <https://github.com/collective/icalendar/blob/main/SECURITY.md>`_.
+-   Report all other issues in the `issue tracker <https://github.com/collective/icalendar/issues>`_.
 -   Comment on and resolve issues.
 -   Submit pull requests from your fork of the icalendar repository.
 -   Extend the :doc:`documentation/index`.
@@ -110,6 +111,7 @@ Report suspected violations
 ```````````````````````````
 
 To report a suspected violation of this AI policy, see the `Reporting an issue <https://pycal.org/code-of-conduct/#reporting-an-issue>`_ section in the Python Calendaring Ecosystem's Code of Conduct.
+The maintainers will investigate and collect information from various sources, including but not limited to the use of automated GitHub workflows to identify suspected AI use.
 The maintainers may close pull requests without providing feedback that they deem to be spam, AI slop, abuse, or that do not comply with :ref:`pull request requirements <pull-request-requirements>`.
 The maintainers may also take further action, including suspend, ban, or report GitHub users, as described in Python Calendaring Ecosystem's `Code of Conduct <https://pycal.org/code-of-conduct/>`_.
 

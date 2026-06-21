@@ -103,8 +103,8 @@ def _get_rdates(
 
     .. note::
 
-        You cannot modify the RDATE value by modifying the result.
-        Use :func:`icalendar.cal.Component.add` to add values.
+        Modifying the returned list does not change the RDATE value. Assign to
+        :attr:`rdates` or use :func:`icalendar.cal.Component.add` instead.
 
         If you want to compute recurrences, have a look at
         `Related Projects <https://github.com/collective/icalendar/blob/main/README.rst#related-projects>`_.
@@ -127,7 +127,24 @@ def _get_rdates(
     return result
 
 
-rdates_property = property(_get_rdates)
+def _set_rdates(self: Component, value) -> None:
+    """Set the RDATE values, replacing any existing ones.
+
+    ``value`` is a list as returned by :attr:`rdates` (each item a date, a
+    datetime, or a ``(start, end)`` period tuple). Setting an empty list or
+    :obj:`None` removes the RDATE property.
+    """
+    _del_rdates(self)
+    if value:
+        self.add("RDATE", value)
+
+
+def _del_rdates(self: Component) -> None:
+    """Delete all RDATE values."""
+    self.pop("RDATE", None)
+
+
+rdates_property = property(_get_rdates, _set_rdates, _del_rdates)
 
 
 def _get_exdates(self: Component) -> list[date | datetime]:
@@ -193,8 +210,8 @@ def _get_exdates(self: Component) -> list[date | datetime]:
 
     .. note::
 
-        You cannot modify the EXDATE value by modifying the result.
-        Use :func:`icalendar.cal.Component.add` to add values.
+        Modifying the returned list does not change the EXDATE value. Assign to
+        :attr:`exdates` or use :func:`icalendar.cal.Component.add` instead.
 
         If you want to compute recurrences, have a look at
         `Related Projects <https://github.com/collective/icalendar/blob/main/README.rst#related-projects>`_.
@@ -210,7 +227,23 @@ def _get_exdates(self: Component) -> list[date | datetime]:
     return result
 
 
-exdates_property = property(_get_exdates)
+def _set_exdates(self: Component, value) -> None:
+    """Set the EXDATE values, replacing any existing ones.
+
+    ``value`` is a list as returned by :attr:`exdates` (each item a date or a
+    datetime). Setting an empty list or :obj:`None` removes the EXDATE property.
+    """
+    _del_exdates(self)
+    if value:
+        self.add("EXDATE", value)
+
+
+def _del_exdates(self: Component) -> None:
+    """Delete all EXDATE values."""
+    self.pop("EXDATE", None)
+
+
+exdates_property = property(_get_exdates, _set_exdates, _del_exdates)
 
 
 def _get_rrules(self: Component) -> list[vRecur]:
@@ -969,11 +1002,14 @@ def create_single_property(
 
     {doc}
 
-    Accepted values: {", ".join(t.__name__ for t in value_type)}.
-    If the attribute has invalid values, we raise
-    :exc:`~icalendar.error.InvalidCalendar`.
-    If the value is absent, we return None.
-    You can also delete the value with del or by setting it to None.
+    To delete the value, either use ``del`` or set it to ``None``.
+
+    Returns:
+        If the value is absent, return ``None``.
+
+    Raises:
+        :exc:`~icalendar.error.InvalidCalendar`
+            If the attribute has invalid values.
     """
     return property(p_get, p_set, p_del, p_doc)
 

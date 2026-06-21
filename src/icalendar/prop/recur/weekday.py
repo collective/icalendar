@@ -10,7 +10,7 @@ from icalendar.parser import Parameters
 from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
 
 WEEKDAY_RULE = re.compile(
-    r"(?P<signal>[+-]?)(?P<relative>[\d]{0,2})(?P<weekday>[\w]{2})$"
+    r"(?P<signal>[+-]?)(?P<relative>[\d]{0,2})(?P<weekday>[\w]{2})\Z"
 )
 
 

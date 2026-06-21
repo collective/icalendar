@@ -12,11 +12,20 @@ from icalendar.parser.string import (
 )
 from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
 
-UFOLD = re.compile("(\r?\n)+[ \t]")
+# Equivalent to the natural ``(\r?\n)+[ \t]`` but without its quadratic cost:
+# the greedy run is re-tried at every line break of a long unfoldable block, so
+# a megabyte of bare newlines takes seconds. The leading lookbehinds pin a match
+# to the first line break of a run, making a failed attempt O(1) instead of a
+# full rescan, while matching exactly the same strings.
+UFOLD = re.compile(r"(?:(?<!\n)\r\n|(?<![\r\n])\n)(?:\r?\n)*[ \t]")
 NEWLINE = re.compile(r"\r?\n")
 
 OWS = " \t"
-OWS_AROUND_DELIMITERS_RE = re.compile(r"[ \t]*([;=])[ \t]*")
+# ``[ \t]*([;=])[ \t]*`` in one pass rescans a long whitespace run at every
+# position. Splitting it into two anchored passes (leading then trailing) keeps
+# the result identical but removes the quadratic blow-up.
+OWS_BEFORE_DELIMITER_RE = re.compile(r"(?<![ \t])[ \t]+([;=])")
+OWS_AFTER_DELIMITER_RE = re.compile(r"([;=])[ \t]+")
 
 
 def _strip_ows_around_delimiters(st: str, delimiters: str = ";=") -> str:
@@ -37,7 +46,8 @@ def _strip_ows_around_delimiters(st: str, delimiters: str = ";=") -> str:
 
     # Fast regex-based path for simple parameter sections without quoting/escaping.
     if delimiters == ";=" and '"' not in st and "\\" not in st:
-        return OWS_AROUND_DELIMITERS_RE.sub(r"\1", st).strip()
+        st = OWS_BEFORE_DELIMITER_RE.sub(r"\1", st)
+        return OWS_AFTER_DELIMITER_RE.sub(r"\1", st).strip()
 
     out: list[str] = []
     pending_ws: list[str] = []
@@ -223,6 +233,25 @@ class Contentline(str):
                 f"Content line could not be parsed into parts: '{self}': {exc}"
             ) from exc
         return (name, params, values)
+
+    def value_separator_index(self) -> int:
+        r"""Return the index of the colon that separates the value.
+
+        This is the first colon that is not inside a quoted parameter section.
+        A colon inside a quoted parameter value (for example
+        ``ALTREP="http://x"``) is skipped, and a colon that belongs to the
+        value (``TEXT`` does not escape ``:``) is not mistaken for the
+        separator. Backslash has no special meaning in the parameter grammar
+        (RFC 5545 §3.1), so it is treated as an ordinary character. Returns
+        ``-1`` if there is none.
+        """
+        in_quotes = False
+        for i, ch in enumerate(self):
+            if ch == '"':
+                in_quotes = not in_quotes
+            elif ch == ":" and not in_quotes:
+                return i
+        return -1
 
     @classmethod
     def from_ical(cls, ical, strict=False):
