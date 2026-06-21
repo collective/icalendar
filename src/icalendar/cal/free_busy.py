@@ -106,25 +106,25 @@ class FreeBusy(Component):
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
     ):
-        """Create a new alarm with all required properties.
+        """Create a new FreeBusy with all required properties.
 
-        This creates a new Alarm in accordance with :rfc:`5545`.
+        This creates a new FreeBusy in accordance with :rfc:`5545`.
 
         Parameters:
-            comments: The :attr:`~icalendar.cal.component.Component.comments` of the component.
-            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the component.
-            contacts: The :attr:`contacts` of the component.
-            end: The :attr:`end` of the component.
-            links: The :attr:`~icalendar.cal.component.Component.links` of the component.
-            organizer: The :attr:`organizer` of the component.
-            refids: :attr:`~icalendar.cal.component.Component.refids` of the component.
-            related_to: :attr:`~icalendar.cal.component.Component.related_to` of the component.
-            stamp: The :attr:`~icalendar.cal.component.Component.DTSTAMP` of the component.
+            comments: The :attr:`~icalendar.cal.component.Component.comments` of the free_busy.
+            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the free_busy.
+            contacts: The :attr:`contacts` of the free_busy.
+            end: The :attr:`end` of the free_busy.
+            links: The :attr:`~icalendar.cal.component.Component.links` of the free_busy.
+            organizer: The :attr:`organizer` of the free_busy.
+            refids: :attr:`~icalendar.cal.component.Component.refids` of the free_busy.
+            related_to: :attr:`~icalendar.cal.component.Component.related_to` of the free_busy.
+            stamp: The :attr:`~icalendar.cal.component.Component.DTSTAMP` of the free_busy.
                 If None, this is set to the current time.
-            start: The :attr:`start` of the component.
-            uid: The :attr:`uid` of the component.
+            start: The :attr:`start` of the free_busy.
+            uid: The :attr:`uid` of the free_busy.
                 If None, this is set to a new :func:`uuid.uuid4`.
-            url: The :attr:`url` of the component.
+            url: The :attr:`url` of the free_busy.
 
         Returns:
             :class:`FreeBusy`

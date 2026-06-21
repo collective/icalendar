@@ -1,0 +1,5 @@
+Clarified the :meth:`icalendar.cal.free_busy.FreeBusy.new`,
+:meth:`icalendar.cal.availability.Availability.new`, and
+:meth:`icalendar.cal.journal.Journal.new` docstrings so their summaries and
+documented parameters match the Python implementations. This change was drafted
+with OpenAI Codex and reviewed by @axelray-dev.

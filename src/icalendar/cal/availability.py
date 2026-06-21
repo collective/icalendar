@@ -263,7 +263,7 @@ class Availability(Component):
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
     ):
-        """Create a new event with all required properties.
+        """Create a new availability with all required properties.
 
         This creates a new Availability in accordance with :rfc:`7953`.
 
