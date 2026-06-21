@@ -265,7 +265,6 @@ class Journal(Component):
         journal.url = url
         journal.organizer = organizer
         journal.contacts = contacts
-        journal.start = start
         journal.status = status
         journal.attendees = attendees
         journal.RECURRENCE_ID = recurrence_id
