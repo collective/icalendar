@@ -8,6 +8,8 @@ from icalendar.tools import to_datetime
 from .windows_to_olson import WINDOWS_TO_OLSON
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
+
     from dateutil.rrule import rrule
 
     from icalendar import prop
@@ -137,37 +139,49 @@ class TZP:
         return tzid.strip("/")
 
     def timezone(self, tz_id: str) -> datetime.tzinfo | None:
-        """Return a timezone with an id or None if we cannot find it."""
-        _unclean_id = tz_id
-        tz_id = self.clean_timezone_id(tz_id)
-        tz = self.__provider.timezone(tz_id)
-        if tz is not None:
-            return tz
-        if tz_id in WINDOWS_TO_OLSON:
-            tz = self.__provider.timezone(WINDOWS_TO_OLSON[tz_id])
-        tz = tz or self.__provider.timezone(_unclean_id) or self.__tz_cache.get(tz_id)
-        if tz is not None:
-            return tz
-        return self._timezone_from_global_id(_unclean_id)
+        """Return a timezone with an id or None if we cannot find it.
 
-    def _timezone_from_global_id(self, tz_id: str) -> datetime.tzinfo | None:
-        """Resolve a globally unique TZID (RFC 5545, section 3.2.19).
-
-        A TZID beginning with a ``/`` is a "globally unique" identifier, which
-        clients such as libical/Evolution emit as ``/<vendor>/<Olson/Name>``
-        (e.g. ``/freeassociation.sourceforge.net/Europe/Berlin``). The vendor
-        prefix is not a real timezone, so strip it and resolve the trailing
-        Olson identifier. Try the longest suffix first so multi-part names such
-        as ``America/Argentina/Buenos_Aires`` still match.
+        ``tz_id`` may be a plain Olson name (``Europe/Berlin``), a Windows
+        timezone name, or a "globally unique" identifier
+        (:rfc:`5545#section-3.2.19`) such as
+        ``/freeassociation.sourceforge.net/Europe/Berlin``. We try the
+        candidate ids from :meth:`_lookup_ids` in order, checking the cache
+        before the provider for each one, and cache the first match under the
+        primary id so the next lookup is fast.
         """
-        if not tz_id.startswith("/"):
-            return None
-        parts = tz_id.strip("/").split("/")
-        for start in range(1, len(parts)):
-            tz = self.__provider.timezone("/".join(parts[start:]))
+        primary = None
+        for lookup_id in self._lookup_ids(tz_id):
+            if primary is None:
+                primary = lookup_id
+            tz = self.__tz_cache.get(lookup_id) or self.__provider.timezone(lookup_id)
             if tz is not None:
+                self.__tz_cache[primary] = tz
                 return tz
         return None
+
+    def _lookup_ids(self, tz_id: str) -> Iterator[str]:
+        """Yield the ids to try when resolving ``tz_id``, best match first.
+
+        1.  the cleaned id, without any surrounding ``/``
+        2.  the Olson name of a Windows timezone (e.g.
+            ``W. Europe Standard Time`` -> ``Europe/Berlin``)
+        3.  for a "globally unique" TZID (:rfc:`5545#section-3.2.19`) of the
+            form ``/<vendor>/<Olson/Name>`` -- emitted by clients such as
+            libical, Evolution and Mozilla Lightning -- the trailing Olson
+            identifier, dropping vendor path components from the front. The
+            longest suffix is tried first so multi-part names such as
+            ``America/Argentina/Buenos_Aires`` still match.
+        4.  the original, unmodified id
+        """
+        cleaned = self.clean_timezone_id(tz_id)
+        yield cleaned
+        if cleaned in WINDOWS_TO_OLSON:
+            yield WINDOWS_TO_OLSON[cleaned]
+        if tz_id.startswith("/"):
+            parts = cleaned.split("/")
+            for start in range(1, len(parts)):
+                yield "/".join(parts[start:])
+        yield tz_id
 
     def uses_pytz(self) -> bool:
         """Whether we use pytz at all."""
