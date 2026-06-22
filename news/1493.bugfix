@@ -1,0 +1,1 @@
+Include `funding.json` in Hatchling source distributions so packaging from the PyPI sdist keeps the funding metadata tests passing.

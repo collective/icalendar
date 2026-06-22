@@ -141,7 +141,6 @@ icalendar = "icalendar.cli:main"
 [tool.hatch.build]
 exclude = [
   "/.*",
-  "/*.*",
   "/src/icalendar/fuzzing",
   "/dist",
   "/build",
