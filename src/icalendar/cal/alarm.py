@@ -376,6 +376,10 @@ class Alarm(Component):
         duration: timedelta | None = None,
         repeat: int | None = None,
         uid: str | uuid.UUID | None = None,
+        links: LINKS_TYPE_SETTER = None,
+        related_to: RELATED_TO_TYPE_SETTER = None,
+        refids: list[str] | str | None = None,
+        concepts: CONCEPTS_TYPE_SETTER = None,
     ) -> Alarm:
         """Create a new DISPLAY alarm that shows a text reminder.
 
@@ -443,11 +447,16 @@ class Alarm(Component):
             raise InvalidCalendar("DISPLAY alarm requires a description")
         if trigger is None:
             raise InvalidCalendar("DISPLAY alarm requires a trigger")
-        alarm: Alarm = cls()
+        alarm: Alarm = cls.new(
+            description=description,
+            uid=uid,
+            links=links,
+            related_to=related_to,
+            refids=refids,
+            concepts=concepts,
+        )
         alarm.add("ACTION", "DISPLAY")
-        alarm.description = description
         alarm.TRIGGER = trigger
-        alarm.uid = uid
         alarm._apply_duration_repeat(duration, repeat)
         return alarm
 
@@ -459,6 +468,10 @@ class Alarm(Component):
         duration: timedelta | None = None,
         repeat: int | None = None,
         uid: str | uuid.UUID | None = None,
+        links: LINKS_TYPE_SETTER = None,
+        related_to: RELATED_TO_TYPE_SETTER = None,
+        refids: list[str] | str | None = None,
+        concepts: CONCEPTS_TYPE_SETTER = None,
     ) -> Alarm:
         """Create a new AUDIO alarm that plays a sound.
 
@@ -511,10 +524,15 @@ class Alarm(Component):
         """
         if trigger is None:
             raise InvalidCalendar("AUDIO alarm requires a trigger")
-        alarm: Alarm = cls()
+        alarm: Alarm = cls.new(
+            uid=uid,
+            links=links,
+            related_to=related_to,
+            refids=refids,
+            concepts=concepts,
+        )
         alarm.add("ACTION", "AUDIO")
         alarm.TRIGGER = trigger
-        alarm.uid = uid
         if attach:
             alarm.add(
                 "ATTACH", vBinary(attach) if isinstance(attach, bytes) else attach
@@ -533,6 +551,10 @@ class Alarm(Component):
         duration: timedelta | None = None,
         repeat: int | None = None,
         uid: str | uuid.UUID | None = None,
+        links: LINKS_TYPE_SETTER = None,
+        related_to: RELATED_TO_TYPE_SETTER = None,
+        refids: list[str] | str | None = None,
+        concepts: CONCEPTS_TYPE_SETTER = None,
     ) -> Alarm:
         """Create a new EMAIL alarm that sends an email notification.
 
@@ -604,13 +626,18 @@ class Alarm(Component):
             raise InvalidCalendar("EMAIL alarm requires a trigger")
         if not attendees:
             raise InvalidCalendar("EMAIL alarm requires at least one attendee")
-        alarm: Alarm = cls()
+        alarm: Alarm = cls.new(
+            summary=summary,
+            description=description,
+            uid=uid,
+            attendees=attendees,
+            links=links,
+            related_to=related_to,
+            refids=refids,
+            concepts=concepts,
+        )
         alarm.add("ACTION", "EMAIL")
-        alarm.summary = summary
-        alarm.description = description
         alarm.TRIGGER = trigger
-        alarm.attendees = attendees
-        alarm.uid = uid
         if attachments:
             for attachment in attachments:
                 alarm.add("ATTACH", attachment)
