@@ -9,7 +9,7 @@ from icalendar import vBinary, vRecur
 from icalendar.cal.calendar import Calendar
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.cal.event import Event
-from icalendar.parser import Contentline, Parameters, _unescape_char
+from icalendar.parser import Contentline, Parameters, _foldline, _unescape_char
 
 
 @pytest.mark.parametrize(
@@ -121,6 +121,49 @@ def test_description_parsed_properly_issue_53(events):
         b"July 12 at 6:30 PM"
         in events.issue_53_description_parsed_properly["DESCRIPTION"].to_ical()
     )
+
+
+@pytest.mark.parametrize(
+    "escape_sequence",
+    [
+        r"\n",
+        r"\N",
+        r"\,",
+        r"\;",
+        r"\\",
+        "^n",
+        "^^",
+        "^'",
+    ],
+)
+@pytest.mark.parametrize("line_limit", range(60, 91))
+def test_foldline_does_not_split_escape_sequences_issue_1501(
+    escape_sequence, line_limit
+):
+    """Issue #1501 - line folding must not split escape sequences."""
+    prefix = "DESCRIPTION:" + ("a" * (line_limit - len("DESCRIPTION:") - 2))
+    line = prefix + escape_sequence + "after fold"
+
+    folded = _foldline(line, limit=line_limit)
+
+    assert "\r\n " in folded
+    assert (escape_sequence[0] + "\r\n " + escape_sequence[1]) not in folded
+
+
+@pytest.mark.parametrize("escape_sequence", [r"\n", "^n"])
+def test_foldline_does_not_split_escape_sequences_across_multiple_lines_issue_1501(
+    escape_sequence,
+):
+    """Issue #1501 - escape-aware folding applies after the first fold too."""
+    line_limit = 60
+    prefix = "DESCRIPTION:" + ("a" * (line_limit - len("DESCRIPTION:") - 2))
+    repeated_segment = escape_sequence + ("b" * (line_limit - len(escape_sequence) - 1))
+    line = prefix + repeated_segment + escape_sequence + "after fold"
+
+    folded = _foldline(line, limit=line_limit)
+
+    assert folded.count("\r\n ") >= 2
+    assert (escape_sequence[0] + "\r\n " + escape_sequence[1]) not in folded
 
 
 def test_raises_value_error_for_properties_without_parent_pull_179():
