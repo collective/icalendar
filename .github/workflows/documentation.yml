@@ -28,7 +28,7 @@ jobs:
       matrix:
         python-version: ['3.11', '3.14']
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           fetch-tags: true
