@@ -54,9 +54,11 @@ class Timezone(Component):
 
     @staticmethod
     def _extract_offsets(component: TimezoneDaylight | TimezoneStandard, tzname: str):
-        """extract offsets and transition times from a VTIMEZONE component
-        :param component: a STANDARD or DAYLIGHT component
-        :param tzname: the name of the zone
+        """Extract offsets and transition times from a VTIMEZONE component.
+
+        Parameters:
+            component: A STANDARD or DAYLIGHT component.
+            tzname: The name of the zone.
         """
         offsetfrom = component.TZOFFSETFROM
         offsetto = component.TZOFFSETTO
@@ -108,9 +110,11 @@ class Timezone(Component):
 
     @staticmethod
     def _make_unique_tzname(tzname, tznames):
-        """
-        :param tzname: Candidate tzname
-        :param tznames: Other tznames
+        """Make a tzname unique by appending ``_1``, ``_2``, etc.
+
+        Parameters:
+            tzname: Candidate tzname.
+            tznames: Other tznames.
         """
         # TODO better way of making sure tznames are unique
         while tzname in tznames:
@@ -119,14 +123,14 @@ class Timezone(Component):
         return tzname
 
     def to_tz(self, tzp: TZP = tzp, lookup_tzid: bool = True):
-        """convert this VTIMEZONE component to a timezone object
+        """Convert this VTIMEZONE component to a timezone object.
 
-        :param tzp: timezone provider to use
-        :param lookup_tzid: whether to use the TZID property to look up existing
-                            timezone definitions with tzp.
-                            If it is False, a new timezone will be created.
-                            If it is True, the existing timezone will be used
-                            if it exists, otherwise a new timezone will be created.
+        Parameters:
+            tzp: Timezone provider to use.
+            lookup_tzid: Whether to use the TZID property to look up existing
+                timezone definitions with tzp. If ``False``, a new timezone
+                will be created. If ``True``, the existing timezone will be
+                used if it exists, otherwise a new timezone will be created.
         """
         if lookup_tzid:
             tz = tzp.timezone(self.tz_name)
@@ -246,12 +250,16 @@ class Timezone(Component):
         The offsets are calculated from the tzinfo object.
 
         Parameters:
+            tzinfo: The timezone object.
+            tzid: The tzid for this timezone. If ``None``, it will be
+                extracted from the ``tzinfo``.
+            first_date: A datetime that is earlier than anything that
+                happens in the calendar.
+            last_date: A datetime that is later than anything that
+                happens in the calendar.
 
-        :param tzinfo: the timezone object
-        :param tzid: the tzid for this timezone. If None, it will be extracted from the tzinfo.
-        :param first_date: a datetime that is earlier than anything that happens in the calendar
-        :param last_date: a datetime that is later than anything that happens in the calendar
-        :raises ValueError: If we have no tzid and cannot extract one.
+        Raises:
+            ValueError: If we have no tzid and cannot extract one.
 
         .. note::
             This can take some time. Please cache the results.
@@ -335,13 +343,16 @@ class Timezone(Component):
     ) -> Timezone:
         """Create a VTIMEZONE from a tzid like ``"Europe/Berlin"``.
 
-        :param tzid: the id of the timezone
-        :param tzp: the timezone provider
-        :param first_date: a datetime that is earlier than anything
-            that happens in the calendar
-        :param last_date: a datetime that is later than anything
-            that happens in the calendar
-        :raises ValueError: If the tzid is unknown.
+        Parameters:
+            tzid: The ID of the timezone.
+            tzp: The timezone provider.
+            first_date: A datetime that is earlier than anything
+                that happens in the calendar.
+            last_date: A datetime that is later than anything
+                that happens in the calendar.
+
+        Raises:
+            ValueError: If the ``tzid`` is unknown.
 
         >>> from icalendar import Timezone
         >>> tz = Timezone.from_tzid("Europe/Berlin")
