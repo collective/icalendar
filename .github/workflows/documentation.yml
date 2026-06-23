@@ -15,7 +15,6 @@ on:
       - 'src/icalendar/prop/*.py'
       - 'src/icalendar/timezone/*.py'
       - 'styles/**'
-      - '.github/workflows/rtd-pr-preview.yml'
       - '.github/workflows/documentation.yml'
       - '.readthedocs.yaml'
       - '.vale.ini'

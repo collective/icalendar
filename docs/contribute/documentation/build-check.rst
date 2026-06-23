@@ -283,7 +283,7 @@ It will append a link to the preview in the description of the pull request that
 
 `View all builds of documentation on Read the Docs <https://app.readthedocs.org/projects/icalendar/builds/>`_.
 
-This feature is configured in the files :file:`.readthedocs.yml` and :file:`.github/workflows/rtd-pr-preview.yml`.
+This feature is configured in the file :file:`.readthedocs.yml`.
 
 
 .. _continuous-integration-checks:
