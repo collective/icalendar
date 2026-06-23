@@ -92,7 +92,7 @@ Internal changes
 Other tasks
 ~~~~~~~~~~~
 
-- `Issue #938 <https://github.com/collective/icalendar/issues/938>`_
+- Added type hints to all methods in the module :mod:`~icalendar.error`. @Priyanshu-pulak (`Issue #938 <https://github.com/collective/icalendar/issues/938>`_)
 
 
 7.1.3 (2026-06-15)
