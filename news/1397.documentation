@@ -1,1 +1,0 @@
-Fix Read the Docs administrative instructions in maintenance documentation by removing the obsolete step to check the default branch and adding a step to manually trigger the "latest" version. @stevepiercy

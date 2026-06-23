@@ -1,1 +1,0 @@
-Documented :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>` as a direct :class:`~icalendar.cal.calendar.Calendar` API member so Sphinx can link to it from the custom components guide. Prepared with AI assistance. @xjn2005

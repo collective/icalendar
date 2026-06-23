@@ -9,7 +9,7 @@ jobs:
         Please set up your development environment and run the formatting command.
         https://icalendar.readthedocs.io/en/stable/contribute/development.html#code-format
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
