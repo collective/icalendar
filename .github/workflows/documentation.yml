@@ -1,4 +1,4 @@
-name: Check news fragements filenames, build documentation, check links, spelling, grammar, and style
+name: Check news fragments filenames, build documentation, check links, spelling, grammar, and style
 on:
   push:
     branches:
