@@ -1,1 +1,0 @@
-Remove redundant and deprecated pull request preview feature on Read the Docs. We now use the RTD GitHub app, making this file redundant to pull request preview builds. Additionally the call to the old GitHub Action was deprecated on 2025-07-01, per its `README.md <https://github.com/readthedocs/actions/blob/main/README.md>`_. @stevepiercy

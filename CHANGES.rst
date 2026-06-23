@@ -11,6 +11,15 @@ Change log
 
 .. towncrier release notes start
 
+7.2.0 (2026-06-23)
+------------------
+
+Other tasks
+~~~~~~~~~~~
+
+- `Issue #938 <https://github.com/collective/icalendar/issues/938>`_
+
+
 7.1.3 (2026-06-15)
 ------------------
 
