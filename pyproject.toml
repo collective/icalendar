@@ -141,11 +141,15 @@ icalendar = "icalendar.cli:main"
 [tool.hatch.build]
 exclude = [
   "/.*",
+  "/*.*",
   "/src/icalendar/fuzzing",
   "/dist",
   "/build",
   "/htmlcov",
 ]
+
+[tool.hatch.build.targets.sdist.force-include]
+"funding.json" = "funding.json"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/icalendar"]
