@@ -111,20 +111,20 @@ class FreeBusy(Component):
         This creates a new FreeBusy in accordance with :rfc:`5545`.
 
         Parameters:
-            comments: The :attr:`~icalendar.cal.component.Component.comments` of the free_busy.
-            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the free_busy.
-            contacts: The :attr:`contacts` of the free_busy.
-            end: The :attr:`end` of the free_busy.
-            links: The :attr:`~icalendar.cal.component.Component.links` of the free_busy.
-            organizer: The :attr:`organizer` of the free_busy.
-            refids: :attr:`~icalendar.cal.component.Component.refids` of the free_busy.
-            related_to: :attr:`~icalendar.cal.component.Component.related_to` of the free_busy.
-            stamp: The :attr:`~icalendar.cal.component.Component.DTSTAMP` of the free_busy.
+            comments: The :attr:`~icalendar.cal.component.Component.comments` of the FreeBusy.
+            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the FreeBusy.
+            contacts: The :attr:`contacts` of the FreeBusy.
+            end: The :attr:`end` of the FreeBusy.
+            links: The :attr:`~icalendar.cal.component.Component.links` of the FreeBusy.
+            organizer: The :attr:`organizer` of the FreeBusy.
+            refids: :attr:`~icalendar.cal.component.Component.refids` of the FreeBusy.
+            related_to: :attr:`~icalendar.cal.component.Component.related_to` of the FreeBusy.
+            stamp: The :attr:`~icalendar.cal.component.Component.DTSTAMP` of the FreeBusy.
                 If None, this is set to the current time.
-            start: The :attr:`start` of the free_busy.
-            uid: The :attr:`uid` of the free_busy.
+            start: The :attr:`start` of the FreeBusy.
+            uid: The :attr:`uid` of the FreeBusy.
                 If None, this is set to a new :func:`uuid.uuid4`.
-            url: The :attr:`url` of the free_busy.
+            url: The :attr:`url` of the FreeBusy.
 
         Returns:
             :class:`FreeBusy`
