@@ -93,8 +93,8 @@ class Alarm(Component):
 
         Defaults to ``0``, meaning the alarm fires once. To repeat the alarm,
         set both :attr:`REPEAT` and :attr:`DURATION`. The :attr:`DURATION`
-        sets the gap between repetitions. ``REPEAT`` is the count of *additional*
-        triggers, so a ``REPEAT`` of ``2`` produces three alarms in total
+        sets the gap between repetitions. :attr:`REPEAT` is the count of *additional*
+        triggers, so a :attr:`REPEAT` of ``2`` produces three alarms in total
         (the initial trigger plus two repeats).
 
         Conforming with :rfc:`5545#section-3.8.6.2`, this property can appear
@@ -131,10 +131,10 @@ class Alarm(Component):
 
         :attr:`DURATION` is meaningful only for repeating alarms and must
         be paired with :attr:`REPEAT`. The two together produce
-        ``REPEAT`` additional triggers, each spaced by ``DURATION`` after
+        :attr:`REPEAT` additional triggers, each spaced by :attr:`DURATION` after
         the initial trigger.
 
-        Conforming with :rfc:`5545#section-3.8.2.5`, the ``DURATION`` property
+        Conforming with :rfc:`5545#section-3.8.2.5`, the :attr:`DURATION` property
         can appear once in an :class:`~icalendar.cal.alarm.Alarm` component.
 
         Example:
@@ -298,7 +298,7 @@ class Alarm(Component):
     uid = single_string_property(
         "UID",
         uid_property.__doc__,
-        "X-ALARMUID",
+        ["X-ALARMUID", "X-EVOLUTION-ALARM-UID"],
     )
     summary = summary_property
     description = description_property
@@ -323,11 +323,11 @@ class Alarm(Component):
 
         Parameters:
             attendees: The :attr:`attendees` of the alarm.
-            concepts: The :attr:`~icalendar.Component.concepts` of the alarm.
+            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the alarm.
             description: The :attr:`description` of the alarm.
-            links: The :attr:`~icalendar.Component.links` of the alarm.
-            refids: :attr:`~icalendar.Component.refids` of the alarm.
-            related_to: :attr:`~icalendar.Component.related_to` of the alarm.
+            links: The :attr:`~icalendar.cal.component.Component.links` of the alarm.
+            refids: :attr:`~icalendar.cal.component.Component.refids` of the alarm.
+            related_to: :attr:`~icalendar.cal.component.Component.related_to` of the alarm.
             summary: The :attr:`summary` of the alarm.
             uid: The :attr:`uid` of the alarm.
 

@@ -15,7 +15,6 @@ on:
       - 'src/icalendar/prop/*.py'
       - 'src/icalendar/timezone/*.py'
       - 'styles/**'
-      - '.github/workflows/rtd-pr-preview.yml'
       - '.github/workflows/documentation.yml'
       - '.readthedocs.yaml'
       - '.vale.ini'
@@ -29,7 +28,7 @@ jobs:
       matrix:
         python-version: ['3.11', '3.14']
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           fetch-tags: true

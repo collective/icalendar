@@ -7,7 +7,8 @@ This guide describes how to contribute to icalendar.
 Examples of how to contribute
 -----------------------------
 
--   Report issues in the `issue tracker <https://github.com/collective/icalendar/issues>`_.
+-   Report security issues per the `Security Policy <https://github.com/collective/icalendar/blob/main/SECURITY.md>`_.
+-   Report all other issues in the `issue tracker <https://github.com/collective/icalendar/issues>`_.
 -   Comment on and resolve issues.
 -   Submit pull requests from your fork of the icalendar repository.
 -   Extend the :doc:`documentation/index`.
@@ -87,6 +88,8 @@ If you use AI in your work:
 -   You must check the AI's terms of use, and ensure that outputs are not reconstructed from copyrighted sources.
 -   You are expected to understand and be able to explain design and code decisions.
 -   In your git commit messages, you must specify both (1) which AI model and version you used, and (2) how you used it, by either including the prompts and interactions you used or summarizing them.
+    You can automate this by using the :program:`ai-prompt-auto-commit` pre-commit hook.
+    See :ref:`AI prompt automation <pre-commit-ai-prompts>` for setup instructions.
 -   You must disclose that you used AI in your change log entry.
 -   You shall be held accountable for your AI-generated content.
 
@@ -108,6 +111,7 @@ Report suspected violations
 ```````````````````````````
 
 To report a suspected violation of this AI policy, see the `Reporting an issue <https://pycal.org/code-of-conduct/#reporting-an-issue>`_ section in the Python Calendaring Ecosystem's Code of Conduct.
+The maintainers will investigate and collect information from various sources, including but not limited to the use of automated GitHub workflows to identify suspected AI use.
 The maintainers may close pull requests without providing feedback that they deem to be spam, AI slop, abuse, or that do not comply with :ref:`pull request requirements <pull-request-requirements>`.
 The maintainers may also take further action, including suspend, ban, or report GitHub users, as described in Python Calendaring Ecosystem's `Code of Conduct <https://pycal.org/code-of-conduct/>`_.
 
@@ -119,9 +123,8 @@ Pull request requirements
 
 Before submitting your pull request, ensure you have met the following requirements.
 
-#.  Add a changelog entry to :file:`CHANGES.rst`.
+#.  Add a change log entry as described in :ref:`change-log`.
     This is required and enforced by GitHub checks.
-    See :ref:`change-log` for details.
 #.  Add a test which proves your fix and passes.
 #.  Run all tests to ensure your changes don't break any existing functionality.
 #.  :doc:`Add or edit documentation <documentation/index>`, both as docstrings to be rendered in the :doc:`API reference documentation <../reference/api/icalendar>` and narrative documentation, as necessary.
@@ -137,7 +140,37 @@ Change log entry format
 
 To create a change log entry or news item, create a file in the :file:`news` directory, located in the root of the package.
 
-The change log entry's format must be ``#.type``, where ``#`` is the referenced GitHub issue or pull request number, ``.`` is the literal extension delimiter, and ``type`` is one of the following strings.
+..  important::
+
+    Never edit a change log entry that you didn't create.
+
+The change log entry's format must be ``#.type``, where ``#`` is the referenced GitHub issue or pull request number, ``.`` is the literal extension delimiter, and ``type`` is one of the following strings described in the next section, :ref:`change-log-types`
+
+To avoid a filename conflict with an existing file or another pull request for the same issue number, append a period (``.``) and an integer to the filename, incrementing it as needed to make the entire filename unique.
+
+..  code-block:: text
+
+    1158.documentation
+    1158.documentation.1
+    1158.documentation.2
+
+For orphan change log entries—that is, those that don't need to be linked to any issue ID or other identifier—start the file name with ``+``.
+The content will still be included in the change log, at the end of the category corresponding to the file extension.
+
+..  code-block:: text
+
+    +anything.bugfix
+
+.. note::
+
+    icalendar uses `towncrier <https://pypi.org/project/towncrier/>`_ to automatically update the :doc:`../reference/changelog` from entries stored in the :file:`/news` directory at the root of the project.
+    It generates links to the issue numbers and organizes the change log entries according to their filename issue numbers and types for each release.
+
+
+..  _change-log-types:
+
+Change log types
+````````````````
 
 ``breaking``
     For changes that break the existing API.
@@ -162,17 +195,6 @@ The change log entry's format must be ``#.type``, where ``#`` is the referenced 
 
 ``chore``
     For routine tasks that shouldn't be published, but will satisfy the checker for the presence of a change log entry.
-
-For orphan change log entries—that is, those that don't need to be linked to any issue ID or other identifier—start the file name with ``+``.
-The content will still be included in the change log, at the end of the category corresponding to the file extension.
-
-..  code-block:: text
-
-    +anything.bugfix
-
-.. note::
-
-    icalendar uses `towncrier <https://pypi.org/project/towncrier/>`_ to automatically update the change log from entries stored in the :file:`/news` directory at the root of the project.
 
 
 .. _write-a-good-change-log-entry-label:

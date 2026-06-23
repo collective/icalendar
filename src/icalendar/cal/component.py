@@ -222,22 +222,22 @@ class Component(CaselessDict):
         self.errors = []  # If we ignored exception(s) while
         # parsing a property, contains error strings
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """Returns True, CaselessDict would return False if it had no items."""
         return True
 
-    def __getitem__(self, key):
+    def __getitem__(self, key) -> VPROPERTY:
         """Get property value from the component dictionary."""
         return super().__getitem__(key)
 
-    def get(self, key, default=None):
+    def get(self, key, default=None) -> Any:
         """Get property value with default."""
         try:
             return self[key]
         except KeyError:
             return default
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         """Returns True if Component has no items or subcomponents, else False."""
         return bool(not list(self.values()) + self.subcomponents)
 
@@ -305,26 +305,39 @@ class Component(CaselessDict):
         value,
         parameters: dict[str, str] | Parameters = None,
         encode: bool = True,
-    ):
-        """Add a property.
+    ) -> None:
+        """Add a property to this component.
 
-        :param name: Name of the property.
-        :type name: string
+        If the property already exists, the new value is appended so the
+        property carries a list of values rather than replacing the previous
+        one. When ``name`` is ``DTSTAMP``, ``CREATED``, or ``LAST-MODIFIED``
+        and ``value`` is a ``datetime``, the value is converted to UTC as the
+        RFC requires.
 
-        :param value: Value of the property. Either of a basic Python type of
-                      any of the icalendar's own property types.
-        :type value: Python native type or icalendar property type.
+        Parameters:
+            name: Name of the property.
+            value:
+                Value of the property. Either a basic Python type or any of
+                icalendar's own property types.
+            parameters:
+                Property parameter dictionary for the value. Only consulted
+                when ``encode`` is ``True``.
+            encode:
+                ``True`` if the value should be encoded to one of icalendar's
+                own property types (fallback is ``vText``); ``False`` to
+                store the value as-is.
 
-        :param parameters: Property parameter dictionary for the value. Only
-                           available, if encode is set to True.
-        :type parameters: Dictionary
+        Returns:
+            ``None``
 
-        :param encode: True, if the value should be encoded to one of
-                       icalendar's own property types (Fallback is "vText")
-                       or False, if not.
-        :type encode: Boolean
+        Example:
 
-        :returns: None
+            >>> from icalendar import Event
+            >>> event = Event()
+            >>> event.add("summary", "Team sync")
+            >>> event["summary"]
+            vText(b'Team sync')
+
         """
         if isinstance(value, datetime) and name.lower() in (
             "dtstamp",
@@ -544,13 +557,21 @@ class Component(CaselessDict):
         if isinstance(st, Path):
             st = st.read_bytes()
         elif isinstance(st, str) and "\n" not in st and "\r" not in st:
-            path = Path(st)
+            # A string is only probed as a file path when it contains no line
+            # breaks. Valid iCalendar data is always folded with CRLF line
+            # endings (RFC 5545), so real calendar content never reaches this
+            # branch and is never read from disk. File paths, conversely, do
+            # not contain line breaks on the platforms we support.
             try:
-                is_file = path.is_file()
-            except OSError:
+                is_file = Path(st).is_file()
+            except (OSError, ValueError):
+                # The string is not usable as a path on this platform (e.g. it
+                # is too long, or contains characters the OS rejects such as an
+                # embedded null byte). Treat it as calendar data, not a file, so
+                # the parser raises a consistent ValueError across platforms.
                 is_file = False
             if is_file:
-                st = path.read_bytes()
+                st = Path(st).read_bytes()
         parser = cls._get_ical_parser(st)
         components = parser.parse()
         if multiple:
@@ -601,7 +622,7 @@ class Component(CaselessDict):
         content_lines = self.content_lines(sorted=sorted)
         return content_lines.to_ical()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """String representation of class with all of its subcomponents.
 
         Implemented iteratively rather than recursively so that calendars
@@ -646,7 +667,7 @@ class Component(CaselessDict):
                     out.append(str(node))
         return "".join(out)
 
-    def __eq__(self, other):
+    def __eq__(self, other: Component) -> bool:
         if not isinstance(other, Component):
             return NotImplemented
 
@@ -724,20 +745,26 @@ class Component(CaselessDict):
         property.
     """,
     )
+
     LAST_MODIFIED = single_utc_property(
         "LAST-MODIFIED",
-        """RFC 5545:
+        """The date and time when a calendar component was last modified.
 
-        Purpose:  This property specifies the date and time that the
-        information associated with the calendar component was last
-        revised in the calendar store.
+        This property is commonly used to track revisions to calendar
+        components such as VEVENT, VTODO, VJOURNAL, and VTIMEZONE.
 
-        Note: This is analogous to the modification date and time for a
-        file in the file system.
+        Example:
+            Set the LAST-MODIFIED property of an event to a UTC time.
 
-        Conformance:  This property can be specified in the "VEVENT",
-        "VTODO", "VJOURNAL", or "VTIMEZONE" calendar components.
-    """,
+            .. code-block:: pycon
+
+                >>> from datetime import datetime, timezone
+                >>> from icalendar import Event
+                >>> event = Event()
+                >>> event.last_modified = datetime(2026, 5, 31, 23, 52, 45, tzinfo=timezone.utc)
+                >>> event.last_modified
+                datetime.datetime(2026, 5, 31, 23, 52, 45, tzinfo=ZoneInfo(key='UTC'))
+        """,
     )
 
     @property
@@ -779,7 +806,7 @@ class Component(CaselessDict):
         return any(attr.startswith("X-MOZ-") for attr in self.keys())
 
     @staticmethod
-    def _utc_now():
+    def _utc_now() -> datetime:
         """Return now as UTC value."""
         return datetime.now(timezone.utc)
 
@@ -892,15 +919,28 @@ class Component(CaselessDict):
               ['dtstart', {}, 'date', '2025-11-22']],
              []]
         """
-        properties = []
-        for key, value in self.items():
-            for item in value if isinstance(value, list) else [value]:
-                properties.append(item.to_jcal(key.lower()))
-        return [
-            self.name.lower(),
-            properties,
-            [subcomponent.to_jcal() for subcomponent in self.subcomponents],
-        ]
+
+        # Iterative tree walk to avoid RecursionError on deeply nested
+        # components, mirroring the iterative iCal parser/serializer (GH #1370).
+        def make_node(comp: Component) -> list:
+            properties = [
+                item.to_jcal(key.lower())
+                for key, value in comp.items()
+                for item in (value if isinstance(value, list) else [value])
+            ]
+            return [comp.name.lower(), properties, []]
+
+        root_node = make_node(self)
+        # stack of (component, jCal node) pairs still to expand
+        stack: list[tuple[Component, list]] = [(self, root_node)]
+        while stack:
+            comp, node = stack.pop()
+            children = node[2]
+            for subcomponent in comp.subcomponents:
+                child_node = make_node(subcomponent)
+                children.append(child_node)
+                stack.append((subcomponent, child_node))
+        return root_node
 
     def to_json(self) -> str:
         """Return this component as a jCal JSON string.
@@ -960,46 +1000,27 @@ class Component(CaselessDict):
         """
         if isinstance(jcal, str):
             jcal = json.loads(jcal)
-        if not isinstance(jcal, list) or len(jcal) != 3:
-            raise JCalParsingError(
-                "A component must be a list with 3 items.", cls, value=jcal
-            )
-        name, properties, subcomponents = jcal
-        if not isinstance(name, str):
-            raise JCalParsingError(
-                "The name must be a string.", cls, path=[0], value=name
-            )
-        if name.upper() != cls.name:
-            # delegate to correct component class
-            component_cls = cls.get_component_class(name.upper())
-            return component_cls.from_jcal(jcal)
-        component = cls()
-        if not isinstance(properties, list):
-            raise JCalParsingError(
-                "The properties must be a list.", cls, path=1, value=properties
-            )
-        for i, prop in enumerate(properties):
-            JCalParsingError.validate_property(prop, cls, path=[1, i])
-            prop_name = prop[0]
-            prop_value = prop[2]
-            prop_cls: type[VPROPERTY] = cls.types_factory.for_property(
-                prop_name, prop_value
-            )
-            with JCalParsingError.reraise_with_path_added(1, i):
-                v_prop = prop_cls.from_jcal(prop)
-            # if we use the default value for that property, we can delete the
-            # VALUE parameter
-            if prop_cls == cls.types_factory.for_property(prop_name):
-                del v_prop.VALUE
-            component.add(prop_name, v_prop)
-        if not isinstance(subcomponents, list):
-            raise JCalParsingError(
-                "The subcomponents must be a list.", cls, 2, value=subcomponents
-            )
-        for i, subcomponent in enumerate(subcomponents):
-            with JCalParsingError.reraise_with_path_added(2, i):
-                component.subcomponents.append(cls.from_jcal(subcomponent))
-        return component
+        # Iterative tree build to avoid RecursionError on deeply nested jCal,
+        # mirroring the iterative iCal parser (GH #1370). ``_node_from_jcal``
+        # parses a single component (without its subcomponents); the stack walks
+        # the subcomponent tree, accumulating the jCal error path ([2, i] per
+        # nesting level) so error messages match the recursive implementation.
+        root, root_subcomponents = _node_from_jcal(jcal, cls)
+        stack: list[tuple[Component, list, list]] = [(root, root_subcomponents, [])]
+        while stack:
+            parent, subcomponents, prefix = stack.pop()
+            for i, subcomponent in enumerate(subcomponents):
+                child_prefix = [*prefix, 2, i]
+                # Prepend the full nesting path so errors match the recursive
+                # implementation. This also preserves the error value and
+                # traceback, like the nested context managers did before.
+                with JCalParsingError.reraise_with_path_added(*child_prefix):
+                    child, child_subcomponents = _node_from_jcal(
+                        subcomponent, type(parent)
+                    )
+                parent.subcomponents.append(child)
+                stack.append((child, child_subcomponents, child_prefix))
+        return root
 
     def copy(self, recursive: bool = False) -> Self:
         """Copy the component.
@@ -1065,6 +1086,85 @@ class Component(CaselessDict):
         For lazy components, this parses the component and returns the result.
         """
         return self
+
+
+def _node_from_jcal(jcal, starting_cls: type[Component]) -> tuple[Component, list]:
+    """Parse a single jCal component without recursing into subcomponents.
+
+    Module-level helper for :meth:`Component.from_jcal`: it has no ties to a
+    class or instance (the relevant class is passed in as ``starting_cls``), so
+    it is a plain function rather than a (static) method.
+
+    Parameters:
+        jcal: The jCal list for one component.
+        starting_cls: The class used as the parser for structural validation
+            before the component type is resolved from its name (the entry
+            class for the root, the parent's resolved class for a child).
+
+    Returns:
+        A ``(component, raw_subcomponents)`` tuple. The raw subcomponents are
+        returned for the caller to walk iteratively.
+
+    Raises:
+        ~error.JCalParsingError: If this component node is invalid. The path
+            is relative to this node; callers prepend the nesting path.
+    """
+    if not isinstance(jcal, list) or len(jcal) != 3:
+        raise JCalParsingError(
+            "A component must be a list with 3 items.", starting_cls, value=jcal
+        )
+    name, properties, subcomponents = jcal
+    if not isinstance(name, str):
+        raise JCalParsingError(
+            "The name must be a string.", starting_cls, path=[0], value=name
+        )
+    if name.upper() != starting_cls.name:
+        # delegate to correct component class
+        component_cls = starting_cls.get_component_class(name.upper())
+    else:
+        component_cls = starting_cls
+    component = component_cls()
+    if not isinstance(properties, list):
+        raise JCalParsingError(
+            "The properties must be a list.",
+            component_cls,
+            path=1,
+            value=properties,
+        )
+    for i, prop in enumerate(properties):
+        JCalParsingError.validate_property(prop, component_cls, path=[1, i])
+        prop_name = prop[0]
+        prop_value = prop[2]
+        prop_cls: type[VPROPERTY] = component_cls.types_factory.for_property(
+            prop_name, prop_value
+        )
+        with JCalParsingError.reraise_with_path_added(1, i):
+            v_prop = prop_cls.from_jcal(prop)
+        # jCal encodes the value type in the type field (``prop[2]``)
+        # instead of as a ``VALUE`` parameter (RFC 7265). Restore that
+        # parameter when the type differs from the property's default, so
+        # explicit value types such as ``RDATE;VALUE=PERIOD`` or
+        # ``TRIGGER;VALUE=DATE-TIME`` survive the round-trip (GH #1426).
+        # A type equal to the default needs no VALUE parameter, and the
+        # reserved ``unknown`` type must never become ``VALUE=UNKNOWN``
+        # (RFC 7265, section 5.2).
+        default_type = component_cls.types_factory.default_value_type(prop_name)
+        if isinstance(prop_value, str) and prop_value.lower() not in (
+            "unknown",
+            default_type,
+        ):
+            v_prop.VALUE = prop_value.upper()
+        elif "VALUE" in v_prop.params:
+            del v_prop.VALUE
+        component.add(prop_name, v_prop)
+    if not isinstance(subcomponents, list):
+        raise JCalParsingError(
+            "The subcomponents must be a list.",
+            component_cls,
+            2,
+            value=subcomponents,
+        )
+    return component, subcomponents
 
 
 __all__ = ["Component"]
