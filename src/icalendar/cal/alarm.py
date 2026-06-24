@@ -161,7 +161,7 @@ class Alarm(Component):
     Setting this property allows calendar clients to
     dismiss or suppress an alarm across multiple devices. Once set to a value
     greater than or equal to the alarm's computed trigger time, conforming clients
-    will not re-fire the alarm.
+    will not refire the alarm.
 
     Returns ``None`` when no acknowledgment has been recorded.
 
@@ -174,11 +174,11 @@ class Alarm(Component):
             >>> from icalendar import Alarm
             >>> alarm = Alarm()
             >>> alarm.ACKNOWLEDGED = datetime(2024, 1, 15, 10, 0, 0, tzinfo=timezone.utc)
-            >>> alarm.ACKNOWLEDGED  # doctest: +ELLIPSIS
-            datetime.datetime(2024, 1, 15, 10, 0, tzinfo=...)
+            >>> alarm.ACKNOWLEDGED
+            datetime.datetime(2024, 1, 15, 10, 0, tzinfo=ZoneInfo(key='UTC'))
 
     See also:
-        :attr:`TRIGGER` — the time at which the alarm fires.
+        :attr:`TRIGGER`, the time at which the alarm fires.
     """,
     )
 
@@ -208,8 +208,8 @@ class Alarm(Component):
             >>> from icalendar import Alarm
             >>> alarm = Alarm()
             >>> alarm.TRIGGER = timedelta(minutes=-15)
-            >>> alarm.TRIGGER  # doctest: +ELLIPSIS
-            datetime.timedelta(...)
+            >>> alarm.TRIGGER
+            datetime.timedelta(days=-1, seconds=85500)
 
     See also:
         :attr:`TRIGGER_RELATED`, :attr:`DURATION`, :attr:`REPEAT`

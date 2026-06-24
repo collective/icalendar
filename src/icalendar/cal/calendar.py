@@ -287,9 +287,9 @@ class Calendar(Component):
     calendar_name = multi_language_text_property(
         "NAME",
         "X-WR-CALNAME",
-        """The display name of this calendar, per :rfc:`7986#section-5.3`.
+        """The display name of this calendar, per :rfc:`7986#section-5.1`.
 
-    Implements both the ``NAME`` property (from :rfc:`7986`) and the widely-used
+    Implements both the ``NAME`` property from :rfc:`7986#section-5.3` and the widely used
     ``X-WR-CALNAME`` extension for broader client compatibility.
 
     Multiple language variants can be stored by setting this property more than
@@ -303,7 +303,7 @@ class Calendar(Component):
             >>> from icalendar import Calendar
             >>> calendar = Calendar()
             >>> calendar.calendar_name = "My Calendar"
-            >>> print(calendar.to_ical())
+            >>> print(calendar.to_ical().decode())
             BEGIN:VCALENDAR
             NAME:My Calendar
             X-WR-CALNAME:My Calendar
@@ -319,7 +319,7 @@ class Calendar(Component):
         "X-WR-CALDESC",
         """A human-readable description of this calendar's content, per :rfc:`7986#section-5.2`.
 
-    Implements both ``DESCRIPTION`` (from :rfc:`7986`) and ``X-WR-CALDESC``
+    Implements both ``DESCRIPTION`` from :rfc:`7986#section-5.2` and ``X-WR-CALDESC``
     for broader calendar client compatibility.
 
     Multiple language variants can be stored by setting this property more than
@@ -333,7 +333,7 @@ class Calendar(Component):
             >>> from icalendar import Calendar
             >>> calendar = Calendar()
             >>> calendar.description = "This is a calendar"
-            >>> print(calendar.to_ical())
+            >>> print(calendar.to_ical().decode())
             BEGIN:VCALENDAR
             DESCRIPTION:This is a calendar
             X-WR-CALDESC:This is a calendar
@@ -348,9 +348,9 @@ class Calendar(Component):
         "COLOR",
         """A CSS3 color name or value used to visually distinguish this calendar, per :rfc:`7986#section-5.9`.
 
-    Implements both ``COLOR`` (from :rfc:`7986`) and ``X-APPLE-CALENDAR-COLOR``.
-    The value is a case-insensitive CSS3 color name (e.g. ``"turquoise"``) or
-    a hex code (e.g. ``"#ffffff"``), drawn from the
+    Implements both ``COLOR`` from :rfc:`7986#section-5.9` and ``X-APPLE-CALENDAR-COLOR``.
+    The value is a case-insensitive CSS3 color name, for example, ``"turquoise"``, or
+    a hex code, for example, ``"#ffffff"``, drawn from the
     `CSS3 color specification <https://www.w3.org/TR/css-color-3/>`_.
 
     Since :rfc:`7986`, individual ``VEVENT``, ``VTODO``, and ``VJOURNAL``
@@ -362,7 +362,7 @@ class Calendar(Component):
             >>> from icalendar import Calendar
             >>> calendar = Calendar()
             >>> calendar.color = "black"
-            >>> print(calendar.to_ical())
+            >>> print(calendar.to_ical().decode())
             BEGIN:VCALENDAR
             COLOR:black
             END:VCALENDAR
@@ -378,10 +378,11 @@ class Calendar(Component):
         "PRODID",
         """The product identifier for the software that created this iCalendar object.
 
-Defined in :rfc:`5545#section-3.7.3` and required exactly once per calendar object.
+This property is defined in :rfc:`5545#section-3.7.3`.
+It's required exactly once per calendar object.
 
 The value should be a globally unique string. The conventional format is a
-Formal Public Identifier (FPI), e.g. ``-//My Company//My Product//EN``, but any
+Formal Public Identifier (FPI), for example, ``-//My Company//My Product//EN``, but any
 unique string is acceptable.
 
 Example:
@@ -403,7 +404,8 @@ See also:
         "VERSION",
         """The iCalendar specification version required to interpret this object.
 
-Defined in :rfc:`5545#section-3.7.4` and required exactly once per calendar object.
+This property is defined in :rfc:`5545#section-3.7.4`.
+It's required exactly once per calendar object.
 The value ``"2.0"`` indicates :rfc:`5545` compliance, which is the default used
 by this library. A range such as ``"1.0;2.0"`` may indicate minimum and maximum
 supported versions.
@@ -426,7 +428,7 @@ See also:
         "CALSCALE",
         """The calendar scale for date and time values in this iCalendar object.
 
-Defined in :rfc:`5545#section-3.7.1`. The only value currently defined is
+This property is defined in :rfc:`5545#section-3.7.1`. The only value currently defined is
 ``"GREGORIAN"`` (the default). When this property is absent, Gregorian is assumed.
 
 Per :rfc:`7529`, non-Gregorian calendar systems are expressed via ``RRULE``
@@ -450,7 +452,7 @@ See also:
         """The iTIP scheduling method associated with this calendar object, per :rfc:`5545#section-3.7.2`.
 
 When present, ``METHOD`` indicates that this object is part of a scheduling
-transaction (e.g., a meeting invitation or cancellation). Scheduling methods
+transaction, such as a meeting invitation or cancellation. Scheduling methods
 are defined by :rfc:`5546` (iTIP), with values such as ``"REQUEST"``,
 ``"REPLY"``, ``"CANCEL"``, and ``"PUBLISH"``.
 
@@ -478,9 +480,11 @@ See also:
     def refresh_interval(self) -> timedelta | None:
         """A suggested minimum polling interval for fetching updates to this calendar, per :rfc:`7986#section-5.7`.
 
-        Returns a :class:`~datetime.timedelta` or ``None`` when not set.
         Calendar clients should not poll more frequently than this interval.
         The value must be a positive duration.
+
+        Returns:
+            A :class:`~datetime.timedelta`, or ``None`` when not set.
 
         Raises:
             ValueError: When setting a non-positive (zero or negative) duration.

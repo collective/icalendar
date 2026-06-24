@@ -727,14 +727,14 @@ class Component(CaselessDict):
         "DTSTAMP",
         """The UTC datetime stamp recording when this component instance was created or last revised.
 
-    Defined in :rfc:`5545#section-3.8.7.2` and required in
-    ``VEVENT``, ``VTODO``, ``VJOURNAL``, and ``VFREEBUSY`` components.
+    This property is defined in :rfc:`5545#section-3.8.7.2`. It's required
+    in ``VEVENT``, ``VTODO``, ``VJOURNAL``, and ``VFREEBUSY`` components.
 
-    When the calendar object carries a ``METHOD`` property (e.g., for
-    scheduling), this value is the creation time of *this particular revision*.
-    Without a ``METHOD`` property it is equivalent to :attr:`LAST_MODIFIED`.
+    When the calendar object carries a ``METHOD`` property, such as for
+    scheduling, this value is the creation time of *this particular revision*.
+    Without a ``METHOD`` property, it's equivalent to :attr:`LAST_MODIFIED`.
 
-    The value is always in UTC. Also accessible as :attr:`stamp`.
+    The value is always in UTC. It's also accessible as :attr:`stamp`.
 
     Example:
         .. code-block:: pycon
@@ -743,8 +743,8 @@ class Component(CaselessDict):
             >>> from icalendar import Event
             >>> event = Event()
             >>> event.DTSTAMP = datetime(2024, 6, 1, 12, 0, 0, tzinfo=timezone.utc)
-            >>> event.DTSTAMP  # doctest: +ELLIPSIS
-            datetime.datetime(2024, 6, 1, 12, 0, tzinfo=...)
+            >>> event.DTSTAMP
+            datetime.datetime(2024, 6, 1, 12, 0, tzinfo=ZoneInfo(key='UTC'))
 
     See also:
         :attr:`LAST_MODIFIED`, :attr:`CREATED`, :attr:`stamp`
@@ -755,10 +755,10 @@ class Component(CaselessDict):
         "LAST-MODIFIED",
         """The UTC datetime when this component's information was last revised, per :rfc:`5545#section-3.8.7.3`.
 
-    Analogous to a file's modification timestamp. This property is optional;
-    when absent, :attr:`last_modified` falls back to :attr:`DTSTAMP`.
+    It's analogous to a file's modification timestamp. This property is optional.
+    When it's absent, :attr:`last_modified` falls back to :attr:`DTSTAMP`.
 
-    Applicable to ``VEVENT``, ``VTODO``, ``VJOURNAL``, and ``VTIMEZONE``
+    This property is applicable to ``VEVENT``, ``VTODO``, ``VJOURNAL``, and ``VTIMEZONE``
     components. The value is always in UTC.
 
     Example:
@@ -768,8 +768,8 @@ class Component(CaselessDict):
             >>> from icalendar import Event
             >>> event = Event()
             >>> event.LAST_MODIFIED = datetime(2024, 6, 1, 9, 0, 0, tzinfo=timezone.utc)
-            >>> event.LAST_MODIFIED  # doctest: +ELLIPSIS
-            datetime.datetime(2024, 6, 1, 9, 0, tzinfo=...)
+            >>> event.LAST_MODIFIED
+            datetime.datetime(2024, 6, 1, 9, 0, tzinfo=ZoneInfo(key='UTC'))
 
     See also:
         :attr:`last_modified`, :attr:`DTSTAMP`, :attr:`CREATED`
@@ -830,11 +830,11 @@ class Component(CaselessDict):
         "CREATED",
         """The UTC datetime when this calendar component was first created, per :rfc:`5545#section-3.8.7.1`.
 
-    Records when the calendar user agent originally stored the component.
-    This property is optional; when absent, :attr:`created` falls back to
+    This property records when the calendar user agent originally stored the component.
+    This property is optional. When it's absent, :attr:`created` falls back to
     :attr:`DTSTAMP`.
 
-    Applicable to ``VEVENT``, ``VTODO``, and ``VJOURNAL`` components.
+    This property is applicable to ``VEVENT``, ``VTODO``, and ``VJOURNAL`` components.
     The value is always in UTC.
 
     Example:
@@ -844,8 +844,8 @@ class Component(CaselessDict):
             >>> from icalendar import Event
             >>> event = Event()
             >>> event.CREATED = datetime(2024, 1, 1, 8, 0, 0, tzinfo=timezone.utc)
-            >>> event.CREATED  # doctest: +ELLIPSIS
-            datetime.datetime(2024, 1, 1, 8, 0, tzinfo=...)
+            >>> event.CREATED
+            datetime.datetime(2024, 1, 1, 8, 0, tzinfo=ZoneInfo(key='UTC'))
 
     See also:
         :attr:`created`, :attr:`DTSTAMP`, :attr:`LAST_MODIFIED`
