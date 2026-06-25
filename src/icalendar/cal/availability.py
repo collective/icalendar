@@ -263,36 +263,38 @@ class Availability(Component):
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
     ):
-        """Create a new event with all required properties.
+        """Create a new availability.
 
         This creates a new Availability in accordance with :rfc:`7953`.
 
         Parameters:
-            busy_type: The :attr:`busy_type` of the availability.
-            categories: The :attr:`categories` of the availability.
-            classification: The :attr:`classification` of the availability.
-            comments: The :attr:`~icalendar.cal.component.Component.comments` of the availability.
-            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the availability.
-            contacts: The :attr:`contacts` of the availability.
-            created: The :attr:`~icalendar.cal.component.Component.created` of the availability.
-            description: The :attr:`description` of the availability.
-            end: The :attr:`end` of the availability.
-            last_modified: The :attr:`~icalendar.cal.component.Component.last_modified` of the
+            busy_type: Optional. The :attr:`busy_type` of the availability.
+            categories: Optional. The :attr:`categories` of the availability.
+            classification: Optional. The :attr:`classification` of the availability.
+            comments: Optional. The :attr:`~icalendar.cal.component.Component.comments` of the availability.
+            components: Optional. :class:`~icalendar.cal.available.Available` subcomponents to add.
+            concepts: Optional. The :attr:`~icalendar.cal.component.Component.concepts` of the availability.
+            contacts: Optional. The :attr:`contacts` of the availability.
+            created: Optional. The :attr:`~icalendar.cal.component.Component.created` of the availability.
+            description: Optional. The :attr:`description` of the availability.
+            end: Optional. The :attr:`end` of the availability.
+            last_modified: Optional. The :attr:`~icalendar.cal.component.Component.last_modified` of the
                 availability.
-            links: The :attr:`~icalendar.cal.component.Component.links` of the availability.
-            location: The :attr:`location` of the availability.
-            organizer: The :attr:`organizer` of the availability.
-            refids: :attr:`~icalendar.cal.component.Component.refids` of the availability.
-            related_to: :attr:`~icalendar.cal.component.Component.related_to` of the availability.
-            sequence: The :attr:`sequence` of the availability.
+            links: Optional. The :attr:`~icalendar.cal.component.Component.links` of the availability.
+            location: Optional. The :attr:`location` of the availability.
+            organizer: Optional. The :attr:`organizer` of the availability.
+            priority: Optional. The :attr:`priority` of the availability.
+            refids: Optional. :attr:`~icalendar.cal.component.Component.refids` of the availability.
+            related_to: Optional. :attr:`~icalendar.cal.component.Component.related_to` of the availability.
+            sequence: Optional. The :attr:`sequence` of the availability.
             stamp: The :attr:`~icalendar.cal.component.Component.stamp` of the availability.
-                If None, this is set to the current time.
-            start: The :attr:`start` of the availability.
-            subcomponents: The :attr:`~icalendar.cal.component.Component.subcomponents` of the availability.
-            summary: The :attr:`summary` of the availability.
+                If ``None``, this is set to the current UTC time.
+            start: Optional. The :attr:`start` of the availability.
+            subcomponents: Optional. The :attr:`~icalendar.cal.component.Component.subcomponents` of the availability.
+            summary: Optional. The :attr:`summary` of the availability.
             uid: The :attr:`~icalendar.cal.component.Component.uid` of the availability.
                 If ``None``, this is set to a new :func:`uuid.uuid4`.
-            url: The :attr:`url` of the availability.
+            url: Optional. The :attr:`url` of the availability.
 
         Returns:
             :class:`Availability`
