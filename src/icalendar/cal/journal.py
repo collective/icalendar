@@ -203,37 +203,36 @@ class Journal(Component):
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
     ):
-        """Create a new journal entry with all required properties.
+        """Create a new journal entry.
 
         This creates a new Journal in accordance with :rfc:`5545`.
 
         Parameters:
-            attendees: The :attr:`attendees` of the journal.
-            categories: The :attr:`categories` of the journal.
-            classification: The :attr:`classification` of the journal.
-            color: The :attr:`color` of the journal.
-            comments: The :attr:`~icalendar.Component.comments` of the journal.
-            concepts: The :attr:`~icalendar.Component.concepts` of the journal.
-            contacts: The :attr:`contacts` of the journal.
-            created: The :attr:`~icalendar.Component.created` of the journal.
-            description: The :attr:`description` of the journal.
-            end: The :attr:`end` of the journal.
-            last_modified: The :attr:`~icalendar.Component.last_modified` of
+            attendees: Optional. The :attr:`attendees` of the journal.
+            categories: Optional. The :attr:`categories` of the journal.
+            classification: Optional. The :attr:`classification` of the journal.
+            color: Optional. The :attr:`color` of the journal.
+            comments: Optional. The :attr:`~icalendar.Component.comments` of the journal.
+            concepts: Optional. The :attr:`~icalendar.Component.concepts` of the journal.
+            contacts: Optional. The :attr:`contacts` of the journal.
+            created: Optional. The :attr:`~icalendar.Component.created` of the journal.
+            description: Optional. The :attr:`description` of the journal.
+            last_modified: Optional. The :attr:`~icalendar.Component.last_modified` of
                 the journal.
-            links: The :attr:`~icalendar.Component.links` of the journal.
-            organizer: The :attr:`organizer` of the journal.
-            recurrence_id: The :attr:`RECURRENCE_ID` of the journal.
-            refids: :attr:`~icalendar.Component.refids` of the journal.
-            related_to: :attr:`~icalendar.Component.related_to` of the journal.
-            sequence: The :attr:`sequence` of the journal.
+            links: Optional. The :attr:`~icalendar.Component.links` of the journal.
+            organizer: Optional. The :attr:`organizer` of the journal.
+            recurrence_id: Optional. The :attr:`RECURRENCE_ID` of the journal.
+            refids: Optional. :attr:`~icalendar.Component.refids` of the journal.
+            related_to: Optional. :attr:`~icalendar.Component.related_to` of the journal.
+            sequence: Optional. The :attr:`sequence` of the journal.
             stamp: The :attr:`~icalendar.Component.stamp` of the journal.
-                If None, this is set to the current time.
-            start: The :attr:`start` of the journal.
-            status: The :attr:`status` of the journal.
-            summary: The :attr:`summary` of the journal.
+                If ``None``, this is set to the current UTC time.
+            start: Optional. The :attr:`start` of the journal.
+            status: Optional. The :attr:`status` of the journal.
+            summary: Optional. The :attr:`summary` of the journal.
             uid: The :attr:`uid` of the journal.
-                If None, this is set to a new :func:`uuid.uuid4`.
-            url: The :attr:`url` of the journal.
+                If ``None``, this is set to a new :func:`uuid.uuid4`.
+            url: Optional. The :attr:`url` of the journal.
 
         Returns:
             :class:`Journal`

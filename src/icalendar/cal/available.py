@@ -118,36 +118,36 @@ class Available(Component):
         summary: str | None = None,
         uid: str | uuid.UUID | None = None,
     ):
-        """Create a new Available component with all required properties.
+        """Create a new available component.
 
         This creates a new Available component in accordance with :rfc:`7953`.
 
         Parameters:
-            categories: The :attr:`categories` of the Available component.
-            comments: The :attr:`~icalendar.Component.comments` of the Available
+            categories: Optional. The :attr:`categories` of the Available component.
+            comments: Optional. The :attr:`~icalendar.Component.comments` of the Available
                 component.
-            concepts: The :attr:`~icalendar.Component.concepts` of the Available
+            concepts: Optional. The :attr:`~icalendar.Component.concepts` of the Available
                 component.
-            contacts: The :attr:`contacts` of the Available component.
-            created: The :attr:`~icalendar.Component.created` of the Available
+            contacts: Optional. The :attr:`contacts` of the Available component.
+            created: Optional. The :attr:`~icalendar.Component.created` of the Available
                 component.
-            description: The :attr:`description` of the Available component.
-            end: The :attr:`end` of the Available component.
-            last_modified: The :attr:`~icalendar.Component.last_modified` of the
+            description: Optional. The :attr:`description` of the Available component.
+            end: Optional. The :attr:`end` of the Available component.
+            last_modified: Optional. The :attr:`~icalendar.Component.last_modified` of the
                 Available component.
-            links: The :attr:`~icalendar.Component.links` of the Available component.
-            location: The :attr:`location` of the Available component.
-            recurrence_id: The :attr:`RECURRENCE_ID` of the Available component.
-            refids: :attr:`~icalendar.Component.refids` of the Available component.
-            related_to: :attr:`~icalendar.Component.related_to` of the Available
+            links: Optional. The :attr:`~icalendar.Component.links` of the Available component.
+            location: Optional. The :attr:`location` of the Available component.
+            recurrence_id: Optional. The :attr:`RECURRENCE_ID` of the Available component.
+            refids: Optional. :attr:`~icalendar.Component.refids` of the Available component.
+            related_to: Optional. :attr:`~icalendar.Component.related_to` of the Available
                 component.
-            sequence: The :attr:`sequence` of the Available component.
+            sequence: Optional. The :attr:`sequence` of the Available component.
             stamp: The :attr:`~icalendar.Component.stamp` of the Available component.
-                If None, this is set to the current time.
-            start: The :attr:`start` of the Available component.
-            summary: The :attr:`summary` of the Available component.
+                If ``None``, this is set to the current UTC time.
+            start: Optional. The :attr:`start` of the Available component.
+            summary: Optional. The :attr:`summary` of the Available component.
             uid: The :attr:`uid` of the Available component.
-                If None, this is set to a new :func:`uuid.uuid4`.
+                If ``None``, this is set to a new :func:`uuid.uuid4`.
 
         Returns:
             :class:`Available`
