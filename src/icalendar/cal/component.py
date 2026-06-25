@@ -451,14 +451,29 @@ class Component(CaselessDict):
         name: str | None = None,
         select: callable[[Component], bool] = lambda _: True,
     ) -> list[Component]:
-        """Recursively traverses component and subcomponents. Returns sequence
-        of same. If name is passed, only components with name will be returned.
+        """Recursively traverse this component and its subcomponents.
 
-        :param name: The name of the component or None such as ``VEVENT``.
-        :param select: A function that takes the component as first argument
-          and returns True/False.
-        :returns: A list of components that match.
-        :rtype: list[Component]
+        Returns a list of matching components. If ``name`` is provided,
+        only components with that name are returned. The ``select``
+        function can be used to further filter results.
+
+        Parameters:
+            name: The component name to filter by (e.g., ``"VEVENT"``),
+                or ``None`` to return all components.
+            select: A callable that takes a component and returns ``True``
+                if it should be included in the results.
+
+        Returns:
+            A list of components matching the criteria.
+
+        Example:
+            .. code-block:: pycon
+
+                >>> from icalendar import Calendar
+                >>> cal = Calendar.from_ical("BEGIN:VCALENDAR\\nBEGIN:VEVENT\\nSUMMARY:Test\\nEND:VEVENT\\nEND:VCALENDAR")
+                >>> cal.walk("VEVENT")
+                [<VEVENT: ...>]
+
         """
         if name is not None:
             name = name.upper()
@@ -483,8 +498,29 @@ class Component(CaselessDict):
         recursive: bool = True,
         sorted: bool = True,
     ) -> list[tuple[str, object]]:
-        """Returns properties in this component and subcomponents as:
-        [(name, value), ...]
+        """Return properties in this component and subcomponents as a list.
+
+        Each property is represented as a ``(name, value)`` tuple where
+        ``name`` is the property name (e.g., ``"SUMMARY"``) and ``value``
+        is the property value.
+
+        Parameters:
+            recursive: If ``True``, include properties from subcomponents.
+                If ``False``, only return properties of this component.
+            sorted: If ``True``, sort properties alphabetically by name.
+
+        Returns:
+            A list of ``(name, value)`` tuples.
+
+        Example:
+            .. code-block:: pycon
+
+                >>> from icalendar import Event
+                >>> event = Event()
+                >>> event.add("summary", "Team sync")
+                >>> event.property_items(recursive=False)
+                [('SUMMARY', vText(b'Team sync'))]
+
         """
         # Iterative implementation to avoid RecursionError
         result = []
@@ -725,25 +761,37 @@ class Component(CaselessDict):
 
     DTSTAMP = stamp = single_utc_property(
         "DTSTAMP",
-        """RFC 5545:
+        """The date and time that the iCalendar object instance was created.
 
-        Conformance:  This property MUST be included in the "VEVENT",
-        "VTODO", "VJOURNAL", or "VFREEBUSY" calendar components.
+        This property specifies when the iCalendar object was created. When
+        a ``METHOD`` property is present, it indicates when the instance was
+        created. When no ``METHOD`` is present, it indicates when the
+        information was last revised in the calendar store.
 
-        Description: In the case of an iCalendar object that specifies a
-        "METHOD" property, this property specifies the date and time that
-        the instance of the iCalendar object was created.  In the case of
-        an iCalendar object that doesn't specify a "METHOD" property, this
-        property specifies the date and time that the information
-        associated with the calendar component was last revised in the
-        calendar store.
+        The value MUST be in UTC time format, as required by
+        :rfc:`5545#section-3.8.7.2`.
 
-        The value MUST be specified in the UTC time format.
+        This property is mandatory in ``VEVENT``, ``VTODO``, ``VJOURNAL``,
+        and ``VFREEBUSY`` components.
 
-        In the case of an iCalendar object that doesn't specify a "METHOD"
-        property, this property is equivalent to the "LAST-MODIFIED"
-        property.
-    """,
+        When no ``METHOD`` is specified, ``DTSTAMP`` is equivalent to
+        :attr:`LAST_MODIFIED`.
+
+        Example:
+            .. code-block:: pycon
+
+                >>> from icalendar import Event
+                >>> from datetime import datetime, timezone
+                >>> event = Event()
+                >>> event.add("dtstamp", datetime(2024, 1, 15, 12, 0, 0, tzinfo=timezone.utc))
+                >>> event["dtstamp"]
+                vDDDTypes(...)
+
+        See also:
+            :attr:`Component.created`,
+            :attr:`Component.last_modified`
+
+        """,
     )
 
     LAST_MODIFIED = single_utc_property(
@@ -819,15 +867,28 @@ class Component(CaselessDict):
 
     CREATED = single_utc_property(
         "CREATED",
-        """
-        CREATED specifies the date and time that the calendar
-        information was created by the calendar user agent in the calendar
-        store.
+        """The date and time when the calendar information was created.
 
-        Conformance:
-            The property can be specified once in "VEVENT",
-            "VTODO", or "VJOURNAL" calendar components.  The value MUST be
-            specified as a date with UTC time.
+        This property specifies when the calendar user agent created the
+        information in the calendar store. The value MUST be in UTC time
+        format, as required by :rfc:`5545#section-3.8.7.1`.
+
+        This property can appear once in ``VEVENT``, ``VTODO``, or
+        ``VJOURNAL`` components.
+
+        Example:
+            .. code-block:: pycon
+
+                >>> from icalendar import Event
+                >>> from datetime import datetime, timezone
+                >>> event = Event()
+                >>> event.add("created", datetime(2024, 1, 15, 12, 0, 0, tzinfo=timezone.utc))
+                >>> event["created"]
+                vDDDTypes(...)
+
+        See also:
+            :attr:`Component.dtstamp`,
+            :attr:`Component.last_modified`
 
         """,
     )
