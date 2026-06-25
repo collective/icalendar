@@ -347,39 +347,40 @@ class Todo(Component):
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
     ):
-        """Create a new TODO with all required properties.
+        """Create a new todo.
 
         This creates a new Todo in accordance with :rfc:`5545`.
 
         Parameters:
-            attendees: The :attr:`attendees` of the todo.
-            categories: The :attr:`categories` of the todo.
-            classification: The :attr:`classification` of the todo.
-            color: The :attr:`color` of the todo.
-            comments: The :attr:`~icalendar.Component.comments` of the todo.
-            concepts: The :attr:`~icalendar.Component.concepts` of the todo.
-            contacts: The :attr:`contacts` of the todo.
-            conferences: The :attr:`conferences` of the todo.
-            created: The :attr:`~icalendar.Component.created` of the todo.
-            description: The :attr:`description` of the todo.
-            end: The :attr:`end` of the todo.
-            last_modified: The :attr:`~icalendar.Component.last_modified` of the todo.
-            links: The :attr:`~icalendar.Component.links` of the todo.
-            location: The :attr:`location` of the todo.
-            organizer: The :attr:`organizer` of the todo.
-            recurrence_id: The :attr:`RECURRENCE_ID` of the todo.
-            refids: :attr:`~icalendar.Component.refids` of the todo.
-            related_to: :attr:`~icalendar.Component.related_to` of the todo.
-            sequence: The :attr:`sequence` of the todo.
+            attendees: Optional. The :attr:`attendees` of the todo.
+            categories: Optional. The :attr:`categories` of the todo.
+            classification: Optional. The :attr:`classification` of the todo.
+            color: Optional. The :attr:`color` of the todo.
+            comments: Optional. The :attr:`~icalendar.Component.comments` of the todo.
+            concepts: Optional. The :attr:`~icalendar.Component.concepts` of the todo.
+            contacts: Optional. The :attr:`contacts` of the todo.
+            conferences: Optional. The :attr:`conferences` of the todo.
+            created: Optional. The :attr:`~icalendar.Component.created` of the todo.
+            description: Optional. The :attr:`description` of the todo.
+            end: Optional. The :attr:`end` of the todo.
+            last_modified: Optional. The :attr:`~icalendar.Component.last_modified` of the todo.
+            links: Optional. The :attr:`~icalendar.Component.links` of the todo.
+            location: Optional. The :attr:`location` of the todo.
+            organizer: Optional. The :attr:`organizer` of the todo.
+            priority: Optional. The :attr:`priority` of the todo.
+            recurrence_id: Optional. The :attr:`RECURRENCE_ID` of the todo.
+            refids: Optional. :attr:`~icalendar.Component.refids` of the todo.
+            related_to: Optional. :attr:`~icalendar.Component.related_to` of the todo.
+            sequence: Optional. The :attr:`sequence` of the todo.
             stamp: The :attr:`~icalendar.Component.DTSTAMP` of the todo.
-                If None, this is set to the current time.
-            start: The :attr:`start` of the todo.
-            status: The :attr:`status` of the todo.
-            subcomponents: The subcomponents of the todo.
-            summary: The :attr:`summary` of the todo.
+                If ``None``, this is set to the current UTC time.
+            start: Optional. The :attr:`start` of the todo.
+            status: Optional. The :attr:`status` of the todo.
+            subcomponents: Optional. The subcomponents of the todo.
+            summary: Optional. The :attr:`summary` of the todo.
             uid: The :attr:`uid` of the todo.
-                If None, this is set to a new :func:`uuid.uuid4`.
-            url: The :attr:`url` of the todo.
+                If ``None``, this is set to a new :func:`uuid.uuid4`.
+            url: Optional. The :attr:`url` of the todo.
 
         Returns:
             :class:`Todo`
