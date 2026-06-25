@@ -459,40 +459,40 @@ class Event(Component):
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
     ):
-        """Create a new event with all required properties.
+        """Create a new event.
 
         This creates a new Event in accordance with :rfc:`5545`.
 
         Parameters:
-            attendees: The :attr:`attendees` of the event.
-            categories: The :attr:`categories` of the event.
-            classification: The :attr:`classification` of the event.
-            color: The :attr:`color` of the event.
-            comments: The :attr:`~icalendar.Component.comments` of the event.
-            concepts: The :attr:`~icalendar.Component.concepts` of the event.
-            conferences: The :attr:`conferences` of the event.
-            created: The :attr:`~icalendar.Component.created` of the event.
-            description: The :attr:`description` of the event.
-            end: The :attr:`end` of the event.
-            last_modified: The :attr:`~icalendar.Component.last_modified` of the event.
-            links: The :attr:`~icalendar.Component.links` of the event.
-            location: The :attr:`location` of the event.
-            organizer: The :attr:`organizer` of the event.
-            priority: The :attr:`priority` of the event.
-            recurrence_id: The :attr:`RECURRENCE_ID` of the event.
-            refids: :attr:`~icalendar.Component.refids` of the event.
-            related_to: :attr:`~icalendar.Component.related_to` of the event.
-            sequence: The :attr:`sequence` of the event.
+            attendees: Optional. The :attr:`attendees` of the event.
+            categories: Optional. The :attr:`categories` of the event.
+            classification: Optional. The :attr:`classification` of the event.
+            color: Optional. The :attr:`color` of the event.
+            comments: Optional. The :attr:`~icalendar.Component.comments` of the event.
+            concepts: Optional. The :attr:`~icalendar.Component.concepts` of the event.
+            conferences: Optional. The :attr:`conferences` of the event.
+            created: Optional. The :attr:`~icalendar.Component.created` of the event.
+            description: Optional. The :attr:`description` of the event.
+            end: Optional. The :attr:`end` of the event.
+            last_modified: Optional. The :attr:`~icalendar.Component.last_modified` of the event.
+            links: Optional. The :attr:`~icalendar.Component.links` of the event.
+            location: Optional. The :attr:`location` of the event.
+            organizer: Optional. The :attr:`organizer` of the event.
+            priority: Optional. The :attr:`priority` of the event.
+            recurrence_id: Optional. The :attr:`RECURRENCE_ID` of the event.
+            refids: Optional. :attr:`~icalendar.Component.refids` of the event.
+            related_to: Optional. :attr:`~icalendar.Component.related_to` of the event.
+            sequence: Optional. The :attr:`sequence` of the event.
             stamp: The :attr:`~icalendar.Component.stamp` of the event.
-                If None, this is set to the current time.
-            start: The :attr:`start` of the event.
-            status: The :attr:`status` of the event.
-            subcomponents: The subcomponents of the event.
-            summary: The :attr:`summary` of the event.
-            transparency: The :attr:`transparency` of the event.
+                If ``None``, this is set to the current UTC time.
+            start: Optional. The :attr:`start` of the event.
+            status: Optional. The :attr:`status` of the event.
+            subcomponents: Optional. The subcomponents of the event.
+            summary: Optional. The :attr:`summary` of the event.
+            transparency: Optional. The :attr:`transparency` of the event.
             uid: The :attr:`uid` of the event.
-                If None, this is set to a new :func:`uuid.uuid4`.
-            url: The :attr:`url` of the event.
+                If ``None``, this is set to a new :func:`uuid.uuid4`.
+            url: Optional. The :attr:`url` of the event.
 
         Returns:
             :class:`Event`
