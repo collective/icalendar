@@ -470,7 +470,12 @@ class Component(CaselessDict):
             .. code-block:: pycon
 
                 >>> from icalendar import Calendar
-                >>> cal = Calendar.from_ical(r"BEGIN:VCALENDAR\nBEGIN:VEVENT\nSUMMARY:Test\nEND:VEVENT\nEND:VCALENDAR")
+                >>> cal = Calendar()
+                >>> cal.add("prodid", "-//Test//Test//EN")
+                >>> from icalendar import Event
+                >>> event = Event()
+                >>> event.add("summary", "Test")
+                >>> cal.add_component(event)
                 >>> cal.walk("VEVENT")  # doctest: +ELLIPSIS
                 [VEVENT(...)]
 
