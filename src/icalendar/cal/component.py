@@ -471,8 +471,8 @@ class Component(CaselessDict):
 
                 >>> from icalendar import Calendar
                 >>> cal = Calendar.from_ical("BEGIN:VCALENDAR\\nBEGIN:VEVENT\\nSUMMARY:Test\\nEND:VEVENT\\nEND:VCALENDAR")
-                >>> cal.walk("VEVENT")
-                [<VEVENT: ...>]
+                >>> cal.walk("VEVENT")  # doctest: +ELLIPSIS
+                [VEVENT(...)]
 
         """
         if name is not None:
@@ -518,8 +518,8 @@ class Component(CaselessDict):
                 >>> from icalendar import Event
                 >>> event = Event()
                 >>> event.add("summary", "Team sync")
-                >>> event.property_items(recursive=False)
-                [('SUMMARY', vText(b'Team sync'))]
+                >>> event.property_items(recursive=False)  # doctest: +NORMALIZE_WHITESPACE
+                [('BEGIN', b'VEVENT'), ('SUMMARY', vText(b'Team sync')), ('END', b'VEVENT')]
 
         """
         # Iterative implementation to avoid RecursionError
@@ -784,7 +784,7 @@ class Component(CaselessDict):
                 >>> from datetime import datetime, timezone
                 >>> event = Event()
                 >>> event.add("dtstamp", datetime(2024, 1, 15, 12, 0, 0, tzinfo=timezone.utc))
-                >>> event["dtstamp"]
+                >>> event["dtstamp"]  # doctest: +ELLIPSIS
                 vDDDTypes(...)
 
         See also:
@@ -883,7 +883,7 @@ class Component(CaselessDict):
                 >>> from datetime import datetime, timezone
                 >>> event = Event()
                 >>> event.add("created", datetime(2024, 1, 15, 12, 0, 0, tzinfo=timezone.utc))
-                >>> event["created"]
+                >>> event["created"]  # doctest: +ELLIPSIS
                 vDDDTypes(...)
 
         See also:
