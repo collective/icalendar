@@ -182,5 +182,8 @@ changes: dev
 
 .PHONY: commit-check
 commit-check:
-	@git log --format="%an" -n 1 | commit-check --author-name
-	@git log --format="%ae" -n 1 | commit-check --no-banner --author-email
+	@commit-check --author-name --author-email; \
+	if [ $$? = 0 ]; then \
+		echo; \
+		echo "Pull request author name and email appear to be human."; \
+	fi
