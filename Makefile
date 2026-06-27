@@ -8,7 +8,7 @@ PAPER           ?=
 VERSION			?=
 
 # Internal variables.
-VENVPATH        = "$(realpath .venv/bin/)"
+CCPATH          = "$(realpath .venv/bin/commit-check)"
 RUFFPATH        = "$(realpath .venv/bin/ruff)"
 SPHINXAUTOBUILD = "$(realpath .venv/bin/sphinx-autobuild)"
 SPHINXBUILD     = "$(realpath .venv/bin/sphinx-build)"
@@ -182,5 +182,5 @@ changes: dev
 
 .PHONY: commit-check
 commit-check:
-	git log --format="%an" -n 1 | ${VENVPATH}/commit-check --no-banner --author-name && \
-	git log --format="%ae" -n 1 | ${VENVPATH}/commit-check --no-banner --author-email
+	@git log --format="%an" -n 1 | $(CCPATH) --no-banner --author-name && \
+	git log --format="%ae" -n 1 | $(CCPATH) --no-banner --author-email
