@@ -180,6 +180,7 @@ changes: dev
 	$(TOWNCRIERPATH) build --version ${VERSION} --yes
 # /release
 
+# CI only
 .PHONY: commit-check
 commit-check:
 	@commit-check --author-name --author-email; \
@@ -187,3 +188,4 @@ commit-check:
 		echo; \
 		echo "Pull request author name and email appear to be human."; \
 	fi
+# /CI only
