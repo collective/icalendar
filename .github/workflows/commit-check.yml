@@ -28,4 +28,4 @@ jobs:
         run: uv tool install commit-check==2.9.0
 
       - name: Run commit-check
-        run: make commit-check
+        run: commit-check --author-name --author-email -m

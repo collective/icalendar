@@ -179,13 +179,3 @@ changes: dev
 	@test -n "$(VERSION)" || (echo "VERSION is not set. Run 'export VERSION=x.y.z' first." && exit 1)
 	$(TOWNCRIERPATH) build --version ${VERSION} --yes
 # /release
-
-# CI only
-.PHONY: commit-check
-commit-check:
-	commit-check --author-name --author-email -m
-#	if [ $$? = 0 ]; then \
-#		echo; \
-#		echo "Pull request author name and email appear to be human."; \
-#	fi
-# /CI only
