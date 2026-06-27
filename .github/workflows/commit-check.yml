@@ -1,0 +1,26 @@
+# Run commit-check against the author of each commit in a PR.
+# https://commit-check.github.io/
+name: Commit check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  commit-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff  # v6
+
+      - name: Install commit-check
+        run: uv tool install commit-check==2.5.0
+
+      - name: Run commit-check
+        run: |
+          git log --format="%s" -n 1 | commit-check -m --no-banner --author-name --author-email
