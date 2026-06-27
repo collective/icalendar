@@ -22,9 +22,9 @@ jobs:
           fetch-depth: 0  # Required for merge-base checks
       - uses: commit-check/commit-check-action@v2
         with:
-#          message: true
-#          branch: true
+          message: false
+          branch: false
           author-name: true
           author-email: true
-#          job-summary: true
+          job-summary: true
           pr-comments: ${{ github.event_name == 'pull_request' }}
