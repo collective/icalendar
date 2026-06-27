@@ -28,7 +28,6 @@ jobs:
         run: uv tool install commit-check==2.9.0
 
       - name: Run commit-check
-        run: make commit-check
         run: |
           pwd
           git log --format="%an" -n 1 | .venv/bin/commit-check --no-banner --author-name
