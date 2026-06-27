@@ -1,7 +1,7 @@
-# Run commit-check against the author of each commit in a PR.
+# Run Commit-Check against the author of each commit in a PR.
 # https://github.com/commit-check/commit-check-action
 # Based on  https://commit-check.github.io/
-name: Commit check
+name: Commit-Check
 
 on:
   push:
