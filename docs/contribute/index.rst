@@ -4,14 +4,24 @@ Contribute
 
 This guide describes how to contribute to icalendar.
 
+A key purpose around icalendar is to foster a warm and welcoming space for people to learn, grow, and contribute.
+Contributors in the icalendar community find joy in working with other people and raising them up to contribute again and improve.
+
+People in the icalendar community strive to uphold the spirit of the Python Calendaring Ecosystem's `Code of Conduct <https://pycal.org/code-of-conduct/>`_.
+You are invited to read it to help you decide whether you would enjoy being a part of the icalendar community.
+
 Examples of how to contribute
 -----------------------------
 
 -   Report security issues per the `Security Policy <https://github.com/collective/icalendar/blob/main/SECURITY.md>`_.
 -   Report all other issues in the `issue tracker <https://github.com/collective/icalendar/issues>`_.
 -   Comment on and resolve issues.
+-   Triage issues and pull requests.
 -   Submit pull requests from your fork of the icalendar repository.
 -   Extend the :doc:`documentation/index`.
+-   Create or comment on a topic in `Discussions <https://github.com/collective/icalendar/discussions>`_.
+-   Write a blog post about icalendar.
+-   Share announcements on social media from :doc:`core contributors <credits>` to icalendar.
 -   Sponsor development of icalendar through `Open Collective <https://opencollective.com/python-icalendar>`_.
 
 
@@ -69,9 +79,10 @@ Artificial intelligence policy
 ------------------------------
 
 We want to protect the joy, goodwill, and volunteer time of the maintainers and contributors of icalendar.
+Pull request reviewers want to train people, not AI.
 As such, we take a strong stance against artificial intelligence (AI) abuse.
 
-Contributors to icalendar must follow icalendar's AI policy as described in this section and its subsections.
+Contributors to icalendar must follow icalendar's AI policy as described in this section.
 
 
 .. _responsible-ai-use:

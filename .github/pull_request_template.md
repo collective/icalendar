@@ -19,9 +19,10 @@ Write a description of the fixes or improvements.
 ## Checklist
 
 - [ ] I've added a change log entry to `/news`, following the instructions in [Change log entry format](https://icalendar.readthedocs.io/en/latest/contribute/#change-log-entry-format).
-- [ ] I've added or updated tests if applicable.
+- [ ] I've followed icalendar's [Artificial intelligence policy](https://icalendar.readthedocs.io/en/latest/contribute/index.html#artificial-intelligence-policy), disclosing my usage of AI, if applicable.
+- [ ] I've added or updated tests, if applicable.
 - [ ] I've run and ensured all tests pass locally by following [Run tests](https://icalendar.readthedocs.io/en/latest/contribute/development.html#run-tests).
-- [ ] I've added or edited documentation, both as docstrings to be rendered in the API documentation and narrative documentation, as necessary.
+- [ ] I've added or edited documentation as necessary, both as docstrings to be rendered in the API documentation and narrative documentation, following the [Style guide](https://icalendar.readthedocs.io/en/latest/contribute/documentation/style-guide.html).
 
 ## Additional information
 
