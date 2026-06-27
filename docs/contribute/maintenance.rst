@@ -350,6 +350,8 @@ Links
 
 This section contains useful links for maintainers and collaborators.
 
+-   To remove private information from an iCalendar file for bug reports, use `icalendar-anonymizer <https://github.com/pycalendar/icalendar-anonymizer>`_ either through its `website <https://icalendar-anonymizer.com/>`_ or `install it locally <https://docs.icalendar-anonymizer.com/latest/installation.html>`_.
+-   `Python Calendaring Ecosystem <https://pycal.org/>`_
 -   `Future of icalendar, looking for maintainer #360 <https://github.com/collective/icalendar/discussions/360>`_
 -   `Comment on the Plone tests running with icalendar <https://github.com/collective/icalendar/pull/447#issuecomment-1277643634>`_
 
