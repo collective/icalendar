@@ -8,6 +8,7 @@ PAPER           ?=
 VERSION			?=
 
 # Internal variables.
+VENVPATH        = "$(realpath .venv/bin/)"
 RUFFPATH        = "$(realpath .venv/bin/ruff)"
 SPHINXAUTOBUILD = "$(realpath .venv/bin/sphinx-autobuild)"
 SPHINXBUILD     = "$(realpath .venv/bin/sphinx-build)"
@@ -178,3 +179,8 @@ changes: dev
 	@test -n "$(VERSION)" || (echo "VERSION is not set. Run 'export VERSION=x.y.z' first." && exit 1)
 	$(TOWNCRIERPATH) build --version ${VERSION} --yes
 # /release
+
+.PHONY: commit-check
+commit-check:
+	git log --format="%an" -n 1 | $(VENVPATH)/commit-check --no-banner --author-name
+	git log --format="%ae" -n 1 | $(VENVPATH)/commit-check --no-banner --author-email

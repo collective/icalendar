@@ -25,8 +25,7 @@ jobs:
         uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff  # v6
 
       - name: Install commit-check
-        run: |
-          uv tool install commit-check==2.9.0
-          source ./.venv/bin/activate
-          git log --format="%an" -n 1 | commit-check --no-banner --author-name
-          git log --format="%ae" -n 1 | commit-check --no-banner --author-email
+        run: uv tool install commit-check==2.9.0
+
+      - name: Run commit-check
+        run: make commit-check
