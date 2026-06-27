@@ -27,5 +27,6 @@ jobs:
       - name: Install commit-check
         run: |
           uv tool install commit-check==2.9.0
-          git log --format="%an" -n 1 | .venv/bin/commit-check --no-banner --author-name
-          git log --format="%ae" -n 1 | .venv/bin/commit-check --no-banner --author-email
+          source .venv/bin/activate
+          git log --format="%an" -n 1 | commit-check --no-banner --author-name
+          git log --format="%ae" -n 1 | commit-check --no-banner --author-email
