@@ -8,7 +8,6 @@ PAPER           ?=
 VERSION			?=
 
 # Internal variables.
-CCPATH          = "$(realpath .venv/bin/commit-check)"
 RUFFPATH        = "$(realpath .venv/bin/ruff)"
 SPHINXAUTOBUILD = "$(realpath .venv/bin/sphinx-autobuild)"
 SPHINXBUILD     = "$(realpath .venv/bin/sphinx-build)"

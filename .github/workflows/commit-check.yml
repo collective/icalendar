@@ -1,5 +1,6 @@
 # Run commit-check against the author of each commit in a PR.
-# https://commit-check.github.io/
+# https://github.com/commit-check/commit-check-action
+# Based on  https://commit-check.github.io/
 name: Commit check
 
 on:
@@ -7,25 +8,24 @@ on:
     branches:
       - main
   pull_request:
-
-permissions:
-  contents: read
+    branches: 'main'
 
 jobs:
   commit-check:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
 
     steps:
       - uses: actions/checkout@v7
         with:
-          fetch-depth: 0
-          fetch-tags: true
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff  # v6
-
-      - name: Install commit-check
-        run: uv tool install commit-check==2.9.0
-
-      - name: Run commit-check
-        run: commit-check --author-name --author-email -m
+          fetch-depth: 0  # Required for merge-base checks
+      - uses: commit-check/commit-check-action@v2
+        with:
+          message: false
+          branch: false
+          author-name: true
+          author-email: true
+          job-summary: true
+          pr-comments: ${{ github.event_name == 'pull_request' }}
