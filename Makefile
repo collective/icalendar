@@ -182,5 +182,5 @@ changes: dev
 
 .PHONY: commit-check
 commit-check:
-	git log --format="%an" -n 1 | "$(VENVPATH)"/commit-check --no-banner --author-name && \
-	git log --format="%ae" -n 1 | "$(VENVPATH)"/commit-check --no-banner --author-email
+	git log --format="%an" -n 1 | ${VENVPATH}/commit-check --no-banner --author-name && \
+	git log --format="%ae" -n 1 | ${VENVPATH}/commit-check --no-banner --author-email
