@@ -183,7 +183,7 @@ changes: dev
 # CI only
 .PHONY: commit-check
 commit-check:
-	@commit-check --author-name --author-email; \
+	@commit-check --author-name --author-email -m; \
 	if [ $$? = 0 ]; then \
 		echo; \
 		echo "Pull request author name and email appear to be human."; \
