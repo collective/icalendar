@@ -16,12 +16,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff  # v6
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff  # v6
 
       - name: Install commit-check
         run: uv tool install commit-check==2.9.0
 
       - name: Run commit-check
+        run: make commit-check
         run: |
+          pwd
           git log --format="%an" -n 1 | .venv/bin/commit-check --no-banner --author-name
           git log --format="%ae" -n 1 | .venv/bin/commit-check --no-banner --author-email
