@@ -161,8 +161,9 @@ Discussion of the issue helps collaborators understand its importance and how to
 Pull request requirements
 -------------------------
 
-Before submitting your pull request, ensure you have met the following requirements.
+When submitting your pull request, complete the description template on GitHub, and ensure you have met the following requirements.
 
+#.  In your pull request description, link to relevant issues.
 #.  Add a change log entry as described in :ref:`change-log`.
     This is required and enforced by GitHub checks.
 #.  Add a test which proves your fix and passes.
