@@ -176,8 +176,15 @@ The maintainers may also take further action, including suspend, ban, or report 
 
 .. _change-log:
 
-Change log entry format
-```````````````````````
+Change log requirements
+-----------------------
+
+This section describes how to write a change log entry that satisfies the requirements of its :ref:`file name <change-log-file-name>` according to :ref:`types <change-log-types>` and which :ref:`summarizes changes <write-a-good-change-log-entry-label>` in your contribution, including compliance with icalendar's :ref:`responsible-ai-use` policy.
+
+.. _change-log-file-name:
+
+Change log entry file name
+``````````````````````````
 
 To create a change log entry or news item, create a file in the :file:`news` directory, located in the root of the package.
 
@@ -211,7 +218,7 @@ The content will still be included in the change log, at the end of the category
 ..  _change-log-types:
 
 Change log types
-````````````````
+~~~~~~~~~~~~~~~~
 
 ``breaking``
     For changes that break the existing API.
@@ -241,7 +248,7 @@ Change log types
 .. _write-a-good-change-log-entry-label:
 
 Write a good change log entry
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`````````````````````````````
 
 .. important::
 
@@ -250,7 +257,9 @@ Write a good change log entry
 The content of this file must include the following.
 
 -   A brief message that summarizes the changes in your contribution.
--   An attribution to yourself, in the format of ``@github_username``.
+-   Use :ref:`reStructuredText markup <markup-examples>` to link to relevant RFCs, API usage, and other references.
+-   A brief disclosure of AI use, per icalendar's :ref:`responsible-ai-use` policy, if applicable.
+-   An attribution to yourself, in the format of ``@github_username``, at the end of the entry.
 
 You can write a good change log entry with the following guidance.
 
