@@ -95,13 +95,25 @@ That means you must comply with :ref:`pull-request-requirements` and follow the 
 
 If you use AI in your work:
 
--   You must take responsibility for the output, including reviewing and validating the output for accuracy and ensuring it resolves an issue.
--   You must check the AI's terms of use, and ensure that outputs are not reconstructed from copyrighted sources.
--   You are expected to understand and be able to explain design and code decisions.
+-   Before you begin work, you must open an issue per :ref:`issue-requirements`.
 -   In your git commit messages, you must specify both (1) which AI model and version you used, and (2) how you used it, by either including the prompts and interactions you used or summarizing them.
+    See the example commit message below.
+
+    ..  code-block:: text
+
+        Author: Parker Programmer with CodeLLM-3.4 pp@example.org
+        Date: Sun Jan 18 10:52:08 2026
+        Generate compliance tests
+        Prompt: Generate tests for compliance with RFC123 messages.
+        Output: (this commit)
+
     You can automate this by using the :program:`ai-prompt-auto-commit` pre-commit hook.
     See :ref:`AI prompt automation <pre-commit-ai-prompts>` for setup instructions.
 -   You must disclose that you used AI in your change log entry.
+    This may be a brief disclosure, not as detailed as the git commit messages, such as, "I used AI to assist me with this change."
+-   You must take responsibility for the output, including reviewing and validating the output for accuracy and ensuring it resolves an issue.
+-   You must check the AI's terms of use, and ensure that outputs are not reconstructed from copyrighted sources.
+-   You are expected to understand and be able to explain design and code decisions.
 -   You shall be held accountable for your AI-generated content.
 
 
