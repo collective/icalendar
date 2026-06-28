@@ -18,11 +18,11 @@ Write a description of the fixes or improvements.
 
 ## Checklist
 
-- [ ] I've added a change log entry to `/news`, following the instructions in [Change log entry format](https://icalendar.readthedocs.io/en/latest/contribute/#change-log-entry-format).
-- [ ] I've followed icalendar's [Artificial intelligence policy](https://icalendar.readthedocs.io/en/latest/contribute/index.html#artificial-intelligence-policy), disclosing my usage of AI, if applicable.
-- [ ] I've added or updated tests, if applicable.
-- [ ] I've run and ensured all tests pass locally by following [Run tests](https://icalendar.readthedocs.io/en/latest/contribute/development.html#run-tests).
-- [ ] I've added or edited documentation as necessary, both as docstrings to be rendered in the API documentation and narrative documentation, following the [Style guide](https://icalendar.readthedocs.io/en/latest/contribute/documentation/style-guide.html).
+- [ ] I added a change log entry, following the instructions in [Change log entry format](https://icalendar.readthedocs.io/en/latest/contribute/#change-log-entry-format).
+- [ ] I followed icalendar's [Artificial intelligence policy](https://icalendar.readthedocs.io/en/latest/contribute/index.html#artificial-intelligence-policy) and disclosed my [Responsible AI use](https://icalendar.readthedocs.io/en/latest/contribute/index.html#responsible-ai-use) in my commit messages, if applicable.
+- [ ] I added or updated tests, if applicable.
+- [ ] I ran and ensured all tests pass locally by following [Run tests](https://icalendar.readthedocs.io/en/latest/contribute/development.html#run-tests).
+- [ ] I added or edited documentation as necessary, both as docstrings to be rendered in the API documentation and narrative documentation, following the [Style guide](https://icalendar.readthedocs.io/en/latest/contribute/documentation/style-guide.html).
 
 ## Additional information
 
