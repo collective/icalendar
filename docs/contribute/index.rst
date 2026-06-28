@@ -144,13 +144,17 @@ The maintainers may also take further action, including suspend, ban, or report 
 Issue requirements
 ------------------
 
-When creating a new issue, you'll be presented with an issue selector.
+An issue should precede a pull request.
+
+When `creating a new issue <https://github.com/collective/icalendar/issues/new/choose>`_, you'll be presented with an issue selector.
 Follow the templates guidance as much as practical.
 
 It might be helpful to include an iCalendar file to help reproduce your issue and to use in a test to ensure a bug fix actually resolves your issue.
 To remove private information from an iCalendar file, use :program:`icalendar-anonymizer`, either through its `website <https://icalendar-anonymizer.com/>`_ or install it locally.
 See icalendar-anonymizer's `Installation <https://docs.icalendar-anonymizer.com/latest/installation.html>`_ and documentation for details.
 
+Anyone may comment on an issue.
+Discussion of the issue helps collaborators understand its importance and how to resolve it.
 
 .. _pull-request-requirements:
 
