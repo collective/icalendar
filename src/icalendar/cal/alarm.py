@@ -322,14 +322,14 @@ class Alarm(Component):
         This creates a new Alarm in accordance with :rfc:`5545`.
 
         Parameters:
-            attendees: The :attr:`attendees` of the alarm.
-            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the alarm.
-            description: The :attr:`description` of the alarm.
-            links: The :attr:`~icalendar.cal.component.Component.links` of the alarm.
-            refids: :attr:`~icalendar.cal.component.Component.refids` of the alarm.
-            related_to: :attr:`~icalendar.cal.component.Component.related_to` of the alarm.
-            summary: The :attr:`summary` of the alarm.
-            uid: The :attr:`uid` of the alarm.
+            attendees: Optional. The :attr:`attendees` of the alarm.
+            concepts: Optional. The :attr:`~icalendar.cal.component.Component.concepts` of the alarm.
+            description: Optional. The :attr:`description` of the alarm.
+            links: Optional. The :attr:`~icalendar.cal.component.Component.links` of the alarm.
+            refids: Optional. :attr:`~icalendar.cal.component.Component.refids` of the alarm.
+            related_to: Optional. :attr:`~icalendar.cal.component.Component.related_to` of the alarm.
+            summary: Optional. The :attr:`summary` of the alarm.
+            uid: Optional. The :attr:`uid` of the alarm.
 
         Returns:
             :class:`Alarm`
