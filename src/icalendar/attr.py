@@ -439,9 +439,9 @@ def single_utc_property(name: str, docs: str) -> property:
         docs: documentation string
     """
     docs = (
-        f"""The {name} property. datetime in UTC
+        f"""The {name} property with all values converted to a
+    :class:`~datetime.datetime` in UTC.
 
-    All values will be converted to a datetime in UTC.
     """
         + docs
     )
@@ -1002,14 +1002,17 @@ def create_single_property(
 
     {doc}
 
-    To delete the value, either use ``del`` or set it to ``None``.
+    You can also delete the value with ``del`` or by setting it to ``None``.
 
-    Returns:
-        If the value is absent, return ``None``.
+    Parameters:
+        {", ".join(t.__name__ for t in value_type)}.
 
     Raises:
-        :exc:`~icalendar.error.InvalidCalendar`
-            If the attribute has invalid values.
+        InvalidCalendar: if the attribute has invalid values.
+
+    Returns:
+        A :class:`~datetime.datetime` or :class:`~datetime.timedelta` if the
+        value is valid. ``None`` if the value is absent.
     """
     return property(p_get, p_set, p_del, p_doc)
 

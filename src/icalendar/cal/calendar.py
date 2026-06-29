@@ -287,115 +287,88 @@ class Calendar(Component):
     calendar_name = multi_language_text_property(
         "NAME",
         "X-WR-CALNAME",
-        """This property specifies the name of the calendar.
+        """The display name of this calendar, per :rfc:`7986#section-5.1`.
 
-    This implements :rfc:`7986` ``NAME`` and ``X-WR-CALNAME``.
+    Implements both the ``NAME`` property from :rfc:`7986#section-5.3` and the widely used
+    ``X-WR-CALNAME`` extension for broader client compatibility.
 
-    Property Parameters:
-        IANA, non-standard, alternate text
-        representation, and language property parameters can be specified
-        on this property.
-
-    Conformance:
-        This property can be specified multiple times in an
-        iCalendar object.  However, each property MUST represent the name
-        of the calendar in a different language.
-
-    Description:
-        This property is used to specify a name of the
-        iCalendar object that can be used by calendar user agents when
-        presenting the calendar data to a user.  Whilst a calendar only
-        has a single name, multiple language variants can be specified by
-        including this property multiple times with different "LANGUAGE"
-        parameter values on each.
+    Multiple language variants can be stored by setting this property more than
+    once, each with a different ``LANGUAGE`` parameter value.
 
     Example:
-        Below, we set the name of the calendar.
+        Set the name of the calendar.
 
         .. code-block:: pycon
 
             >>> from icalendar import Calendar
             >>> calendar = Calendar()
             >>> calendar.calendar_name = "My Calendar"
-            >>> print(calendar.to_ical())
+            >>> print(calendar.to_ical().decode())
             BEGIN:VCALENDAR
             NAME:My Calendar
             X-WR-CALNAME:My Calendar
             END:VCALENDAR
+
+    See also:
+        :attr:`description`
     """,
     )
 
     description = multi_language_text_property(
         "DESCRIPTION",
         "X-WR-CALDESC",
-        """This property specifies the description of the calendar.
+        """A human-readable description of this calendar's content, per :rfc:`7986#section-5.2`.
 
-    This implements :rfc:`7986` ``DESCRIPTION`` and ``X-WR-CALDESC``.
+    Implements both ``DESCRIPTION`` from :rfc:`7986#section-5.2` and ``X-WR-CALDESC``
+    for broader calendar client compatibility.
 
-    Conformance:
-        This property can be specified multiple times in an
-        iCalendar object.  However, each property MUST represent the
-        description of the calendar in a different language.
-
-    Description:
-        This property is used to specify a lengthy textual
-        description of the iCalendar object that can be used by calendar
-        user agents when describing the nature of the calendar data to a
-        user.  Whilst a calendar only has a single description, multiple
-        language variants can be specified by including this property
-        multiple times with different "LANGUAGE" parameter values on each.
+    Multiple language variants can be stored by setting this property more than
+    once with different ``LANGUAGE`` parameter values.
 
     Example:
-        Below, we add a description to a calendar.
+        Add a description to a calendar.
 
         .. code-block:: pycon
 
             >>> from icalendar import Calendar
             >>> calendar = Calendar()
             >>> calendar.description = "This is a calendar"
-            >>> print(calendar.to_ical())
+            >>> print(calendar.to_ical().decode())
             BEGIN:VCALENDAR
             DESCRIPTION:This is a calendar
             X-WR-CALDESC:This is a calendar
             END:VCALENDAR
+
+    See also:
+        :attr:`calendar_name`
     """,
     )
 
     color = single_string_property(
         "COLOR",
-        """This property specifies a color used for displaying the calendar.
+        """A CSS3 color name or value used to visually distinguish this calendar, per :rfc:`7986#section-5.9`.
 
-    This implements :rfc:`7986` ``COLOR`` and ``X-APPLE-CALENDAR-COLOR``.
-    Please note that since :rfc:`7986`, subcomponents can have their own color.
+    Implements both ``COLOR`` from :rfc:`7986#section-5.9` and ``X-APPLE-CALENDAR-COLOR``.
+    The value is a case-insensitive CSS3 color name, for example, ``"turquoise"``, or
+    a hex code, for example, ``"#ffffff"``, drawn from the
+    `CSS3 color specification <https://www.w3.org/TR/css-color-3/>`_.
 
-    Property Parameters:
-        IANA and non-standard property parameters can
-        be specified on this property.
-
-    Conformance:
-        This property can be specified once in an iCalendar
-        object or in ``VEVENT``, ``VTODO``, or ``VJOURNAL`` calendar components.
-
-    Description:
-        This property specifies a color that clients MAY use
-        when presenting the relevant data to a user.  Typically, this
-        would appear as the "background" color of events or tasks.  The
-        value is a case-insensitive color name taken from the CSS3 set of
-        names, defined in Section 4.3 of `W3C.REC-css3-color-20110607 <https://www.w3.org/TR/css-color-3/>`_.
+    Since :rfc:`7986`, individual ``VEVENT``, ``VTODO``, and ``VJOURNAL``
+    subcomponents may also carry their own color.
 
     Example:
-        ``"turquoise"``, ``"#ffffff"``
-
         .. code-block:: pycon
 
             >>> from icalendar import Calendar
             >>> calendar = Calendar()
             >>> calendar.color = "black"
-            >>> print(calendar.to_ical())
+            >>> print(calendar.to_ical().decode())
             BEGIN:VCALENDAR
             COLOR:black
             END:VCALENDAR
 
+    See also:
+        :attr:`calendar_name`
     """,
         "X-APPLE-CALENDAR-COLOR",
     )
@@ -403,87 +376,101 @@ class Calendar(Component):
     uid = uid_property
     prodid = single_string_property(
         "PRODID",
-        """PRODID specifies the identifier for the product that created the iCalendar object.
+        """The product identifier for the software that created this iCalendar object.
 
-Conformance:
-    The property MUST be specified once in an iCalendar object.
+This property is defined in :rfc:`5545#section-3.7.3`.
+It's required exactly once per calendar object.
 
-Description:
-    The vendor of the implementation SHOULD assure that
-    this is a globally unique identifier; using some technique such as
-    an FPI value, as defined in [ISO.9070.1991].
-
-    This property SHOULD NOT be used to alter the interpretation of an
-    iCalendar object beyond the semantics specified in this memo.  For
-    example, it is not to be used to further the understanding of non-
-    standard properties.
+The value should be a globally unique string. The conventional format is a
+Formal Public Identifier (FPI), for example, ``-//My Company//My Product//EN``, but any
+unique string is acceptable.
 
 Example:
-    The following is an example of this property. It does not
-    imply that English is the default language.
+    Set a custom product identifier on a new calendar.
 
-    .. code-block:: text
+    .. code-block:: pycon
 
-        -//ABC Corporation//NONSGML My Product//EN
+        >>> from icalendar import Calendar
+        >>> cal = Calendar()
+        >>> cal.prodid = "-//MyApp//MyCalendar//EN"
+        >>> str(cal.prodid)
+        '-//MyApp//MyCalendar//EN'
+
+See also:
+    :attr:`version`
 """,
     )
     version = single_string_property(
         "VERSION",
-        """VERSION of the calendar specification.
+        """The iCalendar specification version required to interpret this object.
 
-The default is ``"2.0"`` for :rfc:`5545`.
+This property is defined in :rfc:`5545#section-3.7.4`.
+It's required exactly once per calendar object.
+The value ``"2.0"`` indicates :rfc:`5545` compliance, which is the default used
+by this library. A range such as ``"1.0;2.0"`` may indicate minimum and maximum
+supported versions.
 
-Purpose:
-    This property specifies the identifier corresponding to the
-    highest version number or the minimum and maximum range of the
-    iCalendar specification that is required in order to interpret the
-    iCalendar object.
+Example:
+    .. code-block:: pycon
 
+        >>> from icalendar import Calendar
+        >>> cal = Calendar()
+        >>> cal.version = "2.0"
+        >>> str(cal.version)
+        '2.0'
 
-      """,
+See also:
+    :attr:`prodid`, :attr:`calscale`
+""",
     )
 
     calscale = single_string_property(
         "CALSCALE",
-        """CALSCALE defines the calendar scale used for the calendar information specified in the iCalendar object.
+        """The calendar scale for date and time values in this iCalendar object.
 
-Compatibility:
-    :rfc:`7529` makes the case that GREGORIAN stays the default and other calendar scales
-    are implemented on the RRULE.
+This property is defined in :rfc:`5545#section-3.7.1`. The only value currently defined is
+``"GREGORIAN"`` (the default). When this property is absent, Gregorian is assumed.
 
-Conformance:
-    This property can be specified once in an iCalendar
-    object.  The default value is "GREGORIAN".
+Per :rfc:`7529`, non-Gregorian calendar systems are expressed via ``RRULE``
+transformations rather than a different ``CALSCALE`` value.
 
-Description:
-    This memo is based on the Gregorian calendar scale.
-    The Gregorian calendar scale is assumed if this property is not
-    specified in the iCalendar object.  It is expected that other
-    calendar scales will be defined in other specifications or by
-    future versions of this memo.
+Example:
+    .. code-block:: pycon
+
+        >>> from icalendar import Calendar
+        >>> cal = Calendar()
+        >>> cal.calscale
+        'GREGORIAN'
+
+See also:
+    :attr:`version`
         """,
         default="GREGORIAN",
     )
     method = single_string_property(
         "METHOD",
-        """METHOD defines the iCalendar object method associated with the calendar object.
+        """The iTIP scheduling method associated with this calendar object, per :rfc:`5545#section-3.7.2`.
 
-Description:
-    When used in a MIME message entity, the value of this
-    property MUST be the same as the Content-Type "method" parameter
-    value.  If either the "METHOD" property or the Content-Type
-    "method" parameter is specified, then the other MUST also be
-    specified.
+When present, ``METHOD`` indicates that this object is part of a scheduling
+transaction, such as a meeting invitation or cancellation. Scheduling methods
+are defined by :rfc:`5546` (iTIP), with values such as ``"REQUEST"``,
+``"REPLY"``, ``"CANCEL"``, and ``"PUBLISH"``.
 
-    No methods are defined by this specification.  This is the subject
-    of other specifications, such as the iCalendar Transport-
-    independent Interoperability Protocol (iTIP) defined by :rfc:`5546`.
+When used inside a MIME message, this value must match the ``method`` parameter
+of the ``Content-Type`` header. If absent, the calendar is treated as a plain
+data snapshot with no scheduling semantics.
 
-    If this property is not present in the iCalendar object, then a
-    scheduling transaction MUST NOT be assumed.  In such cases, the
-    iCalendar object is merely being used to transport a snapshot of
-    some calendar information; without the intention of conveying a
-    scheduling semantic.
+Example:
+    .. code-block:: pycon
+
+        >>> from icalendar import Calendar
+        >>> cal = Calendar()
+        >>> cal.method = "REQUEST"
+        >>> str(cal.method)
+        'REQUEST'
+
+See also:
+    :attr:`version`, :rfc:`5546`
 """,
     )
     url = url_property
@@ -491,23 +478,30 @@ Description:
 
     @property
     def refresh_interval(self) -> timedelta | None:
-        """REFRESH-INTERVAL specifies a suggested minimum interval for
-        polling for changes of the calendar data from the original source
-        of that data.
+        """A suggested minimum polling interval for fetching updates to this calendar, per :rfc:`7986#section-5.7`.
 
-        Conformance:
-            This property can be specified once in an iCalendar
-            object, consisting of a positive duration of time.
+        Calendar clients should not poll more frequently than this interval.
+        The value must be a positive duration.
 
-        Description:
-            This property specifies a positive duration that gives
-            a suggested minimum polling interval for checking for updates to
-            the calendar data.  The value of this property SHOULD be used by
-            calendar user agents to limit the polling interval for calendar
-            data updates to the minimum interval specified.
+        Returns:
+            A :class:`~datetime.timedelta`, or ``None`` when not set.
 
         Raises:
-            ValueError: When setting a negative duration.
+            ValueError: When setting a non-positive (zero or negative) duration.
+            TypeError: When setting a value that is not a :class:`~datetime.timedelta` or ``None``.
+
+        Example:
+            .. code-block:: pycon
+
+                >>> from datetime import timedelta
+                >>> from icalendar import Calendar
+                >>> cal = Calendar()
+                >>> cal.refresh_interval = timedelta(hours=1)
+                >>> cal.refresh_interval
+                datetime.timedelta(seconds=3600)
+
+        See also:
+            :attr:`source`
         """
         refresh_interval = self.get("REFRESH-INTERVAL")
         return refresh_interval.dt if refresh_interval else None
