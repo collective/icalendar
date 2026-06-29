@@ -1,0 +1,1 @@
+Clarified optional parameters and auto-generated ``UID`` and ``DTSTAMP`` values in the :meth:`~icalendar.cal.event.Event.new` docstring. AI disclosure: Grok assisted with reviewing RFC terminology and drafting the docstring update. @checkzhao8888
