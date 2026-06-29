@@ -29,6 +29,12 @@ def _escape_char(text: str | bytes) -> str:
         5. ``\r\n`` -> ``\n`` (normalize line endings)
         6. ``"\n"`` -> ``r"\n"`` (transform a newline character to a literal, or raw,
            newline character)
+        7. ``"\r"`` -> ``r"\n"`` (escape a lone carriage return left over from above)
+
+        Steps 5 to 7 normalize ``\r\n``, ``\n`` and a lone ``\r`` to the ``\n``
+        escape. That line-ending normalization is an implementation convenience,
+        not part of :rfc:`5545`, which only defines ``\n``/``\N`` for an
+        intentional line break and does not give a literal ``\r`` an escape form.
     """
     assert isinstance(text, (str, bytes))
     text = to_unicode(text)
@@ -40,6 +46,7 @@ def _escape_char(text: str | bytes) -> str:
         .replace(",", r"\,")
         .replace("\r\n", r"\n")
         .replace("\n", r"\n")
+        .replace("\r", r"\n")
     )
 
 
