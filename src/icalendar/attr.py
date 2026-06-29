@@ -738,54 +738,47 @@ attendees_property = property(
     _get_attendees,
     _set_attendees,
     _del_attendees,
-    """ATTENDEE defines one or more "Attendees" within a calendar component.
+    """The attendees of an event, to-do, or alarm.
 
-Conformance:
-    This property MUST be specified in an iCalendar object
-    that specifies a group-scheduled calendar entity.  This property
-    MUST NOT be specified in an iCalendar object when publishing the
-    calendar information (e.g., NOT in an iCalendar object that
-    specifies the publication of a calendar user's busy time, event,
-    to-do, or journal).  This property is not specified in an
-    iCalendar object that specifies only a time zone definition or
-    that defines calendar components that are not group-scheduled
-    components, but are components only on a single user's calendar.
+    Use this to add or read who is invited or involved. Each attendee is
+    represented as a :class:`~icalendar.prop.vCalAddress`, usually an email
+    address like ``mailto:someone@example.com``.
 
-Description:
-    This property MUST only be specified within calendar
-    components to specify participants, non-participants, and the
-    chair of a group-scheduled calendar entity.  The property is
-    specified within an "EMAIL" category of the "VALARM" calendar
-    component to specify an email address that is to receive the email
-    type of iCalendar alarm.
+    For email-based alarms (:class:`~icalendar.cal.alarm.Alarm`), the
+    attendees are the recipients who should get the email reminder.
 
-Examples:
-    Add a new attendee to an existing event.
+    Conforming with :rfc:`5545#section-3.8.4.1`, this property can appear
+    multiple times to list several attendees.
 
-    .. code-block:: pycon
+    Example:
+        Add a new attendee to an existing event.
 
-        >>> from icalendar import Event, vCalAddress
-        >>> event = Event()
-        >>> event.attendees.append(vCalAddress("mailto:me@my-domain.com"))
-        >>> print(event.to_ical())
-        BEGIN:VEVENT
-        ATTENDEE:mailto:me@my-domain.com
-        END:VEVENT
+        .. code-block:: pycon
 
-    Create an email alarm with several attendees:
+            >>> from icalendar import Event, vCalAddress
+            >>> event = Event()
+            >>> event.attendees.append(vCalAddress("mailto:me@my-domain.com"))
+            >>> print(event.to_ical())
+            BEGIN:VEVENT
+            ATTENDEE:mailto:me@my-domain.com
+            END:VEVENT
 
-        >>> from icalendar import Alarm, vCalAddress
-        >>> alarm = Alarm.new(attendees = [
-        ...     vCalAddress("mailto:me@my-domain.com"),
-        ...     vCalAddress("mailto:you@my-domain.com"),
-        ... ], summary = "Email alarm")
-        >>> print(alarm.to_ical())
-        BEGIN:VALARM
-        ATTENDEE:mailto:me@my-domain.com
-        ATTENDEE:mailto:you@my-domain.com
-        SUMMARY:Email alarm
-        END:VALARM
-""",
+        Create an email alarm with several attendees:
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Alarm, vCalAddress
+            >>> alarm = Alarm.new(attendees = [
+            ...     vCalAddress("mailto:me@my-domain.com"),
+            ...     vCalAddress("mailto:you@my-domain.com"),
+            ... ], summary = "Email alarm")
+            >>> print(alarm.to_ical())
+            BEGIN:VALARM
+            ATTENDEE:mailto:me@my-domain.com
+            ATTENDEE:mailto:you@my-domain.com
+            SUMMARY:Email alarm
+            END:VALARM
+    """,
 )
 
 uid_property = single_string_property(
