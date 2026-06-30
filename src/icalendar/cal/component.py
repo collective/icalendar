@@ -246,25 +246,27 @@ class Component(CaselessDict):
 
     @classmethod
     def _encode(cls, name, value, parameters=None, encode=1):
-        """Encode values to icalendar property values.
+       """Encode a Python value into an icalendar property value.
 
-        :param name: Name of the property.
-        :type name: string
+        If the value is already one of icalendar's own property types, it is
+        returned as-is. Otherwise, the appropriate type is looked up from the
+        types factory, and the value is wrapped. When ``encode`` is falsy, the
+        value is returned without any encoding.
 
-        :param value: Value of the property. Either of a basic Python type of
-                      any of the icalendar's own property types.
-        :type value: Python native type or icalendar property type.
+        Parameters:
+            name: Name of the property, such as ``DTSTART`` or ``SUMMARY``.
+            value: Value to encode. Either a basic Python type such as
+                :class:`str`, :class:`datetime.datetime`, or :class:`int`,
+                or an already-encoded icalendar property type.
+            parameters: Property parameter dictionary for the value.
+                Only consulted when ``encode`` is truthy.
+            encode: When truthy, encode ``value`` into one of icalendar's
+                property types (fallback is ``vText``). When falsy, return
+                ``value`` unchanged.
 
-        :param parameters: Property parameter dictionary for the value. Only
-                           available, if encode is set to True.
-        :type parameters: Dictionary
-
-        :param encode: True, if the value should be encoded to one of
-                       icalendar's own property types (Fallback is "vText")
-                       or False, if not.
-        :type encode: Boolean
-
-        :returns: icalendar property value
+        Returns:
+            The encoded icalendar property value, or ``value`` unchanged when
+            ``encode`` is falsy.
         """
         if not encode:
             return value
@@ -451,14 +453,37 @@ class Component(CaselessDict):
         name: str | None = None,
         select: callable[[Component], bool] = lambda _: True,
     ) -> list[Component]:
-        """Recursively traverses component and subcomponents. Returns sequence
-        of same. If name is passed, only components with name will be returned.
+       """Return matching components from this component and all subcomponents.
 
-        :param name: The name of the component or None such as ``VEVENT``.
-        :param select: A function that takes the component as first argument
-          and returns True/False.
-        :returns: A list of components that match.
-        :rtype: list[Component]
+        Traverses the full component tree depth-first. When ``name`` is given,
+        only components with that name are included. The optional ``select``
+        predicate provides additional filtering.
+
+        Parameters:
+            name: The uppercase component name to filter by, such as
+                ``"VEVENT"`` or ``"VTODO"``. When ``None``, all components
+                are considered for inclusion.
+            select: A callable that receives a :class:`~Component` and
+                returns ``True`` to include it or ``False`` to skip it.
+                Defaults to including every component.
+
+        Returns:
+            A list of :class:`~Component` instances that match both ``name``
+            and ``select``.
+
+        Examples:
+            Collect all events from a calendar:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Calendar
+                >>> cal = Calendar.from_ical(
+                ...     "BEGIN:VCALENDAR\\r\\nBEGIN:VEVENT\\r\\n"
+                ...     "SUMMARY:Team Meeting\\r\\nEND:VEVENT\\r\\nEND:VCALENDAR"
+                ... )
+                >>> events = cal.walk("VEVENT")
+                >>> events[0]["SUMMARY"]
+                vText(b'Team Meeting')
         """
         if name is not None:
             name = name.upper()
@@ -483,8 +508,26 @@ class Component(CaselessDict):
         recursive: bool = True,
         sorted: bool = True,
     ) -> list[tuple[str, object]]:
-        """Returns properties in this component and subcomponents as:
-        [(name, value), ...]
+        """Return all properties in this component and its subcomponents.
+
+        Produces a flat list of ``(name, value)`` tuples in iCalendar wire
+        order, including ``BEGIN`` and ``END`` markers for each component.
+        The traversal is iterative to avoid :exc:`RecursionError` on deeply
+        nested calendars.
+
+        Parameters:
+            recursive: When ``True``, traverse subcomponents depth-first and
+                include their properties. When ``False``, return only the
+                properties of this component.
+            sorted: When ``True``, property names within each component are
+                sorted lexicographically according to
+                :meth:`~icalendar.caselessdict.CaselessDict.sorted_keys`.
+                When ``False``, insertion order is preserved.
+
+        Returns:
+            A list of ``(name, value)`` tuples where ``name`` is the
+            uppercase property name and ``value`` is the encoded property
+            object or serialized bytes for ``BEGIN`` and ``END`` lines.
         """
         # Iterative implementation to avoid RecursionError
         result = []
@@ -600,12 +643,37 @@ class Component(CaselessDict):
         return f"{error_description}: {bad_input}"
 
     def content_line(self, name, value, sorted: bool = True):
-        """Returns property as content line."""
+       """Build a single iCalendar content line for a property.
+
+        Parameters:
+            name: The property name, such as ``SUMMARY`` or ``DTSTART``.
+            value: The property value, which may carry a ``params`` attribute
+                containing a :class:`~icalendar.parser.Parameters` mapping.
+            sorted: When ``True``, parameters within the content line are
+                sorted lexicographically.
+
+        Returns:
+            A :class:`~icalendar.parser.Contentline` ready for serialization.
+        """
         params = getattr(value, "params", Parameters())
         return Contentline.from_parts(name, params, value, sorted=sorted)
 
     def content_lines(self, sorted: bool = True):
-        """Converts the Component and subcomponents into content lines."""
+       """Convert the component and all subcomponents into content lines.
+
+        Calls :meth:`property_items` to collect every ``BEGIN``, property,
+        and ``END`` line, then converts each to a
+        :class:`~icalendar.parser.Contentline`.
+
+        Parameters:
+            sorted: When ``True``, parameters and properties are sorted
+                lexicographically within each content line.
+
+        Returns:
+            A :class:`~icalendar.parser.Contentlines` collection containing
+            all content lines for this component, including a trailing
+            empty entry required by :rfc:`5545`.
+        """
         contentlines = Contentlines()
         for name, value in self.property_items(sorted=sorted):
             cl = self.content_line(name, value, sorted=sorted)
@@ -614,9 +682,29 @@ class Component(CaselessDict):
         return contentlines
 
     def to_ical(self, sorted: bool = True):
-        """
-        :param sorted: Whether parameters and properties should be
-                       lexicographically sorted.
+       """Serialize the component to iCalendar-format bytes.
+
+        Converts the full component tree, including all subcomponents and
+        their properties, into a :rfc:`5545`-compliant byte string.
+
+        Parameters:
+            sorted: When ``True``, parameters and properties are sorted
+                lexicographically. Pass ``False`` to preserve insertion
+                order, for example to match a specific wire format.
+
+        Returns:
+            The iCalendar-formatted representation of this component as
+            :class:`bytes`.
+
+        Examples:
+            Serialize a minimal calendar to bytes:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Calendar
+                >>> cal = Calendar.new()
+                >>> b"BEGIN:VCALENDAR" in cal.to_ical()
+                True
         """
 
         content_lines = self.content_lines(sorted=sorted)
