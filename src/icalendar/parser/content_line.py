@@ -252,13 +252,14 @@ class Contentlines(list[Contentline]):
     def from_ical(cls, st):
         """Parses a string into content lines."""
         st = to_unicode(st)
-        try:
-            # a fold is carriage return followed by either a space or a tab
-            unfolded = UFOLD.sub("", st)
-            lines = cls(Contentline(line) for line in NEWLINE.split(unfolded) if line)
-            lines.append("")  # '\r\n' at the end of every content line
-        except Exception as e:
-            raise ValueError("Expected StringType with content lines") from e
+        # a fold is carriage return followed by either a space or a tab
+        # nothing inside can raise: to_unicode catches UnicodeDecodeError,
+        # UFOLD.sub uses module-level constants, and Contentline(line)
+        # only fails on the dead assert "\n" not in value since NEWLINE.split
+        # consumes newlines.
+        unfolded = UFOLD.sub("", st)
+        lines = cls(Contentline(line) for line in NEWLINE.split(unfolded) if line)
+        lines.append("")  # '\r\n' at the end of every content line
         return lines
 
 

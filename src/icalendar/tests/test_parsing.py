@@ -280,3 +280,37 @@ def test_create_a_component():
     my_component_class = factory.get_component_class("My-Component")
     assert my_component_class.name == "MY-COMPONENT"
     assert my_component_class.__name__ == "MyComponent"
+
+
+def test_contentlines_from_ical_unfolded_round_trip():
+    """Contentlines.from_ical keeps simple lines intact and to_ical
+    re-serialises them with CRLF line terminators and a trailing CRLF.
+    The pre-fix implementation wrapped the body in ``try/except Exception``
+    and re-raised as ``ValueError("Expected StringType with content lines")``,
+    which both shadowed every internal exception (including programming
+    errors that should propagate) and translated a now-dead AssertionError
+    into a misleading error message. After removing that try/except, this
+    test exercises the happy path to make sure normal parsing still works.
+    """
+    from icalendar.parser import Contentlines
+
+    raw = "BEGIN:VCALENDAR\r\nSUMMARY:hello\r\nEND:VCALENDAR\r\n"
+    lines = Contentlines.from_ical(raw)
+    assert lines[:-1] == [
+        "BEGIN:VCALENDAR",
+        "SUMMARY:hello",
+        "END:VCALENDAR",
+    ]
+    assert lines.to_ical() == raw.encode("utf-8")
+
+
+def test_contentlines_from_ical_handles_lf_only_line_endings():
+    """Contentlines.from_ical splits on either CRLF or LF, so an input
+    that uses bare LF line endings is split into the same set of lines
+    as the CRLF version.
+    """
+    from icalendar.parser import Contentlines
+
+    crlf = Contentlines.from_ical("A:1\r\nB:2\r\n")
+    lf_only = Contentlines.from_ical("A:1\nB:2\n")
+    assert crlf[:-1] == lf_only[:-1]
