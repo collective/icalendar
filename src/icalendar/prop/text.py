@@ -27,6 +27,13 @@ class vText(str):
     characters are escaped or changed.
     These characters include the COMMA, SEMICOLON, BACKSLASH, and line breaks.
 
+    Contrast TEXT with the UNKNOWN value data type specified in :rfc:`7265#section-5`.
+    UNKNOWN is implemented in the Python class :class:`~icalendar.prop.unknown.vUnknown`,
+    which does **not** apply this escaping and preserves its value verbatim,
+    because the escaping rules of an unrecognized value type are not known.
+    ``vUnknown`` deliberately does not inherit from ``vText``, so the two
+    don't share escaping behavior.
+
     Examples:
 
         vText property as a TEXT value type.
