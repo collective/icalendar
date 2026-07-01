@@ -1,1 +1,0 @@
-Parse and serialize jCal iteratively so that deeply nested components no longer raise an uncaught :exc:`RecursionError`. :meth:`Component.from_jcal <icalendar.cal.component.Component.from_jcal>` and :meth:`Component.to_jcal <icalendar.cal.component.Component.to_jcal>` now handle arbitrary nesting depth, matching the iterative iCal parser and serializer. @arshsmith

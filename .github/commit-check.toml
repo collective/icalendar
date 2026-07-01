@@ -1,0 +1,4 @@
+# Check for bots on each commit.
+# https://commit-check.github.io/
+[commit]
+ignore_authors = ["dependabot[bot]"]
