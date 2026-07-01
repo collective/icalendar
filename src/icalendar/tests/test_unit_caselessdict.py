@@ -81,6 +81,52 @@ class TestCaselessdict(unittest.TestCase):
 
         assert original_dict == copied_dict
 
+    def test_caselessdict_init_normalizes_mapping_keys(self) -> None:
+        CaselessDict = icalendar.caselessdict.CaselessDict
+
+        assert CaselessDict({"summary": "Meeting"}) == {"SUMMARY": "Meeting"}
+
+    def test_caselessdict_pop_and_delete_normalize_bytes_keys(self) -> None:
+        CaselessDict = icalendar.caselessdict.CaselessDict
+
+        ncd = CaselessDict(summary="Meeting", location="Room 1")
+
+        assert ncd.pop(b"summary") == "Meeting"
+        assert "SUMMARY" not in ncd
+
+        del ncd[b"location"]
+        assert "LOCATION" not in ncd
+
+    def test_caselessdict_popitem_returns_last_item(self) -> None:
+        CaselessDict = icalendar.caselessdict.CaselessDict
+
+        ncd = CaselessDict(summary="Meeting", location="Room 1")
+
+        assert ncd.popitem() == ("LOCATION", "Room 1")
+        assert ncd == {"SUMMARY": "Meeting"}
+
+    def test_caselessdict_repr_uses_class_name_and_items(self) -> None:
+        CaselessDict = icalendar.caselessdict.CaselessDict
+
+        assert repr(CaselessDict(summary="Meeting")) == (
+            "CaselessDict({'SUMMARY': 'Meeting'})"
+        )
+
+    def test_caselessdict_sorted_keys_and_items_use_canonical_order(self) -> None:
+        CaselessDict = icalendar.caselessdict.CaselessDict
+
+        class CalendarOrderDict(CaselessDict):
+            canonical_order = ("UID", "DTSTART")
+
+        ncd = CalendarOrderDict(summary="Meeting", uid="123", dtstart="20260702")
+
+        assert ncd.sorted_keys() == ["UID", "DTSTART", "SUMMARY"]
+        assert ncd.sorted_items() == [
+            ("UID", "123"),
+            ("DTSTART", "20260702"),
+            ("SUMMARY", "Meeting"),
+        ]
+
     def test_CaselessDict(self) -> None:
         CaselessDict = icalendar.caselessdict.CaselessDict
 
