@@ -70,7 +70,7 @@ class vFloat(float):
     def from_ical(cls, ical: str | float) -> Self:
         try:
             return cls(ical)
-        except Exception as e:
+        except ValueError as e:
             raise ValueError(f"Expected float value, got: {ical}") from e
 
     @classmethod

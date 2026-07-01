@@ -105,7 +105,7 @@ class vInt(int):
     def from_ical(cls, ical: ICAL_TYPE):
         try:
             return cls(ical)
-        except Exception as e:
+        except ValueError as e:
             raise ValueError(f"Expected int, got: {ical}") from e
 
     @classmethod

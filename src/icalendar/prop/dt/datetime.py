@@ -117,6 +117,8 @@ class vDatetime(TimeBase):
             tzinfo = timezone
 
         try:
+            if isinstance(ical, bytes):
+                ical = ical.decode()
             timetuple = (
                 int(ical[:4]),  # year
                 int(ical[4:6]),  # month
@@ -131,7 +133,7 @@ class vDatetime(TimeBase):
                 return datetime(*timetuple)
             if ical[15:16] == "Z":
                 return tzp.localize_utc(datetime(*timetuple))
-        except Exception as e:
+        except (ValueError, TypeError, UnicodeDecodeError, AttributeError) as e:
             raise ValueError(f"Wrong datetime format: {ical}") from e
         raise ValueError(f"Wrong datetime format: {ical}")
 

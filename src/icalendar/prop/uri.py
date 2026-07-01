@@ -77,7 +77,7 @@ class vUri(str):
     def from_ical(cls, ical: str | bytes) -> Self:
         try:
             return cls(ical)
-        except Exception as e:
+        except (ValueError, TypeError, AttributeError) as e:
             raise ValueError(f"Expected , got: {ical}") from e
 
     @classmethod

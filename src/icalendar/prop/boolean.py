@@ -78,7 +78,7 @@ class vBoolean(int):
     def from_ical(cls, ical: str) -> bool:
         try:
             return cls.BOOL_MAP[ical]
-        except Exception as e:
+        except (KeyError, ValueError, TypeError, AttributeError) as e:
             raise ValueError(f"Expected 'TRUE' or 'FALSE'. Got {ical}") from e
 
     @classmethod
