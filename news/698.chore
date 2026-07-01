@@ -1,0 +1,1 @@
+Improved coverage for ``CaselessDict`` helper behavior, including key normalization, item removal, representation, and canonical sorting. @kingrubic
