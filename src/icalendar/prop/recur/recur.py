@@ -209,7 +209,7 @@ class vRecur(CaselessDict):
             return cls(recur)
         except ValueError:
             raise
-        except Exception as e:
+        except (TypeError, AttributeError) as e:
             raise ValueError(f"Error in recurrence rule: {ical}") from e
 
     @classmethod

@@ -90,7 +90,7 @@ class vWeekday(str):
     def from_ical(cls, ical):
         try:
             return cls(ical.upper())
-        except Exception as e:
+        except (AttributeError, ValueError) as e:
             raise ValueError(f"Expected weekday abbreviation, got: {ical}") from e
 
     @classmethod
