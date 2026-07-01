@@ -106,9 +106,9 @@ class FreeBusy(Component):
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
     ):
-        """Create a new alarm with all required properties.
+        """Create a new free/busy component with all required properties.
 
-        This creates a new Alarm in accordance with :rfc:`5545`.
+        This creates a new FreeBusy in accordance with :rfc:`5545`.
 
         Parameters:
             comments: The :attr:`~icalendar.cal.component.Component.comments` of the component.
