@@ -1,1 +1,0 @@
-Created an :attr:`~icalendar.prop.recur.frequency.vFrequency.ical_value` property for the :class:`~icalendar.prop.recur.frequency.vFrequency` component, mirroring the existing pattern on :class:`~icalendar.prop.recur.weekday.vWeekday`. @mvanhorn
