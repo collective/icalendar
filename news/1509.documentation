@@ -1,0 +1,1 @@
+Replaced copy-pasted RFC 5545 text in docstrings with Pythonic descriptions that follow the project docstring style guide. Used generative AI (Claude by Anthropic) to assist with drafting the docstring rewrites.
