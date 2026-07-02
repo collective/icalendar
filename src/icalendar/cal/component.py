@@ -558,22 +558,6 @@ class Component(CaselessDict):
         """
         if isinstance(st, Path):
             st = st.read_bytes()
-        elif isinstance(st, str) and "\n" not in st and "\r" not in st:
-            # A string is only probed as a file path when it contains no line
-            # breaks. Valid iCalendar data is always folded with CRLF line
-            # endings (RFC 5545), so real calendar content never reaches this
-            # branch and is never read from disk. File paths, conversely, do
-            # not contain line breaks on the platforms we support.
-            try:
-                is_file = Path(st).is_file()
-            except (OSError, ValueError):
-                # The string is not usable as a path on this platform (e.g. it
-                # is too long, or contains characters the OS rejects such as an
-                # embedded null byte). Treat it as calendar data, not a file, so
-                # the parser raises a consistent ValueError across platforms.
-                is_file = False
-            if is_file:
-                st = Path(st).read_bytes()
         parser = cls._get_ical_parser(st)
         components = parser.parse()
         if multiple:
