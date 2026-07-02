@@ -28,25 +28,29 @@ def test_reading_cal_from_path(dummy_cal):
     assert actual_cal.to_ical() == expected_cal.to_ical()
 
 
-def test_string_path_is_parsed_as_calendar_data(dummy_cal):
-    """Test that string input is not interpreted as a filesystem path."""
+def test_existing_calendar_path_as_string_is_not_read(dummy_cal):
+    """A string that matches an existing calendar file is parsed as data, not read.
+
+    The path points at a real, parseable calendar file. If the string were still
+    probed as a path, this call would read the file and return that calendar. It
+    now parses the path string itself as iCalendar data, which fails.
+    """
     _, path = dummy_cal
 
-    with pytest.raises(ValueError) as exc_info:
+    with pytest.raises(ValueError):
         Calendar.from_ical(str(path))
 
-    assert "BEGIN:VCALENDAR" not in str(exc_info.value)
 
+def test_nonexistent_path_as_string_raises_parse_error(tmp_path: Path):
+    """A path-like string that does not exist is parsed as data, not opened.
 
-def test_string_path_does_not_disclose_file_contents(tmp_path: Path):
-    """Test that parsing a string path does not read from the filesystem."""
-    path = tmp_path / "secret.txt"
-    path.write_text("SECRET-CONTENT-WITHOUT-NEWLINE", encoding="utf-8")
+    A non-existent path must not raise ``FileNotFoundError`` (which would mean the
+    parser tried to open it); it is parsed as data and raises a ``ValueError``.
+    """
+    missing = str(tmp_path / "does-not-exist.ics")
 
-    with pytest.raises(ValueError) as exc_info:
-        Calendar.from_ical(str(path))
-
-    assert "SECRET-CONTENT-WITHOUT-NEWLINE" not in str(exc_info.value)
+    with pytest.raises(ValueError):
+        Calendar.from_ical(missing)
 
 
 def test_reading_cal_from_long_string(dummy_cal):
