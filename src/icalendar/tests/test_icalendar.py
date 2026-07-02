@@ -273,6 +273,47 @@ class IcalendarTestCase(unittest.TestCase):
             == "DESCRIPTION:АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭ\r\n ЮЯ"
         )
 
+    def test_fold_line_does_not_split_escape_sequence(self):
+        r"""foldline must not split a TEXT escape sequence across a fold.
+
+        RFC 5545 §3.1 says a content line can be folded at any pair of
+        adjacent characters, but in practice some parsers (notably
+        Google Calendar, see issue #1501) misread a fold that lands
+        between the backslash and the escaped char in a TEXT escape
+        (``\\``, ``\n``, ``\N``, ``\;``, ``\,``). This test ensures
+        foldline keeps the escape sequence intact on the same side of
+        the fold, so downstream parsers always see a complete escape.
+        """
+        assert foldline("foo\\nbar") == "foo\\nbar"
+
+        # Each of the five iCalendar TEXT escape sequences must stay
+        # intact when a fold would otherwise land between the backslash
+        # and the escaped character. Build a DESCRIPTION-style line
+        # where the escape would land at the default fold boundary
+        # (column 75) without the fix, then check that folding plus
+        # unfolding round-trips back to the original line.
+        for escape in ("\\\\", "\\n", "\\N", "\\;", "\\,"):
+            line = "DESCRIPTION:" + "X" * 73 + escape + "Y" * 20
+            folded = foldline(line)
+            assert escape in folded, (
+                f"escape {escape!r} lost from folded output: {folded!r}"
+            )
+            assert folded.count("\r\n ") == 1, (
+                f"unexpected fold count in {folded!r}"
+            )
+            unfolded = folded.replace("\r\n ", "")
+            assert unfolded == line, (
+                f"round-trip changed the line for escape {escape!r}: "
+                f"{unfolded!r} != {line!r}"
+            )
+
+        # A line that needs folding but contains no backslash must
+        # still fold the same way it always did.
+        plain = "X" * 200
+        plain_folded = foldline(plain)
+        assert plain_folded.count("\r\n ") == 2
+        assert plain_folded.replace("\r\n ", "") == plain
+
     def test_value_double_quoting(self):
         assert dquote("Max") == "Max"
         assert dquote("Rasmussen, Max") == '"Rasmussen, Max"'

@@ -46,6 +46,7 @@ Bug fixes
 - Fixed :func:`~icalendar.attr.get_end_property` to avoid allowing the creation of VEVENT components with negative durations. Only VTODO components are allowed to have negative durations. :issue:`999`
 - GitHub Actions: conditional tests now show as "skipped" instead of "pending". :issue:`1264`
 - Fixed ``Component.__eq__`` method not being commutative when comparing subcomponents. :issue:`1224`
+- Fold a content line one character earlier when the default fold boundary would otherwise land between the backslash and the escaped character of a TEXT escape sequence (``\\``, ``\n``, ``\N``, ``\;``, ``\,``), so the escape survives the round-trip and stays readable to lenient downstream parsers (e.g. Google Calendar). :issue:`1501`
 
 Documentation
 ~~~~~~~~~~~~~

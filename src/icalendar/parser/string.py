@@ -179,8 +179,31 @@ def foldline(line: str, limit: int = 75, fold_sep: str = "\r\n ") -> str:
     except (UnicodeEncodeError, UnicodeDecodeError):
         pass
     else:
+        # When a fold would split an iCalendar TEXT escape sequence (``\\``,
+        # ``\\n``, ``\\N``, ``\\;``, ``\\,``) so the leading backslash ends one
+        # line and the escaped character starts the next, downstream parsers
+        # can fail to recognise the backslash as an escape (e.g. Google
+        # Calendar drops events whose DESCRIPTION line is folded across the
+        # middle of a ``\\n`` sequence, see issue #1501).  Pre-shift the fold
+        # backwards by one character when the chunk boundary would land
+        # between ``\\`` and the next char so the escape stays intact.
+        chunk_size = limit - 1
+        if "\\" in line and len(line) > chunk_size:
+            parts = []
+            i = 0
+            n = len(line)
+            while i < n:
+                end = i + chunk_size
+                if end < n and line[end] == "\\" and line[end - 1] != "\\":
+                    # fold would split ``\X`` (X is a real escaped char) -
+                    # move the fold one char earlier so the backslash stays
+                    # on the same line as the character it escapes
+                    end -= 1
+                parts.append(line[i:end])
+                i = end
+            return fold_sep.join(parts)
         return fold_sep.join(
-            line[i : i + limit - 1] for i in range(0, len(line), limit - 1)
+            line[i : i + chunk_size] for i in range(0, len(line), chunk_size)
         )
 
     ret_chars: list[str] = []
