@@ -1,0 +1,31 @@
+# Run Commit-Check against the author of each commit in a PR.
+# https://github.com/commit-check/commit-check-action
+# Based on  https://commit-check.github.io/
+name: Commit-Check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: 'main'
+
+jobs:
+  commit-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0  # Required for merge-base checks
+      - uses: commit-check/commit-check-action@v2
+        with:
+          message: false
+          branch: false
+          author-name: true
+          author-email: true
+          job-summary: true
+          pr-comments: ${{ github.event_name == 'pull_request' }}

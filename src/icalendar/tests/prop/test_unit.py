@@ -60,6 +60,11 @@ class TestProp(unittest.TestCase):
 
         self.assertRaises(TypeError, vDate, "d")
         self.assertRaises(ValueError, vDate.from_ical, "200102")
+        # trailing data and int() quirks must not be silently accepted
+        self.assertRaises(ValueError, vDate.from_ical, "20010102T")
+        self.assertRaises(ValueError, vDate.from_ical, "2001 102")
+        self.assertRaises(ValueError, vDate.from_ical, "2001_102")
+        self.assertRaises(ValueError, vDate.from_ical, "+0010102")
 
     def test_prop_vDuration(self):
         from icalendar.prop import vDuration
@@ -240,6 +245,14 @@ class TestProp(unittest.TestCase):
         self.assertRaises(ValueError, vTime.from_ical, "263000")
 
         self.assertRaises(ValueError, vTime, "263000")
+
+        # trailing data and short values must not be silently accepted
+        self.assertRaises(ValueError, vTime.from_ical, "123000GARBAGE")
+        self.assertRaises(ValueError, vTime.from_ical, "12300")
+        self.assertRaises(ValueError, vTime.from_ical, "12 000")
+
+        # Form #3: local time with a TZID reference still parses
+        assert vTime.from_ical("TZID=America/New_York:083000") == time(8, 30)
 
     def test_prop_vUri(self):
         from icalendar.prop import vUri

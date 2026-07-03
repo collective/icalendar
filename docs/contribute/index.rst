@@ -111,8 +111,22 @@ Report suspected violations
 ```````````````````````````
 
 To report a suspected violation of this AI policy, see the `Reporting an issue <https://pycal.org/code-of-conduct/#reporting-an-issue>`_ section in the Python Calendaring Ecosystem's Code of Conduct.
+The maintainers will investigate and collect information from various sources, including but not limited to the use of automated GitHub workflows to identify suspected AI use.
 The maintainers may close pull requests without providing feedback that they deem to be spam, AI slop, abuse, or that do not comply with :ref:`pull request requirements <pull-request-requirements>`.
 The maintainers may also take further action, including suspend, ban, or report GitHub users, as described in Python Calendaring Ecosystem's `Code of Conduct <https://pycal.org/code-of-conduct/>`_.
+
+
+.. _issue-requirements:
+
+Issue requirements
+------------------
+
+When creating a new issue, you'll be presented with an issue selector.
+Follow the templates guidance as much as practical.
+
+It might be helpful to include an iCalendar file to help reproduce your issue and to use in a test to ensure a bug fix actually resolves your issue.
+To remove private information from an iCalendar file, use :program:`icalendar-anonymizer`, either through its `website <https://icalendar-anonymizer.com/>`_ or install it locally.
+See icalendar-anonymizer's `Installation <https://docs.icalendar-anonymizer.com/latest/installation.html>`_ and documentation for details.
 
 
 .. _pull-request-requirements:
