@@ -102,7 +102,7 @@ class vUri(str):
         JCalParsingError.validate_property(jcal_property, cls)
         return cls(
             jcal_property[3],
-            Parameters.from_jcal_property(jcal_property),
+            params=Parameters.from_jcal_property(jcal_property),
         )
 
     @property
