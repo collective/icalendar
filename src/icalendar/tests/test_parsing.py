@@ -246,6 +246,7 @@ def test_unescape_char():
         ("a\r\nb", r"a\nb"),
         ("a\nb", r"a\nb"),
         ("a\rb\r\nc\nd", r"a\nb\nc\nd"),
+        ("\ra\n", r"\na\n"),
     ],
 )
 def test_escape_char_escapes_lone_carriage_return(value, expected):
