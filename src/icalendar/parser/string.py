@@ -175,14 +175,20 @@ def _escape_string(val: str) -> str:
     Note:
         Conversions:
 
+        - ``%`` -> ``%25``
         - ``\,`` -> ``%2C``
         - ``\:`` -> ``%3A``
         - ``\;`` -> ``%3B``
         - ``\\`` -> ``%5C``
+
+        A literal ``%`` is escaped first so that percent sequences already in
+        the value (e.g. ``%2C`` in a URI) are not confused with the markers
+        introduced here. :func:`_unescape_string` reverses it.
     """
     # f'{i:02X}'
     return (
-        val.replace(r"\,", "%2C")
+        val.replace("%", "%25")
+        .replace(r"\,", "%2C")
         .replace(r"\:", "%3A")
         .replace(r"\;", "%3B")
         .replace(r"\\", "%5C")
@@ -217,12 +223,17 @@ def _unescape_string(val: str) -> str:
         - ``%3A`` -> ``:``
         - ``%3B`` -> ``;``
         - ``%5C`` -> ``\``
+        - ``%25`` -> ``%``
+
+        ``%25`` is restored last so a literal ``%`` that :func:`_escape_string`
+        protected does not re-trigger the marker replacements above.
     """
     return (
         val.replace("%2C", ",")
         .replace("%3A", ":")
         .replace("%3B", ";")
         .replace("%5C", "\\")
+        .replace("%25", "%")
     )
 
 

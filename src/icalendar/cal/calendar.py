@@ -560,7 +560,7 @@ Description:
         url: str | None = None,
         version: str = "2.0",
     ):
-        """Create a new Calendar with all required properties.
+        """Create a new Calendar.
 
         This creates a new Calendar in accordance with :rfc:`5545` and :rfc:`7986`.
 
@@ -576,8 +576,10 @@ Description:
             method: The :attr:`method` of the calendar.
             name: The :attr:`calendar_name` of the calendar.
             organization: The organization name. Used to generate `prodid` if not provided.
-            prodid: The :attr:`prodid` of the component. If None and organization is provided,
-                generates a `prodid` in format "-//organization//name//language".
+            prodid: The :attr:`prodid` of the component. If ``None`` and ``organization`` is provided,
+                generates a `prodid` in the format of "-//organization//name//language".
+                If ``None`` and ``organization`` is not provided, sets it to
+                :attr:`~icalendar.cal.calendar.DEFAULT_PRODID`.
             refresh_interval: The :attr:`refresh_interval` of the calendar.
             refids: :attr:`~icalendar.cal.component.Component.refids` of the calendar.
             related_to: :attr:`~icalendar.cal.component.Component.related_to` of the calendar.
