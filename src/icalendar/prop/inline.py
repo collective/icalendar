@@ -6,9 +6,21 @@ from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
 
 
 class vInline(str):
-    """This is an especially dumb class that just holds raw unparsed text and
-    has parameters. Conversion of inline values are handled by the Component
-    class, so no further processing is needed.
+    """A raw, unparsed inline property value that passes through unchanged.
+
+    This class holds property values that icalendar does not parse further.
+    The :class:`~icalendar.cal.component.Component` class handles conversion
+    of these inline values, so no additional processing occurs here.
+
+    Example:
+        .. code-block:: pycon
+
+            >>> from icalendar.prop import vInline
+            >>> value = vInline("raw text")
+            >>> value.to_ical()
+            b'raw text'
+            >>> vInline.from_ical("raw text")
+            'raw text'
     """
 
     params: Parameters
