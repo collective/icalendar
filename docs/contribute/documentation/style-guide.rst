@@ -76,6 +76,8 @@ Sphinx and its extensions enhance core reStructuredText with additional features
 For configuration of these features, see :ref:`configure-a-package`.
 
 
+.. _markup-examples:
+
 Markup examples
 ---------------
 
