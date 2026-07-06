@@ -24,7 +24,6 @@ jobs:
           max-code-references: 3
           require-linked-issue: true
           require-pr-template: true
-          strict-pr-template-sections: 'Linked issue','Description','Checklist'
           optional-pr-template-sections: 'Additional information'
           blocked-commit-authors: github-automation@zo.computer
           max-daily-forks: 3
