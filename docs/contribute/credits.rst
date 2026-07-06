@@ -12,6 +12,11 @@ Maintainers
 
 .. include:: ../_include/maintainers.inc
 
+Documentation lead
+------------------
+
+`@stevepiercy <https://github.com/stevepiercy>`_
+
 Original author
 ---------------
 
