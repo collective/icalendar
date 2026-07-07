@@ -400,6 +400,10 @@ class Alarm(Component):
                 trigger. Must be paired with ``duration``.
                 Corresponds to the :attr:`REPEAT` property.
             uid: Unique identifier for the alarm or ``None``.
+            links: The :attr:`~icalendar.cal.component.Component.links` of the alarm.
+            related_to: The :attr:`~icalendar.cal.component.Component.related_to` of the alarm.
+            refids: The :attr:`~icalendar.cal.component.Component.refids` of the alarm.
+            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the alarm.
 
         Returns:
             :class:`Alarm` with ``ACTION:DISPLAY`` set.
@@ -496,6 +500,10 @@ class Alarm(Component):
                 trigger. Must be paired with ``duration``.
                 Corresponds to the :attr:`REPEAT` property.
             uid: Unique identifier for the alarm or ``None``.
+            links: The :attr:`~icalendar.cal.component.Component.links` of the alarm.
+            related_to: The :attr:`~icalendar.cal.component.Component.related_to` of the alarm.
+            refids: The :attr:`~icalendar.cal.component.Component.refids` of the alarm.
+            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the alarm.
 
         Returns:
             :class:`Alarm` with ``ACTION:AUDIO`` set.
@@ -583,6 +591,10 @@ class Alarm(Component):
                 trigger. Must be paired with ``duration``.
                 Corresponds to the :attr:`REPEAT` property.
             uid: Unique identifier for the alarm or ``None``.
+            links: The :attr:`~icalendar.cal.component.Component.links` of the alarm.
+            related_to: The :attr:`~icalendar.cal.component.Component.related_to` of the alarm.
+            refids: The :attr:`~icalendar.cal.component.Component.refids` of the alarm.
+            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the alarm.
 
         Returns:
             :class:`Alarm` with ``ACTION:EMAIL`` set.
