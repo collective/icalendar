@@ -465,20 +465,6 @@ class Component(CaselessDict):
 
         Returns:
             A list of components matching the criteria.
-
-        Example:
-            .. code-block:: pycon
-
-                >>> from icalendar import Calendar
-                >>> cal = Calendar()
-                >>> cal.add("prodid", "-//Test//Test//EN")
-                >>> from icalendar import Event
-                >>> event = Event()
-                >>> event.add("summary", "Test")
-                >>> cal.add_component(event)
-                >>> cal.walk("VEVENT")  # doctest: +ELLIPSIS
-                [VEVENT(...)]
-
         """
         if name is not None:
             name = name.upper()
