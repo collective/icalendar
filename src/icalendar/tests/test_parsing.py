@@ -270,8 +270,8 @@ def test_unescape_char():
         ("\ra\n", r"\na\n"),
     ],
 )
-def test_escape_char_escapes_lone_carriage_return(value, expected):
-    r"""A lone ``\r`` must be escaped, not left raw in the content line."""
+def test_escape_char_transforms_lone_carriage_return(value, expected):
+    r"""A lone ``\r`` must be transformed, not left raw in the content line."""
     assert _escape_char(value) == expected
 
 
