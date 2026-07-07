@@ -279,11 +279,11 @@ Pull request previews
 ---------------------
 
 On every pull request, Read the Docs generates a pull request preview of the documentation.
-It will append a link to the preview in the description of the pull request that the author creates.
+It creates a new comment containing a link to the preview in the pull request.
 
 `View all builds of documentation on Read the Docs <https://app.readthedocs.org/projects/icalendar/builds/>`_.
 
-This feature is configured in the file :file:`.readthedocs.yml`.
+This feature is configured in the file :file:`.readthedocs.yml` and the repository settings.
 
 
 .. _continuous-integration-checks:
