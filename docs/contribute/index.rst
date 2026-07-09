@@ -16,8 +16,8 @@ Examples of how to contribute
 -   Report security issues per the `Security Policy <https://github.com/collective/icalendar/blob/main/SECURITY.md>`_.
 -   Report all other issues in the `issue tracker <https://github.com/collective/icalendar/issues>`_.
 -   Comment on and resolve issues.
--   Triage issues and pull requests.
--   Review, comment on, and make suggestions to change the pull request.
+-   Triage open issues and `pull requests <https://github.com/collective/icalendar/pulls>`_.
+-   Review, comment on, and make suggestions to change a pull request.
     See the GitHub documentation `Reviewing proposed changes in a pull request <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/reviewing-proposed-changes-in-a-pull-request>`_.
 -   Submit pull requests from your fork of the icalendar repository.
 -   Extend the :doc:`documentation/index`.
