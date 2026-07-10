@@ -18,6 +18,7 @@ from typing import TYPE_CHECKING
 
 from icalendar.cal.event import Event
 from icalendar.cal.todo import Todo
+from icalendar.config import _clamp_repeat
 from icalendar.error import (
     ComponentEndMissing,
     ComponentStartMissing,
@@ -235,7 +236,7 @@ class Alarms:
         """Set the start of the component.
 
         If you have only absolute alarms, this is not required.
-        If you have alarms relative to the start of a compoment, set the start here.
+        If you have alarms relative to the start of a component, set the start here.
         """
         self._start = dt
 
@@ -243,7 +244,7 @@ class Alarms:
         """Set the end of the component.
 
         If you have only absolute alarms, this is not required.
-        If you have alarms relative to the end of a compoment, set the end here.
+        If you have alarms relative to the end of a component, set the end here.
         """
         self._end = dt
 
@@ -314,7 +315,7 @@ class Alarms:
         repeat = alarm.REPEAT
         duration = alarm.DURATION
         if repeat and duration:
-            for i in range(1, repeat + 1):
+            for i in range(1, _clamp_repeat(repeat) + 1):
                 yield self._add(first, duration * i)
 
     def _alarm_time(self, alarm: Alarm, trigger: date):
@@ -347,7 +348,7 @@ class Alarms:
         ]
 
     def _get_end_alarm_times(self) -> list[AlarmTime]:
-        """Return a list of alarm times relative to the start of the component."""
+        """Return a list of alarm times relative to the end of the component."""
         if self._end is None and self._end_alarms:
             raise ComponentEndMissing(
                 "Use Alarms.set_end because at least one alarm is relative to the end "
