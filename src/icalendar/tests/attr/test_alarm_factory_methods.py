@@ -7,6 +7,7 @@ import pytest
 from icalendar.cal.alarm import Alarm
 from icalendar.error import InvalidCalendar
 from icalendar.prop import vCalAddress
+from icalendar.prop.binary import vBinary
 
 # ---------------------------------------------------------------------------
 # new_display
@@ -140,6 +141,13 @@ def test_new_audio_requires_trigger():
         Alarm.new_audio(None)
 
 
+def test_new_audio_with_bytes_attach():
+    data = b"\x00\x01\x02\x03"
+    alarm = Alarm.new_audio(timedelta(minutes=-5), attach=data)
+    assert isinstance(alarm["ATTACH"], vBinary)
+    assert alarm["ATTACH"] == vBinary(data)
+
+
 # ---------------------------------------------------------------------------
 # new_email
 # ---------------------------------------------------------------------------
@@ -178,6 +186,8 @@ def test_new_email_sets_attendees():
         attendees=attendees,
     )
     assert len(alarm.attendees) == 2
+    assert str(alarm.attendees[0]) == "mailto:a@example.com"
+    assert str(alarm.attendees[1]) == "mailto:b@example.com"
 
 
 def test_new_email_with_attachment():
@@ -189,6 +199,7 @@ def test_new_email_with_attachment():
         attachments=["https://example.com/file.pdf"],
     )
     assert "ATTACH" in alarm
+    assert str(alarm["ATTACH"]) == "https://example.com/file.pdf"
 
 
 def test_new_email_requires_summary():
@@ -231,14 +242,6 @@ def test_new_email_requires_attendees():
         )
 
 
-def test_new_audio_with_bytes_attach():
-    data = b"\x00\x01\x02\x03"
-    alarm = Alarm.new_audio(timedelta(minutes=-5), attach=data)
-    from icalendar.prop.binary import vBinary
-
-    assert isinstance(alarm["ATTACH"], vBinary)
-
-
 def test_new_email_single_attendee():
     alarm = Alarm.new_email(
         summary="S",
@@ -247,6 +250,7 @@ def test_new_email_single_attendee():
         attendees=vCalAddress("mailto:user@example.com"),
     )
     assert len(alarm.attendees) == 1
+    assert str(alarm.attendees[0]) == "mailto:user@example.com"
 
 
 def test_new_email_single_attachment():
@@ -258,3 +262,4 @@ def test_new_email_single_attachment():
         attachments="https://example.com/file.pdf",
     )
     assert "ATTACH" in alarm
+    assert str(alarm["ATTACH"]) == "https://example.com/file.pdf"
