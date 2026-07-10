@@ -3,9 +3,9 @@
 MAX_ALARM_REPEAT: int = 10_000
 """Cap on additional triggers expanded from a ``VALARM`` ``REPEAT`` property.
 
-:rfc:`5545` Section 3.8.6.2 defines ``REPEAT`` as a non-negative integer with no upper
-bound, so a crafted value can exhaust memory or CPU. Set to ``-1`` to disable the cap
-(only safe for fully trusted input).
+:rfc:`5545#section-3.8.6.2` defines ``REPEAT`` as a non-negative integer with no upper
+bound, so a crafted value can exhaust memory or CPU. Set to ``-1`` to disable the cap,
+which should be done only for fully trusted input.
 """
 
 
