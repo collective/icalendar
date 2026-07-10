@@ -32,3 +32,4 @@ jobs:
           success-add-pr-labels: 'PR quality: good'
           failure-add-pr-labels: 'ai-suspicion'
           failure-pr-message: 'This pull request did not pass quality checks and AI use is suspected. Please review [Contribute](https://icalendar.readthedocs.io/en/latest/contribute/index.html) and make any necessary amendments.'
+          close-pr: false
