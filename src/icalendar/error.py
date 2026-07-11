@@ -74,7 +74,8 @@ def _repr_index(index: str | int) -> str:
         index: It is either a dict key(string) or a list integer position (integer).
 
     Returns:
-        The index as a quoted string if it is a string else as a plain number if it is an integer.
+        The index as a quoted string if it is a string else as a plain 
+        number if it is an integer.
     """
     if isinstance(index, str):
         return f'"{index}"'
@@ -159,7 +160,9 @@ class JCalParsingError(ValueError):
         """Validate a jCal property.
 
         Parameters:
-            jcal_property: A list with atleast four items (name, parameters, value type and value) which is the jCal property to be validated.
+            jcal_property: A list with atleast four items (name, 
+                parameters, value type and value) which is the jCal property 
+                to be validated.
             parser: The parser class or its name where the error occurred.
             path: The location in the jCal structure where the error occurred.
 

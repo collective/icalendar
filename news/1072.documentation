@@ -1,0 +1,3 @@
+Improved docstrings in :mod:`icalendar.error` to follow the project's Google-style docstring format, adding Parameters and Returns/Raises sections where missing.
+I used AI to assist me with this change.
+@Vrinda0211
