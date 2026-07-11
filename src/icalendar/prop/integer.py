@@ -88,9 +88,17 @@ class vInt(int):
     default_value: ClassVar[str] = "INTEGER"
     params: Parameters
 
+    _RFC_MIN: ClassVar[int] = -2_147_483_648
+    _RFC_MAX: ClassVar[int] = 2_147_483_647
+
     def __new__(cls, *args, params: dict[str, Any] | None = None, **kwargs):
         self = super().__new__(cls, *args, **kwargs)
         self.params = Parameters(params)
+        if not (cls._RFC_MIN <= self <= cls._RFC_MAX):
+            raise ValueError(
+                f"Integer {self} is outside the RFC 5545 range "
+                f"[{cls._RFC_MIN}, {cls._RFC_MAX}]"
+            )
         return self
 
     def to_ical(self) -> bytes:
@@ -101,25 +109,14 @@ class vInt(int):
         """INTEGER property type according to :rfc:`5545#section-3.3.8`"""
         return int(self)
 
-    _RFC_MIN: ClassVar[int] = -2_147_483_648
-    _RFC_MAX: ClassVar[int] = 2_147_483_647
-
-    @classmethod
-    def _check_range(cls, value: int) -> None:
-        if not (cls._RFC_MIN <= value <= cls._RFC_MAX):
-            raise ValueError(
-                f"Integer {value} is outside the RFC 5545 range "
-                f"[{cls._RFC_MIN}, {cls._RFC_MAX}]"
-            )
-
     @classmethod
     def from_ical(cls, ical: ICAL_TYPE):
         try:
-            value = cls(ical)
+            return cls(ical)
+        except ValueError:
+            raise
         except Exception as e:
             raise ValueError(f"Expected int, got: {ical}") from e
-        cls._check_range(value)
-        return value
 
     @classmethod
     def examples(cls) -> list[Self]:
@@ -144,7 +141,6 @@ class vInt(int):
         """
         JCalParsingError.validate_property(jcal_property, cls)
         JCalParsingError.validate_value_type(jcal_property[3], int, cls, 3)
-        cls._check_range(jcal_property[3])
         return cls(
             jcal_property[3],
             params=Parameters.from_jcal_property(jcal_property),
@@ -158,7 +154,6 @@ class vInt(int):
             ~error.JCalParsingError: If the value is not an int.
         """
         JCalParsingError.validate_value_type(value, int, cls)
-        cls._check_range(value)
         return cls(value)
 
 
