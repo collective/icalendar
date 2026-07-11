@@ -10,13 +10,13 @@ def test_ical_parsing_error_stores_attributes():
         message="Invalid property",
         line="SUMMARY:Meeting",
         line_number=42,
-        value="SUMMARY:Meeting",
+        value={"property": "SUMMARY"},
     )
 
     assert error.message == "Invalid property"
     assert error.line == "SUMMARY:Meeting"
     assert error.line_number == 42
-    assert error.value == "SUMMARY:Meeting"
+    assert error.value == {"property": "SUMMARY"}
 
 
 def test_ical_parsing_error_required_parameters_only():
@@ -33,10 +33,10 @@ def test_ical_parsing_error_parameter_order():
         "Invalid property",
         "SUMMARY:Meeting",
         42,
-        "SUMMARY:Meeting",
+        {"property": "SUMMARY"},
     )
 
     assert error.message == "Invalid property"
     assert error.line == "SUMMARY:Meeting"
     assert error.line_number == 42
-    assert error.value == "SUMMARY:Meeting"
+    assert error.value == {"property": "SUMMARY"}
