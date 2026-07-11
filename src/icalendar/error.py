@@ -70,14 +70,11 @@ class FeatureWillBeRemovedInFutureVersion(DeprecationWarning):
 def _repr_index(index: str | int) -> str:
     """Create a JSON compatible representation for the index.
 
-    Args:
-        index: The index to represent, either a string key or an
-            integer list position.
+    Parameters:
+        index: It is either a dict key(string) or a list integer position (integer).
 
     Returns:
-        The index formatted as it would appear in a JSON path —
-        a quoted string for string indexes, or a plain number
-        for integer indexes.
+        The index as a quoted string if it is a string else as a plain number if it is an integer.
     """
     if isinstance(index, str):
         return f'"{index}"'
@@ -98,13 +95,11 @@ class JCalParsingError(ValueError):
     ) -> None:
         """Create a new JCalParsingError.
 
-        Args:
-            message: A description of what went wrong.
-            parser: The name of the parser or the parser class where
-                the error occurred.
-            path: The location within the jCal structure where the
-                error occurred, e.g. a list of keys/indexes.
-            value: The value that caused the error, if available.
+        Parameters:
+            message: A description of the error that occurred while parsing.
+            parser: The parser class or its name where the error occurred.
+            path: The location in the jCal structure where the error occurred.
+            value: The value which caused the error, if available.
         """
         self.path = self._get_path(path)
         if not isinstance(parser, str):
@@ -163,14 +158,10 @@ class JCalParsingError(ValueError):
     ) -> None:
         """Validate a jCal property.
 
-        Args:
-            jcal_property: The jCal property to validate, expected to
-                be a list with at least 4 items (name, parameters,
-                value type, and value).
-            parser: The name of the parser or the parser class
-                performing the validation.
-            path: The location within the jCal structure where this
-                property appears, used for error reporting.
+        Parameters:
+            jcal_property: A list with atleast four items (name, parameters, value type and value) which is the jCal property to be validated.
+            parser: The parser class or its name where the error occurred.
+            path: The location in the jCal structure where the error occurred.
 
         Raises:
             ~error.JCalParsingError: if the property is not valid.
