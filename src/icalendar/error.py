@@ -68,7 +68,17 @@ class FeatureWillBeRemovedInFutureVersion(DeprecationWarning):
 
 
 def _repr_index(index: str | int) -> str:
-    """Create a JSON compatible representation for the index."""
+    """Create a JSON compatible representation for the index.
+
+    Args:
+        index: The index to represent, either a string key or an
+            integer list position.
+
+    Returns:
+        The index formatted as it would appear in a JSON path —
+        a quoted string for string indexes, or a plain number
+        for integer indexes.
+    """
     if isinstance(index, str):
         return f'"{index}"'
     return str(index)
@@ -86,7 +96,16 @@ class JCalParsingError(ValueError):
         path: list[str | int] | None | str | int = None,
         value: object = _default_value,
     ) -> None:
-        """Create a new JCalParsingError."""
+        """Create a new JCalParsingError.
+
+        Args:
+            message: A description of what went wrong.
+            parser: The name of the parser or the parser class where
+                the error occurred.
+            path: The location within the jCal structure where the
+                error occurred, e.g. a list of keys/indexes.
+            value: The value that caused the error, if available.
+        """
         self.path = self._get_path(path)
         if not isinstance(parser, str):
             parser = parser.__name__
@@ -143,6 +162,15 @@ class JCalParsingError(ValueError):
         path: list[str | int] | None | str | int = None,
     ) -> None:
         """Validate a jCal property.
+
+        Args:
+            jcal_property: The jCal property to validate, expected to
+                be a list with at least 4 items (name, parameters,
+                value type, and value).
+            parser: The name of the parser or the parser class
+                performing the validation.
+            path: The location within the jCal structure where this
+                property appears, used for error reporting.
 
         Raises:
             ~error.JCalParsingError: if the property is not valid.
