@@ -1,0 +1,1 @@
+Replace parser ``assert`` guards with explicit raises so newline (``ValueError``) and type (``TypeError``) checks still run under ``python -O``. @gitcommit90
