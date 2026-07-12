@@ -16,6 +16,23 @@ class InvalidCalendar(ValueError):
     """
 
 
+class ICalParsingError(InvalidCalendar):
+    """Could not parse an iCalendar."""
+
+    def __init__(
+        self,
+        message: str,
+        line: str | None = None,
+        line_number: int | None = None,
+        value: object = None,
+    ) -> None:
+        self.message = message
+        self.line = line
+        self.line_number = line_number
+        self.value = value
+        super().__init__(message)
+
+
 class BrokenCalendarProperty(InvalidCalendar):
     """A property could not be parsed and its value is broken.
 
@@ -237,6 +254,7 @@ __all__ = [
     "ComponentEndMissing",
     "ComponentStartMissing",
     "FeatureWillBeRemovedInFutureVersion",
+    "ICalParsingError",
     "IncompleteAlarmInformation",
     "IncompleteComponent",
     "InvalidCalendar",
