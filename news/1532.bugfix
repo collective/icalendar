@@ -1,0 +1,1 @@
+Rejected invalid parser values consistently when Python optimization is enabled. I used OpenAI Codex (GPT-5) to assist with this change. @esbreeb

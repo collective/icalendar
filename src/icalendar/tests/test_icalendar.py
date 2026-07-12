@@ -6,7 +6,9 @@ from icalendar.parser import (
     Contentline,
     Contentlines,
     Parameters,
+    _escape_char,
     _foldline,
+    _unescape_char,
     dquote,
     q_join,
     q_split,
@@ -70,7 +72,7 @@ class IcalendarTestCase(unittest.TestCase):
         # N or a LATIN CAPITAL LETTER N, that is "\n" or "\N".
 
         # Newlines are not allowed in content lines
-        self.assertRaises(AssertionError, Contentline, b"1234\r\n\r\n1234")
+        self.assertRaises(ValueError, Contentline, b"1234\r\n\r\n1234")
 
         assert Contentline("1234\\n\\n1234").to_ical() == b"1234\\n\\n1234"
 
@@ -256,8 +258,11 @@ class IcalendarTestCase(unittest.TestCase):
         # I don't really get this test
         # at least just but bytes in there
         # porting it to "run" under python 2 & 3 makes it not much better
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError, match="Line must be a string"):
             _foldline("привет".encode(), limit=3)
+
+        with pytest.raises(ValueError, match="new line characters"):
+            _foldline("SUMMARY:Test\nINJECTED:Bad")
 
         assert _foldline("foobar", limit=4) == "foo\r\n bar"
         assert (
@@ -272,6 +277,14 @@ class IcalendarTestCase(unittest.TestCase):
             _foldline("DESCRIPTION:АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯ")
             == "DESCRIPTION:АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭ\r\n ЮЯ"
         )
+
+    def test_escape_functions_reject_invalid_types(self):
+        for function in (_escape_char, _unescape_char):
+            with (
+                self.subTest(function=function),
+                pytest.raises(ValueError, match="Text must be a string or bytes"),
+            ):
+                function(1)
 
     def test_value_double_quoting(self):
         assert dquote("Max") == "Max"
