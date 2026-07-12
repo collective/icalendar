@@ -91,7 +91,7 @@ def _repr_index(index: str | int) -> str:
     return str(index)
 
 
-class JCalParsingError(ValueError):
+class JCalParsingError(InvalidCalendar):
     """Could not parse a part of the JCal."""
 
     _default_value = object()
