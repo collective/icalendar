@@ -112,11 +112,10 @@ class vInt(int):
     @classmethod
     def from_ical(cls, ical: ICAL_TYPE):
         try:
-            return cls(ical)
-        except ValueError:
-            raise
+            value = int(ical)
         except Exception as e:
             raise ValueError(f"Expected int, got: {ical}") from e
+        return cls(value)
 
     @classmethod
     def examples(cls) -> list[Self]:
