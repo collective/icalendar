@@ -40,3 +40,57 @@ def test_ical_parsing_error_parameter_order():
     assert error.line == "SUMMARY:Meeting"
     assert error.line_number == 42
     assert error.value == {"property": "SUMMARY"}
+
+
+def test_ical_parsing_error_message_only():
+    error = ICalParsingError("Malformed date")
+
+    assert str(error) == "Malformed date"
+
+
+def test_ical_parsing_error_message_with_value():
+    error = ICalParsingError(
+        "Malformed date",
+        value="20240399",
+    )
+
+    assert str(error) == "Malformed date: 20240399"
+
+
+def test_ical_parsing_error_message_with_line():
+    error = ICalParsingError(
+        "Malformed date",
+        line="DTSTART:20240399",
+    )
+
+    assert str(error) == "Malformed date (DTSTART:20240399)"
+
+
+def test_ical_parsing_error_message_with_line_number():
+    error = ICalParsingError(
+        "Malformed date",
+        line_number=42,
+    )
+
+    assert str(error) == "Malformed date (line 42)"
+
+
+def test_ical_parsing_error_message_with_line_and_line_number():
+    error = ICalParsingError(
+        "Malformed date",
+        line="DTSTART:20240399",
+        line_number=42,
+    )
+
+    assert str(error) == "Malformed date (line 42: DTSTART:20240399)"
+
+
+def test_ical_parsing_error_message_with_all_context():
+    error = ICalParsingError(
+        "Malformed date",
+        line="DTSTART:20240399",
+        line_number=42,
+        value="20240399",
+    )
+
+    assert str(error) == "Malformed date: 20240399 (line 42: DTSTART:20240399)"
