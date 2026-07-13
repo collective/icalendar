@@ -1,0 +1,1 @@
+Updated the Windows timezone mapping for ``Mountain Standard Time (Mexico)`` to ``America/Mazatlan``, so dates after Mexico's 2022 timezone changes use the correct UTC-7 offset instead of UTC-6. I used OpenAI GPT-5.6 Sol via Rook to assist with the investigation, regression test, and drafting this change. @RobHannay
