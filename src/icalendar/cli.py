@@ -89,8 +89,8 @@ def view(event: Event) -> str:
 def main():
     """Parse command-line arguments and print a summary of calendar events.
 
-    Reads one or more .ics files (or stdin) and writes a human-readable
-    summary of each event to the specified output (or stdout).
+    Reads one or more iCalendar files or stdin, and writes a human-readable
+    summary of each event to the specified output file or stdout.
     """
     parser = argparse.ArgumentParser(description=__doc__)
 
