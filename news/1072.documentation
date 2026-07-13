@@ -1,0 +1,1 @@
+Added a docstring to the :func:`~icalendar.cli.main` function to follow the project's Google Style guide. @Areej-cs
