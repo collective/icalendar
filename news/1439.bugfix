@@ -1,1 +1,0 @@
-Accept the ``(dt, None)`` form that ``rdates``/``exdates`` return for a single date when adding ``RDATE`` or ``EXDATE``, so ``event.add("RDATE", (dt, None))`` no longer raises :exc:`TypeError` and the value round-trips. Prepared with the assistance of an AI coding agent (Anthropic's Claude Opus 4). @gaoflow @texttheater

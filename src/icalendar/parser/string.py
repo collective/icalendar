@@ -29,6 +29,13 @@ def _escape_char(text: str | bytes) -> str:
         5. ``\r\n`` -> ``\n`` (normalize line endings)
         6. ``"\n"`` -> ``r"\n"`` (transform a newline character to a literal, or raw,
            newline character)
+        7. ``"\r"`` -> ``r"\n"`` (transform a lone carriage return to a literal
+           newline character)
+
+        Steps 5 to 7 normalize ``\r\n``, ``\n``, or a lone ``\r`` to ``\n``.
+        The line-ending normalization is an implementation convenience,
+        not part of :rfc:`5545`, which only defines ``\n`` or ``\N`` for an
+        intentional line break, and doesn't give an escape form for a lone ``\r``.
     """
     assert isinstance(text, (str, bytes))
     text = to_unicode(text)
@@ -40,6 +47,7 @@ def _escape_char(text: str | bytes) -> str:
         .replace(",", r"\,")
         .replace("\r\n", r"\n")
         .replace("\n", r"\n")
+        .replace("\r", r"\n")
     )
 
 
@@ -168,14 +176,20 @@ def _escape_string(val: str) -> str:
     Note:
         Conversions:
 
+        - ``%`` -> ``%25``
         - ``\,`` -> ``%2C``
         - ``\:`` -> ``%3A``
         - ``\;`` -> ``%3B``
         - ``\\`` -> ``%5C``
+
+        A literal ``%`` is escaped first so that percent sequences already in
+        the value (e.g. ``%2C`` in a URI) are not confused with the markers
+        introduced here. :func:`_unescape_string` reverses it.
     """
     # f'{i:02X}'
     return (
-        val.replace(r"\,", "%2C")
+        val.replace("%", "%25")
+        .replace(r"\,", "%2C")
         .replace(r"\:", "%3A")
         .replace(r"\;", "%3B")
         .replace(r"\\", "%5C")
@@ -210,12 +224,17 @@ def _unescape_string(val: str) -> str:
         - ``%3A`` -> ``:``
         - ``%3B`` -> ``;``
         - ``%5C`` -> ``\``
+        - ``%25`` -> ``%``
+
+        ``%25`` is restored last so a literal ``%`` that :func:`_escape_string`
+        protected does not re-trigger the marker replacements above.
     """
     return (
         val.replace("%2C", ",")
         .replace("%3A", ":")
         .replace("%3B", ";")
         .replace("%5C", "\\")
+        .replace("%25", "%")
     )
 
 

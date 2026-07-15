@@ -4,14 +4,26 @@ Contribute
 
 This guide describes how to contribute to icalendar.
 
+A key purpose around icalendar is to foster a warm and welcoming space for people to learn, grow, and contribute.
+Contributors in the icalendar community find joy in working with other people and raising them up to contribute again and improve.
+
+People in the icalendar community strive to uphold the spirit of the Python Calendaring Ecosystem's `Code of Conduct <https://pycal.org/code-of-conduct/>`_.
+You are invited to read it to help you decide whether you would enjoy being a part of the icalendar community.
+
 Examples of how to contribute
 -----------------------------
 
 -   Report security issues per the `Security Policy <https://github.com/collective/icalendar/blob/main/SECURITY.md>`_.
 -   Report all other issues in the `issue tracker <https://github.com/collective/icalendar/issues>`_.
 -   Comment on and resolve issues.
+-   Triage open issues and `pull requests <https://github.com/collective/icalendar/pulls>`_.
+-   Review, comment on, and make suggestions to change a pull request.
+    See the GitHub documentation `Reviewing proposed changes in a pull request <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/reviewing-proposed-changes-in-a-pull-request>`_.
 -   Submit pull requests from your fork of the icalendar repository.
 -   Extend the :doc:`documentation/index`.
+-   Create or comment on a topic in `Discussions <https://github.com/collective/icalendar/discussions>`_.
+-   Write a blog post about icalendar.
+-   Share announcements on social media from :doc:`core contributors <credits>` to icalendar.
 -   Sponsor development of icalendar through `Open Collective <https://opencollective.com/python-icalendar>`_.
 
 
@@ -69,9 +81,10 @@ Artificial intelligence policy
 ------------------------------
 
 We want to protect the joy, goodwill, and volunteer time of the maintainers and contributors of icalendar.
+Pull request reviewers want to train people, not AI.
 As such, we take a strong stance against artificial intelligence (AI) abuse.
 
-Contributors to icalendar must follow icalendar's AI policy as described in this section and its subsections.
+Contributors to icalendar must follow icalendar's AI policy as described in this section.
 
 
 .. _responsible-ai-use:
@@ -84,13 +97,25 @@ That means you must comply with :ref:`pull-request-requirements` and follow the 
 
 If you use AI in your work:
 
--   You must take responsibility for the output, including reviewing and validating the output for accuracy and ensuring it resolves an issue.
--   You must check the AI's terms of use, and ensure that outputs are not reconstructed from copyrighted sources.
--   You are expected to understand and be able to explain design and code decisions.
+-   Before you begin work, you must open an issue per :ref:`issue-requirements`.
 -   In your git commit messages, you must specify both (1) which AI model and version you used, and (2) how you used it, by either including the prompts and interactions you used or summarizing them.
+    See the example commit message below.
+
+    ..  code-block:: text
+
+        Author: Parker Programmer with CodeLLM-3.4 pp@example.org
+        Date: Sun Jan 18 10:52:08 2026
+        Generate compliance tests
+        Prompt: Generate tests for compliance with RFC123 messages.
+        Output: (this commit)
+
     You can automate this by using the :program:`ai-prompt-auto-commit` pre-commit hook.
     See :ref:`AI prompt automation <pre-commit-ai-prompts>` for setup instructions.
 -   You must disclose that you used AI in your change log entry.
+    This may be a brief disclosure, not as detailed as the git commit messages, such as, "I used AI to assist me with this change."
+-   You must take responsibility for the output, including reviewing and validating the output for accuracy and ensuring it resolves an issue.
+-   You must check the AI's terms of use, and ensure that outputs are not reconstructed from copyrighted sources.
+-   You are expected to understand and be able to explain design and code decisions.
 -   You shall be held accountable for your AI-generated content.
 
 
@@ -111,17 +136,36 @@ Report suspected violations
 ```````````````````````````
 
 To report a suspected violation of this AI policy, see the `Reporting an issue <https://pycal.org/code-of-conduct/#reporting-an-issue>`_ section in the Python Calendaring Ecosystem's Code of Conduct.
+The maintainers will investigate and collect information from various sources, including but not limited to the use of automated GitHub workflows to identify suspected AI use.
 The maintainers may close pull requests without providing feedback that they deem to be spam, AI slop, abuse, or that do not comply with :ref:`pull request requirements <pull-request-requirements>`.
 The maintainers may also take further action, including suspend, ban, or report GitHub users, as described in Python Calendaring Ecosystem's `Code of Conduct <https://pycal.org/code-of-conduct/>`_.
 
+
+.. _issue-requirements:
+
+Issue requirements
+------------------
+
+An issue should precede a pull request.
+
+When `creating a new issue <https://github.com/collective/icalendar/issues/new/choose>`_, you'll be presented with an issue selector.
+Follow the templates guidance as much as practical.
+
+It might be helpful to include an iCalendar file to help reproduce your issue and to use in a test to ensure a bug fix actually resolves your issue.
+To remove private information from an iCalendar file, use :program:`icalendar-anonymizer`, either through its `website <https://icalendar-anonymizer.com/>`_ or install it locally.
+See icalendar-anonymizer's `Installation <https://docs.icalendar-anonymizer.com/latest/installation.html>`_ and documentation for details.
+
+Anyone may comment on an issue.
+Discussion of the issue helps collaborators understand its importance and how to resolve it.
 
 .. _pull-request-requirements:
 
 Pull request requirements
 -------------------------
 
-Before submitting your pull request, ensure you have met the following requirements.
+When submitting your pull request, complete the description template on GitHub, and ensure you have met the following requirements.
 
+#.  In your pull request description, link to relevant issues.
 #.  Add a change log entry as described in :ref:`change-log`.
     This is required and enforced by GitHub checks.
 #.  Add a test which proves your fix and passes.
@@ -134,8 +178,15 @@ The maintainers may also take further action, including suspend, ban, or report 
 
 .. _change-log:
 
-Change log entry format
-```````````````````````
+Change log requirements
+-----------------------
+
+This section describes how to write a change log entry that satisfies the requirements of its :ref:`file name <change-log-file-name>` according to :ref:`types <change-log-types>` and which :ref:`summarizes changes <write-a-good-change-log-entry-label>` in your contribution, including compliance with icalendar's :ref:`responsible-ai-use` policy.
+
+.. _change-log-file-name:
+
+Change log entry file name
+``````````````````````````
 
 To create a change log entry or news item, create a file in the :file:`news` directory, located in the root of the package.
 
@@ -169,7 +220,7 @@ The content will still be included in the change log, at the end of the category
 ..  _change-log-types:
 
 Change log types
-````````````````
+~~~~~~~~~~~~~~~~
 
 ``breaking``
     For changes that break the existing API.
@@ -199,7 +250,7 @@ Change log types
 .. _write-a-good-change-log-entry-label:
 
 Write a good change log entry
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+`````````````````````````````
 
 .. important::
 
@@ -208,7 +259,9 @@ Write a good change log entry
 The content of this file must include the following.
 
 -   A brief message that summarizes the changes in your contribution.
--   An attribution to yourself, in the format of ``@github_username``.
+-   Use :ref:`reStructuredText markup <markup-examples>` to link to relevant RFCs, API usage, and other references.
+-   A brief disclosure of AI use, per icalendar's :ref:`responsible-ai-use` policy, if applicable.
+-   An attribution to yourself, in the format of ``@github_username``, at the end of the entry.
 
 You can write a good change log entry with the following guidance.
 
