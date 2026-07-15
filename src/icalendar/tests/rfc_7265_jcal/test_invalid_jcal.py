@@ -460,8 +460,8 @@ INVALID_NAME_TOKENS = ["x-foo:INJECT", "x-foo\rRRULE", "a;b", "a=b", "a,b", "a b
 def test_invalid_property_name_token(name):
     """A jCal property name that is not a valid token is rejected.
 
-    Otherwise the name is re-emitted verbatim into the content line, so a ``:``
-    or a lone carriage return injects structure on serialisation.
+    Otherwise the name is re-emitted verbatim into the content line, so a ``:``,
+    ``;``, or a lone carriage return injects structure on serialization.
     """
     with pytest.raises(
         JCalParsingError,
