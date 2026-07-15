@@ -18,6 +18,13 @@ def test_error():
         vFloat.from_ical("not a float")
 
 
+@pytest.mark.parametrize("value", ["nan", "inf", "-inf", "infinity", "1e999"])
+def test_reject_non_finite(value):
+    """Non-finite floats are not valid FLOAT values per RFC 5545."""
+    with pytest.raises(ValueError):
+        vFloat.from_ical(value)
+
+
 def test_ical_value():
     """ical_value property returns the float value."""
     assert vFloat(1.0).ical_value == 1.0

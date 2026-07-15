@@ -13,7 +13,7 @@ from icalendar.timezone.tzid import is_utc
 from .base import TimeBase
 
 TIME_JCAL_REGEX = re.compile(
-    r"^(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2}):(?P<second>[0-9]{2})(?P<utc>Z)?$"
+    r"^(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2}):(?P<second>[0-9]{2})(?P<utc>Z)?\Z"
 )
 
 
@@ -173,12 +173,19 @@ class vTime(TimeBase):
         elif timezone is not None:
             tzinfo = timezone
 
+        if isinstance(ical, bytes):
+            ical = ical.decode()
+        # Extract the value part if parameters are present per
+        # https://datatracker.ietf.org/doc/html/rfc5545.html#section-3.3.5
+        # Form #3: TZID=America/New_York:083000
+        ical = ical.rpartition(":")[2]
+        if utc := ical.endswith("Z"):
+            ical = ical[:-1]
+        # time = time-hour time-minute time-second [time-utc], six digits,
+        # per https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.12
+        if len(ical) != 6 or not ical.isascii() or not ical.isdigit():
+            raise ValueError(f"Expected time, got: {ical}")
         try:
-            if isinstance(ical, bytes):
-                ical = ical.decode()
-            utc = ical.endswith("Z")
-            if utc:
-                ical = ical[:-1]
             timetuple = (int(ical[:2]), int(ical[2:4]), int(ical[4:6]))
             if tzinfo:
                 return tzp.localize(time(*timetuple), tzinfo)
@@ -204,7 +211,7 @@ class vTime(TimeBase):
 
     @classmethod
     def parse_jcal_value(cls, jcal: str) -> time:
-        """Parse a jCal string to a :py:class:`datetime.time`.
+        """Parse a jCal string to a :class:`datetime.time`.
 
         Raises:
             ~error.JCalParsingError: If it can't parse a time.

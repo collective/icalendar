@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from datetime import date, datetime, time, timedelta
 from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
@@ -43,6 +44,10 @@ class vDDDTypes(TimeBase):
     def __init__(self, dt, params: dict[str, Any] | None = None):
         if params is None:
             params = {}
+        if isinstance(dt, Sequence) and len(dt) == 2 and dt[1] is None:
+            # ``(dt, None)`` (tuple or list) is the rdates form of a single date;
+            # the ``[1] is None`` guard skips strings and real two-value pairs (#1439).
+            dt = dt[0]
         if not isinstance(dt, (datetime, date, timedelta, time, tuple)):
             raise TypeError(
                 "You must use datetime, date, timedelta, time or tuple (for periods)"

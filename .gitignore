@@ -28,6 +28,7 @@ uv.lock
 coverage.xml
 !.coveragerc
 !.well-known
+/.prompts/
 /ical_fuzzer/
 # from tutorials
 /example.ics

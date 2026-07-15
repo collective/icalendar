@@ -1,0 +1,1 @@
+Added the :exc:`~icalendar.error.ICalParsingError` exception as a public API for programmatic handling of iCalendar parsing failures. AI assistance: ChatGPT was used to help debug terminal errors encountered during development. @GAUTAMSANSWAL

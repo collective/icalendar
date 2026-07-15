@@ -9,42 +9,32 @@ from icalendar.parser import Parameters
 
 
 class vBoolean(int):
-    """Boolean
+    """An iCalendar boolean value.
 
-    Value Name:  BOOLEAN
+    Converts between iCalendar ``BOOLEAN`` value types and Python boolean values.
+    In iCalendar data, boolean values are represented as "TRUE" or "FALSE". Values
+    parsed from iCalendar text are case insensitive. ``True``, ``true``, and ``TRUE``
+    are all accepted when converting from iCalendar to Python.
 
-    Purpose:  This value type is used to identify properties that contain
-      either a "TRUE" or "FALSE" Boolean value.
+    Conforming with :rfc:`5545#section-3.3.2`, boolean values are represented in
+    iCalendar data as either ``TRUE`` or ``FALSE``.
 
-    Format Definition:  This value type is defined by the following
-      notation:
+    Example:
+        Parse and create iCalendar boolean values.
 
-    .. code-block:: text
+        .. code-block:: pycon
 
-        boolean    = "TRUE" / "FALSE"
+            >>> from icalendar.prop import vBoolean
+            >>> boolean = vBoolean.from_ical('TRUE')
+            >>> boolean
+            True
 
-    Description:  These values are case-insensitive text.  No additional
-      content value encoding is defined for this value type.
+            >>> boolean = vBoolean.from_ical('fAlse')
+            >>> boolean
+            False
 
-    Example:  The following is an example of a hypothetical property that
-      has a BOOLEAN value type:
-
-    .. code-block:: python
-
-        TRUE
-
-    .. code-block:: pycon
-
-        >>> from icalendar.prop import vBoolean
-        >>> boolean = vBoolean.from_ical('TRUE')
-        >>> boolean
-        True
-        >>> boolean = vBoolean.from_ical('FALSE')
-        >>> boolean
-        False
-        >>> boolean = vBoolean.from_ical('True')
-        >>> boolean
-        True
+            >>> vBoolean(True).to_ical()
+            b'TRUE'
     """
 
     default_value: ClassVar[str] = "BOOLEAN"
