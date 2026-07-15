@@ -159,8 +159,8 @@ class JCalParsingError(ValueError):
         """Validate a jCal property.
 
         Parameters:
-            jcal_property: A list with atleast four items (name,
-                parameters, value type and value) which is the jCal property
+            jcal_property: A list with at least four items (name,
+                parameters, value type, and value) which is the jCal property
                 to be validated.
             parser: The parser class or its name where the error occurred.
             path: The location in the jCal structure where the error occurred.
