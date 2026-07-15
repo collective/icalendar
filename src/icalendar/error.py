@@ -71,7 +71,7 @@ def _repr_index(index: str | int) -> str:
     """Create a JSON compatible representation for the index.
 
     Parameters:
-        index: It is either a dict key(string) or a list integer position (integer).
+        index: It is either a dict key (string) or a list position (integer).
 
     Returns:
         The index as a quoted string if it is a string else as a plain
