@@ -21,6 +21,7 @@ from __future__ import annotations
 from collections import defaultdict
 from datetime import datetime, timedelta, tzinfo
 from pathlib import Path
+from pprint import pprint
 from typing import TYPE_CHECKING, NamedTuple
 from zoneinfo import ZoneInfo, available_timezones
 
@@ -123,6 +124,7 @@ def main(
         )
         f.write("import datetime\n\n")
         f.write("\nlookup = ")
+        pprint(lookup, stream=f)
         f.write("\n\n__all__ = ['lookup']\n")
 
     return lookup
