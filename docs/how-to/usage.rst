@@ -190,8 +190,8 @@ You can also choose to use the :meth:`icalendar.cal.component.Component.decoded`
 
 .. code-block:: pycon
 
-    >>> cal = Calendar()                             # create a calendar object
-    >>> cal.add("dtstart", datetime(2005,4,4,8,0,0)) # set start date
+    >>> cal = Calendar()                              # create a calendar object
+    >>> cal.add("dtstart", datetime(2005,4,4,8,0,0))  # set start date
     >>> cal["dtstart"].to_ical()
     b'20050404T080000'
     >>> cal.decoded("dtstart")
