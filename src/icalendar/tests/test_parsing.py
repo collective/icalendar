@@ -9,7 +9,7 @@ from icalendar import vBinary, vRecur
 from icalendar.cal.calendar import Calendar
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.cal.event import Event
-from icalendar.parser import Contentline, Parameters, _unescape_char
+from icalendar.parser import Contentline, Parameters, _escape_char, _unescape_char
 
 
 @pytest.mark.parametrize(
@@ -258,6 +258,30 @@ def test_escaped_characters_read(event_name, expected_cn, expected_ics, events):
 def test_unescape_char():
     assert _unescape_char(b"123") == b"123"
     assert _unescape_char(b"\\n") == b"\n"
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        ("a\rb", r"a\nb"),
+        ("a\r\nb", r"a\nb"),
+        ("a\nb", r"a\nb"),
+        ("a\rb\r\nc\nd", r"a\nb\nc\nd"),
+        ("\ra\n", r"\na\n"),
+    ],
+)
+def test_escape_char_transforms_lone_carriage_return(value, expected):
+    r"""A lone ``\r`` must be transformed, not left raw in the content line."""
+    assert _escape_char(value) == expected
+
+
+def test_lone_carriage_return_cannot_inject_content_line():
+    event = Event()
+    event.add("SUMMARY", "safe\rINJECTED:evil")
+    assert b"\rINJECTED" not in event.to_ical()
+    assert event.to_ical() == (
+        b"BEGIN:VEVENT\r\nSUMMARY:safe\\nINJECTED:evil\r\nEND:VEVENT\r\n"
+    )
 
 
 def test_split_on_unescaped_comma():
