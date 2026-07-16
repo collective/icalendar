@@ -5,11 +5,13 @@ SHELL           = bash
 # You can set these variables from the command line.
 SPHINXOPTS      ?=
 PAPER           ?=
+VERSION			?=
 
 # Internal variables.
 RUFFPATH        = "$(realpath .venv/bin/ruff)"
-SPHINXBUILD     = "$(realpath .venv/bin/sphinx-build)"
 SPHINXAUTOBUILD = "$(realpath .venv/bin/sphinx-autobuild)"
+SPHINXBUILD     = "$(realpath .venv/bin/sphinx-build)"
+TOWNCRIERPATH   = "$(realpath .venv/bin/towncrier)"
 DOCS_DIR        = ./docs/
 BUILDDIR        = ../_build
 PAPEROPT_a4     = -D latex_paper_size=a4
@@ -86,8 +88,8 @@ text: .venv
 	@echo
 	@echo "Build finished. The text files are in $(BUILDDIR)/text."
 
-.PHONY: changes
-changes: .venv
+.PHONY: sphinx-changes
+sphinx-changes: .venv
 	cd $(DOCS_DIR) && $(SPHINXBUILD) -b changes $(ALLSPHINXOPTS) $(BUILDDIR)/changes
 	@echo
 	@echo "The overview file is in $(BUILDDIR)/changes."
@@ -160,3 +162,19 @@ rtd-prepare:  ## Prepare environment on Read the Docs
 rtd-pr-preview: rtd-prepare .venv ## Build pull request preview on Read the Docs
 	cd $(DOCS_DIR) && $(SPHINXBUILD) -b html $(ALLSPHINXOPTS) ${READTHEDOCS_OUTPUT}/html/
 # /deployment
+
+# release
+.PHONY: changes-check
+changes-check: dev
+	$(TOWNCRIERPATH) check
+
+.PHONY: changes-draft
+changes-draft: dev
+	@test -n "$(VERSION)" || (echo "VERSION is not set. Run 'export VERSION=x.y.z' first." && exit 1)
+	$(TOWNCRIERPATH) build --draft --version ${VERSION} --yes
+
+.PHONY: changes
+changes: dev
+	@test -n "$(VERSION)" || (echo "VERSION is not set. Run 'export VERSION=x.y.z' first." && exit 1)
+	$(TOWNCRIERPATH) build --version ${VERSION} --yes
+# /release

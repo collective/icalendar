@@ -4,6 +4,7 @@ on:
   push:
     branches:
     - main
+    - 7.x
     tags:
     - v*
   pull_request:
@@ -20,7 +21,7 @@ jobs:
       # See https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/passing-information-between-jobs#example-defining-outputs-for-a-job
       include: ${{ steps.set-matrix.outputs.include }}
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - name: Set matrix
       id: set-matrix
       run: |
@@ -39,7 +40,7 @@ jobs:
     - name: Skip notice
       if: ${{ matrix.skip }}
       run: echo "Skipped ${{ matrix.test_name }} (not required for this trigger)"
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
       if: ${{ !matrix.skip }}
     - name: Install uv and Python ${{ matrix.python_version }}
       if: ${{ !matrix.skip }}
@@ -88,7 +89,7 @@ jobs:
     name: Check built package
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - name: Set up Python
       uses: actions/setup-python@v6
       with:
@@ -120,7 +121,7 @@ jobs:
       TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
       TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - name: Set up Python
       uses: actions/setup-python@v6
       with:
@@ -160,10 +161,10 @@ jobs:
     environment:
       name: github-release
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Create GitHub release from tag
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
-          body: "To view the changes, please see the [Changelog](https://icalendar.readthedocs.io/en/latest/changelog.html). This release can be installed from [PyPI](https://pypi.org/project/icalendar/#history)."
+          body: "To view the changes, please see the [Changelog](https://icalendar.readthedocs.io/en/latest/reference/changelog.html). This release can be installed from [PyPI](https://pypi.org/project/icalendar/#history)."
           generateReleaseNotes: false

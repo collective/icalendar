@@ -270,7 +270,7 @@ Modify content
 
 After loading the example file, edit and save it.
 
-.. .. code-block:: pycon
+.. code-block:: pycon
 
     >>> calendar.calendar_name = "My Modified Calendar"  # modify
     >>> print(calendar.to_ical()[:121])  # save modification
@@ -297,7 +297,7 @@ Events
 
 Show events.
 
-.. .. code-block:: pycon
+.. code-block:: pycon
 
     >>> icalendar.Event()
     VEVENT({})
@@ -308,7 +308,7 @@ Free/busy times
 
 Show free/busy times.
 
-.. .. code-block:: pycon
+.. code-block:: pycon
 
     >>> icalendar.FreeBusy()
     VFREEBUSY({})
@@ -319,7 +319,7 @@ To-do items
 
 Show to-do items.
 
-.. .. code-block:: pycon
+.. code-block:: pycon
 
     >>> icalendar.Todo()
     VTODO({})
@@ -331,7 +331,7 @@ Alarms
 
 Show alarms.
 
-.. .. code-block:: pycon
+.. code-block:: pycon
 
     >>> icalendar.Alarm()
     VALARM({})
@@ -342,7 +342,7 @@ Journal entries
 
 Show journal entries.
 
-.. .. code-block:: pycon
+.. code-block:: pycon
 
     >>> icalendar.Journal()
     VJOURNAL({})
@@ -356,7 +356,7 @@ You can localize your events to take place in different timezones.
 icalendar supports multiple timezone implementations, including :mod:`zoneinfo`, `dateutil.tz <https://dateutil.readthedocs.io/en/latest/tz.html>`_, and `pytz <https://pypi.org/project/pytz/>`_.
 To demonstrate icalendar's flexibility, the following example creates an event that uses all of the timezone implementations with the same result.
 
-.. .. code-block:: pycon
+.. code-block:: pycon
 
     >>> import pytz, zoneinfo, dateutil.tz  # timezone libraries
     >>> import datetime, icalendar
@@ -386,7 +386,7 @@ The functionality is extended and tested since 6.0.0 with both timezone implemen
 
 Since 6.0.0 by default, :mod:`zoneinfo` timezones are created.
 
-.. .. code-block:: pycon
+.. code-block:: pycon
 
     >>> dt = icalendar.Calendar.example("timezoned").events[0].start
     >>> dt.tzinfo
@@ -394,7 +394,7 @@ Since 6.0.0 by default, :mod:`zoneinfo` timezones are created.
 
 To continue to receive ``pytz`` timezones in parsed results, you can receive all the latest updates, and switch back to earlier behavior.
 
-.. .. code-block:: pycon
+.. code-block:: pycon
 
     >>> icalendar.use_pytz()
     >>> dt = icalendar.Calendar.example("timezoned").events[0].start

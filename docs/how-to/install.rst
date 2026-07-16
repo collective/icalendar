@@ -69,3 +69,12 @@ You can install the `python3-icalendar package <https://packages.fedoraproject.o
 .. code-block:: shell
 
     sudo dnf install python3-icalendar
+
+NixOS
+-----
+
+You can install the icalendar package on NixOS using ``nix-env``:
+
+.. code-block:: shell
+
+    nix-env -iA nixpkgs.python3Packages.icalendar

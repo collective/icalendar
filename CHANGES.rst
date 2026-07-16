@@ -4,7 +4,159 @@ Change log
 
 .. py:currentmodule:: icalendar
 
-7.0.4 (unreleased)
+.. Do *NOT* add new change log entries to this file.
+   Instead create a file in the news directory.
+   For helpful instructions, see:
+   https://icalendar.readthedocs.io/en/latest/contribute/#change-log-entry-format
+
+.. towncrier release notes start
+
+7.2.0 (2026-06-23)
+------------------
+
+Removals and deprecations
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Deprecated :func:`icalendar.parser.string.foldline` as a private function for icalendar version 8. @IoannaGiag (`Issue #1011 <https://github.com/collective/icalendar/issues/1011>`_)
+- Deprecated :func:`icalendar.parser.string.escape_char`, :func:`icalendar.parser.string.unescape_char`, :func:`icalendar.parser.string.escape_string`, and :func:`icalendar.parser.string.unescape_string` using the standard ``deprecate_for_version_8`` wrapper as per issue #1405. (`Issue #1405 <https://github.com/collective/icalendar/issues/1405>`_)
+
+
+New features
+~~~~~~~~~~~~
+
+- Created an :attr:`~icalendar.prop.recur.frequency.vFrequency.ical_value` property for the :class:`~icalendar.prop.recur.frequency.vFrequency` component, mirroring the existing pattern on :class:`~icalendar.prop.recur.weekday.vWeekday`. @mvanhorn (`Issue #876 <https://github.com/collective/icalendar/issues/876>`_)
+- Created an :attr:`~icalendar.prop.geo.vGeo.ical_value` property for the :class:`~icalendar.prop.geo.vGeo` component. @IoannaGiag (`Issue #876 <https://github.com/collective/icalendar/issues/876>`_)
+- Added type hints to component methods. @Priyanshu-pulak (`Issue #938 <https://github.com/collective/icalendar/issues/938>`_)
+- Added test coverage for :func:`icalendar.compatibility.deprecate_for_version_8`. AI disclosure: I used GPT-5 Codex to help draft and refine the test and pull request text. I reviewed the output and validated the change locally. @iccccccccccccc (`Issue #1407 <https://github.com/collective/icalendar/issues/1407>`_)
+- The :attr:`Alarm.uid <icalendar.cal.alarm.Alarm.uid>` accessor now falls back to vendor-specific UID properties (the existing ``X-ALARMUID`` and the newly added ``X-EVOLUTION-ALARM-UID``) when no canonical ``UID`` is present, so alarms exported by Evolution/GNOME Calendar expose a usable identifier. ``single_string_property`` now accepts an ordered list of fallback keys so further vendor aliases can be added later. AI disclosure: I used GPT-5 Codex (via the Codex CLI) to draft and refine this change and its tests; I reviewed and validated the output locally. @mvanhorn (`Issue #1421 <https://github.com/collective/icalendar/issues/1421>`_)
+- The ``rdates`` and ``exdates`` properties are now writable: assigning a list replaces the ``RDATE``/``EXDATE`` values, ``del`` (or assigning an empty list or ``None``) clears them, and assigning the value the getter returns round-trips. Prepared with the assistance of an AI coding agent (Anthropic's Claude). @gaoflow (`Issue #1442 <https://github.com/collective/icalendar/issues/1442>`_)
+
+
+Bug fixes
+~~~~~~~~~
+
+- Strictly validate :class:`~icalendar.prop.dt.datetime.vDatetime` values in :meth:`~icalendar.prop.dt.datetime.vDatetime.from_ical` and reject malformed input. This also improves handling of values with a ``TZID`` prefix, per :rfc:`5545#section-3.3.5`, Form #3. @uwezkhan (`Issue #1361 <https://github.com/collective/icalendar/issues/1361>`_)
+- Preserve an explicit ``VALUE`` parameter (for example ``RDATE;VALUE=PERIOD`` or ``TRIGGER;VALUE=DATE-TIME``) when converting from jCal. Previously :meth:`Component.from_jcal <icalendar.cal.component.Component.from_jcal>` dropped the value type, which is encoded in the jCal type field rather than as a parameter. Prepared with the assistance of an AI coding agent (Anthropic's Claude Opus 4). @gaoflow @lcampanella98 (`Issue #1426 <https://github.com/collective/icalendar/issues/1426>`_)
+- For a newline-free string that the operating system can't use as a file path—for example, one containing an embedded null byte or one that is too long—treat it as calendar data, instead of propagating an :exc:`OSError` from :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`. Such input now raises a consistent :exc:`ValueError` across platforms. The string-versus-path boundary is now covered by tests. @uwezkhan (`Issue #1436 <https://github.com/collective/icalendar/issues/1436>`_)
+- Accept the ``(dt, None)`` form that ``rdates``/``exdates`` return for a single date when adding ``RDATE`` or ``EXDATE``, so ``event.add("RDATE", (dt, None))`` no longer raises :exc:`TypeError` and the value round-trips. Prepared with the assistance of an AI coding agent (Anthropic's Claude Opus 4). @gaoflow @texttheater (`Issue #1439 <https://github.com/collective/icalendar/issues/1439>`_)
+- Anchored the value validation regular expressions with ``\Z`` instead of ``$`` in :class:`~icalendar.prop.recur.weekday.vWeekday`, :meth:`vDuration.from_ical <icalendar.prop.dt.duration.vDuration.from_ical>`, :class:`~icalendar.prop.dt.time.vTime` and :class:`~icalendar.prop.dt.utc_offset.vUTCOffset`. ``$`` matches just before a final ``\n``, so a value with a trailing line break was accepted; for ``vWeekday`` the newline survived in the ``str`` value and was re-emitted into RECUR output. @alhudz
+- For iCalendar files that have thousands of bare line breaks, reduce the content line parse time by a quadratic order of magnitude when reading a component with :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>`. @alhudz
+- Parse a ``CATEGORIES`` value that contains an unescaped colon correctly. ``TEXT`` values do not escape ``:``, so a category such as ``CATEGORIES:CONFIDENTIAL,http://example.com/tag`` was truncated to a single ``//example.com/tag`` because the value boundary was found with the last colon on the line instead of the first one outside the parameters. @alhudz
+- Parse and serialize jCal iteratively so that deeply nested components no longer raise an uncaught :exc:`RecursionError`. :meth:`Component.from_jcal <icalendar.cal.component.Component.from_jcal>` and :meth:`Component.to_jcal <icalendar.cal.component.Component.to_jcal>` now handle arbitrary nesting depth, matching the iterative iCal parser and serializer. @arshsmith
+- Preserve literal percent escapes in parameter values. The parameter parser used ``%2C``/``%3A``/``%3B``/``%5C`` as internal markers for backslash-escaped delimiters, so a value that already contained those sequences (e.g. ``ALTREP="http://x/a%2Cb"``) was silently decoded to ``http://x/a,b``. The internal transport encoding now escapes ``%`` itself, leaving real percent-encoded values untouched. @alhudz
+- Raise :class:`~icalendar.error.InvalidCalendar` instead of leaking :exc:`OverflowError` when a ``DURATION`` value is too large for :class:`datetime.timedelta`, for example, ``P999999999999999999W``. Parsing a whole calendar now records such a value as an error, like any other invalid property, rather than aborting the parse. @arshsmith
+- Reject non-ASCII digits in :class:`~icalendar.prop.recur.month.vMonth` (``BYMONTH``). ``str.isdigit`` is ``True`` for digits like the Arabic-Indic ``١٢``, which was silently accepted and normalized to month ``12``, while characters such as ``²`` cleared the same guard and then leaked a raw ``int()`` error. :meth:`vMonth.from_ical <icalendar.prop.recur.month.vMonth.from_ical>` now rejects both. @alhudz
+- Reject non-finite FLOAT values in :meth:`vFloat.from_ical() <icalendar.prop.float.vFloat.from_ical>` and :meth:`vGeo.from_ical() <icalendar.prop.geo.vGeo.from_ical>`. Inputs such as ``nan``, ``inf`` or an overflowing magnitude like ``1e999`` were silently accepted, producing ``NaN``/``Infinity`` tokens in :meth:`Component.to_json <icalendar.cal.component.Component.to_json>` output that are not valid JSON. @alhudz
+- Strictly validate :class:`~icalendar.prop.dt.date.vDate` and :class:`~icalendar.prop.dt.time.vTime` values in their ``from_ical`` methods and reject malformed input, matching the strictness added to :class:`~icalendar.prop.dt.datetime.vDatetime`. Trailing data and ``int()`` quirks (underscores, whitespace, signs) are no longer silently accepted, per :rfc:`5545#section-3.3.4` and :rfc:`5545#section-3.3.12`. This change was prepared with AI assistance (Anthropic Claude, Opus model, via Claude Code) used to research the relevant RFC grammar and draft the validation and tests, all reviewed and verified locally. @alhudz
+
+
+Documentation
+~~~~~~~~~~~~~
+
+- Switch :file:`docs/how-to/usage.rst` from the deprecated ``.. code:: pycon`` directive to ``.. code-block:: pycon`` for consistency with the rest of the documentation. @mvanhorn (`Issue #626 <https://github.com/collective/icalendar/issues/626>`_)
+- Added type hint for ``encoding`` parameter in :func:`~icalendar.parser_tools.data_encode`. @cybs-joe (`Issue #938 <https://github.com/collective/icalendar/issues/938>`_)
+- Converted docstring of :meth:`~icalendar.cal.component.Component.add` to Google style. @mvanhorn (`Issue #1072 <https://github.com/collective/icalendar/issues/1072>`_)
+- Fixed broken links and removed `:py` prefix in :class:`icalendar.cal.calendar.Calendar` documentation. @lcampanella98 (`Issue #1158 <https://github.com/collective/icalendar/issues/1158>`_)
+- Fixed broken link and removed `:py` prefix in the :func:`~icalendar.parser.unescape_backslash` docstring. @vincere-mori (`Issue #1158 <https://github.com/collective/icalendar/issues/1158>`_)
+- Fixed broken documentation links in :mod:`icalendar.alarms` and :mod:`icalendar.cal.alarm`. @lcampanella98 (`Issue #1158 <https://github.com/collective/icalendar/issues/1158>`_)
+- Fix unqualified cross-references in :attr:`Event.start <icalendar.cal.event.Event.start>` and :attr:`Event.start <icalendar.cal.event.Event.end>` docstrings. @Esneider1107 (`Issue #1158 <https://github.com/collective/icalendar/issues/1158>`_)
+- Fixed broken links in :mod:`icalendar.cal.free_busy` documentation by using fully qualified :class:`icalendar.cal.component.Component` attribute targets. @tsai135 (`Issue #1158 <https://github.com/collective/icalendar/issues/1158>`_)
+- Qualify ambiguous cross-references and remove remaining ``:py`` prefixed roles. @wahajahmed010 (`Issue #1158 <https://github.com/collective/icalendar/issues/1158>`_)
+- Fixed broken documentation links in :mod:`icalendar.cal.availability`. @lcampanella98 (`Issue #1158 <https://github.com/collective/icalendar/issues/1158>`_)
+- Replaced the RFC quotation in the docstring for :class:`vBoolean <icalendar.prop.boolean.vBoolean>` with a Pythonic description, including parsing behavior, a conformance reference, and a working example. @tsai135 (`Issue #1244 <https://github.com/collective/icalendar/issues/1244>`_)
+- Improved the documentation for ``attr.url_property`` by converting raw RFC text into a comprehensive Python docstring with usage examples and explicit RFC cross-references. Assisting tool: Gemini 1.5. @samrodri911 (`Issue #1244 <https://github.com/collective/icalendar/issues/1244>`_)
+- Improved the :attr:`~icalendar.cal.component.Component.LAST_MODIFIED` docstring to a clearer Pythonic docstring. Assisting tool: Claude Haiku 4.5 @valemm13 (`Issue #1244 <https://github.com/collective/icalendar/issues/1244>`_)
+- Tidied the auto-generated property docstrings by removing the redundant accepted values sentence and formatting return and error details as Sphinx sections. @mvanhorn (`Issue #1259 <https://github.com/collective/icalendar/issues/1259>`_)
+- Fix Read the Docs administrative instructions in maintenance documentation by removing the obsolete step to check the default branch and adding a step to manually trigger the "latest" version. @stevepiercy (`Issue #1397 <https://github.com/collective/icalendar/issues/1397>`_)
+- Clarified that :meth:`Calendar.new <icalendar.cal.calendar.Calendar.new>` automatically sets not only required, but recommended properties too. @scop (`Issue #1459 <https://github.com/collective/icalendar/issues/1459>`_)
+- Add how to report security issues. @stevepiercy (`Issue #1463 <https://github.com/collective/icalendar/issues/1463>`_)
+- Added NixOS installation instructions to the documentation. @MichaelFehdrau0205
+- Added instructions to :ref:`change-log` in Contribute documentation for how to avoid a filename conflict when adding a change log entry. @stevepiercy
+- Collect only documentation files for doctest. @stevepiercy
+- Documented :meth:`Calendar.from_ical <icalendar.cal.calendar.Calendar.from_ical>` as a direct :class:`~icalendar.cal.calendar.Calendar` API member so Sphinx can link to it from the custom components guide. Prepared with AI assistance. @xjn2005
+
+
+Internal changes
+~~~~~~~~~~~~~~~~
+
+- Added tests for :attr:`FreeBusy.duration <icalendar.cal.free_busy.FreeBusy.duration>` coverage. @kyriakikrimitza (`Issue #698 <https://github.com/collective/icalendar/issues/698>`_)
+- Refactored :file:`test_error_tolerant_parsing.py` to use ``.ics`` fixture files. @lcampanella98 (`Issue #1081 <https://github.com/collective/icalendar/issues/1081>`_)
+- Added :file:`.pre-commit-config.yaml` configuration and documentation to automatically record AI prompts in commit messages with :program:`ai-prompt-auto-commit`. @AniruthKarthik (`Issue #1320 <https://github.com/collective/icalendar/issues/1320>`_)
+- Support keeping a linked issue open in the pull request template when the pull request fixes only a part of the original issue. @stevepiercy (`Issue #1394 <https://github.com/collective/icalendar/issues/1394>`_)
+- Trigger the creation of a comment with links to Read the Docs of the changed files to review in a pull request preview build. @stevepiercy (`Issue #1396 <https://github.com/collective/icalendar/issues/1396>`_)
+- Add gh-profiler workflow to help triage AI-generated contributions. @SashankBhamidi (`Issue #1484 <https://github.com/collective/icalendar/issues/1484>`_)
+- Added validation test for :attr:`FreeBusy.duration <icalendar.cal.free_busy.FreeBusy.duration>`. @kyriakikrimitza
+- Remove redundant and deprecated pull request preview feature on Read the Docs. We now use the RTD GitHub app, making this file redundant to pull request preview builds. Additionally the call to the old GitHub Action was deprecated on 2025-07-01, per its `README.md <https://github.com/readthedocs/actions/blob/main/README.md>`_. @stevepiercy
+
+
+Other tasks
+~~~~~~~~~~~
+
+- Added type hints to all methods in the module :mod:`~icalendar.error`. @Priyanshu-pulak (`Issue #938 <https://github.com/collective/icalendar/issues/938>`_)
+
+
+7.1.3 (2026-06-15)
+------------------
+
+Bug fixes
+~~~~~~~~~
+
+- Comparing components with ``Component.__eq__`` is no longer exponential in the subcomponent nesting depth, removing a denial-of-service vector where a deeply nested component could take minutes to compare. See `GHSA-cv84-9p8j-fj68 <https://github.com/collective/icalendar/security/advisories/GHSA-cv84-9p8j-fj68>`_. @tidusec
+
+
+7.1.2 (2026-05-22)
+------------------
+
+Bug fixes
+~~~~~~~~~
+
+- Replaced the recursive :meth:`Component.__repr__ <icalendar.cal.component.Component.__repr__>` implementation with an iterative stack-based walk so that deeply nested calendars no longer raise :exc:`RecursionError` when formatted via ``repr()``, ``str()``, or f-strings. The output format is unchanged for normally-shaped calendars. @gistrec (`Issue #1370 <https://github.com/collective/icalendar/issues/1370>`_)
+
+
+Documentation
+~~~~~~~~~~~~~
+
+- Update maintenance documentation. Fix the version switcher on "stable" on Read the Docs. @stevepiercy (`Issue #1352 <https://github.com/collective/icalendar/issues/1352>`_)
+
+
+7.1.1 (2026-05-18)
+------------------
+
+New features
+~~~~~~~~~~~~
+
+- Created an :attr:`~icalendar.prop.dt.period.vPeriod.ical_value` property for the :class:`~icalendar.prop.dt.period.vPeriod` component. @ZairKSM (`Issue #876 <https://github.com/collective/icalendar/issues/876>`_)
+- Created a :meth:`~icalendar.prop.recur.weekday.vWeekday.ical_value` property for the :class:`~icalendar.prop.recur.weekday.vWeekday` component, mirroring the existing pattern on :class:`~icalendar.prop.boolean.vBoolean`. @mvanhorn (`Issue #1360 <https://github.com/collective/icalendar/issues/1360>`_)
+
+
+Bug fixes
+~~~~~~~~~
+
+- Strictly validate BINARY property values in :attr:`vBinary.from_ical() <icalendar.prop.binary.vBinary.from_ical>` and reject malformed Base64 input instead of silently accepting invalid characters. @uwezkhan (`Issue #1349 <https://github.com/collective/icalendar/issues/1349>`_)
+
+
+Documentation
+~~~~~~~~~~~~~
+
+- Replace the RFC quotations in the docstrings for :attr:`Alarm.REPEAT <icalendar.cal.alarm.Alarm.REPEAT>` and :attr:`Alarm.DURATION <icalendar.cal.alarm.Alarm.DURATION>` with Pythonic descriptions, including parameter notes, conformance references, and worked examples. @tmchow (`Issue #1244 <https://github.com/collective/icalendar/issues/1244>`_)
+- Edited contributor documentation for how to add a change log entry, and maintenance documentation for how to process news fragments. @stevepiercy (`Issue #1256 <https://github.com/collective/icalendar/issues/1256>`_)
+- Updated release process documentation. @niccokunzmann @stevepiercy @SashankBhamidi (`Issue #1293 <https://github.com/collective/icalendar/issues/1293>`_)
+
+
+Dependency changes
+~~~~~~~~~~~~~~~~~~
+
+- Added `towncrier <https://pypi.org/project/towncrier/>`_ to development dependencies. @stevepiercy (`Issue #1256 <https://github.com/collective/icalendar/issues/1256>`_)
+
+
+Internal changes
+~~~~~~~~~~~~~~~~
+
+- Switched from manual change log management to `towncrier <https://pypi.org/project/towncrier/>`_ to automate the process. @stevepiercy (`Issue #1256 <https://github.com/collective/icalendar/issues/1256>`_)
+- Bump PyPy from 3.10 to 3.11 for testing. @stevepiercy (`Issue #1383 <https://github.com/collective/icalendar/issues/1383>`_)
+
+
+7.1.0 (2026-04-30)
 ------------------
 
 Minor changes
@@ -25,11 +177,6 @@ Minor changes
 - Add type hints to tests directory functions. :issue:`938`
 - Update to Contributor Covenant 3.0 Code of Conduct, hosted at https://pycal.org/code-of-conduct/.
 
-Breaking changes
-~~~~~~~~~~~~~~~~
-
-- ...
-
 New features
 ~~~~~~~~~~~~
 
@@ -43,10 +190,13 @@ Bug fixes
 
 - Allow lenient parsing of content lines with optional whitespace around property and parameter delimiters (for example, ``REFRESH - INTERVAL; VALUE = DURATION:PT48H``) when parsing calendars with ``strict=False``. :issue:`351`
 - X-properties with a ``VALUE`` parameter are now parsed using the correct type instead of falling back to :class:`~icalendar.prop.unkown.vUnknown`. :issue:`1238`
-- Fixed :func:`~icalendar.attr.get_end_property` to avoid allowing the creation of VEVENT components with negative durations. Only VTODO components are allowed to have negative durations. :issue:`999`
+- Test that the ``DURATION`` property catches :class:`datetime.timedelta` objects without vProperty wrappers. :issue:`884`
+- Fixed :func:`~icalendar.attr.get_end_property` to avoid allowing the creating of VEVENT components with negative durations. Only VTODO components are allowed to have negative durations. :issue:`999`
 - GitHub Actions: conditional tests now show as "skipped" instead of "pending". :issue:`1264`
-- Fixed ``Component.__eq__`` method not being commutative when comparing subcomponents. :issue:`1224`
+- Fixed :meth:`Component.__eq__ <icalendar.cal.component.Component.__eq__>` method not being commutative when comparing subcomponents. :issue:`1224`
+- Verified that the ``VALUE`` parameter of jCal components is used for the type of the component property. :issue:`1237`
 - Fix :func:`~icalendar.parser.string.escape_char` handling of ``bytes`` input by converting with :func:`icalendar.parser_tools.to_unicode` before escaping. :issue:`1226`
+- Fixed ``RecursionError`` in ``walk()``, ``property_items()``, and ``to_ical()`` by using iterative implementations for component traversal and property extraction. :pr:`1348`
 
 Documentation
 ~~~~~~~~~~~~~
@@ -71,6 +221,7 @@ Documentation
 - Add documentation for how to use uv for development. :issue:`1102`
 - Reorganize Design documentation. :issue:`1292`
 - Improve docstring for ``categories_property``, which renders to HTML in :attr:`Calendar.categories <icalendar.cal.calendar.Calendar.categories>`, :attr:`Event.categories <icalendar.cal.event.Event.categories>`, :attr:`Journal.categories <icalendar.cal.journal.Journal.categories>`, and :attr:`Todo.categories <icalendar.cal.todo.Todo.categories>`. :issue:`1244`
+- Fixed Python object cross-references in ``icalendar.cal.component.Component._infer_value_type``. :issue:`1158`, :pr:`1344`
 
 7.0.3 (2026-03-03)
 ------------------
@@ -297,7 +448,7 @@ New features
 ~~~~~~~~~~~~
 
 - Add compatibility to :rfc:`9253`:
-  
+
   - Add new property types :class:`vUid` and :class:`vXmlReference`
   - Add properties to all components: :attr:`Component.concepts`, :attr:`Component.links`, :attr:`Component.refids`, :attr:`Component.related_to`
   - Add new values to :class:`RELTYPE`

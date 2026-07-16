@@ -10,7 +10,7 @@ from icalendar.parser import Parameters
 from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
 
 WEEKDAY_RULE = re.compile(
-    r"(?P<signal>[+-]?)(?P<relative>[\d]{0,2})(?P<weekday>[\w]{2})$"
+    r"(?P<signal>[+-]?)(?P<relative>[\d]{0,2})(?P<weekday>[\w]{2})\Z"
 )
 
 
@@ -92,6 +92,16 @@ class vWeekday(str):
             return cls(ical.upper())
         except Exception as e:
             raise ValueError(f"Expected weekday abbreviation, got: {ical}") from e
+
+    @property
+    def ical_value(self) -> str:
+        """Returns the weekday value as a string, for example, ``MO``, ``+2TH``, or ``-1SU``.
+
+        See Also:
+
+            :rfc:`5545#section-3.3.10` for the ``BYDAY`` rule grammar.
+        """
+        return str(self)
 
     @classmethod
     def parse_jcal_value(cls, value: Any) -> Self:

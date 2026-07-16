@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import timedelta
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal, cast, overload
 
 from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
@@ -28,6 +28,7 @@ from icalendar.version import __version__
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
     from datetime import date, datetime
+    from pathlib import Path
 
     from icalendar.cal.availability import Availability
     from icalendar.cal.event import Event
@@ -95,13 +96,43 @@ class Calendar(Component):
         """Get the iCal parser for the given input string."""
         return CalendarIcalParser(st, cls._get_component_factory(), cls.types_factory)
 
+    @overload
+    @classmethod
+    def from_ical(
+        cls, st: str | bytes | Path, multiple: Literal[False] = False
+    ) -> Calendar: ...
+
+    @overload
+    @classmethod
+    def from_ical(
+        cls, st: str | bytes | Path, multiple: Literal[True]
+    ) -> list[Calendar]: ...
+
+    @classmethod
+    def from_ical(
+        cls, st: str | bytes | Path, multiple: bool = False
+    ) -> Calendar | list[Calendar]:
+        """Parse iCalendar data into calendar instances.
+
+        Parameters:
+            st: iCalendar data as bytes or string, or a path to an iCalendar file.
+            multiple: If ``True``, returns a list of calendars.
+                If ``False``, returns a single calendar.
+
+        Returns:
+            Calendar or list of calendars.
+        """
+        return cast(
+            "Calendar | list[Calendar]", super().from_ical(st, multiple=multiple)
+        )
+
     @property
     def events(self) -> list[Event]:
         """All event components in the calendar.
 
         This is a shortcut to get all events.
         Modifications do not change the calendar.
-        Use :py:meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
+        Use :meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
 
         >>> from icalendar import Calendar
         >>> calendar = Calendar.example()
@@ -119,7 +150,7 @@ class Calendar(Component):
 
         This is a shortcut to get all todos.
         Modifications do not change the calendar.
-        Use :py:meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
+        Use :meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
         """
         return self.walk("VTODO")
 
@@ -129,7 +160,7 @@ class Calendar(Component):
 
         This is a shortcut to get all journals.
         Modifications do not change the calendar.
-        Use :py:meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
+        Use :meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
         """
         return self.walk("VJOURNAL")
 
@@ -139,7 +170,7 @@ class Calendar(Component):
 
         This is a shortcut to get all availabilities.
         Modifications do not change the calendar.
-        Use :py:meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
+        Use :meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
         """
         return self.walk("VAVAILABILITY")
 
@@ -149,7 +180,7 @@ class Calendar(Component):
 
         This is a shortcut to get all FreeBusy.
         Modifications do not change the calendar.
-        Use :py:meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
+        Use :meth:`Component.add_component <icalendar.cal.component.Component.add_component>`.
         """
         return self.walk("VFREEBUSY")
 
@@ -529,7 +560,7 @@ Description:
         url: str | None = None,
         version: str = "2.0",
     ):
-        """Create a new Calendar with all required properties.
+        """Create a new Calendar.
 
         This creates a new Calendar in accordance with :rfc:`5545` and :rfc:`7986`.
 
@@ -537,19 +568,21 @@ Description:
             calscale: The :attr:`calscale` of the calendar.
             categories: The :attr:`categories` of the calendar.
             color: The :attr:`color` of the calendar.
-            concepts: The :attr:`~icalendar.Component.concepts` of the calendar.
+            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the calendar.
             description: The :attr:`description` of the calendar.
             language: The language for the calendar. Used to generate localized `prodid`.
-            last_modified: The :attr:`~icalendar.Component.last_modified` of the calendar.
-            links: The :attr:`~icalendar.Component.links` of the calendar.
+            last_modified: The :attr:`~icalendar.cal.component.Component.last_modified` of the calendar.
+            links: The :attr:`~icalendar.cal.component.Component.links` of the calendar.
             method: The :attr:`method` of the calendar.
             name: The :attr:`calendar_name` of the calendar.
             organization: The organization name. Used to generate `prodid` if not provided.
-            prodid: The :attr:`prodid` of the component. If None and organization is provided,
-                generates a `prodid` in format "-//organization//name//language".
+            prodid: The :attr:`prodid` of the component. If ``None`` and ``organization`` is provided,
+                generates a `prodid` in the format of "-//organization//name//language".
+                If ``None`` and ``organization`` is not provided, sets it to
+                :attr:`~icalendar.cal.calendar.DEFAULT_PRODID`.
             refresh_interval: The :attr:`refresh_interval` of the calendar.
-            refids: :attr:`~icalendar.Component.refids` of the calendar.
-            related_to: :attr:`~icalendar.Component.related_to` of the calendar.
+            refids: :attr:`~icalendar.cal.component.Component.refids` of the calendar.
+            related_to: :attr:`~icalendar.cal.component.Component.related_to` of the calendar.
             source: The :attr:`source` of the calendar.
             subcomponents: The subcomponents of the calendar.
             uid: The :attr:`uid` of the calendar.

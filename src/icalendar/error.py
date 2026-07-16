@@ -3,6 +3,10 @@
 from __future__ import annotations
 
 import contextlib
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
 
 
 class InvalidCalendar(ValueError):
@@ -10,6 +14,23 @@ class InvalidCalendar(ValueError):
 
     This calendar does not conform with RFC 5545 or breaks other RFCs.
     """
+
+
+class ICalParsingError(InvalidCalendar):
+    """Could not parse an iCalendar."""
+
+    def __init__(
+        self,
+        message: str,
+        line: str | None = None,
+        line_number: int | None = None,
+        value: object = None,
+    ) -> None:
+        self.message = message
+        self.line = line
+        self.line_number = line_number
+        self.value = value
+        super().__init__(message)
 
 
 class BrokenCalendarProperty(InvalidCalendar):
@@ -70,7 +91,7 @@ def _repr_index(index: str | int) -> str:
     return str(index)
 
 
-class JCalParsingError(ValueError):
+class JCalParsingError(InvalidCalendar):
     """Could not parse a part of the JCal."""
 
     _default_value = object()
@@ -81,7 +102,7 @@ class JCalParsingError(ValueError):
         parser: str | type = "",
         path: list[str | int] | None | str | int = None,
         value: object = _default_value,
-    ):
+    ) -> None:
         """Create a new JCalParsingError."""
         self.path = self._get_path(path)
         if not isinstance(parser, str):
@@ -103,7 +124,10 @@ class JCalParsingError(ValueError):
 
     @classmethod
     @contextlib.contextmanager
-    def reraise_with_path_added(cls, *path_components: int | str):
+    def reraise_with_path_added(
+        cls,
+        *path_components: int | str,
+    ) -> Generator[None, None, None]:
         """Automatically re-raise the exception with path components added.
 
         Raises:
@@ -131,10 +155,10 @@ class JCalParsingError(ValueError):
     @classmethod
     def validate_property(
         cls,
-        jcal_property,
+        jcal_property: list[object],
         parser: str | type,
         path: list[str | int] | None | str | int = None,
-    ):
+    ) -> None:
         """Validate a jCal property.
 
         Raises:
@@ -177,12 +201,12 @@ class JCalParsingError(ValueError):
     @classmethod
     def validate_value_type(
         cls,
-        jcal,
+        jcal: object,
         expected_type: type[str | int | float | bool]
         | tuple[type[str | int | float | bool], ...],
         parser: str | type = "",
         path: list[str | int] | None | str | int = None,
-    ):
+    ) -> None:
         """Validate the type of a jCal value."""
         if not isinstance(jcal, expected_type):
             type_name = (
@@ -200,11 +224,11 @@ class JCalParsingError(ValueError):
     @classmethod
     def validate_list_type(
         cls,
-        jcal,
+        jcal: object,
         expected_type: type[str | int | float | bool],
         parser: str | type = "",
         path: list[str | int] | None | str | int = None,
-    ):
+    ) -> None:
         """Validate the type of each item in a jCal list."""
         path = cls._get_path(path)
         if not isinstance(jcal, list):
@@ -230,6 +254,7 @@ __all__ = [
     "ComponentEndMissing",
     "ComponentStartMissing",
     "FeatureWillBeRemovedInFutureVersion",
+    "ICalParsingError",
     "IncompleteAlarmInformation",
     "IncompleteComponent",
     "InvalidCalendar",

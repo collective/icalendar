@@ -9,7 +9,7 @@ from icalendar import vBinary, vRecur
 from icalendar.cal.calendar import Calendar
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.cal.event import Event
-from icalendar.parser import Contentline, Parameters, _unescape_char
+from icalendar.parser import Contentline, Parameters, _escape_char, _unescape_char
 
 
 @pytest.mark.parametrize(
@@ -43,6 +43,27 @@ from icalendar.parser import Contentline, Parameters, _unescape_char
 )
 def test_content_lines_parsed_properly(raw_content_line, expected_output):
     assert Contentline.from_ical(raw_content_line).parts() == expected_output
+
+
+@pytest.mark.parametrize(
+    ("raw_content_line", "expected_altrep"),
+    [
+        # Literal percent escapes in a parameter value (common in URIs) must
+        # survive parsing. They collided with the parser's internal
+        # ``\\,`` -> ``%2C`` transport encoding and were silently decoded.
+        ('X-P;ALTREP="http://x/a%2Cb%3Ac%3Bd%5Ce":v', "http://x/a%2Cb%3Ac%3Bd%5Ce"),
+        ('X-P;ALTREP="http://x/%2520":v', "http://x/%2520"),
+        # Same value unquoted, with a backslash-escaped colon protecting the
+        # URI scheme separator. Percent escapes must survive here too.
+        ("X-P;ALTREP=http\\://x/a%2Cb%3Ac%3Bd%5Ce:v", "http://x/a%2Cb%3Ac%3Bd%5Ce"),
+        # A backslash-escaped delimiter still decodes to the bare character.
+        ("X-P;ALTREP=a\\,b:v", "a,b"),
+    ],
+)
+def test_percent_escapes_in_parameter_values_are_preserved(
+    raw_content_line, expected_altrep
+):
+    assert Contentline(raw_content_line).parts()[1]["ALTREP"] == expected_altrep
 
 
 @pytest.mark.parametrize(
@@ -237,6 +258,30 @@ def test_escaped_characters_read(event_name, expected_cn, expected_ics, events):
 def test_unescape_char():
     assert _unescape_char(b"123") == b"123"
     assert _unescape_char(b"\\n") == b"\n"
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        ("a\rb", r"a\nb"),
+        ("a\r\nb", r"a\nb"),
+        ("a\nb", r"a\nb"),
+        ("a\rb\r\nc\nd", r"a\nb\nc\nd"),
+        ("\ra\n", r"\na\n"),
+    ],
+)
+def test_escape_char_transforms_lone_carriage_return(value, expected):
+    r"""A lone ``\r`` must be transformed, not left raw in the content line."""
+    assert _escape_char(value) == expected
+
+
+def test_lone_carriage_return_cannot_inject_content_line():
+    event = Event()
+    event.add("SUMMARY", "safe\rINJECTED:evil")
+    assert b"\rINJECTED" not in event.to_ical()
+    assert event.to_ical() == (
+        b"BEGIN:VEVENT\r\nSUMMARY:safe\\nINJECTED:evil\r\nEND:VEVENT\r\n"
+    )
 
 
 def test_split_on_unescaped_comma():
