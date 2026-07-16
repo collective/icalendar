@@ -68,7 +68,7 @@ WINDOWS_TO_OLSON = {
     "Montevideo Standard Time": "America/Montevideo",
     "Morocco Standard Time": "Africa/Casablanca",
     "Mountain Standard Time": "America/Denver",
-    "Mountain Standard Time (Mexico)": "America/Chihuahua",
+    "Mountain Standard Time (Mexico)": "America/Mazatlan",
     "Myanmar Standard Time": "Asia/Yangon",
     "N. Central Asia Standard Time": "Asia/Novosibirsk",
     "Namibia Standard Time": "Africa/Windhoek",
