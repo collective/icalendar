@@ -1,11 +1,14 @@
 """UNKNOWN values from :rfc:`7265`."""
 
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
+
+if TYPE_CHECKING:
+    from icalendar.parser.content_line import Contentline
 
 
 class vUnknown(str):
@@ -79,6 +82,18 @@ class vUnknown(str):
     def from_ical(cls, ical: ICAL_TYPE) -> Self:
         """Take the value verbatim, without unescaping."""
         return cls(ical)
+
+    @classmethod
+    def initialize_with_raw_content_line(cls, line: "Contentline") -> str:
+        """Return this type's value from ``line``, taken verbatim.
+
+        Value types that must not have their value unescaped provide this
+        method, and the parser uses it to obtain the value instead of
+        :meth:`~icalendar.parser.content_line.Contentline.parts`. For
+        :rfc:`7265` ``UNKNOWN`` values, the escaping rules of the real value
+        type are not known, so no unescaping can be applied.
+        """
+        return line.raw_parts()[2]
 
     @property
     def ical_value(self) -> str:

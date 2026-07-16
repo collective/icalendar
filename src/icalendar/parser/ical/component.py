@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING, ClassVar
 from icalendar.parser.content_line import Contentline, Contentlines
 from icalendar.parser.property import split_on_unescaped_comma
 from icalendar.prop import vBroken
-from icalendar.prop.unknown import vUnknown
 from icalendar.timezone import tzp
 
 if TYPE_CHECKING:
@@ -205,10 +204,12 @@ class ComponentIcalParser:
             vals_list = []
         else:
             factory = self.get_factory_for_property(name, params)
-            if factory is vUnknown:
-                # RFC 7265 unknown values are taken verbatim, so skip the
-                # backslash unescaping that parts() applies.
-                _, _, vals = line.parts(should_unescape=False)
+            # Value types that must not be unescaped provide their own value.
+            initialize_with_raw_content_line = getattr(
+                factory, "initialize_with_raw_content_line", None
+            )
+            if initialize_with_raw_content_line is not None:
+                vals = initialize_with_raw_content_line(line)
             vals_list = [vals]
 
         # Parse all properties eagerly
