@@ -9,32 +9,32 @@ from icalendar.parser import Parameters
 
 
 class vBoolean(int):
-    """Represent an iCalendar BOOLEAN value as an immutable integer.
+    """An iCalendar boolean value.
 
-    ``vBoolean`` accepts the same construction arguments as :class:`int` and
-    stores optional iCalendar property parameters on the created value. Use
-    :meth:`from_ical` to parse the case-insensitive strings ``TRUE`` and ``FALSE``.
-    Use :meth:`to_ical` to serialize the value according to
-    :rfc:`5545#section-3.3.2`.
+    Converts between iCalendar ``BOOLEAN`` value types and Python boolean values.
+    In iCalendar data, boolean values are represented as "TRUE" or "FALSE". Values
+    parsed from iCalendar text are case insensitive. ``True``, ``true``, and ``TRUE``
+    are all accepted when converting from iCalendar to Python.
 
-    Parameters:
-        *args: Positional arguments accepted by :class:`int`.
-        params: iCalendar property parameters to store on the value.
-        **kwargs: Keyword arguments accepted by :class:`int`.
+    Conforming with :rfc:`5545#section-3.3.2`, boolean values are represented in
+    iCalendar data as either ``TRUE`` or ``FALSE``.
 
-    Examples:
-        Create and serialize an iCalendar boolean value.
+    Example:
+        Parse and create iCalendar boolean values.
 
         .. code-block:: pycon
 
-            >>> from icalendar import vBoolean
-            >>> boolean = vBoolean(True, params={"X-EXAMPLE": "value"})
-            >>> bool(boolean)
+            >>> from icalendar.prop import vBoolean
+            >>> boolean = vBoolean.from_ical('TRUE')
+            >>> boolean
             True
-            >>> boolean.to_ical()
+
+            >>> boolean = vBoolean.from_ical('fAlse')
+            >>> boolean
+            False
+
+            >>> vBoolean(True).to_ical()
             b'TRUE'
-            >>> boolean.params["X-EXAMPLE"]
-            'value'
     """
 
     default_value: ClassVar[str] = "BOOLEAN"
@@ -45,6 +45,29 @@ class vBoolean(int):
     def __new__(
         cls, *args: Any, params: dict[str, Any] | None = None, **kwargs: Any
     ) -> Self:
+        """Create an iCalendar boolean value with optional property parameters.
+
+        Parameters:
+            *args: Positional arguments passed to :meth:`int.__new__`.
+                Typically a single :class:`bool` or the integer ``0`` or ``1``.
+            params: iCalendar property parameters associated with the value.
+            **kwargs: Keyword arguments passed to :meth:`int.__new__`.
+
+        Returns:
+            A new :class:`vBoolean` instance with the supplied property parameters.
+
+        Examples:
+            Create a boolean value with the ``VALUE`` parameter from :rfc:`5545`.
+
+            .. code-block:: pycon
+
+                >>> from icalendar import vBoolean
+                >>> boolean = vBoolean(True, params={"VALUE": "BOOLEAN"})
+                >>> boolean.to_ical()
+                b'TRUE'
+                >>> boolean.params["VALUE"]
+                'BOOLEAN'
+        """
         self = super().__new__(cls, *args, **kwargs)
         self.params = Parameters(params)
         return self
