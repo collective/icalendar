@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from copy import deepcopy
+from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, ClassVar, Literal, overload
@@ -42,6 +43,25 @@ if TYPE_CHECKING:
     from icalendar.compatibility import Self
 
 _marker = []
+
+
+@dataclass
+class _ComponentEqFrame:
+    """A pending component-equality comparison on the iterative stack.
+
+    See ``Component.__eq__`` for how the fields are used.
+    """
+
+    #: the two components being compared
+    a: Component
+    b: Component
+    #: ``b``'s subcomponents not yet matched against one of ``a``'s. ``None``
+    #: until ``a`` and ``b``'s own properties have been compared and found equal.
+    unmatched: list | None = None
+    #: index of the ``a`` subcomponent we are currently trying to match
+    a_index: int = 0
+    #: index of the unmatched ``b`` subcomponent we are currently testing
+    candidate_index: int = 0
 
 
 class Component(CaselessDict):
@@ -649,29 +669,60 @@ class Component(CaselessDict):
         return "".join(out)
 
     def __eq__(self, other: Component) -> bool:
-        if len(self.subcomponents) != len(other.subcomponents):
-            return False
+        if not isinstance(other, Component):
+            return NotImplemented
 
-        properties_equal = super().__eq__(other)
-        if not properties_equal:
-            return False
-
-        # The subcomponents might not be in the same order,
-        # neither there's a natural key we can sort the subcomponents by nor
-        # are the subcomponent types hashable, so  we cant put them in a set to
-        # check for set equivalence. We have to iterate over the subcomponents
-        # and look for each of them in the list.
-        for subcomponent in self.subcomponents:
-            if subcomponent not in other.subcomponents:
-                return False
-
-        # We now know the other component's subcomponents are not a strict subset
-        # of this component's. However, we still need to check the other way around.
-        for subcomponent in other.subcomponents:
-            if subcomponent not in self.subcomponents:
-                return False
-
-        return True
+        # Two components are equal when their own properties are equal and their
+        # subcomponents are equal as a multiset: order does not matter, and each
+        # nested pair is compared the same way recursively. Subcomponents are
+        # neither sortable nor hashable, so we can't use a set; we have to match
+        # each one by searching. Done recursively that search is exponential for
+        # deeply nested components (GHSA-cv84-9p8j-fj68), so we walk an explicit
+        # stack instead of recursing.
+        #
+        # Each frame holds the pair being compared plus b's subcomponents
+        # still unmatched. child_result carries the outcome of the comparison
+        # that just finished back up to its parent frame: a successful child
+        # match removes that subcomponent from unmatched and advances to the
+        # next a subcomponent, while a failure tries the next candidate.
+        # Exhausting a's subcomponents means every one found a partner ->
+        # equal; running out of candidates for some subcomponent -> not equal.
+        # (Greedy matching is sufficient because equality is transitive, so equal
+        # candidates are interchangeable.)
+        stack = [_ComponentEqFrame(self, other)]
+        child_result = None
+        while stack:
+            frame = stack[-1]
+            if frame.unmatched is None:
+                if len(frame.a.subcomponents) != len(frame.b.subcomponents) or not (
+                    CaselessDict.__eq__(frame.a, frame.b)
+                ):
+                    stack.pop()
+                    child_result = False
+                    continue
+                frame.unmatched = list(frame.b.subcomponents)
+            elif child_result is not None:
+                if child_result:
+                    del frame.unmatched[frame.candidate_index]
+                    frame.a_index += 1
+                    frame.candidate_index = 0
+                else:
+                    frame.candidate_index += 1
+                child_result = None
+            if frame.a_index >= len(frame.a.subcomponents):
+                stack.pop()
+                child_result = True
+            elif frame.candidate_index >= len(frame.unmatched):
+                stack.pop()
+                child_result = False
+            else:
+                stack.append(
+                    _ComponentEqFrame(
+                        frame.a.subcomponents[frame.a_index],
+                        frame.unmatched[frame.candidate_index],
+                    )
+                )
+        return child_result
 
     DTSTAMP = stamp = single_utc_property(
         "DTSTAMP",
@@ -869,15 +920,28 @@ class Component(CaselessDict):
               ['dtstart', {}, 'date', '2025-11-22']],
              []]
         """
-        properties = []
-        for key, value in self.items():
-            for item in value if isinstance(value, list) else [value]:
-                properties.append(item.to_jcal(key.lower()))
-        return [
-            self.name.lower(),
-            properties,
-            [subcomponent.to_jcal() for subcomponent in self.subcomponents],
-        ]
+
+        # Iterative tree walk to avoid RecursionError on deeply nested
+        # components, mirroring the iterative iCal parser/serializer (GH #1370).
+        def make_node(comp: Component) -> list:
+            properties = [
+                item.to_jcal(key.lower())
+                for key, value in comp.items()
+                for item in (value if isinstance(value, list) else [value])
+            ]
+            return [comp.name.lower(), properties, []]
+
+        root_node = make_node(self)
+        # stack of (component, jCal node) pairs still to expand
+        stack: list[tuple[Component, list]] = [(self, root_node)]
+        while stack:
+            comp, node = stack.pop()
+            children = node[2]
+            for subcomponent in comp.subcomponents:
+                child_node = make_node(subcomponent)
+                children.append(child_node)
+                stack.append((subcomponent, child_node))
+        return root_node
 
     def to_json(self) -> str:
         """Return this component as a jCal JSON string.
@@ -937,58 +1001,27 @@ class Component(CaselessDict):
         """
         if isinstance(jcal, str):
             jcal = json.loads(jcal)
-        if not isinstance(jcal, list) or len(jcal) != 3:
-            raise JCalParsingError(
-                "A component must be a list with 3 items.", cls, value=jcal
-            )
-        name, properties, subcomponents = jcal
-        if not isinstance(name, str):
-            raise JCalParsingError(
-                "The name must be a string.", cls, path=[0], value=name
-            )
-        if name.upper() != cls.name:
-            # delegate to correct component class
-            component_cls = cls.get_component_class(name.upper())
-            return component_cls.from_jcal(jcal)
-        component = cls()
-        if not isinstance(properties, list):
-            raise JCalParsingError(
-                "The properties must be a list.", cls, path=1, value=properties
-            )
-        for i, prop in enumerate(properties):
-            JCalParsingError.validate_property(prop, cls, path=[1, i])
-            prop_name = prop[0]
-            prop_value = prop[2]
-            prop_cls: type[VPROPERTY] = cls.types_factory.for_property(
-                prop_name, prop_value
-            )
-            with JCalParsingError.reraise_with_path_added(1, i):
-                v_prop = prop_cls.from_jcal(prop)
-            # jCal encodes the value type in the type field (``prop[2]``)
-            # instead of as a ``VALUE`` parameter (RFC 7265). Restore that
-            # parameter when the type differs from the property's default, so
-            # explicit value types such as ``RDATE;VALUE=PERIOD`` or
-            # ``TRIGGER;VALUE=DATE-TIME`` survive the round-trip (GH #1426).
-            # A type equal to the default needs no VALUE parameter, and the
-            # reserved ``unknown`` type must never become ``VALUE=UNKNOWN``
-            # (RFC 7265, section 5.2).
-            default_type = cls.types_factory.default_value_type(prop_name)
-            if isinstance(prop_value, str) and prop_value.lower() not in (
-                "unknown",
-                default_type,
-            ):
-                v_prop.VALUE = prop_value.upper()
-            elif "VALUE" in v_prop.params:
-                del v_prop.VALUE
-            component.add(prop_name, v_prop)
-        if not isinstance(subcomponents, list):
-            raise JCalParsingError(
-                "The subcomponents must be a list.", cls, 2, value=subcomponents
-            )
-        for i, subcomponent in enumerate(subcomponents):
-            with JCalParsingError.reraise_with_path_added(2, i):
-                component.subcomponents.append(cls.from_jcal(subcomponent))
-        return component
+        # Iterative tree build to avoid RecursionError on deeply nested jCal,
+        # mirroring the iterative iCal parser (GH #1370). ``_node_from_jcal``
+        # parses a single component (without its subcomponents); the stack walks
+        # the subcomponent tree, accumulating the jCal error path ([2, i] per
+        # nesting level) so error messages match the recursive implementation.
+        root, root_subcomponents = _node_from_jcal(jcal, cls)
+        stack: list[tuple[Component, list, list]] = [(root, root_subcomponents, [])]
+        while stack:
+            parent, subcomponents, prefix = stack.pop()
+            for i, subcomponent in enumerate(subcomponents):
+                child_prefix = [*prefix, 2, i]
+                # Prepend the full nesting path so errors match the recursive
+                # implementation. This also preserves the error value and
+                # traceback, like the nested context managers did before.
+                with JCalParsingError.reraise_with_path_added(*child_prefix):
+                    child, child_subcomponents = _node_from_jcal(
+                        subcomponent, type(parent)
+                    )
+                parent.subcomponents.append(child)
+                stack.append((child, child_subcomponents, child_prefix))
+        return root
 
     def copy(self, recursive: bool = False) -> Self:
         """Copy the component.
@@ -1054,6 +1087,85 @@ class Component(CaselessDict):
         For lazy components, this parses the component and returns the result.
         """
         return self
+
+
+def _node_from_jcal(jcal, starting_cls: type[Component]) -> tuple[Component, list]:
+    """Parse a single jCal component without recursing into subcomponents.
+
+    Module-level helper for :meth:`Component.from_jcal`: it has no ties to a
+    class or instance (the relevant class is passed in as ``starting_cls``), so
+    it is a plain function rather than a (static) method.
+
+    Parameters:
+        jcal: The jCal list for one component.
+        starting_cls: The class used as the parser for structural validation
+            before the component type is resolved from its name (the entry
+            class for the root, the parent's resolved class for a child).
+
+    Returns:
+        A ``(component, raw_subcomponents)`` tuple. The raw subcomponents are
+        returned for the caller to walk iteratively.
+
+    Raises:
+        ~error.JCalParsingError: If this component node is invalid. The path
+            is relative to this node; callers prepend the nesting path.
+    """
+    if not isinstance(jcal, list) or len(jcal) != 3:
+        raise JCalParsingError(
+            "A component must be a list with 3 items.", starting_cls, value=jcal
+        )
+    name, properties, subcomponents = jcal
+    if not isinstance(name, str):
+        raise JCalParsingError(
+            "The name must be a string.", starting_cls, path=[0], value=name
+        )
+    if name.upper() != starting_cls.name:
+        # delegate to correct component class
+        component_cls = starting_cls.get_component_class(name.upper())
+    else:
+        component_cls = starting_cls
+    component = component_cls()
+    if not isinstance(properties, list):
+        raise JCalParsingError(
+            "The properties must be a list.",
+            component_cls,
+            path=1,
+            value=properties,
+        )
+    for i, prop in enumerate(properties):
+        JCalParsingError.validate_property(prop, component_cls, path=[1, i])
+        prop_name = prop[0]
+        prop_value = prop[2]
+        prop_cls: type[VPROPERTY] = component_cls.types_factory.for_property(
+            prop_name, prop_value
+        )
+        with JCalParsingError.reraise_with_path_added(1, i):
+            v_prop = prop_cls.from_jcal(prop)
+        # jCal encodes the value type in the type field (``prop[2]``)
+        # instead of as a ``VALUE`` parameter (RFC 7265). Restore that
+        # parameter when the type differs from the property's default, so
+        # explicit value types such as ``RDATE;VALUE=PERIOD`` or
+        # ``TRIGGER;VALUE=DATE-TIME`` survive the round-trip (GH #1426).
+        # A type equal to the default needs no VALUE parameter, and the
+        # reserved ``unknown`` type must never become ``VALUE=UNKNOWN``
+        # (RFC 7265, section 5.2).
+        default_type = component_cls.types_factory.default_value_type(prop_name)
+        if isinstance(prop_value, str) and prop_value.lower() not in (
+            "unknown",
+            default_type,
+        ):
+            v_prop.VALUE = prop_value.upper()
+        elif "VALUE" in v_prop.params:
+            del v_prop.VALUE
+        component.add(prop_name, v_prop)
+    if not isinstance(subcomponents, list):
+        raise JCalParsingError(
+            "The subcomponents must be a list.",
+            component_cls,
+            2,
+            value=subcomponents,
+        )
+    return component, subcomponents
 
 
 __all__ = ["Component"]

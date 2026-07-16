@@ -250,6 +250,25 @@ class Contentline(str):
         name, params, values = self.raw_parts()
         return (name, params, unescape_backslash(values))
 
+    def value_separator_index(self) -> int:
+        r"""Return the index of the colon that separates the value.
+
+        This is the first colon that is not inside a quoted parameter section.
+        A colon inside a quoted parameter value (for example
+        ``ALTREP="http://x"``) is skipped, and a colon that belongs to the
+        value (``TEXT`` does not escape ``:``) is not mistaken for the
+        separator. Backslash has no special meaning in the parameter grammar
+        (RFC 5545 §3.1), so it is treated as an ordinary character. Returns
+        ``-1`` if there is none.
+        """
+        in_quotes = False
+        for i, ch in enumerate(self):
+            if ch == '"':
+                in_quotes = not in_quotes
+            elif ch == ":" and not in_quotes:
+                return i
+        return -1
+
     @classmethod
     def from_ical(cls, ical, strict=False):
         """Unfold the content lines in an iCalendar into long content lines."""
