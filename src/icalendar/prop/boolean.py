@@ -9,32 +9,32 @@ from icalendar.parser import Parameters
 
 
 class vBoolean(int):
-    """An iCalendar boolean value.
+    """Represent an iCalendar BOOLEAN value as an immutable integer.
 
-    Converts between iCalendar ``BOOLEAN`` value types and Python boolean values.
-    In iCalendar data, boolean values are represented as "TRUE" or "FALSE". Values
-    parsed from iCalendar text are case insensitive. ``True``, ``true``, and ``TRUE``
-    are all accepted when converting from iCalendar to Python.
+    ``vBoolean`` accepts the same construction arguments as :class:`int` and
+    stores optional iCalendar property parameters on the created value. Use
+    :meth:`from_ical` to parse the case-insensitive strings ``TRUE`` and ``FALSE``.
+    Use :meth:`to_ical` to serialize the value according to
+    :rfc:`5545#section-3.3.2`.
 
-    Conforming with :rfc:`5545#section-3.3.2`, boolean values are represented in
-    iCalendar data as either ``TRUE`` or ``FALSE``.
+    Parameters:
+        *args: Positional arguments accepted by :class:`int`.
+        params: iCalendar property parameters to store on the value.
+        **kwargs: Keyword arguments accepted by :class:`int`.
 
-    Example:
-        Parse and create iCalendar boolean values.
+    Examples:
+        Create and serialize an iCalendar boolean value.
 
         .. code-block:: pycon
 
-            >>> from icalendar.prop import vBoolean
-            >>> boolean = vBoolean.from_ical('TRUE')
-            >>> boolean
+            >>> from icalendar import vBoolean
+            >>> boolean = vBoolean(True, params={"X-EXAMPLE": "value"})
+            >>> bool(boolean)
             True
-
-            >>> boolean = vBoolean.from_ical('fAlse')
-            >>> boolean
-            False
-
-            >>> vBoolean(True).to_ical()
+            >>> boolean.to_ical()
             b'TRUE'
+            >>> boolean.params["X-EXAMPLE"]
+            'value'
     """
 
     default_value: ClassVar[str] = "BOOLEAN"
