@@ -48,25 +48,23 @@ class vBoolean(int):
         """Create an iCalendar boolean value with optional property parameters.
 
         Parameters:
-            *args: Positional arguments passed to :meth:`int.__new__`.
-                Typically a single :class:`bool` or the integer ``0`` or ``1``.
             params: iCalendar property parameters associated with the value.
-            **kwargs: Keyword arguments passed to :meth:`int.__new__`.
 
         Returns:
             A new :class:`vBoolean` instance with the supplied property parameters.
 
         Examples:
-            Create a boolean value with the ``VALUE`` parameter from :rfc:`5545`.
+            Create and use a boolean value from :rfc:`5545#section-3.3.2`.
 
             .. code-block:: pycon
 
                 >>> from icalendar import vBoolean
-                >>> boolean = vBoolean(True, params={"VALUE": "BOOLEAN"})
+                >>> boolean = vBoolean(True)
+                >>> if boolean:
+                ...     print("TRUE")
+                TRUE
                 >>> boolean.to_ical()
                 b'TRUE'
-                >>> boolean.params["VALUE"]
-                'BOOLEAN'
         """
         self = super().__new__(cls, *args, **kwargs)
         self.params = Parameters(params)
