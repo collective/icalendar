@@ -31,8 +31,8 @@ class vText(str):
     UNKNOWN is implemented in the Python class :class:`~icalendar.prop.unknown.vUnknown`,
     which does **not** apply this escaping and preserves its value verbatim,
     because the escaping rules of an unrecognized value type are not known.
-    ``vUnknown`` deliberately does not inherit from ``vText``, so the two
-    don't share escaping behavior.
+    :class:`~icalendar.prop.unknown.vUnknown` deliberately does not inherit from
+    ``vText``, so the two don't share escaping behavior.
 
     Examples:
 

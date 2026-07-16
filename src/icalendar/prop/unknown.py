@@ -48,7 +48,7 @@ class vUnknown(str):
         return self
 
     def __repr__(self) -> str:
-        return f"vUnknown({self.to_ical()!r})"
+        return f"{self.__class__.__name__}({self.to_ical()!r})"
 
     def to_ical(self) -> bytes:
         r"""Return the value verbatim, without :rfc:`5545` escaping.
