@@ -1,6 +1,6 @@
 r"""``URI``, ``CAL-ADDRESS`` and inline values must reject raw CR and LF.
 
-Unlike ``TEXT`` these value types are not escaped on serialisation, so a raw
+Unlike ``TEXT``, these value types are not escaped on serialization, so a raw
 ``\r`` or ``\n`` in the value is written straight into the content line. A lone
 ``\r`` slips past the newline-only assertion in ``Contentline`` and reparses as
 a separate property for consumers that treat a bare CR as a line break, which
@@ -45,7 +45,7 @@ def test_valid_values_still_parse(cls):
 @pytest.mark.parametrize(("prop", "jcal_type"), JCAL_PROPERTIES)
 @pytest.mark.parametrize("value", CRLF_INJECTION_VALUES)
 def test_jcal_value_with_cr_or_lf_is_rejected(prop, jcal_type, value):
-    """A CR or LF from untrusted jCal must not reach the serialised output."""
+    """A CR or LF from untrusted jCal must not reach the serialized output."""
     jcal = [
         "vcalendar",
         [["version", {}, "text", "2.0"], ["prodid", {}, "text", "x"]],
