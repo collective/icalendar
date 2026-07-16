@@ -482,16 +482,7 @@ class Parameters(CaselessDict):
                 raise JCalParsingError(
                     "All parameter names must be strings.", cls, value=name
                 )
-            try:
-                validate_token(name)
-            except ValueError:
-                raise JCalParsingError(
-                    "The parameter name is not a valid token.", cls, value=name
-                ) from None
-            if name != name.lower():
-                raise JCalParsingError(
-                    "The parameter name must be lower case.", cls, value=name
-                )
+            JCalParsingError.validate_jcal_token(name, "parameter name", cls)
             if not (
                 (
                     isinstance(value, list)

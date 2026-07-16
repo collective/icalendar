@@ -231,6 +231,35 @@ class JCalParsingError(ValueError):
                     path=path + [index],
                 )
 
+    @classmethod
+    def validate_jcal_token(
+        cls,
+        name: str,
+        kind: str,
+        parser: str | type = "",
+        path: list[str | int] | None | str | int = None,
+    ) -> None:
+        """Validate a jCal ``name`` as a lower-case iCalendar token.
+
+        ``kind`` names the token in the error message, e.g. ``"property name"``.
+        A name is kept verbatim and re-emitted into the content line on
+        serialization, so a ``:``, ``;``, or lone carriage return in it could
+        inject parameters or a new content line.
+
+        Raises:
+            ~error.JCalParsingError: if ``name`` is not a valid lower-case token.
+        """
+        from icalendar.parser.string import validate_token
+
+        try:
+            validate_token(name)
+        except ValueError:
+            raise cls(
+                f"The {kind} is not a valid token.", parser, path, value=name
+            ) from None
+        if name != name.lower():
+            raise cls(f"The {kind} must be lower case.", parser, path, value=name)
+
 
 __all__ = [
     "BrokenCalendarProperty",

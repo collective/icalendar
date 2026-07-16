@@ -30,7 +30,6 @@ from icalendar.parser import (
     Parameters,
     q_join,
     q_split,
-    validate_token,
 )
 from icalendar.parser.ical.component import ComponentIcalParser
 from icalendar.parser_tools import DEFAULT_ENCODING
@@ -1135,22 +1134,9 @@ def _node_from_jcal(jcal, starting_cls: type[Component]) -> tuple[Component, lis
     for i, prop in enumerate(properties):
         JCalParsingError.validate_property(prop, component_cls, path=[1, i])
         prop_name = prop[0]
-        try:
-            validate_token(prop_name)
-        except ValueError:
-            raise JCalParsingError(
-                "The property name is not a valid token.",
-                component_cls,
-                path=[1, i, 0],
-                value=prop_name,
-            ) from None
-        if prop_name != prop_name.lower():
-            raise JCalParsingError(
-                "The property name must be lower case.",
-                component_cls,
-                path=[1, i, 0],
-                value=prop_name,
-            )
+        JCalParsingError.validate_jcal_token(
+            prop_name, "property name", component_cls, path=[1, i, 0]
+        )
         prop_value = prop[2]
         prop_cls: type[VPROPERTY] = component_cls.types_factory.for_property(
             prop_name, prop_value
