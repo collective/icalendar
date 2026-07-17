@@ -10,25 +10,26 @@
 
 import json
 import urllib.request as req
+from pathlib import Path
 
-import lxml.etree as ET
+import lxml.etree as et
 
 # Get the XML data from the CLDR on GitHub and save to a file.
 # Unfortunately, the CLDR does not have a latest or stable tag
 # that points to the stable version.
 # Use the `main` branch, which is the development branch.
-url = "https://raw.githubusercontent.com/unicode-org/cldr/refs/heads/main/common/supplemental/windowsZones.xml"
+url = "https://raw.githubusercontent.com/unicode-org/cldr/refs/heads/main/common/supplemental/windowsZones.xml"  # noqa: S310
 with req.urlopen(url) as response:
     xml_content = response.read()
 
 # Parse the XML file and extract the timezone mapping.
 result = {}
-tree = ET.fromstring(xml_content)
+tree = et.fromstring(xml_content)
 for zone in tree.xpath("//mapZone"):
     attrib = zone.attrib
     if attrib["territory"] == "001":
         result[attrib["other"]] = attrib["type"]
-with open("windows_to_olson.py", "w") as f:
+with Path.open("windows_to_olson.py", "w") as f:
     f.write("""\"\"\"
 This module contains mappings from Windows timezone identifiers to
 Olson timezone identifiers.
@@ -38,7 +39,8 @@ Do not edit manually.
 
 The data is taken from the Unicode Consortium [0].
 
-The proposal and rationale for this mapping is also available at the Unicode Consortium [1].
+The proposal and rationale for this mapping is also available at the
+Unicode Consortium [1].
 
 [0] https://raw.githubusercontent.com/unicode-org/cldr/refs/heads/main/common/supplemental/windowsZones.xml
 [1] https://cldr.unicode.org/development/development-process/design-proposals/extended-windows-olson-zid-mapping

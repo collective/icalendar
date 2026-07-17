@@ -7,7 +7,8 @@ Do not edit manually.
 
 The data is taken from the Unicode Consortium [0].
 
-The proposal and rationale for this mapping is also available at the Unicode Consortium [1].
+The proposal and rationale for this mapping is also available at the
+Unicode Consortium [1].
 
 [0] https://raw.githubusercontent.com/unicode-org/cldr/refs/heads/main/common/supplemental/windowsZones.xml
 [1] https://cldr.unicode.org/development/development-process/design-proposals/extended-windows-olson-zid-mapping
