@@ -9,7 +9,13 @@ from icalendar import vBinary, vRecur
 from icalendar.cal.calendar import Calendar
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.cal.event import Event
-from icalendar.parser import Contentline, Parameters, _unescape_char
+from icalendar.parser import (
+    Contentline,
+    Parameters,
+    _escape_char,
+    _foldline,
+    _unescape_char,
+)
 
 
 @pytest.mark.parametrize(
@@ -144,6 +150,49 @@ def test_description_parsed_properly_issue_53(events):
     )
 
 
+@pytest.mark.parametrize(
+    "escape_sequence",
+    [
+        r"\n",
+        r"\N",
+        r"\,",
+        r"\;",
+        r"\\",
+        "^n",
+        "^^",
+        "^'",
+    ],
+)
+@pytest.mark.parametrize("line_limit", range(60, 91))
+def test_foldline_does_not_split_escape_sequences_issue_1501(
+    escape_sequence, line_limit
+):
+    """Issue #1501 - line folding must not split escape sequences."""
+    prefix = "DESCRIPTION:" + ("a" * (line_limit - len("DESCRIPTION:") - 2))
+    line = prefix + escape_sequence + "after fold"
+
+    folded = _foldline(line, limit=line_limit)
+
+    assert "\r\n " in folded
+    assert (escape_sequence[0] + "\r\n " + escape_sequence[1]) not in folded
+
+
+@pytest.mark.parametrize("escape_sequence", [r"\n", "^n"])
+def test_foldline_does_not_split_escape_sequences_across_multiple_lines_issue_1501(
+    escape_sequence,
+):
+    """Issue #1501 - escape-aware folding applies after the first fold too."""
+    line_limit = 60
+    prefix = "DESCRIPTION:" + ("a" * (line_limit - len("DESCRIPTION:") - 2))
+    repeated_segment = escape_sequence + ("b" * (line_limit - len(escape_sequence) - 1))
+    line = prefix + repeated_segment + escape_sequence + "after fold"
+
+    folded = _foldline(line, limit=line_limit)
+
+    assert folded.count("\r\n ") >= 2
+    assert (escape_sequence[0] + "\r\n " + escape_sequence[1]) not in folded
+
+
 def test_raises_value_error_for_properties_without_parent_pull_179():
     """Found an issue where from_ical() would raise IndexError for
     properties without parent components.
@@ -258,6 +307,30 @@ def test_escaped_characters_read(event_name, expected_cn, expected_ics, events):
 def test_unescape_char():
     assert _unescape_char(b"123") == b"123"
     assert _unescape_char(b"\\n") == b"\n"
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        ("a\rb", r"a\nb"),
+        ("a\r\nb", r"a\nb"),
+        ("a\nb", r"a\nb"),
+        ("a\rb\r\nc\nd", r"a\nb\nc\nd"),
+        ("\ra\n", r"\na\n"),
+    ],
+)
+def test_escape_char_transforms_lone_carriage_return(value, expected):
+    r"""A lone ``\r`` must be transformed, not left raw in the content line."""
+    assert _escape_char(value) == expected
+
+
+def test_lone_carriage_return_cannot_inject_content_line():
+    event = Event()
+    event.add("SUMMARY", "safe\rINJECTED:evil")
+    assert b"\rINJECTED" not in event.to_ical()
+    assert event.to_ical() == (
+        b"BEGIN:VEVENT\r\nSUMMARY:safe\\nINJECTED:evil\r\nEND:VEVENT\r\n"
+    )
 
 
 def test_split_on_unescaped_comma():

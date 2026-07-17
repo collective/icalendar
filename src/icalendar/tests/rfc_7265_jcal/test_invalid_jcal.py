@@ -7,6 +7,7 @@ import pytest
 from icalendar import (
     Calendar,
     Component,
+    InvalidCalendar,
     JCalParsingError,
     Parameters,
     vDate,
@@ -23,6 +24,11 @@ def test_invalid_json():
     """JSON can be invalid"""
     with pytest.raises(JSONDecodeError):
         Component.from_jcal("")
+
+
+def test_jcal_parsing_error_is_invalid_calendar():
+    """JCalParsingError should inherit from InvalidCalendar."""
+    assert issubclass(JCalParsingError, InvalidCalendar)
 
 
 @pytest.fixture(params=[[], {}, None, 1, 1.3])
