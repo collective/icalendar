@@ -1,4 +1,4 @@
-# Generate the Windows to Olson timezone mapping module windows_to_olson.py.
+"""Generate the Windows to Olson timezone mapping module windows_to_olson.py."""
 
 # Source - https://stackoverflow.com/a/16157049
 # Posted by unutbu, modified by community. See post 'Timeline' for change history
@@ -9,6 +9,7 @@
 # Retrieved 2026-07-16, License - CC BY-SA 3.0
 
 import json
+import os
 import urllib.request as req
 from pathlib import Path
 
@@ -29,7 +30,11 @@ for zone in tree.xpath("//mapZone"):
     attrib = zone.attrib
     if attrib["territory"] == "001":
         result[attrib["other"]] = attrib["type"]
-with Path.open("windows_to_olson.py", "w") as f:
+
+path = "src/icalendar/timezone/"
+file = "windows_to_olson.py"
+filepath = os.path.join(path, file)
+with Path.open(filepath, "w") as f:
     f.write("""\"\"\"
 This module contains mappings from Windows timezone identifiers to
 Olson timezone identifiers.

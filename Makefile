@@ -166,8 +166,7 @@ rtd-pr-preview: rtd-prepare .venv ## Build pull request preview on Read the Docs
 # release
 .PHONY: wo
 wo: .venv
-	@cd src/icalendar/timezone && uv run generate_windows_to_olson_mapping.py
-	@cd ../../..
+	@uv run generate_windows_to_olson_mapping.py
 	$(RUFFPATH) format
 
 .PHONY: changes-check
