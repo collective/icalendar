@@ -465,7 +465,7 @@ def test_invalid_property_name_token(name):
     """
     with pytest.raises(
         JCalParsingError,
-        match=r"The property name is not a valid token\.",
+        match=r"The property name must be valid iCalendar token",
     ):
         Component.from_jcal(["vcalendar", [[name, {}, "text", "x"]], []])
 
@@ -475,7 +475,7 @@ def test_invalid_parameter_name_token(name):
     """A jCal parameter name that is not a valid token is rejected."""
     with pytest.raises(
         JCalParsingError,
-        match=r"The parameter name is not a valid token\.",
+        match=r"The parameter name must be valid iCalendar token",
     ):
         Parameters.from_jcal_property(["x-prop", {name: "v"}, "text", "x"])
 
@@ -485,7 +485,7 @@ def test_invalid_recur_part_name_token(key):
     """A jCal RRULE part name that is not a valid token is rejected."""
     with pytest.raises(
         JCalParsingError,
-        match=r"The recurrence rule part name is not a valid token\.",
+        match=r"The recurrence rule part name must be valid iCalendar token",
     ):
         vRecur.from_jcal(["rrule", {}, "recur", {key: "DAILY"}])
 
