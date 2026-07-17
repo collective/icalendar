@@ -18,8 +18,8 @@ import lxml.etree as et
 # Unfortunately, the CLDR does not have a latest or stable tag
 # that points to the stable version.
 # Use the `main` branch, which is the development branch.
-url = "https://raw.githubusercontent.com/unicode-org/cldr/refs/heads/main/common/supplemental/windowsZones.xml"  # noqa: S310
-with req.urlopen(url) as response:
+url = "https://raw.githubusercontent.com/unicode-org/cldr/refs/heads/main/common/supplemental/windowsZones.xml"
+with req.urlopen(url) as response:  # noqa: S310
     xml_content = response.read()
 
 # Parse the XML file and extract the timezone mapping.
