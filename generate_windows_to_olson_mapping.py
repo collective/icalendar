@@ -9,7 +9,6 @@
 # Retrieved 2026-07-16, License - CC BY-SA 3.0
 
 import json
-import os
 import urllib.request as req
 from pathlib import Path
 
@@ -31,9 +30,9 @@ for zone in tree.xpath("//mapZone"):
     if attrib["territory"] == "001":
         result[attrib["other"]] = attrib["type"]
 
-path = "src/icalendar/timezone/"
+path = "src/icalendar/timezone"
 file = "windows_to_olson.py"
-filepath = os.path.join(path, file)
+filepath = Path(path, file)
 with Path.open(filepath, "w") as f:
     f.write("""\"\"\"
 This module contains mappings from Windows timezone identifiers to
