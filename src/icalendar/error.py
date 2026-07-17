@@ -19,8 +19,6 @@ class InvalidCalendar(ValueError):
 class ICalParsingError(InvalidCalendar):
     """Could not parse an iCalendar."""
 
-    _default_value = object()
-
     def __init__(
         self,
         message: str,
@@ -36,13 +34,8 @@ class ICalParsingError(InvalidCalendar):
         full_message = message
 
         if value is not None:
-            full_message += f": {value}"
-        if line_number is not None and line is not None:
-            full_message += f" (line {line_number}: {line})"
-        elif line_number is not None:
-            full_message += f" (line {line_number})"
-        elif line is not None:
             full_message += f": {value!r}"
+
         if line_number is not None and line is not None:
             full_message += f" (line {line_number}: {line!r})"
         elif line_number is not None:

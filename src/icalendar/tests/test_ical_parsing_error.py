@@ -54,7 +54,7 @@ def test_ical_parsing_error_message_with_value():
         value="20240399",
     )
 
-    assert str(error) == "Malformed date: 20240399"
+    assert str(error) == "Malformed date: '20240399'"
 
 
 def test_ical_parsing_error_message_with_line():
@@ -63,7 +63,7 @@ def test_ical_parsing_error_message_with_line():
         line="DTSTART:20240399",
     )
 
-    assert str(error) == "Malformed date (DTSTART:20240399)"
+    assert str(error) == "Malformed date ('DTSTART:20240399')"
 
 
 def test_ical_parsing_error_message_with_line_number():
@@ -82,7 +82,7 @@ def test_ical_parsing_error_message_with_line_and_line_number():
         line_number=42,
     )
 
-    assert str(error) == "Malformed date (line 42: DTSTART:20240399)"
+    assert str(error) == "Malformed date (line 42: 'DTSTART:20240399')"
 
 
 def test_ical_parsing_error_message_with_all_context():
@@ -93,4 +93,4 @@ def test_ical_parsing_error_message_with_all_context():
         value="20240399",
     )
 
-    assert str(error) == "Malformed date: 20240399 (line 42: DTSTART:20240399)"
+    assert str(error) == "Malformed date: '20240399' (line 42: 'DTSTART:20240399')"
