@@ -149,12 +149,6 @@ dev: .venv  ## Install required Python, create Python virtual environment, insta
 format: .venv  ## Format the code base with ruff
 	$(RUFFPATH) format
 	$(RUFFPATH) check --fix
-
-.PHONY: wo
-wo: .venv
-	@cd src/icalendar/timezone && uv run generate_windows_to_olson_mapping.py
-	@cd ../../..
-	$(RUFFPATH) format
 # /development
 
 # deployment
@@ -170,6 +164,12 @@ rtd-pr-preview: rtd-prepare .venv ## Build pull request preview on Read the Docs
 # /deployment
 
 # release
+.PHONY: wo
+wo: .venv
+	@cd src/icalendar/timezone && uv run generate_windows_to_olson_mapping.py
+	@cd ../../..
+	$(RUFFPATH) format
+
 .PHONY: changes-check
 changes-check: dev
 	$(TOWNCRIERPATH) check
