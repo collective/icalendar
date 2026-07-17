@@ -74,7 +74,8 @@ def _repr_index(index: str | int) -> str:
         index: It is either a dict key (string) or a list position (integer).
 
     Returns:
-        The index as a quoted string if it's a string, else the string representation if it's an integer.
+        The index as a quoted string if it's a string, else the string 
+        representation if it's an integer.
     """
     if isinstance(index, str):
         return f'"{index}"'
