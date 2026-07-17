@@ -1,4 +1,4 @@
-name: Build documentation, check links, spelling, grammar, and style
+name: Check news fragments filenames, build documentation, check links, spelling, grammar, and style
 on:
   push:
     branches:
@@ -19,6 +19,7 @@ on:
       - '.readthedocs.yaml'
       - '.vale.ini'
       - 'uv.lock'
+      - 'news/*.*'
 
 jobs:
   docs:
@@ -46,6 +47,9 @@ jobs:
 
       - name: Create Python virtual environment, install requirements
         run: make .venv PYTHONVERSION=${{ matrix.python-version }}
+
+      - name: Check news fragments filenames
+        run: make changes-check PYTHONVERSION=${{ matrix.python-version }}
 
       - name: Build HTML documentation
         run: make html PYTHONVERSION=${{ matrix.python-version }}
