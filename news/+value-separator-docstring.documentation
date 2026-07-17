@@ -1,1 +1,1 @@
-Add an RFC cross-reference and a ``Returns`` section to the ``Contentline.value_separator_index`` docstring. @alhudz
+Add an RFC cross-reference and a ``Returns`` section to the :meth:`Contentline.value_separator_index <icalendar.parser.content_line.Contentline.value_separator_index>` docstring. @alhudz
