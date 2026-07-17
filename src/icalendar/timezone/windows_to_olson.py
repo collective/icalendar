@@ -153,5 +153,5 @@ WINDOWS_TO_OLSON = {
     "West Bank Standard Time": "Asia/Hebron",
     "West Pacific Standard Time": "Pacific/Port_Moresby",
     "Yakutsk Standard Time": "Asia/Yakutsk",
-    "Yukon Standard Time": "America/Whitehorse"
+    "Yukon Standard Time": "America/Whitehorse",
 }

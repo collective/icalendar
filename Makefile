@@ -153,6 +153,8 @@ format: .venv  ## Format the code base with ruff
 .PHONY: wo
 wo: .venv
 	@cd src/icalendar/timezone && uv run generate_windows_to_olson_mapping.py
+	@cd ../../..
+	$(RUFFPATH) format
 # /development
 
 # deployment
