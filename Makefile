@@ -149,6 +149,10 @@ dev: .venv  ## Install required Python, create Python virtual environment, insta
 format: .venv  ## Format the code base with ruff
 	$(RUFFPATH) format
 	$(RUFFPATH) check --fix
+
+.PHONY: wo
+wo: .venv
+	@cd src/icalendar/timezone && uv run generate_windows_to_olson_mapping.py
 # /development
 
 # deployment
