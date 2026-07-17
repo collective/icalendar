@@ -42,7 +42,13 @@ class ICalParsingError(InvalidCalendar):
         elif line_number is not None:
             full_message += f" (line {line_number})"
         elif line is not None:
-            full_message += f" ({line})"
+            full_message += f": {value!r}"
+        if line_number is not None and line is not None:
+            full_message += f" (line {line_number}: {line!r})"
+        elif line_number is not None:
+            full_message += f" (line {line_number})"
+        elif line is not None:
+            full_message += f" ({line!r})"
 
         super().__init__(full_message)
 
