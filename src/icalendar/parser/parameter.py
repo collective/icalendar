@@ -208,6 +208,8 @@ def single_string_parameter(func: Callable | None = None, upper=False):
         def fget(self: Parameters):
             """Get the value."""
             value = self.get(name)
+            if isinstance(value, list):
+                value = value[0] if value else None
             if value is not None and upper:
                 value = value.upper()
             return value
