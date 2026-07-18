@@ -108,7 +108,7 @@ class TZP:
         This can influence the result from timezone(): Once cached, the
         custom timezone is returned from timezone().
         """
-        _unclean_id = timezone_component["TZID"]
+        _unclean_id = timezone_component.tz_name
         _id = self.clean_timezone_id(_unclean_id)
         if (
             not self.__provider.knows_timezone_id(_id)
@@ -128,16 +128,13 @@ class TZP:
         """
         return self.__provider.create_timezone(timezone_component)
 
-    def clean_timezone_id(self, tzid: str | list) -> str:
+    def clean_timezone_id(self, tzid: str) -> str:
         """Return a clean version of the timezone id.
 
         Timezone ids can be a bit unclean, starting with a / for example.
         Internally, we should use this to identify timezones.
         """
-        # Duplicate TZID properties are stored as a list; RFC allows one.
-        if isinstance(tzid, list):
-            tzid = tzid[0]
-        return str(tzid).strip("/")
+        return tzid.strip("/")
 
     def timezone(self, tz_id: str) -> datetime.tzinfo | None:
         """Return a timezone with an id or None if we cannot find it."""
