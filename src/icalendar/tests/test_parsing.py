@@ -374,3 +374,36 @@ def test_create_a_component():
     my_component_class = factory.get_component_class("My-Component")
     assert my_component_class.name == "MY-COMPONENT"
     assert my_component_class.__name__ == "MyComponent"
+
+
+def test_contentline_rejects_unescaped_newline_issue_1532():
+    """Issue #1532 - the newline guard must raise, not rely on ``assert``.
+
+    An ``assert`` is stripped when Python runs with ``-O``, which would let
+    an unescaped newline through and corrupt ``to_ical()`` output.
+    """
+    with pytest.raises(ValueError, match="unescaped new line"):
+        Contentline("SUMMARY:one\ntwo")
+
+
+@pytest.mark.parametrize("bad_input", [123, None, 1.5, ["a"]])
+def test_escape_char_rejects_non_str_or_bytes_issue_1532(bad_input):
+    with pytest.raises(TypeError):
+        _escape_char(bad_input)
+
+
+@pytest.mark.parametrize("bad_input", [123, None, 1.5, ["a"]])
+def test_unescape_char_rejects_non_str_or_bytes_issue_1532(bad_input):
+    with pytest.raises(TypeError):
+        _unescape_char(bad_input)
+
+
+@pytest.mark.parametrize("bad_input", [123, None, b"bytes", ["a"]])
+def test_foldline_rejects_non_str_issue_1532(bad_input):
+    with pytest.raises(TypeError):
+        _foldline(bad_input)
+
+
+def test_foldline_rejects_unescaped_newline_issue_1532():
+    with pytest.raises(ValueError, match="unescaped new line"):
+        _foldline("one\ntwo")
