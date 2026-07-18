@@ -84,6 +84,10 @@ jobs:
         parallel-finished: true
         format: cobertura
         fail-on-error: false
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v7
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   test-distribution:
     name: Check built package
