@@ -141,10 +141,13 @@ class Timezone(Component):
         Please note that the names of the timezone are different from this name
         and may change with winter/summer time.
         """
+        tzid = self["TZID"]
+        if isinstance(tzid, list):
+            tzid = tzid[0]
         try:
-            return str(self["TZID"])
+            return str(tzid)
         except UnicodeEncodeError:
-            return self["TZID"].encode("ascii", "replace")
+            return tzid.encode("ascii", "replace")
 
     def get_transitions(
         self,
