@@ -44,8 +44,8 @@ def test_docstring_headings_are_valid(obj):
     if not doc:
         return
 
-    # Match standard docstring headings (Word followed by line of --- or ===)
-    headings = re.findall(r"^([A-Z][A-Za-z]+(?: [a-z]+)*)\n[-=]+$", doc, re.MULTILINE)
+    # Match standard docstring headings (Word(s) followed by a colon)
+    headings = re.findall(r"^[ \t]*([A-Z][A-Za-z]+(?: [A-Za-z]+)*):[ \t]*$", doc, re.MULTILINE)
 
     for heading in headings:
         assert heading in ALLOWED_HEADINGS, (
