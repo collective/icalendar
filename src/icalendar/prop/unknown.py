@@ -1,13 +1,15 @@
 """UNKNOWN values from :rfc:`7265`."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any, ClassVar
 
-from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
 
 if TYPE_CHECKING:
+    from icalendar.compatibility import Self
     from icalendar.parser.content_line import Contentline
 
 
@@ -84,7 +86,7 @@ class vUnknown(str):
         return cls(ical)
 
     @classmethod
-    def initialize_with_raw_content_line(cls, line: "Contentline") -> str:
+    def get_value_from_content_line(cls, line: Contentline) -> str:
         """Return this type's value from ``line``, taken verbatim.
 
         Value types that must not have their value unescaped provide this

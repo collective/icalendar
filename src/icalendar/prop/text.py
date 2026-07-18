@@ -90,7 +90,7 @@ class vText(str):
         return self
 
     def __repr__(self) -> str:
-        return f"vText({self.to_ical()!r})"
+        return f"{self.__class__.__name__}({self.to_ical()!r})"
 
     def to_ical(self) -> bytes:
         return _escape_char(self).encode(self.encoding)

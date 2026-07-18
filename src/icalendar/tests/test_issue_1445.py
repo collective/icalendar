@@ -180,6 +180,10 @@ def test_image_value_is_verbatim(line, jcal_type):
     unknown type, even when VALUE is URI or BINARY, so that image data is not
     corrupted by escaping (see commit aac97fa9). An explicit VALUE is still
     preserved as the jCal type field, but the value stays verbatim either way.
+
+    Note: whether IMAGE should honor VALUE (vUri/vBinary) instead of always
+    resolving to unknown is tracked separately in issue #1561. This test pins
+    the current behavior; it will need updating if that changes.
     """
     ev = _event(rf"{line}:a;b\,c")
     assert isinstance(ev["IMAGE"], vUnknown)
