@@ -34,7 +34,7 @@ HERE = Path(__file__).parent
 DEST = HERE / "src" / "icalendar" / "timezone"
 file = "windows_to_olson.py"
 filepath = Path(DEST, file)
-print(f"Writing {filepath}")
+print(f"Writing {filepath}")  #noqa: T201
 with Path.open(filepath, "w") as f:
     f.write("""\"\"\"
 This module contains mappings from Windows timezone identifiers to
