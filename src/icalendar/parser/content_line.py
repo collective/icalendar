@@ -258,8 +258,11 @@ class Contentline(str):
         ``ALTREP="http://x"``) is skipped, and a colon that belongs to the
         value (``TEXT`` does not escape ``:``) is not mistaken for the
         separator. Backslash has no special meaning in the parameter grammar
-        (RFC 5545 §3.1), so it is treated as an ordinary character. Returns
-        ``-1`` if there is none.
+        (:rfc:`5545#section-3.1`), so it is treated as an ordinary character.
+
+        Returns:
+            An integer representing the index position of the separator,
+            or ``-1`` if there is none.
         """
         in_quotes = False
         for i, ch in enumerate(self):
