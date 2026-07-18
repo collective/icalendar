@@ -16,6 +16,36 @@ class InvalidCalendar(ValueError):
     """
 
 
+class ICalParsingError(InvalidCalendar):
+    """Could not parse an iCalendar."""
+
+    def __init__(
+        self,
+        message: str,
+        line: str | None = None,
+        line_number: int | None = None,
+        value: object = None,
+    ) -> None:
+        self.message = message
+        self.line = line
+        self.line_number = line_number
+        self.value = value
+
+        full_message = message
+
+        if value is not None:
+            full_message += f": {value!r}"
+
+        if line_number is not None and line is not None:
+            full_message += f" (line {line_number}: {line!r})"
+        elif line_number is not None:
+            full_message += f" (line {line_number})"
+        elif line is not None:
+            full_message += f" ({line!r})"
+
+        super().__init__(full_message)
+
+
 class BrokenCalendarProperty(InvalidCalendar):
     """A property could not be parsed and its value is broken.
 
@@ -74,7 +104,7 @@ def _repr_index(index: str | int) -> str:
     return str(index)
 
 
-class JCalParsingError(ValueError):
+class JCalParsingError(InvalidCalendar):
     """Could not parse a part of the JCal."""
 
     _default_value = object()
@@ -237,6 +267,7 @@ __all__ = [
     "ComponentEndMissing",
     "ComponentStartMissing",
     "FeatureWillBeRemovedInFutureVersion",
+    "ICalParsingError",
     "IncompleteAlarmInformation",
     "IncompleteComponent",
     "InvalidCalendar",
