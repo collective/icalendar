@@ -30,9 +30,11 @@ for zone in tree.xpath("//mapZone"):
     if attrib["territory"] == "001":
         result[attrib["other"]] = attrib["type"]
 
-path = "src/icalendar/timezone"
+HERE = Path(__file__).parent
+DEST = HERE / "src" / "icalendar" / "timezone"
 file = "windows_to_olson.py"
-filepath = Path(path, file)
+filepath = Path(DEST, file)
+print(f"Writing {filepath}")
 with Path.open(filepath, "w") as f:
     f.write("""\"\"\"
 This module contains mappings from Windows timezone identifiers to
