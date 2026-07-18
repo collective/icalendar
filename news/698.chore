@@ -1,0 +1,1 @@
+Added a regression test for ``CaselessDict``'s class-aware representation. I used OpenAI Codex (GPT-5.6) to help narrow the test scope, draft the test and change log entry, and review verification output. @kingrubic

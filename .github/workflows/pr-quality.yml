@@ -1,0 +1,36 @@
+# This workflow checks the quality of pull requests.
+# For configuration options, see:
+# https://github.com/marketplace/actions/anti-slop
+name: PR Quality
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: write
+
+on:
+  pull_request_target:
+    types: [opened, reopened]
+
+jobs:
+  anti-slop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: peakoss/anti-slop@v0
+        with:
+          max-failures: 1
+          max-description-length: 1000
+          max-emoji-count: 1
+          max-code-references: 3
+          require-linked-issue: true
+          require-pr-template: true
+          strict-pr-template-sections: Linked issue,Description,Checklist
+          optional-pr-template-sections: 'Additional information'
+          blocked-commit-authors: github-automation@zo.computer
+          max-daily-forks: 3
+          exempt-users: abe-101,angatha,niccokunzmann,sashankbhamidi,stevepiercy,maurits,tobixen
+          success-add-pr-labels: 'PR quality: good'
+          failure-add-pr-labels: 'ai-suspicion'
+          failure-pr-message: 'This pull request did not pass quality checks and AI use is suspected. Please review [Contribute](https://icalendar.readthedocs.io/en/latest/contribute/index.html) and make any necessary amendments.'
+          close-pr: false
+          min-profile-completeness: 1
