@@ -81,6 +81,13 @@ class TestCaselessdict(unittest.TestCase):
 
         assert original_dict == copied_dict
 
+    def test_caselessdict_repr_includes_class_name_and_items(self) -> None:
+        CaselessDict = icalendar.caselessdict.CaselessDict
+
+        assert repr(CaselessDict(summary="Meeting")) == (
+            "CaselessDict({'SUMMARY': 'Meeting'})"
+        )
+
     def test_CaselessDict(self) -> None:
         CaselessDict = icalendar.caselessdict.CaselessDict
 

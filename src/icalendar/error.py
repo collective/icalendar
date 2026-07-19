@@ -30,7 +30,20 @@ class ICalParsingError(InvalidCalendar):
         self.line = line
         self.line_number = line_number
         self.value = value
-        super().__init__(message)
+
+        full_message = message
+
+        if value is not None:
+            full_message += f": {value!r}"
+
+        if line_number is not None and line is not None:
+            full_message += f" (line {line_number}: {line!r})"
+        elif line_number is not None:
+            full_message += f" (line {line_number})"
+        elif line is not None:
+            full_message += f" ({line!r})"
+
+        super().__init__(full_message)
 
 
 class BrokenCalendarProperty(InvalidCalendar):
@@ -91,7 +104,7 @@ def _repr_index(index: str | int) -> str:
     return str(index)
 
 
-class JCalParsingError(ValueError):
+class JCalParsingError(InvalidCalendar):
     """Could not parse a part of the JCal."""
 
     _default_value = object()

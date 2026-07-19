@@ -74,3 +74,56 @@ def test_ical_value_rejects_non_base64_characters():
 def test_hash():
     obj = vBinary(b"hashed text")
     assert hash(obj) == hash(b"hashed text")
+
+
+def test_base64data_getter():
+    """base64data returns the same string as to_ical(), decoded to str."""
+    obj = vBinary(b"This is gibberish")
+    assert obj.base64data == "VGhpcyBpcyBnaWJiZXJpc2g="
+    assert obj.base64data == obj.to_ical().decode("ascii")
+
+
+def test_base64data_getter_empty():
+    """base64data of an empty value is an empty string."""
+    assert vBinary(b"").base64data == ""
+
+
+def test_base64data_setter():
+    """Setting base64data updates the underlying value."""
+    obj = vBinary(b"initial value")
+    obj.base64data = "QmluYXJ5IGRhdGEgEyBW"
+    assert obj.to_ical() == b"QmluYXJ5IGRhdGEgEyBW"
+    assert obj.from_ical(obj.to_ical()) == b"Binary data \x13 \x56"
+
+
+def test_base64data_roundtrip():
+    """Reading base64data after setting it returns the same string."""
+    obj = vBinary(b"initial value")
+    obj.base64data = "QmluYXJ5IGRhdGEgEyBW"
+    assert obj.base64data == "QmluYXJ5IGRhdGEgEyBW"
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "value",
+        "áèਮ",
+        "!!!!dGV4dA==@@@@",
+        "dG V4dA==",
+        "dGV4dA==#",
+    ],
+)
+def test_base64data_setter_rejects_invalid_base64(value):
+    """The setter raises ValueError, matching from_ical's error, for bad input."""
+    obj = vBinary(b"unchanged")
+    with pytest.raises(ValueError, match=r"Not valid base 64 encoding\."):
+        obj.base64data = value
+    # a rejected assignment must not mutate the existing value
+    assert obj.to_ical() == vBinary(b"unchanged").to_ical()
+
+
+def test_base64data_setter_rejects_non_str():
+    """Non-str input raises TypeError, matching base64.b64decode's behaviour."""
+    obj = vBinary(b"unchanged")
+    with pytest.raises(TypeError):
+        obj.base64data = 12345
