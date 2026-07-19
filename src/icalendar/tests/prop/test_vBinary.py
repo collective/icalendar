@@ -22,6 +22,24 @@ def test_binary():
     assert vBinary.from_ical(txt_ical) == txt
 
 
+def test_non_utf8_binary_round_trip():
+    """Decoded binary bytes are serialized without Unicode replacement."""
+    data = bytes(range(256))
+    encoded = base64.b64encode(data)
+    value = vBinary(vBinary.from_ical(encoded))
+
+    assert value.ical_value == data
+    assert value.to_ical() == encoded
+
+    value.base64data = encoded.decode("ascii")
+    assert value.base64data == encoded.decode("ascii")
+    assert value.ical_value == data
+
+    reparsed = vBinary.from_jcal(value.to_jcal("image"))
+    assert reparsed.base64data == encoded.decode("ascii")
+    assert reparsed.ical_value == data
+
+
 def test_param():
     assert isinstance(vBinary("txt").params, Parameters)
     assert vBinary("txt").params == {"VALUE": "BINARY", "ENCODING": "BASE64"}

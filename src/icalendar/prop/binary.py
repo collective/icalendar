@@ -10,6 +10,16 @@ from icalendar.parser import Parameters
 from icalendar.parser_tools import to_unicode
 
 
+class _DecodedBinary(bytes):
+    """Binary data decoded from an iCalendar value."""
+
+
+class _EncodedBinary(str):
+    """Base64 data read from an iCalendar or jCal value."""
+
+    __slots__ = ()
+
+
 class vBinary:
     """Binary property values are base 64 encoded."""
 
@@ -18,7 +28,11 @@ class vBinary:
     obj: str
 
     def __init__(self, obj: str | bytes, params: dict[str, str] | None = None) -> None:
-        self.obj = to_unicode(obj)
+        self.obj = (
+            _EncodedBinary(base64.b64encode(obj).decode("ascii"))
+            if isinstance(obj, _DecodedBinary)
+            else to_unicode(obj)
+        )
         self.params = Parameters(encoding="BASE64", value="BINARY")
         if params:
             self.params.update(params)
@@ -27,12 +41,14 @@ class vBinary:
         return f"vBinary({self.to_ical()})"
 
     def to_ical(self) -> bytes:
+        if isinstance(self.obj, _EncodedBinary):
+            return self.obj.encode("ascii")
         return binascii.b2a_base64(self.obj.encode("utf-8"))[:-1]
 
     @staticmethod
     def from_ical(ical: str | bytes) -> bytes:
         try:
-            return base64.b64decode(ical, validate=True)
+            return _DecodedBinary(base64.b64decode(ical, validate=True))
         except (binascii.Error, ValueError) as e:
             raise ValueError("Not valid base 64 encoding.") from e
 
@@ -59,7 +75,8 @@ class vBinary:
         Raises:
             ValueError: If ``value`` isn't valid Base64.
         """
-        self.obj = to_unicode(self.from_ical(value))
+        decoded = self.from_ical(value)
+        self.obj = _EncodedBinary(base64.b64encode(decoded).decode("ascii"))
 
     def __eq__(self, other: object) -> bool:
         """self == other"""
@@ -102,7 +119,7 @@ class vBinary:
         JCalParsingError.validate_property(jcal_property, cls)
         JCalParsingError.validate_value_type(jcal_property[3], str, cls, 3)
         return cls(
-            jcal_property[3],
+            _EncodedBinary(jcal_property[3]),
             params=Parameters.from_jcal_property(jcal_property),
         )
 

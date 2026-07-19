@@ -236,9 +236,9 @@ class TypesFactory(CaselessDict):
             return self[value_param]
 
         if name.upper() == "IMAGE":
-            return self[
-                "unknown"
-            ]  # IMAGE is always unknown, even if VALUE is URI or BINARY
+            if value_param and value_param.upper() in ("URI", "BINARY"):
+                return self[value_param]
+            return self["unknown"]
 
         if value_param and (value_param in self) and value_param != "IMAGE":
             return self[value_param]

@@ -1,0 +1,1 @@
+``IMAGE`` properties now honor explicit ``VALUE=URI`` and ``VALUE=BINARY`` parameters while preserving the unknown default when ``VALUE`` is omitted, and binary image data now round-trips without Unicode corruption. I used OpenAI Codex with GPT-5 to assist with this change. @floze-the-genius
