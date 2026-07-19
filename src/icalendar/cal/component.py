@@ -1134,9 +1134,6 @@ def _node_from_jcal(jcal, starting_cls: type[Component]) -> tuple[Component, lis
     for i, prop in enumerate(properties):
         JCalParsingError.validate_property(prop, component_cls, path=[1, i])
         prop_name = prop[0]
-        JCalParsingError.validate_jcal_token(
-            prop_name, "property name", component_cls, path=[1, i, 0]
-        )
         prop_value = prop[2]
         prop_cls: type[VPROPERTY] = component_cls.types_factory.for_property(
             prop_name, prop_value

@@ -203,6 +203,7 @@ class JCalParsingError(InvalidCalendar):
                 path + [2],
                 value=jcal_property[2],
             )
+        cls.validate_jcal_token(jcal_property[0], "property name", parser, path + [0])
 
     _type_names = {
         str: "a string",
