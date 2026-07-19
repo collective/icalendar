@@ -31,15 +31,22 @@ class vInt(int):
         for "integer" is -2147483648 to 2147483647.  If the sign is not
         specified, then the value is assumed to be positive.
 
+    Attributes:
+        min: The minimum valid value per :rfc:`5545#section-3.3.8` (``-2147483648``).
+        max: The maximum valid value per :rfc:`5545#section-3.3.8` (``2147483647``).
+
     The ``__new__`` method creates a vInt instance:
 
     Parameters:
-        value: Integer value to encode. Can be positive or negative within
-            the range -2147483648 to 2147483647.
+        value: Integer value to encode. Must be within :attr:`min` to :attr:`max`.
         params: Optional parameter dictionary for the property.
 
     Returns:
         vInt instance
+
+    Raises:
+        ValueError: If *value* is outside the RFC 5545 signed 32-bit integer range
+            [:attr:`min`, :attr:`max`].
 
     Examples:
 
