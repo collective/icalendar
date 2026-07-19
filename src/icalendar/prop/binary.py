@@ -36,6 +36,31 @@ class vBinary:
         except (binascii.Error, ValueError) as e:
             raise ValueError("Not valid base 64 encoding.") from e
 
+    @property
+    def base64data(self) -> str:
+        """The Base64-encoded string view of this value.
+
+        This is the same string that :meth:`to_ical` produces, exposed as
+        a plain :class:`str` instead of :class:`bytes` so you don't need to
+        call :func:`base64.b64encode` yourself. See :issue:`1550`.
+
+        Returns:
+            The Base64-encoded representation of the stored value.
+        """
+        return self.to_ical().decode("ascii")
+
+    @base64data.setter
+    def base64data(self, value: str) -> None:
+        """Set this value from a Base64-encoded string.
+
+        Parameters:
+            value: A Base64-encoded string.
+
+        Raises:
+            ValueError: If ``value`` isn't valid Base64.
+        """
+        self.obj = to_unicode(self.from_ical(value))
+
     def __eq__(self, other: object) -> bool:
         """self == other"""
         return isinstance(other, vBinary) and self.obj == other.obj
