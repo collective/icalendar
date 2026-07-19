@@ -236,7 +236,7 @@ class Contentline(str):
         :meth:`raw_parts` to get the values verbatim instead.
 
         Examples:
-        
+
             With parameter:
 
             ..  code-block:: ics
