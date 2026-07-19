@@ -18,7 +18,6 @@ from typing import TYPE_CHECKING
 
 from icalendar.cal.event import Event
 from icalendar.cal.todo import Todo
-from icalendar.config import _clamp_repeat
 from icalendar.error import (
     ComponentEndMissing,
     ComponentStartMissing,
@@ -315,7 +314,7 @@ class Alarms:
         repeat = alarm.repeat
         duration = alarm.DURATION
         if repeat and duration:
-            for i in range(1, _clamp_repeat(repeat) + 1):
+            for i in range(1, repeat + 1):
                 yield self._add(first, duration * i)
 
     def _alarm_time(self, alarm: Alarm, trigger: date):

@@ -24,7 +24,6 @@ from icalendar.attr import (
 )
 from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
-from icalendar.config import _clamp_repeat
 
 if TYPE_CHECKING:
     import uuid
@@ -291,7 +290,7 @@ class Alarm(Component):
                 add = end
             duration = self.DURATION
             if duration is not None:
-                for _ in range(_clamp_repeat(self.repeat)):
+                for _ in range(self.repeat):
                     add.append(add[-1] + duration)
         return self.Triggers(
             start=tuple(start), end=tuple(end), absolute=tuple(absolute)
