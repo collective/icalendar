@@ -22,6 +22,6 @@ def _clamp_repeat(n: int) -> int:
     """
     if n < 0:
         return 0
-    if MAX_ALARM_REPEAT == -1:
+    if MAX_ALARM_REPEAT < 0:
         return n
     return min(n, MAX_ALARM_REPEAT)
