@@ -407,3 +407,10 @@ def test_foldline_rejects_non_str_issue_1532(bad_input):
 def test_foldline_rejects_unescaped_newline_issue_1532():
     with pytest.raises(ValueError, match="unescaped new line"):
         _foldline("one\ntwo")
+
+
+@pytest.mark.parametrize("bad_params", [{}, None, "TYPE=HOME", ["TYPE", "HOME"]])
+def test_contentline_from_parts_rejects_non_parameters_issue_1532(bad_params):
+    """Issue #1532 - ``from_parts`` guarded ``params`` with ``assert`` too."""
+    with pytest.raises(TypeError):
+        Contentline.from_parts("SUMMARY", bad_params, "text")

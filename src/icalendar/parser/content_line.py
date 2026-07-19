@@ -140,7 +140,8 @@ class Contentline(str):
         sorted: bool = True,  # noqa: A002
     ):
         """Turn a parts into a content line."""
-        assert isinstance(params, Parameters)
+        if not isinstance(params, Parameters):
+            raise TypeError(f"Expected Parameters, got {type(params).__name__}")
         if hasattr(values, "to_ical"):
             values = values.to_ical()
         else:
