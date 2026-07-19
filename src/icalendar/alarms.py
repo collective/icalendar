@@ -312,7 +312,7 @@ class Alarms:
     def _repeat(self, first: datetime, alarm: Alarm) -> Generator[datetime]:
         """The times when the alarm is triggered relative to start."""
         yield first  # we trigger at the start
-        repeat = alarm.REPEAT
+        repeat = alarm.repeat
         duration = alarm.DURATION
         if repeat and duration:
             for i in range(1, _clamp_repeat(repeat) + 1):
