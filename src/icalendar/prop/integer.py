@@ -88,16 +88,16 @@ class vInt(int):
     default_value: ClassVar[str] = "INTEGER"
     params: Parameters
 
-    RFC_MIN: ClassVar[int] = -2_147_483_648
-    RFC_MAX: ClassVar[int] = 2_147_483_647
+    min: ClassVar[int] = -2_147_483_648
+    max: ClassVar[int] = 2_147_483_647
 
     def __new__(cls, *args, params: dict[str, Any] | None = None, **kwargs):
         self = super().__new__(cls, *args, **kwargs)
         self.params = Parameters(params)
-        if not (cls.RFC_MIN <= self <= cls.RFC_MAX):
+        if not (cls.min <= self <= cls.max):
             raise ValueError(
                 f"Integer {self} is outside the RFC 5545 range "
-                f"[{cls.RFC_MIN}, {cls.RFC_MAX}]"
+                f"[{cls.min}, {cls.max}]"
             )
         return self
 
