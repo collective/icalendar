@@ -165,8 +165,8 @@ class Contentline(str):
 
         This is :meth:`parts` without the unescaping: the values are returned
         verbatim, preserving both backslash sequences and URL encoding. It is
-        used for :rfc:`7265` ``UNKNOWN`` values, whose real value type -- and
-        therefore whose escaping rules -- are not known.
+        used for :rfc:`7265` ``UNKNOWN`` values, whose real value type—and
+        therefore whose escaping rules—are not known.
 
         See :meth:`parts` for the parts themselves and for examples.
         """
@@ -235,17 +235,19 @@ class Contentline(str):
         of ``TEXT`` properties, while URL encoding is preserved. Use
         :meth:`raw_parts` to get the values verbatim instead.
 
-        Example with parameter:
+        Examples:
+        
+            With parameter:
 
-        .. code-block:: ics
+            ..  code-block:: ics
 
-            DESCRIPTION;ALTREP="cid:part1.0001@example.org":The Fall'98 Wild
+                DESCRIPTION;ALTREP="cid:part1.0001@example.org":The Fall'98 Wild
 
-        Example without parameters:
+            Without parameters:
 
-        .. code-block:: ics
+            ..  code-block:: ics
 
-            DESCRIPTION:The Fall'98 Wild
+                DESCRIPTION:The Fall'98 Wild
         """
         name, params, values = self.raw_parts()
         return (name, params, unescape_backslash(values))
