@@ -1,1 +1,1 @@
-Added :attr:`icalendar.prop.binary.vBinary.base64data`, a getter/setter for the Base64 string view of a BINARY property's value, so callers no longer need to call :func:`base64.b64encode`/:func:`base64.b64decode` manually. @gagana2023
+Added :attr:`vBinary.base64data <icalendar.prop.binary.vBinary.base64data>`, a getter/setter for the Base64 string view of a BINARY property's value, so callers no longer need to call :func:`base64.b64encode` or :func:`base64.b64decode` manually. @gagana2023
