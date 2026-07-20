@@ -15,6 +15,7 @@ from icalendar.attr import (
     property_del_duration,
     property_get_duration,
     property_set_duration,
+    repeat_property,
     single_int_property,
     single_string_property,
     single_utc_property,
@@ -289,11 +290,13 @@ class Alarm(Component):
                 add = end
             duration = self.DURATION
             if duration is not None:
-                for _ in range(self.REPEAT):
+                for _ in range(self.repeat):
                     add.append(add[-1] + duration)
         return self.Triggers(
             start=tuple(start), end=tuple(end), absolute=tuple(absolute)
         )
+
+    repeat = repeat_property
 
     uid = single_string_property(
         "UID",
