@@ -1289,7 +1289,7 @@ def _make_repeat_property() -> property:
         """The number of additional times the alarm is triggered after the initial trigger.
 
 Defaults to ``0``, meaning the alarm fires once. Must be paired with
-:attr:`~icalendar.cal.alarm.Alarm.DURATION`. Conforming with :rfc:`5545#section-3.8.6.2`.
+:attr:`~icalendar.cal.alarm.Alarm.DURATION`. Conforms with :rfc:`5545#section-3.8.6.2`.
 The value is capped at :data:`icalendar.config.MAX_ALARM_REPEAT` on read.
 """,
     )

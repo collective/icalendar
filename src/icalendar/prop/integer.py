@@ -45,8 +45,8 @@ class vInt(int):
         vInt instance
 
     Raises:
-        ValueError: If *value* is outside the RFC 5545 signed 32-bit integer range
-            [:attr:`min`, :attr:`max`].
+        ValueError: If the value is outside the RFC 5545 signed 32-bit integer range
+            as defined in :attr:`min` and :attr:`max`.
 
     Examples:
 
