@@ -11,6 +11,15 @@ Change log
 
 .. towncrier release notes start
 
+7.2.2 (2026-07-20)
+------------------
+
+Documentation
+~~~~~~~~~~~~~
+
+- Fixed duplicate ``vInt.min`` and ``vInt.max`` descriptions in the API reference that caused the Read the Docs build to fail.
+
+
 7.2.1 (2026-07-20)
 ------------------
 
