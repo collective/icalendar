@@ -31,10 +31,6 @@ class vInt(int):
         for "integer" is -2147483648 to 2147483647.  If the sign is not
         specified, then the value is assumed to be positive.
 
-    Attributes:
-        min: The minimum valid value per :rfc:`5545#section-3.3.8` (``-2147483648``).
-        max: The maximum valid value per :rfc:`5545#section-3.3.8` (``2147483647``).
-
     The ``__new__`` method creates a vInt instance:
 
     Parameters:
