@@ -1,0 +1,1 @@
+Corrected the ``FreeBusy.new()`` docstring, which described the method as creating an alarm instead of a free/busy component. Written with assistance from Claude Opus 4.5 (Anthropic). @andycheng2018
