@@ -34,12 +34,15 @@ class vInt(int):
     The ``__new__`` method creates a vInt instance:
 
     Parameters:
-        value: Integer value to encode. Can be positive or negative within
-            the range -2147483648 to 2147483647.
+        value: Integer value to encode. Must be within :attr:`min` to :attr:`max`.
         params: Optional parameter dictionary for the property.
 
     Returns:
         vInt instance
+
+    Raises:
+        ValueError: If the value is outside the RFC 5545 signed 32-bit integer range
+            as defined in :attr:`min` and :attr:`max`.
 
     Examples:
 
@@ -88,9 +91,16 @@ class vInt(int):
     default_value: ClassVar[str] = "INTEGER"
     params: Parameters
 
+    min: ClassVar[int] = -2_147_483_648
+    max: ClassVar[int] = 2_147_483_647
+
     def __new__(cls, *args, params: dict[str, Any] | None = None, **kwargs):
         self = super().__new__(cls, *args, **kwargs)
         self.params = Parameters(params)
+        if not (cls.min <= self <= cls.max):
+            raise ValueError(
+                f"Integer {self} is outside the RFC 5545 range [{cls.min}, {cls.max}]"
+            )
         return self
 
     def to_ical(self) -> bytes:
@@ -104,9 +114,10 @@ class vInt(int):
     @classmethod
     def from_ical(cls, ical: ICAL_TYPE):
         try:
-            return cls(ical)
+            value = int(ical)
         except Exception as e:
             raise ValueError(f"Expected int, got: {ical}") from e
+        return cls(value)
 
     @classmethod
     def examples(cls) -> list[Self]:
