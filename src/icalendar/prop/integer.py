@@ -103,8 +103,7 @@ class vInt(int):
         self.params = Parameters(params)
         if not (cls.min <= self <= cls.max):
             raise ValueError(
-                f"Integer {self} is outside the RFC 5545 range "
-                f"[{cls.min}, {cls.max}]"
+                f"Integer {self} is outside the RFC 5545 range [{cls.min}, {cls.max}]"
             )
         return self
 
