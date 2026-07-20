@@ -100,7 +100,6 @@ dev = [
   {include-group = "test"},
   {include-group = "docs"},
   {include-group = "formatting"},
-  "lxml>=6.1.1",
   "towncrier>=25.8.0",
   "tox",
   "tox-uv",

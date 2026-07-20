@@ -12,7 +12,7 @@ import json
 import urllib.request as req
 from pathlib import Path
 
-import lxml.etree as et
+import xml.etree.ElementTree as et
 
 # Get the XML data from the CLDR on GitHub and save to a file.
 # Unfortunately, the CLDR does not have a latest or stable tag
@@ -25,7 +25,7 @@ with req.urlopen(url) as response:  # noqa: S310
 # Parse the XML file and extract the timezone mapping.
 result = {}
 tree = et.fromstring(xml_content)
-for zone in tree.xpath("//mapZone"):
+for zone in tree.findall(".//mapZone"):
     attrib = zone.attrib
     if attrib["territory"] == "001":
         result[attrib["other"]] = attrib["type"]
