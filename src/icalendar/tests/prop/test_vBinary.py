@@ -1,6 +1,5 @@
 """Test vBinary"""
 
-import base64
 
 import pytest
 

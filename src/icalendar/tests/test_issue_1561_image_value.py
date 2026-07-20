@@ -1,5 +1,5 @@
-import pytest
 import icalendar
+
 
 def test_image_value_parameter_determines_type():
     """

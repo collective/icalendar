@@ -1,0 +1,1 @@
+Fixed `IMAGE` property parsing to correctly respect the `VALUE` parameter (`VALUE=URI` or `VALUE=BINARY`), and resolved a data corruption issue in `vBinary` where binary bytes were improperly treated as Unicode strings.
