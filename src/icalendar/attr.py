@@ -1281,6 +1281,30 @@ Description:
 """,
 )
 
+
+def _make_repeat_property() -> property:
+    from icalendar.config import _clamp_repeat
+
+    _base = single_int_property(
+        "REPEAT",
+        0,
+        """The number of additional times the alarm is triggered after the
+initial trigger.
+
+Defaults to ``0``, meaning the alarm fires once. Must be paired with
+:attr:`~icalendar.cal.alarm.Alarm.DURATION`. Conforms with :rfc:`5545#section-3.8.6.2`.
+The value is capped at :data:`icalendar.config.MAX_ALARM_REPEAT` on read.
+""",
+    )
+
+    def fget(self):
+        return _clamp_repeat(_base.fget(self))
+
+    return property(fget, _base.fset, _base.fdel, _base.__doc__)
+
+
+repeat_property = _make_repeat_property()
+
 priority_property = single_int_property(
     "PRIORITY",
     0,
@@ -2576,6 +2600,7 @@ __all__ = [
     "rdates_property",
     "refids_property",
     "related_to_property",
+    "repeat_property",
     "rfc_7953_dtend_property",
     "rfc_7953_dtstart_property",
     "rfc_7953_duration_property",
