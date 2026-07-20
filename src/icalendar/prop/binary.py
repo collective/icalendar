@@ -15,10 +15,13 @@ class vBinary:
 
     default_value: ClassVar[str] = "BINARY"
     params: Parameters
-    obj: str
+    obj: bytes
 
     def __init__(self, obj: str | bytes, params: dict[str, str] | None = None) -> None:
-        self.obj = to_unicode(obj)
+        if isinstance(obj, str):
+            self.obj = obj.encode("utf-8")
+        else:
+            self.obj = obj
         self.params = Parameters(encoding="BASE64", value="BINARY")
         if params:
             self.params.update(params)
@@ -27,7 +30,7 @@ class vBinary:
         return f"vBinary({self.to_ical()})"
 
     def to_ical(self) -> bytes:
-        return binascii.b2a_base64(self.obj.encode("utf-8"))[:-1]
+        return binascii.b2a_base64(self.obj)[:-1]
 
     @staticmethod
     def from_ical(ical: str | bytes) -> bytes:
@@ -82,12 +85,12 @@ class vBinary:
         if params.get("encoding") == "BASE64":
             # BASE64 is the only allowed encoding
             del params["encoding"]
-        return [name, params, self.VALUE.lower(), self.obj]
+        return [name, params, self.VALUE.lower(), binascii.b2a_base64(self.obj).decode("ascii")[:-1]]
 
     @property
     def ical_value(self) -> bytes:
         """The bytes value of the BINARY property."""
-        return self.from_ical(self.obj)
+        return self.obj
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
@@ -102,7 +105,7 @@ class vBinary:
         JCalParsingError.validate_property(jcal_property, cls)
         JCalParsingError.validate_value_type(jcal_property[3], str, cls, 3)
         return cls(
-            jcal_property[3],
+            base64.b64decode(jcal_property[3]),
             params=Parameters.from_jcal_property(jcal_property),
         )
 

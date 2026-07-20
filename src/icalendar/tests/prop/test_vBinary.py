@@ -61,14 +61,14 @@ def test_from_ical_rejects_non_base64_characters(value):
 
 
 def test_ical_value():
-    """ical_value property returns the string value."""
-    magic_string = base64.b64encode(b"magic string")
-    assert vBinary(magic_string).ical_value == base64.b64decode(magic_string)
+    """ical_value property returns the bytes value."""
+    magic_bytes = b"magic string"
+    assert vBinary(magic_bytes).ical_value == magic_bytes
 
 
-def test_ical_value_rejects_non_base64_characters():
+def test_from_ical_rejects_invalid_characters_again():
     with pytest.raises(ValueError, match=r"Not valid base 64 encoding\."):
-        vBinary("!!!!dGV4dA==@@@@").ical_value
+        vBinary.from_ical("!!!!dGV4dA==@@@@")
 
 
 def test_hash():

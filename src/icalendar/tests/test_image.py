@@ -124,8 +124,7 @@ def test_create_image_invalid_params():
 
 def test_create_with_vBinary():
     """Test creating an Image from a vBinary property."""
-    b64data = base64.b64encode(TRANSPARENT_PIXEL).decode("ascii")
-    vbin = vBinary(b64data, params={"FMTTYPE": "image/png"})
+    vbin = vBinary(TRANSPARENT_PIXEL, params={"FMTTYPE": "image/png"})
     image = Image.from_property_value(vbin)
     assert image.uri is None
     assert image.data == TRANSPARENT_PIXEL
