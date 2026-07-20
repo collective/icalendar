@@ -5,6 +5,7 @@ How to guides
 .. toctree::
     :maxdepth: 2
 
+    configure
     install
     upgrade
     usage
