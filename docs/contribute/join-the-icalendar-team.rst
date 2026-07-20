@@ -1,14 +1,43 @@
-==========
-Contribute
-==========
+=======================
+Join the icalendar team
+=======================
 
-This guide describes how to contribute to icalendar.
+This guide describes how to join the icalendar team.
 
-A key purpose around icalendar is to foster a warm and welcoming space for people to learn, grow, and contribute.
-Contributors in the icalendar community find joy in working with other people and raising them up to contribute again and improve.
+
+Purpose
+-------
+
+The icalendar team reviews pull requests and issues for quality, makes releases to PyPI, and protects and promotes the icalendar community.
+To familiarize yourself with the icalendar community, read :doc:`index`.
+
+To encourage collaboration and community, the icalendar team is actively seeking contributors who are interested in elevated access to icalendar to help review and triage issues and pull requests.
+
+A good candidate for elevated access demonstrates the following qualifications:
+
+-   Friendliness, humanity, and values diversity and inclusion.
+-   Frequently engages with other contributors.
+-   Frequently reviews and triages pull requests and issues.
+
+If you're interested in elevated access, you may:
+
+-   Create a new Discussion topic under the Collaborator nominations category https://github.com/collective/icalendar/discussions/categories/collaborator-nominations
+-   Post a message to the Matrix icalendar chat: https://matrix.to/#/#pycal:chat.pycal.org
+
+
+Additionally, the icalendar team may contact you to encourage you to apply.
+
+The icalendar team recognizes that many individuals might not feel qualified to apply. Please rest assured that the worst that can happen is that we'll say "not yet, but here's a path you can follow to become qualified." We want to lift people up.
+
+The icalendar team values diversity, equity, and inclusion. The icalendar team encourages women, people of color, LGBTQ+ individuals, people with disabilities, members of ethnic minorities, residents of countries outside western culture, people of all ages, and people whose primary language is not English to apply. We are committed to building a team that is inclusive of a variety of backgrounds and perspectives.
+
+
+
+
+
 
 People in the icalendar community strive to uphold the spirit of the Python Calendaring Ecosystem's `Code of Conduct <https://pycal.org/code-of-conduct/>`_.
-You are invited to read it to help you decide whether you would enjoy being a part of the icalendar community.
+
 
 Examples of how to contribute
 -----------------------------
@@ -301,7 +330,6 @@ If you would like to set up icalendar to contribute changes, see :doc:`developme
 
     documentation/index
     development
-    join-the-icalendar-team
     code-of-conduct
     credits
     maintenance
