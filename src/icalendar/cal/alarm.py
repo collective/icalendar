@@ -159,16 +159,12 @@ class Alarm(Component):
         "ACKNOWLEDGED",
         """The UTC date and time at which the alarm was last sent or acknowledged.
 
-        Returns a :class:`datetime.datetime` in UTC or ``None`` if not set. Setting
-        this attribute accepts a :class:`~datetime.datetime` in UTC.
+        This allows clients to determine when a pending alarm has been acknowledged
+        by a calendar user so that any alerts can be dismissed across multiple devices.
+        It also allows clients to track missed alarms for repeating or recurring events.
 
-        This property allows clients to track when a pending alarm was acknowledged
-        by a user, so that alerts can be dismissed across multiple devices. Clients
-        should set this to the current UTC date-time when a user acknowledges the alarm,
-        or when the alarm is triggered for email-based alerts.
-
-        Conforming with :rfc:`9074`, the :attr:`ACKNOWLEDGED` property can appear
-        once in an :class:`~icalendar.cal.alarm.Alarm` component.
+        Conforming with :rfc:`9074#section-5.1`, clients should set this to the
+        current date-time in UTC when a user acknowledges a pending alarm.
 
         Example:
             Set the acknowledged time for an alarm.
@@ -179,8 +175,8 @@ class Alarm(Component):
                 >>> from icalendar import Alarm
                 >>> alarm = Alarm()
                 >>> alarm.ACKNOWLEDGED = datetime(2021, 3, 2, 15, 20, 24, tzinfo=timezone.utc)
-                >>> alarm.ACKNOWLEDGED
-                datetime.datetime(2021, 3, 2, 15, 20, 24, tzinfo=datetime.timezone.utc)
+                >>> alarm.ACKNOWLEDGED.strftime("%Y-%m-%d %H:%M:%S%z")
+                '2021-03-02 15:20:24+0000'
         """,
     )
 
