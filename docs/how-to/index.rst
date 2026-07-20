@@ -5,8 +5,8 @@ How to guides
 .. toctree::
     :maxdepth: 2
 
-    configure
     install
+    configure
     upgrade
     usage
     parse-errors
