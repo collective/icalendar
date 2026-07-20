@@ -1,6 +1,5 @@
 """Test vBinary"""
 
-
 import pytest
 
 from icalendar import vBinary

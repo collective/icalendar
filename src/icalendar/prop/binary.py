@@ -85,7 +85,12 @@ class vBinary:
         if params.get("encoding") == "BASE64":
             # BASE64 is the only allowed encoding
             del params["encoding"]
-        return [name, params, self.VALUE.lower(), binascii.b2a_base64(self.obj).decode("ascii")[:-1]]
+        return [
+            name,
+            params,
+            self.VALUE.lower(),
+            binascii.b2a_base64(self.obj).decode("ascii")[:-1],
+        ]
 
     @property
     def ical_value(self) -> bytes:
