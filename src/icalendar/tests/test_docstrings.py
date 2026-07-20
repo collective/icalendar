@@ -1,3 +1,11 @@
+"""Inspect all docstring section headings.
+``ALLOWED_HEADINGS`` is a set of allowed headings.
+It may be amended as needed.
+``KNOWN_BAD_HEADINGS`` is a set of known bad headings.
+As docstrings are fixed, their headings may be removed from this set.
+See https://github.com/collective/icalendar/issues/1481
+"""
+
 import inspect
 import re
 
@@ -23,9 +31,6 @@ ALLOWED_HEADINGS = {
     "Todo",
 }
 
-# Objects with known-bad docstring section headings.
-# As docstrings are fixed in other PRs, remove entries from this set.
-# See https://github.com/collective/icalendar/issues/1481
 KNOWN_BAD_HEADINGS = {
     "Availability",
     "Available",
@@ -84,11 +89,11 @@ def _obj_id(obj):
 @pytest.mark.parametrize("obj", get_public_objects(), ids=_obj_id)
 def test_docstring_headings_are_valid(obj):
     """
-    Identify section headings that are not one of the allowed types.
+    Identify docstring section headings that are not one of the allowed types.
     """
     if obj.__name__ in KNOWN_BAD_HEADINGS:
         pytest.xfail(
-            f"'{obj.__name__}' has known-bad docstring headings (see issue #1481)"
+            f"'{obj.__module__}.{obj.__qualname__}' has a known bad docstring heading (see issue #1481)"
         )
 
     doc = inspect.getdoc(obj)
@@ -97,7 +102,7 @@ def test_docstring_headings_are_valid(obj):
 
     # Match standard docstring headings (Word(s) followed by a colon)
     headings = re.findall(
-        r"^[ \t]*([A-Z][A-Za-z]+(?: [A-Za-z]+)*):(?=\s|$)", doc, re.MULTILINE
+        r"^ *([A-Z][A-Za-z]+(?: [A-Za-z]+)*):(?:\n|$)", doc, re.MULTILINE
     )
 
     for heading in headings:
