@@ -7,7 +7,6 @@ from typing import ClassVar
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
-from icalendar.parser_tools import to_unicode
 
 
 class vBinary:
