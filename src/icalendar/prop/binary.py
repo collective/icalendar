@@ -62,7 +62,7 @@ class vBinary:
         Raises:
             ValueError: If ``value`` isn't valid Base64.
         """
-        self.obj = to_unicode(self.from_ical(value))
+        self.obj = self.from_ical(value)
 
     def __eq__(self, other: object) -> bool:
         """self == other"""
