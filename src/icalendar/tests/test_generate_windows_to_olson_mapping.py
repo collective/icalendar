@@ -53,7 +53,8 @@ def test_generator_pins_mapping_to_latest_cldr_commit(monkeypatch):
     monkeypatch.setattr(request, "urlopen", urlopen)
     monkeypatch.setattr(Path, "open", open_output)
 
-    runpy.run_path("generate_windows_to_olson_mapping.py", run_name="__main__")
+    generator = Path(__file__).parents[3] / "generate_windows_to_olson_mapping.py"
+    runpy.run_path(str(generator), run_name="__main__")
 
     generated = output.getvalue()
     assert requested_urls == [COMMITS_URL, RAW_URL]
