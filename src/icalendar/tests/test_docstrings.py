@@ -93,7 +93,9 @@ def test_docstring_headings_are_valid(obj):
     """
     if obj.__name__ in KNOWN_BAD_HEADINGS:
         pytest.xfail(
-            f"'{obj.__module__}.{obj.__qualname__}' has a known bad docstring heading (see issue #1481)"
+            f"'{obj.__module__}.{obj.__qualname__}'\n"
+            "  Invalid docstring section heading. See:\n"
+            "  https://icalendar.readthedocs.io/en/stable/contribute/documentation/style-guide.html#docstring-structure"
         )
 
     doc = inspect.getdoc(obj)
