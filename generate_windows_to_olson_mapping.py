@@ -15,7 +15,7 @@ from pathlib import Path
 
 CLDR_PATH = "common/supplemental/windowsZones.xml"
 commits_url = (
-    f"https://api.github.com/repos/unicode-org/cldr/commits?path={CLDR_PATH}&per_page=1"
+    f"https://api.github.com/repos/unicode-org/cldr/commits?path={CLDR_PATH}&sha=main&per_page=1"
 )
 with req.urlopen(commits_url) as response:  # noqa: S310
     version = json.load(response)[0]["sha"]
