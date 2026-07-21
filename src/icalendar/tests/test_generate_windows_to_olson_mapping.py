@@ -7,7 +7,7 @@ from urllib import request
 CLDR_SHA = "0123456789abcdef0123456789abcdef01234567"
 COMMITS_URL = (
     "https://api.github.com/repos/unicode-org/cldr/commits"
-    "?path=common/supplemental/windowsZones.xml&per_page=1"
+    "?path=common/supplemental/windowsZones.xml&sha=main&per_page=1"
 )
 RAW_URL = (
     "https://raw.githubusercontent.com/unicode-org/cldr/"
