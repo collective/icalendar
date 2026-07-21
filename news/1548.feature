@@ -1,0 +1,1 @@
+Created a script to automatically generate the :mod:`~icalendar.timezone.windows_to_olson` module from the Unicode Consortium's CLDR GitHub repository. Added lxml as a new development dependency. Added the target ``wo`` to the ``Makefile`` to generate the file from the root of the repository with `make wo`. @stevepiercy
