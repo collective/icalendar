@@ -157,33 +157,33 @@ class Alarm(Component):
 
     ACKNOWLEDGED = single_utc_property(
         "ACKNOWLEDGED",
-        """This is defined in RFC 9074:
+        """The UTC date and time at which this alarm was last acknowledged.
 
-    Purpose: This property specifies the UTC date and time at which the
-    corresponding alarm was last sent or acknowledged.
+        Returns a :class:`~datetime.datetime` in UTC, or ``None`` if not set.
+        Defined in :rfc:`9074`.
 
-    This property is used to specify when an alarm was last sent or acknowledged.
-    This allows clients to determine when a pending alarm has been acknowledged
-    by a calendar user so that any alerts can be dismissed across multiple devices.
-    It also allows clients to track repeating alarms or alarms on recurring events or
-    to-dos to ensure that the right number of missed alarms can be tracked.
+        When a user dismisses an alarm, clients should set this to the
+        current UTC time. This allows other devices to see the
+        acknowledgement and skip re-triggering. For alarms that have no
+        interactive acknowledgement (e.g. email alerts), the client
+        should set this when the alarm fires and the action succeeds.
 
-    Clients SHOULD set this property to the current date-time value in UTC
-    when a calendar user acknowledges a pending alarm. Certain kinds of alarms,
-    such as email-based alerts, might not provide feedback as to when the calendar user
-    sees them. For those kinds of alarms, the client SHOULD set this property
-    when the alarm is triggered and the action is successfully carried out.
+        A client checking whether to trigger an alarm should compare
+        :attr:`ACKNOWLEDGED` against the computed trigger time: if
+        ``ACKNOWLEDGED >= trigger_time``, the alarm can be skipped.
 
-    When an alarm is triggered on a client, clients can check to see if an "ACKNOWLEDGED"
-    property is present. If it is, and the value of that property is greater than or
-    equal to the computed trigger time for the alarm, then the client SHOULD NOT trigger
-    the alarm. Similarly, if an alarm has been triggered and
-    an "alert" has been presented to a calendar user, clients can monitor
-    the iCalendar data to determine whether an "ACKNOWLEDGED" property is added or
-    changed in the alarm component. If the value of any "ACKNOWLEDGED" property
-    in the alarm changes and is greater than or equal to the trigger time of the alarm,
-    then clients SHOULD dismiss or cancel any "alert" presented to the calendar user.
-    """,
+        Example:
+            Record that an alarm was acknowledged at a specific time.
+
+            .. code-block:: pycon
+
+                >>> from datetime import datetime, timezone
+                >>> from icalendar import Alarm
+                >>> alarm = Alarm()
+                >>> alarm.ACKNOWLEDGED = datetime(2026, 7, 21, 12, 0, 0, tzinfo=timezone.utc)
+                >>> alarm.ACKNOWLEDGED is not None
+                True
+        """,
     )
 
     TRIGGER = create_single_property(
@@ -191,17 +191,39 @@ class Alarm(Component):
         "dt",
         (datetime, timedelta),
         timedelta | datetime | None,
-        """Purpose:  This property specifies when an alarm will trigger.
+        """When the alarm fires, relative to the parent component or absolute.
 
-    Value Type:  The default value type is DURATION.  The value type can
-    be set to a DATE-TIME value type, in which case the value MUST
-    specify a UTC-formatted DATE-TIME value.
+        Accepts a :class:`~datetime.timedelta` for relative triggers or a
+        :class:`~datetime.datetime` in UTC for absolute triggers.
+        Returns ``None`` when no trigger is set.
 
-    Either a positive or negative duration may be specified for the
-    "TRIGGER" property.  An alarm with a positive duration is
-    triggered after the associated start or end of the event or to-do.
-    An alarm with a negative duration is triggered before the
-    associated start or end of the event or to-do.""",
+        A *negative* timedelta fires **before** the parent event/todo
+        starts (or ends, depending on :attr:`TRIGGER_RELATED`).
+        A *positive* timedelta fires **after** it.
+
+        Conforms with :rfc:`5545#section-3.8.6.3`.
+
+        Example:
+            Set a trigger for 15 minutes before the event starts.
+
+            .. code-block:: pycon
+
+                >>> from datetime import timedelta
+                >>> from icalendar import Alarm
+                >>> alarm = Alarm()
+                >>> alarm.TRIGGER = timedelta(minutes=-15)
+                >>> alarm.TRIGGER
+                datetime.timedelta(days=-1, seconds=85500)
+
+            Set an absolute trigger in UTC.
+
+            .. code-block:: pycon
+
+                >>> from datetime import datetime, timezone
+                >>> from icalendar import Alarm
+                >>> alarm = Alarm()
+                >>> alarm.TRIGGER = datetime(2026, 7, 21, 9, 0, 0, tzinfo=timezone.utc)
+        """,
     )
 
     @property
