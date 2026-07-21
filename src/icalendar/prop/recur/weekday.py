@@ -9,8 +9,12 @@ from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
 
+# ``\d`` matches non-ASCII digits (e.g. the Arabic-Indic "١٢"), which ``int``
+# then parses below, silently turning a malformed ``ordwk`` into a valid
+# ``relative`` number. RFC 5545, section 3.3.10 allows only ASCII ``DIGIT``
+# here, so match ``[0-9]`` to stay consistent with what ``int`` accepts.
 WEEKDAY_RULE = re.compile(
-    r"(?P<signal>[+-]?)(?P<relative>[\d]{0,2})(?P<weekday>[\w]{2})\Z"
+    r"(?P<signal>[+-]?)(?P<relative>[0-9]{0,2})(?P<weekday>[\w]{2})\Z"
 )
 
 
