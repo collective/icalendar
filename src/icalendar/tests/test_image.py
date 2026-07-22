@@ -7,11 +7,39 @@ import base64
 import pytest
 
 from icalendar import Calendar, Image, vBinary, vUri
-from icalendar.prop import vText
+from icalendar.prop import vText, vUnknown
 
 TRANSPARENT_PIXEL = base64.b64decode("""iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCA
 YAAAAfFcSJAAAACXBIWXMAAAAnAAAAJwEqCZFPAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jn
 m+48GgAAAA1JREFUCJlj+P//PwMACPwC/oXNqzQAAAAASUVORK5CYII=""")
+
+
+@pytest.fixture
+def issue_1561_images(calendars):
+    """Return IMAGE properties covering the supported VALUE dispatch."""
+    calendar: Calendar = calendars.issue_1561_image_value
+    return {component.uid: component["IMAGE"] for component in calendar.subcomponents}
+
+
+def test_image_value_parameter_selects_property_type(issue_1561_images):
+    """IMAGE honors an explicit VALUE and defaults to UNKNOWN without one."""
+    assert isinstance(issue_1561_images["uri"], vUri)
+    assert isinstance(issue_1561_images["binary"], vBinary)
+    assert isinstance(issue_1561_images["text"], vText)
+    assert isinstance(issue_1561_images["unknown"], vUnknown)
+
+
+def test_image_value_types_round_trip(calendars):
+    """IMAGE value types and binary bytes survive calendar serialization."""
+    calendar: Calendar = calendars.issue_1561_image_value
+    reparsed = Calendar.from_ical(calendar.to_ical())
+    images = {component.uid: component["IMAGE"] for component in reparsed.subcomponents}
+
+    assert isinstance(images["uri"], vUri)
+    assert isinstance(images["binary"], vBinary)
+    assert images["binary"].ical_value == b"\x00\xff\x80"
+    assert isinstance(images["text"], vText)
+    assert isinstance(images["unknown"], vUnknown)
 
 
 @pytest.fixture

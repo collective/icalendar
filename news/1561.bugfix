@@ -1,0 +1,1 @@
+``IMAGE`` properties now use their explicitly declared ``VALUE`` type instead of always being parsed as unknown, while ``IMAGE`` without a ``VALUE`` parameter remains unknown. I used OpenAI Codex with GPT-5 to assist with this change. @floze-the-genius
