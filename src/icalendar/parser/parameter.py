@@ -482,6 +482,7 @@ class Parameters(CaselessDict):
                 raise JCalParsingError(
                     "All parameter names must be strings.", cls, value=name
                 )
+            JCalParsingError.validate_jcal_token(name, "parameter name", cls)
             if not (
                 (
                     isinstance(value, list)

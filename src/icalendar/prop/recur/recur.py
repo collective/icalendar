@@ -260,6 +260,9 @@ class vRecur(CaselessDict):
             )
         recur = {}
         for key, value in jcal_property[3].items():
+            JCalParsingError.validate_jcal_token(
+                key, "recurrence rule part name", cls, path=[3, key]
+            )
             value_type = cls.types.get(key, vText)
             with JCalParsingError.reraise_with_path_added(3, key):
                 if isinstance(value, list):
