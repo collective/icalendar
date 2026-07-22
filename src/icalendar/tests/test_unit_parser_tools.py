@@ -16,6 +16,9 @@ class TestParserTools(unittest.TestCase):
 
     def test_parser_tools_from_unicode(self):
         assert from_unicode("Ƶ", encoding="ascii") == b"\xc6\xb5"
+        assert from_unicode(b"spam") == b"spam"
+        assert from_unicode(1) == 1
+        assert from_unicode(None) is None
 
     def test_parser_tools_data_encode(self):
         data1 = {
