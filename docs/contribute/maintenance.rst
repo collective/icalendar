@@ -96,6 +96,14 @@ Adjust the examples for the current release as needed.
 Since collaborators and maintainers have write access to the repository, they can start the release process.
 However, only people with ``Environments/Configure PyPI`` access can approve an automated release to PyPI.
 
+#.  Update the Windows to Olson mapping in the :mod:`~icalendar.timezone.windows_to_olson` module.
+
+    ..  code-block:: shell
+
+        make wo
+
+    If there are any changes to the module, then open a pull request and merge it.
+
 #.  Set an environment variable to use in subsequent commands during the release process.
 
     .. code-block:: shell

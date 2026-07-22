@@ -6,62 +6,40 @@ import base64
 
 import pytest
 
-from icalendar import Calendar, Component, Image, vBinary, vUnknown, vUri
-from icalendar.prop import TypesFactory, vText
+from icalendar import Calendar, Image, vBinary, vUri
+from icalendar.prop import vText, vUnknown
 
 TRANSPARENT_PIXEL = base64.b64decode("""iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCA
 YAAAAfFcSJAAAACXBIWXMAAAAnAAAAJwEqCZFPAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jn
 m+48GgAAAA1JREFUCJlj+P//PwMACPwC/oXNqzQAAAAASUVORK5CYII=""")
 
 
-@pytest.mark.parametrize(
-    ("value", "expected_type"),
-    [
-        ("URI", vUri),
-        ("BINARY", vBinary),
-        (None, vUnknown),
-        ("TEXT", vUnknown),
-    ],
-)
-def test_image_value_type(value, expected_type):
-    """IMAGE uses explicit RFC 7986 value types and otherwise stays unknown."""
-    assert TypesFactory().for_property("IMAGE", value) is expected_type
+@pytest.fixture
+def issue_1561_images(calendars):
+    """Return IMAGE properties covering the supported VALUE dispatch."""
+    calendar: Calendar = calendars.issue_1561_image_value
+    return {component.uid: component["IMAGE"] for component in calendar.subcomponents}
 
 
-def test_image_binary_round_trip_preserves_bytes():
-    """IMAGE binary data is not corrupted while parsing and serializing."""
-    data = bytes(range(256))
-    encoded = base64.b64encode(data).decode("ascii")
-    ics = (
-        "BEGIN:VEVENT\r\n"
-        "UID:1\r\n"
-        f"IMAGE;ENCODING=BASE64;VALUE=BINARY:{encoded}\r\n"
-        "END:VEVENT\r\n"
-    )
-
-    event = Component.from_ical(ics)
-    image = event["IMAGE"]
-
-    assert isinstance(image, vBinary)
-    assert image.ical_value == data
-    reparsed = Component.from_ical(event.to_ical())
-    assert isinstance(reparsed["IMAGE"], vBinary)
-    assert reparsed["IMAGE"].ical_value == data
+def test_image_value_parameter_selects_property_type(issue_1561_images):
+    """IMAGE honors an explicit VALUE and defaults to UNKNOWN without one."""
+    assert isinstance(issue_1561_images["uri"], vUri)
+    assert isinstance(issue_1561_images["binary"], vBinary)
+    assert isinstance(issue_1561_images["text"], vText)
+    assert isinstance(issue_1561_images["unknown"], vUnknown)
 
 
-def test_image_uri_and_unknown_values():
-    """IMAGE only defaults to unknown when VALUE is omitted."""
-    event = Component.from_ical(
-        "BEGIN:VEVENT\r\n"
-        "UID:1\r\n"
-        "IMAGE;VALUE=URI:https://example.com/a.png\r\n"
-        "IMAGE:https://example.com/b.png\r\n"
-        "END:VEVENT\r\n"
-    )
+def test_image_value_types_round_trip(calendars):
+    """IMAGE value types and binary bytes survive calendar serialization."""
+    calendar: Calendar = calendars.issue_1561_image_value
+    reparsed = Calendar.from_ical(calendar.to_ical())
+    images = {component.uid: component["IMAGE"] for component in reparsed.subcomponents}
 
-    uri, unknown = event["IMAGE"]
-    assert isinstance(uri, vUri)
-    assert isinstance(unknown, vUnknown)
+    assert isinstance(images["uri"], vUri)
+    assert isinstance(images["binary"], vBinary)
+    assert images["binary"].ical_value == b"\x00\xff\x80"
+    assert isinstance(images["text"], vText)
+    assert isinstance(images["unknown"], vUnknown)
 
 
 @pytest.fixture
@@ -174,9 +152,7 @@ def test_create_image_invalid_params():
 
 def test_create_with_vBinary():
     """Test creating an Image from a vBinary property."""
-    b64data = base64.b64encode(TRANSPARENT_PIXEL).decode("ascii")
-    vbin = vBinary(b"", params={"FMTTYPE": "image/png"})
-    vbin.base64data = b64data
+    vbin = vBinary(TRANSPARENT_PIXEL, params={"FMTTYPE": "image/png"})
     image = Image.from_property_value(vbin)
     assert image.uri is None
     assert image.data == TRANSPARENT_PIXEL
@@ -198,7 +174,7 @@ def test_create_with_vUri():
 
 
 def test_create_image_with_vText_as_uri():
-    """Test that creating an image with vText but VALUE URI or BINARY raises TypeError."""
+    """Test that creating an image with vText and VALUE=URI works."""
     img = Image.from_property_value(
         vText("http://example.com/image.png", params={"VALUE": "URI"})
     )
@@ -210,7 +186,7 @@ def test_create_image_with_vText_as_uri():
 
 
 def test_create_image_with_vText_as_binary():
-    """Test that creating an image with vText but VALUE URI or BINARY raises TypeError."""
+    """Test that creating an image with vText and VALUE=BINARY works."""
     b64data = base64.b64encode(TRANSPARENT_PIXEL).decode("ascii")
     img = Image.from_property_value(vText(b64data, params={"VALUE": "BINARY"}))
     assert img.uri is None
