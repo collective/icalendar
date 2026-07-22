@@ -1,5 +1,7 @@
 """Test vBinary"""
 
+import base64
+
 import pytest
 
 from icalendar import vBinary
@@ -165,3 +167,16 @@ def test_base64data_setter_rejects_non_str():
     obj = vBinary(b"unchanged")
     with pytest.raises(TypeError):
         obj.base64data = 12345
+
+
+def test_base64data_setter_stores_raw_bytes():
+    """The setter writes the decoded bytes to .bytes, so non-UTF-8 data round-trips.
+
+    See PR #1356.
+    """
+    raw = bytes(range(256))
+    encoded = base64.b64encode(raw).decode("ascii")
+    obj = vBinary(b"")
+    obj.base64data = encoded
+    assert obj.bytes == raw
+    assert obj.base64data == encoded
