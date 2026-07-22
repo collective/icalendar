@@ -45,6 +45,34 @@ class vBinary:
             raise ValueError("Not valid base 64 encoding.") from e
 
     @property
+    def base64data(self) -> str:
+        """The Base64-encoded string view of this value.
+
+        This is the same string that :meth:`to_ical` produces, exposed as
+        a plain :class:`str` instead of :class:`bytes` so you don't need to
+        call :func:`base64.b64encode` yourself. See :issue:`1550`.
+
+        Returns:
+            The Base64-encoded representation of the stored value.
+        """
+        return self.to_ical().decode("ascii")
+
+    @base64data.setter
+    def base64data(self, value: str) -> None:
+        """Set this value from a Base64-encoded string.
+
+        The decoded raw bytes are stored in :attr:`bytes`, so non-UTF-8
+        payloads round-trip losslessly.
+
+        Parameters:
+            value: A Base64-encoded string.
+
+        Raises:
+            ValueError: If ``value`` isn't valid Base64.
+        """
+        self.bytes = self.from_ical(value)
+
+    @property
     @deprecate_for_version_8
     def obj(self) -> str:
         """Deprecated string view of the value.
@@ -82,12 +110,7 @@ class vBinary:
         if params.get("encoding") == "BASE64":
             # BASE64 is the only allowed encoding
             del params["encoding"]
-        return [
-            name,
-            params,
-            self.VALUE.lower(),
-            base64.b64encode(self.bytes).decode("ascii"),
-        ]
+        return [name, params, self.VALUE.lower(), self.base64data]
 
     @property
     def ical_value(self) -> bytes:

@@ -1,5 +1,7 @@
 """Test the enums for values."""
 
+import pickle
+
 import pytest
 
 import icalendar
@@ -33,3 +35,10 @@ def test_all_enums_are_public(enum_name):
 def test_enum_has_description(enum):
     """We should have a docstring."""
     assert "Description:" in enum.__doc__
+
+
+def test_enum_can_be_pickled():
+    """Enum members retain their identity after a pickle round trip."""
+    related = enums.RELATED.START
+
+    assert pickle.loads(pickle.dumps(related)) is related  # noqa: S301

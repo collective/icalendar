@@ -356,6 +356,10 @@ directory = "chore"
 name = "Other tasks"
 showcontent = false
 
+[[tool.towncrier.type]]
+directory = "security"
+name = "Security fixes"
+showcontent = true
 
 [tool.uv]
 python-preference = "managed"
