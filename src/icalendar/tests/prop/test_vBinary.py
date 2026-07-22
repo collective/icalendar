@@ -180,3 +180,15 @@ def test_base64data_setter_stores_raw_bytes():
     obj.base64data = encoded
     assert obj.bytes == raw
     assert obj.base64data == encoded
+
+
+def test_attach_example_preserves_binary_data(calendars):
+    """The example calendar's PNG attachment round-trips without corruption.
+
+    Regression test for the corruption fixed in #1356. See #1549.
+    """
+    calendar = calendars.issue_1549_binary_attachment
+    event = calendar.subcomponents[0]
+    attach = event["ATTACH"]
+
+    assert attach.bytes[:6] == b"\x89PNG\r\n"
