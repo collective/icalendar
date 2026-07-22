@@ -234,6 +234,10 @@ Change log types
 ``bugfix``
     For bug fixes and error corrections.
 
+``security``
+    For security fixes.
+    These must go through the `security report protocol <https://github.com/collective/icalendar/blob/main/SECURITY.md>`_.
+
 ``documentation``
     For changes to the documentation, docstrings, spelling dictionary, or any other documentation matter.
 

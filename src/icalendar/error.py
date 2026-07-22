@@ -98,7 +98,15 @@ class FeatureWillBeRemovedInFutureVersion(DeprecationWarning):
 
 
 def _repr_index(index: str | int) -> str:
-    """Create a JSON compatible representation for the index."""
+    """Create a JSON compatible representation for the index.
+
+    Parameters:
+        index: It is either a dict key (string) or a list position (integer).
+
+    Returns:
+        The index as a quoted string if it's a string, else the string
+        representation if it's an integer.
+    """
     if isinstance(index, str):
         return f'"{index}"'
     return str(index)
@@ -116,7 +124,14 @@ class JCalParsingError(InvalidCalendar):
         path: list[str | int] | None | str | int = None,
         value: object = _default_value,
     ) -> None:
-        """Create a new JCalParsingError."""
+        """Create a new JCalParsingError.
+
+        Parameters:
+            message: A description of the error that occurred while parsing.
+            parser: The parser class or its name where the error occurred.
+            path: The location in the jCal structure where the error occurred.
+            value: The value which caused the error, if available.
+        """
         self.path = self._get_path(path)
         if not isinstance(parser, str):
             parser = parser.__name__
@@ -173,6 +188,13 @@ class JCalParsingError(InvalidCalendar):
         path: list[str | int] | None | str | int = None,
     ) -> None:
         """Validate a jCal property.
+
+        Parameters:
+            jcal_property: A list with at least four items (name,
+                parameters, value type, and value) which is the jCal property
+                to be validated.
+            parser: The parser class or its name where the error occurred.
+            path: The location in the jCal structure where the error occurred.
 
         Raises:
             ~error.JCalParsingError: if the property is not valid.
