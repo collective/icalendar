@@ -37,7 +37,8 @@ def _escape_char(text: str | bytes) -> str:
         not part of :rfc:`5545`, which only defines ``\n`` or ``\N`` for an
         intentional line break, and doesn't give an escape form for a lone ``\r``.
     """
-    assert isinstance(text, (str, bytes))
+    if not isinstance(text, (str, bytes)):
+        raise TypeError("text must be str or bytes")
     text = to_unicode(text)
     # NOTE: ORDER MATTERS!
     return (
@@ -83,7 +84,8 @@ def _unescape_char(text: str | bytes) -> str | bytes | None:
         5. ``\;`` -> ``;`` (unescape semicolons)
         6. ``\\`` -> ``\`` (unescape backslashes last)
     """
-    assert isinstance(text, (str, bytes))
+    if not isinstance(text, (str, bytes)):
+        raise TypeError("text must be str or bytes")
     # NOTE: ORDER MATTERS!
     if isinstance(text, str):
         return (
@@ -126,8 +128,10 @@ def _foldline(line: str, limit: int = 75, fold_sep: str = "\r\n ") -> str:
     immediately followed by a single linear white-space character (i.e.,
     SPACE or HTAB).
     """
-    assert isinstance(line, str)
-    assert "\n" not in line
+    if not isinstance(line, str):
+        raise TypeError("line must be str")
+    if "\n" in line:
+        raise ValueError("line can not contain unescaped new line characters.")
 
     folded_lines: list[str] = []
     current_chars: list[str] = []
