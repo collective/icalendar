@@ -215,7 +215,7 @@ class Alarm(Component):
         the alarm to trigger off the end of the associated event or to-do.
 
         In this example, we create an alarm that triggers two hours after the
-        end of its parent component:
+        end of its parent component.
 
         >>> from icalendar import Alarm
         >>> from datetime import timedelta
@@ -259,7 +259,7 @@ class Alarm(Component):
         This takes the TRIGGER, DURATION and REPEAT properties into account.
 
         Here, we create an alarm that triggers 3 times before the start of the
-        parent component:
+        parent component.
 
         >>> from icalendar import Alarm
         >>> from datetime import timedelta
