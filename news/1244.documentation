@@ -1,0 +1,1 @@
+Rewrote the RFC-copy-paste docstring of :class:`~icalendar.prop.uri.vUri` as a Pythonic docstring with a summary, description, and doctest-verified example, matching the style already used by :class:`~icalendar.prop.boolean.vBoolean` and other converted value types. I used AI (Claude) to assist me with this change; I reviewed and tested it myself. @YOUR-GITHUB-USERNAME
