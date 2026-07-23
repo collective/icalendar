@@ -9,35 +9,15 @@ from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
 
 
 class vUri(str):
-    """URI
+    """A value that identifies a resource with a URI, per :rfc:`5545#section-3.3.13`.
 
-    Value Name:
-        URI
+    This value type is used to reference values that are large, binary, or
+    otherwise undesirable to include directly in the iCalendar object, such
+    as a network file. Property values with this value type must follow the
+    generic URI syntax defined in :rfc:`3986`. When a property *parameter*
+    value is a URI, it must be specified as a quoted-string value.
 
-    Purpose:
-        This value type is used to identify values that contain a
-        uniform resource identifier (URI) type of reference to the
-        property value.
-
-    Format Definition:
-        This value type is defined by the following notation:
-
-        .. code-block:: text
-
-            uri = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
-
-    Description:
-        This value type might be used to reference binary
-        information, for values that are large, or otherwise undesirable
-        to include directly in the iCalendar object.
-
-        Property values with this value type MUST follow the generic URI
-        syntax defined in [RFC3986].
-
-        When a property parameter value is a URI value type, the URI MUST
-        be specified as a quoted-string value.
-
-    Examples:
+    Example:
         The following is a URI for a network file:
 
         .. code-block:: ics
