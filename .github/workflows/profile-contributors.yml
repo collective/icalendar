@@ -1,5 +1,7 @@
 # Run gh-profiler against the author of each new issue and PR.
+# Skip profiling for contributors who already have many merged PRs.
 # See https://github.com/ehmatthes/gh-profiler
+# See https://github.com/collective/icalendar/issues/1580
 
 name: Profile contributors
 
@@ -19,11 +21,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff  # v6
-
-      - name: Install gh-profiler
-        run: uv tool install gh-profiler==0.8.3
-
       - name: Determine target login and issue number
         id: meta
         run: |
@@ -36,7 +33,36 @@ jobs:
             echo "number=${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Check if contributor already has many merged PRs
+        id: check_contributor
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          login="${{ steps.meta.outputs.login }}"
+          # Number of merged PRs required to skip the profile summary.
+          threshold=3
+          # Count merged PRs by this user in this repository.
+          merged_count=$(gh api \
+            "search/issues?q=repo:${{ github.repository }}+type:pr+is:merged+author:${login}" \
+            --jq '.total_count' 2>/dev/null || echo "0")
+          echo "User '$login' has $merged_count merged PR(s) in this repository (threshold: $threshold)"
+          if [ "$merged_count" -ge "$threshold" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Skipping profile: contributor has $merged_count merged PRs (>= $threshold)"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff  # v6
+        if: steps.check_contributor.outputs.skip != 'true'
+
+      - name: Install gh-profiler
+        if: steps.check_contributor.outputs.skip != 'true'
+        run: uv tool install gh-profiler==0.8.3
+
       - name: Run gh-profiler
+        if: steps.check_contributor.outputs.skip != 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -45,6 +71,7 @@ jobs:
           gh-profiler "${{ steps.meta.outputs.login }}" > full.txt
 
       - name: Comment on issue or PR
+        if: steps.check_contributor.outputs.skip != 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
