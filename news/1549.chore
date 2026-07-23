@@ -1,0 +1,4 @@
+Added an example calendar with a binary PNG attachment and a regression
+test confirming it round-trips losslessly through `Calendar.from_ical()`,
+per #1549. Prepared with the assistance of Claude (via the Claude Code
+VS Code extension). @adityaanikam
