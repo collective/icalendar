@@ -92,7 +92,9 @@ class vInt(int):
     params: Parameters
 
     min: ClassVar[int] = -2_147_483_648
+    """min: The minimum valid value per :rfc:`5545#section-3.3.8` (``-2147483648``)."""
     max: ClassVar[int] = 2_147_483_647
+    """max: The maximum valid value per :rfc:`5545#section-3.3.8` (``2147483647``)."""
 
     def __new__(cls, *args, params: dict[str, Any] | None = None, **kwargs):
         self = super().__new__(cls, *args, **kwargs)
