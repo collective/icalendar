@@ -119,7 +119,11 @@ class Alarm(Component):
                 >>> alarm.REPEAT = 2
                 >>> alarm.REPEAT
                 2
+
+        Raises:
+            ValueError: When set to a value smaller than ``0``.
         """,
+        min_value=0,
     )
 
     DURATION = property(
@@ -369,7 +373,7 @@ class Alarm(Component):
                     "DURATION and REPEAT must be set together or not at all"
                 )
             self.DURATION = duration
-            self.REPEAT = repeat
+            self.repeat = repeat
 
     @classmethod
     def new_display(
@@ -414,6 +418,7 @@ class Alarm(Component):
         Raises:
             ~icalendar.error.InvalidCalendar: If required fields are missing
                 or ``duration`` and ``repeat`` are not both provided together.
+            ValueError: If ``repeat`` is negative.
 
         Example:
             Create a display alarm that fires 15 minutes before the event:
@@ -514,6 +519,7 @@ class Alarm(Component):
         Raises:
             ~icalendar.error.InvalidCalendar: If required fields are missing
                 or ``duration`` and ``repeat`` are not both provided together.
+            ValueError: If ``repeat`` is negative.
 
         Example:
             Create an audio alarm using a custom sound file:
@@ -606,6 +612,7 @@ class Alarm(Component):
             ~icalendar.error.InvalidCalendar: If required fields are missing,
                 ``attendees`` is empty, or ``duration`` and ``repeat`` are not
                 both provided together.
+            ValueError: If ``repeat`` is negative.
 
         Example:
             Create an email alarm sent to two recipients:

@@ -1,0 +1,1 @@
+Validate the ``REPEAT`` property of :class:`~icalendar.cal.alarm.Alarm` when setting it: negative values now raise a :class:`ValueError`. :func:`icalendar.attr.single_int_property` accepts a new ``min_value`` argument for this. AI disclosure: I used Devin (Cognition) to draft this change and its tests; I reviewed and validated the result. @pratyushsinghal7

@@ -403,13 +403,20 @@ def multi_language_text_property(
     return property(fget, fset, fdel, doc)
 
 
-def single_int_property(prop: str, default: int, doc: str) -> property:
+def single_int_property(
+    prop: str, default: int, doc: str, min_value: int | None = None
+) -> property:
     """Create a property for an int value that exists only once.
 
     Parameters:
         prop: The name of the property
         default: The default value
         doc: The documentation string
+        min_value: The smallest value the property accepts when set.
+            ``None`` disables the check.
+
+    Raises:
+        ValueError: When setting a value smaller than ``min_value``.
     """
 
     def fget(self: Component) -> int:
@@ -421,6 +428,8 @@ def single_int_property(prop: str, default: int, doc: str) -> property:
 
     def fset(self: Component, value: int | None):
         """Set the property."""
+        if value is not None and min_value is not None and int(value) < min_value:
+            raise ValueError(f"{prop} must be an int >= {min_value}, not {value}")
         fdel(self)
         if value is not None:
             self.add(prop, value)
@@ -1294,7 +1303,9 @@ initial trigger.
 Defaults to ``0``, meaning the alarm fires once. Must be paired with
 :attr:`~icalendar.cal.alarm.Alarm.DURATION`. Conforms with :rfc:`5545#section-3.8.6.2`.
 The value is capped at :data:`icalendar.config.MAX_ALARM_REPEAT` on read.
+Setting a negative value raises a :class:`ValueError`.
 """,
+        min_value=0,
     )
 
     def fget(self):

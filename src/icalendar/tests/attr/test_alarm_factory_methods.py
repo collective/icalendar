@@ -92,6 +92,55 @@ def test_repeat_without_duration_raises(alarm_fn):
         alarm_fn()
 
 
+@pytest.mark.parametrize(
+    "alarm_fn",
+    [
+        lambda: Alarm.new_display(
+            "desc", timedelta(minutes=-5), duration=timedelta(minutes=1), repeat=-1
+        ),
+        lambda: Alarm.new_audio(
+            timedelta(minutes=-5), duration=timedelta(minutes=1), repeat=-1
+        ),
+        lambda: Alarm.new_email(
+            "S",
+            "D",
+            timedelta(minutes=-30),
+            vCalAddress("mailto:a@example.com"),
+            duration=timedelta(minutes=5),
+            repeat=-1,
+        ),
+    ],
+    ids=["display", "audio", "email"],
+)
+def test_negative_repeat_raises(alarm_fn):
+    with pytest.raises(ValueError, match="REPEAT must be an int >= 0"):
+        alarm_fn()
+
+
+@pytest.mark.parametrize(
+    "alarm_fn",
+    [
+        lambda: Alarm.new_display(
+            "desc", timedelta(minutes=-5), duration=timedelta(minutes=1), repeat=0
+        ),
+        lambda: Alarm.new_audio(
+            timedelta(minutes=-5), duration=timedelta(minutes=1), repeat=0
+        ),
+        lambda: Alarm.new_email(
+            "S",
+            "D",
+            timedelta(minutes=-30),
+            vCalAddress("mailto:a@example.com"),
+            duration=timedelta(minutes=5),
+            repeat=0,
+        ),
+    ],
+    ids=["display", "audio", "email"],
+)
+def test_zero_repeat_is_valid(alarm_fn):
+    assert alarm_fn().REPEAT == 0
+
+
 def test_new_audio_sets_action():
     alarm = Alarm.new_audio(timedelta(minutes=-5))
     assert alarm["ACTION"] == "AUDIO"
