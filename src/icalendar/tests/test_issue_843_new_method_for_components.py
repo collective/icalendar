@@ -1090,3 +1090,67 @@ def test_modify_empty_attendees_2():
     e.attendees = attendees
     attendees.append(attendee1)
     assert e.attendees == [attendee1] == attendees
+
+
+attendee_string_plain = "first@example.com"
+attendee_string_prefixed = "mailto:second@example.net"
+
+
+def assert_attendee_is_normalized_vcaladdress(attendee, expected: str):
+    """Check that the attendee is a vCalAddress with the exact expected value.
+
+    We cannot rely on == alone because vCalAddress subclasses str.
+    """
+    assert isinstance(attendee, vCalAddress)
+    assert str(attendee) == expected
+
+
+@pytest.mark.parametrize("component", COMPONENTS_ATTENDEES)
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        (attendee_string_plain, "mailto:first@example.com"),
+        (attendee_string_prefixed, "mailto:second@example.net"),
+    ],
+)
+def test_set_attendees_normalizes_string(component, value, expected):
+    """Setting attendees with a plain string normalizes it to a vCalAddress."""
+    c = component()
+    c.attendees = value
+    assert len(c.attendees) == 1
+    assert_attendee_is_normalized_vcaladdress(c.attendees[0], expected)
+    assert f"ATTENDEE:{expected}".encode() in c.to_ical().splitlines()
+
+
+@pytest.mark.parametrize("component", COMPONENTS_ATTENDEES)
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        (attendee_string_plain, "mailto:first@example.com"),
+        (attendee_string_prefixed, "mailto:second@example.net"),
+    ],
+)
+def test_new_with_attendees_normalizes_string(
+    component, value, expected, dont_validate_new
+):
+    """Creating with new() and a plain string attendee normalizes it to a vCalAddress."""
+    c = component.new(attendees=value)
+    assert len(c.attendees) == 1
+    assert_attendee_is_normalized_vcaladdress(c.attendees[0], expected)
+    assert f"ATTENDEE:{expected}".encode() in c.to_ical().splitlines()
+
+
+def test_mixed_attendees_normalizes_only_the_string_slot():
+    """A list mixing a plain string and an existing vCalAddress normalizes only the string."""
+    existing = vCalAddress("mailto:existing@example.com")
+    existing.params["CN"] = "Existing User"
+    attendees = [attendee_string_plain, existing]
+    e = Event()
+    e.attendees = attendees
+
+    assert e.attendees is attendees
+    assert e.attendees[1] is existing
+    assert e.attendees[1].params["CN"] == "Existing User"
+    assert_attendee_is_normalized_vcaladdress(
+        e.attendees[0], "mailto:first@example.com"
+    )
