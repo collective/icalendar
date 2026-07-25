@@ -12,16 +12,33 @@ Attendees are present inside of events, alarms, and other calendar components, a
 Add attendees to an event
 -------------------------
 
-To add attendees to an event in icalendar, import the required classes.
+Assign an email string or a list of email strings directly to an event.
+Both plain email addresses and addresses that already start with ``mailto:`` are accepted.
+They are automatically converted to :class:`~icalendar.prop.cal_address.vCalAddress` objects.
 
 .. code-block:: pycon
 
-    >>> from icalendar import Event, vCalAddress, CUTYPE, ROLE, PARTSTAT
+    >>> from icalendar import Event
+    >>> event = Event.new()
+    >>> event.attendees = [
+    ...     "emily.smith@example.com",
+    ...     "mailto:alex@example.com",
+    ... ]
+    >>> event.attendees
+    [vCalAddress('mailto:emily.smith@example.com'), vCalAddress('mailto:alex@example.com')]
 
-Then create the attendee object and set its parameters.
+You can also pass attendee strings while creating the event.
 
 .. code-block:: pycon
 
+    >>> event = Event.new(attendees="emily.smith@example.com")
+
+When an attendee needs parameters such as ``CN``, ``ROLE``, or ``RSVP``, create
+it with :meth:`vCalAddress.new <icalendar.prop.cal_address.vCalAddress.new>`.
+
+.. code-block:: pycon
+
+    >>> from icalendar import vCalAddress, CUTYPE, ROLE, PARTSTAT
     >>> attendee = vCalAddress.new(
     ...     "emily.smith@example.com",  # email address
     ...     cn="Emily Smith",           # common name
@@ -36,11 +53,10 @@ Then create the attendee object and set its parameters.
     Apart from the email, all parameters are optional.
     Use the enumerations defined in :mod:`icalendar.enums` to ensure valid values.
 
-Finally, add the attendee to the event.
+Then add the attendee to the event.
 
 .. code-block:: pycon
 
-    >>> event = Event.new()
     >>> event.attendees = [attendee]    # set the attribute
 
 The resulting event looks like this:

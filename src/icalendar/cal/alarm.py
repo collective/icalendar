@@ -6,6 +6,7 @@ from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, NamedTuple
 
 from icalendar.attr import (
+    ATTENDEE_TYPE_SETTER,
     CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
@@ -351,7 +352,7 @@ class Alarm(Component):
     def new(
         cls,
         /,
-        attendees: list[vCalAddress] | None = None,
+        attendees: ATTENDEE_TYPE_SETTER = None,
         concepts: CONCEPTS_TYPE_SETTER = None,
         description: str | None = None,
         links: LINKS_TYPE_SETTER = None,
@@ -594,7 +595,7 @@ class Alarm(Component):
         summary: str,
         description: str,
         trigger: timedelta | datetime,
-        attendees: Sequence[vCalAddress] | vCalAddress,
+        attendees: Sequence[vCalAddress | str] | vCalAddress | str,
         attachments: Sequence[str] | str | None = None,
         duration: timedelta | None = None,
         repeat: int | None = None,
@@ -612,7 +613,7 @@ class Alarm(Component):
         Conforms to :rfc:`5545#section-3.6.6`.
 
         Parameters:
-            attendees: Required. One or more recipient addresses as
+            attendees: Required. One or more recipient addresses as email strings or
                 :class:`~icalendar.prop.cal_address.vCalAddress` instances. A
                 single address or a sequence of addresses. At least one is
                 required.
