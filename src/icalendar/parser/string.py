@@ -129,27 +129,31 @@ def _foldline(line: str, limit: int = 75, fold_sep: str = "\r\n ") -> str:
     assert isinstance(line, str)
     assert "\n" not in line
 
-    # Use a fast and simple variant for the common case that line is all ASCII.
-    try:
-        line.encode("ascii")
-    except (UnicodeEncodeError, UnicodeDecodeError):
-        pass
-    else:
-        return fold_sep.join(
-            line[i : i + limit - 1] for i in range(0, len(line), limit - 1)
-        )
-
-    ret_chars: list[str] = []
+    folded_lines: list[str] = []
+    current_chars: list[str] = []
     byte_count = 0
     for char in line:
         char_byte_len = len(char.encode(DEFAULT_ENCODING))
+        if current_chars and byte_count + char_byte_len >= limit:
+            # For compatibility with existing clients, avoid splitting escaped
+            # values such as TEXT backslash escapes or RFC 6868 parameter
+            # escapes across a folded line boundary. See issue #1501.
+            if len(current_chars) > 1 and current_chars[-1] in r"\^":
+                escaped_prefix = current_chars.pop()
+                folded_lines.append("".join(current_chars))
+                current_chars = [escaped_prefix]
+                byte_count = len(escaped_prefix.encode(DEFAULT_ENCODING))
+            else:
+                folded_lines.append("".join(current_chars))
+                current_chars = []
+                byte_count = 0
+        current_chars.append(char)
         byte_count += char_byte_len
-        if byte_count >= limit:
-            ret_chars.append(fold_sep)
-            byte_count = char_byte_len
-        ret_chars.append(char)
 
-    return "".join(ret_chars)
+    if current_chars:
+        folded_lines.append("".join(current_chars))
+
+    return fold_sep.join(folded_lines)
 
 
 foldline = deprecate_for_version_8(_foldline)

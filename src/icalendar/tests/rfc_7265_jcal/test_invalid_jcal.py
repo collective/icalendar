@@ -31,6 +31,12 @@ def test_jcal_parsing_error_is_invalid_calendar():
     assert issubclass(JCalParsingError, InvalidCalendar)
 
 
+def test_validate_list_type_rejects_non_list():
+    """List validation reports the container type before checking its items."""
+    with pytest.raises(JCalParsingError, match=r"The value must be a list\."):
+        JCalParsingError.validate_list_type("not-a-list", str, "test")
+
+
 @pytest.fixture(params=[[], {}, None, 1, 1.3])
 def str_expected(request):
     """Return everything else"""

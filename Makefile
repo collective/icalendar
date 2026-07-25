@@ -164,6 +164,11 @@ rtd-pr-preview: rtd-prepare .venv ## Build pull request preview on Read the Docs
 # /deployment
 
 # release
+.PHONY: wo
+wo: .venv
+	@uv run generate_windows_to_olson_mapping.py
+	$(RUFFPATH) format
+
 .PHONY: changes-check
 changes-check: dev
 	$(TOWNCRIERPATH) check

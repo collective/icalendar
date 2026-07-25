@@ -5,6 +5,7 @@ from datetime import datetime
 import pytest
 
 from icalendar import vDatetime
+from icalendar.timezone import tzids_from_tzinfo
 from icalendar.timezone.windows_to_olson import WINDOWS_TO_OLSON
 
 
@@ -27,4 +28,4 @@ def test_mountain_standard_time_mexico(tzp):
 @pytest.mark.parametrize("olson_id", WINDOWS_TO_OLSON.values())
 def test_olson_names(tzp, olson_id):
     """test if all mappings actually map to valid tzids"""
-    assert tzp.timezone(olson_id) is not None
+    assert olson_id in tzids_from_tzinfo(tzp.timezone(olson_id))
