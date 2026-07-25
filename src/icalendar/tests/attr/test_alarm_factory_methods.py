@@ -249,3 +249,27 @@ def test_new_email_single_attachment():
     )
     assert "ATTACH" in alarm
     assert str(alarm["ATTACH"]) == "https://example.com/file.pdf"
+
+
+def test_new_email_singleton_string_attendee_normalizes():
+    """A singleton plain string attendee should normalize to a vCalAddress."""
+    alarm = Alarm.new_email(
+        summary="S",
+        description="D",
+        trigger=timedelta(minutes=-30),
+        attendees="first@example.com",
+    )
+    assert isinstance(alarm.attendees[0], vCalAddress)
+    assert str(alarm.attendees[0]) == "mailto:first@example.com"
+
+
+def test_new_email_list_with_prefixed_string_attendee_normalizes():
+    """A list containing an already-prefixed string attendee normalizes to a vCalAddress."""
+    alarm = Alarm.new_email(
+        summary="S",
+        description="D",
+        trigger=timedelta(minutes=-30),
+        attendees=["mailto:second@example.net"],
+    )
+    assert isinstance(alarm.attendees[0], vCalAddress)
+    assert str(alarm.attendees[0]) == "mailto:second@example.net"
