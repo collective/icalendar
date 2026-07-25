@@ -9,10 +9,6 @@ from icalendar.error import InvalidCalendar
 from icalendar.prop import vCalAddress
 from icalendar.prop.binary import vBinary
 
-# ---------------------------------------------------------------------------
-# new_display
-# ---------------------------------------------------------------------------
-
 
 def test_new_display_sets_action():
     alarm = Alarm.new_display("Reminder", timedelta(minutes=-15))
@@ -96,11 +92,6 @@ def test_repeat_without_duration_raises(alarm_fn):
         alarm_fn()
 
 
-# ---------------------------------------------------------------------------
-# new_audio
-# ---------------------------------------------------------------------------
-
-
 def test_new_audio_sets_action():
     alarm = Alarm.new_audio(timedelta(minutes=-5))
     assert alarm["ACTION"] == "AUDIO"
@@ -146,11 +137,6 @@ def test_new_audio_with_bytes_attach():
     alarm = Alarm.new_audio(timedelta(minutes=-5), attach=data)
     assert isinstance(alarm["ATTACH"], vBinary)
     assert alarm["ATTACH"] == vBinary(data)
-
-
-# ---------------------------------------------------------------------------
-# new_email
-# ---------------------------------------------------------------------------
 
 
 def test_new_email_sets_action():
