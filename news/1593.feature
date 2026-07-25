@@ -1,0 +1,1 @@
+Allowed attendee properties to accept plain and ``mailto:``-prefixed email strings, which are converted to :class:`~icalendar.prop.cal_address.vCalAddress` objects automatically. I used OpenAI Codex with GPT-5 to help implement, document, and verify this change. @SyedIshmumAhnaf
