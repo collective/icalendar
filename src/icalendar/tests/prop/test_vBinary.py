@@ -189,7 +189,7 @@ def test_attach_example_preserves_binary_data(calendars):
     """
     calendar = calendars.issue_1549_binary_attachment
     (event,) = calendar.events
-    data = event["ATTACH"].bytes
+    data = event.decoded("ATTACH")
 
     # the whole payload survives, not just the leading magic number
     assert data[:8] == b"\x89PNG\r\n\x1a\n"
@@ -207,4 +207,4 @@ def test_attach_example_survives_reserialization(calendars):
 
     (original,) = calendar.events
     (roundtripped,) = reparsed.events
-    assert roundtripped["ATTACH"].bytes == original["ATTACH"].bytes
+    assert roundtripped.decoded("ATTACH") == original.decoded("ATTACH")
