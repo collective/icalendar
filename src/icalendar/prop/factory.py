@@ -178,6 +178,7 @@ class TypesFactory(CaselessDict):
             "repeat": "integer",
             "trigger": "duration",
             "acknowledged": "date-time",
+            "proximity": "text",  # RFC 9074
             # Change Management Component Properties
             "created": "date-time",
             "dtstamp": "date-time",

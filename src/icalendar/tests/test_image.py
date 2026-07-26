@@ -124,8 +124,7 @@ def test_create_image_invalid_params():
 
 def test_create_with_vBinary():
     """Test creating an Image from a vBinary property."""
-    b64data = base64.b64encode(TRANSPARENT_PIXEL).decode("ascii")
-    vbin = vBinary(b64data, params={"FMTTYPE": "image/png"})
+    vbin = vBinary(TRANSPARENT_PIXEL, params={"FMTTYPE": "image/png"})
     image = Image.from_property_value(vbin)
     assert image.uri is None
     assert image.data == TRANSPARENT_PIXEL
@@ -147,7 +146,7 @@ def test_create_with_vUri():
 
 
 def test_create_image_with_vText_as_uri():
-    """Test that creating an image with vText but VALUE URI or BINARY raises TypeError."""
+    """Test that creating an image with vText and VALUE=URI works."""
     img = Image.from_property_value(
         vText("http://example.com/image.png", params={"VALUE": "URI"})
     )
@@ -159,7 +158,7 @@ def test_create_image_with_vText_as_uri():
 
 
 def test_create_image_with_vText_as_binary():
-    """Test that creating an image with vText but VALUE URI or BINARY raises TypeError."""
+    """Test that creating an image with vText and VALUE=BINARY works."""
     b64data = base64.b64encode(TRANSPARENT_PIXEL).decode("ascii")
     img = Image.from_property_value(vText(b64data, params={"VALUE": "BINARY"}))
     assert img.uri is None

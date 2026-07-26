@@ -160,23 +160,15 @@ class Contentline(str):
                 return cls(f"{name};{params}:{values}")
         return cls(f"{name}:{values}")
 
-    def parts(self) -> tuple[str, Parameters, str]:
-        """Split the content line into ``name``, ``parameters``, and ``values`` parts.
+    def raw_parts(self) -> tuple[str, Parameters, str]:
+        """Split the line into ``name``, ``parameters``, and raw ``values`` parts.
 
-        Properly handles escaping with backslashes and double-quote sections
-        to avoid corrupting URL-encoded characters in values.
+        This is :meth:`parts` without the unescaping: the values are returned
+        verbatim, preserving both backslash sequences and URL encoding. It is
+        used for :rfc:`7265` ``UNKNOWN`` values, whose real value type—and
+        therefore whose escaping rules—are not known.
 
-        Example with parameter:
-
-        .. code-block:: ics
-
-            DESCRIPTION;ALTREP="cid:part1.0001@example.org":The Fall'98 Wild
-
-        Example without parameters:
-
-        .. code-block:: ics
-
-            DESCRIPTION:The Fall'98 Wild
+        See :meth:`parts` for the parts themselves and for examples.
         """
         try:
             name_split: int | None = None
@@ -226,13 +218,39 @@ class Contentline(str):
                 (_unescape_string(key), unescape_list_or_string(value))
                 for key, value in iter(params.items())
             )
-            # Unescape backslash sequences in values but preserve URL encoding
-            values = unescape_backslash(self[value_split + 1 :])
+            values = self[value_split + 1 :]
         except ValueError as exc:
             raise ValueError(
                 f"Content line could not be parsed into parts: '{self}': {exc}"
             ) from exc
         return (name, params, values)
+
+    def parts(self) -> tuple[str, Parameters, str]:
+        """Split the line into ``name``, ``parameters``, and unescaped ``values`` parts.
+
+        Properly handles escaping with backslashes and double-quote sections
+        to avoid corrupting URL-encoded characters in values.
+
+        The backslash sequences in the values are unescaped, as for the values
+        of ``TEXT`` properties, while URL encoding is preserved. Use
+        :meth:`raw_parts` to get the values verbatim instead.
+
+        Examples:
+
+            With parameter:
+
+            ..  code-block:: ics
+
+                DESCRIPTION;ALTREP="cid:part1.0001@example.org":The Fall'98 Wild
+
+            Without parameters:
+
+            ..  code-block:: ics
+
+                DESCRIPTION:The Fall'98 Wild
+        """
+        name, params, values = self.raw_parts()
+        return (name, params, unescape_backslash(values))
 
     def value_separator_index(self) -> int:
         r"""Return the index of the colon that separates the value.
