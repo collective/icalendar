@@ -14,6 +14,8 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 CLDR_PATH = "common/supplemental/windowsZones.xml"
+# GitHub returns commits newest-first by default; [0] is the latest commit
+# touching this file.
 commits_url = f"https://api.github.com/repos/unicode-org/cldr/commits?path={CLDR_PATH}&sha=main&per_page=1"
 with req.urlopen(commits_url) as response:  # noqa: S310
     version = json.load(response)[0]["sha"]
@@ -57,7 +59,7 @@ Unicode Consortium [1].
 
 """
 
-version = "{version}"
+version = {json.dumps(version)}
 
 ''')
     f.write("WINDOWS_TO_OLSON = ")

@@ -60,3 +60,33 @@ def test_generator_pins_mapping_to_latest_cldr_commit(monkeypatch):
     assert requested_urls == [COMMITS_URL, RAW_URL]
     assert f'version = "{CLDR_SHA}"' in generated
     assert '"Test Standard Time": "Etc/Test"' in generated
+
+
+def test_generator_serializes_cldr_version_as_a_string(monkeypatch):
+    """The source version cannot inject executable Python into the output."""
+    malicious_sha = '"; injected = True; version = "'
+    malicious_raw_url = (
+        "https://raw.githubusercontent.com/unicode-org/cldr/"
+        f"{malicious_sha}/common/supplemental/windowsZones.xml"
+    )
+
+    def urlopen(url):
+        if url == COMMITS_URL:
+            return Response(json.dumps([{"sha": malicious_sha}]).encode())
+        if url == malicious_raw_url:
+            return Response(b"<supplementalData />")
+        raise AssertionError(f"Unexpected URL: {url}")
+
+    output = Output()
+
+    monkeypatch.setattr(request, "urlopen", urlopen)
+    monkeypatch.setattr(Path, "open", lambda _path, _mode: output)
+
+    generator = Path(__file__).parents[3] / "generate_windows_to_olson_mapping.py"
+    runpy.run_path(str(generator), run_name="__main__")
+
+    generated = output.getvalue()
+    namespace = {}
+    exec(generated, namespace)  # noqa: S102
+    assert namespace["version"] == malicious_sha
+    assert "injected" not in namespace
