@@ -1,0 +1,1 @@
+Restored the removed docstrings under the :class:`~icalendar.prop.integer.vInt` attribute declarations for :attr:`~icalendar.prop.integer.vInt.max` and :attr:`~icalendar.prop.integer.vInt.min`. @stevepiercy
