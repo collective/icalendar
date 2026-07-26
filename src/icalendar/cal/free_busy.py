@@ -106,31 +106,31 @@ class FreeBusy(Component):
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
     ):
-        """Create a new FreeBusy component with all required properties.
+        """Create a new free/busy with all required properties.
 
         This creates a new FreeBusy in accordance with :rfc:`5545#section-3.6.4`.
 
         Parameters:
-            comments: The :attr:`~icalendar.cal.component.Component.comments` of the component.
-            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the component.
-            contacts: The :attr:`contacts` of the component.
-            end: The :attr:`end` of the component.
-            links: The :attr:`~icalendar.cal.component.Component.links` of the component.
-            organizer: The :attr:`organizer` of the component.
-            refids: :attr:`~icalendar.cal.component.Component.refids` of the component.
-            related_to: :attr:`~icalendar.cal.component.Component.related_to` of the component.
-            stamp: The :attr:`~icalendar.cal.component.Component.DTSTAMP` of the component.
+            comments: The :attr:`~icalendar.cal.component.Component.comments` of the free/busy.
+            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the free/busy.
+            contacts: The :attr:`contacts` of the free/busy.
+            end: The :attr:`end` of the free/busy.
+            links: The :attr:`~icalendar.cal.component.Component.links` of the free/busy.
+            organizer: The :attr:`organizer` of the free/busy.
+            refids: :attr:`~icalendar.cal.component.Component.refids` of the free/busy.
+            related_to: :attr:`~icalendar.cal.component.Component.related_to` of the free/busy.
+            stamp: The :attr:`~icalendar.cal.component.Component.DTSTAMP` of the free/busy.
                 If None, this is set to the current time.
-            start: The :attr:`start` of the component.
-            uid: The :attr:`uid` of the component.
+            start: The :attr:`start` of the free/busy.
+            uid: The :attr:`uid` of the free/busy.
                 If None, this is set to a new :func:`uuid.uuid4`.
-            url: The :attr:`url` of the component.
+            url: The :attr:`url` of the free/busy.
 
         Returns:
             :class:`FreeBusy`
 
         Raises:
-            ~error.InvalidCalendar: If the content is not valid
+            :exc:`~icalendar.error.InvalidCalendar`: If the content is not valid
                 according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
