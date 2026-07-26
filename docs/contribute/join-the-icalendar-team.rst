@@ -16,8 +16,8 @@ To encourage collaboration and community, the icalendar team is actively seeking
 A good candidate for elevated access demonstrates the following qualifications:
 
 -   Friendliness, humanity, and values diversity and inclusion.
--   Frequently engages with other contributors.
--   Frequently reviews and triage pull requests and issues.
+-   Frequently engage with other contributors.
+-   Frequently triage and review pull requests and issues.
 
 If you're interested in elevated access, you may:
 
