@@ -6,6 +6,26 @@ from icalendar.cal.alarm import Alarm
 from icalendar.error import InvalidCalendar
 
 
+def test_action_absent():
+    """An absent ACTION has the documented default."""
+    assert Alarm().action == ""
+
+
+def test_action_round_trip():
+    """ACTION can be read, replaced, and deleted through its property."""
+    alarm = Alarm()
+
+    alarm.action = "DISPLAY"
+    assert alarm.action == "DISPLAY"
+    assert alarm["ACTION"] == "DISPLAY"
+
+    alarm.action = "AUDIO"
+    assert alarm.action == "AUDIO"
+
+    del alarm.action
+    assert "ACTION" not in alarm
+
+
 def test_repeat_absent():
     """Test the absence of REPEAT."""
     assert Alarm().REPEAT == 0

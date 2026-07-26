@@ -88,6 +88,14 @@ class AlarmTime:
         return self._alarm
 
     @property
+    def action(self) -> str:
+        """The action invoked when this alarm triggers.
+
+        This delegates to :attr:`icalendar.cal.alarm.Alarm.action`.
+        """
+        return self.alarm.action
+
+    @property
     def parent(self) -> Parent | None:
         """The component that contains the alarm.
 
