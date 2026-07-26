@@ -4,7 +4,7 @@ import base64
 
 import pytest
 
-from icalendar import vBinary
+from icalendar import Calendar, vBinary
 from icalendar.parser import Parameters
 
 
@@ -188,7 +188,23 @@ def test_attach_example_preserves_binary_data(calendars):
     Regression test for the corruption fixed in #1356. See #1549.
     """
     calendar = calendars.issue_1549_binary_attachment
-    event = calendar.subcomponents[0]
-    attach = event["ATTACH"]
+    (event,) = calendar.events
+    data = event["ATTACH"].bytes
 
-    assert attach.bytes[:6] == b"\x89PNG\r\n"
+    # the whole payload survives, not just the leading magic number
+    assert data[:8] == b"\x89PNG\r\n\x1a\n"
+    assert data[-8:] == b"IEND\xaeB`\x82"
+    assert len(data) == 128
+
+
+def test_attach_example_survives_reserialization(calendars):
+    """The PNG attachment is byte-identical after to_ical()/from_ical().
+
+    See #1549.
+    """
+    calendar = calendars.issue_1549_binary_attachment
+    reparsed = Calendar.from_ical(calendar.to_ical())
+
+    (original,) = calendar.events
+    (roundtripped,) = reparsed.events
+    assert roundtripped["ATTACH"].bytes == original["ATTACH"].bytes
