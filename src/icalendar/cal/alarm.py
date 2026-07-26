@@ -120,6 +120,7 @@ class Alarm(Component):
                 >>> alarm.REPEAT
                 2
         """,
+        min_value=0,
     )
 
     DURATION = property(

@@ -1,0 +1,3 @@
+Validate Alarm repeat value is non-negative.
+Alarm.REPEAT now validates that the repeat value is an integer >= 0,
+raising InvalidCalendar if a negative value or non-integer is provided.

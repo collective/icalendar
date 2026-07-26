@@ -403,13 +403,16 @@ def multi_language_text_property(
     return property(fget, fset, fdel, doc)
 
 
-def single_int_property(prop: str, default: int, doc: str) -> property:
+def single_int_property(
+    prop: str, default: int, doc: str, *, min_value: int | None = None
+) -> property:
     """Create a property for an int value that exists only once.
 
     Parameters:
         prop: The name of the property
         default: The default value
         doc: The documentation string
+        min_value: If set, the value must be >= this minimum
     """
 
     def fget(self: Component) -> int:
@@ -421,6 +424,14 @@ def single_int_property(prop: str, default: int, doc: str) -> property:
 
     def fset(self: Component, value: int | None):
         """Set the property."""
+        if value is not None:
+            try:
+                if min_value is not None and int(value) < min_value:
+                    raise InvalidCalendar(f"{prop} must be >= {min_value}, got {value}")
+            except (TypeError, ValueError):
+                raise InvalidCalendar(
+                    f"{prop} must be an int, got {value}"
+                )
         fdel(self)
         if value is not None:
             self.add(prop, value)
