@@ -108,7 +108,8 @@ class FreeBusy(Component):
     ):
         """Create a new free/busy with all required properties.
 
-        The FreeBusy component has the required properties of UID and DTSTAMP.
+        The FreeBusy component has the required properties of UID and DTSTAMP,
+        which may be set with the parameters of ``uid`` and ``stamp``.
 
         Parameters:
             comments: The :attr:`~icalendar.cal.component.Component.comments` of the component.
