@@ -225,6 +225,7 @@ class JCalParsingError(InvalidCalendar):
                 path + [2],
                 value=jcal_property[2],
             )
+        cls.validate_jcal_token(jcal_property[0], "property name", parser, path + [0])
 
     _type_names = {
         str: "a string",
@@ -282,6 +283,51 @@ class JCalParsingError(InvalidCalendar):
                     value=item,
                     path=path + [index],
                 )
+
+    @classmethod
+    def validate_jcal_token(
+        cls,
+        name: str,
+        kind: str,
+        parser: str | type = "",
+        path: list[str | int] | None | str | int = None,
+    ) -> None:
+        r"""Validate a jCal ``name`` as a lowercase iCalendar token.
+
+        jCal keeps a property name, parameter name, or ``RRULE`` part name
+        verbatim and re-emits it into the content line on serialization, so a
+        ``:``, ``;``, or lone carriage return in the name could inject
+        parameters or a new content line. A valid name matches the iCalendar
+        token pattern ``[\w.-]+`` and, per :rfc:`7265`, must be lowercase.
+
+        Parameters:
+            name: The jCal name to validate.
+            kind: Names the token in the error message, for example,
+                ``"property name"``.
+            parser: The parser or component to which the name belongs.
+            path: The jCal path to ``name``, used to locate it in the error.
+
+        Raises:
+            ~error.JCalParsingError: If ``name`` is not a valid lowercase
+                iCalendar token.
+
+        See also:
+            :meth:`~icalendar.parser.string.validate_token`
+        """
+        from icalendar.parser.string import validate_token
+
+        try:
+            validate_token(name)
+        except ValueError:
+            raise cls(
+                rf"The {kind} must be a valid iCalendar token, matching the "
+                rf"regular expression pattern `[\w.-]+`.",
+                parser,
+                path,
+                value=name,
+            ) from None
+        if name != name.lower():
+            raise cls(f"The {kind} must be lowercase.", parser, path, value=name)
 
 
 __all__ = [
