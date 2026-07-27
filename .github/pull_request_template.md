@@ -1,14 +1,3 @@
-<!--
-
-# INSTRUCTIONS
-
-Fill out the pull request template as described below.
-
-Do not edit or remove section headings as they are required, except "Additional information" which is optional.
-
-Comments, which consist of the content between each pair of `<!--` and `-->`, inclusive, may be removed.
--->
-
 ## Linked issue
 
 <!--
@@ -29,18 +18,9 @@ This form keeps the issue open for future work.
 
 ## Description
 
-<!--
 Write a description of the fixes or improvements.
--->
 
 ## Checklist
-
-<!--
-Do not edit the checkbox list items.
-
-To indicate that you completed an item, place an `x` inside the checkbox, such as `[x]`.
--->
-
 
 - [ ] I added a change log entry, following the instructions in [Change log entry format](https://icalendar.readthedocs.io/en/latest/contribute/#change-log-entry-format).
 - [ ] I followed icalendar's [Artificial intelligence policy](https://icalendar.readthedocs.io/en/latest/contribute/index.html#artificial-intelligence-policy) and disclosed my [Responsible AI use](https://icalendar.readthedocs.io/en/latest/contribute/index.html#responsible-ai-use) in my commit messages, if applicable.
