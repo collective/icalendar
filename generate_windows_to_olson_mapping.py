@@ -24,7 +24,7 @@ version = commit["sha"]
 version_date = commit["commit"]["committer"]["date"][:10]
 if re.fullmatch(r"[0-9a-f]{40}", version) is None:
     raise ValueError(f"Invalid CLDR commit SHA: {version!r}")
-if re.fullmatch(r"\d{4}-\d{2}-\d{2}", version_date) is None:
+if re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", version_date) is None:
     raise ValueError(f"Invalid CLDR commit date: {version_date!r}")
 
 # Fetch the XML from the commit recorded in the generated module. Using the
