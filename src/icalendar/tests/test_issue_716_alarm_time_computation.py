@@ -223,7 +223,7 @@ def test_alarm_acknowledgement_uses_alarm_property():
 def test_alarm_time_action_uses_alarm_property():
     """The computed occurrence exposes its underlying alarm action."""
     alarm = Alarm()
-    alarm.action = "DISPLAY"
+    alarm.ACTION = "DISPLAY"
 
     alarm_time = AlarmTime(alarm, EXAMPLE_TRIGGER)
 

@@ -301,12 +301,12 @@ class Alarm(Component):
 
     repeat = repeat_property
 
-    action = single_string_property(
+    ACTION = single_string_property(
         "ACTION",
         """The action invoked when the alarm triggers.
 
         Typical values defined by :rfc:`5545#section-3.8.6.1` are
-        ``"AUDIO"``, ``"DISPLAY"``, and ``"EMAIL"``. The empty string is
+        ``AUDIO``, ``DISPLAY``, and ``EMAIL``. The empty string is
         returned when no ``ACTION`` property is present.
         """,
     )
