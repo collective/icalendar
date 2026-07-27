@@ -4,7 +4,10 @@ import runpy
 from pathlib import Path
 from urllib import request
 
+import pytest
+
 CLDR_SHA = "0123456789abcdef0123456789abcdef01234567"
+CLDR_DATE = "2026-07-27"
 COMMITS_URL = (
     "https://api.github.com/repos/unicode-org/cldr/commits"
     "?path=common/supplemental/windowsZones.xml&sha=main&per_page=1"
@@ -35,7 +38,16 @@ def test_generator_pins_mapping_to_latest_cldr_commit(monkeypatch):
     def urlopen(url):
         requested_urls.append(url)
         if url == COMMITS_URL:
-            return Response(json.dumps([{"sha": CLDR_SHA}]).encode())
+            return Response(
+                json.dumps(
+                    [
+                        {
+                            "sha": CLDR_SHA,
+                            "commit": {"committer": {"date": f"{CLDR_DATE}T12:00:00Z"}},
+                        }
+                    ]
+                ).encode()
+            )
         if url == RAW_URL:
             return Response(
                 b"<supplementalData><windowsZones><mapTimezones>"
@@ -59,34 +71,31 @@ def test_generator_pins_mapping_to_latest_cldr_commit(monkeypatch):
     generated = output.getvalue()
     assert requested_urls == [COMMITS_URL, RAW_URL]
     assert f'version = "{CLDR_SHA}"' in generated
+    assert f'version_date = "{CLDR_DATE}"' in generated
+    assert f"dated {CLDR_DATE}" in generated
     assert '"Test Standard Time": "Etc/Test"' in generated
 
 
-def test_generator_serializes_cldr_version_as_a_string(monkeypatch):
-    """The source version cannot inject executable Python into the output."""
+def test_generator_rejects_invalid_cldr_version(monkeypatch):
+    """An invalid source version cannot be written into Python output."""
     malicious_sha = '"; injected = True; version = "'
-    malicious_raw_url = (
-        "https://raw.githubusercontent.com/unicode-org/cldr/"
-        f"{malicious_sha}/common/supplemental/windowsZones.xml"
-    )
 
     def urlopen(url):
         if url == COMMITS_URL:
-            return Response(json.dumps([{"sha": malicious_sha}]).encode())
-        if url == malicious_raw_url:
-            return Response(b"<supplementalData />")
+            return Response(
+                json.dumps(
+                    [
+                        {
+                            "sha": malicious_sha,
+                            "commit": {"committer": {"date": f"{CLDR_DATE}T12:00:00Z"}},
+                        }
+                    ]
+                ).encode()
+            )
         raise AssertionError(f"Unexpected URL: {url}")
 
-    output = Output()
-
     monkeypatch.setattr(request, "urlopen", urlopen)
-    monkeypatch.setattr(Path, "open", lambda _path, _mode: output)
 
     generator = Path(__file__).parents[3] / "generate_windows_to_olson_mapping.py"
-    runpy.run_path(str(generator), run_name="__main__")
-
-    generated = output.getvalue()
-    namespace = {}
-    exec(generated, namespace)  # noqa: S102
-    assert namespace["version"] == malicious_sha
-    assert "injected" not in namespace
+    with pytest.raises(ValueError, match="Invalid CLDR commit SHA"):
+        runpy.run_path(str(generator), run_name="__main__")
