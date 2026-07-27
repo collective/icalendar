@@ -42,10 +42,16 @@ Because icalendar is a public open source software repository, anyone with a Git
 
 The Triage role has the following additional permissions:
 
--   Label issues.
--   Assign issues and pull requests.
--   Close, reopen issues and pull requests.
--   https://docs.github.com/en/organizations/managing-user-access-to-your-organizations-repositories/managing-repository-roles/repository-roles-for-an-organization#repository-roles-for-organizationswhere
+-   Apply and dismiss labels.
+-   Close, reopen, and assign all issues and pull requests.
+-   Apply milestones.
+-   Mark duplicate issues and pull requests.
+-   Request pull request reviews.
+-   Hide anyone's comments.
+-   Move a discussion to a different category.
+-   Lock and unlock discussions.
+-   Individually convert issues to discussions.
+-   Delete a discussion.
 
 The primary criteria that the icalendar team uses to consider whether to grant elevated access include, but are not limited to:
 
