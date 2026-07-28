@@ -14,19 +14,14 @@ import pytest
 
 from icalendar import ComponentFactory
 
-COMPONENT_CLASSES = sorted(
-    set(ComponentFactory().values()), key=lambda cls: cls.name
-)
+COMPONENT_CLASSES = sorted(set(ComponentFactory().values()), key=lambda cls: cls.name)
 
 
 @pytest.mark.parametrize("component", COMPONENT_CLASSES, ids=lambda cls: cls.name)
 def test_singletons_and_multiple_are_disjoint(component):
     """No property is classified as both a singleton and multiple."""
     both = set(component.singletons) & set(component.multiple)
-    assert not both, (
-        f"{component.name} lists {sorted(both)} in both "
-        f"singletons and multiple"
-    )
+    assert not both, f"{component.name} lists {sorted(both)} in both lists"
 
 
 def test_alarm_attach_is_multiple_not_singleton():
