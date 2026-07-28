@@ -91,7 +91,7 @@ class AlarmTime:
     def action(self) -> str:
         """The action invoked when this alarm triggers.
 
-        This delegates to :attr:`icalendar.cal.alarm.Alarm.ACTION`.
+        This delegates to :attr:`Alarm.ACTION <icalendar.cal.alarm.Alarm.ACTION>`.
         """
         return self.alarm.ACTION
 
