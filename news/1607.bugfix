@@ -1,0 +1,1 @@
+Added the missing ``BINARY`` member to :class:`icalendar.enums.VALUE`. ``BINARY`` is the first value type defined in :rfc:`5545` section 3.2.20 and is used by the library itself (``vBinary`` serializes as ``VALUE=BINARY``), but ``VALUE.BINARY`` previously raised ``AttributeError``. Prepared with the assistance of an AI coding agent (Anthropic's Claude Opus 4.8). @vtino17
