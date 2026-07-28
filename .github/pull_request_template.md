@@ -1,6 +1,6 @@
 <!--
 
-# INSTRUCTIONS
+INSTRUCTIONS
 
 Fill out the pull request template as described below.
 
