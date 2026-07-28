@@ -100,6 +100,7 @@ class Alarm(Component):
         sets the gap between repetitions. :attr:`REPEAT` is the count of *additional*
         triggers, so a :attr:`REPEAT` of ``2`` produces three alarms in total
         (the initial trigger plus two repeats).
+        Values must be greater than or equal to ``0``.
 
         Conforming with :rfc:`5545#section-3.8.6.2`, this property can appear
         once in an :class:`~icalendar.cal.alarm.Alarm` component and must be
@@ -119,7 +120,14 @@ class Alarm(Component):
                 >>> alarm.REPEAT = 2
                 >>> alarm.REPEAT
                 2
+
+        Raises:
+            ValueError: If the value is negative.
+
+        .. versionchanged:: 7.2.2
+            Negative values are rejected when setting the property.
         """,
+        min_value=0,
     )
 
     DURATION = property(
