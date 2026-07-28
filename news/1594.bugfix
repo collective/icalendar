@@ -1,0 +1,2 @@
+Reject negative values for `REPEAT` and `SEQUENCE`. I used AI to assist
+with this change.
