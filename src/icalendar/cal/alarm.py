@@ -67,7 +67,8 @@ class Alarm(Component):
         "TRIGGER",
     )
     singletons = (
-        "ATTACH",
+        # ATTACH is not a singleton: an "email" alarm MAY carry more than one
+        # ATTACH (RFC 5545, section 3.6.6), so it is listed in ``multiple``.
         "ACTION",
         "DESCRIPTION",
         "SUMMARY",
