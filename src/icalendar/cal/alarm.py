@@ -67,7 +67,6 @@ class Alarm(Component):
         "TRIGGER",
     )
     singletons = (
-        "ATTACH",
         "ACTION",
         "DESCRIPTION",
         "SUMMARY",
