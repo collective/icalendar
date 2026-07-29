@@ -11,15 +11,15 @@ Purpose
 The icalendar team reviews pull requests and issues for quality, makes releases to PyPI, and protects and promotes the icalendar community.
 To familiarize yourself with the icalendar community, read :doc:`index`.
 
-To encourage collaboration and community, the icalendar team is actively seeking contributors who are interested in elevated access to icalendar to help review and triage issues and pull requests.
+To encourage collaboration and community, the icalendar team is actively seeking contributors who are interested in helping to review and triage issues and pull requests.
 
-A good candidate for elevated access demonstrates the following qualifications:
+A good candidate for the team demonstrates the following qualifications:
 
 -   Friendliness, humanity, and values diversity and inclusion.
 -   Frequently engage with other contributors.
 -   Frequently triage and review pull requests and issues.
 
-If you're interested in elevated access, you may:
+If you're interested in applying to join the team, you may:
 
 -   Create a new `Discussion topic <https://github.com/collective/icalendar/discussions/categories/collaborator-nominations>`_ under the Collaborator nominations category.
 -   Post a message to the `Matrix icalendar chat <https://matrix.to/#/#pycal:chat.pycal.org>`_.
