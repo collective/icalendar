@@ -19,6 +19,34 @@ A good candidate for the team demonstrates the following qualifications:
 -   Frequently engage with other contributors.
 -   Frequently triage and review pull requests and issues.
 
+
+Members
+-------
+
+The members of the icalendar team include its maintainers and documentation lead.
+
+
+Maintainers
+```````````
+
+.. include:: ../_include/maintainers.inc
+
+
+Documentation lead
+``````````````````
+
+`@stevepiercy <https://github.com/stevepiercy>`_
+
+
+Triage
+``````
+
+Apply to add your name here.
+
+
+Apply
+-----
+
 If you're interested in applying to join the team, you may:
 
 -   Create a new `Discussion topic <https://github.com/collective/icalendar/discussions/categories/collaborator-nominations>`_ under the Collaborator nominations category.
