@@ -14,32 +14,38 @@ YAAAAfFcSJAAAACXBIWXMAAAAnAAAAJwEqCZFPAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3
 m+48GgAAAA1JREFUCJlj+P//PwMACPwC/oXNqzQAAAAASUVORK5CYII=""")
 
 
-@pytest.fixture
-def issue_1561_images(calendars):
-    """Return IMAGE properties covering the supported VALUE dispatch."""
+@pytest.fixture(params=["raw", "ical", "jcal"])
+def issue_1561_images(calendars, request):
+    """Return IMAGE properties before and after both serialization formats."""
     calendar: Calendar = calendars.issue_1561_image_value
+    if request.param == "ical":
+        calendar = Calendar.from_ical(calendar.to_ical())
+    elif request.param == "jcal":
+        calendar = Calendar.from_jcal(calendar.to_jcal())
     return {component.uid: component["IMAGE"] for component in calendar.subcomponents}
 
 
 def test_image_value_parameter_selects_property_type(issue_1561_images):
-    """IMAGE honors an explicit VALUE and defaults to UNKNOWN without one."""
-    assert isinstance(issue_1561_images["uri"], vUri)
-    assert isinstance(issue_1561_images["binary"], vBinary)
-    assert isinstance(issue_1561_images["text"], vText)
-    assert isinstance(issue_1561_images["unknown"], vUnknown)
+    """IMAGE preserves its value type and parameters through serialization."""
+    uri = issue_1561_images["uri"]
+    assert isinstance(uri, vUri)
+    assert uri == "https://example.com/a.png"
+    assert dict(uri.params) == {"VALUE": "URI"}
 
+    binary = issue_1561_images["binary"]
+    assert isinstance(binary, vBinary)
+    assert binary.bytes == b"\x00\xff\x80"
+    assert dict(binary.params) == {"ENCODING": "BASE64", "VALUE": "BINARY"}
 
-def test_image_value_types_round_trip(calendars):
-    """IMAGE value types and binary bytes survive calendar serialization."""
-    calendar: Calendar = calendars.issue_1561_image_value
-    reparsed = Calendar.from_ical(calendar.to_ical())
-    images = {component.uid: component["IMAGE"] for component in reparsed.subcomponents}
+    text = issue_1561_images["text"]
+    assert isinstance(text, vText)
+    assert text == "a;b,c"
+    assert dict(text.params) == {"VALUE": "TEXT"}
 
-    assert isinstance(images["uri"], vUri)
-    assert isinstance(images["binary"], vBinary)
-    assert images["binary"].ical_value == b"\x00\xff\x80"
-    assert isinstance(images["text"], vText)
-    assert isinstance(images["unknown"], vUnknown)
+    unknown = issue_1561_images["unknown"]
+    assert isinstance(unknown, vUnknown)
+    assert unknown == "https://example.com/b.png"
+    assert dict(unknown.params) == {}
 
 
 @pytest.fixture
