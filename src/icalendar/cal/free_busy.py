@@ -106,7 +106,8 @@ class FreeBusy(Component):
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
     ):
-        """Create a new free/busy with all required properties.
+        """Create a new FreeBusy component with all required properties,
+        in accordance with :rfc:`5545#section-3.6.4`.
 
         The FreeBusy component has the required properties of UID and DTSTAMP,
         which may be set with the parameters of ``uid`` and ``stamp``.
