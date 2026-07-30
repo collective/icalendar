@@ -198,7 +198,7 @@ class Alarms:
         if component is not None:
             self.add_component(component)
 
-    def add_component(self, component: Alarm | Parent):
+    def add_component(self, component: Alarm | Parent) -> None:
         """Add a component.
 
         If this is an alarm, it is added.

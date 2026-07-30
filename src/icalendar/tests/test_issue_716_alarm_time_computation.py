@@ -238,6 +238,14 @@ def test_alarms_from_event_have_right_times(calendars):
     assert a.times[0].parent == event
 
 
+def test_add_component_returns_none(calendars):
+    """Adding a component mutates the alarm collection without a return value."""
+    event = calendars.alarm_etar_future.subcomponents[-1]
+    alarms = Alarms()
+
+    assert alarms.add_component(event) is None
+
+
 def test_cannot_set_the_event_twice(calendars):
     """We cannot set an event twice. This make the state ambiguous."""
     event = calendars.alarm_etar_future.subcomponents[-1]
