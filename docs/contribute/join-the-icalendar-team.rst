@@ -23,7 +23,7 @@ Good candidates for the team demonstrate the following qualifications:
 Members
 -------
 
-The members of the icalendar team include its maintainers and documentation lead.
+The members of the icalendar team are listed below under their role.
 
 
 Maintainers
