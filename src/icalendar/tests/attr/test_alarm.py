@@ -6,6 +6,25 @@ from icalendar.cal.alarm import Alarm
 from icalendar.error import InvalidCalendar
 
 
+def test_ACTION_absent():
+    """An absent ACTION has the documented default."""
+    assert Alarm().ACTION == ""
+
+
+@pytest.mark.parametrize("action", ["AUDIO", "DISPLAY", "EMAIL"])
+def test_ACTION_round_trip(action):
+    """Each RFC 5545 ACTION can be read, serialized, and deleted."""
+    alarm = Alarm()
+
+    alarm.ACTION = action
+    assert alarm.ACTION == action
+    assert alarm["ACTION"] == action
+    assert f"ACTION:{action}\r\n".encode() in alarm.to_ical()
+
+    del alarm.ACTION
+    assert "ACTION" not in alarm
+
+
 def test_repeat_absent():
     """Test the absence of REPEAT."""
     assert Alarm().REPEAT == 0
