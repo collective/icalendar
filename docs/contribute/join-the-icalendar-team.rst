@@ -89,7 +89,7 @@ The primary criteria that the icalendar team uses to consider whether to grant e
 -   Two-factor authentication must be enabled on their GitHub account
 -   Strive to uphold the spirit of the Python Calendaring Ecosystem's `Code of Conduct <https://pycal.org/code-of-conduct/>`_
 -   Join the `#icalendar Matrix chat <https://matrix.to/#/#pycal:chat.pycal.org>`_
--   Join a video call in Matrix
+-   Join a video call to get to know each other
 
 The icalendar team will review your application, and collect relevant information for evaluation.
 
