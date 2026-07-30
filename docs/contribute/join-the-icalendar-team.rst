@@ -13,9 +13,9 @@ To familiarize yourself with the icalendar community, read :doc:`index`.
 
 To encourage collaboration and community, the icalendar team is actively seeking contributors who are interested in helping to review and triage issues and pull requests.
 
-A good candidate for the team demonstrates the following qualifications:
+Good candidates for the team demonstrate the following qualifications:
 
--   Friendliness, humanity, and values diversity and inclusion.
+-   Friendliness, humanity, and value diversity and inclusion.
 -   Frequently engage with other contributors.
 -   Frequently triage and review pull requests and issues.
 
