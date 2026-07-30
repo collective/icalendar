@@ -67,7 +67,6 @@ class Alarm(Component):
         "TRIGGER",
     )
     singletons = (
-        "ATTACH",
         "ACTION",
         "DESCRIPTION",
         "SUMMARY",
@@ -301,6 +300,15 @@ class Alarm(Component):
 
     repeat = repeat_property
 
+    ACTION = single_string_property(
+        "ACTION",
+        """The action invoked when the alarm triggers.
+
+        Typical values defined by :rfc:`5545#section-3.8.6.1` are
+        ``AUDIO``, ``DISPLAY``, and ``EMAIL``. The empty string is
+        returned when no ``ACTION`` property is present.
+        """,
+    )
     uid = single_string_property(
         "UID",
         uid_property.__doc__,

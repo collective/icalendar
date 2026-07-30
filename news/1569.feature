@@ -1,0 +1,1 @@
+Added :attr:`Alarm.ACTION <icalendar.cal.alarm.Alarm.ACTION>` and :attr:`AlarmTime.action <icalendar.alarms.AlarmTime.action>` access to the :rfc:`5545#section-3.8.6.1` ``ACTION`` property. I used OpenAI Codex with GPT-5 to assist with this change, then reviewed and tested the result. @bm1016bm-svg
