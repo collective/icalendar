@@ -106,9 +106,11 @@ class FreeBusy(Component):
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
     ):
-        """Create a new alarm with all required properties.
+        """Create a new FreeBusy component with all required properties,
+        in accordance with :rfc:`5545#section-3.6.4`.
 
-        This creates a new Alarm in accordance with :rfc:`5545`.
+        The FreeBusy component has the required properties of UID and DTSTAMP,
+        which may be set with the parameters of ``uid`` and ``stamp``.
 
         Parameters:
             comments: The :attr:`~icalendar.cal.component.Component.comments` of the component.
@@ -130,7 +132,7 @@ class FreeBusy(Component):
             :class:`FreeBusy`
 
         Raises:
-            ~error.InvalidCalendar: If the content is not valid
+            :exc:`~icalendar.error.InvalidCalendar`: If the content is not valid
                 according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
