@@ -220,6 +220,16 @@ def test_alarm_acknowledgement_uses_alarm_property():
     assert alarm_time.acknowledged == acknowledged
 
 
+def test_alarm_time_action_uses_alarm_property():
+    """The computed occurrence exposes its underlying alarm action."""
+    alarm = Alarm()
+    alarm.ACTION = "DISPLAY"
+
+    alarm_time = AlarmTime(alarm, EXAMPLE_TRIGGER)
+
+    assert alarm_time.action == "DISPLAY"
+
+
 def test_alarms_from_event_have_right_times(calendars):
     """We can collect from an event."""
     event = calendars.alarm_etar_future.subcomponents[-1]
