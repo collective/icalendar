@@ -248,23 +248,18 @@ class Component(CaselessDict):
     def _encode(cls, name, value, parameters=None, encode=1):
         """Encode values to icalendar property values.
 
-        :param name: Name of the property.
-        :type name: string
+        Parameters:
+            name: Name of the property.
+            value: Value of the property. Either a basic Python type or
+                any of icalendar's own property types.
+            parameters: Property parameter dictionary for the value. Only
+                used if encode is set to True.
+            encode: True if the value should be encoded to one of
+                icalendar's own property types (falls back to ``vText``),
+                or False if not.
 
-        :param value: Value of the property. Either of a basic Python type of
-                      any of the icalendar's own property types.
-        :type value: Python native type or icalendar property type.
-
-        :param parameters: Property parameter dictionary for the value. Only
-                           available, if encode is set to True.
-        :type parameters: Dictionary
-
-        :param encode: True, if the value should be encoded to one of
-                       icalendar's own property types (Fallback is "vText")
-                       or False, if not.
-        :type encode: Boolean
-
-        :returns: icalendar property value
+        Returns:
+            The encoded icalendar property value.
         """
         if not encode:
             return value
