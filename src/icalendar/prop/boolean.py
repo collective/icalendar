@@ -19,22 +19,6 @@ class vBoolean(int):
     Conforming with :rfc:`5545#section-3.3.2`, boolean values are represented in
     iCalendar data as either ``TRUE`` or ``FALSE``.
 
-    Example:
-        Parse and create iCalendar boolean values.
-
-        .. code-block:: pycon
-
-            >>> from icalendar.prop import vBoolean
-            >>> boolean = vBoolean.from_ical('TRUE')
-            >>> boolean
-            True
-
-            >>> boolean = vBoolean.from_ical('fAlse')
-            >>> boolean
-            False
-
-            >>> vBoolean(True).to_ical()
-            b'TRUE'
     """
 
     default_value: ClassVar[str] = "BOOLEAN"
@@ -54,11 +38,16 @@ class vBoolean(int):
             A new :class:`vBoolean` instance with the supplied property parameters.
 
         Examples:
-            Create and use a boolean value from :rfc:`5545#section-3.3.2`.
+            Parse, create, and use boolean values from
+            :rfc:`5545#section-3.3.2`.
 
             .. code-block:: pycon
 
                 >>> from icalendar import vBoolean
+                >>> vBoolean.from_ical("TRUE")
+                True
+                >>> vBoolean.from_ical("fAlse")
+                False
                 >>> boolean = vBoolean(True)
                 >>> if boolean:
                 ...     print("TRUE")
