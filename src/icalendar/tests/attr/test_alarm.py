@@ -71,3 +71,57 @@ def test_alarm_to_string():
     a = Alarm()
     a.REPEAT = 11
     assert a.to_ical() == b"BEGIN:VALARM\r\nREPEAT:11\r\nEND:VALARM\r\n"
+
+
+def test_attachments_empty():
+    a = Alarm()
+    assert a.attachments == []
+
+
+def test_attachments_setter_uri():
+    a = Alarm()
+    a.attachments = "ftp://example.com/bell.aud"
+    assert len(a.attachments) == 1
+    assert str(a.attachments[0]) == "ftp://example.com/bell.aud"
+
+
+def test_attachments_setter_binary():
+    a = Alarm()
+    a.attachments = b"\x00\x01raw"
+    assert len(a.attachments) == 1
+
+
+def test_attachments_setter_list():
+    a = Alarm()
+    a.attachments = ["ftp://example.com/a.aud", b"\x00\x01"]
+    assert len(a.attachments) == 2
+
+
+def test_attachments_setter_replaces():
+    a = Alarm()
+    a.attachments = "ftp://example.com/old.aud"
+    a.attachments = "ftp://example.com/new.aud"
+    assert len(a.attachments) == 1
+    assert str(a.attachments[0]) == "ftp://example.com/new.aud"
+
+
+def test_attachments_setter_none_clears():
+    a = Alarm()
+    a.attachments = "ftp://example.com/bell.aud"
+    a.attachments = None
+    assert a.attachments == []
+
+
+def test_attachments_deleter():
+    a = Alarm()
+    a.attachments = "ftp://example.com/bell.aud"
+    del a.attachments
+    assert a.attachments == []
+
+
+def test_attachments_returns_copy():
+    a = Alarm()
+    a.attachments = "ftp://example.com/bell.aud"
+    lst = a.attachments
+    lst.append("extra")
+    assert len(a.attachments) == 1

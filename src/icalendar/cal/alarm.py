@@ -207,6 +207,68 @@ class Alarm(Component):
     )
 
     @property
+    def attachments(self) -> list:
+        """The ATTACH property values of this alarm.
+
+        Returns a list of :class:`~icalendar.prop.vUri` (for URI
+        attachments) or :class:`~icalendar.prop.vBinary` (for inline
+        binary data).  The list is a copy — mutating it does **not**
+        change the alarm; use the setter to replace all attachments at
+        once.
+
+        See :rfc:`5545#section-3.8.1.1`.
+
+        Example:
+
+            >>> from icalendar import Alarm
+            >>> from datetime import timedelta
+            >>> alarm = Alarm.new_audio(timedelta(minutes=-5),
+            ...     attach="ftp://example.com/bell.aud")
+            >>> alarm.attachments
+            [vUri('ftp://example.com/bell.aud')]
+        """
+        value = self.get("ATTACH")
+        if value is None:
+            return []
+        if not isinstance(value, list):
+            return [value]
+        return list(value)
+
+    @attachments.setter
+    def attachments(self, value) -> None:
+        """Replace all ATTACH values.
+
+        Accepts a single value or a list.  ``bytes`` are wrapped in
+        :class:`~icalendar.prop.vBinary`; strings are stored as-is
+        (typically URIs).
+
+        Example:
+
+            >>> from icalendar import Alarm
+            >>> from datetime import timedelta
+            >>> alarm = Alarm.new_audio(timedelta(minutes=-5))
+            >>> alarm.attachments = ["ftp://example.com/a.aud",
+            ...                      b"\\x00\\x01raw"]
+            >>> len(alarm.attachments)
+            2
+        """
+        del self.attachments
+        if value is None:
+            return
+        if not isinstance(value, list):
+            value = [value]
+        for item in value:
+            self.add(
+                "ATTACH",
+                vBinary(item) if isinstance(item, bytes) else item,
+            )
+
+    @attachments.deleter
+    def attachments(self) -> None:
+        """Remove all ATTACH values."""
+        self.pop("ATTACH", None)
+
+    @property
     def TRIGGER_RELATED(self) -> str:
         """The RELATED parameter of the TRIGGER property.
 
