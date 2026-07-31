@@ -12,12 +12,28 @@ class vBoolean(int):
     """An iCalendar boolean value.
 
     Converts between iCalendar ``BOOLEAN`` value types and Python boolean values.
-    In iCalendar data, boolean values are represented as "TRUE" or "FALSE". Values
-    parsed from iCalendar text are case insensitive. ``True``, ``true``, and ``TRUE``
-    are all accepted when converting from iCalendar to Python.
+    Conforming with :rfc:`5545#section-3.3.2`, iCalendar boolean values are
+    represented as ``TRUE`` or ``FALSE``. Values parsed from iCalendar text are case
+    insensitive.
 
-    Conforming with :rfc:`5545#section-3.3.2`, boolean values are represented in
-    iCalendar data as either ``TRUE`` or ``FALSE``.
+    Pass an optional mapping of iCalendar property parameters as ``params``.
+
+    Examples:
+        Parse, create, and use iCalendar boolean values.
+
+        .. code-block:: pycon
+
+            >>> from icalendar import vBoolean
+            >>> vBoolean.from_ical("TRUE")
+            True
+            >>> vBoolean.from_ical("fAlse")
+            False
+            >>> boolean = vBoolean(True)
+            >>> if boolean:
+            ...     print("TRUE")
+            TRUE
+            >>> boolean.to_ical()
+            b'TRUE'
 
     """
 
@@ -29,32 +45,6 @@ class vBoolean(int):
     def __new__(
         cls, *args: Any, params: dict[str, Any] | None = None, **kwargs: Any
     ) -> Self:
-        """Create an iCalendar boolean value with optional property parameters.
-
-        Parameters:
-            params: iCalendar property parameters associated with the value.
-
-        Returns:
-            A new :class:`vBoolean` instance with the supplied property parameters.
-
-        Examples:
-            Parse, create, and use boolean values from
-            :rfc:`5545#section-3.3.2`.
-
-            .. code-block:: pycon
-
-                >>> from icalendar import vBoolean
-                >>> vBoolean.from_ical("TRUE")
-                True
-                >>> vBoolean.from_ical("fAlse")
-                False
-                >>> boolean = vBoolean(True)
-                >>> if boolean:
-                ...     print("TRUE")
-                TRUE
-                >>> boolean.to_ical()
-                b'TRUE'
-        """
         self = super().__new__(cls, *args, **kwargs)
         self.params = Parameters(params)
         return self
