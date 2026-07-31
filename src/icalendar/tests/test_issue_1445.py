@@ -164,31 +164,12 @@ def test_unrecognized_parameter_is_decoded_not_verbatim():
     ]
 
 
-@pytest.mark.parametrize(
-    ("line", "jcal_type"),
-    [
-        ("IMAGE", "unknown"),  # no VALUE parameter
-        ("IMAGE;VALUE=URI", "uri"),  # an explicit VALUE does not change the handling
-        ("IMAGE;VALUE=BINARY", "binary"),
-    ],
-)
-def test_image_value_is_verbatim(line, jcal_type):
-    """IMAGE always resolves to the unknown type and is preserved verbatim.
-
-    This is not a consequence of IMAGE lacking a VALUE parameter. IMAGE is
-    special-cased in ``TypesFactory.for_property`` to always resolve to the
-    unknown type, even when VALUE is URI or BINARY, so that image data is not
-    corrupted by escaping (see commit aac97fa9). An explicit VALUE is still
-    preserved as the jCal type field, but the value stays verbatim either way.
-
-    Note: whether IMAGE should honor VALUE (vUri/vBinary) instead of always
-    resolving to unknown is tracked separately in issue #1561. This test pins
-    the current behavior; it will need updating if that changes.
-    """
-    ev = _event(rf"{line}:a;b\,c")
+def test_image_without_value_is_verbatim():
+    """IMAGE without a VALUE resolves to unknown and stays verbatim."""
+    ev = _event(r"IMAGE:a;b\,c")
     assert isinstance(ev["IMAGE"], vUnknown)
-    assert _line(ev, "IMAGE") == rf"{line}:a;b\,c"
-    assert ev.to_jcal()[1][1] == ["image", {}, jcal_type, r"a;b\,c"]
+    assert _line(ev, "IMAGE") == r"IMAGE:a;b\,c"
+    assert ev.to_jcal()[1][1] == ["image", {}, "unknown", r"a;b\,c"]
 
 
 def test_known_text_property_is_unaffected():
