@@ -16,7 +16,11 @@ class vBoolean(int):
     represented as ``TRUE`` or ``FALSE``. Values parsed from iCalendar text are case
     insensitive.
 
-    Pass an optional mapping of iCalendar property parameters as ``params``.
+    Parameters:
+        params: iCalendar property parameters associated with the value.
+
+    Returns:
+        A new :class:`vBoolean` instance with the supplied property parameters.
 
     Examples:
         Parse, create, and use iCalendar boolean values.
