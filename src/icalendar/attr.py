@@ -413,6 +413,13 @@ def single_int_property(
         default: The default value
         doc: The documentation string
         min_value: If set, the value must be >= this minimum
+
+    Raises:
+        :exc:`~icalendar.error.InvalidCalendar`: If the value is not an
+            integer or is smaller than ``min_value``.
+
+    .. versionadded:: 7.2.3
+        The ``min_value`` parameter.
     """
 
     def fget(self: Component) -> int:
@@ -425,13 +432,10 @@ def single_int_property(
     def fset(self: Component, value: int | None):
         """Set the property."""
         if value is not None:
-            try:
-                if min_value is not None and int(value) < min_value:
-                    raise InvalidCalendar(f"{prop} must be >= {min_value}, got {value}")
-            except (TypeError, ValueError):
-                raise InvalidCalendar(
-                    f"{prop} must be an int, got {value}"
-                )
+            if not isinstance(value, int):
+                raise InvalidCalendar(f"{prop} must be an int, got {value}")
+            if min_value is not None and value < min_value:
+                raise InvalidCalendar(f"{prop} must be >= {min_value}, got {value}")
         fdel(self)
         if value is not None:
             self.add(prop, value)
@@ -629,7 +633,11 @@ Examples:
         >>> event = calendar.events[0]
         >>> event.sequence
         10
+
+    .. versionadded:: 7.2.3
+        Negative values are no longer accepted.
     """,  # noqa: E501
+    min_value=0,
 )
 
 
@@ -1305,7 +1313,11 @@ initial trigger.
 Defaults to ``0``, meaning the alarm fires once. Must be paired with
 :attr:`~icalendar.cal.alarm.Alarm.DURATION`. Conforms with :rfc:`5545#section-3.8.6.2`.
 The value is capped at :data:`icalendar.config.MAX_ALARM_REPEAT` on read.
+
+.. versionadded:: 7.2.3
+    Negative values are no longer accepted.
 """,
+        min_value=0,
     )
 
     def fget(self):
@@ -1354,7 +1366,11 @@ Description:
     Within a "VTODO" calendar component, this property specified a
     priority for the to-do.  This property is useful in prioritizing
     multiple action items for a given time period.
+
+    .. versionadded:: 7.2.3
+        Negative values are no longer accepted.
 """,
+    min_value=0,
 )
 
 class_property = single_string_enum_property(

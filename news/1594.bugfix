@@ -1,3 +1,1 @@
-Validate Alarm repeat value is non-negative.
-Alarm.REPEAT now validates that the repeat value is an integer >= 0,
-raising InvalidCalendar if a negative value or non-integer is provided.
+``Alarm.REPEAT``, ``Alarm.repeat``, ``sequence`` and ``priority`` now validate that the value is a non-negative integer, raising ``InvalidCalendar`` otherwise.
