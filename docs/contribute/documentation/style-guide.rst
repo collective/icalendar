@@ -285,7 +285,7 @@ The following docstrings items are the most frequently used in icalendar, althou
 .. important::
 
     Don't write docstrings for a class's ``__init__`` or ``__new__`` methods, if they're present.
-    Only write the docstring in the class's method.
+    Instead, write a docstring for the class itself.
 
     Sphinx will automatically append the ``__init__`` or ``__new__``  docstrings to the class's docstring, which may render the documentation in a confusing manner to the reader.
 
