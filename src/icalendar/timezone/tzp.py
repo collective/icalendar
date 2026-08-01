@@ -27,7 +27,6 @@ class TZP:
     """
 
     def __init__(self, provider: str | TZProvider = DEFAULT_TIMEZONE_PROVIDER):
-        """Create a new timezone implementation proxy."""
         self.use(provider)
 
     def use_pytz(self) -> None:

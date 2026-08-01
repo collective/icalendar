@@ -55,13 +55,6 @@ class vOrg:
         /,
         params: dict[str, Any] | None = None,
     ):
-        """Initialize ORG with variable fields or parse from vCard format string.
-
-        Parameters:
-            fields: Either a tuple or list of one or more strings, or a
-                    vCard format string with semicolon-separated fields
-            params: Optional property parameters
-        """
         if isinstance(fields, str):
             fields = self.from_ical(fields)
         if len(fields) < 1:

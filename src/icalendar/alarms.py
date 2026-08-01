@@ -42,6 +42,15 @@ class AlarmTime:
     An AlarmTime instance combines an alarm component with its resolved
     trigger time and additional state information, such as acknowledgment
     and snoozing.
+
+    Parameters:
+        alarm: The underlying alarm component.
+        trigger: A date or datetime at which to trigger the alarm.
+        acknowledged_until: Optional datetime in UTC until which
+            the alarm has been acknowledged.
+        snoozed_until: Optional datetime in UTC until which
+            the alarm has been snoozed.
+        parent: Optional parent component to which the alarm relates.
     """
 
     def __init__(
@@ -52,17 +61,6 @@ class AlarmTime:
         snoozed_until: datetime | None = None,
         parent: Parent | None = None,
     ):
-        """Create an instance of ``AlarmTime`` with any of its parameters.
-
-        Parameters:
-            alarm: The underlying alarm component.
-            trigger: A date or datetime at which to trigger the alarm.
-            acknowledged_until: Optional datetime in UTC until which
-                the alarm has been acknowledged.
-            snoozed_until: Optional datetime in UTC until which
-                the alarm has been snoozed.
-            parent: Optional parent component to which the alarm refers.
-        """
         self._alarm = alarm
         self._parent = parent
         self._trigger = trigger
@@ -184,7 +182,6 @@ class Alarms:
     """
 
     def __init__(self, component: Alarm | Event | Todo | None = None):
-        """Start computing alarm times."""
         self._absolute_alarms: list[Alarm] = []
         self._start_alarms: list[Alarm] = []
         self._end_alarms: list[Alarm] = []

@@ -271,7 +271,6 @@ class Parameters(CaselessDict):
     """
 
     def __init__(self, *args, **kwargs):
-        """Create new parameters."""
         if args and args[0] is None:
             # allow passing None
             args = args[1:]

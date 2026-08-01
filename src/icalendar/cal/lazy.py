@@ -207,7 +207,6 @@ class LazyCalendar(Calendar):
     """The strategy pattern for subcomponents of the calendar."""
 
     def __init__(self, *args, **kwargs):
-        """Initialize the calendar."""
         self._subcomponents = InitialSubcomponentsStrategy()
         super().__init__(*args, **kwargs)
 

@@ -215,7 +215,6 @@ class Component(CaselessDict):
         return None
 
     def __init__(self, *args, **kwargs):
-        """Set keys to upper for initial dict."""
         super().__init__(*args, **kwargs)
         # set parameters here for properties that use non-default values
         self.subcomponents: list[Component] = []  # Components can be nested.

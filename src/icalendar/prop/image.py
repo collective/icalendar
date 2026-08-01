@@ -84,7 +84,6 @@ class Image:
         altrep: str | None = None,
         display: str | None = None,
     ) -> None:
-        """Create a new image according to :rfc:`7986`."""
         if uri is not None and b64data is not None:
             raise ValueError("Image cannot have both URI and binary data (RFC 7986)")
         if uri is None and b64data is None:
