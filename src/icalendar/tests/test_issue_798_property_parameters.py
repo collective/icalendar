@@ -23,10 +23,11 @@ from icalendar.timezone.tzp import TZP
 
 
 class Prop:
+    """A property used to test property parameters."""
+
     params: Parameters
 
     def __init__(self, **parameters):
-        """Create a new property."""
         self.params = Parameters(parameters)
 
     def to_ical(self) -> str:

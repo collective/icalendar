@@ -173,7 +173,7 @@ apidoc_modules = [
         },
     }
 ]
-autoclass_content = "both"
+autoclass_content = "class"
 
 # -- sphinx.ext.autodoc options -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html

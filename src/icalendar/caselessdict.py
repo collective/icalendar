@@ -78,26 +78,25 @@ class CaselessDict(OrderedDict):
     their original case. Keys can be provided as ``str`` or ``bytes``.
     They are converted to Unicode via :func:`~icalendar.parser_tools.to_unicode`,
     then uppercased before storage.
+
+    Parameters:
+        *args: Positional arguments passed to :class:`~collections.OrderedDict`.
+        **kwargs: Keyword arguments passed to :class:`~collections.OrderedDict`.
+
+    Examples:
+        Create a new ``CaselessDict`` and normalize existing keys to uppercase.
+
+        ..  code-block:: pycon
+
+            >>> from icalendar.caselessdict import CaselessDict
+            >>> d = CaselessDict(summary="Meeting")
+            >>> d["SUMMARY"]
+            'Meeting'
+            >>> "summary" in d
+            True
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Parameters:
-            *args: Positional arguments passed to :class:`~collections.OrderedDict`.
-            **kwargs: Keyword arguments passed to :class:`~collections.OrderedDict`.
-
-        Example:
-
-            Create a new ``CaselessDict`` and normalize existing keys to uppercase.
-
-            ..  code-block:: pycon
-
-                >>> from icalendar.caselessdict import CaselessDict
-                >>> d = CaselessDict(summary="Meeting")
-                >>> d["SUMMARY"]
-                'Meeting'
-                >>> "summary" in d
-                True
-        """
         super().__init__(*args, **kwargs)
         for key, value in self.items():
             key_upper = to_unicode(key).upper()

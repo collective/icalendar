@@ -9,7 +9,16 @@ from icalendar.parser import Parameters
 
 
 class vGeo:
-    """Geographic Position
+    """Geographic position.
+
+    Create a geographic position from a tuple of latitude and longitude.
+
+    Parameters:
+        geo: Required. A tuple of latitude and longitude.
+        params: Property parameters.
+
+    Raises:
+        ValueError: If ``geo`` is not a tuple of latitude and longitude.
 
     Property Name:
         GEO
@@ -76,11 +85,6 @@ class vGeo:
         /,
         params: dict[str, Any] | None = None,
     ):
-        """Create a new vGeo from a tuple of (latitude, longitude).
-
-        Raises:
-            ValueError: if geo is not a tuple of (latitude, longitude)
-        """
         try:
             latitude, longitude = (geo[0], geo[1])
             latitude = float(latitude)

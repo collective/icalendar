@@ -42,6 +42,14 @@ class AlarmTime:
     An AlarmTime instance combines an alarm component with its resolved
     trigger time and additional state information, such as acknowledgment
     and snoozing.
+
+    Parameters:
+        alarm: Required. The underlying alarm component.
+        trigger: Required. A date or datetime at which to trigger the alarm.
+        acknowledged_until: A datetime in UTC until which the alarm has been
+            acknowledged.
+        parent: The parent component to which the alarm refers.
+        snoozed_until: A datetime in UTC until which the alarm has been snoozed.
     """
 
     def __init__(
@@ -52,17 +60,6 @@ class AlarmTime:
         snoozed_until: datetime | None = None,
         parent: Parent | None = None,
     ):
-        """Create an instance of ``AlarmTime`` with any of its parameters.
-
-        Parameters:
-            alarm: The underlying alarm component.
-            trigger: A date or datetime at which to trigger the alarm.
-            acknowledged_until: Optional datetime in UTC until which
-                the alarm has been acknowledged.
-            snoozed_until: Optional datetime in UTC until which
-                the alarm has been snoozed.
-            parent: Optional parent component to which the alarm refers.
-        """
         self._alarm = alarm
         self._parent = parent
         self._trigger = trigger
@@ -143,48 +140,52 @@ class AlarmTime:
 class Alarms:
     """Compute the times and states of alarms.
 
-    This is an example using RFC 9074.
-    One alarm is 30 minutes before the event and acknowledged.
-    Another alarm is 15 minutes before the event and still active.
-
-    >>> from icalendar import Event, Alarms
-    >>> event = Event.from_ical(
-    ... '''BEGIN:VEVENT
-    ... CREATED:20210301T151004Z
-    ... UID:AC67C078-CED3-4BF5-9726-832C3749F627
-    ... DTSTAMP:20210301T151004Z
-    ... DTSTART;TZID=America/New_York:20210302T103000
-    ... DTEND;TZID=America/New_York:20210302T113000
-    ... SUMMARY:Meeting
-    ... BEGIN:VALARM
-    ... UID:8297C37D-BA2D-4476-91AE-C1EAA364F8E1
-    ... TRIGGER:-PT30M
-    ... ACKNOWLEDGED:20210302T150004Z
-    ... DESCRIPTION:Event reminder
-    ... ACTION:DISPLAY
-    ... END:VALARM
-    ... BEGIN:VALARM
-    ... UID:8297C37D-BA2D-4476-91AE-C1EAA364F8E1
-    ... TRIGGER:-PT15M
-    ... DESCRIPTION:Event reminder
-    ... ACTION:DISPLAY
-    ... END:VALARM
-    ... END:VEVENT
-    ... ''')
-    >>> alarms = Alarms(event)
-    >>> len(alarms.times)   # all alarms including those acknowledged
-    2
-    >>> len(alarms.active)  # the alarms that are not acknowledged, yet
-    1
-    >>> alarms.active[0].trigger  # this alarm triggers 15 minutes before 10:30
-    datetime.datetime(2021, 3, 2, 10, 15, tzinfo=ZoneInfo(key='America/New_York'))
-
     RFC 9074 specifies that alarms can also be triggered by proximity.
     This is not implemented yet.
+
+    Parameters:
+        component: An alarm, event, or to-do component with which to start the
+            computation.
+
+    Examples:
+        This example uses RFC 9074. One alarm is 30 minutes before the event and
+        acknowledged. Another alarm is 15 minutes before the event and still
+        active.
+
+        >>> from icalendar import Event, Alarms
+        >>> event = Event.from_ical(
+        ... '''BEGIN:VEVENT
+        ... CREATED:20210301T151004Z
+        ... UID:AC67C078-CED3-4BF5-9726-832C3749F627
+        ... DTSTAMP:20210301T151004Z
+        ... DTSTART;TZID=America/New_York:20210302T103000
+        ... DTEND;TZID=America/New_York:20210302T113000
+        ... SUMMARY:Meeting
+        ... BEGIN:VALARM
+        ... UID:8297C37D-BA2D-4476-91AE-C1EAA364F8E1
+        ... TRIGGER:-PT30M
+        ... ACKNOWLEDGED:20210302T150004Z
+        ... DESCRIPTION:Event reminder
+        ... ACTION:DISPLAY
+        ... END:VALARM
+        ... BEGIN:VALARM
+        ... UID:8297C37D-BA2D-4476-91AE-C1EAA364F8E1
+        ... TRIGGER:-PT15M
+        ... DESCRIPTION:Event reminder
+        ... ACTION:DISPLAY
+        ... END:VALARM
+        ... END:VEVENT
+        ... ''')
+        >>> alarms = Alarms(event)
+        >>> len(alarms.times)   # all alarms including those acknowledged
+        2
+        >>> len(alarms.active)  # the alarms that are not acknowledged, yet
+        1
+        >>> alarms.active[0].trigger  # this alarm triggers 15 minutes before 10:30
+        datetime.datetime(2021, 3, 2, 10, 15, tzinfo=ZoneInfo(key='America/New_York'))
     """
 
     def __init__(self, component: Alarm | Event | Todo | None = None):
-        """Start computing alarm times."""
         self._absolute_alarms: list[Alarm] = []
         self._start_alarms: list[Alarm] = []
         self._end_alarms: list[Alarm] = []

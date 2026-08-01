@@ -40,6 +40,8 @@ class TypesFactory(CaselessDict):
 
     The value and parameter names don't overlap. So one factory is enough for
     both kinds.
+
+    Keys in the initial dictionary are normalized to uppercase.
     """
 
     _instance: ClassVar[TypesFactory | None] = None
@@ -51,7 +53,6 @@ class TypesFactory(CaselessDict):
         return TypesFactory._instance
 
     def __init__(self, *args, **kwargs):
-        """Set keys to upper for initial dict"""
         super().__init__(*args, **kwargs)
         self.all_types = (
             vBinary,

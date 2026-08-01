@@ -70,6 +70,8 @@ class Component(CaselessDict):
     Component is the base object for calendar, Event and the other
     components defined in :rfc:`5545`. Normally you will not use this class
     directly, but rather one of the subclasses.
+
+    Keys in the initial dictionary are normalized to uppercase.
     """
 
     name: ClassVar[str | None] = None
@@ -215,7 +217,6 @@ class Component(CaselessDict):
         return None
 
     def __init__(self, *args, **kwargs):
-        """Set keys to upper for initial dict."""
         super().__init__(*args, **kwargs)
         # set parameters here for properties that use non-default values
         self.subcomponents: list[Component] = []  # Components can be nested.

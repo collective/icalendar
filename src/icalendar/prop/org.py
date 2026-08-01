@@ -25,6 +25,14 @@ class vOrg:
     Semicolons are field separators and are NOT escaped.
     Commas and backslashes within field values ARE escaped per :rfc:`6350`.
 
+    Initialize an organization with one or more fields or parse it from a
+    vCard-formatted string.
+
+    Parameters:
+        fields: Required. A tuple or list of one or more strings, or a
+            vCard-formatted string with semicolon-separated fields.
+        params: Property parameters.
+
     Examples:
         A property value consisting of an organizational name,
         organizational unit #1 name, and organizational unit #2 name.
@@ -55,13 +63,6 @@ class vOrg:
         /,
         params: dict[str, Any] | None = None,
     ):
-        """Initialize ORG with variable fields or parse from vCard format string.
-
-        Parameters:
-            fields: Either a tuple or list of one or more strings, or a
-                    vCard format string with semicolon-separated fields
-            params: Optional property parameters
-        """
         if isinstance(fields, str):
             fields = self.from_ical(fields)
         if len(fields) < 1:

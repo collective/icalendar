@@ -6,8 +6,10 @@ As docstrings are fixed, their headings may be removed from this set.
 See https://github.com/collective/icalendar/issues/1481
 """
 
+import ast
 import inspect
 import re
+from pathlib import Path
 
 import pytest
 
@@ -84,6 +86,28 @@ def get_public_objects():
 def _obj_id(obj):
     """Return the name of the object for parametrize IDs."""
     return obj.__name__
+
+
+def test_constructor_methods_have_no_docstrings():
+    """Ensure class documentation is not split across constructor docstrings."""
+    package_path = Path(icalendar.__file__).parent
+    constructors_with_docstrings = []
+
+    for path in sorted(package_path.rglob("*.py")):
+        module = ast.parse(path.read_text(encoding="utf-8"))
+        for node in ast.walk(module):
+            if (
+                isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+                and node.name in {"__init__", "__new__"}
+                and ast.get_docstring(node, clean=False) is not None
+            ):
+                relative_path = path.relative_to(package_path)
+                constructors_with_docstrings.append(f"{relative_path}:{node.lineno}")
+
+    assert not constructors_with_docstrings, (
+        "Move constructor docstrings into their class docstrings: "
+        f"{', '.join(constructors_with_docstrings)}"
+    )
 
 
 @pytest.mark.parametrize("obj", get_public_objects(), ids=_obj_id)
