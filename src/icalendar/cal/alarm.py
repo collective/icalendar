@@ -400,9 +400,9 @@ class Alarm(Component):
         Conforms to :rfc:`5545#section-3.6.6`.
 
         Parameters:
-            description: The text to display when the alarm fires.
+            description: Required. The text to display when the alarm fires.
                 Corresponds to the :attr:`description` property.
-            trigger: When the alarm fires, as a :class:`~datetime.timedelta`
+            trigger: Required. When the alarm fires, as a :class:`~datetime.timedelta`
                 relative to the event start (negative means before) or as an
                 absolute :class:`~datetime.datetime` (recommend UTC-aware).
             concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the alarm.
@@ -497,7 +497,7 @@ class Alarm(Component):
         Conforms to :rfc:`5545#section-3.6.6`.
 
         Parameters:
-            trigger: When the alarm fires, as a :class:`~datetime.timedelta`
+            trigger: Required. When the alarm fires, as a :class:`~datetime.timedelta`
                 relative to the event start (negative means before) or as an
                 absolute :class:`~datetime.datetime` (recommend UTC-aware).
             attach: Optional audio attachment. Pass a URI string such as
@@ -583,14 +583,14 @@ class Alarm(Component):
         Conforms to :rfc:`5545#section-3.6.6`.
 
         Parameters:
-            summary: Subject line of the email.
+            summary: Required. Subject line of the email.
                 Corresponds to the :attr:`summary` property.
-            description: Body of the email.
+            description: Required. Body of the email.
                 Corresponds to the :attr:`description` property.
-            trigger: When the alarm fires, as a :class:`~datetime.timedelta`
+            trigger: Required. When the alarm fires, as a :class:`~datetime.timedelta`
                 relative to the event start (negative means before) or as an
                 absolute :class:`~datetime.datetime` (recommend UTC-aware).
-            attendees: One or more recipient addresses as
+            attendees: Required. One or more recipient addresses as
                 :class:`~icalendar.prop.cal_address.vCalAddress` instances. A
                 single address or a sequence of addresses. At least one is
                 required.
