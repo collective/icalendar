@@ -284,13 +284,17 @@ The following docstrings items are the most frequently used in icalendar, althou
 
 .. important::
 
-    When writing docstrings for both a class and its ``__init__`` method, consider the following points.
+    Don't write docstrings for a class's ``__init__`` or ``__new__`` methods, if they're present.
+    Instead, write a docstring for the class itself.
 
-    -   A class's docstring must not contain ``Attributes``, ``Parameters``,  ``Returns``, or ``Raises`` sections.
-    -   ``Parameters``, ``Returns``, and ``Raises`` sections may be in the ``__init__`` method's docstring.
-    -   The ``__init__`` method's docstring gets automatically appended to its class's docstring by Sphinx.
-        See :pr:`1164` for an example.
-    -   The one-line summary in the ``__init__`` method's docstring should serve as a narrative bridge from the ending of its class docstring.
+    Sphinx will automatically append the ``__init__`` or ``__new__``  docstrings to the class's docstring, which may render the documentation in a confusing manner to the reader.
+
+    If you find docstrings in a class's ``__init__`` or ``__new__`` methods, then please create a pull request that moves and merges their content into the class's docstring, leaving their docstrings empty.
+
+    ..  seealso::
+
+        - `Document __new__ methods <https://github.com/collective/icalendar/issues/1118>`_
+        - `Merge __init__ or __new__ docstrings into their class's docstring <https://github.com/collective/icalendar/issues/1620>`_
 
 Summary
     Docstrings must begin with a one-line summary of the Python object, terminated by a period.
@@ -306,8 +310,41 @@ Description
 
 ``Parameters``
     Each parameter should consist of its name and a brief description.
-    You must omit the parameter's type, allowing Sphinx extensions and the use of type hints to automatically render it for you.
-    This is especially true in a class's ``__init__`` method.
+
+    Parameters should be sorted, according to the following guidance.
+
+    -   There may be up to two groups of parameters, required and optional.
+    -   The parameters in the Python signature should retain their existing order, as changing their order may be a breaking change.
+    -   Required parameters must always appear before optional, both in the Python signature and in the docstring.
+    -   Within each group of required and optional parameters, sort them in alphabetical order in the docstring.
+    -   Required attributes should have a term of "Required." in their description, preferably immediately after their name.
+
+    The following abstraction illustrates a typical example.
+
+    ..  code-block:: python
+
+        def some_function(creq, breq, areq, bopt=2, aopt=1, copt=3) -> type_hints:
+            """Summary.
+
+            Longer description.
+
+            Parameters:
+                areq: Required. A string.
+                breq: Required. A string.
+                creq: Required. A string.
+                aopt: An integer.
+                bopt: An integer.
+                copt: An integer.
+            """
+            pass
+
+    If the Python signature for a parameter lacks type hints, you must either add :ref:`type hints <type-hints>` or specify the parameter's type manually.
+    The Sphinx extensions and the use of type hints automatically render the type for you.
+    Using type hints is preferred.
+
+    ..  seealso::
+
+        :ref:`type-hints`
 
     .. note::
 

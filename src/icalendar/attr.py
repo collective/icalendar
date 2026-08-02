@@ -17,6 +17,7 @@ from icalendar.prop import (
     vRecur,
     vText,
     vUid,
+    vUnknown,
     vUri,
     vXmlReference,
 )
@@ -451,7 +452,7 @@ def single_utc_property(name: str, docs: str) -> property:
         if name not in self:
             return None
         dt = self.get(name)
-        if isinstance(dt, vText):
+        if isinstance(dt, (vText, vUnknown)):
             # we might be in an attribute that is not typed
             value = vDDDTypes.from_ical(dt)
         else:
@@ -668,13 +669,16 @@ You can get, set, and delete categories for a component.
 
 This property can be used in icalendar through its Python attributes of:
 
+-   :attr:`Available.categories <icalendar.cal.available.Available.categories>`
+-   :attr:`Availability.categories <icalendar.cal.availability.Availability.categories>`
 -   :attr:`Calendar.categories <icalendar.cal.calendar.Calendar.categories>`
 -   :attr:`Event.categories <icalendar.cal.event.Event.categories>`
 -   :attr:`Journal.categories <icalendar.cal.journal.Journal.categories>`
 -   :attr:`Todo.categories <icalendar.cal.todo.Todo.categories>`
 
-The categories property for ``Event``, ``Journal``, and ``Todo`` complies
-with :rfc:`5545#section-3.8.1.2`, and for ``Calendar`` with :rfc:`7986#section-5.6`.
+The categories property for ``Available`` and ``Availability`` complies with
+:rfc:`7953#section-3.1`, for ``Event``, ``Journal``, and ``Todo`` with
+:rfc:`5545#section-3.8.1.2`, and for ``Calendar`` with :rfc:`7986#section-5.6`.
 
 Note:
     At present, icalendar doesn't take the LANGUAGE parameter as defined
