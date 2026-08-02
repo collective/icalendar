@@ -333,6 +333,16 @@ def test_lone_carriage_return_cannot_inject_content_line():
     )
 
 
+def test_carriage_return_normalized_after_round_trip():
+    r"""Issue #1477: after a serialise/parse round trip, ``\r`` is never
+    preserved, so a value written with ``\r`` and one written with ``\n``
+    come out identical."""
+    event = Event()
+    event.add("SUMMARY", "safe\rvalue")
+    round_tripped = Event.from_ical(event.to_ical())
+    assert round_tripped["SUMMARY"] == "safe\nvalue"
+
+
 def test_split_on_unescaped_comma():
     """Test splitting on unescaped commas."""
     from icalendar.parser import split_on_unescaped_comma
