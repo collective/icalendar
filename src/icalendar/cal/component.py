@@ -214,7 +214,7 @@ class Component(CaselessDict):
         # Don't infer PERIOD - it's too risky and vPeriod already handles it
         return None
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Set keys to upper for initial dict."""
         super().__init__(*args, **kwargs)
         # set parameters here for properties that use non-default values

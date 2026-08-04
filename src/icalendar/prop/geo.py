@@ -75,7 +75,7 @@ class vGeo:
         geo: tuple[float | str | int, float | str | int],
         /,
         params: dict[str, Any] | None = None,
-    ):
+    ) -> None:
         """Create a new vGeo from a tuple of (latitude, longitude).
 
         Raises:

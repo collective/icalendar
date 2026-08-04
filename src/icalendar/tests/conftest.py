@@ -62,7 +62,7 @@ class DataSource:
 
     def __init__(
         self, data_source_folder: Path, parser: type[Component], multiple=False
-    ):
+    ) -> None:
         self._parser = parser
         self._data_source_folder = data_source_folder
         self._multiple = multiple
