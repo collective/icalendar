@@ -15,7 +15,7 @@ To encourage collaboration and community, the icalendar team is actively seeking
 
 Good candidates for the team demonstrate the following qualifications:
 
--   Friendliness, humanity, and value diversity and inclusion.
+-   Be friendly, humane, and value diversity and inclusion.
 -   Frequently engage with other contributors.
 -   Frequently triage and review pull requests and issues.
 
