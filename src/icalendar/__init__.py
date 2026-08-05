@@ -128,6 +128,7 @@ __all__ = [
     "Event",
     "FeatureWillBeRemovedInFutureVersion",
     "FreeBusy",
+    "GloballyUniqueTZIDGuessed",
     "ICalParsingError",
     "Image",
     "IncompleteAlarmInformation",

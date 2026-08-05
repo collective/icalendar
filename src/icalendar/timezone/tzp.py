@@ -151,7 +151,6 @@ class TZP:
         primary ID so the next lookup is fast.
         """
         primary = None
-        global_tzid_candidates: list[str] = []
         for lookup_id, is_global_guess in self._lookup_ids(tz_id):
             if primary is None:
                 primary = lookup_id
@@ -162,8 +161,8 @@ class TZP:
 
                     warnings.warn(
                         f"Timezone {tz_id!r} is a globally unique TZID; "
-                        f"guessing it means {lookup_id!r} by stripping the vendor prefix. "
-                        "This may be wrong. See RFC 5545 section 3.2.19.",
+                        f"guessing it means {lookup_id!r} by stripping the vendor "
+                        "prefix. This may be wrong. See RFC 5545 section 3.2.19.",
                         GloballyUniqueTZIDGuessed,
                         stacklevel=3,
                     )
@@ -172,7 +171,7 @@ class TZP:
         return None
 
     def _lookup_ids(self, tz_id: str) -> Iterator[tuple[str, bool]]:
-        """Yield ``(id, is_global_guess)`` tuples to try when resolving ``tz_id``, best match first.
+        """Yield ``(id, is_global_guess)`` tuples to try, best match first.
 
         1.  The cleaned ID, without any surrounding ``/``.
         2.  The Olson name of a Windows timezone (for example,
