@@ -11,6 +11,24 @@ Change log
 
 .. towncrier release notes start
 
+7.2.2 (2026-07-20)
+------------------
+
+Documentation
+~~~~~~~~~~~~~
+
+- Fixed duplicate ``vInt.min`` and ``vInt.max`` descriptions in the API reference that caused the Read the Docs build to fail.
+
+
+7.2.1 (2026-07-20)
+------------------
+
+Security fixes
+~~~~~~~~~~~~~~
+
+- Fixed `GHSA-qjcq-q7h7-r74v <https://github.com/collective/icalendar/security/advisories/GHSA-qjcq-q7h7-r74v>`_: a crafted ``REPEAT`` on a ``VALARM`` could exhaust memory or CPU via :attr:`Alarm.triggers <icalendar.cal.alarm.Alarm.triggers>` and :class:`~icalendar.alarms.Alarms`. Expansion is now capped at ``icalendar.config.MAX_ALARM_REPEAT``. Its default is ``10000``. Set to ``-1`` to disable the cap. :class:`~icalendar.prop.integer.vInt` now also enforces the :rfc:`5545` signed 32-bit integer range on parse. @SashankBhamidi
+
+
 7.2.0 (2026-06-23)
 ------------------
 

@@ -17,6 +17,7 @@ from icalendar.prop import (
     vRecur,
     vText,
     vUid,
+    vUnknown,
     vUri,
     vXmlReference,
 )
@@ -451,7 +452,7 @@ def single_utc_property(name: str, docs: str) -> property:
         if name not in self:
             return None
         dt = self.get(name)
-        if isinstance(dt, vText):
+        if isinstance(dt, (vText, vUnknown)):
             # we might be in an attribute that is not typed
             value = vDDDTypes.from_ical(dt)
         else:
@@ -668,13 +669,16 @@ You can get, set, and delete categories for a component.
 
 This property can be used in icalendar through its Python attributes of:
 
+-   :attr:`Available.categories <icalendar.cal.available.Available.categories>`
+-   :attr:`Availability.categories <icalendar.cal.availability.Availability.categories>`
 -   :attr:`Calendar.categories <icalendar.cal.calendar.Calendar.categories>`
 -   :attr:`Event.categories <icalendar.cal.event.Event.categories>`
 -   :attr:`Journal.categories <icalendar.cal.journal.Journal.categories>`
 -   :attr:`Todo.categories <icalendar.cal.todo.Todo.categories>`
 
-The categories property for ``Event``, ``Journal``, and ``Todo`` complies
-with :rfc:`5545#section-3.8.1.2`, and for ``Calendar`` with :rfc:`7986#section-5.6`.
+The categories property for ``Available`` and ``Availability`` complies with
+:rfc:`7953#section-3.1`, for ``Event``, ``Journal``, and ``Todo`` with
+:rfc:`5545#section-3.8.1.2`, and for ``Calendar`` with :rfc:`7986#section-5.6`.
 
 Note:
     At present, icalendar doesn't take the LANGUAGE parameter as defined
@@ -1279,6 +1283,30 @@ Description:
     UNAVAILABLE".
 """,
 )
+
+
+def _make_repeat_property() -> property:
+    from icalendar.config import _clamp_repeat
+
+    _base = single_int_property(
+        "REPEAT",
+        0,
+        """The number of additional times the alarm is triggered after the
+initial trigger.
+
+Defaults to ``0``, meaning the alarm fires once. Must be paired with
+:attr:`~icalendar.cal.alarm.Alarm.DURATION`. Conforms with :rfc:`5545#section-3.8.6.2`.
+The value is capped at :data:`icalendar.config.MAX_ALARM_REPEAT` on read.
+""",
+    )
+
+    def fget(self):
+        return _clamp_repeat(_base.fget(self))
+
+    return property(fget, _base.fset, _base.fdel, _base.__doc__)
+
+
+repeat_property = _make_repeat_property()
 
 priority_property = single_int_property(
     "PRIORITY",
@@ -2575,6 +2603,7 @@ __all__ = [
     "rdates_property",
     "refids_property",
     "related_to_property",
+    "repeat_property",
     "rfc_7953_dtend_property",
     "rfc_7953_dtstart_property",
     "rfc_7953_duration_property",
