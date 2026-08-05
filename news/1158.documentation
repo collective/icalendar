@@ -1,3 +1,1 @@
-Fixed the broken link to `Component.to_ical` in the documentation of how to handle parsing errors.
-
-AI disclosure: used Claude Sonnet 5 with the prompt "Fix broken links to Python objects in parse-errors.rst" to assist with this change. @SemTiOne
+Fixed the broken link to `Component.to_ical` in the documentation of how to handle parsing errors. AI disclosure: used Claude Sonnet 5 with the prompt "Fix broken links to Python objects in parse-errors.rst" to assist with this change. @SemTiOne
