@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import warnings
 from datetime import datetime, time
 from typing import TYPE_CHECKING, overload
 
@@ -139,49 +140,60 @@ class TZP:
         return tzid.strip("/")
 
     def timezone(self, tz_id: str) -> datetime.tzinfo | None:
-        """Return a timezone with an id or None if we cannot find it.
+        """Return a timezone with an ID or ``None`` if we can't find it.
 
         ``tz_id`` may be a plain Olson name (``Europe/Berlin``), a Windows
         timezone name, or a "globally unique" identifier
         (:rfc:`5545#section-3.2.19`) such as
         ``/freeassociation.sourceforge.net/Europe/Berlin``. We try the
-        candidate ids from :meth:`_lookup_ids` in order, checking the cache
+        candidate IDs from :meth:`_lookup_ids` in order, checking the cache
         before the provider for each one, and cache the first match under the
-        primary id so the next lookup is fast.
+        primary ID so the next lookup is fast.
         """
         primary = None
-        for lookup_id in self._lookup_ids(tz_id):
+        global_tzid_candidates: list[str] = []
+        for lookup_id, is_global_guess in self._lookup_ids(tz_id):
             if primary is None:
                 primary = lookup_id
             tz = self.__tz_cache.get(lookup_id) or self.__provider.timezone(lookup_id)
             if tz is not None:
+                if is_global_guess:
+                    from icalendar.error import GloballyUniqueTZIDGuessed
+
+                    warnings.warn(
+                        f"Timezone {tz_id!r} is a globally unique TZID; "
+                        f"guessing it means {lookup_id!r} by stripping the vendor prefix. "
+                        "This may be wrong. See RFC 5545 section 3.2.19.",
+                        GloballyUniqueTZIDGuessed,
+                        stacklevel=3,
+                    )
                 self.__tz_cache[primary] = tz
                 return tz
         return None
 
-    def _lookup_ids(self, tz_id: str) -> Iterator[str]:
-        """Yield the ids to try when resolving ``tz_id``, best match first.
+    def _lookup_ids(self, tz_id: str) -> Iterator[tuple[str, bool]]:
+        """Yield ``(id, is_global_guess)`` tuples to try when resolving ``tz_id``, best match first.
 
-        1.  the cleaned id, without any surrounding ``/``
-        2.  the Olson name of a Windows timezone (e.g.
-            ``W. Europe Standard Time`` -> ``Europe/Berlin``)
-        3.  for a "globally unique" TZID (:rfc:`5545#section-3.2.19`) of the
-            form ``/<vendor>/<Olson/Name>`` -- emitted by clients such as
-            libical, Evolution and Mozilla Lightning -- the trailing Olson
+        1.  The cleaned ID, without any surrounding ``/``.
+        2.  The Olson name of a Windows timezone (for example,
+            ``W. Europe Standard Time`` -> ``Europe/Berlin``).
+        3.  For a "globally unique" TZID (:rfc:`5545#section-3.2.19`) of the
+            form ``/<vendor>/<Olson/Name>``—emitted by clients such as
+            libical, Evolution and Mozilla Lightning—the trailing Olson
             identifier, dropping vendor path components from the front. The
-            longest suffix is tried first so multi-part names such as
+            longest suffix is tried first, so multi-part names such as
             ``America/Argentina/Buenos_Aires`` still match.
-        4.  the original, unmodified id
+        4.  The original, unmodified ID.
         """
         cleaned = self.clean_timezone_id(tz_id)
-        yield cleaned
+        yield cleaned, False
         if cleaned in WINDOWS_TO_OLSON:
-            yield WINDOWS_TO_OLSON[cleaned]
+            yield WINDOWS_TO_OLSON[cleaned], False
         if tz_id.startswith("/"):
             parts = cleaned.split("/")
             for start in range(1, len(parts)):
-                yield "/".join(parts[start:])
-        yield tz_id
+                yield "/".join(parts[start:]), True
+        yield tz_id, False
 
     def uses_pytz(self) -> bool:
         """Whether we use pytz at all."""

@@ -13,6 +13,7 @@ from datetime import timedelta
 
 import pytest
 
+from icalendar.error import GloballyUniqueTZIDGuessed
 from icalendar.timezone import tzid_from_tzinfo
 
 # UID -> (expected Olson name, expected UTC offset on 2020-04-26) for each event
@@ -65,7 +66,12 @@ def test_events_with_global_tzids_are_timezone_aware(calendars):
 )
 def test_timezone_id_resolves(tzp, tzid, resolved_tzid):
     """The trailing Olson identifier is recovered regardless of prefix depth."""
-    tz = tzp.timezone(tzid)
+    is_global = tzid.startswith("/")
+    if is_global and resolved_tzid is not None:
+        with pytest.warns(GloballyUniqueTZIDGuessed):
+            tz = tzp.timezone(tzid)
+    else:
+        tz = tzp.timezone(tzid)
     if resolved_tzid is None:
         assert tz is None
     else:

@@ -37,6 +37,7 @@ from icalendar.error import (
     ComponentEndMissing,
     ComponentStartMissing,
     FeatureWillBeRemovedInFutureVersion,
+    GloballyUniqueTZIDGuessed,
     ICalParsingError,
     IncompleteAlarmInformation,
     IncompleteComponent,
