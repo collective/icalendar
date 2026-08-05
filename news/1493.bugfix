@@ -1,0 +1,1 @@
+Ship :file:`funding.json` in PyPI source distributions so packaging and test runs from the sdist no longer fail with :class:`FileNotFoundError`. @Hishamkhashman1

@@ -217,7 +217,6 @@ class Journal(Component):
             contacts: The :attr:`contacts` of the journal.
             created: The :attr:`~icalendar.Component.created` of the journal.
             description: The :attr:`description` of the journal.
-            end: The :attr:`end` of the journal.
             last_modified: The :attr:`~icalendar.Component.last_modified` of
                 the journal.
             links: The :attr:`~icalendar.Component.links` of the journal.

@@ -203,6 +203,13 @@ class ComponentIcalParser:
         elif name == "RDATE" and vals == "":
             vals_list = []
         else:
+            factory = self.get_factory_for_property(name, params)
+            # Value types that must not be unescaped provide their own value.
+            get_value_from_content_line = getattr(
+                factory, "get_value_from_content_line", None
+            )
+            if get_value_from_content_line is not None:
+                vals = get_value_from_content_line(line)
             vals_list = [vals]
 
         # Parse all properties eagerly
@@ -266,9 +273,10 @@ class ComponentIcalParser:
         # Special handling for CATEGORIES - need raw value
         # before unescaping to properly split on unescaped commas
         line_str = str(line)
-        # Use rfind to get the last colon (value separator)
-        # to handle parameters with colons like ALTREP="http://..."
-        colon_idx = line_str.rfind(":")
+        # The value separator is the first colon outside a quoted parameter
+        # section. ``rfind`` here would pick a colon that belongs to the value
+        # (``TEXT`` does not escape ``:``) and truncate the categories.
+        colon_idx = line.value_separator_index()
         if colon_idx > 0:
             raw_value = line_str[colon_idx + 1 :]
             # Parse categories immediately (not lazily) for both

@@ -76,6 +76,10 @@ class vDate(TimeBase):
 
     @staticmethod
     def from_ical(ical):
+        # date-value = 4DIGIT 2DIGIT 2DIGIT, no separators,
+        # per https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.4
+        if len(ical) != 8 or not ical.isascii() or not ical.isdigit():
+            raise ValueError(f"Wrong date format {ical}")
         try:
             timetuple = (
                 int(ical[:4]),  # year

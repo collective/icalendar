@@ -22,6 +22,10 @@ class vInline(str):
         params: dict[str, Any] | None = None,
     ) -> Self:
         value = to_unicode(value, encoding=encoding)
+        if "\r" in value or "\n" in value:
+            raise ValueError(
+                f"An inline value may not contain CR or LF characters: {value!r}"
+            )
         self = super().__new__(cls, value)
         self.params = Parameters(params)
         return self

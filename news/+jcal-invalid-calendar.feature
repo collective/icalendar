@@ -1,0 +1,1 @@
+Made :exc:`~icalendar.error.JCalParsingError` inherit from :exc:`~icalendar.error.InvalidCalendar` for consistency with :exc:`~icalendar.error.ICalParsingError`. AI assistance: ChatGPT was used to help debug terminal errors encountered during development. @GAUTAMSANSWAL

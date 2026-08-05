@@ -1,1 +1,0 @@
-Added :file:`.pre-commit-config.yaml` configuration and documentation to automatically record AI prompts in commit messages with :program:`ai-prompt-auto-commit`. @AniruthKarthik

@@ -1,0 +1,1 @@
+Adjusted the anti-slop GitHub Action settings of ``max-failures`` to ``1`` to surface any number of failures, and the ``min-profile-completeness`` setting from its default of ``4`` to ``1`` to require at least one human-added profile attribute. @stevepiercy

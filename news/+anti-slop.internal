@@ -1,0 +1,1 @@
+Added anti-slop GitHub Action to detect commits by automated AI agents and bots. Removed useless Commit-Check GitHub Action. See related `discussion <https://github.com/collective/icalendar/discussions/1508>`_. @stevepiercy

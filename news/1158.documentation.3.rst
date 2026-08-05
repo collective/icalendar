@@ -1,1 +1,0 @@
-Fix unqualified cross-references in :attr:`Event.start <icalendar.cal.event.Event.start>` and :attr:`Event.start <icalendar.cal.event.Event.end>` docstrings. @Esneider1107

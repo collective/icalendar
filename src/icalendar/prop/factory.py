@@ -166,6 +166,7 @@ class TypesFactory(CaselessDict):
             "related-to": "text",
             "url": "uri",
             "conference": "uri",  # RFC 7986
+            "image": "unknown",  # RFC 7986 has no default value type
             "source": "uri",
             "uid": "text",
             # Recurrence Component Properties
@@ -178,6 +179,7 @@ class TypesFactory(CaselessDict):
             "repeat": "integer",
             "trigger": "duration",
             "acknowledged": "date-time",
+            "proximity": "text",  # RFC 9074
             # Change Management Component Properties
             "created": "date-time",
             "dtstamp": "date-time",
@@ -234,11 +236,6 @@ class TypesFactory(CaselessDict):
         # For unknown/custom properties, always use the default type from types_map
         if value_param and name in self.types_map and value_param in self:
             return self[value_param]
-
-        if name.upper() == "IMAGE":
-            return self[
-                "unknown"
-            ]  # IMAGE is always unknown, even if VALUE is URI or BINARY
 
         if value_param and (value_param in self) and value_param != "IMAGE":
             return self[value_param]

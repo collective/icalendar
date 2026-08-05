@@ -34,6 +34,7 @@ _value_error_matches = [
     "Invalid month:",
     "must have exactly",  # vCard field count validation (ADR, N)
     "must have at least",  # vCard ORG minimum field validation
+    "not enough values to unpack",  # dateutil rejects a malformed VTIMEZONE content line
 ]
 
 

@@ -1,0 +1,73 @@
+# Run gh-profiler against the author of each new issue and PR.
+# See https://github.com/ehmatthes/gh-profiler
+
+name: Profile contributors
+
+on:
+  issues:
+    types: [opened]
+  pull_request_target:
+    types: [opened]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  profile-author:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff  # v6
+
+      - name: Install gh-profiler
+        run: uv tool install gh-profiler==0.8.3
+
+      - name: Determine target login and issue number
+        id: meta
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "issues" ]; then
+            echo "login=${{ github.event.issue.user.login }}" >> "$GITHUB_OUTPUT"
+            echo "number=${{ github.event.issue.number }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "login=${{ github.event.pull_request.user.login }}" >> "$GITHUB_OUTPUT"
+            echo "number=${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run gh-profiler
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh-profiler "${{ steps.meta.outputs.login }}" --concise > concise.txt
+          gh-profiler "${{ steps.meta.outputs.login }}" > full.txt
+
+      - name: Comment on issue or PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          {
+            echo "Profile summary:"
+            echo
+            echo '```text'
+            cat concise.txt
+            echo '```'
+            echo
+            echo '<details>'
+            echo '<summary>Full profile</summary>'
+            echo
+            echo '```text'
+            cat full.txt
+            echo '```'
+            echo
+            echo '</details>'
+          } > body.txt
+
+          jq -Rs '{body: .}' body.txt > payload.json
+
+          gh api \
+            repos/${{ github.repository }}/issues/${{ steps.meta.outputs.number }}/comments \
+            --input payload.json

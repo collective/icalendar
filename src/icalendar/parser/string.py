@@ -29,6 +29,13 @@ def _escape_char(text: str | bytes) -> str:
         5. ``\r\n`` -> ``\n`` (normalize line endings)
         6. ``"\n"`` -> ``r"\n"`` (transform a newline character to a literal, or raw,
            newline character)
+        7. ``"\r"`` -> ``r"\n"`` (transform a lone carriage return to a literal
+           newline character)
+
+        Steps 5 to 7 normalize ``\r\n``, ``\n``, or a lone ``\r`` to ``\n``.
+        The line-ending normalization is an implementation convenience,
+        not part of :rfc:`5545`, which only defines ``\n`` or ``\N`` for an
+        intentional line break, and doesn't give an escape form for a lone ``\r``.
     """
     assert isinstance(text, (str, bytes))
     text = to_unicode(text)
@@ -40,6 +47,7 @@ def _escape_char(text: str | bytes) -> str:
         .replace(",", r"\,")
         .replace("\r\n", r"\n")
         .replace("\n", r"\n")
+        .replace("\r", r"\n")
     )
 
 
@@ -121,27 +129,31 @@ def _foldline(line: str, limit: int = 75, fold_sep: str = "\r\n ") -> str:
     assert isinstance(line, str)
     assert "\n" not in line
 
-    # Use a fast and simple variant for the common case that line is all ASCII.
-    try:
-        line.encode("ascii")
-    except (UnicodeEncodeError, UnicodeDecodeError):
-        pass
-    else:
-        return fold_sep.join(
-            line[i : i + limit - 1] for i in range(0, len(line), limit - 1)
-        )
-
-    ret_chars: list[str] = []
+    folded_lines: list[str] = []
+    current_chars: list[str] = []
     byte_count = 0
     for char in line:
         char_byte_len = len(char.encode(DEFAULT_ENCODING))
+        if current_chars and byte_count + char_byte_len >= limit:
+            # For compatibility with existing clients, avoid splitting escaped
+            # values such as TEXT backslash escapes or RFC 6868 parameter
+            # escapes across a folded line boundary. See issue #1501.
+            if len(current_chars) > 1 and current_chars[-1] in r"\^":
+                escaped_prefix = current_chars.pop()
+                folded_lines.append("".join(current_chars))
+                current_chars = [escaped_prefix]
+                byte_count = len(escaped_prefix.encode(DEFAULT_ENCODING))
+            else:
+                folded_lines.append("".join(current_chars))
+                current_chars = []
+                byte_count = 0
+        current_chars.append(char)
         byte_count += char_byte_len
-        if byte_count >= limit:
-            ret_chars.append(fold_sep)
-            byte_count = char_byte_len
-        ret_chars.append(char)
 
-    return "".join(ret_chars)
+    if current_chars:
+        folded_lines.append("".join(current_chars))
+
+    return fold_sep.join(folded_lines)
 
 
 foldline = deprecate_for_version_8(_foldline)
@@ -168,14 +180,20 @@ def _escape_string(val: str) -> str:
     Note:
         Conversions:
 
+        - ``%`` -> ``%25``
         - ``\,`` -> ``%2C``
         - ``\:`` -> ``%3A``
         - ``\;`` -> ``%3B``
         - ``\\`` -> ``%5C``
+
+        A literal ``%`` is escaped first so that percent sequences already in
+        the value (e.g. ``%2C`` in a URI) are not confused with the markers
+        introduced here. :func:`_unescape_string` reverses it.
     """
     # f'{i:02X}'
     return (
-        val.replace(r"\,", "%2C")
+        val.replace("%", "%25")
+        .replace(r"\,", "%2C")
         .replace(r"\:", "%3A")
         .replace(r"\;", "%3B")
         .replace(r"\\", "%5C")
@@ -210,12 +228,17 @@ def _unescape_string(val: str) -> str:
         - ``%3A`` -> ``:``
         - ``%3B`` -> ``;``
         - ``%5C`` -> ``\``
+        - ``%25`` -> ``%``
+
+        ``%25`` is restored last so a literal ``%`` that :func:`_escape_string`
+        protected does not re-trigger the marker replacements above.
     """
     return (
         val.replace("%2C", ",")
         .replace("%3A", ":")
         .replace("%3B", ";")
         .replace("%5C", "\\")
+        .replace("%25", "%")
     )
 
 
