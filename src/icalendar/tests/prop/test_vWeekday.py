@@ -31,10 +31,13 @@ def test_error():
 def test_non_ascii_ordwk_digits_rejected(value):
     r"""Non-ASCII digits must not be accepted in the ``ordwk`` (relative) part.
 
-    ``\d`` is ``True`` for non-ASCII digits (e.g. Arabic-Indic ones), and
-    ``int`` parses them, so an Arabic-Indic ``"12MO"`` was silently accepted
-    as ``relative == 12``, contrary to :rfc:`5545#section-3.3.10`, which allows
-    only ASCII ``DIGIT`` (``ordwk = 1*2DIGIT``).
+    Use ``[0-9]`` to explicitly specify that only ASCII digits should be
+    matched, instead of ``\d``. In Python, ``\d`` matches a digit zero through
+    nine in any script except ideographic scripts, and is equivalent to
+    ``\p{Nd}``. A malformed ``ordwk`` would therefore get parsed into a valid
+    ``relative`` number.
+    RFC 5545, section 3.3.10, allows only ASCII characters per its definition
+    of ``DIGIT``.
     """
     with pytest.raises(ValueError):
         vWeekday(value)
