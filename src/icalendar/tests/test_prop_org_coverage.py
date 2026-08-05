@@ -99,10 +99,10 @@ class TestVOrgFromJcal:
 
     def test_from_jcal_with_params(self):
         """Parse a jCal ORG property that has parameters."""
-        jcal = ["org", {"LANGUAGE": "en"}, "text", "ABC Inc.", "Marketing"]
+        jcal = ["org", {"language": "en"}, "text", "ABC Inc.", "Marketing"]
         org = vOrg.from_jcal(jcal)
         assert org.fields == ("ABC Inc.", "Marketing")
-        assert org.params["LANGUAGE"] == "en"
+        assert org.params["language"] == "en"
 
     def test_from_jcal_round_trip(self):
         """to_jcal and from_jcal round-trip preserves the vOrg."""
