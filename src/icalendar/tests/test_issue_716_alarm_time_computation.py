@@ -220,12 +220,30 @@ def test_alarm_acknowledgement_uses_alarm_property():
     assert alarm_time.acknowledged == acknowledged
 
 
+def test_alarm_time_action_uses_alarm_property():
+    """The computed occurrence exposes its underlying alarm action."""
+    alarm = Alarm()
+    alarm.ACTION = "DISPLAY"
+
+    alarm_time = AlarmTime(alarm, EXAMPLE_TRIGGER)
+
+    assert alarm_time.action == "DISPLAY"
+
+
 def test_alarms_from_event_have_right_times(calendars):
     """We can collect from an event."""
     event = calendars.alarm_etar_future.subcomponents[-1]
     a = Alarms(event)
     assert len(a.times) == 3
     assert a.times[0].parent == event
+
+
+def test_add_component_returns_none(calendars):
+    """Adding a component mutates the alarm collection without a return value."""
+    event = calendars.alarm_etar_future.subcomponents[-1]
+    alarms = Alarms()
+
+    assert alarms.add_component(event) is None
 
 
 def test_cannot_set_the_event_twice(calendars):
