@@ -11,6 +11,7 @@ from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
+    _set_attachments,
     attachments_property,
     attendees_property,
     create_single_property,
@@ -301,6 +302,18 @@ class Alarm(Component):
 
     repeat = repeat_property
 
+    attachments = attachments_property
+
+    @attachments.setter
+    def attachments(self, value: ATTACHMENTS_TYPE_SETTER) -> None:
+        if value is not None and self.ACTION == "AUDIO":
+            count = len(value) if isinstance(value, (list, tuple)) else 1
+            if count > 1:
+                raise InvalidCalendar(
+                    "An AUDIO alarm MUST NOT contain more than one ATTACH property"
+                )
+        _set_attachments(self, value)
+
     ACTION = single_string_property(
         "ACTION",
         """The action invoked when the alarm triggers.
@@ -318,7 +331,6 @@ class Alarm(Component):
     summary = summary_property
     description = description_property
     attendees = attendees_property
-    attachments = attachments_property
 
     @classmethod
     def new(

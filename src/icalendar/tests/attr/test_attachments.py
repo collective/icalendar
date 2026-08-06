@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+from datetime import timedelta
+
 import pytest
 
 from icalendar import Alarm, Event, Journal, Todo
+from icalendar.error import InvalidCalendar
 from icalendar.prop import vBinary, vText, vUri
 
 ComponentWithAttachments = Alarm | Event | Journal | Todo
@@ -195,3 +198,20 @@ def test_broken_attach_value_does_not_raise():
     )
     restored = Event.from_ical(ical)
     assert len(restored.attachments) == 1
+
+
+def test_audio_alarm_rejects_multiple_attachments():
+    """Setter raises InvalidCalendar when >1 attachment is given and ACTION is AUDIO."""
+    alarm = Alarm.new_audio(timedelta(minutes=-5))
+    with pytest.raises(InvalidCalendar, match="AUDIO"):
+        alarm.attachments = [
+            "ftp://example.com/sound1.aud",
+            "ftp://example.com/sound2.aud",
+        ]
+
+
+def test_audio_alarm_accepts_single_attachment():
+    """A single attachment is valid for an AUDIO alarm."""
+    alarm = Alarm.new_audio(timedelta(minutes=-5))
+    alarm.attachments = "ftp://example.com/sound.aud"
+    assert len(alarm.attachments) == 1

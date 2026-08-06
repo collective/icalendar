@@ -2659,7 +2659,7 @@ Example:
 
 .. note::
 
-    An audio alarm can contain at most one attachment.
+    An ``ACTION:AUDIO`` alarm MUST NOT contain more than one ``ATTACH`` property.
 
     List modifications do not modify the component. Methods such as
     ``append()``, ``extend()``, and ``remove()``, as well as item
