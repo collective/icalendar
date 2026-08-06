@@ -2586,61 +2586,7 @@ def _normalize_attachment(value: str | bytes | vUri | vBinary) -> vUri | vBinary
 
 
 def _get_attachments(self: Component) -> list[vUri | vBinary]:
-    """ATTACH properties as a list.
-
-    Returns a list of :class:`~icalendar.prop.uri.vUri` and
-    :class:`~icalendar.prop.binary.vBinary` values, or an empty list when
-    no ``ATTACH`` property is present.
-
-    Setting this property replaces all existing attachments. A :class:`str`
-    is converted to :class:`~icalendar.prop.uri.vUri` and :class:`bytes` to
-    :class:`~icalendar.prop.binary.vBinary`. Values that are already
-    :class:`~icalendar.prop.uri.vUri` or :class:`~icalendar.prop.binary.vBinary`
-    are stored unchanged, so their parameters are preserved. Setting ``None``
-    or an empty list removes all attachments, as does deleting the property.
-
-    In accordance with :rfc:`5545#section-3.8.1.1`, attachments may occur
-    multiple times in :class:`~icalendar.cal.event.Event`,
-    :class:`~icalendar.cal.todo.Todo`, and
-    :class:`~icalendar.cal.journal.Journal`. Email alarms may contain
-    multiple attachments, audio alarms at most one, and display alarms none.
-
-    Example:
-        Attach a URI and inline binary data to an event:
-
-        .. code-block:: pycon
-
-            >>> from icalendar import Event, vUri, vBinary
-            >>> event = Event()
-            >>> event.attachments
-            []
-            >>> event.attachments = ["https://example.com/agenda.pdf"]
-            >>> print(event.to_ical().decode())
-            BEGIN:VEVENT
-            ATTACH:https://example.com/agenda.pdf
-            END:VEVENT
-            >>> event.attachments = [
-            ...     vUri(
-            ...         "https://example.com/agenda.pdf",
-            ...         params={"FMTTYPE": "application/pdf"},
-            ...     ),
-            ...     vBinary(b"inline-bytes"),
-            ... ]
-            >>> len(event.attachments)
-            2
-
-    .. note::
-
-        List modifications do not modify the component. Methods such as
-        ``append()``, ``extend()``, and ``remove()``, as well as item
-        assignment, act on a copy. Assign the list back to the property or
-        use :meth:`Component.add <icalendar.cal.component.Component.add>`
-        with a typed value instead.
-
-    .. seealso::
-
-        :attr:`Component.links <icalendar.cal.component.Component.links>`
-    """
+    """Get all the attachments"""
     attachments = self.get("ATTACH", [])
     if not isinstance(attachments, SEQUENCE_TYPES):
         return [attachments]
@@ -2661,11 +2607,80 @@ def _set_attachments(self: Component, value: ATTACHMENTS_TYPE_SETTER) -> None:
 
 
 def _del_attachments(self: Component) -> None:
-    """Delete all attachments."""
+    """Delete all attachments"""
     self.pop("ATTACH", None)
 
 
-attachments_property = property(_get_attachments, _set_attachments, _del_attachments)
+attachments_property = property(
+    _get_attachments,
+    _set_attachments,
+    _del_attachments,
+    """This property defines the attachments for a component.
+
+Setting this property replaces all existing attachments. A :class:`str`
+is converted to :class:`~icalendar.prop.uri.vUri`, and :class:`bytes` is
+converted to :class:`~icalendar.prop.binary.vBinary`. Values that are
+already :class:`~icalendar.prop.uri.vUri` or
+:class:`~icalendar.prop.binary.vBinary` are stored unchanged, so their
+parameters are preserved. Setting ``None`` or an empty list removes all
+attachments, as does deleting the property.
+
+This property can be used in icalendar through its Python attributes of:
+
+-   :attr:`Alarm.attachments <icalendar.cal.alarm.Alarm.attachments>`
+-   :attr:`Event.attachments <icalendar.cal.event.Event.attachments>`
+-   :attr:`Journal.attachments <icalendar.cal.journal.Journal.attachments>`
+-   :attr:`Todo.attachments <icalendar.cal.todo.Todo.attachments>`
+
+The attachments property is defined by :rfc:`5545#section-3.8.1.1`. It can
+be specified multiple times on "VEVENT", "VTODO", and "VJOURNAL"
+components. On a "VALARM" component, how many are allowed depends on the
+alarm's action: an "EMAIL" alarm may have one or more, an "AUDIO" alarm at
+most one, and a "DISPLAY" alarm none.
+
+Note:
+    List modifications do not modify the component. Methods such as
+    ``append()``, ``extend()``, and ``remove()``, as well as item
+    assignment, act on a copy. Assign the list back to the property, or
+    use :meth:`Component.add <icalendar.cal.component.Component.add>`
+    with a typed value instead.
+
+Parameters:
+    attachments(str | bytes | vUri | vBinary | list | None):
+        A single attachment, or a list of attachments to set. Accepts
+        :class:`str`, :class:`bytes`, :class:`~icalendar.prop.uri.vUri`,
+        and :class:`~icalendar.prop.binary.vBinary`, individually or
+        mixed together in a list.
+
+Example:
+    Attach a URI to an event, then replace it with a URI and inline
+    binary data together:
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Event, vUri, vBinary
+        >>> event = Event()
+        >>> event.attachments
+        []
+        >>> event.attachments = ["https://example.com/agenda.pdf"]
+        >>> print(event.to_ical().decode())
+        BEGIN:VEVENT
+        ATTACH:https://example.com/agenda.pdf
+        END:VEVENT
+        >>> event.attachments = [
+        ...     vUri(
+        ...         "https://example.com/agenda.pdf",
+        ...         params={"FMTTYPE": "application/pdf"},
+        ...     ),
+        ...     vBinary(b"inline-bytes"),
+        ... ]
+        >>> len(event.attachments)
+        2
+
+See also:
+    :attr:`Component.links <icalendar.cal.component.Component.links>`
+""",
+)
 
 
 __all__ = [

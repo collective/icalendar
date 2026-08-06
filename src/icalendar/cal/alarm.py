@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, NamedTuple
 
@@ -27,11 +28,9 @@ from icalendar.attr import (
 from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
 from icalendar.error import InvalidCalendar
-from icalendar.prop.binary import vBinary
 
 if TYPE_CHECKING:
     import uuid
-    from collections.abc import Sequence
 
     from icalendar.prop import vCalAddress
 
@@ -559,9 +558,7 @@ class Alarm(Component):
         alarm.add("ACTION", "AUDIO")
         alarm.TRIGGER = trigger
         if attach:
-            alarm.add(
-                "ATTACH", vBinary(attach) if isinstance(attach, bytes) else attach
-            )
+            alarm.attachments = attach
         alarm._apply_duration_repeat(duration, repeat)
         return alarm
 
@@ -572,7 +569,7 @@ class Alarm(Component):
         description: str,
         trigger: timedelta | datetime,
         attendees: Sequence[vCalAddress] | vCalAddress,
-        attachments: Sequence[str] | str | None = None,
+        attachments: ATTACHMENTS_TYPE_SETTER | Sequence[str] = None,
         duration: timedelta | None = None,
         repeat: int | None = None,
         uid: str | uuid.UUID | None = None,
@@ -600,8 +597,8 @@ class Alarm(Component):
                 :class:`~icalendar.prop.cal_address.vCalAddress` instances. A
                 single address or a sequence of addresses. At least one is
                 required.
-            attachments: Optional URI or sequence of URIs to attach to the
-                email.
+            attachments: The :attr:`attachments` of the alarm. A single value
+                or a sequence of them. URIs and binary data are both accepted.
             duration: Gap between repeated triggers. Must be paired with
                 ``repeat``. Corresponds to the :attr:`DURATION` property.
             repeat: Number of *additional* times to fire after the initial
@@ -645,8 +642,10 @@ class Alarm(Component):
         """
         if isinstance(attendees, str):
             attendees = [attendees]
-        if isinstance(attachments, str):
-            attachments = [attachments]
+        if isinstance(attachments, Sequence) and not isinstance(
+            attachments, (str, bytes, list, tuple)
+        ):
+            attachments = list(attachments)
         if not summary:
             raise InvalidCalendar("EMAIL alarm requires a summary")
         if not description:
@@ -656,6 +655,7 @@ class Alarm(Component):
         if not attendees:
             raise InvalidCalendar("EMAIL alarm requires at least one attendee")
         alarm: Alarm = cls.new(
+            attachments=attachments,
             summary=summary,
             description=description,
             uid=uid,
@@ -667,9 +667,6 @@ class Alarm(Component):
         )
         alarm.add("ACTION", "EMAIL")
         alarm.TRIGGER = trigger
-        if attachments:
-            for attachment in attachments:
-                alarm.add("ATTACH", attachment)
         alarm._apply_duration_repeat(duration, repeat)
         return alarm
 
