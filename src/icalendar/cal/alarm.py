@@ -310,7 +310,8 @@ class Alarm(Component):
             count = len(value) if isinstance(value, (list, tuple)) else 1
             if count > 1:
                 raise InvalidCalendar(
-                    "An AUDIO alarm MUST NOT contain more than one ATTACH property"
+                    "An AUDIO alarm must not contain more than one attachment.\n"
+                    f"Alarm has {count} attachments."
                 )
         _set_attachments(self, value)
 
@@ -610,7 +611,7 @@ class Alarm(Component):
                 single address or a sequence of addresses. At least one is
                 required.
             attachments: The :attr:`attachments` of the alarm. A single value
-                or a sequence of them. URIs and binary data are both accepted.
+                or a sequence of them. Both URIs and binary data are accepted.
             duration: Gap between repeated triggers. Must be paired with
                 ``repeat``. Corresponds to the :attr:`DURATION` property.
             repeat: Number of *additional* times to fire after the initial

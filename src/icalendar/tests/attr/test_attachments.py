@@ -210,8 +210,31 @@ def test_audio_alarm_rejects_multiple_attachments():
         ]
 
 
+def test_audio_alarm_rejects_multiple_attachments_error_message():
+    """Error message names the constraint and includes the actual count."""
+    alarm = Alarm.new_audio(timedelta(minutes=-5))
+    attachments = [
+        "ftp://example.com/sound1.aud",
+        "ftp://example.com/sound2.aud",
+    ]
+    with pytest.raises(InvalidCalendar) as exc_info:
+        alarm.attachments = attachments
+    msg = str(exc_info.value)
+    assert "must not contain more than one attachment" in msg
+    assert f"Alarm has {len(attachments)} attachments" in msg
+
+
 def test_audio_alarm_accepts_single_attachment():
     """A single attachment is valid for an AUDIO alarm."""
     alarm = Alarm.new_audio(timedelta(minutes=-5))
     alarm.attachments = "ftp://example.com/sound.aud"
     assert len(alarm.attachments) == 1
+
+
+def test_audio_alarm_accepts_zero_attachments():
+    """An AUDIO alarm accepts zero attachments without raising."""
+    alarm = Alarm.new_audio(timedelta(minutes=-5))
+    alarm.attachments = None
+    assert alarm.attachments == []
+    alarm.attachments = []
+    assert alarm.attachments == []
