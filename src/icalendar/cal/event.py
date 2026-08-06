@@ -12,6 +12,7 @@ from icalendar.attr import (
     RELATED_TO_TYPE_SETTER,
     X_MOZ_LASTACK_property,
     X_MOZ_SNOOZE_TIME_property,
+    attachments_property,
     attendees_property,
     categories_property,
     class_property,
@@ -422,6 +423,7 @@ class Event(Component):
     transparency = transparency_property
     status = status_property
     attendees = attendees_property
+    attachments = attachments_property
     images = images_property
     conferences = conferences_property
     from icalendar.attr import RECURRENCE_ID

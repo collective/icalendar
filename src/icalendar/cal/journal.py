@@ -10,6 +10,7 @@ from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
+    attachments_property,
     attendees_property,
     categories_property,
     class_property,
@@ -166,6 +167,7 @@ class Journal(Component):
     contacts = contacts_property
     status = status_property
     attendees = attendees_property
+    attachments = attachments_property
     from icalendar.attr import RECURRENCE_ID
 
     @property

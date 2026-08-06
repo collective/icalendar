@@ -1,0 +1,214 @@
+"""Tests for the attachments property on ATTACH-supporting components."""
+
+from __future__ import annotations
+
+import pytest
+
+from icalendar import Alarm, Event, Journal, Todo
+from icalendar.prop import vBinary, vText, vUri
+
+ComponentWithAttachments = Alarm | Event | Journal | Todo
+
+
+@pytest.fixture(params=[Alarm, Event, Journal, Todo])
+def component(request) -> ComponentWithAttachments:
+    """Return a component that supports ATTACH."""
+    return request.param()
+
+
+def test_absent_attachments_returns_empty_list(component):
+    """An absent property returns [] without inserting ATTACH."""
+    assert component.attachments == []
+    assert "ATTACH" not in component
+
+
+def test_string_becomes_vuri(component):
+    """A string becomes vUri."""
+    component.attachments = "https://example.com/file.pdf"
+    assert len(component.attachments) == 1
+    assert isinstance(component.attachments[0], vUri)
+    assert component.attachments[0] == "https://example.com/file.pdf"
+
+
+def test_bytes_become_vbinary(component):
+    """Bytes, including non-UTF-8 bytes, become vBinary."""
+    payload = b"\xff\xfe\x00binary"
+    component.attachments = payload
+    assert len(component.attachments) == 1
+    attachment = component.attachments[0]
+    assert isinstance(attachment, vBinary)
+    assert attachment.bytes == payload
+
+
+def test_binary_serialization_includes_encoding_and_value(component):
+    """Binary serialization includes VALUE=BINARY, ENCODING=BASE64, and payload."""
+    component.attachments = b"hello"
+    ical = component.to_ical().decode()
+    assert "VALUE=BINARY" in ical
+    assert "ENCODING=BASE64" in ical
+    assert "aGVsbG8=" in ical
+
+
+def test_typed_values_preserve_parameters(component):
+    """Existing vUri and vBinary parameters remain intact."""
+    uri = vUri(
+        "https://example.com/agenda.pdf",
+        params={"FMTTYPE": "application/pdf"},
+    )
+    binary = vBinary(b"data", params={"FMTTYPE": "application/octet-stream"})
+    component.attachments = [uri, binary]
+    got_uri, got_binary = component.attachments
+    assert got_uri.params["FMTTYPE"] == "application/pdf"
+    assert got_binary.params["FMTTYPE"] == "application/octet-stream"
+    assert got_binary.params["VALUE"] == "BINARY"
+    assert got_binary.params["ENCODING"] == "BASE64"
+
+
+def test_mixed_list_preserves_order(component):
+    """Mixed URI and binary lists preserve their order."""
+    component.attachments = [
+        "https://example.com/a.pdf",
+        b"bytes-a",
+        "https://example.com/b.pdf",
+        b"bytes-b",
+    ]
+    values = component.attachments
+    assert isinstance(values[0], vUri)
+    assert isinstance(values[1], vBinary)
+    assert isinstance(values[2], vUri)
+    assert isinstance(values[3], vBinary)
+    assert values[0] == "https://example.com/a.pdf"
+    assert values[1].bytes == b"bytes-a"
+    assert values[2] == "https://example.com/b.pdf"
+    assert values[3].bytes == b"bytes-b"
+
+
+def test_second_assignment_replaces(component):
+    """A second assignment replaces rather than accumulates."""
+    component.attachments = "https://example.com/old.pdf"
+    component.attachments = "https://example.com/new.pdf"
+    assert component.attachments == [vUri("https://example.com/new.pdf")]
+
+
+@pytest.mark.parametrize("bad", [1, object(), {"uri": "x"}])
+def test_unsupported_types_raise_type_error_without_change(component, bad):
+    """Unsupported types raise TypeError without changing attachments."""
+    component.attachments = "https://example.com/keep.pdf"
+    before = component.to_ical()
+    with pytest.raises(TypeError):
+        component.attachments = bad
+    assert component.to_ical() == before
+
+
+def test_unsupported_list_item_raises_without_change(component):
+    """An unsupported list item raises TypeError without changing attachments."""
+    component.attachments = "https://example.com/keep.pdf"
+    before = component.to_ical()
+    with pytest.raises(TypeError):
+        component.attachments = ["https://example.com/ok.pdf", 123]
+    assert component.to_ical() == before
+
+
+@pytest.mark.parametrize("empty", [[], None])
+def test_set_empty_clears_attachments(component, empty):
+    """Setting an empty list or None removes all attachments."""
+    component.attachments = "https://example.com/keep.pdf"
+    component.attachments = empty
+    assert component.attachments == []
+    assert "ATTACH" not in component
+
+
+def test_del_attachments(component):
+    """Deleting the property removes the ATTACH property."""
+    component.attachments = "https://example.com/keep.pdf"
+    del component.attachments
+    assert component.attachments == []
+    assert "ATTACH" not in component
+
+
+def test_set_attachments_round_trips(component):
+    """Assigning the property its own value leaves it unchanged."""
+    component.attachments = [
+        vUri("https://example.com/a.pdf", params={"FMTTYPE": "application/pdf"}),
+        vBinary(b"bytes-a"),
+    ]
+    before = component.to_ical()
+    component.attachments = component.attachments
+    assert component.to_ical() == before
+
+
+def test_tuple_is_accepted(component):
+    """A tuple of attachments is accepted like a list."""
+    component.attachments = ("https://example.com/a.pdf", b"bytes-a")
+    values = component.attachments
+    assert isinstance(values[0], vUri)
+    assert isinstance(values[1], vBinary)
+
+
+@pytest.mark.parametrize(
+    "values",
+    [
+        "https://example.com/one.pdf",
+        ["https://example.com/a.pdf", "https://example.com/b.pdf"],
+    ],
+)
+def test_mutating_returned_list_does_not_alter_serialization(component, values):
+    """Mutating the returned list does not alter serialization."""
+    component.attachments = values
+    before = component.to_ical()
+    returned = component.attachments
+    returned.append(vUri("https://example.com/extra.pdf"))
+    returned[0] = vUri("https://example.com/changed.pdf")
+    assert component.to_ical() == before
+
+
+def test_invalid_uri_leaves_previous_attachments_unchanged(component):
+    """Invalid URI input leaves the previous attachments unchanged."""
+    component.attachments = "https://example.com/keep.pdf"
+    before = component.to_ical()
+    with pytest.raises(ValueError, match="CR or LF"):
+        component.attachments = "https://example.com/bad\n.pdf"
+    assert component.to_ical() == before
+
+
+def test_parse_serialize_round_trip_preserves_both_types(component):
+    """Parse/serialize round trips preserve both attachment types."""
+    component.attachments = [
+        vUri(
+            "https://example.com/agenda.pdf",
+            params={"FMTTYPE": "application/pdf"},
+        ),
+        vBinary(b"\xff\x00data"),
+    ]
+    restored = type(component).from_ical(component.to_ical())
+    assert len(restored.attachments) == 2
+    assert isinstance(restored.attachments[0], vUri)
+    assert restored.attachments[0] == "https://example.com/agenda.pdf"
+    assert restored.attachments[0].params.get("FMTTYPE") == "application/pdf"
+    assert isinstance(restored.attachments[1], vBinary)
+    assert restored.attachments[1].bytes == b"\xff\x00data"
+
+
+def test_unexpected_stored_type_is_returned_as_is(component):
+    """Stored values are returned as-is, like the other list properties.
+
+    Error-tolerant parsing can store a ``vBroken`` value, so the getter must
+    not raise on calendars that icalendar deliberately accepts.
+    """
+    component.add("ATTACH", vText("not-an-attachment"))
+    assert component.attachments == [vText("not-an-attachment")]
+
+
+def test_broken_attach_value_does_not_raise():
+    """A value that fails to parse is returned instead of raising.
+
+    Only :class:`~icalendar.cal.event.Event` sets ``ignore_exceptions``, so it
+    is the component that can store a ``vBroken`` attachment.
+    """
+    ical = (
+        b"BEGIN:VEVENT\r\n"
+        b"ATTACH;ENCODING=BASE64;VALUE=BINARY:!!!notbase64!!!\r\n"
+        b"END:VEVENT\r\n"
+    )
+    restored = Event.from_ical(ical)
+    assert len(restored.attachments) == 1

@@ -9,6 +9,7 @@ from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
+    attachments_property,
     attendees_property,
     create_single_property,
     description_property,
@@ -317,6 +318,7 @@ class Alarm(Component):
     summary = summary_property
     description = description_property
     attendees = attendees_property
+    attachments = attachments_property
 
     @classmethod
     def new(
