@@ -104,7 +104,9 @@ class vDDDTypes(TimeBase):
             if timezone:
                 tzinfo = tzp.timezone(timezone)
                 if tzinfo is not None:
-                    return to_datetime(vDate.from_ical(ical)).replace(tzinfo=tzinfo)
+                    # ``replace`` picks the first offset a pytz timezone knows,
+                    # which is the LMT one, so localize instead.
+                    return tzp.localize(to_datetime(vDate.from_ical(ical)), tzinfo)
             return vDate.from_ical(ical)
         if len(ical) in (6, 7):
             return vTime.from_ical(ical, timezone=timezone)
