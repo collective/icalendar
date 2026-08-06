@@ -24,10 +24,12 @@ class TZP:
     If you would like to have another timezone implementation,
     you can create a new one and pass it to this proxy.
     All of icalendar will then use this timezone implementation.
+
+    Parameters:
+        provider: The timezone provider or the name of a registered provider.
     """
 
     def __init__(self, provider: str | TZProvider = DEFAULT_TIMEZONE_PROVIDER):
-        """Create a new timezone implementation proxy."""
         self.use(provider)
 
     def use_pytz(self) -> None:

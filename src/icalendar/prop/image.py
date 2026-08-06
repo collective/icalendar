@@ -35,11 +35,11 @@ class Image:
         on the image in the calendar user agent.
 
     Parameters:
-        uri: The URI of the image.
+        altrep: The link target of the image.
         b64data: The data of the image, base64 encoded.
+        display: The display mode, for example, ``"BADGE"``.
         fmttype: The format type, e.g. ``"image/png"``.
-        altrep: Link target of the image.
-        display: The display mode, e.g. ``"BADGE"``.
+        uri: The URI of the image.
 
     """
 
@@ -84,7 +84,6 @@ class Image:
         altrep: str | None = None,
         display: str | None = None,
     ) -> None:
-        """Create a new image according to :rfc:`7986`."""
         if uri is not None and b64data is not None:
             raise ValueError("Image cannot have both URI and binary data (RFC 7986)")
         if uri is None and b64data is None:

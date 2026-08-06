@@ -44,6 +44,14 @@ class vN:
     Semicolons are field separators and are NOT escaped.
     Commas and backslashes within field values ARE escaped per :rfc:`6350`.
 
+    Initialize a name with five fields or parse it from a vCard-formatted string.
+
+    Parameters:
+        fields: Required. An :class:`NFields`, tuple, or list of five strings,
+            one per field, or a vCard-formatted string with semicolon-separated
+            fields.
+        params: Property parameters.
+
     Examples:
 
         .. code-block:: pycon
@@ -66,13 +74,6 @@ class vN:
         /,
         params: dict[str, Any] | None = None,
     ):
-        """Initialize N with five fields or parse from vCard format string.
-
-        Parameters:
-            fields: Either an NFields, tuple, or list of five strings, one per field,
-                    or a vCard format string with semicolon-separated fields
-            params: Optional property parameters
-        """
         if isinstance(fields, str):
             fields = self.from_ical(fields)
         if isinstance(fields, NFields):

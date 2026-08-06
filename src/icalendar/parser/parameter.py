@@ -237,6 +237,7 @@ class Parameters(CaselessDict):
 
     It knows nothing of datatypes.
     Its main concern is textual structure.
+    Create new parameters from positional mappings and keyword values.
 
     Examples:
 
@@ -271,7 +272,6 @@ class Parameters(CaselessDict):
     """
 
     def __init__(self, *args, **kwargs):
-        """Create new parameters."""
         if args and args[0] is None:
             # allow passing None
             args = args[1:]

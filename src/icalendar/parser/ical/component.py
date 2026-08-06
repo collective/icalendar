@@ -20,6 +20,12 @@ class ComponentIcalParser:
 
     This uses the template method pattern, where the main parsing
     logic can be refined in subclasses.
+
+    Parameters:
+        component_factory: Required. The factory to use for creating components.
+        data: Required. The raw iCalendar data to parse, either as bytes or a
+            list of content lines.
+        types_factory: Required. The factory to use for creating property values.
     """
 
     datetime_names: ClassVar[tuple[str, ...]] = (
@@ -42,14 +48,6 @@ class ComponentIcalParser:
         component_factory: ComponentFactory,
         types_factory: TypesFactory,
     ):
-        """Initialize the parser with the raw data.
-
-        Parameters:
-            data: The raw iCalendar data to parse, either as bytes
-                or a list of content lines.
-            component_factory: The factory to use for creating components.
-            types_factory: The factory to use for creating property values.
-        """
         self._data = data
         self._component_factory = component_factory
         self._types_factory = types_factory

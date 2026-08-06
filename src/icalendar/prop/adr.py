@@ -51,6 +51,15 @@ class vAdr:
     Semicolons are field separators and are NOT escaped.
     Commas and backslashes within field values ARE escaped per :rfc:`6350`.
 
+    Initialize an address with seven fields or parse it from a vCard-formatted
+    string.
+
+    Parameters:
+        fields: Required. An :class:`AdrFields`, tuple, or list of seven strings,
+            one per field, or a vCard-formatted string with semicolon-separated
+            fields.
+        params: Property parameters.
+
     Examples:
         .. code-block:: pycon
 
@@ -72,13 +81,6 @@ class vAdr:
         /,
         params: dict[str, Any] | None = None,
     ):
-        """Initialize ADR with seven fields or parse from vCard format string.
-
-        Parameters:
-            fields: Either an AdrFields, tuple, or list of seven strings, one per field,
-                    or a vCard format string with semicolon-separated fields
-            params: Optional property parameters
-        """
         if isinstance(fields, str):
             fields = self.from_ical(fields)
         if isinstance(fields, AdrFields):

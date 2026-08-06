@@ -14,6 +14,8 @@ if TYPE_CHECKING:
 class ComponentFactory(CaselessDict):
     """Registered components from :rfc:`7953` and :rfc:`5545`.
 
+    Keys in the initial dictionary are normalized to uppercase.
+
     To get a component, use this class as shown below.
 
     .. code-block:: pycon
@@ -41,7 +43,6 @@ class ComponentFactory(CaselessDict):
     """
 
     def __init__(self, *args, **kwargs):
-        """Set keys to upper for initial dict."""
         super().__init__(*args, **kwargs)
         from icalendar.cal.alarm import Alarm
         from icalendar.cal.availability import Availability

@@ -92,10 +92,13 @@ class LazySubcomponent:
     """A subcomponent that is evaluated lazily.
 
     This class holds the raw data of the subcomponent ready for parsing.
+
+    Parameters:
+        name: Required. The name of the subcomponent.
+        parser: Required. The parser that holds the raw subcomponent data.
     """
 
     def __init__(self, name: str, parser: ComponentIcalParser):
-        """Initialize the lazy subcomponent with the raw data."""
         self._name = name
         self._parser = parser
         self._component: Component | None = None

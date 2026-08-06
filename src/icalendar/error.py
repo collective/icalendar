@@ -113,7 +113,14 @@ def _repr_index(index: str | int) -> str:
 
 
 class JCalParsingError(InvalidCalendar):
-    """Could not parse a part of the JCal."""
+    """Could not parse a part of the JCal.
+
+    Parameters:
+        message: Required. A description of the error that occurred while parsing.
+        path: The location in the jCal structure where the error occurred.
+        parser: The parser class or its name where the error occurred.
+        value: The value which caused the error, if available.
+    """
 
     _default_value = object()
 
@@ -124,14 +131,6 @@ class JCalParsingError(InvalidCalendar):
         path: list[str | int] | None | str | int = None,
         value: object = _default_value,
     ) -> None:
-        """Create a new JCalParsingError.
-
-        Parameters:
-            message: A description of the error that occurred while parsing.
-            parser: The parser class or its name where the error occurred.
-            path: The location in the jCal structure where the error occurred.
-            value: The value which caused the error, if available.
-        """
         self.path = self._get_path(path)
         if not isinstance(parser, str):
             parser = parser.__name__

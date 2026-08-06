@@ -168,6 +168,7 @@ class LazyCalendar(Calendar):
 
     All properties of the calendar component are parsed immediately.
     Subcomponents and their properties are parsed lazily.
+    A new calendar starts with no subcomponents.
 
     Examples:
 
@@ -207,7 +208,6 @@ class LazyCalendar(Calendar):
     """The strategy pattern for subcomponents of the calendar."""
 
     def __init__(self, *args, **kwargs):
-        """Initialize the calendar."""
         self._subcomponents = InitialSubcomponentsStrategy()
         super().__init__(*args, **kwargs)
 
