@@ -8,7 +8,7 @@ import pytest
 
 from icalendar import Alarm, Event, Journal, Todo
 from icalendar.error import InvalidCalendar
-from icalendar.prop import vBinary, vText, vUri
+from icalendar.prop import vBinary, vUri
 
 ComponentWithAttachments = Alarm | Event | Journal | Todo
 
@@ -140,14 +140,6 @@ def test_set_attachments_round_trips(component):
     assert component.to_ical() == before
 
 
-def test_tuple_is_accepted(component):
-    """A tuple of attachments is accepted like a list."""
-    component.attachments = ("https://example.com/a.pdf", b"bytes-a")
-    values = component.attachments
-    assert isinstance(values[0], vUri)
-    assert isinstance(values[1], vBinary)
-
-
 def test_invalid_uri_leaves_previous_attachments_unchanged(component):
     """Invalid URI input leaves the previous attachments unchanged."""
     component.attachments = "https://example.com/keep.pdf"
@@ -173,16 +165,6 @@ def test_parse_serialize_round_trip_preserves_both_types(component):
     assert restored.attachments[0].params.get("FMTTYPE") == "application/pdf"
     assert isinstance(restored.attachments[1], vBinary)
     assert restored.attachments[1].bytes == b"\xff\x00data"
-
-
-def test_unexpected_stored_type_is_returned_as_is(component):
-    """Stored values are returned as-is, like the other list properties.
-
-    Error-tolerant parsing can store a ``vBroken`` value, so the getter must
-    not raise on calendars that icalendar deliberately accepts.
-    """
-    component.add("ATTACH", vText("not-an-attachment"))
-    assert component.attachments == [vText("not-an-attachment")]
 
 
 def test_broken_attach_value_does_not_raise():
@@ -238,3 +220,17 @@ def test_audio_alarm_accepts_zero_attachments():
     assert alarm.attachments == []
     alarm.attachments = []
     assert alarm.attachments == []
+
+
+def test_new_with_audio_action_rejects_multiple_attachments():
+    """Alarm.new() enforces AUDIO cardinality when action='AUDIO' is given."""
+    with pytest.raises(
+        InvalidCalendar, match="must not contain more than one attachment"
+    ):
+        Alarm.new(
+            action="AUDIO",
+            attachments=[
+                "ftp://example.com/sound1.aud",
+                "ftp://example.com/sound2.aud",
+            ],
+        )

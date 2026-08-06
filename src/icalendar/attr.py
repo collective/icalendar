@@ -2598,7 +2598,7 @@ def _set_attachments(self: Component, value: ATTACHMENTS_TYPE_SETTER) -> None:
     if value is None:
         _del_attachments(self)
         return
-    if not isinstance(value, SEQUENCE_TYPES):
+    if not isinstance(value, list):
         value = [value]
     attachments = [_normalize_attachment(attachment) for attachment in value]
     _del_attachments(self)

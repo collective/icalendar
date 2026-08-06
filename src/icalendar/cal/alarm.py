@@ -33,7 +33,7 @@ from icalendar.error import InvalidCalendar
 if TYPE_CHECKING:
     import uuid
 
-    from icalendar.prop import vCalAddress
+    from icalendar.prop import vBinary, vCalAddress, vUri
 
 
 class Alarm(Component):
@@ -307,7 +307,7 @@ class Alarm(Component):
     @attachments.setter
     def attachments(self, value: ATTACHMENTS_TYPE_SETTER) -> None:
         if value is not None and self.ACTION == "AUDIO":
-            count = len(value) if isinstance(value, (list, tuple)) else 1
+            count = len(value) if isinstance(value, list) else 1
             if count > 1:
                 raise InvalidCalendar(
                     "An AUDIO alarm must not contain more than one attachment.\n"
@@ -337,6 +337,7 @@ class Alarm(Component):
     def new(
         cls,
         /,
+        action: str | None = None,
         attachments: ATTACHMENTS_TYPE_SETTER = None,
         attendees: list[vCalAddress] | None = None,
         concepts: CONCEPTS_TYPE_SETTER = None,
@@ -352,6 +353,10 @@ class Alarm(Component):
         This creates a new Alarm in accordance with :rfc:`5545`.
 
         Parameters:
+            action: The :attr:`ACTION` of the alarm. Typical values are
+                ``"AUDIO"``, ``"DISPLAY"``, and ``"EMAIL"``. When
+                ``"AUDIO"``, the cardinality of ``attachments`` is
+                validated against the RFC limit of one.
             attachments: The :attr:`attachments` of the alarm.
             attendees: The :attr:`attendees` of the alarm.
             concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the alarm.
@@ -377,6 +382,8 @@ class Alarm(Component):
             refids=refids,
             concepts=concepts,
         )
+        if action is not None:
+            alarm.add("ACTION", action)
         alarm.attachments = attachments
         alarm.summary = summary
         alarm.description = description
@@ -497,7 +504,7 @@ class Alarm(Component):
     def new_audio(
         cls,
         trigger: timedelta | datetime,
-        attach: str | bytes | None = None,
+        attach: str | bytes | vUri | vBinary | None = None,
         duration: timedelta | None = None,
         repeat: int | None = None,
         uid: str | uuid.UUID | None = None,
@@ -518,11 +525,12 @@ class Alarm(Component):
             trigger: When the alarm fires, as a :class:`~datetime.timedelta`
                 relative to the event start (negative means before) or as an
                 absolute :class:`~datetime.datetime` (recommend UTC-aware).
-            attach: Optional audio attachment. Pass a URI string such as
-                ``"ftp://example.com/pub/sounds/bell.aud"`` for a linked
-                sound file, or :class:`bytes` for inline binary audio data
-                (stored as ``VALUE=BINARY``). When ``None`` the client uses
-                its default sound.
+            attach: Optional audio attachment. Accepts a URI as a
+                :class:`str` or :class:`~icalendar.prop.uri.vUri`, or
+                inline binary audio as :class:`bytes` or
+                :class:`~icalendar.prop.binary.vBinary`
+                (stored as ``VALUE=BINARY``). When ``None`` the client
+                uses its default sound.
             duration: Gap between repeated triggers. Must be paired with
                 ``repeat``. Corresponds to the :attr:`DURATION` property.
             repeat: Number of *additional* times to fire after the initial
