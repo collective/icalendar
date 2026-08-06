@@ -1,17 +1,35 @@
 """PERIOD property type from :rfc:`5545`."""
 
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, tzinfo
 from typing import Any, ClassVar
 
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.timezone import tzp
-from icalendar.tools import is_date, is_datetime, normalize_pytz, to_datetime
+from icalendar.tools import is_date, is_datetime, is_pytz, normalize_pytz, to_datetime
 
 from .base import TimeBase
 from .datetime import vDatetime
 from .duration import vDuration
+
+
+def _to_midnight(dt: date, tz: tzinfo | None) -> datetime:
+    """Convert a date to the datetime at midnight.
+
+    Parameters:
+        dt: The date to convert.
+        tz: The timezone of the result, or ``None`` for a naive result.
+
+    Returns:
+        The datetime at midnight.
+    """
+    midnight = to_datetime(dt)
+    if tz is None:
+        return midnight
+    if is_pytz(tz):
+        return tz.localize(midnight)  # type: ignore[attr-defined]
+    return midnight.replace(tzinfo=tz)
 
 
 def _to_period_datetimes(
@@ -23,6 +41,10 @@ def _to_period_datetimes(
     wild use dates. A date becomes midnight so that the period can be used
     and written back out.
 
+    A converted half takes the timezone of the other half. Without this, an
+    aware and a naive datetime could not be subtracted to compute the
+    duration.
+
     Parameters:
         start: The start of the period.
         end_or_duration: The end of the period or its duration.
@@ -31,9 +53,9 @@ def _to_period_datetimes(
         The start and the end or duration, with any date converted.
     """
     if is_date(start):
-        start = to_datetime(start)
+        start = _to_midnight(start, getattr(end_or_duration, "tzinfo", None))
     if is_date(end_or_duration):
-        end_or_duration = to_datetime(end_or_duration)
+        end_or_duration = _to_midnight(end_or_duration, getattr(start, "tzinfo", None))
     return start, end_or_duration
 
 

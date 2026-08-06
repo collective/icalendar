@@ -7,12 +7,14 @@ written with dates used to parse without error and then raise an
 See https://github.com/collective/icalendar/issues/1633
 """
 
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 
 import pytest
 
 from icalendar import Event, FreeBusy
 from icalendar.prop import vPeriod
+
+UTC_MIDNIGHT = datetime(1997, 1, 1, tzinfo=timezone.utc)
 
 
 def test_calendar_from_the_issue_round_trips(calendars):
@@ -56,6 +58,47 @@ def test_from_ical_converts_dates(ical, expected):
 def test_to_ical(ical, expected):
     """Date-only halves are written out as date-times, valid values are untouched."""
     assert vPeriod(vPeriod.from_ical(ical)).to_ical() == expected
+
+
+@pytest.mark.parametrize(
+    ("ical", "expected"),
+    [
+        ("19970101/19970102T070000Z", b"19970101T000000Z/19970102T070000Z"),
+        ("19970101T180000Z/19970102", b"19970101T180000Z/19970102T000000Z"),
+    ],
+)
+def test_a_converted_date_takes_the_timezone_of_the_other_half(tzp, ical, expected):
+    """A date next to an aware date-time cannot stay naive.
+
+    The two halves could not be subtracted to compute the duration.
+    """
+    period = vPeriod.from_ical(ical)
+    assert period[0].tzinfo is not None
+    assert period[1].tzinfo is not None
+    assert vPeriod(period).to_ical() == expected
+
+
+def test_a_borrowed_timezone_uses_the_offset_of_its_own_date(tzp):
+    """The end is in summer, so it takes the summer offset of the timezone.
+
+    A pytz timezone carries one offset per period of its history, so the
+    offset of the start cannot simply be copied over.
+    """
+    start = tzp.localize(datetime(1997, 7, 1, 12), "America/New_York")
+    _start, end = vPeriod((start, date(1997, 7, 2))).dt
+    assert end.utcoffset() == timedelta(hours=-4)
+
+
+def test_a_timezone_that_the_provider_does_not_use(tzp):
+    """The timezone comes from the value, not from the active provider."""
+    period = vPeriod((date(1997, 1, 1), datetime(1997, 1, 2, 7, tzinfo=timezone.utc)))
+    assert period.to_ical() == b"19970101T000000Z/19970102T070000Z"
+
+
+def test_the_start_keeps_its_moment_in_time(tzp):
+    """Converting the start does not move it to another instant."""
+    start, _end = vPeriod.from_ical("19970101/19970102T070000Z")
+    assert start == UTC_MIDNIGHT
 
 
 def test_freebusy_round_trips(calendars):
