@@ -4,4 +4,5 @@ to access the :rfc:`5545#section-3.8.1.1` ``ATTACH`` property of :class:`~icalen
 :class:`~icalendar.cal.journal.Journal`, 
 and :class:`~icalendar.cal.alarm.Alarm`. 
 
+I used AI to assist me with the changes made in this PR.
 @VedantPatel04
