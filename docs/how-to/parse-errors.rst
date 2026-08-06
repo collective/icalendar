@@ -94,7 +94,7 @@ One broken property does not prevent access to other valid properties in the sam
 Round-trip serialization
 ------------------------
 
-Broken properties preserve their raw values, so they serialize correctly with :meth:`~icalendar.Component.to_ical`.
+Broken properties preserve their raw values, so they serialize correctly with :meth:`Component.to_ical <icalendar.cal.component.Component.to_ical>`.
 
 .. code-block:: pycon
 
