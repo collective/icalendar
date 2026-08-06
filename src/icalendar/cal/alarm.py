@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
 from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, NamedTuple
 
@@ -32,6 +31,7 @@ from icalendar.error import InvalidCalendar
 
 if TYPE_CHECKING:
     import uuid
+    from collections.abc import Sequence
 
     from icalendar.prop import vBinary, vCalAddress, vUri
 
@@ -383,7 +383,7 @@ class Alarm(Component):
             concepts=concepts,
         )
         if action is not None:
-            alarm.add("ACTION", action)
+            alarm.ACTION = action
         alarm.attachments = attachments
         alarm.summary = summary
         alarm.description = description
@@ -402,7 +402,7 @@ class Alarm(Component):
                     "DURATION and REPEAT must be set together or not at all"
                 )
             self.DURATION = duration
-            self.REPEAT = repeat
+            self.repeat = repeat
 
     @classmethod
     def new_display(
@@ -504,7 +504,7 @@ class Alarm(Component):
     def new_audio(
         cls,
         trigger: timedelta | datetime,
-        attach: str | bytes | vUri | vBinary | None = None,
+        attachments: str | bytes | vUri | vBinary | None = None,
         duration: timedelta | None = None,
         repeat: int | None = None,
         uid: str | uuid.UUID | None = None,
@@ -516,7 +516,7 @@ class Alarm(Component):
         """Create a new AUDIO alarm that plays a sound.
 
         An AUDIO alarm plays a sound at the trigger time. An optional
-        ``attach`` URI points to the audio file to play; when omitted,
+        ``attachments`` URI points to the audio file to play; when omitted,
         the client uses its default alert sound.
 
         Conforms to :rfc:`5545#section-3.6.6`.
@@ -525,7 +525,7 @@ class Alarm(Component):
             trigger: When the alarm fires, as a :class:`~datetime.timedelta`
                 relative to the event start (negative means before) or as an
                 absolute :class:`~datetime.datetime` (recommend UTC-aware).
-            attach: Optional audio attachment. Accepts a URI as a
+            attachments: Optional audio attachment. Accepts a URI as a
                 :class:`str` or :class:`~icalendar.prop.uri.vUri`, or
                 inline binary audio as :class:`bytes` or
                 :class:`~icalendar.prop.binary.vBinary`
@@ -558,7 +558,7 @@ class Alarm(Component):
                 >>> from icalendar import Alarm
                 >>> alarm = Alarm.new_audio(
                 ...     trigger=timedelta(minutes=-5),
-                ...     attach="ftp://example.com/pub/sounds/bell-01.aud",
+                ...     attachments="ftp://example.com/pub/sounds/bell-01.aud",
                 ... )
                 >>> print(alarm.to_ical().decode())
                 BEGIN:VALARM
@@ -570,6 +570,7 @@ class Alarm(Component):
         if trigger is None:
             raise InvalidCalendar("AUDIO alarm requires a trigger")
         alarm: Alarm = cls.new(
+            attachments=attachments,
             uid=uid,
             links=links,
             related_to=related_to,
@@ -578,8 +579,6 @@ class Alarm(Component):
         )
         alarm.add("ACTION", "AUDIO")
         alarm.TRIGGER = trigger
-        if attach:
-            alarm.attachments = attach
         alarm._apply_duration_repeat(duration, repeat)
         return alarm
 
@@ -590,7 +589,7 @@ class Alarm(Component):
         description: str,
         trigger: timedelta | datetime,
         attendees: Sequence[vCalAddress] | vCalAddress,
-        attachments: ATTACHMENTS_TYPE_SETTER | Sequence[str] = None,
+        attachments: ATTACHMENTS_TYPE_SETTER = None,
         duration: timedelta | None = None,
         repeat: int | None = None,
         uid: str | uuid.UUID | None = None,
@@ -663,10 +662,6 @@ class Alarm(Component):
         """
         if isinstance(attendees, str):
             attendees = [attendees]
-        if isinstance(attachments, Sequence) and not isinstance(
-            attachments, (str, bytes, list, tuple)
-        ):
-            attachments = list(attachments)
         if not summary:
             raise InvalidCalendar("EMAIL alarm requires a summary")
         if not description:
