@@ -149,6 +149,8 @@ In addition, "internal use only" objects are not displayed in the documentation.
 Their docstrings, of course, remain in the Python source code.
 
 
+.. _type-hints:
+
 Type hints
 ''''''''''
 

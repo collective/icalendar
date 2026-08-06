@@ -49,6 +49,9 @@ def test_creating_calendar_with_unicode_fields(calendars, utc):
         (Event, "event_with_rsvp"),
         (Timezone, "pacific_fiji"),
         (Todo, "example"),
+        (Alarm, "example"),
+        (Alarm, "rfc_5545_end"),
+        (Alarm, "start_date"),
     ],
 )
 def test_component_has_examples(

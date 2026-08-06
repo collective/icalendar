@@ -67,7 +67,6 @@ class Alarm(Component):
         "TRIGGER",
     )
     singletons = (
-        "ATTACH",
         "ACTION",
         "DESCRIPTION",
         "SUMMARY",
@@ -222,7 +221,7 @@ class Alarm(Component):
         the alarm to trigger off the end of the associated event or to-do.
 
         In this example, we create an alarm that triggers two hours after the
-        end of its parent component:
+        end of its parent component.
 
         >>> from icalendar import Alarm
         >>> from datetime import timedelta
@@ -266,7 +265,7 @@ class Alarm(Component):
         This takes the TRIGGER, DURATION and REPEAT properties into account.
 
         Here, we create an alarm that triggers 3 times before the start of the
-        parent component:
+        parent component.
 
         >>> from icalendar import Alarm
         >>> from datetime import timedelta
@@ -305,6 +304,15 @@ class Alarm(Component):
 
     repeat = repeat_property
 
+    ACTION = single_string_property(
+        "ACTION",
+        """The action invoked when the alarm triggers.
+
+        Typical values defined by :rfc:`5545#section-3.8.6.1` are
+        ``AUDIO``, ``DISPLAY``, and ``EMAIL``. The empty string is
+        returned when no ``ACTION`` property is present.
+        """,
+    )
     uid = single_string_property(
         "UID",
         uid_property.__doc__,
