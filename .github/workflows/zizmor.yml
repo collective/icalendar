@@ -20,7 +20,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Install zizmor
-        run: pip install zizmor
+        run: pip install zizmor==1.29.0
       - name: Run zizmor
         run: zizmor --format sarif .github/workflows/ > zizmor-results.sarif
       - name: Upload SARIF file
