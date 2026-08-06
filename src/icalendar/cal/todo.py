@@ -7,6 +7,7 @@ from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Literal
 
 from icalendar.attr import (
+    ATTACHMENTS_TYPE_SETTER,
     CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
@@ -321,6 +322,7 @@ class Todo(Component):
     def new(
         cls,
         /,
+        attachments: ATTACHMENTS_TYPE_SETTER = None,
         attendees: list[vCalAddress] | None = None,
         categories: Sequence[str] = (),
         classification: CLASS | None = None,
@@ -354,6 +356,7 @@ class Todo(Component):
         This creates a new Todo in accordance with :rfc:`5545`.
 
         Parameters:
+            attachments: The :attr:`attachments` of the todo.
             attendees: The :attr:`attendees` of the todo.
             categories: The :attr:`categories` of the todo.
             classification: The :attr:`classification` of the todo.
@@ -416,6 +419,7 @@ class Todo(Component):
         todo.organizer = organizer
         todo.location = location
         todo.priority = priority
+        todo.attachments = attachments
         todo.contacts = contacts
         todo.status = status
         todo.attendees = attendees

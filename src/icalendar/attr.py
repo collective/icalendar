@@ -2588,38 +2588,25 @@ def _normalize_attachment(value: str | bytes | vUri | vBinary) -> vUri | vBinary
 def _get_attachments(self: Component) -> list[vUri | vBinary]:
     """ATTACH properties as a list.
 
-    Purpose:
-        This property provides the capability to associate a document or
-        another resource with a calendar component.
+    Returns a list of :class:`~icalendar.prop.uri.vUri` and
+    :class:`~icalendar.prop.binary.vBinary` values, or an empty list when
+    no ``ATTACH`` property is present.
 
-    Value Type:
-        The default value type is URI. The value type can also be BINARY
-        for inline data, which additionally requires the ``ENCODING=BASE64``
-        parameter. The ``FMTTYPE`` parameter can identify the media type.
+    Setting this property replaces all existing attachments. A :class:`str`
+    is converted to :class:`~icalendar.prop.uri.vUri` and :class:`bytes` to
+    :class:`~icalendar.prop.binary.vBinary`. Values that are already
+    :class:`~icalendar.prop.uri.vUri` or :class:`~icalendar.prop.binary.vBinary`
+    are stored unchanged, so their parameters are preserved. Setting ``None``
+    or an empty list removes all attachments, as does deleting the property.
 
-    Conformance:
-        Conforming with :rfc:`5545#section-3.8.1.1`, this property can be
-        specified multiple times in :class:`~icalendar.cal.event.Event`,
-        :class:`~icalendar.cal.todo.Todo`,
-        :class:`~icalendar.cal.journal.Journal`, and
-        :class:`~icalendar.cal.alarm.Alarm` components.
+    In accordance with :rfc:`5545#section-3.8.1.1`, attachments may occur
+    multiple times in :class:`~icalendar.cal.event.Event`,
+    :class:`~icalendar.cal.todo.Todo`, and
+    :class:`~icalendar.cal.journal.Journal`. Email alarms may contain
+    multiple attachments, audio alarms at most one, and display alarms none.
 
-    Description:
-        Getting this property returns a list of
-        :class:`~icalendar.prop.uri.vUri` and
-        :class:`~icalendar.prop.binary.vBinary` values, or an empty list
-        when no ``ATTACH`` property is present.
-
-        Setting this property replaces all existing attachments. A
-        :class:`str` is converted to :class:`~icalendar.prop.uri.vUri` and
-        :class:`bytes` to :class:`~icalendar.prop.binary.vBinary`. Values
-        that are already :class:`~icalendar.prop.uri.vUri` or
-        :class:`~icalendar.prop.binary.vBinary` are stored unchanged, so
-        their parameters are preserved. Setting ``None`` or an empty list
-        removes all attachments, as does deleting the property.
-
-    Examples:
-        Attach a URI and inline binary data:
+    Example:
+        Attach a URI and inline binary data to an event:
 
         .. code-block:: pycon
 
@@ -2627,8 +2614,8 @@ def _get_attachments(self: Component) -> list[vUri | vBinary]:
             >>> event = Event()
             >>> event.attachments
             []
-            >>> event.attachments = "https://example.com/agenda.pdf"
-            >>> print(event.to_ical())
+            >>> event.attachments = ["https://example.com/agenda.pdf"]
+            >>> print(event.to_ical().decode())
             BEGIN:VEVENT
             ATTACH:https://example.com/agenda.pdf
             END:VEVENT
@@ -2650,7 +2637,8 @@ def _get_attachments(self: Component) -> list[vUri | vBinary]:
         use :meth:`Component.add <icalendar.cal.component.Component.add>`
         with a typed value instead.
 
-    See also:
+    .. seealso::
+
         :attr:`Component.links <icalendar.cal.component.Component.links>`
     """
     attachments = self.get("ATTACH", [])

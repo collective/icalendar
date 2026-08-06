@@ -7,6 +7,7 @@ from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Literal
 
 from icalendar.attr import (
+    ATTACHMENTS_TYPE_SETTER,
     CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
@@ -432,6 +433,7 @@ class Event(Component):
     def new(
         cls,
         /,
+        attachments: ATTACHMENTS_TYPE_SETTER = None,
         attendees: list[vCalAddress] | None = None,
         categories: Sequence[str] = (),
         classification: CLASS | None = None,
@@ -466,6 +468,7 @@ class Event(Component):
         This creates a new Event in accordance with :rfc:`5545`.
 
         Parameters:
+            attachments: The :attr:`attachments` of the event.
             attendees: The :attr:`attendees` of the event.
             categories: The :attr:`categories` of the event.
             classification: The :attr:`classification` of the event.
@@ -530,6 +533,7 @@ class Event(Component):
         event.location = location
         event.priority = priority
         event.transparency = transparency
+        event.attachments = attachments
         event.contacts = contacts
         event.status = status
         event.attendees = attendees

@@ -6,6 +6,7 @@ from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, NamedTuple
 
 from icalendar.attr import (
+    ATTACHMENTS_TYPE_SETTER,
     CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
@@ -324,6 +325,7 @@ class Alarm(Component):
     def new(
         cls,
         /,
+        attachments: ATTACHMENTS_TYPE_SETTER = None,
         attendees: list[vCalAddress] | None = None,
         concepts: CONCEPTS_TYPE_SETTER = None,
         description: str | None = None,
@@ -338,6 +340,7 @@ class Alarm(Component):
         This creates a new Alarm in accordance with :rfc:`5545`.
 
         Parameters:
+            attachments: The :attr:`attachments` of the alarm.
             attendees: The :attr:`attendees` of the alarm.
             concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the alarm.
             description: The :attr:`description` of the alarm.
@@ -362,6 +365,7 @@ class Alarm(Component):
             refids=refids,
             concepts=concepts,
         )
+        alarm.attachments = attachments
         alarm.summary = summary
         alarm.description = description
         alarm.uid = uid

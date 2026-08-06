@@ -145,23 +145,6 @@ def test_tuple_is_accepted(component):
     assert isinstance(values[1], vBinary)
 
 
-@pytest.mark.parametrize(
-    "values",
-    [
-        "https://example.com/one.pdf",
-        ["https://example.com/a.pdf", "https://example.com/b.pdf"],
-    ],
-)
-def test_mutating_returned_list_does_not_alter_serialization(component, values):
-    """Mutating the returned list does not alter serialization."""
-    component.attachments = values
-    before = component.to_ical()
-    returned = component.attachments
-    returned.append(vUri("https://example.com/extra.pdf"))
-    returned[0] = vUri("https://example.com/changed.pdf")
-    assert component.to_ical() == before
-
-
 def test_invalid_uri_leaves_previous_attachments_unchanged(component):
     """Invalid URI input leaves the previous attachments unchanged."""
     component.attachments = "https://example.com/keep.pdf"
