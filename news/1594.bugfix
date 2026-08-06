@@ -1,1 +1,1 @@
-``Alarm.REPEAT``, ``Alarm.repeat``, ``sequence`` and ``priority`` now validate that the value is a non-negative integer, raising ``InvalidCalendar`` otherwise.
+``Alarm.REPEAT``, ``Alarm.repeat``, ``sequence`` and ``priority`` now reject non-integers (including booleans) with ``TypeError`` and negative values with ``InvalidCalendar``.

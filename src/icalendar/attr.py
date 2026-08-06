@@ -415,8 +415,10 @@ def single_int_property(
         min_value: If set, the value must be >= this minimum
 
     Raises:
-        :exc:`~icalendar.error.InvalidCalendar`: If the value is not an
-            integer or is smaller than ``min_value``.
+        :exc:`TypeError`: If the value is not an ``int`` (booleans are not
+            accepted either, even though ``bool`` subclasses ``int``).
+        :exc:`~icalendar.error.InvalidCalendar`: If the value is smaller than
+            ``min_value``.
 
     .. versionadded:: 7.2.3
         The ``min_value`` parameter.
@@ -432,8 +434,8 @@ def single_int_property(
     def fset(self: Component, value: int | None):
         """Set the property."""
         if value is not None:
-            if not isinstance(value, int):
-                raise InvalidCalendar(f"{prop} must be an int, got {value}")
+            if not isinstance(value, int) or isinstance(value, bool):
+                raise TypeError(f"{prop} must be an int, got {value!r}")
             if min_value is not None and value < min_value:
                 raise InvalidCalendar(f"{prop} must be >= {min_value}, got {value}")
         fdel(self)

@@ -50,10 +50,25 @@ def test_set_zero():
 
 @pytest.mark.parametrize("value", ["asd", 1.5, object()])
 def test_set_non_integer_raises(value):
-    """Setting a non-integer value raises an error."""
+    """Setting a non-integer value raises a TypeError."""
     alarm = Alarm()
-    with pytest.raises(InvalidCalendar, match="REPEAT must be an int"):
+    with pytest.raises(TypeError, match="REPEAT must be an int, got"):
         alarm.REPEAT = value
+
+
+@pytest.mark.parametrize("value", [True, False])
+def test_set_bool_raises(value):
+    """Booleans are rejected too, even though bool is a subclass of int."""
+    alarm = Alarm()
+    with pytest.raises(TypeError, match="REPEAT must be an int, got"):
+        alarm.REPEAT = value
+
+
+def test_set_non_integer_raises_for_sequence():
+    """The same TypeError is raised for other integer properties."""
+    event = Event()
+    with pytest.raises(TypeError, match="SEQUENCE must be an int, got"):
+        event.sequence = "1"
 
 
 def test_set_none_deletes():
