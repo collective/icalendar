@@ -41,7 +41,7 @@ class vDDDTypes(TimeBase):
     params: Parameters
     dt: DT_TYPE
 
-    def __init__(self, dt, params: dict[str, Any] | None = None) -> None:
+    def __init__(self, dt: DT_TYPE, params: dict[str, Any] | None = None) -> None:
         if params is None:
             params = {}
         if isinstance(dt, Sequence) and len(dt) == 2 and dt[1] is None:

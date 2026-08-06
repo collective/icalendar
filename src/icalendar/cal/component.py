@@ -219,7 +219,9 @@ class Component(CaselessDict):
         super().__init__(*args, **kwargs)
         # set parameters here for properties that use non-default values
         self.subcomponents: list[Component] = []  # Components can be nested.
-        self.errors = []  # If we ignored exception(s) while
+        self.errors: list[
+            tuple[str | None, str]
+        ] = []  # If we ignored exception(s) while
         # parsing a property, contains error strings
 
     def __bool__(self) -> bool:

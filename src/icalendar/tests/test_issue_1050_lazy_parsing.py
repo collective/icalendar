@@ -29,7 +29,7 @@ def assert_is_parsed_calendar(calendar: LazyCalendar) -> None:
 
 
 class MockParser:
-    def __init__(self, component):
+    def __init__(self, component: str) -> None:
         self._component = component
         self._calls = 0
 
