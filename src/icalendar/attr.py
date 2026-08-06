@@ -2625,26 +2625,6 @@ already :class:`~icalendar.prop.uri.vUri` or
 parameters are preserved. Setting ``None`` or an empty list removes all
 attachments, as does deleting the property.
 
-This property can be used in icalendar through its Python attributes of:
-
--   :attr:`Alarm.attachments <icalendar.cal.alarm.Alarm.attachments>`
--   :attr:`Event.attachments <icalendar.cal.event.Event.attachments>`
--   :attr:`Journal.attachments <icalendar.cal.journal.Journal.attachments>`
--   :attr:`Todo.attachments <icalendar.cal.todo.Todo.attachments>`
-
-The attachments property is defined by :rfc:`5545#section-3.8.1.1`. It can
-be specified multiple times on "VEVENT", "VTODO", and "VJOURNAL"
-components. On a "VALARM" component, how many are allowed depends on the
-alarm's action: an "EMAIL" alarm may have one or more, an "AUDIO" alarm at
-most one, and a "DISPLAY" alarm none.
-
-Note:
-    List modifications do not modify the component. Methods such as
-    ``append()``, ``extend()``, and ``remove()``, as well as item
-    assignment, act on a copy. Assign the list back to the property, or
-    use :meth:`Component.add <icalendar.cal.component.Component.add>`
-    with a typed value instead.
-
 Parameters:
     attachments(str | bytes | vUri | vBinary | list | None):
         A single attachment, or a list of attachments to set. Accepts
@@ -2672,13 +2652,25 @@ Example:
         ...         "https://example.com/agenda.pdf",
         ...         params={"FMTTYPE": "application/pdf"},
         ...     ),
-        ...     vBinary(b"inline-bytes"),
+        ...     vBinary(b"image-data", params={"FMTTYPE": "image/png"},),
         ... ]
         >>> len(event.attachments)
         2
 
-See also:
-    :attr:`Component.links <icalendar.cal.component.Component.links>`
+.. note::
+
+    An audio alarm can contain at most one attachment.
+
+    List modifications do not modify the component. Methods such as
+    ``append()``, ``extend()``, and ``remove()``, as well as item
+    assignment, act on a copy. Assign the list back to the property, or
+    use :meth:`Component.add <icalendar.cal.component.Component.add>`
+    with a typed value instead.
+
+.. seealso::
+
+    :rfc:`5545#section-3.8.1.1` for the definition of the ``ATTACH``
+    property.
 """,
 )
 
