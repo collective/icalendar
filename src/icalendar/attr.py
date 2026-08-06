@@ -409,19 +409,20 @@ def single_int_property(
     """Create a property for an int value that exists only once.
 
     Parameters:
-        prop: The name of the property
-        default: The default value
-        doc: The documentation string
-        min_value: If set, the value must be >= this minimum
+        default: Required. The default value.
+        doc: Required. The documentation string.
+        prop: Required. The name of the property.
+        min_value: If set, the value must be greater than or equal to this minimum.
 
     Raises:
-        :exc:`TypeError`: If the value is not an ``int`` (booleans are not
-            accepted either, even though ``bool`` subclasses ``int``).
-        :exc:`~icalendar.error.InvalidCalendar`: If the value is smaller than
-            ``min_value``.
+        :exc:`TypeError`
+            If the value is not an ``int``. Booleans are rejected, too,
+            even though ``bool`` subclasses ``int``.
+        :exc:`~icalendar.error.InvalidCalendar`
+            If the value is smaller than ``min_value``.
 
-    .. versionadded:: 7.2.3
-        The ``min_value`` parameter.
+    ..  versionadded:: 7.2.3
+        Added the ``min_value`` parameter. Negative values are no longer accepted.
     """
 
     def fget(self: Component) -> int:
@@ -636,8 +637,8 @@ Examples:
         >>> event.sequence
         10
 
-    .. versionadded:: 7.2.3
-        Negative values are no longer accepted.
+    ..  versionadded:: 7.2.3
+        Added the ``min_value`` parameter. Negative values are no longer accepted.
     """,  # noqa: E501
     min_value=0,
 )
@@ -1319,8 +1320,8 @@ Defaults to ``0``, meaning the alarm fires once. Must be paired with
 :attr:`~icalendar.cal.alarm.Alarm.DURATION`. Conforms with :rfc:`5545#section-3.8.6.2`.
 The value is capped at :data:`icalendar.config.MAX_ALARM_REPEAT` on read.
 
-.. versionadded:: 7.2.3
-    Negative values are no longer accepted.
+..  versionadded:: 7.2.3
+    Added the ``min_value`` parameter. Negative values are no longer accepted.
 """,
         min_value=0,
     )
@@ -1372,8 +1373,8 @@ Description:
     priority for the to-do.  This property is useful in prioritizing
     multiple action items for a given time period.
 
-    .. versionadded:: 7.2.3
-        Negative values are no longer accepted.
+    ..  versionadded:: 7.2.3
+        Added the ``min_value`` parameter. Negative values are no longer accepted.
 """,
     min_value=0,
 )

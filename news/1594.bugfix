@@ -1,1 +1,1 @@
-``Alarm.REPEAT``, ``Alarm.repeat``, ``sequence`` and ``priority`` now reject non-integers (including booleans) with ``TypeError`` and negative values with ``InvalidCalendar``.
+:attr:`Alarm.REPEAT <icalendar.cal.alarm.Alarm.REPEAT>`, :attr:`Alarm.repeat <icalendar.cal.alarm.Alarm.repeat>`, :attr:`Event.sequence <icalendar.cal.event.Event.sequence>`, and :attr:`Event.priority <icalendar.cal.event.Event.priority>` now reject non-integers (including booleans) with :exc:`TypeError` and negative values with :exc:`~icalendar.error.InvalidCalendar`. @heyncth

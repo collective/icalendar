@@ -20,7 +20,7 @@ class NumberComponent(Component):
 
 
 @pytest.mark.parametrize("value", [0, 1, 10])
-def test_set_positive_value(value):
+def test_set_non_negative_value(value):
     """Setting a non-negative value works."""
     alarm = Alarm()
     alarm.REPEAT = value
@@ -39,13 +39,6 @@ def test_set_negative_value_raises(value, message):
     alarm = Alarm()
     with pytest.raises(InvalidCalendar, match=message):
         alarm.REPEAT = value
-
-
-def test_set_zero():
-    """Setting zero, the boundary, works."""
-    alarm = Alarm()
-    alarm.REPEAT = 0
-    assert alarm.REPEAT == 0
 
 
 @pytest.mark.parametrize("value", ["asd", 1.5, object()])

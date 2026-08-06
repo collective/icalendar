@@ -119,8 +119,8 @@ class Alarm(Component):
                 >>> alarm.REPEAT
                 2
 
-        .. versionadded:: 7.2.3
-            Negative values are no longer accepted.
+        ..  versionadded:: 7.2.3
+            Added the ``min_value`` parameter. Negative values are no longer accepted.
         """,
         min_value=0,
     )
@@ -381,7 +381,7 @@ class Alarm(Component):
                     "DURATION and REPEAT must be set together or not at all"
                 )
             self.DURATION = duration
-            self.repeat = repeat
+            self.REPEAT = repeat
 
     @classmethod
     def new_display(
