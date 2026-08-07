@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from icalendar.caselessdict import CaselessDict
 
@@ -40,7 +40,7 @@ class ComponentFactory(CaselessDict):
     See :doc:`/how-to/custom-components` for details.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Set keys to upper for initial dict."""
         super().__init__(*args, **kwargs)
         from icalendar.cal.alarm import Alarm

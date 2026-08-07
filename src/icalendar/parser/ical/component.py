@@ -41,7 +41,7 @@ class ComponentIcalParser:
         data: bytes | str | list[Contentline],
         component_factory: ComponentFactory,
         types_factory: TypesFactory,
-    ):
+    ) -> None:
         """Initialize the parser with the raw data.
 
         Parameters:

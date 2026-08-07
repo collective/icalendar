@@ -146,7 +146,7 @@ class vPeriod(TimeBase):
         self,
         per: tuple[date | datetime, date | datetime | timedelta],
         params: dict[str, Any] | None = None,
-    ):
+    ) -> None:
         start, end_or_duration = per
         if not (isinstance(start, (datetime, date))):
             raise TypeError("Start value MUST be a datetime or date instance")
