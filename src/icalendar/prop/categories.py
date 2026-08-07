@@ -16,7 +16,7 @@ class vCategory:
 
     def __init__(
         self, c_list: list[str] | str, /, params: dict[str, Any] | None = None
-    ):
+    ) -> None:
         if not hasattr(c_list, "__iter__") or isinstance(c_list, str):
             c_list = [c_list]
         self.cats: list[vText | str] = [vText(c) for c in c_list]
