@@ -487,7 +487,7 @@ class Alarm(Component):
         if trigger is None:
             raise InvalidCalendar("DISPLAY alarm requires a trigger")
         alarm: Alarm = cls.new(
-            alarm="DISPLAY",
+            action="DISPLAY",
             description=description,
             uid=uid,
             links=links,
@@ -568,7 +568,7 @@ class Alarm(Component):
         if trigger is None:
             raise InvalidCalendar("AUDIO alarm requires a trigger")
         alarm: Alarm = cls.new(
-            alarm="AUDIO",
+            action="AUDIO",
             attachments=attachments,
             uid=uid,
             links=links,
@@ -669,7 +669,7 @@ class Alarm(Component):
         if not attendees:
             raise InvalidCalendar("EMAIL alarm requires at least one attendee")
         alarm: Alarm = cls.new(
-            alarm="EMAIL",
+            action="EMAIL",
             attachments=attachments,
             summary=summary,
             description=description,
