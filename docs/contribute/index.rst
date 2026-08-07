@@ -305,6 +305,7 @@ If you would like to set up icalendar to contribute changes, see :doc:`developme
 
     documentation/index
     development
+    join-the-icalendar-team
     code-of-conduct
     credits
     maintenance
