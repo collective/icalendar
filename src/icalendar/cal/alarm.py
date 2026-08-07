@@ -487,6 +487,7 @@ class Alarm(Component):
         if trigger is None:
             raise InvalidCalendar("DISPLAY alarm requires a trigger")
         alarm: Alarm = cls.new(
+            alarm="DISPLAY",
             description=description,
             uid=uid,
             links=links,
@@ -494,7 +495,6 @@ class Alarm(Component):
             refids=refids,
             concepts=concepts,
         )
-        alarm.add("ACTION", "DISPLAY")
         alarm.TRIGGER = trigger
         alarm._apply_duration_repeat(duration, repeat)
         return alarm
@@ -568,6 +568,7 @@ class Alarm(Component):
         if trigger is None:
             raise InvalidCalendar("AUDIO alarm requires a trigger")
         alarm: Alarm = cls.new(
+            alarm="AUDIO",
             attachments=attachments,
             uid=uid,
             links=links,
@@ -575,7 +576,6 @@ class Alarm(Component):
             refids=refids,
             concepts=concepts,
         )
-        alarm.add("ACTION", "AUDIO")
         alarm.TRIGGER = trigger
         alarm._apply_duration_repeat(duration, repeat)
         return alarm
@@ -669,6 +669,7 @@ class Alarm(Component):
         if not attendees:
             raise InvalidCalendar("EMAIL alarm requires at least one attendee")
         alarm: Alarm = cls.new(
+            alarm="EMAIL",
             attachments=attachments,
             summary=summary,
             description=description,
@@ -679,7 +680,6 @@ class Alarm(Component):
             refids=refids,
             concepts=concepts,
         )
-        alarm.add("ACTION", "EMAIL")
         alarm.TRIGGER = trigger
         alarm._apply_duration_repeat(duration, repeat)
         return alarm
