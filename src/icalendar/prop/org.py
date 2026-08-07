@@ -54,7 +54,7 @@ class vOrg:
         fields: tuple[str, ...] | list[str] | str,
         /,
         params: dict[str, Any] | None = None,
-    ):
+    ) -> None:
         """Initialize ORG with variable fields or parse from vCard format string.
 
         Parameters:

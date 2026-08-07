@@ -29,7 +29,7 @@ class TZP:
     All of icalendar will then use this timezone implementation.
     """
 
-    def __init__(self, provider: str | TZProvider = DEFAULT_TIMEZONE_PROVIDER):
+    def __init__(self, provider: str | TZProvider = DEFAULT_TIMEZONE_PROVIDER) -> None:
         """Create a new timezone implementation proxy."""
         self.use(provider)
 
