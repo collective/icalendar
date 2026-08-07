@@ -311,15 +311,15 @@ def test_factory_links_none_is_empty(factory):
 
 @_ALL_FACTORIES
 def test_factory_related_to_single(factory):
-    rel = vUri("https://example.com/parent")
+    rel = vText("some-uid-ref")
     alarm = factory(related_to=[rel])
     assert alarm.related_to == [rel]
 
 
 @_ALL_FACTORIES
 def test_factory_related_to_string_is_converted(factory):
-    alarm = factory(related_to=["https://example.com/parent"])
-    assert alarm.related_to == [vText("https://example.com/parent")]
+    alarm = factory(related_to=["some-uid-ref"])
+    assert alarm.related_to == [vText("some-uid-ref")]
 
 
 @_ALL_FACTORIES
