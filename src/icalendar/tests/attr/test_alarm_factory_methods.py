@@ -414,25 +414,22 @@ def test_alarm_new_concepts_none_is_empty():
     assert "CONCEPT" not in alarm
 
 
-def test_new_email_singleton_string_attendee_normalizes():
-    """A singleton plain string attendee should normalize to a vCalAddress."""
+@pytest.mark.parametrize(
+    ("attendees", "expected"),
+    [
+        ("first@example.com", "mailto:first@example.com"),
+        (["first@example.com"], "mailto:first@example.com"),
+        ("mailto:second@example.net", "mailto:second@example.net"),
+        (["mailto:second@example.net"], "mailto:second@example.net"),
+    ],
+)
+def test_new_email_string_attendee_normalizes(attendees, expected):
+    """Plain and mailto: string attendees, singleton or in a list, normalize to vCalAddress."""
     alarm = Alarm.new_email(
         summary="S",
         description="D",
         trigger=timedelta(minutes=-30),
-        attendees="first@example.com",
+        attendees=attendees,
     )
     assert isinstance(alarm.attendees[0], vCalAddress)
-    assert str(alarm.attendees[0]) == "mailto:first@example.com"
-
-
-def test_new_email_list_with_prefixed_string_attendee_normalizes():
-    """A list containing an already-prefixed string attendee normalizes to a vCalAddress."""
-    alarm = Alarm.new_email(
-        summary="S",
-        description="D",
-        trigger=timedelta(minutes=-30),
-        attendees=["mailto:second@example.net"],
-    )
-    assert isinstance(alarm.attendees[0], vCalAddress)
-    assert str(alarm.attendees[0]) == "mailto:second@example.net"
+    assert str(alarm.attendees[0]) == expected

@@ -753,16 +753,13 @@ def _set_attendees(self: Component, value: ATTENDEE_TYPE_SETTER):
     _del_attendees(self)
     if value is None:
         return
-    if isinstance(value, vCalAddress):
+    if isinstance(value, (vCalAddress, str)):
         value = [value]
-    elif isinstance(value, str):
-        value = [vCalAddress.new(value)]
     elif not isinstance(value, list):
         value = list(value) if isinstance(value, Sequence) else [value]
     for index, attendee in enumerate(value):
-        if isinstance(attendee, vCalAddress):
-            continue
-        if isinstance(attendee, str):
+        # vCalAddress subclasses str, so exclude it before normalizing strings
+        if not isinstance(attendee, vCalAddress) and isinstance(attendee, str):
             value[index] = vCalAddress.new(attendee)
     self["ATTENDEE"] = value
 
