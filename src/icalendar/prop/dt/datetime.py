@@ -92,7 +92,7 @@ class vDatetime(TimeBase):
     default_value: ClassVar[str] = "DATE-TIME"
     params: Parameters
 
-    def __init__(self, dt, /, params: dict[str, Any] | None = None):
+    def __init__(self, dt: datetime, /, params: dict[str, Any] | None = None) -> None:
         self.dt = dt
         self.params = Parameters(params)
         self.params.update_tzid_from(dt)

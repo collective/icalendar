@@ -270,7 +270,7 @@ class Parameters(CaselessDict):
 
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Create new parameters."""
         if args and args[0] is None:
             # allow passing None
