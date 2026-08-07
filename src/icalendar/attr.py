@@ -415,15 +415,12 @@ def single_int_property(
         min_value: If set, the value must be greater than or equal to this minimum.
 
     Raises:
-        :exc:`TypeError`
-            If the value is not an ``int``. Booleans are rejected, too,
-            even though ``bool`` subclasses ``int``.
-        :exc:`~icalendar.error.InvalidCalendar`
-            If the value is smaller than ``min_value``.
+        TypeError: If the value is not an ``int``. Booleans are rejected, too, even though ``bool`` subclasses ``int``.
+        ~icalendar.error.InvalidCalendar: If the value is smaller than ``min_value``.
 
     ..  versionadded:: 7.2.3
         Added the ``min_value`` parameter. Negative values are no longer accepted.
-    """
+    """  # noqa: E501
 
     def fget(self: Component) -> int:
         """Get the property"""
