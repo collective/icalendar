@@ -29,6 +29,7 @@ from icalendar.attr import (
     url_property,
 )
 from icalendar.cal.component import Component
+from icalendar.cal.examples import get_example
 from icalendar.error import IncompleteComponent
 
 if TYPE_CHECKING:
@@ -62,6 +63,21 @@ class Journal(Component):
             BEGIN:VJOURNAL
             DTSTAMP:20250517T080612Z
             UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
+            END:VJOURNAL
+
+        Get the example Journal.
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Journal
+            >>> journal = Journal.example()
+            >>> print(journal.to_ical().decode())
+            BEGIN:VJOURNAL
+            DESCRIPTION:Aurora project plans were reviewed.
+            DTSTAMP:19970901T130000Z
+            DTSTART;VALUE=DATE:19970317
+            SUMMARY:Staff meeting minutes
+            UID:19970901T130000Z-123405@example.com
             END:VJOURNAL
 
     """
@@ -270,6 +286,11 @@ class Journal(Component):
         journal.RECURRENCE_ID = recurrence_id
 
         return journal
+
+    @classmethod
+    def example(cls, name: str = "example") -> Journal:
+        """Return the journal example with the given name."""
+        return cls.from_ical(get_example("journals", name))
 
 
 __all__ = ["Journal"]
