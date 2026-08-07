@@ -6,16 +6,6 @@ These tests target the branches identified in the coverage survey:
 - ``vOrg.__repr__`` — string representation.
 - ``vOrg.from_jcal`` — the happy path (valid jCal with string fields) and
   the ``validate_value_type`` loop (non-string field value).
-
-Two previously unreachable branches have since been removed from
-:mod:`icalendar.prop.org` (see issue #1641):
-
-- ``vOrg.from_ical`` no longer has a ``raise ValueError`` for
-  ``len(fields) < 1``, since ``split_on_unescaped_semicolon`` always
-  returns at least one element.
-- ``vOrg.from_jcal`` no longer has a redundant ``if len(jcal_property) < 4: raise``,
-  since ``JCalParsingError.validate_property`` already raises when the
-  property has fewer than 4 elements.
 """
 
 from __future__ import annotations
