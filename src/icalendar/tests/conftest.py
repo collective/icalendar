@@ -63,8 +63,8 @@ class DataSource:
     extensions = [".ics", ".jcal"]
 
     def __init__(
-        self, data_source_folder: Path, parser: type[Component], multiple=False
-    ):
+        self, data_source_folder: Path, parser: type[Component], multiple: bool = False
+    ) -> None:
         self._parser = parser
         self._data_source_folder = data_source_folder
         self._multiple = multiple

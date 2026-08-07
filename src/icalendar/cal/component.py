@@ -214,12 +214,14 @@ class Component(CaselessDict):
         # Don't infer PERIOD - it's too risky and vPeriod already handles it
         return None
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Set keys to upper for initial dict."""
         super().__init__(*args, **kwargs)
         # set parameters here for properties that use non-default values
         self.subcomponents: list[Component] = []  # Components can be nested.
-        self.errors = []  # If we ignored exception(s) while
+        self.errors: list[
+            tuple[str | None, str]
+        ] = []  # If we ignored exception(s) while
         # parsing a property, contains error strings
 
     def __bool__(self) -> bool:
