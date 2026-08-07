@@ -2,24 +2,34 @@
 Event attendees
 ===============
 
-This chapter explains how to use the event attendee information in iCalendar files with the icalendar library.
-Attendees are present inside of events, alarms, and other calendar components, and occur as a :class:`~icalendar.prop.cal_address.vCalAddress`.
+This chapter explains how to work with attendee information in iCalendar files using the icalendar library.
+Each attendee is a :class:`~icalendar.prop.cal_address.vCalAddress`.
+The components that support attendees are :class:`~icalendar.cal.event.Event`, :class:`~icalendar.cal.todo.Todo`, :class:`~icalendar.cal.journal.Journal`, and :class:`~icalendar.cal.alarm.Alarm`.
+The examples below use :class:`~icalendar.cal.event.Event`, but the same attendee API applies to each of these components.
 
 .. seealso::
 
     :attr:`Event.attendees <icalendar.cal.event.Event.attendees>`
 
-Add attendees to an event
--------------------------
+Assign attendees to an event
+----------------------------
 
-Assign an email string or a list of email strings directly to an event.
-Both plain email addresses and addresses that already start with ``mailto:`` are accepted.
-They are automatically converted to :class:`~icalendar.prop.cal_address.vCalAddress` objects.
+Assign a single email string to :attr:`~icalendar.cal.event.Event.attendees` to set one attendee.
+The string is converted to a :class:`~icalendar.prop.cal_address.vCalAddress` object.
 
 .. code-block:: pycon
 
     >>> from icalendar import Event
     >>> event = Event.new()
+    >>> event.attendees = "emily.smith@example.com"
+    >>> event.attendees
+    [vCalAddress('mailto:emily.smith@example.com')]
+
+Assign a list of email strings to set several attendees at once.
+A plain email address receives a ``mailto:`` prefix, while an address that already starts with ``mailto:`` is kept as is.
+
+.. code-block:: pycon
+
     >>> event.attendees = [
     ...     "emily.smith@example.com",
     ...     "mailto:alex@example.com",
@@ -27,25 +37,28 @@ They are automatically converted to :class:`~icalendar.prop.cal_address.vCalAddr
     >>> event.attendees
     [vCalAddress('mailto:emily.smith@example.com'), vCalAddress('mailto:alex@example.com')]
 
-You can also pass attendee strings while creating the event.
+You can also pass attendee strings when creating the event with :meth:`Event.new <icalendar.cal.event.Event.new>`.
+This is equivalent to assigning them afterward.
 
 .. code-block:: pycon
 
     >>> event = Event.new(attendees="emily.smith@example.com")
+    >>> event.attendees
+    [vCalAddress('mailto:emily.smith@example.com')]
 
-When an attendee needs parameters such as ``CN``, ``ROLE``, or ``RSVP``, create
-it with :meth:`vCalAddress.new <icalendar.prop.cal_address.vCalAddress.new>`.
+An attendee may carry parameters defined by :rfc:`5545`, such as ``CN``, ``ROLE``, and ``RSVP``.
+Create such an attendee with :meth:`vCalAddress.new <icalendar.prop.cal_address.vCalAddress.new>`, whose Python keyword arguments ``cn``, ``role``, and ``rsvp`` set those RFC parameters.
 
 .. code-block:: pycon
 
     >>> from icalendar import vCalAddress, CUTYPE, ROLE, PARTSTAT
     >>> attendee = vCalAddress.new(
     ...     "emily.smith@example.com",  # email address
-    ...     cn="Emily Smith",           # common name
-    ...     cutype=CUTYPE.INDIVIDUAL,   # calendar user type
-    ...     role=ROLE.CHAIR,            # role
-    ...     partstat=PARTSTAT.ACCEPTED, # participation status
-    ...     rsvp=True,                  # RSVP requirement
+    ...     cn="Emily Smith",           # CN parameter (common name)
+    ...     cutype=CUTYPE.INDIVIDUAL,   # CUTYPE parameter (calendar user type)
+    ...     role=ROLE.CHAIR,            # ROLE parameter
+    ...     partstat=PARTSTAT.ACCEPTED, # PARTSTAT parameter (participation status)
+    ...     rsvp=True,                  # RSVP parameter
     ... )
 
 .. note::
@@ -53,7 +66,8 @@ it with :meth:`vCalAddress.new <icalendar.prop.cal_address.vCalAddress.new>`.
     Apart from the email, all parameters are optional.
     Use the enumerations defined in :mod:`icalendar.enums` to ensure valid values.
 
-Then add the attendee to the event.
+Assign the attendee to the event.
+Assigning a new value replaces any attendees that were set before.
 
 .. code-block:: pycon
 

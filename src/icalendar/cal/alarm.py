@@ -32,8 +32,6 @@ if TYPE_CHECKING:
     import uuid
     from collections.abc import Sequence
 
-    from icalendar.prop import vCalAddress
-
 
 class Alarm(Component):
     """
@@ -595,7 +593,7 @@ class Alarm(Component):
         summary: str,
         description: str,
         trigger: timedelta | datetime,
-        attendees: Sequence[vCalAddress | str] | vCalAddress | str,
+        attendees: ATTENDEE_TYPE_SETTER,
         attachments: Sequence[str] | str | None = None,
         duration: timedelta | None = None,
         repeat: int | None = None,
@@ -646,22 +644,25 @@ class Alarm(Component):
                 both provided together.
 
         Example:
-            Create an email alarm sent to two recipients:
+            Create an email alarm sent to two recipients. Plain email strings
+            and ``mailto:``-prefixed strings are both accepted and normalized
+            to :class:`~icalendar.prop.cal_address.vCalAddress`:
 
             .. code-block:: pycon
 
                 >>> from datetime import timedelta
-                >>> from icalendar import Alarm, vCalAddress
+                >>> from icalendar import Alarm
                 >>> alarm = Alarm.new_email(
                 ...     summary="Meeting reminder",
                 ...     description="Your meeting starts in 30 minutes.",
                 ...     trigger=timedelta(minutes=-30),
-                ...     attendees=[vCalAddress("mailto:user@example.com")],
+                ...     attendees=["user@example.com", "mailto:boss@example.com"],
                 ... )
                 >>> print(alarm.to_ical().decode())
                 BEGIN:VALARM
                 ACTION:EMAIL
                 ATTENDEE:mailto:user@example.com
+                ATTENDEE:mailto:boss@example.com
                 DESCRIPTION:Your meeting starts in 30 minutes.
                 SUMMARY:Meeting reminder
                 TRIGGER:-PT30M
