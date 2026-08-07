@@ -119,8 +119,8 @@ class Alarm(Component):
                 >>> alarm.REPEAT
                 2
 
-        ..  versionadded:: 7.2.3
-            Added the ``min_value`` parameter. Negative values are no longer accepted.
+        ..  versionchanged:: 7.2.3
+            Negative values are no longer accepted.
         """,
         min_value=0,
     )
