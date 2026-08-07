@@ -64,7 +64,7 @@ class vDate(TimeBase):
     default_value: ClassVar[str] = "DATE"
     params: Parameters
 
-    def __init__(self, dt, params: dict[str, Any] | None = None):
+    def __init__(self, dt: date, params: dict[str, Any] | None = None) -> None:
         if not isinstance(dt, date):
             raise TypeError("Value MUST be a date instance")
         self.dt = dt
