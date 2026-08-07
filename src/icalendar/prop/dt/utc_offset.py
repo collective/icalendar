@@ -70,7 +70,7 @@ class vUTCOffset:
     # it, rather than let the exception
     # propagate upwards
 
-    def __init__(self, td: timedelta, /, params: dict[str, Any] | None = None):
+    def __init__(self, td: timedelta, /, params: dict[str, Any] | None = None) -> None:
         if not isinstance(td, timedelta):
             raise TypeError("Offset value MUST be a timedelta instance")
         self.td = td

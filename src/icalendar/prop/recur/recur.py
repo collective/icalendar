@@ -162,7 +162,9 @@ class vRecur(CaselessDict):
     # look up in RFC
     jcal_not_a_list = {"FREQ", "UNTIL", "COUNT", "INTERVAL", "WKST", "SKIP", "RSCALE"}
 
-    def __init__(self, *args, params: dict[str, Any] | None = None, **kwargs):
+    def __init__(
+        self, *args: Any, params: dict[str, Any] | None = None, **kwargs: Any
+    ) -> None:
         if args and isinstance(args[0], str):
             # we have a string as an argument.
             args = (self.from_ical(args[0]),) + args[1:]

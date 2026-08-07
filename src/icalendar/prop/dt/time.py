@@ -132,7 +132,7 @@ class vTime(TimeBase):
     default_value: ClassVar[str] = "TIME"
     params: Parameters
 
-    def __init__(self, *args, params: dict[str, Any] | None = None):
+    def __init__(self, *args: Any, params: dict[str, Any] | None = None) -> None:
         if len(args) == 1:
             if not isinstance(args[0], (time, datetime)):
                 raise ValueError(f"Expected a datetime.time, got: {args[0]}")

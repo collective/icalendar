@@ -87,7 +87,9 @@ class vDuration(TimeBase):
     default_value: ClassVar[str] = "DURATION"
     params: Parameters
 
-    def __init__(self, td: timedelta | str, /, params: dict[str, Any] | None = None):
+    def __init__(
+        self, td: timedelta | str, /, params: dict[str, Any] | None = None
+    ) -> None:
         if isinstance(td, str):
             td = vDuration.from_ical(td)
         if not isinstance(td, timedelta):

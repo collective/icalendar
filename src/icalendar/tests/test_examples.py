@@ -4,7 +4,17 @@ import datetime
 
 import pytest
 
-from icalendar import Alarm, Availability, Available, Calendar, Event, Timezone, Todo
+from icalendar import (
+    Alarm,
+    Availability,
+    Available,
+    Calendar,
+    Event,
+    FreeBusy,
+    Journal,
+    Timezone,
+    Todo,
+)
 
 
 def test_creating_calendar_with_unicode_fields(calendars, utc):
@@ -44,18 +54,29 @@ def test_creating_calendar_with_unicode_fields(calendars, utc):
 @pytest.mark.parametrize(
     ("component", "example"),
     [
-        (Calendar, "example"),
-        (Calendar, "example.ics"),
-        (Event, "event_with_rsvp"),
-        (Timezone, "pacific_fiji"),
-        (Todo, "example"),
         (Alarm, "example"),
         (Alarm, "rfc_5545_end"),
         (Alarm, "start_date"),
+        (Calendar, "example"),
+        (Calendar, "example.ics"),
+        (Event, "event_with_rsvp"),
+        (FreeBusy, "example"),
+        (Journal, "example"),
+        (Timezone, "pacific_fiji"),
+        (Todo, "example"),
     ],
 )
 def test_component_has_examples(
-    tzp, calendars, timezones, events, todos, component, example, alarms
+    alarms,
+    calendars,
+    component,
+    events,
+    example,
+    freebusy,
+    journals,
+    timezones,
+    todos,
+    tzp,
 ):
     """Check that the examples function works."""
     mapping = {
@@ -64,6 +85,8 @@ def test_component_has_examples(
         Timezone: timezones,
         Todo: todos,
         Alarm: alarms,
+        Journal: journals,
+        FreeBusy: freebusy,
     }
     example_component = component.example(example)
     expected_component = mapping[component][example]
@@ -78,7 +101,18 @@ def test_invalid_examples_lists_the_others():
 
 
 @pytest.mark.parametrize(
-    "component", [Calendar, Event, Timezone, Available, Availability, Todo, Alarm]
+    "component",
+    [
+        Alarm,
+        Availability,
+        Available,
+        Calendar,
+        Event,
+        FreeBusy,
+        Journal,
+        Timezone,
+        Todo,
+    ],
 )
 def test_default_example(component):
     """Check that we have a default example."""

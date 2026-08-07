@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import ClassVar
+from typing import Any, ClassVar
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.prop.adr import vAdr
@@ -50,7 +50,7 @@ class TypesFactory(CaselessDict):
             TypesFactory._instance = TypesFactory()
         return TypesFactory._instance
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Set keys to upper for initial dict"""
         super().__init__(*args, **kwargs)
         self.all_types = (
