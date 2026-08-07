@@ -208,3 +208,10 @@ def test_requires_uri_xor_binary():
         Image()
     with pytest.raises(ValueError):
         Image(b64data="", uri="http://example.com/image.png")
+
+
+def test_image_data_rejects_invalid_base64():
+    """Image.data raises ValueError for invalid base64, consistent with vBinary.from_ical."""
+    image = Image(b64data="not-valid-base64!!!")
+    with pytest.raises(ValueError, match=r"Not valid base 64 encoding\."):
+        _ = image.data
