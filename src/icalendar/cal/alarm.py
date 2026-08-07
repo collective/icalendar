@@ -354,9 +354,8 @@ class Alarm(Component):
 
         Parameters:
             action: The :attr:`ACTION` of the alarm. Typical values are
-                ``"AUDIO"``, ``"DISPLAY"``, and ``"EMAIL"``. When
-                ``"AUDIO"``, the cardinality of ``attachments`` is
-                validated against the RFC limit of one.
+                ``"AUDIO"``, ``"DISPLAY"``, and ``"EMAIL"``. When you set
+                ``"AUDIO"``, the alarm accepts at most one attachment.
             attachments: The :attr:`attachments` of the alarm.
             attendees: The :attr:`attendees` of the alarm.
             concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the alarm.
@@ -402,7 +401,7 @@ class Alarm(Component):
                     "DURATION and REPEAT must be set together or not at all"
                 )
             self.DURATION = duration
-            self.repeat = repeat
+            self.REPEAT = repeat
 
     @classmethod
     def new_display(
@@ -528,9 +527,8 @@ class Alarm(Component):
             attachments: Optional audio attachment. Accepts a URI as a
                 :class:`str` or :class:`~icalendar.prop.uri.vUri`, or
                 inline binary audio as :class:`bytes` or
-                :class:`~icalendar.prop.binary.vBinary`
-                (stored as ``VALUE=BINARY``). When ``None`` the client
-                uses its default sound.
+                :class:`~icalendar.prop.binary.vBinary`. When ``None``,
+                the client uses its default sound.
             duration: Gap between repeated triggers. Must be paired with
                 ``repeat``. Corresponds to the :attr:`DURATION` property.
             repeat: Number of *additional* times to fire after the initial
