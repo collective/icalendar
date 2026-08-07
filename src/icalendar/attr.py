@@ -420,7 +420,7 @@ def single_int_property(
         ~icalendar.error.InvalidCalendar: If the value is smaller than ``min_value``.
 
     ..  versionadded:: 7.2.3
-        Added the ``min_value`` parameter.
+        Added the ``min_value`` parameter. Negative values are no longer accepted.
     """
 
     def fget(self: Component) -> int:
@@ -635,8 +635,8 @@ Examples:
         >>> event.sequence
         10
 
-    ..  versionchanged:: 7.2.3
-        Negative values are no longer accepted.
+    ..  versionadded:: 7.2.3
+        Added the ``min_value`` parameter. Negative values are no longer accepted.
     """,  # noqa: E501
     min_value=0,
 )
@@ -1318,8 +1318,8 @@ Defaults to ``0``, meaning the alarm fires once. Must be paired with
 :attr:`~icalendar.cal.alarm.Alarm.DURATION`. Conforms with :rfc:`5545#section-3.8.6.2`.
 The value is capped at :data:`icalendar.config.MAX_ALARM_REPEAT` on read.
 
-..  versionchanged:: 7.2.3
-    Negative values are no longer accepted.
+..  versionadded:: 7.2.3
+    Added the ``min_value`` parameter. Negative values are no longer accepted.
 """,
         min_value=0,
     )
@@ -1371,8 +1371,8 @@ Description:
     priority for the to-do.  This property is useful in prioritizing
     multiple action items for a given time period.
 
-    ..  versionchanged:: 7.2.3
-        Negative values are no longer accepted.
+    ..  versionadded:: 7.2.3
+        Added the ``min_value`` parameter. Negative values are no longer accepted.
 """,
     min_value=0,
 )
