@@ -1,0 +1,1 @@
+Fix incomplete example tests for ``Alarm``. ``test_component_has_examples`` was adapted for ``Alarm.example()`` but never used to test an example for ``Alarm``. @angatha
