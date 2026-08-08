@@ -70,7 +70,7 @@ class IcalendarTestCase(unittest.TestCase):
         # N or a LATIN CAPITAL LETTER N, that is "\n" or "\N".
 
         # Newlines are not allowed in content lines
-        self.assertRaises(AssertionError, Contentline, b"1234\r\n\r\n1234")
+        self.assertRaises(ValueError, Contentline, b"1234\r\n\r\n1234")
 
         assert Contentline("1234\\n\\n1234").to_ical() == b"1234\\n\\n1234"
 
@@ -256,8 +256,27 @@ class IcalendarTestCase(unittest.TestCase):
         # I don't really get this test
         # at least just but bytes in there
         # porting it to "run" under python 2 & 3 makes it not much better
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError):
             _foldline("привет".encode(), limit=3)
+
+    def test_contentline_rejects_embedded_newline_even_with_dash_o(self):
+        """Regression test for GH #1532.
+
+        The validation used to be a bare ``assert``, which Python strips
+        when run with ``-O``/``PYTHONOPTIMIZE``, silently letting embedded
+        newlines through and producing output that violates RFC 5545's
+        line structure. It must now be an explicit check that always runs.
+        """
+        with pytest.raises(ValueError):
+            Contentline("SUMMARY:Test\nINJECTED:Bad")
+
+    def test_foldline_rejects_embedded_newline(self):
+        with pytest.raises(ValueError):
+            _foldline("has\nnewline")
+
+    def test_foldline_rejects_non_str(self):
+        with pytest.raises(ValueError):
+            _foldline(b"bytes-not-str")
 
         assert _foldline("foobar", limit=4) == "foo\r\n bar"
         assert (
