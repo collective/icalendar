@@ -1,0 +1,1 @@
+Added a ``make zizmor`` target that runs zizmor static analysis on the GitHub Actions workflows in the repository, matching the version and command used in the continuous integration workflow. AI disclosure: used Claude Sonnet 5 with the prompt "Create a make zizmor target for local static analysis of GitHub Actions workflows" to assist with this change. @SemTiOne

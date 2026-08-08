@@ -19,6 +19,7 @@ PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = -W -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 VALEFILES       := $(shell find $(DOCS_DIR) -type f -name "*.rst" -print)  # Also add `src` for docstrings.
 VALEOPTS        ?=
+ZIZMOROPTS      ?=
 PYTHONVERSION   = >=3.10,<3.15
 
 # Add the following 'help' target to your Makefile
@@ -126,6 +127,10 @@ vale: .venv  ## Run Vale style, grammar, and spell checks
 		echo "https://icalendar.readthedocs.io/en/latest/contribute/documentation/build-check.html#spelling-grammar-and-style"; \
 		exit 1; \
 	fi
+
+.PHONY: zizmor
+zizmor: .venv  ## Run zizmor static analysis on GitHub Actions workflows
+	@uv run zizmor $(ZIZMOROPTS) .github/workflows/
 
 .PHONY: doctest
 doctest: .venv  ## Test snippets and docstrings in the documentation
