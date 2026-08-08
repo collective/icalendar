@@ -6,6 +6,7 @@ from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, NamedTuple
 
 from icalendar.attr import (
+    ATTENDEE_TYPE_SETTER,
     CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
@@ -30,8 +31,6 @@ from icalendar.prop.binary import vBinary
 if TYPE_CHECKING:
     import uuid
     from collections.abc import Sequence
-
-    from icalendar.prop import vCalAddress
 
 
 class Alarm(Component):
@@ -322,7 +321,7 @@ class Alarm(Component):
     def new(
         cls,
         /,
-        attendees: list[vCalAddress] | None = None,
+        attendees: ATTENDEE_TYPE_SETTER = None,
         concepts: CONCEPTS_TYPE_SETTER = None,
         description: str | None = None,
         links: LINKS_TYPE_SETTER = None,
@@ -565,7 +564,7 @@ class Alarm(Component):
         summary: str,
         description: str,
         trigger: timedelta | datetime,
-        attendees: Sequence[vCalAddress] | vCalAddress,
+        attendees: ATTENDEE_TYPE_SETTER,
         attachments: Sequence[str] | str | None = None,
         duration: timedelta | None = None,
         repeat: int | None = None,
@@ -590,7 +589,7 @@ class Alarm(Component):
             trigger: When the alarm fires, as a :class:`~datetime.timedelta`
                 relative to the event start (negative means before) or as an
                 absolute :class:`~datetime.datetime` (recommend UTC-aware).
-            attendees: One or more recipient addresses as
+            attendees: One or more recipient addresses as email strings or
                 :class:`~icalendar.prop.cal_address.vCalAddress` instances. A
                 single address or a sequence of addresses. At least one is
                 required.
@@ -616,22 +615,25 @@ class Alarm(Component):
                 both provided together.
 
         Example:
-            Create an email alarm sent to two recipients:
+            Create an email alarm sent to two recipients. Plain email strings
+            and ``mailto:``-prefixed strings are both accepted and normalized
+            to :class:`~icalendar.prop.cal_address.vCalAddress`:
 
             .. code-block:: pycon
 
                 >>> from datetime import timedelta
-                >>> from icalendar import Alarm, vCalAddress
+                >>> from icalendar import Alarm
                 >>> alarm = Alarm.new_email(
                 ...     summary="Meeting reminder",
                 ...     description="Your meeting starts in 30 minutes.",
                 ...     trigger=timedelta(minutes=-30),
-                ...     attendees=[vCalAddress("mailto:user@example.com")],
+                ...     attendees=["user@example.com", "mailto:boss@example.com"],
                 ... )
                 >>> print(alarm.to_ical().decode())
                 BEGIN:VALARM
                 ACTION:EMAIL
                 ATTENDEE:mailto:user@example.com
+                ATTENDEE:mailto:boss@example.com
                 DESCRIPTION:Your meeting starts in 30 minutes.
                 SUMMARY:Meeting reminder
                 TRIGGER:-PT30M
