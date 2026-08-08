@@ -105,7 +105,7 @@ class vDDDTypes(TimeBase):
                 tzinfo = tzp.timezone(timezone)
                 if tzinfo is not None:
                     # ``replace`` picks the first offset a pytz timezone knows,
-                    # which is the LMT one, so localize instead.
+                    # which is the local mean time one, so localize instead.
                     return tzp.localize(to_datetime(vDate.from_ical(ical)), tzinfo)
             return vDate.from_ical(ical)
         if len(ical) in (6, 7):
@@ -149,7 +149,7 @@ class vDDDTypes(TimeBase):
 
         Raises:
             ~error.JCalParsingError: If the value can't be parsed as either a date,
-                 time, date-time, duration, or period.
+                 time, datetime, duration, or period.
         """
         if isinstance(jcal, list):
             return vPeriod.parse_jcal_value(jcal)

@@ -37,7 +37,7 @@ def _to_period_datetimes(
 ) -> tuple[datetime, datetime | timedelta]:
     """Convert the dates of a period to datetimes.
 
-    :rfc:`5545` builds a period from date-times only, but calendars in the
+    :rfc:`5545#section-3.3.9` builds a period from datetimes only, but calendars in the
     wild use dates. A date becomes midnight so that the period can be used
     and written back out.
 
@@ -247,7 +247,7 @@ class vPeriod(TimeBase):
 
         Raises:
             ~error.JCalParsingError: If the period is not a list with exactly two items,
-                or it can't parse a date-time or duration.
+                or it can't parse a datetime or duration.
         """
         if isinstance(jcal, str) and "/" in jcal:
             # only occurs in the example of RFC7265, Section B.2.2.

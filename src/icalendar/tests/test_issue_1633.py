@@ -1,6 +1,6 @@
-"""Periods written with dates are read as midnight date-times.
+"""Periods written with dates are read as midnight datetimes.
 
-:rfc:`5545`, section 3.3.9, builds a period from date-times only. A period
+RFC 5545, section 3.3.9, builds a period from datetimes only. A period
 written with dates used to parse without error and then raise an
 ``AttributeError`` from ``to_ical()``.
 
@@ -18,7 +18,7 @@ UTC_MIDNIGHT = datetime(1997, 1, 1, tzinfo=timezone.utc)
 
 
 def test_calendar_from_the_issue_round_trips(calendars):
-    """The calendar in the issue serializes instead of raising."""
+    """The calendar serializes the dates as datetimes at midnight instead of raising."""
     calendar = calendars.issue_1633_rdate_with_dates
     assert b"RDATE;VALUE=PERIOD:19970101T000000/19970102T000000" in calendar.to_ical()
 
@@ -41,7 +41,7 @@ def test_no_error_is_recorded(calendars):
     ],
 )
 def test_from_ical_converts_dates(ical, expected):
-    """Parsing returns date-times, so the value matches what is written out."""
+    """Parsing returns datetimes, so the value matches what is written out."""
     assert vPeriod.from_ical(ical) == expected
 
 
@@ -56,7 +56,7 @@ def test_from_ical_converts_dates(ical, expected):
     ],
 )
 def test_to_ical(ical, expected):
-    """Date-only halves are written out as date-times, valid values are untouched."""
+    """Date-only halves are written out as datetimes, valid values are untouched."""
     assert vPeriod(vPeriod.from_ical(ical)).to_ical() == expected
 
 
@@ -68,7 +68,7 @@ def test_to_ical(ical, expected):
     ],
 )
 def test_a_converted_date_takes_the_timezone_of_the_other_half(tzp, ical, expected):
-    """A date next to an aware date-time cannot stay naive.
+    """A date next to an aware datetime cannot stay naive.
 
     The two halves could not be subtracted to compute the duration.
     """
