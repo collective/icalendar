@@ -97,6 +97,15 @@ class FeatureWillBeRemovedInFutureVersion(DeprecationWarning):
     """This feature will be removed in a future version."""
 
 
+class GloballyUniqueTZIDGuessed(UserWarning):
+    """A globally unique TZID was resolved by stripping the vendor prefix.
+
+    Per :rfc:`5545#section-3.2.19`, the trailing component is convention only
+    and not guaranteed to match a known Olson identifier. Suppress this warning
+    if the resolved timezone is correct for your data.
+    """
+
+
 def _repr_index(index: str | int) -> str:
     """Create a JSON compatible representation for the index.
 

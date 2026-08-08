@@ -71,7 +71,7 @@ class vAdr:
         fields: tuple[str, ...] | list[str] | str | AdrFields,
         /,
         params: dict[str, Any] | None = None,
-    ):
+    ) -> None:
         """Initialize ADR with seven fields or parse from vCard format string.
 
         Parameters:
