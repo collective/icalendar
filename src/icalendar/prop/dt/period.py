@@ -1,17 +1,62 @@
 """PERIOD property type from :rfc:`5545`."""
 
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, tzinfo
 from typing import Any, ClassVar
 
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.timezone import tzp
-from icalendar.tools import is_datetime, normalize_pytz
+from icalendar.tools import is_date, is_datetime, is_pytz, normalize_pytz, to_datetime
 
 from .base import TimeBase
 from .datetime import vDatetime
 from .duration import vDuration
+
+
+def _to_midnight(dt: date, tz: tzinfo | None) -> datetime:
+    """Convert a date to the datetime at midnight.
+
+    Parameters:
+        dt: The date to convert.
+        tz: The timezone of the result, or ``None`` for a naive result.
+
+    Returns:
+        The datetime at midnight.
+    """
+    midnight = to_datetime(dt)
+    if tz is None:
+        return midnight
+    if is_pytz(tz):
+        return tz.localize(midnight)  # type: ignore[attr-defined]
+    return midnight.replace(tzinfo=tz)
+
+
+def _to_period_datetimes(
+    start: date | datetime, end_or_duration: date | datetime | timedelta
+) -> tuple[datetime, datetime | timedelta]:
+    """Convert the dates of a period to datetimes.
+
+    :rfc:`5545` builds a period from date-times only, but calendars in the
+    wild use dates. A date becomes midnight so that the period can be used
+    and written back out.
+
+    A converted half takes the timezone of the other half. Without this, an
+    aware and a naive datetime could not be subtracted to compute the
+    duration.
+
+    Parameters:
+        start: The start of the period.
+        end_or_duration: The end of the period or its duration.
+
+    Returns:
+        The start and the end or duration, with any date converted.
+    """
+    if is_date(start):
+        start = _to_midnight(start, getattr(end_or_duration, "tzinfo", None))
+    if is_date(end_or_duration):
+        end_or_duration = _to_midnight(end_or_duration, getattr(start, "tzinfo", None))
+    return start, end_or_duration
 
 
 class vPeriod(TimeBase):
@@ -56,6 +101,11 @@ class vPeriod(TimeBase):
         the period, followed by a SOLIDUS character, followed by the
         [ISO.8601.2004] basic format for "DURATION" of the period.
 
+        A period written with dates instead of date-times does not conform
+        to this specification. Such a value is read as midnight, so that the
+        calendar can still be used, and it is written back out as a
+        date-time.
+
     Example:
         The period starting at 18:00:00 UTC, on January 1, 1997 and
         ending at 07:00:00 UTC on January 2, 1997 would be:
@@ -76,6 +126,13 @@ class vPeriod(TimeBase):
             >>> from icalendar.prop import vPeriod
             >>> period = vPeriod.from_ical('19970101T180000Z/19970102T070000Z')
             >>> period = vPeriod.from_ical('19970101T180000Z/PT5H30M')
+
+        A period written with dates is read as midnight:
+
+        .. code-block:: pycon
+
+            >>> vPeriod(vPeriod.from_ical('19970101/19970102')).to_ical()
+            b'19970101T000000/19970102T000000'
     """
 
     default_value: ClassVar[str] = "PERIOD"
@@ -87,7 +144,7 @@ class vPeriod(TimeBase):
 
     def __init__(
         self,
-        per: tuple[datetime, datetime | timedelta],
+        per: tuple[date | datetime, date | datetime | timedelta],
         params: dict[str, Any] | None = None,
     ) -> None:
         start, end_or_duration = per
@@ -97,6 +154,7 @@ class vPeriod(TimeBase):
             raise TypeError(
                 "end_or_duration MUST be a datetime, date or timedelta instance"
             )
+        start, end_or_duration = _to_period_datetimes(start, end_or_duration)
         by_duration = isinstance(end_or_duration, timedelta)
         if by_duration:
             duration = end_or_duration
@@ -141,7 +199,7 @@ class vPeriod(TimeBase):
             end_or_duration = vDDDTypes.from_ical(end_or_duration, timezone=timezone)
         except Exception as e:
             raise ValueError(f"Expected period format, got: {ical}") from e
-        return (start, end_or_duration)
+        return _to_period_datetimes(start, end_or_duration)
 
     def __repr__(self):
         p = (self.start, self.duration) if self.by_duration else (self.start, self.end)
