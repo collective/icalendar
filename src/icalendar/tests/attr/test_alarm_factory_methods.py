@@ -8,6 +8,28 @@ from icalendar.cal.alarm import Alarm
 from icalendar.error import InvalidCalendar
 from icalendar.prop import vCalAddress
 from icalendar.prop.binary import vBinary
+from icalendar.prop.text import vText
+from icalendar.prop.uri import vUri
+
+_TRIGGER = timedelta(minutes=-15)
+_ATTENDEE = vCalAddress("mailto:a@example.com")
+
+
+def _display(**kw) -> Alarm:
+    return Alarm.new_display("Reminder", _TRIGGER, **kw)
+
+
+def _audio(**kw) -> Alarm:
+    return Alarm.new_audio(_TRIGGER, **kw)
+
+
+def _email(**kw) -> Alarm:
+    return Alarm.new_email("Subject", "Body", _TRIGGER, [_ATTENDEE], **kw)
+
+
+_ALL_FACTORIES = pytest.mark.parametrize(
+    "factory", [_display, _audio, _email], ids=["new_display", "new_audio", "new_email"]
+)
 
 
 def test_new_display_sets_action():
@@ -249,3 +271,79 @@ def test_new_email_single_attachment():
     )
     assert "ATTACH" in alarm
     assert str(alarm["ATTACH"]) == "https://example.com/file.pdf"
+
+
+# Shared parameters: uid, links, related_to, concepts
+
+
+@_ALL_FACTORIES
+def test_factory_uid_is_set(factory):
+    alarm = factory(uid="test-alarm-uid-001")
+    assert alarm.uid == "test-alarm-uid-001"
+    assert "UID" in alarm
+
+
+@_ALL_FACTORIES
+def test_factory_uid_none_omits_property(factory):
+    alarm = factory(uid=None)
+    assert "UID" not in alarm
+
+
+@_ALL_FACTORIES
+def test_factory_links_single(factory):
+    link = vUri("https://example.com/event")
+    alarm = factory(links=[link])
+    assert alarm.links == [link]
+
+
+@_ALL_FACTORIES
+def test_factory_links_string_is_converted(factory):
+    alarm = factory(links=["https://example.com/event"])
+    assert alarm.links == [vUri("https://example.com/event")]
+
+
+@_ALL_FACTORIES
+def test_factory_links_none_is_empty(factory):
+    alarm = factory(links=None)
+    assert alarm.links == []
+    assert "LINK" not in alarm
+
+
+@_ALL_FACTORIES
+def test_factory_related_to_single(factory):
+    rel = vText("some-uid-ref")
+    alarm = factory(related_to=[rel])
+    assert alarm.related_to == [rel]
+
+
+@_ALL_FACTORIES
+def test_factory_related_to_string_is_converted(factory):
+    alarm = factory(related_to=["some-uid-ref"])
+    assert alarm.related_to == [vText("some-uid-ref")]
+
+
+@_ALL_FACTORIES
+def test_factory_related_to_none_is_empty(factory):
+    alarm = factory(related_to=None)
+    assert alarm.related_to == []
+    assert "RELATED-TO" not in alarm
+
+
+@_ALL_FACTORIES
+def test_factory_concepts_single(factory):
+    concept = vUri("https://example.com/concept")
+    alarm = factory(concepts=[concept])
+    assert alarm.concepts == [concept]
+
+
+@_ALL_FACTORIES
+def test_factory_concepts_string_is_converted(factory):
+    alarm = factory(concepts=["https://example.com/concept"])
+    assert alarm.concepts == [vUri("https://example.com/concept")]
+
+
+@_ALL_FACTORIES
+def test_factory_concepts_none_is_empty(factory):
+    alarm = factory(concepts=None)
+    assert alarm.concepts == []
+    assert "CONCEPT" not in alarm
