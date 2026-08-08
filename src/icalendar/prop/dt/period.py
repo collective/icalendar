@@ -60,86 +60,76 @@ def _to_period_datetimes(
 
 
 class vPeriod(TimeBase):
-    """Period of Time
+    """A span of time, written either as a start and an end or as a start and a duration.
 
-    Value Name:
-        PERIOD
+    The value is a tuple of two :class:`datetime.datetime` objects, or of a
+    datetime and a :class:`datetime.timedelta`. Whichever way it was written,
+    :attr:`start`, :attr:`end`, and :attr:`duration` are all available, and
+    :attr:`by_duration` says which of the two forms is written back out.
 
-    Purpose:
-        This value type is used to identify values that contain a
-        precise period of time.
+    Conforming with :rfc:`5545#section-3.3.9`, a period is built from datetimes
+    only, the start must come before the end, and a duration must be positive.
+    A half written as a date does not conform. Such a half is read as midnight,
+    in the timezone of the other half where it has one, so that a calendar that
+    gets this wrong can still be read and written.
 
-    Format Definition:
-        This value type is defined by the following notation:
+    ``FREEBUSY`` holds periods directly. ``RDATE`` holds them through
+    :class:`~icalendar.prop.dt.list.vDDDLists`, which splits a comma separated
+    list and hands each value to :class:`~icalendar.prop.dt.types.vDDDTypes`.
+    The halves themselves are parsed by
+    :class:`~icalendar.prop.dt.datetime.vDatetime` and
+    :class:`~icalendar.prop.dt.duration.vDuration`.
 
-        .. code-block:: text
+    Parameters:
+        per: The start of the period, and either its end or its duration.
+        params: The parameters of the property.
 
-            period     = period-explicit / period-start
+    Raises:
+        TypeError: If the start is not a date or a datetime, or if the end is
+            not a date, a datetime, or a duration.
+        ValueError: If the start is after the end.
 
-           period-explicit = date-time "/" date-time
-           ; [ISO.8601.2004] complete representation basic format for a
-           ; period of time consisting of a start and end.  The start MUST
-           ; be before the end.
-
-           period-start = date-time "/" dur-value
-           ; [ISO.8601.2004] complete representation basic format for a
-           ; period of time consisting of a start and positive duration
-           ; of time.
-
-    Description:
-        If the property permits, multiple "period" values are
-        specified by a COMMA-separated list of values.  There are two
-        forms of a period of time.  First, a period of time is identified
-        by its start and its end.  This format is based on the
-        [ISO.8601.2004] complete representation, basic format for "DATE-
-        TIME" start of the period, followed by a SOLIDUS character
-        followed by the "DATE-TIME" of the end of the period.  The start
-        of the period MUST be before the end of the period.  Second, a
-        period of time can also be defined by a start and a positive
-        duration of time.  The format is based on the [ISO.8601.2004]
-        complete representation, basic format for the "DATE-TIME" start of
-        the period, followed by a SOLIDUS character, followed by the
-        [ISO.8601.2004] basic format for "DURATION" of the period.
-
-        A period written with dates instead of date-times does not conform
-        to this specification. Such a value is read as midnight, so that the
-        calendar can still be used, and it is written back out as a
-        date-time.
-
-    Example:
-        The period starting at 18:00:00 UTC, on January 1, 1997 and
-        ending at 07:00:00 UTC on January 2, 1997 would be:
+    Examples:
+        A period from 18:00:00 UTC on January 1, 1997 to 07:00:00 UTC on
+        January 2, 1997, and one that starts at 18:00:00 UTC and lasts 5 hours
+        and 30 minutes:
 
         .. code-block:: ics
 
             19970101T180000Z/19970102T070000Z
-
-        The period start at 18:00:00 on January 1, 1997 and lasting 5 hours
-        and 30 minutes would be:
-
-        .. code-block:: ics
-
             19970101T180000Z/PT5H30M
 
         .. code-block:: pycon
 
             >>> from icalendar.prop import vPeriod
-            >>> period = vPeriod.from_ical('19970101T180000Z/19970102T070000Z')
-            >>> period = vPeriod.from_ical('19970101T180000Z/PT5H30M')
+            >>> period = vPeriod.from_ical("19970101T180000Z/19970102T070000Z")
+            >>> vPeriod(period).to_ical()
+            b'19970101T180000Z/19970102T070000Z'
+            >>> period = vPeriod.from_ical("19970101T180000Z/PT5H30M")
+            >>> vPeriod(period).duration
+            datetime.timedelta(seconds=19800)
 
-        A period written with dates is read as midnight:
+        A half written as a date is read as midnight:
 
         .. code-block:: pycon
 
-            >>> vPeriod(vPeriod.from_ical('19970101/19970102')).to_ical()
+            >>> vPeriod(vPeriod.from_ical("19970101/19970102")).to_ical()
             b'19970101T000000/19970102T000000'
+
+    ..  versionchanged:: 7.2.3
+
+        A period written with dates is read as midnight.
     """
 
     default_value: ClassVar[str] = "PERIOD"
     params: Parameters
+    #: Whether the value is written as a duration rather than as an end.
     by_duration: bool
+    #: The start of the period.
     start: datetime
+    #: The end of the period, computed from the duration where there is one.
     end: datetime
+    #: The time between the start and the end.
     duration: timedelta
 
     def __init__(
