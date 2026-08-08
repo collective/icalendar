@@ -89,6 +89,13 @@ def test_a_borrowed_timezone_uses_the_offset_of_its_own_date(tzp):
     assert end.utcoffset() == timedelta(hours=-4)
 
 
+def test_a_converted_start_borrows_a_named_timezone(tzp):
+    """The start date takes the summer offset of the other half's zone."""
+    end = tzp.localize(datetime(1997, 7, 2, 12), "America/New_York")
+    start, _end = vPeriod((date(1997, 7, 1), end)).dt
+    assert start.utcoffset() == timedelta(hours=-4)
+
+
 def test_a_timezone_that_the_provider_does_not_use(tzp):
     """The timezone comes from the value, not from the active provider."""
     period = vPeriod((date(1997, 1, 1), datetime(1997, 1, 2, 7, tzinfo=timezone.utc)))
@@ -137,6 +144,22 @@ def test_dates_added_to_a_freebusy():
     assert b"19970101T000000/19970102T000000" in freebusy.to_ical()
 
 
+def test_a_comma_separated_period_list_round_trips():
+    """A date-only period next to a normal one survives the list split."""
+    event = Event()
+    event.add(
+        "RDATE",
+        [
+            (date(1997, 1, 1), date(1997, 1, 2)),
+            (datetime(1997, 7, 5, 12), datetime(1997, 7, 6)),
+        ],
+    )
+    ical = event.to_ical()
+    assert b"19970101T000000/19970102T000000,19970705T120000/19970706T000000" in ical
+    parsed = Event.from_ical(ical)
+    assert parsed["RDATE"].dts[0].dt[0] == datetime(1997, 1, 1)
+
+
 def test_the_duration_is_computed_from_the_converted_values():
     """The duration is available, where it used to be impossible to compute."""
     period = vPeriod((date(1997, 1, 1), date(1997, 1, 3)))
@@ -161,3 +184,14 @@ def test_an_invalid_period_is_still_invalid():
     """Conversion does not make broken values parse."""
     with pytest.raises(ValueError, match="Expected period format"):
         vPeriod.from_ical("19970101/not-a-date")
+
+
+def test_an_end_date_before_the_start_is_rejected():
+    """Midnight is the whole of the reading, the end is not stretched to the day.
+
+    ``19970102T120000Z/19970102`` asks for an end that midnight puts before
+    the start, so the period is invalid. Reading the end as the end of that
+    day would invent a duration the calendar never stated.
+    """
+    with pytest.raises(ValueError, match="Start time is greater than end time"):
+        vPeriod(vPeriod.from_ical("19970102T120000Z/19970102"))
