@@ -1,1 +1,1 @@
-Include ``funding.json`` in the sdist tarball.
+Include :file:`funding.json` in the sdist tarball. @ChickenisLegit
