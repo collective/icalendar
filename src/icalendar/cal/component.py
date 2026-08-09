@@ -250,23 +250,18 @@ class Component(CaselessDict):
     def _encode(cls, name, value, parameters=None, encode=1):
         """Encode values to icalendar property values.
 
-        :param name: Name of the property.
-        :type name: string
+        Args:
+            name (str): Name of the property.
+            value: Value of the property. Either a basic Python type or
+                any of icalendar's own property types.
+            parameters (dict, optional): Property parameter dictionary for
+                the value. Only available if encode is set to True.
+            encode (bool): True, if the value should be encoded to one of
+                icalendar's own property types (fallback is "vText"), or
+                False, if not.
 
-        :param value: Value of the property. Either of a basic Python type of
-                      any of the icalendar's own property types.
-        :type value: Python native type or icalendar property type.
-
-        :param parameters: Property parameter dictionary for the value. Only
-                           available, if encode is set to True.
-        :type parameters: Dictionary
-
-        :param encode: True, if the value should be encoded to one of
-                       icalendar's own property types (Fallback is "vText")
-                       or False, if not.
-        :type encode: Boolean
-
-        :returns: icalendar property value
+        Returns:
+            icalendar property value.
         """
         if not encode:
             return value
@@ -457,12 +452,15 @@ class Component(CaselessDict):
         """Recursively traverses component and subcomponents. Returns sequence
         of same. If name is passed, only components with name will be returned.
 
-        :param name: The name of the component or None such as ``VEVENT``.
-        :param select: A function that takes the component as first argument
-          and returns True/False.
-        :returns: A list of components that match.
-        :rtype: list[Component]
+        Args:
+            name (str, optional): The name of the component or None such as ``VEVENT``.
+            select (callable, optional): A function that takes the component
+                as first argument and returns True/False.
+
+        Returns:
+            list[Component]: A list of components that match.
         """
+       
         if name is not None:
             name = name.upper()
         return self._walk(name, select)
@@ -618,9 +616,11 @@ class Component(CaselessDict):
         return contentlines
 
     def to_ical(self, sorted: bool = True):
-        """
-        :param sorted: Whether parameters and properties should be
-                       lexicographically sorted.
+        """Return this component as an iCalendar formatted string.
+
+        Args:
+            sorted (bool): Whether parameters and properties should be
+                lexicographically sorted.
         """
 
         content_lines = self.content_lines(sorted=sorted)
