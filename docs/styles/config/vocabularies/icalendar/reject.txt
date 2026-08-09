@@ -1,1 +1,1 @@
-(?i)date-times?
+[Dd]ate-times?
