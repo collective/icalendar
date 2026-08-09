@@ -188,8 +188,15 @@ Description:
 )
 
 
-def quoted_list_parameter(name: str, doc: str) -> property:
-    """Return a parameter that contains a quoted list."""
+def quoted_list_parameter(name: str) -> property:
+    """Create a property for a parameter that contains a quoted list.
+
+    Parameters:
+        name: The parameter name in the ``params`` dictionary.
+
+    Returns:
+        A property with a getter, setter, and deleter for the parameter.
+    """
 
     def fget(self: VPROPERTY) -> tuple[str]:
         value = self.params.get(name)
@@ -208,12 +215,11 @@ def quoted_list_parameter(name: str, doc: str) -> property:
     def fdel(self: VPROPERTY):
         self.params.pop(name, None)
 
-    return property(fget, fset, fdel, doc=doc)
+    return property(fget, fset, fdel)
 
 
-DELEGATED_FROM = quoted_list_parameter(
-    "DELEGATED-FROM",
-    """Specify the calendar users that have delegated their participation to the calendar user specified by the property.
+DELEGATED_FROM = quoted_list_parameter("DELEGATED-FROM")
+"""Specify the calendar users that delegated their participation.
 
 Description:
     This parameter can be specified on properties with a
@@ -222,22 +228,19 @@ Description:
     event or to-do to the calendar user specified by the property.
     The individual calendar address parameter values MUST each be
     specified in a quoted-string.
-""",  # noqa: E501
-)
+"""
 
-DELEGATED_TO = quoted_list_parameter(
-    "DELEGATED-TO",
-    """Specify the calendar users to whom the calendar user specified by the property has delegated participation.
+DELEGATED_TO = quoted_list_parameter("DELEGATED-TO")
+"""Specify the calendar users to whom participation was delegated.
 
 Description:
     This parameter can be specified on properties with a
     CAL-ADDRESS value type.  This parameter specifies those calendar
-    users whom have been delegated participation in a group-scheduled
-    event or to-do by the calendar user specified by the property.
+    users to whom participation in a group-scheduled event or to-do was
+    delegated by the calendar user specified by the property.
     The individual calendar address parameter values MUST each be
     specified in a quoted-string.
-    """,  # noqa: E501
-)
+"""
 
 DIR = string_parameter(
     "DIR",
@@ -304,9 +307,8 @@ Description:
 """,
 )
 
-MEMBER = quoted_list_parameter(
-    "MEMBER",
-    """Specify the group or list membership of the calendar user specified by the property.
+MEMBER = quoted_list_parameter("MEMBER")
+"""Specify the group or list membership of a calendar user.
 
 Description:
     This parameter can be specified on properties with a
@@ -316,8 +318,7 @@ Description:
     quoted-string or a COMMA-separated list of calendar addresses,
     each in a quoted-string.  The individual calendar address
     parameter values MUST each be specified in a quoted-string.
-""",  # noqa: E501
-)
+"""
 
 
 def _default_return_needs_action() -> enums.PARTSTAT | str:
