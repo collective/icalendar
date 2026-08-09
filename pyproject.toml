@@ -148,6 +148,9 @@ exclude = [
   "/htmlcov",
 ]
 
+[tool.hatch.build.targets.sdist.force-include]
+"funding.json" = "funding.json"
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/icalendar"]
 
