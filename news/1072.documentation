@@ -1,1 +1,1 @@
-Improved the docstrings of :meth:\`~icalendar.cal.component.Component._encode\`, :meth:\`~icalendar.cal.component.Component.walk\`, and :meth:\`~icalendar.cal.component.Component.to_ical\` to follow the Google-style format. I used AI to assist me with this change. @anuragdewangan48-gif
+Added a docstring to the :func:\`~icalendar.cli.main\` function to follow the project's Google Style guide. @Areej-cs
