@@ -117,7 +117,7 @@ class Available(Component):
         start: datetime | None = None,
         summary: str | None = None,
         uid: str | uuid.UUID | None = None,
-    ):
+    ) -> Available:
         """Create a new Available component with all required properties.
 
         This creates a new Available component in accordance with :rfc:`7953`.

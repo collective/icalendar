@@ -346,7 +346,7 @@ class Todo(Component):
         summary: str | None = None,
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
-    ):
+    ) -> Todo:
         """Create a new TODO with all required properties.
 
         This creates a new Todo in accordance with :rfc:`5545`.

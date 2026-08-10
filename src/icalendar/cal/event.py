@@ -458,7 +458,7 @@ class Event(Component):
         summary: str | None = None,
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
-    ):
+    ) -> Event:
         """Create a new event with the required properties of ``stamp`` and ``uid``.
 
         This creates a new ``Event`` in accordance with :rfc:`5545#section-3.6.1`.

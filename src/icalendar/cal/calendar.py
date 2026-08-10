@@ -559,7 +559,7 @@ Description:
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
         version: str = "2.0",
-    ):
+    ) -> Calendar:
         """Create a new Calendar.
 
         This creates a new Calendar in accordance with :rfc:`5545` and :rfc:`7986`.

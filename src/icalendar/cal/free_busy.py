@@ -125,7 +125,7 @@ class FreeBusy(Component):
         start: date | datetime | None = None,
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
-    ):
+    ) -> FreeBusy:
         """Create a new FreeBusy component with all required properties,
         in accordance with :rfc:`5545#section-3.6.4`.
 

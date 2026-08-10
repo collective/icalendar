@@ -330,7 +330,7 @@ class Alarm(Component):
         related_to: RELATED_TO_TYPE_SETTER = None,
         summary: str | None = None,
         uid: str | uuid.UUID | None = None,
-    ):
+    ) -> Alarm:
         """Create a new alarm with all required properties.
 
         This creates a new Alarm in accordance with :rfc:`5545`.
