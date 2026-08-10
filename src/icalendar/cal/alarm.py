@@ -583,17 +583,17 @@ class Alarm(Component):
         Conforms to :rfc:`5545#section-3.6.6`.
 
         Parameters:
-            summary: Required. Subject line of the email.
-                Corresponds to the :attr:`summary` property.
-            description: Required. Body of the email.
-                Corresponds to the :attr:`description` property.
-            trigger: Required. When the alarm fires, as a :class:`~datetime.timedelta`
-                relative to the event start (negative means before) or as an
-                absolute :class:`~datetime.datetime` (recommend UTC-aware).
             attendees: Required. One or more recipient addresses as
                 :class:`~icalendar.prop.cal_address.vCalAddress` instances. A
                 single address or a sequence of addresses. At least one is
                 required.
+            description: Required. Body of the email.
+                Corresponds to the :attr:`description` property.
+            summary: Required. Subject line of the email.
+                Corresponds to the :attr:`summary` property.
+            trigger: Required. When the alarm fires, as a :class:`~datetime.timedelta`
+                relative to the event start (negative means before) or as an
+                absolute :class:`~datetime.datetime` (recommend UTC-aware).
             attachments: Optional URI or sequence of URIs to attach to the
                 email.
             concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the alarm.

@@ -1,1 +1,1 @@
-Consolidate and alphabetize the docstring parameters of the ``Alarm`` factory methods ``new_display``, ``new_audio``, and ``new_email``. Prefix required parameters with ``Required.`` @Solaris-star
+Consolidate and alphabetize the docstring parameters of the :class:`~icalendar.cal.alarm.Alarm` factory methods :meth:`~icalendar.cal.alarm.Alarm.new_display`, :meth:`~icalendar.cal.alarm.Alarm.new_audio`, and :meth:`~icalendar.cal.alarm.Alarm.new_email`. Prefixed required parameters with ``Required.`` @Solaris-star
