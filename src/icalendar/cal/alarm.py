@@ -400,21 +400,21 @@ class Alarm(Component):
         Conforms to :rfc:`5545#section-3.6.6`.
 
         Parameters:
-            description: The text to display when the alarm fires.
+            description: Required. The text to display when the alarm fires.
                 Corresponds to the :attr:`description` property.
-            trigger: When the alarm fires, as a :class:`~datetime.timedelta`
+            trigger: Required. When the alarm fires, as a :class:`~datetime.timedelta`
                 relative to the event start (negative means before) or as an
                 absolute :class:`~datetime.datetime` (recommend UTC-aware).
+            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the alarm.
             duration: Gap between repeated triggers. Must be paired with
                 ``repeat``. Corresponds to the :attr:`DURATION` property.
+            links: The :attr:`~icalendar.cal.component.Component.links` of the alarm.
+            refids: The :attr:`~icalendar.cal.component.Component.refids` of the alarm.
+            related_to: The :attr:`~icalendar.cal.component.Component.related_to` of the alarm.
             repeat: Number of *additional* times to fire after the initial
                 trigger. Must be paired with ``duration``.
                 Corresponds to the :attr:`REPEAT` property.
             uid: Unique identifier for the alarm or ``None``.
-            links: The :attr:`~icalendar.cal.component.Component.links` of the alarm.
-            related_to: The :attr:`~icalendar.cal.component.Component.related_to` of the alarm.
-            refids: The :attr:`~icalendar.cal.component.Component.refids` of the alarm.
-            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the alarm.
 
         Returns:
             :class:`Alarm` with ``ACTION:DISPLAY`` set.
@@ -497,7 +497,7 @@ class Alarm(Component):
         Conforms to :rfc:`5545#section-3.6.6`.
 
         Parameters:
-            trigger: When the alarm fires, as a :class:`~datetime.timedelta`
+            trigger: Required. When the alarm fires, as a :class:`~datetime.timedelta`
                 relative to the event start (negative means before) or as an
                 absolute :class:`~datetime.datetime` (recommend UTC-aware).
             attach: Optional audio attachment. Pass a URI string such as
@@ -505,16 +505,16 @@ class Alarm(Component):
                 sound file, or :class:`bytes` for inline binary audio data
                 (stored as ``VALUE=BINARY``). When ``None`` the client uses
                 its default sound.
+            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the alarm.
             duration: Gap between repeated triggers. Must be paired with
                 ``repeat``. Corresponds to the :attr:`DURATION` property.
+            links: The :attr:`~icalendar.cal.component.Component.links` of the alarm.
+            refids: The :attr:`~icalendar.cal.component.Component.refids` of the alarm.
+            related_to: The :attr:`~icalendar.cal.component.Component.related_to` of the alarm.
             repeat: Number of *additional* times to fire after the initial
                 trigger. Must be paired with ``duration``.
                 Corresponds to the :attr:`REPEAT` property.
             uid: Unique identifier for the alarm or ``None``.
-            links: The :attr:`~icalendar.cal.component.Component.links` of the alarm.
-            related_to: The :attr:`~icalendar.cal.component.Component.related_to` of the alarm.
-            refids: The :attr:`~icalendar.cal.component.Component.refids` of the alarm.
-            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the alarm.
 
         Returns:
             :class:`Alarm` with ``ACTION:AUDIO`` set.
@@ -583,29 +583,29 @@ class Alarm(Component):
         Conforms to :rfc:`5545#section-3.6.6`.
 
         Parameters:
-            summary: Subject line of the email.
-                Corresponds to the :attr:`summary` property.
-            description: Body of the email.
-                Corresponds to the :attr:`description` property.
-            trigger: When the alarm fires, as a :class:`~datetime.timedelta`
-                relative to the event start (negative means before) or as an
-                absolute :class:`~datetime.datetime` (recommend UTC-aware).
-            attendees: One or more recipient addresses as
+            attendees: Required. One or more recipient addresses as
                 :class:`~icalendar.prop.cal_address.vCalAddress` instances. A
                 single address or a sequence of addresses. At least one is
                 required.
+            description: Required. Body of the email.
+                Corresponds to the :attr:`description` property.
+            summary: Required. Subject line of the email.
+                Corresponds to the :attr:`summary` property.
+            trigger: Required. When the alarm fires, as a :class:`~datetime.timedelta`
+                relative to the event start (negative means before) or as an
+                absolute :class:`~datetime.datetime` (recommend UTC-aware).
             attachments: Optional URI or sequence of URIs to attach to the
                 email.
+            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the alarm.
             duration: Gap between repeated triggers. Must be paired with
                 ``repeat``. Corresponds to the :attr:`DURATION` property.
+            links: The :attr:`~icalendar.cal.component.Component.links` of the alarm.
+            refids: The :attr:`~icalendar.cal.component.Component.refids` of the alarm.
+            related_to: The :attr:`~icalendar.cal.component.Component.related_to` of the alarm.
             repeat: Number of *additional* times to fire after the initial
                 trigger. Must be paired with ``duration``.
                 Corresponds to the :attr:`REPEAT` property.
             uid: Unique identifier for the alarm or ``None``.
-            links: The :attr:`~icalendar.cal.component.Component.links` of the alarm.
-            related_to: The :attr:`~icalendar.cal.component.Component.related_to` of the alarm.
-            refids: The :attr:`~icalendar.cal.component.Component.refids` of the alarm.
-            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the alarm.
 
         Returns:
             :class:`Alarm` with ``ACTION:EMAIL`` set.
