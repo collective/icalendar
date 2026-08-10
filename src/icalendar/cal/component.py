@@ -252,15 +252,11 @@ class Component(CaselessDict):
     ):
         """Encode values to icalendar property values.
 
-             Parameters:
+        Parameters:
             name: Required. Name of the property.
-            value: Required. Value of the property. Either a basic Python type
-                or any of icalendar's own property types.
-            encode: True if the value should be encoded to one of
-                icalendar's own property types (fallback is "vText"),
-                or False if not.
-            parameters: Property parameter dictionary for the value. Only
-                available if encode is set to True.
+            value: Required. Value of the property. Either a basic Python type or any of icalendar's own property types.
+            encode: True if the value should be encoded to one of icalendar's own property types (fallback is "vText"), or False if not.
+            parameters: Property parameter dictionary for the value. Only available if encode is set to True.
 
         Returns:
             icalendar property value.
@@ -451,13 +447,11 @@ class Component(CaselessDict):
         name: str | None = None,
         select: callable[[Component], bool] = lambda _: True,
     ) -> list[Component]:
-        """Recursively traverses component and subcomponents. Returns sequence
-        of same. If name is passed, only components with name will be returned.
+        """Recursively traverses component and subcomponents. Returns sequence of same. If name is passed, only components with name will be returned.
 
-         Parameters:
+        Parameters:
             name: The name of the component or None such as ``VEVENT``.
-            select: A function that takes the component as first argument
-                and returns True/False.
+            select: A function that takes the component as first argument and returns True/False.
 
         Returns:
             A list of components that match.
