@@ -130,6 +130,38 @@ You can run the following command to automatically format the code.
     make format
 
 
+.. _make-zizmor:
+
+Run zizmor
+----------
+
+`zizmor <https://docs.zizmor.sh/>`_ is a static analysis tool for the security of GitHub Actions workflows.
+The command ``make zizmor`` runs the same analysis as the ``zizmor static analysis`` GitHub Actions workflow.
+
+..  code-block:: shell
+
+    make zizmor
+
+Pass options to zizmor in the ``ZIZMOROPTS`` environment variable.
+In the following example, generate a SARIF report of the results.
+
+..  code-block:: shell
+
+    make zizmor ZIZMOROPTS="--format sarif"
+
+The command ``make zizmor`` automatically installs zizmor into your Python virtual environment when you invoke it the first time.
+If your virtual environment already exists, update it with the following command.
+
+..  code-block:: shell
+
+    make dev
+
+.. seealso::
+
+    -   :file:`.github/workflows/zizmor.yml`
+    -   zizmor's `documentation <https://docs.zizmor.sh/>`_
+
+
 Code conventions
 ----------------
 
@@ -148,6 +180,8 @@ These are implementation details that may change without notice.
 In addition, "internal use only" objects are not displayed in the documentation.
 Their docstrings, of course, remain in the Python source code.
 
+
+.. _type-hints:
 
 Type hints
 ''''''''''

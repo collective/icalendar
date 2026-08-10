@@ -308,7 +308,7 @@ class Event(Component):
         You can set the duration to automatically adjust the end time while keeping
         start locked.
 
-        Setting the duration will:
+        Setting the duration will do the following.
 
         1.  Keep the start time locked (unchanged)
         2.  Adjust the end time to start + duration
@@ -459,9 +459,9 @@ class Event(Component):
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
     ):
-        """Create a new event with all required properties.
+        """Create a new event with the required properties of ``stamp`` and ``uid``.
 
-        This creates a new Event in accordance with :rfc:`5545`.
+        This creates a new ``Event`` in accordance with :rfc:`5545#section-3.6.1`.
 
         Parameters:
             attendees: The :attr:`attendees` of the event.
@@ -484,14 +484,14 @@ class Event(Component):
             related_to: :attr:`~icalendar.Component.related_to` of the event.
             sequence: The :attr:`sequence` of the event.
             stamp: The :attr:`~icalendar.Component.stamp` of the event.
-                If None, this is set to the current time.
+                If ``None``, this is set to the current UTC time.
             start: The :attr:`start` of the event.
             status: The :attr:`status` of the event.
             subcomponents: The subcomponents of the event.
             summary: The :attr:`summary` of the event.
             transparency: The :attr:`transparency` of the event.
             uid: The :attr:`uid` of the event.
-                If None, this is set to a new :func:`uuid.uuid4`.
+                If ``None``, this is set to a new :func:`uuid.uuid4`.
             url: The :attr:`url` of the event.
 
         Returns:

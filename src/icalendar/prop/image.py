@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import base64
 from typing import TYPE_CHECKING
 
 from icalendar.prop.binary import vBinary
@@ -56,7 +55,7 @@ class Image:
         if value_type == "URI" or isinstance(value, vUri):
             params["uri"] = str(value)
         elif isinstance(value, vBinary):
-            params["b64data"] = value.obj
+            params["b64data"] = value.base64data
         elif value_type == "BINARY":
             params["b64data"] = str(value)
         else:
@@ -96,7 +95,7 @@ class Image:
         """Return the binary data, if available."""
         if self.b64data is None:
             return None
-        return base64.b64decode(self.b64data)
+        return vBinary.from_ical(self.b64data)
 
 
 __all__ = ["Image"]

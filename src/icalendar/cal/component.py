@@ -33,7 +33,7 @@ from icalendar.parser import (
 )
 from icalendar.parser.ical.component import ComponentIcalParser
 from icalendar.parser_tools import DEFAULT_ENCODING
-from icalendar.prop import VPROPERTY, TypesFactory, vDDDLists, vText
+from icalendar.prop import VPROPERTY, TypesFactory, vDDDLists, vText, vUnknown
 from icalendar.timezone import tzp
 from icalendar.tools import is_date
 
@@ -214,12 +214,14 @@ class Component(CaselessDict):
         # Don't infer PERIOD - it's too risky and vPeriod already handles it
         return None
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Set keys to upper for initial dict."""
         super().__init__(*args, **kwargs)
         # set parameters here for properties that use non-default values
         self.subcomponents: list[Component] = []  # Components can be nested.
-        self.errors = []  # If we ignored exception(s) while
+        self.errors: list[
+            tuple[str | None, str]
+        ] = []  # If we ignored exception(s) while
         # parsing a property, contains error strings
 
     def __bool__(self) -> bool:
@@ -387,8 +389,9 @@ class Component(CaselessDict):
             return value
         decoded = self.types_factory.from_ical(name, value)
         # TODO: remove when proper decoded is implemented in every prop.* class
-        # Workaround to decode vText properly
-        if isinstance(decoded, vText):
+        # Workaround to decode vText properly. vUnknown is not a vText
+        # subclass (RFC 7265), but its value is decoded the same way here.
+        if isinstance(decoded, (vText, vUnknown)):
             decoded = decoded.encode(DEFAULT_ENCODING)
         return decoded
 
@@ -483,8 +486,9 @@ class Component(CaselessDict):
         recursive: bool = True,
         sorted: bool = True,
     ) -> list[tuple[str, object]]:
-        """Returns properties in this component and subcomponents as:
-        [(name, value), ...]
+        """Returns properties in this component and subcomponents as a list.
+
+        The list contains ``(name, value)`` tuples.
         """
         # Iterative implementation to avoid RecursionError
         result = []

@@ -1,0 +1,1 @@
+Made "Instructions" not a section heading in the pull request template. "Instructions" was interpreted as a section heading, even though it is in a comment. @stevepiercy

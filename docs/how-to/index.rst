@@ -6,6 +6,7 @@ How to guides
     :maxdepth: 2
 
     install
+    configure
     upgrade
     usage
     parse-errors

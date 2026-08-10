@@ -1,0 +1,1 @@
+Avoid folding content lines between escape prefixes and their escaped characters. AI disclosure: I used GPT-5 Codex to help draft and refine this change and its tests; I reviewed and validated the output locally. @kingrubic
