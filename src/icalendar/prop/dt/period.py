@@ -237,7 +237,7 @@ class vPeriod(TimeBase):
 
         Raises:
             ~error.JCalParsingError: If the period is not a list with exactly two items,
-                or it can't parse a datetime or duration.
+                or it can't parse a date-time or duration.
         """
         if isinstance(jcal, str) and "/" in jcal:
             # only occurs in the example of RFC7265, Section B.2.2.

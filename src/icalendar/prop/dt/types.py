@@ -149,7 +149,7 @@ class vDDDTypes(TimeBase):
 
         Raises:
             ~error.JCalParsingError: If the value can't be parsed as either a date,
-                 time, datetime, duration, or period.
+                 time, date-time, duration, or period.
         """
         if isinstance(jcal, list):
             return vPeriod.parse_jcal_value(jcal)
