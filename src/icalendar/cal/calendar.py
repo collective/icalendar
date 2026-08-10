@@ -289,7 +289,7 @@ class Calendar(Component):
         "X-WR-CALNAME",
         """The display name of this calendar, per :rfc:`7986#section-5.1`.
 
-    Implements both the ``NAME`` property from :rfc:`7986#section-5.3` and the widely used
+    Implements both the ``NAME`` property from :rfc:`7986#section-5.1` and the widely used
     ``X-WR-CALNAME`` extension for broader client compatibility.
 
     Multiple language variants can be stored by setting this property more than
