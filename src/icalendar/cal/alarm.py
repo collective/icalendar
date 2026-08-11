@@ -170,7 +170,7 @@ class Alarm(Component):
     It also allows clients to track repeating alarms or alarms on recurring events or
     to-dos to ensure that the right number of missed alarms can be tracked.
 
-    Clients SHOULD set this property to the current date-time value in UTC
+    Clients SHOULD set this property to the current datetime value in UTC
     when a calendar user acknowledges a pending alarm. Certain kinds of alarms,
     such as email-based alerts, might not provide feedback as to when the calendar user
     sees them. For those kinds of alarms, the client SHOULD set this property
