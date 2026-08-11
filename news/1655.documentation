@@ -1,1 +1,1 @@
-Clarified that a ``RECURRENCE-ID`` describes an occurrence's original start datetime rather than its :rfc:`5545` ``DATE-TIME`` value type. AI-assisted. @atirna
+Changed ``date-time`` to ``datetime`` in the narrative parts of the ``RECURRENCE-ID`` and ``ACKNOWLEDGED`` documentation. AI-assisted. @atirna
