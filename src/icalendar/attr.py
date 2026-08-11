@@ -1006,17 +1006,10 @@ def create_single_property(
 
     {doc}
 
-    You can also delete the value with ``del`` or by setting it to ``None``.
-
-    Parameters:
-        {", ".join(t.__name__ for t in value_type)}.
+    To delete the value, either use ``del`` or set it to ``None``.
 
     Raises:
         InvalidCalendar: if the attribute has invalid values.
-
-    Returns:
-        A :class:`~datetime.datetime` or :class:`~datetime.timedelta` if the
-        value is valid. ``None`` if the value is absent.
     """
     return property(p_get, p_set, p_del, p_doc)
 

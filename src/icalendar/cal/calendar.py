@@ -309,18 +309,17 @@ class Calendar(Component):
             X-WR-CALNAME:My Calendar
             END:VCALENDAR
 
-    See also:
-        :attr:`description`
     """,
     )
 
     description = multi_language_text_property(
         "DESCRIPTION",
         "X-WR-CALDESC",
-        """A human-readable description of this calendar's content, per :rfc:`7986#section-5.2`.
+        """A description of the calendar's content.
 
-    Implements both ``DESCRIPTION`` from :rfc:`7986#section-5.2` and ``X-WR-CALDESC``
-    for broader calendar client compatibility.
+    Implements both ``DESCRIPTION`` from :rfc:`5545#section-3.8.1.5` and
+    :rfc:`7986#section-5.2` and ``X-WR-CALDESC`` for broader calendar client
+    compatibility.
 
     Multiple language variants can be stored by setting this property more than
     once with different ``LANGUAGE`` parameter values.
@@ -339,8 +338,6 @@ class Calendar(Component):
             X-WR-CALDESC:This is a calendar
             END:VCALENDAR
 
-    See also:
-        :attr:`calendar_name`
     """,
     )
 
@@ -367,8 +364,6 @@ class Calendar(Component):
             COLOR:black
             END:VCALENDAR
 
-    See also:
-        :attr:`calendar_name`
     """,
         "X-APPLE-CALENDAR-COLOR",
     )
@@ -379,7 +374,7 @@ class Calendar(Component):
         """The product identifier for the software that created this iCalendar object.
 
 This property is defined in :rfc:`5545#section-3.7.3`.
-It's required exactly once per calendar object.
+It's required exactly once per iCalendar object.
 
 The value should be a globally unique string. The conventional format is a
 Formal Public Identifier (FPI), for example, ``-//My Company//My Product//EN``, but any
@@ -420,7 +415,7 @@ Example:
         '2.0'
 
 See also:
-    :attr:`prodid`, :attr:`calscale`
+    :attr:`prodid`
 """,
     )
 
@@ -432,7 +427,8 @@ This property is defined in :rfc:`5545#section-3.7.1`. The only value currently 
 ``"GREGORIAN"`` (the default). When this property is absent, Gregorian is assumed.
 
 Per :rfc:`7529`, non-Gregorian calendar systems are expressed via ``RRULE``
-transformations rather than a different ``CALSCALE`` value.
+transformations rather than a different ``CALSCALE`` value. However, icalendar
+currently implements only the parsing of this value, not a transformation.
 
 Example:
     .. code-block:: pycon
@@ -442,8 +438,6 @@ Example:
         >>> cal.calscale
         'GREGORIAN'
 
-See also:
-    :attr:`version`
         """,
         default="GREGORIAN",
     )
@@ -453,7 +447,7 @@ See also:
 
 When present, ``METHOD`` indicates that this object is part of a scheduling
 transaction, such as a meeting invitation or cancellation. Scheduling methods
-are defined by :rfc:`5546` (iTIP), with values such as ``"REQUEST"``,
+are defined by :rfc:`5546#section-1.4` (iTIP), with values such as ``"REQUEST"``,
 ``"REPLY"``, ``"CANCEL"``, and ``"PUBLISH"``.
 
 When used inside a MIME message, this value must match the ``method`` parameter
@@ -469,8 +463,6 @@ Example:
         >>> str(cal.method)
         'REQUEST'
 
-See also:
-    :attr:`version`, :rfc:`5546`
 """,
     )
     url = url_property
@@ -500,8 +492,6 @@ See also:
                 >>> cal.refresh_interval
                 datetime.timedelta(seconds=3600)
 
-        See also:
-            :attr:`source`
         """
         refresh_interval = self.get("REFRESH-INTERVAL")
         return refresh_interval.dt if refresh_interval else None

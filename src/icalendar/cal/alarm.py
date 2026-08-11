@@ -169,14 +169,17 @@ class Alarm(Component):
     Returns ``None`` when no acknowledgment has been recorded.
 
     Example:
-        Mark an alarm as acknowledged at the current time.
+        Mark an alarm as acknowledged. Note that the example uses an arbitrary time
+        for the purpose of passing doctests. In actual practice, clients should
+        use the current time in UTC, such as ``datetime.now(UTC)``.
 
         .. code-block:: pycon
 
             >>> from datetime import timezone, datetime
             >>> from icalendar import Alarm
+            >>> UTC = timezone.utc
             >>> alarm = Alarm()
-            >>> alarm.ACKNOWLEDGED = datetime(2024, 1, 15, 10, 0, 0, tzinfo=timezone.utc)
+            >>> alarm.ACKNOWLEDGED = datetime(2024, 1, 15, 10, 0, tzinfo=UTC)
             >>> alarm.ACKNOWLEDGED
             datetime.datetime(2024, 1, 15, 10, 0, tzinfo=ZoneInfo(key='UTC'))
 
@@ -190,7 +193,7 @@ class Alarm(Component):
         "dt",
         (datetime, timedelta),
         timedelta | datetime | None,
-        """The time at which this alarm fires, per :rfc:`5545`.
+        """The time at which this alarm fires, per :rfc:`5545#section-3.8.6.3`.
 
     The value is either a :class:`~datetime.timedelta` (relative trigger) or a
     UTC :class:`~datetime.datetime` (absolute trigger).
@@ -202,17 +205,30 @@ class Alarm(Component):
     An absolute trigger fires at an exact UTC point in time regardless of the
     parent component's dates.
 
-    Example:
+    Examples:
         Set an alarm to fire 15 minutes before the start of an event.
 
         .. code-block:: pycon
 
-            >>> from datetime import timedelta
-            >>> from icalendar import Alarm
+            >>> from datetime import datetime, timedelta, timezone
+            >>> from icalendar import Alarm, Event
+            >>> UTC = timezone.utc
+            >>> event = Event()
+            >>> event.start = datetime(2024, 1, 15, 10, 0, tzinfo=UTC)
             >>> alarm = Alarm()
             >>> alarm.TRIGGER = timedelta(minutes=-15)
-            >>> alarm.TRIGGER
-            datetime.timedelta(days=-1, seconds=85500)
+            >>> event.add_component(alarm)
+            >>> event.alarms.times[0].trigger
+            datetime.datetime(2024, 1, 15, 9, 45, tzinfo=datetime.timezone.utc)
+
+        Set an absolute trigger to fire at a specific UTC time.
+
+        .. code-block:: pycon
+
+            >>> absolute_alarm = Alarm()
+            >>> absolute_alarm.TRIGGER = datetime(2024, 1, 15, 9, 45, tzinfo=UTC)
+            >>> absolute_alarm.TRIGGER
+            datetime.datetime(2024, 1, 15, 9, 45, tzinfo=datetime.timezone.utc)
 
     See also:
         :attr:`TRIGGER_RELATED`, :attr:`DURATION`, :attr:`REPEAT`

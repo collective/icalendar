@@ -751,7 +751,8 @@ class Component(CaselessDict):
             datetime.datetime(2024, 6, 1, 12, 0, tzinfo=ZoneInfo(key='UTC'))
 
     See also:
-        :attr:`LAST_MODIFIED`, :attr:`CREATED`, :attr:`stamp`
+        :attr:`CREATED`, :attr:`DTSTAMP`, :attr:`LAST_MODIFIED`,
+        :attr:`created`, :attr:`stamp`, :attr:`last_modified`
     """,
     )
 
@@ -776,7 +777,8 @@ class Component(CaselessDict):
             datetime.datetime(2024, 6, 1, 9, 0, tzinfo=ZoneInfo(key='UTC'))
 
     See also:
-        :attr:`last_modified`, :attr:`DTSTAMP`, :attr:`CREATED`
+        :attr:`CREATED`, :attr:`DTSTAMP`, :attr:`LAST_MODIFIED`,
+        :attr:`created`, :attr:`stamp`, :attr:`last_modified`
     """,
     )
 
@@ -852,7 +854,8 @@ class Component(CaselessDict):
             datetime.datetime(2024, 1, 1, 8, 0, tzinfo=ZoneInfo(key='UTC'))
 
     See also:
-        :attr:`created`, :attr:`DTSTAMP`, :attr:`LAST_MODIFIED`
+        :attr:`CREATED`, :attr:`DTSTAMP`, :attr:`LAST_MODIFIED`,
+        :attr:`created`, :attr:`stamp`, :attr:`last_modified`
     """,
     )
 
