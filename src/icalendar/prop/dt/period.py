@@ -1,93 +1,140 @@
 """PERIOD property type from :rfc:`5545`."""
 
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, tzinfo
 from typing import Any, ClassVar
 
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.timezone import tzp
-from icalendar.tools import is_datetime, normalize_pytz
+from icalendar.tools import is_date, is_datetime, is_pytz, normalize_pytz, to_datetime
 
 from .base import TimeBase
 from .datetime import vDatetime
 from .duration import vDuration
 
 
+def _to_midnight(dt: date, tz: tzinfo | None) -> datetime:
+    """Convert a date to the datetime at midnight.
+
+    Parameters:
+        dt: The date to convert.
+        tz: The timezone of the result, or ``None`` for a naive result.
+
+    Returns:
+        The datetime at midnight.
+    """
+    midnight = to_datetime(dt)
+    if tz is None:
+        return midnight
+    if is_pytz(tz):
+        return tz.localize(midnight)  # type: ignore[attr-defined]
+    return midnight.replace(tzinfo=tz)
+
+
+def _to_period_datetimes(
+    start: date | datetime, end_or_duration: date | datetime | timedelta
+) -> tuple[datetime, datetime | timedelta]:
+    """Convert the dates of a period to datetimes.
+
+    :rfc:`5545#section-3.3.9` builds a period from datetimes only, but calendars in the
+    wild use dates. A date becomes midnight so that the period can be used
+    and written back out.
+
+    A converted half takes the timezone of the other half. Without this, an
+    aware and a naive datetime could not be subtracted to compute the
+    duration.
+
+    Parameters:
+        start: The start of the period.
+        end_or_duration: The end of the period or its duration.
+
+    Returns:
+        The start and the end or duration, with any date converted.
+    """
+    if is_date(start):
+        start = _to_midnight(start, getattr(end_or_duration, "tzinfo", None))
+    if is_date(end_or_duration):
+        end_or_duration = _to_midnight(end_or_duration, getattr(start, "tzinfo", None))
+    return start, end_or_duration
+
+
 class vPeriod(TimeBase):
-    """Period of Time
+    """A span of time, written either as a start and an end or as a start and a duration.
 
-    Value Name:
-        PERIOD
+    The value is a tuple of two :class:`datetime.datetime` objects, or of a
+    datetime and a :class:`datetime.timedelta`. Whichever way it was written,
+    :attr:`start`, :attr:`end`, and :attr:`duration` are all available, and
+    :attr:`by_duration` says which of the two forms is written back out.
 
-    Purpose:
-        This value type is used to identify values that contain a
-        precise period of time.
+    Conforming with :rfc:`5545#section-3.3.9`, a period is built from datetimes
+    only, the start must come before the end, and a duration must be positive.
+    A half written as a date does not conform. Such a half is read as midnight,
+    in the timezone of the other half where it has one, so that a calendar that
+    gets this wrong can still be read and written.
 
-    Format Definition:
-        This value type is defined by the following notation:
+    ``FREEBUSY`` holds periods directly. ``RDATE`` holds them through
+    :class:`~icalendar.prop.dt.list.vDDDLists`, which splits a comma separated
+    list and hands each value to :class:`~icalendar.prop.dt.types.vDDDTypes`.
+    The halves themselves are parsed by
+    :class:`~icalendar.prop.dt.datetime.vDatetime` and
+    :class:`~icalendar.prop.dt.duration.vDuration`.
 
-        .. code-block:: text
+    Parameters:
+        per: The start of the period, and either its end or its duration.
+        params: The parameters of the property.
 
-            period     = period-explicit / period-start
+    Raises:
+        TypeError: If the start is not a date or a datetime, or if the end is
+            not a date, a datetime, or a duration.
+        ValueError: If the start is after the end.
 
-           period-explicit = date-time "/" date-time
-           ; [ISO.8601.2004] complete representation basic format for a
-           ; period of time consisting of a start and end.  The start MUST
-           ; be before the end.
-
-           period-start = date-time "/" dur-value
-           ; [ISO.8601.2004] complete representation basic format for a
-           ; period of time consisting of a start and positive duration
-           ; of time.
-
-    Description:
-        If the property permits, multiple "period" values are
-        specified by a COMMA-separated list of values.  There are two
-        forms of a period of time.  First, a period of time is identified
-        by its start and its end.  This format is based on the
-        [ISO.8601.2004] complete representation, basic format for "DATE-
-        TIME" start of the period, followed by a SOLIDUS character
-        followed by the "DATE-TIME" of the end of the period.  The start
-        of the period MUST be before the end of the period.  Second, a
-        period of time can also be defined by a start and a positive
-        duration of time.  The format is based on the [ISO.8601.2004]
-        complete representation, basic format for the "DATE-TIME" start of
-        the period, followed by a SOLIDUS character, followed by the
-        [ISO.8601.2004] basic format for "DURATION" of the period.
-
-    Example:
-        The period starting at 18:00:00 UTC, on January 1, 1997 and
-        ending at 07:00:00 UTC on January 2, 1997 would be:
+    Examples:
+        A period from 18:00:00 UTC on January 1, 1997 to 07:00:00 UTC on
+        January 2, 1997, and one that starts at 18:00:00 UTC and lasts 5 hours
+        and 30 minutes:
 
         .. code-block:: ics
 
             19970101T180000Z/19970102T070000Z
-
-        The period start at 18:00:00 on January 1, 1997 and lasting 5 hours
-        and 30 minutes would be:
-
-        .. code-block:: ics
-
             19970101T180000Z/PT5H30M
 
         .. code-block:: pycon
 
             >>> from icalendar.prop import vPeriod
-            >>> period = vPeriod.from_ical('19970101T180000Z/19970102T070000Z')
-            >>> period = vPeriod.from_ical('19970101T180000Z/PT5H30M')
+            >>> period = vPeriod.from_ical("19970101T180000Z/19970102T070000Z")
+            >>> vPeriod(period).to_ical()
+            b'19970101T180000Z/19970102T070000Z'
+            >>> period = vPeriod.from_ical("19970101T180000Z/PT5H30M")
+            >>> vPeriod(period).duration
+            datetime.timedelta(seconds=19800)
+
+        A half written as a date is read as midnight:
+
+        .. code-block:: pycon
+
+            >>> vPeriod(vPeriod.from_ical("19970101/19970102")).to_ical()
+            b'19970101T000000/19970102T000000'
+
+    ..  versionchanged:: 7.2.3
+
+        A period written with dates is read as midnight.
     """
 
     default_value: ClassVar[str] = "PERIOD"
     params: Parameters
+    #: Whether the value is written as a duration rather than as an end.
     by_duration: bool
+    #: The start of the period.
     start: datetime
+    #: The end of the period, computed from the duration where there is one.
     end: datetime
+    #: The time between the start and the end.
     duration: timedelta
 
     def __init__(
         self,
-        per: tuple[datetime, datetime | timedelta],
+        per: tuple[date | datetime, date | datetime | timedelta],
         params: dict[str, Any] | None = None,
     ) -> None:
         start, end_or_duration = per
@@ -97,6 +144,7 @@ class vPeriod(TimeBase):
             raise TypeError(
                 "end_or_duration MUST be a datetime, date or timedelta instance"
             )
+        start, end_or_duration = _to_period_datetimes(start, end_or_duration)
         by_duration = isinstance(end_or_duration, timedelta)
         if by_duration:
             duration = end_or_duration
@@ -141,7 +189,7 @@ class vPeriod(TimeBase):
             end_or_duration = vDDDTypes.from_ical(end_or_duration, timezone=timezone)
         except Exception as e:
             raise ValueError(f"Expected period format, got: {ical}") from e
-        return (start, end_or_duration)
+        return _to_period_datetimes(start, end_or_duration)
 
     def __repr__(self):
         p = (self.start, self.duration) if self.by_duration else (self.start, self.end)
