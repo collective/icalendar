@@ -381,6 +381,11 @@ class Alarm(Component):
             refids=refids,
             concepts=concepts,
         )
+        if action == "AUDIO" and isinstance(attachments, list) and len(attachments) > 1:
+            raise InvalidCalendar(
+                "An AUDIO alarm must not contain more than one attachment.\n"
+                f"Alarm has {len(attachments)} attachments."
+            )
         if action is not None:
             alarm.ACTION = action
         alarm.attachments = attachments
@@ -401,7 +406,7 @@ class Alarm(Component):
                     "DURATION and REPEAT must be set together or not at all"
                 )
             self.DURATION = duration
-            self.REPEAT = repeat
+            self.repeat = repeat
 
     @classmethod
     def new_display(

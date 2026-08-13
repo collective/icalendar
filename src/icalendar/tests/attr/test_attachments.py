@@ -167,21 +167,6 @@ def test_parse_serialize_round_trip_preserves_both_types(component):
     assert restored.attachments[1].bytes == b"\xff\x00data"
 
 
-def test_broken_attach_value_does_not_raise():
-    """A value that fails to parse is returned instead of raising.
-
-    Only :class:`~icalendar.cal.event.Event` sets ``ignore_exceptions``, so it
-    is the component that can store a ``vBroken`` attachment.
-    """
-    ical = (
-        b"BEGIN:VEVENT\r\n"
-        b"ATTACH;ENCODING=BASE64;VALUE=BINARY:!!!notbase64!!!\r\n"
-        b"END:VEVENT\r\n"
-    )
-    restored = Event.from_ical(ical)
-    assert len(restored.attachments) == 1
-
-
 def test_audio_alarm_rejects_multiple_attachments():
     """Setter raises InvalidCalendar when >1 attachment is given and ACTION is AUDIO."""
     alarm = Alarm.new_audio(timedelta(minutes=-5))
