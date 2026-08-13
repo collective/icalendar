@@ -414,11 +414,6 @@ def single_int_property(
         prop: Required. The name of the property.
         min_value: If set, the value must be greater than or equal to this minimum.
 
-    Raises:
-        TypeError: If the value is not an ``int``. Booleans are rejected, too,
-            even though ``bool`` subclasses ``int``.
-        ~icalendar.error.InvalidCalendar: If the value is smaller than ``min_value``.
-
     ..  versionadded:: 7.2.3
         Added the ``min_value`` parameter.
     """
@@ -636,6 +631,9 @@ Examples:
         10
 
     Raises:
+        TypeError: If the value is not an ``int``. Booleans are rejected, too,
+            even though ``bool`` subclasses ``int``.
+
         ~icalendar.error.InvalidCalendar: If the value is negative.
 
     ..  versionchanged:: 7.2.3
@@ -1322,6 +1320,9 @@ Defaults to ``0``, meaning the alarm fires once. Must be paired with
 The value is capped at :data:`icalendar.config.MAX_ALARM_REPEAT` on read.
 
 Raises:
+    TypeError: If the value is not an ``int``. Booleans are rejected, too,
+        even though ``bool`` subclasses ``int``.
+
     ~icalendar.error.InvalidCalendar: If the value is negative.
 
 ..  versionchanged:: 7.2.3
@@ -1378,6 +1379,9 @@ Description:
     multiple action items for a given time period.
 
     Raises:
+        TypeError: If the value is not an ``int``. Booleans are rejected, too,
+            even though ``bool`` subclasses ``int``.
+
         ~icalendar.error.InvalidCalendar: If the value is negative.
 
     ..  versionchanged:: 7.2.3

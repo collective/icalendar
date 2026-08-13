@@ -120,6 +120,9 @@ class Alarm(Component):
                 2
 
         Raises:
+            TypeError: If the value is not an ``int``. Booleans are rejected, too,
+                even though ``bool`` subclasses ``int``.
+
             ~icalendar.error.InvalidCalendar: If the value is negative.
 
         ..  versionchanged:: 7.2.3
