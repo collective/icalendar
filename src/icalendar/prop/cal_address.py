@@ -104,12 +104,50 @@ class vCalAddress(str):
         DELEGATED_TO,
         DIR,
         LANGUAGE,
+        MEMBER,
         PARTSTAT,
         ROLE,
         RSVP,
         SENT_BY,
         VALUE,
     )
+
+    DELEGATED_FROM = DELEGATED_FROM
+    """Specify the calendar users that delegated their participation.
+
+    Description:
+        This parameter can be specified on properties with a
+        CAL-ADDRESS value type.  This parameter specifies those calendar
+        users that have delegated their participation in a group-scheduled
+        event or to-do to the calendar user specified by the property.
+        The individual calendar address parameter values MUST each be
+        specified in a quoted-string.
+    """
+
+    DELEGATED_TO = DELEGATED_TO
+    """Specify the calendar users to whom participation was delegated.
+
+    Description:
+        This parameter can be specified on properties with a
+        CAL-ADDRESS value type.  This parameter specifies those calendar
+        users to whom participation in a group-scheduled event or to-do was
+        delegated by the calendar user specified by the property.
+        The individual calendar address parameter values MUST each be
+        specified in a quoted-string.
+    """
+
+    MEMBER = MEMBER
+    """Specify the group or list membership of a calendar user.
+
+    Description:
+        This parameter can be specified on properties with a
+        CAL-ADDRESS value type.  The parameter identifies the groups or
+        list membership for the calendar user specified by the property.
+        The parameter value is either a single calendar address in a
+        quoted-string or a COMMA-separated list of calendar addresses,
+        each in a quoted-string.  The individual calendar address
+        parameter values MUST each be specified in a quoted-string.
+    """
 
     name = CN
 
