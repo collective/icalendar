@@ -51,6 +51,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
 
     from icalendar.alarms import Alarms
+    from icalendar.compatibility import Self
     from icalendar.enums import CLASS, STATUS
     from icalendar.prop import vCalAddress
     from icalendar.prop.conference import Conference
@@ -346,7 +347,7 @@ class Todo(Component):
         summary: str | None = None,
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
-    ) -> Todo:
+    ) -> Self:
         """Create a new TODO with all required properties.
 
         This creates a new Todo in accordance with :rfc:`5545`.

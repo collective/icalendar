@@ -862,7 +862,7 @@ class Component(CaselessDict):
         related_to: RELATED_TO_TYPE_SETTER = None,
         stamp: date | None = None,
         subcomponents: Iterable[Component] | None = None,
-    ) -> Component:
+    ) -> Self:
         """Create a new component.
 
         Parameters:

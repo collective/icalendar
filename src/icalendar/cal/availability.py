@@ -40,6 +40,7 @@ if TYPE_CHECKING:
     from datetime import date
 
     from icalendar.cal.available import Available
+    from icalendar.compatibility import Self
     from icalendar.enums import BUSYTYPE, CLASS
     from icalendar.prop import vCalAddress
 
@@ -262,7 +263,7 @@ class Availability(Component):
         summary: str | None = None,
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
-    ) -> Availability:
+    ) -> Self:
         """Create a new event with all required properties.
 
         This creates a new Availability in accordance with :rfc:`7953`.

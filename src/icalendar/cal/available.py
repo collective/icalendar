@@ -38,6 +38,8 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
     from datetime import date
 
+    from icalendar.compatibility import Self
+
 
 class Available(Component):
     """Sub-component of "VAVAILABILITY from :rfc:`7953`.
@@ -117,7 +119,7 @@ class Available(Component):
         start: datetime | None = None,
         summary: str | None = None,
         uid: str | uuid.UUID | None = None,
-    ) -> Available:
+    ) -> Self:
         """Create a new Available component with all required properties.
 
         This creates a new Available component in accordance with :rfc:`7953`.

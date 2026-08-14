@@ -35,6 +35,7 @@ if TYPE_CHECKING:
     from icalendar.cal.free_busy import FreeBusy
     from icalendar.cal.journal import Journal
     from icalendar.cal.todo import Todo
+    from icalendar.compatibility import Self
     from icalendar.parser.ical.component import ComponentIcalParser
 
 
@@ -559,7 +560,7 @@ Description:
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
         version: str = "2.0",
-    ) -> Calendar:
+    ) -> Self:
         """Create a new Calendar.
 
         This creates a new Calendar in accordance with :rfc:`5545` and :rfc:`7986`.
