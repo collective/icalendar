@@ -599,7 +599,7 @@ Description:
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        calendar: Calendar = super().new(
+        calendar: Self = super().new(
             last_modified=last_modified,
             links=links,
             related_to=related_to,

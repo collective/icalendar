@@ -158,7 +158,7 @@ class FreeBusy(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        free_busy: FreeBusy = super().new(
+        free_busy: Self = super().new(
             stamp=stamp if stamp is not None else cls._utc_now(),
             comments=comments,
             links=links,

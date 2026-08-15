@@ -355,7 +355,7 @@ class Alarm(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        alarm: Alarm = super().new(
+        alarm: Self = super().new(
             links=links,
             related_to=related_to,
             refids=refids,

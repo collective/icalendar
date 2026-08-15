@@ -504,7 +504,7 @@ class Event(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        event: Event = super().new(
+        event: Self = super().new(
             stamp=stamp if stamp is not None else cls._utc_now(),
             created=created,
             last_modified=last_modified,

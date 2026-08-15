@@ -260,7 +260,7 @@ class Journal(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        journal: Journal = super().new(
+        journal: Self = super().new(
             stamp=stamp if stamp is not None else cls._utc_now(),
             created=created,
             last_modified=last_modified,
