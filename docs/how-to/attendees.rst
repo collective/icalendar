@@ -46,7 +46,7 @@ This is equivalent to assigning them afterward.
     >>> event.attendees
     [vCalAddress('mailto:emily.smith@example.com')]
 
-An attendee may carry parameters defined by :rfc:`5545`, such as ``CN``, ``ROLE``, and ``RSVP``.
+An attendee may carry parameters defined by :rfc:`5545#section-3.8.4.1`, such as ``CN``, ``ROLE``, and ``RSVP``.
 Create such an attendee with :meth:`vCalAddress.new <icalendar.prop.cal_address.vCalAddress.new>`, whose Python keyword arguments ``cn``, ``role``, and ``rsvp`` set those RFC parameters.
 
 .. code-block:: pycon
@@ -72,11 +72,6 @@ Assigning a new value replaces any attendees that were set before.
 .. code-block:: pycon
 
     >>> event.attendees = [attendee]    # set the attribute
-
-The resulting event looks like this:
-
-.. code-block:: pycon
-
     >>> print(event.to_ical())
     BEGIN:VEVENT
     DTSTAMP:20250517T080612Z

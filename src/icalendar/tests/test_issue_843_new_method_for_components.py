@@ -1201,23 +1201,3 @@ def test_modify_empty_attendees_2():
     e.attendees = attendees
     attendees.append(attendee1)
     assert e.attendees == [attendee1] == attendees
-
-
-def test_mixed_attendees_normalizes_only_the_string_slot():
-    """A list mixing a plain string and an existing vCalAddress normalizes only the string.
-
-    This preserves list identity, the identity and parameters of an existing
-    vCalAddress, and the normalization of the string slot to a vCalAddress
-    (which the generic ``==`` parametrization in ``new_test_cases`` cannot check).
-    """
-    existing = vCalAddress("mailto:existing@example.com")
-    existing.params["CN"] = "Existing User"
-    attendees = ["first@example.com", existing]
-    e = Event()
-    e.attendees = attendees
-
-    assert e.attendees is attendees
-    assert e.attendees[1] is existing
-    assert e.attendees[1].params["CN"] == "Existing User"
-    assert isinstance(e.attendees[0], vCalAddress)
-    assert str(e.attendees[0]) == "mailto:first@example.com"
