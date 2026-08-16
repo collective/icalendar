@@ -100,19 +100,8 @@ class Calendar(Component):
     @classmethod
     def from_ical(
         cls, st: str | bytes | Path, multiple: Literal[False] = False
-    ) -> Calendar: ...
-
-    @overload
-    @classmethod
-    def from_ical(
-        cls, st: str | bytes | Path, multiple: Literal[True]
-    ) -> list[Calendar]: ...
-
-    @classmethod
-    def from_ical(
-        cls, st: str | bytes | Path, multiple: bool = False
-    ) -> Calendar | list[Calendar]:
-        """Parse iCalendar data into calendar instances.
+    ) -> Calendar:
+        """Parse iCalendar data into a calendar instance.
 
         Parameters:
             st: iCalendar data as bytes or string, or a path to an iCalendar file.
@@ -122,6 +111,19 @@ class Calendar(Component):
         Returns:
             Calendar or list of calendars.
         """
+        ...
+
+    @overload
+    @classmethod
+    def from_ical(
+        cls, st: str | bytes | Path, multiple: Literal[True]
+    ) -> list[Calendar]:
+        ...
+
+    @classmethod
+    def from_ical(
+        cls, st: str | bytes | Path, multiple: bool = False
+    ) -> Calendar | list[Calendar]:
         return cast(
             "Calendar | list[Calendar]", super().from_ical(st, multiple=multiple)
         )
