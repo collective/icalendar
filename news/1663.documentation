@@ -1,1 +1,1 @@
-Remove the self-referential DTSTAMP cross-link from the shared DTSTAMP/stamp docstring's "See also" section so the DTSTAMP page no longer links to itself. I used Claude Opus 4.8 to assist me with this change. @asrith132
+Removed the self-referential DTSTAMP cross-link from the shared DTSTAMP/stamp docstring's "See also" section so the DTSTAMP page no longer links to itself. I used Claude Opus 4.8 to assist me with this change. @asrith132
