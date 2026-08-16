@@ -751,7 +751,7 @@ class Component(CaselessDict):
             datetime.datetime(2024, 6, 1, 12, 0, tzinfo=ZoneInfo(key='UTC'))
 
     See also:
-        :attr:`CREATED`, :attr:`DTSTAMP`, :attr:`LAST_MODIFIED`,
+        :attr:`CREATED`, :attr:`LAST_MODIFIED`,
         :attr:`created`, :attr:`stamp`, :attr:`last_modified`
     """,
     )
