@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import ClassVar
+from typing import Any, ClassVar
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.prop.adr import vAdr
@@ -50,7 +50,7 @@ class TypesFactory(CaselessDict):
             TypesFactory._instance = TypesFactory()
         return TypesFactory._instance
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Set keys to upper for initial dict"""
         super().__init__(*args, **kwargs)
         self.all_types = (
@@ -166,6 +166,7 @@ class TypesFactory(CaselessDict):
             "related-to": "text",
             "url": "uri",
             "conference": "uri",  # RFC 7986
+            "image": "unknown",  # RFC 7986 has no default value type
             "source": "uri",
             "uid": "text",
             # Recurrence Component Properties
@@ -235,11 +236,6 @@ class TypesFactory(CaselessDict):
         # For unknown/custom properties, always use the default type from types_map
         if value_param and name in self.types_map and value_param in self:
             return self[value_param]
-
-        if name.upper() == "IMAGE":
-            return self[
-                "unknown"
-            ]  # IMAGE is always unknown, even if VALUE is URI or BINARY
 
         if value_param and (value_param in self) and value_param != "IMAGE":
             return self[value_param]

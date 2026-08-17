@@ -370,9 +370,9 @@ class ROLE(StrEnum):
 class VALUE(StrEnum):
     """VALUE datatypes as defined in :rfc:`5545`.
 
-    Attributes: ``BOOLEAN``, ``CAL_ADDRESS``, ``DATE``, ``DATE_TIME``, ``DURATION``,
-    ``FLOAT``, ``INTEGER``, ``PERIOD``, ``RECUR``, ``TEXT``, ``TIME``, ``URI``,
-    ``UTC_OFFSET``
+    Attributes: ``BINARY``, ``BOOLEAN``, ``CAL_ADDRESS``, ``DATE``, ``DATE_TIME``,
+    ``DURATION``, ``FLOAT``, ``INTEGER``, ``PERIOD``, ``RECUR``, ``TEXT``, ``TIME``,
+    ``URI``, ``UTC_OFFSET``
 
     Description:
         This parameter specifies the value type and format of
@@ -391,6 +391,7 @@ class VALUE(StrEnum):
 
     """
 
+    BINARY = "BINARY"
     BOOLEAN = "BOOLEAN"
     CAL_ADDRESS = "CAL-ADDRESS"
     DATE = "DATE"

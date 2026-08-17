@@ -51,7 +51,7 @@ class AlarmTime:
         acknowledged_until: datetime | None = None,
         snoozed_until: datetime | None = None,
         parent: Parent | None = None,
-    ):
+    ) -> None:
         """Create an instance of ``AlarmTime`` with any of its parameters.
 
         Parameters:
@@ -86,6 +86,14 @@ class AlarmTime:
     def alarm(self) -> Alarm:
         """The alarm component."""
         return self._alarm
+
+    @property
+    def action(self) -> str:
+        """The action invoked when this alarm triggers.
+
+        This delegates to :attr:`Alarm.ACTION <icalendar.cal.alarm.Alarm.ACTION>`.
+        """
+        return self.alarm.ACTION
 
     @property
     def parent(self) -> Parent | None:
@@ -175,7 +183,7 @@ class Alarms:
     This is not implemented yet.
     """
 
-    def __init__(self, component: Alarm | Event | Todo | None = None):
+    def __init__(self, component: Alarm | Event | Todo | None = None) -> None:
         """Start computing alarm times."""
         self._absolute_alarms: list[Alarm] = []
         self._start_alarms: list[Alarm] = []

@@ -270,7 +270,7 @@ class Parameters(CaselessDict):
 
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Create new parameters."""
         if args and args[0] is None:
             # allow passing None
@@ -455,7 +455,7 @@ class Parameters(CaselessDict):
     def tzid(self) -> str | None:
         """The TZID parameter from :rfc:`5545`."""
 
-    def is_utc(self):
+    def is_utc(self) -> bool:
         """Whether the TZID parameter is UTC."""
         return self.tzid == "UTC"
 

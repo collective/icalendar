@@ -94,7 +94,7 @@ class LazySubcomponent:
     This class holds the raw data of the subcomponent ready for parsing.
     """
 
-    def __init__(self, name: str, parser: ComponentIcalParser):
+    def __init__(self, name: str, parser: ComponentIcalParser) -> None:
         """Initialize the lazy subcomponent with the raw data."""
         self._name = name
         self._parser = parser

@@ -440,9 +440,9 @@ def single_utc_property(name: str, docs: str) -> property:
         docs: documentation string
     """
     docs = (
-        f"""The {name} property. datetime in UTC
+        f"""The {name} property with all values converted to a
+    :class:`~datetime.datetime` in UTC.
 
-    All values will be converted to a datetime in UTC.
     """
         + docs
     )
@@ -669,13 +669,16 @@ You can get, set, and delete categories for a component.
 
 This property can be used in icalendar through its Python attributes of:
 
+-   :attr:`Available.categories <icalendar.cal.available.Available.categories>`
+-   :attr:`Availability.categories <icalendar.cal.availability.Availability.categories>`
 -   :attr:`Calendar.categories <icalendar.cal.calendar.Calendar.categories>`
 -   :attr:`Event.categories <icalendar.cal.event.Event.categories>`
 -   :attr:`Journal.categories <icalendar.cal.journal.Journal.categories>`
 -   :attr:`Todo.categories <icalendar.cal.todo.Todo.categories>`
 
-The categories property for ``Event``, ``Journal``, and ``Todo`` complies
-with :rfc:`5545#section-3.8.1.2`, and for ``Calendar`` with :rfc:`7986#section-5.6`.
+The categories property for ``Available`` and ``Availability`` complies with
+:rfc:`7953#section-3.1`, for ``Event``, ``Journal``, and ``Todo`` with
+:rfc:`5545#section-3.8.1.2`, and for ``Calendar`` with :rfc:`7986#section-5.6`.
 
 Note:
     At present, icalendar doesn't take the LANGUAGE parameter as defined
@@ -1005,12 +1008,8 @@ def create_single_property(
 
     To delete the value, either use ``del`` or set it to ``None``.
 
-    Returns:
-        If the value is absent, return ``None``.
-
     Raises:
-        :exc:`~icalendar.error.InvalidCalendar`
-            If the attribute has invalid values.
+        InvalidCalendar: if the attribute has invalid values.
     """
     return property(p_get, p_set, p_del, p_doc)
 
@@ -1173,7 +1172,7 @@ Identify a specific occurrence of a recurring calendar object.
 
 This property is used together with ``UID`` and ``SEQUENCE`` to refer to one
 particular instance in a recurrence set. The value is the original start
-date or date-time of that instance, not the rescheduled time.
+date or datetime of that instance, not the rescheduled time.
 
 The value is usually a DATE-TIME and must use the same value type as the
 ``DTSTART`` property in the same component. A DATE value may be used for
