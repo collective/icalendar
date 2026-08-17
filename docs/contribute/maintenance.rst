@@ -369,10 +369,17 @@ Updating Python versions
 
 When adding support for a new Python version, or removing support for an old one, the following files need to be updated:
 
+:file:`.github/workflows/documentation.yml`
+    Upgrade the latest Python version.
+:file:`.github/workflows/ruff.yml`
+    Upgrade the latest Python version.
 :file:`.github/workflows/tests.yml`
     Upgrade Python versions.
-:file:`.github/workflows/*.py`
-    Add or remove the Python version from the test matrix.
+:file:`.github/workflows/test_generate_matrix.py`
+    Remove or add the version from ``CASES_ALL`` and ``CASES_MIN``.
+    The lowest and the highest Python version must be in ``CASES_MIN``.
+:file:`.github/workflows/generate_matrix.py`
+    Adjust ``PYTHON_MINOR_VERSION_MIN`` or ``PYTHON_MINOR_VERSION_MAX``.
 :file:`tox.ini`
     Update the ``envlist`` to include or remove the Python version.
 :file:`pyproject.toml`

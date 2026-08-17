@@ -9,8 +9,8 @@ Run with:
 import pytest
 from generate_matrix import generate_matrix
 
-CASES_ALL = {"3.10", "3.11", "3.12", "3.13", "3.14", "3.10 (nopytz)", "pypy3"}
-CASES_MIN = {"3.10", "3.14", "3.10 (nopytz)"}
+CASES_ALL = {"3.10", "3.11", "3.12", "3.13", "3.14", "3.15", "3.10 (nopytz)", "pypy3"}
+CASES_MIN = {"3.10", "3.15", "3.10 (nopytz)"}
 CASES_0 = set()
 
 
