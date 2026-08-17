@@ -1,0 +1,1 @@
+Added coverage confirming all :class:`Alarm <icalendar.cal.alarm.Alarm>` factory methods preserve their shared ``uid``, ``links``, ``related_to``, ``refids``, and ``concepts`` properties. OpenAI Codex assisted with preparing and verifying the change; the contributor approved the final submission and takes responsibility for it. @ka7seks
