@@ -19,9 +19,12 @@ Replace `ISSUE_NUMBER` with the issue number that your pull request addresses. T
 
 If you completely resolve the issue, then use `"Closes"`.
 GitHub will automatically close the related issue when the PR gets merged.
+
+If you contribute to solving part of an issue, use "Contributes to"
 -->
 
 - Closes #ISSUE_NUMBER
+- Contributes to #ISSUE_NUMBER
 
 <!--
 If you resolve only a part of the issue, then use `"See"`.
@@ -50,7 +53,7 @@ Do not edit the checkbox list items.
 To indicate that you completed an item, place an `x` inside the checkbox, such as `[x]`.
 -->
 
-- [ ] I added a change log entry, following the instructions in [Change log entry format](https://icalendar.readthedocs.io/en/latest/contribute/#change-log-entry-format).
+- [ ] I added a change log entry, following the instructions in [Change log entry format](https://icalendar.readthedocs.io/en/latest/contribute/#change-log-requirements).
 - [ ] I followed icalendar's [Artificial intelligence policy](https://icalendar.readthedocs.io/en/latest/contribute/index.html#artificial-intelligence-policy) and disclosed my [Responsible AI use](https://icalendar.readthedocs.io/en/latest/contribute/index.html#responsible-ai-use) in my commit messages, if applicable.
 - [ ] I added or updated tests, if applicable.
 - [ ] I ran and ensured all tests pass locally by following [Run tests](https://icalendar.readthedocs.io/en/latest/contribute/development.html#run-tests).
