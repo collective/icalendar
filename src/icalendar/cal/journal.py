@@ -22,6 +22,7 @@ from icalendar.attr import (
     organizer_property,
     rdates_property,
     rrules_property,
+    rstatus_property,
     sequence_property,
     status_property,
     summary_property,
@@ -156,6 +157,7 @@ class Journal(Component):
     rdates = rdates_property
     exdates = exdates_property
     rrules = rrules_property
+    rstatus = rstatus_property
     uid = uid_property
 
     summary = summary_property
@@ -211,6 +213,7 @@ class Journal(Component):
         recurrence_id: date | datetime | None = None,
         refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
+        rstatus: list[str] | str | None = None,
         sequence: int | None = None,
         stamp: date | None = None,
         start: date | datetime | None = None,
@@ -240,6 +243,7 @@ class Journal(Component):
             recurrence_id: The :attr:`RECURRENCE_ID` of the journal.
             refids: :attr:`~icalendar.Component.refids` of the journal.
             related_to: :attr:`~icalendar.Component.related_to` of the journal.
+            rstatus: The :attr:`rstatus` of the journal.
             sequence: The :attr:`sequence` of the journal.
             stamp: The :attr:`~icalendar.Component.stamp` of the journal.
                 If None, this is set to the current time.
@@ -282,6 +286,7 @@ class Journal(Component):
         journal.contacts = contacts
         journal.start = start
         journal.status = status
+        journal.rstatus = rstatus
         journal.attendees = attendees
         journal.RECURRENCE_ID = recurrence_id
 

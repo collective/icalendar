@@ -35,6 +35,7 @@ from icalendar.attr import (
     property_set_duration,
     rdates_property,
     rrules_property,
+    rstatus_property,
     sequence_property,
     set_duration_with_locking,
     set_end_with_locking,
@@ -410,6 +411,7 @@ class Event(Component):
     rdates = rdates_property
     exdates = exdates_property
     rrules = rrules_property
+    rstatus = rstatus_property
     uid = uid_property
     summary = summary_property
     description = description_property
@@ -449,6 +451,7 @@ class Event(Component):
         recurrence_id: date | datetime | None = None,
         refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
+        rstatus: list[str] | str | None = None,
         sequence: int | None = None,
         stamp: date | None = None,
         start: date | datetime | None = None,
@@ -482,6 +485,7 @@ class Event(Component):
             recurrence_id: The :attr:`RECURRENCE_ID` of the event.
             refids: :attr:`~icalendar.Component.refids` of the event.
             related_to: :attr:`~icalendar.Component.related_to` of the event.
+            rstatus: The :attr:`rstatus` of the event.
             sequence: The :attr:`sequence` of the event.
             stamp: The :attr:`~icalendar.Component.stamp` of the event.
                 If ``None``, this is set to the current UTC time.
@@ -530,6 +534,7 @@ class Event(Component):
         event.transparency = transparency
         event.contacts = contacts
         event.status = status
+        event.rstatus = rstatus
         event.attendees = attendees
         event.conferences = conferences
         event.RECURRENCE_ID = recurrence_id

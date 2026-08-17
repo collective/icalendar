@@ -1,0 +1,1 @@
+Add :attr:`rstatus` property to Event, Todo, Journal, and FreeBusy with ``rstatus`` parameter in ``new()`` constructors per :rfc:`5545#section-3.8.8.3`. I used AI to assist with this change. @SemTiOne

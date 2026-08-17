@@ -2561,6 +2561,42 @@ Examples:
 """,
 )
 
+rstatus_property = multi_string_property(
+    "RSTATUS",
+    """This property defines the status code returned for a scheduling request.
+
+Setting this property replaces all existing RSTATUS values. A :class:`str`
+is stored as-is. Setting ``None`` or an empty list removes all
+RSTATUS values, as does deleting the property.
+
+The value consists of a short return status component, a longer
+return status description component, and optionally a status-specific
+data component, separated by semicolons (statcode;statdesc[;extdata]).
+The return status components are defined in :rfc:`5545#section-3.8.8.3`.
+
+Note:
+    List modifications do not modify the component. Methods such as
+    ``append()``, ``extend()``, and ``remove()``, as well as item
+    assignment, act on a copy. Assign the list back to the property, or
+    use :meth:`Component.add <icalendar.cal.component.Component.add>`
+    with a typed value instead.
+
+Parameters:
+    rstatus(str | list[str] | None):
+        A single status string, or a list of status strings to set.
+
+Example:
+    Add a request status to an event:
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Event
+        >>> event = Event.new(rstatus="2.0;Success")
+        >>> event.rstatus == ["2.0;Success"]
+        True
+""",
+)
+
 
 __all__ = [
     "CONCEPTS_TYPE_SETTER",
@@ -2605,6 +2641,7 @@ __all__ = [
     "rfc_7953_duration_property",
     "rfc_7953_end_property",
     "rrules_property",
+    "rstatus_property",
     "sequence_property",
     "set_duration_with_locking",
     "set_end_with_locking",
