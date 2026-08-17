@@ -148,20 +148,6 @@ def generate_matrix(git_ref, review):
         run.setdefault("test_name", run["python_version"])
         run.setdefault("test_command", COMMAND_TEST)
 
-    #
-    # Replacements for GitHub Actions.
-    #
-    # Versions need to appear in this file:
-    # https://raw.githubusercontent.com/actions/python-versions/main/versions-manifest.json
-    #
-    # Test names should be stabel.
-    # Rename the Python versions after setting the test names.
-    #
-
-    for run in matrix:
-        if run["python_version"] == "3.15":
-            run["python_version"] = "3.15.0-rc.1"
-
     include = list(matrix)
     skipped = [run["test_name"] for run in matrix if run["skip"]]
 

@@ -49,12 +49,12 @@ jobs:
         enable-cache: true
         # Install a specific version of uv.
         version: "0.11.6"
-        python-version: ${{ matrix.python_version }}
     - name: Install dependencies
       if: ${{ !matrix.skip }}
       run: |
         make dev PYTHONVERSION=${{ matrix.python_version }}
         uv tree
+        uv run python --version
     - name: Test
       if: ${{ !matrix.skip }}
       run: ${{ matrix.test_command }}
