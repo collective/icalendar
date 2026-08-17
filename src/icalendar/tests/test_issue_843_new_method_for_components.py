@@ -1057,6 +1057,50 @@ def test_properties_and_new(
             )
 
 
+@pytest.mark.parametrize(
+    ("factory_method", "required_kwargs"),
+    [
+        ("new", {}),
+        (
+            "new_display",
+            {"description": "Reminder", "trigger": timedelta(minutes=-5)},
+        ),
+        ("new_audio", {"trigger": timedelta(minutes=-5)}),
+        (
+            "new_email",
+            {
+                "summary": "Reminder",
+                "description": "The event starts soon.",
+                "trigger": timedelta(minutes=-5),
+                "attendees": [vCalAddress("mailto:user@example.com")],
+            },
+        ),
+    ],
+    ids=["new", "new_display", "new_audio", "new_email"],
+)
+@pytest.mark.parametrize(
+    ("property_name", "value", "expected_value"),
+    [
+        ("uid", "alarm-uid", vText("alarm-uid")),
+        ("links", ["https://example.com/link"], [vUri("https://example.com/link")]),
+        ("related_to", ["parent-uid"], [vText("parent-uid")]),
+        ("refids", ["reference-id"], [vText("reference-id")]),
+        (
+            "concepts",
+            ["https://example.com/concept"],
+            [vUri("https://example.com/concept")],
+        ),
+    ],
+)
+def test_alarm_factory_methods_set_shared_properties(
+    factory_method, required_kwargs, property_name, value, expected_value
+):
+    """All Alarm factory methods set their shared properties."""
+    alarm = getattr(Alarm, factory_method)(**required_kwargs, **{property_name: value})
+
+    assert getattr(alarm, property_name) == expected_value
+
+
 @pytest.mark.parametrize("component_class", COMPONENTS_START_END)
 def test_end_must_be_after_start(tzp, component_class):
     """The end must be after the start."""
