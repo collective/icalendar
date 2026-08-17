@@ -103,6 +103,7 @@ dev = [
   "towncrier>=25.8.0",
   "tox",
   "tox-uv",
+  "zizmor==1.29.0", # also update .github/workflows/zizmor.yml
 ]
 
 test = [
