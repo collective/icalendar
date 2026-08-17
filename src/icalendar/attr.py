@@ -2561,8 +2561,8 @@ Examples:
 """,
 )
 
-rstatus_property = multi_string_property(
-    "RSTATUS",
+REQUEST_STATUS = multi_string_property(
+    "REQUEST-STATUS",
     """This property defines the status code returned for a scheduling request.
 
 Setting this property replaces all existing RSTATUS values. A :class:`str`
@@ -2591,8 +2591,8 @@ Example:
     .. code-block:: pycon
 
         >>> from icalendar import Event
-        >>> event = Event.new(rstatus="2.0;Success")
-        >>> event.rstatus == ["2.0;Success"]
+        >>> event = Event.new(request_status="2.0;Success")
+        >>> event.REQUEST_STATUS == ["2.0;Success"]
         True
 """,
 )

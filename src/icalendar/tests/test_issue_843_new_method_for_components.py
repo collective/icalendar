@@ -965,7 +965,7 @@ rfc_9253_test_cases = [
     (
         COMPONENTS_RSTATUS,
         "rstatus",
-        "RSTATUS",
+        "REQUEST-STATUS",
         None,
         [],
         False,
@@ -990,7 +990,7 @@ rfc_9253_test_cases = [
         "set a value",
     ),
     (
-        COMPONENTS_RSTATUS,
+        COMPONENTS_REQUEST_STATUS,
         "rstatus",
         "RSTATUS",
         ["2.0;Success", "3.1;Invalid property value"],
