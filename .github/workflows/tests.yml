@@ -42,14 +42,15 @@ jobs:
       run: echo "Skipped ${{ matrix.test_name }} (not required for this trigger)"
     - uses: actions/checkout@v7
       if: ${{ !matrix.skip }}
-    - name: Install uv and Python ${{ matrix.python_version }}
+    - name: Install uv
       if: ${{ !matrix.skip }}
       uses: astral-sh/setup-uv@v7
       with:
         enable-cache: true
         # Install a specific version of uv.
+        # If you update this, also update all the other GitHub Actions
         version: "0.11.6"
-    - name: Install dependencies
+    - name: Install Python ${{ matrix.python_version }} and dependencies with uv
       if: ${{ !matrix.skip }}
       run: |
         make dev PYTHONVERSION=${{ matrix.python_version }}
