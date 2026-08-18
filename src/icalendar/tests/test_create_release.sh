@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Create a release file and test it.
 #
