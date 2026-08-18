@@ -8,8 +8,6 @@ on:
     types: [opened]
   pull_request_target:
     types: [opened]
-  push:
-  pull_request:
 
 permissions:
   contents: read
@@ -43,13 +41,6 @@ jobs:
             echo "number=${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
           fi
       
-      - name: debug
-        run: |
-          echo "login=${{ steps.meta.outputs.login }}"
-          echo "number=${{ steps.meta.outputs.number }}"
-          echo "VERIFIED_CONTRIBUTORS=${{ env.VERIFIED_CONTRIBUTORS }}"
-          echo "skip=${{ contains(env.VERIFIED_CONTRIBUTORS, steps.meta.outputs.login) }}"
-
       - name: Run gh-profiler
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
