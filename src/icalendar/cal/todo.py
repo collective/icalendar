@@ -386,7 +386,7 @@ class Todo(Component):
             :class:`Todo`
 
         Raises:
-            :exc:`~icalendar.error.InvalidCalendar`: If the content is not valid
+            ~error.InvalidCalendar: If the content is not valid
                 according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
