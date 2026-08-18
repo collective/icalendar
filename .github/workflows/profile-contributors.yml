@@ -14,6 +14,11 @@ permissions:
   issues: write
   pull-requests: write
 
+env:
+  # Exclude people from being profiled.
+  # See https://stackoverflow.com/a/73274812
+  VERIFIED_CONTRIBUTORS: ("niccokunzmann" "stevepiercy" "angatha" "SashankBhamidi" "ennamarie19" "peskypotato")
+
 jobs:
   profile-author:
     runs-on: ubuntu-latest
@@ -39,6 +44,7 @@ jobs:
       - name: Run gh-profiler
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: ${{ !contains(env.VERIFIED_CONTRIBUTORS, steps.meta.outputs.login) }}
         run: |
           set -euo pipefail
           gh-profiler "${{ steps.meta.outputs.login }}" --concise > concise.txt
@@ -47,6 +53,7 @@ jobs:
       - name: Comment on issue or PR
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: ${{ !contains(env.VERIFIED_CONTRIBUTORS, steps.meta.outputs.login) }}
         run: |
           set -euo pipefail
           {
