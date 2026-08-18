@@ -1606,13 +1606,13 @@ Example:
 )
 
 
-def timezone_datetime_property(name: str, docs: str):
+def _timezone_datetime_property(name: str, docs: str):
     """Create a property to access the values with a proper timezone."""
 
     return single_utc_property(name, docs)
 
 
-rfc_7953_dtstart_property = timezone_datetime_property(
+rfc_7953_dtstart_property = _timezone_datetime_property(
     "DTSTART",
     """Start of the component.
 
@@ -1629,7 +1629,7 @@ rfc_7953_dtstart_property = timezone_datetime_property(
     """,
 )
 
-rfc_7953_dtend_property = timezone_datetime_property(
+rfc_7953_dtend_property = _timezone_datetime_property(
     "DTEND",
     """Start of the component.
 
