@@ -10,6 +10,7 @@ from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
+    REQUEST_STATUS_property,
     contacts_property,
     create_single_property,
     organizer_property,
@@ -82,12 +83,13 @@ class FreeBusy(Component):
         "ATTENDEE",
         "COMMENT",
         "FREEBUSY",
-        "RSTATUS",
+        "REQUEST-STATUS",
     )
     uid = uid_property
     url = url_property
     organizer = organizer_property
     contacts = contacts_property
+    REQUEST_STATUS = REQUEST_STATUS_property
     start = DTSTART = create_single_property(
         "DTSTART",
         "dt",
@@ -122,6 +124,7 @@ class FreeBusy(Component):
         organizer: vCalAddress | str | None = None,
         refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
+        request_status: list[str] | str | None = None,
         stamp: date | None = None,
         start: date | datetime | None = None,
         uid: str | uuid.UUID | None = None,
@@ -142,6 +145,7 @@ class FreeBusy(Component):
             organizer: The :attr:`organizer` of the component.
             refids: :attr:`~icalendar.cal.component.Component.refids` of the component.
             related_to: :attr:`~icalendar.cal.component.Component.related_to` of the component.
+            request_status: The :attr:`REQUEST_STATUS` of the component.
             stamp: The :attr:`~icalendar.cal.component.Component.DTSTAMP` of the component.
                 If None, this is set to the current time.
             start: The :attr:`start` of the component.
@@ -170,6 +174,7 @@ class FreeBusy(Component):
         free_busy.url = url
         free_busy.organizer = organizer
         free_busy.contacts = contacts
+        free_busy.REQUEST_STATUS = request_status
         free_busy.end = end
         free_busy.start = start
 
