@@ -6,8 +6,9 @@ Fill out the pull request template as described below.
 
 Do not edit or remove section headings as they are required, except "Additional information" which is optional.
 
-Comments, which consist of the content between each pair of `<!--` and `-->` delimiters, inclusively, may be removed.
--->
+Comments can be removed, including their delimiters:
+  <!--
+  -->
 
 ## Linked issue
 
