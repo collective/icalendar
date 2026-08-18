@@ -7,7 +7,9 @@ on:
   issues:
     types: [opened]
   pull_request_target:
-    # types: [opened]
+    types: [opened]
+  push:
+  pull_request:
 
 permissions:
   contents: read
