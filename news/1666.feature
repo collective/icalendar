@@ -1,1 +1,1 @@
-Add :attr:`REQUEST_STATUS` property to Event, Todo, Journal, and FreeBusy with ``request_status`` parameter in ``new()`` constructors per :rfc:`5545#section-3.8.8.3`. I used AI to assist with this change. @SemTiOne
+Added :attr:`REQUEST_STATUS` property to :class:`~icalendar.event.Event`, :class:`~icalendar.todo.Todo`, :class:`~icalendar.journal.Journal`, and :class:`~icalendar.free_busy.FreeBusy` with ``request_status`` parameter in ``new()`` constructors per :rfc:`5545#section-3.8.8.3`. I used AI to assist with this change. @SemTiOne
