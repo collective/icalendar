@@ -1,0 +1,1 @@
+Fixed broken Sphinx cross-references to Python objects throughout the codebase, including ``~error.``, ``~icalendar.Component.``, and unqualified class/method references.
