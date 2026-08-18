@@ -40,6 +40,13 @@ jobs:
             echo "login=${{ github.event.pull_request.user.login }}" >> "$GITHUB_OUTPUT"
             echo "number=${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
           fi
+      
+      - name: debug
+        run: |
+          echo "login=${{ steps.meta.outputs.login }}"
+          echo "number=${{ steps.meta.outputs.number }}"
+          echo "VERIFIED_CONTRIBUTORS=${{ env.VERIFIED_CONTRIBUTORS }}"
+          echo "skip=${{ contains(env.VERIFIED_CONTRIBUTORS, steps.meta.outputs.login) }}"
 
       - name: Run gh-profiler
         env:
