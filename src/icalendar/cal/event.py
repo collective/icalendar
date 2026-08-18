@@ -52,6 +52,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
 
     from icalendar.alarms import Alarms
+    from icalendar.compatibility import Self
     from icalendar.enums import CLASS, STATUS, TRANSP
     from icalendar.prop import vCalAddress
     from icalendar.prop.conference import Conference
@@ -458,7 +459,7 @@ class Event(Component):
         summary: str | None = None,
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
-    ):
+    ) -> Self:
         """Create a new event with the required properties of ``stamp`` and ``uid``.
 
         This creates a new ``Event`` in accordance with :rfc:`5545#section-3.6.1`.
@@ -503,7 +504,7 @@ class Event(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        event: Event = super().new(
+        event: Self = super().new(
             stamp=stamp if stamp is not None else cls._utc_now(),
             created=created,
             last_modified=last_modified,
