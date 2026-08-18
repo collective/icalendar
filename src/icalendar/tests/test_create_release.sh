@@ -7,10 +7,18 @@ set -e
 cd "`dirname \"$0\"`"
 cd "../../.."
 
+# setup clean environment
+
 rm -rf dist
-uv build
+make dev
 uv pip install twine
+
+# build the release
+
+uv build
 archive=`echo dist/icalendar-*.tar.gz`
+
+# run the checks
 
 if ! [ -f "$archive" ]; then
   echo "ERROR: Cannot find distribution archive '$archive'."
