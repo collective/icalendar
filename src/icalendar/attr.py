@@ -2602,12 +2602,49 @@ Examples:
 """,
 )
 
+REQUEST_STATUS_property = multi_string_property(
+    "REQUEST-STATUS",
+    """This property defines the status code returned for a scheduling request.
+
+Setting this property replaces all existing REQUEST-STATUS values. A :class:`str`
+is stored as-is. Setting ``None`` or an empty list removes all
+REQUEST-STATUS values, as does deleting the property.
+
+The value consists of a short return status component, a longer
+return status description component, and optionally a status-specific
+data component, separated by semicolons (statcode;statdesc[;extdata]).
+The return status components are defined in :rfc:`5545#section-3.8.8.3`.
+
+Note:
+    List modifications do not modify the component. Methods such as
+    ``append()``, ``extend()``, and ``remove()``, as well as item
+    assignment, act on a copy. Assign the list back to the property, or
+    use :meth:`Component.add <icalendar.cal.component.Component.add>`
+    with a typed value instead.
+
+Parameters:
+    request_status(str | list[str] | None):
+        A single status string, or a list of status strings to set.
+
+Example:
+    Add a request status to an event:
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Event
+        >>> event = Event.new(request_status="2.0;Success")
+        >>> event.REQUEST_STATUS == ["2.0;Success"]
+        True
+""",
+)
+
 
 __all__ = [
     "CONCEPTS_TYPE_SETTER",
     "LINKS_TYPE_SETTER",
     "RECURRENCE_ID",
     "RELATED_TO_TYPE_SETTER",
+    "REQUEST_STATUS_property",
     "attendees_property",
     "busy_type_property",
     "categories_property",
