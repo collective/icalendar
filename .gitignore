@@ -1,7 +1,3 @@
-*.mo
-*.py?
-*.sw?
-*~
 .coverage
 .mypy_cache/
 .pytest_cache/
