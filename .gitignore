@@ -32,3 +32,5 @@ coverage.xml
 /ical_fuzzer/
 # from tutorials
 /example.ics
+!.claude/
+!.claude/settings.json

@@ -20,6 +20,7 @@ from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
 
 if TYPE_CHECKING:
+    from icalendar.compatibility import Self
     from icalendar.prop import vCalAddress
 
 
@@ -125,7 +126,7 @@ class FreeBusy(Component):
         start: date | datetime | None = None,
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
-    ):
+    ) -> Self:
         """Create a new FreeBusy component with all required properties,
         in accordance with :rfc:`5545#section-3.6.4`.
 
@@ -157,7 +158,7 @@ class FreeBusy(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        free_busy: FreeBusy = super().new(
+        free_busy: Self = super().new(
             stamp=stamp if stamp is not None else cls._utc_now(),
             comments=comments,
             links=links,

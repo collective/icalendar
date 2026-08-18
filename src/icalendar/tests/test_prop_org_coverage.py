@@ -6,14 +6,6 @@ These tests target the branches identified in the coverage survey:
 - ``vOrg.__repr__`` — string representation.
 - ``vOrg.from_jcal`` — the happy path (valid jCal with string fields) and
   the ``validate_value_type`` loop (non-string field value).
-
-The following branches are **unreachable** and therefore not tested:
-
-- ``vOrg.from_ical`` line 94 (``raise ValueError``) — ``split_on_unescaped_semicolon``
-  always returns at least one element, so ``len(fields) < 1`` is never True.
-- ``vOrg.from_jcal`` lines 139-144 (``if len(jcal_property) < 4: raise``) —
-  ``JCalParsingError.validate_property`` (line 138) already raises when the
-  property has fewer than 4 elements, so the redundant check is dead code.
 """
 
 from __future__ import annotations
@@ -133,8 +125,7 @@ class TestVOrgFromJcal:
     def test_from_jcal_too_short_raises(self):
         """A jCal property with fewer than 4 elements raises JCalParsingError.
 
-        This is caught by ``validate_property`` (line 138), not by the
-        redundant ``len < 4`` check on line 139 (which is unreachable).
+        This is caught by ``JCalParsingError.validate_property``.
         """
         jcal = ["org", {}, "text"]
         with pytest.raises(

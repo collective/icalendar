@@ -52,6 +52,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
 
     from icalendar.alarms import Alarms
+    from icalendar.compatibility import Self
     from icalendar.enums import CLASS, STATUS, TRANSP
     from icalendar.prop import vCalAddress
     from icalendar.prop.conference import Conference
@@ -458,10 +459,10 @@ class Event(Component):
         summary: str | None = None,
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
-    ):
-        """Create a new event with all required properties.
+    ) -> Self:
+        """Create a new event with the required properties of ``stamp`` and ``uid``.
 
-        This creates a new Event in accordance with :rfc:`5545`.
+        This creates a new ``Event`` in accordance with :rfc:`5545#section-3.6.1`.
 
         Parameters:
             attendees: The :attr:`attendees` of the event.
@@ -484,14 +485,14 @@ class Event(Component):
             related_to: :attr:`~icalendar.Component.related_to` of the event.
             sequence: The :attr:`sequence` of the event.
             stamp: The :attr:`~icalendar.Component.stamp` of the event.
-                If None, this is set to the current time.
+                If ``None``, this is set to the current UTC time.
             start: The :attr:`start` of the event.
             status: The :attr:`status` of the event.
             subcomponents: The subcomponents of the event.
             summary: The :attr:`summary` of the event.
             transparency: The :attr:`transparency` of the event.
             uid: The :attr:`uid` of the event.
-                If None, this is set to a new :func:`uuid.uuid4`.
+                If ``None``, this is set to a new :func:`uuid.uuid4`.
             url: The :attr:`url` of the event.
 
         Returns:
@@ -503,7 +504,7 @@ class Event(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        event: Event = super().new(
+        event: Self = super().new(
             stamp=stamp if stamp is not None else cls._utc_now(),
             created=created,
             last_modified=last_modified,
