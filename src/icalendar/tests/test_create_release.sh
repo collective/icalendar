@@ -43,6 +43,6 @@ if ! tar -tf "$archive" | grep -q '/funding.json'; then
   exit 1
 fi
 
-twine check dist/*
+uv run twine check dist/*
 
 echo "Checks passed."
