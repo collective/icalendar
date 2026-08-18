@@ -182,4 +182,5 @@ changes-draft: dev
 changes: dev
 	@test -n "$(VERSION)" || (echo "VERSION is not set. Run 'export VERSION=x.y.z' first." && exit 1)
 	$(TOWNCRIERPATH) build --version ${VERSION} --yes
+	uv run python -c "import pathlib, re; [p.write_text(re.sub(r'(\.\.\s+version(?:changed|added|deprecated)::)\s+0\.0\.0', r'\g<1> ' + '${VERSION}', p.read_text(encoding='utf-8')), encoding='utf-8') for p in pathlib.Path().rglob('*') if p.suffix in ('.py', '.rst') and 'docs/_build' not in p.parts and '.venv' not in p.parts and '.git' not in p.parts]"
 # /release

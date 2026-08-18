@@ -445,6 +445,23 @@ All links must be valid.
     See how to check links in :ref:`make-linkcheckbroken`.
 
 
+Describing changes between versions
+'''''''''''''''''''''''''''''''''''
+
+When adding version directives (``versionchanged``, ``versionadded``, ``versiondeprecated``) in docstrings or narrative documentation to describe an unreleased API change, always use the version ``0.0.0``.
+
+.. code-block:: rst
+
+    .. versionadded:: 0.0.0
+       Added a new feature.
+
+During the release process, the ``0.0.0`` string will be automatically updated to the actual release version number.
+
+.. seealso::
+
+    `Sphinx documentation on describing changes between versions <https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#describing-changes-between-versions>`_
+
+
 Spelling and grammar
 ''''''''''''''''''''
 
