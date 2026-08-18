@@ -20,7 +20,7 @@ class vBoolean(int):
         params: iCalendar property parameters associated with the value.
 
     Returns:
-        A new :class:`vBoolean` instance with the supplied property parameters.
+        A new :class:`~icalendar.prop.boolean.vBoolean` instance with the supplied property parameters.
 
     Examples:
         Parse, create, and use iCalendar boolean values.
@@ -97,7 +97,7 @@ class vBoolean(int):
             jcal_property: The jCal property to parse.
 
         Raises:
-            ~error.JCalParsingError: If the provided jCal is invalid.
+            ~icalendar.error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         JCalParsingError.validate_value_type(jcal_property[3], bool, cls, 3)

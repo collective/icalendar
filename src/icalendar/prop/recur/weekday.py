@@ -115,7 +115,7 @@ class vWeekday(str):
         """Parse a jCal value for vWeekday.
 
         Raises:
-            ~error.JCalParsingError: If the value is not a valid weekday.
+            ~icalendar.error.JCalParsingError: If the value is not a valid weekday.
         """
         JCalParsingError.validate_value_type(value, str, cls)
         try:

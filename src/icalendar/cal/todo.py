@@ -366,23 +366,23 @@ class Todo(Component):
             categories: The :attr:`categories` of the todo.
             classification: The :attr:`classification` of the todo.
             color: The :attr:`color` of the todo.
-            comments: The :attr:`~icalendar.Component.comments` of the todo.
-            concepts: The :attr:`~icalendar.Component.concepts` of the todo.
+            comments: The :attr:`~icalendar.cal.component.Component.comments` of the todo.
+            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the todo.
             contacts: The :attr:`contacts` of the todo.
             conferences: The :attr:`conferences` of the todo.
-            created: The :attr:`~icalendar.Component.created` of the todo.
+            created: The :attr:`~icalendar.cal.component.Component.created` of the todo.
             description: The :attr:`description` of the todo.
             end: The :attr:`end` of the todo.
-            last_modified: The :attr:`~icalendar.Component.last_modified` of the todo.
-            links: The :attr:`~icalendar.Component.links` of the todo.
+            last_modified: The :attr:`~icalendar.cal.component.Component.last_modified` of the todo.
+            links: The :attr:`~icalendar.cal.component.Component.links` of the todo.
             location: The :attr:`location` of the todo.
             organizer: The :attr:`organizer` of the todo.
             recurrence_id: The :attr:`RECURRENCE_ID` of the todo.
-            refids: :attr:`~icalendar.Component.refids` of the todo.
-            related_to: :attr:`~icalendar.Component.related_to` of the todo.
+            refids: :attr:`~icalendar.cal.component.Component.refids` of the todo.
+            related_to: :attr:`~icalendar.cal.component.Component.related_to` of the todo.
             request_status: The :attr:`REQUEST_STATUS` of the todo.
             sequence: The :attr:`sequence` of the todo.
-            stamp: The :attr:`~icalendar.Component.DTSTAMP` of the todo.
+            stamp: The :attr:`~icalendar.cal.component.Component.DTSTAMP` of the todo.
                 If None, this is set to the current time.
             start: The :attr:`start` of the todo.
             status: The :attr:`status` of the todo.
@@ -396,7 +396,7 @@ class Todo(Component):
             :class:`Todo`
 
         Raises:
-            ~error.InvalidCalendar: If the content is not valid
+            ~icalendar.error.InvalidCalendar: If the content is not valid
                 according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
