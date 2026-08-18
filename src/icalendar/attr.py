@@ -2561,13 +2561,13 @@ Examples:
 """,
 )
 
-REQUEST_STATUS = multi_string_property(
+REQUEST_STATUS_property = multi_string_property(
     "REQUEST-STATUS",
     """This property defines the status code returned for a scheduling request.
 
-Setting this property replaces all existing RSTATUS values. A :class:`str`
+Setting this property replaces all existing REQUEST-STATUS values. A :class:`str`
 is stored as-is. Setting ``None`` or an empty list removes all
-RSTATUS values, as does deleting the property.
+REQUEST-STATUS values, as does deleting the property.
 
 The value consists of a short return status component, a longer
 return status description component, and optionally a status-specific
@@ -2582,7 +2582,7 @@ Note:
     with a typed value instead.
 
 Parameters:
-    rstatus(str | list[str] | None):
+    request_status(str | list[str] | None):
         A single status string, or a list of status strings to set.
 
 Example:
@@ -2603,6 +2603,7 @@ __all__ = [
     "LINKS_TYPE_SETTER",
     "RECURRENCE_ID",
     "RELATED_TO_TYPE_SETTER",
+    "REQUEST_STATUS_property",
     "attendees_property",
     "busy_type_property",
     "categories_property",
@@ -2641,7 +2642,6 @@ __all__ = [
     "rfc_7953_duration_property",
     "rfc_7953_end_property",
     "rrules_property",
-    "rstatus_property",
     "sequence_property",
     "set_duration_with_locking",
     "set_end_with_locking",

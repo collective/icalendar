@@ -10,6 +10,7 @@ from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
+    REQUEST_STATUS_property,
     X_MOZ_LASTACK_property,
     X_MOZ_SNOOZE_TIME_property,
     attendees_property,
@@ -35,7 +36,6 @@ from icalendar.attr import (
     property_set_duration,
     rdates_property,
     rrules_property,
-    rstatus_property,
     sequence_property,
     set_duration_with_locking,
     set_end_with_locking,
@@ -141,7 +141,7 @@ class Todo(Component):
         "COMMENT",
         "CONTACT",
         "EXDATE",
-        "RSTATUS",
+        "REQUEST-STATUS",
         "RELATED",
         "RESOURCES",
         "RDATE",
@@ -301,7 +301,7 @@ class Todo(Component):
     rdates = rdates_property
     exdates = exdates_property
     rrules = rrules_property
-    rstatus = rstatus_property
+    REQUEST_STATUS = REQUEST_STATUS_property
     uid = uid_property
     summary = summary_property
     description = description_property
@@ -340,7 +340,7 @@ class Todo(Component):
         recurrence_id: date | datetime | None = None,
         refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
-        rstatus: list[str] | str | None = None,
+        request_status: list[str] | str | None = None,
         sequence: int | None = None,
         stamp: date | None = None,
         start: date | datetime | None = None,
@@ -373,7 +373,7 @@ class Todo(Component):
             recurrence_id: The :attr:`RECURRENCE_ID` of the todo.
             refids: :attr:`~icalendar.Component.refids` of the todo.
             related_to: :attr:`~icalendar.Component.related_to` of the todo.
-            rstatus: The :attr:`rstatus` of the todo.
+            request_status: The :attr:`REQUEST_STATUS` of the todo.
             sequence: The :attr:`sequence` of the todo.
             stamp: The :attr:`~icalendar.Component.DTSTAMP` of the todo.
                 If None, this is set to the current time.
@@ -420,7 +420,7 @@ class Todo(Component):
         todo.priority = priority
         todo.contacts = contacts
         todo.status = status
-        todo.rstatus = rstatus
+        todo.REQUEST_STATUS = request_status
         todo.attendees = attendees
         todo.conferences = conferences
         todo.RECURRENCE_ID = recurrence_id
