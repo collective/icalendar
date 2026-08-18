@@ -403,13 +403,19 @@ def multi_language_text_property(
     return property(fget, fset, fdel, doc)
 
 
-def single_int_property(prop: str, default: int, doc: str) -> property:
+def single_int_property(
+    prop: str, default: int, doc: str, *, min_value: int | None = None
+) -> property:
     """Create a property for an int value that exists only once.
 
     Parameters:
-        prop: The name of the property
-        default: The default value
-        doc: The documentation string
+        default: Required. The default value.
+        doc: Required. The documentation string.
+        prop: Required. The name of the property.
+        min_value: If set, the value must be greater than or equal to this minimum.
+
+    ..  versionadded:: 7.2.3
+        Added the ``min_value`` parameter.
     """
 
     def fget(self: Component) -> int:
@@ -421,6 +427,11 @@ def single_int_property(prop: str, default: int, doc: str) -> property:
 
     def fset(self: Component, value: int | None):
         """Set the property."""
+        if value is not None:
+            if not isinstance(value, int) or isinstance(value, bool):
+                raise TypeError(f"{prop} must be an int, got {value!r}")
+            if min_value is not None and value < min_value:
+                raise InvalidCalendar(f"{prop} must be >= {min_value}, got {value}")
         fdel(self)
         if value is not None:
             self.add(prop, value)
@@ -618,7 +629,17 @@ Examples:
         >>> event = calendar.events[0]
         >>> event.sequence
         10
+
+    Raises:
+        TypeError: If the value is not an ``int``. Booleans are rejected, too,
+            even though ``bool`` subclasses ``int``.
+
+        ~icalendar.error.InvalidCalendar: If the value is negative.
+
+    ..  versionchanged:: 7.2.3
+        Negative values are no longer accepted.
     """,  # noqa: E501
+    min_value=0,
 )
 
 
@@ -1293,7 +1314,17 @@ initial trigger.
 Defaults to ``0``, meaning the alarm fires once. Must be paired with
 :attr:`~icalendar.cal.alarm.Alarm.DURATION`. Conforms with :rfc:`5545#section-3.8.6.2`.
 The value is capped at :data:`icalendar.config.MAX_ALARM_REPEAT` on read.
+
+Raises:
+    TypeError: If the value is not an ``int``. Booleans are rejected, too,
+        even though ``bool`` subclasses ``int``.
+
+    ~icalendar.error.InvalidCalendar: If the value is negative.
+
+..  versionchanged:: 7.2.3
+    Negative values are no longer accepted.
 """,
+        min_value=0,
     )
 
     def fget(self):
@@ -1342,7 +1373,17 @@ Description:
     Within a "VTODO" calendar component, this property specified a
     priority for the to-do.  This property is useful in prioritizing
     multiple action items for a given time period.
+
+    Raises:
+        TypeError: If the value is not an ``int``. Booleans are rejected, too,
+            even though ``bool`` subclasses ``int``.
+
+        ~icalendar.error.InvalidCalendar: If the value is negative.
+
+    ..  versionchanged:: 7.2.3
+        Negative values are no longer accepted.
 """,
+    min_value=0,
 )
 
 class_property = single_string_enum_property(
