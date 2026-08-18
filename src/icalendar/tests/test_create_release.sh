@@ -9,6 +9,7 @@ cd "../../.."
 
 rm -rf dist
 uv build
+uv pip install twine
 archive=`echo dist/icalendar-*.tar.gz`
 
 if ! [ -f "$archive" ]; then
@@ -33,5 +34,7 @@ if ! tar -tf "$archive" | grep -q '/funding.json'; then
   echo "       See https://github.com/collective/icalendar/issues/1493"
   exit 1
 fi
+
+twine check dist/*
 
 echo "Checks passed."
