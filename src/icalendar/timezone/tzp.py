@@ -62,7 +62,7 @@ class TZP:
         else:
             self._use(provider)
 
-    def use_default(self):
+    def use_default(self) -> None:
         """Use the default timezone provider."""
         self.use(DEFAULT_TIMEZONE_PROVIDER)
 
