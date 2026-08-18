@@ -347,3 +347,68 @@ def test_factory_concepts_none_is_empty(factory):
     alarm = factory(concepts=None)
     assert alarm.concepts == []
     assert "CONCEPT" not in alarm
+
+
+# Alarm.new shared parameters: uid, links, related_to, concepts
+
+
+def test_alarm_new_uid_is_set():
+    alarm = Alarm.new(uid="test-alarm-uid-001")
+    assert alarm.uid == "test-alarm-uid-001"
+    assert "UID" in alarm
+
+
+def test_alarm_new_uid_none_omits_property():
+    alarm = Alarm.new(uid=None)
+    assert "UID" not in alarm
+
+
+def test_alarm_new_links_single():
+    link = vUri("https://example.com/event")
+    alarm = Alarm.new(links=[link])
+    assert alarm.links == [link]
+
+
+def test_alarm_new_links_string_is_converted():
+    alarm = Alarm.new(links=["https://example.com/event"])
+    assert alarm.links == [vUri("https://example.com/event")]
+
+
+def test_alarm_new_links_none_is_empty():
+    alarm = Alarm.new(links=None)
+    assert alarm.links == []
+    assert "LINK" not in alarm
+
+
+def test_alarm_new_related_to_single():
+    rel = vText("some-uid-ref")
+    alarm = Alarm.new(related_to=[rel])
+    assert alarm.related_to == [rel]
+
+
+def test_alarm_new_related_to_string_is_converted():
+    alarm = Alarm.new(related_to=["some-uid-ref"])
+    assert alarm.related_to == [vText("some-uid-ref")]
+
+
+def test_alarm_new_related_to_none_is_empty():
+    alarm = Alarm.new(related_to=None)
+    assert alarm.related_to == []
+    assert "RELATED-TO" not in alarm
+
+
+def test_alarm_new_concepts_single():
+    concept = vUri("https://example.com/concept")
+    alarm = Alarm.new(concepts=[concept])
+    assert alarm.concepts == [concept]
+
+
+def test_alarm_new_concepts_string_is_converted():
+    alarm = Alarm.new(concepts=["https://example.com/concept"])
+    assert alarm.concepts == [vUri("https://example.com/concept")]
+
+
+def test_alarm_new_concepts_none_is_empty():
+    alarm = Alarm.new(concepts=None)
+    assert alarm.concepts == []
+    assert "CONCEPT" not in alarm
