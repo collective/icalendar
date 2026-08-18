@@ -93,7 +93,6 @@ jobs:
     - name: Install uv and Python
       uses: astral-sh/setup-uv@v7
       with:
-        enable-cache: true
         version: "0.11.6"
     - name: Check the release files
       run: src/icalendar/tests/test_create_release.sh
