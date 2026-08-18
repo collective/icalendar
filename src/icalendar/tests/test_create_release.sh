@@ -3,7 +3,7 @@
 # Create a release file and test it.
 #
 
-set -e
+set -euo pipefail
 cd "`dirname \"$0\"`"
 cd "../../.."
 
