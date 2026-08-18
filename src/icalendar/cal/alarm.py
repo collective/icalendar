@@ -31,6 +31,7 @@ if TYPE_CHECKING:
     import uuid
     from collections.abc import Sequence
 
+    from icalendar.compatibility import Self
     from icalendar.prop import vCalAddress
 
 
@@ -359,7 +360,7 @@ class Alarm(Component):
         related_to: RELATED_TO_TYPE_SETTER = None,
         summary: str | None = None,
         uid: str | uuid.UUID | None = None,
-    ):
+    ) -> Self:
         """Create a new alarm with all required properties.
 
         This creates a new Alarm in accordance with :rfc:`5545`.
@@ -383,7 +384,7 @@ class Alarm(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        alarm: Alarm = super().new(
+        alarm: Self = super().new(
             links=links,
             related_to=related_to,
             refids=refids,

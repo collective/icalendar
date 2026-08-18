@@ -35,6 +35,7 @@ from icalendar.error import IncompleteComponent
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
+    from icalendar.compatibility import Self
     from icalendar.enums import CLASS, STATUS
     from icalendar.prop import vCalAddress
 
@@ -218,7 +219,7 @@ class Journal(Component):
         summary: str | None = None,
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
-    ):
+    ) -> Self:
         """Create a new journal entry with all required properties.
 
         This creates a new Journal in accordance with :rfc:`5545`.
@@ -259,7 +260,7 @@ class Journal(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        journal: Journal = super().new(
+        journal: Self = super().new(
             stamp=stamp if stamp is not None else cls._utc_now(),
             created=created,
             last_modified=last_modified,
