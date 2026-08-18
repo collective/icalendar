@@ -187,4 +187,11 @@ changes-draft: dev
 changes: dev
 	@test -n "$(VERSION)" || (echo "VERSION is not set. Run 'export VERSION=x.y.z' first." && exit 1)
 	$(TOWNCRIERPATH) build --version ${VERSION} --yes
+
+.PHONY: new-version
+new-version: dev
+	@CURRENT_VERSION=`git tag | sort -V | tail -n 1 | grep -o '[0-9].*'`; \
+	if ls news | grep -q '.breaking'; then OPTION=M; elif ls news | grep -q '.feature'; then OPTION=m; else OPTION=p; fi; \
+	VERSION=`./scripts/semver -$${OPTION} $$CURRENT_VERSION`; \
+	echo "export VERSION=$$VERSION";
 # /release
