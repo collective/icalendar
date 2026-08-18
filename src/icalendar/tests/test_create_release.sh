@@ -8,8 +8,7 @@ cd "`dirname \"$0\"`"
 cd "../../.."
 
 rm -rf dist
-pip3 install build
-python3 -m build
+uv build
 archive=`echo dist/icalendar-*.tar.gz`
 
 if ! [ -f "$archive" ]; then
@@ -26,6 +25,12 @@ fi
 if ! tar -tf "$archive" | grep -q '/docs/'; then
   echo "ERROR: The documentation is not included in the release, but should be."
   echo "       See https://github.com/collective/icalendar/issues/712"
+  exit 1
+fi
+
+if ! tar -tf "$archive" | grep -q '/funding.json'; then
+  echo "ERROR: Funding files need to be included in the release files."
+  echo "       See https://github.com/collective/icalendar/issues/1493"
   exit 1
 fi
 
