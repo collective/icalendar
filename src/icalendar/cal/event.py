@@ -10,6 +10,7 @@ from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
+    REQUEST_STATUS_property,
     X_MOZ_LASTACK_property,
     X_MOZ_SNOOZE_TIME_property,
     attendees_property,
@@ -52,6 +53,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
 
     from icalendar.alarms import Alarms
+    from icalendar.compatibility import Self
     from icalendar.enums import CLASS, STATUS, TRANSP
     from icalendar.prop import vCalAddress
     from icalendar.prop.conference import Conference
@@ -235,7 +237,7 @@ class Event(Component):
         "COMMENT",
         "CONTACT",
         "EXDATE",
-        "RSTATUS",
+        "REQUEST-STATUS",
         "RELATED",
         "RESOURCES",
         "RDATE",
@@ -410,6 +412,7 @@ class Event(Component):
     rdates = rdates_property
     exdates = exdates_property
     rrules = rrules_property
+    REQUEST_STATUS = REQUEST_STATUS_property
     uid = uid_property
     summary = summary_property
     description = description_property
@@ -449,6 +452,7 @@ class Event(Component):
         recurrence_id: date | datetime | None = None,
         refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
+        request_status: list[str] | str | None = None,
         sequence: int | None = None,
         stamp: date | None = None,
         start: date | datetime | None = None,
@@ -458,10 +462,10 @@ class Event(Component):
         summary: str | None = None,
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
-    ):
-        """Create a new event with all required properties.
+    ) -> Self:
+        """Create a new event with the required properties of ``stamp`` and ``uid``.
 
-        This creates a new Event in accordance with :rfc:`5545`.
+        This creates a new ``Event`` in accordance with :rfc:`5545#section-3.6.1`.
 
         Parameters:
             attendees: The :attr:`attendees` of the event.
@@ -482,16 +486,17 @@ class Event(Component):
             recurrence_id: The :attr:`RECURRENCE_ID` of the event.
             refids: :attr:`~icalendar.Component.refids` of the event.
             related_to: :attr:`~icalendar.Component.related_to` of the event.
+            request_status: The :attr:`REQUEST_STATUS` of the event.
             sequence: The :attr:`sequence` of the event.
             stamp: The :attr:`~icalendar.Component.stamp` of the event.
-                If None, this is set to the current time.
+                If ``None``, this is set to the current UTC time.
             start: The :attr:`start` of the event.
             status: The :attr:`status` of the event.
             subcomponents: The subcomponents of the event.
             summary: The :attr:`summary` of the event.
             transparency: The :attr:`transparency` of the event.
             uid: The :attr:`uid` of the event.
-                If None, this is set to a new :func:`uuid.uuid4`.
+                If ``None``, this is set to a new :func:`uuid.uuid4`.
             url: The :attr:`url` of the event.
 
         Returns:
@@ -503,7 +508,7 @@ class Event(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        event: Event = super().new(
+        event: Self = super().new(
             stamp=stamp if stamp is not None else cls._utc_now(),
             created=created,
             last_modified=last_modified,
@@ -530,6 +535,7 @@ class Event(Component):
         event.transparency = transparency
         event.contacts = contacts
         event.status = status
+        event.REQUEST_STATUS = request_status
         event.attendees = attendees
         event.conferences = conferences
         event.RECURRENCE_ID = recurrence_id
