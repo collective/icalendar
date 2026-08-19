@@ -2638,6 +2638,42 @@ Example:
 """,
 )
 
+RESOURCES_property = multi_string_property(
+    "RESOURCES",
+    """This property defines resources for a calendar component.
+
+Setting this property replaces all existing RESOURCES values. A :class:`str`
+is stored as-is. Setting ``None`` or an empty list removes all
+RESOURCES values, as does deleting the property.
+
+The value is a comma-separated list of resources, such as equipment,
+facilities, or other things that the component needs. Each item of the
+list becomes its own RESOURCES property value. See
+:rfc:`5545#section-3.8.1.10` for the specification.
+
+Note:
+    List modifications do not modify the component. Methods such as
+    ``append()``, ``extend()``, and ``remove()``, as well as item
+    assignment, act on a copy. Assign the list back to the property, or
+    use :meth:`Component.add <icalendar.cal.component.Component.add>`
+    with a typed value instead.
+
+Parameters:
+    resources(str | list[str] | None):
+        A single resource, or a list of resources to set.
+
+Example:
+    Add resources to an event:
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Event
+        >>> event = Event.new(resources=["EASEL", "PROJECTOR", "VCR"])
+        >>> event.RESOURCES == ["EASEL", "PROJECTOR", "VCR"]
+        True
+""",
+)
+
 
 __all__ = [
     "CONCEPTS_TYPE_SETTER",
@@ -2645,6 +2681,7 @@ __all__ = [
     "RECURRENCE_ID",
     "RELATED_TO_TYPE_SETTER",
     "REQUEST_STATUS_property",
+    "RESOURCES_property",
     "attendees_property",
     "busy_type_property",
     "categories_property",

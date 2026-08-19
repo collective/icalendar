@@ -1,0 +1,1 @@
+Added :attr:`RESOURCES` property to :class:`~icalendar.event.Event` and :class:`~icalendar.todo.Todo` with ``resources`` parameter in ``new()`` constructors per :rfc:`5545#section-3.8.1.10`. I used AI to assist with this change. @SemTiOne

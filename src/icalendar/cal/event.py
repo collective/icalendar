@@ -11,6 +11,7 @@ from icalendar.attr import (
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
     REQUEST_STATUS_property,
+    RESOURCES_property,
     X_MOZ_LASTACK_property,
     X_MOZ_SNOOZE_TIME_property,
     attendees_property,
@@ -413,6 +414,7 @@ class Event(Component):
     exdates = exdates_property
     rrules = rrules_property
     REQUEST_STATUS = REQUEST_STATUS_property
+    RESOURCES = RESOURCES_property
     uid = uid_property
     summary = summary_property
     description = description_property
@@ -453,6 +455,7 @@ class Event(Component):
         refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
         request_status: list[str] | str | None = None,
+        resources: list[str] | str | None = None,
         sequence: int | None = None,
         stamp: date | None = None,
         start: date | datetime | None = None,
@@ -487,6 +490,7 @@ class Event(Component):
             refids: :attr:`~icalendar.Component.refids` of the event.
             related_to: :attr:`~icalendar.Component.related_to` of the event.
             request_status: The :attr:`REQUEST_STATUS` of the event.
+            resources: The :attr:`RESOURCES` of the event.
             sequence: The :attr:`sequence` of the event.
             stamp: The :attr:`~icalendar.Component.stamp` of the event.
                 If ``None``, this is set to the current UTC time.
@@ -536,6 +540,7 @@ class Event(Component):
         event.contacts = contacts
         event.status = status
         event.REQUEST_STATUS = request_status
+        event.RESOURCES = resources
         event.attendees = attendees
         event.conferences = conferences
         event.RECURRENCE_ID = recurrence_id
