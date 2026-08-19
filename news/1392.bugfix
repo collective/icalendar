@@ -1,1 +1,0 @@
-Fixed the `equivalent_timezone_ids.py` script after the call to generate the timezone Python code was removed. @gjabell
