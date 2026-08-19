@@ -1,7 +1,4 @@
-.coverage
-.mypy_cache/
-.pytest_cache/
-.ruff_cache/
+/.coverage
 /.hypothesis/
 /.prompts/
 /.tox/
@@ -9,9 +6,9 @@
 /docs/styles/Microsoft/
 /example.ics
 /src/icalendar/_version.py
-_build/
-build/
-coverage.xml
-dist/
+/_build/
+/build/
+/coverage.xml
+/dist/
 /htmlcov/
-uv.lock
+/uv.lock
