@@ -104,7 +104,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
     If there are any changes to the module, then open a pull request and merge it.
 
-#. Determine the next version of icalendar.
+#.  Determine the new version of icalendar.
 
     .. code-block:: shell
 

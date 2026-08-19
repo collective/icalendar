@@ -189,7 +189,7 @@ changes: dev
 	$(TOWNCRIERPATH) build --version ${VERSION} --yes
 
 .PHONY: new-version
-new-version: dev
+new-version: dev ## Get the new version to use for a release
 	@CURRENT_VERSION=`git tag | sort -V | tail -n 1 | grep -o '[0-9].*'`; \
 	if ls news | grep -q '.breaking'; then OPTION=M; elif ls news | grep -q '.feature'; then OPTION=m; else OPTION=p; fi; \
 	VERSION=`./scripts/semver -$${OPTION} $$CURRENT_VERSION`; \
