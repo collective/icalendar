@@ -28,7 +28,7 @@ import sys
 
 PYTHON_MINOR_VERSION_MIN = 10
 # Update this when a new Python minor version is released
-PYTHON_MINOR_VERSION_MAX = 14
+PYTHON_MINOR_VERSION_MAX = 15
 
 COMMAND_TEST = "uv run tox -e py"
 
