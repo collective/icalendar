@@ -30,11 +30,13 @@ if TYPE_CHECKING:
     from datetime import date, datetime
     from pathlib import Path
 
-    from icalendar.cal.availability import Availability
-    from icalendar.cal.event import Event
-    from icalendar.cal.free_busy import FreeBusy
-    from icalendar.cal.journal import Journal
-    from icalendar.cal.todo import Todo
+    from icalendar.cal import (
+        Availability,
+        Event,
+        FreeBusy,
+        Journal,
+        Todo,
+    )
     from icalendar.parser.ical.component import ComponentIcalParser
 
 
