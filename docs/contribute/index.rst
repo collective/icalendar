@@ -216,6 +216,11 @@ The content will still be included in the change log, at the end of the category
     icalendar uses `towncrier <https://pypi.org/project/towncrier/>`_ to automatically update the :doc:`../reference/changelog` from entries stored in the :file:`/news` directory at the root of the project.
     It generates links to the issue numbers and organizes the change log entries according to their filename issue numbers and types for each release.
 
+    All types except ``chore`` will be published.
+
+    Changes in the ``breaking`` type will be released in the next major version.
+    Changes in the ``feature`` type will be released in the next minor or major version.
+    Changes for all other types will be released in the next version.
 
 ..  _change-log-types:
 
