@@ -48,3 +48,4 @@ Output:
 
 - [ ] I tested it with the latest version. For example, I used the command `pip3 install --upgrade https://github.com/collective/icalendar.git`.
 - [ ] I attached the `.ics` sample file, or there is no `.ics` sample file.
+      To remove private information, use icalendar-anonymizer either through its [website](https://icalendar-anonymizer.com/) or [install it locally](https://docs.icalendar-anonymizer.com/latest/installation.html).

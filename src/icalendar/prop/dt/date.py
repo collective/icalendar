@@ -64,7 +64,7 @@ class vDate(TimeBase):
     default_value: ClassVar[str] = "DATE"
     params: Parameters
 
-    def __init__(self, dt, params: dict[str, Any] | None = None):
+    def __init__(self, dt: date, params: dict[str, Any] | None = None) -> None:
         if not isinstance(dt, date):
             raise TypeError("Value MUST be a date instance")
         self.dt = dt
@@ -76,6 +76,10 @@ class vDate(TimeBase):
 
     @staticmethod
     def from_ical(ical):
+        # date-value = 4DIGIT 2DIGIT 2DIGIT, no separators,
+        # per https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.4
+        if len(ical) != 8 or not ical.isascii() or not ical.isdigit():
+            raise ValueError(f"Wrong date format {ical}")
         try:
             timetuple = (
                 int(ical[:4]),  # year

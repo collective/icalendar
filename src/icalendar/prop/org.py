@@ -16,7 +16,7 @@ class vOrg:
 
     Its value is a structured type consisting of components separated
     by semicolons. The components are the organization name, followed
-    by zero or more levels of organizational unit names:
+    by zero or more levels of organizational unit names.
 
     .. code-block:: text
 
@@ -54,7 +54,7 @@ class vOrg:
         fields: tuple[str, ...] | list[str] | str,
         /,
         params: dict[str, Any] | None = None,
-    ):
+    ) -> None:
         """Initialize ORG with variable fields or parse from vCard format string.
 
         Parameters:
@@ -90,8 +90,6 @@ class vOrg:
 
         ical = to_unicode(ical)
         fields = split_on_unescaped_semicolon(ical)
-        if len(fields) < 1:
-            raise ValueError(f"ORG must have at least 1 field: {ical}")
         return tuple(fields)
 
     def __eq__(self, other: object) -> bool:
@@ -136,12 +134,6 @@ class vOrg:
             ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
-        if len(jcal_property) < 4:  # name, params, value_type, at least 1 field
-            raise JCalParsingError(
-                "ORG must have at least 4 elements"
-                " (name, params, value_type, org name),"
-                f" got {len(jcal_property)}"
-            )
         for i, field in enumerate(jcal_property[3:], start=3):
             JCalParsingError.validate_value_type(field, str, cls, i)
         return cls(

@@ -1,1 +1,0 @@
-Added type hint for ``encoding`` parameter in :func:`~icalendar.parser_tools.data_encode`. @cybs-joe

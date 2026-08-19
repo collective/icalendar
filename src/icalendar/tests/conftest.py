@@ -21,6 +21,8 @@ from icalendar import (
     Component,
     ComponentFactory,
     Event,
+    FreeBusy,
+    Journal,
     LazyCalendar,
     Timezone,
     Todo,
@@ -61,8 +63,8 @@ class DataSource:
     extensions = [".ics", ".jcal"]
 
     def __init__(
-        self, data_source_folder: Path, parser: type[Component], multiple=False
-    ):
+        self, data_source_folder: Path, parser: type[Component], multiple: bool = False
+    ) -> None:
         self._parser = parser
         self._data_source_folder = data_source_folder
         self._multiple = multiple
@@ -148,6 +150,8 @@ EVENTS_FOLDER = HERE / "events"
 ALARMS_FOLDER = HERE / "alarms"
 AVAILABILITIES_FOLDER = HERE / "availabilities"
 TODOS_FOLDER = HERE / "todos"
+JOURNALS_FOLDER = HERE / "journals"
+FREEBUSY_FOLDER = HERE / "freebusy"
 
 
 @pytest.fixture(scope="module", params=[Calendar, LazyCalendar])
@@ -190,6 +194,16 @@ def availabilities(tzp):
 @pytest.fixture(scope="module")
 def todos(tzp):
     return DataSource.from_folder(TODOS_FOLDER, Todo)
+
+
+@pytest.fixture(scope="module")
+def journals(tzp):
+    return DataSource.from_folder(JOURNALS_FOLDER, Journal)
+
+
+@pytest.fixture(scope="module")
+def freebusy(tzp):
+    return DataSource.from_folder(FREEBUSY_FOLDER, FreeBusy)
 
 
 @pytest.fixture(

@@ -11,7 +11,7 @@ from icalendar.parser import Parameters
 from .base import TimeBase
 
 DURATION_REGEX = re.compile(
-    r"([-+]?)P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$"
+    r"([-+]?)P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?\Z"
 )
 
 
@@ -87,7 +87,9 @@ class vDuration(TimeBase):
     default_value: ClassVar[str] = "DURATION"
     params: Parameters
 
-    def __init__(self, td: timedelta | str, /, params: dict[str, Any] | None = None):
+    def __init__(
+        self, td: timedelta | str, /, params: dict[str, Any] | None = None
+    ) -> None:
         if isinstance(td, str):
             td = vDuration.from_ical(td)
         if not isinstance(td, timedelta):
@@ -130,13 +132,19 @@ class vDuration(TimeBase):
             raise InvalidCalendar(f"Invalid iCalendar duration: {ical}")
 
         sign, weeks, days, hours, minutes, seconds = match.groups()
-        value = timedelta(
-            weeks=int(weeks or 0),
-            days=int(days or 0),
-            hours=int(hours or 0),
-            minutes=int(minutes or 0),
-            seconds=int(seconds or 0),
-        )
+        try:
+            value = timedelta(
+                weeks=int(weeks or 0),
+                days=int(days or 0),
+                hours=int(hours or 0),
+                minutes=int(minutes or 0),
+                seconds=int(seconds or 0),
+            )
+        except OverflowError as e:
+            # ``timedelta`` rejects values that are too large for its C
+            # implementation. Raise the same error as other invalid durations
+            # instead of leaking ``OverflowError`` to callers.
+            raise InvalidCalendar(f"Impractical iCalendar duration: {ical}") from e
 
         if sign == "-":
             value = -value

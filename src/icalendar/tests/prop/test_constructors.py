@@ -110,6 +110,16 @@ def test_vMonth_validation():
     with pytest.raises(ValueError, match="Invalid month"):
         vMonth("")  # Empty string
 
+    # Non-ASCII digits pass ``str.isdigit`` but are not RFC month values.
+    with pytest.raises(ValueError, match="Invalid month"):
+        vMonth("١٢")  # Arabic-Indic "12", silently accepted before
+
+    with pytest.raises(ValueError, match="Invalid month"):
+        vMonth("²")  # superscript two, leaked a raw int() error before
+
+    with pytest.raises(ValueError, match="Invalid month"):
+        vMonth("٥L")  # Arabic-Indic "5" with leap suffix
+
 
 def test_param_vUTCOffset():
     obj = vUTCOffset(

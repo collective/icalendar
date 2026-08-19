@@ -9,7 +9,7 @@ Creating a calendar
 
 First, you create a :class:`~icalendar.cal.calendar.Calendar`, the highest component type which can contain one or more subcomponents.
 The Calendar component itself contains its own properties.
-When you create one using the :meth:`~icalendar.cal.calendar.Calendar.new()` method, it automatically sets the minimal required properties.
+When you create one using the :meth:`~icalendar.cal.calendar.Calendar.new()` method, it automatically sets required and recommended attributes that apply to the iCalendar object as a whole, as well as any optional ones given as arguments.
 
 .. code-block:: pycon
 

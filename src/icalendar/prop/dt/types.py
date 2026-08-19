@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from datetime import date, datetime, time, timedelta
 from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
@@ -40,9 +41,13 @@ class vDDDTypes(TimeBase):
     params: Parameters
     dt: DT_TYPE
 
-    def __init__(self, dt, params: dict[str, Any] | None = None):
+    def __init__(self, dt: DT_TYPE, params: dict[str, Any] | None = None) -> None:
         if params is None:
             params = {}
+        if isinstance(dt, Sequence) and len(dt) == 2 and dt[1] is None:
+            # ``(dt, None)`` (tuple or list) is the rdates form of a single date;
+            # the ``[1] is None`` guard skips strings and real two-value pairs (#1439).
+            dt = dt[0]
         if not isinstance(dt, (datetime, date, timedelta, time, tuple)):
             raise TypeError(
                 "You must use datetime, date, timedelta, time or tuple (for periods)"
@@ -99,7 +104,9 @@ class vDDDTypes(TimeBase):
             if timezone:
                 tzinfo = tzp.timezone(timezone)
                 if tzinfo is not None:
-                    return to_datetime(vDate.from_ical(ical)).replace(tzinfo=tzinfo)
+                    # ``replace`` picks the first offset a pytz timezone knows,
+                    # which is the local mean time one, so localize instead.
+                    return tzp.localize(to_datetime(vDate.from_ical(ical)), tzinfo)
             return vDate.from_ical(ical)
         if len(ical) in (6, 7):
             return vTime.from_ical(ical, timezone=timezone)

@@ -9,10 +9,7 @@ icalendar Maintainers
 
 Currently the maintainers are the following people.
 
-- `@geier <https://github.com/geier>`_
-- `@jacadzaca <https://github.com/jacadzaca>`_
-- `@niccokunzmann <https://github.com/niccokunzmann>`_
-- `@SashankBhamidi <https://github.com/SashankBhamidi>`_
+.. include:: ../_include/maintainers.inc
 
 Maintainers need the following permissions.
 
@@ -98,6 +95,14 @@ Adjust the examples for the current release as needed.
 
 Since collaborators and maintainers have write access to the repository, they can start the release process.
 However, only people with ``Environments/Configure PyPI`` access can approve an automated release to PyPI.
+
+#.  Update the Windows to Olson mapping in the :mod:`~icalendar.timezone.windows_to_olson` module.
+
+    ..  code-block:: shell
+
+        make wo
+
+    If there are any changes to the module, then open a pull request and merge it.
 
 #.  Set an environment variable to use in subsequent commands during the release process.
 
@@ -353,6 +358,8 @@ Links
 
 This section contains useful links for maintainers and collaborators.
 
+-   To remove private information from an iCalendar file for bug reports, use `icalendar-anonymizer <https://github.com/pycalendar/icalendar-anonymizer>`_ either through its `website <https://icalendar-anonymizer.com/>`_ or `install it locally <https://docs.icalendar-anonymizer.com/latest/installation.html>`_.
+-   `Python Calendaring Ecosystem <https://pycal.org/>`_
 -   `Future of icalendar, looking for maintainer #360 <https://github.com/collective/icalendar/discussions/360>`_
 -   `Comment on the Plone tests running with icalendar <https://github.com/collective/icalendar/pull/447#issuecomment-1277643634>`_
 

@@ -105,6 +105,9 @@ Related projects
 `sphinx-icalendar <https://pypi.org/project/sphinx-icalendar/>`_
     Provides calendar code blocks and syntax highlighting in a tabbed interface for documentation as an extension to Sphinx.
 
+`Python Calendaring Ecosystem <https://pycal.org/>`_
+    The standards compliant, integrated Python calendar packages.
+
 Change log
 ==========
 
