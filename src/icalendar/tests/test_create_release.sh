@@ -11,7 +11,6 @@ cd "../../.."
 
 rm -rf dist
 make dev
-uv pip install twine
 
 # build the release
 
@@ -45,6 +44,6 @@ if ! echo "$FILES" | grep -q '/funding.json$'; then
   exit 1
 fi
 
-uv run twine check dist/*
+uvx run twine check dist/*
 
 echo "Checks passed."
