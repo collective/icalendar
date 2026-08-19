@@ -17,7 +17,7 @@ permissions:
 env:
   # Exclude people from being profiled.
   # See https://stackoverflow.com/a/73274812
-  VERIFIED_CONTRIBUTORS: ("niccokunzmann" "stevepiercy" "angatha" "SashankBhamidi" "ennamarie19" "peskypotato")
+  VERIFIED_CONTRIBUTORS: ("angatha" "dependabot" "ennamarie19" "niccokunzmann" "peskypotato" "SashankBhamidi" "stevepiercy")
 
 jobs:
   profile-author:
@@ -40,7 +40,6 @@ jobs:
             echo "login=${{ github.event.pull_request.user.login }}" >> "$GITHUB_OUTPUT"
             echo "number=${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
           fi
-      
       - name: Run gh-profiler
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
