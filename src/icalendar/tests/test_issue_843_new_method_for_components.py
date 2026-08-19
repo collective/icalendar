@@ -89,6 +89,7 @@ COMPONENTS_PRIORITY = {Event, Todo, Availability}
 COMPONENTS_CONTACT = {Event, Todo, Journal, FreeBusy, Available, Availability}
 COMPONENTS_START_END = {Event, Todo, FreeBusy, Available, Availability}
 COMPONENTS_STATUS = {Event, Todo, Journal}
+COMPONENTS_REQUEST_STATUS = {Event, Todo, Journal, FreeBusy}
 COMPONENTS_ATTENDEES = {Event, Todo, Journal, Alarm}
 # RFC 9253 properties are defines on ALL
 # So, if you add new components, do not forget to add them here.
@@ -958,6 +959,42 @@ rfc_9253_test_cases = [
         "REFID",
         ["itinerary-2014-11-17", "itinerary-2014-11-17-2"],
         ["itinerary-2014-11-17", "itinerary-2014-11-17-2"],
+        True,
+        "set two values",
+    ),
+    (
+        COMPONENTS_REQUEST_STATUS,
+        "REQUEST_STATUS",
+        "REQUEST-STATUS",
+        None,
+        [],
+        False,
+        "setting nothing",
+    ),
+    (
+        COMPONENTS_REQUEST_STATUS,
+        "REQUEST_STATUS",
+        "REQUEST-STATUS",
+        [],
+        [],
+        False,
+        "setting nothing",
+    ),
+    (
+        COMPONENTS_REQUEST_STATUS,
+        "REQUEST_STATUS",
+        "REQUEST-STATUS",
+        "2.0;Success",
+        ["2.0;Success"],
+        True,
+        "set a value",
+    ),
+    (
+        COMPONENTS_REQUEST_STATUS,
+        "REQUEST_STATUS",
+        "REQUEST-STATUS",
+        ["2.0;Success", "3.1;Invalid property value"],
+        ["2.0;Success", "3.1;Invalid property value"],
         True,
         "set two values",
     ),
