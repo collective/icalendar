@@ -403,13 +403,19 @@ def multi_language_text_property(
     return property(fget, fset, fdel, doc)
 
 
-def single_int_property(prop: str, default: int, doc: str) -> property:
+def single_int_property(
+    prop: str, default: int, doc: str, *, min_value: int | None = None
+) -> property:
     """Create a property for an int value that exists only once.
 
     Parameters:
-        prop: The name of the property
-        default: The default value
-        doc: The documentation string
+        default: Required. The default value.
+        doc: Required. The documentation string.
+        prop: Required. The name of the property.
+        min_value: If set, the value must be greater than or equal to this minimum.
+
+    ..  versionadded:: 7.2.3
+        Added the ``min_value`` parameter.
     """
 
     def fget(self: Component) -> int:
@@ -421,6 +427,11 @@ def single_int_property(prop: str, default: int, doc: str) -> property:
 
     def fset(self: Component, value: int | None):
         """Set the property."""
+        if value is not None:
+            if not isinstance(value, int) or isinstance(value, bool):
+                raise TypeError(f"{prop} must be an int, got {value!r}")
+            if min_value is not None and value < min_value:
+                raise InvalidCalendar(f"{prop} must be >= {min_value}, got {value}")
         fdel(self)
         if value is not None:
             self.add(prop, value)
@@ -618,7 +629,17 @@ Examples:
         >>> event = calendar.events[0]
         >>> event.sequence
         10
+
+    Raises:
+        TypeError: If the value is not an ``int``. Booleans are rejected, too,
+            even though ``bool`` subclasses ``int``.
+
+        ~icalendar.error.InvalidCalendar: If the value is negative.
+
+    ..  versionchanged:: 7.2.3
+        Negative values are no longer accepted.
     """,  # noqa: E501
+    min_value=0,
 )
 
 
@@ -1293,7 +1314,17 @@ initial trigger.
 Defaults to ``0``, meaning the alarm fires once. Must be paired with
 :attr:`~icalendar.cal.alarm.Alarm.DURATION`. Conforms with :rfc:`5545#section-3.8.6.2`.
 The value is capped at :data:`icalendar.config.MAX_ALARM_REPEAT` on read.
+
+Raises:
+    TypeError: If the value is not an ``int``. Booleans are rejected, too,
+        even though ``bool`` subclasses ``int``.
+
+    ~icalendar.error.InvalidCalendar: If the value is negative.
+
+..  versionchanged:: 7.2.3
+    Negative values are no longer accepted.
 """,
+        min_value=0,
     )
 
     def fget(self):
@@ -1342,7 +1373,17 @@ Description:
     Within a "VTODO" calendar component, this property specified a
     priority for the to-do.  This property is useful in prioritizing
     multiple action items for a given time period.
+
+    Raises:
+        TypeError: If the value is not an ``int``. Booleans are rejected, too,
+            even though ``bool`` subclasses ``int``.
+
+        ~icalendar.error.InvalidCalendar: If the value is negative.
+
+    ..  versionchanged:: 7.2.3
+        Negative values are no longer accepted.
 """,
+    min_value=0,
 )
 
 class_property = single_string_enum_property(
@@ -1606,13 +1647,13 @@ Example:
 )
 
 
-def timezone_datetime_property(name: str, docs: str):
+def _timezone_datetime_property(name: str, docs: str):
     """Create a property to access the values with a proper timezone."""
 
     return single_utc_property(name, docs)
 
 
-rfc_7953_dtstart_property = timezone_datetime_property(
+rfc_7953_dtstart_property = _timezone_datetime_property(
     "DTSTART",
     """Start of the component.
 
@@ -1629,7 +1670,7 @@ rfc_7953_dtstart_property = timezone_datetime_property(
     """,
 )
 
-rfc_7953_dtend_property = timezone_datetime_property(
+rfc_7953_dtend_property = _timezone_datetime_property(
     "DTEND",
     """Start of the component.
 
@@ -2562,12 +2603,49 @@ Examples:
 """,
 )
 
+REQUEST_STATUS_property = multi_string_property(
+    "REQUEST-STATUS",
+    """This property defines the status code returned for a scheduling request.
+
+Setting this property replaces all existing REQUEST-STATUS values. A :class:`str`
+is stored as-is. Setting ``None`` or an empty list removes all
+REQUEST-STATUS values, as does deleting the property.
+
+The value consists of a short return status component, a longer
+return status description component, and optionally a status-specific
+data component, separated by semicolons (statcode;statdesc[;extdata]).
+The return status components are defined in :rfc:`5545#section-3.8.8.3`.
+
+Note:
+    List modifications do not modify the component. Methods such as
+    ``append()``, ``extend()``, and ``remove()``, as well as item
+    assignment, act on a copy. Assign the list back to the property, or
+    use :meth:`Component.add <icalendar.cal.component.Component.add>`
+    with a typed value instead.
+
+Parameters:
+    request_status(str | list[str] | None):
+        A single status string, or a list of status strings to set.
+
+Example:
+    Add a request status to an event:
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Event
+        >>> event = Event.new(request_status="2.0;Success")
+        >>> event.REQUEST_STATUS == ["2.0;Success"]
+        True
+""",
+)
+
 
 __all__ = [
     "CONCEPTS_TYPE_SETTER",
     "LINKS_TYPE_SETTER",
     "RECURRENCE_ID",
     "RELATED_TO_TYPE_SETTER",
+    "REQUEST_STATUS_property",
     "attendees_property",
     "busy_type_property",
     "categories_property",
