@@ -44,6 +44,6 @@ if ! echo "$FILES" | grep -q '/funding.json$'; then
   exit 1
 fi
 
-uvx run twine check dist/*
+uvx twine check dist/*
 
 echo "Checks passed."
