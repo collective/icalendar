@@ -89,6 +89,7 @@ COMPONENTS_PRIORITY = {Event, Todo, Availability}
 COMPONENTS_CONTACT = {Event, Todo, Journal, FreeBusy, Available, Availability}
 COMPONENTS_START_END = {Event, Todo, FreeBusy, Available, Availability}
 COMPONENTS_STATUS = {Event, Todo, Journal}
+COMPONENTS_REQUEST_STATUS = {Event, Todo, Journal, FreeBusy}
 COMPONENTS_ATTENDEES = {Event, Todo, Journal, Alarm}
 # RFC 9253 properties are defines on ALL
 # So, if you add new components, do not forget to add them here.
@@ -961,6 +962,42 @@ rfc_9253_test_cases = [
         True,
         "set two values",
     ),
+    (
+        COMPONENTS_REQUEST_STATUS,
+        "REQUEST_STATUS",
+        "REQUEST-STATUS",
+        None,
+        [],
+        False,
+        "setting nothing",
+    ),
+    (
+        COMPONENTS_REQUEST_STATUS,
+        "REQUEST_STATUS",
+        "REQUEST-STATUS",
+        [],
+        [],
+        False,
+        "setting nothing",
+    ),
+    (
+        COMPONENTS_REQUEST_STATUS,
+        "REQUEST_STATUS",
+        "REQUEST-STATUS",
+        "2.0;Success",
+        ["2.0;Success"],
+        True,
+        "set a value",
+    ),
+    (
+        COMPONENTS_REQUEST_STATUS,
+        "REQUEST_STATUS",
+        "REQUEST-STATUS",
+        ["2.0;Success", "3.1;Invalid property value"],
+        ["2.0;Success", "3.1;Invalid property value"],
+        True,
+        "set two values",
+    ),
 ]
 
 
@@ -1018,6 +1055,50 @@ def test_properties_and_new(
             assert_component_attribute_has_value(
                 component, property_name, expected_value, message
             )
+
+
+@pytest.mark.parametrize(
+    ("factory_method", "required_kwargs"),
+    [
+        ("new", {}),
+        (
+            "new_display",
+            {"description": "Reminder", "trigger": timedelta(minutes=-5)},
+        ),
+        ("new_audio", {"trigger": timedelta(minutes=-5)}),
+        (
+            "new_email",
+            {
+                "summary": "Reminder",
+                "description": "The event starts soon.",
+                "trigger": timedelta(minutes=-5),
+                "attendees": [vCalAddress("mailto:user@example.com")],
+            },
+        ),
+    ],
+    ids=["new", "new_display", "new_audio", "new_email"],
+)
+@pytest.mark.parametrize(
+    ("property_name", "value", "expected_value"),
+    [
+        ("uid", "alarm-uid", vText("alarm-uid")),
+        ("links", ["https://example.com/link"], [vUri("https://example.com/link")]),
+        ("related_to", ["parent-uid"], [vText("parent-uid")]),
+        ("refids", ["reference-id"], [vText("reference-id")]),
+        (
+            "concepts",
+            ["https://example.com/concept"],
+            [vUri("https://example.com/concept")],
+        ),
+    ],
+)
+def test_alarm_factory_methods_set_shared_properties(
+    factory_method, required_kwargs, property_name, value, expected_value
+):
+    """All Alarm factory methods set their shared properties."""
+    alarm = getattr(Alarm, factory_method)(**required_kwargs, **{property_name: value})
+
+    assert getattr(alarm, property_name) == expected_value
 
 
 @pytest.mark.parametrize("component_class", COMPONENTS_START_END)

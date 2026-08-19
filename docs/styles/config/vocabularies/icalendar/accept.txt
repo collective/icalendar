@@ -20,6 +20,7 @@ Repology
 recur.recur
 reformats
 RFCs?
+SARIF
 sphinx_copybutton
 sphinx_design
 sphinx_reredirects
@@ -34,3 +35,4 @@ uv
 vCard
 xCal
 Xcode
+zizmor

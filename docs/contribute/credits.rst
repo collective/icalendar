@@ -10,10 +10,12 @@ The maintainers of icalendar are grateful for their support.
 Maintainers
 -----------
 
-- `@geier <https://github.com/geier>`_
-- `@jacadzaca <https://github.com/jacadzaca>`_
-- `Nicco Kunzmann <https://github.com/niccokunzmann>`_
+.. include:: ../_include/maintainers.inc
 
+Documentation lead
+------------------
+
+`@stevepiercy <https://github.com/stevepiercy>`_
 
 Original author
 ---------------

@@ -65,7 +65,7 @@ class vN:
         fields: tuple[str, ...] | list[str] | str | NFields,
         /,
         params: dict[str, Any] | None = None,
-    ):
+    ) -> None:
         """Initialize N with five fields or parse from vCard format string.
 
         Parameters:

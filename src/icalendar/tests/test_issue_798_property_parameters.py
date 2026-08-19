@@ -4,6 +4,7 @@ See https://github.com/collective/icalendar/issues/798
 """
 
 from datetime import datetime
+from typing import Any
 
 import pytest
 
@@ -25,7 +26,7 @@ from icalendar.timezone.tzp import TZP
 class Prop:
     params: Parameters
 
-    def __init__(self, **parameters):
+    def __init__(self, **parameters: Any) -> None:
         """Create a new property."""
         self.params = Parameters(parameters)
 
