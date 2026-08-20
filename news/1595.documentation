@@ -1,1 +1,1 @@
-Added `new-version` make target to calculate the new version of icalendar. @niccokunzmann
+Added ``new-version`` make target to calculate the new version of icalendar. @niccokunzmann

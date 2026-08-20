@@ -230,19 +230,11 @@ Change log types
 ``breaking``
     For changes that break the existing API.
 
-    .. note::
-
-        Breaking changes increase the major version of icalendar.
-
 ``removal``
     For removals and deprecations.
 
 ``feature``
     For new functionality.
-
-    .. note::
-
-        New features increase the minor version of icalendar.
 
 ``bugfix``
     For bug fixes and error corrections.
