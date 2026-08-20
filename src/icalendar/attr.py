@@ -2658,10 +2658,6 @@ Note:
     use :meth:`Component.add <icalendar.cal.component.Component.add>`
     with a typed value instead.
 
-Parameters:
-    resources(str | list[str] | None):
-        A single resource, or a list of resources to set.
-
 Example:
     Add resources to an event:
 
