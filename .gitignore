@@ -1,9 +1,3 @@
-/.coverage
-/.hypothesis/
-/.prompts/
-/.tox/
-/.venv/
-/docs/styles/Microsoft/
 __pycache__
 /_build/
 /.coverage
