@@ -10,7 +10,6 @@ cd "../../.."
 # setup clean environment
 
 rm -rf dist
-make dev
 
 # build the release
 
