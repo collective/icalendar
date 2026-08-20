@@ -104,7 +104,13 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
     If there are any changes to the module, then open a pull request and merge it.
 
-#.  Set an environment variable to use in subsequent commands during the release process.
+#.  Determine the new version of icalendar.
+
+    .. code-block:: shell
+
+        make new-version
+
+#.  Copy and paste the new version into an environment variable to use in subsequent commands during the release process.
 
     .. code-block:: shell
 
