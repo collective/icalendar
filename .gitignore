@@ -4,10 +4,6 @@
 /.tox/
 /.venv/
 /docs/styles/Microsoft/
-/example.ics
-/src/icalendar/_version.py
-/_build/
-/build/
 __pycache__
 /_build/
 /.coverage
