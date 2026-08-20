@@ -13,3 +13,4 @@ __pycache__
 /htmlcov/
 /src/icalendar/_version.py
 /uv.lock
+.DS_Store
