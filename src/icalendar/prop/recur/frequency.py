@@ -56,7 +56,7 @@ class vFrequency(str):
         """Parse a jCal value for vFrequency.
 
         Raises:
-            ~error.JCalParsingError: If the value is not a valid frequency.
+            ~icalendar.error.JCalParsingError: If the value is not a valid frequency.
         """
         JCalParsingError.validate_value_type(value, str, cls)
         try:

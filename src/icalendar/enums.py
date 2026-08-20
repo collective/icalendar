@@ -118,7 +118,7 @@ class FBTYPE(StrEnum):
         ``BUSY_UNAVAILABLE``,
         ``BUSY_TENTATIVE``
 
-    See also :class:`BUSYTYPE`.
+    See also :class:`~icalendar.enums.BUSYTYPE`.
 
     Purpose:
         To specify the free or busy time type.
@@ -417,7 +417,8 @@ class BUSYTYPE(StrEnum):
 
     Description:
         This property is used to specify the default busy time
-        type.  The values correspond to those used by the :class:`FBTYPE`
+        type.  The values correspond to those used by the
+        :class:`~icalendar.enums.FBTYPE`
         parameter used on a "FREEBUSY" property, with the exception that
         the "FREE" value is not used in this property.  If not specified
         on a component that allows this property, the default is "BUSY-

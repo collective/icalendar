@@ -42,7 +42,7 @@ class vSkip(vText, Enum):
         """Parse a jCal value for vSkip.
 
         Raises:
-            ~error.JCalParsingError: If the value is not a valid skip value.
+            ~icalendar.error.JCalParsingError: If the value is not a valid skip value.
         """
         JCalParsingError.validate_value_type(value, str, cls)
         try:
