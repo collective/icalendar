@@ -2,9 +2,11 @@ __pycache__
 /_build/
 /.coverage
 /.hypothesis/
+/.idea/
 /.prompts/
 /.tox/
 /.venv/
+/.vscode/
 /build/
 /coverage.xml
 /dist/
