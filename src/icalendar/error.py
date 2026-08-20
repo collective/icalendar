@@ -208,7 +208,7 @@ class JCalParsingError(InvalidCalendar):
         Raises:
             ~error.JCalParsingError: if the property is not valid.
 
-        ..  versionchanged:: 7.3.0:
+        ..  versionchanged:: 7.3.0
             The name (first item of the list) is validated by
             :meth:`validate_jcal_token`.
         """
@@ -327,8 +327,7 @@ class JCalParsingError(InvalidCalendar):
         See also:
             :meth:`~icalendar.parser.string.validate_token`
 
-        ..  versionadded:: 7.3.0:
-            This method was added.
+        ..  versionadded:: 7.3.0
         """
         from icalendar.parser.string import validate_token
 
