@@ -155,7 +155,7 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
     .. code-block:: shell
 
-        git add --all CHANGES.rst news/ docs/conf.py
+        git add CHANGES.rst news/ docs/conf.py
         git add .github/workflows/tests.yml  # Only for a new major release
         git commit -m"version $VERSION"
         git push  # to collective/icalendar
