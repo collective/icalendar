@@ -37,6 +37,13 @@ def test_add_multiple_resources(component: ET):
     assert component.RESOURCES == ["EASEL", "PROJECTOR", "VCR"]
 
 
+def test_successive_adds(component: ET):
+    """Successive adds accumulate."""
+    component.add("RESOURCES", "EASEL")
+    component.add("RESOURCES", "TELEGRAPH")
+    assert component.RESOURCES == ["EASEL", "TELEGRAPH"]
+
+
 def test_set_resources(component: ET):
     """Set resources."""
     component.RESOURCES = ["EASEL", "PROJECTOR", "VCR"]
@@ -49,6 +56,13 @@ def test_delete_resources(component: ET):
     del component.RESOURCES
     assert "RESOURCES" not in component
     assert component.RESOURCES == []
+
+
+def test_delete_by_index(component: ET):
+    """Delete one of many resources by index."""
+    component.RESOURCES = ["EASEL", "TELEGRAPH"]
+    del component.RESOURCES[0]
+    assert component.RESOURCES == ["TELEGRAPH"]
 
 
 def test_resources_roundtrip(component: ET):

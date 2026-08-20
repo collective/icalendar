@@ -705,9 +705,6 @@ Note:
     At present, icalendar doesn't take the LANGUAGE parameter as defined
     in :rfc:`5545#section-3.2.10` into account.
 
-Parameters:
-    categories(list[str]): A list of categories as strings.
-
 Example:
     Create an event, add categories to it, print its ical representation,
     append another category, and finally compare the result
@@ -2616,15 +2613,11 @@ data component, separated by semicolons (statcode;statdesc[;extdata]).
 The return status components are defined in :rfc:`5545#section-3.8.8.3`.
 
 Note:
-    List modifications do not modify the component. Methods such as
-    ``append()``, ``extend()``, and ``remove()``, as well as item
-    assignment, act on a copy. Assign the list back to the property, or
-    use :meth:`Component.add <icalendar.cal.component.Component.add>`
-    with a typed value instead.
-
-Parameters:
-    request_status(str | list[str] | None):
-        A single status string, or a list of status strings to set.
+    After assigning a list or adding several values, the returned list
+    is the same object that stores the values. Modifying it (``append()``,
+    ``extend()``, ``remove()``, item assignment, or ``del``) changes the
+    component. If the property holds a single value, the returned list is
+    a new wrapper and modifications are lost.
 
 Example:
     Add a request status to an event:
@@ -2652,11 +2645,11 @@ list becomes its own RESOURCES property value. See
 :rfc:`5545#section-3.8.1.10` for the specification.
 
 Note:
-    List modifications do not modify the component. Methods such as
-    ``append()``, ``extend()``, and ``remove()``, as well as item
-    assignment, act on a copy. Assign the list back to the property, or
-    use :meth:`Component.add <icalendar.cal.component.Component.add>`
-    with a typed value instead.
+    After assigning a list or adding several values, the returned list
+    is the same object that stores the values. Modifying it (``append()``,
+    ``extend()``, ``remove()``, item assignment, or ``del``) changes the
+    component. If the property holds a single value, the returned list is
+    a new wrapper and modifications are lost.
 
 Example:
     Add resources to an event:
