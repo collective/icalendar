@@ -1,3 +1,4 @@
+.DS_Store
 __pycache__
 /_build/
 /.coverage
@@ -13,4 +14,4 @@ __pycache__
 /htmlcov/
 /src/icalendar/_version.py
 /uv.lock
-.DS_Store
+
