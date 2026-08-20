@@ -229,6 +229,7 @@ Change log types
 
 ``breaking``
     For changes that break the existing API.
+    These also require an entry in the :doc:`../how-to/upgrade`, and might require the creation of a new section heading for the next major version number release.
 
 ``removal``
     For removals and deprecations.
