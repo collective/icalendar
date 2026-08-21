@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Any, Literal
 
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.parser.ical.lazy import LazyCalendarIcalParser
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 class ParsedSubcomponentsStrategy:
     """All the subcomponents are parsed and available as a list."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._components: list[Component] = []
 
     def get_all_components(self) -> tuple[ParsedSubcomponentsStrategy, list[Component]]:
@@ -67,7 +67,7 @@ class LazySubcomponentsStrategy:
     initial_components_to_parse: tuple[str, ...] = ("VTIMEZONE",)
     """Parse these subcomponents before any others."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._components: list[LazySubcomponent | Component] = []
         self._initial_parsed: bool = False
 
@@ -206,7 +206,7 @@ class LazyCalendar(Calendar):
     )
     """The strategy pattern for subcomponents of the calendar."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Initialize the calendar."""
         self._subcomponents = InitialSubcomponentsStrategy()
         super().__init__(*args, **kwargs)

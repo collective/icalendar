@@ -66,6 +66,10 @@ class vUri(str):
         params: dict[str, Any] | None = None,
     ) -> Self:
         value = to_unicode(value, encoding=encoding)
+        if "\r" in value or "\n" in value:
+            raise ValueError(
+                f"A URI value may not contain CR or LF characters: {value!r}"
+            )
         self = super().__new__(cls, value)
         self.params = Parameters(params)
         return self
@@ -102,7 +106,7 @@ class vUri(str):
         JCalParsingError.validate_property(jcal_property, cls)
         return cls(
             jcal_property[3],
-            Parameters.from_jcal_property(jcal_property),
+            params=Parameters.from_jcal_property(jcal_property),
         )
 
     @property

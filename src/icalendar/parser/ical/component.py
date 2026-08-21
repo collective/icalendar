@@ -41,7 +41,7 @@ class ComponentIcalParser:
         data: bytes | str | list[Contentline],
         component_factory: ComponentFactory,
         types_factory: TypesFactory,
-    ):
+    ) -> None:
         """Initialize the parser with the raw data.
 
         Parameters:
@@ -203,6 +203,13 @@ class ComponentIcalParser:
         elif name == "RDATE" and vals == "":
             vals_list = []
         else:
+            factory = self.get_factory_for_property(name, params)
+            # Value types that must not be unescaped provide their own value.
+            get_value_from_content_line = getattr(
+                factory, "get_value_from_content_line", None
+            )
+            if get_value_from_content_line is not None:
+                vals = get_value_from_content_line(line)
             vals_list = [vals]
 
         # Parse all properties eagerly
