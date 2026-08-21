@@ -210,8 +210,8 @@ The following example demonstrates subtyping through the usage of a protocol and
     - GitHub issue :issue:`Add type hints <938>`
     - :ref:`markup-and-formatting`
     - :doc:`typing:index`
-- Python standard library :mod:`typing`
-- :ref:`typing:spec/callable` (for annotating callables)
+    - Python standard library :mod:`typing`
+    - `Annotating callables <https://docs.python.org/3/library/typing.html#annotating-callables>`_
 
 
 Activate a tox environment
