@@ -8,6 +8,17 @@ Its purpose is to help developers adapt their existing code.
 This guide includes only breaking changes and deprecation notices.
 For a comprehensive list of new features and bug fixes, see the :doc:`../reference/changelog`.
 
+.. _upgrade-8.0.0:
+
+8.0.0
+=====
+
+This section describes the major changes to icalendar in version 8.0.0.
+
+.. _upgrade-8.0.0-breaking:
+
+Breaking changes
+----------------
 
 .. _upgrade-7.0.0:
 
