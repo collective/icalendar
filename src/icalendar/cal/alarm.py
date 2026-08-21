@@ -126,7 +126,7 @@ class Alarm(Component):
 
             ~icalendar.error.InvalidCalendar: If the value is negative.
 
-        ..  versionchanged:: 7.2.3
+        ..  versionchanged:: 7.3.0
             Negative values are no longer accepted.
         """,
         min_value=0,
