@@ -9,27 +9,35 @@ jobs:
     steps:
     - name: Build Fuzzers
       id: build
-      uses: google/oss-fuzz/infra/cifuzz/actions/build_fuzzers@master
+      uses: google/oss-fuzz/infra/cifuzz/actions/build_fuzzers@06a694ed8ee65428f29d220a001681a19ccde657 # master
       with:
         oss-fuzz-project-name: 'icalendar'
         language: python
     - name: Run Fuzzers
-      uses: google/oss-fuzz/infra/cifuzz/actions/run_fuzzers@master
+      uses: google/oss-fuzz/infra/cifuzz/actions/run_fuzzers@06a694ed8ee65428f29d220a001681a19ccde657 # master
       with:
         oss-fuzz-project-name: 'icalendar'
         language: python
         fuzz-seconds: 600
         output-sarif: true
     - name: Upload Crash
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
       if: failure() && steps.build.outcome == 'success'
       with:
         name: artifacts
         path: ./out/artifacts
     - name: Upload Sarif
       if: always() && steps.build.outcome == 'success'
-      uses: github/codeql-action/upload-sarif@v4
+      uses: github/codeql-action/upload-sarif@ff2f1c621b7f889edc0d3c761ac2e6a3f8cdb0dd # v4
       with:
         # Path to SARIF file relative to the root of the repository
         sarif_file: cifuzz-sarif/results.sarif
         checkout_path: cifuzz-sarif
+
+  check-distribution:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+    - name: Do not include Apache files in the distribution.
+      run: |
+        src/icalendar/tests/test_create_release.sh

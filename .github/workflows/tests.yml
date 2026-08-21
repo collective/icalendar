@@ -21,7 +21,7 @@ jobs:
       # See https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/passing-information-between-jobs#example-defining-outputs-for-a-job
       include: ${{ steps.set-matrix.outputs.include }}
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
     - name: Set matrix
       id: set-matrix
       run: |
@@ -40,11 +40,11 @@ jobs:
     - name: Skip notice
       if: ${{ matrix.skip }}
       run: echo "Skipped ${{ matrix.test_name }} (not required for this trigger)"
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       if: ${{ !matrix.skip }}
     - name: Install uv and Python ${{ matrix.python_version }}
       if: ${{ !matrix.skip }}
-      uses: astral-sh/setup-uv@v7
+      uses: astral-sh/setup-uv@94527f2e458b27549849d47d273a16bec83a01e9 # v7
       with:
         enable-cache: true
         # Install a specific version of uv.
@@ -60,7 +60,7 @@ jobs:
       run: ${{ matrix.test_command }}
     - name: Coveralls Parallel
       if: ${{ !matrix.skip }}
-      uses: coverallsapp/github-action@v2
+      uses: coverallsapp/github-action@8d6379e14d29928660c4ba802d8e85393440b329 # v2
       with:
         flag-name: run-${{ matrix.test_name }}
         parallel: true
@@ -79,7 +79,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Coveralls Finished
-      uses: coverallsapp/github-action@v2
+      uses: coverallsapp/github-action@8d6379e14d29928660c4ba802d8e85393440b329 # v2
       with:
         parallel-finished: true
         format: cobertura
@@ -89,9 +89,13 @@ jobs:
     name: Check built packages
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v7
-    - name: Install uv and Python
-      uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+    - name: Set up Python
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+      with:
+        python-version: "3.14"
+    - name: Install uv
+      uses: astral-sh/setup-uv@94527f2e458b27549849d47d273a16bec83a01e9 # v7
       with:
         enable-cache: false
         version: "0.11.6"
@@ -116,9 +120,9 @@ jobs:
       TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
       TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
     - name: Set up Python
-      uses: actions/setup-python@v7
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
       with:
         python-version: "3.14"
     - name: Install dependencies
@@ -156,9 +160,9 @@ jobs:
     environment:
       name: github-release
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Create GitHub release from tag
-        uses: ncipollo/release-action@v1
+        uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1
         with:
           allowUpdates: true
           body: "To view the changes, please see the [Changelog](https://icalendar.readthedocs.io/en/latest/reference/changelog.html). This release can be installed from [PyPI](https://pypi.org/project/icalendar/#history)."
