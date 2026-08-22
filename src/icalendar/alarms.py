@@ -14,7 +14,7 @@ This takes different calendar software into account and the RFC 9074 (Alarm Exte
 from __future__ import annotations
 
 from datetime import date, timedelta, tzinfo
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, overload
 
 from icalendar.cal.event import Event
 from icalendar.cal.todo import Todo
@@ -254,6 +254,12 @@ class Alarms:
         If you have alarms relative to the end of a component, set the end here.
         """
         self._end = dt
+
+    @overload
+    def _add(self, dt: datetime, td: timedelta) -> datetime: ...
+
+    @overload
+    def _add(self, dt: date, td: timedelta) -> date: ...
 
     def _add(self, dt: date, td: timedelta) -> date | datetime:
         """Add a timedelta to a datetime."""
