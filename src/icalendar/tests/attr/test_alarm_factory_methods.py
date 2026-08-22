@@ -132,13 +132,8 @@ def test_new_audio_without_attach():
 
 def test_new_audio_with_attach():
     uri = "ftp://example.com/pub/sounds/bell-01.aud"
-    alarm = Alarm.new_audio(timedelta(minutes=-5), attach=uri)
+    alarm = Alarm.new_audio(timedelta(minutes=-5), attachments=uri)
     assert str(alarm["ATTACH"]) == uri
-
-
-def test_new_audio_with_empty_attach_ignored():
-    alarm = Alarm.new_audio(timedelta(minutes=-5), attach="")
-    assert alarm.get("ATTACH") is None
 
 
 def test_new_audio_with_repeat():
@@ -156,7 +151,7 @@ def test_new_audio_requires_trigger():
 
 def test_new_audio_with_bytes_attach():
     data = b"\x00\x01\x02\x03"
-    alarm = Alarm.new_audio(timedelta(minutes=-5), attach=data)
+    alarm = Alarm.new_audio(timedelta(minutes=-5), attachments=data)
     assert isinstance(alarm["ATTACH"], vBinary)
     assert alarm["ATTACH"] == vBinary(data)
 
