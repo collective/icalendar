@@ -136,3 +136,22 @@ def test_pypy_is_first(arg_ref, arg_pr):
     """
     result = generate_matrix(arg_ref, arg_pr)
     assert result["include"][0]["test_name"] == "pypy3"
+
+
+@pytest.mark.parametrize(
+    ("event_name", "git_ref", "expected_skip"),
+    [
+        ("push", "refs/heads/main", False),
+        ("schedule", "refs/heads/main", True),
+        ("workflow_dispatch", "refs/heads/main", True),
+        ("schedule", "refs/heads/7.x", True),
+        ("push", "refs/heads/7.x", True),
+        ("push", "refs/tags/v8.0.0", True),
+        ("pull_request_review", "refs/pull/42/merge", True),
+    ],
+)
+def test_pypy_only_runs_on_push_to_main(event_name, git_ref, expected_skip):
+    """Run the slow PyPy job after changes are merged or pushed to main."""
+    matrix = generate_matrix(git_ref, "", event_name)
+    pypy = next(case for case in matrix["include"] if case["test_name"] == "pypy3")
+    assert pypy["skip"] is expected_skip
