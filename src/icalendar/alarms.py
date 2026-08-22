@@ -325,7 +325,7 @@ class Alarms:
             for i in range(1, repeat + 1):
                 yield self._add(first, duration * i)
 
-    def _alarm_time(self, alarm: Alarm, trigger: date)  -> AlarmTime:
+    def _alarm_time(self, alarm: Alarm, trigger: date) -> AlarmTime:
         """Create an alarm time with the additional attributes."""
         if getattr(trigger, "tzinfo", None) is None and self._local_tzinfo is not None:
             trigger = normalize_pytz(trigger.replace(tzinfo=self._local_tzinfo))
