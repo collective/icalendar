@@ -11,6 +11,7 @@ from icalendar.attr import (
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
     REQUEST_STATUS_property,
+    RESOURCES_property,
     X_MOZ_LASTACK_property,
     X_MOZ_SNOOZE_TIME_property,
     attendees_property,
@@ -303,6 +304,7 @@ class Todo(Component):
     exdates = exdates_property
     rrules = rrules_property
     REQUEST_STATUS = REQUEST_STATUS_property
+    RESOURCES = RESOURCES_property
     uid = uid_property
     summary = summary_property
     description = description_property
@@ -342,6 +344,7 @@ class Todo(Component):
         refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
         request_status: list[str] | str | None = None,
+        resources: list[str] | str | None = None,
         sequence: int | None = None,
         stamp: date | None = None,
         start: date | datetime | None = None,
@@ -375,6 +378,7 @@ class Todo(Component):
             refids: :attr:`~icalendar.Component.refids` of the todo.
             related_to: :attr:`~icalendar.Component.related_to` of the todo.
             request_status: The :attr:`REQUEST_STATUS` of the todo.
+            resources: The :attr:`RESOURCES` of the todo.
             sequence: The :attr:`sequence` of the todo.
             stamp: The :attr:`~icalendar.Component.DTSTAMP` of the todo.
                 If None, this is set to the current time.
@@ -422,6 +426,7 @@ class Todo(Component):
         todo.contacts = contacts
         todo.status = status
         todo.REQUEST_STATUS = request_status
+        todo.RESOURCES = resources
         todo.attendees = attendees
         todo.conferences = conferences
         todo.RECURRENCE_ID = recurrence_id

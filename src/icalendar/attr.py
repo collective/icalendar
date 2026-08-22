@@ -705,9 +705,6 @@ Note:
     At present, icalendar doesn't take the LANGUAGE parameter as defined
     in :rfc:`5545#section-3.2.10` into account.
 
-Parameters:
-    categories(list[str]): A list of categories as strings.
-
 Example:
     Create an event, add categories to it, print its ical representation,
     append another category, and finally compare the result
@@ -2616,15 +2613,11 @@ data component, separated by semicolons (statcode;statdesc[;extdata]).
 The return status components are defined in :rfc:`5545#section-3.8.8.3`.
 
 Note:
-    List modifications do not modify the component. Methods such as
-    ``append()``, ``extend()``, and ``remove()``, as well as item
-    assignment, act on a copy. Assign the list back to the property, or
-    use :meth:`Component.add <icalendar.cal.component.Component.add>`
-    with a typed value instead.
-
-Parameters:
-    request_status(str | list[str] | None):
-        A single status string, or a list of status strings to set.
+    After assigning a list or adding several values, the returned list
+    is the same object that stores the values. Modifying it (``append()``,
+    ``extend()``, ``remove()``, item assignment, or ``del``) changes the
+    component. If the property holds a single value, the returned list is
+    a new wrapper and modifications are lost.
 
 Example:
     Add a request status to an event:
@@ -2638,6 +2631,38 @@ Example:
 """,
 )
 
+RESOURCES_property = multi_string_property(
+    "RESOURCES",
+    """This property defines resources for a calendar component.
+
+Setting this property replaces all existing RESOURCES values. A :class:`str`
+is stored as-is. Setting ``None`` or an empty list removes all
+RESOURCES values, as does deleting the property.
+
+The value is a comma-separated list of resources, such as equipment,
+facilities, or other things that the component needs. Each item of the
+list becomes its own RESOURCES property value. See
+:rfc:`5545#section-3.8.1.10` for the specification.
+
+Note:
+    After assigning a list or adding several values, the returned list
+    is the same object that stores the values. Modifying it (``append()``,
+    ``extend()``, ``remove()``, item assignment, or ``del``) changes the
+    component. If the property holds a single value, the returned list is
+    a new wrapper and modifications are lost.
+
+Example:
+    Add resources to an event:
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Event
+        >>> event = Event.new(resources=["EASEL", "PROJECTOR", "VCR"])
+        >>> event.RESOURCES == ["EASEL", "PROJECTOR", "VCR"]
+        True
+""",
+)
+
 
 __all__ = [
     "CONCEPTS_TYPE_SETTER",
@@ -2645,6 +2670,7 @@ __all__ = [
     "RECURRENCE_ID",
     "RELATED_TO_TYPE_SETTER",
     "REQUEST_STATUS_property",
+    "RESOURCES_property",
     "attendees_property",
     "busy_type_property",
     "categories_property",
