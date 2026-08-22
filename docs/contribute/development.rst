@@ -194,7 +194,7 @@ As such, there are many Python objects in the code base that lack type hints.
 The icalendar team welcomes contributions to add type hints.
 
 When the type hints in the standard library are not sufficient, you can use subtyping through :doc:`protocols <typing:spec/protocol>`.
-The following example demonstrates subtyping through the usage of a protocol and a method using a literal :ref:`ellipsis <bltin-ellipsis-object>` ``...`` to indicate that the method signature exists, but the implementation details aren't necessary.
+The following example demonstrates subtyping through the usage of a protocol and a method using a literal ``...`` (ellipsis) to indicate that the method signature exists, but the implementation details aren't necessary.
 
 .. code-block:: python
 
@@ -211,7 +211,7 @@ The following example demonstrates subtyping through the usage of a protocol and
     - :ref:`markup-and-formatting`
     - :doc:`typing:index`
     - Python standard library :mod:`typing`
-    - :ref:`annotating-callables`
+    - `Annotating callables <https://docs.python.org/3/library/typing.html#annotating-callables>`_
 
 
 Activate a tox environment
