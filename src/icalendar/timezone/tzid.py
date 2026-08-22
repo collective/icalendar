@@ -49,30 +49,30 @@ def tzids_from_tzinfo(tzinfo: tzinfo | None) -> tuple[str]:
         return ()
     if isinstance(tzinfo, timezone):
         # fixed offset timezone with name
-        return get_equivalent_tzids(tzinfo.tzname(None))
+        return _get_equivalent_tzids(tzinfo.tzname(None))
     if hasattr(tzinfo, "zone"):
-        return get_equivalent_tzids(tzinfo.zone)  # pytz implementation
+        return _get_equivalent_tzids(tzinfo.zone)  # pytz implementation
     if hasattr(tzinfo, "key"):
-        return get_equivalent_tzids(tzinfo.key)  # ZoneInfo implementation
+        return _get_equivalent_tzids(tzinfo.key)  # ZoneInfo implementation
     if isinstance(tzinfo, tz._tzicalvtz):  # noqa: SLF001
-        return get_equivalent_tzids(tzinfo._tzid)  # noqa: SLF001
+        return _get_equivalent_tzids(tzinfo._tzid)  # noqa: SLF001
     if isinstance(tzinfo, tz.tzstr):
-        return get_equivalent_tzids(tzinfo._s)  # noqa: SLF001
+        return _get_equivalent_tzids(tzinfo._s)  # noqa: SLF001
     if _tzwin is not None and isinstance(tzinfo, _tzwin):
         olson = WINDOWS_TO_OLSON.get(tzinfo._name)  # noqa: SLF001
         if olson is not None:
-            return get_equivalent_tzids(olson)
-        return get_equivalent_tzids(tzinfo._name)  # noqa: SLF001
+            return _get_equivalent_tzids(olson)
+        return _get_equivalent_tzids(tzinfo._name)  # noqa: SLF001
     if hasattr(tzinfo, "_filename"):  # dateutil.tz.tzfile  # noqa: SIM102
         if DATEUTIL_ZONEINFO_PATH is not None:
             # tzfile('/usr/share/zoneinfo/Europe/Berlin')
             path = tzinfo._filename  # noqa: SLF001
             if path.startswith(str(DATEUTIL_ZONEINFO_PATH)):
                 tzid = str(Path(path).relative_to(DATEUTIL_ZONEINFO_PATH))
-                return get_equivalent_tzids(tzid)
-            return get_equivalent_tzids(path)
+                return _get_equivalent_tzids(tzid)
+            return _get_equivalent_tzids(path)
     if isinstance(tzinfo, tz.tzutc):
-        return get_equivalent_tzids("UTC")
+        return _get_equivalent_tzids("UTC")
     return ()
 
 
@@ -125,8 +125,11 @@ def _add_equivalent_ids(value: tuple | dict | set):
 _add_equivalent_ids(equivalent_timezone_ids_result.lookup)
 
 
-def get_equivalent_tzids(tzid: str) -> tuple[str]:
-    """This returns the tzids which are equivalent to this one."""
+def _get_equivalent_tzids(tzid: str) -> tuple[str]:
+    """This returns the tzids which are equivalent to this one.
+
+    :meta private:
+    """
     ids = _EQUIVALENT_IDS.get(tzid, set())
     return (tzid,) + tuple(sorted(ids - {tzid}))
 
