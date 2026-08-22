@@ -418,34 +418,38 @@ Description:
 )
 
 
-def boolean_parameter(name: str, default: bool, doc: str) -> property:
+def boolean_parameter(name: str, default: bool) -> property:
+    """Create a property for a Boolean parameter.
+
+    Parameters:
+        default: The value to return when the parameter is absent.
+        name: The parameter name in the ``params`` dictionary.
+
+    Returns:
+        A property with a getter, setter, and deleter for the parameter.
+    """
+
     def _default() -> bool:
         return default
 
     return string_parameter(
         name,
-        doc,
+        "",
         default=_default,
         convert=lambda x: x.upper() == "TRUE",
         convert_to=lambda x: "TRUE" if x else "FALSE",
     )
 
 
-RSVP = boolean_parameter(
-    "RSVP",
-    False,
-    """Specify whether there is an expectation of a favor of anreply from the calendar user specified by the property value.
+RSVP = boolean_parameter("RSVP", False)
+"""Indicate whether a reply is expected from the calendar user.
 
 Description:
-    This parameter can be specified on properties with a
-    CAL-ADDRESS value type.  The parameter identifies the expectation
-    of a reply from the calendar user specified by the property value.
-    This parameter is used by the "Organizer" to request a
-    participation status reply from an "Attendee" of a group-scheduled
-    event or to-do.  If not specified on a property that allows this
-    parameter, the default value is ``False``.
-""",  # noqa: E501
-)
+    This parameter can be specified on properties with a ``CAL-ADDRESS``
+    value type. An organizer uses it to request a participation status reply
+    from an attendee in a group-scheduled event or to-do. If the parameter is
+    absent, the property returns ``False``.
+"""
 
 SENT_BY = string_parameter(
     "SENT-BY",
