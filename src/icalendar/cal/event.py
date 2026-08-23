@@ -52,11 +52,15 @@ from icalendar.cal.examples import get_example
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
 
-    from icalendar.alarms import Alarms
-    from icalendar.compatibility import Self
-    from icalendar.enums import CLASS, STATUS, TRANSP
-    from icalendar.prop import vCalAddress
-    from icalendar.prop.conference import Conference
+    from icalendar import (
+        CLASS,
+        STATUS,
+        TRANSP,
+        Alarms,
+        Self,
+        vCalAddress,
+    )
+    from icalendar.prop import Conference
 
 
 class Event(Component):

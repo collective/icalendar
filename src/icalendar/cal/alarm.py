@@ -31,8 +31,10 @@ if TYPE_CHECKING:
     import uuid
     from collections.abc import Sequence
 
-    from icalendar.compatibility import Self
-    from icalendar.prop import vCalAddress
+    from icalendar import (
+        Self,
+        vCalAddress,
+    )
 
 
 class Alarm(Component):

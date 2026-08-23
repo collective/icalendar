@@ -36,9 +36,12 @@ from icalendar.error import IncompleteComponent
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from icalendar.compatibility import Self
-    from icalendar.enums import CLASS, STATUS
-    from icalendar.prop import vCalAddress
+    from icalendar import (
+        CLASS,
+        STATUS,
+        Self,
+        vCalAddress,
+    )
 
 
 class Journal(Component):

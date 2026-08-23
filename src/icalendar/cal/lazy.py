@@ -12,8 +12,10 @@ from .calendar import Calendar
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-    from icalendar.parser.ical.component import ComponentIcalParser
-    from icalendar.parser.ical.lazy import LazySubcomponent
+    from icalendar.parser.ical import (
+        ComponentIcalParser,
+        LazySubcomponent,
+    )
 
     from .component import Component
 

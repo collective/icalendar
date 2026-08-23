@@ -39,10 +39,13 @@ if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
     from datetime import date
 
-    from icalendar.cal.available import Available
-    from icalendar.compatibility import Self
-    from icalendar.enums import BUSYTYPE, CLASS
-    from icalendar.prop import vCalAddress
+    from icalendar import (
+        BUSYTYPE,
+        CLASS,
+        Self,
+        vCalAddress,
+    )
+    from icalendar.cal import Available
 
 
 class Availability(Component):

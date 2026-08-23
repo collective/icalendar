@@ -21,8 +21,10 @@ from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
 
 if TYPE_CHECKING:
-    from icalendar.compatibility import Self
-    from icalendar.prop import vCalAddress
+    from icalendar import (
+        Self,
+        vCalAddress,
+    )
 
 
 class FreeBusy(Component):
