@@ -153,8 +153,10 @@ linkcheck_retries = 1
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-the-nitpicky-mode
 # Use `make clean livehtml SPHINXOPTS="-n"`
 nitpick_ignore_regex = [
-    (r"py:.*", r"icalendar\.prop.*"),  # Ignore old change log entry from before the re-org
-#    (r"py:meth", r"icalendar.timezone.tzp.TZP.localize"),
+    (
+        r"py:.*",
+        r"icalendar\.prop.*",
+    ),  # Ignore old change log entry from before the re-org in 7.0.0a1
 ]
 
 
