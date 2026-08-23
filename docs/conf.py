@@ -149,6 +149,15 @@ linkcheck_timeout = 5
 linkcheck_retries = 1
 
 
+# -- nitpicky mode options ----------------------------------
+# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-the-nitpicky-mode
+# Use `make clean livehtml SPHINXOPTS="-n"`
+nitpick_ignore_regex = [
+    (r"py:.*", r"icalendar\.prop.*"),  # Ignore old change log entry from before the re-org
+#    (r"py:meth", r"icalendar.timezone.tzp.TZP.localize"),
+]
+
+
 # -- notfound.extension configuration ----------------------------------
 # https://sphinx-notfound-page.readthedocs.io/en/latest/configuration.html
 notfound_template = "404.html"
