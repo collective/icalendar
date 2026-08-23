@@ -71,6 +71,7 @@ Assigning a new value replaces any attendees that were set before.
 
 .. code-block:: pycon
 
+    >>> event = Event.new()
     >>> event.attendees = [attendee]    # set the attribute
     >>> print(event.to_ical())
     BEGIN:VEVENT
