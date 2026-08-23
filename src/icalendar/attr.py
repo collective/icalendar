@@ -2610,7 +2610,17 @@ REQUEST-STATUS values, as does deleting the property.
 The value consists of a short return status component, a longer
 return status description component, and optionally a status-specific
 data component, separated by semicolons (statcode;statdesc[;extdata]).
+The value consists of a short return status code component, a longer
+return status description component, and optionally a status-specific
+data component, separated by semicolons (statcode;statdesc[;extdata]).
 The return status components are defined in :rfc:`5545#section-3.8.8.3`.
+
+The REQUEST-STATUS property can be specified in the following icalendar components as ``REQUEST_STATUS``.
+
+-   :attr:`Event.REQUEST_STATUS <icalendar.cal.event.Event.REQUEST_STATUS>`
+-   :attr:`FreeBusy.REQUEST_STATUS <icalendar.cal.free_busy.FreeBusy.REQUEST_STATUS>`
+-   :attr:`Journal.REQUEST_STATUS <icalendar.cal.journal.Journal.REQUEST_STATUS>`
+-   :attr:`Todo.REQUEST_STATUS <icalendar.cal.todo.Todo.REQUEST_STATUS>`
 
 Note:
     After assigning a list or adding several values, the returned list
