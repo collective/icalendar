@@ -74,14 +74,10 @@ class TZP:
         return self.__provider.localize_utc(to_datetime(dt))
 
     @overload
-    def localize(
-        self, dt: datetime, tz: datetime.tzinfo | str | None
-    ) -> datetime: ...
+    def localize(self, dt: datetime, tz: datetime.tzinfo | str | None) -> datetime: ...
 
     @overload
-    def localize(
-        self, dt: time, tz: datetime.tzinfo | str | None
-    ) -> time: ...
+    def localize(self, dt: time, tz: datetime.tzinfo | str | None) -> time: ...
 
     def localize(
         self, dt: datetime.date | time, tz: datetime.tzinfo | str | None
