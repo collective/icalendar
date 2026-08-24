@@ -17,7 +17,7 @@ from datetime import date, datetime, timedelta, timezone
 
 import pytest
 
-from icalendar.alarms import Alarms, AlarmTime
+from icalendar.alarms import INTENTIONALLY_EXCLUDED_ALARM_PROPERTIES, Alarms, AlarmTime
 from icalendar.cal.alarm import Alarm
 from icalendar.cal.event import Event
 from icalendar.error import IncompleteAlarmInformation
@@ -475,3 +475,29 @@ def test_delete_TRIGGER():
     a.TRIGGER = datetime(2017, 12, 1, 10, 1)
     del a.TRIGGER
     assert a.TRIGGER is None
+
+
+def test_alarm_time_exposes_all_useful_alarm_properties():
+    """AlarmTime should mirror Alarm's lowercase properties, except those
+    in INTENTIONALLY_EXCLUDED_ALARM_PROPERTIES.
+
+    If this test fails, a new lowercase property was likely added to
+    Alarm and needs either a matching pass-through property on
+    AlarmTime, or a reasoned entry in INTENTIONALLY_EXCLUDED_ALARM_PROPERTIES.
+    See https://github.com/collective/icalendar/issues/1421
+    """
+    alarm_prop = set()
+    alarm_time_prop = set()
+    for prop in dir(Alarm):
+        if prop.islower() and type(getattr(Alarm, prop)) == property:
+            alarm_prop.add(prop)
+    for prop in dir(AlarmTime):
+        if prop.islower() and type(getattr(AlarmTime, prop)) == property:
+            alarm_time_prop.add(prop)
+    missing = alarm_prop.difference(alarm_time_prop)
+    unaccounted = missing - INTENTIONALLY_EXCLUDED_ALARM_PROPERTIES
+    assert not unaccounted, (
+        f"AlarmTime is missing pass-through properties for: {sorted(unaccounted)}. "
+        f"Either add a getter, or add to INTENTIONALLY_EXCLUDED_ALARM_PROPERTIES "
+        f"with a reason. See https://github.com/collective/icalendar/issues/1421"
+    )
