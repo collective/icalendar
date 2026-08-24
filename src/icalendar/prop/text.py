@@ -1,11 +1,20 @@
 """TEXT values from :rfc:`5545`."""
 
+import re
 from typing import Any, ClassVar
 
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters, _escape_char
 from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
+
+# :rfc:`5545#section-3.3.11` defines TEXT as
+# ``*(TSAFE-CHAR / ":" / DQUOTE / ESCAPED-CHAR)`` and
+# ``CONTROL = %x00-08 / %x0A-1F / %x7F``, so no control character except the
+# horizontal tab may appear in a TEXT value. The line feed is additionally
+# accepted here because it is the result of the escaped sequences ``\N``
+# and ``\n``.
+UNSAFE_TEXT_CHARS = re.compile(r"[\x00-\x08\x0b-\x1f\x7f]")
 
 
 class vText(str):
@@ -97,7 +106,22 @@ class vText(str):
 
     @classmethod
     def from_ical(cls, ical: ICAL_TYPE) -> Self:
-        return cls(ical)
+        r"""Parse a TEXT value from its iCalendar representation.
+
+        Raises:
+            ValueError: If the value contains a control character that
+                :rfc:`5545#section-3.3.11` does not allow in TEXT values.
+                The line feed is exempt because it can only enter a parsed
+                value through the escaped sequences ``\N`` and ``\n``.
+        """
+        text = to_unicode(ical)
+        match = UNSAFE_TEXT_CHARS.search(text)
+        if match is not None:
+            raise ValueError(
+                f"Control character {match.group()!a} at index "
+                f"{match.start()} is not allowed in TEXT values."
+            )
+        return cls(text)
 
     @property
     def ical_value(self) -> str:
