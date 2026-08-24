@@ -17,7 +17,7 @@ from datetime import date, datetime, timedelta, timezone
 
 import pytest
 
-from icalendar.alarms import INTENTIONALLY_EXCLUDED_ALARM_PROPERTIES, Alarms, AlarmTime
+from icalendar.alarms import Alarms, AlarmTime
 from icalendar.cal.alarm import Alarm
 from icalendar.cal.event import Event
 from icalendar.error import IncompleteAlarmInformation
@@ -26,6 +26,30 @@ from icalendar.tools import normalize_pytz
 
 UTC = timezone.utc
 EXAMPLE_TRIGGER = datetime(1997, 3, 17, 13, 30, tzinfo=UTC)
+
+# Properties Alarm has (directly or inherited from Component) that are
+# intentionally NOT mirrored onto AlarmTime, because they describe generic
+# component/lifecycle metadata, references/relationships to other
+# components, or the alarm's overall repeat schedule -- rather than the
+# alarm's own identity, notification content, or recipients.
+#
+# If you add a new lowercase property to Alarm and it should NOT appear on
+# AlarmTime, add its name here with a short reason. Otherwise, add a
+# matching pass-through property to AlarmTime itself.
+# See https://github.com/collective/icalendar/issues/1421
+
+INTENTIONALLY_EXCLUDED_ALARM_PROPERTIES = {
+    "repeat",  # overall repeat schedule, not one occurrence
+    "triggers",  # when/how the alarm fires overall, not the occurrence
+    "created",  # component lifecycle metadata
+    "last_modified",  # component lifecycle metadata
+    "stamp",  # generic component metadata
+    "comments",  # generic component annotation
+    "concepts",  # generic component category/concept references
+    "links",  # generic component external references
+    "refids",  # generic component reference identifiers
+    "related_to",  # generic component relationship, same as links/refids
+}
 
 
 def test_absolute_alarm_time_rfc_example(alarms):

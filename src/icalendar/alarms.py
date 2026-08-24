@@ -35,30 +35,6 @@ if TYPE_CHECKING:
 
 Parent = Event | Todo
 
-# Properties Alarm has (directly or inherited from Component) that are
-# intentionally NOT mirrored onto AlarmTime, because they describe generic
-# component/lifecycle metadata, references/relationships to other
-# components, or the alarm's overall repeat schedule -- rather than the
-# alarm's own identity, notification content, or recipients.
-#
-# If you add a new lowercase property to Alarm and it should NOT appear on
-# AlarmTime, add its name here with a short reason. Otherwise, add a
-# matching pass-through property to AlarmTime itself.
-# See https://github.com/collective/icalendar/issues/1421
-
-INTENTIONALLY_EXCLUDED_ALARM_PROPERTIES = {
-    "repeat",  # overall repeat schedule, not one occurrence
-    "triggers",  # when/how the alarm fires overall, not the occurrence
-    "created",  # component lifecycle metadata
-    "last_modified",  # component lifecycle metadata
-    "stamp",  # generic component metadata
-    "comments",  # generic component annotation
-    "concepts",  # generic component category/concept references
-    "links",  # generic component external references
-    "refids",  # generic component reference identifiers
-    "related_to",  # generic component relationship, same as links/refids
-}
-
 
 class AlarmTime:
     """Represents a computed alarm occurrence with its timing and state.
