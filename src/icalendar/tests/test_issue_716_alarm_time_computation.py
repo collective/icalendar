@@ -230,6 +230,46 @@ def test_alarm_time_action_uses_alarm_property():
     assert alarm_time.action == "DISPLAY"
 
 
+def test_alarm_time_uid_uses_alarm_property():
+    """The computed occurrence exposes its underlying alarm uid."""
+    alarm = Alarm()
+    alarm.uid = "test-uid-123"
+
+    alarm_time = AlarmTime(alarm, EXAMPLE_TRIGGER)
+
+    assert alarm_time.uid == "test-uid-123"
+
+
+def test_alarm_time_summary_uses_alarm_property():
+    """The computed occurrence exposes its underlying alarm summary."""
+    alarm = Alarm()
+    alarm.summary = "Summary"
+
+    alarm_time = AlarmTime(alarm, EXAMPLE_TRIGGER)
+
+    assert alarm_time.summary == "Summary"
+
+
+def test_alarm_time_description_uses_alarm_property():
+    """The computed occurrence exposes its underlying alarm description."""
+    alarm = Alarm()
+    alarm.description = "Description"
+
+    alarm_time = AlarmTime(alarm, EXAMPLE_TRIGGER)
+
+    assert alarm_time.description == "Description"
+
+
+def test_alarm_time_attendees_uses_alarm_property():
+    """The computed occurrence exposes its underlying alarm attendees."""
+    alarm = Alarm()
+    alarm.attendees = ["mailto:john.doe@example.com"]
+
+    alarm_time = AlarmTime(alarm, EXAMPLE_TRIGGER)
+
+    assert alarm_time.attendees == ["mailto:john.doe@example.com"]
+
+
 def test_alarms_from_event_have_right_times(calendars):
     """We can collect from an event."""
     event = calendars.alarm_etar_future.subcomponents[-1]
