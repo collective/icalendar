@@ -2627,11 +2627,11 @@ icalendar components as ``REQUEST_STATUS``.
 -   :attr:`Todo.REQUEST_STATUS <icalendar.cal.todo.Todo.REQUEST_STATUS>`
 
 Note:
-    After assigning a list or adding several values, the returned list
-    is the same object that stores the values. Modifying it (``append()``,
-    ``extend()``, ``remove()``, item assignment, or ``del``) changes the
-    component. If the property holds a single value, the returned list is
-    a new wrapper and modifications are lost.
+    When you assign a list to this property, the returned list
+    is the same object stored in the component. Modifying it (``append()``,
+    ``extend()``, ``remove()``, item assignment, or ``del``) changes what
+    the component stores. If the property holds a single value, the returned
+    list is a temporary copy, and changes to it do not affect the component.
 
 Parameters:
     request_status(str | list[str] | None):
@@ -2677,11 +2677,11 @@ Parameters:
         or ``None`` to set the component's resources.
 
 Note:
-    After assigning a list or adding several values, the returned list
-    is the same object that stores the values. Modifying it (``append()``,
-    ``extend()``, ``remove()``, item assignment, or ``del``) changes the
-    component. If the property holds a single value, the returned list is
-    a new wrapper and modifications are lost.
+    When you assign a list to this property, the returned list
+    is the same object stored in the component. Modifying it (``append()``,
+    ``extend()``, ``remove()``, item assignment, or ``del``) changes what
+    the component stores. If the property holds a single value, the returned
+    list is a temporary copy, and changes to it do not affect the component.
 
 Example:
     Add resources to an event:
