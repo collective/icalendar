@@ -143,7 +143,7 @@ docstring: .venv  ## Test docstrings are formatted properly
 	@pytest -rx src/icalendar/tests/test_docstrings.py
 
 .PHONY: docs-all
-docs-all: .venv clean vale doctest html linkcheckbroken  ## Clean docs build, then run vale, doctest, html, and linkcheckbroken
+docs-all: .venv clean vale doctest docstring html linkcheckbroken  ## Clean docs build, then run vale, doctest, html, and linkcheckbroken
 
 .PHONY: test
 test: .venv  ## Run code tests and coverage
