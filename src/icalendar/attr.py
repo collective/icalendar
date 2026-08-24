@@ -2607,9 +2607,6 @@ Setting this property replaces all existing REQUEST-STATUS values. A :class:`str
 is stored as-is. Setting ``None`` or an empty list removes all
 REQUEST-STATUS values, as does deleting the property.
 
-The value consists of a short return status component, a longer
-return status description component, and optionally a status-specific
-data component, separated by semicolons (statcode;statdesc[;extdata]).
 The value consists of a short return status code component, a longer
 return status description component, and optionally a status-specific
 data component, separated by semicolons (statcode;statdesc[;extdata]).
@@ -2653,6 +2650,11 @@ The value is a comma-separated list of resources, such as equipment,
 facilities, or other things that the component needs. Each item of the
 list becomes its own RESOURCES property value. See
 :rfc:`5545#section-3.8.1.10` for the specification.
+
+The RESOURCES property can be specified in the following icalendar components as ``resources`` using the component's ``new()`` constructor.
+
+-   :attr:`Event.RESOURCES <icalendar.cal.event.Event.RESOURCES>`
+-   :attr:`Todo.RESOURCES <icalendar.cal.todo.Todo.RESOURCES>`
 
 Note:
     After assigning a list or adding several values, the returned list
