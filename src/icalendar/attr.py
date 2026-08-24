@@ -687,6 +687,8 @@ component of a particular type and category.
 
 Within the calendar components, specify categories as a list of strings.
 You can get, set, and delete categories for a component.
+Assign a list of strings, a single string, or ``None`` to this property;
+assigning ``None`` or an empty list removes the categories.
 
 This property can be used in icalendar through its Python attributes of:
 
@@ -704,6 +706,9 @@ The categories property for ``Available`` and ``Availability`` complies with
 Note:
     At present, icalendar doesn't take the LANGUAGE parameter as defined
     in :rfc:`5545#section-3.2.10` into account.
+
+Parameters:
+    categories(list[str]): A list of categories as strings.
 
 Example:
     Create an event, add categories to it, print its ical representation,
@@ -2603,16 +2608,18 @@ REQUEST_STATUS_property = multi_string_property(
     "REQUEST-STATUS",
     """This property defines the status code returned for a scheduling request.
 
-Setting this property replaces all existing REQUEST-STATUS values. A :class:`str`
-is stored as-is. Setting ``None`` or an empty list removes all
-REQUEST-STATUS values, as does deleting the property.
+You can assign a single string, a list of strings, or ``None`` to this
+property. The property stores a :class:`str` as-is. Assigning ``None`` or
+an empty list removes all REQUEST-STATUS values, as does deleting the
+property.
 
 The value consists of a short return status code component, a longer
 return status description component, and optionally a status-specific
 data component, separated by semicolons (statcode;statdesc[;extdata]).
 The return status components are defined in :rfc:`5545#section-3.8.8.3`.
 
-The REQUEST-STATUS property can be specified in the following icalendar components as ``REQUEST_STATUS``.
+The REQUEST-STATUS property can be specified in the following
+icalendar components as ``REQUEST_STATUS``.
 
 -   :attr:`Event.REQUEST_STATUS <icalendar.cal.event.Event.REQUEST_STATUS>`
 -   :attr:`FreeBusy.REQUEST_STATUS <icalendar.cal.free_busy.FreeBusy.REQUEST_STATUS>`
@@ -2625,6 +2632,12 @@ Note:
     ``extend()``, ``remove()``, item assignment, or ``del``) changes the
     component. If the property holds a single value, the returned list is
     a new wrapper and modifications are lost.
+
+Parameters:
+    request_status(str | list[str] | None):
+        Either a single status string, a list of status strings, or
+        ``None`` to set the component's status code returned for a
+        scheduling request.
 
 Example:
     Add a request status to an event:
@@ -2642,19 +2655,26 @@ RESOURCES_property = multi_string_property(
     "RESOURCES",
     """This property defines resources for a calendar component.
 
-Setting this property replaces all existing RESOURCES values. A :class:`str`
-is stored as-is. Setting ``None`` or an empty list removes all
-RESOURCES values, as does deleting the property.
+You can assign a single string, a list of strings, or ``None`` to this
+property. The property stores a :class:`str` as-is. Assigning ``None`` or
+an empty list removes all RESOURCES values, as does deleting the property.
 
 The value is a comma-separated list of resources, such as equipment,
 facilities, or other things that the component needs. Each item of the
 list becomes its own RESOURCES property value. See
 :rfc:`5545#section-3.8.1.10` for the specification.
 
-The RESOURCES property can be specified in the following icalendar components as ``resources`` using the component's ``new()`` constructor.
+The RESOURCES property can be specified in the following
+icalendar components as ``resources`` using the component's
+``new()`` constructor.
 
 -   :attr:`Event.RESOURCES <icalendar.cal.event.Event.RESOURCES>`
 -   :attr:`Todo.RESOURCES <icalendar.cal.todo.Todo.RESOURCES>`
+
+Parameters:
+    resources(str | list[str] | None):
+        Either a single resource string, a list of resource strings,
+        or ``None`` to set the component's resources.
 
 Note:
     After assigning a list or adding several values, the returned list
