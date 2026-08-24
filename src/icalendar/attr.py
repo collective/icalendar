@@ -415,7 +415,7 @@ def single_int_property(
         prop: Required. The name of the property.
         min_value: If set, the value must be greater than or equal to this minimum.
 
-    ..  versionadded:: 7.2.3
+    ..  versionadded:: 7.3.0
         Added the ``min_value`` parameter.
     """
 
@@ -637,7 +637,7 @@ Examples:
 
         ~icalendar.error.InvalidCalendar: If the value is negative.
 
-    ..  versionchanged:: 7.2.3
+    ..  versionchanged:: 7.3.0
         Negative values are no longer accepted.
     """,  # noqa: E501
     min_value=0,
@@ -1322,7 +1322,7 @@ Raises:
 
     ~icalendar.error.InvalidCalendar: If the value is negative.
 
-..  versionchanged:: 7.2.3
+..  versionchanged:: 7.3.0
     Negative values are no longer accepted.
 """,
         min_value=0,
@@ -1381,7 +1381,7 @@ Description:
 
         ~icalendar.error.InvalidCalendar: If the value is negative.
 
-    ..  versionchanged:: 7.2.3
+    ..  versionchanged:: 7.3.0
         Negative values are no longer accepted.
 """,
     min_value=0,

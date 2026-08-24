@@ -179,8 +179,8 @@ class Todo(Component):
     def start(self) -> date | datetime:
         """The start of the VTODO.
 
-        Invalid values raise an InvalidCalendar.
-        If there is no start, we also raise an IncompleteComponent error.
+        Invalid values raise an :exc:`~icalendar.error.InvalidCalendar`.
+        If there is no start, we also raise an :exc:`~icalendar.error.IncompleteComponent` error.
 
         You can get the start, end and duration of a Todo as follows:
 
@@ -208,8 +208,8 @@ class Todo(Component):
     def end(self) -> date | datetime:
         """The end of the todo.
 
-        Invalid values raise an InvalidCalendar error.
-        If there is no end, we also raise an IncompleteComponent error.
+        Invalid values raise an :exc:`~icalendar.error.InvalidCalendar` error.
+        If there is no end, we also raise an :exc:`~icalendar.error.IncompleteComponent` error.
         """
         return get_end_property(self, "DUE")
 
