@@ -2630,8 +2630,10 @@ Note:
     When you assign a list to this property, the returned list
     is the same object stored in the component. Modifying it (``append()``,
     ``extend()``, ``remove()``, item assignment, or ``del``) changes what
-    the component stores. If the property holds a single value, the returned
-    list is a temporary copy, and changes to it do not affect the component.
+    the component stores.
+
+    However, if you assign a single string value to this property, the returned
+    list is a temporary copy, and changes to this list don't affect the component.
 
 Parameters:
     request_status(str | list[str] | None):
