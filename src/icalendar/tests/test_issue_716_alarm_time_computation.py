@@ -39,16 +39,16 @@ EXAMPLE_TRIGGER = datetime(1997, 3, 17, 13, 30, tzinfo=UTC)
 # See https://github.com/collective/icalendar/issues/1421
 
 INTENTIONALLY_EXCLUDED_ALARM_PROPERTIES = {
-    "repeat",  # overall repeat schedule, not one occurrence
-    "triggers",  # when/how the alarm fires overall, not the occurrence
-    "created",  # component lifecycle metadata
-    "last_modified",  # component lifecycle metadata
-    "stamp",  # generic component metadata
     "comments",  # generic component annotation
     "concepts",  # generic component category/concept references
+    "created",  # component lifecycle metadata
+    "last_modified",  # component lifecycle metadata
     "links",  # generic component external references
     "refids",  # generic component reference identifiers
     "related_to",  # generic component relationship, same as links/refids
+    "repeat",  # overall repeat schedule, not one occurrence
+    "stamp",  # generic component metadata
+    "triggers",  # when/how the alarm fires overall, not the occurrence
 }
 
 
