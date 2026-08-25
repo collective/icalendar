@@ -687,8 +687,6 @@ component of a particular type and category.
 
 Within the calendar components, specify categories as a list of strings.
 You can get, set, and delete categories for a component.
-Assign a list of strings, a single string, or ``None`` to this property;
-assigning ``None`` or an empty list removes the categories.
 
 This property can be used in icalendar through its Python attributes of:
 
