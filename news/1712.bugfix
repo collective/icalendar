@@ -1,1 +1,1 @@
-TEXT property values now reject :rfc:`5545` control characters such as NUL on parse instead of passing them through to serialized output. Invalid lines are collected in ``errors`` or raise, like invalid parameter values. @abhijeet117 (`Issue #1712 <https://github.com/collective/icalendar/issues/1712>`_)
+TEXT property values now reject :rfc:`5545` control characters such as NUL on parse instead of passing them through to serialized output. Invalid lines are collected in ``errors`` or raise, like invalid parameter values. @abhijeet117

@@ -9,11 +9,20 @@ from icalendar.parser import Parameters, _escape_char
 from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
 
 # :rfc:`5545#section-3.3.11` defines TEXT as
-# ``*(TSAFE-CHAR / ":" / DQUOTE / ESCAPED-CHAR)`` and
-# ``CONTROL = %x00-08 / %x0A-1F / %x7F``, so no control character except the
-# horizontal tab may appear in a TEXT value. The line feed is additionally
-# accepted here because it is the result of the escaped sequences ``\N``
-# and ``\n``.
+# ``*(TSAFE-CHAR / ":" / DQUOTE / ESCAPED-CHAR)`` where TSAFE-CHAR is in turn
+# defined by the following grammar in :rfc:`5545#section-3.1`.
+#
+# ..  code-block:: text
+#
+#     TSAFE-CHAR = WSP / %x21 / %x23-2B / %x2D-39 / %x3C-5B /
+#              %x5D-7E / NON-US-ASCII
+#        ; Any character except CONTROLs not needed by the current
+#        ; character set, DQUOTE, ";", ":", "\", ","
+#
+# CONTROL is defined in the same section as ``%x00-08 / %x0A-1F / %x7F``, so no
+# control character except the horizontal tab may appear in a TEXT value.
+# The line feed, ``\x0a``, is additionally accepted here because it is the
+# result of the escaped sequences ``\N`` and ``\n``.
 UNSAFE_TEXT_CHARS = re.compile(r"[\x00-\x08\x0b-\x1f\x7f]")
 
 

@@ -1,10 +1,30 @@
 r"""TEXT values must reject control characters on parse.
 
 :rfc:`5545#section-3.3.11` defines TEXT as
-``*(TSAFE-CHAR / ":" / DQUOTE / ESCAPED-CHAR)`` with
-``CONTROL = %x00-08 / %x0A-1F / %x7F``, so control characters other than
-the horizontal tab cannot appear in a valid TEXT value. A NUL byte in a
-property value previously passed through :meth:`vText.from_ical`
+``*(TSAFE-CHAR / ":" / DQUOTE / ESCAPED-CHAR)`` where TSAFE-CHAR is defined by
+the following grammar.
+
+..  code-block:: text
+
+    TSAFE-CHAR = WSP / %x21 / %x23-2B / %x2D-39 / %x3C-5B /
+             %x5D-7E / NON-US-ASCII
+       ; Any character except CONTROLs not needed by the current
+       ; character set, DQUOTE, ";", ":", "\", ","
+
+In turn, CONTROL is defined by the following grammar in :rfc:`5545#section-3.1`.
+
+..  code-block:: text
+
+    CONTROL       = %x00-08 / %x0A-1F / %x7F
+    ; All the controls except HTAB
+
+Although "the current character set" may be one of many, it is UTF-8 by default
+per :rfc:`5545#section-3.1.4`. Thus TEXT should reject all the CONTROLs except
+the horizontal tab, ``%x09``. Additionally the new line, ``%x0A``, is needed by
+the current character set because it is the result of the escaped sequences
+``\N`` and ``\n``.
+
+A NUL byte in a property value previously passed through :meth:`vText.from_ical`
 unchanged, and consumers written in C truncate strings at NUL, silently
 changing the round-tripped value. TEXT values now reject them like
 invalid parameter values do.
@@ -15,15 +35,17 @@ import pytest
 from icalendar import Calendar, Event, vText
 from icalendar.prop import vBroken
 
+#: Every CONTROL from :rfc:`5545#section-3.1`. The horizontal tab, ``%x09``,
+#: is not a CONTROL, and the new line, ``%x0A``, is not forbidden because the
+#: escaped sequences ``\N`` and ``\n`` produce it.
+FORBIDDEN_CONTROL_CHARS = [
+    chr(control) for control in range(0x20) if control not in (0x09, 0x0A)
+] + ["\x7f"]
+
 FORBIDDEN_VALUES = [
+    *FORBIDDEN_CONTROL_CHARS,
     "A\x00B",  # NUL from the issue report
-    "\x00",
-    "\x01",
-    "\x08",
-    "\x0b",  # vertical tab
-    "\x0c",  # form feed
     "a\rb",  # lone carriage return
-    "\x7f",  # delete
 ]
 
 VALID_VALUES = [
@@ -31,7 +53,8 @@ VALID_VALUES = [
     'quotes " and colons : and semicolons ; and commas ,',
     r"escapes \; \, \\ stay verbatim here",
     "horizontal tab\tinside",
-    "line\nbreak from the escaped sequences",
+    "horizontal tab as hex\x09inside",
+    "newline\nfrom the escaped sequences",
     "non-US-ASCII: café ☕",
 ]
 
