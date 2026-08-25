@@ -112,7 +112,8 @@ class AlarmTime:
 
     @property
     def description(self) -> str | None:
-        """This description of why and what this alarm is for
+        """A more complete description of the alarm than that provided by the
+        SUMMARY property.
 
         This delegates to :attr:`Alarm.description
         <icalendar.cal.alarm.Alarm.description>`.
