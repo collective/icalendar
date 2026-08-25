@@ -121,7 +121,7 @@ class AlarmTime:
 
     @property
     def attendees(self) -> list[str]:
-        """List of addresses to notify when this alarm is triggered
+        """List of email addresses to notify when this alarm is triggered.
 
         This delegates to :attr:`Alarm.attendees
         <icalendar.cal.alarm.Alarm.attendees>`.
