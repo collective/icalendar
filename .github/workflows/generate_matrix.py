@@ -38,8 +38,8 @@ def generate_matrix(git_ref, review, event_name=""):
     """Generate a matrix of test runs.
 
     Parameters:
-        git_ref: The branch or tag that triggered the workflow
-        review: The state of the pull request review
+        git_ref: Required. The branch or tag that triggered the workflow
+        review: Required. The state of the pull request review
         event_name: The event that triggered the workflow
     """
     #
