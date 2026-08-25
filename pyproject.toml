@@ -150,6 +150,8 @@ exclude = [
 ]
 
 [tool.hatch.build.targets.sdist.force-include]
+# Tests for files included in the distribution reside here:
+# src/icalendar/tests/test_create_release.sh
 "funding.json" = "funding.json"
 
 [tool.hatch.build.targets.wheel]

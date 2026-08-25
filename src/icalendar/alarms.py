@@ -14,7 +14,7 @@ This takes different calendar software into account and the RFC 9074 (Alarm Exte
 from __future__ import annotations
 
 from datetime import date, timedelta, tzinfo
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, overload
 
 from icalendar.cal.event import Event
 from icalendar.cal.todo import Todo
@@ -218,7 +218,7 @@ class Alarms:
         for alarm in component.walk("VALARM"):
             self.add_alarm(alarm)
 
-    def set_parent(self, parent: Parent):
+    def set_parent(self, parent: Parent) -> None:
         """Set the parent of all the alarms.
 
         If you would like to collect alarms from a component, use add_component
@@ -239,7 +239,7 @@ class Alarms:
         else:
             self._end_alarms.append(alarm)
 
-    def set_start(self, dt: date | None):
+    def set_start(self, dt: date | None) -> None:
         """Set the start of the component.
 
         If you have only absolute alarms, this is not required.
@@ -247,7 +247,7 @@ class Alarms:
         """
         self._start = dt
 
-    def set_end(self, dt: date | None):
+    def set_end(self, dt: date | None) -> None:
         """Set the end of the component.
 
         If you have only absolute alarms, this is not required.
@@ -255,7 +255,13 @@ class Alarms:
         """
         self._end = dt
 
-    def _add(self, dt: date, td: timedelta):
+    @overload
+    def _add(self, dt: datetime, td: timedelta) -> datetime: ...
+
+    @overload
+    def _add(self, dt: date, td: timedelta) -> date: ...
+
+    def _add(self, dt: date, td: timedelta) -> date | datetime:
         """Add a timedelta to a datetime."""
         if is_date(dt):
             if td.seconds == 0:
@@ -286,7 +292,7 @@ class Alarms:
         """
         self._snooze_until = tzp.localize_utc(dt) if dt is not None else None
 
-    def set_local_timezone(self, tzinfo: tzinfo | str | None):
+    def set_local_timezone(self, tzinfo: tzinfo | str | None) -> None:
         """Set the local timezone.
 
         Events are sometimes in local time.
@@ -325,7 +331,7 @@ class Alarms:
             for i in range(1, repeat + 1):
                 yield self._add(first, duration * i)
 
-    def _alarm_time(self, alarm: Alarm, trigger: date):
+    def _alarm_time(self, alarm: Alarm, trigger: date) -> AlarmTime:
         """Create an alarm time with the additional attributes."""
         if getattr(trigger, "tzinfo", None) is None and self._local_tzinfo is not None:
             trigger = normalize_pytz(trigger.replace(tzinfo=self._local_tzinfo))

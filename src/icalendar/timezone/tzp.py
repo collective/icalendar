@@ -62,7 +62,7 @@ class TZP:
         else:
             self._use(provider)
 
-    def use_default(self):
+    def use_default(self) -> None:
         """Use the default timezone provider."""
         self.use(DEFAULT_TIMEZONE_PROVIDER)
 
@@ -74,18 +74,14 @@ class TZP:
         return self.__provider.localize_utc(to_datetime(dt))
 
     @overload
-    def localize(
-        self, dt: datetime.datetime, tz: datetime.tzinfo | str | None
-    ) -> datetime.datetime: ...
+    def localize(self, dt: datetime, tz: datetime.tzinfo | str | None) -> datetime: ...
 
     @overload
-    def localize(
-        self, dt: datetime.time, tz: datetime.tzinfo | str | None
-    ) -> datetime.time: ...
+    def localize(self, dt: time, tz: datetime.tzinfo | str | None) -> time: ...
 
     def localize(
-        self, dt: datetime.date | datetime.time, tz: datetime.tzinfo | str | None
-    ) -> datetime.datetime | datetime.time:
+        self, dt: datetime.date | time, tz: datetime.tzinfo | str | None
+    ) -> datetime | datetime.time:
         """Localize a datetime or time to a timezone.
 
         Returns:
@@ -146,7 +142,7 @@ class TZP:
         timezone name, or a "globally unique" identifier
         (:rfc:`5545#section-3.2.19`) such as
         ``/freeassociation.sourceforge.net/Europe/Berlin``. We try the
-        candidate IDs from :meth:`_lookup_ids` in order, checking the cache
+        candidate IDs from ``_lookup_ids`` in order, checking the cache
         before the provider for each one, and cache the first match under the
         primary ID so the next lookup is fast.
         """

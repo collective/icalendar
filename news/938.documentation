@@ -1,1 +1,0 @@
-Added a return type annotation to :meth:`~icalendar.alarms.Alarms.add_component`. I used OpenAI GPT-5 Codex to identify the scoped method, draft the annotation and test, and review the validation results. @kudala-bharani

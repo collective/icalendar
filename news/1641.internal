@@ -1,1 +1,0 @@
-Removed two unreachable code branches from :meth:`vOrg.from_ical <icalendar.prop.org.vOrg.from_ical>` and :meth:`vOrg.from_jcal <icalendar.prop.org.vOrg.from_jcal>`. I used Claude Code (Anthropic's Claude Sonnet 5) to identify and remove the dead branches and to update the accompanying coverage tests; I reviewed the diff and ran the test suite locally. @vjymisal0
