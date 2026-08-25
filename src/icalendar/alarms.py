@@ -97,7 +97,7 @@ class AlarmTime:
 
     @property
     def uid(self) -> str:
-        """The unique identifier of this alarm
+        """The persistent, globally unique identifier of this alarm.
 
         This delegates to :attr:`Alarm.uid <icalendar.cal.alarm.Alarm.uid>`.
         """
