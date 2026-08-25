@@ -7,6 +7,7 @@ from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Literal
 
 from icalendar.attr import (
+    ATTENDEE_TYPE_SETTER,
     CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
@@ -433,7 +434,7 @@ class Event(Component):
     def new(
         cls,
         /,
-        attendees: list[vCalAddress] | None = None,
+        attendees: ATTENDEE_TYPE_SETTER = None,
         categories: Sequence[str] = (),
         classification: CLASS | None = None,
         color: str | None = None,
