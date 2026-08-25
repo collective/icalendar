@@ -412,3 +412,24 @@ def test_alarm_new_concepts_none_is_empty():
     alarm = Alarm.new(concepts=None)
     assert alarm.concepts == []
     assert "CONCEPT" not in alarm
+
+
+@pytest.mark.parametrize(
+    ("attendees", "expected"),
+    [
+        ("first@example.com", "mailto:first@example.com"),
+        (["first@example.com"], "mailto:first@example.com"),
+        ("mailto:second@example.net", "mailto:second@example.net"),
+        (["mailto:second@example.net"], "mailto:second@example.net"),
+    ],
+)
+def test_new_email_string_attendee_normalizes(attendees, expected):
+    """Plain and mailto: string attendees, singleton or in a list, normalize to vCalAddress."""
+    alarm = Alarm.new_email(
+        summary="S",
+        description="D",
+        trigger=timedelta(minutes=-30),
+        attendees=attendees,
+    )
+    assert isinstance(alarm.attendees[0], vCalAddress)
+    assert str(alarm.attendees[0]) == expected
