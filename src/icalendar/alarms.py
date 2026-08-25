@@ -96,6 +96,41 @@ class AlarmTime:
         return self.alarm.ACTION
 
     @property
+    def uid(self) -> str:
+        """The persistent, globally unique identifier of this alarm.
+
+        This delegates to :attr:`Alarm.uid <icalendar.cal.alarm.Alarm.uid>`.
+        """
+        return self.alarm.uid
+
+    @property
+    def summary(self) -> str | None:
+        """The short summary or subject for this alarm.
+
+        This delegates to :attr:`Alarm.summary <icalendar.cal.alarm.Alarm.summary>`.
+        """
+        return self.alarm.summary
+
+    @property
+    def description(self) -> str | None:
+        """A more complete description of the alarm than that provided by the
+        SUMMARY property.
+
+        This delegates to :attr:`Alarm.description
+        <icalendar.cal.alarm.Alarm.description>`.
+        """
+        return self.alarm.description
+
+    @property
+    def attendees(self) -> list[str]:
+        """List of email addresses to notify when this alarm is triggered.
+
+        This delegates to :attr:`Alarm.attendees
+        <icalendar.cal.alarm.Alarm.attendees>`.
+        """
+        return self.alarm.attendees
+
+    @property
     def parent(self) -> Parent | None:
         """The component that contains the alarm.
 
