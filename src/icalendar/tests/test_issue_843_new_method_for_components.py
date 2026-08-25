@@ -764,6 +764,36 @@ new_test_cases = [
         True,
         "two attendees",
     ),
+    (
+        COMPONENTS_ATTENDEES,
+        "attendees",
+        "ATTENDEE",
+        "plain@example.com",
+        [vCalAddress("mailto:plain@example.com")],
+        True,
+        "a plain email string is normalized to a vCalAddress",
+    ),
+    (
+        COMPONENTS_ATTENDEES,
+        "attendees",
+        "ATTENDEE",
+        "mailto:prefixed@example.net",
+        [vCalAddress("mailto:prefixed@example.net")],
+        True,
+        "a mailto: string is not prefixed twice",
+    ),
+    (
+        COMPONENTS_ATTENDEES,
+        "attendees",
+        "ATTENDEE",
+        ["plain@example.com", "mailto:prefixed@example.net"],
+        [
+            vCalAddress("mailto:plain@example.com"),
+            vCalAddress("mailto:prefixed@example.net"),
+        ],
+        True,
+        "a list of plain and mailto: strings is normalized",
+    ),
 ]
 
 rfc_7986_test_cases = [

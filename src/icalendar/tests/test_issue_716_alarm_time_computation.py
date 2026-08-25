@@ -27,6 +27,30 @@ from icalendar.tools import normalize_pytz
 UTC = timezone.utc
 EXAMPLE_TRIGGER = datetime(1997, 3, 17, 13, 30, tzinfo=UTC)
 
+# Properties Alarm has (directly or inherited from Component) that are
+# intentionally NOT mirrored onto AlarmTime, because they describe generic
+# component/lifecycle metadata, references/relationships to other
+# components, or the alarm's overall repeat schedule -- rather than the
+# alarm's own identity, notification content, or recipients.
+#
+# If you add a new lowercase property to Alarm and it should NOT appear on
+# AlarmTime, add its name here with a short reason. Otherwise, add a
+# matching pass-through property to AlarmTime itself.
+# See https://github.com/collective/icalendar/issues/1421
+
+INTENTIONALLY_EXCLUDED_ALARM_PROPERTIES = {
+    "comments",  # generic component annotation
+    "concepts",  # generic component category/concept references
+    "created",  # component lifecycle metadata
+    "last_modified",  # component lifecycle metadata
+    "links",  # generic component external references
+    "refids",  # generic component reference identifiers
+    "related_to",  # generic component relationship, same as links/refids
+    "repeat",  # overall repeat schedule, not one occurrence
+    "stamp",  # generic component metadata
+    "triggers",  # when/how the alarm fires overall, not the occurrence
+}
+
 
 def test_absolute_alarm_time_rfc_example(alarms):
     """Check that the absolute alarm is recognized.
@@ -228,6 +252,46 @@ def test_alarm_time_action_uses_alarm_property():
     alarm_time = AlarmTime(alarm, EXAMPLE_TRIGGER)
 
     assert alarm_time.action == "DISPLAY"
+
+
+def test_alarm_time_uid_uses_alarm_property():
+    """The computed occurrence exposes its underlying alarm uid."""
+    alarm = Alarm()
+    alarm.uid = "test-uid-123"
+
+    alarm_time = AlarmTime(alarm, EXAMPLE_TRIGGER)
+
+    assert alarm_time.uid == "test-uid-123"
+
+
+def test_alarm_time_summary_uses_alarm_property():
+    """The computed occurrence exposes its underlying alarm summary."""
+    alarm = Alarm()
+    alarm.summary = "Summary"
+
+    alarm_time = AlarmTime(alarm, EXAMPLE_TRIGGER)
+
+    assert alarm_time.summary == "Summary"
+
+
+def test_alarm_time_description_uses_alarm_property():
+    """The computed occurrence exposes its underlying alarm description."""
+    alarm = Alarm()
+    alarm.description = "Description"
+
+    alarm_time = AlarmTime(alarm, EXAMPLE_TRIGGER)
+
+    assert alarm_time.description == "Description"
+
+
+def test_alarm_time_attendees_uses_alarm_property():
+    """The computed occurrence exposes its underlying alarm attendees."""
+    alarm = Alarm()
+    alarm.attendees = ["mailto:john.doe@example.com"]
+
+    alarm_time = AlarmTime(alarm, EXAMPLE_TRIGGER)
+
+    assert alarm_time.attendees == ["mailto:john.doe@example.com"]
 
 
 def test_alarms_from_event_have_right_times(calendars):
@@ -475,3 +539,29 @@ def test_delete_TRIGGER():
     a.TRIGGER = datetime(2017, 12, 1, 10, 1)
     del a.TRIGGER
     assert a.TRIGGER is None
+
+
+def test_alarm_time_exposes_all_useful_alarm_properties():
+    """AlarmTime should mirror Alarm's lowercase properties, except those
+    in INTENTIONALLY_EXCLUDED_ALARM_PROPERTIES.
+
+    If this test fails, a new lowercase property was likely added to
+    Alarm and needs either a matching pass-through property on
+    AlarmTime, or a reasoned entry in INTENTIONALLY_EXCLUDED_ALARM_PROPERTIES.
+    See https://github.com/collective/icalendar/issues/1421
+    """
+    alarm_prop = set()
+    alarm_time_prop = set()
+    for prop in dir(Alarm):
+        if prop.islower() and type(getattr(Alarm, prop)) == property:
+            alarm_prop.add(prop)
+    for prop in dir(AlarmTime):
+        if prop.islower() and type(getattr(AlarmTime, prop)) == property:
+            alarm_time_prop.add(prop)
+    missing = alarm_prop.difference(alarm_time_prop)
+    unaccounted = missing - INTENTIONALLY_EXCLUDED_ALARM_PROPERTIES
+    assert not unaccounted, (
+        f"AlarmTime is missing pass-through properties for: {sorted(unaccounted)}. "
+        f"Either add a getter, or add to INTENTIONALLY_EXCLUDED_ALARM_PROPERTIES "
+        f"with a reason. See https://github.com/collective/icalendar/issues/1421"
+    )

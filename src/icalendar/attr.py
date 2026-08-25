@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import itertools
+from collections.abc import Sequence
 from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Literal, TypeAlias
 
@@ -27,7 +28,7 @@ from icalendar.timezone import tzp
 from icalendar.tools import is_date
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Sequence
+    from collections.abc import Callable
 
     from icalendar.cal import Component
 
@@ -744,13 +745,22 @@ def _get_attendees(self: Component) -> list[vCalAddress]:
     return value
 
 
-def _set_attendees(self: Component, value: list[vCalAddress] | vCalAddress | None):
+ATTENDEE_TYPE_SETTER: TypeAlias = Sequence[vCalAddress | str] | vCalAddress | str | None
+
+
+def _set_attendees(self: Component, value: ATTENDEE_TYPE_SETTER):
     """Set attendees."""
     _del_attendees(self)
     if value is None:
         return
-    if not isinstance(value, list):
+    if isinstance(value, (vCalAddress, str)):
         value = [value]
+    elif not isinstance(value, list):
+        value = list(value) if isinstance(value, Sequence) else [value]
+    for index, attendee in enumerate(value):
+        # vCalAddress subclasses str, so exclude it before normalizing strings
+        if not isinstance(attendee, vCalAddress) and isinstance(attendee, str):
+            value[index] = vCalAddress.new(attendee)
     self["ATTENDEE"] = value
 
 
@@ -785,31 +795,43 @@ Description:
     type of iCalendar alarm.
 
 Examples:
-    Add a new attendee to an existing event.
+    Assign one or more attendee email addresses directly. Strings are
+    converted to :class:`~icalendar.prop.cal_address.vCalAddress` objects
+    and receive a ``mailto:`` prefix when needed.
 
     .. code-block:: pycon
 
-        >>> from icalendar import Event, vCalAddress
+        >>> from icalendar import Event
         >>> event = Event()
-        >>> event.attendees.append(vCalAddress("mailto:me@my-domain.com"))
+        >>> event.attendees = [
+        ...     "me@my-domain.com",
+        ...     "mailto:you@my-domain.com",
+        ... ]
+        >>> event.attendees[0]
+        vCalAddress('mailto:me@my-domain.com')
+        >>> event.attendees[1]
+        vCalAddress('mailto:you@my-domain.com')
         >>> print(event.to_ical())
         BEGIN:VEVENT
         ATTENDEE:mailto:me@my-domain.com
+        ATTENDEE:mailto:you@my-domain.com
         END:VEVENT
 
-    Create an email alarm with several attendees:
+    Use :meth:`vCalAddress.new
+    <icalendar.prop.cal_address.vCalAddress.new>` when an attendee needs
+    parameters such as ``CN``, ``ROLE``, or ``RSVP``.
 
-        >>> from icalendar import Alarm, vCalAddress
-        >>> alarm = Alarm.new(attendees = [
-        ...     vCalAddress("mailto:me@my-domain.com"),
-        ...     vCalAddress("mailto:you@my-domain.com"),
-        ... ], summary = "Email alarm")
-        >>> print(alarm.to_ical())
-        BEGIN:VALARM
-        ATTENDEE:mailto:me@my-domain.com
-        ATTENDEE:mailto:you@my-domain.com
-        SUMMARY:Email alarm
-        END:VALARM
+    .. code-block:: pycon
+
+        >>> from icalendar import vCalAddress
+        >>> event.attendees = [
+        ...     vCalAddress.new(
+        ...         "chair@example.com",
+        ...         cn="Meeting Chair",
+        ...         role="CHAIR",
+        ...         rsvp=True,
+        ...     )
+        ... ]
 """,
 )
 
@@ -2640,6 +2662,7 @@ Example:
 
 
 __all__ = [
+    "ATTENDEE_TYPE_SETTER",
     "CONCEPTS_TYPE_SETTER",
     "LINKS_TYPE_SETTER",
     "RECURRENCE_ID",
