@@ -105,7 +105,8 @@ class AlarmTime:
 
     @property
     def summary(self) -> str | None:
-        """The subject for this alarm
+        """The short summary or subject for this alarm.
+
         This delegates to :attr:`Alarm.summary <icalendar.cal.alarm.Alarm.summary>`.
         """
         return self.alarm.summary
