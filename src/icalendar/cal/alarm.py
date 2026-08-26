@@ -364,6 +364,18 @@ class Alarm(Component):
         returned when no ``ACTION`` property is present.
         """,
     )
+
+    @ACTION.setter
+    def ACTION(self, value: str | None) -> None:
+        if value == "AUDIO" and len(self.attachments) > 1:
+            raise InvalidCalendar(
+                "An AUDIO alarm must not contain more than one attachment.\n"
+                f"Alarm has {len(self.attachments)} attachments."
+            )
+        self.pop("ACTION", None)
+        if value is not None:
+            self.add("ACTION", value)
+
     uid = single_string_property(
         "UID",
         uid_property.__doc__,

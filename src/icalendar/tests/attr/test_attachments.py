@@ -219,3 +219,11 @@ def test_new_with_audio_action_rejects_multiple_attachments():
                 "ftp://example.com/sound2.aud",
             ],
         )
+
+
+def test_setting_audio_action_on_alarm_with_multiple_attachments_raises():
+    alarm = Alarm.new(attachments=["ftp://a.com/a.aud", "ftp://b.com/b.aud"])
+    with pytest.raises(
+        InvalidCalendar, match="must not contain more than one attachment"
+    ):
+        alarm.ACTION = "AUDIO"
