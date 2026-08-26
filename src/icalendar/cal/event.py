@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Literal
 
 from icalendar.attr import (
     ATTACHMENTS_TYPE_SETTER,
+    ATTENDEE_TYPE_SETTER,
     CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
@@ -437,7 +438,7 @@ class Event(Component):
         cls,
         /,
         attachments: ATTACHMENTS_TYPE_SETTER = None,
-        attendees: list[vCalAddress] | None = None,
+        attendees: ATTENDEE_TYPE_SETTER = None,
         categories: Sequence[str] = (),
         classification: CLASS | None = None,
         color: str | None = None,
