@@ -119,6 +119,21 @@ The following command shows how to run tests in Python 3.14.
     tox's `CLI interface documentation <https://tox.wiki/en/stable/reference/cli.html>`_.
 
 
+Test distribution files
+-----------------------
+
+To build and check the source distribution and wheel, run the following command.
+
+..  code-block:: shell
+
+    make test-dist
+
+This command runs :file:`src/icalendar/tests/test_create_release.sh`, which
+builds the distribution files, checks that required files are included and
+unwanted files are excluded, and verifies the package metadata with
+:program:`twine`.
+
+
 Format code
 -----------
 

@@ -148,6 +148,10 @@ docs-all: .venv clean vale doctest docstring html linkcheckbroken  ## Clean docs
 .PHONY: test
 test: .venv  ## Run code tests and coverage
 	@uv run tox
+
+.PHONY: test-dist
+test-dist:  ## Build and test the distribution files
+	@src/icalendar/tests/test_create_release.sh
 # /test
 
 

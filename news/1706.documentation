@@ -1,0 +1,1 @@
+Added the :program:`make test-dist` command to build and check the distribution files. I used AI to assist with this change. @cananoo

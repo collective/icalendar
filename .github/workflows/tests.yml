@@ -100,7 +100,7 @@ jobs:
         enable-cache: false
         version: "0.11.6"
     - name: Check the release files
-      run: src/icalendar/tests/test_create_release.sh
+      run: make test-dist
 
   deploy-tag-to-pypi:
     # only deploy on tags, see https://stackoverflow.com/a/58478262/1320237
