@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from icalendar.parser.ical.component import ComponentIcalParser
     from icalendar.parser.ical.lazy import LazySubcomponent
 
-    from .component import Component
+    from icalendar.cal import Component
 
 
 class ParsedSubcomponentsStrategy:
