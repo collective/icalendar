@@ -7,11 +7,13 @@ from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING
 
 from icalendar.attr import (
+    ATTACHMENTS_TYPE_SETTER,
     ATTENDEE_TYPE_SETTER,
     CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
     REQUEST_STATUS_property,
+    attachments_property,
     attendees_property,
     categories_property,
     class_property,
@@ -170,6 +172,7 @@ class Journal(Component):
     contacts = contacts_property
     status = status_property
     attendees = attendees_property
+    attachments = attachments_property
     from icalendar.attr import RECURRENCE_ID
 
     @property
@@ -200,6 +203,7 @@ class Journal(Component):
     def new(
         cls,
         /,
+        attachments: ATTACHMENTS_TYPE_SETTER = None,
         attendees: ATTENDEE_TYPE_SETTER = None,
         categories: Sequence[str] = (),
         classification: CLASS | None = None,
@@ -229,6 +233,7 @@ class Journal(Component):
         This creates a new Journal in accordance with :rfc:`5545`.
 
         Parameters:
+            attachments: The :attr:`attachments` of the journal.
             attendees: The :attr:`attendees` of the journal.
             categories: The :attr:`categories` of the journal.
             classification: The :attr:`classification` of the journal.
@@ -285,6 +290,7 @@ class Journal(Component):
         journal.classification = classification
         journal.url = url
         journal.organizer = organizer
+        journal.attachments = attachments
         journal.contacts = contacts
         journal.start = start
         journal.status = status
