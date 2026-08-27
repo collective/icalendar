@@ -39,6 +39,9 @@ class ParsedSubcomponentsStrategy:
 
         Parameters:
             components: The parsed subcomponents to store.
+
+        Returns:
+            This strategy with the subcomponents stored.
         """
         self._components = components
         return self
@@ -48,6 +51,9 @@ class ParsedSubcomponentsStrategy:
 
         Parameters:
             component: The component to add.
+
+        Returns:
+            This strategy with the component added.
         """
         self._components.append(component.parse())
         return self
@@ -137,6 +143,9 @@ class LazySubcomponentsStrategy:
 
         Parameters:
             component: The component to add.
+
+        Returns:
+            This strategy with the component added.
         """
         self._components.append(component)
         return self
@@ -259,7 +268,7 @@ class LazyCalendar(Calendar):
             False
 
     See also:
-        :class:`~icalendar.cal.calendar.Calendar`
+        :meth:`~icalendar.cal.calendar.Calendar`
     """
 
     _subcomponents: (
@@ -288,8 +297,8 @@ class LazyCalendar(Calendar):
             A list of parsed subcomponents.
 
         See also:
-            -   :attr:`Calendar.subcomponents` [Needs fixing]
-            -   :meth:`is_lazy`
+            :attr:`~icalendar.cal.calendar.Calendar.subcomponents`
+            :meth:`is_lazy`
 
         """
         self._subcomponents, result = self._subcomponents.get_all_components()
@@ -326,7 +335,7 @@ class LazyCalendar(Calendar):
             component: The component to add as a subcomponent.
 
         See also:
-            :meth:`Component.add_component`
+            :meth:`Component.add_component <icalendar.cal.component.Component.add_component>`
         """
         self._subcomponents = self._subcomponents.add_component(component)
 
@@ -337,8 +346,9 @@ class LazyCalendar(Calendar):
         Returns ``False`` once all subcomponents have been parsed,
         for example, by accessing :attr:`subcomponents`.
 
-        If you believe the calendar parses more subcomponents than it should,
-        please `open an issue <https://github.com/collective/icalendar/issues/new?template=bug_report.md>`_.
+        .. note:: If you believe the calendar parses more subcomponents than
+            it should, please `open an issue
+            <https://github.com/collective/icalendar/issues/new?template=bug_report.md>`_.
 
         Returns:
             ``True`` if subcomponent parsing is deferred.
@@ -370,7 +380,7 @@ class LazyCalendar(Calendar):
             first if it matches.
 
         See also:
-            :meth:`Component.with_uid`
+            :meth:`Component.with_uid <icalendar.cal.component.Component.with_uid>`
         """
         self._subcomponents, result = self._subcomponents.with_uid(uid)
         if self.uid == uid:
