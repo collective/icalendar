@@ -297,8 +297,8 @@ class LazyCalendar(Calendar):
             A list of parsed subcomponents.
 
         See also:
-            :attr:`~icalendar.cal.calendar.Calendar.subcomponents`
-            :meth:`is_lazy`
+            -   :attr:`~icalendar.cal.calendar.Calendar.subcomponents`
+            -   :meth:`is_lazy`
 
         """
         self._subcomponents, result = self._subcomponents.get_all_components()
