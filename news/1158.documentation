@@ -1,5 +1,1 @@
-Fix the broken ``vXmlReference`` cross-reference in the documentation style guide.
-
-AI-assisted: ChatGPT (GPT-5.6 Sol) was used to help identify and review the broken Sphinx reference. The final change was manually verified.
-
-@josemmiranda04
+Fix the broken ``vXmlReference`` cross-reference in the documentation style guide. AI-assisted: ChatGPT (GPT-5.6 Sol) was used to help identify and review the broken Sphinx reference. The final change was manually verified. @josemmiranda04
