@@ -11,6 +11,7 @@ from icalendar.enums import BUSYTYPE, CLASS, STATUS, TRANSP, StrEnum
 from icalendar.error import IncompleteComponent, InvalidCalendar
 from icalendar.parser_tools import SEQUENCE_TYPES
 from icalendar.prop import (
+    vBinary,
     vCalAddress,
     vCategory,
     vDDDTypes,
@@ -2661,13 +2662,123 @@ Example:
 )
 
 
+ATTACHMENTS_TYPE_SETTER: TypeAlias = (
+    str | bytes | vUri | vBinary | None | list[str | bytes | vUri | vBinary]
+)
+
+
+def _normalize_attachment(value: str | bytes | vUri | vBinary) -> vUri | vBinary:
+    """Convert one attachment value."""
+    if isinstance(value, (vUri, vBinary)):
+        return value
+    if isinstance(value, str):
+        return vUri(value)
+    if isinstance(value, bytes):
+        return vBinary(value)
+    raise TypeError(
+        f"Attachments must be str, bytes, vUri, or vBinary, not {type(value).__name__}."
+    )
+
+
+def _get_attachments(self: Component) -> list[vUri | vBinary]:
+    """Get all the attachments"""
+    attachments = self.get("ATTACH", [])
+    if not isinstance(attachments, SEQUENCE_TYPES):
+        return [attachments]
+    return list(attachments)
+
+
+def _set_attachments(self: Component, value: ATTACHMENTS_TYPE_SETTER) -> None:
+    """Set attachments properties"""
+    if value is None:
+        _del_attachments(self)
+        return
+    if not isinstance(value, list):
+        value = [value]
+    attachments = [_normalize_attachment(attachment) for attachment in value]
+    _del_attachments(self)
+    for attachment in attachments:
+        self.add("ATTACH", attachment)
+
+
+def _del_attachments(self: Component) -> None:
+    """Delete all attachments"""
+    self.pop("ATTACH", None)
+
+
+attachments_property = property(
+    _get_attachments,
+    _set_attachments,
+    _del_attachments,
+    """This property defines the attachments for a component.
+
+Setting this property replaces all existing attachments. A :class:`str`
+is converted to :class:`~icalendar.prop.uri.vUri`, and :class:`bytes` is
+converted to :class:`~icalendar.prop.binary.vBinary`. Values that are
+already :class:`~icalendar.prop.uri.vUri` or
+:class:`~icalendar.prop.binary.vBinary` are stored unchanged, so their
+parameters are preserved. Setting ``None`` or an empty list removes all
+attachments, as does deleting the property.
+
+Parameters:
+    attachments(str | bytes | vUri | vBinary | list | None):
+        A single attachment, or a list of attachments to set. Accepts
+        :class:`str`, :class:`bytes`, :class:`~icalendar.prop.uri.vUri`,
+        and :class:`~icalendar.prop.binary.vBinary`, individually or
+        mixed together in a list.
+
+Example:
+    Attach a URI to an event, then replace it with a URI and inline
+    binary data together:
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Event, vUri, vBinary
+        >>> event = Event()
+        >>> event.attachments
+        []
+        >>> event.attachments = ["https://example.com/agenda.pdf"]
+        >>> print(event.to_ical().decode())
+        BEGIN:VEVENT
+        ATTACH:https://example.com/agenda.pdf
+        END:VEVENT
+        >>> event.attachments = [
+        ...     vUri(
+        ...         "https://example.com/agenda.pdf",
+        ...         params={"FMTTYPE": "application/pdf"},
+        ...     ),
+        ...     vBinary(b"image-data", params={"FMTTYPE": "image/png"},),
+        ... ]
+        >>> len(event.attachments)
+        2
+
+.. note::
+
+    An alarm as an audio action must not contain more than one attachment.
+
+    List modifications do not modify the component. Methods such as
+    ``append()``, ``extend()``, and ``remove()``, as well as item
+    assignment, act on a copy. Assign the list back to the property, or
+    use :meth:`Component.add <icalendar.cal.component.Component.add>`
+    with a typed value instead.
+
+.. seealso::
+
+    :rfc:`5545#section-3.8.1.1` for the definition of the ``ATTACH``
+    property.
+""",
+)
+
+
 __all__ = [
+    "ATTACHMENTS_TYPE_SETTER",
     "ATTENDEE_TYPE_SETTER",
     "CONCEPTS_TYPE_SETTER",
     "LINKS_TYPE_SETTER",
     "RECURRENCE_ID",
     "RELATED_TO_TYPE_SETTER",
     "REQUEST_STATUS_property",
+    "attachments_property",
     "attendees_property",
     "busy_type_property",
     "categories_property",

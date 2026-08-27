@@ -32,7 +32,7 @@ from icalendar import (
     vCalAddress,
 )
 from icalendar.enums import BUSYTYPE
-from icalendar.prop import vText, vUid, vUri, vXmlReference
+from icalendar.prop import vBinary, vText, vUid, vUri, vXmlReference
 
 from .conftest import NOW_UTC, UID_DEFAULT
 
@@ -91,6 +91,7 @@ COMPONENTS_START_END = {Event, Todo, FreeBusy, Available, Availability}
 COMPONENTS_STATUS = {Event, Todo, Journal}
 COMPONENTS_REQUEST_STATUS = {Event, Todo, Journal, FreeBusy}
 COMPONENTS_ATTENDEES = {Event, Todo, Journal, Alarm}
+COMPONENTS_ATTACHMENTS = {Alarm, Event, Journal, Todo}
 # RFC 9253 properties are defines on ALL
 # So, if you add new components, do not forget to add them here.
 COMPONENTS_LINKS = COMPONENTS_RELATED_TO = COMPONENTS_CONCEPTS = COMPONENTS_REFID = {
@@ -793,6 +794,42 @@ new_test_cases = [
         ],
         True,
         "a list of plain and mailto: strings is normalized",
+    ),
+    (
+        COMPONENTS_ATTACHMENTS,
+        "attachments",
+        "ATTACH",
+        None,
+        [],
+        False,
+        "no attachments by default",
+    ),
+    (
+        COMPONENTS_ATTACHMENTS,
+        "attachments",
+        "ATTACH",
+        [],
+        [],
+        False,
+        "no attachments when empty list given",
+    ),
+    (
+        COMPONENTS_ATTACHMENTS,
+        "attachments",
+        "ATTACH",
+        ["https://example.com/a.pdf"],
+        [vUri("https://example.com/a.pdf")],
+        True,
+        "one URI attachment",
+    ),
+    (
+        COMPONENTS_ATTACHMENTS,
+        "attachments",
+        "ATTACH",
+        [vUri("https://example.com/a.pdf"), vBinary(b"bytes")],
+        [vUri("https://example.com/a.pdf"), vBinary(b"bytes")],
+        True,
+        "URI and binary attachment",
     ),
 ]
 
