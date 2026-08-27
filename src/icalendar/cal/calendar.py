@@ -59,6 +59,12 @@ class Calendar(Component):
             >>> print(calendar.calendar_name)
             My Calendar
 
+        Get the example Calendar:
+
+            >>> calendar = Calendar.example()
+            >>> print(calendar.calendar_name)
+            Holidays
+
     """
 
     name = "VCALENDAR"
