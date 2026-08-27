@@ -294,6 +294,16 @@ def test_alarm_time_attendees_uses_alarm_property():
     assert alarm_time.attendees == ["mailto:john.doe@example.com"]
 
 
+def test_alarm_time_attachments_uses_alarm_property():
+    """The computed occurrence exposes its underlying alarm attachments."""
+    alarm = Alarm()
+    alarm.attachments = ["ftp://example.com/sound.aud"]
+
+    alarm_time = AlarmTime(alarm, EXAMPLE_TRIGGER)
+
+    assert alarm_time.attachments == ["ftp://example.com/sound.aud"]
+
+
 def test_alarms_from_event_have_right_times(calendars):
     """We can collect from an event."""
     event = calendars.alarm_etar_future.subcomponents[-1]
