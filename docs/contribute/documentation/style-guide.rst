@@ -217,13 +217,13 @@ In the page in which the reference appears, you may use the :rst:dir:`currentmod
 
     .. currentmodule:: icalendar.prop
 
-    The class :class:`vXmlReference` is useful.
+    The class :class:`vXmlReference <icalendar.prop.xml_reference.vXmlReference>` is useful.
 
 .. currentmodule:: icalendar.prop
 
 The above example will render as shown.
 
-    The class :class:`vXmlReference` is useful.
+    The class :class:`vXmlReference <icalendar.prop.xml_reference.vXmlReference>` is useful.
 
 
 Calendar file code blocks
