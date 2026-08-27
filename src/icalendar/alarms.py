@@ -32,6 +32,7 @@ if TYPE_CHECKING:
     from datetime import datetime
 
     from icalendar.cal.alarm import Alarm
+    from icalendar.prop import vBinary, vUri
 
 Parent = Event | Todo
 
@@ -129,6 +130,15 @@ class AlarmTime:
         <icalendar.cal.alarm.Alarm.attendees>`.
         """
         return self.alarm.attendees
+
+    @property
+    def attachments(self) -> list[vUri | vBinary]:
+        """The attachments of this alarm.
+
+        This delegates to :attr:`Alarm.attachments
+        <icalendar.cal.alarm.Alarm.attachments>`.
+        """
+        return self.alarm.attachments
 
     @property
     def parent(self) -> Parent | None:
