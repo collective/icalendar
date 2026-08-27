@@ -1,0 +1,10 @@
+Fixed two broken documentation cross-reference links in the
+:meth:`~icalendar.cal.calendar.Calendar.new` docstring: the
+:class:`~icalendar.cal.availability.Availability` class reference
+was missing its full module path, and the ``DEFAULT_PRODID``
+reference pointed to an undocumented module-level constant and
+was changed to plain code formatting instead.
+
+I used AI to assist me with this change.
+
+@Mohammed-Ahmed7
