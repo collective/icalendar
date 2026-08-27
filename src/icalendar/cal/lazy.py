@@ -268,7 +268,7 @@ class LazyCalendar(Calendar):
             False
 
     See also:
-        :meth:`~icalendar.cal.calendar.Calendar`
+        :class:`~icalendar.cal.calendar.Calendar`
     """
 
     _subcomponents: (
@@ -297,7 +297,7 @@ class LazyCalendar(Calendar):
             A list of parsed subcomponents.
 
         See also:
-            -   :attr:`~icalendar.cal.calendar.Calendar.subcomponents`
+            -   :attr:`~icalendar.cal.component.Component.subcomponents`
             -   :meth:`is_lazy`
 
         """
