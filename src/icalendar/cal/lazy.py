@@ -60,7 +60,7 @@ class ParsedSubcomponentsStrategy:
         """Get the subcomponents of the calendar with the given name.
 
         Parameters:
-            name: The component name to filter by, e.g. ``"VEVENT"``.
+            name: The component name to filter by, for example, ``"VEVENT"``.
 
         Returns:
             A tuple of this strategy and the matching subcomponents.
@@ -279,8 +279,7 @@ class LazyCalendar(Calendar):
         """Parse and return all subcomponents of this calendar.
 
         Accessing this property triggers the parsing of all deferred
-        subcomponents. Once accessed, the calendar is no longer lazy
-        (see :meth:`is_lazy`).
+        subcomponents. Once accessed, the calendar is no longer lazy.
 
         You can manipulate the returned list or set it to replace all
         subcomponents. Setting the list does not re-enable lazy parsing.
@@ -289,7 +288,9 @@ class LazyCalendar(Calendar):
             A list of parsed subcomponents.
 
         See also:
-            :attr:`Calendar.subcomponents`
+            -   :attr:`Calendar.subcomponents` [Needs fixing]
+            -   :meth:`is_lazy`
+
         """
         self._subcomponents, result = self._subcomponents.get_all_components()
         return result
@@ -317,8 +318,8 @@ class LazyCalendar(Calendar):
         """Add a component to this calendar.
 
         This adds a subcomponent without parsing the entire calendar.
-        Use this instead of appending to
-        :attr:`~icalendar.cal.lazy.LazyCalendar.subcomponents`,
+        Use this, instead of appending to
+        :attr:`~icalendar.cal.lazy.LazyCalendar.subcomponents`
         which forces all subcomponents to be parsed first.
 
         Parameters:
@@ -334,13 +335,14 @@ class LazyCalendar(Calendar):
 
         Returns ``True`` if subcomponents have not been accessed yet.
         Returns ``False`` once all subcomponents have been parsed,
-        for example by accessing :attr:`subcomponents`.
+        for example, by accessing :attr:`subcomponents`.
 
         If you believe the calendar parses more subcomponents than it should,
         please `open an issue <https://github.com/collective/icalendar/issues/new?template=bug_report.md>`_.
 
         Returns:
-            ``True`` if subcomponents are deferred, ``False`` if parsed.
+            ``True`` if subcomponent parsing is deferred.
+            ``False`` if all subcomponents have been parsed.
         """
         return self._subcomponents.is_lazy()
 

@@ -1,1 +1,1 @@
-Replaced RFC copy-paste in LazyCalendar and subcomponent strategy docstrings. I used AI to assist with this change. @SemTiOne
+Replaced RFC copy-paste and expanded docstrings in both the classes :class:`~icalendar.cal.lazy.LazyCalendar` and :class:`~icalendar.cal.lazy.ParsedSubcomponentsStrategy` and their methods. I used AI to assist with this change. @SemTiOne
