@@ -25,27 +25,52 @@ class ParsedSubcomponentsStrategy:
         self._components: list[Component] = []
 
     def get_all_components(self) -> tuple[ParsedSubcomponentsStrategy, list[Component]]:
-        """Get the subcomponents of the calendar."""
+        """Get the parsed subcomponents of the calendar.
+
+        Returns:
+            A tuple of this strategy and the list of parsed subcomponents.
+        """
         return self, self._components
 
     def set_components(
         self, components: list[Component]
     ) -> ParsedSubcomponentsStrategy:
-        """Set the subcomponents of the calendar."""
+        """Set the subcomponents of the calendar.
+
+        Parameters:
+            components: The parsed subcomponents to store.
+
+        Returns:
+            This strategy with the subcomponents stored.
+        """
         self._components = components
         return self
 
     def add_component(self, component: Component) -> ParsedSubcomponentsStrategy:
-        """Add a component to the calendar."""
+        """Add a component to the calendar, parsing it immediately.
+
+        Parameters:
+            component: The component to add.
+
+        Returns:
+            This strategy with the component added.
+        """
         self._components.append(component.parse())
         return self
 
     def is_lazy(self) -> Literal[False]:
-        """Returns ``False`` because subcomponents are not lazily parsed."""
+        """Return ``False`` because subcomponents are not lazily parsed."""
         return False
 
     def walk(self, name: str) -> tuple[ParsedSubcomponentsStrategy, list[Component]]:
-        """Get the subcomponents of the calendar with the given name."""
+        """Get the subcomponents of the calendar with the given name.
+
+        Parameters:
+            name: The component name to filter by, for example, ``"VEVENT"``.
+
+        Returns:
+            A tuple of this strategy and the matching subcomponents.
+        """
         result = []
         for component in self._components:
             result += component.walk(name)
@@ -54,7 +79,14 @@ class ParsedSubcomponentsStrategy:
     def with_uid(
         self, name: str
     ) -> tuple[ParsedSubcomponentsStrategy, list[Component]]:
-        """Get the subcomponents of the calendar with the given uid."""
+        """Get the subcomponents of the calendar with the given UID.
+
+        Parameters:
+            name: The UID to search for.
+
+        Returns:
+            A tuple of this strategy and the matching subcomponents.
+        """
         result = []
         for component in self._components:
             result += component.with_uid(name)
@@ -73,15 +105,20 @@ class LazySubcomponentsStrategy:
 
     @property
     def as_parsed(self) -> ParsedSubcomponentsStrategy:
-        """Return the parsed components."""
+        """Return a parsed strategy with all subcomponents parsed.
+
+        Returns:
+            A :class:`ParsedSubcomponentsStrategy` with all subcomponents.
+        """
         return ParsedSubcomponentsStrategy().set_components(
             [component.parse() for component in self._components]
         )
 
     def get_all_components(self) -> tuple[ParsedSubcomponentsStrategy, list[Component]]:
-        """Get the subcomponents of the calendar.
+        """Get the subcomponents of the calendar, parsing all of them.
 
-        Parse all subcomponents.
+        Returns:
+            A tuple of a parsed strategy and the list of subcomponents.
         """
         self.parse_initial_components()
         return self.as_parsed.get_all_components()
@@ -89,13 +126,27 @@ class LazySubcomponentsStrategy:
     def set_components(
         self, components: list[Component]
     ) -> ParsedSubcomponentsStrategy:
-        """Set the subcomponents of the calendar."""
+        """Set the subcomponents of the calendar.
+
+        Parameters:
+            components: The subcomponents to store.
+
+        Returns:
+            A :class:`ParsedSubcomponentsStrategy` holding the components.
+        """
         return ParsedSubcomponentsStrategy().set_components(components)
 
     def add_component(
         self, component: Component | LazySubcomponent
     ) -> LazySubcomponentsStrategy:
-        """Add a component to the calendar."""
+        """Add a component to the calendar without parsing it.
+
+        Parameters:
+            component: The component to add.
+
+        Returns:
+            This strategy with the component added.
+        """
         self._components.append(component)
         return self
 
@@ -122,6 +173,12 @@ class LazySubcomponentsStrategy:
         """Get the subcomponents of the calendar with the given name.
 
         Parse only the minimal number of subcomponents.
+
+        Parameters:
+            name: The component name to filter by, or ``None`` for all.
+
+        Returns:
+            A tuple of this strategy and the matching subcomponents.
         """
         if name is None:
             return self.as_parsed.walk(name)
@@ -135,6 +192,12 @@ class LazySubcomponentsStrategy:
         """Get the subcomponents of the calendar with the given ``uid``.
 
         Parse only the minimal number of subcomponents.
+
+        Parameters:
+            uid: The UID to search for.
+
+        Returns:
+            A tuple of this strategy and the matching subcomponents.
         """
         self.parse_initial_components()
         result = []
@@ -150,6 +213,16 @@ class InitialSubcomponentsStrategy:
     """
 
     def set_components(self, components: list[Component]) -> LazySubcomponentsStrategy:
+        """Set the subcomponents, switching to lazy parsing.
+
+        Parameters:
+            components: The subcomponents to store. Must be empty for an
+                uninitialised calendar.
+
+        Raises:
+            ValueError: If ``components`` is not empty. Parse the calendar
+                first or use :meth:`LazyCalendar.add_component` instead.
+        """
         if components:
             raise ValueError(
                 "Cannot set subcomponents on an uninitialised LazyCalendar. "
@@ -159,15 +232,12 @@ class InitialSubcomponentsStrategy:
 
 
 class LazyCalendar(Calendar):
-    """A calendar that can handle big files.
+    """A calendar that parses subcomponents lazily for memory efficiency.
 
-    Subcomponents of this calendar are evaluated lazily,
-    meaning that they are not parsed until they are accessed.
-    This allows the calendar to handle large files without
-    consuming too much memory or time.
-
-    All properties of the calendar component are parsed immediately.
-    Subcomponents and their properties are parsed lazily.
+    Subcomponents of this calendar are parsed only when accessed,
+    allowing the calendar to handle large files without consuming
+    too much memory or time. All calendar-level properties are parsed
+    immediately; subcomponents and their properties are deferred.
 
     Examples:
 
@@ -197,6 +267,8 @@ class LazyCalendar(Calendar):
             >>> calendar.is_lazy()
             False
 
+    See also:
+        :meth:`ComponentIcalParser.parse <icalendar.parser.ical.component.ComponentIcalParser.parse>`
     """
 
     _subcomponents: (
@@ -213,12 +285,21 @@ class LazyCalendar(Calendar):
 
     @property
     def subcomponents(self) -> list[Component]:
-        """The subcomponents of the calendar.
+        """Parse and return all subcomponents of this calendar.
 
-        Parse all subcomponents of the calendar and return them as a list.
+        Accessing this property triggers the parsing of all deferred
+        subcomponents. Once accessed, the calendar is no longer lazy.
 
-        You can manipulate this list or set it.
-        It has the same behavior as in :class:`~icalendar.cal.calendar.Calendar`.
+        You can manipulate the returned list or set it to replace all
+        subcomponents. Setting the list does not re-enable lazy parsing.
+
+        Returns:
+            A list of parsed subcomponents.
+
+        See also:
+            -   :attr:`~icalendar.cal.component.Component.subcomponents`
+            -   :meth:`is_lazy`
+
         """
         self._subcomponents, result = self._subcomponents.get_all_components()
         return result
@@ -243,22 +324,34 @@ class LazyCalendar(Calendar):
         return factory
 
     def add_component(self, component: Component) -> None:
-        """Add a component to the calendar.
+        """Add a component to this calendar.
 
-        Use this instead of appending to
-        :attr:`~icalendar.cal.lazy.LazyCalendar.subcomponents`,
-        as the latter does not parse the whole calendar.
+        This adds a subcomponent without parsing the entire calendar.
+        Use this, instead of appending to
+        :attr:`~icalendar.cal.lazy.LazyCalendar.subcomponents`
+        which forces all subcomponents to be parsed first.
+
+        Parameters:
+            component: The component to add as a subcomponent.
+
+        See also:
+            :meth:`Component.add_component <icalendar.cal.component.Component.add_component>`
         """
         self._subcomponents = self._subcomponents.add_component(component)
 
     def is_lazy(self) -> bool:
-        """Whether the subcomponents will be parsed lazily.
+        """Whether the subcomponents are still deferred and not yet parsed.
 
-        .. note:: If you believe that the calendar parses more than it should,
-            please `open an issue <https://github.com/collective/icalendar/issues/new?template=bug_report.md>`_.
+        Returns ``True`` if subcomponents have not been accessed yet.
+        Returns ``False`` once all subcomponents have been parsed,
+        for example, by accessing :attr:`subcomponents`.
+
+        .. note:: If you believe the calendar parses more subcomponents than
+            it should, please `open an issue
+            <https://github.com/collective/icalendar/issues/new?template=bug_report.md>`_.
 
         Returns:
-            ``True`` if subcomponents are deferred and not yet parsed.
+            ``True`` if subcomponent parsing is deferred.
             ``False`` if all subcomponents have been parsed.
         """
         return self._subcomponents.is_lazy()
@@ -273,12 +366,26 @@ class LazyCalendar(Calendar):
         return result
 
     def with_uid(self, uid: str) -> list[Component]:
+        """Return subcomponents matching the given UID without parsing all subcomponents.
+
+        This searches lazily, parsing only the minimal subcomponents
+        needed to find matches. If this calendar's own UID matches,
+        it is included as the first element.
+
+        Parameters:
+            uid: The UID to search for.
+
+        Returns:
+            A list of components whose UID matches, with the calendar itself
+            first if it matches.
+
+        See also:
+            :meth:`Component.with_uid <icalendar.cal.component.Component.with_uid>`
+        """
         self._subcomponents, result = self._subcomponents.with_uid(uid)
         if self.uid == uid:
             result.insert(0, self)
         return result
-
-    with_uid.__doc__ = Calendar.with_uid.__doc__
 
 
 __all__ = ["LazyCalendar"]
