@@ -268,7 +268,7 @@ class LazyCalendar(Calendar):
             False
 
     See also:
-        :meth:`~icalendar.parser.ical.component.ComponentIcalParser.parse`
+        :meth:`ComponentIcalParser.parse <icalendar.parser.ical.component.ComponentIcalParser.parse>`
     """
 
     _subcomponents: (
