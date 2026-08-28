@@ -184,7 +184,7 @@ full dotted Python path
 
     The above example will render as shown.
 
-        :class:`icalendar.prop.vXmlReference`
+        :class:`icalendar.prop.xml_reference.vXmlReference`
 
 custom text label
     As a compromise to showing the full dotted Python path, while retaining sufficient context of the object's location when displayed, use a custom text label.
