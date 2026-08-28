@@ -1162,8 +1162,13 @@ def _node_from_jcal(jcal, starting_cls: type[Component]) -> tuple[Component, lis
         JCalParsingError.validate_property(prop, component_cls, path=[1, i])
         prop_name = prop[0]
         prop_value = prop[2]
-        prop_cls: type[VPROPERTY] = component_cls.types_factory.for_property(
-            prop_name, prop_value
+        # RFC 7265's UNKNOWN type is always represented verbatim.  This must
+        # take precedence over the RDATE/EXDATE list special case in the
+        # general property factory.
+        prop_cls: type[VPROPERTY] = (
+            vUnknown
+            if prop_value.lower() == "unknown"
+            else component_cls.types_factory.for_property(prop_name, prop_value)
         )
         with JCalParsingError.reraise_with_path_added(1, i):
             v_prop = prop_cls.from_jcal(prop)

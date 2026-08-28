@@ -63,6 +63,10 @@ class vBroken(vText):
             f"property_name={self.property_name!r})"
         )
 
+    def to_jcal(self, name: str) -> list:
+        """Serialize the unparsed value as the RFC 7265 ``unknown`` type."""
+        return [name, self.params.to_jcal(), "unknown", str(self)]
+
     @classmethod
     def from_parse_error(
         cls,

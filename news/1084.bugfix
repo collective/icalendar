@@ -1,0 +1,1 @@
+Broken properties now serialize as RFC 7265 ``unknown`` values and survive jCal round-trips. @cakeni
