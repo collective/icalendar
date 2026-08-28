@@ -215,7 +215,7 @@ In the page in which the reference appears, you may use the :rst:dir:`currentmod
 
 .. code-block:: rst
 
-    .. currentmodule:: icalendar.prop
+    .. currentmodule:: icalendar.prop.xml_reference
 
     The class :class:`vXmlReference <icalendar.prop.xml_reference.vXmlReference>` is useful.
 
