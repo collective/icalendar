@@ -59,18 +59,32 @@ def test_timezone_property_summary_names_the_right_boundary(component, prop):
 
 
 @pytest.mark.parametrize(
-    ("own_names", "prop"),
+    "prop",
     [
-        (("DTSTAMP", "stamp"), Component.__dict__["DTSTAMP"]),
-        (("CREATED", "created"), Component.__dict__["CREATED"]),
-        (("LAST_MODIFIED", "last_modified"), Component.__dict__["LAST_MODIFIED"]),
+        Component.__dict__["DTSTAMP"],
+        Component.__dict__["CREATED"],
+        Component.__dict__["LAST_MODIFIED"],
     ],
 )
-def test_see_also_does_not_reference_the_property_itself(own_names, prop):
-    """A timestamp property should point at the other two, not at itself."""
+def test_see_also_lists_the_lowercase_accessors(prop):
+    """See also points at the lowercase accessors, per the 2026-08-28 review.
+
+    The uppercase property names are not listed (they are what the docstring
+    documents), and the lowercase names are distinct accessor objects, so none
+    of the three entries is self-referential.
+    """
     _, _, see_also = prop.__doc__.partition("See also:")
     assert see_also, "no See also section found"
-    for name in own_names:
-        assert f":attr:`{name}`" not in see_also, (
-            f"{own_names[0]} lists itself in its own See also section"
-        )
+    assert ":attr:`DTSTAMP`" not in see_also
+    assert ":attr:`CREATED`" not in see_also
+    assert ":attr:`LAST_MODIFIED`" not in see_also
+    for name in ("created", "stamp", "last_modified"):
+        assert f":attr:`{name}`" in see_also
+
+
+def test_stamp_is_a_distinct_accessor_without_a_deleter():
+    """stamp is no longer the same property object as DTSTAMP, and cannot be
+    deleted, as a stamp should never be removed once set (review 2026-08-28).
+    """
+    assert Component.__dict__["stamp"] is not Component.__dict__["DTSTAMP"]
+    assert Component.__dict__["stamp"].fdel is None

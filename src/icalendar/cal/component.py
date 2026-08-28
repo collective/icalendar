@@ -727,7 +727,7 @@ class Component(CaselessDict):
                 )
         return child_result
 
-    DTSTAMP = stamp = single_utc_property(
+    DTSTAMP = single_utc_property(
         "DTSTAMP",
         """The UTC datetime stamp recording when this component instance was created or last revised.
 
@@ -751,10 +751,24 @@ class Component(CaselessDict):
             datetime.datetime(2024, 6, 1, 12, 0, tzinfo=ZoneInfo(key='UTC'))
 
     See also:
-        :attr:`CREATED`, :attr:`LAST_MODIFIED`,
-        :attr:`created`, :attr:`last_modified`
+        :attr:`created`, :attr:`stamp`, :attr:`last_modified`
     """,
     )
+
+    @property
+    def stamp(self) -> datetime | None:
+        """Datetime stamp of this component, as a :class:`~datetime.datetime` in UTC.
+
+        This is the lowercase accessor for :attr:`DTSTAMP`, following the pattern
+        of :attr:`created` and :attr:`last_modified`. Unlike those, there is no
+        fallback: a component without :attr:`DTSTAMP` has ``stamp = None``.
+        There is no deleter, as a stamp should never be removed once set.
+        """
+        return self.DTSTAMP
+
+    @stamp.setter
+    def stamp(self, value: datetime) -> None:
+        self.DTSTAMP = value
 
     LAST_MODIFIED = single_utc_property(
         "LAST-MODIFIED",
@@ -777,8 +791,7 @@ class Component(CaselessDict):
             datetime.datetime(2024, 6, 1, 9, 0, tzinfo=ZoneInfo(key='UTC'))
 
     See also:
-        :attr:`CREATED`, :attr:`DTSTAMP`,
-        :attr:`created`, :attr:`stamp`
+        :attr:`created`, :attr:`stamp`, :attr:`last_modified`
     """,
     )
 
@@ -854,8 +867,7 @@ class Component(CaselessDict):
             datetime.datetime(2024, 1, 1, 8, 0, tzinfo=ZoneInfo(key='UTC'))
 
     See also:
-        :attr:`DTSTAMP`, :attr:`LAST_MODIFIED`,
-        :attr:`stamp`, :attr:`last_modified`
+        :attr:`created`, :attr:`stamp`, :attr:`last_modified`
     """,
     )
 
