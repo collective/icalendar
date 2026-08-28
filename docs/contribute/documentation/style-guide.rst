@@ -172,7 +172,7 @@ object only
 
     The above example will render as shown.
 
-        :class:`~icalendar.prop.vXmlReference`
+        :class:`~icalendar.prop.xml_reference.vXmlReference`
 
 full dotted Python path
     Use this form only when the object exists outside the rendered HTML page, such as in a superclass.
