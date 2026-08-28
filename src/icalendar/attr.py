@@ -1185,17 +1185,14 @@ Examples:
 
 comments_property = multi_text_property(
     "COMMENT",
-    """Non-processing information intended to provide a comment to the calendar user.
+    """Specifies a comment to the calendar user.
 
-The comment property holds free-text notes attached to a component. Calendar
-clients display it but never act on it, so it is safe for human-readable
-annotations such as "moved from the planning board" or "confirmed by phone".
-
-This property is defined in :rfc:`5545#section-3.8.1.4` and may appear
-multiple times on ``VEVENT``, ``VTODO``, ``VJOURNAL``, and ``VFREEBUSY``
-components as well as on their ``STANDARD`` and ``DAYLIGHT`` sub-components.
-For availability components it is defined in :rfc:`7953` and may appear
-multiple times on ``VAVAILABILITY`` and ``VAVAILABLE``.
+This property holds free-text notes attached to a component; calendar clients
+display it but never act on it. It is defined in :rfc:`5545#section-3.8.1.4`
+and may appear multiple times on ``VEVENT``, ``VTODO``, ``VJOURNAL``, and
+``VFREEBUSY`` components as well as on their ``STANDARD`` and ``DAYLIGHT``
+sub-components. For availability components it is defined in :rfc:`7953` and
+may appear multiple times on ``VAVAILABILITY`` and ``VAVAILABLE``.
 
 You can get, set, append, and delete comments on a component. The value is a
 list of strings; each string is one comment.
@@ -1213,9 +1210,6 @@ Example:
         ['Moved from the planning board.', 'Confirmed by phone.']
         >>> str(event.comments[0])
         'Moved from the planning board.'
-
-See also:
-    :attr:`Component.comments <icalendar.cal.component.Component.comments>`
 """,
 )
 
@@ -1618,10 +1612,10 @@ Description:
 
 contacts_property = multi_text_property(
     "CONTACT",
-    """Contact information associated with the calendar component.
+    """Contact information associated with a calendar component.
 
 The contact property holds free-text information for reaching the person or
-organization responsible for a component, such as a name, phone number, or a
+organization responsible in a component, such as a name, phone number, or a
 reference to more detailed contact data. Calendar clients surface it so
 attendees know who to contact about the event or task.
 
@@ -1629,7 +1623,7 @@ This property is defined in :rfc:`5545#section-3.8.4.2` and may appear on a
 ``VEVENT``, ``VTODO``, ``VJOURNAL``, or ``VFREEBUSY`` component. For
 availability components it is defined in :rfc:`7953` and may appear on a
 ``VAVAILABILITY`` or ``VAVAILABLE`` component. An alternate representation may
-point to a URI (for example a vCard :rfc:`2426`) via the ``ALTREP`` parameter.
+point to a URI, for example a vCard per :rfc:`2426`, via the ``ALTREP`` parameter.
 
 You can get, set, append, and delete contacts on a component. The value is a
 list of strings; each string is one contact entry.
@@ -1646,18 +1640,6 @@ Example:
         ['Jim Dolittle, ABC Industries, +1-919-555-1234']
         >>> str(event.contacts[0])
         'Jim Dolittle, ABC Industries, +1-919-555-1234'
-
-See also:
-    :attr:`Component.contacts <icalendar.cal.component.Component.contacts>`
-
-    The following is an example of this property referencing a network
-    resource, such as a vCard :rfc:`2426` object containing the contact
-    information:
-
-    .. code-block:: ics
-
-        CONTACT;ALTREP="http://example.com/pdi/jdoe.vcf":Jim
-         Dolittle\\, ABC Industries\\, +1-919-555-1234
 """,
 )
 
