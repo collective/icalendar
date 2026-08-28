@@ -192,7 +192,7 @@ custom text label
 
     .. code-block:: rst
 
-        :class:`prop.vXmlReference <icalendar.prop.vXmlReference>`
+        :class:`prop.xml_reference.vXmlReference <icalendar.prop.xml_reference.vXmlReference>`
 
     The above example will render as shown.
 
