@@ -168,7 +168,7 @@ object only
 
     .. code-block:: rst
 
-        :class:`~icalendar.prop.vXmlReference`
+        :class:`~icalendar.prop.xml_reference.vXmlReference`
 
     The above example will render as shown.
 
