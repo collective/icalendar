@@ -1,1 +1,1 @@
-Broken properties now serialize as RFC 7265 ``unknown`` values and survive jCal round-trips. @cakeni
+:class:`~icalendar.prop.broken.vBroken` properties now serialize as :rfc:`7265#section-7.1` ``unknown`` values and survive jCal round-trips. @cakeni
