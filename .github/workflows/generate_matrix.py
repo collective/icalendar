@@ -168,9 +168,15 @@ if __name__ == "__main__":
     #
     # Parse parameters
     #
+    if len(sys.argv) < 3:
+        print(  # noqa: T201
+            "Usage: generate_matrix.py <git_ref> <review_state> [event_name]",
+            file=sys.stderr,
+        )
+        sys.exit(1)
     arg_ref = sys.argv[1]  # github.ref
     arg_review = sys.argv[2]  # github.event.review.state
-    arg_event_name = sys.argv[3]  # github.event_name
+    arg_event_name = sys.argv[3] if len(sys.argv) > 3 else ""  # github.event_name
 
     matrix = generate_matrix(arg_ref, arg_review, arg_event_name)
 
