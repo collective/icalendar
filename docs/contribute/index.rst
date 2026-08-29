@@ -204,7 +204,7 @@ To avoid a filename conflict with an existing file or another pull request for t
     1158.documentation.1
     1158.documentation.2
 
-For orphan change log entries—that is, those that don't need to be linked to any issue ID or other identifier—start the file name with ``+``.
+For orphan change log entries, which don't need to be linked to any issue ID or other identifier, start the file name with ``+``.
 The content will still be included in the change log, at the end of the category corresponding to the file extension.
 
 ..  code-block:: text
@@ -271,6 +271,7 @@ The content of this file must include the following.
 You can write a good change log entry with the following guidance.
 
 -   Use a narrative format, in the past tense, proper English spelling and grammar, and inline markup as needed.
+-   Write the entire entry on a single line and let documentation tools wrap it for display.
 -   Write your change log entry for its appropriate audience.
 
     -   Most entries should address *users* of the software.
