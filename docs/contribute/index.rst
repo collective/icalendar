@@ -263,7 +263,7 @@ Write a good change log entry
 
 The content of this file must include the following.
 
--   A brief message that summarizes the changes in your contribution.
+-   A brief message that summarizes the changes in your contribution, written as a single line, without wrapped or multi-line paragraphs.
 -   Use :ref:`reStructuredText markup <markup-examples>` to link to relevant RFCs, API usage, and other references.
 -   A brief disclosure of AI use, per icalendar's :ref:`responsible-ai-use` policy, if applicable.
 -   An attribution to yourself, in the format of ``@github_username``, at the end of the entry.
