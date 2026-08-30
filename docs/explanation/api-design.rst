@@ -242,7 +242,7 @@ Similar to the casing of names of properties, lower case parameters calculate th
     >>> print(attendee.CN)  # direct access
     Max Rasmussen
 
-The parameters turn up the iCal representation.
+The parameters turn up in the iCal representation.
 
 .. code-block:: pycon
     
