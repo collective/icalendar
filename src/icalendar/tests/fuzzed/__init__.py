@@ -35,6 +35,17 @@ _value_error_matches = [
     "must have exactly",  # vCard field count validation (ADR, N)
     "must have at least",  # vCard ORG minimum field validation
     "not enough values to unpack",  # dateutil rejects a malformed VTIMEZONE content line
+    "unsupported property",  # dateutil tzical: RRULE (etc.) at VTIMEZONE level
+    "unsupported ",  # dateutil tzical: unsupported TZID/TZOFFSET/TZNAME parm
+    "empty offset",  # dateutil tzical
+    "invalid offset",  # dateutil tzical
+    "empty property name",  # dateutil tzical
+    "mandatory TZID",  # dateutil tzical
+    "mandatory DTSTART",  # dateutil tzical
+    "mandatory TZOFFSETFROM",  # dateutil tzical
+    "no timezones defined",  # dateutil tzical
+    "more than one timezone available",  # dateutil tzical
+    "Unsupported DTSTART param",  # dateutil tzical
 ]
 
 
