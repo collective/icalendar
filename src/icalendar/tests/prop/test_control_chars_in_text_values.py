@@ -1,4 +1,4 @@
-r"""TEXT values must reject control characters on parse.
+r"""TEXT values must not emit control characters.
 
 :rfc:`5545#section-3.3.11` defines TEXT as
 ``*(TSAFE-CHAR / ":" / DQUOTE / ESCAPED-CHAR)`` where TSAFE-CHAR is defined by
@@ -19,25 +19,25 @@ In turn, CONTROL is defined by the following grammar in :rfc:`5545#section-3.1`.
     ; All the controls except HTAB
 
 Although "the current character set" may be one of many, it is UTF-8 by default
-per :rfc:`5545#section-3.1.4`. Thus TEXT should reject all the CONTROLs except
-the horizontal tab, ``%x09``. Additionally the new line, ``%x0A``, is needed by
-the current character set because it is the result of the escaped sequences
-``\N`` and ``\n``.
+per :rfc:`5545#section-3.1.4`. Thus serialized TEXT must not contain CONTROLs
+except the horizontal tab, ``%x09``. The new line, ``%x0A``, is written as the
+escaped sequences ``\N`` and ``\n``.
 
-A NUL byte in a property value previously passed through :meth:`vText.from_ical`
-unchanged, and consumers written in C truncate strings at NUL, silently
-changing the round-tripped value. TEXT values now reject them like
-invalid parameter values do.
+A NUL byte in a property value previously passed through to ``to_ical()``.
+Consumers written in C truncate strings at NUL, silently changing the
+round-tripped value. Parsing stays open so problematic files can still be
+read; serialization strips leftover CONTROL characters. Parameter values
+still reject NUL into ``component.errors``.
 """
 
 import pytest
 
 from icalendar import Calendar, Event, vText
-from icalendar.prop import vBroken
+from icalendar.parser import _escape_char
 
 #: Every CONTROL from :rfc:`5545#section-3.1`. The horizontal tab, ``%x09``,
-#: is not a CONTROL, and the new line, ``%x0A``, is not forbidden because the
-#: escaped sequences ``\N`` and ``\n`` produce it.
+#: is not a CONTROL, and the new line, ``%x0A``, is escaped rather than
+#: stripped because the sequences ``\N`` and ``\n`` represent it.
 FORBIDDEN_CONTROL_CHARS = [
     chr(control) for control in range(0x20) if control not in (0x09, 0x0A)
 ] + ["\x7f"]
@@ -45,7 +45,8 @@ FORBIDDEN_CONTROL_CHARS = [
 FORBIDDEN_VALUES = [
     *FORBIDDEN_CONTROL_CHARS,
     "A\x00B",  # NUL from the issue report
-    "a\rb",  # lone carriage return
+    "a\x01b",  # SOH
+    "a\x7fb",  # DEL
 ]
 
 VALID_VALUES = [
@@ -59,29 +60,55 @@ VALID_VALUES = [
 ]
 
 
+def _contains_forbidden_control(data: bytes) -> bool:
+    return any(ch.encode("latin-1") in data for ch in FORBIDDEN_CONTROL_CHARS)
+
+
 @pytest.mark.parametrize("value", FORBIDDEN_VALUES)
-def test_vtext_rejects_control_characters(value):
-    with pytest.raises(ValueError):
-        vText.from_ical(value)
+def test_vtext_from_ical_stays_open(value):
+    parsed = vText.from_ical(value)
+    assert str(parsed) == value
+
+
+@pytest.mark.parametrize("value", FORBIDDEN_VALUES)
+def test_vtext_to_ical_strips_control_characters(value):
+    serialized = vText(value).to_ical()
+    assert not _contains_forbidden_control(serialized)
 
 
 @pytest.mark.parametrize("value", VALID_VALUES)
 def test_valid_text_values_still_parse(value):
-    assert vText.from_ical(value)
+    assert vText.from_ical(value) == value
 
 
-def test_event_collects_nul_in_errors():
-    """The invalid line is collected like an invalid parameter value."""
+@pytest.mark.parametrize("value", VALID_VALUES)
+def test_valid_text_values_still_serialize(value):
+    serialized = vText(value).to_ical()
+    assert not _contains_forbidden_control(serialized)
+
+
+def test_reporter_repro_does_not_emit_nul():
     event = Event.from_ical(b"BEGIN:VEVENT\r\nSUMMARY:A\x00B\r\nEND:VEVENT\r\n")
-    assert len(event.errors) == 1
-    assert isinstance(event["SUMMARY"], vBroken)
+    assert not event.errors
+    assert ascii(str(event["SUMMARY"])) == "'A\\x00B'"
+    assert b"\x00" not in event.to_ical()
+    assert b"SUMMARY:AB" in event.to_ical()
 
 
-def test_calendar_raises_for_nul_strictly():
-    with pytest.raises(ValueError):
-        Calendar.from_ical(
-            b"BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:A\x00B\r\nEND:VCALENDAR\r\n"
-        )
+def test_constructed_event_does_not_emit_nul():
+    event = Event()
+    event.add("SUMMARY", "A\x00B")
+    assert b"\x00" not in event.to_ical()
+    assert b"SUMMARY:AB" in event.to_ical()
+
+
+def test_calendar_prodid_with_nul_parses_and_sanitizes():
+    calendar = Calendar.from_ical(
+        b"BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:A\x00B\r\nEND:VCALENDAR\r\n"
+    )
+    assert not calendar.errors
+    assert str(calendar["PRODID"]) == "A\x00B"
+    assert b"\x00" not in calendar.to_ical()
 
 
 def test_escaped_newline_still_parses():
@@ -90,3 +117,25 @@ def test_escaped_newline_still_parses():
     )
     assert not event.errors
     assert str(event["SUMMARY"]) == "first\nsecond\nthird"
+    assert b"SUMMARY:first\\nsecond\\nthird" in event.to_ical()
+
+
+def test_parameter_nul_still_collected_in_errors():
+    """The parameter path still rejects NUL into ``errors``."""
+    event = Event.from_ical(
+        b"BEGIN:VEVENT\r\nSUMMARY;LANGUAGE=en\x00:Hello\r\nEND:VEVENT\r\n"
+    )
+    assert event.errors
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        ("A\x00B", "AB"),
+        ("a\x01b\x7fc", "abc"),
+        ("keep\tthis", "keep\tthis"),
+        ("a\rb", r"a\nb"),
+    ],
+)
+def test_escape_char_sanitizes_controls(value, expected):
+    assert _escape_char(value) == expected

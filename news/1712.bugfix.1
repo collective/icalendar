@@ -1,0 +1,1 @@
+Serialized :rfc:`5545` TEXT values no longer emit control characters such as NUL. Parsing stays open so problematic files can still be read; :meth:`~icalendar.prop.text.vText.to_ical` strips leftover CONTROLs after escaping line breaks. I used AI to assist me with this change. @Dmao233
