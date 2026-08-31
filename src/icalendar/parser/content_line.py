@@ -153,8 +153,15 @@ class Contentline(str):
         # Convert back to unicode, after to_ical encoded it.
         name = to_unicode(name)
         values = to_unicode(values)
+        # :rfc:`5545#section-3.1` content lines cannot contain a raw CR or LF.
+        # TEXT already escapes line breaks in :func:`_escape_char`. Other
+        # value types (for example a malformed RECUR key) can still emit one;
+        # strip leftover breaks so serialize never trips :meth:`__new__`.
+        name = name.replace("\r", "").replace("\n", "")
+        values = values.replace("\r", "").replace("\n", "")
         if params:
             params = to_unicode(params.to_ical(sorted=sorted))
+            params = params.replace("\r", "").replace("\n", "")
             if params:
                 # some parameter values can be skipped during serialization
                 return cls(f"{name};{params}:{values}")
