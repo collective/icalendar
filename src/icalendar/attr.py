@@ -1186,24 +1186,31 @@ Examples:
 
 comments_property = multi_text_property(
     "COMMENT",
-    """COMMENT is used to specify a comment to the calendar user.
+    """Specifies a comment to the calendar user.
 
-Purpose:
-    This property specifies non-processing information intended
-    to provide a comment to the calendar user.
+This property holds free-text notes attached to a component; calendar clients
+display it but never act on it. It is defined in :rfc:`5545#section-3.8.1.4`
+and may appear multiple times on ``VEVENT``, ``VTODO``, ``VJOURNAL``, and
+``VFREEBUSY`` components as well as on their ``STANDARD`` and ``DAYLIGHT``
+sub-components. For availability components, it is defined in :rfc:`7953`, and
+may appear multiple times on ``VAVAILABILITY`` and ``VAVAILABLE``.
 
-Conformance:
-    In :rfc:`5545`, this property can be specified multiple times in
-    "VEVENT", "VTODO", "VJOURNAL", and "VFREEBUSY" calendar components
-    as well as in the "STANDARD" and "DAYLIGHT" sub-components.
-    In :rfc:`7953`, this property can be specified multiple times in
-    "VAVAILABILITY" and "VAVAILABLE".
+You can get, set, append, and delete comments on a component. The value is a
+list of strings; each string is one comment.
 
-Property Parameters:
-    IANA, non-standard, alternate text
-    representation, and language property parameters can be specified
-    on this property.
+Example:
+    Add two comments to an event and then read them back.
 
+    .. code-block:: pycon
+
+        >>> from icalendar import Event
+        >>> event = Event()
+        >>> event.add("COMMENT", "Moved from the planning board.")
+        >>> event.add("COMMENT", "Confirmed by phone.")
+        >>> [str(c) for c in event.comments]
+        ['Moved from the planning board.', 'Confirmed by phone.']
+        >>> str(event.comments[0])
+        'Moved from the planning board.'
 """,
 )
 
@@ -1606,67 +1613,34 @@ Description:
 
 contacts_property = multi_text_property(
     "CONTACT",
-    """Contact information associated with the calendar component.
+    """Contact information associated with a calendar component.
 
-Purpose:
-    This property is used to represent contact information or
-    alternately a reference to contact information associated with the
-    calendar component.
+The contact property holds free-text information for reaching the person or
+organization responsible in a component, such as a name, phone number, or a
+reference to more detailed contact data. Calendar clients surface it so
+attendees know who to contact about the event or task.
 
-Property Parameters:
-    IANA, non-standard, alternate text
-    representation, and language property parameters can be specified
-    on this property.
+This property is defined in :rfc:`5545#section-3.8.4.2` and may appear on a
+``VEVENT``, ``VTODO``, ``VJOURNAL``, or ``VFREEBUSY`` component. For
+availability components it is defined in :rfc:`7953` and may appear on a
+``VAVAILABILITY`` or ``VAVAILABLE`` component. An alternate representation may
+point to a URI, for example, a vCard per :rfc:`2426`, via the ``ALTREP`` parameter.
 
-Conformance:
-    In :rfc:`5545`, this property can be specified in a "VEVENT", "VTODO",
-    "VJOURNAL", or "VFREEBUSY" calendar component.
-    In :rfc:`7953`, this property can be specified in a "VAVAILABILITY"
-    amd "VAVAILABLE" calendar component.
-
-Description:
-    The property value consists of textual contact
-    information.  An alternative representation for the property value
-    can also be specified that refers to a URI pointing to an
-    alternate form, such as a vCard :rfc:`2426`, for the contact
-    information.
+You can get, set, append, and delete contacts on a component. The value is a
+list of strings; each string is one contact entry.
 
 Example:
-    The following is an example of this property referencing
-    textual contact information:
+    Add a contact to an event and then read it back.
 
-    .. code-block:: ics
+    .. code-block:: pycon
 
-        CONTACT:Jim Dolittle\\, ABC Industries\\, +1-919-555-1234
-
-    The following is an example of this property with an alternate
-    representation of an LDAP URI to a directory entry containing the
-    contact information:
-
-    .. code-block:: ics
-
-        CONTACT;ALTREP="ldap://example.com:6666/o=ABC%20Industries\\,
-        c=US???(cn=Jim%20Dolittle)":Jim Dolittle\\, ABC Industries\\,
-        +1-919-555-1234
-
-    The following is an example of this property with an alternate
-    representation of a MIME body part containing the contact
-    information, such as a vCard :rfc:`2426` embedded in a text/
-    directory media type :rfc:`2425`:
-
-    .. code-block:: ics
-
-        CONTACT;ALTREP="CID:part3.msg970930T083000SILVER@example.com":
-         Jim Dolittle\\, ABC Industries\\, +1-919-555-1234
-
-    The following is an example of this property referencing a network
-    resource, such as a vCard :rfc:`2426` object containing the contact
-    information:
-
-    .. code-block:: ics
-
-        CONTACT;ALTREP="http://example.com/pdi/jdoe.vcf":Jim
-         Dolittle\\, ABC Industries\\, +1-919-555-1234
+        >>> from icalendar import Event
+        >>> event = Event()
+        >>> event.add("CONTACT", "Jim Dolittle, ABC Industries, +1-919-555-1234")
+        >>> [str(c) for c in event.contacts]
+        ['Jim Dolittle, ABC Industries, +1-919-555-1234']
+        >>> str(event.contacts[0])
+        'Jim Dolittle, ABC Industries, +1-919-555-1234'
 """,
 )
 
