@@ -11,6 +11,8 @@ component.
 Part of https://github.com/collective/icalendar/issues/1650
 """
 
+from datetime import datetime, timezone
+
 import pytest
 
 from icalendar.cal import Alarm, Availability, Available, Component, Event
@@ -59,32 +61,36 @@ def test_timezone_property_summary_names_the_right_boundary(component, prop):
 
 
 @pytest.mark.parametrize(
-    "prop",
+    ("name", "prop"),
     [
-        Component.__dict__["DTSTAMP"],
-        Component.__dict__["CREATED"],
-        Component.__dict__["LAST_MODIFIED"],
+        ("DTSTAMP", Component.__dict__["DTSTAMP"]),
+        ("CREATED", Component.__dict__["CREATED"]),
+        ("LAST_MODIFIED", Component.__dict__["LAST_MODIFIED"]),
     ],
 )
-def test_see_also_lists_the_lowercase_accessors(prop):
-    """See also points at the lowercase accessors, per the 2026-08-28 review.
+def test_see_also_is_not_self_referential(name, prop):
+    """See also may list uppercase and lowercase counterparts, but not itself.
 
-    The uppercase property names are not listed (they are what the docstring
-    documents), and the lowercase names are distinct accessor objects, so none
-    of the three entries is self-referential.
+    Uppercase and lowercase properties behave differently, so they may refer to
+    each other's counterparts; a property must not refer to itself.
     """
     _, _, see_also = prop.__doc__.partition("See also:")
-    assert see_also, "no See also section found"
-    assert ":attr:`DTSTAMP`" not in see_also
-    assert ":attr:`CREATED`" not in see_also
-    assert ":attr:`LAST_MODIFIED`" not in see_also
-    for name in ("created", "stamp", "last_modified"):
-        assert f":attr:`{name}`" in see_also
+    assert see_also, f"{name} has no See also section"
+    assert f":attr:`{name}`" not in see_also, f"{name} See also is self-referential"
+    for lowercase in ("created", "stamp", "last_modified"):
+        assert f":attr:`{lowercase}`" in see_also, (
+            f"{name} See also should list the :attr:`{lowercase}` counterpart"
+        )
 
 
-def test_stamp_is_a_distinct_accessor_without_a_deleter():
-    """stamp is no longer the same property object as DTSTAMP, and cannot be
-    deleted, as a stamp should never be removed once set (review 2026-08-28).
+def test_stamp_is_a_distinct_accessor_with_a_deleter():
+    """stamp is no longer the same property object as DTSTAMP, and deleting it
+    removes DTSTAMP, preserving the functionality that existed before the alias
+    was removed (review 2026-08-30).
     """
     assert Component.__dict__["stamp"] is not Component.__dict__["DTSTAMP"]
-    assert Component.__dict__["stamp"].fdel is None
+    assert Component.__dict__["stamp"].fdel is not None
+    event = Event()
+    event.stamp = datetime(2024, 6, 1, 12, 0, 0, tzinfo=timezone.utc)
+    del event.stamp
+    assert event.DTSTAMP is None
