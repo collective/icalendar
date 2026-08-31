@@ -1191,7 +1191,7 @@ This property holds free-text notes attached to a component; calendar clients
 display it but never act on it. It is defined in :rfc:`5545#section-3.8.1.4`
 and may appear multiple times on ``VEVENT``, ``VTODO``, ``VJOURNAL``, and
 ``VFREEBUSY`` components as well as on their ``STANDARD`` and ``DAYLIGHT``
-sub-components. For availability components it is defined in :rfc:`7953` and
+sub-components. For availability components, it is defined in :rfc:`7953`, and
 may appear multiple times on ``VAVAILABILITY`` and ``VAVAILABLE``.
 
 You can get, set, append, and delete comments on a component. The value is a
@@ -1623,7 +1623,7 @@ This property is defined in :rfc:`5545#section-3.8.4.2` and may appear on a
 ``VEVENT``, ``VTODO``, ``VJOURNAL``, or ``VFREEBUSY`` component. For
 availability components it is defined in :rfc:`7953` and may appear on a
 ``VAVAILABILITY`` or ``VAVAILABLE`` component. An alternate representation may
-point to a URI, for example a vCard per :rfc:`2426`, via the ``ALTREP`` parameter.
+point to a URI, for example, a vCard per :rfc:`2426`, via the ``ALTREP`` parameter.
 
 You can get, set, append, and delete contacts on a component. The value is a
 list of strings; each string is one contact entry.
