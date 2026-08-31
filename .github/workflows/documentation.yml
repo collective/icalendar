@@ -40,11 +40,6 @@ jobs:
           # Install a specific version of uv.
           version: "0.9.3"
 
-      - name: Set up Python
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
-        with:
-          python-version: ${{ matrix.python-version }}
-
       - name: Create Python virtual environment, install requirements
         run: make .venv PYTHONVERSION=${{ matrix.python-version }}
 
