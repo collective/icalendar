@@ -189,7 +189,7 @@ def q_join(lst: Sequence[str], sep: str = ",", always_quote: bool = False) -> st
     return sep.join(dquote(itm, always_quote=always_quote) for itm in lst)
 
 
-def single_string_parameter(func: Callable | None = None, upper=False):
+def single_string_parameter(func: Callable | None = None, upper: bool = False) -> Callable:
     """Create a parameter getter/setter for a single string parameter.
 
     Parameters:
@@ -201,18 +201,18 @@ def single_string_parameter(func: Callable | None = None, upper=False):
         if func is ``None``.
     """
 
-    def decorator(func):
+    def decorator(func: Callable) -> property:
         name = func.__name__
 
         @functools.wraps(func)
-        def fget(self: Parameters):
+        def fget(self: Parameters) -> str | None:
             """Get the value."""
             value = self.get(name)
             if value is not None and upper:
                 value = value.upper()
             return value
 
-        def fset(self: Parameters, value: str | None):
+        def fset(self: Parameters, value: str | None) -> None:
             """Set the value"""
             if value is None:
                 fdel(self)
@@ -221,7 +221,7 @@ def single_string_parameter(func: Callable | None = None, upper=False):
                     value = value.upper()
                 self[name] = value
 
-        def fdel(self: Parameters):
+        def fdel(self: Parameters) -> None:
             """Delete the value."""
             self.pop(name, None)
 
