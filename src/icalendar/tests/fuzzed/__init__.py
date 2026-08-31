@@ -48,6 +48,10 @@ _value_error_matches = [
     "Unsupported DTSTART param",  # dateutil tzical
 ]
 
+_CONTENTLINE_NEWLINE_ASSERT = (
+    "Content line can not contain unescaped new line characters."
+)
+
 
 def fuzz_v1_calendar(
     from_ical, calendar_string: str, multiple: bool, should_walk: bool
@@ -69,5 +73,12 @@ def fuzz_v1_calendar(
                 c.to_ical()
     except (ValueError, TypeError) as e:
         if any(m in str(e) for m in _value_error_matches):
+            return -1
+        raise
+    except AssertionError as e:
+        # Contentline.__new__ fails loudly on a raw LF (issue #1445). That is
+        # expected for non-TEXT values such as a malformed RRULE; do not treat
+        # it as a fuzzer crash. Other asserts still propagate.
+        if _CONTENTLINE_NEWLINE_ASSERT in str(e):
             return -1
         raise
