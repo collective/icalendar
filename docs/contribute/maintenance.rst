@@ -15,6 +15,13 @@ Maintainers need the following permissions.
 
 ``Admin`` access to the `repository <https://github.com/collective/icalendar>`_.
     These can be enabled by a current maintainer or a GitHub organization administrator in the `settings <https://github.com/collective/icalendar/settings/access>`_.
+
+    This access will also grant you permission to configure the Coveralls GitHub app, both through the repository settings and at `Coveralls <https://coveralls.io/github/collective/icalendar>`_.
+
+    .. seealso::
+
+        `Generate test coverage report before approval of pull request <https://github.com/collective/icalendar/issues/1556>`_
+
 ``Maintainer`` or ``Owner`` access to the `PyPI project <https://pypi.org/project/icalendar/>`_.
     Each owner and maintainer needs a PyPI account.
     All PyPI accounts require two-factor authentication (2FA) enabled.
