@@ -1,0 +1,828 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Leeds Beckett//BHBMT-A264 Timetable//EN
+CALSCALE:GREGORIAN
+TZID:Europe/London
+TZOFFSETFROM:+0000
+TZOFFSETTO:+0100
+TZNAME:BST
+
+BEGIN:VEVENT
+UID:induction-20260921@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20260921T120000
+DTEND;TZID=Europe/London:20260921T140000
+SUMMARY:Course Induction
+LOCATION:CC NT222
+DESCRIPTION:Module: Induction-BHBMT-A264-Yr1-202610-Sept_Start\nLecturers: Alistair MacAuley, Frances Bostyn, Kerry Courtney, Sarah Douglas-Lee
+END:VEVENT
+
+BEGIN:VEVENT
+UID:studentcard-20260925@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20260925T120000
+DTEND;TZID=Europe/London:20260925T160000
+SUMMARY:Student Card Collection + Harvard Layout
+LOCATION:CC RB314 / CC RB412
+DESCRIPTION:Student Card Collection & Harvard Referencing Layout
+END:VEVENT
+
+BEGIN:VEVENT
+UID:mkt-lec-20260928@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20260928T090000
+DTEND;TZID=Europe/London:20260928T100000
+SUMMARY:Marketing & the DCE (Lecture)
+LOCATION:Online - Recorded
+DESCRIPTION:Module: Marketing & the DCE\nLecturer: Esther Pugh\nOnline Recorded
+END:VEVENT
+
+BEGIN:VEVENT
+UID:gbe-lec-20260928@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20260928T100000
+DTEND;TZID=Europe/London:20260928T110000
+SUMMARY:Global Business Environment (Lecture)
+LOCATION:Online - Recorded
+DESCRIPTION:Module: Global Business Environment\nLecturer: Ella Smith\nOnline Recorded
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ent-lec-20260928@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20260928T110000
+DTEND;TZID=Europe/London:20260928T120000
+SUMMARY:Entrepreneurial Strategy (Lecture)
+LOCATION:Online - Recorded
+DESCRIPTION:Module: Entrepreneurial Strategy\nLecturer: Shane Wright\nOnline Recorded
+END:VEVENT
+
+BEGIN:VEVENT
+UID:gbe-sem-20260929@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20260929T110000
+DTEND;TZID=Europe/London:20260929T130000
+SUMMARY:Global Business Environment (Seminar)
+LOCATION:CC RB223
+DESCRIPTION:Module: Global Business Environment\nLecturer: Pooja Soni
+END:VEVENT
+
+BEGIN:VEVENT
+UID:gbe-lec-20260930@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20260930T090000
+DTEND;TZID=Europe/London:20260930T100000
+SUMMARY:Global Business Environment (Lecture)
+LOCATION:CC RB241 (LTA) Sagar Wright Theatre
+DESCRIPTION:Module: Global Business Environment\nLecturer: Ella Smith
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ent-sem-20260930@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20260930T110000
+DTEND;TZID=Europe/London:20260930T130000
+SUMMARY:Entrepreneurial Strategy (Seminar)
+LOCATION:CC RB206
+DESCRIPTION:Module: Entrepreneurial Strategy\nLecturer: Carl Clare
+END:VEVENT
+
+BEGIN:VEVENT
+UID:mkt-lec-20261001@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261001T160000
+DTEND;TZID=Europe/London:20261001T170000
+SUMMARY:Marketing & the DCE (Lecture)
+LOCATION:CC RB241 (LTA) Sagar Wright Theatre
+DESCRIPTION:Module: Marketing & the DCE\nLecturer: Esther Pugh
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ent-lec-20261002@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261002T110000
+DTEND;TZID=Europe/London:20261002T120000
+SUMMARY:Entrepreneurial Strategy (Lecture)
+LOCATION:CC WHG02 (LT2)
+DESCRIPTION:Module: Entrepreneurial Strategy\nLecturer: Shane Wright
+END:VEVENT
+
+BEGIN:VEVENT
+UID:mkt-sem-20261002@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261002T130000
+DTEND;TZID=Europe/London:20261002T150000
+SUMMARY:Marketing & the DCE (Seminar)
+LOCATION:CC RB206
+DESCRIPTION:Module: Marketing & the DCE\nLecturer: Lily Young
+END:VEVENT
+
+BEGIN:VEVENT
+UID:mkt-lec-20261005@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261005T090000
+DTEND;TZID=Europe/London:20261005T100000
+SUMMARY:Marketing & the DCE (Lecture)
+LOCATION:Online - Recorded
+DESCRIPTION:Module: Marketing & the DCE\nLecturer: Esther Pugh\nOnline Recorded
+END:VEVENT
+
+BEGIN:VEVENT
+UID:gbe-lec-20261005@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261005T100000
+DTEND;TZID=Europe/London:20261005T110000
+SUMMARY:Global Business Environment (Lecture)
+LOCATION:Online - Recorded
+DESCRIPTION:Module: Global Business Environment\nLecturer: Ella Smith\nOnline Recorded
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ent-lec-20261005@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261005T110000
+DTEND;TZID=Europe/London:20261005T120000
+SUMMARY:Entrepreneurial Strategy (Lecture)
+LOCATION:Online - Recorded
+DESCRIPTION:Module: Entrepreneurial Strategy\nLecturer: Shane Wright\nOnline Recorded
+END:VEVENT
+
+BEGIN:VEVENT
+UID:gbe-sem-20261006@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261006T110000
+DTEND;TZID=Europe/London:20261006T130000
+SUMMARY:Global Business Environment (Seminar)
+LOCATION:CC RB223
+DESCRIPTION:Module: Global Business Environment\nLecturer: Pooja Soni
+END:VEVENT
+
+BEGIN:VEVENT
+UID:gbe-lec-20261007@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261007T090000
+DTEND;TZID=Europe/London:20261007T100000
+SUMMARY:Global Business Environment (Lecture)
+LOCATION:CC RB241 (LTA) Sagar Wright Theatre
+DESCRIPTION:Module: Global Business Environment\nLecturer: Ella Smith
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ent-sem-20261007@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261007T110000
+DTEND;TZID=Europe/London:20261007T130000
+SUMMARY:Entrepreneurial Strategy (Seminar)
+LOCATION:CC RB206
+DESCRIPTION:Module: Entrepreneurial Strategy\nLecturer: Carl Clare
+END:VEVENT
+
+BEGIN:VEVENT
+UID:mkt-lec-20261008@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261008T160000
+DTEND;TZID=Europe/London:20261008T170000
+SUMMARY:Marketing & the DCE (Lecture)
+LOCATION:CC RB241 (LTA) Sagar Wright Theatre
+DESCRIPTION:Module: Marketing & the DCE\nLecturer: Esther Pugh
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ent-lec-20261009@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261009T110000
+DTEND;TZID=Europe/London:20261009T120000
+SUMMARY:Entrepreneurial Strategy (Lecture)
+LOCATION:CC WHG02 (LT2)
+DESCRIPTION:Module: Entrepreneurial Strategy\nLecturer: Shane Wright
+END:VEVENT
+
+BEGIN:VEVENT
+UID:mkt-sem-20261009@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261009T130000
+DTEND;TZID=Europe/London:20261009T150000
+SUMMARY:Marketing & the DCE (Seminar)
+LOCATION:CC RB206
+DESCRIPTION:Module: Marketing & the DCE\nLecturer: Lily Young
+END:VEVENT
+
+BEGIN:VEVENT
+UID:mkt-lec-20261012@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261012T090000
+DTEND;TZID=Europe/London:20261012T100000
+SUMMARY:Marketing & the DCE (Lecture)
+LOCATION:Online - Recorded
+DESCRIPTION:Module: Marketing & the DCE\nLecturer: Esther Pugh\nOnline Recorded
+END:VEVENT
+
+BEGIN:VEVENT
+UID:gbe-lec-20261012@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261012T100000
+DTEND;TZID=Europe/London:20261012T110000
+SUMMARY:Global Business Environment (Lecture)
+LOCATION:Online - Recorded
+DESCRIPTION:Module: Global Business Environment\nLecturer: Ella Smith\nOnline Recorded
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ent-lec-20261012@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261012T110000
+DTEND;TZID=Europe/London:20261012T120000
+SUMMARY:Entrepreneurial Strategy (Lecture)
+LOCATION:Online - Recorded
+DESCRIPTION:Module: Entrepreneurial Strategy\nLecturer: Shane Wright\nOnline Recorded
+END:VEVENT
+
+BEGIN:VEVENT
+UID:gbe-sem-20261013@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261013T110000
+DTEND;TZID=Europe/London:20261013T130000
+SUMMARY:Global Business Environment (Seminar)
+LOCATION:CC RB223
+DESCRIPTION:Module: Global Business Environment\nLecturer: Pooja Soni
+END:VEVENT
+
+BEGIN:VEVENT
+UID:gbe-lec-20261014@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261014T090000
+DTEND;TZID=Europe/London:20261014T100000
+SUMMARY:Global Business Environment (Lecture)
+LOCATION:CC RB241 (LTA) Sagar Wright Theatre
+DESCRIPTION:Module: Global Business Environment\nLecturer: Ella Smith
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ent-sem-20261014@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261014T110000
+DTEND;TZID=Europe/London:20261014T130000
+SUMMARY:Entrepreneurial Strategy (Seminar)
+LOCATION:CC RB206
+DESCRIPTION:Module: Entrepreneurial Strategy\nLecturer: Carl Clare
+END:VEVENT
+
+BEGIN:VEVENT
+UID:mkt-lec-20261015@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261015T160000
+DTEND;TZID=Europe/London:20261015T170000
+SUMMARY:Marketing & the DCE (Lecture)
+LOCATION:CC RB241 (LTA) Sagar Wright Theatre
+DESCRIPTION:Module: Marketing & the DCE\nLecturer: Esther Pugh
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ent-lec-20261016@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261016T110000
+DTEND;TZID=Europe/London:20261016T120000
+SUMMARY:Entrepreneurial Strategy (Lecture)
+LOCATION:CC WHG02 (LT2)
+DESCRIPTION:Module: Entrepreneurial Strategy\nLecturer: Shane Wright
+END:VEVENT
+
+BEGIN:VEVENT
+UID:mkt-sem-20261016@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261016T130000
+DTEND;TZID=Europe/London:20261016T150000
+SUMMARY:Marketing & the DCE (Seminar)
+LOCATION:CC RB206
+DESCRIPTION:Module: Marketing & the DCE\nLecturer: Lily Young
+END:VEVENT
+
+BEGIN:VEVENT
+UID:mkt-lec-20261019@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261019T090000
+DTEND;TZID=Europe/London:20261019T100000
+SUMMARY:Marketing & the DCE (Lecture)
+LOCATION:Online - Recorded
+DESCRIPTION:Module: Marketing & the DCE\nLecturer: Esther Pugh\nOnline Recorded
+END:VEVENT
+
+BEGIN:VEVENT
+UID:gbe-lec-20261019@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261019T100000
+DTEND;TZID=Europe/London:20261019T110000
+SUMMARY:Global Business Environment (Lecture)
+LOCATION:Online - Recorded
+DESCRIPTION:Module: Global Business Environment\nLecturer: Ella Smith\nOnline Recorded
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ent-lec-20261019@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261019T110000
+DTEND;TZID=Europe/London:20261019T120000
+SUMMARY:Entrepreneurial Strategy (Lecture)
+LOCATION:Online - Recorded
+DESCRIPTION:Module: Entrepreneurial Strategy\nLecturer: Shane Wright\nOnline Recorded
+END:VEVENT
+
+BEGIN:VEVENT
+UID:gbe-sem-20261020@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261020T110000
+DTEND;TZID=Europe/London:20261020T130000
+SUMMARY:Global Business Environment (Seminar)
+LOCATION:CC RB223
+DESCRIPTION:Module: Global Business Environment\nLecturer: Pooja Soni
+END:VEVENT
+
+BEGIN:VEVENT
+UID:gbe-lec-20261021@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261021T090000
+DTEND;TZID=Europe/London:20261021T100000
+SUMMARY:Global Business Environment (Lecture)
+LOCATION:CC RB241 (LTA) Sagar Wright Theatre
+DESCRIPTION:Module: Global Business Environment\nLecturer: Ella Smith
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ent-sem-20261021@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261021T110000
+DTEND;TZID=Europe/London:20261021T130000
+SUMMARY:Entrepreneurial Strategy (Seminar)
+LOCATION:CC RB206
+DESCRIPTION:Module: Entrepreneurial Strategy\nLecturer: Carl Clare
+END:VEVENT
+
+BEGIN:VEVENT
+UID:mkt-lec-20261022@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261022T160000
+DTEND;TZID=Europe/London:20261022T170000
+SUMMARY:Marketing & the DCE (Lecture)
+LOCATION:CC RB241 (LTA) Sagar Wright Theatre
+DESCRIPTION:Module: Marketing & the DCE\nLecturer: Esther Pugh
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ent-lec-20261023@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261023T110000
+DTEND;TZID=Europe/London:20261023T120000
+SUMMARY:Entrepreneurial Strategy (Lecture)
+LOCATION:CC WHG02 (LT2)
+DESCRIPTION:Module: Entrepreneurial Strategy\nLecturer: Shane Wright
+END:VEVENT
+
+BEGIN:VEVENT
+UID:mkt-sem-20261023@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261023T130000
+DTEND;TZID=Europe/London:20261023T150000
+SUMMARY:Marketing & the DCE (Seminar)
+LOCATION:CC RB206
+DESCRIPTION:Module: Marketing & the DCE\nLecturer: Lily Young
+END:VEVENT
+
+BEGIN:VEVENT
+UID:mkt-lec-20261026@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261026T090000
+DTEND;TZID=Europe/London:20261026T100000
+SUMMARY:Marketing & the DCE (Lecture)
+LOCATION:Online - Recorded
+DESCRIPTION:Module: Marketing & the DCE\nLecturer: Esther Pugh\nOnline Recorded
+END:VEVENT
+
+BEGIN:VEVENT
+UID:gbe-lec-20261026@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261026T100000
+DTEND;TZID=Europe/London:20261026T110000
+SUMMARY:Global Business Environment (Lecture)
+LOCATION:Online - Recorded
+DESCRIPTION:Module: Global Business Environment\nLecturer: Ella Smith\nOnline Recorded
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ent-lec-20261026@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261026T110000
+DTEND;TZID=Europe/London:20261026T120000
+SUMMARY:Entrepreneurial Strategy (Lecture)
+LOCATION:Online - Recorded
+DESCRIPTION:Module: Entrepreneurial Strategy\nLecturer: Shane Wright\nOnline Recorded
+END:VEVENT
+
+BEGIN:VEVENT
+UID:gbe-sem-20261027@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261027T110000
+DTEND;TZID=Europe/London:20261027T130000
+SUMMARY:Global Business Environment (Seminar)
+LOCATION:CC RB223
+DESCRIPTION:Module: Global Business Environment\nLecturer: Pooja Soni
+END:VEVENT
+
+BEGIN:VEVENT
+UID:gbe-lec-20261028@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261028T090000
+DTEND;TZID=Europe/London:20261028T100000
+SUMMARY:Global Business Environment (Lecture)
+LOCATION:CC RB241 (LTA) Sagar Wright Theatre
+DESCRIPTION:Module: Global Business Environment\nLecturer: Ella Smith
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ent-sem-20261028@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261028T110000
+DTEND;TZID=Europe/London:20261028T130000
+SUMMARY:Entrepreneurial Strategy (Seminar)
+LOCATION:CC RB206
+DESCRIPTION:Module: Entrepreneurial Strategy\nLecturer: Carl Clare
+END:VEVENT
+
+BEGIN:VEVENT
+UID:mkt-lec-20261029@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261029T160000
+DTEND;TZID=Europe/London:20261029T170000
+SUMMARY:Marketing & the DCE (Lecture)
+LOCATION:CC RB241 (LTA) Sagar Wright Theatre
+DESCRIPTION:Module: Marketing & the DCE\nLecturer: Esther Pugh
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ent-lec-20261030@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261030T110000
+DTEND;TZID=Europe/London:20261030T120000
+SUMMARY:Entrepreneurial Strategy (Lecture)
+LOCATION:CC WHG02 (LT2)
+DESCRIPTION:Module: Entrepreneurial Strategy\nLecturer: Shane Wright
+END:VEVENT
+
+BEGIN:VEVENT
+UID:mkt-sem-20261030@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261030T130000
+DTEND;TZID=Europe/London:20261030T150000
+SUMMARY:Marketing & the DCE (Seminar)
+LOCATION:CC RB206
+DESCRIPTION:Module: Marketing & the DCE\nLecturer: Lily Young
+END:VEVENT
+
+BEGIN:VEVENT
+UID:mkt-lec-20261102@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261102T090000
+DTEND;TZID=Europe/London:20261102T100000
+SUMMARY:Marketing & the DCE (Lecture)
+LOCATION:Online - Recorded
+DESCRIPTION:Module: Marketing & the DCE\nLecturer: Esther Pugh\nOnline Recorded
+END:VEVENT
+
+BEGIN:VEVENT
+UID:gbe-lec-20261102@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261102T100000
+DTEND;TZID=Europe/London:20261102T110000
+SUMMARY:Global Business Environment (Lecture)
+LOCATION:Online - Recorded
+DESCRIPTION:Module: Global Business Environment\nLecturer: Ella Smith\nOnline Recorded
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ent-lec-20261102@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261102T110000
+DTEND;TZID=Europe/London:20261102T120000
+SUMMARY:Entrepreneurial Strategy (Lecture)
+LOCATION:Online - Recorded
+DESCRIPTION:Module: Entrepreneurial Strategy\nLecturer: Shane Wright\nOnline Recorded
+END:VEVENT
+
+BEGIN:VEVENT
+UID:gbe-sem-20261103@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261103T110000
+DTEND;TZID=Europe/London:20261103T130000
+SUMMARY:Global Business Environment (Seminar)
+LOCATION:CC RB223
+DESCRIPTION:Module: Global Business Environment\nLecturer: Pooja Soni
+END:VEVENT
+
+BEGIN:VEVENT
+UID:gbe-lec-20261104@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261104T090000
+DTEND;TZID=Europe/London:20261104T100000
+SUMMARY:Global Business Environment (Lecture)
+LOCATION:CC RB241 (LTA) Sagar Wright Theatre
+DESCRIPTION:Module: Global Business Environment\nLecturer: Ella Smith
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ent-sem-20261104@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261104T110000
+DTEND;TZID=Europe/London:20261104T130000
+SUMMARY:Entrepreneurial Strategy (Seminar)
+LOCATION:CC RB206
+DESCRIPTION:Module: Entrepreneurial Strategy\nLecturer: Carl Clare
+END:VEVENT
+
+BEGIN:VEVENT
+UID:mkt-lec-20261105@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261105T160000
+DTEND;TZID=Europe/London:20261105T170000
+SUMMARY:Marketing & the DCE (Lecture)
+LOCATION:CC RB241 (LTA) Sagar Wright Theatre
+DESCRIPTION:Module: Marketing & the DCE\nLecturer: Esther Pugh
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ent-lec-20261106@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261106T110000
+DTEND;TZID=Europe/London:20261106T120000
+SUMMARY:Entrepreneurial Strategy (Lecture)
+LOCATION:CC WHG02 (LT2)
+DESCRIPTION:Module: Entrepreneurial Strategy\nLecturer: Shane Wright
+END:VEVENT
+
+BEGIN:VEVENT
+UID:mkt-sem-20261106@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261106T130000
+DTEND;TZID=Europe/London:20261106T150000
+SUMMARY:Marketing & the DCE (Seminar)
+LOCATION:CC RB206
+DESCRIPTION:Module: Marketing & the DCE\nLecturer: Lily Young
+END:VEVENT
+
+BEGIN:VEVENT
+UID:mkt-lec-20261109@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261109T090000
+DTEND;TZID=Europe/London:20261109T100000
+SUMMARY:Marketing & the DCE (Lecture)
+LOCATION:Online - Recorded
+DESCRIPTION:Module: Marketing & the DCE\nLecturer: Esther Pugh\nOnline Recorded
+END:VEVENT
+
+BEGIN:VEVENT
+UID:gbe-lec-20261109@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261109T100000
+DTEND;TZID=Europe/London:20261109T110000
+SUMMARY:Global Business Environment (Lecture)
+LOCATION:Online - Recorded
+DESCRIPTION:Module: Global Business Environment\nLecturer: Ella Smith\nOnline Recorded
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ent-lec-20261109@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261109T110000
+DTEND;TZID=Europe/London:20261109T120000
+SUMMARY:Entrepreneurial Strategy (Lecture)
+LOCATION:Online - Recorded
+DESCRIPTION:Module: Entrepreneurial Strategy\nLecturer: Shane Wright\nOnline Recorded
+END:VEVENT
+
+BEGIN:VEVENT
+UID:gbe-sem-20261110@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261110T110000
+DTEND;TZID=Europe/London:20261110T130000
+SUMMARY:Global Business Environment (Seminar)
+LOCATION:CC RB223
+DESCRIPTION:Module: Global Business Environment\nLecturer: Pooja Soni
+END:VEVENT
+
+BEGIN:VEVENT
+UID:gbe-lec-20261111@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261111T090000
+DTEND;TZID=Europe/London:20261111T100000
+SUMMARY:Global Business Environment (Lecture)
+LOCATION:CC RB241 (LTA) Sagar Wright Theatre
+DESCRIPTION:Module: Global Business Environment\nLecturer: Ella Smith
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ent-sem-20261111@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261111T110000
+DTEND;TZID=Europe/London:20261111T130000
+SUMMARY:Entrepreneurial Strategy (Seminar)
+LOCATION:CC RB206
+DESCRIPTION:Module: Entrepreneurial Strategy\nLecturer: Carl Clare
+END:VEVENT
+
+BEGIN:VEVENT
+UID:mkt-lec-20261112@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261112T160000
+DTEND;TZID=Europe/London:20261112T170000
+SUMMARY:Marketing & the DCE (Lecture)
+LOCATION:CC RB241 (LTA) Sagar Wright Theatre
+DESCRIPTION:Module: Marketing & the DCE\nLecturer: Esther Pugh
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ent-lec-20261113@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261113T110000
+DTEND;TZID=Europe/London:20261113T120000
+SUMMARY:Entrepreneurial Strategy (Lecture)
+LOCATION:CC WHG02 (LT2)
+DESCRIPTION:Module: Entrepreneurial Strategy\nLecturer: Shane Wright
+END:VEVENT
+
+BEGIN:VEVENT
+UID:mkt-sem-20261113@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261113T130000
+DTEND;TZID=Europe/London:20261113T150000
+SUMMARY:Marketing & the DCE (Seminar)
+LOCATION:CC RB206
+DESCRIPTION:Module: Marketing & the DCE\nLecturer: Lily Young
+END:VEVENT
+
+BEGIN:VEVENT
+UID:mkt-lec-20261116@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261116T090000
+DTEND;TZID=Europe/London:20261116T100000
+SUMMARY:Marketing & the DCE (Lecture)
+LOCATION:Online - Recorded
+DESCRIPTION:Module: Marketing & the DCE\nLecturer: Esther Pugh\nOnline Recorded
+END:VEVENT
+
+BEGIN:VEVENT
+UID:gbe-lec-20261116@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261116T100000
+DTEND;TZID=Europe/London:20261116T110000
+SUMMARY:Global Business Environment (Lecture)
+LOCATION:Online - Recorded
+DESCRIPTION:Module: Global Business Environment\nLecturer: Ella Smith\nOnline Recorded
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ent-lec-20261116@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261116T110000
+DTEND;TZID=Europe/London:20261116T120000
+SUMMARY:Entrepreneurial Strategy (Lecture)
+LOCATION:Online - Recorded
+DESCRIPTION:Module: Entrepreneurial Strategy\nLecturer: Shane Wright\nOnline Recorded
+END:VEVENT
+
+BEGIN:VEVENT
+UID:gbe-sem-20261117@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261117T110000
+DTEND;TZID=Europe/London:20261117T130000
+SUMMARY:Global Business Environment (Seminar)
+LOCATION:CC RB223
+DESCRIPTION:Module: Global Business Environment\nLecturer: Pooja Soni
+END:VEVENT
+
+BEGIN:VEVENT
+UID:gbe-lec-20261118@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261118T090000
+DTEND;TZID=Europe/London:20261118T100000
+SUMMARY:Global Business Environment (Lecture)
+LOCATION:CC RB241 (LTA) Sagar Wright Theatre
+DESCRIPTION:Module: Global Business Environment\nLecturer: Ella Smith
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ent-sem-20261118@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261118T110000
+DTEND;TZID=Europe/London:20261118T130000
+SUMMARY:Entrepreneurial Strategy (Seminar)
+LOCATION:CC RB206
+DESCRIPTION:Module: Entrepreneurial Strategy\nLecturer: Carl Clare
+END:VEVENT
+
+BEGIN:VEVENT
+UID:mkt-lec-20261119@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261119T160000
+DTEND;TZID=Europe/London:20261119T170000
+SUMMARY:Marketing & the DCE (Lecture)
+LOCATION:CC RB241 (LTA) Sagar Wright Theatre
+DESCRIPTION:Module: Marketing & the DCE\nLecturer: Esther Pugh
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ent-lec-20261120@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261120T110000
+DTEND;TZID=Europe/London:20261120T120000
+SUMMARY:Entrepreneurial Strategy (Lecture)
+LOCATION:CC WHG02 (LT2)
+DESCRIPTION:Module: Entrepreneurial Strategy\nLecturer: Shane Wright
+END:VEVENT
+
+BEGIN:VEVENT
+UID:mkt-sem-20261120@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261120T130000
+DTEND;TZID=Europe/London:20261120T150000
+SUMMARY:Marketing & the DCE (Seminar)
+LOCATION:CC RB206
+DESCRIPTION:Module: Marketing & the DCE\nLecturer: Lily Young
+END:VEVENT
+
+BEGIN:VEVENT
+UID:mkt-lec-20261123@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261123T090000
+DTEND;TZID=Europe/London:20261123T100000
+SUMMARY:Marketing & the DCE (Lecture)
+LOCATION:Online - Recorded
+DESCRIPTION:Module: Marketing & the DCE\nLecturer: Esther Pugh\nOnline Recorded
+END:VEVENT
+
+BEGIN:VEVENT
+UID:gbe-lec-20261123@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261123T100000
+DTEND;TZID=Europe/London:20261123T110000
+SUMMARY:Global Business Environment (Lecture)
+LOCATION:Online - Recorded
+DESCRIPTION:Module: Global Business Environment\nLecturer: Ella Smith\nOnline Recorded
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ent-lec-20261123@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261123T110000
+DTEND;TZID=Europe/London:20261123T120000
+SUMMARY:Entrepreneurial Strategy (Lecture)
+LOCATION:Online - Recorded
+DESCRIPTION:Module: Entrepreneurial Strategy\nLecturer: Shane Wright\nOnline Recorded
+END:VEVENT
+
+BEGIN:VEVENT
+UID:gbe-sem-20261124@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261124T110000
+DTEND;TZID=Europe/London:20261124T130000
+SUMMARY:Global Business Environment (Seminar)
+LOCATION:CC RB223
+DESCRIPTION:Module: Global Business Environment\nLecturer: Pooja Soni
+END:VEVENT
+
+BEGIN:VEVENT
+UID:gbe-lec-20261125@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261125T090000
+DTEND;TZID=Europe/London:20261125T100000
+SUMMARY:Global Business Environment (Lecture)
+LOCATION:CC RB241 (LTA) Sagar Wright Theatre
+DESCRIPTION:Module: Global Business Environment\nLecturer: Ella Smith
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ent-sem-20261125@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261125T110000
+DTEND;TZID=Europe/London:20261125T130000
+SUMMARY:Entrepreneurial Strategy (Seminar)
+LOCATION:CC RB206
+DESCRIPTION:Module: Entrepreneurial Strategy\nLecturer: Carl Clare
+END:VEVENT
+
+BEGIN:VEVENT
+UID:mkt-lec-20261126@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261126T160000
+DTEND;TZID=Europe/London:20261126T170000
+SUMMARY:Marketing & the DCE (Lecture)
+LOCATION:CC RB241 (LTA) Sagar Wright Theatre
+DESCRIPTION:Module: Marketing & the DCE\nLecturer: Esther Pugh
+END:VEVENT
+
+BEGIN:VEVENT
+UID:ent-lec-20261127@leedsbeckett
+DTSTAMP:20260831T190000Z
+DTSTART;TZID=Europe/London:20261127T110000
+DTEND;TZID=Europe/London:20261127T120000
+SUMMARY:Entrepreneurial Strategy (Lecture)
+LOCATION:CC WHG02 (LT2)
+DESCRIPTION:Module: Entrepreneurial Strategy\nLecturer: Shane Wright
+END:
