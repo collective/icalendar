@@ -5,13 +5,6 @@ import re
 from icalendar.compatibility import deprecate_for_version_8
 from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
 
-# :rfc:`5545#section-3.3.11` TEXT is
-# ``*(TSAFE-CHAR / ":" / DQUOTE / ESCAPED-CHAR)``. TSAFE-CHAR excludes
-# CONTROL except HTAB (see :rfc:`5545#section-3.1`). After the line-break
-# escapes below, any remaining CONTROL other than HTAB is stripped so
-# serialized output never contains a raw control character.
-_UNSAFE_TEXT_CHARS = re.compile(r"[\x00-\x08\x0b-\x1f\x7f]")
-
 
 def _escape_char(text: str | bytes) -> str:
     r"""Format value according to iCalendar TEXT escaping rules.
@@ -38,20 +31,16 @@ def _escape_char(text: str | bytes) -> str:
            newline character)
         7. ``"\r"`` -> ``r"\n"`` (transform a lone carriage return to a literal
            newline character)
-        8. Strip remaining :rfc:`5545` CONTROL characters except HTAB
-           (NUL, other C0 controls, and DEL). TEXT has no escape for these.
 
         Steps 5 to 7 normalize ``\r\n``, ``\n``, or a lone ``\r`` to ``\n``.
         The line-ending normalization is an implementation convenience,
         not part of :rfc:`5545`, which only defines ``\n`` or ``\N`` for an
         intentional line break, and doesn't give an escape form for a lone ``\r``.
-        Step 8 then removes any leftover control character so a parsed or
-        constructed value cannot emit invalid TEXT.
     """
     assert isinstance(text, (str, bytes))
     text = to_unicode(text)
     # NOTE: ORDER MATTERS!
-    escaped = (
+    return (
         text.replace(r"\N", "\n")
         .replace("\\", "\\\\")
         .replace(";", r"\;")
@@ -60,7 +49,6 @@ def _escape_char(text: str | bytes) -> str:
         .replace("\n", r"\n")
         .replace("\r", r"\n")
     )
-    return _UNSAFE_TEXT_CHARS.sub("", escaped)
 
 
 escape_char = deprecate_for_version_8(_escape_char)

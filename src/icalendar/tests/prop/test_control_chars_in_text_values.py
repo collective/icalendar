@@ -19,25 +19,27 @@ In turn, CONTROL is defined by the following grammar in :rfc:`5545#section-3.1`.
     ; All the controls except HTAB
 
 Although "the current character set" may be one of many, it is UTF-8 by default
-per :rfc:`5545#section-3.1.4`. Thus serialized TEXT must not contain CONTROLs
-except the horizontal tab, ``%x09``. The new line, ``%x0A``, is written as the
-escaped sequences ``\N`` and ``\n``.
+per :rfc:`5545#section-3.1.4`. Thus TEXT should reject all the CONTROLs except
+the horizontal tab, ``%x09``. Additionally the new line, ``%x0A``, is needed by
+the current character set because it is the result of the escaped sequences
+``\N`` and ``\n``.
 
 A NUL byte in a property value previously passed through to ``to_ical()``.
 Consumers written in C truncate strings at NUL, silently changing the
 round-tripped value. Parsing stays open so problematic files can still be
-read; serialization strips leftover CONTROL characters. Parameter values
+read; :class:`~icalendar.prop.text.vText` removes leftover CONTROLs when
+constructed so both ``to_ical`` and ``to_jcal`` stay valid. Parameter values
 still reject NUL into ``component.errors``.
 """
 
 import pytest
 
 from icalendar import Calendar, Event, vText
-from icalendar.parser import _escape_char
+from icalendar.prop.text import UNSAFE_TEXT_CHARS
 
 #: Every CONTROL from :rfc:`5545#section-3.1`. The horizontal tab, ``%x09``,
-#: is not a CONTROL, and the new line, ``%x0A``, is escaped rather than
-#: stripped because the sequences ``\N`` and ``\n`` represent it.
+#: is not a CONTROL, and the new line, ``%x0A``, is not forbidden because the
+#: escaped sequences ``\N`` and ``\n`` produce it.
 FORBIDDEN_CONTROL_CHARS = [
     chr(control) for control in range(0x20) if control not in (0x09, 0x0A)
 ] + ["\x7f"]
@@ -45,6 +47,7 @@ FORBIDDEN_CONTROL_CHARS = [
 FORBIDDEN_VALUES = [
     *FORBIDDEN_CONTROL_CHARS,
     "A\x00B",  # NUL from the issue report
+    "a\rb",  # lone carriage return
     "a\x01b",  # SOH
     "a\x7fb",  # DEL
 ]
@@ -60,20 +63,38 @@ VALID_VALUES = [
 ]
 
 
-def _contains_forbidden_control(data: bytes) -> bool:
-    return any(ch.encode("latin-1") in data for ch in FORBIDDEN_CONTROL_CHARS)
+def _contains_forbidden_control(data: str | bytes) -> bool:
+    if isinstance(data, bytes):
+        return any(ch.encode("latin-1") in data for ch in FORBIDDEN_CONTROL_CHARS)
+    return any(ch in data for ch in FORBIDDEN_CONTROL_CHARS)
+
+
+def test_unsafe_text_chars_is_public():
+    """:data:`~icalendar.prop.text.UNSAFE_TEXT_CHARS` stays a public name."""
+    assert UNSAFE_TEXT_CHARS.search("A\x00B")
+    assert UNSAFE_TEXT_CHARS.search("\r")
+    assert UNSAFE_TEXT_CHARS.search("\x7f")
+    assert UNSAFE_TEXT_CHARS.search("\x01") is not None
+    assert UNSAFE_TEXT_CHARS.search("\t") is None
+    assert UNSAFE_TEXT_CHARS.search("\n") is None
 
 
 @pytest.mark.parametrize("value", FORBIDDEN_VALUES)
 def test_vtext_from_ical_stays_open(value):
     parsed = vText.from_ical(value)
-    assert str(parsed) == value
+    assert not _contains_forbidden_control(parsed)
 
 
 @pytest.mark.parametrize("value", FORBIDDEN_VALUES)
 def test_vtext_to_ical_strips_control_characters(value):
     serialized = vText(value).to_ical()
     assert not _contains_forbidden_control(serialized)
+
+
+@pytest.mark.parametrize("value", FORBIDDEN_VALUES)
+def test_vtext_to_jcal_strips_control_characters(value):
+    jcal = vText(value).to_jcal("summary")
+    assert not _contains_forbidden_control(jcal[3])
 
 
 @pytest.mark.parametrize("value", VALID_VALUES)
@@ -90,7 +111,7 @@ def test_valid_text_values_still_serialize(value):
 def test_reporter_repro_does_not_emit_nul():
     event = Event.from_ical(b"BEGIN:VEVENT\r\nSUMMARY:A\x00B\r\nEND:VEVENT\r\n")
     assert not event.errors
-    assert ascii(str(event["SUMMARY"])) == "'A\\x00B'"
+    assert str(event["SUMMARY"]) == "AB"
     assert b"\x00" not in event.to_ical()
     assert b"SUMMARY:AB" in event.to_ical()
 
@@ -98,6 +119,7 @@ def test_reporter_repro_does_not_emit_nul():
 def test_constructed_event_does_not_emit_nul():
     event = Event()
     event.add("SUMMARY", "A\x00B")
+    assert str(event["SUMMARY"]) == "AB"
     assert b"\x00" not in event.to_ical()
     assert b"SUMMARY:AB" in event.to_ical()
 
@@ -107,8 +129,14 @@ def test_calendar_prodid_with_nul_parses_and_sanitizes():
         b"BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:A\x00B\r\nEND:VCALENDAR\r\n"
     )
     assert not calendar.errors
-    assert str(calendar["PRODID"]) == "A\x00B"
+    assert str(calendar["PRODID"]) == "AB"
     assert b"\x00" not in calendar.to_ical()
+
+
+def test_lone_cr_becomes_newline_not_stripped():
+    text = vText.from_ical("a\rb")
+    assert str(text) == "a\nb"
+    assert text.to_ical() == rb"a\nb"
 
 
 def test_escaped_newline_still_parses():
@@ -126,16 +154,3 @@ def test_parameter_nul_still_collected_in_errors():
         b"BEGIN:VEVENT\r\nSUMMARY;LANGUAGE=en\x00:Hello\r\nEND:VEVENT\r\n"
     )
     assert event.errors
-
-
-@pytest.mark.parametrize(
-    ("value", "expected"),
-    [
-        ("A\x00B", "AB"),
-        ("a\x01b\x7fc", "abc"),
-        ("keep\tthis", "keep\tthis"),
-        ("a\rb", r"a\nb"),
-    ],
-)
-def test_escape_char_sanitizes_controls(value, expected):
-    assert _escape_char(value) == expected

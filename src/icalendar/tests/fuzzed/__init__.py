@@ -35,17 +35,8 @@ _value_error_matches = [
     "must have exactly",  # vCard field count validation (ADR, N)
     "must have at least",  # vCard ORG minimum field validation
     "not enough values to unpack",  # dateutil rejects a malformed VTIMEZONE content line
-    "unsupported property",  # dateutil tzical: RRULE (etc.) at VTIMEZONE level
-    "unsupported ",  # dateutil tzical: unsupported TZID/TZOFFSET/TZNAME parm
-    "empty offset",  # dateutil tzical
-    "invalid offset",  # dateutil tzical
-    "empty property name",  # dateutil tzical
-    "mandatory TZID",  # dateutil tzical
-    "mandatory DTSTART",  # dateutil tzical
-    "mandatory TZOFFSETFROM",  # dateutil tzical
-    "no timezones defined",  # dateutil tzical
-    "more than one timezone available",  # dateutil tzical
-    "Unsupported DTSTART param",  # dateutil tzical
+    # TEXT parse no longer raises, so tzical can run on the same corpus item.
+    "unsupported property",  # dateutil.tz.tzical: RRULE at VTIMEZONE level
 ]
 
 _CONTENTLINE_NEWLINE_ASSERT = (
@@ -76,9 +67,9 @@ def fuzz_v1_calendar(
             return -1
         raise
     except AssertionError as e:
-        # Contentline.__new__ fails loudly on a raw LF (issue #1445). That is
-        # expected for non-TEXT values such as a malformed RRULE; do not treat
-        # it as a fuzzer crash. Other asserts still propagate.
+        # Same corpus path as above: a non-TEXT RRULE key can still carry a
+        # raw LF. Contentline.__new__ must fail loudly (issue #1445); that is
+        # not a TEXT sanitization miss. Other asserts still propagate.
         if _CONTENTLINE_NEWLINE_ASSERT in str(e):
             return -1
         raise
