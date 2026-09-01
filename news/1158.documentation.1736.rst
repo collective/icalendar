@@ -1,1 +1,1 @@
-Fixed three broken cross-references to :meth:`Component.add <icalendar.cal.component.Component.add>`. Claude Code (Auto mode) assisted with investigating the Sphinx warnings and drafting the changes; Mayeen Abedin Sajid reviewed and verified the result with Ruff, pre-commit, and Sphinx.
+Fixed three broken cross-references to :meth:`Component.add <icalendar.cal.component.Component.add>`. I used Claude Code (Auto mode) to assist with the changes, and verified the result. @Mayeen4536

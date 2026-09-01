@@ -106,10 +106,9 @@ def _get_rdates(
 
     .. note::
 
-        Modifying the returned list does not change the RDATE value. Assign to
-        :attr:`rdates` or use
+       Modifying the returned list does not change the RDATE value. Assign to
+        ``rdates`` for the relevant component or use
         :meth:`Component.add <icalendar.cal.component.Component.add>` instead.
-
         If you want to compute recurrences, have a look at
         `Related Projects <https://github.com/collective/icalendar/blob/main/README.rst#related-projects>`_.
 
@@ -215,9 +214,8 @@ def _get_exdates(self: Component) -> list[date | datetime]:
     .. note::
 
         Modifying the returned list does not change the EXDATE value. Assign to
-        :attr:`exdates` or use
+        ``exdates`` for the relevant component or use
         :meth:`Component.add <icalendar.cal.component.Component.add>` instead.
-
         If you want to compute recurrences, have a look at
         `Related Projects <https://github.com/collective/icalendar/blob/main/README.rst#related-projects>`_.
 
