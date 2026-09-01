@@ -7,9 +7,13 @@ from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING
 
 from icalendar.attr import (
+    ATTACHMENTS_TYPE_SETTER,
+    ATTENDEE_TYPE_SETTER,
     CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
+    REQUEST_STATUS_property,
+    attachments_property,
     attendees_property,
     categories_property,
     class_property,
@@ -29,11 +33,13 @@ from icalendar.attr import (
     url_property,
 )
 from icalendar.cal.component import Component
+from icalendar.cal.examples import get_example
 from icalendar.error import IncompleteComponent
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
+    from icalendar.compatibility import Self
     from icalendar.enums import CLASS, STATUS
     from icalendar.prop import vCalAddress
 
@@ -62,6 +68,21 @@ class Journal(Component):
             BEGIN:VJOURNAL
             DTSTAMP:20250517T080612Z
             UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
+            END:VJOURNAL
+
+        Get the example Journal.
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Journal
+            >>> journal = Journal.example()
+            >>> print(journal.to_ical().decode())
+            BEGIN:VJOURNAL
+            DESCRIPTION:Aurora project plans were reviewed.
+            DTSTAMP:19970901T130000Z
+            DTSTART;VALUE=DATE:19970317
+            SUMMARY:Staff meeting minutes
+            UID:19970901T130000Z-123405@example.com
             END:VJOURNAL
 
     """
@@ -97,7 +118,7 @@ class Journal(Component):
         "RELATED",
         "RDATE",
         "RRULE",
-        "RSTATUS",
+        "REQUEST-STATUS",
         "DESCRIPTION",
     )
 
@@ -140,6 +161,7 @@ class Journal(Component):
     rdates = rdates_property
     exdates = exdates_property
     rrules = rrules_property
+    REQUEST_STATUS = REQUEST_STATUS_property
     uid = uid_property
 
     summary = summary_property
@@ -150,6 +172,7 @@ class Journal(Component):
     contacts = contacts_property
     status = status_property
     attendees = attendees_property
+    attachments = attachments_property
     from icalendar.attr import RECURRENCE_ID
 
     @property
@@ -180,7 +203,8 @@ class Journal(Component):
     def new(
         cls,
         /,
-        attendees: list[vCalAddress] | None = None,
+        attachments: ATTACHMENTS_TYPE_SETTER = None,
+        attendees: ATTENDEE_TYPE_SETTER = None,
         categories: Sequence[str] = (),
         classification: CLASS | None = None,
         color: str | None = None,
@@ -195,6 +219,7 @@ class Journal(Component):
         recurrence_id: date | datetime | None = None,
         refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
+        request_status: list[str] | str | None = None,
         sequence: int | None = None,
         stamp: date | None = None,
         start: date | datetime | None = None,
@@ -202,12 +227,13 @@ class Journal(Component):
         summary: str | None = None,
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
-    ):
+    ) -> Self:
         """Create a new journal entry with all required properties.
 
         This creates a new Journal in accordance with :rfc:`5545`.
 
         Parameters:
+            attachments: The :attr:`attachments` of the journal.
             attendees: The :attr:`attendees` of the journal.
             categories: The :attr:`categories` of the journal.
             classification: The :attr:`classification` of the journal.
@@ -224,6 +250,7 @@ class Journal(Component):
             recurrence_id: The :attr:`RECURRENCE_ID` of the journal.
             refids: :attr:`~icalendar.Component.refids` of the journal.
             related_to: :attr:`~icalendar.Component.related_to` of the journal.
+            request_status: The :attr:`REQUEST_STATUS` of the journal.
             sequence: The :attr:`sequence` of the journal.
             stamp: The :attr:`~icalendar.Component.stamp` of the journal.
                 If None, this is set to the current time.
@@ -243,7 +270,7 @@ class Journal(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        journal: Journal = super().new(
+        journal: Self = super().new(
             stamp=stamp if stamp is not None else cls._utc_now(),
             created=created,
             last_modified=last_modified,
@@ -263,13 +290,20 @@ class Journal(Component):
         journal.classification = classification
         journal.url = url
         journal.organizer = organizer
+        journal.attachments = attachments
         journal.contacts = contacts
         journal.start = start
         journal.status = status
+        journal.REQUEST_STATUS = request_status
         journal.attendees = attendees
         journal.RECURRENCE_ID = recurrence_id
 
         return journal
+
+    @classmethod
+    def example(cls, name: str = "example") -> Journal:
+        """Return the journal example with the given name."""
+        return cls.from_ical(get_example("journals", name))
 
 
 __all__ = ["Journal"]

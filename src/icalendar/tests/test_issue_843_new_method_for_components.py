@@ -32,7 +32,7 @@ from icalendar import (
     vCalAddress,
 )
 from icalendar.enums import BUSYTYPE
-from icalendar.prop import vText, vUid, vUri, vXmlReference
+from icalendar.prop import vBinary, vText, vUid, vUri, vXmlReference
 
 from .conftest import NOW_UTC, UID_DEFAULT
 
@@ -89,7 +89,9 @@ COMPONENTS_PRIORITY = {Event, Todo, Availability}
 COMPONENTS_CONTACT = {Event, Todo, Journal, FreeBusy, Available, Availability}
 COMPONENTS_START_END = {Event, Todo, FreeBusy, Available, Availability}
 COMPONENTS_STATUS = {Event, Todo, Journal}
+COMPONENTS_REQUEST_STATUS = {Event, Todo, Journal, FreeBusy}
 COMPONENTS_ATTENDEES = {Event, Todo, Journal, Alarm}
+COMPONENTS_ATTACHMENTS = {Alarm, Event, Journal, Todo}
 # RFC 9253 properties are defines on ALL
 # So, if you add new components, do not forget to add them here.
 COMPONENTS_LINKS = COMPONENTS_RELATED_TO = COMPONENTS_CONCEPTS = COMPONENTS_REFID = {
@@ -763,6 +765,72 @@ new_test_cases = [
         True,
         "two attendees",
     ),
+    (
+        COMPONENTS_ATTENDEES,
+        "attendees",
+        "ATTENDEE",
+        "plain@example.com",
+        [vCalAddress("mailto:plain@example.com")],
+        True,
+        "a plain email string is normalized to a vCalAddress",
+    ),
+    (
+        COMPONENTS_ATTENDEES,
+        "attendees",
+        "ATTENDEE",
+        "mailto:prefixed@example.net",
+        [vCalAddress("mailto:prefixed@example.net")],
+        True,
+        "a mailto: string is not prefixed twice",
+    ),
+    (
+        COMPONENTS_ATTENDEES,
+        "attendees",
+        "ATTENDEE",
+        ["plain@example.com", "mailto:prefixed@example.net"],
+        [
+            vCalAddress("mailto:plain@example.com"),
+            vCalAddress("mailto:prefixed@example.net"),
+        ],
+        True,
+        "a list of plain and mailto: strings is normalized",
+    ),
+    (
+        COMPONENTS_ATTACHMENTS,
+        "attachments",
+        "ATTACH",
+        None,
+        [],
+        False,
+        "no attachments by default",
+    ),
+    (
+        COMPONENTS_ATTACHMENTS,
+        "attachments",
+        "ATTACH",
+        [],
+        [],
+        False,
+        "no attachments when empty list given",
+    ),
+    (
+        COMPONENTS_ATTACHMENTS,
+        "attachments",
+        "ATTACH",
+        ["https://example.com/a.pdf"],
+        [vUri("https://example.com/a.pdf")],
+        True,
+        "one URI attachment",
+    ),
+    (
+        COMPONENTS_ATTACHMENTS,
+        "attachments",
+        "ATTACH",
+        [vUri("https://example.com/a.pdf"), vBinary(b"bytes")],
+        [vUri("https://example.com/a.pdf"), vBinary(b"bytes")],
+        True,
+        "URI and binary attachment",
+    ),
 ]
 
 rfc_7986_test_cases = [
@@ -961,6 +1029,42 @@ rfc_9253_test_cases = [
         True,
         "set two values",
     ),
+    (
+        COMPONENTS_REQUEST_STATUS,
+        "REQUEST_STATUS",
+        "REQUEST-STATUS",
+        None,
+        [],
+        False,
+        "setting nothing",
+    ),
+    (
+        COMPONENTS_REQUEST_STATUS,
+        "REQUEST_STATUS",
+        "REQUEST-STATUS",
+        [],
+        [],
+        False,
+        "setting nothing",
+    ),
+    (
+        COMPONENTS_REQUEST_STATUS,
+        "REQUEST_STATUS",
+        "REQUEST-STATUS",
+        "2.0;Success",
+        ["2.0;Success"],
+        True,
+        "set a value",
+    ),
+    (
+        COMPONENTS_REQUEST_STATUS,
+        "REQUEST_STATUS",
+        "REQUEST-STATUS",
+        ["2.0;Success", "3.1;Invalid property value"],
+        ["2.0;Success", "3.1;Invalid property value"],
+        True,
+        "set two values",
+    ),
 ]
 
 
@@ -1018,6 +1122,50 @@ def test_properties_and_new(
             assert_component_attribute_has_value(
                 component, property_name, expected_value, message
             )
+
+
+@pytest.mark.parametrize(
+    ("factory_method", "required_kwargs"),
+    [
+        ("new", {}),
+        (
+            "new_display",
+            {"description": "Reminder", "trigger": timedelta(minutes=-5)},
+        ),
+        ("new_audio", {"trigger": timedelta(minutes=-5)}),
+        (
+            "new_email",
+            {
+                "summary": "Reminder",
+                "description": "The event starts soon.",
+                "trigger": timedelta(minutes=-5),
+                "attendees": [vCalAddress("mailto:user@example.com")],
+            },
+        ),
+    ],
+    ids=["new", "new_display", "new_audio", "new_email"],
+)
+@pytest.mark.parametrize(
+    ("property_name", "value", "expected_value"),
+    [
+        ("uid", "alarm-uid", vText("alarm-uid")),
+        ("links", ["https://example.com/link"], [vUri("https://example.com/link")]),
+        ("related_to", ["parent-uid"], [vText("parent-uid")]),
+        ("refids", ["reference-id"], [vText("reference-id")]),
+        (
+            "concepts",
+            ["https://example.com/concept"],
+            [vUri("https://example.com/concept")],
+        ),
+    ],
+)
+def test_alarm_factory_methods_set_shared_properties(
+    factory_method, required_kwargs, property_name, value, expected_value
+):
+    """All Alarm factory methods set their shared properties."""
+    alarm = getattr(Alarm, factory_method)(**required_kwargs, **{property_name: value})
+
+    assert getattr(alarm, property_name) == expected_value
 
 
 @pytest.mark.parametrize("component_class", COMPONENTS_START_END)

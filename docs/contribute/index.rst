@@ -224,6 +224,7 @@ Change log types
 
 ``breaking``
     For changes that break the existing API.
+    These also require an entry in the :doc:`../how-to/upgrade`, and might require the creation of a new section heading for the next major version number release.
 
 ``removal``
     For removals and deprecations.
@@ -305,6 +306,7 @@ If you would like to set up icalendar to contribute changes, see :doc:`developme
 
     documentation/index
     development
+    join-the-icalendar-team
     code-of-conduct
     credits
     maintenance

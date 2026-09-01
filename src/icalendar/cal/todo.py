@@ -7,11 +7,15 @@ from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Literal
 
 from icalendar.attr import (
+    ATTACHMENTS_TYPE_SETTER,
+    ATTENDEE_TYPE_SETTER,
     CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
+    REQUEST_STATUS_property,
     X_MOZ_LASTACK_property,
     X_MOZ_SNOOZE_TIME_property,
+    attachments_property,
     attendees_property,
     categories_property,
     class_property,
@@ -51,6 +55,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
 
     from icalendar.alarms import Alarms
+    from icalendar.compatibility import Self
     from icalendar.enums import CLASS, STATUS
     from icalendar.prop import vCalAddress
     from icalendar.prop.conference import Conference
@@ -140,7 +145,7 @@ class Todo(Component):
         "COMMENT",
         "CONTACT",
         "EXDATE",
-        "RSTATUS",
+        "REQUEST-STATUS",
         "RELATED",
         "RESOURCES",
         "RDATE",
@@ -175,8 +180,8 @@ class Todo(Component):
     def start(self) -> date | datetime:
         """The start of the VTODO.
 
-        Invalid values raise an InvalidCalendar.
-        If there is no start, we also raise an IncompleteComponent error.
+        Invalid values raise an :exc:`~icalendar.error.InvalidCalendar`.
+        If there is no start, we also raise an :exc:`~icalendar.error.IncompleteComponent` error.
 
         You can get the start, end and duration of a Todo as follows:
 
@@ -204,8 +209,8 @@ class Todo(Component):
     def end(self) -> date | datetime:
         """The end of the todo.
 
-        Invalid values raise an InvalidCalendar error.
-        If there is no end, we also raise an IncompleteComponent error.
+        Invalid values raise an :exc:`~icalendar.error.InvalidCalendar` error.
+        If there is no end, we also raise an :exc:`~icalendar.error.IncompleteComponent` error.
         """
         return get_end_property(self, "DUE")
 
@@ -222,7 +227,7 @@ class Todo(Component):
         You can set the duration to automatically adjust the end time while keeping
         start locked.
 
-        Setting the duration will:
+        Setting the duration will do the following.
 
         1.  Keep the start time locked (unchanged)
         2.  Adjust the end time to start + duration
@@ -300,6 +305,7 @@ class Todo(Component):
     rdates = rdates_property
     exdates = exdates_property
     rrules = rrules_property
+    REQUEST_STATUS = REQUEST_STATUS_property
     uid = uid_property
     summary = summary_property
     description = description_property
@@ -311,6 +317,7 @@ class Todo(Component):
     contacts = contacts_property
     status = status_property
     attendees = attendees_property
+    attachments = attachments_property
     images = images_property
     conferences = conferences_property
     from icalendar.attr import RECURRENCE_ID
@@ -319,7 +326,8 @@ class Todo(Component):
     def new(
         cls,
         /,
-        attendees: list[vCalAddress] | None = None,
+        attachments: ATTACHMENTS_TYPE_SETTER = None,
+        attendees: ATTENDEE_TYPE_SETTER = None,
         categories: Sequence[str] = (),
         classification: CLASS | None = None,
         color: str | None = None,
@@ -338,6 +346,7 @@ class Todo(Component):
         recurrence_id: date | datetime | None = None,
         refids: list[str] | str | None = None,
         related_to: RELATED_TO_TYPE_SETTER = None,
+        request_status: list[str] | str | None = None,
         sequence: int | None = None,
         stamp: date | None = None,
         start: date | datetime | None = None,
@@ -346,12 +355,13 @@ class Todo(Component):
         summary: str | None = None,
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
-    ):
+    ) -> Self:
         """Create a new TODO with all required properties.
 
         This creates a new Todo in accordance with :rfc:`5545`.
 
         Parameters:
+            attachments: The :attr:`attachments` of the todo.
             attendees: The :attr:`attendees` of the todo.
             categories: The :attr:`categories` of the todo.
             classification: The :attr:`classification` of the todo.
@@ -370,6 +380,7 @@ class Todo(Component):
             recurrence_id: The :attr:`RECURRENCE_ID` of the todo.
             refids: :attr:`~icalendar.Component.refids` of the todo.
             related_to: :attr:`~icalendar.Component.related_to` of the todo.
+            request_status: The :attr:`REQUEST_STATUS` of the todo.
             sequence: The :attr:`sequence` of the todo.
             stamp: The :attr:`~icalendar.Component.DTSTAMP` of the todo.
                 If None, this is set to the current time.
@@ -390,7 +401,7 @@ class Todo(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        todo: Todo = super().new(
+        todo: Self = super().new(
             stamp=stamp if stamp is not None else cls._utc_now(),
             created=created,
             last_modified=last_modified,
@@ -414,8 +425,10 @@ class Todo(Component):
         todo.organizer = organizer
         todo.location = location
         todo.priority = priority
+        todo.attachments = attachments
         todo.contacts = contacts
         todo.status = status
+        todo.REQUEST_STATUS = request_status
         todo.attendees = attendees
         todo.conferences = conferences
         todo.RECURRENCE_ID = recurrence_id
