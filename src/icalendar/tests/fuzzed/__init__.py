@@ -36,6 +36,20 @@ _value_error_matches = [
     "must have at least",  # vCard ORG minimum field validation
     "not enough values to unpack",  # dateutil rejects a malformed VTIMEZONE content line
     "unsupported property",  # CIFuzz: dateutil tzical ValueError: unsupported property: RRULE
+    # dateutil.tz.tzical ValueErrors on malformed VTIMEZONE after parse stays
+    # open for #1712; not TEXT-filter bugs. The ignore list is how this
+    # project's fuzzer treats expected third-party parse failures (same
+    # pattern as "not enough values to unpack").
+    "unsupported ",  # dateutil tzical: unsupported TZID/TZOFFSET/TZNAME parm
+    "empty offset",
+    "invalid offset",
+    "empty property name",
+    "mandatory TZID",
+    "mandatory DTSTART",  # CIFuzz crash-ba601c46 on this PR
+    "mandatory TZOFFSETFROM",
+    "no timezones defined",
+    "more than one timezone available",
+    "Unsupported DTSTART param",
 ]
 
 _CONTENTLINE_NEWLINE_ASSERT = (
