@@ -115,8 +115,7 @@ def _strip_ows_around_delimiters(st: str, delimiters: str = ";=") -> str:
 
 
 class Contentline(str):
-    """A content line is basically a string that can be folded and parsed into
-r"""A content line is basically a string that can be folded and parsed into
+    r"""A content line is basically a string that can be folded and parsed into
    parts.
 
     Raises:
