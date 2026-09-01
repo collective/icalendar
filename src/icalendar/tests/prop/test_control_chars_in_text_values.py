@@ -37,7 +37,7 @@ import uuid
 import pytest
 
 from icalendar import Calendar, Event, vText, vUid
-from icalendar.prop.text import UNSAFE_TEXT_CHARS
+from icalendar.prop.text import _UNSAFE_TEXT_CHARS
 
 #: Every CONTROL from :rfc:`5545#section-3.1`. The horizontal tab, ``%x09``,
 #: is not a CONTROL, and the new line, ``%x0A``, is not forbidden because the
@@ -71,14 +71,13 @@ def _contains_forbidden_control(data: str | bytes) -> bool:
     return any(ch in data for ch in FORBIDDEN_CONTROL_CHARS)
 
 
-def test_unsafe_text_chars_is_public():
-    """:data:`~icalendar.prop.text.UNSAFE_TEXT_CHARS` stays a public name."""
-    assert UNSAFE_TEXT_CHARS.search("A\x00B")
-    assert UNSAFE_TEXT_CHARS.search("\r")
-    assert UNSAFE_TEXT_CHARS.search("\x7f")
-    assert UNSAFE_TEXT_CHARS.search("\x01") is not None
-    assert UNSAFE_TEXT_CHARS.search("\t") is None
-    assert UNSAFE_TEXT_CHARS.search("\n") is None
+@pytest.mark.parametrize("codepoint", range(128))
+def test_unsafe_text_chars_matches_forbidden_ascii(codepoint):
+    ch = chr(codepoint)
+    if ch in FORBIDDEN_CONTROL_CHARS:
+        assert _UNSAFE_TEXT_CHARS.search(ch)
+    else:
+        assert _UNSAFE_TEXT_CHARS.search(ch) is None
 
 
 @pytest.mark.parametrize("value", FORBIDDEN_VALUES)

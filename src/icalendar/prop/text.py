@@ -23,7 +23,7 @@ from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
 # control character except the horizontal tab may appear in a TEXT value.
 # The line feed, ``\x0a``, is additionally accepted here because it is the
 # result of the escaped sequences ``\N`` and ``\n``.
-UNSAFE_TEXT_CHARS = re.compile(r"[\x00-\x08\x0b-\x1f\x7f]")
+_UNSAFE_TEXT_CHARS = re.compile(r"[\x00-\x08\x0b-\x1f\x7f]")
 
 
 def _strip_unsafe_text_chars(value: object) -> str:
@@ -31,7 +31,7 @@ def _strip_unsafe_text_chars(value: object) -> str:
 
     ``\\r\\n`` and a lone ``\\r`` become ``\\n`` first so an intentional line
     break is kept and escaped on serialize. Remaining matches of
-    :data:`UNSAFE_TEXT_CHARS` (NUL, other C0 controls, DEL) are stripped.
+    :data:`_UNSAFE_TEXT_CHARS` (NUL, other C0 controls, DEL) are stripped.
     HTAB and LF are left as-is.
 
     :func:`~icalendar.parser_tools.to_unicode` leaves non-``str``/``bytes``
@@ -42,7 +42,7 @@ def _strip_unsafe_text_chars(value: object) -> str:
     if not isinstance(value, str):
         value = str(value)
     value = value.replace("\r\n", "\n").replace("\r", "\n")
-    return UNSAFE_TEXT_CHARS.sub("", value)
+    return _UNSAFE_TEXT_CHARS.sub("", value)
 
 
 class vText(str):
@@ -196,4 +196,4 @@ class vText(str):
         return cls(str(jcal_value))
 
 
-__all__ = ["UNSAFE_TEXT_CHARS", "vText"]
+__all__ = ["vText"]
