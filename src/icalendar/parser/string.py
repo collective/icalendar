@@ -19,6 +19,9 @@ def _escape_char(text: str | bytes) -> str:
     Returns:
         The escaped text with special characters escaped.
 
+    Raises:
+        TypeError: If ``text`` is neither ``str`` nor ``bytes``.
+
     Note:
         The replacement order is critical:
 
@@ -74,6 +77,9 @@ def _unescape_char(text: str | bytes) -> str | bytes:
     Returns:
         The unescaped text.
 
+    Raises:
+        TypeError: If ``text`` is neither ``str`` nor ``bytes``.
+
     Note:
         The replacement order is critical to avoid double-unescaping:
 
@@ -117,7 +123,7 @@ unescape_char = deprecate_for_version_8(_unescape_char)
 
 
 def _foldline(line: str, limit: int = 75, fold_sep: str = "\r\n ") -> str:
-    """Make a string folded as defined in RFC5545.
+    r"""Make a string folded as defined in RFC5545.
 
     Lines of text SHOULD NOT be longer than 75 octets, excluding the line
     break.  Long content lines SHOULD be split into a multiple line
@@ -125,6 +131,11 @@ def _foldline(line: str, limit: int = 75, fold_sep: str = "\r\n ") -> str:
     line can be split between any two characters by inserting a CRLF
     immediately followed by a single linear white-space character (i.e.,
     SPACE or HTAB).
+
+    Raises:
+        TypeError: If ``line`` is not a ``str``.
+        ValueError: If ``line`` contains ``\n``.
+
     """
     if not isinstance(line, str):
         raise TypeError(f"Expected str, got {type(line).__name__}")
