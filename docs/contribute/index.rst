@@ -22,6 +22,7 @@ Examples of how to contribute
 -   Submit pull requests from your fork of the icalendar repository.
 -   Extend the :doc:`documentation/index`.
 -   Create or comment on a topic in `Discussions <https://github.com/collective/icalendar/discussions>`_.
+-   Join a live chat with icalendar team members in the `icalendar room <https://matrix.to/#/%23icalendar:chat.pycal.org>`_ or its parent organization in the `Python Calendaring Ecosystem (PyCal) space <https://matrix.to/#/%23pycal:chat.pycal.org>`_ via `Matrix <https://matrix.org/>`_.
 -   Write a blog post about icalendar.
 -   Share announcements on social media from :doc:`core contributors <credits>` to icalendar.
 -   Sponsor development of icalendar through `Open Collective <https://opencollective.com/python-icalendar>`_.
