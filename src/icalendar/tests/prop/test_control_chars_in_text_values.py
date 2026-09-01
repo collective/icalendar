@@ -32,9 +32,11 @@ constructed so both ``to_ical`` and ``to_jcal`` stay valid. Parameter values
 still reject NUL into ``component.errors``.
 """
 
+import uuid
+
 import pytest
 
-from icalendar import Calendar, Event, vText
+from icalendar import Calendar, Event, vText, vUid
 from icalendar.prop.text import UNSAFE_TEXT_CHARS
 
 #: Every CONTROL from :rfc:`5545#section-3.1`. The horizontal tab, ``%x09``,
@@ -154,3 +156,30 @@ def test_parameter_nul_still_collected_in_errors():
         b"BEGIN:VEVENT\r\nSUMMARY;LANGUAGE=en\x00:Hello\r\nEND:VEVENT\r\n"
     )
     assert event.errors
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        (1, "1"),
+        (None, "None"),
+        (
+            uuid.UUID("d755cef5-2311-46ed-a0e1-6733c9e15c63"),
+            "d755cef5-2311-46ed-a0e1-6733c9e15c63",
+        ),
+    ],
+)
+def test_vtext_coerces_non_string_constructor_values(value, expected):
+    """to_unicode leaves UUID/int/None as-is; construction must still work."""
+    text = vText(value)
+    assert str(text) == expected
+    assert not _contains_forbidden_control(text.to_ical())
+
+
+def test_vuid_new_and_event_new_accept_uuid():
+    uid = vUid.new()
+    assert str(uid)
+    assert not _contains_forbidden_control(uid.to_ical())
+    event = Event.new()
+    assert event.uid
+    assert b"\x00" not in event.to_ical()

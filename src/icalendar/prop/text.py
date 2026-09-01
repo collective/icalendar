@@ -26,14 +26,21 @@ from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
 UNSAFE_TEXT_CHARS = re.compile(r"[\x00-\x08\x0b-\x1f\x7f]")
 
 
-def _strip_unsafe_text_chars(value: str) -> str:
+def _strip_unsafe_text_chars(value: object) -> str:
     r"""Remove CONTROL characters that :rfc:`5545#section-3.3.11` forbids in TEXT.
 
     ``\\r\\n`` and a lone ``\\r`` become ``\\n`` first so an intentional line
     break is kept and escaped on serialize. Remaining matches of
     :data:`UNSAFE_TEXT_CHARS` (NUL, other C0 controls, DEL) are stripped.
     HTAB and LF are left as-is.
+
+    :func:`~icalendar.parser_tools.to_unicode` leaves non-``str``/``bytes``
+    values unchanged, and callers such as :meth:`vUid.new` pass a
+    :class:`uuid.UUID`. Coerce those to ``str`` the same way ``str.__new__``
+    did before this filter ran.
     """
+    if not isinstance(value, str):
+        value = str(value)
     value = value.replace("\r\n", "\n").replace("\r", "\n")
     return UNSAFE_TEXT_CHARS.sub("", value)
 
