@@ -27,7 +27,7 @@ UNSAFE_TEXT_CHARS = re.compile(r"[\x00-\x08\x0b-\x1f\x7f]")
 
 
 def _strip_unsafe_text_chars(value: str) -> str:
-    """Remove CONTROL characters that :rfc:`5545#section-3.3.11` forbids in TEXT.
+    r"""Remove CONTROL characters that :rfc:`5545#section-3.3.11` forbids in TEXT.
 
     ``\\r\\n`` and a lone ``\\r`` become ``\\n`` first so an intentional line
     break is kept and escaped on serialize. Remaining matches of

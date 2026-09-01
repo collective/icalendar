@@ -35,8 +35,7 @@ _value_error_matches = [
     "must have exactly",  # vCard field count validation (ADR, N)
     "must have at least",  # vCard ORG minimum field validation
     "not enough values to unpack",  # dateutil rejects a malformed VTIMEZONE content line
-    # TEXT parse no longer raises, so tzical can run on the same corpus item.
-    "unsupported property",  # dateutil.tz.tzical: RRULE at VTIMEZONE level
+    "unsupported property",  # CIFuzz: dateutil tzical ValueError: unsupported property: RRULE
 ]
 
 _CONTENTLINE_NEWLINE_ASSERT = (
@@ -67,9 +66,7 @@ def fuzz_v1_calendar(
             return -1
         raise
     except AssertionError as e:
-        # Same corpus path as above: a non-TEXT RRULE key can still carry a
-        # raw LF. Contentline.__new__ must fail loudly (issue #1445); that is
-        # not a TEXT sanitization miss. Other asserts still propagate.
+        # CIFuzz: Contentline AssertionError on raw LF in a non-TEXT RRULE key (#1445).
         if _CONTENTLINE_NEWLINE_ASSERT in str(e):
             return -1
         raise
