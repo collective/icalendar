@@ -1,0 +1,1 @@
+Added a return type annotation to :func:`~icalendar.parser.unescape_backslash`. I used OpenAI GPT-5.6 Sol to help locate issue #938 and understand the function before implementing and testing the change. @goAuD

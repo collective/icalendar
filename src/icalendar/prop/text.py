@@ -1,11 +1,29 @@
 """TEXT values from :rfc:`5545`."""
 
+import re
 from typing import Any, ClassVar
 
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters, _escape_char
 from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
+
+# :rfc:`5545#section-3.3.11` defines TEXT as
+# ``*(TSAFE-CHAR / ":" / DQUOTE / ESCAPED-CHAR)`` where TSAFE-CHAR is in turn
+# defined by the following grammar in :rfc:`5545#section-3.1`.
+#
+# ..  code-block:: text
+#
+#     TSAFE-CHAR = WSP / %x21 / %x23-2B / %x2D-39 / %x3C-5B /
+#              %x5D-7E / NON-US-ASCII
+#        ; Any character except CONTROLs not needed by the current
+#        ; character set, DQUOTE, ";", ":", "\", ","
+#
+# CONTROL is defined in the same section as ``%x00-08 / %x0A-1F / %x7F``, so no
+# control character except the horizontal tab may appear in a TEXT value.
+# The line feed, ``\x0a``, is additionally accepted here because it is the
+# result of the escaped sequences ``\N`` and ``\n``.
+UNSAFE_TEXT_CHARS = re.compile(r"[\x00-\x08\x0b-\x1f\x7f]")
 
 
 class vText(str):
@@ -26,6 +44,13 @@ class vText(str):
     When the TEXT object is serialized to an icalendar stream, certain
     characters are escaped or changed.
     These characters include the COMMA, SEMICOLON, BACKSLASH, and line breaks.
+
+    Contrast TEXT with the UNKNOWN value data type specified in :rfc:`7265#section-5`.
+    UNKNOWN is implemented in the Python class :class:`~icalendar.prop.unknown.vUnknown`,
+    which does **not** apply this escaping and preserves its value verbatim,
+    because the escaping rules of an unrecognized value type are not known.
+    :class:`~icalendar.prop.unknown.vUnknown` deliberately does not inherit from
+    ``vText``, so the two don't share escaping behavior.
 
     Examples:
 
@@ -83,14 +108,29 @@ class vText(str):
         return self
 
     def __repr__(self) -> str:
-        return f"vText({self.to_ical()!r})"
+        return f"{self.__class__.__name__}({self.to_ical()!r})"
 
     def to_ical(self) -> bytes:
         return _escape_char(self).encode(self.encoding)
 
     @classmethod
     def from_ical(cls, ical: ICAL_TYPE) -> Self:
-        return cls(ical)
+        r"""Parse a TEXT value from its iCalendar representation.
+
+        Raises:
+            ValueError: If the value contains a control character that
+                :rfc:`5545#section-3.3.11` does not allow in TEXT values.
+                The line feed is exempt because it can only enter a parsed
+                value through the escaped sequences ``\N`` and ``\n``.
+        """
+        text = to_unicode(ical)
+        match = UNSAFE_TEXT_CHARS.search(text)
+        if match is not None:
+            raise ValueError(
+                f"Control character {match.group()!a} at index "
+                f"{match.start()} is not allowed in TEXT values."
+            )
+        return cls(text)
 
     @property
     def ical_value(self) -> str:

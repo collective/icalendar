@@ -23,6 +23,7 @@ Submodules
    icalendar.caselessdict
    icalendar.cli
    icalendar.compatibility
+   icalendar.config
    icalendar.enums
    icalendar.error
    icalendar.param

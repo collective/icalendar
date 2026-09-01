@@ -19,7 +19,7 @@ jobs:
       - uses: peakoss/anti-slop@v0
         with:
           max-failures: 1
-          max-description-length: 1000
+          max-description-length: 1500
           max-emoji-count: 1
           max-code-references: 3
           require-linked-issue: true

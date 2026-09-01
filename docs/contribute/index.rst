@@ -224,6 +224,7 @@ Change log types
 
 ``breaking``
     For changes that break the existing API.
+    These also require an entry in the :doc:`../how-to/upgrade`, and might require the creation of a new section heading for the next major version number release.
 
 ``removal``
     For removals and deprecations.
@@ -233,6 +234,10 @@ Change log types
 
 ``bugfix``
     For bug fixes and error corrections.
+
+``security``
+    For security fixes.
+    These must go through the `security report protocol <https://github.com/collective/icalendar/blob/main/SECURITY.md>`_.
 
 ``documentation``
     For changes to the documentation, docstrings, spelling dictionary, or any other documentation matter.
@@ -301,6 +306,7 @@ If you would like to set up icalendar to contribute changes, see :doc:`developme
 
     documentation/index
     development
+    join-the-icalendar-team
     code-of-conduct
     credits
     maintenance

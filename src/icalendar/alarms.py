@@ -14,7 +14,7 @@ This takes different calendar software into account and the RFC 9074 (Alarm Exte
 from __future__ import annotations
 
 from datetime import date, timedelta, tzinfo
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, overload
 
 from icalendar.cal.event import Event
 from icalendar.cal.todo import Todo
@@ -32,6 +32,7 @@ if TYPE_CHECKING:
     from datetime import datetime
 
     from icalendar.cal.alarm import Alarm
+    from icalendar.prop import vBinary, vUri
 
 Parent = Event | Todo
 
@@ -51,7 +52,7 @@ class AlarmTime:
         acknowledged_until: datetime | None = None,
         snoozed_until: datetime | None = None,
         parent: Parent | None = None,
-    ):
+    ) -> None:
         """Create an instance of ``AlarmTime`` with any of its parameters.
 
         Parameters:
@@ -86,6 +87,58 @@ class AlarmTime:
     def alarm(self) -> Alarm:
         """The alarm component."""
         return self._alarm
+
+    @property
+    def action(self) -> str:
+        """The action invoked when this alarm triggers.
+
+        This delegates to :attr:`Alarm.ACTION <icalendar.cal.alarm.Alarm.ACTION>`.
+        """
+        return self.alarm.ACTION
+
+    @property
+    def uid(self) -> str:
+        """The persistent, globally unique identifier of this alarm.
+
+        This delegates to :attr:`Alarm.uid <icalendar.cal.alarm.Alarm.uid>`.
+        """
+        return self.alarm.uid
+
+    @property
+    def summary(self) -> str | None:
+        """The short summary or subject for this alarm.
+
+        This delegates to :attr:`Alarm.summary <icalendar.cal.alarm.Alarm.summary>`.
+        """
+        return self.alarm.summary
+
+    @property
+    def description(self) -> str | None:
+        """A more complete description of the alarm than that provided by the
+        SUMMARY property.
+
+        This delegates to :attr:`Alarm.description
+        <icalendar.cal.alarm.Alarm.description>`.
+        """
+        return self.alarm.description
+
+    @property
+    def attendees(self) -> list[str]:
+        """List of email addresses to notify when this alarm is triggered.
+
+        This delegates to :attr:`Alarm.attendees
+        <icalendar.cal.alarm.Alarm.attendees>`.
+        """
+        return self.alarm.attendees
+
+    @property
+    def attachments(self) -> list[vUri | vBinary]:
+        """The attachments of this alarm.
+
+        This delegates to :attr:`Alarm.attachments
+        <icalendar.cal.alarm.Alarm.attachments>`.
+        """
+        return self.alarm.attachments
 
     @property
     def parent(self) -> Parent | None:
@@ -175,7 +228,7 @@ class Alarms:
     This is not implemented yet.
     """
 
-    def __init__(self, component: Alarm | Event | Todo | None = None):
+    def __init__(self, component: Alarm | Event | Todo | None = None) -> None:
         """Start computing alarm times."""
         self._absolute_alarms: list[Alarm] = []
         self._start_alarms: list[Alarm] = []
@@ -190,7 +243,7 @@ class Alarms:
         if component is not None:
             self.add_component(component)
 
-    def add_component(self, component: Alarm | Parent):
+    def add_component(self, component: Alarm | Parent) -> None:
         """Add a component.
 
         If this is an alarm, it is added.
@@ -210,7 +263,7 @@ class Alarms:
         for alarm in component.walk("VALARM"):
             self.add_alarm(alarm)
 
-    def set_parent(self, parent: Parent):
+    def set_parent(self, parent: Parent) -> None:
         """Set the parent of all the alarms.
 
         If you would like to collect alarms from a component, use add_component
@@ -231,23 +284,29 @@ class Alarms:
         else:
             self._end_alarms.append(alarm)
 
-    def set_start(self, dt: date | None):
+    def set_start(self, dt: date | None) -> None:
         """Set the start of the component.
 
         If you have only absolute alarms, this is not required.
-        If you have alarms relative to the start of a compoment, set the start here.
+        If you have alarms relative to the start of a component, set the start here.
         """
         self._start = dt
 
-    def set_end(self, dt: date | None):
+    def set_end(self, dt: date | None) -> None:
         """Set the end of the component.
 
         If you have only absolute alarms, this is not required.
-        If you have alarms relative to the end of a compoment, set the end here.
+        If you have alarms relative to the end of a component, set the end here.
         """
         self._end = dt
 
-    def _add(self, dt: date, td: timedelta):
+    @overload
+    def _add(self, dt: datetime, td: timedelta) -> datetime: ...
+
+    @overload
+    def _add(self, dt: date, td: timedelta) -> date: ...
+
+    def _add(self, dt: date, td: timedelta) -> date | datetime:
         """Add a timedelta to a datetime."""
         if is_date(dt):
             if td.seconds == 0:
@@ -278,7 +337,7 @@ class Alarms:
         """
         self._snooze_until = tzp.localize_utc(dt) if dt is not None else None
 
-    def set_local_timezone(self, tzinfo: tzinfo | str | None):
+    def set_local_timezone(self, tzinfo: tzinfo | str | None) -> None:
         """Set the local timezone.
 
         Events are sometimes in local time.
@@ -311,13 +370,13 @@ class Alarms:
     def _repeat(self, first: datetime, alarm: Alarm) -> Generator[datetime]:
         """The times when the alarm is triggered relative to start."""
         yield first  # we trigger at the start
-        repeat = alarm.REPEAT
+        repeat = alarm.repeat
         duration = alarm.DURATION
         if repeat and duration:
             for i in range(1, repeat + 1):
                 yield self._add(first, duration * i)
 
-    def _alarm_time(self, alarm: Alarm, trigger: date):
+    def _alarm_time(self, alarm: Alarm, trigger: date) -> AlarmTime:
         """Create an alarm time with the additional attributes."""
         if getattr(trigger, "tzinfo", None) is None and self._local_tzinfo is not None:
             trigger = normalize_pytz(trigger.replace(tzinfo=self._local_tzinfo))
@@ -347,7 +406,7 @@ class Alarms:
         ]
 
     def _get_end_alarm_times(self) -> list[AlarmTime]:
-        """Return a list of alarm times relative to the start of the component."""
+        """Return a list of alarm times relative to the end of the component."""
         if self._end is None and self._end_alarms:
             raise ComponentEndMissing(
                 "Use Alarms.set_end because at least one alarm is relative to the end "

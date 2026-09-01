@@ -19,6 +19,7 @@ PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = -W -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) .
 VALEFILES       := $(shell find $(DOCS_DIR) -type f -name "*.rst" -print)  # Also add `src` for docstrings.
 VALEOPTS        ?=
+ZIZMOROPTS      ?=
 PYTHONVERSION   = >=3.10,<3.15
 
 # Add the following 'help' target to your Makefile
@@ -127,6 +128,10 @@ vale: .venv  ## Run Vale style, grammar, and spell checks
 		exit 1; \
 	fi
 
+.PHONY: zizmor
+zizmor: .venv  ## Run zizmor static analysis on GitHub Actions workflows
+	@uv run zizmor $(ZIZMOROPTS) .github/workflows/
+
 .PHONY: doctest
 doctest: .venv  ## Test snippets and docstrings in the documentation
 	@echo;
@@ -164,6 +169,11 @@ rtd-pr-preview: rtd-prepare .venv ## Build pull request preview on Read the Docs
 # /deployment
 
 # release
+.PHONY: wo
+wo: .venv
+	@uv run generate_windows_to_olson_mapping.py
+	$(RUFFPATH) format
+
 .PHONY: changes-check
 changes-check: dev
 	$(TOWNCRIERPATH) check

@@ -6,15 +6,20 @@ from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, NamedTuple
 
 from icalendar.attr import (
+    ATTACHMENTS_TYPE_SETTER,
+    ATTENDEE_TYPE_SETTER,
     CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
+    _set_attachments,
+    attachments_property,
     attendees_property,
     create_single_property,
     description_property,
     property_del_duration,
     property_get_duration,
     property_set_duration,
+    repeat_property,
     single_int_property,
     single_string_property,
     single_utc_property,
@@ -23,11 +28,13 @@ from icalendar.attr import (
 )
 from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
+from icalendar.error import InvalidCalendar
 
 if TYPE_CHECKING:
     import uuid
 
-    from icalendar.prop import vCalAddress
+    from icalendar.compatibility import Self
+    from icalendar.prop import vBinary, vUri
 
 
 class Alarm(Component):
@@ -63,7 +70,6 @@ class Alarm(Component):
         "TRIGGER",
     )
     singletons = (
-        "ATTACH",
         "ACTION",
         "DESCRIPTION",
         "SUMMARY",
@@ -115,7 +121,17 @@ class Alarm(Component):
                 >>> alarm.REPEAT = 2
                 >>> alarm.REPEAT
                 2
+
+        Raises:
+            TypeError: If the value is not an ``int``. Booleans are rejected, too,
+                even though ``bool`` subclasses ``int``.
+
+            ~icalendar.error.InvalidCalendar: If the value is negative.
+
+        ..  versionchanged:: 7.3.0
+            Negative values are no longer accepted.
         """,
+        min_value=0,
     )
 
     DURATION = property(
@@ -156,32 +172,32 @@ class Alarm(Component):
 
     ACKNOWLEDGED = single_utc_property(
         "ACKNOWLEDGED",
-        """This is defined in RFC 9074:
+        """This property is the UTC datetime at which this alarm was last sent or acknowledged as defined in :rfc:`9074`.
 
-    Purpose: This property specifies the UTC date and time at which the
-    corresponding alarm was last sent or acknowledged.
+    Setting this property allows calendar clients to
+    dismiss or suppress an alarm across multiple devices. Once set to a value
+    greater than or equal to the alarm's computed trigger time, conforming clients
+    will not refire the alarm.
 
-    This property is used to specify when an alarm was last sent or acknowledged.
-    This allows clients to determine when a pending alarm has been acknowledged
-    by a calendar user so that any alerts can be dismissed across multiple devices.
-    It also allows clients to track repeating alarms or alarms on recurring events or
-    to-dos to ensure that the right number of missed alarms can be tracked.
+    Returns ``None`` when no acknowledgment has been recorded.
 
-    Clients SHOULD set this property to the current date-time value in UTC
-    when a calendar user acknowledges a pending alarm. Certain kinds of alarms,
-    such as email-based alerts, might not provide feedback as to when the calendar user
-    sees them. For those kinds of alarms, the client SHOULD set this property
-    when the alarm is triggered and the action is successfully carried out.
+    Example:
+        Mark an alarm as acknowledged. Note that the example uses an arbitrary time
+        for the purpose of passing doctests. In actual practice, clients should
+        use the current time in UTC, such as ``datetime.now(UTC)``.
 
-    When an alarm is triggered on a client, clients can check to see if an "ACKNOWLEDGED"
-    property is present. If it is, and the value of that property is greater than or
-    equal to the computed trigger time for the alarm, then the client SHOULD NOT trigger
-    the alarm. Similarly, if an alarm has been triggered and
-    an "alert" has been presented to a calendar user, clients can monitor
-    the iCalendar data to determine whether an "ACKNOWLEDGED" property is added or
-    changed in the alarm component. If the value of any "ACKNOWLEDGED" property
-    in the alarm changes and is greater than or equal to the trigger time of the alarm,
-    then clients SHOULD dismiss or cancel any "alert" presented to the calendar user.
+        .. code-block:: pycon
+
+            >>> from datetime import timezone, datetime
+            >>> from icalendar import Alarm
+            >>> UTC = timezone.utc
+            >>> alarm = Alarm()
+            >>> alarm.ACKNOWLEDGED = datetime(2024, 1, 15, 10, 0, tzinfo=UTC)
+            >>> alarm.ACKNOWLEDGED
+            datetime.datetime(2024, 1, 15, 10, 0, tzinfo=ZoneInfo(key='UTC'))
+
+    See also:
+        :attr:`TRIGGER`, the time at which the alarm fires.
     """,
     )
 
@@ -190,17 +206,46 @@ class Alarm(Component):
         "dt",
         (datetime, timedelta),
         timedelta | datetime | None,
-        """Purpose:  This property specifies when an alarm will trigger.
+        """The time at which this alarm fires, per :rfc:`5545#section-3.8.6.3`.
 
-    Value Type:  The default value type is DURATION.  The value type can
-    be set to a DATE-TIME value type, in which case the value MUST
-    specify a UTC-formatted DATE-TIME value.
+    The value is either a :class:`~datetime.timedelta` (relative trigger) or a
+    UTC :class:`~datetime.datetime` (absolute trigger).
 
-    Either a positive or negative duration may be specified for the
-    "TRIGGER" property.  An alarm with a positive duration is
-    triggered after the associated start or end of the event or to-do.
-    An alarm with a negative duration is triggered before the
-    associated start or end of the event or to-do.""",
+    A negative :class:`~datetime.timedelta` fires *before* the related
+    component boundary (start or end); a positive one fires *after* it.
+    Use :attr:`TRIGGER_RELATED` to choose whether the offset is measured from
+    the start or the end of the parent event or to-do.
+    An absolute trigger fires at an exact UTC point in time regardless of the
+    parent component's dates.
+
+    Examples:
+        Set an alarm to fire 15 minutes before the start of an event.
+
+        .. code-block:: pycon
+
+            >>> from datetime import datetime, timedelta, timezone
+            >>> from icalendar import Alarm, Event
+            >>> UTC = timezone.utc
+            >>> event = Event()
+            >>> event.start = datetime(2024, 1, 15, 10, 0, tzinfo=UTC)
+            >>> alarm = Alarm()
+            >>> alarm.TRIGGER = timedelta(minutes=-15)
+            >>> event.add_component(alarm)
+            >>> event.alarms.times[0].trigger
+            datetime.datetime(2024, 1, 15, 9, 45, tzinfo=datetime.timezone.utc)
+
+        Set an absolute trigger to fire at a specific UTC time.
+
+        .. code-block:: pycon
+
+            >>> absolute_alarm = Alarm()
+            >>> absolute_alarm.TRIGGER = datetime(2024, 1, 15, 9, 45, tzinfo=UTC)
+            >>> absolute_alarm.TRIGGER
+            datetime.datetime(2024, 1, 15, 9, 45, tzinfo=datetime.timezone.utc)
+
+    See also:
+        :attr:`TRIGGER_RELATED`, :attr:`DURATION`, :attr:`REPEAT`
+    """,
     )
 
     @property
@@ -214,7 +259,7 @@ class Alarm(Component):
         the alarm to trigger off the end of the associated event or to-do.
 
         In this example, we create an alarm that triggers two hours after the
-        end of its parent component:
+        end of its parent component.
 
         >>> from icalendar import Alarm
         >>> from datetime import timedelta
@@ -258,7 +303,7 @@ class Alarm(Component):
         This takes the TRIGGER, DURATION and REPEAT properties into account.
 
         Here, we create an alarm that triggers 3 times before the start of the
-        parent component:
+        parent component.
 
         >>> from icalendar import Alarm
         >>> from datetime import timedelta
@@ -289,11 +334,47 @@ class Alarm(Component):
                 add = end
             duration = self.DURATION
             if duration is not None:
-                for _ in range(self.REPEAT):
+                for _ in range(self.repeat):
                     add.append(add[-1] + duration)
         return self.Triggers(
             start=tuple(start), end=tuple(end), absolute=tuple(absolute)
         )
+
+    repeat = repeat_property
+
+    attachments = attachments_property
+
+    @attachments.setter
+    def attachments(self, value: ATTACHMENTS_TYPE_SETTER) -> None:
+        if value is not None and self.ACTION == "AUDIO":
+            count = len(value) if isinstance(value, list) else 1
+            if count > 1:
+                raise InvalidCalendar(
+                    "An AUDIO alarm must not contain more than one attachment.\n"
+                    f"Alarm has {count} attachments."
+                )
+        _set_attachments(self, value)
+
+    ACTION = single_string_property(
+        "ACTION",
+        """The action invoked when the alarm triggers.
+
+        Typical values defined by :rfc:`5545#section-3.8.6.1` are
+        ``AUDIO``, ``DISPLAY``, and ``EMAIL``. The empty string is
+        returned when no ``ACTION`` property is present.
+        """,
+    )
+
+    @ACTION.setter
+    def ACTION(self, value: str | None) -> None:
+        if value == "AUDIO" and len(self.attachments) > 1:
+            raise InvalidCalendar(
+                "An AUDIO alarm must not contain more than one attachment.\n"
+                f"Alarm has {len(self.attachments)} attachments."
+            )
+        self.pop("ACTION", None)
+        if value is not None:
+            self.add("ACTION", value)
 
     uid = single_string_property(
         "UID",
@@ -308,7 +389,9 @@ class Alarm(Component):
     def new(
         cls,
         /,
-        attendees: list[vCalAddress] | None = None,
+        action: str | None = None,
+        attachments: ATTACHMENTS_TYPE_SETTER = None,
+        attendees: ATTENDEE_TYPE_SETTER = None,
         concepts: CONCEPTS_TYPE_SETTER = None,
         description: str | None = None,
         links: LINKS_TYPE_SETTER = None,
@@ -316,12 +399,16 @@ class Alarm(Component):
         related_to: RELATED_TO_TYPE_SETTER = None,
         summary: str | None = None,
         uid: str | uuid.UUID | None = None,
-    ):
+    ) -> Self:
         """Create a new alarm with all required properties.
 
         This creates a new Alarm in accordance with :rfc:`5545`.
 
         Parameters:
+            action: The :attr:`ACTION` of the alarm. Typical values are
+                ``"AUDIO"``, ``"DISPLAY"``, and ``"EMAIL"``. When you set
+                ``"AUDIO"``, the alarm accepts at most one attachment.
+            attachments: The :attr:`attachments` of the alarm.
             attendees: The :attr:`attendees` of the alarm.
             concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the alarm.
             description: The :attr:`description` of the alarm.
@@ -340,16 +427,315 @@ class Alarm(Component):
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
-        alarm: Alarm = super().new(
+        alarm: Self = super().new(
             links=links,
             related_to=related_to,
             refids=refids,
             concepts=concepts,
         )
+        if action is not None:
+            alarm.ACTION = action
+        alarm.attachments = attachments
         alarm.summary = summary
         alarm.description = description
         alarm.uid = uid
         alarm.attendees = attendees
+        return alarm
+
+    def _apply_duration_repeat(
+        self,
+        duration: timedelta | None,
+        repeat: int | None,
+    ) -> None:
+        if duration is not None or repeat is not None:
+            if duration is None or repeat is None:
+                raise InvalidCalendar(
+                    "DURATION and REPEAT must be set together or not at all"
+                )
+            self.DURATION = duration
+            self.repeat = repeat
+
+    @classmethod
+    def new_display(
+        cls,
+        description: str,
+        trigger: timedelta | datetime,
+        duration: timedelta | None = None,
+        repeat: int | None = None,
+        uid: str | uuid.UUID | None = None,
+        links: LINKS_TYPE_SETTER = None,
+        related_to: RELATED_TO_TYPE_SETTER = None,
+        refids: list[str] | str | None = None,
+        concepts: CONCEPTS_TYPE_SETTER = None,
+    ) -> Alarm:
+        """Create a new DISPLAY alarm that shows a text reminder.
+
+        A DISPLAY alarm pops up a text notification at the trigger time.
+        This is the most common alarm type used by calendar clients.
+
+        Conforms to :rfc:`5545#section-3.6.6`.
+
+        Parameters:
+            description: Required. The text to display when the alarm fires.
+                Corresponds to the :attr:`description` property.
+            trigger: Required. When the alarm fires, as a :class:`~datetime.timedelta`
+                relative to the event start (negative means before) or as an
+                absolute :class:`~datetime.datetime` (recommend UTC-aware).
+            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the alarm.
+            duration: Gap between repeated triggers. Must be paired with
+                ``repeat``. Corresponds to the :attr:`DURATION` property.
+            links: The :attr:`~icalendar.cal.component.Component.links` of the alarm.
+            refids: The :attr:`~icalendar.cal.component.Component.refids` of the alarm.
+            related_to: The :attr:`~icalendar.cal.component.Component.related_to` of the alarm.
+            repeat: Number of *additional* times to fire after the initial
+                trigger. Must be paired with ``duration``.
+                Corresponds to the :attr:`REPEAT` property.
+            uid: Unique identifier for the alarm or ``None``.
+
+        Returns:
+            :class:`Alarm` with ``ACTION:DISPLAY`` set.
+
+        Raises:
+            ~icalendar.error.InvalidCalendar: If required fields are missing
+                or ``duration`` and ``repeat`` are not both provided together.
+
+        Example:
+            Create a display alarm that fires 15 minutes before the event:
+
+            .. code-block:: pycon
+
+                >>> from datetime import timedelta
+                >>> from icalendar import Alarm
+                >>> alarm = Alarm.new_display(
+                ...     description="Team meeting in 15 minutes",
+                ...     trigger=timedelta(minutes=-15),
+                ... )
+                >>> print(alarm.to_ical().decode())
+                BEGIN:VALARM
+                ACTION:DISPLAY
+                DESCRIPTION:Team meeting in 15 minutes
+                TRIGGER:-PT15M
+                END:VALARM
+
+            Attach the alarm to an event:
+
+            .. code-block:: python
+
+                from datetime import datetime, timedelta, timezone
+                from icalendar import Alarm, Event
+
+                event = Event.new(
+                    summary="Team meeting",
+                    start=datetime(2025, 6, 1, 10, 0, tzinfo=timezone.utc),
+                    end=datetime(2025, 6, 1, 11, 0, tzinfo=timezone.utc),
+                )
+                event.add_component(Alarm.new_display(
+                    description="Team meeting in 15 minutes",
+                    trigger=timedelta(minutes=-15),
+                ))
+        """
+        if not description:
+            raise InvalidCalendar("DISPLAY alarm requires a description")
+        if trigger is None:
+            raise InvalidCalendar("DISPLAY alarm requires a trigger")
+        alarm: Alarm = cls.new(
+            action="DISPLAY",
+            description=description,
+            uid=uid,
+            links=links,
+            related_to=related_to,
+            refids=refids,
+            concepts=concepts,
+        )
+        alarm.TRIGGER = trigger
+        alarm._apply_duration_repeat(duration, repeat)
+        return alarm
+
+    @classmethod
+    def new_audio(
+        cls,
+        trigger: timedelta | datetime,
+        attachments: str | bytes | vUri | vBinary | None = None,
+        duration: timedelta | None = None,
+        repeat: int | None = None,
+        uid: str | uuid.UUID | None = None,
+        links: LINKS_TYPE_SETTER = None,
+        related_to: RELATED_TO_TYPE_SETTER = None,
+        refids: list[str] | str | None = None,
+        concepts: CONCEPTS_TYPE_SETTER = None,
+    ) -> Alarm:
+        """Create a new AUDIO alarm that plays a sound.
+
+        An AUDIO alarm plays a sound at the trigger time. An optional
+        ``attachments`` URI points to the audio file to play; when omitted,
+        the client uses its default alert sound.
+
+        Conforms to :rfc:`5545#section-3.6.6`.
+
+        Parameters:
+            trigger: Required. When the alarm fires, as a :class:`~datetime.timedelta`
+                relative to the event start (negative means before) or as an
+                absolute :class:`~datetime.datetime` (recommend UTC-aware).
+            attachments: Optional audio attachment. Accepts a URI as a
+                :class:`str` or :class:`~icalendar.prop.uri.vUri`, or
+                inline binary audio as :class:`bytes` or
+                :class:`~icalendar.prop.binary.vBinary`. When ``None``,
+                the client uses its default sound.
+            duration: Gap between repeated triggers. Must be paired with
+                ``repeat``. Corresponds to the :attr:`DURATION` property.
+            links: The :attr:`~icalendar.cal.component.Component.links` of the alarm.
+            refids: The :attr:`~icalendar.cal.component.Component.refids` of the alarm.
+            related_to: The :attr:`~icalendar.cal.component.Component.related_to` of the alarm.
+            repeat: Number of *additional* times to fire after the initial
+                trigger. Must be paired with ``duration``.
+                Corresponds to the :attr:`REPEAT` property.
+            uid: Unique identifier for the alarm or ``None``.
+
+        Returns:
+            :class:`Alarm` with ``ACTION:AUDIO`` set.
+
+        Raises:
+            ~icalendar.error.InvalidCalendar: If required fields are missing
+                or ``duration`` and ``repeat`` are not both provided together.
+
+        Example:
+            Create an audio alarm using a custom sound file:
+
+            .. code-block:: pycon
+
+                >>> from datetime import timedelta
+                >>> from icalendar import Alarm
+                >>> alarm = Alarm.new_audio(
+                ...     trigger=timedelta(minutes=-5),
+                ...     attachments="ftp://example.com/pub/sounds/bell-01.aud",
+                ... )
+                >>> print(alarm.to_ical().decode())
+                BEGIN:VALARM
+                ACTION:AUDIO
+                ATTACH:ftp://example.com/pub/sounds/bell-01.aud
+                TRIGGER:-PT5M
+                END:VALARM
+        """
+        if trigger is None:
+            raise InvalidCalendar("AUDIO alarm requires a trigger")
+        alarm: Alarm = cls.new(
+            action="AUDIO",
+            attachments=attachments,
+            uid=uid,
+            links=links,
+            related_to=related_to,
+            refids=refids,
+            concepts=concepts,
+        )
+        alarm.TRIGGER = trigger
+        alarm._apply_duration_repeat(duration, repeat)
+        return alarm
+
+    @classmethod
+    def new_email(
+        cls,
+        summary: str,
+        description: str,
+        trigger: timedelta | datetime,
+        attendees: ATTENDEE_TYPE_SETTER,
+        attachments: ATTACHMENTS_TYPE_SETTER = None,
+        duration: timedelta | None = None,
+        repeat: int | None = None,
+        uid: str | uuid.UUID | None = None,
+        links: LINKS_TYPE_SETTER = None,
+        related_to: RELATED_TO_TYPE_SETTER = None,
+        refids: list[str] | str | None = None,
+        concepts: CONCEPTS_TYPE_SETTER = None,
+    ) -> Alarm:
+        """Create a new EMAIL alarm that sends an email notification.
+
+        An EMAIL alarm sends an email to each address in ``attendees`` when
+        the alarm fires.
+
+        Conforms to :rfc:`5545#section-3.6.6`.
+
+        Parameters:
+            attendees: Required. One or more recipient addresses as email strings or
+                :class:`~icalendar.prop.cal_address.vCalAddress` instances. A
+                single address or a sequence of addresses. At least one is
+                required.
+            description: Required. Body of the email.
+                Corresponds to the :attr:`description` property.
+            summary: Required. Subject line of the email.
+                Corresponds to the :attr:`summary` property.
+            trigger: Required. When the alarm fires, as a :class:`~datetime.timedelta`
+                relative to the event start (negative means before) or as an
+                absolute :class:`~datetime.datetime` (recommend UTC-aware).
+            attachments: The :attr:`attachments` of the alarm. A single value
+                or a sequence of them. Both URIs and binary data are accepted.
+            concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the alarm.
+            duration: Gap between repeated triggers. Must be paired with
+                ``repeat``. Corresponds to the :attr:`DURATION` property.
+            links: The :attr:`~icalendar.cal.component.Component.links` of the alarm.
+            refids: The :attr:`~icalendar.cal.component.Component.refids` of the alarm.
+            related_to: The :attr:`~icalendar.cal.component.Component.related_to` of the alarm.
+            repeat: Number of *additional* times to fire after the initial
+                trigger. Must be paired with ``duration``.
+                Corresponds to the :attr:`REPEAT` property.
+            uid: Unique identifier for the alarm or ``None``.
+
+        Returns:
+            :class:`Alarm` with ``ACTION:EMAIL`` set.
+
+        Raises:
+            ~icalendar.error.InvalidCalendar: If required fields are missing,
+                ``attendees`` is empty, or ``duration`` and ``repeat`` are not
+                both provided together.
+
+        Example:
+            Create an email alarm sent to two recipients. Plain email strings
+            and ``mailto:``-prefixed strings are both accepted and normalized
+            to :class:`~icalendar.prop.cal_address.vCalAddress`:
+
+            .. code-block:: pycon
+
+                >>> from datetime import timedelta
+                >>> from icalendar import Alarm
+                >>> alarm = Alarm.new_email(
+                ...     summary="Meeting reminder",
+                ...     description="Your meeting starts in 30 minutes.",
+                ...     trigger=timedelta(minutes=-30),
+                ...     attendees=["user@example.com", "mailto:boss@example.com"],
+                ... )
+                >>> print(alarm.to_ical().decode())
+                BEGIN:VALARM
+                ACTION:EMAIL
+                ATTENDEE:mailto:user@example.com
+                ATTENDEE:mailto:boss@example.com
+                DESCRIPTION:Your meeting starts in 30 minutes.
+                SUMMARY:Meeting reminder
+                TRIGGER:-PT30M
+                END:VALARM
+        """
+        if isinstance(attendees, str):
+            attendees = [attendees]
+        if not summary:
+            raise InvalidCalendar("EMAIL alarm requires a summary")
+        if not description:
+            raise InvalidCalendar("EMAIL alarm requires a description")
+        if trigger is None:
+            raise InvalidCalendar("EMAIL alarm requires a trigger")
+        if not attendees:
+            raise InvalidCalendar("EMAIL alarm requires at least one attendee")
+        alarm: Alarm = cls.new(
+            action="EMAIL",
+            attachments=attachments,
+            summary=summary,
+            description=description,
+            uid=uid,
+            attendees=attendees,
+            links=links,
+            related_to=related_to,
+            refids=refids,
+            concepts=concepts,
+        )
+        alarm.TRIGGER = trigger
+        alarm._apply_duration_repeat(duration, repeat)
         return alarm
 
     @classmethod
