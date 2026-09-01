@@ -2,6 +2,7 @@
 
 import pytest
 
+from icalendar import Event, vUnknown
 from icalendar.error import BrokenCalendarProperty
 from icalendar.prop import vBroken, vDDDLists, vDDDTypes, vRecur, vText
 
@@ -214,6 +215,19 @@ def broken():
         expected_type="vDDDTypes",
         parse_error=ValueError("bad value"),
     )
+
+
+def test_vbroken_serializes_as_unknown_jcal(broken):
+    assert broken.to_jcal("dtstart") == ["dtstart", {}, "unknown", "INVALID"]
+
+
+@pytest.mark.parametrize("name", ["rdate", "exdate"])
+def test_unknown_jcal_type_is_verbatim_for_date_lists(name):
+    event = Event.from_jcal(["vevent", [[name, {}, "unknown", "raw"]], []])
+
+    value = event[name.upper()]
+    assert isinstance(value, vUnknown)
+    assert value == "raw"
 
 
 def test_vbroken_getattr_raises_broken_calendar_property(broken):
