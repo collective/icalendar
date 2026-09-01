@@ -116,7 +116,7 @@ def _strip_ows_around_delimiters(st: str, delimiters: str = ";=") -> str:
 
 class Contentline(str):
     r"""A content line is basically a string that can be folded and parsed into
-   parts.
+    parts.
 
     Raises:
         ValueError: If the value contains ``\n``.
@@ -144,7 +144,7 @@ class Contentline(str):
         sorted: bool = True,  # noqa: A002
     ):
         r"""Turn a parts into a content line.
-        
+
         Raises:
             TypeError: If ``params`` is not type ``Parameters``.
 
