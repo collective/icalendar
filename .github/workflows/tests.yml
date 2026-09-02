@@ -24,8 +24,12 @@ jobs:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
     - name: Set matrix
       id: set-matrix
+      env:
+        EVENT_NAME: ${{ github.event_name }}
+        GIT_REF: ${{ github.ref }}
+        REVIEW_STATE: ${{ github.event.review.state }}
       run: |
-        matrix_json="$(python .github/workflows/generate_matrix.py '${{ github.ref }}' '${{ github.event.review.state }}' )"
+        matrix_json="$(python .github/workflows/generate_matrix.py "$GIT_REF" "$REVIEW_STATE" "$EVENT_NAME")"
         echo "include=$(echo "$matrix_json" | python -c 'import json,sys; print(json.dumps(json.load(sys.stdin)["include"]))')" >> $GITHUB_OUTPUT
 
   run-tests:
