@@ -189,7 +189,7 @@ def q_join(lst: Sequence[str], sep: str = ",", always_quote: bool = False) -> st
     return sep.join(dquote(itm, always_quote=always_quote) for itm in lst)
 
 
-def single_string_parameter(func: Callable | None = None, upper=False):
+def _single_string_parameter(func: Callable | None = None, upper=False):
     """Create a parameter getter/setter for a single string parameter.
 
     Parameters:
@@ -230,6 +230,21 @@ def single_string_parameter(func: Callable | None = None, upper=False):
     if func is None:
         return decorator
     return decorator(func)
+
+
+def _deprecated_single_string_parameter(func: Callable | None = None, upper=False):
+    """Deprecated wrapper for single_string_parameter."""
+    import warnings
+
+    warnings.warn(
+        "single_string_parameter is deprecated and will be removed in icalendar 8",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return _single_string_parameter(func=func, upper=upper)
+
+
+single_string_parameter = _deprecated_single_string_parameter
 
 
 class Parameters(CaselessDict):
@@ -376,7 +391,7 @@ class Parameters(CaselessDict):
                 ) from exc
         return result
 
-    @single_string_parameter(upper=True)
+    @_single_string_parameter(upper=True)
     def value(self) -> VALUE | str | None:
         """The VALUE parameter from :rfc:`5545`.
 
@@ -451,7 +466,7 @@ class Parameters(CaselessDict):
             del jcal["tzid"]
         return jcal
 
-    @single_string_parameter
+    @_single_string_parameter
     def tzid(self) -> str | None:
         """The TZID parameter from :rfc:`5545`."""
 
