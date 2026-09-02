@@ -16,7 +16,7 @@ Nicco
 Params
 Penner
 (?i)Plone
-(?i)prek
+prek
 Repology
 recur.recur
 reformats

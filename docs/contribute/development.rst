@@ -40,15 +40,18 @@ The :program:`Make` commands may invoke :program:`uv`, :program:`tox`, :program:
 prek
 ----
 
-`prek <https://prek.j178.dev/>`_ is a fast Git hook manager written in Rust, a drop-in replacement for ``pre-commit``.
+..  versionchanged:: 0.0.0
+
+    Replaced :program:`pre-commit` with :program:`prek`.
+
+`prek <https://prek.j178.dev/>`_ is a fast Git hook manager written in Rust, a drop-in replacement for :program:`pre-commit`.
 It is automatically installed as one of the development requirements when running the following command.
 
 .. code-block:: shell
 
     make dev
 
-That command installs a supported Python, creates a Python virtual environment, and installs package and development requirements (including ``prek``).
-If you previously used ``pre-commit``, switch once with ``prek install -f``, so your existing :file:`.pre-commit-config.yaml` continues to work unchanged.
+That command installs a supported Python, creates a Python virtual environment, and installs package and development requirements.
 
 When you commit code to icalendar with ``git commit``, prek runs the following code quality checks and reformats code automatically for you.
 
