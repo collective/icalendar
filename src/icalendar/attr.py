@@ -106,7 +106,7 @@ def _get_rdates(
 
     .. note::
 
-       Modifying the returned list does not change the RDATE value. Assign to
+        Modifying the returned list does not change the RDATE value. Assign to
         ``rdates`` for the relevant component or use
         :meth:`Component.add <icalendar.cal.component.Component.add>` instead.
         If you want to compute recurrences, have a look at
