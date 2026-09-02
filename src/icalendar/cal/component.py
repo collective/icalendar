@@ -252,13 +252,13 @@ class Component(CaselessDict):
 
         Parameters:
             name: Name of the property.
-            value: Value of the property. Either a basic Python type or
+            value: Value of the property. Either a native Python type or
                 any of icalendar's own property types.
             parameters: Property parameter dictionary for the value. Only
-                used if encode is set to True.
-            encode: True if the value should be encoded to one of
+                used if encode is set to ``True``.
+            encode: ``True`` if the value should be encoded to one of
                 icalendar's own property types (falls back to ``vText``),
-                or False if not.
+                or ``False`` if not.
 
         Returns:
             The encoded icalendar property value.
