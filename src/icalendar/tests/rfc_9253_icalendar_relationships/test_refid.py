@@ -23,10 +23,10 @@ def test_delete_refids(component: Component):
     del component.refids
     component.refids = ["asd"]
     del component.refids
-    assert component.refids == []
+    assert component.refids is None
 
 
 def test_delete_refids_with_none(component: Component):
     component.refids = ["123"]
     component.refids = None
-    assert component.refids == []
+    assert component.refids is None

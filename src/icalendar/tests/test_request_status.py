@@ -24,7 +24,7 @@ def component(request):
 def test_no_request_status_at_creation(component: ETJF):
     """An empty component has no request status."""
     assert "REQUEST-STATUS" not in component
-    assert component.REQUEST_STATUS == []
+    assert component.REQUEST_STATUS is None
 
 
 def test_add_one_request_status(component: ETJF):
@@ -50,7 +50,7 @@ def test_delete_request_status(component: ETJF):
     component.REQUEST_STATUS = ["2.0;Success"]
     del component.REQUEST_STATUS
     assert "REQUEST-STATUS" not in component
-    assert component.REQUEST_STATUS == []
+    assert component.REQUEST_STATUS is None
 
 
 def test_request_status_roundtrip(component: ETJF):
