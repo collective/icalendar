@@ -1,0 +1,1 @@
+Added a test that every property type preserves its parameters through a jCal ``to_jcal``/``from_jcal`` round-trip. I used AI to assist me with this change. @Ashishjob
