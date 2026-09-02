@@ -45,6 +45,13 @@ class TZP:
 
         self._use(ZONEINFO())
 
+    def use_pyicu(self) -> None:
+        """Use pyicu as the timezone provider."""
+        from .pyicu import PYICU # noqa: PLC0415, RUF100
+
+        self._use(PYICU())
+
+          
     def _use(self, provider: TZProvider) -> None:
         """Use a timezone implementation."""
         self.__tz_cache = {}
