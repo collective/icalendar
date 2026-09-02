@@ -123,7 +123,7 @@ unescape_char = deprecate_for_version_8(_unescape_char)
 
 
 def _foldline(line: str, limit: int = 75, fold_sep: str = "\r\n ") -> str:
-    r"""Make a string folded as defined in RFC5545.
+    r"""Make a string folded as defined in :rfc:`5545#section-3.1`.
 
     Lines of text SHOULD NOT be longer than 75 octets, excluding the line
     break.  Long content lines SHOULD be split into a multiple line
@@ -140,7 +140,7 @@ def _foldline(line: str, limit: int = 75, fold_sep: str = "\r\n ") -> str:
     if not isinstance(line, str):
         raise TypeError(f"Expected str, got {type(line).__name__}")
     if "\n" in line:
-        raise ValueError("line must not contain unescaped new line characters")
+        raise ValueError("Line must not contain unescaped new line characters.")
 
     folded_lines: list[str] = []
     current_chars: list[str] = []
