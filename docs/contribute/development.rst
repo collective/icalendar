@@ -80,7 +80,7 @@ If you use :program:`Claude Code`, recording is automatic, once the repository i
 For other AI tools, you may need to manually record prompts or instruct the AI to do so.
 Consider adding support for your AI tool in the `project repository <https://github.com/pycalendar/ai-prompt-auto-commit>`_.
 
-Contributors to icalendar are encouraged to use prek (``pre-commit`` still works as drop-in).
+Contributors to icalendar are encouraged to use prek.
 Any issues that would be caught by prek shall be caught by GitHub workflows when you push commits to a pull request for icalendar.
 This could delay merging of your pull request.
 
