@@ -30,3 +30,25 @@ def test_delete_refids_with_none(component: Component):
     component.refids = ["123"]
     component.refids = None
     assert component.refids is None
+
+
+def test_append_one_value_is_noop(component: Component):
+    """Mutating the returned list is a no-op."""
+    component.refids = ["ref1"]
+    values = component.refids
+    values.append("ref2")
+    assert component.refids == ["ref1"]
+
+
+def test_append_with_two_values_is_noop(component: Component):
+    """Mutating the returned list is a no-op."""
+    component.refids = ["ref1", "ref2"]
+    values = component.refids
+    values.append("ref3")
+    assert component.refids == ["ref1", "ref2"]
+
+
+def test_elements_are_str(component: Component):
+    """Elements should be a plain str, not vText."""
+    component.refids = ["ref1", "ref2"]
+    assert all(type(x) is str for x in component.refids)
