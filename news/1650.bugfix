@@ -1,1 +1,0 @@
-Corrected the ``DTEND`` docstring on ``Availability`` and ``Available``, which read "Start of the component." after being copied from ``DTSTART``, and dropped each timestamp property's self-reference from its own "See also" list. I used AI to assist me with this change. @Morningstar202604
