@@ -406,23 +406,37 @@ class Alarm(Component):
         summary: str | None = None,
         uid: str | uuid.UUID | None = None,
     ) -> Self:
-        """Create a new alarm with all required properties.
+        """Create a new alarm.
 
         This creates a new Alarm in accordance with :rfc:`5545`.
+
+        Per the RFC, ``action`` and ``trigger`` are required properties.
+        ``duration`` and ``repeat`` are optional, but if one is set,
+        the other must also be set.
 
         Parameters:
             action: The :attr:`ACTION` of the alarm. Typical values are
                 ``"AUDIO"``, ``"DISPLAY"``, and ``"EMAIL"``. When you set
                 ``"AUDIO"``, the alarm accepts at most one attachment.
+                ``required`` per :rfc:`5545#section-3.6.6`.
             attachments: The :attr:`attachments` of the alarm.
+                ``optional`` per :rfc:`5545#section-3.8.6`.
             attendees: The :attr:`attendees` of the alarm.
+                ``optional`` per :rfc:`5545#section-3.8.6`.
             concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the alarm.
+                ``optional`` per :rfc:`5545#section-3.8.6`.
             description: The :attr:`description` of the alarm.
+                ``optional`` per :rfc:`5545#section-3.8.6`.
             links: The :attr:`~icalendar.cal.component.Component.links` of the alarm.
+                ``optional`` per :rfc:`5545#section-3.8.6`.
             refids: :attr:`~icalendar.cal.component.Component.refids` of the alarm.
+                ``optional`` per :rfc:`5545#section-3.8.6`.
             related_to: :attr:`~icalendar.cal.component.Component.related_to` of the alarm.
+                ``optional`` per :rfc:`5545#section-3.8.6`.
             summary: The :attr:`summary` of the alarm.
+                ``optional`` per :rfc:`5545#section-3.8.6`.
             uid: The :attr:`uid` of the alarm.
+                ``optional`` per :rfc:`5545#section-3.8.6`.
 
         Returns:
             :class:`Alarm`
