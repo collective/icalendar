@@ -33,12 +33,16 @@ def TestOneInput(data):
     calendar_string = fdp.ConsumeString(fdp.remaining_bytes())
     print("--- start calendar ---")
     with contextlib.suppress(UnicodeEncodeError):
-        # print the ICS file for the test case extraction
+        # print the ICS file for the test case extraction, alongside the
+        # from_ical call's other arguments so a case can be reproduced
+        # without guessing multiple/should_walk
         # see https://stackoverflow.com/a/27367173/1320237
+        encoded = base64.b64encode(
+            calendar_string.encode("UTF-8", "surrogateescape")
+        ).decode("ASCII")
         print(
-            base64.b64encode(calendar_string.encode("UTF-8", "surrogateescape")).decode(
-                "ASCII"
-            )
+            f"{icalendar.cal.calendar.Calendar.from_ical.__qualname__} "
+            f"multiple={multiple} should_walk={should_walk} {encoded}"
         )
 
     fuzz_v1_calendar(
