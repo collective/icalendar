@@ -107,8 +107,8 @@ def _get_rdates(
     .. note::
 
         Modifying the returned list does not change the RDATE value. Assign to
-        :attr:`rdates` or use :func:`icalendar.cal.Component.add` instead.
-
+        ``rdates`` for the relevant component or use
+        :meth:`Component.add <icalendar.cal.component.Component.add>` instead.
         If you want to compute recurrences, have a look at
         `Related Projects <https://github.com/collective/icalendar/blob/main/README.rst#related-projects>`_.
 
@@ -214,8 +214,8 @@ def _get_exdates(self: Component) -> list[date | datetime]:
     .. note::
 
         Modifying the returned list does not change the EXDATE value. Assign to
-        :attr:`exdates` or use :func:`icalendar.cal.Component.add` instead.
-
+        ``exdates`` for the relevant component or use
+        :meth:`Component.add <icalendar.cal.component.Component.add>` instead.
         If you want to compute recurrences, have a look at
         `Related Projects <https://github.com/collective/icalendar/blob/main/README.rst#related-projects>`_.
 
@@ -349,7 +349,7 @@ def _get_rrules(self: Component) -> list[vRecur]:
     .. note::
 
         You cannot modify the RRULE value by modifying the result.
-        Use :func:`icalendar.cal.Component.add` to add values.
+        Use :meth:`Component.add <icalendar.cal.component.Component.add>` to add values.
 
         If you want to compute recurrences, have a look at
         `Related Projects <https://github.com/collective/icalendar/blob/main/README.rst#related-projects>`_.
@@ -1185,24 +1185,31 @@ Examples:
 
 comments_property = multi_text_property(
     "COMMENT",
-    """COMMENT is used to specify a comment to the calendar user.
+    """Specifies a comment to the calendar user.
 
-Purpose:
-    This property specifies non-processing information intended
-    to provide a comment to the calendar user.
+This property holds free-text notes attached to a component; calendar clients
+display it but never act on it. It is defined in :rfc:`5545#section-3.8.1.4`
+and may appear multiple times on ``VEVENT``, ``VTODO``, ``VJOURNAL``, and
+``VFREEBUSY`` components as well as on their ``STANDARD`` and ``DAYLIGHT``
+sub-components. For availability components, it is defined in :rfc:`7953`, and
+may appear multiple times on ``VAVAILABILITY`` and ``VAVAILABLE``.
 
-Conformance:
-    In :rfc:`5545`, this property can be specified multiple times in
-    "VEVENT", "VTODO", "VJOURNAL", and "VFREEBUSY" calendar components
-    as well as in the "STANDARD" and "DAYLIGHT" sub-components.
-    In :rfc:`7953`, this property can be specified multiple times in
-    "VAVAILABILITY" and "VAVAILABLE".
+You can get, set, append, and delete comments on a component. The value is a
+list of strings; each string is one comment.
 
-Property Parameters:
-    IANA, non-standard, alternate text
-    representation, and language property parameters can be specified
-    on this property.
+Example:
+    Add two comments to an event and then read them back.
 
+    .. code-block:: pycon
+
+        >>> from icalendar import Event
+        >>> event = Event()
+        >>> event.add("COMMENT", "Moved from the planning board.")
+        >>> event.add("COMMENT", "Confirmed by phone.")
+        >>> [str(c) for c in event.comments]
+        ['Moved from the planning board.', 'Confirmed by phone.']
+        >>> str(event.comments[0])
+        'Moved from the planning board.'
 """,
 )
 
@@ -1605,67 +1612,34 @@ Description:
 
 contacts_property = multi_text_property(
     "CONTACT",
-    """Contact information associated with the calendar component.
+    """Contact information associated with a calendar component.
 
-Purpose:
-    This property is used to represent contact information or
-    alternately a reference to contact information associated with the
-    calendar component.
+The contact property holds free-text information for reaching the person or
+organization responsible in a component, such as a name, phone number, or a
+reference to more detailed contact data. Calendar clients surface it so
+attendees know who to contact about the event or task.
 
-Property Parameters:
-    IANA, non-standard, alternate text
-    representation, and language property parameters can be specified
-    on this property.
+This property is defined in :rfc:`5545#section-3.8.4.2` and may appear on a
+``VEVENT``, ``VTODO``, ``VJOURNAL``, or ``VFREEBUSY`` component. For
+availability components it is defined in :rfc:`7953` and may appear on a
+``VAVAILABILITY`` or ``VAVAILABLE`` component. An alternate representation may
+point to a URI, for example, a vCard per :rfc:`2426`, via the ``ALTREP`` parameter.
 
-Conformance:
-    In :rfc:`5545`, this property can be specified in a "VEVENT", "VTODO",
-    "VJOURNAL", or "VFREEBUSY" calendar component.
-    In :rfc:`7953`, this property can be specified in a "VAVAILABILITY"
-    amd "VAVAILABLE" calendar component.
-
-Description:
-    The property value consists of textual contact
-    information.  An alternative representation for the property value
-    can also be specified that refers to a URI pointing to an
-    alternate form, such as a vCard :rfc:`2426`, for the contact
-    information.
+You can get, set, append, and delete contacts on a component. The value is a
+list of strings; each string is one contact entry.
 
 Example:
-    The following is an example of this property referencing
-    textual contact information:
+    Add a contact to an event and then read it back.
 
-    .. code-block:: ics
+    .. code-block:: pycon
 
-        CONTACT:Jim Dolittle\\, ABC Industries\\, +1-919-555-1234
-
-    The following is an example of this property with an alternate
-    representation of an LDAP URI to a directory entry containing the
-    contact information:
-
-    .. code-block:: ics
-
-        CONTACT;ALTREP="ldap://example.com:6666/o=ABC%20Industries\\,
-        c=US???(cn=Jim%20Dolittle)":Jim Dolittle\\, ABC Industries\\,
-        +1-919-555-1234
-
-    The following is an example of this property with an alternate
-    representation of a MIME body part containing the contact
-    information, such as a vCard :rfc:`2426` embedded in a text/
-    directory media type :rfc:`2425`:
-
-    .. code-block:: ics
-
-        CONTACT;ALTREP="CID:part3.msg970930T083000SILVER@example.com":
-         Jim Dolittle\\, ABC Industries\\, +1-919-555-1234
-
-    The following is an example of this property referencing a network
-    resource, such as a vCard :rfc:`2426` object containing the contact
-    information:
-
-    .. code-block:: ics
-
-        CONTACT;ALTREP="http://example.com/pdi/jdoe.vcf":Jim
-         Dolittle\\, ABC Industries\\, +1-919-555-1234
+        >>> from icalendar import Event
+        >>> event = Event()
+        >>> event.add("CONTACT", "Jim Dolittle, ABC Industries, +1-919-555-1234")
+        >>> [str(c) for c in event.contacts]
+        ['Jim Dolittle, ABC Industries, +1-919-555-1234']
+        >>> str(event.contacts[0])
+        'Jim Dolittle, ABC Industries, +1-919-555-1234'
 """,
 )
 
@@ -2621,7 +2595,13 @@ Examples:
 
 .. note::
 
-    List modifications do not modify the component.
+    When you assign a list to this property, the returned list
+    is the same object stored in the component. Modifying it (``append()``,
+    ``extend()``, ``remove()``, item assignment, or ``del``) changes what
+    the component stores.
+
+    However, if you assign a single string value to this property, the returned
+    list is a temporary copy, and changes to this list don't affect the component.
 """,
 )
 
@@ -2629,25 +2609,38 @@ REQUEST_STATUS_property = multi_string_property(
     "REQUEST-STATUS",
     """This property defines the status code returned for a scheduling request.
 
-Setting this property replaces all existing REQUEST-STATUS values. A :class:`str`
-is stored as-is. Setting ``None`` or an empty list removes all
-REQUEST-STATUS values, as does deleting the property.
+You can assign a single string, a list of strings, or ``None`` to this
+property. The property stores a :class:`str` as-is. Assigning ``None`` or
+an empty list removes all REQUEST-STATUS values, as does deleting the
+property.
 
-The value consists of a short return status component, a longer
+The value consists of a short return status code component, a longer
 return status description component, and optionally a status-specific
 data component, separated by semicolons (statcode;statdesc[;extdata]).
 The return status components are defined in :rfc:`5545#section-3.8.8.3`.
 
+The REQUEST-STATUS property can be specified in the following
+icalendar components as ``REQUEST_STATUS``.
+
+-   :attr:`Event.REQUEST_STATUS <icalendar.cal.event.Event.REQUEST_STATUS>`
+-   :attr:`FreeBusy.REQUEST_STATUS <icalendar.cal.free_busy.FreeBusy.REQUEST_STATUS>`
+-   :attr:`Journal.REQUEST_STATUS <icalendar.cal.journal.Journal.REQUEST_STATUS>`
+-   :attr:`Todo.REQUEST_STATUS <icalendar.cal.todo.Todo.REQUEST_STATUS>`
+
 Note:
-    List modifications do not modify the component. Methods such as
-    ``append()``, ``extend()``, and ``remove()``, as well as item
-    assignment, act on a copy. Assign the list back to the property, or
-    use :meth:`Component.add <icalendar.cal.component.Component.add>`
-    with a typed value instead.
+    When you assign a list to this property, the returned list
+    is the same object stored in the component. Modifying it (``append()``,
+    ``extend()``, ``remove()``, item assignment, or ``del``) changes what
+    the component stores.
+
+    However, if you assign a single string value to this property, the returned
+    list is a temporary copy, and changes to this list don't affect the component.
 
 Parameters:
     request_status(str | list[str] | None):
-        A single status string, or a list of status strings to set.
+        Either a single status string, a list of status strings, or
+        ``None`` to set the component's status code returned for a
+        scheduling request.
 
 Example:
     Add a request status to an event:
@@ -2657,6 +2650,52 @@ Example:
         >>> from icalendar import Event
         >>> event = Event.new(request_status="2.0;Success")
         >>> event.REQUEST_STATUS == ["2.0;Success"]
+        True
+""",
+)
+
+RESOURCES_property = multi_string_property(
+    "RESOURCES",
+    """This property defines resources for a calendar component.
+
+You can assign a single string, a list of strings, or ``None`` to this
+property. The property stores a :class:`str` as-is. Assigning ``None`` or
+an empty list removes all RESOURCES values, as does deleting the property.
+
+The value is a comma-separated list of resources, such as equipment,
+facilities, or other things that the component needs. Each item of the
+list becomes its own RESOURCES property value. See
+:rfc:`5545#section-3.8.1.10` for the specification.
+
+The RESOURCES property can be specified in the following
+icalendar components as ``resources`` using the component's
+``new()`` constructor.
+
+-   :attr:`Event.RESOURCES <icalendar.cal.event.Event.RESOURCES>`
+-   :attr:`Todo.RESOURCES <icalendar.cal.todo.Todo.RESOURCES>`
+
+Parameters:
+    resources(str | list[str] | None):
+        Either a single resource string, a list of resource strings,
+        or ``None`` to set the component's resources.
+
+Note:
+    When you assign a list to this property, the returned list
+    is the same object stored in the component. Modifying it (``append()``,
+    ``extend()``, ``remove()``, item assignment, or ``del``) changes what
+    the component stores.
+
+    However, if you assign a single string value to this property, the returned
+    list is a temporary copy, and changes to this list don't affect the component.
+
+Example:
+    Add resources to an event:
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Event
+        >>> event = Event.new(resources=["EASEL", "PROJECTOR", "VCR"])
+        >>> event.RESOURCES == ["EASEL", "PROJECTOR", "VCR"]
         True
 """,
 )
@@ -2778,6 +2817,7 @@ __all__ = [
     "RECURRENCE_ID",
     "RELATED_TO_TYPE_SETTER",
     "REQUEST_STATUS_property",
+    "RESOURCES_property",
     "attachments_property",
     "attendees_property",
     "busy_type_property",
