@@ -5,6 +5,8 @@ These test cases reproduce the failure.
 Some more tests can be added to make sure that the behavior works properly.
 """
 
+import base64
+
 _value_error_matches = [
     "component",
     "parse",
@@ -37,6 +39,19 @@ _value_error_matches = [
     "not enough values to unpack",  # dateutil rejects a malformed VTIMEZONE content line
     "not allowed in TEXT values",  # RFC 5545 control character rejection in TEXT
 ]
+
+
+def format_fuzz_v1_calendar_log(
+    from_ical, calendar_string: str, multiple: bool, should_walk: bool
+) -> str:
+    """Format the information needed to reproduce a fuzzed calendar."""
+    encoded_calendar = base64.b64encode(
+        calendar_string.encode("UTF-8", "surrogateescape")
+    ).decode("ASCII")
+    return (
+        f"{from_ical.__qualname__} multiple={multiple} "
+        f"should_walk={should_walk} {encoded_calendar}"
+    )
 
 
 def fuzz_v1_calendar(

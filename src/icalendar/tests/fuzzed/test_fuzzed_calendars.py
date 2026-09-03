@@ -13,8 +13,26 @@ Templace code to create a new test case:
 
 """
 
+import base64
+
 import icalendar.cal.calendar
-from icalendar.tests.fuzzed import fuzz_v1_calendar
+from icalendar.tests.fuzzed import (
+    format_fuzz_v1_calendar_log,
+    fuzz_v1_calendar,
+)
+
+
+def test_fuzz_v1_calendar_log_contains_reproduction_parameters():
+    """The fuzzing log includes all parameters needed to reproduce a failure."""
+    calendar = "BEGIN:VCALENDAR\r\nEND:VCALENDAR\r\n"
+    encoded_calendar = base64.b64encode(calendar.encode()).decode("ASCII")
+
+    assert format_fuzz_v1_calendar_log(
+        icalendar.cal.calendar.Calendar.from_ical,
+        calendar,
+        multiple=False,
+        should_walk=True,
+    ) == ("Calendar.from_ical multiple=False should_walk=True " + encoded_calendar)
 
 
 def test_fuzz_v1(fuzz_v1_calendar_path):

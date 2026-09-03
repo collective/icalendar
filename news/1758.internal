@@ -1,0 +1,1 @@
+Added the parser name and option values alongside the encoded calendar in fuzzing failure logs, making failures easier to reproduce. AI assistance was used to help implement and test this change. @ritik26ce020-arch
