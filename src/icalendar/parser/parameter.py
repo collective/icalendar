@@ -9,6 +9,7 @@ from datetime import datetime, time
 from typing import TYPE_CHECKING, Any, Protocol
 
 from icalendar.caselessdict import CaselessDict
+from icalendar.compatibility import deprecate_for_version_8
 from icalendar.error import JCalParsingError
 from icalendar.parser.string import validate_token
 from icalendar.parser_tools import (
@@ -232,19 +233,7 @@ def _single_string_parameter(func: Callable | None = None, upper=False):
     return decorator(func)
 
 
-def _deprecated_single_string_parameter(func: Callable | None = None, upper=False):
-    """Deprecated wrapper for single_string_parameter."""
-    import warnings
-
-    warnings.warn(
-        "single_string_parameter is deprecated and will be removed in icalendar 8",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-    return _single_string_parameter(func=func, upper=upper)
-
-
-single_string_parameter = _deprecated_single_string_parameter
+single_string_parameter = deprecate_for_version_8(_single_string_parameter)
 
 
 class Parameters(CaselessDict):
