@@ -30,6 +30,9 @@ def to_unicode(value: ICAL_TYPE, encoding: str = "utf-8-sig") -> str:
     Parameters:
         value: The value to convert.
         encoding: The encoding to use in the conversion.
+
+    Returns:
+        The string representation of the value.
     """
     if isinstance(value, str):
         return value
