@@ -168,11 +168,11 @@ object only
 
     .. code-block:: rst
 
-        :class:`~icalendar.prop.vXmlReference`
+        :class:`~icalendar.prop.xml_reference.vXmlReference`
 
     The above example will render as shown.
 
-        :class:`~icalendar.prop.vXmlReference`
+        :class:`~icalendar.prop.xml_reference.vXmlReference`
 
 full dotted Python path
     Use this form only when the object exists outside the rendered HTML page, such as in a superclass.
@@ -180,11 +180,11 @@ full dotted Python path
 
     .. code-block:: rst
 
-        :class:`icalendar.prop.vXmlReference`
+        :class:`icalendar.prop.xml_reference.vXmlReference`
 
     The above example will render as shown.
 
-        :class:`icalendar.prop.vXmlReference`
+        :class:`icalendar.prop.xml_reference.vXmlReference`
 
 custom text label
     As a compromise to showing the full dotted Python path, while retaining sufficient context of the object's location when displayed, use a custom text label.
@@ -192,11 +192,11 @@ custom text label
 
     .. code-block:: rst
 
-        :class:`prop.vXmlReference <icalendar.prop.vXmlReference>`
+        :class:`prop.xml_reference.vXmlReference <icalendar.prop.xml_reference.vXmlReference>`
 
     The above example will render as shown.
 
-        :class:`prop.vXmlReference <icalendar.prop.vXmlReference>`
+        :class:`prop.xml_reference.vXmlReference <icalendar.prop.xml_reference.vXmlReference>`
 
 .. seealso::
 
@@ -215,11 +215,11 @@ In the page in which the reference appears, you may use the :rst:dir:`currentmod
 
 .. code-block:: rst
 
-    .. currentmodule:: icalendar.prop
+    .. currentmodule:: icalendar.prop.xml_reference
 
     The class :class:`vXmlReference` is useful.
 
-.. currentmodule:: icalendar.prop
+.. currentmodule:: icalendar.prop.xml_reference
 
 The above example will render as shown.
 
@@ -280,7 +280,7 @@ Supported section headers enhance formatting, such as structuring method paramet
 
 All items should terminate with a period.
 
-The following docstrings items are the most frequently used in icalendar, although they may be others.
+The following docstrings items are the most frequently used in icalendar, although there may be others.
 
 .. important::
 
@@ -366,6 +366,18 @@ Description
 .. seealso::
 
     :ref:`sphinx:Sections`
+
+
+.. _test-docstring-structure-label:
+
+Test docstring structure
+------------------------
+
+To test whether docstring structure is valid, run the following command.
+
+```shell
+make docstring
+```
 
 
 Escape docstrings
