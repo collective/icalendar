@@ -151,12 +151,6 @@ However, only people with ``Environments/Configure PyPI`` access can approve an 
 
         make changes
 
-#.  Verify the source distribution and wheel before committing the release changes.
-
-    ..  code-block:: shell
-
-        make test-dist
-
 #.  Add the changes, create a commit on the ``main`` branch, and push the changes to prepare a release of this version.
 
     .. code-block:: shell
