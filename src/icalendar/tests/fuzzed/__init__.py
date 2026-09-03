@@ -35,11 +35,8 @@ _value_error_matches = [
     "must have exactly",  # vCard field count validation (ADR, N)
     "must have at least",  # vCard ORG minimum field validation
     "not enough values to unpack",  # dateutil rejects a malformed VTIMEZONE content line
+    "Content line can not contain unescaped new line characters.",  # Contentline after #1559
 ]
-
-_CONTENTLINE_NEWLINE_ASSERT = (
-    "Content line can not contain unescaped new line characters."
-)
 
 
 def fuzz_v1_calendar(
@@ -62,10 +59,5 @@ def fuzz_v1_calendar(
                 c.to_ical()
     except (ValueError, TypeError) as e:
         if any(m in str(e) for m in _value_error_matches):
-            return -1
-        raise
-    except AssertionError as e:
-        # CIFuzz: Contentline AssertionError on raw LF in a non-TEXT RRULE key (#1445).
-        if _CONTENTLINE_NEWLINE_ASSERT in str(e):
             return -1
         raise
