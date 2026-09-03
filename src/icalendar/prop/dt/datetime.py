@@ -168,7 +168,7 @@ class vDatetime(TimeBase):
         """Parse a jCal string to a :class:`datetime.datetime`.
 
         Raises:
-            ~error.JCalParsingError: If it can't parse a date-time value.
+            ~icalendar.error.JCalParsingError: If it can't parse a date-time value.
         """
         JCalParsingError.validate_value_type(jcal, str, cls)
         utc = jcal.endswith("Z")
@@ -190,7 +190,7 @@ class vDatetime(TimeBase):
             jcal_property: The jCal property to parse.
 
         Raises:
-            ~error.JCalParsingError: If the provided jCal is invalid.
+            ~icalendar.error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         params = Parameters.from_jcal_property(jcal_property)
