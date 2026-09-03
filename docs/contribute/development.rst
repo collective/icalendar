@@ -65,7 +65,6 @@ When you commit code to icalendar with ``git commit``, prek runs the following c
     Automatically records AI prompts and appends them to your commit messages.
 
 The configuration file, :file:`.pre-commit-config.yaml`, is compatible with both ``prek`` and ``pre-commit`` and is located at the root of the repository.
-You can optionally convert it to the native ``prek.toml`` format with ``prek util yaml-to-toml`` (see `prek documentation <https://prek.j178.dev/configuration/>`_).
 
 .. _prek-ai-prompts:
 .. _pre-commit-ai-prompts:
