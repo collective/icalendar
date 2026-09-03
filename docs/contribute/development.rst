@@ -95,9 +95,9 @@ The screenshot below shows how to configure PyCharm to disable prek/pre-commit b
 
 .. card::
 
-    .. image:: ../_static/contributing/development-disable-pre-commit.png
+    .. image:: ../_static/contributing/development-disable-prek.png
         :alt: Disable prek in PyCharm settings
-        :target: ../_static/contributing/development-disable-pre-commit.png
+        :target: ../_static/contributing/development-disable-prek.png
 
     +++
     *Disable prek in PyCharm settings*
