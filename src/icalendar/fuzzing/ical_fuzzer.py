@@ -22,7 +22,7 @@ import atheris
 
 with atheris.instrument_imports():
     import icalendar.cal.calendar
-    from icalendar.tests.fuzzed import fuzz_v1_calendar
+    from icalendar.tests.fuzzed import format_fuzz_log, fuzz_v1_calendar
 
 
 @atheris.instrument_func
@@ -31,18 +31,15 @@ def TestOneInput(data):
     multiple = fdp.ConsumeBool()
     should_walk = fdp.ConsumeBool()
     calendar_string = fdp.ConsumeString(fdp.remaining_bytes())
+    from_ical = icalendar.cal.calendar.Calendar.from_ical
     print("--- start calendar ---")
     with contextlib.suppress(UnicodeEncodeError):
         # print the ICS file for the test case extraction
         # see https://stackoverflow.com/a/27367173/1320237
-        print(
-            base64.b64encode(calendar_string.encode("UTF-8", "surrogateescape")).decode(
-                "ASCII"
-            )
-        )
+        print(format_fuzz_log(from_ical, multiple, should_walk, calendar_string))
 
     fuzz_v1_calendar(
-        icalendar.cal.calendar.Calendar.from_ical,
+        from_ical,
         calendar_string,
         multiple,
         should_walk,
