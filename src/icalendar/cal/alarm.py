@@ -385,6 +385,12 @@ class Alarm(Component):
     description = description_property
     attendees = attendees_property
 
+    # Lowercase accessors for singletons
+    action = ACTION
+    trigger = TRIGGER
+    duration = DURATION
+    acknowledged = ACKNOWLEDGED
+
     @classmethod
     def new(
         cls,
