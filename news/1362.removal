@@ -1,0 +1,1 @@
+Passing a file path as a ``str`` to :meth:`~icalendar.cal.component.Component.from_ical` no longer reads that file implicitly. ``str`` and ``bytes`` values are now parsed as iCalendar data only. Instead, use :class:`pathlib.Path` to read data from a file. This hardens parsing of untrusted input against unintended local file reads. @uwezkhan
