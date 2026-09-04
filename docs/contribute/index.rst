@@ -113,7 +113,7 @@ If you use AI in your work:
     You can automate this by using the :program:`ai-prompt-auto-commit` pre-commit hook.
     See :ref:`AI prompt automation <pre-commit-ai-prompts>` for setup instructions.
 -   You must disclose that you used AI in your change log entry.
-    This may be a brief disclosure, not as detailed as the git commit messages, such as, "I used AI to assist me with this change."
+    This may be a brief disclosure, not as detailed as the git commit messages. The example above would be, "I used CodeLLM-3.4 to generate tests for compliance with RFC123 messages."
 -   You must take responsibility for the output, including reviewing and validating the output for accuracy and ensuring it resolves an issue.
 -   You must check the AI's terms of use, and ensure that outputs are not reconstructed from copyrighted sources.
 -   You are expected to understand and be able to explain design and code decisions.
