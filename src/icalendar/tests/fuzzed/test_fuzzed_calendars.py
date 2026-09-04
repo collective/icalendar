@@ -31,6 +31,7 @@ def test_fuzz_v1(fuzz_v1_calendar_path):
 
 def test_format_fuzz_log():
     import base64
+
     from icalendar.tests.fuzzed import format_fuzz_log
 
     content = "BEGIN:VCALENDAR\r\nEND:VCALENDAR"
@@ -43,4 +44,3 @@ def test_format_fuzz_log():
     assert log.startswith("Calendar.from_ical multiple=False should_walk=True ")
     encoded = log.split()[-1]
     assert base64.b64decode(encoded).decode("utf-8") == content
-

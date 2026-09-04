@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 ################################################################################
-import base64
 import contextlib
 import sys
 
@@ -31,15 +30,21 @@ def TestOneInput(data):
     multiple = fdp.ConsumeBool()
     should_walk = fdp.ConsumeBool()
     calendar_string = fdp.ConsumeString(fdp.remaining_bytes())
-    from_ical = icalendar.cal.calendar.Calendar.from_ical
     print("--- start calendar ---")
     with contextlib.suppress(UnicodeEncodeError):
         # print the ICS file for the test case extraction
         # see https://stackoverflow.com/a/27367173/1320237
-        print(format_fuzz_log(from_ical, multiple, should_walk, calendar_string))
+        print(
+            format_fuzz_log(
+                icalendar.cal.calendar.Calendar.from_ical,
+                multiple,
+                should_walk,
+                calendar_string,
+            )
+        )
 
     fuzz_v1_calendar(
-        from_ical,
+        icalendar.cal.calendar.Calendar.from_ical,
         calendar_string,
         multiple,
         should_walk,
