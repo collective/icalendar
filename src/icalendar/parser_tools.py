@@ -6,7 +6,7 @@ ICAL_TYPE = str | bytes
 def from_unicode(value: ICAL_TYPE, encoding: str = "utf-8") -> bytes:
     """Converts a value to bytes, even if it is already bytes.
 
-    Args:
+    Parameters:
         value: The value to convert.
         encoding: The encoding to use in the conversion.
 
@@ -27,7 +27,7 @@ def from_unicode(value: ICAL_TYPE, encoding: str = "utf-8") -> bytes:
 def to_unicode(value: ICAL_TYPE, encoding: str = "utf-8-sig") -> str:
     """Converts a value to Unicode, even if it is already a Unicode string.
 
-    Args:
+    Parameters:
         value: The value to convert.
         encoding: The encoding to use in the conversion.
 
@@ -52,7 +52,7 @@ def data_encode(
 
     Currently Unicode strings, dicts, and lists are supported.
 
-    Args:
+    Parameters:
         data: The datastructure to encode.
         encoding: The encoding to use in the conversion.
 
