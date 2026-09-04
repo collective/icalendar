@@ -29,7 +29,7 @@ _UNSAFE_TEXT_CHARS = re.compile(r"[\x00-\x08\x0b-\x1f\x7f]")
 def _strip_unsafe_text_chars(value: object) -> str:
     r"""Remove CONTROL characters that :rfc:`5545#section-3.3.11` forbids in TEXT.
 
-    ``\\r\\n`` and a lone ``\\r`` become ``\\n`` first so an intentional line
+    ``\r\n`` and a lone ``\r`` become ``\n`` first, so an intentional line
     break is kept and escaped on serialize. Remaining matches of
     :data:`_UNSAFE_TEXT_CHARS` (NUL, other C0 controls, DEL) are stripped.
     HTAB and LF are left as-is.
@@ -62,7 +62,7 @@ class vText(str):
 
     When the TEXT object is created, CONTROL characters other than HTAB
     are removed so both :meth:`to_ical` and :meth:`to_jcal` stay valid
-    :rfc:`5545` TEXT. Parsing does not raise; the value is corrected.
+    :rfc:`5545#section-3.3.11` TEXT. Parsing does not raise; the value is corrected.
     When the TEXT object is serialized to an icalendar stream, COMMA,
     SEMICOLON, BACKSLASH, and line breaks are escaped.
 
@@ -72,6 +72,10 @@ class vText(str):
     because the escaping rules of an unrecognized value type are not known.
     :class:`~icalendar.prop.unknown.vUnknown` deliberately does not inherit from
     ``vText``, so the two don't share escaping behavior.
+
+    ..  versionchanged:: 0.0.0
+
+        Remove CONTROL characters other than HTAB.
 
     Examples:
 
@@ -140,8 +144,17 @@ class vText(str):
         r"""Parse a TEXT value from its iCalendar representation.
 
         Control characters that :rfc:`5545#section-3.3.11` does not allow
-        in TEXT do not raise. :meth:`__new__` removes them so the parsed
-        object can still be read and later serialized.
+        in TEXT get removed.
+
+        ..  versionchanged:: 0.0.0
+
+            Don't raise for unsafe characters in TEXT, but instead remove them.
+            The parsed object can now be read and later serialized.
+
+            ..  seealso::
+
+                -   :issue:`1712`
+                -   :pr:`1723`
         """
         return cls(ical)
 
