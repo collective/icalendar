@@ -30,11 +30,13 @@ if TYPE_CHECKING:
     from datetime import date, datetime
     from pathlib import Path
 
-    from icalendar.cal.availability import Availability
-    from icalendar.cal.event import Event
-    from icalendar.cal.free_busy import FreeBusy
-    from icalendar.cal.journal import Journal
-    from icalendar.cal.todo import Todo
+    from icalendar.cal import (
+        Availability,
+        Event,
+        FreeBusy,
+        Journal,
+        Todo,
+    )
     from icalendar.compatibility import Self
     from icalendar.parser.ical.component import ComponentIcalParser
 
@@ -49,7 +51,7 @@ class Calendar(Component):
         "VEVENT", "VTODO", "VJOURNAL", "VFREEBUSY", "VTIMEZONE", or any
         other type of calendar component.
 
-    Examples:
+    Example:
         Create a new Calendar:
 
             >>> from icalendar import Calendar
@@ -89,7 +91,55 @@ class Calendar(Component):
 
     @classmethod
     def example(cls, name: str = "example") -> Calendar:
-        """Return the calendar example with the given name."""
+        """Return the calendar example with the given name.
+
+        Example:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Calendar
+                >>> print(Calendar.example().to_ical().decode())
+                BEGIN:VCALENDAR
+                VERSION:2.0
+                PRODID:collective/icalendar
+                CALSCALE:GREGORIAN
+                METHOD:PUBLISH
+                X-WR-CALNAME:Holidays
+                X-WR-TIMEZONE:Etc/GMT
+                BEGIN:VEVENT
+                SUMMARY:New Year's Day
+                DTSTART:20220101
+                DTEND:20220101
+                DTSTAMP:20221108T080105Z
+                UID:636a0cc1dbd5a1667894465@icalendar
+                SEQUENCE:0
+                DESCRIPTION:Happy New Year!
+                STATUS:CONFIRMED
+                TRANSP:TRANSPARENT
+                END:VEVENT
+                BEGIN:VEVENT
+                SUMMARY:Orthodox Christmas
+                DTSTART:20220107
+                DTEND:20220107
+                UID:636a0cc1dbfd91667894465@icalendar
+                SEQUENCE:0
+                DESCRIPTION:It is Christmas again!
+                LOCATION:Russia
+                STATUS:CONFIRMED
+                TRANSP:TRANSPARENT
+                END:VEVENT
+                BEGIN:VEVENT
+                SUMMARY:International Women's Day
+                DTSTART:20220308
+                DTEND:20220308
+                UID:636a0cc1dc0f11667894465@icalendar
+                SEQUENCE:0
+                DESCRIPTION:May the feminine be honoured!
+                STATUS:CONFIRMED
+                TRANSP:TRANSPARENT
+                END:VEVENT
+                END:VCALENDAR
+        """
         return cls.from_ical(get_example("calendars", name))
 
     @classmethod
