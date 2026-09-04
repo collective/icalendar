@@ -42,6 +42,7 @@ INTENTIONALLY_EXCLUDED_ALARM_PROPERTIES = {
     "comments",  # generic component annotation
     "concepts",  # generic component category/concept references
     "created",  # component lifecycle metadata
+    "duration",  # gap between repeats of a repeating alarm, like repeat
     "last_modified",  # component lifecycle metadata
     "links",  # generic component external references
     "refids",  # generic component reference identifiers
