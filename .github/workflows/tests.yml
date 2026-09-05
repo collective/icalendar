@@ -50,7 +50,8 @@ jobs:
       if: ${{ !matrix.skip }}
       uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
       with:
-        enable-cache: false
+        # zizmor: ignore[cache-poisoning] - run-tests does not produce release artifacts
+        enable-cache: true
         # Install a specific version of uv.
         version: "0.11.6"
         python-version: ${{ matrix.python_version }}
