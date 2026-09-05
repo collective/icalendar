@@ -1071,7 +1071,7 @@ rfc_9253_test_cases = [
         "RESOURCES",
         "RESOURCES",
         None,
-        [],
+        None,
         False,
         "setting nothing",
     ),
