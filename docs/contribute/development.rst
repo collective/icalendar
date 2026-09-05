@@ -37,10 +37,15 @@ All :program:`Make` commands use the file :file:`Makefile` at the root of the re
 The :program:`Make` commands may invoke :program:`uv`, :program:`tox`, :program:`Sphinx`, :program:`Vale`, shell commands, and other programs.
 
 
-pre-commit
-----------
+prek
+----
 
-`pre-commit <https://pre-commit.com/>`_ is automatically installed as one of the development requirements when running the following command.
+..  versionchanged:: 0.0.0
+
+    Replaced :program:`pre-commit` with :program:`prek`.
+
+`prek <https://prek.j178.dev/>`_ is a fast Git hook manager written in Rust, a drop-in replacement for :program:`pre-commit`.
+It is automatically installed as one of the development requirements when running the following command.
 
 .. code-block:: shell
 
@@ -48,7 +53,7 @@ pre-commit
 
 That command installs a supported Python, creates a Python virtual environment, and installs package and development requirements.
 
-When you commit code to icalendar with ``git commit``, pre-commit runs the following code quality checks and reformats code automatically for you.
+When you commit code to icalendar with ``git commit``, prek runs the following code quality checks and reformats code automatically for you.
 
 `debug-statements <https://github.com/pre-commit/pre-commit-hooks#debug-statements>`_
     Checks for debugger imports and Python 3.7+ ``breakpoint()`` calls in Python source code.
@@ -59,8 +64,9 @@ When you commit code to icalendar with ``git commit``, pre-commit runs the follo
 :program:`ai-prompt-auto-commit`
     Automatically records AI prompts and appends them to your commit messages.
 
-The configuration file for pre-commit, :file:`.pre-commit-config.yaml`, is located at the root of the repository.
+The configuration file, :file:`.pre-commit-config.yaml`, is compatible with both ``prek`` and ``pre-commit`` and is located at the root of the repository.
 
+.. _prek-ai-prompts:
 .. _pre-commit-ai-prompts:
 
 AI prompt automation
@@ -73,11 +79,11 @@ If you use :program:`Claude Code`, recording is automatic, once the repository i
 For other AI tools, you may need to manually record prompts or instruct the AI to do so.
 Consider adding support for your AI tool in the `project repository <https://github.com/pycalendar/ai-prompt-auto-commit>`_.
 
-Contributors to icalendar are encouraged to use pre-commit.
-Any issues that would be caught by pre-commit shall be caught by GitHub workflows when you push commits to a pull request for icalendar.
+Contributors to icalendar are encouraged to use prek.
+Any issues that would be caught by prek shall be caught by GitHub workflows when you push commits to a pull request for icalendar.
 This could delay merging of your pull request.
 
-However, you may opt out of using pre-commit.
+However, you may opt out of using prek.
 You can use the ``--no-validate`` flag for the ``git commit`` command.
 
 .. code-block:: shell
@@ -85,16 +91,16 @@ You can use the ``--no-validate`` flag for the ``git commit`` command.
     git commit -m "My commit message" --no-validate
 
 Alternatively, configure your editor to use ``--no-validate`` for all commits.
-The screenshot below shows how to configure PyCharm to disable pre-commit by searching for "git commit hooks" in its settings.
+The screenshot below shows how to configure PyCharm to disable prek/pre-commit by searching for "git commit hooks" in its settings.
 
 .. card::
 
-    .. image:: ../_static/contributing/development-disable-pre-commit.png
-        :alt: Disable pre-commit in PyCharm settings
-        :target: ../_static/contributing/development-disable-pre-commit.png
+    .. image:: ../_static/contributing/development-disable-prek.png
+        :alt: Disable prek in PyCharm settings
+        :target: ../_static/contributing/development-disable-prek.png
 
     +++
-    *Disable pre-commit in PyCharm settings*
+    *Disable prek in PyCharm settings*
 
 
 Run tests
