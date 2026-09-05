@@ -1,0 +1,1 @@
+Added a ``RESOURCES`` property to both :meth:`Event.new <icalendar.cal.event.Event.new>` and :meth:`Todo.new <icalendar.cal.todo.Todo.new>` constructors through the use of a ``resources`` parameter per :rfc:`5545#section-3.8.1.10`. I used AI to assist with this change. @SemTiOne

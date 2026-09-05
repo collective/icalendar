@@ -107,8 +107,8 @@ def _get_rdates(
     .. note::
 
         Modifying the returned list does not change the RDATE value. Assign to
-        :attr:`rdates` or use :func:`icalendar.cal.Component.add` instead.
-
+        ``rdates`` for the relevant component or use
+        :meth:`Component.add <icalendar.cal.component.Component.add>` instead.
         If you want to compute recurrences, have a look at
         `Related Projects <https://github.com/collective/icalendar/blob/main/README.rst#related-projects>`_.
 
@@ -214,8 +214,8 @@ def _get_exdates(self: Component) -> list[date | datetime]:
     .. note::
 
         Modifying the returned list does not change the EXDATE value. Assign to
-        :attr:`exdates` or use :func:`icalendar.cal.Component.add` instead.
-
+        ``exdates`` for the relevant component or use
+        :meth:`Component.add <icalendar.cal.component.Component.add>` instead.
         If you want to compute recurrences, have a look at
         `Related Projects <https://github.com/collective/icalendar/blob/main/README.rst#related-projects>`_.
 
@@ -349,7 +349,7 @@ def _get_rrules(self: Component) -> list[vRecur]:
     .. note::
 
         You cannot modify the RRULE value by modifying the result.
-        Use :func:`icalendar.cal.Component.add` to add values.
+        Use :meth:`Component.add <icalendar.cal.component.Component.add>` to add values.
 
         If you want to compute recurrences, have a look at
         `Related Projects <https://github.com/collective/icalendar/blob/main/README.rst#related-projects>`_.
@@ -2603,7 +2603,7 @@ Examples:
 
 .. note::
     The property is ``None`` when the component has no REFID values.
-    Settings it to ``None`` or an empty list removes all REFID values.
+    Setting it to ``None`` or an empty list removes all REFID values.
     List modifications do not modify the component.
 """,
 )
@@ -2613,25 +2613,37 @@ REQUEST_STATUS_property = multi_string_property(
     """This property defines the status code returned for a scheduling request.
 
 The property returns None when the component has no REQUEST-STATUS values.
-Setting this property replaces all existing REQUEST-STATUS values. A :class:`str`
-is stored as-is. Setting ``None`` or an empty list removes all
-REQUEST-STATUS values, as does deleting the property.
+You can assign a single string, a list of strings, or ``None`` to this
+property. The property stores a :class:`str` as-is. Setting ``None`` or an
+empty list removes all REQUEST-STATUS values, as does deleting the property.
 
-The value consists of a short return status component, a longer
+The value consists of a short return status code component, a longer
 return status description component, and optionally a status-specific
 data component, separated by semicolons (statcode;statdesc[;extdata]).
 The return status components are defined in :rfc:`5545#section-3.8.8.3`.
 
+The REQUEST-STATUS property can be specified in the following
+icalendar components as ``REQUEST_STATUS``.
+
+-   :attr:`Event.REQUEST_STATUS <icalendar.cal.event.Event.REQUEST_STATUS>`
+-   :attr:`FreeBusy.REQUEST_STATUS <icalendar.cal.free_busy.FreeBusy.REQUEST_STATUS>`
+-   :attr:`Journal.REQUEST_STATUS <icalendar.cal.journal.Journal.REQUEST_STATUS>`
+-   :attr:`Todo.REQUEST_STATUS <icalendar.cal.todo.Todo.REQUEST_STATUS>`
+
 Note:
-    List modifications do not modify the component. Methods such as
-    ``append()``, ``extend()``, and ``remove()``, as well as item
-    assignment, act on a copy. Assign the list back to the property, or
-    use :meth:`Component.add <icalendar.cal.component.Component.add>`
-    with a typed value instead.
+    When you assign a list to this property, the returned list
+    is the same object stored in the component. Modifying it (``append()``,
+    ``extend()``, ``remove()``, item assignment, or ``del``) changes what
+    the component stores.
+
+    However, if you assign a single string value to this property, the returned
+    list is a temporary copy, and changes to this list don't affect the component.
 
 Parameters:
     request_status(str | list[str] | None):
-        A single status string, or a list of status strings to set.
+        Either a single status string, a list of status strings, or
+        ``None`` to set the component's status code returned for a
+        scheduling request.
 
 Example:
     Add a request status to an event:
@@ -2641,6 +2653,52 @@ Example:
         >>> from icalendar import Event
         >>> event = Event.new(request_status="2.0;Success")
         >>> event.REQUEST_STATUS == ["2.0;Success"]
+        True
+""",
+)
+
+RESOURCES_property = multi_string_property(
+    "RESOURCES",
+    """This property defines resources for a calendar component.
+
+You can assign a single string, a list of strings, or ``None`` to this
+property. The property stores a :class:`str` as-is. Assigning ``None`` or
+an empty list removes all RESOURCES values, as does deleting the property.
+
+The value is a comma-separated list of resources, such as equipment,
+facilities, or other things that the component needs. Each item of the
+list becomes its own RESOURCES property value. See
+:rfc:`5545#section-3.8.1.10` for the specification.
+
+The RESOURCES property can be specified in the following
+icalendar components as ``resources`` using the component's
+``new()`` constructor.
+
+-   :attr:`Event.RESOURCES <icalendar.cal.event.Event.RESOURCES>`
+-   :attr:`Todo.RESOURCES <icalendar.cal.todo.Todo.RESOURCES>`
+
+Parameters:
+    resources(str | list[str] | None):
+        Either a single resource string, a list of resource strings,
+        or ``None`` to set the component's resources.
+
+Note:
+    When you assign a list to this property, the returned list
+    is the same object stored in the component. Modifying it (``append()``,
+    ``extend()``, ``remove()``, item assignment, or ``del``) changes what
+    the component stores.
+
+    However, if you assign a single string value to this property, the returned
+    list is a temporary copy, and changes to this list don't affect the component.
+
+Example:
+    Add resources to an event:
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Event
+        >>> event = Event.new(resources=["EASEL", "PROJECTOR", "VCR"])
+        >>> event.RESOURCES == ["EASEL", "PROJECTOR", "VCR"]
         True
 """,
 )
@@ -2762,6 +2820,7 @@ __all__ = [
     "RECURRENCE_ID",
     "RELATED_TO_TYPE_SETTER",
     "REQUEST_STATUS_property",
+    "RESOURCES_property",
     "attachments_property",
     "attendees_property",
     "busy_type_property",
