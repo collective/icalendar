@@ -452,13 +452,6 @@ def single_utc_property(name: str, docs: str) -> property:
         name: name of the property
         docs: documentation string
     """
-    docs = (
-        f"""The {name} property with all values converted to a
-    :class:`~datetime.datetime` in UTC.
-
-    """
-        + docs
-    )
 
     def fget(self: Component) -> datetime | None:
         """Get the value."""
@@ -1059,10 +1052,18 @@ def create_single_property(
 
 
 X_MOZ_SNOOZE_TIME_property = single_utc_property(
-    "X-MOZ-SNOOZE-TIME", "Thunderbird: Alarms before this time are snoozed."
+    "X-MOZ-SNOOZE-TIME",
+    """The ``X-MOZ-SNOOZE-TIME`` property as a :class:`~datetime.datetime` in UTC.
+
+    Thunderbird: Alarms before this time are snoozed.
+""",
 )
 X_MOZ_LASTACK_property = single_utc_property(
-    "X-MOZ-LASTACK", "Thunderbird: Alarms before this time are acknowledged."
+    "X-MOZ-LASTACK",
+    """The ``X-MOZ-LASTACK`` property as a :class:`~datetime.datetime` in UTC.
+
+    Thunderbird: Alarms before this time are acknowledged.
+""",
 )
 
 
@@ -1652,7 +1653,7 @@ def _timezone_datetime_property(name: str, docs: str):
 
 rfc_7953_dtstart_property = _timezone_datetime_property(
     "DTSTART",
-    """Start of the component.
+    """Start of the component as a :class:`~datetime.datetime` in UTC.
 
     This is almost the same as
     :attr:`Event.DTSTART <icalendar.cal.event.Event.DTSTART>` with one exception:
@@ -1669,7 +1670,7 @@ rfc_7953_dtstart_property = _timezone_datetime_property(
 
 rfc_7953_dtend_property = _timezone_datetime_property(
     "DTEND",
-    """Start of the component.
+    """End of the component as a :class:`~datetime.datetime` in UTC.
 
     This is almost the same as
     :attr:`Event.DTEND <icalendar.cal.event.Event.DTEND>` with one exception:
