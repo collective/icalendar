@@ -30,6 +30,9 @@ def to_unicode(value: ICAL_TYPE, encoding: str = "utf-8-sig") -> str:
     Parameters:
         value: The value to convert.
         encoding: The encoding to use in the conversion.
+
+    Returns:
+        The Unicode string representation of the value.
     """
     if isinstance(value, str):
         return value
@@ -51,6 +54,10 @@ def data_encode(
 
     Parameters:
         data: The datastructure to encode.
+        encoding: The encoding to use in the conversion.
+
+    Returns:
+        The encoded datastructure.
     """
     # https://stackoverflow.com/questions/1254454/fastest-way-to-convert-a-dicts-keys-values-from-unicode-to-str
     if isinstance(data, str):
