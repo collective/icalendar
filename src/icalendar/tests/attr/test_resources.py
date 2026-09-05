@@ -22,7 +22,7 @@ def component(request):
 def test_no_resources_at_creation(component: ET):
     """An empty component has no resources."""
     assert "RESOURCES" not in component
-    assert component.RESOURCES == []
+    assert component.RESOURCES is None
 
 
 def test_add_one_resource(component: ET):
@@ -55,13 +55,18 @@ def test_delete_resources(component: ET):
     component.RESOURCES = ["EASEL"]
     del component.RESOURCES
     assert "RESOURCES" not in component
-    assert component.RESOURCES == []
+    assert component.RESOURCES is None
 
 
 def test_delete_by_index(component: ET):
-    """Delete one of many resources by index."""
+    """Deleting from the returned list does not
+    modify the component; reassigns to make the
+    changes stick."""
     component.RESOURCES = ["EASEL", "TELEGRAPH"]
-    del component.RESOURCES[0]
+    value = component.RESOURCES
+    del value[0]
+    assert component.RESOURCES == ["EASEL", "TELEGRAPH"]
+    component.RESOURCES = value
     assert component.RESOURCES == ["TELEGRAPH"]
 
 

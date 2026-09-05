@@ -2527,12 +2527,14 @@ concepts_property = property(_get_concepts, _set_concepts, _del_concepts)
 def multi_string_property(name: str, doc: str):
     """A property for an iCalendar Property that can occur multiple times."""
 
-    def fget(self: Component) -> list[str]:
+    def fget(self: Component) -> list[str] | None:
         """Get the values of a multi-string property."""
-        value = self.get(name, [])
+        value = self.get(name)
+        if value is None:
+            return None
         if not isinstance(value, list):
-            value = [value]
-        return value
+            return [str(value)]
+        return [str(v) for v in value]
 
     def fset(self: Component, value: list[str] | str | None) -> None:
         """Set the values of a multi-string property."""
@@ -2541,8 +2543,14 @@ def multi_string_property(name: str, doc: str):
             return
         if not isinstance(value, list):
             value = [value]
+        if len(value) == 0:
+            value = None
+            return
         for value in value:
             self.add(name, value)
+        stored = self[name]
+        if not isinstance(stored, list):
+            self[name] = [stored]
 
     def fdel(self: Component):
         """Delete the values of a multi-string property."""
@@ -2594,14 +2602,9 @@ Examples:
         True
 
 .. note::
-
-    When you assign a list to this property, the returned list
-    is the same object stored in the component. Modifying it (``append()``,
-    ``extend()``, ``remove()``, item assignment, or ``del``) changes what
-    the component stores.
-
-    However, if you assign a single string value to this property, the returned
-    list is a temporary copy, and changes to this list don't affect the component.
+    The property is ``None`` when the component has no REFID values.
+    Setting it to ``None`` or an empty list removes all REFID values.
+    List modifications do not modify the component.
 """,
 )
 
@@ -2609,10 +2612,10 @@ REQUEST_STATUS_property = multi_string_property(
     "REQUEST-STATUS",
     """This property defines the status code returned for a scheduling request.
 
+The property returns None when the component has no REQUEST-STATUS values.
 You can assign a single string, a list of strings, or ``None`` to this
-property. The property stores a :class:`str` as-is. Assigning ``None`` or
-an empty list removes all REQUEST-STATUS values, as does deleting the
-property.
+property. The property stores a :class:`str` as-is. Setting ``None`` or an
+empty list removes all REQUEST-STATUS values, as does deleting the property.
 
 The value consists of a short return status code component, a longer
 return status description component, and optionally a status-specific
