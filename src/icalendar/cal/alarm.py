@@ -385,6 +385,12 @@ class Alarm(Component):
     description = description_property
     attendees = attendees_property
 
+    # Lowercase accessors for singletons
+    action = ACTION
+    trigger = TRIGGER
+    duration = DURATION
+    acknowledged = ACKNOWLEDGED
+
     @classmethod
     def new(
         cls,
@@ -400,7 +406,7 @@ class Alarm(Component):
         summary: str | None = None,
         uid: str | uuid.UUID | None = None,
     ) -> Self:
-        """Create a new alarm with all required properties.
+        """Create a new alarm.
 
         This creates a new Alarm in accordance with :rfc:`5545`.
 
