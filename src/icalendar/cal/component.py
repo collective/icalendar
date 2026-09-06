@@ -262,9 +262,9 @@ class Component(CaselessDict):
                 any of the icalendar's own property types.
             parameters: Property parameter dictionary for the value. Only
                 available, if encode is set to True.
-            encode: True, if the value should be encoded to one of
-                icalendar's own property types (Fallback is "vText")
-                or False, if not.
+            encode: ``True`` if the value should be encoded to one of
+                icalendar's own property types with a fallback to
+                :attr:`~icalendar.prop.text.vText`, else ``False``.
 
         Returns:
             icalendar property value
