@@ -57,7 +57,7 @@ def data_encode(
         encoding: The encoding to use in the conversion.
 
     Returns:
-        The encoded datastructure.
+        The encoded data structure.
     """
     # https://stackoverflow.com/questions/1254454/fastest-way-to-convert-a-dicts-keys-values-from-unicode-to-str
     if isinstance(data, str):
