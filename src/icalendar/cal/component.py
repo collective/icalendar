@@ -459,7 +459,7 @@ class Component(CaselessDict):
         of same. If name is passed, only components with name will be returned.
 
         Parameters:
-            name: The name of the component or None such as ``VEVENT``.
+            name: The name of the component, such as ``VEVENT``, or ``None``.
             select: A function that takes the component as its first argument
                 and returns either ``True`` or ``False``.
 
