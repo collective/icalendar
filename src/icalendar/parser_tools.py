@@ -53,7 +53,7 @@ def data_encode(
     Currently Unicode strings, dicts, and lists are supported.
 
     Parameters:
-        data: The datastructure to encode.
+        data: The data structure to encode.
         encoding: The encoding to use in the conversion.
 
     Returns:
