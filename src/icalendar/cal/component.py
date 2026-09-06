@@ -866,7 +866,7 @@ class Component(CaselessDict):
         """This validates start and end.
 
         Raises:
-            ~error.InvalidCalendar: If the information is not valid
+            ~icalendar.error.InvalidCalendar: If the information is not valid
         """
         if start is None or end is None:
             return
@@ -899,7 +899,7 @@ class Component(CaselessDict):
             subcomponents: The subcomponents of the component.
 
         Raises:
-            ~error.InvalidCalendar: If the content is not valid
+            ~icalendar.error.InvalidCalendar: If the content is not valid
                 according to :rfc:`5545`.
 
         .. warning:: As time progresses, we will be stricter with the
@@ -987,7 +987,7 @@ class Component(CaselessDict):
             jcal: jCal list or JSON string according to :rfc:`7265`.
 
         Raises:
-            ~error.JCalParsingError: If the jCal provided is invalid.
+            ~icalendar.error.JCalParsingError: If the jCal provided is invalid.
             ~json.JSONDecodeError: If the provided string is not valid JSON.
 
         This reverses :func:`to_json` and :func:`to_jcal`.
@@ -1118,7 +1118,7 @@ class Component(CaselessDict):
 def _node_from_jcal(jcal, starting_cls: type[Component]) -> tuple[Component, list]:
     """Parse a single jCal component without recursing into subcomponents.
 
-    Module-level helper for :meth:`Component.from_jcal`: it has no ties to a
+    Module-level helper for :meth:`~icalendar.cal.component.Component.from_jcal`: it has no ties to a
     class or instance (the relevant class is passed in as ``starting_cls``), so
     it is a plain function rather than a (static) method.
 
@@ -1133,7 +1133,7 @@ def _node_from_jcal(jcal, starting_cls: type[Component]) -> tuple[Component, lis
         returned for the caller to walk iteratively.
 
     Raises:
-        ~error.JCalParsingError: If this component node is invalid. The path
+        ~icalendar.error.JCalParsingError: If this component node is invalid. The path
             is relative to this node; callers prepend the nesting path.
     """
     if not isinstance(jcal, list) or len(jcal) != 3:

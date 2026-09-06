@@ -140,7 +140,7 @@ class vInt(int):
             jcal_property: The jCal property to parse.
 
         Raises:
-            ~error.JCalParsingError: If the provided jCal is invalid.
+            ~icalendar.error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         JCalParsingError.validate_value_type(jcal_property[3], int, cls, 3)
@@ -154,7 +154,7 @@ class vInt(int):
         """Parse a jCal value for vInt.
 
         Raises:
-            ~error.JCalParsingError: If the value is not an int.
+            ~icalendar.error.JCalParsingError: If the value is not an int.
         """
         JCalParsingError.validate_value_type(value, int, cls)
         return cls(value)

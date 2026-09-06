@@ -91,7 +91,7 @@ class vDDDLists:
             jcal_property: The jCal property to parse.
 
         Raises:
-            ~error.JCalParsingError: If the jCal provided is invalid.
+            ~icalendar.error.JCalParsingError: If the jCal provided is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         values = jcal_property[3:]

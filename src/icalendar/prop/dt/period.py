@@ -236,7 +236,7 @@ class vPeriod(TimeBase):
         """Parse a jCal value.
 
         Raises:
-            ~error.JCalParsingError: If the period is not a list with exactly two items,
+            ~icalendar.error.JCalParsingError: If the period is not a list with exactly two items,
                 or it can't parse a date-time or duration.
         """
         if isinstance(jcal, str) and "/" in jcal:
@@ -271,7 +271,7 @@ class vPeriod(TimeBase):
             jcal_property: The jCal property to parse.
 
         Raises:
-            ~error.JCalParsingError: If the provided jCal is invalid.
+            ~icalendar.error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         with JCalParsingError.reraise_with_path_added(3):

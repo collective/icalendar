@@ -148,7 +148,7 @@ class vDDDTypes(TimeBase):
         """Parse a jCal value.
 
         Raises:
-            ~error.JCalParsingError: If the value can't be parsed as either a date,
+            ~icalendar.error.JCalParsingError: If the value can't be parsed as either a date,
                  time, date-time, duration, or period.
         """
         if isinstance(jcal, list):
@@ -173,7 +173,7 @@ class vDDDTypes(TimeBase):
             jcal_property: The jCal property to parse.
 
         Raises:
-            ~error.JCalParsingError: If the provided jCal is invalid.
+            ~icalendar.error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         with JCalParsingError.reraise_with_path_added(3):

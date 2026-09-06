@@ -101,7 +101,7 @@ class vFloat(float):
             jcal_property: The jCal property to parse.
 
         Raises:
-            ~error.JCalParsingError: If the jCal provided is invalid.
+            ~icalendar.error.JCalParsingError: If the jCal provided is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
         if jcal_property[0].upper() == "GEO":
