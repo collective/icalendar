@@ -266,6 +266,7 @@ class Component(CaselessDict):
                 icalendar's own property types with a fallback to
                 :attr:`~icalendar.prop.text.vText`, else ``False``.
 
+
         Returns:
             icalendar property value
         """
