@@ -15,13 +15,6 @@ Maintainers need the following permissions.
 
 ``Admin`` access to the `repository <https://github.com/collective/icalendar>`_.
     These can be enabled by a current maintainer or a GitHub organization administrator in the `settings <https://github.com/collective/icalendar/settings/access>`_.
-
-    This access will also grant you permission to configure the Coveralls GitHub app, both through the repository settings and at `Coveralls <https://coveralls.io/github/collective/icalendar>`_.
-
-    .. seealso::
-
-        `Generate test coverage report before approval of pull request <https://github.com/collective/icalendar/issues/1556>`_
-
 ``Maintainer`` or ``Owner`` access to the `PyPI project <https://pypi.org/project/icalendar/>`_.
     Each owner and maintainer needs a PyPI account.
     All PyPI accounts require two-factor authentication (2FA) enabled.
@@ -50,6 +43,18 @@ Maintainers need the following permissions.
         -   :issue:`562`
 Maintainer in :file:`pyproject.toml`
     Maintainers should be mentioned with or without email address in the :file:`pyproject.toml` file's `maintainers' section <https://github.com/collective/icalendar/blob/7ca9db18c0847d1530520e01baf75f8ab8f4fa06/pyproject.toml#L32>`_.
+Coveralls
+    Create an account on `Coveralls <https://coveralls.io/github/collective/icalendar>`_.
+    This will allow you to see the results of Coveralls runs over time.
+
+    It doesn't grant you permission to configure the Coveralls GitHub app.
+    That requires Owner permission in the GitHub organization Collective.
+    To configure the Coveralls app for icalendar, either contact @stevepiercy or `create an issue <https://github.com/collective/Collective/issues/new?template=BLANK_ISSUE>`_ in ``collective/Collective``.
+
+    .. seealso::
+
+        `Generate test coverage report before approval of pull request <https://github.com/collective/icalendar/issues/1556>`_
+
 
 Collaborators
 -------------
