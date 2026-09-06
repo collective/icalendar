@@ -48,7 +48,7 @@ def to_unicode(value: ICAL_TYPE, encoding: str = "utf-8-sig") -> str:
 def data_encode(
     data: ICAL_TYPE | dict | list, encoding: str = DEFAULT_ENCODING
 ) -> bytes | list[bytes] | dict:
-    """Encode all datastructures to the given encoding.
+    """Encode all data structures to the given encoding.
 
     Currently Unicode strings, dicts, and lists are supported.
 
