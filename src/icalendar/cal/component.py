@@ -38,7 +38,7 @@ from icalendar.timezone import tzp
 from icalendar.tools import is_date
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
+    from collections.abc import Callable, Iterable
 
     from icalendar.compatibility import Self
 
@@ -439,7 +439,7 @@ class Component(CaselessDict):
         self.subcomponents.append(component)
 
     def _walk(
-        self, name: str | None, select: callable[[Component], bool]
+        self, name: str | None, select: Callable[[Component], bool]
     ) -> list[Component]:
         """Walk to given component."""
         result = []
@@ -451,13 +451,19 @@ class Component(CaselessDict):
             stack.extend(reversed(component.subcomponents))
         return result
 
+    @staticmethod
+    def __identity(_component: Component) -> bool:
+        """Identity selector for :meth:`Component.walk`."""
+        return True
+
     def walk(
         self,
         name: str | None = None,
-        select: callable[[Component], bool] = lambda _: True,
+        select: Callable[[Component], bool] = __identity,
     ) -> list[Component]:
-        """Recursively traverses component and subcomponents. Returns sequence
-        of same. If name is passed, only components with name will be returned.
+        """Recursively traverses component and subcomponents and returns a
+        sequence of them. If name is passed, only components with that name
+        will be returned.
 
         Parameters:
             name: The name of the component, such as ``VEVENT``, or ``None``.
