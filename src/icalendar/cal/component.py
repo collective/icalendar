@@ -460,8 +460,8 @@ class Component(CaselessDict):
 
         Parameters:
             name: The name of the component or None such as ``VEVENT``.
-            select: A function that takes the component as first argument
-                and returns True/False.
+            select: A function that takes the component as its first argument
+                and returns either ``True`` or ``False``.
 
         Returns:
             A list of components that match.
