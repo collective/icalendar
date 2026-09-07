@@ -408,7 +408,8 @@ class Alarm(Component):
     ) -> Self:
         """Create a new alarm.
 
-        This creates a new Alarm in accordance with :rfc:`5545`.
+        This creates a new Alarm in accordance with :rfc:`5545#section-3.6.6`
+        with the exception that required properties are not enforced.
 
         Parameters:
             action: The :attr:`ACTION` of the alarm. Typical values are
@@ -429,7 +430,7 @@ class Alarm(Component):
 
         Raises:
             ~error.InvalidCalendar: If the content is not valid
-                according to :rfc:`5545`.
+                according to :rfc:`5545#section-3.6.6`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
