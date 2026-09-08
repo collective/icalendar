@@ -385,6 +385,12 @@ class Alarm(Component):
     description = description_property
     attendees = attendees_property
 
+    # Lowercase accessors for singletons
+    action = ACTION
+    trigger = TRIGGER
+    duration = DURATION
+    acknowledged = ACKNOWLEDGED
+
     @classmethod
     def new(
         cls,
@@ -400,9 +406,10 @@ class Alarm(Component):
         summary: str | None = None,
         uid: str | uuid.UUID | None = None,
     ) -> Self:
-        """Create a new alarm with all required properties.
+        """Create a new alarm.
 
-        This creates a new Alarm in accordance with :rfc:`5545`.
+        This creates a new Alarm in accordance with :rfc:`5545#section-3.6.6`
+        with the exception that required properties are not enforced.
 
         Parameters:
             action: The :attr:`ACTION` of the alarm. Typical values are
@@ -423,7 +430,7 @@ class Alarm(Component):
 
         Raises:
             ~error.InvalidCalendar: If the content is not valid
-                according to :rfc:`5545`.
+                according to :rfc:`5545#section-3.6.6`.
 
         .. warning:: As time progresses, we will be stricter with the validation.
         """
