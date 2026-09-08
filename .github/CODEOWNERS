@@ -16,18 +16,18 @@
 /styles @stevepiercy
 
 # Core calendar logic
-/src/ @niccokunzmann @SashankBhamidi @stevepiercy @angatha
+/src/ @niccokunzmann @stevepiercy @angatha
 
 # Tests
-/src/icalendar/tests/ @niccokunzmann @SashankBhamidi
+/src/icalendar/tests/ @niccokunzmann
 
 # Fuzzing
-/src/icalendar/fuzzing/ @ennamarie19 @niccokunzmann @SashankBhamidi
+/src/icalendar/fuzzing/ @ennamarie19 @niccokunzmann
 
 # CI and infrastructure
 /.coveragerc @niccokunzmann
-/.github/ @niccokunzmann @SashankBhamidi @stevepiercy
-/.pre-commit-config.yaml @niccokunzmann @SashankBhamidi @stevepiercy
+/.github/ @niccokunzmann @stevepiercy
+/.pre-commit-config.yaml @niccokunzmann @stevepiercy
 /bootstrap.py @niccokunzmann @stevepiercy
 /buildout.cfg @niccokunzmann @stevepiercy
 /pyproject.toml @niccokunzmann @stevepiercy
