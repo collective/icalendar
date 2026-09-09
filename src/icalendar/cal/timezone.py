@@ -54,9 +54,15 @@ class Timezone(Component):
 
     @staticmethod
     def _extract_offsets(component: TimezoneDaylight | TimezoneStandard, tzname: str):
-        """extract offsets and transition times from a VTIMEZONE component
-        :param component: a STANDARD or DAYLIGHT component
-        :param tzname: the name of the zone
+        """Extract offsets and transition times from a VTIMEZONE component.
+
+        Args:
+            component: A STANDARD or DAYLIGHT timezone component.
+            tzname: The name of the timezone.
+
+        Returns:
+            A tuple containing whether the component represents daylight saving
+            time and its transition information.
         """
         offsetfrom = component.TZOFFSETFROM
         offsetto = component.TZOFFSETTO
