@@ -47,6 +47,8 @@ The following example shows how to parse a component, then display its name and 
 ``Calendar.from_ical()``
 ------------------------
 
+.. automethod:: icalendar.cal.calendar.Calendar.from_ical
+
 Parse a calendar containing custom components.
 The following example shows how to parse a component, get its subcomponents, then display its name and ``UID``.
 
