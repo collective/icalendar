@@ -1,5 +1,6 @@
 import pytest
 
+from icalendar.error import JCalParsingError
 from icalendar.prop import vWeekday
 
 
@@ -64,3 +65,11 @@ def test_ical_value():
     assert vWeekday("+2TH").ical_value == "+2TH"
     assert vWeekday("-1SU").ical_value == "-1SU"
     assert isinstance(vWeekday("MO").ical_value, str)
+
+
+def test_vweekday_rejects_invalid_jcal_value():
+    with pytest.raises(
+        JCalParsingError,
+        match="The value must be a valid weekday",
+    ):
+        vWeekday.parse_jcal_value("NOT-A-WEEKDAY")
