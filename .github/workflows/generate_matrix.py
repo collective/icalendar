@@ -71,9 +71,7 @@ def generate_matrix(git_ref, review, event_name=""):
         or triggered_by_push_to_stable
         or review_approved
     )
-    runs_pypy = (
-        run_all_jobs if not event_name else runs_on_main and event_name == "push"
-    )
+    runs_pypy = runs_on_main and event_name == "push"
 
     run_no_jobs = review_submitted and not review_approved
 
