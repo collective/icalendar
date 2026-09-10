@@ -138,7 +138,10 @@ class Component(CaselessDict):
         """Return a component with this name.
 
         Parameters:
-            name: Name of the component, i.e. ``VCALENDAR``
+            name: The name of the component, such as ``VCALENDAR``.
+
+        Returns:
+            The component class registered for ``name``.
         """
         return cls._get_component_factory().get_component_class(name)
 
@@ -265,7 +268,6 @@ class Component(CaselessDict):
             encode: ``True`` if the value should be encoded to one of
                 icalendar's own property types with a fallback to
                 :attr:`~icalendar.prop.text.vText`, else ``False``.
-
 
         Returns:
             icalendar property value
@@ -398,10 +400,18 @@ class Component(CaselessDict):
         return decoded
 
     def decoded(self, name: str, default: Any = _marker) -> Any:
-        """Returns decoded value of property.
+        """Return the decoded value of a property.
 
         A component maps keys to icalendar property value types.
-        This function returns values compatible to native Python types.
+        This function returns values compatible with native Python types.
+
+        Parameters:
+            name: The name of the property.
+            default: The value to return if the property is not present.
+
+        Returns:
+            The decoded value of the property, or ``default`` if the
+            property is not present.
         """
         if name in self:
             value = self[name]
@@ -424,9 +434,7 @@ class Component(CaselessDict):
         return vals
 
     def set_inline(self, name, values, encode=1):
-        """Converts a list of values into comma separated string and sets value
-        to that.
-        """
+        """Convert a list of values into a comma-separated string and set the property value to it."""
         if encode:
             values = [self._encode(name, value, encode=1) for value in values]
         self[name] = self.types_factory["inline"](q_join(values))
@@ -461,9 +469,9 @@ class Component(CaselessDict):
         name: str | None = None,
         select: Callable[[Component], bool] = __identity,
     ) -> list[Component]:
-        """Recursively traverses component and subcomponents and returns a
-        sequence of them. If name is passed, only components with that name
-        will be returned.
+        """Recursively traverse component and subcomponents and return a sequence of them.
+
+        If ``name`` is passed, only components with that name will be returned.
 
         Parameters:
             name: The name of the component, such as ``VEVENT``, or ``None``.
@@ -909,6 +917,7 @@ class Component(CaselessDict):
             created: The :attr:`created` of the component.
             last_modified: The :attr:`last_modified` of the component.
             links: The :attr:`links` of the component.
+            refids: The :attr:`refids` of the component.
             related_to: The :attr:`related_to` of the component.
             stamp: The :attr:`DTSTAMP` of the component.
             subcomponents: The subcomponents of the component.
