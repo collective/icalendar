@@ -39,6 +39,26 @@ _value_error_matches = [
 ]
 
 
+def format_fuzz_log(
+    from_ical, multiple: bool, should_walk: bool, calendar_string: str
+) -> str:
+    """Format the log entry for fuzzed test case extraction.
+
+    Outputs entrypoint name, parameter values, and base64-encoded calendar content.
+    """
+    import base64
+
+    encoded = base64.b64encode(
+        calendar_string.encode("UTF-8", "surrogateescape")
+        if isinstance(calendar_string, str)
+        else calendar_string
+    ).decode("ASCII")
+    return (
+        f"{from_ical.__qualname__} multiple={multiple} "
+        f"should_walk={should_walk} {encoded}"
+    )
+
+
 def fuzz_v1_calendar(
     from_ical, calendar_string: str, multiple: bool, should_walk: bool
 ):
