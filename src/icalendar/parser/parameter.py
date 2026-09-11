@@ -9,6 +9,7 @@ from datetime import datetime, time
 from typing import TYPE_CHECKING, Any, Protocol
 
 from icalendar.caselessdict import CaselessDict
+from icalendar.compatibility import deprecate_for_version_8
 from icalendar.error import JCalParsingError
 from icalendar.parser.string import validate_token
 from icalendar.parser_tools import (
@@ -189,7 +190,7 @@ def q_join(lst: Sequence[str], sep: str = ",", always_quote: bool = False) -> st
     return sep.join(dquote(itm, always_quote=always_quote) for itm in lst)
 
 
-def single_string_parameter(func: Callable | None = None, upper=False):
+def _single_string_parameter(func: Callable | None = None, upper=False):
     """Create a parameter getter/setter for a single string parameter.
 
     Parameters:
@@ -230,6 +231,9 @@ def single_string_parameter(func: Callable | None = None, upper=False):
     if func is None:
         return decorator
     return decorator(func)
+
+
+single_string_parameter = deprecate_for_version_8(_single_string_parameter)
 
 
 class Parameters(CaselessDict):
@@ -376,7 +380,7 @@ class Parameters(CaselessDict):
                 ) from exc
         return result
 
-    @single_string_parameter(upper=True)
+    @_single_string_parameter(upper=True)
     def value(self) -> VALUE | str | None:
         """The VALUE parameter from :rfc:`5545`.
 
@@ -451,7 +455,7 @@ class Parameters(CaselessDict):
             del jcal["tzid"]
         return jcal
 
-    @single_string_parameter
+    @_single_string_parameter
     def tzid(self) -> str | None:
         """The TZID parameter from :rfc:`5545`."""
 
