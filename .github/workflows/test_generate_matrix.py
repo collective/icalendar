@@ -18,28 +18,28 @@ CASES_0 = set()
 @pytest.fixture(
     params=[
         # push runs PyPy on main only; review never runs PyPy
-        ("", CASES_ALL, "refs/heads/main"),
-        ("", CASES_NO_PYPY, "refs/heads/7.x"),
-        ("", CASES_NO_PYPY, "refs/heads/6.x"),
-        ("", CASES_NO_PYPY, "refs/heads/5.x"),
-        ("", CASES_NO_PYPY, "refs/heads/release-1"),
-        ("", CASES_NO_PYPY, "refs/tags/v7.0.2"),
-        ("", CASES_MIN, "refs/heads/pr-branch"),
+        ("", CASES_ALL, "refs/heads/main", "push"),
+        ("", CASES_NO_PYPY, "refs/heads/7.x", "push"),
+        ("", CASES_NO_PYPY, "refs/heads/6.x", "push"),
+        ("", CASES_NO_PYPY, "refs/heads/5.x", "push"),
+        ("", CASES_NO_PYPY, "refs/heads/release-1", "push"),
+        ("", CASES_NO_PYPY, "refs/tags/v7.0.2", "push"),
+        ("", CASES_MIN, "refs/heads/pr-branch", "push"),
         # review
-        ("changes_requested", CASES_0, "refs/heads/main"),
-        ("changes_requested", CASES_0, "refs/heads/7.x"),
-        ("changes_requested", CASES_0, "refs/heads/6.x"),
-        ("changes_requested", CASES_0, "refs/heads/5.x"),
-        ("changes_requested", CASES_0, "refs/heads/release-2"),
-        ("changes_requested", CASES_0, "refs/tags/v7.0.2"),
-        ("changes_requested", CASES_0, "refs/heads/pr-branch"),
-        ("approved", CASES_NO_PYPY, "refs/heads/main"),
-        ("approved", CASES_NO_PYPY, "refs/heads/7.x"),
-        ("approved", CASES_NO_PYPY, "refs/heads/6.x"),
-        ("approved", CASES_NO_PYPY, "refs/heads/5.x"),
-        ("approved", CASES_NO_PYPY, "refs/heads/release-3"),
-        ("approved", CASES_NO_PYPY, "refs/tags/v7.0.2"),
-        ("approved", CASES_NO_PYPY, "refs/heads/pr-branch"),
+        ("changes_requested", CASES_0, "refs/heads/main", "pull_request_review"),
+        ("changes_requested", CASES_0, "refs/heads/7.x", "pull_request_review"),
+        ("changes_requested", CASES_0, "refs/heads/6.x", "pull_request_review"),
+        ("changes_requested", CASES_0, "refs/heads/5.x", "pull_request_review"),
+        ("changes_requested", CASES_0, "refs/heads/release-2", "pull_request_review"),
+        ("changes_requested", CASES_0, "refs/heads/tags/v7.0.2", "pull_request_review"),
+        ("changes_requested", CASES_0, "refs/heads/pr-branch", "pull_request_review"),
+        ("approved", CASES_NO_PYPY, "refs/heads/main", "pull_request_review"),
+        ("approved", CASES_NO_PYPY, "refs/heads/7.x", "pull_request_review"),
+        ("approved", CASES_NO_PYPY, "refs/heads/6.x", "pull_request_review"),
+        ("approved", CASES_NO_PYPY, "refs/heads/5.x", "pull_request_review"),
+        ("approved", CASES_NO_PYPY, "refs/heads/release-3", "pull_request_review"),
+        ("approved", CASES_NO_PYPY, "refs/heads/tags/v7.0.2", "pull_request_review"),
+        ("approved", CASES_NO_PYPY, "refs/heads/pr-branch", "pull_request_review"),
     ],
 )
 def cases(request):
@@ -60,9 +60,9 @@ def arg_ref(cases):
 
 
 @pytest.fixture
-def arg_event_name(arg_pr):
-    """The GitHub event name derived from the review state."""
-    return "push" if arg_pr == "" else "pull_request_review"
+def arg_event_name(cases):
+    """The GitHub event name."""
+    return cases[3]
 
 
 @pytest.fixture
@@ -93,6 +93,12 @@ def skipped_names(matrix):
 def running_names(matrix):
     """All running test cases"""
     return {case["test_name"] for case in matrix["include"] if not case["skip"]}
+
+
+def test_event_matches_review_state(cases):
+    """Event and review state must pair as GitHub delivers them."""
+    review, _, _, event = cases
+    assert not (review and event == "push")
 
 
 def test_count_test_runs(running_names, expected):
@@ -126,24 +132,6 @@ def test_all_cases_are_always_included(running_names, skipped_names, matrix):
 def test_parameters_are_present(matrix, attribute):
     for case in matrix["include"]:
         assert attribute in case, f"Missing {attribute} in {case}"
-
-
-@pytest.mark.parametrize(
-    ("arg_pr", "arg_ref", "arg_event_name"),
-    [
-        # push
-        ("", "refs/heads/main", "push"),
-        # review
-        ("approved", "refs/heads/6.x", "pull_request_review"),
-    ],
-)
-def test_pypy_is_first(arg_ref, arg_pr, arg_event_name):
-    """PyPy takes longest to run, so it should be triggered first.
-
-    See https://github.com/collective/icalendar/pull/1239#discussion_r2868711107
-    """
-    result = generate_matrix(arg_ref, arg_pr, arg_event_name)
-    assert result["include"][0]["test_name"] == "pypy3"
 
 
 @pytest.mark.parametrize(
