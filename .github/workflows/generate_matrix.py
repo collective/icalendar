@@ -41,6 +41,7 @@ def generate_matrix(git_ref, review, event_name=""):
         git_ref: Required. The branch or tag that triggered the workflow.
         review: Required. The state of the pull request review.
         event_name: The event that triggered the workflow.
+            Empty string skips PyPy; pass the real event in CI.
     """
     #
     # Analyze the reference

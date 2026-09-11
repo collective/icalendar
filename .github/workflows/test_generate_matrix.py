@@ -34,6 +34,7 @@ CASES_0 = set()
         ("changes_requested", CASES_0, "refs/tags/v7.0.2", "pull_request_review"),
         ("changes_requested", CASES_0, "refs/heads/pr-branch", "pull_request_review"),
         ("approved", CASES_NO_PYPY, "refs/heads/main", "pull_request_review"),
+        ("approved", CASES_NO_PYPY, "refs/pull/123/merge", "pull_request_review"),
         ("approved", CASES_NO_PYPY, "refs/heads/7.x", "pull_request_review"),
         ("approved", CASES_NO_PYPY, "refs/heads/6.x", "pull_request_review"),
         ("approved", CASES_NO_PYPY, "refs/heads/5.x", "pull_request_review"),
@@ -96,7 +97,11 @@ def running_names(matrix):
 
 
 def test_event_matches_review_state(cases):
-    """Event and review state must pair as GitHub delivers them."""
+    """Event and review state must pair as GitHub delivers them.
+
+    Reviews never arrive via push, while other events
+    stay free for future rows.
+    """
     review, _, _, event = cases
     assert not (review and event == "push")
 
@@ -138,6 +143,7 @@ def test_parameters_are_present(matrix, attribute):
     ("event_name", "git_ref", "expected_skip"),
     [
         ("push", "refs/heads/main", False),
+        ("pull_request", "refs/pull/123/merge", True),
         ("schedule", "refs/heads/main", True),
         ("workflow_dispatch", "refs/heads/main", True),
         ("pull_request_review", "refs/heads/main", True),
