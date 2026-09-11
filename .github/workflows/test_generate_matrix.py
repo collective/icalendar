@@ -11,34 +11,36 @@ from generate_matrix import generate_matrix
 
 CASES_ALL = {"3.10", "3.11", "3.12", "3.13", "3.14", "3.10 (nopytz)", "pypy3"}
 CASES_MIN = {"3.10", "3.14", "3.10 (nopytz)"}
+CASES_NO_PYPY = CASES_ALL - {"pypy3"}
 CASES_0 = set()
 
 
 @pytest.fixture(
     params=[
-        # push
-        ("", CASES_ALL, "refs/heads/main"),
-        ("", CASES_ALL, "refs/heads/7.x"),
-        ("", CASES_ALL, "refs/heads/6.x"),
-        ("", CASES_ALL, "refs/heads/5.x"),
-        ("", CASES_ALL, "refs/heads/release-1"),
-        ("", CASES_ALL, "refs/tags/v7.0.2"),
-        ("", CASES_MIN, "refs/heads/pr-branch"),
+        # push runs PyPy on main only; review never runs PyPy
+        ("", CASES_ALL, "refs/heads/main", "push"),
+        ("", CASES_NO_PYPY, "refs/heads/7.x", "push"),
+        ("", CASES_NO_PYPY, "refs/heads/6.x", "push"),
+        ("", CASES_NO_PYPY, "refs/heads/5.x", "push"),
+        ("", CASES_NO_PYPY, "refs/heads/release-1", "push"),
+        ("", CASES_NO_PYPY, "refs/tags/v7.0.2", "push"),
+        ("", CASES_MIN, "refs/heads/pr-branch", "push"),
         # review
-        ("changes_requested", CASES_0, "refs/heads/main"),
-        ("changes_requested", CASES_0, "refs/heads/7.x"),
-        ("changes_requested", CASES_0, "refs/heads/6.x"),
-        ("changes_requested", CASES_0, "refs/heads/5.x"),
-        ("changes_requested", CASES_0, "refs/heads/release-2"),
-        ("changes_requested", CASES_0, "refs/tags/v7.0.2"),
-        ("changes_requested", CASES_0, "refs/heads/pr-branch"),
-        ("approved", CASES_ALL, "refs/heads/main"),
-        ("approved", CASES_ALL, "refs/heads/7.x"),
-        ("approved", CASES_ALL, "refs/heads/6.x"),
-        ("approved", CASES_ALL, "refs/heads/5.x"),
-        ("approved", CASES_ALL, "refs/heads/release-3"),
-        ("approved", CASES_ALL, "refs/tags/v7.0.2"),
-        ("approved", CASES_ALL, "refs/heads/pr-branch"),
+        ("changes_requested", CASES_0, "refs/heads/main", "pull_request_review"),
+        ("changes_requested", CASES_0, "refs/heads/7.x", "pull_request_review"),
+        ("changes_requested", CASES_0, "refs/heads/6.x", "pull_request_review"),
+        ("changes_requested", CASES_0, "refs/heads/5.x", "pull_request_review"),
+        ("changes_requested", CASES_0, "refs/heads/release-2", "pull_request_review"),
+        ("changes_requested", CASES_0, "refs/tags/v7.0.2", "pull_request_review"),
+        ("changes_requested", CASES_0, "refs/heads/pr-branch", "pull_request_review"),
+        ("approved", CASES_NO_PYPY, "refs/heads/main", "pull_request_review"),
+        ("approved", CASES_NO_PYPY, "refs/pull/123/merge", "pull_request_review"),
+        ("approved", CASES_NO_PYPY, "refs/heads/7.x", "pull_request_review"),
+        ("approved", CASES_NO_PYPY, "refs/heads/6.x", "pull_request_review"),
+        ("approved", CASES_NO_PYPY, "refs/heads/5.x", "pull_request_review"),
+        ("approved", CASES_NO_PYPY, "refs/heads/release-3", "pull_request_review"),
+        ("approved", CASES_NO_PYPY, "refs/tags/v7.0.2", "pull_request_review"),
+        ("approved", CASES_NO_PYPY, "refs/heads/pr-branch", "pull_request_review"),
     ],
 )
 def cases(request):
@@ -59,15 +61,21 @@ def arg_ref(cases):
 
 
 @pytest.fixture
+def arg_event_name(cases):
+    """The GitHub event name."""
+    return cases[3]
+
+
+@pytest.fixture
 def expected(cases):
     """All expected case names."""
     return cases[1]
 
 
 @pytest.fixture
-def matrix(arg_ref, arg_pr):
+def matrix(arg_ref, arg_pr, arg_event_name):
     """The generated test matrix."""
-    matrix = generate_matrix(arg_ref, arg_pr)
+    matrix = generate_matrix(arg_ref, arg_pr, arg_event_name)
     print("Cases:")
     for case in sorted(matrix["include"], key=lambda case: case["test_name"]):
         print(f"- running\t{case['test_name']}")
@@ -86,6 +94,16 @@ def skipped_names(matrix):
 def running_names(matrix):
     """All running test cases"""
     return {case["test_name"] for case in matrix["include"] if not case["skip"]}
+
+
+def test_event_matches_review_state(cases):
+    """Event and review state must pair as GitHub delivers them.
+
+    Reviews never arrive via push, while other events
+    stay free for future rows.
+    """
+    review, _, _, event = cases
+    assert not (review and event == "push")
 
 
 def test_count_test_runs(running_names, expected):
@@ -122,30 +140,16 @@ def test_parameters_are_present(matrix, attribute):
 
 
 @pytest.mark.parametrize(
-    ("arg_pr", "arg_ref"),
-    [
-        # push
-        ("", "refs/heads/main"),
-        ("approved", "refs/heads/6.x"),
-    ],
-)
-def test_pypy_is_first(arg_ref, arg_pr):
-    """PyPy takes longest to run, so it should be triggered first.
-
-    See https://github.com/collective/icalendar/pull/1239#discussion_r2868711107
-    """
-    result = generate_matrix(arg_ref, arg_pr)
-    assert result["include"][0]["test_name"] == "pypy3"
-
-
-@pytest.mark.parametrize(
     ("event_name", "git_ref", "expected_skip"),
     [
         ("push", "refs/heads/main", False),
+        ("pull_request", "refs/pull/123/merge", True),
         ("schedule", "refs/heads/main", True),
         ("workflow_dispatch", "refs/heads/main", True),
+        ("pull_request_review", "refs/heads/main", True),
         ("schedule", "refs/heads/7.x", True),
         ("push", "refs/heads/7.x", True),
+        ("pull_request_review", "refs/heads/7.x", True),
     ],
 )
 def test_pypy_only_runs_on_push_to_main(event_name, git_ref, expected_skip):
