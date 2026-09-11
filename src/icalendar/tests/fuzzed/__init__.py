@@ -35,7 +35,7 @@ _value_error_matches = [
     "must have exactly",  # vCard field count validation (ADR, N)
     "must have at least",  # vCard ORG minimum field validation
     "not enough values to unpack",  # dateutil rejects a malformed VTIMEZONE content line
-    "not allowed in TEXT values",  # RFC 5545 control character rejection in TEXT
+    "Content line can not contain unescaped new line characters.",  # Contentline after #1559
 ]
 
 
