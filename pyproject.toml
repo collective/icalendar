@@ -141,12 +141,12 @@ icalendar = "icalendar.cli:main"
 
 [tool.hatch.build]
 exclude = [
-  "/.*",
-  "/*.*",
-  "/src/icalendar/fuzzing",
-  "/dist",
-  "/build",
-  "/htmlcov",
+  "/.*",  # Local tool and development configuration.
+  "/*.*",  # Root project files; Hatch restores required package metadata.
+  "/build",  # Python build output.
+  "/dist",  # Release archives from an earlier build.
+  "/htmlcov",  # Generated coverage report.
+  "/src/icalendar/fuzzing",  # Development-only fuzzing helpers.
 ]
 
 [tool.hatch.build.targets.sdist.force-include]
