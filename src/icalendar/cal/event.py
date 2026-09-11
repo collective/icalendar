@@ -186,6 +186,35 @@ class Event(Component):
             UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
             END:VEVENT
 
+        Use one of the bundled event examples:
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Event
+            >>> print(Event.example().to_ical().decode())
+            BEGIN:VEVENT
+            SUMMARY:Meeting
+            DTSTART;TZID=America/New_York:20210302T103000
+            DTEND;TZID=America/New_York:20210302T113000
+            DTSTAMP:20210302T152026Z
+            UID:AC67C078-CED3-4BF5-9726-832C3749F627
+            CREATED:20210302T151004Z
+            BEGIN:VALARM
+            ACKNOWLEDGED:20210302T152024Z
+            ACTION:DISPLAY
+            DESCRIPTION:Event reminder
+            TRIGGER:-PT15M
+            UID:8297C37D-BA2D-4476-91AE-C1EAA364F8E1
+            END:VALARM
+            BEGIN:VALARM
+            ACTION:DISPLAY
+            DESCRIPTION:Event reminder
+            RELATED-TO;RELTYPE=SNOOZE:8297C37D-BA2D-4476-91AE-C1EAA364F8E1
+            TRIGGER;VALUE=DATE-TIME:20210302T152500Z
+            UID:87D690A7-B5E8-4EB4-8500-491F50AFE394
+            END:VALARM
+            END:VEVENT
+
     """
 
     name = "VEVENT"
