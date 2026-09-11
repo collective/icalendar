@@ -15,6 +15,9 @@ def use_zoneinfo():
     """Use zoneinfo as the implementation that looks up and creates timezones."""
     tzp.use_zoneinfo()
 
+def use_pyicu():
+    """Use pyicu as the implementation that looks up and creates timezones."""
+    tzp.use_pyicu()
 
 __all__ = [
     "TZP",
@@ -25,4 +28,5 @@ __all__ = [
     "tzp",
     "use_pytz",
     "use_zoneinfo",
+    "use_pyicu",
 ]
