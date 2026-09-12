@@ -443,7 +443,6 @@ Example:
     -   :attr:`Event.attendees <icalendar.cal.event.Event.attendees>`
     -   :attr:`Journal.attendees <icalendar.cal.journal.Journal.attendees>`
     -   :attr:`Todo.attendees <icalendar.cal.todo.Todo.attendees>`
-    
 """
 
 SENT_BY = string_parameter(
