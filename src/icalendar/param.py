@@ -414,9 +414,6 @@ def boolean_parameter(name: str, default: bool) -> property:
 RSVP = boolean_parameter("RSVP", False)
 """Indicate whether a reply is expected from the ATTENDEE.
 
-    This parameter can be specified on properties with a ``CAL-ADDRESS``
-    value type. An organizer uses it to request a participation status reply
-    from an attendee in a group-scheduled event or to-do. If the parameter is
 The RSVP Expectation parameter can be specified on properties with a
 CAL-ADDRESS value type, specifically ATTENDEE, as part of the ``attendees``
 property. An organizer uses it to request a participation status reply from
