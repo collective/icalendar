@@ -412,13 +412,41 @@ def boolean_parameter(name: str, default: bool) -> property:
 
 
 RSVP = boolean_parameter("RSVP", False)
-"""Indicate whether a reply is expected from the calendar user.
+"""Indicate whether a reply is expected from the ATTENDEE.
 
-Description:
     This parameter can be specified on properties with a ``CAL-ADDRESS``
     value type. An organizer uses it to request a participation status reply
     from an attendee in a group-scheduled event or to-do. If the parameter is
-    absent, the property returns ``False``.
+The RSVP Expectation parameter can be specified on properties with a
+CAL-ADDRESS value type, specifically ATTENDEE, as part of the ``attendees``
+property. An organizer uses it to request a participation status reply from
+an attendee in a group-scheduled event or to-do.
+
+..  note::
+
+    According to :rfc:`5545#section-3.2.17`, if the parameter is absent from
+    the property, it should return a value of ``False``. However, it
+    currently raises a ``KeyError``. See :issue:`1778`.
+
+Example:
+
+    Create a VCALADDRESS with an attendee who's expected to respond.
+
+    ..  code-block:: pycon
+
+        >>> from icalendar import vCalAddress
+        >>> attendee = vCalAddress("mailto:someone@example.com")
+        >>> attendee.params["RSVP"] = True
+        >>> attendee.params["RSVP"]
+        True
+
+..  seealso::
+
+    -   :attr:`Alarm.attendees <icalendar.cal.alarm.Alarm.attendees>`
+    -   :attr:`Event.attendees <icalendar.cal.event.Event.attendees>`
+    -   :attr:`Journal.attendees <icalendar.cal.journal.Journal.attendees>`
+    -   :attr:`Todo.attendees <icalendar.cal.todo.Todo.attendees>`
+    
 """
 
 SENT_BY = string_parameter(
