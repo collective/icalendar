@@ -1,0 +1,1 @@
+Added and documented the usage example for :meth:`Calendar.example <icalendar.cal.calendar.Calendar.example>`. I used OpenAI Codex (GPT-5) to help identify and draft this documentation change, then reviewed and verified the output locally. @cananoo

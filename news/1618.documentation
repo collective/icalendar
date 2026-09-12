@@ -1,1 +1,0 @@
-Revised how to document parameters in docstrings, specifically their order of appearance and usage of type hints. Revised guidance to write docstrings only for a class, and not their ``__init__`` or ``__new__`` methods. @stevepiercy

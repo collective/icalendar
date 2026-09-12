@@ -6,6 +6,7 @@ name: Profile contributors
 on:
   issues:
     types: [opened]
+  # zizmor: ignore[dangerous-triggers] - pull_request_target needed to comment on PRs from forks
   pull_request_target:
     types: [opened]
 
@@ -14,12 +15,17 @@ permissions:
   issues: write
   pull-requests: write
 
+env:
+  # Exclude people from being profiled.
+  # See https://stackoverflow.com/a/73274812
+  VERIFIED_CONTRIBUTORS: ("angatha" "dependabot" "ennamarie19" "niccokunzmann" "peskypotato" "SashankBhamidi" "stevepiercy")
+
 jobs:
   profile-author:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff  # v6
+      - uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
 
       - name: Install gh-profiler
         run: uv tool install gh-profiler==0.8.3
@@ -35,10 +41,10 @@ jobs:
             echo "login=${{ github.event.pull_request.user.login }}" >> "$GITHUB_OUTPUT"
             echo "number=${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
           fi
-
       - name: Run gh-profiler
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: ${{ !contains(env.VERIFIED_CONTRIBUTORS, steps.meta.outputs.login) }}
         run: |
           set -euo pipefail
           gh-profiler "${{ steps.meta.outputs.login }}" --concise > concise.txt
@@ -47,6 +53,7 @@ jobs:
       - name: Comment on issue or PR
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: ${{ !contains(env.VERIFIED_CONTRIBUTORS, steps.meta.outputs.login) }}
         run: |
           set -euo pipefail
           {

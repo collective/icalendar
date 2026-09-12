@@ -226,6 +226,11 @@ class TypesFactory(CaselessDict):
         Returns:
             The appropriate value type class.
         """
+        # RFC 7265's UNKNOWN type is always represented verbatim, even for
+        # properties such as RDATE/EXDATE that normally use list parsing.
+        if value_param and value_param.lower() == "unknown":
+            return self["unknown"]
+
         # Special case: RDATE and EXDATE always use vDDDLists to support list values
         # regardless of the VALUE parameter
         if name.upper() in ("RDATE", "EXDATE"):

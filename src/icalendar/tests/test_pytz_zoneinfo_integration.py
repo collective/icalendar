@@ -11,12 +11,13 @@ except ImportError:
     pytz = None
 import copy
 import pickle
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pytest
 from dateutil.rrule import MONTHLY, rrule
 from dateutil.tz.tz import _tzicalvtz
 
+from icalendar.prop import vDDDTypes
 from icalendar.timezone.zoneinfo import ZONEINFO, zoneinfo
 
 if pytz:
@@ -102,3 +103,26 @@ def test_invalid_name(tzp):
     assert f"Unknown provider {provider}." in message
     assert "zoneinfo" in message
     assert "pytz" in message
+
+
+@pytest.mark.parametrize(
+    ("value", "expected_offset"),
+    [
+        ("19970101", timedelta(hours=-5)),  # EST
+        ("19970701", timedelta(hours=-4)),  # EDT
+    ],
+)
+def test_a_date_with_a_tzid_uses_the_offset_of_that_date(tzp, value, expected_offset):
+    """A date is localized like a date-time, whichever provider is in use.
+
+    pytz timezones default to their oldest offset, the local mean time one,
+    until they are localized.
+    """
+    tzid = "America/New_York"
+    midnight = datetime.strptime(value, "%Y%m%d")  # noqa: DTZ007
+    offset = vDDDTypes.from_ical(value, timezone=tzid).utcoffset()
+    # what the timezone database says about midnight on that date
+    assert offset == midnight.replace(tzinfo=zoneinfo.ZoneInfo(tzid)).utcoffset()
+    # what the same value written as a date-time is read as
+    assert offset == vDDDTypes.from_ical(f"{value}T000000", timezone=tzid).utcoffset()
+    assert offset == expected_offset

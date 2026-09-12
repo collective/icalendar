@@ -527,12 +527,14 @@ class Component(CaselessDict):
     @overload
     @classmethod
     def from_ical(
-        cls, st: str | bytes, multiple: Literal[False] = False
+        cls, st: str | bytes | Path, multiple: Literal[False] = False
     ) -> Component: ...
 
     @overload
     @classmethod
-    def from_ical(cls, st: str | bytes, multiple: Literal[True]) -> list[Component]: ...
+    def from_ical(
+        cls, st: str | bytes | Path, multiple: Literal[True]
+    ) -> list[Component]: ...
 
     @classmethod
     def _get_ical_parser(cls, st: str | bytes) -> ComponentIcalParser:
@@ -549,7 +551,7 @@ class Component(CaselessDict):
 
         Parameters:
             st: iCalendar data as bytes or string, or a path to an iCalendar file as
-                :class:`pathlib.Path` or string.
+                :class:`pathlib.Path`.
             multiple: If ``True``, returns list. If ``False``, returns single component.
 
         Returns:
@@ -560,22 +562,6 @@ class Component(CaselessDict):
         """
         if isinstance(st, Path):
             st = st.read_bytes()
-        elif isinstance(st, str) and "\n" not in st and "\r" not in st:
-            # A string is only probed as a file path when it contains no line
-            # breaks. Valid iCalendar data is always folded with CRLF line
-            # endings (RFC 5545), so real calendar content never reaches this
-            # branch and is never read from disk. File paths, conversely, do
-            # not contain line breaks on the platforms we support.
-            try:
-                is_file = Path(st).is_file()
-            except (OSError, ValueError):
-                # The string is not usable as a path on this platform (e.g. it
-                # is too long, or contains characters the OS rejects such as an
-                # embedded null byte). Treat it as calendar data, not a file, so
-                # the parser raises a consistent ValueError across platforms.
-                is_file = False
-            if is_file:
-                st = Path(st).read_bytes()
         parser = cls._get_ical_parser(st)
         components = parser.parse()
         if multiple:
@@ -727,48 +713,75 @@ class Component(CaselessDict):
                 )
         return child_result
 
-    DTSTAMP = stamp = single_utc_property(
+    DTSTAMP = single_utc_property(
         "DTSTAMP",
-        """RFC 5545:
+        """The UTC datetime stamp recording when this component instance was created or last revised.
 
-        Conformance:  This property MUST be included in the "VEVENT",
-        "VTODO", "VJOURNAL", or "VFREEBUSY" calendar components.
+    This property is defined in :rfc:`5545#section-3.8.7.2`. It's required
+    in ``VEVENT``, ``VTODO``, ``VJOURNAL``, and ``VFREEBUSY`` components.
 
-        Description: In the case of an iCalendar object that specifies a
-        "METHOD" property, this property specifies the date and time that
-        the instance of the iCalendar object was created.  In the case of
-        an iCalendar object that doesn't specify a "METHOD" property, this
-        property specifies the date and time that the information
-        associated with the calendar component was last revised in the
-        calendar store.
+    When the calendar object carries a ``METHOD`` property, such as for
+    scheduling, this value is the creation time of *this particular revision*.
+    Without a ``METHOD`` property, it's equivalent to :attr:`LAST_MODIFIED`.
 
-        The value MUST be specified in the UTC time format.
+    The value is always in UTC. It's also accessible as :attr:`stamp`.
 
-        In the case of an iCalendar object that doesn't specify a "METHOD"
-        property, this property is equivalent to the "LAST-MODIFIED"
-        property.
+    Example:
+        .. code-block:: pycon
+
+            >>> from datetime import timezone, datetime
+            >>> from icalendar import Event
+            >>> event = Event()
+            >>> event.DTSTAMP = datetime(2024, 6, 1, 12, 0, 0, tzinfo=timezone.utc)
+            >>> event.DTSTAMP
+            datetime.datetime(2024, 6, 1, 12, 0, tzinfo=ZoneInfo(key='UTC'))
+
+    See also:
+        :attr:`CREATED`, :attr:`LAST_MODIFIED`,
+        :attr:`created`, :attr:`stamp`, :attr:`last_modified`
     """,
     )
 
+    @property
+    def stamp(self) -> datetime | None:
+        """Datetime stamp of this component, as a :class:`~datetime.datetime` in UTC.
+
+        This is the lowercase property counterpart to, and accessor for, :attr:`DTSTAMP`.
+        """
+        return self.DTSTAMP
+
+    @stamp.setter
+    def stamp(self, value: datetime) -> None:
+        self.DTSTAMP = value
+
+    @stamp.deleter
+    def stamp(self) -> None:
+        del self.DTSTAMP
+
     LAST_MODIFIED = single_utc_property(
         "LAST-MODIFIED",
-        """The date and time when a calendar component was last modified.
+        """The UTC datetime when this component's information was last revised, per :rfc:`5545#section-3.8.7.3`.
 
-        This property is commonly used to track revisions to calendar
-        components such as VEVENT, VTODO, VJOURNAL, and VTIMEZONE.
+    It's analogous to a file's modification timestamp. This property is optional.
+    When it's absent, :attr:`last_modified` falls back to :attr:`DTSTAMP`.
 
-        Example:
-            Set the LAST-MODIFIED property of an event to a UTC time.
+    This property is applicable to ``VEVENT``, ``VTODO``, ``VJOURNAL``, and ``VTIMEZONE``
+    components. The value is always in UTC.
 
-            .. code-block:: pycon
+    Example:
+        .. code-block:: pycon
 
-                >>> from datetime import datetime, timezone
-                >>> from icalendar import Event
-                >>> event = Event()
-                >>> event.last_modified = datetime(2026, 5, 31, 23, 52, 45, tzinfo=timezone.utc)
-                >>> event.last_modified
-                datetime.datetime(2026, 5, 31, 23, 52, 45, tzinfo=ZoneInfo(key='UTC'))
-        """,
+            >>> from datetime import timezone, datetime
+            >>> from icalendar import Event
+            >>> event = Event()
+            >>> event.LAST_MODIFIED = datetime(2024, 6, 1, 9, 0, 0, tzinfo=timezone.utc)
+            >>> event.LAST_MODIFIED
+            datetime.datetime(2024, 6, 1, 9, 0, tzinfo=ZoneInfo(key='UTC'))
+
+    See also:
+        :attr:`CREATED`, :attr:`DTSTAMP`,
+        :attr:`created`, :attr:`stamp`, :attr:`last_modified`
+    """,
     )
 
     @property
@@ -823,17 +836,29 @@ class Component(CaselessDict):
 
     CREATED = single_utc_property(
         "CREATED",
-        """
-        CREATED specifies the date and time that the calendar
-        information was created by the calendar user agent in the calendar
-        store.
+        """The UTC datetime when this calendar component was first created, per :rfc:`5545#section-3.8.7.1`.
 
-        Conformance:
-            The property can be specified once in "VEVENT",
-            "VTODO", or "VJOURNAL" calendar components.  The value MUST be
-            specified as a date with UTC time.
+    This property records when the calendar user agent originally stored the component.
+    This property is optional. When it's absent, :attr:`created` falls back to
+    :attr:`DTSTAMP`.
 
-        """,
+    This property is applicable to ``VEVENT``, ``VTODO``, and ``VJOURNAL`` components.
+    The value is always in UTC.
+
+    Example:
+        .. code-block:: pycon
+
+            >>> from datetime import timezone, datetime
+            >>> from icalendar import Event
+            >>> event = Event()
+            >>> event.CREATED = datetime(2024, 1, 1, 8, 0, 0, tzinfo=timezone.utc)
+            >>> event.CREATED
+            datetime.datetime(2024, 1, 1, 8, 0, tzinfo=ZoneInfo(key='UTC'))
+
+    See also:
+        :attr:`DTSTAMP`, :attr:`LAST_MODIFIED`,
+        :attr:`created`, :attr:`stamp`, :attr:`last_modified`
+    """,
     )
 
     _validate_new = True
@@ -862,7 +887,7 @@ class Component(CaselessDict):
         related_to: RELATED_TO_TYPE_SETTER = None,
         stamp: date | None = None,
         subcomponents: Iterable[Component] | None = None,
-    ) -> Component:
+    ) -> Self:
         """Create a new component.
 
         Parameters:
