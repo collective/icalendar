@@ -40,7 +40,7 @@ _value_error_matches = [
 
 
 def format_fuzz_log(
-    from_ical, multiple: bool, should_walk: bool, calendar_string: str
+    version: str, from_ical, multiple: bool, should_walk: bool, calendar_string: str
 ) -> str:
     """Format the log entry for fuzzed test case extraction.
 
@@ -54,7 +54,7 @@ def format_fuzz_log(
         else calendar_string
     ).decode("ASCII")
     return (
-        f"{from_ical.__qualname__} multiple={multiple} "
+        f"{version} {from_ical.__qualname__} multiple={multiple} "
         f"should_walk={should_walk} {encoded}"
     )
 
@@ -66,6 +66,7 @@ def fuzz_v1_calendar(
 
     The calendar_string is a fuzzed input.
     """
+    print(format_fuzz_log("v1", from_ical, multiple, should_walk, calendar_string))
     try:
         cal = from_ical(calendar_string, multiple=multiple)
 

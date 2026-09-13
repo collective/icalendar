@@ -36,11 +36,12 @@ def test_format_fuzz_log():
 
     content = "BEGIN:VCALENDAR\r\nEND:VCALENDAR"
     log = format_fuzz_log(
+        "v1",
         icalendar.cal.calendar.Calendar.from_ical,
         multiple=False,
         should_walk=True,
         calendar_string=content,
     )
-    assert log.startswith("Calendar.from_ical multiple=False should_walk=True ")
+    assert log.startswith("v1 Calendar.from_ical multiple=False should_walk=True ")
     encoded = log.split()[-1]
     assert base64.b64decode(encoded).decode("utf-8") == content

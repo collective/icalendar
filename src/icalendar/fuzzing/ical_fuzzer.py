@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 ################################################################################
+import base64
 import contextlib
 import sys
 
@@ -21,7 +22,7 @@ import atheris
 
 with atheris.instrument_imports():
     import icalendar.cal.calendar
-    from icalendar.tests.fuzzed import format_fuzz_log, fuzz_v1_calendar
+    from icalendar.tests.fuzzed import fuzz_v1_calendar
 
 
 @atheris.instrument_func
@@ -35,11 +36,8 @@ def TestOneInput(data):
         # print the ICS file for the test case extraction
         # see https://stackoverflow.com/a/27367173/1320237
         print(
-            format_fuzz_log(
-                icalendar.cal.calendar.Calendar.from_ical,
-                multiple,
-                should_walk,
-                calendar_string,
+            base64.b64encode(calendar_string.encode("UTF-8", "surrogateescape")).decode(
+                "ASCII"
             )
         )
 
