@@ -262,11 +262,11 @@ Write a good change log entry
 
     These change log entries become narrative documentation.
 
-The content of this file must include the following.
+The content of this file must be on a single line and include the following.
 
--   A brief message that summarizes the changes in your contribution.
+-   A *brief* message that summarizes the changes in your contribution.
 -   Use :ref:`reStructuredText markup <markup-examples>` to link to relevant RFCs, API usage, and other references.
--   A brief disclosure of AI use, per icalendar's :ref:`responsible-ai-use` policy, if applicable.
+-   A *brief* disclosure of AI use, per icalendar's :ref:`responsible-ai-use` policy, if applicable.
 -   An attribution to yourself, in the format of ``@github_username``, at the end of the entry.
 
 You can write a good change log entry with the following guidance.
