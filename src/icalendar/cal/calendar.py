@@ -170,7 +170,7 @@ class Calendar(Component):
 
     @property
     def availabilities(self) -> list[Availability]:
-        """All :class:`Availability <icalendar.cal.availability.Availability>` components in the calendar.
+        """All :class:`~icalendar.cal.availability.Availability` components in the calendar.
 
         This is a shortcut to get all availabilities.
         Modifications do not change the calendar.
