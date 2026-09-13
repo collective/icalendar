@@ -5,6 +5,8 @@ These test cases reproduce the failure.
 Some more tests can be added to make sure that the behavior works properly.
 """
 
+import inspect
+
 _value_error_matches = [
     "component",
     "parse",
@@ -39,6 +41,39 @@ _value_error_matches = [
 ]
 
 
+def format_fuzz_log(
+    from_ical, multiple: bool, should_walk: bool, calendar_string: str | bytes
+) -> str:
+    """Format the log entry for fuzzed test case extraction.
+
+    Outputs entrypoint name, parameter values, and base64-encoded calendar content.
+    """
+    import base64
+
+    try:
+        # print the ICS file for the test case extraction
+        # see https://stackoverflow.com/a/27367173/1320237
+        encoded = base64.b64encode(
+            calendar_string.encode("UTF-8", "surrogateescape")
+            if isinstance(calendar_string, str)
+            else calendar_string
+        ).decode("ASCII")
+    except UnicodeEncodeError as e:
+        encoded = str(e)
+    return (
+        f"{_get_name_of_caller()} {from_ical.__qualname__} multiple={multiple} "
+        f"should_walk={should_walk} {encoded}"
+    )
+
+
+def _get_name_of_caller(skip: int = 0) -> str:
+    stack = inspect.stack()
+    relevant_index = skip + 2  # ignore own and caller frame
+    if relevant_index < len(stack) and (frame := stack[relevant_index]):
+        return frame.function
+    return "<unknown source>"
+
+
 def fuzz_v1_calendar(
     from_ical, calendar_string: str, multiple: bool, should_walk: bool
 ):
@@ -46,6 +81,7 @@ def fuzz_v1_calendar(
 
     The calendar_string is a fuzzed input.
     """
+    print(format_fuzz_log(from_ical, multiple, should_walk, calendar_string))
     try:
         cal = from_ical(calendar_string, multiple=multiple)
 
