@@ -4,6 +4,7 @@
 Parameters:
     0: The branch or tag that triggered the workflow
     1: The state of the pull request
+    2: The GitHub event name
 
 Documentation:
 - for python versions
@@ -33,12 +34,13 @@ PYTHON_MINOR_VERSION_MAX = 14
 COMMAND_TEST = "uv run tox -e py"
 
 
-def generate_matrix(git_ref, review):
+def generate_matrix(git_ref, review, event_name=""):
     """Generate a matrix of test runs.
 
     Parameters:
-        arg_ref: The branch or tag that triggered the workflow
-        arg_pr: The state of the pull request
+        git_ref: Required. The branch or tag that triggered the workflow.
+        review: Required. The state of the pull request review.
+        event_name: The event that triggered the workflow.
     """
     #
     # Analyze the reference
@@ -47,7 +49,6 @@ def generate_matrix(git_ref, review):
     runs_on_stable = bool(re.match(r"refs/heads/\d+\.x", git_ref))
     runs_on_release = git_ref.startswith("refs/heads/release-")
     runs_on_tag = git_ref.startswith("refs/tags/v")
-
     #
     # Analyze the trigger
     #
@@ -69,6 +70,9 @@ def generate_matrix(git_ref, review):
         or triggered_by_push_to_release
         or triggered_by_push_to_stable
         or review_approved
+    )
+    runs_pypy = (
+        run_all_jobs if not event_name else runs_on_main and event_name == "push"
     )
 
     run_no_jobs = review_submitted and not review_approved
@@ -132,7 +136,7 @@ def generate_matrix(git_ref, review):
         {
             "python_version": "pypy3.11",
             "test_name": "pypy3",
-            "skip": not run_all_jobs,
+            "skip": not runs_pypy,
         },
     )
 
@@ -164,10 +168,17 @@ if __name__ == "__main__":
     #
     # Parse parameters
     #
+    if len(sys.argv) < 3:
+        print(  # noqa: T201
+            "Usage: generate_matrix.py <git_ref> <review_state> [event_name]",
+            file=sys.stderr,
+        )
+        sys.exit(1)
     arg_ref = sys.argv[1]  # github.ref
     arg_review = sys.argv[2]  # github.event.review.state
+    arg_event_name = sys.argv[3] if len(sys.argv) > 3 else ""  # github.event_name
 
-    matrix = generate_matrix(arg_ref, arg_review)
+    matrix = generate_matrix(arg_ref, arg_review, arg_event_name)
 
     print(json.dumps(matrix, indent=2))  # noqa: T201
     stdout.write(json.dumps(matrix))

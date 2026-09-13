@@ -90,6 +90,7 @@ COMPONENTS_CONTACT = {Event, Todo, Journal, FreeBusy, Available, Availability}
 COMPONENTS_START_END = {Event, Todo, FreeBusy, Available, Availability}
 COMPONENTS_STATUS = {Event, Todo, Journal}
 COMPONENTS_REQUEST_STATUS = {Event, Todo, Journal, FreeBusy}
+COMPONENTS_RESOURCES = {Event, Todo}
 COMPONENTS_ATTENDEES = {Event, Todo, Journal, Alarm}
 COMPONENTS_ATTACHMENTS = {Alarm, Event, Journal, Todo}
 # RFC 9253 properties are defines on ALL
@@ -1064,6 +1065,33 @@ rfc_9253_test_cases = [
         ["2.0;Success", "3.1;Invalid property value"],
         True,
         "set two values",
+    ),
+    (
+        COMPONENTS_RESOURCES,
+        "RESOURCES",
+        "RESOURCES",
+        None,
+        [],
+        False,
+        "setting nothing",
+    ),
+    (
+        COMPONENTS_RESOURCES,
+        "RESOURCES",
+        "RESOURCES",
+        "EASEL",
+        ["EASEL"],
+        True,
+        "set a value",
+    ),
+    (
+        COMPONENTS_RESOURCES,
+        "RESOURCES",
+        "RESOURCES",
+        ["EASEL", "PROJECTOR", "VCR"],
+        ["EASEL", "PROJECTOR", "VCR"],
+        True,
+        "set several values",
     ),
 ]
 

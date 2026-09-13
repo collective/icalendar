@@ -12,13 +12,16 @@ icalendar supports multiple timezone implementations, including `zoneinfo <https
 ----
 
 :Homepage: https://icalendar.readthedocs.io/en/stable/
-:Community Discussions: https://github.com/collective/icalendar/discussions
-:Issue Tracker: https://github.com/collective/icalendar/issues
+:Discussions: https://github.com/collective/icalendar/discussions
+:Issues: https://github.com/collective/icalendar/issues
 :Code: https://github.com/collective/icalendar
 :Dependencies: `python-dateutil <https://pypi.org/project/python-dateutil/>`_ and `tzdata <https://pypi.org/project/tzdata/>`_.
 :License: `2-Clause BSD License <https://github.com/collective/icalendar/blob/main/LICENSE.rst>`_
 :Contribute: `Contribute to icalendar <https://icalendar.readthedocs.io/en/latest/contribute/index.html>`_
 :Funding: `Open Collective <https://opencollective.com/python-icalendar>`_
+:icalendar chat: https://matrix.to/#/%23icalendar:chat.pycal.org
+:PyCal chat: https://matrix.to/#/%23pycal:chat.pycal.org
+:Python Calendaring Ecosystem: https://pycal.org
 
 ----
 

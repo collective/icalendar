@@ -50,7 +50,7 @@ class TZP:
         self.__tz_cache = {}
         self.__provider = provider
 
-    def use(self, provider: str | TZProvider):
+    def use(self, provider: str | TZProvider) -> None:
         """Switch to a different timezone provider."""
         if isinstance(provider, str):
             use_provider = getattr(self, f"use_{provider}", None)
