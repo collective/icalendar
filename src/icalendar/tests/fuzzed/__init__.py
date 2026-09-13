@@ -48,6 +48,8 @@ def format_fuzz_log(
     """
     import base64
 
+    # print the ICS file for the test case extraction
+    # see https://stackoverflow.com/a/27367173/1320237
     encoded = base64.b64encode(
         calendar_string.encode("UTF-8", "surrogateescape")
         if isinstance(calendar_string, str)
