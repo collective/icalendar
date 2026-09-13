@@ -40,7 +40,7 @@ _value_error_matches = [
 
 
 def format_fuzz_log(
-    version: str, from_ical, multiple: bool, should_walk: bool, calendar_string: str
+    version: str, from_ical, multiple: bool, should_walk: bool, calendar_string: str | bytes
 ) -> str:
     """Format the log entry for fuzzed test case extraction.
 
