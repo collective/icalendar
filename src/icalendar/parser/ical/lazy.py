@@ -9,7 +9,7 @@ from icalendar.parser.content_line import Contentline
 from .component import ComponentIcalParser
 
 if TYPE_CHECKING:
-    from icalendar.cal.component import Component
+    from icalendar.cal import Component
 
 
 class LazyCalendarIcalParser(ComponentIcalParser):

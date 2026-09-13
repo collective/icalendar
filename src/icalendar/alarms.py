@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from collections.abc import Generator
     from datetime import datetime
 
-    from icalendar.cal.alarm import Alarm
+    from icalendar.cal import Alarm
     from icalendar.prop import vBinary, vUri
 
 Parent = Event | Todo
