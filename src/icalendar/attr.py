@@ -1884,6 +1884,14 @@ def get_duration_property(component: Component) -> timedelta:
     if "DURATION" in component:
         return component["DURATION"].dt
 
+    # A component with an end but no start (e.g. a VTODO with just DUE) has
+    # no meaningful span to measure from, so its duration is 0. A component
+    # with neither start nor end still falls through, so it raises
+    # IncompleteComponent from component.end below, as before.
+    start, end, _duration = component._get_start_end_duration()  # noqa: SLF001
+    if start is None and end is not None:
+        return timedelta(0)
+
     # Fall back to calculated duration from start and end
     return component.end - component.start
 

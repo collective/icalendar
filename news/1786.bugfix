@@ -1,0 +1,1 @@
+:attr:`~icalendar.cal.Todo.duration` (and :attr:`~icalendar.cal.Event.duration`) is now ``timedelta(0)`` for a component that has an end (``DUE``/``DTEND``) but no start, instead of raising :exc:`~icalendar.error.IncompleteComponent`. I used AI to assist me with this change. @Selahattinozdmr
