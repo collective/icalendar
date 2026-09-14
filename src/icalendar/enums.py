@@ -78,6 +78,19 @@ class StrEnum(str, Enum):
             return default
 
 
+class ACTION(StrEnum):
+    """Enum for ``ACTION`` on a :class:`~icalendar.cal.alarm.Alarm`.
+
+    Description:
+        Values are defined by :rfc:`5545#section-3.8.6.1` and identify the
+        notification performed when an alarm is triggered.
+    """
+
+    AUDIO = "AUDIO"
+    DISPLAY = "DISPLAY"
+    EMAIL = "EMAIL"
+
+
 class PARTSTAT(StrEnum):
     """Enum for PARTSTAT from :rfc:`5545`.
 
@@ -550,6 +563,7 @@ class TRANSP(StrEnum):
 
 
 __all__ = [
+    "ACTION",
     "BUSYTYPE",
     "CLASS",
     "CUTYPE",

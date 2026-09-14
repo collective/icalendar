@@ -28,6 +28,7 @@ from icalendar.attr import (
 )
 from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
+from icalendar.enums import ACTION
 from icalendar.error import InvalidCalendar
 from icalendar.prop import vCalAddress
 
@@ -390,7 +391,7 @@ class Alarm(Component):
     def new(
         cls,
         /,
-        action: str | None = None,
+        action: ACTION | str | None = None,
         trigger: timedelta | datetime | None = None,
         attachments: ATTACHMENTS_TYPE_SETTER = None,
         attendees: ATTENDEE_TYPE_SETTER = None,
@@ -549,7 +550,7 @@ class Alarm(Component):
         if trigger is None:
             raise InvalidCalendar("DISPLAY alarm requires a trigger")
         alarm: Alarm = cls.new(
-            action="DISPLAY",
+            action=ACTION.DISPLAY,
             trigger=trigger,
             description=description,
             uid=uid,
@@ -629,7 +630,7 @@ class Alarm(Component):
         if trigger is None:
             raise InvalidCalendar("AUDIO alarm requires a trigger")
         alarm: Alarm = cls.new(
-            action="AUDIO",
+            action=ACTION.AUDIO,
             trigger=trigger,
             attachments=attachments,
             uid=uid,
@@ -740,7 +741,7 @@ class Alarm(Component):
         if not cleaned_attendees:
             raise InvalidCalendar("EMAIL alarm requires at least one valid attendee")
         alarm: Alarm = cls.new(
-            action="EMAIL",
+            action=ACTION.EMAIL,
             trigger=trigger,
             attachments=attachments,
             summary=summary,
