@@ -1,10 +1,11 @@
 """BOOLEAN values from :rfc:`5545`."""
 
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError
+from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
 
 
@@ -63,6 +64,18 @@ class vBoolean(int):
         """
         return b"TRUE" if self else b"FALSE"
 
+    def to_xcal(self) -> Element:
+        """Converts a :class:`~icalendar.prop.boolean.vBoolean` to a BOOLEAN property value.
+
+        This class method takes a ``vBoolean``—a Python boolean value—and converts it to an iCalendar BOOLEAN property type, in compliance with :rfc:`6321#section-3.6.2`.
+
+        Returns:
+            The XML element.
+        """
+        element = Element("boolean")
+        element.text = "true" if self else "false"
+        return element
+
     @property
     def ical_value(self) -> bool:
         """BOOLEAN property type according to :rfc:`5545#section-3.3.2`"""
@@ -74,6 +87,18 @@ class vBoolean(int):
             return cls.BOOL_MAP[ical]
         except Exception as e:
             raise ValueError(f"Expected 'TRUE' or 'FALSE'. Got {ical}") from e
+
+    @classmethod
+    def from_xcal(cls, element: Element) -> Self:
+        """Parse a :class:`~icalendar.prop.boolean.vBoolean` from an xCal Element."""
+        value = cls.BOOL_MAP.get(element.text)
+        if value is None:
+            raise XCalParsingError.in_property_text(
+                "Expected 'true' or 'false'.",
+                element,
+                cls,
+            )
+        return cls(value)
 
     @classmethod
     def examples(cls) -> list[Self]:
