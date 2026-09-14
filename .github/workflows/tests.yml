@@ -92,9 +92,13 @@ jobs:
 
   test-distribution:
     name: Check built packages
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      with:
+        persist-credentials: false
     - name: Install uv and Python
       uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
       with:
@@ -102,6 +106,36 @@ jobs:
         version: "0.11.6"
     - name: Check the release files
       run: make test-dist
+    - name: Upload built packages
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      with:
+        name: built-packages
+        path: dist/*
+
+  test-source-distribution:
+    name: Test source distribution
+    needs: test-distribution
+    permissions: {}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download built packages
+      uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      with:
+        name: built-packages
+        path: dist
+    - name: Install uv and Python 3.14
+      uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+      with:
+        enable-cache: false
+        version: "0.11.6"
+        python-version: "3.14"
+    - name: Unpack source distribution
+      run: |
+        mkdir source-distribution
+        tar --extract --gzip --file dist/*.tar.gz --directory source-distribution --strip-components=1
+    - name: Test source distribution
+      working-directory: source-distribution
+      run: uv run --group test pytest
 
   deploy-tag-to-pypi:
     # only deploy on tags, see https://stackoverflow.com/a/58478262/1320237
@@ -109,6 +143,7 @@ jobs:
     needs:
     - run-tests
     - test-distribution
+    - test-source-distribution
     runs-on: ubuntu-latest
     # This environment stores the TWINE_USERNAME and TWINE_PASSWORD
     # see https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment
@@ -157,6 +192,7 @@ jobs:
     needs:
     - run-tests
     - test-distribution
+    - test-source-distribution
     runs-on: ubuntu-latest
     environment:
       name: github-release
