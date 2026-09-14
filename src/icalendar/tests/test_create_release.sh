@@ -24,6 +24,23 @@ if ! [ -f "$archive" ]; then
 fi
 
 FILES="`tar -tf \"$archive\" | grep -o '/.*'`"
+ROOT_ENTRIES="`printf '%s\n' "$FILES" | sed 's#^/##; s#/.*##; /^$/d' | LC_ALL=C sort -u`"
+EXPECTED_ROOT_ENTRIES=".gitignore
+LICENSE.rst
+Makefile
+PKG-INFO
+README.rst
+docs
+funding.json
+news
+pyproject.toml
+src"
+
+if [ "$ROOT_ENTRIES" != "$EXPECTED_ROOT_ENTRIES" ]; then
+  echo "ERROR: Source distribution root entries differ from the reviewed allowlist."
+  diff -u <(printf '%s\n' "$EXPECTED_ROOT_ENTRIES") <(printf '%s\n' "$ROOT_ENTRIES") || true
+  exit 1
+fi
 
 if echo "$FILES" | grep -q '^/src/icalendar/fuzzing'; then
   echo "ERROR: Fuzzing files are included in the release."
