@@ -1,0 +1,1 @@
+Added the public :class:`~icalendar.enums.ACTION` string enum for RFC 5545 alarm actions. ``Alarm.new()``, ``Alarm.new_display()``, ``Alarm.new_audio()``, and ``Alarm.new_email()`` now use the enum values in their type hints and construction paths while preserving string compatibility.

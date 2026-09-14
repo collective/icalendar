@@ -1,7 +1,10 @@
 """Test the properties of the alarm."""
 
+from datetime import timedelta
+
 import pytest
 
+from icalendar import ACTION
 from icalendar.cal.alarm import Alarm
 from icalendar.error import InvalidCalendar
 
@@ -9,6 +12,13 @@ from icalendar.error import InvalidCalendar
 def test_ACTION_absent():
     """An absent ACTION has the documented default."""
     assert Alarm().ACTION == ""
+
+
+def test_ACTION_enum_values():
+    """ACTION exposes the RFC-defined alarm actions as a string enum."""
+    assert [action.value for action in ACTION] == ["AUDIO", "DISPLAY", "EMAIL"]
+    alarm = Alarm.new_display("Reminder", timedelta(minutes=-5))
+    assert alarm.ACTION == ACTION.DISPLAY
 
 
 @pytest.mark.parametrize("action", ["AUDIO", "DISPLAY", "EMAIL"])
