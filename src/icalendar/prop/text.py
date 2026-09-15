@@ -2,6 +2,7 @@
 
 import re
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element
 
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
@@ -207,6 +208,12 @@ class vText(str):
         """Parse a jCal value into a vText."""
         JCalParsingError.validate_value_type(jcal_value, (str, int, float), cls)
         return cls(str(jcal_value))
+
+    def to_xcal(self) -> Element:
+        """The xCal representation of this property according to :rfc:`6321`."""
+        element = Element(self.default_value.lower())
+        element.text = self
+        return element
 
 
 __all__ = ["vText"]

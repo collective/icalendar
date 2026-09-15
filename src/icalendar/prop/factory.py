@@ -49,6 +49,7 @@ class TypesFactory(CaselessDict):
 
     _instance: ClassVar[TypesFactory | None] = None
 
+    @staticmethod
     def instance() -> TypesFactory:
         """Return a singleton instance of this class."""
         if TypesFactory._instance is None:
@@ -220,7 +221,7 @@ class TypesFactory(CaselessDict):
         }
     )
 
-    def for_property(self, name, value_param: str | None = None) -> VPROPERTY:
+    def for_property(self, name, value_param: str | None = None) -> type[VPROPERTY]:
         """Returns the type class for a property or parameter.
 
         Parameters:

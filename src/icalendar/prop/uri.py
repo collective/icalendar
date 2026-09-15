@@ -1,6 +1,7 @@
 """URI values from :rfc:`5545`."""
 
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element
 
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
@@ -124,6 +125,12 @@ class vUri(str):
         return f"{self.__class__.__name__}({self.uri!r})"
 
     from icalendar.param import FMTTYPE, GAP, LABEL, LANGUAGE, LINKREL, RELTYPE, VALUE
+
+    def to_xcal(self) -> Element:
+        """The xCal representation of this property according to :rfc:`6321`."""
+        element = Element(self.default_value.lower())
+        element.text = self
+        return element
 
 
 __all__ = ["vUri"]

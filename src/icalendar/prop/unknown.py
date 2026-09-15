@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, ClassVar
+from xml.etree.ElementTree import Element
 
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
@@ -144,6 +145,12 @@ class vUnknown(str):
         """Parse a jCal value into a vUnknown."""
         JCalParsingError.validate_value_type(jcal_value, (str, int, float), cls)
         return cls(str(jcal_value))
+
+    def to_xcal(self) -> Element:
+        """The xCal representation of this property according to :rfc:`6321`."""
+        element = Element(self.default_value.lower())
+        element.text = self
+        return element
 
 
 __all__ = ["vUnknown"]

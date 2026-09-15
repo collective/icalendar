@@ -2,6 +2,7 @@
 
 from datetime import date, datetime
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element
 
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
@@ -136,6 +137,12 @@ class vDate(TimeBase):
             value,
             params=Parameters.from_jcal_property(jcal_property),
         )
+
+    def to_xcal(self) -> Element:
+        """Convert a vDate to an xCal element."""
+        element = Element("date")
+        element.text = self.dt.strftime("%Y%m%d")
+        return element
 
 
 __all__ = ["vDate"]

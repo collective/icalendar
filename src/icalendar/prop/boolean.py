@@ -64,18 +64,6 @@ class vBoolean(int):
         """
         return b"TRUE" if self else b"FALSE"
 
-    def to_xcal(self) -> Element:
-        """Converts a :class:`~icalendar.prop.boolean.vBoolean` to a BOOLEAN property value.
-
-        This class method takes a ``vBoolean``—a Python boolean value—and converts it to an iCalendar BOOLEAN property type, in compliance with :rfc:`6321#section-3.6.2`.
-
-        Returns:
-            The XML element.
-        """
-        element = Element("boolean")
-        element.text = "true" if self else "false"
-        return element
-
     @property
     def ical_value(self) -> bool:
         """BOOLEAN property type according to :rfc:`5545#section-3.3.2`"""
@@ -87,18 +75,6 @@ class vBoolean(int):
             return cls.BOOL_MAP[ical]
         except Exception as e:
             raise ValueError(f"Expected 'TRUE' or 'FALSE'. Got {ical}") from e
-
-    @classmethod
-    def from_xcal(cls, element: Element) -> Self:
-        """Parse a :class:`~icalendar.prop.boolean.vBoolean` from an xCal Element."""
-        value = cls.BOOL_MAP.get(element.text)
-        if value is None:
-            raise XCalParsingError.in_property_text(
-                "Expected 'true' or 'false'.",
-                element,
-                cls,
-            )
-        return cls(value)
 
     @classmethod
     def examples(cls) -> list[Self]:
@@ -130,6 +106,31 @@ class vBoolean(int):
             jcal_property[3],
             params=Parameters.from_jcal_property(jcal_property),
         )
+
+    @classmethod
+    def from_xcal(cls, element: Element) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        value = cls.BOOL_MAP.get(element.text)
+        if value is None:
+            raise XCalParsingError.in_property_text(
+                "Expected 'true' or 'false'.",
+                element,
+                cls,
+            )
+        return cls(value)
+
+    def to_xcal(self) -> Element:
+        """The xCal representation of this property according to :rfc:`6321`."""
+        element = Element(self.default_value.lower())
+        element.text = "true" if self else "false"
+        return element
 
 
 __all__ = ["vBoolean"]
