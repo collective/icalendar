@@ -6,7 +6,10 @@ import contextlib
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    import xml.etree.ElementTree as ET
     from collections.abc import Generator
+
+    from icalendar.prop import VPROPERTY
 
 
 class InvalidCalendar(ValueError):
@@ -345,6 +348,62 @@ class JCalParsingError(InvalidCalendar):
             raise cls(f"The {kind} must be lowercase.", parser, path, value=name)
 
 
+class XCalParsingError(InvalidCalendar):
+    """Could not parse a part of the xCal."""
+
+    message: str
+    """A description of the error that occurred while parsing."""
+
+    value: str
+    """The value that caused the error."""
+
+    element: ET.Element
+    """The XML element that caused the error."""
+
+    parser: type[VPROPERTY]
+    """The parser that cannot parse the XML element."""
+
+    def __init__(
+        self, message: str, value: str, element: ET.Element, parser: type[VPROPERTY]
+    ) -> None:
+        """Create a new XCalParsingError.
+
+        Parameters:
+            message: A description of the error that occurred while parsing.
+            value: The value that caused the error.
+            element: The XML element that caused the error.
+            parser: The parser that cannot parse the XML element.
+        """
+        self.value = value
+        self.element = element
+        self.parser = parser
+        self.message = message + (
+            f" Got {value!r} in {element.tag!r} element parsing {parser.__name__!r}."
+        )
+        super().__init__(self.message)
+
+    @classmethod
+    def in_property_text(
+        cls, message: str, element: ET.Element, v_property: type[VPROPERTY]
+    ):
+        """Raise an error in a property.
+
+        Parameters:
+            message: A description of the error that occurred while parsing.
+            element: The XML element where the error occurred.
+            vProperty: The property class where the error occurred.
+
+        Returns:
+            ~error.XCalParsingError: Always.
+        """
+        return cls(
+            message=message,
+            value=element.text or "None",
+            element=element,
+            parser=v_property,
+        )
+
+
 __all__ = [
     "BrokenCalendarProperty",
     "ComponentEndMissing",
@@ -356,4 +415,5 @@ __all__ = [
     "InvalidCalendar",
     "JCalParsingError",
     "LocalTimezoneMissing",
+    "XCalParsingError",
 ]

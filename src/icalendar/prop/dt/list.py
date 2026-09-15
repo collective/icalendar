@@ -106,5 +106,19 @@ class vDDDLists:
 
     __hash__ = None
 
+    @property
+    def dt(self) -> TimeBase:
+        """Return the time/date value of the list.
+
+        This is a compatibility method for the vDDDTypes interface.
+
+        Returns:
+            The first value of the list.
+
+        Raises:
+            IndexError: If the list is empty.
+        """
+        return self.dts[0]
+
 
 __all__ = ["vDDDLists"]

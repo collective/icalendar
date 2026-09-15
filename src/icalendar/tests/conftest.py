@@ -4,6 +4,7 @@ import functools
 import itertools
 import sys
 import uuid
+import xml.etree.ElementTree as ET
 import zoneinfo
 from collections.abc import Generator
 from datetime import datetime, timezone
@@ -566,3 +567,9 @@ def v_prop_example(v_prop) -> prop.VPROPERTY:
 def mock():
     """A mock."""
     return Mock()
+
+
+@pytest.fixture
+def xcal() -> ET.Element:
+    """Shortcut to create an XML Element"""
+    return ET.Element("vcalendar")
