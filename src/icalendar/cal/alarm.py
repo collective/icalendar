@@ -28,7 +28,10 @@ from icalendar.attr import (
 )
 from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
+from icalendar.enums import ACTION
 from icalendar.error import InvalidCalendar
+
+AlarmAction = ACTION
 
 if TYPE_CHECKING:
     import uuid
@@ -355,18 +358,23 @@ class Alarm(Component):
                 )
         _set_attachments(self, value)
 
-    ACTION = single_string_property(
-        "ACTION",
-        """The action invoked when the alarm triggers.
-
-        Typical values defined by :rfc:`5545#section-3.8.6.1` are
-        ``AUDIO``, ``DISPLAY``, and ``EMAIL``. The empty string is
-        returned when no ``ACTION`` property is present.
-        """,
-    )
+    @property
+    def ACTION(self) -> AlarmAction | str:
+        """Return a standard :class:`ACTION` or an extension value."""
+        value = self.get("ACTION", None)
+        if value is None or value == []:
+            return ""
+        if isinstance(value, list):
+            value = value[0]
+        try:
+            return ACTION(str(value))
+        except ValueError:
+            # RFC 5545 permits IANA and ``X-`` extension actions. Keep values
+            # we do not know yet so parsing and serializing remain lossless.
+            return value
 
     @ACTION.setter
-    def ACTION(self, value: str | None) -> None:
+    def ACTION(self, value: AlarmAction | str | None) -> None:
         if value == "AUDIO" and len(self.attachments) > 1:
             raise InvalidCalendar(
                 "An AUDIO alarm must not contain more than one attachment.\n"
@@ -375,6 +383,10 @@ class Alarm(Component):
         self.pop("ACTION", None)
         if value is not None:
             self.add("ACTION", value)
+
+    @ACTION.deleter
+    def ACTION(self) -> None:
+        self.pop("ACTION", None)
 
     uid = single_string_property(
         "UID",
@@ -389,7 +401,7 @@ class Alarm(Component):
     def new(
         cls,
         /,
-        action: str | None = None,
+        action: AlarmAction | str | None = None,
         attachments: ATTACHMENTS_TYPE_SETTER = None,
         attendees: ATTENDEE_TYPE_SETTER = None,
         concepts: CONCEPTS_TYPE_SETTER = None,
@@ -539,7 +551,7 @@ class Alarm(Component):
         if trigger is None:
             raise InvalidCalendar("DISPLAY alarm requires a trigger")
         alarm: Alarm = cls.new(
-            action="DISPLAY",
+            action=ACTION.DISPLAY,
             description=description,
             uid=uid,
             links=links,
@@ -619,7 +631,7 @@ class Alarm(Component):
         if trigger is None:
             raise InvalidCalendar("AUDIO alarm requires a trigger")
         alarm: Alarm = cls.new(
-            action="AUDIO",
+            action=ACTION.AUDIO,
             attachments=attachments,
             uid=uid,
             links=links,
@@ -723,7 +735,7 @@ class Alarm(Component):
         if not attendees:
             raise InvalidCalendar("EMAIL alarm requires at least one attendee")
         alarm: Alarm = cls.new(
-            action="EMAIL",
+            action=ACTION.EMAIL,
             attachments=attachments,
             summary=summary,
             description=description,

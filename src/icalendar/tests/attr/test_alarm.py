@@ -1,7 +1,10 @@
 """Test the properties of the alarm."""
 
+from datetime import timedelta
+
 import pytest
 
+from icalendar import ACTION
 from icalendar.cal.alarm import Alarm
 from icalendar.error import InvalidCalendar
 
@@ -11,13 +14,29 @@ def test_ACTION_absent():
     assert Alarm().ACTION == ""
 
 
+def test_ACTION_enum_values():
+    """ACTION exposes the RFC-defined alarm actions as a string enum."""
+    assert [action.value for action in ACTION] == ["AUDIO", "DISPLAY", "EMAIL"]
+    alarm = Alarm.new_display("Reminder", timedelta(minutes=-5))
+    assert alarm.ACTION is ACTION.DISPLAY
+
+
+def test_ACTION_preserves_extension_values():
+    """Unknown IANA and X- actions remain lossless string values."""
+    alarm = Alarm()
+    alarm.ACTION = "X-CUSTOM"
+    assert alarm.ACTION == "X-CUSTOM"
+    assert not isinstance(alarm.ACTION, ACTION)
+    assert b"ACTION:X-CUSTOM\r\n" in alarm.to_ical()
+
+
 @pytest.mark.parametrize("action", ["AUDIO", "DISPLAY", "EMAIL"])
 def test_ACTION_round_trip(action):
     """Each RFC 5545 ACTION can be read, serialized, and deleted."""
     alarm = Alarm()
 
     alarm.ACTION = action
-    assert alarm.ACTION == action
+    assert alarm.ACTION is ACTION(action)
     assert alarm["ACTION"] == action
     assert f"ACTION:{action}\r\n".encode() in alarm.to_ical()
 
