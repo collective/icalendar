@@ -261,7 +261,7 @@ def test_parameters_to_xcal(name, value, xcal, message):
 @mark_parameters
 def test_parameters_from_xcal(name, value, xcal, message):
     """Parse Parameters from xcal."""
-    xcal_element = fromstring(xcal)
+    xcal_element = fromstring(f"<parameters>{xcal}</parameters>")
     params = Parameters.from_xcal(xcal_element)
     assert isinstance(params, Parameters)
     assert name in params, (

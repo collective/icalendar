@@ -528,7 +528,7 @@ class Parameters(CaselessDict):
         return self
 
     @classmethod
-    def from_xcal(cls, _element: Element) -> Self:
+    def from_xcal(cls, element: Element) -> Self:
         """Parse xCal from :rfc:`6321`.
 
         Parameters:
@@ -539,8 +539,41 @@ class Parameters(CaselessDict):
 
         Returns:
             :Parameters: The parsed parameters.
+
+        Example:
+
+            This parses the parameters from an xCal string.
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Parameters
+                >>> from xml.etree.ElementTree import fromstring
+                >>> xcal_string = '''
+                ... <parameters>
+                ...     <language>
+                ...         <text>en-US</text>
+                ...     </language>
+                ... </parameters>
+                ... '''
+                >>> xml_element = fromstring(xcal_string)
+                >>> parameters = Parameters.from_xcal(xml_element)
+                >>> parameters.LANGUAGE
+                'en-US'
+
         """
-        return cls()
+        parameters = cls()
+        factory = cls.get_xcal_type_factory()
+        for parameter_element in element:
+            key = parameter_element.tag
+            values = []
+            for value_element in parameter_element:
+                v_property = factory.for_property(key, value_element.tag)
+                values.append(v_property.from_xcal(value_element).ical_value)
+            if len(values) == 1:
+                parameters[key] = values[0]
+            else:
+                parameters[key] = values
+        return parameters
 
     @staticmethod
     def get_xcal_type_factory() -> TypesFactory:

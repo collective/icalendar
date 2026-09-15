@@ -132,5 +132,17 @@ class vUri(str):
         element.text = self
         return element
 
+    @classmethod
+    def from_xcal(cls, element: Element) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        return cls(element.text)
+
 
 __all__ = ["vUri"]
