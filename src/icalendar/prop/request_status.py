@@ -29,6 +29,20 @@ class vRequestStatus(vText):
     """A text specifically for REQUEST-STATUS.
 
     See :rfc:`5545#section-3.8.8.3`.
+
+    Example:
+
+        .. code-block:: pycon
+
+            >>> from icalendar.prop import vRequestStatus
+            >>> r = vRequestStatus("2.0;Success")
+            >>> r.code
+            (2, 0)
+            >>> r.description
+            'Success'
+            >>> r.data is None
+            True
+
     """
 
     __match: re.Match | None = None
