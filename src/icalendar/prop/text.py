@@ -225,7 +225,7 @@ class vText(str):
         Raises:
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
-        return cls(element.text)
+        return cls(element.text or "")
 
 
 __all__ = ["vText"]
