@@ -128,3 +128,11 @@ def test_from_jcal(text, code, description, data, text_serialized):
     print(jcal)
     round_tripped_request_status = request_status.from_jcal(jcal)
     assert request_status == round_tripped_request_status
+
+
+def test_adding_a_request_status():
+    """Adding a requet status should use the corrrect type."""
+    e = Event()
+    e.add("REQUEST-STATUS", "2.0;Success")
+    assert e["REQUEST-STATUS"].code == (2, 0)
+    assert e["REQUEST-STATUS"].description == "Success"
