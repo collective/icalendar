@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
+
+from icalendar.error import JCalParsingError
+from icalendar.parser.parameter import Parameters
 
 from .text import vText
 
@@ -13,7 +16,10 @@ if TYPE_CHECKING:
     from icalendar.compatibility import Self
 
 REQUEST_STATUS_GRAMMAR = re.compile(
-    "^(?P<code>[^;]*)(?:;(?P<description>[^;]*)(?:;(?P<data>.*))?)?$", re.MULTILINE
+    r"^(?P<code>[^;]*)"
+    r"(?:;(?P<description>(?:\\.|[^;\\])*)"
+    r"(?:;(?P<data>.*))?)?$",
+    re.MULTILINE,
 )
 UNESCAPE = re.compile(r"\\(.)")
 ESCAPE = re.compile(r"([\\,;])")
@@ -40,11 +46,19 @@ class vRequestStatus(vText):
         Returns:
             A tuple of integers or () if the status code could not be parsed.
         """
+        return tuple(int(x) for x in self.code_string.split(".") if x)
+
+    @property
+    def code_string(self) -> str:
+        """Return the status code as a string.
+
+        Returns:
+            A tuple of integers or () if the status code could not be parsed.
+        """
         match = self._get_match()
         if not match:
-            return ()
-        code: str = match.group("code")
-        return tuple(int(x) for x in code.split(".") if x)
+            return ""
+        return match.group("code")
 
     def _unescape(self, string: str):
         """Unescape a string."""
@@ -85,6 +99,7 @@ class vRequestStatus(vText):
         code: Sequence[int, ...] | str | int,
         description: str = "",
         data: str | None = None,
+        params: dict[str, Any] | None = None,
     ) -> Self:
         """Create a new request status object.
 
@@ -105,7 +120,7 @@ class vRequestStatus(vText):
         if data is not None:
             data = ESCAPE.sub(r"\\\1", data)
             request_status += f";{data}"
-        return cls(request_status)
+        return cls(request_status, params=params)
 
     @classmethod
     def examples(cls) -> list[Self]:  # pyright: ignore[reportIncompatibleMethodOverride]
@@ -114,6 +129,30 @@ class vRequestStatus(vText):
             cls("2.0;Success"),
             cls("3.7;Invalid calendar user;ATTENDEE:mailto:jsmith@example.org"),
         ]
+
+    def to_jcal(self, name: str) -> list:
+        """The jCal representation of this property according to :rfc:`7265`."""
+        status = [self.code_string, self.description, self.data]
+        if status[-1] is None:
+            status = status[:-1]
+        return [name, self.params.to_jcal(), self.VALUE.lower(), status]
+
+    @classmethod
+    def from_jcal(cls, jcal_property: list) -> Self:
+        """Parse jCal from :rfc:`7265`.
+
+        Parameters:
+            jcal_property: The jCal property to parse.
+
+        Raises:
+            ~error.JCalParsingError: If the provided jCal is invalid.
+        """
+        JCalParsingError.validate_property(jcal_property, cls)
+        JCalParsingError.validate_list_type(jcal_property[3], str, cls, 3)
+        return cls.new(
+            *jcal_property[3],
+            params=Parameters.from_jcal_property(jcal_property),
+        )
 
 
 __all__ = ["vRequestStatus"]

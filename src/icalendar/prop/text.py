@@ -167,8 +167,10 @@ class vText(str):
 
     def to_jcal(self, name: str) -> list:
         """The jCal representation of this property according to :rfc:`7265`."""
-        if name == "request-status":  # TODO: maybe add a vRequestStatus class?
-            return [name, {}, "text", self.split(";", 2)]
+        if name == "request-status":
+            from .request_status import vRequestStatus
+
+            return vRequestStatus(self, params=self.params).to_jcal(name)
         return [name, self.params.to_jcal(), self.VALUE.lower(), str(self)]
 
     @classmethod
