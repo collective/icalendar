@@ -48,7 +48,7 @@ mark_examples = pytest.mark.parametrize(
         ),
         # special cases that should not crash but make no sense
         ("3.3", (3, 3), "", None, "3.3;"),
-        ("3", (3,), "", None, "3;"),
+        ("3;", (3,), "", None, None),
         ("10.", (10,), "", None, "10;"),
         ("", (), "", None, ";"),
         (
