@@ -26,6 +26,7 @@ from icalendar.prop.inline import vInline
 from icalendar.prop.n import vN
 from icalendar.prop.org import vOrg
 from icalendar.prop.recur import vFrequency, vRecur, vWeekday
+from icalendar.prop.request_status import vRequestStatus
 from icalendar.prop.text import vText
 from icalendar.prop.uid import vUid
 from icalendar.prop.unknown import vUnknown
@@ -81,6 +82,7 @@ class TypesFactory(CaselessDict):
             vUid,
             vXmlReference,
             vUnknown,
+            vRequestStatus,
         )
         self["binary"] = vBinary
         self["boolean"] = vBoolean
@@ -100,6 +102,7 @@ class TypesFactory(CaselessDict):
         self["inline"] = vInline
         self["date-time-list"] = vDDDLists
         self["categories"] = vCategory
+        self["request-status-text"] = vRequestStatus  # RFC 5545 and 6321
         self["adr"] = vAdr  # RFC 6350 vCard
         self["n"] = vN  # RFC 6350 vCard
         self["org"] = vOrg  # RFC 6350 vCard
@@ -186,7 +189,7 @@ class TypesFactory(CaselessDict):
             "last-modified": "date-time",
             "sequence": "integer",
             # Miscellaneous Component Properties
-            "request-status": "text",
+            "request-status": "request-status-text",
             ####################################
             # parameter types (luckily there is no name overlap)
             "altrep": "uri",
