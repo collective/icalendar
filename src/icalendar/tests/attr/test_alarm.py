@@ -30,6 +30,26 @@ def test_ACTION_preserves_extension_values():
     assert b"ACTION:X-CUSTOM\r\n" in alarm.to_ical()
 
 
+def test_ACTION_none_deletes_property():
+    """Setting ACTION to None removes the property."""
+    alarm = Alarm()
+    alarm.ACTION = "DISPLAY"
+
+    alarm.ACTION = None
+
+    assert alarm.ACTION == ""
+    assert "ACTION" not in alarm
+
+
+def test_ACTION_uses_first_repeated_property():
+    """Reading repeated ACTION properties uses the first value."""
+    alarm = Alarm()
+    alarm.add("ACTION", "DISPLAY")
+    alarm.add("ACTION", "EMAIL")
+
+    assert alarm.ACTION is ACTION.DISPLAY
+
+
 @pytest.mark.parametrize("action", ["AUDIO", "DISPLAY", "EMAIL"])
 def test_ACTION_round_trip(action):
     """Each RFC 5545 ACTION can be read, serialized, and deleted."""
