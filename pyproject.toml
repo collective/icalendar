@@ -153,6 +153,7 @@ exclude = [
 # Tests for files included in the distribution reside here:
 # src/icalendar/tests/test_create_release.sh
 "funding.json" = "funding.json"
+"generate_windows_to_olson_mapping.py" = "generate_windows_to_olson_mapping.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/icalendar"]
