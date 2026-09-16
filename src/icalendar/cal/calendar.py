@@ -197,9 +197,7 @@ class Calendar(Component):
         """
         return cast(
             "Calendar | list[Calendar]",
-            super().from_ical(
-                st, multiple=multiple, encoding=encoding, errors=errors
-            ),
+            super().from_ical(st, multiple=multiple, encoding=encoding, errors=errors),
         )
 
     @property

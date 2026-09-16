@@ -37,6 +37,7 @@ def test_content_line_decoding_options_are_forwarded():
     assert Contentline.from_ical(b"SUMMARY:R\xe9union", encoding="cp1252") == (
         "SUMMARY:R\u00e9union"
     )
-    assert Contentlines.from_ical(
-        b"SUMMARY:R\xe9union\r\n", encoding="cp1252"
-    ) == ["SUMMARY:R\u00e9union", ""]
+    assert Contentlines.from_ical(b"SUMMARY:R\xe9union\r\n", encoding="cp1252") == [
+        "SUMMARY:R\u00e9union",
+        "",
+    ]
