@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 
 import pytest
 
-from icalendar.cal import Alarm, Availability, Available, Component, Event
+from icalendar.cal import Alarm, Availability, Available, Component, Event, Todo
 
 #: iCalendar property name -> property object, as attached to its class
 UTC_PROPERTIES = {
@@ -25,6 +25,7 @@ UTC_PROPERTIES = {
     "ACKNOWLEDGED": Alarm.__dict__["ACKNOWLEDGED"],
     "X-MOZ-SNOOZE-TIME": Event.__dict__["X_MOZ_SNOOZE_TIME"],
     "X-MOZ-LASTACK": Event.__dict__["X_MOZ_LASTACK"],
+    "COMPLETED": Todo.__dict__["COMPLETED"],
 }
 
 

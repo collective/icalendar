@@ -1,0 +1,1 @@
+Added :attr:`~icalendar.cal.todo.Todo.COMPLETED` and :attr:`~icalendar.cal.todo.Todo.completed` properties to :class:`~icalendar.cal.todo.Todo` and added ``completed`` parameter to :meth:`Todo.new <icalendar.cal.todo.Todo.new>` per :rfc:`5545#section-3.8.2.1`. @DYNOSuprovo
