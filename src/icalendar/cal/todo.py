@@ -380,6 +380,7 @@ class Todo(Component):
             links: The :attr:`~icalendar.Component.links` of the todo.
             location: The :attr:`location` of the todo.
             organizer: The :attr:`organizer` of the todo.
+            priority: The :attr:`priority` of the todo.
             recurrence_id: The :attr:`RECURRENCE_ID` of the todo.
             refids: :attr:`~icalendar.Component.refids` of the todo.
             related_to: :attr:`~icalendar.Component.related_to` of the todo.
