@@ -1,6 +1,13 @@
 SEQUENCE_TYPES = (list, tuple)
 DEFAULT_ENCODING = "utf-8"
 ICAL_TYPE = str | bytes
+INVALID_ENCODING_MESSAGE = (
+    "Calendar data is not valid UTF-8. RFC 5545 requires UTF-8. "
+    "Pass encoding=... if you know the source encoding, or use "
+    "errors='replace' to restore the previous replacement behavior. "
+    "See https://github.com/collective/icalendar/issues/1793 and open a "
+    "related issue if you need broader encoding support."
+)
 
 
 def from_unicode(value: ICAL_TYPE, encoding: str = "utf-8") -> bytes:
@@ -24,20 +31,27 @@ def from_unicode(value: ICAL_TYPE, encoding: str = "utf-8") -> bytes:
         return value
 
 
-def to_unicode(value: ICAL_TYPE, encoding: str = "utf-8-sig") -> str:
+def to_unicode(
+    value: ICAL_TYPE, encoding: str = "utf-8-sig", errors: str = "strict"
+) -> str:
     """Converts a value to Unicode, even if it is already a Unicode string.
 
     Parameters:
         value: The value to convert.
         encoding: The encoding to use in the conversion.
+        errors: The error handling scheme to use when decoding bytes.
     """
     if isinstance(value, str):
         return value
     if isinstance(value, bytes):
         try:
-            return value.decode(encoding)
-        except UnicodeDecodeError:
-            return value.decode("utf-8-sig", "replace")
+            return value.decode(encoding, errors)
+        except UnicodeDecodeError as error:
+            if errors != "strict":
+                raise
+            from icalendar.error import InvalidCalendar
+
+            raise InvalidCalendar(INVALID_ENCODING_MESSAGE) from error
     else:
         return value
 

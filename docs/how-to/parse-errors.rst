@@ -40,6 +40,31 @@ This attribute is a list of tuples containing the property name and error inform
 Errors are populated immediately after parsing, without needing to access the problematic properties.
 
 
+Decode calendar bytes
+---------------------
+
+Calendar byte input must be UTF-8 according to :rfc:`5545`. Invalid UTF-8 now
+raises :exc:`~icalendar.error.InvalidCalendar` instead of silently replacing
+bytes with the Unicode replacement character.
+
+If a legacy calendar uses a known encoding, pass it explicitly:
+
+.. code-block:: pycon
+
+    >>> cal = Calendar.from_ical(raw_bytes, encoding="cp1252")
+
+To explicitly restore the previous replacement behavior, pass
+``errors="replace"``:
+
+.. code-block:: pycon
+
+    >>> cal = Calendar.from_ical(raw_bytes, errors="replace")
+
+Automatic encoding detection is not performed. See
+`issue 1793 <https://github.com/collective/icalendar/issues/1793>`_ for the
+reasoning and open a related issue if another source encoding needs support.
+
+
 Access broken properties
 ------------------------
 
