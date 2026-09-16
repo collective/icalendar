@@ -4,6 +4,8 @@ files according to RFC 5545.
 These are the defined components.
 """
 
+from icalendar.attr import single_utc_property
+
 from .alarm import Alarm
 from .availability import Availability
 from .available import Available
@@ -16,6 +18,18 @@ from .journal import Journal
 from .lazy import LazyCalendar
 from .timezone import Timezone, TimezoneDaylight, TimezoneStandard
 from .todo import Todo
+
+Todo.COMPLETED = single_utc_property(
+    "COMPLETED",
+    """The UTC datetime when this to-do was completed.
+
+    This property is defined in :rfc:`5545#section-3.8.2.1`. It appears
+    only on ``VTODO`` components. The RFC value type is ``DATE-TIME`` in UTC.
+
+    Date-only values (including ``COMPLETED;VALUE=DATE``) are converted to
+    midnight UTC, matching :attr:`~icalendar.Component.DTSTAMP`.
+    """,
+)
 
 __all__ = [
     "Alarm",
