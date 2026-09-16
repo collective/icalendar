@@ -2,15 +2,21 @@
 
 from datetime import datetime
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element
 
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
-from icalendar.parser_tools import to_unicode
+from icalendar.parser_tools import XCalRegexMatcher, to_unicode
 from icalendar.timezone import tzp
 from icalendar.timezone.tzid import is_utc
 
 from .base import TimeBase
+
+XCAL_DATETIME_REGEX = XCalRegexMatcher(
+    r"(\d\d\d\d)-(\d\d)-(\d\d)T(\d\d):(\d\d):(\d\d)(Z?)",
+    "Expected date-time format YYYY-MM-DDTHH:MM:SS or YYYY-MM-DDTHH:MM:SSZ.",
+)
 
 
 class vDatetime(TimeBase):
@@ -202,6 +208,35 @@ class vDatetime(TimeBase):
             dt,
             params=params,
         )
+
+    def to_xcal(self) -> Element:
+        """Convert a vDate to an xCal element."""
+        element = Element("date-time")
+        text = self.dt.strftime("%Y-%m-%dT%H:%M:%S")
+        if is_utc(self.dt):
+            text += "Z"
+        element.text = text
+        return element
+
+    @classmethod
+    def from_xcal(cls, element: Element) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        year, month, day, hour, minute, second, timezone = XCAL_DATETIME_REGEX.groups(
+            element, cls
+        )
+        dt = datetime(
+            int(year), int(month), int(day), int(hour), int(minute), int(second)
+        )
+        if timezone:
+            dt = tzp.localize_utc(dt)
+        return cls(dt)
 
 
 __all__ = ["vDatetime"]

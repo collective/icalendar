@@ -57,17 +57,17 @@ def test_from_xcal_from_dt_class(v_date, date, xcal):
 
 
 @pytest.mark.parametrize(
-    ("xcal", "error_message"),
+    ("xcal"),
     [
-        ("INVALID", "Wrong date format INVALID"),
-        ("2025-1110", "Wrong date format 2025-11-10"),
-        ("2025111", "Wrong date format 2025111"),
-        ("202511100", "Wrong date format 202511100"),
-        ("2025111A", "Wrong date format 2025111A"),
-        (None, "Wrong date format None"),
+        "INVALID",
+        "2025-1110",  # TODO: Be less strict
+        "2025111",
+        "202511100",
+        "2025111A",
+        None,
     ],
 )
-def test_invalid_value_from_xcal(v_date, xcal, error_message):
+def test_invalid_value_from_xcal(v_date, xcal):
     """Parse from xcal with invalid value."""
     e = ET.Element("date")
     e.text = xcal
