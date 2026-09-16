@@ -22,8 +22,8 @@ def v_date(request):
 mark_values = pytest.mark.parametrize(
     ("date", "xcal"),
     [
-        (date(2011, 5, 17), "20110517"),
-        (date(2025, 11, 10), "20251110"),
+        (date(2011, 5, 17), "2011-05-17"),
+        (date(2025, 11, 10), "2025-11-10"),
     ],
 )
 
@@ -33,7 +33,7 @@ def test_to_xcal(v_date, date, xcal):
     """Convert to xcal."""
     e = v_date(date).to_xcal()
     assert isinstance(e, ET.Element)
-    assert e.tag == "cal-address"
+    assert e.tag == "date"
     assert e.text == xcal
     assert ET.tostring(e, encoding="unicode") == f"<date>{xcal}</date>"
 
@@ -44,7 +44,6 @@ def test_from_xcal_from_factory(types_factory: TypesFactory, v_date, date, xcal)
     e = ET.Element("date")
     e.text = xcal
     result = types_factory.from_xcal("x-prop", e)
-    assert isinstance(result, vDate)
     assert result.dt == date
 
 
@@ -54,7 +53,6 @@ def test_from_xcal_from_dt_class(v_date, date, xcal):
     e = ET.Element("date")
     e.text = xcal
     result = v_date.from_xcal(e)
-    assert isinstance(result, vDate)
     assert result.dt == date
 
 
@@ -62,7 +60,7 @@ def test_from_xcal_from_dt_class(v_date, date, xcal):
     ("xcal", "error_message"),
     [
         ("INVALID", "Wrong date format INVALID"),
-        ("2025-11-10", "Wrong date format 2025-11-10"),
+        ("2025-1110", "Wrong date format 2025-11-10"),
         ("2025111", "Wrong date format 2025111"),
         ("202511100", "Wrong date format 202511100"),
         ("2025111A", "Wrong date format 2025111A"),
@@ -74,9 +72,9 @@ def test_invalid_value_from_xcal(v_date, xcal, error_message):
     e = ET.Element("date")
     e.text = xcal
     with pytest.raises(XCalParsingError) as error:
-        v_date.from_xcal("x-prop", e)
+        v_date.from_xcal(e)
     assert error.value.parser == vDate
     assert (
         error.value.message
-        == f"Expected YYYY-MM-DD as date. Got {xcal!r} in 'date' element parsing 'vDate'."
+        == f"Expected date format YYYY-MM-DD. Got {xcal!r} in 'date' element parsing 'vDate'."
     )

@@ -9,6 +9,7 @@ if TYPE_CHECKING:
     import xml.etree.ElementTree as ET
     from collections.abc import Generator
 
+    from icalendar.cal.component import Component
     from icalendar.prop import VPROPERTY
 
 
@@ -360,11 +361,15 @@ class XCalParsingError(InvalidCalendar):
     element: ET.Element
     """The XML element that caused the error."""
 
-    parser: type[VPROPERTY]
+    parser: type[VPROPERTY | Component]
     """The parser that cannot parse the XML element."""
 
     def __init__(
-        self, message: str, value: str, element: ET.Element, parser: type[VPROPERTY]
+        self,
+        message: str,
+        value: str | None,
+        element: ET.Element,
+        parser: type[VPROPERTY | Component],
     ) -> None:
         """Create a new XCalParsingError.
 
@@ -384,23 +389,23 @@ class XCalParsingError(InvalidCalendar):
 
     @classmethod
     def in_property_text(
-        cls, message: str, element: ET.Element, v_property: type[VPROPERTY]
+        cls, message: str, element: ET.Element, parser: type[VPROPERTY | Component]
     ):
         """Raise an error in a property.
 
         Parameters:
             message: A description of the error that occurred while parsing.
             element: The XML element where the error occurred.
-            vProperty: The property class where the error occurred.
+            parser: The parser class where the error occurred.
 
         Returns:
             ~error.XCalParsingError: Always.
         """
         return cls(
             message=message,
-            value=element.text or "None",
+            value=element.text,
             element=element,
-            parser=v_property,
+            parser=parser,
         )
 
 

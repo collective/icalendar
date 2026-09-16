@@ -6,7 +6,8 @@ from collections.abc import Sequence
 from datetime import date, datetime, time, timedelta
 from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
-from icalendar.error import JCalParsingError
+from icalendar.caselessdict import CaselessDict
+from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
 from icalendar.timezone import tzp
 from icalendar.tools import is_date, is_datetime, to_datetime
@@ -19,7 +20,10 @@ from .period import vPeriod
 from .time import vTime
 
 if TYPE_CHECKING:
+    from xml.etree.ElementTree import Element
+
     from icalendar.compatibility import Self
+    from icalendar.prop import VPROPERTY
 
 DT_TYPE: TypeAlias = (
     datetime
@@ -190,6 +194,44 @@ class vDDDTypes(TimeBase):
         return cls(
             dt,
             params=params,
+        )
+
+    def to_xcal(self) -> Element:
+        """Convert a vDDDTypes to an xCal element."""
+        return self.to_property_type().to_xcal()
+
+    VALUE_MAP: dict[str, VPROPERTY] = CaselessDict(
+        {
+            vDate.default_value: vDate,
+            vTime.default_value: vTime,
+            vDatetime.default_value: vDatetime,
+            vDuration.default_value: vDuration,
+            vPeriod.default_value: vPeriod,
+        }
+    )
+    """Map the VALUE parameters of the different types to their class."""
+
+    @classmethod
+    def from_xcal(cls, element: Element) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        v_prop = cls.VALUE_MAP.get(element.tag)
+        if v_prop is None:
+            raise XCalParsingError.in_property_text(
+                f"Expected one of these values: {list(cls.VALUE_MAP.keys())}.",
+                element,
+                cls,
+            )
+        parsed = v_prop.from_xcal(element)
+        return cls(
+            parsed.dt,
+            params=parsed.params,
         )
 
 
