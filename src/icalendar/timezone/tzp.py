@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import warnings
-from datetime import datetime, time
+from datetime import date, datetime, time, tzinfo
 from typing import TYPE_CHECKING, overload
 
 from icalendar.tools import to_datetime
@@ -19,6 +19,9 @@ if TYPE_CHECKING:
     from .provider import TZProvider
 
 DEFAULT_TIMEZONE_PROVIDER = "zoneinfo"
+
+#: Reference date used to localize a bare :class:`datetime.time`.
+_TIME_REFERENCE_DATE = date(2020, 1, 1)
 
 
 class TZP:
@@ -66,39 +69,68 @@ class TZP:
         """Use the default timezone provider."""
         self.use(DEFAULT_TIMEZONE_PROVIDER)
 
-    def localize_utc(self, dt: datetime.date) -> datetime.datetime:
-        """Return the datetime in UTC.
+    @overload
+    def localize_utc(self, dt: datetime) -> datetime: ...
 
-        If the datetime has no timezone, set UTC as its timezone.
+    @overload
+    def localize_utc(self, dt: time) -> time: ...
+
+    @overload
+    def localize_utc(self, dt: date) -> datetime: ...
+
+    def localize_utc(self, dt: date | datetime | time) -> datetime | time:
+        """Return the value in UTC.
+
+        If the value has no timezone, set UTC as its timezone.
+
+        Returns:
+            -   A localized :class:`datetime.datetime` in UTC when a
+                :class:`datetime.datetime` is given.
+            -   A localized :class:`datetime.datetime` at midnight in UTC
+                when a :class:`datetime.date` is given.
+            -   A localized :class:`datetime.time` in UTC when a
+                :class:`datetime.time` is given.
         """
+        if isinstance(dt, time):
+            dt_full = datetime.combine(_TIME_REFERENCE_DATE, dt)
+            return self.__provider.localize_utc(dt_full).timetz()
         return self.__provider.localize_utc(to_datetime(dt))
 
     @overload
-    def localize(self, dt: datetime, tz: datetime.tzinfo | str | None) -> datetime: ...
+    def localize(self, dt: datetime, tz: tzinfo | str | None) -> datetime: ...
 
     @overload
-    def localize(self, dt: time, tz: datetime.tzinfo | str | None) -> time: ...
+    def localize(self, dt: time, tz: tzinfo | str | None) -> time: ...
+
+    @overload
+    def localize(self, dt: date, tz: tzinfo | str | None) -> datetime: ...
 
     def localize(
-        self, dt: datetime.date | time, tz: datetime.tzinfo | str | None
-    ) -> datetime | datetime.time:
-        """Localize a datetime or time to a timezone.
+        self, dt: date | datetime | time, tz: tzinfo | str | None
+    ) -> datetime | time:
+        """Localize a date, datetime or time to a timezone.
+
+        Use ``tz=None`` to remove the timezone.
 
         Returns:
             -   A localized :class:`datetime.datetime` when a
                 :class:`datetime.datetime` is given.
+            -   A localized :class:`datetime.datetime` at midnight when a
+                :class:`datetime.date` is given.
             -   A localized :class:`datetime.time` when a
                 :class:`datetime.time` is given.
         """
         if isinstance(tz, str):
             tz = self.timezone(tz)
+        if isinstance(dt, time):
+            if tz is None:
+                return dt.replace(tzinfo=None)
+            dt_full = datetime.combine(_TIME_REFERENCE_DATE, dt)
+            return self.__provider.localize(dt_full, tz).timetz()
+        dt = to_datetime(dt)
         if tz is None:
             return dt.replace(tzinfo=None)
-        if isinstance(dt, time):
-            dt_full = datetime.combine(datetime(2020, 1, 1), dt)  # noqa: DTZ001
-            localized = self.__provider.localize(dt_full, tz)
-            return localized.timetz()
-        return self.__provider.localize(to_datetime(dt), tz)
+        return self.__provider.localize(dt, tz)
 
     def cache_timezone_component(self, timezone_component: Timezone.Timezone) -> None:
         """Cache the timezone that is created from a timezone component
@@ -120,7 +152,7 @@ class TZP:
         """Make sure the until value works."""
         self.__provider.fix_rrule_until(rrule, ical_rrule)
 
-    def create_timezone(self, timezone_component: Timezone.Timezone) -> datetime.tzinfo:
+    def create_timezone(self, timezone_component: Timezone.Timezone) -> tzinfo:
         """Create a timezone from a timezone component.
 
         This component will not be cached.
@@ -135,7 +167,7 @@ class TZP:
         """
         return tzid.strip("/")
 
-    def timezone(self, tz_id: str) -> datetime.tzinfo | None:
+    def timezone(self, tz_id: str) -> tzinfo | None:
         """Return a timezone with an ID or ``None`` if we can't find it.
 
         ``tz_id`` may be a plain Olson name (``Europe/Berlin``), a Windows
