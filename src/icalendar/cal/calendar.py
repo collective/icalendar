@@ -51,13 +51,61 @@ class Calendar(Component):
         "VEVENT", "VTODO", "VJOURNAL", "VFREEBUSY", "VTIMEZONE", or any
         other type of calendar component.
 
-    Example:
+    Examples:
         Create a new Calendar:
 
             >>> from icalendar import Calendar
             >>> calendar = Calendar.new(name="My Calendar")
             >>> print(calendar.calendar_name)
             My Calendar
+
+        Get the example Calendar.
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Calendar
+            >>> calendar = Calendar.example()
+            >>> print(calendar.to_ical().decode())
+            BEGIN:VCALENDAR
+            VERSION:2.0
+            PRODID:collective/icalendar
+            CALSCALE:GREGORIAN
+            METHOD:PUBLISH
+            X-WR-CALNAME:Holidays
+            X-WR-TIMEZONE:Etc/GMT
+            BEGIN:VEVENT
+            SUMMARY:New Year's Day
+            DTSTART:20220101
+            DTEND:20220101
+            DTSTAMP:20221108T080105Z
+            UID:636a0cc1dbd5a1667894465@icalendar
+            SEQUENCE:0
+            DESCRIPTION:Happy New Year!
+            STATUS:CONFIRMED
+            TRANSP:TRANSPARENT
+            END:VEVENT
+            BEGIN:VEVENT
+            SUMMARY:Orthodox Christmas
+            DTSTART:20220107
+            DTEND:20220107
+            UID:636a0cc1dbfd91667894465@icalendar
+            SEQUENCE:0
+            DESCRIPTION:It is Christmas again!
+            LOCATION:Russia
+            STATUS:CONFIRMED
+            TRANSP:TRANSPARENT
+            END:VEVENT
+            BEGIN:VEVENT
+            SUMMARY:International Women's Day
+            DTSTART:20220308
+            DTEND:20220308
+            UID:636a0cc1dc0f11667894465@icalendar
+            SEQUENCE:0
+            DESCRIPTION:May the feminine be honoured!
+            STATUS:CONFIRMED
+            TRANSP:TRANSPARENT
+            END:VEVENT
+            END:VCALENDAR
 
     """
 

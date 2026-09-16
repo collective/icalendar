@@ -1,1 +1,1 @@
-Added and documented the usage example for :meth:`Calendar.example <icalendar.cal.calendar.Calendar.example>`. I used OpenAI Codex (GPT-5) to help identify and draft this documentation change, then reviewed and verified the output locally. @cananoo
+Show how to use the example of Event, Calendar and Timezone in their class docstrings. AI-assisted: Claude was used to generate the doctest output from the library and draft the wording. The final change was manually verified. @sandeep780049

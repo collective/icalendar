@@ -31,6 +31,57 @@ class Timezone(Component):
     A "VTIMEZONE" calendar component is a grouping of component
     properties that defines a time zone. It is used to describe the
     way in which a time zone changes its offset from UTC over time.
+
+    Examples:
+        Get the example Timezone.
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Timezone
+            >>> timezone = Timezone.example()
+            >>> print(timezone.to_ical().decode())
+            BEGIN:VTIMEZONE
+            TZID:custom_Pacific/Fiji
+            TZURL:http://tzurl.org/zoneinfo/Pacific/Fiji
+            X-LIC-LOCATION:Pacific/Fiji
+            BEGIN:DAYLIGHT
+            DTSTART:20101024T020000
+            RRULE:FREQ=YEARLY;BYDAY=SU;BYMONTHDAY=21,22,23,24,25,26,27;BYMONTH=10
+            TZOFFSETFROM:+1200
+            TZOFFSETTO:+1300
+            END:DAYLIGHT
+            BEGIN:STANDARD
+            DTSTART:20140119T020000
+            RRULE:FREQ=YEARLY;BYDAY=SU;BYMONTHDAY=18,19,20,21,22,23,24;BYMONTH=1
+            TZOFFSETFROM:+1300
+            TZOFFSETTO:+1200
+            END:STANDARD
+            BEGIN:STANDARD
+            DTSTART:19151026T000000
+            RDATE:19151026T000000
+            TZOFFSETFROM:+115544
+            TZOFFSETTO:+1200
+            END:STANDARD
+            BEGIN:DAYLIGHT
+            DTSTART:19981101T020000
+            RDATE:19981101T020000
+            RDATE:19991107T020000
+            RDATE:20091129T020000
+            TZOFFSETFROM:+1200
+            TZOFFSETTO:+1300
+            END:DAYLIGHT
+            BEGIN:STANDARD
+            DTSTART:19990228T030000
+            RDATE:19990228T030000
+            RDATE:20000227T030000
+            RDATE:20100328T030000
+            RDATE:20110306T030000
+            RDATE:20120122T030000
+            RDATE:20130120T030000
+            TZOFFSETFROM:+1300
+            TZOFFSETTO:+1200
+            END:STANDARD
+            END:VTIMEZONE
     """
 
     subcomponents: list[TimezoneStandard | TimezoneDaylight]
