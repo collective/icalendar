@@ -115,3 +115,8 @@ Change log
 ==========
 
 See the `change log <https://icalendar.readthedocs.io/en/latest/reference/changelog.html>`_ for the latest updates to icalendar.
+
+Troubleshooting
+---------------
+
+If parsing fails, validate against RFC 5545 and preserve line folding.
