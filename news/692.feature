@@ -1,0 +1,1 @@
+Added a PyICU timezone provider (``use_pyicu()``) implementing the timezone interface using ICU's :rfc:`5545` ``VTIMEZONE`` support. I used AI to explain the timezone architecture and to verify its behaviour; the code is my own. @h4syy
