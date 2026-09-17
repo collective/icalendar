@@ -1,4 +1,4 @@
-"""date converison
+"""date-time converison
 
 https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.4
 """
