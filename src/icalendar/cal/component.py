@@ -527,23 +527,43 @@ class Component(CaselessDict):
     @overload
     @classmethod
     def from_ical(
-        cls, st: str | bytes | Path, multiple: Literal[False] = False
+        cls,
+        st: str | bytes | Path,
+        multiple: Literal[False] = False,
+        encoding: str = "utf-8-sig",
+        errors: str = "strict",
     ) -> Component: ...
 
     @overload
     @classmethod
     def from_ical(
-        cls, st: str | bytes | Path, multiple: Literal[True]
+        cls,
+        st: str | bytes | Path,
+        multiple: Literal[True],
+        encoding: str = "utf-8-sig",
+        errors: str = "strict",
     ) -> list[Component]: ...
 
     @classmethod
-    def _get_ical_parser(cls, st: str | bytes) -> ComponentIcalParser:
+    def _get_ical_parser(
+        cls, st: str | bytes, encoding: str = "utf-8-sig", errors: str = "strict"
+    ) -> ComponentIcalParser:
         """Get the iCal parser for the given input string."""
-        return ComponentIcalParser(st, cls._get_component_factory(), cls.types_factory)
+        return ComponentIcalParser(
+            st,
+            cls._get_component_factory(),
+            cls.types_factory,
+            encoding=encoding,
+            errors=errors,
+        )
 
     @classmethod
     def from_ical(
-        cls, st: str | bytes | Path, multiple: bool = False
+        cls,
+        st: str | bytes | Path,
+        multiple: bool = False,
+        encoding: str = "utf-8-sig",
+        errors: str = "strict",
     ) -> Component | list[Component]:
         """Parse iCalendar data into component instances.
 
@@ -553,6 +573,8 @@ class Component(CaselessDict):
             st: iCalendar data as bytes or string, or a path to an iCalendar file as
                 :class:`pathlib.Path`.
             multiple: If ``True``, returns list. If ``False``, returns single component.
+            encoding: The encoding used to decode byte input.
+            errors: The error handling scheme used when decoding byte input.
 
         Returns:
             Component or list of components
@@ -562,7 +584,7 @@ class Component(CaselessDict):
         """
         if isinstance(st, Path):
             st = st.read_bytes()
-        parser = cls._get_ical_parser(st)
+        parser = cls._get_ical_parser(st, encoding=encoding, errors=errors)
         components = parser.parse()
         if multiple:
             return components
