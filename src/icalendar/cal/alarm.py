@@ -400,9 +400,13 @@ class Alarm(Component):
         summary: str | None = None,
         uid: str | uuid.UUID | None = None,
     ) -> Self:
-        """Create a new alarm with all required properties.
+        """Create a new alarm with the given properties.
 
         This creates a new Alarm in accordance with :rfc:`5545`.
+        Note that :attr:`ACTION` and :attr:`TRIGGER` are required in a
+        conforming VALARM, but are not set by this method.
+        Use :meth:`new_display`, :meth:`new_audio` or :meth:`new_email`
+        to create a valid alarm.
 
         Parameters:
             action: The :attr:`ACTION` of the alarm. Typical values are

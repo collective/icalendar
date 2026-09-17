@@ -264,7 +264,7 @@ class Availability(Component):
         uid: str | uuid.UUID | None = None,
         url: str | None = None,
     ) -> Self:
-        """Create a new event with all required properties.
+        """Create a new Availability with all required properties.
 
         This creates a new Availability in accordance with :rfc:`7953`.
 
@@ -273,6 +273,9 @@ class Availability(Component):
             categories: The :attr:`categories` of the availability.
             classification: The :attr:`classification` of the availability.
             comments: The :attr:`~icalendar.cal.component.Component.comments` of the availability.
+            components: The :attr:`~icalendar.cal.component.Component.subcomponents`
+                of the availability, usually :class:`~icalendar.cal.available.Available`
+                components.
             concepts: The :attr:`~icalendar.cal.component.Component.concepts` of the availability.
             contacts: The :attr:`contacts` of the availability.
             created: The :attr:`~icalendar.cal.component.Component.created` of the availability.
@@ -283,6 +286,7 @@ class Availability(Component):
             links: The :attr:`~icalendar.cal.component.Component.links` of the availability.
             location: The :attr:`location` of the availability.
             organizer: The :attr:`organizer` of the availability.
+            priority: The :attr:`priority` of the availability.
             refids: :attr:`~icalendar.cal.component.Component.refids` of the availability.
             related_to: :attr:`~icalendar.cal.component.Component.related_to` of the availability.
             sequence: The :attr:`sequence` of the availability.
