@@ -210,7 +210,7 @@ class vDatetime(TimeBase):
         )
 
     def to_xcal(self) -> Element:
-        """Convert a vDate to an xCal element."""
+        """The xCal representation of this property according to :rfc:`6321`."""
         element = Element("date-time")
         text = self.dt.strftime("%Y-%m-%dT%H:%M:%S")
         if is_utc(self.dt):

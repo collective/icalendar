@@ -80,8 +80,10 @@ def data_encode(
 class XCalRegexMatcher:
     """Match a regex and provide some nice error message."""
 
-    def __init__(self, regex: str, expected_message: str, flags: int = 0):
-        self._regex = re.compile(f"^{regex}$", flags)
+    def __init__(self, regex: str | re.Pattern, expected_message: str, flags: int = 0):
+        self._regex = (
+            re.compile(f"^{regex}$", flags) if isinstance(regex, str) else regex
+        )
         self._expected_message = expected_message
 
     def match(self, element: Element, parser: type[VPROPERTY | Component]) -> re.Match:

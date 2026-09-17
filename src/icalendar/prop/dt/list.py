@@ -119,11 +119,11 @@ class vDDDLists:
         Raises:
             IndexError: If the list is empty.
         """
-        return self.dts[0]
+        return self.dts[0].dt
 
     def to_xcal(self) -> Element:
         """Convert a vDDDTypes to an xCal element."""
-        return self.dt.to_xcal()  # wrong for now
+        return self.dts[0].to_xcal()  # wrong for now
 
     @classmethod
     def from_xcal(cls, element: Element) -> Self:
