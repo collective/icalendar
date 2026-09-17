@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from icalendar.compatibility import Self
 
 REQUEST_STATUS_GRAMMAR = re.compile(
-    r"^(?P<code>[^;]*)"
+    r"^(?P<code>[\d\.]*)"
     r"(?:;(?P<description>(?:\\.|[^;\\])*)"
     r"(?:;(?P<data>.*))?)?$",
     re.MULTILINE,

@@ -136,3 +136,27 @@ def test_adding_a_request_status():
     e.add("REQUEST-STATUS", "2.0;Success")
     assert e["REQUEST-STATUS"].code == (2, 0)
     assert e["REQUEST-STATUS"].description == "Success"
+
+
+def test_invalid_request_status_does_not_error():
+    """When the request status is invalid, accessors should not error."""
+    r = vRequestStatus("invalid")
+    assert r.code == ()
+    assert r.description == ""
+    assert r.data is None
+
+
+def test_invalid_request_status_does_not_error_with_dots():
+    """When the request status is invalid, accessors should not error."""
+    r = vRequestStatus(".")
+    assert r.code == ()
+    assert r.description == ""
+    assert r.data is None
+
+
+def test_invalid_request_status_does_not_error_with_code():
+    """When the request status is invalid, accessors should not error."""
+    r = vRequestStatus(".3")
+    assert r.code == (3,)
+    assert r.description == ""
+    assert r.data is None
