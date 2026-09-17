@@ -13,7 +13,7 @@ NON_UTF8_CALENDAR = (
     b"END:VCALENDAR\r\n"
 )
 
-NON_UTF8_EVENT = b"BEGIN:VEVENT\r\n" b"SUMMARY:R\xe9union\r\n" b"END:VEVENT\r\n"
+NON_UTF8_EVENT = b"BEGIN:VEVENT\r\nSUMMARY:R\xe9union\r\nEND:VEVENT\r\n"
 
 
 def test_non_utf8_calendar_bytes_raise_invalid_calendar():
