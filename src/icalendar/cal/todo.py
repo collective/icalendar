@@ -44,6 +44,7 @@ from icalendar.attr import (
     set_duration_with_locking,
     set_end_with_locking,
     set_start_with_locking,
+    single_utc_property,
     status_property,
     summary_property,
     uid_property,
@@ -171,6 +172,32 @@ class Todo(Component):
         property_set_duration,
         property_del_duration,
         property_doc_duration_template.format(component="VTODO"),
+    )
+    COMPLETED = single_utc_property(
+        "COMPLETED",
+        """The date and time that a to-do was actually completed, per :rfc:`5545#section-3.8.2.1`.
+
+    This property defines the date and time that a to-do was actually completed.
+    The property can be specified in a "VTODO" calendar component. The value
+    MUST be specified as a date with UTC time.
+
+    Returns ``None`` when the to-do has not been marked as completed.
+    The value is always in UTC.
+
+    Example:
+        .. code-block:: pycon
+
+            >>> from datetime import timezone, datetime
+            >>> from icalendar import Todo
+            >>> UTC = timezone.utc
+            >>> todo = Todo()
+            >>> todo.COMPLETED = datetime(2007, 5, 1, 12, 0, tzinfo=UTC)
+            >>> todo.COMPLETED
+            datetime.datetime(2007, 5, 1, 12, 0, tzinfo=ZoneInfo(key='UTC'))
+
+    See also:
+        :attr:`STATUS`
+    """,
     )
 
     def _get_start_end_duration(self):
@@ -334,6 +361,7 @@ class Todo(Component):
         classification: CLASS | None = None,
         color: str | None = None,
         comments: list[str] | str | None = None,
+        completed: date | datetime | None = None,
         concepts: CONCEPTS_TYPE_SETTER = None,
         contacts: list[str] | str | None = None,
         conferences: list[Conference] | None = None,
@@ -370,6 +398,7 @@ class Todo(Component):
             classification: The :attr:`classification` of the todo.
             color: The :attr:`color` of the todo.
             comments: The :attr:`~icalendar.Component.comments` of the todo.
+            completed: The :attr:`COMPLETED` date/time of the todo.
             concepts: The :attr:`~icalendar.Component.concepts` of the todo.
             contacts: The :attr:`contacts` of the todo.
             conferences: The :attr:`conferences` of the todo.
@@ -432,6 +461,7 @@ class Todo(Component):
         todo.attachments = attachments
         todo.contacts = contacts
         todo.status = status
+        todo.COMPLETED = completed
         todo.REQUEST_STATUS = request_status
         todo.RESOURCES = resources
         todo.attendees = attendees
