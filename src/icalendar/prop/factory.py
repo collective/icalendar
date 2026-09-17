@@ -45,6 +45,7 @@ class TypesFactory(CaselessDict):
 
     _instance: ClassVar[TypesFactory | None] = None
 
+    @staticmethod
     def instance() -> TypesFactory:
         """Return a singleton instance of this class."""
         if TypesFactory._instance is None:
@@ -289,16 +290,13 @@ class TypesFactory(CaselessDict):
         Returns:
             The default jCal value type as a lowercase string.
         """
-        internal = self.types_map.get(name.lower(), "unknown")
+        internal = self.types_map.get(name, "unknown").lower()
         if internal in self._jcal_value_types:
             return internal
         # Internal keys such as ``categories`` or ``date-time-list`` are not
         # jCal value types themselves; ask the value class for the type it
         # actually serialises to.
-        try:
-            return self[internal].examples()[0].VALUE.lower()
-        except (KeyError, IndexError, AttributeError):
-            return "unknown"
+        return self[internal].default_value.lower()
 
     def to_ical(self, name, value):
         """Encodes a named value from a primitive python type to an icalendar
