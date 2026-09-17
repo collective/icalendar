@@ -13,6 +13,8 @@ from icalendar import vFloat
 from icalendar.error import XCalParsingError
 from icalendar.prop.factory import TypesFactory
 
+from .common import XML_WHITESPACE
+
 
 @pytest.mark.parametrize(
     ("python", "xml", "message"),
@@ -26,6 +28,7 @@ from icalendar.prop.factory import TypesFactory
         (-float("inf"), "-INF", "negative infinity"),
         (0.0, "-0", "0"),
         (float("nan"), "NaN", "Not a Number"),
+        (12, XML_WHITESPACE + "12" + XML_WHITESPACE, "White Space: collapse"),
     ],
 )
 def test_xsd_float_to_python(python, xml, message):
