@@ -182,7 +182,7 @@ class Todo(Component):
     MUST be specified as a date with UTC time.
 
     Returns ``None`` when the to-do has not been marked as completed.
-    The value is always in UTC. It's also accessible as :attr:`completed`.
+    The value is always in UTC.
 
     Example:
         .. code-block:: pycon
@@ -196,25 +196,9 @@ class Todo(Component):
             datetime.datetime(2007, 5, 1, 12, 0, tzinfo=ZoneInfo(key='UTC'))
 
     See also:
-        :attr:`completed`, :attr:`STATUS`
+        :attr:`STATUS`
     """,
     )
-
-    @property
-    def completed(self) -> datetime | None:
-        """Datetime when this to-do was completed, as a :class:`~datetime.datetime` in UTC.
-
-        This is the lowercase property counterpart to, and accessor for, :attr:`COMPLETED`.
-        """
-        return self.COMPLETED
-
-    @completed.setter
-    def completed(self, value: date | datetime | None) -> None:
-        self.COMPLETED = value
-
-    @completed.deleter
-    def completed(self) -> None:
-        del self.COMPLETED
 
     def _get_start_end_duration(self):
         """Verify the calendar validity and return the right attributes."""
@@ -414,7 +398,7 @@ class Todo(Component):
             classification: The :attr:`classification` of the todo.
             color: The :attr:`color` of the todo.
             comments: The :attr:`~icalendar.Component.comments` of the todo.
-            completed: The :attr:`completed` date/time of the todo.
+            completed: The :attr:`COMPLETED` date/time of the todo.
             concepts: The :attr:`~icalendar.Component.concepts` of the todo.
             contacts: The :attr:`contacts` of the todo.
             conferences: The :attr:`conferences` of the todo.
@@ -477,7 +461,7 @@ class Todo(Component):
         todo.attachments = attachments
         todo.contacts = contacts
         todo.status = status
-        todo.completed = completed
+        todo.COMPLETED = completed
         todo.REQUEST_STATUS = request_status
         todo.RESOURCES = resources
         todo.attendees = attendees
