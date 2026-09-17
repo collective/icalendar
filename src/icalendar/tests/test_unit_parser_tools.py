@@ -13,6 +13,7 @@ class TestParserTools(unittest.TestCase):
         with self.assertRaises(InvalidCalendar):
             to_unicode(b"\xc6\xb5", encoding="ascii")
         assert to_unicode(b"\xe9", errors="replace") == "\ufffd"
+        assert to_unicode(b"\xe9", encoding="cp1252") == "\u00e9"
         assert to_unicode(1) == 1
         assert to_unicode(None) is None
 

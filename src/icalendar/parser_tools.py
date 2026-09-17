@@ -44,11 +44,11 @@ def to_unicode(
     if isinstance(value, str):
         return value
     if isinstance(value, bytes):
+        if errors != "strict":
+            return value.decode(encoding, errors)
         try:
             return value.decode(encoding, errors)
         except UnicodeDecodeError as error:
-            if errors != "strict":
-                raise
             from icalendar.error import InvalidCalendar
 
             raise InvalidCalendar(INVALID_ENCODING_MESSAGE) from error
