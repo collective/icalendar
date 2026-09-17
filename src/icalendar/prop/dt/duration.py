@@ -3,9 +3,10 @@
 import re
 from datetime import timedelta
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element
 
 from icalendar.compatibility import Self
-from icalendar.error import InvalidCalendar, JCalParsingError
+from icalendar.error import InvalidCalendar, JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
 
 from .base import TimeBase
@@ -13,6 +14,8 @@ from .base import TimeBase
 DURATION_REGEX = re.compile(
     r"([-+]?)P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?\Z"
 )
+
+XCAL_DURATION_ERROR = "Expected duration format https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.6."
 
 
 class vDuration(TimeBase):
@@ -201,6 +204,38 @@ class vDuration(TimeBase):
             duration,
             Parameters.from_jcal_property(jcal_property),
         )
+
+    def to_xcal(self) -> Element:
+        """The xCal representation of this property according to :rfc:`6321`."""
+        element = Element("duration")
+        element.text = self.to_ical().decode()
+        return element
+
+    @classmethod
+    def from_xcal(cls, element: Element) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        if element.text is None:
+            raise XCalParsingError.in_property_text(
+                XCAL_DURATION_ERROR,
+                element,
+                cls,
+            )
+        try:
+            td = cls.from_ical(element.text)
+        except InvalidCalendar as e:
+            raise XCalParsingError.in_property_text(
+                XCAL_DURATION_ERROR,
+                element,
+                cls,
+            ) from e
+        return cls(td)
 
 
 __all__ = ["vDuration"]

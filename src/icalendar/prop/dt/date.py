@@ -2,12 +2,18 @@
 
 from datetime import date, datetime
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element
 
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser_tools import XCalRegexMatcher
 
 from .base import TimeBase
+
+XCAL_DATE_REGEX = XCalRegexMatcher(
+    r"(\d\d\d\d)-(\d\d)-(\d\d)", "Expected date format YYYY-MM-DD."
+)
 
 
 class vDate(TimeBase):
@@ -136,6 +142,25 @@ class vDate(TimeBase):
             value,
             params=Parameters.from_jcal_property(jcal_property),
         )
+
+    def to_xcal(self) -> Element:
+        """The xCal representation of this property according to :rfc:`6321`."""
+        element = Element("date")
+        element.text = self.dt.strftime("%Y-%m-%d")
+        return element
+
+    @classmethod
+    def from_xcal(cls, element: Element) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        year, month, day = XCAL_DATE_REGEX.groups(element, cls)
+        return cls(date(int(year), int(month), int(day)))
 
 
 __all__ = ["vDate"]

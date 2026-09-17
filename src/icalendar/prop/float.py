@@ -2,9 +2,10 @@
 
 import math
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element
 
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError
+from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
 
 
@@ -113,6 +114,53 @@ class vFloat(float):
             jcal_property[3],
             params=Parameters.from_jcal_property(jcal_property),
         )
+
+    @staticmethod
+    def from_xsd_float(xsd_float: str | None) -> float:
+        """Convert an xsd:float to a :py:`float`."""
+        if not isinstance(xsd_float, str):
+            raise TypeError("Expected xsd:float. Got None.")
+        try:
+            return float(xsd_float)
+        except (ValueError, TypeError) as e:
+            raise ValueError(f"Expected xsd:float. Got {xsd_float!r}.") from e
+
+    @staticmethod
+    def to_xsd_float(f: float) -> str:
+        """Convert a :py:`float` to an xsd:float."""
+        if math.isnan(f):
+            return "NaN"
+        if math.isfinite(f):
+            return str(f)
+        if f > 0:
+            return "INF"
+        return "-INF"
+
+    @classmethod
+    def from_xcal(cls, element: Element) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        try:
+            value = cls.from_xsd_float(element.text)
+        except (TypeError, ValueError) as e:
+            raise XCalParsingError.in_property_text(
+                "Expected xsd:float.",
+                element,
+                cls,
+            ) from e
+        return cls(value)
+
+    def to_xcal(self) -> Element:
+        """The xCal representation of this property according to :rfc:`6321`."""
+        element = Element(self.default_value.lower())
+        element.text = self.to_xsd_float(self)
+        return element
 
 
 __all__ = ["vFloat"]

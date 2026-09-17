@@ -1,3 +1,18 @@
+"""Tools for parsing."""
+
+from __future__ import annotations
+
+import re
+from typing import TYPE_CHECKING
+
+from icalendar.error import XCalParsingError
+
+if TYPE_CHECKING:
+    from xml.etree.ElementTree import Element
+
+    from icalendar.cal.component import Component
+    from icalendar.prop import VPROPERTY
+
 SEQUENCE_TYPES = (list, tuple)
 DEFAULT_ENCODING = "utf-8"
 ICAL_TYPE = str | bytes
@@ -62,10 +77,56 @@ def data_encode(
     return data
 
 
+class XCalRegexMatcher:
+    """Match a regex and provide some nice error message."""
+
+    def __init__(self, regex: str | re.Pattern, expected_message: str, flags: int = 0):
+        self._regex = (
+            re.compile(f"^{regex}$", flags) if isinstance(regex, str) else regex
+        )
+        self._expected_message = expected_message
+
+    def match(self, element: Element, parser: type[VPROPERTY | Component]) -> re.Match:
+        """Return the match for the element.
+
+        Parameters:
+            element: The element to match the text from.
+
+        Returns:
+            The match if successful.
+
+        Raises:
+            ~icalendar.error.XCalParsingError: If the provided xCal is invalid.
+        """
+        match = self._regex.match(element.text or "")
+        if match is None:
+            raise XCalParsingError.in_property_text(
+                self._expected_message,
+                element,
+                parser,
+            )
+        return match
+
+    def groups(self, element: Element, parser: type[VPROPERTY | Component]):
+        """Return the match groups for the element.
+
+        Parameters:
+            element: The element to match the text from.
+
+        Returns:
+            The groups of the match if successful.
+
+        Raises:
+            ~icalendar.error.XCalParsingError: If the provided xCal is invalid.
+        """
+        return self.match(element, parser).groups()
+
+
 __all__ = [
     "DEFAULT_ENCODING",
     "ICAL_TYPE",
     "SEQUENCE_TYPES",
+    "XCalRegexMatcher",
     "data_encode",
     "from_unicode",
     "to_unicode",

@@ -1,6 +1,7 @@
 from collections.abc import Sequence
 from datetime import date, datetime
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element
 
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
@@ -105,6 +106,36 @@ class vDDDLists:
         )
 
     __hash__ = None
+
+    @property
+    def dt(self) -> TimeBase:
+        """Return the time/date value of the list.
+
+        This is a compatibility method for the vDDDTypes interface.
+
+        Returns:
+            The first value of the list.
+
+        Raises:
+            IndexError: If the list is empty.
+        """
+        return self.dts[0].dt
+
+    def to_xcal(self) -> Element:
+        """Convert a vDDDTypes to an xCal element."""
+        return self.dts[0].to_xcal()  # wrong for now
+
+    @classmethod
+    def from_xcal(cls, element: Element) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        return cls(vDDDTypes.from_xcal(element))
 
 
 __all__ = ["vDDDLists"]

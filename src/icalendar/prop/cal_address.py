@@ -1,6 +1,7 @@
 """CAL-ADDRESS values from :rfc:`5545`."""
 
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element
 
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
@@ -278,6 +279,24 @@ class vCalAddress(str):
             jcal_property[3],
             params=Parameters.from_jcal_property(jcal_property),
         )
+
+    @classmethod
+    def from_xcal(cls, element: Element) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        return cls(element.text or "")
+
+    def to_xcal(self) -> Element:
+        """The xCal representation of this property according to :rfc:`6321`."""
+        element = Element("cal-address")
+        element.text = self.ical_value
+        return element
 
 
 __all__ = ["vCalAddress"]

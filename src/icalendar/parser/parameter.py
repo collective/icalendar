@@ -7,6 +7,7 @@ import os
 import re
 from datetime import datetime, time
 from typing import TYPE_CHECKING, Any, Protocol
+from xml.etree.ElementTree import Element
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.compatibility import deprecate_for_version_8
@@ -21,8 +22,10 @@ from icalendar.timezone.tzid import tzid_from_dt
 if TYPE_CHECKING:
     from collections.abc import Callable, Sequence
 
+    from icalendar.compatibility import Self
     from icalendar.enums import VALUE
     from icalendar.prop import VPROPERTY
+    from icalendar.prop.factory import TypesFactory
 
 
 class HasToIcal(Protocol):
@@ -523,6 +526,87 @@ class Parameters(CaselessDict):
         if self.is_utc():
             del self.tzid  # we do not want this parameter
         return self
+
+    @classmethod
+    def from_xcal(cls, element: Element) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+
+        Returns:
+            :Parameters: The parsed parameters.
+
+        Example:
+
+            This parses the parameters from an xCal string.
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Parameters
+                >>> from xml.etree.ElementTree import fromstring
+                >>> xcal_string = '''
+                ... <parameters>
+                ...     <language>
+                ...         <text>en-US</text>
+                ...     </language>
+                ... </parameters>
+                ... '''
+                >>> xml_element = fromstring(xcal_string)
+                >>> parameters = Parameters.from_xcal(xml_element)
+                >>> parameters.LANGUAGE
+                'en-US'
+
+        """
+        parameters = cls()
+        factory = cls.get_xcal_type_factory()
+        for parameter_element in element:
+            key = parameter_element.tag
+            values = []
+            for value_element in parameter_element:
+                v_property = factory.for_property(key, value_element.tag)
+                values.append(v_property.from_xcal(value_element).ical_value)
+            if len(values) == 1:
+                parameters[key] = values[0]
+            else:
+                parameters[key] = values
+        return parameters
+
+    @staticmethod
+    def get_xcal_type_factory() -> TypesFactory:
+        """Get the type factory for xCal serialization."""
+        from icalendar.prop.factory import TypesFactory
+
+        return TypesFactory.instance()
+
+    def to_xcal(self) -> Element:
+        """The xCal representation of the parameters according to :rfc:`6321`."""
+        result = Element("parameters")
+        factory = self.get_xcal_type_factory()
+        for key in self:
+            value_factory = factory.for_property(key)
+            param_element = Element(key.lower())
+            for value in self.get_multiple(key):
+                v_value = value_factory(value)
+                value_element = v_value.to_xcal()
+                param_element.append(value_element)
+            result.append(param_element)
+        return result
+
+    def get_multiple(self, key: str) -> list:
+        """Get mulitple values as a list.
+
+        .. note::
+
+            Do not modify the list. This is only for iteration.
+        """
+        result = self.get(key, [])
+        if not isinstance(result, list):
+            return [result]
+        return result
 
 
 RFC_6868_UNESCAPE_REGEX = re.compile(r"\^\^|\^n|\^'")
