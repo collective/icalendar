@@ -1,0 +1,1 @@
+Create :class:`~icalendar.prop.request_status.vRequestStatus` with convenience methods for parsing and creation. @niccokunzmann
