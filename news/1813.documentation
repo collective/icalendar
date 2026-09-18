@@ -1,0 +1,1 @@
+Added `IDEs` to the vale spelling vocabulary so the documentation build passes again. AI-assisted: Claude was used to locate the failing vale rule from the CI log and draft the change; the fix was manually verified against the workflow output. @sandeep780049
