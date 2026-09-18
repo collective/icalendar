@@ -7,7 +7,7 @@ from datetime import date, datetime, timezone
 
 import pytest
 
-from icalendar import Calendar, Event
+from icalendar import Calendar, Event, is_utc
 from icalendar.error import InvalidCalendar
 from icalendar.prop import vDDDTypes
 
@@ -65,6 +65,7 @@ def test_duplicate_with_other_timezone_returns_earliest_instant(tzp):
     event.add("DTSTAMP", utc_noon)
     event["DTSTAMP"] = [event["DTSTAMP"], new_york_half_past_six]
     assert event.stamp == datetime(2021, 1, 1, 11, 30, tzinfo=UTC)
+    assert is_utc(event.stamp)
 
 
 def test_duplicate_with_date_returns_earliest_after_midnight_utc(tzp):
