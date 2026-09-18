@@ -1,0 +1,1 @@
+Made singleton UTC properties such as ``DTSTAMP``, ``CREATED`` and ``LAST-MODIFIED`` tolerate duplication in broken calendars by returning the earliest timestamp instead of raising ``InvalidCalendar``. Stored duplicates are preserved for serialization. Values that cannot be datetimes still raise. Drafted with Claude Sonnet 5, reviewed by me. @SemTiOne

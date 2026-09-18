@@ -445,6 +445,18 @@ def single_int_property(
     return property(fget, fset, fdel, doc)
 
 
+def _decode_single_utc_value(name: str, value: object) -> date | datetime:
+    """Extract and check one datetime value of a singleton UTC property."""
+    if isinstance(value, (vText, vUnknown)):
+        # we might be in an attribute that is not typed
+        value = vDDDTypes.from_ical(value)
+    else:
+        value = getattr(value, "dt", value)
+    if not isinstance(value, date):
+        raise InvalidCalendar(f"{name} must be a datetime in UTC, not {value}")
+    return value
+
+
 def single_utc_property(name: str, docs: str) -> property:
     """Create a property to access a value of datetime in UTC timezone.
 
@@ -458,14 +470,14 @@ def single_utc_property(name: str, docs: str) -> property:
         if name not in self:
             return None
         dt = self.get(name)
-        if isinstance(dt, (vText, vUnknown)):
-            # we might be in an attribute that is not typed
-            value = vDDDTypes.from_ical(dt)
-        else:
-            value = getattr(dt, "dt", dt)
-        if value is None or not isinstance(value, date):
-            raise InvalidCalendar(f"{name} must be a datetime in UTC, not {value}")
-        return tzp.localize_utc(value)
+        if isinstance(dt, list):
+            # Broken calendars repeat singleton properties. Keep every value
+            # for serialization, but return the earliest one for reading.
+            values = [_decode_single_utc_value(name, item) for item in dt]
+            if not values:
+                raise InvalidCalendar(f"{name} must be a datetime in UTC, not {dt}")
+            return min(tzp.localize_utc(value) for value in values)
+        return tzp.localize_utc(_decode_single_utc_value(name, dt))
 
     def fset(self: Component, value: datetime | None):
         """Set the value"""
