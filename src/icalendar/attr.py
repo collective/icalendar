@@ -34,7 +34,7 @@ if TYPE_CHECKING:
     from icalendar.cal import Component
 
 
-class HasStartEndDuration(Protocol):
+class HasStartEndDuration(Protocol):  # pragma: no cover
     """Structural contract for components with start, end and duration.
 
     :class:`~icalendar.cal.event.Event` and
