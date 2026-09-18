@@ -186,6 +186,17 @@ class Event(Component):
             UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
             END:VEVENT
 
+        Get the example Event:
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Event
+            >>> event = Event.example()
+            >>> print(event["SUMMARY"])
+            Meeting
+            >>> len(event.alarms.times)
+            2
+
     """
 
     name = "VEVENT"
@@ -272,7 +283,17 @@ class Event(Component):
 
     @classmethod
     def example(cls, name: str = "rfc_9074_example_3") -> Event:
-        """Return the calendar example with the given name."""
+        """Return the event example with the given name.
+
+        Example:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Event
+                >>> event = Event.example()
+                >>> print(event["SUMMARY"])
+                Meeting
+        """
         return cls.from_ical(get_example("events", name))
 
     DTSTART = create_single_property(

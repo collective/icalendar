@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from collections import defaultdict
 from datetime import date, datetime, timedelta, tzinfo
-from typing import TYPE_CHECKING
 
 import dateutil.rrule
 import dateutil.tz
@@ -22,15 +21,25 @@ from icalendar.timezone import TZP, tzp
 from icalendar.timezone.tzid import tzid_from_tzinfo
 from icalendar.tools import to_datetime
 
-if TYPE_CHECKING:
-    from icalendar.cal import Calendar
-
 
 class Timezone(Component):
     """
     A "VTIMEZONE" calendar component is a grouping of component
     properties that defines a time zone. It is used to describe the
     way in which a time zone changes its offset from UTC over time.
+
+    Examples:
+        Get the example Timezone.
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Timezone
+            >>> timezone = Timezone.example()
+            >>> print(timezone["TZID"])
+            custom_Pacific/Fiji
+            >>> len(timezone.subcomponents)
+            5
+
     """
 
     subcomponents: list[TimezoneStandard | TimezoneDaylight]
@@ -48,8 +57,18 @@ class Timezone(Component):
     DEFAULT_LAST_DATE = date(2038, 1, 1)
 
     @classmethod
-    def example(cls, name: str = "pacific_fiji") -> Calendar:
-        """Return the timezone example with the given name."""
+    def example(cls, name: str = "pacific_fiji") -> Timezone:
+        """Return the timezone example with the given name.
+
+        Example:
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Timezone
+                >>> timezone = Timezone.example()
+                >>> print(timezone["TZID"])
+                custom_Pacific/Fiji
+        """
         return cls.from_ical(get_example("timezones", name))
 
     @staticmethod
