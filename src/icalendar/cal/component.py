@@ -527,12 +527,14 @@ class Component(CaselessDict):
     @overload
     @classmethod
     def from_ical(
-        cls, st: str | bytes, multiple: Literal[False] = False
+        cls, st: str | bytes | Path, multiple: Literal[False] = False
     ) -> Component: ...
 
     @overload
     @classmethod
-    def from_ical(cls, st: str | bytes, multiple: Literal[True]) -> list[Component]: ...
+    def from_ical(
+        cls, st: str | bytes | Path, multiple: Literal[True]
+    ) -> list[Component]: ...
 
     @classmethod
     def _get_ical_parser(cls, st: str | bytes) -> ComponentIcalParser:
@@ -549,7 +551,7 @@ class Component(CaselessDict):
 
         Parameters:
             st: iCalendar data as bytes or string, or a path to an iCalendar file as
-                :class:`pathlib.Path` or string.
+                :class:`pathlib.Path`.
             multiple: If ``True``, returns list. If ``False``, returns single component.
 
         Returns:
@@ -560,22 +562,6 @@ class Component(CaselessDict):
         """
         if isinstance(st, Path):
             st = st.read_bytes()
-        elif isinstance(st, str) and "\n" not in st and "\r" not in st:
-            # A string is only probed as a file path when it contains no line
-            # breaks. Valid iCalendar data is always folded with CRLF line
-            # endings (RFC 5545), so real calendar content never reaches this
-            # branch and is never read from disk. File paths, conversely, do
-            # not contain line breaks on the platforms we support.
-            try:
-                is_file = Path(st).is_file()
-            except (OSError, ValueError):
-                # The string is not usable as a path on this platform (e.g. it
-                # is too long, or contains characters the OS rejects such as an
-                # embedded null byte). Treat it as calendar data, not a file, so
-                # the parser raises a consistent ValueError across platforms.
-                is_file = False
-            if is_file:
-                st = Path(st).read_bytes()
         parser = cls._get_ical_parser(st)
         components = parser.parse()
         if multiple:
@@ -727,7 +713,7 @@ class Component(CaselessDict):
                 )
         return child_result
 
-    DTSTAMP = stamp = single_utc_property(
+    DTSTAMP = single_utc_property(
         "DTSTAMP",
         """The UTC datetime stamp recording when this component instance was created or last revised.
 
@@ -751,10 +737,26 @@ class Component(CaselessDict):
             datetime.datetime(2024, 6, 1, 12, 0, tzinfo=ZoneInfo(key='UTC'))
 
     See also:
-        :attr:`CREATED`, :attr:`DTSTAMP`, :attr:`LAST_MODIFIED`,
+        :attr:`CREATED`, :attr:`LAST_MODIFIED`,
         :attr:`created`, :attr:`stamp`, :attr:`last_modified`
     """,
     )
+
+    @property
+    def stamp(self) -> datetime | None:
+        """Datetime stamp of this component, as a :class:`~datetime.datetime` in UTC.
+
+        This is the lowercase property counterpart to, and accessor for, :attr:`DTSTAMP`.
+        """
+        return self.DTSTAMP
+
+    @stamp.setter
+    def stamp(self, value: datetime) -> None:
+        self.DTSTAMP = value
+
+    @stamp.deleter
+    def stamp(self) -> None:
+        del self.DTSTAMP
 
     LAST_MODIFIED = single_utc_property(
         "LAST-MODIFIED",
@@ -777,7 +779,7 @@ class Component(CaselessDict):
             datetime.datetime(2024, 6, 1, 9, 0, tzinfo=ZoneInfo(key='UTC'))
 
     See also:
-        :attr:`CREATED`, :attr:`DTSTAMP`, :attr:`LAST_MODIFIED`,
+        :attr:`CREATED`, :attr:`DTSTAMP`,
         :attr:`created`, :attr:`stamp`, :attr:`last_modified`
     """,
     )
@@ -854,7 +856,7 @@ class Component(CaselessDict):
             datetime.datetime(2024, 1, 1, 8, 0, tzinfo=ZoneInfo(key='UTC'))
 
     See also:
-        :attr:`CREATED`, :attr:`DTSTAMP`, :attr:`LAST_MODIFIED`,
+        :attr:`DTSTAMP`, :attr:`LAST_MODIFIED`,
         :attr:`created`, :attr:`stamp`, :attr:`last_modified`
     """,
     )

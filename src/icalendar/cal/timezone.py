@@ -23,7 +23,7 @@ from icalendar.timezone.tzid import tzid_from_tzinfo
 from icalendar.tools import to_datetime
 
 if TYPE_CHECKING:
-    from icalendar.cal.calendar import Calendar
+    from icalendar.cal import Calendar
 
 
 class Timezone(Component):
