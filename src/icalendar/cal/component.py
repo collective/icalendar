@@ -126,6 +126,25 @@ class Component(CaselessDict):
     subcomponents: list[Component]
     """All subcomponents of this component."""
 
+    errors: list[tuple[str | None, str]]
+    """Errors collected while parsing this component.
+
+    When :attr:`ignore_exceptions` is ``True``, parse failures are stored here
+    instead of being raised. Each item is ``(property_name, message)``.
+    ``property_name`` is ``None`` when the content line is not a property.
+
+    Example:
+
+        ..  code-block:: pycon
+
+            >>> from icalendar import Calendar, Event
+            >>> Event.example("issue_104_mark_events_broken").errors
+            [(None, "Content line could not be parsed into parts: 'X': Invalid content line")]
+            >>> Calendar.example("issue_1081_invalid_start_and_end").events[0].errors
+            [('DTSTART', "Expected datetime, date, or time. Got: 'INVALID-DATE'"), ('DTEND', "Expected datetime, date, or time. Got: 'ALSO-INVALID'")]
+
+    """
+
     @classmethod
     def _get_component_factory(cls) -> ComponentFactory:
         """Get the component factory."""
