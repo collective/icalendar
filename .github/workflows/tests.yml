@@ -48,9 +48,10 @@ jobs:
       if: ${{ !matrix.skip }}
     - name: Install uv and Python ${{ matrix.python_version }}
       if: ${{ !matrix.skip }}
-      uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+      uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
       with:
-        enable-cache: false
+        # zizmor: ignore[cache-poisoning] - run-tests does not produce release artifacts
+        enable-cache: true
         # Install a specific version of uv.
         version: "0.11.6"
         python-version: ${{ matrix.python_version }}
@@ -95,12 +96,12 @@ jobs:
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
     - name: Install uv and Python
-      uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+      uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
       with:
         enable-cache: false
         version: "0.11.6"
     - name: Check the release files
-      run: src/icalendar/tests/test_create_release.sh
+      run: make test-dist
 
   deploy-tag-to-pypi:
     # only deploy on tags, see https://stackoverflow.com/a/58478262/1320237
