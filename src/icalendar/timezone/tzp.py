@@ -82,6 +82,7 @@ class TZP:
         """Return the value in UTC.
 
         If the value has no timezone, set UTC as its timezone.
+        Otherwise, the same date/time in UTC is returned.
 
         Returns:
             -   A localized :class:`datetime.datetime` in UTC when a
