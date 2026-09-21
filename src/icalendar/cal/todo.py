@@ -203,7 +203,17 @@ class Todo(Component):
 
     @start.setter
     def start(self, start: date | datetime | None):
-        """Set the start."""
+        """Set the start of the VTODO.
+
+        Sets the ``DTSTART`` property. Pass ``None`` to remove it.
+
+        Parameters:
+            start: The start as :class:`datetime.date` or
+                :class:`datetime.datetime`, or ``None`` to remove ``DTSTART``.
+
+        See also:
+            :attr:`end`, :attr:`duration`
+        """
         self.DTSTART = start
 
     @property
@@ -217,7 +227,17 @@ class Todo(Component):
 
     @end.setter
     def end(self, end: date | datetime | None):
-        """Set the end."""
+        """Set the end of the VTODO.
+
+        Sets the ``DUE`` property. Pass ``None`` to remove it.
+
+        Parameters:
+            end: The end as :class:`datetime.date` or
+                :class:`datetime.datetime`, or ``None`` to remove ``DUE``.
+
+        See also:
+            :attr:`start`, :attr:`duration`
+        """
         self.DUE = end
 
     @property
