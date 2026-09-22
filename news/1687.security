@@ -1,0 +1,1 @@
+Pinned GitHub Action steps to commit hashes across the workflows (cifuzz, ruff, tests, pr-quality, profile-contributors, uv-setup) to close the cache-poisoning and credential-persistence findings zizmor flagged. I used AI to assist me with this change. @vjymisal0

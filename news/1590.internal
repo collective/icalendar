@@ -1,0 +1,1 @@
+Run the slow PyPy test job only after changes are merged or pushed to ``main`` instead of on pull request approvals, release branches, tags, or scheduled workflows. I used GPT-5.6 to assist with the workflow condition and regression tests. @Solaris-star

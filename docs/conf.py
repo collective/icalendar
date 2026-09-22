@@ -100,7 +100,7 @@ html_theme_options = {
     "secondary_sidebar_items": ["edit-this-page", "page-toc", "sourcelink"],
     "show_nav_level": 2,
     "show_toc_level": 2,
-    "show_version_warning_banner": False,
+    "show_version_warning_banner": True,
     "switcher": {
         "json_url": json_url,
         "version_match": version_match,
@@ -147,6 +147,17 @@ linkcheck_ignore = [
 linkcheck_anchors = True
 linkcheck_timeout = 5
 linkcheck_retries = 1
+
+
+# -- nitpicky mode options ----------------------------------
+# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-the-nitpicky-mode
+# Use `make clean livehtml SPHINXOPTS="-n"`
+nitpick_ignore_regex = [
+    (
+        r"py:.*",
+        r"icalendar\.prop.*",
+    ),  # Ignore old change log entry from before the re-org in 7.0.0a1
+]
 
 
 # -- notfound.extension configuration ----------------------------------
