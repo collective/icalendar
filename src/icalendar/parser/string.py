@@ -59,7 +59,7 @@ escape_char = deprecate_for_version_8(_escape_char)
 """Format value according to iCalendar TEXT escaping rules.
 
 .. deprecated:: 7.0.0
-    Use the private :func:`_escape_char` internally. For external use,
+    Use the private ``_escape_char`` internally. For external use,
     this function is deprecated. Please use alternative escaping methods
     or contact the maintainers.
 """
@@ -68,7 +68,7 @@ escape_char = deprecate_for_version_8(_escape_char)
 def _unescape_char(text: str | bytes) -> str | bytes:
     r"""Unescape iCalendar TEXT values.
 
-    Reverses the escaping applied by :func:`_escape_char` according to
+    Reverses the escaping applied by ``_escape_char`` according to
     :rfc:`5545#section-3.3.11` TEXT escaping rules.
 
     Parameters:
@@ -116,7 +116,7 @@ unescape_char = deprecate_for_version_8(_unescape_char)
 """Unescape iCalendar TEXT values.
 
 .. deprecated:: 7.0.0
-    Use the private :func:`_unescape_char` internally. For external use,
+    Use the private ``_unescape_char`` internally. For external use,
     this function is deprecated. Please use alternative unescaping methods
     or contact the maintainers.
 """
@@ -173,7 +173,7 @@ foldline = deprecate_for_version_8(_foldline)
 """Make a string folded as defined in RFC5545.
 
 .. deprecated:: 7.0.0
-    Use the private :func:`_foldline` internally.
+    Use the private ``_foldline`` internally.
 """
 
 
@@ -201,7 +201,7 @@ def _escape_string(val: str) -> str:
 
         A literal ``%`` is escaped first so that percent sequences already in
         the value (e.g. ``%2C`` in a URI) are not confused with the markers
-        introduced here. :func:`_unescape_string` reverses it.
+        introduced here. ``_unescape_string`` reverses it.
     """
     # f'{i:02X}'
     return (
@@ -217,7 +217,7 @@ escape_string = deprecate_for_version_8(_escape_string)
 """Escape backslash sequences to URL-encoded hex values.
 
 .. deprecated:: 7.0.0
-    Use the private :func:`_escape_string` internally. For external use,
+    Use the private ``_escape_string`` internally. For external use,
     this function is deprecated.
 """
 
@@ -225,7 +225,7 @@ escape_string = deprecate_for_version_8(_escape_string)
 def _unescape_string(val: str) -> str:
     r"""Unescape URL-encoded hex values to their original characters.
 
-    Reverses :func:`_escape_string` by converting percent-encoded hex values
+    Reverses ``_escape_string`` by converting percent-encoded hex values
     back to their original characters. This is used for parameter parsing.
 
     Parameters:
@@ -243,7 +243,7 @@ def _unescape_string(val: str) -> str:
         - ``%5C`` -> ``\``
         - ``%25`` -> ``%``
 
-        ``%25`` is restored last so a literal ``%`` that :func:`_escape_string`
+        ``%25`` is restored last so a literal ``%`` that ``_escape_string``
         protected does not re-trigger the marker replacements above.
     """
     return (
@@ -259,7 +259,7 @@ unescape_string = deprecate_for_version_8(_unescape_string)
 """Unescape URL-encoded hex values to their original characters.
 
 .. deprecated:: 7.0.0
-    Use the private :func:`_unescape_string` internally. For external use,
+    Use the private ``_unescape_string`` internally. For external use,
     this function is deprecated.
 """
 
