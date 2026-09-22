@@ -126,7 +126,6 @@ def test_from_jcal(text, code, description, data, text_serialized):
     """Check that jcal round trip preserves semicolon escape."""
     request_status = vRequestStatus.new(code, description, data)
     jcal = request_status.to_jcal("request-status")
-    print(jcal)
     round_tripped_request_status = request_status.from_jcal(jcal)
     assert request_status == round_tripped_request_status
 
