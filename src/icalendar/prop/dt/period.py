@@ -116,7 +116,7 @@ class vPeriod(TimeBase):
             >>> vPeriod(vPeriod.from_ical("19970101/19970102")).to_ical()
             b'19970101T000000/19970102T000000'
 
-    ..  versionchanged:: 7.2.3
+    ..  versionchanged:: 7.3.0
 
         A period written with dates is read as midnight.
     """

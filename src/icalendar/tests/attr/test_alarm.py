@@ -60,7 +60,7 @@ def test_add_REPEAT():
 def test_invalid_repeat_value():
     """Check setting the value."""
     a = Alarm()
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         a.REPEAT = "asd"
     a["REPEAT"] = "asd"
     with pytest.raises(InvalidCalendar):

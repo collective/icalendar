@@ -1,1 +1,0 @@
-Updated the ai-prompt-auto-commit configuration to v0.0.9 and restored the missing Claude Code settings. I used GPT-5.6 Luna to assist with researching the issue, reviewing the repository configuration, and drafting the changes; I reviewed and validated the changes locally. @akkiyolo

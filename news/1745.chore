@@ -1,0 +1,1 @@
+Added a return type hint to :meth:`~icalendar.timezone.tzp.TZP.use`. I used AI to assist me with this change. @chintakuntaharshavardhanreddy
