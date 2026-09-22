@@ -38,6 +38,7 @@ src"
 
 if [ "$ROOT_ENTRIES" != "$EXPECTED_ROOT_ENTRIES" ]; then
   echo "ERROR: Source distribution root entries differ from the reviewed allowlist."
+  echo "       See https://github.com/collective/icalendar/issues/1695"
   diff -u <(printf '%s\n' "$EXPECTED_ROOT_ENTRIES") <(printf '%s\n' "$ROOT_ENTRIES") || true
   exit 1
 fi
