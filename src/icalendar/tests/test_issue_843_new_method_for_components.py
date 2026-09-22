@@ -32,7 +32,7 @@ from icalendar import (
     vCalAddress,
 )
 from icalendar.enums import BUSYTYPE
-from icalendar.prop import vText, vUid, vUri, vXmlReference
+from icalendar.prop import vBinary, vText, vUid, vUri, vXmlReference
 
 from .conftest import NOW_UTC, UID_DEFAULT
 
@@ -90,7 +90,9 @@ COMPONENTS_CONTACT = {Event, Todo, Journal, FreeBusy, Available, Availability}
 COMPONENTS_START_END = {Event, Todo, FreeBusy, Available, Availability}
 COMPONENTS_STATUS = {Event, Todo, Journal}
 COMPONENTS_REQUEST_STATUS = {Event, Todo, Journal, FreeBusy}
+COMPONENTS_RESOURCES = {Event, Todo}
 COMPONENTS_ATTENDEES = {Event, Todo, Journal, Alarm}
+COMPONENTS_ATTACHMENTS = {Alarm, Event, Journal, Todo}
 # RFC 9253 properties are defines on ALL
 # So, if you add new components, do not forget to add them here.
 COMPONENTS_LINKS = COMPONENTS_RELATED_TO = COMPONENTS_CONCEPTS = COMPONENTS_REFID = {
@@ -764,6 +766,72 @@ new_test_cases = [
         True,
         "two attendees",
     ),
+    (
+        COMPONENTS_ATTENDEES,
+        "attendees",
+        "ATTENDEE",
+        "plain@example.com",
+        [vCalAddress("mailto:plain@example.com")],
+        True,
+        "a plain email string is normalized to a vCalAddress",
+    ),
+    (
+        COMPONENTS_ATTENDEES,
+        "attendees",
+        "ATTENDEE",
+        "mailto:prefixed@example.net",
+        [vCalAddress("mailto:prefixed@example.net")],
+        True,
+        "a mailto: string is not prefixed twice",
+    ),
+    (
+        COMPONENTS_ATTENDEES,
+        "attendees",
+        "ATTENDEE",
+        ["plain@example.com", "mailto:prefixed@example.net"],
+        [
+            vCalAddress("mailto:plain@example.com"),
+            vCalAddress("mailto:prefixed@example.net"),
+        ],
+        True,
+        "a list of plain and mailto: strings is normalized",
+    ),
+    (
+        COMPONENTS_ATTACHMENTS,
+        "attachments",
+        "ATTACH",
+        None,
+        [],
+        False,
+        "no attachments by default",
+    ),
+    (
+        COMPONENTS_ATTACHMENTS,
+        "attachments",
+        "ATTACH",
+        [],
+        [],
+        False,
+        "no attachments when empty list given",
+    ),
+    (
+        COMPONENTS_ATTACHMENTS,
+        "attachments",
+        "ATTACH",
+        ["https://example.com/a.pdf"],
+        [vUri("https://example.com/a.pdf")],
+        True,
+        "one URI attachment",
+    ),
+    (
+        COMPONENTS_ATTACHMENTS,
+        "attachments",
+        "ATTACH",
+        [vUri("https://example.com/a.pdf"), vBinary(b"bytes")],
+        [vUri("https://example.com/a.pdf"), vBinary(b"bytes")],
+        True,
+        "URI and binary attachment",
+    ),
 ]
 
 rfc_7986_test_cases = [
@@ -997,6 +1065,33 @@ rfc_9253_test_cases = [
         ["2.0;Success", "3.1;Invalid property value"],
         True,
         "set two values",
+    ),
+    (
+        COMPONENTS_RESOURCES,
+        "RESOURCES",
+        "RESOURCES",
+        None,
+        [],
+        False,
+        "setting nothing",
+    ),
+    (
+        COMPONENTS_RESOURCES,
+        "RESOURCES",
+        "RESOURCES",
+        "EASEL",
+        ["EASEL"],
+        True,
+        "set a value",
+    ),
+    (
+        COMPONENTS_RESOURCES,
+        "RESOURCES",
+        "RESOURCES",
+        ["EASEL", "PROJECTOR", "VCR"],
+        ["EASEL", "PROJECTOR", "VCR"],
+        True,
+        "set several values",
     ),
 ]
 

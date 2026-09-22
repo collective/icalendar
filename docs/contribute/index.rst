@@ -22,6 +22,7 @@ Examples of how to contribute
 -   Submit pull requests from your fork of the icalendar repository.
 -   Extend the :doc:`documentation/index`.
 -   Create or comment on a topic in `Discussions <https://github.com/collective/icalendar/discussions>`_.
+-   Join a live chat with icalendar team members in the `icalendar room <https://matrix.to/#/%23icalendar:chat.pycal.org>`_ or its parent organization in the `Python Calendaring Ecosystem (PyCal) space <https://matrix.to/#/%23pycal:chat.pycal.org>`_ via `Matrix <https://matrix.org/>`_.
 -   Write a blog post about icalendar.
 -   Share announcements on social media from :doc:`core contributors <credits>` to icalendar.
 -   Sponsor development of icalendar through `Open Collective <https://opencollective.com/python-icalendar>`_.
@@ -266,11 +267,11 @@ Write a good change log entry
 
     These change log entries become narrative documentation.
 
-The content of this file must include the following.
+The content of this file must be on a single line and include the following.
 
--   A brief message that summarizes the changes in your contribution.
+-   A *brief* message that summarizes the changes in your contribution.
 -   Use :ref:`reStructuredText markup <markup-examples>` to link to relevant RFCs, API usage, and other references.
--   A brief disclosure of AI use, per icalendar's :ref:`responsible-ai-use` policy, if applicable.
+-   A *brief* disclosure of AI use, per icalendar's :ref:`responsible-ai-use` policy, if applicable.
 -   An attribution to yourself, in the format of ``@github_username``, at the end of the entry.
 
 You can write a good change log entry with the following guidance.

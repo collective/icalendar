@@ -56,4 +56,6 @@ To indicate that you completed an item, place an `x` inside the checkbox, such a
 
 ## Additional information
 
+<!--
 Upload screenshots, videos, links to documentation, or any other relevant information.
+-->
