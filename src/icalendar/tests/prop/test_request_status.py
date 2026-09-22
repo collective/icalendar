@@ -3,6 +3,7 @@
 import pytest
 
 from icalendar import Event, vRequestStatus, vText
+from icalendar.error import JCalParsingError
 
 
 def test_request_status_is_text():
@@ -158,5 +159,41 @@ def test_invalid_request_status_does_not_error_with_code():
     """When the request status is invalid, accessors should not error."""
     r = vRequestStatus(".3")
     assert r.code == (3,)
+    assert r.description == ""
+    assert r.data is None
+
+
+def test_jcal_invaild_request_status():
+    """The request status can have an unexpected length.
+
+    See https://github.com/collective/icalendar/pull/1792#discussion_r4040271630
+    """
+    r = vRequestStatus.from_jcal(
+        ["request-status", {}, "text", ["2.0", "Success", "data1", "data2"]]
+    )
+    assert r.code == (2, 0)
+    assert r.description == "Success"
+    assert r.data == "data1;data2"
+
+
+@pytest.mark.parametrize("index", [0, 1, 2, 3])
+@pytest.mark.parametrize("wrong_data", [0, None, 1.2])
+def test_jcal_typing_of_request_status_content(index, wrong_data):
+    """The request status is a text."""
+    status_list = ["2.0", "Success", "data1", "data2"]
+    status_list[index] = wrong_data
+    with pytest.raises(JCalParsingError) as error:
+        vRequestStatus.from_jcal(["request-status", {}, "text", status_list])
+    assert "Each item in the list must be a string." in str(error.value)
+    assert error.value.parser == "vRequestStatus"
+    assert error.value.path == [3, index]
+
+
+@pytest.mark.parametrize("length", [0, 1])
+def test_jcal_too_short(length):
+    """The request status is a text."""
+    status_list = ["2.0"][:length]
+    r = vRequestStatus.from_jcal(["request-status", {}, "text", status_list])
+    assert r.code == ((2, 0) if length == 1 else ())
     assert r.description == ""
     assert r.data is None

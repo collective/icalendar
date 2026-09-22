@@ -162,9 +162,12 @@ class vRequestStatus(vText):
             ~error.JCalParsingError: If the provided jCal is invalid.
         """
         JCalParsingError.validate_property(jcal_property, cls)
-        JCalParsingError.validate_list_type(jcal_property[3], str, cls, 3)
+        status_list = jcal_property[3]
+        JCalParsingError.validate_list_type(status_list, str, cls, 3)
         return cls.new(
-            *jcal_property[3],
+            code=status_list[0] if len(status_list) > 0 else (),
+            description=status_list[1] if len(status_list) > 1 else "",
+            data=";".join(status_list[2:]) if len(status_list) > 2 else None,
             params=Parameters.from_jcal_property(jcal_property),
         )
 
