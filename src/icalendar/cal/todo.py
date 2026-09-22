@@ -208,7 +208,7 @@ class Todo(Component):
         Sets the ``DTSTART`` property. Pass ``None`` to remove it.
 
         Parameters:
-            start: The start as :class:`datetime.date` or
+            start: Required. The start as :class:`datetime.date` or
                 :class:`datetime.datetime`, or ``None`` to remove ``DTSTART``.
 
         See also:
@@ -232,7 +232,7 @@ class Todo(Component):
         Sets the ``DUE`` property. Pass ``None`` to remove it.
 
         Parameters:
-            end: The end as :class:`datetime.date` or
+            end: Required. The end as :class:`datetime.date` or
                 :class:`datetime.datetime`, or ``None`` to remove ``DUE``.
 
         See also:
