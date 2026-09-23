@@ -166,6 +166,13 @@ class Todo(Component):
         date,
         'The "DUE" property for a "VTODO" calendar component specifies the non-inclusive end of the Todo.',
     )
+    COMPLETED = create_single_property(
+        "COMPLETED",
+        "dt",
+        (datetime, date),
+        date,
+        'The "COMPLETED" property specifies the date and time that a to-do was actually completed (:rfc:`5545#section-3.8.2.1`).',
+    )
     DURATION = property(
         property_get_duration,
         property_set_duration,
