@@ -9,6 +9,8 @@ Hanoka
 \.ical
 iCal
 (?i)icalendar
+IDE
+IDEs
 jCal
 Kunzmann
 Napolean
