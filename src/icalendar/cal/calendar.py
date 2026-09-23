@@ -143,25 +143,45 @@ class Calendar(Component):
         return cls.from_ical(get_example("calendars", name))
 
     @classmethod
-    def _get_ical_parser(cls, st: str | bytes) -> ComponentIcalParser:
+    def _get_ical_parser(
+        cls, st: str | bytes, encoding: str = "utf-8-sig", errors: str = "strict"
+    ) -> ComponentIcalParser:
         """Get the iCal parser for the given input string."""
-        return CalendarIcalParser(st, cls._get_component_factory(), cls.types_factory)
+        return CalendarIcalParser(
+            st,
+            cls._get_component_factory(),
+            cls.types_factory,
+            encoding=encoding,
+            errors=errors,
+        )
 
     @overload
     @classmethod
     def from_ical(
-        cls, st: str | bytes | Path, multiple: Literal[False] = False
+        cls,
+        st: str | bytes | Path,
+        multiple: Literal[False] = False,
+        encoding: str = "utf-8-sig",
+        errors: str = "strict",
     ) -> Calendar: ...
 
     @overload
     @classmethod
     def from_ical(
-        cls, st: str | bytes | Path, multiple: Literal[True]
+        cls,
+        st: str | bytes | Path,
+        multiple: Literal[True],
+        encoding: str = "utf-8-sig",
+        errors: str = "strict",
     ) -> list[Calendar]: ...
 
     @classmethod
     def from_ical(
-        cls, st: str | bytes | Path, multiple: bool = False
+        cls,
+        st: str | bytes | Path,
+        multiple: bool = False,
+        encoding: str = "utf-8-sig",
+        errors: str = "strict",
     ) -> Calendar | list[Calendar]:
         """Parse iCalendar data into calendar instances.
 
@@ -169,12 +189,15 @@ class Calendar(Component):
             st: iCalendar data as bytes or string, or a path to an iCalendar file.
             multiple: If ``True``, returns a list of calendars.
                 If ``False``, returns a single calendar.
+            encoding: The encoding used to decode byte input.
+            errors: The error handling scheme used when decoding byte input.
 
         Returns:
             Calendar or list of calendars.
         """
         return cast(
-            "Calendar | list[Calendar]", super().from_ical(st, multiple=multiple)
+            "Calendar | list[Calendar]",
+            super().from_ical(st, multiple=multiple, encoding=encoding, errors=errors),
         )
 
     @property
