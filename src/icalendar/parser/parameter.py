@@ -587,6 +587,8 @@ class Parameters(CaselessDict):
         result = Element("parameters")
         factory = self.get_xcal_type_factory()
         for key in self:
+            if key == "VALUE":
+                continue
             value_factory = factory.for_property(key)
             param_element = Element(key.lower())
             for value in self.get_multiple(key):

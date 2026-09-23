@@ -16,7 +16,11 @@ def test_skip_value_parameter():
     elements for each value, and these appear inside of property
     elements.  Thus, when converting from iCalendar to xCal, any "VALUE"
     property parameters are skipped."""
-    pytest.xfail("Not implemented yet")
+    params = Parameters()
+    params["VALUE"] = "DATE-TIME"
+    xcal_element = params.to_xcal()
+    assert xcal_element.tag == "parameters"
+    assert len(xcal_element) == 0  # No child elements
 
 
 def test_set_value_parameter_from_xcal():
