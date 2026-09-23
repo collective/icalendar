@@ -3,7 +3,7 @@
 https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.4
 """
 
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from xml.etree import ElementTree as ET
 
 import pytest
@@ -23,7 +23,7 @@ mark_values = pytest.mark.parametrize(
     ("date", "xcal"),
     [
         (datetime(2011, 5, 17, 20, 59), "2011-05-17T20:59:00"),
-        (datetime(2025, 11, 10, 0, 0, 10, tzinfo=UTC), "2025-11-10T00:00:10Z"),
+        (datetime(2025, 11, 10, 0, 0, 10, tzinfo=timezone.utc), "2025-11-10T00:00:10Z"),
     ],
 )
 
