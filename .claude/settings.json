@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "id": "ai-prompt-auto-commit",
+            "type": "command",
+            "command": "input=$(cat); ts=$(date +%Y-%m-%dT%H-%M-%S); model=$(printf '%s' \"$input\" | jq -r '.model // \"claude-sonnet-4-6\"'); root=$(git rev-parse --show-toplevel 2>/dev/null || pwd); mkdir -p \"$root/.prompts\"; printf '%s' \"$input\" | jq -r '.prompt' > \"$root/.prompts/${ts}_${model}.txt\"",
+            "version": "0.0.9"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -22,6 +22,7 @@ Examples of how to contribute
 -   Submit pull requests from your fork of the icalendar repository.
 -   Extend the :doc:`documentation/index`.
 -   Create or comment on a topic in `Discussions <https://github.com/collective/icalendar/discussions>`_.
+-   Join a live chat with icalendar team members in the `icalendar room <https://matrix.to/#/%23icalendar:chat.pycal.org>`_ or its parent organization in the `Python Calendaring Ecosystem (PyCal) space <https://matrix.to/#/%23pycal:chat.pycal.org>`_ via `Matrix <https://matrix.org/>`_.
 -   Write a blog post about icalendar.
 -   Share announcements on social media from :doc:`core contributors <credits>` to icalendar.
 -   Sponsor development of icalendar through `Open Collective <https://opencollective.com/python-icalendar>`_.
@@ -216,6 +217,11 @@ The content will still be included in the change log, at the end of the category
     icalendar uses `towncrier <https://pypi.org/project/towncrier/>`_ to automatically update the :doc:`../reference/changelog` from entries stored in the :file:`/news` directory at the root of the project.
     It generates links to the issue numbers and organizes the change log entries according to their filename issue numbers and types for each release.
 
+    All types except ``chore`` will be published.
+
+    Changes in the ``breaking`` type will be released in the next major version.
+    Changes in the ``feature`` type will be released in the next minor or major version.
+    Changes for all other types will be released in the next version.
 
 ..  _change-log-types:
 
@@ -224,6 +230,7 @@ Change log types
 
 ``breaking``
     For changes that break the existing API.
+    These also require an entry in the :doc:`../how-to/upgrade`, and might require the creation of a new section heading for the next major version number release.
 
 ``removal``
     For removals and deprecations.
@@ -260,11 +267,11 @@ Write a good change log entry
 
     These change log entries become narrative documentation.
 
-The content of this file must include the following.
+The content of this file must be on a single line and include the following.
 
--   A brief message that summarizes the changes in your contribution.
+-   A *brief* message that summarizes the changes in your contribution.
 -   Use :ref:`reStructuredText markup <markup-examples>` to link to relevant RFCs, API usage, and other references.
--   A brief disclosure of AI use, per icalendar's :ref:`responsible-ai-use` policy, if applicable.
+-   A *brief* disclosure of AI use, per icalendar's :ref:`responsible-ai-use` policy, if applicable.
 -   An attribution to yourself, in the format of ``@github_username``, at the end of the entry.
 
 You can write a good change log entry with the following guidance.

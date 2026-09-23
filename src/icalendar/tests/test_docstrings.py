@@ -62,7 +62,6 @@ KNOWN_BAD_HEADINGS = {
     "vGeo",
     "vInt",
     "vMonth",
-    "vPeriod",
     "vRecur",
     "vTime",
     "vUTCOffset",

@@ -103,6 +103,7 @@ dev = [
   "towncrier>=25.8.0",
   "tox",
   "tox-uv",
+  "zizmor==1.29.0", # also update .github/workflows/zizmor.yml
 ]
 
 test = [
@@ -140,15 +141,18 @@ icalendar = "icalendar.cli:main"
 
 [tool.hatch.build]
 exclude = [
-  "/.*",
-  "/*.*",
-  "/src/icalendar/fuzzing",
-  "/dist",
-  "/build",
-  "/htmlcov",
+  "/.*",       # Local tool and development configuration.
+  "/*.*",      # Root project files; Hatch restores required package metadata.
+  "/build",    # Python build output.
+  "/dist",     # Release archives from an earlier build.
+  "/htmlcov",  # Generated coverage report.
+  "/scripts",  # Development scripts
+  "/src/icalendar/fuzzing",  # Development-only fuzzing helpers.
 ]
 
 [tool.hatch.build.targets.sdist.force-include]
+# Tests for files included in the distribution reside here:
+# src/icalendar/tests/test_create_release.sh
 "funding.json" = "funding.json"
 
 [tool.hatch.build.targets.wheel]

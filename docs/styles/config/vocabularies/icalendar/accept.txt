@@ -9,6 +9,7 @@ Hanoka
 \.ical
 iCal
 (?i)icalendar
+IDEs?
 jCal
 Kunzmann
 Napolean
@@ -20,6 +21,7 @@ Repology
 recur.recur
 reformats
 RFCs?
+SARIF
 sphinx_copybutton
 sphinx_design
 sphinx_reredirects
@@ -34,3 +36,4 @@ uv
 vCard
 xCal
 Xcode
+zizmor

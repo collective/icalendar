@@ -1,1 +1,0 @@
-Improved :exc:`~icalendar.error.ICalParsingError` by including optional value, line, and line number information in exception messages for more consistent iCalendar parsing error reporting. AI assistance: ChatGPT was used to help debug terminal errors encountered during development. @GAUTAMSANSWAL

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import itertools
+from collections.abc import Sequence
 from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Literal, TypeAlias
 
@@ -10,6 +11,7 @@ from icalendar.enums import BUSYTYPE, CLASS, STATUS, TRANSP, StrEnum
 from icalendar.error import IncompleteComponent, InvalidCalendar
 from icalendar.parser_tools import SEQUENCE_TYPES
 from icalendar.prop import (
+    vBinary,
     vCalAddress,
     vCategory,
     vDDDTypes,
@@ -27,7 +29,7 @@ from icalendar.timezone import tzp
 from icalendar.tools import is_date
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Sequence
+    from collections.abc import Callable
 
     from icalendar.cal import Component
 
@@ -105,8 +107,8 @@ def _get_rdates(
     .. note::
 
         Modifying the returned list does not change the RDATE value. Assign to
-        :attr:`rdates` or use :func:`icalendar.cal.Component.add` instead.
-
+        ``rdates`` for the relevant component or use
+        :meth:`Component.add <icalendar.cal.component.Component.add>` instead.
         If you want to compute recurrences, have a look at
         `Related Projects <https://github.com/collective/icalendar/blob/main/README.rst#related-projects>`_.
 
@@ -212,8 +214,8 @@ def _get_exdates(self: Component) -> list[date | datetime]:
     .. note::
 
         Modifying the returned list does not change the EXDATE value. Assign to
-        :attr:`exdates` or use :func:`icalendar.cal.Component.add` instead.
-
+        ``exdates`` for the relevant component or use
+        :meth:`Component.add <icalendar.cal.component.Component.add>` instead.
         If you want to compute recurrences, have a look at
         `Related Projects <https://github.com/collective/icalendar/blob/main/README.rst#related-projects>`_.
 
@@ -347,7 +349,7 @@ def _get_rrules(self: Component) -> list[vRecur]:
     .. note::
 
         You cannot modify the RRULE value by modifying the result.
-        Use :func:`icalendar.cal.Component.add` to add values.
+        Use :meth:`Component.add <icalendar.cal.component.Component.add>` to add values.
 
         If you want to compute recurrences, have a look at
         `Related Projects <https://github.com/collective/icalendar/blob/main/README.rst#related-projects>`_.
@@ -403,13 +405,19 @@ def multi_language_text_property(
     return property(fget, fset, fdel, doc)
 
 
-def single_int_property(prop: str, default: int, doc: str) -> property:
+def single_int_property(
+    prop: str, default: int, doc: str, *, min_value: int | None = None
+) -> property:
     """Create a property for an int value that exists only once.
 
     Parameters:
-        prop: The name of the property
-        default: The default value
-        doc: The documentation string
+        default: Required. The default value.
+        doc: Required. The documentation string.
+        prop: Required. The name of the property.
+        min_value: If set, the value must be greater than or equal to this minimum.
+
+    ..  versionadded:: 7.3.0
+        Added the ``min_value`` parameter.
     """
 
     def fget(self: Component) -> int:
@@ -421,6 +429,11 @@ def single_int_property(prop: str, default: int, doc: str) -> property:
 
     def fset(self: Component, value: int | None):
         """Set the property."""
+        if value is not None:
+            if not isinstance(value, int) or isinstance(value, bool):
+                raise TypeError(f"{prop} must be an int, got {value!r}")
+            if min_value is not None and value < min_value:
+                raise InvalidCalendar(f"{prop} must be >= {min_value}, got {value}")
         fdel(self)
         if value is not None:
             self.add(prop, value)
@@ -439,13 +452,6 @@ def single_utc_property(name: str, docs: str) -> property:
         name: name of the property
         docs: documentation string
     """
-    docs = (
-        f"""The {name} property. datetime in UTC
-
-    All values will be converted to a datetime in UTC.
-    """
-        + docs
-    )
 
     def fget(self: Component) -> datetime | None:
         """Get the value."""
@@ -618,7 +624,17 @@ Examples:
         >>> event = calendar.events[0]
         >>> event.sequence
         10
+
+    Raises:
+        TypeError: If the value is not an ``int``. Booleans are rejected, too,
+            even though ``bool`` subclasses ``int``.
+
+        ~icalendar.error.InvalidCalendar: If the value is negative.
+
+    ..  versionchanged:: 7.3.0
+        Negative values are no longer accepted.
     """,  # noqa: E501
+    min_value=0,
 )
 
 
@@ -723,13 +739,22 @@ def _get_attendees(self: Component) -> list[vCalAddress]:
     return value
 
 
-def _set_attendees(self: Component, value: list[vCalAddress] | vCalAddress | None):
+ATTENDEE_TYPE_SETTER: TypeAlias = Sequence[vCalAddress | str] | vCalAddress | str | None
+
+
+def _set_attendees(self: Component, value: ATTENDEE_TYPE_SETTER):
     """Set attendees."""
     _del_attendees(self)
     if value is None:
         return
-    if not isinstance(value, list):
+    if isinstance(value, (vCalAddress, str)):
         value = [value]
+    elif not isinstance(value, list):
+        value = list(value) if isinstance(value, Sequence) else [value]
+    for index, attendee in enumerate(value):
+        # vCalAddress subclasses str, so exclude it before normalizing strings
+        if not isinstance(attendee, vCalAddress) and isinstance(attendee, str):
+            value[index] = vCalAddress.new(attendee)
     self["ATTENDEE"] = value
 
 
@@ -764,31 +789,43 @@ Description:
     type of iCalendar alarm.
 
 Examples:
-    Add a new attendee to an existing event.
+    Assign one or more attendee email addresses directly. Strings are
+    converted to :class:`~icalendar.prop.cal_address.vCalAddress` objects
+    and receive a ``mailto:`` prefix when needed.
 
     .. code-block:: pycon
 
-        >>> from icalendar import Event, vCalAddress
+        >>> from icalendar import Event
         >>> event = Event()
-        >>> event.attendees.append(vCalAddress("mailto:me@my-domain.com"))
+        >>> event.attendees = [
+        ...     "me@my-domain.com",
+        ...     "mailto:you@my-domain.com",
+        ... ]
+        >>> event.attendees[0]
+        vCalAddress('mailto:me@my-domain.com')
+        >>> event.attendees[1]
+        vCalAddress('mailto:you@my-domain.com')
         >>> print(event.to_ical())
         BEGIN:VEVENT
         ATTENDEE:mailto:me@my-domain.com
+        ATTENDEE:mailto:you@my-domain.com
         END:VEVENT
 
-    Create an email alarm with several attendees:
+    Use :meth:`vCalAddress.new
+    <icalendar.prop.cal_address.vCalAddress.new>` when an attendee needs
+    parameters such as ``CN``, ``ROLE``, or ``RSVP``.
 
-        >>> from icalendar import Alarm, vCalAddress
-        >>> alarm = Alarm.new(attendees = [
-        ...     vCalAddress("mailto:me@my-domain.com"),
-        ...     vCalAddress("mailto:you@my-domain.com"),
-        ... ], summary = "Email alarm")
-        >>> print(alarm.to_ical())
-        BEGIN:VALARM
-        ATTENDEE:mailto:me@my-domain.com
-        ATTENDEE:mailto:you@my-domain.com
-        SUMMARY:Email alarm
-        END:VALARM
+    .. code-block:: pycon
+
+        >>> from icalendar import vCalAddress
+        >>> event.attendees = [
+        ...     vCalAddress.new(
+        ...         "chair@example.com",
+        ...         cn="Meeting Chair",
+        ...         role="CHAIR",
+        ...         rsvp=True,
+        ...     )
+        ... ]
 """,
 )
 
@@ -1008,21 +1045,25 @@ def create_single_property(
 
     To delete the value, either use ``del`` or set it to ``None``.
 
-    Returns:
-        If the value is absent, return ``None``.
-
     Raises:
-        :exc:`~icalendar.error.InvalidCalendar`
-            If the attribute has invalid values.
+        InvalidCalendar: if the attribute has invalid values.
     """
     return property(p_get, p_set, p_del, p_doc)
 
 
 X_MOZ_SNOOZE_TIME_property = single_utc_property(
-    "X-MOZ-SNOOZE-TIME", "Thunderbird: Alarms before this time are snoozed."
+    "X-MOZ-SNOOZE-TIME",
+    """The ``X-MOZ-SNOOZE-TIME`` property as a :class:`~datetime.datetime` in UTC.
+
+    Thunderbird: Alarms before this time are snoozed.
+""",
 )
 X_MOZ_LASTACK_property = single_utc_property(
-    "X-MOZ-LASTACK", "Thunderbird: Alarms before this time are acknowledged."
+    "X-MOZ-LASTACK",
+    """The ``X-MOZ-LASTACK`` property as a :class:`~datetime.datetime` in UTC.
+
+    Thunderbird: Alarms before this time are acknowledged.
+""",
 )
 
 
@@ -1145,24 +1186,31 @@ Examples:
 
 comments_property = multi_text_property(
     "COMMENT",
-    """COMMENT is used to specify a comment to the calendar user.
+    """Specifies a comment to the calendar user.
 
-Purpose:
-    This property specifies non-processing information intended
-    to provide a comment to the calendar user.
+This property holds free-text notes attached to a component; calendar clients
+display it but never act on it. It is defined in :rfc:`5545#section-3.8.1.4`
+and may appear multiple times on ``VEVENT``, ``VTODO``, ``VJOURNAL``, and
+``VFREEBUSY`` components as well as on their ``STANDARD`` and ``DAYLIGHT``
+sub-components. For availability components, it is defined in :rfc:`7953`, and
+may appear multiple times on ``VAVAILABILITY`` and ``VAVAILABLE``.
 
-Conformance:
-    In :rfc:`5545`, this property can be specified multiple times in
-    "VEVENT", "VTODO", "VJOURNAL", and "VFREEBUSY" calendar components
-    as well as in the "STANDARD" and "DAYLIGHT" sub-components.
-    In :rfc:`7953`, this property can be specified multiple times in
-    "VAVAILABILITY" and "VAVAILABLE".
+You can get, set, append, and delete comments on a component. The value is a
+list of strings; each string is one comment.
 
-Property Parameters:
-    IANA, non-standard, alternate text
-    representation, and language property parameters can be specified
-    on this property.
+Example:
+    Add two comments to an event and then read them back.
 
+    .. code-block:: pycon
+
+        >>> from icalendar import Event
+        >>> event = Event()
+        >>> event.add("COMMENT", "Moved from the planning board.")
+        >>> event.add("COMMENT", "Confirmed by phone.")
+        >>> [str(c) for c in event.comments]
+        ['Moved from the planning board.', 'Confirmed by phone.']
+        >>> str(event.comments[0])
+        'Moved from the planning board.'
 """,
 )
 
@@ -1176,7 +1224,7 @@ Identify a specific occurrence of a recurring calendar object.
 
 This property is used together with ``UID`` and ``SEQUENCE`` to refer to one
 particular instance in a recurrence set. The value is the original start
-date or date-time of that instance, not the rescheduled time.
+date or datetime of that instance, not the rescheduled time.
 
 The value is usually a DATE-TIME and must use the same value type as the
 ``DTSTART`` property in the same component. A DATE value may be used for
@@ -1297,7 +1345,17 @@ initial trigger.
 Defaults to ``0``, meaning the alarm fires once. Must be paired with
 :attr:`~icalendar.cal.alarm.Alarm.DURATION`. Conforms with :rfc:`5545#section-3.8.6.2`.
 The value is capped at :data:`icalendar.config.MAX_ALARM_REPEAT` on read.
+
+Raises:
+    TypeError: If the value is not an ``int``. Booleans are rejected, too,
+        even though ``bool`` subclasses ``int``.
+
+    ~icalendar.error.InvalidCalendar: If the value is negative.
+
+..  versionchanged:: 7.3.0
+    Negative values are no longer accepted.
 """,
+        min_value=0,
     )
 
     def fget(self):
@@ -1346,7 +1404,17 @@ Description:
     Within a "VTODO" calendar component, this property specified a
     priority for the to-do.  This property is useful in prioritizing
     multiple action items for a given time period.
+
+    Raises:
+        TypeError: If the value is not an ``int``. Booleans are rejected, too,
+            even though ``bool`` subclasses ``int``.
+
+        ~icalendar.error.InvalidCalendar: If the value is negative.
+
+    ..  versionchanged:: 7.3.0
+        Negative values are no longer accepted.
 """,
+    min_value=0,
 )
 
 class_property = single_string_enum_property(
@@ -1545,80 +1613,47 @@ Description:
 
 contacts_property = multi_text_property(
     "CONTACT",
-    """Contact information associated with the calendar component.
+    """Contact information associated with a calendar component.
 
-Purpose:
-    This property is used to represent contact information or
-    alternately a reference to contact information associated with the
-    calendar component.
+The contact property holds free-text information for reaching the person or
+organization responsible in a component, such as a name, phone number, or a
+reference to more detailed contact data. Calendar clients surface it so
+attendees know who to contact about the event or task.
 
-Property Parameters:
-    IANA, non-standard, alternate text
-    representation, and language property parameters can be specified
-    on this property.
+This property is defined in :rfc:`5545#section-3.8.4.2` and may appear on a
+``VEVENT``, ``VTODO``, ``VJOURNAL``, or ``VFREEBUSY`` component. For
+availability components it is defined in :rfc:`7953` and may appear on a
+``VAVAILABILITY`` or ``VAVAILABLE`` component. An alternate representation may
+point to a URI, for example, a vCard per :rfc:`2426`, via the ``ALTREP`` parameter.
 
-Conformance:
-    In :rfc:`5545`, this property can be specified in a "VEVENT", "VTODO",
-    "VJOURNAL", or "VFREEBUSY" calendar component.
-    In :rfc:`7953`, this property can be specified in a "VAVAILABILITY"
-    amd "VAVAILABLE" calendar component.
-
-Description:
-    The property value consists of textual contact
-    information.  An alternative representation for the property value
-    can also be specified that refers to a URI pointing to an
-    alternate form, such as a vCard :rfc:`2426`, for the contact
-    information.
+You can get, set, append, and delete contacts on a component. The value is a
+list of strings; each string is one contact entry.
 
 Example:
-    The following is an example of this property referencing
-    textual contact information:
+    Add a contact to an event and then read it back.
 
-    .. code-block:: ics
+    .. code-block:: pycon
 
-        CONTACT:Jim Dolittle\\, ABC Industries\\, +1-919-555-1234
-
-    The following is an example of this property with an alternate
-    representation of an LDAP URI to a directory entry containing the
-    contact information:
-
-    .. code-block:: ics
-
-        CONTACT;ALTREP="ldap://example.com:6666/o=ABC%20Industries\\,
-        c=US???(cn=Jim%20Dolittle)":Jim Dolittle\\, ABC Industries\\,
-        +1-919-555-1234
-
-    The following is an example of this property with an alternate
-    representation of a MIME body part containing the contact
-    information, such as a vCard :rfc:`2426` embedded in a text/
-    directory media type :rfc:`2425`:
-
-    .. code-block:: ics
-
-        CONTACT;ALTREP="CID:part3.msg970930T083000SILVER@example.com":
-         Jim Dolittle\\, ABC Industries\\, +1-919-555-1234
-
-    The following is an example of this property referencing a network
-    resource, such as a vCard :rfc:`2426` object containing the contact
-    information:
-
-    .. code-block:: ics
-
-        CONTACT;ALTREP="http://example.com/pdi/jdoe.vcf":Jim
-         Dolittle\\, ABC Industries\\, +1-919-555-1234
+        >>> from icalendar import Event
+        >>> event = Event()
+        >>> event.add("CONTACT", "Jim Dolittle, ABC Industries, +1-919-555-1234")
+        >>> [str(c) for c in event.contacts]
+        ['Jim Dolittle, ABC Industries, +1-919-555-1234']
+        >>> str(event.contacts[0])
+        'Jim Dolittle, ABC Industries, +1-919-555-1234'
 """,
 )
 
 
-def timezone_datetime_property(name: str, docs: str):
+def _timezone_datetime_property(name: str, docs: str):
     """Create a property to access the values with a proper timezone."""
 
     return single_utc_property(name, docs)
 
 
-rfc_7953_dtstart_property = timezone_datetime_property(
+rfc_7953_dtstart_property = _timezone_datetime_property(
     "DTSTART",
-    """Start of the component.
+    """Start of the component as a :class:`~datetime.datetime` in UTC.
 
     This is almost the same as
     :attr:`Event.DTSTART <icalendar.cal.event.Event.DTSTART>` with one exception:
@@ -1633,9 +1668,9 @@ rfc_7953_dtstart_property = timezone_datetime_property(
     """,
 )
 
-rfc_7953_dtend_property = timezone_datetime_property(
+rfc_7953_dtend_property = _timezone_datetime_property(
     "DTEND",
-    """Start of the component.
+    """End of the component as a :class:`~datetime.datetime` in UTC.
 
     This is almost the same as
     :attr:`Event.DTEND <icalendar.cal.event.Event.DTEND>` with one exception:
@@ -2561,16 +2596,230 @@ Examples:
 
 .. note::
 
-    List modifications do not modify the component.
+    When you assign a list to this property, the returned list
+    is the same object stored in the component. Modifying it (``append()``,
+    ``extend()``, ``remove()``, item assignment, or ``del``) changes what
+    the component stores.
+
+    However, if you assign a single string value to this property, the returned
+    list is a temporary copy, and changes to this list don't affect the component.
+""",
+)
+
+REQUEST_STATUS_property = multi_string_property(
+    "REQUEST-STATUS",
+    """This property defines the status code returned for a scheduling request.
+
+You can assign a single string, a list of strings, or ``None`` to this
+property. The property stores a :class:`str` as-is. Assigning ``None`` or
+an empty list removes all REQUEST-STATUS values, as does deleting the
+property.
+
+The value consists of a short return status code component, a longer
+return status description component, and optionally a status-specific
+data component, separated by semicolons (statcode;statdesc[;extdata]).
+The return status components are defined in :rfc:`5545#section-3.8.8.3`.
+
+The REQUEST-STATUS property can be specified in the following
+icalendar components as ``REQUEST_STATUS``.
+
+-   :attr:`Event.REQUEST_STATUS <icalendar.cal.event.Event.REQUEST_STATUS>`
+-   :attr:`FreeBusy.REQUEST_STATUS <icalendar.cal.free_busy.FreeBusy.REQUEST_STATUS>`
+-   :attr:`Journal.REQUEST_STATUS <icalendar.cal.journal.Journal.REQUEST_STATUS>`
+-   :attr:`Todo.REQUEST_STATUS <icalendar.cal.todo.Todo.REQUEST_STATUS>`
+
+Note:
+    When you assign a list to this property, the returned list
+    is the same object stored in the component. Modifying it (``append()``,
+    ``extend()``, ``remove()``, item assignment, or ``del``) changes what
+    the component stores.
+
+    However, if you assign a single string value to this property, the returned
+    list is a temporary copy, and changes to this list don't affect the component.
+
+Parameters:
+    request_status(str | list[str] | None):
+        Either a single status string, a list of status strings, or
+        ``None`` to set the component's status code returned for a
+        scheduling request.
+
+Example:
+    Add a request status to an event:
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Event
+        >>> event = Event.new(request_status="2.0;Success")
+        >>> event.REQUEST_STATUS == ["2.0;Success"]
+        True
+""",
+)
+
+RESOURCES_property = multi_string_property(
+    "RESOURCES",
+    """This property defines resources for a calendar component.
+
+You can assign a single string, a list of strings, or ``None`` to this
+property. The property stores a :class:`str` as-is. Assigning ``None`` or
+an empty list removes all RESOURCES values, as does deleting the property.
+
+The value is a comma-separated list of resources, such as equipment,
+facilities, or other things that the component needs. Each item of the
+list becomes its own RESOURCES property value. See
+:rfc:`5545#section-3.8.1.10` for the specification.
+
+The RESOURCES property can be specified in the following
+icalendar components as ``resources`` using the component's
+``new()`` constructor.
+
+-   :attr:`Event.RESOURCES <icalendar.cal.event.Event.RESOURCES>`
+-   :attr:`Todo.RESOURCES <icalendar.cal.todo.Todo.RESOURCES>`
+
+Parameters:
+    resources(str | list[str] | None):
+        Either a single resource string, a list of resource strings,
+        or ``None`` to set the component's resources.
+
+Note:
+    When you assign a list to this property, the returned list
+    is the same object stored in the component. Modifying it (``append()``,
+    ``extend()``, ``remove()``, item assignment, or ``del``) changes what
+    the component stores.
+
+    However, if you assign a single string value to this property, the returned
+    list is a temporary copy, and changes to this list don't affect the component.
+
+Example:
+    Add resources to an event:
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Event
+        >>> event = Event.new(resources=["EASEL", "PROJECTOR", "VCR"])
+        >>> event.RESOURCES == ["EASEL", "PROJECTOR", "VCR"]
+        True
+""",
+)
+
+
+ATTACHMENTS_TYPE_SETTER: TypeAlias = (
+    str | bytes | vUri | vBinary | None | list[str | bytes | vUri | vBinary]
+)
+
+
+def _normalize_attachment(value: str | bytes | vUri | vBinary) -> vUri | vBinary:
+    """Convert one attachment value."""
+    if isinstance(value, (vUri, vBinary)):
+        return value
+    if isinstance(value, str):
+        return vUri(value)
+    if isinstance(value, bytes):
+        return vBinary(value)
+    raise TypeError(
+        f"Attachments must be str, bytes, vUri, or vBinary, not {type(value).__name__}."
+    )
+
+
+def _get_attachments(self: Component) -> list[vUri | vBinary]:
+    """Get all the attachments"""
+    attachments = self.get("ATTACH", [])
+    if not isinstance(attachments, SEQUENCE_TYPES):
+        return [attachments]
+    return list(attachments)
+
+
+def _set_attachments(self: Component, value: ATTACHMENTS_TYPE_SETTER) -> None:
+    """Set attachments properties"""
+    if value is None:
+        _del_attachments(self)
+        return
+    if not isinstance(value, list):
+        value = [value]
+    attachments = [_normalize_attachment(attachment) for attachment in value]
+    _del_attachments(self)
+    for attachment in attachments:
+        self.add("ATTACH", attachment)
+
+
+def _del_attachments(self: Component) -> None:
+    """Delete all attachments"""
+    self.pop("ATTACH", None)
+
+
+attachments_property = property(
+    _get_attachments,
+    _set_attachments,
+    _del_attachments,
+    """This property defines the attachments for a component.
+
+Setting this property replaces all existing attachments. A :class:`str`
+is converted to :class:`~icalendar.prop.uri.vUri`, and :class:`bytes` is
+converted to :class:`~icalendar.prop.binary.vBinary`. Values that are
+already :class:`~icalendar.prop.uri.vUri` or
+:class:`~icalendar.prop.binary.vBinary` are stored unchanged, so their
+parameters are preserved. Setting ``None`` or an empty list removes all
+attachments, as does deleting the property.
+
+Parameters:
+    attachments(str | bytes | vUri | vBinary | list | None):
+        A single attachment, or a list of attachments to set. Accepts
+        :class:`str`, :class:`bytes`, :class:`~icalendar.prop.uri.vUri`,
+        and :class:`~icalendar.prop.binary.vBinary`, individually or
+        mixed together in a list.
+
+Example:
+    Attach a URI to an event, then replace it with a URI and inline
+    binary data together:
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Event, vUri, vBinary
+        >>> event = Event()
+        >>> event.attachments
+        []
+        >>> event.attachments = ["https://example.com/agenda.pdf"]
+        >>> print(event.to_ical().decode())
+        BEGIN:VEVENT
+        ATTACH:https://example.com/agenda.pdf
+        END:VEVENT
+        >>> event.attachments = [
+        ...     vUri(
+        ...         "https://example.com/agenda.pdf",
+        ...         params={"FMTTYPE": "application/pdf"},
+        ...     ),
+        ...     vBinary(b"image-data", params={"FMTTYPE": "image/png"},),
+        ... ]
+        >>> len(event.attachments)
+        2
+
+.. note::
+
+    An alarm as an audio action must not contain more than one attachment.
+
+    List modifications do not modify the component. Methods such as
+    ``append()``, ``extend()``, and ``remove()``, as well as item
+    assignment, act on a copy. Assign the list back to the property, or
+    use :meth:`Component.add <icalendar.cal.component.Component.add>`
+    with a typed value instead.
+
+.. seealso::
+
+    :rfc:`5545#section-3.8.1.1` for the definition of the ``ATTACH``
+    property.
 """,
 )
 
 
 __all__ = [
+    "ATTACHMENTS_TYPE_SETTER",
+    "ATTENDEE_TYPE_SETTER",
     "CONCEPTS_TYPE_SETTER",
     "LINKS_TYPE_SETTER",
     "RECURRENCE_ID",
     "RELATED_TO_TYPE_SETTER",
+    "REQUEST_STATUS_property",
+    "RESOURCES_property",
+    "attachments_property",
     "attendees_property",
     "busy_type_property",
     "categories_property",
