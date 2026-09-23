@@ -6,9 +6,10 @@ import json
 from copy import deepcopy
 from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta, timezone
+from io import BytesIO
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, ClassVar, Literal, overload
-from xml.etree.ElementTree import Element, SubElement
+from typing import TYPE_CHECKING, Any, BinaryIO, ClassVar, Literal, overload
+from xml.etree.ElementTree import Element, SubElement, parse
 
 from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
@@ -24,7 +25,7 @@ from icalendar.attr import (
 )
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.caselessdict import CaselessDict
-from icalendar.error import InvalidCalendar, JCalParsingError
+from icalendar.error import InvalidCalendar, JCalParsingError, XCalParsingError
 from icalendar.parser import (
     Contentline,
     Contentlines,
@@ -36,7 +37,7 @@ from icalendar.parser.ical.component import ComponentIcalParser
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import VPROPERTY, TypesFactory, vDDDLists, vText, vUnknown
 from icalendar.timezone import tzp
-from icalendar.tools import is_date
+from icalendar.tools import is_date, tag_without_namespace
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -1146,6 +1147,69 @@ class Component(CaselessDict):
             e_components = SubElement(e_component, "components")
             for subcomponent in self.subcomponents:
                 subcomponent.to_xcal(e_components)
+
+    @classmethod
+    def from_xcal(cls, xcal: Element | bytes | Path | BinaryIO) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            xcal: The xCal element or data to parse.
+
+        Returns:
+            The parsed component.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal XML is invalid.
+            TypeError: If the wrong type is passed to ``xcal``.
+            xml.etree.ElementTree.ParseError: If the provided XML is invalid.
+
+        """
+        if isinstance(xcal, Path):
+            xcal = xcal.open("rb")
+        elif isinstance(xcal, bytes):
+            xcal = BytesIO(xcal)
+        if hasattr(xcal, "read"):
+            # TODO: Safe parsing
+            # S314 Using `xml` to parse untrusted data is known to be vulnerable to XML attacks; use `defusedxml` equivalents
+            element = parse(xcal).getroot()  # noqa: S314
+        elif isinstance(xcal, Element):
+            element = xcal
+        else:
+            raise TypeError(
+                f"Expected an XML Element, bytes, a Path or file object. Got {xcal}"
+            )
+        # enter the stream and get the first element
+        if tag_without_namespace(element) == "icalendar":
+            if len(element) == 0:
+                raise XCalParsingError(
+                    "Namespace is missing content.", None, element, cls
+                )
+            element = element[0]
+        return cls._from_xcal(element)
+
+    @classmethod
+    def _from_xcal(cls, element: Element) -> Self:
+        """Parse xCal from :rfc:`6321`."""
+        component_factory = cls._get_component_factory()
+        types_factory = cls.types_factory
+        component_class = component_factory.get_component_class(
+            tag_without_namespace(element)
+        )
+        component = component_class()
+        properties = element.find(".//properties")
+        if properties is not None:
+            for e_property in properties:
+                p_name = e_property.tag
+                p_values = [
+                    types_factory.from_xcal(p_name, e_value) for e_value in e_property
+                ]
+                component[p_name] = p_values
+        e_components = element.find(".//components")
+        if e_components is not None:
+            for e_component in e_components:
+                subcomponent = cls._from_xcal(e_component)
+                component.add_component(subcomponent)
+        return component
 
 
 def _node_from_jcal(jcal, starting_cls: type[Component]) -> tuple[Component, list]:

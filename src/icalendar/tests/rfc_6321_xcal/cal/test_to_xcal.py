@@ -1,7 +1,5 @@
 """Test component to xcal serialization."""
 
-from xml.etree.ElementTree import Element, tostring
-
 import pytest
 
 from icalendar.cal.alarm import Alarm
@@ -9,15 +7,7 @@ from icalendar.cal.calendar import Calendar
 from icalendar.cal.component import Component
 from icalendar.cal.event import Event
 from icalendar.cal.todo import Todo
-
-
-def _xcal(component: Component) -> Element:
-    """Return the xCal of a component."""
-    e = Element("vcalendar")
-    component.to_xcal(e)
-    print(tostring(e, method="xml").decode())
-    assert len(e) == 1
-    return e[0]
+from icalendar.tests.rfc_6321_xcal.cal.common import _xcal
 
 
 def test_component_to_xcal_uses_component_name(component):

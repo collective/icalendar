@@ -31,6 +31,7 @@ from icalendar.prop.uid import vUid
 from icalendar.prop.unknown import vUnknown
 from icalendar.prop.uri import vUri
 from icalendar.prop.xml_reference import vXmlReference
+from icalendar.tools import tag_without_namespace
 
 from .integer import vInt
 
@@ -319,7 +320,9 @@ class TypesFactory(CaselessDict):
 
     def from_xcal(self, property_name: str, element: Element):
         """Decodes a named property or parameter value from an xCal XML element."""
-        type_class = self.for_property(property_name, element.tag)
+        type_class = self.for_property(
+            property_name, tag_without_namespace(element.tag)
+        )
         return type_class.from_xcal(element)
 
 
