@@ -47,7 +47,10 @@ def test_empty_element_from_xcal(types_factory: TypesFactory):
     with pytest.raises(XCalParsingError) as error:
         types_factory.from_xcal("url", ET.Element("uri"))
     assert error.value.parser == vUri
-    assert error.value.message == "Expected a URI. Got None in 'uri' element parsing 'vUri'."
+    assert (
+        error.value.message
+        == "Expected a URI. Got None in 'uri' element parsing 'vUri'."
+    )
 
 
 def test_uri_with_a_line_break_from_xcal(types_factory: TypesFactory):
