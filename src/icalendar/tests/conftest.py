@@ -334,6 +334,16 @@ def component_factory():
     return ComponentFactory()
 
 
+COMPONENTS = list(ComponentFactory().values())
+COMPONENTS.append(ComponentFactory().get_component_class("X-CUSTOM"))
+
+
+@pytest.fixture(params=COMPONENTS)
+def component(request) -> Component:
+    """Return one of the defined components."""
+    return request.param()
+
+
 @pytest.fixture
 def x_sometime(types_factory):
     """Map x_sometime to time"""
