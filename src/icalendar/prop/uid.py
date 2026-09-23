@@ -2,6 +2,7 @@
 
 import uuid
 from typing import ClassVar
+from xml.etree.ElementTree import Element
 
 from icalendar.compatibility import Self
 
@@ -28,6 +29,12 @@ class vUid(vText):
 
         """
         return vUid(uuid.uuid4())
+
+    def to_xcal(self) -> Element:
+        """The xCal representation of this UID as a TEXT value."""
+        element = Element("text")
+        element.text = self
+        return element
 
     @property
     def uid(self) -> str:
