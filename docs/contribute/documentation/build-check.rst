@@ -139,7 +139,7 @@ This build must be successful in the :ref:`continuous-integration-checks` for yo
 Vale integration
 ````````````````
 
-Vale has `integrations <https://vale.sh/docs/>`_ with various integrated development environments.
+Vale has `integrations <https://vale.sh/docs/>`_ with various IDEs.
 Integration might require installing Vale using your operating system's package manager.
 
 -   `JetBrains <https://plugins.jetbrains.com/plugin/19613-vale-cli/docs>`_
