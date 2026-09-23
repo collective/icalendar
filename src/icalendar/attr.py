@@ -471,9 +471,14 @@ def single_utc_property(name: str, docs: str) -> property:
             return None
         dt = self.get(name)
         if isinstance(dt, list):
-            # Broken calendars repeat singleton properties. Keep every value
-            # for serialization, but return the earliest one for reading.
-            values = [_decode_single_utc_value(name, item) for item in dt]
+            # Broken calendars can repeat singleton properties. Keep all values
+            # for serialization; when reading, use the earliest valid value.
+            values = []
+            for item in dt:
+                try:
+                    values.append(_decode_single_utc_value(name, item))
+                except (InvalidCalendar, ValueError):  # noqa: PERF203  # duplicate lists are tiny
+                    continue
             if not values:
                 raise InvalidCalendar(f"{name} must be a datetime in UTC, not {dt}")
             return min(tzp.localize_utc(value) for value in values)
