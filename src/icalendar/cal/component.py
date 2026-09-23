@@ -1159,7 +1159,7 @@ class Component(CaselessDict):
             The parsed component.
 
         Raises:
-            ~error.XCalParsingError: If the provided xCal XML is invalid.
+            ~icalendar.error.XCalParsingError: If the provided xCal XML is invalid.
             TypeError: If the wrong type is passed to ``xcal``.
             xml.etree.ElementTree.ParseError: If the provided XML is invalid.
 
