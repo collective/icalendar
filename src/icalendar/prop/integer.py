@@ -1,9 +1,11 @@
 """INT values from :rfc:`5545`."""
 
+import re
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element
 
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError
+from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser_tools import ICAL_TYPE
 
@@ -158,6 +160,51 @@ class vInt(int):
         """
         JCalParsingError.validate_value_type(value, int, cls)
         return cls(value)
+
+    XSD_INTEGER = re.compile(r"^[+-]?[0-9]+$")
+    """The lexical space of xsd:integer, see https://datypic.com/sc/xsd/t-xsd_integer.html."""
+
+    @classmethod
+    def from_xsd_integer(cls, xsd_integer: str | None) -> int:
+        """Convert an xsd:integer to an :py:`int`."""
+        if not isinstance(xsd_integer, str):
+            raise TypeError("Expected xsd:integer. Got None.")
+        # whiteSpace is "collapse" for xsd:integer
+        collapsed = xsd_integer.strip()
+        if not cls.XSD_INTEGER.match(collapsed):
+            raise ValueError(f"Expected xsd:integer. Got {xsd_integer!r}.")
+        return int(collapsed)
+
+    @staticmethod
+    def to_xsd_integer(i: int) -> str:
+        """Convert an :py:`int` to an xsd:integer."""
+        return str(int(i))
+
+    @classmethod
+    def from_xcal(cls, element: Element) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        try:
+            value = cls.from_xsd_integer(element.text)
+        except (TypeError, ValueError) as e:
+            raise XCalParsingError.in_property_text(
+                "Expected xsd:integer.",
+                element,
+                cls,
+            ) from e
+        return cls(value)
+
+    def to_xcal(self) -> Element:
+        """The xCal representation of this property according to :rfc:`6321`."""
+        element = Element(self.default_value.lower())
+        element.text = self.to_xsd_integer(self)
+        return element
 
 
 __all__ = ["vInt"]
