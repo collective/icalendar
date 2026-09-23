@@ -29,7 +29,16 @@ class vFloat(float):
         If the property permits, multiple "float" values are
         specified by a COMMA-separated list of values.
 
-        Example:
+    The ``__new__`` method creates a vFloat instance:
+
+    Parameters:
+        value: Float value to encode, as accepted by :class:`float`.
+        params: Optional parameter dictionary for the property.
+
+    Returns:
+        vFloat instance
+
+    Examples:
 
         .. code-block:: text
 

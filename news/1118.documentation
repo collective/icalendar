@@ -1,0 +1,1 @@
+Documented the ``__new__`` method of :class:`~icalendar.prop.float.vFloat` so readers can see which parameters create a FLOAT property value. I used AI to assist me with this change. @harsh-thakkar7
