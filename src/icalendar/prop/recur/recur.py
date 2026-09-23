@@ -1,10 +1,12 @@
 """RECUR property type from :rfc:`5545`."""
 
+from datetime import datetime
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError
+from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser_tools import DEFAULT_ENCODING, SEQUENCE_TYPES
 from icalendar.prop.dt import vDDDTypes
@@ -297,6 +299,63 @@ class vRecur(CaselessDict):
         return True
 
     __hash__ = None
+
+    def to_xcal(self) -> Element:
+        """The xCal representation of this property according to :rfc:`6321`.
+
+        Each rule part becomes an element named after it, in the order of
+        :attr:`canonical_order`. A part with several values is repeated, as
+        :rfc:`6321#section-3.6.10` requires.
+        """
+        from icalendar.prop.dt import vDate, vDatetime
+
+        element = Element("recur")
+        for key, values in self.sorted_items():
+            value_type = self.types.get(key, vText)
+            if not isinstance(values, SEQUENCE_TYPES):
+                values = [values]
+            for value in values:
+                if key.upper() == "UNTIL":
+                    # UNTIL is a date or a date-time, written the xCal way.
+                    converter = vDatetime if isinstance(value, datetime) else vDate
+                    text = converter(value).to_xcal().text
+                else:
+                    text = value_type(value).to_ical().decode(DEFAULT_ENCODING)
+                SubElement(element, key.lower()).text = text
+        return element
+
+    @classmethod
+    def from_xcal(cls, element: Element) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        from icalendar.prop.dt import vDate, vDatetime
+
+        recur: dict[str, list] = {}
+        for part in element:
+            key = part.tag.upper()
+            value_type = cls.types.get(key, vText)
+            if key == "UNTIL":
+                converter = vDatetime if "T" in (part.text or "") else vDate
+                value = converter.from_xcal(part).dt
+            else:
+                try:
+                    value = value_type.from_ical(part.text or "")
+                except ValueError as e:
+                    raise XCalParsingError.in_property_text(
+                        f"Cannot parse the {part.tag!r} rule part.", part, cls
+                    ) from e
+            recur.setdefault(key, []).append(value)
+        if not recur:
+            raise XCalParsingError.in_property_text(
+                "A recurrence rule must have at least one rule part.", element, cls
+            )
+        return cls(recur)
 
 
 __all__ = ["vRecur"]
