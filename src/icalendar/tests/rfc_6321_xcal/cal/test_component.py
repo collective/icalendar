@@ -4,7 +4,11 @@ from xml.etree.ElementTree import Element, tostring
 
 import pytest
 
+from icalendar.cal.alarm import Alarm
+from icalendar.cal.calendar import Calendar
 from icalendar.cal.component import Component
+from icalendar.cal.event import Event
+from icalendar.cal.todo import Todo
 
 
 def _xcal(component: Component) -> Element:
@@ -60,3 +64,58 @@ def test_component_without_name_to_ical_yields_error():
 def test_component_bool():
     c = Component()
     assert c
+
+
+def test_serialize_subcomponents():
+    """Test serialization of subcomponents."""
+    c = Calendar()
+    c.add_component(Event())
+    c.add_component(Todo())
+    c.events[0].add_component(Alarm())
+    serialized = _xcal(c)
+    # calendar
+    assert serialized.tag == "vcalendar"
+    assert len(serialized) == 1
+    c_c = serialized[0]
+    assert len(c_c) == 2
+    assert c_c.tag == "components"
+    # event
+    c_e = c_c[0]
+    assert c_e.tag == "vevent"
+    assert len(c_e) == 1
+    c_e_c = c_e[0]
+    assert c_e_c.tag == "components"
+    # alarm
+    c_a = c_e_c[0]
+    assert c_a.tag == "valarm"
+    assert len(c_a) == 0
+    # todo
+    c_t = c_c[1]
+    assert c_t.tag == "vtodo"
+    assert len(c_t) == 0
+
+
+def test_subcomponent_also_serializes_parameters():
+    """The subcomponents must also add parameters."""
+    e = Event()
+    e.summary = "an event"
+    a = Alarm()
+    a.ACTION = "DISPLAY"
+    e.add_component(a)
+    x_e = _xcal(e)
+    assert len(x_e) == 2
+    assert x_e.tag == "vevent"
+    assert x_e[0].tag == "properties"
+    assert x_e[0][0].tag == "summary"
+    assert x_e[0][0][0].tag == "text"
+    assert x_e[0][0][0].text == "an event"
+    assert x_e[1].tag == "components"
+    assert len(x_e[1]) == 1
+    assert x_e[1][0].tag == "valarm"
+    assert len(x_e[1][0]) == 1
+    assert x_e[1][0][0].tag == "properties"
+    assert len(x_e[1][0][0]) == 1
+    assert x_e[1][0][0][0].tag == "action"
+    assert len(x_e[1][0][0][0]) == 1
+    assert x_e[1][0][0][0][0].tag == "text"
+    assert x_e[1][0][0][0][0].text == "DISPLAY"

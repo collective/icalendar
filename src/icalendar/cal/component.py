@@ -1142,6 +1142,10 @@ class Component(CaselessDict):
                 e_property = SubElement(e_properties, key.lower())
                 e_content = prop.to_xcal()
                 e_property.append(e_content)
+        if self.subcomponents:
+            e_components = SubElement(e_component, "components")
+            for subcomponent in self.subcomponents:
+                subcomponent.to_xcal(e_components)
 
 
 def _node_from_jcal(jcal, starting_cls: type[Component]) -> tuple[Component, list]:
