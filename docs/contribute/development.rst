@@ -196,7 +196,7 @@ Their docstrings, of course, remain in the Python source code.
 Type hints
 ''''''''''
 
-Type hints in Python help developers catch errors early, improve code documentation, and enhance the functionality of integrated development environments and linters.
+Type hints in Python help developers catch errors early, improve code documentation, and enhance the functionality of IDEs and linters.
 icalendar uses type hints, and supports rendering them in its :doc:`reference API documentation </reference/api/icalendar>`.
 
 icalendar was originally written before the existence of type hints in Python.
