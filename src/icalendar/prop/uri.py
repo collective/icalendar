@@ -4,7 +4,7 @@ from typing import Any, ClassVar
 from xml.etree.ElementTree import Element
 
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError
+from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
 
@@ -129,7 +129,7 @@ class vUri(str):
     def to_xcal(self) -> Element:
         """The xCal representation of this property according to :rfc:`6321`."""
         element = Element(self.default_value.lower())
-        element.text = self
+        element.text = str(self)
         return element
 
     @classmethod
@@ -142,7 +142,16 @@ class vUri(str):
         Raises:
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
-        return cls(element.text)
+        if element.text is None:
+            # An empty <uri/> element carries no URI; without this, str creation
+            # fails with a TypeError instead of a parsing error.
+            raise XCalParsingError.in_property_text("Expected a URI.", element, cls)
+        try:
+            return cls(element.text)
+        except ValueError as e:
+            raise XCalParsingError.in_property_text(
+                "Expected a URI.", element, cls
+            ) from e
 
 
 __all__ = ["vUri"]
