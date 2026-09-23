@@ -25,11 +25,11 @@ This section describes the branches used in icalendar development.
 ``main``
     The `main <https://github.com/collective/icalendar/tree/main/>`_ branch receives the latest updates and features.
     Active development takes place on this branch.
-    It's compatible with Python versions 3.10 - 3.14, and PyPy3.10, subject to change because it's an active development branch.
+    It's compatible with Python versions 3.10 - 3.15, and PyPy3.10, subject to change because it's an active development branch.
 
 ``7.x``
     icalendar version 7 is on the branch `7.x <https://github.com/collective/icalendar/tree/7.x/>`_.
-    It's compatible with Python versions 3.10 - 3.14, and PyPy3.10.
+    It's compatible with Python versions 3.10 - 3.15, and PyPy3.10.
     Security updates, bug fixes, and new features that are not breaking changes are continuously backported from `main` and released on this branch.
 
 ``6.x``
