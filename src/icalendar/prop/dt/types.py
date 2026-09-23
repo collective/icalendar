@@ -224,7 +224,8 @@ class vDDDTypes(TimeBase):
         v_prop = cls.VALUE_MAP.get(element.tag)
         if v_prop is None:
             raise XCalParsingError.in_property_text(
-                f"Expected one of these values: {list(cls.VALUE_MAP.keys())}.",
+                "Expected one of these values: "
+                f"{', '.join(value.lower() for value in cls.VALUE_MAP)}.",
                 element,
                 cls,
             )

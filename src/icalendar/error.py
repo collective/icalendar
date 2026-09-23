@@ -5,6 +5,8 @@ from __future__ import annotations
 import contextlib
 from typing import TYPE_CHECKING
 
+from icalendar.tools import tag_without_namespace
+
 if TYPE_CHECKING:
     import xml.etree.ElementTree as ET
     from collections.abc import Generator
@@ -383,7 +385,8 @@ class XCalParsingError(InvalidCalendar):
         self.element = element
         self.parser = parser
         self.message = message + (
-            f" Got {value!r} in {element.tag!r} element parsing {parser.__name__!r}."
+            f" Got {value!r} in {tag_without_namespace(element)!r}"
+            f" element parsing {parser.__name__!r}."
         )
         super().__init__(self.message)
 

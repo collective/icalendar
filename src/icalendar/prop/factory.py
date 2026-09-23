@@ -320,9 +320,7 @@ class TypesFactory(CaselessDict):
 
     def from_xcal(self, property_name: str, element: Element):
         """Decodes a named property or parameter value from an xCal XML element."""
-        type_class = self.for_property(
-            property_name, tag_without_namespace(element.tag)
-        )
+        type_class = self.for_property(property_name, tag_without_namespace(element))
         return type_class.from_xcal(element)
 
 

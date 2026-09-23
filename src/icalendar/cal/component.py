@@ -1196,19 +1196,19 @@ class Component(CaselessDict):
             tag_without_namespace(element)
         )
         component = component_class()
-        properties = element.find(".//properties")
-        if properties is not None:
-            for e_property in properties:
-                p_name = e_property.tag
-                p_values = [
-                    types_factory.from_xcal(p_name, e_value) for e_value in e_property
-                ]
-                component[p_name] = p_values
-        e_components = element.find(".//components")
-        if e_components is not None:
-            for e_component in e_components:
-                subcomponent = cls._from_xcal(e_component)
-                component.add_component(subcomponent)
+        for content in element:
+            if tag_without_namespace(content) == "properties":
+                for e_property in content:
+                    p_name = e_property.tag
+                    p_values = [
+                        types_factory.from_xcal(p_name, e_value)
+                        for e_value in e_property
+                    ]
+                    component[p_name] = p_values
+            if tag_without_namespace(content) == "components":
+                for e_component in content:
+                    subcomponent = cls._from_xcal(e_component)
+                    component.add_component(subcomponent)
         return component
 
 
