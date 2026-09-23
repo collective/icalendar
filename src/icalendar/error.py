@@ -357,7 +357,7 @@ class XCalParsingError(InvalidCalendar):
     message: str
     """A description of the error that occurred while parsing."""
 
-    value: str
+    value: str | None
     """The value that caused the error."""
 
     element: ET.Element
