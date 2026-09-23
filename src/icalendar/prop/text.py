@@ -213,6 +213,7 @@ class vText(str):
         """The xCal representation of this property according to :rfc:`6321`."""
         element = Element(self.default_value.lower())
         element.text = self
+        element.append(self.params.to_xcal())
         return element
 
     @classmethod
@@ -225,7 +226,9 @@ class vText(str):
         Raises:
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
-        return cls(element.text or "")
+        return cls(
+            element.text or "", params=Parameters.from_xcal_property(element, cls)
+        )
 
 
 __all__ = ["vText"]

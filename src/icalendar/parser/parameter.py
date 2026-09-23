@@ -18,6 +18,7 @@ from icalendar.parser_tools import (
     SEQUENCE_TYPES,
 )
 from icalendar.timezone.tzid import tzid_from_dt
+from icalendar.tools import tag_without_namespace
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Sequence
@@ -609,6 +610,24 @@ class Parameters(CaselessDict):
         if not isinstance(result, list):
             return [result]
         return result
+
+    @classmethod
+    def from_xcal_property(cls, element: Element, _v_prop: type[VPROPERTY]) -> Self:
+        """Parse xCal from :rfc:`6321` and consider the property's default VALUE type.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+
+        Returns:
+            :Parameters: The parsed parameters.
+        """
+        for child in element:
+            if tag_without_namespace(child) == "parameters":
+                return cls.from_xcal(child)
+        return cls()
 
 
 RFC_6868_UNESCAPE_REGEX = re.compile(r"\^\^|\^n|\^'")

@@ -209,6 +209,7 @@ class vDuration(TimeBase):
         """The xCal representation of this property according to :rfc:`6321`."""
         element = Element("duration")
         element.text = self.to_ical().decode()
+        element.append(self.params.to_xcal())
         return element
 
     @classmethod
@@ -235,7 +236,7 @@ class vDuration(TimeBase):
                 element,
                 cls,
             ) from e
-        return cls(td)
+        return cls(td, params=Parameters.from_xcal_property(element, cls))
 
 
 __all__ = ["vDuration"]

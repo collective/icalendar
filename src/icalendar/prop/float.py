@@ -154,12 +154,13 @@ class vFloat(float):
                 element,
                 cls,
             ) from e
-        return cls(value)
+        return cls(value, params=Parameters.from_xcal_property(element, cls))
 
     def to_xcal(self) -> Element:
         """The xCal representation of this property according to :rfc:`6321`."""
         element = Element(self.default_value.lower())
         element.text = self.to_xsd_float(self)
+        element.append(self.params.to_xcal())
         return element
 
 

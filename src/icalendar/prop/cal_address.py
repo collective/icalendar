@@ -290,12 +290,15 @@ class vCalAddress(str):
         Raises:
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
-        return cls(element.text or "")
+        return cls(
+            element.text or "", params=Parameters.from_xcal_property(element, cls)
+        )
 
     def to_xcal(self) -> Element:
         """The xCal representation of this property according to :rfc:`6321`."""
         element = Element("cal-address")
         element.text = self.ical_value
+        element.append(self.params.to_xcal())
         return element
 
 

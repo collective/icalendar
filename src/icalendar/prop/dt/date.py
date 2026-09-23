@@ -147,6 +147,7 @@ class vDate(TimeBase):
         """The xCal representation of this property according to :rfc:`6321`."""
         element = Element("date")
         element.text = self.dt.strftime("%Y-%m-%d")
+        element.append(self.params.to_xcal())
         return element
 
     @classmethod
@@ -160,7 +161,10 @@ class vDate(TimeBase):
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
         year, month, day = XCAL_DATE_REGEX.groups(element, cls)
-        return cls(date(int(year), int(month), int(day)))
+        return cls(
+            date(int(year), int(month), int(day)),
+            params=Parameters.from_xcal_property(element, cls),
+        )
 
 
 __all__ = ["vDate"]

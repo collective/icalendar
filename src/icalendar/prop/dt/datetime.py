@@ -216,6 +216,7 @@ class vDatetime(TimeBase):
         if is_utc(self.dt):
             text += "Z"
         element.text = text
+        element.append(self.params.to_xcal())
         return element
 
     @classmethod
@@ -236,7 +237,7 @@ class vDatetime(TimeBase):
         )
         if timezone:
             dt = tzp.localize_utc(dt)
-        return cls(dt)
+        return cls(dt, params=Parameters.from_xcal_property(element, cls))
 
 
 __all__ = ["vDatetime"]

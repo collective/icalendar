@@ -29,7 +29,7 @@ def test_set_value_parameter_from_xcal():
     included in the iCalendar property if the value type is not the
     default value type for that property.
     """
-    pytest.xfail("Not implemented yet")
+    pytest.xfail("TODO")
 
 
 def test_empty_parameters_to_xcal():
