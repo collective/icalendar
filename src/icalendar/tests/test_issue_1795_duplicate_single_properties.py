@@ -26,8 +26,12 @@ def test_issue_example_returns_earliest_dtstamp(calendars):
 
 
 def test_duplicate_raw_values_are_preserved_for_serialization(calendars):
-    """The accessor picks earliest, but duplicates still serialize."""
+    """Reading the accessor still preserves all duplicate values for serialization."""
     cal = calendars.issue_1795_duplicate_single_properties
+    event = _events_by_uid(cal)["1795-reproducer"]
+
+    assert event.stamp == datetime(2020, 5, 16, 6, 0, tzinfo=UTC)
+
     serialized = cal.to_ical()
     assert b"DTSTAMP:20210205T101751Z" in serialized
     assert b"DTSTAMP:20200516T060000Z" in serialized
