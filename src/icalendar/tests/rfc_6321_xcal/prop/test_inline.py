@@ -11,9 +11,7 @@ import pytest
 from icalendar.error import XCalParsingError
 from icalendar.prop import vInline
 
-mark_values = pytest.mark.parametrize(
-    "value", ["", "some text", "a;b:c", "TENTATIVE"]
-)
+mark_values = pytest.mark.parametrize("value", ["", "some text", "a;b:c", "TENTATIVE"])
 
 
 @mark_values
