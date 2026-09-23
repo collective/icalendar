@@ -59,6 +59,15 @@ class Calendar(Component):
             >>> print(calendar.calendar_name)
             My Calendar
 
+        Get the example Calendar:
+
+            >>> from icalendar import Calendar
+            >>> calendar = Calendar.example()
+            >>> print(calendar.calendar_name)
+            Holidays
+            >>> len(calendar.events)
+            3
+
     """
 
     name = "VCALENDAR"
