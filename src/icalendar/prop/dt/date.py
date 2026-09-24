@@ -146,7 +146,7 @@ class vDate(TimeBase):
     def to_xcal(self, element: Element) -> None:
         """The xCal representation of this property according to :rfc:`6321`."""
         self.params.to_xcal(element)
-        element = SubElement("date")
+        element = SubElement(element, "date")
         element.text = self.dt.strftime("%Y-%m-%d")
 
     @classmethod

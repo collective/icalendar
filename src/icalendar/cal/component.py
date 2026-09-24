@@ -25,7 +25,7 @@ from icalendar.attr import (
 )
 from icalendar.cal.component_factory import ComponentFactory
 from icalendar.caselessdict import CaselessDict
-from icalendar.error import InvalidCalendar, JCalParsingError, XCalParsingError
+from icalendar.error import InvalidCalendar, JCalParsingError
 from icalendar.parser import (
     Contentline,
     Contentlines,
@@ -37,7 +37,7 @@ from icalendar.parser.ical.component import ComponentIcalParser
 from icalendar.parser_tools import DEFAULT_ENCODING
 from icalendar.prop import VPROPERTY, TypesFactory, vDDDLists, vText, vUnknown
 from icalendar.timezone import tzp
-from icalendar.tools import is_date, tag_without_namespace
+from icalendar.tools import is_date
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -1149,7 +1149,7 @@ class Component(CaselessDict):
                 subcomponent.to_xcal(e_components)
 
     @classmethod
-    def from_xcal(cls, xcal: Element | bytes | Path | BinaryIO) -> Self:
+    def from_xcal(cls, xcal: Element | bytes | Path | BinaryIO) -> list[Self]:
         """Parse xCal from :rfc:`6321`.
 
         Parameters:
@@ -1164,6 +1164,8 @@ class Component(CaselessDict):
             xml.etree.ElementTree.ParseError: If the provided XML is invalid.
 
         """
+        from icalendar.parser.xcal.component import XCalComponentParser
+
         if isinstance(xcal, Path):
             xcal = xcal.open("rb")
         elif isinstance(xcal, bytes):
@@ -1178,38 +1180,14 @@ class Component(CaselessDict):
             raise TypeError(
                 f"Expected an XML Element, bytes, a Path or file object. Got {xcal}"
             )
-        # enter the stream and get the first element
-        if tag_without_namespace(element) == "icalendar":
-            if len(element) == 0:
-                raise XCalParsingError(
-                    "Namespace is missing content.", None, element, cls
-                )
-            element = element[0]
-        return cls._from_xcal(element)
-
-    @classmethod
-    def _from_xcal(cls, element: Element) -> Self:
-        """Parse xCal from :rfc:`6321`."""
-        component_factory = cls._get_component_factory()
-        types_factory = cls.types_factory
-        component_class = component_factory.get_component_class(
-            tag_without_namespace(element)
+        parser = XCalComponentParser(
+            element, cls._get_component_factory(), cls.types_factory
         )
-        component = component_class()
-        for content in element:
-            if tag_without_namespace(content) == "properties":
-                for e_property in content:
-                    p_name = e_property.tag
-                    p_values = [
-                        types_factory.from_xcal(p_name, e_value)
-                        for e_value in e_property
-                    ]
-                    component[p_name] = p_values
-            if tag_without_namespace(content) == "components":
-                for e_component in content:
-                    subcomponent = cls._from_xcal(e_component)
-                    component.add_component(subcomponent)
-        return component
+        components = []
+        while not parser.is_finished():
+            component = parser.parse_component()
+            components.append(component)
+        return components
 
 
 def _node_from_jcal(jcal, starting_cls: type[Component]) -> tuple[Component, list]:

@@ -33,14 +33,6 @@ def test_set_value_parameter_from_xcal():
     pytest.xfail("TODO")
 
 
-def test_empty_parameters_to_xcal():
-    """An empty Parameters object should produce an empty <parameters> element."""
-    params = Parameters()
-    xcal_element = to_xcal(params)
-    assert xcal_element.tag == "parameters"
-    assert len(xcal_element) == 0  # No child elements
-
-
 @pytest.mark.parametrize(("text"), [None, ""])
 def test_emtpy_parameters_from_xcal(text):
     """An empty <parameters> element should produce an empty Parameters object."""
@@ -365,7 +357,6 @@ def test_parameters_with_values_as_list(
     values.  To ease processing in jCal, the value of such parameters
     MUST be represented in an array containing the separated values.
     """
-    pytest.xfail("Not implemented yet")
     calendar: Calendar = calendars.rfc_7256_multi_value_parameters
     event = calendar.events[event_index]
     parameter = to_xcal(event)[1][parameter_index]
@@ -393,5 +384,5 @@ def test_get_multiple_many_values():
 def test_parameters_only_serialize_if_they_have_content():
     """Empty parameters must not turn up."""
     parameters = Parameters()
-    xcal = to_xcal(parameters)
+    xcal = to_xcal(parameters, wrap=True)
     assert len(xcal) == 0

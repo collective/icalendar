@@ -339,5 +339,18 @@ class TypesFactory(CaselessDict):
             type_class = self.for_property(tag_without_namespace(element), value_param)
         return type_class.from_xcal(element)
 
+    def parse_xcal_parameter(self, element: Element):
+        """Decodes a parameter value from an xCal XML element.
+
+        Example:
+
+            .. code-block:: text
+
+                <language>
+                    <text>en-US</text>
+                </language>
+        """
+        return self.parse_xcal_property(element)
+
 
 __all__ = ["TypesFactory"]

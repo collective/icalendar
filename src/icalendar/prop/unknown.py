@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, ClassVar
-from xml.etree.ElementTree import Element
+from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
@@ -12,6 +12,7 @@ from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
 if TYPE_CHECKING:
     from icalendar.compatibility import Self
     from icalendar.parser.content_line import Contentline
+    from icalendar.parser.xcal.value import VPropParser
 
 
 class vUnknown(str):
@@ -146,23 +147,25 @@ class vUnknown(str):
         JCalParsingError.validate_value_type(jcal_value, (str, int, float), cls)
         return cls(str(jcal_value))
 
-    def to_xcal(self) -> Element:
-        """The xCal representation of this property according to :rfc:`6321`."""
-        element = Element(self.default_value.lower())
+    def to_xcal(self, element: Element) -> None:
+        """Add the xCal representation of this property according to :rfc:`6321`."""
+        element = SubElement(element, self.default_value.lower())
         element.text = self
-        return element
+        self.params.to_xcal(element)
 
     @classmethod
-    def from_xcal(cls, element: Element) -> Self:
+    def from_xcal(cls, parser: VPropParser) -> Self:
         """Parse xCal from :rfc:`6321`.
 
         Parameters:
-            element: The xCal element to parse.
+            parser: The parser to use.
 
         Raises:
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
-        return cls(element.text)
+        params = parser.parse_parameters()
+        element = parser.parse_tag(cls.default_value)
+        return cls(element.get_xsd_string(), params=params)
 
 
 __all__ = ["vUnknown"]

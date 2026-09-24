@@ -38,3 +38,27 @@ See:
 - "White Space: collapse": https://datypic.com/sc/xsd/t-xsd_float.html
 
 """
+
+
+def generate_xml_tree(spec: list[str | list]) -> Element:
+    """Generate and xml tree from a specification.
+
+    Args:
+        spec: A spec.
+    """
+    if not isinstance(spec, list):
+        raise TypeError("spec must be a list.")
+    if not spec:
+        raise ValueError("spec must not be empty.")
+    if not isinstance(spec[0], str):
+        raise TypeError("spec[0] must be a string.")
+    e = Element(spec[0])
+    if len(spec) == 1:
+        return e
+    index = 1
+    if isinstance(spec[1], str):
+        e.text = spec[1]
+        index = 2
+    for child in spec[index:]:
+        e.append(generate_xml_tree(child))  # pyright: ignore[reportArgumentType]
+    return e

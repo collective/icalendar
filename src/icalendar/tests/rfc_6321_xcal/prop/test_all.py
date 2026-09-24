@@ -16,3 +16,11 @@ def test_parameters_are_the_first_element(v_prop_example: VPROPERTY):
     assert len(parameters) >= 1, (
         f"xCal: {v_prop_example.__class__.__name__} did not include the parameter values."
     )
+
+
+def test_all_default_values_are_uppercase(v_prop):
+    """The default_value property should be capital case always."""
+    default_value = getattr(v_prop, "default_value", "")
+    assert default_value.isupper(), (
+        f"xCal: {v_prop.__name__} must have an uppercase default value."
+    )

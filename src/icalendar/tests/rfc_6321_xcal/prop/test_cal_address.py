@@ -21,7 +21,7 @@ from icalendar.tests.rfc_6321_xcal.common import to_xcal
 )
 def test_to_xcal(value, expected):
     """Convert to xcal."""
-    e = to_xcal(value.to_xcal)
+    e = to_xcal(value)
     assert isinstance(e, ET.Element)
     assert e.tag == "cal-address"
     assert e.text == expected

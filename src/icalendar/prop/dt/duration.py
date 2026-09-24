@@ -3,7 +3,7 @@
 import re
 from datetime import timedelta
 from typing import Any, ClassVar
-from xml.etree.ElementTree import Element
+from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.compatibility import Self
 from icalendar.error import InvalidCalendar, JCalParsingError, XCalParsingError
@@ -205,12 +205,11 @@ class vDuration(TimeBase):
             Parameters.from_jcal_property(jcal_property),
         )
 
-    def to_xcal(self) -> Element:
+    def to_xcal(self, element: Element) -> None:
         """The xCal representation of this property according to :rfc:`6321`."""
-        element = Element("duration")
+        self.params.to_xcal(element)
+        element = SubElement(element, "duration")
         element.text = self.to_ical().decode()
-        element.append(self.params.to_xcal())
-        return element
 
     @classmethod
     def from_xcal(cls, element: Element) -> Self:
