@@ -5,7 +5,7 @@ from __future__ import annotations
 import itertools
 from collections.abc import Sequence
 from datetime import date, datetime, timedelta
-from typing import TYPE_CHECKING, Any, Literal, Protocol, TypeAlias
+from typing import TYPE_CHECKING, Literal, TypeAlias
 
 from icalendar.enums import BUSYTYPE, CLASS, STATUS, TRANSP, StrEnum
 from icalendar.error import IncompleteComponent, InvalidCalendar
@@ -32,39 +32,8 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
     from icalendar.cal import Component
-
-
-class HasStartEndDuration(Protocol):  # pragma: no cover
-    """Structural contract for components with start, end and duration.
-
-    :class:`~icalendar.cal.event.Event` and
-    :class:`~icalendar.cal.todo.Todo` implement this. The shared helpers
-    below accept this instead of :class:`~icalendar.cal.Component`,
-    which lacks the required members.
-
-    Declares only members the helpers use. ``name`` is read-only
-    because the helpers only read it.
-    """
-
-    @property
-    def name(self) -> str | None: ...
-
-    DTSTART: date | datetime | None
-    DURATION: timedelta | None
-
-    @property
-    def start(self) -> date | datetime: ...
-    @property
-    def end(self) -> date | datetime: ...
-    @property
-    def duration(self) -> timedelta: ...
-
-    def _get_start_end_duration(
-        self,
-    ) -> tuple[date | datetime | None, date | datetime | None, timedelta | None]: ...
-    def __contains__(self, key: object) -> bool: ...
-    def __getitem__(self, key: object) -> Any: ...
-    def pop(self, key: object, default: Any = None) -> Any: ...
+    from icalendar.cal.event import Event
+    from icalendar.cal.todo import Todo
 
 
 def _get_rdates(
@@ -1775,7 +1744,7 @@ def rfc_7953_end_property(self):
 
 
 def get_start_end_duration_with_validation(
-    component: HasStartEndDuration,
+    component: Event | Todo,
     start_property: Literal["DTSTART"],
     end_property: Literal["DTEND", "DUE"],
     component_name: Literal["VEVENT", "VTODO"],
@@ -1835,7 +1804,7 @@ def get_start_end_duration_with_validation(
     return start, end, duration
 
 
-def get_start_property(component: HasStartEndDuration) -> date | datetime:
+def get_start_property(component: Event | Todo) -> date | datetime:
     """
     Get the start property with validation.
 
@@ -1858,7 +1827,7 @@ def get_start_property(component: HasStartEndDuration) -> date | datetime:
 
 
 def get_end_property(
-    component: HasStartEndDuration, end_property: Literal["DTEND", "DUE"]
+    component: Event | Todo, end_property: Literal["DTEND", "DUE"]
 ) -> date | datetime:
     """
     Get the end property with fallback logic for ``Event`` and ``Todo`` components.
@@ -1901,11 +1870,14 @@ def get_end_property(
         msg = f"No {end_name} or DURATION+DTSTART given."
         raise IncompleteComponent(msg)
 
-    assert end is not None  # narrowed: end or duration given, duration is None
+    if end is None:
+        # Unreachable given the branches above; explicit error instead
+        # of assert so it also fires under python -O.
+        raise IncompleteComponent("No end value could be computed.")
     return end
 
 
-def get_duration_property(component: HasStartEndDuration) -> timedelta:
+def get_duration_property(component: Event | Todo) -> timedelta:
     """
     Get the duration property with fallback calculation from start and end.
 
@@ -1925,7 +1897,7 @@ def get_duration_property(component: HasStartEndDuration) -> timedelta:
 
 
 def set_duration_with_locking(
-    component: HasStartEndDuration,
+    component: Event | Todo,
     duration: timedelta | None,
     locked: Literal["start", "end"],
     end_property: Literal["DTEND", "DUE"],
@@ -1978,7 +1950,7 @@ def set_duration_with_locking(
 
 
 def set_start_with_locking(
-    component: HasStartEndDuration,
+    component: Event | Todo,
     start: date | datetime,
     locked: Literal["duration", "end"] | None,
     end_property: Literal["DTEND", "DUE"],
@@ -2028,7 +2000,7 @@ def set_start_with_locking(
 
 
 def set_end_with_locking(
-    component: HasStartEndDuration,
+    component: Event | Todo,
     end: date | datetime,
     locked: Literal["start", "duration"],
     end_property: Literal["DTEND", "DUE"],
