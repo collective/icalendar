@@ -67,7 +67,7 @@ class vRequestStatus(vText):
         """Return the status code as a string.
 
         Returns:
-            A tuple of integers or () if the status code could not be parsed.
+            The status string or ``""`` if the request status could not be parsed.
         """
         match = self._get_match()
         if not match:
@@ -110,7 +110,7 @@ class vRequestStatus(vText):
     @classmethod
     def new(
         cls,
-        code: Sequence[int, ...] | str | int,
+        code: Sequence[int] | str | int,
         description: str = "",
         data: str | None = None,
         params: dict[str, Any] | None = None,
