@@ -8,6 +8,7 @@ from xml.etree.ElementTree import Element, fromstring, tostring
 import pytest
 
 from icalendar import Calendar, Parameters
+from icalendar.tests.rfc_6321_xcal.common import to_xcal
 
 
 def test_skip_value_parameter():
@@ -18,7 +19,7 @@ def test_skip_value_parameter():
     property parameters are skipped."""
     params = Parameters()
     params["VALUE"] = "DATE-TIME"
-    xcal_element = params.to_xcal()
+    xcal_element = to_xcal(params)
     assert xcal_element.tag == "parameters"
     assert len(xcal_element) == 0  # No child elements
 
@@ -35,7 +36,7 @@ def test_set_value_parameter_from_xcal():
 def test_empty_parameters_to_xcal():
     """An empty Parameters object should produce an empty <parameters> element."""
     params = Parameters()
-    xcal_element = params.to_xcal()
+    xcal_element = to_xcal(params)
     assert xcal_element.tag == "parameters"
     assert len(xcal_element) == 0  # No child elements
 
@@ -254,7 +255,7 @@ mark_parameters = pytest.mark.parametrize(
 def test_parameters_to_xcal(name, value, xcal, message):
     """Convert Parameters to xcal."""
     params = Parameters({name: value})
-    xcal_element = params.to_xcal()
+    xcal_element = to_xcal(params)
     assert isinstance(xcal_element, Element)
     text = tostring(xcal_element, encoding="unicode")
     assert text.startswith("<parameters>")
@@ -367,7 +368,7 @@ def test_parameters_with_values_as_list(
     pytest.xfail("Not implemented yet")
     calendar: Calendar = calendars.rfc_7256_multi_value_parameters
     event = calendar.events[event_index]
-    parameter = event.to_xcal()[1][parameter_index]
+    parameter = to_xcal(event)[1][parameter_index]
     assert parameter == expected_value
 
 
@@ -387,3 +388,10 @@ def test_get_multiple_many_values():
     """Test get_multiple when there is a list of values."""
     parameters = Parameters({"delegated-to": EMAIL_2})
     assert parameters.get_multiple("delegated-to") == EMAIL_2
+
+
+def test_parameters_only_serialize_if_they_have_content():
+    """Empty parameters must not turn up."""
+    parameters = Parameters()
+    xcal = to_xcal(parameters)
+    assert len(xcal) == 0

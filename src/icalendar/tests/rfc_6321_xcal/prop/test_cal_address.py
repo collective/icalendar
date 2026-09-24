@@ -9,6 +9,7 @@ import pytest
 
 from icalendar import vCalAddress
 from icalendar.prop.factory import TypesFactory
+from icalendar.tests.rfc_6321_xcal.common import to_xcal
 
 
 @pytest.mark.parametrize(
@@ -20,7 +21,7 @@ from icalendar.prop.factory import TypesFactory
 )
 def test_to_xcal(value, expected):
     """Convert to xcal."""
-    e = value.to_xcal()
+    e = to_xcal(value.to_xcal)
     assert isinstance(e, ET.Element)
     assert e.tag == "cal-address"
     assert e.text == expected

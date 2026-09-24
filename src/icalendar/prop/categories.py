@@ -2,12 +2,14 @@
 
 from collections.abc import Iterator
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element
 
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser_tools import to_unicode
 from icalendar.prop.text import vText
+from icalendar.tools import tag_without_namespace
 
 
 class vCategory:
@@ -109,6 +111,29 @@ class vCategory:
     def ical_value(self) -> list[str]:
         """The list of categories as strings."""
         return [str(cat) for cat in self.cats]
+
+    def to_xcal(self, element: Element) -> None:
+        """Add the xCal representation of this property according to :rfc:`6321`."""
+        self.params.to_xcal(element)
+        for cat in self.cats:
+            if not isinstance(cat, vText):
+                cat = vText(cat)
+            cat.to_xcal(element)
+
+    @classmethod
+    def from_xcal(cls, element: Element) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        cats = [
+            child.text for child in element if tag_without_namespace(child) == "text"
+        ]
+        return cls(cats, params=Parameters.from_xcal_property(element, cls))
 
 
 __all__ = ["vCategory"]

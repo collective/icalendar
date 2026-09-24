@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from typing import Any, ClassVar
-from xml.etree.ElementTree import Element
+from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
@@ -209,15 +209,14 @@ class vDatetime(TimeBase):
             params=params,
         )
 
-    def to_xcal(self) -> Element:
+    def to_xcal(self, element: Element) -> None:
         """The xCal representation of this property according to :rfc:`6321`."""
-        element = Element("date-time")
+        self.params.to_xcal(element)
+        element = SubElement(element, "date-time")
         text = self.dt.strftime("%Y-%m-%dT%H:%M:%S")
         if is_utc(self.dt):
             text += "Z"
         element.text = text
-        element.append(self.params.to_xcal())
-        return element
 
     @classmethod
     def from_xcal(cls, element: Element) -> Self:

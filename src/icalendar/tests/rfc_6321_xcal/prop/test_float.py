@@ -12,8 +12,7 @@ import pytest
 from icalendar import vFloat
 from icalendar.error import XCalParsingError
 from icalendar.prop.factory import TypesFactory
-
-from .common import XML_WHITESPACE
+from icalendar.tests.rfc_6321_xcal.common import XML_WHITESPACE, to_xcal
 
 
 @pytest.mark.parametrize(
@@ -94,7 +93,7 @@ mark_values = pytest.mark.parametrize(
 @mark_values
 def test_to_xcal(value, expected):
     """Convert to xcal."""
-    e = expected.to_xcal()
+    e = to_xcal(expected)
     assert isinstance(e, ET.Element)
     assert e.tag == "float"
     assert e.text == value

@@ -126,12 +126,11 @@ class vBoolean(int):
             )
         return cls(value, params=Parameters.from_xcal_property(element, cls))
 
-    def to_xcal(self) -> Element:
+    def to_xcal(self, element: Element) -> None:
         """The xCal representation of this property according to :rfc:`6321`."""
+        self.params.to_xcal(element)
         element = Element(self.default_value.lower())
         element.text = "true" if self else "false"
-        element.append(self.params.to_xcal())
-        return element
 
 
 __all__ = ["vBoolean"]

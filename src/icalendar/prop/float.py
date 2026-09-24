@@ -2,7 +2,7 @@
 
 import math
 from typing import Any, ClassVar
-from xml.etree.ElementTree import Element
+from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError, XCalParsingError
@@ -156,12 +156,11 @@ class vFloat(float):
             ) from e
         return cls(value, params=Parameters.from_xcal_property(element, cls))
 
-    def to_xcal(self) -> Element:
-        """The xCal representation of this property according to :rfc:`6321`."""
-        element = Element(self.default_value.lower())
+    def to_xcal(self, element: Element) -> None:
+        """Add the xCal representation of this property according to :rfc:`6321`."""
+        element = SubElement(element, self.default_value.lower())
         element.text = self.to_xsd_float(self)
-        element.append(self.params.to_xcal())
-        return element
+        self.params.to_xcal(element)
 
 
 __all__ = ["vFloat"]

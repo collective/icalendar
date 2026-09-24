@@ -583,8 +583,8 @@ class Parameters(CaselessDict):
 
         return TypesFactory.instance()
 
-    def to_xcal(self) -> Element:
-        """The xCal representation of the parameters according to :rfc:`6321`."""
+    def to_xcal(self, element: Element) -> None:
+        """Add the xCal representation of the parameters according to :rfc:`6321`."""
         result = Element("parameters")
         factory = self.get_xcal_type_factory()
         for key in self:

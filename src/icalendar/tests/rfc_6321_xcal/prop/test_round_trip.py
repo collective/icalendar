@@ -3,6 +3,7 @@
 from xml.etree.ElementTree import tostring
 
 from icalendar.prop import VPROPERTY
+from icalendar.tests.rfc_6321_xcal.common import to_xcal
 
 
 def test_xcal_preserves_parameters(v_prop_example: VPROPERTY):
@@ -11,7 +12,7 @@ def test_xcal_preserves_parameters(v_prop_example: VPROPERTY):
     v_prop_example.params["TZID"] = "Europe/Paris"
     v_prop_example.params["RSVP"] = True
     v_prop_example.params["ALTREP"] = "https://other-location.com"
-    xcal = v_prop_example.to_xcal()
+    xcal = to_xcal(v_prop_example)
     print("v_prop_example:", repr(v_prop_example))
     print("xcal:", tostring(xcal))
     v_prop = v_prop_example.__class__.from_xcal(xcal)
@@ -26,6 +27,6 @@ def test_xcal_preserves_parameters(v_prop_example: VPROPERTY):
 
 def test_xcal_reproduces_the_example(v_prop_example: VPROPERTY):
     """xcal serialization must include the parameters"""
-    xcal = v_prop_example.to_xcal()
+    xcal = to_xcal(v_prop_example, wrap=True)
     v_prop = v_prop_example.__class__.from_xcal(xcal)
     assert v_prop == v_prop_example

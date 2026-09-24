@@ -11,6 +11,7 @@ import pytest
 from icalendar.error import XCalParsingError
 from icalendar.prop.dt import vDate, vDDDLists, vDDDTypes
 from icalendar.prop.factory import TypesFactory
+from icalendar.tests.rfc_6321_xcal.common import to_xcal
 
 
 @pytest.fixture(params=[vDate, vDDDTypes, vDDDLists])
@@ -31,7 +32,7 @@ mark_values = pytest.mark.parametrize(
 @mark_values
 def test_to_xcal(v_date, date, xcal):
     """Convert to xcal."""
-    e = v_date(date).to_xcal()
+    e = to_xcal(v_date(date))
     assert isinstance(e, ET.Element)
     assert e.tag == "date"
     assert e.text == xcal

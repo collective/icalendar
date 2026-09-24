@@ -1133,7 +1133,7 @@ class Component(CaselessDict):
         return self
 
     def to_xcal(self, element: Element) -> None:
-        """The xCal representation of this component according to :rfc:`6321`."""
+        """Add the xCal representation of this component according to :rfc:`6321`."""
         self._validate_name()
         e_component = SubElement(element, self.name.lower())
         if len(self) > 0:

@@ -196,9 +196,9 @@ class vDDDTypes(TimeBase):
             params=params,
         )
 
-    def to_xcal(self) -> Element:
+    def to_xcal(self, element: Element) -> None:
         """Convert a vDDDTypes to an xCal element."""
-        return self.to_property_type().to_xcal()
+        self.to_property_type().to_xcal(element)
 
     VALUE_MAP: dict[str, VPROPERTY] = CaselessDict(
         {

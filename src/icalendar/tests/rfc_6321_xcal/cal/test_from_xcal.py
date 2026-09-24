@@ -7,13 +7,12 @@ import pytest
 from icalendar.cal.calendar import Calendar
 from icalendar.cal.component import Component
 from icalendar.error import XCalParsingError
-
-from .common import _xcal
+from icalendar.tests.rfc_6321_xcal.common import to_xcal
 
 
 def test_component_from_xcal_chooses_correct_type(component: Component):
     """The component factory is used to get the right type."""
-    c = component.from_xcal(_xcal(component))
+    c = component.from_xcal(to_xcal(component))
     assert isinstance(c, Component)
     assert c.name == component.name
 

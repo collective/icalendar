@@ -7,25 +7,25 @@ from icalendar.cal.calendar import Calendar
 from icalendar.cal.component import Component
 from icalendar.cal.event import Event
 from icalendar.cal.todo import Todo
-from icalendar.tests.rfc_6321_xcal.cal.common import _xcal
+from icalendar.tests.rfc_6321_xcal.common import to_xcal
 
 
 def test_component_to_xcal_uses_component_name(component):
     """The name is lowercase, same as rfc 5545"""
-    e = _xcal(component)
+    e = to_xcal(component)
     assert e.tag == component.name.lower()
 
 
 def test_empty_component(component):
     """Empty component without children."""
-    e = _xcal(component)
+    e = to_xcal(component)
     assert len(e) == 0
 
 
 def test_adding_a_property(component):
     """Test that adding a property turns up."""
     component.add("comment", "this is a comment")
-    e = _xcal(component)
+    e = to_xcal(component)
     assert len(e) == 1
     props = e[0]
     assert props.tag == "properties"
@@ -47,7 +47,7 @@ def test_component_without_name_to_ical_yields_error():
         c.to_jcal()
     assert error.value.args == ("This component needs a name for serialization.", c)
     with pytest.raises(ValueError) as error:
-        _xcal(c)
+        to_xcal(c)
     assert error.value.args == ("This component needs a name for serialization.", c)
 
 
@@ -62,7 +62,7 @@ def test_serialize_subcomponents():
     c.add_component(Event())
     c.add_component(Todo())
     c.events[0].add_component(Alarm())
-    serialized = _xcal(c)
+    serialized = to_xcal(c)
     # calendar
     assert serialized.tag == "vcalendar"
     assert len(serialized) == 1
@@ -92,7 +92,7 @@ def test_subcomponent_also_serializes_parameters():
     a = Alarm()
     a.ACTION = "DISPLAY"
     e.add_component(a)
-    x_e = _xcal(e)
+    x_e = to_xcal(e)
     assert len(x_e) == 2
     assert x_e.tag == "vevent"
     assert x_e[0].tag == "properties"

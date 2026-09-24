@@ -121,9 +121,11 @@ class vDDDLists:
         """
         return self.dts[0].dt
 
-    def to_xcal(self) -> Element:
+    def to_xcal(self, element: Element) -> None:
         """Convert a vDDDTypes to an xCal element."""
-        return self.dts[0].to_xcal()  # wrong for now
+        # TODO: test
+        for dt in self.dts:
+            dt.to_xcal(element)
 
     @classmethod
     def from_xcal(cls, element: Element) -> Self:

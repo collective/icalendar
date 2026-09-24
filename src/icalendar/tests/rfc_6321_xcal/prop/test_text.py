@@ -5,6 +5,7 @@ from xml.etree import ElementTree as ET
 import pytest
 
 from icalendar import TypesFactory, vText, vUid
+from icalendar.tests.rfc_6321_xcal.common import to_xcal
 
 mark_text = pytest.mark.parametrize(
     "text", ["", "normal text", "中文鍵盤/中文键盘", "Text\nwith\nnewlines"]
@@ -18,10 +19,10 @@ mark_text_class = pytest.mark.parametrize("text_class", [vText, vUid])
 def test_to_xcal(text, text_class):
     """Convert text-based values to xCal."""
     value = text_class(text)
-    element = value.to_xcal()
+    element = to_xcal(value)
 
     assert isinstance(element, ET.Element)
-    assert element.tag == "text"
+    assert element.tag == value.default_value
     assert element.text == text
 
 
