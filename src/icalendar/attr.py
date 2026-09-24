@@ -446,7 +446,12 @@ def single_int_property(
 
 
 def _decode_single_utc_value(name: str, value: object) -> date | datetime:
-    """Extract and check one datetime value of a singleton UTC property."""
+    """Extract and check one datetime value of a singleton UTC property.
+
+    Raises:
+        ValueError: If a text or unknown value cannot be parsed.
+        InvalidCalendar: If the decoded value is not a date or datetime.
+    """
     if isinstance(value, (vText, vUnknown)):
         # we might be in an attribute that is not typed
         value = vDDDTypes.from_ical(value)
