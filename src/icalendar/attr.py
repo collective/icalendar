@@ -1772,14 +1772,12 @@ def get_start_end_duration_with_validation(
     end = getattr(component, end_property, None)
     duration = component.DURATION
 
-    # RFC 5545: Only one of end property and DURATION may be present
+    # RFC 5545 forbids both properties, but real-world calendars can
+    # contain both. Prefer the explicit DURATION because it is the
+    # unambiguous duration representation and lets callers still read the
+    # component rather than failing the entire lookup.
     if duration is not None and end is not None:
-        end_name = "DTEND" if end_property == "DTEND" else "DUE"
-        msg = (
-            f"Only one of {end_name} and DURATION "
-            f"may be in a {component_name}, not both."
-        )
-        raise InvalidCalendar(msg)
+        end = None
 
     # RFC 5545: When DTSTART is a date, DURATION must be of days or weeks
     if (
