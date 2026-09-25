@@ -1884,6 +1884,10 @@ def get_duration_property(component: Component) -> timedelta:
     if "DURATION" in component:
         return component["DURATION"].dt
 
+    # A VTODO with DUE but no DTSTART occupies the instant at DUE.
+    if component.name == "VTODO" and "DUE" in component and "DTSTART" not in component:
+        return timedelta(0)
+
     # Fall back to calculated duration from start and end
     return component.end - component.start
 

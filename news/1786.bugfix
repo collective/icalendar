@@ -1,0 +1,1 @@
+Return a zero duration for a VTODO that has DUE but no DTSTART, instead of raising IncompleteComponent. I used AI to assist me with this change.
