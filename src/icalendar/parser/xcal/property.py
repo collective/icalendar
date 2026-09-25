@@ -110,3 +110,4 @@ class XCalPropertyParser(XCalParameterParser):
                 <text>-//Example Inc.//Example Client//EN</text>
             </prodid>
         """
+        self.parse_parameter()

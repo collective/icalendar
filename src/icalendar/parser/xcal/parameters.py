@@ -93,7 +93,9 @@ class XCalParameterParser(XCalParser):
         # TODO: Test that something is getting consumed
         #       otherwise we might land in a loop
         value_type = self._types_factory.for_property(self.tag, self.child.tag)
-        return value_type.from_xcal(self)
+        result = value_type.from_xcal(self)
+        self.done()
+        return result
 
     def parse_parameters(self) -> Parameters:
         """Return empty parameters as parameters can only appear in a property."""

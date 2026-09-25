@@ -1138,11 +1138,11 @@ class Component(CaselessDict):
         e_component = SubElement(element, self.name.lower())
         if len(self) > 0:
             e_properties = SubElement(e_component, "properties")
-            for key, prop in self.items():
-                prop: VPROPERTY
-                e_property = SubElement(e_properties, key.lower())
-                e_content = prop.to_xcal()
-                e_property.append(e_content)
+            for key, prop_list in self.items():
+                for prop in prop_list if isinstance(prop_list, list) else [prop_list]:
+                    prop: VPROPERTY
+                    e_property = SubElement(e_properties, key.lower())
+                    prop.to_xcal(e_property)
         if self.subcomponents:
             e_components = SubElement(e_component, "components")
             for subcomponent in self.subcomponents:
