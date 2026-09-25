@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from xml.etree.ElementTree import Element
 
-REGEX_WHITESPACE = re.compile(r"\s+")
+REGEX_WHITESPACE = re.compile(r"\s+", re.MULTILINE)
 
 
 class ElementAdapter:
@@ -52,7 +52,7 @@ class ElementAdapter:
         This is the only datatype that leaves all the whitespace. -
         `xmlschemata.org <https://books.xmlschemata.org/relaxng/ch19-77303.html>`_
         """
-        return self._element.text or ""
+        return self._element.text or ""  # TODO: test
 
     def get_xsd_token(self) -> str:
         """Return the element's text as xsd:token.
@@ -61,7 +61,7 @@ class ElementAdapter:
         that don't care about whitespace. -
         `xmlschemata.org <https://books.xmlschemata.org/relaxng/ch19-77319.html>`_
         """
-        return REGEX_WHITESPACE.sub(" ", self.get_xsd_string(), re.MULTILINE).strip()
+        return REGEX_WHITESPACE.sub(" ", self.get_xsd_string()).strip()  # TODO: test
 
 
 class ChildElementAdapter(ElementAdapter):
