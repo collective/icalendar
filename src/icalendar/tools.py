@@ -6,8 +6,6 @@ from datetime import date, datetime, tzinfo
 from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
-    from xml.etree.ElementTree import Element
-
     from icalendar.compatibility import TypeGuard, TypeIs
 
 
@@ -138,17 +136,11 @@ def normalize_pytz(dt: date | datetime) -> date | datetime:
     return dt
 
 
-def tag_without_namespace(element: Element) -> str:
-    """Return the cleaned version of the element's tag."""
-    return element.tag.split("}")[-1].lower()
-
-
 __all__ = [
     "is_date",
     "is_datetime",
     "is_pytz",
     "is_pytz_dt",
     "normalize_pytz",
-    "tag_without_namespace",
     "to_datetime",
 ]

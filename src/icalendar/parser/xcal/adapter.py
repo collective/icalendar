@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from collections import defaultdict
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -35,7 +36,13 @@ class ElementAdapter:
     @property
     def children(self) -> list[ChildElementAdapter]:
         """A list of child elements."""
-        return [ChildElementAdapter(child, self) for child in self._element]
+        tags = defaultdict(int)
+        children = []
+        for child_element in self._element:
+            tag = child_element.tag
+            tags[tag] += 1
+            children.append(ChildElementAdapter(child_element, self, tags[tag]))
+        return children
 
     def get_child_with_tag(self, tag: str) -> ChildElementAdapter | None:
         """Get the first child element with the given tag."""
@@ -52,7 +59,7 @@ class ElementAdapter:
         This is the only datatype that leaves all the whitespace. -
         `xmlschemata.org <https://books.xmlschemata.org/relaxng/ch19-77303.html>`_
         """
-        return self._element.text or ""  # TODO: test
+        return self._element.text or ""
 
     def get_xsd_token(self) -> str:
         """Return the element's text as xsd:token.
@@ -61,17 +68,36 @@ class ElementAdapter:
         that don't care about whitespace. -
         `xmlschemata.org <https://books.xmlschemata.org/relaxng/ch19-77319.html>`_
         """
-        return REGEX_WHITESPACE.sub(" ", self.get_xsd_string()).strip()  # TODO: test
+        return REGEX_WHITESPACE.sub(" ", self.get_xsd_string()).strip()
+
+    def get_xpath(self) -> str:
+        """Return the path in the XML file where this element occurs."""
+        return f"/{self.tag}"
+
+    def __repr__(self) -> str:
+        """Return the text representation of this element."""
+        return f"Element@{self.get_xpath()}"
 
 
 class ChildElementAdapter(ElementAdapter):
-    """An adapter class with convenience methods for child elements."""
+    """An adapter class with convenience methods for child elements.
 
-    def __init__(self, child: Element, parent: ElementAdapter) -> None:
+    Parameters:
+        child: The child element.
+        parent: The parent element adapter.
+        index: The index for building the XPath in the parent.
+    """
+
+    def __init__(self, child: Element, parent: ElementAdapter, index: int = 1) -> None:
         super().__init__(child)
         self._parent = parent
+        self._index = index
 
     @property
     def parent(self) -> ElementAdapter:
         """The parent element."""
         return self._parent
+
+    def get_xpath(self) -> str:
+        """Return the path in the XML file where this element occurs."""
+        return f"{self.parent.get_xpath()}/{self.tag}[{self._index}]"

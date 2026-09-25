@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from icalendar.parser.parameter import Parameters
 from icalendar.parser.xcal.base import XCalParser
-from icalendar.parser.xcal.parameters import XCalParametersParser
+from icalendar.parser.xcal.parameters import XCalParameterParser, XCalParametersParser
 
 if TYPE_CHECKING:
     from xml.etree.ElementTree import Element
@@ -56,14 +56,23 @@ class XCalPropertiesParser(XCalParser):
         self.done()
 
 
-class XCalPropertyParser(XCalParser):
-    """A parser for one property."""
+class XCalPropertyParser(XCalParameterParser):
+    """A parser for one property.
+
+    This parses the value type and additionally the parameters.
+    """
 
     def __init__(
-        self, element: Element | ElementAdapter, types_factory: TypesFactory
+        self,
+        element: Element | ElementAdapter,
+        types_factory: TypesFactory | None = None,
     ) -> None:
         super().__init__(element)
-        self._types_factory = types_factory
+        from icalendar.prop.factory import TypesFactory
+
+        self._types_factory = (
+            TypesFactory.instance() if types_factory is None else types_factory
+        )
         self._parameters = self.parse_parameters()
 
     def parse_parameters(self) -> Parameters:

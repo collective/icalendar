@@ -4,7 +4,7 @@ from xml.etree import ElementTree as ET
 
 import pytest
 
-from icalendar import TypesFactory, vText, vUid
+from icalendar import vText, vUid
 from icalendar.tests.rfc_6321_xcal.common import generate_xml_tree, to_xcal
 
 mark_text = pytest.mark.parametrize(
@@ -27,21 +27,10 @@ def test_to_xcal(text, text_class):
 
 
 @mark_text
-def test_from_xcal_from_factory(types_factory: TypesFactory, text):
-    """Parse text from xCal through the type factory."""
-    element = generate_xml_tree(["x-prop", ["text", text]])
-
-    result = types_factory.parse_xcal_property(element)
-
-    assert isinstance(result, vText)
-    assert result.ical_value == text
-
-
-@mark_text
 @mark_text_class
 def test_from_xcal_from_text_class(text, text_class):
     """Parse text-based values from xCal."""
-    element = generate_xml_tree(["x-prop", ["text", text]])
+    element = generate_xml_tree(["x-prop", [text_class.default_value, text]])
 
     result = text_class.from_xcal(element)
 
@@ -52,7 +41,8 @@ def test_from_xcal_from_text_class(text, text_class):
 @mark_text_class
 def test_invalid_value_from_xcal(text_class):
     """Parse an empty xCal value."""
-    element = ET.Element("text")
+    element = ET.Element("root")
+    ET.SubElement(element, text_class.default_value)
 
     result = text_class.from_xcal(element)
 

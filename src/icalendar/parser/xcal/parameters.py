@@ -2,14 +2,15 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from icalendar.error import XCalParsingError
 from icalendar.parser.parameter import Parameters
 from icalendar.parser.xcal.base import XCalParser
-from icalendar.prop.factory import TypesFactory
 
 if TYPE_CHECKING:
     from xml.etree.ElementTree import Element
 
     from icalendar.parser.xcal.adapter import ElementAdapter
+    from icalendar.prop.factory import TypesFactory
 
 
 class XCalParametersParser(XCalParser):
@@ -21,6 +22,8 @@ class XCalParametersParser(XCalParser):
         parameters: Parameters | None = None,
         types_factory: TypesFactory | None = None,
     ) -> None:
+        from icalendar.prop.factory import TypesFactory
+
         super().__init__(element)
         self._types_factory = (
             TypesFactory.instance() if types_factory is None else types_factory
@@ -64,6 +67,8 @@ class XCalParameterParser(XCalParser):
         element: Element | ElementAdapter,
         types_factory: TypesFactory | None = None,
     ) -> None:
+        from icalendar.prop.factory import TypesFactory
+
         super().__init__(element)
         self._types_factory = (
             TypesFactory.instance() if types_factory is None else types_factory
@@ -102,4 +107,4 @@ class XCalParameterParser(XCalParser):
             if child.tag == tag:
                 del self._children[i]
                 return child
-        raise ValueError(f"Tag {tag} not found.")  # TODO: This is the wrong error.
+        raise XCalParsingError(f"Tag {tag} not found", None, self._element)

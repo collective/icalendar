@@ -31,13 +31,10 @@ from icalendar.prop.uid import vUid
 from icalendar.prop.unknown import vUnknown
 from icalendar.prop.uri import vUri
 from icalendar.prop.xml_reference import vXmlReference
-from icalendar.tools import tag_without_namespace
 
 from .integer import vInt
 
 if TYPE_CHECKING:
-    from xml.etree.ElementTree import Element
-
     from icalendar.prop import VPROPERTY
 
 
@@ -317,40 +314,6 @@ class TypesFactory(CaselessDict):
         """
         type_class = self.for_property(name)
         return type_class.from_ical(value)
-
-    def from_xcal(self, property_name: str, element: Element):
-        """Decodes a named property or parameter value from an xCal XML element."""
-        type_class = self.for_property(property_name, tag_without_namespace(element))
-        return type_class.from_xcal(element)
-
-    def parse_xcal_property(self, element: Element):
-        """Decodes a named property or parameter value from an xCal XML element."""
-        value_param = None
-        # use the first value type to parse
-        for child in element:
-            tag = tag_without_namespace(child)
-            if tag != "parameters":
-                value_param = tag
-                break
-        type_class = self.for_property(tag_without_namespace(element))
-        if type_class.default_value.lower() != value_param:
-            # The value parameter does not match this class.
-            # We need to find a better match.
-            type_class = self.for_property(tag_without_namespace(element), value_param)
-        return type_class.from_xcal(element)
-
-    def parse_xcal_parameter(self, element: Element):
-        """Decodes a parameter value from an xCal XML element.
-
-        Example:
-
-            .. code-block:: text
-
-                <language>
-                    <text>en-US</text>
-                </language>
-        """
-        return self.parse_xcal_property(element)
 
 
 __all__ = ["TypesFactory"]

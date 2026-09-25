@@ -5,8 +5,6 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING
 
-from icalendar.error import XCalParsingError
-
 if TYPE_CHECKING:
     from xml.etree.ElementTree import Element
 
@@ -98,6 +96,8 @@ class XCalRegexMatcher:
         Raises:
             ~icalendar.error.XCalParsingError: If the provided xCal is invalid.
         """
+        from icalendar.error import XCalParsingError
+
         match = self._regex.match(element.text or "")
         if match is None:
             raise XCalParsingError.in_property_text(

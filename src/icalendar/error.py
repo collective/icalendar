@@ -5,14 +5,11 @@ from __future__ import annotations
 import contextlib
 from typing import TYPE_CHECKING
 
-from icalendar.tools import tag_without_namespace
-
 if TYPE_CHECKING:
-    import xml.etree.ElementTree as ET
     from collections.abc import Generator
 
-    from icalendar.cal.component import Component
-    from icalendar.prop import VPROPERTY
+    from icalendar.parser.xcal.adapter import ElementAdapter
+    from icalendar.parser.xcal.base import XCalParser
 
 
 class InvalidCalendar(ValueError):
@@ -360,18 +357,15 @@ class XCalParsingError(InvalidCalendar):
     value: str | None
     """The value that caused the error."""
 
-    element: ET.Element
+    element: ElementAdapter
     """The XML element that caused the error."""
-
-    parser: type[VPROPERTY | Component]
-    """The parser that cannot parse the XML element."""
 
     def __init__(
         self,
         message: str,
         value: str | None,
-        element: ET.Element,
-        parser: type[VPROPERTY | Component],
+        element: ElementAdapter,
+        parser: XCalParser | None = None,
     ) -> None:
         """Create a new XCalParsingError.
 
@@ -379,37 +373,15 @@ class XCalParsingError(InvalidCalendar):
             message: A description of the error that occurred while parsing.
             value: The value that caused the error.
             element: The XML element that caused the error.
-            parser: The parser that cannot parse the XML element.
         """
         self.value = value
         self.element = element
-        self.parser = parser
-        self.message = message + (
-            f" Got {value!r} in {tag_without_namespace(element)!r}"
-            f" element parsing {parser.__name__!r}."
-        )
-        super().__init__(self.message)
-
-    @classmethod
-    def in_property_text(
-        cls, message: str, element: ET.Element, parser: type[VPROPERTY | Component]
-    ):
-        """Raise an error in a property.
-
-        Parameters:
-            message: A description of the error that occurred while parsing.
-            element: The XML element where the error occurred.
-            parser: The parser class where the error occurred.
-
-        Returns:
-            ~error.XCalParsingError: Always.
-        """
-        return cls(
-            message=message,
-            value=element.text,
-            element=element,
-            parser=parser,
-        )
+        self.message = message
+        if value is not None:
+            full_message = f"{message}, got {value!r} in {element.get_xpath()}."
+        else:
+            full_message = f"{message} in {element.get_xpath()}."
+        super().__init__(full_message)
 
 
 __all__ = [

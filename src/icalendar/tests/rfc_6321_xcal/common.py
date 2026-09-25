@@ -52,7 +52,7 @@ def generate_xml_tree(spec: list[str | list]) -> Element:
         raise ValueError("spec must not be empty.")
     if not isinstance(spec[0], str):
         raise TypeError("spec[0] must be a string.")
-    e = Element(spec[0])
+    e = Element(spec[0].lower())
     if len(spec) == 1:
         return e
     index = 1

@@ -9,7 +9,6 @@ from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser_tools import to_unicode
 from icalendar.prop.text import vText
-from icalendar.tools import tag_without_namespace
 
 
 class vCategory:
@@ -130,10 +129,6 @@ class vCategory:
         Raises:
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
-        cats = [
-            child.text for child in element if tag_without_namespace(child) == "text"
-        ]
-        return cls(cats, params=Parameters.from_xcal_property(element, cls))
 
 
 __all__ = ["vCategory"]
