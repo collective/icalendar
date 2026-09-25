@@ -276,20 +276,24 @@ class TestConsolidatedPropertyGetters:
 
     def test_get_start_end_duration_validation_errors(self) -> None:
         """Test get_start_end_duration_with_validation error cases."""
-        # Test both DTEND and DURATION
+        # When both DTEND and DURATION are present, prefer DURATION so
+        # malformed real-world calendars remain readable.
         event = Event()
         event.add("UID", "test-both")
         event.add("DTSTART", datetime(2026, 1, 1, 12, 0))
         event.add("DTEND", datetime(2026, 1, 1, 15, 0))
         event.add("DURATION", timedelta(hours=2))
 
-        with pytest.raises(InvalidCalendar, match="Only one of DTEND and DURATION"):
-            get_start_end_duration_with_validation(
-                event,
-                "DTSTART",
-                "DTEND",
-                "VEVENT",
-            )
+        start, end, duration = get_start_end_duration_with_validation(
+            event,
+            "DTSTART",
+            "DTEND",
+            "VEVENT",
+        )
+        assert start == datetime(2026, 1, 1, 12, 0)
+        assert end is None
+        assert duration == timedelta(hours=2)
+        assert event.end == datetime(2026, 1, 1, 14, 0)
 
         # Test invalid duration for date DTSTART
         event2 = Event()
