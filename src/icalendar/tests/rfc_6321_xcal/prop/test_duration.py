@@ -10,8 +10,7 @@ import pytest
 
 from icalendar.error import XCalParsingError
 from icalendar.prop.dt import vDDDLists, vDDDTypes, vDuration
-from icalendar.prop.factory import TypesFactory
-from icalendar.tests.rfc_6321_xcal.common import to_xcal
+from icalendar.tests.rfc_6321_xcal.common import generate_xml_tree, to_xcal
 
 
 @pytest.fixture(params=[vDuration, vDDDTypes, vDDDLists])
@@ -40,38 +39,23 @@ def test_to_xcal(v_duration, date, xcal):
 
 
 @mark_values
-def test_from_xcal_from_factory(types_factory: TypesFactory, v_duration, date, xcal):
-    """Parse from xcal."""
-    e = ET.Element("duration")
-    e.text = xcal
-    result = types_factory.from_xcal("x-prop", e)
-    assert result.dt == date
-
-
-@mark_values
 def test_from_xcal_from_dt_class(v_duration, date, xcal):
     """Parse from xcal."""
-    e = ET.Element("duration")
-    e.text = xcal
-    result = v_duration.from_xcal(e)
+    element = generate_xml_tree(["x-prop", ["duration", xcal]])
+    result = v_duration.from_xcal(element)
     assert result.dt == date
 
 
 @pytest.mark.parametrize(
     ("xcal"),
-    [
-        "INVALID",
-        None,
-    ],
+    ["INVALID", "P15DT5H0M20Sx", ""],
 )
 def test_invalid_value_from_xcal(v_duration, xcal):
     """Parse from xcal with invalid value."""
-    e = ET.Element("duration")
-    e.text = xcal
+    element = generate_xml_tree(["x-prop", ["duration", xcal]])
     with pytest.raises(XCalParsingError) as error:
-        v_duration.from_xcal(e)
-    assert error.value.parser == vDuration
+        v_duration.from_xcal(element)
     assert (
         error.value.message
-        == f"Expected duration format https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.6. Got {xcal!r} in 'duration' element parsing 'vDuration'."
+        == f"Expected duration format https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.6, got {xcal!r} in /x-prop/duration[1]."
     )

@@ -9,7 +9,6 @@ if TYPE_CHECKING:
     from collections.abc import Generator
 
     from icalendar.parser.xcal.adapter import ElementAdapter
-    from icalendar.parser.xcal.base import XCalParser
 
 
 class InvalidCalendar(ValueError):
@@ -365,7 +364,6 @@ class XCalParsingError(InvalidCalendar):
         message: str,
         value: str | None,
         element: ElementAdapter,
-        parser: XCalParser | None = None,
     ) -> None:
         """Create a new XCalParsingError.
 
@@ -376,12 +374,12 @@ class XCalParsingError(InvalidCalendar):
         """
         self.value = value
         self.element = element
-        self.message = message
+        self.short_message = message
         if value is not None:
-            full_message = f"{message}, got {value!r} in {element.get_xpath()}."
+            self.message = f"{message}, got {value!r} in {element.get_xpath()}."
         else:
-            full_message = f"{message} in {element.get_xpath()}."
-        super().__init__(full_message)
+            self.message = f"{message} in {element.get_xpath()}."
+        super().__init__(self.message)
 
 
 __all__ = [

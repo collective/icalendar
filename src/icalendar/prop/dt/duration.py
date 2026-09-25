@@ -8,6 +8,8 @@ from xml.etree.ElementTree import Element, SubElement
 from icalendar.compatibility import Self
 from icalendar.error import InvalidCalendar, JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.value import VPropParser
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 
 from .base import TimeBase
 
@@ -15,7 +17,7 @@ DURATION_REGEX = re.compile(
     r"([-+]?)P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?\Z"
 )
 
-XCAL_DURATION_ERROR = "Expected duration format https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.6."
+XCAL_DURATION_ERROR = "Expected duration format https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.6"
 
 
 class vDuration(TimeBase):
@@ -211,31 +213,24 @@ class vDuration(TimeBase):
         element = SubElement(element, "duration")
         element.text = self.to_ical().decode()
 
-    @classmethod
-    def from_xcal(cls, element: Element) -> Self:
+    @from_xcal_wrapper  # TODO: Fix typing issues
+    def from_xcal(self, parser: VPropParser, params: Parameters) -> Self:
         """Parse xCal from :rfc:`6321`.
 
         Parameters:
-            element: The xCal element to parse.
+            parser: The parser to use.
 
         Raises:
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
-        if element.text is None:
-            raise XCalParsingError.in_property_text(
-                XCAL_DURATION_ERROR,
-                element,
-                cls,
-            )
+        element = parser.parse_tag(self.default_value)
         try:
-            td = cls.from_ical(element.text)
+            td = self.from_ical(element.get_xsd_token())
         except InvalidCalendar as e:
-            raise XCalParsingError.in_property_text(
-                XCAL_DURATION_ERROR,
-                element,
-                cls,
+            raise XCalParsingError(
+                XCAL_DURATION_ERROR, element.get_xsd_token(), element
             ) from e
-        return cls(td, params=Parameters.from_xcal_property(element, cls))
+        return self(td, params=params)
 
 
 __all__ = ["vDuration"]

@@ -7,7 +7,10 @@ from xml.etree.ElementTree import Element, SubElement
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
-from icalendar.parser_tools import XCalRegexMatcher, to_unicode
+from icalendar.parser.xcal.match import XCalRegexMatcher
+from icalendar.parser.xcal.value import VPropParser
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
+from icalendar.parser_tools import to_unicode
 from icalendar.timezone import tzp
 from icalendar.timezone.tzid import is_utc
 
@@ -15,7 +18,7 @@ from .base import TimeBase
 
 XCAL_DATETIME_REGEX = XCalRegexMatcher(
     r"(\d\d\d\d)-(\d\d)-(\d\d)T(\d\d):(\d\d):(\d\d)(Z?)",
-    "Expected date-time format YYYY-MM-DDTHH:MM:SS or YYYY-MM-DDTHH:MM:SSZ.",
+    "Expected date-time format YYYY-MM-DDTHH:MM:SS or YYYY-MM-DDTHH:MM:SSZ",
 )
 
 
@@ -218,25 +221,26 @@ class vDatetime(TimeBase):
             text += "Z"
         element.text = text
 
-    @classmethod
-    def from_xcal(cls, element: Element) -> Self:
+    @from_xcal_wrapper  # TODO: Fix typing issues
+    def from_xcal(self, parser: VPropParser, params: Parameters) -> Self:
         """Parse xCal from :rfc:`6321`.
 
         Parameters:
-            element: The xCal element to parse.
+            parser: The parser to use.
 
         Raises:
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
+        element = parser.parse_tag(self.default_value)
         year, month, day, hour, minute, second, timezone = XCAL_DATETIME_REGEX.groups(
-            element, cls
+            element
         )
         dt = datetime(
             int(year), int(month), int(day), int(hour), int(minute), int(second)
         )
         if timezone:
             dt = tzp.localize_utc(dt)
-        return cls(dt, params=Parameters.from_xcal_property(element, cls))
+        return self(dt, params=params)
 
 
 __all__ = ["vDatetime"]

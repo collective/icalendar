@@ -47,8 +47,7 @@ def test_from_xcal(types_factory: TypesFactory, cats):
         e.append(ET.Element("text"))
         e[-1].text = cat
     expected = vCategory(cats)
-    result = types_factory.parse_xcal_property(e)
-    print(repr(result))
+    result = vCategory.from_xcal(e)
     assert isinstance(result, vCategory)
     assert result == expected
 

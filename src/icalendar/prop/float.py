@@ -7,6 +7,8 @@ from xml.etree.ElementTree import Element, SubElement
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.value import VPropParser
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 
 
 class vFloat(float):
@@ -136,8 +138,8 @@ class vFloat(float):
             return "INF"
         return "-INF"
 
-    @classmethod
-    def from_xcal(cls, element: Element) -> Self:
+    @from_xcal_wrapper
+    def from_xcal(self, parser: VPropParser, params: Parameters) -> Self:
         """Parse xCal from :rfc:`6321`.
 
         Parameters:
@@ -146,15 +148,16 @@ class vFloat(float):
         Raises:
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
+        element = parser.parse_tag(self.default_value)
         try:
-            value = cls.from_xsd_float(element.text)
+            value = self.from_xsd_float(element.get_xsd_token())
         except (TypeError, ValueError) as e:
-            raise XCalParsingError.in_property_text(
-                "Expected xsd:float.",
+            raise XCalParsingError(
+                "Expected xsd:float",
+                element.get_xsd_token(),
                 element,
-                cls,
             ) from e
-        return cls(value, params=Parameters.from_xcal_property(element, cls))
+        return self(value, params=params)
 
     def to_xcal(self, element: Element) -> None:
         """Add the xCal representation of this property according to :rfc:`6321`."""

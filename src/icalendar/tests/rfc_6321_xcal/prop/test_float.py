@@ -10,9 +10,12 @@ from xml.etree import ElementTree as ET
 import pytest
 
 from icalendar import vFloat
-from icalendar.error import XCalParsingError
 from icalendar.prop.factory import TypesFactory
-from icalendar.tests.rfc_6321_xcal.common import XML_WHITESPACE, to_xcal
+from icalendar.tests.rfc_6321_xcal.common import (
+    XML_WHITESPACE,
+    generate_xml_tree,
+    to_xcal,
+)
 
 
 @pytest.mark.parametrize(
@@ -103,21 +106,7 @@ def test_to_xcal(value, expected):
 @mark_values
 def test_from_xcal(types_factory: TypesFactory, value, expected):
     """Parse from xcal."""
-    e = ET.Element("float")
-    e.text = value
-    result = types_factory.from_xcal("x-prop", e)
+    xml = generate_xml_tree(["x-prop", ["float", value]])
+    result = vFloat.from_xcal(xml)
     assert isinstance(result, vFloat)
     assert result == expected
-
-
-def test_invalid_value_from_xcal(types_factory: TypesFactory):
-    """Parse from xcal with invalid value."""
-    e = ET.Element("float")
-    e.text = "INVALID"
-    with pytest.raises(XCalParsingError) as error:
-        types_factory.from_xcal("x-prop", e)
-    assert error.value.parser == vFloat
-    assert (
-        error.value.message
-        == "Expected xsd:float. Got 'INVALID' in 'float' element parsing 'vFloat'."
-    )

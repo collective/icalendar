@@ -7,6 +7,7 @@ from icalendar.parser.parameter import Parameters
 from icalendar.parser.xcal.base import XCalParser
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
     from xml.etree.ElementTree import Element
 
     from icalendar.parser.xcal.adapter import ElementAdapter
@@ -73,6 +74,7 @@ class XCalParameterParser(XCalParser):
         self._types_factory = (
             TypesFactory.instance() if types_factory is None else types_factory
         )
+        self._element_is_parsed = False
 
     def parse_parameter(self) -> None:
         """Parse one parameter value if present.
@@ -97,14 +99,54 @@ class XCalParameterParser(XCalParser):
         """Return empty parameters as parameters can only appear in a property."""
         return Parameters()
 
-    def parse_tag(self, tag: str) -> ElementAdapter:
+    @staticmethod
+    def _sanitize_tags(tags: str | Sequence[str]) -> set[str]:
+        """Return a set of tags to test."""
+        if isinstance(tags, str):
+            return {tags.lower()}
+        return {t.lower() for t in tags}
+
+    def parse_tag(self, tag: str | Sequence[str]) -> ElementAdapter:
+        """Find a child tag and return it.
+
+        This child is then considered parsed.
+
+        Raises:
+            XCalParsingError: If the tag is not found.
+        """
+        tags = self._sanitize_tags(tag)
+        element = self._parse_tag(tags)
+
+        if element is None:
+            raise XCalParsingError(
+                f"Tag {' or '.join(tags)} not found", None, self._element
+            )
+        return element
+
+    def _parse_tag(self, tags: set[str]) -> ElementAdapter | None:
         """Find a child tag and return it.
 
         This child is then considered parsed.
         """
-        tag = tag.lower()
+        if not self._element_is_parsed and self._element.tag in tags:
+            self._element_is_parsed = True
+            return self._element
         for i, child in enumerate(self._children):
-            if child.tag == tag:
+            if child.tag in tags:
                 del self._children[i]
                 return child
-        raise XCalParsingError(f"Tag {tag} not found", None, self._element)
+        return None
+
+    def parse_tags(self, tag: str | Sequence[str]) -> list[ElementAdapter]:
+        """Find all child tags and return it.
+
+        These children is then considered parsed.
+        """
+        tags = self._sanitize_tags(tag)
+        children = []
+        while True:
+            child = self._parse_tag(tags)
+            if child is None:
+                break
+            children.append(child)
+        return children

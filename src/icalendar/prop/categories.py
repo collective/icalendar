@@ -7,6 +7,8 @@ from xml.etree.ElementTree import Element
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.value import VPropParser
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import to_unicode
 from icalendar.prop.text import vText
 
@@ -119,16 +121,19 @@ class vCategory:
                 cat = vText(cat)
             cat.to_xcal(element)
 
-    @classmethod
-    def from_xcal(cls, element: Element) -> Self:
+    @from_xcal_wrapper  # TODO: Fix typing issues
+    def from_xcal(self, parser: VPropParser, params: Parameters) -> Self:
         """Parse xCal from :rfc:`6321`.
 
         Parameters:
-            element: The xCal element to parse.
+            parser: The parser to use.
 
         Raises:
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
+        elements = parser.parse_tags(self.default_value)
+        cats = [element.get_xsd_string() for element in elements]
+        return self(cats, params=params)
 
 
 __all__ = ["vCategory"]

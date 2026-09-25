@@ -7,7 +7,7 @@ from xml.etree.ElementTree import Element, SubElement
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
-from icalendar.parser_tools import XCalRegexMatcher
+from icalendar.parser.xcal.match import XCalRegexMatcher
 
 from .base import TimeBase
 

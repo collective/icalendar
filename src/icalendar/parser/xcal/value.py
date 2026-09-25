@@ -3,6 +3,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Protocol
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from icalendar.parser.parameter import Parameters
     from icalendar.parser.xcal.adapter import ElementAdapter
 
@@ -17,4 +19,5 @@ class VPropParser(Protocol):
 
     def parse_parameters(self) -> Parameters: ...
 
-    def parse_tag(self, tag: str) -> ElementAdapter: ...
+    def parse_tag(self, tag: str | Sequence[str]) -> ElementAdapter: ...
+    def parse_tags(self, tag: str | Sequence[str]) -> list[ElementAdapter]: ...

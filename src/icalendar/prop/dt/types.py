@@ -7,8 +7,9 @@ from datetime import date, datetime, time, timedelta
 from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
 from icalendar.caselessdict import CaselessDict
-from icalendar.error import JCalParsingError, XCalParsingError
+from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.timezone import tzp
 from icalendar.tools import is_date, is_datetime, to_datetime
 
@@ -23,7 +24,7 @@ if TYPE_CHECKING:
     from xml.etree.ElementTree import Element
 
     from icalendar.compatibility import Self
-    from icalendar.prop import VPROPERTY
+    from icalendar.parser.xcal.value import VPropParser
 
 DT_TYPE: TypeAlias = (
     datetime
@@ -200,39 +201,36 @@ class vDDDTypes(TimeBase):
         """Convert a vDDDTypes to an xCal element."""
         self.to_property_type().to_xcal(element)
 
-    VALUE_MAP: dict[str, VPROPERTY] = CaselessDict(
-        {
-            vDate.default_value: vDate,
-            vTime.default_value: vTime,
-            vDatetime.default_value: vDatetime,
-            vDuration.default_value: vDuration,
-            vPeriod.default_value: vPeriod,
-        }
+    VALUE_MAP: dict[str, vDate | vTime | vDatetime | vDuration | vPeriod] = (
+        CaselessDict(
+            {
+                vDate.default_value: vDate,
+                vTime.default_value: vTime,
+                vDatetime.default_value: vDatetime,
+                vDuration.default_value: vDuration,
+                vPeriod.default_value: vPeriod,
+            }
+        )
     )
     """Map the VALUE parameters of the different types to their class."""
 
-    @classmethod
-    def from_xcal(cls, element: Element) -> Self:
+    @from_xcal_wrapper  # TODO: Fix typing issues
+    def from_xcal(self, parser: VPropParser, params: Parameters) -> Self:
         """Parse xCal from :rfc:`6321`.
 
         Parameters:
-            element: The xCal element to parse.
+            parser: The parser to use.
 
         Raises:
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
-        v_prop = cls.VALUE_MAP.get(element.tag)
-        if v_prop is None:
-            raise XCalParsingError.in_property_text(
-                "Expected one of these values: "
-                f"{', '.join(value.lower() for value in cls.VALUE_MAP)}.",
-                element,
-                cls,
-            )
+        element = parser.parse_tag(list(self.VALUE_MAP))
+        v_prop = self.VALUE_MAP[element.tag]
+
         parsed = v_prop.from_xcal(element)
-        return cls(
+        return self(
             parsed.dt,
-            params=parsed.params,
+            params=params,
         )
 
 

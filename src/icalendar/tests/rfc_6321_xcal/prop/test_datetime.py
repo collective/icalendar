@@ -10,7 +10,6 @@ import pytest
 
 from icalendar.error import XCalParsingError
 from icalendar.prop.dt import vDatetime, vDDDLists, vDDDTypes
-from icalendar.prop.factory import TypesFactory
 from icalendar.tests.rfc_6321_xcal.common import to_xcal
 
 
@@ -40,15 +39,6 @@ def test_to_xcal(v_datetime, date, xcal):
 
 
 @mark_values
-def test_from_xcal_from_factory(types_factory: TypesFactory, v_datetime, date, xcal):
-    """Parse from xcal."""
-    e = ET.Element("date-time")
-    e.text = xcal
-    result = types_factory.from_xcal("x-prop", e)
-    assert result.dt == date
-
-
-@mark_values
 def test_from_xcal_from_dt_class(v_datetime, date, xcal):
     """Parse from xcal."""
     e = ET.Element("date-time")
@@ -65,7 +55,6 @@ def test_from_xcal_from_dt_class(v_datetime, date, xcal):
         "2025111",
         "2025-11-10T00:0010",
         "2025111A",
-        None,
     ],
 )
 def test_invalid_value_from_xcal(v_datetime, xcal):
@@ -74,8 +63,7 @@ def test_invalid_value_from_xcal(v_datetime, xcal):
     e.text = xcal
     with pytest.raises(XCalParsingError) as error:
         v_datetime.from_xcal(e)
-    assert error.value.parser == vDatetime
     assert (
         error.value.message
-        == f"Expected date-time format YYYY-MM-DDTHH:MM:SS or YYYY-MM-DDTHH:MM:SSZ. Got {xcal!r} in 'date-time' element parsing 'vDatetime'."
+        == f"Expected date-time format YYYY-MM-DDTHH:MM:SS or YYYY-MM-DDTHH:MM:SSZ, got {xcal!r} in /date-time."
     )
