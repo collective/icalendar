@@ -2,10 +2,13 @@
 
 from collections.abc import Iterator
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element
 
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.value import VPropParser
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import to_unicode
 from icalendar.prop.text import vText
 
@@ -109,6 +112,28 @@ class vCategory:
     def ical_value(self) -> list[str]:
         """The list of categories as strings."""
         return [str(cat) for cat in self.cats]
+
+    def to_xcal(self, element: Element) -> None:
+        """Add the xCal representation of this property according to :rfc:`6321`."""
+        self.params.to_xcal(element)
+        for cat in self.cats:
+            if not isinstance(cat, vText):
+                cat = vText(cat)
+            cat.to_xcal(element)
+
+    @from_xcal_wrapper  # TODO: Fix typing issues
+    def from_xcal(self, parser: VPropParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            parser: The parser to use.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        elements = parser.parse_tags(self.default_value)
+        cats = [element.get_xsd_string() for element in elements]
+        return self(cats, params=params)
 
 
 __all__ = ["vCategory"]

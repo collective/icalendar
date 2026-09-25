@@ -4,6 +4,7 @@ import functools
 import itertools
 import sys
 import uuid
+import xml.etree.ElementTree as ET
 import zoneinfo
 from collections.abc import Generator
 from datetime import datetime, timezone
@@ -60,7 +61,7 @@ else:
 class DataSource:
     """A collection of parsed ICS elements (e.g calendars, timezones, events)"""
 
-    extensions = [".ics", ".jcal"]
+    extensions = [".ics", ".jcal", ".xml"]
 
     def __init__(
         self, data_source_folder: Path, parser: type[Component], multiple: bool = False
@@ -96,28 +97,33 @@ class DataSource:
                 f"{attribute} does not exist with these extensions: {', '.join(extensions)}."
             )
         # check different source types
-        raw_ics: bytes | None = None
-        raw_jcal: str | None = None
+        raw_bytes: bytes | None = None
+        raw_string: str | None = None
         if extension == ".jcal":
-            raw_jcal = source_path.read_text()
+            raw_string = source_path.read_text()
+            is_ical = False
         else:
-            raw_ics = source_path.read_bytes()
+            raw_bytes = source_path.read_bytes()
+            is_ical = not raw_bytes.startswith(b"<")
 
         def get_parsed(self):
-            source = (
-                self._parser.from_ical(raw_ics, multiple=self._multiple)
-                if raw_ics
-                else self._parser.from_jcal(raw_jcal)
-            )
+            if not raw_bytes:
+                source = self._parser.from_jcal(raw_string)
+            elif not is_ical:
+                source = self._parser.from_xcal(raw_bytes)
+            else:
+                source = self._parser.from_ical(raw_bytes, multiple=self._multiple)
             if self._multiple:
                 return source
-            source.raw_ics = raw_ics
-            source.raw_jcal = raw_jcal
+            source.raw_ics = raw_bytes if is_ical else None
+            source.raw_xcal = raw_bytes if not is_ical else None
+            source.raw_jcal = raw_string
             source.source_file = source_file
+            source.source_path = source_path
             return source
 
         setattr(self.__class__, attribute, property(get_parsed))
-        return getattr(self, attribute)
+        return get_parsed(self)
 
     def __contains__(self, key):
         """key in self.keys()"""
@@ -237,35 +243,29 @@ BROKEN_SOURCE_FILES = (
     "parsing_error_in_UTC_offset.ics",
     "parsing_error.ics",
 )
-SOURCE_FILES = [
-    file.name
-    for file in itertools.chain(
-        CALENDARS_FOLDER.iterdir(), TIMEZONES_FOLDER.iterdir(), EVENTS_FOLDER.iterdir()
-    )
-    if file.name not in BROKEN_SOURCE_FILES
-    and file.suffix in (".ics", ".jcal")
-    and FUZZ_TESTCASES_BROKEN_CALENDARS not in file.name
-]
 
-ICS_FILES = [
-    file.name
-    for file in itertools.chain(
-        CALENDARS_FOLDER.iterdir(), TIMEZONES_FOLDER.iterdir(), EVENTS_FOLDER.iterdir()
-    )
-    if file.name not in BROKEN_SOURCE_FILES
-    and file.suffix == ".ics"
-    and FUZZ_TESTCASES_BROKEN_CALENDARS not in file.name
-]
 
-JCAL_FILES = [
-    file.name
-    for file in itertools.chain(
-        CALENDARS_FOLDER.iterdir(), TIMEZONES_FOLDER.iterdir(), EVENTS_FOLDER.iterdir()
-    )
-    if file.name not in BROKEN_SOURCE_FILES
-    and file.suffix == ".jcal"
-    and FUZZ_TESTCASES_BROKEN_CALENDARS not in file.name
-]
+def get_files_with_extension(extension: str):
+    """Return a list of source file names with the extension."""
+    return [
+        file.name
+        for file in itertools.chain(
+            CALENDARS_FOLDER.iterdir(),
+            TIMEZONES_FOLDER.iterdir(),
+            EVENTS_FOLDER.iterdir(),
+        )
+        if file.name not in BROKEN_SOURCE_FILES
+        and file.suffix == extension
+        and FUZZ_TESTCASES_BROKEN_CALENDARS not in file.name
+    ]
+
+
+ICS_FILES = get_files_with_extension(".ics")
+
+JCAL_FILES = get_files_with_extension(".jcal")
+
+XCAL_FILES = get_files_with_extension(".xml")
+SOURCE_FILES = ICS_FILES + JCAL_FILES + XCAL_FILES
 
 
 def get_source_file(calendars, timezones, events, request) -> Component:
@@ -331,6 +331,16 @@ def types_factory():
 def component_factory():
     """Return a new types factory."""
     return ComponentFactory()
+
+
+COMPONENTS = list(ComponentFactory().values())
+COMPONENTS.append(ComponentFactory().get_component_class("X-CUSTOM"))
+
+
+@pytest.fixture(params=COMPONENTS)
+def component(request) -> Component:
+    """Return one of the defined components."""
+    return request.param()
 
 
 @pytest.fixture
@@ -566,3 +576,9 @@ def v_prop_example(v_prop) -> prop.VPROPERTY:
 def mock():
     """A mock."""
     return Mock()
+
+
+@pytest.fixture
+def xcal() -> ET.Element:
+    """Shortcut to create an XML Element"""
+    return ET.Element("vcalendar")

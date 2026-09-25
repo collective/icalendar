@@ -1,10 +1,12 @@
 """URI values from :rfc:`5545`."""
 
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.value import VPropParser
 from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
 
 
@@ -124,6 +126,26 @@ class vUri(str):
         return f"{self.__class__.__name__}({self.uri!r})"
 
     from icalendar.param import FMTTYPE, GAP, LABEL, LANGUAGE, LINKREL, RELTYPE, VALUE
+
+    def to_xcal(self, element: Element) -> None:
+        """Add the xCal representation of this property according to :rfc:`6321`."""
+        self.params.to_xcal(element)
+        element = SubElement(element, self.default_value.lower())
+        element.text = self
+
+    @classmethod
+    def from_xcal(cls, parser: VPropParser) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            parser: The parser to use.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        params = parser.parse_parameters()
+        element = parser.parse_tag(cls.default_value)
+        return cls(element.get_xsd_string(), params=params)
 
 
 __all__ = ["vUri"]

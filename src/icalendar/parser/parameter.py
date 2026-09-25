@@ -7,6 +7,7 @@ import os
 import re
 from datetime import datetime, time
 from typing import TYPE_CHECKING, Any, Protocol
+from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.compatibility import deprecate_for_version_8
@@ -523,6 +524,76 @@ class Parameters(CaselessDict):
         if self.is_utc():
             del self.tzid  # we do not want this parameter
         return self
+
+    @classmethod
+    def from_xcal(cls, element: Element) -> Parameters:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+
+        Returns:
+            :Parameters: The parsed parameters.
+
+        Example:
+
+            This parses the parameters from an xCal string.
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Parameters
+                >>> from xml.etree.ElementTree import fromstring
+                >>> xcal_string = '''
+                ... <parameters>
+                ...     <language>
+                ...         <text>en-US</text>
+                ...     </language>
+                ... </parameters>
+                ... '''
+                >>> xml_element = fromstring(xcal_string)
+                >>> parameters = Parameters.from_xcal(xml_element)
+                >>> parameters.LANGUAGE
+                'en-US'
+
+        """
+        from icalendar.parser.xcal.parameters import XCalParametersParser
+
+        parser = XCalParametersParser(element)
+        return parser.parse_parameters()
+
+    def to_xcal(self, element: Element) -> None:
+        """Add the xCal representation of the parameters according to :rfc:`6321`."""
+        if not self:
+            return
+        from icalendar.prop.factory import TypesFactory
+
+        result = SubElement(element, "parameters")
+        factory = TypesFactory.instance()
+        for key in self:
+            if key == "VALUE":
+                continue
+            value_factory = factory.for_property(key)
+            param_element = Element(key.lower())
+            for value in self.get_multiple(key):
+                if not hasattr(value, "to_xcal"):
+                    value = value_factory(value)  # noqa: PLW2901
+                value.to_xcal(param_element)
+            result.append(param_element)
+
+    def get_multiple(self, key: str) -> list:
+        """Get mulitple values as a list.
+
+        .. note::
+
+            Do not modify the list. This is only for iteration.
+        """
+        result = self.get(key, [])
+        if not isinstance(result, list):
+            return [result]
+        return result
 
 
 RFC_6868_UNESCAPE_REGEX = re.compile(r"\^\^|\^n|\^'")

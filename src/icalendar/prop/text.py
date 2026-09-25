@@ -2,10 +2,13 @@
 
 import re
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters, _escape_char
+from icalendar.parser.xcal.value import VPropParser
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
 
 # :rfc:`5545#section-3.3.11` defines TEXT as
@@ -207,6 +210,24 @@ class vText(str):
         """Parse a jCal value into a vText."""
         JCalParsingError.validate_value_type(jcal_value, (str, int, float), cls)
         return cls(str(jcal_value))
+
+    def to_xcal(self, element: Element) -> None:
+        """Add the xCal representation of this property according to :rfc:`6321`."""
+        element = SubElement(element, self.default_value.lower())
+        element.text = self
+
+    @from_xcal_wrapper  # TODO: Fix typing issues
+    def from_xcal(self, parser: VPropParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            parser: The parser to use.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        element = parser.parse_tag(self.default_value)
+        return self(element.get_xsd_string(), params=params)
 
 
 __all__ = ["vText"]

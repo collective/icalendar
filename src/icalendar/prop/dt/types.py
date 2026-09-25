@@ -6,8 +6,10 @@ from collections.abc import Sequence
 from datetime import date, datetime, time, timedelta
 from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
+from icalendar.caselessdict import CaselessDict
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.timezone import tzp
 from icalendar.tools import is_date, is_datetime, to_datetime
 
@@ -19,7 +21,10 @@ from .period import vPeriod
 from .time import vTime
 
 if TYPE_CHECKING:
+    from xml.etree.ElementTree import Element
+
     from icalendar.compatibility import Self
+    from icalendar.parser.xcal.value import VPropParser
 
 DT_TYPE: TypeAlias = (
     datetime
@@ -189,6 +194,42 @@ class vDDDTypes(TimeBase):
                 dt = tzp.localize(dt, params.tzid)
         return cls(
             dt,
+            params=params,
+        )
+
+    def to_xcal(self, element: Element) -> None:
+        """Convert a vDDDTypes to an xCal element."""
+        self.to_property_type().to_xcal(element)
+
+    VALUE_MAP: dict[str, vDate | vTime | vDatetime | vDuration | vPeriod] = (
+        CaselessDict(
+            {
+                vDate.default_value: vDate,
+                vTime.default_value: vTime,
+                vDatetime.default_value: vDatetime,
+                vDuration.default_value: vDuration,
+                vPeriod.default_value: vPeriod,
+            }
+        )
+    )
+    """Map the VALUE parameters of the different types to their class."""
+
+    @from_xcal_wrapper  # TODO: Fix typing issues
+    def from_xcal(self, parser: VPropParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            parser: The parser to use.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        element = parser.parse_tag(list(self.VALUE_MAP))
+        v_prop = self.VALUE_MAP[element.tag]
+
+        parsed = v_prop.from_xcal(element)
+        return self(
+            parsed.dt,
             params=params,
         )
 

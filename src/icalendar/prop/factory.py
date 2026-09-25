@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.prop.adr import vAdr
@@ -34,6 +34,9 @@ from icalendar.prop.xml_reference import vXmlReference
 
 from .integer import vInt
 
+if TYPE_CHECKING:
+    from icalendar.prop import VPROPERTY
+
 
 class TypesFactory(CaselessDict):
     """Factory for all value types defined in :rfc:`5545` and subsequent.
@@ -44,6 +47,7 @@ class TypesFactory(CaselessDict):
 
     _instance: ClassVar[TypesFactory | None] = None
 
+    @staticmethod
     def instance() -> TypesFactory:
         """Return a singleton instance of this class."""
         if TypesFactory._instance is None:
@@ -215,7 +219,7 @@ class TypesFactory(CaselessDict):
         }
     )
 
-    def for_property(self, name, value_param: str | None = None) -> type:
+    def for_property(self, name, value_param: str | None = None) -> type[VPROPERTY]:
         """Returns the type class for a property or parameter.
 
         Parameters:

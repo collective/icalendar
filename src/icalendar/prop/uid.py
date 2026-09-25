@@ -27,7 +27,19 @@ class vUid(vText):
             vUid('d755cef5-2311-46ed-a0e1-6733c9e15c63')
 
         """
-        return vUid(uuid.uuid4())
+        return cls(str(uuid.uuid4()))
+
+    # def to_xcal(self) -> Element:
+    #     """Serialize this UID value to xCal as ``text``.
+
+    #     :rfc:`6321` predates the UID value type introduced by :rfc:`9253`,
+    #     so xCal does not define a dedicated ``uid`` value element.
+    #     UID values are therefore serialized using the existing ``text``
+    #     value element for compatibility with xCal.
+    #     """
+    #     element = Element("text")
+    #     element.text = self
+    #     return element
 
     @property
     def uid(self) -> str:

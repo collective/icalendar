@@ -162,3 +162,16 @@ class TestCaselessdict(unittest.TestCase):
         # Should still work correctly with dicts
         assert d == {"TEST": 1}
         assert d != {"TEST": 2}
+
+
+def test_length_and_bool():
+    """__bool__ should be computed from __len__"""
+    CaselessDict = icalendar.caselessdict.CaselessDict
+
+    d = CaselessDict()
+    assert bool(d) is False
+    assert len(d) == 0
+
+    d["test"] = 1
+    assert bool(d) is True
+    assert len(d) == 1

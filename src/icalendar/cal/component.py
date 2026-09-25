@@ -6,8 +6,10 @@ import json
 from copy import deepcopy
 from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta, timezone
+from io import BytesIO
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, ClassVar, Literal, overload
+from typing import TYPE_CHECKING, Any, BinaryIO, ClassVar, Literal, overload
+from xml.etree.ElementTree import Element, SubElement, parse
 
 from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
@@ -478,6 +480,15 @@ class Component(CaselessDict):
         """
         return self.walk(select=lambda c: c.uid == uid)
 
+    def _validate_name(self):
+        """Make sure the component has a name.
+
+        Raises:
+            ValueError: If this component does not have a name.
+        """
+        if self.name is None:
+            raise ValueError("This component needs a name for serialization.", self)
+
     #####################
     # Generation
 
@@ -499,6 +510,7 @@ class Component(CaselessDict):
         stack = [(self, False)]
         while stack:
             comp, is_end = stack.pop()
+            comp._validate_name()
             if is_end:
                 result.append(("END", v_text(comp.name).to_ical()))
             else:
@@ -930,6 +942,9 @@ class Component(CaselessDict):
         Returns:
             jCal object
 
+        Raises:
+            ValueError: If a component does not have a name.
+
         See also :attr:`to_json`.
 
         In this example, we create a simple VEVENT component and convert it to jCal:
@@ -957,6 +972,7 @@ class Component(CaselessDict):
                 for key, value in comp.items()
                 for item in (value if isinstance(value, list) else [value])
             ]
+            comp._validate_name()
             return [comp.name.lower(), properties, []]
 
         root_node = make_node(self)
@@ -1115,6 +1131,63 @@ class Component(CaselessDict):
         For lazy components, this parses the component and returns the result.
         """
         return self
+
+    def to_xcal(self, element: Element) -> None:
+        """Add the xCal representation of this component according to :rfc:`6321`."""
+        self._validate_name()
+        e_component = SubElement(element, self.name.lower())
+        if len(self) > 0:
+            e_properties = SubElement(e_component, "properties")
+            for key, prop in self.items():
+                prop: VPROPERTY
+                e_property = SubElement(e_properties, key.lower())
+                e_content = prop.to_xcal()
+                e_property.append(e_content)
+        if self.subcomponents:
+            e_components = SubElement(e_component, "components")
+            for subcomponent in self.subcomponents:
+                subcomponent.to_xcal(e_components)
+
+    @classmethod
+    def from_xcal(cls, xcal: Element | bytes | Path | BinaryIO) -> list[Self]:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            xcal: The xCal element or data to parse.
+
+        Returns:
+            The parsed component.
+
+        Raises:
+            ~icalendar.error.XCalParsingError: If the provided xCal XML is invalid.
+            TypeError: If the wrong type is passed to ``xcal``.
+            xml.etree.ElementTree.ParseError: If the provided XML is invalid.
+
+        """
+        from icalendar.parser.xcal.component import XCalComponentParser
+
+        if isinstance(xcal, Path):
+            xcal = xcal.open("rb")
+        elif isinstance(xcal, bytes):
+            xcal = BytesIO(xcal)
+        if hasattr(xcal, "read"):
+            # TODO: Safe parsing
+            # S314 Using `xml` to parse untrusted data is known to be vulnerable to XML attacks; use `defusedxml` equivalents
+            element = parse(xcal).getroot()  # noqa: S314
+        elif isinstance(xcal, Element):
+            element = xcal
+        else:
+            raise TypeError(
+                f"Expected an XML Element, bytes, a Path or file object. Got {xcal}"
+            )
+        parser = XCalComponentParser(
+            element, cls._get_component_factory(), cls.types_factory
+        )
+        components = []
+        while not parser.is_finished():
+            component = parser.parse_component()
+            components.append(component)
+        return components
 
 
 def _node_from_jcal(jcal, starting_cls: type[Component]) -> tuple[Component, list]:
