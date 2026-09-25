@@ -151,8 +151,9 @@ class vDate(TimeBase):
         element = SubElement(element, "date")
         element.text = self.dt.strftime("%Y-%m-%d")
 
-    @from_xcal_wrapper  # TODO: Fix typing issues
-    def from_xcal(self, parser: VPropParser, params: Parameters) -> Self:
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: VPropParser, params: Parameters) -> Self:
         """Parse xCal from :rfc:`6321`.
 
         Parameters:
@@ -161,9 +162,9 @@ class vDate(TimeBase):
         Raises:
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
-        element = parser.parse_tag(self.default_value)
+        element = parser.parse_tag(cls.default_value)
         year, month, day = XCAL_DATE_REGEX.groups(element)
-        return self(
+        return cls(
             date(int(year), int(month), int(day)),
             params=params,
         )

@@ -216,8 +216,9 @@ class vText(str):
         element = SubElement(element, self.default_value.lower())
         element.text = self
 
-    @from_xcal_wrapper  # TODO: Fix typing issues
-    def from_xcal(self, parser: VPropParser, params: Parameters) -> Self:
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: VPropParser, params: Parameters) -> Self:
         """Parse xCal from :rfc:`6321`.
 
         Parameters:
@@ -226,8 +227,8 @@ class vText(str):
         Raises:
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
-        element = parser.parse_tag(self.default_value)
-        return self(element.get_xsd_string(), params=params)
+        element = parser.parse_tag(cls.default_value)
+        return cls(element.get_xsd_string(), params=params)
 
 
 __all__ = ["vText"]

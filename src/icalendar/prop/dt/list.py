@@ -129,8 +129,9 @@ class vDDDLists:
         for dt in self.dts:
             dt.to_xcal(element)
 
-    @from_xcal_wrapper  # TODO: Fix typing issues
-    def from_xcal(self, parser: VPropParser, params: Parameters) -> Self:
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: VPropParser, params: Parameters) -> Self:
         """Parse xCal from :rfc:`6321`.
 
         Parameters:
@@ -140,7 +141,7 @@ class vDDDLists:
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
         elements = parser.parse_tags(list(vDDDTypes.VALUE_MAP))
-        return self(
+        return cls(
             [vDDDTypes.from_xcal(element) for element in elements],
             params=params,
         )

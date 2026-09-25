@@ -214,8 +214,9 @@ class vDDDTypes(TimeBase):
     )
     """Map the VALUE parameters of the different types to their class."""
 
-    @from_xcal_wrapper  # TODO: Fix typing issues
-    def from_xcal(self, parser: VPropParser, params: Parameters) -> Self:
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: VPropParser, params: Parameters) -> Self:
         """Parse xCal from :rfc:`6321`.
 
         Parameters:
@@ -224,11 +225,11 @@ class vDDDTypes(TimeBase):
         Raises:
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
-        element = parser.parse_tag(list(self.VALUE_MAP))
-        v_prop = self.VALUE_MAP[element.tag]
+        element = parser.parse_tag(list(cls.VALUE_MAP))
+        v_prop = cls.VALUE_MAP[element.tag]
 
         parsed = v_prop.from_xcal(element)
-        return self(
+        return cls(
             parsed.dt,
             params=params,
         )

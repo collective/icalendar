@@ -138,8 +138,9 @@ class vFloat(float):
             return "INF"
         return "-INF"
 
+    @classmethod
     @from_xcal_wrapper
-    def from_xcal(self, parser: VPropParser, params: Parameters) -> Self:
+    def from_xcal(cls, parser: VPropParser, params: Parameters) -> Self:
         """Parse xCal from :rfc:`6321`.
 
         Parameters:
@@ -148,16 +149,16 @@ class vFloat(float):
         Raises:
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
-        element = parser.parse_tag(self.default_value)
+        element = parser.parse_tag(cls.default_value)
         try:
-            value = self.from_xsd_float(element.get_xsd_token())
+            value = cls.from_xsd_float(element.get_xsd_token())
         except (TypeError, ValueError) as e:
             raise XCalParsingError(
                 "Expected xsd:float",
                 element.get_xsd_token(),
                 element,
             ) from e
-        return self(value, params=params)
+        return cls(value, params=params)
 
     def to_xcal(self, element: Element) -> None:
         """Add the xCal representation of this property according to :rfc:`6321`."""

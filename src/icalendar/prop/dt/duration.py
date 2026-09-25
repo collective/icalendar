@@ -213,8 +213,9 @@ class vDuration(TimeBase):
         element = SubElement(element, "duration")
         element.text = self.to_ical().decode()
 
-    @from_xcal_wrapper  # TODO: Fix typing issues
-    def from_xcal(self, parser: VPropParser, params: Parameters) -> Self:
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: VPropParser, params: Parameters) -> Self:
         """Parse xCal from :rfc:`6321`.
 
         Parameters:
@@ -223,14 +224,14 @@ class vDuration(TimeBase):
         Raises:
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
-        element = parser.parse_tag(self.default_value)
+        element = parser.parse_tag(cls.default_value)
         try:
-            td = self.from_ical(element.get_xsd_token())
+            td = cls.from_ical(element.get_xsd_token())
         except InvalidCalendar as e:
             raise XCalParsingError(
                 XCAL_DURATION_ERROR, element.get_xsd_token(), element
             ) from e
-        return self(td, params=params)
+        return cls(td, params=params)
 
 
 __all__ = ["vDuration"]

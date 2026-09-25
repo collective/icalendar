@@ -18,15 +18,17 @@ VProp = TypeVar("VProp")
 
 # Trying to solve typing issues: https://stackoverflow.com/q/80005905/1320237
 
+
 def from_xcal_wrapper(
     func: Callable[[type[VProp], VPropParser, Parameters], VProp],
 ) -> Callable[[type[VProp], VPropParser | ElementAdapter | Element], VProp]:
-    """Wrap a property's from_xcal() with convenience functions."""
+    """Wrap a property's from_xcal() with convenience functions.
 
-    @classmethod
-    def wrapper(
-        cls: type[VProp], xml: VPropParser | ElementAdapter | Element
-    ) -> VProp:
+    Use it below ``@classmethod`` so that type checkers and linters see
+    a class method.
+    """
+
+    def wrapper(cls: type[VProp], xml: VPropParser | ElementAdapter | Element) -> VProp:
         if isinstance(xml, (Element, ElementAdapter)):
             xml = XCalPropertyParser(xml)
         parameters = xml.parse_parameters()

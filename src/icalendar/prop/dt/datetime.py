@@ -221,8 +221,9 @@ class vDatetime(TimeBase):
             text += "Z"
         element.text = text
 
-    @from_xcal_wrapper  # TODO: Fix typing issues
-    def from_xcal(self, parser: VPropParser, params: Parameters) -> Self:
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: VPropParser, params: Parameters) -> Self:
         """Parse xCal from :rfc:`6321`.
 
         Parameters:
@@ -231,7 +232,7 @@ class vDatetime(TimeBase):
         Raises:
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
-        element = parser.parse_tag(self.default_value)
+        element = parser.parse_tag(cls.default_value)
         year, month, day, hour, minute, second, timezone = XCAL_DATETIME_REGEX.groups(
             element
         )
@@ -240,7 +241,7 @@ class vDatetime(TimeBase):
         )
         if timezone:
             dt = tzp.localize_utc(dt)
-        return self(dt, params=params)
+        return cls(dt, params=params)
 
 
 __all__ = ["vDatetime"]

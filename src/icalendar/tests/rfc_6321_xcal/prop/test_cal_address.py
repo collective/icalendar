@@ -8,7 +8,6 @@ from xml.etree import ElementTree as ET
 import pytest
 
 from icalendar import vCalAddress
-from icalendar.prop.factory import TypesFactory
 from icalendar.tests.rfc_6321_xcal.common import to_xcal
 
 

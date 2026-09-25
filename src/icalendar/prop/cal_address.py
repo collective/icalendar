@@ -282,7 +282,8 @@ class vCalAddress(str):
             params=Parameters.from_jcal_property(jcal_property),
         )
 
-    @from_xcal_wrapper  # TODO: Fix typing issues
+    @classmethod
+    @from_xcal_wrapper
     def from_xcal(cls, parser: VPropParser, params: Parameters) -> Self:
         """Parse xCal from :rfc:`6321`.
 

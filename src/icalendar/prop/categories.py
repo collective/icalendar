@@ -121,8 +121,9 @@ class vCategory:
                 cat = vText(cat)
             cat.to_xcal(element)
 
-    @from_xcal_wrapper  # TODO: Fix typing issues
-    def from_xcal(self, parser: VPropParser, params: Parameters) -> Self:
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: VPropParser, params: Parameters) -> Self:
         """Parse xCal from :rfc:`6321`.
 
         Parameters:
@@ -131,9 +132,9 @@ class vCategory:
         Raises:
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
-        elements = parser.parse_tags(self.default_value)
+        elements = parser.parse_tags(cls.default_value)
         cats = [element.get_xsd_string() for element in elements]
-        return self(cats, params=params)
+        return cls(cats, params=params)
 
 
 __all__ = ["vCategory"]
