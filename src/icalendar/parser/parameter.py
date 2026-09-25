@@ -7,7 +7,7 @@ import os
 import re
 from datetime import datetime, time
 from typing import TYPE_CHECKING, Any, Protocol
-from xml.etree.ElementTree import Element, SubElement
+from xml.etree.ElementTree import Element
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.compatibility import deprecate_for_version_8
@@ -567,10 +567,10 @@ class Parameters(CaselessDict):
     def to_xcal(self, element: Element) -> None:
         """Add the xCal representation of the parameters according to :rfc:`6321`."""
         if not self:
-            return
+            return  # exit quickly
         from icalendar.prop.factory import TypesFactory
 
-        result = SubElement(element, "parameters")
+        result = Element("parameters")
         factory = TypesFactory.instance()
         for key in self:
             if key == "VALUE":
@@ -582,6 +582,9 @@ class Parameters(CaselessDict):
                     value = value_factory(value)  # noqa: PLW2901
                 value.to_xcal(param_element)
             result.append(param_element)
+        if len(result) > 0:
+            # Parameters always go first.
+            element.insert(0, result)
 
     def get_multiple(self, key: str) -> list:
         """Get mulitple values as a list.

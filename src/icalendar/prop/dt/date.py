@@ -8,11 +8,13 @@ from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser.xcal.match import XCalRegexMatcher
+from icalendar.parser.xcal.value import VPropParser
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 
 from .base import TimeBase
 
 XCAL_DATE_REGEX = XCalRegexMatcher(
-    r"(\d\d\d\d)-(\d\d)-(\d\d)", "Expected date format YYYY-MM-DD."
+    r"(\d\d\d\d)-(\d\d)-(\d\d)", "Expected date format YYYY-MM-DD"
 )
 
 
@@ -149,20 +151,21 @@ class vDate(TimeBase):
         element = SubElement(element, "date")
         element.text = self.dt.strftime("%Y-%m-%d")
 
-    @classmethod
-    def from_xcal(cls, element: Element) -> Self:
+    @from_xcal_wrapper  # TODO: Fix typing issues
+    def from_xcal(self, parser: VPropParser, params: Parameters) -> Self:
         """Parse xCal from :rfc:`6321`.
 
         Parameters:
-            element: The xCal element to parse.
+            parser: The parser to use.
 
         Raises:
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
-        year, month, day = XCAL_DATE_REGEX.groups(element, cls)
-        return cls(
+        element = parser.parse_tag(self.default_value)
+        year, month, day = XCAL_DATE_REGEX.groups(element)
+        return self(
             date(int(year), int(month), int(day)),
-            params=Parameters.from_xcal_property(element, cls),
+            params=params,
         )
 
 

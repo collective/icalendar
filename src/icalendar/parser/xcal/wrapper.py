@@ -16,24 +16,32 @@ if TYPE_CHECKING:
 
 VProp = TypeVar("VProp")
 
+# Trying to solve typing issues: https://stackoverflow.com/q/80005905/1320237
 
-def from_xcal_wrapper(
-    func: Callable[[type[VProp], VPropParser, Parameters], VProp],
-) -> Callable[[type[VProp], VPropParser | ElementAdapter | Element], VProp]:
-    """Wrap a property's from_xcal() with convenience functions."""
 
-    @classmethod
-    def wrapper(cls: type[VProp], xml: VPropParser | ElementAdapter | Element) -> VProp:
-        if isinstance(xml, (Element, ElementAdapter)):
-            xml = XCalPropertyParser(xml)
-        parameters = xml.parse_parameters()
-        return func(cls, xml, parameters)
+if TYPE_CHECKING:
+    from_xcal_wrapper = classmethod
+else:
 
-    wrapper.__name__ = func.__name__
-    wrapper.__qualname__ = func.__qualname__
-    wrapper.__doc__ = func.__doc__
+    def from_xcal_wrapper(
+        func: Callable[[type[VProp], VPropParser, Parameters], VProp],
+    ) -> Callable[[type[VProp], VPropParser | ElementAdapter | Element], VProp]:
+        """Wrap a property's from_xcal() with convenience functions."""
 
-    return wrapper
+        @classmethod
+        def wrapper(
+            cls: type[VProp], xml: VPropParser | ElementAdapter | Element
+        ) -> VProp:
+            if isinstance(xml, (Element, ElementAdapter)):
+                xml = XCalPropertyParser(xml)
+            parameters = xml.parse_parameters()
+            return func(cls, xml, parameters)
+
+        wrapper.__name__ = func.__name__
+        wrapper.__qualname__ = func.__qualname__
+        wrapper.__doc__ = func.__doc__
+
+        return wrapper
 
 
 __all__ = [
