@@ -37,11 +37,11 @@ def test_to_xcal(value, expected):
         ("mailto:john@doe.eu", vCalAddress("mailto:john@doe.eu")),
     ],
 )
-def test_from_xcal(types_factory: TypesFactory, value, expected):
+def test_from_xcal(value, expected):
     """Parse from xcal."""
     e = ET.Element("cal-address")
     e.text = value
-    result = types_factory.from_xcal("x-prop", e)
+    result = vCalAddress.from_xcal(e)
     assert isinstance(result, vCalAddress)
     assert result == expected
 
