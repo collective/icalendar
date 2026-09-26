@@ -29,6 +29,7 @@ def assert_equals_dt(result, expected, tzid=None):
 
 # ---------------------------------------------------------------- localize
 
+
 def test_localize_date_returns_datetime(tzp):
     result = tzp.localize(date(2024, 1, 15), "Europe/Berlin")
     assert_equals_dt(result, datetime(2024, 1, 15, 0, 0, 0), "Europe/Berlin")
@@ -73,6 +74,7 @@ def test_localize_time_with_none_removes_timezone(tzp):
 
 
 # ------------------------------------------------------------ localize_utc
+
 
 def test_localize_utc_date_returns_datetime(tzp):
     result = tzp.localize_utc(date(2024, 1, 15))
