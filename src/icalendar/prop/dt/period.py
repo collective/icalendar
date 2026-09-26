@@ -2,9 +2,10 @@
 
 from datetime import date, datetime, timedelta, tzinfo
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError
+from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
 from icalendar.timezone import tzp
 from icalendar.tools import is_date, is_datetime, is_pytz, normalize_pytz, to_datetime
@@ -285,6 +286,49 @@ class vPeriod(TimeBase):
                 end_or_duration = tzp.localize(end_or_duration, tzid)
 
         return cls((start, end_or_duration), params=params)
+
+    def to_xcal(self) -> Element:
+        """The xCal representation of this property according to :rfc:`6321`.
+
+        A period is written as a ``<start>`` followed by either an ``<end>``
+        or a ``<duration>``, whichever form the value was written in.
+        """
+        element = Element("period")
+        SubElement(element, "start").text = vDatetime(self.start).to_xcal().text
+        if self.by_duration:
+            SubElement(element, "duration").text = (
+                vDuration(self.duration).to_xcal().text
+            )
+        else:
+            SubElement(element, "end").text = vDatetime(self.end).to_xcal().text
+        return element
+
+    @classmethod
+    def from_xcal(cls, element: Element) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        start = element.find("start")
+        if start is None:
+            raise XCalParsingError.in_property_text(
+                "Expected a 'start' element.", element, cls
+            )
+        end = element.find("end")
+        duration = element.find("duration")
+        if end is not None:
+            end_or_duration = vDatetime.from_xcal(end).dt
+        elif duration is not None:
+            end_or_duration = vDuration.from_xcal(duration).td
+        else:
+            raise XCalParsingError.in_property_text(
+                "Expected an 'end' or a 'duration' element.", element, cls
+            )
+        return cls((vDatetime.from_xcal(start).dt, end_or_duration))
 
 
 __all__ = ["vPeriod"]
