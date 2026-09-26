@@ -3,10 +3,12 @@
 import re
 from datetime import datetime, time, timezone, tzinfo
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element
 
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser_tools import XCalRegexMatcher
 from icalendar.timezone import tzp
 from icalendar.timezone.tzid import is_utc
 
@@ -14,6 +16,11 @@ from .base import TimeBase
 
 TIME_JCAL_REGEX = re.compile(
     r"^(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2}):(?P<second>[0-9]{2})(?P<utc>Z)?\Z"
+)
+
+XCAL_TIME_REGEX = XCalRegexMatcher(
+    r"(\d\d):(\d\d):(\d\d)(Z?)",
+    "Expected time format HH:MM:SS or HH:MM:SSZ.",
 )
 
 
@@ -242,6 +249,35 @@ class vTime(TimeBase):
         return cls(
             value,
             params=Parameters.from_jcal_property(jcal_property),
+        )
+
+    def to_xcal(self) -> Element:
+        """The xCal representation of this property according to :rfc:`6321`."""
+        element = Element("time")
+        text = self.dt.strftime("%H:%M:%S")
+        if self.is_utc():
+            text += "Z"
+        element.text = text
+        return element
+
+    @classmethod
+    def from_xcal(cls, element: Element) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        hour, minute, second, utc = XCAL_TIME_REGEX.groups(element, cls)
+        return cls(
+            time(
+                int(hour),
+                int(minute),
+                int(second),
+                tzinfo=timezone.utc if utc else None,
+            )
         )
 
 
