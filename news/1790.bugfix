@@ -1,0 +1,1 @@
+Preserved ``Self`` return annotations at runtime so API documentation no longer renders them as ``None``. AI assistance was used to diagnose the overwrite and draft the fix and regression tests. @kudala-bharani
