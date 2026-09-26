@@ -3,9 +3,10 @@
 import re
 from datetime import timedelta
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element
 
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError
+from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
 
 UTC_OFFSET_JCAL_REGEX = re.compile(
@@ -179,6 +180,42 @@ class vUTCOffset:
         if negative:
             t = -t
         return cls(t, Parameters.from_jcal_property(jcal_property))
+
+    def to_xcal(self) -> Element:
+        """The xCal representation of this property according to :rfc:`6321`."""
+        element = Element(self.default_value.lower())
+        element.text = self.format(":")
+        return element
+
+    @classmethod
+    def from_xcal(cls, element: Element) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        # xCal uses the same lexical representation as jCal, see
+        # https://datatracker.ietf.org/doc/html/rfc6321#section-3.6.14
+        match = (
+            UTC_OFFSET_JCAL_REGEX.match(element.text.strip())
+            if element.text is not None
+            else None
+        )
+        if match is None:
+            raise XCalParsingError.in_property_text(
+                "Expected a UTC offset such as '-05:00'.", element, cls
+            )
+        t = timedelta(
+            hours=int(match.group("hours")),
+            minutes=int(match.group("minutes")),
+            seconds=int(match.group("seconds") or 0),
+        )
+        if match.group("sign") == "-":
+            t = -t
+        return cls(t)
 
 
 __all__ = ["vUTCOffset"]
