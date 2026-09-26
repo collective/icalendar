@@ -1,6 +1,8 @@
 from typing import Any
+from xml.etree.ElementTree import Element
 
 from icalendar.compatibility import Self
+from icalendar.error import XCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
 
@@ -36,6 +38,33 @@ class vInline(str):
     @classmethod
     def from_ical(cls, ical: ICAL_TYPE) -> Self:
         return cls(ical)
+
+    def to_xcal(self) -> Element:
+        """The xCal representation of this property according to :rfc:`6321`.
+
+        Inline values are unparsed text, so they are written as ``<unknown>``,
+        the value element :rfc:`6321` uses for values it cannot type.
+        """
+        element = Element("unknown")
+        element.text = str(self)
+        return element
+
+    @classmethod
+    def from_xcal(cls, element: Element) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        try:
+            return cls(element.text or "")
+        except ValueError as e:
+            raise XCalParsingError.in_property_text(
+                "An inline value may not contain CR or LF characters.", element, cls
+            ) from e
 
 
 __all__ = ["vInline"]
