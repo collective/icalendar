@@ -6,7 +6,6 @@ name: PR Quality
 
 permissions:
   contents: read
-  issues: write
   pull-requests: write
 
 on:
@@ -29,8 +28,9 @@ jobs:
       - name: Welcome contributor
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          gh pr comment "${{ github.event.pull_request.number }}" \
+          gh pr comment "$PR_NUMBER" \
             --body "Thanks for opening this pull request to icalendar. A maintainer will have a look at this in the next days.
 
             While you are waiting, please view the status checks and the items in the PR template as far as possible. If you have any questions, feel free to ask."
@@ -56,6 +56,9 @@ jobs:
           min-profile-completeness: 1
 
   profile-author:
+    permissions:
+      contents: read
+      issues: write
     runs-on: ubuntu-latest
 
     steps:
@@ -66,28 +69,37 @@ jobs:
 
       - name: Determine target login and issue number
         id: meta
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          ISSUE_LOGIN: ${{ github.event.issue.user.login }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          PR_LOGIN: ${{ github.event.pull_request.user.login }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           set -euo pipefail
-          if [ "${{ github.event_name }}" = "issues" ]; then
-            echo "login=${{ github.event.issue.user.login }}" >> "$GITHUB_OUTPUT"
-            echo "number=${{ github.event.issue.number }}" >> "$GITHUB_OUTPUT"
+          if [ "$EVENT_NAME" = "issues" ]; then
+            echo "login=$ISSUE_LOGIN" >> "$GITHUB_OUTPUT"
+            echo "number=$ISSUE_NUMBER" >> "$GITHUB_OUTPUT"
           else
-            echo "login=${{ github.event.pull_request.user.login }}" >> "$GITHUB_OUTPUT"
-            echo "number=${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
+            echo "login=$PR_LOGIN" >> "$GITHUB_OUTPUT"
+            echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Run gh-profiler
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LOGIN: ${{ steps.meta.outputs.login }}
         if: ${{ !contains(env.VERIFIED_CONTRIBUTORS, steps.meta.outputs.login) }}
         run: |
           set -euo pipefail
-          gh-profiler "${{ steps.meta.outputs.login }}" --concise > concise.txt
-          gh-profiler "${{ steps.meta.outputs.login }}" > full.txt
+          gh-profiler "$LOGIN" --concise > concise.txt
+          gh-profiler "$LOGIN" > full.txt
 
       - name: Comment on issue or PR
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          NUMBER: ${{ steps.meta.outputs.number }}
         if: ${{ !contains(env.VERIFIED_CONTRIBUTORS, steps.meta.outputs.login) }}
         run: |
           set -euo pipefail
@@ -111,5 +123,5 @@ jobs:
           jq -Rs '{body: .}' body.txt > payload.json
 
           gh api \
-            repos/${{ github.repository }}/issues/${{ steps.meta.outputs.number }}/comments \
+            "repos/$GITHUB_REPOSITORY/issues/$NUMBER/comments" \
             --input payload.json
