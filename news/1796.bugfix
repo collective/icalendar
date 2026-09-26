@@ -1,0 +1,1 @@
+Prefer DURATION when a VEVENT contains both DTEND and DURATION, allowing the effective end time to be derived consistently.
