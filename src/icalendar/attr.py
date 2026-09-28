@@ -474,22 +474,28 @@ def single_utc_property(name: str, docs: str) -> property:
         """Get the value."""
         if name not in self:
             return None
-        dt = self.get(name)
-        if not isinstance(dt, list):
-            dt = [dt]
-        # code continues with less indentation
-            # Broken calendars can repeat singleton properties. Keep all values
-            # for serialization; when reading, use the earliest valid value.
-            values = []
-            for item in dt:
-                try:
-                    values.append(_decode_single_utc_value(name, item))
-                except (InvalidCalendar, ValueError):  # noqa: PERF203  # duplicate lists are tiny
-                    continue
-            if not values:
-                raise InvalidCalendar(f"{name} must be a datetime in UTC, not {dt}")
-            return min(tzp.localize_utc(value) for value in values)
-        return tzp.localize_utc(_decode_single_utc_value(name, dt))
+        raw = self.get(name)
+        # Code continues with less indentation
+        # Broken calendars can repeat singleton properties. Keep all values
+        # for serialization; when reading, use the earliest valid value.
+        items = raw if isinstance(raw, list) else [raw]
+        values = []
+        invalid = raw
+        # duplicate lists are tiny, so the loop overhead is negligible
+        for item in items:
+            try:
+                values.append(_decode_single_utc_value(name, item))
+            except (InvalidCalendar, ValueError):  # noqa: PERF203
+                # Report the decoded value as before, or the raw item
+                # when it cannot be decoded.
+                if isinstance(item, (vText, vUnknown)):
+                    invalid = item
+                else:
+                    invalid = getattr(item, "dt", item)
+                continue
+        if not values:
+            raise InvalidCalendar(f"{name} must be a datetime in UTC, not {invalid}")
+        return min(tzp.localize_utc(value) for value in values)
 
     def fset(self: Component, value: datetime | None):
         """Set the value"""
