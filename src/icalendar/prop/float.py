@@ -119,7 +119,7 @@ class vFloat(float):
 
     @staticmethod
     def from_xsd_float(xsd_float: str | None) -> float:
-        """Convert an xsd:float to a :py:`float`."""
+        """Convert an xsd:float to a :class:`float`."""
         if not isinstance(xsd_float, str):
             raise TypeError("Expected xsd:float. Got None.")
         try:
@@ -129,7 +129,7 @@ class vFloat(float):
 
     @staticmethod
     def to_xsd_float(f: float) -> str:
-        """Convert a :py:`float` to an xsd:float."""
+        """Convert a :class:`float` to an xsd:float."""
         if math.isnan(f):
             return "NaN"
         if math.isfinite(f):
