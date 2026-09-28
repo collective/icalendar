@@ -70,6 +70,10 @@ class ElementAdapter:
         """
         return REGEX_WHITESPACE.sub(" ", self.get_xsd_string()).strip()
 
+    def get_text_without_whitespace(self) -> str:
+        """Return the element's text with all whitespace removed."""
+        return REGEX_WHITESPACE.sub("", self.get_xsd_string())
+
     def get_xpath(self) -> str:
         """Return the path in the XML file where this element occurs."""
         return f"/{self.tag}"

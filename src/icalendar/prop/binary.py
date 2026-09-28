@@ -3,11 +3,13 @@
 import base64
 import binascii
 from typing import ClassVar
-from xml.etree.ElementTree import Element
+from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.compatibility import Self, deprecate_for_version_8
 from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.value import VPropParser
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import to_unicode
 
 
@@ -143,32 +145,33 @@ class vBinary:
             params=Parameters.from_jcal_property(jcal_property),
         )
 
-    def to_xcal(self) -> Element:
+    def to_xcal(self, element: Element):
         """The xCal representation of this property according to :rfc:`6321`."""
-        element = Element(self.default_value.lower())
-        element.text = self.base64data
-        return element
+        xml = SubElement(element, self.default_value.lower())
+        xml.text = self.base64data
 
     @classmethod
-    def from_xcal(cls, element: Element) -> Self:
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: VPropParser, params: Parameters) -> Self:
         """Parse xCal from :rfc:`6321`.
 
-        The text is an xsd:base64Binary, which may carry whitespace between
-        the characters, see https://www.w3.org/TR/xmlschema-2/#base64Binary.
-
         Parameters:
-            element: The xCal element to parse.
+            parser: The parser to use.
 
         Raises:
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
-        text = "".join((element.text or "").split())
+        element = parser.parse_tag(cls.default_value)
+        text = element.get_text_without_whitespace()
         try:
-            return cls(cls.from_ical(text))
-        except ValueError as e:
-            raise XCalParsingError.in_property_text(
-                "Expected xsd:base64Binary.", element, cls
+            binary = base64.b64decode(text, validate=True)
+        except binascii.Error as e:
+            raise XCalParsingError(
+                "Expected base64 encoded data",
+                None,  # do not print potentially huge chunks of data
+                element,
             ) from e
+        return cls(binary, params=params)
 
 
 __all__ = ["vBinary"]
