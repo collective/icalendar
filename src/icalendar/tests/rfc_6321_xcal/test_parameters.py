@@ -8,7 +8,9 @@ from xml.etree.ElementTree import Element, fromstring, tostring
 import pytest
 
 from icalendar import Parameters
-from icalendar.tests.rfc_6321_xcal.common import to_xcal
+from icalendar.parser.xcal.base import InvalidParserState
+from icalendar.parser.xcal.parameters import XCalParameterParser
+from icalendar.tests.rfc_6321_xcal.common import list2xml, to_xcal, xml2list
 
 
 def test_skip_value_parameter():
@@ -267,97 +269,55 @@ def test_parameters_from_xcal(name, value, xcal, message):
     assert len(params) == 1, "We only parse one element."
 
 
-@pytest.mark.parametrize(
-    ("event_index", "parameter_index", "expected_value"),
+multiple_values_parameters = pytest.mark.parametrize(
+    "parameter_name",
     [
-        (
-            0,
-            0,
-            [
-                "attendee",
-                {
-                    "delegated-to": [
-                        "mailto:jdoe@example.com",
-                        "mailto:jqpublic@example.com",
-                    ]
-                },
-                "cal-address",
-                "mailto:jsmith@example.com",
-            ],
-        ),
-        (
-            0,
-            1,
-            [
-                "attendee",
-                {
-                    "delegated-from": [
-                        "mailto:jsmith@example.com",
-                        "mailto:jdoe@example.com",
-                    ]
-                },
-                "cal-address",
-                "mailto:jdoe@example.com",
-            ],
-        ),
-        (
-            0,
-            2,
-            [
-                "attendee",
-                {
-                    "member": [
-                        "mailto:projectA@example.com",
-                        "mailto:projectB@example.com",
-                    ]
-                },
-                "cal-address",
-                "mailto:janedoe@example.com",
-            ],
-        ),
-        (
-            1,
-            0,
-            [
-                "attendee",
-                {"delegated-to": "mailto:jdoe@example.com"},
-                "cal-address",
-                "mailto:jsmith@example.com",
-            ],
-        ),
-        (
-            1,
-            1,
-            [
-                "attendee",
-                {"delegated-from": "mailto:jsmith@example.com"},
-                "cal-address",
-                "mailto:jdoe@example.com",
-            ],
-        ),
-        (
-            1,
-            2,
-            [
-                "attendee",
-                {"member": "mailto:projectA@example.com"},
-                "cal-address",
-                "mailto:janedoe@example.com",
-            ],
-        ),
+        "delegated-to",
+        "delegated-from",
+        "member",
     ],
 )
-def test_parameters_with_values_as_list(
-    calendars, event_index, parameter_index, expected_value
-):
+
+
+@multiple_values_parameters
+def test_parse_mulitple_values(parameter_name):
     """Check the conversion of list value parameters.
 
     In [RFC5545], some parameters allow using a COMMA-separated list of
     values.
     """
-    pytest.skip(
-        "TODO: We should test parsing and serialization of parameters with multiple values."
+    xml = list2xml(
+        [
+            "parameters",
+            [
+                parameter_name,
+                ["cal-address", "mailto:jsmith@example.org"],
+                ["cal-address", "mailto:jsmith@example.com"],
+            ],
+        ]
     )
+    parameters = Parameters.from_xcal(xml)
+    expected_value = ["mailto:jsmith@example.org", "mailto:jsmith@example.com"]
+    assert parameters.get_multiple(parameter_name) == expected_value
+    assert parameters[parameter_name] == expected_value
+
+
+@multiple_values_parameters
+def test_serialize_multiple_values(parameter_name):
+    """Test that multiple_values turn up in the correct order."""
+    parameters = Parameters(
+        {parameter_name: ["mailto:jsmith@example.org", "mailto:jsmith@example.com"]}
+    )
+    xcal = to_xcal(parameters)
+    result = xml2list(xcal)
+    assert result == [
+        "parameters",
+        [
+            parameter_name,
+            ["cal-address", "mailto:jsmith@example.org"],
+            ["cal-address", "mailto:jsmith@example.com"],
+        ],
+    ]
 
 
 def test_get_multiple_absent():
@@ -383,3 +343,15 @@ def test_parameters_only_serialize_if_they_have_content():
     parameters = Parameters()
     xcal = to_xcal(parameters, wrap=True)
     assert len(xcal) == 0
+
+
+def test_parameters_parser_finds_out_if_nothing_is_consumed(mock):
+    """We can end in an endless loop if a vProp is not working."""
+    e = list2xml(
+        ["parameters", ["delegated-to", ["text", "mailto:jsmith@example.com"]]]
+    )
+    parser = XCalParameterParser(e, mock)  # mock does not consume anything
+    with pytest.raises(InvalidParserState) as e:
+        parser.parse_parameter()
+    assert "did not consume any XML." in str(e.value)
+    assert "Endless loop detected" in str(e.value)

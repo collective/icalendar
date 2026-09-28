@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, TypeVar
 from xml.etree.ElementTree import Element
 
 from icalendar.parser.xcal.adapter import ElementAdapter
-from icalendar.parser.xcal.property import XCalPropertyParser
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -30,6 +29,8 @@ def from_xcal_wrapper(
 
     def wrapper(cls: type[VProp], xml: VPropParser | ElementAdapter | Element) -> VProp:
         if isinstance(xml, (Element, ElementAdapter)):
+            from icalendar.parser.xcal.property import XCalPropertyParser
+
             xml = XCalPropertyParser(xml)
         parameters = xml.parse_parameters()
         return func(cls, xml, parameters)

@@ -5,7 +5,7 @@ from xml.etree import ElementTree as ET
 import pytest
 
 from icalendar import vText, vUid
-from icalendar.tests.rfc_6321_xcal.common import generate_xml_tree, to_xcal
+from icalendar.tests.rfc_6321_xcal.common import list2xml, to_xcal
 
 mark_text = pytest.mark.parametrize(
     "text", ["", "normal text", "中文鍵盤/中文键盘", "Text\nwith\nnewlines"]
@@ -30,7 +30,7 @@ def test_to_xcal(text, text_class):
 @mark_text_class
 def test_from_xcal_from_text_class(text, text_class):
     """Parse text-based values from xCal."""
-    element = generate_xml_tree(["x-prop", [text_class.default_value, text]])
+    element = list2xml(["x-prop", [text_class.default_value, text]])
 
     result = text_class.from_xcal(element)
 

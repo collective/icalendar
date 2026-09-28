@@ -44,6 +44,7 @@ class XCalParser:
     def __init__(self, element: Element | ElementAdapter) -> None:
         self._element = ElementAdapter.with_element(element)
         self._children = self._element.children
+        self._consumed = 0
 
     def is_finished(self) -> bool:
         """Wether there are more elements left to consume."""
@@ -69,6 +70,7 @@ class XCalParser:
         if self.is_finished():
             raise InvalidParserState("No more children available.")
         self._children = self._children[1:]
+        self._consumed += 1
 
     @property
     def tag(self) -> str:

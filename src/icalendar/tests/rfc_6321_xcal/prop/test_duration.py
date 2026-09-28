@@ -10,7 +10,7 @@ import pytest
 
 from icalendar.error import XCalParsingError
 from icalendar.prop.dt import vDDDLists, vDDDTypes, vDuration
-from icalendar.tests.rfc_6321_xcal.common import generate_xml_tree, to_xcal
+from icalendar.tests.rfc_6321_xcal.common import list2xml, to_xcal
 
 
 @pytest.fixture(params=[vDuration, vDDDTypes, vDDDLists])
@@ -41,7 +41,7 @@ def test_to_xcal(v_duration, date, xcal):
 @mark_values
 def test_from_xcal_from_dt_class(v_duration, date, xcal):
     """Parse from xcal."""
-    element = generate_xml_tree(["x-prop", ["duration", xcal]])
+    element = list2xml(["x-prop", ["duration", xcal]])
     result = v_duration.from_xcal(element)
     assert result.dt == date
 
@@ -52,7 +52,7 @@ def test_from_xcal_from_dt_class(v_duration, date, xcal):
 )
 def test_invalid_value_from_xcal(v_duration, xcal):
     """Parse from xcal with invalid value."""
-    element = generate_xml_tree(["x-prop", ["duration", xcal]])
+    element = list2xml(["x-prop", ["duration", xcal]])
     with pytest.raises(XCalParsingError) as error:
         v_duration.from_xcal(element)
     assert (

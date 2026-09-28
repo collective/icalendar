@@ -40,7 +40,7 @@ See:
 """
 
 
-def generate_xml_tree(spec: list[str | list]) -> Element:
+def list2xml(spec: list[str | list]) -> Element[str]:
     """Generate and xml tree from a specification.
 
     Args:
@@ -60,5 +60,13 @@ def generate_xml_tree(spec: list[str | list]) -> Element:
         e.text = spec[1]
         index = 2
     for child in spec[index:]:
-        e.append(generate_xml_tree(child))  # pyright: ignore[reportArgumentType]
+        e.append(list2xml(child))  # pyright: ignore[reportArgumentType]
     return e
+
+
+def xml2list(element: Element[str]) -> list[str | list]:
+    """Return the reverse of :func:`list2xml`."""
+    children = [xml2list(child) for child in element]
+    if not children:
+        return [element.tag, element.text or ""]
+    return [element.tag] + children

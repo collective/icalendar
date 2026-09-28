@@ -23,6 +23,7 @@ if TYPE_CHECKING:
     from collections.abc import Callable, Sequence
 
     from icalendar.enums import VALUE
+    from icalendar.parser.xcal.adapter import ElementAdapter
     from icalendar.prop import VPROPERTY
 
 
@@ -526,7 +527,7 @@ class Parameters(CaselessDict):
         return self
 
     @classmethod
-    def from_xcal(cls, element: Element) -> Parameters:
+    def from_xcal(cls, element: Element | ElementAdapter) -> Parameters:
         """Parse xCal from :rfc:`6321`.
 
         Parameters:

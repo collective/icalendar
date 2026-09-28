@@ -13,7 +13,7 @@ from icalendar import vFloat
 from icalendar.prop.factory import TypesFactory
 from icalendar.tests.rfc_6321_xcal.common import (
     XML_WHITESPACE,
-    generate_xml_tree,
+    list2xml,
     to_xcal,
 )
 
@@ -106,7 +106,7 @@ def test_to_xcal(value, expected):
 @mark_values
 def test_from_xcal(types_factory: TypesFactory, value, expected):
     """Parse from xcal."""
-    xml = generate_xml_tree(["x-prop", ["float", value]])
+    xml = list2xml(["x-prop", ["float", value]])
     result = vFloat.from_xcal(xml)
     assert isinstance(result, vFloat)
     assert result == expected

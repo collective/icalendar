@@ -4,13 +4,14 @@ from typing import TYPE_CHECKING
 
 from icalendar.error import XCalParsingError
 from icalendar.parser.parameter import Parameters
-from icalendar.parser.xcal.base import XCalParser
+from icalendar.parser.xcal.base import InvalidParserState, XCalParser
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
     from xml.etree.ElementTree import Element
 
     from icalendar.parser.xcal.adapter import ElementAdapter
+    from icalendar.prop import VPROPERTY
     from icalendar.prop.factory import TypesFactory
 
 
@@ -76,7 +77,7 @@ class XCalParameterParser(XCalParser):
         )
         self._element_is_parsed = False
 
-    def parse_parameter(self) -> None:
+    def parse_parameter(self) -> VPROPERTY:
         """Parse one parameter value if present.
 
         Returns:
@@ -90,11 +91,13 @@ class XCalParameterParser(XCalParser):
                 <text>US/Eastern</text>
             </tzid>
         """
-        # TODO: Test that something is getting consumed
-        #       otherwise we might land in a loop
+        start = self._consumed
         value_type = self._types_factory.for_property(self.tag, self.child.tag)
         result = value_type.from_xcal(self)
-        self.done()
+        if self._consumed == start:
+            raise InvalidParserState(
+                f"Endless loop detected: {value_type} did not consume any XML."
+            )
         return result
 
     def parse_parameters(self) -> Parameters:
@@ -132,10 +135,12 @@ class XCalParameterParser(XCalParser):
         """
         if not self._element_is_parsed and self._element.tag in tags:
             self._element_is_parsed = True
+            self._consumed += 1
             return self._element
         for i, child in enumerate(self._children):
             if child.tag in tags:
                 del self._children[i]
+                self._consumed += 1
                 return child
         return None
 
