@@ -1,10 +1,13 @@
 """INT values from :rfc:`5545`."""
 
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError
+from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.value import VPropParser
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import ICAL_TYPE
 
 
@@ -96,10 +99,16 @@ class vInt(int):
     max: ClassVar[int] = 2_147_483_647
     """max: The maximum valid value per :rfc:`5545#section-3.3.8` (``2147483647``)."""
 
-    def __new__(cls, *args, params: dict[str, Any] | None = None, **kwargs):
+    def __new__(
+        cls,
+        *args,
+        params: dict[str, Any] | None = None,
+        _validate_range: bool = True,
+        **kwargs,
+    ):
         self = super().__new__(cls, *args, **kwargs)
         self.params = Parameters(params)
-        if not (cls.min <= self <= cls.max):
+        if not (cls.min <= self <= cls.max) and _validate_range:
             raise ValueError(
                 f"Integer {self} is outside the RFC 5545 range [{cls.min}, {cls.max}]"
             )
@@ -158,6 +167,35 @@ class vInt(int):
         """
         JCalParsingError.validate_value_type(value, int, cls)
         return cls(value)
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: VPropParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        element = parser.parse_tag(cls.default_value)
+        try:
+            value = int(element.get_xsd_token())
+        except (TypeError, ValueError) as e:
+            raise XCalParsingError(
+                "Expected xsd:integer",
+                element.get_xsd_token(),
+                element,
+            ) from e
+        # xCal integers are xsd:integers. They do not have a value range.
+        return cls(value, params=params, _validate_range=False)
+
+    def to_xcal(self, element: Element) -> None:
+        """Add the xCal representation of this property according to :rfc:`6321`."""
+        element = SubElement(element, self.default_value.lower())
+        element.text = self.to_ical().decode()
+        self.params.to_xcal(element)
 
 
 __all__ = ["vInt"]
