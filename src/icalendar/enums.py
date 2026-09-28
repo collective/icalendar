@@ -21,6 +21,15 @@ class StrEnum(str, Enum):
         """
         return self.value
 
+    @classmethod
+    def _missing_(cls, value: object) -> object:
+        if isinstance(value, str):
+            value_upper = value.upper()
+            for member in cls:
+                if member.value.upper() == value_upper:
+                    return member
+        return super()._missing_(value)
+
 
 class PARTSTAT(StrEnum):
     """Enum for PARTSTAT from :rfc:`5545`.
