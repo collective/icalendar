@@ -1,0 +1,1 @@
+Enum values are now accepted case-insensitively when constructed directly, as required by RFC 5545. I used GPT-5 to assist with this change and reviewed and validated the result. @fankcoder

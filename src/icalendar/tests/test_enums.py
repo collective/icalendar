@@ -44,6 +44,12 @@ def test_enum_can_be_pickled():
     assert pickle.loads(pickle.dumps(related)) is related  # noqa: S301
 
 
+def test_enum_values_are_case_insensitive(enum):
+    """RFC enum values can be provided in any case."""
+    for member in enum:
+        assert enum(member.value.lower()) is member
+
+
 def test_value_enum_includes_binary():
     """BINARY is an RFC 5545 (section 3.2.20) value type and must be present."""
     assert enums.VALUE.BINARY == "BINARY"

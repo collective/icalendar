@@ -14,6 +14,16 @@ class Enum(_Enum):
 class StrEnum(str, Enum):
     """Enum for strings."""
 
+    @classmethod
+    def _missing_(cls, value):
+        """Match string values case-insensitively."""
+        if isinstance(value, str):
+            normalized_value = value.upper()
+            for member in cls:
+                if member.value == normalized_value:
+                    return member
+        return None
+
     def __str__(self) -> str:
         """Convert to a string.
 
