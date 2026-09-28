@@ -4,9 +4,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from icalendar.error import XCalParsingError
 from icalendar.parser.xcal.adapter import ChildElementAdapter, ElementAdapter
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
     from xml.etree.ElementTree import Element
 
 
@@ -76,6 +78,87 @@ class XCalParser:
     def tag(self) -> str:
         """The tag of the element we work on."""
         return self._element.tag
+
+    @staticmethod
+    def _sanitize_tags(tags: str | Sequence[str]) -> set[str]:
+        """Return a set of tags to test."""
+        if isinstance(tags, str):
+            return {tags.lower()}
+        return {t.lower() for t in tags}
+
+    def parse_optional_tag(self, tag: str | Sequence[str]) -> ElementAdapter | None:
+        """Find a child tag and return it. or None
+
+        This child is then considered parsed.
+        """
+        tags = self._sanitize_tags(tag)
+        return self._parse_tag(tags)
+
+    def parse_tag(self, tag: str | Sequence[str]) -> ElementAdapter:
+        """Find a child tag and return it.
+
+        This child is then considered parsed.
+
+        Raises:
+            XCalParsingError: If the tag is not found.
+        """
+        tags = self._sanitize_tags(tag)
+        element = self._parse_tag(tags)
+
+        if element is None:
+            raise XCalParsingError(
+                f"Tag {' or '.join(tags)} not found", None, self._element
+            )
+        return element
+
+    def _parse_tag(self, tags: set[str]) -> ElementAdapter | None:
+        """Find a child tag and return it.
+
+        This child is then considered parsed.
+        """
+        if not self._element_is_parsed and self._element.tag in tags:
+            self._element_is_parsed = True
+            self._consumed += 1
+            return self._element
+        for i, child in enumerate(self._children):
+            if child.tag in tags:
+                del self._children[i]
+                self._consumed += 1
+                return child
+        return None
+
+    def parse_tags(self, tag: str | Sequence[str]) -> list[ElementAdapter]:
+        """Find all child tags and return it.
+
+        These children is then considered parsed.
+        """
+        tags = self._sanitize_tags(tag)
+        children = []
+        while True:
+            child = self._parse_tag(tags)
+            if child is None:
+                break
+            children.append(child)
+        return children
+
+    def ensure_tag_is_present(self, tag: str | Sequence[str]) -> str:
+        """Make sure a a tag is present and can be parsed.
+
+        Returns:
+            The tag that is present.
+
+        Raises:
+            XCalParsingError: If the tag is not found.
+        """
+        tags = self._sanitize_tags(tag)
+        if not self._element_is_parsed and self._element.tag in tags:
+            return self._element.tag
+        for child in self._children:
+            if child.tag in tags:
+                return child.tag
+        raise XCalParsingError(
+            f"Tag {' or '.join(tags)} not found", None, self._element
+        )
 
 
 __all__ = ["XCalParser"]

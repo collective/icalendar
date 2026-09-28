@@ -10,7 +10,7 @@ import pytest
 
 from icalendar.error import XCalParsingError
 from icalendar.prop.dt import vDate, vDDDLists, vDDDTypes
-from icalendar.tests.rfc_6321_xcal.common import to_xcal
+from icalendar.tests.rfc_6321_xcal.common import list2xml, to_xcal
 
 
 @pytest.fixture(params=[vDate, vDDDTypes, vDDDLists])
@@ -41,8 +41,7 @@ def test_to_xcal(v_date, date, xcal):
 @mark_values
 def test_from_xcal_from_dt_class(v_date, date, xcal):
     """Parse from xcal."""
-    e = ET.Element("date")
-    e.text = xcal
+    e = list2xml(["x-prop", ["date", xcal]])
     result = v_date.from_xcal(e)
     assert result.dt == date
 
@@ -59,11 +58,10 @@ def test_from_xcal_from_dt_class(v_date, date, xcal):
 )
 def test_invalid_value_from_xcal(v_date, xcal):
     """Parse from xcal with invalid value."""
-    e = ET.Element("date")
-    e.text = xcal
+    e = list2xml(["x-prop", ["date", xcal]])
     with pytest.raises(XCalParsingError) as error:
         v_date.from_xcal(e)
     assert (
         error.value.message
-        == f"Expected date format YYYY-MM-DD, got {xcal!r} in /date."
+        == f"Expected date format YYYY-MM-DD, got {xcal!r} in /x-prop/date[1]."
     )
