@@ -1,0 +1,1 @@
+Enumerated property values such as :class:`~icalendar.enums.PARTSTAT` now accept case-insensitive values, per :rfc:`5545#section-3.1`. For example, ``PARTSTAT("needs-action")`` now resolves to ``PARTSTAT.NEEDS_ACTION``. I used AI to assist me with this change. @Evolian-o

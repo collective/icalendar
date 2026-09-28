@@ -21,6 +21,22 @@ class StrEnum(str, Enum):
         """
         return self.value
 
+    @classmethod
+    def _missing_(cls, value):
+        """Match values case-insensitively.
+
+        Enumerated property values are case-insensitive as stated in
+        :rfc:`5545#section-3.1`. This allows ``PARTSTAT("needs-action")`` to
+        resolve to ``PARTSTAT.NEEDS_ACTION`` while still returning the
+        canonical member (and its canonical value).
+        """
+        if isinstance(value, str):
+            upper = value.upper()
+            for member in cls:
+                if member.value.upper() == upper:
+                    return member
+        return None
+
 
 class PARTSTAT(StrEnum):
     """Enum for PARTSTAT from :rfc:`5545`.

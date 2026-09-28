@@ -75,3 +75,31 @@ def test_vbinary_default_value_is_a_value_enum_member():
     from icalendar.prop import vBinary
 
     assert vBinary.default_value in {member.value for member in enums.VALUE}
+
+
+def test_enum_values_are_case_insensitive(enum):
+    """Enumerated property values are case-insensitive per RFC 5545 section 3.1."""
+    for member in enum:
+        assert enum(member.value.lower()) is member
+        assert enum(member.value.upper()) is member
+        assert enum(member.value.swapcase()) is member
+
+
+def test_partstat_accepts_case_insensitive_values():
+    """PARTSTAT resolves differently-cased values to the same member (issue #1840)."""
+    assert enums.PARTSTAT("needs-action") == enums.PARTSTAT.NEEDS_ACTION
+    assert enums.PARTSTAT("needs-action") is enums.PARTSTAT.NEEDS_ACTION
+
+
+def test_enum_raises_for_unknown_values(enum):
+    """Unknown values still raise a ValueError."""
+    for value in ("NOT-A-VALUE", ""):
+        with pytest.raises(ValueError):
+            enum(value)
+
+
+def test_enum_raises_for_non_string_values(enum):
+    """Non-string values are not matched case-insensitively."""
+    for value in (None, 123, b"NEEDS-ACTION"):
+        with pytest.raises(ValueError):
+            enum(value)
