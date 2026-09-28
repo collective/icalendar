@@ -21,7 +21,7 @@ TIME_JCAL_REGEX = re.compile(
 )
 
 XCAL_TIME_REGEX = XCalRegexMatcher(
-    r"(\d\d):(\d\d):(\d\d)(Z?)",
+    TIME_JCAL_REGEX,
     "Expected time format HH:MM:SS or HH:MM:SSZ",
 )
 

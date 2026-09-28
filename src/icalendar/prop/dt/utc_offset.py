@@ -3,13 +3,22 @@
 import re
 from datetime import timedelta
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.match import XCalRegexMatcher
+from icalendar.parser.xcal.protocol import VPropParser
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 
 UTC_OFFSET_JCAL_REGEX = re.compile(
     r"^(?P<sign>[+-])?(?P<hours>\d\d):(?P<minutes>\d\d)(?::(?P<seconds>\d\d))?\Z"
+)
+
+XCAL_UTC_OFFSET_REGEX = XCalRegexMatcher(
+    UTC_OFFSET_JCAL_REGEX,
+    "Expected utc-offset format https://datatracker.ietf.org/doc/html/rfc6321#section-3.6.14",
 )
 
 
@@ -179,6 +188,30 @@ class vUTCOffset:
         if negative:
             t = -t
         return cls(t, Parameters.from_jcal_property(jcal_property))
+
+    def to_xcal(self, element: Element) -> None:
+        """The xCal representation of this property according to :rfc:`6321`."""
+        self.params.to_xcal(element)
+        element = SubElement(element, self.default_value.lower())
+        element.text = self.format(":")
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: VPropParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            parser: The parser to use.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        element = parser.parse_tag(cls.default_value)
+        sign, hour, minute, second = XCAL_UTC_OFFSET_REGEX.groups(element)
+        dt = timedelta(hours=int(hour), minutes=int(minute), seconds=int(second or "0"))
+        if sign == "-":
+            dt = -dt
+        return cls(dt, params=params)
 
 
 __all__ = ["vUTCOffset"]
