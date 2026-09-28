@@ -42,8 +42,7 @@ def test_to_xcal(v_datetime, date, xcal):
 @mark_values
 def test_from_xcal_from_dt_class(v_datetime, date, xcal):
     """Parse from xcal."""
-    e = ET.Element("date-time")
-    e.text = xcal
+    e = list2xml(["x-prop", ["date-time", xcal]])
     result = v_datetime.from_xcal(e)
     assert result.dt == date
 
@@ -60,13 +59,12 @@ def test_from_xcal_from_dt_class(v_datetime, date, xcal):
 )
 def test_invalid_value_from_xcal(v_datetime, xcal):
     """Parse from xcal with invalid value."""
-    e = ET.Element("date-time")
-    e.text = xcal
+    e = list2xml(["x-prop", ["date-time", xcal]])
     with pytest.raises(XCalParsingError) as error:
         v_datetime.from_xcal(e)
     assert (
         error.value.message
-        == f"Expected date-time format YYYY-MM-DDTHH:MM:SS or YYYY-MM-DDTHH:MM:SSZ, got {xcal!r} in /date-time."
+        == f"Expected date-time format YYYY-MM-DDTHH:MM:SS or YYYY-MM-DDTHH:MM:SSZ, got {xcal!r} in /x-prop/date-time[1]."
     )
 
 

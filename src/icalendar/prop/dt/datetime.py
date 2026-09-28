@@ -215,7 +215,7 @@ class vDatetime(TimeBase):
     def to_xcal(self, element: Element) -> None:
         """The xCal representation of this property according to :rfc:`6321`."""
         self.params.to_xcal(element)
-        element = SubElement(element, "date-time")
+        element = SubElement(element, self.default_value.lower())
         text = self.dt.strftime("%Y-%m-%dT%H:%M:%S")
         if is_utc(self.dt):
             text += "Z"
