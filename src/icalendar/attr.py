@@ -475,7 +475,9 @@ def single_utc_property(name: str, docs: str) -> property:
         if name not in self:
             return None
         dt = self.get(name)
-        if isinstance(dt, list):
+        if not isinstance(dt, list):
+            dt = [dt]
+        # code continues with less indentation
             # Broken calendars can repeat singleton properties. Keep all values
             # for serialization; when reading, use the earliest valid value.
             values = []
