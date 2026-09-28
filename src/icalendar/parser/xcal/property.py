@@ -73,10 +73,12 @@ class XCalPropertyParser(XCalParameterParser):
         self._types_factory = (
             TypesFactory.instance() if types_factory is None else types_factory
         )
-        self._parameters = self.parse_parameters()
+        self._parameters = self.initialize_parameters()
 
-    def parse_parameters(self) -> Parameters:
+    def initialize_parameters(self) -> Parameters:
         """Parse the parameters if present.
+
+        They only need to be parsed once.
 
         Returns:
             The parsed parameters.
@@ -89,15 +91,15 @@ class XCalPropertyParser(XCalParameterParser):
                 <text>-//Example Inc.//Example Client//EN</text>
             </prodid>
         """
-        params = Parameters()
-        if self.is_finished() or self.child.tag != "parameters":
-            return params
-        parameters_parser = XCalParametersParser(
-            self.child, params, self._types_factory
-        )
-        parameters_parser.parse_parameters()
-        self.done()
-        return params
+        element = self.parse_optional_tag("parameters")
+        if element is None:
+            return Parameters()
+        parameters_parser = XCalParametersParser(element, self._types_factory)
+        return parameters_parser.parse_parameters()
+
+    def parse_parameters(self) -> Parameters:
+        """Return the parsed parameters."""
+        return self._parameters
 
     def parse_property(self):
         """Parse one property from the list.

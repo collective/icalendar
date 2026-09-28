@@ -8,7 +8,7 @@ from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser.xcal.match import XCalRegexMatcher
-from icalendar.parser.xcal.value import VPropParser
+from icalendar.parser.xcal.protocol import VPropParser
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 
 from .base import TimeBase

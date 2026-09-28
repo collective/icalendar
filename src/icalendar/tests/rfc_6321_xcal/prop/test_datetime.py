@@ -10,7 +10,8 @@ import pytest
 
 from icalendar.error import XCalParsingError
 from icalendar.prop.dt import vDatetime, vDDDLists, vDDDTypes
-from icalendar.tests.rfc_6321_xcal.common import to_xcal
+from icalendar.tests.rfc_6321_xcal.common import list2xml, to_xcal, xml2list
+from icalendar.timezone.tzid import tzid_from_dt
 
 
 @pytest.fixture(params=[vDatetime, vDDDTypes, vDDDLists])
@@ -67,3 +68,64 @@ def test_invalid_value_from_xcal(v_datetime, xcal):
         error.value.message
         == f"Expected date-time format YYYY-MM-DDTHH:MM:SS or YYYY-MM-DDTHH:MM:SSZ, got {xcal!r} in /date-time."
     )
+
+
+mark_floating_datetime = pytest.mark.parametrize(
+    "dt", [datetime(2025, 11, 10, 0, 0, 10), datetime(1997, 1, 31, 23, 59, 59)]
+)
+mark_timezone = pytest.mark.parametrize("tz", ["Asia/Tokyo", "Europe/Paris"])
+
+
+@mark_floating_datetime
+@mark_timezone
+def test_datetime_to_xcal_includes_timezone(tzp, dt, tz, v_datetime):
+    """Convert to xcal."""
+    v_dt = v_datetime(tzp.localize(dt, tz))
+    e = to_xcal(v_dt, wrap=True)
+    expected = [
+        "TEST",
+        [
+            "parameters",
+            [
+                "tzid",
+                [
+                    "text",
+                    tz,
+                ],
+            ],
+        ],
+        [
+            "date-time",
+            dt.strftime("%Y-%m-%dT%H:%M:%S"),
+        ],
+    ]
+    result = xml2list(e)
+    assert result == expected
+
+
+@mark_floating_datetime
+@mark_timezone
+def test_xcal_to_datetime_considers_timezone(tzp, dt, tz, v_datetime):
+    """Test that the timezone is considered when parsing."""
+    xml = list2xml(
+        [
+            "dtstart",
+            [
+                "parameters",
+                [
+                    "tzid",
+                    [
+                        "text",
+                        tz,
+                    ],
+                ],
+            ],
+            [
+                "date-time",
+                dt.strftime("%Y-%m-%dT%H:%M:%S"),
+            ],
+        ]
+    )
+    v_dt = v_datetime.from_xcal(xml)
+    assert v_dt.dt.replace(tzinfo=None) == dt
+    assert tzid_from_dt(v_dt.dt) == tz

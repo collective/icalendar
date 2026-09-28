@@ -24,7 +24,7 @@ if TYPE_CHECKING:
     from xml.etree.ElementTree import Element
 
     from icalendar.compatibility import Self
-    from icalendar.parser.xcal.value import VPropParser
+    from icalendar.parser.xcal.protocol import VPropParser
 
 DT_TYPE: TypeAlias = (
     datetime
@@ -225,10 +225,10 @@ class vDDDTypes(TimeBase):
         Raises:
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
-        element = parser.parse_tag(list(cls.VALUE_MAP))
-        v_prop = cls.VALUE_MAP[element.tag]
+        tag = parser.ensure_tag_is_present(list(cls.VALUE_MAP))
+        v_prop = cls.VALUE_MAP[tag]
 
-        parsed = v_prop.from_xcal(element)
+        parsed = v_prop.from_xcal(parser)
         return cls(
             parsed.dt,
             params=params,

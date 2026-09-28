@@ -8,7 +8,7 @@ from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser.xcal.match import XCalRegexMatcher
-from icalendar.parser.xcal.value import VPropParser
+from icalendar.parser.xcal.protocol import VPropParser
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import to_unicode
 from icalendar.timezone import tzp
@@ -233,14 +233,18 @@ class vDatetime(TimeBase):
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
         element = parser.parse_tag(cls.default_value)
-        year, month, day, hour, minute, second, timezone = XCAL_DATETIME_REGEX.groups(
+        year, month, day, hour, minute, second, utc = XCAL_DATETIME_REGEX.groups(
             element
         )
         dt = datetime(
             int(year), int(month), int(day), int(hour), int(minute), int(second)
         )
-        if timezone:
+        if utc:
             dt = tzp.localize_utc(dt)
+        else:
+            tzid = params.tzid
+            if tzid:
+                dt = tzp.localize(dt, tzid)
         return cls(dt, params=params)
 
 

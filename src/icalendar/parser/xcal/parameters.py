@@ -21,7 +21,6 @@ class XCalParametersParser(XCalParser):
     def __init__(
         self,
         element: Element | ElementAdapter,
-        parameters: Parameters | None = None,
         types_factory: TypesFactory | None = None,
     ) -> None:
         from icalendar.prop.factory import TypesFactory
@@ -30,7 +29,7 @@ class XCalParametersParser(XCalParser):
         self._types_factory = (
             TypesFactory.instance() if types_factory is None else types_factory
         )
-        self._parameters = Parameters() if parameters is None else parameters
+        self._parameters = Parameters()
 
     def parse_parameters(self) -> Parameters:
         """Parse properties until finished."""
@@ -111,6 +110,14 @@ class XCalParameterParser(XCalParser):
             return {tags.lower()}
         return {t.lower() for t in tags}
 
+    def parse_optional_tag(self, tag: str | Sequence[str]) -> ElementAdapter | None:
+        """Find a child tag and return it. or None
+
+        This child is then considered parsed.
+        """
+        tags = self._sanitize_tags(tag)
+        return self._parse_tag(tags)
+
     def parse_tag(self, tag: str | Sequence[str]) -> ElementAdapter:
         """Find a child tag and return it.
 
@@ -157,3 +164,22 @@ class XCalParameterParser(XCalParser):
                 break
             children.append(child)
         return children
+
+    def ensure_tag_is_present(self, tag: str | Sequence[str]) -> str:
+        """Make sure a a tag is present and can be parsed.
+
+        Returns:
+            The tag that is present.
+
+        Raises:
+            XCalParsingError: If the tag is not found.
+        """
+        tags = self._sanitize_tags(tag)
+        if not self._element_is_parsed and self._element.tag in tags:
+            return self._element.tag
+        for child in self._children:
+            if child.tag in tags:
+                return child.tag
+        raise XCalParsingError(
+            f"Tag {' or '.join(tags)} not found", None, self._element
+        )

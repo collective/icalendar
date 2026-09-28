@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
     from icalendar.parser.parameter import Parameters
-    from icalendar.parser.xcal.value import VPropParser
+    from icalendar.parser.xcal.protocol import VPropParser
 
 VProp = TypeVar("VProp")
 

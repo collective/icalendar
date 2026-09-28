@@ -13,7 +13,7 @@ from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
 if TYPE_CHECKING:
     from icalendar.compatibility import Self
     from icalendar.parser.content_line import Contentline
-    from icalendar.parser.xcal.value import VPropParser
+    from icalendar.parser.xcal.protocol import VPropParser
 
 
 class vUnknown(str):

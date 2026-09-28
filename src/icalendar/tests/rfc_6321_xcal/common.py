@@ -68,5 +68,5 @@ def xml2list(element: Element[str]) -> list[str | list]:
     """Return the reverse of :func:`list2xml`."""
     children = [xml2list(child) for child in element]
     if not children:
-        return [element.tag, element.text or ""]
+        return [element.tag, str(element.text or "")]
     return [element.tag] + children

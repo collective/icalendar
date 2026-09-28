@@ -7,7 +7,7 @@ from xml.etree.ElementTree import Element, SubElement
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
-from icalendar.parser.xcal.value import VPropParser
+from icalendar.parser.xcal.protocol import VPropParser
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 
 

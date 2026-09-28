@@ -6,7 +6,7 @@ from xml.etree.ElementTree import Element
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
-from icalendar.parser.xcal.value import VPropParser
+from icalendar.parser.xcal.protocol import VPropParser
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import from_unicode
 
@@ -140,9 +140,11 @@ class vDDDLists:
         Raises:
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
-        elements = parser.parse_tags(list(vDDDTypes.VALUE_MAP))
+        elements = []
+        while not parser.is_finished():
+            elements.append(vDDDTypes.from_xcal(parser))
         return cls(
-            [vDDDTypes.from_xcal(element) for element in elements],
+            elements,
             params=params,
         )
 

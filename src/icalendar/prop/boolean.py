@@ -7,7 +7,7 @@ from icalendar.caselessdict import CaselessDict
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
-from icalendar.parser.xcal.value import VPropParser
+from icalendar.parser.xcal.protocol import VPropParser
 
 
 class vBoolean(int):
