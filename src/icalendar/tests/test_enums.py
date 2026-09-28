@@ -75,3 +75,39 @@ def test_vbinary_default_value_is_a_value_enum_member():
     from icalendar.prop import vBinary
 
     assert vBinary.default_value in {member.value for member in enums.VALUE}
+
+
+@pytest.mark.parametrize(
+    ("enum_cls", "lower", "canonical"),
+    [
+        (enums.PARTSTAT, "needs-action", enums.PARTSTAT.NEEDS_ACTION),
+        (enums.PARTSTAT, "NEEDS-ACTION", enums.PARTSTAT.NEEDS_ACTION),
+        (enums.PARTSTAT, "Accepted", enums.PARTSTAT.ACCEPTED),
+        (enums.STATUS, "tentative", enums.STATUS.TENTATIVE),
+        (enums.FBTYPE, "busy-unavailable", enums.FBTYPE.BUSY_UNAVAILABLE),
+        (enums.CUTYPE, "individual", enums.CUTYPE.INDIVIDUAL),
+        (enums.ROLE, "req-participant", enums.ROLE.REQ_PARTICIPANT),
+        (enums.TRANSP, "transparent", enums.TRANSP.TRANSPARENT),
+        (enums.CLASS, "private", enums.CLASS.PRIVATE),
+        (enums.VALUE, "date-time", enums.VALUE.DATE_TIME),
+    ],
+)
+def test_str_enums_accept_case_insensitive_values(enum_cls, lower, canonical):
+    """RFC 5545 enumerated values that are not quoted are case-insensitive."""
+    assert enum_cls(lower) is canonical
+    assert enum_cls(lower) == enum_cls(canonical.value) == canonical
+
+
+def test_partstat_example_from_issue_1840():
+    """The example requested in issue #1840 must hold."""
+    assert (
+        enums.PARTSTAT("needs-action")
+        == enums.PARTSTAT("NEEDS-ACTION")
+        == enums.PARTSTAT.NEEDS_ACTION
+    )
+
+
+def test_unknown_enum_value_still_raises():
+    """Unrecognized values must still raise ValueError."""
+    with pytest.raises(ValueError):
+        enums.PARTSTAT("not-a-real-status")
