@@ -75,3 +75,40 @@ def test_vbinary_default_value_is_a_value_enum_member():
     from icalendar.prop import vBinary
 
     assert vBinary.default_value in {member.value for member in enums.VALUE}
+
+
+def test_enums_accept_case_insensitive_values(enum):
+    """Values that are not enclosed in double quotes are case-insensitive.
+
+    See :rfc:`5545`, Section 3.1.
+    """
+    for member in enum:
+        assert enum(member.value.lower()) is member
+        assert enum(member.value.title()) is member
+
+
+def test_partstat_example_is_case_insensitive():
+    """The example from the report: PARTSTAT accepts any casing."""
+    needs_action = enums.PARTSTAT.NEEDS_ACTION
+
+    assert enums.PARTSTAT("needs-action") == needs_action
+    assert enums.PARTSTAT("NEEDS-ACTION") == needs_action
+    assert enums.PARTSTAT("nEeDs-AcTiOn") is needs_action
+
+
+def test_unknown_enum_values_raise_value_error(enum):
+    """An unknown value is still rejected instead of becoming a member."""
+    with pytest.raises(ValueError, match="is not a valid"):
+        enum("no-such-member")
+
+
+def test_lowercase_property_values_are_read_from_calendars():
+    """A value such as ``STATUS:confirmed`` maps to the enum member."""
+    event = icalendar.Event.from_ical(
+        "BEGIN:VEVENT\r\nUID:1\r\nDTSTAMP:20240101T000000Z\r\n"
+        "DTSTART:20240101T000000Z\r\nSTATUS:confirmed\r\n"
+        "TRANSP:transparent\r\nEND:VEVENT"
+    )
+
+    assert event.status is enums.STATUS.CONFIRMED
+    assert event.transparency is enums.TRANSP.TRANSPARENT

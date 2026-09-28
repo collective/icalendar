@@ -12,7 +12,12 @@ class Enum(_Enum):
 
 
 class StrEnum(str, Enum):
-    """Enum for strings."""
+    """Enum for strings.
+
+    Values that are not enclosed in double quotes are case-insensitive
+    (:rfc:`5545`, Section 3.1), so ``PARTSTAT("needs-action")`` is the same
+    member as ``PARTSTAT.NEEDS_ACTION``.
+    """
 
     def __str__(self) -> str:
         """Convert to a string.
@@ -20,6 +25,20 @@ class StrEnum(str, Enum):
         This is needed when we set the value directly in components.
         """
         return self.value
+
+    @classmethod
+    def _missing_(cls, value: object) -> "StrEnum | None":
+        """Look up a value case-insensitively.
+
+        Enumerated property values and property parameter values that are not
+        enclosed in double quotes are case-insensitive (:rfc:`5545`,
+        Section 3.1).  Unknown values are still rejected with
+        :exc:`ValueError`.
+        """
+        if not isinstance(value, str):
+            return None
+        uppercase = value.upper()
+        return next((member for member in cls if member.value == uppercase), None)
 
 
 class PARTSTAT(StrEnum):
