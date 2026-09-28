@@ -5,9 +5,10 @@ from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError
+from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser.xcal.protocol import VPropParser
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 
 
 class vBoolean(int):
@@ -109,7 +110,8 @@ class vBoolean(int):
         )
 
     @classmethod
-    def from_xcal(cls, parser: VPropParser) -> Self:
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: VPropParser, params: Parameters) -> Self:
         """Parse xCal from :rfc:`6321`.
 
         Parameters:
@@ -118,9 +120,15 @@ class vBoolean(int):
         Raises:
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
-        params = parser.parse_parameters()
         element = parser.parse_tag(cls.default_value)
-        return cls(element.get_xsd_token().lower() == "true", params=params)
+        value = element.get_xsd_token().lower()
+        if value not in cls.BOOL_MAP:
+            raise XCalParsingError(
+                "Expected 'true' or 'false'",
+                element.get_xsd_token(),
+                element,
+            )
+        return cls(cls.BOOL_MAP[value], params=params)
 
     def to_xcal(self, element: Element) -> None:
         """The xCal representation of this property according to :rfc:`6321`."""

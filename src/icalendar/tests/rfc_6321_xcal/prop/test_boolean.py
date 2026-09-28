@@ -40,7 +40,7 @@ def test_from_xcal(types_factory: TypesFactory, value, expected):
     """Parse from xcal."""
     e = ET.Element("boolean")
     e.text = value
-    result = types_factory.from_xcal("x-prop", e)
+    result = vBoolean.from_xcal(e)
     assert isinstance(result, vBoolean)
     assert result == expected
 
@@ -50,9 +50,7 @@ def test_invalid_value_from_xcal(types_factory: TypesFactory):
     e = ET.Element("boolean")
     e.text = "INVALID"
     with pytest.raises(XCalParsingError) as error:
-        types_factory.from_xcal("x-prop", e)
-    assert error.value.parser == vBoolean
+        print(vBoolean.from_xcal(e))
     assert (
-        error.value.message
-        == "Expected 'true' or 'false'. Got 'INVALID' in 'boolean' element parsing 'vBoolean'."
+        error.value.message == "Expected 'true' or 'false', got 'INVALID' in /boolean."
     )
