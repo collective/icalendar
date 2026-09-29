@@ -1,1 +1,4 @@
-Return a zero duration for a VTODO that has DUE but no DTSTART, instead of raising IncompleteComponent. I used AI to assist me with this change. @tayfuryldz
+Fix VTODO duration with only DUE
+
+AI disclosure: I used ChatGPT (GPT-5.6 Luna) to assist with investigating the issue, developing the regression test, and reviewing the implementation. I reviewed the changes and validated them locally.
+
