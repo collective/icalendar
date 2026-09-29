@@ -1,0 +1,1 @@
+:meth:`icalendar.Alarm.new` now requires ``action`` and ``trigger`` so it always creates an RFC 5545-compliant alarm. I used OpenAI Codex to assist with this change. @fankcoder

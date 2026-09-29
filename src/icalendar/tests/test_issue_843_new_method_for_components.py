@@ -1155,7 +1155,7 @@ def test_properties_and_new(
 @pytest.mark.parametrize(
     ("factory_method", "required_kwargs"),
     [
-        ("new", {}),
+        ("new", {"action": "DISPLAY", "trigger": timedelta(minutes=-5)}),
         (
             "new_display",
             {"description": "Reminder", "trigger": timedelta(minutes=-5)},
