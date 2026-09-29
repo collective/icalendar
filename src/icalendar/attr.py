@@ -1870,10 +1870,6 @@ def get_end_property(
         msg = f"No {end_name} or DURATION+DTSTART given."
         raise IncompleteComponent(msg)
 
-    if end is None:
-        # Unreachable given the branches above; explicit error instead
-        # of assert so it also fires under python -O.
-        raise IncompleteComponent("No end value could be computed.")
     return end
 
 
