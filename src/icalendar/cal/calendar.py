@@ -61,6 +61,8 @@ class Calendar(Component):
 
         Get the example Calendar:
 
+        .. code-block:: pycon
+
             >>> from icalendar import Calendar
             >>> calendar = Calendar.example()
             >>> print(calendar.calendar_name)
