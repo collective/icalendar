@@ -173,7 +173,7 @@ def test_negative_duration_raises_error(spec, v_period):
 
 @pytest.mark.parametrize("spec", VALID_PERIODS)
 def test_period_without_start_raises_error(spec, v_period):
-    """A period without a start is parsed but wrong."""
+    """A period without a start errors."""
     xml_list = spec2list(spec)
     del xml_list[1][1]  # delete start
     pprint(xml_list)
@@ -185,7 +185,7 @@ def test_period_without_start_raises_error(spec, v_period):
 
 @pytest.mark.parametrize("spec", VALID_PERIODS)
 def test_period_without_end_raises_error(spec, v_period):
-    """A period without a end/duration is parsed but wrong."""
+    """A period without a end/duration errors."""
     xml_list = spec2list(spec)
     del xml_list[1][2]  # delete end/duration
     pprint(xml_list)
