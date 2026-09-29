@@ -10,23 +10,17 @@ Members will be added and removed without deprecation warnings.
 import functools
 import sys
 import warnings
-from typing import TYPE_CHECKING
+from typing import TypeGuard
 
 if sys.version_info >= (3, 11):
     from typing import Self
 else:
     from typing_extensions import Self
 
-if TYPE_CHECKING:
-    from typing import TypeGuard
-
-    if sys.version_info >= (3, 13):
-        from typing import TypeIs
-    else:
-        from typing_extensions import TypeIs
+if sys.version_info >= (3, 13):
+    from typing import TypeIs
 else:
-    # we cannot use a TypeGuard = "TypeGuard" hack since it's used with a parameter
-    TypeGuard = TypeIs = None
+    from typing_extensions import TypeIs
 
 
 def deprecate_for_version_8(func):
