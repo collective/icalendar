@@ -70,3 +70,8 @@ def xml2list(element: Element[str]) -> list[str | list]:
     if not children:
         return [element.tag, str(element.text or "")]
     return [element.tag] + children
+
+
+def to_xcal_list(value: HasToXcal) -> list[str | list]:
+    """combile to_xcal and xml2list."""
+    return xml2list(to_xcal(value, wrap=True))

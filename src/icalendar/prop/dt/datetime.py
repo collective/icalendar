@@ -7,6 +7,7 @@ from xml.etree.ElementTree import Element, SubElement
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.adapter import ElementAdapter
 from icalendar.parser.xcal.match import XCalRegexMatcher
 from icalendar.parser.xcal.protocol import VPropParser
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
@@ -213,13 +214,51 @@ class vDatetime(TimeBase):
         )
 
     def to_xcal(self, element: Element) -> None:
-        """The xCal representation of this property according to :rfc:`6321`."""
+        """The xCal representation of this property according to :rfc:`6321`.
+
+        Parameters:
+            element: The element to add the property to.
+        """
         self.params.to_xcal(element)
-        element = SubElement(element, self.default_value.lower())
+        self.to_xcal_value_only(element, self.default_value)
+
+    def to_xcal_value_only(self, element: Element, tag: str):
+        """The xCal representation of this property according to :rfc:`6321`.
+
+        In contrast to :meth:`to_xcal`, this method does not add the parameters.
+
+        Parameters:
+            element: The element to add the property to.
+            tag: The tag to use.
+        """
+        element = SubElement(element, tag.lower())
         text = self.dt.strftime("%Y-%m-%dT%H:%M:%S")
         if is_utc(self.dt):
             text += "Z"
         element.text = text
+
+    @classmethod
+    def from_xcal_element(cls, element: ElementAdapter) -> datetime:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Returns:
+            The datetime object, possibly with a UTC timezone.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        year, month, day, hour, minute, second, utc = XCAL_DATETIME_REGEX.groups(
+            element
+        )
+        dt = datetime(
+            int(year), int(month), int(day), int(hour), int(minute), int(second)
+        )
+        if utc:
+            dt = tzp.localize_utc(dt)
+        return dt
 
     @classmethod
     @from_xcal_wrapper
@@ -233,18 +272,10 @@ class vDatetime(TimeBase):
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
         element = parser.parse_tag(cls.default_value)
-        year, month, day, hour, minute, second, utc = XCAL_DATETIME_REGEX.groups(
-            element
-        )
-        dt = datetime(
-            int(year), int(month), int(day), int(hour), int(minute), int(second)
-        )
-        if utc:
-            dt = tzp.localize_utc(dt)
-        else:
-            tzid = params.tzid
-            if tzid:
-                dt = tzp.localize(dt, tzid)
+        dt = cls.from_xcal_element(element)
+        tzid = params.tzid
+        if tzid:
+            dt = tzp.localize(dt, tzid)
         return cls(dt, params=params)
 
 

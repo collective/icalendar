@@ -2,10 +2,13 @@
 
 from datetime import date, datetime, timedelta, tzinfo
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError
+from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.protocol import VPropParser
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.timezone import tzp
 from icalendar.tools import is_date, is_datetime, is_pytz, normalize_pytz, to_datetime
 
@@ -285,6 +288,53 @@ class vPeriod(TimeBase):
                 end_or_duration = tzp.localize(end_or_duration, tzid)
 
         return cls((start, end_or_duration), params=params)
+
+    def to_xcal(self, element: Element) -> None:
+        """The xCal representation of this property according to :rfc:`6321`."""
+        self.params.to_xcal(element)
+        period_element = SubElement(element, self.default_value.lower())
+        vDatetime(self.start).to_xcal_value_only(period_element, "start")
+        if self.by_duration:
+            vDuration(self.duration).to_xcal(period_element)
+        else:
+            vDatetime(self.end).to_xcal_value_only(period_element, "end")
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: VPropParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            parser: The parser to use.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        element = parser.parse_tag(cls.default_value)
+        start_element = element.get_child_with_tag("start")
+        if start_element is None:
+            raise XCalParsingError("Expected <start>", None, element)
+        start = vDatetime.from_xcal_element(start_element)
+        tzid = params.tzid
+        if tzid:
+            start = tzp.localize(start, tzid)
+        end_element = element.get_child_with_tag("end")
+        if end_element:
+            end = vDatetime.from_xcal_element(end_element)
+            if tzid:
+                end = tzp.localize(end, tzid)
+        else:
+            duration_element = element.get_child_with_tag("duration")
+            if duration_element is None:
+                raise XCalParsingError("Expected <end> or <duration>", None, element)
+            end = vDuration.from_xcal(duration_element).td
+            if end < timedelta(0):
+                raise XCalParsingError(
+                    "Expected positive duration",
+                    duration_element.get_xsd_token(),
+                    duration_element,
+                )
+        return cls((start, end), params=params)
 
 
 __all__ = ["vPeriod"]

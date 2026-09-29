@@ -465,13 +465,17 @@ class Parameters(CaselessDict):
         """Whether the TZID parameter is UTC."""
         return self.tzid == "UTC"
 
-    def update_tzid_from(self, dt: datetime | time | Any) -> None:
+    def update_tzid_from(
+        self, dt: datetime | time | tuple[datetime, Any] | Any
+    ) -> None:
         """Update the TZID parameter from a datetime object.
 
         This sets the TZID parameter or deletes it according to the datetime.
         :rfc:`5545#section-3.2.19` prohibits TZID on UTC datetimes,
         which use the ``Z`` suffix instead.
         """
+        if isinstance(dt, tuple) and len(dt) >= 1:
+            dt = dt[0]
         if isinstance(dt, (datetime, time)):
             tzid = tzid_from_dt(dt)
             if tzid != "UTC":

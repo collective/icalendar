@@ -22,6 +22,7 @@ class ElementAdapter:
 
     def __init__(self, element: Element) -> None:
         self._element = element
+        self._tag = self._element.tag.split("}")[-1].lower()
 
     @property
     def element(self) -> Element:
@@ -31,7 +32,7 @@ class ElementAdapter:
     @property
     def tag(self) -> str:
         """A sanitized element tag."""
-        return self._element.tag.split("}")[-1].lower()
+        return self._tag
 
     @property
     def children(self) -> list[ChildElementAdapter]:
