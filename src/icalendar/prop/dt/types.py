@@ -6,8 +6,10 @@ from collections.abc import Sequence
 from datetime import date, datetime, time, timedelta
 from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
+from icalendar.caselessdict import CaselessDict
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.timezone import tzp
 from icalendar.tools import is_date, is_datetime, to_datetime
 
@@ -19,7 +21,10 @@ from .period import vPeriod
 from .time import vTime
 
 if TYPE_CHECKING:
+    from xml.etree.ElementTree import Element
+
     from icalendar.compatibility import Self
+    from icalendar.parser.xcal.base import XCalParser
 
 DT_TYPE: TypeAlias = (
     datetime
@@ -191,6 +196,63 @@ class vDDDTypes(TimeBase):
             dt,
             params=params,
         )
+
+    def to_xcal(self, element: Element) -> None:
+        """Convert a vDDDTypes to an xCal element."""
+        self.to_property_type().to_xcal(element)
+
+    VALUE_MAP: dict[str, vDate | vTime | vDatetime | vDuration | vPeriod] = (
+        CaselessDict(
+            {
+                vDate.default_value: vDate,
+                vTime.default_value: vTime,
+                vDatetime.default_value: vDatetime,
+                vDuration.default_value: vDuration,
+                vPeriod.default_value: vPeriod,
+            }
+        )
+    )
+    """Map the VALUE parameters of the different types to their class."""
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            parser: The parser to use.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        tag = parser.ensure_tag_is_present(list(cls.VALUE_MAP))
+        v_prop = cls.VALUE_MAP[tag]
+
+        parsed = v_prop.from_xcal(parser)
+        return cls(
+            parsed.dt,
+            params=params,
+        )
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal_in_recur(cls, parser: XCalParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            parser: The parser to use.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        element = parser.parse_tag()
+        if not element.children:
+            # we have only one element here and that is with a date or date-time text.
+            text = element.get_text_without_whitespace()
+            if len(text) <= 10:  # YYYY-MM-DD
+                return cls(vDate.from_xcal_element(element), params=params)
+            return cls(vDatetime.from_xcal_element(element), params=params)
+        return cls.from_xcal(element)
 
 
 __all__ = ["DT_TYPE", "vDDDTypes"]

@@ -3,10 +3,13 @@
 import base64
 import binascii
 from typing import ClassVar
+from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.compatibility import Self, deprecate_for_version_8
-from icalendar.error import JCalParsingError
+from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.base import XCalParser
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import to_unicode
 
 
@@ -141,6 +144,34 @@ class vBinary:
             cls.from_ical(jcal_property[3]),
             params=Parameters.from_jcal_property(jcal_property),
         )
+
+    def to_xcal(self, element: Element):
+        """The xCal representation of this property according to :rfc:`6321`."""
+        xml = SubElement(element, self.default_value.lower())
+        xml.text = self.base64data
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            parser: The parser to use.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        element = parser.parse_tag(cls.default_value)
+        text = element.get_text_without_whitespace()
+        try:
+            binary = base64.b64decode(text, validate=True)
+        except binascii.Error as e:
+            raise XCalParsingError(
+                "Expected base64 encoded data",
+                None,  # do not print potentially huge chunks of data
+                element,
+            ) from e
+        return cls(binary, params=params)
 
 
 __all__ = ["vBinary"]

@@ -1,11 +1,14 @@
 """BOOLEAN values from :rfc:`5545`."""
 
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError
+from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.base import XCalParser
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 
 
 class vBoolean(int):
@@ -105,6 +108,33 @@ class vBoolean(int):
             jcal_property[3],
             params=Parameters.from_jcal_property(jcal_property),
         )
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            parser: The parser to use.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        element = parser.parse_tag(cls.default_value)
+        value = element.get_xsd_token().lower()
+        if value not in cls.BOOL_MAP:
+            raise XCalParsingError(
+                "Expected 'true' or 'false'",
+                element.get_xsd_token(),
+                element,
+            )
+        return cls(cls.BOOL_MAP[value], params=params)
+
+    def to_xcal(self, element: Element) -> None:
+        """The xCal representation of this property according to :rfc:`6321`."""
+        self.params.to_xcal(element)
+        element = SubElement(element, self.default_value.lower())
+        element.text = "true" if self else "false"
 
 
 __all__ = ["vBoolean"]

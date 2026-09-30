@@ -7,6 +7,7 @@ import os
 import re
 from datetime import datetime, time
 from typing import TYPE_CHECKING, Any, Protocol
+from xml.etree.ElementTree import Element
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.compatibility import deprecate_for_version_8
@@ -22,6 +23,7 @@ if TYPE_CHECKING:
     from collections.abc import Callable, Sequence
 
     from icalendar.enums import VALUE
+    from icalendar.parser.xcal.adapter import ElementAdapter
     from icalendar.prop import VPROPERTY
 
 
@@ -463,13 +465,17 @@ class Parameters(CaselessDict):
         """Whether the TZID parameter is UTC."""
         return self.tzid == "UTC"
 
-    def update_tzid_from(self, dt: datetime | time | Any) -> None:
+    def update_tzid_from(
+        self, dt: datetime | time | tuple[datetime, Any] | Any
+    ) -> None:
         """Update the TZID parameter from a datetime object.
 
         This sets the TZID parameter or deletes it according to the datetime.
         :rfc:`5545#section-3.2.19` prohibits TZID on UTC datetimes,
         which use the ``Z`` suffix instead.
         """
+        if isinstance(dt, tuple) and len(dt) >= 1:
+            dt = dt[0]
         if isinstance(dt, (datetime, time)):
             tzid = tzid_from_dt(dt)
             if tzid != "UTC":
@@ -523,6 +529,79 @@ class Parameters(CaselessDict):
         if self.is_utc():
             del self.tzid  # we do not want this parameter
         return self
+
+    @classmethod
+    def from_xcal(cls, element: Element | ElementAdapter) -> Parameters:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+
+        Returns:
+            :Parameters: The parsed parameters.
+
+        Example:
+
+            This parses the parameters from an xCal string.
+
+            .. code-block:: pycon
+
+                >>> from icalendar import Parameters
+                >>> from xml.etree.ElementTree import fromstring
+                >>> xcal_string = '''
+                ... <parameters>
+                ...     <language>
+                ...         <text>en-US</text>
+                ...     </language>
+                ... </parameters>
+                ... '''
+                >>> xml_element = fromstring(xcal_string)
+                >>> parameters = Parameters.from_xcal(xml_element)
+                >>> parameters['language'] == 'en-US'
+                True
+
+        """
+        from icalendar.parser.xcal.parameters import XCalParametersParser
+
+        parser = XCalParametersParser(element)
+        return parser.parse_parameters()
+
+    def to_xcal(self, element: Element) -> None:
+        """Add the xCal representation of the parameters according to :rfc:`6321`."""
+        if not self:
+            return  # exit quickly
+        from icalendar.prop.factory import TypesFactory
+
+        result = Element("parameters")
+        factory = TypesFactory.instance()
+        for key in self:
+            if key == "VALUE":
+                continue
+            value_factory = factory.for_property(key)
+            param_element = Element(key.lower())
+            for value in self.get_multiple(key):
+                if not hasattr(value, "to_xcal"):
+                    value = value_factory(value)  # noqa: PLW2901
+                value.to_xcal(param_element)
+            result.append(param_element)
+        if len(result) > 0:
+            # Parameters always go first.
+            element.insert(0, result)
+
+    def get_multiple(self, key: str) -> list:
+        """Get mulitple values as a list.
+
+        .. note::
+
+            Do not modify the list. This is only for iteration.
+        """
+        result = self.get(key, [])
+        if not isinstance(result, list):
+            return [result]
+        return result
 
 
 RFC_6868_UNESCAPE_REGEX = re.compile(r"\^\^|\^n|\^'")

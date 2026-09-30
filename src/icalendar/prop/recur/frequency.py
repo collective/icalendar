@@ -1,12 +1,19 @@
 """FREQ value type of RECUR from :rfc:`5545`."""
 
-from typing import Any
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
+from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.caselessdict import CaselessDict
-from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError
+from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
+
+if TYPE_CHECKING:
+    from icalendar.compatibility import Self
+    from icalendar.parser.xcal.base import XCalParser
 
 
 class vFrequency(str):
@@ -75,6 +82,34 @@ class vFrequency(str):
             :rfc:`5545#section-3.3.10` for the ``FREQ`` rule grammar.
         """
         return str(self)
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            parser: The parser to use.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        child = parser.parse_tag()
+        text = child.get_xsd_token()
+        try:
+            return cls(text, params=params)
+        except ValueError as e:
+            raise XCalParsingError(
+                "Expected frequency https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.10",
+                text,
+                child,
+            ) from e
+
+    def to_xcal(self, element: Element) -> None:
+        """Add the xCal representation of this property according to :rfc:`6321`."""
+        self.params.to_xcal(element)
+        weekday_element = SubElement(element, "freq")
+        weekday_element.text = str(self)
 
 
 __all__ = ["vFrequency"]
