@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, ClassVar
+from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.error import JCalParsingError
@@ -337,6 +338,19 @@ class vRecur(CaselessDict):
             if len(value) == 1:
                 self[key] = value[0]
         return self
+
+    def to_xcal(self, element: Element) -> None:
+        """Add the xCal representation of this property according to :rfc:`6321`."""
+        self.params.to_xcal(element)
+        recur_element = SubElement(element, self.default_value.lower())
+        for key, value in self.items():
+            value = value if isinstance(value, list) else [value]
+            for v in value:
+                if not hasattr(v, "to_xcal"):
+                    v_prop = self.types.get(key, vText)
+                    v = v_prop(v)
+                v.to_xcal(recur_element)
+                recur_element[-1].tag = key.lower()
 
 
 __all__ = ["vRecur"]

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
+from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
@@ -128,6 +129,12 @@ class vMonth(int):
             return cls(text, params=params)
         except ValueError as e:
             raise XCalParsingError("Expected month number", text, child) from e
+
+    def to_xcal(self, element: Element) -> None:
+        """Add the xCal representation of this property according to :rfc:`6321`."""
+        self.params.to_xcal(element)
+        weekday_element = SubElement(element, "bymonth")
+        weekday_element.text = str(self)
 
 
 __all__ = ["vMonth"]

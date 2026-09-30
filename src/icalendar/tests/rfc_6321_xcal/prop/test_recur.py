@@ -27,12 +27,14 @@ https://errata.rfc-editor.org/new/preview/d637989c-0123-4b09-ab79-b1c78f183ed2/
 """
 
 from datetime import date, datetime, timezone
+from pprint import pprint
 
 import pytest
 
 from icalendar.error import XCalParsingError
 from icalendar.prop.recur import vRecur
-from icalendar.tests.rfc_6321_xcal.common import list2xml
+from icalendar.prop.recur.month import vMonth
+from icalendar.tests.rfc_6321_xcal.common import list2xml, to_xcal_list
 
 VALID_FREQ = ["SECONDLY", "MINUTELY", "HOURLY", "DAILY", "WEEKLY", "MONTHLY", "YEARLY"]
 
@@ -105,7 +107,7 @@ MULTI_VALUE = [
     ("byhour", "23", 23),
     # BYMONTH
     ("bymonth", "1", 1),
-    ("bymonth", "12L", 12),
+    ("bymonth", "12L", vMonth("12L")),
     # BYWEEKNO
     ("byweekno", "10", 10),
     ("byweekno", "32", 32),
@@ -299,3 +301,41 @@ def test_until_with_tags(xml, expected):
     xml = list2xml(["recur", ["until", xml]])
     result = vRecur.from_xcal(xml)
     assert result["UNTIL"] == expected
+
+
+@mark_single_value
+def test_to_xcal_init(key, xml, value):
+    """Parse from xcal."""
+    recur = vRecur(**{key: value})
+    assert_xcal_matches(recur, [key, xml])
+
+
+@mark_single_value
+def test_to_xcal_setter(key, xml, value):
+    """Parse from xcal."""
+    recur = vRecur()
+    recur[key] = value
+    assert_xcal_matches(recur, [key, xml])
+
+
+def assert_xcal_matches(recur: vRecur, *values: list[str]):
+    expected = ["TEST", ["recur"] + list(values)]
+    result = to_xcal_list(recur)
+    pprint(expected)
+    pprint(result)
+    assert result == expected
+
+
+@mark_multi_value
+def test_to_xcal_init_multi(key, xml1, value1, xml2, value2):
+    """Parse from xcal."""
+    recur = vRecur(**{key: [value1, value2]})
+    assert_xcal_matches(recur, [key, xml1], [key, xml2])
+
+
+@mark_multi_value
+def test_to_xcal_setter_multi(key, xml1, value1, xml2, value2):
+    """Parse from xcal."""
+    recur = vRecur()
+    recur[key] = [value1, value2]
+    assert_xcal_matches(recur, [key, xml1], [key, xml2])

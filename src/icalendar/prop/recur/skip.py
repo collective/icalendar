@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
+from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.enums import Enum
 from icalendar.error import JCalParsingError, XCalParsingError
@@ -80,6 +81,12 @@ class vSkip(vText, Enum):
                 text,
                 child,
             ) from e
+
+    def to_xcal(self, element: Element) -> None:
+        """Add the xCal representation of this property according to :rfc:`6321`."""
+        self.params.to_xcal(element)
+        weekday_element = SubElement(element, "skip")
+        weekday_element.text = self.name
 
 
 __all__ = ["vSkip"]
