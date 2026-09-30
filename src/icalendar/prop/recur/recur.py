@@ -288,6 +288,9 @@ class vRecur(CaselessDict):
         (:rfc:`5545#section-3.3.10`). ``COUNT`` and ``UNTIL`` are mutually
         exclusive; this accessor does not enforce that.
 
+        The RFC 5545 grammar for COUNT is ``1*DIGIT``, so ``0`` is a valid
+        value and is returned as such, not treated as missing.
+
         If multiple values are present, the first one is returned. If the
         value is missing or an empty sequence, ``None`` is returned.
 
@@ -299,11 +302,13 @@ class vRecur(CaselessDict):
                 >>> from icalendar.prop import vRecur
                 >>> vRecur.from_ical("FREQ=DAILY;COUNT=10").count
                 10
+                >>> vRecur.from_ical("FREQ=DAILY;COUNT=0").count
+                0
                 >>> vRecur.from_ical("FREQ=DAILY").count is None
                 True
         """
         values = self.get("COUNT")
-        if not values:
+        if values is None or (isinstance(values, SEQUENCE_TYPES) and len(values) == 0):
             return None
         value = values[0] if isinstance(values, SEQUENCE_TYPES) else values
         return int(value)
@@ -316,8 +321,12 @@ class vRecur(CaselessDict):
             return
         if not isinstance(value, int) or isinstance(value, bool):
             raise TypeError(f"count must be an int, got {value!r}")
-        if value < 1:
-            raise ValueError(f"count must be a positive integer, got {value}")
+        if value < 0:
+            # RFC 5545's grammar for COUNT is `1*DIGIT`: unsigned digits only,
+            # so a negative value can never be a valid COUNT. 0 is valid
+            # (RFC 5545 doesn't say COUNT must be positive, only non-negative
+            # per its digit-only grammar), and is stored as such.
+            raise ValueError(f"count must not be negative, got {value}")
         self["COUNT"] = [vInt(value)]
 
     @count.deleter
