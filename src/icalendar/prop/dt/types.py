@@ -234,5 +234,25 @@ class vDDDTypes(TimeBase):
             params=params,
         )
 
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal_in_recur(cls, parser: XCalParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            parser: The parser to use.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        element = parser.parse_tag()
+        if not element.children:
+            # we have only one element here and that is with a date or date-time text.
+            text = element.get_text_without_whitespace()
+            if len(text) <= 10:  # YYYY-MM-DD
+                return cls(vDate.from_xcal_element(element), params=params)
+            return cls(vDatetime.from_xcal_element(element), params=params)
+        return cls.from_xcal(element)
+
 
 __all__ = ["DT_TYPE", "vDDDTypes"]

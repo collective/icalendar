@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from icalendar.caselessdict import CaselessDict
-from icalendar.error import JCalParsingError
+from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
@@ -95,7 +95,14 @@ class vFrequency(str):
         """
         child = parser.parse_tag()
         text = child.get_xsd_token()
-        return cls(text, params=params)
+        try:
+            return cls(text, params=params)
+        except ValueError as e:
+            raise XCalParsingError(
+                "Expected frequency https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.10",
+                text,
+                child,
+            ) from e
 
 
 __all__ = ["vFrequency"]

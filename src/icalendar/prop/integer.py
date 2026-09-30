@@ -227,8 +227,11 @@ class vInt(int):
         self.params.to_xcal(element)
 
 
-class vPositiveInt(vInt):
-    """This is an integer that is supposed to be positive."""
+class vNonNegativeInt(vInt):
+    """This is an integer that is supposed to be at least 0.
+
+    See https://www.rfc-editor.org/rfc/inline-errata/rfc6321.html#btn_3050
+    """
 
     min: ClassVar[int] = 0
 
@@ -240,4 +243,4 @@ class vPositiveInt(vInt):
     XCAL_TYPE = "xsd:positiveInteger"
 
 
-__all__ = ["vInt", "vPositiveInt"]
+__all__ = ["vInt", "vNonNegativeInt"]

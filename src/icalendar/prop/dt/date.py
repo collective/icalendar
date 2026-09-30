@@ -1,17 +1,22 @@
 """DATE property type from :rfc:`5545`."""
 
+from __future__ import annotations
+
 from datetime import date, datetime
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 from xml.etree.ElementTree import Element, SubElement
 
-from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
-from icalendar.parser.xcal.base import XCalParser
 from icalendar.parser.xcal.match import XCalRegexMatcher
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 
 from .base import TimeBase
+
+if TYPE_CHECKING:
+    from icalendar.compatibility import Self
+    from icalendar.parser.xcal.adapter import ElementAdapter
+    from icalendar.parser.xcal.base import XCalParser
 
 XCAL_DATE_REGEX = XCalRegexMatcher(
     r"(\d\d\d\d)-(\d\d)-(\d\d)", "Expected date format YYYY-MM-DD"
@@ -152,6 +157,22 @@ class vDate(TimeBase):
         element.text = self.dt.strftime("%Y-%m-%d")
 
     @classmethod
+    def from_xcal_element(cls, element: ElementAdapter) -> date:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Returns:
+            The date object.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        year, month, day = XCAL_DATE_REGEX.groups(element)
+        return date(int(year), int(month), int(day))
+
+    @classmethod
     @from_xcal_wrapper
     def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
         """Parse xCal from :rfc:`6321`.
@@ -163,9 +184,9 @@ class vDate(TimeBase):
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
         element = parser.parse_tag(cls.default_value)
-        year, month, day = XCAL_DATE_REGEX.groups(element)
+        d = cls.from_xcal_element(element)
         return cls(
-            date(int(year), int(month), int(day)),
+            d,
             params=params,
         )
 

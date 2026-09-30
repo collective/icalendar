@@ -16,8 +16,17 @@ Example:
         <bymonth>10</bymonth>
     </recur>
 
+Notes on UNITL:
+https://errata.rfc-editor.org/eid3315/
+This is not clearly defined. We will parse both here.
+When we serialize, we put the tag around it.
+It is common practice in xCal that the tag determines the pattern.
+Submitted a suggestion:
+https://errata.rfc-editor.org/new/preview/d637989c-0123-4b09-ab79-b1c78f183ed2/
 
 """
+
+from datetime import date, datetime, timezone
 
 import pytest
 
@@ -73,6 +82,14 @@ SINGLE_VALUE = [
     ("rscale", "GREGORIAN", "GREGORIAN"),
     ("rscale", "HEBREW", "HEBREW"),
     # UNTIL
+    # These are text values. We still parse them.
+    (
+        "until",
+        "2014-01-01T00:02:03Z",
+        datetime(2014, 1, 1, 0, 2, 3, tzinfo=timezone.utc),
+    ),
+    ("until", "2014-01-01T00:02:03", datetime(2014, 1, 1, 0, 2, 3)),
+    ("until", "2014-03-04", date(2014, 3, 4)),
 ]
 
 # These values can appear several times.
@@ -181,10 +198,31 @@ INVALID_VALUE = [
         "Expected weekday https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.10, got 'asd' in /recur/byday[1].",
     ),
     # UNTIL
+    (
+        "until",
+        "asd",
+        "Expected date format YYYY-MM-DD, got 'asd' in /recur/until[1].",
+    ),
     # WKST
+    (
+        "wkst",
+        "asd",
+        "Expected weekday https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.10, got 'asd' in /recur/wkst[1].",
+    ),
     # FREQ
+    (
+        "freq",
+        "asd",
+        "Expected frequency https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.10, got 'asd' in /recur/freq[1].",
+    ),
     # SKIP
+    (
+        "skip",
+        "asd",
+        "Expected OMIT|BACKWARD|FORWARD https://datatracker.ietf.org/doc/html/rfc7529#section-4.1, got 'asd' in /recur/skip[1].",
+    ),
     # RSCALE
+    # For RSCALE, we use text, so there is no issue.
 ]
 
 POSITIVE_INTS = [
@@ -243,3 +281,21 @@ def test_weekday_becomes_uppercase():
     xml = list2xml(["recur", ["byday", "su"]])
     result = vRecur.from_xcal(xml)
     assert result["BYDAY"] == "SU"
+
+
+@pytest.mark.parametrize(
+    ("xml", "expected"),
+    [
+        (["date", "2021-01-01"], date(2021, 1, 1)),
+        (["date-time", "1998-12-23T11:45:00"], datetime(1998, 12, 23, 11, 45)),
+        (
+            ["date-time", "1998-12-23T11:45:01Z"],
+            datetime(1998, 12, 23, 11, 45, 1, tzinfo=timezone.utc),
+        ),
+    ],
+)
+def test_until_with_tags(xml, expected):
+    """Test the UNTIL date value."""
+    xml = list2xml(["recur", ["until", xml]])
+    result = vRecur.from_xcal(xml)
+    assert result["UNTIL"] == expected
