@@ -547,3 +547,18 @@ def test_frequency():
         match=r'\[3\]\["freq"\] in vFrequency: The value must be a valid frequency\.',
     ):
         vRecur.from_jcal(["rrule", {}, "recur", {"freq": "INVALID"}])
+
+
+def test_vRecur_normalizes_byweekday_in_jcal():
+    """The dateutil ``byweekday`` alias is emitted as jCal ``byday``."""
+    recur = vRecur.from_jcal(
+        ["rrule", {}, "recur", {"freq": "WEEKLY", "byweekday": ["MO"]}]
+    )
+
+    assert recur == {"FREQ": "WEEKLY", "BYDAY": ["MO"]}
+    assert recur.to_jcal("rrule") == [
+        "rrule",
+        {},
+        "recur",
+        {"freq": "WEEKLY", "byday": ["MO"]},
+    ]
