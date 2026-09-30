@@ -7,7 +7,7 @@ from xml.etree.ElementTree import Element, SubElement
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters, _escape_char
-from icalendar.parser.xcal.protocol import VPropParser
+from icalendar.parser.xcal.base import XCalParser
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
 
@@ -218,7 +218,7 @@ class vText(str):
 
     @classmethod
     @from_xcal_wrapper
-    def from_xcal(cls, parser: VPropParser, params: Parameters) -> Self:
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
         """Parse xCal from :rfc:`6321`.
 
         Parameters:
@@ -229,6 +229,20 @@ class vText(str):
         """
         element = parser.parse_tag(cls.default_value)
         return cls(element.get_xsd_string(), params=params)
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal_in_recur(cls, parser: XCalParser, _params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            parser: The parser to use.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        element = parser.parse_tag()
+        return cls(element.get_xsd_string())
 
 
 __all__ = ["vText"]

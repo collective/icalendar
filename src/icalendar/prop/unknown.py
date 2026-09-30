@@ -13,7 +13,7 @@ from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
 if TYPE_CHECKING:
     from icalendar.compatibility import Self
     from icalendar.parser.content_line import Contentline
-    from icalendar.parser.xcal.protocol import VPropParser
+    from icalendar.parser.xcal.base import XCalParser
 
 
 class vUnknown(str):
@@ -156,7 +156,7 @@ class vUnknown(str):
 
     @classmethod
     @from_xcal_wrapper
-    def from_xcal(cls, parser: VPropParser, params: Parameters) -> Self:
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
         """Parse xCal from :rfc:`6321`.
 
         Parameters:

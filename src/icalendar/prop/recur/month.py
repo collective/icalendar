@@ -1,10 +1,16 @@
 """BYMONTH value type of RECUR from :rfc:`5545` and :rfc:`7529`."""
 
-from typing import Any
+from __future__ import annotations
 
-from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError
+from typing import TYPE_CHECKING, Any
+
+from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
+
+if TYPE_CHECKING:
+    from icalendar.compatibility import Self
+    from icalendar.parser.xcal.base import XCalParser
 
 
 class vMonth(int):
@@ -104,6 +110,24 @@ class vMonth(int):
             raise JCalParsingError(
                 "The value must be a string or an integer.", cls, value=value
             ) from e
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            parser: The parser to use.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        child = parser.parse_tag()
+        text = child.get_xsd_token()
+        try:
+            return cls(text, params=params)
+        except ValueError as e:
+            raise XCalParsingError("Expected month number", text, child) from e
 
 
 __all__ = ["vMonth"]

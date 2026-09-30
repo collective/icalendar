@@ -8,8 +8,8 @@ from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser.xcal.adapter import ElementAdapter
+from icalendar.parser.xcal.base import XCalParser
 from icalendar.parser.xcal.match import XCalRegexMatcher
-from icalendar.parser.xcal.protocol import VPropParser
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import to_unicode
 from icalendar.timezone import tzp
@@ -262,7 +262,7 @@ class vDatetime(TimeBase):
 
     @classmethod
     @from_xcal_wrapper
-    def from_xcal(cls, parser: VPropParser, params: Parameters) -> Self:
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
         """Parse xCal from :rfc:`6321`.
 
         Parameters:

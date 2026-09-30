@@ -1,12 +1,18 @@
 """FREQ value type of RECUR from :rfc:`5545`."""
 
-from typing import Any
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
 
 from icalendar.caselessdict import CaselessDict
-from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
+
+if TYPE_CHECKING:
+    from icalendar.compatibility import Self
+    from icalendar.parser.xcal.base import XCalParser
 
 
 class vFrequency(str):
@@ -75,6 +81,21 @@ class vFrequency(str):
             :rfc:`5545#section-3.3.10` for the ``FREQ`` rule grammar.
         """
         return str(self)
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            parser: The parser to use.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        child = parser.parse_tag()
+        text = child.get_xsd_token()
+        return cls(text, params=params)
 
 
 __all__ = ["vFrequency"]

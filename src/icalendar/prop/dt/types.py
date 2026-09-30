@@ -24,7 +24,7 @@ if TYPE_CHECKING:
     from xml.etree.ElementTree import Element
 
     from icalendar.compatibility import Self
-    from icalendar.parser.xcal.protocol import VPropParser
+    from icalendar.parser.xcal.base import XCalParser
 
 DT_TYPE: TypeAlias = (
     datetime
@@ -216,7 +216,7 @@ class vDDDTypes(TimeBase):
 
     @classmethod
     @from_xcal_wrapper
-    def from_xcal(cls, parser: VPropParser, params: Parameters) -> Self:
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
         """Parse xCal from :rfc:`6321`.
 
         Parameters:

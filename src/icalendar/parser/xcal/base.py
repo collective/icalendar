@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
 from icalendar.error import XCalParsingError
+from icalendar.parser.parameter import Parameters
 from icalendar.parser.xcal.adapter import ChildElementAdapter, ElementAdapter
 
 if TYPE_CHECKING:
@@ -94,14 +96,21 @@ class XCalParser:
         tags = self._sanitize_tags(tag)
         return self._parse_tag(tags)
 
-    def parse_tag(self, tag: str | Sequence[str]) -> ElementAdapter:
+    def parse_tag(self, tag: str | Sequence[str] | None = None) -> ElementAdapter:
         """Find a child tag and return it.
 
         This child is then considered parsed.
 
+        Returns:
+            The child element with the tag or if no tag is given, the first child.
+
         Raises:
             XCalParsingError: If the tag is not found.
         """
+        if tag is None:
+            child = self.child
+            self.done()
+            return child
         tags = self._sanitize_tags(tag)
         element = self._parse_tag(tags)
 
@@ -159,6 +168,10 @@ class XCalParser:
         raise XCalParsingError(
             f"Tag {' or '.join(tags)} not found", None, self._element
         )
+
+    def parse_parameters(self) -> Parameters:
+        """Return empty parameters as parameters can only appear in a property."""
+        return Parameters()
 
 
 __all__ = ["XCalParser"]

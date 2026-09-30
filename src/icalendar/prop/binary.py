@@ -8,7 +8,7 @@ from xml.etree.ElementTree import Element, SubElement
 from icalendar.compatibility import Self, deprecate_for_version_8
 from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
-from icalendar.parser.xcal.protocol import VPropParser
+from icalendar.parser.xcal.base import XCalParser
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import to_unicode
 
@@ -152,7 +152,7 @@ class vBinary:
 
     @classmethod
     @from_xcal_wrapper
-    def from_xcal(cls, parser: VPropParser, params: Parameters) -> Self:
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
         """Parse xCal from :rfc:`6321`.
 
         Parameters:

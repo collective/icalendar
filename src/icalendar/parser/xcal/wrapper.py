@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
     from icalendar.parser.parameter import Parameters
-    from icalendar.parser.xcal.protocol import VPropParser
+    from icalendar.parser.xcal.base import XCalParser
 
 VProp = TypeVar("VProp")
 
@@ -19,15 +19,15 @@ VProp = TypeVar("VProp")
 
 
 def from_xcal_wrapper(
-    func: Callable[[type[VProp], VPropParser, Parameters], VProp],
-) -> Callable[[type[VProp], VPropParser | ElementAdapter | Element], VProp]:
+    func: Callable[[type[VProp], XCalParser, Parameters], VProp],
+) -> Callable[[type[VProp], XCalParser | ElementAdapter | Element], VProp]:
     """Wrap a property's from_xcal() with convenience functions.
 
     Use it below ``@classmethod`` so that type checkers and linters see
     a class method.
     """
 
-    def wrapper(cls: type[VProp], xml: VPropParser | ElementAdapter | Element) -> VProp:
+    def wrapper(cls: type[VProp], xml: XCalParser | ElementAdapter | Element) -> VProp:
         if isinstance(xml, (Element, ElementAdapter)):
             from icalendar.parser.xcal.property import XCalPropertyParser
 

@@ -7,7 +7,7 @@ from icalendar.caselessdict import CaselessDict
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
-from icalendar.parser.xcal.protocol import VPropParser
+from icalendar.parser.xcal.base import XCalParser
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 
 
@@ -111,7 +111,7 @@ class vBoolean(int):
 
     @classmethod
     @from_xcal_wrapper
-    def from_xcal(cls, parser: VPropParser, params: Parameters) -> Self:
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
         """Parse xCal from :rfc:`6321`.
 
         Parameters:

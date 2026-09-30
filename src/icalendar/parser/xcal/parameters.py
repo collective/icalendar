@@ -96,7 +96,3 @@ class XCalParameterParser(XCalParser):
                 f"Endless loop detected: {value_type} did not consume any XML."
             )
         return result
-
-    def parse_parameters(self) -> Parameters:
-        """Return empty parameters as parameters can only appear in a property."""
-        return Parameters()

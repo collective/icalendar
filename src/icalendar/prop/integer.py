@@ -6,7 +6,8 @@ from xml.etree.ElementTree import Element, SubElement
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
-from icalendar.parser.xcal.protocol import VPropParser
+from icalendar.parser.xcal.adapter import ElementAdapter
+from icalendar.parser.xcal.base import XCalParser
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import ICAL_TYPE
 
@@ -170,7 +171,7 @@ class vInt(int):
 
     @classmethod
     @from_xcal_wrapper
-    def from_xcal(cls, parser: VPropParser, params: Parameters) -> Self:
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
         """Parse xCal from :rfc:`6321`.
 
         Parameters:
@@ -180,6 +181,18 @@ class vInt(int):
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
         element = parser.parse_tag(cls.default_value)
+        return cls.from_xcal_element(element, params)
+
+    @classmethod
+    def from_xcal_element(cls, element: ElementAdapter, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
         try:
             value = int(element.get_xsd_token())
         except (TypeError, ValueError) as e:
@@ -190,6 +203,20 @@ class vInt(int):
             ) from e
         # xCal integers are xsd:integers. They do not have a value range.
         return cls(value, params=params, _validate_range=False)
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal_in_recur(cls, parser: XCalParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        element = parser.parse_tag()
+        return cls.from_xcal_element(element, params)
 
     def to_xcal(self, element: Element) -> None:
         """Add the xCal representation of this property according to :rfc:`6321`."""

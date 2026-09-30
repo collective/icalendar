@@ -1,11 +1,13 @@
 """RECUR property type from :rfc:`5545`."""
 
-from typing import Any, ClassVar
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from icalendar.caselessdict import CaselessDict
-from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import DEFAULT_ENCODING, SEQUENCE_TYPES
 from icalendar.prop.dt import vDDDTypes
 from icalendar.prop.integer import vInt
@@ -14,6 +16,13 @@ from icalendar.prop.recur.month import vMonth
 from icalendar.prop.recur.skip import vSkip
 from icalendar.prop.recur.weekday import vWeekday
 from icalendar.prop.text import vText
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from icalendar.compatibility import Self
+    from icalendar.parser.xcal.base import XCalParser
+    from icalendar.prop import VPROPERTY
 
 
 class vRecur(CaselessDict):
@@ -135,7 +144,9 @@ class vRecur(CaselessDict):
         "SKIP",
     )
 
-    types = CaselessDict(
+    types: ClassVar[
+        dict[str, type[vInt | vMonth | vFrequency | vWeekday | vSkip | vText]]
+    ] = CaselessDict(
         {
             "COUNT": vInt,
             "INTERVAL": vInt,
@@ -297,6 +308,35 @@ class vRecur(CaselessDict):
         return True
 
     __hash__ = None
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            parser: The parser to use.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        self = cls(params=params)
+        while not parser.is_finished():
+            child = parser.child
+            key = child.tag
+            v_prop = cls.types.get(key, vText)
+            from_xcal: Callable[[XCalParser], VPROPERTY] | None = getattr(
+                v_prop, "from_xcal_in_recur", None
+            )
+            if from_xcal is None:
+                from_xcal = v_prop.from_xcal
+            value = from_xcal(parser)
+            self.setdefault(key, []).append(value)
+        # single occurrences are not stored as list
+        for key, value in self.items():
+            if len(value) == 1:
+                self[key] = value[0]
+        return self
 
 
 __all__ = ["vRecur"]
