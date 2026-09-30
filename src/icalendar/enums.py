@@ -1,6 +1,12 @@
 """Enumerations for different types in the RFCs."""
 
+from __future__ import annotations
+
 from enum import Enum as _Enum
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from icalendar.compatibility import Self
 
 
 class Enum(_Enum):
@@ -12,7 +18,22 @@ class Enum(_Enum):
 
 
 class StrEnum(str, Enum):
-    """Enum for strings."""
+    """Enum for strings.
+
+    Members are looked up case-insensitively, as :rfc:`5545#section-3.1` requires for
+    property parameter values that are not enclosed in double quotes.  A value that
+    matches no member of the enum still raises :class:`ValueError`.
+    """
+
+    @classmethod
+    def _missing_(cls, value: object) -> Self | None:
+        """Return the member matching value ignoring case."""
+        if isinstance(value, str):
+            folded = value.casefold()
+            for member in cls:
+                if member.value.casefold() == folded:
+                    return member
+        return None
 
     def __str__(self) -> str:
         """Convert to a string.

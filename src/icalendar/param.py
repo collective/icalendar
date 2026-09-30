@@ -164,7 +164,7 @@ def _convert_enum(enum: type[Enum]) -> Callable[[str], Enum]:
     def convert(value: str) -> str:
         """Convert if possible."""
         try:
-            return enum(value.upper())
+            return enum(value)
         except ValueError:
             return value
 
