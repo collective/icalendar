@@ -215,6 +215,7 @@ class vText(str):
         """Add the xCal representation of this property according to :rfc:`6321`."""
         element = SubElement(element, self.default_value.lower())
         element.text = self
+        self.params.to_xcal(element)
 
     @classmethod
     @from_xcal_wrapper

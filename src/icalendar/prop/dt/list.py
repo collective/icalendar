@@ -70,7 +70,7 @@ class vDDDLists:
     @classmethod
     def examples(cls) -> list[Self]:
         """Examples of vDDDLists."""
-        return [vDDDLists([datetime(2025, 11, 10, 16, 50)])]
+        return [cls([datetime(2025, 11, 10, 16, 50)])]
 
     def to_jcal(self, name: str) -> list:
         """The jCal representation of this property according to :rfc:`7265`."""
@@ -125,7 +125,7 @@ class vDDDLists:
 
     def to_xcal(self, element: Element) -> None:
         """Convert a vDDDTypes to an xCal element."""
-        # TODO: test
+        self.params.to_xcal(element)
         for dt in self.dts:
             dt.to_xcal(element)
 

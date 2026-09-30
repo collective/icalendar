@@ -149,6 +149,7 @@ class vBinary:
         """The xCal representation of this property according to :rfc:`6321`."""
         xml = SubElement(element, self.default_value.lower())
         xml.text = self.base64data
+        self.params.to_xcal(xml)
 
     @classmethod
     @from_xcal_wrapper
