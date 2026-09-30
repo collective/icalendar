@@ -23,7 +23,6 @@ import pytest
 
 from icalendar.error import XCalParsingError
 from icalendar.prop.recur import vRecur
-from icalendar.prop.recur.weekday import vWeekday
 from icalendar.tests.rfc_6321_xcal.common import list2xml
 
 VALID_FREQ = ["SECONDLY", "MINUTELY", "HOURLY", "DAILY", "WEEKLY", "MONTHLY", "YEARLY"]
@@ -169,17 +168,49 @@ def test_leap_month_from_xcal(leap):
 
 
 INVALID_VALUE = [
+    # BYMONTH
     (
         "bymonth",
         "asd",
         "Expected month number, got 'asd' in /recur/bymonth[1].",
     ),
+    # BYDAY
     (
         "byday",
         "asd",
         "Expected weekday https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.10, got 'asd' in /recur/byday[1].",
     ),
+    # UNTIL
+    # WKST
+    # FREQ
+    # SKIP
+    # RSCALE
 ]
+
+POSITIVE_INTS = [
+    "COUNT",
+    "INTERVAL",
+    "BYSECOND",
+    "BYMINUTE",
+    "BYHOUR",
+    # BYMONTH is handeled by vMonth in extra tests.
+]
+
+for key in POSITIVE_INTS:
+    INVALID_VALUE.append(
+        (
+            key,
+            "asd",
+            f"Expected xsd:positiveInteger, got 'asd' in /recur/{key.lower()}[1].",
+        )
+    )
+
+INTS = ["BYWEEKNO", "BYMONTHDAY", "BYYEARDAY", "BYSETPOS"]
+
+for key in INTS:
+    INVALID_VALUE.append(
+        (key, "asd", f"Expected xsd:integer, got 'asd' in /recur/{key.lower()}[1].")
+    )
 
 
 @pytest.mark.parametrize(("key", "xml", "message"), INVALID_VALUE)
@@ -195,7 +226,20 @@ def test_invalid_values_raise_xcal_error(key, xml, message):
     assert e.value.message == message
 
 
+@pytest.mark.parametrize("key", POSITIVE_INTS)
+def test_negative_integer_still_parses(key):
+    """We still want to preserve invalid values because
+    - we might just want to convert a calendar
+    - we might not be interested in them
+    """
+    xml = list2xml(["recur", [key, "-1"]])
+    result = vRecur.from_xcal(xml)
+    assert result[key] == -1
+    assert result[key].min == 0
+
+
 def test_weekday_becomes_uppercase():
     """Uppercase is required for xCal."""
-    vWeekday("su")
-    pytest.xfail("TODO")
+    xml = list2xml(["recur", ["byday", "su"]])
+    result = vRecur.from_xcal(xml)
+    assert result["BYDAY"] == "SU"

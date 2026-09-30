@@ -10,7 +10,7 @@ from icalendar.parser import Parameters
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import DEFAULT_ENCODING, SEQUENCE_TYPES
 from icalendar.prop.dt import vDDDTypes
-from icalendar.prop.integer import vInt
+from icalendar.prop.integer import vInt, vPositiveInt
 from icalendar.prop.recur.frequency import vFrequency
 from icalendar.prop.recur.month import vMonth
 from icalendar.prop.recur.skip import vSkip
@@ -148,11 +148,11 @@ class vRecur(CaselessDict):
         dict[str, type[vInt | vMonth | vFrequency | vWeekday | vSkip | vText]]
     ] = CaselessDict(
         {
-            "COUNT": vInt,
-            "INTERVAL": vInt,
-            "BYSECOND": vInt,
-            "BYMINUTE": vInt,
-            "BYHOUR": vInt,
+            "COUNT": vPositiveInt,
+            "INTERVAL": vPositiveInt,
+            "BYSECOND": vPositiveInt,
+            "BYMINUTE": vPositiveInt,
+            "BYHOUR": vPositiveInt,
             "BYWEEKNO": vInt,
             "BYMONTHDAY": vInt,
             "BYYEARDAY": vInt,

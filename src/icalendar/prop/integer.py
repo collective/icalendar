@@ -134,7 +134,7 @@ class vInt(int):
     @classmethod
     def examples(cls) -> list[Self]:
         """Examples of vInt."""
-        return [vInt(1000), vInt(-42)]
+        return [cls(1000), cls(-42)]
 
     from icalendar.param import VALUE
 
@@ -183,6 +183,8 @@ class vInt(int):
         element = parser.parse_tag(cls.default_value)
         return cls.from_xcal_element(element, params)
 
+    XCAL_TYPE = "xsd:integer"
+
     @classmethod
     def from_xcal_element(cls, element: ElementAdapter, params: Parameters) -> Self:
         """Parse xCal from :rfc:`6321`.
@@ -197,7 +199,7 @@ class vInt(int):
             value = int(element.get_xsd_token())
         except (TypeError, ValueError) as e:
             raise XCalParsingError(
-                "Expected xsd:integer",
+                f"Expected {cls.XCAL_TYPE}",
                 element.get_xsd_token(),
                 element,
             ) from e
@@ -225,4 +227,17 @@ class vInt(int):
         self.params.to_xcal(element)
 
 
-__all__ = ["vInt"]
+class vPositiveInt(vInt):
+    """This is an integer that is supposed to be positive."""
+
+    min: ClassVar[int] = 0
+
+    @classmethod
+    def examples(cls) -> list[vInt]:
+        """Examples of vPositiveInt."""
+        return [cls(1000), cls(0)]
+
+    XCAL_TYPE = "xsd:positiveInteger"
+
+
+__all__ = ["vInt", "vPositiveInt"]

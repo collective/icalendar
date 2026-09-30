@@ -145,7 +145,7 @@ class vWeekday(str):
         child = parser.parse_tag()
         text = child.get_xsd_token()
         try:
-            return cls(text, params=params)
+            return cls(text.upper(), params=params)
         except ValueError as e:
             raise XCalParsingError(
                 "Expected weekday https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.10",
