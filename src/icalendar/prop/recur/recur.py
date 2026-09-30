@@ -279,6 +279,52 @@ class vRecur(CaselessDict):
             recur["until"] = [until]
         return cls(recur, params=params)
 
+    @property
+    def count(self) -> int | None:
+        """The COUNT part of the recurrence rule.
+
+        This is the number of occurrences at which to range-bound the
+        recurrence, as an alternative to specifying an ``UNTIL`` value
+        (:rfc:`5545#section-3.3.10`). ``COUNT`` and ``UNTIL`` are mutually
+        exclusive; this accessor does not enforce that.
+
+        If multiple values are present, the first one is returned. If the
+        value is missing or an empty sequence, ``None`` is returned.
+
+        Setting this to ``None`` deletes the value, as does ``del``.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=DAILY;COUNT=10").count
+                10
+                >>> vRecur.from_ical("FREQ=DAILY").count is None
+                True
+        """
+        values = self.get("COUNT")
+        if not values:
+            return None
+        value = values[0] if isinstance(values, SEQUENCE_TYPES) else values
+        return int(value)
+
+    @count.setter
+    def count(self, value: int | None) -> None:
+        """Set the COUNT part of the recurrence rule, or delete it if None."""
+        if value is None:
+            del self.count
+            return
+        if not isinstance(value, int) or isinstance(value, bool):
+            raise TypeError(f"count must be an int, got {value!r}")
+        if value < 1:
+            raise ValueError(f"count must be a positive integer, got {value}")
+        self["COUNT"] = [vInt(value)]
+
+    @count.deleter
+    def count(self) -> None:
+        """Delete the COUNT part of the recurrence rule."""
+        self.pop("COUNT", None)
+
     def __eq__(self, other: object) -> bool:
         """self == other"""
         if not isinstance(other, vRecur):
