@@ -183,6 +183,11 @@ class TestProp(unittest.TestCase):
         assert r == {"FREQ": ["WEEKLY"], "BYDAY": ["TH"]}
         assert r.to_ical() == b"FREQ=WEEKLY;BYDAY=TH"
 
+        with pytest.raises(
+            ValueError, match="BYDAY and BYWEEKDAY cannot both be specified"
+        ):
+            vRecur(BYDAY="MO", BYWEEKDAY="TH")
+
         # Some examples from the spec
         r = vRecur.from_ical("FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1")
         assert vRecur(r).to_ical() == b"FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1"
