@@ -191,7 +191,7 @@ class vRecur(CaselessDict):
 
     def _normalized(self) -> Self:
         """Return a recurrence with canonical rule-part names."""
-        return type(self)(self)
+        return type(self)(self) if "BYWEEKDAY" in self else self
 
     def to_ical(self):
         result = []
@@ -245,7 +245,7 @@ class vRecur(CaselessDict):
     def to_jcal(self, name: str) -> list:
         """The jCal representation of this property according to :rfc:`7265`."""
         recur = {}
-        for k, v in self._normalized().items():
+        for k, v in self._normalized().sorted_items():
             key = k.lower()
             if key.upper() in self.jcal_not_a_list:
                 value = v[0] if isinstance(v, list) and len(v) == 1 else v

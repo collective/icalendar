@@ -552,7 +552,7 @@ def test_frequency():
 def test_vRecur_normalizes_byweekday_in_jcal():
     """The dateutil ``byweekday`` alias is emitted as jCal ``byday``."""
     recur = vRecur.from_jcal(
-        ["rrule", {}, "recur", {"freq": "WEEKLY", "byweekday": ["MO"]}]
+        ["rrule", {}, "recur", {"byweekday": ["MO"], "freq": "WEEKLY"}]
     )
 
     assert recur == {"FREQ": "WEEKLY", "BYDAY": ["MO"]}
