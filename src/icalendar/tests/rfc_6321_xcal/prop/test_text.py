@@ -5,13 +5,17 @@ from xml.etree import ElementTree as ET
 import pytest
 
 from icalendar import vText, vUid
+from icalendar.prop.unknown import vUnknown
+from icalendar.prop.xml_reference import vXmlReference
 from icalendar.tests.rfc_6321_xcal.common import list2xml, to_xcal
 
 mark_text = pytest.mark.parametrize(
     "text", ["", "normal text", "中文鍵盤/中文键盘", "Text\nwith\nnewlines"]
 )
 
-mark_text_class = pytest.mark.parametrize("text_class", [vText, vUid])
+mark_text_class = pytest.mark.parametrize(
+    "text_class", [vText, vUid, vUnknown, vXmlReference]
+)
 
 
 @mark_text

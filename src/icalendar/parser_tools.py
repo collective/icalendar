@@ -2,6 +2,11 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Any, Protocol
+
+if TYPE_CHECKING:
+    from collections.abc import Buffer
+
 SEQUENCE_TYPES = (list, tuple)
 DEFAULT_ENCODING = "utf-8"
 ICAL_TYPE = str | bytes
@@ -66,10 +71,17 @@ def data_encode(
     return data
 
 
+class BytesWriter(Protocol):
+    """Write bytes to a stream."""
+
+    def write(self, data: Buffer) -> Any: ...
+
+
 __all__ = [
     "DEFAULT_ENCODING",
     "ICAL_TYPE",
     "SEQUENCE_TYPES",
+    "BytesWriter",
     "data_encode",
     "from_unicode",
     "to_unicode",

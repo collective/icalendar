@@ -6,13 +6,12 @@ import pytest
 
 from icalendar.cal.calendar import Calendar
 from icalendar.cal.component import Component
-from icalendar.error import XCalParsingError
 from icalendar.tests.rfc_6321_xcal.common import to_xcal
 
 
 def test_component_from_xcal_chooses_correct_type(component: Component):
     """The component factory is used to get the right type."""
-    c = component.from_xcal(to_xcal(component))
+    c = component.from_xcal(to_xcal(component))[0]
     assert isinstance(c, Component)
     assert c.name == component.name
 
@@ -20,7 +19,7 @@ def test_component_from_xcal_chooses_correct_type(component: Component):
 def test_input_can_be_a_file(calendars):
     """The file interface can be used."""
     cal = calendars.rfc_7265_appendix_example_1_xcal.source_path.open("rb")
-    c = Component.from_xcal(cal)
+    c = Component.from_xcal(cal)[0]
     assert c.name == "VCALENDAR"
     assert isinstance(c, Calendar)
 
@@ -28,7 +27,7 @@ def test_input_can_be_a_file(calendars):
 def test_input_can_be_an_element():
     """The Element interface can be used."""
     e = Element("vcalendar")
-    c = Component.from_xcal(e)
+    c = Component.from_xcal(e)[0]
     assert c.name == "VCALENDAR"
     assert isinstance(c, Calendar)
 
@@ -36,14 +35,34 @@ def test_input_can_be_an_element():
 def test_input_can_be_a_path(calendars):
     """The path interface can be used."""
     cal = calendars.rfc_7265_appendix_example_1_xcal.source_path
-    c = Component.from_xcal(cal)
+    c = Component.from_xcal(cal)[0]
     assert c.name == "VCALENDAR"
     assert isinstance(c, Calendar)
 
 
+CALENDAR_BYTES = b"""<?xml version="1.0" encoding="utf-8"?>
+<icalendar xmlns="urn:ietf:params:xml:ns:icalendar-2.0">
+    <vcalendar>
+        <properties>
+            <prodid>
+                <text>-//Example Inc.//Example Client//EN</text>
+            </prodid>
+            <version>
+                <text>2.0</text>
+            </version>
+        </properties>
+    </vcalendar>
+</icalendar>
+"""
+
+
 def test_input_can_be_bytes():
     """The string interface can be used."""
-    pytest.skip("TODO")
+    c = Component.from_xcal(CALENDAR_BYTES)[0]
+    assert c.name == "VCALENDAR"
+    assert isinstance(c, Calendar)
+    assert c.version == "2.0"
+    assert c.prodid == "-//Example Inc.//Example Client//EN"
 
 
 def test_input_can_not_be_a_string():
@@ -66,17 +85,11 @@ def test_invalid_xml_input_raises_error(xml):
 
 
 @pytest.mark.parametrize(
-    ("xml", "message"),
+    ("xml"),
     [
-        (
-            b'<?xml version="1.0" encoding="utf-8" ?>\n<icalendar />',
-            "Namespace is missing content. Got None in 'icalendar' element parsing 'Component'.",
-        ),
+        b'<?xml version="1.0" encoding="utf-8" ?>\n<icalendar />',
     ],
 )
-def test_invalid_xcal_input_raises_error(xml, message):
+def test_empty_xcal_is_ok(xml):
     """An empty input should be considered."""
-    with pytest.raises(XCalParsingError) as error:
-        Component.from_xcal(xml)
-    assert error.value.parser == Component
-    assert error.value.message == message
+    assert Component.from_xcal(xml) == []

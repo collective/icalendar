@@ -1132,7 +1132,7 @@ class Component(CaselessDict):
         """
         return self
 
-    def to_xcal(self, element: Element) -> None:
+    def to_xcal(self, element: Element, /) -> None:
         """Add the xCal representation of this component according to :rfc:`6321`."""
         self._validate_name()
         e_component = SubElement(element, self.name.lower())
@@ -1162,6 +1162,29 @@ class Component(CaselessDict):
             ~icalendar.error.XCalParsingError: If the provided xCal XML is invalid.
             TypeError: If the wrong type is passed to ``xcal``.
             xml.etree.ElementTree.ParseError: If the provided XML is invalid.
+
+        Example:
+
+            Read an xCal from XML bytes.
+
+            >>> from icalendar import Calendar
+            >>> xml = b'''<?xml version="1.0" encoding="utf-8"?>
+            ... <icalendar xmlns="urn:ietf:params:xml:ns:icalendar-2.0">
+            ...     <vcalendar>
+            ...         <properties>
+            ...             <prodid>
+            ...                 <text>-//Example Inc.//Example Client//EN</text>
+            ...             </prodid>
+            ...             <version>
+            ...                 <text>2.0</text>
+            ...             </version>
+            ...         </properties>
+            ...     </vcalendar>
+            ... </icalendar>
+            ... '''
+            >>> cal = Calendar.from_xcal(xml)[0]
+            >>> cal.prodid == '-//Example Inc.//Example Client//EN'
+            True
 
         """
         from icalendar.parser.xcal.component import XCalComponentParser

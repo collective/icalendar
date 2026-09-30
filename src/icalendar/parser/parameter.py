@@ -560,8 +560,8 @@ class Parameters(CaselessDict):
                 ... '''
                 >>> xml_element = fromstring(xcal_string)
                 >>> parameters = Parameters.from_xcal(xml_element)
-                >>> parameters.LANGUAGE
-                'en-US'
+                >>> parameters['language'] == 'en-US'
+                True
 
         """
         from icalendar.parser.xcal.parameters import XCalParametersParser

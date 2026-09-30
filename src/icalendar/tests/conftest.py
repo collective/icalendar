@@ -110,7 +110,7 @@ class DataSource:
             if not raw_bytes:
                 source = self._parser.from_jcal(raw_string)
             elif not is_ical:
-                source = self._parser.from_xcal(raw_bytes)
+                source = self._parser.from_xcal(raw_bytes)[0]
             else:
                 source = self._parser.from_ical(raw_bytes, multiple=self._multiple)
             if self._multiple:

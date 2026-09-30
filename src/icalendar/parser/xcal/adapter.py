@@ -2,10 +2,7 @@ from __future__ import annotations
 
 import re
 from collections import defaultdict
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from xml.etree.ElementTree import Element
+from xml.etree.ElementTree import Element
 
 REGEX_WHITESPACE = re.compile(r"\s+", re.MULTILINE)
 
@@ -82,6 +79,12 @@ class ElementAdapter:
     def __repr__(self) -> str:
         """Return the text representation of this element."""
         return f"Element@{self.get_xpath()}"
+
+    def make_parent(self, tag: str) -> ElementAdapter:
+        """Return an element adapter for a parent."""
+        parent = Element(tag)
+        parent.append(self._element)
+        return ElementAdapter(parent)
 
 
 class ChildElementAdapter(ElementAdapter):

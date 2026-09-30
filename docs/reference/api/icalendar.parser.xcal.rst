@@ -13,7 +13,6 @@ Submodules
    icalendar.parser.xcal.match
    icalendar.parser.xcal.parameters
    icalendar.parser.xcal.property
-   icalendar.parser.xcal.value
    icalendar.parser.xcal.wrapper
 
 Module contents
