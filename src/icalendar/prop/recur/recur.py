@@ -4,7 +4,7 @@ from typing import Any, ClassVar
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError
+from icalendar.error import InvalidCalendar, JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser_tools import DEFAULT_ENCODING, SEQUENCE_TYPES
 from icalendar.prop.dt import vDDDTypes
@@ -278,6 +278,68 @@ class vRecur(CaselessDict):
         if until is not None and not isinstance(until, list):
             recur["until"] = [until]
         return cls(recur, params=params)
+
+    @property
+    def interval(self) -> int | None:
+        """The INTERVAL part of the recurrence rule.
+
+        A positive integer for how many ``FREQ`` units separate occurrences
+        (:rfc:`5545#section-3.3.10`). The RFC default when INTERVAL is omitted
+        is ``1``; this accessor returns ``None`` when the part is absent so
+        callers can tell an explicit INTERVAL from the default.
+
+        Valid values are integers ``>= 1``. ``0`` and negative values are
+        invalid because INTERVAL must be a positive integer.
+
+        If multiple values are present, the first one is returned. If the
+        value is missing or an empty sequence, ``None`` is returned.
+
+        Setting this to ``None`` deletes the value, as does ``del``.
+
+        Raises:
+            InvalidCalendar: if a value is present but cannot be read as an
+                int, or if the stored value is less than ``1``.
+            InvalidCalendar: when setting a value less than ``1``.
+            TypeError: when setting a value that is not an int, or is a bool.
+
+        Example:
+
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=DAILY;INTERVAL=2").interval
+                2
+                >>> vRecur.from_ical("FREQ=DAILY").interval is None
+                True
+        """
+        values = self.get("INTERVAL")
+        if values is None or (isinstance(values, SEQUENCE_TYPES) and len(values) == 0):
+            return None
+        value = values[0] if isinstance(values, SEQUENCE_TYPES) else values
+        try:
+            result = int(value)
+        except (TypeError, ValueError) as e:
+            raise InvalidCalendar("INTERVAL must be an int") from e
+        if result < 1:
+            raise InvalidCalendar(f"INTERVAL must be >= 1, got {result}")
+        return result
+
+    @interval.setter
+    def interval(self, value: int | None) -> None:
+        """Set the INTERVAL part of the recurrence rule, or delete it if None."""
+        if value is None:
+            del self.interval
+            return
+        if not isinstance(value, int) or isinstance(value, bool):
+            raise TypeError(f"interval must be an int, got {value!r}")
+        if value < 1:
+            raise InvalidCalendar(f"INTERVAL must be >= 1, got {value}")
+        self["INTERVAL"] = [vInt(value)]
+
+    @interval.deleter
+    def interval(self) -> None:
+        """Delete the INTERVAL part of the recurrence rule."""
+        self.pop("INTERVAL", None)
 
     def __eq__(self, other: object) -> bool:
         """self == other"""
