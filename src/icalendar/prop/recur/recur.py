@@ -302,7 +302,7 @@ class vRecur(CaselessDict):
                 stored, so this only happens when the value was assigned
                 directly (``recur["COUNT"] = "abc"``).
             InvalidCalendar: when setting a negative value.
-            TypeError: when setting a value that is not an int, or is a bool.
+            TypeError: when setting a value that is not an int.
 
         Example:
             ..  code-block:: pycon
