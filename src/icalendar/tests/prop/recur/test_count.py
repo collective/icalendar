@@ -1,5 +1,6 @@
 import pytest
 
+from icalendar.error import InvalidCalendar
 from icalendar.prop import vRecur
 
 
@@ -80,12 +81,34 @@ def test_setting_count_to_bool_raises_type_error():
         recur.count = True
 
 
-def test_setting_count_to_negative_raises_value_error():
+def test_setting_count_to_negative_raises_invalid_calendar():
     """RFC 5545's grammar for COUNT is ``1*DIGIT`` -- unsigned digits only,
-    so a negative value is never valid, even though 0 is."""
+    so a negative value is never valid, even though 0 is.
+
+    ``InvalidCalendar`` subclasses ``ValueError``, matching how
+    ``icalendar.attr.single_int_property`` reports an out-of-range value.
+    """
     recur = vRecur.from_ical("FREQ=DAILY")
-    with pytest.raises(ValueError):
+    with pytest.raises(InvalidCalendar):
         recur.count = -1
+
+
+def test_non_numeric_count_cannot_be_parsed_at_all():
+    """A non-numeric COUNT is rejected while parsing, before the accessor is
+    ever reached, so it cannot arrive in a vRecur through from_ical."""
+    with pytest.raises(ValueError, match="Expected int, got: abc"):
+        vRecur.from_ical("FREQ=DAILY;COUNT=abc")
+
+
+@pytest.mark.parametrize("stored", ["abc", "", ["abc"]])
+def test_directly_assigned_unreadable_count_raises_invalid_calendar(stored):
+    """The only route to an unreadable COUNT is assigning it directly, past
+    the parser. Reading it reports InvalidCalendar rather than letting a bare
+    int() error escape."""
+    recur = vRecur.from_ical("FREQ=DAILY")
+    recur["COUNT"] = stored
+    with pytest.raises(InvalidCalendar, match="COUNT must be an int"):
+        recur.count
 
 
 def test_count_roundtrips_through_ical():

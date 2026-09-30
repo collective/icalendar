@@ -4,7 +4,7 @@ from typing import Any, ClassVar
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError
+from icalendar.error import InvalidCalendar, JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser_tools import DEFAULT_ENCODING, SEQUENCE_TYPES
 from icalendar.prop.dt import vDDDTypes
@@ -296,6 +296,14 @@ class vRecur(CaselessDict):
 
         Setting this to ``None`` deletes the value, as does ``del``.
 
+        Raises:
+            InvalidCalendar: if a value is present but cannot be read as an
+                int. Parsing rejects a non-numeric ``COUNT`` before it can be
+                stored, so this only happens when the value was assigned
+                directly (``recur["COUNT"] = "abc"``).
+            InvalidCalendar: when setting a negative value.
+            TypeError: when setting a value that is not an int, or is a bool.
+
         Example:
             ..  code-block:: pycon
 
@@ -311,7 +319,12 @@ class vRecur(CaselessDict):
         if values is None or (isinstance(values, SEQUENCE_TYPES) and len(values) == 0):
             return None
         value = values[0] if isinstance(values, SEQUENCE_TYPES) else values
-        return int(value)
+        try:
+            return int(value)
+        except (TypeError, ValueError) as e:
+            # Matches how icalendar.attr.single_int_property surfaces a stored
+            # value that is not readable as an int.
+            raise InvalidCalendar("COUNT must be an int") from e
 
     @count.setter
     def count(self, value: int | None) -> None:
@@ -326,7 +339,7 @@ class vRecur(CaselessDict):
             # so a negative value can never be a valid COUNT. 0 is valid
             # (RFC 5545 doesn't say COUNT must be positive, only non-negative
             # per its digit-only grammar), and is stored as such.
-            raise ValueError(f"count must not be negative, got {value}")
+            raise InvalidCalendar(f"COUNT must be >= 0, got {value}")
         self["COUNT"] = [vInt(value)]
 
     @count.deleter
