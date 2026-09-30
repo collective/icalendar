@@ -5,9 +5,10 @@ from typing import Any, ClassVar
 from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError, XCalParsingError
+from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser.xcal.base import XCalParser
+from icalendar.parser.xcal.string import xsd_float_to_string
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 
 
@@ -117,27 +118,6 @@ class vFloat(float):
             params=Parameters.from_jcal_property(jcal_property),
         )
 
-    @staticmethod
-    def from_xsd_float(xsd_float: str | None) -> float:
-        """Convert an xsd:float to a :class:`float`."""
-        if not isinstance(xsd_float, str):
-            raise TypeError("Expected xsd:float. Got None.")
-        try:
-            return float(xsd_float)
-        except (ValueError, TypeError) as e:
-            raise ValueError(f"Expected xsd:float. Got {xsd_float!r}.") from e
-
-    @staticmethod
-    def to_xsd_float(f: float) -> str:
-        """Convert a :class:`float` to an xsd:float."""
-        if math.isnan(f):
-            return "NaN"
-        if math.isfinite(f):
-            return str(f)
-        if f > 0:
-            return "INF"
-        return "-INF"
-
     @classmethod
     @from_xcal_wrapper
     def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
@@ -150,20 +130,13 @@ class vFloat(float):
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
         element = parser.parse_tag(cls.default_value)
-        try:
-            value = cls.from_xsd_float(element.get_xsd_token())
-        except (TypeError, ValueError) as e:
-            raise XCalParsingError(
-                "Expected xsd:float",
-                element.get_xsd_token(),
-                element,
-            ) from e
+        value = element.get_xsd_float()
         return cls(value, params=params)
 
     def to_xcal(self, element: Element) -> None:
         """Add the xCal representation of this property according to :rfc:`6321`."""
         element = SubElement(element, self.default_value.lower())
-        element.text = self.to_xsd_float(self)
+        element.text = xsd_float_to_string(self)
         self.params.to_xcal(element)
 
 

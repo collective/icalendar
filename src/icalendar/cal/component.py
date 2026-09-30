@@ -969,7 +969,7 @@ class Component(CaselessDict):
         def make_node(comp: Component) -> list:
             properties = [
                 item.to_jcal(key.lower())
-                for key, value in comp.items()
+                for key, value in comp.sorted_items()
                 for item in (value if isinstance(value, list) else [value])
             ]
             comp._validate_name()
@@ -1138,7 +1138,7 @@ class Component(CaselessDict):
         e_component = SubElement(element, self.name.lower())
         if len(self) > 0:
             e_properties = SubElement(e_component, "properties")
-            for key, prop_list in self.items():
+            for key, prop_list in self.sorted_items():
                 for prop in prop_list if isinstance(prop_list, list) else [prop_list]:
                     prop: VPROPERTY
                     e_property = SubElement(e_properties, key.lower())

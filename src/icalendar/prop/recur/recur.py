@@ -321,6 +321,10 @@ class vRecur(CaselessDict):
         Raises:
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
+        if parser.tag != cls.default_value.lower():
+            self = cls.from_xcal(parser.parse_tag(cls.default_value))
+            self.params = params
+            return self
         self = cls(params=params)
         while not parser.is_finished():
             child = parser.child

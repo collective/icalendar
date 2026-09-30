@@ -4,6 +4,9 @@ import re
 from collections import defaultdict
 from xml.etree.ElementTree import Element
 
+from icalendar.error import XCalParsingError
+from icalendar.parser.xcal.string import string_to_xsd_float
+
 REGEX_WHITESPACE = re.compile(r"\s+", re.MULTILINE)
 
 
@@ -51,6 +54,20 @@ class ElementAdapter:
                 return child
         return None
 
+    def parse_tag(self, tag: str):
+        """Get the first child element with the given tag.
+
+        Returns:
+            The first child element with the given tag.
+
+        Raises:
+            XCalParsingError: If the tag is not found.
+        """
+        child = self.get_child_with_tag(tag)
+        if child is None:
+            raise XCalParsingError(f"Tag {tag} not found", None, self)
+        return child
+
     def get_xsd_string(self) -> str:
         """Return the element's text as xsd:string.
 
@@ -75,6 +92,24 @@ class ElementAdapter:
     def get_xpath(self) -> str:
         """Return the path in the XML file where this element occurs."""
         return f"/{self.tag}"
+
+    def get_xsd_float(self) -> float:
+        """Return the xsd:float.
+
+        Returns:
+            The parsed float value.
+
+        Raises:
+            XCalParsingError: If the value is not a float.
+        """
+        try:
+            return string_to_xsd_float(self.get_xsd_token())
+        except (TypeError, ValueError) as e:
+            raise XCalParsingError(
+                "Expected xsd:float",
+                self.get_xsd_token(),
+                self,
+            ) from e
 
     def __repr__(self) -> str:
         """Return the text representation of this element."""

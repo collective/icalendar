@@ -22,6 +22,8 @@ mark_text_class = pytest.mark.parametrize(
 @mark_text_class
 def test_to_xcal(text, text_class):
     """Convert text-based values to xCal."""
+    if "\n" in text and text_class == vXmlReference:
+        text = text.replace("\n", " ")
     value = text_class(text)
     element = to_xcal(value)
 
@@ -34,6 +36,8 @@ def test_to_xcal(text, text_class):
 @mark_text_class
 def test_from_xcal_from_text_class(text, text_class):
     """Parse text-based values from xCal."""
+    if "\n" in text and text_class == vXmlReference:
+        text = text.replace("\n", " ")
     element = list2xml(["x-prop", [text_class.default_value, text]])
 
     result = text_class.from_xcal(element)

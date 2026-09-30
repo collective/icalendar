@@ -10,6 +10,7 @@ from xml.etree import ElementTree as ET
 import pytest
 
 from icalendar import vFloat
+from icalendar.parser.xcal.string import string_to_xsd_float, xsd_float_to_string
 from icalendar.prop.factory import TypesFactory
 from icalendar.tests.rfc_6321_xcal.common import (
     XML_WHITESPACE,
@@ -38,7 +39,7 @@ def test_xsd_float_to_python(python, xml, message):
 
     See https://datypic.com/sc/xsd/t-xsd_float.html
     """
-    converted = vFloat.from_xsd_float(xml)
+    converted = string_to_xsd_float(xml)
     is_nan = math.isnan(converted) and xml.lower() == "nan"
     assert converted == python or is_nan, (
         f"Expected {converted} == {python}. " + message
@@ -65,7 +66,7 @@ def test_python_to_xsd(python, xml, message):
 
     See https://datypic.com/sc/xsd/t-xsd_float.html
     """
-    converted = vFloat.to_xsd_float(python)
+    converted = xsd_float_to_string(python)
     is_nan = math.isnan(python) and converted.lower() == "nan"
     assert converted == xml or is_nan, f"Expected {converted!r} == {xml!r}. " + message
 
@@ -80,7 +81,7 @@ def test_parsing_errors(invalid_xml_value):
     - NAN
     """
     with pytest.raises((TypeError, ValueError)) as error:
-        vFloat.from_xsd_float(invalid_xml_value)
+        string_to_xsd_float(invalid_xml_value)
     assert error.value.args[0] == f"Expected xsd:float. Got {invalid_xml_value!r}."
 
 

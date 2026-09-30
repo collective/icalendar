@@ -125,15 +125,15 @@ class XCalParser:
 
         This child is then considered parsed.
         """
-        if not self._element_is_parsed and self._element.tag in tags:
-            self._element_is_parsed = True
-            self._consumed += 1
-            return self._element
         for i, child in enumerate(self._children):
             if child.tag in tags:
                 del self._children[i]
                 self._consumed += 1
                 return child
+        if not self._element_is_parsed and self._element.tag in tags:
+            self._element_is_parsed = True
+            self._consumed += 1
+            return self._element
         return None
 
     def parse_tags(self, tag: str | Sequence[str]) -> list[ElementAdapter]:

@@ -3,7 +3,7 @@
   <vcalendar>
     <properties>
       <prodid>
-        <text>-//Example Inc.//Example Client//EN</text>
+        <text>-//Example Corp.//Example Client//EN</text>
       </prodid>
       <version>
         <text>2.0</text>
@@ -99,10 +99,7 @@
             <text>Event #2</text>
           </summary>
           <description>
-            <text>We are having a meeting all this week at 12
-pm for one hour, with an additional meeting on the first day
-2 hours long.&#x0a;Please bring your own lunch for the 12 pm
-meetings.</text>
+            <text>We are having a meeting all this week at 12 pm for one hour, with an additional meeting on the first day 2 hours long.&#x0a;Please bring your own lunch for the 12 pm meetings.</text>
           </description>
           <uid>
             <text>00959BC664CA650E933C892C@example.com</text>
@@ -130,7 +127,7 @@ meetings.</text>
             <date-time>2006-01-04T12:00:00</date-time>
           </recurrence-id>
           <summary>
-            <text>Event #2 bis</text>
+            <text>Event #2</text>
  
           </summary>
           <uid>
