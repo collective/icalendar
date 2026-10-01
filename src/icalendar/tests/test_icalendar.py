@@ -297,9 +297,10 @@ class IcalendarTestCase(unittest.TestCase):
 
     def test_q_join(self):
         assert ( 
-            _q_join(["Max", "Moller", "Rasmussen, Max"]) 
+        _q_join(["Max", "Moller", "Rasmussen, Max"]) 
             == 'Max,Moller,"Rasmussen, Max"'
-        )
+                )
+        
     def test_q_join_deprecated(self):
             with pytest.warns(DeprecationWarning):
-                q_join(["a", "b"])
+            q_join(["a", "b"])
