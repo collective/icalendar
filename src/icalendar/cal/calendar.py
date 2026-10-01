@@ -702,18 +702,6 @@ Example:
             - ``None`` if an argument is passed
             - :class:`bytes` if called with no arguments
 
-        Example:
-
-            Read an xCal from XML bytes. This is an empty example from :rfc:`6321`.
-
-            >>> from icalendar import Calendar
-            >>> xml = (
-            ...     b'<?xml version="1.0" encoding="utf-8"?>'
-            ...     b'<icalendar xmlns="urn:ietf:params:xml:ns:icalendar-2.0">'
-            ...         b'<vcalendar>'
-            ...         b'</vcalendar>'
-            ...     b'</icalendar>'
-            ... )
         """
         from io import BytesIO
 
