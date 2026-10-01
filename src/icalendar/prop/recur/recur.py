@@ -1,5 +1,6 @@
 """RECUR property type from :rfc:`5545`."""
 
+from datetime import date
 from typing import Any, ClassVar
 
 from icalendar.caselessdict import CaselessDict
@@ -346,6 +347,64 @@ class vRecur(CaselessDict):
     def count(self) -> None:
         """Delete the COUNT part of the recurrence rule."""
         self.pop("COUNT", None)
+
+    @property
+    def until(self) -> date | None:
+        """The UNTIL part of the recurrence rule.
+
+        This is a date or date-time at which the recurrence ends, as an
+        alternative to specifying a ``COUNT`` value (:rfc:`5545#section-3.3.10`).
+        ``COUNT`` and ``UNTIL`` are mutually exclusive; this accessor does not
+        enforce that, matching :attr:`count`.
+
+        :rfc:`5545#section-3.3.10` also requires that UNTIL have the same
+        value type (date vs. date-time) as the component's ``DTSTART``, and
+        be specified in UTC whenever ``DTSTART`` is UTC or has a time zone
+        reference. ``vRecur`` has no access to ``DTSTART`` -- it is a sibling
+        property on the component, not part of the recurrence rule -- so this
+        accessor cannot and does not enforce that constraint.
+
+        If multiple values are present, the first one is returned. If the
+        value is missing or an empty sequence, ``None`` is returned.
+
+        Setting this to ``None`` deletes the value, as does ``del``.
+
+        Raises:
+            TypeError: when setting a value that is not a :class:`datetime.date`
+                or :class:`datetime.datetime`.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=DAILY;UNTIL=20261231T235959Z").until
+                datetime.datetime(2026, 12, 31, 23, 59, 59, tzinfo=ZoneInfo(key='UTC'))
+                >>> vRecur.from_ical("FREQ=DAILY;UNTIL=20261231").until
+                datetime.date(2026, 12, 31)
+                >>> vRecur.from_ical("FREQ=DAILY").until is None
+                True
+        """
+        values = self.get("UNTIL")
+        if values is None or (isinstance(values, SEQUENCE_TYPES) and len(values) == 0):
+            return None
+        return values[0] if isinstance(values, SEQUENCE_TYPES) else values
+
+    @until.setter
+    def until(self, value: date | None) -> None:
+        """Set the UNTIL part of the recurrence rule, or delete it if None."""
+        if value is None:
+            del self.until
+            return
+        if not isinstance(value, date):
+            # datetime is a subclass of date, so this accepts both, matching
+            # the DATE / DATE-TIME value types UNTIL is allowed to have.
+            raise TypeError(f"until must be a date or datetime, got {value!r}")
+        self["UNTIL"] = [value]
+
+    @until.deleter
+    def until(self) -> None:
+        """Delete the UNTIL part of the recurrence rule."""
+        self.pop("UNTIL", None)
 
     def __eq__(self, other: object) -> bool:
         """self == other"""
