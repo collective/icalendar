@@ -19,6 +19,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install . --group formatting
+          sudo apt update
           sudo apt install -y git-delta
       - name: Run the ruff formatter to change files
         run: ruff format .
