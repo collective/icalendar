@@ -4,7 +4,7 @@ from typing import Any, ClassVar
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError
+from icalendar.error import InvalidCalendar, JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser_tools import DEFAULT_ENCODING, SEQUENCE_TYPES
 from icalendar.prop.dt import vDDDTypes
@@ -278,6 +278,74 @@ class vRecur(CaselessDict):
         if until is not None and not isinstance(until, list):
             recur["until"] = [until]
         return cls(recur, params=params)
+
+    @property
+    def count(self) -> int | None:
+        """The COUNT part of the recurrence rule.
+
+        This is the number of occurrences at which to range-bound the
+        recurrence, as an alternative to specifying an ``UNTIL`` value
+        (:rfc:`5545#section-3.3.10`). ``COUNT`` and ``UNTIL`` are mutually
+        exclusive; this accessor does not enforce that.
+
+        The RFC 5545 grammar for COUNT is ``1*DIGIT``, so ``0`` is a valid
+        value and is returned as such, not treated as missing.
+
+        If multiple values are present, the first one is returned. If the
+        value is missing or an empty sequence, ``None`` is returned.
+
+        Setting this to ``None`` deletes the value, as does ``del``.
+
+        Raises:
+            InvalidCalendar: if a value is present but cannot be read as an
+                int. Parsing rejects a non-numeric ``COUNT`` before it can be
+                stored, so this only happens when the value was assigned
+                directly (``recur["COUNT"] = "abc"``).
+            InvalidCalendar: when setting a negative value.
+            TypeError: when setting a value that is not an int.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=DAILY;COUNT=10").count
+                10
+                >>> vRecur.from_ical("FREQ=DAILY;COUNT=0").count
+                0
+                >>> vRecur.from_ical("FREQ=DAILY").count is None
+                True
+        """
+        values = self.get("COUNT")
+        if values is None or (isinstance(values, SEQUENCE_TYPES) and len(values) == 0):
+            return None
+        value = values[0] if isinstance(values, SEQUENCE_TYPES) else values
+        try:
+            return int(value)
+        except (TypeError, ValueError) as e:
+            # Matches how icalendar.attr.single_int_property surfaces a stored
+            # value that is not readable as an int.
+            raise InvalidCalendar("COUNT must be an int") from e
+
+    @count.setter
+    def count(self, value: int | None) -> None:
+        """Set the COUNT part of the recurrence rule, or delete it if None."""
+        if value is None:
+            del self.count
+            return
+        if not isinstance(value, int) or isinstance(value, bool):
+            raise TypeError(f"count must be an int, got {value!r}")
+        if value < 0:
+            # RFC 5545's grammar for COUNT is `1*DIGIT`: unsigned digits only,
+            # so a negative value can never be a valid COUNT. 0 is valid
+            # (RFC 5545 doesn't say COUNT must be positive, only non-negative
+            # per its digit-only grammar), and is stored as such.
+            raise InvalidCalendar(f"COUNT must be >= 0, got {value}")
+        self["COUNT"] = [vInt(value)]
+
+    @count.deleter
+    def count(self) -> None:
+        """Delete the COUNT part of the recurrence rule."""
+        self.pop("COUNT", None)
 
     def __eq__(self, other: object) -> bool:
         """self == other"""
