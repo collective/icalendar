@@ -1,6 +1,7 @@
 """We would like to have certain errors for invalid JCal."""
 
 from json import JSONDecodeError
+from pprint import pprint
 
 import pytest
 
@@ -235,7 +236,8 @@ def test_failing_example_delegated_to(calendars):
     """Check the failing example."""
     calendar: Calendar = calendars.rfc_7256_multi_value_parameters
     jcal = calendar.to_jcal()
-    delegated_to = jcal[2][0][1][0][1]["delegated-to"]
+    pprint(jcal)
+    delegated_to = jcal[2][0][1][1][1]["delegated-to"]
     assert delegated_to == [
         "mailto:jdoe@example.com",
         "mailto:jqpublic@example.com",
@@ -432,7 +434,7 @@ def test_int_parameters(int_expected, key, as_list):
     # parse bad value
     with pytest.raises(
         JCalParsingError,
-        match=f'\\[3\\]\\["{key}"\\](?:\\[0\\])? in vInt: The value must be an integer.',
+        match=f'\\[3\\]\\["{key}"\\](?:\\[0\\])? in vNonNegativeInt: The value must be an integer.',
     ):
         vRecur.from_jcal(["rrule", {}, "recur", {key: int_expected}])
 

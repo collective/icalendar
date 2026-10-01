@@ -8,8 +8,8 @@ from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta, timezone
 from io import BytesIO
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, BinaryIO, ClassVar, Literal, overload
-from xml.etree.ElementTree import Element, SubElement, parse
+from typing import IO, TYPE_CHECKING, Any, BinaryIO, ClassVar, Literal, overload
+from xml.etree.ElementTree import Element, SubElement, parse, tostring
 
 from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
@@ -957,10 +957,10 @@ class Component(CaselessDict):
             >>> event = Event.new(summary="My Event", start=date(2025, 11, 22))
             >>> pprint(event.to_jcal())
             ['vevent',
-             [['dtstamp', {}, 'date-time', '2025-05-17T08:06:12Z'],
-              ['summary', {}, 'text', 'My Event'],
-              ['uid', {}, 'text', 'd755cef5-2311-46ed-a0e1-6733c9e15c63'],
-              ['dtstart', {}, 'date', '2025-11-22']],
+             [['summary', {}, 'text', 'My Event'],
+              ['dtstart', {}, 'date', '2025-11-22'],
+              ['dtstamp', {}, 'date-time', '2025-05-17T08:06:12Z'],
+              ['uid', {}, 'text', 'd755cef5-2311-46ed-a0e1-6733c9e15c63']],
              []]
         """
 
@@ -1132,7 +1132,46 @@ class Component(CaselessDict):
         """
         return self
 
-    def to_xcal(self, element: Element, /) -> None:
+    @overload
+    def to_xcal(self, destination: Element | IO[bytes], /) -> None: ...
+
+    @overload
+    def to_xcal(self, /) -> bytes: ...
+
+    def to_xcal(
+        self, destination: Element | None | IO[bytes] = None, /
+    ) -> None | bytes:
+        """The xCal representation of this component according to :rfc:`6321`.
+
+        Parameters:
+            destination: (Optional) The iCalendar stream or a file.
+
+        Returns:
+            - ``None`` if an argument is passed
+            - :class:`bytes` if called with no arguments
+
+        """
+        from io import BytesIO
+
+        input_is_element = isinstance(destination, Element)
+        if input_is_element:
+            stream = destination
+        else:
+            stream = Element(
+                "icalendar", {"xmlns": "urn:ietf:params:xml:ns:icalendar-2.0"}
+            )
+        self.to_xcal_element(stream)
+        if input_is_element:
+            return None
+        return_bytes = destination is None
+        file = BytesIO() if return_bytes else destination
+        file.write(b'<?xml version="1.0" encoding="UTF-8"?>')
+        file.write(tostring(stream))
+        if return_bytes:
+            return file.getvalue()
+        return None
+
+    def to_xcal_element(self, element: Element, /) -> None:
         """Add the xCal representation of this component according to :rfc:`6321`."""
         self._validate_name()
         e_component = SubElement(element, self.name.lower())

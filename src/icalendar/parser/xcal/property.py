@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from icalendar.parser.parameter import Parameters
-from icalendar.parser.xcal.base import XCalParser
+from icalendar.parser.xcal.base import InvalidParserState, XCalParser
 from icalendar.parser.xcal.parameters import XCalParameterParser, XCalParametersParser
 
 if TYPE_CHECKING:
@@ -52,7 +52,8 @@ class XCalPropertiesParser(XCalParser):
         values = []
         while not property_parser.is_finished():
             values.append(property_parser.parse_property())
-        self._component[self.child.tag] = values
+        if values:
+            self._component[self.child.tag] = values[0] if len(values) == 1 else values
         self.done()
 
 
@@ -112,4 +113,11 @@ class XCalPropertyParser(XCalParameterParser):
                 <text>-//Example Inc.//Example Client//EN</text>
             </prodid>
         """
-        return self.parse_parameter()
+        start = self._consumed
+        value_type = self._types_factory.for_property(self.tag, self.child.tag)
+        result = value_type.from_xcal(self)
+        if self._consumed == start:
+            raise InvalidParserState(
+                f"Endless loop detected: {value_type} did not consume any XML."
+            )
+        return result

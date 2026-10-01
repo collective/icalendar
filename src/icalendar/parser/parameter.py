@@ -358,24 +358,24 @@ class Parameters(CaselessDict):
                 validate_token(key)
                 # Property parameter values that are not in quoted
                 # strings are case insensitive.
-                vals = []
+                string_values = []
                 for v in q_split(val, ","):
                     if v.startswith('"') and v.endswith('"'):
                         v2 = v.strip('"')
                         validate_param_value(v2, quoted=True)
-                        vals.append(rfc_6868_unescape(v2))
+                        string_values.append(rfc_6868_unescape(v2))
                     else:
                         validate_param_value(v, quoted=False)
                         if strict:
-                            vals.append(rfc_6868_unescape(v.upper()))
+                            string_values.append(rfc_6868_unescape(v.upper()))
                         else:
-                            vals.append(rfc_6868_unescape(v))
-                if not vals:
-                    result[key] = val
-                elif len(vals) == 1:
-                    result[key] = vals[0]
-                else:
-                    result[key] = vals
+                            string_values.append(rfc_6868_unescape(v))
+
+                if not string_values:
+                    string_values = [val]
+                result[key] = (
+                    string_values[0] if len(string_values) == 1 else string_values
+                )
             except ValueError as exc:  # noqa: PERF203
                 raise ValueError(
                     f"{param!r} is not a valid parameter string: {exc}"
@@ -487,6 +487,7 @@ class Parameters(CaselessDict):
         """Parse jCal parameters."""
         if not isinstance(jcal, dict):
             raise JCalParsingError("The parameters must be a mapping.", cls)
+        result = cls()
         for name, value in jcal.items():
             if not isinstance(name, str):
                 raise JCalParsingError(
@@ -508,7 +509,10 @@ class Parameters(CaselessDict):
                     name,
                     value=value,
                 )
-        return cls(jcal)
+            result[name] = (
+                value[0] if isinstance(value, list) and len(value) == 1 else value
+            )
+        return result
 
     @classmethod
     def from_jcal_property(cls, jcal_property: list):
@@ -590,9 +594,19 @@ class Parameters(CaselessDict):
             value_factory = factory.for_property(key)
             param_element = Element(key.lower())
             for value in self.get_multiple(key):
-                if not hasattr(value, "to_xcal"):
-                    value = value_factory(value)  # noqa: PLW2901
-                value.to_xcal(param_element)
+                # value is expected to be str or a subclass of str
+                if hasattr(value, "to_xcal"):
+                    # str subclass
+                    value.to_xcal(param_element)
+                else:
+                    parsed_value = value_factory.from_ical(value)
+                    if hasattr(parsed_value, "to_xcal"):
+                        # property type
+                        parsed_value.to_xcal(param_element)  # type: ignore  # noqa: PGH003
+                    else:
+                        # native type
+                        v_prop = value_factory(parsed_value)  # type: ignore  # noqa: PGH003
+                        v_prop.to_xcal(param_element)
             result.append(param_element)
         if len(result) > 0:
             # Parameters always go first.

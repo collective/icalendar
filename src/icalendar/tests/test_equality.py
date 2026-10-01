@@ -66,6 +66,16 @@ def test_parsed_calendars_are_equal_if_parsed_again_jcal(source_file, tzp):
     assert_equal(copy_of_calendar, source_file)
 
 
+def test_parsed_calendars_are_equal_if_parsed_again_xcal(source_file, tzp):
+    """Ensure that a calendar equals the same calendar.
+
+    source -> calendar -> xcal -> same calendar
+    """
+    print(source_file)
+    copy_of_calendar = Calendar.from_xcal(source_file.to_xcal())[0]
+    assert_equal(copy_of_calendar, source_file)
+
+
 def test_parsed_calendars_are_equal_if_from_same_source(ics_file, tzp):
     """Ensure that a calendar equals the same calendar.
 

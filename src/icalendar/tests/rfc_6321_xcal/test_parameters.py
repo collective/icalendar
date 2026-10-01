@@ -1,6 +1,13 @@
 """xCal parameter serialization and deserialization tests.
 
 See https://datatracker.ietf.org/doc/html/rfc6321#section-3.5
+
+.. note::
+
+    At present, the Parameters store string values.
+    There is a type given for these but there are only strings stored.
+
+
 """
 
 from xml.etree.ElementTree import Element, fromstring, tostring
@@ -8,8 +15,6 @@ from xml.etree.ElementTree import Element, fromstring, tostring
 import pytest
 
 from icalendar import Parameters
-from icalendar.parser.xcal.base import InvalidParserState
-from icalendar.parser.xcal.parameters import XCalParameterParser
 from icalendar.tests.rfc_6321_xcal.common import list2xml, to_xcal, xml2list
 
 
@@ -214,14 +219,14 @@ mark_parameters = pytest.mark.parametrize(
         ),
         pytest.param(
             "rsvp",
-            True,
+            "TRUE",
             "<rsvp><boolean>true</boolean></rsvp>",
             _appendix("RSVP"),
             id="rsvp-true",
         ),
         pytest.param(
             "rsvp",
-            False,
+            "FALSE",
             "<rsvp><boolean>false</boolean></rsvp>",
             _appendix("RSVP"),
             id="rsvp-false",
@@ -343,15 +348,3 @@ def test_parameters_only_serialize_if_they_have_content():
     parameters = Parameters()
     xcal = to_xcal(parameters, wrap=True)
     assert len(xcal) == 0
-
-
-def test_parameters_parser_finds_out_if_nothing_is_consumed(mock):
-    """We can end in an endless loop if a vProp is not working."""
-    e = list2xml(
-        ["parameters", ["delegated-to", ["text", "mailto:jsmith@example.com"]]]
-    )
-    parser = XCalParameterParser(e, mock)  # mock does not consume anything
-    with pytest.raises(InvalidParserState) as e:
-        parser.parse_parameter()
-    assert "did not consume any XML." in str(e.value)
-    assert "Endless loop detected" in str(e.value)

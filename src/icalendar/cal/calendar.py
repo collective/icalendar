@@ -4,8 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import timedelta
-from typing import IO, TYPE_CHECKING, Literal, cast, overload
-from xml.etree.ElementTree import Element, tostring
+from typing import TYPE_CHECKING, Literal, cast, overload
 
 from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
@@ -683,45 +682,6 @@ Example:
             raise IncompleteComponent(
                 "Calendar must contain at least one component (event, todo, etc.)"
             )
-
-    @overload
-    def to_xcal(self, destination: Element | IO[bytes], /) -> None: ...
-
-    @overload
-    def to_xcal(self, /) -> bytes: ...
-
-    def to_xcal(
-        self, destination: Element | None | IO[bytes] = None, /
-    ) -> None | bytes:
-        """The xCal representation of this component according to :rfc:`6321`.
-
-        Parameters:
-            destination: (Optional) The iCalendar stream or a file.
-
-        Returns:
-            - ``None`` if an argument is passed
-            - :class:`bytes` if called with no arguments
-
-        """
-        from io import BytesIO
-
-        input_is_element = isinstance(destination, Element)
-        if input_is_element:
-            stream = destination
-        else:
-            stream = Element(
-                "icalendar", {"xmlns": "urn:ietf:params:xml:ns:icalendar-2.0"}
-            )
-        super().to_xcal(stream)
-        if input_is_element:
-            return None
-        return_bytes = destination is None
-        file = BytesIO() if return_bytes else destination
-        file.write(b'<?xml version="1.0" encoding="UTF-8"?>')
-        file.write(tostring(stream))
-        if return_bytes:
-            return file.getvalue()
-        return None
 
 
 __all__ = ["Calendar"]

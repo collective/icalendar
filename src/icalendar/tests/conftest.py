@@ -150,6 +150,7 @@ class DataSource:
 
 
 HERE = Path(__file__).parent
+REPOSITORY_ROOT = HERE.parent.parent.parent
 CALENDARS_FOLDER = HERE / "calendars"
 TIMEZONES_FOLDER = HERE / "timezones"
 EVENTS_FOLDER = HERE / "events"
@@ -270,10 +271,11 @@ SOURCE_FILES = ICS_FILES + JCAL_FILES + XCAL_FILES
 
 def get_source_file(calendars, timezones, events, request) -> Component:
     source_file = request.param
-    print("example file:", source_file)
     for data in calendars, timezones, events:
         if source_file in data:
-            return data[source_file]
+            result = data[source_file]
+            print("example file:", result.source_path.relative_to(REPOSITORY_ROOT))
+            return result
     raise ValueError(f"Could not find file {source_file}.")
 
 
@@ -372,10 +374,16 @@ def event_component(tzp):
     return c
 
 
+class TestComponent(Component):
+    """A component for testing."""
+
+    name = "VTEST"
+
+
 @pytest.fixture
 def c(tzp):
     """Return an empty component."""
-    return Component()
+    return TestComponent()
 
 
 comp = c

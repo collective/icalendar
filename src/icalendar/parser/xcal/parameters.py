@@ -3,13 +3,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from icalendar.parser.parameter import Parameters
-from icalendar.parser.xcal.base import InvalidParserState, XCalParser
+from icalendar.parser.xcal.base import XCalParser
 
 if TYPE_CHECKING:
     from xml.etree.ElementTree import Element
 
     from icalendar.parser.xcal.adapter import ElementAdapter
-    from icalendar.prop import VPROPERTY
     from icalendar.prop.factory import TypesFactory
 
 
@@ -54,7 +53,8 @@ class XCalParametersParser(XCalParser):
         values = []
         while not parameters_parser.is_finished():
             values.append(parameters_parser.parse_parameter())
-        self._parameters[self.child.tag] = values[0] if len(values) == 1 else values
+        if values:
+            self._parameters[self.child.tag] = values[0] if len(values) == 1 else values
         self.done()
 
 
@@ -74,7 +74,7 @@ class XCalParameterParser(XCalParser):
         )
         self._element_is_parsed = False
 
-    def parse_parameter(self) -> VPROPERTY:
+    def parse_parameter(self) -> str:
         """Parse one parameter value if present.
 
         Returns:
@@ -88,11 +88,8 @@ class XCalParameterParser(XCalParser):
                 <text>US/Eastern</text>
             </tzid>
         """
-        start = self._consumed
-        value_type = self._types_factory.for_property(self.tag, self.child.tag)
-        result = value_type.from_xcal(self)
-        if self._consumed == start:
-            raise InvalidParserState(
-                f"Endless loop detected: {value_type} did not consume any XML."
-            )
+        child = self.parse_tag()
+        result = child.get_xsd_string()
+        if child.tag == "boolean":
+            result = result.upper()
         return result
