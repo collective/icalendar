@@ -22,6 +22,14 @@ END:VTODO""")
     # Should return the DURATION property directly
     assert my_task.duration == timedelta(days=5)
 
+def test_todo_duration_edge_case_only_due():
+    """Test Todo with only `DUE` (no `DTSTART` or `DURATION`)."""
+    todo = Todo()
+    todo.add("UID", "test-only-due")
+    todo.end = datetime(2026, 3, 19, 12, 0)
+
+    assert todo.duration == timedelta(0)
+
 
 def test_todo_duration_calculated_from_start_and_due():
     """Test that Todo.duration still works for calculated duration from `DTSTART` and `DUE`."""
@@ -33,7 +41,6 @@ def test_todo_duration_calculated_from_start_and_due():
     # Should calculate duration from start and end
     assert todo.duration == timedelta(hours=3, minutes=30)
 
-
 def test_todo_duration_prefers_duration_property():
     """Test that explicit `DURATION` property takes precedence over calculated duration."""
     todo = Todo()
@@ -44,7 +51,6 @@ def test_todo_duration_prefers_duration_property():
 
     # Should return DURATION property, not calculated value
     assert todo.duration == timedelta(days=2)
-
 
 def test_todo_duration_with_dtstart_and_duration():
     """Test Todo with `DTSTART` and `DURATION` (valid per RFC 5545)."""
