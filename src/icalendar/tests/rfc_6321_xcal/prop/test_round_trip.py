@@ -10,7 +10,7 @@ def test_xcal_preserves_parameters(xcal_prop_example: VPROPERTY):
     """xcal serialization must include the parameters"""
     xcal_prop_example.params["X-CUSTOM"] = "custom-value"
     xcal_prop_example.params["TZID"] = "Europe/Paris"
-    xcal_prop_example.params["RSVP"] = True
+    xcal_prop_example.params["RSVP"] = "TRUE"
     xcal_prop_example.params["ALTREP"] = "https://other-location.com"
     xcal = to_xcal(xcal_prop_example)
     print("xcal_prop_example:", repr(xcal_prop_example))
@@ -21,7 +21,7 @@ def test_xcal_preserves_parameters(xcal_prop_example: VPROPERTY):
         f"custom-value missing in {v_prop}"
     )
     assert v_prop.params.get("TZID") == "Europe/Paris"
-    assert v_prop.params.get("RSVP") == True  # noqa: E712
+    assert v_prop.params.get("RSVP") == "TRUE"
     assert v_prop.params.get("ALTREP") == "https://other-location.com"
 
 
