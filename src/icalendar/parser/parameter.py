@@ -570,8 +570,15 @@ class Parameters(CaselessDict):
         return parser.parse_parameters()
 
     def to_xcal(self, element: Element) -> None:
-        """Add the xCal representation of the parameters according to :rfc:`6321`."""
-        if not self:
+        """Add the xCal representation of the parameters according to :rfc:`6321`.
+
+        No parameters are added when they are empty or parameters are already present
+        in the element.
+
+        Parameters:
+            element: The parameters are added to this element as first child.
+        """
+        if not self or (len(element) >= 1 and element[0].tag == "parameters"):
             return  # exit quickly
         from icalendar.prop.factory import TypesFactory
 

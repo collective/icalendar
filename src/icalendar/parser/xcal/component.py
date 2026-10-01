@@ -28,6 +28,7 @@ class XCalComponentParser(XCalParser):
         element = ElementAdapter.with_element(element)
         if element.tag not in ("icalendar", "components"):
             # we are not in an icalendar/component stream. We need to wrap it.
+            # This only happens when you pass in a single component.
             element = element.make_parent("icalendar")
         super().__init__(element)
         self._component_factory = component_factory

@@ -125,6 +125,7 @@ class vDDDLists:
 
     def to_xcal(self, element: Element) -> None:
         """Convert a vDDDTypes to an xCal element."""
+        self.params.to_xcal(element)
         for dt in self.dts:
             dt.to_xcal(element)
 

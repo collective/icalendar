@@ -11,11 +11,16 @@ REGEX_WHITESPACE = re.compile(r"\s+", re.MULTILINE)
 
 
 class ElementAdapter:
-    """An adapter class with convenience methods for elements."""
+    """An adapter class with convenience methods for XML elements.
+
+    This is a read-only access adapter.
+    All operations on ElementAdapter are reproducible and
+    do not change the underlying element.
+    """
 
     @classmethod
     def with_element(cls, element: Element | ElementAdapter) -> ElementAdapter:
-        """Create a new element adapter."""
+        """Create a new element adapter or return the present one."""
         if isinstance(element, ElementAdapter):
             return element
         return cls(element)
@@ -48,7 +53,6 @@ class ElementAdapter:
     def get_child_with_tag(self, tag: str) -> ChildElementAdapter | None:
         """Get the first child element with the given tag."""
         tag = tag.lower()
-        # TODO: Test that this is the only child - we do not expect many of these.
         for child in self.children:
             if child.tag == tag:
                 return child
@@ -94,7 +98,7 @@ class ElementAdapter:
         return f"/{self.tag}"
 
     def get_xsd_float(self) -> float:
-        """Return the xsd:float.
+        """Return the element's text parsed as xsd:float.
 
         Returns:
             The parsed float value.
