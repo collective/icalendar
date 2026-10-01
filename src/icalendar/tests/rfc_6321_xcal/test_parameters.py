@@ -10,6 +10,8 @@ See https://datatracker.ietf.org/doc/html/rfc6321#section-3.5
 
 """
 
+from __future__ import annotations
+
 from xml.etree.ElementTree import Element, fromstring, tostring
 
 import pytest

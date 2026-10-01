@@ -2,15 +2,18 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from icalendar.error import XCalParsingError
 from icalendar.parser.parameter import Parameters
 from icalendar.parser.xcal.base import InvalidParserState, XCalParser
 from icalendar.parser.xcal.parameters import XCalParameterParser, XCalParametersParser
+from icalendar.prop.broken import vBroken
 
 if TYPE_CHECKING:
     from xml.etree.ElementTree import Element
 
     from icalendar.cal.component import Component
     from icalendar.parser.xcal.adapter import ElementAdapter
+    from icalendar.prop import VPROPERTY
     from icalendar.prop.factory import TypesFactory
 
 
@@ -114,8 +117,14 @@ class XCalPropertyParser(XCalParameterParser):
         """Return the parsed parameters."""
         return self._parameters
 
-    def parse_property(self):
+    def parse_property(self) -> VPROPERTY:
         """Parse one property from the list.
+
+        Returns:
+            The parsed property
+
+        Raises:
+            InvalidParserState: If no parsing takes place.
 
         Example:
 
@@ -124,10 +133,24 @@ class XCalPropertyParser(XCalParameterParser):
             <prodid>
                 <text>-//Example Inc.//Example Client//EN</text>
             </prodid>
+
         """
         start = self._consumed
-        value_type = self._types_factory.for_property(self.tag, self.child.tag)
-        result = value_type.from_xcal(self)
+        child = self.child
+        value_type = self._types_factory.for_property(self.tag, child.tag)
+        try:
+            result = value_type.from_xcal(self)
+        except XCalParsingError as e:
+            result = vBroken.from_parse_error(
+                child.get_inner_text(),
+                Parameters(),
+                self.tag.upper(),
+                value_type.__name__,
+                e,
+            )
+            if self._consumed == start:
+                # if we did not progress, we should move on
+                self.done()
         if self._consumed == start:
             raise InvalidParserState(
                 f"Endless loop detected: {value_type} did not consume any XML."

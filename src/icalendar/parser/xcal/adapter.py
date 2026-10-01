@@ -125,6 +125,13 @@ class ElementAdapter:
         parent.append(self._element)
         return ElementAdapter(parent)
 
+    def get_inner_text(self) -> str:
+        """Return the inner text.
+
+        This is useful when there is a broken property.
+        """
+        return self.get_xsd_string()
+
 
 class ChildElementAdapter(ElementAdapter):
     """An adapter class with convenience methods for child elements.

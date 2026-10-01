@@ -71,7 +71,9 @@ def test_parsed_calendars_are_equal_if_parsed_again_xcal(source_file, tzp):
 
     source -> calendar -> xcal -> same calendar
     """
-    copy_of_calendar = Calendar.from_xcal(source_file.to_xcal())[0]
+    xml = source_file.to_xcal()
+    print(xml)
+    copy_of_calendar = Calendar.from_xcal(xml)[0]
     assert_equal(copy_of_calendar, source_file)
 
 
