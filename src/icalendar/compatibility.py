@@ -33,7 +33,7 @@ if TYPE_CHECKING:
         from typing_extensions import Self
 else:
     # we cannot use a TypeGuard = "TypeGuard" hack since it's used with a parameter
-    TypeGuard = TypeIs = Self = None
+    TypeGuard = TypeIs = None
 
 
 def deprecate_for_version_8(func):
