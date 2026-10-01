@@ -296,8 +296,9 @@ class IcalendarTestCase(unittest.TestCase):
             q_split("a,b")
 
     def test_q_join(self):
-        assert (
-            _q_join(["Max", "Moller", "Rasmussen, Max"]) == 'Max,Moller,"Rasmussen, Max"'
+        assert ( 
+            _q_join(["Max", "Moller", "Rasmussen, Max"]) 
+            == 'Max,Moller,"Rasmussen, Max"'
         )
     def test_q_join_deprecated(self):
             with pytest.warns(DeprecationWarning):
