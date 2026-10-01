@@ -9,7 +9,11 @@ Members will be added and removed without deprecation warnings.
 
 import functools
 import warnings
-from typing import TYPE_CHECKING
+from collections.abc import Callable
+from typing import TYPE_CHECKING, ParamSpec, TypeVar
+
+P = ParamSpec("P")
+R = TypeVar("R")
 
 try:
     from typing import Self
@@ -36,12 +40,12 @@ else:
     TypeGuard = TypeIs = Self = None
 
 
-def deprecate_for_version_8(func):
+def deprecate_for_version_8(func: Callable[P, R]) -> Callable[P, R]:
     """Issue a warning for deprecated functions to be removed in version 8."""
     public_name = func.__name__.removeprefix("_")
 
     @functools.wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
         warnings.warn(
             f"{public_name} is deprecated and will be removed in icalendar 8",
             DeprecationWarning,
