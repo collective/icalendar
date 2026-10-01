@@ -53,7 +53,19 @@ class XCalPropertiesParser(XCalParser):
         while not property_parser.is_finished():
             values.append(property_parser.parse_property())
         if values:
-            self._component[self.child.tag] = values[0] if len(values) == 1 else values
+            previous = self._component.get(self.child.tag)
+            if previous is None:
+                # first occurrence of the parameter
+                self._component[self.child.tag] = (
+                    values[0] if len(values) == 1 else values
+                )
+            # the parameter occurs several times
+            elif not isinstance(previous, list):
+                # one value
+                self._component[self.child.tag] = [previous] + values
+            else:
+                # several values
+                previous.extend(values)
         self.done()
 
 
