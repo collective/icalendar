@@ -227,13 +227,15 @@ class TestProp(unittest.TestCase):
         ).parts()
         assert vText.from_ical(value) == "A string with; some\\ characters in\\it"
 
-        # We are forgiving to utf-8 encoding errors:
-        # We intentionally use a string with unexpected encoding
-        #
-        assert vText.from_ical(b"Ol\xe9") == "Ol�"
+        # Invalid UTF-8 now raises InvalidCalendar, see issue #1793.
+        # Pass a known source encoding or errors="replace" explicitly.
+        from icalendar.error import InvalidCalendar
+        from icalendar.parser_tools import to_unicode
 
-        # Notice how accented E character, encoded with latin-1, got replaced
-        # with the official U+FFFD REPLACEMENT CHARACTER.
+        with pytest.raises(InvalidCalendar):
+            vText.from_ical(b"Ol\xe9")
+        assert vText(b"Ol\xe9", "cp1252") == "Ol\u00e9"
+        assert to_unicode(b"Ol\xe9", errors="replace") == "Ol\ufffd"
 
     def test_prop_vTime(self):
         from icalendar.prop import vTime
