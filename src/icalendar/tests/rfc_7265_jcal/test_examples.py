@@ -4,8 +4,16 @@ import json
 from datetime import datetime
 from pprint import pprint
 
+import pytest
+
 from icalendar.cal.alarm import Alarm
 from icalendar.timezone.tzid import is_utc
+
+# Some source calendars use globally unique TZIDs, so issuing the
+# GloballyUniqueTZIDGuessed warning is the expected behavior under test.
+pytestmark = pytest.mark.filterwarnings(
+    "ignore::icalendar.error.GloballyUniqueTZIDGuessed"
+)
 
 
 def test_to_jcal_can_be_json_serialized(source_file):
