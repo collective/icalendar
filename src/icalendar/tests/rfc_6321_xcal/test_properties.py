@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import pytest
 
+from icalendar.cal.calendar import Calendar
 from icalendar.cal.event import Event
 from icalendar.error import XCalParsingError
 from icalendar.parser.xcal.base import InvalidParserState
 from icalendar.parser.xcal.property import XCalPropertyParser
 from icalendar.prop.broken import vBroken
+from icalendar.prop.categories import vCategory
 from icalendar.tests.rfc_6321_xcal.common import list2xml
 
 
@@ -34,3 +36,23 @@ def test_broken_property_remains_broken(events):
     assert xrdate.property_name == "RDATE"
     assert xrdate.expected_type == "vDDDLists"
     assert isinstance(xrdate.parse_error, XCalParsingError)
+
+
+def test_categories_get_parsed_properly(calendars):
+    """Categories should get parsed.
+
+    Reproduces:
+        src/icalendar/tests/test_equality.py::test_parsed_calendars_are_equal_if_parsed_again_xcal[LazyCalendar-issue_466_convert_tzid_with_slash.ics-zoneinfo]
+    """
+    cal: Calendar = calendars.issue_466_convert_tzid_with_slash
+    event = cal.subcomponents[0]
+    categories = event["CATEGORIES"]
+    assert categories == ["Just Chatting"]
+    xcal = cal.to_xcal()
+    print(xcal)
+    xcal = Calendar.from_xcal(xcal)[0]
+    xevent = xcal.subcomponents[0]
+    xcategories = xevent["CATEGORIES"]
+    assert xcategories == ["Just Chatting"]
+    assert xcategories == categories
+    assert isinstance(xcategories, vCategory)

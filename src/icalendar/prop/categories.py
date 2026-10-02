@@ -65,7 +65,11 @@ class vCategory:
 
     def __eq__(self, other: object) -> bool:
         """self == other"""
-        return isinstance(other, vCategory) and self.cats == other.cats
+        if isinstance(other, vCategory):
+            return self.cats == other.cats
+        if isinstance(other, list):
+            return self.cats == other
+        return NotImplemented
 
     def __hash__(self) -> int:
         """Hash of the vCategory object."""

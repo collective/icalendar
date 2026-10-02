@@ -230,20 +230,28 @@ class TypesFactory(CaselessDict):
         Returns:
             The appropriate value type class.
         """
+        name = name.upper()
+        value_param = value_param.upper() if value_param else None
         # RFC 7265's UNKNOWN type is always represented verbatim, even for
         # properties such as RDATE/EXDATE that normally use list parsing.
-        if value_param and value_param.lower() == "unknown":
+        if value_param and value_param == "UNKNOWN":
             return self["unknown"]
 
         # Special case: RDATE and EXDATE always use vDDDLists to support list values
         # regardless of the VALUE parameter
-        if name.upper() in ("RDATE", "EXDATE"):
+        if name in ("RDATE", "EXDATE"):
             return self["date-time-list"]
 
         # Only use VALUE parameter for known properties that support multiple value
         # types (like DTSTART, DTEND, etc. which can be DATE or DATE-TIME)
         # For unknown/custom properties, always use the default type from types_map
         if value_param and name in self.types_map and value_param in self:
+            # vCategory also has TEXT as VALUE.
+            # It should be preferred over TEXT
+            # This checks the case that the value type actually matches.
+            value_type: VPROPERTY = self[self.types_map[name]]
+            if value_type.default_value == value_param:
+                return value_type
             return self[value_param]
 
         if value_param and (value_param in self) and value_param != "IMAGE":
