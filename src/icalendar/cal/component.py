@@ -10,6 +10,7 @@ from io import BytesIO
 from pathlib import Path
 from typing import IO, TYPE_CHECKING, Any, BinaryIO, ClassVar, Literal, overload
 from xml.etree.ElementTree import Element, SubElement, parse, tostring
+from xml.etree.ElementTree import indent as indent_xml
 
 from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
@@ -987,15 +988,27 @@ class Component(CaselessDict):
                 stack.append((subcomponent, child_node))
         return root_node
 
-    def to_json(self) -> str:
+    def to_json(self, indent: int | str | None = None) -> str:
         """Return this component as a jCal JSON string.
+
+        Parameters:
+            indent: If a non-negative integer or string is provided,
+                    then JSON will be pretty-printed with that indent level.
 
         Returns:
             JSON string
 
+        Raises:
+            ValueError: If a component does not have a name.
+
         See also :attr:`to_jcal`.
         """
-        return json.dumps(self.to_jcal())
+        return json.dumps(
+            self.to_jcal(),
+            indent=indent,
+            sort_keys=True,
+            separators=(",", ":") if indent is None else None,
+        )
 
     @classmethod
     def from_jcal(cls, jcal: str | list) -> Component:
@@ -1133,18 +1146,24 @@ class Component(CaselessDict):
         return self
 
     @overload
-    def to_xcal(self, destination: Element | IO[bytes], /) -> None: ...
+    def to_xcal(
+        self, destination: Element | IO[bytes], *, indent: int | str | None = None
+    ) -> None: ...
 
     @overload
-    def to_xcal(self, /) -> bytes: ...
+    def to_xcal(self, *, indent: int | str | None = None) -> bytes: ...
 
     def to_xcal(
-        self, destination: Element | None | IO[bytes] = None, /
-    ) -> None | bytes:
+        self,
+        destination: Element | IO[bytes] | None = None,
+        *,
+        indent: int | str | None = None,
+    ) -> bytes | None:
         """The xCal representation of this component according to :rfc:`6321`.
 
         Parameters:
             destination: (Optional) The iCalendar stream or a file.
+            indent: The indentation for pretty printing the XML.
 
         Returns:
             - ``None`` if an argument is passed
@@ -1157,16 +1176,31 @@ class Component(CaselessDict):
         if input_is_element:
             stream = destination
         else:
-            stream = Element(
-                "icalendar", {"xmlns": "urn:ietf:params:xml:ns:icalendar-2.0"}
-            )
+            stream = Element("icalendar", xmlns="urn:ietf:params:xml:ns:icalendar-2.0")
+            if destination is not None and not hasattr(destination, "write"):
+                raise TypeError(
+                    "Expected an XML Element or a file-like "
+                    f"object for destination, got {destination!r}"
+                )
         self.to_xcal_element(stream)
+        if indent is not None:
+            if isinstance(indent, int):
+                indent = " " * indent
+            elif not isinstance(indent, str):
+                raise TypeError(
+                    f"Expected an integer or string for indent, got {type(indent)}"
+                )
         if input_is_element:
             return None
         return_bytes = destination is None
         file = BytesIO() if return_bytes else destination
         file.write(b'<?xml version="1.0" encoding="UTF-8"?>')
+        if indent is not None:
+            file.write(b"\n")
+            indent_xml(stream, space=indent)
         file.write(tostring(stream))
+        if indent is not None:
+            file.write(b"\n")
         if return_bytes:
             return file.getvalue()
         return None
