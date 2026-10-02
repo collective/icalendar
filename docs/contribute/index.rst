@@ -13,18 +13,47 @@ You are invited to read it to help you decide whether you would enjoy being a pa
 Examples of how to contribute
 -----------------------------
 
+There are many ways you can contribute to icalendar.
+If you have questions or want to get in touch before you begin, join the `Matrix chat <https://matrix.to/#/%23icalendar:chat.pycal.org>`_.
+
+
+Code contributions
+``````````````````
+
 -   Report security issues per the `Security Policy <https://github.com/collective/icalendar/blob/main/SECURITY.md>`_.
 -   Report all other issues in the `issue tracker <https://github.com/collective/icalendar/issues>`_.
+-   Submit pull requests from your fork of the icalendar repository.
+
+
+Triage and review
+`````````````````
+
 -   Comment on and resolve issues.
 -   Triage open issues and `pull requests <https://github.com/collective/icalendar/pulls>`_.
 -   Review, comment on, and make suggestions to change a pull request.
     See the GitHub documentation `Reviewing proposed changes in a pull request <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/reviewing-proposed-changes-in-a-pull-request>`_.
--   Submit pull requests from your fork of the icalendar repository.
+-   Conduct a reproducibility review: reproduce an issue and note your findings in the issue.
+
+
+Documentation
+`````````````
+
 -   Extend the :doc:`documentation/index`.
--   Create or comment on a topic in `Discussions <https://github.com/collective/icalendar/discussions>`_.
+-   Write guides and tutorials, or fix typos and improve clarity.
+
+
+Community
+`````````
+
 -   Join a live chat with icalendar team members in the `icalendar room <https://matrix.to/#/%23icalendar:chat.pycal.org>`_ or its parent organization in the `Python Calendaring Ecosystem (PyCal) space <https://matrix.to/#/%23pycal:chat.pycal.org>`_ via `Matrix <https://matrix.org/>`_.
+-   Create or comment on a topic in `Discussions <https://github.com/collective/icalendar/discussions>`_.
 -   Write a blog post about icalendar.
 -   Share announcements on social media from :doc:`core contributors <credits>` to icalendar.
+
+
+Financial support
+`````````````````
+
 -   Sponsor development of icalendar through `Open Collective <https://opencollective.com/python-icalendar>`_.
 
 
@@ -38,7 +67,7 @@ Contributions to icalendar from people new to icalendar are welcome.
 Like most free and open source software, icalendar promotes the "free" part, meaning freedom or liberty.
 
 -   You're free to start work on issues without asking.
--   You're free to ask questions to clarify the scope of work before you start.
+-   You're free to ask questions in the `Matrix chat <https://matrix.to/#/%23icalendar:chat.pycal.org>`_ or on GitHub issues to clarify the scope of work before you start.
 -   We don't assign issues.
 -   Free other contributors from duplicating your effort by opening a pull request as soon as you can.
 
