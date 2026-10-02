@@ -1,0 +1,1 @@
+Add property accessors for ``vRecur`` rule parts (``freq``, ``until``, ``interval``, ``wkst``, ``skip``, ``rscale``, and the ``BY*`` lists). ``COUNT`` and ``UNTIL`` are mutually exclusive. @HarshRajSinghania

@@ -286,10 +286,14 @@ class vRecur(CaselessDict):
         This is the number of occurrences at which to range-bound the
         recurrence, as an alternative to specifying an ``UNTIL`` value
         (:rfc:`5545#section-3.3.10`). ``COUNT`` and ``UNTIL`` are mutually
-        exclusive; this accessor does not enforce that.
+        exclusive. If both are present, reading this raises InvalidCalendar. Setting this deletes UNTIL.
 
         The RFC 5545 grammar for COUNT is ``1*DIGIT``, so ``0`` is a valid
         value and is returned as such, not treated as missing.
+
+        ``COUNT`` and ``UNTIL`` are mutually exclusive. If both are present,
+        reading this raises :class:`InvalidCalendar`. Setting this deletes
+        ``UNTIL``.
 
         If multiple values are present, the first one is returned. If the
         value is missing or an empty sequence, ``None`` is returned.
@@ -315,6 +319,7 @@ class vRecur(CaselessDict):
                 >>> vRecur.from_ical("FREQ=DAILY").count is None
                 True
         """
+        self._exclusive_with("COUNT", "UNTIL")
         values = self.get("COUNT")
         if values is None or (isinstance(values, SEQUENCE_TYPES) and len(values) == 0):
             return None
@@ -341,11 +346,489 @@ class vRecur(CaselessDict):
             # per its digit-only grammar), and is stored as such.
             raise InvalidCalendar(f"COUNT must be >= 0, got {value}")
         self["COUNT"] = [vInt(value)]
+        self.pop("UNTIL", None)
 
     @count.deleter
     def count(self) -> None:
         """Delete the COUNT part of the recurrence rule."""
         self.pop("COUNT", None)
+
+    def _part_values(self, key: str) -> list[Any]:
+        """Return stored values for a rule part, always as a list."""
+        values = self.get(key)
+        if values is None:
+            return []
+        if isinstance(values, SEQUENCE_TYPES) and not isinstance(values, (str, bytes)):
+            return list(values)
+        return [values]
+
+    def _exclusive_with(self, key: str, other: str) -> None:
+        """Raise if both mutually exclusive parts are present."""
+        if self._part_values(key) and self._part_values(other):
+            raise InvalidCalendar(
+                f"{key} and {other} are mutually exclusive"
+            )
+
+    def _convert(self, key: str, value: Any) -> Any:
+        """Convert a stored value with the registered type, or raise InvalidCalendar."""
+        typ = self.types.get(key, vText)
+        if isinstance(value, typ):
+            return value
+        try:
+            if isinstance(value, str) and hasattr(typ, "from_ical"):
+                return typ.from_ical(value)
+            return typ(value)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise InvalidCalendar(f"{key} has an invalid value: {value!r}") from exc
+
+    def _get_single(self, key: str) -> Any | None:
+        values = self._part_values(key)
+        if not values:
+            return None
+        return self._convert(key, values[0])
+
+    def _set_single(self, key: str, value: Any) -> None:
+        if value is None:
+            self.pop(key, None)
+            return
+        self[key] = [self._convert(key, value)]
+
+    def _get_multiple(self, key: str) -> tuple[Any, ...]:
+        return tuple(self._convert(key, value) for value in self._part_values(key))
+
+    def _set_multiple(self, key: str, value: Any) -> None:
+        if value is None or (
+            isinstance(value, SEQUENCE_TYPES) and not isinstance(value, (str, bytes)) and len(value) == 0
+        ):
+            self.pop(key, None)
+            return
+        if isinstance(value, (str, bytes)) or not isinstance(value, SEQUENCE_TYPES):
+            value = [value]
+        self[key] = [self._convert(key, item) for item in value]
+
+    def _require_int_range(self, key: str, value: int, low: int, high: int, *, exclude_zero: bool = False) -> None:
+        if not isinstance(value, int) or isinstance(value, bool):
+            raise TypeError(f"{key.lower()} must be an int, got {value!r}")
+        if value < low or value > high or (exclude_zero and value == 0):
+            raise InvalidCalendar(f"{key} must be in range {low}..{high}, got {value}")
+
+    @property
+    def freq(self) -> vFrequency:
+        """The FREQ part of the recurrence rule.
+
+        FREQ must be present. The return value is a :class:`vFrequency`.
+
+        Raises:
+            InvalidCalendar: if FREQ is missing or not a known frequency.
+                FREQ cannot be deleted.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=DAILY").freq
+                'DAILY'
+        """
+        values = self._part_values("FREQ")
+        if not values:
+            raise InvalidCalendar("FREQ must be present")
+        return self._convert("FREQ", values[0])
+
+    @freq.setter
+    def freq(self, value: Any) -> None:
+        """Set the FREQ part of the recurrence rule."""
+        if value is None:
+            raise InvalidCalendar("FREQ cannot be deleted")
+        self["FREQ"] = [self._convert("FREQ", value)]
+
+    @freq.deleter
+    def freq(self) -> None:
+        """FREQ is mandatory and cannot be deleted."""
+        raise InvalidCalendar("FREQ cannot be deleted")
+
+    @property
+    def until(self) -> Any | None:
+        """The UNTIL part of the recurrence rule, as a date or datetime.
+
+        ``COUNT`` and ``UNTIL`` are mutually exclusive. If both are present,
+        reading either raises :class:`InvalidCalendar`. Setting this deletes
+        ``COUNT``. Setting ``None`` deletes the value, as does ``del``.
+
+        If multiple values are present, the first one is returned. An empty
+        sequence is treated as missing.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> import datetime
+                >>> vRecur.from_ical("FREQ=DAILY;UNTIL=19971224T000000Z").until
+                datetime.datetime(1997, 12, 24, 0, 0, tzinfo=datetime.timezone.utc)
+        """
+        self._exclusive_with("UNTIL", "COUNT")
+        value = self._get_single("UNTIL")
+        if isinstance(value, vDDDTypes):
+            return value.dt
+        return value
+
+    @until.setter
+    def until(self, value: Any) -> None:
+        """Set UNTIL, or delete it if None. Clears COUNT."""
+        if value is None:
+            del self.until
+            return
+        self._set_single("UNTIL", value)
+        self.pop("COUNT", None)
+
+    @until.deleter
+    def until(self) -> None:
+        """Delete the UNTIL part of the recurrence rule."""
+        self.pop("UNTIL", None)
+
+    @property
+    def interval(self) -> int | None:
+        """The INTERVAL part of the recurrence rule.
+
+        How often the rule repeats, in units of ``FREQ``. The RFC 5545 range
+        is a positive integer (``1`` or greater). ``0`` is rejected.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=DAILY;INTERVAL=2").interval
+                2
+        """
+        value = self._get_single("INTERVAL")
+        if value is None:
+            return None
+        if not isinstance(value, int) or isinstance(value, bool):
+            raise InvalidCalendar("INTERVAL must be an int")
+        return value
+
+    @interval.setter
+    def interval(self, value: int | None) -> None:
+        """Set INTERVAL, or delete it if None."""
+        if value is None:
+            del self.interval
+            return
+        self._require_int_range("INTERVAL", value, 1, 10**9)
+        self._set_single("INTERVAL", value)
+
+    @interval.deleter
+    def interval(self) -> None:
+        """Delete the INTERVAL part of the recurrence rule."""
+        self.pop("INTERVAL", None)
+
+    @property
+    def wkst(self) -> Any | None:
+        """The WKST part of the recurrence rule.
+
+        The day on which the workweek starts. Valid values are the two-letter
+        weekdays ``MO`` through ``SU``.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=WEEKLY;WKST=SU").wkst
+                'SU'
+        """
+        return self._get_single("WKST")
+
+    @wkst.setter
+    def wkst(self, value: Any) -> None:
+        """Set WKST, or delete it if None."""
+        self._set_single("WKST", value)
+
+    @wkst.deleter
+    def wkst(self) -> None:
+        """Delete the WKST part of the recurrence rule."""
+        self.pop("WKST", None)
+
+    @property
+    def skip(self) -> Any | None:
+        """The SKIP part of the recurrence rule (:rfc:`7529`).
+
+        Valid values are ``OMIT``, ``FORWARD``, and ``BACKWARD``.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> str(vRecur.from_ical("FREQ=YEARLY;RSCALE=GREGORIAN;SKIP=FORWARD").skip)
+                'FORWARD'
+        """
+        return self._get_single("SKIP")
+
+    @skip.setter
+    def skip(self, value: Any) -> None:
+        """Set SKIP, or delete it if None."""
+        self._set_single("SKIP", value)
+
+    @skip.deleter
+    def skip(self) -> None:
+        """Delete the SKIP part of the recurrence rule."""
+        self.pop("SKIP", None)
+
+    @property
+    def rscale(self) -> str | None:
+        """The RSCALE part of the recurrence rule (:rfc:`7529`).
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=YEARLY;RSCALE=GREGORIAN").rscale
+                'GREGORIAN'
+        """
+        value = self._get_single("RSCALE")
+        return None if value is None else str(value)
+
+    @rscale.setter
+    def rscale(self, value: str | None) -> None:
+        """Set RSCALE, or delete it if None."""
+        self._set_single("RSCALE", value)
+
+    @rscale.deleter
+    def rscale(self) -> None:
+        """Delete the RSCALE part of the recurrence rule."""
+        self.pop("RSCALE", None)
+
+    def _int_list(self, key: str, low: int, high: int, *, exclude_zero: bool = False) -> tuple[int, ...]:
+        values = self._get_multiple(key)
+        result = []
+        for value in values:
+            if not isinstance(value, int) or isinstance(value, bool):
+                raise InvalidCalendar(f"{key} must be an int")
+            if value < low or value > high or (exclude_zero and value == 0):
+                raise InvalidCalendar(f"{key} must be in range {low}..{high}, got {value}")
+            result.append(int(value))
+        return tuple(result)
+
+    def _set_int_list(self, key: str, value: Any, low: int, high: int, *, exclude_zero: bool = False) -> None:
+        if value is None or (
+            isinstance(value, SEQUENCE_TYPES) and not isinstance(value, (str, bytes)) and len(value) == 0
+        ):
+            self.pop(key, None)
+            return
+        if isinstance(value, (str, bytes)) or not isinstance(value, SEQUENCE_TYPES):
+            items = [value]
+        else:
+            items = list(value)
+        for item in items:
+            self._require_int_range(key, item, low, high, exclude_zero=exclude_zero)
+        self._set_multiple(key, items)
+
+    @property
+    def bysecond(self) -> tuple[int, ...]:
+        """The BYSECOND part. Range is 0 to 60 (leap second).
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=MINUTELY;BYSECOND=0,30").bysecond
+                (0, 30)
+        """
+        return self._int_list("BYSECOND", 0, 60)
+
+    @bysecond.setter
+    def bysecond(self, value: Any) -> None:
+        self._set_int_list("BYSECOND", value, 0, 60)
+
+    @bysecond.deleter
+    def bysecond(self) -> None:
+        self.pop("BYSECOND", None)
+
+    @property
+    def byminute(self) -> tuple[int, ...]:
+        """The BYMINUTE part. Range is 0 to 59.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=HOURLY;BYMINUTE=0,30").byminute
+                (0, 30)
+        """
+        return self._int_list("BYMINUTE", 0, 59)
+
+    @byminute.setter
+    def byminute(self, value: Any) -> None:
+        self._set_int_list("BYMINUTE", value, 0, 59)
+
+    @byminute.deleter
+    def byminute(self) -> None:
+        self.pop("BYMINUTE", None)
+
+    @property
+    def byhour(self) -> tuple[int, ...]:
+        """The BYHOUR part. Range is 0 to 23.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=DAILY;BYHOUR=9,17").byhour
+                (9, 17)
+        """
+        return self._int_list("BYHOUR", 0, 23)
+
+    @byhour.setter
+    def byhour(self, value: Any) -> None:
+        self._set_int_list("BYHOUR", value, 0, 23)
+
+    @byhour.deleter
+    def byhour(self) -> None:
+        self.pop("BYHOUR", None)
+
+    @property
+    def bymonthday(self) -> tuple[int, ...]:
+        """The BYMONTHDAY part. Range is -31 to -1 and 1 to 31.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=MONTHLY;BYMONTHDAY=1,-1").bymonthday
+                (1, -1)
+        """
+        return self._int_list("BYMONTHDAY", -31, 31, exclude_zero=True)
+
+    @bymonthday.setter
+    def bymonthday(self, value: Any) -> None:
+        self._set_int_list("BYMONTHDAY", value, -31, 31, exclude_zero=True)
+
+    @bymonthday.deleter
+    def bymonthday(self) -> None:
+        self.pop("BYMONTHDAY", None)
+
+    @property
+    def byyearday(self) -> tuple[int, ...]:
+        """The BYYEARDAY part. Range is -366 to -1 and 1 to 366.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=YEARLY;BYYEARDAY=1,100").byyearday
+                (1, 100)
+        """
+        return self._int_list("BYYEARDAY", -366, 366, exclude_zero=True)
+
+    @byyearday.setter
+    def byyearday(self, value: Any) -> None:
+        self._set_int_list("BYYEARDAY", value, -366, 366, exclude_zero=True)
+
+    @byyearday.deleter
+    def byyearday(self) -> None:
+        self.pop("BYYEARDAY", None)
+
+    @property
+    def byweekno(self) -> tuple[int, ...]:
+        """The BYWEEKNO part. Range is -53 to -1 and 1 to 53.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=YEARLY;BYWEEKNO=1,20").byweekno
+                (1, 20)
+        """
+        return self._int_list("BYWEEKNO", -53, 53, exclude_zero=True)
+
+    @byweekno.setter
+    def byweekno(self, value: Any) -> None:
+        self._set_int_list("BYWEEKNO", value, -53, 53, exclude_zero=True)
+
+    @byweekno.deleter
+    def byweekno(self) -> None:
+        self.pop("BYWEEKNO", None)
+
+    @property
+    def bymonth(self) -> tuple[Any, ...]:
+        """The BYMONTH part. Range is 1 to 12, or a leap month such as ``5L``.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> tuple(int(m) for m in vRecur.from_ical("FREQ=YEARLY;BYMONTH=1,6").bymonth)
+                (1, 6)
+        """
+        return self._get_multiple("BYMONTH")
+
+    @bymonth.setter
+    def bymonth(self, value: Any) -> None:
+        self._set_multiple("BYMONTH", value)
+
+    @bymonth.deleter
+    def bymonth(self) -> None:
+        self.pop("BYMONTH", None)
+
+    @property
+    def bysetpos(self) -> tuple[int, ...]:
+        """The BYSETPOS part. Range is -366 to -1 and 1 to 366.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1").bysetpos
+                (-1,)
+        """
+        return self._int_list("BYSETPOS", -366, 366, exclude_zero=True)
+
+    @bysetpos.setter
+    def bysetpos(self, value: Any) -> None:
+        self._set_int_list("BYSETPOS", value, -366, 366, exclude_zero=True)
+
+    @bysetpos.deleter
+    def bysetpos(self) -> None:
+        self.pop("BYSETPOS", None)
+
+    @property
+    def byday(self) -> tuple[Any, ...]:
+        """The BYDAY part. Each value is a weekday or weekdaynum (``MO``, ``-1SU``).
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=WEEKLY;BYDAY=MO,WE,FR").byday
+                ('MO', 'WE', 'FR')
+        """
+        return self._get_multiple("BYDAY")
+
+    @byday.setter
+    def byday(self, value: Any) -> None:
+        self._set_multiple("BYDAY", value)
+
+    @byday.deleter
+    def byday(self) -> None:
+        self.pop("BYDAY", None)
+
+    @property
+    def byweekday(self) -> tuple[Any, ...]:
+        """The BYWEEKDAY part, with the same behaviour as :attr:`byday`.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=WEEKLY;BYWEEKDAY=TU").byweekday
+                ('TU',)
+        """
+        return self._get_multiple("BYWEEKDAY")
+
+    @byweekday.setter
+    def byweekday(self, value: Any) -> None:
+        self._set_multiple("BYWEEKDAY", value)
+
+    @byweekday.deleter
+    def byweekday(self) -> None:
+        self.pop("BYWEEKDAY", None)
 
     def __eq__(self, other: object) -> bool:
         """self == other"""
