@@ -76,3 +76,34 @@ def test_valid_durations_still_parse():
     assert vDuration.from_ical("P15DT5H0M20S") == timedelta(days=15, seconds=18020)
     assert vDuration.from_ical("P7W") == timedelta(days=49)
     assert vDuration.from_ical("-P14D") == timedelta(-14)
+    assert vDuration.from_ical("P0D") == timedelta(0)
+    assert vDuration.from_ical("PT0S") == timedelta(0)
+
+
+@pytest.mark.parametrize("value", ["P", "PT", "+P", "-P", "+PT", "-PT"])
+def test_vDuration_from_ical_rejects_duration_with_no_component(value):
+    """A duration with no week, day, or time component is not zero.
+
+    DURATION_REGEX makes every component optional, so these strings used
+    to match and return timedelta(0). RFC 5545 requires one of dur-date,
+    dur-time, or dur-week.
+    """
+    with pytest.raises(InvalidCalendar):
+        vDuration.from_ical(value)
+
+
+def test_empty_duration_in_calendar_is_recorded_not_zero():
+    """DURATION:P is an invalid property, not a zero-length event."""
+    ics = (
+        "BEGIN:VCALENDAR\r\n"
+        "BEGIN:VEVENT\r\n"
+        "UID:1\r\n"
+        "DTSTART:20240101T000000Z\r\n"
+        "DURATION:P\r\n"
+        "END:VEVENT\r\n"
+        "END:VCALENDAR\r\n"
+    )
+    calendar = Calendar.from_ical(ics)
+    event = calendar.subcomponents[0]
+    assert any(name == "DURATION" for name, _ in event.errors)
+    assert b"DURATION:P\r\n" in calendar.to_ical()
