@@ -1,0 +1,1 @@
+Normalized the dateutil ``byweekday`` alias to the RFC ``BYDAY`` rule part during iCalendar and jCal recurrence conversion. I used AI to assist with this change. @Solaris-star
