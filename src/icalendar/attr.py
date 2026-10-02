@@ -1772,16 +1772,6 @@ def get_start_end_duration_with_validation(
     end = getattr(component, end_property, None)
     duration = component.DURATION
 
-    # RFC 5545 forbids both properties, but real-world calendars can
-    # contain both. If they describe the same end time, prefer DURATION
-    # because it is the explicit duration representation. If they disagree,
-    # the calendar is ambiguous and must still fail validation.
-    if duration is not None and end is not None:
-        if start is not None and end != start + duration:
-            msg = f"{end_property} and DURATION specify different end times."
-            raise InvalidCalendar(msg)
-        end = None
-
     # RFC 5545: When DTSTART is a date, DURATION must be of days or weeks
     if (
         start is not None
@@ -1791,6 +1781,15 @@ def get_start_end_duration_with_validation(
     ):
         msg = "When DTSTART is a date, DURATION must be of days or weeks."
         raise InvalidCalendar(msg)
+
+    # Per #1796, prefer DURATION over DTEND because that removes some errors
+    # with inconsistent timezone usage. Only do so when both represent the
+    # same end time; conflicting values are ambiguous and remain invalid.
+    if duration is not None and end is not None:
+        if start is not None and end != start + duration:
+            msg = f"{end_property} and DURATION specify different end times."
+            raise InvalidCalendar(msg)
+        end = None
 
     # RFC 5545: DTSTART and end property must be of the same type
     if start is not None and end is not None and is_date(start) != is_date(end):
