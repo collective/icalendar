@@ -276,12 +276,12 @@ class TestConsolidatedPropertyGetters:
 
     def test_get_start_end_duration_validation_errors(self) -> None:
         """Test get_start_end_duration_with_validation error cases."""
-        # When both DTEND and DURATION are present, prefer DURATION so
-        # malformed real-world calendars remain readable.
+        # When DTEND and DURATION describe the same end time, prefer
+        # DURATION so the explicit duration remains the effective value.
         event = Event()
-        event.add("UID", "test-both")
+        event.add("UID", "test-both-matching")
         event.add("DTSTART", datetime(2026, 1, 1, 12, 0))
-        event.add("DTEND", datetime(2026, 1, 1, 15, 0))
+        event.add("DTEND", datetime(2026, 1, 1, 14, 0))
         event.add("DURATION", timedelta(hours=2))
 
         start, end, duration = get_start_end_duration_with_validation(
@@ -294,6 +294,24 @@ class TestConsolidatedPropertyGetters:
         assert end is None
         assert duration == timedelta(hours=2)
         assert event.end == datetime(2026, 1, 1, 14, 0)
+
+        # If DTEND and DURATION describe different end times, the
+        # calendar is ambiguous and validation must still fail.
+        event_mismatch = Event()
+        event_mismatch.add("UID", "test-both-mismatch")
+        event_mismatch.add("DTSTART", datetime(2026, 1, 1, 12, 0))
+        event_mismatch.add("DTEND", datetime(2026, 1, 1, 15, 0))
+        event_mismatch.add("DURATION", timedelta(hours=2))
+
+        with pytest.raises(
+            InvalidCalendar, match="DTEND and DURATION specify different end times"
+        ):
+            get_start_end_duration_with_validation(
+                event_mismatch,
+                "DTSTART",
+                "DTEND",
+                "VEVENT",
+            )
 
         # Test invalid duration for date DTSTART
         event2 = Event()
