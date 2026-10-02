@@ -434,7 +434,7 @@ def test_int_parameters(int_expected, key, as_list):
     # parse bad value
     with pytest.raises(
         JCalParsingError,
-        match=f'\\[3\\]\\["{key}"\\](?:\\[0\\])? in vNonNegativeInt: The value must be an integer.',
+        match=f'\\[3\\]\\["{key}"\\](?:\\[0\\])? in v(NonNegative)?Int: The value must be an integer.',
     ):
         vRecur.from_jcal(["rrule", {}, "recur", {key: int_expected}])
 
