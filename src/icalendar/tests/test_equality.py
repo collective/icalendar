@@ -35,6 +35,12 @@ from icalendar import (
     vTime,
 )
 
+# Some calendars parsed by these tests use globally unique TZIDs, so issuing
+# the GloballyUniqueTZIDGuessed warning is the expected behavior under test.
+pytestmark = pytest.mark.filterwarnings(
+    "ignore::icalendar.error.GloballyUniqueTZIDGuessed"
+)
+
 
 def assert_equal(actual_value, expected_value):
     """Make sure both values are equal"""
