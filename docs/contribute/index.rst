@@ -14,7 +14,7 @@ Examples of how to contribute
 -----------------------------
 
 There are many ways you can contribute to icalendar.
-If you have questions or want to get in touch before you begin, join the `Matrix chat <https://matrix.to/#/%23icalendar:chat.pycal.org>`_.
+If you have questions or want to get in touch before you begin, see the :ref:`Community <contribute-community>` section below.
 
 
 Code contributions
@@ -42,10 +42,12 @@ Documentation
 -   Write guides and tutorials, or fix typos and improve clarity.
 
 
+.. _contribute-community:
+
 Community
 `````````
 
--   Join a live chat with icalendar team members in the `icalendar room <https://matrix.to/#/%23icalendar:chat.pycal.org>`_ or its parent organization in the `Python Calendaring Ecosystem (PyCal) space <https://matrix.to/#/%23pycal:chat.pycal.org>`_ via `Matrix <https://matrix.org/>`_.
+-   Join the `Python Calendaring Ecosystem (PyCal) space <https://matrix.to/#/%23pycal:chat.pycal.org>`_ via `Matrix <https://matrix.org/>`_ to access all community channels.
 -   Create or comment on a topic in `Discussions <https://github.com/collective/icalendar/discussions>`_.
 -   Write a blog post about icalendar.
 -   Share announcements on social media from :doc:`core contributors <credits>` to icalendar.
@@ -67,7 +69,7 @@ Contributions to icalendar from people new to icalendar are welcome.
 Like most free and open source software, icalendar promotes the "free" part, meaning freedom or liberty.
 
 -   You're free to start work on issues without asking.
--   You're free to ask questions in the `Matrix chat <https://matrix.to/#/%23icalendar:chat.pycal.org>`_ or on GitHub issues to clarify the scope of work before you start.
+-   You're free to ask questions to clarify the scope of work before you start.
 -   We don't assign issues.
 -   Free other contributors from duplicating your effort by opening a pull request as soon as you can.
 
