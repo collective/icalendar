@@ -50,8 +50,8 @@ from icalendar.error import (
 # chars.
 from icalendar.parser import (
     Parameters,
-    q_join,
-    q_split,
+    _q_join,
+    _q_split,
 )
 
 # Property Data Value Types
@@ -148,8 +148,8 @@ __all__ = [
     "__version__",
     "__version_tuple__",
     "is_utc",
-    "q_join",
-    "q_split",
+    "_q_join",
+    "_q_split",
     "use_pytz",
     "use_zoneinfo",
     "vAdr",

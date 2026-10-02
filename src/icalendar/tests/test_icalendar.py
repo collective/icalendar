@@ -8,6 +8,8 @@ from icalendar.parser import (
     Parameters,
     _foldline,
     dquote,
+    _q_join,
+    _q_split,
     q_join,
     q_split,
 )
@@ -279,7 +281,7 @@ class IcalendarTestCase(unittest.TestCase):
         assert dquote("name:value") == '"name:value"'
 
     def test_q_split(self):
-        assert q_split('Max,Moller,"Rasmussen, Max"') == [
+        assert _q_split('Max,Moller,"Rasmussen, Max"') == [
             "Max",
             "Moller",
             '"Rasmussen, Max"',
@@ -288,9 +290,17 @@ class IcalendarTestCase(unittest.TestCase):
     def test_q_split_bin(self):
         for s in ("X-SOMETHING=ABCDE==", ",,,"):
             for maxsplit in range(-1, 3):
-                assert q_split(s, "=", maxsplit=maxsplit) == s.split("=", maxsplit)
+                assert _q_split(s, "=", maxsplit=maxsplit) == s.split("=", maxsplit)
+    def test_q_split_deprecated(self):
+        with pytest.warns(DeprecationWarning):
+            q_split("a,b")
 
     def test_q_join(self):
-        assert (
-            q_join(["Max", "Moller", "Rasmussen, Max"]) == 'Max,Moller,"Rasmussen, Max"'
-        )
+        assert ( 
+        _q_join(["Max", "Moller", "Rasmussen, Max"]) 
+            == 'Max,Moller,"Rasmussen, Max"'
+                )
+        
+    def test_q_join_deprecated(self):
+            with pytest.warns(DeprecationWarning):
+            q_join(["a", "b"])

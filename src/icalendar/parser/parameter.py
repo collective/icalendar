@@ -51,7 +51,7 @@ def param_value(
         The formatted parameter value, escaped and quoted as needed.
     """
     if isinstance(value, SEQUENCE_TYPES):
-        return q_join(map(rfc_6868_escape, value), always_quote=always_quote)
+        return _q_join(map(rfc_6868_escape, value), always_quote=always_quote)
     if isinstance(value, str):
         return dquote(rfc_6868_escape(value), always_quote=always_quote)
     return dquote(rfc_6868_escape(value.to_ical().decode(DEFAULT_ENCODING)))
@@ -115,7 +115,7 @@ def dquote(val: str, always_quote: bool = False) -> str:
 
 
 # parsing helper
-def q_split(st: str, sep: str = ",", maxsplit: int = -1) -> list[str]:
+def _q_split(st: str, sep: str = ",", maxsplit: int = -1) -> list[str]:
     """Split a string on a separator, respecting double quotes.
 
     Splits the string on the separator character, but ignores separators that
@@ -134,12 +134,12 @@ def q_split(st: str, sep: str = ",", maxsplit: int = -1) -> list[str]:
     Examples:
         .. code-block:: pycon
 
-            >>> from icalendar.parser import q_split
-            >>> q_split('a,b,c')
+            >>> from icalendar.parser import _q_split
+            >>> _q_split('a,b,c')
             ['a', 'b', 'c']
-            >>> q_split('a,"b,c",d')
+            >>> _q_split('a,"b,c",d')
             ['a', '"b,c"', 'd']
-            >>> q_split('a;b;c', sep=';')
+            >>> _q_split('a;b;c', sep=';')
             ['a', 'b', 'c']
     """
     if maxsplit == 0:
@@ -161,9 +161,10 @@ def q_split(st: str, sep: str = ",", maxsplit: int = -1) -> list[str]:
             result.append(st[cursor:])
             break
     return result
+q_split = deprecate_for_version_8(_q_split)
 
 
-def q_join(lst: Sequence[str], sep: str = ",", always_quote: bool = False) -> str:
+def _q_join(lst: Sequence[str], sep: str = ",", always_quote: bool = False) -> str:
     """Join a list with a separator, quoting items as needed.
 
     Joins list items with the separator, applying :func:`dquote` to each item
@@ -181,13 +182,14 @@ def q_join(lst: Sequence[str], sep: str = ",", always_quote: bool = False) -> st
     Examples:
         .. code-block:: pycon
 
-            >>> from icalendar.parser import q_join
-            >>> q_join(['a', 'b', 'c'])
+            >>> from icalendar.parser import _q_join
+            >>> _q_join(['a', 'b', 'c'])
             'a,b,c'
-            >>> q_join(['plain', 'has,comma'])
+            >>> _q_join(['plain', 'has,comma'])
             'plain,"has,comma"'
     """
     return sep.join(dquote(itm, always_quote=always_quote) for itm in lst)
+q_join = deprecate_for_version_8(_q_join)
 
 
 def _single_string_parameter(func: Callable | None = None, upper=False):
@@ -350,14 +352,14 @@ class Parameters(CaselessDict):
 
         # parse into strings
         result = cls()
-        for param in q_split(st, ";"):
+        for param in _q_split(st, ";"):
             try:
-                key, val = q_split(param, "=", maxsplit=1)
+                key, val = _q_split(param, "=", maxsplit=1)
                 validate_token(key)
                 # Property parameter values that are not in quoted
                 # strings are case insensitive.
                 vals = []
-                for v in q_split(val, ","):
+                for v in _q_split(val, ","):
                     if v.startswith('"') and v.endswith('"'):
                         v2 = v.strip('"')
                         validate_param_value(v2, quoted=True)
@@ -572,8 +574,8 @@ __all__ = [
     "Parameters",
     "dquote",
     "param_value",
-    "q_join",
-    "q_split",
+    "_q_join",
+    "_q_split",
     "rfc_6868_escape",
     "rfc_6868_unescape",
     "validate_param_value",
