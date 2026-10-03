@@ -2,6 +2,7 @@ from datetime import datetime
 
 import pytest
 
+from icalendar import ICalParsingError
 from icalendar.prop import vDatetime
 
 
@@ -35,15 +36,23 @@ def test_from_ical_form_3():
     assert dt == datetime(1998, 1, 19, 2, 0, 0)
 
 
-def test_from_ical_no_t():
-    with pytest.raises(ValueError, match="Wrong datetime format: 20010101-000000"):
-        vDatetime.from_ical("20010101-000000")
+@pytest.mark.parametrize(
+    "value",
+    [
+        "20010101T000000A",
+        "20010101-000000",
+        "200101011T00000",
+    ],
+)
+def test_from_ical_invalid_datetime_raises_parsing_error(value):
+    with pytest.raises(ICalParsingError) as exc_info:
+        vDatetime.from_ical(value)
 
-
-def test_from_ical_wrong_t_position():
-    # T is at index 9 instead of 8
-    with pytest.raises(ValueError, match="Wrong datetime format: 200101011T00000"):
-        vDatetime.from_ical("200101011T00000")
+    error = exc_info.value
+    assert error.message == "Wrong datetime format"
+    assert error.value == value
+    assert error.line is None
+    assert error.line_number is None
 
 
 def test_roundtrip():
