@@ -247,7 +247,6 @@ class Event(Component):
         "RDATE",
         "RRULE",
     )
-    ignore_exceptions = True
 
     @property
     def alarms(self) -> Alarms:

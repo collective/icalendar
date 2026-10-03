@@ -113,7 +113,7 @@ class Component(CaselessDict):
             ('duration', 'repeat')
     """
 
-    ignore_exceptions: ClassVar[bool] = False
+    ignore_exceptions: ClassVar[bool] = True
     """Whether or not to ignore exceptions when parsing.
 
     If ``True``, and this component can't be parsed, then it will silently
