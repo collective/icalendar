@@ -297,6 +297,7 @@ class TestConsolidatedPropertyGetters:
 
         # If DTEND and DURATION describe different end times, the
         # calendar is ambiguous and validation must still fail.
+        # See https://github.com/collective/icalendar/issues/1796
         event_mismatch = Event()
         event_mismatch.add("UID", "test-both-mismatch")
         event_mismatch.add("DTSTART", datetime(2026, 1, 1, 12, 0))
