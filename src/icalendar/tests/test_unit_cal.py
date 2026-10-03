@@ -461,10 +461,11 @@ def test_calendar_with_parsing_errors_has_an_error_in_one_event(calendars):
     assert errors == [[], [("EXDATE", "Expected datetime, date, or time. Got: ''")]]
 
 
-def test_cal_strict_parsing(calendars):
-    """If components are damaged, we raise an exception."""
-    with pytest.raises(ValueError):
-        calendars.parsing_error_in_UTC_offset.subcomponents
+def test_cal_parsing_errors_are_ignored(calendars):
+    """If components are damaged, parsing records the error."""
+    calendar = calendars.parsing_error_in_UTC_offset
+    assert calendar.subcomponents
+    assert calendar.walk("STANDARD")[0].errors
 
 
 def test_cal_ignore_errors_parsing(calendars, vUTCOffset_ignore_exceptions):
