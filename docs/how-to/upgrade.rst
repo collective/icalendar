@@ -27,7 +27,7 @@ Malformed component content is ignored by default
 
 Components now ignore parsing exceptions by default. Malformed content lines and property values are skipped or represented as broken properties, and the exception is recorded in the component's ``errors`` attribute.
 
-If your code relies on :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>` raising ``ValueError`` for malformed content, inspect ``component.errors`` after parsing instead. To enable the previous strict behavior globally, set ``Component.ignore_exceptions = False`` before parsing and restore it afterward as needed. This is a process-wide class setting; subclassing ``Calendar`` does not change the component classes created by the parser's component factory.
+If your code relies on :meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>` raising ``ValueError`` for malformed content, inspect ``component.errors`` after parsing instead. To enable the previous strict behavior globally, set ``Component.ignore_exceptions = False`` before parsing and restore it afterward as needed. This is a process-wide class setting; subclassing ``Calendar`` does not change the component classes created by the component factory.
 
 Strict mode raises for malformed content lines and most malformed property values. The existing parser exception for malformed ``X-*`` property values remains tolerant even when ``ignore_exceptions`` is ``False``; those errors are recorded and the properties are represented as broken values.
 
