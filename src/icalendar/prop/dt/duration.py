@@ -5,7 +5,7 @@ from datetime import timedelta
 from typing import Any, ClassVar
 
 from icalendar.compatibility import Self
-from icalendar.error import InvalidCalendar, JCalParsingError
+from icalendar.error import ICalParsingError, InvalidCalendar, JCalParsingError
 from icalendar.parser import Parameters
 
 from .base import TimeBase
@@ -129,9 +129,13 @@ class vDuration(TimeBase):
     def from_ical(ical):
         match = DURATION_REGEX.match(ical)
         if not match:
-            raise InvalidCalendar(f"Invalid iCalendar duration: {ical}")
+            raise ICalParsingError(
+                "Invalid iCalendar duration",
+                value=ical,
+            )
 
         sign, weeks, days, hours, minutes, seconds = match.groups()
+
         try:
             value = timedelta(
                 weeks=int(weeks or 0),
@@ -142,9 +146,11 @@ class vDuration(TimeBase):
             )
         except OverflowError as e:
             # ``timedelta`` rejects values that are too large for its C
-            # implementation. Raise the same error as other invalid durations
-            # instead of leaking ``OverflowError`` to callers.
-            raise InvalidCalendar(f"Impractical iCalendar duration: {ical}") from e
+            # implementation.
+            raise ICalParsingError(
+                "Impractical iCalendar duration",
+                value=ical,
+            ) from e
 
         if sign == "-":
             value = -value
