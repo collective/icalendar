@@ -125,6 +125,14 @@ class JCalParsingError(InvalidCalendar):
     """Could not parse a part of the JCal."""
 
     _default_value = object()
+    path: list[str | int]
+    """The location in the jCal structure where the error occurred."""
+    parser: str
+    """The parser class or its name where the error occurred."""
+    message: str
+    """A description of the error that occurred while parsing."""
+    value: object
+    """The value which caused the error, if available."""
 
     def __init__(
         self,
