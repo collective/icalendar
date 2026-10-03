@@ -242,8 +242,10 @@ class TypesFactory(CaselessDict):
 
         # Special case: RDATE and EXDATE always use vDDDLists to support list values
         # regardless of the VALUE parameter
-        # if name in ("RDATE", "EXDATE") and value_param not in ("X-BROKEN", "UNKNOWN"):
-        #     return self["date-time-list"]
+        if name in ("RDATE", "EXDATE") and (
+            value_param is None or value_param in vDDDTypes.VALUE_MAP
+        ):
+            return self["date-time-list"]
         # Only use VALUE parameter for known properties that support multiple value
         # types (like DTSTART, DTEND, etc. which can be DATE or DATE-TIME)
         # For unknown/custom properties, always use the default type from types_map

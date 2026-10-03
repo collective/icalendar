@@ -30,14 +30,24 @@ class vUnknown(str):
     then no escaping rules can be applied, and the value must be preserved as is
     round-trip.
 
-    For :rfc:`6321`, vUnkown plays an important role in preserving the VALUE parameter.
+    For :rfc:`6321`, vUnknown plays an important role in preserving the VALUE parameter.
 
     .. code-block:: pycon
 
         >>> from icalendar import Calendar, vUnknown
         >>> cal = Calendar()
         >>> cal.add("X-PROP", vUnknown("lalala", params={"VALUE": "X-VALUE"}))
-        >>> cal.to_xcal(indent=2)
+        >>> print(cal.to_xcal(indent=2).decode("utf-8"))
+        <?xml version="1.0" encoding="UTF-8"?>
+        <icalendar xmlns="urn:ietf:params:xml:ns:icalendar-2.0">
+          <vcalendar>
+            <properties>
+              <x-prop>
+                <x-value>lalala</x-value>
+              </x-prop>
+            </properties>
+          </vcalendar>
+        </icalendar>
 
     See also:
 

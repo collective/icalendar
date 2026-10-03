@@ -79,5 +79,4 @@ The following commands writes the jCal version of the calendar to a temporary fi
 
     >>> from tempfile import NamedTemporaryFile
     >>> file = NamedTemporaryFile(suffix=".jcal")
-    >>> file.write(calendar.to_json().encode("UTF-8"))
-    358
+    >>> _ = file.write(calendar.to_json().encode("UTF-8"))
