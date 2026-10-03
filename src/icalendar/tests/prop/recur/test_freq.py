@@ -77,6 +77,24 @@ def test_freq_cannot_be_deleted():
     assert recur.freq == "DAILY"
 
 
+def test_setting_freq_accepts_registered_frequency_type():
+    recur = vRecur()
+    frequency = vFrequency.from_ical("DAILY")
+
+    recur.freq = frequency
+
+    assert isinstance(recur.freq, vRecur.types["FREQ"])
+    assert recur.freq == frequency
+
+
+def test_from_ical_matches_setting_freq():
+    parsed = vRecur.from_ical("FREQ=DAILY")
+    assigned = vRecur()
+    assigned.freq = "DAILY"
+
+    assert parsed == assigned
+
+
 def test_freq_roundtrips_through_ical():
     recur = vRecur.from_ical("FREQ=WEEKLY;COUNT=3")
     roundtripped = vRecur.from_ical(recur.to_ical().decode())

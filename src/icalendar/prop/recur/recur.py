@@ -309,7 +309,7 @@ class vRecur(CaselessDict):
             ) from e
 
     @freq.setter
-    def freq(self, value: str | None) -> None:
+    def freq(self, value: vFrequency | str) -> None:
         """Set the required frequency; ``None`` and invalid values are rejected."""
         if value is None:
             raise InvalidCalendar("FREQ is required and cannot be None")
