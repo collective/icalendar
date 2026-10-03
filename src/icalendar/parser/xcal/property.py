@@ -7,6 +7,7 @@ from icalendar.parser.parameter import Parameters
 from icalendar.parser.xcal.base import InvalidParserState, XCalParser
 from icalendar.parser.xcal.parameters import XCalParameterParser, XCalParametersParser
 from icalendar.prop.broken import vBroken
+from icalendar.prop.unknown import vUnknown
 
 if TYPE_CHECKING:
     from xml.etree.ElementTree import Element
@@ -137,20 +138,46 @@ class XCalPropertyParser(XCalParameterParser):
         """
         start = self._consumed
         child = self.child
-        value_type = self._types_factory.for_property(self.tag, child.tag)
+        property_name = self.tag
+        value_parameter = child.tag
+        value_type = self._types_factory.for_property(property_name, value_parameter)
         try:
             result = value_type.from_xcal(self)
         except XCalParsingError as e:
-            result = vBroken.from_parse_error(
-                child.get_inner_text(),
-                Parameters(),
-                self.tag.upper(),
-                value_type.__name__,
-                e,
-            )
             if self._consumed == start:
-                # if we did not progress, we should move on
-                self.done()
+                result = vUnknown.from_first_xcal_element(self)
+            else:
+                result = vBroken.from_parse_error(
+                    child.get_inner_text(),
+                    Parameters(),
+                    property_name.upper(),
+                    value_type.__name__,
+                    e,
+                )
+            # if self._consumed == start:
+            #     # if we did not progress, we should move on
+            #     self.done()
+        else:
+            expected_type = self._types_factory.types_map.get(property_name, None)
+            if (
+                expected_type is not None
+                and expected_type.lower() == value_parameter.lower()
+            ):
+                # We delete the VALUE parameter if this is the default value.
+                result.params.value = None
+            if isinstance(result, vBroken):
+                # We can get an x-broken property that we created ourselves.
+                # In this case, we set additional attributes.
+                result.property_name = property_name.upper()
+                result.expected_type = self._types_factory.for_property(
+                    property_name
+                ).__name__
+                result.parse_error = XCalParsingError(
+                    f"Could not parse {result.property_name}"
+                    f" with {result.expected_type}",
+                    None,  # avoid recursion
+                    child,
+                )
         if self._consumed == start:
             raise InvalidParserState(
                 f"Endless loop detected: {value_type} did not consume any XML."

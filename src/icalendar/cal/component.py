@@ -1147,6 +1147,12 @@ class Component(CaselessDict):
 
     @overload
     def to_xcal(
+        self,
+        destination: Element | IO[bytes],
+    ) -> None: ...
+
+    @overload
+    def to_xcal(
         self, destination: Element | IO[bytes], *, indent: int | str | None = None
     ) -> None: ...
 

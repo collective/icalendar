@@ -8,6 +8,7 @@ from icalendar.caselessdict import CaselessDict
 from icalendar.prop.adr import vAdr
 from icalendar.prop.binary import vBinary
 from icalendar.prop.boolean import vBoolean
+from icalendar.prop.broken import vBroken
 from icalendar.prop.cal_address import vCalAddress
 from icalendar.prop.categories import vCategory
 from icalendar.prop.dt import (
@@ -85,6 +86,7 @@ class TypesFactory(CaselessDict):
             vUid,
             vXmlReference,
             vUnknown,
+            vBroken,
         )
         self["binary"] = vBinary
         self["boolean"] = vBoolean
@@ -110,6 +112,7 @@ class TypesFactory(CaselessDict):
         self["unknown"] = vUnknown  # RFC 7265
         self["uid"] = vUid  # RFC 9253
         self["xml-reference"] = vXmlReference  # RFC 9253
+        self["x-broken"] = vBroken
 
     #################################################
     # Property types
@@ -239,9 +242,8 @@ class TypesFactory(CaselessDict):
 
         # Special case: RDATE and EXDATE always use vDDDLists to support list values
         # regardless of the VALUE parameter
-        if name in ("RDATE", "EXDATE"):
-            return self["date-time-list"]
-
+        # if name in ("RDATE", "EXDATE") and value_param not in ("X-BROKEN", "UNKNOWN"):
+        #     return self["date-time-list"]
         # Only use VALUE parameter for known properties that support multiple value
         # types (like DTSTART, DTEND, etc. which can be DATE or DATE-TIME)
         # For unknown/custom properties, always use the default type from types_map
@@ -253,7 +255,6 @@ class TypesFactory(CaselessDict):
             if value_type.default_value == value_param:
                 return value_type
             return self[value_param]
-
         if value_param and (value_param in self) and value_param != "IMAGE":
             return self[value_param]
 

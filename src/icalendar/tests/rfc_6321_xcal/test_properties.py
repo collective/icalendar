@@ -28,6 +28,7 @@ def test_broken_property_remains_broken(events):
     rdate = event["RDATE"]
     assert isinstance(rdate, vBroken)
     xcal = event.to_xcal()
+    print(xcal)
     xevent = Event.from_xcal(xcal)[0]
     xrdate = xevent["RDATE"]
     assert isinstance(xrdate, vBroken)
@@ -35,7 +36,12 @@ def test_broken_property_remains_broken(events):
 
     assert xrdate.property_name == "RDATE"
     assert xrdate.expected_type == "vDDDLists"
-    assert isinstance(xrdate.parse_error, XCalParsingError)
+    error = xrdate.parse_error
+    assert isinstance(error, XCalParsingError)
+    assert (
+        error.message
+        == "Could not parse RDATE with vDDDLists in /icalendar/vevent[1]/properties[1]/rdate[1]/x-broken[1]."
+    )
 
 
 def test_categories_get_parsed_properly(calendars):

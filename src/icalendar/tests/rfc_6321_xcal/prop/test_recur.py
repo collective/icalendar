@@ -339,3 +339,32 @@ def test_to_xcal_setter_multi(key, xml1, value1, xml2, value2):
     recur = vRecur()
     recur[key] = [value1, value2]
     assert_xcal_matches(recur, [key, xml1], [key, xml2])
+
+
+RECUR_VALUES = list(
+    {key: value for key, _xml, value in SINGLE_VALUE + MULTI_VALUE}.items()
+)
+RECUR_VALUES.sort()  # differen order
+
+ORDER = [key for key in vRecur.canonical_order if key != "BYWEEKDAY"]
+
+
+def test_canonical_order():
+    """The order of keys does not matter. It is always the same."""
+    recur1 = vRecur()
+    recur2 = vRecur()
+    for key, value in RECUR_VALUES:
+        recur1[key] = value
+    for key, value in reversed(RECUR_VALUES):
+        recur2[key] = value
+        assert key.upper() in ORDER, "All test keys are ordered"
+    for key in ORDER:
+        assert key in recur1, f"All canonical keys are in the test data: {key}"
+        assert key in recur2, f"All canonical keys are in the test data: {key}"
+    xml1 = to_xcal_list(recur1)
+    xml2 = to_xcal_list(recur2)
+    keys = [val[0].upper() for val in xml1[1][1:]]
+    assert keys == ORDER
+    pprint(xml1)
+    pprint(xml2)
+    assert xml1 == xml2

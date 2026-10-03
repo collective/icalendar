@@ -32,15 +32,6 @@ def test_skip_value_parameter():
     assert len(xcal_element) == 0  # No parameters elements
 
 
-def test_set_value_parameter_from_xcal():
-    """When converting from xCal into
-    iCalendar, the appropriate "VALUE" property parameter MUST be
-    included in the iCalendar property if the value type is not the
-    default value type for that property.
-    """
-    pytest.xfail("TODO")
-
-
 @pytest.mark.parametrize(("text"), [None, ""])
 def test_emtpy_parameters_from_xcal(text):
     """An empty <parameters> element should produce an empty Parameters object."""

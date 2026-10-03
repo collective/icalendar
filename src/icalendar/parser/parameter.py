@@ -192,7 +192,7 @@ def q_join(lst: Sequence[str], sep: str = ",", always_quote: bool = False) -> st
     return sep.join(dquote(itm, always_quote=always_quote) for itm in lst)
 
 
-def _single_string_parameter(func: Callable | None = None, upper=False):
+def _single_string_parameter(func: Callable | None = None, upper: bool = False):
     """Create a parameter getter/setter for a single string parameter.
 
     Parameters:
@@ -204,7 +204,7 @@ def _single_string_parameter(func: Callable | None = None, upper=False):
         if func is ``None``.
     """
 
-    def decorator(func):
+    def decorator(func: Callable) -> property:
         name = func.__name__
 
         @functools.wraps(func)

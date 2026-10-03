@@ -347,7 +347,7 @@ class vRecur(CaselessDict):
         """Add the xCal representation of this property according to :rfc:`6321`."""
         self.params.to_xcal(element)
         recur_element = SubElement(element, self.default_value.lower())
-        for key, value in self.items():
+        for key, value in self.sorted_items():
             value = value if isinstance(value, list) else [value]
             for v in value:
                 if not hasattr(v, "to_xcal"):

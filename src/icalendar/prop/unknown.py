@@ -30,6 +30,15 @@ class vUnknown(str):
     then no escaping rules can be applied, and the value must be preserved as is
     round-trip.
 
+    For :rfc:`6321`, vUnkown plays an important role in preserving the VALUE parameter.
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Calendar, vUnknown
+        >>> cal = Calendar()
+        >>> cal.add("X-PROP", vUnknown("lalala", params={"VALUE": "X-VALUE"}))
+        >>> cal.to_xcal(indent=2)
+
     See also:
 
         :rfc:`7265#section-5.1`
@@ -150,7 +159,10 @@ class vUnknown(str):
 
     def to_xcal(self, element: Element) -> None:
         """Add the xCal representation of this property according to :rfc:`6321`."""
-        element = SubElement(element, self.default_value.lower())
+        value_parameter = self.params.value
+        if value_parameter is None:
+            value_parameter = self.default_value
+        element = SubElement(element, value_parameter.lower())
         element.text = self
         self.params.to_xcal(element)
 
@@ -166,6 +178,24 @@ class vUnknown(str):
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
         element = parser.parse_tag(cls.default_value)
+        params.value = cls.default_value  # UNKNOWN is never the default type
+        return cls(element.get_xsd_string(), params=params)
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_first_xcal_element(cls, parser: XCalParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        This class is used as a fallback if no other type can parse this.
+
+        Parameters:
+            parser: The parser to use.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        element = parser.parse_tag()
+        params.value = element.tag.upper()  # set the VALUE parameter
         return cls(element.get_xsd_string(), params=params)
 
 

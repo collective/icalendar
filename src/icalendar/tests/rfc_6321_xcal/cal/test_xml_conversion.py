@@ -32,7 +32,9 @@ MINIMAL_CALENDAR_XCAL_PRETTY = b"""<?xml version="1.0" encoding="UTF-8"?>
 """
 
 
-MINIMAL_CALENDAR_XCAL_SINGLE_LINE = re.sub(b"^\\s+", b"", MINIMAL_CALENDAR_XCAL_PRETTY)
+MINIMAL_CALENDAR_XCAL_SINGLE_LINE = re.sub(
+    b"^\n*\\s+|\n+\\s*", b"", MINIMAL_CALENDAR_XCAL_PRETTY, flags=re.MULTILINE
+)
 
 
 def test_pretty_xml(calendars):
@@ -54,6 +56,7 @@ def test_single_line_xml(calendars):
     xml = cal.to_xcal(indent=None)
     assert b"\n" not in xml
     print(xml)
+    assert b"\n" not in MINIMAL_CALENDAR_XCAL_SINGLE_LINE
     print(MINIMAL_CALENDAR_XCAL_SINGLE_LINE)
     assert xml == MINIMAL_CALENDAR_XCAL_SINGLE_LINE
 
