@@ -126,6 +126,45 @@ class Component(CaselessDict):
     subcomponents: list[Component]
     """All subcomponents of this component."""
 
+    errors: list[tuple[str | None, str]]
+    """The errors that occurred while parsing this component.
+
+    Each entry is a ``(name, message)`` tuple.
+    ``name`` is the name of the property whose value could not be parsed, or
+    ``None`` if a whole content line was unparseable and therefore skipped.
+    ``message`` is the description of the problem.
+
+    Errors are recorded instead of raised only when the component sets
+    :attr:`ignore_exceptions` to ``True``, as :class:`~icalendar.cal.event.Event`
+    does, or when the property is an unregistered ``X-`` property.
+    A property with an unparseable value is kept as a
+    :class:`~icalendar.prop.broken.vBroken` value, so :meth:`to_ical` writes it
+    back unchanged.
+
+    Errors are recorded per component: this list stays empty when only a
+    subcomponent is affected. Use :meth:`walk` to collect all of them.
+
+    Example:
+
+        ..  code-block:: pycon
+
+            >>> from icalendar import Calendar, Event
+            >>> event = Calendar.example("broken_dtstart").events[0]
+            >>> event.errors
+            [('DTSTART', "Expected datetime, date, or time. Got: 'INVALID-DATE'")]
+
+        A content line that cannot be split into a name, parameters, and a value
+        is recorded without a property name:
+
+        ..  code-block:: pycon
+
+            >>> Event.example("issue_104_mark_events_broken").errors
+            [(None, "Content line could not be parsed into parts: 'X': Invalid content line")]
+
+    See also:
+        :attr:`ignore_exceptions`, :meth:`walk`, :doc:`/how-to/parse-errors`
+    """
+
     @classmethod
     def _get_component_factory(cls) -> ComponentFactory:
         """Get the component factory."""
@@ -219,10 +258,7 @@ class Component(CaselessDict):
         super().__init__(*args, **kwargs)
         # set parameters here for properties that use non-default values
         self.subcomponents: list[Component] = []  # Components can be nested.
-        self.errors: list[
-            tuple[str | None, str]
-        ] = []  # If we ignored exception(s) while
-        # parsing a property, contains error strings
+        self.errors: list[tuple[str | None, str]] = []
 
     def __bool__(self) -> bool:
         """Returns True, CaselessDict would return False if it had no items."""
