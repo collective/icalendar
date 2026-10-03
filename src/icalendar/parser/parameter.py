@@ -114,6 +114,28 @@ def dquote(val: str, always_quote: bool = False) -> str:
     return val
 
 
+def unescape_quoted_param_value(value: str) -> str:
+    r"""Unescape RFC 2445-style escapes in a quoted parameter value.
+
+    ``\"`` becomes a literal double quote and ``\\`` a literal backslash;
+    a lone backslash is kept as-is (it is a valid :rfc:`5545` QSAFE-CHAR
+    with no escape meaning). Scanned left to right so ``\\\"`` resolves
+    to ``\"``.
+    """
+    out = []
+    i = 0
+    length = len(value)
+    while i < length:
+        ch = value[i]
+        if ch == "\\" and i + 1 < length and value[i + 1] in ('"', "\\"):
+            out.append(value[i + 1])
+            i += 2
+        else:
+            out.append(ch)
+            i += 1
+    return "".join(out)
+
+
 # parsing helper
 def q_split(st: str, sep: str = ",", maxsplit: int = -1) -> list[str]:
     """Split a string on a separator, respecting double quotes.
@@ -149,9 +171,16 @@ def q_split(st: str, sep: str = ",", maxsplit: int = -1) -> list[str]:
     cursor = 0
     length = len(st)
     inquote = 0
+    escaped = False
     splits = 0
     for i, ch in enumerate(st):
-        if ch == '"':
+        if inquote and escaped:
+            # an escaped character inside a quoted section is content:
+            # ``\"`` does not close the quote (RFC 2445-style input)
+            escaped = False
+        elif inquote and ch == "\\":
+            escaped = True
+        elif ch == '"':
             inquote = not inquote
         if not inquote and ch == sep:
             result.append(st[cursor:i])
@@ -358,10 +387,15 @@ class Parameters(CaselessDict):
                 # strings are case insensitive.
                 vals = []
                 for v in q_split(val, ","):
-                    if v.startswith('"') and v.endswith('"'):
-                        v2 = v.strip('"')
-                        validate_param_value(v2, quoted=True)
-                        vals.append(rfc_6868_unescape(v2))
+                    if v.startswith('"') and v.endswith('"') and len(v) >= 2:
+                        # validate the still-escaped form: ``\"`` pairs are
+                        # removed first so the literal quote they unescape to
+                        # does not trip QUNSAFE_CHAR, while a raw unescaped
+                        # quote still does. Exactly the surrounding quotes
+                        # are removed — a trailing ``\"`` keeps its quote.
+                        v2 = v[1:-1]
+                        validate_param_value(v2.replace('\\"', ""), quoted=True)
+                        vals.append(rfc_6868_unescape(unescape_quoted_param_value(v2)))
                     else:
                         validate_param_value(v, quoted=False)
                         if strict:

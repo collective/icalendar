@@ -1,0 +1,2 @@
+Fix silently dropped properties whose quoted parameter values contain an escaped double quote, e.g. ``ATTENDEE;CN="Qu\"ote":mailto:x@y.z``. ``\"`` inside a quoted parameter value is now treated as a literal quote (:rfc:`2445`-style escaping found in real-world files) instead of closing the quoted section, which made the value-separating colon look quoted and the whole content line vanish from the parsed component.
+I used AI to assist me with this change.
