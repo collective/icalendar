@@ -447,6 +447,23 @@ def single_int_property(
     return property(fget, fset, fdel, doc)
 
 
+def _decode_single_utc_value(name: str, value: object) -> date | datetime:
+    """Extract and check one datetime value of a singleton UTC property.
+
+    Raises:
+        ValueError: If a text or unknown value cannot be parsed.
+        InvalidCalendar: If the decoded value is not a date or datetime.
+    """
+    if isinstance(value, (vText, vUnknown)):
+        # we might be in an attribute that is not typed
+        value = vDDDTypes.from_ical(value)
+    else:
+        value = getattr(value, "dt", value)
+    if not isinstance(value, date):
+        raise InvalidCalendar(f"{name} must be a datetime in UTC, not {value}")
+    return value
+
+
 def single_utc_property(name: str, docs: str) -> property:
     """Create a property to access a value of datetime in UTC timezone.
 
@@ -459,15 +476,28 @@ def single_utc_property(name: str, docs: str) -> property:
         """Get the value."""
         if name not in self:
             return None
-        dt = self.get(name)
-        if isinstance(dt, (vText, vUnknown)):
-            # we might be in an attribute that is not typed
-            value = vDDDTypes.from_ical(dt)
-        else:
-            value = getattr(dt, "dt", dt)
-        if value is None or not isinstance(value, date):
-            raise InvalidCalendar(f"{name} must be a datetime in UTC, not {value}")
-        return tzp.localize_utc(value)
+        raw = self.get(name)
+        # Code continues with less indentation
+        # Broken calendars can repeat singleton properties. Keep all values
+        # for serialization; when reading, use the earliest valid value.
+        items = raw if isinstance(raw, list) else [raw]
+        values = []
+        invalid = raw
+        # duplicate lists are tiny, so the loop overhead is negligible
+        for item in items:
+            try:
+                values.append(_decode_single_utc_value(name, item))
+            except (InvalidCalendar, ValueError):  # noqa: PERF203
+                # Report the decoded value as before, or the raw item
+                # when it cannot be decoded.
+                if isinstance(item, (vText, vUnknown)):
+                    invalid = item
+                else:
+                    invalid = getattr(item, "dt", item)
+                continue
+        if not values:
+            raise InvalidCalendar(f"{name} must be a datetime in UTC, not {invalid}")
+        return min(tzp.localize_utc(value) for value in values)
 
     def fset(self: Component, value: datetime | None):
         """Set the value"""
