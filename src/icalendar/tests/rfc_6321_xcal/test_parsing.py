@@ -1,11 +1,9 @@
 """Additional parsing tests."""
 
-from typing import TYPE_CHECKING
+from pathlib import Path
 
+from icalendar.cal.calendar import Calendar
 from icalendar.prop.text import vText
-
-if TYPE_CHECKING:
-    from icalendar.cal.calendar import Calendar
 
 
 def test_parsed_properties_are_not_a_list_if_they_have_one_value(calendars):
@@ -40,3 +38,12 @@ def test_empty_parameter(calendars):
     print(x_prop.params)
     assert "x-param" not in x_prop.params
     assert x_prop.params["x-param-2"] == "test"
+
+
+def test_from_xcal_takes_path_argument(calendars):
+    """Test that from_xcal can take a path argument."""
+    cal = calendars.rfc_7265_appendix_example_1_xcal
+    path = cal.source_path
+    assert isinstance(path, Path)
+    cal_parsed = Calendar.from_xcal(path)[0]
+    assert cal_parsed == cal
