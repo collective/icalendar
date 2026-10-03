@@ -6,7 +6,15 @@ from zoneinfo import ZoneInfo
 
 import pytest
 
-from icalendar import Component, vDate, vDatetime, vDDDLists, vDDDTypes, vTime
+from icalendar import (
+    Component,
+    ICalParsingError,
+    vDate,
+    vDatetime,
+    vDDDLists,
+    vDDDTypes,
+    vTime,
+)
 from icalendar.parser_tools import to_unicode
 from icalendar.prop import VPROPERTY
 from icalendar.timezone.tzid import is_utc
@@ -15,9 +23,24 @@ if TYPE_CHECKING:
     from icalendar.cal.event import Event
 
 
-def test_vdate_rejects_invalid_calendar_date():
-    with pytest.raises(ValueError, match="Wrong date format 20250230"):
-        vDate.from_ical("20250230")
+@pytest.mark.parametrize(
+    "value",
+    [
+        "20250230",
+        "200102",
+        "20010102T",
+        "2001 102",
+    ],
+)
+def test_vdate_rejects_invalid_calendar_date(value):
+    with pytest.raises(ICalParsingError) as exc_info:
+        vDate.from_ical(value)
+
+    error = exc_info.value
+    assert error.message == "Wrong date format"
+    assert error.value == value
+    assert error.line is None
+    assert error.line_number is None
 
 
 @pytest.fixture(
