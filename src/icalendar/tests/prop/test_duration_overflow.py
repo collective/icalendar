@@ -10,8 +10,27 @@ It is now reported as an invalid duration, like any other bad value.
 import pytest
 
 from icalendar import Calendar
-from icalendar.error import InvalidCalendar
+from icalendar.error import ICalParsingError
 from icalendar.prop import vDuration
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "kox",
+        "P1X",
+        "P1D\n",
+    ],
+)
+def test_vduration_invalid_ical_raises_parsing_error(value):
+    with pytest.raises(ICalParsingError) as exc_info:
+        vDuration.from_ical(value)
+
+    error = exc_info.value
+    assert error.message == "Invalid iCalendar duration"
+    assert error.value == value
+    assert error.line is None
+    assert error.line_number is None
 
 
 @pytest.mark.parametrize(
@@ -23,9 +42,13 @@ from icalendar.prop import vDuration
     ],
 )
 def test_vDuration_from_ical_rejects_overflowing_duration(value):
-    """An overflowing duration raises InvalidCalendar, not OverflowError."""
-    with pytest.raises(InvalidCalendar):
+    with pytest.raises(ICalParsingError) as exc_info:
         vDuration.from_ical(value)
+
+    error = exc_info.value
+    assert error.message == "Impractical iCalendar duration"
+    assert error.value == value
+    assert isinstance(error.__cause__, OverflowError)
 
 
 def test_overflowing_duration_is_a_value_error():

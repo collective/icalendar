@@ -5,7 +5,7 @@ from datetime import datetime, time, timezone, tzinfo
 from typing import Any, ClassVar
 
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError
+from icalendar.error import ICalParsingError, JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.timezone import tzp
 from icalendar.timezone.tzid import is_utc
@@ -156,16 +156,18 @@ class vTime(TimeBase):
     def from_ical(ical: str, timezone: str | None | tzinfo = None) -> time:
         """Convert an ical string into a time.
 
-        This method supports parsing the three forms of time values defined in :rfc:`5545#section-3.3.12`:
+        This method supports parsing the three forms of time values defined in
+        :rfc:`5545#section-3.3.12`:
             - Local time (floating)
             - UTC time
             - Local time with time zone reference
 
         Returns:
-            A :class:`datetime.time` object representing the parsed time, with timezone information if applicable.
+            A :class:`datetime.time` object representing the parsed time, with
+            timezone information if applicable.
 
         Raises:
-            ValueError: if the provided string cannot be parsed as a time.
+            ~error.ICalParsingError: If the provided value cannot be parsed as a time.
         """
         tzinfo = None
         if isinstance(timezone, str):
@@ -175,25 +177,41 @@ class vTime(TimeBase):
 
         if isinstance(ical, bytes):
             ical = ical.decode()
+
+        original_ical = ical
+
         # Extract the value part if parameters are present per
         # https://datatracker.ietf.org/doc/html/rfc5545.html#section-3.3.5
         # Form #3: TZID=America/New_York:083000
         ical = ical.rpartition(":")[2]
+
         if utc := ical.endswith("Z"):
             ical = ical[:-1]
+
         # time = time-hour time-minute time-second [time-utc], six digits,
         # per https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.12
         if len(ical) != 6 or not ical.isascii() or not ical.isdigit():
-            raise ValueError(f"Expected time, got: {ical}")
+            raise ICalParsingError(
+                "Expected time",
+                value=original_ical,
+            )
+
         try:
             timetuple = (int(ical[:2]), int(ical[2:4]), int(ical[4:6]))
+
             if tzinfo:
                 return tzp.localize(time(*timetuple), tzinfo)
+
             if utc:
                 return tzp.localize_utc(time(*timetuple))
+
             return time(*timetuple)
+
         except Exception as e:
-            raise ValueError(f"Expected time, got: {ical}") from e
+            raise ICalParsingError(
+                "Expected time",
+                value=original_ical,
+            ) from e
 
     @classmethod
     def examples(cls) -> list[Self]:
