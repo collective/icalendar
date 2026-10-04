@@ -44,6 +44,7 @@ from icalendar.attr import (
     set_duration_with_locking,
     set_end_with_locking,
     set_start_with_locking,
+    single_utc_property,
     status_property,
     summary_property,
     uid_property,
@@ -89,13 +90,13 @@ class Todo(Component):
             >>> from icalendar import Todo, STATUS
             >>> todo = Todo.example()
             >>> todo["PERCENT-COMPLETE"] = 100
-            >>> todo["COMPLETED"] = datetime(2007, 5, 1, 12, tzinfo=timezone.utc)
+            >>> todo.COMPLETED = datetime(2007, 5, 1, 12, tzinfo=timezone.utc)
             >>> todo.status = STATUS.COMPLETED
             >>> print(todo.to_ical().decode())
             BEGIN:VTODO
             CATEGORIES:FAMILY,FINANCE
             CLASS:CONFIDENTIAL
-            COMPLETED:2007-05-01 12:00:00+00:00
+            COMPLETED:20070501T120000Z
             DTSTAMP:20070313T123432Z
             DUE;VALUE=DATE:20070501
             PERCENT-COMPLETE:100
@@ -165,6 +166,24 @@ class Todo(Component):
         (datetime, date),
         date,
         'The "DUE" property for a "VTODO" calendar component specifies the non-inclusive end of the Todo.',
+    )
+    COMPLETED = single_utc_property(
+        "COMPLETED",
+        """The UTC datetime when the to-do was completed, per :rfc:`5545#section-3.8.2.1`.
+
+    This property records when a ``VTODO`` reached completion.
+    The value is always in UTC.
+
+    Example:
+        .. code-block:: pycon
+
+            >>> from datetime import datetime, timezone
+            >>> from icalendar import Todo
+            >>> todo = Todo()
+            >>> todo.COMPLETED = datetime(2024, 6, 1, 12, 0, 0, tzinfo=timezone.utc)
+            >>> todo.COMPLETED
+            datetime.datetime(2024, 6, 1, 12, 0, tzinfo=ZoneInfo(key='UTC'))
+    """,
     )
     DURATION = property(
         property_get_duration,
@@ -336,6 +355,7 @@ class Todo(Component):
         classification: CLASS | None = None,
         color: str | None = None,
         comments: list[str] | str | None = None,
+        completed: date | datetime | None = None,
         concepts: CONCEPTS_TYPE_SETTER = None,
         contacts: list[str] | str | None = None,
         conferences: list[Conference] | None = None,
@@ -372,6 +392,7 @@ class Todo(Component):
             classification: The :attr:`classification` of the todo.
             color: The :attr:`color` of the todo.
             comments: The :attr:`~icalendar.Component.comments` of the todo.
+            completed: The :attr:`COMPLETED` timestamp of the todo.
             concepts: The :attr:`~icalendar.Component.concepts` of the todo.
             contacts: The :attr:`contacts` of the todo.
             conferences: The :attr:`conferences` of the todo.
@@ -423,6 +444,7 @@ class Todo(Component):
         todo.uid = uid if uid is not None else uuid.uuid4()
         todo.start = start
         todo.end = end
+        todo.COMPLETED = completed
         todo.color = color
         todo.categories = categories
         todo.sequence = sequence
