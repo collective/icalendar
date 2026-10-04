@@ -16,12 +16,6 @@ import pytest
 from icalendar.error import GloballyUniqueTZIDGuessed
 from icalendar.timezone import tzid_from_tzinfo
 
-# These tests parse calendars whose globally unique TZIDs make icalendar
-# guess the timezone, so issuing the warning is the expected behavior.
-pytestmark = pytest.mark.filterwarnings(
-    "ignore::icalendar.error.GloballyUniqueTZIDGuessed"
-)
-
 # UID -> (expected Olson name, expected UTC offset on 2020-04-26) for each event
 # in ``calendars/issue_313_globally_unique_tzid.ics``.
 EVENTS = {
