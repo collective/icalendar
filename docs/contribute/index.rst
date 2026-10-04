@@ -110,8 +110,8 @@ If you use AI in your work:
         Prompt: Generate tests for compliance with RFC123 messages.
         Output: (this commit)
 
-    You can automate this by using the :program:`ai-prompt-auto-commit` pre-commit hook.
-    See :ref:`AI prompt automation <pre-commit-ai-prompts>` for setup instructions.
+    You can automate this by using the :program:`ai-prompt-auto-commit` prek hook.
+    See :ref:`AI prompt automation <prek-ai-prompts>` for setup instructions.
 -   You must disclose that you used AI in your change log entry.
     This may be a brief disclosure, not as detailed as the git commit messages, such as, "I used AI to assist me with this change."
 -   You must take responsibility for the output, including reviewing and validating the output for accuracy and ensuring it resolves an issue.
