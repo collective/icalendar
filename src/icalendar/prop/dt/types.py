@@ -44,6 +44,8 @@ class vDDDTypes(TimeBase):
     def __init__(self, dt: DT_TYPE, params: dict[str, Any] | None = None) -> None:
         if params is None:
             params = {}
+        if isinstance(dt, vDDDTypes):
+            dt = dt.dt
         if isinstance(dt, Sequence) and len(dt) == 2 and dt[1] is None:
             # ``(dt, None)`` (tuple or list) is the rdates form of a single date;
             # the ``[1] is None`` guard skips strings and real two-value pairs (#1439).

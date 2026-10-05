@@ -411,6 +411,121 @@ class vRecur(CaselessDict):
         """Delete the WKST part of the recurrence rule."""
         self.pop("WKST", None)
 
+    @property
+    def interval(self) -> int | None:
+        """The INTERVAL part of the recurrence rule.
+
+        This defines the interval between occurrences (:rfc:`5545#section-3.3.10`).
+        The value is a positive integer (>= 1). When omitted, RFC 5545 defines
+        the default as 1; this accessor returns ``None`` so callers can distinguish
+        an omitted value from an explicit one.
+
+        If multiple values are present, the first one is returned. If the
+        value is missing or an empty sequence, ``None`` is returned.
+
+        Setting this to ``None`` deletes the value, as does ``del``.
+
+        Raises:
+            InvalidCalendar: if a value is present but cannot be read as an int,
+                or if setting a value < 1.
+            TypeError: when setting a value that is not an int.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=DAILY;INTERVAL=2").interval
+                2
+                >>> vRecur.from_ical("FREQ=DAILY").interval is None
+                True
+        """
+        values = self.get("INTERVAL")
+        if values is None or (isinstance(values, SEQUENCE_TYPES) and len(values) == 0):
+            return None
+        value = values[0] if isinstance(values, SEQUENCE_TYPES) else values
+        try:
+            val_int = int(value)
+        except (TypeError, ValueError) as e:
+            raise InvalidCalendar("INTERVAL must be an int") from e
+        if val_int < 1:
+            raise InvalidCalendar(f"INTERVAL must be >= 1, got {val_int}")
+        return val_int
+
+    @interval.setter
+    def interval(self, value: int | None) -> None:
+        """Set the INTERVAL part of the recurrence rule, or delete it if None."""
+        if value is None:
+            del self.interval
+            return
+        if not isinstance(value, int) or isinstance(value, bool):
+            raise TypeError(f"interval must be an int, got {value!r}")
+        if value < 1:
+            raise InvalidCalendar(f"INTERVAL must be >= 1, got {value}")
+        self["INTERVAL"] = [vInt(value)]
+
+    @interval.deleter
+    def interval(self) -> None:
+        """Delete the INTERVAL part of the recurrence rule."""
+        self.pop("INTERVAL", None)
+
+    @property
+    def until(self) -> Any | None:
+        """The UNTIL part of the recurrence rule.
+
+        This defines a DATE or DATE-TIME value that bounds the recurrence
+        set in an inclusive manner (:rfc:`5545#section-3.3.10`).
+
+        If multiple values are present, the first one is returned. If the
+        value is missing or an empty sequence, ``None`` is returned.
+
+        Setting this to ``None`` deletes the value, as does ``del``.
+
+        Raises:
+            InvalidCalendar: if a value is present but cannot be parsed as a date/datetime.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> import datetime
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=DAILY;UNTIL=20261231").until
+                datetime.date(2026, 12, 31)
+                >>> vRecur.from_ical("FREQ=DAILY").until is None
+                True
+        """
+        values = self.get("UNTIL")
+        if values is None or (isinstance(values, SEQUENCE_TYPES) and len(values) == 0):
+            return None
+        value = values[0] if isinstance(values, SEQUENCE_TYPES) else values
+        if isinstance(value, vDDDTypes):
+            return value.dt
+        if hasattr(value, "dt"):
+            return value.dt
+        try:
+            return vDDDTypes.from_ical(value).dt if isinstance(value, str) else value
+        except (TypeError, ValueError) as e:
+            raise InvalidCalendar("UNTIL must be a date or datetime") from e
+
+    @until.setter
+    def until(self, value: Any | None) -> None:
+        """Set the UNTIL part of the recurrence rule, or delete it if None."""
+        if value is None:
+            del self.until
+            return
+        if isinstance(value, vDDDTypes):
+            val_obj = value
+        else:
+            try:
+                val_obj = vDDDTypes(value)
+            except (TypeError, ValueError) as e:
+                raise InvalidCalendar("UNTIL must be a date or datetime") from e
+        self["UNTIL"] = [val_obj]
+
+    @until.deleter
+    def until(self) -> None:
+        """Delete the UNTIL part of the recurrence rule."""
+        self.pop("UNTIL", None)
+
     def __eq__(self, other: object) -> bool:
         """self == other"""
         if not isinstance(other, vRecur):

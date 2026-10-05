@@ -1,0 +1,1 @@
+Added ``interval`` and ``until`` property accessors to :class:`~icalendar.prop.recur.recur.vRecur` for getting, setting, and deleting the ``INTERVAL`` and ``UNTIL`` parts of a recurrence rule. I used AI to assist me with this change. @apurva1094
