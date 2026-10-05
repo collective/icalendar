@@ -718,7 +718,9 @@ class Alarm(Component):
         elif attendees is None:
             attendees = []
         cleaned_attendees = [
-            a for a in attendees if a is not None and (not isinstance(a, str) or a.strip())
+            a
+            for a in attendees
+            if a is not None and (not isinstance(a, str) or a.strip())
         ]
         if not summary:
             raise InvalidCalendar("EMAIL alarm requires a summary")
