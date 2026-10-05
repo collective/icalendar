@@ -1,0 +1,1 @@
+Converted the docstring of ``Timezone._make_unique_tzname`` to Google style and added type hints. @zexi25
