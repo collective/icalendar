@@ -132,6 +132,10 @@ class vDuration(TimeBase):
             raise InvalidCalendar(f"Invalid iCalendar duration: {ical}")
 
         sign, weeks, days, hours, minutes, seconds = match.groups()
+        if not any((weeks, days, hours, minutes, seconds)):
+            # RFC 5545 requires at least one date or time component after
+            # "P"; bare "P" and "PT" otherwise parse as a zero duration.
+            raise InvalidCalendar(f"Invalid iCalendar duration: {ical}")
         try:
             value = timedelta(
                 weeks=int(weeks or 0),

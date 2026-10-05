@@ -3,6 +3,8 @@ from datetime import date, datetime, time, timedelta
 
 import pytest
 
+from icalendar.error import InvalidCalendar
+
 from icalendar.parser import Parameters
 
 
@@ -95,7 +97,29 @@ class TestProp(unittest.TestCase):
         # calling to_ical twice should result in same output
         duration = vDuration(timedelta(days=-1, hours=-5))
         assert duration.to_ical() == b"-P1DT5H"
+
+    def test_prop_vDuration_empty_duration_is_invalid(self):
+        from icalendar.prop import vDuration
+
+        # RFC 5545 requires at least one date or time component after "P"
+        for empty in ("P", "PT", "+P", "-PT"):
+            with pytest.raises(InvalidCalendar):
+                vDuration.from_ical(empty)
+        # zero-valued components are fine
+        assert vDuration.from_ical("PT0S") == timedelta(0)
+        assert vDuration.from_ical("P0D") == timedelta(0)
         assert duration.to_ical() == b"-P1DT5H"
+
+    def test_prop_vDuration_empty_duration_is_invalid(self):
+        from icalendar.prop import vDuration
+
+        # RFC 5545 requires at least one date or time component after "P"
+        for empty in ("P", "PT", "+P", "-PT"):
+            with pytest.raises(InvalidCalendar):
+                vDuration.from_ical(empty)
+        # zero-valued components are fine
+        assert vDuration.from_ical("PT0S") == timedelta(0)
+        assert vDuration.from_ical("P0D") == timedelta(0)
 
     def test_prop_vWeekday(self):
         from icalendar.prop import vWeekday
