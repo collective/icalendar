@@ -9,7 +9,7 @@ from datetime import date, datetime, time, timedelta, timezone
 from io import BytesIO
 from pathlib import Path
 from typing import IO, TYPE_CHECKING, Any, BinaryIO, ClassVar, Literal, overload
-from xml.etree.ElementTree import Element, SubElement, tostring
+from xml.etree.ElementTree import Element, ElementTree, SubElement
 from xml.etree.ElementTree import indent as indent_xml
 
 from icalendar import config
@@ -1230,7 +1230,7 @@ class Component(CaselessDict):
         if indent is not None:
             file.write(b"\n")
             indent_xml(stream, space=indent)
-        file.write(tostring(stream))
+        ElementTree(stream).write(file, "utf-8", xml_declaration=False, method="xml")
         if indent is not None:
             file.write(b"\n")
         if return_bytes:
