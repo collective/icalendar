@@ -1,6 +1,6 @@
 import pytest
 
-from icalendar import Calendar, Component
+from icalendar import Component, Event
 
 
 def test_ignore_exceptions_on_broken_events_issue_104(events):
@@ -16,42 +16,20 @@ def test_ignore_exceptions_on_broken_events_issue_104(events):
 
 
 def test_ignore_exceptions_on_broken_calendars_issue_104(calendars):
-    """Issue #104 - line parsing error in a VCALENDAR is recorded."""
+    """Issue #104 - changed to record errors instead of raising for issue #399.
+
+    https://github.com/collective/icalendar/issues/399
+    """
     calendar = calendars.issue_104_broken_calendar
     assert calendar.errors == [
         (None, "Content line could not be parsed into parts: 'X': Invalid content line")
     ]
 
 
-def test_issue_399_malformed_lines_are_handled_consistently():
+def test_issue_399_malformed_lines_are_handled_consistently(calendars):
     """Malformed content lines are skipped and recorded for every component."""
-    bare_x = b"""BEGIN:VCALENDAR\r
-VERSION:2.0\r
-METHOD:PUBLISH\r
-BEGIN:VEVENT\r
-DTSTART:20140401T000000Z\r
-DTEND:20140401T010000Z\r
-DTSTAMP:20140401T000000Z\r
-SUMMARY:Broken Eevnt\r
-CLASS:PUBLIC\r
-STATUS:CONFIRMED\r
-TRANSP:OPAQUE\r
-END:VEVENT\r
-X\r
-END:VCALENDAR\r
-"""
-    malformed_x_property = b"""BEGIN:VCALENDAR\r
-BEGIN:VEVENT\r
-DTSTART:20150905T090000Z\r
-DTEND:20150905T100000Z\r
-UID:123\r
-X-APPLE-RADIUS=49.91307046514149\r
-END:VEVENT\r
-END:VCALENDAR\r
-"""
-
-    bare_x_calendar = Calendar.from_ical(bare_x)
-    malformed_x_property_calendar = Calendar.from_ical(malformed_x_property)
+    bare_x_calendar = calendars.issue_104_broken_calendar
+    malformed_x_property_calendar = calendars.issue_399_malformed_x_property
 
     assert bare_x_calendar.errors == [
         (None, "Content line could not be parsed into parts: 'X': Invalid content line")
@@ -70,12 +48,40 @@ END:VCALENDAR\r
     assert b"X-APPLE-RADIUS" not in malformed_x_property_calendar.to_ical()
 
 
-def test_strict_parsing_can_be_enabled_globally(monkeypatch):
+def test_strict_parsing_can_be_enabled_globally(calendars, monkeypatch):
     """The global strict setting still raises for malformed content lines."""
     monkeypatch.setattr(Component, "ignore_exceptions", False)
 
-    with pytest.raises(ValueError, match="Invalid content line"):
-        Calendar.from_ical(b"BEGIN:VCALENDAR\r\nX\r\nEND:VCALENDAR\r\n")
+    with pytest.raises(
+        ValueError,
+        match=r"^Content line could not be parsed into parts: 'X': Invalid content line$",
+    ):
+        calendars.issue_104_broken_calendar.subcomponents
+
+
+def test_event_override_preserves_tolerant_parsing(calendars, monkeypatch):
+    """Events remain tolerant unless their explicit override is changed."""
+    monkeypatch.setattr(Component, "ignore_exceptions", False)
+
+    parsed = calendars.issue_399_malformed_x_property
+    assert parsed.walk("VEVENT")[0].errors == [
+        (
+            None,
+            (
+                "Content line could not be parsed into parts: "
+                "'X-APPLE-RADIUS=49.91307046514149': "
+                "X-APPLE-RADIUS=49.91307046514149"
+            ),
+        )
+    ]
+    assert b"X-APPLE-RADIUS" not in parsed.to_ical()
+
+    monkeypatch.setattr(Event, "ignore_exceptions", False)
+    with pytest.raises(
+        ValueError,
+        match=r"^Content line could not be parsed into parts: 'X-APPLE-RADIUS=49\.91307046514149': X-APPLE-RADIUS=49\.91307046514149$",
+    ):
+        calendars.issue_399_malformed_x_property.subcomponents
 
 
 def test_rdate_dosent_become_none_on_invalid_input_issue_464(events):

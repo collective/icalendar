@@ -116,8 +116,14 @@ class Component(CaselessDict):
     ignore_exceptions: ClassVar[bool] = True
     """Whether or not to ignore exceptions when parsing.
 
-    If ``True``, and this component can't be parsed, then it will silently
-    ignore it, rather than let the exception propagate upwards.
+    If ``True``, malformed content is skipped or represented as broken
+    properties, and parsing exceptions are recorded in the component's
+    ``errors`` attribute instead of being raised.
+    See :doc:`/how-to/parse-errors`.
+
+    .. versionchanged:: 8.0.0
+        Defaults to ``True`` for all components. See the
+        :ref:`upgrade guide <upgrade-8.0.0-parsing-errors>` for strict parsing.
     """
 
     types_factory: ClassVar[TypesFactory] = TypesFactory.instance()

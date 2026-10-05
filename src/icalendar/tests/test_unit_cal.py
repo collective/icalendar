@@ -462,10 +462,30 @@ def test_calendar_with_parsing_errors_has_an_error_in_one_event(calendars):
 
 
 def test_cal_parsing_errors_are_ignored(calendars):
-    """If components are damaged, parsing records the error."""
+    """Changed to record errors instead of raising for issue #399.
+
+    https://github.com/collective/icalendar/issues/399
+    """
     calendar = calendars.parsing_error_in_UTC_offset
-    assert calendar.subcomponents
-    assert calendar.walk("STANDARD")[0].errors
+    timezone = calendar.subcomponents[0]
+    standard = timezone.subcomponents[0]
+    assert timezone.name == "VTIMEZONE"
+    assert standard.name == "STANDARD"
+    assert calendar.errors == []
+    assert timezone.errors == []
+    assert standard.errors == [
+        ("TZOFFSETFROM", "Offset must be less than 24 hours, was +5744"),
+        ("TZOFFSETTO", "Offset must be less than 24 hours, was +5744"),
+    ]
+
+
+def test_cal_strict_parsing(calendars, monkeypatch):
+    """Issue #399 - strict parsing still raises for a damaged UTC offset."""
+    monkeypatch.setattr(Component, "ignore_exceptions", False)
+    with pytest.raises(
+        ValueError, match=r"^Offset must be less than 24 hours, was \+5744$"
+    ):
+        calendars.parsing_error_in_UTC_offset.subcomponents
 
 
 def test_cal_ignore_errors_parsing(calendars, vUTCOffset_ignore_exceptions):
