@@ -125,6 +125,8 @@ class Component(CaselessDict):
     """
 
     types_factory: ClassVar[TypesFactory] = TypesFactory.instance()
+    """The factory class to parse and wrap properties."""
+
     _components_factory: ClassVar[ComponentFactory | None] = None
 
     subcomponents: list[Component]
@@ -1176,6 +1178,29 @@ class Component(CaselessDict):
             - ``None`` if an argument is passed
             - :class:`bytes` if called with no arguments
 
+        This example shows how to convert an empty calendar to XML:
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Calendar
+            >>> cal = Calendar.new()
+            >>> print(cal.to_xcal(indent=2).decode())
+            <?xml version="1.0" encoding="UTF-8"?>
+            <icalendar xmlns="urn:ietf:params:xml:ns:icalendar-2.0">
+              <vcalendar>
+                <properties>
+                  <version>
+                    <text>2.0</text>
+                  </version>
+                  <prodid>
+                    <text>-//collective//icalendar//7.0.0//EN</text>
+                  </prodid>
+                  <uid>
+                    <text>d755cef5-2311-46ed-a0e1-6733c9e15c63</text>
+                  </uid>
+                </properties>
+              </vcalendar>
+            </icalendar>
         """
         from io import BytesIO
 
@@ -1239,9 +1264,9 @@ class Component(CaselessDict):
             The parsed component.
 
         Raises:
-            ~icalendar.error.XCalParsingError: If the provided xCal XML is invalid.
+            ~icalendar.error.XCalParsingError: If the provided XML does not conform with :rfc:`6321`.
             TypeError: If the wrong type is passed to ``xcal``.
-            xml.etree.ElementTree.ParseError: If the provided XML is invalid.
+            xml.etree.ElementTree.ParseError: If the provided data is not valid XML.
 
         Example:
 
