@@ -30,3 +30,12 @@ def test_delete_refids_with_none(component: Component):
     component.refids = ["123"]
     component.refids = None
     assert component.refids == []
+
+
+def test_append_to_refids_on_new_component():
+    """Issue #1722: Appending to list properties on a new component persists in component."""
+    comp = Component()
+    comp.refids.append("refid-1")
+    assert "REFID" in comp
+    assert comp.refids == ["refid-1"]
+    assert "refid-1" in comp.refids

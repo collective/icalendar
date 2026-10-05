@@ -2438,10 +2438,11 @@ def _get_related_to(self: Component) -> list[vText | vUri | vUid]:
     See also :class:`icalendar.enums.RELTYPE`.
 
     """
-    result = self.get("RELATED-TO", [])
-    if not isinstance(result, list):
-        return [result]
-    return result
+    if "RELATED-TO" not in self:
+        self["RELATED-TO"] = []
+    elif not isinstance(self["RELATED-TO"], list):
+        self["RELATED-TO"] = [self["RELATED-TO"]]
+    return self["RELATED-TO"]
 
 
 def _set_related_to(self: Component, values: RELATED_TO_TYPE_SETTER) -> None:
@@ -2501,10 +2502,11 @@ def _get_concepts(self: Component) -> list[vUri]:
 
         :attr:`icalendar.prop.categories.vCategory`
     """
-    concepts = self.get("CONCEPT", [])
-    if not isinstance(concepts, list):
-        concepts = [concepts]
-    return concepts
+    if "CONCEPT" not in self:
+        self["CONCEPT"] = []
+    elif not isinstance(self["CONCEPT"], list):
+        self["CONCEPT"] = [self["CONCEPT"]]
+    return self["CONCEPT"]
 
 
 CONCEPTS_TYPE_SETTER: TypeAlias = list[vUri | str] | str | vUri | None
@@ -2534,10 +2536,11 @@ def multi_string_property(name: str, doc: str):
 
     def fget(self: Component) -> list[str]:
         """Get the values of a multi-string property."""
-        value = self.get(name, [])
-        if not isinstance(value, list):
-            value = [value]
-        return value
+        if name not in self:
+            self[name] = []
+        elif not isinstance(self[name], list):
+            self[name] = [self[name]]
+        return self[name]
 
     def fset(self: Component, value: list[str] | str | None) -> None:
         """Set the values of a multi-string property."""
