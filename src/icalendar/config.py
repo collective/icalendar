@@ -1,5 +1,7 @@
 """Runtime configuration for icalendar."""
 
+from xml.etree.ElementTree import Element, ElementTree, parse
+
 MAX_ALARM_REPEAT: int = 10_000
 """Cap on additional triggers expanded from a ``VALARM`` ``REPEAT`` property.
 
@@ -25,3 +27,38 @@ def _clamp_repeat(n: int) -> int:
     if MAX_ALARM_REPEAT < 0:
         return n
     return min(n, MAX_ALARM_REPEAT)
+
+
+def parse_xml(source) -> ElementTree[Element[str]]:
+    """Parse xml from source.
+
+    This wraps :func:`xml.etree.ElementTree.parse`.
+    It makes the XML parser configurable.
+
+    If you would like to use another XML parser,
+    you can replace this function.
+
+    .. seealso::
+
+        :ref:`safe-xml-parsing`
+
+    Parameters:
+        source: A file-like object to with a ``read`` method.
+
+    Returns:
+        The parsed XML tree.
+
+    Raises:
+        TypeError: If the wrong type is passed to ``source``.
+
+    """
+    if not hasattr(source, "read"):
+        raise TypeError("Expected source.read() method.")
+    # S314 Using `xml` to parse untrusted data is known to be vulnerable to XML attacks
+    return parse(source)  # noqa: S314
+
+
+__all__ = [
+    "MAX_ALARM_REPEAT",
+    "parse_xml",
+]

@@ -9,9 +9,10 @@ from datetime import date, datetime, time, timedelta, timezone
 from io import BytesIO
 from pathlib import Path
 from typing import IO, TYPE_CHECKING, Any, BinaryIO, ClassVar, Literal, overload
-from xml.etree.ElementTree import Element, SubElement, parse, tostring
+from xml.etree.ElementTree import Element, SubElement, tostring
 from xml.etree.ElementTree import indent as indent_xml
 
+from icalendar import config
 from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
@@ -1273,9 +1274,7 @@ class Component(CaselessDict):
         elif isinstance(xcal, bytes):
             xcal = BytesIO(xcal)
         if hasattr(xcal, "read"):
-            # TODO: Safe parsing
-            # S314 Using `xml` to parse untrusted data is known to be vulnerable to XML attacks; use `defusedxml` equivalents
-            element = parse(xcal).getroot()  # noqa: S314
+            element = config.parse_xml(xcal).getroot()
         elif isinstance(xcal, Element):
             element = xcal
         else:
