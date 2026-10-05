@@ -347,3 +347,23 @@ def test_parameters_only_serialize_if_they_have_content():
     parameters = Parameters()
     xcal = to_xcal(parameters, wrap=True)
     assert len(xcal) == 0
+
+
+def test_parameters_are_serialized_in_order():
+    parameters = Parameters(
+        {
+            "delegated-to": EMAIL_2,
+            "delegated-from": EMAIL_1,
+            "MEMBER": EMAIL_1,
+            "cn": "John",
+        }
+    )
+    xcal = to_xcal(parameters)
+    result = xml2list(xcal)
+    assert result == [
+        "parameters",
+        ["cn", ["text", "John"]],
+        ["delegated-from", ["cal-address", EMAIL_1]],
+        ["delegated-to", ["cal-address", EMAIL_2[0]], ["cal-address", EMAIL_2[1]]],
+        ["member", ["cal-address", EMAIL_1]],
+    ]

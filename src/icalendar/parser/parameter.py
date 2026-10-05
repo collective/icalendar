@@ -588,7 +588,7 @@ class Parameters(CaselessDict):
 
         result = Element("parameters")
         factory = TypesFactory.instance()
-        for key in self:
+        for key in sorted(self):
             if key == "VALUE":
                 continue
             value_factory = factory.for_property(key)
