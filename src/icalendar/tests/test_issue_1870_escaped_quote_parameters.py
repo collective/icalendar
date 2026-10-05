@@ -322,3 +322,94 @@ class TestEventParsing:
         reparsed = Event.from_ical(out)
         assert reparsed.get("ATTENDEE") is not None
         assert reparsed["ATTENDEE"].params["CN"] == f"Qu{Q}ote"
+
+
+class TestUnbalancedEscapes:
+    """Edge cases where an escaped DQUOTE inside a parameter value may or
+    may not be followed by a properly balanced closing quote.
+
+    These tests document what actually happens for each shape so future
+    maintainers can make an informed decision if the behavior needs to
+    change (see the review discussion on PR #1871).
+    """
+
+    @pytest.mark.parametrize(
+        "content",
+        [
+            "content",
+            f"quoted{Q}content",
+            f"content_with{BS}{Q}",
+            "a : in it but no quote before",
+        ],
+        ids=[
+            "plain_after_escape",
+            "raw_quote_after_escape",
+            "escaped_quote_after_escape",
+            "colon_no_quote",
+        ],
+    )
+    def test_x_prop_with_escape_parameter_before_last_quote(self, content):
+        r"""An escaped DQUOTE inside a parameter value followed by content
+        that may or may not provide a balanced closing quote.
+
+        Only an *escaped* DQUOTE (``{BS}{Q}``) in the trailing content
+        balances the escape tracking and allows the line to parse — the
+        scanner sees the pair and treats it as content inside the quoted
+        section. A *raw* DQUOTE does not help: the escape-aware parameter
+        validator still finds an unmasked quote and rejects the value.
+        Without any quote at all, the parameter section runs to the end
+        and the value separator is never found.
+        """
+        line = f'X-PROP;X-PARAM="text{BS}{Q}:{content}'
+        if content == f"content_with{BS}{Q}":
+            # the trailing escaped DQUOTE balances: the line parses and
+            # the param value absorbs everything up to the end
+            name, params, _value = Contentline(line).parts()
+            assert name == "X-PROP"
+            assert params["X-PARAM"] is not None
+        else:
+            # raw quotes do not balance the escape tracking, and without
+            # any quote the section is unterminated — both are rejected
+            with pytest.raises(ValueError):
+                Contentline(line).parts()
+
+    def test_double_backslash_then_quote_alone(self):
+        """``{BS}{BS}{Q}`` on its own: the left-to-right scan treats the
+        first ``{BS}{BS}`` as an escaped backslash (literal ``{BS}``),
+        then ``{Q}`` is a bare DQUOTE with no preceding backslash.
+
+        The unescaper returns ``{BS}{Q}`` — a literal backslash followed
+        by a literal DQUOTE. This is the correct reading for RFC 2445
+        backslash escapes: each ``{BS}`` pairs with the character after
+        it; a DQUOTE not preceded by the *second* of a pair is literal
+        content. Producers emitting ``{BS}{BS}{Q}`` inside a quoted
+        parameter value intended a literal backslash then a literal
+        quote.
+        """
+        raw = f"{BS}{BS}{Q}"
+        assert unescape_quoted_param_value(raw) == f"{BS}{Q}"
+
+    def test_double_backslash_quote_in_parameter(self):
+        """The same ``{BS}{BS}{Q}`` sequence inside a full parameter."""
+        params = Parameters.from_ical(f'CN="{BS}{BS}{Q}"')
+        assert params["CN"] == f"{BS}{Q}"
+
+    def test_double_backslash_quote_in_contentline(self):
+        r"""The same ``{BS}{BS}{Q}`` sequence in a full content line is
+        rejected: the scanner processes pairs left-to-right, so the first
+        ``{BS}{BS}`` is consumed as an escaped backslash pair, leaving the
+        ``{Q}`` as a bare DQUOTE that closes the quoted section early.
+
+        The parameter section then runs past the intended end and the
+        value separator is consumed as parameter content — the line is
+        rejected as malformed. This differs from the unescape helper
+        (which processes it as two literals) because the scanner sees the
+        raw wire format while the helper sees the already-extracted
+        parameter value. A producer that intends ``{BS}{Q}`` (literal
+        backslash + literal quote) inside a parameter value should emit
+        ``{BS}{BS}{BS}{Q}`` (escaped backslash + escaped quote), which
+        parses correctly.
+        """
+        line = f'ATTENDEE;CN="a{BS}{BS}{Q}b":mailto:x@y.z'
+        with pytest.raises(ValueError, match="not a valid parameter"):
+            Contentline(line).parts()
