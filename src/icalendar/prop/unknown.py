@@ -169,12 +169,12 @@ class vUnknown(str):
 
     def to_xcal(self, element: Element) -> None:
         """Add the xCal representation of this property according to :rfc:`6321`."""
+        self.params.to_xcal(element)
         value_parameter = self.params.value
         if value_parameter is None:
             value_parameter = self.default_value
         element = SubElement(element, value_parameter.lower())
         element.text = self
-        self.params.to_xcal(element)
 
     @classmethod
     @from_xcal_wrapper

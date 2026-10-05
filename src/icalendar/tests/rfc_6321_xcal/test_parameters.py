@@ -244,7 +244,13 @@ mark_parameters = pytest.mark.parametrize(
 
 @mark_parameters
 def test_parameters_to_xcal(name, value, xcal, message):
-    """Convert Parameters to xcal."""
+    """Convert Parameters to xcal.
+
+    Any unrecognized property parameter MUST be converted using the
+    value type XML element IC:unknown, with its content set to the
+    property parameter value text, treated as if it were a "TEXT"
+    value or list of "TEXT" values. - :rfc:`6321`
+    """
     params = Parameters({name: value})
     xcal_element = to_xcal(params)
     assert isinstance(xcal_element, Element)

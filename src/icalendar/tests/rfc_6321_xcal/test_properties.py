@@ -1,3 +1,5 @@
+"""Integration tests for properties inside of components."""
+
 from __future__ import annotations
 
 import pytest

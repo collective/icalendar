@@ -29,8 +29,8 @@ def test_to_xcal(value, raw):
     """Convert to xcal."""
     e = to_xcal(vBinary(raw))
     assert isinstance(e, ET.Element)
-    assert e.tag == "binary"
-    assert e.text == value
+    assert e[1].tag == "binary"
+    assert e[1].text == value
 
 
 @mark_values

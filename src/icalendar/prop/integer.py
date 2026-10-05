@@ -222,9 +222,9 @@ class vInt(int):
 
     def to_xcal(self, element: Element) -> None:
         """Add the xCal representation of this property according to :rfc:`6321`."""
+        self.params.to_xcal(element)
         element = SubElement(element, self.default_value.lower())
         element.text = self.to_ical().decode()
-        self.params.to_xcal(element)
 
 
 class vNonNegativeInt(vInt):

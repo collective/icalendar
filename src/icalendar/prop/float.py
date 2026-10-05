@@ -135,9 +135,9 @@ class vFloat(float):
 
     def to_xcal(self, element: Element) -> None:
         """Add the xCal representation of this property according to :rfc:`6321`."""
+        self.params.to_xcal(element)
         element = SubElement(element, self.default_value.lower())
         element.text = xsd_float_to_string(self)
-        self.params.to_xcal(element)
 
 
 __all__ = ["vFloat"]
