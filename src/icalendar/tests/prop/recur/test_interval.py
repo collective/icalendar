@@ -11,14 +11,14 @@ def test_get_interval_from_ical():
     assert vRecur.from_ical("FREQ=DAILY;INTERVAL=2").interval == 2
 
 
-def test_get_interval_missing_is_none():
-    assert vRecur.from_ical("FREQ=DAILY").interval is None
+def test_get_interval_missing_is_default():
+    assert vRecur.from_ical("FREQ=DAILY").interval == 1
 
 
-def test_get_interval_empty_list_is_none():
+def test_get_interval_empty_list_is_default():
     recur = vRecur.from_ical("FREQ=DAILY")
     recur["INTERVAL"] = []
-    assert recur.interval is None
+    assert recur.interval == 1
 
 
 def test_get_interval_returns_first_of_multiple():
@@ -37,21 +37,21 @@ def test_set_interval():
 def test_set_interval_none_deletes():
     recur = vRecur.from_ical("FREQ=DAILY;INTERVAL=2")
     recur.interval = None
-    assert recur.interval is None
+    assert recur.interval == 1
     assert "INTERVAL" not in recur
 
 
 def test_del_interval():
     recur = vRecur.from_ical("FREQ=DAILY;INTERVAL=2")
     del recur.interval
-    assert recur.interval is None
+    assert recur.interval == 1
     assert "INTERVAL" not in recur
 
 
 def test_del_interval_when_absent():
     recur = vRecur.from_ical("FREQ=DAILY")
     del recur.interval
-    assert recur.interval is None
+    assert recur.interval == 1
 
 
 def test_set_rejects_bool():
@@ -74,18 +74,22 @@ def test_set_rejects_zero_and_negative():
         recur.interval = -1
 
 
-def test_get_rejects_zero_stored_directly():
+def test_get_invalid_stored_values_return_default():
     recur = vRecur.from_ical("FREQ=DAILY")
     recur["INTERVAL"] = [vInt(0)]
-    with pytest.raises(InvalidCalendar):
-        _ = recur.interval
-
-
-def test_get_rejects_non_int_stored_directly():
-    recur = vRecur.from_ical("FREQ=DAILY")
+    assert recur.interval == 1
+    recur["INTERVAL"] = [vInt(-3)]
+    assert recur.interval == 1
     recur["INTERVAL"] = ["abc"]
-    with pytest.raises(InvalidCalendar):
-        _ = recur.interval
+    assert recur.interval == 1
+    recur["INTERVAL"] = [True]
+    assert recur.interval == 1
+
+
+def test_get_skips_invalid_and_returns_first_valid():
+    recur = vRecur.from_ical("FREQ=DAILY")
+    recur["INTERVAL"] = ["abc", vInt(0), vInt(4)]
+    assert recur.interval == 4
 
 
 def test_round_trip():

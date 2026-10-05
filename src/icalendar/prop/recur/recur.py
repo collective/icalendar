@@ -279,28 +279,35 @@ class vRecur(CaselessDict):
             recur["until"] = [until]
         return cls(recur, params=params)
 
+    def get_multiple(self, key: str) -> list:
+        """Return every stored value for ``key`` as a list.
+
+        An absent key is an empty list, and a single stored value is a
+        one-item list. Accessors can then pick the first usable value.
+        """
+        if key not in self:
+            return []
+        values = self[key]
+        if isinstance(values, SEQUENCE_TYPES) and not isinstance(values, (str, bytes)):
+            return list(values)
+        return [values]
+
     @property
-    def interval(self) -> int | None:
+    def interval(self) -> int:
         """The INTERVAL part of the recurrence rule.
 
         A positive integer for how many ``FREQ`` units separate occurrences
-        (:rfc:`5545#section-3.3.10`). The RFC default when INTERVAL is omitted
-        is ``1``; this accessor returns ``None`` when the part is absent so
-        callers can tell an explicit INTERVAL from the default.
+        (:rfc:`5545#section-3.3.10`). The RFC default is ``1``. Missing and
+        invalid values return that default, so callers always get a usable
+        interval.
 
-        Valid values are integers ``>= 1``. ``0`` and negative values are
-        invalid because INTERVAL must be a positive integer.
-
-        If multiple values are present, the first one is returned. If the
-        value is missing or an empty sequence, ``None`` is returned.
+        If several values are present, the first valid one is returned.
 
         Setting this to ``None`` deletes the value, as does ``del``.
 
         Raises:
-            InvalidCalendar: if a value is present but cannot be read as an
-                int, or if the stored value is less than ``1``.
             InvalidCalendar: when setting a value less than ``1``.
-            TypeError: when setting a value that is not an int, or is a bool.
+            TypeError: when setting a value that is not an int.
 
         Example:
 
@@ -309,20 +316,19 @@ class vRecur(CaselessDict):
                 >>> from icalendar.prop import vRecur
                 >>> vRecur.from_ical("FREQ=DAILY;INTERVAL=2").interval
                 2
-                >>> vRecur.from_ical("FREQ=DAILY").interval is None
-                True
+                >>> vRecur.from_ical("FREQ=DAILY").interval
+                1
         """
-        values = self.get("INTERVAL")
-        if values is None or (isinstance(values, SEQUENCE_TYPES) and len(values) == 0):
-            return None
-        value = values[0] if isinstance(values, SEQUENCE_TYPES) else values
-        try:
-            result = int(value)
-        except (TypeError, ValueError) as e:
-            raise InvalidCalendar("INTERVAL must be an int") from e
-        if result < 1:
-            raise InvalidCalendar(f"INTERVAL must be >= 1, got {result}")
-        return result
+        for value in self.get_multiple("INTERVAL"):
+            if isinstance(value, bool):
+                continue
+            try:
+                result = int(value)
+            except (TypeError, ValueError):
+                continue
+            if result >= 1:
+                return result
+        return 1
 
     @interval.setter
     def interval(self, value: int | None) -> None:
