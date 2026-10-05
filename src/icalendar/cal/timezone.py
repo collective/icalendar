@@ -107,10 +107,29 @@ class Timezone(Component):
         return is_dst, transitions
 
     @staticmethod
-    def _make_unique_tzname(tzname, tznames):
-        """
-        :param tzname: Candidate tzname
-        :param tznames: Other tznames
+    def _make_unique_tzname(tzname: str, tznames: set[str]) -> str:
+        """Make a unique tzname and add it to ``tznames``.
+
+        Append ``_1`` to ``tzname`` until it is not in ``tznames``.
+
+        Parameters:
+            tzname: The candidate timezone name.
+            tznames: The timezone names already in use.
+
+        Returns:
+            The unique timezone name.
+
+        Example:
+            .. code-block:: pycon
+
+                >>> from icalendar import Timezone
+                >>> names = {"EST"}
+                >>> Timezone._make_unique_tzname("EST", names)
+                'EST_1'
+                >>> Timezone._make_unique_tzname("EST", names)
+                'EST_1_1'
+                >>> sorted(names)
+                ['EST', 'EST_1', 'EST_1_1']
         """
         # TODO better way of making sure tznames are unique
         while tzname in tznames:
