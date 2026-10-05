@@ -58,7 +58,7 @@ class vRequestStatus(vText):
         """Return the status code as a tuple.
 
         Returns:
-            A tuple of integers or () if the status code could not be parsed.
+            A tuple of integers or ``()`` if the status code could not be parsed.
         """
         return tuple(int(x) for x in self.code_string.split(".") if x)
 
