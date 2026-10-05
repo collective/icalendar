@@ -428,3 +428,24 @@ def test_new_email_string_attendee_normalizes(attendees, expected):
     )
     assert isinstance(alarm.attendees[0], vCalAddress)
     assert str(alarm.attendees[0]) == expected
+
+
+@pytest.mark.parametrize(
+    "invalid_attendees",
+    [
+        [None],
+        [None, None],
+        "",
+        "   ",
+        [""],
+    ],
+)
+def test_new_email_with_none_or_empty_attendees_raises_invalid_calendar(invalid_attendees):
+    """Issue #1783: Alarm.new_email rejects None or empty attendee values."""
+    with pytest.raises(InvalidCalendar):
+        Alarm.new_email(
+            summary="S",
+            description="D",
+            trigger=timedelta(minutes=-30),
+            attendees=invalid_attendees,
+        )
