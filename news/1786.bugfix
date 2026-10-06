@@ -1,1 +1,3 @@
-Fixed ``Todo.duration`` when a VTODO has only a ``DUE`` property. I used AI to help investigate the issue and review the fix and tests. @Sahil251005
+Fix VTODO duration with only DUE
+
+AI disclosure: I used ChatGPT (GPT-5.6 Luna) to assist with investigating the issue, developing the regression test, and reviewing the implementation. I reviewed the changes and validated them locally.
