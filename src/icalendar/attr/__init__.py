@@ -2444,18 +2444,12 @@ def _get_related_to(self: Component) -> list[vText | vUri | vUid]:
 
 def _set_related_to(self: Component, values: RELATED_TO_TYPE_SETTER) -> None:
     """Set the RELATED-TO properties."""
-    _del_related_to(self)
-    if values is None:
-        return
-    if not isinstance(values, list):
-        values = [values]
-    for value in values:
-        self.add("RELATED-TO", value)
+    PropertyListView(self, "RELATED-TO").replace_with(values)
 
 
 def _del_related_to(self: Component):
     """Delete the RELATED-TO properties."""
-    self.pop("RELATED-TO", None)
+    PropertyListView(self, "RELATED-TO").clear()
 
 
 related_to_property = property(_get_related_to, _set_related_to, _del_related_to)
@@ -2507,18 +2501,12 @@ CONCEPTS_TYPE_SETTER: TypeAlias = list[vUri | str] | str | vUri | None
 
 def _set_concepts(self: Component, concepts: CONCEPTS_TYPE_SETTER):
     """Set the concepts."""
-    _del_concepts(self)
-    if concepts is None:
-        return
-    if not isinstance(concepts, list):
-        concepts = [concepts]
-    for value in concepts:
-        self.add("CONCEPT", value)
+    PropertyListView(self, "CONCEPT").replace_with(concepts)
 
 
 def _del_concepts(self: Component):
     """Delete the concepts."""
-    self.pop("CONCEPT", None)
+    PropertyListView(self, "CONCEPT").clear()
 
 
 concepts_property = property(_get_concepts, _set_concepts, _del_concepts)
@@ -2527,23 +2515,17 @@ concepts_property = property(_get_concepts, _set_concepts, _del_concepts)
 def multi_string_property(name: str, doc: str):
     """A property for an iCalendar Property that can occur multiple times."""
 
-    def fget(self: Component) -> list[str]:
+    def fget(self: Component) -> PropertyListView:
         """Get the values of a multi-string property."""
         return PropertyListView(self, name)
 
     def fset(self: Component, value: list[str] | str | None) -> None:
         """Set the values of a multi-string property."""
-        fdel(self)
-        if value is None:
-            return
-        if not isinstance(value, list):
-            value = [value]
-        for value in value:
-            self.add(name, value)
+        PropertyListView(self, name).replace_with(value)
 
     def fdel(self: Component):
         """Delete the values of a multi-string property."""
-        self.pop(name, None)
+        PropertyListView(self, name).clear()
 
     return property(fget, fset, fdel, doc=doc)
 

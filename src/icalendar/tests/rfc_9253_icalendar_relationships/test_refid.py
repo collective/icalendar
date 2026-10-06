@@ -102,3 +102,45 @@ def test_append_to_concepts_and_related_to():
     comp2.related_to.append("rel-001")
     assert "RELATED-TO" in comp2
     assert len(comp2.related_to) == 1
+
+
+def test_set_refids_to_itself(component: Component):
+    """Setting an attribute to its own value keeps the values."""
+    component.refids = ["a", "b"]
+    component.refids = component.refids
+    assert component.refids == ["a", "b"]
+
+
+def test_set_refids_to_value_of_other_attribute(component: Component):
+    """Setting an attribute from another list attribute copies the values."""
+    component.related_to = ["uid-1", "uid-2"]
+    component.refids = component.related_to
+    assert component.refids == ["uid-1", "uid-2"]
+    assert component.related_to == ["uid-1", "uid-2"]
+
+
+def test_set_refids_to_single_value_and_tuple(component: Component):
+    component.refids = "a"
+    assert component.refids == ["a"]
+    component.refids = ("b", "c")
+    assert component.refids == ["b", "c"]
+
+
+def test_clear_removes_the_property(component: Component):
+    component.refids = ["a"]
+    component.refids.clear()
+    assert "REFID" not in component
+    assert component.refids == []
+
+
+def test_views_compare_equal_and_not_equal_to_non_iterables(component: Component):
+    """Views are equal to views with the same values, and not to other objects."""
+    component.refids = ["a"]
+    component.related_to = ["a"]
+    assert component.refids == component.related_to
+    assert component.refids != 1
+
+
+def test_repr_of_view(component: Component):
+    component.refids = ["a"]
+    assert repr(component.refids).startswith("PropertyListView(")

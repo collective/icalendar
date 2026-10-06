@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import contextlib
-from collections.abc import MutableSequence
+from collections.abc import MutableSequence, Sequence
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
@@ -22,7 +22,12 @@ class PropertyListView(MutableSequence):
     __hash__ = None
 
     def __init__(self, component: Component, name: str) -> None:
-        """Initialize the property list view for a given component and property name."""
+        """Initialize the property list view for a given component and property name.
+
+        Parameters:
+            component: The component to view.
+            name: The name of the property to view.
+        """
         self._component = component
         self._name = name
 
@@ -67,6 +72,29 @@ class PropertyListView(MutableSequence):
         """Insert an item into the property list at a given index."""
         with self._values() as values:
             values.insert(index, value)
+
+    def clear(self) -> None:
+        """Remove all values and the property from the component."""
+        self._component.pop(self._name, None)
+
+    def replace_with(self, values: Any) -> None:
+        """Replace all values with ``values``.
+
+        The values are added with :meth:`icalendar.Component.add`,
+        so they are converted to the correct types.
+        ``values`` can be ``None`` (remove the property), a single value,
+        a list or another view, also one of the same property.
+        """
+        if values is None:
+            new_values = []
+        elif isinstance(values, Sequence) and not isinstance(values, (str, bytes)):
+            # copy first: ``values`` could be this view or a view of this property
+            new_values = list(values)
+        else:
+            new_values = [values]
+        self.clear()
+        for value in new_values:
+            self._component.add(self._name, value)
 
     def __eq__(self, other: object) -> bool:
         """Check equality against another sequence."""
