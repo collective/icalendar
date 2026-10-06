@@ -5,18 +5,19 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING, Any
 
-from icalendar.error import JCalParsingError
+from icalendar.error import InvalidCalendar, JCalParsingError
 from icalendar.parser.parameter import Parameters
 
 from .text import vText
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
-
     from icalendar.compatibility import Self
 
+CODE_REGEX = r"^[0-9]\.[0-9](?:\.[0-9])?$"
+CODE_REGEX_PATTERN = re.compile(CODE_REGEX)
+
 REQUEST_STATUS_GRAMMAR = re.compile(
-    r"^(?P<code>[0-9]+\.[0-9]+(\.[0-9]+)?)"
+    r"^(?P<code>[0-9]\.[0-9](?:\.[0-9])?)"
     r"(?:;(?P<description>(?:\\.|[^;\\])*)"
     r"(?:;(?P<data>.*))?)?$",
     re.MULTILINE,
@@ -54,13 +55,18 @@ class vRequestStatus(vText):
         return self.__match
 
     @property
-    def code(self) -> tuple[int, ...]:
+    def code(self) -> tuple[int, int] | tuple[int, int, int] | tuple[()]:
         """Return the status code as a tuple.
 
         Returns:
             A tuple of integers or ``()`` if the status code could not be parsed.
         """
-        return tuple(int(x) for x in self.code_string.split(".") if x)
+        s = self.code_string.split(".")
+        if len(s) == 2:
+            return int(s[0]), int(s[1])
+        if len(s) == 3:
+            return int(s[0]), int(s[1]), int(s[2])
+        return ()
 
     @property
     def code_string(self) -> str:
@@ -110,10 +116,12 @@ class vRequestStatus(vText):
     @classmethod
     def new(
         cls,
-        code: Sequence[int] | str | int,
+        code: tuple[int, int] | tuple[int, int, int] | str,
         description: str = "",
         data: str | None = None,
+        *,
         params: dict[str, Any] | None = None,
+        validate: bool = True,
     ) -> Self:
         """Create a new request status object.
 
@@ -121,16 +129,38 @@ class vRequestStatus(vText):
             code: The status code.
             description: The description of the request status.
             data: The data of the request status.
+            validate: Turn validation for the ``code`` string on and off.
+                      ``code`` tuples are always validated.
+
+        Raises:
+            InvalidCalendar: If the code is not valid.
+            TypeError: If the code is neither a tuple of integers nor string.
 
         Returns:
             A new request status object.
         """
-        if isinstance(code, int):
-            code = (code,)
-        if not isinstance(code, str):
-            code = ".".join(str(x) for x in code)
+        if not isinstance(code, (tuple, str)):
+            raise TypeError("code must be tuple or string")
+        if isinstance(code, str):
+            code_string = code
+            if validate and CODE_REGEX_PATTERN.match(code_string) is None:
+                raise InvalidCalendar(
+                    f"code must have 2 or 3 numbers from 0 to 9. Got {code_string!r}"
+                )
+        else:
+            if not all(isinstance(x, int) for x in code):
+                raise TypeError(
+                    f"code must be a tuple of 2 or 3 integers from 0 to 9. Got {code!r}"
+                )
+            if len(code) not in (2, 3) or not all(0 <= x <= 9 for x in code):
+                raise InvalidCalendar(
+                    f"code must have 2 or 3 numbers from 0 to 9. Got {code!r}"
+                )
+            code_string = f"{code[0]}.{code[1]}"
+            if len(code) == 3:
+                code_string += f".{code[2]}"
         description = ESCAPE.sub(r"\\\1", description)
-        request_status = f"{code};{description}"
+        request_status = f"{code_string};{description}"
         if data is not None:
             data = ESCAPE.sub(r"\\\1", data)
             request_status += f";{data}"
@@ -165,10 +195,11 @@ class vRequestStatus(vText):
         status_list = jcal_property[3]
         JCalParsingError.validate_list_type(status_list, str, cls, 3)
         return cls.new(
-            code=status_list[0] if len(status_list) > 0 else (),
+            code=status_list[0] if len(status_list) > 0 else "",
             description=status_list[1] if len(status_list) > 1 else "",
             data=";".join(status_list[2:]) if len(status_list) > 2 else None,
             params=Parameters.from_jcal_property(jcal_property),
+            validate=False,
         )
 
 

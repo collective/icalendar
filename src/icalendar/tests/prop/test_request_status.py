@@ -3,7 +3,7 @@
 import pytest
 
 from icalendar import Event, vRequestStatus, vText
-from icalendar.error import JCalParsingError
+from icalendar.error import InvalidCalendar, JCalParsingError
 
 
 def test_request_status_is_text():
@@ -47,11 +47,6 @@ mark_examples = pytest.mark.parametrize(
             "ATTENDEE:mailto:jsmith@example.com",
             None,
         ),
-        # special cases that should not crash but make no sense
-        ("3.3", (3, 3), "", None, "3.3;"),
-        ("3;", (3,), "", None, None),
-        ("10.", (10,), "", None, "10;"),
-        ("", (), "", None, ";"),
         (
             r"1.2;escape\;semicolon;data\;escape",
             (1, 2),
@@ -70,6 +65,24 @@ def test_parse_content(text, code, description, data, text_serialized):
     assert request_status.code == code
     assert request_status.description == description
     assert request_status.data == data
+
+
+@pytest.mark.parametrize(
+    ("text", "code", "description"),
+    [
+        # special cases that should not crash but make no sense
+        ("3.30.3", (), ""),
+        ("3;", (), ""),
+        ("10.", (), ""),
+        ("", (), ""),
+    ],
+)
+def test_special_cases(text, code, description):
+    """These are invalid syntax cases. They should not crash."""
+    request_status = vRequestStatus(text)
+    assert request_status.code == code
+    assert request_status.description == description
+    assert request_status.data is None
 
 
 def test_from_ical(events):
@@ -108,12 +121,6 @@ def test_create_content(text, code, description, data, text_serialized):
 
 def test_create_special_cases():
     """Test creating a request status with new()"""
-    request_status = vRequestStatus.new(3)
-    assert request_status.code == (3,)
-    assert request_status.description == ""
-    assert request_status.data is None
-    assert request_status == "3;"
-
     request_status = vRequestStatus.new("3.4")
     assert request_status.code == (3, 4)
     assert request_status.description == ""
@@ -157,7 +164,7 @@ def test_invalid_request_status_does_not_error_with_dots():
 def test_invalid_request_status_does_not_error_with_code():
     """When the request status is invalid, accessors should not error."""
     r = vRequestStatus(".3")
-    assert r.code == (3,)
+    assert r.code == ()
     assert r.description == ""
     assert r.data is None
 
@@ -196,3 +203,39 @@ def test_jcal_too_short(length):
     assert r.code == ((2, 0) if length == 1 else ())
     assert r.description == ""
     assert r.data is None
+
+
+@pytest.mark.parametrize(
+    "code",
+    ["2.0.0.0", ".0.0", "0.", "10.0", (2, 0, 11), (10, 2), (), (1, 1, 1, 1), (-1, 0)],
+)
+def test_request_status_new_rejects_invalid_code(code):
+    """You are not allows to create invalid request status."""
+    with pytest.raises(InvalidCalendar) as exc_info:
+        vRequestStatus.new(code)
+    message = exc_info.value.args[0]
+    assert message == f"code must have 2 or 3 numbers from 0 to 9. Got {code!r}"
+
+
+@pytest.mark.parametrize("code", ["2.0.0.0", ".0.0", "0.", "10.0", ""])
+def test_disable_validation_for_jcal(code):
+    """You are not allows to create invalid request status."""
+    _ = vRequestStatus.new(code, validate=False)
+
+
+@pytest.mark.parametrize("code", [None, [], 10, ("asd", 1)])
+def test_type_error_on_invalid_type(code):
+    with pytest.raises(TypeError):
+        vRequestStatus.new(code)
+
+
+@pytest.mark.parametrize("description", [None, [], 10, ("asd", 1)])
+def test_invalid_description_type(description):
+    with pytest.raises(TypeError):
+        vRequestStatus.new("2.0", description)
+
+
+@pytest.mark.parametrize("data", [[], 10, ("asd", 1)])
+def test_invalid_data_type(data):
+    with pytest.raises(TypeError):
+        vRequestStatus.new("2.0", data=data)
