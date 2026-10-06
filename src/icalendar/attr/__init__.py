@@ -7,6 +7,7 @@ from collections.abc import Sequence
 from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Literal, TypeAlias
 
+from icalendar.attr.property_list import PropertyListView
 from icalendar.enums import BUSYTYPE, CLASS, STATUS, TRANSP, StrEnum
 from icalendar.error import IncompleteComponent, InvalidCalendar
 from icalendar.parser_tools import SEQUENCE_TYPES
@@ -2313,57 +2314,6 @@ RELATED_TO_TYPE_SETTER: TypeAlias = (
 )
 
 
-class _ComponentList(list):
-    """A list wrapper that synchronizes mutations with the parent component."""
-
-    def __init__(self, iterable, component: Component, name: str):
-        super().__init__(iterable)
-        self._component = component
-        self._name = name
-
-    def append(self, item) -> None:
-        super().append(item)
-        self._component[self._name] = self
-
-    def extend(self, iterable) -> None:
-        super().extend(iterable)
-        self._component[self._name] = self
-
-    def insert(self, index: int, item) -> None:
-        super().insert(index, item)
-        self._component[self._name] = self
-
-    def clear(self) -> None:
-        super().clear()
-        self._component.pop(self._name, None)
-
-    def remove(self, item) -> None:
-        super().remove(item)
-        if not self:
-            self._component.pop(self._name, None)
-        else:
-            self._component[self._name] = self
-
-    def pop(self, index: int = -1):
-        item = super().pop(index)
-        if not self:
-            self._component.pop(self._name, None)
-        else:
-            self._component[self._name] = self
-        return item
-
-    def __setitem__(self, key, value) -> None:
-        super().__setitem__(key, value)
-        self._component[self._name] = self
-
-    def __delitem__(self, key) -> None:
-        super().__delitem__(key)
-        if not self:
-            self._component.pop(self._name, None)
-        else:
-            self._component[self._name] = self
-
-
 def _get_related_to(self: Component) -> list[vText | vUri | vUid]:
     """RELATED-TO properties as a list.
 
@@ -2489,10 +2439,7 @@ def _get_related_to(self: Component) -> list[vText | vUri | vUid]:
     See also :class:`icalendar.enums.RELTYPE`.
 
     """
-    result = self.get("RELATED-TO", [])
-    if not isinstance(result, list):
-        result = [result]
-    return _ComponentList(result, self, "RELATED-TO")
+    return PropertyListView(self, "RELATED-TO")
 
 
 def _set_related_to(self: Component, values: RELATED_TO_TYPE_SETTER) -> None:
@@ -2552,10 +2499,7 @@ def _get_concepts(self: Component) -> list[vUri]:
 
         :attr:`icalendar.prop.categories.vCategory`
     """
-    concepts = self.get("CONCEPT", [])
-    if not isinstance(concepts, list):
-        concepts = [concepts]
-    return _ComponentList(concepts, self, "CONCEPT")
+    return PropertyListView(self, "CONCEPT")
 
 
 CONCEPTS_TYPE_SETTER: TypeAlias = list[vUri | str] | str | vUri | None
@@ -2585,10 +2529,7 @@ def multi_string_property(name: str, doc: str):
 
     def fget(self: Component) -> list[str]:
         """Get the values of a multi-string property."""
-        value = self.get(name, [])
-        if not isinstance(value, list):
-            value = [value]
-        return _ComponentList(value, self, name)
+        return PropertyListView(self, name)
 
     def fset(self: Component, value: list[str] | str | None) -> None:
         """Set the values of a multi-string property."""
@@ -2872,6 +2813,7 @@ __all__ = [
     "LINKS_TYPE_SETTER",
     "RECURRENCE_ID",
     "RELATED_TO_TYPE_SETTER",
+    "PropertyListView",
     "REQUEST_STATUS_property",
     "RESOURCES_property",
     "attachments_property",

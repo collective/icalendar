@@ -32,34 +32,40 @@ def test_delete_refids_with_none(component: Component):
     assert component.refids == []
 
 
-def test_append_to_refids_on_new_component():
+def test_append_to_refids_on_new_component(component: Component):
     """Issue #1722: Appending to list properties on new component persists."""
-    comp = Component()
-    comp.refids.append("refid-1")
-    assert "REFID" in comp
-    assert comp.refids == ["refid-1"]
-    assert "refid-1" in comp.refids
+    component.refids.append("refid-1")
+    assert "REFID" in component
+    assert component.refids == ["refid-1"]
+    assert "refid-1" in component.refids
 
 
-def test_extend_and_insert_refids():
+def test_multiple_property_list_views_stay_synchronized(component: Component):
+    """Multiple PropertyListView references stay synchronized."""
+    a = component.refids
+    a.append("refid-sync")
+    b = component.refids
+    assert a == b
+    assert list(a) == ["refid-sync"]
+
+
+def test_extend_and_insert_refids(component: Component):
     """Extending and inserting into list properties persists in component storage."""
-    comp = Component()
-    comp.refids.extend(["ref-b", "ref-c"])
-    comp.refids.insert(0, "ref-a")
-    assert comp.refids == ["ref-a", "ref-b", "ref-c"]
-    assert "REFID" in comp
+    component.refids.extend(["ref-b", "ref-c"])
+    component.refids.insert(0, "ref-a")
+    assert component.refids == ["ref-a", "ref-b", "ref-c"]
+    assert "REFID" in component
 
 
-def test_clear_and_remove_refids():
+def test_clear_and_remove_refids(component: Component):
     """Clearing and removing all items cleanly unsets the property key."""
-    comp = Component()
-    comp.refids.extend(["ref-1", "ref-2"])
-    comp.refids.remove("ref-1")
-    assert comp.refids == ["ref-2"]
-    assert "REFID" in comp
-    comp.refids.remove("ref-2")
-    assert comp.refids == []
-    assert "REFID" not in comp
+    component.refids.extend(["ref-1", "ref-2"])
+    component.refids.remove("ref-1")
+    assert component.refids == ["ref-2"]
+    assert "REFID" in component
+    component.refids.remove("ref-2")
+    assert component.refids == []
+    assert "REFID" not in component
 
     comp2 = Component()
     comp2.refids.append("ref-temp")
@@ -69,21 +75,20 @@ def test_clear_and_remove_refids():
     assert "REFID" not in comp2
 
 
-def test_pop_and_item_assignment_refids():
+def test_pop_and_item_assignment_refids(component: Component):
     """Popping and index mutation synchronize with component storage."""
-    comp = Component()
-    comp.refids.extend(["ref-1", "ref-2"])
-    comp.refids[0] = "ref-updated"
-    assert comp.refids == ["ref-updated", "ref-2"]
+    component.refids.extend(["ref-1", "ref-2"])
+    component.refids[0] = "ref-updated"
+    assert component.refids == ["ref-updated", "ref-2"]
 
-    val = comp.refids.pop()
+    val = component.refids.pop()
     assert val == "ref-2"
-    assert comp.refids == ["ref-updated"]
-    assert "REFID" in comp
+    assert component.refids == ["ref-updated"]
+    assert "REFID" in component
 
-    del comp.refids[0]
-    assert comp.refids == []
-    assert "REFID" not in comp
+    del component.refids[0]
+    assert component.refids == []
+    assert "REFID" not in component
 
 
 def test_append_to_concepts_and_related_to():
