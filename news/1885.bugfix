@@ -1,0 +1,1 @@
+Fixed :meth:`vUTCOffset.from_ical <icalendar.prop.dt.utc_offset.vUTCOffset.from_ical>` reading a UTC offset without a sign, such as ``0100``, as ten hours instead of one, and accepting malformed values such as ``x0530``. I used AI to assist me with this change.@Karunya-Muddana

@@ -8,6 +8,9 @@ from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 
+UTC_OFFSET_REGEX = re.compile(
+    r"(?P<sign>[+-]?)(?P<hours>[0-9]{2})(?P<minutes>[0-9]{2})(?P<seconds>[0-9]{2})?\Z"
+)
 UTC_OFFSET_JCAL_REGEX = re.compile(
     r"^(?P<sign>[+-])?(?P<hours>\d\d):(?P<minutes>\d\d)(?::(?P<seconds>\d\d))?\Z"
 )
@@ -116,19 +119,21 @@ class vUTCOffset:
     def from_ical(cls, ical):
         if isinstance(ical, cls):
             return ical.td
-        try:
-            sign, hours, minutes, seconds = (
-                ical[0:1],
-                int(ical[1:3]),
-                int(ical[3:5]),
-                int(ical[5:7] or 0),
-            )
-            offset = timedelta(hours=hours, minutes=minutes, seconds=seconds)
-        except Exception as e:
-            raise ValueError(f"Expected UTC offset, got: {ical}") from e
-        if not cls.ignore_exceptions and offset >= timedelta(hours=24):
-            raise ValueError(f"Offset must be less than 24 hours, was {ical}")
-        if sign == "-":
+        match = UTC_OFFSET_REGEX.match(ical) if isinstance(ical, str) else None
+        if match is None:
+            raise ValueError(f"Expected UTC offset, got: {ical}")
+        hours = int(match.group("hours"))
+        minutes = int(match.group("minutes"))
+        seconds = int(match.group("seconds") or 0)
+        offset = timedelta(hours=hours, minutes=minutes, seconds=seconds)
+        if not cls.ignore_exceptions:
+            if offset >= timedelta(hours=24):
+                raise ValueError(f"Offset must be less than 24 hours, was {ical}")
+            if minutes > 59 or seconds > 59:
+                raise ValueError(
+                    f"Minutes and seconds must be less than 60, was {ical}"
+                )
+        if match.group("sign") == "-":
             return -offset
         return offset
 
