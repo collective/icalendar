@@ -347,6 +347,70 @@ class vRecur(CaselessDict):
         """Delete the COUNT part of the recurrence rule."""
         self.pop("COUNT", None)
 
+    @property
+    def wkst(self) -> vWeekday | None:
+        """The WKST part of the recurrence rule.
+
+        This defines the day on which the workweek starts. It is significant
+        when a weekly rule has an interval greater than one and when a yearly
+        rule uses ``BYWEEKNO`` (:rfc:`5545#section-3.3.10`). The value is one
+        of ``MO``, ``TU``, ``WE``, ``TH``, ``FR``, ``SA``, or ``SU``. When
+        omitted, RFC 5545 defines the default as ``MO``; this accessor returns
+        ``None`` so callers can distinguish an omitted value from an explicit
+        one.
+
+        Because only one value is expected according to :rfc:`5545`,
+        if multiple values are present, the first one is returned. If the
+        value is missing or an empty sequence, ``None`` is returned.
+
+        Setting this to ``None`` deletes the value, as does ``del``.
+
+        Raises:
+            InvalidCalendar: if a value cannot be read or set as a weekday.
+            TypeError: when setting a value that is not a weekday string
+                or :class:`~icalendar.prop.recur.weekday.vWeekday`.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur("FREQ=WEEKLY;WKST=SU").wkst
+                'SU'
+                >>> vRecur("FREQ=WEEKLY").wkst is None
+                True
+        """
+        values = self.get("WKST")
+        if values is None or (isinstance(values, SEQUENCE_TYPES) and len(values) == 0):
+            return None
+        value = values[0] if isinstance(values, SEQUENCE_TYPES) else values
+        if isinstance(value, vWeekday):
+            return value
+        try:
+            return vWeekday(value)
+        except (TypeError, ValueError) as e:
+            raise InvalidCalendar("WKST must be a weekday") from e
+
+    @wkst.setter
+    def wkst(self, value: str | vWeekday | None) -> None:
+        """Set the WKST part of the recurrence rule, or delete it if None."""
+        if value is None:
+            del self.wkst
+            return
+        if not isinstance(value, (str, vWeekday)):
+            raise TypeError(f"wkst must be a weekday string or vWeekday, got {value!r}")
+        try:
+            weekday = value if isinstance(value, vWeekday) else vWeekday(value)
+        except ValueError as e:
+            raise InvalidCalendar("WKST must be a weekday") from e
+        # from_ical stores WKST as a one-item list via parse_type; keep
+        # that representation so assignment matches a parsed vRecur.
+        self["WKST"] = [weekday]
+
+    @wkst.deleter
+    def wkst(self) -> None:
+        """Delete the WKST part of the recurrence rule."""
+        self.pop("WKST", None)
+
     def __eq__(self, other: object) -> bool:
         """self == other"""
         if not isinstance(other, vRecur):
