@@ -18,8 +18,8 @@ CODE_REGEX_PATTERN = re.compile(CODE_REGEX)
 
 REQUEST_STATUS_GRAMMAR = re.compile(
     r"^(?P<code>[0-9]\.[0-9](?:\.[0-9])?)"
-    r"(?:;(?P<description>(?:\\.|[^;\\])*)"
-    r"(?:;(?P<data>.*))?)?$",
+    r";(?P<description>(?:\\;|[^;])*)"
+    r"(?:;(?P<data>.*))?$",
     re.MULTILINE,
 )
 UNESCAPE = re.compile(r"\\(.)")
