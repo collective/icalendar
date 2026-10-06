@@ -433,6 +433,7 @@ def test_new_email_string_attendee_normalizes(attendees, expected):
 @pytest.mark.parametrize(
     "invalid_attendees",
     [
+        None,
         [None],
         [None, None],
         "",
@@ -466,3 +467,46 @@ def test_new_email_filters_blank_strings_and_none_from_sequence():
     )
     assert len(alarm.attendees) == 1
     assert str(alarm.attendees[0]) == "mailto:valid@example.com"
+
+
+@_ALL_FACTORIES
+def test_factory_refids_single(factory):
+    ref = vText("ref-id-001")
+    alarm = factory(refids=[ref])
+    assert alarm.refids == [ref]
+
+
+@_ALL_FACTORIES
+def test_factory_refids_string_is_converted(factory):
+    alarm = factory(refids=["ref-id-001"])
+    assert alarm.refids == [vText("ref-id-001")]
+
+
+@_ALL_FACTORIES
+def test_factory_refids_none_is_empty(factory):
+    alarm = factory(refids=None)
+    assert alarm.refids == []
+    assert "REFID" not in alarm
+
+
+def test_new_email_with_all_optional_parameters():
+    alarm = Alarm.new_email(
+        summary="Summary",
+        description="Description",
+        trigger=timedelta(minutes=-15),
+        attendees=["user@example.com"],
+        uid="email-alarm-uid-999",
+        attachments=["https://example.com/doc.pdf"],
+        links=["https://example.com/link"],
+        related_to=["rel-001"],
+        refids=["ref-001"],
+        concepts=["https://example.com/concept"],
+    )
+    assert alarm.summary == "Summary"
+    assert alarm.description == "Description"
+    assert alarm.uid == "email-alarm-uid-999"
+    assert len(alarm.attendees) == 1
+    assert len(alarm.links) == 1
+    assert len(alarm.related_to) == 1
+    assert len(alarm.refids) == 1
+    assert len(alarm.concepts) == 1
