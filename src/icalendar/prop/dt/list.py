@@ -4,7 +4,7 @@ from typing import Any, ClassVar
 from xml.etree.ElementTree import Element
 
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError
+from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser.xcal.base import XCalParser
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
@@ -140,11 +140,18 @@ class vDDDLists:
         Raises:
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
-        elements = []
+        dts = []
         while not parser.is_finished():
-            elements.append(vDDDTypes.from_xcal(parser))
+            dts.append(vDDDTypes.from_xcal(parser))
+        if dts:
+            tz = getattr(dts[0].dt, "tzinfo", None)
+            for dt in dts[1:]:
+                if getattr(dt.dt, "tzinfo", None) != tz:
+                    raise XCalParsingError(
+                        "Cannot mix floating with UTC", None, parser.element
+                    )
         return cls(
-            elements,
+            dts,
             params=params,
         )
 

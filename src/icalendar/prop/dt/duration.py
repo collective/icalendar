@@ -228,6 +228,11 @@ class vDuration(TimeBase):
         try:
             td = cls.from_ical(element.get_xsd_token())
         except InvalidCalendar as e:
+            if isinstance(e.__cause__, OverflowError):
+                # The syntax is valid but we are out of range
+                raise XCalParsingError(
+                    "Duration is out of range", element.get_xsd_token(), element
+                ) from e
             raise XCalParsingError(
                 XCAL_DURATION_ERROR, element.get_xsd_token(), element
             ) from e

@@ -10,7 +10,13 @@ import pytest
 
 from icalendar.error import XCalParsingError
 from icalendar.prop.dt import vDatetime, vDDDLists, vDDDTypes
-from icalendar.tests.rfc_6321_xcal.common import list2xml, to_xcal, xml2list
+from icalendar.tests.rfc_6321_xcal.common import (
+    INVALID_DATES,
+    INVALID_TIMES,
+    list2xml,
+    to_xcal,
+    xml2list,
+)
 from icalendar.timezone.tzid import tzid_from_dt
 
 
@@ -127,3 +133,27 @@ def test_xcal_to_datetime_considers_timezone(tzp, dt, tz, v_datetime):
     v_dt = v_datetime.from_xcal(xml)
     assert v_dt.dt.replace(tzinfo=None) == dt
     assert tzid_from_dt(v_dt.dt) == tz
+
+
+@pytest.mark.parametrize(
+    "invalid",
+    ["2025-11-12T" + t for t in INVALID_TIMES]
+    + [t + "T12:12:12" for t in INVALID_DATES],
+)
+def test_out_of_range_values_raise_xcal_parsing_error(invalid, v_datetime):
+    """Test that we raise the correct error if a time cannot be created."""
+    with pytest.raises(XCalParsingError) as error:
+        v_datetime.from_xcal(list2xml(["x-prop", ["date-time", invalid]]))
+    assert (
+        error.value.message
+        == f"Date-time is out of range, got {invalid!r} in /x-prop/date-time[1]."
+    )
+
+
+def test_second_60_is_allowed(v_datetime):
+    """Test that second 60 is allowed.
+
+    The value is the closest we can get.
+    """
+    t = v_datetime.from_xcal(list2xml(["x-prop", ["date-time", "2025-11-10T23:59:60"]]))
+    assert t.dt == datetime(2025, 11, 10, 23, 59, 59)

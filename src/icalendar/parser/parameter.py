@@ -478,8 +478,10 @@ class Parameters(CaselessDict):
             dt = dt[0]
         if isinstance(dt, (datetime, time)):
             tzid = tzid_from_dt(dt)
-            if tzid != "UTC":
-                # UTC uses Z suffix and does not appear as TZID parameter
+            # UTC uses Z suffix and does not appear as TZID parameter
+            if tzid == "UTC":
+                del self.tzid
+            else:
                 self.tzid = tzid
 
     @classmethod

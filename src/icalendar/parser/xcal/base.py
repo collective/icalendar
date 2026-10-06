@@ -50,6 +50,11 @@ class XCalParser:
         self._children = self._element.children
         self._consumed = 0
 
+    @property
+    def element(self) -> ElementAdapter:
+        """The element to parse."""
+        return self._element
+
     def is_finished(self) -> bool:
         """Wether there are more elements left to consume."""
         return len(self._children) == 0

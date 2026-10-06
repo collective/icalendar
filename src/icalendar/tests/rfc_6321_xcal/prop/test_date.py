@@ -10,7 +10,7 @@ import pytest
 
 from icalendar.error import XCalParsingError
 from icalendar.prop.dt import vDate, vDDDLists, vDDDTypes
-from icalendar.tests.rfc_6321_xcal.common import list2xml, to_xcal
+from icalendar.tests.rfc_6321_xcal.common import INVALID_DATES, list2xml, to_xcal
 
 
 @pytest.fixture(params=[vDate, vDDDTypes, vDDDLists])
@@ -64,4 +64,15 @@ def test_invalid_value_from_xcal(v_date, xcal):
     assert (
         error.value.message
         == f"Expected date format YYYY-MM-DD, got {xcal!r} in /x-prop/date[1]."
+    )
+
+
+@pytest.mark.parametrize("invalid", INVALID_DATES)
+def test_out_of_range_values_raise_xcal_parsing_error(invalid, v_date):
+    """Test that we raise the correct error if a date cannot be created."""
+    with pytest.raises(XCalParsingError) as error:
+        v_date.from_xcal(list2xml(["x-prop", ["date", invalid]]))
+    assert (
+        error.value.message
+        == f"Date is out of range, got {invalid!r} in /x-prop/date[1]."
     )

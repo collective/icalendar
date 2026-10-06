@@ -13,14 +13,16 @@ from icalendar import Calendar
 from icalendar.error import InvalidCalendar
 from icalendar.prop import vDuration
 
+OVERFLOWING_DURATIONS = [
+    "P999999999999999999W",
+    "P1000000000000000000000D",
+    "PT999999999999999999999H",
+]
+
 
 @pytest.mark.parametrize(
     "value",
-    [
-        "P999999999999999999W",
-        "P1000000000000000000000D",
-        "PT999999999999999999999H",
-    ],
+    OVERFLOWING_DURATIONS,
 )
 def test_vDuration_from_ical_rejects_overflowing_duration(value):
     """An overflowing duration raises InvalidCalendar, not OverflowError."""

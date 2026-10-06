@@ -5,7 +5,7 @@ from typing import Any, ClassVar
 from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError
+from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser.xcal.adapter import ElementAdapter
 from icalendar.parser.xcal.base import XCalParser
@@ -253,9 +253,17 @@ class vDatetime(TimeBase):
         year, month, day, hour, minute, second, utc = XCAL_DATETIME_REGEX.groups(
             element
         )
-        dt = datetime(
-            int(year), int(month), int(day), int(hour), int(minute), int(second)
-        )
+        if second == "60":
+            # This is wrong but we have no way to represent this
+            second = 59
+        try:
+            dt = datetime(
+                int(year), int(month), int(day), int(hour), int(minute), int(second)
+            )
+        except ValueError as e:
+            raise XCalParsingError(
+                "Date-time is out of range", element.get_xsd_token(), element
+            ) from e
         if utc:
             dt = tzp.localize_utc(dt)
         return dt
@@ -275,6 +283,8 @@ class vDatetime(TimeBase):
         dt = cls.from_xcal_element(element)
         tzid = params.tzid
         if tzid:
+            if is_utc(dt):
+                raise XCalParsingError(f"Cannot mix {tzid} with UTC", None, element)
             dt = tzp.localize(dt, tzid)
         return cls(dt, params=params)
 

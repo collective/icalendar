@@ -6,7 +6,7 @@ from datetime import date, datetime
 from typing import TYPE_CHECKING, Any, ClassVar
 from xml.etree.ElementTree import Element, SubElement
 
-from icalendar.error import JCalParsingError
+from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser.xcal.match import XCalRegexMatcher
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
@@ -170,7 +170,12 @@ class vDate(TimeBase):
             ~error.XCalParsingError: If the provided xCal is invalid.
         """
         year, month, day = XCAL_DATE_REGEX.groups(element)
-        return date(int(year), int(month), int(day))
+        try:
+            return date(int(year), int(month), int(day))
+        except ValueError as e:
+            raise XCalParsingError(
+                "Date is out of range", element.get_xsd_token(), element
+            ) from e
 
     @classmethod
     @from_xcal_wrapper

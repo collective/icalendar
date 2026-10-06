@@ -75,3 +75,31 @@ def xml2list(element: Element[str]) -> list[str | list]:
 def to_xcal_list(value: HasToXcal, wrap: bool = True) -> list[str | list]:
     """combile to_xcal and xml2list."""
     return xml2list(to_xcal(value, wrap=wrap))
+
+
+INVALID_DATES = [
+    "0000-01-01",
+    # "9999-01-12",  # valid
+    "2026-00-01",
+    "2025-13-01",
+    "2025-01-32",
+    "2025-02-30",
+    "2025-02-00",
+]
+"""Dates out of range.
+
+See https://www.rfc-editor.org/info/rfc5545/#section-3.3.4
+"""
+
+
+INVALID_TIMES = [
+    "24:00:00",
+    "00:60:00",
+    "00:00:61",
+]
+"""Invalid strings for times.
+
+time-hour    = 2DIGIT        ;00-23
+time-minute  = 2DIGIT        ;00-59
+time-second  = 2DIGIT        ;00-60
+"""
