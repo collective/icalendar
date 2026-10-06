@@ -1,0 +1,1 @@
+``vDuration.from_ical`` now rejects empty duration strings such as ``P`` and ``PT`` with a clear ``ValueError`` instead of treating them as valid durations.
