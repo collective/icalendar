@@ -131,7 +131,7 @@ def test_from_jcal(text, code, description, data, text_serialized):
 
 
 def test_adding_a_request_status():
-    """Adding a requet status should use the corrrect type."""
+    """Adding a request status should use the corrrect type."""
     e = Event()
     e.add("REQUEST-STATUS", "2.0;Success")
     assert e["REQUEST-STATUS"].code == (2, 0)
