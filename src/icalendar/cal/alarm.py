@@ -35,7 +35,7 @@ if TYPE_CHECKING:
     import uuid
 
     from icalendar.compatibility import Self
-    from icalendar.prop import vBinary, vCalAddress, vUri
+    from icalendar.prop import vBinary, vUri
 
 
 class Alarm(Component):

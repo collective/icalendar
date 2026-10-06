@@ -438,6 +438,9 @@ def test_new_email_string_attendee_normalizes(attendees, expected):
         "",
         "   ",
         [""],
+        ["   "],
+        ["  ", "   "],
+        [None, "   "],
     ],
 )
 def test_new_email_with_none_or_empty_attendees_raises_invalid_calendar(
@@ -451,3 +454,15 @@ def test_new_email_with_none_or_empty_attendees_raises_invalid_calendar(
             trigger=timedelta(minutes=-30),
             attendees=invalid_attendees,
         )
+
+
+def test_new_email_filters_blank_strings_and_none_from_sequence():
+    """Sequence containing valid attendee along with blank strings or None filters out invalid elements."""
+    alarm = Alarm.new_email(
+        summary="S",
+        description="D",
+        trigger=timedelta(minutes=-30),
+        attendees=["valid@example.com", "   ", None, ""],
+    )
+    assert len(alarm.attendees) == 1
+    assert str(alarm.attendees[0]) == "mailto:valid@example.com"
