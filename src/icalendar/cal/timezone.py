@@ -110,8 +110,6 @@ class Timezone(Component):
     def _make_unique_tzname(tzname: str, tznames: set[str]) -> str:
         """Make a unique tzname and add it to ``tznames``.
 
-        Append ``_1`` to ``tzname`` until it is not in ``tznames``.
-
         Parameters:
             tzname: The candidate timezone name.
             tznames: The timezone names already in use.
