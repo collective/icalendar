@@ -125,5 +125,7 @@ class vUri(str):
 
     from icalendar.param import FMTTYPE, GAP, LABEL, LANGUAGE, LINKREL, RELTYPE, VALUE
 
+    language = LANGUAGE
+
 
 __all__ = ["vUri"]

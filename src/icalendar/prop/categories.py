@@ -85,7 +85,9 @@ class vCategory:
         """Examples of vCategory."""
         return [cls(["HOME", "COSY"])]
 
-    from icalendar.param import VALUE
+    from icalendar.param import LANGUAGE, VALUE
+
+    language = LANGUAGE
 
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:

@@ -284,6 +284,26 @@ Description:
     For transport in a MIME entity, the Content-Language header field
     can be used to set the default language for the entire body part.
     Otherwise, no default language is assumed.
+
+    The ``language`` (or ``LANGUAGE``) property accesses ``self.params``,
+    returns ``None`` if no language is set, returns the language string,
+    and deletes the parameter when set to ``None`` or when using ``del``.
+
+    Values are defined in :rfc:`5646` (see :rfc:`5646#section-2.1.1` on
+    `Formatting of Language Tags <https://www.rfc-editor.org/info/rfc5646/>`_).
+    Validation or normalization is not enforced by icalendar itself.
+    To standardize language tags, the external library `langcodes <https://pypi.org/project/langcodes/>`_
+    can be installed (``pip install langcodes``) and used:
+
+    .. code-block:: python
+
+        import langcodes
+        from icalendar.prop import vText
+
+        lang = langcodes.standardize_tag("en-us")  # 'en-US'
+        text = vText("Meeting Notes")
+        text.language = lang
+        del text.language
 """,
 )
 

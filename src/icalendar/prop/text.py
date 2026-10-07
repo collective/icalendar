@@ -58,7 +58,8 @@ class vText(str):
 
     To add a line break, use ``\n`` or ``\N``.
 
-    Use the LANGUAGE property parameter to set the language of the text.
+    Use the ``language`` (or ``LANGUAGE``) property parameter to set the language of the text.
+    Values are defined in :rfc:`5646` and can be standardized using `langcodes <https://pypi.org/project/langcodes/>`_.
 
     When the TEXT object is created, CONTROL characters other than HTAB
     are removed so both :meth:`to_ical` and :meth:`to_jcal` stay valid
@@ -164,6 +165,8 @@ class vText(str):
         return str(self)
 
     from icalendar.param import ALTREP, GAP, LANGUAGE, RELTYPE, VALUE
+
+    language = LANGUAGE
 
     def to_jcal(self, name: str) -> list:
         """The jCal representation of this property according to :rfc:`7265`."""

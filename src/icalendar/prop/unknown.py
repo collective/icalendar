@@ -104,6 +104,8 @@ class vUnknown(str):
 
     from icalendar.param import ALTREP, GAP, LANGUAGE, RELTYPE, VALUE
 
+    language = LANGUAGE
+
     def to_jcal(self, name: str) -> list:
         """The jCal representation of this property, according to :rfc:`7265#section-5.1`.
 
