@@ -1187,8 +1187,28 @@ Examples:
 """,  # noqa: E501
 )
 
-comments_property = multi_text_property(
-    "COMMENT",
+
+def _get_comments(component: Component) -> PropertyListView[vText, str | vText]:
+    """Get the comments as a PropertyListView."""
+    return PropertyListView.for_text(component, "COMMENT")
+
+
+def _set_comments(
+    component: Component, values: Sequence[str | vText] | str | vText | None
+) -> None:
+    """Set the comments."""
+    PropertyListView.for_text(component, "COMMENT").replace_with(values)
+
+
+def _del_comments(component: Component) -> None:
+    """Delete all comments."""
+    PropertyListView.for_text(component, "COMMENT").clear()
+
+
+comments_property = property(
+    _get_comments,
+    _set_comments,
+    _del_comments,
     """Specifies a comment to the calendar user.
 
 This property holds free-text notes attached to a component; calendar clients

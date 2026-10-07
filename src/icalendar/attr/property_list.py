@@ -3,16 +3,19 @@
 from __future__ import annotations
 
 import contextlib
-from collections.abc import MutableSequence, Sequence
-from typing import TYPE_CHECKING, Any
+from collections.abc import Callable, Iterator, MutableSequence, Sequence
+from typing import TYPE_CHECKING, Any, Generic, TypeVar
+
+from icalendar.prop import vText
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator
-
     from icalendar.cal.component import Component
 
+ValueT = TypeVar("ValueT")
+ArgT = TypeVar("ArgT")
 
-class PropertyListView(MutableSequence):
+
+class PropertyListView(MutableSequence[ValueT], Generic[ValueT, ArgT]):
     """A list-like view of an RFC 5545 property within a component.
 
     This view synchronizes modifications (such as append, extend, insert,
@@ -21,15 +24,47 @@ class PropertyListView(MutableSequence):
 
     __hash__ = None
 
-    def __init__(self, component: Component, name: str) -> None:
+    def __init__(
+        self,
+        component: Component,
+        name: str,
+        converter: Callable[[ArgT], ValueT] | dict[type, type] | None = None,
+    ) -> None:
         """Initialize the property list view for a given component and property name.
 
         Parameters:
             component: The component to view.
             name: The name of the property to view.
+            converter: An optional conversion function or mapping from types to
+                conversion classes used when inserting or modifying values.
         """
         self._component = component
         self._name = name
+        self._converter = converter
+
+    @classmethod
+    def for_text(
+        cls, component: Component, name: str
+    ) -> PropertyListView[vText, str | vText]:
+        """Create a PropertyListView for text properties converting strings to vText."""
+        return cls(
+            component,
+            name,
+            converter=lambda v: v if isinstance(v, vText) else vText(v),
+        )
+
+    def _convert(self, value: Any) -> Any:
+        """Convert a value using the configured converter if present."""
+        if self._converter is None:
+            return value
+        if isinstance(self._converter, dict):
+            target_cls = self._converter.get(type(value))
+            if target_cls is not None:
+                return target_cls(value)
+            return value
+        if callable(self._converter):
+            return self._converter(value)
+        return value
 
     @contextlib.contextmanager
     def _values(self) -> Iterator[list[Any]]:
@@ -52,7 +87,10 @@ class PropertyListView(MutableSequence):
     def __setitem__(self, index: Any, value: Any) -> None:
         """Set an item or slice in the property list."""
         with self._values() as values:
-            values[index] = value
+            if isinstance(index, slice):
+                values[index] = [self._convert(v) for v in value]
+            else:
+                values[index] = self._convert(value)
 
     def __delitem__(self, index: Any) -> None:
         """Delete an item or slice from the property list."""
@@ -70,8 +108,9 @@ class PropertyListView(MutableSequence):
 
     def insert(self, index: int, value: Any) -> None:
         """Insert an item into the property list at a given index."""
+        converted = self._convert(value)
         with self._values() as values:
-            values.insert(index, value)
+            values.insert(index, converted)
 
     def clear(self) -> None:
         """Remove all values and the property from the component."""
