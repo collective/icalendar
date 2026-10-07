@@ -6,7 +6,7 @@ This eases round trip and corrections.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Self
+from typing import TYPE_CHECKING, Any
 
 from icalendar.error import InvalidCalendar
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
@@ -14,6 +14,7 @@ from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from .unknown import vUnknown
 
 if TYPE_CHECKING:
+    from icalendar.compatibility import Self
     from icalendar.parser.parameter import Parameters
     from icalendar.parser.xcal.base import XCalParser
 

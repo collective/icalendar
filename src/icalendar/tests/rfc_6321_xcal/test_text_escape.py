@@ -9,6 +9,8 @@ https://www.w3.org/TR/REC-xml/#charsets
 
 """
 
+from __future__ import annotations
+
 from io import BytesIO
 from xml.etree.ElementTree import Element, ElementTree, ParseError
 

@@ -1,5 +1,7 @@
 """Common xCal test functionality."""
 
+from __future__ import annotations
+
 from typing import Protocol
 from xml.etree.ElementTree import Element, tostring
 

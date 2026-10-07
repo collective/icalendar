@@ -1,5 +1,7 @@
 """Runtime configuration for icalendar."""
 
+from __future__ import annotations
+
 from xml.etree.ElementTree import Element, ElementTree, parse
 
 MAX_ALARM_REPEAT: int = 10_000
