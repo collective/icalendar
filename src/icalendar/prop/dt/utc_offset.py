@@ -130,7 +130,9 @@ class vUTCOffset:
             time-numzone = ("+" / "-") time-hour time-minute [time-second]
 
         The RFC requires the sign.
-        A value without a sign is accepted and read as a positive offset.
+        A value without a sign is rejected,
+        unless ``ignore_exceptions`` is ``True``.
+        Then it is read as a positive offset.
         Seconds may be ``60``, which is read as one more minute.
 
         Parameters:
@@ -145,10 +147,11 @@ class vUTCOffset:
             TypeError: If ``ical`` is neither a :class:`str` nor a
                 :class:`vUTCOffset`.
             ~icalendar.error.ICalParsingError: If ``ical`` does not have the format
-                above, or the offset is 24 hours or more, or the minutes are
-                greater than 59, or the seconds are greater than 60.
-                The range checks are skipped if ``ignore_exceptions``
-                is ``True``.
+                above, or the sign is missing, or the offset is 24 hours or
+                more, or the minutes are greater than 59, or the seconds are
+                greater than 60.
+                The sign and range checks are skipped if
+                ``ignore_exceptions`` is ``True``.
 
         Example:
             .. code-block:: pycon
@@ -168,6 +171,9 @@ class vUTCOffset:
         match = UTC_OFFSET_REGEX.match(ical)
         if match is None:
             raise ICalParsingError("Expected UTC offset as [+-]HHMM[SS]", value=ical)
+        if not cls.ignore_exceptions and not match.group("sign"):
+            raise ICalParsingError("UTC offset must have a sign (+ or -)", value=ical)
+
         hours = int(match.group("hours"))
         minutes = int(match.group("minutes"))
         seconds = int(match.group("seconds") or 0)
