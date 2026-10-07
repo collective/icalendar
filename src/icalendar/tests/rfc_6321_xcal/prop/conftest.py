@@ -30,5 +30,10 @@ def xcal_prop(xcal_prop_name):
 
 
 @pytest.fixture
-def xcal_prop_example(xcal_prop) -> prop.VPROPERTY:
-    return xcal_prop.examples()[0]
+def xcal_prop_examples(xcal_prop) -> list[prop.VPROPERTY]:
+    return xcal_prop.examples()
+
+
+@pytest.fixture
+def xcal_prop_example(xcal_prop_examples) -> prop.VPROPERTY:
+    return xcal_prop_examples[0]

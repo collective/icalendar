@@ -158,7 +158,11 @@ class vDatetime(TimeBase):
     @classmethod
     def examples(cls) -> list[Self]:
         """Examples of vDatetime."""
-        return [cls(tzp.localize_utc(datetime(2025, 11, 10, 16, 52)))]
+        return [
+            cls(tzp.localize_utc(datetime(2025, 11, 10, 16, 52))),
+            cls(tzp.localize(datetime(2025, 11, 10, 16, 52), "America/New_York")),
+            cls(datetime(2025, 11, 10, 16, 52)),
+        ]
 
     from icalendar.param import VALUE
 
