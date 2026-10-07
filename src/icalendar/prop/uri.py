@@ -7,7 +7,7 @@ from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser.xcal.base import XCalParser
-from icalendar.parser.xcal.string import to_valid_xml_string
+from icalendar.parser.xcal.string import _to_valid_xml_string
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import DEFAULT_ENCODING, to_unicode
 
@@ -133,7 +133,7 @@ class vUri(str):
         """Add the xCal representation of this property according to :rfc:`6321`."""
         self.params.to_xcal(element)
         element = SubElement(element, self.default_value.lower())
-        element.text = to_valid_xml_string(self)
+        element.text = _to_valid_xml_string(self)
 
     @classmethod
     @from_xcal_wrapper

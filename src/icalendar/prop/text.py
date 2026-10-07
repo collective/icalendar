@@ -8,7 +8,7 @@ from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters, _escape_char
 from icalendar.parser.xcal.base import XCalParser
-from icalendar.parser.xcal.string import to_valid_xml_string
+from icalendar.parser.xcal.string import _to_valid_xml_string
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
 
@@ -42,6 +42,12 @@ def _strip_unsafe_text_chars(value: object) -> str:
     values unchanged, and callers such as :meth:`vUid.new` pass a
     :class:`uuid.UUID`. Coerce those to ``str`` the same way ``str.__new__``
     did before this filter ran.
+
+    .. seealso::
+
+        :func:`~icalendar.parser.xcal.string._to_valid_xml_string`
+        `Issue 1712 <https://github.com/collective/icalendar/issues/1712>`_,
+        `Issue 1888 <https://github.com/collective/icalendar/issues/1888>`_,
     """
     if not isinstance(value, str):
         value = str(value)
@@ -216,7 +222,7 @@ class vText(str):
         """Add the xCal representation of this property according to :rfc:`6321`."""
         self.params.to_xcal(element)
         element = SubElement(element, self.default_value.lower())
-        element.text = to_valid_xml_string(self)
+        element.text = _to_valid_xml_string(self)
 
     @classmethod
     @from_xcal_wrapper

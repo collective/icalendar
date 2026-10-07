@@ -7,7 +7,7 @@ from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
-from icalendar.parser.xcal.string import to_valid_xml_string
+from icalendar.parser.xcal.string import _to_valid_xml_string
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
 
@@ -175,7 +175,7 @@ class vUnknown(str):
         if value_parameter is None:
             value_parameter = self.default_value
         element = SubElement(element, value_parameter.lower())
-        element.text = to_valid_xml_string(self)
+        element.text = _to_valid_xml_string(self)
 
     @classmethod
     @from_xcal_wrapper

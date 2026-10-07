@@ -36,7 +36,7 @@ def xsd_float_to_string(f: float) -> str:
 _VALID_XML_CHARACTERS = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f]")
 
 
-def to_valid_xml_string(string: str) -> str:
+def _to_valid_xml_string(string: str) -> str:
     """Remove all characters that are not valid XML characters.
 
     Returns:
@@ -45,9 +45,11 @@ def to_valid_xml_string(string: str) -> str:
 
     .. seealso::
 
-        `Character Range <https://www.w3.org/TR/REC-xml/#charsets>`_.
+        `XML Character Range <https://www.w3.org/TR/REC-xml/#charsets>`_,
+        `~icalendar.prop.text._strip_unsafe_text_chars`,
+        `Issue 1888 <https://github.com/collective/icalendar/issues/1888>`_,
     """
     return _VALID_XML_CHARACTERS.sub("", string)
 
 
-__all__ = ["string_to_xsd_float", "to_valid_xml_string", "xsd_float_to_string"]
+__all__ = ["_to_valid_xml_string", "string_to_xsd_float", "xsd_float_to_string"]
