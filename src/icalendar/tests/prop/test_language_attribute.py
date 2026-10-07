@@ -7,6 +7,7 @@ Related to:
 
 import pytest
 
+from icalendar.cal import Event
 from icalendar.prop import (
     vCalAddress,
     vCategory,
@@ -72,18 +73,41 @@ def test_language_standardization_with_langcodes(raw_tag, expected_standardized)
     standardized = langcodes.standardize_tag(raw_tag)
     assert standardized == expected_standardized
 
-    text = vText("International meeting")
-    text.language = standardized
-    assert text.language == expected_standardized
-    assert text.params["LANGUAGE"] == expected_standardized
+    event = Event()
+    event.add("summary", "International meeting")
+    event["summary"].language = standardized
+    assert event["summary"].language == expected_standardized
+    assert event["summary"].params["LANGUAGE"] == expected_standardized
+
+    ical_output = event.to_ical().decode("utf-8")
+    assert (
+        f"SUMMARY;LANGUAGE={expected_standardized}:International meeting" in ical_output
+    )
+
+    parsed_event = Event.from_ical(ical_output)
+    assert parsed_event["summary"].language == expected_standardized
 
 
-def test_language_in_ical_serialization():
-    """Test that language parameter renders properly in iCalendar output."""
-    text = vText("Meeting with team")
-    text.language = "en-US"
-    assert text.params["LANGUAGE"] == "en-US"
+def test_language_in_ical_serialization_and_roundtrip():
+    """Test that language parameter renders in to_ical output and roundtrips with from_ical."""
+    event = Event()
+    event.add("summary", "Meeting with team")
+    event["summary"].language = "en-US"
 
-    addr = vCalAddress("mailto:organizer@example.com")
-    addr.language = "fr-FR"
-    assert addr.params["LANGUAGE"] == "fr-FR"
+    event.add("organizer", "mailto:organizer@example.com")
+    event["organizer"].language = "fr-FR"
+
+    event.add("categories", ["Work", "Design"])
+    event["categories"].language = "de-DE"
+
+    ical_bytes = event.to_ical()
+    ical_text = ical_bytes.decode("utf-8")
+
+    assert "SUMMARY;LANGUAGE=en-US:Meeting with team" in ical_text
+    assert "ORGANIZER;LANGUAGE=fr-FR:mailto:organizer@example.com" in ical_text
+    assert "CATEGORIES;LANGUAGE=de-DE:Work,Design" in ical_text
+
+    parsed_event = Event.from_ical(ical_bytes)
+    assert parsed_event["summary"].language == "en-US"
+    assert parsed_event["organizer"].language == "fr-FR"
+    assert parsed_event["categories"].language == "de-DE"

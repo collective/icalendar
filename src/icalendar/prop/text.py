@@ -58,7 +58,7 @@ class vText(str):
 
     To add a line break, use ``\n`` or ``\N``.
 
-    Use the ``language`` (or ``LANGUAGE``) property parameter to set the language of the text.
+    Use the ``language`` (or ``LANGUAGE``) property to set the iCalendar ``LANGUAGE`` parameter of the text.
     Values are defined in :rfc:`5646` and can be standardized using `langcodes <https://pypi.org/project/langcodes/>`_.
 
     When the TEXT object is created, CONTROL characters other than HTAB
