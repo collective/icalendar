@@ -75,3 +75,12 @@ def test_vbinary_default_value_is_a_value_enum_member():
     from icalendar.prop import vBinary
 
     assert vBinary.default_value in {member.value for member in enums.VALUE}
+
+
+def test_enum_case_insensitivity(enum):
+    """Enums should be able to accept case-insensitive string values."""
+    if hasattr(enum, "_missing_"):
+        first_member = list(enum)[0]
+        val = first_member.value
+        assert enum(val.lower()) == first_member
+        assert enum(val.upper()) == first_member
