@@ -7,7 +7,7 @@ Safe XML parsing
 
 :rfc:`6321` specifies how to represent calendars as XML.
 
-We consider the built-in XML parser safe enough to parse xCal XML.
+Summary: Python's built-in XML parser is considered safe enough to parse XML for xCal.
 
 If you don't, please open an issue.
 
@@ -16,8 +16,8 @@ Sources
 
 The following sources have been taken into consideration:
 
-#. `Python 3.12 xml package <https://docs.python.org/3.12/library/xml.html#xml-vulnerabilities>`_
-#. `Python 3.13 xml package <https://docs.python.org/3.13/library/xml.html#xml-vulnerabilities>`_
+#. `Python 3.12 XML package <https://docs.python.org/3.12/library/xml.html#xml-vulnerabilities>`_
+#. `Python 3.13 XML package <https://docs.python.org/3.13/library/xml.html#xml-vulnerabilities>`_
 #. `Amended documentation recommendation <https://github.com/python/cpython/pull/135294>`_
 
        "Python 3.11-3.15 include expat 2.7.1 which is not vulnerable."
@@ -29,7 +29,7 @@ The following sources have been taken into consideration:
 
 We can expect people who use icalendar parse unverified, external XML.
 Therefore, we should make sure that the XML parser is safe.
-If it is not safe, we can just refuse to parse content and
+If it isn't safe, we can just refuse to parse content and
 refer to a solution.
 
 Conclusion
