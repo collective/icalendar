@@ -144,7 +144,7 @@ class vUTCOffset:
         Raises:
             TypeError: If ``ical`` is neither a :class:`str` nor a
                 :class:`vUTCOffset`.
-            ~error.ICalParsingError: If ``ical`` does not have the format
+            ~icalendar.error.ICalParsingError: If ``ical`` does not have the format
                 above, or the offset is 24 hours or more, or the minutes are
                 greater than 59, or the seconds are greater than 60.
                 The range checks are skipped if ``ignore_exceptions``
