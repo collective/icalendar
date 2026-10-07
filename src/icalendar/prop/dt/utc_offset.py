@@ -154,11 +154,9 @@ class vUTCOffset:
             .. code-block:: pycon
 
                 >>> from icalendar import vUTCOffset
-                >>> vUTCOffset.from_ical("+0100")
+                >>> vUTCOffset.from_ical("+0100")  # positive
                 datetime.timedelta(seconds=3600)
-                >>> vUTCOffset.from_ical("0530")
-                datetime.timedelta(seconds=19800)
-                >>> vUTCOffset.from_ical("-000030")
+                >>> vUTCOffset.from_ical("-000030")  # negative
                 datetime.timedelta(days=-1, seconds=86370)
         """
         if isinstance(ical, cls):
