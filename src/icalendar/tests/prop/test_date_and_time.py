@@ -33,6 +33,7 @@ if TYPE_CHECKING:
     ],
 )
 def test_vdate_rejects_invalid_calendar_date(value):
+    """Invalid DATE values raise ICalParsingError (issue #1448; DATE follow-up #1759)."""
     with pytest.raises(ICalParsingError) as exc_info:
         vDate.from_ical(value)
 

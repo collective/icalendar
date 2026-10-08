@@ -110,7 +110,11 @@ class vDatetime(TimeBase):
 
     @staticmethod
     def from_ical(ical, timezone=None):
-        """Create a datetime from the RFC string."""
+        """Create a datetime from the RFC string.
+
+        Raises:
+            ~icalendar.error.ICalParsingError: If the value is not a valid DATE-TIME.
+        """
         ical = to_unicode(ical)
         tzinfo = None
         if isinstance(timezone, str):

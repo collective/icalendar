@@ -41,10 +41,11 @@ def test_from_ical_form_3():
     [
         "20010101T000000A",
         "20010101-000000",
-        "200101011T00000",
+        "200101011T00000",  # T is at index 9 instead of 8
     ],
 )
 def test_from_ical_invalid_datetime_raises_parsing_error(value):
+    """Invalid DATE-TIME values raise ICalParsingError (issue #1448; see #1759)."""
     with pytest.raises(ICalParsingError) as exc_info:
         vDatetime.from_ical(value)
 
