@@ -353,7 +353,7 @@ class vRecur(CaselessDict):
             # (RFC 5545 doesn't say COUNT must be positive, only non-negative
             # per its digit-only grammar), and is stored as such.
             raise InvalidCalendar(f"COUNT must be >= 0, got {value}")
-        self["COUNT"] = [vInt(value)]
+        self["COUNT"] = [vNonNegativeInt(value)]
 
     @count.deleter
     def count(self) -> None:
