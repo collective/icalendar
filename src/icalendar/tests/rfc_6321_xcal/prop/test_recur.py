@@ -60,7 +60,7 @@ def test_from_xcal_freq(freq):
     """Test that the valid values can be parsed."""
     xml = list2xml(["recur", ["freq", freq], ["count", "5"]])
     recur = vRecur.from_xcal(xml)
-    assert recur["FREQ"] == freq
+    assert recur["FREQ"] == [freq]
 
 
 # These values appear at most once
@@ -139,7 +139,7 @@ def test_from_xcal(key, xml, value):
     xml = list2xml(["recur", [key, xml]])
     result = vRecur.from_xcal(xml)
     assert isinstance(result, vRecur)
-    assert result[key] == value
+    assert result[key] == [value]
 
 
 MULTI_VALUE_COMBINATION = [
@@ -174,7 +174,7 @@ def test_unknown_parameters_are_also_included():
     """New RFCs might extend the parameters. We include them."""
     xml = list2xml(["recur", ["foo", "bar"]])
     result = vRecur.from_xcal(xml)
-    assert result["foo"] == "bar"
+    assert result["foo"] == ["bar"]
 
 
 @pytest.mark.parametrize("leap", [True, False])
@@ -182,8 +182,8 @@ def test_leap_month_from_xcal(leap):
     """The leap month has an L suffix."""
     xml = list2xml(["recur", ["bymonth", "12L" if leap else "12"]])
     result = vRecur.from_xcal(xml)
-    assert result["bymonth"] == 12
-    assert result["bymonth"].leap == leap
+    assert result["bymonth"] == [12]
+    assert result["bymonth"][0].leap == leap
 
 
 INVALID_VALUE = [
@@ -274,15 +274,15 @@ def test_negative_integer_still_parses(key):
     """
     xml = list2xml(["recur", [key, "-1"]])
     result = vRecur.from_xcal(xml)
-    assert result[key] == -1
-    assert result[key].min == 0
+    assert result[key] == [-1]
+    assert result[key][0].min == 0
 
 
 def test_weekday_becomes_uppercase():
     """Uppercase is required for xCal."""
     xml = list2xml(["recur", ["byday", "su"]])
     result = vRecur.from_xcal(xml)
-    assert result["BYDAY"] == "SU"
+    assert result["BYDAY"] == ["SU"]
 
 
 @pytest.mark.parametrize(
@@ -300,7 +300,7 @@ def test_until_with_tags(xml, expected):
     """Test the UNTIL date value."""
     xml = list2xml(["recur", ["until", xml]])
     result = vRecur.from_xcal(xml)
-    assert result["UNTIL"] == expected
+    assert result["UNTIL"] == [expected]
 
 
 @mark_single_value

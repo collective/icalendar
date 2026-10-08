@@ -470,10 +470,6 @@ class vRecur(CaselessDict):
                 from_xcal = v_prop.from_xcal
             value = from_xcal(parser)
             self.setdefault(key, []).append(value)
-        # single occurrences are not stored as list
-        for key, value in self.items():
-            if len(value) == 1:
-                self[key] = value[0]
         return self
 
     def to_xcal(self, element: Element) -> None:
