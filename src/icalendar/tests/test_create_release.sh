@@ -32,6 +32,7 @@ PKG-INFO
 README.rst
 docs
 funding.json
+generate_windows_to_olson_mapping.py
 news
 pyproject.toml
 src"
