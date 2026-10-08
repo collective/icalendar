@@ -69,7 +69,6 @@ class XCalParametersParser(XCalParser):
                 </parameters>
 
         """
-        self._types_factory.for_property(self.tag, self.child.tag)
         parameters_parser = XCalParameterParser(self.child, self._types_factory)
         values = []
         while not parameters_parser.is_finished():
