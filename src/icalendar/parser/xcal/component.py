@@ -17,7 +17,13 @@ if TYPE_CHECKING:
 
 
 class XCalComponentParser(XCalParser):
-    """A parser for components."""
+    """A parser for components.
+
+    Parameters:
+        element: The element to parse.
+        component_factory: The component factory to use.
+        types_factory: The types factory to use.
+    """
 
     def __init__(
         self,
@@ -41,6 +47,7 @@ class XCalComponentParser(XCalParser):
             The consumed component.
 
         Raises:
+            InvalidParserState: If parsing is finished
             XCalParsingError: If the element is not a component.
 
         Example:
@@ -58,12 +65,21 @@ class XCalComponentParser(XCalParser):
                   </components>
                 </vcalendar>
         """
-        component = self.parse_component_from_element(self.child)
+        component = self.parse_component_from_child()
         self.done()
         return component
 
-    def parse_component_from_element(self, element: ElementAdapter):
-        """Parse a component from an element."""
+    def parse_component_from_child(self) -> Component:
+        """Parse a component from a child element.
+
+        Returns:
+            The parsed component
+
+        Raises:
+            InvalidParserState: If there is no child
+            XCalParsingError: If there is an error in the child
+
+        """
         component_class = self._component_factory.get_component_class(self.child.tag)
         component = component_class()
         properties = self.child.get_child_with_tag("properties")
