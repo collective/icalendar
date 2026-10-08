@@ -107,7 +107,7 @@ class DataSource:
             is_ical = not raw_bytes.startswith(b"<")
 
         def get_parsed(self):
-            if not raw_bytes:
+            if raw_bytes is None:
                 source = self._parser.from_jcal(raw_string)
             elif not is_ical:
                 source = self._parser.from_xcal(raw_bytes)[0]
