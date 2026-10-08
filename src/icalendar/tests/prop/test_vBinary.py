@@ -208,3 +208,36 @@ def test_attach_example_survives_reserialization(calendars):
     (original,) = calendar.events
     (roundtripped,) = reparsed.events
     assert roundtripped.decoded("ATTACH") == original.decoded("ATTACH")
+
+
+def test_uri_uses_fmttype_as_media_type():
+    """vBinary.uri builds a data: URI with the FMTTYPE media type.
+
+    See issue #1895.
+    """
+    obj = vBinary(b"hello", params={"FMTTYPE": "text/plain"})
+    assert obj.uri == "data:text/plain;base64,aGVsbG8="
+
+
+def test_uri_defaults_to_application_octet_stream():
+    """Without an FMTTYPE parameter, the media type is application/octet-stream."""
+    assert vBinary(b"hello").uri == "data:application/octet-stream;base64,aGVsbG8="
+
+
+def test_uri_param_name_is_case_insensitive():
+    """The FMTTYPE parameter is found regardless of its case."""
+    obj = vBinary(b"hello", params={"fmttype": "image/png"})
+    assert obj.uri == "data:image/png;base64,aGVsbG8="
+
+
+def test_uri_payload_decodes_to_stored_bytes():
+    """The data: URI payload round-trips back to the stored bytes."""
+    raw = bytes(range(256))
+    uri = vBinary(raw).uri
+    assert uri.startswith("data:application/octet-stream;base64,")
+    assert base64.b64decode(uri.split(",", 1)[1]) == raw
+
+
+def test_uri_of_empty_value():
+    """An empty value still forms a valid, empty data: URI."""
+    assert vBinary(b"").uri == "data:application/octet-stream;base64,"
