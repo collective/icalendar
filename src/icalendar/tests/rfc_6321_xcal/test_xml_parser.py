@@ -38,7 +38,7 @@ MAIN = HERE / "include" / "main.xml"
 def test_include_is_not_processed():
     """XML include is not processed.
 
-    Include is the only vilnerability that is listed in
+    Include is the only vulnerability that is listed in
     https://github.com/tiran/defusedxml/blob/c7445887f5e1bcea470a16f61369d29870cfcfe1/README.md#python-xml-libraries
     """
     etree = config.parse_xml(MAIN.open("rb"))
