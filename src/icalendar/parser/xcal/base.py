@@ -49,6 +49,7 @@ class XCalParser:
         self._element = ElementAdapter.with_element(element)
         self._children = self._element.children
         self._consumed = 0
+        self._element_is_parsed = False
 
     @property
     def element(self) -> ElementAdapter:
