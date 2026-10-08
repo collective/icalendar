@@ -200,9 +200,6 @@ class XCalPropertyParser(XCalParameterParser):
                     value_type.__name__,
                     e,
                 )
-            # if self._consumed == start:
-            #     # if we did not progress, we should move on
-            #     self.done()
         else:
             expected_type = self._types_factory.types_map.get(property_name, None)
             if (
