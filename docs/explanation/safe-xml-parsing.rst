@@ -9,8 +9,6 @@ Safe XML parsing
 
 Summary: Python's built-in XML parser is considered safe enough to parse XML for xCal.
 
-If you don't, please open an issue.
-
 Sources
 =======
 
