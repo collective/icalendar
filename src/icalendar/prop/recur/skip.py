@@ -5,13 +5,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 from xml.etree.ElementTree import Element, SubElement
 
+from icalendar.compatibility import Self  # noqa: TC001
 from icalendar.enums import Enum
 from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.prop.text import vText
 
 if TYPE_CHECKING:
-    from icalendar.compatibility import Self
     from icalendar.parser.parameter import Parameters
     from icalendar.parser.xcal.base import XCalParser
 

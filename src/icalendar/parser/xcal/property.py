@@ -20,7 +20,13 @@ if TYPE_CHECKING:
 
 
 class XCalPropertiesParser(XCalParser):
-    """A parser for <properties>."""
+    """A parser for <properties>.
+
+    Parameters:
+        element: The xCal element to parse.
+        component: The component to add properties to.
+        types_factory: The types factory to use.
+    """
 
     def __init__(
         self,
@@ -33,12 +39,26 @@ class XCalPropertiesParser(XCalParser):
         self._component = component
 
     def parse_properties(self):
-        """Parse properties until finished."""
+        """Parse properties until finished.
+
+        Raises:
+            ~icalendar.error.XCalParsingError: If the provided xCal is invalid.
+            ~icalendar.parser.xcal.base.InvalidParserState:
+                If all properties have been parsed a property value type
+                did not parse anything.
+        """
         while not self.is_finished():
             self.parse_property()
 
     def parse_property(self):
         """Parse one property from the list.
+
+
+        Raises:
+            ~icalendar.error.XCalParsingError: If the provided xCal is invalid.
+            ~icalendar.parser.xcal.base.InvalidParserState:
+                If all properties have been parsed a property value type
+                did not parse anything.
 
         Example:
 
@@ -84,6 +104,14 @@ class XCalPropertyParser(XCalParameterParser):
     """A parser for one property.
 
     This parses the value type and additionally the parameters.
+
+    Parameters:
+        element: The xCal element to parse.
+        types_factory: The types factory to use.
+            If ``None`` is passed, the default TypesFactory is used.
+
+    Raises:
+        ~icalendar.error.XCalParsingError: If the provided xCal is invalid.
     """
 
     def __init__(
@@ -107,6 +135,9 @@ class XCalPropertyParser(XCalParameterParser):
         Returns:
             The parsed parameters.
 
+        Raises:
+            ~icalendar.error.XCalParsingError: If the provided xCal is invalid.
+
         Example:
 
         .. code-block:: xml
@@ -122,7 +153,12 @@ class XCalPropertyParser(XCalParameterParser):
         return parameters_parser.parse_parameters()
 
     def parse_parameters(self) -> Parameters:
-        """Return the parsed parameters."""
+        """Return the parsed parameters.
+
+        Returns:
+            The parsed parameters.
+            They are identical for all property values.
+        """
         return self._parameters
 
     def parse_property(self) -> VPROPERTY:
@@ -132,7 +168,10 @@ class XCalPropertyParser(XCalParameterParser):
             The parsed property
 
         Raises:
-            InvalidParserState: If no parsing takes place.
+            ~icalendar.error.XCalParsingError: If the provided xCal is invalid.
+            ~icalendar.parser.xcal.base.InvalidParserState:
+                If all properties have been parsed or a property value
+                type did not parse anything.
 
         Example:
 

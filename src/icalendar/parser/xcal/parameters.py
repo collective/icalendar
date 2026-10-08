@@ -13,7 +13,13 @@ if TYPE_CHECKING:
 
 
 class XCalParametersParser(XCalParser):
-    """A parser for <properties>."""
+    """A parser for <properties>.
+
+    Parameters:
+        element: The xCal element to parse.
+        types_factory: The types factory to use.
+            If ``None`` is passed, the default TypesFactory is used.
+    """
 
     def __init__(
         self,
@@ -29,13 +35,28 @@ class XCalParametersParser(XCalParser):
         self._parameters = Parameters()
 
     def parse_parameters(self) -> Parameters:
-        """Parse properties until finished."""
+        """Parse properties until finished.
+
+        Parameters are parsed once and are the same for all
+        property values inside a property tag.
+
+        Returns:
+            The parsed parameters.
+
+        Raises:
+            ~icalendar.error.XCalParsingError: If the provided xCal is invalid.
+        """
         while not self.is_finished():
             self.parse_parameter()
         return self._parameters
 
-    def parse_parameter(self):
+    def parse_parameter(self) -> None:
         """Parse one parameter from the list.
+
+        Raises:
+            ~icalendar.error.XCalParsingError: If the provided xCal is invalid.
+            ~icalendar.parser.xcal.base.InvalidParserState:
+                If all parameters have been parsed.
 
         Example:
 

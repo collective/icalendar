@@ -47,8 +47,10 @@ class XCalComponentParser(XCalParser):
             The consumed component.
 
         Raises:
-            InvalidParserState: If parsing is finished
-            XCalParsingError: If the element is not a component.
+            ~icalendar.error.XCalParsingError: If there is an error in the child
+            ~icalendar.parser.xcal.base.InvalidParserState:
+                If all components have been parsed or a property value type did not
+                parse anything.
 
         Example:
 
@@ -76,8 +78,10 @@ class XCalComponentParser(XCalParser):
             The parsed component
 
         Raises:
-            InvalidParserState: If there is no child
-            XCalParsingError: If there is an error in the child
+            ~icalendar.error.XCalParsingError: If there is an error in the child
+            ~icalendar.parser.xcal.base.InvalidParserState:
+                If all components have been parsed or a property value type did not
+                parse anything.
 
         """
         component_class = self._component_factory.get_component_class(self.child.tag)
