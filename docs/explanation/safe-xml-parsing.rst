@@ -38,7 +38,7 @@ Conclusion
 We must ensure Python is >= 3.8 or XML loading is vulnerable.
 :file:`pyproject.toml` does that, so there is nothing to do.
 
-People can open an issue it they like to use a different XML parser.
+People can open an issue if they like to use a different XML parser.
 
 
 .. seealso::
