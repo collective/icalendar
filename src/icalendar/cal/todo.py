@@ -235,6 +235,8 @@ class Todo(Component):
         3.  Remove any existing DUE property
         4.  Set the DURATION property
         """
+        if "DURATION" not in self and "DUE" in self and "DTSTART" not in self:
+            return timedelta(0)
         return get_duration_property(self)
 
     @duration.setter

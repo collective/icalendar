@@ -104,7 +104,10 @@ class ZONEINFO(TZProvider):
                 if start and hasattr(start, "dt") and is_date(start.dt):
                     # ValueError: Unsupported DTSTART param in VTIMEZONE: VALUE=DATE
                     sub.DTSTART = to_datetime(start.dt)
-            return self._create_timezone(tz)
+            try:
+                return self._create_timezone(tz)
+            except ValueError as e:
+                raise ValueError(f"Invalid iCalendar VTIMEZONE: {e}") from e
 
     def _create_timezone(self, tz: Timezone.Timezone) -> tzinfo:
         """Create a timezone and maybe fail"""

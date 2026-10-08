@@ -20,6 +20,34 @@ This section describes the major changes to icalendar in version 8.0.0.
 Breaking changes
 ----------------
 
+This section describes the breaking changes in icalendar 8.0.0, and how to adapt your code to these changes.
+
+``Component.from_ical`` no longer reads files from a ``str`` path
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+:meth:`Component.from_ical <icalendar.cal.component.Component.from_ical>` no longer reads a file when it is given a ``str`` that matches a path on the file system.
+``str`` and ``bytes`` values are now always parsed as iCalendar data.
+This prevents untrusted input from causing unintended local file reads.
+
+If your code passes a file path as a ``str``:
+
+.. code-block:: python
+
+    from icalendar import Calendar
+
+    calendar = Calendar.from_ical("/path/to/calendar.ics")
+
+…then pass a :class:`pathlib.Path` instead.
+
+.. code-block:: python
+
+    from pathlib import Path
+
+    from icalendar import Calendar
+
+    calendar = Calendar.from_ical(Path("/path/to/calendar.ics"))
+
+
 .. _upgrade-7.0.0:
 
 7.0.0

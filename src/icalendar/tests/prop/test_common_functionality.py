@@ -120,6 +120,21 @@ def test_value_parameter_does_not_turn_up_in_jcal():
     assert params.to_jcal() == {}
 
 
+def test_jcal_roundtrip_preserves_parameters(v_prop, v_prop_example):
+    """Parameters survive a jCal ``to_jcal``/``from_jcal`` round-trip.
+
+    Property types that serialize more than one positional value used to drop
+    their parameters on the way through jCal (see #1526). This checks that
+    every property type keeps its parameters. See #1553.
+    """
+    v_prop_example.params["CN"] = "Test Name"
+    v_prop_example.params["X-CUSTOM"] = "custom-value"
+    jcal = v_prop_example.to_jcal("x-test")
+    restored = v_prop.from_jcal(jcal)
+    assert restored.params.get("CN") == "Test Name"
+    assert restored.params.get("X-CUSTOM") == "custom-value"
+
+
 def test_value_is_always_uppercase(v_prop_example):
     """The VALUE parameter should always be uppercase."""
     v_prop_example.VALUE = "unknown"
