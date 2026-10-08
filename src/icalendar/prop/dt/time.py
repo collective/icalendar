@@ -167,7 +167,8 @@ class vTime(TimeBase):
             timezone information if applicable.
 
         Raises:
-            ~error.ICalParsingError: If the provided value cannot be parsed as a time.
+            ~icalendar.error.ICalParsingError: If the provided value cannot
+                be parsed as a time.
         """
         tzinfo = None
         if isinstance(timezone, str):

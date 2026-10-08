@@ -127,6 +127,11 @@ class vDuration(TimeBase):
 
     @staticmethod
     def from_ical(ical):
+        """Parse an iCalendar DURATION value.
+
+        Raises:
+            ~icalendar.error.ICalParsingError: If the value is not a valid DURATION.
+        """
         match = DURATION_REGEX.match(ical)
         if not match:
             raise ICalParsingError(

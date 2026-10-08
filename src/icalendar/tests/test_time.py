@@ -20,6 +20,7 @@ from icalendar.prop.dt.time import vTime
     ],
 )
 def test_vtime_invalid_ical_raises_parsing_error(value):
+    """Invalid TIME values raise ICalParsingError (issue #1448)."""
     with pytest.raises(ICalParsingError) as exc_info:
         vTime.from_ical(value)
 

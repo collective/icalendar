@@ -23,6 +23,7 @@ from icalendar.prop import vDuration
     ],
 )
 def test_vduration_invalid_ical_raises_parsing_error(value):
+    """Invalid DURATION syntax raises ICalParsingError (issue #1448)."""
     with pytest.raises(ICalParsingError) as exc_info:
         vDuration.from_ical(value)
 
@@ -42,6 +43,7 @@ def test_vduration_invalid_ical_raises_parsing_error(value):
     ],
 )
 def test_vDuration_from_ical_rejects_overflowing_duration(value):
+    """Overflowing DURATION values raise ICalParsingError (issue #1448)."""
     with pytest.raises(ICalParsingError) as exc_info:
         vDuration.from_ical(value)
 
