@@ -27,7 +27,7 @@ The following sources have been taken into consideration:
 #. `defusedxml analysis <https://github.com/tiran/defusedxml/blob/c7445887f5e1bcea470a16f61369d29870cfcfe1/README.md#python-xml-libraries>`_
 #. `xinclude support <https://runebook.dev/en/docs/python/library/xml.etree.elementtree/xinclude-support>`_
 
-We can expect people who use icalendar parse unverified, external XML.
+We can expect people who use icalendar to parse unverified, external XML.
 Therefore, we should make sure that the XML parser is safe.
 If it isn't safe, we can just refuse to parse content and
 refer to a solution.
@@ -35,8 +35,9 @@ refer to a solution.
 Conclusion
 ==========
 
-We must ensure Python is >= 3.8 or XML loading is vulnerable.
-:file:`pyproject.toml` does that, so there is nothing to do.
+We must ensure Python is >= 3.11 or XML loading may be vulnerable.
+:file:`pyproject.toml` currently requires Python >= 3.8; once the minimum is
+raised to 3.11, there is nothing further to do.
 
 People can open an issue if they like to use a different XML parser.
 
