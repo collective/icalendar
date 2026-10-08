@@ -73,6 +73,29 @@ class vBinary:
         self.bytes = self.from_ical(value)
 
     @property
+    def uri(self) -> str:
+        """The value as a ``data:`` URI as defined in :rfc:`2397`.
+
+        This is handy when binary data, e.g. an ``ATTACH`` property value,
+        should be referenced as a URL instead of being embedded in the
+        iCalendar object. It mirrors :attr:`~icalendar.prop.vUri.uri`.
+
+        The media type is taken from the ``FMTTYPE`` parameter if present
+        and defaults to ``application/octet-stream`` otherwise. The data
+        is always Base64-encoded, as required for binary ``data:`` URIs.
+
+        .. code-block:: pycon
+
+            >>> from icalendar import vBinary
+            >>> vBinary(b"hello", params={"FMTTYPE": "text/plain"}).uri
+            'data:text/plain;base64,aGVsbG8='
+
+        See :issue:`1895`.
+        """
+        media_type = self.params.get("FMTTYPE", "application/octet-stream")
+        return f"data:{media_type};base64,{self.base64data}"
+
+    @property
     @deprecate_for_version_8
     def obj(self) -> str:
         """Deprecated string view of the value.
