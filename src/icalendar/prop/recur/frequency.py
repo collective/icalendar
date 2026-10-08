@@ -108,8 +108,8 @@ class vFrequency(str):
     def to_xcal(self, element: Element) -> None:
         """Add the xCal representation of this property according to :rfc:`6321`."""
         self.params.to_xcal(element)
-        element = SubElement(element, "freq")
-        element.text = str(self)
+        frequency_element = SubElement(element, "freq")
+        frequency_element.text = str(self)
 
 
 __all__ = ["vFrequency"]

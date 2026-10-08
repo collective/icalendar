@@ -85,8 +85,8 @@ class vSkip(vText, Enum):
     def to_xcal(self, element: Element) -> None:
         """Add the xCal representation of this property according to :rfc:`6321`."""
         self.params.to_xcal(element)
-        weekday_element = SubElement(element, "skip")
-        weekday_element.text = self.name
+        skip_element = SubElement(element, "skip")
+        skip_element.text = self.name
 
 
 __all__ = ["vSkip"]

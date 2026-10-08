@@ -133,8 +133,8 @@ class vMonth(int):
     def to_xcal(self, element: Element) -> None:
         """Add the xCal representation of this property according to :rfc:`6321`."""
         self.params.to_xcal(element)
-        element = SubElement(element, "bymonth")
-        element.text = str(self)
+        month_element = SubElement(element, "bymonth")
+        month_element.text = str(self)
 
 
 __all__ = ["vMonth"]
