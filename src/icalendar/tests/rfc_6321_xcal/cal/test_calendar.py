@@ -1,4 +1,4 @@
-"""Test the calendar spefically."""
+"""Test the calendar specifically."""
 
 from io import BytesIO
 
@@ -9,13 +9,13 @@ ICALENDAR_STREAM = b'<icalendar xmlns="urn:ietf:params:xml:ns:icalendar-2.0">'
 
 
 def test_calendar_bytes_start_with_xml_heading():
-    """Test the calendar spefically."""
+    """Test the calendar specifically."""
     xml = Calendar().to_xcal()
     assert xml.startswith(XML_HEADER)
 
 
 def test_calendar_is_in_icalendar_stream():
-    """Test the calendar spefically."""
+    """Test the calendar specifically."""
     xml = Calendar().to_xcal()
     data = xml[len(XML_HEADER) :].lstrip()
     print(data)
