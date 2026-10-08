@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class XCalParametersParser(XCalParser):
-    """A parser for <properties>.
+    """A parser for <parameters>.
 
     Parameters:
         element: The xCal element to parse.
