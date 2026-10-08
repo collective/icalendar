@@ -19,8 +19,45 @@ if TYPE_CHECKING:
     from icalendar.parser.xcal.base import XCalParser
 
 
-class vEmtpy(vUnknown):
-    """An empty icalendar property."""
+class vEmpty(vUnknown):
+    """This represents an invalid, empty property that is still there.
+
+    This is used when  a property element is present but carries no typed value,
+    only parameters.
+    Storing this placeholder keeps the parameters from being
+    silently dropped when parsing,
+    while :attr:`ical_value` raises so the
+    broken state is visible.
+
+    Properties containing :class:`vEmpty` are invalid.
+    However, they will be serialized correctly, repairing the calendar.
+
+    Examples:
+
+        .. code-block:: pycon
+
+            >>> from icalendar import Calendar
+            >>> cal = Calendar.from_xcal(
+            ... b'''
+            ... <icalendar>
+            ...   <vcalendar>
+            ...     <properties>
+            ...       <version>
+            ...         <parameters>
+            ...           <x-param><text>x-content</text></x-param>
+            ...         </parameters>
+            ...         <!-- missing a value here -->
+            ...       </version>
+            ...     </properties>
+            ...   </vcalendar>
+            ... </icalendar>
+            ... '''
+            ... )[0]
+            >>> cal["VERSION"]
+            vEmpty()
+            >>> cal["VERSION"].params["x-param"]
+            'x-content'
+    """
 
     def __new__(
         cls,
@@ -54,5 +91,9 @@ class vEmtpy(vUnknown):
         params.value = cls.default_value  # UNKNOWN is never the default type
         return cls(params=params)
 
+    def __repr__(self) -> str:
+        """The text representation."""
+        return f"{self.__class__.__name__}()"
 
-__all__ = ["vEmtpy"]
+
+__all__ = ["vEmpty"]

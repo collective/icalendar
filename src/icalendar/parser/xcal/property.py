@@ -7,7 +7,7 @@ from icalendar.parser.parameter import Parameters
 from icalendar.parser.xcal.base import InvalidParserState, XCalParser
 from icalendar.parser.xcal.parameters import XCalParameterParser, XCalParametersParser
 from icalendar.prop.broken import vBroken
-from icalendar.prop.empty import vEmtpy
+from icalendar.prop.empty import vEmpty
 from icalendar.prop.unknown import vUnknown
 
 if TYPE_CHECKING:
@@ -82,7 +82,7 @@ class XCalPropertiesParser(XCalParser):
             parameters = property_parser.parse_parameters()
             if parameters:
                 # If there are parameters, it is worth remembering them
-                values = [vEmtpy.from_xcal(property_parser)]
+                values = [vEmpty.from_xcal(property_parser)]
         if values:
             previous = self._component.get(self.child.tag)
             if previous is None:
