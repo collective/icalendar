@@ -57,6 +57,23 @@ def test_language_attribute_accessors(factory):
     assert prop.LANGUAGE is None
     assert "LANGUAGE" not in prop.params
 
+    # 5. Raises ValueError on setting invalid characters (control chars, newlines, spaces, etc.)
+    with pytest.raises(ValueError, match="Invalid characters or format in language tag"):
+        prop.language = "en\nUS"
+
+    with pytest.raises(ValueError, match="Invalid characters or format in language tag"):
+        prop.language = "en US"
+
+    with pytest.raises(ValueError, match="Invalid characters or format in language tag"):
+        prop.language = "en;q=0.8"
+
+    with pytest.raises(ValueError, match="Invalid characters or format in language tag"):
+        prop.language = "-invalid"
+
+    # 6. Getter sanitizes any raw invalid characters from params
+    prop.params["LANGUAGE"] = "en\r\n-US;invalid"
+    assert prop.language == "en-USinvalid"
+
 
 @pytest.mark.parametrize(
     ("raw_tag", "expected_standardized"),

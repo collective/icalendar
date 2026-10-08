@@ -11,6 +11,7 @@ Related:
 from __future__ import annotations
 
 import functools
+import re
 from typing import TYPE_CHECKING, TypeVar
 
 from icalendar import enums
@@ -271,6 +272,30 @@ Description:
     convert=_convert_enum(enums.FBTYPE),
 )
 
+_VALID_LANGUAGE_TAG = re.compile(r"^[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*$")
+_DISALLOWED_LANGUAGE_CHARS = re.compile(r"[^a-zA-Z0-9-]")
+
+
+def _validate_language_tag(tag: str) -> str:
+    """Validate a language tag per RFC 5646.
+
+    Raises:
+        ValueError: If the language tag contains invalid characters or structure.
+    """
+    if not tag or not _VALID_LANGUAGE_TAG.match(tag):
+        raise ValueError(f"Invalid characters or format in language tag: {tag!r}")
+    return tag
+
+
+def _sanitize_language_tag(raw: str) -> str:
+    """Sanitize raw language tag by stripping disallowed characters.
+
+    Guarantees callers receive a safe string without newlines, control
+    characters, or unsafe injection sequences.
+    """
+    return _DISALLOWED_LANGUAGE_CHARS.sub("", raw)
+
+
 LANGUAGE = string_parameter(
     "LANGUAGE",
     """Specify the language for text values in a property or property parameter.
@@ -291,7 +316,9 @@ Description:
 
     Values are defined in :rfc:`5646` (see :rfc:`5646#section-2.1.1` on
     `Formatting of Language Tags <https://www.rfc-editor.org/info/rfc5646/>`_).
-    Validation or normalization is not enforced by icalendar itself.
+    When setting ``language``, a :class:`ValueError` is raised if invalid
+    characters are present. When getting ``language``, any invalid characters
+    are sanitized and removed.
     To standardize language tags, the external library `langcodes <https://pypi.org/project/langcodes/>`_
     can be installed (``pip install langcodes``) and used:
 
@@ -305,6 +332,8 @@ Description:
         text.language = lang
         del text.language
 """,
+    convert=_sanitize_language_tag,
+    convert_to=_validate_language_tag,
 )
 
 MEMBER = quoted_list_parameter("MEMBER")
