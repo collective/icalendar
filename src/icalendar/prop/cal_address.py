@@ -85,6 +85,41 @@ class vCalAddress(str):
     def from_ical(cls, ical: str | bytes) -> Self:
         return cls(ical)
 
+    def __eq__(self, other: object) -> bool:
+        """Compare calendar addresses by email address.
+
+        Two addresses are equal if their email addresses match
+        case-insensitively. The ``mailto:`` prefix is optional on either
+        side, so ``mailto:user@example.com`` equals ``user@example.com``.
+
+        Comparison against other types returns :data:`NotImplemented`,
+        leaving the reflected operation to decide. In particular,
+        comparison with a plain :class:`str` keeps the exact ``str``
+        semantics it always had (e.g. ``vCalAddress("MAILTO:x@y.z") ==
+        "MAILTO:x@y.z"`` is still ``True``) — required for backward
+        compatibility (see ``test_from_ical``).
+
+        Known limitation: hash consistency is guaranteed only between
+        two :class:`vCalAddress` instances. Compared with a plain
+        ``str``, ``vCalAddress("mailto:a@example.com") ==
+        "mailto:a@example.com"`` is ``True`` while the hashes differ,
+        because a plain ``str`` hashes by its literal value and that
+        cannot be changed. This cannot be "fixed" without breaking
+        something else: returning ``False`` for ``str`` would break
+        backward compatibility, and normalizing the ``str`` side as
+        well would only create *more* equal-but-differently-hashed
+        pairs.
+
+        See :issue:`1896`.
+        """
+        if isinstance(other, vCalAddress):
+            return self.email.lower() == other.email.lower()
+        return NotImplemented
+
+    def __hash__(self) -> int:
+        """Hash of the lowercased email address, consistent with :meth:`__eq__`."""
+        return hash(self.email.lower())
+
     @property
     def ical_value(self) -> str:
         """The ``mailto:`` part of the address."""
