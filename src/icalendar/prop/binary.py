@@ -3,6 +3,7 @@
 import base64
 import binascii
 from typing import ClassVar
+from urllib.parse import quote
 
 from icalendar.compatibility import Self, deprecate_for_version_8
 from icalendar.error import JCalParsingError
@@ -71,6 +72,17 @@ class vBinary:
             ValueError: If ``value`` isn't valid Base64.
         """
         self.bytes = self.from_ical(value)
+
+    @property
+    def uri(self) -> str:
+        """Return this value as an RFC 2397 base64 data URI.
+
+        The media type comes from the current ``FMTTYPE`` parameter, or
+        defaults to ``application/octet-stream`` when it is not set. See
+        :rfc:`2397` for the data URI scheme.
+        """
+        media_type = self.params.get("FMTTYPE") or "application/octet-stream"
+        return f"data:{quote(media_type, safe='/;=')};base64,{self.base64data}"
 
     @property
     @deprecate_for_version_8
