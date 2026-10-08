@@ -57,7 +57,7 @@ class XCalParser:
         return self._element
 
     def is_finished(self) -> bool:
-        """Wether there are more elements left to consume."""
+        """Whether there are more elements left to consume."""
         return len(self._children) == 0
 
     @property
