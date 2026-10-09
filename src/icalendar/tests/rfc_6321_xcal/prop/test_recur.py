@@ -241,7 +241,7 @@ for key in POSITIVE_INTS:
         (
             key,
             "asd",
-            f"Expected xsd:positiveInteger, got 'asd' in /recur/{key.lower()}[1].",
+            f"Expected xsd:nonNegativeInteger, got 'asd' in /recur/{key.lower()}[1].",
         )
     )
 
