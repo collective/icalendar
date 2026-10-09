@@ -236,7 +236,7 @@ def _single_string_parameter(func: Callable | None = None, upper=False):
 single_string_parameter = deprecate_for_version_8(_single_string_parameter)
 
 
-class Parameters(CaselessDict):
+class Parameters(CaselessDict[str]):
     """Parser and generator of Property parameter strings.
 
     It knows nothing of datatypes.

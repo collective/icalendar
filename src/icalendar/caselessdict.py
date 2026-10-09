@@ -15,6 +15,7 @@ except ImportError:
 
 KT = TypeVar("KT")
 VT = TypeVar("VT")
+_VT = TypeVar("_VT")
 
 
 def canonsort_keys(
@@ -71,7 +72,7 @@ def canonsort_items(
     return [(k, dict1[k]) for k in canonsort_keys(dict1.keys(), canonical_order)]
 
 
-class CaselessDict(OrderedDict[str, Any]):
+class CaselessDict(OrderedDict[str, _VT]):
     """A case-insensitive dictionary that uses strings as keys.
 
     All keys are stored in uppercase internally, but values retain
@@ -107,7 +108,7 @@ class CaselessDict(OrderedDict[str, Any]):
 
     __hash__ = None
 
-    def __getitem__(self, key: str) -> Any:
+    def __getitem__(self, key: str) -> _VT:
         """Get the item from the ``CaselessDict`` instance by
         ``key``, case-insensitively.
 
@@ -123,7 +124,7 @@ class CaselessDict(OrderedDict[str, Any]):
         key = to_unicode(key)
         return super().__getitem__(key.upper())
 
-    def __setitem__(self, key: str, value: Any) -> None:
+    def __setitem__(self, key: str, value: _VT) -> None:
         """Set a (key, value) pair, storing the key in uppercase.
 
         Parameters:
@@ -157,7 +158,7 @@ class CaselessDict(OrderedDict[str, Any]):
         key = to_unicode(key)
         return super().__contains__(key.upper())
 
-    def get(self, key: str, default: Any = None) -> Any:
+    def get(self, key: str, default: _VT | None = None) -> _VT | None:
         """Return the ``key``, optionally with a ``default`` value.
 
         Parameters:
@@ -170,7 +171,7 @@ class CaselessDict(OrderedDict[str, Any]):
         key = to_unicode(key)
         return super().get(key.upper(), default)
 
-    def setdefault(self, key: str, value: Any = None) -> Any:
+    def setdefault(self, key: str, value: _VT | None = None) -> _VT:
         """Create the (key, value) pair, optionally with a ``value``.
 
         Once set, to change default value use :meth:`update`.
@@ -185,7 +186,7 @@ class CaselessDict(OrderedDict[str, Any]):
         key = to_unicode(key)
         return super().setdefault(key.upper(), value)
 
-    def pop(self, key: str, default: Any = None) -> Any:
+    def pop(self, key: str, default: _VT | None = None) -> _VT | None:
         """Remove and return the value for ``key``, or ``default`` if not found.
 
         Parameters:
@@ -198,7 +199,7 @@ class CaselessDict(OrderedDict[str, Any]):
         key = to_unicode(key)
         return super().pop(key.upper(), default)
 
-    def popitem(self) -> tuple[str, Any]:
+    def popitem(self) -> tuple[str, _VT]:
         """Remove and return the last inserted (key, value) pair.
 
         Returns:
@@ -300,7 +301,7 @@ class CaselessDict(OrderedDict[str, Any]):
         """
         return canonsort_keys(self.keys(), self.canonical_order)
 
-    def sorted_items(self) -> list[tuple[str, Any]]:
+    def sorted_items(self) -> list[tuple[str, _VT]]:
         """Sort items according to the canonical order for this class.
 
         Items whose keys are listed in :attr:`canonical_order` appear first
