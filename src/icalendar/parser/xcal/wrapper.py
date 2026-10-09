@@ -42,7 +42,9 @@ def from_xcal_wrapper(
     wrapper.__doc__ = func.__doc__
     wrapper.__module__ = func.__module__
     # now, we only update the return type but not the arguments
-    wrapper.__annotations__["return"] = func.__annotations__.get("return", "fix your code and properly annotate the return type")
+    wrapper.__annotations__["return"] = func.__annotations__.get(
+        "return", "fix your code and properly annotate the return type"
+    )
 
     return wrapper
 
