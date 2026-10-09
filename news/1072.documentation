@@ -1,0 +1,1 @@
+Applied Google style to the docstring of :meth:`Component.walk <icalendar.cal.component.Component.walk>`. AI-assisted: Claude Opus 5.5 drafted the docstring and made the edits at my request; I reviewed the diff against the code. @thackerdaksh28-ai

@@ -454,14 +454,21 @@ class Component(CaselessDict):
         name: str | None = None,
         select: callable[[Component], bool] = lambda _: True,
     ) -> list[Component]:
-        """Recursively traverses component and subcomponents. Returns sequence
-        of same. If name is passed, only components with name will be returned.
+        """Return this component and its subcomponents that match the filters.
 
-        :param name: The name of the component or None such as ``VEVENT``.
-        :param select: A function that takes the component as first argument
-          and returns True/False.
-        :returns: A list of components that match.
-        :rtype: list[Component]
+        A component is kept only if it matches both ``name`` and ``select``.
+        The name match is case-insensitive, so ``"vevent"`` finds ``VEVENT``
+        components.
+
+        Parameters:
+            name: Component name to keep, such as ``"VEVENT"``; ``None`` keeps
+                every name.
+            select: Function that takes a component and returns ``True`` to
+                keep it. By default, every component is kept.
+
+        Returns:
+            list[Component]: The matching components, starting with this one
+                if it matches.
         """
         if name is not None:
             name = name.upper()
