@@ -1,4 +1,4 @@
-"""BYWEEKDAY, BYDAY, and WKST value type of RECUR from :rfc:`5545`."""
+"""BYDAY and WKST value type of RECUR from :rfc:`5545`."""
 
 import re
 from typing import Any

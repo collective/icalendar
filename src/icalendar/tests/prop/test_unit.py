@@ -175,9 +175,9 @@ class TestProp(unittest.TestCase):
 
         r = vRecur.from_ical("FREQ=WEEKLY;INTERVAL=1;BYWEEKDAY=TH")
 
-        assert r == {"FREQ": ["WEEKLY"], "INTERVAL": [1], "BYWEEKDAY": ["TH"]}
+        assert r == {"FREQ": ["WEEKLY"], "INTERVAL": [1], "BYDAY": ["TH"]}
 
-        assert vRecur(r).to_ical() == b"FREQ=WEEKLY;INTERVAL=1;BYWEEKDAY=TH"
+        assert vRecur(r).to_ical() == b"FREQ=WEEKLY;INTERVAL=1;BYDAY=TH"
 
         # Some examples from the spec
         r = vRecur.from_ical("FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1")
