@@ -78,6 +78,14 @@ class vCalAddress(str):
     def __repr__(self) -> str:
         return f"vCalAddress('{self}')"
 
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, vCalAddress):
+            return NotImplemented
+        return self.email.lower() == other.email.lower()
+
+    def __hash__(self) -> int:
+        return hash(self.email.lower())
+
     def to_ical(self) -> bytes:
         return self.encode(DEFAULT_ENCODING)
 

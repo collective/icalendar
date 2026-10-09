@@ -55,3 +55,22 @@ def test_set_the_name():
     address.name = "Yemaya :)"
     assert address.name == "Yemaya :)"
     assert address.params["CN"] == "Yemaya :)"
+
+
+def test_vcaladdress_equality():
+    """Test equality and hashing of vCalAddress (case-insensitive and ignores mailto:)."""
+    a = vCalAddress("mailto:TEST@example.com")
+    b = vCalAddress("test@example.com")
+    c = vCalAddress("mailto:test@example.com")
+    d = vCalAddress("other@example.com")
+
+    # Test equality (Issue #1896)
+    assert a == b
+    assert b == a
+    assert a == c
+    assert a != d
+
+    # Test hashing
+    assert hash(a) == hash(b)
+    assert hash(a) == hash(c)
+    assert hash(a) != hash(d)
