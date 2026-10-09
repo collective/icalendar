@@ -1,0 +1,1 @@
+Correct the return type annotation of ``Parameters.value`` and ``Parameters.tzid``. @niccokunzmann
