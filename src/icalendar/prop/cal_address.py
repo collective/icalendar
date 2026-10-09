@@ -104,6 +104,7 @@ class vCalAddress(str):
         DELEGATED_TO,
         DIR,
         LANGUAGE,
+        language,
         MEMBER,
         PARTSTAT,
         ROLE,
@@ -147,7 +148,8 @@ class vCalAddress(str):
     """
 
     name = CN
-    language = LANGUAGE
+    LANGUAGE = LANGUAGE
+    language = language
 
     @staticmethod
     def _get_email(email: str) -> str:
