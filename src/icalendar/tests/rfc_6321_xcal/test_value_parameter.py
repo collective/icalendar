@@ -153,7 +153,7 @@ def test_5_unknown_from_xcal_preserves_round_trip_of_custom_value(prop):
 
 @pytest.mark.parametrize("prop", ["x-prop", "link"])
 @pytest.mark.parametrize("value_type", ["x-value", "uri", "uid", "text", "unknown"])
-def case_2_value_is_set_if_there_is_no_default_from_xcal(prop, value_type):
+def test_case_2_value_is_set_if_there_is_no_default_from_xcal(prop, value_type):
     """
     LINK is specified in :rfc:`9253` and has no default value type.
     The VALUE parameter must be set.
@@ -175,10 +175,10 @@ def case_2_value_is_set_if_there_is_no_default_from_xcal(prop, value_type):
     value = event[prop]
     assert isinstance(value, (vUnknown, vUri, vUid, vText))
     assert value.ical_value == "lalala"
-    assert value.params["VALUE"] == value_type.upper()
+    assert value_type.upper() == value.params.get("VALUE", value.default_value)
 
 
-def case_3_value_is_set_if_it_deviates_from_default_from_xcal():
+def test_case_3_value_is_set_if_it_deviates_from_default_from_xcal():
     """
     The VALUE parameter must be set if the value type deviates from the default value type for that property.
     """
@@ -194,6 +194,7 @@ def case_3_value_is_set_if_it_deviates_from_default_from_xcal():
                 "summary",
                 ["x-value", "lalala"],
             ],
+            ["dtstart", ["date", "2025-10-12"]],
         ],
     ]
     pprint(xml)
@@ -332,7 +333,7 @@ def test_preserve_value_parameter_known_prop_different_type_not_allowed_from_xca
 
 
 @pytest.mark.parametrize("link_type", [vUid, vUri, vXmlReference])
-def preserve_value_parameter_known_prop_different_type_extension_round_trip(
+def test_preserve_value_parameter_known_prop_different_type_extension_round_trip(
     link_type, comp
 ):
     """
@@ -344,7 +345,10 @@ def preserve_value_parameter_known_prop_different_type_extension_round_trip(
     """
     comp["LINK"] = link_type.examples()[0]
     xml = to_xcal_list(comp, wrap=False)
-    compx = Component.from_xcal(list2xml(xml))
+    compx = Component.from_xcal(list2xml(xml))[0]
     assert isinstance(compx["LINK"], link_type)
     assert compx["LINK"] == comp["LINK"]
-    assert compx["LINK"].params["VALUE"] == link_type.default_value.upper()
+    assert compx["LINK"].params.value is None, (
+        "The value parameter in icalendar convention is removed "
+        "if it is equal to the default value of the property type."
+    )
