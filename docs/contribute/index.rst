@@ -13,18 +13,33 @@ You are invited to read it to help you decide whether you would enjoy being a pa
 Examples of how to contribute
 -----------------------------
 
+Write code and documentation
+````````````````````````````
+
 -   Report security issues per the `Security Policy <https://github.com/collective/icalendar/blob/main/SECURITY.md>`_.
 -   Report all other issues in the `issue tracker <https://github.com/collective/icalendar/issues>`_.
+-   Submit pull requests from your fork of the icalendar repository.
+-   Extend the :doc:`documentation/index`.
+
+Review and triage
+`````````````````
+
 -   Comment on and resolve issues.
 -   Triage open issues and `pull requests <https://github.com/collective/icalendar/pulls>`_.
 -   Review, comment on, and make suggestions to change a pull request.
     See the GitHub documentation `Reviewing proposed changes in a pull request <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/reviewing-proposed-changes-in-a-pull-request>`_.
--   Submit pull requests from your fork of the icalendar repository.
--   Extend the :doc:`documentation/index`.
+
+Connect with the community
+``````````````````````````
+
 -   Create or comment on a topic in `Discussions <https://github.com/collective/icalendar/discussions>`_.
 -   Join a live chat with icalendar team members in the `icalendar room <https://matrix.to/#/%23icalendar:chat.pycal.org>`_ or its parent organization in the `Python Calendaring Ecosystem (PyCal) space <https://matrix.to/#/%23pycal:chat.pycal.org>`_ via `Matrix <https://matrix.org/>`_.
 -   Write a blog post about icalendar.
 -   Share announcements on social media from :doc:`core contributors <credits>` to icalendar.
+
+Provide financial support
+`````````````````````````
+
 -   Sponsor development of icalendar through `Open Collective <https://opencollective.com/python-icalendar>`_.
 
 
