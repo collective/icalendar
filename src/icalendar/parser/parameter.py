@@ -19,7 +19,7 @@ from icalendar.parser_tools import (
 from icalendar.timezone.tzid import tzid_from_dt
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Sequence
+    from collections.abc import Sequence
 
     from icalendar.enums import VALUE
     from icalendar.prop import VPROPERTY
@@ -190,7 +190,7 @@ def q_join(lst: Sequence[str], sep: str = ",", always_quote: bool = False) -> st
     return sep.join(dquote(itm, always_quote=always_quote) for itm in lst)
 
 
-def _single_string_parameter(func: Callable | None = None, upper=False):
+def _single_string_parameter(upper: bool = False):
     """Create a parameter getter/setter for a single string parameter.
 
     Parameters:
@@ -228,9 +228,7 @@ def _single_string_parameter(func: Callable | None = None, upper=False):
 
         return property(fget, fset, fdel, doc=func.__doc__)
 
-    if func is None:
-        return decorator
-    return decorator(func)
+    return decorator
 
 
 single_string_parameter = deprecate_for_version_8(_single_string_parameter)
@@ -455,7 +453,7 @@ class Parameters(CaselessDict):
             del jcal["tzid"]
         return jcal
 
-    @_single_string_parameter
+    @_single_string_parameter()
     def tzid(self) -> str | None:
         """The TZID parameter from :rfc:`5545`."""
 
