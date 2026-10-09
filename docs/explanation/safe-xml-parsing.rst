@@ -14,8 +14,8 @@ Sources
 
 The following sources have been taken into consideration:
 
-#. `Python 3.12 XML package <https://docs.python.org/3.12/library/xml.html#xml-vulnerabilities>`_
-#. `Python 3.13 XML package <https://docs.python.org/3.13/library/xml.html#xml-vulnerabilities>`_
+#. `Python 3.12 XML package <https://docs.python.org/3.12/library/xml.html#xml-vulnerabilities>`_ still mentions ``defusedxml``
+#. `Python 3.13 XML package <https://docs.python.org/3.13/library/xml.html#xml-vulnerabilities>`_ does not mention ``defusedxml``
 #. `Amended documentation recommendation <https://github.com/python/cpython/pull/135294>`_
 
        "Python 3.11-3.15 include expat 2.7.1 which is not vulnerable."
@@ -33,14 +33,15 @@ refer to a solution.
 Conclusion
 ==========
 
-We must ensure Python is >= 3.11 or XML loading may be vulnerable.
-:file:`pyproject.toml` currently requires Python >= 3.8; once the minimum is
-raised to 3.11, there is nothing further to do.
+Python 3.10 ships with expat >= 2.4.1. According to `defusedxml analysis`_, this is protected.
+Python 3.11 >= ship expat >= 2.7.1. According to `Amended documentation recommendation`_, these versions are safe.
 
-People can open an issue if they like to use a different XML parser.
+:file:`pyproject.toml` requires a Python version that is safe.
+Therefore, icalendar is safe to use configured built-in parsing. 
 
+Developers can open an issue if they like to use a different XML parser.
+The parser is configurable through setting :func:`icalendar.config.parse_xml`.
 
 .. seealso::
 
-    :func:`icalendar.config.parse_xml`
     :mod:`icalendar.tests.rfc_6321_xcal.test_xml_parser`
