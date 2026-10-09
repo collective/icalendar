@@ -1,0 +1,7 @@
+BEGIN:VJOURNAL
+UID:empty-duration-journal@example.com
+DTSTAMP:20240101T000000Z
+DTSTART:20240101T000000Z
+DURATION:P
+SUMMARY:Journal with an empty duration
+END:VJOURNAL

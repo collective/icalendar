@@ -7,9 +7,11 @@ to leak out of :meth:`vDuration.from_ical`, so callers catching the documented
 It is now reported as an invalid duration, like any other bad value.
 """
 
+from pathlib import Path
+
 import pytest
 
-from icalendar import Calendar
+from icalendar import Alarm, Calendar, FreeBusy, Journal, Todo
 from icalendar.error import InvalidCalendar
 from icalendar.prop import vDuration
 
@@ -92,18 +94,30 @@ def test_vDuration_from_ical_rejects_duration_with_no_component(value):
         vDuration.from_ical(value)
 
 
-def test_empty_duration_in_calendar_is_recorded_not_zero():
-    """DURATION:P is an invalid property, not a zero-length event."""
-    ics = (
-        "BEGIN:VCALENDAR\r\n"
-        "BEGIN:VEVENT\r\n"
-        "UID:1\r\n"
-        "DTSTART:20240101T000000Z\r\n"
-        "DURATION:P\r\n"
-        "END:VEVENT\r\n"
-        "END:VCALENDAR\r\n"
-    )
-    calendar = Calendar.from_ical(ics)
-    event = calendar.subcomponents[0]
+def test_empty_duration_in_calendar_is_recorded_not_zero(calendars):
+    """DURATION:P stays the raw value. It is not a zero-length event.
+
+    Runs against both ``Calendar`` and ``LazyCalendar`` via the ``calendars``
+    fixture. See ``issue_1872_empty_duration.ics``.
+    """
+    calendar = calendars.issue_1872_empty_duration
+    event = calendar.walk("VEVENT")[0]
+    assert event["DURATION"] == "P"
     assert any(name == "DURATION" for name, _ in event.errors)
-    assert b"DURATION:P\r\n" in calendar.to_ical()
+    assert b"DURATION:P" in calendar.to_ical()
+
+
+@pytest.mark.parametrize(
+    ("component", "folder"),
+    [
+        (Todo, "todos"),
+        (Journal, "journals"),
+        (Alarm, "alarms"),
+        (FreeBusy, "freebusy"),
+    ],
+)
+def test_other_components_reject_an_empty_duration(component, folder):
+    """A todo, journal, alarm, and freebusy do not turn DURATION:P into zero."""
+    path = Path(__file__).parents[1] / folder / "issue_1872_empty_duration.ics"
+    with pytest.raises(InvalidCalendar):
+        component.from_ical(path.read_bytes())
