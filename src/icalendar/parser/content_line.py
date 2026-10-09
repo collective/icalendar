@@ -73,8 +73,10 @@ def _strip_ows_around_delimiters(st: str, delimiters: str = ";=") -> str:
             last_was_delimiter = False
             continue
 
-        # Handle backslash to escape next character
-        if ch == "\\" and not in_quotes:
+        # Handle backslash to escape next character — outside quotes it
+        # protects delimiters, inside quotes it protects the closing quote
+        # (``\"``), so an escaped quote does not toggle the quote state.
+        if ch == "\\":
             flush_pending()
             out.append(ch)
             escaped = True
@@ -187,20 +189,23 @@ class Contentline(str):
             escaped: bool = False
 
             for i, ch in enumerate(self):
-                if ch == '"' and not escaped:
-                    in_quotes = not in_quotes
-                elif ch == "\\" and not in_quotes:
+                if escaped:
+                    # the previous character was an escaping backslash:
+                    # outside quotes it protects a delimiter, inside quotes
+                    # it protects the closing quote (``\"``), which must not
+                    # toggle the quote state (:rfc:`2445`-style input)
+                    escaped = False
+                elif ch == "\\":
                     escaped = True
-                    continue
-                elif not in_quotes and not escaped:
+                elif ch == '"':
+                    in_quotes = not in_quotes
+                elif not in_quotes and ch in ":;":
                     # Find first delimiter for name
-                    if ch in ":;" and name_split is None:
+                    if name_split is None:
                         name_split = i
                     # Find value delimiter (first colon)
                     if ch == ":" and value_split is None:
                         value_split = i
-
-                escaped = False
 
             # Validate parsing results
             if not value_split:
@@ -269,16 +274,22 @@ class Contentline(str):
         A colon inside a quoted parameter value (for example
         ``ALTREP="http://x"``) is skipped, and a colon that belongs to the
         value (``TEXT`` does not escape ``:``) is not mistaken for the
-        separator. Backslash has no special meaning in the parameter grammar
-        (:rfc:`5545#section-3.1`), so it is treated as an ordinary character.
+        separator. An escaped double quote (``\"``) inside a quoted section
+        does not close it — :rfc:`2445`-style input such as ``CN="Qu\"ote"``
+        keeps its quote state — so the separator after it is still found.
 
         Returns:
             An integer representing the index position of the separator,
             or ``-1`` if there is none.
         """
         in_quotes = False
+        escaped = False
         for i, ch in enumerate(self):
-            if ch == '"':
+            if in_quotes and escaped:
+                escaped = False
+            elif in_quotes and ch == "\\":
+                escaped = True
+            elif ch == '"':
                 in_quotes = not in_quotes
             elif ch == ":" and not in_quotes:
                 return i
