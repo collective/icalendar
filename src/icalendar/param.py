@@ -340,7 +340,8 @@ Description:
     are removed.
 
 Returns:
-    A string with only ``a-z``, ``A-Z``, ``0-9`` and ``-`` in it, possibly a valid :rfc:`5646` language identifier.
+    A string with only ``a-z``, ``A-Z``, ``0-9`` and ``-`` in it,
+    possibly a valid :rfc:`5646` language identifier.
 
 .. note::
 
