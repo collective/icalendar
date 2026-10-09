@@ -240,7 +240,7 @@ class vNonNegativeInt(vInt):
         """Examples of vPositiveInt."""
         return [cls(1000), cls(0)]
 
-    XCAL_TYPE = "xsd:positiveInteger"
+    XCAL_TYPE = "xsd:nonNegativeInteger"
 
 
 __all__ = ["vInt", "vNonNegativeInt"]
