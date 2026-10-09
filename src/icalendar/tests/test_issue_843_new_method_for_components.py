@@ -12,6 +12,7 @@ See https://github.com/collective/icalendar/issues/843
 from __future__ import annotations
 
 import itertools
+from uuid import UUID
 import traceback
 from datetime import date, datetime, timedelta, timezone
 from typing import TYPE_CHECKING, Any
@@ -369,6 +370,15 @@ new_test_cases = [
         "test UID",
         True,
         "Set the UID property",
+    ),
+    (
+    COMPONENTS_UID,
+    "uid",
+    "uid",
+    UUID("12345678-1234-5678-1234-567812345678"),
+    "12345678-1234-5678-1234-567812345678",
+    True,
+    "Set the UID property using uuid.UUID",
     ),
     (
         COMPONENTS_UID_AUTOMATIC,
