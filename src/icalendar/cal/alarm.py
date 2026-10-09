@@ -29,6 +29,7 @@ from icalendar.attr import (
 from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
 from icalendar.error import InvalidCalendar
+from icalendar.prop import vCalAddress
 
 if TYPE_CHECKING:
     import uuid
@@ -712,23 +713,30 @@ class Alarm(Component):
                 TRIGGER:-PT30M
                 END:VALARM
         """
-        if isinstance(attendees, str):
+        if isinstance(attendees, (str, vCalAddress)):
             attendees = [attendees]
+        elif attendees is None:
+            attendees = []
+        cleaned_attendees = [
+            a
+            for a in attendees
+            if a is not None and (not isinstance(a, str) or a.strip())
+        ]
         if not summary:
             raise InvalidCalendar("EMAIL alarm requires a summary")
         if not description:
             raise InvalidCalendar("EMAIL alarm requires a description")
         if trigger is None:
             raise InvalidCalendar("EMAIL alarm requires a trigger")
-        if not attendees:
-            raise InvalidCalendar("EMAIL alarm requires at least one attendee")
+        if not cleaned_attendees:
+            raise InvalidCalendar("EMAIL alarm requires at least one valid attendee")
         alarm: Alarm = cls.new(
             action="EMAIL",
             attachments=attachments,
             summary=summary,
             description=description,
             uid=uid,
-            attendees=attendees,
+            attendees=cleaned_attendees,
             links=links,
             related_to=related_to,
             refids=refids,
