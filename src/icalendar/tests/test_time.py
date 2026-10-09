@@ -2,8 +2,33 @@ import datetime
 import os
 from datetime import time
 
+import pytest
+
 from icalendar import Calendar
+from icalendar.error import ICalParsingError
 from icalendar.prop.dt.time import vTime
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "263000",
+        "123000GARBAGE",
+        "12300",
+        "12 000",
+        "TZID=America/New_York:263000",
+    ],
+)
+def test_vtime_invalid_ical_raises_parsing_error(value):
+    """Invalid TIME values raise ICalParsingError (issue #1448)."""
+    with pytest.raises(ICalParsingError) as exc_info:
+        vTime.from_ical(value)
+
+    error = exc_info.value
+    assert error.message == "Expected time"
+    assert error.value == value
+    assert error.line is None
+    assert error.line_number is None
 
 
 def test_value_type_is_not_mapped(types_factory):
