@@ -306,7 +306,7 @@ class TestProp(unittest.TestCase):
 
         # Parsing
 
-        assert vUTCOffset.from_ical("0000") == timedelta(0)
+        assert vUTCOffset.from_ical("+0000") == timedelta(0)
         assert vUTCOffset.from_ical("-0030") == timedelta(-1, 84600)
         assert vUTCOffset.from_ical("+0200") == timedelta(0, 7200)
         assert vUTCOffset.from_ical("+023040") == timedelta(0, 9040)

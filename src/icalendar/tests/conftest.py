@@ -236,6 +236,7 @@ BROKEN_SOURCE_FILES = (
     "pr_480_summary_with_colon.ics",
     "parsing_error_in_UTC_offset.ics",
     "parsing_error.ics",
+    "issue_1885_unsigned_utc_offset.ics",
 )
 SOURCE_FILES = [
     file.name

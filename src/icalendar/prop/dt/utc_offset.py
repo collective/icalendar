@@ -5,9 +5,12 @@ from datetime import timedelta
 from typing import Any, ClassVar
 
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError
+from icalendar.error import ICalParsingError, JCalParsingError
 from icalendar.parser import Parameters
 
+UTC_OFFSET_REGEX = re.compile(
+    r"^(?P<sign>[+-]?)(?P<hours>[0-9]{2})(?P<minutes>[0-9]{2})(?P<seconds>[0-9]{2})?\Z"
+)
 UTC_OFFSET_JCAL_REGEX = re.compile(
     r"^(?P<sign>[+-])?(?P<hours>\d\d):(?P<minutes>\d\d)(?::(?P<seconds>\d\d))?\Z"
 )
@@ -114,21 +117,79 @@ class vUTCOffset:
 
     @classmethod
     def from_ical(cls, ical):
+        """Parse a UTC offset from its iCalendar representation.
+
+        :rfc:`5545#section-3.3.14` defines the format as a sign, two digits
+        for the hours, two digits for the minutes, and two optional digits
+        for the seconds:
+
+        .. code-block:: text
+
+            utc-offset = time-numzone
+
+            time-numzone = ("+" / "-") time-hour time-minute [time-second]
+
+        The RFC requires the sign.
+        A value without a sign is rejected,
+        unless ``ignore_exceptions`` is ``True``.
+        Then it is read as a positive offset.
+        Seconds may be ``60``, which is read as one more minute.
+
+        Parameters:
+            ical: The UTC offset to parse, such as ``+0100`` or ``-053000``.
+                A :class:`vUTCOffset` is also accepted.
+
+        Returns:
+            The offset as a :class:`datetime.timedelta`.
+            It is negative for offsets behind UTC.
+
+        Raises:
+            TypeError: If ``ical`` is neither a :class:`str` nor a
+                :class:`vUTCOffset`.
+            ~icalendar.error.ICalParsingError: If ``ical`` does not have the format
+                above, or the sign is missing, or the offset is 24 hours or
+                more, or the minutes are greater than 59, or the seconds are
+                greater than 60.
+                The sign and range checks are skipped if
+                ``ignore_exceptions`` is ``True``.
+
+        Example:
+            .. code-block:: pycon
+
+                >>> from icalendar import vUTCOffset
+                >>> vUTCOffset.from_ical("+0100")  # positive
+                datetime.timedelta(seconds=3600)
+                >>> vUTCOffset.from_ical("-000030")  # negative
+                datetime.timedelta(days=-1, seconds=86370)
+        """
         if isinstance(ical, cls):
             return ical.td
-        try:
-            sign, hours, minutes, seconds = (
-                ical[0:1],
-                int(ical[1:3]),
-                int(ical[3:5]),
-                int(ical[5:7] or 0),
+        if not isinstance(ical, str):
+            raise TypeError(
+                f"UTC offset must be a str or vUTCOffset, not {type(ical).__name__}"
             )
-            offset = timedelta(hours=hours, minutes=minutes, seconds=seconds)
-        except Exception as e:
-            raise ValueError(f"Expected UTC offset, got: {ical}") from e
-        if not cls.ignore_exceptions and offset >= timedelta(hours=24):
-            raise ValueError(f"Offset must be less than 24 hours, was {ical}")
-        if sign == "-":
+        match = UTC_OFFSET_REGEX.match(ical)
+        if match is None:
+            raise ICalParsingError("Expected UTC offset as [+-]HHMM[SS]", value=ical)
+        if not cls.ignore_exceptions and not match.group("sign"):
+            raise ICalParsingError("UTC offset must have a sign (+ or -)", value=ical)
+
+        hours = int(match.group("hours"))
+        minutes = int(match.group("minutes"))
+        seconds = int(match.group("seconds") or 0)
+        offset = timedelta(hours=hours, minutes=minutes, seconds=seconds)
+        if not cls.ignore_exceptions:
+            if offset >= timedelta(hours=24):
+                raise ICalParsingError(
+                    "UTC offset must be less than 24 hours", value=ical
+                )
+            if minutes > 59 or seconds > 60:
+                raise ICalParsingError(
+                    "UTC offset minutes must be less than 60 "
+                    "and seconds less than or equal to 60",
+                    value=ical,
+                )
+        if match.group("sign") == "-":
             return -offset
         return offset
 
