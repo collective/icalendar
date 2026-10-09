@@ -83,7 +83,7 @@ class vEmpty(vUnknown):
         This does not parse any tag but instead assumes that there is no tag.
 
         Parameters:
-            parser: The parser to use.
+            xml: The XML to parse or a parser.
 
         Raises:
             ~error.XCalParsingError: If the provided xCal is invalid.

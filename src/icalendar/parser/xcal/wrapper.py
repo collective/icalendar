@@ -35,10 +35,13 @@ def from_xcal_wrapper(
         parameters = xml.parse_parameters()
         return func(cls, xml, parameters)
 
+    # update attributes
     wrapper.__name__ = func.__name__
     wrapper.__qualname__ = func.__qualname__
     wrapper.__doc__ = func.__doc__
     wrapper.__module__ = func.__module__
+    # now, we only update the return type but not the arguments
+    wrapper.__annotations__["return"] = func.__annotations__["return"]
 
     return wrapper
 

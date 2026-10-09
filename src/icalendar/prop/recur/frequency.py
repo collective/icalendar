@@ -89,7 +89,7 @@ class vFrequency(str):
         """Parse xCal from :rfc:`6321`.
 
         Parameters:
-            parser: The parser to use.
+            xml: The XML to parse or a parser.
 
         Raises:
             ~error.XCalParsingError: If the provided xCal is invalid.
