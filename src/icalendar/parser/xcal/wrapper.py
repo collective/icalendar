@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, TypeVar
 from xml.etree.ElementTree import Element
 
+from icalendar.compatibility import Self  # noqa: F401, RUF100, TC001
 from icalendar.parser.xcal.adapter import ElementAdapter
 
 if TYPE_CHECKING:

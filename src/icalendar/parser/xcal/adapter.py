@@ -76,7 +76,7 @@ class ElementAdapter:
         """Return the element's text as xsd:string.
 
         This is the only datatype that leaves all the whitespace. -
-        `xmlschemata.org <https://books.xmlschemata.org/relaxng/ch19-77303.html>`_
+        `xmlschemata.org <https://books.xmlschemata.org/relaxng/ch19-77303.html>`__
         """
         return self._element.text or ""
 
@@ -85,7 +85,7 @@ class ElementAdapter:
 
         xsd:token is the most appropriate datatype to use for strings
         that don't care about whitespace. -
-        `xmlschemata.org <https://books.xmlschemata.org/relaxng/ch19-77319.html>`_
+        `xmlschemata.org <https://books.xmlschemata.org/relaxng/ch19-77319.html>`__
         """
         return REGEX_WHITESPACE.sub(" ", self.get_xsd_string()).strip()
 

@@ -7,6 +7,7 @@ from datetime import date, datetime, time, timedelta
 from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias
 
 from icalendar.caselessdict import CaselessDict
+from icalendar.compatibility import Self  # noqa: TC001
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
@@ -23,7 +24,6 @@ from .time import vTime
 if TYPE_CHECKING:
     from xml.etree.ElementTree import Element
 
-    from icalendar.compatibility import Self
     from icalendar.parser.xcal.base import XCalParser
 
 DT_TYPE: TypeAlias = (
