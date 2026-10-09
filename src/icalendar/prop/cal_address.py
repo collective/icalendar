@@ -104,13 +104,13 @@ class vCalAddress(str):
         DELEGATED_TO,
         DIR,
         LANGUAGE,
-        language,
         MEMBER,
         PARTSTAT,
         ROLE,
         RSVP,
         SENT_BY,
         VALUE,
+        language,
     )
 
     DELEGATED_FROM = DELEGATED_FROM

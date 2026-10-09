@@ -123,7 +123,16 @@ class vUri(str):
         """repr(self)"""
         return f"{self.__class__.__name__}({self.uri!r})"
 
-    from icalendar.param import FMTTYPE, GAP, LABEL, LANGUAGE, LINKREL, RELTYPE, VALUE, language
+    from icalendar.param import (
+        FMTTYPE,
+        GAP,
+        LABEL,
+        LANGUAGE,
+        LINKREL,
+        RELTYPE,
+        VALUE,
+        language,
+    )
 
     LANGUAGE = LANGUAGE
     language = language

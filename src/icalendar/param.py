@@ -914,7 +914,6 @@ __all__ = [
     "GAP",
     "LABEL",
     "LANGUAGE",
-    "language",
     "LINKREL",
     "MEMBER",
     "PARTSTAT",
@@ -925,6 +924,7 @@ __all__ = [
     "SENT_BY",
     "TZID",
     "VALUE",
+    "language",
     "quoted_list_parameter",
     "string_parameter",
 ]
