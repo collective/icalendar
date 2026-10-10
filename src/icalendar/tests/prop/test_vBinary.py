@@ -1,6 +1,7 @@
 """Test vBinary"""
 
 import base64
+from urllib.parse import urlparse
 
 import pytest
 
@@ -143,6 +144,58 @@ def test_base64data_roundtrip():
     assert obj.base64data == "QmluYXJ5IGRhdGEgEyBW"
 
 
+@pytest.mark.parametrize("parameter_name", ["FMTTYPE", "fmttype"])
+def test_uri_for_text_is_an_rfc2397_data_uri(parameter_name):
+    """uri returns a base64 data URI using the current FMTTYPE."""
+    assert vBinary(b"hello", params={parameter_name: "text/plain"}).uri == (
+        "data:text/plain;base64,aGVsbG8="
+    )
+
+
+@pytest.mark.parametrize(
+    ("raw", "params", "media_type"),
+    [
+        (b"\x00\xff\x80", {}, "application/octet-stream"),
+        (b"", {"FMTTYPE": ""}, "application/octet-stream"),
+    ],
+)
+def test_uri_roundtrips_binary_and_empty_values(raw, params, media_type):
+    """The generated URI decodes to the same bytes and advertises its type."""
+    binary = vBinary(raw, params=params)
+    parsed = urlparse(binary.uri)
+    metadata, encoded = parsed.path.split(",", maxsplit=1)
+
+    assert parsed.scheme == "data"
+    assert metadata == f"{media_type};base64"
+    assert base64.b64decode(encoded) == raw
+
+
+def test_uri_reflects_current_bytes_and_fmttype():
+    """uri reads current bytes and parameters each time it is accessed."""
+    binary = vBinary(b"old", params={"FMTTYPE": "text/plain"})
+    assert binary.uri == "data:text/plain;base64,b2xk"
+
+    binary.bytes = b"new"
+    binary.params["FMTTYPE"] = "application/json"
+    assert binary.uri == "data:application/json;base64,bmV3"
+
+
+@pytest.mark.parametrize(
+    ("media_type", "quoted_media_type"),
+    [
+        (
+            "text/plain;charset=utf-8;name=attachment#1.bin",
+            "text/plain;charset=utf-8;name=attachment%231.bin",
+        ),
+        ("text/plain\n;charset=utf-8", "text/plain%0A;charset=utf-8"),
+    ],
+)
+def test_uri_quotes_url_unsafe_media_type_characters(media_type, quoted_media_type):
+    """uri quotes unsafe media type characters while preserving basic parameters."""
+    binary = vBinary(b"hello", params={"FMTTYPE": media_type})
+    assert binary.uri == f"data:{quoted_media_type};base64,aGVsbG8="
+
+
 @pytest.mark.parametrize(
     "value",
     [
@@ -195,6 +248,21 @@ def test_attach_example_preserves_binary_data(calendars):
     assert data[:8] == b"\x89PNG\r\n\x1a\n"
     assert data[-8:] == b"IEND\xaeB`\x82"
     assert len(data) == 128
+
+
+def test_attach_example_uri_preserves_png_data(calendars):
+    """The parsed PNG attachment exposes its media type and original bytes as a URI."""
+    calendar = calendars.issue_1549_binary_attachment
+    (event,) = calendar.events
+    attachment = event["ATTACH"]
+    parsed = urlparse(attachment.uri)
+    metadata, encoded = parsed.path.split(",", maxsplit=1)
+
+    assert attachment.params["FMTTYPE"] == "image/png"
+    assert parsed.scheme == "data"
+    assert metadata == "image/png;base64"
+    assert base64.b64decode(encoded) == event.decoded("ATTACH")
+    assert len(event.decoded("ATTACH")) == 128
 
 
 def test_attach_example_survives_reserialization(calendars):
