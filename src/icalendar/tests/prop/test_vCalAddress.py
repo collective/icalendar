@@ -80,8 +80,12 @@ def test_equality_ignores_email_case():
 
 def test_equality_mailto_prefix_is_optional():
     """mailto: may be present on either, both or neither side."""
-    assert_equals(vCalAddress("mailto:user@example.com"), vCalAddress("user@example.com"))
-    assert_equals(vCalAddress("MAILTO:user@example.com"), vCalAddress("user@example.com"))
+    assert_equals(
+        vCalAddress("mailto:user@example.com"), vCalAddress("user@example.com")
+    )
+    assert_equals(
+        vCalAddress("MAILTO:user@example.com"), vCalAddress("user@example.com")
+    )
     assert_equals(vCalAddress("user@example.com"), vCalAddress("user@example.com"))
 
 
@@ -96,34 +100,42 @@ def test_inequality_for_different_emails():
     )
 
 
-def test_equality_against_plain_str_keeps_str_semantics():
-    """Comparing with a plain str falls back to exact str comparison.
+def test_equality_against_plain_str_coerces_to_vcaladdress():
+    """A plain str is converted to vCalAddress before comparing.
 
-    This is intentional: normalizing here too would break the
-    hash invariant, as a plain str hashes by its literal value.
+    This is the use case the maintainer asked for in the review of
+    #1901: ``my_email in event.attendees`` must work when attendees
+    are vCalAddress objects and my_email is a plain string.
     """
-    assert vCalAddress("mailto:a@example.com") == "mailto:a@example.com"
-    assert vCalAddress("mailto:a@example.com") != "mailto:A@example.com"
+    assert vCalAddress("mailto:a@example.com") == "a@example.com"
+    assert vCalAddress("mailto:a@example.com") == "mailto:A@EXAMPLE.com"
+    assert "a@example.com" == vCalAddress("mailto:a@example.com")  # reflected
+    assert vCalAddress("mailto:a@example.com") != "b@example.com"
+
+
+def test_str_that_cannot_be_an_address_is_not_equal():
+    """A str that fails vCalAddress() construction is never equal.
+
+    vCalAddress.__new__ rejects CR and LF; per the review of #1901,
+    such strings make __eq__ return NotImplemented, so the comparison
+    is False in both directions instead of raising.
+    """
+    assert vCalAddress("mailto:a@example.com") != "a\nb@example.com"
+    assert "a\nb@example.com" != vCalAddress("mailto:a@example.com")
 
 
 def test_mixed_str_comparison_hash_limitation_is_documented():
     """Known limitation, also documented in vCalAddress.__eq__.
 
-    Comparison with a plain str keeps the exact str semantics it always
-    had (see test_from_ical), so the pair below compares equal while
-    their hashes differ. Hash consistency is guaranteed only between
-    two vCalAddress instances.
-
-    This cannot be "fixed": returning False for str would break backward
-    compatibility, and normalizing the str side as well would only create
-    more equal-but-differently-hashed pairs (a plain str hashes by its
-    literal value and that cannot be changed).
+    Hash consistency is guaranteed only between two vCalAddress
+    instances: a plain str hashes by its literal value, which cannot
+    be changed. The maintainer accepted this in the review of #1901.
     """
     a = vCalAddress("mailto:a@example.com")
-    b = "mailto:a@example.com"
-    assert a == b  # exact str semantics, unchanged legacy behavior
+    b = "MAILTO:A@EXAMPLE.COM"
+    assert a == b
     assert b == a
-    assert hash(a) != hash(b)  # known, documented limitation — see docstring
+    assert hash(a) != hash(b)  # accepted limitation — see docstring
 
 
 def test_equal_addresses_deduplicate_in_sets():
@@ -135,3 +147,18 @@ def test_equal_addresses_deduplicate_in_sets():
     }
     assert len(addresses) == 1
     assert vCalAddress("USER@EXAMPLE.COM") in addresses
+
+
+def test_equality_ignores_parameters():
+    """Equality depends only on the email address, not on .params.
+
+    Suggested by DhyeyBuch in the review of #1901: two addresses with
+    the same email but different parameters (e.g. CN) still compare
+    equal. Passes against the current __eq__, which compares only the
+    lowercased email — no implementation change needed.
+    """
+    a = vCalAddress("mailto:user@example.com")
+    a.params["CN"] = "Alice"
+    b = vCalAddress("mailto:user@example.com")
+    b.params["CN"] = "Bob"
+    assert_equals(a, b)
