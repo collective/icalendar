@@ -132,6 +132,11 @@ class vDuration(TimeBase):
             raise InvalidCalendar(f"Invalid iCalendar duration: {ical}")
 
         sign, weeks, days, hours, minutes, seconds = match.groups()
+        # Every component is optional in the regex, so "P" and "PT" match
+        # and become timedelta(0). RFC 5545 requires a dur-date, dur-time,
+        # or dur-week. An explicit zero such as P0D still has a component.
+        if weeks is days is hours is minutes is seconds is None:
+            raise InvalidCalendar(f"Invalid iCalendar duration: {ical}")
         try:
             value = timedelta(
                 weeks=int(weeks or 0),
