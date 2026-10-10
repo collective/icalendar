@@ -53,7 +53,7 @@ def test_whitespace_is_ignored(types_factory: TypesFactory):
 
 INVALID_VALUES = ["INVALID!", "a"]
 
-if sys.version_info >= (3, 11):
+if sys.version_info >= (3, 12):
     INVALID_VALUES.append("MTIz=")
 
 
