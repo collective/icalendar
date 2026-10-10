@@ -31,13 +31,13 @@ def test_vCalAddressExample():
     assert jcal == [
         "vevent",
         [
+            ["summary", {}, "text", "Meeting"],
             [
                 "attendee",
                 {"partstat": "ACCEPTED", "rsvp": "TRUE", "role": "REQ-PARTICIPANT"},
                 "cal-address",
                 "mailto:jsmith@example.org",
             ],
-            ["summary", {}, "text", "Meeting"],
         ],
         [],
     ]
@@ -197,5 +197,5 @@ def test_parameters_with_values_as_list(
     """
     calendar: Calendar = calendars.rfc_7256_multi_value_parameters
     event = calendar.events[event_index]
-    parameter = event.to_jcal()[1][parameter_index]
-    assert parameter == expected_value
+    parameter = event.to_jcal()[1]
+    assert expected_value in parameter

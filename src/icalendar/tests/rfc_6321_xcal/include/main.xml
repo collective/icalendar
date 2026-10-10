@@ -1,0 +1,5 @@
+<root xmlns:xi="http://www.w3.org/2001/XInclude">
+    <header>Main Document</header>
+    <xi:include href="included.xml"/>
+    <footer>End of Document</footer>
+</root>

@@ -1,3 +1,7 @@
+"""Tools for parsing."""
+
+from __future__ import annotations
+
 SEQUENCE_TYPES = (list, tuple)
 DEFAULT_ENCODING = "utf-8"
 ICAL_TYPE = str | bytes

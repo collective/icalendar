@@ -62,13 +62,13 @@ To convert a :class:`~icalendar.cal.calendar.Calendar` and any other :class:`~ic
     >>> from pprint import pprint
     >>> pprint(calendar.to_jcal())
     ['vcalendar',
-     [['calscale', {}, 'text', 'GREGORIAN'],
+     [['version', {}, 'text', '2.0'],
       ['prodid', {}, 'text', '-//Example Inc.//Example Calendar//EN'],
-      ['version', {}, 'text', '2.0']],
+      ['calscale', {}, 'text', 'GREGORIAN']],
      [['vevent',
-       [['dtstamp', {}, 'date-time', '2008-02-05T19:12:24Z'],
+       [['summary', {}, 'text', 'Planning meeting'],
         ['dtstart', {}, 'date', '2008-10-06'],
-        ['summary', {}, 'text', 'Planning meeting'],
+        ['dtstamp', {}, 'date-time', '2008-02-05T19:12:24Z'],
         ['uid', {}, 'text', '4088E990AD89CB3DBB484909']],
        []]]]
 
@@ -79,5 +79,4 @@ The following commands writes the jCal version of the calendar to a temporary fi
 
     >>> from tempfile import NamedTemporaryFile
     >>> file = NamedTemporaryFile(suffix=".jcal")
-    >>> file.write(calendar.to_json().encode("UTF-8"))
-    358
+    >>> _ = file.write(calendar.to_json().encode("UTF-8"))

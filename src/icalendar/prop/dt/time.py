@@ -3,10 +3,14 @@
 import re
 from datetime import datetime, time, timezone, tzinfo
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError
+from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.base import XCalParser
+from icalendar.parser.xcal.match import XCalRegexMatcher
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.timezone import tzp
 from icalendar.timezone.tzid import is_utc
 
@@ -14,6 +18,11 @@ from .base import TimeBase
 
 TIME_JCAL_REGEX = re.compile(
     r"^(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2}):(?P<second>[0-9]{2})(?P<utc>Z)?\Z"
+)
+
+XCAL_TIME_REGEX = XCalRegexMatcher(
+    TIME_JCAL_REGEX,
+    "Expected time format HH:MM:SS or HH:MM:SSZ",
 )
 
 
@@ -243,6 +252,46 @@ class vTime(TimeBase):
             value,
             params=Parameters.from_jcal_property(jcal_property),
         )
+
+    def to_xcal(self, element: Element) -> None:
+        """The xCal representation of this property according to :rfc:`6321`."""
+        self.params.to_xcal(element)
+        element = SubElement(element, self.default_value.lower())
+        text = self.dt.strftime("%H:%M:%S")
+        if is_utc(self.dt):
+            text += "Z"
+        element.text = text
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            xml: The XML to parse or a parser.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        element = parser.parse_tag(cls.default_value)
+        hour, minute, second, utc = XCAL_TIME_REGEX.groups(element)
+        if second == "60":
+            # This is wrong but we have no way to represent this
+            second = 59
+        try:
+            dt = time(int(hour), int(minute), int(second))
+        except ValueError as e:
+            raise XCalParsingError(
+                "Time is out of range", element.get_xsd_token(), element
+            ) from e
+        tzid = params.tzid
+        if utc:
+            if tzid:
+                raise XCalParsingError(f"Cannot mix {tzid} with UTC", None, element)
+            dt = tzp.localize_utc(dt)
+        elif tzid:
+            dt = tzp.localize(dt, tzid)
+        return cls(dt, params=params)
 
 
 __all__ = ["vTime"]

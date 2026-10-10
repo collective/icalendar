@@ -1,11 +1,19 @@
 """GEO property values from :rfc:`5545`."""
 
-import math
-from typing import Any, ClassVar
+from __future__ import annotations
 
-from icalendar.compatibility import Self
+import math
+from typing import TYPE_CHECKING, Any, ClassVar
+from xml.etree.ElementTree import Element, SubElement
+
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.string import xsd_float_to_string
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
+
+if TYPE_CHECKING:
+    from icalendar.compatibility import Self
+    from icalendar.parser.xcal.base import XCalParser
 
 
 class vGeo:
@@ -69,6 +77,12 @@ class vGeo:
 
     default_value: ClassVar[str] = "FLOAT"
     params: Parameters
+
+    latitude: float
+    """The latitude of the geo position."""
+
+    longitude: float
+    """The longitude of the geo position."""
 
     def __init__(
         self,
@@ -154,6 +168,31 @@ class vGeo:
             jcal_property[3],
             Parameters.from_jcal_property(jcal_property),
         )
+
+    def to_xcal(self, element: Element) -> None:
+        """Add the xCal representation of this property according to :rfc:`6321`."""
+        geo = SubElement(element, "geo")
+        latitude = SubElement(geo, "latitude")
+        latitude.text = xsd_float_to_string(self.latitude)
+        longitude = SubElement(geo, "longitude")
+        longitude.text = xsd_float_to_string(self.longitude)
+        self.params.to_xcal(element)
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        geo = parser.parse_tag("geo")
+        latitude = geo.parse_tag("latitude").get_xsd_float()
+        longitude = geo.parse_tag("longitude").get_xsd_float()
+        return cls((latitude, longitude), params=params)
 
 
 __all__ = ["vGeo"]

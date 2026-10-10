@@ -17,10 +17,15 @@ class vBroken(vText):
     """Property that failed to parse, preserving raw value as text.
 
     Represents property values that failed to parse with their expected
-    type. The raw iCalendar string is preserved for round-trip serialization.
+    type. The raw iCalendar string is preserved for round-trip serialization:
+    ical -> xcal -> ical
     """
 
-    default_value: ClassVar[str] = "TEXT"
+    default_value: ClassVar[str] = "X-BROKEN"
+    """The default value is x-broken.
+
+    With this, we can identify broken properties in xCal round-trip.
+    """
     __slots__ = ("expected_type", "parse_error", "property_name")
 
     def __new__(

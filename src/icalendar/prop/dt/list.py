@@ -1,10 +1,13 @@
 from collections.abc import Sequence
 from datetime import date, datetime
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element
 
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError
+from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.base import XCalParser
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import from_unicode
 
 from .base import TimeBase
@@ -67,7 +70,7 @@ class vDDDLists:
     @classmethod
     def examples(cls) -> list[Self]:
         """Examples of vDDDLists."""
-        return [vDDDLists([datetime(2025, 11, 10, 16, 50)])]
+        return [cls([datetime(2025, 11, 10, 16, 50)])]
 
     def to_jcal(self, name: str) -> list:
         """The jCal representation of this property according to :rfc:`7265`."""
@@ -105,6 +108,52 @@ class vDDDLists:
         )
 
     __hash__ = None
+
+    @property
+    def dt(self) -> TimeBase:
+        """Return the time/date value of the list.
+
+        This is a compatibility method for the vDDDTypes interface.
+
+        Returns:
+            The first value of the list.
+
+        Raises:
+            IndexError: If the list is empty.
+        """
+        return self.dts[0].dt
+
+    def to_xcal(self, element: Element) -> None:
+        """Convert a vDDDTypes to an xCal element."""
+        self.params.to_xcal(element)
+        for dt in self.dts:
+            dt.to_xcal(element)
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            xml: The XML to parse or a parser.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        dts = []
+        while not parser.is_finished():
+            dts.append(vDDDTypes.from_xcal(parser))
+        if dts:
+            tz = getattr(dts[0].dt, "tzinfo", None)
+            for dt in dts[1:]:
+                if getattr(dt.dt, "tzinfo", None) != tz:
+                    raise XCalParsingError(
+                        "Cannot mix floating with UTC", None, parser.element
+                    )
+        return cls(
+            dts,
+            params=params,
+        )
 
 
 __all__ = ["vDDDLists"]

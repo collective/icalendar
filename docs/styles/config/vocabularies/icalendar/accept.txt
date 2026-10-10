@@ -1,6 +1,7 @@
 Args
 backported
 (?i)datetime
+defusedxml
 dicts
 [Dd]ocstrings?
 fuzzer
@@ -35,5 +36,7 @@ towncrier
 uv
 vCard
 xCal
+\.xcal
+xinclude
 Xcode
 zizmor
