@@ -194,12 +194,10 @@ def _single_string_parameter(upper: bool = False):
     """Create a parameter getter/setter for a single string parameter.
 
     Parameters:
-        upper: Convert the value to uppercase
-        func: The function to decorate.
+        upper: Convert the return value of the property getter to uppercase.
 
     Returns:
-        The property for the parameter or a decorator for the parameter
-        if func is ``None``.
+        The property for the parameter.
     """
 
     def decorator(func):
