@@ -144,9 +144,10 @@ def test_base64data_roundtrip():
     assert obj.base64data == "QmluYXJ5IGRhdGEgEyBW"
 
 
-def test_uri_for_text_is_an_rfc2397_data_uri():
+@pytest.mark.parametrize("parameter_name", ["FMTTYPE", "fmttype"])
+def test_uri_for_text_is_an_rfc2397_data_uri(parameter_name):
     """uri returns a base64 data URI using the current FMTTYPE."""
-    assert vBinary(b"hello", params={"FMTTYPE": "text/plain"}).uri == (
+    assert vBinary(b"hello", params={parameter_name: "text/plain"}).uri == (
         "data:text/plain;base64,aGVsbG8="
     )
 

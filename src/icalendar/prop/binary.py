@@ -80,6 +80,11 @@ class vBinary:
         The media type comes from the current ``FMTTYPE`` parameter, or
         defaults to ``application/octet-stream`` when it is not set. See
         :rfc:`2397` for the data URI scheme.
+
+        Examples:
+            >>> from icalendar import vBinary
+            >>> vBinary(b"hello", params={"FMTTYPE": "text/plain"}).uri
+            'data:text/plain;base64,aGVsbG8='
         """
         media_type = self.params.get("FMTTYPE") or "application/octet-stream"
         return f"data:{quote(media_type, safe='/;=')};base64,{self.base64data}"
