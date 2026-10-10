@@ -1,0 +1,1 @@
+Fix Alarm.new_email attendee validation to filter out None and empty string values and reject invalid attendee sequences. I used AI to assist me with this change. @apurva1094
