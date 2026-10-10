@@ -180,15 +180,20 @@ def test_uri_reflects_current_bytes_and_fmttype():
     assert binary.uri == "data:application/json;base64,bmV3"
 
 
-def test_uri_quotes_url_unsafe_media_type_characters():
+@pytest.mark.parametrize(
+    ("media_type", "quoted_media_type"),
+    [
+        (
+            "text/plain;charset=utf-8;name=attachment#1.bin",
+            "text/plain;charset=utf-8;name=attachment%231.bin",
+        ),
+        ("text/plain\n;charset=utf-8", "text/plain%0A;charset=utf-8"),
+    ],
+)
+def test_uri_quotes_url_unsafe_media_type_characters(media_type, quoted_media_type):
     """uri quotes unsafe media type characters while preserving basic parameters."""
-    binary = vBinary(
-        b"hello",
-        params={"FMTTYPE": "text/plain;charset=utf-8;name=attachment#1.bin"},
-    )
-    assert binary.uri == (
-        "data:text/plain;charset=utf-8;name=attachment%231.bin;base64,aGVsbG8="
-    )
+    binary = vBinary(b"hello", params={"FMTTYPE": media_type})
+    assert binary.uri == f"data:{quoted_media_type};base64,aGVsbG8="
 
 
 @pytest.mark.parametrize(
