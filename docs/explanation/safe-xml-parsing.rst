@@ -5,17 +5,19 @@
 Safe XML parsing
 ================
 
+This chapter explains the design decisions made for safe XML parsing in icalendar.
+
 :rfc:`6321` specifies how to represent calendars as XML.
 
-Summary: Python's built-in XML parser is considered safe enough to parse XML for xCal.
+In summary, Python's built-in XML parser is reasonably safe to parse XML for xCal.
 
 Sources
 =======
 
 The following sources have been taken into consideration:
 
-#. `Python 3.12 XML package <https://docs.python.org/3.12/library/xml.html#xml-vulnerabilities>`_ still mentions ``defusedxml``
-#. `Python 3.13 XML package <https://docs.python.org/3.13/library/xml.html#xml-vulnerabilities>`_ does not mention ``defusedxml``
+#. `Python 3.12 XML package <https://docs.python.org/3.12/library/xml.html#xml-vulnerabilities>`_ still mentions `defusedxml <https://pypi.org/project/defusedxml/>`_.
+#. `Python 3.13 XML package <https://docs.python.org/3.13/library/xml.html#xml-vulnerabilities>`_ does not mention `defusedxml`_.
 #. `Amended documentation recommendation <https://github.com/python/cpython/pull/135294>`_
 
        "Python 3.11-3.15 include expat 2.7.1 which is not vulnerable."
@@ -25,22 +27,24 @@ The following sources have been taken into consideration:
 #. `defusedxml analysis <https://github.com/tiran/defusedxml/blob/c7445887f5e1bcea470a16f61369d29870cfcfe1/README.md#python-xml-libraries>`_
 #. `xinclude support <https://runebook.dev/en/docs/python/library/xml.etree.elementtree/xinclude-support>`_
 
-We can expect people who use icalendar to parse unverified, external XML.
-Therefore, we should make sure that the XML parser is safe.
-If it isn't safe, we can just refuse to parse content and
-refer to a solution.
+People who use icalendar may parse unverified, external XML.
+Therefore, the XML parser should be safe.
+If it isn't safe, then icalendar can refuse to parse content, and raise a exception that refers to a solution.
 
 Conclusion
 ==========
 
-Python 3.10 ships with expat >= 2.4.1. According to `defusedxml analysis`_, this is protected.
-Python 3.11 >= ship expat >= 2.7.1. According to `Amended documentation recommendation`_, these versions are safe.
+Python 3.10 ships with expat >= 2.4.1.
+According to `defusedxml analysis`_, XML parsing is safe in Python 3.10.
 
-:file:`pyproject.toml` requires a Python version that is safe.
-Therefore, icalendar is safe to use configured built-in parsing. 
+Python 3.11 or later ships expat >= 2.7.1.
+According to `Amended documentation recommendation`_, in these Python versions, XML parsing is safe.
 
-Developers can open an issue if they like to use a different XML parser.
-The parser is configurable through setting :func:`icalendar.config.parse_xml`.
+icalendar's :file:`pyproject.toml` file requires a Python version that is safe for XML parsing.
+Therefore, icalendar is safe to use its configured built-in XML parsing.
+
+Developers can `open an issue <https://github.com/collective/icalendar/issues/new?template=empty-issue.md>`_ to use a different XML parser.
+The parser is configurable through the setting :func:`icalendar.config.parse_xml`.
 
 .. seealso::
 
