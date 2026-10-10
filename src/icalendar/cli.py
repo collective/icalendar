@@ -21,10 +21,15 @@ def _format_name(address: str) -> str:
         A formatted string, like 'name <name@example.com>',
         or an empty string if no email is found.
     """
+    # A cal-address is a URI, so a value such as "urn:uuid:1234" or a bare
+    # "Jane Doe" has no mailto: and no "@". Splitting those on "@" produced a
+    # bogus "1234 <1234>" pair, and the guard below could never fire because
+    # rsplit always leaves a non-empty tail. Return the address unchanged when
+    # there is no email to format.
     email = address.rsplit(":", maxsplit=1)[-1]
-    name = email.split("@")[0]
-    if not email:
+    if "@" not in email:
         return ""
+    name = email.split("@")[0]
     return f"{name} <{email}>"
 
 
