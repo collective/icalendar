@@ -12,10 +12,10 @@ See https://github.com/collective/icalendar/issues/843
 from __future__ import annotations
 
 import itertools
-from uuid import UUID
 import traceback
 from datetime import date, datetime, timedelta, timezone
 from typing import TYPE_CHECKING, Any
+from uuid import UUID
 from zoneinfo import ZoneInfo
 
 import pytest
