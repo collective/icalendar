@@ -1,0 +1,1 @@
+Migrated the Git hook manager from ``pre-commit`` to ``prek``. @SemTiOne
