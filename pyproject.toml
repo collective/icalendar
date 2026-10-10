@@ -307,6 +307,9 @@ norecursedirs = [
     "build",
 ]
 filterwarnings = [
+    # A globally unique TZID is resolved by stripping the vendor prefix, which
+    # is the best guess we can make; icalendar warns about every one of them.
+    "ignore::icalendar.error.GloballyUniqueTZIDGuessed",
     "ignore::DeprecationWarning",
 ]
 
