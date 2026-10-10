@@ -4,7 +4,7 @@ from datetime import date, datetime
 from typing import Any, ClassVar
 
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError
+from icalendar.error import ICalParsingError, JCalParsingError
 from icalendar.parser import Parameters
 
 from .base import TimeBase
@@ -76,10 +76,18 @@ class vDate(TimeBase):
 
     @staticmethod
     def from_ical(ical):
+        """Parse an iCalendar DATE value.
+
+        Raises:
+            ~icalendar.error.ICalParsingError: If the value is not a valid DATE.
+        """
         # date-value = 4DIGIT 2DIGIT 2DIGIT, no separators,
         # per https://datatracker.ietf.org/doc/html/rfc5545#section-3.3.4
         if len(ical) != 8 or not ical.isascii() or not ical.isdigit():
-            raise ValueError(f"Wrong date format {ical}")
+            raise ICalParsingError(
+                "Wrong date format",
+                value=ical,
+            )
         try:
             timetuple = (
                 int(ical[:4]),  # year
@@ -88,7 +96,10 @@ class vDate(TimeBase):
             )
             return date(*timetuple)
         except Exception as e:
-            raise ValueError(f"Wrong date format {ical}") from e
+            raise ICalParsingError(
+                "Wrong date format",
+                value=ical,
+            ) from e
 
     @classmethod
     def examples(cls) -> list[Self]:
