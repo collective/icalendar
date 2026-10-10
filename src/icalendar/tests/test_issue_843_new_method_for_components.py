@@ -15,6 +15,7 @@ import itertools
 import traceback
 from datetime import date, datetime, timedelta, timezone
 from typing import TYPE_CHECKING, Any
+from uuid import UUID
 from zoneinfo import ZoneInfo
 
 import pytest
@@ -369,6 +370,15 @@ new_test_cases = [
         "test UID",
         True,
         "Set the UID property",
+    ),
+    (
+        COMPONENTS_UID,
+        "uid",
+        "uid",
+        UUID("12345678-1234-5678-1234-567812345678"),
+        "12345678-1234-5678-1234-567812345678",
+        True,
+        "Set the UID property using uuid.UUID",
     ),
     (
         COMPONENTS_UID_AUTOMATIC,
