@@ -134,7 +134,7 @@ Documentation
 Security fixes
 ~~~~~~~~~~~~~~
 
-- Fixed `GHSA-qjcq-q7h7-r74v <https://github.com/collective/icalendar/security/advisories/GHSA-qjcq-q7h7-r74v>`_: a crafted ``REPEAT`` on a ``VALARM`` could exhaust memory or CPU via :attr:`Alarm.triggers <icalendar.cal.alarm.Alarm.triggers>` and :class:`~icalendar.alarms.Alarms`. Expansion is now capped at ``icalendar.config.MAX_ALARM_REPEAT``. Its default is ``10000``. Set to ``-1`` to disable the cap. :class:`~icalendar.prop.integer.vInt` now also enforces the :rfc:`5545` signed 32-bit integer range on parse. @SashankBhamidi
+- Fixed `GHSA-qjcq-q7h7-r74v, (CVE ID: CVE-2026-77399) <https://github.com/collective/icalendar/security/advisories/GHSA-qjcq-q7h7-r74v>`_: a crafted ``REPEAT`` on a ``VALARM`` could exhaust memory or CPU via :attr:`Alarm.triggers <icalendar.cal.alarm.Alarm.triggers>` and :class:`~icalendar.alarms.Alarms`. Expansion is now capped at ``icalendar.config.MAX_ALARM_REPEAT``. Its default is ``10000``. Set to ``-1`` to disable the cap. :class:`~icalendar.prop.integer.vInt` now also enforces the :rfc:`5545` signed 32-bit integer range on parse. @SashankBhamidi
 
 
 7.2.0 (2026-06-23)
