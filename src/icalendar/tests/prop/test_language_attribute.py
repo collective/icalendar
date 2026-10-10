@@ -17,9 +17,8 @@ from icalendar.prop import (
 )
 
 
-@pytest.mark.parametrize(
-    "factory",
-    [
+@pytest.fixture(
+    params=[
         lambda: vText("Summary text"),
         lambda: vCategory(["Work", "Meeting"]),
         lambda: vCalAddress("mailto:user@example.com"),
@@ -28,28 +27,36 @@ from icalendar.prop import (
     ],
     ids=["vText", "vCategory", "vCalAddress", "vUnknown", "vUri"],
 )
-def test_language_attribute_accessors(factory):
-    """Test language property: None by default, getter, setter, del, and set to None."""
-    prop = factory()
+def prop(request):
+    return request.param()
 
-    # 1. Accesses self.params and returns None if no language is set
+
+def test_no_language_is_none(prop):
+    """Accesses self.params and returns None if no language is set."""
     assert prop.language is None
     assert prop.LANGUAGE is None
     assert "LANGUAGE" not in prop.params
 
-    # 2. Sets the language string
+
+def test_set_language(prop):
+    """Sets the language string."""
     prop.language = "en-US"
     assert prop.language == "en-US"
     assert prop.LANGUAGE == "en-US"
     assert prop.params.get("LANGUAGE") == "en-US"
 
-    # 3. Deletes the language param when set to None
+
+def test_delete_language_when_none(prop):
+    """Deletes the language param when set to None."""
+    prop.language = "en-US"
     prop.language = None
     assert prop.language is None
     assert prop.LANGUAGE is None
     assert "LANGUAGE" not in prop.params
 
-    # 4. Sets and deletes with `del`
+
+def test_delete_language_with_del(prop):
+    """Sets and deletes with del."""
     prop.language = "de-DE"
     assert prop.language == "de-DE"
     del prop.language
@@ -57,7 +64,9 @@ def test_language_attribute_accessors(factory):
     assert prop.LANGUAGE is None
     assert "LANGUAGE" not in prop.params
 
-    # 5. Raises ValueError on setting invalid characters (control chars, newlines, spaces, etc.)
+
+def test_invalid_language_raises_value_error(prop):
+    """Raises ValueError on setting invalid characters."""
     with pytest.raises(
         ValueError, match="Invalid characters or format in language tag"
     ):
@@ -78,7 +87,9 @@ def test_language_attribute_accessors(factory):
     ):
         prop.language = "-invalid"
 
-    # 6. Getter sanitizes any raw invalid characters from params
+
+def test_getter_sanitizes_invalid_characters(prop):
+    """Getter sanitizes any raw invalid characters from params."""
     prop.params["LANGUAGE"] = "en\r\n-US;invalid"
     assert prop.language == "en-USinvalid"
 

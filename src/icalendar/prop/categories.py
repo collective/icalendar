@@ -87,9 +87,6 @@ class vCategory:
 
     from icalendar.param import LANGUAGE, VALUE, language
 
-    LANGUAGE = LANGUAGE
-    language = language
-
     @classmethod
     def from_jcal(cls, jcal_property: list) -> Self:
         """Parse jCal from :rfc:`7265`.

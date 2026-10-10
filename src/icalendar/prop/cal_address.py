@@ -148,8 +148,6 @@ class vCalAddress(str):
     """
 
     name = CN
-    LANGUAGE = LANGUAGE
-    language = language
 
     @staticmethod
     def _get_email(email: str) -> str:

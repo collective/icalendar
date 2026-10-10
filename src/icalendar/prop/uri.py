@@ -134,8 +134,5 @@ class vUri(str):
         language,
     )
 
-    LANGUAGE = LANGUAGE
-    language = language
-
 
 __all__ = ["vUri"]

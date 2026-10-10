@@ -346,7 +346,7 @@ Returns:
 .. note::
 
     To standardize language tags, the external library `langcodes <https://pypi.org/project/langcodes/>`_
-    can used. It is not installed with icalendar.
+    can be used. It is not installed with icalendar.
 
     The example below shows how to set valid language tags:
 
