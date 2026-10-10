@@ -92,28 +92,33 @@ class vCalAddress(str):
         case-insensitively. The ``mailto:`` prefix is optional on either
         side, so ``mailto:user@example.com`` equals ``user@example.com``.
 
-        Comparison against other types returns :data:`NotImplemented`,
-        leaving the reflected operation to decide. In particular,
-        comparison with a plain :class:`str` keeps the exact ``str``
-        semantics it always had (e.g. ``vCalAddress("MAILTO:x@y.z") ==
-        "MAILTO:x@y.z"`` is still ``True``) — required for backward
-        compatibility (see ``test_from_ical``).
+        A plain :class:`str` is converted to :class:`vCalAddress` before
+        comparing, so ``"me@example.com" == vCalAddress("MAILTO:me@example.com")``
+        is ``True``. This is what lets the common pattern
+        ``my_email in event.attendees`` work (see :issue:`1901`). If the
+        string cannot form a valid address (e.g. it contains a newline),
+        comparison returns :data:`NotImplemented`, leaving the reflected
+        operation to decide.
+
+        Comparison against other types returns :data:`NotImplemented`.
 
         Known limitation: hash consistency is guaranteed only between
-        two :class:`vCalAddress` instances. Compared with a plain
-        ``str``, ``vCalAddress("mailto:a@example.com") ==
-        "mailto:a@example.com"`` is ``True`` while the hashes differ,
-        because a plain ``str`` hashes by its literal value and that
-        cannot be changed. This cannot be "fixed" without breaking
-        something else: returning ``False`` for ``str`` would break
-        backward compatibility, and normalizing the ``str`` side as
-        well would only create *more* equal-but-differently-hashed
-        pairs.
+        two :class:`vCalAddress` instances. A plain :class:`str` hashes
+        by its literal value, so ``hash(vCalAddress(...))`` may differ
+        from ``hash(str(...))`` even when they compare equal. This is
+        accepted; see the discussion in :issue:`1901`.
 
         See :issue:`1896`.
         """
         if isinstance(other, vCalAddress):
             return self.email.lower() == other.email.lower()
+        if isinstance(other, str):
+            try:
+                other = vCalAddress(other)
+            except ValueError:
+                # e.g. the string contains CR or LF and cannot be an address
+                return NotImplemented
+            return self == other
         return NotImplemented
 
     def __hash__(self) -> int:
