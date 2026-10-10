@@ -1,0 +1,1 @@
+Make :class:`~icalendar.enums.StrEnum` accept case-insensitive values so ``PARTSTAT("needs-action")`` equals ``PARTSTAT.NEEDS_ACTION``, matching :rfc:`5545`. I used Grok to assist with implementing ``StrEnum._missing_`` and adding regression tests. @HarshRajSinghania

@@ -21,6 +21,22 @@ class StrEnum(str, Enum):
         """
         return self.value
 
+    @classmethod
+    def _missing_(cls, value):
+        """Look up members case-insensitively.
+
+        RFC 5545 section 3.1: names of enumerated property values and
+        property parameter values are case-insensitive when they are not
+        enclosed in quotes. ``PARTSTAT("needs-action")`` should therefore
+        match ``PARTSTAT.NEEDS_ACTION``.
+        """
+        if isinstance(value, str):
+            upper = value.upper()
+            for member in cls:
+                if member.value.upper() == upper:
+                    return member
+        return None
+
 
 class PARTSTAT(StrEnum):
     """Enum for PARTSTAT from :rfc:`5545`.
