@@ -280,6 +280,52 @@ class vRecur(CaselessDict):
         return cls(recur, params=params)
 
     @property
+    def freq(self) -> vFrequency:
+        """The required FREQ part of the recurrence rule.
+
+        The value is returned as :class:`~icalendar.prop.recur.frequency.vFrequency`,
+        the type registered for ``FREQ`` in :attr:`vRecur.types`. If multiple
+        values are stored, the first one is returned.
+
+        Raises:
+            InvalidCalendar: if ``FREQ`` is absent, empty, or invalid.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=DAILY;COUNT=10").freq
+                'DAILY'
+        """
+        values = self.get("FREQ")
+        if values is None or (isinstance(values, SEQUENCE_TYPES) and not values):
+            raise InvalidCalendar("FREQ is required")
+        value = values[0] if isinstance(values, SEQUENCE_TYPES) else values
+        try:
+            return vFrequency.from_ical(value)
+        except ValueError as e:
+            raise InvalidCalendar(
+                f"FREQ must be a valid frequency, got: {value!r}"
+            ) from e
+
+    @freq.setter
+    def freq(self, value: vFrequency | str) -> None:
+        """Set the required frequency; ``None`` and invalid values are rejected."""
+        if value is None:
+            raise InvalidCalendar("FREQ is required and cannot be None")
+        try:
+            self["FREQ"] = [vFrequency.from_ical(value)]
+        except ValueError as e:
+            raise InvalidCalendar(
+                f"FREQ must be a valid frequency, got: {value!r}"
+            ) from e
+
+    @freq.deleter
+    def freq(self) -> None:
+        """Reject deletion because every recurrence rule requires FREQ."""
+        raise InvalidCalendar("FREQ is required and cannot be deleted")
+
+    @property
     def count(self) -> int | None:
         """The COUNT part of the recurrence rule.
 
