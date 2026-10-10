@@ -285,9 +285,9 @@ class Contentline(str):
         return -1
 
     @classmethod
-    def from_ical(cls, ical, strict=False):
+    def from_ical(cls, ical, strict=False, encoding="utf-8-sig", errors="strict"):
         """Unfold the content lines in an iCalendar into long content lines."""
-        ical = to_unicode(ical)
+        ical = to_unicode(ical, encoding=encoding, errors=errors)
         # a fold is carriage return followed by either a space or a tab
         return cls(UFOLD.sub("", ical), strict=strict)
 
@@ -309,9 +309,9 @@ class Contentlines(list[Contentline]):
         return b"\r\n".join(line.to_ical() for line in self if line) + b"\r\n"
 
     @classmethod
-    def from_ical(cls, st):
+    def from_ical(cls, st, encoding="utf-8-sig", errors="strict"):
         """Parses a string into content lines."""
-        st = to_unicode(st)
+        st = to_unicode(st, encoding=encoding, errors=errors)
         try:
             # a fold is carriage return followed by either a space or a tab
             unfolded = UFOLD.sub("", st)
