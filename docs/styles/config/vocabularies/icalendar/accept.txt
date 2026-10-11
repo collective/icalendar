@@ -7,7 +7,7 @@ dicts
 fuzzer
 Hacktoberfest
 Hanoka
-\.ical
+icalendar(\.[a-z]+)+
 iCal
 (?i)icalendar
 IDEs?
@@ -36,7 +36,6 @@ towncrier
 uv
 vCard
 xCal
-\.xcal
 xinclude
 Xcode
 zizmor
