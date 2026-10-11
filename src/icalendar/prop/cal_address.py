@@ -103,6 +103,7 @@ class vCalAddress(str):
         DELEGATED_FROM,
         DELEGATED_TO,
         DIR,
+        EMAIL,
         LANGUAGE,
         MEMBER,
         PARTSTAT,
