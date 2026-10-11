@@ -76,7 +76,7 @@ class ElementAdapter:
         """Return the element's text as ``xsd:string``.
 
         This is the only datatype that leaves all the whitespace.
-    
+
         ..  seealso::
             `xmlschemata.org <https://books.xmlschemata.org/relaxng/ch19-77303.html>`__
         """
@@ -87,7 +87,7 @@ class ElementAdapter:
 
         ``xsd:token`` is the most appropriate datatype to use for strings
         that don't care about whitespace.
-        
+
         ..  seealso::
             `xmlschemata.org <https://books.xmlschemata.org/relaxng/ch19-77319.html>`__
         """
