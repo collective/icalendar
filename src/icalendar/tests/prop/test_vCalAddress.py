@@ -124,6 +124,31 @@ def test_str_that_cannot_be_an_address_is_not_equal():
     assert "a\nb@example.com" != vCalAddress("mailto:a@example.com")
 
 
+def test_ne_is_consistent_with_eq():
+    """``!=`` must be the exact negation of ``==``.
+
+    vCalAddress extends str, so without an explicit __ne__, ``!=``
+    would use str.__ne__ (plain string comparison) and disagree with
+    __eq__: case-insensitively equal addresses would be both ``==``
+    and ``!=``. Found via the coverage review in #1901.
+    """
+    a = vCalAddress("mailto:a@example.com")
+    assert a == "MAILTO:A@EXAMPLE.COM"
+    assert not (a != "MAILTO:A@EXAMPLE.COM")
+    assert not ("MAILTO:A@EXAMPLE.COM" != a)
+    assert a != "b@example.com"
+    assert not (a == "b@example.com")
+
+
+def test_comparison_against_other_types_is_not_equal():
+    """Comparison against non-str types falls back to NotImplemented."""
+    a = vCalAddress("mailto:a@example.com")
+    assert not (a == 123)
+    assert a != 123
+    assert not (a == ["mailto:a@example.com"])
+    assert a != ["mailto:a@example.com"]
+
+
 def test_mixed_str_comparison_hash_limitation_is_documented():
     """Known limitation, also documented in vCalAddress.__eq__.
 
