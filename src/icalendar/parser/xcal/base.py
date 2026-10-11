@@ -1,4 +1,4 @@
-"""xCal parser class to make sure we parse the content fully."""
+"""xCal parser class to fully parse the content."""
 
 from __future__ import annotations
 
@@ -67,7 +67,7 @@ class XCalParser:
 
     @property
     def tag(self) -> str:
-        """The tag of the element we work on."""
+        """The tag of the element on which to work."""
         return self._element.tag
 
     @staticmethod
@@ -78,7 +78,7 @@ class XCalParser:
         return {t.lower() for t in tags}
 
     def parse_optional_tag(self, tag: str | Sequence[str]) -> ElementAdapter | None:
-        """Find a child tag and return it. or None
+        """Find a child tag and return it if present, else ``None``.
 
         This child is then considered parsed.
         """
@@ -91,7 +91,7 @@ class XCalParser:
         This child is then considered parsed.
 
         Returns:
-            The child element with the tag or if no tag is given, the first child.
+            The child element with the tag, or if no tag is given, then the first child.
 
         Raises:
             XCalParsingError: If the tag is not found.

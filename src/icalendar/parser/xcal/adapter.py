@@ -73,19 +73,23 @@ class ElementAdapter:
         return child
 
     def get_xsd_string(self) -> str:
-        """Return the element's text as xsd:string.
+        """Return the element's text as ``xsd:string``.
 
-        This is the only datatype that leaves all the whitespace. -
-        `xmlschemata.org <https://books.xmlschemata.org/relaxng/ch19-77303.html>`__
+        This is the only datatype that leaves all the whitespace.
+    
+        ..  seealso::
+            `xmlschemata.org <https://books.xmlschemata.org/relaxng/ch19-77303.html>`__
         """
         return self._element.text or ""
 
     def get_xsd_token(self) -> str:
-        """Return the element's text as xsd:token.
+        """Return the element's text as ``xsd:token``.
 
-        xsd:token is the most appropriate datatype to use for strings
-        that don't care about whitespace. -
-        `xmlschemata.org <https://books.xmlschemata.org/relaxng/ch19-77319.html>`__
+        ``xsd:token`` is the most appropriate datatype to use for strings
+        that don't care about whitespace.
+        
+        ..  seealso::
+            `xmlschemata.org <https://books.xmlschemata.org/relaxng/ch19-77319.html>`__
         """
         return REGEX_WHITESPACE.sub(" ", self.get_xsd_string()).strip()
 
@@ -98,7 +102,7 @@ class ElementAdapter:
         return f"/{self.tag}"
 
     def get_xsd_float(self) -> float:
-        """Return the element's text parsed as xsd:float.
+        """Return the element's text parsed as ``xsd:float``.
 
         Returns:
             The parsed float value.
@@ -138,8 +142,8 @@ class ChildElementAdapter(ElementAdapter):
 
     Parameters:
         child: The child element.
-        parent: The parent element adapter.
         index: The index for building the XPath in the parent.
+        parent: The parent element adapter.
     """
 
     def __init__(self, child: Element, parent: ElementAdapter, index: int = 1) -> None:

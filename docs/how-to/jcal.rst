@@ -73,7 +73,7 @@ To convert a :class:`~icalendar.cal.calendar.Calendar` and any other :class:`~ic
        []]]]
 
 To directly generate JSON output and write it to a file or send it to a server, use :meth:`~icalendar.cal.component.Component.to_json`.
-The following commands writes the jCal version of the calendar to a temporary file.
+Continuing from the earlier examples, the following commands write the jCal version of the calendar to a temporary file object, storing the number of bytes written in a temporary variable ``_``.
 
 .. code-block:: pycon
 

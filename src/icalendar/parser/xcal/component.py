@@ -20,8 +20,8 @@ class XCalComponentParser(XCalParser):
     """A parser for components.
 
     Parameters:
-        element: The element to parse.
         component_factory: The component factory to use.
+        element: The element to parse.
         types_factory: The types factory to use.
 
     Examples:
@@ -72,7 +72,7 @@ class XCalComponentParser(XCalParser):
             The parsed component.
 
         Raises:
-            ~icalendar.error.XCalParsingError: If there is an error in the child
+            ~icalendar.error.XCalParsingError: If there is an error in the child.
             ~icalendar.parser.xcal.base.InvalidParserState:
                 If all components have been parsed or a property value type did not
                 parse anything.
@@ -106,10 +106,10 @@ class XCalComponentParser(XCalParser):
         """Parse a component from a child element.
 
         Returns:
-            The parsed component
+            The parsed component.
 
         Raises:
-            ~icalendar.error.XCalParsingError: If there is an error in the child
+            ~icalendar.error.XCalParsingError: If there is an error in the child.
             ~icalendar.parser.xcal.base.InvalidParserState:
                 If all components have been parsed or a property value type did not
                 parse anything.
