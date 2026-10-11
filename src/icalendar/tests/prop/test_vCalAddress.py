@@ -140,7 +140,8 @@ def test_ne_is_consistent_with_eq():
     ne_forward = a != "MAILTO:A@EXAMPLE.COM"
     eq_reflected = "MAILTO:A@EXAMPLE.COM" == a
     ne_reflected = "MAILTO:A@EXAMPLE.COM" != a
-    assert eq_forward and eq_reflected
+    assert eq_forward
+    assert eq_reflected
     assert ne_forward == (not eq_forward)
     assert ne_reflected == (not eq_reflected)
 
