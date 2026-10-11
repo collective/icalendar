@@ -1188,19 +1188,19 @@ class Component(CaselessDict):
                 >>> print(cal.to_xcal(indent=2).decode())
                 <?xml version="1.0" encoding="UTF-8"?>
                 <icalendar xmlns="urn:ietf:params:xml:ns:icalendar-2.0">
-                <vcalendar>
+                  <vcalendar>
                     <properties>
-                    <version>
+                      <version>
                         <text>2.0</text>
-                    </version>
-                    <prodid>
+                      </version>
+                      <prodid>
                         <text>-//collective//icalendar//7.0.0//EN</text>
-                    </prodid>
-                    <uid>
+                      </prodid>
+                      <uid>
                         <text>d755cef5-2311-46ed-a0e1-6733c9e15c63</text>
-                    </uid>
+                      </uid>
                     </properties>
-                </vcalendar>
+                  </vcalendar>
                 </icalendar>
         """
         from io import BytesIO
