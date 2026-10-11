@@ -1178,29 +1178,30 @@ class Component(CaselessDict):
             - ``None`` if an argument is passed
             - :class:`bytes` if called with no arguments
 
-        This example shows how to convert an empty calendar to XML:
+        Example:
+            This example shows how to convert a new calendar to XML:
 
-        .. code-block:: pycon
+            .. code-block:: pycon
 
-            >>> from icalendar import Calendar
-            >>> cal = Calendar.new()
-            >>> print(cal.to_xcal(indent=2).decode())
-            <?xml version="1.0" encoding="UTF-8"?>
-            <icalendar xmlns="urn:ietf:params:xml:ns:icalendar-2.0">
-              <vcalendar>
-                <properties>
-                  <version>
-                    <text>2.0</text>
-                  </version>
-                  <prodid>
-                    <text>-//collective//icalendar//7.0.0//EN</text>
-                  </prodid>
-                  <uid>
-                    <text>d755cef5-2311-46ed-a0e1-6733c9e15c63</text>
-                  </uid>
-                </properties>
-              </vcalendar>
-            </icalendar>
+                >>> from icalendar import Calendar
+                >>> cal = Calendar.new()
+                >>> print(cal.to_xcal(indent=2).decode())
+                <?xml version="1.0" encoding="UTF-8"?>
+                <icalendar xmlns="urn:ietf:params:xml:ns:icalendar-2.0">
+                <vcalendar>
+                    <properties>
+                    <version>
+                        <text>2.0</text>
+                    </version>
+                    <prodid>
+                        <text>-//collective//icalendar//7.0.0//EN</text>
+                    </prodid>
+                    <uid>
+                        <text>d755cef5-2311-46ed-a0e1-6733c9e15c63</text>
+                    </uid>
+                    </properties>
+                </vcalendar>
+                </icalendar>
         """
         from io import BytesIO
 
