@@ -121,6 +121,20 @@ class vCalAddress(str):
             return self == other
         return NotImplemented
 
+    def __ne__(self, other: object) -> bool:
+        """Negation of :meth:`__eq__`.
+
+        This is required because :class:`vCalAddress` extends
+        :class:`str`: without it, ``!=`` would use :meth:`str.__ne__`
+        (plain string comparison) and could disagree with
+        :meth:`__eq__`, e.g. case-insensitively equal addresses would
+        be both ``==`` and ``!=`` at the same time.
+        """
+        result = self.__eq__(other)
+        if result is NotImplemented:
+            return result
+        return not result
+
     def __hash__(self) -> int:
         """Hash of the lowercased email address, consistent with :meth:`__eq__`."""
         return hash(self.email.lower())
