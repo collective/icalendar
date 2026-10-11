@@ -1171,12 +1171,12 @@ class Component(CaselessDict):
         """The xCal representation of this component according to :rfc:`6321`.
 
         Parameters:
-            destination: (Optional) The iCalendar stream or a file.
+            destination: The iCalendar stream or a file.
             indent: The indentation for pretty printing the XML.
 
         Returns:
-            - ``None`` if an argument is passed
-            - :class:`bytes` if called with no arguments
+            - ``None`` if an argument is passed.
+            - :class:`bytes` if called with no arguments.
 
         Example:
             This example shows how to convert a new calendar to XML:
@@ -1256,7 +1256,7 @@ class Component(CaselessDict):
 
     @classmethod
     def from_xcal(cls, xcal: Element | bytes | Path | BinaryIO) -> list[Self]:
-        """Parse xCal from :rfc:`6321`.
+        """Parse xCal according to :rfc:`6321`.
 
         Parameters:
             xcal: The xCal element or data to parse.
@@ -1266,12 +1266,12 @@ class Component(CaselessDict):
 
         Raises:
             ~icalendar.error.XCalParsingError: If the provided XML does not conform with :rfc:`6321`.
-            TypeError: If the wrong type is passed to ``xcal``.
+            TypeError: If ``xcal`` is not one of the valid types.
             xml.etree.ElementTree.ParseError: If the provided data is not valid XML.
 
         Example:
 
-            Read an xCal from XML bytes.
+            Parse an xCal object from a bytes object in XML format.
 
             >>> from icalendar import Calendar
             >>> xml = b'''<?xml version="1.0" encoding="utf-8"?>
@@ -1305,7 +1305,7 @@ class Component(CaselessDict):
             element = xcal
         else:
             raise TypeError(
-                f"Expected an XML Element, bytes, a Path or file object. Got {xcal}"
+                f"Expected an XML Element, bytes, Path, or file object. Got {xcal}"
             )
         parser = XCalComponentParser(
             element, cls._get_component_factory(), cls.types_factory
