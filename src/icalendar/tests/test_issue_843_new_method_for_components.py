@@ -895,6 +895,43 @@ rfc_9253_related_to_values = [
     vText("nananana", params={"RELTYPE": "SIBLING"}),
 ]
 rfc_9253_test_cases = [
+    # #1592: the single-value forms of links.
+    (
+        COMPONENTS_LINKS,
+        "links",
+        "LINK",
+        "https://123",
+        [vUri("https://123")],
+        True,
+        "a plain str is accepted",
+    ),
+    (
+        COMPONENTS_LINKS,
+        "links",
+        "LINK",
+        vUri("https://123"),
+        [vUri("https://123")],
+        True,
+        "a single vUri is accepted",
+    ),
+    (
+        COMPONENTS_LINKS,
+        "links",
+        "LINK",
+        vUid("123-123-123"),
+        [vUid("123-123-123")],
+        True,
+        "a single vUid is accepted",
+    ),
+    (
+        COMPONENTS_LINKS,
+        "links",
+        "LINK",
+        vXmlReference("http://example.com"),
+        [vXmlReference("http://example.com")],
+        True,
+        "a single vXmlReference is accepted",
+    ),
     (
         COMPONENTS_LINKS,
         "links",
