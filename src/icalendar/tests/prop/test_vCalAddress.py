@@ -61,6 +61,10 @@ def assert_equals(a, b):
     """Check a == b, b == a and that both hash the same."""
     assert a == b
     assert b == a
+    ne_forward = a != b
+    ne_reversed = b != a
+    assert not ne_forward
+    assert not ne_reversed
     assert hash(a) == hash(b)
 
 
@@ -68,6 +72,10 @@ def assert_not_equals(a, b):
     """Check a != b and b != a."""
     assert a != b
     assert b != a
+    eq_forward = a == b
+    eq_reversed = b == a
+    assert not eq_forward
+    assert not eq_reversed
 
 
 def test_equality_ignores_email_case():
