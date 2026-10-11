@@ -249,8 +249,12 @@ EMAIL = string_parameter(
 
 Description:
     This parameter can be specified on the ``ORGANIZER`` and ``ATTENDEE``
-    properties. It provides an email address for the calendar user when the
-    calendar address value does not contain one. See :rfc:`7986#section-6.2`.
+    properties. It provides an email address for identifying or contacting the
+    calendar user, which can differ from the calendar address value.
+    See :rfc:`7986#section-6.2`.
+
+    Returns ``None`` when absent. Assign ``None`` or delete this property to
+    remove the parameter.
 
     This is distinct from the lowercase ``email`` property, which returns the
     calendar address value without its ``mailto:`` prefix.
