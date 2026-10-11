@@ -131,22 +131,36 @@ def test_ne_is_consistent_with_eq():
     would use str.__ne__ (plain string comparison) and disagree with
     __eq__: case-insensitively equal addresses would be both ``==``
     and ``!=``. Found via the coverage review in #1901.
+
+    Results are bound to names first so the comparison operators are
+    genuinely exercised (and the linter does not rewrite the check).
     """
     a = vCalAddress("mailto:a@example.com")
-    assert a == "MAILTO:A@EXAMPLE.COM"
-    assert not (a != "MAILTO:A@EXAMPLE.COM")
-    assert not ("MAILTO:A@EXAMPLE.COM" != a)
-    assert a != "b@example.com"
-    assert not (a == "b@example.com")
+    eq_forward = a == "MAILTO:A@EXAMPLE.COM"
+    ne_forward = a != "MAILTO:A@EXAMPLE.COM"
+    eq_reflected = "MAILTO:A@EXAMPLE.COM" == a
+    ne_reflected = "MAILTO:A@EXAMPLE.COM" != a
+    assert eq_forward and eq_reflected
+    assert ne_forward == (not eq_forward)
+    assert ne_reflected == (not eq_reflected)
+
+    eq_other = a == "b@example.com"
+    ne_other = a != "b@example.com"
+    assert not eq_other
+    assert ne_other == (not eq_other)
 
 
 def test_comparison_against_other_types_is_not_equal():
     """Comparison against non-str types falls back to NotImplemented."""
     a = vCalAddress("mailto:a@example.com")
-    assert not (a == 123)
-    assert a != 123
-    assert not (a == ["mailto:a@example.com"])
-    assert a != ["mailto:a@example.com"]
+    eq_int = a == 123
+    ne_int = a != 123
+    assert not eq_int
+    assert ne_int
+    eq_list = a == ["mailto:a@example.com"]
+    ne_list = a != ["mailto:a@example.com"]
+    assert not eq_list
+    assert ne_list
 
 
 def test_mixed_str_comparison_hash_limitation_is_documented():
