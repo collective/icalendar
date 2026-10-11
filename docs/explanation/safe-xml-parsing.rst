@@ -16,8 +16,8 @@ Sources
 
 The following sources have been taken into consideration:
 
-#. `Python 3.12 XML package <https://docs.python.org/3.12/library/xml.html#xml-vulnerabilities>`_ still mentions `defusedxml <https://pypi.org/project/defusedxml/>`_.
-#. `Python 3.13 XML package <https://docs.python.org/3.13/library/xml.html#xml-vulnerabilities>`_ does not mention `defusedxml`_.
+#. `Python 3.12 XML package <https://docs.python.org/3.12/library/xml.html#xml-vulnerabilities>`_ still mentions `defusedxml <https://pypi.org/project/defusedxml/>`__.
+#. `Python 3.13 XML package <https://docs.python.org/3.13/library/xml.html#xml-vulnerabilities>`_ does not mention `defusedxml <https://pypi.org/project/defusedxml/>`__.
 #. `Amended documentation recommendation <https://github.com/python/cpython/pull/135294>`_
 
        "Python 3.11-3.15 include expat 2.7.1 which is not vulnerable."
