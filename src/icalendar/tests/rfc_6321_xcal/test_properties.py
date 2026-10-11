@@ -19,7 +19,7 @@ def test_parameters_parser_finds_out_if_nothing_is_consumed(mock):
     e = list2xml(["properties", ["x-prop", ["text", "mailto:jsmith@example.com"]]])
     parser = XCalPropertyParser(e, mock)  # mock does not consume anything
     with pytest.raises(InvalidParserState) as e:
-        parser.parse_property()
+        parser.parse_property_value()
     assert "did not consume any XML." in str(e.value)
     assert "Endless loop detected" in str(e.value)
 

@@ -19,6 +19,19 @@ class XCalParametersParser(XCalParser):
         element: The xCal element to parse.
         types_factory: The types factory to use.
             If ``None`` is passed, the default TypesFactory is used.
+
+    Example:
+
+        The parameter ``element`` can be a ``parameters`` tag as shown below:
+
+        .. code-block:: xml
+
+            <parameters>
+                <tzid>
+                    <text>US/Eastern</text>
+                </tzid>
+            </parameters>
+
     """
 
     def __init__(
@@ -35,10 +48,12 @@ class XCalParametersParser(XCalParser):
         self._parameters = Parameters()
 
     def parse_parameters(self) -> Parameters:
-        """Parse properties until finished.
+        """Parse all parameters until finished.
 
         Parameters are parsed once and are the same for all
         property values inside a property tag.
+        This method parses the whole ``parameters`` tag collects them
+        and returns them as a :class:`~icalendar.prop.parameters.Parameters` object.
 
         Returns:
             The parsed parameters.
@@ -51,7 +66,11 @@ class XCalParametersParser(XCalParser):
         return self._parameters
 
     def parse_parameter(self) -> None:
-        """Parse one parameter from the list.
+        """Parse the next parameter that has not been parsed, yet.
+
+        This function only parses one parameter inside the parser's ``element``
+        parameter and adds it to the collected parameters.
+        Each call parses a single parameter.
 
         Raises:
             ~icalendar.error.XCalParsingError: If the provided xCal is invalid.
@@ -59,6 +78,10 @@ class XCalParametersParser(XCalParser):
                 If all parameters have been parsed.
 
         Example:
+
+            The example below shows a ``parameters`` tag with a
+            ``tzid`` parameter.
+            This function would only parse the ``tzid`` parameter.
 
             .. code-block:: xml
 

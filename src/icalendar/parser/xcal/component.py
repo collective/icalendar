@@ -23,6 +23,31 @@ class XCalComponentParser(XCalParser):
         element: The element to parse.
         component_factory: The component factory to use.
         types_factory: The types factory to use.
+
+    Examples:
+
+        The ``element`` can be a an ``icalendar`` stream that contains
+        one or more ``vcalendar`` components.
+
+        .. code-block:: xml
+
+            <icalendar xmlns="urn:ietf:params:xml:ns:icalendar-2.0">
+              <vcalendar>
+                ...
+              </vcalendar>
+            </icalendar>
+
+        Components can contain other components inside the ``components`` tag.
+        The parameter ``element`` can be such a ``components`` tag.
+
+        .. code-block:: xml
+
+            <components>
+              <vevent>
+                ...
+              </vevent>
+            </components>
+
     """
 
     def __init__(
@@ -53,6 +78,12 @@ class XCalComponentParser(XCalParser):
                 parse anything.
 
         Example:
+
+            The XML below shows the structure of one component
+            element that gets parsed by this method.
+            ``vcalendar`` is the name of the component.
+            Each component can contain a ``properties`` and
+            a ``components`` element with more components.
 
             .. code-block:: xml
 

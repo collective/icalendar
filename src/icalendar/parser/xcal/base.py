@@ -24,25 +24,8 @@ class InvalidParserState(Exception):
 class XCalParser:
     """Create a new XCalParser that takes care of the parsing state.
 
-    For components:
-
-        .. code-block:: xml
-
-            <icalendar xmlns="urn:ietf:params:xml:ns:icalendar-2.0">
-              <vcalendar>
-                ...
-              </vcalendar>
-            </icalendar>
-
-    .. code-block:: xml
-
-            <components>
-                <vevent>
-                ...
-                </vevent>
-            </components>
-
-
+    An element is passed to the parser.
+    The element and its child elements can be inspected and marked as parsed.
     """
 
     def __init__(self, element: Element | ElementAdapter) -> None:
@@ -57,7 +40,7 @@ class XCalParser:
         return self._element
 
     def is_finished(self) -> bool:
-        """Whether there are more elements left to consume."""
+        """Whether there are more elements left to parse."""
         return len(self._children) == 0
 
     @property
