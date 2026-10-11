@@ -66,10 +66,10 @@ class XCalComponentParser(XCalParser):
         self._types_factory = types_factory
 
     def parse_component(self) -> Component:
-        """Consume one child as a component.
+        """Convert one child into a :class:`~icalendar.cal.component.Component`.
 
         Returns:
-            The consumed component.
+            The parsed component.
 
         Raises:
             ~icalendar.error.XCalParsingError: If there is an error in the child
