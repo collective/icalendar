@@ -1032,6 +1032,24 @@ rfc_9253_test_cases = [
         "set two values",
     ),
     (
+        COMPONENTS_CONCEPTS,
+        "concepts",
+        "CONCEPT",
+        "https://example.com/concept",
+        [vUri("https://example.com/concept")],
+        True,
+        "a single concept str is accepted",
+    ),
+    (
+        COMPONENTS_CONCEPTS,
+        "concepts",
+        "CONCEPT",
+        vUri("https://example.com/concept"),
+        [vUri("https://example.com/concept")],
+        True,
+        "a single concept vUri is accepted",
+    ),
+    (
         COMPONENTS_REFID,
         "refids",
         "REFID",
@@ -1217,6 +1235,16 @@ def test_properties_and_new(
         ("links", ["https://example.com/link"], [vUri("https://example.com/link")]),
         ("related_to", ["parent-uid"], [vText("parent-uid")]),
         ("refids", ["reference-id"], [vText("reference-id")]),
+        (
+            "concepts",
+            "https://example.com/concept",
+            [vUri("https://example.com/concept")],
+        ),
+        (
+            "concepts",
+            vUri("https://example.com/concept"),
+            [vUri("https://example.com/concept")],
+        ),
         (
             "concepts",
             ["https://example.com/concept"],
