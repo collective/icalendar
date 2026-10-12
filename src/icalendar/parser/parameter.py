@@ -161,7 +161,7 @@ def _q_split(st: str, sep: str = ",", maxsplit: int = -1) -> list[str]:
             result.append(st[cursor:])
             break
     return result
-q_split = deprecate_for_version_8(_q_split)
+q_split = deprecate_for_version_9(_q_split)
 
 
 def _q_join(lst: Sequence[str], sep: str = ",", always_quote: bool = False) -> str:
