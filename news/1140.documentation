@@ -1,0 +1,1 @@
+Fixed the display of the overloaded method :meth:`TZP.localize <icalendar.timezone.tzp.TZP.localize>`. @stevepiercy

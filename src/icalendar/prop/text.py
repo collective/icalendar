@@ -1,11 +1,48 @@
 """TEXT values from :rfc:`5545`."""
 
+import re
 from typing import Any, ClassVar
 
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters, _escape_char
 from icalendar.parser_tools import DEFAULT_ENCODING, ICAL_TYPE, to_unicode
+
+# :rfc:`5545#section-3.3.11` defines TEXT as
+# ``*(TSAFE-CHAR / ":" / DQUOTE / ESCAPED-CHAR)`` where TSAFE-CHAR is in turn
+# defined by the following grammar in :rfc:`5545#section-3.1`.
+#
+# ..  code-block:: text
+#
+#     TSAFE-CHAR = WSP / %x21 / %x23-2B / %x2D-39 / %x3C-5B /
+#              %x5D-7E / NON-US-ASCII
+#        ; Any character except CONTROLs not needed by the current
+#        ; character set, DQUOTE, ";", ":", "\", ","
+#
+# CONTROL is defined in the same section as ``%x00-08 / %x0A-1F / %x7F``, so no
+# control character except the horizontal tab may appear in a TEXT value.
+# The line feed, ``\x0a``, is additionally accepted here because it is the
+# result of the escaped sequences ``\N`` and ``\n``.
+_UNSAFE_TEXT_CHARS = re.compile(r"[\x00-\x08\x0b-\x1f\x7f]")
+
+
+def _strip_unsafe_text_chars(value: object) -> str:
+    r"""Remove CONTROL characters that :rfc:`5545#section-3.3.11` forbids in TEXT.
+
+    ``\r\n`` and a lone ``\r`` become ``\n`` first, so an intentional line
+    break is kept and escaped on serialize. Remaining matches of
+    :data:`_UNSAFE_TEXT_CHARS` (NUL, other C0 controls, DEL) are stripped.
+    HTAB and LF are left as-is.
+
+    :func:`~icalendar.parser_tools.to_unicode` leaves non-``str``/``bytes``
+    values unchanged, and callers such as :meth:`vUid.new` pass a
+    :class:`uuid.UUID`. Coerce those to ``str`` the same way ``str.__new__``
+    did before this filter ran.
+    """
+    if not isinstance(value, str):
+        value = str(value)
+    value = value.replace("\r\n", "\n").replace("\r", "\n")
+    return _UNSAFE_TEXT_CHARS.sub("", value)
 
 
 class vText(str):
@@ -23,9 +60,11 @@ class vText(str):
 
     Use the LANGUAGE property parameter to set the language of the text.
 
-    When the TEXT object is serialized to an icalendar stream, certain
-    characters are escaped or changed.
-    These characters include the COMMA, SEMICOLON, BACKSLASH, and line breaks.
+    When the TEXT object is created, CONTROL characters other than HTAB
+    are removed so both :meth:`to_ical` and :meth:`to_jcal` stay valid
+    :rfc:`5545#section-3.3.11` TEXT. Parsing does not raise; the value is corrected.
+    When the TEXT object is serialized to an icalendar stream, COMMA,
+    SEMICOLON, BACKSLASH, and line breaks are escaped.
 
     Contrast TEXT with the UNKNOWN value data type specified in :rfc:`7265#section-5`.
     UNKNOWN is implemented in the Python class :class:`~icalendar.prop.unknown.vUnknown`,
@@ -33,6 +72,10 @@ class vText(str):
     because the escaping rules of an unrecognized value type are not known.
     :class:`~icalendar.prop.unknown.vUnknown` deliberately does not inherit from
     ``vText``, so the two don't share escaping behavior.
+
+    ..  versionchanged:: 0.0.0
+
+        Remove CONTROL characters other than HTAB.
 
     Examples:
 
@@ -83,7 +126,7 @@ class vText(str):
         /,
         params: dict[str, Any] | None = None,
     ) -> Self:
-        value = to_unicode(value, encoding=encoding)
+        value = _strip_unsafe_text_chars(to_unicode(value, encoding=encoding))
         self = super().__new__(cls, value)
         self.encoding = encoding
         self.params = Parameters(params)
@@ -93,10 +136,26 @@ class vText(str):
         return f"{self.__class__.__name__}({self.to_ical()!r})"
 
     def to_ical(self) -> bytes:
+        """Serialize this TEXT value with :rfc:`5545` escaping."""
         return _escape_char(self).encode(self.encoding)
 
     @classmethod
     def from_ical(cls, ical: ICAL_TYPE) -> Self:
+        r"""Parse a TEXT value from its iCalendar representation.
+
+        Control characters that :rfc:`5545#section-3.3.11` does not allow
+        in TEXT get removed.
+
+        ..  versionchanged:: 0.0.0
+
+            Don't raise for unsafe characters in TEXT, but instead remove them.
+            The parsed object can now be read and later serialized.
+
+            ..  seealso::
+
+                -   :issue:`1712`
+                -   :pr:`1723`
+        """
         return cls(ical)
 
     @property

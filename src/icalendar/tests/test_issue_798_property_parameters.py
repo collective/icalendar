@@ -181,6 +181,12 @@ def test_set_sent_by(addr: vCalAddress):
     assert addr.params.to_ical() == b'SENT-BY="mailto:asd"'
 
 
+def test_set_member(addr: vCalAddress):
+    addr.MEMBER = "mailto:group"
+    assert addr.MEMBER == ("mailto:group",)
+    assert addr.params["MEMBER"] == ("mailto:group",)
+
+
 @pytest.mark.parametrize("tzid", [None, "Europe/Berlin"])
 def test_tzid(tzid, tzp: TZP):
     """Check that the TZID parameter is determined by the datetime value."""

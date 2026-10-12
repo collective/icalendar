@@ -162,6 +162,16 @@ If your virtual environment already exists, update it with the following command
     -   zizmor's `documentation <https://docs.zizmor.sh/>`_
 
 
+Test distribution files
+-----------------------
+
+To build the source distribution and wheel, check that required files are included and unwanted files are excluded, and verify the package metadata, run the following command.
+
+..  code-block:: shell
+
+    make test-dist
+
+
 Code conventions
 ----------------
 

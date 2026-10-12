@@ -188,8 +188,15 @@ Description:
 )
 
 
-def quoted_list_parameter(name: str, doc: str) -> property:
-    """Return a parameter that contains a quoted list."""
+def quoted_list_parameter(name: str) -> property:
+    """Create a property for a parameter that contains a quoted list.
+
+    Parameters:
+        name: The parameter name in the ``params`` dictionary.
+
+    Returns:
+        A property with a getter, setter, and deleter for the parameter.
+    """
 
     def fget(self: VPROPERTY) -> tuple[str]:
         value = self.params.get(name)
@@ -208,36 +215,12 @@ def quoted_list_parameter(name: str, doc: str) -> property:
     def fdel(self: VPROPERTY):
         self.params.pop(name, None)
 
-    return property(fget, fset, fdel, doc=doc)
+    return property(fget, fset, fdel)
 
 
-DELEGATED_FROM = quoted_list_parameter(
-    "DELEGATED-FROM",
-    """Specify the calendar users that have delegated their participation to the calendar user specified by the property.
+DELEGATED_FROM = quoted_list_parameter("DELEGATED-FROM")
 
-Description:
-    This parameter can be specified on properties with a
-    CAL-ADDRESS value type.  This parameter specifies those calendar
-    users that have delegated their participation in a group-scheduled
-    event or to-do to the calendar user specified by the property.
-    The individual calendar address parameter values MUST each be
-    specified in a quoted-string.
-""",  # noqa: E501
-)
-
-DELEGATED_TO = quoted_list_parameter(
-    "DELEGATED-TO",
-    """Specify the calendar users to whom the calendar user specified by the property has delegated participation.
-
-Description:
-    This parameter can be specified on properties with a
-    CAL-ADDRESS value type.  This parameter specifies those calendar
-    users whom have been delegated participation in a group-scheduled
-    event or to-do by the calendar user specified by the property.
-    The individual calendar address parameter values MUST each be
-    specified in a quoted-string.
-    """,  # noqa: E501
-)
+DELEGATED_TO = quoted_list_parameter("DELEGATED-TO")
 
 DIR = string_parameter(
     "DIR",
@@ -304,20 +287,7 @@ Description:
 """,
 )
 
-MEMBER = quoted_list_parameter(
-    "MEMBER",
-    """Specify the group or list membership of the calendar user specified by the property.
-
-Description:
-    This parameter can be specified on properties with a
-    CAL-ADDRESS value type.  The parameter identifies the groups or
-    list membership for the calendar user specified by the property.
-    The parameter value is either a single calendar address in a
-    quoted-string or a COMMA-separated list of calendar addresses,
-    each in a quoted-string.  The individual calendar address
-    parameter values MUST each be specified in a quoted-string.
-""",  # noqa: E501
-)
+MEMBER = quoted_list_parameter("MEMBER")
 
 
 def _default_return_needs_action() -> enums.PARTSTAT | str:
@@ -418,34 +388,62 @@ Description:
 )
 
 
-def boolean_parameter(name: str, default: bool, doc: str) -> property:
+def boolean_parameter(name: str, default: bool) -> property:
+    """Create a property for a Boolean parameter.
+
+    Parameters:
+        default: The value to return when the parameter is absent.
+        name: The parameter name in the ``params`` dictionary.
+
+    Returns:
+        A property with a getter, setter, and deleter for the parameter.
+    """
+
     def _default() -> bool:
         return default
 
     return string_parameter(
         name,
-        doc,
+        "",
         default=_default,
         convert=lambda x: x.upper() == "TRUE",
         convert_to=lambda x: "TRUE" if x else "FALSE",
     )
 
 
-RSVP = boolean_parameter(
-    "RSVP",
-    False,
-    """Specify whether there is an expectation of a favor of anreply from the calendar user specified by the property value.
+RSVP = boolean_parameter("RSVP", False)
+"""Indicate whether a reply is expected from the ATTENDEE.
 
-Description:
-    This parameter can be specified on properties with a
-    CAL-ADDRESS value type.  The parameter identifies the expectation
-    of a reply from the calendar user specified by the property value.
-    This parameter is used by the "Organizer" to request a
-    participation status reply from an "Attendee" of a group-scheduled
-    event or to-do.  If not specified on a property that allows this
-    parameter, the default value is ``False``.
-""",  # noqa: E501
-)
+The RSVP Expectation parameter can be specified on properties with a
+CAL-ADDRESS value type, specifically ATTENDEE, as part of the ``attendees``
+property. An organizer uses it to request a participation status reply from
+an attendee in a group-scheduled event or to-do.
+
+..  note::
+
+    According to :rfc:`5545#section-3.2.17`, if the parameter is absent from
+    the property, it should return a value of ``False``. However, it
+    currently raises a ``KeyError``. See :issue:`1778`.
+
+Example:
+
+    Create a VCALADDRESS with an attendee who's expected to respond.
+
+    ..  code-block:: pycon
+
+        >>> from icalendar import vCalAddress
+        >>> attendee = vCalAddress("mailto:someone@example.com")
+        >>> attendee.params["RSVP"] = True
+        >>> attendee.params["RSVP"]
+        True
+
+..  seealso::
+
+    -   :attr:`Alarm.attendees <icalendar.cal.alarm.Alarm.attendees>`
+    -   :attr:`Event.attendees <icalendar.cal.event.Event.attendees>`
+    -   :attr:`Journal.attendees <icalendar.cal.journal.Journal.attendees>`
+    -   :attr:`Todo.attendees <icalendar.cal.todo.Todo.attendees>`
+"""
 
 SENT_BY = string_parameter(
     "SENT-BY",

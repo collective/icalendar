@@ -1,0 +1,1 @@
+Added :attr:`attachments <icalendar.cal.event.Event.attachments>` to access the :rfc:`5545#section-3.8.1.1` ``ATTACH`` property of :class:`~icalendar.cal.event.Event`, :class:`~icalendar.cal.todo.Todo`, :class:`~icalendar.cal.journal.Journal`, and :class:`~icalendar.cal.alarm.Alarm`. I used Claude Sonnet 4.6 to assist me with the changes made in this PR. @VedantPatel04

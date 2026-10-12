@@ -8,6 +8,28 @@ from icalendar.cal.alarm import Alarm
 from icalendar.error import InvalidCalendar
 from icalendar.prop import vCalAddress
 from icalendar.prop.binary import vBinary
+from icalendar.prop.text import vText
+from icalendar.prop.uri import vUri
+
+_TRIGGER = timedelta(minutes=-15)
+_ATTENDEE = vCalAddress("mailto:a@example.com")
+
+
+def _display(**kw) -> Alarm:
+    return Alarm.new_display("Reminder", _TRIGGER, **kw)
+
+
+def _audio(**kw) -> Alarm:
+    return Alarm.new_audio(_TRIGGER, **kw)
+
+
+def _email(**kw) -> Alarm:
+    return Alarm.new_email("Subject", "Body", _TRIGGER, [_ATTENDEE], **kw)
+
+
+_ALL_FACTORIES = pytest.mark.parametrize(
+    "factory", [_display, _audio, _email], ids=["new_display", "new_audio", "new_email"]
+)
 
 
 def test_new_display_sets_action():
@@ -110,13 +132,8 @@ def test_new_audio_without_attach():
 
 def test_new_audio_with_attach():
     uri = "ftp://example.com/pub/sounds/bell-01.aud"
-    alarm = Alarm.new_audio(timedelta(minutes=-5), attach=uri)
+    alarm = Alarm.new_audio(timedelta(minutes=-5), attachments=uri)
     assert str(alarm["ATTACH"]) == uri
-
-
-def test_new_audio_with_empty_attach_ignored():
-    alarm = Alarm.new_audio(timedelta(minutes=-5), attach="")
-    assert alarm.get("ATTACH") is None
 
 
 def test_new_audio_with_repeat():
@@ -134,7 +151,7 @@ def test_new_audio_requires_trigger():
 
 def test_new_audio_with_bytes_attach():
     data = b"\x00\x01\x02\x03"
-    alarm = Alarm.new_audio(timedelta(minutes=-5), attach=data)
+    alarm = Alarm.new_audio(timedelta(minutes=-5), attachments=data)
     assert isinstance(alarm["ATTACH"], vBinary)
     assert alarm["ATTACH"] == vBinary(data)
 
@@ -249,3 +266,247 @@ def test_new_email_single_attachment():
     )
     assert "ATTACH" in alarm
     assert str(alarm["ATTACH"]) == "https://example.com/file.pdf"
+
+
+# Shared parameters: uid, links, related_to, concepts
+
+
+@_ALL_FACTORIES
+def test_factory_uid_is_set(factory):
+    alarm = factory(uid="test-alarm-uid-001")
+    assert alarm.uid == "test-alarm-uid-001"
+    assert "UID" in alarm
+
+
+@_ALL_FACTORIES
+def test_factory_uid_none_omits_property(factory):
+    alarm = factory(uid=None)
+    assert "UID" not in alarm
+
+
+@_ALL_FACTORIES
+def test_factory_links_single(factory):
+    link = vUri("https://example.com/event")
+    alarm = factory(links=[link])
+    assert alarm.links == [link]
+
+
+@_ALL_FACTORIES
+def test_factory_links_string_is_converted(factory):
+    alarm = factory(links=["https://example.com/event"])
+    assert alarm.links == [vUri("https://example.com/event")]
+
+
+@_ALL_FACTORIES
+def test_factory_links_none_is_empty(factory):
+    alarm = factory(links=None)
+    assert alarm.links == []
+    assert "LINK" not in alarm
+
+
+@_ALL_FACTORIES
+def test_factory_related_to_single(factory):
+    rel = vText("some-uid-ref")
+    alarm = factory(related_to=[rel])
+    assert alarm.related_to == [rel]
+
+
+@_ALL_FACTORIES
+def test_factory_related_to_string_is_converted(factory):
+    alarm = factory(related_to=["some-uid-ref"])
+    assert alarm.related_to == [vText("some-uid-ref")]
+
+
+@_ALL_FACTORIES
+def test_factory_related_to_none_is_empty(factory):
+    alarm = factory(related_to=None)
+    assert alarm.related_to == []
+    assert "RELATED-TO" not in alarm
+
+
+@_ALL_FACTORIES
+def test_factory_concepts_single(factory):
+    concept = vUri("https://example.com/concept")
+    alarm = factory(concepts=[concept])
+    assert alarm.concepts == [concept]
+
+
+@_ALL_FACTORIES
+def test_factory_concepts_string_is_converted(factory):
+    alarm = factory(concepts=["https://example.com/concept"])
+    assert alarm.concepts == [vUri("https://example.com/concept")]
+
+
+@_ALL_FACTORIES
+def test_factory_concepts_none_is_empty(factory):
+    alarm = factory(concepts=None)
+    assert alarm.concepts == []
+    assert "CONCEPT" not in alarm
+
+
+# Alarm.new shared parameters: uid, links, related_to, concepts
+
+
+def test_alarm_new_uid_is_set():
+    alarm = Alarm.new(uid="test-alarm-uid-001")
+    assert alarm.uid == "test-alarm-uid-001"
+    assert "UID" in alarm
+
+
+def test_alarm_new_uid_none_omits_property():
+    alarm = Alarm.new(uid=None)
+    assert "UID" not in alarm
+
+
+def test_alarm_new_links_single():
+    link = vUri("https://example.com/event")
+    alarm = Alarm.new(links=[link])
+    assert alarm.links == [link]
+
+
+def test_alarm_new_links_string_is_converted():
+    alarm = Alarm.new(links=["https://example.com/event"])
+    assert alarm.links == [vUri("https://example.com/event")]
+
+
+def test_alarm_new_links_none_is_empty():
+    alarm = Alarm.new(links=None)
+    assert alarm.links == []
+    assert "LINK" not in alarm
+
+
+def test_alarm_new_related_to_single():
+    rel = vText("some-uid-ref")
+    alarm = Alarm.new(related_to=[rel])
+    assert alarm.related_to == [rel]
+
+
+def test_alarm_new_related_to_string_is_converted():
+    alarm = Alarm.new(related_to=["some-uid-ref"])
+    assert alarm.related_to == [vText("some-uid-ref")]
+
+
+def test_alarm_new_related_to_none_is_empty():
+    alarm = Alarm.new(related_to=None)
+    assert alarm.related_to == []
+    assert "RELATED-TO" not in alarm
+
+
+def test_alarm_new_concepts_single():
+    concept = vUri("https://example.com/concept")
+    alarm = Alarm.new(concepts=[concept])
+    assert alarm.concepts == [concept]
+
+
+def test_alarm_new_concepts_string_is_converted():
+    alarm = Alarm.new(concepts=["https://example.com/concept"])
+    assert alarm.concepts == [vUri("https://example.com/concept")]
+
+
+def test_alarm_new_concepts_none_is_empty():
+    alarm = Alarm.new(concepts=None)
+    assert alarm.concepts == []
+    assert "CONCEPT" not in alarm
+
+
+@pytest.mark.parametrize(
+    ("attendees", "expected"),
+    [
+        ("first@example.com", "mailto:first@example.com"),
+        (["first@example.com"], "mailto:first@example.com"),
+        ("mailto:second@example.net", "mailto:second@example.net"),
+        (["mailto:second@example.net"], "mailto:second@example.net"),
+    ],
+)
+def test_new_email_string_attendee_normalizes(attendees, expected):
+    """Plain and mailto: string attendees, singleton or in a list, normalize to vCalAddress."""
+    alarm = Alarm.new_email(
+        summary="S",
+        description="D",
+        trigger=timedelta(minutes=-30),
+        attendees=attendees,
+    )
+    assert isinstance(alarm.attendees[0], vCalAddress)
+    assert str(alarm.attendees[0]) == expected
+
+
+@pytest.mark.parametrize(
+    "invalid_attendees",
+    [
+        None,
+        [None],
+        [None, None],
+        "",
+        "   ",
+        [""],
+        ["   "],
+        ["  ", "   "],
+        [None, "   "],
+    ],
+)
+def test_new_email_with_none_or_empty_attendees_raises_invalid_calendar(
+    invalid_attendees,
+):
+    """Issue #1783: Alarm.new_email rejects None or empty attendee values."""
+    with pytest.raises(InvalidCalendar):
+        Alarm.new_email(
+            summary="S",
+            description="D",
+            trigger=timedelta(minutes=-30),
+            attendees=invalid_attendees,
+        )
+
+
+def test_new_email_filters_blank_strings_and_none_from_sequence():
+    """Sequence containing valid attendee along with blank strings or None filters out invalid elements."""
+    alarm = Alarm.new_email(
+        summary="S",
+        description="D",
+        trigger=timedelta(minutes=-30),
+        attendees=["valid@example.com", "   ", None, ""],
+    )
+    assert len(alarm.attendees) == 1
+    assert str(alarm.attendees[0]) == "mailto:valid@example.com"
+
+
+@_ALL_FACTORIES
+def test_factory_refids_single(factory):
+    ref = vText("ref-id-001")
+    alarm = factory(refids=[ref])
+    assert alarm.refids == [ref]
+
+
+@_ALL_FACTORIES
+def test_factory_refids_string_is_converted(factory):
+    alarm = factory(refids=["ref-id-001"])
+    assert alarm.refids == [vText("ref-id-001")]
+
+
+@_ALL_FACTORIES
+def test_factory_refids_none_is_empty(factory):
+    alarm = factory(refids=None)
+    assert alarm.refids == []
+    assert "REFID" not in alarm
+
+
+def test_new_email_with_all_optional_parameters():
+    alarm = Alarm.new_email(
+        summary="Summary",
+        description="Description",
+        trigger=timedelta(minutes=-15),
+        attendees=["user@example.com"],
+        uid="email-alarm-uid-999",
+        attachments=["https://example.com/doc.pdf"],
+        links=["https://example.com/link"],
+        related_to=["rel-001"],
+        refids=["ref-001"],
+        concepts=["https://example.com/concept"],
+    )
+    assert alarm.summary == "Summary"
+    assert alarm.description == "Description"
+    assert alarm.uid == "email-alarm-uid-999"
+    assert len(alarm.attendees) == 1
+    assert len(alarm.links) == 1
+    assert len(alarm.related_to) == 1
+    assert len(alarm.refids) == 1
+    assert len(alarm.concepts) == 1

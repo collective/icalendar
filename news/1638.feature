@@ -1,1 +1,0 @@
-Used :meth:`vBinary.from_ical() <icalendar.prop.binary.vBinary.from_ical>` in :attr:`Image.data <icalendar.prop.image.Image.data>` for consistent Base64 validation, removing the manual :func:`base64.b64decode` call. @klouds27

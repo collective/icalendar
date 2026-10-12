@@ -115,17 +115,21 @@ def _strip_ows_around_delimiters(st: str, delimiters: str = ";=") -> str:
 
 
 class Contentline(str):
-    """A content line is basically a string that can be folded and parsed into
-    parts.
+    r"""A content line is a string that can be folded and parsed into parts.
+
+    Raises:
+        ValueError: If the value contains ``\n``.
+
     """
 
     __slots__ = ("strict",)
 
     def __new__(cls, value, strict=False, encoding=DEFAULT_ENCODING):
         value = to_unicode(value, encoding=encoding)
-        assert "\n" not in value, (
-            "Content line can not contain unescaped new line characters."
-        )
+        if "\n" in value:
+            raise ValueError(
+                "Content line can not contain unescaped new line characters."
+            )
         self = super().__new__(cls, value)
         self.strict = strict
         return self
@@ -138,8 +142,14 @@ class Contentline(str):
         values,
         sorted: bool = True,  # noqa: A002
     ):
-        """Turn a parts into a content line."""
-        assert isinstance(params, Parameters)
+        r"""Turn a parts into a content line.
+
+        Raises:
+            TypeError: If ``params`` is not type ``Parameters``.
+
+        """
+        if not isinstance(params, Parameters):
+            raise TypeError(f"Expected Parameters, got {type(params).__name__}")
         if hasattr(values, "to_ical"):
             values = values.to_ical()
         else:
