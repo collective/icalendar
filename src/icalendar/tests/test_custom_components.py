@@ -206,9 +206,8 @@ class TestCustomComponentAPI:
         assert len(container.subcomponents) == 1
         assert container.subcomponents[0].name == "VEVENT"
 
-    def test_custom_component_iteration(self):
+    def test_custom_component_iteration(self, comp):
         """Can iterate over properties in custom component."""
-        comp = Component(name="X-TEST")
         comp.add("prop1", "value1")
         comp.add("prop2", "value2")
 
