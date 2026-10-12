@@ -162,7 +162,10 @@ class XCalParser:
         )
 
     def parse_parameters(self) -> Parameters:
-        """Return empty parameters as parameters can only appear in a property."""
+        """Return empty parameters.
+
+        This can be changed in subclasses.
+        """
         return Parameters()
 
 
