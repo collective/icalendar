@@ -1,0 +1,1 @@
+Changed ``vDate.from_ical()`` and ``vDatetime.from_ical()`` to raise ``ICalParsingError`` for invalid DATE and DATE-TIME values, preserving the malformed input on the exception. I used AI to assist with understanding the issue, debugging, and reviewing the tests and implementation. @sairex53

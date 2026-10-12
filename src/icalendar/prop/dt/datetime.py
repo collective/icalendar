@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Any, ClassVar
 
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError
+from icalendar.error import ICalParsingError, JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser_tools import to_unicode
 from icalendar.timezone import tzp
@@ -110,7 +110,11 @@ class vDatetime(TimeBase):
 
     @staticmethod
     def from_ical(ical, timezone=None):
-        """Create a datetime from the RFC string."""
+        """Create a datetime from the RFC string.
+
+        Raises:
+            ~icalendar.error.ICalParsingError: If the value is not a valid DATE-TIME.
+        """
         ical = to_unicode(ical)
         tzinfo = None
         if isinstance(timezone, str):
@@ -124,7 +128,10 @@ class vDatetime(TimeBase):
         ical_value = ical.rpartition(":")[2]
 
         if len(ical_value) < 15 or ical_value[8] != "T":
-            raise ValueError(f"Wrong datetime format: {ical}")
+            raise ICalParsingError(
+                "Wrong datetime format",
+                value=ical,
+            )
 
         try:
             timetuple = (
@@ -142,8 +149,14 @@ class vDatetime(TimeBase):
             if ical_value[15:] == "Z":
                 return tzp.localize_utc(datetime(*timetuple))
         except Exception as e:
-            raise ValueError(f"Wrong datetime format: {ical}") from e
-        raise ValueError(f"Wrong datetime format: {ical}")
+            raise ICalParsingError(
+                "Wrong datetime format",
+                value=ical,
+            ) from e
+        raise ICalParsingError(
+            "Wrong datetime format",
+            value=ical,
+        )
 
     @classmethod
     def examples(cls) -> list[Self]:
