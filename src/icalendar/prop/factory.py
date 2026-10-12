@@ -26,6 +26,7 @@ from icalendar.prop.inline import vInline
 from icalendar.prop.n import vN
 from icalendar.prop.org import vOrg
 from icalendar.prop.recur import vFrequency, vRecur, vWeekday
+from icalendar.prop.request_status import vRequestStatus
 from icalendar.prop.text import vText
 from icalendar.prop.uid import vUid
 from icalendar.prop.unknown import vUnknown
@@ -44,6 +45,7 @@ class TypesFactory(CaselessDict):
 
     _instance: ClassVar[TypesFactory | None] = None
 
+    @staticmethod
     def instance() -> TypesFactory:
         """Return a singleton instance of this class."""
         if TypesFactory._instance is None:
@@ -81,6 +83,7 @@ class TypesFactory(CaselessDict):
             vUid,
             vXmlReference,
             vUnknown,
+            vRequestStatus,
         )
         self["binary"] = vBinary
         self["boolean"] = vBoolean
@@ -100,6 +103,7 @@ class TypesFactory(CaselessDict):
         self["inline"] = vInline
         self["date-time-list"] = vDDDLists
         self["categories"] = vCategory
+        self["request-status-text"] = vRequestStatus  # RFC 5545 and 6321
         self["adr"] = vAdr  # RFC 6350 vCard
         self["n"] = vN  # RFC 6350 vCard
         self["org"] = vOrg  # RFC 6350 vCard
@@ -186,7 +190,7 @@ class TypesFactory(CaselessDict):
             "last-modified": "date-time",
             "sequence": "integer",
             # Miscellaneous Component Properties
-            "request-status": "text",
+            "request-status": "request-status-text",
             ####################################
             # parameter types (luckily there is no name overlap)
             "altrep": "uri",
@@ -286,16 +290,13 @@ class TypesFactory(CaselessDict):
         Returns:
             The default jCal value type as a lowercase string.
         """
-        internal = self.types_map.get(name.lower(), "unknown")
+        internal = self.types_map.get(name, "unknown").lower()
         if internal in self._jcal_value_types:
             return internal
         # Internal keys such as ``categories`` or ``date-time-list`` are not
         # jCal value types themselves; ask the value class for the type it
         # actually serialises to.
-        try:
-            return self[internal].examples()[0].VALUE.lower()
-        except (KeyError, IndexError, AttributeError):
-            return "unknown"
+        return self[internal].default_value.lower()
 
     def to_ical(self, name, value):
         """Encodes a named value from a primitive python type to an icalendar
