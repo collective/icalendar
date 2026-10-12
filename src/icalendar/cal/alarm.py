@@ -520,11 +520,13 @@ class Alarm(Component):
             .. code-block:: pycon
 
                 >>> from datetime import timedelta
-                >>> from icalendar import Alarm
+                >>> from icalendar import ACTION, Alarm
                 >>> alarm = Alarm.new_display(
                 ...     description="Team meeting in 15 minutes",
                 ...     trigger=timedelta(minutes=-15),
                 ... )
+                >>> alarm.ACTION is ACTION.DISPLAY
+                True
                 >>> print(alarm.to_ical().decode())
                 BEGIN:VALARM
                 ACTION:DISPLAY
