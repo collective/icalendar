@@ -140,7 +140,10 @@ class XCalParser:
         return children
 
     def ensure_tag_is_present(self, tag: str | Sequence[str]) -> str:
-        """Make sure a a tag is present and can be parsed.
+        """Check for the presence of a tag that has not yet been parsed.
+
+        This serves as a check before :meth:`parse_tag`.
+        The returned tag is not marked as parsed.
 
         Returns:
             The tag that is present.
