@@ -256,7 +256,7 @@ Description:
     Returns ``None`` when absent. Assign ``None`` or delete this property to
     remove the parameter.
 
-    This is distinct from the lowercase ``email`` property, which returns the
+    This is distinct from :attr:`email`, which returns the
     calendar address value without its ``mailto:`` prefix.
 """,
 )
