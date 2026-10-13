@@ -1,0 +1,1 @@
+﻿Rendered ``Self`` return types in the API reference as the documented class, linked to where the class definition starts, instead of unresolved text or ``None``. AI assistance (Xiaomi MiMo v2.6) was used to diagnose the Sphinx cross-reference behavior and to draft the change and its tests. @SakarPaisen

@@ -250,3 +250,52 @@ redirects = {
 man_pages = [("index", "icalendar", "icalendar Documentation", ["Plone Foundation"], 1)]
 
 htmlhelp_basename = "icalendardoc"
+
+
+# -- Resolve ``Self`` type references ---------------------------------------
+# Sphinx cannot resolve ``Self`` in signatures and return types by itself, so
+# the API reference shows it as unlinked text.  Show and link the class that is
+# being documented instead. See https://github.com/collective/icalendar/issues/1790
+
+SELF_REFERENCE_TARGETS = {"Self", "typing.Self", "typing_extensions.Self"}
+
+
+def self_reference_candidates(py_module, py_class):
+    """Return possible full dotted names of the class that ``Self`` refers to.
+
+    ``py_module`` and ``py_class`` are the ``py:module`` and ``py:class``
+    values of a cross-reference. ``py_class`` may be a full dotted name
+    already. Return no candidates if there is no class context.
+    """
+    if not py_class:
+        return []
+    if py_module and "." not in py_class:
+        return [f"{py_module}.{py_class}", py_class]
+    return [py_class]
+
+
+def resolve_self_reference(app, env, node, contnode):
+    """Resolve ``Self`` type references to the class being documented.
+
+    This is a ``missing-reference`` event handler. It displays the name of the
+    documented class and links to where the class definition starts.
+    """
+    if node.get("reftarget") not in SELF_REFERENCE_TARGETS:
+        return None
+    py_domain = env.get_domain("py")
+    for name in self_reference_candidates(node.get("py:module"), node.get("py:class")):
+        if name not in py_domain.objects:
+            continue
+        label = contnode.deepcopy()
+        if label.children:
+            label.children = [type(label.children[0])(name.rsplit(".", 1)[-1])]
+        return py_domain.resolve_xref(
+            env, node.get("refdoc", ""), app.builder, "class", name, node, label
+        )
+    return None
+
+
+def setup(app):
+    """Configure the documentation build."""
+    app.connect("missing-reference", resolve_self_reference, priority=450)
+    return {"parallel_read_safe": True, "parallel_write_safe": True}
