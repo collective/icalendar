@@ -3,6 +3,7 @@
 name: AgentScan
 
 on:
+  # zizmor: ignore[dangerous-triggers] - pull_request_target needed to comment on PRs from forks
   pull_request_target:
     types:
       - opened
