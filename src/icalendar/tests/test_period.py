@@ -5,7 +5,7 @@ See
 - https://github.com/pimutils/khal/issues/152#issuecomment-933635248
 """
 
-import datetime
+import datetime as dt
 
 import pytest
 
@@ -101,17 +101,15 @@ def test_tzid_is_part_of_the_period_values(calendars, tzp):
     """The TZID should be set in the datetime."""
     event = list(calendars.period_with_timezone.walk("VEVENT"))[0]
     start, end = event["RDATE"].dts[0].dt
-    assert start == tzp.localize(
-        datetime.datetime(2023, 12, 13, 12), "America/Vancouver"
-    )
-    assert end == tzp.localize(datetime.datetime(2023, 12, 13, 15), "America/Vancouver")
+    assert start == tzp.localize(dt.datetime(2023, 12, 13, 12), "America/Vancouver")
+    assert end == tzp.localize(dt.datetime(2023, 12, 13, 15), "America/Vancouver")
 
 
 def test_period_overlaps():
     # 30 minute increments
-    datetime_1 = datetime.datetime(2024, 11, 20, 12, 0)  # 12:00
-    datetime_2 = datetime.datetime(2024, 11, 20, 12, 30)  # 12:30
-    datetime_3 = datetime.datetime(2024, 11, 20, 13, 0)  # 13:00
+    datetime_1 = dt.datetime(2024, 11, 20, 12, 0)  # 12:00
+    datetime_2 = dt.datetime(2024, 11, 20, 12, 30)  # 12:30
+    datetime_3 = dt.datetime(2024, 11, 20, 13, 0)  # 13:00
 
     period_1 = vPeriod((datetime_1, datetime_2))
     period_2 = vPeriod((datetime_1, datetime_3))

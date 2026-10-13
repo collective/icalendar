@@ -1,4 +1,4 @@
-import datetime
+import datetime as dt
 
 import dateutil.parser
 
@@ -22,14 +22,14 @@ def test_create_from_ical(calendars, other_tzp):
     assert tz["tzid"].to_ical() == b"Europe/Vienna"
 
     std = tz.walk("STANDARD")[0]
-    assert std.decoded("TZOFFSETFROM") == datetime.timedelta(0, 7200)
+    assert std.decoded("TZOFFSETFROM") == dt.timedelta(0, 7200)
 
     ev1 = cal.walk("VEVENT")[0]
     assert ev1.decoded("DTSTART") == other_tzp.localize(
-        datetime.datetime(2012, 2, 13, 10, 0, 0), "Europe/Vienna"
+        dt.datetime(2012, 2, 13, 10, 0, 0), "Europe/Vienna"
     )
     assert ev1.decoded("DTSTAMP") == other_tzp.localize(
-        datetime.datetime(2010, 10, 10, 9, 10, 10), "UTC"
+        dt.datetime(2010, 10, 10, 9, 10, 10), "UTC"
     )
 
 
@@ -49,17 +49,17 @@ def test_create_to_ical(tzp):
 
     tzs = icalendar.cal.timezone.TimezoneStandard()
     tzs.add("tzname", "CET")
-    tzs.add("dtstart", datetime.datetime(1970, 10, 25, 3, 0, 0))
+    tzs.add("dtstart", dt.datetime(1970, 10, 25, 3, 0, 0))
     tzs.add("rrule", {"freq": "yearly", "bymonth": 10, "byday": "-1su"})
-    tzs.add("TZOFFSETFROM", datetime.timedelta(hours=2))
-    tzs.add("TZOFFSETTO", datetime.timedelta(hours=1))
+    tzs.add("TZOFFSETFROM", dt.timedelta(hours=2))
+    tzs.add("TZOFFSETTO", dt.timedelta(hours=1))
 
     tzd = icalendar.cal.timezone.TimezoneDaylight()
     tzd.add("tzname", "CEST")
-    tzd.add("dtstart", datetime.datetime(1970, 3, 29, 2, 0, 0))
+    tzd.add("dtstart", dt.datetime(1970, 3, 29, 2, 0, 0))
     tzs.add("rrule", {"freq": "yearly", "bymonth": 3, "byday": "-1su"})
-    tzd.add("TZOFFSETFROM", datetime.timedelta(hours=1))
-    tzd.add("TZOFFSETTO", datetime.timedelta(hours=2))
+    tzd.add("TZOFFSETFROM", dt.timedelta(hours=1))
+    tzd.add("TZOFFSETTO", dt.timedelta(hours=2))
 
     tzc.add_component(tzs)
     tzc.add_component(tzd)
@@ -68,24 +68,24 @@ def test_create_to_ical(tzp):
     event = icalendar.cal.event.Event()
     event.add(
         "dtstart",
-        tzp.localize(datetime.datetime(2012, 2, 13, 10, 00, 00), "Europe/Vienna"),
+        tzp.localize(dt.datetime(2012, 2, 13, 10, 00, 00), "Europe/Vienna"),
     )
     event.add(
         "dtend",
-        tzp.localize(datetime.datetime(2012, 2, 17, 18, 00, 00), "Europe/Vienna"),
+        tzp.localize(dt.datetime(2012, 2, 17, 18, 00, 00), "Europe/Vienna"),
     )
     event.add(
         "dtstamp",
-        tzp.localize(datetime.datetime(2010, 10, 10, 10, 10, 10), "Europe/Vienna"),
+        tzp.localize(dt.datetime(2010, 10, 10, 10, 10, 10), "Europe/Vienna"),
     )
     event.add(
         "created",
-        tzp.localize(datetime.datetime(2010, 10, 10, 10, 10, 10), "Europe/Vienna"),
+        tzp.localize(dt.datetime(2010, 10, 10, 10, 10, 10), "Europe/Vienna"),
     )
     event.add("uid", "123456")
     event.add(
         "last-modified",
-        tzp.localize(datetime.datetime(2010, 10, 10, 10, 10, 10), "Europe/Vienna"),
+        tzp.localize(dt.datetime(2010, 10, 10, 10, 10, 10), "Europe/Vienna"),
     )
     event.add("summary", "artsprint 2012")
     # event.add('rrule', 'FREQ=YEARLY;INTERVAL=1;COUNT=10')
@@ -162,145 +162,141 @@ def test_america_new_york_with_pytz(calendars, tzp, pytz_only):
     ny_transition_times = []
     ny_transition_info = []
     for num, date in enumerate(tz_new_york._utc_transition_times):
-        if (
-            datetime.datetime(1967, 4, 30, 7, 0)
-            <= date
-            <= datetime.datetime(2037, 11, 1, 6, 0)
-        ):
+        if dt.datetime(1967, 4, 30, 7, 0) <= date <= dt.datetime(2037, 11, 1, 6, 0):
             ny_transition_times.append(date)
             ny_transition_info.append(tz_new_york._transition_info[num])
     assert tz._utc_transition_times[:142] == ny_transition_times
     assert tz._transition_info[0:142] == ny_transition_info
     assert (
-        datetime.timedelta(-1, 72000),
-        datetime.timedelta(0, 3600),
+        dt.timedelta(-1, 72000),
+        dt.timedelta(0, 3600),
         "EDT",
     ) in tz._tzinfos
     assert (
-        datetime.timedelta(-1, 68400),
-        datetime.timedelta(0),
+        dt.timedelta(-1, 68400),
+        dt.timedelta(0),
         "EST",
     ) in tz._tzinfos
 
 
 fiji_transition_times = [
-    datetime.datetime(1915, 10, 25, 12, 4),
-    datetime.datetime(1998, 10, 31, 14, 0),
-    datetime.datetime(1999, 2, 27, 14, 0),
-    datetime.datetime(1999, 11, 6, 14, 0),
-    datetime.datetime(2000, 2, 26, 14, 0),
-    datetime.datetime(2009, 11, 28, 14, 0),
-    datetime.datetime(2010, 3, 27, 14, 0),
-    datetime.datetime(2010, 10, 23, 14, 0),
-    datetime.datetime(2011, 3, 5, 14, 0),
-    datetime.datetime(2011, 10, 22, 14, 0),
-    datetime.datetime(2012, 1, 21, 14, 0),
-    datetime.datetime(2012, 10, 20, 14, 0),
-    datetime.datetime(2013, 1, 19, 14, 0),
-    datetime.datetime(2013, 10, 26, 14, 0),
-    datetime.datetime(2014, 1, 18, 13, 0),
-    datetime.datetime(2014, 10, 25, 14, 0),
-    datetime.datetime(2015, 1, 17, 13, 0),
-    datetime.datetime(2015, 10, 24, 14, 0),
-    datetime.datetime(2016, 1, 23, 13, 0),
-    datetime.datetime(2016, 10, 22, 14, 0),
-    datetime.datetime(2017, 1, 21, 13, 0),
-    datetime.datetime(2017, 10, 21, 14, 0),
-    datetime.datetime(2018, 1, 20, 13, 0),
-    datetime.datetime(2018, 10, 20, 14, 0),
-    datetime.datetime(2019, 1, 19, 13, 0),
-    datetime.datetime(2019, 10, 26, 14, 0),
-    datetime.datetime(2020, 1, 18, 13, 0),
-    datetime.datetime(2020, 10, 24, 14, 0),
-    datetime.datetime(2021, 1, 23, 13, 0),
-    datetime.datetime(2021, 10, 23, 14, 0),
-    datetime.datetime(2022, 1, 22, 13, 0),
-    datetime.datetime(2022, 10, 22, 14, 0),
-    datetime.datetime(2023, 1, 21, 13, 0),
-    datetime.datetime(2023, 10, 21, 14, 0),
-    datetime.datetime(2024, 1, 20, 13, 0),
-    datetime.datetime(2024, 10, 26, 14, 0),
-    datetime.datetime(2025, 1, 18, 13, 0),
-    datetime.datetime(2025, 10, 25, 14, 0),
-    datetime.datetime(2026, 1, 17, 13, 0),
-    datetime.datetime(2026, 10, 24, 14, 0),
-    datetime.datetime(2027, 1, 23, 13, 0),
-    datetime.datetime(2027, 10, 23, 14, 0),
-    datetime.datetime(2028, 1, 22, 13, 0),
-    datetime.datetime(2028, 10, 21, 14, 0),
-    datetime.datetime(2029, 1, 20, 13, 0),
-    datetime.datetime(2029, 10, 20, 14, 0),
-    datetime.datetime(2030, 1, 19, 13, 0),
-    datetime.datetime(2030, 10, 26, 14, 0),
-    datetime.datetime(2031, 1, 18, 13, 0),
-    datetime.datetime(2031, 10, 25, 14, 0),
-    datetime.datetime(2032, 1, 17, 13, 0),
-    datetime.datetime(2032, 10, 23, 14, 0),
-    datetime.datetime(2033, 1, 22, 13, 0),
-    datetime.datetime(2033, 10, 22, 14, 0),
-    datetime.datetime(2034, 1, 21, 13, 0),
-    datetime.datetime(2034, 10, 21, 14, 0),
-    datetime.datetime(2035, 1, 20, 13, 0),
-    datetime.datetime(2035, 10, 20, 14, 0),
-    datetime.datetime(2036, 1, 19, 13, 0),
-    datetime.datetime(2036, 10, 25, 14, 0),
-    datetime.datetime(2037, 1, 17, 13, 0),
-    datetime.datetime(2037, 10, 24, 14, 0),
-    datetime.datetime(2038, 1, 23, 13, 0),
-    datetime.datetime(2038, 10, 23, 14, 0),
+    dt.datetime(1915, 10, 25, 12, 4),
+    dt.datetime(1998, 10, 31, 14, 0),
+    dt.datetime(1999, 2, 27, 14, 0),
+    dt.datetime(1999, 11, 6, 14, 0),
+    dt.datetime(2000, 2, 26, 14, 0),
+    dt.datetime(2009, 11, 28, 14, 0),
+    dt.datetime(2010, 3, 27, 14, 0),
+    dt.datetime(2010, 10, 23, 14, 0),
+    dt.datetime(2011, 3, 5, 14, 0),
+    dt.datetime(2011, 10, 22, 14, 0),
+    dt.datetime(2012, 1, 21, 14, 0),
+    dt.datetime(2012, 10, 20, 14, 0),
+    dt.datetime(2013, 1, 19, 14, 0),
+    dt.datetime(2013, 10, 26, 14, 0),
+    dt.datetime(2014, 1, 18, 13, 0),
+    dt.datetime(2014, 10, 25, 14, 0),
+    dt.datetime(2015, 1, 17, 13, 0),
+    dt.datetime(2015, 10, 24, 14, 0),
+    dt.datetime(2016, 1, 23, 13, 0),
+    dt.datetime(2016, 10, 22, 14, 0),
+    dt.datetime(2017, 1, 21, 13, 0),
+    dt.datetime(2017, 10, 21, 14, 0),
+    dt.datetime(2018, 1, 20, 13, 0),
+    dt.datetime(2018, 10, 20, 14, 0),
+    dt.datetime(2019, 1, 19, 13, 0),
+    dt.datetime(2019, 10, 26, 14, 0),
+    dt.datetime(2020, 1, 18, 13, 0),
+    dt.datetime(2020, 10, 24, 14, 0),
+    dt.datetime(2021, 1, 23, 13, 0),
+    dt.datetime(2021, 10, 23, 14, 0),
+    dt.datetime(2022, 1, 22, 13, 0),
+    dt.datetime(2022, 10, 22, 14, 0),
+    dt.datetime(2023, 1, 21, 13, 0),
+    dt.datetime(2023, 10, 21, 14, 0),
+    dt.datetime(2024, 1, 20, 13, 0),
+    dt.datetime(2024, 10, 26, 14, 0),
+    dt.datetime(2025, 1, 18, 13, 0),
+    dt.datetime(2025, 10, 25, 14, 0),
+    dt.datetime(2026, 1, 17, 13, 0),
+    dt.datetime(2026, 10, 24, 14, 0),
+    dt.datetime(2027, 1, 23, 13, 0),
+    dt.datetime(2027, 10, 23, 14, 0),
+    dt.datetime(2028, 1, 22, 13, 0),
+    dt.datetime(2028, 10, 21, 14, 0),
+    dt.datetime(2029, 1, 20, 13, 0),
+    dt.datetime(2029, 10, 20, 14, 0),
+    dt.datetime(2030, 1, 19, 13, 0),
+    dt.datetime(2030, 10, 26, 14, 0),
+    dt.datetime(2031, 1, 18, 13, 0),
+    dt.datetime(2031, 10, 25, 14, 0),
+    dt.datetime(2032, 1, 17, 13, 0),
+    dt.datetime(2032, 10, 23, 14, 0),
+    dt.datetime(2033, 1, 22, 13, 0),
+    dt.datetime(2033, 10, 22, 14, 0),
+    dt.datetime(2034, 1, 21, 13, 0),
+    dt.datetime(2034, 10, 21, 14, 0),
+    dt.datetime(2035, 1, 20, 13, 0),
+    dt.datetime(2035, 10, 20, 14, 0),
+    dt.datetime(2036, 1, 19, 13, 0),
+    dt.datetime(2036, 10, 25, 14, 0),
+    dt.datetime(2037, 1, 17, 13, 0),
+    dt.datetime(2037, 10, 24, 14, 0),
+    dt.datetime(2038, 1, 23, 13, 0),
+    dt.datetime(2038, 10, 23, 14, 0),
 ]
 
 fiji_transition_info = (
     [
         (
-            datetime.timedelta(0, 43200),
-            datetime.timedelta(0),
+            dt.timedelta(0, 43200),
+            dt.timedelta(0),
             "custom_Pacific/Fiji_19151026T000000_+115544_+1200",
         )
     ]
     + 3
     * [
         (
-            datetime.timedelta(0, 46800),
-            datetime.timedelta(0, 3600),
+            dt.timedelta(0, 46800),
+            dt.timedelta(0, 3600),
             "custom_Pacific/Fiji_19981101T020000_+1200_+1300",
         ),
         (
-            datetime.timedelta(0, 43200),
-            datetime.timedelta(0),
+            dt.timedelta(0, 43200),
+            dt.timedelta(0),
             "custom_Pacific/Fiji_19990228T030000_+1300_+1200",
         ),
     ]
     + 3
     * [
         (
-            datetime.timedelta(0, 46800),
-            datetime.timedelta(0, 3600),
+            dt.timedelta(0, 46800),
+            dt.timedelta(0, 3600),
             "custom_Pacific/Fiji_20101024T020000_+1200_+1300",
         ),
         (
-            datetime.timedelta(0, 43200),
-            datetime.timedelta(0),
+            dt.timedelta(0, 43200),
+            dt.timedelta(0),
             "custom_Pacific/Fiji_19990228T030000_+1300_+1200",
         ),
     ]
     + 25
     * [
         (
-            datetime.timedelta(0, 46800),
-            datetime.timedelta(0, 3600),
+            dt.timedelta(0, 46800),
+            dt.timedelta(0, 3600),
             "custom_Pacific/Fiji_20101024T020000_+1200_+1300",
         ),
         (
-            datetime.timedelta(0, 43200),
-            datetime.timedelta(0),
+            dt.timedelta(0, 43200),
+            dt.timedelta(0),
             "custom_Pacific/Fiji_20140119T020000_+1300_+1200",
         ),
     ]
     + [
         (
-            datetime.timedelta(0, 46800),
-            datetime.timedelta(0, 3600),
+            dt.timedelta(0, 46800),
+            dt.timedelta(0, 3600),
             "custom_Pacific/Fiji_20101024T020000_+1200_+1300",
         )
     ]
@@ -317,83 +313,83 @@ def test_create_pacific_fiji(calendars, pytz_only):
     assert tz._utc_transition_times == fiji_transition_times
     assert tz._transition_info == fiji_transition_info
     assert (
-        datetime.timedelta(0, 46800),
-        datetime.timedelta(0, 3600),
+        dt.timedelta(0, 46800),
+        dt.timedelta(0, 3600),
         "custom_Pacific/Fiji_19981101T020000_+1200_+1300",
     ) in tz._tzinfos
     assert (
-        datetime.timedelta(0, 43200),
-        datetime.timedelta(0),
+        dt.timedelta(0, 43200),
+        dt.timedelta(0),
         "custom_Pacific/Fiji_19990228T030000_+1300_+1200",
     ) in tz._tzinfos
 
 
 # these are the expected offsets before and after the fiji_transition_times
 fiji_expected_offsets = [
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
-    (datetime.timedelta(hours=13), datetime.timedelta(hours=13)),
-    (datetime.timedelta(hours=12), datetime.timedelta(hours=12)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
+    (dt.timedelta(hours=13), dt.timedelta(hours=13)),
+    (dt.timedelta(hours=12), dt.timedelta(hours=12)),
 ]
 
 
@@ -403,7 +399,7 @@ def test_transition_times_fiji(tzp, timezones):
     offsets = []  # [(before, after), ...]
     for _i, transition_time in enumerate(fiji_transition_times):
         before_after_offset = []
-        for offset in (datetime.timedelta(hours=-1), datetime.timedelta(hours=+1)):
+        for offset in (dt.timedelta(hours=-1), dt.timedelta(hours=+1)):
             time_in_timezone = tzp.localize(transition_time + offset, tz)
             utc_offset = time_in_timezone.utcoffset()
             before_after_offset.append(utc_offset)
@@ -440,18 +436,18 @@ def test_rdate_pytz(calendars, pytz_only):
     vevent = cal.walk("VEVENT")[0]
     tz = vevent["DTSTART"].dt.tzinfo
     assert tz._utc_transition_times[:6] == [
-        datetime.datetime(1901, 12, 13, 20, 45, 38),
-        datetime.datetime(1941, 5, 5, 0, 0, 0),
-        datetime.datetime(1941, 10, 6, 0, 0, 0),
-        datetime.datetime(1942, 5, 4, 0, 0, 0),
-        datetime.datetime(1942, 10, 5, 0, 0, 0),
-        datetime.datetime(1981, 3, 29, 1, 0),
+        dt.datetime(1901, 12, 13, 20, 45, 38),
+        dt.datetime(1941, 5, 5, 0, 0, 0),
+        dt.datetime(1941, 10, 6, 0, 0, 0),
+        dt.datetime(1942, 5, 4, 0, 0, 0),
+        dt.datetime(1942, 10, 5, 0, 0, 0),
+        dt.datetime(1981, 3, 29, 1, 0),
     ]
     assert tz._transition_info[:6] == [
-        (datetime.timedelta(0, 3600), datetime.timedelta(0), "CET"),
-        (datetime.timedelta(0, 7200), datetime.timedelta(0, 3600), "CEST"),
-        (datetime.timedelta(0, 3600), datetime.timedelta(0), "CET"),
-        (datetime.timedelta(0, 7200), datetime.timedelta(0, 3600), "CEST"),
-        (datetime.timedelta(0, 3600), datetime.timedelta(0), "CET"),
-        (datetime.timedelta(0, 7200), datetime.timedelta(0, 3600), "CEST"),
+        (dt.timedelta(0, 3600), dt.timedelta(0), "CET"),
+        (dt.timedelta(0, 7200), dt.timedelta(0, 3600), "CEST"),
+        (dt.timedelta(0, 3600), dt.timedelta(0), "CET"),
+        (dt.timedelta(0, 7200), dt.timedelta(0, 3600), "CEST"),
+        (dt.timedelta(0, 3600), dt.timedelta(0), "CET"),
+        (dt.timedelta(0, 7200), dt.timedelta(0, 3600), "CEST"),
     ]
