@@ -75,3 +75,45 @@ def test_vbinary_default_value_is_a_value_enum_member():
     from icalendar.prop import vBinary
 
     assert vBinary.default_value in {member.value for member in enums.VALUE}
+
+
+def test_get_returns_member_for_known_value():
+    """get() with a valid value returns that member, like a dict."""
+    assert enums.PARTSTAT.get("ACCEPTED") is enums.PARTSTAT.ACCEPTED
+    assert enums.STATUS.get("TENTATIVE") is enums.STATUS.TENTATIVE
+
+
+def test_get_returns_none_for_unknown_value():
+    """get() with an unknown value returns None instead of raising."""
+    assert enums.PARTSTAT.get("no-value") is None
+    assert enums.STATUS.get("X-UNKNOWN") is None
+
+
+def test_get_returns_default_for_unknown_value():
+    """get() with a default returns that default for an unknown value."""
+    assert enums.PARTSTAT.get("no-value", "other-value") == "other-value"
+    assert enums.PARTSTAT.get("no-value", enums.PARTSTAT.ACCEPTED) is (
+        enums.PARTSTAT.ACCEPTED
+    )
+    assert enums.STATUS.get("no-value", None) is None
+
+
+def test_get_ignores_default_for_known_value():
+    """A known value wins over the default, like dict.get()."""
+    assert enums.PARTSTAT.get("DECLINED", "other-value") is enums.PARTSTAT.DECLINED
+
+
+@pytest.mark.parametrize("enum_name", ENUMS)
+def test_get_is_available_on_every_enum(enum_name):
+    """get() must exist on all of the enums, not just PARTSTAT."""
+    assert hasattr(getattr(enums, enum_name), "get")
+
+
+def test_constructor_still_rejects_unknown_value():
+    """get() must not change the strict behaviour of calling the enum itself.
+
+    PARTSTAT("no-value") keeps raising ValueError: get() is the opt-in
+    lenient path, not a global relaxation.
+    """
+    with pytest.raises(ValueError):
+        enums.PARTSTAT("no-value")

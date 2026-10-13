@@ -1,6 +1,9 @@
 """Enumerations for different types in the RFCs."""
 
+from __future__ import annotations
+
 from enum import Enum as _Enum
+from typing import Any
 
 
 class Enum(_Enum):
@@ -11,8 +14,11 @@ class Enum(_Enum):
         return self.__class__, (self._name_,)
 
 
-class StrEnum(str, Enum):
-    """Enum for strings."""
+class StrEnum(str, _Enum):
+    """Enum for strings.
+
+    Members behave like :class:`str`, so ``PARTSTAT.ACCEPTED == "ACCEPTED"``.
+    """
 
     def __str__(self) -> str:
         """Convert to a string.
@@ -20,6 +26,38 @@ class StrEnum(str, Enum):
         This is needed when we set the value directly in components.
         """
         return self.value
+
+    @classmethod
+    def get(cls, value: Any, default: Any = None) -> Any:
+        """Return the member with this value, or ``default`` if there is none.
+
+        Like :meth:`dict.get`, so parsing untrusted input does not raise:
+
+        .. code-block:: pycon
+
+            >>> from icalendar import PARTSTAT
+            >>> PARTSTAT.get("ACCEPTED")
+            <PARTSTAT.ACCEPTED: 'ACCEPTED'>
+            >>> PARTSTAT.get("no-value")            # returns None
+            >>> PARTSTAT.get("no-value", "other")   # returns "other"
+            'other'
+
+        The enum's own constructor stays strict — ``PARTSTAT("no-value")``
+        still raises :exc:`ValueError`. Use ``get()`` when a value may be
+        absent, the constructor when it must be present.
+
+        Args:
+            value: the value to look up.
+            default: what to return when ``value`` is not a member.
+                Defaults to ``None``.
+
+        Returns:
+            the matching member, or ``default``.
+        """
+        for member in cls:
+            if member.value == value:
+                return member
+        return default
 
 
 class PARTSTAT(StrEnum):

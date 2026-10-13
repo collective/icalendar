@@ -1,0 +1,1 @@
+Added ``StrEnum.get()`` so looking up a value that may be absent no longer raises: ``PARTSTAT.get("no-value")`` returns ``None`` and ``PARTSTAT.get("no-value", "other")`` returns ``"other"``, like ``dict.get()``. The enum constructor stays strict — ``PARTSTAT("no-value")`` still raises ``ValueError``. I used AI to assist me with this change. @faresrafat3
