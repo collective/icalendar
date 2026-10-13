@@ -245,9 +245,9 @@ class Timezone(Component):
         Calculate offsets from a pytz, zoneinfo, or other timezone object.
 
         Parameters:
-            timezone: Required. The timezone object used to calculate transitions.
             first_date: The starting date for the transition search.
             last_date: The ending date for the transition search.
+            timezone: Required. The timezone object used to calculate transitions.
             tzid: The timezone identifier. If None, derive it from
                 ``timezone``.
 
