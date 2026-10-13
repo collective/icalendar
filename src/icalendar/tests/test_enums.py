@@ -7,7 +7,13 @@ import pytest
 import icalendar
 from icalendar import enums
 
-ENUMS = [name for name in dir(enums) if name.isupper()]
+ENUMS = [
+    name
+    for name in dir(enums)
+    if name.isupper()
+    and isinstance(getattr(enums, name), type)
+    and issubclass(getattr(enums, name), enums.Enum)
+]
 
 
 @pytest.fixture(params=ENUMS)
@@ -75,3 +81,25 @@ def test_vbinary_default_value_is_a_value_enum_member():
     from icalendar.prop import vBinary
 
     assert vBinary.default_value in {member.value for member in enums.VALUE}
+
+
+def test_get_returns_member_for_valid_value():
+    """get() returns the enum member when a member has the given value."""
+    assert enums.PARTSTAT.get("ACCEPTED") is enums.PARTSTAT.ACCEPTED
+
+
+def test_get_returns_none_for_invalid_value():
+    """get() returns None when no member has the given value."""
+    assert enums.PARTSTAT.get("invalid-value") is None
+
+
+def test_get_returns_default_value_for_invalid_value():
+    """get() returns the default value when no member has the given value."""
+    default = "No value"
+    assert enums.PARTSTAT.get("invalid-value", default) == default
+
+
+def test_get_ignores_default_value_for_valid_value():
+    """get() ignores the default value when a member has the given value."""
+    default = "No value"
+    assert enums.PARTSTAT.get("ACCEPTED", default) is enums.PARTSTAT.ACCEPTED

@@ -1,6 +1,14 @@
 """Enumerations for different types in the RFCs."""
 
+from __future__ import annotations
+
 from enum import Enum as _Enum
+from typing import TYPE_CHECKING, TypeVar, overload
+
+if TYPE_CHECKING:
+    from icalendar.compatibility import Self
+
+T = TypeVar("T")
 
 
 class Enum(_Enum):
@@ -14,12 +22,54 @@ class Enum(_Enum):
 class StrEnum(str, Enum):
     """Enum for strings."""
 
+    _value_: str
+
     def __str__(self) -> str:
         """Convert to a string.
 
         This is needed when we set the value directly in components.
         """
         return self.value
+
+    @overload
+    @classmethod
+    def get(cls, value: str) -> Self | None: ...
+
+    @overload
+    @classmethod
+    def get(cls, value: str, default: T) -> Self | T: ...
+
+    @classmethod
+    def get(cls, value: str, default: T | None = None) -> Self | T | None:
+        """Return the member with the given value, or a default.
+
+        This works like :meth:`dict.get`. Unlike calling the enum directly,
+        as in ``PARTSTAT("no-value")``, it does not raise a
+        :class:`ValueError` for an unknown value.
+
+        Parameters:
+            value: Required. Value to look up.
+            default: Value to return in case ``value`` is not found.
+
+        Returns:
+            The member with that value, or ``default`` if there is none.
+
+        Example:
+            >>> from icalendar import PARTSTAT
+            >>> PARTSTAT.get("ACCEPTED")
+            <PARTSTAT.ACCEPTED: 'ACCEPTED'>
+            >>> print(PARTSTAT.get("invalid-value"))
+            None
+            >>> print(PARTSTAT.get("invalid-value", "No value given"))
+            No value given
+            >>> print(PARTSTAT.get("ACCEPTED", "No value given"))
+            ACCEPTED
+
+        """
+        try:
+            return cls(value)
+        except ValueError:
+            return default
 
 
 class PARTSTAT(StrEnum):
