@@ -35,7 +35,6 @@ help:  # This help message
 	uv python install "$(PYTHONVERSION)"
 	uv venv --python "$(PYTHONVERSION)"
 	uv sync $(UV_GROUP)
-	uv run pre-commit install
 
 .PHONY: sync
 sync:  ## Sync package requirements
@@ -159,6 +158,7 @@ test-dist:  ## Build and test the distribution files
 # development
 .PHONY: dev
 dev: .venv  ## Install required Python, create Python virtual environment, install package and development requirements
+	@uv run pre-commit install
 
 .PHONY: format
 format: .venv  ## Format the code base with ruff
