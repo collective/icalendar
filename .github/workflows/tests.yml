@@ -58,7 +58,7 @@ jobs:
     - name: Install Python ${{ matrix.python_version }} and dependencies with uv
       if: ${{ !matrix.skip }}
       run: |
-        make dev PYTHONVERSION=${{ matrix.python_version }}
+        make dev PYTHONVERSION=${{ matrix.python_version }} UV_GROUP=test
         uv tree
         uv run python --version
     - name: Test

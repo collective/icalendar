@@ -98,13 +98,13 @@ Funding = "https://opencollective.com/python-icalendar"
 # Local development dependencies
 [dependency-groups]
 dev = [
-  {include-group = "test"},
-  {include-group = "docs"},
-  {include-group = "formatting"},
-  "towncrier>=25.8.0",
-  "tox",
-  "tox-uv",
-  "zizmor==1.29.0", # also update .github/workflows/zizmor.yml
+    {include-group = "test"},
+    {include-group = "docs"},
+    {include-group = "formatting"},
+    "towncrier>=25.8.0",
+    "types-python-dateutil",
+    "types-pytz",
+    "zizmor==1.29.0", # also update .github/workflows/zizmor.yml
 ]
 
 test = [
@@ -113,8 +113,8 @@ test = [
     "mypy>=1.0",
     "pytest",
     "pytz>=2025.2",
-    "types-python-dateutil",
-    "types-pytz",
+    "tox",
+    "tox-uv",
 ]
 
 formatting = [
