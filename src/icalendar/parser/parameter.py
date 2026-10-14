@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Any, Protocol
 from xml.etree.ElementTree import Element
 
 from icalendar.caselessdict import CaselessDict
-from icalendar.compatibility import deprecate_for_version_8
+from icalendar.compatibility import Self, deprecate_for_version_8
 from icalendar.error import JCalParsingError
 from icalendar.parser.string import validate_token
 from icalendar.parser_tools import (
@@ -20,7 +20,7 @@ from icalendar.parser_tools import (
 from icalendar.timezone.tzid import tzid_from_dt
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Sequence
+    from collections.abc import Callable, KeysView, Sequence
 
     from icalendar.enums import VALUE
     from icalendar.parser.xcal.adapter import ElementAdapter
@@ -267,7 +267,7 @@ def _single_string_parameter(func: Callable | None = None, upper: bool = False):
 single_string_parameter = deprecate_for_version_8(_single_string_parameter)
 
 
-class Parameters(CaselessDict):
+class Parameters(CaselessDict[str | list[str]]):
     """Parser and generator of Property parameter strings.
 
     It knows nothing of datatypes.
@@ -339,13 +339,13 @@ class Parameters(CaselessDict):
         "CN": " '",
     }
 
-    def params(self):
+    def params(self) -> KeysView[str]:
         """In RFC 5545 keys are called parameters, so this is to be consitent
         with the naming conventions.
         """
         return self.keys()
 
-    def to_ical(self, sorted: bool = True):  # noqa: A002
+    def to_ical(self, sorted: bool = True) -> bytes:  # noqa: A002
         """Returns an :rfc:`5545` representation of the parameters.
 
         Parameters:
@@ -376,7 +376,7 @@ class Parameters(CaselessDict):
         return b";".join(result)
 
     @classmethod
-    def from_ical(cls, st, strict=False):
+    def from_ical(cls, st: str, strict: bool = False) -> Self:
         """Parses the parameter format from ical text format."""
 
         # parse into strings
