@@ -1,4 +1,4 @@
-import datetime
+import datetime as dt
 
 import pytest
 
@@ -47,7 +47,7 @@ def test_param_vBoolean():
 
 
 def test_param_vDuration():
-    td = datetime.timedelta(days=15, seconds=18020)
+    td = dt.timedelta(days=15, seconds=18020)
     obj = vDuration(td, params={"SOME_PARAM": "VALUE"})
     assert isinstance(obj, vDuration)
     assert obj.params["SOME_PARAM"] == "VALUE"
@@ -123,7 +123,7 @@ def test_vMonth_validation():
 
 def test_param_vUTCOffset():
     obj = vUTCOffset(
-        datetime.timedelta(days=-1, seconds=68400), params={"SOME_PARAM": "VALUE"}
+        dt.timedelta(days=-1, seconds=68400), params={"SOME_PARAM": "VALUE"}
     )
     assert isinstance(obj, vUTCOffset)
     assert obj.params["SOME_PARAM"] == "VALUE"
@@ -142,7 +142,7 @@ def test_param_vRecur():
 
 
 def test_param_vDatetime():
-    dt = datetime.datetime(2025, 3, 16, 14, 30, 0, tzinfo=datetime.timezone.utc)
+    dt = dt.datetime(2025, 3, 16, 14, 30, 0, tzinfo=dt.timezone.utc)
     obj = vDatetime(dt, params={"SOME_PARAM": "VALUE"})
     assert isinstance(obj, vDatetime)
     assert obj.params["SOME_PARAM"] == "VALUE"

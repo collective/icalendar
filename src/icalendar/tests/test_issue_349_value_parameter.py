@@ -13,7 +13,7 @@ Related PRs:
 - #196: Original attempt (2016, by stlaz)
 """
 
-import datetime
+import datetime as dt
 
 from icalendar import Calendar, Event
 
@@ -25,11 +25,11 @@ class TestValueParameterEncoding:
         """Test that adding EXDATE with datetime.date sets VALUE=DATE."""
         ev = Event()
         ev.add("UID", "test-value-param-date")
-        ev.add("DTSTAMP", datetime.datetime.now(datetime.timezone.utc))
+        ev.add("DTSTAMP", dt.datetime.now(dt.timezone.utc))
         ev.add("SUMMARY", "EXDATE test")
-        ev.add("DTSTART", datetime.date(2022, 1, 1))
+        ev.add("DTSTART", dt.date(2022, 1, 1))
         ev.add("RRULE", {"FREQ": "WEEKLY"})
-        ev.add("EXDATE", datetime.date(2022, 1, 8))
+        ev.add("EXDATE", dt.date(2022, 1, 8))
 
         ical_str = ev.to_ical().decode()
         assert "EXDATE;VALUE=DATE:20220108" in ical_str
@@ -38,9 +38,9 @@ class TestValueParameterEncoding:
         """Test that adding RDATE with datetime.date sets VALUE=DATE."""
         ev = Event()
         ev.add("UID", "test-rdate-date")
-        ev.add("DTSTAMP", datetime.datetime.now(datetime.timezone.utc))
-        ev.add("DTSTART", datetime.date(2022, 1, 1))
-        ev.add("RDATE", datetime.date(2022, 1, 15))
+        ev.add("DTSTAMP", dt.datetime.now(dt.timezone.utc))
+        ev.add("DTSTART", dt.date(2022, 1, 1))
+        ev.add("RDATE", dt.date(2022, 1, 15))
 
         ical_str = ev.to_ical().decode()
         assert "RDATE;VALUE=DATE:20220115" in ical_str
@@ -49,8 +49,8 @@ class TestValueParameterEncoding:
         """Test that DTSTART with datetime.date sets VALUE=DATE."""
         ev = Event()
         ev.add("UID", "test-dtstart-date")
-        ev.add("DTSTAMP", datetime.datetime.now(datetime.timezone.utc))
-        ev.add("DTSTART", datetime.date(2022, 1, 1))
+        ev.add("DTSTAMP", dt.datetime.now(dt.timezone.utc))
+        ev.add("DTSTART", dt.date(2022, 1, 1))
 
         ical_str = ev.to_ical().decode()
         assert "DTSTART;VALUE=DATE:20220101" in ical_str
@@ -59,10 +59,10 @@ class TestValueParameterEncoding:
         """Test that DTSTART with datetime.datetime doesn't set VALUE (default DATE-TIME)."""
         ev = Event()
         ev.add("UID", "test-dtstart-datetime")
-        ev.add("DTSTAMP", datetime.datetime.now(datetime.timezone.utc))
+        ev.add("DTSTAMP", dt.datetime.now(dt.timezone.utc))
         ev.add(
             "DTSTART",
-            datetime.datetime(2022, 1, 1, 10, 0, 0, tzinfo=datetime.timezone.utc),
+            dt.datetime(2022, 1, 1, 10, 0, 0, tzinfo=dt.timezone.utc),
         )
 
         ical_str = ev.to_ical().decode()
@@ -75,12 +75,12 @@ class TestValueParameterEncoding:
         """Test that EXDATE list with datetime.date objects sets VALUE=DATE."""
         ev = Event()
         ev.add("UID", "test-exdate-list")
-        ev.add("DTSTAMP", datetime.datetime.now(datetime.timezone.utc))
-        ev.add("DTSTART", datetime.date(2022, 1, 1))
+        ev.add("DTSTAMP", dt.datetime.now(dt.timezone.utc))
+        ev.add("DTSTART", dt.date(2022, 1, 1))
         ev.add("RRULE", {"FREQ": "DAILY"})
         # Add dates individually - lists are handled by vDDDLists
-        ev.add("EXDATE", datetime.date(2022, 1, 5))
-        ev.add("EXDATE", datetime.date(2022, 1, 10))
+        ev.add("EXDATE", dt.date(2022, 1, 5))
+        ev.add("EXDATE", dt.date(2022, 1, 10))
 
         ical_str = ev.to_ical().decode()
         assert "EXDATE;VALUE=DATE:20220105" in ical_str
@@ -112,9 +112,9 @@ END:VCALENDAR"""
         assert len(exdate.dts) == 1
         first_date = exdate.dts[0].dt
         # Should be parsed as a date, not datetime
-        assert isinstance(first_date, datetime.date)
-        assert not isinstance(first_date, datetime.datetime)
-        assert first_date == datetime.date(2022, 1, 8)
+        assert isinstance(first_date, dt.date)
+        assert not isinstance(first_date, dt.datetime)
+        assert first_date == dt.date(2022, 1, 8)
 
     def test_parse_dtstart_with_value_date(self):
         """Test parsing DTSTART with VALUE=DATE parameter."""
@@ -134,9 +134,9 @@ END:VCALENDAR"""
         dtstart = event["DTSTART"]
 
         # Should be parsed as a date, not datetime
-        assert isinstance(dtstart.dt, datetime.date)
-        assert not isinstance(dtstart.dt, datetime.datetime)
-        assert dtstart.dt == datetime.date(2022, 1, 1)
+        assert isinstance(dtstart.dt, dt.date)
+        assert not isinstance(dtstart.dt, dt.datetime)
+        assert dtstart.dt == dt.date(2022, 1, 1)
 
     def test_parse_dtstart_without_value_defaults_to_datetime(self):
         """Test that DTSTART without VALUE parameter defaults to DATE-TIME."""
@@ -156,10 +156,8 @@ END:VCALENDAR"""
         dtstart = event["DTSTART"]
 
         # Should be parsed as datetime
-        assert isinstance(dtstart.dt, datetime.datetime)
-        assert dtstart.dt == datetime.datetime(
-            2022, 1, 1, 10, 0, 0, tzinfo=datetime.timezone.utc
-        )
+        assert isinstance(dtstart.dt, dt.datetime)
+        assert dtstart.dt == dt.datetime(2022, 1, 1, 10, 0, 0, tzinfo=dt.timezone.utc)
 
 
 class TestValueParameterRoundTrip:
@@ -170,9 +168,9 @@ class TestValueParameterRoundTrip:
         # Create event with date
         ev1 = Event()
         ev1.add("UID", "test-roundtrip")
-        ev1.add("DTSTAMP", datetime.datetime.now(datetime.timezone.utc))
-        ev1.add("DTSTART", datetime.date(2022, 1, 1))
-        ev1.add("EXDATE", datetime.date(2022, 1, 8))
+        ev1.add("DTSTAMP", dt.datetime.now(dt.timezone.utc))
+        ev1.add("DTSTART", dt.date(2022, 1, 1))
+        ev1.add("EXDATE", dt.date(2022, 1, 8))
 
         # Encode to iCalendar format
         ical_bytes = ev1.to_ical()
@@ -186,16 +184,16 @@ class TestValueParameterRoundTrip:
         ev2 = cal.walk("VEVENT")[0]
 
         # Check that types are preserved
-        assert isinstance(ev2["DTSTART"].dt, datetime.date)
-        assert not isinstance(ev2["DTSTART"].dt, datetime.datetime)
-        assert ev2["DTSTART"].dt == datetime.date(2022, 1, 1)
+        assert isinstance(ev2["DTSTART"].dt, dt.date)
+        assert not isinstance(ev2["DTSTART"].dt, dt.datetime)
+        assert ev2["DTSTART"].dt == dt.date(2022, 1, 1)
 
         # EXDATE is always a vDDDLists, get the first item
         assert len(ev2["EXDATE"].dts) == 1
         exdate = ev2["EXDATE"].dts[0].dt
-        assert isinstance(exdate, datetime.date)
-        assert not isinstance(exdate, datetime.datetime)
-        assert exdate == datetime.date(2022, 1, 8)
+        assert isinstance(exdate, dt.date)
+        assert not isinstance(exdate, dt.datetime)
+        assert exdate == dt.date(2022, 1, 8)
 
 
 class TestExplicitValueParameter:
@@ -205,9 +203,9 @@ class TestExplicitValueParameter:
         """Test that explicitly provided VALUE parameter is used."""
         ev = Event()
         ev.add("UID", "test-explicit-value")
-        ev.add("DTSTAMP", datetime.datetime.now(datetime.timezone.utc))
+        ev.add("DTSTAMP", dt.datetime.now(dt.timezone.utc))
         # Explicitly set VALUE=DATE
-        ev.add("DTSTART", datetime.date(2022, 1, 1), parameters={"VALUE": "DATE"})
+        ev.add("DTSTART", dt.date(2022, 1, 1), parameters={"VALUE": "DATE"})
 
         ical_str = ev.to_ical().decode()
         assert "VALUE=DATE" in ical_str
@@ -216,10 +214,10 @@ class TestExplicitValueParameter:
         """Test that other parameters are preserved when VALUE is added."""
         ev = Event()
         ev.add("UID", "test-params-preserved")
-        ev.add("DTSTAMP", datetime.datetime.now(datetime.timezone.utc))
+        ev.add("DTSTAMP", dt.datetime.now(dt.timezone.utc))
         ev.add(
             "DTSTART",
-            datetime.datetime(2022, 1, 1, 10, 0, 0),
+            dt.datetime(2022, 1, 1, 10, 0, 0),
             parameters={"TZID": "America/New_York"},
         )
 

@@ -364,7 +364,6 @@ class Parameters(CaselessDict):
                 validate_token(key)
                 # Property parameter values that are not in quoted
                 # strings are case insensitive.
-                vals = []
                 string_values = []
                 for v in q_split(val, ","):
                     if v.startswith('"') and v.endswith('"'):
@@ -679,10 +678,10 @@ def rfc_6868_escape(param_value: str) -> str:
 
 __all__ = [
     "Parameters",
-    "dquote",
-    "param_value",
     "_q_join",
     "_q_split",
+    "dquote",
+    "param_value",
     "rfc_6868_escape",
     "rfc_6868_unescape",
     "validate_param_value",
