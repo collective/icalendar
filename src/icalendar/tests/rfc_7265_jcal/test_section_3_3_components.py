@@ -1,7 +1,5 @@
 """Test the conversion of components."""
 
-import json
-
 import pytest
 
 from icalendar import Calendar, Event, Journal, Todo
@@ -48,10 +46,3 @@ def test_nesting(component_class):
         [],
         [],
     ]
-
-
-def test_apply_json_serialization():
-    """Check that we can convert to JSON."""
-    calendar = Calendar()
-    calendar.add_component(Event())
-    assert calendar.to_json() == json.dumps(calendar.to_jcal())

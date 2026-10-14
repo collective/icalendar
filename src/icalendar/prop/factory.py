@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from icalendar.caselessdict import CaselessDict
 from icalendar.prop.adr import vAdr
 from icalendar.prop.binary import vBinary
 from icalendar.prop.boolean import vBoolean
+from icalendar.prop.broken import vBroken
 from icalendar.prop.cal_address import vCalAddress
 from icalendar.prop.categories import vCategory
 from icalendar.prop.dt import (
@@ -34,6 +35,9 @@ from icalendar.prop.xml_reference import vXmlReference
 
 from .integer import vInt
 
+if TYPE_CHECKING:
+    from icalendar.prop import VPROPERTY
+
 
 class TypesFactory(CaselessDict):
     """Factory for all value types defined in :rfc:`5545` and subsequent.
@@ -44,6 +48,7 @@ class TypesFactory(CaselessDict):
 
     _instance: ClassVar[TypesFactory | None] = None
 
+    @staticmethod
     def instance() -> TypesFactory:
         """Return a singleton instance of this class."""
         if TypesFactory._instance is None:
@@ -81,6 +86,7 @@ class TypesFactory(CaselessDict):
             vUid,
             vXmlReference,
             vUnknown,
+            vBroken,
         )
         self["binary"] = vBinary
         self["boolean"] = vBoolean
@@ -106,6 +112,7 @@ class TypesFactory(CaselessDict):
         self["unknown"] = vUnknown  # RFC 7265
         self["uid"] = vUid  # RFC 9253
         self["xml-reference"] = vXmlReference  # RFC 9253
+        self["x-broken"] = vBroken
 
     #################################################
     # Property types
@@ -215,7 +222,7 @@ class TypesFactory(CaselessDict):
         }
     )
 
-    def for_property(self, name, value_param: str | None = None) -> type:
+    def for_property(self, name, value_param: str | None = None) -> type[VPROPERTY]:
         """Returns the type class for a property or parameter.
 
         Parameters:
@@ -226,22 +233,30 @@ class TypesFactory(CaselessDict):
         Returns:
             The appropriate value type class.
         """
+        name = name.upper()
+        value_param = value_param.upper() if value_param else None
         # RFC 7265's UNKNOWN type is always represented verbatim, even for
         # properties such as RDATE/EXDATE that normally use list parsing.
-        if value_param and value_param.lower() == "unknown":
+        if value_param and value_param == "UNKNOWN":
             return self["unknown"]
 
         # Special case: RDATE and EXDATE always use vDDDLists to support list values
         # regardless of the VALUE parameter
-        if name.upper() in ("RDATE", "EXDATE"):
+        if name in ("RDATE", "EXDATE") and (
+            value_param is None or value_param in vDDDTypes.VALUE_MAP
+        ):
             return self["date-time-list"]
-
         # Only use VALUE parameter for known properties that support multiple value
         # types (like DTSTART, DTEND, etc. which can be DATE or DATE-TIME)
         # For unknown/custom properties, always use the default type from types_map
         if value_param and name in self.types_map and value_param in self:
+            # vCategory also has TEXT as VALUE.
+            # It should be preferred over TEXT
+            # This checks the case that the value type actually matches.
+            value_type: VPROPERTY = self[self.types_map[name]]
+            if value_type.default_value == value_param:
+                return value_type
             return self[value_param]
-
         if value_param and (value_param in self) and value_param != "IMAGE":
             return self[value_param]
 
