@@ -153,8 +153,8 @@ def test_america_new_york_with_pytz(calendars, tzp, pytz_only):
     """Create a custom timezone with pytz and test the transition times."""
     print(tzp)
     cal = calendars.america_new_york
-    dt = cal.events[0].start
-    tz = dt.tzinfo
+    event_dt = cal.events[0].start
+    tz = event_dt.tzinfo
     tz_new_york = tzp.timezone("America/New_York")
     # for reasons (tm) the locally installed version of the timezone
     # database isn't always complete, therefore we only compare some
