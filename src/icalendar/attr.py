@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import itertools
+import re
 from collections.abc import Sequence
 from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Literal, TypeAlias
@@ -487,9 +488,20 @@ def single_utc_property(name: str, docs: str) -> property:
 
 
 def single_string_property(
-    name: str, docs: str, other_name: str | list[str] | None = None, default: str = ""
+    name: str,
+    docs: str,
+    other_name: str | list[str] | None = None,
+    default: str = "",
+    validate: Callable[[str], None] | None = None,
 ) -> property:
-    """Create a property to access a single string value."""
+    """Create a property to access a single string value.
+
+    Args:
+        validate: Optional callable that receives the string form of the value
+            and raises an exception if it does not conform to the expected
+            format. It is called on set, before any existing value is removed,
+            and must not modify the value.
+    """
     other_names = (
         []
         if other_name is None
@@ -517,6 +529,8 @@ def single_string_property(
 
         Setting the value to None will delete it.
         """
+        if value is not None and validate is not None:
+            validate(str(value))
         fdel(self)
         if value is not None:
             self.add(name, value)
@@ -831,6 +845,32 @@ Examples:
 """,
 )
 
+#: Control characters that are not allowed in an :rfc:`5545` ``text`` value.
+#: Everything except TAB (``\t``) in the C0 range, plus DEL and the C1 range.
+_UID_CONTROL_CHARS = re.compile(r"[\x00-\x08\x0a-\x1f\x7f-\x9f]")
+
+
+def validate_uid(value: str) -> None:
+    """Validate that ``value`` is a well-formed UID.
+
+    :rfc:`5545#section-3.8.4.7` defines the ``UID`` value as ``text``, so this
+    accepts any non-empty text, including the common ``local@domain`` form. It
+    only rejects values that cannot be serialized into a valid calendar, namely
+    an empty value or one containing control characters (such as ``CR``/``LF``).
+    The value is not modified in any way, so its letter casing is preserved.
+
+    Args:
+        value: The string form of the UID to validate.
+
+    Raises:
+        InvalidCalendar: If ``value`` is empty or contains control characters.
+    """
+    if not value:
+        raise InvalidCalendar("UID must not be empty")
+    if _UID_CONTROL_CHARS.search(value) is not None:
+        raise InvalidCalendar(f"UID contains a control character: {value!r}")
+
+
 uid_property = single_string_property(
     "UID",
     """UID specifies the persistent, globally unique identifier for a component.
@@ -894,6 +934,16 @@ Security:
 Compatibility:
     For Alarms, ``X-ALARMUID`` is also considered.
 
+Format:
+    :rfc:`5545#section-3.8.4.7` defines the value as ``text``, so any
+    non-empty text is accepted, including the common ``local@domain`` form.
+    When set, the value is validated: an empty value or one with control
+    characters (such as ``CR``/``LF``) that would produce an invalid calendar
+    raises :exc:`~icalendar.error.InvalidCalendar`. The value is validated but
+    never modified, so its letter casing is preserved. :rfc:`7986#section-5.3`
+    additionally recommends an opaque identifier shorter than 255 octets, such
+    as a UUID, but this is not enforced.
+
 Examples:
     The following is an example of such a property value:
     ``5FC53010-1267-4F8E-BC28-1D7AE55A7C99``.
@@ -911,7 +961,22 @@ Examples:
         UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
         END:VCALENDAR
 
+    An invalid value raises an error:
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Event
+        >>> event = Event()
+        >>> event.uid = "AbC-123@example.com"  # a valid value, casing kept
+        >>> print(event.uid)
+        AbC-123@example.com
+        >>> event.uid = "a\\r\\nb"
+        Traceback (most recent call last):
+          ...
+        icalendar.error.InvalidCalendar: UID contains a control character: 'a\\r\\nb'
+
 """,
+    validate=validate_uid,
 )
 
 summary_property = multi_language_text_property(
