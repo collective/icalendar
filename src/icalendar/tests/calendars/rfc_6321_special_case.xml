@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<icalendar xmlns="urn:ietf:params:xml:ns:icalendar-2.0">
+ <vcalendar>
+  <properties>
+   <version>
+   </version>
+   <x-prop>
+    <parameters>
+     <x-param>
+     </x-param>
+     <x-param-2>
+        <text>test</text>
+     </x-param-2>
+    </parameters>
+    <text>lalala</text>
+   </x-prop>
+  </properties>
+  <components>
+  </components>
+ </vcalendar>
+</icalendar>
