@@ -165,12 +165,12 @@ class vPeriod(TimeBase):
         self.by_duration = by_duration
         self.duration = duration
 
-    def overlaps(self, other):
+    def overlaps(self, other: "vPeriod") -> bool:
         if self.start > other.start:
             return other.overlaps(self)
         return self.start <= other.start < self.end
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         if self.by_duration:
             return (
                 vDatetime(self.start).to_ical()
@@ -191,7 +191,7 @@ class vPeriod(TimeBase):
             raise ValueError(f"Expected period format, got: {ical}") from e
         return _to_period_datetimes(start, end_or_duration)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         p = (self.start, self.duration) if self.by_duration else (self.start, self.end)
         return f"vPeriod({p!r})"
 

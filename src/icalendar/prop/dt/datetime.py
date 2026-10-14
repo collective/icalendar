@@ -97,7 +97,7 @@ class vDatetime(TimeBase):
         self.params = Parameters(params)
         self.params.update_tzid_from(dt)
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         dt = self.dt
 
         s = (
