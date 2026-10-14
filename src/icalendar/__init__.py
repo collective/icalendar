@@ -44,6 +44,7 @@ from icalendar.error import (
     InvalidCalendar,
     JCalParsingError,
     LocalTimezoneMissing,
+    XCalParsingError,
 )
 
 # Parameters and helper methods for splitting and joining string with escaped
@@ -96,7 +97,10 @@ from icalendar.prop.image import Image
 from icalendar.prop.n import NFields
 from icalendar.timezone import is_utc, use_pytz, use_zoneinfo
 
+from icalendar.tools import parse
+
 from .version import __version__, __version_tuple__, version, version_tuple
+
 
 __all__ = [
     "BUSYTYPE",
@@ -145,9 +149,11 @@ __all__ = [
     "TimezoneStandard",
     "Todo",
     "TypesFactory",
+    "XCalParsingError",
     "__version__",
     "__version_tuple__",
     "is_utc",
+    "parse",
     "q_join",
     "q_split",
     "use_pytz",
