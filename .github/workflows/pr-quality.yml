@@ -1,23 +1,42 @@
-# This workflow checks the quality of pull requests.
+# This workflow checks the quality of pull requests and profiles new contributors.
 # For configuration options, see:
 # https://github.com/marketplace/actions/anti-slop
+
 name: PR Quality
 
 permissions:
   contents: read
-  issues: read
   pull-requests: write
 
 on:
+  issues:
+    types: [opened]
   # zizmor: ignore[dangerous-triggers] - pull_request_target needed to check PR quality from forks
   pull_request_target:
     types: [opened, reopened]
 
+env:
+  # Exclude people from being profiled.
+  # See https://stackoverflow.com/a/73274812
+  VERIFIED_CONTRIBUTORS: ("angatha" "dependabot" "ennamarie19" "niccokunzmann" "peskypotato" "SashankBhamidi" "stevepiercy")
+
 jobs:
   anti-slop:
+    if: github.event_name == 'pull_request_target'
     runs-on: ubuntu-latest
     steps:
-      - uses: peakoss/anti-slop@57858eead489d08b255fab2af45a506c2ca6eab2 # v0.3.0
+      - name: Welcome contributor
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          gh pr comment "$PR_NUMBER" \
+            --body "Thanks for opening this pull request to icalendar. A maintainer will have a look at this in the next days.
+
+            While you are waiting, please view the status checks and the items in the PR template as far as possible. If you have any questions, feel free to ask."
+
+      - id: anti-slop
+        uses: peakoss/anti-slop@57858eead489d08b255fab2af45a506c2ca6eab2 # v0.3.0
         with:
           max-failures: 1
           max-description-length: 1500
@@ -32,6 +51,77 @@ jobs:
           exempt-users: abe-101,angatha,niccokunzmann,sashankbhamidi,stevepiercy,maurits,tobixen
           success-add-pr-labels: 'PR quality: good'
           failure-add-pr-labels: 'ai-suspicion'
-          failure-pr-message: 'This pull request did not pass quality checks and AI use is suspected. Please review [Contribute](https://icalendar.readthedocs.io/en/latest/contribute/index.html) and make any necessary amendments.'
+          failure-pr-message: 'This pull request did not pass quality checks. Please check the failed status checks and review the PR template requirements: keep the required sections unchanged, link the relevant issue, and keep the description concise. If AI use is suspected, review the [Contribute guide](https://icalendar.readthedocs.io/en/latest/contribute/index.html) and make any necessary amendments.'
           close-pr: false
           min-profile-completeness: 1
+
+  profile-author:
+    permissions:
+      contents: read
+      issues: write
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+
+      - name: Install gh-profiler
+        run: uv tool install gh-profiler==0.8.3
+
+      - name: Determine target login and issue number
+        id: meta
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          ISSUE_LOGIN: ${{ github.event.issue.user.login }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          PR_LOGIN: ${{ github.event.pull_request.user.login }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT_NAME" = "issues" ]; then
+            echo "login=$ISSUE_LOGIN" >> "$GITHUB_OUTPUT"
+            echo "number=$ISSUE_NUMBER" >> "$GITHUB_OUTPUT"
+          else
+            echo "login=$PR_LOGIN" >> "$GITHUB_OUTPUT"
+            echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run gh-profiler
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LOGIN: ${{ steps.meta.outputs.login }}
+        if: ${{ !contains(env.VERIFIED_CONTRIBUTORS, steps.meta.outputs.login) }}
+        run: |
+          set -euo pipefail
+          gh-profiler "$LOGIN" --concise > concise.txt
+          gh-profiler "$LOGIN" > full.txt
+
+      - name: Comment on issue or PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          NUMBER: ${{ steps.meta.outputs.number }}
+        if: ${{ !contains(env.VERIFIED_CONTRIBUTORS, steps.meta.outputs.login) }}
+        run: |
+          set -euo pipefail
+          {
+            echo "Profile summary:"
+            echo
+            echo '```text'
+            cat concise.txt
+            echo '```'
+            echo
+            echo '<details>'
+            echo '<summary>Full profile</summary>'
+            echo
+            echo '```text'
+            cat full.txt
+            echo '```'
+            echo
+            echo '</details>'
+          } > body.txt
+
+          jq -Rs '{body: .}' body.txt > payload.json
+
+          gh api \
+            "repos/$GITHUB_REPOSITORY/issues/$NUMBER/comments" \
+            --input payload.json
