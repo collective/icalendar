@@ -2,7 +2,7 @@
 
 Run with:
 
-    pytest .github/workflows/test_generate_matrix.py
+    uv run pytest .github/workflows/test_generate_matrix.py
 
 """
 
