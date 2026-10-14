@@ -5,7 +5,7 @@ import binascii
 from typing import ClassVar
 from xml.etree.ElementTree import Element, SubElement
 
-from icalendar.compatibility import Self, deprecate_for_version_8
+from icalendar.compatibility import Self, deprecate_for_version_9
 from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser.xcal.base import XCalParser
@@ -76,7 +76,7 @@ class vBinary:
         self.bytes = self.from_ical(value)
 
     @property
-    @deprecate_for_version_8
+    @deprecate_for_version_9
     def obj(self) -> str:
         """Deprecated string view of the value.
 
@@ -88,7 +88,7 @@ class vBinary:
         return to_unicode(self.bytes)
 
     @obj.setter
-    @deprecate_for_version_8
+    @deprecate_for_version_9
     def obj(self, value: str | bytes) -> None:
         self.bytes = value.encode("utf-8") if isinstance(value, str) else value
 
