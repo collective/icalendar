@@ -22,8 +22,8 @@ jobs:
       pull-requests: write
       issues: write
       contents: read
-    env:
-      GITHUB_TOKEN: ${{ secrets.AGENTSCAN_TOKEN }}
+#    env:
+#      GITHUB_TOKEN: ${{ secrets.AGENTSCAN_TOKEN }}
     steps:
 #      - name: Cache AgentScan analysis
 #        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  #v6.1.0
@@ -35,6 +35,7 @@ jobs:
         uses: MatteoGabriele/agentscan-action@c7d61446e7aece6bdd3edcee4558bbfc0392615e  # v2.5.0
         with:
 #          allowed-users: "angatha,ennamarie19,niccokunzmann,peskypotato,SashankBhamidi,stevepiercy"
+          github-token: ${{ secrets.AGENTSCAN_TOKEN }}
 #          honeypot: true
 #          message-honeypot: "Thanks for the {type}, @{username}! A maintainer will review it shortly."
 #          message-honeypot-first-time: "Welcome, @{username}! Thanks for your first {type} here!"
