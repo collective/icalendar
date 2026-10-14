@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Any, Protocol
 from xml.etree.ElementTree import Element
 
 from icalendar.caselessdict import CaselessDict
-from icalendar.compatibility import deprecate_for_version_8
+from icalendar.compatibility import Self, deprecate_for_version_8
 from icalendar.error import JCalParsingError
 from icalendar.parser.string import validate_token
 from icalendar.parser_tools import (
@@ -347,7 +347,7 @@ class Parameters(CaselessDict[str | list[str]]):
         return b";".join(result)
 
     @classmethod
-    def from_ical(cls, st: str, strict: bool = False) -> Parameters:
+    def from_ical(cls, st: str, strict: bool = False) -> Self:
         """Parses the parameter format from ical text format."""
 
         # parse into strings
