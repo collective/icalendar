@@ -291,6 +291,7 @@ class IcalendarTestCase(unittest.TestCase):
         for s in ("X-SOMETHING=ABCDE==", ",,,"):
             for maxsplit in range(-1, 3):
                 assert _q_split(s, "=", maxsplit=maxsplit) == s.split("=", maxsplit)
+
     def test_q_split_deprecated(self):
         with pytest.warns(
             DeprecationWarning,
@@ -299,11 +300,11 @@ class IcalendarTestCase(unittest.TestCase):
             q_split("a,b")
 
     def test_q_join(self):
-        assert ( 
-        _q_join(["Max", "Moller", "Rasmussen, Max"]) 
+        assert (
+            _q_join(["Max", "Moller", "Rasmussen, Max"])
             == 'Max,Moller,"Rasmussen, Max"'
-                )
-        
+        )
+
     def test_q_join_deprecated(self):
         with pytest.warns(
             DeprecationWarning,

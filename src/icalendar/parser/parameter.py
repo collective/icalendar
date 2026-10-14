@@ -191,7 +191,9 @@ def _q_join(lst: Sequence[str], sep: str = ",", always_quote: bool = False) -> s
             'plain,"has,comma"'
     """
     return sep.join(dquote(itm, always_quote=always_quote) for itm in lst)
-q_join = deprecate_for_version_8(_q_join)
+
+
+q_join = deprecate_for_version_9(_q_join)
 
 
 def _single_string_parameter(func: Callable | None = None, upper: bool = False):
@@ -362,7 +364,7 @@ class Parameters(CaselessDict):
                 # strings are case insensitive.
                 vals = []
                 for v in _q_split(val, ","):
-                string_values = []
+                    string_values = []
                 for v in q_split(val, ","):
                     if v.startswith('"') and v.endswith('"'):
                         v2 = v.strip('"')
