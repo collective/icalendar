@@ -142,8 +142,8 @@ def test_param_vRecur():
 
 
 def test_param_vDatetime():
-    dt = dt.datetime(2025, 3, 16, 14, 30, 0, tzinfo=dt.timezone.utc)
-    obj = vDatetime(dt, params={"SOME_PARAM": "VALUE"})
+    date_time = dt.datetime(2025, 3, 16, 14, 30, 0, tzinfo=dt.timezone.utc)
+    obj = vDatetime(date_time, params={"SOME_PARAM": "VALUE"})
     assert isinstance(obj, vDatetime)
     assert obj.params["SOME_PARAM"] == "VALUE"
 
