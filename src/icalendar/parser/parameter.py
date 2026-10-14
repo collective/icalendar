@@ -163,7 +163,7 @@ def _q_split(st: str, sep: str = ",", maxsplit: int = -1) -> list[str]:
             result.append(st[cursor:])
             break
     return result
-q_split = deprecate_for_version_9(_q_split)
+q_split = deprecate_for_version_8(_q_split)
 
 
 def _q_join(lst: Sequence[str], sep: str = ",", always_quote: bool = False) -> str:
@@ -193,7 +193,7 @@ def _q_join(lst: Sequence[str], sep: str = ",", always_quote: bool = False) -> s
     return sep.join(dquote(itm, always_quote=always_quote) for itm in lst)
 
 
-q_join = deprecate_for_version_9(_q_join)
+q_join = deprecate_for_version_8(_q_join)
 
 
 def _single_string_parameter(func: Callable | None = None, upper: bool = False):
@@ -363,8 +363,7 @@ class Parameters(CaselessDict):
                 # Property parameter values that are not in quoted
                 # strings are case insensitive.
                 vals = []
-                for v in _q_split(val, ","):
-                    string_values = []
+                string_values = []
                 for v in q_split(val, ","):
                     if v.startswith('"') and v.endswith('"'):
                         v2 = v.strip('"')
