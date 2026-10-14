@@ -32,10 +32,10 @@ help:  # This help message
 
 # environment management
 .venv:  ## Install required Python, create Python virtual environment, and install package requirements
-	@uv python install "$(PYTHONVERSION)"
-	@uv venv --python "$(PYTHONVERSION)"
-	@uv sync --group "$(UV_GROUP)"
-	@uv run pre-commit install
+	uv python install "$(PYTHONVERSION)"
+	uv venv --python "$(PYTHONVERSION)"
+	uv sync --group "$(UV_GROUP)"
+	uv run pre-commit install
 
 .PHONY: sync
 sync:  ## Sync package requirements
