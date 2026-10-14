@@ -13,5 +13,6 @@ How to guides
     attendees
     custom-components
     jcal
+    parse
     cli
     fuzz-testing
