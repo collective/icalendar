@@ -292,7 +292,10 @@ class IcalendarTestCase(unittest.TestCase):
             for maxsplit in range(-1, 3):
                 assert _q_split(s, "=", maxsplit=maxsplit) == s.split("=", maxsplit)
     def test_q_split_deprecated(self):
-        with pytest.warns(DeprecationWarning):
+        with pytest.warns(
+            DeprecationWarning,
+            match="q_split is deprecated and will be removed in icalendar 8",
+        ):
             q_split("a,b")
 
     def test_q_join(self):
@@ -302,5 +305,8 @@ class IcalendarTestCase(unittest.TestCase):
                 )
         
     def test_q_join_deprecated(self):
-            with pytest.warns(DeprecationWarning):
+        with pytest.warns(
+            DeprecationWarning,
+            match="q_join is deprecated and will be removed in icalendar 8",
+        ):
             q_join(["a", "b"])
