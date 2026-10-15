@@ -44,6 +44,7 @@ from icalendar.attr import (
     set_duration_with_locking,
     set_end_with_locking,
     set_start_with_locking,
+    single_utc_property,
     status_property,
     summary_property,
     uid_property,
@@ -151,6 +152,10 @@ class Todo(Component):
         "RESOURCES",
         "RDATE",
         "RRULE",
+    )
+    COMPLETED = single_utc_property(
+        "COMPLETED",
+        'The "COMPLETED" property for a "VTODO" specifies the date and time when the Todo was completed.',
     )
     DTSTART = create_single_property(
         "DTSTART",
