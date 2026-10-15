@@ -5,16 +5,20 @@ import binascii
 from typing import ClassVar
 from xml.etree.ElementTree import Element, SubElement
 
-from icalendar.compatibility import Self, deprecate_for_version_9
+from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser.xcal.base import XCalParser
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
-from icalendar.parser_tools import to_unicode
 
 
 class vBinary:
-    """Binary property values are Base64 encoded."""
+    """Binary property values are Base64 encoded.
+
+    .. versionchanged:: 8.0.0
+        Removed ``obj`` attribute, use :attr:`bytes` to access the binary content.
+        See :ref:`upgrade-8.0.0-breaking`.
+    """
 
     default_value: ClassVar[str] = "BINARY"
     params: Parameters
@@ -22,7 +26,7 @@ class vBinary:
     """The raw binary value of the BINARY property.
 
     This is the authoritative storage and round-trips losslessly, including
-    for non-UTF-8 data. Use this instead of the deprecated :attr:`obj`.
+    for non-UTF-8 data.
     """
 
     def __init__(self, obj: str | bytes, params: dict[str, str] | None = None) -> None:
@@ -74,23 +78,6 @@ class vBinary:
             ValueError: If ``value`` isn't valid Base64.
         """
         self.bytes = self.from_ical(value)
-
-    @property
-    @deprecate_for_version_9
-    def obj(self) -> str:
-        """Deprecated string view of the value.
-
-        .. deprecated:: 7.1.3
-            Use :attr:`bytes` for the raw binary value. ``obj`` decodes
-            :attr:`bytes` as text and is lossy for non-UTF-8 data. It will
-            be removed in icalendar 8.
-        """
-        return to_unicode(self.bytes)
-
-    @obj.setter
-    @deprecate_for_version_9
-    def obj(self, value: str | bytes) -> None:
-        self.bytes = value.encode("utf-8") if isinstance(value, str) else value
 
     def __eq__(self, other: object) -> bool:
         """self == other"""

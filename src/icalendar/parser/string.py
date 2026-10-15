@@ -1,4 +1,10 @@
-"""Functions for manipulating strings and bytes."""
+"""Functions for manipulating strings and bytes.
+
+.. versionchanged:: 8.0.0
+    Removed ``escape_char``, ``escape_string``, ``foldline``, ``unescape_char``,
+    ``unescape_string``.
+    See :ref:`upgrade-8.0.0-breaking`.
+"""
 
 import re
 
