@@ -1,4 +1,4 @@
-import datetime
+import datetime as dt
 import os
 from datetime import time
 
@@ -22,13 +22,13 @@ def test_create_from_ical(x_sometime):
     cal = Calendar.from_ical(ics.read())
     ics.close()
 
-    assert cal["X-SOMETIME"].dt == datetime.time(17, 20, 10)
+    assert cal["X-SOMETIME"].dt == dt.time(17, 20, 10)
     assert cal["X-SOMETIME"].to_ical() == "172010"
 
 
 def test_create_to_ical(x_sometime):
     cal = Calendar()
-    cal.add("X-SOMETIME", datetime.time(17, 20, 10))
+    cal.add("X-SOMETIME", dt.time(17, 20, 10))
     assert b"X-SOMETIME;VALUE=TIME:172010" in cal.to_ical().splitlines()
 
 
@@ -50,7 +50,7 @@ def test_vtime_multiple_timezones(calendars):
 
 
 def test_vtime_with_tzinfo_object():
-    tz = datetime.timezone.utc
+    tz = dt.timezone.utc
 
     parsed = vTime.from_ical("083000", timezone=tz)
 

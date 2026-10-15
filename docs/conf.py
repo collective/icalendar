@@ -1,5 +1,5 @@
 # icalendar documentation build configuration file
-import datetime
+import datetime as dt
 import os
 import sys
 from pathlib import Path
@@ -29,7 +29,7 @@ source_suffix = {".rst": "restructuredtext"}
 master_doc = "index"
 
 project = "icalendar"
-this_year = datetime.date.today().year  # noqa: DTZ011
+this_year = dt.date.today().year  # noqa: DTZ011
 copyright = f"{this_year}, Plone Foundation"  # noqa: A001
 
 # -- Options for HTML output -------------------------------------------------

@@ -1,0 +1,1 @@
+Deprecated :func:`icalendar.parser.q_join` and :func:`icalendar.parser.q_split` as private functions for icalendar version 8. @wisdommaglo1303

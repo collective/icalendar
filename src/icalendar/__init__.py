@@ -51,8 +51,8 @@ from icalendar.error import (
 # chars.
 from icalendar.parser import (
     Parameters,
-    q_join,
-    q_split,
+    _q_join,
+    _q_split,
 )
 
 # Property Data Value Types
@@ -149,9 +149,9 @@ __all__ = [
     "XCalParsingError",
     "__version__",
     "__version_tuple__",
+    "_q_join",
+    "_q_split",
     "is_utc",
-    "q_join",
-    "q_split",
     "use_pytz",
     "use_zoneinfo",
     "vAdr",
