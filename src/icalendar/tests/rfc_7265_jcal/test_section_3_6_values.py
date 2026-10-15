@@ -237,3 +237,43 @@ def test_jcal_round_trip_preserves_value_parameter(ics_line, prop_name, expected
     if isinstance(prop, list):
         prop = prop[0]
     assert prop.params.get("VALUE") == expected_value
+
+
+def test_vrecur_to_jcal_canonical_order():
+    """vRecur keys in to_jcal must follow canonical order regardless of insertion order (GH #1928)."""
+    expected_order = [
+        key.lower() for key in vRecur.canonical_order if key != "BYWEEKDAY"
+    ]
+    vals = {
+        "interval": 2,
+        "count": 5,
+        "byday": ["MO"],
+        "freq": "WEEKLY",
+        "bymonth": [10],
+        "until": date(2026, 12, 31),
+        "wkst": "SU",
+    }
+    r1 = vRecur()
+    for k, v in vals.items():
+        r1[k] = v
+
+    r2 = vRecur()
+    for k, v in reversed(list(vals.items())):
+        r2[k] = v
+
+    jcal1 = r1.to_jcal("rrule")
+    jcal2 = r2.to_jcal("rrule")
+
+    keys1 = list(jcal1[3].keys())
+    keys2 = list(jcal2[3].keys())
+
+    assert keys1 == keys2
+    expected_subset = [k for k in expected_order if k in keys1]
+    assert keys1 == expected_subset
+    assert keys1[0] == "freq"
+
+    # With RSCALE present, RSCALE is first followed by FREQ per RFC 7529
+    r_rscale = vRecur({"interval": 2, "rscale": "GREGORIAN", "freq": "YEARLY"})
+    jcal_rscale = r_rscale.to_jcal("rrule")
+    assert list(jcal_rscale[3].keys()) == ["rscale", "freq", "interval"]
+
