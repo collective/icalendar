@@ -9,6 +9,7 @@ from icalendar.parser.xcal.parameters import XCalParameterParser, XCalParameters
 from icalendar.prop.broken import vBroken
 from icalendar.prop.empty import vEmpty
 from icalendar.prop.unknown import vUnknown
+from icalendar.prop.xml import _is_extension, vXml
 
 if TYPE_CHECKING:
     from xml.etree.ElementTree import Element
@@ -76,6 +77,8 @@ class XCalPropertiesParser(XCalParser):
         This function only parses one property inside the parser's ``element``
         parameter and adds it to the ``component`` parameter.
         Each call parses a single property.
+        An element in another namespace than the iCalendar namespace
+        becomes an XML property, see :rfc:`6321#section-4.1`.
 
         Raises:
             ~icalendar.error.XCalParsingError: If the provided xCal is invalid.
@@ -94,6 +97,10 @@ class XCalPropertiesParser(XCalParser):
                     <text>-//Example Inc.//Example Client//EN</text>
                 </prodid>
         """
+        if _is_extension(self.child.element):
+            self._component.add("XML", vXml(self.child.element))
+            self.done()
+            return
         property_parser = XCalPropertyParser(self.child, self._types_factory)
         values = []
         while not property_parser.is_finished():
