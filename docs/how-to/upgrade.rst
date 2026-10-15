@@ -51,7 +51,8 @@ If your code passes a file path as a ``str``:
 ``vBinary.obj`` removed
 '''''''''''''''''''''''
 
-``vBinary.obj`` corrupted data. You should use :meth:`vBinary.bytes <icalendar.prop.binary.vBinary.bytes>`.
+``vBinary.obj`` corrupted data.
+Use :meth:`vBinary.bytes <icalendar.prop.binary.vBinary.bytes>` instead.
 
 The example below shows how to correctly access binary data:
 
@@ -63,7 +64,7 @@ The example below shows how to correctly access binary data:
     >>> v_binary.bytes[:4]  # correct access for PNG image data
     b'\x89PNG'
 
-If you need it as a Unicode string, you can do this:
+To get the bytes as a Unicode string, use the following code:
 
 .. code-block:: pycon
 
@@ -71,7 +72,10 @@ If you need it as a Unicode string, you can do this:
     >>> string = to_unicode(v_binary.bytes)  # corrupts data
 
 ``escape_char``, ``escape_string``, ``foldline``, ``unescape_char``, ``unescape_string`` removed
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+..  _removed-from-icalendar-parser-string:
+
+Functions removed from :mod:`icalendar.parser.string`
+'''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 These functions have been removed from :mod:`icalendar.parser.string`:
 
@@ -81,7 +85,6 @@ These functions have been removed from :mod:`icalendar.parser.string`:
 * ``unescape_char``
 * ``unescape_string``
 
-If you require one of those, please `open an issue <https://github.com/collective/icalendar/issues>`_.
 
 .. _upgrade-7.0.0:
 

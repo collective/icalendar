@@ -15,7 +15,7 @@ from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 class vBinary:
     """Binary property values are Base64 encoded.
 
-    .. versionchanged:: 8.0.0
+    ..  versionremoved:: 8.0.0
         Removed ``obj`` attribute, use :attr:`bytes` to access the binary content.
         See :ref:`upgrade-8.0.0-breaking`.
     """
@@ -25,7 +25,7 @@ class vBinary:
     bytes: bytes
     """The raw binary value of the BINARY property.
 
-    This is the authoritative storage and round-trips losslessly, including
+    This is the authoritative storage method, which round-trips losslessly, including
     for non-UTF-8 data.
     """
 
