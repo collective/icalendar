@@ -45,7 +45,7 @@ def test_deprecate_for_version_8_warns_and_delegates() -> None:
 
     with pytest.warns(
         DeprecationWarning,
-        match="join_parts is deprecated and will be removed in icalendar 8",
+        match="join_parts is deprecated and will be removed in icalendar 9",
     ):
         assert deprecated("left", right="right") == "left-right"
 
