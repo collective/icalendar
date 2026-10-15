@@ -276,4 +276,3 @@ def test_vrecur_to_jcal_canonical_order():
     r_rscale = vRecur({"interval": 2, "rscale": "GREGORIAN", "freq": "YEARLY"})
     jcal_rscale = r_rscale.to_jcal("rrule")
     assert list(jcal_rscale[3].keys()) == ["rscale", "freq", "interval"]
-
