@@ -9,7 +9,6 @@ from icalendar.parser import Parameters
 from icalendar.timezone import tzp
 from icalendar.tools import is_date, is_datetime, is_pytz, normalize_pytz, to_datetime
 
-
 from .base import TimeBase
 from .datetime import vDatetime
 from .duration import vDuration
