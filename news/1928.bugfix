@@ -1,1 +1,1 @@
-Preserve RFC 5545 canonical ordering when serializing vRecur to jCal so that FREQ is always serialized first regardless of dictionary insertion order. Part of #1928. @rajpreetcodes
+Preserve RFC 5545 canonical ordering when serializing vRecur to jCal so that FREQ is always serialized first regardless of dictionary insertion order. Part of #1928. I used AI to assist me with this change. @rajpreetcodes
