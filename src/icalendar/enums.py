@@ -43,31 +43,37 @@ class StrEnum(str, Enum):
     def get(cls, value: str, default: T | None = None) -> Self | T | None:
         """Return the member with the given value, or a default.
 
-        This works like :meth:`dict.get`. Unlike calling the enum directly,
-        as in ``PARTSTAT("no-value")``, it does not raise a
-        :class:`ValueError` for an unknown value.
+        Unlike calling the enum directly, as in ``PARTSTAT("no-value")``, it does
+        not raise a :class:`ValueError` for an unknown value. The lookup is
+        case-insensitive.
 
         Parameters:
             value: Required. Value to look up.
-            default: Value to return in case ``value`` is not found.
+            default: Optional value to return in case ``value`` is not found.
 
         Returns:
             The member with that value, or ``default`` if there is none.
 
         Example:
-            >>> from icalendar import PARTSTAT
-            >>> PARTSTAT.get("ACCEPTED")
-            <PARTSTAT.ACCEPTED: 'ACCEPTED'>
-            >>> print(PARTSTAT.get("invalid-value"))
-            None
-            >>> print(PARTSTAT.get("invalid-value", "No value given"))
-            No value given
-            >>> print(PARTSTAT.get("ACCEPTED", "No value given"))
-            ACCEPTED
+            This example shows how to use this method.
+
+            .. code-block:: pycon
+
+                >>> from icalendar import PARTSTAT
+                >>> PARTSTAT.get("ACCEPTED")
+                <PARTSTAT.ACCEPTED: 'ACCEPTED'>
+                >>> PARTSTAT.get("accepted")
+                <PARTSTAT.ACCEPTED: 'ACCEPTED'>
+                >>> print(PARTSTAT.get("invalid-value"))
+                None
+                >>> print(PARTSTAT.get("invalid-value", "No value given"))
+                No value given
+                >>> print(PARTSTAT.get("ACCEPTED", "No value given"))
+                ACCEPTED
 
         """
         try:
-            return cls(value)
+            return cls(value.upper())
         except ValueError:
             return default
 

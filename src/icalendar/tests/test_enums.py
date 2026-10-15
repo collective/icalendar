@@ -88,6 +88,11 @@ def test_get_returns_member_for_valid_value():
     assert enums.PARTSTAT.get("ACCEPTED") is enums.PARTSTAT.ACCEPTED
 
 
+def test_get_is_case_insensitive():
+    """get() returns the enum member when a member has the given value even if it is in lowercase."""
+    assert enums.STATUS.get("confirmed") is enums.STATUS.CONFIRMED
+
+
 def test_get_returns_none_for_invalid_value():
     """get() returns None when no member has the given value."""
     assert enums.PARTSTAT.get("invalid-value") is None
