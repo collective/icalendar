@@ -94,6 +94,22 @@ class vCalAddress(str):
         return str(self)
 
     @property
+    def uri(self) -> str:
+        """The calendar user address as a URI, usually the ``mailto:`` link.
+
+        This provides the same interface as :attr:`vUri.uri
+        <icalendar.prop.uri.vUri.uri>`.
+        Use :attr:`email` to get the address without ``mailto:``.
+
+        .. code-block:: pycon
+
+            >>> from icalendar import vCalAddress
+            >>> vCalAddress("mailto:jane_doe@example.com").uri
+            'mailto:jane_doe@example.com'
+        """
+        return str(self)
+
+    @property
     def email(self) -> str:
         """The email address without ``mailto:`` at the start."""
         if self.lower().startswith("mailto:"):
