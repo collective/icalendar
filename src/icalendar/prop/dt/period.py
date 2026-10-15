@@ -8,6 +8,7 @@ from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.timezone import tzp
 from icalendar.tools import is_date, is_datetime, is_pytz, normalize_pytz, to_datetime
+from __future__ import annotations
 
 from .base import TimeBase
 from .datetime import vDatetime
@@ -165,7 +166,7 @@ class vPeriod(TimeBase):
         self.by_duration = by_duration
         self.duration = duration
 
-    def overlaps(self, other: "vPeriod") -> bool:
+    def overlaps(self, other: vPeriod) -> bool:
         if self.start > other.start:
             return other.overlaps(self)
         return self.start <= other.start < self.end
