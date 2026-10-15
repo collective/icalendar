@@ -48,6 +48,7 @@ class TZP:
     def _use(self, provider: TZProvider) -> None:
         """Use a timezone implementation."""
         self.__tz_cache = {}
+        self.__tz_cache_ical = {}
         self.__provider = provider
 
     def use(self, provider: str | TZProvider) -> None:
@@ -102,19 +103,20 @@ class TZP:
 
     def cache_timezone_component(self, timezone_component: Timezone.Timezone) -> None:
         """Cache the timezone that is created from a timezone component
-        if it is not already known.
+        unless an identical definition is already cached or the provider knows it.
 
         This can influence the result from timezone(): Once cached, the
         custom timezone is returned from timezone().
         """
         _unclean_id = timezone_component["TZID"]
         _id = self.clean_timezone_id(_unclean_id)
-        if (
-            not self.__provider.knows_timezone_id(_id)
-            and not self.__provider.knows_timezone_id(_unclean_id)
-            and _id not in self.__tz_cache
-        ):
-            self.__tz_cache[_id] = timezone_component.to_tz(self, lookup_tzid=False)
+        if not self.__provider.knows_timezone_id(
+            _id
+        ) and not self.__provider.knows_timezone_id(_unclean_id):
+            component_ical = timezone_component.to_ical()
+            if self.__tz_cache_ical.get(_id) != component_ical:
+                self.__tz_cache[_id] = timezone_component.to_tz(self, lookup_tzid=False)
+                self.__tz_cache_ical[_id] = component_ical
 
     def fix_rrule_until(self, rrule: rrule, ical_rrule: prop.vRecur) -> None:
         """Make sure the until value works."""
