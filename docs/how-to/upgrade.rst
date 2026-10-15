@@ -48,6 +48,43 @@ If your code passes a file path as a ``str``:
     calendar = Calendar.from_ical(Path("/path/to/calendar.ics"))
 
 
+``vBinary.obj`` removed
+'''''''''''''''''''''''
+
+``vBinary.obj`` corrupted data.
+Use :meth:`vBinary.bytes <icalendar.prop.binary.vBinary.bytes>` instead.
+
+The example below shows how to correctly access binary data:
+
+.. code-block:: pycon
+
+    >>> from icalendar import Calendar
+    >>> cal = Calendar.example("rfc_7986_image.ics")
+    >>> v_binary = cal.events[1]["IMAGE"]
+    >>> v_binary.bytes[:4]  # correct access for PNG image data
+    b'\x89PNG'
+
+To get the bytes as a Unicode string, use the following code:
+
+.. code-block:: pycon
+
+    >>> from icalendar.parser_tools import to_unicode
+    >>> string = to_unicode(v_binary.bytes)  # corrupts data
+
+..  _removed-from-icalendar-parser-string:
+
+Functions removed from :mod:`icalendar.parser.string`
+'''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+These functions have been removed from :mod:`icalendar.parser.string`:
+
+* ``escape_char``
+* ``escape_string``
+* ``foldline``,
+* ``unescape_char``
+* ``unescape_string``
+
+
 .. _upgrade-7.0.0:
 
 7.0.0
