@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Any,ClassVar
+from typing import Any, ClassVar
 
 from icalendar.parser import Parameters
 
