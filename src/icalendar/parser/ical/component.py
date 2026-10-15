@@ -41,6 +41,8 @@ class ComponentIcalParser:
         data: bytes | str | list[Contentline],
         component_factory: ComponentFactory,
         types_factory: TypesFactory,
+        encoding: str = "utf-8-sig",
+        errors: str = "strict",
     ) -> None:
         """Initialize the parser with the raw data.
 
@@ -53,6 +55,8 @@ class ComponentIcalParser:
         self._data = data
         self._component_factory = component_factory
         self._types_factory = types_factory
+        self._encoding = encoding
+        self._errors = errors
         self._tzp = tzp
 
     _content_lines: list[Contentline]
@@ -81,7 +85,9 @@ class ComponentIcalParser:
         self._data = self._content_lines = (
             self._data
             if isinstance(self._data, list)
-            else Contentlines.from_ical(self._data)
+            else Contentlines.from_ical(
+                self._data, encoding=self._encoding, errors=self._errors
+            )
         )
         self._content_lines_iterator = iter(self._content_lines)
 
