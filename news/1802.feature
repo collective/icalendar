@@ -1,0 +1,1 @@
+Added the :attr:`~icalendar.cal.todo.Todo.COMPLETED` UTC property and ``completed=`` support to :meth:`~icalendar.cal.todo.Todo.new` so completed to-dos no longer require raw item assignment. I used AI to assist me with this change. @rajneeshchaurasia47-ctrl
