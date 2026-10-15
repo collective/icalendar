@@ -108,3 +108,9 @@ def test_get_ignores_default_value_for_valid_value():
     """get() ignores the default value when a member has the given value."""
     default = "No value"
     assert enums.PARTSTAT.get("ACCEPTED", default) is enums.PARTSTAT.ACCEPTED
+
+
+def test_constructor_still_raises_for_invalid_value():
+    """Calling the enum directly still raises ValueError for an unknown value."""
+    with pytest.raises(ValueError):
+        enums.PARTSTAT("no-value")
