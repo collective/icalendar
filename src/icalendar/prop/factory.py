@@ -31,6 +31,7 @@ from icalendar.prop.text import vText
 from icalendar.prop.uid import vUid
 from icalendar.prop.unknown import vUnknown
 from icalendar.prop.uri import vUri
+from icalendar.prop.xml import vXml
 from icalendar.prop.xml_reference import vXmlReference
 
 from .integer import vInt
@@ -85,6 +86,7 @@ class TypesFactory(CaselessDict):
             vOrg,
             vUid,
             vXmlReference,
+            vXml,
             vUnknown,
             vBroken,
         )
@@ -112,6 +114,7 @@ class TypesFactory(CaselessDict):
         self["unknown"] = vUnknown  # RFC 7265
         self["uid"] = vUid  # RFC 9253
         self["xml-reference"] = vXmlReference  # RFC 9253
+        self["xml"] = vXml  # RFC 6321
         self["x-broken"] = vBroken
 
     #################################################
@@ -194,6 +197,7 @@ class TypesFactory(CaselessDict):
             "sequence": "integer",
             # Miscellaneous Component Properties
             "request-status": "text",
+            "xml": "xml",  # RFC 6321
             ####################################
             # parameter types (luckily there is no name overlap)
             "altrep": "uri",
@@ -246,6 +250,9 @@ class TypesFactory(CaselessDict):
             value_param is None or value_param in vDDDTypes.VALUE_MAP
         ):
             return self["date-time-list"]
+        # The XML property is TEXT or BINARY, see RFC 6321 section 4.2.
+        if name == "XML" and value_param == "BINARY":
+            return self["xml"]
         # Only use VALUE parameter for known properties that support multiple value
         # types (like DTSTART, DTEND, etc. which can be DATE or DATE-TIME)
         # For unknown/custom properties, always use the default type from types_map

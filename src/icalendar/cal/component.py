@@ -17,6 +17,7 @@ from icalendar.attr import (
     CONCEPTS_TYPE_SETTER,
     LINKS_TYPE_SETTER,
     RELATED_TO_TYPE_SETTER,
+    XML_property,
     comments_property,
     concepts_property,
     links_property,
@@ -37,7 +38,7 @@ from icalendar.parser import (
 )
 from icalendar.parser.ical.component import ComponentIcalParser
 from icalendar.parser_tools import DEFAULT_ENCODING
-from icalendar.prop import VPROPERTY, TypesFactory, vDDDLists, vText, vUnknown
+from icalendar.prop import VPROPERTY, TypesFactory, vDDDLists, vText, vUnknown, vXml
 from icalendar.timezone import tzp
 from icalendar.tools import is_date
 
@@ -849,6 +850,7 @@ class Component(CaselessDict):
     related_to = related_to_property
     concepts = concepts_property
     refids = refids_property
+    XML = XML_property
 
     CREATED = single_utc_property(
         "CREATED",
@@ -1230,7 +1232,7 @@ class Component(CaselessDict):
         file.write(b'<?xml version="1.0" encoding="UTF-8"?>')
         if indent is not None:
             file.write(b"\n")
-            indent_xml(stream, space=indent)
+            _indent_xcal(stream, indent)
         ElementTree(stream).write(file, "utf-8", xml_declaration=False, method="xml")
         if indent is not None:
             file.write(b"\n")
@@ -1247,6 +1249,11 @@ class Component(CaselessDict):
             for key, prop_list in self.sorted_items():
                 for prop in prop_list if isinstance(prop_list, list) else [prop_list]:
                     prop: VPROPERTY
+                    if key == "XML" and isinstance(prop, vXml):
+                        extension = prop._xcal_extension()
+                        if extension is not None:
+                            e_properties.append(extension)
+                            continue
                     e_property = SubElement(e_properties, key.lower())
                     prop.to_xcal(e_property)
         if self.subcomponents:
@@ -1315,6 +1322,25 @@ class Component(CaselessDict):
             component = parser.parse_component()
             components.append(component)
         return components
+
+
+def _indent_xcal(stream: Element, space: str) -> None:
+    """Indent xCal like :func:`xml.etree.ElementTree.indent`.
+
+    The XML elements of XML properties have a namespace.
+    Their content stays as it is, see :rfc:`6321#section-4.2`.
+    They are replaced before the iteration reaches their content.
+    """
+    extensions = []
+    for e_properties in stream.iter("properties"):
+        for index, element in enumerate(e_properties):
+            if element.tag.startswith("{"):
+                e_properties[index] = Element(element.tag)
+                extensions.append((e_properties, index, element))
+    indent_xml(stream, space=space)
+    for e_properties, index, element in extensions:
+        element.tail = e_properties[index].tail
+        e_properties[index] = element
 
 
 def _node_from_jcal(jcal, starting_cls: type[Component]) -> tuple[Component, list]:
