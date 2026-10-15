@@ -1,7 +1,5 @@
 """PERIOD property type from :rfc:`5545`."""
 
-from __future__ import annotations
-
 from datetime import date, datetime, timedelta, tzinfo
 from typing import Any, ClassVar
 
@@ -168,7 +166,7 @@ class vPeriod(TimeBase):
         self.by_duration = by_duration
         self.duration = duration
 
-    def overlaps(self, other: vPeriod) -> bool:
+    def overlaps(self, other: "vPeriod") -> bool:
         if self.start > other.start:
             return other.overlaps(self)
         return self.start <= other.start < self.end

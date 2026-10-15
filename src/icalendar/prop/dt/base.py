@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Any, ClassVar
+from typing import ClassVar
 
 from icalendar.parser import Parameters
 
@@ -11,7 +11,7 @@ class TimeBase:
     params: Parameters
     ignore_for_equality = {"TZID", "VALUE"}
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         """self == other"""
         if isinstance(other, date):
             return self.dt == other
