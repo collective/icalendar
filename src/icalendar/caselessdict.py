@@ -288,7 +288,7 @@ class CaselessDict(OrderedDict[str, _VT]):
 
     # A list of keys that must appear first in sorted_keys and sorted_items;
     # must be uppercase.
-    canonical_order = None
+    canonical_order: Iterable[str] | None = None
 
     def sorted_keys(self) -> list[str]:
         """Sort keys according to the canonical order for this class.

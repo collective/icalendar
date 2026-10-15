@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, ClassVar
+from datetime import date, datetime, time, timedelta
+from typing import TYPE_CHECKING, Any, ClassVar, TypeAlias, cast
 from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.caselessdict import CaselessDict
@@ -26,8 +27,21 @@ if TYPE_CHECKING:
     from icalendar.parser.xcal.base import XCalParser
     from icalendar.prop import VPROPERTY
 
+RecurValue: TypeAlias = (
+    int
+    | str
+    | date
+    | datetime
+    | time
+    | timedelta
+    | tuple[datetime, datetime | timedelta]
+    | vDDDTypes
+)
 
-class vRecur(CaselessDict):
+RecurEntryValue: TypeAlias = RecurValue | list[RecurValue] | tuple[RecurValue, ...]
+
+
+class vRecur(CaselessDict[RecurEntryValue]):
     """Recurrence definition.
 
     Property Name:
@@ -147,7 +161,10 @@ class vRecur(CaselessDict):
     )
 
     types: ClassVar[
-        dict[str, type[vInt | vMonth | vFrequency | vWeekday | vSkip | vText]]
+        dict[
+            str,
+            type[vInt | vMonth | vDDDTypes | vFrequency | vWeekday | vSkip | vText],
+        ]
     ] = CaselessDict(
         {
             "COUNT": vNonNegativeInt,
@@ -187,10 +204,10 @@ class vRecur(CaselessDict):
         super().__init__(*args, **kwargs)
         self.params = Parameters(params)
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         result = []
         for key, vals in self.sorted_items():
-            typ = self.types.get(key, vText)
+            typ: Any = self.types.get(key, vText)
             if not isinstance(vals, SEQUENCE_TYPES):
                 vals = [vals]
             param_vals = b",".join(typ(val).to_ical() for val in vals)
@@ -202,7 +219,7 @@ class vRecur(CaselessDict):
         return b";".join(result)
 
     @classmethod
-    def parse_type(cls, key, values):
+    def parse_type(cls, key: str, values: str) -> list[RecurValue]:
         # integers
         parser = cls.types.get(key, vText)
         return [parser.from_ical(v) for v in values.split(",")]
@@ -236,11 +253,11 @@ class vRecur(CaselessDict):
 
     def to_jcal(self, name: str) -> list:
         """The jCal representation of this property according to :rfc:`7265`."""
-        recur = {}
+        recur: dict[str, Any] = {}
         for k, v in self.items():
             key = k.lower()
             if key.upper() in self.jcal_not_a_list:
-                value = v[0] if isinstance(v, list) and len(v) == 1 else v
+                value: Any = v[0] if isinstance(v, list) and len(v) == 1 else v
             elif not isinstance(v, list):
                 value = [v]
             else:
@@ -273,7 +290,7 @@ class vRecur(CaselessDict):
                 3,
                 value=jcal_property[3],
             )
-        recur = {}
+        recur: dict[str, RecurValue | list[RecurValue]] = {}
         for key, value in jcal_property[3].items():
             JCalParsingError.validate_jcal_token(
                 key, "recurrence rule part name", cls, path=[3, key]
@@ -281,7 +298,8 @@ class vRecur(CaselessDict):
             value_type = cls.types.get(key, vText)
             with JCalParsingError.reraise_with_path_added(3, key):
                 if isinstance(value, list):
-                    recur[key.lower()] = values = []
+                    values: list[RecurValue] = []
+                    recur[key.lower()] = values
                     for i, v in enumerate(value):
                         with JCalParsingError.reraise_with_path_added(i):
                             values.append(value_type.parse_jcal_value(v))
@@ -333,7 +351,7 @@ class vRecur(CaselessDict):
             return None
         value = values[0] if isinstance(values, SEQUENCE_TYPES) else values
         try:
-            return int(value)
+            return int(cast("int | str", value))
         except (TypeError, ValueError) as e:
             # Matches how icalendar.attr.single_int_property surfaces a stored
             # value that is not readable as an int.
@@ -469,7 +487,8 @@ class vRecur(CaselessDict):
             if from_xcal is None:
                 from_xcal = v_prop.from_xcal
             value = from_xcal(parser)
-            self.setdefault(key, []).append(value)
+            values = cast("list[RecurValue]", self.setdefault(key, []))
+            values.append(cast("RecurValue", value))
         return self
 
     def to_xcal(self, element: Element) -> None:
@@ -477,8 +496,8 @@ class vRecur(CaselessDict):
         self.params.to_xcal(element)
         recur_element = SubElement(element, self.default_value.lower())
         for key, value in self.sorted_items():
-            value = value if isinstance(value, list) else [value]
-            for v in value:
+            values: list[Any] = value if isinstance(value, list) else [value]
+            for v in values:
                 if not hasattr(v, "to_xcal"):
                     v_prop = self.types.get(key, vText)
                     v = v_prop(v)
