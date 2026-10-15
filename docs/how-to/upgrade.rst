@@ -71,7 +71,6 @@ To get the bytes as a Unicode string, use the following code:
     >>> from icalendar.parser_tools import to_unicode
     >>> string = to_unicode(v_binary.bytes)  # corrupts data
 
-``escape_char``, ``escape_string``, ``foldline``, ``unescape_char``, ``unescape_string`` removed
 ..  _removed-from-icalendar-parser-string:
 
 Functions removed from :mod:`icalendar.parser.string`
