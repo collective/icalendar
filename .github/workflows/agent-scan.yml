@@ -111,5 +111,5 @@ jobs:
           mode: full
           scan-issues: true
           scan-pull-requests: true
-         trusted-author-associations: "owner,collaborator"  # for collective, we allow those registered on the project only to not receive a scan message
+          trusted-author-associations: "owner,collaborator"  # for collective, we allow those registered on the project only to not receive a scan message
 
