@@ -388,34 +388,62 @@ Description:
 )
 
 
-def boolean_parameter(name: str, default: bool, doc: str) -> property:
+def boolean_parameter(name: str, default: bool) -> property:
+    """Create a property for a Boolean parameter.
+
+    Parameters:
+        default: The value to return when the parameter is absent.
+        name: The parameter name in the ``params`` dictionary.
+
+    Returns:
+        A property with a getter, setter, and deleter for the parameter.
+    """
+
     def _default() -> bool:
         return default
 
     return string_parameter(
         name,
-        doc,
+        "",
         default=_default,
         convert=lambda x: x.upper() == "TRUE",
         convert_to=lambda x: "TRUE" if x else "FALSE",
     )
 
 
-RSVP = boolean_parameter(
-    "RSVP",
-    False,
-    """Specify whether there is an expectation of a favor of anreply from the calendar user specified by the property value.
+RSVP = boolean_parameter("RSVP", False)
+"""Indicate whether a reply is expected from the ATTENDEE.
 
-Description:
-    This parameter can be specified on properties with a
-    CAL-ADDRESS value type.  The parameter identifies the expectation
-    of a reply from the calendar user specified by the property value.
-    This parameter is used by the "Organizer" to request a
-    participation status reply from an "Attendee" of a group-scheduled
-    event or to-do.  If not specified on a property that allows this
-    parameter, the default value is ``False``.
-""",  # noqa: E501
-)
+The RSVP Expectation parameter can be specified on properties with a
+CAL-ADDRESS value type, specifically ATTENDEE, as part of the ``attendees``
+property. An organizer uses it to request a participation status reply from
+an attendee in a group-scheduled event or to-do.
+
+..  note::
+
+    According to :rfc:`5545#section-3.2.17`, if the parameter is absent from
+    the property, it should return a value of ``False``. However, it
+    currently raises a ``KeyError``. See :issue:`1778`.
+
+Example:
+
+    Create a VCALADDRESS with an attendee who's expected to respond.
+
+    ..  code-block:: pycon
+
+        >>> from icalendar import vCalAddress
+        >>> attendee = vCalAddress("mailto:someone@example.com")
+        >>> attendee.params["RSVP"] = True
+        >>> attendee.params["RSVP"]
+        True
+
+..  seealso::
+
+    -   :attr:`Alarm.attendees <icalendar.cal.alarm.Alarm.attendees>`
+    -   :attr:`Event.attendees <icalendar.cal.event.Event.attendees>`
+    -   :attr:`Journal.attendees <icalendar.cal.journal.Journal.attendees>`
+    -   :attr:`Todo.attendees <icalendar.cal.todo.Todo.attendees>`
+"""
 
 SENT_BY = string_parameter(
     "SENT-BY",
