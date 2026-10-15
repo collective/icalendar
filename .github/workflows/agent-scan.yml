@@ -16,11 +16,11 @@ on:
       - created
 
 jobs:
-  agentscan:
+  agentscan-pr:
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request_target'
     permissions:
       pull-requests: write
-      issues: write
       contents: read
     steps:
 #      - name: Cache AgentScan analysis
@@ -32,15 +32,77 @@ jobs:
       - name: AgentScan
         uses: MatteoGabriele/agentscan-action@8112fb79b33fafb8506159df20129a34209ac410  # v2.5.0
         with:
-#          allowed-users: "angatha,ennamarie19,niccokunzmann,peskypotato,SashankBhamidi,stevepiercy"
           honeypot: true
-          message-honeypot: "Thanks for the {type}, @{username}! A maintainer will review it shortly."
-          message-honeypot-first-time: "Welcome, @{username}! Thanks for your first {type} here!"
+          message-honeypot: |
+            Thanks for opening the pull request, @{username}! A maintainer will review it within the next 3 days.
+
+            Please, make sure you use our [Pull Request Template](https://github.com/collective/icalendar/blob/main/.github/pull_request_template.md) and check as many boxes as you can.
+            If there is another Pull Request open for the same issue, review it and help make it better with your ideas.
+
+            Our [contributing guide](https://icalendar.readthedocs.io/en/stable/contribute/index.html) should answer most of your questions.
+            While you are waiting - we appreciate your review on other open Pull Requests.
+            That helps us maintainers speed up merges.
+
+            Thank you for your contributions! 🙏
+          message-honeypot-first-time: |
+            Welcome, @{username}! Thanks for your first Pull Request here! 🥳
+            A maintainer will give you a review within the next 3 days.
+
+            Please, make sure you use our [Pull Request Template](https://github.com/collective/icalendar/blob/main/.github/pull_request_template.md) and check as many boxes as you can.
+            If there is another Pull Request open for the same issue, review it and help make it better with your ideas.
+
+            Because this is your first contribution, we will take special care to help you get started.
+            Please, refrain from opening another Pull Request until this one is done.
+
+            Also familiarize yourself with our [contributing guide](https://icalendar.readthedocs.io/en/stable/contribute/index.html).
+            And while you are waiting, you can have a look around - there are other open Pull Requests from contributors like you.
+            You are invited to review their work and in that spirit receive a review yourself.
+
+            Thank you very much! 🙏
           label-automation: "agentscan:automated-account"
           label-community-flagged: "agentscan:community-flagged"
           label-mixed: "agentscan:needs-review"
           mode: full
           scan-issues: true
           scan-pull-requests: true
-#          trusted-author-associations: "owner"
+          trusted-author-associations: "owner,collaborator"  # for collective, we allow those registered on the project only to not receive a scan message
+
+  agentscan-issue:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issues'
+    permissions:
+      issues: write
+      contents: read
+    steps:
+      - name: AgentScan
+        uses: MatteoGabriele/agentscan-action@8112fb79b33fafb8506159df20129a34209ac410  # v2.5.0
+        with:
+          honeypot: true
+          message-honeypot: |
+            Thanks for opening this issue, @{username}!
+
+            Please have a look of you find any other related issues and leave them a comment.
+            Our [contributing guide](https://icalendar.readthedocs.io/en/stable/contribute/index.html)
+            should answer most of your questions and is always worth a read.
+
+            ---
+            
+            We do not assign issues, if you would like to work on this issue, please go ahead and open a Pull Request.
+          message-honeypot-first-time: |
+            Welcome, @{username}! Thanks for opening your first issue here!
+
+            Please have a look of you find any other related issues and leave them a comment about this one.
+            Also, check our [contributing guide](https://icalendar.readthedocs.io/en/stable/contribute/index.html).
+            If you have any questions, please ask!
+
+            ---
+            
+            We do not assign issues, if you would like to work on this issue, please go ahead and open a Pull Request.
+          label-automation: "agentscan:automated-account"
+          label-community-flagged: "agentscan:community-flagged"
+          label-mixed: "agentscan:needs-review"
+          mode: full
+          scan-issues: true
+          scan-pull-requests: true
+         trusted-author-associations: "owner,collaborator"  # for collective, we allow those registered on the project only to not receive a scan message
 
