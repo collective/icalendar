@@ -63,7 +63,7 @@ The example below shows how to correctly access binary data:
     >>> v_binary.bytes[:4]  # correct access for PNG image data
     b'\x89PNG'
 
-If you need it as a unicode string, you can do this:
+If you need it as a Unicode string, you can do this:
 
 .. code-block:: pycon
 
