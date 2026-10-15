@@ -24,7 +24,7 @@ def component(request):
 def test_no_request_status_at_creation(component: ETJF):
     """An empty component has no request status."""
     assert "REQUEST-STATUS" not in component
-    assert component.REQUEST_STATUS == []
+    assert component.REQUEST_STATUS is None
 
 
 def test_add_one_request_status(component: ETJF):
@@ -50,7 +50,7 @@ def test_delete_request_status(component: ETJF):
     component.REQUEST_STATUS = ["2.0;Success"]
     del component.REQUEST_STATUS
     assert "REQUEST-STATUS" not in component
-    assert component.REQUEST_STATUS == []
+    assert component.REQUEST_STATUS is None
 
 
 def test_request_status_roundtrip(component: ETJF):
@@ -65,3 +65,31 @@ def test_new_with_request_status(component: ETJF):
     """We can use new with request status."""
     component = component.__class__.new(request_status="2.0;Success")
     assert component.REQUEST_STATUS == ["2.0;Success"]
+
+
+def test_append_one_value_is_noop(component: ETJF):
+    """Mutating the returned list(Single value) is a no-op."""
+    component.REQUEST_STATUS = ["2.0;Success"]
+    values = component.REQUEST_STATUS
+    values.append("3.1;Invalid property value")
+    assert component.REQUEST_STATUS == ["2.0;Success"]
+
+
+def test_append_two_values_is_noop(component: ETJF):
+    """Mutating the returned list(Double value) is a no-op."""
+    component.REQUEST_STATUS = ["2.0;Success", "3.1;Invalid property value"]
+    values = component.REQUEST_STATUS
+    values.append("5.0;Unknown error")
+    assert component.REQUEST_STATUS == [
+        "2.0;Success",
+        "3.1;Invalid property value",
+    ]
+
+
+def test_empty_list_deletes(component: ETJF):
+    """Setting an empty list deletes the property, same as None."""
+    component.REQUEST_STATUS = ["2.0;Success"]
+    component.REQUEST_STATUS = []
+
+    assert component.REQUEST_STATUS is None
+    assert "REQUEST-STATUS" not in component

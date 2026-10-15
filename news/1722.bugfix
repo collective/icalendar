@@ -1,0 +1,7 @@
+``refids`` and ``REQUEST-STATUS`` now return ``None`` instead of an
+empty list when the component has no such values, and setting either
+to ``None`` or an empty list now deletes the property. Modifying the
+list returned by these properties no longer has any effect on the
+component; previously this worked inconsistently, only mutating the
+component when two or more values were already set. Part of #1722. I
+used AI to assist me with this change. @nihirborkar17
