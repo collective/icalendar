@@ -304,8 +304,12 @@ class Contentlines(list[Contentline]):
     be used instead.
     """
 
-    def to_ical(self):
-        """Simply join self."""
+    def to_ical(self) -> bytes:
+        r"""Simply join self.
+
+        Returns:
+            All content lines joined with ``\\r\\n``.
+        """
         return b"\r\n".join(line.to_ical() for line in self if line) + b"\r\n"
 
     @classmethod
@@ -316,7 +320,7 @@ class Contentlines(list[Contentline]):
             # a fold is carriage return followed by either a space or a tab
             unfolded = UFOLD.sub("", st)
             lines = cls(Contentline(line) for line in NEWLINE.split(unfolded) if line)
-            lines.append("")  # '\r\n' at the end of every content line
+            lines.append(Contentline(""))  # '\r\n' at the end of every content line
         except Exception as e:
             raise ValueError("Expected StringType with content lines") from e
         return lines
