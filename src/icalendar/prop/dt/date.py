@@ -195,5 +195,12 @@ class vDate(TimeBase):
             params=params,
         )
 
+    @property
+    def ical_value(self) -> date:
+        """
+        Returns the date as a date value.
+        """
+        return self.dt
+
 
 __all__ = ["vDate"]
