@@ -1347,6 +1347,7 @@ def _node_from_jcal(jcal, starting_cls: type[Component]) -> tuple[Component, lis
         raise JCalParsingError(
             "The name must be a string.", starting_cls, path=[0], value=name
         )
+    JCalParsingError.validate_jcal_token(name, "component name", starting_cls, [0])
     if name.upper() != starting_cls.name:
         # delegate to correct component class
         component_cls = starting_cls.get_component_class(name.upper())
