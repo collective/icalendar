@@ -1,6 +1,6 @@
 """tests ensuring that *the* way of doing things works"""
 
-import datetime
+import datetime as dt
 
 import pytest
 
@@ -27,9 +27,9 @@ def test_creating_calendar_with_unicode_fields(calendars, utc):
     cal.add("X-WR-RELCALID", "12345")
 
     event = Event()
-    event.add("DTSTART", datetime.datetime(2010, 10, 10, 10, 0, 0, tzinfo=utc))
-    event.add("DTEND", datetime.datetime(2010, 10, 10, 12, 0, 0, tzinfo=utc))
-    event.add("CREATED", datetime.datetime(2010, 10, 10, 0, 0, 0, tzinfo=utc))
+    event.add("DTSTART", dt.datetime(2010, 10, 10, 10, 0, 0, tzinfo=utc))
+    event.add("DTEND", dt.datetime(2010, 10, 10, 12, 0, 0, tzinfo=utc))
+    event.add("CREATED", dt.datetime(2010, 10, 10, 0, 0, 0, tzinfo=utc))
     event.add("UID", "123456")
     event.add("SUMMARY", "Non-ASCII Test: ÄÖÜ äöü €")
     event.add("DESCRIPTION", "icalendar should be able to de/serialize non-ascii.")
@@ -38,7 +38,7 @@ def test_creating_calendar_with_unicode_fields(calendars, utc):
 
     # test_create_event_simple
     event1 = Event()
-    event1.add("DTSTART", datetime.datetime(2010, 10, 10, 0, 0, 0, tzinfo=utc))
+    event1.add("DTSTART", dt.datetime(2010, 10, 10, 0, 0, 0, tzinfo=utc))
     event1.add("SUMMARY", "åäö")
     cal.add_component(event1)
 

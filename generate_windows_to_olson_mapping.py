@@ -18,7 +18,7 @@ CLDR_PATH = "common/supplemental/windowsZones.xml"
 # GitHub returns commits newest-first by default; [0] is the latest commit
 # touching this file.
 commits_url = f"https://api.github.com/repos/unicode-org/cldr/commits?path={CLDR_PATH}&sha=main&per_page=1"
-with req.urlopen(commits_url) as response:  # noqa: S310
+with req.urlopen(commits_url) as response:
     commit = json.load(response)[0]
 version = commit["sha"]
 version_date = commit["commit"]["committer"]["date"][:10]
@@ -31,7 +31,7 @@ if re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", version_date) is None:
 # commit instead of `main` ensures that the data and version cannot diverge if
 # CLDR changes between the two requests.
 url = f"https://raw.githubusercontent.com/unicode-org/cldr/{version}/{CLDR_PATH}"
-with req.urlopen(url) as response:  # noqa: S310
+with req.urlopen(url) as response:
     xml_content = response.read()
 
 # Parse the XML file and extract the timezone mapping.
