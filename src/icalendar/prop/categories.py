@@ -2,10 +2,13 @@
 
 from collections.abc import Iterator
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element
 
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.base import XCalParser
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 from icalendar.parser_tools import to_unicode
 from icalendar.prop.text import vText
 
@@ -62,7 +65,11 @@ class vCategory:
 
     def __eq__(self, other: object) -> bool:
         """self == other"""
-        return isinstance(other, vCategory) and self.cats == other.cats
+        if isinstance(other, vCategory):
+            return self.cats == other.cats
+        if isinstance(other, list):
+            return self.cats == other
+        return NotImplemented
 
     def __hash__(self) -> int:
         """Hash of the vCategory object."""
@@ -109,6 +116,29 @@ class vCategory:
     def ical_value(self) -> list[str]:
         """The list of categories as strings."""
         return [str(cat) for cat in self.cats]
+
+    def to_xcal(self, element: Element) -> None:
+        """Add the xCal representation of this property according to :rfc:`6321`."""
+        self.params.to_xcal(element)
+        for cat in self.cats:
+            if not isinstance(cat, vText):
+                cat = vText(cat)
+            cat.to_xcal(element)
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            xml: The XML to parse or a parser.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        elements = parser.parse_tags(cls.default_value)
+        cats = [element.get_xsd_string() for element in elements]
+        return cls(cats, params=params)
 
 
 __all__ = ["vCategory"]
