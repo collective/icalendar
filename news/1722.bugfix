@@ -1,0 +1,1 @@
+Fix inconsistent behavior of multi-value string list properties (e.g. refids, concepts, related_to) so appending to list properties on a component persists. I used AI to assist me with this change. @apurva1094
