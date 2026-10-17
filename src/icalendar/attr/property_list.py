@@ -119,7 +119,8 @@ class PropertyListView(MutableSequence[ValueT], Generic[ValueT, ArgT]):
     def replace_with(self, values: Any) -> None:
         """Replace all values with ``values``.
 
-        The values are added with :meth:`Component.add <icalendar.cal.component.Component.add>`,
+        The values are added with
+        :meth:`Component.add <icalendar.cal.component.Component.add>`,
         so they are converted to the correct types.
         ``values`` can be ``None`` (remove the property), a single value,
         a list or another view, also one of the same property.
