@@ -97,7 +97,7 @@ class vWeekday(str):
         self.params = Parameters(params)
         return self
 
-    def to_ical(self):
+    def to_ical(self) -> bytes:
         return self.encode(DEFAULT_ENCODING).upper()
 
     @classmethod
