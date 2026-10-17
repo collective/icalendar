@@ -1,0 +1,1 @@
+Added the :attr:`~icalendar.prop.dt.date.vDate.ical_value` property to :class:`~icalendar.prop.dt.date.vDate`, which returns the :class:`datetime.date` it represents. I used AI to assist me with this change. @HannaEpelboim
