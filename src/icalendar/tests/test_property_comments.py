@@ -169,4 +169,3 @@ def test_property_list_view_dict_and_fallback_converter():
     view3 = PropertyListView(comp3, "X-OTHER-CONV", converter="not-callable-or-dict")
     view3.append("fallback-val")
     assert view3[0] == "fallback-val"
-
