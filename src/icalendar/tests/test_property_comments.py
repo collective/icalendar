@@ -112,3 +112,61 @@ def test_property_list_view_for_text_factory():
     view.append("custom value")
     assert comp["X-CUSTOM-TEXT"] == [vText(b"custom value")]
     assert isinstance(view[0], vText)
+
+
+def test_comments_del_attribute(event: Event):
+    """Deleting event.comments deletes the property from component."""
+    event.comments = ["note1", "note2"]
+    assert "COMMENT" in event
+    del event.comments
+    assert "COMMENT" not in event
+    assert event.comments == []
+
+
+def test_comments_setter_scalar_and_tuple(event: Event):
+    """Setting comments to single string or tuple converts properly."""
+    event.comments = "Single string"
+    assert event.comments == ["Single string"]
+    assert isinstance(event.comments[0], vText)
+
+    event.comments = ("Tuple item 1", "Tuple item 2")
+    assert event.comments == ["Tuple item 1", "Tuple item 2"]
+    assert all(isinstance(c, vText) for c in event.comments)
+
+
+def test_comments_across_other_components():
+    """comments property works on Todo, Journal, Timezone, and Alarm components."""
+    from icalendar.cal import Alarm, Journal, Timezone, Todo
+
+    for cls in (Todo, Journal, Timezone, Alarm):
+        comp = cls()
+        assert comp.comments == []
+        comp.comments.append(f"Note for {cls.__name__}")
+        assert "COMMENT" in comp
+        assert comp.comments == [f"Note for {cls.__name__}"]
+        assert isinstance(comp.comments[0], vText)
+        del comp.comments
+        assert "COMMENT" not in comp
+        assert comp.comments == []
+
+
+def test_property_list_view_dict_and_fallback_converter():
+    """PropertyListView with dict converter and fallback behavior."""
+    comp = Component()
+    view = PropertyListView(comp, "X-DICT-CONV", converter={str: vText})
+    view.append("converted-str")
+    view.append(42)
+    assert isinstance(view[0], vText)
+    assert view[1] == 42
+
+    comp2 = Component()
+    view2 = PropertyListView(comp2, "X-NO-CONV", converter=None)
+    view2.append("raw-val")
+    assert view2[0] == "raw-val"
+    assert type(view2[0]) is str
+
+    comp3 = Component()
+    view3 = PropertyListView(comp3, "X-OTHER-CONV", converter="not-callable-or-dict")
+    view3.append("fallback-val")
+    assert view3[0] == "fallback-val"
+
