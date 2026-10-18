@@ -47,3 +47,25 @@ def test_canonsort_items_basic():
     assert sorted_items[0] == ("A", 1)
     # Remaining keys follow alphabetical order
     assert sorted_items == [("A", 1), ("B", 2), ("C", 3)]
+
+
+def test_component_methods_return_type_hints():
+    """Verify return type hints on Calendar, Event, and Todo methods (#938)."""
+    from typing import get_type_hints
+
+    from icalendar import Calendar, Event, Todo
+
+    # Event methods
+    assert get_type_hints(Event.set_start)["return"] is type(None)
+    assert get_type_hints(Event.set_end)["return"] is type(None)
+    assert get_type_hints(Event.set_duration)["return"] is type(None)
+
+    # Todo methods
+    assert get_type_hints(Todo.set_start)["return"] is type(None)
+    assert get_type_hints(Todo.set_end)["return"] is type(None)
+    assert get_type_hints(Todo.set_duration)["return"] is type(None)
+
+    # Calendar methods
+    assert get_type_hints(Calendar.validate)["return"] is type(None)
+    assert get_type_hints(Calendar.add_missing_timezones)["return"] is type(None)
+

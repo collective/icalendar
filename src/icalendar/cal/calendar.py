@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import timedelta
+from datetime import date, timedelta
 from typing import TYPE_CHECKING, Literal, cast, overload
 
 from icalendar.attr import (
@@ -27,7 +27,7 @@ from icalendar.version import __version__
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
-    from datetime import date, datetime
+    from datetime import datetime
     from pathlib import Path
 
     from icalendar.cal import (
@@ -289,7 +289,7 @@ class Calendar(Component):
         self,
         first_date: date = Timezone.DEFAULT_FIRST_DATE,
         last_date: date = Timezone.DEFAULT_LAST_DATE,
-    ):
+    ) -> None:
         """Add all missing VTIMEZONE components.
 
         This adds all the timezone components that are required.
@@ -548,7 +548,7 @@ Example:
         return refresh_interval.dt if refresh_interval else None
 
     @refresh_interval.setter
-    def refresh_interval(self, value: timedelta | None):
+    def refresh_interval(self, value: timedelta | None) -> None:
         """Set the REFRESH-INTERVAL."""
         if not isinstance(value, timedelta) and value is not None:
             raise TypeError(
@@ -564,7 +564,7 @@ Example:
             del self.refresh_interval
 
     @refresh_interval.deleter
-    def refresh_interval(self):
+    def refresh_interval(self) -> None:
         """Delete REFRESH-INTERVAL."""
         self.pop("REFRESH-INTERVAL")
 
@@ -665,7 +665,7 @@ Example:
 
         return calendar
 
-    def validate(self):
+    def validate(self) -> None:
         """Validate that the calendar has required properties and components.
 
         This method can be called explicitly to validate a calendar before output.

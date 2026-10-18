@@ -290,7 +290,9 @@ class Event(Component):
         'The "DTEND" property for a "VEVENT" calendar component specifies the non-inclusive end of the event.',
     )
 
-    def _get_start_end_duration(self):
+    def _get_start_end_duration(
+        self,
+    ) -> tuple[date | datetime | None, date | datetime | None, timedelta | None]:
         """Verify the calendar validity and return the right attributes."""
         return get_start_end_duration_with_validation(
             self, "DTSTART", "DTEND", "VEVENT"
@@ -324,7 +326,7 @@ class Event(Component):
         return get_duration_property(self)
 
     @duration.setter
-    def duration(self, value: timedelta):
+    def duration(self, value: timedelta) -> None:
         if not isinstance(value, timedelta):
             raise TypeError(f"Use timedelta, not {type(value).__name__}.")
 
@@ -356,7 +358,7 @@ class Event(Component):
         return get_start_property(self)
 
     @start.setter
-    def start(self, start: date | datetime | None):
+    def start(self, start: date | datetime | None) -> None:
         """Set the start."""
         self.DTSTART = start
 
@@ -370,13 +372,13 @@ class Event(Component):
         return get_end_property(self, "DTEND")
 
     @end.setter
-    def end(self, end: date | datetime | None):
+    def end(self, end: date | datetime | None) -> None:
         """Set the end."""
         self.DTEND = end
 
     def set_duration(
         self, duration: timedelta | None, locked: Literal["start", "end"] = "start"
-    ):
+    ) -> None:
         """Set the duration of the event relative to either start or end.
 
         Parameters:
@@ -387,7 +389,7 @@ class Event(Component):
 
     def set_start(
         self, start: date | datetime, locked: Literal["duration", "end"] | None = None
-    ):
+    ) -> None:
         """Set the start and keep the duration or end of the event.
 
         Parameters:
@@ -399,7 +401,7 @@ class Event(Component):
 
     def set_end(
         self, end: date | datetime, locked: Literal["start", "duration"] = "start"
-    ):
+    ) -> None:
         """Set the end of the component, keeping either the start or the duration same.
 
         Parameters:
