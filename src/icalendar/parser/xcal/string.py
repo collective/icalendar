@@ -33,7 +33,7 @@ def xsd_float_to_string(f: float) -> str:
     return "-INF"
 
 
-_VALID_XML_CHARACTERS = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f]")
+_VALID_XML_CHARACTERS = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\ufffe\uffff]")
 
 
 def _to_valid_xml_string(string: str) -> str:
