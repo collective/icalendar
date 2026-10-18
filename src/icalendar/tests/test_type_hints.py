@@ -68,4 +68,3 @@ def test_component_methods_return_type_hints():
     # Calendar methods
     assert get_type_hints(Calendar.validate)["return"] is type(None)
     assert get_type_hints(Calendar.add_missing_timezones)["return"] is type(None)
-
