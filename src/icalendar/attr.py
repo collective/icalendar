@@ -532,9 +532,7 @@ def single_string_property(
         """
         if value is not None:
             if not isinstance(value, (str, UUID)):
-                raise TypeError(
-                    f"{name} must be a string or None, got {value!r}"
-                )
+                raise TypeError(f"{name} must be a string or None, got {value!r}")
             if validate is not None:
                 validate(str(value))
 
@@ -860,7 +858,6 @@ _UID_IANA_TOKEN = re.compile(r"^[A-Za-z0-9-]+$")
 _UID_MAX_OCTETS = 255
 
 
-
 def validate_uid(value: str) -> None:
     """Validate that ``value`` is a well-formed UID.
 
@@ -882,10 +879,7 @@ def validate_uid(value: str) -> None:
             f"UID must be shorter than {_UID_MAX_OCTETS} octets, got {octets}"
         )
     if _UID_IANA_TOKEN.match(value) is None:
-        raise InvalidCalendar(
-            f"UID must be an RFC 5545 iana-token "
-            f"(letters, digits, hyphens), got {value!r}"
-        )
+        raise InvalidCalendar(f"UID must be an RFC 5545 iana-token, got {value!r}")
 
     """Validate that ``value`` is a well-formed UID.
 
@@ -907,11 +901,7 @@ def validate_uid(value: str) -> None:
             f"UID must be shorter than {_UID_MAX_OCTETS} octets, got {octets}"
         )
     if _UID_IANA_TOKEN.match(value) is None:
-        raise InvalidCalendar(
-            f"UID must be an RFC 5545 iana-token "
-            f"(letters, digits, hyphens), got {value!r}"
-        )
-
+        raise InvalidCalendar(f"UID must be an RFC 5545 iana-token, got {value!r}")
 
 
 uid_property = single_string_property(
@@ -978,14 +968,11 @@ Compatibility:
     For Alarms, ``X-ALARMUID`` is also considered.
 
 Format:
-    :rfc:`5545#section-3.8.4.7` defines the value as ``text``, so any
-    non-empty text is accepted, including the common ``local@domain`` form.
-    When set, the value is validated: an empty value or one with control
-    characters (such as ``CR``/``LF``) that would produce an invalid calendar
-    raises :exc:`~icalendar.error.InvalidCalendar`. The value is validated but
-    never modified, so its letter casing is preserved. :rfc:`7986#section-5.3`
-    additionally recommends an opaque identifier shorter than 255 octets, such
-    as a UUID, but this is not enforced.
+    When set, the value must be an :rfc:`5545` ``iana-token`` (ASCII letters,
+    digits and hyphens) shorter than 255 octets, as required by
+    :rfc:`7986#section-5.3`. Values that do not conform raise
+    :exc:`~icalendar.error.InvalidCalendar`. The value is validated but never
+    modified, so its letter casing is preserved.
 
 Examples:
     The following is an example of such a property value:
@@ -1010,13 +997,13 @@ Examples:
 
         >>> from icalendar import Event
         >>> event = Event()
-        >>> event.uid = "AbC-123@example.com"  # a valid value, casing kept
+        >>> event.uid = "AbC-123"  # a valid token, casing is preserved
         >>> print(event.uid)
-        AbC-123@example.com
-        >>> event.uid = "a\\r\\nb"
+        AbC-123
+        >>> event.uid = "a b"
         Traceback (most recent call last):
           ...
-        icalendar.error.InvalidCalendar: UID contains a control character: 'a\\r\\nb'
+        icalendar.error.InvalidCalendar: UID must be an RFC 5545 iana-token, got 'a b'
 
 """,
     validate=validate_uid,
