@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+import datetime
 import warnings
-from datetime import datetime, time
 from typing import TYPE_CHECKING, overload
 
 from icalendar.tools import to_datetime
@@ -74,14 +74,18 @@ class TZP:
         return self.__provider.localize_utc(to_datetime(dt))
 
     @overload
-    def localize(self, dt: datetime, tz: datetime.tzinfo | str | None) -> datetime: ...
+    def localize(
+        self, dt: datetime.datetime, tz: datetime.tzinfo | str | None
+    ) -> datetime.datetime: ...
 
     @overload
-    def localize(self, dt: time, tz: datetime.tzinfo | str | None) -> time: ...
+    def localize(
+        self, dt: datetime.time, tz: datetime.tzinfo | str | None
+    ) -> datetime.time: ...
 
     def localize(
-        self, dt: datetime.date | time, tz: datetime.tzinfo | str | None
-    ) -> datetime | datetime.time:
+        self, dt: datetime.date | datetime.time, tz: datetime.tzinfo | str | None
+    ) -> datetime.datetime | datetime.time:
         """Localize a datetime or time to a timezone.
 
         Returns:
@@ -94,13 +98,13 @@ class TZP:
             tz = self.timezone(tz)
         if tz is None:
             return dt.replace(tzinfo=None)
-        if isinstance(dt, time):
-            dt_full = datetime.combine(datetime(2020, 1, 1), dt)  # noqa: DTZ001
+        if isinstance(dt, datetime.time):
+            dt_full = datetime.datetime.combine(datetime.datetime(2020, 1, 1), dt)  # noqa: DTZ001
             localized = self.__provider.localize(dt_full, tz)
             return localized.timetz()
         return self.__provider.localize(to_datetime(dt), tz)
 
-    def cache_timezone_component(self, timezone_component: Timezone.Timezone) -> None:
+    def cache_timezone_component(self, timezone_component: Timezone) -> None:
         """Cache the timezone that is created from a timezone component
         if it is not already known.
 
@@ -120,7 +124,7 @@ class TZP:
         """Make sure the until value works."""
         self.__provider.fix_rrule_until(rrule, ical_rrule)
 
-    def create_timezone(self, timezone_component: Timezone.Timezone) -> datetime.tzinfo:
+    def create_timezone(self, timezone_component: Timezone) -> datetime.tzinfo:
         """Create a timezone from a timezone component.
 
         This component will not be cached.
