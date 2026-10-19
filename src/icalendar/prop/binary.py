@@ -17,7 +17,8 @@ class vBinary:
 
     ..  versionremoved:: 8.0.0
         Removed ``obj`` attribute, use :attr:`bytes` to access the binary content.
-        See :ref:`upgrade-8.0.0-breaking`.
+
+        .. seealso:: :ref:`vbinary-obj-removed`.
     """
 
     default_value: ClassVar[str] = "BINARY"
