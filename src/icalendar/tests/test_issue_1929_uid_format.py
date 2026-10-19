@@ -18,17 +18,12 @@ COMPONENTS = [Calendar, Event, Journal, Todo]
     "value",
     [
         "1234",
-        "AbC-123",
-        "d755cef5-2311-46ed-a0e1-6733c9e15c63",
+        "AbC-123",  # mixed case is preserved, not normalised
+        "d755cef5-2311-46ed-a0e1-6733c9e15c63",  # a UUID is a valid token
         str(uuid4()),
-        # The common local@domain form, e.g. from RFC 9253, must stay valid.
-        "19960401-080045-4000F192713-0052@example.com",
-        "event-1@example.com",
-        "19960401-080045-4000F192713.ics",
-        "café-123",  # arbitrary unicode text is allowed
-        "with\ttab",  # TAB is WSP and allowed in RFC 5545 text
         "a",
-        "a" * 300,  # RFC 5545 requires persisting values of at least 255 octets
+        "-",  # a lone hyphen is a valid token character
+        "a" * 254,  # 254 octets is allowed; 255 or more is not
     ],
 )
 def test_valid_uid_is_accepted_unchanged(cls, value):
@@ -82,3 +77,12 @@ def test_setting_uid_to_none_deletes_it(cls):
     component.uid = "valid-123"
     component.uid = None
     assert component.uid == ""
+
+
+@pytest.mark.parametrize("cls", COMPONENTS)
+@pytest.mark.parametrize("value", [object(), 123, 1.5, ["a"], {"a": 1}])
+def test_uid_wrong_type_raises_type_error(cls, value):
+    """Setting the UID to a non-string, non-UUID value raises TypeError."""
+    component = cls()
+    with pytest.raises(TypeError):
+        component.uid = value

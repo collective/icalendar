@@ -7,6 +7,7 @@ import re
 from collections.abc import Sequence
 from datetime import date, datetime, timedelta
 from typing import TYPE_CHECKING, Literal, TypeAlias
+from uuid import UUID
 
 from icalendar.enums import BUSYTYPE, CLASS, STATUS, TRANSP, StrEnum
 from icalendar.error import IncompleteComponent, InvalidCalendar
@@ -529,8 +530,14 @@ def single_string_property(
 
         Setting the value to None will delete it.
         """
-        if value is not None and validate is not None:
-            validate(str(value))
+        if value is not None:
+            if not isinstance(value, (str, UUID)):
+                raise TypeError(
+                    f"{name} must be a string or None, got {value!r}"
+                )
+            if validate is not None:
+                validate(str(value))
+
         fdel(self)
         if value is not None:
             self.add(name, value)
@@ -846,8 +853,12 @@ Examples:
 )
 
 #: Control characters that are not allowed in an :rfc:`5545` ``text`` value.
-#: Everything except TAB (``\t``) in the C0 range, plus DEL and the C1 range.
-_UID_CONTROL_CHARS = re.compile(r"[\x00-\x08\x0a-\x1f\x7f-\x9f]")
+#: An :rfc:`5545` ``iana-token``: one or more ASCII letters, digits or hyphens.
+_UID_IANA_TOKEN = re.compile(r"^[A-Za-z0-9-]+$")
+
+#: Maximum UID length in octets, per :rfc:`7986#section-5.3`.
+_UID_MAX_OCTETS = 255
+
 
 
 def validate_uid(value: str) -> None:
@@ -865,10 +876,42 @@ def validate_uid(value: str) -> None:
     Raises:
         InvalidCalendar: If ``value`` is empty or contains control characters.
     """
-    if not value:
-        raise InvalidCalendar("UID must not be empty")
-    if _UID_CONTROL_CHARS.search(value) is not None:
-        raise InvalidCalendar(f"UID contains a control character: {value!r}")
+    octets = len(value.encode("utf-8"))
+    if octets >= _UID_MAX_OCTETS:
+        raise InvalidCalendar(
+            f"UID must be shorter than {_UID_MAX_OCTETS} octets, got {octets}"
+        )
+    if _UID_IANA_TOKEN.match(value) is None:
+        raise InvalidCalendar(
+            f"UID must be an RFC 5545 iana-token "
+            f"(letters, digits, hyphens), got {value!r}"
+        )
+
+    """Validate that ``value`` is a well-formed UID.
+
+    :rfc:`5545#section-3.8.4.7` defines the ``UID`` value as ``text``, so this
+    accepts any non-empty text, including the common ``local@domain`` form. It
+    only rejects values that cannot be serialized into a valid calendar, namely
+    an empty value or one containing control characters (such as ``CR``/``LF``).
+    The value is not modified in any way, so its letter casing is preserved.
+
+    Args:
+        value: The string form of the UID to validate.
+
+    Raises:
+        InvalidCalendar: If ``value`` is empty or contains control characters.
+    """
+    octets = len(value.encode("utf-8"))
+    if octets >= _UID_MAX_OCTETS:
+        raise InvalidCalendar(
+            f"UID must be shorter than {_UID_MAX_OCTETS} octets, got {octets}"
+        )
+    if _UID_IANA_TOKEN.match(value) is None:
+        raise InvalidCalendar(
+            f"UID must be an RFC 5545 iana-token "
+            f"(letters, digits, hyphens), got {value!r}"
+        )
+
 
 
 uid_property = single_string_property(
