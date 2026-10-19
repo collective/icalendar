@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import warnings
-from datetime import datetime, time
+from datetime import date, datetime, time
 from typing import TYPE_CHECKING, overload
 
 from icalendar.tools import to_datetime
@@ -93,6 +93,8 @@ class TZP:
         if isinstance(tz, str):
             tz = self.timezone(tz)
         if tz is None:
+            if isinstance(dt, date):
+                return to_datetime(dt)
             return dt.replace(tzinfo=None)
         if isinstance(dt, time):
             dt_full = datetime.combine(datetime(2020, 1, 1), dt)  # noqa: DTZ001
