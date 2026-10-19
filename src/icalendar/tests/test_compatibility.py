@@ -7,7 +7,7 @@ from typing import TypeGuard, get_type_hints
 import pytest
 
 from icalendar import vBoolean
-from icalendar.compatibility import deprecate_for_version_8
+from icalendar.compatibility import deprecate_for_version_9
 from icalendar.tools import is_datetime, is_pytz_dt
 
 if sys.version_info >= (3, 11):
@@ -41,11 +41,11 @@ def test_deprecate_for_version_8_warns_and_delegates() -> None:
     def _join_parts(left: str, right: str = "") -> str:
         return f"{left}-{right}"
 
-    deprecated = deprecate_for_version_8(_join_parts)
+    deprecated = deprecate_for_version_9(_join_parts)
 
     with pytest.warns(
         DeprecationWarning,
-        match="join_parts is deprecated and will be removed in icalendar 8",
+        match="join_parts is deprecated and will be removed in icalendar 9",
     ):
         assert deprecated("left", right="right") == "left-right"
 
