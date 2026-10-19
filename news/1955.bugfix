@@ -1,0 +1,1 @@
+Fixed calendars with the same local ``TZID`` incorrectly reusing an earlier calendar's timezone definition. AI-assisted. @vera-rubin
