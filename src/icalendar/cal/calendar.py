@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import timedelta
+from pathlib import Path
 from typing import TYPE_CHECKING, Literal, cast, overload
 
 from icalendar.attr import (
@@ -28,7 +29,7 @@ from icalendar.version import __version__
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
     from datetime import date, datetime
-    from pathlib import Path
+    from typing import BinaryIO
 
     from icalendar.cal import (
         Availability,
@@ -684,4 +685,86 @@ Example:
             )
 
 
-__all__ = ["Calendar"]
+@overload
+def parse(
+    source: bytes | Path | BinaryIO, multiple: Literal[False] = False
+) -> Calendar: ...
+@overload
+def parse(
+    source: bytes | Path | BinaryIO, multiple: Literal[True]
+) -> list[Calendar]: ...
+
+
+def parse(
+    source: bytes | Path | BinaryIO, multiple: bool = False
+) -> Calendar | list[Calendar]:
+    r"""Parse iCalendar, jCal, or xCal data into calendars.
+
+    The format is detected from the first non-whitespace character of the data:
+    ``B`` for iCalendar (:rfc:`5545`), ``[`` for jCal (:rfc:`7265`),
+    and ``<`` for xCal (:rfc:`6321`).
+
+    Parameters:
+        source: The data to parse, as :class:`bytes`, a :class:`~pathlib.Path`
+            to a file, or a file opened in binary mode.
+        multiple: If ``True``, returns a list of calendars.
+            If ``False``, returns a single calendar.
+
+    Returns:
+        A calendar, or a list of calendars if ``multiple`` is ``True``.
+
+    Raises:
+        ValueError: If the format cannot be detected, or if ``multiple`` is
+            ``False`` and the data does not contain exactly one calendar.
+
+    Example:
+
+        Parse iCalendar and jCal data with the same function.
+
+        .. code-block:: pycon
+
+            >>> from icalendar import parse
+            >>> ical = b"BEGIN:VCALENDAR\r\nPRODID:example\r\nEND:VCALENDAR\r\n"
+            >>> parse(ical)["PRODID"]
+            vText(b'example')
+            >>> jcal = b'["vcalendar", [["prodid", {}, "text", "example"]], []]'
+            >>> parse(jcal)["PRODID"]
+            vText(b'example')
+
+        Use ``multiple=True`` to get a list of all calendars.
+
+        .. code-block:: pycon
+
+            >>> calendars = parse(ical + ical, multiple=True)
+            >>> len(calendars)
+            2
+    """
+    if isinstance(source, bytes):
+        data = source
+    elif isinstance(source, Path):
+        data = source.read_bytes()
+    else:
+        data = source.read()
+    data = data.lstrip()
+    first = data[:1]
+    if first == b"B":
+        calendars = Calendar.from_ical(data, multiple=True)
+    elif first == b"[":
+        calendars = [cast("Calendar", Calendar.from_jcal(data.decode("utf-8")))]
+    elif first == b"<":
+        calendars = Calendar.from_xcal(data)
+    else:
+        raise ValueError(
+            f"Could not detect the calendar format: expected iCal, jCal or xCal data, "
+            f"but the data starts with {first!r}."
+        )
+    if multiple:
+        return calendars
+    if len(calendars) > 1:
+        raise ValueError("There are multiple calendars, please use multiple=True")
+    if len(calendars) == 0:
+        raise ValueError("No calendars found.")
+    return calendars[0]
+
+
+__all__ = ["Calendar", "parse"]
