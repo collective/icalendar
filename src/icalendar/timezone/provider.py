@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, ClassVar
 
 if TYPE_CHECKING:
     from datetime import datetime, tzinfo
@@ -11,15 +11,14 @@ if TYPE_CHECKING:
     from dateutil.rrule import rrule
 
     from icalendar import prop
+    from icalendar.cal.timezone import Timezone
 
 
 class TZProvider(ABC):
     """Interface for timezone implementations."""
 
-    @property
-    @abstractmethod
-    def name(self) -> str:
-        """The name of the implementation."""
+    name: ClassVar[str]
+    """The name of the implementation."""
 
     @abstractmethod
     def localize_utc(self, dt: datetime) -> datetime:
@@ -38,7 +37,7 @@ class TZProvider(ABC):
         """Make sure the until value works for rrules generated from the ical_rrule."""
 
     @abstractmethod
-    def create_timezone(self, name: str, transition_times, transition_info) -> tzinfo:
+    def create_timezone(self, tz: Timezone) -> tzinfo:
         """Create a pytz timezone file given information."""
 
     @abstractmethod
