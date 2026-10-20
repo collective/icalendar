@@ -2,6 +2,8 @@
 API design
 ==========
 
+.. include:: <isonum.txt>
+
 This chapter describes the API design of icalendar.
 
 icalendar's API aligns with iCalendar components and properties as defined in :rfc:`5545` and related RFCs.
@@ -343,3 +345,50 @@ Without this convenience, imports would require the fully qualified Python path.
     >>> from icalendar.cal.event import Event
 
 This provides a nice API for developers, and establishes consistency across the API, ensuring backward compatibility as much as practical.
+
+Strictness during parsing
+=========================
+
+icalendar parses :rfc:`iCal <5545>`, :rfc:`xCal <6321>` and :rfc:`jCal <7265>`.
+The issue we are facing is calendars not being constructed according to the RFCs and passed to icalendar for parsing.
+
+When implementing parsing support, this is the guidance:
+
+#. Serialization should stay close to the standard.
+
+#. Errors are raised when values are wrong.
+
+#. When the case is made later through a real-world example, then we become less strict.
+
+
+icalendar also offers to convert between the different formats :rfc:`iCal <5545>`, :rfc:`xCal <6321>` and :rfc:`jCal <7265>`.
+For conversion, this is the guidance:
+
+#. Calendars must round-trip with all examples provided.
+   Exceptions can be made for broken calendars.
+   A round trip is for example iCal |rarr| :class:`~icalendar.cal.calendar.Calendar` |rarr| iCal or :class:`~icalendar.cal.calendar.Calendar` |rarr| iCal |rarr| :class:`~icalendar.cal.calendar.Calendar`.
+
+#. icalendar should correct values where examples are already provided.
+
+#. Calendars should round-trip losslessly when possible.
+   Invalid values behave differently from valid ones and should not loose invalidity during round-tripping.
+
+Examples for preservation:
+    :class:`~icalendar.prop.broken.vBroken` preserves invalid values.
+
+Examples for correction:
+    :class:`~icalendar.prop.text.vText` corrects the character set.
+
+Examples for checking:
+    :attr:`~icalendar.cal.event.Event.sequence` accepts only positive values.
+    :class:`~icalendar.prop.integer.vInt` has ``MAX`` and ``MIN`` values to check if the value is in range.
+    :class:`~icalendar.prop.request_status.vRequestStatus` returns default values for invalid ``code``.
+
+Not all of the calendar is interesting to the developer.
+Sensible default values and error-tolerant parsing enable compatibility to a wide range of faulty calendar files.
+A value that is not of interest should not prevent the calendar from being parsed.
+Then all interesting values would also get lost.
+
+.. seealso:
+
+    :issue:`1888`
