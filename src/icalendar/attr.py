@@ -855,7 +855,6 @@ Examples:
 """,
 )
 
-#: Control characters that are not allowed in an :rfc:`5545` ``text`` value.
 #: An :rfc:`5545` ``iana-token``: one or more ASCII letters, digits or hyphens.
 _UID_IANA_TOKEN = re.compile(r"^[A-Za-z0-9-]+$")
 
@@ -866,17 +865,16 @@ _UID_MAX_OCTETS = 255
 def validate_uid(value: str) -> None:
     """Validate that ``value`` is a well-formed UID.
 
-    :rfc:`5545#section-3.8.4.7` defines the ``UID`` value as ``text``, so this
-    accepts any non-empty text, including the common ``local@domain`` form. It
-    only rejects values that cannot be serialized into a valid calendar, namely
-    an empty value or one containing control characters (such as ``CR``/``LF``).
-    The value is not modified in any way, so its letter casing is preserved.
+    When set, the value must be an :rfc:`5545` ``iana-token`` (ASCII letters,
+    digits and hyphens) shorter than 255 octets, as required by
+    :rfc:`7986#section-5.3`.
 
-    Args:
+    Parameters:
         value: The string form of the UID to validate.
 
     Raises:
-        InvalidCalendar: If ``value`` is empty or contains control characters.
+        InvalidCalendar: If ``value`` is not an RFC 5545 iana-token or is 255
+            octets or longer.
     """
     octets = len(value.encode("utf-8"))
     if octets >= _UID_MAX_OCTETS:
