@@ -29,11 +29,6 @@ from .string import (
     _foldline,
     _unescape_char,
     _unescape_string,
-    escape_char,
-    escape_string,
-    foldline,
-    unescape_char,
-    unescape_string,
     validate_token,
 )
 
@@ -47,9 +42,6 @@ __all__ = [
     "_unescape_char",
     "_unescape_string",
     "dquote",
-    "escape_char",
-    "escape_string",
-    "foldline",
     "param_value",
     "q_join",
     "q_split",
@@ -58,9 +50,7 @@ __all__ = [
     "split_on_unescaped_comma",
     "split_on_unescaped_semicolon",
     "unescape_backslash",
-    "unescape_char",
     "unescape_list_or_string",
-    "unescape_string",
     "validate_param_value",
     "validate_token",
 ]
