@@ -1,1 +1,1 @@
-Added the ``uri`` property to :class:`~icalendar.prop.cal_address.vCalAddress`, so it has the same interface as :class:`~icalendar.prop.uri.vUri`. It returns the calendar user address, usually the ``mailto:`` link. This contributes to :issue:`1916`. Prepared with AI assistance (Claude); reviewed and tested locally. @DEVJHAWAR11
+Added the ``uri`` property to :class:`~icalendar.prop.cal_address.vCalAddress`. It returns the ``mailto:`` link. Prepared with AI assistance (Claude); reviewed and tested locally. @DEVJHAWAR11

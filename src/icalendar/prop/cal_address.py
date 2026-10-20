@@ -107,7 +107,7 @@ class vCalAddress(str):
             >>> vCalAddress("mailto:jane_doe@example.com").uri
             'mailto:jane_doe@example.com'
         """
-        return str(self)
+        return self.ical_value
 
     @property
     def email(self) -> str:
