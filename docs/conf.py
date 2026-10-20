@@ -4,6 +4,8 @@ import os
 import sys
 from pathlib import Path
 
+import sphinx
+
 import icalendar
 
 HERE = Path(__file__).parent
@@ -12,7 +14,6 @@ sys.path.insert(0, str(SRC))  # update docs from icalendar source for livehtml
 
 extensions = [
     "notfound.extension",
-    "sphinx.ext.apidoc",
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
@@ -25,6 +26,12 @@ extensions = [
     "sphinx_llms_txt",
     "sphinx_reredirects",
 ]
+
+# sphinx.ext.apidoc is a Sphinx extension since Sphinx 8.2, which requires Python 3.11+.
+# With older versions of Sphinx, the committed API reference files are used as they are.
+if sphinx.version_info >= (8, 2):
+    extensions.insert(1, "sphinx.ext.apidoc")
+
 source_suffix = {".rst": "restructuredtext"}
 master_doc = "index"
 
