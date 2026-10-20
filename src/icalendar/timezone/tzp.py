@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+import datetime
 import warnings
-from datetime import datetime, time
 from typing import TYPE_CHECKING, overload
 
 from icalendar.tools import to_datetime
@@ -48,6 +48,7 @@ class TZP:
     def _use(self, provider: TZProvider) -> None:
         """Use a timezone implementation."""
         self.__tz_cache = {}
+        self.__guessed_ids = {}
         self.__provider = provider
 
     def use(self, provider: str | TZProvider) -> None:
@@ -74,14 +75,18 @@ class TZP:
         return self.__provider.localize_utc(to_datetime(dt))
 
     @overload
-    def localize(self, dt: datetime, tz: datetime.tzinfo | str | None) -> datetime: ...
+    def localize(
+        self, dt: datetime.datetime, tz: datetime.tzinfo | str | None
+    ) -> datetime.datetime: ...
 
     @overload
-    def localize(self, dt: time, tz: datetime.tzinfo | str | None) -> time: ...
+    def localize(
+        self, dt: datetime.time, tz: datetime.tzinfo | str | None
+    ) -> datetime.time: ...
 
     def localize(
-        self, dt: datetime.date | time, tz: datetime.tzinfo | str | None
-    ) -> datetime | datetime.time:
+        self, dt: datetime.date | datetime.time, tz: datetime.tzinfo | str | None
+    ) -> datetime.datetime | datetime.time:
         """Localize a datetime or time to a timezone.
 
         Returns:
@@ -94,13 +99,13 @@ class TZP:
             tz = self.timezone(tz)
         if tz is None:
             return dt.replace(tzinfo=None)
-        if isinstance(dt, time):
-            dt_full = datetime.combine(datetime(2020, 1, 1), dt)  # noqa: DTZ001
+        if isinstance(dt, datetime.time):
+            dt_full = datetime.datetime.combine(datetime.datetime(2020, 1, 1), dt)  # noqa: DTZ001
             localized = self.__provider.localize(dt_full, tz)
             return localized.timetz()
         return self.__provider.localize(to_datetime(dt), tz)
 
-    def cache_timezone_component(self, timezone_component: Timezone.Timezone) -> None:
+    def cache_timezone_component(self, timezone_component: Timezone) -> None:
         """Cache the timezone that is created from a timezone component
         if it is not already known.
 
@@ -120,7 +125,7 @@ class TZP:
         """Make sure the until value works."""
         self.__provider.fix_rrule_until(rrule, ical_rrule)
 
-    def create_timezone(self, timezone_component: Timezone.Timezone) -> datetime.tzinfo:
+    def create_timezone(self, timezone_component: Timezone) -> datetime.tzinfo:
         """Create a timezone from a timezone component.
 
         This component will not be cached.
@@ -145,6 +150,10 @@ class TZP:
         candidate IDs from ``_lookup_ids`` in order, checking the cache
         before the provider for each one, and cache the first match under the
         primary ID so the next lookup is fast.
+
+        A lookup that is resolved by guessing the trailing Olson identifier
+        emits :class:`~icalendar.error.GloballyUniqueTZIDGuessed` on every
+        call, including when the result is served from the cache.
         """
         primary = None
         for lookup_id, is_global_guess in self._lookup_ids(tz_id):
@@ -152,16 +161,23 @@ class TZP:
                 primary = lookup_id
             tz = self.__tz_cache.get(lookup_id) or self.__provider.timezone(lookup_id)
             if tz is not None:
-                if is_global_guess:
+                # Warn on every lookup that relies on a guess, including
+                # cache hits: the cache key is the cleaned id, so remember
+                # which ids were resolved by guessing.
+                guessed_id = (
+                    lookup_id if is_global_guess else self.__guessed_ids.get(lookup_id)
+                )
+                if guessed_id is not None:
                     from icalendar.error import GloballyUniqueTZIDGuessed
 
                     warnings.warn(
                         f"Timezone {tz_id!r} is a globally unique TZID; "
-                        f"guessing it means {lookup_id!r} by stripping the vendor "
+                        f"guessing it means {guessed_id!r} by stripping the vendor "
                         "prefix. This may be wrong. See RFC 5545 section 3.2.19.",
                         GloballyUniqueTZIDGuessed,
                         stacklevel=3,
                     )
+                    self.__guessed_ids[primary] = guessed_id
                 self.__tz_cache[primary] = tz
                 return tz
         return None

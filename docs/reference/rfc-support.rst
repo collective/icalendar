@@ -15,6 +15,8 @@ icalendar supports the following RFC standards.
     obsoleted by :rfc:`5545`
 :rfc:`5545`
     Internet Calendaring and Scheduling Core Object Specification (iCalendar)
+:rfc:`6321`
+    xCal: The XML Format for iCalendar. See :issue:`1135`.
 :rfc:`6868`
     Parameter Value Encoding in iCalendar and vCard
 :rfc:`7529`
@@ -33,8 +35,6 @@ Unsupported RFCs
 
 The maintainers of icalendar do not claim compatibility with the following RFCs.
 
-:rfc:`6321`
-    xCal: The XML Format for iCalendar. See :issue:`1135`.
 :rfc:`6350`
     vCard 4.0. See :issue:`859`.
 :rfc:`9073`
