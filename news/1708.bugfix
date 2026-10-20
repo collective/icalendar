@@ -1,0 +1,1 @@
+Source distributions now include all files required to run their test suite, and CI verifies them outside the repository checkout. I used OpenAI Codex based on GPT-5 to assist with this change. @ryux1

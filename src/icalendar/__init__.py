@@ -44,6 +44,7 @@ from icalendar.error import (
     InvalidCalendar,
     JCalParsingError,
     LocalTimezoneMissing,
+    XCalParsingError,
 )
 
 # Parameters and helper methods for splitting and joining string with escaped
@@ -146,6 +147,7 @@ __all__ = [
     "TimezoneStandard",
     "Todo",
     "TypesFactory",
+    "XCalParsingError",
     "__version__",
     "__version_tuple__",
     "is_utc",

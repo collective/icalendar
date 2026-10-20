@@ -2,10 +2,14 @@
 
 import math
 from typing import Any, ClassVar
+from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.compatibility import Self
 from icalendar.error import JCalParsingError
 from icalendar.parser import Parameters
+from icalendar.parser.xcal.base import XCalParser
+from icalendar.parser.xcal.string import xsd_float_to_string
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 
 
 class vFloat(float):
@@ -113,6 +117,27 @@ class vFloat(float):
             jcal_property[3],
             params=Parameters.from_jcal_property(jcal_property),
         )
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            element: The xCal element to parse.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        element = parser.parse_tag(cls.default_value)
+        value = element.get_xsd_float()
+        return cls(value, params=params)
+
+    def to_xcal(self, element: Element) -> None:
+        """Add the xCal representation of this property according to :rfc:`6321`."""
+        self.params.to_xcal(element)
+        element = SubElement(element, self.default_value.lower())
+        element.text = xsd_float_to_string(self)
 
 
 __all__ = ["vFloat"]
