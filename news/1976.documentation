@@ -1,0 +1,1 @@
+Fixed the documentation build warning about ``sphinx.ext.apidoc`` not being a Sphinx extension when building the documentation with Python 3.10, where Sphinx 8.2 or later is not available. I used AI to assist me with this change. @ThiagoMirandaLiotto
