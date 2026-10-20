@@ -10,10 +10,13 @@ import pytest
 from icalendar import Calendar, Event, Journal, Todo
 from icalendar.error import InvalidCalendar
 
-COMPONENTS = [Calendar, Event, Journal, Todo]
+
+@pytest.fixture(params=[Calendar, Event, Journal, Todo])
+def cls(request):
+    """Return a component class that supports the UID property."""
+    return request.param
 
 
-@pytest.mark.parametrize("cls", COMPONENTS)
 @pytest.mark.parametrize(
     "value",
     [
@@ -33,7 +36,6 @@ def test_valid_uid_is_accepted_unchanged(cls, value):
     assert component.uid == value
 
 
-@pytest.mark.parametrize("cls", COMPONENTS)
 def test_uuid_object_is_accepted(cls):
     """A :class:`uuid.UUID` object serializes to a valid UID."""
     value = uuid4()
@@ -42,7 +44,6 @@ def test_uuid_object_is_accepted(cls):
     assert component.uid == str(value)
 
 
-@pytest.mark.parametrize("cls", COMPONENTS)
 @pytest.mark.parametrize(
     "value",
     [
@@ -60,7 +61,6 @@ def test_invalid_uid_is_rejected(cls, value):
         component.uid = value
 
 
-@pytest.mark.parametrize("cls", COMPONENTS)
 def test_rejected_uid_does_not_overwrite_existing_value(cls):
     """A failed set leaves any previously-set, valid UID untouched."""
     component = cls()
@@ -70,7 +70,6 @@ def test_rejected_uid_does_not_overwrite_existing_value(cls):
     assert component.uid == "valid-123"
 
 
-@pytest.mark.parametrize("cls", COMPONENTS)
 def test_setting_uid_to_none_deletes_it(cls):
     """Setting the UID to ``None`` clears it without validating."""
     component = cls()
@@ -79,7 +78,6 @@ def test_setting_uid_to_none_deletes_it(cls):
     assert component.uid == ""
 
 
-@pytest.mark.parametrize("cls", COMPONENTS)
 @pytest.mark.parametrize("value", [object(), 123, 1.5, ["a"], {"a": 1}])
 def test_uid_wrong_type_raises_type_error(cls, value):
     """Setting the UID to a non-string, non-UUID value raises TypeError."""

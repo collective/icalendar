@@ -497,7 +497,12 @@ def single_string_property(
 ) -> property:
     """Create a property to access a single string value.
 
-    Args:
+    Parameters:
+        name: The iCalendar property name (e.g. ``"UID"``).
+        docs: Documentation string for the generated property.
+        other_name: Alias name(s) to fall back on when the primary *name*
+            is not present in the component.
+        default: Value returned when the property is not set.
         validate: Optional callable that receives the string form of the value
             and raises an exception if it does not conform to the expected
             format. It is called on set, before any existing value is removed,
@@ -881,28 +886,6 @@ def validate_uid(value: str) -> None:
     if _UID_IANA_TOKEN.match(value) is None:
         raise InvalidCalendar(f"UID must be an RFC 5545 iana-token, got {value!r}")
 
-    """Validate that ``value`` is a well-formed UID.
-
-    :rfc:`5545#section-3.8.4.7` defines the ``UID`` value as ``text``, so this
-    accepts any non-empty text, including the common ``local@domain`` form. It
-    only rejects values that cannot be serialized into a valid calendar, namely
-    an empty value or one containing control characters (such as ``CR``/``LF``).
-    The value is not modified in any way, so its letter casing is preserved.
-
-    Args:
-        value: The string form of the UID to validate.
-
-    Raises:
-        InvalidCalendar: If ``value`` is empty or contains control characters.
-    """
-    octets = len(value.encode("utf-8"))
-    if octets >= _UID_MAX_OCTETS:
-        raise InvalidCalendar(
-            f"UID must be shorter than {_UID_MAX_OCTETS} octets, got {octets}"
-        )
-    if _UID_IANA_TOKEN.match(value) is None:
-        raise InvalidCalendar(f"UID must be an RFC 5545 iana-token, got {value!r}")
-
 
 uid_property = single_string_property(
     "UID",
@@ -971,8 +954,7 @@ Format:
     When set, the value must be an :rfc:`5545` ``iana-token`` (ASCII letters,
     digits and hyphens) shorter than 255 octets, as required by
     :rfc:`7986#section-5.3`. Values that do not conform raise
-    :exc:`~icalendar.error.InvalidCalendar`. The value is validated but never
-    modified, so its letter casing is preserved.
+    :exc:`~icalendar.error.InvalidCalendar`.
 
 Examples:
     The following is an example of such a property value:
@@ -990,6 +972,17 @@ Examples:
         BEGIN:VCALENDAR
         UID:d755cef5-2311-46ed-a0e1-6733c9e15c63
         END:VCALENDAR
+
+    Set a new UUID4 as the UID (recommended):
+
+    .. code-block:: pycon
+
+        >>> from icalendar import Event
+        >>> from uuid import uuid4
+        >>> event = Event()
+        >>> event.uid = str(uuid4())
+        >>> len(event.uid) > 0
+        True
 
     An invalid value raises an error:
 
