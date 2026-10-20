@@ -145,16 +145,16 @@ class vRequestStatus(vText):
             code_string = code
             if validate and CODE_REGEX_PATTERN.match(code_string) is None:
                 raise InvalidCalendar(
-                    f"code must have 2 or 3 numbers from 0 to 9. Got {code_string!r}"
+                    f"code must be either 2 or 3 numbers, each in the range 0-9, separated by `.`. Got {code_string!r}."
                 )
         else:
             if not all(isinstance(x, int) for x in code):
                 raise TypeError(
-                    f"code must be a tuple of 2 or 3 integers from 0 to 9. Got {code!r}"
+                    f"code must be a tuple of either 2 or 3 numbers, each in the range 0-9, separated by `.`. Got {code!r}."
                 )
             if len(code) not in (2, 3) or not all(0 <= x <= 9 for x in code):
                 raise InvalidCalendar(
-                    f"code must have 2 or 3 numbers from 0 to 9. Got {code!r}"
+                    f"code must be either 2 or 3 numbers, each in the range 0-9, separated by `.`. Got {code!r}."
                 )
             code_string = f"{code[0]}.{code[1]}"
             if len(code) == 3:
