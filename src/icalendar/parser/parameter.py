@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Any, Protocol
 from xml.etree.ElementTree import Element
 
 from icalendar.caselessdict import CaselessDict
-from icalendar.compatibility import Self, deprecate_for_version_8
+from icalendar.compatibility import Self, deprecate_for_version_9
 from icalendar.error import JCalParsingError
 from icalendar.parser.string import validate_token
 from icalendar.parser_tools import (
@@ -235,7 +235,7 @@ def _single_string_parameter(func: Callable | None = None, upper: bool = False):
     return decorator(func)
 
 
-single_string_parameter = deprecate_for_version_8(_single_string_parameter)
+single_string_parameter = deprecate_for_version_9(_single_string_parameter)
 
 
 class Parameters(CaselessDict[str | list[str]]):
