@@ -4,6 +4,7 @@ import pytest
 
 from icalendar import Event, vRequestStatus, vText
 from icalendar.error import InvalidCalendar, JCalParsingError
+from icalendar.tests.rfc_6321_xcal.common import list2xml, to_xcal_list
 
 
 def test_request_status_is_text():
@@ -214,7 +215,10 @@ def test_request_status_new_rejects_invalid_code(code):
     with pytest.raises(InvalidCalendar) as exc_info:
         vRequestStatus.new(code)
     message = exc_info.value.args[0]
-    assert message == f"code must have 2 or 3 numbers from 0 to 9. Got {code!r}"
+    assert (
+        message
+        == f"code must be either 2 or 3 numbers, each in the range 0-9, separated by `.`. Got {code!r}."
+    )
 
 
 @pytest.mark.parametrize("code", ["2.0.0.0", ".0.0", "0.", "10.0", ""])
@@ -239,3 +243,59 @@ def test_invalid_description_type(description):
 def test_invalid_data_type(data):
     with pytest.raises(TypeError):
         vRequestStatus.new("2.0", data=data)
+
+
+@pytest.mark.parametrize("data", [True, False])
+def test_to_xcal(data):
+    """Test serialization to xcal.
+
+    property-rstatus = element request-status {
+
+       element parameters {
+           languageparam?
+       }?,
+
+       element code { xsd:string },
+       element description { xsd:string },
+       element data { xsd:string }?
+    }
+    """
+    r = vRequestStatus.new("2.0", "Success", "data123" if data else None)
+    l = to_xcal_list(r, name="request-status")
+    expected = [
+        "request-status",
+        ["code", "2.0"],
+        ["description", "Success"],
+    ]
+    if data:
+        expected.append(["data", "data123"])
+    assert l == expected
+
+
+@pytest.mark.parametrize("data", [True, False])
+def test_from_xcal(data):
+    xml = list2xml(
+        [
+            "request-status",
+            ["code", "2.0"],
+            ["description", "Success"],
+        ]
+        + ([["data", "data123"]] if data else [])
+    )
+    r = vRequestStatus.from_xcal(xml)
+    assert r.code == (2, 0)
+    assert r.description == "Success"
+    assert r.data == ("data123" if data else None)
+
+
+def test_from_xcal_preserves_invalid_code():
+    xml = list2xml(
+        [
+            "request-status",
+            ["code", "2.0.0.0"],
+            ["description", "Success"],
+        ]
+    )
+    r = vRequestStatus.from_xcal(xml)
+    assert r.code == ()
+    assert r.description == ""

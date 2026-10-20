@@ -4,14 +4,17 @@ from __future__ import annotations
 
 import re
 from typing import TYPE_CHECKING, Any
+from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.error import InvalidCalendar, JCalParsingError
 from icalendar.parser.parameter import Parameters
+from icalendar.parser.xcal.wrapper import from_xcal_wrapper
 
 from .text import vText
 
 if TYPE_CHECKING:
     from icalendar.compatibility import Self
+    from icalendar.parser.xcal.base import XCalParser
 
 CODE_REGEX = r"^[0-9]\.[0-9](?:\.[0-9])?$"
 CODE_REGEX_PATTERN = re.compile(CODE_REGEX)
@@ -29,7 +32,9 @@ ESCAPE = re.compile(r"([\\,;])")
 class vRequestStatus(vText):
     """A text specifically for REQUEST-STATUS.
 
-    See :rfc:`5545#section-3.8.8.3`.
+    See :rfc:`5545#section-3.8.8.3`,
+    :rfc:`6321#appendix-A` in subsection 3.8.8.3 Request Status and,
+    :rfc:`7265#section-3.4.1.2`.
 
     Example:
 
@@ -199,6 +204,36 @@ class vRequestStatus(vText):
             description=status_list[1] if len(status_list) > 1 else "",
             data=";".join(status_list[2:]) if len(status_list) > 2 else None,
             params=Parameters.from_jcal_property(jcal_property),
+            validate=False,
+        )
+
+    def to_xcal(self, element: Element) -> None:
+        """Add the xCal representation of this property according to :rfc:`6321`."""
+        self.params.to_xcal(element)
+        SubElement(element, "code").text = self.code_string
+        SubElement(element, "description").text = self.description
+        if self.data is not None:
+            SubElement(element, "data").text = self.data
+
+    @classmethod
+    @from_xcal_wrapper
+    def from_xcal(cls, parser: XCalParser, params: Parameters) -> Self:
+        """Parse xCal from :rfc:`6321`.
+
+        Parameters:
+            xml: The XML to parse or a parser.
+
+        Raises:
+            ~error.XCalParsingError: If the provided xCal is invalid.
+        """
+        code = parser.parse_tag("code")
+        description = parser.parse_tag("description")
+        data = parser.parse_optional_tag("data")
+        return cls.new(
+            code.get_xsd_token(),
+            description.get_xsd_string(),
+            None if data is None else data.get_xsd_string(),
+            params=params,
             validate=False,
         )
 
