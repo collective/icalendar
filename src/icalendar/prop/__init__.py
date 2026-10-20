@@ -71,7 +71,7 @@ from .n import NFields, vN
 from .org import vOrg
 from .recur import vFrequency, vMonth, vRecur, vSkip, vWeekday
 from .text import vText
-from .uid import vUid
+from .uid import validate_uid, vUid
 from .unknown import vUnknown
 from .uri import vUri
 from .xml_reference import vXmlReference
@@ -146,4 +146,5 @@ __all__ = [
     "vUri",
     "vWeekday",
     "vXmlReference",
+    "validate_uid",
 ]

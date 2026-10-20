@@ -1,0 +1,1 @@
+Enforced UID format validation on component setters in compliance with RFC 7986 Section 5.3 and RFC 5545 Section 3.1 (must be an iana-token less than 255 octets, preserving letter casing). I used Gemini to assist with this change. @kabilme

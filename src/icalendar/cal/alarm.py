@@ -25,6 +25,7 @@ from icalendar.attr import (
     single_utc_property,
     summary_property,
     uid_property,
+    validate_uid,
 )
 from icalendar.cal.component import Component
 from icalendar.cal.examples import get_example
@@ -381,6 +382,7 @@ class Alarm(Component):
         "UID",
         uid_property.__doc__,
         ["X-ALARMUID", "X-EVOLUTION-ALARM-UID"],
+        validator=validate_uid,
     )
     summary = summary_property
     description = description_property
