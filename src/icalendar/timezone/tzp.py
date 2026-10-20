@@ -139,7 +139,13 @@ class TZP:
         """
         return tzid.strip("/")
 
-    def timezone(self, tz_id: str) -> datetime.tzinfo | None:
+    @overload
+    def timezone(self, tz_id: None) -> None: ...
+
+    @overload
+    def timezone(self, tz_id: str) -> datetime.tzinfo | None: ...
+
+    def timezone(self, tz_id: str | None) -> datetime.tzinfo | None:
         """Return a timezone with an ID or ``None`` if we can't find it.
 
         ``tz_id`` may be a plain Olson name (``Europe/Berlin``), a Windows
@@ -149,7 +155,15 @@ class TZP:
         candidate IDs from ``_lookup_ids`` in order, checking the cache
         before the provider for each one, and cache the first match under the
         primary ID so the next lookup is fast.
+
+        Parameters:
+            tz_id: The ID of the timezone to get.
+
+        Returns:
+            A :class:`datetime.tzinfo` or ``None`` if the timezone could not be found.
         """
+        if tz_id is None:
+            return None
         primary = None
         for lookup_id, is_global_guess in self._lookup_ids(tz_id):
             if primary is None:
