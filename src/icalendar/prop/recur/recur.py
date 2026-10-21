@@ -450,6 +450,48 @@ class vRecur(CaselessDict):
         self.pop("BYDAY", None)
 
     @property
+    def bymonth(self) -> list[int] | None:
+        """The BYMONTH part of the recurrence rule.
+
+        This is a list of months (1-12) on which the recurrence occurs
+        (:rfc:`5545#section-3.3.10`). When omitted, ``None`` is returned.
+
+        Setting this to ``None`` deletes the value, as does ``del``.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=YEARLY;BYMONTH=1,6").bymonth
+                [1, 6]
+                >>> vRecur.from_ical("FREQ=DAILY").bymonth is None
+                True
+        """
+        values = self.get("BYMONTH")
+        if values is None or (isinstance(values, SEQUENCE_TYPES) and len(values) == 0):
+            return None
+        if not isinstance(values, SEQUENCE_TYPES):
+            values = [values]
+        return [int(v) for v in values]
+
+    @bymonth.setter
+    def bymonth(self, value: list[int] | int | None) -> None:
+        """Set the BYMONTH part of the recurrence rule, or delete it if None."""
+        if value is None:
+            del self.bymonth
+            return
+        if isinstance(value, int) and not isinstance(value, bool):
+            value = [value]
+        if not isinstance(value, (list, tuple)):
+            raise TypeError(f"bymonth must be a list of int, got {value!r}")
+        self["BYMONTH"] = [vMonth(v) if not isinstance(v, vMonth) else v for v in value]
+
+    @bymonth.deleter
+    def bymonth(self) -> None:
+        """Delete the BYMONTH part of the recurrence rule."""
+        self.pop("BYMONTH", None)
+
+    @property
     def wkst(self) -> vWeekday | None:
         """The WKST part of the recurrence rule.
 
