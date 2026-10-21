@@ -198,7 +198,7 @@ You can also choose to use the :meth:`icalendar.cal.component.Component.decoded`
 
 
 BASE64 values
-~~~~~~~~~~~~~
+'''''''''''''
 
 Use :meth:`~icalendar.cal.component.Component.from_ical` to read values with ``ENCODING=BASE64``.
 The parser decodes non-BINARY values as UTF-8 before it parses their value type.
