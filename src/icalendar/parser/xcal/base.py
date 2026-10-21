@@ -26,11 +26,22 @@ class XCalParser:
 
     An element is passed to the parser.
     The element and its child elements can be inspected and marked as parsed.
+    Foreign namespace elements are ignored except directly inside ``properties``,
+    as specified by :rfc:`6321#section-4.1`.
     """
 
     def __init__(self, element: Element | ElementAdapter) -> None:
         self._element = ElementAdapter.with_element(element)
         self._children = self._element.children
+        if self._element.tag != "properties":
+            self._children = [
+                child
+                for child in self._children
+                if not child.element.tag.startswith("{")
+                or child.element.tag.startswith(
+                    "{urn:ietf:params:xml:ns:icalendar-2.0}"
+                )
+            ]
         self._consumed = 0
         self._element_is_parsed = False
 
