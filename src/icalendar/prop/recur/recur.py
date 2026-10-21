@@ -2,12 +2,14 @@
 
 from typing import Any, ClassVar
 
+from datetime import date, datetime
+
 from icalendar.caselessdict import CaselessDict
 from icalendar.compatibility import Self
 from icalendar.error import InvalidCalendar, JCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser_tools import DEFAULT_ENCODING, SEQUENCE_TYPES
-from icalendar.prop.dt import vDDDTypes
+from icalendar.prop.dt import vDDDTypes, vDate, vDatetime
 from icalendar.prop.integer import vInt
 from icalendar.prop.recur.frequency import vFrequency
 from icalendar.prop.recur.month import vMonth
@@ -410,6 +412,70 @@ class vRecur(CaselessDict):
     def wkst(self) -> None:
         """Delete the WKST part of the recurrence rule."""
         self.pop("WKST", None)
+
+    @property
+    def until(self) -> date | datetime | None:
+        """The UNTIL part of the recurrence rule.
+
+        This is the date or date-time at which to range-bound the
+        recurrence, as an alternative to specifying a ``COUNT`` value
+        (:rfc:`5545#section-3.3.10`). ``UNTIL`` and ``COUNT`` are mutually
+        exclusive; this accessor does not enforce that.
+
+        The value is a :class:`~icalendar.prop.dt.vDate` or
+        :class:`~icalendar.prop.dt.vDatetime` depending on whether a
+        time component is present. When omitted, ``None`` is returned.
+
+        Setting this to ``None`` deletes the value, as does ``del``.
+
+        Raises:
+            InvalidCalendar: if a value is present but cannot be read.
+            TypeError: when setting a value that is not a date or date-time.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=DAILY;UNTIL=20260101").until
+                datetime.date(2026, 1, 1)
+                >>> vRecur.from_ical("FREQ=DAILY").until is None
+                True
+        """
+        values = self.get("UNTIL")
+        if values is None or (isinstance(values, SEQUENCE_TYPES) and len(values) == 0):
+            return None
+        value = values[0] if isinstance(values, SEQUENCE_TYPES) else values
+        if isinstance(value, (date, datetime, vDDDTypes)):
+            if isinstance(value, vDDDTypes):
+                return value.dt
+            return value
+        try:
+            return vDDDTypes(value).dt
+        except (TypeError, ValueError) as e:
+            raise InvalidCalendar("UNTIL must be a date or date-time") from e
+
+    @until.setter
+    def until(self, value: date | datetime | vDDDTypes | None) -> None:
+        """Set the UNTIL part of the recurrence rule, or delete it if None."""
+        if value is None:
+            del self.until
+            return
+        if isinstance(value, vDDDTypes):
+            v = value.dt
+        elif isinstance(value, datetime):
+            v = value
+        elif isinstance(value, date):
+            v = value
+        else:
+            raise TypeError(f"until must be a date, datetime, or vDDDTypes, got {value!r}")
+        # from_ical stores UNTIL as a one-item list of a raw date/datetime;
+        # keep that representation so assignment matches a parsed vRecur.
+        self["UNTIL"] = [v]
+
+    @until.deleter
+    def until(self) -> None:
+        """Delete the UNTIL part of the recurrence rule."""
+        self.pop("UNTIL", None)
 
     def __eq__(self, other: object) -> bool:
         """self == other"""
