@@ -9,6 +9,8 @@ conversion is attempted.
 from .content_line import Contentline, Contentlines
 from .parameter import (
     Parameters,
+    _rfc_6868_escape,
+    _rfc_6868_unescape,
     dquote,
     param_value,
     q_join,
@@ -45,8 +47,6 @@ __all__ = [
     "param_value",
     "q_join",
     "q_split",
-    "rfc_6868_escape",
-    "rfc_6868_unescape",
     "split_on_unescaped_comma",
     "split_on_unescaped_semicolon",
     "unescape_backslash",
