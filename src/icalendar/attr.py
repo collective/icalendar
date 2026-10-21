@@ -2710,9 +2710,13 @@ XML_property = multi_string_property(
     "XML",
     """This property embeds XML elements into a component.
 
-You can assign an XML string, an :class:`~xml.etree.ElementTree.Element`,
+You can assign XML text, an :class:`~xml.etree.ElementTree.Element`,
+an :class:`~icalendar.parser.xcal.adapter.ElementAdapter`,
 a list of these, or ``None`` to this property.
 The values become :class:`~icalendar.prop.xml.vXml` values.
+A :class:`~icalendar.prop.text.vText` value is not converted,
+so it is written as text in xCal.
+XML with the value type BINARY is a :class:`~icalendar.prop.binary.vBinary`.
 Assigning ``None`` or an empty list removes all XML values,
 as does deleting the property.
 
@@ -2734,7 +2738,7 @@ Example:
         >>> from icalendar import Event
         >>> event = Event()
         >>> event.XML = '<a xmlns="http://example.com/ns">text</a>'
-        >>> print(event.to_ical())
+        >>> print(event.to_ical().decode())
         BEGIN:VEVENT
         XML:<a xmlns="http://example.com/ns">text</a>
         END:VEVENT

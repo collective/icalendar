@@ -38,7 +38,8 @@ from icalendar.parser import (
 )
 from icalendar.parser.ical.component import ComponentIcalParser
 from icalendar.parser_tools import DEFAULT_ENCODING
-from icalendar.prop import VPROPERTY, TypesFactory, vDDDLists, vText, vUnknown, vXml
+from icalendar.prop import VPROPERTY, TypesFactory, vDDDLists, vText, vUnknown
+from icalendar.prop.xml import _hide_xml_properties
 from icalendar.timezone import tzp
 from icalendar.tools import is_date
 
@@ -1180,6 +1181,12 @@ class Component(CaselessDict):
             - ``None`` if an argument is passed.
             - :class:`bytes` if called with no arguments.
 
+        Raises:
+            TypeError: If ``destination`` is neither an XML Element nor a file-like
+                object, or if ``indent`` is neither an integer nor a string.
+            ~icalendar.error.InvalidCalendar: If an XML property cannot be written
+                to xCal, see :meth:`vXml.to_xcal() <icalendar.prop.xml.vXml.to_xcal>`.
+
         Example:
             This example shows how to convert a new calendar to XML:
 
@@ -1232,7 +1239,8 @@ class Component(CaselessDict):
         file.write(b'<?xml version="1.0" encoding="UTF-8"?>')
         if indent is not None:
             file.write(b"\n")
-            _indent_xcal(stream, indent)
+            with _hide_xml_properties(stream):
+                indent_xml(stream, space=indent)
         ElementTree(stream).write(file, "utf-8", xml_declaration=False, method="xml")
         if indent is not None:
             file.write(b"\n")
@@ -1249,11 +1257,6 @@ class Component(CaselessDict):
             for key, prop_list in self.sorted_items():
                 for prop in prop_list if isinstance(prop_list, list) else [prop_list]:
                     prop: VPROPERTY
-                    if key == "XML" and isinstance(prop, vXml):
-                        extension = prop._xcal_extension()
-                        if extension is not None:
-                            e_properties.append(extension)
-                            continue
                     e_property = SubElement(e_properties, key.lower())
                     prop.to_xcal(e_property)
         if self.subcomponents:
@@ -1264,6 +1267,9 @@ class Component(CaselessDict):
     @classmethod
     def from_xcal(cls, xcal: Element | bytes | Path | BinaryIO) -> list[Self]:
         """Parse xCal according to :rfc:`6321`.
+
+        Elements in other namespaces directly in ``properties`` become XML
+        properties, see :class:`~icalendar.prop.xml.vXml`.
 
         Parameters:
             xcal: The xCal element or data to parse.
@@ -1322,25 +1328,6 @@ class Component(CaselessDict):
             component = parser.parse_component()
             components.append(component)
         return components
-
-
-def _indent_xcal(stream: Element, space: str) -> None:
-    """Indent xCal like :func:`xml.etree.ElementTree.indent`.
-
-    The XML elements of XML properties have a namespace.
-    Their content stays as it is, see :rfc:`6321#section-4.2`.
-    They are replaced before the iteration reaches their content.
-    """
-    extensions = []
-    for e_properties in stream.iter("properties"):
-        for index, element in enumerate(e_properties):
-            if element.tag.startswith("{"):
-                e_properties[index] = Element(element.tag)
-                extensions.append((e_properties, index, element))
-    indent_xml(stream, space=space)
-    for e_properties, index, element in extensions:
-        element.tail = e_properties[index].tail
-        e_properties[index] = element
 
 
 def _node_from_jcal(jcal, starting_cls: type[Component]) -> tuple[Component, list]:

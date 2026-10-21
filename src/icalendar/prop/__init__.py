@@ -107,8 +107,8 @@ VPROPERTY: TypeAlias = (
     | vGeo
     | vUnknown
     | vXmlReference
-    | vUid
     | vXml
+    | vUid
 )
 
 __all__ = [
