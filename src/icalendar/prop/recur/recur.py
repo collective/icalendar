@@ -407,6 +407,49 @@ class vRecur(CaselessDict):
         self.pop("INTERVAL", None)
 
     @property
+    def byday(self) -> list[vWeekday] | None:
+        """The BYDAY part of the recurrence rule.
+
+        This is a list of weekdays (with optional ordinal prefixes) on which
+        the recurrence occurs (:rfc:`5545#section-3.3.10`). When omitted,
+        ``None`` is returned.
+
+        Setting this to ``None`` deletes the value, as does ``del``.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=WEEKLY;BYDAY=MO,WE,FR").byday
+                ['MO', 'WE', 'FR']
+                >>> vRecur.from_ical("FREQ=DAILY").byday is None
+                True
+        """
+        values = self.get("BYDAY")
+        if values is None or (isinstance(values, SEQUENCE_TYPES) and len(values) == 0):
+            return None
+        if not isinstance(values, SEQUENCE_TYPES):
+            values = [values]
+        return [vWeekday(v) if not isinstance(v, vWeekday) else v for v in values]
+
+    @byday.setter
+    def byday(self, value: list[vWeekday] | vWeekday | None) -> None:
+        """Set the BYDAY part of the recurrence rule, or delete it if None."""
+        if value is None:
+            del self.byday
+            return
+        if isinstance(value, vWeekday):
+            value = [value]
+        if not isinstance(value, (list, tuple)):
+            raise TypeError(f"byday must be a list of vWeekday, got {value!r}")
+        self["BYDAY"] = [vWeekday(v) if not isinstance(v, vWeekday) else v for v in value]
+
+    @byday.deleter
+    def byday(self) -> None:
+        """Delete the BYDAY part of the recurrence rule."""
+        self.pop("BYDAY", None)
+
+    @property
     def wkst(self) -> vWeekday | None:
         """The WKST part of the recurrence rule.
 
