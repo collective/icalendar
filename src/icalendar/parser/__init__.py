@@ -15,8 +15,6 @@ from .parameter import (
     param_value,
     q_join,
     q_split,
-    rfc_6868_escape,
-    rfc_6868_unescape,
     validate_param_value,
 )
 from .property import (
