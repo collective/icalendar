@@ -21,6 +21,7 @@ VALEFILES       := $(shell find $(DOCS_DIR) -type f -name "*.rst" -print)  # Als
 VALEOPTS        ?=
 ZIZMOROPTS      ?=
 PYTHONVERSION   = >=3.10,<3.15
+UV_GROUP        = --group dev
 
 # Add the following 'help' target to your Makefile
 # And add help text after each target name starting with '\#\#'
@@ -31,10 +32,9 @@ help:  # This help message
 
 # environment management
 .venv:  ## Install required Python, create Python virtual environment, and install package requirements
-	@uv python install "$(PYTHONVERSION)"
-	@uv venv --python "$(PYTHONVERSION)"
-	@uv sync --group dev
-	@uv run pre-commit install
+	uv python install "$(PYTHONVERSION)"
+	uv venv --python "$(PYTHONVERSION)"
+	uv sync $(UV_GROUP)
 
 .PHONY: sync
 sync:  ## Sync package requirements
@@ -158,6 +158,7 @@ test-dist:  ## Build and test the distribution files
 # development
 .PHONY: dev
 dev: .venv  ## Install required Python, create Python virtual environment, install package and development requirements
+	@uv run pre-commit install
 
 .PHONY: format
 format: .venv  ## Format the code base with ruff

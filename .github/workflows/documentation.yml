@@ -38,7 +38,8 @@ jobs:
         uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
         with:
           # Install a specific version of uv.
-          version: "0.9.3"
+          # If you update this, also update all the other GitHub Actions
+          version: "0.11.6"
 
       - name: Create Python virtual environment, install requirements
         run: make .venv PYTHONVERSION=${{ matrix.python-version }}
