@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar
 
+from icalendar.error import Base64DecodingError
 from icalendar.parser.content_line import Contentline, Contentlines
 from icalendar.parser.property import split_on_unescaped_comma, unescape_backslash
 from icalendar.prop import vBinary, vBroken
@@ -188,20 +189,24 @@ class ComponentIcalParser:
             raise ValueError(f'Property "{name}" does not have a parent component.')
 
         raw_value = None
-        encoding = params.get("ENCODING")
-        if (
-            isinstance(encoding, str)
-            and encoding.upper() == "BASE64"
-            and not issubclass(self.get_factory_for_property(name, params), vBinary)
+        encoding = params.encoding
+        if encoding == "BASE64" and not issubclass(
+            self.get_factory_for_property(name, params), vBinary
         ):
             try:
                 raw_value = vBinary.from_ical(vals).decode("utf-8")
             except (ValueError, TypeError) as e:
+                if isinstance(e, UnicodeDecodeError):
+                    e = Base64DecodingError(
+                        "BASE64 data is not valid UTF-8", value=vals
+                    )
                 self.handle_property_parse_error(e, name, params, vals, line)
                 return
             # Decode before splitting lists or unescaping TEXT values.
             vals = unescape_backslash(raw_value)
             del params["ENCODING"]
+        elif encoding == "8BIT":
+            del params.encoding
 
         # Determine TZID for datetime properties
         tzid = params.get("TZID") if params and name in self.datetime_names else None
@@ -226,6 +231,7 @@ class ComponentIcalParser:
                 factory, "get_value_from_content_line", None
             )
             if get_value_from_content_line is not None:
+                # Keep UNKNOWN escapes, but do not read BASE64 text again.
                 vals = (
                     get_value_from_content_line(line)
                     if raw_value is None

@@ -1,1 +1,1 @@
-Added support for non-BINARY ``ENCODING=BASE64`` values when reading iCalendar and converting to jCal or xCal. AI helped with the code, tests, and review. @radixun
+Added support for non-BINARY ``ENCODING=BASE64`` values when reading iCalendar and converting to jCal or xCal. Remove the default ``ENCODING=8BIT`` parameter after parsing. Use ``Parameters.encoding`` to read the normalized encoding and ``Base64DecodingError`` to catch decoding errors. AI helped with the code, tests, and review. @radixun

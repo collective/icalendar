@@ -565,10 +565,6 @@ class Component(CaselessDict):
 
         Handles standard and custom components (``X-*``, IANA-registered).
 
-        The parser decodes ``ENCODING=BASE64`` values before it parses their
-        value type. For non-BINARY values, it reads UTF-8 and removes
-        ``ENCODING``. BINARY values keep their binary data and parameters.
-
         Parameters:
             st: iCalendar data as bytes or string, or a path to an iCalendar file as
                 :class:`pathlib.Path`.

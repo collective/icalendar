@@ -6,7 +6,7 @@ from typing import ClassVar
 from xml.etree.ElementTree import Element, SubElement
 
 from icalendar.compatibility import Self
-from icalendar.error import JCalParsingError, XCalParsingError
+from icalendar.error import Base64DecodingError, JCalParsingError, XCalParsingError
 from icalendar.parser import Parameters
 from icalendar.parser.xcal.base import XCalParser
 from icalendar.parser.xcal.wrapper import from_xcal_wrapper
@@ -50,7 +50,7 @@ class vBinary:
         try:
             return base64.b64decode(ical, validate=True)
         except (binascii.Error, ValueError) as e:
-            raise ValueError("Not valid base 64 encoding.") from e
+            raise Base64DecodingError("Not valid base 64 encoding.") from e
 
     @property
     def base64data(self) -> str:
