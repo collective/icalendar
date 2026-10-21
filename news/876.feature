@@ -1,1 +1,1 @@
-Added and documented meth: <src.icalendar.prop.dt.datetime.Ical_value> and added new tests to account for it.I used Claude AI (Sonnet 5.5) to assist me with this change @Mrbozz
+Added and documented an :attr: '~icalendar.prop.dt.datetime.ical_value' property for the :class:`~icalendar.prop.dt.datetime.vDatetime` component.I used Claude AI (Sonnet 5.5) to assist me with this change @Mrbozz
