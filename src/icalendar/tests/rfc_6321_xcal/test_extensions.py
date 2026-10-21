@@ -105,4 +105,4 @@ def test_foreign_children_do_not_change_recurrence_date_parsing():
             "</recur></rrule></properties></vevent>"
         )
     )[0]
-    assert event["RRULE"]["UNTIL"][0].dt == date(2026, 1, 1)
+    assert event["RRULE"]["UNTIL"] == [date(2026, 1, 1)]
