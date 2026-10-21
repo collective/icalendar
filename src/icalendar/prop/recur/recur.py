@@ -361,6 +361,135 @@ class vRecur(CaselessDict):
         self.pop("COUNT", None)
 
     @property
+    def byweekno(self) -> list[int] | None:
+        """The BYWEEKNO part of the recurrence rule.
+
+        This is a list of week numbers (1-53, or negative for counting
+        from the end) on which the recurrence occurs
+        (:rfc:`5545#section-3.3.10`). When omitted, ``None`` is returned.
+
+        Setting this to ``None`` deletes the value, as does ``del``.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=YEARLY;BYWEEKNO=1,52").byweekno
+                [1, 52]
+                >>> vRecur.from_ical("FREQ=DAILY").byweekno is None
+                True
+        """
+        values = self.get("BYWEEKNO")
+        if values is None or (isinstance(values, SEQUENCE_TYPES) and len(values) == 0):
+            return None
+        if not isinstance(values, SEQUENCE_TYPES):
+            values = [values]
+        return [int(v) for v in values]
+
+    @byweekno.setter
+    def byweekno(self, value: list[int] | int | None) -> None:
+        """Set the BYWEEKNO part of the recurrence rule, or delete it if None."""
+        if value is None:
+            del self.byweekno
+            return
+        if isinstance(value, int) and not isinstance(value, bool):
+            value = [value]
+        if not isinstance(value, (list, tuple)):
+            raise TypeError(f"byweekno must be a list of int, got {value!r}")
+        self["BYWEEKNO"] = [vInt(v) for v in value]
+
+    @byweekno.deleter
+    def byweekno(self) -> None:
+        """Delete the BYWEEKNO part of the recurrence rule."""
+        self.pop("BYWEEKNO", None)
+
+    @property
+    def byyearday(self) -> list[int] | None:
+        """The BYYEARDAY part of the recurrence rule.
+
+        This is a list of days of the year (1-366, or negative for counting
+        from the end) on which the recurrence occurs
+        (:rfc:`5545#section-3.3.10`). When omitted, ``None`` is returned.
+
+        Setting this to ``None`` deletes the value, as does ``del``.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=YEARLY;BYYEARDAY=1,100").byyearday
+                [1, 100]
+                >>> vRecur.from_ical("FREQ=DAILY").byyearday is None
+                True
+        """
+        values = self.get("BYYEARDAY")
+        if values is None or (isinstance(values, SEQUENCE_TYPES) and len(values) == 0):
+            return None
+        if not isinstance(values, SEQUENCE_TYPES):
+            values = [values]
+        return [int(v) for v in values]
+
+    @byyearday.setter
+    def byyearday(self, value: list[int] | int | None) -> None:
+        """Set the BYYEARDAY part of the recurrence rule, or delete it if None."""
+        if value is None:
+            del self.byyearday
+            return
+        if isinstance(value, int) and not isinstance(value, bool):
+            value = [value]
+        if not isinstance(value, (list, tuple)):
+            raise TypeError(f"byyearday must be a list of int, got {value!r}")
+        self["BYYEARDAY"] = [vInt(v) for v in value]
+
+    @byyearday.deleter
+    def byyearday(self) -> None:
+        """Delete the BYYEARDAY part of the recurrence rule."""
+        self.pop("BYYEARDAY", None)
+
+    @property
+    def bysetpos(self) -> list[int] | None:
+        """The BYSETPOS part of the recurrence rule.
+
+        This is a list of positions (1-based, or negative for counting from
+        the end) within the set of occurrences that the recurrence occurs
+        on (:rfc:`5545#section-3.3.10`). When omitted, ``None`` is returned.
+
+        Setting this to ``None`` deletes the value, as does ``del``.
+
+        Example:
+            ..  code-block:: pycon
+
+                >>> from icalendar.prop import vRecur
+                >>> vRecur.from_ical("FREQ=MONTHLY;BYSETPOS=1,-1").bysetpos
+                [1, -1]
+                >>> vRecur.from_ical("FREQ=DAILY").bysetpos is None
+                True
+        """
+        values = self.get("BYSETPOS")
+        if values is None or (isinstance(values, SEQUENCE_TYPES) and len(values) == 0):
+            return None
+        if not isinstance(values, SEQUENCE_TYPES):
+            values = [values]
+        return [int(v) for v in values]
+
+    @bysetpos.setter
+    def bysetpos(self, value: list[int] | int | None) -> None:
+        """Set the BYSETPOS part of the recurrence rule, or delete it if None."""
+        if value is None:
+            del self.bysetpos
+            return
+        if isinstance(value, int) and not isinstance(value, bool):
+            value = [value]
+        if not isinstance(value, (list, tuple)):
+            raise TypeError(f"bysetpos must be a list of int, got {value!r}")
+        self["BYSETPOS"] = [vInt(v) for v in value]
+
+    @bysetpos.deleter
+    def bysetpos(self) -> None:
+        """Delete the BYSETPOS part of the recurrence rule."""
+        self.pop("BYSETPOS", None)
+
+    @property
     def wkst(self) -> vWeekday | None:
         """The WKST part of the recurrence rule.
 
